@@ -243,6 +243,11 @@
               </c:if>
             </c:if>
 
+
+<imp:profileGraphs type='dataset' tableName="ExampleGraphs"/>
+
+
+
           </div><hr>       <!-- .data-set -->
         </c:forEach>       <!-- all datasets in one category  -->
 

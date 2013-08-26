@@ -210,6 +210,7 @@
 <%--   Data table by some graphs --%>
 
 
+
 <imp:toggle
     name="${tableId}"     
     displayName="Data Table"
@@ -249,6 +250,10 @@
     	</c:if>
     </c:if>
 
+
+
+<c:set var="graphToggle">
+
 <imp:toggle
     name="${secName}"
     isOpen="${row['mainOpen'].value}"
@@ -257,9 +262,26 @@
     content="${profileContent}"
     attribution=""
     imageId="${imgId}"
-    imageSource="${imgSrc}" />				
+    imageSource="${imgSrc}" />
+
+
+</c:set>
+
+<c:choose>
+  <c:when test="${type eq 'dataset'}">
+    <imp:simpleToggle
+       name="Example Graph(s)"
+       content="${graphToggle}"
+       show="true"/>
+  </c:when>
+  <c:otherwise>
+    ${graphToggle}
+  </c:otherwise>
+</c:choose>
+
 
   </c:if>
+
   <c:set var="i" value="${i +  1}"/>      
 </c:forEach>  	<%-- var="row" items="${tbl}" --%>
 
