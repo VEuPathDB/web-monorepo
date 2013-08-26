@@ -68,8 +68,6 @@
 
 <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 
-<imp:wdkTable tblName="RelatedCompounds" isOpen="true" attribution=""/>
-
 <imp:profileGraphs type='compound' tableName="MassSpecGraphs"/>
 
 
