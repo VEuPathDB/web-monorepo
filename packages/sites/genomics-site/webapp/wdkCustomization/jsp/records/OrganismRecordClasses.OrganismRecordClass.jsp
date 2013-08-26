@@ -154,11 +154,14 @@
    <td align="center"><a href="${attrs['hasCommunity'].url}">${attrs['hasCommunity'].displayText}</a></td>
    <td>${attrs['communitycount'].value}</td>
  </tr>
+
+<!--
  <tr class="rowMedium">
    <td>Isolates</td>
    <td align="center"><a href="${attrs['hasIsolate'].url}">${attrs['hasIsolate'].displayText}</a></td>
    <td>TODO</td>
  </tr>
+-->
 
 </table>
 </c:set>
