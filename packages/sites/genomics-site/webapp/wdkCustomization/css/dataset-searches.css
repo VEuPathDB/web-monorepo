@@ -87,7 +87,7 @@ html {
   -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
 }
 
-[data-controller] {
+.dataset-searches {
   width: 90%;
   min-width: 900px;
   max-width: 1060px;

@@ -7,7 +7,8 @@
   <c:set var="urlBase" value="${pageContext.request.contextPath}"/>
 
   <link rel="stylesheet" href="${urlBase}/wdkCustomization/css/dataset-searches.css"/>
-  <div data-controller="dataset-searches"
+  <div class="dataset-searches"
+    data-controller="eupathdb.datasetSearches.init"
     data-table="#dataset-records"
     data-table-toggle=".table-toggle"
     data-tabs-template="#dataset-tabs">

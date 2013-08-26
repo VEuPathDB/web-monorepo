@@ -1,170 +1,172 @@
-function datasetSearches($element, $attrs) {
+wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
   "use strict";
+  ns.init = function($element, $attrs) {
 
-  var $datasetRecords = $element.find($attrs.table);
+    var $datasetRecords = $element.find($attrs.table);
 
-  var datasetTabsSource = $element.find($attrs.tabsTemplate).html();
-  var datasetTabsTmpl = Handlebars.compile(datasetTabsSource);
+    var datasetTabsSource = $element.find($attrs.tabsTemplate).html();
+    var datasetTabsTmpl = Handlebars.compile(datasetTabsSource);
 
-  var toggleSource = $element.find("#toggle").html();
-  var toggleTmpl = Handlebars.compile(toggleSource);
+    var toggleSource = $element.find("#toggle").html();
+    var toggleTmpl = Handlebars.compile(toggleSource);
 
-  var $questionWrapper = $("#question-wrapper");
+    var $questionWrapper = $("#question-wrapper");
 
-  var questionTabsCache = {
-    cache: {},
-    // id: datasetId
-    // html: tabs source
-    add: function(id, html) {
-      return (this.cache[id] = html);
-    },
-    // id: datasetId
-    get: function(id) {
-      return this.cache[id];
-    }
-  };
-
-  var questionCollection = {
-    datasetId: null,
-    questions: []
-  };
-
-  var dataTableOpts = {
-    aoColumnDefs: [
-      {
-        bVisible: false,
-        aTargets: [2]
+    var questionTabsCache = {
+      cache: {},
+      // id: datasetId
+      // html: tabs source
+      add: function(id, html) {
+        return (this.cache[id] = html);
+      },
+      // id: datasetId
+      get: function(id) {
+        return this.cache[id];
       }
-    ],
-    bJQueryUI: true,
-    bPaginate: false,
-    oLanguage: {
-      sSearch: "Filter Data Sets:",
-      sInfo: ""
+    };
+
+    var questionCollection = {
+      datasetId: null,
+      questions: []
+    };
+
+    var dataTableOpts = {
+      aoColumnDefs: [
+        {
+          bVisible: false,
+          aTargets: [2]
+        }
+      ],
+      bJQueryUI: true,
+      bPaginate: false,
+      oLanguage: {
+        sSearch: "Filter Data Sets:",
+        sInfo: ""
+      }
+    };
+
+    var $tableToggle = $element.find($attrs.tableToggle);
+
+    // helper toggle function
+    var toggleTable = function(collapse) {
+      collapse = typeof collapse !== "undefined" ? collapse : !$datasetRecords.hasClass("collapsed");
+      $datasetRecords.toggleClass("collapsed", collapse);
+      $tableToggle.html(toggleTmpl({collapsed: collapse}));
     }
-  };
 
-  var $tableToggle = $element.find($attrs.tableToggle);
+    var colors = [
+      "blue",
+      "red",
+      "green",
+      "brown"
+    ];
 
-  // helper toggle function
-  var toggleTable = function(collapse) {
-    collapse = typeof collapse !== "undefined" ? collapse : !$datasetRecords.hasClass("collapsed");
-    $datasetRecords.toggleClass("collapsed", collapse);
-    $tableToggle.html(toggleTmpl({collapsed: collapse}));
-  }
+    // using site-based colors now (btn-site)
+    // $datasetRecords.find("tbody tr").each(function() {
+    //   $(this).find(".search-mechanism").each(function(idx, td) {
+    //     var $btn = $(td).find(".btn");
+    //     var color = colors[idx % colors.length];
+    //     $btn.addClass("btn-" + color);
+    //   });
+    // });
 
-  var colors = [
-    "blue",
-    "red",
-    "green",
-    "brown"
-  ];
+    // $element.find(".legend .search-mechanism").each(function(idx, span) {
+    //   var color = colors[idx % colors.length];
+    //   $(span).addClass("btn btn-active btn-" + color);
+    // });
 
-  // using site-based colors now (btn-site)
-  // $datasetRecords.find("tbody tr").each(function() {
-  //   $(this).find(".search-mechanism").each(function(idx, td) {
-  //     var $btn = $(td).find(".btn");
-  //     var color = colors[idx % colors.length];
-  //     $btn.addClass("btn-" + color);
-  //   });
-  // });
+    var dataTable = $datasetRecords.dataTable(dataTableOpts);
+    //new FixedHeader(dataTable);
 
-  // $element.find(".legend .search-mechanism").each(function(idx, span) {
-  //   var color = colors[idx % colors.length];
-  //   $(span).addClass("btn btn-active btn-" + color);
-  // });
+    // filter
+    //   - remove active search page and expand table
+    //   - when input has content, display clear button
+    $($attrs.table + "_filter input")
+      .on("keyup change", function(e) {
+        $(this).toggleClass("content", this.value.length > 0);
+        toggleTable(false);
+        $("#question-wrapper").html("").removeClass("active");
+        questionCollection.datasetId = null;
+        questionCollection.questions = [];
+        $datasetRecords.find(".btn-active").removeClass("btn-active");
+        $datasetRecords.find("tbody tr").removeClass("active");
+        $tableToggle.hide();
+        $questionWrapper.find(".tabs").hide();
+      }).after(
+        $('<span class="ui-icon ui-icon-circle-close"></span>')
+          .addClass("filter-clear")
+          .on("click", function(e) {
+            e.preventDefault();
+            dataTable.fnFilter("");
+            $($attrs.table + "_filter input").change().select();
+          })
+      );
 
-  var dataTable = $datasetRecords.dataTable(dataTableOpts);
-  //new FixedHeader(dataTable);
+    $($attrs.table + "_filter input").wdkTooltip({
+      content: {
+        text: "Type anything to filter this table, " +
+              "such as investigator or organism name. "
+      },
+      position: {
+        my: "left center",
+        at: "right center"
+      }
+    }).attr("placeholder", "Type keyword(s) to filter");
 
-  // filter
-  //   - remove active search page and expand table
-  //   - when input has content, display clear button
-  $($attrs.table + "_filter input")
-    .on("keyup change", function(e) {
-      $(this).toggleClass("content", this.value.length > 0);
-      toggleTable(false);
-      $("#question-wrapper").html("").removeClass("active");
-      questionCollection.datasetId = null;
-      questionCollection.questions = [];
-      $datasetRecords.find(".btn-active").removeClass("btn-active");
-      $datasetRecords.find("tbody tr").removeClass("active");
-      $tableToggle.hide();
-      $questionWrapper.find(".tabs").hide();
-    }).after(
-      $('<span class="ui-icon ui-icon-circle-close"></span>')
-        .addClass("filter-clear")
-        .on("click", function(e) {
-          e.preventDefault();
-          dataTable.fnFilter("");
-          $($attrs.table + "_filter input").change().select();
-        })
-    );
+    // handle search click
+    $datasetRecords.find(".dataset").on("click", ".question-link", function(e) {
+      var $delegate, $data, tabIdx;
+      // allow modifier keys to do their thing
+      if (e.ctrlKey || e.metaKey || e.shiftKey) return;
 
-  $($attrs.table + "_filter input").wdkTooltip({
-    content: {
-      text: "Type anything to filter this table, " +
-            "such as investigator or organism name. "
-    },
-    position: {
-      my: "left center",
-      at: "right center"
-    }
-  }).attr("placeholder", "Type keyword(s) to filter");
+      e.preventDefault();
+      $delegate = $(e.delegateTarget);
+      $data = $delegate.data();
 
-  // handle search click
-  $datasetRecords.find(".dataset").on("click", ".question-link", function(e) {
-    var $delegate, $data, tabIdx;
-    // allow modifier keys to do their thing
-    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+      $tableToggle.show();
 
-    e.preventDefault();
-    $delegate = $(e.delegateTarget);
-    $data = $delegate.data();
+      $(this).addClass("btn-active");
 
-    $tableToggle.show();
+      $datasetRecords.find(".btn-active").not(this).removeClass("btn-active");
 
-    $(this).addClass("btn-active");
+      tabIdx = $delegate.find(".search-mechanism .question-link").index(this);
 
-    $datasetRecords.find(".btn-active").not(this).removeClass("btn-active");
+      if ($data.datasetId === questionCollection.datasetId) {
+        // select appropriate tab
+        $("#question-wrapper").find("#question-set-" + questionCollection.datasetId).tabs("option", "active", tabIdx);
+      } else {
+        // update active row
+        $datasetRecords.find("tbody tr").removeClass("active");
+        $delegate.addClass("active");
+        $questionWrapper.find(".tabs").hide();
 
-    tabIdx = $delegate.find(".search-mechanism .question-link").index(this);
-
-    if ($data.datasetId === questionCollection.datasetId) {
-      // select appropriate tab
-      $("#question-wrapper").find("#question-set-" + questionCollection.datasetId).tabs("option", "active", tabIdx);
-    } else {
-      // update active row
-      $datasetRecords.find("tbody tr").removeClass("active");
-      $delegate.addClass("active");
-      $questionWrapper.find(".tabs").hide();
-
-      questionCollection.datasetId = $data.datasetId;
-      questionCollection.questions = [];
-      $delegate.find(".question-link").each(function(idx, anchor) {
-        var category = $(this).data("category");
-        questionCollection.questions.push({
-          url: $(this).attr("href") + "&partial=true",
-          category: category.replace(/((^\w)|_(\w))/g,
-              function(s) { return s.replace("_", " ").toUpperCase()})
+        questionCollection.datasetId = $data.datasetId;
+        questionCollection.questions = [];
+        $delegate.find(".question-link").each(function(idx, anchor) {
+          var category = $(this).data("category");
+          questionCollection.questions.push({
+            url: $(this).attr("href") + "&partial=true",
+            category: category.replace(/((^\w)|_(\w))/g,
+                function(s) { return s.replace("_", " ").toUpperCase()})
+          });
         });
-      });
 
-      if (!$questionWrapper.find("#question-set-" + questionCollection.datasetId).show().tabs("option", "active", tabIdx).length) {
-        $questionWrapper
-          .append(datasetTabsTmpl(questionCollection))
-          .addClass("active")
-          .find(".tabs").tabs({ active: tabIdx });
+        if (!$questionWrapper.find("#question-set-" + questionCollection.datasetId).show().tabs("option", "active", tabIdx).length) {
+          $questionWrapper
+            .append(datasetTabsTmpl(questionCollection))
+            .addClass("active")
+            .find(".tabs").tabs({ active: tabIdx });
+        }
       }
-    }
-    toggleTable.call($tableToggle.get(0), true);
-  });
+      toggleTable.call($tableToggle.get(0), true);
+    });
 
-  // bind toggleTable to .table-toggle
-  $tableToggle.on("click", function() { toggleTable() });
+    // bind toggleTable to .table-toggle
+    $tableToggle.on("click", function() { toggleTable() });
 
-  // show the page
-  setTimeout(function() {
-    $element.css("visibility", "visible");
-  }, 100);
-}
+    // show the page
+    setTimeout(function() {
+      $element.css("visibility", "visible");
+    }, 100);
+  }
+});
