@@ -5,6 +5,7 @@
     xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
   <c:set var="urlBase" value="${pageContext.request.contextPath}"/>
+  <c:set var="wdkModel_" value="${wdkModel.model}"/>
 
   <link rel="stylesheet" href="${urlBase}/wdkCustomization/css/dataset-searches.css"/>
   <div class="dataset-searches"
@@ -52,6 +53,7 @@
         <c:set var="dataset_name" value="${datasetRecord.attributes['display_name_piece']}"/>
         <c:set var="dataset_summary" value="${datasetRecord.attributes['summary']}"/>
         <c:set var="dataset_description" value="${datasetRecord.attributes['description']}"/>
+        <c:set var="build_number_introduced" value="${datasetRecord.attributes['build_number_introduced']}"/>
         <c:set var="publications" value="${datasetRecord.tables['Publications']}" />
 
         <tr class="dataset" data-dataset-id="${dataset_id}">
@@ -60,6 +62,10 @@
             <div>
               ${dataset_name}
               (${short_attribution})
+              <c:if test="${build_number_introduced eq wdkModel_.buildNumber}">
+                <img alt="New feature icon" title="This is a new search!"
+                  src="${urlBase}/wdk/images/new-feature.png"/>
+              </c:if>
               <span class="info wdk-tooltip" data-content="+ .dataset-tooltip-content"><jsp:text/></span>
               <div class="dataset-tooltip-content">
                 <h4>Summary</h4>
