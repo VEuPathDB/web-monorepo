@@ -20,8 +20,10 @@
     <th colspan=3 align="center"><i>Plasmodium yoelii</i></th>
     <th rowspan=2 align="center"><i>Plasmodium berghei</i></th>
     <th rowspan=2 align="center"><i>Plasmodium chabaudi</i></th>
-    <th rowspan=2 align="center"><i>Plasmodium knowlesi</i></th>
     <th rowspan=2 align="center"><i>Plasmodium cynomolgi</i></th>
+    <th rowspan=2 align="center"><i>Plasmodium gallinaceum</i></th>
+    <th rowspan=2 align="center"><i>Plasmodium knowlesi</i></th>
+    <th rowspan=2 align="center"><i></i>Plasmodium reichenowi</th>
   </tr>
   <tr>
     <th><i>Distinct genes</i></th>
@@ -103,13 +105,25 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
+                          instanceName="cynomolgi_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
+                          instanceName="gallinaceum_instances" />  
+    </td>
+    <td>
+      <imp:filterInstance strategyId="${strategyId}" 
+                          stepId="${stepId}" 
+                          answerValue="${answerValue}" 
                           instanceName="knowlesi_instances" />  
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="cynomolgi_instances" />  
+                          instanceName="reichenowi_instances" />  
     </td>
   </tr>
 </table>
