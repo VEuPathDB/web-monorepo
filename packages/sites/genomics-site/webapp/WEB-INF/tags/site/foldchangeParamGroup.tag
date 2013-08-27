@@ -19,9 +19,7 @@
 
   <c:set var="protein_coding_onlyParam" value="${paramGroup['protein_coding_only']}"/>
 
-  <span class="onload-function" data-function="eupathdb.foldChange.init">
-    <jsp:text/></span>
-  <div class="fold-change ui-help-clearfix">
+  <div class="fold-change ui-help-clearfix" data-controller="eupathdb.foldChange.init">
 
     <div class="fold-change-params">
       <div id="profileset_genericaaa" class="param-line">
@@ -163,119 +161,119 @@
       </div>
     </div>
 
-  </div> <!-- .fold-change -->
-
-  <script id="formula-partial" type="text/x-handlebars-template">
-    <div class="formula">
-      <div class="left-hand-side">{{{leftHandSide}}}</div>
-      <div class="right-hand-side">
-        <div class="division">
-          <div class="numerator">{{{numerator}}}</div>
-          <div class="denominator">{{{denominator}}}</div>
+    <script id="formula-partial" type="text/x-handlebars-template">
+      <div class="formula">
+        <div class="left-hand-side">{{{leftHandSide}}}</div>
+        <div class="right-hand-side">
+          <div class="division">
+            <div class="numerator">{{{numerator}}}</div>
+            <div class="denominator">{{{denominator}}}</div>
+          </div>
         </div>
       </div>
-    </div>
-  </script>
+    </script>
 
-  <script id="help-template" type="text/x-handlebars-template">
-    <p>You are searching for genes that are <b>{{direction}}</b> between
-      {{#if multipleRef}}
-        at least two <b>reference samples</b>
-      {{else}}
-        one <b>reference sample</b>
-      {{/if}}
-      and
-      {{#if multipleComp}}
-        at least two <b>comparison samples</b>.
-      {{else}}
-        one <b>comparison sample</b>.
-      {{/if}}
-    </p>
-    <br/>
-    <p>For each gene, the search calculates:</p>
-    {{#each formulas}}
-    {{> formula}}
-    {{/each}}
-    <p>and returns genes when {{{criteria}}}.
-      {{#if narrowest}}
-        This calculation creates the <b>narrowest</b> window of expression values in
-        which to look for genes that meet your fold change cutoff.
-      {{/if}}
-      {{#if broadest}}
-        This calculation creates the <b>broadest</b> window of expression values in
-        which to look for genes that meet your fold change cutoff.
-      {{/if}}
-
-      {{#if toNarrow}}
-        To narrow the window, use the {{toNarrow}}.
-      {{/if}}
-
-      {{#if toBroaden}}
-        To broaden the window, use the {{toBroaden}}.
-      {{/if}}
-    </p>
-  </script>
-
-  <script id="samples-partial" type="text/x-handlebars-template">
-    <div class="samples {{type}}-samples">
-      <div class="sample-operation {{operationLevel}}">
-        <div class="operation-line"><jsp:text/></div>
-        {{operationLabel}}
-
-        {{#each samples}}
-        <div class="sample" style="top: {{top}}%"><jsp:text/></div>
-        {{/each}}
-
-      </div>
-      <div class="samples-label">
-        {{samplesLabel}} <br/> Samples
-      </div>
-    </div>
-  </script>
-
-  <script id="foldChange-partial" type="text/x-handlebars-template">
-    <div class="fold-change-label">
-      <div class="up-arrow"><jsp:text/></div>
-      <div class="label">{{foldChange}} fold</div>
-      <div class="down-arrow"><jsp:text/></div>
-    </div>
-  </script>
-
-  <script id="one-direction-template" type="text/x-handlebars/template">
-    <div class="{{direction}}">
-      <div class="title">{{title}}</div>
-      {{#if foldChange}}
-      {{> foldChange}}
-      {{/if}}
-
-      {{#each sampleGroups}}
-      {{> samples}}
+    <script id="help-template" type="text/x-handlebars-template">
+      <p>You are searching for genes that are <b>{{direction}}</b> between
+        {{#if multipleRef}}
+          at least two <b>reference samples</b>
+        {{else}}
+          one <b>reference sample</b>
+        {{/if}}
+        and
+        {{#if multipleComp}}
+          at least two <b>comparison samples</b>.
+        {{else}}
+          one <b>comparison sample</b>.
+        {{/if}}
+      </p>
+      <br/>
+      <p>For each gene, the search calculates:</p>
+      {{#each formulas}}
+      {{> formula}}
       {{/each}}
-    </div>
-  </script>
+      <p>and returns genes when {{{criteria}}}.
+        {{#if narrowest}}
+          This calculation creates the <b>narrowest</b> window of expression values in
+          which to look for genes that meet your fold change cutoff.
+        {{/if}}
+        {{#if broadest}}
+          This calculation creates the <b>broadest</b> window of expression values in
+          which to look for genes that meet your fold change cutoff.
+        {{/if}}
 
-  <script id="two-direction-template" type="text/x-handlebars/template">
-    <div class="up-or-down-regulated">
-      <div class="title">{{title}}</div>
-      <div class="left-samples">
+        {{#if toNarrow}}
+          To narrow the window, use the {{toNarrow}}.
+        {{/if}}
+
+        {{#if toBroaden}}
+          To broaden the window, use the {{toBroaden}}.
+        {{/if}}
+      </p>
+    </script>
+
+    <script id="samples-partial" type="text/x-handlebars-template">
+      <div class="samples {{type}}-samples">
+        <div class="sample-operation {{operationLevel}}">
+          <div class="operation-line"><jsp:text/></div>
+          {{operationLabel}}
+
+          {{#each samples}}
+          <div class="sample" style="top: {{top}}%"><jsp:text/></div>
+          {{/each}}
+
+        </div>
+        <div class="samples-label">
+          {{samplesLabel}} <br/> Samples
+        </div>
+      </div>
+    </script>
+
+    <script id="foldChange-partial" type="text/x-handlebars-template">
+      <div class="fold-change-label">
+        <div class="up-arrow"><jsp:text/></div>
+        <div class="label">{{foldChange}} fold</div>
+        <div class="down-arrow"><jsp:text/></div>
+      </div>
+    </script>
+
+    <script id="one-direction-template" type="text/x-handlebars/template">
+      <div class="{{direction}}">
+        <div class="title">{{title}}</div>
         {{#if foldChange}}
         {{> foldChange}}
         {{/if}}
 
-        {{#each leftSampleGroups}}
+        {{#each sampleGroups}}
         {{> samples}}
         {{/each}}
       </div>
-      <div class="right-samples">
-        {{#if foldChange}}
-        {{> foldChange}}
-        {{/if}}
+    </script>
 
-        {{#each rightSampleGroups}}
-        {{> samples}}
-        {{/each}}
+    <script id="two-direction-template" type="text/x-handlebars/template">
+      <div class="up-or-down-regulated">
+        <div class="title">{{title}}</div>
+        <div class="left-samples">
+          {{#if foldChange}}
+          {{> foldChange}}
+          {{/if}}
+
+          {{#each leftSampleGroups}}
+          {{> samples}}
+          {{/each}}
+        </div>
+        <div class="right-samples">
+          {{#if foldChange}}
+          {{> foldChange}}
+          {{/if}}
+
+          {{#each rightSampleGroups}}
+          {{> samples}}
+          {{/each}}
+        </div>
       </div>
-    </div>
-  </script>
+    </script>
+
+  </div> <!-- .fold-change -->
 
 </jsp:root>

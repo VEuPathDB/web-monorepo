@@ -70,18 +70,18 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     this.denominator = denominator;
   };
 
-  var init = function() {
+  var init = function($element) {
 
-    Handlebars.registerPartial("samples", $("#samples-partial").html());
-    Handlebars.registerPartial("foldChange", $("#foldChange-partial").html());
-    Handlebars.registerPartial("formula", $("#formula-partial").html());
+    Handlebars.registerPartial("samples", $element.find("#samples-partial").html());
+    Handlebars.registerPartial("foldChange", $element.find("#foldChange-partial").html());
+    Handlebars.registerPartial("formula", $element.find("#formula-partial").html());
 
-    helpTmpl = Handlebars.compile($("#help-template").html());
-    oneDirectionTmpl = Handlebars.compile($("#one-direction-template").html());
-    twoDirectionTmpl = Handlebars.compile($("#two-direction-template").html());
+    helpTmpl = Handlebars.compile($element.find("#help-template").html());
+    oneDirectionTmpl = Handlebars.compile($element.find("#one-direction-template").html());
+    twoDirectionTmpl = Handlebars.compile($element.find("#two-direction-template").html());
 
-    $img = $(".fold-change-img");
-    $form = $(".fold-change").closest("form");
+    $img = $element.find(".fold-change-img");
+    $form = $element.closest("form");
 
     // connect to form change event
     $form.on("change", update).on("submit", function() {
@@ -93,7 +93,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     });
 
     // make samples boxes resizable
-    $(".reference > div, .comparison > div").each(function(idx, div) {
+    $element.find(".reference > div, .comparison > div").each(function(idx, div) {
       var $div = $(div);
       $div.resizable({
         alsoResize: $div.find(".param-multiPick.dependentParam ul, .checkbox-tree"),
@@ -365,13 +365,13 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   var setHelp = function() {
     if ($scope.refCount && $scope.compCount) {
       var html = helpTmpl($scope);
-      $(".fold-change-help.static-help").hide();
-      $(".fold-change-help.dynamic-help").show().html(html);
+      $form.find(".fold-change-help.static-help").hide();
+      $form.find(".fold-change-help.dynamic-help").show().html(html);
     } else {
-      $(".fold-change-help.static-help").show();
-      $(".fold-change-help.dynamic-help").hide();
+      $form.find(".fold-change-help.static-help").show();
+      $form.find(".fold-change-help.dynamic-help").hide();
     }
-    $(".fold-change .caption")
+    $form.find(".fold-change .caption")
       .css("visibility", $scope.refCount > 4 || $scope.compCount > 4 ?
           "visible" : "hidden");
   };
