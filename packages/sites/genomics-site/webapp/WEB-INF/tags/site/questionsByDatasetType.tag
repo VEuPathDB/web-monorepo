@@ -17,7 +17,8 @@
       <div>Legend:</div>
       <ul>
         <c:forEach items="${display_categories}" var="displayCategory">
-          <li class="wdk-tooltip" title="${displayCategory['description']}">
+          <li class="wdk-tooltip"
+            title="${displayCategory['displayName']}: ${displayCategory['description']}">
             <span class="search-mechanism btn btn-blue btn-active">${displayCategory['shortDisplayName']}
             </span>
             <span>${displayCategory['displayName']}</span>
