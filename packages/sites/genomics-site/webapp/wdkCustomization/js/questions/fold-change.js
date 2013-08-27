@@ -9,17 +9,11 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
   var $scope = {}; // gets bound to form state, with some extras. used for template
 
-  var sampleCollection = function(type) {
+  var SampleCollection = function(type) {
     this.type = type;
     this.samplesLabel = type[0].toUpperCase() + type.slice(1);
     this.operationLabel = type[0].toUpperCase() + type.slice(1);
     this.samples = [];
-  };
-
-  var formula = function(leftHandSide, numerator, denominator) {
-    this.leftHandSide = leftHandSide;
-    this.numerator = numerator;
-    this.denominator = denominator;
   };
 
   /** 
@@ -27,7 +21,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
    * String @operation - one of minimum, maximum, average
    * Boolean @isHigh - should the samples appear high or low in graph?
    */
-  sampleCollection.prototype.setup = function(sampleCount, operation, isHigh) {
+  SampleCollection.prototype.setup = function(sampleCount, operation, isHigh) {
     var stepCount, steps, smallSteps, bigSteps;
 
     smallSteps = [0, 100, 33, 66]; // percentages
@@ -68,6 +62,12 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       this.samples.push({top: steps[i]});
     }
     return this;
+  };
+
+  var Formula = function(leftHandSide, numerator, denominator) {
+    this.leftHandSide = leftHandSide;
+    this.numerator = numerator;
+    this.denominator = denominator;
   };
 
   var init = function() {
@@ -145,10 +145,10 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     }
 
     // if "up or down regulated" selected, disable ops
-    if ($form.find("select[name*='regulated_dir']").val() === "up or down regulated") {
-      refOp.attr("disabled", true);
-      compOp.attr("disabled", true);
-    }
+    // if ($form.find("select[name*='regulated_dir']").val() === "up or down regulated") {
+    //   refOp.attr("disabled", true);
+    //   compOp.attr("disabled", true);
+    // }
   };
 
   // set the properies of $scope
@@ -190,14 +190,14 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     }
 
     if ($scope.direction === "up-regulated") {
-      $scope.formulas.push(new formula("fold change", compFormula, refFormula));
+      $scope.formulas.push(new Formula("fold change", compFormula, refFormula));
       $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
     } else if ($scope.direction === "down-regulated") {
-      $scope.formulas.push(new formula("fold change", refFormula, compFormula));
+      $scope.formulas.push(new Formula("fold change", refFormula, compFormula));
       $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
     } else if ($scope.direction === "up or down regulated") {
-      $scope.formulas.push(new formula('fold change<sub>up</sub>', compFormula, refFormula));
-      $scope.formulas.push(new formula('fold change<sub>down</sub>', refFormula, compFormula));
+      $scope.formulas.push(new Formula('fold change<sub>up</sub>', compFormula, refFormula));
+      $scope.formulas.push(new Formula('fold change<sub>down</sub>', refFormula, compFormula));
       $scope.criteria = "<b>fold change<sub>up</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
       $scope.criteria += " or <b>fold change<sub>down</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
     }
@@ -321,15 +321,15 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       var leftSampleGroups = [],
           rightSampleGroups = [];
       if ($scope.refCount) {
-        leftSampleGroups.push(new sampleCollection("reference")
+        leftSampleGroups.push(new SampleCollection("reference")
             .setup($scope.refCount, $scope.refOperation));
-        rightSampleGroups.push(new sampleCollection("reference")
+        rightSampleGroups.push(new SampleCollection("reference")
             .setup($scope.refCount, $scope.refOperation, true));
       }
       if ($scope.compCount) {
-        leftSampleGroups.push(new sampleCollection("comparison")
+        leftSampleGroups.push(new SampleCollection("comparison")
             .setup($scope.compCount, $scope.compOperation, true));
-        rightSampleGroups.push(new sampleCollection("comparison")
+        rightSampleGroups.push(new SampleCollection("comparison")
             .setup($scope.compCount, $scope.compOperation));
       }
       html = twoDirectionTmpl({
@@ -340,8 +340,8 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       });
     } else {
       var sampleCollections = [];
-      var refSamples = new sampleCollection("reference");
-      var compSamples = new sampleCollection("comparison");
+      var refSamples = new SampleCollection("reference");
+      var compSamples = new SampleCollection("comparison");
 
       refSamples.setup($scope.refCount, $scope.refOperation, $scope.direction === "down-regulated");
       compSamples.setup($scope.compCount, $scope.compOperation, $scope.direction === "up-regulated");
