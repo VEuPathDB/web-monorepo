@@ -6,7 +6,7 @@ use Getopt::Long;
 use Time::Local;
 use FgpUtil::Util::SlowQueryReport;
 
-my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $logTailSize, $logDeathImmunity, $debug);
+my ($threshold, $genepage, $notgenepage, $width_filter, $time_filter, $sort_column, $plotOutputFile, $logTailSize, $logDeathImmunity, $debug, $tabfile, $brief);
 my ($width_min, $width_max);
 
 usage() unless scalar(@ARGV);
@@ -22,6 +22,8 @@ $sort_column=2;
 	    'l=s' => \$logTailSize,
 	    'i' => \$logDeathImmunity,
             'd' => \$debug,
+            'b' => \$brief,
+            'f=s' => \$tabfile,
 	   );
 
 if ($width_filter) {
@@ -49,7 +51,7 @@ my $parseLogRecord = sub {
   return ($reject, $timestamp, $lastPageSeconds, $name, $width);
 };
 
-FgpUtil::Util::SlowQueryReport::makeReport($parseLogRecord, $time_filter, $plotOutputFile, $sort_column, $logTailSize, $logDeathImmunity, $threshold, $debug);
+FgpUtil::Util::SlowQueryReport::makeReport($parseLogRecord, $time_filter, $plotOutputFile, $sort_column, $logTailSize, $logDeathImmunity, $threshold, $debug, $tabfile, $brief);
 
 sub usage {
   print STDERR "
