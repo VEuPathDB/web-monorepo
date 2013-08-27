@@ -255,7 +255,7 @@
 <c:set var="graphToggle">
 
 <imp:toggle
-    name="${secName}"
+    name="${secName}${i}"
     isOpen="${row['mainOpen'].value}"
     noData="${noData}"
     displayName="${row['display_name'].value}"
