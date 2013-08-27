@@ -68,13 +68,13 @@
 
 <table width="100%">
   <tr align=center>     
-    <td><b>Please select at least two isolates strains to run ClustalW.</b> </td>
+    <td><b>Please select two or three strains to run ClustalW.</b> </td>
   </tr>   
   <tr>
     <td align=center>
 		  <!-- build 20 hts isolate will be mapped to primary seq instead of top level seq -->
       <!-- <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['primary_seq_id']}','${attrs['primary_seq_start']}','${attrs['primary_seq_end']}')" /> --> 
-      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToIsolate(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min']}','${attrs['end_max']}')" /> 
+      <input type="button" value="Run Clustalw on Checked Strains" onClick="goToHTSStrain(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min']}','${attrs['end_max']}')" /> 
 
     <input type="button" name="CheckAll" value="Check All"  onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
     <input type="button" name="UnCheckAll" value="Uncheck All" onClick="wdk.api.checkboxNone(jQuery('input:checkbox[name=selectedFields]'))">
