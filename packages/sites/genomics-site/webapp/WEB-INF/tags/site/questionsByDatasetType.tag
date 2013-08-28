@@ -18,11 +18,15 @@
       <div>Legend:</div>
       <ul>
         <c:forEach items="${display_categories}" var="displayCategory">
-          <li class="wdk-tooltip"
-            title="${displayCategory['displayName']}: ${displayCategory['description']}">
-            <span class="search-mechanism btn btn-blue btn-active">${displayCategory['shortDisplayName']}
+          <li class="wdk-tooltip" data-content=".tooltip-content">
+            <span class="search-mechanism btn btn-blue btn-active">
+              ${displayCategory['shortDisplayName']}
             </span>
             <span>${displayCategory['displayName']}</span>
+            <div class="tooltip-content">
+              <h4>${displayCategory['displayName']}</h4>
+              ${displayCategory['description']}
+            </div>
           </li>
         </c:forEach>
       </ul>
