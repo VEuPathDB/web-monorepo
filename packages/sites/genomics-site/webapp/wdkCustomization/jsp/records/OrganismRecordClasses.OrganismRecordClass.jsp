@@ -159,7 +159,7 @@
  <tr class="rowMedium">
    <td>Isolates</td>
    <td align="center"><a href="${attrs['hasIsolate'].url}">${attrs['hasIsolate'].displayText}</a></td>
-   <td>TODO</td>
+   <td>${attrs['isolatecount'].value}</td>
  </tr>
 -->
 
