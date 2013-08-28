@@ -21,7 +21,6 @@
 
   <!-- JQuery library is included by WDK -->
 
-
   <!-- comment out, since it is commented out below
   <c:if test="${project == 'CryptoDB'}">
     <c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" />
@@ -31,6 +30,7 @@
   <script type="text/javascript" src="${base}/wdkCustomization/js/lib/hoverIntent.js"><jsp:text/></script>
   <script type="text/javascript" src="${base}/wdkCustomization/js/lib/superfish.js"><jsp:text/></script>
   <script type="text/javascript" src="${base}/wdkCustomization/js/common.js"><jsp:text/></script>
+  <script type="text/javascript" src="${base}/wdkCustomization/js/custom-login.js"><jsp:text/></script>
 
   <!-- Contact Us window -->
   <script type='text/javascript' src='${base}/js/newwindow.js'><jsp:text/></script>
