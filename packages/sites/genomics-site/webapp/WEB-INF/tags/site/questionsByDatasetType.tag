@@ -93,6 +93,7 @@
             <td class="search-mechanism">
               <c:if test="${question ne null}">
                 <a class="wdk-tooltip question-link btn btn-blue"
+                  data-adjust-y="5"
                   data-category="${displayCategory['displayName']}"
                   title="Search this data set by ${displayCategory['displayName']}"
                   href="showQuestion.do?questionFullName=${question.fullName}">
