@@ -94,12 +94,17 @@ function validateFields(e)
   <c:otherwise>
 
     <!-- check if there's an error message to display -->
-    <c:if test="${requestScope.changePasswordError != null}">
-       <tr>
+    <c:if test="${not empty changePasswordError}">
+      <tr><td colspan="2"><font color="red">${changePasswordError}</font></td></tr>
+     </c:if>
+    <c:if test="${validator.errorsPresent}}">
+      <c:forEach var="error" items="${validator.errorList}">
+        <tr>
           <td colspan="2">
-             <font color="red">${requestScope.changePasswordError}</font>
+            <font color="red">${error}</font>
           </td>
-       </tr>
+        </tr>
+      </c:forEach>
     </c:if>
 
     <tr>
@@ -124,7 +129,7 @@ function validateFields(e)
     </tr>
     <tr>
        <td colspan="2" align="center">
-         <input type="submit" name="changeButton" value="Change"  onclick="return validateFields();" />
+         <input type="submit" value="Change" onclick="return validateFields();" />
        </td>
     </tr>
     <tr>
