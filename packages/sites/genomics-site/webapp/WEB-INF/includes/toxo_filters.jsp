@@ -18,7 +18,7 @@
     <th colspan=8 align="center"><i>Toxoplasma gondii</i></th>
     <th rowspan=2 align="center"><i>Neospora caninum</i></th>
     <th rowspan=2 align="center"><i>Eimeria tenella</i></th>
-    <th rowspan=2 align="center"><i>Sarcocystis neurona</i></th>
+    <!-- th rowspan=2 align="center"><i>Sarcocystis neurona</i></th -->
   </tr>
 
   <tr>
@@ -115,12 +115,12 @@
                           answerValue="${answerValue}" 
                           instanceName="eimeria_instances" />  
     </td>
-    <td>
+    <!-- td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="sarcocystis_instances" />  
-    </td>
+    </td -->
 
   </tr>
 </table>

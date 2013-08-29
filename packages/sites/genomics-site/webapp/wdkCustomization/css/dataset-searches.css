@@ -301,6 +301,7 @@ td.search-mechanism a {
   left: 6px;
   top: 0px;
 }
+.legend .tooltip-content,
 .dataset-tooltip-content {
   display: none;
 }

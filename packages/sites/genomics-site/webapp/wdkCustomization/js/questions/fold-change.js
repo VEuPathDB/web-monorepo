@@ -1,14 +1,6 @@
 wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   "use strict";
 
-  var $img,
-      $form,
-      helpTmpl,
-      oneDirectionTmpl,
-      twoDirectionTmpl;
-
-  var $scope = {}; // gets bound to form state, with some extras. used for template
-
   var SampleCollection = function(type) {
     this.type = type;
     this.samplesLabel = type[0].toUpperCase() + type.slice(1);
@@ -71,6 +63,14 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   };
 
   var init = function($element) {
+    var $img,
+        $form,
+        helpTmpl,
+        oneDirectionTmpl,
+        twoDirectionTmpl;
+
+    var $scope = {}; // gets bound to form state, with some extras. used for template
+
 
     Handlebars.registerPartial("samples", $element.find("#samples-partial").html());
     Handlebars.registerPartial("foldChange", $element.find("#foldChange-partial").html());
@@ -84,12 +84,16 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     $form = $element.closest("form");
 
     // connect to form change event
-    $form.on("change", update).on("submit", function() {
+    $form
+    .on("change", function() {
+      update($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl);
+    })
+    .on("submit", function() {
       $(this).find(":disabled").attr("disabled", false);
     });
 
     $form.find("#fold_change").on("keyup", function(e) {
-      update();
+      update($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl);
     });
 
     // make samples boxes resizable
@@ -103,19 +107,19 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
       });
     });
 
-    update();
+    update($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl);
     return;
   };
 
-  var update = function() {
-    setParams();
-    setScope();
-    setGraph();
-    setHelp();
+  var update = function($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl) {
+    setParams($form);
+    setScope($scope, $form);
+    setGraph($scope, $img, oneDirectionTmpl, twoDirectionTmpl);
+    setHelp($scope, $form, helpTmpl);
   };
 
   // make some params readonly in certain conditions
-  var setParams = function() {
+  var setParams = function($form) {
     var refOp = $form.find("select[name*='min_max_avg_ref']"),
         compOp = $form.find("select[name*='min_max_avg_comp']"),
         refCount = $form.find("input[name*='samples_fc_ref_generic']:checked").length,
@@ -124,22 +128,22 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
 
     // if refCount <= 1, make ops disabled
     if (refCount <= 1) {
-      refOp.attr("disabled", true);
+      //refOp.attr("disabled", true);
       refOp.find(":selected").text("none");
       refOp.parent().hide();
     } else {
-      refOp.attr("disabled", false);
+      //refOp.attr("disabled", false);
       refOp.find(":selected").text(refOp.val().slice(0, -1));
       refOp.parent().css("display", "");
     }
 
     // if compCount <= 1, make ops disabled
     if (compCount <=1) {
-      compOp.attr("disabled", true);
+      //compOp.attr("disabled", true);
       compOp.find(":selected").text("none");
       compOp.parent().hide();
     } else {
-      compOp.attr("disabled", false);
+      //compOp.attr("disabled", false);
       compOp.find(":selected").text(compOp.val().slice(0, -1));
       compOp.parent().css("display", "");
     }
@@ -152,7 +156,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   };
 
   // set the properies of $scope
-  var setScope = function() {
+  var setScope = function($scope, $form) {
 
     $scope.foldChange = $form.find("#fold_change").val();
     $scope.direction = $form.find("select[name*='regulated_dir']").val();
@@ -314,7 +318,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
   };
 
   // set the classname for the image placeholder
-  var setGraph = function() {
+  var setGraph = function($scope, $img, oneDirectionTmpl, twoDirectionTmpl) {
     var html = '';
 
     if ($scope.direction === "up or down regulated") {
@@ -362,7 +366,7 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     }, 10);
   };
 
-  var setHelp = function() {
+  var setHelp = function($scope, $form, helpTmpl) {
     if ($scope.refCount && $scope.compCount) {
       var html = helpTmpl($scope);
       $form.find(".fold-change-help.static-help").hide();

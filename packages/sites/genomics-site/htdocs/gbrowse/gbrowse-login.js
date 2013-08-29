@@ -10,22 +10,27 @@ var GB = {
     performLogin : function() {
         // render the progress bar
         GB.updateProgress(0, 0);
-    
+
+        // retrieve project name (where gbrowse resides), and redirect url from this page's URL
+        var project = GB.getParameterByName('project');
+        var redirectUrl = GB.getParameterByName('redirectUrl');
+        var cookieMaxAge = GB.getParameterByName('cookieMaxAge');
+
         // try to split cookie into email and checksum
         var creds = GB.splitAuthCookie(jQuery.cookies.get(GB.WDK_COOKIE_NAME));
 
         if (creds == undefined) {
-            alert("System error: the WDK login cookie cannot be found; unable to complete GBrowse login.");
+            // user's login credentials must have been invalid; simply redirect to page
+            //alert("System error: the WDK login cookie cannot be found; unable to complete GBrowse login.");
+            window.top.location.href = redirectUrl;
         }
         else {
+            // make main div visible
+            jQuery('#progressbar').show();
+            
             // update progress bar and add some more in a bit (while ajaxing)
             GB.updateProgress(30, 0);
             GB.updateProgress(45, 450);
-
-            // retrieve project name (where gbrowse resides), and redirect url from this page's URL
-            var project = GB.getParameterByName('project');
-            var redirectUrl = GB.getParameterByName('redirectUrl');
-            var cookieMaxAge = GB.getParameterByName('cookieMaxAge');
           
             // append login form to the bottom of the page (is display:none)
             var html = GB.getLoginFormHtml(project, creds);
