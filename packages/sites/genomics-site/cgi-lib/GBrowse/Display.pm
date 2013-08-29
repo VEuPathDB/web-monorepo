@@ -799,7 +799,10 @@ sub ChromosomeFgcolor {
       return $col if $col;
       return "orange" if ($f->strand == 1); 
       return "darkseagreen";
-    } 
+    } else {
+      return "blue" if ($f->strand == 1); 
+      return "red";
+    }
 }  
 
 sub gapFgcolor { 
