@@ -202,9 +202,9 @@
         	<c:set var="noProfileDataTable">false</c:set>
 
          		<c:set var="profileDataTable">
-           			<c:set var="prefix" 		value="<%= request.getRequestURL() %>" />
+           			<c:set var="prefix" 		value="http://${pageContext.request.serverName}" />
 
-           			<c:import url="${prefix}/../../../../../${tableSrc}"  />  
+           			<c:import url="${prefix}${tableSrc}"  />  
          		</c:set>
 
 <%--   Data table by some graphs --%>
