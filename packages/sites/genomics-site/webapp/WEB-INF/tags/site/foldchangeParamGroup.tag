@@ -32,17 +32,23 @@
           src="${pageContext.request.contextPath}/wdk/images/question.png" />
       </div>
 
-      <div class="param-line">
-        <span class="text">return
-          <imp:enumParamInput qp="${protein_coding_onlyParam}"/>
-          <img class="help-link"
-            style="cursor:pointer"
-            title="${fn:escapeXml(protein_coding_onlyParam.help)}"
-            src="${pageContext.request.contextPath}/wdk/images/question.png" />
-          <span class="prompt">Genes</span>
-        </span>
-      </div>
+      <c:if test="${protein_coding_onlyParam ne null}">
+        <div class="param-line">
+          <span class="text">return
+            <imp:enumParamInput qp="${protein_coding_onlyParam}"/>
+            <img class="help-link"
+              style="cursor:pointer"
+              title="${fn:escapeXml(protein_coding_onlyParam.help)}"
+              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+            <span class="prompt">Genes</span>
+          </span>
+        </div>
+      </c:if>
+
       <div id="regulated_diraaa" class="param-line">
+        <c:if test="${protein_coding_onlyParam eq null}">
+          return genes
+        </c:if>
         <span class="text">that are</span>
         <imp:enumParamInput qp="${regulated_dirParam}"/>
         <img class="help-link"
