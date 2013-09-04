@@ -432,11 +432,11 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/toxodbaa/?name=${wd
 <imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 
-<%-- TODO:  Add this back once sgcid tuning table has been made --%>
-<%-- imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" / --%> 
-<%-- c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}" --%>
-<%--  ${attrs['ssgcid_request_link']} --%>
-<%-- /c:if --%>
+<%-- TODO:  Add this back once sgcid tuning table has been made  --%>
+<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" /> 
+<c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}" >
+<${attrs['ssgcid_request_link']} >
+</c:if>
 
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
