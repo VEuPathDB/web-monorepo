@@ -91,7 +91,12 @@
               </div>
             </div>
           </td>
-          <td>${dataset_summary} <br/> ${dataset_description}</td>
+          <td>
+            <c:choose>
+              <c:when test="${dataset_summary eq ''}">${dataset_description}</c:when>
+              <c:otherwise>${dataset_summary}</c:otherwise>
+            </c:choose>
+          </td>
           <c:forEach items="${display_categories}" var="displayCategory">
             <c:set var="question" value="${internalQuestions[displayCategory['name']]}"/>
             <td class="search-mechanism">
