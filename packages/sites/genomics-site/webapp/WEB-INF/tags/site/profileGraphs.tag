@@ -251,11 +251,18 @@
     </c:if>
 
 
+ <c:if test="${type eq 'compound'}">
+    <c:set var="toggleName" value="${secName}${i}"/>
+</c:if>
+ <c:if test="${type ne 'compound'}">
+    <c:set var="toggleName" value="${secName}"/>
+</c:if>
+
 
 <c:set var="graphToggle">
 
 <imp:toggle
-    name="${secName}${i}"
+    name="${toggleName}" 
     isOpen="${row['mainOpen'].value}"
     noData="${noData}"
     displayName="${row['display_name'].value}"
