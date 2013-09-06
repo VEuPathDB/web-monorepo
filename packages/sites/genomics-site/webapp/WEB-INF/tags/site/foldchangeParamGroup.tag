@@ -108,7 +108,7 @@
         </div>
 
         <div id="min_max_avg_compaaa" class="param-line">
-          and each gene's 
+          and its 
           <imp:enumParamInput qp="${min_max_avg_compParam}"/>
           <span class="text prompt">expression value</span>
           <img class="help-link"
@@ -150,14 +150,14 @@
 
     <div class="fold-change-graphic">
       <div class="title">Example showing one gene that would meet search criteria</div>
-      <div class="subtitle">(Dots represent expression values for the samples you selected)</div>
+      <div class="subtitle">(Dots represent this gene's expression values for selected samples)</div>
       <div class="fold-change-img"><jsp:text/></div>
       <div class="caption">A maximum of four samples are shown when more than
           four are selected.</div>
       <div class="fold-change-help static-help">
         <p>This graphic will help you visualize the parameter
         choices you make at the left.
-        It will begin to display when you choose a <b>Reference Sample</b> and
+        It will begin to display when you choose a <b>Reference Sample</b> or a
          <b>Comparison Sample</b>.</p>
       </div>
       <div class="fold-change-help dynamic-help"><jsp:text/></div>
