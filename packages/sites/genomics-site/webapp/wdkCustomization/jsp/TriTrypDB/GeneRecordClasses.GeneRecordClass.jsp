@@ -396,6 +396,12 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/tritrypdbaa/?name=$
 <c:if test="${attrs['hasPostTransMod'].value eq '1'}">
  <imp:wdkTable tblName="MassSpecMod" isOpen="true"   attribution=""/>
 </c:if>
+
+
+<c:if test="${attrs['hasQuantitativeProteomics'].value eq '1'}">
+   <imp:profileGraphs species="${binomial}" tableName="ProteinExpressionGraphs"/>
+</c:if>
+
      
 <imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
