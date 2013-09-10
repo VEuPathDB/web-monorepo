@@ -2,11 +2,11 @@
 function doCustomLogin(form, contextPath) {
   
   // get values user entered into the visible form
-  var email = $(form).find("#email").val();
-  var password = $(form).find("#password").val();
-  //var openid = $(form).find("#openid").val();
-  var remember = ($(form).find("#remember").prop('checked') ? "on" : "");
-  var redirectUrl = $(form).find("#redirectUrl").val();
+  var email = jQuery(form).find("#email").val();
+  var password = jQuery(form).find("#password").val();
+  //var openid = jQuery(form).find("#openid").val();
+  var remember = (jQuery(form).find("#remember").prop('checked') ? "on" : "");
+  var redirectUrl = jQuery(form).find("#redirectUrl").val();
   // only pull redirectUrl from address bar if doesn't exist in form
   if (redirectUrl == "") {
     redirectUrl = window.location.href;
