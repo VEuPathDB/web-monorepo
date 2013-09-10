@@ -117,7 +117,7 @@
                   data-adjust-y="5"
                   data-category="${displayCategory['displayName']}"
                   data-full-name="${question.fullName}"
-                  title="Search this data set by ${displayCategory['displayName']}"
+                  title="${displayCategory['description']}"
                   href="showQuestion.do?questionFullName=${question.fullName}">
                   ${displayCategory['shortDisplayName']}</a>
               </c:if>
