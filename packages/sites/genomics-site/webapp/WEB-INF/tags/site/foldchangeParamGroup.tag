@@ -19,7 +19,7 @@
 
   <c:set var="protein_coding_onlyParam" value="${paramGroup['protein_coding_only']}"/>
 
-  <div class="fold-change ui-help-clearfix" data-controller="eupathdb.foldChange.init">
+  <div class="fold-change ui-helper-clearfix" data-controller="eupathdb.foldChange.init">
 
     <div class="fold-change-params">
       <div id="profileset_genericaaa" class="param-line">
