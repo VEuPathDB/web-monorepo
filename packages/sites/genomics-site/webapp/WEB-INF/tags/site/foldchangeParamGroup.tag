@@ -19,7 +19,7 @@
 
   <c:set var="protein_coding_onlyParam" value="${paramGroup['protein_coding_only']}"/>
 
-  <div class="fold-change ui-help-clearfix" data-controller="eupathdb.foldChange.init">
+  <div class="fold-change ui-helper-clearfix" data-controller="eupathdb.foldChange.init">
 
     <div class="fold-change-params">
       <div id="profileset_genericaaa" class="param-line">
@@ -32,17 +32,23 @@
           src="${pageContext.request.contextPath}/wdk/images/question.png" />
       </div>
 
-      <div class="param-line">
-        <span class="text">return
-          <imp:enumParamInput qp="${protein_coding_onlyParam}"/>
-          <img class="help-link"
-            style="cursor:pointer"
-            title="${fn:escapeXml(protein_coding_onlyParam.help)}"
-            src="${pageContext.request.contextPath}/wdk/images/question.png" />
-          <span class="prompt">Genes</span>
-        </span>
-      </div>
+      <c:if test="${protein_coding_onlyParam ne null}">
+        <div class="param-line">
+          <span class="text">return
+            <imp:enumParamInput qp="${protein_coding_onlyParam}"/>
+            <img class="help-link"
+              style="cursor:pointer"
+              title="${fn:escapeXml(protein_coding_onlyParam.help)}"
+              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+            <span class="prompt">Genes</span>
+          </span>
+        </div>
+      </c:if>
+
       <div id="regulated_diraaa" class="param-line">
+        <c:if test="${protein_coding_onlyParam eq null}">
+          return genes
+        </c:if>
         <span class="text">that are</span>
         <imp:enumParamInput qp="${regulated_dirParam}"/>
         <img class="help-link"
@@ -102,7 +108,7 @@
         </div>
 
         <div id="min_max_avg_compaaa" class="param-line">
-          and each gene's 
+          and its 
           <imp:enumParamInput qp="${min_max_avg_compParam}"/>
           <span class="text prompt">expression value</span>
           <img class="help-link"
@@ -144,14 +150,14 @@
 
     <div class="fold-change-graphic">
       <div class="title">Example showing one gene that would meet search criteria</div>
-      <div class="subtitle">(Dots represent expression values for the samples you selected)</div>
+      <div class="subtitle">(Dots represent this gene's expression values for selected samples)</div>
       <div class="fold-change-img"><jsp:text/></div>
       <div class="caption">A maximum of four samples are shown when more than
           four are selected.</div>
       <div class="fold-change-help static-help">
         <p>This graphic will help you visualize the parameter
         choices you make at the left.
-        It will begin to display when you choose a <b>Reference Sample</b> and
+        It will begin to display when you choose a <b>Reference Sample</b> or a
          <b>Comparison Sample</b>.</p>
       </div>
       <div class="fold-change-help dynamic-help"><jsp:text/></div>

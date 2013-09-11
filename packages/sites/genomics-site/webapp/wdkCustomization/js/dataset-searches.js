@@ -115,11 +115,18 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
 
     // handle search click
     $datasetRecords.find(".dataset").on("click", ".question-link", function(e) {
-      var $delegate, $data, tabIdx;
+      var $delegate, $data, tabIdx, fullName;
       // allow modifier keys to do their thing
       if (e.ctrlKey || e.metaKey || e.shiftKey) return;
 
       e.preventDefault();
+
+      if ($attrs.callWizardUrl) {
+        fullName = $(this).data("fullName");
+        wdk.addStepPopup.callWizard($attrs.callWizardUrl + fullName, null, null, null, "next");
+        return;
+      }
+
       $delegate = $(e.delegateTarget);
       $data = $delegate.data();
 

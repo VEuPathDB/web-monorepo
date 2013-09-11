@@ -25,7 +25,7 @@ html {
   background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
   background-image: -moz-linear-gradient(to bottom, #ffffff, #e6e6e6);
   background-image: -o-linear-gradient(to bottom, #ffffff, #e6e6e6);
-  background-image: -webkit-linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
   filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)";
   background-repeat: repeat-x;
 }
@@ -36,7 +36,7 @@ html {
   background-image: linear-gradient(to bottom, #73a5f1, #4576c0);
   background-image: -moz-linear-gradient(to bottom, #73a5f1, #4576c0);
   background-image: -o-linear-gradient(to bottom, #73a5f1, #4576c0);
-  background-image: -webkit-linear-gradient(to bottom, #73a5f1, #4576c0);
+  background-image: -webkit-linear-gradient(top, #73a5f1, #4576c0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#73a5f1, endColorStr=#4576c0)";
 }
 .btn-brown {
@@ -46,7 +46,7 @@ html {
   background-image: linear-gradient(to bottom, #C79F6C, #9E6946);
   background-image: -moz-linear-gradient(to bottom, #C79F6C, #9E6946);
   background-image: -o-linear-gradient(to bottom, #C79F6C, #9E6946);
-  background-image: -webkit-linear-gradient(to bottom, #C79F6C, #9E6946);
+  background-image: -webkit-linear-gradient(top, #C79F6C, #9E6946);
   -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C79F6C, endColorStr=#9E6946)";
 }
 .btn-green {
@@ -56,7 +56,7 @@ html {
   background-image: linear-gradient(to bottom, #86c586, #3f963f);
   background-image: -moz-linear-gradient(to bottom, #86c586, #3f963f);
   background-image: -o-linear-gradient(to bottom, #86c586, #3f963f);
-  background-image: -webkit-linear-gradient(to bottom, #86c586, #3f963f);
+  background-image: -webkit-linear-gradient(top, #86c586, #3f963f);
   -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#86c586, endColorStr=#3f963f)";
 }
 .btn-red {
@@ -66,7 +66,7 @@ html {
   background-image: linear-gradient(to bottom, #d67676, #b34949);
   background-image: -moz-linear-gradient(to bottom, #d67676, #b34949);
   background-image: -o-linear-gradient(to bottom, #d67676, #b34949);
-  background-image: -webkit-linear-gradient(to bottom, #d67676, #b34949);
+  background-image: -webkit-linear-gradient(top, #d67676, #b34949);
   -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#d67676, endColorStr=#b34949)";
 }
 .btn:hover, .btn:focus {

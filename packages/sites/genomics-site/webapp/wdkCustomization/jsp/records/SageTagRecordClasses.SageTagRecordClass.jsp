@@ -23,7 +23,7 @@
 </c:catch>
 
 <imp:pageFrame title="${wdkRecord.primaryKey}"
-             divisionName="Sage Tag Record"
+             divisionName="SAGE Tag Record"
              refer="recordPage"
              division="queries_tools">
 
@@ -38,7 +38,7 @@
 <imp:recordToolbox />
 
 <div class="h2center" style="font-size:160%">
- 	Sage Tag
+ 	SAGE Tag
 </div>
 
 <div class="h3center" style="font-size:130%">

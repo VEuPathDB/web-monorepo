@@ -7,12 +7,24 @@
   <c:set var="urlBase" value="${pageContext.request.contextPath}"/>
   <c:set var="wdkModel_" value="${wdkModel.model}"/>
 
+  <c:set var="wdkStep" value="${requestScope.wdkStep}"/>
+  <c:set var="action" value="${requestScope.action}"/>
+  <c:choose>
+    <c:when test="${wdkStep == null}">
+      <c:set var="quesitonUrl" value=""/>
+    </c:when>
+    <c:otherwise>
+      <c:url var="questionUrl" value="/wizard.do?stage=question&amp;action=${action}&amp;strategy=${wdkStrategy.strategyId}&amp;step=${wdkStep.stepId}&amp;questionFullName=${q.fullName}" />
+    </c:otherwise>
+  </c:choose>
+
   <link rel="stylesheet" href="${urlBase}/wdkCustomization/css/dataset-searches.css"/>
   <div class="dataset-searches"
     data-controller="eupathdb.datasetSearches.init"
     data-table="#dataset-records"
     data-table-toggle=".table-toggle"
-    data-tabs-template="#dataset-tabs">
+    data-tabs-template="#dataset-tabs"
+    data-call-wizard-url="${questionUrl}">
 
     <div class="legend ui-helper-clearfix">
       <div>Legend:</div>
@@ -91,7 +103,12 @@
               </div>
             </div>
           </td>
-          <td>${dataset_summary} <br/> ${dataset_description}</td>
+          <td>
+            <c:choose>
+              <c:when test="${dataset_summary eq ''}">${dataset_description}</c:when>
+              <c:otherwise>${dataset_summary}</c:otherwise>
+            </c:choose>
+          </td>
           <c:forEach items="${display_categories}" var="displayCategory">
             <c:set var="question" value="${internalQuestions[displayCategory['name']]}"/>
             <td class="search-mechanism">
@@ -99,7 +116,8 @@
                 <a class="wdk-tooltip question-link btn btn-blue"
                   data-adjust-y="5"
                   data-category="${displayCategory['displayName']}"
-                  title="Search this data set by ${displayCategory['displayName']}"
+                  data-full-name="${question.fullName}"
+                  title="${displayCategory['description']}"
                   href="showQuestion.do?questionFullName=${question.fullName}">
                   ${displayCategory['shortDisplayName']}</a>
               </c:if>

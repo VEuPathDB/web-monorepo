@@ -334,10 +334,16 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/hostdbaa/?name=${wd
 <imp:wdkTable tblName="Epitopes" isOpen="true"
                  attribution=""/>
 
+
+
+<c:if test="${attrs['hasQuantitativeProteomics'].value eq '1'}">
+   <imp:profileGraphs species="${binomial}" tableName="ProteinExpressionGraphs"/>
+</c:if>
+
+
  
 <imp:wdkTable tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
-<imp:wdkTable tblName="Ssgcid" isOpen="true" attribution="" />
 
 <%--
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
