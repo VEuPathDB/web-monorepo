@@ -925,8 +925,9 @@ sub heightBySOTerm {
 sub heightByCount {
   my ($f, $height) = @_;
   $f = $f->parent if (! $f->get_tag_values('Count'));
-  my ($count) = $f->get_tag_values("Count"); 
-  return (log($count*$height)/log(2));
+  my ($count) = $f->get_tag_values("Count");
+  my $numeric_count = ($count =~ m/Unavailable/i) ? 1 : $count;
+  return (log(($numeric_count)*($height))/log(2));
 }
 
 sub heightBySpliceSiteCount {
