@@ -336,13 +336,6 @@ sub wastlingMassSpecBgColor {
   return 'yellow';
 }
 
-
-sub glyphFlipBgColor { 
-  my ($f, $glyph) = @_;
-  my $flip = $glyph->{flip};
-  $f->strand == ($flip ? -1 : 1) ? "navy" : "maroon";
-}
-
 sub bgColorFromStrandAndDeprecated {
   my ($f, $forward, $rev, $forDep, $revDep) = @_;
   my ($dep) = $f->get_tag_values('isDeprecated');
