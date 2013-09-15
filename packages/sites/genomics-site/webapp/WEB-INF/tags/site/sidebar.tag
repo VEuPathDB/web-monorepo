@@ -69,12 +69,12 @@
 <div class="menu_lefttop_drop" style="text-align:center;">
   <table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
     <tr><td style="padding:0;">
-	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">
+	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">
 	    <img style="border: 2px solid #666666;" src="/assets/images/genomeTable.png" width="190" height="100"></a>
     </td><tr>
 
     <tr><td style="text-align:left;">
-	    <a class="small"  href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GeneMetrics"/>">
+	    <a class="small"  href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics"/>">
 		  Also check our Gene Metrics >>></a>
     </td></tr>
   </table>
@@ -221,7 +221,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     <b>Community Files</b>
     <ul>
       <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-      <li><a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+      <li><a href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
     </ul>
     <hr>
   </c:if>
