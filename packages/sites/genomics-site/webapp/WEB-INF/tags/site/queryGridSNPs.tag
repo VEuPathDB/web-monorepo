@@ -70,26 +70,22 @@
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(modelName,'eupath')||fn:containsIgnoreCase(modelName,'plasmo') }">
                 <tr>
-                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByIsolateType" linktext="Isolate Assay" existsOn="A P"/>
-                </tr>
-                <tr>
                    <imp:queryGridMakeUrl qset="InternalSnpQuestions" qname="SnpsByIsolateComparison" linktext="Isolate Comparison" existsOn="A Am C P T Tt"/>
                 </tr>
 </c:when>
 <c:otherwise>
                  <tr>
-                   <imp:queryGridMakeUrl qset="SnpQuestions" qname="HtsSnpsByIsolate" linktext="Isolate Comparison" existsOn="A Am C P T Tt"/>
+                   <imp:queryGridMakeUrl qset="SnpQuestions" qname="HtsSnpsByIsolateComparison" linktext="Isolate Comparison" existsOn="A Am C P T Tt"/>
                 </tr>
 </c:otherwise>
 </c:choose>
-
                 <tr>
                     <imp:queryGridMakeUrl qset="SnpQuestions" qname="HTSSnpsByAlleleFrequency" linktext="Allele Frequency" existsOn="A Am C P T Tt"/>
                 </tr>
-                <tr>
-                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="HtsSnpsByIsolateComparison" linktext="Isolate Comparison" existsOn="A Am C P T Tt"/>
+              
+                 <tr>
+                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="SnpsByIsolateType" linktext="Isolate Assay" existsOn="A P"/>
                 </tr>
-
             </table>
         </td>
 
