@@ -284,14 +284,18 @@ ${id}
   <c:set var="gnCtxDivId" value="gnCtx"/>
 
   <c:set var="gnCtxImg">
- <c:set var="gbrowseUrl">
+		<c:set var="gbrowseUrl">
         /cgi-bin/gbrowse/plasmodb/?name=${sequence_id}:${context_start_range}..${context_end_range};h_feat=${fn:toLowerCase(id)}@yellow
     </c:set>
-    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
 
-    <center><div id="${gnCtxDivId}"></div></center>
-    
-    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
+    <center>
+		    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+				<div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
+				<div id="${gnCtxDivId}"></div>
+		    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+				<div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
+		</center>
+
   </c:set>
 
   <imp:toggle 

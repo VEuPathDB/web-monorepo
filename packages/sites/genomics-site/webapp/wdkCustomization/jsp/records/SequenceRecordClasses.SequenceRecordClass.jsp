@@ -157,8 +157,15 @@
     <c:set var="genomeContextUrl">
     http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};hmap=gbrowse;type=${gtracks};width=640;embed=1;h_feat=${feature_source_id}@yellow
     </c:set>
+
+
     <c:set var="genomeContextImg">
-        <noindex follow><center>
+
+        <noindex follow>
+				<center>
+ 				<a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+				<div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
+
         <c:catch var="e">
            <c:import url="${genomeContextUrl}"/>
         </c:catch>
@@ -168,6 +175,9 @@
                 e="${e}" 
             />
         </c:if>
+
+ 				<a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+				<div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
         </center>
         </noindex>
 
@@ -175,7 +185,7 @@
         <c:set var="gbrowseUrl">
             /cgi-bin/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
         </c:set>
-        <a href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+
 
     </c:set>
 

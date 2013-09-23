@@ -1,3 +1,4 @@
+<!doctype html>
 <?php require_once dirname(__FILE__) . "/lib/UserAgent.php" ?>
 <html><?php include "head.php.inc"; ?>
 

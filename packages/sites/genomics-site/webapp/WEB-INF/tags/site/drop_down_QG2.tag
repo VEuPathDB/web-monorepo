@@ -13,7 +13,7 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
-<!-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
+<%-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
      Two reasons why the model was used:
     	- to avoid fake questions; 
       		now with the new flag "usedBy" we could read from categories.xml, using "usedBy='website'" on fake questions.
@@ -21,7 +21,7 @@
       		one could obtain the questionSet name either by 
           	- hardcoding it below (there is already an if that could be used)
           	- reading from the question object (question.questionSetName) ?
- -->
+ --%>
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
 
 <ul>

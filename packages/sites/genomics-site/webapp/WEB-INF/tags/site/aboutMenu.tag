@@ -14,7 +14,7 @@
 
   <c:set var="newsUrl" value="${isPortal ? 'aggregateNews.jsp' : 'showXmlDataContent.do?name=XmlQuestions.News'}"/>
   <!-- if the site has statistics on its own, not covered in the Portal Data Summary table, show them, otherwise show the genome table -->
-  <c:set var="statsUrl" value="${'/showSummary.do?questionFullName=OrganismQuestions.GenomeDataTypes'}"/>
+  <c:set var="statsUrl" value="${'/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes'}"/>
 
 <span class="smallTitle">------ Usage and Citation</span>
   
@@ -28,7 +28,7 @@
 
 <br/><span class="smallTitle">------ Data Provided</span>
   
-  <li><a href="${baseUrl}/showSummary.do?questionFullName=OrganismQuestions.GenomeDataTypes">Organisms in ${project}</a></li>
+  <li><a href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Organisms in ${project}</a></li>
   <li><a href="${baseUrl}/${statsUrl}">Data Statistics</a></li>
   <c:if test="${project eq 'CryptoDB'}">
     <li><a href="http://cryptodb.org/static/SOP/">SOPs for <em>C.parvum</em> Annotation</a></li>

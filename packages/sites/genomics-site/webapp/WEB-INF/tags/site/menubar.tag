@@ -145,14 +145,14 @@
         </c:if>
 <c:if test="${project != 'FungiDB'}" > 
         <!-- <li><a title="Table summarizing all the genomes and their different data types available in EuPathDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">EuPathDB Genomes and Data Types</a></li> -->
-        <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">Genomes and Data Types</a></li> 
+        <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">Genomes and Data Types</a></li> 
 </c:if>   
 <c:if test="${project == 'FungiDB'}" >
         <li><a title="Table summarizing all the genomes and their different data types available in FungiDB" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">FungiDB Genomes and Data Types</a></li>
 </c:if>  
 <c:if test="${project != 'FungiDB'}" >
         <!-- <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">EuPathDB Gene Metrics</a></li> -->
-        <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showSummary.do?questionFullName=OrganismQuestions.GeneMetrics"/>">Gene Metrics</a></li>
+        <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics"/>">Gene Metrics</a></li>
 </c:if>
 <c:if test="${project == 'FungiDB'}" >
         <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">FungiDB Gene Metrics</a></li>
@@ -191,7 +191,7 @@
 
         <c:if test="${project != 'EuPathDB'}" >
           <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-          <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+          <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
         </c:if>
         <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li> 
       </ul>
@@ -225,11 +225,13 @@
 
 
        <c:if test="${project != 'EuPathDB'}" >    
-        <li><a title="Add your comments to your gene of interest: start at the gene page" onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
+        <li><a title="Add your comments to your gene of interest: start at the gene page" onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
+               href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
 
         <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
 
-        <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+        <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
+               href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
       </c:if>
 
       <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>

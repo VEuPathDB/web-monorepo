@@ -32,7 +32,7 @@
     <div class="h2center" style="font-size: 18px;">Upload Files</div>
     This form allows you to upload and share documents, images, small datasets and other files 
     of community interest. Files submitted via this form will be publicly available
-    (see the file listing <a href="<c:url value="/showSummary.do?questionFullName=UserFileQuestions.UserFileUploads"/>">here</a>). 
+    (see the file listing <a href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">here</a>). 
     If you wish to submit data privately, please <a href="<c:url value="/contact.do"/>" class="new-window" data-name="contact_us">Contact Us</a> and we will provide further assistance.
     <br><br>
     Files to be associated with specific genes or genomic sequences should be added
