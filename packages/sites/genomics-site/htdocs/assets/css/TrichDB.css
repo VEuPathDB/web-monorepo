@@ -13,9 +13,11 @@ a:link, a:visited, div.divlink {
 a:hover, a:active, div.divlink:hover {
 	color: #7B5A37;  /* #a9cb6d; */
 }
+
 a[name]:link {
 	color: black;
 }
+
 a[name]:visited {
 	color: black;
 }
@@ -36,7 +38,6 @@ a[name]:hover, a[name]:active {
 	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
 }
 
-
 #header_rt {
    color: #8c8b35;
 }
@@ -48,6 +49,7 @@ a[name]:hover, a[name]:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #nav-top {
 	color: #8c8b35;
 }
@@ -55,6 +57,7 @@ a[name]:hover, a[name]:active {
 #nav-top a:link, #nav-top a:visited {
 	color: #8c8b35;
 }
+
 #nav-top li ul {  /* second-level lists */
 	background-image: url(../images/TrichDB/footer.png);
 	border-color:#8c8b35;
@@ -69,15 +72,17 @@ a[name]:hover, a[name]:active {
 	color: #605f0e;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HOME 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+/* #bubbles .info {
+  min-height: 299px;
+} */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-/* #menubar #mysearch {
-	background-image: url(../images/TrichDB/my_hist_menubar.png);
-	border: 1px solid #868520;
-} */
  
 #contentcolumn {
 	background-image: url(../images/TrichDB/footer.png);
@@ -98,15 +103,6 @@ a[name]:hover, a[name]:active {
 	background-image: url(../images/TrichDB/tools_bckgnd.jpg);
 }
 
-#about_us_left {
-	background-color: #d9e8cc;
-	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
-}
-#pink_title {
-	color: #585b0f;
-	background-image: url(../images/TrichDB/trheader.png);
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
@@ -115,6 +111,7 @@ a[name]:hover, a[name]:active {
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
 	color:#560000;
 }
+
 #menu ul ul a:link, #menu ul ul a:visited{
 	border-bottom-color: #7b5a37;
 }
@@ -127,6 +124,7 @@ a[name]:hover, a[name]:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 .menu_lefttop_drop {
    border-color: #455F15;  /* color as in contentcolumn border */
 }
@@ -154,6 +152,7 @@ a[name]:hover, a[name]:active {
 h1 {
 	color: #7b5a37;   /*455f15;*/
 }
+
 h2 {
   	color: #7b5a37; 
 }
@@ -161,12 +160,6 @@ h2 {
 .h2center, .h3left,.h3center, .h4left {
   	color: #7b5a37;
 }
-
-.subcolor {
-	color: #714782
-}
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOOTER 
@@ -185,7 +178,6 @@ td.headerrow {
 	color: #585b0f;
 	background-image: url(../images/TrichDB/trheader.png);
 }
-
 
 tr.headerrow {
 	color: #585b0f;
@@ -224,10 +216,10 @@ tr.subheaderrow2 td{
 a.queryGridInactive {
         color:              #C8C8C8;
 }
+
 a.queryGridActive {
         color:              #538001;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =END OF TABLES FOR QUERY GRID
@@ -247,7 +239,6 @@ tr.headerrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -263,7 +254,6 @@ div.Workspace {
 .twoColHybLt #sidebar1 {
 	background-image: url(../images/TrichDB/aboutus.png);
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WARNING BOXES 
@@ -282,9 +272,6 @@ span.marker a:link, span.marker a:visited {
 	color: #717001;
 }
 
-
-/* APPLICATION PAGE STYLES */
-
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #e9eee5;
 }
@@ -301,18 +288,15 @@ span.marker a:link, span.marker a:visited {
 	background-image: url(/assets/images/TrichDB/footer.png);
 }
 
-.flexigrid div.hDiv
-{
+.flexigrid div.hDiv {
 	background-image:url(/assets/images/TrichDB/trheader.png);
 }
 
-.flexigrid div.hDiv th.thMove
-{
+.flexigrid div.hDiv th.thMove {
 	background-image:url(/assets/images/TrichDB/trheader.png);
 }
 
-div.colCopy
-{
+div.colCopy {
 	background-image:url(/assets/images/TrichDB/trheader.png);
 }
 
@@ -321,16 +305,15 @@ div.colCopy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #query_form {
 	border: 1px solid #7b5a37;	
 }
@@ -338,6 +321,7 @@ div.colCopy
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 dataset-searches.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #dataset-records th {
   color: #7b5a37;
 }

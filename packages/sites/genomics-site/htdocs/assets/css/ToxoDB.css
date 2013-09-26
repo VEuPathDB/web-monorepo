@@ -1,4 +1,3 @@
-
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TAGS 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -7,13 +6,10 @@ body {
 	background-image: url(/assets/images/ToxoDB/background_s.jpg);
 }
 
-.coloredtext {         /* no link */
-	color: #772841; // dark red, now that links are green   
-}
-
 a:link, div.divlink {
 	color: #187a02; //#206910;  //green
 }
+
 a:visited {
 	color: #507a46;            //muter green
 }
@@ -21,9 +17,11 @@ a:visited {
 a:hover, a:active, div.divlink:hover {
 	color: #772841;            //dark pink, wine color
 }
+
 a[name]:link {
 	color: black;
 }
+
 a[name]:visited {
 	color: black;
 }
@@ -31,6 +29,7 @@ a[name]:visited {
 a[name]:hover, a[name]:active {
 	color:  black;
 }
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
@@ -43,7 +42,6 @@ a[name]:hover, a[name]:active {
 	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
 }
 
-
 #header_rt {
    color: #3c8935; //lighter green
 }
@@ -55,6 +53,7 @@ a[name]:hover, a[name]:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #nav-top {
 	color: #3c8935;
 }
@@ -80,19 +79,15 @@ a[name]:hover, a[name]:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #bubbles .info {
   min-height: 329px;
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-/* #menubar #mysearch {
-	background-image: url(../images/ToxoDB/my_hist_menubar.png);
-	border: 1px solid #831639;
-} */
- 
+
 #contentcolumn {
 	background-image: url(../images/ToxoDB/footer.png);
 	border: 1px solid #20691a; //green
@@ -102,37 +97,25 @@ a[name]:hover, a[name]:active {
 	background-image: url(../images/ToxoDB/footer.png);
 	border: 1px solid #20691a;
 }
-
 /* commented out in DQG_bubble.tag
 #mysearchhist {
 	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
 	border: 1px solid #20691a;
 }
 */
-
 #main_tools {
 	background-image: url(../images/ToxoDB/tools_bckgnd.jpg);
 }
 
-/* not in use, remove in a few rounds
-#about_us_left {
-	background-color: #bfccdf;
-	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
-}
-
-#pink_title {
-	color: #5e0f28;
-	background-image: url(../images/ToxoDB/trheader.png);
-}
-*/
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active {
+#menu a:hover, #menu a:active, #strategy_tabs #selected a {
 	color:#560000;
 }
+
 #menu ul ul a:link, #menu ul ul a:visited{
 	border-bottom-color: #3c8935;
 }
@@ -145,6 +128,7 @@ a[name]:hover, a[name]:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 .menu_lefttop_drop {
    border-color: #6f223a; //  color as sidebar header color
 }
@@ -172,6 +156,7 @@ a[name]:hover, a[name]:active {
 h1 {
 	color: #772841; //#20691a;
 }
+
 h2 {
   	color: #772841; //#20691a;
 }
@@ -179,13 +164,6 @@ h2 {
 .h2center, .h3left,.h3center, .h4left {
   	color: #772841; //dark red     #3c8935; //lighter green
 }
-
-/* seems unused
-.subcolor {
-	color: #714782
-}
-*/
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOOTER 
@@ -203,9 +181,7 @@ h2 {
 td.headerrow {
 	color: #5e0f28;  //dark red
 	background-image: url(../images/ToxoDB/trheader.png);
-	background-repeat: repeat-x;
 }
-
 
 tr.headerrow {
 	color: #5e0f28;
@@ -244,10 +220,10 @@ tr.subheaderrow2 td{
 a.queryGridInactive {
         color:              #C8C8C8;    //grey with redish tint
 }
+
 a.queryGridActive {
         color:              #772841;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =END OF TABLES FOR QUERY GRID
@@ -270,6 +246,7 @@ tr.headerrow th {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 div.Workspace {
 	border-color: #187a02;
 }
@@ -282,20 +259,12 @@ div.Workspace {
 	background-image: url(../images/ToxoDB/aboutus.png);
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 span.marker a:link, span.marker a:visited {
 	color: #7D0101;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = strategy workspace
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#strategy_tabs #selected a {
-	color:#560000;
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
@@ -314,26 +283,21 @@ span.marker a:link, span.marker a:visited {
 	background-image: url(/assets/images/ToxoDB/footer.png);
 }
 
-.flexigrid div.hDiv
-{
+.flexigrid div.hDiv {
 	background-image:url(/assets/images/ToxoDB/trheader.png);
 }
 
-.flexigrid div.hDiv th.thMove
-{
+.flexigrid div.hDiv th.thMove {
 	background-image:url(/assets/images/ToxoDB/trheader.png);
 }
 
-div.colCopy
-{
+div.colCopy {
 	background-image:url(/assets/images/ToxoDB/trheader.png);
 }
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
 	border: 1px solid #772841;	
@@ -342,6 +306,7 @@ div.colCopy
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 dataset-searches.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #dataset-records th {
   color: #772841;
 }
