@@ -6,16 +6,18 @@ body {
 	background-image: url(/assets/images/CryptoDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink {
+a:link, a:visited, div.divlink  {
 	color: #0b4796;
 }
 
 a:hover, a:active, div.divlink:hover {
 	color: #610b0b;    /* for contrast 08438F; */        /*  #83a6d4; */
 }
+
 a[name]:link {
 	color: black;
 }
+
 a[name]:visited {
 	color: black;
 }
@@ -23,6 +25,7 @@ a[name]:visited {
 a[name]:hover, a[name]:active {
 	color:  black;
 }
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
@@ -35,7 +38,6 @@ a[name]:hover, a[name]:active {
 	background-image: url(../images/CryptoDB/backgroundtop_s.jpg);
 }
 
-
 #header_rt {
    color: #395b8e;
 }
@@ -44,10 +46,10 @@ a[name]:hover, a[name]:active {
    color: #395b8e;
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #nav-top {
 	color: #395b8e;
 }
@@ -73,10 +75,10 @@ a[name]:hover, a[name]:active {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #bubbles .info {
   min-height: 351px;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
@@ -110,6 +112,7 @@ a[name]:hover, a[name]:active {
 	background-color: #bfccdf;
 	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
 }
+
 #pink_title {
 	color: #5f140e;
 	background-image: url(../images/CryptoDB/trheader.png);
@@ -120,7 +123,6 @@ a[name]:hover, a[name]:active {
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/*
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
 	color:#560000;
 }
@@ -133,25 +135,11 @@ a[name]:hover, a[name]:active {
 	border-bottom-color: #610b0b;
 	color: #610b0b;
 }
-*/
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Superfish menu stuff
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-/* active link color */
-.sf-menu a:hover {
-  color: #7a3838;
-}
-
-/* parent selected link color */
-.sf-menu li.sfHover > a {
-  color: #364179;
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 .menu_lefttop_drop {
    border-color: #345d9b;  /* color as in contentcolumn border */
 }
@@ -179,6 +167,7 @@ a[name]:hover, a[name]:active {
 h1 {
 	color: #610b0b; /*#345d9b; */
 }
+
 h2 {
   	color: #610b0b; /*#345d9b;*/
 }
@@ -186,14 +175,6 @@ h2 {
 .h2center, .h3left, .h3center, .h4left {
         color: #610b0b;
 }
-
-
-
-.subcolor {
-	color: #714782
-}
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOOTER 
@@ -212,7 +193,6 @@ td.headerrow {
 	color: #5f140e;
 	background-image: url(../images/CryptoDB/trheader.png);
 }
-
 
 tr.headerrow {
 	color: #5f140e;
@@ -251,6 +231,7 @@ tr.subheaderrow2 td{
 a.queryGridInactive {
         color:              #C8C8C8;
 }
+
 a.queryGridActive {
         color:              #0b4796;
 }
@@ -269,32 +250,24 @@ tr.headerrow th {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 div.Workspace {
 	border-color: #0B4796;
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 /* seems unused, not in other component sites 
 .twoColHybLt #container_au { 
 	background-image: url(../images/CryptoDB/aboutus.png);
 }
 */
-
 .twoColHybLt #sidebar1 {
 	background-image: url(../images/CryptoDB/aboutus.png);
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WARNING BOXES 
@@ -314,12 +287,10 @@ div.Workspace {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 span.marker a:link, span.marker a:visited {
 	color: #7D0101;
 }
-
-
-/* APPLICATION PAGE STYLES */
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
     background-color: #E8EBF0;
@@ -337,37 +308,30 @@ span.marker a:link, span.marker a:visited {
 	background-image: url(/assets/images/CryptoDB/footer.png);
 }
 
-.flexigrid div.hDiv
-{
+.flexigrid div.hDiv {
 	background-image:url(/assets/images/CryptoDB/trheader.png);
 }
 
-.flexigrid div.hDiv th.thMove
-{
+.flexigrid div.hDiv th.thMove {
 	background-image:url(/assets/images/CryptoDB/trheader.png);
 }
 
-div.colCopy
-{
+div.colCopy {
 	background-image:url(/assets/images/CryptoDB/trheader.png);
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 history.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
 
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #query_form {
 	border: 1px solid #345d9b;	
 }
@@ -375,6 +339,7 @@ div.colCopy
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 dataset-searches.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 #dataset-records th {
   color: #610b0b;
 }
