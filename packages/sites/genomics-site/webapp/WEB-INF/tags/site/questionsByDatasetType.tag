@@ -31,7 +31,7 @@
       <ul>
         <c:forEach items="${display_categories}" var="displayCategory">
           <li class="wdk-tooltip" data-content=".tooltip-content">
-            <span class="search-mechanism btn btn-blue btn-active">
+            <span class="search-mechanism btn btn-cyan btn-active">
               ${displayCategory['shortDisplayName']}
             </span>
             <span>${displayCategory['displayName']}</span>
@@ -113,7 +113,7 @@
             <c:set var="question" value="${internalQuestions[displayCategory['name']]}"/>
             <td class="search-mechanism">
               <c:if test="${question ne null}">
-                <a class="wdk-tooltip question-link btn btn-blue"
+                <a class="wdk-tooltip question-link btn btn-cyan"
                   data-adjust-y="5"
                   data-category="${displayCategory['displayName']}"
                   data-full-name="${question.fullName}"

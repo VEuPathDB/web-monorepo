@@ -17,9 +17,9 @@ html {
   border: 1px solid #cccccc;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  box-shadow: 1px 1px 0 #e6e6e6;
-  -moz-box-shadow: 1px 1px 0 #e6e6e6;
-  -webkit-box-shadow: 1px 1px 0 #e6e6e6;
+  box-shadow: 1px 1px 0 #dddddd;
+  -moz-box-shadow: 1px 1px 0 #dddddd;
+  -webkit-box-shadow: 1px 1px 0 #dddddd;
   -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#e6e6e6')";
   background-color: #e6e6e6;
   background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
@@ -69,21 +69,25 @@ html {
   background-image: -webkit-linear-gradient(top, #d67676, #b34949);
   -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#d67676, endColorStr=#b34949)";
 }
+.btn-cyan {
+  color: #ffffff;
+  border: 1px solid #2f96b4;
+  background-color: #2f96b4;
+  background-image: linear-gradient(to bottom, #5bc0de, #2f96b4);
+  background-image: -moz-linear-gradient(to bottom, #5bc0de, #2f96b4);
+  background-image: -o-linear-gradient(to bottom, #5bc0de, #2f96b4);
+  background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)";
+}
 .btn:hover, .btn:focus {
   background-position: 0 -8px;
   text-decoration: none;
-  /*
-  transition: background-position 0.1s linear;
-  -moz-transition: background-position 0.1s linear;
-  -o-transition: background-position 0.1s linear;
-  -webkit-transition: background-position 0.1s linear;
-  */
 }
 .btn:active, .btn-active {
   background-image: none;
-  box-shadow: 1px 1px 0 #eeeeee;
-  -moz-box-shadow: 1px 1px 0 #eeeeee;
-  -webkit-box-shadow: 1px 1px 0 #eeeeee;
+  box-shadow: 1px 1px 0 #dddddd;
+  -moz-box-shadow: 1px 1px 0 #dddddd;
+  -webkit-box-shadow: 1px 1px 0 #dddddd;
   -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
 }
 
@@ -93,7 +97,6 @@ html {
   max-width: 1060px;
   margin: 0 auto;
   visibility: hidden;
-  /*padding-top: 7em;*/
   position: relative;
 }
 .dataTable {
@@ -153,6 +156,7 @@ html {
 .dataTable td {
   border-bottom: 1px solid #dddddd;
   border-top: none;
+  border-left: 1px dotted #cccccc;
   line-height: 1.2;
 }
 .dataTable tr:hover td {
@@ -161,45 +165,16 @@ html {
 .dataTable tr.active td {
   background-color: #f0f0f0;
 }
+.dataTable tr > td:first-child,
+.dataTable tr:first-child > th:first-child {
+  border-left: none;
+}
 th.searches {
   text-align: center;
   white-space: nowrap;
 }
 .search-head {
   display: none;
-}
-/* The following three rules kanged from http://s-church.net/Blog/Entry/464 */
-.dataTable th.skew {
-    vertical-align: bottom;
-    padding: 0;
-}
- 
-.dataTable th.skew > div {
-    position: relative;
-    top: -86px;
-    left: 48px;
-    width: 50px;
-    transform:skew(-45deg,0deg);
-    -ms-transform:skew(-45deg,0deg);
-    -moz-transform:skew(-45deg,0deg);
-    -webkit-transform:skew(-45deg,0deg);
-    -o-transform:skew(-45deg,0deg);    
-    z-index: 1;
-    padding-bottom: 5px;
-}
- 
-.dataTable th.skew span {
-    transform:skew(45deg,0deg) rotate(315deg);
-    -ms-transform:skew(45deg,0deg) rotate(315deg);
-    -moz-transform:skew(45deg,0deg) rotate(315deg);
-    -webkit-transform:skew(45deg,0deg) rotate(315deg);
-    -o-transform:skew(45deg,0deg) rotate(315deg);        
-    position: relative;
-    left: -30px;
-    bottom: -32px;
-    display: inline-block;
-    width: 150px;
-    text-align: left;
 }
 .dataTable th.sorting,
 .dataTable th.sorting_asc,
@@ -261,21 +236,6 @@ td.search-mechanism {
 }
 td.search-mechanism a {
   color: #ffffff;
-  /*
-  padding: 2px;
-  font-size: 10px;
-  line-height: 16px;
-  width: 26px;
-  display: inline-block;
-  text-align: center;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  box-shadow: 1px 1px 0 rgb(200,200,200);
-  -moz-box-shadow: 1px 1px 0 rgb(200,200,200);
-  -webkit-box-shadow: 1px 1px 0 rgb(200,200,200);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#CCCCCC')";
-  */
 }
 .red-dot {
   display: inline-block;
@@ -322,29 +282,25 @@ td.search-mechanism a {
   font-family: inherit;
   font-size: inherit;
 }
-/*
-.legend, .dataTables_filter {
-  position: absolute;
-  top: 1em;
-  margin: 0;
-  padding: 0;
-*/
 .legend {
   float: right;
-}
-.legend {
   right: 0em;
-  color: #777777;
+  color: #555555;
   width: 68%;
+  background-color: #f6f6f6;
+  margin-bottom: 4px;
+  position: relative;
+  left: -1px;
+  padding: 2px 4px;
 }
 .legend div:first-child {
   color: black;
-  height: 5em;
-}
-.legend div {
-  padding: 0.2em 0.6em;
+  width: 60px;
   float: left;
-  line-height: 18px;
+  line-height: 20px;
+}
+.legend > ul {
+  margin-left: 60px;
 }
 .legend ul span:first-child {
   margin-right: 0.4em;
