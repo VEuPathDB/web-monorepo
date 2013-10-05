@@ -8,6 +8,12 @@ var GB = {
     WDK_COOKIE_NAME : "wdk_check_auth",
     
     performLogin : function() {
+
+        // shrink and center progress bar if page is in the full window
+        if (window === window.top) {
+            jQuery('#progressbar').parent().attr('style','width:45%; text-align:left; margin:180px auto');
+        }
+
         // render the progress bar
         GB.updateProgress(0, 0);
 

@@ -1,6 +1,23 @@
 
+function isIe() {
+  return (navigator.userAgent.match(/MSIE ([0-9]+)\./));
+}
+
+function getIeVersion() {
+  if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+    return RegExp.$1;
+  }
+  return 0;
+}
+
 function doCustomLogin(form, contextPath) {
   
+  // problems with IE executing javascript in iframe; so if IE, submit in main window
+  if (isIe()) {
+    jQuery(form).attr('action', contextPath + '/processLogin.do');
+    return true;
+  }
+
   // get values user entered into the visible form
   var email = jQuery(form).find("#email").val();
   var password = jQuery(form).find("#password").val();
