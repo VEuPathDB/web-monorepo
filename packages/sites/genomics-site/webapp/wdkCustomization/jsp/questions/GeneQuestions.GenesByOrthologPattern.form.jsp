@@ -103,7 +103,7 @@ Ack, this form won't work at all without JavaScript support!
 <div class='usererror'><api:errors/></div>
 
 <%--  PARAMS DIV --%>
-<div class="params">
+<div class="params" data-controller="wdk.parameterHandlers.init">
   <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
   <input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
   <input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
@@ -236,8 +236,6 @@ Ack, this form won't work at all without JavaScript support!
 	}
 
 	<c:if test="${showParams == null}">
-		$(document).ready(function() { wdk.parameterHandlers.init(); });
-
     $(document).ready(function() {
       $("#orthology-profile-tree").jstree({
         "plugins" : [ "html_data", "themes" ],
