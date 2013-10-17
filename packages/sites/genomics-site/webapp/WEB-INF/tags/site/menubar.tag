@@ -244,6 +244,8 @@
             <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Related Sites</a></li>
           </c:otherwise>
         </c:choose>
+        
+        <li><a href="javascript:wdk.publicStrats.goToPublicStrats()">Public Strategies</a></li>
       </ul>
     </li>
 
