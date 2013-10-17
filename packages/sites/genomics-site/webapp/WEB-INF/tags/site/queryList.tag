@@ -18,7 +18,7 @@
 
 <script type="text/javascript">
   $(function() {
-    wdk.question.init();
+    //wdk.question.init(); // this isn't needed here since it gets called when the specific quesiton is loaded
     wdk.tooltips.assignTooltips('.query-tooltip', 35);
   });
 </script>
