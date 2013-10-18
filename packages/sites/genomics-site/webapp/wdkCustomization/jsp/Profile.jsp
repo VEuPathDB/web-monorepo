@@ -105,14 +105,24 @@ function validateFields(e)
       </td>
     </tr>
 
+    <!-- temporarily disable email updating until build 20 -->
     <tr>
+      <td align="right" width="50%" nowrap="nowrap">Email: </td>
+      <td aligh="left">
+        ${wdkUser.email}
+        <input type="hidden" name="email" value="${wdkUser.email}"/>
+        <input type="hidden" name="confirmEmail" value="${wdkUser.email}"/>
+      </td>
+    </tr>
+
+    <!-- <tr>
       <td align="right" width="50%" nowrap><font color="red">*</font> Email: </td>
       <td align="left"><input type="text" name="email" value="${wdkUser.email}" size="20"></td>
     </tr>
     <tr>
       <td align="right" width="50%" nowrap><font color="red">*</font> Re-type email: </td>
       <td align="left"><input type="text" name="confirmEmail" value="${wdkUser.email}" size="20"></td>
-    </tr>
+    </tr> -->
 
     <tr>
        <td colspan="2" align="left"><hr><b>User Information:</b></td>
