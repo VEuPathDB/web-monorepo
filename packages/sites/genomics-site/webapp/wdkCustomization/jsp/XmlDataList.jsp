@@ -9,18 +9,18 @@
 <imp:pageFrame banner="Data Contents">
 
 <!-- show all xml question sets -->
-<UL>
-<c:forEach items="${xmlQSets}" var="qSet">
+<ul>
+  <c:forEach items="${xmlQSets}" var="qSet">
     <c:set var="qSetName" value="${qSet.name}"/>
     ${qSet.displayName}:<br>
 
     <!-- show all xml questions in this set -->
     <c:set var="xqs" value="${qSet.questions}"/>
     <c:forEach items="${xqs}" var="q">
-        <c:set var="qName" value="${q.name}"/>
-        <LI><a href="showXmlDataContent.do?name=${qSetName}.${qName}">${q.displayName}</a></LI>
+      <c:set var="qName" value="${q.name}"/>
+      <li><a href="showXmlDataContent.do?name=${qSetName}.${qName}">${q.displayName}</a></li>
     </c:forEach>
-</c:forEach>
-</UL>
+  </c:forEach>
+</ul>
 
 </imp:pageFrame>
