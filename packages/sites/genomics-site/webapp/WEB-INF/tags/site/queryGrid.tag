@@ -80,8 +80,8 @@
 		<tr class="headerrow2">
 			<td style="padding-top:0"  align="center"><b>Identify Pathways by:</b>
 
-<img alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
- header." src="<c:url value='/wdk/images/beta2-40.png'/>" />
+<imp:image alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
+ header." src="/wdk/images/beta2-40.png" />
 
 </td>
 		</tr>
@@ -99,8 +99,8 @@
 		<tr class="headerrow2">
 			<td  style="padding-top:0"  align="center"><b>Identify Compounds by:
 
-<img alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
- header." src="<c:url value='/wdk/images/beta2-40.png'/>" />
+<imp:image alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
+ header." src="/wdk/images/beta2-40.png" />
 
 </b></td>
 		</tr>

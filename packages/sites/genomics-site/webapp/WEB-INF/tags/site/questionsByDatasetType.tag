@@ -2,7 +2,8 @@
 <jsp:root version="2.0"
     xmlns:jsp="http://java.sun.com/JSP/Page"
     xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
 
   <c:set var="urlBase" value="${pageContext.request.contextPath}"/>
   <c:set var="wdkModel_" value="${wdkModel.model}"/>
@@ -79,8 +80,8 @@
               ${dataset_name}
               (${short_attribution})
               <c:if test="${build_number_introduced eq wdkModel_.buildNumber}">
-                <img alt="New feature icon" title="This is a new data set!"
-                  src="${urlBase}/wdk/images/new-feature.png"/>
+                <imp:image alt="New feature icon" title="This is a new data set!"
+                  src="/wdk/images/new-feature.png"/>
               </c:if>
               <span class="info wdk-tooltip" data-content="+ .dataset-tooltip-content"><jsp:text/></span>
               <div class="dataset-tooltip-content">

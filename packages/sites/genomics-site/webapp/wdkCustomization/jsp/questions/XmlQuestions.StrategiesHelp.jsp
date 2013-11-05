@@ -62,7 +62,7 @@
 
   <br><br>${text}
 
-  <br><c:if test="${image != null && image != ''}"><img src="<c:url value="${image}"/>" alt=""/></c:if>
+  <br><c:if test="${image != null && image != ''}"><imp:image src="${image}" alt=""/></c:if>
 
 
 

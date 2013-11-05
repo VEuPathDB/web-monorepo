@@ -189,13 +189,13 @@ not clear we need icons on categories, ui-infra meet May 22, 2012
 <c:if test="${modelName eq 'ToxoDB' || modelName eq 'EuPathDB'}">
 <%-- not clear we need icons on categories, ui-infra meet May 22, 2012
 <c:if test="${linktext eq 'Microarray Evidence'  || linktext eq 'RNA Seq Evidence'}">
-	<img width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="<c:url value='/wdk/images/revised-small.png' />" />
+	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
+         	src="/wdk/images/revised-small.png" />
 </c:if>
 --%>
 <c:if test="${fn:containsIgnoreCase(linktext, 'Annotation from Previous')}">
-	<img alt="New feature icon" title="This is a new search" 
-         src="<c:url value='/wdk/images/new-feature.png' />" />
+	<imp:image alt="New feature icon" title="This is a new search" 
+         src="/wdk/images/new-feature.png" />
 </c:if>
 </c:if>
 

@@ -249,10 +249,10 @@
 				$(start).html(type);
 				$(start).css({"font-size":"90%","white-space":"nowrap"});
 				if (diaLength > 1 && x2 > 1.6)
-					$(stop).append('<img height="15" src="wdk/images/whitearrow.png" />');
+					$(stop).append('<img height="15" src="' + wdk.assetsUrl('/wdk/images/whitearrow.png') + '" />');
 				if (diaLength == 1) {
 					$(stop).css({"top":"-6px","left":(x2 - 16)});
-					$(stop).append('<img height="18" src="wdk/images/diamond.png" />');
+					$(stop).append('<img height="18" src="' + wdk.assetsUrl('/wdk/images/diamond.png') + '" />');
 				}
 			}
 			

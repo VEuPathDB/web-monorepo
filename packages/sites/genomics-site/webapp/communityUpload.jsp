@@ -60,7 +60,7 @@
 
 
  	//used in fileUpload.js to access images provided by WDK
-       	<div id ="urlholder"  imageurl="<c:url value='/wdk/images/close.gif'/>" />
+      <div id ="urlholder"  imageurl="${wdkModel.model.modelConfig.assetsUrl}/wdk/images/close.gif" />
 	
     <table id="fileSelTbl">
     </table>

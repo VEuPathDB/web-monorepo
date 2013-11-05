@@ -70,8 +70,8 @@
 
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
-	<img alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
-         	src="<c:url value='/wdk/images/beta2-30.png' />" />
+	<imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
+         	src="/wdk/images/beta2-30.png" />
 </c:if>
 </c:if>
 
@@ -124,8 +124,8 @@
 <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${cat.displayName eq 'Transcript Expression'}">
-	<img width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="<c:url value='/wdk/images/revised-small.png' />" />
+	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
+         	src="/wdk/images/revised-small.png" />
 </c:if>
 </c:if>
  --%>
@@ -145,8 +145,8 @@
 <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
-	<img width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="<c:url value='/wdk/images/revised-small.png' />" />
+	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
+         	src="/wdk/images/revised-small.png" />
 </c:if>
 </c:if>
  --%>

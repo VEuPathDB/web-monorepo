@@ -44,8 +44,8 @@
 
 <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045 
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-	<img width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="<c:url value='/wdk/images/revised-small.png' />" />
+	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
+         	src="/wdk/images/revised-small.png" />
 </c:if>
 --%>
 		</a>

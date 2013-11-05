@@ -26,20 +26,20 @@
         <span class="text">For the
           <span class="prompt">Experiment</span></span>
         <imp:enumParamInput qp="${profileset_genericParam}"/>
-        <img class="help-link"
+        <imp:image class="help-link"
           style="cursor:pointer"
           title="${fn:escapeXml(profileset_genericParam.help)}"
-          src="${pageContext.request.contextPath}/wdk/images/question.png" />
+          src="/wdk/images/question.png" />
       </div>
 
       <c:if test="${protein_coding_onlyParam ne null}">
         <div class="param-line">
           <span class="text">return
             <imp:enumParamInput qp="${protein_coding_onlyParam}"/>
-            <img class="help-link"
+            <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(protein_coding_onlyParam.help)}"
-              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+              src="/wdk/images/question.png" />
             <span class="prompt">Genes</span>
           </span>
         </div>
@@ -51,20 +51,20 @@
         </c:if>
         <span class="text">that are</span>
         <imp:enumParamInput qp="${regulated_dirParam}"/>
-        <img class="help-link"
+        <imp:image class="help-link"
           style="cursor:pointer"
           title="${fn:escapeXml(regulated_dirParam.help)}"
-          src="${pageContext.request.contextPath}/wdk/images/question.png" />
+          src="/wdk/images/question.png" />
       </div>
 
       <div class="param-line">
         <span class="text">with a
           <span class="prompt">Fold change</span> &amp;gt;=</span>
         <imp:stringParamInput qp="${fold_changeParam}"/>
-        <img class="help-link"
+        <imp:image class="help-link"
           style="cursor:pointer"
           title="${fn:escapeXml(fold_changeParam.help)}"
-          src="${pageContext.request.contextPath}/wdk/images/question.png" />
+          src="/wdk/images/question.png" />
       </div>
 
       <div class="samples ui-helper-clearfix">
@@ -72,19 +72,19 @@
           between each gene's
           <imp:enumParamInput qp="${min_max_avg_refParam}"/>
           <span class="text prompt">expression value</span>
-          <img class="help-link"
+          <imp:image class="help-link"
             style="cursor:pointer"
             title="${fn:escapeXml(min_max_avg_refParam.help)}"
-            src="${pageContext.request.contextPath}/wdk/images/question.png" />
+            src="/wdk/images/question.png" />
         </div>
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
             in the following <span class="samples-tab reference">Reference Samples</span>
             <jsp:text> </jsp:text>
-            <img class="help-link"
+            <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(samples_fc_ref_genericParam.help)}"
-              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+              src="/wdk/images/question.png" />
           </span>
         </div>
 
@@ -96,10 +96,10 @@
           <div id="min_max_avg_refaaa" class="param-line">
             <span class="text">Calculate each gene's fold change using its</span>
             <imp:enumParamInput qp="${min_max_avg_refParam}"/>
-            <img class="help-link"
+            <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(min_max_avg_refParam.help)}"
-              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+              src="/wdk/images/question.png" />
             <span class="text">
               <span class="prompt">expression value</span>
               in my chosen reference samples.</span>
@@ -111,19 +111,19 @@
           and its 
           <imp:enumParamInput qp="${min_max_avg_compParam}"/>
           <span class="text prompt">expression value</span>
-          <img class="help-link"
+          <imp:image class="help-link"
             style="cursor:pointer"
             title="${fn:escapeXml(min_max_avg_compParam.help)}"
-            src="${pageContext.request.contextPath}/wdk/images/question.png" />
+            src="/wdk/images/question.png" />
         </div>
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
             in the following <span class="samples-tab comparison">Comparison Samples</span>
             <jsp:text> </jsp:text>
-            <img class="help-link"
+            <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(samples_fc_comp_genericParam.help)}"
-              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+              src="/wdk/images/question.png" />
           </span>
         </div>
 
@@ -135,10 +135,10 @@
           <div id="min_max_avg_compaaa" class="param-line">
             <span class="text">Calculate each gene's fold change using its</span>
             <imp:enumParamInput qp="${min_max_avg_compParam}"/>
-            <img class="help-link"
-              style="cursor:pointer"
-              title="${fn:escapeXml(min_max_avg_compParam.help)}"
-              src="${pageContext.request.contextPath}/wdk/images/question.png" />
+            <imp:image class="help-link"
+            style="cursor:pointer"
+            title="${fn:escapeXml(min_max_avg_compParam.help)}"
+            src="/wdk/images/question.png" /
             <span class="text">
               <span class="prompt">expression value</span>
               in my chosen comparison samples.</span>
