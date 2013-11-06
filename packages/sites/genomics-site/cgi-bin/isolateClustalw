@@ -5,13 +5,20 @@ use strict;
 use lib "@targetDir@/lib/perl";
 $ENV{GUS_HOME} = '@targetDir@';
 
+use CGI qw/:standard/;
 use ApiCommonWebsite::View::CgiApp::IsolateClustalw;
+use ApiCommonWebsite::View::CgiApp::HtsSNPAlignment;
 
-my $app =
-  ApiCommonWebsite::View::CgiApp::IsolateClustalw->
+my $app;
+my $cgi = new CGI;
+
+my $type  = $cgi->param('type');
+if($type =~ /htsSNP/i) {
+  $app = ApiCommonWebsite::View::CgiApp::HtsSNPAlignment->
     new(ConfigFile => "cryptoModel");
+} else {
+  $app = ApiCommonWebsite::View::CgiApp::IsolateClustalw->
+    new(ConfigFile => "cryptoModel");
+}
 
 $app->go();
-
-
-
