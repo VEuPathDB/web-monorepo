@@ -67,9 +67,6 @@
 </table>
 
 <table width="100%">
-  <tr align=center>     
-    <td><b>Please select two or three strains to run ClustalW.</b> </td>
-  </tr>   
   <tr>
     <td align=center>
 		  <!-- build 20 hts isolate will be mapped to primary seq instead of top level seq -->
