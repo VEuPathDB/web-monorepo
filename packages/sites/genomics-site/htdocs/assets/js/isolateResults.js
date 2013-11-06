@@ -43,14 +43,6 @@ function goToHTSStrain(ele,type,source_id,start,end) {
   var $ = jQuery;
 	var form = $(ele).parents("form[name=checkHandleForm]");
 	var cbs = form.find('input:checkbox[name=selectedFields]:checked');
-	//alert("cbs length is " + cbs.length);
-	if(cbs.length < 2) {
-		alert("Please select at least two strains to run ClustalW");
-		return false;
-	} else if(cbs.length > 3) {
-		alert("Please select no more than three strains to run ClustalW"); 
-		return false;
-  }
 
 	var url = "/cgi-bin/isolateClustalw?project_id=" + wdk.modelName() + ";type=" + type + ";sid=" + source_id + ";start=" + start + ";end=" + end + ";isolate_ids=";
 	cbs.each(function(){
