@@ -161,6 +161,11 @@
 
     <c:set var="genomeContextImg">
 
+        <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
+        <c:set var="gbrowseUrl">
+            /cgi-bin/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
+        </c:set>
+
         <noindex follow>
 				<center>
  				<a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
@@ -180,12 +185,6 @@
 				<div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
         </center>
         </noindex>
-
-        <c:set var="labels" value="${fn:replace(gtracks, '+', ';label=')}" />
-        <c:set var="gbrowseUrl">
-            /cgi-bin/gbrowse/${projectIdLowerCase}/?name=${id}:1..${attrs['length'].value};label=${labels};h_feat=${id}@yellow
-        </c:set>
-
 
     </c:set>
 
