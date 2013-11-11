@@ -57,7 +57,7 @@ function doCustomLogin(form, contextPath) {
     '        <input type="hidden" name="remember" value="' + remember + '"/>' +
     '        <input type="hidden" name="redirectUrl" value="' + redirectUrl + '"/>' +
     '      </form>' +
-    '      <scr' + 'ipt type="text/javascript" src="' + contextPath + '/wdk/js/lib/jquery.js"></scr' + 'ipt>' +
+    '      <scr' + 'ipt type="text/javascript" src="' + wdk.assetsUrl('/wdk/lib/jquery.js') + '"></scr' + 'ipt>' +
     '      <scr' + 'ipt type="text/javascript"> jQuery(function() { jQuery("form").submit(); }); </scr' + 'ipt>' +
     '    </div>' +
     '  </body>' +

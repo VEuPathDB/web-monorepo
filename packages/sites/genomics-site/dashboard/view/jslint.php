@@ -1,7 +1,7 @@
 <?php
     // get list of js files
     $curr_dir = getcwd();
-    $js_dir = $_SERVER['GUS_HOME'] . '/../webapp/wdk/js/src';
+    $js_dir = $_SERVER['GUS_HOME'] . '/../webapp/wdk/src';
 
     chdir($js_dir) or die("Could not change to $js_dir");
     $js_files = glob('*.js');
@@ -47,7 +47,7 @@
 <script src="js/jslint.js"></script>
 <script>
   $(function() {
-    var js_dir = "/wdk/js/src",
+    var js_dir = "/wdk/src",
         errors_template = $("#errors_template").html(),
         JSLINT_OPTS = {
           browser  : true,

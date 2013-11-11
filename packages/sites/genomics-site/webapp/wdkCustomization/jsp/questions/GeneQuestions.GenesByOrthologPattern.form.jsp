@@ -118,7 +118,7 @@ Ack, this form won't work at all without JavaScript support!
              class="help-link"
              src="/wdk/images/question.png" 
              style="cursor:pointer" 
-             aria-describedby="ui-tooltip-2">
+             aria-describedby="ui-tooltip-2"/>
         </label>
         <div class="param-control"><imp:enumParamInput qp="${resultSpecies}" /></div>
       </div>
@@ -130,7 +130,7 @@ Ack, this form won't work at all without JavaScript support!
               class="help-link" 
               src="/wdk/images/question.png" 
               style="cursor:pointer" 
-              aria-describedby="ui-tooltip-2">
+              aria-describedby="ui-tooltip-2"/>
         </label>
 
         <div class="param-control">

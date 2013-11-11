@@ -54,7 +54,7 @@
   </c:if>
 
   <!-- this seems unneeded since it only contains:
-          <script type="text/javascript" src="${base}/wdk/js/lib/json.js"><jsp:text/></script>
+          <script type="text/javascript" src="${base}/wdk/lib/json.js"><jsp:text/></script>
     which is already in the wdk:includes.tag
   <c:if test="${refer == 'record'}">
     <imp:recordPageScript />
