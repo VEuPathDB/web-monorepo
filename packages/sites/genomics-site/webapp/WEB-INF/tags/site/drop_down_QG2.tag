@@ -236,8 +236,8 @@
 
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
-	<img alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
-         	src="<c:url value='/wdk/images/beta2-30.png' />" />
+	<imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
+         	src="/wdk/images/beta2-30.png" />
 </c:if>
 </c:if>
 
