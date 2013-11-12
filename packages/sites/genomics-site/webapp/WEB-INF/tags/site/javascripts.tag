@@ -13,7 +13,7 @@
 
   <c:set var="min" value="${requestScope.WEBSITE_RELEASE_STAGE ge websiteRelease.feature}"/>
   <!-- JavaScript provided by WDK -->
-  <imp:wdkJavascripts refer="${refer}" min="${min}"/>
+  <imp:wdkJavascripts refer="${refer}" />
 
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />
