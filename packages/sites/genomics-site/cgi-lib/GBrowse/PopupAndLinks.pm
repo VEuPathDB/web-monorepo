@@ -957,6 +957,22 @@ sub massSpecUnifiedTitle {
   hover($f, \@data) if $count;
 }
 
+sub unifiedPostTranslationalMod {
+  my $f = shift;
+  my ($count) = $f->get_tag_values('SCount');
+  my ($seq) =  $f->get_tag_values('PepSeq');
+  my ($experiment) = $f->get_tag_values('Experiment');
+  my ($sample) = $f->get_tag_values('Sample');
+  my @data;
+
+  push @data, [ 'Experiment' => "$experiment" ];
+  push @data, [ 'Sample'     => "$sample" ];
+  push @data, [ 'Sequence'   => "$seq" ];
+
+  hover($f, \@data);
+}
+
+
 sub blatTitleGB2 {
   my $f = shift;
   my $name = $f->name;
