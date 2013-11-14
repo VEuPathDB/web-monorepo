@@ -963,10 +963,16 @@ sub unifiedPostTranslationalMod {
   my ($seq) =  $f->get_tag_values('PepSeq');
   my ($experiment) = $f->get_tag_values('Experiment');
   my ($sample) = $f->get_tag_values('Sample');
+  my ($score) = $f->get_tag_values('PhosphoScore');
+  my ($ontology) = $f->get_tag_values('Ontology');
+  my ($location) = $f->get_tag_values('PhosphoSite');
   my @data;
 
   push @data, [ 'Experiment' => "$experiment" ];
   push @data, [ 'Sample'     => "$sample" ];
+  push @data, [ 'Score'      => "$score" ];
+  push @data, [ 'Modification Type' => "$ontology" ];
+  push @data, [ 'Modification Site' => "$location" ];
   push @data, [ 'Sequence'   => "$seq" ];
 
   hover($f, \@data);

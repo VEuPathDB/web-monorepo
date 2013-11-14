@@ -322,6 +322,18 @@ sub massSpecBgColor {
 }
 
 
+sub unifiedPostTranslationalModBgColor {
+  my $f = shift;
+
+  $f = $f->parent if (! $f->get_tag_values('Ontology'));
+  my ($ontology) = $f->get_tag_values('Ontology');
+
+  if($ontology =~ /phosphorylation_site/i) {
+    return 'dodgerblue';
+  }
+  return 'yellow';
+}
+
 sub wastlingMassSpecBgColor {
   my $f = shift;
   my $extdbname;
