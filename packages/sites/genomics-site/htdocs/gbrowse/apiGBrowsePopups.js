@@ -152,7 +152,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   rows.push(twoColRow('ID:', sourceId));
   rows.push(twoColRow('Gene Type:', soTerm));
   rows.push(twoColRow('Description:', product));
-  rows.push(twoColRow('Location:', loc));
+  rows.push(twoColRow('CDS:', loc));
   if(utr != '') {
     rows.push(twoColRow('UTR:', utr));
   }
