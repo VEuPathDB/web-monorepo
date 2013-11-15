@@ -54,8 +54,13 @@
       // attach event handler for radio selection
       .on('click', '.param-item:has([name="active-param"]:not(:checked)), ' +
           '[name="active-param"]', function(e) {
+
+        // check the .active-param radio for this param
         $(this).find('[name="active-param"]').prop('checked', true);
+
         setActive();
+
+        $(this).find('input:not(:radio)').focus();
       })
 
       // attach submit handler
@@ -74,13 +79,16 @@
         }
       });
 
+    /**
+     * Set active or inactive classes on .param-item based on checked radio
+     */
     function setActive() {
       // get selected radio
       var radios = $form.find('[name="active-param"]'),
-          selected = radios.filter(':checked');
+          checked = radios.filter(':checked');
 
       radios.parents('.param-item').addClass('inactive');
-      selected.parents('.param-item').removeClass('inactive').find('input').focus();
+      checked.parents('.param-item').removeClass('inactive');
     };
 
   });
