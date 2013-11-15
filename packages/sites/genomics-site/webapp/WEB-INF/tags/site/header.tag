@@ -27,7 +27,9 @@
   <imp:freefind_header/>
 
   <!-- helper divs with generic information used by javascript; vars can also be used in any page using this header -->
+  <!-- moved to wdkJavascripts tag
   <imp:siteInfo/>
+  -->
 
   <div id="header2">
 
