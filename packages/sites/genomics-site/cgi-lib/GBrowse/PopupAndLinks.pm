@@ -977,11 +977,12 @@ sub unifiedPostTranslationalMod {
   if($seq && $location) {
 	  my ($start) = $f->get_tag_values('PeptideStart');
     my $loc = $location - $start + 1;
+    my $residue = substr($seq, $loc, 1);
+
     substr($seq, $loc, 0) = '*' if $ontology =~ /phosphorylation/i; 
     substr($seq, $loc, 0) = '#' if $ontology =~ /methionine/i; 
     substr($seq, $loc, 0) = '^' if $ontology =~ /cysteine/i; 
 
-    my $residue = substr($seq, $loc, 1);
     push @data, [ 'Modified Residue' => "$residue" ];
   } 
 
