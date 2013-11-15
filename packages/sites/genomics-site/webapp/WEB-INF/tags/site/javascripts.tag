@@ -11,9 +11,9 @@
 
   <jsp:useBean id="websiteRelease" class="org.eupathdb.common.controller.WebsiteReleaseConstants"/>
 
-  <c:set var="min" value="${requestScope.WEBSITE_RELEASE_STAGE ge websiteRelease.feature}"/>
+  <c:set var="debug" value="${requestScope.WEBSITE_RELEASE_STAGE eq websiteRelease.development}"/>
   <!-- JavaScript provided by WDK -->
-  <imp:wdkJavascripts refer="${refer}" />
+  <imp:wdkJavascripts refer="${refer}" debug="${debug}"/>
 
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />
