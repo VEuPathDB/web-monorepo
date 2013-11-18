@@ -241,7 +241,7 @@ Ack, this form won't work at all without JavaScript support!
         "plugins" : [ "html_data", "themes" ],
         "themes" : { "theme" : "classic", "icons" : false }
       }).bind("loaded.jstree", function() {
-        $(this).jstree("open_all").jstree("close_node", "> ul > li").show();
+        $(this).jstree("close_all").jstree("open_node", "> ul > li").show();
       });
     });
 	</c:if>
