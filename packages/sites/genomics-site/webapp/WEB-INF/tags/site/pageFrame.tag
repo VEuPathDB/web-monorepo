@@ -45,10 +45,24 @@
   <html lang="en">
   
 	  <!-- flag incoming galaxy.psu.edu users -->
+<!--
 	  <c:if test="${not empty param.GALAXY_URL}">
 	    <c:set var="GALAXY_URL" value="${param.GALAXY_URL}" scope="session" />
 	  </c:if>
-	
+-->
+<c:choose>
+<c:when test="${not empty param.GALAXY_URL}">
+  <c:set var="GALAXY_URL" value="${param.GALAXY_URL}" scope="session" />
+</c:when>
+<c:when test="${!empty sessionScope.GALAXY_URL}">
+    <!-- keep existing session value -->
+</c:when>
+<c:otherwise>
+  <c:set var="GALAXY_URL" value="http://main.g2.bx.psu.edu/tool_runner?tool_id=eupathdb" scope="session" />
+</c:otherwise>
+</c:choose>
+<c:set var="EUPATHDB_GALAXY_URL" value="http://galaxy.apidb.org/tool_runner?tool_id=eupathdb" scope="session" />
+
 	  <!-- Contains HTML head tag, meta, and includes for all sites -->
     <imp:head refer="${refer}" title="${title}" banner="${banner}"/>
 
