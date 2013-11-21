@@ -20,16 +20,9 @@
 <c:set var="TrichDBOrgs" value="Trichomonas"/>
 <c:set var="TriTrypDBOrgs" value="Crithidia, Endotrypanum, Leishmania, Trypanosoma"/>
 
-
 <div id="contentwrapper">
 <div id="contentcolumn">
 <div class="innertube">
-
-
-<div style="padding:3px 10px;">
-	<imp:searchLookup />
-</div>
-
 
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
@@ -74,6 +67,13 @@
 	<p>&nbsp;</p>
 </c:otherwise>
 </c:choose>
+
+<hr>
+
+<div style="padding:3px 10px;">
+	<imp:searchLookup />
+</div>
+
 
 <script type="text/javascript">
     $(function() { wdk.tooltips.assignTooltipsLeft('.dqg-tooltip', -3); });
