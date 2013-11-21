@@ -62,13 +62,15 @@
 
 	<br>
 	</p>
+
+<hr>
+
 </c:when>
 <c:otherwise>
 	<p>&nbsp;</p>
 </c:otherwise>
 </c:choose>
 
-<hr>
 
 <div style="padding:3px 10px;">
 	<imp:searchLookup />
