@@ -126,8 +126,10 @@ function openPubmedWindow(searchBoxId) {
 <c:choose>
 
   <c:when test="${empty wdkUser || wdkUser.guest}">
-    <p align=center>Please login to post a comment.</p>
-    <table align='center'><tr><td><imp:login/></td></tr></table>
+    <div style="margin:0 auto">
+      <p>Please login to post a comment.</p>
+      <imp:loginForm showCancel="false"/>
+    </div>
   </c:when>
   
   <c:otherwise>

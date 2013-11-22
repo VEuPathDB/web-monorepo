@@ -62,7 +62,7 @@ $(document).ready(function() {
                <th width=150>Headline:</th>
                <th> 
                <a name=${comment.commentId}>${comment.headline}</a> 
-               <c:if test="${comment.email eq wdkUser.email}">
+               <c:if test="${comment.userId eq wdkUser.userId}">
                &nbsp;&nbsp;&nbsp; 
 
                <a href="editComment.do?projectId=${comment.projectName}&stableId=${comment.stableId}&commentTargetId=${comment.commentTarget}&commentId=${comment.commentId}&email=${wdkUser.email}">[edit comment]</a>
