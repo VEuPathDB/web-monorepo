@@ -105,25 +105,14 @@ function validateFields(e)
       </td>
     </tr>
 
-    <!-- temporarily disable email updating until build 20 -->
     <tr>
-      <td align="right" width="50%" nowrap="nowrap">Email: </td>
-      <td aligh="left">
-        ${wdkUser.email}
-        <input type="hidden" name="email" value="${wdkUser.email}"/>
-        <input type="hidden" name="confirmEmail" value="${wdkUser.email}"/>
-      </td>
-    </tr>
-
-    <!-- <tr>
       <td align="right" width="50%" nowrap><font color="red">*</font> Email: </td>
       <td align="left"><input type="text" name="email" value="${wdkUser.email}" size="20"></td>
     </tr>
     <tr>
       <td align="right" width="50%" nowrap><font color="red">*</font> Re-type email: </td>
       <td align="left"><input type="text" name="confirmEmail" value="${wdkUser.email}" size="20"></td>
-    </tr> -->
-
+    </tr>
     <tr>
        <td colspan="2" align="left"><hr><b>User Information:</b></td>
     </tr>
@@ -187,11 +176,11 @@ function validateFields(e)
 	        ${(global['preference_global_email_toxodb'] == 'on')? 'checked' : ''}>
 	    ToxoDB
 	 </input>
- <input type="checkbox" name="preference_global_email_trichdb" 
+   <input type="checkbox" name="preference_global_email_trichdb" 
 	        ${(global['preference_global_email_trichdb'] == 'on')? 'checked' : ''}>
 	    TrichDB
 	 </input>
-<input type="checkbox" name="preference_global_email_tritrypdb" 
+   <input type="checkbox" name="preference_global_email_tritrypdb" 
 	        ${(global['preference_global_email_tritrypdb'] == 'on')? 'checked' : ''}>
 	    TriTrypDB
 	 </input>
