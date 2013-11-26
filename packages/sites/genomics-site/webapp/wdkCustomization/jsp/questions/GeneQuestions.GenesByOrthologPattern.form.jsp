@@ -36,233 +36,206 @@
 
 <c:set var="indentMap" value="${ind.vocabMap}"/>
 <c:set var="termMap" value="${trm.vocabMap}"/>
-
-<!-- js values used in html/assets/js/orthologpatern.js -->
-<!-- I think this script is only needed to build question page when adding/editing a step -->
-<script>
-<!-- //
-includedSpeciesName = '${includedSpeciesName}';
-excludedSpeciesName = '${excludedSpeciesName}';
-profilePatternName = '${profilePatternName}';
-
 <c:set var="taxaCount" value="${fn:length(ind.vocab)+1}"/>
-state = new Array(${taxaCount});
-urls = new Array("dc.gif", "yes.gif", "no.gif", "yes.gif", "unk.gif");
-children = new Array(${taxaCount});
-parent = new Array(${taxaCount});
 
-for (var i = 0 ; i < ${taxaCount} ; i++) {
-    state[i] = 0;
-    children[i] = new Array();
-    parent[i] = null;
-}
+<c:set var="indentMapJSON">
+  { <c:forEach var='indent' varStatus="loop" items='${indentMap}'>
+      "${indent.key}" : "${indent.value}" <c:if test="${loop.last eq false}">,</c:if>
+    </c:forEach> }
+</c:set>
 
-abbrev =
-  new Array("All Organisms"
-            <c:forEach var="sp" items="${ind.vocab}">, "${sp}"</c:forEach>
-   );
+<div data-controller="eupathdb.orthologPattern.init"
+  data-included-species-name="${includedSpeciesName}"
+  data-excluded-species-name="${excludedSpeciesName}"
+  data-profile-pattern-name="${profilePatternName}"
+  data-taxa-count="${taxaCount}"
+  data-abbrev='["All Organisms" <c:forEach var='sp' items='${ind.vocab}'>, "${sp}"</c:forEach>]'
+  data-indent-map='${indentMapJSON}'
+>
 
-parents = new Array();
-parents.push(0);
-<c:set var="idx" value="1" />
-<c:set var="lastindent" value="0" />
-<c:forEach var="sp" items="${ind.vocab}">
-  <c:set var="indent" value="${indentMap[sp]}" />
-  <c:choose>
-   <c:when test="${indent > lastindent}">
-parents.push(${idx-1});
-    </c:when>
-    <c:when test="${indent < lastindent}">
-      <c:forEach var="i" begin="${indent}" end="${lastindent-1}" step="1">
-parents.pop();
-      </c:forEach>
-    </c:when>
-    <c:otherwise>
-    </c:otherwise>
-  </c:choose>  
-parent[${idx}] = parents[parents.length-1];
+  <%-- The following is done in html/assets/js/orthologpattern.js now
+  <!-- js values used in html/assets/js/orthologpatern.js -->
+  <!-- I think this script is only needed to build question page when adding/editing a step -->
+  <script>
+  <!-- //
+  (function() {
+   'use strict';
 
-<c:set var="idx" value="${idx+1}" />
-  <c:set var="lastindent" value="${indent}" />
-</c:forEach>
+    var parents = new Array();
+    parents.push(0);
+    <c:set var="idx" value="1" />
+    <c:set var="lastindent" value="0" />
+    <c:forEach var="sp" items="${ind.vocab}">
+      <c:set var="indent" value="${indentMap[sp]}" />
+      <c:choose>
+        <c:when test="${indent > lastindent}">
+          parents.push(${idx-1});
+        </c:when>
+        <c:when test="${indent < lastindent}">
+          <c:forEach var="i" begin="${indent}" end="${lastindent-1}" step="1">
+            parents.pop();
+          </c:forEach>
+        </c:when>
+        <c:otherwise>
+        </c:otherwise>
+      </c:choose>  
+      parent[${idx}] = parents[parents.length-1];
 
-// fill the children array
-  for (var i = 0 ; i < parent.length ; i++) {
+      <c:set var="idx" value="${idx+1}" />
+      <c:set var="lastindent" value="${indent}" />
+    </c:forEach>
+
+    // fill the children array
+    for (var i = 0 ; i < parent.length ; i++) {
       if (parent[i] != null) {
-	  var parentidx = parent[i];
-	  children[parentidx][children[parentidx].length] = i;
+        var parentidx = parent[i];
+        children[parentidx][children[parentidx].length] = i;
       } 
-}
-// -->
-</script>
-<noscript>
-Ack, this form won't work at all without JavaScript support!
-</noscript>
+    }
 
-<!-- show error messages, if any -->
-<div class='usererror'><api:errors/></div>
+  }());
+  // -->
+  </script>
+  --%>
+  <noscript>
+  Ack, this form won't work at all without JavaScript support!
+  </noscript>
 
-<%--  PARAMS DIV --%>
-<div class="params" data-controller="wdk.parameterHandlers.init">
-  <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
-  <input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
-  <input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
+  <!-- show error messages, if any -->
+  <div class='usererror'><api:errors/></div>
 
-  <div class="param-group content-pane">
-    <div class="group-detail">
+  <%--  PARAMS DIV --%>
+  <div class="params" data-controller="wdk.parameterHandlers.init">
+    <input name="questionFullName" value="GeneQuestions.GenesByOrthologPattern" type="hidden"/>    
+    <input name="array(phyletic_term_map)" value="rnor" type="hidden"/>
+    <input name="array(phyletic_indent_map)" value="ARCH" type="hidden"/>
 
-      <div class="param-item">
-        <label>
-          <span style="font-weight:bold">Find genes in these organisms</span>
-          <imp:image title="Find genes in these organisms that belong to an ortholog group with the profile you select below" 
-             class="help-link"
-             src="/wdk/images/question.png" 
-             style="cursor:pointer" 
-             aria-describedby="ui-tooltip-2"/>
-        </label>
-        <div class="param-control"><imp:enumParamInput qp="${resultSpecies}" /></div>
-      </div>
+    <div class="param-group content-pane">
+      <div class="group-detail">
 
-      <div class="param-item">
-        <label>
-          <span style="font-weight:bold">Select orthology profile</span>
-          <imp:image title="If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
-              class="help-link" 
-              src="/wdk/images/question.png" 
-              style="cursor:pointer" 
-              aria-describedby="ui-tooltip-2"/>
-        </label>
+        <div class="param-item">
+          <label>
+            <span style="font-weight:bold">Find genes in these organisms</span>
+            <imp:image title="Find genes in these organisms that belong to an ortholog group with the profile you select below" 
+               class="help-link"
+               src="/wdk/images/question.png" 
+               style="cursor:pointer" 
+               aria-describedby="ui-tooltip-2"/>
+          </label>
+          <div class="param-control"><imp:enumParamInput qp="${resultSpecies}" /></div>
+        </div>
 
-        <div class="param-control">
-          <div>Click on <img src="images/dc.gif"> to determine which organisms to
-              include or exclude in the orthology profile.<br>
-            <i style="font-size:95%">(<img src="images/dc.gif">=no constraints |
-            <img src="images/yes.gif">=must be in group |
-            <img src="images/no.gif">=must not be in group |
-            <img src="images/unk.gif">=mixture of constraints)</i>
-          </div>
+        <div class="param-item">
+          <label>
+            <span style="font-weight:bold">Select orthology profile</span>
+            <imp:image title="If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
+                class="help-link" 
+                src="/wdk/images/question.png" 
+                style="cursor:pointer" 
+                aria-describedby="ui-tooltip-2"/>
+          </label>
 
-          <c:set var="idx" value="1"/>
+          <div class="param-control">
+            <div>Click on <img src="images/dc.gif"> to determine which organisms to
+                include or exclude in the orthology profile.<br>
+              <i style="font-size:95%">(<img src="images/dc.gif">=no constraints |
+              <img src="images/yes.gif">=must be in group |
+              <img src="images/no.gif">=must not be in group |
+              <img src="images/unk.gif">=mixture of constraints)</i>
+            </div>
 
-<%-- I don't think we need this - dmf
-<tr style="display:none;" class="showhide">
-		<td width="250px"  style="text-align:right">&nbsp;</td>
-		<td>
-					<div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
-		</td>
-</tr>
---%>
+            <c:set var="idx" value="1"/>
 
-          <div style="padding-top:1em"> <%-- start WRAPPER --%>
-            <a href="javascript:void(0)" onclick="toggle(0)">
-              <img border=0 id="img0" src="<c:url value="/images/dc.gif"/>">
-            </a>
-            &nbsp;<b>All Organisms</b>
-            &nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand all</a>
-            &nbsp;|&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myhideTree()">collapse all</a>
+  <%-- I don't think we need this - dmf
+  <tr style="display:none;" class="showhide">
+      <td width="250px"  style="text-align:right">&nbsp;</td>
+      <td>
+            <div class="filter-button"><html:submit property="questionSubmit" value="Get Answer"/></div>
+      </td>
+  </tr>
+  --%>
 
-            <%--  TREE CONSTRUCTION LOOP  -----------------%>
-            <div id="orthology-profile-tree" style="display:none">
+            <div style="padding-top:1em"> <%-- start WRAPPER --%>
+              <a href="javascript:void(0)" onclick="eupathdb.orthologPattern.toggle(0)">
+                <img border=0 id="img0" src="<c:url value="/images/dc.gif"/>">
+              </a>
+              &nbsp;<b>All Organisms</b>
+              &nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand all</a>
+              &nbsp;|&nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myhideTree()">collapse all</a>
 
-              <c:set var="indent" value="0"/>
-              <c:forEach var="sp" items="${ind.vocab}">
-                <c:set var="spDisp" value="${termMap[sp]}"/>
-                <c:set var="category" value="0"/>
-                <c:if test="${spDisp == null}">
-                  <c:set var="spDisp" value="${sp}"/> 
-                  <c:set var="category" value="1"/>
-                </c:if>
+              <%--  TREE CONSTRUCTION LOOP  -----------------%>
+              <div id="orthology-profile-tree" style="display:none">
 
-                <%-- determine if we should nest our list, remain the same, or unnest --%>
-                <c:set var="nest" value="${indentMap[sp] - indent}"/>
-                <c:set var="indent" value="${indentMap[sp]}"/>
+                <c:set var="indent" value="0"/>
+                <c:forEach var="sp" items="${ind.vocab}">
+                  <c:set var="spDisp" value="${termMap[sp]}"/>
+                  <c:set var="category" value="0"/>
+                  <c:if test="${spDisp == null}">
+                    <c:set var="spDisp" value="${sp}"/> 
+                    <c:set var="category" value="1"/>
+                  </c:if>
 
-                <c:choose>
-                  <c:when test="${nest eq 0}">
-                    </li>
-                  </c:when>
-                  <c:when test="${nest lt 0}">
-                    <c:forEach begin="1" end="${nest * -1}" step="1">
-                      </li></ul>
-                    </c:forEach>
-                    </li>
-                  </c:when>
-                  <c:otherwise>
-                    <c:forEach begin="1" end="${nest}" step="1">
-                      <ul>
-                    </c:forEach>
-                  </c:otherwise>
-                </c:choose>
+                  <%-- determine if we should nest our list, remain the same, or unnest --%>
+                  <c:set var="nest" value="${indentMap[sp] - indent}"/>
+                  <c:set var="indent" value="${indentMap[sp]}"/>
 
-                <li id="${sp}-node">
-                  <!-- ${sp} -->
-                  <a href="javascript:void(0)" onclick="toggle(${idx})"><img alt=""
-                      border="0" id="img${idx}" src="<c:url value="/images/dc.gif"/>"/></a>&nbsp;
-                  <span>
                   <c:choose>
-                    <c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when>
-                    <c:otherwise><i>${spDisp}</i></c:otherwise>
+                    <c:when test="${nest eq 0}">
+                      </li>
+                    </c:when>
+                    <c:when test="${nest lt 0}">
+                      <c:forEach begin="1" end="${nest * -1}" step="1">
+                        </li></ul>
+                      </c:forEach>
+                      </li>
+                    </c:when>
+                    <c:otherwise>
+                      <c:forEach begin="1" end="${nest}" step="1">
+                        <ul>
+                      </c:forEach>
+                    </c:otherwise>
                   </c:choose>
-                  <c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
-                  </span>
 
-                <c:set var="idx" value="${idx+1}"/>	
+                  <li id="${sp}-node">
+                    <!-- ${sp} -->
+                    <a href="javascript:void(0)" onclick="eupathdb.orthologPattern.toggle(${idx})"><img alt=""
+                        border="0" id="img${idx}" src="<c:url value="/images/dc.gif"/>"/></a>&nbsp;
+                    <span>
+                    <c:choose>
+                      <c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when>
+                      <c:otherwise><i>${spDisp}</i></c:otherwise>
+                    </c:choose>
+                    <c:if test="${sp != spDisp}">&nbsp;(<code>${sp}</code>)</c:if>
+                    </span>
 
-              </c:forEach>
-              <c:forEach begin="1" end="${indent}" step="1">
-                </li></ul>
-              </c:forEach>
+                  <c:set var="idx" value="${idx+1}"/>	
 
-          </div> <%-- end TREE --%>
+                </c:forEach>
+                <c:forEach begin="1" end="${indent}" step="1">
+                  </li></ul>
+                </c:forEach>
 
-          <html:hidden property="value(${includedSpeciesName})" value="n/a" />
-          <html:hidden property="value(${excludedSpeciesName})" value="n/a" />
-          <html:hidden property="value(${profilePatternName})" value="%"/>
-        </div> <%-- end WRAPPER --%>
+            </div> <%-- end TREE --%>
 
-      </div> <%-- end param-item --%>
-    </div> <%-- end group-detail --%>
-  </div> <%-- end param-group --%>
-</div><%-- END OF PARAMS DIV --%>
+            <html:hidden property="value(${includedSpeciesName})" />
+            <html:hidden property="value(${excludedSpeciesName})" />
+            <html:hidden property="value(${profilePatternName})"  value="%"/>
+          </div> <%-- end WRAPPER --%>
 
-<script>
+        </div> <%-- end param-item --%>
+      </div> <%-- end group-detail --%>
+    </div> <%-- end param-group --%>
+  </div><%-- END OF PARAMS DIV --%>
 
-	function myshowTree(){
-    $("#orthology-profile-tree").jstree("open_all", true);
-	}
+  <script>
 
-	function myhideTree(){
-    $("#orthology-profile-tree").jstree("close_all", true);
-	}
+    function myshowTree(){
+      $("#orthology-profile-tree").jstree("open_all", true);
+    }
 
-	<c:if test="${showParams == null}">
-    $(document).ready(function() {
-      $("#orthology-profile-tree").jstree({
-        "plugins" : [ "html_data", "themes" ],
-        "themes" : { "theme" : "classic", "icons" : false }
-      }).bind("loaded.jstree", function() {
-        $(this).jstree("close_all").jstree("open_node", "> ul > li").show();
-      });
-    });
-	</c:if>
+    function myhideTree(){
+      $("#orthology-profile-tree").jstree("close_all", true);
+    }
 
-</script>
-
-
-
-<!-- using toggle function defined in orthologpattern.js? -->
-<c:if test="${showParams == null}">
-<script>
-<!-- //
-toggle(7);
-toggle(7);
-toggle(7);
-// -->
-</script>
-</c:if>
-
-
-
-
-
-
+  </script>
+</div>
