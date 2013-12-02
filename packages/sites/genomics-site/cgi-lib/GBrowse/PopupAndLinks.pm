@@ -862,19 +862,18 @@ sub massSpecTitle {
   $desc =~ s/[\r\n]/<br>/g;
 
   my ($phospho_site) = $f->get_tag_values('PhosphoSite');
-  my ($phospho_score) = $f->get_tag_values('PhosphoScore');
   my ($ontology_names) = $f->get_tag_values('Ontology');
-  my $tb = "<table><tr><th>Location</th><th>Modified Residue</th><th>Modification Type</th><th>Score</th></tr>";
+  my $tb = "<table><tr><th>Location</th><th>Modified Residue</th><th>Modification Type</th></tr>";
 
   my $start = $f->start;
   if($phospho_site) {
+    my ($residue) = $f->get_tag_values('Residue');
     my @locs =  split /;/, $phospho_site; 
-    my @scores = split /;/, $phospho_score; 
     my @term = split /;/, $ontology_names; 
+    my @residues = split /;/, $residue; 
     my $count = 0;
     foreach my $loc (@locs) {
-       my $residue = substr($seq, $loc - $start, 1);
-       $tb .= "<tr><td>".$locs[$count]."</td><td>$residue</td><td>".$term[$count]."</td><td>".$scores[$count]."</td></tr>";
+       $tb .= "<tr><td>".$locs[$count]."</td><td>".$residues[$count]."</td><td>".$term[$count]."</td></tr>";
        $count++;
     }
     $tb .= "</table>"; 
@@ -963,31 +962,37 @@ sub unifiedPostTranslationalMod {
   my ($seq) =  $f->get_tag_values('PepSeq');
   my ($experiment) = $f->get_tag_values('Experiment');
   my ($sample) = $f->get_tag_values('Sample');
-  my ($score) = $f->get_tag_values('PhosphoScore');
   my ($ontology) = $f->get_tag_values('Ontology');
-  my ($location) = $f->get_tag_values('PhosphoSite');
+  my ($location) = $f->start;
+  my ($start) = $f->get_tag_values('PeptideStart');
   my @data;
 
-  push @data, [ 'Experiment' => "$experiment" ];
-  push @data, [ 'Sample'     => "$sample" ];
-  push @data, [ 'Score'      => "$score" ];
-  push @data, [ 'Modification Type' => "$ontology" ];
+  my @exps = split /;/, $experiment;
+  my @samples = split /;/, $sample;
+  my @seqs = split /;/, $seq;
+  my @starts = split /;/, $start;
+
+  push @data, [ 'Modification Type' => $ontology ];
   push @data, [ 'Modification Site' => "$location" ];
 
-  if($seq && $location) {
-	  my ($start) = $f->get_tag_values('PeptideStart');
-    my $residue = substr($seq, $location - $start, 1);
-    my $loc = $location - $start + 1;
+  for(0..$count-1) {
+    push @data, [ '==========='   => "=======================" ];
+    push @data, [ 'Experiment' => $exps[$_] ];
+    push @data, [ 'Sample'     => $samples[$_] ];
 
-    substr($seq, $loc, 0) = '*' if $ontology =~ /phosphorylation/i; 
-    substr($seq, $loc, 0) = '#' if $ontology =~ /methionine/i; 
-    substr($seq, $loc, 0) = '^' if $ontology =~ /cysteine/i; 
+    my $pseq = $seqs[$_];
 
-    push @data, [ 'Modified Residue' => "$residue" ];
-  } 
+    if($pseq && $location) {
+      my $residue = substr($pseq, $location - $starts[$_], 1);
+      my $loc = $location - $starts[$_] + 1; 
+      substr($pseq, $loc, 0) = '*' if $ontology =~ /phosphorylation/i; 
+      substr($pseq, $loc, 0) = '#' if $ontology =~ /methionine/i; 
+      substr($pseq, $loc, 0) = '^' if $ontology =~ /cysteine/i; 
+      push @data, [ 'Modified Residue' => "$residue" ];
+    }    
+    push @data, [ 'Sequence'   => "$pseq" ];
 
-  push @data, [ 'Sequence'   => "$seq" ];
-
+  }
   hover($f, \@data);
 }
 
