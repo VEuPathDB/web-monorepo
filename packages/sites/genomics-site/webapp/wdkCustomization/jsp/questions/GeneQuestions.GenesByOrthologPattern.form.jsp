@@ -39,19 +39,8 @@
 <c:set var="taxaCount" value="${fn:length(ind.vocab)+1}"/>
 
 <c:set var="indentMapJSON">
-  { <c:forEach var='indent' varStatus="loop" items='${indentMap}'>
-      "${indent.key}" : "${indent.value}" <c:if test="${loop.last eq false}">,</c:if>
-    </c:forEach> }
+  { <c:forEach var='indent' varStatus="loop" items='${indentMap}'> "${indent.key}" : "${indent.value}" <c:if test="${loop.last eq false}">,</c:if> </c:forEach> }
 </c:set>
-
-<div data-controller="eupathdb.orthologPattern.init"
-  data-included-species-name="${includedSpeciesName}"
-  data-excluded-species-name="${excludedSpeciesName}"
-  data-profile-pattern-name="${profilePatternName}"
-  data-taxa-count="${taxaCount}"
-  data-abbrev='["All Organisms" <c:forEach var='sp' items='${ind.vocab}'>, "${sp}"</c:forEach>]'
-  data-indent-map='${indentMapJSON}'
->
 
   <%-- The following is done in html/assets/js/orthologpattern.js now
   <!-- js values used in html/assets/js/orthologpatern.js -->
@@ -125,7 +114,15 @@
           <div class="param-control"><imp:enumParamInput qp="${resultSpecies}" /></div>
         </div>
 
-        <div class="param-item">
+        <div class="param-item"
+          data-controller="eupathdb.orthologPattern.init"
+          data-included-species-name="${includedSpeciesName}"
+          data-excluded-species-name="${excludedSpeciesName}"
+          data-profile-pattern-name="${profilePatternName}"
+          data-taxa-count="${taxaCount}"
+          data-abbrev='["All Organisms" <c:forEach var='sp' items='${ind.vocab}'>, "${sp}"</c:forEach>]'
+          data-indent-map='${indentMapJSON}'
+        >
           <label>
             <span style="font-weight:bold">Select orthology profile</span>
             <imp:image title="If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
@@ -238,4 +235,3 @@
     }
 
   </script>
-</div>
