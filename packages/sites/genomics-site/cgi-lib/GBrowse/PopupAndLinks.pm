@@ -965,12 +965,14 @@ sub unifiedPostTranslationalMod {
   my ($ontology) = $f->get_tag_values('Ontology');
   my ($location) = $f->start;
   my ($start) = $f->get_tag_values('PeptideStart');
+  my ($residue) = $f->get_tag_values('Residue');
   my @data;
 
   my @exps = split /;/, $experiment;
   my @samples = split /;/, $sample;
   my @seqs = split /;/, $seq;
   my @starts = split /;/, $start;
+  my @residues = split /;/, $residue;
 
   push @data, [ 'Modification Type' => $ontology ];
   push @data, [ 'Modification Site' => "$location" ];
@@ -983,12 +985,11 @@ sub unifiedPostTranslationalMod {
     my $pseq = $seqs[$_];
 
     if($pseq && $location) {
-      my $residue = substr($pseq, $location - $starts[$_], 1);
       my $loc = $location - $starts[$_] + 1; 
       substr($pseq, $loc, 0) = '*' if $ontology =~ /phosphorylation/i; 
       substr($pseq, $loc, 0) = '#' if $ontology =~ /methionine/i; 
       substr($pseq, $loc, 0) = '^' if $ontology =~ /cysteine/i; 
-      push @data, [ 'Modified Residue' => "$residue" ];
+      push @data, [ 'Modified Residue' => $residues[$_] ];
     }    
     push @data, [ 'Sequence'   => "$pseq" ];
 
