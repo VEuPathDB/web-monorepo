@@ -316,7 +316,8 @@ sub massSpecBgColor {
   my ($color) = $f->get_tag_values('Color');
 
   if($color) {
-    return $color;
+    my @colors = split /;/, $color; # for post translational modification 
+    return $colors[0];
   }
   return 'yellow';
 }
