@@ -157,7 +157,9 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
     rows.push(twoColRow('UTR:', utr));
   }
   rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
-  rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
+  if (soTerm =='protein_coding') {
+      rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
+  }
   rows.push(twoColRow('Links:', gbLink + " | " + recordLink));
   
   //tip.T_BGCOLOR = 'lightskyblue';
