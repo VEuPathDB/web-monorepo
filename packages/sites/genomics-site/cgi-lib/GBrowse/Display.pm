@@ -331,8 +331,14 @@ sub unifiedPostTranslationalModBgColor {
 
   if($ontology =~ /phosphorylation_site/i) {
     return 'dodgerblue';
+  } elsif ($ontology =~ /modified_L_cysteine/i) {
+    return 'deepskyblue';
+  } elsif ($ontology =~ /iodoacetamide_derivatized_residue/i) {
+    return 'blueviolet';
+  } elsif ($ontology =~ /modified_L_methionine/i) {
+    return 'steelblue';
   }
-  return 'yellow';
+  return 'blue';
 }
 
 sub wastlingMassSpecBgColor {
