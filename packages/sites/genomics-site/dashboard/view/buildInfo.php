@@ -54,6 +54,12 @@ if ($stage_value) {
      onmouseout = "return nd();"><sup>[?]</sup></a>
 
 <p>
+
+<p><i>
+Subversion working directories are recorded at build time. An incomplete build will result in an incomplete list. 
+Any subversion working directories in project_home that are not defined as dependencies in the GUS/Ant build will not be listed.
+</i></p>
+
 <p class="clickable">Component Build Details &#8593;&#8595;</p>
 
 <div class="expandable" style="padding: 5px;">
