@@ -95,7 +95,7 @@
 </c:when>
 <%-- ================================== SPECIES TITLE WITH GENE COUNT=============== --%>
 <c:when test="${distinct eq 'true'}">
-<div class="filter-instance">
+<div style="height:100%" class="filter-instance">
     <c:choose>
       <c:when test="${current}"><div class="current"></c:when>
       <c:otherwise><div></c:otherwise>
@@ -124,7 +124,7 @@
 </c:when>
 <%-- ================================== TRANSCRIPTS COUNT =============== --%>
 <c:otherwise>
-<div class="filter-instance">
+<div style="height:100%" class="filter-instance">
     <c:choose>
       <c:when test="${current}"><div class="current"></c:when>
       <c:otherwise><div></c:otherwise>
