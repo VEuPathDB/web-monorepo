@@ -47,7 +47,7 @@
 
 <%-- ================================ SPECIES TITLE ================= --%>
 <c:when test="${titleSpecies eq 'true'}">
-<div style="height:100%" class="filter-instance">
+<div class="filter-instance">
     <c:choose>
       <c:when test="${current}"><div class="current"></c:when>
       <c:otherwise><div></c:otherwise>
@@ -70,7 +70,7 @@
 </c:when>
 <%-- =============================== STRAIN TITLE ================== --%>
 <c:when test="${titleStrain eq 'true'}">
-<div style="height:100%" class="filter-instance">
+<div class="filter-instance">
     <c:choose>
       <c:when test="${current}"><div class="current"></c:when>
       <c:otherwise><div></c:otherwise>
@@ -95,7 +95,7 @@
 </c:when>
 <%-- ================================== SPECIES TITLE WITH GENE COUNT=============== --%>
 <c:when test="${distinct eq 'true'}">
-<div style="height:100%" class="filter-instance">
+<div class="filter-instance">
     <c:choose>
       <c:when test="${current}"><div class="current"></c:when>
       <c:otherwise><div></c:otherwise>
@@ -124,7 +124,7 @@
 </c:when>
 <%-- ================================== TRANSCRIPTS COUNT =============== --%>
 <c:otherwise>
-<div style="height:100%" class="filter-instance">
+<div class="filter-instance">
     <c:choose>
       <c:when test="${current}"><div class="current"></c:when>
       <c:otherwise><div></c:otherwise>

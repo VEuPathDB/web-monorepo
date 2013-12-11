@@ -23,17 +23,17 @@
 --%>
 
 
-<table border="1">
+<table>
 
 <!-- ======================== FAMILY TITLE  (all + orthologs +  total family count ) ================ -->
 <!-- ================================================= -->
 
   <tr>
-    <th rowspan=3 align="center">All<br>Results</th>
-    <th rowspan=3 align="center">Ortholog<br>Groups</th>
+    <th rowspan=3>All<br>Results</th>
+    <th rowspan=3>Ortholog<br>Groups</th>
 
  		<c:forEach items="${layout.sortedFamilyCountMap}" var="family" >
-    	<th style="padding:3px" colspan="${family.value}" align="center"><i>${family.key}</i></th>
+    	<th colspan="${family.value}"><i>${family.key}</i></th>
  		</c:forEach>
   </tr>
 
@@ -46,7 +46,7 @@
    
 	  <c:choose>
 		  <c:when test="${layout.instanceCountMap[abbrev] ne '1' && fn:contains(instance.name,'distinct')}" >
-        <th colspan="${layout.instanceCountMap[abbrev]}" align="center">
+        <th colspan="${layout.instanceCountMap[abbrev]}">
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 				 											 instanceName="${instance.name}" 
 															 distinct="true"/> 
@@ -71,7 +71,7 @@
       <c:set var="abbrev" value="${fn:substring(instance.name,0,4)}" />
    
     	<c:if test="${abbrev ne 'all_' && !fn:contains(instance.name,'distinct')}" >
-        <th style="padding:1px">
+        <th>
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 															 instanceName="${instance.name}" 	
 															 titleStrain="true"/> 
@@ -83,15 +83,15 @@
 <!-- ========================== TRANSCRIPTS COUNTS (all + orthologs+ total strain count)  ================ -->
 <!-- =================================================== -->
 
-  <tr align="center">
+  <tr>
     <td>
-      <imp:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance2 strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_results" />  
     </td>
     <td>
-      <imp:filterInstance strategyId="${strategyId}" 
+      <imp:filterInstance2 strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
                           instanceName="all_ortholog_groups" />  
@@ -101,10 +101,10 @@
       <c:set var="abbrev" value="${fn:substring(instance.name,0,4)}" />
    
 	    <c:if test="${abbrev ne 'all_' && !fn:contains(instance.name,'distinct')}" >
-         <th>
+         <td>
            <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 																instanceName="${instance.name}" /> 
-         </th>
+         </td>
       </c:if>
     </c:forEach>
   </tr>
