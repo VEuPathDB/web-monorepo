@@ -9,7 +9,7 @@
 <c:set var="stepId" value="${requestScope.step_id}"/>
 <c:set var="layout" value="${requestScope.filter_layout}"/>
  
-
+<!-- DEBUGGING
 <c:forEach items="${layout.sortedFamilyCountMap}" var="family" >
     <br>---${family.key}----${family.value}----<br>
  </c:forEach>
@@ -20,7 +20,7 @@
 				<br>${familySpecies} -----  ${layout.instanceCountMap[familySpecies]} ---- ${instance.name} <br>
   </c:if>
 </c:forEach>
-
+-->
 
 
 <table>
