@@ -15,8 +15,8 @@
  </c:forEach>
 
 <c:forEach items="${layout.sortedInstances}" var="instance">
-  <c:set var="abbrev" value="${fn:substring(instance.name,0,4)}" />
-	<c:if test="${abbrev ne 'all_' && !fn:contains(instance.name,'distinct')}" >
+  <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
+	<c:if test="${abbrev ne 'all' && !fn:contains(instance.name,'distinct')}" >
 				<br>${abbrev} -----  ${layout.instanceCountMap[abbrev]} ---- ${instance.name} <br>
   </c:if>
 </c:forEach>
@@ -42,8 +42,8 @@
 
   <tr>
 	<c:forEach items="${layout.sortedInstances}" var="instance">         
-  	<c:set var="abbrev" value="${fn:substring(instance.name,0,4)}" />
-   
+    <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
+
 	  <c:choose>
 		  <c:when test="${layout.instanceCountMap[abbrev] ne '1' && fn:contains(instance.name,'distinct')}" >
         <th colspan="${layout.instanceCountMap[abbrev]}">
@@ -68,9 +68,9 @@
 
   <tr>
     <c:forEach items="${layout.sortedInstances}" var="instance">         
-      <c:set var="abbrev" value="${fn:substring(instance.name,0,4)}" />
-   
-    	<c:if test="${abbrev ne 'all_' && !fn:contains(instance.name,'distinct')}" >
+      <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
+
+    	<c:if test="${abbrev ne 'all' && !fn:contains(instance.name,'distinct')}" >
         <th>
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 															 instanceName="${instance.name}" 	
@@ -98,9 +98,9 @@
     </td>
 
     <c:forEach items="${layout.sortedInstances}" var="instance">         
-      <c:set var="abbrev" value="${fn:substring(instance.name,0,4)}" />
-   
-	    <c:if test="${abbrev ne 'all_' && !fn:contains(instance.name,'distinct')}" >
+      <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
+
+	    <c:if test="${abbrev ne 'all' && !fn:contains(instance.name,'distinct')}" >
          <td>
            <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 																instanceName="${instance.name}" /> 
