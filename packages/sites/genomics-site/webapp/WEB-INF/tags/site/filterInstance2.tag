@@ -61,12 +61,6 @@
 
 <i>${fn:substring(Family,3,4)}.${Species}</i>
 
-        <div class="instance-detail" style="display: none;">
-            <div class="display">${instance.displayName}</div>
-            <div class="description">${instance.description}</div>
-        </div>
-    </div>
-</div>
 </c:when>
 <%-- =============================== STRAIN TITLE ================== --%>
 <c:when test="${titleStrain eq 'true'}">
@@ -86,12 +80,6 @@
 
 <i>${Strain}</i>
 
-        <div class="instance-detail" style="display: none;">
-            <div class="display">${instance.displayName}</div>
-            <div class="description">${instance.description}</div>
-        </div>
-    </div>
-</div>
 </c:when>
 <%-- ================================== SPECIES TITLE WITH GENE COUNT=============== --%>
 <c:when test="${distinct eq 'true'}">
@@ -102,7 +90,7 @@
     </c:choose>
 
 <c:set var="dispNameParts" value="${fn:split(instance.displayName, ' ')}" />
-<i>${fn:substring(dispNameParts[1],0,1)}.${dispNameParts[2]}</i>&nbsp;&nbsp;Genes:
+<i>${fn:substring(dispNameParts[1],0,1)}.${dispNameParts[2]}</i>&nbsp;&nbsp;NR Genes:
 
         <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&revise=${stepId}&filter=${instance.name}" />
         <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
@@ -115,12 +103,7 @@
 					 </c:choose>
 
 	      </a>
-        <div class="instance-detail" style="display: none;">
-            <div class="display">${instance.displayName}</div>
-            <div class="description">${instance.description}</div>
-        </div>
-      </div>
-</div>
+
 </c:when>
 <%-- ================================== TRANSCRIPTS COUNT =============== --%>
 <c:otherwise>
@@ -140,11 +123,13 @@
 		</c:choose>
 
 	</a>
+
+</c:otherwise>
+</c:choose>
+
         <div class="instance-detail" style="display: none;">
             <div class="display">${instance.displayName}</div>
-            <div class="description">${instance.description}</div>
+         <!--   <div class="description">${instance.description}</div> -->
         </div>
     </div>
 </div>
-</c:otherwise>
-</c:choose>
