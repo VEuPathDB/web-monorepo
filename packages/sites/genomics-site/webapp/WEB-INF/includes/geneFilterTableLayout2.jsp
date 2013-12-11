@@ -9,18 +9,18 @@
 <c:set var="stepId" value="${requestScope.step_id}"/>
 <c:set var="layout" value="${requestScope.filter_layout}"/>
  
-<%-- DEBUGGING
+
 <c:forEach items="${layout.sortedFamilyCountMap}" var="family" >
     <br>---${family.key}----${family.value}----<br>
  </c:forEach>
 
 <c:forEach items="${layout.sortedInstances}" var="instance">
-  <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
-	<c:if test="${abbrev ne 'all' && !fn:contains(instance.name,'distinct')}" >
-				<br>${abbrev} -----  ${layout.instanceCountMap[abbrev]} ---- ${instance.name} <br>
+  <c:set var="familySpecies" value="${fn:substringBefore(instance.name,'_')}" />
+	<c:if test="${familySpecies ne 'all' && !fn:contains(instance.name,'distinct')}" >
+				<br>${familySpecies} -----  ${layout.instanceCountMap[familySpecies]} ---- ${instance.name} <br>
   </c:if>
 </c:forEach>
---%>
+
 
 
 <table>
@@ -42,17 +42,17 @@
 
   <tr>
 	<c:forEach items="${layout.sortedInstances}" var="instance">         
-    <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
+    <c:set var="familySpecies" value="${fn:substringBefore(instance.name,'_')}" />
 
 	  <c:choose>
-		  <c:when test="${layout.instanceCountMap[abbrev] ne '1' && fn:contains(instance.name,'distinct')}" >
-        <th colspan="${layout.instanceCountMap[abbrev]}">
+		  <c:when test="${layout.instanceCountMap[familySpecies] ne '1' && fn:contains(instance.name,'distinct')}" >
+        <th colspan="${layout.instanceCountMap[familySpecies]}">
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 				 											 instanceName="${instance.name}" 
 															 distinct="true"/> 
         </th>
       </c:when>
- 	    <c:when test="${layout.instanceCountMap[abbrev] == 1 && !fn:contains(instance.name,'distinct')}" >
+ 	    <c:when test="${layout.instanceCountMap[familySpecies] == 1 && !fn:contains(instance.name,'distinct')}" >
         <th>
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 															 instanceName="${instance.name}" 
@@ -68,9 +68,9 @@
 
   <tr>
     <c:forEach items="${layout.sortedInstances}" var="instance">         
-      <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
+      <c:set var="familySpecies" value="${fn:substringBefore(instance.name,'_')}" />
 
-    	<c:if test="${abbrev ne 'all' && !fn:contains(instance.name,'distinct')}" >
+    	<c:if test="${familySpecies ne 'all' && !fn:contains(instance.name,'distinct')}" >
         <th>
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 															 instanceName="${instance.name}" 	
@@ -98,9 +98,9 @@
     </td>
 
     <c:forEach items="${layout.sortedInstances}" var="instance">         
-      <c:set var="abbrev" value="${fn:substringBefore(instance.name,'_')}" />
+      <c:set var="familySpecies" value="${fn:substringBefore(instance.name,'_')}" />
 
-	    <c:if test="${abbrev ne 'all' && !fn:contains(instance.name,'distinct')}" >
+	    <c:if test="${familySpecies ne 'all' && !fn:contains(instance.name,'distinct')}" >
          <td>
            <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 																instanceName="${instance.name}" /> 
