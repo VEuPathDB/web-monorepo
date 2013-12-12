@@ -617,7 +617,7 @@ ${id}
  <imp:wdkTable tblName="MassSpec" isOpen="true"   attribution=""/>
 </c:if>
 
-<c:if test="${attrs['hasPostTransMod'].value eq '1'}">
+<c:if test="${attrs['hasPostTransMod'].value ne '0'}">
  <imp:wdkTable tblName="MassSpecMod" isOpen="true"   attribution=""/>
 </c:if>
 
