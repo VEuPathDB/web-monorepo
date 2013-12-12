@@ -9,7 +9,7 @@
 <%@ attribute name="type"  description="Type"  %>
 
 <%@ attribute name="tableName"
-              description="PhenotypeGraphs or ExpressionGraphs or PutativeFunctionGraphs"
+              description="PhenotypeGraphs or ExpressionGraphs or HostResponseGraphs"
 %>
 
 
