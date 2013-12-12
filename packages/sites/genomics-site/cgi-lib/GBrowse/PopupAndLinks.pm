@@ -888,22 +888,12 @@ sub massSpecTitle {
     } 
   } 
 
-#  if($replaceString) {
-#    $extdbname =~ s/$replaceString/assay: /i;
-#  }
-
-# if($replaceString2) {
-#    $extdbname =~ s/$replaceString2/$val2/i;
-#  }
-  
-#  my $displayName = $MS_EXTDB_NAME_MAP{$extdbname} ? $MS_EXTDB_NAME_MAP{$extdbname} : $extdbname;
-
   my @data;
   push @data, [ 'Experiment:' => $experiment ];
   push @data, [ 'Sample:' => $sample ];
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
-  push @data, [ 'Number of Matches:' => "$count" ] if($count);
+  push @data, [ 'Spectrum Count:' => "$count" ] if($count);
   push @data, [ 'Info:' => "$tb" ] if($phospho_site);
   push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine<br/>^ stands for modified_L_cysteine" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
