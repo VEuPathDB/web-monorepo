@@ -657,12 +657,12 @@ ${id}
 </c:if>
 
 
-<c:if test="${species eq 'falciparum3D7'}">
+<c:if test="${attrs['hasHostResponse'].value eq '1'}">
 
-<imp:pageDivider name="Putative Function"/>
+<imp:pageDivider name="Host Response"/>
 
 
-   <imp:profileGraphs species="${binomial}" tableName="PutativeFunctionGraphs"/>
+   <imp:profileGraphs species="${binomial}" tableName="HostResponseGraphs"/>
 
 </c:if>
 
