@@ -71,11 +71,11 @@
 </c:otherwise>
 </c:choose>
 
-
+<%--
 <div style="padding:3px 10px;">
 	<imp:searchLookup />
 </div>
-
+--%>
 
 <script type="text/javascript">
     $(function() { wdk.tooltips.assignTooltipsLeft('.dqg-tooltip', -3); });
