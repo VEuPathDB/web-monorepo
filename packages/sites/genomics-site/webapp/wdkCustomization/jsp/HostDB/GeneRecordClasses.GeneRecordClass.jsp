@@ -139,7 +139,6 @@ ${attrs['organism'].value}<br>
 
 <%-- DNA CONTEXT ---------------------------------------------------%>
 
-
   <c:set var="gnCtxUrl">
      /cgi-bin/gbrowse_img/hostdb/?name=${sequence_id}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
@@ -168,6 +167,9 @@ ${attrs['organism'].value}<br>
 
 <%-- END DNA CONTEXT --------------------------------------------%>
 
+<!-- strains comparison table -->
+<imp:wdkTable tblName="Strains" isOpen="true"
+               attribution=""/>
 
   <c:if test="${strand eq '-'}">
    <c:set var="revCompOn" value="1"/>
