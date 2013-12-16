@@ -33,13 +33,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="hsap_gene_instances" />  
+                          instanceName="hsap_gene_instances" />  genes
     </td>
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="mmus_gene_instances" />  
+                          instanceName="mmus_gene_instances" />  genes
     </td>
     </tr>
     <tr align="center">
@@ -47,13 +47,13 @@
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="hsapREF_transcript_instances" />  
+                          instanceName="hsapREF_transcript_instances" />  transcripts
     </td> 
     <td>
       <imp:filterInstance strategyId="${strategyId}" 
                           stepId="${stepId}" 
                           answerValue="${answerValue}" 
-                          instanceName="mmusC57BL6J_transcript_instances" />  
+                          instanceName="mmusC57BL6J_transcript_instances" />  transcripts
     </td>
   </tr>
 </table>
