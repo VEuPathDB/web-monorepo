@@ -50,6 +50,11 @@
 <c:set var="family" value="${speciesNameParts[0]}" />
 <c:set var="species" value="${speciesNameParts[1]}" />
 
+<!-- for species names that have more than one word ("sp. 1") the dataset injector AnnotatedGenomes sets all spaces to '=' because it is used in the filter instance name (as a unique species identifier) and the instance name cannot have spaces (it would break the javascript associated with filters).
+Here we 'undo' that process.
+-->
+<c:set var="species" value="${fn:replace(species, '=', ' ')}" />
+
 <c:choose>
 
 <%-- ================================ SPECIES TITLE  ================= --%>
@@ -63,32 +68,6 @@
 <i>${fn:substring(family,0,1)}.${species}</i>
 </c:when>
 
-<%-- =============================== STRAIN TITLE ================== --%>
-<c:when test="${titleStrain eq 'true'}">
-<div class="filter-instance">
-    <c:choose>
-      <c:when test="${current}"><div class="current"></c:when>
-      <c:otherwise><div></c:otherwise>
-    </c:choose>
-
-<!-- still reading strain name form filter instance displayName (popup title) -->
-<!-- to remove this dependency on displayName we need to access the paramValue for paramName = organism
-         that is: add a bean "paramValueMap" in AnswerFilterInstance -->
-<!-- other options are: 
-     - get the strain name from instance name (spaces and word "strain" removed in some cases), or
-     - pass the strain name from the injector into the instance name
--->
-<c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
-<c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
-<c:set var="dispNameParts" value="${fn:split(dispNameOrg, ' ')}" />
-<c:set var="Family" value="${dispNameParts[0]}" />
-<c:set var="Species" value="${dispNameParts[1]}" />
-<c:set var="Family_Species" value="${Family} ${Species}" />
-<c:set var="Strain" value="${fn:substringAfter(dispNameOrg, Family_Species)}" />
-
-<i>${Strain}</i>
-
-</c:when>
 <%-- ================================== SPECIES TITLE WITH GENE COUNT=============== --%>
 <c:when test="${distinct eq 'true'}">
 <div class="filter-instance">
@@ -111,6 +90,29 @@
 	  </a>
 
 </c:when>
+
+<%-- =============================== STRAIN TITLE ================== --%>
+<c:when test="${titleStrain eq 'true'}">
+<div class="filter-instance">
+    <c:choose>
+      <c:when test="${current}"><div class="current"></c:when>
+      <c:otherwise><div></c:otherwise>
+    </c:choose>
+
+<!-- still reading strain name form filter instance displayName (popup title) -->
+<!-- alternatives to remove this dependency on displayName:
+     - pass the strain name from the injector into the instance name, problem is dealing with spaces that cannot be used in css id and other attributes used by javascript
+		 - better: define new layout tags to be set with these values (family, species, strain) by injector, so WDK does not have to be parsing.
+-->
+
+<c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
+<c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
+<c:set var="strain" value="${fn:substringAfter(dispNameOrg, species)}" />
+
+<i>${strain}</i>
+
+</c:when>
+
 <%-- ================================== TRANSCRIPTS COUNT =============== --%>
 <c:otherwise>
 <div class="filter-instance">
