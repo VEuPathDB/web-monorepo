@@ -952,20 +952,24 @@ sub unifiedPostTranslationalMod {
   my ($seq) =  $f->get_tag_values('PepSeq');
   my ($experiment) = $f->get_tag_values('Experiment');
   my ($sample) = $f->get_tag_values('Sample');
-  my ($ontology) = $f->get_tag_values('Ontology');
   my ($location) = $f->start;
   my ($start) = $f->get_tag_values('PeptideStart');
   my ($residue) = $f->get_tag_values('Residue');
+  my ($ontology) = $f->get_tag_values('Ontology');
+  my ($mscount) = $f->get_tag_values('MSCount');
   my @data;
 
   my @exps = split /;/, $experiment;
   my @samples = split /;/, $sample;
   my @seqs = split /;/, $seq;
   my @starts = split /;/, $start;
-  my @residues = split /;/, $residue;
+  my @mscounts = split /;/, $mscount;
+
+  $residue  =~ s/;.*$//g;
 
   push @data, [ 'Modification Type' => $ontology ];
-  push @data, [ 'Modification Site' => "$location" ];
+  push @data, [ 'Modification Site' => $location ];
+  push @data, [ 'Modified Residue'  => $residue ];
 
   for(0..$count-1) {
     push @data, [ '==========='   => "=======================" ];
@@ -979,7 +983,7 @@ sub unifiedPostTranslationalMod {
       substr($pseq, $loc, 0) = '*' if $ontology =~ /phosphorylation/i; 
       substr($pseq, $loc, 0) = '#' if $ontology =~ /methionine/i; 
       substr($pseq, $loc, 0) = '^' if $ontology =~ /cysteine/i; 
-      push @data, [ 'Modified Residue' => $residues[$_] ];
+      push @data, [ 'Spectrum Count' => $mscounts[$_] ];
     }    
     push @data, [ 'Sequence'   => "$pseq" ];
 
