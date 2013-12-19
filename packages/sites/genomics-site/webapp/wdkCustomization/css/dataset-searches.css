@@ -99,6 +99,9 @@ html {
   visibility: hidden;
   position: relative;
 }
+#query_form .dataset-searches {
+  min-width: 95%;
+}
 .dataTable {
   font-size: 14px;
   width: 100%;
