@@ -6,7 +6,6 @@
 <%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
 
 <%-- get wdkAnswer from requestScope --%>
-<jsp:useBean id="wdkUser" scope="session" type="org.gusdb.wdk.model.jspwrap.UserBean"/>
 <c:set value="${requestScope.wdkAnswer}" var="wdkAnswer"/>
 
 <imp:pageFrame>
