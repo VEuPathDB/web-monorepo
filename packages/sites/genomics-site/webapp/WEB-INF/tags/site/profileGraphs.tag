@@ -155,7 +155,7 @@
                <c:if test="${vp_i % 2 == 0}">
                  <br />
                </c:if>
-            </c:otherwise>
+            </c:otherwise>      
           </c:choose>
 
         </c:forEach>
@@ -163,13 +163,21 @@
 
 <c:if test="${fn:toLowerCase(row['has_meta_data'].value) eq 'true'}">
 <b>Color Samples by: </b><br /> 
-              <c:set var="isFirstItem" value="1"/>
               <c:set var="categories" value="${fn:split(row['meta_data_categories'].value,',')}"/>
-              <c:set var="defaultCategory" value="${categories[0]}"/>
+              <c:set var="defaultCategory" value="${row['default_category'].value}"/>              
+              <c:if test="${empty defaultCategory}">
+                     <c:set var="defaultCategory" value="${categories[0]}"/>
+              </c:if>
               <select name="meta_data_categories" onchange="wdk.api.updateImage('${imgId}', formatResourceUrl('${preImgSrc}', this.form)); wdk.api.updateDiv('${tableId}', formatResourceUrl('${preTableSrc}', this.form), '${tblErrMsg}');" />
-                  <c:set var="isFirstItem" value="1"/>
                   <c:forEach var="category" items="${categories}">
+                      <c:choose>
+                         <c:when test="${defaultCategory == category}">
+                             <option value="${category}" selected>${category}</option>
+                         </c:when>
+                         <c:otherwise>
                              <option value="${category}">${category}</option>
+                         </c:otherwise>
+                      </c:choose>
                   </c:forEach>
                   <c:set var="imgSrc" 		value="${imgSrc}&typeArg=${defaultCategory}"/>
         </c:if> 
