@@ -40,6 +40,7 @@
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GeneMetrics">EuPathDB Gene Metrics</a></li>
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li>
   <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer.pdf">EuPathDB Brochure</a></li>
+  <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer-Chinese.pdf">EuPathDB Brochure in Chinese</a></li>
   
 <br/><span class="smallTitle">------ Administrative</span>
   
