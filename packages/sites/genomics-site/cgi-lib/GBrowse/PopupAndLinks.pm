@@ -362,10 +362,12 @@ sub geneGbrowseLink {
 
 sub geneTitleGB2 {
   my $f = shift;
-  
+
   my $projectId = $ENV{PROJECT_ID};
   my $sourceId = $f->name;
   my $chr = $f->seq_id;
+
+
 
 
 #  my $loc = $f->location->to_FTstring;
