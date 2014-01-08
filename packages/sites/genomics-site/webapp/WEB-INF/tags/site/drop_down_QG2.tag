@@ -93,7 +93,7 @@
 <c:when test="${from == 'webservices'}">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
-        <imp:questionFeature question="${q}" />
+        <imp:questionFeature question="${q}" refer="${from}"/>
         </a>
   <c:if test="${project eq 'EuPathDB'}">
     <c:set var="flag"/>
@@ -146,7 +146,7 @@
 <c:when test="${from == 'webservices'}">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
-          <imp:questionFeature question="${q}" />
+          <imp:questionFeature question="${q}" refer='${from}'/>
         </a>
   <c:if test="${project eq 'EuPathDB'}">
     <c:set var="flag"/>
@@ -207,7 +207,7 @@
            		<c:forEach items="${qSet.questions}" var="q">
              			<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}
-                                  <imp:questionFeature question="${q}" />
+                                  <imp:questionFeature question="${q}" refer="${from}" />
                                 </a>
                   <c:if test="${project eq 'EuPathDB'}">
                     <c:set var="flag"/>
@@ -247,7 +247,7 @@
 	<c:forEach items="${cat.websiteQuestions}" var="q">
 		<li>
 		<a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
-                  <imp:questionFeature question="${q}" />
+                  <imp:questionFeature question="${q}" refer="${from}" />
                 </a>
 		</li>
 	</c:forEach>
