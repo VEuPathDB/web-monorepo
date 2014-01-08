@@ -903,7 +903,16 @@ sub alignmentConnectColor {
   }
 }
 
-
+sub colorSegmentByScore {
+    my $f = shift;
+    my ($score) = $f->score;
+     # use shades of red, brighter as score is larger
+         return '#FF0000' if ($score > 60);
+         return '#FF8000' if ($score > 50);
+         return '#00FF00' if ($score > 40 );
+         return '#0000FF' if ($score > 30 );
+         return '#000000';
+}
 
 
 
@@ -926,7 +935,6 @@ sub peakHeight {
   return $logScore unless $addBase;
   return (2 + $logScore );
 }
-
 
 sub heightBySOTerm {
   my ($f, $term, $val1, $val2) = @_;
