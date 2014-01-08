@@ -45,7 +45,7 @@ function writeData(page, div, quesName, insertStep){
                         // t.html(data);
                         $.unblockUI();
 			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
-			wdk.parameterHandlers.init(true);
+			wdk.parameterHandlers.init(t);
 			var question = new wdk.question.WdkQuestion();
 			question.registerGroups();
 		},
