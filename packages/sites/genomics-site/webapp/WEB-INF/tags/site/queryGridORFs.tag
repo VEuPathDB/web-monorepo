@@ -17,10 +17,10 @@
 <tr>
                     <imp:queryGridMakeUrl qset="OrfQuestions" qname="OrfByOrfId" linktext="ORF ID(s)" existsOn="A Am G C M Pi P T Tr Tt"/>
                 </tr>
+ <tr>
+                    <imp:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Genomic Location" existsOn="A Am G C M Pi P T Tr Tt"/>
+                </tr>
 
-<tr>
-	             <imp:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMassSpec" linktext="Mass Spec. Evidence" existsOn="A C T G"/>
-            	</tr>
             </table>
 </div>
         </td>
@@ -37,9 +37,6 @@
                 </tr>  
  <tr>
                     <imp:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByMotifSearch" linktext="Protein Motif" existsOn="A Am G C M Pi P T Tr Tt"/>
-                </tr>
- <tr>
-                    <imp:queryGridMakeUrl qset="OrfQuestions" qname="OrfsByLocation" linktext="Genomic Location" existsOn="A Am G C M Pi P T Tr Tt"/>
                 </tr>
             </table>
 </div>
