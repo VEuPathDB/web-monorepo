@@ -233,7 +233,7 @@ ${attrs['organism'].value}<br>
 <%-- ORTHOMCL ------------------------------------------------------%>
 <c:if test="${attrs['so_term_name'].value eq 'protein_coding'}">
 
-<imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="Orthologs" isOpen="false" attribution=""/>
 <c:choose>
     <c:when test="${fn:contains( orthomcl_name, '|') }">
     <div>

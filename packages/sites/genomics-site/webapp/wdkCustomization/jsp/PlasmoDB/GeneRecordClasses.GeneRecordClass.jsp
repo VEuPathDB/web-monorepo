@@ -467,7 +467,7 @@ ${id}
   </c:choose>
   </c:set>
 
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution=""
+  <imp:wdkTable tblName="Orthologs" isOpen="false" attribution=""
                  postscript="${orthomclLink}"/>
 </c:if>
 <%--</c:if>--%>

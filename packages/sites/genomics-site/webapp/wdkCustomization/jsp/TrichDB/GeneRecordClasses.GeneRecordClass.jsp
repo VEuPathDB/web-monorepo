@@ -272,7 +272,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
     </c:otherwise>
   </c:choose>
   </c:set>
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="OrthoMCL"
+  <imp:wdkTable tblName="Orthologs" isOpen="false" attribution="OrthoMCL"
                  postscript="${orthomclLink}"/>
 
 </c:if>

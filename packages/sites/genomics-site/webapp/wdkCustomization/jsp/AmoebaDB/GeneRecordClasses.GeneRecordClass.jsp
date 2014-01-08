@@ -270,7 +270,7 @@ ${attrs['organism'].value}<br>
   </c:choose>
   </c:set>
 
-  <imp:wdkTable tblName="Orthologs" isOpen="true" attribution="" postscript="${orthomclLink}"/>
+  <imp:wdkTable tblName="Orthologs" isOpen="false" attribution="" postscript="${orthomclLink}"/>
 
 </c:if>
 
