@@ -6,6 +6,14 @@ use strict;
 #  Methods which Return 1 or 0 for determining the Label
 #--------------------------------------------------------------------------------
 
+sub geneName {
+  my $f = shift;
+  my ($gName) = $f->get_tag_values("gName");
+
+  return $f->name unless $gName;
+  return $f->name . "($gName)"; 
+}
+
 sub labelFromTagValue { 
   my ($f, $tag, $value) = @_;
 
