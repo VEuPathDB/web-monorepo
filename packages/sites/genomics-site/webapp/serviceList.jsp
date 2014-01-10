@@ -46,6 +46,9 @@
 <c:if test="${wdkModelDispName eq 'TriTrypDB'}">
         <c:set var="organism" value="Leishmania braziliensis,Trypanosoma brucei"/>
 </c:if>
+<c:if test="${wdkModelDispName eq 'HostDB'}">
+        <c:set var="organism" value="Homo sapiens"/>
+</c:if>
 
 <!-- display wdkModel introduction text -->
 <h1>Searches via Web Services</h1>
