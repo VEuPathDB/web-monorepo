@@ -341,6 +341,17 @@ sub peakTitle {
   hover( $f, \@data); 
 }
 
+sub altPeakTitle {
+  my $f = shift;
+  my ($score) = $f->score;
+  my $start = $f->start;
+  my $end = $f->end;
+  my @data;
+  push @data, [ 'Score:' => $score ];
+  push @data, [ 'Start Location:' => $start ];
+  push @data, [ 'End Location:' => $end ];
+  hover ($f, \@data);
+}
 
 sub geneLink {
   my $f = shift;
