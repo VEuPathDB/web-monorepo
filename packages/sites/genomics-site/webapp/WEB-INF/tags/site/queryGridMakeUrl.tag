@@ -182,22 +182,27 @@ not clear we need icons on categories, ui-infra meet May 22, 2012
 </c:if>
 </c:if>
  --%>
+
 <c:if test="${!empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
      <td align="left"><a style="${astyle}" id="${qset}_${qname}_${type}" class="queryGridLink queryGridActive" href='${link}' title="${fn:escapeXml(popup)}">${linktext}</a>
 
 
-<c:if test="${modelName eq 'ToxoDB' || modelName eq 'EuPathDB'}">
 <%-- not clear we need icons on categories, ui-infra meet May 22, 2012
 <c:if test="${linktext eq 'Microarray Evidence'  || linktext eq 'RNA Seq Evidence'}">
 	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
          	src="/wdk/images/revised-small.png" />
 </c:if>
 --%>
-<c:if test="${fn:containsIgnoreCase(linktext, 'Annotation from Previous')}">
+
+<c:if test="${fn:containsIgnoreCase(linktext, 'Host Response')}">
 	<imp:image alt="New feature icon" title="This is a new search" 
          src="/wdk/images/new-feature.png" />
 </c:if>
+<c:if test="${fn:containsIgnoreCase(qname, 'SnpsByIsolatesGroup')}">
+	<imp:image alt="New feature icon" title="This is a new search" 
+         src="/wdk/images/beta2-30.png" />
 </c:if>
+
 
 </td>
 </c:if>

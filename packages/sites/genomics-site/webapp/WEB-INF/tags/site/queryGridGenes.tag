@@ -319,6 +319,24 @@
 </div>
         </td>
  
+
+ <td >
+<div class="innertube2">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr class="subheaderrow2"><td colspan="4">Host Response
+                </td></tr>
+                <tr>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByCromptonAbFoldChange" linktext="Host Response"  existsOn="P"/>
+                </tr>
+
+ <tr><td class="lines2">&nbsp;</td></tr>
+
+            </table>
+</div>
+        </td>
+
+
+
     </tr>
 
 </table>
