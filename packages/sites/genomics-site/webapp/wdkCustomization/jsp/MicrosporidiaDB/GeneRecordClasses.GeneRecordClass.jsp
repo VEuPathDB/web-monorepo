@@ -104,6 +104,15 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 </div>
 
 
+<%--#####  show note on release policy  ###########################--%>
+   <c:choose>
+    <c:when test="${attrs['release_policy'].value  != null}">
+    <b>NOTE: ${attrs['release_policy'].value }</b>
+    </c:when>
+  </c:choose>
+
+
+
 
 <c:set var="append" value="" />
 
