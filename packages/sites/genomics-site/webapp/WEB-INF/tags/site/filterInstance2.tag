@@ -137,7 +137,7 @@ Here we 'undo' that process.
 
         <div class="instance-detail" style="display: none;">
             <div class="display">${instance.displayName}</div>
-         <!--   <div class="description">${instance.description}</div> -->
+              <div class="description">${instance.description}</div> 
         </div>
     </div>
 </div>
