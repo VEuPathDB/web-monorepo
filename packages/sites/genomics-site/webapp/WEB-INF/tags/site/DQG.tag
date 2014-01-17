@@ -60,10 +60,9 @@
 	</tr>
 	</table>
 
-	<br>
+	<br> 
 	</p>
 
-<hr>
 
 </c:when>
 <c:otherwise>
