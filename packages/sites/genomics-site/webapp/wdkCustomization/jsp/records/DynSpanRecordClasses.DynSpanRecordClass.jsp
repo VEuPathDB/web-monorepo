@@ -126,10 +126,20 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 
 <c:if test="${wdkModel.displayName ne 'PiroplasmaDB'}">
 
+    <c:if test="${attrs['length'].value <= 10000}">
+
 	<imp:wdkTable tblName="SNPs" isOpen="false"
                  attribution=""/>
 
 	<br>
+    </c:if>
+    <c:if test="${attrs['length'].value > 10000}">
+       <p> <b>SNPs </b> not shown for regions above 10 KB</p>
+
+	<br>
+    </c:if>
+
+
 	<imp:wdkTable tblName="SageTags" isOpen="false"
                  attribution=""/>
 
