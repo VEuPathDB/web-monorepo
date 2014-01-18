@@ -811,6 +811,13 @@ sub rumIntronTitleUnified {
   my @sonrs_arr    = split /\|/, $sonrs;
   my @notCan_arr   = split /\|/, $notCans;
 
+  my $note = "The overall score is the sum of the short and long overlap unique reads from all samples.";
+  my @data;
+  push @data, [ 'Location:'  => "$start - $stop"];
+  push @data, [ 'Score'     => $sum ];
+  push @data, [ 'Note'     => $note ];
+
+
   my $count = 0;
   my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th><th>Long Unique</th><th>Short Unique</th><th>Long Non-Unique</th><th>Short Non-Unique</th><th>Canonical</th></tr>";
   foreach my $exp (@exp_arr) {
@@ -850,12 +857,9 @@ sub rumIntronTitleUnified {
      $count++;
   }
   $html .= "</table>";
-  my $note = "The overall score is the sum of the short and long overlap unique reads from all samples.";
-  my @data;
   push @data, [ '' => $html ];
-  push @data, [ 'Location:'  => "$start - $stop"];
-  push @data, [ 'Score'     => $sum ];
-  push @data, [ 'Note'     => $note ];
+
+
 #  hover('Unified Splice Site Junctions - RNASeq', \@data);
   hover($f, \@data); 
 }
