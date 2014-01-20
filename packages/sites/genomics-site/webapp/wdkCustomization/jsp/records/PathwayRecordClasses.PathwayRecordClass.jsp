@@ -4,6 +4,18 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 
+    <!-- needed for CYTOSCAPE start -->
+    <!-- JSON support for IE (needed to use JS API) -->
+	<script type="text/javascript" src="/js/json2.min.js"></script>
+        
+     <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
+     <script type="text/javascript" src="/js/AC_OETags.min.js"></script>
+        
+     <!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
+     <script type="text/javascript" src="/js/cytoscapeweb.min.js"></script>
+        
+     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script> 
+    <!-- needed for CYTOSCAPE end -->
 
 <%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
@@ -66,6 +78,270 @@
 --%>
 <iframe  src="<c:url value='/pathway-dynamic-view.jsp?model=${projectId}&pathway=${id}' />"  width=100% height=800 align=middle>
 </iframe> 
+
+<!-- CYTOSCAPE start-->
+     <script type="text/javascript">
+     window.onload=function() {
+	 // id of Cytoscape Web container div
+	 var div_id = "cytoscapeweb";
+           
+	 // initialization options
+	 var options = {
+	     // where you have the Cytoscape Web SWF
+	     swfPath: "/swf/CytoscapeWeb",
+	     // where you have the Flash installer SWF
+	     flashInstallerPath: "/swf/playerProductInstall"
+	 };
+                
+	 // init and draw
+	 var vis = new org.cytoscapeweb.Visualization(div_id, options);
+
+	 // callback when Cytoscape Web has finished drawing
+	 vis.ready(function() {
+		 // listener for when nodes and edges are clicked
+		 vis.addListener("click", "nodes", function(event) {
+			 // try "mouseover" OR "click"
+			 handle_click(event);
+		     });
+                    
+		 function handle_click(event) {
+		     var target = event.target;                         
+		     clear();
+
+		     var type = "";
+		     var name = "";
+		     for (var i in target.data) {
+			 var variable_name = i;
+			 var variable_value = target.data[i];
+			 if(variable_name == "Type") {
+			     type = variable_value;
+			 }
+		     }
+
+		     for (var i in target.data) {
+			 var variable_name = i;
+			 var variable_value = target.data[i];
+			 
+			 if(type == "enzyme") {
+			     if(variable_name == "label") {
+				 print ("Enzyme " + variable_value);
+
+				 print("<a href='http://plasmodb.org/plasmo/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&questionSubmit=Get+Answer&array%28ec_number_pattern%29=" + variable_value + "'>Genes in PlasmoDB</a>");
+			     }
+			     if(variable_name == "Description") {
+				 print(variable_value);
+			     }
+			     if(variable_name == "Organisms"  && variable_value) {
+				 print(variable_value);
+			     }
+			 }
+			 
+			 if(type == "compound") {
+			     if(variable_name == "label") {
+				 print ("Compound " + variable_value);
+				 print ("<a href='http://www.genome.jp/dbget-bin/www_bget?" + variable_value + "'>View in KEGG</a>");
+			     }
+			     if(variable_name == "CID") {
+				 print("<a href='http://plasmodb.org/plasmo/showRecord.do?name=CompoundRecordClasses.CompoundRecordClass&project_id=PlasmoDB&source_id=CID:" + variable_value + "'>View in PlasmoDB</a>");
+				 print("<a href='http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=" + variable_value + "'>View on NCBI</a>");
+				 print("<img src='http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&cid=" + variable_value + "'>");
+			     }
+			 }
+
+			 if(type == "map") {
+			     if(variable_name == "Description") {
+			     print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + variable_value + "'>View in KEGG</a>");
+			     }
+			 }
+			 
+		     }
+		 }
+                    
+		 function clear() {
+		     document.getElementById("note").innerHTML = "";
+		 }
+		 
+		 function print(msg) {
+		     document.getElementById("note").innerHTML += msg + "<br /><br />";
+		 }
+
+		 // customTooltip function
+		 vis["customTooltip"] = function (data) {
+		     //  var value = Math.round(100 * data["weight"]) + "%";
+		     var value = data["label"];
+		     if (data["Description"]) {
+			 value  = value +  ": " + data["Description"] ;
+		     }
+		     if (data["Organisms"]) {
+			 value  = value + "\nOrganisms: " + data["Organisms"];
+		     }
+		     return (value);
+		 };
+
+		 // customBorder function : if node has Organisms, then border should be a different color
+		 vis["customBorder"] = function (data) {
+		     var value = data["label"];
+		     if (data["Organisms"]) {
+			 value  = "#FF0000";
+		     } else {
+		       value = "#000000";
+		     }		       	     
+		     return (value);
+		 };
+
+		 var colorMapper = {
+		     attrName: "Type",
+		     entries: [ { attrValue: "map", value: "#ccffff" },
+		                { attrValue: "enzyme", value: "#ffffcc" },
+		                { attrValue: "compound", value: "#0000ff" } ]
+		 };
+		 
+		 var shapeMapper = {
+		     attrName: "Type",
+		     entries: [ { attrValue: "map", value: "ROUNDRECT" },
+		                { attrValue: "enzyme", value: "SQUARE" },
+		                { attrValue: "compound", value: "CIRCLE" } ]
+		 };
+
+		 var sizeMapper = {
+		     attrName: "Type",
+		     entries: [ { attrValue: "map", value: 350 }]
+		 };
+
+		 var widthMapper = {
+		     attrName: "Type",
+		     entries: [ { attrValue: "map", value: 300 },
+		                { attrValue: "enzyme", value: 50 },
+		                { attrValue: "compound", value: 15 } ]
+		 };
+
+		 var heightMapper = {
+		     attrName: "Type",
+		     entries: [{ attrValue: "map", value: 20 },
+		                { attrValue: "enzyme", value: 20 },
+		                { attrValue: "compound", value: 15 } ]
+		 };
+
+		 var labelPosition = {
+		     attrName: "Type",
+		     entries: [{attrValue: "compound", value: 'right' } ]
+		 };
+
+		 var labelSize = {
+		     attrName: "Type",
+		     entries: [{ attrValue: "compound", value: 0 } ],
+		 };
+
+
+var style = {
+        nodes: {
+  	  color: { discreteMapper: colorMapper }, 
+  	  shape: { discreteMapper: shapeMapper }, 
+  	  width : { discreteMapper: widthMapper }, 
+  	  height : { discreteMapper: heightMapper }, 
+	  borderColor : { customMapper: { functionName:  "customBorder" } }, 
+          borderWidth : 1,
+	  tooltipText : {customMapper:  { functionName: "customTooltip" } },
+	  labelFontSize : { discreteMapper: labelSize },
+        },
+        edges: {
+  	  color :"#000000", width: 1
+	}
+};
+
+     vis.nodeTooltipsEnabled(true);
+     vis.visualStyle(style);
+
+
+ document.getElementById("expt").onchange = function(){
+     // use bypass to hide labelling of EC num that have heatmap graphs
+    var nodes = vis.nodes();  
+     for (var i in nodes) {
+	 var n = nodes[i];
+
+    //  for enzymes
+	 var ecNum = "";
+	 for (var j in n.data) {
+             var type = "";
+	     var variable_name = j;
+	     var variable_value = n.data[j];
+	     if(variable_name == "label") {
+		 ecNum = variable_value;
+	     }
+     var regex = /^[0-9]*\-*\.[0-9]*\-*\.[0-9]*\-*\.[0-9]*\-*/;
+       if (ecNum.match(regex)) {
+             if (expt.value == "WbcGametocytes" ){ 
+                var link = '/cgi-bin/dataPlotter.pl?type=WbcGametocytes::Ver2&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Winzeler_WBCGametocyte_RSRC&fmt=png&vp=rma&h=20&w=50&idType=ec&compact=1&id=' + ecNum ;
+         style.nodes[n.data.id] = {image:  link,  label: ""}
+           } else if (expt.value == "Derisi_HB3_TimeSeries" ) {
+                var link = '/cgi-bin/dataPlotter.pl?type=DeRisi::Combined&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Derisi_HB3_TimeSeries_RSRC&fmt=png&vp=expr_val_HB3&compact=1&w=50&h=20&idType=ec&id=' + ecNum ;
+         style.nodes[n.data.id] = {image:  link,  label: ""}
+           } else {
+                var link = "";
+         style.nodes[n.data.id] = {image:  link}
+          }
+
+       }
+     }
+  }
+   vis.nodeTooltipsEnabled(true);
+   vis.visualStyleBypass(style);
+   };
+
+  // set the style programmatically
+   document.getElementById("color").onclick = function(){
+      vis.visualStyleBypass(style);
+   };
+     
+     // end ready
+});
+
+	 $.ajax({
+                 url: "/cytoscape/${id}.xgmml",
+		     dataType: "text",
+		     success: function(data){
+		     vis.draw(options);
+		      vis.draw({ network: data , layout: 'Preset',
+		     		 });
+		   },
+		  error: function(){
+		  alert("Error loading file");
+		  }
+	     });
+     };
+
+</script>        
+    <style>
+            /* The Cytoscape Web container must have its dimensions set. */
+            html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
+            #cytoscapeweb { width: 100%; height: 100%; }
+            .link { text-decoration: underline; color: #0b94b1; cursor: pointer; }
+        </style>
+    </head>
+    
+        <div id="note" style="z-index:1000;margin-left:18px;position:absolute;margin-top: 18px;background-color:white;border:1px solid black; border-radius:5px;">
+            <p>Click on nodes or edges.</p>
+        </div>
+
+        <div id="cytoscapeweb">
+            Cytoscape Web will replace the contents of this div with your graph.
+        </div>
+
+<BR>
+  <form name = "expts"><B>Experiments</B><BR>
+  <select id ="expt"  >
+ <option></option>
+ <option value="WbcGametocytes">Winzeler Gametocytes</option>
+ <option value="Derisi_HB3_TimeSeries">Derisi HB3 Time Series</option>
+</select>
+  </form>
+        </div>
+<BR>
+<!-- CYTOSCAPE end-->
+
+
+
+
 
 <%-- Reaction Table ------------------------------------------------%>
   <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true"/>
