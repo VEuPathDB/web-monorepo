@@ -162,8 +162,8 @@ Although regular expressions seem complicated at first, they are very useful and
 <font color=FF0000>but not match :</font>
 <ul class="cirbulletlist">
 <li>edefa
-<li>eeeedef
-<li>defaredfadfk
+<li>emdefa
+<li>eeeemdef
 </ul>
 
 <br><br>
