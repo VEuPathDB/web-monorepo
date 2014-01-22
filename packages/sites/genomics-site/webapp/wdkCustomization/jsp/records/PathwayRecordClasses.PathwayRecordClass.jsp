@@ -141,11 +141,14 @@
 				 print ("Compound " + variable_value);
 				 print ("<a href='http://www.genome.jp/dbget-bin/www_bget?" + variable_value + "'>View in KEGG</a>");
 			     }
-			     if(variable_name == "CID") {
+			     if(variable_name == "CID" && variable_value) {
 				 print("<a href='http://plasmodb.org/plasmo/showRecord.do?name=CompoundRecordClasses.CompoundRecordClass&project_id=PlasmoDB&source_id=CID:" + variable_value + "'>View in PlasmoDB</a>");
-				 print("<a href='http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=" + variable_value + "'>View on NCBI</a>");
-				 print("<img src='http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&cid=" + variable_value + "'>");
 			     }
+			     if(variable_name == "SID" && variable_value) {
+				 print("<a href='http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=" + variable_value + "'>View on NCBI</a>");
+				 print("<img src='http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&sid=" + variable_value + "'>");
+			     }
+
 			 }
 
 			 if(type == "map") {
