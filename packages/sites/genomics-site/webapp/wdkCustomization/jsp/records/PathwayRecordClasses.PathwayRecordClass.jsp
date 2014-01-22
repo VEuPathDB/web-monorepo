@@ -324,7 +324,8 @@ var style = {
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
  <style>
-#draggable { background-color:white;border:1px solid black; border-radius:5px; width: 400px; padding: 0.5em; }
+#draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 18px; background-color:white;border:1px solid black; border-radius:5px; width: 400px; padding: 0.5em; }
+#cytoscapeweb { border:1px solid black; border-radius:5px;  }
 </style>
 <script>
 $(function() {
