@@ -75,10 +75,10 @@
 <imp:pathwayMap projectId="${projectId}" pathway="${id}" />
 </div>
 <br>
---%>
+
 <iframe  src="<c:url value='/pathway-dynamic-view.jsp?model=${projectId}&pathway=${id}' />"  width=100% height=800 align=middle>
 </iframe> 
-
+--%>
 <!-- CYTOSCAPE start-->
      <script type="text/javascript">
      window.onload=function() {
@@ -158,11 +158,11 @@
 		 }
                     
 		 function clear() {
-		     document.getElementById("note").innerHTML = "";
+		     document.getElementById("draggable").innerHTML = "";
 		 }
 		 
 		 function print(msg) {
-		     document.getElementById("note").innerHTML += msg + "<br /><br />";
+		     document.getElementById("draggable").innerHTML += msg + "<br /><br />";
 		 }
 
 		 // customTooltip function
@@ -317,12 +317,27 @@ var style = {
             #cytoscapeweb { width: 100%; height: 100%; }
             .link { text-decoration: underline; color: #0b94b1; cursor: pointer; }
         </style>
-    </head>
-    
-        <div id="note" style="z-index:1000;margin-left:18px;position:absolute;margin-top: 18px;background-color:white;border:1px solid black; border-radius:5px;">
-            <p>Click on nodes or edges.</p>
-        </div>
 
+
+ <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+ <style>
+#draggable { background-color:white;border:1px solid black; border-radius:5px; width: 400px; padding: 0.5em; }
+</style>
+<script>
+$(function() {
+$( "#draggable" ).draggable();
+});
+</script>
+
+    </head>
+
+
+        <div id="draggable" style="">
+            <p>Click on nodes or edges for more info.  You can drag this box around to if the image is too large.</p>
+        </div>
         <div id="cytoscapeweb">
             Cytoscape Web will replace the contents of this div with your graph.
         </div>
