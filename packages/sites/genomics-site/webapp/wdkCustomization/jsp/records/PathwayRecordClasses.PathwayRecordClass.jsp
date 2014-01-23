@@ -97,6 +97,7 @@
                 
 	 // init and draw
 	 var vis = new org.cytoscapeweb.Visualization(div_id, options);
+         var presetLayout;
 
 	 // callback when Cytoscape Web has finished drawing
 	 vis.ready(function() {
@@ -291,11 +292,30 @@ var style = {
    vis.visualStyleBypass(style);
    };
 
+
+ document.getElementById("layout").onchange = function(){
+      var current = vis.layout();
+      if(current.name == "Preset") {
+         presetLayout = current;
+      }
+
+      if(layout.value == "Preset") {
+          vis.layout(presetLayout);
+      }
+      else {
+        vis.layout(layout.value);
+     }    
+    };
+
+
+
   // set the style programmatically
    document.getElementById("color").onclick = function(){
       vis.visualStyleBypass(style);
    };
      
+
+
      // end ready
 });
 
@@ -321,11 +341,9 @@ var style = {
             .link { text-decoration: underline; color: #0b94b1; cursor: pointer; }
         </style>
 
-
  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-
  <style>
 #draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 18px; background-color:white;border:1px solid black; border-radius:5px; width: 300px; padding: 0.5em; }
 #cytoscapeweb { border:1px solid black; border-radius:5px;  }
@@ -336,37 +354,46 @@ $( "#draggable" ).draggable();
 });
 </script>
 
-    </head>
-
-
   <form name = "expts"><B>Choose an Experiment to Paint onto the Map</B><BR>
   <select id ="expt"  >
 
- <option value="">Default</option>
+ <option value="">*** None ***</option>
 <c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
 
 <c:forEach var="row" items="${pathwayGraphs}">
  <option value="${row['internal'].value}">${row['display_name'].value}</option>
 </c:forEach>
 
-<%--
- <option value="type=WbcGametocytes::Ver2&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Winzeler_WBCGametocyte_RSRC&vp=rma">Winzeler Gametocytes</option>
- <option value="type=DeRisi::Combined&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Derisi_HB3_TimeSeries_RSRC&vp=expr_val_HB3">Derisi HB3 Time Series</option>
---%>
+</select>
+  </form>
+
+  <form name = "layouts"><B>Choose a Alternative Layout</B><BR>
+  <select id ="layout"  >
+ <option value="Preset">Kegg</option>
+ <option value="ForceDirected">ForceDirected</option>
+ <option value="Tree">Tree</option>
+ <option value="Circle">Circle</option>
+ <option value="Radial">Radial</option>
 
 </select>
   </form>
 
 
+
         <div id="draggable" style="">
             <p>Click on nodes or edges for more info.  We have highlighed enzyme nodes in <font color="red">red</font> where we have mappped the EC Number to at least one Gene ID.   You can drag this box around to if the image is too large.</p>
 <br />
-
         </div>
+
+
+
+
         <div id="cytoscapeweb">
             Cytoscape Web will replace the contents of this div with your graph.
         </div>
 
+<br />
+<br />
 <br />
 
 <!-- CYTOSCAPE end-->
