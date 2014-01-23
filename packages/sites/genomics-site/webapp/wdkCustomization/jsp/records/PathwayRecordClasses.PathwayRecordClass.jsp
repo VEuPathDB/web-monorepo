@@ -108,7 +108,6 @@
 		 function handle_click(event) {
 		     var target = event.target;                         
 		     clear();
-
 		     var type = target.data["Type"];
 
                       if(type == "enzyme") {
@@ -126,6 +125,11 @@
                               print("");
                               print("<a href='/a/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&questionSubmit=Get+Answer&array%28ec_number_pattern%29=" + target.data["label"] + "'>Search for Gene(s) By EC Number</a>");
                               print("");
+
+                              if(target.data.image) {
+                                     var link =  target.data.image + '&fmt=png&h=250&w=300' ;
+                                     print("<img src='" + link + "'>");
+                              }
                               }
                        } 
 			 
@@ -166,9 +170,9 @@
 		     if (data["Description"]) {
 			 value  = value +  ": " + data["Description"] ;
 		     }
-		     if (data["Organisms"]) {
-			 value  = value + "\nOrganisms: " + data["Organisms"];
-		     }
+		     //if (data["Organisms"]) {
+			 //value  = value + "\nOrganisms: " + data["Organisms"];
+		     //}
 		     return (value);
 		 };
 
@@ -243,6 +247,10 @@ var style = {
 	}
 };
 
+     // I need a node attribute to store the image
+     var field = { name: "image", type: "string", defValue: "" };
+     vis.addDataField("nodes", field);
+
      vis.nodeTooltipsEnabled(true);
      vis.visualStyle(style);
 
@@ -250,34 +258,29 @@ var style = {
  document.getElementById("expt").onchange = function(){
      // use bypass to hide labelling of EC num that have heatmap graphs
     var nodes = vis.nodes();  
+
      for (var i in nodes) {
 	 var n = nodes[i];
 
-    //  for enzymes
-	 var ecNum = "";
-	 for (var j in n.data) {
-             var type = "";
-	     var variable_name = j;
-	     var variable_value = n.data[j];
-	     if(variable_name == "label") {
-		 ecNum = variable_value;
-	     }
-     var regex = /^[0-9]*\-*\.[0-9]*\-*\.[0-9]*\-*\.[0-9]*\-*/;
-       if (ecNum.match(regex)) {
-             if (expt.value == "WbcGametocytes" ){ 
-                var link = '/cgi-bin/dataPlotter.pl?type=WbcGametocytes::Ver2&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Winzeler_WBCGametocyte_RSRC&fmt=png&vp=rma&h=20&w=50&idType=ec&compact=1&id=' + ecNum ;
-         style.nodes[n.data.id] = {image:  link,  label: ""}
-           } else if (expt.value == "Derisi_HB3_TimeSeries" ) {
-                var link = '/cgi-bin/dataPlotter.pl?type=DeRisi::Combined&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Derisi_HB3_TimeSeries_RSRC&fmt=png&vp=expr_val_HB3&compact=1&w=50&h=20&idType=ec&id=' + ecNum ;
-         style.nodes[n.data.id] = {image:  link,  label: ""}
-           } else {
-                var link = "";
-         style.nodes[n.data.id] = {image:  link}
-          }
+         var type =  n.data.Type;
 
-       }
+         if(type == ("enzyme") && n.data.Organisms) {
+           var ecNum = n.data.label;
+
+           if(expt.value) {
+               var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + expt.value + '&id=' + ecNum;
+                var link =  linkPrefix + '&fmt=png&h=20&w=50&compact=1' ;
+
+               style.nodes[n.data.id] = {image:  link,  label: ""}
+               n.data.image = linkPrefix;
+           } else {
+               style.nodes[n.data.id] = {image:  ""};
+               n.data.image = "";
+          }
+        vis.updateData([n]);
      }
   }
+
    vis.nodeTooltipsEnabled(true);
    vis.visualStyleBypass(style);
    };
@@ -333,8 +336,8 @@ $( "#draggable" ).draggable();
   <form name = "expts"><B>Choose an Experiment to Paint onto the Map</B><BR>
   <select id ="expt"  >
  <option></option>
- <option value="WbcGametocytes">Winzeler Gametocytes</option>
- <option value="Derisi_HB3_TimeSeries">Derisi HB3 Time Series</option>
+ <option value="type=WbcGametocytes::Ver2&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Winzeler_WBCGametocyte_RSRC&vp=rma">Winzeler Gametocytes</option>
+ <option value="type=DeRisi::Combined&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Derisi_HB3_TimeSeries_RSRC&vp=expr_val_HB3">Derisi HB3 Time Series</option>
 </select>
   </form>
 
