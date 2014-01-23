@@ -98,6 +98,7 @@
 
 	 // callback when Cytoscape Web has finished drawing
 	 vis.ready(function() {
+
 		 // listener for when nodes and edges are clicked
 		 vis.addListener("click", "nodes", function(event) {
 			 // try "mouseover" OR "click"
@@ -108,56 +109,46 @@
 		     var target = event.target;                         
 		     clear();
 
-		     var type = "";
-		     var name = "";
-		     for (var i in target.data) {
-			 var variable_name = i;
-			 var variable_value = target.data[i];
-			 if(variable_name == "Type") {
-			     type = variable_value;
-			 }
-		     }
+		     var type = target.data["Type"];
 
-		     for (var i in target.data) {
-			 var variable_name = i;
-			 var variable_value = target.data[i];
-			 
-			 if(type == "enzyme") {
-			     if(variable_name == "label") {
-				 print ("Enzyme " + variable_value);
+                      if(type == "enzyme") {
+				 print ("<b>EC Number:  </b> " + target.data["label"]);
+                                 print("");
+				 print("<b>Enzyme Name:  </b>" + target.data["Description"]);
+                                 print("");
 
-				 print("<a href='http://plasmodb.org/plasmo/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&questionSubmit=Get+Answer&array%28ec_number_pattern%29=" + variable_value + "'>Genes in PlasmoDB</a>");
-			     }
-			     if(variable_name == "Description") {
-				 print(variable_value);
-			     }
-			     if(variable_name == "Organisms"  && variable_value) {
-				 print(variable_value);
-			     }
-			 }
+                               if(target.data["Organisms"]) {
+                               var orgs =  target.data["Organisms"].split(",");
+                               print("<b>Organism(s): </b>");
+                               for(var i in orgs) {
+  				 print("&nbsp;&nbsp;" + orgs[i]);        
+                              }
+                              print("");
+                              print("<a href='/a/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&questionSubmit=Get+Answer&array%28ec_number_pattern%29=" + target.data["label"] + "'>Search for Gene(s) By EC Number</a>");
+                              print("");
+                              }
+                       } 
 			 
 			 if(type == "compound") {
-			     if(variable_name == "label") {
-				 print ("Compound " + variable_value);
-				 print ("<a href='http://www.genome.jp/dbget-bin/www_bget?" + variable_value + "'>View in KEGG</a>");
+                                 print("<b>Compound:</b>  " + target.data["label"]);
+				 print ("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["label"] + "'>View in KEGG</a>");
+
+			     if(target.data["CID"]) {
+				 print("<a href='/a/showRecord.do?name=CompoundRecordClasses.CompoundRecordClass&project_id=PlasmoDB&source_id=CID:" + target.data["CID"] + "'>View in PlasmoDB</a>");
 			     }
-			     if(variable_name == "CID" && variable_value) {
-				 print("<a href='http://plasmodb.org/plasmo/showRecord.do?name=CompoundRecordClasses.CompoundRecordClass&project_id=PlasmoDB&source_id=CID:" + variable_value + "'>View in PlasmoDB</a>");
-			     }
-			     if(variable_name == "SID" && variable_value) {
-				 print("<a href='http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=" + variable_value + "'>View on NCBI</a>");
-				 print("<img src='http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&sid=" + variable_value + "'>");
+			     if(target.data["SID"]) {
+				 print("<a href='http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=" + target.data["SID"] + "'>View on NCBI</a>");
+				 print("<img src='http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&sid=" + target.data["SID"] + "'>");
 			     }
 
 			 }
 
 			 if(type == "map") {
-			     if(variable_name == "Description") {
-			     print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + variable_value + "'>View in KEGG</a>");
-			     }
+
+			     print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&project_id=PlasmoDB&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
+                             print("");
+			     print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["Description"] + "'>View in KEGG</a>");
 			 }
-			 
-		     }
 		 }
                     
 		 function clear() {
@@ -165,7 +156,7 @@
 		 }
 		 
 		 function print(msg) {
-		     document.getElementById("draggable").innerHTML += msg + "<br /><br />";
+		     document.getElementById("draggable").innerHTML += msg + "<br />";
 		 }
 
 		 // customTooltip function
@@ -327,7 +318,7 @@ var style = {
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
  <style>
-#draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 18px; background-color:white;border:1px solid black; border-radius:5px; width: 400px; padding: 0.5em; }
+#draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 18px; background-color:white;border:1px solid black; border-radius:5px; width: 300px; padding: 0.5em; }
 #cytoscapeweb { border:1px solid black; border-radius:5px;  }
 </style>
 <script>
@@ -339,26 +330,27 @@ $( "#draggable" ).draggable();
     </head>
 
 
-        <div id="draggable" style="">
-            <p>Click on nodes or edges for more info.  You can drag this box around to if the image is too large.</p>
-        </div>
-        <div id="cytoscapeweb">
-            Cytoscape Web will replace the contents of this div with your graph.
-        </div>
-
-<BR>
-  <form name = "expts"><B>Experiments</B><BR>
+  <form name = "expts"><B>Choose an Experiment to Paint onto the Map</B><BR>
   <select id ="expt"  >
  <option></option>
  <option value="WbcGametocytes">Winzeler Gametocytes</option>
  <option value="Derisi_HB3_TimeSeries">Derisi HB3 Time Series</option>
 </select>
   </form>
+
+
+        <div id="draggable" style="">
+            <p>Click on nodes or edges for more info.  We have highlighed enzyme nodes in <font color="red">red</font> where we have mappped the EC Number to at least one Gene ID.   You can drag this box around to if the image is too large.</p>
+<br />
+
         </div>
-<BR>
+        <div id="cytoscapeweb">
+            Cytoscape Web will replace the contents of this div with your graph.
+        </div>
+
+<br />
+
 <!-- CYTOSCAPE end-->
-
-
 
 
 
