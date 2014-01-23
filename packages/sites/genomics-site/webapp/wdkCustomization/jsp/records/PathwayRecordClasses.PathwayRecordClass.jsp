@@ -79,6 +79,8 @@
 <iframe  src="<c:url value='/pathway-dynamic-view.jsp?model=${projectId}&pathway=${id}' />"  width=100% height=800 align=middle>
 </iframe> 
 --%>
+
+
 <!-- CYTOSCAPE start-->
      <script type="text/javascript">
      window.onload=function() {
@@ -119,7 +121,7 @@
                                if(target.data["Organisms"]) {
                                var orgs =  target.data["Organisms"].split(",");
                                print("<b>Organism(s): </b>");
-                               for(var i in orgs) {
+                               for(var i in orgs.sort()) {
   				 print("&nbsp;&nbsp;" + orgs[i]);        
                               }
                               print("");
@@ -339,9 +341,19 @@ $( "#draggable" ).draggable();
 
   <form name = "expts"><B>Choose an Experiment to Paint onto the Map</B><BR>
   <select id ="expt"  >
- <option></option>
+
+ <option value="">Default</option>
+<c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
+
+<c:forEach var="row" items="${pathwayGraphs}">
+ <option value="${row['internal'].value}">${row['display_name'].value}</option>
+</c:forEach>
+
+<%--
  <option value="type=WbcGametocytes::Ver2&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Winzeler_WBCGametocyte_RSRC&vp=rma">Winzeler Gametocytes</option>
  <option value="type=DeRisi::Combined&project_id=PlasmoDB&dataset=pfal3D7_microarrayExpression_Derisi_HB3_TimeSeries_RSRC&vp=expr_val_HB3">Derisi HB3 Time Series</option>
+--%>
+
 </select>
   </form>
 
