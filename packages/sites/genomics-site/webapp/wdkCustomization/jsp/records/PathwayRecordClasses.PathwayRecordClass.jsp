@@ -134,7 +134,11 @@
                        } 
 			 
 			 if(type == "compound") {
-                                 print("<b>Compound:</b>  " + target.data["label"]);
+                                 print("<b>Compound ID:</b>  " + target.data["label"] + "<br />");
+
+                                 if(target.data.Description) {
+                                 print("<b>Name:</b>  " + target.data["Description"] + "<br />");
+                                 }
 				 print ("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["label"] + "'>View in KEGG</a>");
 
 			     if(target.data["CID"]) {
