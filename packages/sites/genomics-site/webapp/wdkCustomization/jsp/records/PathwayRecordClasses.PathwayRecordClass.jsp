@@ -209,13 +209,12 @@
 
 		 var sizeMapper = {
 		     attrName: "Type",
-		     entries: [ { attrValue: "map", value: 350 }]
+		     entries: [ { attrValue: "map", value: 'auto' }]
 		 };
 
 		 var widthMapper = {
 		     attrName: "Type",
-		     entries: [ { attrValue: "map", value: 300 },
-		                { attrValue: "enzyme", value: 50 },
+		     entries: [ { attrValue: "enzyme", value: 50 },
 		                { attrValue: "compound", value: 15 } ]
 		 };
 
@@ -242,6 +241,7 @@ var style = {
   	  color: { discreteMapper: colorMapper }, 
   	  shape: { discreteMapper: shapeMapper }, 
   	  width : { discreteMapper: widthMapper }, 
+  	  size : { discreteMapper: sizeMapper }, 
   	  height : { discreteMapper: heightMapper }, 
 	  borderColor : { customMapper: { functionName:  "customBorder" } }, 
           borderWidth : 1,
