@@ -15,6 +15,9 @@
      <script type="text/javascript" src="/js/cytoscapeweb.min.js"></script>
         
      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script> 
+
+
+
     <!-- needed for CYTOSCAPE end -->
 
 <%/* get wdkRecord from proper scope */%>
@@ -261,8 +264,7 @@ var style = {
      vis.nodeTooltipsEnabled(true);
      vis.visualStyle(style);
 
-
- document.getElementById("expt").onchange = function(){
+   changeExperiment = function(val) {
      // use bypass to hide labelling of EC num that have heatmap graphs
     var nodes = vis.nodes();  
 
@@ -274,8 +276,8 @@ var style = {
          if(type == ("enzyme") && n.data.Organisms) {
            var ecNum = n.data.label;
 
-           if(expt.value) {
-               var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + expt.value + '&id=' + ecNum;
+           if(val) {
+               var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
                 var link =  linkPrefix + '&fmt=png&h=20&w=50&compact=1' ;
 
                style.nodes[n.data.id] = {image:  link,  label: ""}
@@ -292,32 +294,33 @@ var style = {
    vis.visualStyleBypass(style);
    };
 
-
- document.getElementById("layout").onchange = function(){
+   changeLayout = function(val) {
       var current = vis.layout();
       if(current.name == "Preset") {
          presetLayout = current;
       }
 
-      if(layout.value == "Preset") {
+      if(val == "Preset") {
           vis.layout(presetLayout);
       }
       else {
-        vis.layout(layout.value);
+        vis.layout(val);
      }    
-    };
 
+  };
 
 
   // set the style programmatically
    document.getElementById("color").onclick = function(){
       vis.visualStyleBypass(style);
    };
-     
 
 
      // end ready
 });
+
+
+
 
 	 $.ajax({
                  url: "/cytoscape/${id}.xgmml",
@@ -341,11 +344,18 @@ var style = {
             .link { text-decoration: underline; color: #0b94b1; cursor: pointer; }
         </style>
 
+
+     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js" type="text/javascript"></script>
+      <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/jsddm/jsddm.css"/>
+      <script type="text/javascript" src="${pageContext.request.contextPath}/wdkCustomization/js/lib/jsddm.js"><jsp:text/></script>
+
+
+
  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
  <style>
-#draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 18px; background-color:white;border:1px solid black; border-radius:5px; width: 300px; padding: 0.5em; }
+#draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 400px; background-color:white;border:1px solid black; border-radius:5px; width: 300px; padding: 0.5em; }
 #cytoscapeweb { border:1px solid black; border-radius:5px;  }
 </style>
 <script>
@@ -353,30 +363,6 @@ $(function() {
 $( "#draggable" ).draggable();
 });
 </script>
-
-  <form name = "expts"><B>Choose an Experiment to Paint onto the Map</B><BR>
-  <select id ="expt"  >
-
- <option value="">*** None ***</option>
-<c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
-
-<c:forEach var="row" items="${pathwayGraphs}">
- <option value="${row['internal'].value}">${row['display_name'].value}</option>
-</c:forEach>
-
-</select>
-  </form>
-
-  <form name = "layouts"><B>Choose a Alternative Layout</B><BR>
-  <select id ="layout"  >
- <option value="Preset">Kegg</option>
- <option value="ForceDirected">ForceDirected</option>
- <option value="Tree">Tree</option>
- <option value="Circle">Circle</option>
- <option value="Radial">Radial</option>
-
-</select>
-  </form>
 
 
 
@@ -386,7 +372,26 @@ $( "#draggable" ).draggable();
         </div>
 
 
-
+<ul id="jsddm">
+    <li><a href="javascript:void(0)">Layout</a>
+        <ul>
+            <li><a  href="javascript:void(0)" onclick="changeLayout('Preset')">Kegg</a></li>
+            <li><a  href="javascript:void(0)" onclick="changeLayout('ForceDirected')">ForceDirected</a></li>
+            <li><a href="javascript:void(0)" onclick="changeLayout('Tree')">Tree</a></li>
+            <li><a href="javascript:void(0)" onclick="changeLayout('Circle')">Circle</a></li>
+            <li><a href="javascript:void(0)" onclick="changeLayout('Radial')">Radial</a></li>
+        </ul>
+    </li>
+    <li><a href="#">Paint Expt.</a>
+        <ul>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('')">Default</a></li>
+<c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
+<c:forEach var="row" items="${pathwayGraphs}">
+            <li><a href="javascript:void(0)" onclick="changeExperiment('${row['internal'].value}')">${row['display_name'].value}</a></li>
+</c:forEach>
+        </ul>
+    </li>
+</ul>
 
         <div id="cytoscapeweb">
             Cytoscape Web will replace the contents of this div with your graph.
