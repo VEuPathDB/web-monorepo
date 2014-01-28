@@ -239,6 +239,13 @@
 		     entries: [{ attrValue: "compound", value: 0 } ],
 		 };
 
+		 // to not show arrowhead for a Reversible reaction
+		 var edgeArrow= {
+		     attrName: "direction",
+		     entries: [{ attrValue: "Reversible", value: "NONE" },
+		                   { attrValue: "Irreversible", value: "DELTA" }  ]
+		 };
+
 
 var style = {
         nodes: {
@@ -253,7 +260,8 @@ var style = {
 	  labelFontSize : { discreteMapper: labelSize },
         },
         edges: {
-  	  color :"#000000", width: 1
+  	  color :"#000000", width: 1, 
+  	  targetArrowShape:  { discreteMapper: edgeArrow  },
 	}
 };
 
