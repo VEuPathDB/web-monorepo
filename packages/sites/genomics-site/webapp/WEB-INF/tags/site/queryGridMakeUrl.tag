@@ -63,6 +63,25 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
+<%-- if we need to get all the organisms..
+<c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
+<c:set var="sqSet" value="${qSetMap['GenomicSequenceQuestions']}"/>
+<c:set var="sqMap" value="${sqSet.questionsMap}"/>
+<c:set var="seqByTaxonQuestion" value="${sqMap['SequencesByTaxon']}"/>
+<c:set var="stpMap" value="${seqByTaxonQuestion.paramsMap}"/>
+<c:catch var="orgParam_exception">
+	<c:set var="orgParam" value="${stpMap['organism']}"/>
+    <c:set var="listOrganisms" value="" />
+    <c:forEach items="${orgParam.vocabMap}" var="item">
+      <c:set var="term" value="${item.key}" />
+      <c:if test="${fn:length(listOrganisms) > 0}">
+        <c:set var="listOrganisms" value="${listOrganisms}," />
+      </c:if>
+      <c:set var="listOrganisms" value="${listOrganisms}${term}" />
+    </c:forEach>
+</c:catch>
+--%>
+
 <c:choose>
 <c:when test="${fn:containsIgnoreCase(modelName, 'eupath')    }">
 	<c:set var="API" value="true"     />
@@ -140,6 +159,11 @@
 </c:forEach>
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
+
+<%-- remove harcoded 
+<c:if test="${modelName eq 'HostDB'}">
+    <c:set var="organismName" value="Human, Mouse"/>
+</c:if>
 <c:if test="${modelName eq 'AmoebaDB'}">
     <c:set var="organismName" value="Entamoeba"/>
 </c:if>
@@ -167,6 +191,7 @@
 <c:if test="${modelName eq 'TriTrypDB'}">
         <c:set var="organismName" value="Kinetoplastid"/>
 </c:if>
+--%>
 
 <c:set var="popup" value="${wdkModel.questionSetsMap[qset].questionsMap[qname].summary}"/>
 
@@ -210,12 +235,7 @@ not clear we need icons on categories, ui-infra meet May 22, 2012
 <%-- LINK INACTIVE --%>
 <c:if test="${ empty wdkModel.questionSetsMap[qset].questionsMap[qname]}">
 
-<%--  do not think this is needed ....
-<c:if test="${API}">
-   <c:set var="modelName" value="EuPathDB"/>
-</c:if>
---%>
-     <c:set var="tooltip" value="This data type is not available for <i>${organismName}</i> (or is not yet in ${modelName})."/>
+     <c:set var="tooltip" value="This search type is not available yet in ${modelName}."/>  
      <td align="left"><a id="${qset}_${qname}_${type}" class="queryGridLink queryGridInactive" href='javascript:void(0);' title="${fn:escapeXml(tooltip)}">${linktext}</a></td>
 
 </c:if>
