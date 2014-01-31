@@ -139,31 +139,74 @@ Any subversion working directories in project_home that are not defined as depen
   </table>
 </div>
 
-<div id="svnswitch" style="padding-left:10px;">
-  <b>Subversion State Matching</b>
-  <p>
-    Use the following commands from within your $PROJECT_HOME to switch it to match this site.
-  </p>
-  <table class='p' border='1' cellspacing='0' cellpadding='5'>
-    <tr><td class='monospaced'>
-        <?php
-        foreach ($build as $p => $v) {
-          if ($trunc = strpos($p, '.svn.info')) {
-            $start = strpos($v, 'Revision: ') + strlen('Revision: ');
-            $end = strpos($v, 'Last Changed Rev: ') - $start;
-            $svnrevision = trim(substr($v, $start, $end));
-
-            $start = strpos($v, 'URL: ') + strlen('URL: ');
-            $end = strpos($v, 'Revision: ') - $start;
-            $svnbranch = trim(substr($v, $start, $end));
-
-            $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
-
-
-            print "svn switch -r$svnrevision $svnbranch $svnproject;<br>";
+<script>
+  $(function() { 
+    $( "#content_tabs" ).tabs(
+      {
+        select: function(event, ui) {
+          if (ui.index == 0) {
+            $( "#svn-state-txt" ).text('Use the following commands from within your $PROJECT_HOME to switch it to match this site.');
+          } else if (ui.index == 1) {
+            $( "#svn-state-txt" ).text('Use the following commands from within your $PROJECT_HOME to checkout code to match this site.');          
           }
         }
-        ?>
-      </td></tr>
+      }
+    );
+  });
+</script>
+<div id="svnswitch" style="padding-left:10px;">
+  <b>Subversion State Matching</b>
+  <p id='svn-state-txt'>
+    Use the following commands from within your $PROJECT_HOME to switch it to match this site.
+  </p>
+  <table class='p' border='1' cellspacing='0' cellpadding='0'>
+    <tr><td class='rowLight'>        
+        <div id="content_tabs">
+          <ul>
+            <li><a href="#tab-svn-switch">switch</a></li>
+            <li><a href="#tab-svn-checkout">checkout</a></li>
+          </ul>
+          <div id="tab-svn-switch">
+                <?php
+                foreach ($build as $p => $v) {
+                  if ($trunc = strpos($p, '.svn.info')) {
+                    $start = strpos($v, 'Revision: ') + strlen('Revision: ');
+                    $end = strpos($v, 'Last Changed Rev: ') - $start;
+                    $svnrevision = trim(substr($v, $start, $end));
+        
+                    $start = strpos($v, 'URL: ') + strlen('URL: ');
+                    $end = strpos($v, 'Revision: ') - $start;
+                    $svnbranch = trim(substr($v, $start, $end));
+        
+                    $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
+        
+        
+                    print "svn switch -r$svnrevision $svnbranch $svnproject;<br>";
+                  }
+                }
+                ?>
+          </div>
+          <div id="tab-svn-checkout">
+                <?php
+                foreach ($build as $p => $v) {
+                  if ($trunc = strpos($p, '.svn.info')) {
+                    $start = strpos($v, 'Revision: ') + strlen('Revision: ');
+                    $end = strpos($v, 'Last Changed Rev: ') - $start;
+                    $svnrevision = trim(substr($v, $start, $end));
+        
+                    $start = strpos($v, 'URL: ') + strlen('URL: ');
+                    $end = strpos($v, 'Revision: ') - $start;
+                    $svnbranch = trim(substr($v, $start, $end));
+        
+                    $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
+        
+        
+                    print "svn checkout -r$svnrevision $svnbranch $svnproject;<br>";
+                  }
+                }
+                ?>
+          </div>
+        </div>
+    </td></tr>
   </table>
 </div>
