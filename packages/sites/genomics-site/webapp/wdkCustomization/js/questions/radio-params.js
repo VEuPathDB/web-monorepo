@@ -10,6 +10,11 @@
       'go_wildcard'
     ],
 
+    'GeneQuestions.GenesByEcNumber': [
+      'ec_number_pattern',
+      'ec_wildcard'
+    ],
+
     'GeneQuestions.GenesByInterproDomain': [
       'domain_accession',
       'domain_wildcard'
