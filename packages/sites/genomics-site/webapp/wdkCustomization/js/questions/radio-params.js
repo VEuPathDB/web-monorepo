@@ -6,8 +6,8 @@
 
   var paramNames = {
     'GeneQuestions.GenesByGoTerm': [
-      'go_term',
-      'go_wildcard'
+      'go_typeahead',
+      'go_term'
     ],
 
     'GeneQuestions.GenesByEcNumber': [
@@ -16,8 +16,8 @@
     ],
 
     'GeneQuestions.GenesByInterproDomain': [
-      'domain_accession',
-      'domain_wildcard'
+      'domain_typeahead',
+      'domain_accession'
     ]
   };
 
@@ -32,7 +32,9 @@
 
         wildcardValue = wildcardWrapper.find('input[name="value(' + paramNames[name][1] + ')"]').val(),
 
-        nonsenseValue = 'nil',
+        nonsenseValue = 'N/A',
+
+        nonsenseValueR = /(nil|N\/A)/i;
 
         inlineSubmit = $form[0].onsubmit;
 
@@ -45,7 +47,7 @@
 
 
     // default term to be selected, unless wildcard has value
-    if (wildcardValue && wildcardValue !== nonsenseValue) {
+    if (wildcardValue && !nonsenseValueR.test(wildcardValue)) {
       wildcardWrapper.find('[name="active-param"]').prop('checked', true);
     } else {
       termWrapper.find('[name="active-param"]').prop('checked', true);
@@ -65,7 +67,7 @@
 
         setActive();
 
-        $(this).find('input:not(:radio)').focus();
+        $(this).find('input:not(:radio)').focus().select();
       })
 
       // attach submit handler
