@@ -142,7 +142,7 @@
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByMassSpec" linktext="Mass Spec. Evidence" existsOn="A Am C G P T Tr Tt"/>
                 </td></tr>
                 <tr><td>
-                    <imp:queryGridMakeUrl qset="InternalGeneDatasetQuestions" qname="GenesByQuantitativeProteomics" linktext="Quantitative Evidence" existsOn="A T Tr"/>
+                    <imp:queryGridMakeUrl qset="InternalGeneDatasetQuestions" qname="GenesByQuantitativeProteomics" linktext="Quantitative Evidence" existsOn="A T Tt"/>
                 </td></tr>
 
             </table>
