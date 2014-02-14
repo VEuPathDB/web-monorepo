@@ -88,7 +88,7 @@
     <style>
             /* The Cytoscape Web container must have its dimensions set. */
             html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
-            #cytoscapeweb { width: 100%; height: 100%; }
+            #cytoscapeweb { width: 100%; height: 100%; padding-bottom: 26px; }
             .link { text-decoration: underline; color: #0b94b1; cursor: pointer; }
         </style>
 

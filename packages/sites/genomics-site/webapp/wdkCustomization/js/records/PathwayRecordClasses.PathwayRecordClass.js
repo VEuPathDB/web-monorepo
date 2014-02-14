@@ -84,7 +84,6 @@ vis.ready(function() {
 	    document.getElementById("draggable").innerHTML += msg + "<br />";
 	}
 
-
 	// customTooltip function
 	vis["customTooltip"] = function (data) {
 	    //  var value = Math.round(100 * data["weight"]) + "%";
@@ -236,3 +235,13 @@ vis.ready(function() {
 	};
     });
 // end ready
+
+// Resize cytoscape container to height of viewport
+(function($) {
+  function resizeMap() {
+    $('#' + div_id).height($(window).height() - 10);
+  }
+
+  $(window).on('resize', resizeMap);
+  resizeMap();
+}(jQuery));
