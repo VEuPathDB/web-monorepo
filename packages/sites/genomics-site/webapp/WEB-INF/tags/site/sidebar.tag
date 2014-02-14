@@ -104,10 +104,21 @@
 		    http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
 	    </c:set>
 	    <c:forEach items="${config}" var="s">
-  		  <c:set var="rss_Url">
-  			  ${rss_Url} 
-  			  ${fn:substringBefore(s.value,'services')}showXmlDataContent.do?name=XmlQuestions.NewsRss
-  		  </c:set>
+        <c:set var="rss_base_url">
+          <%-- 
+            s.value should be like
+              http://microsporidiadb.org/micro/services/WsfService
+            rss_base_url should then be computed as
+              http://microsporidiadb.org/micro/
+          --%>
+          ${fn:substringBefore(s.value,'services')}
+        </c:set>
+        <c:if test="${fn:startsWith(rss_base_url, 'http')}">
+          <c:set var="rss_Url">
+            ${rss_Url} 
+            ${rss_base_url}showXmlDataContent.do?name=XmlQuestions.NewsRss
+          </c:set>
+  		  </c:if>
 	    </c:forEach>
 <%-- 
  wir:feed returns a SyndFeed object which has a Bean interface for 
