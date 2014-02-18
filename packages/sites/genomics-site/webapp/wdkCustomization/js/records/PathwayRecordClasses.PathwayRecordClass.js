@@ -245,7 +245,7 @@ vis.ready(function() {
 	};
 
 
-	colorEcNums = function(val) {
+	colorNodes = function(val) {
 	    //  to color the ec numbers that correspond to a set of genes
 	    var nodes = vis.nodes();  
 
@@ -254,13 +254,19 @@ vis.ready(function() {
 		var type =  n.data.Type;
 		var label = n.data.label;
 
-		var ecNumArray = val.split(/,/);
-		for(var j = 0; j < ecNumArray.length; j++) {
-		    if(type == ("enzyme") && label == ecNumArray[j]  ) {
+		var nodeArray = val.split(/,/);
+		for(var j = 0; j < nodeArray.length; j++) {
+		    if(type == ("enzyme") && label == nodeArray[j]  ) {
 			style.nodes[n.data.id] = { color: "#00FF00" , border : 2};
 
 			//vis.updateData([n]);
+		    } else if (type == ("compound") && label == nodeArray[j]  ) {
+			style.nodes[n.data.id] = { color: "#00FF00" };
+
 		    }
+
+
+
 		}
 	    }
 	    vis.nodeTooltipsEnabled(true);
@@ -269,8 +275,8 @@ vis.ready(function() {
 
 
   // color EC Numbers, if any specified
-  var ecNumList = $('#' + div_id).data('ec-num-list');
-  colorEcNums(ecNumList);
+  var nodeList = $('#' + div_id).data('node-list');
+  colorNodes(nodeList);
 
 	// set the style programmatically
 	document.getElementById("color").onclick = function(){
