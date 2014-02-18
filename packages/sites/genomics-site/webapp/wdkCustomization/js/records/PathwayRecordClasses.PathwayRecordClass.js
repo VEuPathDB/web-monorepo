@@ -13,6 +13,22 @@ var options = {
 var vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
+	var changeLayout = function(val) {
+	    var current = vis.layout();
+	    if(current.name == "Preset") {
+		presetLayout = current;
+	    }
+
+	    if(val == "Preset") {
+		vis.layout(presetLayout);
+	    }
+	    else {
+		vis.layout(val);
+	    }    
+	};
+
+
+
 // callback when Cytoscape Web has finished drawing
 vis.ready(function() {
 
@@ -213,7 +229,7 @@ vis.ready(function() {
 	    vis.visualStyleBypass(style);
 	};
 
-	changeLayout = function(val) {
+	changeLayoutBAK = function(val) {
 	    var current = vis.layout();
 	    if(current.name == "Preset") {
 		presetLayout = current;
@@ -225,7 +241,29 @@ vis.ready(function() {
 	    else {
 		vis.layout(val);
 	    }    
+	};
 
+
+	colorEcNums = function(val) {
+	    //  to color the ec numbers that correspond to a set of genes
+	    var nodes = vis.nodes();  
+
+	    for (var i in nodes) {
+		var n = nodes[i];
+		var type =  n.data.Type;
+		var label = n.data.label;
+
+		var ecNumArray = val.split(/,/);
+		for(var j = 0; j < ecNumArray.length; j++) {
+		    if(type == ("enzyme") && label == ecNumArray[j]  ) {
+			style.nodes[n.data.id] = { color: "#00FF00" , border : 2};
+
+			//vis.updateData([n]);
+		    }
+		}
+	    }
+	    vis.nodeTooltipsEnabled(true);
+	    vis.visualStyleBypass(style);
 	};
 
 
@@ -235,6 +273,7 @@ vis.ready(function() {
 	};
     });
 // end ready
+
 
 // Resize cytoscape container to height of viewport
 (function($) {
