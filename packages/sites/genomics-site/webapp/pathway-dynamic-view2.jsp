@@ -6,7 +6,7 @@
 
 
 <%--############# Access URL Params ############--%>
-<c:set var="ecNumList"  value="${param.ecNumList}" />
+<c:set var="nodeList"  value="${param.nodeList}" />
 <c:set var="pathwayId" value="${param.pathway}" />
 <c:set var="projectId" value="${param.model}" />
 
@@ -18,7 +18,7 @@
     <!-- JavaScript provided by WDK -->
 <imp:wdkJavascripts refer="window"/>
 
-<!-- br>EC NUMS:${ecNumList} AND ${pathwayId}<br -->
+<!-- br>EC NUMS:${nodeList} AND ${pathwayId}<br -->
 
     <style>
             /* The Cytoscape Web container must have its dimensions set. */
@@ -49,16 +49,18 @@ $( "#draggable" ).draggable();
 
 
 <%--
-The value of data-ec-num-list is available in JavaScript:
+The value of data-node-list is available in JavaScript:
 
-  var ecNumList = $("#cytoscapeweb").data('ec-num-list');
+  var nodeList = $("#cytoscapeweb").data('node-list');
 
 This is a convenient way to pass params to javascript code without worrying about
 calling functions at the right time.
 --%>
-<div id="cytoscapeweb" data-ec-num-list="${ecNumList}">
+
+<div id="cytoscapeweb" data-node-list="${nodeList}">
   Cytoscape Web will replace the contents of this div with your graph.
  </div>
+
 
 <br />
 <br />
