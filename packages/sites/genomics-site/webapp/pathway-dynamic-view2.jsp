@@ -60,7 +60,15 @@ $( "#draggable" ).draggable();
 
 
 
- <div id="cytoscapeweb">
+<%--
+The value of data-ec-num-list is available in JavaScript:
+
+  var ecNumList = $("#cytoscapeweb").data('ec-num-list');
+
+This is a convenient way to pass params to javascript code without worrying about
+calling functions at the right time.
+--%>
+<div id="cytoscapeweb" data-ec-num-list="${ecNumList}">
   Cytoscape Web will replace the contents of this div with your graph.
  </div>
 
@@ -81,20 +89,8 @@ $( "#draggable" ).draggable();
 
 
 <!-- CYTOSCAPE start-->
-     <script type="text/javascript">
-     jQuery(function($) {
-	 $.ajax ({
-                 url: "/cytoscape/${pathwayId}.xgmml",
-		     dataType: "text",
-		     success: function(data){
-		     vis.draw(options);
-		      vis.draw({ network: data , layout: 'Preset' });
-                      changeLayout('Tree');
-		   },
-		  error: function(){
-		  alert("Error loading file");
-		  }
-	     })
-    }); 
+<script type="text/javascript">
+  // get xgmml and draw the visualization
+  drawVisualization("${pathwayId}");
 </script>        
 

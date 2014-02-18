@@ -13,19 +13,20 @@ var options = {
 var vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
-	var changeLayout = function(val) {
-	    var current = vis.layout();
-	    if(current.name == "Preset") {
-		presetLayout = current;
-	    }
 
-	    if(val == "Preset") {
-		vis.layout(presetLayout);
-	    }
-	    else {
-		vis.layout(val);
-	    }    
-	};
+function drawVisualization(pathwayId) {
+  $.ajax({
+    url: "/cytoscape/" + pathwayId + ".xgmml",
+    dataType: "text",
+    success: function(data){
+      vis.draw(options);
+      vis.draw({ network: data , layout: 'Preset' });
+    },
+    error: function(){
+      alert("Error loading file");
+    }
+  });
+}
 
 
 
@@ -229,7 +230,7 @@ vis.ready(function() {
 	    vis.visualStyleBypass(style);
 	};
 
-	changeLayoutBAK = function(val) {
+	changeLayout = function(val) {
 	    var current = vis.layout();
 	    if(current.name == "Preset") {
 		presetLayout = current;
@@ -267,10 +268,15 @@ vis.ready(function() {
 	};
 
 
+  // color EC Numbers, if any specified
+  var ecNumList = $('#' + div_id).data('ec-num-list');
+  colorEcNums(ecNumList);
+
 	// set the style programmatically
 	document.getElementById("color").onclick = function(){
 	    vis.visualStyleBypass(style);
 	};
+
     });
 // end ready
 
