@@ -18,9 +18,7 @@
     <!-- JavaScript provided by WDK -->
 <imp:wdkJavascripts refer="window"/>
 
-<br>EC NUMS:${ecNumList} AND ${pathwayId}<br>
-<br> 
-
+<!-- br>EC NUMS:${ecNumList} AND ${pathwayId}<br -->
 
     <style>
             /* The Cytoscape Web container must have its dimensions set. */
@@ -28,8 +26,6 @@
             #cytoscapeweb { width: 100%; height: 100%; }
             .link { text-decoration: underline; color: #0b94b1; cursor: pointer; }
         </style>
-
-      <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/jsddm/jsddm.css"/>
 
 
  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
@@ -50,14 +46,6 @@ $( "#draggable" ).draggable();
 </div>
 
 
-<br><br>
-
-<a  href="javascript:void(0)" onclick="changeLayout('Tree')"><b>TREE LAYOUT</b></a> <br>
-
-<a  href="javascript:void(0)" onclick="colorEcNums('${ecNumList}')"><b>COLOR</b></a>
-<! -- window.onload="colorEcNums('${ecNumList}')";-->
-
-
 
 
 <%--
@@ -76,8 +64,6 @@ calling functions at the right time.
 <br />
 <!-- CYTOSCAPE end-->
 
-
-<a href="" onclick="alert('BLAH')" >HELLO I AM HERE</a>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
  <script type="text/javascript" src="/js/AC_OETags.min.js"></script>
