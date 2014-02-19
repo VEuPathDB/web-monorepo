@@ -93,8 +93,6 @@
         </style>
 
       <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/jsddm/jsddm.css"/>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js" type="text/javascript"></script>
-      <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/jsddm/jsddm.css"/>
  <script type="text/javascript" src="${pageContext.request.contextPath}/wdkCustomization/js/lib/jsddm.js"><jsp:text/></script>
 
 
