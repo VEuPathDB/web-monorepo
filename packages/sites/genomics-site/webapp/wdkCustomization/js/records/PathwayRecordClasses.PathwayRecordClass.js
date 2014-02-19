@@ -16,7 +16,7 @@ var presetLayout;
 
 function drawVisualization(pathwayId) {
   $.ajax({
-    url: "/cytoscape/" + pathwayId + ".xgmml",
+    url: "/common/downloads/pathwayFiles/" + pathwayId + ".xgmml",
     dataType: "text",
     success: function(data){
       vis.draw(options);
@@ -274,9 +274,9 @@ vis.ready(function() {
 	};
 
 
-  // color EC Numbers, if any specified
-  var nodeList = $('#' + div_id).data('node-list');
-  colorNodes(nodeList);
+	// color EC Numbers, if any specified
+	var nodeList = $('#' + div_id).data('node-list');
+	colorNodes(nodeList);
 
 	// set the style programmatically
 	document.getElementById("color").onclick = function(){
