@@ -69,22 +69,19 @@
 
 
 <!-- CYTOSCAPE start-->
-     <script type="text/javascript">
-     window.onload=function() {
-	 $.ajax({
-                 url: "/common/downloads/pathwayFiles/${id}.xgmml",
-		     dataType: "text",
-		     success: function(data){
-		     vis.draw(options);
-		      vis.draw({ network: data , layout: 'Preset',
-		     		 });
-		   },
-		  error: function(){
-		  alert("Error loading file");
-		  }
-	     });
-     };
+ <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
+ <script type="text/javascript" src="/js/AC_OETags.min.js"></script>
+        
+<!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
+ <script type="text/javascript" src="/js/cytoscapeweb.min.js"></script> 
+
+<script src="${pageContext.request.contextPath}/wdkCustomization/js/records/PathwayRecordClasses.PathwayRecordClass.js"></script>
+
+<script type="text/javascript">
+  // get xgmml and draw the visualization
+  drawVisualization("${id}");
 </script>        
+
     <style>
             /* The Cytoscape Web container must have its dimensions set. */
             html, body { height: 100%; width: 100%; padding: 0; margin: 0; }
@@ -170,14 +167,6 @@ Coloring of the KEGG maps was performed in house with custom scripts and annotat
 
 <hr>
 
-
-<!-- Flash embedding utility (needed to embed Cytoscape Web) -->
- <script type="text/javascript" src="/js/AC_OETags.min.js"></script>
-        
-<!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
- <script type="text/javascript" src="/js/cytoscapeweb.min.js"></script> 
-
- <script src="${pageContext.request.contextPath}/wdkCustomization/js/records/PathwayRecordClasses.PathwayRecordClass.js"></script>
 
 </imp:pageFrame>
 
