@@ -72,7 +72,7 @@
      <script type="text/javascript">
      window.onload=function() {
 	 $.ajax({
-                 url: "/cytoscape/${id}.xgmml",
+                 url: "/common/downloads/pathwayFiles/${id}.xgmml",
 		     dataType: "text",
 		     success: function(data){
 		     vis.draw(options);
