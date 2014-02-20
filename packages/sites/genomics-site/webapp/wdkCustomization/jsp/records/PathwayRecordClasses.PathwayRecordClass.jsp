@@ -138,6 +138,10 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
   Cytoscape Web will replace the contents of this div with your graph.
  </div>
 
+<a href="http://cytoscapeweb.cytoscape.org/">
+    <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytosca
+pe Web"/></a>
+
 <br />
 <br />
 <!-- CYTOSCAPE end-->
