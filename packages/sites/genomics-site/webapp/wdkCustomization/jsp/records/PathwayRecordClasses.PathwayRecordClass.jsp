@@ -79,7 +79,9 @@
 
 <script type="text/javascript">
   // get xgmml and draw the visualization
-  drawVisualization("${id}");
+  $(function() {
+    drawVisualization("${id}");
+  });
 </script>        
 
     <style>
