@@ -288,11 +288,11 @@ vis.ready(function() {
 
 
 // Resize cytoscape container to height of viewport
-(function($) {
+jQuery(function($) {
   function resizeMap() {
     $('#' + div_id).height($(window).height() - 10);
   }
 
   $(window).on('resize', resizeMap);
   resizeMap();
-}(jQuery));
+});

@@ -102,7 +102,7 @@
 
 <script>
 $(function() {
-$( "#draggable" ).draggable();
+$( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 });
 </script>
 
