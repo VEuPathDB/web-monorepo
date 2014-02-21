@@ -61,11 +61,15 @@ calling functions at the right time.
   Cytoscape Web will replace the contents of this div with your graph.
  </div>
 
+ <div>
+<BR><a href="/common/downloads/pathwayFiles/${pathwayId}.xgmml">XGMML data file</a>
+</div>
+ <div align="right">
 <a href="http://cytoscapeweb.cytoscape.org/">
     <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytosca
 pe Web"/></a>
-
-<br />
+</div>
+<br>
 <br />
 <!-- CYTOSCAPE end-->
 
