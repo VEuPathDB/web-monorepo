@@ -29,6 +29,12 @@ function drawVisualization(pathwayId) {
 }
 
 
+function exportVisualization (type) {
+    var link = "pathway-export.jsp?type=" + type;
+
+    vis.exportNetwork(type, link);
+}
+
 
 // callback when Cytoscape Web has finished drawing
 vis.ready(function() {

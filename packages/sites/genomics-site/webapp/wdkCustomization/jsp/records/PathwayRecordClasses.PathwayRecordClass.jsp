@@ -134,6 +134,11 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     </li>
 </ul>
 
+
+                    <a href="javascript:exportVisualization('xgmml')">Here is the xgmml</a>
+<br />
+                    <a href="javascript:exportVisualization('png')">Here is the image</a>
+
  <div id="cytoscapeweb">
   Cytoscape Web will replace the contents of this div with your graph.
  </div>
