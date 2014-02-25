@@ -1,16 +1,12 @@
 <html>
 
 
-<%@ page import="java.io.BufferedReader" %>
-<%@ page import="java.io.InputStreamReader" %>
-<%@ page import="java.io.PrintWriter" %>
-
 <%
 String type = request.getParameter("type");
-        if(type.equals("xgmml")) {
+        if("xgmml".equals(type)) {
                 response.setContentType("text/xml");  
         }
-        if(type.equals("png")) {
+        if("png".equals(type)) {
                 response.setContentType("image/png");  
         }
 %>
@@ -21,16 +17,18 @@ String type = request.getParameter("type");
 <%
 
 
-       BufferedReader in = new BufferedReader(  
-        new InputStreamReader(request.getInputStream()));  
+ServletInputStream is = request.getInputStream();
+ServletOutputStream os = response.getOutputStream();
 
+byte[] b = new byte[16384];
 
+int i = 0;
+while ((i = is.read(b)) != -1) {
+        os.write(b, 0, i);
+}
 
-
-        String line = null;  
-        while((line = in.readLine()) != null) {  
-           out.print(line);
-        }  
+os.flush();
+os.close();
 
 %>
 </body>
