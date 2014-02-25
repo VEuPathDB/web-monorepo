@@ -155,7 +155,8 @@ class PrivateAPI {
 
   /**
    * Restructures and formats subversion data that was extracted
-   * from the GUS .build.info properties file via the BuildInfo class.
+   * from the GUS .buildlog/gus-build-state.log properties file 
+   * via the BuildInfo class.
    * @see BuildInfo
    *
    * @param array build data
