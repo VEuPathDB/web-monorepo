@@ -30,7 +30,7 @@ function drawVisualization(pathwayId) {
 
 
 function exportVisualization (type) {
-    var link = "pathway-export.jsp?type=" + type;
+    var link = wdk.webappUrl('exportCytoscapeNetwork.do?type=' + type);
 
     vis.exportNetwork(type, link);
 }

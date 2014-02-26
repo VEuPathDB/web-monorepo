@@ -581,6 +581,12 @@
       validate="false">
       <forward name="display" redirect="false" path="/wdk/jsp/results/attributePlugin.jsp"/>
     </action>
+    <action
+      path="/exportCytoscapeNetwork"
+      type="org.apidb.apicommon.controller.action.ExportCytoscapeNetworkAction"
+      scope="request"
+      validate="false">
+    </action>
 
     <action
       path="/siteSearch"

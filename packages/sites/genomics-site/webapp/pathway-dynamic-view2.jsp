@@ -36,7 +36,7 @@
 
 <script>
 $(function() {
-$( "#draggable" ).draggable();
+$( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 });
 </script>
 
@@ -86,6 +86,8 @@ pe Web"/></a>
 <!-- CYTOSCAPE start-->
 <script type="text/javascript">
   // get xgmml and draw the visualization
-  drawVisualization("${pathwayId}");
+  $(function() {
+    drawVisualization("${id}");
+  });
 </script>        
 
