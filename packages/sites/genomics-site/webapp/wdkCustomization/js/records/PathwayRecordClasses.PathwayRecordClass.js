@@ -35,6 +35,71 @@ function exportVisualization (type) {
     vis.exportNetwork(type, link);
 }
 
+// Transform a JSON request from webservices to
+// a more usable data structure. This is used
+// by `getEcToOrganismMap`
+function transformToEcNumberList(data) {
+  if (!(data.response && data.response.recordset && data.response.recordset.records)) {
+    throw new Error("Received an unexpected response object");
+  }
+
+  var ecNumberList = {};
+  var records = data.response.recordset.records;
+
+  records.forEach(function(record) {
+    var organism = _(record.fields).findWhere({ name: 'organism' });
+    var ecTable = _(record.tables).findWhere({ name: 'EC Number' });
+
+    console.log('Organism record "%s"', organism.value);
+
+    ecTable.rows.forEach(function(row) {
+      var ecItem;
+      var ecNumber = _(row.fields).findWhere({ name: 'ec_number' });
+      var source = _(row.fields).findWhere({ name: 'source' });
+
+      if (!_(ecNumberList).has(ecNumber.value)) {
+        // create new entry in ecNumberList
+        ecItem = ecNumberList[ecNumber.value] = {};
+      } else {
+        // return existing entry
+        ecItem = ecNumberList[ecNumber.value]
+      }
+
+      if (!_(ecItem).has(source.value)) {
+        ecItem[source.value] = [];
+      }
+
+      if (ecItem[source.value].indexOf(organism.value) === -1) {
+        ecItem[source.value].push(organism.value);
+        console.log('Adding source "%s" for organism "%s" for ec "%s"', source.value, organism.value, ecNumber.value);
+      }
+
+    });
+  });
+
+  return ecNumberList;
+}
+
+
+// Requests JSON from webservice and tranforms the JSON to
+// a map of ecNumbers -> sources -> organisms
+//
+// Example:
+//   getEcToOrganismMap(id).done(function(ecNumberMap) {
+//     vis.nodes().forEach(function(node) {
+//       // get ecNumber from node somehow ...
+//       var ecMapItem = ecNumberMap[ecNumber];
+//       for (var source in ecMapItem) {
+//         var genes = ecMapItem[source]; // returns an array
+//         // do something with ecNumber, source, and genes ...
+//       }
+//     });
+//   });
+function getEcToOragnismMap(id) {
+  var url = wdk.webappUrl('/webservices/GeneQuestions/GenesByMetabolicPathwayKegg.json?metabolic_pathway_id_with_genes=' +
+      encodeURIComponent(id) + '&o-fields=organism,EcNumber');
+  return $.getJSON(url).then(transformToEcNumberList);
+}
 
 // callback when Cytoscape Web has finished drawing
 vis.ready(function() {
