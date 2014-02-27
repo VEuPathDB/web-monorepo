@@ -225,7 +225,7 @@ class PrivateAPI {
 PRODUCT=PlasmoDB
 WEBAPP=plasmo.b19
 HOST=sa.plasmodb.org
-RELEASE=release-10.0
+RELEASE_NUMBER=10.0
 LOGIN=plasmodbwww
 BUILD_NO=19
 **/
@@ -242,7 +242,7 @@ BUILD_NO=19
     $env .= 'PRODUCT=' . $wdk_properties_attr{'PROJECT_ID'} . "\n";
     $env .= 'HOST=' . 'sa.' . $tld . "\n";
     $env .= 'WEBAPP=' . $webapp . "\n";
-    $env .= 'RELEASE=' . $wdk_meta_attr{'ModelVersion'} . "\n";
+    $env .= 'RELEASE_NUMBER=' . $wdk_meta_attr{'ModelVersion'} . "\n";
     $env .= 'APP_LOGIN=' . strtolower($adb_attr{'login'}) . "\n";
     $env .= 'BUILD_NUMBER=' . $wdk_meta_attr{'BuildNumber'} . "\n";
     return $env;
