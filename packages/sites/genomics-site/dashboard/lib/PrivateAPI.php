@@ -243,7 +243,7 @@ BUILD_NO=19
     $env .= 'HOST=' . 'sa.' . $tld . "\n";
     $env .= 'WEBAPP=' . $webapp . "\n";
     $env .= 'RELEASE=' . $wdk_meta_attr{'ModelVersion'} . "\n";
-    $env .= 'APP_LOGIN=' . $adb_attr{'login'} . "\n";
+    $env .= 'APP_LOGIN=' . strtolower($adb_attr{'login'}) . "\n";
     $env .= 'BUILD_NUMBER=' . $wdk_meta_attr{'BuildNumber'} . "\n";
     return $env;
   }
