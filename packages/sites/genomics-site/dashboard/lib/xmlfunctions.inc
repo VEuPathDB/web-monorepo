@@ -32,15 +32,32 @@ function print_node_values($node) {
 
 
 function import_node($dom_doc, $source) {
-    if ( ! $source || ! $source->documentElement ) {
-        $node = error_node($dom_doc, 'unavailable');
-    } else {
-        $node = $source->documentElement;
-    }
-    $root = $dom_doc->documentElement;
-    $root->appendChild($dom_doc->importNode($node, true));
-
+  if ( ! $source || ! $source->documentElement ) {
+      $node = error_node($dom_doc, 'unavailable');
+  } else {
+      $node = $source->documentElement;
+  }
+  $root = $dom_doc->documentElement;
+  $root->appendChild($dom_doc->importNode($node, true));
 }
 
 
+/**
+merge
+   <dom_doc>           <source>
+    <node1/>     +       <node2/>
+   </dom_doc>          </source>
+into
+   <dom_doc>
+    <node1/>
+    <node2/>
+   </dom_doc>
+
+**/
+function merge_child_nodes_with_doc($dom_doc, $source) {
+  foreach ($source->documentElement->childNodes as $node) {
+    $importNode = $dom_doc->importNode($node,TRUE);
+    $dom_doc->documentElement->appendChild($importNode);
+  }
+}
 ?>

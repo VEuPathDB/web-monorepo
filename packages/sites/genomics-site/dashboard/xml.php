@@ -22,8 +22,8 @@ $path_info = trim(@$_SERVER["PATH_INFO"], '/');
 /**
   Check if pathinfo terminates with 'value' and remove it. The remainder of path_info
   will be used for an xpath query.
-  /dashboard/wdk returns xml document
-  /dashboard/wdk/value returns text values of /dashboard/wdk
+  /dashboard/xml/wdk returns xml document
+  /dashboard/xml/wdk/value returns text values of /dashboard/xml/wdk
  * */
 if ($path_info) {
   if ($path_info == 'version') {
@@ -38,7 +38,7 @@ if ($path_info) {
 
 $req_xpath = ($path_info) ? '/' . $path_info : ROOTNAME;
 
-$wdkxml = $api->get_xml();
+$all_xml = $api->get_xml();
 
 /** Construct new XML doc and combine xml gathered from various sources * */
 $sitexml = new DomDocument('1.0');
@@ -48,7 +48,7 @@ $root = $sitexml->createElement(ROOTNAME);
 $root->setAttribute('version', FORMATVERSION);
 $sitexml->appendChild($root);
 
-import_node($sitexml, $wdkxml);
+merge_child_nodes_with_doc($sitexml, $all_xml);
 
 /** get node from xpath query * */
 $domxpath = new DOMXpath($sitexml);
