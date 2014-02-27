@@ -95,8 +95,8 @@ function transformToEcNumberList(data) {
 //       }
 //     });
 //   });
-function getEcToOragnismMap(id) {
-  var url = wdk.webappUrl('/webservices/GeneQuestions/GenesByMetabolicPathwayKegg.json?metabolic_pathway_id_with_genes=' +
+function getEcToOrganismMap(id) {
+  var url = wdk.webappUrl('/webservices/GeneQuestions/GenesByMetabolicPathwayIDKegg.json?metabolic_pathway_id_with_genes=' +
       encodeURIComponent(id) + '&o-fields=organism,EcNumber');
   return $.getJSON(url).then(transformToEcNumberList);
 }
