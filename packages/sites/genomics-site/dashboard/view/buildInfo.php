@@ -145,9 +145,13 @@ Any subversion working directories in project_home that are not defined as depen
       {
         select: function(event, ui) {
           if (ui.index == 0) {
-            $( "#svn-state-txt" ).text('Use the following commands from within your $PROJECT_HOME to switch it to match this site.');
+            $( "#svn-state-txt" ).html('Run the following curl command from within your \
+            $PROJECT_HOME to switch it to match this site.<br/>\
+            <code>curl -s <?php print $_SERVER['SERVER_NAME'] ?>/dashboard/xml/svn/switch/value | /bin/sh</code>');
           } else if (ui.index == 1) {
-            $( "#svn-state-txt" ).text('Use the following commands from within your $PROJECT_HOME to checkout code to match this site.');          
+            $( "#svn-state-txt" ).html('Run the following curl command from within your \
+            $PROJECT_HOME to checkout code to match this site.<br/>\
+            <code>curl -s <?php print $_SERVER['SERVER_NAME'] ?>/dashboard/xml/svn/checkout/value | /bin/sh</code>');
           }
         }
       }
@@ -157,7 +161,8 @@ Any subversion working directories in project_home that are not defined as depen
 <div id="svnswitch" style="padding-left:10px;">
   <b>Subversion State Matching</b>
   <p id='svn-state-txt'>
-    Use the following commands from within your $PROJECT_HOME to switch it to match this site.
+    Run the following command from within your $PROJECT_HOME to switch it to match this site.<br>
+    <code>curl -s <?php print $_SERVER['SERVER_NAME'] ?>/dashboard/xml/svn/switch/value | /bin/sh</code>
   </p>
   <table class='p' border='1' cellspacing='0' cellpadding='0'>
     <tr><td class='rowLight'>        
