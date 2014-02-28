@@ -50,8 +50,6 @@ function transformToEcNumberList(data) {
     var organism = _(record.fields).findWhere({ name: 'organism' });
     var ecTable = _(record.tables).findWhere({ name: 'EC Number' });
 
-    console.log('Organism record "%s"', organism.value);
-
     ecTable.rows.forEach(function(row) {
       var ecItem;
       var ecNumber = _(row.fields).findWhere({ name: 'ec_number' });
@@ -71,7 +69,6 @@ function transformToEcNumberList(data) {
 
       if (ecItem[source.value].indexOf(organism.value) === -1) {
         ecItem[source.value].push(organism.value);
-        console.log('Adding source "%s" for organism "%s" for ec "%s"', source.value, organism.value, ecNumber.value);
       }
 
     });
