@@ -234,6 +234,11 @@ BUILD_NO=19
 
     $webapp = $this->webapp_from_context($webapp_attr{'path'});
 
+    # webapp names on VMs should be of the form toxo.b12, where '12' is the build
+    # number. So strip any existing extension and add '.b12'.
+    $webapp_base = preg_replace('/\..*/', '', $webapp);
+    $webapp_for_vm = $webapp_base . '.b' . $wdk_meta_attr{'BuildNumber'};
+
     // e.g. get TLD plasmodb.org from qa.plasmodb.org
     preg_match("/[^\.\/]+\.[^\.\/]+$/", $_SERVER['SERVER_NAME'], $matches);
     $tld = @$matches[0];
@@ -241,7 +246,7 @@ BUILD_NO=19
     $env = '';
     $env .= 'PRODUCT=' . $wdk_properties_attr{'PROJECT_ID'} . "\n";
     $env .= 'HOST=' . 'sa.' . $tld . "\n";
-    $env .= 'WEBAPP=' . $webapp . "\n";
+    $env .= 'WEBAPP=' . $webapp_for_vm . "\n";
     $env .= 'RELEASE_NUMBER=' . $wdk_meta_attr{'ModelVersion'} . "\n";
     $env .= 'APP_LOGIN=' . strtolower($adb_attr{'login'}) . "\n";
     $env .= 'BUILD_NUMBER=' . $wdk_meta_attr{'BuildNumber'} . "\n";
