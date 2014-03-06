@@ -27,48 +27,45 @@
 
 
 <!------------------------------------------------------------------------->
-<SCRIPT type="text/javascript" >
+<script>
 
 function writeData(page, div, quesName, insertStep){
-    if(page=="") {document.getElementById(div).innerHTML = ""; return;}
-	var t = $("#"+div);
-	$.blockUI();
-	$.ajax({
-		url: page,
-                contentType: "text/html; charset=UTF-8",
-		dataType: 'html',
-		success: function(data){
-			if(location.href.indexOf("showApplication") != -1){
-				formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
-			}
-                        t.html($.trim(data));
-                        // t.html(data);
-                        $.unblockUI();
-			$('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
-			wdk.parameterHandlers.init(t);
-			var question = new wdk.question.WdkQuestion();
-			question.registerGroups();
-		},
-                error: function(data) {
-                        alert("An error has occurred, please refresh and try again. If the problem persists, please contact us.");
-                        $.unblockUI();
-                }
-	});
-}	
-
-function changeDesc(myUrl) 
-{
-// var myUrl = document.getElementById("querySelect").options[document.getElementById("querySelect").selectedIndex].value;
- writeData(myUrl,"des");
+  if(page=="") {
+    document.getElementById(div).innerHTML = "";
+    return;
+  }
+  var t = $("#"+div);
+  $.blockUI();
+  $.ajax({
+    url: page,
+    contentType: "text/html; charset=UTF-8",
+    dataType: 'html',
+    success: function(data) {
+      if (location.href.indexOf("showApplication") != -1) {
+        formatFilterForm("<form>" + $("div.params",data).html() + "</form>", data, 0, insertStep, false, false, false);
+      }
+      t.html($.trim(data));
+      $.unblockUI();
+      $('html,body').animate({scrollTop: (t.offset().top - 50)},'fast');
+    },
+    error: function(data) {
+      alert("An error has occurred, please refresh and try again. If the problem persists, please contact us.");
+      $.unblockUI();
+    }
+  });
 }
 
-function getComboElement()
-{
-   return document.getElementById("querySelect").options[document.getElementById("querySelect").selectedIndex].value;
+function changeDesc(myUrl) {
+  // var myUrl = document.getElementById("querySelect").options[document.getElementById("querySelect").selectedIndex].value;
+  writeData(myUrl,"des");
+}
+
+function getComboElement() {
+  return document.getElementById("querySelect").options[document.getElementById("querySelect").selectedIndex].value;
 }
 
 
-</SCRIPT>
+</script>
 <!------------------------------------------------------------------------->
 
 <c:set var="questionFullNamesArray" value="${fn:split(questions, ',')}" />
