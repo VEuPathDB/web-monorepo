@@ -2,101 +2,101 @@
  * Add radio buttons around term and wildcard params
  */
 
-(function() {
+var RadioParamsView = Backbone.View.extend({
 
-  var paramNames = {
-    'GeneQuestions.GenesByGoTerm': [
-      'go_typeahead',
-      'go_term'
-    ],
+  termName: null,
 
-    'GeneQuestions.GenesByEcNumber': [
-      'ec_number_pattern',
-      'ec_wildcard'
-    ],
+  wildcardName: null,
 
-    'GeneQuestions.GenesByInterproDomain': [
-      'domain_typeahead',
-      'domain_accession'
-    ]
-  };
+  radioStr: '<div class="param-radio"><input type="radio" name="active-param"/></div>',
 
-  wdk.question.on(Object.keys(paramNames), function($form, name) {
-        // get handles on params
-    var termWrapper = $form.find('.param-item:has([id^="' + paramNames[name][0] + '"])'),
+  nonsenseValue: 'N/A',
 
-        wildcardWrapper = $form.find('.param-item:has([id^="' + paramNames[name][1] + '"])'),
+  events: {
+    'click .param-item:has([name="active-param"]:not(:checked)), [name="active-param"]': 'handleClick',
+    'submit': 'submit'
+  },
 
-        // template for radio input
-        radioStr = '<div class="param-radio"><input type="radio" name="active-param"/></div>',
+  initialize: function(options) {
+    if (this.termName === null || this.wildcardName === null) {
+      throw new Error('The "termName" and "wildcardName" properties must be specified.');
+    }
 
-        wildcardValue = wildcardWrapper.find('input[name="value(' + paramNames[name][1] + ')"]').val(),
+    var radioStr = this.radioStr;
 
-        nonsenseValue = 'N/A',
+    var termWrapper = this.$('.param-item:has([id^="' +
+      this.termName + '"])');
 
-        nonsenseValueR = /(nil|N\/A)/i;
+    var wildcardWrapper = this.$('.param-item:has([id^="' +
+      this.wildcardName + '"])');
 
-        inlineSubmit = $form[0].onsubmit;
+    var wildcardValue = wildcardWrapper.find('input[name="value(' +
+      this.wildcardName + ')"]').val();
 
-    $form[0].onsubmit = null;
-
-    // insert radio inputs
-    termWrapper.find('.param-control').prepend(radioStr)
-
+    termWrapper.find('.param-control').prepend(radioStr);
     wildcardWrapper.find('.param-control').prepend(radioStr);
 
+    this.nonsenseValue = this.nonsenseValue;
+    var nonsenseValueR = new RegExp('^(nil|' + this.nonsenseValue + ')$', 'i');
+
+    this.inlineSubmit = this.el.onsubmit;
+    this.el.onsubmit = null;
 
     // default term to be selected, unless wildcard has value
-    if (wildcardValue && !nonsenseValueR.test(wildcardValue)) {
+    if (wildcardValue && !nonsenseValueR.test(wildcardValue.trim())) {
       wildcardWrapper.find('[name="active-param"]').prop('checked', true);
     } else {
       termWrapper.find('[name="active-param"]').prop('checked', true);
     }
 
-    setActive();
+    this.setActive();
 
+  },
 
-    $form
+  setActive: function() {
+    // get selected radio
+    var radios = this.$('[name="active-param"]'),
+        checked = radios.filter(':checked');
 
-      // attach event handler for radio selection
-      .on('click', '.param-item:has([name="active-param"]:not(:checked)), ' +
-          '[name="active-param"]', function(e) {
+    radios.parents('.param-item').addClass('inactive');
+    checked.parents('.param-item').removeClass('inactive');
+  },
 
-        // check the .active-param radio for this param
-        $(this).find('[name="active-param"]').prop('checked', true);
+  handleClick: function(e) {
+    var target = e.currentTarget;
+    // check the .active-param radio for this param
+    $(target).find('[name="active-param"]').prop('checked', true);
+    this.setActive();
+    $(target).find('input:not(:radio)').focus().select();
+  },
 
-        setActive();
+  submit: function(e) {
+    // keep form from submitting radio params so validation doesn't break
+    this.$('[name="active-param"]').prop('disabled', true);
 
-        $(this).find('input:not(:radio)').focus().select();
-      })
+    // add nonsense value to inactive params
+    this.$('.param-item.inactive').find('input').val(this.nonsenseValue);
+    this.$('.param-item.inactive').find('select')
+      .append('<option value="' + this.nonsenseValue + '"/>').val(this.nonsenseValue);
 
-      // attach submit handler
-      .on('submit', function(e) {
+    if ('function' === typeof this.inlineSubmit) {
+      this.inlineSubmit.call(this.el);
+    }
+  }
 
-        // keep form from submitting radio params so validation doesn't break
-        $form.find('[name="active-param"]').prop('disabled', true);
+});
 
-        // add nonsense value to inactive params
-        $form.find('.param-item.inactive').find('input').val(nonsenseValue);
-        $form.find('.param-item.inactive').find('select')
-          .append('<option value="' + nonsenseValue + '"/>').val(nonsenseValue);
+wdk.questionView('GeneQuestions.GenesByGoTerm',  RadioParamsView.extend({
+  termName: 'go_typeahead',
+  wildcardName: 'go_term',
+}));
 
-        if ('function' === typeof inlineSubmit) {
-          inlineSubmit.call(this);
-        }
-      });
+wdk.questionView('GeneQuestions.GenesByEcNumber', RadioParamsView.extend({
+  termName: 'ec_number_pattern',
+  wildcardName: 'ec_wildcard'
+}));
 
-    /**
-     * Set active or inactive classes on .param-item based on checked radio
-     */
-    function setActive() {
-      // get selected radio
-      var radios = $form.find('[name="active-param"]'),
-          checked = radios.filter(':checked');
-
-      radios.parents('.param-item').addClass('inactive');
-      checked.parents('.param-item').removeClass('inactive');
-    };
-
-  });
-}());
+wdk.questionView('GeneQuestions.GenesByInterproDomain', RadioParamsView.extend({
+  termName: 'domain_typeahead',
+  wildcardName: 'domain_accession'
+}));
