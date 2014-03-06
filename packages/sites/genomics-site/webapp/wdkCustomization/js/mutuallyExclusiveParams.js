@@ -159,7 +159,7 @@
 
 
 // *ByLocation questions have mutually exclusive params:
-  wdk.event.subscribe("questionload", function() {
+  wdk.registerQuestionEvent(function() {
     var $ = jQuery;
 
     // First, find the active form
