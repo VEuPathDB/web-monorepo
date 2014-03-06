@@ -124,6 +124,14 @@ vis.ready(function() {
 		    for(var i in orgs.sort()) {
 			print("&nbsp;&nbsp;" + orgs[i]);        
 		    }
+		}
+		print("");
+		if(target.data["OrganismsInferredByOthoMCL"]) {
+		    var orgs =  target.data["OrganismsInferredByOthoMCL"].split(",");
+		    print("<b>Organism(s) inferred from OrthoMCL: </b>");
+		    for(var i in orgs.sort()) {
+			print("&nbsp;&nbsp;" + orgs[i]);        
+		    }
 		    print("");
 		    print("<a href='/a/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&questionSubmit=Get+Answer&array%28ec_number_pattern%29=" + target.data["label"] + "'>Search for Gene(s) By EC Number</a>");
 		    print("");
@@ -185,7 +193,7 @@ vis.ready(function() {
 	// customBorder function : if node has Organisms, then border should be a different color
 	vis["customBorder"] = function (data) {
 	    var value = data["label"];
-	    if (data["Organisms"]) {
+	    if (data["OrganismsInferredByOthoMCL"]) {
 		value  = "#FF0000";
 	    } else {
 		value = "#000000";
