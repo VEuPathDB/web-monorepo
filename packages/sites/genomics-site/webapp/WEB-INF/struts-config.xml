@@ -315,6 +315,27 @@
        <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
 
+    <!-- Step Analysis Actions -->
+    
+    <action path="/stepAnalysisForm"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisFormAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/runStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.RunStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/showStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisResultAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="pending" path="/wdk/jsp/analysis/resultsPending.jsp"/>
+      <forward name="incomplete" path="/wdk/jsp/analysis/resultsIncomplete.jsp"/>
+    </action>
+    <action path="/deleteStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.DeleteStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+
     <!-- * is question set name -->
 	<action
 		path="/*.wadl"
