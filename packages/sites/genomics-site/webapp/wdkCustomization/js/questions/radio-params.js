@@ -13,7 +13,8 @@ var RadioParamsView = Backbone.View.extend({
   nonsenseValue: 'N/A',
 
   events: {
-    'click .param-item:has([name="active-param"]:not(:checked)), [name="active-param"]': 'handleClick',
+    'click .param-item:has([name="active-param"]:not(:checked))': 'handleClick',
+    'click [name="active-param"]': 'handleClick',
     'submit': 'submit'
   },
 
@@ -64,10 +65,11 @@ var RadioParamsView = Backbone.View.extend({
 
   handleClick: function(e) {
     var target = e.currentTarget;
+    var paramItem = $(target).closest('.param-item');
     // check the .active-param radio for this param
-    $(target).find('[name="active-param"]').prop('checked', true);
+    paramItem.find('[name="active-param"]').prop('checked', true);
+    paramItem.find('input:not(:radio)').focus().select();
     this.setActive();
-    $(target).find('input:not(:radio)').focus().select();
   },
 
   submit: function(e) {
