@@ -10,7 +10,7 @@ wdk.questionView('GeneQuestions.GenesByBindingSiteFeature', wdk.views.View.exten
 
   swapTfbsImage: function() {
     var newVal = this.$('#tfbs_name').val();
-    this.$('#tfbs_image').attr('src', '/a/images/pf_tfbs/' + newVal + '.png');
+    $('#tfbs_image').attr('src', '/a/images/pf_tfbs/' + newVal + '.png');
   }
 
 }));
