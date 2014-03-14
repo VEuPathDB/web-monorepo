@@ -1,13 +1,16 @@
+wdk.questionView('GeneQuestions.GenesByBindingSiteFeature', wdk.views.View.extend({
 
-$(function() {
-	// set the initial description image
-	swapTfbsImage();
-	// change image when user changes TFBS name
-	$('#tfbs_name').click(swapTfbsImage);
-});
+  events: {
+    'change #tfbs_name': 'swapTfbsImage'
+  },
 
-function swapTfbsImage(){
-	var names = $('#tfbs_name')[0];
-	var newVal = names.options[names.selectedIndex].value;
-	$('#tfbs_image').attr('src', '/a/images/pf_tfbs/' + newVal + '.png');
-}
+  didInitialize: function() {
+    this.swapTfbsImage();
+  },
+
+  swapTfbsImage: function() {
+    var newVal = this.$('#tfbs_name').val();
+    $('#tfbs_image').attr('src', '/a/images/pf_tfbs/' + newVal + '.png');
+  }
+
+}));
