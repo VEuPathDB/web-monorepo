@@ -316,8 +316,16 @@
     </action>
 
     <!-- Step Analysis Actions -->
-    
-    <action path="/stepAnalysisForm"
+    <action path="/newStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.CreateStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/showStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="success" path="/wdk/jsp/analysis/stepAnalysisPane.jsp"/>
+    </action>
+    <action path="/showStepAnalysisForm"
         parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisFormAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
@@ -325,7 +333,7 @@
         parameter="org.gusdb.wdk.controller.action.analysis.RunStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
-    <action path="/showStepAnalysis"
+    <action path="/showStepAnalysisResult"
         parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisResultAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="pending" path="/wdk/jsp/analysis/resultsPending.jsp"/>
