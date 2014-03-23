@@ -46,7 +46,7 @@
 <c:choose>
 <c:when test="${tblName ne 'MetaTable' && tblName ne 'UserComments' && !fn:containsIgnoreCase(tableList,tblName)}" >
 <br>
-***** Attention:  WE SKIP TABLE ${tblName} THAT IS NOT DEFINED IN A DATASET
+***** Attention:  WE SKIP TABLE ${tblName} THAT IS NOT DEFINED IN A DATASET FOR THIS ORGANISM
 <br>
 <%--
 ${tableList}
