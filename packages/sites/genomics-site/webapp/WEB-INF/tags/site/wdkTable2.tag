@@ -163,7 +163,9 @@ ${tableList}
 </c:catch>
 
 <c:if test="${tableError != null}">
+<%--
 <br>
 WE SKIP TABLE ${tblName} THAT IS NOT IN THE MODEL
 <br>
+--%>
 </c:if>
