@@ -35,14 +35,18 @@
 %>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
+<%-- =========== IF ERROR IT MEANS TABLE IS NOT DEFINED IN THE MODEL ========== --%>
+<c:catch var="tableError">
+<c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 
 
-<%-- NEW   do not show table if this table is not listed--%>
+<%-- =========== DO not show if TABLE is not DEFINED IN A DATASET FOR THIS ORGANISM ======--%>
 <c:set var="tableList" value="${wdkRecord.attributes['tablesForOrg'].value}"/>
 
 <c:choose>
 <c:when test="${tblName ne 'MetaTable' && tblName ne 'UserComments' && !fn:containsIgnoreCase(tableList,tblName)}" >
-WE JUMPED OVER A TABLE ${tblName} THAT IS NOT IN THE LIST:
+<br>
+***** Attention:  WE SKIP TABLE ${tblName} THAT IS NOT DEFINED IN A DATASET
 <br>
 <%--
 ${tableList}
@@ -52,10 +56,7 @@ ${tableList}
 <c:otherwise>
 
 
-<c:catch var="tableError">
-
-
-<c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
+<%-- =========== TABLE IS DEFINED IN A DATASET FOR THIS ORGANISM ========== --%>
 
 <c:if test="${suppressDisplayName == null || !suppressDisplayName}">
   <c:set value="${tbl.tableField.displayName}" var="tableDisplayName"/>
@@ -142,14 +143,13 @@ ${tableList}
 <!--  CASE WHERE THE TABLE IS NOT DEFINED -->
 
 
-</c:catch>
+<%--
 <c:if test="${tableError != null}">
     <c:set var="exception" value="${tableError}" scope="request"/>
     <c:set var="tblContent" value="<i>Error. Data is temporarily unavailable</i>"/>
     <c:set var="tableDisplayName" value="${tblName}"/>
 </c:if>
-
-
+--%>
 
 <imp:toggle name="${tblName}" displayName="${tableDisplayName}"
              content="${tblContent}" isOpen="${isOpen}" noData="${noData}"
@@ -160,3 +160,10 @@ ${tableList}
 </c:otherwise>
 </c:choose>
 
+</c:catch>
+
+<c:if test="${tableError != null}">
+<br>
+WE SKIP TABLE ${tblName} THAT IS NOT IN THE MODEL
+<br>
+</c:if>
