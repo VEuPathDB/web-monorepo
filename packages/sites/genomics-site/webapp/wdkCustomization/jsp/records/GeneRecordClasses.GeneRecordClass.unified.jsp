@@ -10,15 +10,11 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
-
 <c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
-
-
-
 <c:choose>
-
 <c:when test="${!wdkRecord.validRecord}">
+
 <!-----------   ERROR ----------------------------------->
 
 <imp:pageFrame title="${wdkModel.displayName} : gene ${id}"
@@ -31,8 +27,7 @@
 <c:otherwise>
 
 
-<!--------  SETTING ATTRIBUTES ****** do all attributes exist in all projects? what if they do not?  ---------------------------->
-
+<!--  SETTING ATTRIBUTES ****** 4 genedb-related attr only in plasmo and tritryp; 2 more missing in trich --------->
 
 <c:set var="organism" value="${attrs['organism'].value}"/>
 <c:set var="organismFull" value="${attrs['organism_full'].value}"/>
@@ -52,23 +47,10 @@
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
 
-
-
-<!-- MOVED HERE FROM BELOW -->
 <c:set var="strand" value="+"/>
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
 </c:if>
-
-<%--    only used in a section only valid for PlasmoDB and TriTrypDB, can be deleted
-<c:set var="genedb_annot_link">
-  ${attrs['GeneDB_updated'].value}
-</c:set>
---%>
-
-
-
-
 
 <!-- COMMENTS attributes  -->
 <c:set value="${wdkRecord.tables['CategoryLink']}" var="ctgLinks"/>
@@ -100,7 +82,7 @@
 </c:forEach> 
 
 
-<%-- species was harcoded in previous jsp --%>
+<%-- species used in expression and sequence sections --%>
 <c:set var="species" value="${attrs['genus_species'].value}"/>
 
 <!-- example values:
@@ -111,7 +93,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-- =========================  HEADER ======================== -->
 
-
 <imp:pageFrame title="${wdkModel.displayName} : gene ${id} (${prd})"
              divisionName="Gene Record"
 		         refer="recordPage" 
@@ -121,15 +102,12 @@ organismFull:   Plasmodium falciparum 3D7
 <a name="top"></a>
 
 
-
-<!-- =========================  TOP   MENU   4 OPTIONS, MAYBE ONLY 2  ========================= -->
+<!-- =========================  TOP MENU 4 OPTIONS, some genes ONLY 2  ========================= -->
 <table width="100%">
 <tr>
   <td align="center" style="padding:6px"><a href="#Annotation">Annotation</a>
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
-
-
 
   <c:if test="${isCodingGene}">
   <td align="center"><a href="#Protein">Protein</a>
@@ -137,31 +115,22 @@ organismFull:   Plasmodium falciparum 3D7
   </td>
   </c:if>
 
-
-
-<%-- in old jsp they were hardoding org names --%>
   <c:if test="${attrs['hasExpression'].value eq '1'}">
   <td align="center"><a href="#Expression">Expression</a>
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
   </c:if>
 
-
-
   <td align="center"><a href="#Sequence">Sequence</a>
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
-
 </tr>
 </table>
 
-
-
-
 <hr>
-<!-- =========================  PAGE BEGINNING, before First Section (Annotation)    ========================= -->
+<!-- =========================  PAGE BEGINNING: title, stuff under title  ========================= -->
 
-<!-- this block moves here so we can set a link to add a comment on the page title -->
+<!-- this block is to set a link to add a comment  -->
 <c:set var="externalDbName" value="${attrs['external_db_name']}"/>
 <c:set var="externalDbVersion" value="${attrs['external_db_version']}"/>
 <c:url var="commentsUrl" value="addComment.do">
@@ -177,17 +146,13 @@ organismFull:   Plasmodium falciparum 3D7
   <c:param name="bulk" value="0" /> 
 </c:url>
 
-
 <!------------ small div with: Download, show and hide all  ------------->
 <imp:recordToolbox />
 
-
-
-<!------------ BIG ID  ------------->
+<!------------ BIG ID title  ------------->
 <div class="h2center" style="font-size:150%">
   ${id} 
   <br><span style="font-size:70%">Product: ${prd} </span>
-
 
 <!----------- Previous IDS  ----------------->
 <c:if test="${attrs['old_ids'].value != null && attrs['old_ids'].value ne id }">
@@ -195,8 +160,8 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 <br>
-
 <div>
+
 <!----------- User Comments    ----------------->
 <c:set var="count" value="0"/>
 <c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
@@ -218,29 +183,24 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!----------- Basket and Favorites  ----------------->
 <imp:recordPageBasketIcon />
-
 </div>
-
 
 <!-------------- Updated Product Name from GeneDB ---------------------------->
 
 <c:if test="${projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'  }">
-
-<div style="margin:12px;padding:5px">
-<c:if test="${attrs['updated_annotation'].value != null}">
-  ${attrs['GeneDB_updated'].value}
-</c:if>
-<c:if test="${attrs['new_product_name'].value != null}">
-  <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
-</c:if>
-</div>
-
+  <div style="margin:12px;padding:5px">
+    <c:if test="${attrs['updated_annotation'].value != null}">
+      ${attrs['GeneDB_updated'].value}
+    </c:if>
+    <c:if test="${attrs['new_product_name'].value != null}">
+      <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
+  </div>
 </c:if>
 
 </div>
 
-
-<!--------------  NOTE on Unpublished data ----****** ask JB ho wto deal with this------------------------>
+<!--------------  NOTE on Unpublished data ----****** ask JB how to deal with this------------------------>
 <%--
 <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
   <c:choose>
@@ -252,14 +212,10 @@ organismFull:   Plasmodium falciparum 3D7
   </c:otherwise>
   </c:choose>
 </c:if>
-
 --%>
 
 
-
-
-<%--##########################  SECTION  BEFORE    ANNOTATION      ################################--%>
-
+<%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
 
 <%--- COMMUNITY EXPERT ANNOTATION -----------%>
 <!--
@@ -331,16 +287,11 @@ organismFull:   Plasmodium falciparum 3D7
 
 <%-- END DNA CONTEXT --------------------------------------------%>
 
-
 <%-- mouseOver does not function properly
      if dnaContext and proteinFeatures imageMap are dynamically set on the page 
  <c:set var="okDOMInnerHtml" value="${ fn:contains(header['User-Agent'], 'Firefox') ||
                                        fn:contains(header['User-Agent'], 'Netscape') }"/>
 --%>
-
-
-
-
 
 
 <%---------- HTS SNP OVERVIEW --------- BASED ON ATTRIBUTE  ------%>
@@ -355,7 +306,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%------------ eQTL regions ---------------%>
-
 <%-- ******* not in Datasets  --%>
 <%-- uneeded since table defines the organisms via datasets 
 <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">  
@@ -363,8 +313,7 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:wdkTable2 tblName="Plasmo_eQTL_Table" isOpen="true"
                attribution="" />
 
-<%-- will add when we have the table working, as wdktable extracontent
-
+<%-- ***** check with JB : will add as wdktable extracontent
   <c:set var="queryURL">
         showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_HaploGrpSimilarity&value%28lod_score%29=1.5&value%28percentage_sim_haploblck%29=25&value%28pf_gene_id%29=${id}&weight=10
   </c:set>
@@ -373,16 +322,11 @@ organismFull:   Plasmodium falciparum 3D7
 --%>
 
 <%------------- version 8.2 genes ------------%>
-
-<%-- **********  not in crypto --%>
-
 <imp:wdkTable2 tblName="PreviousReleaseGenes" isOpen="true"
                attribution="" />
 
 
-
-<!-- Mercator / Mavid alignments -->
-
+<%----------- Mercator / Mavid alignments ------------%>
 <c:if test="${externalDbName.value eq 'Pfalciparum_chromosomes_RSRC'}">
   <c:if test="${strand eq '-'}">
    <c:set var="revCompOn" value="1"/>
@@ -395,7 +339,6 @@ organismFull:   Plasmodium falciparum 3D7
      start="${start}" end="${end}" /> 
 
 
-
 <%-------COMMENT OUT FOR DEBUGGING: MetaTable  
 <imp:wdkTable2 tblName="MetaTable" isOpen="FALSE" attribution=""/>
  ---------%>
@@ -403,7 +346,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 <%--##########################   ANNOTATION      ################################--%>
 <imp:pageDivider name="Annotation"/>
-
 
 
 <!-- User comments -->
@@ -430,7 +372,6 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-
 <!-- Note for 3D7 -->
 <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
   <div align="center">
@@ -439,19 +380,16 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if> 
 <br/>
 
-<%-- in old jsp there was commented out a section on phenotype --%>
+<%---------- in old jsp there was a section on phenotype  commented out ------------%>
 
 <!-- EC number -->
-  <a name="ecNumber"></a>
-  <c:if test="${isCodingGene}">
-    <imp:wdkTable2 tblName="EcNumber" isOpen="false"
-                   attribution=""/>
-  </c:if>
-
+<a name="ecNumber"></a>
+<c:if test="${isCodingGene}">
+  <imp:wdkTable2 tblName="EcNumber" isOpen="false" attribution=""/>
+</c:if>
 
 
 <!-- metabolic pathways -->
-<%-- *********** not in crypto --%>
 <imp:wdkTable2 tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 
 
@@ -459,7 +397,7 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 
-<!-- orthologs and paralogs -->
+<!-- Orthologs and Paralogs -->
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
   <c:choose>
@@ -481,50 +419,44 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-
 <!-- GO TERMS -->
 <c:if test="${isCodingGene}">
   <a name="goTerm"></a>
-  <imp:wdkTable2 tblName="GoTerms"
-                 attribution=""/>
+  <imp:wdkTable2 tblName="GoTerms" attribution=""/>
 </c:if>
-
 
 
 <!-- gene alias table -->
 <imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-
-
 <!-- Notes from annotator -->
-  <imp:wdkTable2 tblName="Notes" attribution=""/>
+<imp:wdkTable2 tblName="Notes" attribution=""/>
 
 
 <%-- unneeded since table appears associated to specific organisms 
 <c:if test="${organismFull eq 'Plasmodium falciparum 3D7' || species eq 'Plasmodium berghei' || species eq 'Plasmodium yoelii'}">
 --%>
 
-  <!-- phenotype -->
-  <imp:wdkTable2 tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
+<!-- phenotype -->
+<imp:wdkTable2 tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
 
 
-  <!-- Hagai -->
+<!-- Hagai -->
 <%-- ******* not in Datasets  --%>
-  <c:if test="${isCodingGene}">
-    <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
-  </c:if>
+<c:if test="${isCodingGene}">
+  <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
+</c:if>
 
 
+<!-- plasmocyc -->
 <c:if test="${projectId eq 'PlasmoDB'}">
-  <!-- plasmocyc -->
   <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
   <c:set var="plasmocycurl" value="${plasmocyc.url}"/>  
   <imp:panel 
     displayName="PlasmoCyc <a href='${plasmocycurl}'>View</a>"
     content="" />
 </c:if>
-
 
 
 <%-- *******  not in crypto  ******* not in Datasets --%>
@@ -536,9 +468,6 @@ organismFull:   Plasmodium falciparum 3D7
 --%>
 
 
-
-
-
 <%--##########################   PROTEIN      ################################--%>
 
 <c:if test="${isCodingGene}">
@@ -547,38 +476,36 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%-- Protein Features------------%>
-  <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
-  <c:set var="proteinFeaturesUrl">
+<c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
+<c:set var="proteinFeaturesUrl">
    http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/plasmodbaa/?name=${id}:1..${proteinLength};l=${protein_gtracks};hmap=pbrowse;width=640;embed=1;genepage=1
-   </c:set>
+</c:set>
 
-   <c:if test="${protein_gtracks ne ''}">
-     <c:set var="proteinFeaturesImg">
-     <noindex follow><center>
-     <c:catch var="e">
-       <c:import url="${proteinFeaturesUrl}"/>
-     </c:catch>
-     <c:if test="${e!=null}">
-       <imp:embeddedError 
+<c:if test="${protein_gtracks ne ''}">
+  <c:set var="proteinFeaturesImg">
+    <noindex follow><center>
+    <c:catch var="e">
+      <c:import url="${proteinFeaturesUrl}"/>
+    </c:catch>
+    <c:if test="${e!=null}">
+      <imp:embeddedError 
             msg="<font size='-2'>temporarily unavailable</font>" 
             e="${e}" />
-     </c:if> 
-     </center></noindex>
-     </c:set>
+    </c:if> 
+    </center></noindex>
+  </c:set>
 
-     <imp:toggle name="proteinContext"  displayName="Protein Features" 
+  <imp:toggle name="proteinContext"  displayName="Protein Features" 
                 content="${proteinFeaturesImg}" 
                 attribution=""/>
-   </c:if> <%-- protein_gtracks ne '' --%>
+</c:if> 
 
 
 <%-- Y2Hinteractions ------------%>
-
 <%-- uneeded since table defines the organisms via datasets
   <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
 --%>
-
-  <imp:wdkTable2 tblName="Y2hInteractions" isOpen="true" attribution=""/>
+<imp:wdkTable2 tblName="Y2hInteractions" isOpen="true" attribution=""/>
 
 
 <!-- Molecular weight -->
@@ -586,18 +513,18 @@ organismFull:   Plasmodium falciparum 3D7
 <c:set var="min_mw" value="${attrs['min_molecular_weight'].value}"/>
 <c:set var="max_mw" value="${attrs['max_molecular_weight'].value}"/>
 
- <c:choose>
+<c:choose>
   <c:when test="${min_mw != null && max_mw != null && min_mw != max_mw}">
-   <imp:panel 
+    <imp:panel 
       displayName="Molecular Weight"
       content="${min_mw} to ${max_mw} Da" />
-    </c:when>
-    <c:otherwise>
-   <imp:panel 
+  </c:when>
+  <c:otherwise>
+    <imp:panel 
       displayName="Molecular Weight"
       content="${mw} Da" />
-    </c:otherwise>
-  </c:choose>
+  </c:otherwise>
+</c:choose>
 
 <!-- Isoelectric Point -->
 <c:set var="ip" value="${attrs['isoelectric_point']}"/>
@@ -616,7 +543,6 @@ organismFull:   Plasmodium falciparum 3D7
         </c:choose>
 
 
-
 <!-- Mass Spec -->
 <c:if test="${attrs['hasProteomics'].value eq '1'}">
  <imp:wdkTable2 tblName="MassSpec" isOpen="true"   attribution=""/>
@@ -629,18 +555,15 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-<!-- Pberghei Prot Expression -->
-<%--   ******* not in Datasets   --%>
+<%-- Pberghei Prot Expression   ******* not in Datasets   --%>
 <%-- unneeded since table will define the organisms 
 <c:if test="${binomial eq 'Plasmodium berghei'}">
 --%>
-  <imp:wdkTable2 tblName="ProteinExpression" attribution=""/>
-
+<imp:wdkTable2 tblName="ProteinExpression" attribution=""/>
 
 
 <%--  Protein Linkouts    ******** not in Crypto ******* not in Datasets  --%>
-  <imp:wdkTable2 tblName="ProteinDatabase"/>
-
+<imp:wdkTable2 tblName="ProteinDatabase"/>
 
 
 <!-- PdbSimilarities -->
@@ -649,7 +572,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-- SSGCID  ******* not in Datasets -->
 <imp:wdkTable2 tblName="Ssgcid" isOpen="true" attribution="" />
-
 
 <!-- SSGCID Note  -->
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
@@ -666,8 +588,7 @@ organismFull:   Plasmodium falciparum 3D7
 <%-- unneeded since table will define the organisms 
 <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
 --%>
-  <imp:wdkTable2 tblName="3dPreds" attribution=""/>
-
+<imp:wdkTable2 tblName="3dPreds" attribution=""/>
 
 
 <!-- Epitopes -->
@@ -679,11 +600,11 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 
-
 <%--##########################   EXPRESSION      ################################--%>
 
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
+
   <imp:pageDivider name="Expression"/>
 
   <imp:expressionGraphs organism="${organismFull}" species="${binomial}"/>
@@ -691,8 +612,7 @@ organismFull:   Plasmodium falciparum 3D7
 <%-- unneeded since table will define the organisms 
   <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
 --%>
-    <imp:wdkTable2 tblName="SageTags" attribution=""/>
-
+  <imp:wdkTable2 tblName="SageTags" attribution=""/>
 
 </c:if>
 
@@ -705,10 +625,6 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
  
- <%-- ------------------------------------------------------------------ --%>
-
-
-
 
 <%--##########################   SEQUENCE     ################################--%>
 
@@ -820,10 +736,8 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-
 <!-- attribution -->
 <hr>
-
 <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
@@ -832,22 +746,14 @@ organismFull:   Plasmodium falciparum 3D7
 </c:forEach>
 
 
-
-
-
-
 <imp:panel 
     displayName="Genome Sequencing and Annotation by:"
     content="${reference}" />
-
 <br>
+
 <%------------------------------------------------------------------%>
 
-
-
 <%-- jsp:include page="/include/footer.html" --%>
-
-
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
