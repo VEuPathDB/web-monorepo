@@ -176,11 +176,11 @@
       return;
     }
 
-    if (questionName === "HtsSnpsByLocation") {
+    if (questionName === "NgsSnpsByLocation") {
       groups = [
         {
           name: "Chromosome",
-          params: ['chromosomeOptional']
+          params: ['chromosomeOptionalForNgsSnps']
         },
         {
           name: "Sequence ID",
