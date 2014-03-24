@@ -3,6 +3,7 @@
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
@@ -187,6 +188,8 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-------------- Updated Product Name from GeneDB ---------------------------->
 
+<%-- check attribute is_genedb_organism --%>
+
 <c:if test="${projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'  }">
   <div style="margin:12px;padding:5px">
     <c:if test="${attrs['updated_annotation'].value != null}">
@@ -200,8 +203,10 @@ organismFull:   Plasmodium falciparum 3D7
 
 </div>
 
-<!--------------  NOTE on Unpublished data ----****** ask JB how to deal with this------------------------>
-<%--
+<!--------------  NOTE on Unpublished data ----------------------->
+
+<%-- Bindu should check this --%>
+
 <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
@@ -212,7 +217,7 @@ organismFull:   Plasmodium falciparum 3D7
   </c:otherwise>
   </c:choose>
 </c:if>
---%>
+
 
 
 <%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
@@ -339,9 +344,9 @@ organismFull:   Plasmodium falciparum 3D7
      start="${start}" end="${end}" /> 
 
 
-<%-------COMMENT OUT FOR DEBUGGING: MetaTable  
+<%-------COMMENT OUT FOR DEBUGGING: MetaTable --%> 
 <imp:wdkTable2 tblName="MetaTable" isOpen="FALSE" attribution=""/>
- ---------%>
+
 
 
 <%--##########################   ANNOTATION      ################################--%>
