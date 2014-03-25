@@ -38,7 +38,9 @@
 <c:set var="prd" value="${attrs['product'].value}"/>
 <c:set var="overview" value="${attrs['overview']}"/>
 <c:set var="length" value="${attrs['transcript_length']}"/>
-<%-- OLD   <c:set var="genedb_organism" value="${attrs['genedb_organism'].value}"/>  --%>
+<%-- only defined in plasmo, we need it in all sites
+<c:set var="genedb_organism" value="${attrs['genedb_organism'].value}"/> 
+--%>
 <c:set var="isCodingGene" value="${so_term_name eq 'protein_coding'}"/>
 <c:set var="async" value="${param.sync != '1'}"/>
 <c:set var="start" value="${attrs['start_min_text'].value}"/>
@@ -129,7 +131,7 @@ organismFull:   Plasmodium falciparum 3D7
 </table>
 
 <hr>
-<!-- =========================  PAGE BEGINNING: title, stuff under title  ========================= -->
+<!-- =========================  PAGE BEGINNING: title and stuff under title  ========================= -->
 
 <!-- this block is to set a link to add a comment  -->
 <c:set var="externalDbName" value="${attrs['external_db_name']}"/>
@@ -188,8 +190,9 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-------------- Updated Product Name from GeneDB ---------------------------->
 
-<%-- check attribute is_genedb_organism --%>
-
+<%--  use genedb_organism when defined in all sites
+<c:if test="${not empty genedb_organism}">
+--%>
 <c:if test="${projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'  }">
   <div style="margin:12px;padding:5px">
     <c:if test="${attrs['updated_annotation'].value != null}">
@@ -204,7 +207,6 @@ organismFull:   Plasmodium falciparum 3D7
 </div>
 
 <!--------------  NOTE on Unpublished data ----------------------->
-
 <%-- Bindu should check this --%>
 
 <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
@@ -315,16 +317,16 @@ organismFull:   Plasmodium falciparum 3D7
 <%-- uneeded since table defines the organisms via datasets 
 <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">  
 --%>
-<imp:wdkTable2 tblName="Plasmo_eQTL_Table" isOpen="true"
-               attribution="" />
-
-<%-- ***** check with JB : will add as wdktable extracontent
-  <c:set var="queryURL">
-        showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_HaploGrpSimilarity&value%28lod_score%29=1.5&value%28percentage_sim_haploblck%29=25&value%28pf_gene_id%29=${id}&weight=10
-  </c:set>
-
+<c:set var="queryURL">
+  showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_HaploGrpSimilarity&value%28lod_score%29=1.5&value%28percentage_sim_haploblck%29=25&value%28pf_gene_id%29=${id}&weight=10
+</c:set>
+<c:set var="extraInfo">
   <a id="assocQueryLink" href="${queryURL}"><font size='-2'>Other genes that have similar associations based on eQTL experiments</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
---%>
+</c:set>
+<imp:wdkTable2 tblName="Plasmo_eQTL_Table" isOpen="true"
+               attribution="" postscript="${extraInfo}" />
+
+
 
 <%------------- version 8.2 genes ------------%>
 <imp:wdkTable2 tblName="PreviousReleaseGenes" isOpen="true"
