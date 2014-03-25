@@ -46,7 +46,10 @@ RecordBean.java, line 475: instead of throwing error we could just return null t
 <c:set var="tableList" value="${wdkRecord.attributes['tablesForOrg'].value}"/>
 
 <c:choose>
-<c:when test="${tblName ne 'MetaTable' && tblName ne 'UserComments' && !fn:containsIgnoreCase(tableList,tblName)}" >
+<c:when test="${tblName ne 'MetaTable' && 
+                tblName ne 'UserComments' && 
+                tblName ne 'Ssgcid' && 
+                !fn:containsIgnoreCase(tableList,tblName)}" >
 <br>
 ***** Attention:  WE SKIP TABLE ${tblName} --NOT DEFINED IN A DATASET FOR THIS ORGANISM
 <br>
