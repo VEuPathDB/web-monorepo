@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jsp:root version="2.0"
     xmlns:jsp="http://java.sun.com/JSP/Page"
-    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
   <jsp:directive.page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"/>
   <html>
     <body>
@@ -16,20 +16,25 @@
         </p>
         <form>
           <div class="testFormInputGroup">
-            <input type="checkbox" name="cbx1"/> Checkbox 1<br/>
-            <input type="checkbox" name="cbx2"/> Checkbox 2<br/>
-            <input type="checkbox" name="cbx3"/> Checkbox 3<br/>
+            <input type="checkbox" name="checkbox1"/> Checkbox 1<br/>
+            <input type="checkbox" name="checkbox2"/> Checkbox 2<br/>
+            <input type="checkbox" name="checkbox3"/> Checkbox 3<br/>
           </div>
           <div class="testFormInputGroup">
-            <input type="radio" name="rad1"/> Radio 1<br/>
-            <input type="radio" name="rad2"/> Radio 2<br/>
-            <input type="radio" name="rad3"/> Radio 3<br/>
+            <input type="checkbox" name="checkbox4" value="val1"/> Checkbox 4, Val 1<br/>
+            <input type="checkbox" name="checkbox4" value="val2"/> Checkbox 4, Val 2<br/>
+            <input type="checkbox" name="checkbox4" value="val3"/> Checkbox 4, Val 3<br/>
           </div>
           <div class="testFormInputGroup">
-            Hidden: <input type="hidden" name="hdn1"/><br/>
-            Text: <input type="text" name="txt1"/><br/>
-            Password: <input type="password" name="pwd1"/><br/>
-            Textarea: <textarea name="texta1" rows="4" cols="20"/><br/>
+            <input type="radio" name="radio1" value="val1"/> Radio 1, Val 1<br/>
+            <input type="radio" name="radio1" value="val2"/> Radio 1, Val 2<br/>
+            <input type="radio" name="radio1" value="val3"/> Radio 1, Val 3<br/>
+          </div>
+          <div class="testFormInputGroup">
+            Hidden 1: <input type="hidden" name="hidden1"/><br/>
+            Text 1: <input type="text" name="text1"/><br/>
+            Password 1: <input type="password" name="password1"/><br/>
+            Textarea 1: <textarea name="textarea1" rows="4" cols="20"/><br/>
           </div>
           <div class="testFormInputGroup">
             Select 1 (single):
@@ -39,7 +44,7 @@
               <option value="val3">Value 3</option>
             </select><br/>
             Select 2 (single):
-            <select name="sel2" size="1">
+            <select name="sel2" size="5">
               <option value="val1">Value 1</option>
               <option value="val2">Value 2</option>
               <option value="val3">Value 3</option>

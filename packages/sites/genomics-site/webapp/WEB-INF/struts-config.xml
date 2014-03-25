@@ -320,6 +320,10 @@
         parameter="org.gusdb.wdk.controller.action.analysis.CreateStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
+    <action path="/copyStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.CopyStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
     <action path="/runStepAnalysis"
         parameter="org.gusdb.wdk.controller.action.analysis.RunStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
@@ -350,6 +354,10 @@
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="pending" path="/wdk/jsp/analysis/resultsPending.jsp"/>
       <forward name="incomplete" path="/wdk/jsp/analysis/resultsIncomplete.jsp"/>
+    </action>
+    <action path="/stepAnalysisAll"
+        parameter="org.gusdb.wdk.controller.action.analysis.GetAllStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
 
     <!-- * is question set name -->
