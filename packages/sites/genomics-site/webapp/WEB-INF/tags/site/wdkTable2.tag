@@ -4,38 +4,40 @@
 <%@ attribute name="tblName"
               description="name of table attribute"
 %>
-
 <%@ attribute name="isOpen"
               description="Is show/hide block initially open, by default?"
 %>
-
 <%@ attribute name="attribution"
               description="Dataset name, for attribution"
 %>
-
 <%@ attribute name="preamble"
               description="Text to go above the table and description"
 %>
-
 <%@ attribute name="postscript"
               description="Text to go below the table"
 %>
-
 <%@ attribute name="suppressColumnHeaders"
               description="Should the display of column headers be skipped?"
 %>
-
 <%@ attribute name="suppressDisplayName"
               description="Should the display name be skipped?"
 %>
-
 <%@ attribute name="dataTable"
               description="Should the table use dataTables?"
               type="java.lang.Boolean"
 %>
+
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
-<%-- =========== IF ERROR IT MEANS TABLE IS NOT DEFINED IN THE MODEL ========== --%>
+<%-- ===== IF ERROR IT MEANS TABLE IS NOT DEFINED IN THE MODEL, handled at the bottom (we do nothing) ========== --%>
+<%-- breaks if table does not exist
+RecordBean.java, line 475: instead of throwing error we could just return null there
+
+<c:if test="${wdkRecord.tables[tblName] == null}" >
+<br>table does NOT EXIST in model <br>
+</c:if>
+--%>
+
 <c:catch var="tableError">
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 
@@ -46,7 +48,7 @@
 <c:choose>
 <c:when test="${tblName ne 'MetaTable' && tblName ne 'UserComments' && !fn:containsIgnoreCase(tableList,tblName)}" >
 <br>
-***** Attention:  WE SKIP TABLE ${tblName} THAT IS NOT DEFINED IN A DATASET FOR THIS ORGANISM
+***** Attention:  WE SKIP TABLE ${tblName} --NOT DEFINED IN A DATASET FOR THIS ORGANISM
 <br>
 <%--
 ${tableList}
@@ -83,10 +85,10 @@ ${tableList}
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
 
-	  <table class="${tableClassName}" title="Click to go to the comments page"  style="cursor:pointer" onclick="window.location='<c:url value="/showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>';">
+	  <table id="dt_${tblName}" class="dataTable ${tableClassName}" title="Click to go to the comments page"  style="cursor:pointer" onclick="window.location='<c:url value="/showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>';">
   </c:when>
   <c:otherwise>
-	  <table class="${tableClassName}">
+	  <table id="dt_${tblName}" class="dataTable ${tableClassName}">
   </c:otherwise>
   </c:choose>
 
@@ -130,20 +132,36 @@ ${tableList}
   </table>
 
 
+<%-- ====== make datatables, working on header width issue ==== --%>
+<%--
+<script type="text/javascript">
+setTimeout(function(){
+  jQuery('#dt_${tblName}').dataTable(
+    {
+		  "sScrollY": "200px",
+		  "bPaginate": false,
+      "aaSorting": [[ 1, 'asc']]
+	    }
+   );
+},500);
+</script>
+--%>
+
+
 <!--  CASE WHERE THE TABLE IS DEFINED BUT THERE IS NO DATA -->
   <c:if test="${i == 0}">
     <c:set var="noData" value="true"/>
   </c:if>
 
+<!-- SHOW extra content after table, if any. It must reset to empty on every call. -->
   ${postscript}
-
 </c:set>
 
 
-<!--  CASE WHERE THE TABLE IS NOT DEFINED -->
-
-
+<!--  CASE WHERE THE TABLE IS NOT DEFINED AND 
+      we want to show the empty table with an error message -->
 <%--
+</c:catch>
 <c:if test="${tableError != null}">
     <c:set var="exception" value="${tableError}" scope="request"/>
     <c:set var="tblContent" value="<i>Error. Data is temporarily unavailable</i>"/>
@@ -151,21 +169,23 @@ ${tableList}
 </c:if>
 --%>
 
+
+<!----  FINALLY GO SHOW THE TABLE!!! ------------->
 <imp:toggle name="${tblName}" displayName="${tableDisplayName}"
              content="${tblContent}" isOpen="${isOpen}" noData="${noData}"
              attribution="${attribution}"/>
 
 
-
 </c:otherwise>
 </c:choose>
 
-</c:catch>
 
+</c:catch>
+<%-- ========= REACT TO TABLE NOT IN MODEL or nothing ============= --%>
 <c:if test="${tableError != null}">
-<%--
-<br>
-WE SKIP TABLE ${tblName} THAT IS NOT IN THE MODEL
-<br>
---%>
+  <%--
+  <br>
+  WE SKIP TABLE ${tblName} THAT IS NOT IN THE MODEL
+  <br>
+  --%>
 </c:if>
