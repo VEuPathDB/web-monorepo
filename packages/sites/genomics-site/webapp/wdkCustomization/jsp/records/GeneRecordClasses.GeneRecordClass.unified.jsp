@@ -577,8 +577,10 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:wdkTable2 tblName="PdbSimilarities" postscript="${attrs['pdb_blast_form'].value}" attribution=""/>
 
 
-<!-- SSGCID  ******* not in Datasets -->
-<imp:wdkTable2 tblName="Ssgcid" isOpen="true" attribution="" />
+<!-- SSGCID  ******* not in Datasets because we do not load the dataset -->
+<c:if test="${attrs['hasSsgcid'].value eq '1'}">
+  <imp:wdkTable2 tblName="Ssgcid" isOpen="true" attribution="" />
+</c:if>
 
 <!-- SSGCID Note  -->
 <c:if test="${attrs['hasSsgcid'].value eq '0' && attrs['hasPdbSimilarity'].value eq '0'}">
