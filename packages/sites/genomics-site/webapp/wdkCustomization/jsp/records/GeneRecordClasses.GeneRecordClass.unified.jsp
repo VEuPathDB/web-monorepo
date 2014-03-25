@@ -352,8 +352,8 @@ organismFull:   Plasmodium falciparum 3D7
 --%>
 <c:if test="${strand eq '-'}">
    <c:set var="revCompOn" value="1"/>
-  </c:if>
 </c:if>
+
 
 <imp:mercatorTable tblName="MercatorTable" isOpen="false" 
      cgiUrl="/cgi-bin" projectId="${projectId}" 
