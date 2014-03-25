@@ -300,6 +300,10 @@ organismFull:   Plasmodium falciparum 3D7
                                        fn:contains(header['User-Agent'], 'Netscape') }"/>
 --%>
 
+<%-- === from toxo ===== --%>
+<!-- strains comparison table -->
+<imp:wdkTable2 tblName="Strains" isOpen="true"  attribution=""/>
+
 
 <%---------- HTS SNP OVERVIEW --------- BASED ON ATTRIBUTE  ------%>
 <c:if test="${attrs['hasHtsSnps'].value eq '1'}">
@@ -310,6 +314,12 @@ organismFull:   Plasmodium falciparum 3D7
 <br>
 <imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
 </c:if>
+
+
+<%-- === from toxo ===== --%>
+<!-- locations -->
+<imp:wdkTable2 tblName="Genbank" isOpen="true" attribution="" />
+
 
 
 <%------------ eQTL regions ---------------%>
@@ -334,8 +344,13 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%----------- Mercator / Mavid alignments ------------%>
-<c:if test="${externalDbName.value eq 'Pfalciparum_chromosomes_RSRC'}">
-  <c:if test="${strand eq '-'}">
+<%-- asked JB how to handle this: remove conditionals
+- In crypto: it was done always
+- In toxo: it was done for all BUT not for externalDbName.value:  'Roos Lab T. gondii apicoplast
+          <c:if test="${externalDbName.value ne 'Roos Lab T. gondii apicoplast'}">
+- in plasmo: it was done ONLY if externalDbName.value eq 'Pfalciparum_chromosomes_RSRC
+--%>
+<c:if test="${strand eq '-'}">
    <c:set var="revCompOn" value="1"/>
   </c:if>
 </c:if>
@@ -377,6 +392,29 @@ organismFull:   Plasmodium falciparum 3D7
      </td></tr>
  </table>
 </c:if>
+
+<%--  ====== from toxo ====== --%>
+<%--
+<c:catch var="e">
+--%>
+
+<imp:wdkTable2 tblName="TaskComments" isOpen="true"
+                 attribution="" suppressColumnHeaders="true"/>
+<%--
+</c:catch>
+<c:if test="${e != null}">
+ <table  width="100%" cellpadding="3">
+      <tr><td><b>Toxoplasma Genome Sequencing Project Annotation </b>
+     <imp:embeddedError 
+         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
+         e="${e}" 
+     />
+     </td></tr>
+ </table>
+</c:if>
+--%>
+
+
 
 
 <!-- Note for 3D7 -->
@@ -437,7 +475,7 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-<!-- Notes from annotator -->
+<!-- Notes from annotator == in toxo only shown if externalDbName.value eq 'Roos Lab T. gondii apicoplast-->
 <imp:wdkTable2 tblName="Notes" attribution=""/>
 
 
@@ -588,8 +626,8 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-<!-- Antibody ***** only crypto?  ****** not in Datasets -->
-<imp:wdkTable2 tblName="Antibody" attribution=""/>
+<!-- Antibody ***** only crypto? toxo too but shown under GoTerms  ****** not in Datasets -->
+<imp:wdkTable2 tblName="Antibody" attribution="" />
 
 
 <!-- 3D struct predictions ==== only 3D7   -->
