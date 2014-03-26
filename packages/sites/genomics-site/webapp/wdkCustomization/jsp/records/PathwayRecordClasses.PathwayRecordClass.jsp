@@ -91,15 +91,22 @@
             .link { text-decoration: underline; color: #0b94b1; cursor: pointer; }
         </style>
 
-      <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/jsddm/jsddm.css"/>
- <script type="text/javascript" src="${pageContext.request.contextPath}/wdkCustomization/js/lib/jsddm.js"><jsp:text/></script>
-
-
-
  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
  <style>
-#draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 400px; background-color:white;border:1px solid black; border-radius:5px; width: 300px; padding: 0.5em; }
-#cytoscapeweb { border:1px solid black; border-radius:5px;  }
+  #draggable {z-index:1000;margin-left:18px;position:absolute;margin-top: 400px; background-color:white;border:1px solid black; border-radius:5px; width: 300px; padding: 0.5em; }
+  #cytoscapeweb { border:1px solid black; border-radius:5px;  }
+  #vis-menu {
+    background: -webkit-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+    background: -o-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+    background: -moz-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+    background: linear-gradient(rgb(191,191,191), rgb(121,121,121));
+    background-color: rgb(171,171,171);
+    margin-bottom: inherit;
+    width: auto;
+  }
+  #vis-menu li {
+    z-index: 96;
+  }
 </style>
 
 <script>
@@ -113,7 +120,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 <br />
 </div>
 
-<ul id="jsddm">
+<ul id="vis-menu" class="sf-menu">
     <li><a href="javascript:void(0)">Layout</a>
         <ul>
             <li><a  href="javascript:void(0)" onclick="changeLayout('Preset')">Kegg</a></li>

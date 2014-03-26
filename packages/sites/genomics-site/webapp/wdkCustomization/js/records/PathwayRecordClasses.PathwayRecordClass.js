@@ -371,4 +371,6 @@ jQuery(function($) {
 
   $(window).on('resize', resizeMap);
   resizeMap();
+
+  $('#vis-menu').superfish();
 });
