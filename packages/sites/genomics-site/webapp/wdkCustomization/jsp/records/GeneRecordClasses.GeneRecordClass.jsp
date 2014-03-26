@@ -14,7 +14,7 @@
 </c:catch>
 
 <c:choose>
-<c:when test="${projectId eq 'PlasmoDB' || projectId eq 'CryptoDB'  }">
+<c:when test="${projectId eq 'PlasmoDB' || projectId eq 'CryptoDB' || projectId eq 'ToxoDB' }">
    <jsp:include page="/wdkCustomization/jsp/records/GeneRecordClasses.GeneRecordClass.unified.jsp"/>
 </c:when>
 <c:otherwise>
