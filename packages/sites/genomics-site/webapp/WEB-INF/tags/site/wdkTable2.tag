@@ -48,7 +48,9 @@ RecordBean.java, line 475: instead of throwing error we could just return null t
 <c:choose>
 <c:when test="${tblName ne 'MetaTable' && 
                 tblName ne 'UserComments' && 
+                tblName ne 'TaskComments' && 
                 tblName ne 'Ssgcid' && 
+                tblName ne 'SNPsAlignment' && 
                 !fn:containsIgnoreCase(tableList,tblName)}" >
 <br>
 ***** Attention:  WE SKIP TABLE ${tblName} --NOT DEFINED IN A DATASET FOR THIS ORGANISM
@@ -75,12 +77,63 @@ ${tableList}
   </c:choose>
 </c:set>
 
-<!-- GENERATING CONTENT TO BE PASSED TO imp:toggle below -->
+<!-- ============ GENERATING CONTENT TO BE PASSED TO imp:toggle below ======== -->
 <c:set var="tblContent">
   <div class="table-preamble">${preamble}</div>
   <div class="table-description">${tbl.tableField.description}</div>
 
+<c:choose>
+<c:when test="${tblName == 'SNPsAlignment'}">
+<%-- =========  SNP ALIGNMENTS ======= temporary view ============ --%>
+  <c:set var="attrs" value="${wdkRecord.attributes}"/>
+
+  <form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
+  <c:set var="i" value="0"/>
+
+<table >
+<c:forEach var="row" items="${tbl}">
+  <c:set var="i" value="${i+1}"/>
+  <c:if test="${i % 8 == 1}">
+     <tr>
+  </c:if>
+  <c:forEach var="rColEntry" items="${row}">
+    <c:set var="attributeValue" value="${rColEntry.value}"/>
+    <c:if test="${attributeValue.attributeField.internal == false}"> 
+      <td><imp:wdkAttribute attributeValue="${attributeValue}" truncate="false" /></td>
+    </c:if> 
+  </c:forEach>
+  <c:if test="${i % 8 == 0}">
+    </tr>
+  </c:if>
+</c:forEach>
+</table>
+
+<c:choose>
+<c:when test="${i == 1}">
+  <br>Sorry, we only have one SNP dataset.<br>
+</c:when>
+<c:otherwise>
+  <table width="100%">
+  <tr>
+    <td align=center>
+      <br>We have ${i} SNP datasets for alignment.<br>
+      <input type="button" value="Show Alignment on Checked Strains" onClick="goToHTSStrain(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min']}','${attrs['end_max']}')" /> 
+      <input type="button" name="CheckAll" value="Check All"  onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
+      <input type="button" name="UnCheckAll" value="Uncheck All" onClick="wdk.api.checkboxNone(jQuery('input:checkbox[name=selectedFields]'))">
+    </td>
+  </tr> 
+  </table>
+</c:otherwise>
+</c:choose>
+
+
+  </form>
+</c:when>
+<c:otherwise>
+
+
   <c:choose>
+<%-- =========  USER COMMENTS======================== --%>
   <c:when test="${tblName == 'UserComments'}">
     <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
     <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
@@ -88,10 +141,17 @@ ${tableList}
     <c:set var="projectId" value="${pkValues['project_id']}" />
     <c:set var="id" value="${pkValues['source_id']}" />
 
-	  <table id="dt_${tblName}" class="dataTable ${tableClassName}" title="Click to go to the comments page"  style="cursor:pointer" onclick="window.location='<c:url value="/showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>';">
+	  <table id="dt_${tblName}" 
+           class="dataTable ${tableClassName}" 
+           title="Click to go to the comments page"  
+           style="cursor:pointer" 
+           onclick="window.location='<c:url value="/showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>';">
   </c:when>
+
+<%-- =========  OTHER TABLES ======================= --%>
   <c:otherwise>
-	  <table id="dt_${tblName}" class="dataTable ${tableClassName}">
+	  <table id="dt_${tblName}"
+           class="dataTable ${tableClassName}">
   </c:otherwise>
   </c:choose>
 
@@ -135,20 +195,23 @@ ${tableList}
   </table>
 
 
-<%-- ====== make datatables, working on header width issue ==== --%>
-<%--
-<script type="text/javascript">
-setTimeout(function(){
-  jQuery('#dt_${tblName}').dataTable(
-    {
-		  "sScrollY": "200px",
-		  "bPaginate": false,
-      "aaSorting": [[ 1, 'asc']]
-	    }
-   );
-},500);
-</script>
+  <%-- ====== make datatables, working on header width issue ==== --%>
+  <%--
+  <script type="text/javascript">
+  setTimeout(function(){
+    jQuery('#dt_${tblName}').dataTable(
+      {
+		    "sScrollY": "200px",
+		    "bPaginate": false,
+        "aaSorting": [[ 1, 'asc']]
+	      }
+     );
+  },500);
+  </script>
 --%>
+
+  </c:otherwise> <%-- tables other than SNPsAlignment --%>
+  </c:choose>
 
 
 <!--  CASE WHERE THE TABLE IS DEFINED BUT THERE IS NO DATA -->

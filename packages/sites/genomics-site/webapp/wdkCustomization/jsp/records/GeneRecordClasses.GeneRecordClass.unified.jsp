@@ -312,7 +312,7 @@ organismFull:   Plasmodium falciparum 3D7
     displayName="${htsSNPs.displayName}"
     content="${htsSNPs.value}${append}" />
 <br>
-<imp:snpTable tblName="SNPsAlignment" isOpen="false" /> 
+<imp:wdkTable2 tblName="SNPsAlignment" isOpen="false" /> 
 </c:if>
 
 
@@ -400,7 +400,8 @@ organismFull:   Plasmodium falciparum 3D7
 
 <imp:wdkTable2 tblName="TaskComments" isOpen="true"
                  attribution="" suppressColumnHeaders="true"/>
-<%--
+
+<%-- handled in tag file
 </c:catch>
 <c:if test="${e != null}">
  <table  width="100%" cellpadding="3">
