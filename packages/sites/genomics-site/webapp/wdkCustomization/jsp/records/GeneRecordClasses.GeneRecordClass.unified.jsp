@@ -206,10 +206,12 @@ organismFull:   Plasmodium falciparum 3D7
 
 </div>
 
-<!--------------  NOTE on Unpublished data ----------------------->
-<%-- Bindu should check this --%>
+<!--------------  NOTE on Unpublished data as it was in Plasmo page ----------------------->
+<%-- Bindu should review this --%>
+<%-- a similar note is in Toxo based on a table: 'ToxoETennellaSuspects', do we need that? --%>
 
 <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
+<%-- <c:if test="${projectId eq 'PlasmoDB' && attrs['is_annotated'].value == 0}">  --%>
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
     <b>NOTE: ${attrs['release_policy'].value }</b>
@@ -225,6 +227,7 @@ organismFull:   Plasmodium falciparum 3D7
 <%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
 
 <%--- COMMUNITY EXPERT ANNOTATION -----------%>
+<!-- this is commented out in some sites like plasmo but not in giardia .. -->
 <!--
 <imp:panel 
      displayName="Community Expert Annotation"
@@ -249,6 +252,15 @@ organismFull:   Plasmodium falciparum 3D7
 
 <%-- OVERVIEW ------------%>
 <c:set var="attr" value="${attrs['overview']}" />
+
+<%-- do we need this information?
+<c:if test="${attrs['is_deprecated'].value eq 'Yes'}">
+   <c:set var="isdeprecated">
+     **<b>Deprecated</b>**
+   </c:set>
+</c:if>
+--%>
+
 <imp:panel attribute="${attr.name}"
     displayName="${attr.displayName} ${has_namefun_comment}"
     content="${attr.value}${append}" />
@@ -317,9 +329,9 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-<%-- === from toxo ===== --%>
+<%-- === from toxo ==  giardia also uses it ==== --%>
 <!-- locations -->
-<imp:wdkTable2 tblName="Genbank" isOpen="true" attribution="" />
+<imp:wdkTable2 tblName="GeneLocation" isOpen="true" attribution="" />
 
 
 
@@ -506,7 +518,7 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-<%-- *******  not in crypto  ******* not in Datasets --%>
+<%-- mr4reagents  --%>
 <imp:wdkTable2 tblName="Mr4Reagents" attribution=""/>
 
 
