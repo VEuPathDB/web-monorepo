@@ -55,6 +55,15 @@
   <c:set var="strand" value="-"/>
 </c:if>
 
+<%-- from giardia --%>
+<%-- attributes not defined in other sites ---- used in Annotation as "Philogentic Tree" 
+
+<c:set var="tree_source_id" value="${attrs['phyTreeId'].value}"/>
+<c:set var="tree_applet" value="${attrs['tree_applet_link'].value}"/>
+--%>
+
+
+
 <!-- COMMENTS attributes  -->
 <c:set value="${wdkRecord.tables['CategoryLink']}" var="ctgLinks"/>
 
@@ -455,6 +464,17 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- External Links --> 
 <imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
+<%-- in giardia, using attributes that do not exist in other sites
+<c:if test="${tree_source_id ne null}">
+  <c:set var='treeLink'>
+    ${tree_applet} against RefEuks database
+  </c:set>
+  <imp:panel 
+      displayName="Phylogenetic Tree"
+      content="${treeLink}" />
+</c:if>
+<br>
+--%>
 
 <!-- Orthologs and Paralogs -->
 <c:if test="${isCodingGene}">
@@ -483,6 +503,10 @@ organismFull:   Plasmodium falciparum 3D7
   <a name="goTerm"></a>
   <imp:wdkTable2 tblName="GoTerms" attribution=""/>
 </c:if>
+
+<%-- from giardia new in build21--%>
+<imp:wdkTable tblName="CellularLocalization" isOpen="true"
+               attribution=""/>
 
 
 <!-- gene alias table -->
