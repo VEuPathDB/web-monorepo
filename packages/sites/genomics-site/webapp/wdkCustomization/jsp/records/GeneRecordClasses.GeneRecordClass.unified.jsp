@@ -505,7 +505,7 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 <%-- from giardia new in build21--%>
-<imp:wdkTable tblName="CellularLocalization" isOpen="true"
+<imp:wdkTable2 tblName="CellularLocalization" isOpen="true"
                attribution=""/>
 
 
