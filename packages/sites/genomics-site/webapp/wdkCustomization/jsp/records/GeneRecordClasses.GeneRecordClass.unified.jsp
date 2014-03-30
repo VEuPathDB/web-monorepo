@@ -158,6 +158,20 @@ organismFull:   Plasmodium falciparum 3D7
   <c:param name="bulk" value="0" /> 
 </c:url>
 
+<%----------- TriTrp --------%>
+<c:set var="esmeraldoDatabaseName" value="TcruziEsmeraldoLike_chromosomes_RSRC"/>
+<c:set var="nonEsmeraldoDatabaseName" value="TcruziNonEsmeraldoLike_genome_RSRC"/>
+<c:choose>
+  <c:when test='${binomial eq "Trypanosoma cruzi" && sequenceDatabaseName ne esmeraldoDatabaseName && sequenceDatabaseName ne nonEsmeraldoDatabaseName}'>
+    <c:set var="append" value=" - (this contig could not be assigned to Esmeraldo or Non-Esmeraldo)" />
+  </c:when>
+  <c:otherwise>
+    <c:set var="append" value="" />
+  </c:otherwise>
+</c:choose>
+
+
+
 <!------------ small div with: Download, show and hide all  ------------->
 <imp:recordToolbox />
 
@@ -199,7 +213,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-------------- Updated Product Name from GeneDB ---------------------------->
 
-<%--  use genedb_organism when defined in all sites
+<%--  TODO:  use genedb_organism when defined in all sites
 <c:if test="${not empty genedb_organism}">
 --%>
 <c:if test="${projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'  }">
@@ -216,7 +230,7 @@ organismFull:   Plasmodium falciparum 3D7
 </div>
 
 <!--------------  NOTE on Unpublished data as it was in Plasmo page ----------------------->
-<%-- Bindu should review this --%>
+<%-- TODO:  Bindu should review this --%>
 <%-- a similar note is in Toxo based on a table: 'ToxoETennellaSuspects', do we need that? --%>
 
 <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
@@ -345,10 +359,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%------------ eQTL regions ---------------%>
-<%-- ******* not in Datasets  --%>
-<%-- uneeded since table defines the organisms via datasets 
-<c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">  
---%>
 <c:set var="queryURL">
   showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_HaploGrpSimilarity&value%28lod_score%29=1.5&value%28percentage_sim_haploblck%29=25&value%28pf_gene_id%29=${id}&weight=10
 </c:set>
@@ -513,20 +523,24 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
+<%-------- TRITRYP  ---------%>
+<c:if test="${projectId eq 'TriTrypDB'  }">
+<c:set var="geneDbLink">
+  <div align="left">
+    <br><small>Notes provided by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
+    </small></div>
+</c:set>
+</c:if>
+
 <!-- Notes from annotator == in toxo only shown if externalDbName.value eq 'Roos Lab T. gondii apicoplast-->
-<imp:wdkTable2 tblName="Notes" attribution=""/>
+<imp:wdkTable2 tblName="Notes" attribution="" postscript="${geneDbLink}"/>
 
-
-<%-- unneeded since table appears associated to specific organisms 
-<c:if test="${organismFull eq 'Plasmodium falciparum 3D7' || species eq 'Plasmodium berghei' || species eq 'Plasmodium yoelii'}">
---%>
 
 <!-- phenotype -->
 <imp:wdkTable2 tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
 
 
 <!-- Hagai -->
-<%-- ******* not in Datasets  --%>
 <c:if test="${isCodingGene}">
   <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
 </c:if>
@@ -585,9 +599,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%-- Y2Hinteractions ------------%>
-<%-- uneeded since table defines the organisms via datasets
-  <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
---%>
 <imp:wdkTable2 tblName="Y2hInteractions" isOpen="true" attribution=""/>
 
 
@@ -638,14 +649,11 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-<%-- Pberghei Prot Expression   ******* not in Datasets   --%>
-<%-- unneeded since table will define the organisms 
-<c:if test="${binomial eq 'Plasmodium berghei'}">
---%>
+<%-- Pberghei Prot Expression  --%>
 <imp:wdkTable2 tblName="ProteinExpression" attribution=""/>
 
 
-<%--  Protein Linkouts    ******** not in Crypto ******* not in Datasets  --%>
+<%--  Protein Linkouts     --%>
 <imp:wdkTable2 tblName="ProteinDatabase"/>
 
 
@@ -664,15 +672,11 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-<!-- Antibody ***** only crypto? toxo too but shown under GoTerms  ****** not in Datasets -->
+<!-- Antibody  -->
 <imp:wdkTable2 tblName="Antibody" attribution="" />
 
 
 <!-- 3D struct predictions ==== only 3D7   -->
-<%-- ******* not in Datasets  --%>
-<%-- unneeded since table will define the organisms 
-<c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
---%>
 <imp:wdkTable2 tblName="3dPreds" attribution=""/>
 
 
@@ -683,22 +687,50 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if> <%-- end if isCodingGene --%>
 
 
+<%--##########################   PHENOYPE (only in TriTryp)      ################################--%>
+
+<c:if test="${projectId eq 'TriTrypDB'  }">
+  <c:set var="geneDbLink">
+    <div align="left">
+    <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
+</small></div>
+  </c:set>
+
+  <imp:wdkTable2 tblName="Phenotype" isOpen="true"
+               attribution="" postscript="${geneDbLink}"/>
+  <imp:profileGraphs species="${binomial}" tableName="PhenotypeGraphs"/>
+</c:if>
 
 
 <%--##########################   EXPRESSION      ################################--%>
 
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
-
   <imp:pageDivider name="Expression"/>
-
   <imp:expressionGraphs organism="${organismFull}" species="${binomial}"/>
 
-<%-- unneeded since table will define the organisms 
-  <c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
---%>
-  <imp:wdkTable2 tblName="SageTags" attribution=""/>
 
+<%----------TODO --- TRITRYP --------------------------%>
+<%---- Splice Sites table --------%>
+<c:if test="${binomial eq 'Leishmania infantum'}">
+     <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
+</c:if>
+<c:if test="${binomial eq 'Leishmania major'}">
+     <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
+</c:if>
+<c:if test="${binomial eq 'Trypanosoma brucei'}">
+     <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
+</c:if>
+<%---- Poly A Sites table ---------%>
+<c:if test="${binomial eq 'Leishmania major' }">
+     <imp:wdkTable2 tblName="PolyASites" isOpen="false" attribution=""/>
+</c:if>
+<c:if test="${binomial eq 'Trypanosoma brucei'}">
+     <imp:wdkTable2 tblName="PolyASites" isOpen="false" attribution=""/>
+</c:if>
+
+
+  <imp:wdkTable2 tblName="SageTags" attribution=""/>
 </c:if>
 
 
