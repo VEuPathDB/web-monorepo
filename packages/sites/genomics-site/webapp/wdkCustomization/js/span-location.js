@@ -88,7 +88,7 @@
             var strand = params.find("select#sequence_strand").val();
 
             var ids = sequenceIds.split(/[,;]/);
-            var spanIdsInput = $("#form_question #span-search-list textarea#span_id_data");
+            var spanIdsInput = $("#form_question #span-search-list textarea[name=span_id_data]");
             var spanIds = spanIdsInput.val();
             for(var i = 0; i < ids.length; i++) {
                 var sequenceId = $.trim(ids[i]);
