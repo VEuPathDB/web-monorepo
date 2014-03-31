@@ -7,7 +7,7 @@
   <html>
     <body>
       <style>
-        .testFormInputGroup { margin:4px; border:1px solid #cccccc; border-radius:7px; padding:5px; }
+        .testFormInputGroup { margin:4px; border:1px solid #cccccc; border-radius:7px; padding:5px; display:inline-block; }
       </style>
       <div style="text-align:center">
         <h3 style="text-align:center">Analysis Form Tester</h3>

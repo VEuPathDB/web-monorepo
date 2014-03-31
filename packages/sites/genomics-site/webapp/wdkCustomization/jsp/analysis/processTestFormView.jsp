@@ -7,7 +7,7 @@
     <body>
       <div style="text-align:center">
         <form>
-          <h3>List Files (Test Analyzer Plugin)</h3>
+          <h3 style="text-align:center">List Files (Test Analyzer Plugin)</h3>
           <em>Type in a directory on the server to see a list of files.</em>
           <p>
             <input type="text" name="location" size="50"/>
