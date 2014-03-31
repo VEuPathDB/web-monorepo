@@ -121,6 +121,12 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 </div>
 
 <ul id="vis-menu" class="sf-menu">
+    <li><a href="#">File</a>
+        <ul>
+            <li> <a href="javascript:exportVisualization('xgmml')">XGMML file</a></li>
+            <li> <a href="javascript:exportVisualization('png')">image file</a></li>
+ 	</ul>
+    </li>
     <li><a href="javascript:void(0)">Layout</a>
         <ul>
             <li><a  href="javascript:void(0)" onclick="changeLayout('Preset')">Kegg</a></li>
@@ -139,12 +145,6 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 </c:forEach>
         </ul>
     </li>
-    <li><a href="#">Data</a>
-        <ul>
-            <li> <a href="javascript:exportVisualization('xgmml')">XGMML file</a></li>
-            <li>    <a href="javascript:exportVisualization('png')">image file</a></li>
- 	</ul>
-       </li>
 </ul>
 
 
