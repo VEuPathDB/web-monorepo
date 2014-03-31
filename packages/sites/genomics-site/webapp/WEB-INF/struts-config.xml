@@ -359,6 +359,10 @@
         parameter="org.gusdb.wdk.controller.action.analysis.GetAllStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
+    <action path="/stepAnalysisResource"
+        parameter="org.gusdb.wdk.controller.action.analysis.GetStepAnalysisResourceAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
 
     <!-- * is question set name -->
 	<action

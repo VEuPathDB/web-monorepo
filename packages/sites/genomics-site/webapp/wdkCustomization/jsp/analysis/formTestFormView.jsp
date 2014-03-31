@@ -8,7 +8,7 @@
       <style>
         .testFormInputGroup { margin:4px; border:1px solid #cccccc; border-radius:7px }
       </style>
-      <div>
+      <div style="text-align:center">
         <h3>Analysis Form Tester</h3>
         <p>
           <em>Below are examples of each input type we support.<br/>
