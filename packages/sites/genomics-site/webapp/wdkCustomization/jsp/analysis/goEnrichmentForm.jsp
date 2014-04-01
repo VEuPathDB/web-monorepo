@@ -33,7 +33,7 @@
             </tr>
             <tr>
               <td colspan="2" style="text-align:center">
-                <input type="submit" name="Submit"/>
+                <input type="submit" value="Submit"/>
               </td>
             </tr>
           </table>
