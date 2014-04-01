@@ -28,7 +28,7 @@
 <c:otherwise>
 
 
-<!--  SETTING ATTRIBUTES ****** 4 genedb-related attr only in plasmo and tritryp; 2 more missing in trich --------->
+<!--  SETTING ATTRIBUTES ****** should al exist in all projects --------->
 
 <c:set var="organism" value="${attrs['organism'].value}"/>
 <c:set var="organismFull" value="${attrs['organism_full'].value}"/>
@@ -38,9 +38,6 @@
 <c:set var="prd" value="${attrs['product'].value}"/>
 <c:set var="overview" value="${attrs['overview']}"/>
 <c:set var="length" value="${attrs['transcript_length']}"/>
-<%-- only defined in plasmo, we need it in all sites
-<c:set var="genedb_organism" value="${attrs['genedb_organism'].value}"/> 
---%>
 <c:set var="isCodingGene" value="${so_term_name eq 'protein_coding'}"/>
 <c:set var="async" value="${param.sync != '1'}"/>
 <c:set var="start" value="${attrs['start_min_text'].value}"/>
@@ -54,13 +51,6 @@
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
 </c:if>
-
-<%-- from giardia --%>
-<%-- attributes not defined in other sites ---- used in Annotation as "Philogentic Tree" 
-
-<c:set var="tree_source_id" value="${attrs['phyTreeId'].value}"/>
-<c:set var="tree_applet" value="${attrs['tree_applet_link'].value}"/>
---%>
 
 
 
@@ -94,7 +84,9 @@
 </c:forEach> 
 
 
-<%-- species used in expression and sequence sections --%>
+<%-- binomial used in expression section --%>
+<%-- organismFull used in expression section  --%>
+<%-- species used in sequence section --%>
 <c:set var="species" value="${attrs['genus_species'].value}"/>
 
 <!-- example values:
@@ -158,18 +150,21 @@ organismFull:   Plasmodium falciparum 3D7
   <c:param name="bulk" value="0" /> 
 </c:url>
 
-<%----------- TriTrp --------%>
-<c:set var="esmeraldoDatabaseName" value="TcruziEsmeraldoLike_chromosomes_RSRC"/>
-<c:set var="nonEsmeraldoDatabaseName" value="TcruziNonEsmeraldoLike_genome_RSRC"/>
-<c:choose>
-  <c:when test='${binomial eq "Trypanosoma cruzi" && sequenceDatabaseName ne esmeraldoDatabaseName && sequenceDatabaseName ne nonEsmeraldoDatabaseName}'>
-    <c:set var="append" value=" - (this contig could not be assigned to Esmeraldo or Non-Esmeraldo)" />
-  </c:when>
-  <c:otherwise>
-    <c:set var="append" value="" />
-  </c:otherwise>
-</c:choose>
 
+<%------TODO ----- TriTryp --------%>
+<c:if test="${projectId eq 'TriTrypDB'}">
+  <c:set var="esmeraldoDatabaseName" value="TcruziEsmeraldoLike_chromosomes_RSRC"/>
+  <c:set var="nonEsmeraldoDatabaseName" value="TcruziNonEsmeraldoLike_genome_RSRC"/>
+  <c:set var="sequenceDatabaseName" value="${attrs['sequence_database_name'].value}"/>
+  <c:choose>
+    <c:when test='${binomial eq "Trypanosoma cruzi" && sequenceDatabaseName ne esmeraldoDatabaseName && sequenceDatabaseName ne nonEsmeraldoDatabaseName}'>
+      <c:set var="append" value=" - (this contig could not be assigned to Esmeraldo or Non-Esmeraldo)" />
+    </c:when>
+    <c:otherwise>
+      <c:set var="append" value="" />
+    </c:otherwise>
+  </c:choose>
+</c:if>
 
 
 <!------------ small div with: Download, show and hide all  ------------->
@@ -213,7 +208,8 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-------------- Updated Product Name from GeneDB ---------------------------->
 
-<%--  TODO:  use genedb_organism when defined in all sites
+<%--  TODO:  add attribute is_genedb_organism (remove genedb_organism?)
+<c:set var="genedb_organism" value="${attrs['genedb_organism'].value}"/> 
 <c:if test="${not empty genedb_organism}">
 --%>
 <c:if test="${projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'  }">
@@ -230,11 +226,8 @@ organismFull:   Plasmodium falciparum 3D7
 </div>
 
 <!--------------  NOTE on Unpublished data as it was in Plasmo page ----------------------->
-<%-- TODO:  Bindu should review this --%>
-<%-- a similar note is in Toxo based on a table: 'ToxoETennellaSuspects', do we need that? --%>
 
 <c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
-<%-- <c:if test="${projectId eq 'PlasmoDB' && attrs['is_annotated'].value == 0}">  --%>
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
     <b>NOTE: ${attrs['release_policy'].value }</b>
@@ -249,9 +242,9 @@ organismFull:   Plasmodium falciparum 3D7
 
 <%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
 
-<%--- COMMUNITY EXPERT ANNOTATION -----------%>
+<%--- TODO ---COMMUNITY EXPERT ANNOTATION -----------%>
 <!-- this is commented out in some sites like plasmo but not in giardia .. -->
-<!--
+<!--  CONFIRM WITH BRIAN
 <imp:panel 
      displayName="Community Expert Annotation"
      content="" />
@@ -276,7 +269,7 @@ organismFull:   Plasmodium falciparum 3D7
 <%-- OVERVIEW ------------%>
 <c:set var="attr" value="${attrs['overview']}" />
 
-<%-- do we need this information?
+<%-- TODO   ADD to all sites
 <c:if test="${attrs['is_deprecated'].value eq 'Yes'}">
    <c:set var="isdeprecated">
      **<b>Deprecated</b>**
@@ -426,39 +419,11 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 <%--  ====== from toxo ====== --%>
-<%--
-<c:catch var="e">
---%>
-
 <imp:wdkTable2 tblName="TaskComments" isOpen="true"
                  attribution="" suppressColumnHeaders="true"/>
 
-<%-- handled in tag file
-</c:catch>
-<c:if test="${e != null}">
- <table  width="100%" cellpadding="3">
-      <tr><td><b>Toxoplasma Genome Sequencing Project Annotation </b>
-     <imp:embeddedError 
-         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
-         e="${e}" 
-     />
-     </td></tr>
- </table>
-</c:if>
---%>
 
-
-
-
-<!-- Note for 3D7 -->
-<c:if test="${organismFull eq 'Plasmodium falciparum 3D7'}">
-  <div align="center">
-      <i>The ${binomial} genome is not finished.  Please consult Plasmodium orthologs to support your conclusions.</i><br><br>
-  </div>
-</c:if> 
-<br/>
-
-<%---------- in old jsp there was a section on phenotype  commented out ------------%>
+<%---------- in old plasmo jsp there was a section on phenotype  commented out ------------%>
 
 <!-- EC number -->
 <a name="ecNumber"></a>
@@ -470,11 +435,14 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- metabolic pathways -->
 <imp:wdkTable2 tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 
-
 <!-- External Links --> 
 <imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
-<%-- in giardia, using attributes that do not exist in other sites
+
+<%-- in giardia TODO   add new attribute
+<c:set var="tree_source_id" value="${attrs['phyTreeId'].value}"/>
+<c:set var="tree_applet" value="${attrs['tree_applet_link'].value}"/>
+
 <c:if test="${tree_source_id ne null}">
   <c:set var='treeLink'>
     ${tree_applet} against RefEuks database
@@ -523,7 +491,7 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-<%-------- TRITRYP  ---------%>
+<%------TODO -- TRITRYP  ---------%>
 <c:if test="${projectId eq 'TriTrypDB'  }">
 <c:set var="geneDbLink">
   <div align="left">
@@ -546,7 +514,7 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
-<!-- plasmocyc -->
+<!-- TODO  plasmocyc -->
 <c:if test="${projectId eq 'PlasmoDB'}">
   <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
   <c:set var="plasmocycurl" value="${plasmocyc.url}"/>  
@@ -687,7 +655,7 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if> <%-- end if isCodingGene --%>
 
 
-<%--##########################   PHENOYPE (only in TriTryp)      ################################--%>
+<%--########### TODO ###############   PHENOTYPE (only in TriTryp)      ################################--%>
 
 <c:if test="${projectId eq 'TriTrypDB'  }">
   <c:set var="geneDbLink">
@@ -707,29 +675,10 @@ organismFull:   Plasmodium falciparum 3D7
 
 <c:if test="${attrs['hasExpression'].value eq '1'}">
   <imp:pageDivider name="Expression"/>
+
   <imp:expressionGraphs organism="${organismFull}" species="${binomial}"/>
-
-
-<%----------TODO --- TRITRYP --------------------------%>
-<%---- Splice Sites table --------%>
-<c:if test="${binomial eq 'Leishmania infantum'}">
-     <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
-</c:if>
-<c:if test="${binomial eq 'Leishmania major'}">
-     <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
-</c:if>
-<c:if test="${binomial eq 'Trypanosoma brucei'}">
-     <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
-</c:if>
-<%---- Poly A Sites table ---------%>
-<c:if test="${binomial eq 'Leishmania major' }">
-     <imp:wdkTable2 tblName="PolyASites" isOpen="false" attribution=""/>
-</c:if>
-<c:if test="${binomial eq 'Trypanosoma brucei'}">
-     <imp:wdkTable2 tblName="PolyASites" isOpen="false" attribution=""/>
-</c:if>
-
-
+  <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
+  <imp:wdkTable2 tblName="PolyASites" isOpen="false" attribution=""/>
   <imp:wdkTable2 tblName="SageTags" attribution=""/>
 </c:if>
 
@@ -737,8 +686,8 @@ organismFull:   Plasmodium falciparum 3D7
 <%--##########################  HOST RESPONSE      ################################--%>
 <c:if test="${attrs['hasHostResponse'].value eq '1'}">
   <imp:pageDivider name="Host Response"/>
-  <imp:profileGraphs species="${binomial}" tableName="HostResponseGraphs"/>
 
+  <imp:profileGraphs species="${binomial}" tableName="HostResponseGraphs"/>
 </c:if>
 
  
@@ -747,32 +696,16 @@ organismFull:   Plasmodium falciparum 3D7
 
 <imp:pageDivider name="Sequence"/>
 <i>Please note that UTRs are not available for all gene models and may result in the RNA sequence (with introns removed) being identical to the CDS in those cases.</i>
+
 <c:if test="${isCodingGene}">
-<!-- protein sequence -->
-<c:set var="proteinSequence" value="${attrs['protein_sequence']}"/>
-<c:set var="proteinSequenceContent">
-  <pre><w:wrap size="60">${attrs['protein_sequence'].value}</w:wrap></pre>
-  <font size="-1">Sequence Length: ${fn:length(proteinSequence.value)} aa</font><br/>
-</c:set>
-<imp:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
-             content="${proteinSequenceContent}" isOpen="false"/>
-
-<%-- Workshop annotations have become the offical annotation as of release V6.0
-  <!-- workshop protein sequence -->
-  <c:if test="${species eq 'falciparum' && attrs['new_protein'].value == 1}">
-
-  <c:set var="workshopProteinSequence" value="${attrs['workshop_protein_sequence']}"/>
-  <c:set var="workshopProteinSequenceContent">
-    <pre><w:wrap size="60">${attrs['workshop_protein_sequence'].value}</w:wrap></pre>
-    <font size="-1">Sequence Length: ${fn:length(workshopProteinSequence.value)} aa</font><br/>
+  <!-- protein sequence -->
+  <c:set var="proteinSequence" value="${attrs['protein_sequence']}"/>
+  <c:set var="proteinSequenceContent">
+    <pre><w:wrap size="60">${attrs['protein_sequence'].value}</w:wrap></pre>
+    <font size="-1">Sequence Length: ${fn:length(proteinSequence.value)} aa</font><br/>
   </c:set>
-
-  <table width="100%" bgcolor=#98FB98>
-    <tr><td>
-      <imp:toggle name="workshopProteinSequence" displayName="${workshopProteinSequence.displayName}"
-               content="${workshopProteinSequenceContent}" isOpen="false"/>
-    </td></tr>--%>
-<%--  </c:if>--%>
+  <imp:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
+             content="${proteinSequenceContent}" isOpen="false"/>
 </c:if>
 
 <!-- transcript sequence -->
@@ -785,24 +718,6 @@ organismFull:   Plasmodium falciparum 3D7
              displayName="${transcriptSequence.displayName}"
              content="${transcriptSequenceContent}" isOpen="false"/>
 
-
-<%-- Workshop annotations have become the offical annotation as of release V6.0
-
-<!-- workshop transcript sequence -->
-<c:if test="${species eq 'falciparum' && attrs['new_protein'].value == 1}">
-  <c:set var="workshopTranscriptSequence" value="${attrs['workshop_transcript_sequence']}"/>
-  <c:set var="workshopTranscriptSequenceContent">
-    <pre><w:wrap size="60">${workshopTranscriptSequence.value}</w:wrap></pre>
-    <font size="-1">Sequence Length: ${fn:length(workshopTranscriptSequence.value)} bp</font><br/>
-  </c:set>
-    <table width="100%" bgcolor=#98FB98>
-      <tr><td>
-      <imp:toggle name="workshopTranscriptSequence"
-             displayName="${workshopTranscriptSequence.displayName}"
-             content="${workshopTranscriptSequenceContent}" isOpen="false"/>
-    </td></tr>
-  </table>--%>
-<%--</c:if> --%>
 
 <!-- genomic sequence -->
 <c:set value="${wdkRecord.tables['GeneModel']}" var="geneModelTable"/>
@@ -824,32 +739,14 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <c:if test="${isCodingGene}">
-<!-- CDS -->
-<c:set var="cds" value="${attrs['cds']}"/>
-<c:set var="cdsContent">
-  <pre><w:wrap size="60">${cds.value}</w:wrap></pre>
-  <font size="-1">Sequence Length: ${fn:length(cds.value)} bp</font><br/>
-</c:set>
-<imp:toggle name="cds" displayName="${cds.displayName}"
+  <!-- CDS -->
+  <c:set var="cds" value="${attrs['cds']}"/>
+  <c:set var="cdsContent">
+    <pre><w:wrap size="60">${cds.value}</w:wrap></pre>
+    <font size="-1">Sequence Length: ${fn:length(cds.value)} bp</font><br/>
+  </c:set>
+  <imp:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
-
-
-<%-- Workshop annotations have become the offical annotation as of release V6.0
-  <!-- workshop coding sequence -->
-  <c:if test="${species eq 'falciparum' && attrs['new_protein'].value == 1}">
-    <c:set var="workshopCds" value="${attrs['workshop_cds']}"/>
-    <c:set var="workshopCdsContent">
-      <pre><w:wrap size="60">${workshopCds.value}</w:wrap></pre>
-      <font size="-1">Sequence Length: ${fn:length(workshopCds.value)} bp</font><br/>
-    </c:set>
-    <table width="100%" bgcolor=#98FB98>
-      <tr><td>
-    <imp:toggle name="workshopCds" displayName="${workshopCds.displayName}"
-                content="${workshopCdsContent}" isOpen="false"/>
-    </td></tr>
-  </table>
-  </c:if>--%>
-
 </c:if>
 
 
@@ -861,7 +758,6 @@ organismFull:   Plasmodium falciparum 3D7
 <c:forEach var="row" items="${referenceTable}">
     <c:set var="reference" value="${row['description'].value}"/>
 </c:forEach>
-
 
 <imp:panel 
     displayName="Genome Sequencing and Annotation by:"
