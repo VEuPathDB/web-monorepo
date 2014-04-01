@@ -655,19 +655,18 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if> <%-- end if isCodingGene --%>
 
 
-<%--########### TODO ###############   PHENOTYPE (only in TriTryp)      ################################--%>
+<%--######################   PHENOTYPE (only in TriTryp)      ################################--%>
 
-<c:if test="${projectId eq 'TriTrypDB'  }">
-  <c:set var="geneDbLink">
-    <div align="left">
+<c:set var="geneDbLink">
+  <div align="left">
     <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
 </small></div>
-  </c:set>
+</c:set>
 
-  <imp:wdkTable2 tblName="Phenotype" isOpen="true"
+<imp:wdkTable2 tblName="Phenotype" isOpen="true"
                attribution="" postscript="${geneDbLink}"/>
-  <imp:profileGraphs species="${binomial}" tableName="PhenotypeGraphs"/>
-</c:if>
+
+<imp:profileGraphs species="${binomial}" tableName="PhenotypeGraphs"/>
 
 
 <%--##########################   EXPRESSION      ################################--%>
