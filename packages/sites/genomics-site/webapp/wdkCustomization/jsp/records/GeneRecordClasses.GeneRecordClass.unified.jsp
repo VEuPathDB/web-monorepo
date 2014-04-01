@@ -16,7 +16,7 @@
 <c:choose>
 <c:when test="${!wdkRecord.validRecord}">
 
-<!-----------   ERROR ----------------------------------->
+<!-----------   INVALID RECORD ----------------------------------->
 
 <imp:pageFrame title="${wdkModel.displayName} : gene ${id}"
              divisionName="Gene Record"
@@ -25,14 +25,27 @@
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordName)} '${id}' was not found.</h2>
 </imp:pageFrame>
 </c:when>
-<c:otherwise>
 
+<c:otherwise>    <!-----------  VALID RECORD  ----------------------------------->
+
+<!--  TABLES REFERRED TO IN THIS PAGE, SHOULD EXIST IN ALL MODELS 
+- CategoryLink
+- UserComments
+- GeneModel in Sequences section
+- GenomeSequencingAndAnnotationAttribution in Sequences section
+-->
 
 <!--  SETTING ATTRIBUTES ****** should al exist in all projects --------->
 
-<c:set var="organism" value="${attrs['organism'].value}"/>
 <c:set var="organismFull" value="${attrs['organism_full'].value}"/>
 <c:set var="binomial" value="${attrs['genus_species'].value}"/>
+<%-- binomial used in many sections --%>
+<%-- organismFull used in expression section  --%>
+<!-- example values:
+binomial:  	    Plasmodium falciparum
+organismFull:   Plasmodium falciparum 3D7 
+-->
+
 <c:set var="so_term_name" value="${attrs['so_term_name'].value}"/>
 <c:set var="extdbname" value="${attrs['external_db_name'].value}" />
 <c:set var="prd" value="${attrs['product'].value}"/>
@@ -51,8 +64,6 @@
 <c:if test="${attrs['strand'].value == 'reverse'}">
   <c:set var="strand" value="-"/>
 </c:if>
-
-
 
 <!-- COMMENTS attributes  -->
 <c:set value="${wdkRecord.tables['CategoryLink']}" var="ctgLinks"/>
@@ -84,16 +95,7 @@
 </c:forEach> 
 
 
-<%-- binomial used in expression section --%>
-<%-- organismFull used in expression section  --%>
-<%-- species used in sequence section --%>
-<c:set var="species" value="${attrs['genus_species'].value}"/>
 
-<!-- example values:
-species:  	    Plasmodium falciparum
-organism :    	P. falciparum 3D7
-organismFull:   Plasmodium falciparum 3D7 
--->
 
 <!-- =========================  HEADER ======================== -->
 
@@ -152,6 +154,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%------TODO ----- TriTryp --------%>
+<%-- comment out for now
 <c:if test="${projectId eq 'TriTrypDB'}">
   <c:set var="esmeraldoDatabaseName" value="TcruziEsmeraldoLike_chromosomes_RSRC"/>
   <c:set var="nonEsmeraldoDatabaseName" value="TcruziNonEsmeraldoLike_genome_RSRC"/>
@@ -165,7 +168,7 @@ organismFull:   Plasmodium falciparum 3D7
     </c:otherwise>
   </c:choose>
 </c:if>
-
+--%>
 
 <!------------ small div with: Download, show and hide all  ------------->
 <imp:recordToolbox />
@@ -491,7 +494,7 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
-<%------TODO -- TRITRYP  ---------%>
+<%------TODO -- TRITRYP   will use new attr is_genedb_ ---------%>
 <c:if test="${projectId eq 'TriTrypDB'  }">
 <c:set var="geneDbLink">
   <div align="left">
