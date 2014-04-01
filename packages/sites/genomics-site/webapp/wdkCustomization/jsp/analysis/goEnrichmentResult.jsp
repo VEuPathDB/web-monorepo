@@ -9,11 +9,20 @@
       <div style="text-align:center">
         <div style="display:inline-block; text-align:center">
           <style>
+            .go-result-p {
+              margin: 5px;
+            }
             .go-table {
               margin-top: 5px;
             }
-            .go-table th, .go-table td {
+            .go-table th {
+              text-align:left;
+            }
+            .go-table td {
               text-align: left;
+            }
+            .go-table td.go-centered {
+              text-align: center;
             }
             .go-databar {
               border:0; margin:0; padding:0;
@@ -23,24 +32,31 @@
             }
           </style>
           <h2 style="text-align:center">GO Enriched Terms</h2>
-          <p>
+          <p class="go-result-p">
             <em>GO Enriched terms from ${viewModel.goSources} with P-Value
             Cutoff value ${viewModel.pvalueCutoff}.</em>
           </p>
-          <p>
+          <p class="go-result-p">
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
             <a href="${downloadUrl}">Download as Excel Spreadsheet</a>
           </p>
           <table class="go-table">
             <tr>
-              <th>GO Term</th>
-              <th colspan="2">Enrichment Value</th>
+              <c:set var="row" value="${viewModel.headerRow}"/>
+              <th>${row.goId}</th>
+              <th colspan="2">${row.pvalue}</th>
+              <th>${row.bgdGenes}</th>
+              <th>${row.resultGenes}</th>
+              <th>${row.goTerm}</th>
             </tr>
             <c:forEach var="row" items="${viewModel.resultData}">
               <tr>
-                <td>${row.name}</td>
-                <td>${row.value}%</td>
-                <td><div class="go-databar" style="width:${row.value * 2}px;"><jsp:text/></div></td>
+                <td>${row.goId}</td>
+                <td>${row.pvalue}</td>
+                <td><div class="go-databar" style="width:${row.pvalue * 100}px;"><jsp:text/></div></td>
+                <td class="go-centered">${row.bgdGenes}</td>
+                <td class="go-centered">${row.resultGenes}</td>
+                <td>${row.goTerm}</td>
               </tr>
             </c:forEach>
           </table>
