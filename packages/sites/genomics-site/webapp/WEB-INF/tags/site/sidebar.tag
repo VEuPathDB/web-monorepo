@@ -290,7 +290,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 	  <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</li>
     <li id='edu-2'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
     <li id='edu-3-1'><a href="http://workshop.eupathdb.org/most_recent/index.php?page=schedule">Exercises from our most recent Workshop</a> (English)</li>
-    <li id='edu-3-2'><a href="http://workshop.eupathdb.org/2011/index.php?page=schedule">Exercises from 2011 Workshop</a> (English and Spanish)</li>
+    <li id='edu-3-2'><a href="http://workshop.eupathdb.org/athens/2011/index.php?page=schedule">Exercises from 2011 Workshop</a> (English and Spanish)</li>
 	  <li id='edu-4'><a href="http://www.genome.gov/Glossary/">NCBI's Glossary of Terms</a></li>
 	  <li id='edu-5'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Our Glossary</a></li>
     <li id='edu-6'><a href="${pageContext.request.contextPath}/contact.do" class="new-window
