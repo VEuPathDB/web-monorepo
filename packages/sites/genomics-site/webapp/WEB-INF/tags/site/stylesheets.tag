@@ -7,6 +7,12 @@
 	      description="Page calling this tag"
 %>
 
+<jsp:useBean id="websiteRelease" class="org.eupathdb.common.controller.WebsiteReleaseConstants"/>
+<c:set var="debug" value="${requestScope.WEBSITE_RELEASE_STAGE eq websiteRelease.development}"/>
+<!-- StyleSheets provided by WDK -->
+<imp:wdkStylesheets refer="${refer}" debug="${debug}"/> 
+
+
 <c:set var="base" value="${pageContext.request.contextPath}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
