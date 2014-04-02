@@ -115,6 +115,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 });
 </script>
 
+
 <div id="draggable" style="">
   <p>Click on nodes or edges for more info.  We have highlighed enzyme nodes in <font color="red">red</font> where we have mappped the EC Number to at least one Gene ID.   You can drag this box around to if the image is too large.</p>
 <br />
@@ -123,8 +124,8 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 <ul id="vis-menu" class="sf-menu">
     <li><a href="#">File</a>
         <ul>
-            <li> <a href="javascript:exportVisualization('xgmml')">XGMML file</a></li>
-            <li> <a href="javascript:exportVisualization('png')">image file</a></li>
+            <li> <a href="javascript:exportVisualization('xgmml')">Save XGMML (XML)</a></li>
+            <li> <a href="javascript:exportVisualization('png')">Save image (PNG)</a></li>
  	</ul>
     </li>
     <li><a href="javascript:void(0)">Layout</a>
@@ -148,18 +149,16 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 </ul>
 
 
- <div id="cytoscapeweb">
-  Cytoscape Web will replace the contents of this div with your graph.
- </div>
-
-<BR>
  <div align="right">
 <a href="http://cytoscapeweb.cytoscape.org/">
     <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytosca
 pe Web"/></a>
 </div>
 
-<br />
+ <div id="cytoscapeweb">
+  Cytoscape Web will replace the contents of this div with your graph.
+ </div>
+
 <br />
 <!-- CYTOSCAPE end-->
 
