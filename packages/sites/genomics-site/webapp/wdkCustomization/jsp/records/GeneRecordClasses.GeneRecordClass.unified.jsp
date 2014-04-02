@@ -154,7 +154,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%------TODO ----- TriTryp --------%>
-<%-- comment out for now
+<%-- JB: comment out for now
 <c:if test="${projectId eq 'TriTrypDB'}">
   <c:set var="esmeraldoDatabaseName" value="TcruziEsmeraldoLike_chromosomes_RSRC"/>
   <c:set var="nonEsmeraldoDatabaseName" value="TcruziNonEsmeraldoLike_genome_RSRC"/>
@@ -178,9 +178,11 @@ organismFull:   Plasmodium falciparum 3D7
   ${id} 
   <br><span style="font-size:70%">Product: ${prd} </span>
 
-<!----------- Previous IDS  ----------------->
+<!----------- Previous IDS  --- ONLY PLASMO according to Omar -------------->
+<c:if test="${projectId eq 'PlasmoDB'}">
 <c:if test="${attrs['old_ids'].value != null && attrs['old_ids'].value ne id }">
   <br><span style="font-size:70%">${attrs['OldIds'].value}</span><br>
+</c:if>
 </c:if>
 
 <br>
@@ -245,34 +247,13 @@ organismFull:   Plasmodium falciparum 3D7
 
 <%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
 
-<%--- TODO ---COMMUNITY EXPERT ANNOTATION -----------%>
-<!-- this is commented out in some sites like plasmo but not in giardia .. -->
-<!--  CONFIRM WITH BRIAN
-<imp:panel 
-     displayName="Community Expert Annotation"
-     content="" />
-
-<c:catch var="e">
-    <imp:dataTable tblName="CommunityExpComments"/>
-</c:catch>
-<c:if test="${e != null}">
-  <table  width="100%" cellpadding="3">
-    <tr><td><b>User Comments</b>
-      <imp:embeddedError
-           msg="<font size='-1'><i>temporarily unavailable.</i></font>"
-           e="${e}"
-      />
-    </td></tr>
-  </table>
-</c:if>
-<br/><br/>
--->
-
+<%----giardia COMMUNITY EXPERT ANNOTATION -----------%>
+<imp:wdkTable2 tblName="CommunityExpComments" isOpen="true" attribution="" />
 
 <%-- OVERVIEW ------------%>
 <c:set var="attr" value="${attrs['overview']}" />
 
-<%-- TODO   ADD to all sites
+<%-- TODO:   ADD to all sites
 <c:if test="${attrs['is_deprecated'].value eq 'Yes'}">
    <c:set var="isdeprecated">
      **<b>Deprecated</b>**
@@ -361,14 +342,11 @@ organismFull:   Plasmodium falciparum 3D7
 <c:set var="extraInfo">
   <a id="assocQueryLink" href="${queryURL}"><font size='-2'>Other genes that have similar associations based on eQTL experiments</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
 </c:set>
-<imp:wdkTable2 tblName="Plasmo_eQTL_Table" isOpen="true"
-               attribution="" postscript="${extraInfo}" />
+<imp:wdkTable2 tblName="Plasmo_eQTL_Table" isOpen="true" attribution="" postscript="${extraInfo}" />
 
 
-
-<%------------- version 8.2 genes ------------%>
-<imp:wdkTable2 tblName="PreviousReleaseGenes" isOpen="true"
-               attribution="" />
+<%------------- version 8.2 genes - WHICH SITEs?-----------%>
+<imp:wdkTable2 tblName="PreviousReleaseGenes" isOpen="true" attribution="" />
 
 
 <%----------- Mercator / Mavid alignments ------------%>
@@ -400,33 +378,13 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-- User comments -->
 <a name="user-comment"/>
-
 <b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+  <img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
 </a></b>
-
 <br><br>
 
-<c:catch var="e">
-  <imp:wdkTable2 tblName="UserComments" />
-</c:catch>
-<c:if test="${e != null}">
- <table  width="100%" cellpadding="3">
-      <tr><td><b>User Comments</b>
-     <imp:embeddedError 
-         msg="<font size='-1'><i>temporarily unavailable.</i></font>"
-         e="${e}" 
-     />
-     </td></tr>
- </table>
-</c:if>
+<imp:wdkTable2 tblName="UserComments" isOpen="true" attribution="" />
 
-<%--  ====== from toxo ====== --%>
-<imp:wdkTable2 tblName="TaskComments" isOpen="true"
-                 attribution="" suppressColumnHeaders="true"/>
-
-
-<%---------- in old plasmo jsp there was a section on phenotype  commented out ------------%>
 
 <!-- EC number -->
 <a name="ecNumber"></a>
@@ -437,6 +395,11 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-- metabolic pathways -->
 <imp:wdkTable2 tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
+
+
+<!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not loaded in rebuild --> 
+<%-- imp:wdkTable tblName="GeneDeprecation" isOpen="true"/ --%>
+
 
 <!-- External Links --> 
 <imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
@@ -486,14 +449,14 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 <%-- from giardia new in build21--%>
-<imp:wdkTable2 tblName="CellularLocalization" isOpen="true"
-               attribution=""/>
+<imp:wdkTable2 tblName="CellularLocalization" isOpen="true" attribution=""/>
 
 
 <!-- gene alias table -->
 <imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
 
+<c:set var="geneDbLink"></c:set>
 <%------TODO -- TRITRYP   will use new attr is_genedb_ ---------%>
 <c:if test="${projectId eq 'TriTrypDB'  }">
 <c:set var="geneDbLink">
@@ -666,8 +629,8 @@ organismFull:   Plasmodium falciparum 3D7
 </small></div>
 </c:set>
 
-<imp:wdkTable2 tblName="Phenotype" isOpen="true"
-               attribution="" postscript="${geneDbLink}"/>
+<imp:wdkTable2 tblName="Phenotype" isOpen="true" attribution="" 
+               postscript="${geneDbLink}"/>
 
 <imp:profileGraphs species="${binomial}" tableName="PhenotypeGraphs"/>
 
