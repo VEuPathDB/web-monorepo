@@ -348,6 +348,7 @@
     <action path="/stepAnalysisForm"
         parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisFormAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+        <forward name="invalidStep" path="/wdk/jsp/analysis/invalidStep.jsp"/>
     </action>
     <action path="/stepAnalysisResult"
         parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisResultAction"

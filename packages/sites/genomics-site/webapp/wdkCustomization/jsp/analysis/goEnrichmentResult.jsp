@@ -48,6 +48,7 @@
               <th colspan="2" title="${desc.pvalue}">${row.pvalue}</th>
               <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
               <th title="${desc.resultGenes}">${row.resultGenes}</th>
+              <th title="${desc.percentInResult}">${row.percentInResult}</th>
               <th title="${desc.goTerm}">${row.goTerm}</th>
             </tr>
             <c:forEach var="row" items="${viewModel.resultData}">
@@ -57,6 +58,7 @@
                 <td><div class="go-databar" style="width:${row.pvalue * 100}px;"><jsp:text/></div></td>
                 <td class="go-centered">${row.bgdGenes}</td>
                 <td class="go-centered">${row.resultGenes}</td>
+                <td class="go-centered">${row.percentInResult}</td>
                 <td>${row.goTerm}</td>
               </tr>
             </c:forEach>

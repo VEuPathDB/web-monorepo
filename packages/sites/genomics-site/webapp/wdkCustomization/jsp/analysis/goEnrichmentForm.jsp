@@ -27,7 +27,15 @@
               <td><span>GO Associations Sources</span></td>
               <td>
                 <c:forEach var="item" items="${viewModel.sourceOptions}">
-                  <input type="checkbox" name="goAssociationsSources" value="${item.value}"/> ${item.name}<br/>
+                  <input type="checkbox" name="goAssociationsSources" value="${item}"/> ${item}<br/>
+                </c:forEach>
+              </td>
+            </tr>
+            <tr>
+              <td><span>GO Ontology Sources</span></td>
+              <td>
+                <c:forEach var="item" items="${viewModel.ontologyOptions}">
+                  <input type="checkbox" name="goAssociationsOntologies" value="${item}"/> ${item}<br/>
                 </c:forEach>
               </td>
             </tr>
