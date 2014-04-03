@@ -137,15 +137,26 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
             <li><a href="javascript:void(0)" onclick="changeLayout('Radial')">Radial</a></li>
         </ul>
     </li>
-    <li><a href="#">Paint Expt.</a>
+    <li><a href="#">Paint Experiment</a>
         <ul>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('')">Default</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
 <c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
 <c:forEach var="row" items="${pathwayGraphs}">
             <li><a href="javascript:void(0)" onclick="changeExperiment('${row['internal'].value}')">${row['display_name'].value}</a></li>
 </c:forEach>
         </ul>
     </li>
+
+    <li><a href="#">Paint Genera</a>
+        <ul>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma')">ApiComplexa</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo')">Cryp,Toxo,Plas,Tryp,Host</a></li>
+        </ul>
+    </li>
+
+
+
 </ul>
 
 
