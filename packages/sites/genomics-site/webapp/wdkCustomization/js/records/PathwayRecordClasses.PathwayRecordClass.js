@@ -276,7 +276,7 @@ vis.ready(function() {
 	vis.nodeTooltipsEnabled(true);
 	vis.visualStyle(style);
 
-	changeExperiment = function(val) {
+	changeExperiment = function(val, doAllNodes) {
 	    // use bypass to hide labelling of EC num that have expression graphs
 	    var nodes = vis.nodes();  
 
@@ -285,10 +285,10 @@ vis.ready(function() {
 
 		var type =  n.data.Type;
 
-		if(type == ("enzyme") && n.data.OrganismsInferredByOthoMCL) {
+		if(type == ("enzyme") ) {
 		    var ecNum = n.data.label;
 
-		    if(val) {
+		    if(val && (doAllNodes || n.data.OrganismsInferredByOthoMCL)) {
 			var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
 			var link =  linkPrefix + '&fmt=png&h=20&w=50&compact=1' ;
 

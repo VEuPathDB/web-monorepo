@@ -151,7 +151,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
         <ul>
             <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma')">ApiComplexa</a></li>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo')">Cryp,Toxo,Plas,Tryp,Host</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo', '1')">Cryp,Toxo,Plas,Tryp,Host</a></li>
         </ul>
     </li>
 
