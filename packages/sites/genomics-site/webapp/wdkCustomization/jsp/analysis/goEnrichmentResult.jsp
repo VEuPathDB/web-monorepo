@@ -43,11 +43,12 @@
           <table class="go-table">
             <tr>
               <c:set var="row" value="${viewModel.headerRow}"/>
-              <th>${row.goId}</th>
-              <th colspan="2">${row.pvalue}</th>
-              <th>${row.bgdGenes}</th>
-              <th>${row.resultGenes}</th>
-              <th>${row.goTerm}</th>
+              <c:set var="desc" value="${viewModel.headerDescription}"/>
+              <th title="${desc.goId}">${row.goId}</th>
+              <th colspan="2" title="${desc.pvalue}">${row.pvalue}</th>
+              <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
+              <th title="${desc.resultGenes}">${row.resultGenes}</th>
+              <th title="${desc.goTerm}">${row.goTerm}</th>
             </tr>
             <c:forEach var="row" items="${viewModel.resultData}">
               <tr>
