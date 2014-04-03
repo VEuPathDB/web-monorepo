@@ -277,7 +277,7 @@ vis.ready(function() {
 	vis.visualStyle(style);
 
 	changeExperiment = function(val) {
-	    // use bypass to hide labelling of EC num that have heatmap graphs
+	    // use bypass to hide labelling of EC num that have expression graphs
 	    var nodes = vis.nodes();  
 
 	    for (var i in nodes) {
@@ -285,7 +285,7 @@ vis.ready(function() {
 
 		var type =  n.data.Type;
 
-		if(type == ("enzyme") && n.data.Organisms) {
+		if(type == ("enzyme") && n.data.OrganismsInferredByOthoMCL) {
 		    var ecNum = n.data.label;
 
 		    if(val) {
