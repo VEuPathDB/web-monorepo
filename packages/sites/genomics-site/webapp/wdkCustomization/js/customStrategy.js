@@ -39,7 +39,7 @@ function loadSampleStrat(url) {
 }
 
 function customShowError() {
-	alert("An error occurred. \n Please try again.  If the error persists please contact the EuPathDB team by clicking the Contact Us link at the bottom of the page .  Thank you.");
+	//alert("An error occurred. \n Please try again.  If the error persists please contact the EuPathDB team by clicking the Contact Us link at the bottom of the page .  Thank you.");
 }
 
 // TODO: If span logic code is moved back into WDK,

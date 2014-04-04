@@ -315,6 +315,65 @@
        <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
 
+    <!-- Step Analysis Actions -->
+    <action path="/showNewAnalysisTab"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisTabAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="success" path="/wdk/jsp/analysis/stepAnalysisSelection.jsp"/>
+    </action>
+    <action path="/createStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.CreateStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/copyStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.CopyStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/runStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.RunStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/renameStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.RenameStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/deleteStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.DeleteStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/stepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.GetStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/stepAnalysisPane"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="success" path="/wdk/jsp/analysis/stepAnalysisPane.jsp"/>
+    </action>
+    <action path="/stepAnalysisForm"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisFormAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+        <forward name="invalidStep" path="/wdk/jsp/analysis/invalidStep.jsp"/>
+    </action>
+    <action path="/stepAnalysisResult"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisResultAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="pending" path="/wdk/jsp/analysis/resultsPending.jsp"/>
+      <forward name="incomplete" path="/wdk/jsp/analysis/resultsIncomplete.jsp"/>
+    </action>
+    <action path="/stepAnalysisResource"
+        parameter="org.gusdb.wdk.controller.action.analysis.GetStepAnalysisResourceAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/clearStepAnalysisCache"
+        parameter="org.gusdb.wdk.controller.action.analysis.ClearStepAnalysisCacheAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/stepAnalysisAll"
+        parameter="org.gusdb.wdk.controller.action.analysis.GetAllStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+
     <!-- * is question set name -->
 	<action
 		path="/*.wadl"
