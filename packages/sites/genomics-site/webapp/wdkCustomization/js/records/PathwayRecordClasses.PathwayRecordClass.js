@@ -276,8 +276,8 @@ vis.ready(function() {
 	vis.nodeTooltipsEnabled(true);
 	vis.visualStyle(style);
 
-	changeExperiment = function(val) {
-	    // use bypass to hide labelling of EC num that have heatmap graphs
+	changeExperiment = function(val, doAllNodes) {
+	    // use bypass to hide labelling of EC num that have expression graphs
 	    var nodes = vis.nodes();  
 
 	    for (var i in nodes) {
@@ -285,10 +285,10 @@ vis.ready(function() {
 
 		var type =  n.data.Type;
 
-		if(type == ("enzyme") && n.data.Organisms) {
+		if(type == ("enzyme") ) {
 		    var ecNum = n.data.label;
 
-		    if(val) {
+		    if(val && (doAllNodes || n.data.OrganismsInferredByOthoMCL)) {
 			var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
 			var link =  linkPrefix + '&fmt=png&h=20&w=50&compact=1' ;
 
@@ -372,5 +372,16 @@ jQuery(function($) {
   $(window).on('resize', resizeMap);
   resizeMap();
 
-  $('#vis-menu').superfish();
+  var menu = $('#vis-menu')
+    .superfish()
+    .on('click', 'a', function(e) {
+      var a = $(this);
+      if (a.is('.sf-with-ul')) {
+        // prevent page jumps
+        e.preventDefault();
+      } else {
+        // hide menu when an action is clicked
+        menu.hideSuperfishUl();
+      }
+    });
 });

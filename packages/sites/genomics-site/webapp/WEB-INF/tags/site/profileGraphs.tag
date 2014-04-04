@@ -14,6 +14,9 @@
 
 
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
+
+<c:catch var="tableError">
+
 <c:set value="${wdkRecord.tables[tableName]}" var="tbl"/>
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 <c:set var="i" value="0"/>
@@ -341,3 +344,13 @@ function updateText(id,sourceId,geneId,myForm) {
 }
 
 </script>
+
+</c:catch>
+<%-- ========= REACT TO TABLE NOT IN MODEL or nothing ============= --%>
+<c:if test="${tableError != null}">
+  <%--
+  <br>
+  WE SKIP TABLE ${tblName} THAT IS NOT IN THE MODEL
+  <br>
+  --%>
+</c:if>

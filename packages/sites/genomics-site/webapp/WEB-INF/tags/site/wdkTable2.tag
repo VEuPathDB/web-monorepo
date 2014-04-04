@@ -47,8 +47,9 @@ RecordBean.java, line 475: instead of throwing error we could just return null t
 
 <c:choose>
 <c:when test="${tblName ne 'MetaTable' && 
-                tblName ne 'UserComments' && 
-                tblName ne 'TaskComments' && 
+                tblName ne 'UserComments' &&
+                tblName ne 'CommunityExpComments' && 
+                tblName ne 'Strains' && 
                 tblName ne 'Ssgcid' && 
                 tblName ne 'SNPsAlignment' && 
                 !fn:containsIgnoreCase(tableList,tblName)}" >

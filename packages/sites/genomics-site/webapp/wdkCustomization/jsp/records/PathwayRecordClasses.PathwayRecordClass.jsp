@@ -115,6 +115,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 });
 </script>
 
+
 <div id="draggable" style="">
   <p>Click on nodes or edges for more info.  We have highlighed enzyme nodes in <font color="red">red</font> where we have mappped the EC Number to at least one Gene ID.   You can drag this box around to if the image is too large.</p>
 <br />
@@ -123,8 +124,8 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 <ul id="vis-menu" class="sf-menu">
     <li><a href="#">File</a>
         <ul>
-            <li> <a href="javascript:exportVisualization('xgmml')">XGMML file</a></li>
-            <li> <a href="javascript:exportVisualization('png')">image file</a></li>
+            <li> <a href="javascript:exportVisualization('xgmml')">Save XGMML (XML)</a></li>
+            <li> <a href="javascript:exportVisualization('png')">Save image (PNG)</a></li>
  	</ul>
     </li>
     <li><a href="javascript:void(0)">Layout</a>
@@ -136,32 +137,39 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
             <li><a href="javascript:void(0)" onclick="changeLayout('Radial')">Radial</a></li>
         </ul>
     </li>
-    <li><a href="#">Paint Expt.</a>
+    <li><a href="#">Paint Experiment</a>
         <ul>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('')">Default</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
 <c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
 <c:forEach var="row" items="${pathwayGraphs}">
             <li><a href="javascript:void(0)" onclick="changeExperiment('${row['internal'].value}')">${row['display_name'].value}</a></li>
 </c:forEach>
         </ul>
     </li>
+
+    <li><a href="#">Paint Genera</a>
+        <ul>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma', '1')">ApiComplexa</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo', '1')">Cryp,Toxo,Plas,Tryp,Host</a></li>
+        </ul>
+    </li>
+
+
+
 </ul>
 
 
- <div id="cytoscapeweb">
-  Cytoscape Web will replace the contents of this div with your graph.
- </div>
-
- <div>
-<BR><a href="/common/downloads/pathwayFiles/${id}.xgmml">XGMML data file</a>
-</div>
  <div align="right">
 <a href="http://cytoscapeweb.cytoscape.org/">
     <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytosca
 pe Web"/></a>
 </div>
 
-<br />
+ <div id="cytoscapeweb">
+  Cytoscape Web will replace the contents of this div with your graph.
+ </div>
+
 <br />
 <!-- CYTOSCAPE end-->
 
