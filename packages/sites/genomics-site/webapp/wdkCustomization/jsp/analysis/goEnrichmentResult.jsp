@@ -33,7 +33,7 @@
           </style>
           <h2 style="text-align:center">GO Enriched Terms</h2>
           <p class="go-result-p">
-            <em>GO Enriched terms from ${viewModel.goSources} with P-Value
+            <em>GO Enriched terms from ${viewModel.goSources} (sources) and ${viewModel.goOntologies} (ontologies) with P-Value
             Cutoff value ${viewModel.pvalueCutoff}.</em>
           </p>
           <p class="go-result-p">
@@ -45,21 +45,21 @@
               <c:set var="row" value="${viewModel.headerRow}"/>
               <c:set var="desc" value="${viewModel.headerDescription}"/>
               <th title="${desc.goId}">${row.goId}</th>
-              <th colspan="2" title="${desc.pvalue}">${row.pvalue}</th>
+              <th title="${desc.goTerm}">${row.goTerm}</th>
+              <th title="${desc.pvalue}">${row.pvalue}</th>
               <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
               <th title="${desc.resultGenes}">${row.resultGenes}</th>
-              <th title="${desc.percentInResult}">${row.percentInResult}</th>
-              <th title="${desc.goTerm}">${row.goTerm}</th>
+              <th colspan="2" title="${desc.percentInResult}">${row.percentInResult}</th>
             </tr>
             <c:forEach var="row" items="${viewModel.resultData}">
               <tr>
                 <td>${row.goId}</td>
-                <td>${row.pvalue}</td>
-                <td><div class="go-databar" style="width:${row.pvalue * 100}px;"><jsp:text/></div></td>
+                <td>${row.goTerm}</td>
+                <td class="go-centered">${row.pvalue}</td>
                 <td class="go-centered">${row.bgdGenes}</td>
                 <td class="go-centered">${row.resultGenes}</td>
                 <td class="go-centered">${row.percentInResult}</td>
-                <td>${row.goTerm}</td>
+                <td><div class="go-databar" style="width:${row.percentInResult}px;"><jsp:text/></div></td>
               </tr>
             </c:forEach>
           </table>

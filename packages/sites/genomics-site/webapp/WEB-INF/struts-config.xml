@@ -316,6 +316,11 @@
     </action>
 
     <!-- Step Analysis Actions -->
+    <action path="/showNewAnalysisTab"
+        parameter="org.gusdb.wdk.controller.action.analysis.ShowStepAnalysisTabAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="success" path="/wdk/jsp/analysis/stepAnalysisSelection.jsp"/>
+    </action>
     <action path="/createStepAnalysis"
         parameter="org.gusdb.wdk.controller.action.analysis.CreateStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
