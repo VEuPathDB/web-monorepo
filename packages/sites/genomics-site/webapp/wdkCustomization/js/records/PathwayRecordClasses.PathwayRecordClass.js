@@ -137,7 +137,7 @@ vis.ready(function() {
 		    print("");
 
 		    if(target.data.image) {
-			var link =  target.data.image + '&fmt=png&h=250&w=300' ;
+			var link =  target.data.image + '&fmt=png&h=250&w=350' ;
 			print("<img src='" + link + "'>");
 		    }
                               }
