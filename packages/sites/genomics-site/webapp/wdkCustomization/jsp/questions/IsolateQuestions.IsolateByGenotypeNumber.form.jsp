@@ -229,8 +229,7 @@
 <div><b>Data sources:</b></div>
 <div>
   <ul> 
-  <li><a href="getDataset.do?display=detail&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPSequences"> Toxoplasma RFLP sequences from Chunlei Su </a> </li> 
-  <li><a href="getDataset.do?display=detail&datasets=ChunleiSuRFLPSequences,ChunleiSuRFLPs&title=Query#ChunleiSuRFLPs"> Toxoplasma RFLPs from Chunlei Su </a> </li> 
+  <li><a href="getDataset.do?question=IsolateQuestions.IsolateByRFLPGenotype&display=detail#61">Toxoplasma RFLP sequences from Chunlei Su </a> </li> 
   </ul> 
 </div> 
 
