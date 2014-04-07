@@ -136,11 +136,12 @@ vis.ready(function() {
 		    print("<a href='/a/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&array%28organism%29=all&questionSubmit=Get+Answer&array%28ec_number_pattern%29=" + target.data["label"] + "'>Search for Gene(s) By EC Number</a>");
 		    print("");
 
-		    if(target.data.image) {
-			var link =  target.data.image + '&fmt=png&h=250&w=350' ;
-			print("<img src='" + link + "'>");
-		    }
-                              }
+		}
+		if(target.data.image) {
+		    var link =  target.data.image + '&fmt=png&h=250&w=350' ;
+		    print("<img src='" + link + "'>");
+		}
+
 	    } 
 	    
 	    if(type == "compound") {
@@ -184,20 +185,17 @@ vis.ready(function() {
 	    if (data["Description"]) {
 		value  = value +  ": " + data["Description"] ;
 	    }
-	    //if (data["Organisms"]) {
-	    //value  = value + "\nOrganisms: " + data["Organisms"];
-	    //}
 	    return (value);
 	};
 
 	// customBorder function : if node has Organisms, then border should be a different color
 	vis["customBorder"] = function (data) {
 	    var value = data["label"];
-	    if (data["OrganismsInferredByOthoMCL"]) {
+	    if (data["OrganismsInferredByOthoMCL"] || data["Organisms"] ) {
 		value  = "#FF0000";
 	    } else {
 		value = "#000000";
-	    }		       	     
+	    }	       	     
 	    return (value);
 	};
 
@@ -288,7 +286,7 @@ vis.ready(function() {
 		if(type == ("enzyme") ) {
 		    var ecNum = n.data.label;
 
-		    if(val && (doAllNodes || n.data.OrganismsInferredByOthoMCL)) {
+		    if(val && (doAllNodes || n.data.OrganismsInferredByOthoMCL || n.data.Organisms)) {
 			var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
 			var link =  linkPrefix + '&fmt=png&h=20&w=50&compact=1' ;
 
