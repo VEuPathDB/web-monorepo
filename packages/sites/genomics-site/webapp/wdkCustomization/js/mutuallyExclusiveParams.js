@@ -168,6 +168,7 @@
 
     var form = $("form#form_question").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
+        sequenceR = /(\(Example: .*\)|No match)/i,
         inlineSubmit,
         chromosomeFakeNull,
         groups;
@@ -213,7 +214,7 @@
       groups: groups,
 
       init: function(element) {
-        if ($("#sequenceId", element).val().indexOf("(Example") !== 0 ||
+        if (!sequenceR.test(element.find('#sequenceId').val()) ||
             // AmoebaDB only allows SequenceID
             (questionName === "HtsSnpsByLocation" && wdk.modelName() === "AmoebaDB")) {
           // select this
@@ -229,7 +230,7 @@
       // which should be the "blank" option
       var chromosomeOptional = this.chromosomeOptional;
 
-      if (chromosomeOptional.disabled && this.sequenceId.value.indexOf("(Example:") === 0) {
+      if (chromosomeOptional.disabled && sequenceR.test(this.sequenceId.value)) {
         alert("Please enter a valid Sequence ID");
         event.preventDefault();
         return false;
