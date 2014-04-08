@@ -150,7 +150,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     <li><a href="#">Paint Genera</a>
         <ul>
             <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma', '1')">ApiComplexa</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma', '1')">Apicomplexa</a></li>
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo', '1')">Cryp,Toxo,Plas,Tryp,Host</a></li>
         </ul>
     </li>
