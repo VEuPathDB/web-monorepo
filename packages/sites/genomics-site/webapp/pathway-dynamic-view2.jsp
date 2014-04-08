@@ -87,7 +87,7 @@ pe Web"/></a>
 <script type="text/javascript">
   // get xgmml and draw the visualization
   $(function() {
-    drawVisualization("${id}");
+    drawVisualization("${pathwayId}");
   });
 </script>        
 

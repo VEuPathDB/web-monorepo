@@ -370,16 +370,19 @@ jQuery(function($) {
   $(window).on('resize', resizeMap);
   resizeMap();
 
-  var menu = $('#vis-menu')
-    .superfish()
-    .on('click', 'a', function(e) {
-      var a = $(this);
-      if (a.is('.sf-with-ul')) {
-        // prevent page jumps
-        e.preventDefault();
-      } else {
-        // hide menu when an action is clicked
-        menu.hideSuperfishUl();
-      }
-    });
+  if ($.fn.superfish) {
+    var menu = $('#vis-menu')
+      .superfish()
+      .on('click', 'a', function(e) {
+        var a = $(this);
+        if (a.is('.sf-with-ul')) {
+          // prevent page jumps
+          e.preventDefault();
+        } else {
+          // hide menu when an action is clicked
+          menu.hideSuperfishUl();
+        }
+      });
+  }
+
 });
