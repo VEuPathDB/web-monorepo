@@ -133,7 +133,7 @@ vis.ready(function() {
 			print("&nbsp;&nbsp;" + orgs[i]);        
 		    }
 		    print("");
-		    print("<a href='/a/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&organism=all&array%28ec_source%29=MPMP,GenBank,GeneDB,Uniprot,inferred from OrthoMCL&questionSubmit=Get+Answer&ec_number_pattern=N/A&ec_wildcard=" + target.data["label"] + "'>Search for Gene(s) By EC Number</a>");
+		    print("<a href='/a/processQuestion.do?questionFullName=GeneQuestions.InternalGenesByEcNumber&organism=all&array%28ec_source%29=all&questionSubmit=Get+Answer&ec_number_pattern=N/A&ec_wildcard=" + target.data["label"] + "'>Search for Gene(s) By EC Number</a>");
 		    print("");
 
 		}
