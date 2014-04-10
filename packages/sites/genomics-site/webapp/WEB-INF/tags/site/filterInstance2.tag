@@ -109,7 +109,7 @@ Here we 'undo' that process.
 <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
 <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species)}" />
 <c:set var="strain" value="${fn:trim(strain)}" /> 
-<i>${strain}</i>
+${strain}
 
 </c:when>
 
