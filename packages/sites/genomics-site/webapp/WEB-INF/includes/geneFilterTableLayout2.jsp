@@ -20,7 +20,7 @@
 				<br>${familySpecies} -----  ${layout.instanceCountMap[familySpecies]} ---- ${instance.name} <br>
   </c:if>
 </c:forEach>
--->
+ -->
 
 
 <table>
@@ -45,21 +45,41 @@
     <c:set var="familySpecies" value="${fn:substringBefore(instance.name,'_')}" />
 
 	  <c:choose>
-		  <c:when test="${layout.instanceCountMap[familySpecies] ne '1' && fn:contains(instance.name,'distinct')}" >
+		  <c:when test="${layout.instanceCountMap[familySpecies] ne '1' && 
+                      fn:contains(instance.name,'distinct')
+                    }">
         <th colspan="${layout.instanceCountMap[familySpecies]}">
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 				 											 instanceName="${instance.name}" 
 															 distinct="true"/> 
         </th>
       </c:when>
- 	    <c:when test="${layout.instanceCountMap[familySpecies] == 1 && !fn:contains(instance.name,'distinct')}" >
+ 	    <c:when test="${layout.instanceCountMap[familySpecies] == 1 && 
+                      !fn:contains(instance.name,'distinct')
+                     }">
         <th>
           <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 															 instanceName="${instance.name}" 
 															 titleSpecies="true"/> 
         </th>
       </c:when>
+      <%-- marginal case where there is not a reference strain defined by loaders, 
+           therefore no distinct filter in the model.
+       --%>
+      <c:when test="${layout.instanceCountMap[familySpecies] ne '1' && 
+                     !fn:contains(instance.name,'distinct') &&  
+                     !fn:contains(familySpeciesList,fn:trim(familySpecies))  eq 'true' &&
+                     familySpecies ne 'all' 
+                    }">
+          <th colspan="${layout.instanceCountMap[familySpecies]}">
+            <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
+				 											 instanceName="${instance.name}"  
+                               titleSpecies="true"/>
+          </th>
+      </c:when>
     </c:choose>
+    <c:set var="familySpeciesList" value="${familySpeciesList} ${familySpecies}" />
+
   </c:forEach>
   </tr>
 
