@@ -38,7 +38,7 @@
           </p>
           <p class="go-result-p">
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
-            <a href="${downloadUrl}">Download as Excel Spreadsheet</a>
+            <a href="${downloadUrl}">Download as tab-delimited file</a>
           </p>
           <table class="go-table">
             <tr>
