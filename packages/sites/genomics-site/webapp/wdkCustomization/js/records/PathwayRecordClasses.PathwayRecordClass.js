@@ -115,7 +115,7 @@ vis.ready(function() {
 	    if(type == "enzyme") {
 		print ("<b>EC Number:  </b> " + target.data["label"]);
 		print("");
-		print("<b>Enzyme Name:  </b>" + target.data["Description"]);
+		print("<b>Enzyme Name or Description:  </b>" + target.data["Description"]);
 		print("");
 		
 		if(target.data["Organisms"]) {
