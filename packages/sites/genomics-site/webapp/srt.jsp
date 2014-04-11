@@ -44,7 +44,7 @@
 <b><center>Download Sequences By <br>
 <a href="#gene">Gene IDs</a> | 
 <a href="#sequence">Genomic Sequence IDs</a> |  
-<c:if test="${wdkModel.name eq 'ToxoDB' || wdkModel.name eq 'CryptoDB' || wdkModel.name eq 'TriTrypDB'}">
+<c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
 <a href="#msa">Alignments</a> |
 </c:if>
 <a href="#orf">ORF IDs</a> </center></b><hr>
@@ -93,7 +93,7 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
   </form>
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 
-<%--
+
 <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
 
   <hr>
@@ -104,8 +104,6 @@ ${contigsIds3.default} reverse (100..2000)</textarea>
 
 <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
 </c:if>
-
---%>
 
 <hr>
 
