@@ -83,6 +83,9 @@
           <c:if test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
              <c:set var="textFields" value="${textFields},Genes of previous release"/>
           </c:if>
+          <c:if test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
+             <c:set var="textFields" value="${textFields},Cellular localization"/>
+          </c:if>
           <c:if test="${fn:containsIgnoreCase(modelName, 'TriTrypDB') || fn:containsIgnoreCase(modelName, 'EuPathDB')}">
              <c:set var="textFields" value="${textFields},Phenotype"/>
           </c:if>
