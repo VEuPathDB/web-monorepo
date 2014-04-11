@@ -26,7 +26,11 @@
 %>
 <%@ attribute name="titleSpecies"
               required="false"
-              description="true if we are on a species with only one strain, we return the Species name"
+              description="true if we are on a species with only one strain AND if we are on a species with more than one strain but we do not have a reference strain defined in classes.xml (therefore no distinct filter generated in model), we return the Species name"
+%>
+<%@ attribute name="missRefStrain"
+              required="false"
+              description="true if we are on a species with more than one strain but no distinct filter has been generated, no reference strain defined-- it affects the popup"
 %>
 <%@ attribute name="titleStrain"
               required="false"
@@ -135,9 +139,21 @@ ${strain}
 </c:otherwise>
 </c:choose>
 
+<%-- ===============================  POPUPS TEXT  ================== --%>
         <div class="instance-detail" style="display: none;">
-            <div class="display">${instance.displayName}</div>
-              <div class="description">${instance.description}</div> 
+        <c:choose>
+        <c:when test="${not empty distinct}">
+          <div class="display">${instance.displayName}</div>
+          <div class="description">${instance.description}</div> 
+        </c:when>
+				 <c:when test="${empty distinct && empty missRefStrain}">
+          <div class="display">${instance.displayName}</div>
+        </c:when>
+        <c:otherwise>
+          <div class="display"><i>${family} ${species}</i> Results</div> 
+        </c:otherwise>
+			  </c:choose>
         </div>
+
     </div>
 </div>

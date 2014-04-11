@@ -74,7 +74,8 @@
           <th colspan="${layout.instanceCountMap[familySpecies]}">
             <imp:filterInstance2 strategyId="${strategyId}" stepId="${stepId}" answerValue="${answerValue}" 
 				 											 instanceName="${instance.name}"  
-                               titleSpecies="true"/>
+                               titleSpecies="true"
+                               missRefStrain="true" />
           </th>
       </c:when>
     </c:choose>
