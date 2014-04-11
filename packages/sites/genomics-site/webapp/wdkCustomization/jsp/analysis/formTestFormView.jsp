@@ -17,7 +17,7 @@
         </p>
         <form>
           <div class="testFormInputGroup">
-            <input type="checkbox" name="checkbox1"/> Checkbox 1<br/>
+            <input type="checkbox" name="checkbox1" checked="checked"/> Checkbox 1<br/>
             <input type="checkbox" name="checkbox2"/> Checkbox 2<br/>
             <input type="checkbox" name="checkbox3"/> Checkbox 3<br/>
           </div>
@@ -32,10 +32,10 @@
             </c:forEach>
           </div>
           <div class="testFormInputGroup">
-            Hidden 1: <input type="hidden" name="hidden1"/><br/>
-            Text 1: <input type="text" name="text1"/><br/>
-            Password 1: <input type="password" name="password1"/><br/>
-            Textarea 1: <textarea name="textarea1" rows="4" cols="20"/><br/>
+            Hidden 1: <input type="hidden" name="hidden1" value="default hidden"/><br/>
+            Text 1: <input type="text" name="text1" value="default text"/><br/>
+            Password 1: <input type="password" name="password1" value="default password"/><br/>
+            Textarea 1: <textarea name="textarea1" rows="4" cols="20"><jsp:text/></textarea><br/>
           </div>
           <div class="testFormInputGroup">
             Select 1 (single):
@@ -54,6 +54,12 @@
             <select name="sel3" size="5" multiple="multiple">
               <c:forEach var="option" items="${viewModel.selectOptions}">
                 <option value="${option.value}">${option.name}</option>
+              </c:forEach>
+            </select><br/>
+            Select 4 (multiple, selected):
+            <select name="sel4" size="5" multiple="multiple">
+              <c:forEach var="option" items="${viewModel.selectOptions}">
+                <option selected="selected" value="${option.value}">${option.name}</option>
               </c:forEach>
             </select><br/>
           </div>
