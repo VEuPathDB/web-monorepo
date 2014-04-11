@@ -455,19 +455,8 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- gene alias table -->
 <imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
-
-<c:set var="geneDbLink"></c:set>
-<%------TODO -- TRITRYP   will use new attr is_genedb_ ---------%>
-<c:if test="${projectId eq 'TriTrypDB'  }">
-<c:set var="geneDbLink">
-  <div align="left">
-    <br><small>Notes provided by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
-    </small></div>
-</c:set>
-</c:if>
-
 <!-- Notes from annotator == in toxo only shown if externalDbName.value eq 'Roos Lab T. gondii apicoplast-->
-<imp:wdkTable2 tblName="Notes" attribution="" postscript="${geneDbLink}"/>
+<imp:wdkTable2 tblName="Notes" attribution="" />
 
 
 <!-- phenotype -->
