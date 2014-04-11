@@ -21,13 +21,13 @@
           <table class="go-form-table" style="margin:0px auto">
             <tr>
               <td><span>P-Value Cutoff <span style="color:blue;font-size:0.95em;font-family:monospace">(0.0, 1.0]</span></span></td>
-              <td><input type="text" name="pValueCutoff" size="10" value="0.5"/></td>
+              <td><input type="text" name="pValueCutoff" size="10" value="0.05"/></td>
             </tr>
             <tr>
               <td><span>GO Associations Sources</span></td>
               <td>
                 <c:forEach var="item" items="${viewModel.sourceOptions}">
-                  <input type="checkbox" name="goAssociationsSources" value="${item}" checked="checked"/> ${item}<br/>
+                  <input type="checkbox" name="goAssociationsSources" value="${item}"/> ${item}<br/>
                 </c:forEach>
               </td>
             </tr>
@@ -35,7 +35,7 @@
               <td><span>GO Ontology Sources</span></td>
               <td>
                 <c:forEach var="item" items="${viewModel.ontologyOptions}">
-                  <input type="checkbox" name="goAssociationsOntologies" value="${item}" checked="checked"/> ${item}<br/>
+                  <input type="radio" name="goAssociationsOntologies" value="${item}"/> ${item}<br/>
                 </c:forEach>
               </td>
             </tr>
