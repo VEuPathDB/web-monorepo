@@ -76,6 +76,7 @@ class PrivateAPI {
                     'servicename' => $adb_attr{'service_name'},
                     'instancename' => $adb_attr{'instance_name'},
                     'globalname' => $adb_attr{'global_name'},
+                    'dbuniquename' => $adb_attr{'db_unique_name'},
                     'servername' => $adb_attr{'server_name'},
                     'aliases' => $this->array_to_map($ldap_resolver->resolve($adb_attr{'service_name'}), 'alias'),
                 ),
