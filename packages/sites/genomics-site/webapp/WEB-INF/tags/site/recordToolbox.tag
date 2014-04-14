@@ -14,49 +14,49 @@
     <c:choose>
       <c:when test="${type == 'GeneRecordClasses.GeneRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&skip_to_download=1&value(single_gene_id)=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&skip_to_download=1&value(single_gene_id)=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
       <c:when test="${type == 'EstRecordClasses.EstRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=EstQuestions.EstBySourceId&skip_to_download=1&est_id_type=data&est_id_data=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=EstQuestions.EstBySourceId&skip_to_download=1&est_id_type=data&est_id_data=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
       <c:when test="${type == 'IsolateRecordClasses.IsolateRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=IsolateQuestions.IsolateByIsolateId&skip_to_download=1&isolate_id_type=data&isolate_id_data=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=IsolateQuestions.IsolateByIsolateId&skip_to_download=1&isolate_id_type=data&isolate_id_data=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
       <c:when test="${type == 'SequenceRecordClasses.SequenceRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=GenomicSequenceQuestions.SequenceBySourceId&skip_to_download=1&sequenceId_type=data&sequenceId_data=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=GenomicSequenceQuestions.SequenceBySourceId&skip_to_download=1&sequenceId_type=data&sequenceId_data=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
       <c:when test="${type == 'SnpRecordClasses.SnpRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=SnpQuestions.SnpBySourceId&skip_to_download=1&snp_id_type=data&snp_id_data=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SnpQuestions.SnpBySourceId&skip_to_download=1&snp_id_type=data&snp_id_data=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
       <c:when test="${type == 'OrfRecordClasses.OrfRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=OrfQuestions.OrfByOrfId&skip_to_download=1&orf_id_type=data&orf_id_data=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=OrfQuestions.OrfByOrfId&skip_to_download=1&orf_id_type=data&orf_id_data=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
       <c:when test="${type == 'SageTagRecordClasses.SageTagRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=SageTagQuestions.SageTagByRadSourceId&skip_to_download=1&rad_source_id_type=data&rad_source_id_data=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SageTagQuestions.SageTagByRadSourceId&skip_to_download=1&rad_source_id_type=data&rad_source_id_data=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
  <c:when test="${type == 'DynSpanRecordClasses.DynSpanRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/processQuestion.do?questionFullName=SpanQuestions.DynSpansBySourceId&skip_to_download=1&span_id_type=data&span_id_data=${id}&array(organism)=Plasmodium berghei ANKA&array(chromosomeOptional)=Choose chromosome&value(start_point)=1&value(end_point_segment)=100&array(sequence_strand)=f" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SpanQuestions.DynSpansBySourceId&skip_to_download=1&span_id_type=data&span_id_data=${id}&array(organism)=Plasmodium berghei ANKA&array(chromosomeOptional)=Choose chromosome&value(start_point)=1&value(end_point_segment)=100&array(sequence_strand)=f" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
