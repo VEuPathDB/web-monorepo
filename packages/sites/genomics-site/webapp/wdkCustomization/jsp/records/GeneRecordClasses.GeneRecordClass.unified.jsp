@@ -154,21 +154,14 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%------TODO ----- TriTryp --------%>
-<%-- JB: comment out for now
-<c:if test="${projectId eq 'TriTrypDB'}">
-  <c:set var="esmeraldoDatabaseName" value="TcruziEsmeraldoLike_chromosomes_RSRC"/>
-  <c:set var="nonEsmeraldoDatabaseName" value="TcruziNonEsmeraldoLike_genome_RSRC"/>
-  <c:set var="sequenceDatabaseName" value="${attrs['sequence_database_name'].value}"/>
-  <c:choose>
-    <c:when test='${binomial eq "Trypanosoma cruzi" && sequenceDatabaseName ne esmeraldoDatabaseName && sequenceDatabaseName ne nonEsmeraldoDatabaseName}'>
+ <c:choose>
+  <c:when test="${attrs['is_unassigned_tcruzi'].value  == 1}">	
       <c:set var="append" value=" - (this contig could not be assigned to Esmeraldo or Non-Esmeraldo)" />
     </c:when>
     <c:otherwise>
       <c:set var="append" value="" />
     </c:otherwise>
-  </c:choose>
-</c:if>
---%>
+ </c:choose>
 
 <!------------ small div with: Download, show and hide all  ------------->
 <imp:recordToolbox />
