@@ -106,6 +106,10 @@ vis.ready(function() {
 		// try "mouseover" OR "click"
 		handle_click(event);
 	    });
+
+	// Add new field 'xaxis' to nodes:
+	var field = { name: "xaxis", type: "string", defValue: '' };
+	vis.addDataField("nodes", field);
                     
 	function handle_click(event) {
 	    var target = event.target;                         
@@ -140,6 +144,9 @@ vis.ready(function() {
 		if(target.data.image) {
 		    var link =  target.data.image + '&fmt=png&h=250&w=350' ;
 		    print("<img src='" + link + "'>");
+		    if (target.data.xaxis) {
+			print("<B>x-axis</B>: " + target.data.xaxis );
+		    }
 		}
 
 	    } 
@@ -274,7 +281,8 @@ vis.ready(function() {
 	vis.nodeTooltipsEnabled(true);
 	vis.visualStyle(style);
 
-	changeExperiment = function(val, doAllNodes) {
+	changeExperiment = function( val, xaxis, doAllNodes) {
+
 	    // use bypass to hide labelling of EC num that have expression graphs
 	    var nodes = vis.nodes();  
 
@@ -292,9 +300,15 @@ vis.ready(function() {
 
 			style.nodes[n.data.id] = {image:  link,  label: ""}
 			n.data.image = linkPrefix;
+			if (xaxis) {
+			    n.data.xaxis = xaxis;
+			} else {
+			    n.data.xaxis = "";
+			}
 		    } else {
 			style.nodes[n.data.id] = {image:  ""};
 			n.data.image = "";
+			n.data.xaxis = "";
 		    }
 		    vis.updateData([n]);
 		}
