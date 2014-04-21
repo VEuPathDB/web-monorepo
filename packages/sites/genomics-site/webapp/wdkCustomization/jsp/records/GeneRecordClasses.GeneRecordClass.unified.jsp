@@ -294,6 +294,7 @@ organismFull:   Plasmodium falciparum 3D7
     imageMapDivId="${gnCtxDivId}" imageMapSource="${gnCtxUrl}"
     postLoadJS="/gbrowse/apiGBrowsePopups.js,/gbrowse/wz_tooltip.js"
     attribution=""
+    dsLink="/cgi-bin/gbrowse_citation.pl?project_id=${projectId}&tracks=${dna_gtracks}"
   />
 
 </c:if> 
@@ -510,7 +511,9 @@ organismFull:   Plasmodium falciparum 3D7
 
   <imp:toggle name="proteinContext"  displayName="Protein Features" 
                 content="${proteinFeaturesImg}" 
-                attribution=""/>
+                attribution=""
+    dsLink="/cgi-bin/gbrowse_citation.pl?project_id=${projectId}aa&tracks=${protein_gtracks}"
+/>
 </c:if> 
 
 
