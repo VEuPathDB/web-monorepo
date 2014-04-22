@@ -146,7 +146,6 @@ vis.ready(function() {
 		    print("<img src='" + link + "'>");
 		    if (target.data.xaxis) {
 			print("<B>x-axis</B>: " + target.data.xaxis );
-			print("<BR>Full Link=<BR>" + link );
 		    }
 		}
 
@@ -301,18 +300,20 @@ vis.ready(function() {
 
 			style.nodes[n.data.id] = {image:  link,  label: ""}
 			n.data.image = linkPrefix;
-			if (xaxis) {
-			    n.data.xaxis = xaxis + "<BR><BR>Compact Link=<BR>" + link;
+
+			if (xaxis) {   
+			    n.data.xaxis = xaxis;
 			} else {
 			    n.data.xaxis = "";
 			}
+
 		    } else {
 			style.nodes[n.data.id] = {image:  ""};
 			n.data.image = "";
 			n.data.xaxis = "";
 		    }
 		    vis.updateData([n]);
-		}
+		}  // if enzyme
 	    }
 
 	    vis.nodeTooltipsEnabled(true);

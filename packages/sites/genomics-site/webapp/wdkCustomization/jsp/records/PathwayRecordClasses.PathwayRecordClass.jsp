@@ -139,7 +139,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     </li>
     <li><a href="#">Paint Experiment</a>
         <ul>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('','')">None</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
 <c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
 <c:forEach var="row" items="${pathwayGraphs}">
             <li><a href="javascript:void(0)" onclick="changeExperiment('${row['internal'].value}','${row['xaxis_description'].value}')">${row['display_name'].value}</a></li>
@@ -150,8 +150,8 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     <li><a href="#">Paint Genera</a>
         <ul>
             <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma', '1')">Apicomplexa</a></li>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo', '1')">Cryp,Toxo,Plas,Tryp,Host</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma', 'genus', '1')">Apicomplexa</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo', 'genus','1')">Cryp,Toxo,Plas,Tryp,Host</a></li>
         </ul>
     </li>
 
