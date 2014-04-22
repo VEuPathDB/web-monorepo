@@ -28,8 +28,18 @@
 
 <br/><span class="smallTitle">------ Data Provided</span>
   
-  <li><a href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Organisms in ${project}</a></li>
-<!--   <li><a href="${baseUrl}/${statsUrl}">Data Statistics</a></li> -->
+<c:choose>
+<c:when test="${project == 'TrichDB'}">
+  <c:set var="linkToDataSummary" value="/eupathGenomeTable.jsp" />
+  <c:set var="linkToGeneMetrics" value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics" />
+</c:when>
+<c:otherwise>
+  <c:set var="linkToDataSummary" value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes" />
+  <c:set var="linkToGeneMetrics" value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics" />
+</c:otherwise>
+</c:choose>
+
+  <li><a href="${baseUrl}${linkToDataSummary}">Organisms in ${project}</a></li>
   <c:if test="${project eq 'CryptoDB'}">
     <li><a href="http://cryptodb.org/static/SOP/">SOPs for <em>C.parvum</em> Annotation</a></li>
   </c:if>
@@ -37,7 +47,7 @@
     <li><a href="/common/cosmid-BAC-tutorial/CosmidandBAC-Tutorial.html">Viewing Cosmid and BAC Alignments</a></li>
     <li><a href="/common/array-tutorial/Array-Tutorial.html">Viewing Microarray Probes</a></li>
   </c:if>
-  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GeneMetrics">${project} Gene Metrics</a></li>
+  <li><a href="${baseUrl}${linkToGeneMetrics}">${project} Gene Metrics</a></li>
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li>
   <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer.pdf">EuPathDB Brochure</a></li>
   <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer_Chinese.pdf">EuPathDB Brochure in Chinese</a></li>

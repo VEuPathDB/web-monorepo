@@ -66,17 +66,30 @@
 <img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading" id='stats'  href="#">Data Summary</a>
 
+<c:choose>
+<c:when test="${project == 'TrichDB'}">
+  <c:set var="linkToDataSummary" value="/eupathGenomeTable.jsp" />
+  <c:set var="linkToGeneMetrics" value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics" />
+</c:when>
+<c:otherwise>
+  <c:set var="linkToDataSummary" value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes" />
+  <c:set var="linkToGeneMetrics" value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics" />
+</c:otherwise>
+</c:choose>
+
 <div class="menu_lefttop_drop" style="text-align:center;">
   <table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
+
     <tr><td style="padding:0;">
-	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">
+	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="${linkToDataSummary}"/>">
 	    <img style="border: 2px solid #666666;" src="/assets/images/genomeTable.png" width="190" height="100"></a>
     </td><tr>
 
     <tr><td style="text-align:left;">
-	    <a class="small"  href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics"/>">
+	    <a class="small"  href="<c:url value="${linkToGeneMetrics}"/>">
 		  Also check our Gene Metrics >>></a>
     </td></tr>
+
   </table>
 </div>
 
