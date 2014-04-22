@@ -146,6 +146,7 @@ vis.ready(function() {
 		    print("<img src='" + link + "'>");
 		    if (target.data.xaxis) {
 			print("<B>x-axis</B>: " + target.data.xaxis );
+			print("<BR>Full Link=<BR>" + link );
 		    }
 		}
 
@@ -301,7 +302,7 @@ vis.ready(function() {
 			style.nodes[n.data.id] = {image:  link,  label: ""}
 			n.data.image = linkPrefix;
 			if (xaxis) {
-			    n.data.xaxis = xaxis;
+			    n.data.xaxis = xaxis + "<BR><BR>Compact Link=<BR>" + link;
 			} else {
 			    n.data.xaxis = "";
 			}
