@@ -52,6 +52,7 @@ organismFull:   Plasmodium falciparum 3D7
 <c:set var="overview" value="${attrs['overview']}"/>
 <c:set var="length" value="${attrs['transcript_length']}"/>
 <c:set var="isCodingGene" value="${so_term_name eq 'protein_coding'}"/>
+<c:set var="hasPhenotype" value="${attrs['hasPhenotype'].value eq '1'}"/>
 <c:set var="async" value="${param.sync != '1'}"/>
 <c:set var="start" value="${attrs['start_min_text'].value}"/>
 <c:set var="end" value="${attrs['end_max_text'].value}"/>
@@ -117,6 +118,12 @@ organismFull:   Plasmodium falciparum 3D7
 
   <c:if test="${isCodingGene}">
   <td align="center"><a href="#Protein">Protein</a>
+     <img src="<c:url value='/images/arrow.gif'/>">
+  </td>
+  </c:if>
+
+<c:if test="${hasPhenotype}">
+  <td align="center"><a href="#Phenotype">Phenotype</a>
      <img src="<c:url value='/images/arrow.gif'/>">
   </td>
   </c:if>
@@ -606,7 +613,10 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if> <%-- end if isCodingGene --%>
 
 
-<%--######################   PHENOTYPE (only in TriTryp)      ################################--%>
+<%--######################   PHENOTYPE    ################################--%>
+<c:if test="${hasPhenotype}">
+
+<imp:pageDivider name="Phenotype"/>
 
 <c:set var="geneDbLink">
   <div align="left">
@@ -619,7 +629,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 <imp:profileGraphs species="${binomial}" tableName="PhenotypeGraphs"/>
 
-
+</c:if>
 <%--##########################   EXPRESSION      ################################--%>
 
 
