@@ -145,7 +145,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 
 
   <c:set var="gnCtxUrl">
-     /cgi-bin/gbrowse_img/trichdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=640;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
+     /cgi-bin/gbrowse_img/trichdb/?name=${contig}:${context_start_range}..${context_end_range};hmap=gbrowseSyn;l=${dna_gtracks};width=800;embed=1;h_feat=${fn:toLowerCase(id)}@yellow;genepage=1
   </c:set>
 
   <c:set var="gnCtxDivId" value="gnCtx"/>
@@ -287,7 +287,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 
 <c:set var="proteinLength" value="${attrs['protein_length'].value}"/>
 <c:set var="proteinFeaturesUrl">
-http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${id}:1..${proteinLength};l=${protein_gtracks};width=640;embed=1;genepage=1
+http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/trichdbaa/?name=${id}:1..${proteinLength};l=${protein_gtracks};width=800;embed=1;genepage=1
 </c:set>
 <c:if test="${protein_gtracks ne ''}">
     <c:set var="proteinFeaturesImg">
