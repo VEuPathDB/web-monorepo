@@ -410,6 +410,8 @@ sub rnaseqColorFromBigWig {
   my ($strand) = $f->get_tag_values('strand');
   my ($alignment) = $f->get_tag_values('alignment');
 
+  return 'black' unless $strand;
+
   ######## strand specific rnaseq ######
 
   # pos strand unique = BLUE
