@@ -150,7 +150,10 @@
           <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">Genomes and Data Types</a></li> 
           <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics"/>">Gene Metrics</a></li>
         </c:if>
-
+        <c:if test="${project == 'TrichDB'}">
+          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Genomes and Data Types</a></li> 
+          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">Gene Metrics</a></li>
+        </c:if>
       </ul>
     </li>
 
