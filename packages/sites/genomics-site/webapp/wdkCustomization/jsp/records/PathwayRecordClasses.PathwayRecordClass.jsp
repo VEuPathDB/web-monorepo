@@ -124,9 +124,9 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 <ul id="vis-menu" class="sf-menu">
     <li><a href="#">File</a>
         <ul>
-            <li> <a href="javascript:exportVisualization('xgmml')">Save XGMML (XML)</a></li>
-            <li> <a href="javascript:exportVisualization('png')">Save image (PNG)</a></li>
- 	</ul>
+          <li> <a href="javascript:exportVisualization('xgmml', '${id}')">Save XGMML (XML)</a></li>
+          <li> <a href="javascript:exportVisualization('png', '${id}')">Save image (PNG)</a></li>
+        </ul>
     </li>
     <li><a href="javascript:void(0)">Layout</a>
         <ul>

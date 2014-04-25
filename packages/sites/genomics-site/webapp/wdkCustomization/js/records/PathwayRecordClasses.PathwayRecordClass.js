@@ -29,8 +29,8 @@ function drawVisualization(pathwayId) {
 }
 
 
-function exportVisualization (type) {
-    var link = wdk.webappUrl('exportCytoscapeNetwork.do?type=' + type);
+function exportVisualization (type, name) {
+    var link = wdk.webappUrl('exportCytoscapeNetwork.do?type=' + type + '&name=' + name);
 
     vis.exportNetwork(type, link);
 }
