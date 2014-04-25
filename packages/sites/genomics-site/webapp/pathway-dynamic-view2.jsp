@@ -44,6 +44,10 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
   <p>Click on nodes or edges for more info.  We have highlighed enzyme nodes in <font color="red">red</font> where we have mappped the EC Number to at least one Gene ID.   You can drag this box around to if the image is too large.</p>
 <br />
 </div>
+<div>
+<BR><center><B>NOTE: </B>IDs of previous Query Result are in <font color="#00FF00">green</font>.</center>
+<BR><BR>
+</div>
 
 
 
