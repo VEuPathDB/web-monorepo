@@ -38,13 +38,7 @@
               <c:set var="children" value="${rootCat.webserviceChildren}" />
             </c:when>
             <c:otherwise>
-              <a href="#" class="dropdown">Search for Genes
-              <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045 
-              <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-                <imp:image width="40" alt="Revised feature icon" title="This category has been revised" src="/wdk/images/revised-small.png" />
-              </c:if>
-              --%>
-              </a>
+              <a href="#" class="dropdown">Search for Genes</a>
               <c:set var="children" value="${rootCat.websiteChildren}" />
             </c:otherwise>
           </c:choose>
