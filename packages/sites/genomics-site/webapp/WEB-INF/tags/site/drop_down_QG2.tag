@@ -62,16 +62,7 @@
                       <c:set var="categories" value="${cat.webserviceChildren}" /> 
                     </c:when>
                     <c:otherwise>
-                      <a href="javascript:void(0)" class="dropdown">${cat.displayName}
-                        <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045 
-                        <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-                          <c:if test="${cat.displayName eq 'Transcript Expression'}">
-                            <img width="40" alt="Revised feature icon" title="This category has been revised" 
-                                  src="<c:url value='/wdk/images/revised-small.png' />" />
-                          </c:if>
-                        </c:if>
-                        --%>
-                      </a>
+                      <a href="javascript:void(0)" class="dropdown">${cat.displayName}</a>
                       <c:set var="questions" value="${cat.websiteQuestions}" />
                       <c:set var="categories" value="${cat.websiteChildren}" /> 
                     </c:otherwise>
@@ -102,14 +93,6 @@
                       <c:otherwise>
                         <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
                           <imp:questionFeature question="${q}" />
-                          <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
-                          <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-                            <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
-                              <img width="40" alt="Revised feature icon" title="This category has been revised" 
-                                   src="<c:url value='/wdk/images/revised-small.png' />" />
-                            </c:if>
-                          </c:if>
-                          --%>
                         </a>
                       </c:otherwise>
                     </c:choose>
