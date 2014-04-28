@@ -2,8 +2,7 @@
 
 .genome-view { width: 100%; }
 .genome-view th { white-space:nowrap; }
-/* .genome-view td { vertical-align:top; border:1px solid #AAAAAA; } */
- .genome-view td { vertical-align:middle; border:1px solid #AAAAAA; }
+.genome-view td { vertical-align:top; border:1px solid #AAAAAA; }
 .genome-view td.length, .genome-view td.span-count { text-align:right; }
 
 .genome-view #sequences {display:none;}
@@ -12,14 +11,12 @@
 .genome-view .region.forward { background-color:#AAAAFF; }
 .genome-view .region.reverse { background-color:#FFAAAA; }
 
-/* height needs to account for scrolloing bar when zooming */
+/* height needs to account for scrolling bar when zooming */
 .genome-view .canvas, .region .canvas { position:relative; overflow:visible; }
 .genome-view .canvas .ruler, .region .canvas .ruler { position:absolute; height:3px; background-color:#666666; cursor:pointer; }
 
-/* .genome-view .canvas { height:99px; } */
- .genome-view .canvas { height:58px; }
-.genome-view .canvas .ruler { top:48px; }
-
+.genome-view .canvas { height:59px; }
+.genome-view .canvas .ruler { top:28px; }
 
 .region {width: 500px; }
 .region .end {float:right; margin:0px 10px 0px 0px;}
@@ -32,14 +29,13 @@
 .region .features {display:none;}
 
 .genome-view .canvas .region { display:block; position:absolute; cursor:pointer; border-left:1px dotted #CCCCCC; max-height:50px; }
-.genome-view .canvas .region.forward { bottom:52px; }
-.genome-view .canvas .region.reverse { top:52px; }
+.genome-view .canvas .region.forward { bottom:32px; }
+.genome-view .canvas .region.reverse { top:32px; }
 
 
 .genome-view .canvas .feature { height:5px; border:1px solid #444444; display:block; min-width:2px; position:absolute; cursor:pointer; }
-/* .genome-view .canvas .feature.forward { bottom:52px; background-color:#0000FF; } */
- .genome-view .canvas .feature.forward { bottom:11px; background-color:#0000FF; }
-.genome-view .canvas .feature.reverse { top:52px;background-color:#FF0000; }
+.genome-view .canvas .feature.forward { bottom:32px; background-color:#0000FF; }
+.genome-view .canvas .feature.reverse { top:32px;background-color:#FF0000; }
 
 .genome-view .legend { background-color:#EEEEEE; border-radius:5px; padding:5px; margin:5px; width: 425px; font-size:90%; font-style:italic;line-height:20px;}
 .genome-view .legend .title {  font-weight:bold; text-align:center}
