@@ -291,23 +291,13 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr class="subheaderrow2"><td colspan="4">Population Biology
                 </td></tr>
-<c:choose>
-<c:when test="${fn:containsIgnoreCase(modelName,'eupath')||fn:containsIgnoreCase(modelName,'toxo') }">
+
                 <tr>
-                    <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A Am C P T Tt"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByNgsSnps" linktext="NGS SNPs" existsOn="Am C P T Tt"/>
                 </tr>
-</c:when>
-<c:when test="${fn:containsIgnoreCase(modelName,'tritryp')||fn:containsIgnoreCase(modelName,'amoeba') }">
                 <tr>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByHtsSnps" linktext="SNPs" existsOn="A Am C P T Tt"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="Sanger SNPs" existsOn="A C P T"/>
                 </tr>
-</c:when>
-<c:otherwise>
-                <tr>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="SNPs" existsOn="A Am C P T Tt"/>
-                </tr>
-</c:otherwise>
-</c:choose>
                 <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="NA" linktext="Microsatellites" existsOn=""/>
                 </tr>
