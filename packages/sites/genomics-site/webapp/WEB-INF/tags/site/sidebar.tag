@@ -225,18 +225,6 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 <a  class="heading" id='community' href="#">Community Resources</a>
 
 <div class="menu_lefttop_drop">
-  <%--
-  <a style="line-height:24px" href="javascript:gotoTwitter()">
-	  <img style="margin-left:17px;float:left;vertical-align:middle" title="Follow us on Twitter!" src="/assets/images/twitter.gif" width="25">
-	  <span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on Twitter!</span>
-  </a>
-  <br>
-  <a href="javascript:gotoFacebook()">
-	  <img style="margin-left:19px;float:left;vertical-align:middle" title="Follow us on Facebook!" src="/assets/images/facebook-icon.png" width="22">
-	  <span style="vertical-align:sub">&nbsp;&nbsp;&nbsp;Follow us on Facebook!</span>
-  </a>
-  <br><br>
-  --%>
   <ul><imp:socialMedia label="true"/></ul>
   <hr>
 
