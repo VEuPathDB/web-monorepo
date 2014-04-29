@@ -70,3 +70,8 @@
   </ul>
 </div>
 
+<script>
+  (function() {
+    (new eupathdb.TableToggler).initialize();
+  })();
+</script>

@@ -1,45 +1,40 @@
-jQuery(document).ready(function() {
-    var toggler = new TableToggler();
-    toggler.initialize();
-});
+wdk.namespace('eupathdb', function(ns, $) {
+  'use strict';
 
-
-function TableToggler() {
+  function TableToggler() {
 
     this.initialize = function() {
-        var toggler = this;
-        // attach the event handlers
-        jQuery("#record-toolbox a.show-all").click(toggler.showAll)
-                                       .attr("href", "javascript:void(0);");
-        jQuery("#record-toolbox a.hide-all").click(toggler.hideAll)
-                                       .attr("href", "javascript:void(0);");
+      var toggler = this;
+      // attach the event handlers
+      $("#record-toolbox a.show-all").click(toggler.showAll);
+      $("#record-toolbox a.hide-all").click(toggler.hideAll);
     }
 
-    this.showAll = function() {
-        jQuery(".toggle, .toggle-handle").each(function() {
-                            var name = jQuery(this).attr("name");
-                            var display = jQuery('#' + name.replace(/:/g,"\\:")).css('display');
-                            if (display != 'block') {
-                               var onclick = jQuery(this).find('a').attr('href');
-                               onclick = onclick.substring(11);
-                               eval(onclick);
-                            }
-                        });
-        return 0;
+    this.showAll = function(event) {
+      event.preventDefault();
+      $(".toggle, .toggle-handle").each(function() {
+        var name = $(this).attr("name");
+        var display = $('#' + name.replace(/:/g,"\\:")).css('display');
+        if (display != 'block') {
+          $(this).find('a').trigger('click');
+        }
+      });
     }
 
-    this.hideAll = function() {
-        jQuery(".toggle, .toggle-handle").each(function() {
-                            var name = jQuery(this).attr("name");
-                            var display = jQuery('#' + name.replace(/:/g,"\\:")).css('display');
-                            var controlName = jQuery(this).attr('id');
-                            if (display != 'none') {
-                               var onclick = jQuery(this).find('a').attr('href');
-                               onclick = onclick.substring(11);
-                               eval(onclick);
-                            }
-                        });
-        return 0;
+    this.hideAll = function(event) {
+      event.preventDefault();
+      $(".toggle, .toggle-handle").each(function() {
+        var name = $(this).attr("name");
+        var display = $('#' + name.replace(/:/g,"\\:")).css('display');
+        var controlName = $(this).attr('id');
+        if (display != 'none') {
+          $(this).find('a').trigger('click');
+        }
+      });
     }
 
-}
+  }
+
+  ns.TableToggler = TableToggler;
+
+});

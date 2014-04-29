@@ -140,18 +140,18 @@
         <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
            <div id="toggle${name}" class="toggle-handle" name="${name}" align="left">
              <b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-             <a href="javascript:${showOnClick}wdk.api.toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
+             <a href="javascript:void(0)" onclick="javascript:${showOnClick}wdk.api.toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
            </div>
         </c:when>
 
         <%--  Netscape/Firefox cannot handle this way of doing it  --%>
         <c:otherwise>
            <div id="showToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-             <a href="javascript:${showOnClick}wdk.api.showLayer('${name}')&amp;&amp;wdk.api.showLayer('hideToggle${name}')&amp;&amp;wdk.api.hideLayer('showToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',1,365)" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
+             <a href="javascript:void(0)" onclick="javascript:${showOnClick}wdk.api.showLayer('${name}')&amp;&amp;wdk.api.showLayer('hideToggle${name}')&amp;&amp;wdk.api.hideLayer('showToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',1,365)" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
            </div>
 
            <div id="hideToggle${name}" class="toggle" name="${name}" align="left"><b><font size="-1" face="Arial,Helvetica">${displayName}</font></b>
-              <a href="javascript:wdk.api.hideLayer('${name}')&amp;&amp;wdk.api.showLayer('showToggle${name}')&amp;&amp;wdk.api.hideLayer('hideToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',0,365);" title="Hide ${displayName}" onmouseover="status='Hide ${displayName}';return true" onmouseout="status='';return true">Hide</a>
+              <a href="javascript:void(0)" onclick="javascript:wdk.api.hideLayer('${name}')&amp;&amp;wdk.api.showLayer('showToggle${name}')&amp;&amp;wdk.api.hideLayer('hideToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',0,365);" title="Hide ${displayName}" onmouseover="status='Hide ${displayName}';return true" onmouseout="status='';return true">Hide</a>
             </div>
         </c:otherwise>
         </c:choose>
