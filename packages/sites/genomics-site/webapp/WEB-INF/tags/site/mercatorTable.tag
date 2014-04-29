@@ -15,34 +15,23 @@
 <c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="project" value="${wdkModel.displayName}"/>
-
-<c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
-<c:set value="${wdkRecord.tables[tblName]}" var="tbl"/>
 <c:if test="${suppressDisplayName == null || !suppressDisplayName}">
   <c:set value="${tbl.tableField.displayName}" var="tableDisplayName"/>
-  </c:if>
-  <c:set var="noData" value="false"/>
+</c:if>
+  
+<c:set var="noData" value="false"/>
 
 <c:set var="tableClassName">
-   <c:choose>
-     <c:when test="${dataTable eq true}">recordTable wdk-data-table</c:when>
-  <c:otherwise>recordTable</c:otherwise>
+  <c:choose>
+    <c:when test="${dataTable eq true}">recordTable wdk-data-table</c:when>
+    <c:otherwise>recordTable</c:otherwise>
   </c:choose>
 </c:set>
 
+<%-- ================================ --%>
 <c:set var="tblContent">
 
 <div class="table-description">${tbl.tableField.description}</div>
-
-
-
-
-
-
-
-
-
-
 
 
 <%@ attribute name="cgiUrl"
@@ -73,8 +62,6 @@
               description="boolean"
 %>
 
-<c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
-
 
 <SCRIPT TYPE="text/javascript">
 <!--
@@ -87,6 +74,7 @@ return true;
 }
 //-->
 </SCRIPT>
+
 
 <c:set var="cgiScript" value='mavidAlign'/>
 <c:set var="cgiScript" value='pairwiseMercator'/>
@@ -102,18 +90,19 @@ return true;
 <form action="${cgiUrl}/${cgiScript}" onSubmit="popupform(this, ${cgiScript})">
 
   <input name='project_id' value='${projectId}' type='hidden' />
+<%--
   <c:if test="${inputContig == null}">
-    <input name='contig' value='${contigId}' type='hidden' />
+    <input name='contig' value='${contigId}' type='hidden' /> 
   </c:if>
-
+--%>
  <table> 
-    <c:if test="${inputContig != null}">
+<%--     <c:if test="${inputContig != null}"> --%>
       <tr>
         <td align="left"><b>Enter a Contig ID:</b>
           <input type="text" name="contig" value="${contigId}">
         </td>
       </tr>
-    </c:if>
+<%--     </c:if>  --%>
         
     <tr><td><b>Nucleotide positions:</b>
         <input type="text" name="start" value="${start}" maxlength="10" size="10"/>
@@ -130,10 +119,9 @@ return true;
   </tr>
 
   <tr>
-   <td>
-    
+   <td style="padding:0">
 
-
+  <form name="checkHandleForm-mercator" method="post" action="/dosomething.jsp" onsubmit="return false;">
 
 <table >
 <c:forEach var="row" items="${tbl}">
@@ -142,34 +130,39 @@ return true;
      <tr>
   </c:if>
   <c:forEach var="rColEntry" items="${row}">
-
     <c:set var="attributeValue" value="${rColEntry.value}"/>
     <c:if test="${attributeValue.attributeField.internal == false}"> 
-      <td nobr><imp:wdkAttribute attributeValue="${attributeValue}" truncate="false" /></td>
+      <td nobr style="padding:2px"><imp:wdkAttribute attributeValue="${attributeValue}" truncate="false" /></td>
      </c:if> 
     </c:forEach>
   <c:if test="${i % 4 == 0}">
     </tr>
   </c:if>
 </c:forEach>
-
 </table>
 
+  <table width="100%">
+  <tr>
+    <td align=center>
+      <input type="button" name="CheckAll" value="Check All"  onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=genomes]'))">
+      <input type="button" name="UnCheckAll" value="Uncheck All" onClick="wdk.api.checkboxNone(jQuery('input:checkbox[name=genomes]'))">
+    </td>
+  </tr> 
+  </table>
+
+ </form>
 
   </td>
   </tr>
 
 
-    <tr><td align="left"><b>Output Format:</b>&nbsp;&nbsp;
-        <input type="radio" name="type" value="clustal" checked>clustal
-        <input type="radio" name="type" value="fasta_ungapped">multi fasta
-     </td></tr>
-    <tr><td align="left"><br><input type="submit" name='go' value='Get Alignment' />
-  <span style="font-size:90%;">&nbsp;&nbsp;&nbsp;(Alignments made with <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Mercator</a>)</span>
-  </td>
-     </tr>
-   
-   </table>
+    <tr><td align="left"><b>Select output:</b>&nbsp;&nbsp;</td></tr>
+    <tr><td align="left"><input type="radio" name="type" value="clustal" checked>Obtain alignment (clustal)
+      <span style="font-size:90%;">&nbsp;&nbsp;&nbsp;(Alignments made with <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Mercator</a>)</span>
+      </td></tr>
+    <tr><td align="left"><input type="radio" name="type" value="fasta_ungapped">Download fasta file</td></tr>
+    <tr><td align="left"><input type="submit" name='go' value='Submit' /></td></tr>
+  </table>
 </form>
 
 

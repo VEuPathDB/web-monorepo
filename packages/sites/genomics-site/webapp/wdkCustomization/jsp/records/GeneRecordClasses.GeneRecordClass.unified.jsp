@@ -369,8 +369,9 @@ organismFull:   Plasmodium falciparum 3D7
 
 
 <%-------COMMENT OUT FOR DEBUGGING: MetaTable --%> 
+<%--
 <imp:wdkTable2 tblName="MetaTable" isOpen="FALSE" attribution=""/>
-
+--%>
 
 
 <%--##########################   ANNOTATION      ################################--%>

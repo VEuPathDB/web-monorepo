@@ -53,16 +53,18 @@ RecordBean.java, line 475: instead of throwing error we could just return null t
                 tblName ne 'Ssgcid' && 
                 tblName ne 'SNPsAlignment' && 
                 !fn:containsIgnoreCase(tableList,tblName)}" >
+
+<%-- DEBUG
 <br>
 ***** Attention:  WE SKIP TABLE ${tblName} --NOT DEFINED IN A DATASET FOR THIS ORGANISM
 <br>
-<%--
 ${tableList}
 <br>
 --%>
-</c:when>
-<c:otherwise>
 
+</c:when>
+
+<c:otherwise>
 
 <%-- =========== TABLE IS DEFINED IN A DATASET FOR THIS ORGANISM ========== --%>
 
