@@ -578,6 +578,9 @@ organismFull:   Plasmodium falciparum 3D7
 <%-- Pberghei Prot Expression  --%>
 <imp:wdkTable2 tblName="ProteinExpression" attribution=""/>
 
+<c:if test="${attrs['hasQuantitativeProteomics'].value eq '1'}">
+   <imp:profileGraphs species="${binomial}" tableName="ProteinExpressionGraphs"/>
+</c:if>
 
 <%--  Protein Linkouts     --%>
 <imp:wdkTable2 tblName="ProteinDatabase"/>
