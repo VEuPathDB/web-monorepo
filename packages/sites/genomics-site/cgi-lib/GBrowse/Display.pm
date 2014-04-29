@@ -1021,7 +1021,12 @@ sub warnNote {
   my $txt = "<table width='100%' style='margin:5px'><tr>" .
 			"<td width='50%'>" .
 			"<div style='display:inline-block;" . $eupathStyle . "padding:10px;'>" .
-			"<span style='font-size:120%;font-weight:bold;'>" .
+			"<span style='font-size:110%;font-weight:bold;'>" .
+      "To save or share track configurations," . 
+      "</span>" .
+      " select 'Generate URL' from File menu (above) and cut and paste resulting URL" .
+      "<br><br>" .
+     	"<span style='font-size:110%;font-weight:bold;'>" .
 			"If you load tracks and they appear empty, please try two things:" .
 			"</span>" .
 			"<br>1. Make sure you are viewing the correct species/strain to which the data was mapped." .
