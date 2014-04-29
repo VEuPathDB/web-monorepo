@@ -160,7 +160,6 @@ organismFull:   Plasmodium falciparum 3D7
 </c:url>
 
 
-<%------TODO ----- TriTryp --------%>
  <c:choose>
   <c:when test="${attrs['is_unassigned_tcruzi'].value  == 1}">	
       <c:set var="append" value=" - (this contig could not be assigned to Esmeraldo or Non-Esmeraldo)" />
@@ -213,21 +212,22 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-------------- Updated Product Name from GeneDB ---------------------------->
 
-<%--  TODO:  add attribute is_genedb_organism (remove genedb_organism?)
-<c:set var="genedb_organism" value="${attrs['genedb_organism'].value}"/> 
-<c:if test="${not empty genedb_organism}">
---%>
-<c:if test="${projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB'  }">
+<c:set var="is_genedb_organism" value="${attrs['is_genedb_organism'].value}"/> 
+
+<c:if test="${is_genedb_organism == 1}">
   <div style="margin:12px;padding:5px">
+
     <c:if test="${attrs['updated_annotation'].value != null}">
       ${attrs['GeneDB_updated'].value}
     </c:if>
+
     <c:if test="${attrs['new_product_name'].value != null}">
       <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
-  </div>
-</c:if>
 
+  </div>
+
+</c:if>
 </div>
 
 <!--------------  NOTE on Unpublished data as it was in Plasmo page ----------------------->
@@ -253,13 +253,11 @@ organismFull:   Plasmodium falciparum 3D7
 <%-- OVERVIEW ------------%>
 <c:set var="attr" value="${attrs['overview']}" />
 
-<%-- TODO:   ADD to all sites
 <c:if test="${attrs['is_deprecated'].value eq 'Yes'}">
    <c:set var="isdeprecated">
      **<b>Deprecated</b>**
    </c:set>
 </c:if>
---%>
 
 <imp:panel attribute="${attr.name}"
     displayName="${attr.displayName} ${has_namefun_comment}"
@@ -405,22 +403,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 <!-- External Links --> 
 <imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
-
-
-<%-- in giardia TODO   add new attribute
-<c:set var="tree_source_id" value="${attrs['phyTreeId'].value}"/>
-<c:set var="tree_applet" value="${attrs['tree_applet_link'].value}"/>
-
-<c:if test="${tree_source_id ne null}">
-  <c:set var='treeLink'>
-    ${tree_applet} against RefEuks database
-  </c:set>
-  <imp:panel 
-      displayName="Phylogenetic Tree"
-      content="${treeLink}" />
-</c:if>
-<br>
---%>
 
 <!-- Orthologs and Paralogs -->
 <c:if test="${isCodingGene}">
