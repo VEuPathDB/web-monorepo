@@ -282,10 +282,10 @@ WITH pubs as (select name,
                      group by name, id, contact_email),
                      samples as ( select experiment, 
                                          listagg(sample_i,chr(10)) WITHIN GROUP (order by sample) sample_table
-                                    from ( select (substr(internal_id, 0,instr('|', internal_id) - 1)) as experiment,
+                                    from ( select distinct external_database_name as experiment,
                                                   sample,
                                                   '<p style="color:' || html_color || '">' || sample || '<\p>' as sample_i
-                                             from APIDBTUNING.massspecterms 
+                                             from APIDBTUNING.MSPeptideSummary 
                                              where internal_id like '$extdb%'
                                           )
                                     group by experiment
