@@ -6,22 +6,13 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib"%>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome"%>
 
-
 <c:catch var="error">
-<%-- 
-    setLocale req. for date parsing when client browser (e.g. curl) doesn't send locale 
---%>
-
+<%--  setLocale req. for date parsing when client browser (e.g. curl) doesn't send locale --%>
 <fmt:setLocale value="en-US"/>
-
-<c:set 
-    var="project" value="${applicationScope.wdkModel.name}" 
-/>
 
 <api:configurations 
     var="config" configfile="/WEB-INF/wdk-model/config/projects.xml"
 />
-
 <%--
  wir:feed returns a SyndFeed object which has a Bean interface for
 iteration and getting SyndEntry objects and their attributes.
@@ -29,20 +20,23 @@ See the Rome API for SyndEntry attributes you can get.
 http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.html
 --%>
 <c:set var="rss_Url">
-http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
+  http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
 </c:set>
 
 <c:forEach items="${config}" var="s">
-<c:set 
-    var="rss_Url">
-    ${rss_Url}
-    ${fn:substringBefore(s.value,'services')}showXmlDataContent.do?name=XmlQuestions.NewsRss
-</c:set>
+  <c:if test="${!fn:contains(s, 'EuPathDB')}"> <%-- projects.xml contains an empty value for eupathdb, let's skip it --%>
+    <c:set 
+      var="rss_Url">
+      ${rss_Url}
+      ${fn:substringBefore(s.value,'services')}/showXmlDataContent.do?name=XmlQuestions.NewsRss
+    </c:set>
+  </c:if>
 </c:forEach>
 <%-- Thu May 13 15:00:00 EDT 2010 --%>
 <c:set
     var="dateStringPattern" value="EEE MMMM d HH:mm:ss z yyyy"
 />
+
 <wir:feed 
     feed="allFeeds" timeout="7000" 
     channelLink="http://eupathdb.org/"
@@ -54,8 +48,7 @@ http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestio
     feed="allFeeds" direction="desc" value="date"
 />
 
-</c:catch>
-
+</c:catch> 
 
 <imp:pageFrame title="${wdkModel.displayName} : News"
                  banner="${banner}"
