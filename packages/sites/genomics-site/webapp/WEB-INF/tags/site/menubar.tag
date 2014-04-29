@@ -183,6 +183,8 @@
           </c:otherwise>
         </c:choose>
 
+        <li><a href="<c:url value="/srt.jsp"/>">Generate Fasta Files</a>
+
         <%--  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li> --%>
 
         <c:if test="${project != 'EuPathDB'}" >
