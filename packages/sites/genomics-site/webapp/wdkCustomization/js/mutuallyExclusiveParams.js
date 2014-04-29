@@ -168,10 +168,10 @@
 
     var form = $("form#form_question").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
+        $chromosomeOptional = form.find('[id^="chromosomeOptional"]:input'),
         sequenceR = /(\(Example: .*\)|No match)/i,
         inlineSubmit,
         chromosomeFakeNull,
-        $chromosomeOptional = form.find('[id^="chromosomeOptional"]:input'),
         groups;
 
     if (form.length === 0) {
@@ -226,15 +226,19 @@
         //element.find("#chromosomeOptional option:nth-child(2)").attr("selected", true);
       }
 
-    }).on("submit", function() {
-      // If chromosome is disabled, enable it and select the first option,
-      // which should be the "blank" option
-      if ($chromosomeOptional.prop('disabled') && sequenceR.test(this.sequenceId.value)) {
+    });
+
+    form.on("submit", function validateAndFormfix() {
+      if ($chromosomeOptional.prop('disabled') &&
+          sequenceR.test(this.sequenceId.value) &&
+          questionName !== 'DynSpansBySourceId') {
         alert("Please enter a valid Sequence ID");
         event.preventDefault();
         return false;
       }
 
+      // If chromosome is disabled, enable it and select the first option,
+      // which should be the "blank" option
       if ($chromosomeOptional.prop('disabled')) {
         $chromosomeOptional.prop('disabled', false);
         chromosomeFakeNull.appendTo(chromosomeOptional).attr("selected", true);
