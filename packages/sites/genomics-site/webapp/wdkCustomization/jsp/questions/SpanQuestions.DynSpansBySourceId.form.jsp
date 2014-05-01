@@ -14,7 +14,7 @@
   padding: 5px;
 }
 #span-location #span-params { vertical-align: middle; }
-#span-location #span-search-list #span_id td { font-weight:bold; }
+/* #span-location #span-search-list #span_id td { font-weight:bold; } */
 
 -->
 </style>
