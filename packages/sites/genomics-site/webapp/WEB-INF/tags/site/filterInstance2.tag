@@ -47,17 +47,23 @@
     </c:choose>
 </c:set>
 
-<!-- reading family and species name from filter instance name -->
+<!-- reading family and species name from filter (instance) name -->
+<!--    the use of _ to separate parts of the filter name is set in the geneFilterTemplate.dst -->
+<!--    the use of - to separate family from species (in familySpecies) is set in injector AnnotatedGenome.java -->
 <c:set var="instanceNameParts" value="${fn:split(instance.name, '_')}" />
 <c:set var="familySpecies" value="${instanceNameParts[0]}" />
 <c:set var="speciesNameParts" value="${fn:split(familySpecies, '-')}" />
 <c:set var="family" value="${speciesNameParts[0]}" />
 <c:set var="species" value="${speciesNameParts[1]}" />
 
-<!-- for species names that have more than one word ("sp. 1") the dataset injector AnnotatedGenomes sets all spaces to '=' because it is used in the filter instance name (as a unique species identifier) and the instance name cannot have spaces (it would break the javascript associated with filters).
-Here we 'undo' that process.
--->
+<!--    the use of = in spaces inside the species name (eg: "sp. 1" becomes "sp.=1"), is set injector AnnotatedGenome.java -->
+<!--    this is done because the filter instance name cannot have spaces 
+         (it would break the javascript associated with filters).
+    		 Here we 'undo' that process. -->
 <c:set var="species" value="${fn:replace(species, '=', ' ')}" />
+
+<!-- All this painful mess to being able to extract clearly the (1) family, (2) species and (3) strain names for a given organism is due to the fact that we do not have those 3 distinct values as part of the genome information, anywhere in our system. 
+-->
 
 <c:choose>
 
@@ -103,12 +109,7 @@ Here we 'undo' that process.
       <c:otherwise><div></c:otherwise>
     </c:choose>
 
-<!-- still reading strain name form filter instance displayName (popup title) -->
-<!-- alternatives to remove this dependency on displayName:
-     - pass the strain name from the injector into the instance name, problem is dealing with spaces that cannot be used in css id and other attributes used by javascript
-		 - better: define new layout tags to be set with these values (family, species, strain) by injector, so WDK does not have to be parsing.
--->
-
+		<!-- reading strain name from filter instance displayName (popup title) -->
 <c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
 <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
 <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species)}" />
