@@ -26,6 +26,20 @@
     <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
 
+  <!-- mitigation for Struts1 security hole CVE-2014-0114 -->
+  <filter>
+    <filter-name>ParamFilter</filter-name>
+    <filter-class>org.gusdb.wdk.controller.filter.ParameterFilter</filter-class>
+    <init-param>
+      <param-name>excludeParams</param-name>
+      <param-value>(.*\.|^|.*|\[('|"))(c|C)lass(\.|('|")]|\[).*</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>ParamFilter</filter-name>
+    <servlet-name>wdkEuPathDbBrc</servlet-name>
+  </filter-mapping>
+
   <!-- Configuration of JavaMelody monitoring plugin -->
   <filter>
     <filter-name>monitoring-display</filter-name>
