@@ -54,9 +54,11 @@ organismFull:   Plasmodium falciparum 3D7
 <c:set var="isCodingGene" value="${so_term_name eq 'protein_coding'}"/>
 <c:set var="hasPhenotype" value="${attrs['hasPhenotype'].value eq '1'}"/>
 <c:set var="async" value="${param.sync != '1'}"/>
-<c:set var="start" value="${attrs['start_min_text'].value}"/>
+<!--  <c:set var="start" value="${attrs['start_min_text'].value}"/>  -->
 <c:set var="end" value="${attrs['end_max_text'].value}"/>
 <c:set var="sequence_id" value="${attrs['sequence_id'].value}"/>
+<c:set var="start" value="${attrs['start_min'].value}"/>
+<c:set var="end" value="${attrs['end_max'].value}"/>
 <c:set var="context_start_range" value="${attrs['context_start'].value}" />
 <c:set var="context_end_range" value="${attrs['context_end'].value}" />
 <c:set var="orthomcl_name" value="${attrs['orthomcl_name'].value}"/>
@@ -679,9 +681,13 @@ organismFull:   Plasmodium falciparum 3D7
   <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
 </c:set>
 
+<c:set var="downloadLink">
+  <a href="/cgi-bin/contigSrt?project_id=${projectId}&ids=${sequence_id}&start=${start}&end=${end}&go=Get+Sequence">Download</a>
+</c:set>
 <imp:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
-    content="${seq}" />
+    content="${seq}" downloadLink="${downloadLink}"/>
+
 
 
 <c:if test="${isCodingGene}">

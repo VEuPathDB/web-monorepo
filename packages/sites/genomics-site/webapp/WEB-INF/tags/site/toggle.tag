@@ -69,7 +69,10 @@
               required="false"
               description="Dataset ID (from Data Sets) for attribution"
 %>
-
+<%@ attribute name="downloadLink"
+              required="false"
+              description="download link"
+%>
 
 <c:set var="userAgent" value="${header['User-Agent']}"/>
 
@@ -158,11 +161,19 @@
 
       </c:otherwise>
     </c:choose>
+
     </td>
     <c:if test='${displayLink != null && displayLink != ""}'>
       <td align="left">
          <font size="-1" face="Arial,Helvetica">
 				 ${displayLink}
+         </font>
+      </td>
+    </c:if>
+ <c:if test='${downloadLink != null && downloadLink != ""}'>
+      <td align="right">
+         <font size="-1" face="Arial,Helvetica">
+				 ${downloadLink}
          </font>
       </td>
     </c:if>
