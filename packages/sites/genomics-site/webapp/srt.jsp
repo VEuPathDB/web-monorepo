@@ -55,7 +55,7 @@
 <a href="#orf">ORF IDs</a></b>
 <br><br>
  <c:if test="${project != 'EuPathDB'}" >
-<b style="font-size:90%">(If you would like to download data in bulk, please visit our <a href="/common/downloads"> file download section</a>)</b>
+<b style="font-size:90%">If you would like to download data in bulk, please visit our <a href="/common/downloads"> file download section</a></b>
 </center>
 <br>
 </c:if>
