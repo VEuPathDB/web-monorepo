@@ -181,7 +181,7 @@
           </c:otherwise>
         </c:choose>
 
-        <li><a href="<c:url value="/srt.jsp"/>">Download sequences</a>
+        <li><a href="<c:url value="/srt.jsp"/>">Sequence Retrieval</a>
 
         <%--  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li> --%>
 
