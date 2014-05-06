@@ -6,6 +6,7 @@
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+<c:set var="project" value="${applicationScope.wdkModel.name}" />
 
 <imp:pageFrame title="${wdkModel.displayName} :: Retrieve Sequences"
                  refer="srt"
@@ -38,7 +39,7 @@
 
 <!-- begin page table -->
 
-<table border=0 width=100% cellpadding=10>
+<table border=0 width=100% cellpadding=10 style="font-size:130%">
  <tr>
   <td bgcolor="white" valign="top">
 <b><center>Download Sequences By <br>
@@ -51,12 +52,19 @@
 </c:if>
  --%>
 
-<a href="#orf">ORF IDs</a> </center></b><hr>
+<a href="#orf">ORF IDs</a></b>
+<br><br>
+ <c:if test="${project != 'EuPathDB'}" >
+<b style="font-size:90%">(If you would like to download data in bulk, please visit our <a href="/common/downloads"> file download section</a>)</b>
+</center>
+<br>
+</c:if>
+
   </td>
   <td valign="top" class="dottedLeftBorder"></td> 
 </tr>
 </table> 
-
+<hr>
 <h3><a name="gene">Retrieve Sequences By Gene IDs</a></h3>
 
 <imp:geneSrt />
