@@ -50,8 +50,8 @@
         </center></b>              
         <br><br>
         <c:if test="${project != 'EuPathDB'}" >
-          <center><b style="font-size:90%">(If you would like to download data in bulk, please visit our 
-              <a href="/common/downloads"> file download section</a>)</b></center>
+          <center><b style="font-size:90%">If you would like to download data in bulk, please visit our 
+              <a href="/common/downloads"> file download section</a></b></center>
           <br>
         </c:if>
 
