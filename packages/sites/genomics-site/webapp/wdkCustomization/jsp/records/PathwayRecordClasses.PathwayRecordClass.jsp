@@ -117,7 +117,9 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 
 
 <div id="draggable" style="">
-  <p>Click on nodes or edges for more info.  We have highlighed enzyme nodes in <font color="red">red</font> where we have mappped the EC Number to at least one Gene ID.   You can drag this box around to if the image is too large.</p>
+  <p>Click on nodes for more info.  
+<BR>Nodes highlighted in <font color="red">red</font> are EC numbers that we have mapped to at least one gene.
+<BR>The nodes, as well as this info box, can be repositioned by dragging.
 <br />
 </div>
 
