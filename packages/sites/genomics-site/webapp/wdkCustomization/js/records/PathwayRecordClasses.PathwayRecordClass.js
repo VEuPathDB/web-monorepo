@@ -169,9 +169,18 @@ vis.ready(function() {
 	    }
 
 	    if(type == "map") {
-		print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&project_id=PlasmoDB&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
-		print("");
-		print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["Description"] + "'>View in KEGG</a>");
+		if ((target.data['Description']).indexOf('ec0') > -1) {
+		    print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&project_id=PlasmoDB&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
+		    print("");
+		    // FIX for MPMP
+		    print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["Description"] + "'>View in KEGG</a>");
+		} else {
+		    print("<b>Pathway:  </b>" +  target.data["Description"] + "<BR>");
+		}
+
+
+
+
 	    }
 	}
         
