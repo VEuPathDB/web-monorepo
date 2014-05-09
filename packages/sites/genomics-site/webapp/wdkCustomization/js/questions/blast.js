@@ -4,6 +4,10 @@ $(function() {
 });
 
 function setUpBlastPage() {
+	
+	// alert user if their sequence input will cause an error
+	validateInputsOnSubmit();
+	
 	// add warning span to sequence field
 	var sequenceValue = $('#BlastQuerySequence').val();
     var sequenceHtml = $('#BlastQuerySequence').parent().html();
@@ -26,8 +30,25 @@ function setUpBlastPage() {
 	changeAlgorithms();
 }
 
+function validateInputsOnSubmit() {
+	// only input to check for now is sequence; ensure no whitespace
+	$('#BlastQuerySequence').parents('form').submit(function() {
+		var sequence = $('#BlastQuerySequence').val().trim();
+		$('#BlastQuerySequence').val(sequence);
+		if (sequence == "") {
+			alert("Sequence cannot be empty.  Please enter an Input Sequence and try again.");
+			return false;
+		}
+		if (/\s/g.test(sequence)) {
+			alert("Only one sequence is allowed.  Please remove whitespace from sequence value.");
+			return false;
+		}
+		return true;
+	});
+}
+
 function changeQuestion() {
-        var recordClass = $("input[name='value(BlastRecordClass)']");
+    var recordClass = $("input[name='value(BlastRecordClass)']");
 	// stores mapping from blast databases to questions	
 	var blastDb = getSelectedDatabaseName().toLowerCase();
 	var questionName;
