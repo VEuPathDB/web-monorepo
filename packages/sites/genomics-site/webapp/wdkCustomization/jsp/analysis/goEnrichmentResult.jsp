@@ -51,7 +51,7 @@
               <th title="${desc.percentInResult}">${row.percentInResult}</th>
               <th title="${desc.foldEnrich}">${row.foldEnrich}</th>
               <th title="${desc.oddsRatio}">${row.oddsRatio}</th>
-              <th title="${desc.pValue}">${row.pValue}</th>
+              <th title="${desc.pvalue}">${row.pvalue}</th>
               <th title="${desc.benjamini}">${row.benjamini}</th>
               <th title="${desc.bonferroni}">${row.bonferroni}</th>
               <th colspan="2" title="${desc.percentInResult}">${row.percentInResult}</th>
@@ -63,11 +63,11 @@
                 <td class="go-centered">${row.bgdGenes}</td>
                 <td class="go-centered">${row.resultGenes}</td>
                 <td class="go-centered">${row.percentInResult}</td>
-		<td class="go-centered">${row.foldEnrich}</td>
-		<td class="go-centered">${row.oddsRatio}</td>
-		<td class="go-centered">${row.pValue}</td>
-		<td class="go-centered">${row.benjamini}</td>
-		<td class="go-centered">${row.bonferroni}</td>
+                <td class="go-centered">${row.foldEnrich}</td>
+                <td class="go-centered">${row.oddsRatio}</td>
+                <td class="go-centered">${row.pvalue}</td>
+                <td class="go-centered">${row.benjamini}</td>
+                <td class="go-centered">${row.bonferroni}</td>
                 <td><div class="go-databar" style="width:${row.percentInResult}px;"><jsp:text/></div></td>
               </tr>
             </c:forEach>
