@@ -10,7 +10,7 @@ a:link, a:visited, div.divlink  {
 	color: #0b4796;
 }
 
-a:hover, a:active, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover {
 	color: #610b0b;    /* for contrast 08438F; */        /*  #83a6d4; */
 }
 

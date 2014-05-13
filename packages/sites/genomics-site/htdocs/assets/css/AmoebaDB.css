@@ -14,7 +14,7 @@ a:visited {
 	color: #628276;     //paler green
 }
 
-a:hover, a:active, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover {
 	color:  #58441F;    //brown
 }
 
