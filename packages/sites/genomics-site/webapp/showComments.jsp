@@ -57,10 +57,10 @@ $(document).ready(function() {
       <br/>
 
       <c:forEach var="comment" items="${comments}">
-        <table>
+        <table style="table-layout: fixed; width: 100%">
             <tr>
-               <th width=150>Headline:</th>
-               <th> 
+               <th width=250>Headline:</th>
+               <th style="word-wrap: break-word"> 
                <a name=${comment.commentId}>${comment.headline}</a> 
                <c:if test="${comment.userId eq wdkUser.userId}">
                &nbsp;&nbsp;&nbsp; 
@@ -170,7 +170,7 @@ $(document).ready(function() {
 
                 <tr>
                    <td>Phenotype Description:</td> 
-                   <td> 
+                   <td style="word-wrap: break-word"> 
                    <site:BBCode content="${comment.content}" />
                    </td>
                 </tr>
@@ -191,7 +191,7 @@ $(document).ready(function() {
 
                 <tr>
                    <td>Content:</td> 
-                   <td> 
+                   <td style="word-wrap: break-word"> 
                    <site:BBCode content="${comment.content}" />
                    </td>
                 </tr>
