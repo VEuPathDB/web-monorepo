@@ -30,21 +30,46 @@ function setUpBlastPage() {
 	changeAlgorithms();
 }
 
+// error messages for sequence validation
+var emptyValueMessage = "Sequence value cannot be empty.  Please enter an Input Sequence and try again.";
+var onlyDefLineMessage = "Current sequence value contains only a def line.  Please add a sequence and try again.";
+var onlyOneSequenceMessage = "Only one sequence is allowed.  Please remove secondary sequences and try again.";
+
 function validateInputsOnSubmit() {
-	// only input to check for now is sequence; ensure no whitespace
-	$('#BlastQuerySequence').parents('form').submit(function() {
-		var sequence = $('#BlastQuerySequence').val().trim();
-		$('#BlastQuerySequence').val(sequence);
-		if (sequence == "") {
-			alert("Sequence cannot be empty.  Please enter an Input Sequence and try again.");
-			return false;
-		}
-		if (/\s/g.test(sequence)) {
-			alert("Only one sequence is allowed.  Please remove whitespace from sequence value.");
-			return false;
-		}
-		return true;
-	});
+    // only input to check for now is sequence; ensure no whitespace
+    $('#BlastQuerySequence').parents('form').submit(function() {
+        var sequence = $('#BlastQuerySequence').val().trim();
+        $('#BlastQuerySequence').val(sequence);
+        if (sequence == "") {
+            alert(emptyValueMessage); return false;
+        }
+        // handle newline variations
+        sequence = sequence.replace(/\r\n/g, "\n"); // convert any \r\n to just \n
+        sequence = sequence.replace(/\r/g, "\n"); // convert any remaining \r to \n
+        if (sequence.slice(0,1) == ">") {
+            // sequence has a def line; remove it before checking sequence
+            var firstNewlineIndex = sequence.indexOf("\n");
+            if (firstNewlineIndex == -1 || sequence.length == firstNewlineIndex + 1) {
+                alert(onlyDefLineMessage); return false;
+            }
+            sequence = sequence.substring(firstNewlineIndex).trim();
+            if (sequence == "") {
+                alert(onlyDefLineMessage); return false;
+            }
+        }
+        // check for other def lines
+        if (sequence.indexOf(">") != -1) {
+            alert(onlyOneSequenceMessage); return false;
+        }
+        var lines = sequence.split("\n");
+        for (var i=0; i < lines.length; i++) {
+            if (lines[i].trim() == "" || /\s/g.test(lines[i].trim())) {
+                alert(onlyOneSequenceMessage); return false;
+            }
+        }
+        // passed all our tests; appears to be a single valid BLAST sequence
+        return true;
+    });
 }
 
 function changeQuestion() {
