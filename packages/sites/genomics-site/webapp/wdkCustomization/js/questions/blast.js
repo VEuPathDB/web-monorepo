@@ -37,11 +37,11 @@ var onlyOneSequenceMessage = "Only one sequence is allowed.  Please remove secon
 
 function validateInputsOnSubmit() {
     // only input to check for now is sequence; ensure no whitespace
-    $('#BlastQuerySequence').parents('form').submit(function() {
+    $('#BlastQuerySequence').parents('form').submit(function(event) {
         var sequence = $('#BlastQuerySequence').val().trim();
         $('#BlastQuerySequence').val(sequence);
         if (sequence == "") {
-            alert(emptyValueMessage); return false;
+            return handleValidationFailure(emptyValueMessage, event);
         }
         // handle newline variations
         sequence = sequence.replace(/\r\n/g, "\n"); // convert any \r\n to just \n
@@ -50,26 +50,26 @@ function validateInputsOnSubmit() {
             // sequence has a def line; remove it before checking sequence
             var firstNewlineIndex = sequence.indexOf("\n");
             if (firstNewlineIndex == -1 || sequence.length == firstNewlineIndex + 1) {
-                alert(onlyDefLineMessage); return false;
+                return handleValidationFailure(onlyDefLineMessage, event);
             }
             sequence = sequence.substring(firstNewlineIndex).trim();
             if (sequence == "") {
-                alert(onlyDefLineMessage); return false;
+                return handleValidationFailure(onlyDefLineMessage, event);
             }
         }
         // check for other def lines
         if (sequence.indexOf(">") != -1) {
-            alert(onlyOneSequenceMessage); return false;
-        }
-        var lines = sequence.split("\n");
-        for (var i=0; i < lines.length; i++) {
-            if (lines[i].trim() == "" || /\s/g.test(lines[i].trim())) {
-                alert(onlyOneSequenceMessage); return false;
-            }
+            return handleValidationFailure(onlyOneSequenceMessage, event);
         }
         // passed all our tests; appears to be a single valid BLAST sequence
         return true;
     });
+}
+
+function handleValidationFailure(message, event) {
+	event.stopImmediatePropagation();
+	alert(message);
+	return false;
 }
 
 function changeQuestion() {
