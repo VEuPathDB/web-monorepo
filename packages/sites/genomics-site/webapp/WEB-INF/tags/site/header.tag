@@ -33,7 +33,7 @@
 
   <div id="header2">
 
-    <div style="width:518px;" id="header_rt">
+    <div id="header_rt">
   
       <div id="toplink">
         <c:if test="${project eq 'TriTrypDB'}">
