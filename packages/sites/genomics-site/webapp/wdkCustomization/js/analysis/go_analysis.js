@@ -1,4 +1,4 @@
-wdk.on('analysis:initialize:go-enrichment', function(analysisId, element) {
+wdk.on('analysis:formload', function(analysisId, element) {
   'use strict';
 
   var $ = wdk.$,
@@ -12,10 +12,12 @@ wdk.on('analysis:initialize:go-enrichment', function(analysisId, element) {
     .on('click', '[href="#clear-all"]',preventEvent(function() {
       $(this).closest('td').find(':input').prop('checked', false);
     }));
+});
 
+wdk.on('analysis:resultsload', function(analysisId, element) {
   // use datatable for results
   $(element).find('.go-table').wdkDataTable();
-  $(element).find('.go-table thead th').wdkTooltip({
+  $(element).find('thead th').wdkTooltip({
       hide: 'click mouseleave'
     });
 
