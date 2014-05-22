@@ -1,25 +1,30 @@
-wdk.on('analysis:formload', function(analysisId, element) {
+(function($) {
   'use strict';
 
-  var $ = wdk.$,
-      preventEvent = wdk.fn.preventEvent;
+  var preventEvent = wdk.fn.preventEvent;
+
+  wdk.on({
+    'analysis:formload:go-enrichment': formload,
+    'analysis:resultsload:go-enrichment': resultsload
+  });
 
   // handle select all and clear all links on form
-  $(element)
-    .on('click', '[href="#select-all"]', preventEvent(function() {
-      $(this).closest('td').find(':input').prop('checked', true);
-    }))
-    .on('click', '[href="#clear-all"]',preventEvent(function() {
-      $(this).closest('td').find(':input').prop('checked', false);
-    }));
-});
+  function formload(analysis) {
+    analysis.$el
+      .on('click', '[href="#select-all"]', preventEvent(function() {
+        $(this).closest('td').find(':input').prop('checked', true);
+      }))
+      .on('click', '[href="#clear-all"]',preventEvent(function() {
+        $(this).closest('td').find(':input').prop('checked', false);
+      }));
+  }
 
-wdk.on('analysis:resultsload', function(analysisId, element) {
-  // use datatable for results
-  $(element).find('.go-table').wdkDataTable();
-  $(element).find('thead th').wdkTooltip({
+  // use datatable for results and add fancy tooltips
+  function resultsload(analysis) {
+    analysis.$el.find('.go-table').wdkDataTable();
+    analysis.$el.find('thead th').wdkTooltip({
       hide: 'click mouseleave'
     });
+  }
 
-
-});
+}(jQuery));
