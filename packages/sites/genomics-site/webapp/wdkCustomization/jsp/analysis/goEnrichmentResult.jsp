@@ -35,7 +35,7 @@
               background-color: lightgreen;
             }
           </style>
-          <h2 style="text-align:center">GO Enriched Terms</h2>
+          <h2 style="text-align:center">Enriched GO Terms</h2>
           <p class="go-result-p">
             <em>Note: your results for this analysis might change in the next release of ${project}.
                 To save this exact result permanently, please download it.</em>
