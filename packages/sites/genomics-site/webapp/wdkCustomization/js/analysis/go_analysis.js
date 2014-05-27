@@ -32,6 +32,7 @@
     });
 
     $table.wdkDataTable({
+      aaSorting: [[ 7, 'asc' ]],
       aoColumnDefs: [{
         sType: 'numeric',
         aTargets: [7, 8, 9]
