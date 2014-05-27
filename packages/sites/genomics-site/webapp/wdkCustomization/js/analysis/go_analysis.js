@@ -38,6 +38,12 @@
         aTargets: [7, 8, 9]
       }]
     });
+
+    $(window)
+      .off('resize.go_enrichment')
+      .on('resize.go_enrichment', _.debounce(function() {
+        $table.dataTable().fnDraw();
+      }, 300));
   }
 
   // Convert scipy's scientific notation to what we want.
