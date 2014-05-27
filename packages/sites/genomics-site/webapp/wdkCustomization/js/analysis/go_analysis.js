@@ -21,10 +21,31 @@
 
   // use datatable for results and add fancy tooltips
   function resultsload(analysis) {
-    analysis.$el.find('.go-table').wdkDataTable();
-    analysis.$el.find('thead th').wdkTooltip({
+    var $table = analysis.$el.find('.go-table');
+
+    $table.find('tbody tr > td:nth-child(8)').each(toTwoDecimals);
+    $table.find('tbody tr > td:nth-child(9)').each(toTwoDecimals);
+    $table.find('tbody tr > td:nth-child(10)').each(toTwoDecimals);
+
+    $table.find('th, td').wdkTooltip({
       hide: 'click mouseleave'
     });
+
+    $table.wdkDataTable({
+      aoColumnDefs: [{
+        sType: 'numeric',
+        aTargets: [7, 8, 9]
+      }]
+    });
+  }
+
+  // Convert scipy's scientific notation to what we want.
+  // Only show two decimal places.
+  function toTwoDecimals() {
+    var $el = $(this),
+        number = Number($el.text());
+    $el.text(number.toExponential(2));
+    $el.attr('title', number);
   }
 
 }(jQuery));
