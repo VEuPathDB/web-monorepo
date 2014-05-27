@@ -32,7 +32,9 @@
     });
 
     $table.wdkDataTable({
+      // sort by p-value
       aaSorting: [[ 7, 'asc' ]],
+      // order p-value cols numerically
       aoColumnDefs: [{
         sType: 'numeric',
         aTargets: [7, 8, 9]
