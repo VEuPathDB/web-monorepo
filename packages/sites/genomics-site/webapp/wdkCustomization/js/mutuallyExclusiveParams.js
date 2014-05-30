@@ -168,7 +168,7 @@
 
     var form = $("form#form_question").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
-        $chromosomeOptional = form.find('[id^="chromosomeOptional"]:input'),
+        getChromosomeParam = function() { return form.find('[id^="chromosomeOptional"]:input'); },
         sequenceR = /(\(Example: .*\)|No match)/i,
         inlineSubmit,
         chromosomeFakeNull,
@@ -215,6 +215,8 @@
       groups: groups,
 
       init: function(element) {
+        var $chromosomeOptional = getChromosomeParam();
+
         if (!sequenceR.test(element.find('#sequenceId').val()) ||
             // AmoebaDB only allows SequenceID
             (questionName === "HtsSnpsByLocation" && wdk.modelName() === "AmoebaDB")) {
@@ -223,12 +225,13 @@
         }
         // change default chromosome
         chromosomeFakeNull = $chromosomeOptional.find(":first").remove();
-        //element.find("#chromosomeOptional option:nth-child(2)").attr("selected", true);
       }
 
     });
 
     form.on("submit", function validateAndFormfix() {
+      var $chromosomeOptional = getChromosomeParam();
+
       if ($chromosomeOptional.prop('disabled') &&
           sequenceR.test(this.sequenceId.value) &&
           questionName !== 'DynSpansBySourceId') {
