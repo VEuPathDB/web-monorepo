@@ -8,7 +8,7 @@
   <html>
     <body>
       <div>
-        <div>
+        <div style="position:relative">
           <style>
             .go-result-p {
               margin: 5px;
@@ -34,7 +34,17 @@
               height: 1em;
               background-color: lightgreen;
             }
+            .go-download-link {
+              position: absolute;
+              top: 0px;
+              right: 0px;
+              font-weight: bold;
+            }
           </style>
+          <span class="go-download-link">
+            <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
+            <a href="${downloadUrl}">Download Analysis Results</a>
+          </span>
           <h2 style="text-align:center">Enriched GO Terms</h2>
           <p class="go-result-p">
             <em>Note: your results for this analysis might change in the next release of ${project}.
@@ -43,10 +53,6 @@
             <em>GO Enriched terms from ${viewModel.goSources} (sources) and ${viewModel.goOntologies} (ontologies) with P-Value
             Cutoff value ${viewModel.pvalueCutoff}.</em>
             -->
-          </p>
-          <p class="go-result-p">
-            <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
-            <a href="${downloadUrl}">Download as tab-delimited file</a>
           </p>
           <table class="go-table">
             <thead>

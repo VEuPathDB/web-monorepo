@@ -81,6 +81,7 @@
             .go-form-table span {
               display: inline-block;
               margin-top: 4px;
+              font-weight: bold;
             }
           </style>
           <form>
