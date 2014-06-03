@@ -74,8 +74,7 @@
             <tbody>
               <c:forEach var="row" items="${viewModel.resultData}">
                 <tr>
-                  <!-- TODO Move url prefix to config file, like model.prop -->
-                  <td><a href="http://amigo.geneontology.org/amigo/term/${row.goId}" target="_blank">${row.goId}</a></td>
+                  <td><a href="${viewModel.goTermBaseUrl}${row.goId}" target="_blank">${row.goId}</a></td>
                   <td>${row.goTerm}</td>
                   <td class="go-centered">${row.bgdGenes}</td>
                   <td class="go-centered">${row.resultGenes}</td>
