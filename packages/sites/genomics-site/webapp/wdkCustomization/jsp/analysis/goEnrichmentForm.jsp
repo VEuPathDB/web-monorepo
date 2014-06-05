@@ -99,7 +99,7 @@
                 <td>
                   <div><a href="#select-all">Select all</a> | <a href="#clear-all">Clear all</a></div>
                   <c:forEach var="item" items="${viewModel.sourceOptions}">
-                    <label><input type="checkbox" name="goAssociationsSources" value="${item}"/> ${item}</label><br/>
+                    <label><input checked="checked" type="checkbox" name="goAssociationsSources" value="${item}"/> ${item}</label><br/>
                   </c:forEach>
                 </td>
               </tr>
@@ -108,7 +108,7 @@
                 <td>
                   <div><a href="#select-all">Select all</a> | <a href="#clear-all">Clear all</a></div>
                   <c:forEach var="item" items="${viewModel.evidCodeOptions}">
-                    <label><input type="checkbox" name="goEvidenceCodes" value="${item}"/> ${item}</label><br/>
+                    <label><input checked="checked" type="checkbox" name="goEvidenceCodes" value="${item}"/> ${item}</label><br/>
                   </c:forEach>
                 </td>
               </tr>
