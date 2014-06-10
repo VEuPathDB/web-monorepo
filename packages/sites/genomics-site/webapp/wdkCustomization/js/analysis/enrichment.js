@@ -5,7 +5,10 @@
 
   wdk.on({
     'analysis:formload:go-enrichment': formload,
-    'analysis:resultsload:go-enrichment': resultsload
+    'analysis:resultsload:go-enrichment': resultsload,
+
+    'analysis:formload:pathway-enrichment': formload,
+    'analysis:resultsload:pathway-enrichment': resultsload
   });
 
   // handle select all and clear all links on form
@@ -21,7 +24,7 @@
 
   // use datatable for results and add fancy tooltips
   function resultsload(analysis) {
-    var $table = analysis.$el.find('.go-table');
+    var $table = analysis.$el.find('.step-analysis-results-pane table');
 
     $table.find('tbody tr > td:nth-child(8)').each(toTwoDecimals);
     $table.find('tbody tr > td:nth-child(9)').each(toTwoDecimals);
@@ -42,8 +45,8 @@
     });
 
     $(window)
-      .off('resize.go_enrichment')
-      .on('resize.go_enrichment', _.debounce(function() {
+      .off('resize.enrichment')
+      .on('resize.enrichment', _.debounce(function() {
         $table.dataTable().fnDraw();
       }, 300));
   }
