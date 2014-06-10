@@ -6,9 +6,11 @@
   wdk.on({
     'analysis:formload:go-enrichment': formload,
     'analysis:resultsload:go-enrichment': resultsload,
+    'analysis:remove:go-enrichment': removeEvents,
 
     'analysis:formload:pathway-enrichment': formload,
-    'analysis:resultsload:pathway-enrichment': resultsload
+    'analysis:resultsload:pathway-enrichment': resultsload,
+    'analysis:remove:pathway-enrichment': removeEvents
   });
 
   // handle select all and clear all links on form
@@ -45,10 +47,14 @@
     });
 
     $(window)
-      .off('resize.enrichment')
-      .on('resize.enrichment', _.debounce(function() {
+      .off('resize.enrichment' + analysis.id)
+      .on('resize.enrichment' + analysis.id, _.debounce(function() {
         $table.dataTable().fnDraw();
       }, 300));
+  }
+
+  function removeEvents(analysis) {
+    $(window).off('resize.enrichment' + analysis.id);
   }
 
   // Convert scipy's scientific notation to what we want.
