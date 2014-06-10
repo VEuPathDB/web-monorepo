@@ -31,8 +31,19 @@ function initializeGenomeView() {
                         var feature = $(document.getElementById(featureId));
                         tooltip.setUpStickyTooltip(this, feature);
                     });
+
+                    // register the datatable
+                    content.find(".feature-list").dataTable({
+                      "bJQueryUI": true,
+                      "sDom":'<"H"iplfr>t<"F"ip>',
+                      "aaSorting": [[1,'asc']],
+                      "aoColumns": [ null, 
+                                     null,
+                                     null,
+                                     { "bSortable": false } ]
+                    });
                 }
-                content.dialog({width:500});
+                content.dialog({width:800});
             });
 
             // register events on feature if it's detail view
@@ -46,7 +57,7 @@ function initializeGenomeView() {
 
         // register datatables. it has to be the last step, otherwise the rest of 
         // the registration will be applied to the current page only.
-        genomeView.find(".datatables").dataTable({
+        var sequenceTable = genomeView.find(".datatables").dataTable({
             "bJQueryUI": true,
             "aLengthMenu": [[10, 25, -1], [10, 25, "All"]],
             "iDisplayLength": 25,
@@ -57,7 +68,19 @@ function initializeGenomeView() {
                            null,
                            null,
                            null,
-                           { "bSortable": false } ]
+                           { "bSortable": false } ],
+            "aoSearchCols": [null,
+                             null,
+                             null,
+                             { "sSearch": "[^0]", "bEscapeRegex": false },
+                             null,
+                             null ]
+        });
+
+        // set up the option to show/hide empty chromosomes
+        genomeView.find("#emptyChromosomes input").change(function() {
+          var search = $(this).is(":checked") ? "" : "[^0]";
+          sequenceTable.fnFilter(search, 3, true, true, false, false);
         });
 
         // set initialized flag, make sure only initialize once
