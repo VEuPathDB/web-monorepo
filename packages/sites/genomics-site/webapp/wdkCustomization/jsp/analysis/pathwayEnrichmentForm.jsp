@@ -9,32 +9,23 @@
       <div class="ui-helper-clearfix">
         <div style="text-align:center">
           <style>
-            .go-form-table td {
+            .pathway-form-table td {
               text-align: left;
               vertical-align: top;
             }
-            .go-form-table span {
+            .pathway-form-table span {
               display: inline-block;
               margin-top: 4px;
-              font-weight: bold;
             }
           </style>
           <form>
-            <table class="go-form-table" style="margin:0px auto">
+            <table class="pathway-form-table" style="margin:0px auto">
               <tr>
-                <td><span>Ontology</span></td>
-                <td>
-                  <c:forEach var="item" items="${viewModel.ontologyOptions}">
-                    <label><input type="radio" name="goAssociationsOntologies" value="${item}"/> ${item}</label><br/>
-                  </c:forEach>
-                </td>
-              </tr>
-              <tr>
-                <td><span>GO Association Sources</span></td>
+                <td><span>Pathway Sources</span></td>
                 <td>
                   <div><a href="#select-all">Select all</a> | <a href="#clear-all">Clear all</a></div>
                   <c:forEach var="item" items="${viewModel.sourceOptions}">
-                    <label><input checked="checked" type="checkbox" name="goAssociationsSources" value="${item}"/> ${item}</label><br/>
+                    <label><input type="checkbox" name="pathwaysSources" value="${item}"/> ${item}</label><br/>
                   </c:forEach>
                 </td>
               </tr>
