@@ -40,6 +40,11 @@
               right: 0px;
               font-weight: bold;
             }
+            .go-empty-results {
+              font-weight: bold;
+              margin: 25px auto;
+              text-align: center;
+            }
           </style>
           <span class="go-download-link">
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
@@ -54,40 +59,45 @@
             Cutoff value ${viewModel.pvalueCutoff}.</em>
             -->
           </p>
-          <table class="go-table">
-            <thead>
-              <tr>
-                <c:set var="row" value="${viewModel.headerRow}"/>
-                <c:set var="desc" value="${viewModel.headerDescription}"/>
-                <th title="${desc.goId}">${row.goId}</th>
-                <th title="${desc.goTerm}">${row.goTerm}</th>
-                <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
-                <th title="${desc.resultGenes}">${row.resultGenes}</th>
-                <th title="${desc.percentInResult}">${row.percentInResult}</th>
-                <th title="${desc.foldEnrich}">${row.foldEnrich}</th>
-                <th title="${desc.oddsRatio}">${row.oddsRatio}</th>
-                <th title="${desc.pvalue}">${row.pvalue}</th>
-                <th title="${desc.benjamini}">${row.benjamini}</th>
-                <th title="${desc.bonferroni}">${row.bonferroni}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <c:forEach var="row" items="${viewModel.resultData}">
+          <c:if test="${empty viewModel.resultData}">
+            <div class="go-empty-results">No analysis results found that met your parameter choices.</div>
+          </c:if>
+          <c:if test="${not empty viewModel.resultData}">
+            <table class="go-table">
+              <thead>
                 <tr>
-                  <td><a href="${viewModel.goTermBaseUrl}${row.goId}" target="_blank">${row.goId}</a></td>
-                  <td>${row.goTerm}</td>
-                  <td class="go-centered">${row.bgdGenes}</td>
-                  <td class="go-centered">${row.resultGenes}</td>
-                  <td class="go-centered">${row.percentInResult}</td>
-                  <td class="go-centered">${row.foldEnrich}</td>
-                  <td class="go-centered">${row.oddsRatio}</td>
-                  <td class="go-centered">${row.pvalue}</td>
-                  <td class="go-centered">${row.benjamini}</td>
-                  <td class="go-centered">${row.bonferroni}</td>
+                  <c:set var="row" value="${viewModel.headerRow}"/>
+                  <c:set var="desc" value="${viewModel.headerDescription}"/>
+                  <th title="${desc.goId}">${row.goId}</th>
+                  <th title="${desc.goTerm}">${row.goTerm}</th>
+                  <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
+                  <th title="${desc.resultGenes}">${row.resultGenes}</th>
+                  <th title="${desc.percentInResult}">${row.percentInResult}</th>
+                  <th title="${desc.foldEnrich}">${row.foldEnrich}</th>
+                  <th title="${desc.oddsRatio}">${row.oddsRatio}</th>
+                  <th title="${desc.pvalue}">${row.pvalue}</th>
+                  <th title="${desc.benjamini}">${row.benjamini}</th>
+                  <th title="${desc.bonferroni}">${row.bonferroni}</th>
                 </tr>
-              </c:forEach>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <c:forEach var="row" items="${viewModel.resultData}">
+                  <tr>
+                    <td><a href="${viewModel.goTermBaseUrl}${row.goId}" target="_blank">${row.goId}</a></td>
+                    <td>${row.goTerm}</td>
+                    <td class="go-centered">${row.bgdGenes}</td>
+                    <td class="go-centered">${row.resultGenes}</td>
+                    <td class="go-centered">${row.percentInResult}</td>
+                    <td class="go-centered">${row.foldEnrich}</td>
+                    <td class="go-centered">${row.oddsRatio}</td>
+                    <td class="go-centered">${row.pvalue}</td>
+                    <td class="go-centered">${row.benjamini}</td>
+                    <td class="go-centered">${row.bonferroni}</td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
+          </c:if>
         </div>
       </div>
     </body>

@@ -40,6 +40,11 @@
               right: 0px;
               font-weight: bold;
             }
+            .pathway-empty-results {
+              font-weight: bold;
+              margin: 25px auto;
+              text-align: center;
+            }
           </style>
           <span class="pathway-download-link">
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
@@ -50,40 +55,45 @@
             <em>Note: your results for this analysis might change in the next release of ${project}.
                 To save this exact result permanently, please download it.</em>
           </p>
-          <table class="pathway-table">
-            <thead>
-              <tr>
-                <c:set var="row" value="${viewModel.headerRow}"/>
-                <c:set var="desc" value="${viewModel.headerDescription}"/>
-                <th title="${desc.pathwayId}">${row.pathwayId}</th>
-                <th title="${desc.pathwayName}">${row.pathwayName}</th>
-                <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
-                <th title="${desc.resultGenes}">${row.resultGenes}</th>
-                <th title="${desc.percentInResult}">${row.percentInResult}</th>
-                <th title="${desc.foldEnrich}">${row.foldEnrich}</th>
-                <th title="${desc.oddsRatio}">${row.oddsRatio}</th>
-                <th title="${desc.pvalue}">${row.pvalue}</th>
-                <th title="${desc.benjamini}">${row.benjamini}</th>
-                <th title="${desc.bonferroni}">${row.bonferroni}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <c:forEach var="row" items="${viewModel.resultData}">
+          <c:if test="${empty viewModel.resultData}">
+            <div class="go-empty-results">No analysis results found that met your parameter choices.</div>
+          </c:if>
+          <c:if test="${not empty viewModel.resultData}">
+            <table class="pathway-table">
+              <thead>
                 <tr>
-                  <td><a href="${viewModel.pathwayBaseUrl}${row.pathwayId}" target="_blank">${row.pathwayId}</a></td>
-                  <td>${row.pathwayName}</td>
-                  <td class="pathway-centered">${row.bgdGenes}</td>
-                  <td class="pathway-centered">${row.resultGenes}</td>
-                  <td class="pathway-centered">${row.percentInResult}</td>
-                  <td class="pathway-centered">${row.foldEnrich}</td>
-                  <td class="pathway-centered">${row.oddsRatio}</td>
-                  <td class="pathway-centered">${row.pvalue}</td>
-                  <td class="pathway-centered">${row.benjamini}</td>
-                  <td class="pathway-centered">${row.bonferroni}</td>
+                  <c:set var="row" value="${viewModel.headerRow}"/>
+                  <c:set var="desc" value="${viewModel.headerDescription}"/>
+                  <th title="${desc.pathwayId}">${row.pathwayId}</th>
+                  <th title="${desc.pathwayName}">${row.pathwayName}</th>
+                  <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
+                  <th title="${desc.resultGenes}">${row.resultGenes}</th>
+                  <th title="${desc.percentInResult}">${row.percentInResult}</th>
+                  <th title="${desc.foldEnrich}">${row.foldEnrich}</th>
+                  <th title="${desc.oddsRatio}">${row.oddsRatio}</th>
+                  <th title="${desc.pvalue}">${row.pvalue}</th>
+                  <th title="${desc.benjamini}">${row.benjamini}</th>
+                  <th title="${desc.bonferroni}">${row.bonferroni}</th>
                 </tr>
-              </c:forEach>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <c:forEach var="row" items="${viewModel.resultData}">
+                  <tr>
+                    <td><a href="${viewModel.pathwayBaseUrl}${row.pathwayId}" target="_blank">${row.pathwayId}</a></td>
+                    <td>${row.pathwayName}</td>
+                    <td class="pathway-centered">${row.bgdGenes}</td>
+                    <td class="pathway-centered">${row.resultGenes}</td>
+                    <td class="pathway-centered">${row.percentInResult}</td>
+                    <td class="pathway-centered">${row.foldEnrich}</td>
+                    <td class="pathway-centered">${row.oddsRatio}</td>
+                    <td class="pathway-centered">${row.pvalue}</td>
+                    <td class="pathway-centered">${row.benjamini}</td>
+                    <td class="pathway-centered">${row.bonferroni}</td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
+          </c:if>
         </div>
       </div>
     </body>
