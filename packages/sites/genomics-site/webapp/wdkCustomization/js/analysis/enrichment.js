@@ -3,6 +3,14 @@
 
   var preventEvent = wdk.fn.preventEvent;
 
+  // Subscribe to events published by the analysis framework.
+  //
+  // Each callback function is called with an analysis object.
+  //
+  // An analysis object has the following properties:
+  //  - $el:  Reference to the jQuery-wrapped tab pane element
+  //  - name: The name of the analysis instance, as defined in the model
+  //  - id:   The analysis ID
   wdk.on({
     'analysis:formload:go-enrichment': formload,
     'analysis:resultsload:go-enrichment': resultsload,
