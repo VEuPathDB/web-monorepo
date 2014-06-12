@@ -18,7 +18,7 @@
 
     'analysis:formload:pathway-enrichment': formload,
     'analysis:resultsload:pathway-enrichment': resultsload,
-    'analysis:remove:pathway-enrichment': removeEvents
+    'analysis:remove:pathway-enrichment': removeEvents,
 
     'analysis:formload:word-enrichment': formload,
     'analysis:resultsload:word-enrichment': resultsload,
