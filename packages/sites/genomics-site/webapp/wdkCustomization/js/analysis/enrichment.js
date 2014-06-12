@@ -19,6 +19,10 @@
     'analysis:formload:pathway-enrichment': formload,
     'analysis:resultsload:pathway-enrichment': resultsload,
     'analysis:remove:pathway-enrichment': removeEvents
+
+    'analysis:formload:word-enrichment': formload,
+    'analysis:resultsload:word-enrichment': resultsload,
+    'analysis:remove:word-enrichment': removeEvents
   });
 
   // handle select all and clear all links on form
