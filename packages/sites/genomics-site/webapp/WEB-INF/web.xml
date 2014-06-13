@@ -110,6 +110,7 @@
   <!-- End JavaMelody monitoring plugin configuration -->
   
   <!-- WSF Restful service filter -->
+<!-- Cannot get this filter to work, use the servlet version instead.
   <filter>
 	<filter-name>WSF</filter-name>
 	<filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
@@ -123,6 +124,23 @@
 	<filter-name>WSF</filter-name>
 	<url-pattern>/wsf/*</url-pattern>
   </filter-mapping>
+-->
+
+  <servlet>
+        <servlet-name>WSF</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+                <param-name>javax.ws.rs.Application</param-name>
+                <param-value>org.gusdb.wsf.service.WsfServiceApplication</param-value>
+        </init-param>
+  </servlet>
+  
+  <servlet-mapping>
+        <servlet-name>WSF</servlet-name>
+        <url-pattern>/wsf/*</url-pattern>
+  </servlet-mapping>
+
+
   <!-- End of WSF Restful service filter -->
   
   <servlet>
