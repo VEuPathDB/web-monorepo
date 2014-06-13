@@ -192,7 +192,6 @@ pe Web"/></a>
 
   <c:set var="reference">
 <br>Data for KEGG Metabolic Pathways were procured from the <a href="http://www.kegg.jp/">Kyoto Encyclopedia of Genes and Genomes (KEGG)</a>.
-<br>Data for MPMP Pathways was supplied by Hagai Ginsburg (Hebrew University), <a href="http://priweb.cc.huji.ac.il/malaria//FramIntroduction.html">Malaria Parasite Metabolic Pathways (MPMP)</a>.<br>
 <br> This data was mapped to EC Numbers obtained from the official genome annotations of organisms, and to Compounds from the NCBI repository.<br>
 <!-- The images and maps for KEGG pathways are copyright of <a href="http://www.kanehisa.jp/">Kanehisa Laboratories</a> (<a href="http://www.kegg.jp/kegg/legal.html">Copyright 1995-2012</a>).-->
 Coloring of the pathway maps was performed in house with custom scripts and annotation information.<br>
