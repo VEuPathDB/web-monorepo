@@ -7,7 +7,6 @@ function QuickSearch() {
 
     this.LoadQuickSearch = function() {
        var quickSearch = this;
-       var session = jQuery("#quick-search").attr("session-id");
        jQuery("#quick-search form").each(function() {
            var form = this;
            // load previous input, if have any

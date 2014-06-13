@@ -3,9 +3,26 @@
 
   var preventEvent = wdk.fn.preventEvent;
 
+  // Subscribe to events published by the analysis framework.
+  //
+  // Each callback function is called with an analysis object.
+  //
+  // An analysis object has the following properties:
+  //  - $el:  Reference to the jQuery-wrapped tab pane element
+  //  - name: The name of the analysis instance, as defined in the model
+  //  - id:   The analysis ID
   wdk.on({
     'analysis:formload:go-enrichment': formload,
-    'analysis:resultsload:go-enrichment': resultsload
+    'analysis:resultsload:go-enrichment': resultsload,
+    'analysis:remove:go-enrichment': removeEvents,
+
+    'analysis:formload:pathway-enrichment': formload,
+    'analysis:resultsload:pathway-enrichment': resultsload,
+    'analysis:remove:pathway-enrichment': removeEvents,
+
+    'analysis:formload:word-enrichment': formload,
+    'analysis:resultsload:word-enrichment': resultsload,
+    'analysis:remove:word-enrichment': removeEvents
   });
 
   // handle select all and clear all links on form
@@ -21,7 +38,7 @@
 
   // use datatable for results and add fancy tooltips
   function resultsload(analysis) {
-    var $table = analysis.$el.find('.go-table');
+    var $table = analysis.$el.find('.step-analysis-results-pane table');
 
     $table.find('tbody tr > td:nth-child(8)').each(toTwoDecimals);
     $table.find('tbody tr > td:nth-child(9)').each(toTwoDecimals);
@@ -42,10 +59,14 @@
     });
 
     $(window)
-      .off('resize.go_enrichment')
-      .on('resize.go_enrichment', _.debounce(function() {
+      .off('resize.enrichment' + analysis.id)
+      .on('resize.enrichment' + analysis.id, _.debounce(function() {
         $table.dataTable().fnDraw();
       }, 300));
+  }
+
+  function removeEvents(analysis) {
+    $(window).off('resize.enrichment' + analysis.id);
   }
 
   // Convert scipy's scientific notation to what we want.

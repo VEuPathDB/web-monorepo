@@ -10,66 +10,62 @@
       <div>
         <div style="position:relative">
           <style>
-            .go-result-p {
+            .pathway-result-p {
               margin: 5px;
               text-align: center;
             }
             /*
-            .go-table {
+            .pathway-table {
               margin-top: 5px;
             }
             */
-            .go-table th {
+            .pathway-table th {
               text-align:left;
             }
-            .go-table td {
+            .pathway-table td {
               text-align: left;
             }
-            .go-table td.go-centered {
+            .pathway-table td.pathway-centered {
               text-align: center;
             }
-            .go-databar {
+            .pathway-databar {
               border:0; margin:0; padding:0;
               display: inline-block;
               height: 1em;
               background-color: lightgreen;
             }
-            .go-download-link {
+            .pathway-download-link {
               position: absolute;
               top: 0px;
               right: 0px;
               font-weight: bold;
             }
-            .go-empty-results {
+            .pathway-empty-results {
               font-weight: bold;
               margin: 25px auto;
               text-align: center;
             }
           </style>
-          <span class="go-download-link">
+          <span class="pathway-download-link">
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
             <a href="${downloadUrl}">Download Analysis Results</a>
           </span>
-          <h2 style="text-align:center">Enriched GO Terms</h2>
-          <p class="go-result-p">
+          <h2 style="text-align:center">Enriched Pathways</h2>
+          <p class="pathway-result-p">
             <em>Note: your results for this analysis might change in the next release of ${project}.
                 To save this exact result permanently, please download it.</em>
-            <!--
-            <em>GO Enriched terms from ${viewModel.goSources} (sources) and ${viewModel.goOntologies} (ontologies) with P-Value
-            Cutoff value ${viewModel.pvalueCutoff}.</em>
-            -->
           </p>
           <c:if test="${empty viewModel.resultData}">
             <div class="go-empty-results">No analysis results found that met your parameter choices.</div>
           </c:if>
           <c:if test="${not empty viewModel.resultData}">
-            <table class="go-table">
+            <table class="pathway-table">
               <thead>
                 <tr>
                   <c:set var="row" value="${viewModel.headerRow}"/>
                   <c:set var="desc" value="${viewModel.headerDescription}"/>
-                  <th title="${desc.goId}">${row.goId}</th>
-                  <th title="${desc.goTerm}">${row.goTerm}</th>
+                  <th title="${desc.pathwayId}">${row.pathwayId}</th>
+                  <th title="${desc.pathwayName}">${row.pathwayName}</th>
                   <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
                   <th title="${desc.resultGenes}">${row.resultGenes}</th>
                   <th title="${desc.percentInResult}">${row.percentInResult}</th>
@@ -83,16 +79,16 @@
               <tbody>
                 <c:forEach var="row" items="${viewModel.resultData}">
                   <tr>
-                    <td><a href="${viewModel.goTermBaseUrl}${row.goId}" target="_blank">${row.goId}</a></td>
-                    <td>${row.goTerm}</td>
-                    <td class="go-centered">${row.bgdGenes}</td>
-                    <td class="go-centered">${row.resultGenes}</td>
-                    <td class="go-centered">${row.percentInResult}</td>
-                    <td class="go-centered">${row.foldEnrich}</td>
-                    <td class="go-centered">${row.oddsRatio}</td>
-                    <td class="go-centered">${row.pvalue}</td>
-                    <td class="go-centered">${row.benjamini}</td>
-                    <td class="go-centered">${row.bonferroni}</td>
+                    <td><a href="${viewModel.pathwayBaseUrl}${row.pathwayId}" target="_blank">${row.pathwayId}</a></td>
+                    <td>${row.pathwayName}</td>
+                    <td class="pathway-centered">${row.bgdGenes}</td>
+                    <td class="pathway-centered">${row.resultGenes}</td>
+                    <td class="pathway-centered">${row.percentInResult}</td>
+                    <td class="pathway-centered">${row.foldEnrich}</td>
+                    <td class="pathway-centered">${row.oddsRatio}</td>
+                    <td class="pathway-centered">${row.pvalue}</td>
+                    <td class="pathway-centered">${row.benjamini}</td>
+                    <td class="pathway-centered">${row.bonferroni}</td>
                   </tr>
                 </c:forEach>
               </tbody>

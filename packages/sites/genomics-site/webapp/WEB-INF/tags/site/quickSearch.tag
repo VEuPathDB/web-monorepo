@@ -27,7 +27,6 @@
 <c:set var="gkwqpMap" value="${geneByTextQuestion.paramsMap}"/>
 <c:set var="textParam" value="${gkwqpMap['text_expression']}"/>
 <c:set var="timestampParam" value="${gkwqpMap['timestamp']}"/>
-<c:set var="sessionId" value="${sessionScope['sessionId']}"/>
 
 <c:catch var="orgParam_exception">
 	<c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
@@ -46,7 +45,7 @@
   $(function() { wdk.tooltips.assignTooltips('.head-search-tip'); });
 </script>
 
-<div id="quick-search" session-id="${sessionId}">
+<div id="quick-search">
 	<table style="float:right;margin-bottom:10px">
            <tr>
 
