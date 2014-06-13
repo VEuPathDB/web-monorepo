@@ -72,72 +72,15 @@
 <!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
 
 <c:choose>
-  <c:when  test="${attrs['type'].value == 'HTS'}">
-
-<c:set var="start" value="${attrs['start_min_text']}"/>
-<c:set var="startm" value="${fn:replace(start,',','') - 39}" /> </h4>
-<c:set var="end" value="${fn:replace(start,',','') + 40}" /> </h4>
-
-<form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
-
-    <imp:wdkTable tblName="HTSStrains" isOpen="true"/>
-
-<table width="100%">
-  <tr align=center>        
-    <td><b>Please select at least two isolates strains to run ClustalW.</b></td>
-  </tr>   
-  <tr>
-    <td align=center>
-
-  <c:choose>
-    <c:when test = "${projectId == 'ToxoDB'}">
-      <c:set var="snp" value="${fn:split(primaryKey, '.')}" />
-      <c:set var="part1" value="${snp[1]}" />
-      <c:set var="part2" value="${snp[2]}" />
-      <c:set var="ref_seq" value="${part1}.${part2}" />
-      <c:set var="snp_start" value="${snp[3] - 25}" />
-      <c:set var="snp_end" value="${snp[3] + 24}" />
-
-      <input type="button" value="Run Clustalw on Checked Strains" 
-           onClick="goToIsolate(this,'htsSNP','${ref_seq}','${snp_start}', '${snp_end}')" />
-    </c:when>
-    <c:otherwise>
-      <input type="button" value="Run Clustalw on Checked Strains" 
-           onClick="goToIsolate(this,'htsSNP','${attrs['seq_source_id']}','${startm}', '${end}')" />
-    </c:otherwise>
-  </c:choose>
-
-      <input type="button" name="CheckAll" value="Check All" 
-           onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
-      <input type="button" name="UnCheckAll" value="Uncheck All" 
-          onClick="wdk.api.checkboxNone(jQuery('input:checkbox[name=selectedFields]'))">
-    </td>
-  </tr> 
-</table>
-</form>
-
-  </c:when>
-  <c:otherwise>
-    <imp:wdkTable tblName="Strains" isOpen="true"/>
-  </c:otherwise>
+	<c:when test="${fn:endsWith(id, 'barcode')}">
+		<imp:wdkTable tblName="StrainsWithMetaData" isOpen="true"/>
+	</c:when>
+	<c:otherwise>
+		<imp:wdkTable tblName="Strains" isOpen="true"/>
+	</c:otherwise>
 </c:choose>
 
-<c:if test="${projectId eq 'PlasmoDB'}">
-
-<imp:pageDivider name="Isolate Chip Assays"/>
-
-<imp:wdkTable tblName="Isolates" isOpen="false"/>
-<imp:wdkTable tblName="IsolatesAlleleFrequency" isOpen="true"/>
-
-
-<imp:pageDivider name="Sequence Context"/>
-
-<br/>
-</c:if>
-
-
 <imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
-
 
 </c:otherwise>
 </c:choose>
