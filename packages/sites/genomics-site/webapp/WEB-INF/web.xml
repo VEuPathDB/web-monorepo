@@ -137,7 +137,7 @@
   
   <servlet-mapping>
         <servlet-name>WSF</servlet-name>
-        <url-pattern>/wsf/*</url-pattern>
+        <url-pattern>/services/WsfService/*</url-pattern>
   </servlet-mapping>
 
 
