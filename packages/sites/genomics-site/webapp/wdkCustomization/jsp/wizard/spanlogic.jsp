@@ -90,7 +90,7 @@ Your new <b>${newPluralType}</b> search <span style="color:#c60056">(Step</span>
 	<input type="hidden" value="${importStep.recordClass.displayName}" id="span_b_type"/>
 	<c:if test="${action == 'revise'}">
           <c:forEach items="${spanStep.params}" var="spanParam">
-            <input type="hidden" value="${spanParam.value}" id="${spanParam.key}_default"/>
+            <input type="hidden" value="${fn:escapeXml(spanParam.value)}" id="${spanParam.key}_default"/>
           </c:forEach>
         </c:if>
 
