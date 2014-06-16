@@ -122,20 +122,6 @@
   </c:otherwise>
 </c:choose>
 
-<c:if test="${projectId eq 'PlasmoDB'}">
-
-<imp:pageDivider name="Isolate Chip Assays"/>
-
-<imp:wdkTable tblName="Isolates" isOpen="false"/>
-<imp:wdkTable tblName="IsolatesAlleleFrequency" isOpen="true"/>
-
-
-<imp:pageDivider name="Sequence Context"/>
-
-<br/>
-</c:if>
-
-
 <imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
 
