@@ -163,6 +163,11 @@
           <c:choose>
             <c:when test="${from == 'webservices'}">
               <c:forEach items="${questionSets}" var="qSet">
+<!-- DEBUG 
+<br>
+${qSet.displayName}---${qSet.internal}---${cat.displayName}
+<br>
+-->
                 <c:if test="${qSet.internal == false}">
                   <c:if test="${qSet.displayName == cat.displayName}">
                     <br><br>
@@ -170,6 +175,7 @@
                       <a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
                       <ul>
                         <c:forEach items="${qSet.questions}" var="q">
+<c:if test="${!fn:contains(q.name,'BySpanLogic')  && !fn:contains(q.name,'ByWeightFilter')}">
                           <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}
                               <imp:questionFeature question="${q}" refer="${from}" />
@@ -186,6 +192,7 @@
                               ${flag}
                             </c:if>
                           </li>
+</c:if>
                         </c:forEach>
                       </ul>
                     </li>

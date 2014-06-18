@@ -10,7 +10,7 @@ a:link, a:visited, div.divlink {
 	color: #2c5986;
 }
 
-a:hover, a:active, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover {
 	color: #610b0b;   /* red like in crypto */     /*    #88a3bc;  */
 }
 

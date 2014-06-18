@@ -1,23 +1,33 @@
-<?xml version="1.0" ?>
-<web-app version="2.4" 
-         xmlns="http://java.sun.com/xml/ns/j2ee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4"
+    xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:web="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
   <context-param>
     <param-name>GUS_HOME</param-name>
     <param-value>/WEB-INF/wdk-model/</param-value>
   </context-param>
-<!-- For the EuPathDB-BRC project, the model param goes in the webapp's context xml
+
+  <!-- For the EuPathDB-BRC project, the model param goes in the webapp's context xml
   <context-param>
     <param-name>model</param-name>
     <param-value>SomeDB</param-value>
   </context-param>
--->
+  -->
+
   <context-param>
     <param-name>wdkAlwaysGoToSummary_param</param-name>
     <param-value>yes</param-value>
   </context-param>
+
+  <!-- For internal WSF support -->
+  <context-param>
+    <param-name>wsfConfigDir_param</param-name>
+    <param-value>/WEB-INF/wdk-model/config/</param-value>
+  </context-param>
+
   <listener>
     <listener-class>org.gusdb.wdk.controller.ApplicationInitListener</listener-class>
   </listener>
@@ -25,6 +35,34 @@
   <listener>
     <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
+
+  <listener>
+    <listener-class>net.bull.javamelody.SessionListener</listener-class>
+  </listener>
+
+  <!-- The Apache file upload library starts a cleanup thread to remove temporary files -->
+  <!--    This listener destroys that thread when the webapp is unloaded.               -->
+  <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>MDCServletFilter</filter-name>
+    <filter-class>org.gusdb.wdk.controller.filter.MDCServletFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>MDCServletFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>CheckLoginFilter</filter-name>
+    <filter-class>org.gusdb.wdk.controller.filter.CheckLoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CheckLoginFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <!-- mitigation for Struts1 security hole CVE-2014-0114 -->
   <filter>
@@ -40,7 +78,7 @@
     <servlet-name>wdkEuPathDbBrc</servlet-name>
   </filter-mapping>
 
-  <!-- Configuration of JavaMelody monitoring plugin -->
+  <!-- JavaMelody monitoring plugin configuration -->
   <filter>
     <filter-name>monitoring-display</filter-name>
     <filter-class>org.eupathdb.common.controller.MelodyDisplayFilter</filter-class>
@@ -69,15 +107,7 @@
     <filter-name>monitoring</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  <listener>
-    <listener-class>net.bull.javamelody.SessionListener</listener-class>
-  </listener>
-  
-  <!-- The Apache file upload library starts a cleanup thread to remove temporary files -->
-  <!--    This listener destroys that thread when the webapp is unloaded.               -->
-  <listener>
-    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
-  </listener>
+  <!-- End JavaMelody monitoring plugin configuration -->
   
   <servlet>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
@@ -88,49 +118,19 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  
   <servlet-mapping>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <url-pattern>/webservices/*</url-pattern>
   </servlet-mapping>
-
   <servlet-mapping>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
-<!-- Internal WSF support -->
-  <context-param>
-    <param-name>wsfConfigDir_param</param-name>
-    <param-value>/WEB-INF/wdk-model/config/</param-value>
-  </context-param>
-
+  <!-- Internal WSF Support -->
   <servlet>
     <servlet-name>AxisServlet</servlet-name>
-    <display-name>Apache-Axis Servlet</display-name>
-    <servlet-class>
-        org.apache.axis.transport.http.AxisServlet
-    </servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>AdminServlet</servlet-name>
-    <display-name>Axis Admin Servlet</display-name>
-    <servlet-class>
-        org.apache.axis.transport.http.AdminServlet
-    </servlet-class>
-    <load-on-startup>100</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>SOAPMonitorService</servlet-name>
-    <display-name>SOAPMonitorService</display-name>
-    <servlet-class>
-        org.apache.axis.monitor.SOAPMonitorService
-    </servlet-class>
-    <init-param>
-      <param-name>SOAPMonitorPort</param-name>
-      <param-value>5001</param-value>
-    </init-param>
-    <load-on-startup>100</load-on-startup>
+    <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>AxisServlet</servlet-name>
@@ -144,15 +144,24 @@
     <servlet-name>AxisServlet</servlet-name>
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>SOAPMonitorService</servlet-name>
+    <servlet-class>org.apache.axis.monitor.SOAPMonitorService</servlet-class>
+    <init-param>
+      <param-name>SOAPMonitorPort</param-name>
+      <param-value>5001</param-value>
+    </init-param>
+    <load-on-startup>100</load-on-startup>
+  </servlet>
   <servlet-mapping>
     <servlet-name>SOAPMonitorService</servlet-name>
     <url-pattern>/SOAPMonitor</url-pattern>
   </servlet-mapping>
-<!-- End Internal WSF support -->
+  <!-- End Internal WSF support -->
 
   <!-- The Welcome File List -->
   <welcome-file-list>
-     <welcome-file>home.jsp</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
 
   <!-- Error Page Mappings -->
@@ -173,37 +182,20 @@
      <location>/500.jsp</location>
   </error-page>
 
+  <!-- Declare tag libs for JSP and tags -->
   <jsp-config>
-  <taglib>
-    <taglib-uri>/WEB-INF/tld-third-party/struts-html.tld</taglib-uri>
-    <taglib-location>/WEB-INF/tld-third-party/struts-html.tld</taglib-location>
-  </taglib>
-
-  <taglib>
-    <taglib-uri>/WEB-INF/tld-third-party/pager-taglib.tld</taglib-uri>
-    <taglib-location>/WEB-INF/tld-third-party/pager-taglib.tld</taglib-location>
-  </taglib>
-
-  <taglib>
-    <taglib-uri>http://jakarta.apache.org/taglibs/random-1.0</taglib-uri>
-    <taglib-location>/WEB-INF/tld-third-party/taglibs-random.tld</taglib-location>
-  </taglib>
+    <taglib>
+      <taglib-uri>/WEB-INF/tld-third-party/struts-html.tld</taglib-uri>
+      <taglib-location>/WEB-INF/tld-third-party/struts-html.tld</taglib-location>
+    </taglib>
+    <taglib>
+      <taglib-uri>/WEB-INF/tld-third-party/pager-taglib.tld</taglib-uri>
+      <taglib-location>/WEB-INF/tld-third-party/pager-taglib.tld</taglib-location>
+    </taglib>
+    <taglib>
+      <taglib-uri>http://jakarta.apache.org/taglibs/random-1.0</taglib-uri>
+      <taglib-location>/WEB-INF/tld-third-party/taglibs-random.tld</taglib-location>
+    </taglib>
   </jsp-config>
-  <filter>
-    <filter-name>MDCServletFilter</filter-name>
-    <filter-class>org.apidb.apicommon.controller.log4j.MDCServletFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>CheckLoginFilter</filter-name>
-    <filter-class>org.gusdb.wdk.controller.CheckLoginFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>MDCServletFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>CheckLoginFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
 
 </web-app>

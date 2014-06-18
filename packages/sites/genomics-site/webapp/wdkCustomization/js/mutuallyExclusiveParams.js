@@ -244,7 +244,7 @@
       // which should be the "blank" option
       if ($chromosomeOptional.prop('disabled')) {
         $chromosomeOptional.prop('disabled', false);
-        chromosomeFakeNull.appendTo(chromosomeOptional).attr("selected", true);
+        chromosomeFakeNull.appendTo($chromosomeOptional).attr("selected", true);
       }
 
       this.organism.disabled = false;
