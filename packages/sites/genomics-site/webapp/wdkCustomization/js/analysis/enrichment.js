@@ -50,11 +50,11 @@
 
     $table.wdkDataTable({
       // sort by p-value
-      aaSorting: [[ 7, 'asc' ]],
+      order: [ 7, 'asc' ],
       // order p-value cols numerically
-      aoColumnDefs: [{
-        sType: 'numeric',
-        aTargets: [7, 8, 9]
+      columnDefs: [{
+        type: 'scientific',
+        targets: [7, 8, 9]
       }]
     });
 

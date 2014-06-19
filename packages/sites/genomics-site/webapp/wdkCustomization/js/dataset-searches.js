@@ -80,10 +80,8 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
 
     // filter
     //   - remove active search page and expand table
-    //   - when input has content, display clear button
     $($attrs.table + "_filter input")
       .on("keyup change", function(e) {
-        $(this).toggleClass("content", this.value.length > 0);
         toggleTable(false);
         $("#question-wrapper").html("").removeClass("active");
         questionCollection.datasetId = null;
@@ -92,26 +90,18 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
         $datasetRecords.find("tbody tr").removeClass("active");
         $tableToggle.hide();
         $questionWrapper.find(".tabs").hide();
-      }).after(
-        $('<span class="ui-icon ui-icon-circle-close"></span>')
-          .addClass("filter-clear")
-          .on("click", function(e) {
-            e.preventDefault();
-            dataTable.fnFilter("");
-            $($attrs.table + "_filter input").change().select();
-          })
-      );
-
-    $($attrs.table + "_filter input").wdkTooltip({
-      content: {
-        text: "Type anything to filter this table, " +
-              "such as investigator or organism name. "
-      },
-      position: {
-        my: "left center",
-        at: "right center"
-      }
-    }).attr("placeholder", "Type keyword(s) to filter");
+      })
+      .wdkTooltip({
+        content: {
+          text: "Type anything to filter this table, " +
+                "such as investigator or organism name. "
+        },
+        position: {
+          my: "left center",
+          at: "right center"
+        }
+      })
+      .attr("placeholder", "Type keyword(s) to filter");
 
     // handle search click
     $datasetRecords.find(".dataset").on("click", ".question-link", function(e) {
