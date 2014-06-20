@@ -922,6 +922,17 @@ sub colorSegmentByScore {
          return '#000000';
 }
 
+sub bgColorForBamTracks {
+    my $f = shift;
+    my $strand = $f->query->strand;
+    return $strand == 1 ? 'cornflowerblue' : 'coral';
+    }
+
+sub mismatchColorForBamTracks {
+    my $f = shift;
+    my $strand = $f->query->strand;
+    return $strand == 1 ? 'coral' : 'cornflowerblue';
+    }
 
 
 #--------------------------------------------------------------------------------
