@@ -27,8 +27,8 @@
   <c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
 </c:catch>
 
-<imp:pageFrame title="${wdkModel.displayName} : Isolate Assay SNP ${id}"
-             banner="Isolate Assay SNP ${id}"
+<imp:pageFrame title="${wdkModel.displayName} : SNP Chip ${id}"
+             banner="SNP Chip ${id}"
              refer="recordPage"
              divisionName="SNP Record"
              division="queries_tools">
@@ -44,7 +44,7 @@
 
 
 <div class="h2center" style="font-size:160%">
-   Isolate Assay SNP
+   SNP Chip
 </div>
 
 <div class="h3center" style="font-size:130%">
