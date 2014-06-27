@@ -102,6 +102,7 @@
           <c:set var="externallinks" value="${tables['HyperLinks']}" />
           <c:set var="versions" value="${tables['Version']}" /> 
           <c:set var="references" value="${tables['References']}" />
+          <c:set var="genHistory" value="${tables['GenomeHistory']}" />
 
           <div class="data-set">
 
@@ -199,7 +200,22 @@
               <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="${show}" />
             </c:if>
 
-            <c:if test="${fn:length(versions) > 0}">
+            <c:if test="${fn:length(genHistory) > 0}">
+              <c:set var="genHistoryContent">
+                 <table>
+                  <c:forEach items="${genHistory}" var="genHistoryRow">
+                        <tr><td>${genHistoryRow['build'].displayName}--${genHistoryRow['build']}----${genHistoryRow['release_date']}<br>
+                                ${genHistoryRow['note']}<br>
+                                Genome source: ${genHistoryRow['genome_source']}--${genHistoryRow['genome_version']}<br>
+                                Annotation source: ${genHistoryRow['annotation_source']}--${genHistoryRow['annotation_version']}
+                        </td></tr>
+                  </c:forEach>
+                 </table>
+              </c:set>
+              <imp:simpleToggle name ="${genHistory.displayName}" content="${genHistoryContent}" show="${show}" /> 
+            </c:if>
+
+           <c:if test="${fn:length(versions) > 0}">
               <c:set var="versionContent">
                 <!-- <imp:table table="${versions}" sortable="false" showHeader="false" /> -->
                  <table>
@@ -210,7 +226,6 @@
               </c:set>
               <imp:simpleToggle name ="${versions.displayName}" content="${versionContent}" show="${show}" /> 
             </c:if>
-
 
             <c:if test="${fn:length(references) > 0}">
               <c:set var="hasQuestion" value="${false}" />
