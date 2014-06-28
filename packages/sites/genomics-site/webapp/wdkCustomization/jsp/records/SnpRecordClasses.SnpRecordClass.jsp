@@ -18,7 +18,7 @@
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
 <c:set var="junk" value="${attrs['organism']}"/>
-  <c:set var="snp_position" value="${attrs['start_min'].value}"/>
+  <c:set var="snp_position" value="${attrs['location'].value}"/>
   <c:set var="start" value="${snp_position-25}"/>
   <c:set var="end"   value="${snp_position+25}"/>
    <c:if test="${attrs['gene_strand'].value == 'reverse'}">
@@ -69,12 +69,9 @@
     content="${attr.value}" 
     attribute="${attr.name}"/>
 
-<!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
+<!-- strains table: for HTS SNPs only -->
 
-<c:choose>
-  <c:when  test="${attrs['type'].value == 'HTS'}">
-
-<c:set var="start" value="${attrs['start_min_text']}"/>
+<c:set var="start" value="${attrs['location_text']}"/>
 <c:set var="startm" value="${fn:replace(start,',','') - 39}" /> </h4>
 <c:set var="end" value="${fn:replace(start,',','') + 40}" /> </h4>
 
@@ -115,12 +112,6 @@
   </tr> 
 </table>
 </form>
-
-  </c:when>
-  <c:otherwise>
-    <imp:wdkTable tblName="Strains" isOpen="true"/>
-  </c:otherwise>
-</c:choose>
 
 <imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
 
