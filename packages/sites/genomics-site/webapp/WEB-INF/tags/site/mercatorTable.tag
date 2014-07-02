@@ -98,7 +98,7 @@ return true;
  <table> 
 <%--     <c:if test="${inputContig != null}"> --%>
       <tr>
-        <td align="left"><b>Enter a Contig ID:</b>
+        <td align="left"><b>Contig ID:</b>
           <input type="text" name="contig" value="${contigId}">
         </td>
       </tr>
@@ -157,10 +157,10 @@ return true;
 
 
     <tr><td align="left"><b>Select output:</b>&nbsp;&nbsp;</td></tr>
-    <tr><td align="left"><input type="radio" name="type" value="clustal" checked>Obtain alignment (clustal)
+    <tr><td align="left"><input type="radio" name="type" value="clustal" checked>Multiple sequence alignment (clustal)
       <span style="font-size:90%;">&nbsp;&nbsp;&nbsp;(Alignments made with <a href="http://www.biostat.wisc.edu/~cdewey/mercator/">Mercator</a>)</span>
       </td></tr>
-    <tr><td align="left"><input type="radio" name="type" value="fasta_ungapped">Download fasta file</td></tr>
+    <tr><td align="left"><input type="radio" name="type" value="fasta_ungapped">Multi-FASTA</td></tr>
     <tr><td align="left"><input type="submit" name='go' value='Submit' /></td></tr>
   </table>
 </form>
