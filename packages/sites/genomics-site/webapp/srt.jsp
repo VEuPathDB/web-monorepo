@@ -40,7 +40,7 @@
         <b><center>Download Sequences By <br>
             <a href="#gene">Gene IDs</a> | 
             <a href="#sequence">Genomic Sequence IDs</a> |  
-
+            <a href="#est">EST IDs</a> |  
             <%--
                <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
                  <a href="#msa">Alignments</a> |
@@ -103,7 +103,7 @@
 
 
   <hr>
-  <h3><a name="sequence">Retrieve Sequences By EST IDs</a></h3>
+  <h3><a name="est">Retrieve Sequences By EST IDs</a></h3>
   <form action="/cgi-bin/${eSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
