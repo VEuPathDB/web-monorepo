@@ -309,21 +309,17 @@ sub snpTitleFromMatchToReference {
    my $f = shift;
    my @data;
    my $name = $f->name;
-   #my ($source) = $f->get_tag_values("IsoDbName");
    my ($location) = $f->start;
    my ($majorAllele) = $f->get_tag_values("MajorAllele");
-   my ($minorAllele) = $f->get_tag_values("MinorAllele");
+   my ($majorAlleleFreq) = $f->get_tag_values("MajorAlleleFreq");
    my ($minorAlleleFreq) = $f->get_tag_values("MinorAlleleFreq");
-   my ($numIsolates) = $f->get_tag_values("NumIsolates");
    my ($snpid) = $f->get_tag_values("SnpId");
-   my $link = qq(<a href="/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$name">$name</a>);
-   push @data, [ 'Name:'  => $name ];
-   #push @data, [ 'Data Source:'  => $source ];
+   my $link = qq(<a href="/a/showRecord.do?name=SnpChipRecordClasses.SnpChipRecordClass&primary_key=$name">$name</a>);
+   push @data, [ 'Name:'  => $link ];
    push @data, [ 'Location:' => $location ];
    push @data, [ 'Major Allele:'  => $majorAllele ];
-   push @data, [ 'Minor Allele:'  => $minorAllele ];
+   push @data, [ 'Major Allele Frequency:'  => $majorAlleleFreq ];
    push @data, [ 'Minor Allele Frequency:'  => $minorAlleleFreq ];
-   push @data, [ '# of isolates:'  => $numIsolates ];
    return hover($f, \@data); 
  }
 
