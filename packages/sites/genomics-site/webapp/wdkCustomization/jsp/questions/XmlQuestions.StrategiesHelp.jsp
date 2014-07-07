@@ -8,9 +8,7 @@
 
 <%-- get wdkXmlAnswer saved in request scope --%>
 <c:set var="xmlAnswer" value="${requestScope.wdkXmlAnswer}"/>
-
 <c:set var="banner" value="${xmlAnswer.question.displayName}"/>
-
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <imp:pageFrame title="${wdkModel.displayName} : Did You Know"
@@ -19,7 +17,6 @@
                  parentUrl="/home.jsp"
                  divisionName="Did you know"
                  division="about">
-
 
 
 <div id="strategyTips">
@@ -33,55 +30,37 @@
 
 <!-- main body start -->
 
-<table border="0" cellpadding="2" cellspacing="0" width="100%">
+<div>
+  <c:set var="i" value="0"/>
 
-<c:set var="i" value="0"/>
-<c:set var="alreadyPrintedSomething" value="false"/>
-<c:forEach items="${xmlAnswer.recordInstances}" var="record">
+  <c:forEach items="${xmlAnswer.recordInstances}" var="record">
+    <hr color="#D0D0D0">
+    <c:set var="title" value="${record.attributesMap['title']}"/>
+    <c:set var="text" value="${record.attributesMap['body']}"/>
+    <c:set var="image" value="${record.attributesMap['image']}"/>
+    <c:set var="showTip" value="${record.attributesMap['showTipAsDidYouKnow']}"/>
+    <c:set var="tip" value="${record.attributesMap['tip']}"/>
+<%--    <b id="strat_help_${i}" class="strat_help_title">${title}</b> --%>
 
-<c:choose>
+<div class="h3left" id="strat_help_${i}"> Did you know... </div>
 
-<c:when test="${param['idx'] != null && param['idx'] != i}">
-</c:when>
+    <c:if test="${showTip}">
+      <span id="tip_${i}"><div style="margin: 10px 15px 15px;">
+        <p><b>...${tip}</b>&nbsp;
+          <a href="#strat_help_${i}">Learn more...</a> 
+        </p></div></span></c:if>
 
-<c:otherwise>
-<tr class="rowLight">
-  <td>
+    <br><br>${text}
+    <br><c:if test="${image != null && image != ''}"><imp:image src="${image}" alt=""/></c:if>
 
-  <c:if test="${alreadyPrintedSomething}"><hr></c:if>
-  <c:set var="alreadyPrintedSomething" value="true"/>
+    <c:set var="i" value="${i+1}"/>
+  </c:forEach>
 
-  <c:set var="title" value="${record.attributesMap['title']}"/>
-  <c:set var="text" value="${record.attributesMap['body']}"/>
-  <c:set var="image" value="${record.attributesMap['image']}"/>
-  <c:set var="showTip" value="${record.attributesMap['showTipAsDidYouKnow']}"/>
-  <c:set var="tip" value="${record.attributesMap['tip']}"/>
-  <b id="strat_help_${i}" class="strat_help_title">${title}</b>
-
-  <c:if test="${showTip}"><span id="tip_${i}"><div style="margin: 10px 15px 15px;"><p><b>...${tip}</b>&nbsp;<a href="#strat_help_${i}">Learn more...</a></p></div></span></c:if>
-
-  <br><br>${text}
-
-  <br><c:if test="${image != null && image != ''}"><imp:image src="${image}" alt=""/></c:if>
-
-
-
-  </td>
-</tr>
-</c:otherwise>
-</c:choose>
-
-<c:set var="i" value="${i+1}"/>
-</c:forEach>
-
-</tr>
-</table>
-
+</div>
 <!-- main body end -->
 
   </c:otherwise>
 </c:choose>
-
 
 </div>
 </imp:pageFrame>
