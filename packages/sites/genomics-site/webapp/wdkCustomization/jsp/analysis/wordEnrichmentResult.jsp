@@ -56,7 +56,7 @@
                 To save this exact result permanently, please download it.</em>
           </p>
           <c:if test="${empty viewModel.resultData}">
-            <div class="go-empty-results">No analysis results found that met your parameter choices.</div>
+            <div class="go-empty-results">No enrichment was found with significance at the P-value threshold you specified.</div>
           </c:if>
           <c:if test="${not empty viewModel.resultData}">
             <table class="word-table">

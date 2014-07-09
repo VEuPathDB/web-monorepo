@@ -215,7 +215,8 @@
          		<c:set var="profileDataTable">
            			<c:set var="prefix" 		value="http://${pageContext.request.serverName}" />
 
-           			<c:import url="${prefix}${tableSrc}"  />  
+                <%-- <c:import url="${prefix}${tableSrc}"  /> --%>
+                <wdk-ajax url="${tableSrc}"> </wdk-ajax>
          		</c:set>
 
 <%--   Data table by some graphs --%>

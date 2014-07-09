@@ -489,6 +489,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 <c:if test="${protein_gtracks ne ''}">
   <c:set var="proteinFeaturesImg">
+  <%--
     <noindex follow><center>
     <c:catch var="e">
       <c:import url="${proteinFeaturesUrl}"/>
@@ -499,6 +500,10 @@ organismFull:   Plasmodium falciparum 3D7
             e="${e}" />
     </c:if> 
     </center></noindex>
+    --%>
+    <center>
+      <wdk-ajax url="${proteinFeaturesUrl}"></wdk-ajax>
+    </center>
   </c:set>
 
   <imp:toggle name="proteinContext"  displayName="Protein Features" 

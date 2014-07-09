@@ -30,6 +30,7 @@
 
   <c:set var="gSrt" value="geneSrt"/>
   <c:set var="cSrt" value="contigSrt"/>
+  <c:set var="eSrt" value="estSrt"/>
   <c:set var="oSrt" value="orfSrt"/>
 
 
@@ -39,7 +40,7 @@
         <b><center>Download Sequences By <br>
             <a href="#gene">Gene IDs</a> | 
             <a href="#sequence">Genomic Sequence IDs</a> |  
-
+            <a href="#est">EST IDs</a> |  
             <%--
                <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
                  <a href="#msa">Alignments</a> |
@@ -99,6 +100,39 @@
     </table>
   </form>
   <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+
+
+  <hr>
+  <h3><a name="est">Retrieve Sequences By EST IDs</a></h3>
+  <form action="/cgi-bin/${eSrt}" method="post">
+    <input type="hidden" name="project_id" value="${wdkModel.name}"/>
+    <table border="0" width="100%" cellpadding="2">
+      <tr><td colspan="2" valign="top"><b>Enter a list of EST IDs (each ID on a separate line):</b></td><tr>
+      <tr><td colspan="2">
+          <textarea name="ids" rows="4" cols="60"></textarea>
+      </td></tr>
+      <tr><td colspan="2">Default region (for sequences in the list without a specified region):</td></tr>
+      <tr><td colspan="2">
+          <table style="margin-left:20px;" cellpadding="2">
+            <tr><td colspan="2">
+                <input type="checkbox" name="revComp" value="protein">Reverse & Complement
+            </td></tr>
+            <tr><td>Nucleotide positions</td>
+              <td align="left">
+                <input name="start" value="1" size="6"> to
+                <input name="end" value="200" size="6"></td></tr>
+
+            <tr><td valign="top" nowrap><b>Download Type</b>:
+                <input type="radio" name="downloadType" value="text">Save to File</input>
+                <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
+            </td></tr>
+            <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>        
+      </table></td></tr>
+
+    </table>
+  </form>
+  <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+
 
   <%--
      <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">

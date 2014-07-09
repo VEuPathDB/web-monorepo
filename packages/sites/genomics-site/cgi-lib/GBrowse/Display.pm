@@ -102,10 +102,11 @@ sub SnpBgFromMatchingReference {
 sub SnpBgcolorForGenotyping {
 #  red for 75k chip, blue 3k chip and green for barcoding.
       my $f = shift;
-      my ($source) = $f->get_tag_values('IsoDbName');
       my ($freq) = $f->get_tag_values('MinorAlleleFreq');
+      my ($type) = $f->get_tag_values('Type');
 
-      if ($source eq 'pfal3D7_SNP_Broad75KGenotyping_RSRC') {
+
+      if ($type eq 'pfal3D7_SNP_Broad75KGenotyping_RSRC') {
           if ($freq <= 0.1) {
             return '#FF0000';
           } elsif ($freq <= 0.2) {
@@ -117,7 +118,7 @@ sub SnpBgcolorForGenotyping {
           } else {
             return '#800000';
           }
-      } elsif ($source eq 'pfal3D7_SNP_Broad3KGenotyping_RSRC') {
+      } elsif ($type eq 'pfal3D7_SNP_Broad3KGenotyping_RSRC') {
           if ($freq <= 0.1) {
             return '#0000FF';
           } elsif ($freq <= 0.2) {
@@ -922,6 +923,17 @@ sub colorSegmentByScore {
          return '#000000';
 }
 
+sub bgColorForBamTracks {
+    my $f = shift;
+    my $strand = $f->query->strand;
+    return $strand == 1 ? 'cornflowerblue' : 'coral';
+    }
+
+sub mismatchColorForBamTracks {
+    my $f = shift;
+    my $strand = $f->query->strand;
+    return $strand == 1 ? 'coral' : 'cornflowerblue';
+    }
 
 
 #--------------------------------------------------------------------------------
