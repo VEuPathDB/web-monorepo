@@ -83,7 +83,7 @@
               <tbody>
                 <c:forEach var="row" items="${viewModel.resultData}">
                   <tr>
-                    <td><a href="${viewModel.goTermBaseUrl}${row.goId}" target="_blank">${row.goId}</a></td>
+                    <td><a title="Check this term in the GO hierarchy (Amigo website)" href="${viewModel.goTermBaseUrl}${row.goId}#display-lineage-tab" target="_blank">${row.goId}</a></td>
                     <td>${row.goTerm}</td>
                     <td class="go-centered">${row.bgdGenes}</td>
                     <td class="go-centered">${row.resultGenes}</td>
