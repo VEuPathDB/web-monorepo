@@ -33,7 +33,7 @@
 
 <c:if test="${refer == 'summary'}">
     <link rel="stylesheet" href="${base}/wdkCustomization/css/spanlogic.css" type="text/css" />
-    <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/span-genome-view.css"/>
+    <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/genome-view.css"/>
 </c:if>
 
 <c:if test="${refer == 'question' || refer == 'summary'}">

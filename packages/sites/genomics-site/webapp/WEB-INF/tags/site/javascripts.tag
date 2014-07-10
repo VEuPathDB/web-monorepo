@@ -42,7 +42,7 @@
 
       <script type="text/javascript" src="${base}/wdkCustomization/js/spanlogic.js"><jsp:text/></script>
 
-      <script type="text/javascript" src="${base}/wdkCustomization/js/span-genome-view.js"><jsp:text/></script>
+      <script type="text/javascript" src="${base}/wdkCustomization/js/genome-view.js"><jsp:text/></script>
 
       <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"><jsp:text/></script> -->
       <!-- moved to isolateResults.tag
