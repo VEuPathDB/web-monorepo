@@ -15,21 +15,33 @@ my ($server, $logfile, $queryName, $runtime, $rownum);
 usage() unless ($server && $logfile && $queryName && $runtime) || $rownum;
 
 if ($rownum) {
-  my $header = <STDIN>;
-  print $header;
+
+  # find header line of report
+  my $header;
+  while ($header = <STDIN>) {
+    last if $header =~ "AvgSecs";
+  }
+
+  my ($linenumLoc, $linenumWidth) = findField($header, "#");
+  my ($serverLoc, $serverWidth) = findField($header, "Server");
+  my ($logfileLoc, $logfileWidth) = findField($header, "Log File");
+  my ($nameLoc, $nameWidth) = findField($header, "Name");
+  my ($worstLoc, $worstWidth) = findField($header, "Worst");
+
   while (my $line = <STDIN>) {
-    my $n = substr($line, 0, 3);
+    my $n = substr($line, $linenumLoc, $linenumWidth);
     next if $n != $rownum;
 
     print $line;
-    $server = substr($line, 108, 25);
+    $server = substr($line, $serverLoc, $serverWidth);
     $server =~ s/\s//g;
-    $logfile = substr($line, 133, 80);
+    $logfile = substr($line, $logfileLoc, $logfileWidth);
     $logfile =~ s/\s//g;
-    $queryName = substr($line, 4, 47);
+    $queryName = substr($line, $nameLoc, $nameWidth);
     $queryName =~ s/\s//g;
-    $runtime = substr($line, 101, 7);
-    # print "server >$server< logfile >$logfile< queryName >$queryName< runtime >$runtime<\n";
+    $runtime = substr($line, $worstLoc, $worstWidth);
+    $runtime =~ s/\s//g;
+    print "server >$server< logfile >$logfile< queryName >$queryName< runtime >$runtime<\n";
     last;
   }
 
@@ -46,15 +58,20 @@ while(<LOGFILE>) {
   if ($state eq "seeking") {
     next unless /QUERYTIME/;
     chomp;
-    my ($qt, $timestamp, $absoluteTime, $tag, $module, $seconds, $width, $name) = split(/\t/);
-  $state = "printing"
-    if $name eq $queryName && $seconds == $runtime;	
+    my ($qt, $timestamp, $absoluteTime, $tag, $module, $executeSeconds, $lastPageSeconds, $width, $name, $surplus) = split(/\t/);
+    # print "\$qt=\"$qt\" \$timestamp=\"$timestamp\" \$absoluteTime=\"$absoluteTime\" \$tag=\"$tag\" \$module=\"$module\" \$lastPageSeconds=\"$lastPageSeconds\" \$width=\"$width\" \$name=\"$name\" \$surplus=\"$surplus\" \n";
+
+    if ($name eq $queryName && sprintf("%7.2f", $lastPageSeconds) == $runtime) {
+      $state = "printing";
+      print STDERR "ERROR: query was logged as a \"baseline\", without SQL text\n"
+	if $tag eq "baseline";
+    }
+
   } else {
     last if /QUERYTIME/;
-    print "$_"; 
+    print "$_";
   }
 }
-
 
 
 sub usage {
@@ -75,4 +92,27 @@ where:
   <reportLineNumber> line number (initial column) from gbrowseSlowQueryReport
 ";
   exit(1);
+}
+
+sub findField {
+
+  # given the header line, in which field names are right-justified, find the
+  # start index and length of the given field
+  my ($header, $field) = @_;
+
+  my $loc = index($header, $field);
+  die "can't find field \"$field\""
+    if $loc == -1;
+
+  # print "index() returned $loc; substr(\$header, $loc, 1) = >" . substr($header, $loc, 1) . "<\n";
+
+  my $endLoc = $loc + length($field) - 1;
+
+  # back up to the previous field or start of string
+  $loc--;
+  $loc--
+    while ($loc >= 0 and (substr($header, $loc, 1) eq " "));
+
+  return ($loc + 1, $endLoc - $loc);
+
 }
