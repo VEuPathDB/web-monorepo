@@ -109,6 +109,40 @@
   </filter-mapping>
   <!-- End JavaMelody monitoring plugin configuration -->
   
+  <!-- WSF Restful service filter -->
+<!-- Cannot get this filter to work, use the servlet version instead.
+  <filter>
+	<filter-name>WSF</filter-name>
+	<filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
+	<init-param>
+		<param-name>javax.ws.rs.Application</param-name>
+		<param-value>org.gusdb.wsf.service.WsfServiceApplication</param-value>
+	</init-param>
+  </filter>
+ 
+  <filter-mapping>
+	<filter-name>WSF</filter-name>
+	<url-pattern>/wsf/*</url-pattern>
+  </filter-mapping>
+-->
+
+  <servlet>
+        <servlet-name>WSF</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+                <param-name>javax.ws.rs.Application</param-name>
+                <param-value>org.gusdb.wsf.service.WsfServiceApplication</param-value>
+        </init-param>
+  </servlet>
+  
+  <servlet-mapping>
+        <servlet-name>WSF</servlet-name>
+        <url-pattern>/services/WsfService/*</url-pattern>
+  </servlet-mapping>
+
+
+  <!-- End of WSF Restful service filter -->
+  
   <servlet>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -127,37 +161,6 @@
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
 
-  <!-- Internal WSF Support -->
-  <servlet>
-    <servlet-name>AxisServlet</servlet-name>
-    <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/servlet/AxisServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>*.jws</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/services/*</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>SOAPMonitorService</servlet-name>
-    <servlet-class>org.apache.axis.monitor.SOAPMonitorService</servlet-class>
-    <init-param>
-      <param-name>SOAPMonitorPort</param-name>
-      <param-value>5001</param-value>
-    </init-param>
-    <load-on-startup>100</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>SOAPMonitorService</servlet-name>
-    <url-pattern>/SOAPMonitor</url-pattern>
-  </servlet-mapping>
-  <!-- End Internal WSF support -->
 
   <!-- The Welcome File List -->
   <welcome-file-list>
