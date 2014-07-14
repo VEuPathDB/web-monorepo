@@ -17,7 +17,7 @@
   <c:set var="statsUrl" value="${'/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes'}"/>
 
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About">What is ${project}?</a></li>
- <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li>
+ <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">Publications on EuPathDB sites</a></li>
  
 <br/><span class="smallTitle">------ Data in ${project}</span>
   
