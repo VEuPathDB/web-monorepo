@@ -18,9 +18,7 @@
 
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About">What is ${project}?</a></li>
  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li>
-  <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer.pdf">EuPathDB Brochure</a></li>
-  <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer_Chinese.pdf">EuPathDB Brochure in Chinese</a></li>
-
+ 
 <br/><span class="smallTitle">------ Data in ${project}</span>
   
 <c:choose>
@@ -73,6 +71,9 @@
   </c:if>
 	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.AboutAll#acks">Acknowledgements</a></li>
 	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#funding">Funding</a></li>
+ <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer.pdf">EuPathDB Brochure</a></li>
+  <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer_Chinese.pdf">EuPathDB Brochure in Chinese</a></li>
+
 	
 <br/><span class="smallTitle">------ Technical</span>
 	
