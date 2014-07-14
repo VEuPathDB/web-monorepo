@@ -1,10 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-
-<%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
 <imp:pageFrame title="${wdkModel.displayName} :: Data Submission">
 
@@ -38,7 +37,7 @@ mso-themecolor:accent1;mso-themeshade:191'><o:p>&nbsp;</o:p></span></p>
 <p class=MsoNoSpacing style='text-align:justify'>We also accept genomic-scale data
 types not listed above and are open to your suggestions. If you would like to
 suggest a new data type, please <a
-href="http://eupathdb.org/eupathdb/contact.do"><span style='color:#2E74B5;
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#2E74B5;
 mso-themecolor:accent1;mso-themeshade:191'>Contact Us</span></a><span
 style='color:#2E74B5;mso-themecolor:accent1;mso-themeshade:191'> </span>to
 discuss your data. </p>
@@ -57,7 +56,7 @@ Policy:<o:p></o:p></b></p>
 ensuring that genomic and other large-scale data sets pertaining to BRC-supported
 pathogens are conveniently accessible to the worldwide community of biomedical
 researchers. Please see our <a
-href="http://eupathdb.org/EuPathDB_datasubm_SOP.pdf">Data Submission Policy</a>
+href="http://${project}.org/EuPathDB_datasubm_SOP.pdf">Data Submission Policy</a>
 for full details.</p>
 
 <p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
@@ -77,7 +76,7 @@ style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp
 EuPathDB Outreach for an initial review of your data.</b> </p>
 
 <p class=MsoNoSpacing style='margin-left:.25in;text-align:justify'>Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> link to send a
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> link to send a
 brief description (two or three sentences) of your data. We will make every
 effort to reply quickly. During the data submission process, data sets are scheduled
 for an upcoming release and given a release date so that we can allocate our
@@ -93,7 +92,7 @@ appropriate and the data representation is accurate. </p>
 l9 level1 lfo12'><![if !supportLists]><b style='mso-bidi-font-weight:normal'><span
 style='mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
 style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span></b><![endif]><b style='mso-bidi-font-weight:normal'>Submit
+</span></span></span></b><![endif]><b style='mso-bidi-font-weight:normal'>Submit 
 your Data. </b><span style="mso-spacerun:yes">&nbsp;&nbsp;</span></p>
 
 <p class=MsoNoSpacing style='margin-left:.25in'><o:p>&nbsp;</o:p></p>
@@ -105,7 +104,7 @@ Sequencing Data in FASTQ or FASTA format</p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>We prefer to receive the raw read data in FASTQ
 or FASTA file format.<span style="mso-spacerun:yes">&nbsp; </span>Using the raw
 reads we remap the data when a genome is updated and update analyses as needed.</p>
@@ -113,7 +112,7 @@ reads we remap the data when a genome is updated and update analyses as needed.<
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these three options:</p>
 
@@ -133,7 +132,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -141,13 +140,13 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Complete the appropriate data description form
 making sure to enter your data’s archive accession numbers (if any) when
 prompted.</p>
@@ -187,14 +186,14 @@ normal'>Microarray</b> &#8211; CEL, CSV </p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l13 level1 lfo13'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Files should include expression levels and probe
 set information.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l13 level1 lfo13'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these four options:</p>
 
@@ -210,7 +209,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -218,7 +217,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -226,7 +225,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do"><span style='color:#0563C1'>Contact
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#0563C1'>Contact
 Us</span></a><span style='color:#0563C1'> </span>form to send us an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt'><span style='color:#C00000'><o:p>&nbsp;</o:p></span></p>
@@ -234,7 +233,7 @@ Us</span></a><span style='color:#0563C1'> </span>form to send us an email.</p>
 <p class=MsoListParagraph style='margin-left:49.5pt;mso-add-space:auto;
 text-indent:-.25in;mso-list:l1 level1 lfo4'><![if !supportLists]><span
 style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
-Symbol;color:black;mso-themecolor:text1'><span style='mso-list:Ignore'>·<span
+Symbol;color:black;mso-themecolor:text1'><span style='mso-list:Ignore'>.<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Complete
 our <a
 href="https://docs.google.com/a/apidb.org/forms/d/1pzD53hCY0rH7JYomUH8cjwJXJlOSrtZRc_mFowfFfU4/edit?usp=sharing">Microarray
@@ -250,20 +249,20 @@ normal'>Proteomics</b> &#8211; Excel or tab delimited text files are preferred.
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>We can accommodate xml file format. </p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Required columns include gene IDs, peptide
 sequences, peptide counts and scores. </p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these three options: </p>
 
@@ -272,7 +271,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request access
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request access
 to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -280,7 +279,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -288,13 +287,13 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do"><span style='color:windowtext'>Contact
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:windowtext'>Contact
 Us</span></a> form to send us an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l3 level1 lfo5'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Complete the <a
 href="https://docs.google.com/a/apidb.org/forms/d/1Yx9qGKDyCf2Wm5lnf1-dFHArdQAQ9tVbR8gvxdY7n5A/edit?usp=sharing">Proteomics
 Data Description Form</a> making sure to clearly indicate the content of each
@@ -309,19 +308,19 @@ preferred.</p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l3 level1 lfo5'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>We can accommodate xml file format. </p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l3 level1 lfo5'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Required columns include gene IDs and scores.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these three options: </p>
 
@@ -330,7 +329,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -338,7 +337,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -346,13 +345,13 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. . Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l1 level1 lfo4'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
-mso-themecolor:text1'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mso-themecolor:text1'><span style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Complete the Quantitative Proteomics Description
 <span style='color:#C00000'>(Susanne needs to modify Proteomics form)</span> form
 making sure to include a description of data columns, for example, time course
@@ -370,14 +369,14 @@ normal'>ChIP-chip</b> &#8211; </p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l12 level1 lfo7'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Your data files should include expression levels
 and probe set information.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l1 level1 lfo4'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
-mso-themecolor:text1'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mso-themecolor:text1'><span style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these four options:</p>
 
@@ -393,7 +392,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -401,7 +400,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -409,7 +408,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do"><span style='color:#0563C1'>Contact
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#0563C1'>Contact
 Us</span></a> form to send us an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -421,7 +420,7 @@ style='mso-list:Ignore'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
 <p class=MsoListParagraph style='margin-left:49.5pt;mso-add-space:auto;
 text-indent:-.25in;mso-list:l1 level1 lfo4'><![if !supportLists]><span
 style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
-Symbol;color:black;mso-themecolor:text1'><span style='mso-list:Ignore'>·<span
+Symbol;color:black;mso-themecolor:text1'><span style='mso-list:Ignore'>.<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]>Complete
 the <a
 href="https://docs.google.com/forms/d/1E1QN9dKGc9rK_Bd3t-4ugIeVAyNXZoX1Z3bcSKEIMJc/viewform">ChIP-chip
@@ -437,7 +436,7 @@ normal'>Isolates typed by sequencing limited genetic loci</b> &#8211; </p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
 normal'>IS</b> uploaded to Genbank, use the Contact Us to tell us about your
 data. Genebank Isolate records and the associated metadata are automatically
@@ -447,7 +446,7 @@ updated with each EuPathDB release.<span style="mso-spacerun:yes">&nbsp;
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
 normal'>IS NOT</b> uploaded to Genbank, we can facilitate this upload. Complete
 the Isolate Submission Form <span style='color:#C00000'>(</span><span
@@ -459,7 +458,7 @@ style='color:#C00000'>Susanne needs to finish) </span>and we will use the
 information to generate a Genbank submission for your isolates.<span
 style="mso-spacerun:yes">&nbsp; </span>The new isolate records will be
 downloaded to EuPathDB with the release. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:1.25in'><o:p>&nbsp;</o:p></p>
@@ -471,7 +470,7 @@ FastQ file format preferred</p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these three options:</p>
 
@@ -488,7 +487,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -496,13 +495,13 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site where we can retrieve the data. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l12 level1 lfo7'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Complete our High Throughput Sequencing Data
 Description Form <span style='color:#C00000'>(</span><span style='font-family:
 Wingdings;mso-ascii-font-family:Calibri;mso-ascii-theme-font:minor-latin;
@@ -526,7 +525,7 @@ normal'>Genome Sequence and/or Annotation<o:p></o:p></b></p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>We prefer to download annotated genome sequence
 from a repository which assigns gene IDs, for example, the DNA Data Bank of
 Japan, the European Nucleotide Archive or NCBI’s GenBank. </p>
@@ -534,7 +533,7 @@ Japan, the European Nucleotide Archive or NCBI’s GenBank. </p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your genome <b style='mso-bidi-font-weight:
 normal'>IS</b> uploaded to a repository, complete the Genome Sequence and/or
 Annotation Description Form <span style='color:#C00000'>(</span><span
@@ -549,7 +548,7 @@ from the repository.</p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
 normal'>IS NOT</b> uploaded to a repository, we can facilitate this upload.
 Complete the <span style='color:#538135;mso-themecolor:accent6;mso-themeshade:
@@ -560,7 +559,7 @@ Genbank submission for your genome.<span style="mso-spacerun:yes">&nbsp;
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If you are <b style='mso-bidi-font-weight:normal'>submitting
 only genome annotation (gff, ensemble, gtf or genbank formats)</b>, transfer a
 copy of your files to EuPathDB using one of these three options:</p>
@@ -570,7 +569,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -578,7 +577,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site where we can retrieve the data. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -586,7 +585,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 an email.</p>
 
 <p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
@@ -597,7 +596,7 @@ use for data that does not fit any of the above categories </p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l6 level1 lfo14'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
-mso-themecolor:text1'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mso-themecolor:text1'><span style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these four options:</p>
 
@@ -613,7 +612,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to request
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -621,7 +620,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site. Use the <a
-href="http://eupathdb.org/eupathdb/contact.do">Contact Us</a> form to send us
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -635,7 +634,7 @@ style="mso-spacerun:yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l1 level1 lfo4'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
-mso-themecolor:text1'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+mso-themecolor:text1'><span style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]><span style='color:black;mso-themecolor:text1'>Complete
 the General Data Description Form </span><span style='color:#C00000'>(Susanne
 needs to create) </span><span style='color:black;mso-themecolor:text1'>making
