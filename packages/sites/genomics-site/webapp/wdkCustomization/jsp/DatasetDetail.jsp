@@ -1,6 +1,6 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -202,15 +202,32 @@
 
             <c:if test="${fn:length(genHistory) > 0}">
               <c:set var="genHistoryContent">
-                 <table>
                   <c:forEach items="${genHistory}" var="genHistoryRow">
-                        <tr><td>${genHistoryRow['build'].displayName}--${genHistoryRow['build']}----${genHistoryRow['release_date']}<br>
-                                ${genHistoryRow['note']}<br>
-                                Genome source: ${genHistoryRow['genome_source']}--${genHistoryRow['genome_version']}<br>
-                                Annotation source: ${genHistoryRow['annotation_source']}--${genHistoryRow['annotation_version']}
-                        </td></tr>
+                    <fmt:parseDate value="${genHistoryRow['release_date']}"
+                        var="releaseDate" pattern="yyyy-MM-dd"/>
+                    <fmt:formatDate value="${releaseDate}" var="releaseDateStr"
+                        pattern="MMM d, yyyy"/>
+                    <h4>
+                      ${genHistoryRow['build'].displayName} ${genHistoryRow['build']}
+                      (${releaseDateStr}):
+                    </h4>
+                    <div>
+                      <table>
+                        <tr>
+                          <th>${genHistoryRow['note'].displayName}</th>
+                          <td>${genHistoryRow['note']}</td>
+                        </tr>
+                        <tr>
+                          <th>${genHistoryRow['genome_source'].displayName}</th>
+                          <td>${genHistoryRow['genome_source']} (${genHistoryRow['genome_version']})</td>
+                        </tr>
+                        <tr>
+                          <th>${genHistoryRow['annotation_source'].displayName}</th>
+                          <td>${genHistoryRow['annotation_source']} (${genHistoryRow['annotation_version']})</td>
+                        </tr>
+                      </table>
+                    </div>
                   </c:forEach>
-                 </table>
               </c:set>
               <imp:simpleToggle name ="${genHistory.displayName}" content="${genHistoryContent}" show="${show}" /> 
             </c:if>

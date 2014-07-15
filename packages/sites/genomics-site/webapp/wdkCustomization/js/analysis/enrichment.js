@@ -57,12 +57,6 @@
         targets: [7, 8, 9]
       }]
     });
-
-    $(window)
-      .off('resize.enrichment' + analysis.id)
-      .on('resize.enrichment' + analysis.id, _.debounce(function() {
-        $table.dataTable().fnDraw();
-      }, 300));
   }
 
   function removeEvents(analysis) {
