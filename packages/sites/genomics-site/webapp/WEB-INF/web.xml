@@ -28,6 +28,12 @@
     <param-value>/WEB-INF/wdk-model/config/</param-value>
   </context-param>
 
+  <!--
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  -->
+
   <listener>
     <listener-class>org.gusdb.wdk.controller.ApplicationInitListener</listener-class>
   </listener>
@@ -109,40 +115,6 @@
   </filter-mapping>
   <!-- End JavaMelody monitoring plugin configuration -->
   
-  <!-- WSF Restful service filter -->
-<!-- Cannot get this filter to work, use the servlet version instead.
-  <filter>
-	<filter-name>WSF</filter-name>
-	<filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
-	<init-param>
-		<param-name>javax.ws.rs.Application</param-name>
-		<param-value>org.gusdb.wsf.service.WsfServiceApplication</param-value>
-	</init-param>
-  </filter>
- 
-  <filter-mapping>
-	<filter-name>WSF</filter-name>
-	<url-pattern>/wsf/*</url-pattern>
-  </filter-mapping>
--->
-
-  <servlet>
-        <servlet-name>WSF</servlet-name>
-        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-        <init-param>
-                <param-name>javax.ws.rs.Application</param-name>
-                <param-value>org.gusdb.wsf.service.WsfServiceApplication</param-value>
-        </init-param>
-  </servlet>
-  
-  <servlet-mapping>
-        <servlet-name>WSF</servlet-name>
-        <url-pattern>/services/WsfService/*</url-pattern>
-  </servlet-mapping>
-
-
-  <!-- End of WSF Restful service filter -->
-  
   <servlet>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -160,7 +132,6 @@
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
-
 
   <!-- The Welcome File List -->
   <welcome-file-list>
