@@ -135,7 +135,7 @@
 				            </c:when>
 				            <c:otherwise>
                       <%-- display sorting buttons --%>
-                      <c:set var="resultsAction" value="javascript:wdk.resultsPage.GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
+                      <c:set var="resultsAction" value="javascript:wdk.resultsPage.getResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
                       <a href="${resultsAction}" title="Sort by ${sumAttrib}">
                         <imp:image src="/wdk/images/results_arrw_up.png" alt="Sort up" border="0" />
                       </a>
@@ -155,7 +155,7 @@
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
-              <c:set var="resultsAction" value="javascript:wdk.resultsPage.GetResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
+              <c:set var="resultsAction" value="javascript:wdk.resultsPage.getResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
               <a href="${resultsAction}" title="Sort by ${sumAttrib}">
               <imp:image src="/wdk/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
@@ -169,7 +169,7 @@
         <c:if test="${j != 0}">
           <td style="width:20px;">
             <%-- display remove attribute button --%>
-            <c:set var="resultsAction" value="javascript:wdk.resultsPage.GetResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
+            <c:set var="resultsAction" value="javascript:wdk.resultsPage.getResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
             <a href="${resultsAction}"
                         title="Remove ${sumAttrib} column">
               <imp:image src="/wdk/images/results_x.png" alt="Remove" border="0" /></a>
