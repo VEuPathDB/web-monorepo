@@ -69,6 +69,12 @@
     content="${attr.value}" 
     attribute="${attr.name}"/>
 
+<!-- Allele count table -->
+<imp:wdkTable tblName="AlleleCount" isOpen="true"/>
+
+<!-- Product count table -->
+<imp:wdkTable tblName="ProductCount" isOpen="true"/>
+
 <!-- strains table: for HTS SNPs only -->
 
 <c:set var="start" value="${attrs['location_text']}"/>
