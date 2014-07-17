@@ -97,9 +97,20 @@ your Data. </b><span style="mso-spacerun:yes">&nbsp;&nbsp;</span></p>
 
 <p class=MsoNoSpacing style='margin-left:.25in'><o:p>&nbsp;</o:p></p>
 
+
+<!-- =========== High Throughput =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">High Throughput / Next Generation Sequencing</a>
+   &#8211; RNA, DNA or ChIP Sequencing Data in FASTQ or FASTA format
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>High Throughput / Next Generation Sequencing</b> &#8211; RNA, DNA or ChIP
 Sequencing Data in FASTQ or FASTA format</p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
@@ -174,14 +185,22 @@ mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>DNA-Seq
 Data Description Form</p>
 
-<p class=MsoNoSpacing style='margin-left:81.0pt'><o:p>&nbsp;</o:p></p>
+</div>
+</div>
 
-<p class=MsoNoSpacing style='margin-left:63.0pt'><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNoSpacing style='margin-left:1.25in'><o:p>&nbsp;</o:p></p>
+<!-- =========== Microarray =========== -->
 
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">Microarray</a> 
+  &#8211; CEL, CSV
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>Microarray</b> &#8211; CEL, CSV </p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l13 level1 lfo13'><![if !supportLists]><span style='font-family:Symbol;
@@ -242,9 +261,24 @@ numbers (if any) when prompted. Pay special attention to clearly indicate the
 identity of columns in the data files you transferred to EuPathDB.<span
 style='color:#538135;mso-themecolor:accent6;mso-themeshade:191'><o:p></o:p></span></p>
 
+</div>
+</div>
+
+
+
+<!-- =========== Proteomics =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">Proteomics</a> 
+  &#8211; Excel or tab delimited text files are preferred.
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>Proteomics</b> &#8211; Excel or tab delimited text files are preferred.
 </p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
@@ -299,11 +333,25 @@ href="https://docs.google.com/a/apidb.org/forms/d/1Yx9qGKDyCf2Wm5lnf1-dFHArdQAQ9
 Data Description Form</a> making sure to clearly indicate the content of each
 column in your file. </p>
 
-<p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
 
+</div>
+</div>
+
+
+
+<!-- =========== Quantitative Proteomics =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">Quantitative Proteomics</a> 
+  &#8211; Excel or tab delimited files are preferred.
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>Quantitative Proteomics</b> &#8211; Excel or tab delimited files are
 preferred.</p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l3 level1 lfo5'><![if !supportLists]><span style='font-family:Symbol;
@@ -361,10 +409,23 @@ style='color:#C00000'><o:p></o:p></span></p>
 <p class=MsoNoSpacing style='margin-left:49.5pt'><span style='color:#ED7D31;
 mso-themecolor:accent2'><o:p>&nbsp;</o:p></span></p>
 
-<p class=MsoNoSpacing style='margin-left:1.25in'><o:p>&nbsp;</o:p></p>
+</div>
+</div>
 
+
+
+<!-- =========== ChIP-chip =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">ChIP-chip</a> 
+  &#8211; 
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>ChIP-chip</b> &#8211; </p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l12 level1 lfo7'><![if !supportLists]><span style='font-family:Symbol;
@@ -428,10 +489,23 @@ Data Description Form</a> making sure to enter the archive accession numbers (if
 any) for your data when prompted. We will retrieve your data from the sequence
 read archive. </p>
 
-<p class=MsoNoSpacing style='margin-left:1.25in'><o:p>&nbsp;</o:p></p>
+</div>
+</div>
 
+
+
+<!-- =========== Isolates typed by =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">Isolates typed by sequencing limited genetic loci</a> 
+  &#8211; 
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>Isolates typed by sequencing limited genetic loci</b> &#8211; </p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
@@ -461,11 +535,23 @@ downloaded to EuPathDB with the release. Use the <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
-<p class=MsoNoSpacing style='margin-left:1.25in'><o:p>&nbsp;</o:p></p>
+</div>
+</div>
 
+
+<!-- =========== Isolates or Strains =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">Isolates or Strains typed by High Throughput Sequencing</a> 
+  &#8211;FastQ file format preferred
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>Isolates or Strains typed by High Throughput Sequencing</b> &#8211;
 FastQ file format preferred</p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
@@ -517,10 +603,22 @@ style='color:#C00000'>)</span> making sure to enter the read archive accession
 numbers for your data when prompted. We will retrieve your data from the
 sequence read archive. </p>
 
-<p class=MsoNoSpacing style='margin-left:1.25in'><o:p>&nbsp;</o:p></p>
+</div>
+</div>
 
+
+
+<!-- =========== Genome Sequence =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">Genome Sequence and/or Annotation</a>
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'><b style='mso-bidi-font-weight:
 normal'>Genome Sequence and/or Annotation<o:p></o:p></b></p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
@@ -588,10 +686,22 @@ your data as an attachment to an email. Use the <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 an email.</p>
 
-<p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
+</div>
+</div>
 
+
+<!-- =========== General Data Submission =========== -->
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">General Data Submission</a>
+  &#8211;use for data that does not fit any of the above categories
+</h3>
+<div class="wdk-toggle-content">
+
+<!--
 <p class=MsoNoSpacing style='margin-left:.25in'>General Data Submission &#8211;
 use for data that does not fit any of the above categories </p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l6 level1 lfo14'><![if !supportLists]><span style='font-family:Symbol;
@@ -641,9 +751,8 @@ needs to create) </span><span style='color:black;mso-themecolor:text1'>making
 sure to clearly describe the type of data, the file formats and content of
 files you are submitting.<o:p></o:p></span></p>
 
-<p class=MsoNoSpacing style='margin-left:.25in'><o:p>&nbsp;</o:p></p>
-
-<p class=MsoNoSpacing><span style="mso-spacerun:yes">&nbsp;</span></p>
+</div>
+</div>
 
 </div>
 
