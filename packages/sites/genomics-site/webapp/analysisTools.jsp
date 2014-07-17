@@ -13,7 +13,7 @@
                banner="Analyze Results"
                parentUrl="/home.jsp">
 
-  <h1>Analysis Tools</h1>
+  <h1>Learn About Our Analysis Tools</h1>
 
   <p>Now, you can analyze your search results on all EuPathDB sites.</p>
 
