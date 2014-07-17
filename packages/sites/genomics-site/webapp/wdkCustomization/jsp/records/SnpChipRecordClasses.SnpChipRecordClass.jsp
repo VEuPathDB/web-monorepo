@@ -72,7 +72,7 @@
 <!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
 
 <c:choose>
-	<c:when test="${fn:endsWith(id, 'barcode')}">
+	<c:when test="${ fn:endsWith(id, 'barcode') || fn:endsWith(id, 'chip') || fn:endsWith(id, 'array')}">
 		<imp:wdkTable tblName="StrainsWithMetaData" isOpen="true"/>
 	</c:when>
 	<c:otherwise>
