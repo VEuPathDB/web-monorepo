@@ -119,7 +119,9 @@
 </table>
 </form>
 
-<imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
+<c:if test = "${projectId == 'PlasmoDB'}">
+  <imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
+</c:if>
 
 
 </c:otherwise>
