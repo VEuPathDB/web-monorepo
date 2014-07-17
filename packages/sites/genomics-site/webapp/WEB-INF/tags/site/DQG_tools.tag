@@ -80,7 +80,7 @@
                         <ul><li  style="border:0">Access Probeset data and <i>Toxoplasma</i> Array info</li></ul>
                 </li>
 
-		<li><p class="coloredtext" style="padding-top:6px;line-height:1em;">
+		<li><p>
 			<i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
 
@@ -104,7 +104,7 @@
 </c:when>
 <c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, add descriptions as mouseovers --%>
 
-  		<li><p class="coloredtext" style="padding-top:16px;"><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
+  		<li><p><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
 
 	</ul>
