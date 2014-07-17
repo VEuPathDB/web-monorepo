@@ -80,7 +80,7 @@
 	</c:otherwise>
 </c:choose>
 
-<imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
+<imp:wdkTable tblName="OtherSNPs" isOpen="true"/>
 
 </c:otherwise>
 </c:choose>
