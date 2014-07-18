@@ -8,7 +8,10 @@
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 
 <%-- QUESTIONS --%>
-<c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayHagai,GeneQuestions.GenesByMetabolicPathwayKegg,GeneQuestions.GenesByReactionCompounds"/>
+<c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayKegg,GeneQuestions.GenesByReactionCompounds"/>
+<c:set var="plasmoToxo_pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayHagai" /><%-- QUESTIONS --%>
+
+
 <%-- END OF QUESTIONS --%>
 
 <imp:errors/>
@@ -28,7 +31,18 @@
 
 <tr class="headerRow"><td colspan="${columns + 2}" align="center"><b>Choose a Search</b><br><i style="font-size:80%">Mouse over to read description</i></td></tr>
 
+<c:choose>
+<c:when test = "${project == 'PlasmoDB' || project == 'ToxoDB'}">
+      <imp:queryList columns="${columns}" questions="${plasmoToxo_pathwayQuestions},${pathwayQuestions}"/>
+</c:when>
+<c:otherwise>
       <imp:queryList columns="${columns}" questions="${pathwayQuestions}"/>
+</c:otherwise>
+</c:choose>
+
+
+
+
 
 </table>
 </center>
