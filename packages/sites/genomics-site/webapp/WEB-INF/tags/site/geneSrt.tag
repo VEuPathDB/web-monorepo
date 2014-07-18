@@ -90,8 +90,8 @@
             <td>begin at</td>
             <td align="left">
               <select name="upstreamAnchor3">
-                <option value="Start" selected>Start <sup>***</sup></option>
-                <option value="End">Stop <sup>***</sup></option>
+                <option value="Start" selected>Start</option>
+                <option value="End">Stop</option>
               </select>
             </td>
             <td align="left">
@@ -108,8 +108,8 @@
             <td>end at</td>
             <td align="left">
               <select name="downstreamAnchor3">
-                <option value="Start">Start <sup>***</sup></option>
-                <option value="End" selected>Stop <sup>***</sup></option>
+                <option value="Start">Start</option>
+                <option value="End" selected>Stop</option>
               </select>
             </td>
             <td align="left">
