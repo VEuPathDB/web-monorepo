@@ -13,6 +13,10 @@ p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing, p.MsoListParagraph {
     font-size: 11pt;
     margin: 0 0 0.0001pt;
 }
+.WordSection1 .wdk-toggle > h3 {
+    font-family: Calibri;
+    font-size: 120%;
+}
 </style>
 
 <div class=WordSection1>
