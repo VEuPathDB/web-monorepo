@@ -24,10 +24,10 @@
     <tr>
       <td colspan="2">
         <b>Choose the type of sequence:</b>
-        <input type="radio" name="type" value="genomic" checked onclick="setEnable(true)">genomic
-        <input type="radio" name="type" value="protein" onclick="setEnable(false)">protein
-        <input type="radio" name="type" value="CDS" onclick="setEnable(false)">CDS
-        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false)">transcript
+        <input type="radio" name="type" value="genomic" checked onclick="setEnable(true);setEnable3(false);">genomic
+        <input type="radio" name="type" value="protein" onclick="setEnable(false);setEnable3(true);">protein
+        <input type="radio" name="type" value="CDS" onclick="setEnable(false);setEnable3(false);">CDS
+        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false);setEnable3(false);">transcript
       </td>
     </tr>
     <tr>
@@ -79,6 +79,52 @@
             </td>
           </tr>
         </table>
+
+        <table id="offsetOptions3" cellpadding="2">
+          <tr>
+            <td colspan="3">
+              <b>Choose the region of the protein sequence(s):</b>
+            </td>
+          </tr>
+          <tr>
+            <td>begin at</td>
+            <td align="left">
+              <select name="upstreamAnchor3">
+                <option value="Start" selected>Start <sup>***</sup></option>
+                <option value="End">Stop <sup>***</sup></option>
+              </select>
+            </td>
+            <td align="left">
+              <select name="upstreamSign3">
+                <option value="plus" selected>+</option>
+                <option value="minus">-</option>
+              </select>
+	    </td>
+            <td align="left">
+              <input id="upstreamOffset3" name="upstreamOffset3" value="0" size="6"/> aminoacids
+            </td>
+          </tr>
+          <tr>
+            <td>end at</td>
+            <td align="left">
+              <select name="downstreamAnchor3">
+                <option value="Start">Start <sup>***</sup></option>
+                <option value="End" selected>Stop <sup>***</sup></option>
+              </select>
+            </td>
+            <td align="left">
+              <select name="downstreamSign3">
+                <option value="plus" selected>+</option>
+                <option value="minus">-</option>
+              </select>
+            </td>
+            <td align="left">
+              <input id="downstreamOffset3" name="downstreamOffset3" value="0" size="6"> aminoacids
+            </td>
+          </tr>
+        </table>
+
+
       </td>
     </tr>
     <tr>
