@@ -8,7 +8,7 @@
 <imp:pageFrame title="${wdkModel.displayName} :: Data Submission">
 
 <style>
-p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing {
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing, p.MsoListParagraph {
     font-family: Calibri;
     font-size: 11pt;
     margin: 0 0 0.0001pt;
