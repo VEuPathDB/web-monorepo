@@ -113,6 +113,7 @@
 }
 ul.horizontal {
   padding: 5px 0;
+  list-style: none;
 }
 
 ul.horizontal li {
