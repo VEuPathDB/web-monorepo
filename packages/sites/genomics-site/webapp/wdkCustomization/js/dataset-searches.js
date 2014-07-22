@@ -12,24 +12,6 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
 
     var $questionWrapper = $("#question-wrapper");
 
-    var questionTabsCache = {
-      cache: {},
-      // id: datasetId
-      // html: tabs source
-      add: function(id, html) {
-        return (this.cache[id] = html);
-      },
-      // id: datasetId
-      get: function(id) {
-        return this.cache[id];
-      }
-    };
-
-    var questionCollection = {
-      datasetId: null,
-      questions: []
-    };
-
     var dataTableOpts = {
       aoColumnDefs: [
         {
@@ -54,29 +36,18 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
       $tableToggle.html(toggleTmpl({collapsed: collapse}));
     }
 
-    var colors = [
-      "blue",
-      "red",
-      "green",
-      "brown"
-    ];
-
-    // using site-based colors now (btn-site)
-    // $datasetRecords.find("tbody tr").each(function() {
-    //   $(this).find(".search-mechanism").each(function(idx, td) {
-    //     var $btn = $(td).find(".btn");
-    //     var color = colors[idx % colors.length];
-    //     $btn.addClass("btn-" + color);
-    //   });
-    // });
-
-    // $element.find(".legend .search-mechanism").each(function(idx, span) {
-    //   var color = colors[idx % colors.length];
-    //   $(span).addClass("btn btn-active btn-" + color);
-    // });
-
     var dataTable = $datasetRecords.dataTable(dataTableOpts);
-    //new FixedHeader(dataTable);
+
+    // show the page
+    setTimeout(function() {
+      $element.css("visibility", "visible");
+    }, 100);
+
+    // watch for hash changes
+    $(window).on('hashchange', route);
+
+    // bind toggleTable to .table-toggle
+    $tableToggle.on("click", function() { toggleTable() });
 
     // filter
     //   - remove active search page and expand table
@@ -84,8 +55,6 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
       .on("keyup change", function(e) {
         toggleTable(false);
         $("#question-wrapper").html("").removeClass("active");
-        questionCollection.datasetId = null;
-        questionCollection.questions = [];
         $datasetRecords.find(".btn-active").removeClass("btn-active");
         $datasetRecords.find("tbody tr").removeClass("active");
         $tableToggle.hide();
@@ -105,65 +74,100 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
 
     // handle search click
     $datasetRecords.find(".dataset").on("click", ".question-link", function(e) {
-      var $delegate, $data, tabIdx, fullName;
       // allow modifier keys to do their thing
       if (e.ctrlKey || e.metaKey || e.shiftKey) return;
-
       e.preventDefault();
 
+      var fullName = e.currentTarget.getAttribute('data-full-name');
+
       if ($attrs.callWizardUrl) {
-        fullName = $(this).data("fullName");
         wdk.addStepPopup.callWizard($attrs.callWizardUrl + fullName, null, null, null, "next");
-        return;
-      }
-
-      $delegate = $(e.delegateTarget);
-      $data = $delegate.data();
-
-      $tableToggle.show();
-
-      $(this).addClass("btn-active");
-
-      $datasetRecords.find(".btn-active").not(this).removeClass("btn-active");
-
-      tabIdx = $delegate.find(".search-mechanism .question-link").index(this);
-
-      if ($data.datasetId === questionCollection.datasetId) {
-        // select appropriate tab
-        $("#question-wrapper").find("#question-set-" + questionCollection.datasetId).tabs("option", "active", tabIdx);
       } else {
-        // update active row
-        $datasetRecords.find("tbody tr").removeClass("active");
-        $delegate.addClass("active");
-        $questionWrapper.find(".tabs").hide();
-
-        questionCollection.datasetId = $data.datasetId;
-        questionCollection.questions = [];
-        $delegate.find(".question-link").each(function(idx, anchor) {
-          var category = $(this).data("category");
-          questionCollection.questions.push({
-            url: $(this).attr("href") + "&partial=true",
-            category: category.replace(/((^\w)|_(\w))/g,
-                function(s) { return s.replace("_", " ").toUpperCase()})
-          });
-        });
-
-        if (!$questionWrapper.find("#question-set-" + questionCollection.datasetId).show().tabs("option", "active", tabIdx).length) {
-          $questionWrapper
-            .append(datasetTabsTmpl(questionCollection))
-            .addClass("active")
-            .find(".tabs").tabs({ active: tabIdx });
-        }
+        location.hash = fullName;
       }
-      toggleTable.call($tableToggle.get(0), true);
     });
 
-    // bind toggleTable to .table-toggle
-    $tableToggle.on("click", function() { toggleTable() });
+    function clearSelectedQuestion() {
+      $datasetRecords
+        // unselect row
+        .find("tbody tr")
+          .removeClass("active")
+          .end()
+        // unselect link
+        .find(".btn-active")
+          .removeClass("btn-active");
+      // hide question tabs
+      $questionWrapper.find(".tabs").hide();
+      // expand table
+      toggleTable(false);
+    }
 
-    // show the page
-    setTimeout(function() {
-      $element.css("visibility", "visible");
-    }, 100);
+    function selectQuestion(fullName) {
+      var $link, $row, $data, $questionTabs, tabIdx;
+
+      $link = $element.find('.question-link[data-full-name="' + fullName + '"]');
+
+      if (!$link.length) return;
+
+      clearSelectedQuestion();
+
+      // get table row
+      $row = $element.find('tr').has($link);
+
+      // get data attrs
+      $data = $row.data();
+
+      // show table toggle button
+      $tableToggle.show();
+
+      // set link to active
+      $link.addClass("btn-active");
+
+      // get the index for tab in question tabs (equivalent to link index)
+      tabIdx = $row.find(".search-mechanism .question-link").index($link);
+
+      // update active row
+      $row.addClass("active");
+
+      $questionTabs = $questionWrapper.find("#question-set-" + $data.datasetId);
+
+      if ($questionTabs.length) {
+        // select appropriate tab
+        $questionTabs.tabs("option", "active", tabIdx).show();
+      } else {
+        // render new tabs and append
+        var questions = $row.find('.question-link').toArray()
+          .map(function(link) {
+            return {
+              url: link.getAttribute('href') + '&partial=true',
+              category: link.getAttribute('data-category')
+            };
+          })
+
+        var tabsHtml = datasetTabsTmpl({
+          datasetId: $data.datasetId,
+          questions: questions
+        });
+
+        $questionWrapper.append(tabsHtml).addClass('active')
+          .find('.tabs:last')
+            .tabs({ active: tabIdx })
+            .show();
+      }
+
+      toggleTable.call($tableToggle.get(0), true);
+    }
+
+    function route() {
+      var fullName = location.hash.slice(1);
+
+      if (fullName) {
+        selectQuestion(fullName);
+      } else {
+        clearSelectedQuestion();
+      }
+    }
+
+    route();
   }
 });
