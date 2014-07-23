@@ -124,11 +124,17 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 <br>
 
 
-<c:if test="${wdkModel.displayName ne 'PiroplasmaDB'}">
+<c:if test="${wdkModel.displayName eq 'PlasmoDB' || 
+              wdkModel.displayName eq 'ToxoDB' ||
+              wdkModel.displayName eq 'TriTrypDB' ||
+              wdkModel.displayName eq 'AmoebaDB' ||
+              wdkModel.displayName eq 'CryptoDB' ||
+              wdkModel.displayName eq 'EuPathDB'
+              }">
 
     <c:if test="${attrs['length'].value <= 10000}">
 
-	<imp:wdkTable tblName="SNPs" isOpen="false"
+  <imp:wdkTable tblName="SNPs" isOpen="false"
                  attribution=""/>
 
 	<br>
