@@ -37,24 +37,23 @@
 			    <c:if test="${current}"><div class="current"></c:if>
 			        <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&revise=${stepId}&filter=${instance.name}" />
 			        <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
-			        <a id="link-${instanceName}-2" class="link-url" href="javascript:void(0)" countref="${countUrl}" strId="${strategyId}" stpId="${stepId}" linkUrl="${linkUrl}">
-						<c:choose>
-							<c:when test="${current}">
-								<c:choose>
-									<c:when test="${rMMap[linstance.displayName] == -1}">Error</c:when>
-									<c:when test="${rMMap[linstance.displayName] == -2}">N/A</c:when>
-									<c:otherwise>${answerValue.resultSize}</c:otherwise>
-								</c:choose>
-							</c:when>
-							<c:otherwise>
-								<c:choose>
-									<c:when test="${rMMap[linstance.displayName] == -1}">Error</c:when>
-									<c:when test="${rMMap[linstance.displayName] == -2}">N/A</c:when>
-									<c:otherwise><img class="loading" src="<c:url value="/images/loading.gif" />" /></c:otherwise>
-								</c:choose>
-							</c:otherwise>
-						</c:choose>
-					</a>
+                                <c:set var="filterCountLoaded" value="loaded" />
+                                <c:set var="filterCount" value="${rMMap[linstance.displayName]}" />
+                                <c:choose>
+                                  <c:when test="${filterCount == null}">
+                                    <c:set var="filterCount">
+                                      <img class="loading" src="<c:url value='/assets/wdk/images/loading.gif' />" />
+                                    </c:set>
+                                    <c:set var="filterCountLoaded" value="" />
+                                  </c:when>
+                                  <c:when test="${filterCount == -1}"><c:set var="filterCount">Error</c:set></c:when>
+                                  <c:when test="${filterCount == -1}"><c:set var="filterCount">N/A</c:set></c:when>
+                                </c:choose>
+                                <a id="link-${instanceName}-2" class="link-url ${filterCountLoaded}" data-filter="${instanceName}" 
+                                   href="javascript:void(0)" countref="${countUrl}" strId="${strategyId}" stpId="${stepId}" 
+                                   linkUrl="${linkUrl}">
+                                   ${filterCount}
+				</a>
 			        <div class="instance-detail" style="display: none;">
 			            <div class="display">${instance.displayName}</div>
 			            <div class="description">${instance.description}</div>
@@ -91,24 +90,23 @@
 			    <c:if test="${current}"><div class="current"></c:if>
 			        <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&revise=${stepId}&filter=${instance.name}" />
 			        <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
-			        <a id="link-${instanceName}-2" class="link-url" href="javascript:void(0)" countref="${countUrl}" strId="${strategyId}" stpId="${stepId}" linkUrl="${linkUrl}">
-						<c:choose>
-							<c:when test="${current}">
-								<c:choose>
-									<c:when test="${rMMap[linstance.displayName] == -1}">Error</c:when>
-									<c:when test="${rMMap[linstance.displayName] == -2}">N/A</c:when>
-									<c:otherwise>${answerValue.resultSize}</c:otherwise>
-								</c:choose>
-							</c:when>
-							<c:otherwise>
-								<c:choose>
-									<c:when test="${rMMap[linstance.displayName] == -1}">Error</c:when>
-									<c:when test="${rMMap[linstance.displayName] == -2}">N/A</c:when>
-									<c:otherwise><img class="loading" src="<c:url value="/images/loading.gif" />" /></c:otherwise>
-								</c:choose>
-							</c:otherwise>
-						</c:choose>
-					</a>
+                                <c:set var="filterCountLoaded" value="loaded" />
+                                <c:set var="filterCount" value="${rMMap[linstance.displayName]}" />
+                                <c:choose>
+                                  <c:when test="${filterCount == null}">
+                                    <c:set var="filterCount">
+                                      <img class="loading" src="<c:url value='/assets/wdk/images/loading.gif' />" />
+                                    </c:set>
+                                    <c:set var="filterCountLoaded" value="" />
+                                  </c:when>
+                                  <c:when test="${filterCount == -1}"><c:set var="filterCount">Error</c:set></c:when>
+                                  <c:when test="${filterCount == -1}"><c:set var="filterCount">N/A</c:set></c:when>
+                                </c:choose>
+                                <a id="link-${instanceName}-2" class="link-url ${filterCountLoaded}" data-filter="${instanceName}" 
+                                   href="javascript:void(0)" countref="${countUrl}" strId="${strategyId}" stpId="${stepId}" 
+                                   linkUrl="${linkUrl}">
+                                   ${filterCount}
+                                </a>
 			        <div class="instance-detail" style="display: none;">
 			            <div class="display">${instance.displayName}</div>
 			            <div class="description">${instance.description}</div>
