@@ -12,11 +12,13 @@
   border-collapse: separate;
   border-spacing: 2px;
 }
+#data-sets h4 + div td {
+  padding-bottom: 0;
+}
 #data-sets h4 + div th {
   border: none;
   font-weight: normal;
-}
-#data-sets h4 + div th {
+  padding-bottom: 0;
   background-color: #f6f6f6;
 }
 #data-sets ul { 

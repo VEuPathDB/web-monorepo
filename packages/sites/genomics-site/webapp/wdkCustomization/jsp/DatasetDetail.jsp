@@ -37,11 +37,12 @@
 </script>
 --%>
 
-  <%-- show all simpleToggles if page is filtered --%>
-  <c:set var="show" value="${fn:length(param.reference) gt 0 or
-      fn:length(param.question) gt 0 or
-      fn:length(param.recordClass) gt 0 or
-      fn:length(param.datasets) gt 0}"/>
+<%-- show all simpleToggles if page is filtered --%>
+<c:set var="show" value="${fn:length(param.reference) gt 0 or
+  fn:length(param.question) gt 0 or
+  fn:length(param.recordClass) gt 0 or
+  fn:length(param.datasets) gt 0}"
+/>
 
 <%-- show all xml question sets --%>
 <div id="data-sets">
@@ -77,7 +78,7 @@
   <br/><br/><br/>
 
   <c:forEach items="${datasets}" var="category">
-  <div class="category">
+    <div class="category">
       <div class="anchor">[ <a href="#_top">Top</a> ]</div>
       <a name="${category.key}"></a>
       <div class="h3center ctitle">${category.key}</div>
@@ -125,8 +126,9 @@
               </a>
             </div>
 
-
 <%-------    DATASET CONTENT ----------------%>
+
+<%-------    Orgs and contact  ----------------%>
             <div class="detail">
               <table>
                 <c:if test='${not empty organism.value}'>    <tr><td><span class="caption"><b>${organism.displayName}</b> </span></td><td> ${organism.value}</td></tr>  </c:if>
@@ -138,11 +140,12 @@
               </table>
             </div>
             
+<%-------    Description ----------------%>
             <c:if test='${not empty description.value}'>
-            <imp:simpleToggle name="Description" content="${description.value}" show="${show}" />
+              <imp:simpleToggle name="Description" content="${description.value}" show="${show}" />
             </c:if>
 
-
+<%-------    Isolates ----------------%>
             <%-- avoiding table.tag to unify style with searches --%>
             <c:if test="${fn:length(isolates) > 0}">
                <c:set var="isolatesContent">
@@ -157,7 +160,7 @@
             </c:if>
 
 
-
+<%-------    Publications ----------------%>
             <%-- avoiding table.tag to unify style with searches --%>
             <c:if test="${fn:length(publications) > 0}">
                <c:set var="publicationContent">
@@ -173,7 +176,7 @@
             </c:if>
 
 
-
+<%-------    PI and collaborators ----------------%>
             <%-- avoiding table.tag to unify style with searches --%>
             <c:if test="${fn:length(contacts) > 0}">
                <c:set var="contactsContent">
@@ -187,7 +190,7 @@
               <imp:simpleToggle name="${contacts.displayName}" content="${contactsContent}" show="${show}" />
             </c:if>
 
-
+<%-------    Links ----------------%>
             <c:if test="${fn:length(externallinks) > 0}">
               <c:set var="extLinkContent">
                <!--   <imp:table table="${externallinks}" sortable="false" showHeader="false" />  -->
@@ -200,50 +203,71 @@
               <imp:simpleToggle name ="${externallinks.displayName}" content="${extLinkContent}" show="${show}" />
             </c:if>
 
+<%-------    Genome History ----------------%>
             <c:if test="${fn:length(genHistory) > 0}">
               <c:set var="genHistoryContent">
-                  <c:forEach items="${genHistory}" var="genHistoryRow">
-                    <fmt:parseDate value="${genHistoryRow['release_date']}"
-                        var="releaseDate" pattern="yyyy-MM-dd"/>
-                    <fmt:formatDate value="${releaseDate}" var="releaseDateStr"
-                        pattern="MMM d, yyyy"/>
-                    <h4>
-                      ${genHistoryRow['build'].displayName} ${genHistoryRow['build']}
-                      (${releaseDateStr}):
-                    </h4>
-                    <div>
-                      <table>
-                        <tr>
-                          <th>${genHistoryRow['note'].displayName}</th>
-                          <td>${genHistoryRow['note']}</td>
-                        </tr>
-                        <tr>
-                          <th>${genHistoryRow['genome_source'].displayName}</th>
-                          <td>${genHistoryRow['genome_source']} (${genHistoryRow['genome_version']})</td>
-                        </tr>
-                        <tr>
-                          <th>${genHistoryRow['annotation_source'].displayName}</th>
-                          <td>${genHistoryRow['annotation_source']} (${genHistoryRow['annotation_version']})</td>
-                        </tr>
-                      </table>
-                    </div>
-                  </c:forEach>
+              <c:forEach items="${genHistory}" var="genHistoryRow">
+                <fmt:parseDate value="${genHistoryRow['release_date']}"
+                  var="releaseDate" pattern="yyyy-MM-dd"/>
+                <fmt:formatDate value="${releaseDate}" var="releaseDateStr"
+                  pattern="MMM d, yyyy"/>
+                <c:choose>
+                <c:when test="${genHistoryRow['build'] eq '0'}">
+                  <h4>Previous releases</h4>
+                </c:when>
+                <c:otherwise>
+                  <h4>${genHistoryRow['build'].displayName} ${genHistoryRow['build']} (released: ${releaseDateStr})</h4>
+                </c:otherwise>
+                </c:choose>
+                    
+                <div>
+                  <table>
+                  <tr>
+                    <th>${genHistoryRow['note'].displayName}s:</th>
+                    <td>${genHistoryRow['note']}</td>
+                  </tr>
+                  <tr>
+                    <th>${genHistoryRow['genome_source'].displayName}</th>
+                    <td>${genHistoryRow['genome_source']} (${genHistoryRow['genome_version']})</td>
+                  </tr>
+                  <tr>
+                    <th>${genHistoryRow['annotation_source'].displayName}</th>
+                    <td>${genHistoryRow['annotation_source']} (${genHistoryRow['annotation_version']})</td>
+                  </tr>
+                  </table>
+                </div>
+              </c:forEach>
               </c:set>
               <imp:simpleToggle name ="${genHistory.displayName}" content="${genHistoryContent}" show="${show}" /> 
             </c:if>
 
+<%-------    Version ----------------%>
            <c:if test="${fn:length(versions) > 0}">
               <c:set var="versionContent">
-                <!-- <imp:table table="${versions}" sortable="false" showHeader="false" /> -->
-                 <table>
-                  <c:forEach items="${versions}" var="version">
-                        <tr><td>${version['version']}(${version['organism']})</td></tr>
-                  </c:forEach>
-                 </table>
+              <p>The <i>version</i> of a dataset is the version number or date assigned to the dataset by the provider of the data.  If a data file contains a version or date we choose that; if not we use the version or publication date as indicated on the download site of origin; in the rare case in which those are not available we use the date the dataset was downloaded.
+              </p>
+              <%-- assumes sorted by version,organism (in model SQL) --%>
+              <c:set var="prevVer" value="" />
+              <table>
+                <c:forEach items="${versions}" var="version">
+                  <c:set var="curVer" value="${version['version']}" />
+                  <c:choose>
+                  <c:when test="${fn:trim(curVer) != fn:trim(prevVer)}">
+                    <tr><td>${curVer}</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;${version['organism']}</td></tr>
+                  </c:when>
+                  <c:otherwise>
+                    <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;${version['organism']}</td></tr>
+                  </c:otherwise>
+                  </c:choose>
+                  <c:set var="prevVer" value="${curVer}" />
+                </c:forEach>
+              </table>
               </c:set>
               <imp:simpleToggle name ="${versions.displayName}" content="${versionContent}" show="${show}" /> 
             </c:if>
 
+<%-------    Searches and Tracks (wdk references) ----------------%>
             <c:if test="${fn:length(references) > 0}">
               <c:set var="hasQuestion" value="${false}" />
               <c:set var="referenceContent">
@@ -275,25 +299,22 @@
               </c:if>
             </c:if>
 
-
-<imp:profileGraphs type='dataset' tableName="ExampleGraphs"/>
-
-
+<%-------    Expression Graphs  ----------------%>
+            <imp:profileGraphs type='dataset' tableName="ExampleGraphs"/>
 
           </div><hr>       <!-- .data-set -->
         </c:forEach>       <!-- all datasets in one category  -->
-
-      </div>   <!-- .category-content -->
-  </div>       <!-- .category   -->
-  </c:forEach> <!-- all categories  -->
+      </div>               <!-- .category-content -->
+    </div>                 <!-- .category   -->
+  </c:forEach>             <!-- all categories  -->
   
 
-   <%-- if we came to this page to show only a few datasets (would be specified in the url) --%>
+  <%-- if we came to this page to show only a few datasets (would be specified in the url) --%>
   <c:if test="${fn:length(param.reference) > 0}">
-    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataset.do?display=detail' />">Click here to see the complete list of Data Sets</a></p>
+    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataset.do?display=detail' />">
+      Click here to see the complete list of Data Sets</a></p>
   </c:if>
 
-</div>      <!-- #data-sets   -->
-
+</div>   
 
 </imp:pageFrame>
