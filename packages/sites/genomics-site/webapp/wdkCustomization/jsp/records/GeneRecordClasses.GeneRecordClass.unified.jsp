@@ -455,6 +455,13 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
+<%-- PlasmoGem --%>
+<c:if test="${attrs['has_plasmogem_info'] eq '1'}">
+  <imp:panel 
+    displayName="PlasmoGem"
+    content="${attrs['plasmogem_link']}" />
+</c:if>
+
 <!-- TODO  plasmocyc -->
 <c:if test="${projectId eq 'PlasmoDB'}">
   <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
