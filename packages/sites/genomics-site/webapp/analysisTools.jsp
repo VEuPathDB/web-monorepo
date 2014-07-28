@@ -15,13 +15,13 @@
 
   <h1>Learn About Our Results Analyzer</h1>
 
-  <p>@PROJECT_ID@ offers tools for analyzing gene search results. <br>
+  <p>Our sites offer tools for analyzing the results of gene searches. <br>
   After running a search or strategy that returns genes, you can analyze the result to find 
   statistically enriched Gene Ontology annotations, Metabolic Pathway annotations or words 
   in the gene product descriptions. A term or word is considered enriched if it appears more 
   often in the gene result set than it does in the set of all genes for that organism.  </p>
 
-  <div><img src="/assets/images/overall.jpg"/></div>
+  <div><img src="/assets/images/Overall.jpg" width="550px"/></div>
 
   <h3>How to create an Analysis</h3>
   <div>
@@ -32,11 +32,11 @@
       <ol>
          <li>To choose the result you wish to analyze, click the box in the strategy panel that represents the result you wish to analyze
          
-         <div><img src="/assets/images/choose_result.jpg"/></div></li>
+         <div><img src="/assets/images/choose_result.jpg" width="400px"/></div></li>
          
          <li>If your result contains genes from more than one organism, use the filter table to limit the result to genes from a single organism.
          
-         <div><img src="/assets/images/choose_organism.jpg"/></div></li>
+         <div><img src="/assets/images/choose_organism.jpg" width="550px"/></div></li>
       </ol>
        </li>
       <li>Click on the blue "Analyze Results" button. The button appears next to the tabbed results pages.</li>
