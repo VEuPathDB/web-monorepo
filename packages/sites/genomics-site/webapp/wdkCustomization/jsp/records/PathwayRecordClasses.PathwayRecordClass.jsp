@@ -157,12 +157,35 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     <li><a href="#">Paint Genera
     <img title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map "  src="/a/assets/wdk/images/question.png" ></img></a>
         <ul>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Neospora,Plasmodium,Theileria,Toxoplasma', 'genus', '1')">Apicomplexa</a></li>
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo', 'genus','1')">Cryp,Toxo,Plas,Tryp,Host</a></li>
+          <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
+
+
+	  <c:if test="${projectId eq 'AmoebaDB'}"> 
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Acanthamoeba,Entamoeba,Homo,Mus', 'genus', '1')">Acanthamoeba,Entamoeba,Human,Mouse</a></li>
+	  </c:if>
+
+	  <%-- Apicomplexa ---%>
+	  <c:if test="${projectId eq 'CryptoDB' || projectId eq 'PiroplasmaDB' || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB'}"> 
+	    <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Chromera,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma,Vitrella', 'genus', '1')">Apicomplexa</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus', 'genus','1')">Cryp,Toxo,Plas,Tryp,Human,Mouse</a></li>
+	  </c:if>
+
+
+	  <c:if test="${projectId eq 'GiardiaDB'}"> 
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Giardia,Spironucleus,Homo,Mus', 'genus', '1')">Giardia,Spironucleus,Human,Mouse</a></li>
+	  </c:if>
+
+	  <c:if test="${projectId eq 'MicrosporidiaDB'}"> 
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,,Homo,Mus', 'genus', '1')">Microsporidia,Human,Mouse</a></li>
+	  </c:if>
+
+	  <c:if test="${projectId eq 'TriTrypDB'}"> 
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Crithidia,Leishmania,Trypanosoma,Homo,Mus', 'genus', '1')">Crithidia,Leishmania,Trypanosoma,Human,Mouse</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus', 'genus','1')">Cryp,Toxo,Plas,Tryp,Human,Mouse</a></li>
+	  </c:if>
+
         </ul>
     </li>
-
 
 
 </ul>
