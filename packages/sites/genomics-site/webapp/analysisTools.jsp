@@ -30,17 +30,24 @@
       <li>When the strategy is loaded, 
       choose the result and organism that you wish to analyze. 
       <ol>
-         <li>To choose the result that you wish to analyze, click the box in the strategy panel that represents the result.
+         <li>To choose the result that you wish to analyze, click the box in the strategy 
+         panel that represents the result.
          
          <div><img src="/assets/images/choose_result.jpg" width="450px"/></div></li>
          
-         <li>If your result contains genes from more than one organism, use the filter table to limit the result to genes from a single organism.
+         <li>If your result contains genes from more than one organism, use the 
+         filter table to limit the result to genes from a single organism.
          
          <div><img src="/assets/images/choose_organism.jpg" width="550px"/></div></li>
       </ol>
        </li>
-      <li>Click on the blue "Analyze Results" button. The button appears next to the tabbed results pages.</li>
-      <li>Select an analysis tool from the list of available tools.</li>
+      <li>Click on the blue "Analyze Results" button. The button appears next to the tabbed results pages.
+      
+      <div><img src="/assets/images/click_button.jpg" width="450px"/></div></li>
+      
+      <li>Select an analysis tool from the list of available tools.
+      <div><img src="/assets/images/choose_analysis.jpg" width="450px"/></div></li>
+      
     </ol>
     <em>Not all search results have analysis tools available.</em>
   </div>
