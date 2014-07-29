@@ -15,16 +15,18 @@
 
   <h1>Analyze Your Strategy Results</h1>
 
-  <p>Our sites offer tools for analyzing the results of gene searches. 
+  <p>Our sites offer tools for analyzing the results of gene searches or strategies. 
   After running a search or strategy that returns genes, you can analyze the results to find 
   statistically enriched Gene Ontology annotations, Metabolic Pathway annotations or words 
   in the gene product descriptions. A term or word is considered enriched if it appears more 
   often in the gene result set than it does in the set of all genes for that organism.  </p>
 
-  <div><img src="/assets/images/Overall.jpg" width="400px"/></div>
+  <div style="text-align:center">
+  
+  <img src="/assets/images/Overall.jpg" width="400px"/></div>
 <br><br>
 
-  <h3>4 Steps to Creating an Enrichment Analysis</h3>
+  <h3>4 Steps to Analyzing a Search or Strategy Result:</h3>
   <div>
     <ol>
       <li>Start a new search, or open an existing strategy.</li>
@@ -34,7 +36,7 @@
          <li>To choose the result that you wish to analyze, click the box in the strategy 
          panel that represents the result.
          
-         <div><img src="/assets/images/choose_result.jpg" width="400px"/></div></li>
+         <div><img src="/assets/images/choose_result.jpg" width="350px"/></div></li>
          
          <li>If your result contains genes from more than one organism, use the 
          filter table to limit the result to genes from a single organism.
