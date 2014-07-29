@@ -44,12 +44,10 @@ suggest a new data type, please <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#2E74B5;
 mso-themecolor:accent1;mso-themeshade:191'>Contact Us</span></a><span
 style='color:#2E74B5;mso-themecolor:accent1;mso-themeshade:191'> </span>to
-discuss your data. </p>
+discuss your data. We look forward to working with you!</p>
 
 <p class=MsoNoSpacing style='text-align:justify'><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNoSpacing style='text-align:justify'>We look forward to working
-with you!</p>
 
 <p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
 
@@ -106,7 +104,7 @@ your Data. </b><span style="mso-spacerun:yes">&nbsp;&nbsp;</span></p>
 
 <div class="wdk-toggle" data-show="false">
 <h3 class="wdk-toggle-name"><a href="#">High Throughput / Next Generation Sequencing</a>
-   &#8211; RNA, DNA or ChIP Sequencing Data in FASTQ or FASTA format
+   &#8211; RNA, DNA or ChIP Sequencing
 </h3>
 <div class="wdk-toggle-content">
 
@@ -127,7 +125,7 @@ reads we remap the data when a genome is updated and update analyses as needed.<
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
 one of these three options:</p>
 
@@ -136,7 +134,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to a sequence read archive such as DNA Data Bank of Japan, the
-European Nucleotide Archive or NCBI’s Sequence Read Archive. If your data is
+European Nucleotide Archive or NCBI's Sequence Read Archive. If your data is
 already submitted to a data repository, there is no need to re-transfer the
 data to EuPathDB.<span style="mso-spacerun:yes">&nbsp; </span>In either case, we
 will retrieve the data directly from the repository.<span
@@ -161,9 +159,9 @@ instructions for retrieving your data.</p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Complete the appropriate data description form
-making sure to enter your data’s archive accession numbers (if any) when
+making sure to enter your data archive accession numbers (if any) when
 prompted.</p>
 
 <p class=MsoNoSpacing style='margin-left:1.75in;text-indent:-.25in;mso-list:
