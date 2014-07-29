@@ -4,6 +4,7 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="sName" value="${fn:substringBefore(modelName,'DB')}" />
 <c:set var="cycName" value="${sName}Cyc" />
+<c:set var="urlBase" value="${pageContext.request.contextPath}"/>
 
 <c:choose>
         <c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
@@ -31,10 +32,13 @@
 
 <div class="info">
     	<ul> 
-		<li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"><strong>BLAST</strong></a>
+		<li><a href="${urlBase}/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"><strong>BLAST</strong></a>
 			<ul><li style="border:0">Identify Sequence Similarities</li></ul>
 		</li>
-		<li><a href="<c:url value="/srt.jsp"/>"><strong>Sequence Retrieval</strong></a>
+		<li><a href="${urlBase}/analysisTools.jsp"><strong>Results Analysis</strong></a>
+			<ul><li  style="border:0">Analyze Your Strategy Results</li></ul>
+		</li>
+		<li><a href="${urlBase}/srt.jsp"><strong>Sequence Retrieval</strong></a>
 			<ul><li  style="border:0">Retrieve Specific Sequences using IDs and coordinates</li></ul>
 		</li>
 	<li><a href="http://pathogenportal.org"><strong>Pathogen Portal</strong></a>
@@ -49,10 +53,6 @@
 			<ul><li  style="border:0">View Sequences and Features in the genome browser</li></ul>
 		</li>
 </c:if>
-
-		<li><a href="/plasmo.dfalke/analysisTools.jsp"><strong>Results Analysis</strong></a>
-			<ul><li  style="border:0">Analyze Your Strategy Results</li></ul>
-		</li>
     
 
 
@@ -66,7 +66,7 @@
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
 
-		<li><a href="<c:url value="/serviceList.jsp"/>"><strong>Searches via Web Services</strong></a>
+		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
 			<ul><li style="border:0">Learn about web service access to our data</li></ul>
 		</li>
 	</c:when>
@@ -75,7 +75,7 @@
                         <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
                 </li>
 
-		<li><a href="<c:url value="/serviceList.jsp"/>"><strong>Searches via Web Services</strong></a>
+		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
 			<ul><li style="border:0">Learn about web service access to our data</li></ul>
 		</li>
 	</c:when>
@@ -96,7 +96,7 @@
 	</c:when>
 	<c:otherwise>   <%----- Giardia, Trich and TriTryp:  fill in 2 empty lines to keep buckets aligned -----%>
 
-		<li><a href="<c:url value="/serviceList.jsp"/>"><strong>Searches via Web Services</strong></a>
+		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
 			<ul><li style="border:0">Learn about web service access to our data</li></ul>
 		</li>
                 <%-- <li>&nbsp;<ul><li  style="border:0">&nbsp;</li></ul></li> --%>
