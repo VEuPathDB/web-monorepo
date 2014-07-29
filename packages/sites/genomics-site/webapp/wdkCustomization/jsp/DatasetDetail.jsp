@@ -246,12 +246,12 @@
            <c:if test="${fn:length(versions) > 0}">
               <c:set var="versionContent">
               <p>
-                The data set <i>version</i> shown here is the data provider's version number or publication date indicated on the site from which we downloaded the data.  In the rare case that these are not available, the version is the date that the dataset was downloaded.
+                The data set <i>version</i> shown here is the data provider's version number or publication date indicated on the site from which we downloaded the data.  In the rare case that these are not available, the version is the date that the data set was downloaded.
               </p>
               <%-- assumes sorted by organism (in model SQL) --%>
-              <table>
+              <table class="headerRow">
                 <tr><th>Organism</th>
-                    <th>Provider's version</th>
+                    <th>Provider's Version</th>
                 </tr>
                 <c:forEach items="${versions}" var="version">
                   <tr><td>${version['organism']}</td>&nbsp;&nbsp;&nbsp;
