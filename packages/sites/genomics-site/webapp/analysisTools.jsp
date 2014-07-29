@@ -21,7 +21,7 @@
   in the gene product descriptions. A term or word is considered enriched if it appears more 
   often in the gene result set than it does in the set of all genes for that organism.  </p>
 
-  <div><img src="/assets/images/Overall.jpg" width="500px"/></div>
+  <div><img src="/assets/images/Overall.jpg" width="400px"/></div>
 <br><br>
 
   <h3>4 Steps to Creating an Enrichment Analysis</h3>
