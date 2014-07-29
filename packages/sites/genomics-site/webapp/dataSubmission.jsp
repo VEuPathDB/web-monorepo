@@ -287,14 +287,18 @@ normal'>Proteomics</b> &#8211; Excel or tab delimited text files are preferred.
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Excel or tab delimited text files are preferred. We can accommodate xml file format. </p>
+</span></span></span><![endif]>Excel or tab delimited text files are preferred. We can accommodate xml file format. 
+Required columns include gene IDs, peptide
+sequences, peptide counts and scores.</p>
 
+<!--  
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Required columns include gene IDs, peptide
 sequences, peptide counts and scores. </p>
+-->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
@@ -358,13 +362,17 @@ preferred.</p>
 l3 level1 lfo5'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Excel or tab delimited files are preferred. We can accommodate xml file format. </p>
+</span></span></span><![endif]>Excel or tab delimited files are preferred. We can accommodate xml file format. 
+Required columns include gene IDs and scores. </p>
 
+<!--  
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l3 level1 lfo5'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Required columns include gene IDs and scores.</p>
+</span></span></span><![endif]></p>
+-->
+
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
@@ -401,9 +409,9 @@ an email.</p>
 l1 level1 lfo4'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
 mso-themecolor:text1'><span style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Complete the Quantitative Proteomics Description
-<span style='color:#C00000'>(Susanne needs to modify Proteomics form)</span> form
-making sure to include a description of data columns, for example, time course
+</span></span></span><![endif]>Complete the <a
+href="https://docs.google.com/a/apidb.org/forms/d/1jC1w4wWb_tNWPoL55F0zLq8o8rqOXQjtw27dt9lKups/viewform">Quantitative 
+Proteomics Data Description Form</a> making sure to include a description of data columns, for example, time course
 units and arrangement if not apparent from column headers. <span
 style='color:#C00000'><o:p></o:p></span></p>
 
@@ -564,7 +572,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to a sequence read archive such as DNA Data Bank of Japan, the
-European Nucleotide Archive or NCBI’s Sequence Read Archive. We will retrieve
+European Nucleotide Archive or NCBI's Sequence Read Archive. We will retrieve
 your data using the read archive’s accession numbers for your data set. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
