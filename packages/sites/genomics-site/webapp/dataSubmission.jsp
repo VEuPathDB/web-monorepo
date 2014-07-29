@@ -117,12 +117,18 @@ Sequencing Data in FASTQ or FASTA format</p>
 -->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
+l0 level1 lfo3'>
+<!--  
+<![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>&#8226;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>We prefer to receive the raw read data in FASTQ
-or FASTA file format.<span style="mso-spacerun:yes">&nbsp; </span>Using the raw
-reads we remap the data when a genome is updated and update analyses as needed.</p>
+</span></span></span><![endif]>
+-->
+We prefer to receive the raw read data in FASTQ
+or FASTA file format. Using the raw
+reads we remap the data when a genome is updated and update analyses as needed.
+
+</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
