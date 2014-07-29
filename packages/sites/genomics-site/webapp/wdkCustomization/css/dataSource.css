@@ -1,5 +1,7 @@
 #data-sets { padding: 5px; }
 
+
+/* h4 was used in genome history
 #data-sets h4 {
   margin-top: 1em;
   margin-bottom: .2em;
@@ -21,6 +23,9 @@
   padding-bottom: 0;
   background-color: #f6f6f6;
 }
+*/
+
+
 #data-sets ul { 
 	list-style: disc inside none; 
 	font-size:120%;
@@ -106,3 +111,6 @@
 	font-size: 85%;
 }
 
+#data-sets .wdk-toggle-content th {
+	color: #555;
+}

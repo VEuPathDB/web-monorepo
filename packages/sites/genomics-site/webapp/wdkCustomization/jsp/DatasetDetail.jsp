@@ -206,38 +206,43 @@
 <%-------    Genome History ----------------%>
             <c:if test="${fn:length(genHistory) > 0}">
               <c:set var="genHistoryContent">
+
+              <table class="headerRow">
+                <tr>
+                  <th>Build#</th>
+                  <th>Release#</th>
+                  <th>Release Date</th>
+                  <th>Genome Source</th>
+                  <th>Annotation Source</th>
+                  <th>Notes</th>
+                </tr>
+
               <c:forEach items="${genHistory}" var="genHistoryRow">
                 <fmt:parseDate value="${genHistoryRow['release_date']}"
                   var="releaseDate" pattern="yyyy-MM-dd"/>
                 <fmt:formatDate value="${releaseDate}" var="releaseDateStr"
                   pattern="MMM d, yyyy"/>
+                <tr>
                 <c:choose>
                 <c:when test="${genHistoryRow['build'] eq '0'}">
-                  <h4>Initial release</h4>
+                  <td>Initial</td>
                 </c:when>
                 <c:otherwise>
-                  <h4>${genHistoryRow['build'].displayName} ${genHistoryRow['build']} (released: ${releaseDateStr})</h4>
+                  <td>${genHistoryRow['build']}</td>
                 </c:otherwise>
                 </c:choose>
-                    
-                <div>
-                  <table>
-                  <tr>
-                    <th>${genHistoryRow['note'].displayName}:</th>
-                    <td>${genHistoryRow['note']}</td>
-                  </tr>
-                  <tr>
-                    <th>${genHistoryRow['genome_source'].displayName}</th>
-                    <td>${genHistoryRow['genome_source']} (${genHistoryRow['genome_version']})</td>
-                  </tr>
-                  <tr>
-                    <th>${genHistoryRow['annotation_source'].displayName}</th>
-                    <td>${genHistoryRow['annotation_source']} (${genHistoryRow['annotation_version']})</td>
-                  </tr>
-                  </table>
-                </div>
+                  <td><i style="font-size:80%">coming soon...</i></td>
+                <c:if test="${genHistoryRow['build'] eq '0'}">
+                  <c:set var="releaseDateStr" value=""/>
+                </c:if>
+                  <td>${releaseDateStr}</td>
+                  <td>${genHistoryRow['genome_source']} (${genHistoryRow['genome_version']})</td>
+                  <td>${genHistoryRow['annotation_source']} (${genHistoryRow['annotation_version']})</td>
+                  <td>${genHistoryRow['note']}</td>
+                </tr>
 
               </c:forEach>
+              </table>
               </c:set>
               <imp:simpleToggle name ="${genHistory.displayName}" content="${genHistoryContent}" show="${show}" /> 
             </c:if>
@@ -245,9 +250,9 @@
 <%-------    Version ----------------%>
            <c:if test="${fn:length(versions) > 0}">
               <c:set var="versionContent">
-              <p>
-                The data set <i>version</i> shown here is the data provider's version number or publication date indicated on the site from which we downloaded the data.  In the rare case that these are not available, the version is the date that the data set was downloaded.
-              </p>
+                <p style="margin:1px 0;">
+                The data set <i>version</i> shown here is the data provider's version number or publication date indicated on the site from which we downloaded the data.  In the rare case that these are not available, the version is the date that the data set was downloaded.</p>
+
               <%-- assumes sorted by organism (in model SQL) --%>
               <table class="headerRow">
                 <tr><th>Organism</th>
