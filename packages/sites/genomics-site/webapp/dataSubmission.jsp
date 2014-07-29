@@ -622,7 +622,7 @@ mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>We prefer to download annotated genome sequence
 from a repository which assigns gene IDs, for example, the DNA Data Bank of
-Japan, the European Nucleotide Archive or NCBIÕs GenBank. </p>
+Japan, the European Nucleotide Archive or NCBI's GenBank. </p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
