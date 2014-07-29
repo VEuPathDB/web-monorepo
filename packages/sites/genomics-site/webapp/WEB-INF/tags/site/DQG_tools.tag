@@ -50,7 +50,7 @@
 		</li>
 </c:if>
 
-		<li><a href="/plasmo.dfalke/analysisTools.jsp"><strong>Results Analyzer</strong></a>
+		<li><a href="/plasmo.dfalke/analysisTools.jsp"><strong>Results Analysis</strong></a>
 			<ul><li  style="border:0">Analyze Your Strategy Results</li></ul>
 		</li>
     
