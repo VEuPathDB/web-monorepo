@@ -128,15 +128,17 @@
 
 <%-------    DATASET CONTENT ----------------%>
 
-<%-------    Orgs and contact  ----------------%>
+<%-------    Organisms and Contact  ----------------%>
             <div class="detail">
               <table>
-                <c:if test='${not empty organism.value}'>    <tr><td><span class="caption"><b>${organism.displayName}</b> </span></td><td> ${organism.value}</td></tr>  </c:if>
-                <tr><td><span class="caption"><b>${contact.displayName}</b></span></td>
-                  <td> <c:if test='${not empty contact.value}'>${contact.value}</c:if>
-                  <c:if test='${not empty institution.value}'> - ${institution.value}</c:if>
-                </td></tr>
-       <!--         <tr><td><span class="caption">Description </span></td><td> ${description.value}</td></tr> -->
+                <c:if test='${not empty organism.value}'>    
+                  <tr><td><span class="caption"><b>${organism.displayName}:</b> </span></td>
+                      <td> ${organism.value}</td></tr>  
+                </c:if>
+                <tr><td><span class="caption"><b>${contact.displayName}:</b></span></td>
+                    <td> <c:if test='${not empty contact.value}'>${contact.value}</c:if>
+                         <c:if test='${not empty institution.value}'> - ${institution.value}</c:if>
+                    </td></tr>
               </table>
             </div>
             
@@ -159,7 +161,6 @@
               <imp:simpleToggle name="${isolates.displayName}" content="${isolatesContent}" show="true" />
             </c:if>
 
-
 <%-------    Publications ----------------%>
             <%-- avoiding table.tag to unify style with searches --%>
             <c:if test="${fn:length(publications) > 0}">
@@ -174,7 +175,6 @@
 
               <imp:simpleToggle name="${publications.displayName}" content="${publicationContent}" show="${show}" />
             </c:if>
-
 
 <%-------    PI and collaborators ----------------%>
             <%-- avoiding table.tag to unify style with searches --%>
@@ -213,7 +213,7 @@
                   pattern="MMM d, yyyy"/>
                 <c:choose>
                 <c:when test="${genHistoryRow['build'] eq '0'}">
-                  <h4>Previous releases</h4>
+                  <h4>Initial release</h4>
                 </c:when>
                 <c:otherwise>
                   <h4>${genHistoryRow['build'].displayName} ${genHistoryRow['build']} (released: ${releaseDateStr})</h4>
@@ -223,7 +223,7 @@
                 <div>
                   <table>
                   <tr>
-                    <th>${genHistoryRow['note'].displayName}s:</th>
+                    <th>${genHistoryRow['note'].displayName}:</th>
                     <td>${genHistoryRow['note']}</td>
                   </tr>
                   <tr>
@@ -236,6 +236,7 @@
                   </tr>
                   </table>
                 </div>
+
               </c:forEach>
               </c:set>
               <imp:simpleToggle name ="${genHistory.displayName}" content="${genHistoryContent}" show="${show}" /> 
@@ -244,23 +245,18 @@
 <%-------    Version ----------------%>
            <c:if test="${fn:length(versions) > 0}">
               <c:set var="versionContent">
-              <p>The <i>version</i> of a dataset is the version number or date assigned to the dataset by the provider of the data.  If a data file contains a version or date we choose that; if not we use the version or publication date as indicated on the download site of origin; in the rare case in which those are not available we use the date the dataset was downloaded.
+              <p>
+                The data set <i>version</i> shown here is the data provider's version number or publication date indicated on the site from which we downloaded the data.  In the rare case that these are not available, the version is the date that the dataset was downloaded.
               </p>
-              <%-- assumes sorted by version,organism (in model SQL) --%>
-              <c:set var="prevVer" value="" />
+              <%-- assumes sorted by organism (in model SQL) --%>
               <table>
+                <tr><th>Organism</th>
+                    <th>Provider's version</th>
+                </tr>
                 <c:forEach items="${versions}" var="version">
-                  <c:set var="curVer" value="${version['version']}" />
-                  <c:choose>
-                  <c:when test="${fn:trim(curVer) != fn:trim(prevVer)}">
-                    <tr><td>${curVer}</td></tr>
-                    <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;${version['organism']}</td></tr>
-                  </c:when>
-                  <c:otherwise>
-                    <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;${version['organism']}</td></tr>
-                  </c:otherwise>
-                  </c:choose>
-                  <c:set var="prevVer" value="${curVer}" />
+                  <tr><td>${version['organism']}</td>&nbsp;&nbsp;&nbsp;
+                      <td>${version['version']}</td>
+                  </tr>
                 </c:forEach>
               </table>
               </c:set>
