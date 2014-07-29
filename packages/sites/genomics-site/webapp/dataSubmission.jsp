@@ -180,14 +180,17 @@ style='color:windowtext;text-decoration:none;text-underline:none'><o:p></o:p></s
 l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]><a
-href="https://docs.google.com/forms/d/11Qt40E13XTmIUbdftNXVQ6lEr2VIvZPFc0__jrZILJc/viewform">ChIP-Sequencing
-Data Description Form</a></p>
+href="https://docs.google.com/forms/d/1z4rrMp2kjJSkqz6EbwglF6oK9xp_0_VUz9AjfPg4FWc/viewform">DNA-Seq
+Data Description Form</p>
 
 <p class=MsoNoSpacing style='margin-left:1.75in;text-indent:-.25in;mso-list:
 l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>DNA-Seq
-Data Description Form</p>
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]><a
+href="https://docs.google.com/forms/d/11Qt40E13XTmIUbdftNXVQ6lEr2VIvZPFc0__jrZILJc/viewform">ChIP-Sequencing
+Data Description Form</a></p>
+
+
 
 </div>
 </div>
