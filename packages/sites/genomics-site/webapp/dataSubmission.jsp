@@ -570,8 +570,8 @@ href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact U
 instructions for retrieving your data.</p>
 
 <p>
-<a href="tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a><br>
-<a href="tutorials/EuPathDB_Isolatesubmission_genericHelp.pdf">Help for submitting Isolate Data</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="tutorials/EuPathDB_Isolatesubmission_genericHelp.pdf">Help for submitting Isolate Data</a><br>
 </p>
 </div>
 </div>
@@ -595,8 +595,10 @@ or FASTA file format. We integrate your data into the database using
 the raw reads. We also use the raw reads during future 
 database releases to remap your data when the reference genome is 
 reloaded and to update our analyses when needed.
+</p>
 
-
+<p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
+l0 level1 lfo3'>
 <![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -654,43 +656,40 @@ normal'>Genome Sequence and/or Annotation<o:p></o:p></b></p>
 -->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
+l2 level1 lfo6'>
+<!-- 
+<![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>We prefer to download annotated genome sequence
+</span></span></span><![endif]>
+ -->
+We prefer to download annotated genome sequence
 from a repository which assigns gene IDs, for example, the DNA Data Bank of
 Japan, the European Nucleotide Archive or NCBI's GenBank. </p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your genome <b style='mso-bidi-font-weight:
 normal'>IS</b> uploaded to a repository, complete the Genome Sequence and/or
-Annotation Description Form <span style='color:#C00000'>(</span><span
-style='font-family:Wingdings;mso-ascii-font-family:Calibri;mso-ascii-theme-font:
-minor-latin;mso-hansi-font-family:Calibri;mso-hansi-theme-font:minor-latin;
-color:#C00000;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
-style='mso-char-type:symbol;mso-symbol-font-family:Wingdings'>J</span></span><span
-style='color:#C00000'>Susanne needs to finish) </span>making sure to include
+Annotation Description Form making sure to include
 the accession numbers of your data when prompted. We will download your data
 from the repository.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
-normal'>IS NOT</b> uploaded to a repository, we can facilitate this upload.
-Complete the <span style='color:#538135;mso-themecolor:accent6;mso-themeshade:
-191'>Debbie’s Genome Form </span>and we will use the information to generate a
-Genbank submission for your genome.<span style="mso-spacerun:yes">&nbsp;
-</span>We will retrieve your genome from Genbank.</p>
+normal'>IS NOT</b> uploaded to a repository, Use the <a
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
+data and work out the best way to transfer the data.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If you are <b style='mso-bidi-font-weight:normal'>submitting
 only genome annotation (gff, ensemble, gtf or genbank formats)</b>, transfer a
 copy of your files to EuPathDB using one of these three options:</p>
@@ -774,15 +773,6 @@ style='mso-list:Ignore'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
 attachment to an email. Do we use the EuPathDB Contact Us link here</span>?<span
 style="mso-spacerun:yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
 
-<p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l1 level1 lfo4'><![if !supportLists]><span style='font-family:Symbol;
-mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
-mso-themecolor:text1'><span style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style='color:black;mso-themecolor:text1'>Complete
-the General Data Description Form </span><span style='color:#C00000'>(Susanne
-needs to create) </span><span style='color:black;mso-themecolor:text1'>making
-sure to clearly describe the type of data, the file formats and content of
-files you are submitting.<o:p></o:p></span></p>
 
 </div>
 </div>
