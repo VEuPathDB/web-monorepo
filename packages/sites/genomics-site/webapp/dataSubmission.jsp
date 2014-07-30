@@ -5,6 +5,9 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<c:set var="project" value="${props['PROJECT_ID']}" />
+
 <imp:pageFrame title="${wdkModel.displayName} :: Data Submission">
 
 <style>
@@ -21,7 +24,7 @@ p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing, p.MsoListParagraph {
 
 <div class=WordSection1>
 
-<h1>Submit Your Data</h1>
+<h1>Submit Your Data to ${project}</h1>
 
 <p class=MsoNoSpacing align=center style='text-align:center'><b
 style='mso-bidi-font-weight:normal'><span style='font-size:14.0pt'><o:p>&nbsp;</o:p></span></b></p>
