@@ -1,3 +1,17 @@
+<script type="text/javascript">
+$(document).ready( function () {
+    $('#tuningTables').DataTable(
+      {
+        'stateSave': false,
+        'stripeClasses': [ 'rowMedium', 'rowLight' ],
+        'orderClasses': false,
+        'order': [1, 'desc'],
+        'pageLength': 10,
+      }
+    );
+} );
+</script>
+
 <?php
 /**
  * View of User and App database stats
@@ -30,6 +44,7 @@ $udb_aliases_ar = $ldap_resolver->resolve($udb{'service_name'});
 $tuning_status_attrs = $tuning_manager_status->attributes();
 
 ?>
+
 <h2>Application Database</h2>
 <div class='related_dashboard_links'>
 Related Links
@@ -133,7 +148,7 @@ foreach ($dblink_map as $dblink) {
 <p>
 
 <p class="clickable">Tuning Tables &#8593;&#8595;</p>
-<div class="expandable" style="padding: 5px;">
+<div class="expandable" >
 
 <?php  $days_old_warning_threshold = 5; ?>
 
@@ -141,20 +156,22 @@ foreach ($dblink_map as $dblink) {
 Color codes: <span class='fatal'>update failed</span>, 
 <span class='warn'>last_check older than <?php print $days_old_warning_threshold?> days</span>
 </p>
-<table border="0" cellspacing="3" cellpadding="2" align="">
-
+<div style="display: inline-block; padding-left: 10px;"><!-- constrain jquery datatables -->
+<table id="tuningTables" class='display' cellspacing="3" cellpadding="2" align="">
+<thead>
 <tr class="secondary3">
 <th align="left"><font size="-2">name</font></th>
 <th align="left"><font size="-2">last_check</font></th>
 <th align="left"><font size="-2">status</font></th>
 <th align="left"><font size="-2">created</font></th>
 </tr>
+</thead>
+<tbody>
 <?php
 $tm_status_map = $tuning_status_attrs{'table_statuses'};
 $row = 0;
 foreach ($tm_status_map as $table) {
-  $row_css_class = ($row % 2) ? "rowMedium" : "rowLight";
-  
+
   $now = time();
   $last_check_ts = strtotime($table{'last_check'});
   $seconds_diff = $now - $last_check_ts;
@@ -168,19 +185,19 @@ foreach ($tm_status_map as $table) {
     $cell_css_class = '';
   }
 ?>
-<tr class="<?php print $row_css_class?>" >
+<tr>
   <td <?php print $cell_css_class?>><?php print $table{'name'}?></td>
   <td <?php print $cell_css_class?>><?php print $table{'last_check'}?></td>
   <td <?php print $cell_css_class?>><?php print $table{'status'}?></td>
   <td <?php print $cell_css_class?>><?php print $table{'created'}?></td>
 </tr>
 <?php
-  $row++;
 }
 ?>
+</tbody>
 </table>
-
-</div>
+</div> <!-- constrain jquery datatables -->
+</div> <!-- div expandable -->
 </p>
 
 
@@ -272,3 +289,4 @@ foreach ($dblink_map as $dblink) {
 <input name="refresh" type="hidden" value="1">
 <input type="submit" value="update now">
 </form>
+
