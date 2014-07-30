@@ -47,8 +47,8 @@
       
       <div><img src="/assets/images/click_button.jpg" width="400px"/></div></li>
       
-      <li>Select an analysis tool from the list of available tools. The analysis tool opens in a new tab. 
-      Select parameter values for the analysis and click Submit.
+      <li>Select an analysis tool from the list of available tools. The analysis tool opens in a new tab where you can
+      select parameter values for the analysis and click then Submit.
       <div><img src="/assets/images/choose_analysis.jpg" width="400px"/></div></li>
       
     </ol>
