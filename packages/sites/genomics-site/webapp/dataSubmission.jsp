@@ -611,7 +611,7 @@ mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to a sequence read archive such as DNA Data Bank of Japan, the
 European Nucleotide Archive or NCBI's Sequence Read Archive. We will retrieve
-your data using the read archive’s accession numbers for your data set. </p>
+your data using the read archive's accession numbers for your data set. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
 l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
@@ -633,8 +633,10 @@ instructions for retrieving your data.</p>
 l12 level1 lfo7'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Complete our High Throughput Sequencing Data
-Description Form  making sure to enter the read archive accession
+</span></span></span><![endif]>Complete our 
+<a
+href="https://docs.google.com/a/apidb.org/forms/d/1z4rrMp2kjJSkqz6EbwglF6oK9xp_0_VUz9AjfPg4FWc/viewform"> 
+DNA Seq Data Description Form</a> making sure to enter the read archive accession
 numbers for your data when prompted. We will retrieve your data from the
 sequence read archive. </p>
 
@@ -682,7 +684,7 @@ l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
-normal'>IS NOT</b> uploaded to a repository, Use the <a
+normal'>IS NOT</b> uploaded to a repository, use the <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
 data and work out the best way to transfer the data.</p>
 
@@ -735,6 +737,11 @@ an email.</p>
 use for data that does not fit any of the above categories </p>
 -->
 
+Use the <a
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
+data and work out the best way to transfer the data.</p>
+
+<!-- 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l6 level1 lfo14'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
@@ -773,7 +780,7 @@ style='mso-list:Ignore'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
 attachment to an email. Do we use the EuPathDB Contact Us link here</span>?<span
 style="mso-spacerun:yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
 
-
+ -->
 </div>
 </div>
 
