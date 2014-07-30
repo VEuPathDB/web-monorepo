@@ -230,7 +230,7 @@ ${datasetId.value}
                   Initial
                 </c:when>
                 <c:otherwise>
-                  ${genHistoryRow['build']} (${releaseDateStr}) <i style="font-size:80%">(Rel# coming)</i>
+                  ${genHistoryRow['build']} (${releaseDateStr}) (${genHistoryRow['release_number']})
                 </c:otherwise>
                 </c:choose>
                   </td>
