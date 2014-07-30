@@ -571,8 +571,8 @@ href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact U
 instructions for retrieving your data.</p>
 
 <p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/tutorials/EuPathDB_Isolatesubmission_genericHelp.pdf">Help for submitting Isolate Data</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://eupathdb.org/tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://eupathdb.org/tutorials/EuPathDB_Isolatesubmission_genericHelp.pdf">Help for submitting Isolate Data</a><br>
 </p>
 </div>
 </div>
@@ -638,8 +638,8 @@ style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp
 <a
 href="https://docs.google.com/a/apidb.org/forms/d/1z4rrMp2kjJSkqz6EbwglF6oK9xp_0_VUz9AjfPg4FWc/viewform"> 
 DNA Seq Data Description Form</a> making sure to enter the read archive accession
-numbers (if any) for your data when prompted. We also ask that you complete the 
-<a href="/tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a> to describe 
+numbers (if any) for your data when prompted. We also ask that you complete an abbreviated  
+<a href="http://eupathdb.org/tutorials/IsolateSubmissionEuPathDBv8.xls">Abbreviated Isolate Submission Form</a> to describe 
 meta data associated with your isolates.<br></p>
 
 </div>
