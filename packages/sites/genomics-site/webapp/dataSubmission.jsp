@@ -214,10 +214,14 @@ normal'>Microarray</b> &#8211; CEL, CSV </p>
 -->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l13 level1 lfo13'><![if !supportLists]><span style='font-family:Symbol;
+l13 level1 lfo13'>
+<!--  
+<![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Files (CEL, CSV) should include expression levels and probe
+</span></span></span><![endif]>
+-->
+Files (CEL, CSV) should include expression levels and probe
 set information.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -290,12 +294,16 @@ normal'>Proteomics</b> &#8211; Excel or tab delimited text files are preferred.
 -->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
+l0 level1 lfo3'>
+<!--  
+<![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Excel or tab delimited text files are preferred. We can accommodate xml file format. 
-Required columns include gene IDs, peptide
-sequences, peptide counts and scores.</p>
+</span></span></span><![endif]>
+-->
+
+Excel or tab delimited text files are preferred. We can accommodate xml file format. 
+Required columns include gene IDs, peptide sequences, peptide counts and scores.</p>
 
 <!--  
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -365,10 +373,15 @@ preferred.</p>
 -->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l3 level1 lfo5'><![if !supportLists]><span style='font-family:Symbol;
+l3 level1 lfo5'>
+<!-- 
+<![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Excel or tab delimited files are preferred. We can accommodate xml file format. 
+</span></span></span><![endif]>
+ -->
+ 
+Excel or tab delimited files are preferred. We can accommodate xml file format. 
 Required columns include gene IDs and scores. </p>
 
 <!--  
@@ -441,10 +454,14 @@ normal'>ChIP-chip</b> &#8211; </p>
 -->
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l12 level1 lfo7'><![if !supportLists]><span style='font-family:Symbol;
+l12 level1 lfo7'>
+<!-- 
+<![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Your data files should include expression levels
+</span></span></span><![endif]>
+ -->
+Your data files should include expression levels
 and probe set information.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -521,7 +538,7 @@ normal'>Isolates typed by sequencing limited genetic loci</b> &#8211; </p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
 normal'>IS</b> uploaded to Genbank, use the Contact Us to tell us about your
 data. Genebank Isolate records and the associated metadata are automatically
@@ -531,20 +548,27 @@ updated with each EuPathDB release.<span style="mso-spacerun:yes">&nbsp;
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l2 level1 lfo6'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
 normal'>IS NOT</b> uploaded to Genbank, we can facilitate this upload. Complete
-the Isolate Submission Form <span style='color:#C00000'>(</span><span
+the Isolate Submission Form 
+
+<!-- 
+<span style='color:#C00000'>(</span><span
 style='font-family:Wingdings;mso-ascii-font-family:Calibri;mso-ascii-theme-font:
 minor-latin;mso-hansi-font-family:Calibri;mso-hansi-theme-font:minor-latin;
 color:#C00000;mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span
 style='mso-char-type:symbol;mso-symbol-font-family:Wingdings'>J</span></span><span
-style='color:#C00000'>Susanne needs to finish) </span>and we will use the
-information to generate a Genbank submission for your isolates.<span
-style="mso-spacerun:yes">&nbsp; </span>The new isolate records will be
+style='color:#C00000'>Susanne needs to finish) </span>
+ -->
+ 
+and we will use the
+information to generate a Genbank submission for your isolates. The new isolate records will be
 downloaded to EuPathDB with the release. Use the <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
+
+
 
 </div>
 </div>
