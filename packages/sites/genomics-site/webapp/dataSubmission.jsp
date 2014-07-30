@@ -570,8 +570,8 @@ href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact U
 instructions for retrieving your data.</p>
 
 <p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="tutorials/EuPathDB_Isolatesubmission_genericHelp.pdf">Help for submitting Isolate Data</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/tutorials/EuPathDB_Isolatesubmission_genericHelp.pdf">Help for submitting Isolate Data</a><br>
 </p>
 </div>
 </div>
