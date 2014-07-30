@@ -21,9 +21,7 @@ p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing, p.MsoListParagraph {
 
 <div class=WordSection1>
 
-<p class=MsoNoSpacing align=center style='text-align:center'><b
-style='mso-bidi-font-weight:normal'><span style='font-size:14.0pt'>Data
-Submission<o:p></o:p></span></b></p>
+<h1>Submit Your Data</h1>
 
 <p class=MsoNoSpacing align=center style='text-align:center'><b
 style='mso-bidi-font-weight:normal'><span style='font-size:14.0pt'><o:p>&nbsp;</o:p></span></b></p>
