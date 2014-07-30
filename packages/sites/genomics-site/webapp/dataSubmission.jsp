@@ -125,8 +125,9 @@ style='mso-list:Ignore'>&#8226;<span style='font:7.0pt "Times New Roman"'>&nbsp;
 </span></span></span><![endif]>
 -->
 We prefer to receive the raw read data in FASTQ
-or FASTA file format. Using the raw
-reads we remap the data when a genome is updated and update analyses as needed.
+or FASTA file format. We integrate your data into the database using the raw reads. We also use the raw reads during future 
+database releases to remap your data when the reference genome is reloaded and to update our analyses when needed.
+
 
 </p>
 
@@ -568,8 +569,10 @@ downloaded to EuPathDB with the release. Use the <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
-
-
+<p>
+<a href="tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a><br>
+<a href="tutorials/EuPathDB_Isolatesubmission_genericHelp.pdf">Help for submitting Isolate Data</a><br>
+</p>
 </div>
 </div>
 
@@ -586,12 +589,15 @@ normal'>Isolates or Strains typed by High Throughput Sequencing</b> &#8211;
 FastQ file format preferred</p>
 -->
 
-
-  &#8211;FastQ file format preferred
-
-
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
-l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
+l0 level1 lfo3'>We prefer to receive the raw read data in FASTQ
+or FASTA file format. We integrate your data into the database using 
+the raw reads. We also use the raw reads during future 
+database releases to remap your data when the reference genome is 
+reloaded and to update our analyses when needed.
+
+
+<![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
@@ -624,19 +630,9 @@ instructions for retrieving your data.</p>
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
 l12 level1 lfo7'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
-style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>Complete our High Throughput Sequencing Data
-Description Form <span style='color:#C00000'>(</span><span style='font-family:
-Wingdings;mso-ascii-font-family:Calibri;mso-ascii-theme-font:minor-latin;
-mso-hansi-font-family:Calibri;mso-hansi-theme-font:minor-latin;color:#C00000;
-mso-char-type:symbol;mso-symbol-font-family:Wingdings'><span style='mso-char-type:
-symbol;mso-symbol-font-family:Wingdings'>J</span></span><span style='color:
-#C00000'>Susanne needs to make this form and discuss with Omar what meta data
-to ask for &#8211; perhaps one of these .xls files is a start? </span><a
-href="https://redmine.apidb.org/documents/342">https://redmine.apidb.org/documents/342</a><span
-style='color:#C00000'><span style="mso-spacerun:yes">&nbsp;&nbsp; </span></span><a
-href="https://redmine.apidb.org/documents/343">https://redmine.apidb.org/documents/343</a><span
-style='color:#C00000'>)</span> making sure to enter the read archive accession
+Description Form  making sure to enter the read archive accession
 numbers for your data when prompted. We will retrieve your data from the
 sequence read archive. </p>
 
