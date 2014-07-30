@@ -127,7 +127,11 @@
             </div>
 
 <%-------    DATASET CONTENT ----------------%>
-
+<!--
+<br>
+${datasetId.value}
+<br>
+-->
 <%-------    Organisms and Contact  ----------------%>
             <div class="detail">
               <table>
@@ -209,9 +213,7 @@
 
               <table class="headerRow">
                 <tr>
-                  <th>Build#</th>
-                  <th>Release#</th>
-                  <th>Release Date</th>
+                  <th>EuPathDB Build</th>
                   <th>Genome Source</th>
                   <th>Annotation Source</th>
                   <th>Notes</th>
@@ -222,20 +224,16 @@
                   var="releaseDate" pattern="yyyy-MM-dd"/>
                 <fmt:formatDate value="${releaseDate}" var="releaseDateStr"
                   pattern="MMM d, yyyy"/>
-                <tr>
+                <tr><td>
                 <c:choose>
                 <c:when test="${genHistoryRow['build'] eq '0'}">
-                  <td>Initial</td>
+                  Initial
                 </c:when>
                 <c:otherwise>
-                  <td>${genHistoryRow['build']}</td>
+                  ${genHistoryRow['build']} (${releaseDateStr}) <i style="font-size:80%">(Rel# coming)</i>
                 </c:otherwise>
                 </c:choose>
-                  <td><i style="font-size:80%">coming soon...</i></td>
-                <c:if test="${genHistoryRow['build'] eq '0'}">
-                  <c:set var="releaseDateStr" value=""/>
-                </c:if>
-                  <td>${releaseDateStr}</td>
+                  </td>
                   <td>${genHistoryRow['genome_source']} (${genHistoryRow['genome_version']})</td>
                   <td>${genHistoryRow['annotation_source']} (${genHistoryRow['annotation_version']})</td>
                   <td>${genHistoryRow['note']}</td>
