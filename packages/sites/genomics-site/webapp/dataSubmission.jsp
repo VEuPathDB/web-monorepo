@@ -637,8 +637,9 @@ style='mso-list:Ignore'>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp
 <a
 href="https://docs.google.com/a/apidb.org/forms/d/1z4rrMp2kjJSkqz6EbwglF6oK9xp_0_VUz9AjfPg4FWc/viewform"> 
 DNA Seq Data Description Form</a> making sure to enter the read archive accession
-numbers for your data when prompted. We will retrieve your data from the
-sequence read archive. </p>
+numbers (if any) for your data when prompted. We also ask that you complete the 
+<a href="/tutorials/IsolateSubmissionEuPathDBv8.xls">Isolate Submission Form</a> to describe 
+meta data associated with your isolates.<br></p>
 
 </div>
 </div>
@@ -737,7 +738,7 @@ an email.</p>
 use for data that does not fit any of the above categories </p>
 -->
 
-Use the <a
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
 data and work out the best way to transfer the data.</p>
 
