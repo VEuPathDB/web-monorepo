@@ -32,13 +32,12 @@
       <li>Start a new search, or open an existing strategy.</li>
       <li>When the strategy is loaded, 
       choose the result and organism that you wish to analyze. 
-      <ol>
-         <li>To choose the result that you wish to analyze, click the box in the strategy 
-         panel that represents the result.
+      <ol type=a>
+         <li>To choose the result that you wish to analyze, click the strategy box that represents the result.
          
          <div><img src="/assets/images/choose_result.jpg" width="350px"/></div></li>
          
-         <li>If your result contains genes from more than one organism, use the 
+         <li>If the result contains genes from more than one organism, use the 
          filter table to limit the result to genes from a single organism.
          
          <div><img src="/assets/images/choose_organism.jpg" width="500px"/></div></li>
@@ -48,7 +47,8 @@
       
       <div><img src="/assets/images/click_button.jpg" width="400px"/></div></li>
       
-      <li>Select an analysis tool from the list of available tools.
+      <li>Select an analysis tool from the list of available tools. The analysis tool opens in a new tab. 
+      Select parameter values for the analysis and click Submit.
       <div><img src="/assets/images/choose_analysis.jpg" width="400px"/></div></li>
       
     </ol>
