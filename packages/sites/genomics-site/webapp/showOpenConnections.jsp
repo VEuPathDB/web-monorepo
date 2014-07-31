@@ -3,9 +3,26 @@
   <jsp:directive.page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"/>
   <html>
     <body>
-      <pre>
+      <div>
+        <a name="userdb"/>
+        <hr/>
+        <h2>User Database</h2>
+        <a href="#appdb">Jump to AppDB</a>
+        <hr/>
+        <pre>
+${wdkModel.model.userDb.unclosedConnectionInfo}
+        </pre>
+      </div>
+      <div>
+        <a name="appdb"/>
+        <hr/>
+        <h2>Application Database</h2>
+        <a href="#userdb">Jump to UserDB</a>
+        <hr/>
+        <pre>
 ${wdkModel.model.appDb.unclosedConnectionInfo}
-      </pre>
+        </pre>
+      </div>
     </body>
   </html>
 </jsp:root>
