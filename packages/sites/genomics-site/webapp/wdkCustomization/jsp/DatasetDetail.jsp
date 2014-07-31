@@ -9,6 +9,7 @@
 <c:set var="datasets" value="${requestScope.datasets}"/>
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
+<c:set var='project' value='${wdkModel.name}'/>
 
 <imp:pageFrame banner="Data Sets" refer="data-set" >
 
@@ -230,7 +231,7 @@ ${datasetId.value}
                   Initial
                 </c:when>
                 <c:otherwise>
-                  ${genHistoryRow['build']} (${releaseDateStr}) (${genHistoryRow['release_number']})
+                  ${genHistoryRow['build']} (${releaseDateStr}) (${project}&nbsp;${genHistoryRow['release_number']})
                 </c:otherwise>
                 </c:choose>
                   </td>
