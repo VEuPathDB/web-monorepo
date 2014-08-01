@@ -107,6 +107,7 @@ sub synGeneTitle {
   my ($desc) = $f->get_tag_values("Note");
 
   my ($soTerm) = $f->get_tag_values("SOTerm");
+  my ($orthomclName) = $f->get_tag_values("orthomcl_name");
   my ($isPseudo) = $f->get_tag_values("IsPseudo");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
@@ -123,7 +124,7 @@ sub synGeneTitle {
   my ($trunc) = $f->get_tag_values("Truncated");
   my $location = "$seqId: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "");
   
-  return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams'))};
+  return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams', '$orthomclName'))};
 }
 
 sub synSpanTitle {
@@ -393,6 +394,7 @@ sub geneTitleGB2 {
   
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
+  my ($orthomclName) = $f->get_tag_values("orthomcl_name");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
   $soTerm .= " (pseudogene)" if $isPseudo == '1';
@@ -413,7 +415,7 @@ sub geneTitleGB2 {
   my ($seqId) = $f->get_tag_values("Contig");
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams'))};
+  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName'))};
 } 
 
 
