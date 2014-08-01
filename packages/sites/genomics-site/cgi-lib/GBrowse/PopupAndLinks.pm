@@ -810,8 +810,8 @@ sub rumIntronTitleUnified {
   my $note = "The overall score is the sum of the short and long overlap unique reads from all samples.";
   my @data;
   push @data, [ 'Location:'  => "$start - $stop"];
-  push @data, [ 'Score'     => $sum ];
-  push @data, [ 'Note'     => $note ];
+  push @data, [ '<b>Score</b>'     => "<b>$sum</b>" ];
+  push @data, [ '<b>Note</b>'     => $note ];
 
 
   my $count = 0;
