@@ -431,7 +431,12 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- GO TERMS -->
 <c:if test="${isCodingGene}">
   <a name="goTerm"></a>
-  <imp:wdkTable2 tblName="GoTerms" attribution=""/>
+  <c:set var="goEvidenceLink">
+    <div>
+    <br> <a target="_blank" href="http://www.geneontology.org/page/introduction">View documentation on GO Evidence Codes</a>
+    </div>
+  </c:set>
+  <imp:wdkTable2 tblName="GoTerms" attribution="" postscript="${goEvidenceLink}"/>
 </c:if>
 
 <%-- from giardia new in build21--%>
