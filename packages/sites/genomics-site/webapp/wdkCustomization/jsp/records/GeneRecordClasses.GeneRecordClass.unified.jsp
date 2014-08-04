@@ -467,15 +467,6 @@ organismFull:   Plasmodium falciparum 3D7
     content="${attrs['plasmogem_link']}" />
 </c:if>
 
-<!-- TODO  plasmocyc -->
-<c:if test="${projectId eq 'PlasmoDB'}">
-  <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
-  <c:set var="plasmocycurl" value="${plasmocyc.url}"/>  
-  <imp:panel 
-    displayName="PlasmoCyc <a href='${plasmocycurl}'>View</a>"
-    content="" />
-</c:if>
-
 
 <%-- mr4reagents  --%>
 <imp:wdkTable2 tblName="Mr4Reagents" attribution=""/>
