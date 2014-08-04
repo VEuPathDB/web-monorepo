@@ -84,8 +84,10 @@ brief description (two or three sentences) of your data. We will make every
 effort to reply quickly. During the data submission process, data sets are scheduled
 for an upcoming release and given a release date so that we can allocate our
 resources appropriately. This release date is flexible. Data will not be made
-public until you, the data provider, are satisfied that the release date is
-appropriate and the data representation is accurate. </p>
+available to anyone, used for any other purpose or be made public until you, 
+the data provider, are satisfied that releasing the data is
+appropriate and the data representation is accurate. 
+</p>
 
 <p class=MsoNoSpacing style='margin-left:.25in;text-align:justify'><o:p>&nbsp;</o:p></p>
 
