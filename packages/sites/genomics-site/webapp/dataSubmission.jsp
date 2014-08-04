@@ -43,10 +43,19 @@ mso-themecolor:accent1;mso-themeshade:191'><o:p>&nbsp;</o:p></span></p>
 Our most common data types include transcriptomics, proteomics,
 metabolomics, epigenomics, population-level and isolate information. 
 We also accept other genomic-scale data
-and are open to suggestions. Use the <a
+and are open to suggestions. Use the 
+
+<!-- 
+<a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#2E74B5;
-mso-themecolor:accent1;mso-themeshade:191'>Contact Us</span></a><span
-style='color:#2E74B5;mso-themecolor:accent1;mso-themeshade:191'> </span> link to 
+mso-themecolor:accent1;mso-themeshade:191'>Contact Us</span></a> -->
+
+<!--  <span style='color:#2E74B5;mso-themecolor:accent1;mso-themeshade:191'> </span> -->
+
+
+<a
+href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a>
+link to 
 make suggestions. We look forward to working with you!</p>
 
 <p class=MsoNoSpacing style='text-align:justify'><o:p>&nbsp;</o:p></p>
