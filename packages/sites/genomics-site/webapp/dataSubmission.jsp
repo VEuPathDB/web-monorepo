@@ -31,27 +31,29 @@ style='mso-bidi-font-weight:normal'><span style='font-size:14.0pt'><o:p>&nbsp;</
 
 <p class=MsoNoSpacing style='text-align:justify'>EuPathDB welcomes submissions
 of genomic-scale data concerning eukaryotic pathogens and host-pathogen
-interactions. Our most common data types include transcriptomics, proteomics,
-metabolomics, epigenomics, population-level and isolates data. If you are
-interested in submitting one of these data types, please review the data
-submission policy and start the data submission process outlined below. </p>
+interactions. 
+<a href="http://${project}.org/EuPathDB_datasubm_SOP.pdf"> Please review our Data Submission Policy</a>. </p>
+
+
 
 <p class=MsoNoSpacing style='text-align:justify'><span style='color:#2E74B5;
 mso-themecolor:accent1;mso-themeshade:191'><o:p>&nbsp;</o:p></span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'>We also accept genomic-scale data
-types not listed above and are open to your suggestions. If you would like to
-suggest a new data type, please <a
+<p class=MsoNoSpacing style='text-align:justify'>
+Our most common data types include transcriptomics, proteomics,
+metabolomics, epigenomics, population-level and isolate information. 
+We also accept other genomic-scale data
+and are open to suggestions. Use the <a
 href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#2E74B5;
 mso-themecolor:accent1;mso-themeshade:191'>Contact Us</span></a><span
-style='color:#2E74B5;mso-themecolor:accent1;mso-themeshade:191'> </span>to
-discuss your data. We look forward to working with you!</p>
+style='color:#2E74B5;mso-themecolor:accent1;mso-themeshade:191'> </span> link to 
+make suggestions. We look forward to working with you!</p>
 
 <p class=MsoNoSpacing style='text-align:justify'><o:p>&nbsp;</o:p></p>
 
 
 <p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
-
+<!--  -->
 <p class=MsoNoSpacing><b style='mso-bidi-font-weight:normal'>Data Submission
 Policy:<o:p></o:p></b></p>
 
@@ -61,10 +63,9 @@ pathogens are conveniently accessible to the worldwide community of biomedical
 researchers. Please see our <a
 href="http://${project}.org/EuPathDB_datasubm_SOP.pdf">Data Submission Policy</a>
 for full details.</p>
+-->
 
-<p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
 
 <p class=MsoNoSpacing><b style='mso-bidi-font-weight:normal'>Data Submission
 Process:<o:p></o:p></b></p>
