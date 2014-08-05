@@ -18,11 +18,11 @@ JmxBridgeQuery
     $query_param_array is an array
                   array(
                   'type' => 'read',
-                  'mbean' => 'org.apidb.wdk:group=Databases,type=UserDB,path=//localhost/cryptodb.msh',
+                  'mbean' => 'org.apidb.wdk:type=Database,role=UserDB,path=//localhost/cryptodb.msh',
                   'attribute' => 'MetaDataMap',
               )
         for the cooresponding json string
-            {"type":"read","mbean":"org.apidb.wdk:group=Databases,type=UserDB,path=//localhost/cryptodb.msh","attribute":"MetaDataMap"}        
+            {"type":"read","mbean":"org.apidb.wdk:type=Database,role=UserDB,path=//localhost/cryptodb.msh","attribute":"MetaDataMap"}        
 
     constructs a UserAgent and executes it
 

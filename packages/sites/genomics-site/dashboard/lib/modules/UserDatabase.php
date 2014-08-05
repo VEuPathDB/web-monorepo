@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . "/Database.php";
 
 /**
  * Application database mbean at
- * org.apidb.wdk:group=Databases,type=UserDB
+ * org.apidb.wdk:type=Database,role=UserDB
  * for the hosting Tomcat context.
  *
  * @author Mark Heiges <mheiges.edu>
@@ -15,7 +15,7 @@ class UserDatabase extends Database {
 
   public function __construct() {
     parent::__construct();
-    $this->type = 'UserDB';
+    $this->role = 'UserDB';
   }
 
 }

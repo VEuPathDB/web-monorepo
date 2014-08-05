@@ -4,7 +4,7 @@ require_once dirname(__FILE__) . "/Database.php";
 /**
  * Application database MBean at
  * 
- * org.apidb.wdk:group=Databases,type=AppDB
+ * org.apidb.wdk:type=Database,role=AppDB
  * for the hosting Tomcat context.
  *
  * @author Mark Heiges <mheiges.edu>
@@ -15,7 +15,7 @@ class AppDatabase extends Database {
 
   public function __construct() {
     parent::__construct();
-    $this->type = 'AppDB';
+    $this->role = 'AppDB';
   }
 
 }
