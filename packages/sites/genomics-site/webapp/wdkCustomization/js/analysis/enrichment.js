@@ -51,6 +51,14 @@
     $table.wdkDataTable({
       // sort by p-value
       order: [ 7, 'asc' ],
+			// positions total (i) and filter (f) before he table
+			dom: 'lipft',
+  		// instead of defaults: "Showing x to y of z entries", "Search"
+      // overrides values defined in WDK datatables.js
+      oLanguage: {
+					sInfo: 'Got a total of _TOTAL_ results',
+          sSearch: 'Filter : '
+      },
       // order p-value cols numerically
       columnDefs: [{
         type: 'scientific',
