@@ -20,11 +20,13 @@ $(document).ready( function () {
 
 require_once dirname(__FILE__) . "/../lib/modules/AppDatabase.php";
 require_once dirname(__FILE__) . "/../lib/modules/UserDatabase.php";
+require_once dirname(__FILE__) . "/../lib/modules/OpenConnections.php";
 require_once dirname(__FILE__) . "/../lib/modules/TuningManagerStatus.php";
 require_once dirname(__FILE__) . "/../lib/LdapTnsNameResolver.php";
 
 $app_database = new AppDatabase();
 $user_database = new UserDatabase();
+$open_connections = new OpenConnections();
 $ldap_resolver = new LdapTnsNameResolver();
 $tuning_manager_status = new TuningManagerStatus();
 
@@ -39,6 +41,7 @@ if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
 
 $adb = $app_database->attributes();
 $udb = $user_database->attributes();
+$oconn = $open_connections->attributes();
 $adb_aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
 $udb_aliases_ar = $ldap_resolver->resolve($udb{'service_name'});
 $tuning_status_attrs = $tuning_manager_status->attributes();
@@ -98,9 +101,18 @@ Related Links
 <br><br>
 <b>Hosted on</b>: <?php print strtolower($adb{'server_name'})?><br>
 <b>Oracle Version</b>: <?php print $adb{'version'}?>
+<p>
 <b>Client login name</b>: <?php print strtolower($adb{'login'})?><br>
 <b>Client connecting from</b>: <?php print strtolower($adb{'client_host'})?><br>
-<b>Client OS user</b>: <?php print strtolower($adb{'os_user'})?><br>
+<b>Client OS user</b>: <?php print strtolower($adb{'os_user'})?>
+<p>
+<b>Connection activity:</b>: <?php print str_replace("\n", ',', trim($oconn{'OpenAppDBConnections'}, "\n"))?>
+<a href='javascript:void()' style="text-decoration:none"
+        onmouseover="return overlib(
+         'Running count of connections take from pool on open and returned to pool on close. Persistent connections currently open might indicate a leak.'
+        )"
+        onmouseout = "return nd();"><sup> [?]</sup></a>
+<br>
 </p>
 
 <p>
@@ -254,8 +266,14 @@ foreach ($tm_status_map as $table) {
 <p>
 <b>Client login name</b>: <?php print strtolower($udb{'login'}) ?></b><br>
 <b>Client connecting from</b>: <?php print strtolower($udb{'client_host'})?><br>
-<b>Client OS user</b>: <?php print strtolower($udb{'os_user'})?><br>
-
+<b>Client OS user</b>: <?php print strtolower($udb{'os_user'})?>
+<p>
+<b>Connection activity:</b>: <?php print str_replace("\n", ',', trim($oconn{'OpenUserDBConnections'}, "\n"))?><a href='javascript:void()' style="text-decoration:none"
+        onmouseover="return overlib(
+         'Running count of connections take from pool on open and returned to pool on close. Persistent connections currently open might indicate a leak.'
+        )"
+        onmouseout = "return nd();"><sup> [?]</sup></a>
+<br>
 </p>
 
 <p>
