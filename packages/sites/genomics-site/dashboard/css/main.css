@@ -91,6 +91,12 @@ p {
     margin: 12px 8px;
 }
 
+span.pre {
+  white-space: pre;
+  font-family: monospace;
+  display: block;
+}
+
 .clickable {
   cursor: pointer;
   font: 12px Verdana, Arial, Helvetica, sans-serif;

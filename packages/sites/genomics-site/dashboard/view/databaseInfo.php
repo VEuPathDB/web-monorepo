@@ -106,13 +106,16 @@ Related Links
 <b>Client connecting from</b>: <?php print strtolower($adb{'client_host'})?><br>
 <b>Client OS user</b>: <?php print strtolower($adb{'os_user'})?>
 <p>
-<b>Connection activity:</b>: <?php print str_replace("\n", ',', trim($oconn{'OpenAppDBConnections'}, "\n"))?>
-<a href='javascript:void()' style="text-decoration:none"
-        onmouseover="return overlib(
-         'Running count of connections take from pool on open and returned to pool on close. Persistent connections currently open might indicate a leak.'
-        )"
-        onmouseout = "return nd();"><sup> [?]</sup></a>
-<br>
+<p class="clickable">Connection activity &#8593;&#8595;</p>
+<div class="expandable" >
+    <p>
+    Running count of connections take from pool on open and returned to pool on close. 
+    Persistent connections currently open might indicate a leak.
+    </p>
+    <p>
+    <span class='pre'><?php print $oconn{'OpenAppDBConnections'}?></span>
+    </p>
+</div> <!-- div expandable -->
 </p>
 
 <p>
@@ -268,12 +271,18 @@ foreach ($tm_status_map as $table) {
 <b>Client connecting from</b>: <?php print strtolower($udb{'client_host'})?><br>
 <b>Client OS user</b>: <?php print strtolower($udb{'os_user'})?>
 <p>
-<b>Connection activity:</b>: <?php print str_replace("\n", ',', trim($oconn{'OpenUserDBConnections'}, "\n"))?><a href='javascript:void()' style="text-decoration:none"
-        onmouseover="return overlib(
-         'Running count of connections take from pool on open and returned to pool on close. Persistent connections currently open might indicate a leak.'
-        )"
-        onmouseout = "return nd();"><sup> [?]</sup></a>
-<br>
+<p class="clickable">Connection activity &#8593;&#8595;</p>
+<div class="expandable" >
+    <p>
+    Running count of connections take from pool on open and returned to pool on close. 
+    Persistent connections currently open might indicate a leak.
+    </p>
+    <p>
+    <span class='pre'><?php print $oconn{'OpenUserDBConnections'}?></span>
+    </p>
+</div> <!-- div expandable -->
+</p>
+
 </p>
 
 <p>
