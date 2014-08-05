@@ -32,7 +32,15 @@
                 </td>
                 <td>
                   <c:forEach var="item" items="${viewModel.ontologyOptions}">
-                    <label><input type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}</label><br/>
+		    <c:choose>
+		      <c:when test="${item.display eq 'Biological Process'}">
+                      <label><input checked="checked" type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}</label><br/>
+		      </c:when>
+		      <c:otherwise>
+			<label><input type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}</label><br/>
+		      </c:otherwise>
+		    </c:choose>
+
                   </c:forEach>
                 </td>
               </tr>
