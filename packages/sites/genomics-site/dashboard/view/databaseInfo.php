@@ -20,13 +20,11 @@ $(document).ready( function () {
 
 require_once dirname(__FILE__) . "/../lib/modules/AppDatabase.php";
 require_once dirname(__FILE__) . "/../lib/modules/UserDatabase.php";
-require_once dirname(__FILE__) . "/../lib/modules/OpenConnections.php";
 require_once dirname(__FILE__) . "/../lib/modules/TuningManagerStatus.php";
 require_once dirname(__FILE__) . "/../lib/LdapTnsNameResolver.php";
 
 $app_database = new AppDatabase();
 $user_database = new UserDatabase();
-$open_connections = new OpenConnections();
 $ldap_resolver = new LdapTnsNameResolver();
 $tuning_manager_status = new TuningManagerStatus();
 
@@ -41,7 +39,6 @@ if (isset($_GET['refresh']) && $_GET['refresh'] == 1) {
 
 $adb = $app_database->attributes();
 $udb = $user_database->attributes();
-$oconn = $open_connections->attributes();
 $adb_aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
 $udb_aliases_ar = $ldap_resolver->resolve($udb{'service_name'});
 $tuning_status_attrs = $tuning_manager_status->attributes();
