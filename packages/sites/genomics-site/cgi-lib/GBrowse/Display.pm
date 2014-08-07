@@ -1004,16 +1004,45 @@ sub changeType {
 
 sub synSpanRelativeCoords { 
   my $f = shift; 
-  my ($off) = $f->get_tag_values("SynStart"); 
+
+  my ($leftAnchSyntenicLoc) = $f->get_tag_values("LeftAnchSyntenicLoc"); 
+  my ($rightAnchSyntenicLoc) = $f->get_tag_values("RightAnchSyntenicLoc"); 
+  my ($leftAnchRefLoc) = $f->get_tag_values("LeftAnchRefLoc"); 
+  my ($rightAnchRefLoc) = $f->get_tag_values("RightAnchRefLoc"); 
+  my ($leftAnchPrevRefLoc) = $f->get_tag_values("LeftAnchPrevRefLoc"); 
+  my ($rightAnchNextRefLoc) = $f->get_tag_values("LeftAnchNextRefLoc"); 
+
   my ($scale) = $f->get_tag_values("Scale");
-  return int($off*$scale+0.5);
+
+  my $strand = $f->strand();
+  my $start = $f->start();
+  my $end = $f->end();
+
+  # Forward Span Starts w/in Window;  Left anchor syntenic loc is exact position
+  if($strand == 1 && $leftAnchPrevRefLoc == -9999999999) {
+    return $leftAnchSyntenicLoc;
+  }
+
+  # Reverse Span Starts w/in Window;  Right anchor syntenic loc is exact position
+  if($strand == -1 && $rightAnchNextRefLoc == 9999999999) {
+    return $rightAnchSyntenicLoc;
+  }
+
+  if($strand == 1) {
+    return ($leftAnchSyntenicLoc - ($leftAnchRefLoc - $start) / $scale) * $scale;
+  }
+
+  if($strand == -1) {
+    return ($rightAnchSyntenicLoc + ($end - $rightAnchRefLoc) / $scale) * $scale;
+  }
+
 }
 
 
 sub synSpanScale { 
   my $f = shift; 
   my ($scale) = $f->get_tag_values("Scale");
-  return int($scale+0.5);
+  return $scale;
 }
 
 sub synSpanOffset { 
