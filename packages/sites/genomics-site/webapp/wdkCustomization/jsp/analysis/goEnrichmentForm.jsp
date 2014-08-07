@@ -25,6 +25,22 @@
               <tr>
                 <td>
                   <label>
+                    <span style="font-weight:bold">Organism</span>
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                        title="${fn:escapeXml(viewModel.organismParamHelp)}"/>
+                  </label>
+                </td>
+                <td>
+                  <select name="organism">
+                    <c:forEach var="item" items="${viewModel.organismOptions}">
+                      <option value="${item.term}">${item.display}</option>
+                    </c:forEach>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label>
                     <span style="font-weight:bold">Ontology</span>
                     <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.ontologyParamHelp)}"/>
@@ -32,15 +48,19 @@
                 </td>
                 <td>
                   <c:forEach var="item" items="${viewModel.ontologyOptions}">
-		    <c:choose>
-		      <c:when test="${item.display eq 'Biological Process'}">
-                      <label><input checked="checked" type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}</label><br/>
-		      </c:when>
-		      <c:otherwise>
-			<label><input type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}</label><br/>
-		      </c:otherwise>
-		    </c:choose>
-
+                    <c:choose>
+                      <c:when test="${item.display eq 'Biological Process'}">
+                        <label>
+                          <input checked="checked" type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}
+                        </label>
+                      </c:when>
+                      <c:otherwise>
+                        <label>
+                          <input type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}
+                        </label>
+                      </c:otherwise>
+                    </c:choose>
+                    <br/>
                   </c:forEach>
                 </td>
               </tr>
