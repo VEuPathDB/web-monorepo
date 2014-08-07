@@ -89,6 +89,7 @@ h2 {
 p {
     font-size: 12px;
     margin: 12px 8px;
+    text-align: left;
 }
 
 span.pre {

@@ -105,17 +105,9 @@ Related Links
 <b>Client login name</b>: <?php print strtolower($adb{'login'})?><br>
 <b>Client connecting from</b>: <?php print strtolower($adb{'client_host'})?><br>
 <b>Client OS user</b>: <?php print strtolower($adb{'os_user'})?>
+
 <p>
-<p class="clickable">Connection activity &#8593;&#8595;</p>
-<div class="expandable" >
-    <p>
-    Running count of connections take from pool on open and returned to pool on close. 
-    Persistent connections currently open might indicate a leak.
-    </p>
-    <p>
-    <span class='pre'><?php print $oconn{'OpenAppDBConnections'}?></span>
-    </p>
-</div> <!-- div expandable -->
+<b><a href="?p=Database%20Connection%20Pool">Connection pool activity</a></b>
 </p>
 
 <p>
@@ -270,19 +262,9 @@ foreach ($tm_status_map as $table) {
 <b>Client login name</b>: <?php print strtolower($udb{'login'}) ?></b><br>
 <b>Client connecting from</b>: <?php print strtolower($udb{'client_host'})?><br>
 <b>Client OS user</b>: <?php print strtolower($udb{'os_user'})?>
-<p>
-<p class="clickable">Connection activity &#8593;&#8595;</p>
-<div class="expandable" >
-    <p>
-    Running count of connections take from pool on open and returned to pool on close. 
-    Persistent connections currently open might indicate a leak.
-    </p>
-    <p>
-    <span class='pre'><?php print $oconn{'OpenUserDBConnections'}?></span>
-    </p>
-</div> <!-- div expandable -->
-</p>
 
+<p>
+<b><a href="?p=Database%20Connection%20Pool">Connection pool activity</a></b>
 </p>
 
 <p>
