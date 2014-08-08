@@ -2,7 +2,8 @@
 <jsp:root version="2.0"
     xmlns:jsp="http://java.sun.com/JSP/Page"
     xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
   <jsp:directive.page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"/>
   <html>
     <body>
@@ -21,11 +22,27 @@
           <form>
             <table class="pathway-form-table" style="margin:0px auto">
               <tr>
+                <td>
+                  <label>
+                    <span style="font-weight:bold">Organism</span>
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                        title="${fn:escapeXml(viewModel.organismParamHelp)}"/>
+                  </label>
+                </td>
+                <td>
+                  <select name="organism">
+                    <c:forEach var="item" items="${viewModel.organismOptions}">
+                      <option value="${item.term}">${item.display}</option>
+                    </c:forEach>
+                  </select>
+                </td>
+              </tr>
+              <tr>
                 <td><span>Pathway Sources</span></td>
                 <td>
                   <div><a href="#select-all">Select all</a> | <a href="#clear-all">Clear all</a></div>
                   <c:forEach var="item" items="${viewModel.sourceOptions}">
-                    <label><input checked="checked"  type="checkbox" name="pathwaysSources" value="${item}"/> ${item}</label><br/>
+                    <label><input checked="checked"  type="checkbox" name="pathwaysSources" value="${item.term}"/> ${item.display}</label><br/>
                   </c:forEach>
                 </td>
               </tr>
