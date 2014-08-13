@@ -205,7 +205,7 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
             <c:otherwise>  
               <li>
                 <a href="#" class="dropdown">${cat.displayName}
-                  <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
+                  <c:if test="${project ne 'TriTrypDB' || project ne 'HostDB'}">
                     <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
                       <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
                                  src="/wdk/images/beta2-30.png" />
