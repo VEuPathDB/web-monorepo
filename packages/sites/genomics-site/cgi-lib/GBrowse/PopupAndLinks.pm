@@ -1324,7 +1324,9 @@ sub lowcomplexitySegTitle {
 
 sub ExportPredTitle{
    my $f = shift;
+   my ($name) = $f->get_tag_values("DomainName");
    my @data;
+   push @data, [ 'Name:' => $name ];
    push @data, [ 'Coordinates:' => $f->start . '..' . $f->end ];
 
    hover($f, \@data); 
