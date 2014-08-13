@@ -68,7 +68,7 @@
                                             <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                                             <a class="heading" href="javascript:void(0)">&nbsp;${display}
 
-<c:if test="${project ne 'TriTrypDB' || project ne 'HostDB'}">
+<c:if test="${project ne 'TrichDB' && project ne 'HostDB'}">
 <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
 	<imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
          	src="/wdk/images/beta2-30.png" />
