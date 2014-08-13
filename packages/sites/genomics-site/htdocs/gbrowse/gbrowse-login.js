@@ -4,9 +4,9 @@ jQuery(function(){
 });
 
 var GB = {
-    
+
     WDK_COOKIE_NAME : "wdk_check_auth",
-    
+
     performLogin : function() {
 
         // shrink and center progress bar if page is in the full window
@@ -33,21 +33,21 @@ var GB = {
         else {
             // make main div visible
             jQuery('#progressbar').show();
-            
+
             // update progress bar and add some more in a bit (while ajaxing)
             GB.updateProgress(30, 0);
             GB.updateProgress(45, 450);
-          
+
             // append login form to the bottom of the page (is display:none)
             var html = GB.getLoginFormHtml(project, creds);
             jQuery('body').append(html);
-          
+
             // run authentication
             Controller.plugin_authenticate($('plugin_configure_form'),
                 $('login_message'),'/cgi-bin/gbrowse/'+project,redirectUrl,cookieMaxAge);
         }
     },
-  
+
     updateProgress : function(amountPct, delayMs) {
         if (delayMs == 0) {
             jQuery('#progressbar').progressbar({ value: amountPct });
@@ -74,7 +74,7 @@ var GB = {
         var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
         return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
     },
-  
+
     splitAuthCookie : function(cookieVal) {
         if (cookieVal == null) {
             return undefined;
@@ -92,5 +92,12 @@ var GB = {
             "email" : cookieVal.substring(0, lastIndex),
             "checksum" : cookieVal.substring(lastIndex + 1)
         };
+    },
+
+    handleLoginError : function(errorCode, redirectUrl) {
+        alert("Error (" + errorCode + "): Unable to complete login process.\n" +
+              "You will be logged in to the main site, but not GBrowse.\n" +
+              "Please let us know if this problem persists.");
+        window.top.location.href = redirectUrl;
     }
 };
