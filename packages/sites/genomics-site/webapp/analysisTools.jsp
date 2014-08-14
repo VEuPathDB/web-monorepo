@@ -54,9 +54,10 @@
     </ol>
     <em>Not all search results have analysis tools available.</em>
   </div>
-
+<!-- 
   <h3>Video Tutorial</h3>
   <div>
     <em>Embedded YouTube video here</em>
   </div>
+   -->
 </imp:pageFrame>
