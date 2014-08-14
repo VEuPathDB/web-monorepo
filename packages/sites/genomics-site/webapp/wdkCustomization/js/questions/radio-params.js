@@ -102,3 +102,8 @@ wdk.questionView('GeneQuestions.GenesByInterproDomain', RadioParamsView.extend({
   termName: 'domain_typeahead',
   wildcardName: 'domain_accession'
 }));
+
+wdk.questionView('CompoundQuestions.CompoundsByPathway', RadioParamsView.extend({
+  termName: 'metabolic_pathway_id_with_compounds',
+  wildcardName: 'pathway_wildcard'
+}));
