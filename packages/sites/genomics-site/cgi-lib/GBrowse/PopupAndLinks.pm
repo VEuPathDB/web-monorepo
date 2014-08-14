@@ -1376,6 +1376,12 @@ sub riteshMassSpec {
   return hover($f,\@data);
 }
 
+sub BamFileSeqBalloon {
+    my $f = shift;
+    my $seq = $f->query->dna;
+    my $len = length($seq);
+    return "$seq ($len bp)";
+}
 
 
 1;
