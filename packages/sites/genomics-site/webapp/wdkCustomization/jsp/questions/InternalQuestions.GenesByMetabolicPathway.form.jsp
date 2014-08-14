@@ -4,14 +4,12 @@
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="projectId" value="${applicationScope.wdkModel.projectId}" />
+<c:set var="project" value="${wdkModel.displayName}"/>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 
 <%-- QUESTIONS --%>
 <c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayKegg,GeneQuestions.GenesByReactionCompounds"/>
-<c:set var="plasmoToxo_pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayHagai" /><%-- QUESTIONS --%>
-
-
+<c:set var="plasmoToxo_pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayHagai" />
 <%-- END OF QUESTIONS --%>
 
 <imp:errors/>
