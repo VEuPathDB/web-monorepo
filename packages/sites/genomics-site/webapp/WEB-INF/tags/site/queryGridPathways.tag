@@ -6,27 +6,37 @@
 
 <c:set var="modelName" value="${wdkModel.displayName}"/>
 
-<table width="100%" border="0" cellspacing="1" cellpadding="1">
+<table width="100%" border="0" cellspacing="2" cellpadding="2">
 <tr>
 
+<td width="50%" >
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr> 
+                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByPathwayID" linktext="Pathway Name(s)" existsOn="Am C G M Pi P T Tt"/>
+    </tr>
+    <tr> 
+	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneList" linktext="Genes" existsOn="Am C G M Pi P T Tt"/>
+    </tr>
 
-        <td width="50%" >
-<div class="innertube2">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    </table>
+</td>
 
-<tr>
-                    <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByPathwayID" linktext="Pathway Name(s)" existsOn="P"/>
-                </tr>
+<td width="50%" >
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByCompounds" linktext="Compounds" existsOn="Am C G M Pi P T Tt"/>
+    </tr>
 
-<tr>
-	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByGeneList" linktext="Genes" existsOn="P"/>
-            	</tr>
-<tr>
-	             <imp:queryGridMakeUrl qset="PathwayQuestions" qname="PathwaysByCompounds" linktext="Compounds" existsOn="P"/>
-            	</tr>
-            </table>
-</div>
-        </td>
+
+    </table>
+</td>
 
 </tr>
 </table>
+
+
+
+
+
+
+
