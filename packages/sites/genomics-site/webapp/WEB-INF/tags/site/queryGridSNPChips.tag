@@ -14,15 +14,14 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
                   <tr>
-                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="NgsSnpBySourceId" linktext="SNP ID(s)" existsOn="A Am C P T Tt"/>
+                    <imp:queryGridMakeUrl qset="SnpChipQuestions" qname="SnpBySourceId" linktext="SNP ID(s)" existsOn="A Am C P T Tt"/>
                 </tr>
-                  <tr>
-                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="NgsSnpsByIsolateGroup" linktext="A Group of Isolates" existsOn="Am C P T Tt"/>
+ <tr>
+                    <imp:queryGridMakeUrl qset="SnpChipQuestions" qname="SnpsByStrain" linktext="Strain (Sanger)" existsOn="A C P T"/>
                 </tr>
-                 <tr>
-                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="NgsSnpsByLocation" linktext="Genomic Location (NGS)" existsOn="Am C P T Tt"/>
+                <tr>
+                    <imp:queryGridMakeUrl qset="SnpChipQuestions" qname="SnpsByLocation" linktext="Genomic Location (Sanger)" existsOn="A C P T"/>
                 </tr>
-                
 
             </table>
         </td>
@@ -35,11 +34,12 @@
         <td  width="50%" >
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-<tr>
-                    <imp:queryGridMakeUrl qset="SnpQuestions" qname="NgsSnpsByGeneIds" linktext="Gene ID (NGS)" existsOn="Am C P T Tt"/>
-                </tr>
                <tr>
-                   <imp:queryGridMakeUrl qset="SnpQuestions" qname="NgsSnpsByTwoIsolateGroups" linktext="Isolate Comparison (2 groups)" existsOn="Am C P T Tt"/>
+                    <imp:queryGridMakeUrl qset="SnpChipQuestions" qname="SnpsByGeneId" linktext="Gene ID (Sanger)" existsOn="C P T"/>
+                </tr>
+                 
+                <tr>
+                   <imp:queryGridMakeUrl qset="SnpChipQuestions" qname="SnpsByIsolatePattern" linktext="Isolate Comparison" existsOn="A P"/>
                 </tr>
 
 

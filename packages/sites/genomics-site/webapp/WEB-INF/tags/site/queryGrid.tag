@@ -62,13 +62,39 @@
 </td></tr>
 
 <%-----------------------------------------------------------------------------%>
-<%--  Isolates  --%>
+
+<tr>
+
+ <%--  All SNP Queries TABLE --%>
+    <td >    
+<div class="innertube2"> 
+	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
+		<tr class="headerrow2">
+			<td   align="center"><b>Identify SNPs by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<imp:queryGridSNPs/>
+		</td></tr>
+   	</table> 
+</div>
+    </td>
+
+<%--  All SNP CHIP Queries TABLE --%>
+    <td >    
+<div class="innertube2"> 
+	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
+		<tr class="headerrow2">
+			<td   align="center"><b>Identify SNPs (from Chips) by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<imp:queryGridSNPChips/>
+		</td></tr>
+   	</table> 
+</div>
+    </td>
 
 
-  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Isolates by:</b></td></tr>
-  <tr><td colspan="3" align="center">
-	<imp:queryGridIsolates/> 
-  </td></tr>
+</tr>
 
 <%-----------------------------------------------------------------------------%>
 <%--  All Pathways and Compounds  --%>
@@ -113,7 +139,7 @@
 </tr>
 
 <%-----------------------------------------------------------------------------%>
-<%--  All Genomic and SNP  --%>
+<%--  All Genomic and Segments  --%>
 <tr>
     <%-- All Genomic Sequences (CONTIG) Queries TABLE  --%>
     <td >     
@@ -145,7 +171,7 @@
 </tr>
 
 <%-----------------------------------------------------------------------------%>
-<%--  All EST and EST Assemblies --%>
+<%--  All EST and ISOLATES --%>
 <tr>
     <%-- All EST Queries TABLE  --%>
     <td >     
@@ -159,23 +185,22 @@
 		</td></tr>	
 	</table> 
 </div>
-</div>
     </td>
 
-    <%--  All SNP Queries TABLE --%>
-    <td >    
+   <%--  Isolates  --%>
+
+ <td >     
 <div class="innertube2"> 
-	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
-		<tr class="headerrow2">
-			<td   align="center"><b>Identify SNPs by:</b></td>
-		</tr>
-		<tr><td align="center">
-			<imp:queryGridSNPs/>
-		</td></tr>
-   	</table> 
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+
+  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Isolates by:</b></td></tr>
+  <tr><td colspan="3" align="center">
+	<imp:queryGridIsolates/> 
+  </td></tr>
+
+	</table> 
 </div>
     </td>
-
 
 </tr>
 
