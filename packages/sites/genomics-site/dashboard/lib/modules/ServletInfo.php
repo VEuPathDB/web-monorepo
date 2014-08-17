@@ -2,16 +2,16 @@
 require_once dirname(__FILE__) . "/JolModule.php";
 
 /**
- * Selected attributes from Catalina:type=Server mbean
+ * Selected attributes from org.apidb.wdk:type=ServletVersions mbean
  *
  * @author Mark Heiges <mheiges@uga.edu>
  * @package Module
  * @subpackage Tomcat
 */
-class Catalina extends JolModule {
+class ServletInfo extends JolModule {
 
   /**
-   * @return array Selected Catalina attributes
+   * @return array servlet attributes
    */
   public function attributes() {
     //$domain = $this->configuration->get('tomcat_engine_name');
