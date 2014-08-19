@@ -35,10 +35,10 @@
               background-color: lightgreen;
             }
             .go-download-link {
-              position: absolute;
-              top: 0px;
-              right: 0px;
+              float:right;
               font-weight: bold;
+              width: 320px;
+              text-align:right;
             }
             .go-empty-results {
               font-weight: bold;
@@ -46,19 +46,12 @@
               text-align: center;
             }
           </style>
-          <span class="go-download-link">
+          <div class="go-download-link">
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
             <a href="${downloadUrl}">Download Analysis Results</a>
-          </span>
-          <h2 style="text-align:center">Enriched GO Terms</h2>
-          <p class="go-result-p">
-            <em>Note: your results for this analysis might change in the next release of ${project}.
-                To save this exact result permanently, please download it.</em>
-            <!--
-            <em>GO Enriched terms from ${viewModel.goSources} (sources) and ${viewModel.goOntologies} (ontologies) with P-Value
-            Cutoff value ${viewModel.pvalueCutoff}.</em>
-            -->
-          </p>
+            <p style="font-size:90%;font-weight:normal;margin:0">If your step results change (because of revision, filters or changes in previous steps) you will need to re-run your analyses.</p>
+          </div>
+          <h3>Enriched GO Terms Results</h3>
           <c:if test="${empty viewModel.resultData}">
             <div class="go-empty-results">No enrichment was found with significance at the P-value threshold you specified.</div>
           </c:if>
