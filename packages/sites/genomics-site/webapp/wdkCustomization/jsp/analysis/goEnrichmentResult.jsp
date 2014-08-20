@@ -37,7 +37,8 @@
             .go-download-link {
               float:right;
               font-weight: bold;
-              width: 320px;
+              font-size: 110%;
+              width: 430px;
               text-align:right;
             }
             .go-empty-results {
@@ -49,9 +50,12 @@
           <div class="go-download-link">
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
             <a href="${downloadUrl}">Download Analysis Results</a>
-            <p style="font-size:90%;font-weight:normal;margin:0">If your step results change (because of revision, filters or changes in previous steps) you will need to re-run your analyses.</p>
+            <p style="font-size:90%;font-weight:normal;margin:0">
+              The gene result used to generate this analysis will change if a step in the search strategy is revised or filtered. 
+              If this occurs, you will have to re-run the analysis.
+            </p>
           </div>
-          <h3>Enriched GO Terms Results</h3>
+          <h3>Analysis Results</h3>
           <c:if test="${empty viewModel.resultData}">
             <div class="go-empty-results">No enrichment was found with significance at the P-value threshold you specified.</div>
           </c:if>
