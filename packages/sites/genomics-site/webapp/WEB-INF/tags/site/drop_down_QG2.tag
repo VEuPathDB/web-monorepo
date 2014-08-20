@@ -170,7 +170,7 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 -->
                 <c:if test="${qSet.internal == false}">
                   <c:if test="${qSet.displayName == cat.displayName}">
-                    <br><br>
+                   
                     <li>
                       <a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
                       <ul>
