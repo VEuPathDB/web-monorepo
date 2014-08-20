@@ -51,8 +51,7 @@
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
             <a href="${downloadUrl}">Download Analysis Results</a>
             <p style="font-size:90%;font-weight:normal;margin:0">
-              The gene result used to generate this analysis will change if a step in the search strategy is revised or filtered. 
-              If this occurs, you will have to re-run the analysis.
+The gene result used to generate this analysis might change and you will have to re-run the analysis; to save your current analysis results please download.
             </p>
           </div>
           <h3>Analysis Results</h3>
