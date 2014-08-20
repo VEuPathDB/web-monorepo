@@ -22,7 +22,7 @@
  --%>
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
 
-<ul>
+<ul style="margin:0;padding:0;list-style:none">
   <c:forEach items="${rootCatMap}" var="rootCatEntry">
     <c:set var="recType" value="${rootCatEntry.key}" />
     <c:set var="rootCat" value="${rootCatEntry.value}" />
