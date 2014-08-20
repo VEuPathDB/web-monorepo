@@ -117,7 +117,7 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 </ul>
 </span>
 
-<br><br>
+
 <!-- show all questionSets in model, driven by categories as in menubar -->
 <imp:drop_down_QG2 from="webservices" />
 
