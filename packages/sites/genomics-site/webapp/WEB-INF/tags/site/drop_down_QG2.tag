@@ -161,13 +161,15 @@
         <c:set var="cat" value="${catEntry.value}" />
         <c:if test="${fn:length(cat.websiteQuestions) > 0}">
           <c:choose>
+
+             <%-- WEBSERVICES PAGE  --%>
             <c:when test="${from == 'webservices'}">
               <c:forEach items="${questionSets}" var="qSet">
-<!-- DEBUG 
+<!-- DEBUG
 <br>
 ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 <br>
--->
+ -->
                 <c:if test="${qSet.internal == false}">
                   <c:if test="${qSet.displayName == cat.displayName}">
                    
