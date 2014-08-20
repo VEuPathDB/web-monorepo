@@ -12,9 +12,7 @@
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
 <%-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
-     Two reasons why the model was used:
-      - to avoid fake questions; 
-          now with the new flag "usedBy" we could read from categories.xml, using "usedBy='website'" on fake questions.
+     the reason being:
       - categories.xml does not provide the questionSet name (e.g. EstQuestions) that is needed to form the WS URL.
           one could obtain the questionSet name either by 
             - hardcoding it below (there is already an if that could be used)
