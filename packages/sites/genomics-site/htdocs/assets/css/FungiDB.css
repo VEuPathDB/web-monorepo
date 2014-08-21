@@ -6,11 +6,11 @@ body {
 	background-image: url(/assets/images/FungiDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink {
+a:link, a:visited, div.divlink, .link {
 	color: #067387;
 }
 
-a:hover, a:active, a:focus, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
 	color: #672a87;   /* #4eb8cb; */
 }
 

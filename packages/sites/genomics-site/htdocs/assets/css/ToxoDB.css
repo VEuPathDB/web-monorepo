@@ -6,7 +6,7 @@ body {
 	background-image: url(/assets/images/ToxoDB/background_s.jpg);
 }
 
-a:link, div.divlink {
+a:link, div.divlink, .link {
 	color: #187a02; //#206910;  //green
 }
 
@@ -14,7 +14,7 @@ a:visited {
 	color: #507a46;            //muter green
 }
 
-a:hover, a:active, a:focus, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
 	color: #772841;            //dark pink, wine color
 }
 

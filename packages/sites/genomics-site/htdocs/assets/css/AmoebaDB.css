@@ -6,7 +6,7 @@ body {
 	background-image: url(/assets/images/AmoebaDB/background_s.jpg);
 }
 
-a:link, div.divlink {
+a:link, div.divlink, .link {
 	color: #02935c;     //green
 }
 
@@ -14,7 +14,7 @@ a:visited {
 	color: #628276;     //paler green
 }
 
-a:hover, a:active, a:focus, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
 	color:  #58441F;    //brown
 }
 

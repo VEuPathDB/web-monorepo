@@ -6,11 +6,11 @@ body {
 	background-image: url(/assets/images/TriTrypDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink {
+a:link, a:visited, div.divlink, .link {
 	color: #015f9a;
 }
 
-a:hover, a:active, a:focus, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
 	color: #b45f04;    /* for contrast   93c4e3; */
 }
 

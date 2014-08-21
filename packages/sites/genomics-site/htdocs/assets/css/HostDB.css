@@ -6,11 +6,11 @@ body {
 	background-image: url(/assets/images/PiroplasmaDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink {
+a:link, a:visited, div.divlink, .link {
 	color: #316e9f; 
 }
 
-a:hover, a:active, a:focus, div.divlink:hover {
+a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
 	color: #6f223a;    /*  #9a5b37;    */
 }
 
