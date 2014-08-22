@@ -38,7 +38,7 @@
               float:right;
               font-weight: bold;
               font-size: 110%;
-              width: 430px;
+              width: 340px;
               text-align:right;
             }
             .go-empty-results {
@@ -51,7 +51,7 @@
             <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
             <a href="${downloadUrl}">Download Analysis Results</a>
             <p style="font-size:90%;font-weight:normal;margin:0">
-The gene result used to generate this analysis might change and you will have to re-run the analysis; to save your current analysis results please download.
+This analysis result may be lost if you change your gene result. To save this analysis result, please download.
             </p>
           </div>
           <h3>Analysis Results</h3>
