@@ -47,7 +47,7 @@
                                     <c:set var="filterCountLoaded" value="" />
                                   </c:when>
                                   <c:when test="${filterCount == -1}"><c:set var="filterCount">Error</c:set></c:when>
-                                  <c:when test="${filterCount == -1}"><c:set var="filterCount">N/A</c:set></c:when>
+                                  <c:when test="${filterCount == -2}"><c:set var="filterCount">N/A</c:set></c:when>
                                 </c:choose>
                                 <a id="link-${instanceName}-2" class="link-url ${filterCountLoaded}" data-filter="${instanceName}" 
                                    href="javascript:void(0)" countref="${countUrl}" strId="${strategyId}" stpId="${stepId}" 
@@ -100,7 +100,7 @@
                                     <c:set var="filterCountLoaded" value="" />
                                   </c:when>
                                   <c:when test="${filterCount == -1}"><c:set var="filterCount">Error</c:set></c:when>
-                                  <c:when test="${filterCount == -1}"><c:set var="filterCount">N/A</c:set></c:when>
+                                  <c:when test="${filterCount == -2}"><c:set var="filterCount">N/A</c:set></c:when>
                                 </c:choose>
                                 <a id="link-${instanceName}-2" class="link-url ${filterCountLoaded}" data-filter="${instanceName}" 
                                    href="javascript:void(0)" countref="${countUrl}" strId="${strategyId}" stpId="${stepId}" 
