@@ -117,3 +117,8 @@ wdk.questionView('PathwayQuestions.PathwaysByPathwayID', RadioParamsView.extend(
   termName: 'metabolic_pathway_id',
   wildcardName: 'pathway_wildcard'
 }));
+
+wdk.questionView('IsolateQuestions.IsolateByProduct', RadioParamsView.extend({
+  termName: 'product',
+  wildcardName: 'product_wildcard'
+}));
