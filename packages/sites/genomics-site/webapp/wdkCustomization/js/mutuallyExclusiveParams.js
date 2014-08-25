@@ -146,7 +146,6 @@
 
     destroy: function() {
       // remove previous xor-group markup and elements
-      $(this.element).off();
       $(this.element).find(".xor-select").remove();
       $(this.element).find(".xor-group").removeClass("xor-group").show();
 
