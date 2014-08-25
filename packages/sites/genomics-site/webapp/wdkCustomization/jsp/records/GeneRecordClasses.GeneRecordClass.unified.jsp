@@ -232,7 +232,7 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 </div>
 
-<!--------------  NOTE on Unpublished data as it was in Plasmo page ----------------------->
+<!--------------  NOTE on data with ReleasePolicy, or default text for Unpublished data ---------------->
 <c:if test="${projectId ne 'TrichDB' }">
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
