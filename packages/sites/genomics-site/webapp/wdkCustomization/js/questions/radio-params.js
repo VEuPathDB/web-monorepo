@@ -103,7 +103,17 @@ wdk.questionView('GeneQuestions.GenesByInterproDomain', RadioParamsView.extend({
   wildcardName: 'domain_accession'
 }));
 
+wdk.questionView('GeneQuestions.GenesByMetabolicPathwayKegg', RadioParamsView.extend({
+  termName: 'metabolic_pathway_id_with_genes',
+  wildcardName: 'pathway_wildcard'
+}));
+
 wdk.questionView('CompoundQuestions.CompoundsByPathway', RadioParamsView.extend({
   termName: 'metabolic_pathway_id_with_compounds',
+  wildcardName: 'pathway_wildcard'
+}));
+
+wdk.questionView('PathwayQuestions.PathwaysByPathwayID', RadioParamsView.extend({
+  termName: 'metabolic_pathway_id',
   wildcardName: 'pathway_wildcard'
 }));
