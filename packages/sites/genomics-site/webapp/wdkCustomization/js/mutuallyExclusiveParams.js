@@ -169,7 +169,6 @@
         questionName = form.find("div#questionName").attr("name"),
         getChromosomeParam = function() { return form.find('[id^="chromosomeOptional"]:input'); },
         sequenceR = /(\(Example: .*\)|No match)/i,
-        inlineSubmit,
         chromosomeFakeNull,
         groups;
 
@@ -205,11 +204,6 @@
       return;
     }
 
-    // disable inline submit; we call it below
-    inlineSubmit = form[0].onsubmit;
-    form[0].onsubmit = null;
-
-
     form.mutuallyExclusiveParams({
       groups: groups,
 
@@ -235,6 +229,7 @@
           sequenceR.test(this.sequenceId.value) &&
           questionName !== 'DynSpansBySourceId') {
         alert("Please enter a valid Sequence ID");
+        this.sequenceId.select();
         event.preventDefault();
         return false;
       }
@@ -248,9 +243,6 @@
 
       this.organism.disabled = false;
 
-      if (inlineSubmit instanceof Function) {
-        inlineSubmit.call(this);
-      }
     }).on("change", function() {
       form.mutuallyExclusiveParams("change");
     });

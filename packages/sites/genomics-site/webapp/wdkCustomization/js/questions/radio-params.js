@@ -40,9 +40,6 @@ var RadioParamsView = Backbone.View.extend({
     this.nonsenseValue = this.nonsenseValue;
     var nonsenseValueR = new RegExp('^(nil|' + this.nonsenseValue + ')$', 'i');
 
-    this.inlineSubmit = this.el.onsubmit;
-    this.el.onsubmit = null;
-
     // default term to be selected, unless wildcard has value
     if (wildcardValue && !nonsenseValueR.test(wildcardValue.trim())) {
       wildcardWrapper.find('[name="active-param"]').prop('checked', true);
@@ -80,10 +77,6 @@ var RadioParamsView = Backbone.View.extend({
     this.$('.param-item.inactive').find('input').val(this.nonsenseValue);
     this.$('.param-item.inactive').find('select')
       .append('<option value="' + this.nonsenseValue + '"/>').val(this.nonsenseValue);
-
-    if ('function' === typeof this.inlineSubmit) {
-      this.inlineSubmit.call(this.el);
-    }
   }
 
 });
