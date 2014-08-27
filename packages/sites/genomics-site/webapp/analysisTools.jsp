@@ -26,7 +26,7 @@
   <img src="/assets/images/Overall.jpg" width="400px"/></div>
 <br><br>
 
-  <h3> 3 Steps to Analyzing a Search or Strategy Result:</h3>
+  <h3> 4 Steps to Analyzing a Search or Strategy Result:</h3>
   <div>
     <ol>
       <li>Start a new search, or open an existing strategy.</li>
