@@ -219,10 +219,13 @@ not clear we need icons on categories, ui-infra meet May 22, 2012
 </c:if>
 --%>
 
+<%--
 <c:if test="${fn:containsIgnoreCase(linktext, 'Host Response')}">
 	<imp:image alt="New feature icon" title="This is a new search" 
          src="/wdk/images/new-feature.png" />
 </c:if>
+--%>
+
 <c:if test="${fn:containsIgnoreCase(qname, 'SnpsByIsolatesGroup')}">
 	<imp:image alt="New feature icon" title="This is a new search" 
          src="/wdk/images/beta2-30.png" />
