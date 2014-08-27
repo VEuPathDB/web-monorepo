@@ -26,25 +26,17 @@
   <img src="/assets/images/Overall.jpg" width="400px"/></div>
 <br><br>
 
-  <h3>4 Steps to Analyzing a Search or Strategy Result:</h3>
+  <h3> 3 Steps to Analyzing a Search or Strategy Result:</h3>
   <div>
     <ol>
       <li>Start a new search, or open an existing strategy.</li>
-      <li>When the strategy is loaded, 
-      choose the result and organism that you wish to analyze. 
-      <ol type=a>
-         <li>To choose the result that you wish to analyze, click the strategy box that represents the result. 
+      <li>When the search or strategy is loaded, 
+      choose the result that you wish to analyze by clicking the 
+      strategy box that represents the result. 
          The active result is highlighted in yellow. 
-         
          <div><img src="/assets/images/choose_result.jpg" width="350px"/></div></li>
-         <!--  
-         <li>If the result contains genes from more than one organism, use the 
-         filter table to limit the result to genes from a single organism.
-         
-         <div><img src="/assets/images/choose_organism.jpg" width="500px"/></div></li>
-      </ol>
-       </li>
-       -->
+      
+       
       <li>Click on the blue "Analyze Results" button. The button appears next to the tabbed results pages.
       
       <div><img src="/assets/images/click_button.jpg" width="400px"/></div></li>
