@@ -13,7 +13,7 @@
                banner="Analyze Results"
                parentUrl="/home.jsp">
 
-  <h1>Analyze Your Strategy Results <img src="/assets/images/camera.png"/></h1>
+  <h1>Analyze Your Strategy Results <img src="/assets/images/camera.png" width="12px"/></h1>
   
   <a href=https://www.youtube.com/watch?v=npgkkychkrI class="new-window"><img src="/assets/images/camera.png"/></a>
 
