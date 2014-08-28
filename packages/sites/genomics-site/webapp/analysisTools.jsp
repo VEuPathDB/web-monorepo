@@ -13,9 +13,9 @@
                banner="Analyze Results"
                parentUrl="/home.jsp">
 
-  <h1>Analyze Your Strategy Results <img src="/assets/images/camera.png" width="12px"/></h1>
+  <h1>Analyze Your Strategy Results <a href=https://www.youtube.com/watch?v=npgkkychkrI class="new-window"><img src="/assets/images/camera.png" width="25px"/></a></h1>
   
-  <a href=https://www.youtube.com/watch?v=npgkkychkrI class="new-window"><img src="/assets/images/camera.png"/></a>
+  
 
   <p>Our sites offer tools for analyzing the results of gene searches or strategies. 
   After running a search or strategy that returns genes, you can analyze the results to find 
