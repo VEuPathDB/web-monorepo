@@ -51,7 +51,7 @@
 <!-- 
   <h3>Video Tutorial</h3>
   <div>
-    <em>Embedded YouTube video here</em>
+    <em><iframe width="420" height="315" src="//www.youtube.com/embed/npgkkychkrI" frameborder="0" allowfullscreen></iframe></em>
   </div>
    -->
 </imp:pageFrame>
