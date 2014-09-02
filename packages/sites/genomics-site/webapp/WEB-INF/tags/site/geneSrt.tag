@@ -89,37 +89,25 @@
           <tr>
             <td>begin at</td>
             <td align="left">
-              <select name="upstreamAnchor3">
-                <option value="Start" selected>Start</option>
-                <option value="End">Stop</option>
+              <select name="startAnchor3">
+                <option value="Start" selected>upstream from Start</option>
+                <option value="End">downstream from Stop</option>
               </select>
             </td>
             <td align="left">
-              <select name="upstreamSign3">
-                <option value="plus" selected>+</option>
-                <option value="minus">-</option>
-              </select>
-	    </td>
-            <td align="left">
-              <input id="upstreamOffset3" name="upstreamOffset3" value="0" size="6"/> aminoacids
+              <input id="startOffset3" name="startOffset3" value="0" size="6"/> aminoacids
             </td>
           </tr>
           <tr>
             <td>end at</td>
             <td align="left">
-              <select name="downstreamAnchor3">
-                <option value="Start">Start</option>
-                <option value="End" selected>Stop</option>
+              <select name="endAnchor3">
+                <option value="Start">upstream from Start</option>
+                <option value="End" selected>downstream from Stop</option>
               </select>
             </td>
             <td align="left">
-              <select name="downstreamSign3">
-                <option value="plus" selected>+</option>
-                <option value="minus">-</option>
-              </select>
-            </td>
-            <td align="left">
-              <input id="downstreamOffset3" name="downstreamOffset3" value="0" size="6"> aminoacids
+              <input id="endOffset3" name="endOffset3" value="0" size="6"> aminoacids
             </td>
           </tr>
         </table>
