@@ -386,25 +386,6 @@ organismFull:   Plasmodium falciparum 3D7
 
 <imp:wdkTable2 tblName="UserComments" isOpen="true" attribution="" />
 
-
-<!-- EC number -->
-<a name="ecNumber"></a>
-<c:if test="${isCodingGene}">
-  <imp:wdkTable2 tblName="EcNumber" isOpen="false" attribution=""/>
-</c:if>
-
-
-<!-- metabolic pathways -->
-<imp:wdkTable2 tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
-
-
-<!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not loaded in rebuild --> 
-<%-- imp:wdkTable tblName="GeneDeprecation" isOpen="true"/ --%>
-
-
-<!-- External Links --> 
-<imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
-
 <!-- Orthologs and Paralogs -->
 <c:if test="${isCodingGene}">
   <c:set var="orthomclLink">
@@ -427,6 +408,28 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
+<!-- gene alias table -->
+<imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
+
+
+<!-- External Links --> 
+<imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
+
+
+<!-- Hagai -->
+<c:if test="${isCodingGene}">
+  <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
+</c:if>
+
+<!-- metabolic pathways -->
+<imp:wdkTable2 tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
+
+<!-- EC number -->
+<a name="ecNumber"></a>
+<c:if test="${isCodingGene}">
+  <imp:wdkTable2 tblName="EcNumber" isOpen="false" attribution=""/>
+</c:if>
+
 <!-- GO TERMS -->
 <c:if test="${isCodingGene}">
   <a name="goTerm"></a>
@@ -438,13 +441,6 @@ organismFull:   Plasmodium falciparum 3D7
   <imp:wdkTable2 tblName="GoTerms" attribution="" postscript="${goEvidenceLink}"/>
 </c:if>
 
-<%-- from giardia new in build21--%>
-<imp:wdkTable2 tblName="CellularLocalization" isOpen="true" attribution=""/>
-
-
-<!-- gene alias table -->
-<imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
-
 <!-- Notes from annotator == in toxo only shown if externalDbName.value eq 'Roos Lab T. gondii apicoplast-->
 <imp:wdkTable2 tblName="Notes" attribution="" />
 
@@ -452,11 +448,8 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- phenotype -->
 <imp:wdkTable2 tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
 
-
-<!-- Hagai -->
-<c:if test="${isCodingGene}">
-  <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
-</c:if>
+<%-- mr4reagents  --%>
+<imp:wdkTable2 tblName="Mr4Reagents" attribution=""/>
 
 
 <%-- PlasmoGem --%>
@@ -466,14 +459,20 @@ organismFull:   Plasmodium falciparum 3D7
     content="${attrs['plasmogem_link']}" />
 </c:if>
 
+<%-- from giardia new in build21--%>
+<imp:wdkTable2 tblName="CellularLocalization" isOpen="true" attribution=""/>
 
-<%-- mr4reagents  --%>
-<imp:wdkTable2 tblName="Mr4Reagents" attribution=""/>
 
+<!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not loaded in rebuild --> 
+<%-- imp:wdkTable tblName="GeneDeprecation" isOpen="true"/ --%>
 
 <%-- was already commented out
 <imp:wdkTable2 tblName="AnnotationChanges"/>
 --%>
+
+
+
+
 
 
 <%--##########################   PROTEIN      ################################--%>
