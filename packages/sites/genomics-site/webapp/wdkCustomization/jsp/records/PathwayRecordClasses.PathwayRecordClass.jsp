@@ -166,7 +166,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 
 	  <%-- Apicomplexa ---%>
 	  <c:if test="${projectId eq 'CryptoDB' || projectId eq 'PiroplasmaDB' || projectId eq 'PlasmoDB' || projectId eq 'ToxoDB'}"> 
-	    <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Chromera,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma,Vitrella', 'genus', '1')">Apicomplexa</a></li>
+	    <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma', 'genus', '1')">Apicomplexa</a></li>
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus', 'genus','1')">Cryp,Toxo,Plas,Human,Mouse</a></li>
 	  </c:if>
 
