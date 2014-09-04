@@ -460,7 +460,9 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 <%-- from giardia new in build21--%>
-<imp:wdkTable2 tblName="CellularLocalization" isOpen="true" attribution=""/>
+<c:if test="${projectId eq 'GiardiaDB' && attrs['has_image'].value eq '1'}">
+  <imp:wdkTable tblName="CellularLocalization" isOpen="true" attribution=""/>
+</c:if> 
 
 
 <!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not loaded in rebuild --> 
