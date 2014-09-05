@@ -577,6 +577,12 @@
       validate="false">
     </action>
     <action
+      path="/getMetadata"
+      type="org.gusdb.wdk.controller.action.GetMetadataAction"
+      scope="request"
+      validate="false">
+    </action>
+    <action
       path="/logging"
       parameter="org.gusdb.wdk.controller.action.standard.LoggingAction"
       type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
