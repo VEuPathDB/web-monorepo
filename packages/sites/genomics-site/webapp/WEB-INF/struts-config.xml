@@ -580,6 +580,7 @@
       path="/getMetadata"
       type="org.gusdb.wdk.controller.action.GetMetadataAction"
       scope="request"
+      name="questionForm"
       validate="false">
     </action>
     <action
