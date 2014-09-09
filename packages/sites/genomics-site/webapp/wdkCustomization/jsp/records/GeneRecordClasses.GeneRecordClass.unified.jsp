@@ -397,7 +397,9 @@ organismFull:   Plasmodium falciparum 3D7
     </c:when>
     <c:otherwise>
     <div>
-    <br> <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
+    <br> <a title="We map our genes to ortholog groups in the OrthoMC.org website. If a gene maps to an existing OrthoMCL group, we report it here with a link so that you can get information about the group, for example descriptions of the other gene members. But OrthoMCL.org website contains version 5 of OrthoMCL which was built a few years ago, so many of the current genes in the EuPathDB websites are not included in this old OrthoMCL 5 build. Therefore this gene might not be listed as a member in the group at OrthoMCL.org.
+
+We are currently in the process of creating an updated version 6 of OrthoMCL which should be available in the next few months." target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
     </div>
     </c:otherwise>
   </c:choose>
