@@ -109,9 +109,9 @@ Please use the following URL's to download FASTA files with DNA sequence for spe
 <br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_06_v3&start=1122801&end=1153664">
   http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_06_v3&start=1122801&end=1153664</a>
 <br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)">
-  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700</a>
+  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)</a>
 </li>
-<li>For multiple segments use the line feed character (%0A) as separator (comma or semicolon or carriage return do not work):
+<li>For multiple sequences use the line feed character (%0A) as separator (comma or semicolon or carriage return do not work):
 <br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)%0APf3D7_04_v3%20(800..900)">
 http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)%0APf3D7_04_v3%20(800..900)</a>
 </li>
