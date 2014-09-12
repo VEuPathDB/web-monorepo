@@ -114,21 +114,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 ${attrs['organism'].value}<br>
 </c:set>
 
-<!--
-<c:if test="${attrs['cyc_gene_id'].value ne 'null'}">
-  <c:set var="content">
-    ${content}<br>
-    ${attrs['cyc_db'].value}
-  </c:set>
-</c:if>
-
-<imp:panel 
-    displayName="Links to Other Web Pages"
-    content="${content}" />
-<br>
--->
-
-
      <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
   
      <c:set var="protein_gtracks" value="${attrs['protein_gtracks'].value}"/>
