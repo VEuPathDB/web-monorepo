@@ -69,10 +69,6 @@
               required="false"
               description="Dataset ID (from Data Sets) for attribution"
 %>
-<%@ attribute name="downloadLink"
-              required="false"
-              description="download link"
-%>
 
 <c:set var="userAgent" value="${header['User-Agent']}"/>
 
@@ -143,18 +139,18 @@
         <c:when test="${fn:contains(userAgent, 'Firefox') || fn:contains(userAgent, 'Red Hat') }">
            <div id="toggle${name}" class="toggle-handle" name="${name}" align="left">
              <b>${displayName}</b>
-             <a href="javascript:void(0)" onclick="javascript:${showOnClick}wdk.api.toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
+             <a href="javascript:void(0)" onclick="javascript:${showOnClick}wdk.api.toggleLayer('${name}', 'toggle${name}')" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>&nbsp;&nbsp;${displayLink}
            </div>
         </c:when>
 
         <%--  Netscape/Firefox cannot handle this way of doing it  --%>
         <c:otherwise>
            <div id="showToggle${name}" class="toggle" name="${name}" align="left"><b>${displayName}</b>
-             <a href="javascript:void(0)" onclick="javascript:${showOnClick}wdk.api.showLayer('${name}')&amp;&amp;wdk.api.showLayer('hideToggle${name}')&amp;&amp;wdk.api.hideLayer('showToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',1,365)" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>
+             <a href="javascript:void(0)" onclick="javascript:${showOnClick}wdk.api.showLayer('${name}')&amp;&amp;wdk.api.showLayer('hideToggle${name}')&amp;&amp;wdk.api.hideLayer('showToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',1,365)" title="Show ${displayName}" onmouseover="status='Show ${displayName}';return true" onmouseout="status='';return true">Show</a>&nbsp;&nbsp;${displayLink}
            </div>
 
            <div id="hideToggle${name}" class="toggle" name="${name}" align="left"><b>${displayName}</b>
-              <a href="javascript:void(0)" onclick="javascript:wdk.api.hideLayer('${name}')&amp;&amp;wdk.api.showLayer('showToggle${name}')&amp;&amp;wdk.api.hideLayer('hideToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',0,365);" title="Hide ${displayName}" onmouseover="status='Hide ${displayName}';return true" onmouseout="status='';return true">Hide</a>
+              <a href="javascript:void(0)" onclick="javascript:wdk.api.hideLayer('${name}')&amp;&amp;wdk.api.showLayer('showToggle${name}')&amp;&amp;wdk.api.hideLayer('hideToggle${name}')&amp;&amp;wdk.api.storeIntelligentCookie('show${name}',0,365);" title="Hide ${displayName}" onmouseover="status='Hide ${displayName}';return true" onmouseout="status='';return true">Hide</a>&nbsp;&nbsp;${displayLink}
             </div>
         </c:otherwise>
         </c:choose>
@@ -163,12 +159,6 @@
     </c:choose>
 
     </td>
-    <c:if test='${displayLink != null && displayLink != ""}'>
-      <td align="left"> ${displayLink} </td>
-    </c:if>
- <c:if test='${downloadLink != null && downloadLink != ""}'>
-      <td align="right"> ${downloadLink} </td>
-    </c:if>
 
     <c:choose>
 	 <c:when  test='${dsLink != null && dsLink != ""}'>

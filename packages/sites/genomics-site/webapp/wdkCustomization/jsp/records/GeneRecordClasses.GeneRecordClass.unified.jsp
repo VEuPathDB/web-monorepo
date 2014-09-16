@@ -698,7 +698,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 </c:set>
 <imp:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
-    content="${seq}" downloadLink="${downloadLink}"/>
+    content="${seq}" displayLink="${downloadLink}"/>
 
 
 
