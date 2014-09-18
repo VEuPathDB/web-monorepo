@@ -45,7 +45,7 @@
 <div class="h2center" style="text-align:center;">Genomic Colocation
 <span>
 <a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-  <imp:image title="Help text in a popup window" src="/wdk/images/spanhelp.png" width="19"  alt="help with combining IDs via relative genomic location" />
+  <imp:image title="Help text in a popup window" src="wdk/images/spanhelp.png" width="19"  alt="help with combining IDs via relative genomic location" />
 </a>
 <a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
 	<img style="position:relative;right:8px" title="7-minute flash tutorial on a popup window" src="/assets/images/camera.png" width="22" alt="help with combining IDs via relative genomic location" />

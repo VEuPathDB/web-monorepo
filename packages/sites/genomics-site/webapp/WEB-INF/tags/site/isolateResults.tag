@@ -110,7 +110,7 @@
         </c:otherwise>
       </c:choose>
       <a href="javascript:void(0)" onclick="${basketClick}">
-        <imp:image class="head basket" src="/wdk/images/basket_gray.png" height="16" width="16" value="0"/>
+        <imp:image class="head basket" src="wdk/images/basket_gray.png" height="16" width="16" value="0"/>
       </a>
     </th>
   </c:if>
@@ -127,17 +127,17 @@
                 <td style="padding:0;">
                   <c:choose>
 				            <c:when test="${!sumAttrib.sortable}">
-				              <imp:image src="/wdk/images/results_arrw_up_blk.png" border="0" alt="Sort up"/>
+				              <imp:image src="wdk/images/results_arrw_up_blk.png" border="0" alt="Sort up"/>
 				            </c:when>
 				            <c:when test="${attrName == sortingAttrNames[0] && sortingAttrOrders[0]}">
-				              <imp:image src="/wdk/images/results_arrw_up_gr.png"  alt="Sort up" 
+				              <imp:image src="wdk/images/results_arrw_up_gr.png"  alt="Sort up" 
 				                  title="Result is sorted by ${sumAttrib}" />
 				            </c:when>
 				            <c:otherwise>
                       <%-- display sorting buttons --%>
                       <c:set var="resultsAction" value="javascript:wdk.resultsPage.getResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=asc', true, true)" />
                       <a href="${resultsAction}" title="Sort by ${sumAttrib}">
-                        <imp:image src="/wdk/images/results_arrw_up.png" alt="Sort up" border="0" />
+                        <imp:image src="wdk/images/results_arrw_up.png" alt="Sort up" border="0" />
                       </a>
                     </c:otherwise>
                   </c:choose> 
@@ -147,17 +147,17 @@
                 <td style="padding:0;">
 	        <c:choose>
             <c:when test="${!sumAttrib.sortable}">
-	             <imp:image src="/wdk/images/results_arrw_dwn_blk.png" border="0" />
+	             <imp:image src="wdk/images/results_arrw_dwn_blk.png" border="0" />
 	          </c:when>
             <c:when test="${attrName == sortingAttrNames[0] && !sortingAttrOrders[0]}">
-              <imp:image src="/wdk/images/results_arrw_dwn_gr.png" alt="Sort down" 
+              <imp:image src="wdk/images/results_arrw_dwn_gr.png" alt="Sort down" 
 	                    title="Result is sorted by ${sumAttrib}" />
             </c:when>
             <c:otherwise>
               <%-- display sorting buttons --%>
               <c:set var="resultsAction" value="javascript:wdk.resultsPage.getResultsPage('${commandUrl}&command=sort&attribute=${attrName}&sortOrder=desc', true, true)" />
               <a href="${resultsAction}" title="Sort by ${sumAttrib}">
-              <imp:image src="/wdk/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
+              <imp:image src="wdk/images/results_arrw_dwn.png" alt="Sort down" border="0" /></a>
             </c:otherwise>
           </c:choose>
                    </td>
@@ -172,7 +172,7 @@
             <c:set var="resultsAction" value="javascript:wdk.resultsPage.getResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
             <a href="${resultsAction}"
                         title="Remove ${sumAttrib} column">
-              <imp:image src="/wdk/images/results_x.png" alt="Remove" border="0" /></a>
+              <imp:image src="/dk/images/results_x.png" alt="Remove" border="0" /></a>
           </td>
         </c:if>
 
@@ -223,7 +223,7 @@
               </c:otherwise>
             </c:choose>
 	    <a href="javascript:void(0)" onclick="${basketClick}">
-	      <imp:image title="${basketTitle}" class="basket" value="${is_basket}" src="/wdk/images/${basket_img}" width="16" height="16"/>
+	      <imp:image title="${basketTitle}" class="basket" value="${is_basket}" src="wdk/images/${basket_img}" width="16" height="16"/>
 	    </a>
           </td>
 	</c:if>

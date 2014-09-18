@@ -107,7 +107,7 @@
             <span style="font-weight:bold">Find genes in these organisms</span>
             <imp:image title="Find genes in these organisms that belong to an ortholog group with the profile you select below" 
                class="help-link"
-               src="/wdk/images/question.png" 
+               src="wdk/images/question.png" 
                style="cursor:pointer" 
                aria-describedby="ui-tooltip-2"/>
           </label>
@@ -127,7 +127,7 @@
             <span style="font-weight:bold">Select orthology profile</span>
             <imp:image title="If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
                 class="help-link" 
-                src="/wdk/images/question.png" 
+                src="wdk/images/question.png" 
                 style="cursor:pointer" 
                 aria-describedby="ui-tooltip-2"/>
           </label>

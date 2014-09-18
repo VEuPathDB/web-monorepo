@@ -215,20 +215,20 @@ not clear we need icons on categories, ui-infra meet May 22, 2012
 <%-- not clear we need icons on categories, ui-infra meet May 22, 2012
 <c:if test="${linktext eq 'Microarray Evidence'  || linktext eq 'RNA Seq Evidence'}">
 	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="/wdk/images/revised-small.png" />
+         	src="wdk/images/revised-small.png" />
 </c:if>
 --%>
 
 <%--
 <c:if test="${fn:containsIgnoreCase(linktext, 'Host Response')}">
 	<imp:image alt="New feature icon" title="This is a new search" 
-         src="/wdk/images/new-feature.png" />
+         src="wdk/images/new-feature.png" />
 </c:if>
 --%>
 
 <c:if test="${fn:containsIgnoreCase(qname, 'SnpsByIsolatesGroup')}">
 	<imp:image alt="New feature icon" title="This is a new search" 
-         src="/wdk/images/beta2-30.png" />
+         src="wdk/images/beta2-30.png" />
 </c:if>
 
 

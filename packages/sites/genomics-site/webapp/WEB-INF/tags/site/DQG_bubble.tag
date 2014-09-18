@@ -71,7 +71,7 @@
 <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
 <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
 	<imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
-         	src="/wdk/images/beta2-30.png" />
+         	src="wdk/images/beta2-30.png" />
 </c:if>
 </c:if>
 
@@ -125,7 +125,7 @@
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${cat.displayName eq 'Transcript Expression'}">
 	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="/wdk/images/revised-small.png" />
+         	src="wdk/images/revised-small.png" />
 </c:if>
 </c:if>
  --%>
@@ -146,7 +146,7 @@
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
 	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="/wdk/images/revised-small.png" />
+         	src="wdk/images/revised-small.png" />
 </c:if>
 </c:if>
  --%>

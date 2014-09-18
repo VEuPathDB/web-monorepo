@@ -42,7 +42,7 @@
                                 <c:choose>
                                   <c:when test="${filterCount == null}">
                                     <c:set var="filterCount">
-                                      <img class="loading" src="<c:url value='/assets/wdk/images/loading.gif' />" />
+                                      <imp:image class="loading" src="wdk/images/loading.gif" />
                                     </c:set>
                                     <c:set var="filterCountLoaded" value="" />
                                   </c:when>
@@ -95,7 +95,7 @@
                                 <c:choose>
                                   <c:when test="${filterCount == null}">
                                     <c:set var="filterCount">
-                                      <img class="loading" src="<c:url value='/assets/wdk/images/loading.gif' />" />
+                                      <imp:image class="loading" src="wdk/images/loading.gif" />
                                     </c:set>
                                     <c:set var="filterCountLoaded" value="" />
                                   </c:when>

@@ -81,7 +81,7 @@
               (${short_attribution})
               <c:if test="${build_number_introduced eq wdkModel_.buildNumber}">
                 <imp:image alt="New feature icon" title="This is a new data set!"
-                  src="/wdk/images/new-feature.png"/>
+                  src="wdk/images/new-feature.png"/>
               </c:if>
               <span class="info wdk-tooltip" data-content="+ .dataset-tooltip-content"><jsp:text/></span>
               <div class="dataset-tooltip-content">

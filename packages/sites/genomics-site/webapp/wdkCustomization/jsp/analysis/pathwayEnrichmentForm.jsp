@@ -25,7 +25,7 @@
                 <td>
                   <label>
                     <span style="font-weight:bold">Organism</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.organismParamHelp)}"/>
                   </label>
                 </td>

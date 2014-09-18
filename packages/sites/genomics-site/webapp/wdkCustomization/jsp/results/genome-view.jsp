@@ -38,7 +38,7 @@
  </div>
 
 <%--
-<div style="float:left;position:relative;bottom:35px;left:30px;"><imp:image src="/wdk/images/betatesting.png" /></div>
+<div style="float:left;position:relative;bottom:35px;left:30px;"><imp:image src="wdk/images/betatesting.png" /></div>
 
 <div style="float:left;position:relative;top:5px;left:30px;font-weight:bold">
 <a onclick="poptastic(this.href); return false;" target="_blank" href="<c:url value='/betatester.jsp' />">

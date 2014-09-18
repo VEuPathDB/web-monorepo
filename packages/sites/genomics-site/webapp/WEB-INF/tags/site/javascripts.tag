@@ -27,22 +27,20 @@
   </c:if>
   -->
 
-  <script type="text/javascript" src="${base}/wdkCustomization/js/lib/hoverIntent.js"><jsp:text/></script>
-  <script type="text/javascript" src="${base}/wdkCustomization/js/lib/superfish.js"><jsp:text/></script>
-  <script type="text/javascript" src="${base}/wdkCustomization/js/common.js"><jsp:text/></script>
-  <script type="text/javascript" src="${base}/wdkCustomization/js/custom-login.js"><jsp:text/></script>
+  <imp:script src="wdkCustomization/js/lib/hoverIntent.js"/>
+  <imp:script src="wdkCustomization/js/lib/superfish.js"/>
+  <imp:script src="wdkCustomization/js/common.js"/>
+  <imp:script src="wdkCustomization/js/custom-login.js"/>
 
   <!-- Contact Us window -->
-  <script type='text/javascript' src='${base}/js/newwindow.js'><jsp:text/></script>
+  <imp:script src='js/newwindow.js'/>
 
   <c:if test="${refer == 'summary'}">
-      <script type="text/javascript" src="${base}/wdkCustomization/js/customStrategy.js"><jsp:text/></script>
-      <script type="text/javascript" src="${base}/wdkCustomization/js/ortholog.js"><jsp:text/></script>
-      <script type="text/javascript" src="${base}/wdkCustomization/js/export-basket.js"><jsp:text/></script>
-
-      <script type="text/javascript" src="${base}/wdkCustomization/js/spanlogic.js"><jsp:text/></script>
-
-      <script type="text/javascript" src="${base}/wdkCustomization/js/genome-view.js"><jsp:text/></script>
+    <imp:script src="wdkCustomization/js/customStrategy.js"/>
+    <imp:script src="wdkCustomization/js/ortholog.js"/>
+    <imp:script src="wdkCustomization/js/export-basket.js"/>
+    <imp:script src="wdkCustomization/js/spanlogic.js"/>
+    <imp:script src="wdkCustomization/js/genome-view.js"/>
 
       <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"><jsp:text/></script> -->
       <!-- moved to isolateResults.tag
@@ -50,6 +48,7 @@
       <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js"><jsp:text/></script>
       -->
 
+      <!-- TODO Move to webapp -->
       <script type="text/javascript" src="/assets/js/isolateResults.js"><jsp:text/></script>
   </c:if>
 
@@ -62,21 +61,20 @@
   -->
 
   <c:if test="${refer == 'recordPage'}">
+    <!-- TODO Move to webapp -->
     <script type="text/javascript" src="/assets/js/isolateResults.js"><jsp:text/></script>
   </c:if>
 
   <c:if test="${refer == 'question' || refer == 'summary'}">
     <!-- <imp:parameterScript /> -->
-    <![CDATA[
-    <script src="/assets/js/orthologpattern.js"></script>
-    <script src="${base}/wdkCustomization/js/span-location.js"></script>
-    <script src="${base}/wdkCustomization/js/mutuallyExclusiveParams.js"></script>
-    <script src="${base}/wdkCustomization/js/dataset-searches.js"></script>
-    <script src="${base}/wdkCustomization/js/questions/fold-change.js"></script>
-    <script src="${base}/wdkCustomization/js/questions/radio-params.js"></script>
-    <script src="${base}/wdkCustomization/js/questions/isolatesByTaxon.js"></script>
-    <script src="${base}/wdkCustomization/js/analysis/enrichment.js"></script>
-    ]]>
+    <script src="/assets/js/orthologpattern.js"><jsp:text/></script>
+    <imp:script src="wdkCustomization/js/span-location.js"/>
+    <imp:script src="wdkCustomization/js/mutuallyExclusiveParams.js"/>
+    <imp:script src="wdkCustomization/js/dataset-searches.js"/>
+    <imp:script src="wdkCustomization/js/questions/fold-change.js"/>
+    <imp:script src="wdkCustomization/js/questions/radio-params.js"/>
+    <imp:script src="wdkCustomization/js/questions/isolatesByTaxon.js"/>
+    <imp:script src="wdkCustomization/js/analysis/enrichment.js"/>
   </c:if>
 
   <!-- Quick seach box -->
@@ -89,7 +87,7 @@
   <script type="text/javascript" src="/assets/js/newitems.js"><jsp:text/></script>
 
   <!-- Access twitter/facebook links, and configure menubar (superfish) -->
-  <script type="text/javascript" src="${base}/js/nav.js"><jsp:text/></script>
+  <imp:script src="js/nav.js"/>
 
   <!-- show/hide the tables in the Record page -->
   <script type='text/javascript' src="/assets/js/show_hide_tables.js"><jsp:text/></script>

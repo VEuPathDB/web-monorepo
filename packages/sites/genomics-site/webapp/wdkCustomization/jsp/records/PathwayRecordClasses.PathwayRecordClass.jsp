@@ -125,7 +125,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 
 <ul id="vis-menu" class="sf-menu">
     <li><a href="#">File
-    <img title="NOTE: Saving of some XGMML or image files is not working at present. We apologize, and will try to fix this issue soon."  src="/a/assets/wdk/images/question.png" ></img></a>
+    <imp:image title="NOTE: Saving of some XGMML or image files is not working at present. We apologize, and will try to fix this issue soon."  src="wdk/images/question.png" /></a>
         <ul>
           <li> <a href="javascript:exportVisualization('xgmml', '${id}')">Save XGMML (XML)</a></li>
           <li> <a href="javascript:exportVisualization('png', '${id}')">Save image (PNG)</a></li>
@@ -133,7 +133,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
         </ul>
     </li>
     <li><a href="javascript:void(0)">Layout
-    <img title="Choose a Layout for the Pathway Map"  src="/a/assets/wdk/images/question.png" ></img></a>
+    <imp:image title="Choose a Layout for the Pathway Map"  src="wdk/images/question.png" /></a>
         <ul>
             <li><a  href="javascript:void(0)" onclick="changeLayout('Preset')">Kegg</a></li>
             <li><a  href="javascript:void(0)" onclick="changeLayout('ForceDirected')">ForceDirected</a></li>
@@ -144,7 +144,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     </li>
 
     <li><a href="#">Paint Experiment
-    <img title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map"  src="/a/assets/wdk/images/question.png" ></img></a>
+    <imp:image title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map"  src="wdk/images/question.png" /></a>
         <ul>
             <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
 <c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
@@ -155,7 +155,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     </li>
 
     <li><a href="#">Paint Genera
-    <img title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map "  src="/a/assets/wdk/images/question.png" ></img></a>
+    <imp:image title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map "  src="wdk/images/question.png" /></a>
         <ul>
           <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
 

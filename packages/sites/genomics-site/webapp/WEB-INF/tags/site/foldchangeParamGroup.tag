@@ -29,7 +29,7 @@
         <imp:image class="help-link"
           style="cursor:pointer"
           title="${fn:escapeXml(profileset_genericParam.help)}"
-          src="/wdk/images/question.png" />
+          src="wdk/images/question.png" />
       </div>
 
       <c:if test="${protein_coding_onlyParam ne null}">
@@ -39,7 +39,7 @@
             <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(protein_coding_onlyParam.help)}"
-              src="/wdk/images/question.png" />
+              src="wdk/images/question.png" />
             <span class="prompt">Genes</span>
           </span>
         </div>
@@ -54,7 +54,7 @@
         <imp:image class="help-link"
           style="cursor:pointer"
           title="${fn:escapeXml(regulated_dirParam.help)}"
-          src="/wdk/images/question.png" />
+          src="wdk/images/question.png" />
       </div>
 
       <div class="param-line">
@@ -64,7 +64,7 @@
         <imp:image class="help-link"
           style="cursor:pointer"
           title="${fn:escapeXml(fold_changeParam.help)}"
-          src="/wdk/images/question.png" />
+          src="wdk/images/question.png" />
       </div>
 
       <div class="samples ui-helper-clearfix">
@@ -75,7 +75,7 @@
           <imp:image class="help-link"
             style="cursor:pointer"
             title="${fn:escapeXml(min_max_avg_refParam.help)}"
-            src="/wdk/images/question.png" />
+            src="wdk/images/question.png" />
         </div>
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
@@ -84,7 +84,7 @@
             <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(samples_fc_ref_genericParam.help)}"
-              src="/wdk/images/question.png" />
+              src="wdk/images/question.png" />
           </span>
         </div>
 
@@ -99,7 +99,7 @@
             <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(min_max_avg_refParam.help)}"
-              src="/wdk/images/question.png" />
+              src="wdk/images/question.png" />
             <span class="text">
               <span class="prompt">expression value</span>
               in my chosen reference samples.</span>
@@ -114,7 +114,7 @@
           <imp:image class="help-link"
             style="cursor:pointer"
             title="${fn:escapeXml(min_max_avg_compParam.help)}"
-            src="/wdk/images/question.png" />
+            src="wdk/images/question.png" />
         </div>
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
@@ -123,7 +123,7 @@
             <imp:image class="help-link"
               style="cursor:pointer"
               title="${fn:escapeXml(samples_fc_comp_genericParam.help)}"
-              src="/wdk/images/question.png" />
+              src="wdk/images/question.png" />
           </span>
         </div>
 
@@ -138,7 +138,7 @@
             <imp:image class="help-link"
             style="cursor:pointer"
             title="${fn:escapeXml(min_max_avg_compParam.help)}"
-            src="/wdk/images/question.png" /
+            src="wdk/images/question.png" /
             <span class="text">
               <span class="prompt">expression value</span>
               in my chosen comparison samples.</span>

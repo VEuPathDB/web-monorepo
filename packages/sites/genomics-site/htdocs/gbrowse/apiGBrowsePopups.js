@@ -35,8 +35,8 @@ function fiveColRow(one, two, three, four, five) {
 
 /****** Favorite link functions for GBrowse ******/
 
-var saveFavTextLink = 'As Favorite <img width="20" src="' + wdk.assetsUrl('/wdk/images/favorite_gray.gif') + '"/>';
-var removeFavTextLink = 'Remove From Favorites <img width="20" src="' + wdk.assetsUrl('/wdk/images/favorite_color.gif') + '"/>';
+var saveFavTextLink = 'As Favorite <img width="20" src="' + wdk.assetsUrl('wdk/images/favorite_gray.gif') + '"/>';
+var removeFavTextLink = 'Remove From Favorites <img width="20" src="' + wdk.assetsUrl('wdk/images/favorite_color.gif') + '"/>';
 
 function applyCorrectFavoriteLink(sourceId, projectId) {
 	wdk.favorite.performIfItemIsFavorite(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
@@ -55,8 +55,8 @@ function removeGeneAsFavorite(projectId, sourceId) {
 
 /****** Basket link functions for GBrowse ******/
 
-var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="' + wdk.assetsUrl('/wdk/images/basket_gray.png') + '"/>';
-var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="' + wdk.assetsUrl('/wdk/images/basket_color.png') + '"/>';
+var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="' + wdk.assetsUrl('wdk/images/basket_gray.png') + '"/>';
+var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="' + wdk.assetsUrl('wdk/images/basket_color.png') + '"/>';
 
 function applyCorrectBasketLink(sourceId, projectId) {
 	wdk.basket.performIfItemInBasket(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
@@ -85,7 +85,7 @@ function checkLogin() {
 
 function performSavedItemOp(funcToCall, projectId, sourceId, selectionSuffix, nextFunction, nextLinkText) {
 	checkLogin();
-	jQuery('#'+sourceId+'_'+selectionSuffix).html('<img width="20" src="' + wdk.assetsUrl('/wdk/images/loading.gif') + '"/>');
+	jQuery('#'+sourceId+'_'+selectionSuffix).html('<img width="20" src="' + wdk.assetsUrl('wdk/images/loading.gif') + '"/>');
 	funcToCall(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
 		    function(result) {
 				setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText);

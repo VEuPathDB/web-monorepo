@@ -59,8 +59,8 @@
     <%-- <tr><td>Description:<br>(4000 max characters)</td><td><html:textarea rows="5" cols="80" property="notes"/></td></tr> --%>
 
 
- 	//used in fileUpload.js to access images provided by WDK
-      <div id ="urlholder"  imageurl="${wdkModel.model.modelConfig.assetsUrl}/wdk/images/close.gif" />
+    <%-- used in fileUpload.js to access images provided by WDK. data-assets-src gets resolved to the src attr --%>
+      <div id ="urlholder"  data-assets-src="wdk/images/close.gif" />
 	
     <table id="fileSelTbl">
     </table>

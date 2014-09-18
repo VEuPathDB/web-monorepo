@@ -26,7 +26,7 @@
                 <td>
                   <label>
                     <span style="font-weight:bold">Organism</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.organismParamHelp)}"/>
                   </label>
                 </td>
@@ -42,7 +42,7 @@
                 <td>
                   <label>
                     <span style="font-weight:bold">Ontology</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.ontologyParamHelp)}"/>
                   </label>
                 </td>
@@ -68,7 +68,7 @@
                 <td>
                   <label>
                     <span style="font-weight:bold">GO Association Sources</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.sourcesParamHelp)}"/>
                   </label>
                 </td>
@@ -85,7 +85,7 @@
                     <span style="font-weight:bold">
                       P-Value Cutoff <span style="color:blue;font-size:0.95em;font-family:monospace">(0 - 1.0)</span>
                     </span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.pvalueParamHelp)}"/>
                   </label>
                 </td>
