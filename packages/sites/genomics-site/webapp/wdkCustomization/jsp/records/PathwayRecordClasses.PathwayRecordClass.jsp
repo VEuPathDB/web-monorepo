@@ -75,7 +75,7 @@
 <!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
  <script type="text/javascript" src="/js/cytoscapeweb.min.js"></script> 
 
-<script src="${pageContext.request.contextPath}/wdkCustomization/js/records/PathwayRecordClasses.PathwayRecordClass.js"></script>
+<imp:script src="wdkCustomization/js/records/PathwayRecordClasses.PathwayRecordClass.js"/>
 
 <script type="text/javascript">
   // get xgmml and draw the visualization

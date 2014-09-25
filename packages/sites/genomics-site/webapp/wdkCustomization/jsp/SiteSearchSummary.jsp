@@ -129,6 +129,6 @@
 
 </div><!-- END of site-search -->
 
-<script type="text/javascript" src="<c:url value='/wdkCustomization/js/site-search.js'/>"></script>
+<imp:script src="wdkCustomization/js/site-search.js"/>
 
 </imp:pageFrame>
