@@ -3,15 +3,19 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/PiroplasmaDB/background_s.jpg);
+	background-image: url(../images/AmoebaDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink, .link {
-	color: #316e9f; 
+a:link, div.divlink, .link {
+	color: #02935c;     //green
+}
+
+a:visited {
+	color: #628276;     //paler green
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #6f223a;    /*  #9a5b37;    */
+	color:  #58441F;    //brown
 }
 
 a[name]:link {
@@ -31,112 +35,121 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/PiroplasmaDB/backgroundtop_s.jpg);
+	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/PiroplasmaDB/backgroundtop_s.jpg);
+	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
 }
 
+
 #header_rt {
-   color: #6f223a;     /*   #9a5b37;   #6f4230; */
+   color: #58441F; //brown
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #6f223a;    /*    #9a5b37;   #6f4230; */
+   color: #58441F;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
 #nav-top {
-	color: #316e9f;  /*  #9a5b37;   */
+	color: #58441F;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #316e9f;    
+	color: #58441F;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/PiroplasmaDB/footer.png);
-	border-color:#316e9f;  /*   #9a5b37; */
-	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
+	background-image: url(../images/AmoebaDB/footer.png);
+	border-color:#58441F;
+	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #316e9f;   /*  #9a5b37;  */
+	color: #58441F;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #6f223a;  
+	color: #4f7f6d;  
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
 /* #bubbles .info {
-  min-height: 299px;
+  min-height: 351px;
 } */
 
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =STRUCTURE 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
+	 =STRUCTURE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+/* #menubar #mysearch {
+	background-image: url(../images/AmoebaDB/my_hist_menubar.png);
+	border: 1px solid #792861;
+} */
+ 
 #contentcolumn {
-	background-image: url(../images/PiroplasmaDB/footer.png);
-	border: 1px solid #6f223a;   /*  #9a5b37;  #20691a; */
+	background-image: url(../images/AmoebaDB/footer.png);
+	border: 1px solid #4F3D1B; //brown
 }
 
 #contentcolumn2 {
-	background-image: url(../images/PiroplasmaDB/footer.png);
-	border: 1px solid #6f223a;  /*  #9a5b37;  #20691a; */
+	background-image: url(../images/AmoebaDB/footer.png);
+	border: 1px solid #4F3D1B;
 }
-
+/* commented out in DQG_bubble.tag
 #mysearchhist {
-	background-image: url(../images/PiroplasmaDB/bubble_my_searchbox.png);
-	border: 1px solid #6f223a;   /*  #9a5b37;  #20691a; */
+	background-image: url(../images/AmoebaDB/bubble_my_searchbox.png);
+	border: 1px solid #b5a3d4;
 }
-
-
+*/
 #main_tools {
-	background-image: url(../images/PiroplasmaDB/tools_bckgnd.jpg);
+	background-image: url(../images/AmoebaDB/tools_bckgnd.jpg);
 }
-
+/* not in use, remove in a few rounds
 #about_us_left {
-	background-color: #bfccdf;
-	list-style-image: url(../images/PiroplasmaDB/bullet_arrow.gif);
+	background-color: #cdc3de;
+	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
 }
 
+#pink_title {
+	color: #4F3D1B; //brown
+	background-image: url(../images/AmoebaDB/trheader.png);
+}
+*/
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color: #6f223a;    /*  #9a5b37;    #560000;  */
+#menu a:hover, #menu a:active, #strategy_tabs #selected a  {
+	color:#58441F;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color:  #6f223a;   /*  #9a5b37; #3c8935; */
+	border-bottom-color:  #58441F;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color:  #6f223a;    /*  #9a5b37; #3c8935;  */
-	color: #316e9f;   //#b30101;
+	border-bottom-color: #58441F;
+	color: #4f7f6d;  
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
+	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color:  #6f223a;  /8  #9a5b37; #20691A; */  /* color as in contentcolumn border */
+   border-color:  #4F3D1B;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/PiroplasmaDB/menu_lft2.png);
+	background-image: url(../images/AmoebaDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -144,11 +157,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #6f223a;;    /*  #9a5b37; #1c7c12;   */
-} 
+    border: solid 1px #58441F;
+}
 
 .search-box .textbox{
-	border: solid 1px #b3b3b3;
+	border: solid 1px #58441F;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,15 +169,15 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #6f223a;   /* #9a5b37; #20691a; */
+	color: #58441F;
 }
 
 h2 {
-  	color: #6f223a;     /*   #9a5b37; #20691a;  */
+  	color: #58441F;
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #6f223a;    /*  #9a5b37; #3c8935;  */
+  	color: #58441F;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,7 +185,7 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-   background-image: url(../images/PiroplasmaDB/footer.png);
+   background-image: url(../images/AmoebaDB/footer.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,28 +194,28 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #0c3f60;
-	background-image: url(../images/PiroplasmaDB/trheader.png);
+	color: #58441F;
+	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #0c3f60;
+	color: #58441F;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/PiroplasmaDB/trheader.png);
+	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/PiroplasmaDB/trhover.png);
+	background-image: url(../images/AmoebaDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/PiroplasmaDB/trsubhead.png);
+	background-image: url(../images/AmoebaDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/PiroplasmaDB/trsubhead.png);
+	background-image: url(../images/AmoebaDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -211,20 +224,20 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #0c3f60;
-	background-image: url(../images/PiroplasmaDB/trheader.png);
+        color: #58441F; 
+	background-image: url(../images/AmoebaDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/PiroplasmaDB/trsubhead.png);
+	background-image: url(../images/AmoebaDB/trsubhead.png);
 }
 
 a.queryGridInactive {
-        color:              #C8C8C8;
+        color: #C8C8C8;
 }
 
 a.queryGridActive {
-        color:              #0c3f60;
+        color: #58441F;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,32 +246,27 @@ a.queryGridActive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #0c3f60;
+	border-color: #58441F;
 }
 
 tr.headerrow th { 
-	border-color: #0c3f60;
+	border-color: #58441F;
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 div.Workspace {
-	border-color: #316e9f;
+	border-color: #02935c;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ABOUT US and HELP PAGES SIDEBAR  I think it is unused
+	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/PiroplasmaDB/aboutus.png);
+	background-image: url(../images/AmoebaDB/aboutus.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -272,15 +280,20 @@ div.Workspace {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =MISC 
+	 =used in contact.do, classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MISC 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* maybe used in genePage.js which deals with seeing gen page in results page , unused at the moment */
 span.marker a:link, span.marker a:visited {
-	color: #7D0101;
+	color: #800158;   //pink
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E8EBF0;
+    background-color: #e9e6ee;   //very light colored grey
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -288,41 +301,39 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #3c8935;
+	border: 1px solid  #58441F; //brown
 }
 
 .blockPage{
-	background-image: url(/assets/images/PiroplasmaDB/footer.png);
+	background-image: url(../images/AmoebaDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+	background-image:url(../images/AmoebaDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+	background-image:url(../images/AmoebaDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+	background-image:url(../images/AmoebaDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 history.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #772841;	
+	border: 1px solid #58441F;     //brown
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -330,7 +341,8 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #6f223a;
+  color: #58441F;
 }
+
 
 /*THE END */

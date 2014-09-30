@@ -3,19 +3,15 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/AmoebaDB/background_s.jpg);
+	background-image: url(../images/FungiDB/background_s.jpg);
 }
 
-a:link, div.divlink, .link {
-	color: #02935c;     //green
-}
-
-a:visited {
-	color: #628276;     //paler green
+a:link, a:visited, div.divlink, .link {
+	color: #067387;
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color:  #58441F;    //brown
+	color: #672a87;   /* #4eb8cb; */
 }
 
 a[name]:link {
@@ -35,121 +31,120 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
+	background-image: url(../images/FungiDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
+	background-image: url(../images/FungiDB/backgroundtop_s.jpg);
 }
 
-
 #header_rt {
-   color: #58441F; //brown
+   color: #067387;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #58441F;
+   color: #067387;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #nav-top {
-	color: #58441F;
+	color: #067387;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #58441F;
+	color:  #067387;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/AmoebaDB/footer.png);
-	border-color:#58441F;
-	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
+	background-image: url(../images/FungiDB/footer.png);
+	border-color:#067387;
+	list-style-image: url(../images/FungiDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #58441F;
+	color: #067387;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #4f7f6d;  
+	color: #672a87; 
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 /* #bubbles .info {
-  min-height: 351px;
+  min-height: 299px;
 } */
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =STRUCTURE
+	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 /* #menubar #mysearch {
-	background-image: url(../images/AmoebaDB/my_hist_menubar.png);
-	border: 1px solid #792861;
+	background-image: url(../images/FungiDB/my_hist_menubar.png);
+	border: 1px solid #175982;
 } */
- 
+
 #contentcolumn {
-	background-image: url(../images/AmoebaDB/footer.png);
-	border: 1px solid #4F3D1B; //brown
+	background-image: url(../images/FungiDB/footer.png);
+	border: 1px solid #116b7b;
 }
 
 #contentcolumn2 {
-	background-image: url(../images/AmoebaDB/footer.png);
-	border: 1px solid #4F3D1B;
+	background-image: url(../images/FungiDB/footer.png);
+	border: 1px solid #116b7b;
 }
-/* commented out in DQG_bubble.tag
+
 #mysearchhist {
-	background-image: url(../images/AmoebaDB/bubble_my_searchbox.png);
-	border: 1px solid #b5a3d4;
+	background-image: url(../images/FungiDB/bubble_my_searchbox.png);
+	border: 1px solid #116b7b;
 }
-*/
+
 #main_tools {
-	background-image: url(../images/AmoebaDB/tools_bckgnd.jpg);
+	background-image: url(../images/FungiDB/tools_bckgnd.jpg);
 }
-/* not in use, remove in a few rounds
+
 #about_us_left {
-	background-color: #cdc3de;
-	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
+	background-color: #bfccdf;
+	list-style-image: url(../images/FungiDB/bullet_arrow.gif);
 }
 
 #pink_title {
-	color: #4F3D1B; //brown
-	background-image: url(../images/AmoebaDB/trheader.png);
+	color: #672a87;
+	background-image: url(../images/FungiDB/trheader.png);
 }
-*/
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
-	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, #strategy_tabs #selected a  {
-	color:#58441F;
+#menu a:hover, #menu a:active, #strategy_tabs #selected a {
+	color:#672a87;   /*  #3B1870; */
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color:  #58441F;
+	border-bottom-color: #414141;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #58441F;
-	color: #4f7f6d;  
+	border-bottom-color: #a45d35;
+	color: #672a87;   /* #4eb8cb; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Sidebar
+	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color:  #4F3D1B;  /* color as in contentcolumn border */
+   border-color: #9c5bbe;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/AmoebaDB/menu_lft2.png);
+	background-image: url(../images/FungiDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,116 +152,120 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-    border: solid 1px #58441F;
-}
+   border: solid 1px #157485;
+} 
 
 .search-box .textbox{
-	border: solid 1px #58441F;
+	border: solid 1px #b3b3b3;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Arrow Chains 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Fonts 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #58441F;
+	color: #672a87;  /* #3B1870; */
 }
 
 h2 {
-  	color: #58441F;
+  	color: #672a87;  /*  #3B1870; */
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #58441F;
+  	color: #672a87;  /* #3B1870; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER 
+	 =FOOTER  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
+
 #footer{
-   background-image: url(../images/AmoebaDB/footer.png);
-}
+    background-image: url(../images/FungiDB/footer.png);
+ }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TABLES 
-	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #58441F;
-	background-image: url(../images/AmoebaDB/trheader.png);
+	color: #0c3f60;
+	background-image: url(../images/FungiDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #58441F;
+	color: #672a87;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/AmoebaDB/trheader.png);
+	background-image: url(../images/FungiDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/AmoebaDB/trhover.png);
+	background-image: url(../images/FungiDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/AmoebaDB/trsubhead.png);
+	background-image: url(../images/FungiDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/AmoebaDB/trsubhead.png);
+	background-image: url(../images/FungiDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOR QUERY GRID
-	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #58441F; 
-	background-image: url(../images/AmoebaDB/trheader.png);
+        color: #672a87;
+	background-image: url(../images/FungiDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/AmoebaDB/trsubhead.png);
+	background-image: url(../images/FungiDB/trsubhead.png);
 }
 
 a.queryGridInactive {
-        color: #C8C8C8;
+        color:              #C8C8C8;
 }
 
 a.queryGridActive {
-        color: #58441F;
+        color:              #672a87;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =END OF TABLES FOR QUERY GRID
-	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #58441F;
+	border-color: #672a87;
 }
 
 tr.headerrow th { 
-	border-color: #58441F;
+	border-color: #067387;    /*  #672a87; */
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =RED BUTTON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-div.Workspace {
-	border-color: #02935c;
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/AmoebaDB/aboutus.png);
+	background-image: url(../images/FungiDB/aboutus.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -287,13 +286,13 @@ div.Workspace {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* maybe used in genePage.js which deals with seeing gen page in results page , unused at the moment */
+
 span.marker a:link, span.marker a:visited {
-	color: #800158;   //pink
+	color: #7D0101;
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #e9e6ee;   //very light colored grey
+    background-color: #E8EBF0;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -301,39 +300,41 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid  #58441F; //brown
+	border: 1px solid #634697;
 }
 
 .blockPage{
-	background-image: url(/assets/images/AmoebaDB/footer.png);
+	background-image: url(../images/FungiDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/AmoebaDB/trheader.png);
+	background-image:url(../images/FungiDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/AmoebaDB/trheader.png);
+	background-image:url(../images/FungiDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/AmoebaDB/trheader.png);
+	background-image:url(../images/FungiDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 history.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #58441F;     //brown
+	border: 1px solid #015f9a;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -341,8 +342,7 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #58441F;
+  color: #672a87;
 }
-
 
 /*THE END */

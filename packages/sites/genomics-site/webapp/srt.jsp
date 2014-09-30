@@ -65,7 +65,7 @@
 
   <imp:geneSrt />
 
-  <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+  <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
 
   <hr>
 
@@ -99,7 +99,7 @@
 
     </table>
   </form>
-  <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+  <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
 
 
   <hr>
@@ -131,7 +131,7 @@
 
     </table>
   </form>
-  <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+  <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
 
 
   <%--
@@ -218,14 +218,14 @@
       <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>
     </table>
   </form>
-  <a href="#help"><img src="images/toHelp.jpg" align="top" border='0'></a>
+  <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
 
   <hr>
 
   <b><a name="help">Help</a></b>
   <br>
   <br>
-  <img src="images/genemodel.gif" align="top" > 
+  <imp:image src="images/genemodel.gif" align="top" />
 
   <br>
 

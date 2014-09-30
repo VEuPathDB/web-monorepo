@@ -28,24 +28,25 @@ ${record.id}
 <c:set var="record" value="${tutAnswer.recordInstanceMap[id]}"/>
 
 <c:forEach items="${record.tables}" var="table">   
-	<c:forEach items="${table.rows}" var="row">
-		<c:set var="projects" value="${row[0].value}"/>
-		<c:if test="${fn:containsIgnoreCase(projects, project)}"> 
-			<center style="font-weight:bold;font-size:90%"">Watch this tutorial!
-                        <c:set var="urlMov" value="${row[1].value}"/>
-                        <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
-                        	<c:set var="urlMov">http://www.youtube.com/${urlMov}</c:set>
-                        </c:if>
-			<span style="font-size:120%;font-weight:bold">
-                  	<c:if test="${urlMov != 'unavailable'}">
-                             	<a target="_blank" onClick="poptastic(this.href); return false;"
-					href="${urlMov}"><img title="YouTube tutorial" style="vertical-align:middle" 
-					alt="YouTube icon" src="/assets/images/smallYoutube-icon.png" border='0'></a>
-                  	</c:if>
-			</span>
-
-                </c:if>  <%-- if project --%>
-	</c:forEach> 
+  <c:forEach items="${table.rows}" var="row">
+    <c:set var="projects" value="${row[0].value}"/>
+    <c:if test="${fn:containsIgnoreCase(projects, project)}"> 
+      <center style="font-weight:bold;font-size:90%">Watch this tutorial!
+        <c:set var="urlMov" value="${row[1].value}"/>
+        <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
+          <c:set var="urlMov">http://www.youtube.com/${urlMov}</c:set>
+        </c:if>
+        <span style="font-size:120%;font-weight:bold">
+          <c:if test="${urlMov != 'unavailable'}">
+            <a target="_blank" onClick="poptastic(this.href); return false;" href="${urlMov}">
+              <imp:image title="YouTube tutorial" style="vertical-align:middle" alt="YouTube icon"
+                src="images/smallYoutube-icon.png" border='0'/>
+            </a>
+          </c:if>
+        </span>
+      </center>
+    </c:if>  <%-- if project --%>
+  </c:forEach> 
 </c:forEach>  
 
 <%--
@@ -53,7 +54,6 @@ ${record.id}
 </c:forEach>  
 --%>
 
-</center>
 
 
 

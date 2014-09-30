@@ -44,10 +44,10 @@
         </c:if>
         <c:choose>
           <c:when test="${project eq 'TriTrypDB'}">
-            <img usemap="#partof" src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
+            <imp:image usemap="#partof" src="images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
           </c:when>
           <c:otherwise>
-            <a href="http://eupathdb.org"><img src="/assets/images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
+            <a href="http://eupathdb.org"><imp:image src="images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
           </c:otherwise>
         </c:choose>
       </div>   <!-- id="toplink" -->
@@ -66,7 +66,7 @@
     <span style="position:relative;top:-20px;left:-20px">${releaseDate_formatted}</span>
   </c:when>
   <c:otherwise>
-  <a href="/"><img src="/assets/images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
+  <a href="/"><imp:image src="images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
     Version ${version}<br/>
     ${releaseDate_formatted}
   </c:otherwise>

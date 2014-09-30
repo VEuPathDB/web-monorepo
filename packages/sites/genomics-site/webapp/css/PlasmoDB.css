@@ -3,15 +3,15 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/TriTrypDB/background_s.jpg);
+	background-image: url(../images/PlasmoDB/background_s.jpg);
 }
 
 a:link, a:visited, div.divlink, .link {
-	color: #015f9a;
+	color: #6600CC;
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #b45f04;    /* for contrast   93c4e3; */
+	color: #8f0165;    /*  #330099;  */
 }
 
 a[name]:link {
@@ -31,28 +31,19 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/TriTrypDB/backgroundtop_s.jpg);
+	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/TriTrypDB/backgroundtop_s.jpg);
+	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
 }
 
 #header_rt {
-   color: #95461a;
+   color: #6e549c;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #95461a;
-}
-
-/* only used in tritryp (genedb link)  MOVE TO BRANDING */
-#toplink a:link, #toplink a:visited{
-	width: 381px;
-}
-
-#toplink a:hover {
-	width: 381px;
+   color: #543792;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,56 +51,56 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #nav-top {
-	color: #395b8e;
+	color: #634697;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #97400e;
+	color: #634697;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/TriTrypDB/footer.png);
-	border-color:#95461a;
-	list-style-image: url(../images/TriTrypDB/bullet_arrow.gif);
+	background-image: url(../images/PlasmoDB/footer.png);
+	border-color:#634697;
+	list-style-image: url(../images/PlasmoDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #95461a;
+	color: #634697;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #013c63;
+	color: #8f0165;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#bubbles .info {
+/* #bubbles .info {
   min-height: 299px;
-}
+} */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
- 
+
 #contentcolumn {
-	background-image: url(../images/TriTrypDB/footer.png);
-	border: 1px solid #9e5933;
+	background-image: url(../images/PlasmoDB/footer.png);
+	border: 1px solid #634697;
 }
 
 #contentcolumn2 {
-	background-image: url(../images/TriTrypDB/footer.png);
-	border: 1px solid #9e5933;
+	background-image: url(../images/PlasmoDB/footer.png);
+	border: 1px solid #634697;
 }
 
 #mysearchhist {
-	background-image: url(../images/TriTrypDB/bubble_my_searchbox.png);
-	border: 1px solid #dfbba6;
+	background-image: url(../images/PlasmoDB/bubble_my_searchbox.png);
+	border: 1px solid #b5a3d4;
 }
 
 #main_tools {
-	background-image: url(../images/TriTrypDB/tools_bckgnd.jpg);
+	background-image: url(../images/PlasmoDB/tools_bckgnd.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -118,16 +109,16 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#003658;
+	color:#5c0141;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #a45d35;
+	border-bottom-color: #5f0f47;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #a45d35;
-	color: #0276be;
+	border-bottom-color: #5f0f47;
+	color: #8f0165;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,11 +126,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #9E5933;  /* color as in contentcolumn border */
+   border-color: #634697;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/TriTrypDB/menu_lft2.png);
+	background-image: url(../images/PlasmoDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -147,42 +138,36 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #a06442;
-} 
+    border: solid 1px #634697;
+ } 
 
 .search-box .textbox{
-	border: solid 1px #b3b3b3;
+	border: solid 1px #634697;
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Arrow Chains 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Fonts 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #a45d35;
+	color: #5f0f47; /*  #634697;  */
 }
 
 h2 {
-  	color: #a45d35;
+  	color: #5f0f47; /* #634697;  */
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #a45d35;
+  	color: #5f0f47;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER  
+	 =FOOTER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-    background-image: url(../images/TriTrypDB/footer.png);
- }
+   background-image: url(../images/PlasmoDB/footer.png);
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TABLES 
@@ -190,28 +175,28 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #0c3f60;
-	background-image: url(../images/TriTrypDB/trheader.png);
+	color: #5f0f47;
+	background-image: url(../images/PlasmoDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #0c3f60;
+	color: #5f0f47;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/TriTrypDB/trheader.png);
+	background-image: url(../images/PlasmoDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/TriTrypDB/trhover.png);
+	background-image: url(../images/PlasmoDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/TriTrypDB/trsubhead.png);
+	background-image: url(../images/PlasmoDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/TriTrypDB/trsubhead.png);
+	background-image: url(../images/PlasmoDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,20 +205,20 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #0c3f60;
-	background-image: url(../images/TriTrypDB/trheader.png);
+        color: #5f0f47;
+	background-image: url(../images/PlasmoDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/TriTrypDB/trsubhead.png);
+	background-image: url(../images/PlasmoDB/trsubhead.png);
 }
 
 a.queryGridInactive {
-        color:              #C8C8C8;
+        color:               #C8C8C8;
 }
 
 a.queryGridActive {
-        color:              #9f4510;
+        color:              #440c94;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -242,11 +227,11 @@ a.queryGridActive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #0c3f60;
+	border-color: #610c48;
 }
 
 tr.headerrow th { 
-	border-color: #0c3f60;
+	border-color: #610c48;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -254,14 +239,12 @@ tr.headerrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 div.Workspace {
-	border-color: #015f9a;
+	border-color:#6600CC;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -269,7 +252,7 @@ div.Workspace {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/TriTrypDB/aboutus.jpg);
+	background-image: url(../images/PlasmoDB/aboutus.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -292,11 +275,11 @@ div.Workspace {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 span.marker a:link, span.marker a:visited {
-	color: #014c7c;
+	color: #800158;
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E9E6EE;   /*  #f2e9e4;  */
+    background-color: #e9e6ee;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -304,23 +287,23 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #9e5933;
+	border: 1px solid #634697;
 }
 
 .blockPage{
-	background-image: url(/assets/images/TriTrypDB/footer.png);
+	background-image: url(../images/PlasmoDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/TriTrypDB/trheader.png);
+	background-image:url(../images/PlasmoDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/TriTrypDB/trheader.png);
+	background-image:url(../images/PlasmoDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/TriTrypDB/trheader.png);
+	background-image:url(../images/PlasmoDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -338,7 +321,7 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #015f9a;   /*   #9e5933;	  */
+	border: 1px solid #634697;	
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -346,7 +329,7 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #a45d35;
+  color: #5f0f47;
 }
 
 /*THE END */

@@ -49,7 +49,7 @@
       -->
 
       <!-- TODO Move to webapp -->
-      <script type="text/javascript" src="/assets/js/isolateResults.js"><jsp:text/></script>
+      <imp:script src="wdkCustomization/js/isolateResults.js"/>
   </c:if>
 
   <!-- this seems unneeded since it only contains:
@@ -62,39 +62,39 @@
 
   <c:if test="${refer == 'recordPage'}">
     <!-- TODO Move to webapp -->
-    <script type="text/javascript" src="/assets/js/isolateResults.js"><jsp:text/></script>
+    <imp:script src="wdkCustomization/js/isolateResults.js"/>
   </c:if>
 
   <c:if test="${refer == 'question' || refer == 'summary'}">
     <!-- <imp:parameterScript /> -->
-    <script src="/assets/js/orthologpattern.js"><jsp:text/></script>
-    <imp:script src="wdkCustomization/js/span-location.js"/>
-    <imp:script src="wdkCustomization/js/mutuallyExclusiveParams.js"/>
-    <imp:script src="wdkCustomization/js/dataset-searches.js"/>
+    <imp:script src="wdkCustomization/js/questions/orthologpattern.js"/>
+    <imp:script src="wdkCustomization/js/questions/span-location.js"/>
+    <imp:script src="wdkCustomization/js/questions/mutuallyExclusiveParams.js"/>
+    <imp:script src="wdkCustomization/js/questions/dataset-searches.js"/>
     <imp:script src="wdkCustomization/js/questions/fold-change.js"/>
     <imp:script src="wdkCustomization/js/questions/radio-params.js"/>
     <imp:script src="wdkCustomization/js/questions/isolatesByTaxon.js"/>
     <imp:script src="wdkCustomization/js/analysis/enrichment.js"/>
   </c:if>
 
-  <!-- Quick seach box -->
-  <script type="text/javascript" src="/assets/js/quicksearch.js"><jsp:text/></script>
+  <!-- Quick search box -->
+  <imp:script src="js/quicksearch.js"/>
 
   <!-- Dynamic query grid (bubbles in home page) -->
-  <script type="text/javascript" src="/assets/js/dqg.js"><jsp:text/></script>
+  <imp:script src="js/dqg.js"/>
 
   <!-- Sidebar news/events, yellow background -->
-  <script type="text/javascript" src="/assets/js/newitems.js"><jsp:text/></script>
+  <imp:script src="js/newitems.js"/>
 
   <!-- Access twitter/facebook links, and configure menubar (superfish) -->
   <imp:script src="js/nav.js"/>
 
   <!-- show/hide the tables in the Record page -->
-  <script type='text/javascript' src="/assets/js/show_hide_tables.js"><jsp:text/></script>
+  <imp:script src="js/show_hide_tables.js"/>
 
   <!-- SRT page -->
   <c:if test="${refer == 'srt'}">
-    <script type="text/javascript" src="/assets/js/srt.js"><jsp:text/></script>
+    <imp:script src="js/srt.js"/>
   </c:if>
 
 

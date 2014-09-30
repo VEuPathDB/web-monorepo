@@ -9,12 +9,12 @@ $(document).ready(function(){
 		var sublist = $(this).parents("li").find("div.sub_list");
 		var img = $(this).siblings("img.plus-minus");
 		if(img.hasClass("plus")){
-			img[0].src = "/assets/images/sqr_bullet_minus.gif";
+			img[0].src = wdk.assetsUrl("images/sqr_bullet_minus.gif");
 			img.removeClass("plus");
 			//img.addClass("minus");
 		}
 		else{
-			img[0].src = "/assets/images/sqr_bullet_plus.gif";
+			img[0].src = wdk.assetsUrl("images/sqr_bullet_plus.gif");
 			img.addClass("plus");
 			//img.removeClass("minus");
 		}
@@ -26,12 +26,12 @@ $(document).ready(function(){
 		var sublist = $(this).parents("li").find("div.sub_list");
 		var img = $(this);
 		if(img.hasClass("plus")){
-			img[0].src = "/assets/images/sqr_bullet_minus.gif";
+			img[0].src = wdk.assetsUrl("images/sqr_bullet_minus.gif");
 			img.removeClass("plus");
 			//img.addClass("minus");
 		}
 		else{
-			img[0].src = "/assets/images/sqr_bullet_plus.gif";
+			img[0].src = wdk.assetsUrl("images/sqr_bullet_plus.gif");
 			img.addClass("plus");
 			//img.removeClass("minus");
 		}
@@ -44,7 +44,7 @@ $(document).ready(function(){
 		var headList = $(this).parent().siblings("ul.heading_list");
 		if(val == "true"){
 			var img = $("li img.plus-minus", headList);
-			img.attr("src","/assets/images/sqr_bullet_minus.gif");
+			img.attr("src",wdk.assetsUrl("images/sqr_bullet_minus.gif"));
 			//img.addClass("minus");
 			img.removeClass("plus");
 			$("div.sub_list", headList).slideDown(dqg_speed);
@@ -52,7 +52,7 @@ $(document).ready(function(){
 			var img = $("li img.plus-minus", headList);
 			//img.removeClass("minus");
 			img.addClass("plus");
-			img.attr("src","/assets/images/sqr_bullet_plus.gif");
+			img.attr("src",wdk.assetsUrl("images/sqr_bullet_plus.gif"));
 			$("div.sub_list", headList).slideUp(dqg_speed);
 		}
 		return false;

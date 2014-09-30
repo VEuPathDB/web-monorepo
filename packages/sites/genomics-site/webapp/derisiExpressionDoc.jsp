@@ -28,7 +28,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/expStages.png" border=1>
+      <imp:image src="images/expStages.png" border="1"/>
     </td>
   </tr>
 
@@ -57,7 +57,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/expressionIntensityPercentile.png" border=1>
+      <imp:image src="images/expressionIntensityPercentile.png" border="1"/>
     </td>
   </tr>
 

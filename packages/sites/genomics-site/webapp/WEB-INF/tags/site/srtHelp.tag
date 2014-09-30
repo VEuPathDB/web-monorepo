@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<img src="images/genemodel.gif" align="top" > 
+<imp:image src="images/genemodel.gif" align="top" />
 
 <br>
 Types of sequences:

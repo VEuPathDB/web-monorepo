@@ -10,7 +10,7 @@
 <a name="${name}"></a>
 
 <%-- class secondary3 does not seem to exist --%>
-<table border='0' width='100%' style="background-image: url(/assets/images/${project}/footer.png);">
+<table border='0' width='100%' style="background-image: url(${pageContext.servletContext.contextPath}/images/${project}/footer.png);">
 <tr class="secondary3">
   <th align="center" width='85%' style="font-size:150%;padding:6px;">
      ${name}

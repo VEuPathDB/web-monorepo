@@ -22,7 +22,7 @@ $(document).ready(function(){
 function addFileSelRow() {
   var url = $("div#urlholder").attr("src");
   var rmBtn = $("<td>")
-       .append($("<img>").attr("src", "/assets/images/remove.gif")
+       .append($("<img>").attr("src", wdk.assetsUrl("images/remove.gif"))
 	    //.append($("<img>").attr("src", url)
              .click(function(){  
                 $(this).parents("table:first").parents("tr:first").remove();

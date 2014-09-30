@@ -28,10 +28,8 @@
               description="GENE,SEQ,ORF or EST"
 %>
 
-<c:set var="E_image">
-   /assets/images/empty_letter.gif
-</c:set>
-<c:set var="E" value="<img src='${E_image}' border='0' alt='' />" />
+<c:set var="E_image" value="images/empty_letter.gif"/>
+<c:set var="E"> <imp:image src="${E_image}" border="0" alt="" /> </c:set>
  
 
 <c:set var="Am" value="${E}" />
@@ -95,66 +93,65 @@
 
 <c:set var="array" value="${fn:split(existsOn, ' ')}" />
 <c:forEach var="token" items="${array}" >
-  
-<c:if test="${token eq 'Am'}">
-        <c:set var="Am_image">
-            /assets/images/A_letter.gif
-        </c:set>
-        <c:set var="Am" value="<a href='${amoebaRoot}${link}'><img src='${Am_image}' border='0' alt='amoebadb' width='10' height='10'/></a>" />
+  <c:if test="${token eq 'Am'}">
+    <c:set var="Am_image" value="images/A_letter.gif"/>
+    <c:set var="Am">
+      <a href='${amoebaRoot}${link}'><imp:image src='${Am_image}' border='0' alt='amoebadb' width='10' height='10'/></a>
+    </c:set>
   </c:if>
-<c:if test="${token eq 'M'}">
-        <c:set var="M_image">
-            /assets/images/M_letter.gif
-        </c:set>
-        <c:set var="M" value="<a href='${microRoot}${link}'><img src='${M_image}' border='0' alt='microdb' width='10' height='10'/></a>" />
+  <c:if test="${token eq 'M'}">
+    <c:set var="M_image" value="images/M_letter.gif"/>
+    <c:set var="M">
+      <a href='${microRoot}${link}'><imp:image src='${M_image}' border='0' alt='microdb' width='10' height='10'/></a>
+    </c:set>
   </c:if>
-<c:if test="${token eq 'Tt'}">
-        <c:set var="Tt_image">
-            /assets/images/tritrypdb_letter.gif
-        </c:set>
-        <c:set var="Tt" value="<a href='${tritrypRoot}${link}'><img src='${Tt_image}' border='0' alt='tritrypdb' /></a>" />
+  <c:if test="${token eq 'Tt'}">
+    <c:set var="Tt_image" value="images/tritrypdb_letter.gif"/>
+    <c:set var="Tt">
+      <a href='${tritrypRoot}${link}'><imp:image src='${Tt_image}' border='0' alt='tritrypdb' /></a>
+    </c:set>
   </c:if>
   <c:if test="${token eq 'G'}">
-        <c:set var="G_image">
-            /assets/images/giardiadb_letter.gif
-        </c:set>
-        <c:set var="G" value="<a href='${giardiaRoot}${link}'><img src='${G_image}' border='0' alt='giardiadb' /></a>" />
+    <c:set var="G_image" value="images/giardiadb_letter.gif"/>
+    <c:set var="G">
+      <a href='${giardiaRoot}${link}'><imp:image src='${G_image}' border='0' alt='giardiadb' /></a>
+    </c:set>
   </c:if>
-<c:if test="${token eq 'Tr'}">
-        <c:set var="Tr_image">
-            /assets/images/trichdb_letter.gif
-        </c:set>
-        <c:set var="Tr" value="<a href='${trichRoot}${link}'><img src='${Tr_image}' border='0' alt='trichdb' /></a>" />
+  <c:if test="${token eq 'Tr'}">
+    <c:set var="Tr_image" value="images/trichdb_letter.gif"/>
+    <c:set var="Tr">
+      <a href='${trichRoot}${link}'><imp:image src='${Tr_image}' border='0' alt='trichdb' /></a>
+    </c:set>
   </c:if>
-<c:if test="${token eq 'P'}">
-        <c:set var="P_image">
-            /assets/images/plasmodb_letter.gif
-        </c:set>
-        <c:set var="P" value="<a href='${plasmoRoot}${link}'><img src='${P_image}' border='0' alt='plasmodb' /></a>" />
+  <c:if test="${token eq 'P'}">
+    <c:set var="P_image" value="images/plasmodb_letter.gif"/>
+    <c:set var="P">
+      <a href='${plasmoRoot}${link}'><imp:image src='${P_image}' border='0' alt='plasmodb' /></a>
+    </c:set>
   </c:if>
-<c:if test="${token eq 'Pi'}">
-        <c:set var="Pi_image">
-            /assets/images/plasmodb_letter.gif
-        </c:set>
-        <c:set var="Pi" value="<a href='${piroRoot}${link}'><img src='${Pi_image}' border='0' alt='piroplasmadb' /></a>" />
+  <c:if test="${token eq 'Pi'}">
+    <c:set var="Pi_image" value="images/plasmodb_letter.gif"/>
+    <c:set var="Pi">
+      <a href='${piroRoot}${link}'><imp:image src='${Pi_image}' border='0' alt='piroplasmadb' /></a>
+    </c:set>
   </c:if>
   <c:if test="${token eq 'T'}">
-        <c:set var="T_image">
-            /assets/images/toxodb_letter.gif
-        </c:set>
-        <c:set var="T" value="<a href='${toxoRoot}${link}'><img src='${T_image}' border='0' alt='toxodb' /></a>" />
+    <c:set var="T_image" value="images/toxodb_letter.gif"/>
+    <c:set var="T">
+      <a href='${toxoRoot}${link}'><imp:image src='${T_image}' border='0' alt='toxodb' /></a>
+    </c:set>
   </c:if>
   <c:if test="${token eq 'C'}">
-        <c:set var="C_image">
-            /assets/images/cryptodb_letter.gif
-        </c:set>
-        <c:set var="C" value="<a href='${cryptoRoot}${link}'><img src='${C_image}' border='0' alt='cryptodb' /></a>" />
+    <c:set var="C_image" value="images/cryptodb_letter.gif"/>
+    <c:set var="C">
+      <a href='${cryptoRoot}${link}'><imp:image src='${C_image}' border='0' alt='cryptodb' /></a>
+    </c:set>
   </c:if>
   <c:if test="${token eq 'A'}">
-        <c:set var="A_image">
-             /assets/images/eupathdb_letter.gif 
-        </c:set>
-        <c:set var="A" value="<a href='${apiRoot}${link}'><img src='${A_image}' border='0' alt='apidb' /></a>" />
+    <c:set var="A_image" value="images/eupathdb_letter.gif "/>
+    <c:set var="A">
+      <a href='${apiRoot}${link}'><imp:image src='${A_image}' border='0' alt='apidb' /></a>
+    </c:set>
   </c:if>
 </c:forEach>
 

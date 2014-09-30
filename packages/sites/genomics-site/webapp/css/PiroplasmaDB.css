@@ -3,7 +3,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/PiroplasmaDB/background_s.jpg);
+	background-image: url(../images/PiroplasmaDB/background_s.jpg);
 }
 
 a:link, a:visited, div.divlink, .link {
@@ -291,19 +291,19 @@ span.marker a:link, span.marker a:visited {
 }
 
 .blockPage{
-	background-image: url(/assets/images/PiroplasmaDB/footer.png);
+	background-image: url(../images/PiroplasmaDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+	background-image:url(../images/PiroplasmaDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+	background-image:url(../images/PiroplasmaDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/PiroplasmaDB/trheader.png);
+	background-image:url(../images/PiroplasmaDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

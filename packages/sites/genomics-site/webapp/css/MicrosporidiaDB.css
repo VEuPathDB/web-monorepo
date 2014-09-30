@@ -3,7 +3,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/MicrosporidiaDB/background_s.jpg);
+	background-image: url(../images/MicrosporidiaDB/background_s.jpg);
 }
 
 a:link, a:visited, div.divlink, .link {
@@ -307,19 +307,19 @@ span.marker a:link, span.marker a:visited {
 }
 
 .blockPage{
-	background-image: url(/assets/images/MicrosporidiaDB/footer.png);
+	background-image: url(../images/MicrosporidiaDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/MicrosporidiaDB/trheader.png);
+	background-image:url(../images/MicrosporidiaDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/MicrosporidiaDB/trheader.png);
+	background-image:url(../images/MicrosporidiaDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/MicrosporidiaDB/trheader.png);
+	background-image:url(../images/MicrosporidiaDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -48,7 +48,7 @@
 <tr><td colspan="3">  
     <div class="smallBlack" align="center">
 	(Click on &nbsp; 
-	<img src="/assets/images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a search in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
+	<imp:image src="images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a search in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
 	</div>
 </td></tr>
 

@@ -69,11 +69,11 @@
 
 
 <!-- CYTOSCAPE start-->
- <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
- <script type="text/javascript" src="/js/AC_OETags.min.js"></script>
+<!-- Flash embedding utility (needed to embed Cytoscape Web) -->
+<imp:script type="text/javascript" src="js/AC_OETags.min.js"/>
         
 <!-- Cytoscape Web JS API (needed to reference org.cytoscapeweb.Visualization) -->
- <script type="text/javascript" src="/js/cytoscapeweb.min.js"></script> 
+<imp:script type="text/javascript" src="js/cytoscapeweb.min.js"/>
 
 <imp:script src="wdkCustomization/js/records/PathwayRecordClasses.PathwayRecordClass.js"/>
 

@@ -115,29 +115,29 @@ organismFull:   Plasmodium falciparum 3D7
 <table width="100%">
 <tr>
   <td align="center" style="padding:6px"><a href="#Annotation">Annotation</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
 
   <c:if test="${isCodingGene}">
   <td align="center"><a href="#Protein">Protein</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
   </c:if>
 
 <c:if test="${hasPhenotype}">
   <td align="center"><a href="#Phenotype">Phenotype</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
   </c:if>
 
   <c:if test="${attrs['hasExpression'].value eq '1'}">
   <td align="center"><a href="#Expression">Expression</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
   </c:if>
 
   <td align="center"><a href="#Sequence">Sequence</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
 </tr>
 </table>
@@ -203,7 +203,7 @@ organismFull:   Plasmodium falciparum 3D7
 	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="wdk.api.showLayer('UserComments')">This gene has <span style='color:red'>${count}</span> user comments
 </c:otherwise>
 </c:choose>
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -380,7 +380,7 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- User comments -->
 <a name="user-comment"/>
 <b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
-  <img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+  <imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a></b>
 <br><br>
 

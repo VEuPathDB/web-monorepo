@@ -19,8 +19,8 @@
 	</c:when>
 <c:otherwise>
 
-    <script type="text/javascript"  src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
-    <script type="text/javascript" src="/assets/js/fileUpload.js"></script>
+<imp:script src="js/lib/jquery-validate/jquery.validate.pack.js"/>
+<imp:script src="js/fileUpload.js"/>
 
     <body>
     <imp:errors/>

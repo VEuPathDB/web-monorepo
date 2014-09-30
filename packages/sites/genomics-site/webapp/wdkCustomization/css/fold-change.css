@@ -68,10 +68,10 @@
 }
 .fold-change-img .up-regulated,
 .fold-change-img .down-regulated {
-  background-image: url(/assets/images/fold-change/graph-background.jpg);
+  background-image: url(../../images/fold-change/graph-background.jpg);
 }
 .fold-change-img .up-or-down-regulated {
-  background-image: url(/assets/images/fold-change/two-graph-background.jpg);
+  background-image: url(../../images/fold-change/two-graph-background.jpg);
 }
 
 .fold-change .param {

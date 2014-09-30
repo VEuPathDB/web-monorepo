@@ -36,7 +36,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/winz_sorb_ratios_derisi_ratios_correlation.png" border=1>
+      <imp:image src="images/winz_sorb_ratios_derisi_ratios_correlation.png" border="1"/>
     </td>
   </tr>
 
@@ -53,7 +53,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/w.s.d.hb3.rankCorr.tpMap.png" border=1>
+      <imp:image src="images/w.s.d.hb3.rankCorr.tpMap.png" border="1"/>
     </td>
   </tr>
 
@@ -78,7 +78,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/d.3d7.d.hb3.rankCorr.tpMap.png" border=1>
+      <imp:image src="images/d.3d7.d.hb3.rankCorr.tpMap.png" border="1"/>
     </td>
   </tr>
 
@@ -102,7 +102,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/tpMapLabeled.png" border=1>
+      <imp:image src="images/tpMapLabeled.png" border="1"/>
     </td>
   </tr>
 </table>

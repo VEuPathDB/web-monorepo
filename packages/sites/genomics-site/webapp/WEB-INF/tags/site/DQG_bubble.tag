@@ -40,7 +40,7 @@
 </c:choose>
 
 <div class="threecolumndiv">
-<img class="threecolumndivimg" src="/assets/images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
+<imp:image class="threecolumndivimg" src="images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
 <c:choose>
 
 <%---------------------------------   TOOLS  -------------------------%>
@@ -65,7 +65,7 @@
 
                                         <c:set var="display" value="${fn:substring(cat.displayName, 11, -1)}" />
 					<li>
-                                            <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
+                                            <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                                             <a class="heading" href="javascript:void(0)">&nbsp;${display}
 
 <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
@@ -117,7 +117,7 @@
 			<c:set var="cat" value="${catEntry.value}" />
 			<c:if test="${fn:length(cat.websiteQuestions) > 0}">
 				<li>
-				<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
+				<imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
 				<a class="heading" href="javascript:void(0)">${cat.displayName}
 
 
@@ -168,5 +168,5 @@
 </c:otherwise>
 </c:choose>	
 
-<!--<img src="/assets/images/bubble_bottom.png" alt="" width="247" height="35" />-->
+<!--<imp:image src="images/bubble_bottom.png" alt="" width="247" height="35" />-->
 </div>

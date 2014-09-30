@@ -38,8 +38,8 @@ $("#box a").click(function(event) {
 });
 </script>
 
-<script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
-<script type="text/javascript" src="/assets/js/fileUpload.js"></script>
+<imp:script src="js/lib/jquery-validate/jquery.validate.pack.js"/>
+<imp:script src="js/fileUpload.js"/>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -166,7 +166,7 @@ $(document).ready(function(){
         <td>Genetic Background</td>
         <td>
            <html:text property="background" size="60"/> 
-          <a href="javascript:void(0)" onmouseover="this.T_OFFSETY=10;return escape('<ul class=myul><li>Genotype, strain, other mutations/markers), other genotypic information</li></ul>')" ><img src="/assets/images/help.png" align=bottom border=0></a> 
+          <a href="javascript:void(0)" onmouseover="this.T_OFFSETY=10;return escape('<ul class=myul><li>Genotype, strain, other mutations/markers), other genotypic information</li></ul>')" ><imp:image src="images/help.png" align="bottom" border="0"/></a> 
 
         </td>
       </tr>
@@ -230,7 +230,7 @@ $(document).ready(function(){
           </logic:iterate> 
 
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>CAT: Chloramphenicol acyl transferase (Chloramphenicol resistance)</li></ul>')">
-          <img src="/assets/images/help.png" align=bottom border=0></a>
+          <imp:image src="images/help.png" align="bottom" border="0"/></a>
 
           </td>
       </tr>
@@ -249,7 +249,7 @@ $(document).ready(function(){
             <html:checkbox property="marker" value="9">other</html:checkbox>
 
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>dhfr: Dihydrofolate reductase (pyrimethamine/WR99210 resistance)</li><li>hxgprt: hypoxanthine-xanthine-guanine phosphoribosyl transferase (mycophenolic acid resistance)</li><li>neo: neomycin phosphotransferase (G418/neomycin/kanamycin resistance)</li><li>bsd:  blasticidin S deaminase (blasticidin S resistance)</li><li>hph: hygromycin B phosphotransferase (hygromycin resistance)</li><li>pac: puromycin N-acetyltransferase (puromycin resistance)</li><li>sat: streptothricin acetyltransferase (nourseothricin resistance)</li><li>ble:  phleomycin resistance gene (phleomycin resistance)</li></ul>')">
-          <img src="/assets/images/help.png" align=bottom border=0></a>
+          <imp:image src="images/help.png" align="bottom" border="0"/></a>
           </td>
       </tr>
 
@@ -313,7 +313,7 @@ $(document).ready(function(){
         <td>
           <html:text property="pmIds" styleId="pmIds" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title</li><li>Enter one or more IDs in the box above separated by \',\'</li><li>Example: 18172196,10558988</li></ul>')">
-          <img src="/assets/images/help.png" align=bottom border=0></a>
+          <imp:image src="images/help.png" align="bottom" border="0"/></a>
           <br />
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">

@@ -205,7 +205,7 @@ ${id}
 	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="wdk.api.showLayer('UserComments')">This gene has <span style='color:red'>${count}</span> user comments
 </c:otherwise>
 </c:choose>
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -369,7 +369,7 @@ ${id}
 <a name="user-comment"/>
 
 <b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a></b><br><br>
 
 <c:catch var="e">

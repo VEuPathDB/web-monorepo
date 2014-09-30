@@ -135,7 +135,7 @@
 </c:if>
 </td><td align="right">
 <a href="${rssUrl}">
-  <img src="${pageContext.request.contextPath}/images/feed-icon16x16.png" alt="" border='0'>
+  <imp:image src="images/feed-icon16x16.png" alt="" border='0'/>
 <font size='-2' color='black'>RSS</font></a>
 </td></tr>
 </table>

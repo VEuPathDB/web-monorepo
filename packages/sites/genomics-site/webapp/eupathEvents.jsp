@@ -55,23 +55,23 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 
   <table align="left" border="0">
   <tr>
-     <td><a href="/"><img src="/assets/images/eupathdb_titleonwhite.gif" border=0></a></td> 
+     <td><a href="/"><imp:image src="images/eupathdb_titleonwhite.gif" border="0"></a></td> 
 	<td>&nbsp;</td> 
-    <td><a href="http://amoebadb.org"><img border=0 src="/assets/images/AmoebaDB/amoebadb_w50.png"  height=25 width=25></a></td>
+    <td><a href="http://amoebadb.org"><imp:image border="0" src="images/AmoebaDB/amoebadb_w50.png"  height="25" width="25"/></a></td>
 	<td>&nbsp;</td>
-    <td><a href="http://cryptodb.org"><img border=0 src="/assets/images/CryptoDB/cryptodb_w50.png"  height=25 width=25></a></td>
+    <td><a href="http://cryptodb.org"><imp:image border="0" src="images/CryptoDB/cryptodb_w50.png"  height="25" width="25"/></a></td>
 	<td>&nbsp;</td> 
-    <td><a href="http://giardiadb.org"><img border=0 src="/assets/images/GiardiaDB/giardiadb_w50.png"  height=25 width=25></a></td>	
+    <td><a href="http://giardiadb.org"><imp:image border="0" src="images/GiardiaDB/giardiadb_w50.png"  height="25" width="25"/></a></td>	
 	<td>&nbsp;</td> 
-    <td><a href="http://microsporidiadb.org"><img border=0 src="/assets/images/MicrosporidiaDB/microdb_w50.png"  height=25 width=25></a></td>	
+    <td><a href="http://microsporidiadb.org"><imp:image border="0" src="images/MicrosporidiaDB/microdb_w50.png"  height="25" width="25"/></a></td>	
 	<td>&nbsp;</td> 
-    <td><a href="http://plasmodb.org"><img border=0 src="/assets/images/PlasmoDB/plasmodb_w50.png"  height=25 width=25></a></td>
+    <td><a href="http://plasmodb.org"><imp:image border="0" src="images/PlasmoDB/plasmodb_w50.png"  height="25" width="25"/></a></td>
 	<td>&nbsp;</td> 
-    <td><a href="http://toxodb.org"><img border=0 src="/assets/images/ToxoDB/toxodb_w50.png"  height=25 width=25></a></td>
+    <td><a href="http://toxodb.org"><imp:image border="0" src="images/ToxoDB/toxodb_w50.png"  height="25" width="25"/></a></td>
 	<td>&nbsp;</td> 
-    <td><a href="http://trichdb.org"><img border=0 src="/assets/images/TrichDB/trichdb_w65.png"  height=25 width=30></a></td>
+    <td><a href="http://trichdb.org"><imp:image border="0" src="images/TrichDB/trichdb_w65.png"  height=25 width=30></a></td>
 	<td>&nbsp;</td> 
-    <td><a href="http://tritrypdb.org"><img border=0 src="/assets/images/TriTrypDB/tritrypdb_w40.png"  height=25 width=25></a></td>
+    <td><a href="http://tritrypdb.org"><imp:image border="0" src="images/TriTrypDB/tritrypdb_w40.png"  height="25" width="25"/></a></td>
   </tr>
   </table>
 

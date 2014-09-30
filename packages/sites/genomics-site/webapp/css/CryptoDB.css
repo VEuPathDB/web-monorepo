@@ -3,15 +3,15 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/PlasmoDB/background_s.jpg);
+	background-image: url(../images/CryptoDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink, .link {
-	color: #6600CC;
+a:link, a:visited, div.divlink, .link  {
+	color: #0b4796;
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #8f0165;    /*  #330099;  */
+	color: #610b0b;    /* for contrast 08438F; */        /*  #83a6d4; */
 }
 
 a[name]:link {
@@ -31,19 +31,19 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
+	background-image: url(../images/CryptoDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
+	background-image: url(../images/CryptoDB/backgroundtop_s.jpg);
 }
 
 #header_rt {
-   color: #6e549c;
+   color: #395b8e;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #543792;
+   color: #395b8e;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,56 +51,71 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #nav-top {
-	color: #634697;
+	color: #395b8e;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #634697;
+	color: #395b8e;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/PlasmoDB/footer.png);
-	border-color:#634697;
-	list-style-image: url(../images/PlasmoDB/bullet_arrow.gif);
+	background-image: url(../images/CryptoDB/footer.png);
+	border-color:#395b8e;
+	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #634697;
+	color: #395b8e;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #8f0165;
+	color: #630d0d;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-/* #bubbles .info {
-  min-height: 299px;
-} */
+#bubbles .info {
+  min-height: 351px;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
+/* #menubar #mysearch {
+	background-image: url(../images/CryptoDB/my_hist_menubar.png);
+	border: 1px solid #6e2929;
+} */
+ 
 #contentcolumn {
-	background-image: url(../images/PlasmoDB/footer.png);
-	border: 1px solid #634697;
+	background-image: url(../images/CryptoDB/footer.png);
+	border: 1px solid #345d9b;
 }
 
 #contentcolumn2 {
-	background-image: url(../images/PlasmoDB/footer.png);
-	border: 1px solid #634697;
+	background-image: url(../images/CryptoDB/footer.png);
+	border: 1px solid #345d9b;
 }
 
 #mysearchhist {
-	background-image: url(../images/PlasmoDB/bubble_my_searchbox.png);
-	border: 1px solid #b5a3d4;
+	background-image: url(../images/CryptoDB/bubble_my_searchbox.png);
+	border: 1px solid #aebed7;
 }
 
 #main_tools {
-	background-image: url(../images/PlasmoDB/tools_bckgnd.jpg);
+	background-image: url(../images/CryptoDB/tools_bckgnd.jpg);
+}
+
+#about_us_left {
+	background-color: #bfccdf;
+	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
+}
+
+#pink_title {
+	color: #5f140e;
+	background-image: url(../images/CryptoDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,16 +124,16 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#5c0141;
+	color:#560000;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #5f0f47;
+	border-bottom-color: #610b0b;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #5f0f47;
-	color: #8f0165;
+	border-bottom-color: #610b0b;
+	color: #610b0b;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,11 +141,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #634697;  /* color as in contentcolumn border */
+   border-color: #345d9b;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/PlasmoDB/menu_lft2.png);
+	background-image: url(../images/CryptoDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -138,11 +153,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-    border: solid 1px #634697;
- } 
+   border: solid 1px #5376ae;
+} 
 
 .search-box .textbox{
-	border: solid 1px #634697;
+	border: solid 1px #5376ae;    /* b3b3b3; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,15 +165,15 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #5f0f47; /*  #634697;  */
+	color: #610b0b; /*#345d9b; */
 }
 
 h2 {
-  	color: #5f0f47; /* #634697;  */
+  	color: #610b0b; /*#345d9b;*/
 }
 
-.h2center, .h3left,.h3center, .h4left {
-  	color: #5f0f47;
+.h2center, .h3left, .h3center, .h4left {
+        color: #610b0b;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,7 +181,7 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-   background-image: url(../images/PlasmoDB/footer.png);
+   background-image: url(../images/CryptoDB/footer.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,28 +190,28 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #5f0f47;
-	background-image: url(../images/PlasmoDB/trheader.png);
+	color: #5f140e;
+	background-image: url(../images/CryptoDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #5f0f47;
+	color: #5f140e;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/PlasmoDB/trheader.png);
+	background-image: url(../images/CryptoDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/PlasmoDB/trhover.png);
+	background-image: url(../images/CryptoDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/PlasmoDB/trsubhead.png);
+	background-image: url(../images/CryptoDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/PlasmoDB/trsubhead.png);
+	background-image: url(../images/CryptoDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -205,20 +220,20 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #5f0f47;
-	background-image: url(../images/PlasmoDB/trheader.png);
+        color: #5f140e;
+	background-image: url(../images/CryptoDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/PlasmoDB/trsubhead.png);
+	background-image: url(../images/CryptoDB/trsubhead.png);
 }
 
 a.queryGridInactive {
-        color:               #C8C8C8;
+        color:              #C8C8C8;
 }
 
 a.queryGridActive {
-        color:              #440c94;
+        color:              #0b4796;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -227,32 +242,31 @@ a.queryGridActive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #610c48;
+	border-color: #5F140E;
 }
 
 tr.headerrow th { 
-	border-color: #610c48;
+	border-color: #5F140E;
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 div.Workspace {
-	border-color:#6600CC;
+	border-color: #0B4796;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+/* seems unused, not in other component sites 
+.twoColHybLt #container_au { 
+	background-image: url(../images/CryptoDB/aboutus.png);
+}
+*/
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/PlasmoDB/aboutus.png);
+	background-image: url(../images/CryptoDB/aboutus.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -275,11 +289,11 @@ div.Workspace {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 span.marker a:link, span.marker a:visited {
-	color: #800158;
+	color: #7D0101;
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #e9e6ee;
+    background-color: #E8EBF0;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -287,41 +301,39 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #634697;
+	border: 1px solid #345d9b;
 }
 
 .blockPage{
-	background-image: url(/assets/images/PlasmoDB/footer.png);
+	background-image: url(../images/CryptoDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/PlasmoDB/trheader.png);
+	background-image:url(../images/CryptoDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/PlasmoDB/trheader.png);
+	background-image:url(../images/CryptoDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/PlasmoDB/trheader.png);
+	background-image:url(../images/CryptoDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 history.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #634697;	
+	border: 1px solid #345d9b;	
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -329,7 +341,8 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #5f0f47;
+  color: #610b0b;
 }
+
 
 /*THE END */

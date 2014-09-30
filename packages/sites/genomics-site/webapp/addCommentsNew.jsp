@@ -34,8 +34,8 @@
                  banner="Add A Comment">
 <head>
 
-<script type="text/javascript" src="/assets/js/lib/jquery-validate/jquery.validate.pack.js"></script>
-<script type="text/javascript" src="/assets/js/fileUpload.js"></script>
+  <imp:script src="js/lib/jquery-validate/jquery.validate.pack.js"/>
+  <imp:script src="js/fileUpload.js"/>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -315,7 +315,7 @@ function openPubmedWindow(searchBoxId) {
           <html:text property="locations" size="70"/>
 
           <a href="javascript:void(0)" onmouseover="this.T_OFFSETY=10;return escape('<ul class=myul><li>Leave blank if Location is not applicable</li><li>Example 1: 1000-2000</li><li>Example 2: 1000-2000, 2500-2600, 3000-5000</li><li>Always use the forward strand (5\'-3\') coordinates</li><ul>')">
-          <img src="/assets/images/help.png" align=bottom border=0></a>
+          <imp:image src="images/help.png" align="bottom" border="0"/></a>
         </td>
 
       </tr>
@@ -357,7 +357,7 @@ function openPubmedWindow(searchBoxId) {
              <td align="right">
              
               <html:hidden property="existingFiles" value="${file}"/> 
-              <img class="delete" src="/assets/images/remove.gif">
+              <imp:image class="delete" src="images/remove.gif"/>
              </td>
            </tr>
 
@@ -395,7 +395,7 @@ function openPubmedWindow(searchBoxId) {
 	  <td>        
           <html:text property="pmIds" styleId="pmIds" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li> First, find the publcation in <a href=\'http://www.ncbi.nlm.nih.gov/pubmed\'>PubMed</a> based on author or title.</li><li>Enter one or more IDs in the box above separated by \',\'s (Example: 18172196,10558988).</li><li>Click \'Preview\' to see information about these publications.</li></ul>');">
-          <img src="/assets/images/help.png" align=bottom border=0></a>
+          <imp:image src="images/help.png" align="bottom" border="0"/></a>
 
     	<div> <input type="button" id="preview" value="Preview"> the article details of the PubMed ID(s) above</div>
           <br/>
@@ -406,7 +406,7 @@ function openPubmedWindow(searchBoxId) {
 	<!-- article details here -->
           <div id="wrapper" style="display:none;">
             <div id="quote" class="border">
-            <img id="remove" src="/assets/images/remove.gif" align=right>
+            <imp:image id="remove" src="images/remove.gif" align="right"/>
             <p></p></div>
           </div>
 
@@ -420,7 +420,7 @@ function openPubmedWindow(searchBoxId) {
         <td>
           <html:text property="dois" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter one or more DOIs, site URLs (at dx.doi.org), or DOI URLs (with doi: prefix) in the box above, separated by \',\'</li><li><a>DOI homepage - http://www.doi.org/index.html</a></li></ul>')">
-          <img src="/assets/images/help.png" align=bottom border=0></a>
+          <imp:image src="images/help.png" align="bottom" border="0"/></a>
         </td>
       </tr>
 
@@ -430,7 +430,7 @@ function openPubmedWindow(searchBoxId) {
         <td>
           <html:text property="accessions" size="70"/>
           <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter one or more Acccession(s) in the box above separated by \',\'</li></ul>')">
-          <img src="/assets/images/help.png" align=bottom border=0></a>
+          <imp:image src="images/help.png" align="bottom" border="0"/></a>
         </td>
       </tr>
 
@@ -458,7 +458,7 @@ function openPubmedWindow(searchBoxId) {
         <td> 
           <html:textarea property="associatedStableIds" rows="3" cols="70"/>
          <a href="javascript:void(0)" onmouseover="this.T_BORDERWIDTH=1;this.T_OFFSETY=10;return escape('<ul class=myul><li>Enter asscociated Gene/Genome/Isolate Id(s) in the box above separated by space or \',\'. </li><li>The same comment and uploaded files will be showed on those associated gene/genome/isolate pages.</li></ul>')"> 
-          <img src="/assets/images/help.png" align=top border=0></a>
+          <imp:image src="images/help.png" align="top" border="0"/></a>
         </td>
       </tr>
         
@@ -530,7 +530,7 @@ function openPubmedWindow(searchBoxId) {
     <table width=60% align=center>
     <tr><td>
 
-      <a href="#" id="trigger"><img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp; Format description</a>
+      <a href="#" id="trigger"><imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp; Format description</a>
       <div id="box">
       ${formatHelp}
       </div>

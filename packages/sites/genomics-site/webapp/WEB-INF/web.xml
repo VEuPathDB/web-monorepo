@@ -99,6 +99,15 @@
     <servlet-name>wdkEuPathDbBrc</servlet-name>
   </filter-mapping>
 
+  <filter>
+    <filter-name>gzip</filter-name>
+    <filter-class>org.eupathdb.common.controller.gzip.GzipServletFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>gzip</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <!-- JavaMelody monitoring plugin configuration -->
   <filter>
     <filter-name>monitoring-display</filter-name>

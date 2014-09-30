@@ -3,23 +3,15 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/EuPathDB/background_s.jpg);
+	background-image: url(../images/GiardiaDB/background_s.jpg);
 }
 
 a:link, a:visited, div.divlink, .link {
-	color: #2c5986;
+	color: #227124; //green
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #610b0b;   /* red like in crypto */     /*    #88a3bc;  */
-}
-
-a.opposite:link, a.opposite:visited {
-	color: #610b0b; 
-}
-
-a.opposite:hover, a.opposite:active {
-	color: #2c5986;
+	color: #2c2c7d;  //blue, towards purple
 }
 
 a[name]:link {
@@ -39,19 +31,19 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/EuPathDB/backgroundtop_s.jpg);
+	background-image: url(../images/GiardiaDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/EuPathDB/backgroundtop_s.jpg);
+	background-image: url(../images/GiardiaDB/backgroundtop_s.jpg);
 }
 
 #header_rt {
-   color: #4a5f72;
+   color: #2c2c7d;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #33587a;
+   color: #2c2c7d;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,71 +51,71 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #nav-top {
-	color: #255f95;
+	color: #2c2c7d;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #255f95;
+	color: #2c2c7d;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/EuPathDB/footer.png);
-	border-color:#14426d;
-	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
+	background-image: url(../images/GiardiaDB/footer.png);
+	border-color:#226723;
+	list-style-image: url(../images/GiardiaDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #255f95;
+	color: #2c2c7d;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #717775;
+	color: #227124; //green
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#bubbles .info {
+/* #bubbles .info {
   min-height: 299px;
-}
+} */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 /* #menubar #mysearch {
-	background-image: url(../images/EuPathDB/my_hist_menubar.png);
-	border: 1px solid #6e2b2a;
+	background-image: url(../images/GiardiaDB/my_hist_menubar.png);
+	border: 1px solid #393966;
 } */
  
 #contentcolumn {
-	background-image: url(../images/EuPathDB/footer.png);
-	border: 1px solid #14426d;
+	background-image: url(../images/GiardiaDB/footer.png);
+	border: 1px solid #226723;
 }
 
 #contentcolumn2 {
-	background-image: url(../images/EuPathDB/footer.png);
-	border: 1px solid #14426d;
+	background-image: url(../images/GiardiaDB/footer.png);
+	border: 1px solid #226723;
 }
 
 #mysearchhist {
-	background-image: url(../images/EuPathDB/bubble_my_searchbox.png);
-	border: 1px solid #9eb7ce;
+	background-image: url(../images/GiardiaDB/bubble_my_searchbox.png);
+	border: 1px solid #a3dca4;
 }
 
 #main_tools {
-	background-image: url(../images/EuPathDB/tools_bckgnd.jpg);
+	background-image: url(../images/GiardiaDB/tools_bckgnd.jpg);
 }
 
 #about_us_left {
-	background-color: #b8c9da;
-	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
+	background-color: #bfbfdc;
+	list-style-image: url(../images/GiardiaDB/bullet_arrow.gif);
 }
 
 #pink_title {
-	color: #505453;
-	background-image: url(../images/EuPathDB/trheader.png);
+	color: #282868;
+	background-image: url(../images/GiardiaDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,16 +124,16 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#013260;
+	color:#000068;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #610b0b;
+	border-bottom-color: #2c2c7d;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #610b0b;
-	color: #013260;
+	border-bottom-color: #2c2c7d;
+	color: #2c2c7d;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -149,11 +141,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #14426D;  /* color as in contentcolumn border */
+   border-color: #226723;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/EuPathDB/menu_lft2.png);
+	background-image: url(../images/GiardiaDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,11 +153,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #255f95;
+   border: solid 1px #1c7c12;
 } 
 
 .search-box .textbox{
-	border: solid 1px #255f95;
+	border: solid 1px #b3b3b3;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -173,15 +165,15 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #626262;  /* dark grey  */
+	color: #226723;
 }
 
 h2 {
-  	color: #626262;
+  	color: #226723;
 }
 
-.h2center, .h3left, .h3center,  .h4left {
-        color: #610b0b;   /* reddish */
+.h2center, .h3left,.h3center, .h4left {
+  	color: #2c2c7d;   /* 5f0f47; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -189,7 +181,7 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-   background-image: url(../images/EuPathDB/footer.png);
+   background-image: url(../images/GiardiaDB/footer.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -198,28 +190,28 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #505453;
-	background-image: url(../images/EuPathDB/trheader.png);
+	color: #282868;
+	background-image: url(../images/GiardiaDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #505453;
+	color: #282868;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/EuPathDB/trheader.png);
+	background-image: url(../images/GiardiaDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/EuPathDB/trhover.png);
+	background-image: url(../images/GiardiaDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/EuPathDB/trsubhead.png);
+	background-image: url(../images/GiardiaDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/EuPathDB/trsubhead.png);
+	background-image: url(../images/GiardiaDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -228,13 +220,12 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-  color: #505453;
-	background-image: url(../images/EuPathDB/trheader.png);
+        color: #282868;
+	background-image: url(../images/GiardiaDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-  color: darkred;
-	background-image: url(../images/EuPathDB/trsubhead.png);
+	background-image: url(../images/GiardiaDB/trsubhead.png);
 }
 
 a.queryGridInactive {
@@ -242,23 +233,33 @@ a.queryGridInactive {
 }
 
 a.queryGridActive {
-        color:              #08549c;
+        color:              #282868;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =END OF TABLES FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 tr.subheaderrow th {
-	border-color: #51575b;
+	border-color: #227124;
 }
 
 tr.headerrow th { 
-	border-color: #51575b;
+	border-color: #227124;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =RED BUTTON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 div.Workspace {
-	border-color: #2c5986;
+	border-color: #227124;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -266,7 +267,7 @@ div.Workspace {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/EuPathDB/aboutus.png);
+	background-image: url(../images/GiardiaDB/aboutus.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -293,7 +294,7 @@ span.marker a:link, span.marker a:visited {
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #e4eaf0;
+    background-color: #E8EBF0;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -301,39 +302,41 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #14426d;
+	border: 1px solid #226723;
 }
 
 .blockPage{
-	background-image: url(/assets/images/EuPathDB/footer.png);
+	background-image: url(../images/GiardiaDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/EuPathDB/trheader.png);
+	background-image:url(../images/GiardiaDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/EuPathDB/trheader.png);
+	background-image:url(../images/GiardiaDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/EuPathDB/trheader.png);
+	background-image:url(../images/GiardiaDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 history.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #345d9b;	
+	border: 1px solid #2c2c7d;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -341,8 +344,8 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #626262;
+  color: #226723;
 }
 
-
 /*THE END */
+

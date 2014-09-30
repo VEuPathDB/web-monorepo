@@ -1073,7 +1073,7 @@ sub warnNote {
 			"<br>1. Make sure you are viewing the correct species/strain to which the data was mapped." .
 			"<br>2.<a style='font-weight:bold' href='/cgi-bin/gbrowse/$project/?reset=1'> Reset your GBrowse</a> and try again." .
 			"</div></td>" .
-			"<td style='font-size:120%;font-weight:bold;text-align:center;vertical-align:middle'><a onclick='poptastic(this.href); return false;' target='_blank' href='http://www.youtube.com/watch?v=jxA6VMN97Y8'>EuPathDB GBrowse Tutorial <img border='0' src='/assets/images/smallYoutube-icon.png' alt='YouTube icon' style='vertical-align:middle' title='YouTube tutorial'></a></td></tr></table>";
+			"<td style='font-size:120%;font-weight:bold;text-align:center;vertical-align:middle'><a onclick='poptastic(this.href); return false;' target='_blank' href='http://www.youtube.com/watch?v=jxA6VMN97Y8'>EuPathDB GBrowse Tutorial <img border='0' src='/a/images/smallYoutube-icon.png' alt='YouTube icon' style='vertical-align:middle' title='YouTube tutorial'></a></td></tr></table>";
 
   return $txt;
 }

@@ -12,8 +12,8 @@
        questions; partial == true)  because it breaks IE7. When using internal questions, the parent 
        question page will still call this once.
     -->
-    <script language="javascript" type="text/javascript" src="/js/awstats_misc_tracker.js" ></script>
-    <noscript><img src="/js/awstats_misc_tracker.js?nojs=y" height="0" width="0" border="0" style="display: none"></noscript>
+    <imp:script src="js/awstats_misc_tracker.js"/>
+    <noscript><imp:image src="js/awstats_misc_tracker.js?nojs=y" height="0" width="0" border="0" style="display: none"/></noscript>
   </c:when>
   <c:otherwise>
     <imp:questionPageContent/>

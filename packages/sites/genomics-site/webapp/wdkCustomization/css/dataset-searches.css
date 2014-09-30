@@ -251,7 +251,7 @@ td.search-mechanism a {
   display: inline-block;
   width: 22px;
   height: 22px;
-  background: url(/assets/images/mag_glass.png);
+  background: url(../../images/mag_glass.png);
   vertical-align: middle;
 }
 .info {

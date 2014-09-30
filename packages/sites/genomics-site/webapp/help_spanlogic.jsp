@@ -29,7 +29,7 @@
 </td>
 <td width="20%">
 	<a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
-	<img title="7-minute flash tutorial on a popup window" src="/assets/images/camera.png" alt="help with combining IDs via relative genomic location" />
+	<imp:image title="7-minute flash tutorial on a popup window" src="images/camera.png" alt="help with combining IDs via relative genomic location" />
 	</a>
 </td>
 </tr></table></center>

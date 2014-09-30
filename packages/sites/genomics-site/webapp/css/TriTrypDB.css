@@ -3,15 +3,15 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/GiardiaDB/background_s.jpg);
+	background-image: url(../images/TriTrypDB/background_s.jpg);
 }
 
 a:link, a:visited, div.divlink, .link {
-	color: #227124; //green
+	color: #015f9a;
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #2c2c7d;  //blue, towards purple
+	color: #b45f04;    /* for contrast   93c4e3; */
 }
 
 a[name]:link {
@@ -31,19 +31,28 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/GiardiaDB/backgroundtop_s.jpg);
+	background-image: url(../images/TriTrypDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/GiardiaDB/backgroundtop_s.jpg);
+	background-image: url(../images/TriTrypDB/backgroundtop_s.jpg);
 }
 
 #header_rt {
-   color: #2c2c7d;
+   color: #95461a;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #2c2c7d;
+   color: #95461a;
+}
+
+/* only used in tritryp (genedb link)  MOVE TO BRANDING */
+#toplink a:link, #toplink a:visited{
+	width: 381px;
+}
+
+#toplink a:hover {
+	width: 381px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,71 +60,56 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #nav-top {
-	color: #2c2c7d;
+	color: #395b8e;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #2c2c7d;
+	color: #97400e;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/GiardiaDB/footer.png);
-	border-color:#226723;
-	list-style-image: url(../images/GiardiaDB/bullet_arrow.gif);
+	background-image: url(../images/TriTrypDB/footer.png);
+	border-color:#95461a;
+	list-style-image: url(../images/TriTrypDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #2c2c7d;
+	color: #95461a;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #227124; //green
+	color: #013c63;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-/* #bubbles .info {
+#bubbles .info {
   min-height: 299px;
-} */
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-/* #menubar #mysearch {
-	background-image: url(../images/GiardiaDB/my_hist_menubar.png);
-	border: 1px solid #393966;
-} */
  
 #contentcolumn {
-	background-image: url(../images/GiardiaDB/footer.png);
-	border: 1px solid #226723;
+	background-image: url(../images/TriTrypDB/footer.png);
+	border: 1px solid #9e5933;
 }
 
 #contentcolumn2 {
-	background-image: url(../images/GiardiaDB/footer.png);
-	border: 1px solid #226723;
+	background-image: url(../images/TriTrypDB/footer.png);
+	border: 1px solid #9e5933;
 }
 
 #mysearchhist {
-	background-image: url(../images/GiardiaDB/bubble_my_searchbox.png);
-	border: 1px solid #a3dca4;
+	background-image: url(../images/TriTrypDB/bubble_my_searchbox.png);
+	border: 1px solid #dfbba6;
 }
 
 #main_tools {
-	background-image: url(../images/GiardiaDB/tools_bckgnd.jpg);
-}
-
-#about_us_left {
-	background-color: #bfbfdc;
-	list-style-image: url(../images/GiardiaDB/bullet_arrow.gif);
-}
-
-#pink_title {
-	color: #282868;
-	background-image: url(../images/GiardiaDB/trheader.png);
+	background-image: url(../images/TriTrypDB/tools_bckgnd.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,16 +118,16 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#000068;
+	color:#003658;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #2c2c7d;
+	border-bottom-color: #a45d35;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #2c2c7d;
-	color: #2c2c7d;
+	border-bottom-color: #a45d35;
+	color: #0276be;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,11 +135,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #226723;  /* color as in contentcolumn border */
+   border-color: #9E5933;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/GiardiaDB/menu_lft2.png);
+	background-image: url(../images/TriTrypDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -153,36 +147,42 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #1c7c12;
+   border: solid 1px #a06442;
 } 
 
 .search-box .textbox{
 	border: solid 1px #b3b3b3;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Arrow Chains 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Fonts 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #226723;
+	color: #a45d35;
 }
 
 h2 {
-  	color: #226723;
+  	color: #a45d35;
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #2c2c7d;   /* 5f0f47; */
+  	color: #a45d35;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER 
+	 =FOOTER  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-   background-image: url(../images/GiardiaDB/footer.png);
-}
+    background-image: url(../images/TriTrypDB/footer.png);
+ }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TABLES 
@@ -190,28 +190,28 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #282868;
-	background-image: url(../images/GiardiaDB/trheader.png);
+	color: #0c3f60;
+	background-image: url(../images/TriTrypDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #282868;
+	color: #0c3f60;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/GiardiaDB/trheader.png);
+	background-image: url(../images/TriTrypDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/GiardiaDB/trhover.png);
+	background-image: url(../images/TriTrypDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/GiardiaDB/trsubhead.png);
+	background-image: url(../images/TriTrypDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/GiardiaDB/trsubhead.png);
+	background-image: url(../images/TriTrypDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,12 +220,12 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #282868;
-	background-image: url(../images/GiardiaDB/trheader.png);
+        color: #0c3f60;
+	background-image: url(../images/TriTrypDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/GiardiaDB/trsubhead.png);
+	background-image: url(../images/TriTrypDB/trsubhead.png);
 }
 
 a.queryGridInactive {
@@ -233,7 +233,7 @@ a.queryGridInactive {
 }
 
 a.queryGridActive {
-        color:              #282868;
+        color:              #9f4510;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -242,11 +242,11 @@ a.queryGridActive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #227124;
+	border-color: #0c3f60;
 }
 
 tr.headerrow th { 
-	border-color: #227124;
+	border-color: #0c3f60;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -254,12 +254,14 @@ tr.headerrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 div.Workspace {
-	border-color: #227124;
+	border-color: #015f9a;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -267,7 +269,7 @@ div.Workspace {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/GiardiaDB/aboutus.jpg);
+	background-image: url(../images/TriTrypDB/aboutus.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -290,11 +292,11 @@ div.Workspace {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 span.marker a:link, span.marker a:visited {
-	color: #7D0101;
+	color: #014c7c;
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E8EBF0;
+    background-color: #E9E6EE;   /*  #f2e9e4;  */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -302,23 +304,23 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #226723;
+	border: 1px solid #9e5933;
 }
 
 .blockPage{
-	background-image: url(/assets/images/GiardiaDB/footer.png);
+	background-image: url(../images/TriTrypDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/GiardiaDB/trheader.png);
+	background-image:url(../images/TriTrypDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/GiardiaDB/trheader.png);
+	background-image:url(../images/TriTrypDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/GiardiaDB/trheader.png);
+	background-image:url(../images/TriTrypDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -336,7 +338,7 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #2c2c7d;
+	border: 1px solid #015f9a;   /*   #9e5933;	  */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -344,8 +346,7 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #226723;
+  color: #a45d35;
 }
 
 /*THE END */
-

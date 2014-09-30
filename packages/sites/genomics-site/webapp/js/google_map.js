@@ -43,7 +43,7 @@ jQuery(document).ready(function(){
 function setMarkers(map, locations) {
 
   var infoWindow = new google.maps.InfoWindow();
-  var shadow = new google.maps.MarkerImage('/assets/images/isolate/mm_shadow.png');
+  var shadow = new google.maps.MarkerImage(wdk.assetsUrl('images/isolate/mm_shadow.png'));
 
   for (var i = 0; i < locations.length; i++ ) {
      var loc = locations[i];
@@ -68,7 +68,7 @@ function setMarkers(map, locations) {
        $icon = '10.png';
      }
 
-     var image = new google.maps.MarkerImage('/assets/images/isolate/' + $icon);
+     var image = new google.maps.MarkerImage(wdk.assetsUrl('images/isolate/' + $icon));
 
      var marker = new google.maps.Marker({
         position: latLng,

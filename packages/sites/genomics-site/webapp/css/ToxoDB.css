@@ -3,15 +3,19 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/FungiDB/background_s.jpg);
+	background-image: url(../images/ToxoDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink, .link {
-	color: #067387;
+a:link, div.divlink, .link {
+	color: #187a02; //#206910;  //green
+}
+
+a:visited {
+	color: #507a46;            //muter green
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #672a87;   /* #4eb8cb; */
+	color: #772841;            //dark pink, wine color
 }
 
 a[name]:link {
@@ -31,19 +35,19 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/FungiDB/backgroundtop_s.jpg);
+	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/FungiDB/backgroundtop_s.jpg);
+	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
 }
 
 #header_rt {
-   color: #067387;
+   color: #3c8935; //lighter green
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #067387;
+   color: #3c8935;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,100 +55,86 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #nav-top {
-	color: #067387;
+	color: #3c8935;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color:  #067387;
+	color: #3c8935;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/FungiDB/footer.png);
-	border-color:#067387;
-	list-style-image: url(../images/FungiDB/bullet_arrow.gif);
+	background-image: url(../images/ToxoDB/footer.png);
+	border-color:#3c8935;
+	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #067387;
+	color: #3c8935;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #672a87; 
+	color: #6f223a;   //dark red
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-/* #bubbles .info {
-  min-height: 299px;
-} */
+#bubbles .info {
+  min-height: 329px;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-/* #menubar #mysearch {
-	background-image: url(../images/FungiDB/my_hist_menubar.png);
-	border: 1px solid #175982;
-} */
-
 #contentcolumn {
-	background-image: url(../images/FungiDB/footer.png);
-	border: 1px solid #116b7b;
+	background-image: url(../images/ToxoDB/footer.png);
+	border: 1px solid #20691a; //green
 }
 
 #contentcolumn2 {
-	background-image: url(../images/FungiDB/footer.png);
-	border: 1px solid #116b7b;
+	background-image: url(../images/ToxoDB/footer.png);
+	border: 1px solid #20691a;
 }
-
+/* commented out in DQG_bubble.tag
 #mysearchhist {
-	background-image: url(../images/FungiDB/bubble_my_searchbox.png);
-	border: 1px solid #116b7b;
+	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
+	border: 1px solid #20691a;
 }
-
+*/
 #main_tools {
-	background-image: url(../images/FungiDB/tools_bckgnd.jpg);
-}
-
-#about_us_left {
-	background-color: #bfccdf;
-	list-style-image: url(../images/FungiDB/bullet_arrow.gif);
-}
-
-#pink_title {
-	color: #672a87;
-	background-image: url(../images/FungiDB/trheader.png);
+	background-image: url(../images/ToxoDB/tools_bckgnd.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
+	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#672a87;   /*  #3B1870; */
+	color:#560000;
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #414141;
+	border-bottom-color: #3c8935;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #a45d35;
-	color: #672a87;   /* #4eb8cb; */
+	border-bottom-color: #3c8935;
+	color: #6f2239;      //#b30101; //light red
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
+	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #9c5bbe;  /* color as in contentcolumn border */
+   border-color: #6f223a; //  color as sidebar header color
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/FungiDB/menu_lft2.png);
+	background-image: url(../images/ToxoDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,102 +142,100 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #157485;
+   border: solid 1px #1c7c12;   //lighter  green
 } 
 
 .search-box .textbox{
-	border: solid 1px #b3b3b3;
+	border: solid 1px #b3b3b3;  //grey with a redish tint
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Arrow Chains 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Fonts 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #672a87;  /* #3B1870; */
+	color: #772841; //#20691a;
 }
 
 h2 {
-  	color: #672a87;  /*  #3B1870; */
+  	color: #772841; //#20691a;
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #672a87;  /* #3B1870; */
+  	color: #772841; //dark red     #3c8935; //lighter green
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER  
+	 =FOOTER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+	
 #footer{
-    background-image: url(../images/FungiDB/footer.png);
- }
+   background-image: url(../images/ToxoDB/footer.png);
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TABLES 
+	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #0c3f60;
-	background-image: url(../images/FungiDB/trheader.png);
+	color: #5e0f28;  //dark red
+	background-image: url(../images/ToxoDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #672a87;
+	color: #5e0f28;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/FungiDB/trheader.png);
+	background-image: url(../images/ToxoDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/FungiDB/trhover.png);
+	background-image: url(../images/ToxoDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/FungiDB/trsubhead.png);
+	background-image: url(../images/ToxoDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/FungiDB/trsubhead.png);
+	background-image: url(../images/ToxoDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOR QUERY GRID
+	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #672a87;
-	background-image: url(../images/FungiDB/trheader.png);
+        color: #5e0f28;
+	background-image: url(../images/ToxoDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/FungiDB/trsubhead.png);
+	background-image: url(../images/ToxoDB/trsubhead.png);
 }
 
 a.queryGridInactive {
-        color:              #C8C8C8;
+        color:              #C8C8C8;    //grey with redish tint
 }
 
 a.queryGridActive {
-        color:              #672a87;
+        color:              #772841;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =END OF TABLES FOR QUERY GRID
+	 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #672a87;
+	border-color: #772841;
 }
 
 tr.headerrow th { 
-	border-color: #067387;    /*  #672a87; */
+	border-color: #772841;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -259,29 +247,17 @@ tr.headerrow th {
 	 =WorkSpace Divs 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+div.Workspace {
+	border-color: #187a02;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT US and HELP PAGES SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/FungiDB/aboutus.jpg);
+	background-image: url(../images/ToxoDB/aboutus.png);
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ADVANCED STRATEGY PAGING 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in contact.do, classic bullet list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC 
@@ -300,41 +276,31 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #634697;
+	border: 1px solid #3c8935;
 }
 
 .blockPage{
-	background-image: url(/assets/images/FungiDB/footer.png);
+	background-image: url(../images/ToxoDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/FungiDB/trheader.png);
+	background-image:url(../images/ToxoDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/FungiDB/trheader.png);
+	background-image:url(../images/ToxoDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/FungiDB/trheader.png);
+	background-image:url(../images/ToxoDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 history.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #015f9a;
+	border: 1px solid #772841;	
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,7 +308,7 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #672a87;
+  color: #772841;
 }
 
 /*THE END */

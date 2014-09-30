@@ -94,7 +94,7 @@ wdk.namespace('eupathdb.orthologPattern', function(ns, $) {
 
   function setstate (imgidx, urlidx, dofixparent) {
     state[imgidx] = urlidx;
-    $("img#img" + imgidx).attr('src',"images/" + urls[urlidx]);
+    $("img#img" + imgidx).attr('src', wdk.assetsUrl("images/" + urls[urlidx]));
     for (var i = 0 ; i < children[imgidx].length ; i++) {
       setstate(children[imgidx][i], urlidx == 3 ? 0 : urlidx, 0);
     }
@@ -121,11 +121,11 @@ wdk.namespace('eupathdb.orthologPattern', function(ns, $) {
       }
       if (allmatch) {
         state[parentidx] = urlidx;
-        $("img#img" + parentidx).attr('src', "images/" + urls[urlidx]);
+        $("img#img" + parentidx).attr('src', wdk.assetsUrl("images/" + urls[urlidx]));
         fixparent(parentidx, urlidx);
       } else {
         state[parentidx] = null;
-        $("img#img" + parentidx).attr('src', "images/" + urls[4]);
+        $("img#img" + parentidx).attr('src', wdk.assetsUrl("images/" + urls[4]));
         fixparent(parentidx, null);
       }
     }

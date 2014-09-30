@@ -206,7 +206,7 @@
         <table id="profileContent">
         <tr>
         <td>
-          <img  id="${imgId}" src="<c:url value='/images/spacer.gif'/>">
+          <imp:image  id="${imgId}" src="images/spacer.gif"/>
         </td>
 
         <td class="centered">

@@ -57,7 +57,7 @@
   <%-- copied from siteAnnounce.tag --%>
   <div class="info announcebox" style="color:darkred;font-size:120%">
     <table><tr>
-			<td><img src="/assets/images/clearInfoIcon.png" alt="warningSign" /></td>
+			<td><imp:image src="images/clearInfoIcon.png" alt="warningSign" /></td>
     	<td>
       	<span class="warningMessage" style="line-height: 16px">
           Currently, some searches (demarcated with a &dagger;) do not work properly

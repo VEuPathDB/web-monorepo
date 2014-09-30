@@ -53,7 +53,7 @@
 
 <c:if test="${project == 'AmoebaDB' || project == 'TriTrypDB' || project == 'ToxoDB'}">
 --------------  SITE SEARCH  ---------------------------------------------
-	<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+	<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
   <a class="heading" id='stats'  href="#">Site Search</a>
   <div class="menu_lefttop_drop" style="text-align:center;">
 		<imp:freefind_form searchSite="${project}"/>
@@ -63,7 +63,7 @@
 --%>
 
 <%--------------  EUPATHDB DATA STATS---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading" id='stats'  href="#">Data Summary</a>
 
 <c:choose>
@@ -82,7 +82,7 @@
 
     <tr><td style="padding:0;">
 	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="${linkToDataSummary}"/>">
-	    <img style="border: 2px solid #666666;" src="/assets/images/genomeTable.png" width="190" height="100"></a>
+	    <imp:image style="border: 2px solid #666666;" src="images/genomeTable.png" width="190" height="100"/></a>
     </td><tr>
 
     <tr><td style="text-align:left;">
@@ -97,7 +97,7 @@
 <!-- number of news items to show in sidebar (there is scrollbar) -->
 <c:set var="NewsCount" value="50"/>
 
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading"  href="#">News and Tweets</a>
 
 <div class="menu_lefttop_drop" id="News">
@@ -221,7 +221,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
 
 <%--------------  COMMUNITY RESOURCES ---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a  class="heading" id='community' href="#">Community Resources</a>
 
 <div class="menu_lefttop_drop">
@@ -279,13 +279,13 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 </div>
 
 <%--------------  TUTORIALS ---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
 <div class="menu_lefttop_drop">
   <ul id="education">
     <li id='edu-05'><a target="_blank" href="${constants.youtubeUrl}">
       YouTube Tutorials Channel
-      <img style="width:20px;display:inline;vertical-align:middle;" src="/assets/images/youtube_32x32.png"/>
+      <imp:image style="width:20px;display:inline;vertical-align:middle;" src="images/youtube_32x32.png"/>
       </a>
     </li>
 	  <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</li>
@@ -301,7 +301,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
 <div class="menu_lefttop_drop">
   <ul id="information">

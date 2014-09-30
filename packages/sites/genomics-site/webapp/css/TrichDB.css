@@ -3,19 +3,15 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(/assets/images/ToxoDB/background_s.jpg);
+	background-image: url(../images/TrichDB/background_s.jpg);
 }
 
-a:link, div.divlink, .link {
-	color: #187a02; //#206910;  //green
-}
-
-a:visited {
-	color: #507a46;            //muter green
+a:link, a:visited, div.divlink, .link {
+	color: #538001;
 }
 
 a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #772841;            //dark pink, wine color
+	color: #7B5A37;  /* #a9cb6d; */
 }
 
 a[name]:link {
@@ -35,19 +31,19 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header {
-	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/ToxoDB/backgroundtop_s.jpg);
+	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
 }
 
 #header_rt {
-   color: #3c8935; //lighter green
+   color: #8c8b35;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #3c8935;
+   color: #8c8b35;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,56 +51,56 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #nav-top {
-	color: #3c8935;
+	color: #8c8b35;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #3c8935;
+	color: #8c8b35;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/ToxoDB/footer.png);
-	border-color:#3c8935;
-	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
+	background-image: url(../images/TrichDB/footer.png);
+	border-color:#8c8b35;
+	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #3c8935;
+	color: #8c8b35;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #6f223a;   //dark red
+	color: #605f0e;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#bubbles .info {
-  min-height: 329px;
-}
+/* #bubbles .info {
+  min-height: 299px;
+} */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
+ 
 #contentcolumn {
-	background-image: url(../images/ToxoDB/footer.png);
-	border: 1px solid #20691a; //green
+	background-image: url(../images/TrichDB/footer.png);
+	border: 1px solid #455f15;
 }
 
 #contentcolumn2 {
-	background-image: url(../images/ToxoDB/footer.png);
-	border: 1px solid #20691a;
+	background-image: url(../images/TrichDB/footer.png);
+	border: 1px solid #455f15;
 }
-/* commented out in DQG_bubble.tag
+
 #mysearchhist {
-	background-image: url(../images/ToxoDB/bubble_my_searchbox.png);
-	border: 1px solid #20691a;
+	background-image: url(../images/TrichDB/bubble_my_searchbox.png);
+	border: 1px solid #c9dea4;
 }
-*/
+
 #main_tools {
-	background-image: url(../images/ToxoDB/tools_bckgnd.jpg);
+	background-image: url(../images/TrichDB/tools_bckgnd.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -117,24 +113,24 @@ a[name]:hover, a[name]:active {
 }
 
 #menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #3c8935;
+	border-bottom-color: #7b5a37;
 }
 
 #menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #3c8935;
-	color: #6f2239;      //#b30101; //light red
+	border-bottom-color: #7b5a37;
+	color: #7b5a37;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Sidebar
+	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #6f223a; //  color as sidebar header color
+   border-color: #455F15;  /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/ToxoDB/menu_lft2.png);
+	background-image: url(../images/TrichDB/menu_lft2.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,11 +138,11 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .search-box{
-   border: solid 1px #1c7c12;   //lighter  green
+   border: solid 1px #3f5d27;
 } 
 
 .search-box .textbox{
-	border: solid 1px #b3b3b3;  //grey with a redish tint
+	border: solid 1px #b3b3b3;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,15 +150,15 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 h1 {
-	color: #772841; //#20691a;
+	color: #7b5a37;   /*455f15;*/
 }
 
 h2 {
-  	color: #772841; //#20691a;
+  	color: #7b5a37; 
 }
 
 .h2center, .h3left,.h3center, .h4left {
-  	color: #772841; //dark red     #3c8935; //lighter green
+  	color: #7b5a37;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,7 +166,7 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 #footer{
-   background-image: url(../images/ToxoDB/footer.png);
+   background-image: url(../images/TrichDB/footer.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,28 +175,28 @@ h2 {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 td.headerrow {
-	color: #5e0f28;  //dark red
-	background-image: url(../images/ToxoDB/trheader.png);
+	color: #585b0f;
+	background-image: url(../images/TrichDB/trheader.png);
 }
 
 tr.headerrow {
-	color: #5e0f28;
+	color: #585b0f;
 }
 
 tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/ToxoDB/trheader.png);
+	background-image: url(../images/TrichDB/trheader.png);
 }
 
 .flexigrid tr.headerrow th:hover {
-	background-image: url(../images/ToxoDB/trhover.png);
+	background-image: url(../images/TrichDB/trhover.png);
 }
 
 td.subheaderrow {
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/TrichDB/trsubhead.png);
 }
 
 tr.subheaderrow th {
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/TrichDB/trsubhead.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,20 +205,20 @@ tr.subheaderrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.headerrow2 td{
-        color: #5e0f28;
-	background-image: url(../images/ToxoDB/trheader.png);
+        color: #585b0f;
+	background-image: url(../images/TrichDB/trheader.png);
 }
 
 tr.subheaderrow2 td{
-	background-image: url(../images/ToxoDB/trsubhead.png);
+	background-image: url(../images/TrichDB/trsubhead.png);
 }
 
 a.queryGridInactive {
-        color:              #C8C8C8;    //grey with redish tint
+        color:              #C8C8C8;
 }
 
 a.queryGridActive {
-        color:              #772841;
+        color:              #538001;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -231,11 +227,11 @@ a.queryGridActive {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.subheaderrow th {
-	border-color: #772841;
+	border-color: #538001;
 }
 
 tr.headerrow th { 
-	border-color: #772841;
+	border-color: #538001;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -248,7 +244,7 @@ tr.headerrow th {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 div.Workspace {
-	border-color: #187a02;
+	border-color: #538001;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -256,19 +252,28 @@ div.Workspace {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .twoColHybLt #sidebar1 {
-	background-image: url(../images/ToxoDB/aboutus.png);
+	background-image: url(../images/TrichDB/aboutus.png);
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WARNING BOXES 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ADVANCED STRATEGY PAGING 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 span.marker a:link, span.marker a:visited {
-	color: #7D0101;
+	color: #717001;
 }
 
 #strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E8EBF0;
+    background-color: #e9eee5;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -276,31 +281,41 @@ span.marker a:link, span.marker a:visited {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .blockMsg{
-	border: 1px solid #3c8935;
+	border: 1px solid #455f15;
 }
 
 .blockPage{
-	background-image: url(/assets/images/ToxoDB/footer.png);
+	background-image: url(../images/TrichDB/footer.png);
 }
 
 .flexigrid div.hDiv {
-	background-image:url(/assets/images/ToxoDB/trheader.png);
+	background-image:url(../images/TrichDB/trheader.png);
 }
 
 .flexigrid div.hDiv th.thMove {
-	background-image:url(/assets/images/ToxoDB/trheader.png);
+	background-image:url(../images/TrichDB/trheader.png);
 }
 
 div.colCopy {
-	background-image:url(/assets/images/ToxoDB/trheader.png);
+	background-image:url(../images/TrichDB/trheader.png);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_form {
-	border: 1px solid #772841;	
+	border: 1px solid #7b5a37;	
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -308,7 +323,5 @@ div.colCopy {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #dataset-records th {
-  color: #772841;
+  color: #7b5a37;
 }
-
-/*THE END */

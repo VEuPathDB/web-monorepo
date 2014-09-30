@@ -57,7 +57,7 @@
       <xsl:for-each select="presence/projects/project">
         <xsl:if test="string-length(.) &gt; 0">
         <img>
-         <xsl:attribute name="src">/assets/images/<xsl:value-of select="normalize-space(.)"/>/favicon.jpg</xsl:attribute>
+         <xsl:attribute name="src">/a/images/<xsl:value-of select="normalize-space(.)"/>/favicon.jpg</xsl:attribute>
         </img>
         </xsl:if>
       </xsl:for-each>

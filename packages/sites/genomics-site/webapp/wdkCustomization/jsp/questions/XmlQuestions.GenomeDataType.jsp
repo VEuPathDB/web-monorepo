@@ -83,7 +83,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 </c:choose>
 
 <br><br>
-<i style="color:#b45f04">(Please mouse over links for details; click on red dots <img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"> to access dataset information.)</i><br>
+<i style="color:#b45f04">(Please mouse over links for details; click on red dots <imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/> to access dataset information.)</i><br>
 </td>
 </tr>
 </table>
@@ -244,7 +244,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <!-- ORGANELLAR -->
 <c:choose>
 <c:when test="${not empty record.attributesMap['Organellar_Genomes']}">
-     <td class="mytdStyle" style="${separation}" title="${org_genomes}"><img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></td>
+     <td class="mytdStyle" style="${separation}" title="${org_genomes}"><imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -256,7 +256,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['Isolates'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -268,7 +268,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['SNPs'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -279,7 +279,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['ChIP_chip'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -290,7 +290,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['Chip_Seq'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">	
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -309,7 +309,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
         <a href="http://${website}.org/${webapp}/getDataset.do?display=detail">
   </c:otherwise>
   </c:choose>
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a>
     </td>
 </c:when>
 <c:otherwise>
@@ -321,7 +321,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['Microarray'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -333,7 +333,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['RNA_Seq'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">	
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -345,7 +345,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['RT_PCR'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">	
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -357,7 +357,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['SageTags'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">	
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -368,7 +368,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['Proteomics'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>
@@ -379,7 +379,7 @@ The EuPathDB <a href="http://pathogenportal.org"><b>Bioinformatics Resource Cent
 <c:when test="${record.attributesMap['Pathways'] == 'yes'}">
     <td class="mytdStyle" style="${separation}">
 	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">
-		<img border=0 src="/assets/images/reddot.gif" width="8" alt="yes"></a></td>
+		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
 </c:when>
 <c:otherwise>
     <td class="mytdStyle" style="${separation}"></td>

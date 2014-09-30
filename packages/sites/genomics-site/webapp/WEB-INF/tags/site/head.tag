@@ -54,7 +54,7 @@
     </title>
 
     <!-- no needed with next line: <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"/> --> <!-- standard -->
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/${project}/favicon.ico"/> <!-- for IE7 -->
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.servletContext.contextPath}/images/${project}/favicon.ico"/> <!-- for IE7 -->
 
     <!-- StyleSheets provided by Site -->
     <imp:stylesheets refer="${refer}" /> 

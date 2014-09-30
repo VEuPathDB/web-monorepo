@@ -19,7 +19,7 @@
     </c:otherwise>
   </c:choose>
 
-  <link rel="stylesheet" href="${urlBase}/wdkCustomization/css/dataset-searches.css"/>
+  <imp:stylesheet rel="stylesheet" href="wdkCustomization/css/dataset-searches.css"/>
   <div class="dataset-searches"
     data-controller="eupathdb.datasetSearches.init"
     data-table="#dataset-records"

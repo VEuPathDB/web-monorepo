@@ -13,7 +13,7 @@
                banner="Analyze Results"
                parentUrl="/home.jsp">
 
-  <h1>Analyze Your Strategy Results <a href=https://www.youtube.com/watch?v=npgkkychkrI class="new-window"><img src="/assets/images/camera.png" width="25px"/></a></h1>
+  <h1>Analyze Your Strategy Results <a href=https://www.youtube.com/watch?v=npgkkychkrI class="new-window"><imp:image src="images/camera.png" width="25px"/></a></h1>
   
   
 
@@ -25,7 +25,7 @@
 
   <div style="text-align:center">
   
-  <img src="/assets/images/Overall.jpg" width="400px"/></div>
+  <imp:image src="images/Overall.jpg" width="400px"/></div>
 <br><br>
 
   <h3> 4 Steps to Analyzing a Search or Strategy Result:</h3>
@@ -36,16 +36,16 @@
       choose the result that you wish to analyze by clicking the 
       strategy box that represents the result. 
          The active result is highlighted in yellow. 
-         <div><img src="/assets/images/choose_result.jpg" width="350px"/></div></li>
+         <div><imp:image src="images/choose_result.jpg" width="350px"/></div></li>
       
        
       <li>Click on the blue "Analyze Results" button. The button appears next to the tabbed results pages.
       
-      <div><img src="/assets/images/click_button.jpg" width="400px"/></div></li>
+      <div><imp:image src="images/click_button.jpg" width="400px"/></div></li>
       
       <li>Select an analysis tool from the list of available tools. The analysis tool opens in a new tab where you can
       select parameter values for the analysis and click Submit.
-      <div><img src="/assets/images/choose_analysis.jpg" width="400px"/></div></li>
+      <div><imp:image src="images/choose_analysis.jpg" width="400px"/></div></li>
       
     </ol>
     <em>Not all search results have analysis tools available.</em>

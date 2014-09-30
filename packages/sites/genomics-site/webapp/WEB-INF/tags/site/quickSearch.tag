@@ -6,7 +6,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- TRANSPARENT PNGS for IE6 --%>
-<%--  <script defer type="text/javascript" src="/assets/js/pngfix.js"></script>   --%>
+<%--  <imp:script defer src="js/pngfix.js"/>   --%>
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -66,7 +66,7 @@
          		  <input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
 	  			    <input type="text" class="search-box" name="value(${geneIdParam.name})" value="${geneIdParam.default}" />  <!-- size is defined in class -->
 	  			    <input type="hidden" name="questionSubmit" value="Get Answer"/>
-	  			    <input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle"/>
+              <input name="go" value="go" type="image" src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle"/>
 	  			  </span>
          </html:form>
 		   </div>
@@ -102,7 +102,7 @@
           		<input type="text" class="search-box ts_ie" name="value(${textParam.name})" value="${textParam.default}"/>
                         <input type="hidden" name="value(timestamp)" value="${timestampParam.default}"/>
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
-	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
+              <input name="go" value="go" type="image" src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
                      </span>
           	   </html:form>
 			 </div></td>
@@ -125,7 +125,7 @@
 		  <span class="head-search-tip" title="Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase.">
                      <input type="text" class="search-box ts_ie" name="keyword" value="synth*" />
                      <input name="go" value="go" type="image" 
-                         	src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
+                     src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
 		  </span>
                 </form>
               </td>

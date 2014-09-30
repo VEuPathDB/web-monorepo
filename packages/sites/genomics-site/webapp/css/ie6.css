@@ -3,11 +3,11 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	behavior: url(/assets/css/csshover.htc);
+	behavior: url(csshover.htc);
 }
 
 .top_nav {
-	behavior: url(/assets/css/csshover.htc);
+	behavior: url(csshover.htc);
 }
 
 #menu ul li {
@@ -27,7 +27,7 @@ body {
 }
 
 img, input.img_align_middle {
-	behavior: url(/assets/css/iepngfix.htc);
+	behavior: url(iepngfix.htc);
 }
 
 #Strategies {
