@@ -201,21 +201,11 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   </c:choose>
 
 
-<!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB account settings -->
- 		 <a class="twitter-timeline" data-chrome="nofooter" height="50"  href="https://twitter.com/eupathdb" data-widget-id="344817818073714691">Tweets by @eupathdb</a>
-		 <script>
-		 !function(d,s,id){
-				var js,fjs=d.getElementsByTagName(s)[0],
-								p=/^http:/.test(d.location)?'http':'https';
-				if(!d.getElementById(id)){
-								js=d.createElement(s);
-								js.id=id;
-								js.src=p+"://platform.twitter.com/widgets.js";
-								fjs.parentNode.insertBefore(js,fjs);
-								}
-				}(document,"script","twitter-wjs");
-		 </script>
-
+  <!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB and FungiDB account settings -->
+  <c:set var="props" value="${applicationScope.wdkModel.properties}" />
+  <a class="twitter-timeline" data-chrome="nofooter"  height="50"  href="https://twitter.com/${props['TWITTER_ID']}" data-widget-id="${props['TWITTER_WIDGET_ID']}"></a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs")
+;</script>
 
 </div>  <%-- section that opens and closes --%>
 
