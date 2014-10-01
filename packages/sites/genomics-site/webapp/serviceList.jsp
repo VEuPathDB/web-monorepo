@@ -6,6 +6,7 @@
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
+
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="wdkModelDispName"/>
 <imp:pageFrame banner="${wdkModelDispName}">
@@ -102,18 +103,27 @@ Find all (${organism}) genes that have molecular weight between 10,000 and 50,00
 </span>
 
 <br><br><br>
+<c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
+<c:set var="gqSet" value="${qSetMap['GenomicSequenceQuestions']}"/>
+<c:set var="gqMap" value="${gqSet.questionsMap}"/>
+
+<c:set var="seqByIdQuestion" value="${gqMap['SequenceBySourceId']}"/>
+<c:set var="sidqpMap" value="${seqByIdQuestion.paramsMap}"/>
+<c:set var="seqIdParam" value="${sidqpMap['sequenceId']}"/>
+
+
 <b style="font-size:120%">Note about downloading sequences in a FASTA format:</b><br>
 Please use the following URL's to download FASTA files with DNA sequence for specific genomic segments:
 <ul>
 <li>To download one sequence, please use one of the following formats:
-<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_06_v3&start=1122801&end=1153664">
-  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_06_v3&start=1122801&end=1153664</a>
-<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)">
-  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)</a>
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700">
+  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700</a>
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)">
+  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)</a>
 </li>
 <li>For multiple sequences use the line feed character (%0A) as separator (comma or semicolon or carriage return do not work):
-<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)%0APf3D7_04_v3%20(800..900)">
-http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=Pf3D7_04_v3%20(14..700)%0APf3D7_04_v3%20(800..900)</a>
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)">
+http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)</a>
 </li>
 </ul>
 
