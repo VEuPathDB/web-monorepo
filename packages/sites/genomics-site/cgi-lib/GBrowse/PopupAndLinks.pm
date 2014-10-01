@@ -214,7 +214,7 @@ sub snpTitleQuick {
   my $type = 'Non-coding';
   my  $refNA = $gene_strand == 1 ? $revArray{$reference_na} : $reference_na;
   my $refAAString = ''; 
-  if ($isCoding =~ /yes/i) {
+  if ($isCoding == 1 || $isCoding =~ /yes/i) {
      $type = "Coding (synonymous)";
      $type = "Coding (non-synonymous)" if $nonSyn =~ /yes/;
      $refAAString = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$reference_aa";
@@ -224,7 +224,7 @@ sub snpTitleQuick {
   push(@data, ['SNP' => $link]);
   push(@data, ['Location' => $start]);
   push(@data, ['Gene' => $gene]) if $gene;
-  if ($isCoding =~ /yes/i) {
+  if ($isCoding == 1 || $isCoding =~ /yes/i) {
     push(@data, ['Position&nbsp;in&nbsp;CDS' => $position_in_CDS]);
     push(@data, ['Position&nbsp;in&nbsp;protein' => $position_in_protein]);
   }
@@ -243,7 +243,7 @@ sub snpTitleQuick {
     my $na = $var[1];
     $na = $revArray{$na} if ($gene_strand == 1);
 
-    my $aa_seq =  ($isCoding == 'yes') ? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$var[2]"  : '';
+    my $aa_seq =  ($isCoding == 1 || $isCoding == 'yes') ? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$var[2]"  : '';
 
     push(@data, [$strain => "NA=$na $aa_seq" ]);
 
