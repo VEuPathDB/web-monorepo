@@ -1,4 +1,4 @@
-wdk.questionView('IsolateQuestions.IsolateByTaxon', wdk.views.View.extend({
+wdk.questionView('IsolateQuestions.IsolateByTaxon', wdk.views.core.View.extend({
 
   MAX_SELECTED: 900,
 
