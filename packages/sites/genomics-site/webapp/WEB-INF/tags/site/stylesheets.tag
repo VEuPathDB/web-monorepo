@@ -42,6 +42,11 @@
   <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/radio-params.css"/>
 </c:if>
 
+<!-- step analysis -->
+<c:if test="${refer == 'summary'}">
+  <imp:stylesheet rel="styleSheet" type="text/css" href="wdkCustomization/css/analysis/enrichment.css"/>
+</c:if>
+
 <!-- Data source page -->
 <c:if test="${refer == 'data-set'}">
   <imp:stylesheet rel="styleSheet" type="text/css" href="wdkCustomization/css/dataSource.css"/>

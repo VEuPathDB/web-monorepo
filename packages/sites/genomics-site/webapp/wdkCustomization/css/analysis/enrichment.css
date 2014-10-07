@@ -1,0 +1,42 @@
+.enrich-result-p {
+  font-size:90%;
+  font-weight:normal;
+  margin:0;
+}
+.enrich-table th {
+  text-align:left;
+}
+.enrich-table td {
+  text-align: left;
+}
+.enrich-table td.enrich-centered {
+  text-align: center;
+}
+.enrich-databar {
+  border:0; margin:0; padding:0;
+  display: inline-block;
+  height: 1em;
+  background-color: lightgreen;
+}
+.enrich-download-link {
+  float:right;
+  font-weight: bold;
+  font-size: 110%;
+  width: 340px;
+  text-align:right;
+}
+.enrich-empty-results {
+  font-weight: bold;
+  margin: 25px auto;
+  text-align: center;
+}
+
+/*
+div.step-analysis-results-pane div.dataTables_info {
+  bottom: 30px;
+  font-size: 120%;
+  font-weight: bold;
+  left: 11em;
+  position: relative;
+}
+*/

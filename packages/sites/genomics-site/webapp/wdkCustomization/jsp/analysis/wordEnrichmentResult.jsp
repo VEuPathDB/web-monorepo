@@ -2,64 +2,21 @@
 <jsp:root version="2.0"
     xmlns:jsp="http://java.sun.com/JSP/Page"
     xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
   <jsp:directive.page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"/>
   <c:set var="project" value="${applicationScope.wdkModel.properties['PROJECT_ID']}"/>
   <html>
     <body>
       <div>
         <div style="position:relative">
-          <style>
-            .word-result-p {
-              margin: 5px;
-              text-align: center;
-            }
-            /*
-            .word-table {
-              margin-top: 5px;
-            }
-            */
-            .word-table th {
-              text-align:left;
-            }
-            .word-table td {
-              text-align: left;
-            }
-            .word-table td.word-centered {
-              text-align: center;
-            }
-            .word-databar {
-              border:0; margin:0; padding:0;
-              display: inline-block;
-              height: 1em;
-              background-color: lightgreen;
-            }
-            .word-download-link {
-              position: absolute;
-              top: 0px;
-              right: 0px;
-              font-weight: bold;
-            }
-            .word-empty-results {
-              font-weight: bold;
-              margin: 25px auto;
-              text-align: center;
-            }
-          </style>
-          <span class="word-download-link">
-            <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
-            <a href="${downloadUrl}">Download Analysis Results</a>
-          </span>
-          <h2 style="text-align:center">Enriched Words</h2>
-          <p class="word-result-p">
-            <em>Note: your results for this analysis might change in the next release of ${project}.
-                To save this exact result permanently, please download it.</em>
-          </p>
+          <imp:enrichResultTitle />
+
           <c:if test="${empty viewModel.resultData}">
-            <div class="go-empty-results">No enrichment was found with significance at the P-value threshold you specified.</div>
+            <div class="enrich-empty-results">No enrichment was found with significance at the P-value threshold you specified.</div>
           </c:if>
           <c:if test="${not empty viewModel.resultData}">
-            <table class="word-table">
+            <table class="enrich-table">
               <thead>
                 <tr>
                   <c:set var="row" value="${viewModel.headerRow}"/>
@@ -81,14 +38,14 @@
                   <tr>
                     <td>${row.word}</td>
                     <td>${row.descrip}</td>
-                    <td class="word-centered">${row.bgdGenes}</td>
-                    <td class="word-centered">${row.resultGenes}</td>
-                    <td class="word-centered">${row.percentInResult}</td>
-                    <td class="word-centered">${row.foldEnrich}</td>
-                    <td class="word-centered">${row.oddsRatio}</td>
-                    <td class="word-centered">${row.pvalue}</td>
-                    <td class="word-centered">${row.benjamini}</td>
-                    <td class="word-centered">${row.bonferroni}</td>
+                    <td class="enrich-centered">${row.bgdGenes}</td>
+                    <td class="enrich-centered">${row.resultGenes}</td>
+                    <td class="enrich-centered">${row.percentInResult}</td>
+                    <td class="enrich-centered">${row.foldEnrich}</td>
+                    <td class="enrich-centered">${row.oddsRatio}</td>
+                    <td class="enrich-centered">${row.pvalue}</td>
+                    <td class="enrich-centered">${row.benjamini}</td>
+                    <td class="enrich-centered">${row.bonferroni}</td>
                   </tr>
                 </c:forEach>
               </tbody>
