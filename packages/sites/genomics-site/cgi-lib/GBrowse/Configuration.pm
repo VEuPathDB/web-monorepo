@@ -17,7 +17,7 @@ umask 0;
 
 # Export Static Methods
 @ISA = qw(Exporter);
-@EXPORT = qw(init hover myfooter myheader mypostgrid site_version);  
+@EXPORT = qw(init hover myfooter myheader mypostgrid);
 
 sub new {
   my $class = shift;
@@ -58,18 +58,31 @@ sub init {
   }
 }
 
-sub site_version {
+# sub site_version {
+# 
+#   my $versionType = shift || 'buildNumber' ; # version type is releaseVersion or buildNumber 
+# 
+#   my $model = EuPathSiteCommon::Model::ModelXML->new('apiCommonModel.xml');
+#   my $projectId = $ENV{PROJECT_ID};
+# 
+#   if($versionType eq 'buildNumber') {
+#     return $model->getBuildNumberByProjectId($projectId);
+#   }
+# 
+#   return->getSiteVersionByProjectId($projectId);
+# }
 
-  my $versionType = shift || 'buildNumber' ; # version type is releaseVersion or buildNumber 
+sub getBuildNumber {
 
-  my $model = EuPathSiteCommon::Model::ModelXML->new('apiCommonModel.xml');
-  my $projectId = $ENV{PROJECT_ID};
+  my ($self) = @_;
 
-  if($versionType eq 'buildNumber') {
-    return $model->getBuildNumberByProjectId($projectId);
+  unless ($self->{_site_version}) {
+    my $model = EuPathSiteCommon::Model::ModelXML->new('apiCommonModel.xml');
+    my $projectId = $ENV{PROJECT_ID};
+    $self->{_site_version} = $model->getBuildNumberByProjectId($projectId);
   }
 
-  return->getSiteVersionByProjectId($projectId);
+    return $self->{_site_version};
 }
 
 sub lookupOrganismDirectory {
@@ -99,10 +112,10 @@ sub bam_file_path {
 
   if($orgAbbrev) {
     my $orgDirName = $self->lookupOrganismDirectory($orgAbbrev);
-    return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. "/$orgDirName/bam";
+    return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". $self->getBuildNumber. "/$orgDirName/bam";
   }
 
-  return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. '/bam';
+  return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". $self->getBuildNumber. '/bam';
 }
 
 sub bigwig_file_path {
@@ -110,10 +123,10 @@ sub bigwig_file_path {
 
   if($orgAbbrev) {
     my $orgDirName = $self->lookupOrganismDirectory($orgAbbrev);
-    return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. "/$orgDirName/bigwig";
+    return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". $self->getBuildNumber. "/$orgDirName/bigwig";
   }
 
-  return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". site_version. '/bigwig';
+  return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". $self->getBuildNumber. '/bigwig';
 }
 
 sub userDB {
