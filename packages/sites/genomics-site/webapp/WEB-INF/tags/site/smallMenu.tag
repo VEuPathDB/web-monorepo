@@ -21,8 +21,7 @@
 
   <!-- functions to be called when page loads -->
   <span class="onload-function" data-function="wdk.setUpNavDropDowns"><jsp:text/></span>
-  <span class="onload-function" data-function="eupath.setup.setUpContactUsLogic"><jsp:text/></span>
-  
+
 
   <div id="nav-top-div">
 	  <ul id="nav-top">
