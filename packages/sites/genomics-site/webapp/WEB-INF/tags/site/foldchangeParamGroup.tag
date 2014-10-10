@@ -60,10 +60,10 @@
       <div class="param-line">
         <span class="text">with a
           <span class="prompt">Fold change</span> &amp;gt;=</span>
-        <imp:stringParamInput qp="${fold_changeParam}"/>
+        <imp:stringParamInput qp="${fold_change}"/>
         <imp:image class="help-link"
           style="cursor:pointer"
-          title="${fn:escapeXml(fold_changeParam.help)}"
+          title="${fn:escapeXml(fold_change.help)}"
           src="wdk/images/question.png" />
       </div>
 
