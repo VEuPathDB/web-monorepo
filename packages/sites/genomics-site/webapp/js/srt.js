@@ -17,8 +17,8 @@ function setEnable2(flag) {
     else offsetOptions2.style.display = "none";   
 }
 
-//function setEnable3(flag) {
-//    var offsetOptions3 = document.getElementById("offsetOptions3");
-//    if (flag) offsetOptions3.style.display = "block";
-//    else offsetOptions3.style.display = "none";   
-//}
+function setEnable3(flag) {
+   var offsetOptions3 = document.getElementById("offsetOptions3");
+   if (flag) offsetOptions3.style.display = "block";
+   else offsetOptions3.style.display = "none";   
+}

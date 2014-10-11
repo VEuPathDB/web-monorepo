@@ -80,6 +80,38 @@
           </tr>
         </table>
 
+        <table id="offsetOptions3" cellpadding="2">
+          <tr>
+            <td colspan="3">
+              <b>Choose the region of the protein sequence(s):</b>
+            </td>
+          </tr>
+          <tr>
+            <td>begin at</td>
+            <td align="left">
+              <select name="startAnchor3">
+                <option value="Start" selected>upstream from Start</option>
+                <option value="End">downstream from Stop</option>
+              </select>
+            </td>
+            <td align="left">
+              <input id="startOffset3" name="startOffset3" value="0" size="6"/> aminoacids
+            </td>
+          </tr>
+          <tr>
+            <td>end at</td>
+            <td align="left">
+              <select name="endAnchor3">
+                <option value="Start">upstream from Start</option>
+                <option value="End" selected>downstream from Stop</option>
+              </select>
+            </td>
+            <td align="left">
+              <input id="endOffset3" name="endOffset3" value="0" size="6"> aminoacids
+            </td>
+          </tr>
+        </table>
+
 
       </td>
     </tr>
