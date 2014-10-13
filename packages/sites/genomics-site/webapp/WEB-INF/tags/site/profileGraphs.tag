@@ -216,7 +216,7 @@
            			<c:set var="prefix" 		value="http://${pageContext.request.serverName}" />
 
                 <%-- <c:import url="${prefix}${tableSrc}"  /> --%>
-                <wdk-ajax url="${tableSrc}"> </wdk-ajax>
+                <wdk-ajax manual url="${tableSrc}"> </wdk-ajax>
          		</c:set>
 
 <%--   Data table by some graphs --%>

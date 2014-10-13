@@ -509,7 +509,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
     </center></noindex>
     --%>
     <center>
-      <wdk-ajax url="${proteinFeaturesUrl}"></wdk-ajax>
+      <wdk-ajax manual url="${proteinFeaturesUrl}"></wdk-ajax>
     </center>
   </c:set>
 
@@ -734,6 +734,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
+<imp:script src="wdkCustomization/js/records/allRecords.js"/>
 
 </imp:pageFrame>
 </c:otherwise>
