@@ -5,10 +5,10 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
     var $datasetRecords = $element.find($attrs.table);
 
     var datasetTabsSource = $element.find($attrs.tabsTemplate).html();
-    var datasetTabsTmpl = Handlebars.compile(datasetTabsSource);
+    var datasetTabsTmpl = _.template(datasetTabsSource);
 
     var toggleSource = $element.find("#toggle").html();
-    var toggleTmpl = Handlebars.compile(toggleSource);
+    var toggleTmpl = _.template(toggleSource);
 
     var $questionWrapper = $("#question-wrapper");
 

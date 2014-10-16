@@ -132,26 +132,30 @@
 
     <div id="question-wrapper"> <jsp:text/> </div>
 
-    <script type="text/x-handlebars-template" id="dataset-tabs">
+    <script type="text/x-jst" id="dataset-tabs">
+    <![CDATA[
       <div id="question-set-{{datasetId}}" class="tabs">
         <ul>
-          {{#each questions}}
-          <li><a href="{{url}}">{{category}}<span><jsp:text/></span></a></li>
-          {{/each}}
+          <% _.forEach(questions, function(question) { %>
+            <li><a href="<%- question.url %>"><%- question.category %><span></span></a></li>
+          <% }); %>
         </ul>
       </div>
+    ]]>
     </script>
 
-    <script type="text/x-handlebars-template" id="toggle">
-      {{#if collapsed}}
-      <span class="ui-icon ui-icon-arrowthickstop-1-s"><jsp:text/></span>
-        <label>Show All Data Sets</label>
-      <span class="ui-icon ui-icon-arrowthickstop-1-s"><jsp:text/></span>
-      {{else}}
-      <span class="ui-icon ui-icon-arrowthickstop-1-n"><jsp:text/></span>
-        <label>Hide Other Data Sets</label>
-      <span class="ui-icon ui-icon-arrowthickstop-1-n"><jsp:text/></span>
-      {{/if}}
+    <script type="text/x-jst" id="toggle">
+    <![CDATA[
+      <% if (collapsed) { %>
+        <span class="ui-icon ui-icon-arrowthickstop-1-s"><jsp:text/></span>
+          <label>Show All Data Sets</label>
+        <span class="ui-icon ui-icon-arrowthickstop-1-s"><jsp:text/></span>
+      <% } else { %>
+        <span class="ui-icon ui-icon-arrowthickstop-1-n"><jsp:text/></span>
+          <label>Hide Other Data Sets</label>
+        <span class="ui-icon ui-icon-arrowthickstop-1-n"><jsp:text/></span>
+      <% } %>
+    ]]>
     </script>
 
   </div>

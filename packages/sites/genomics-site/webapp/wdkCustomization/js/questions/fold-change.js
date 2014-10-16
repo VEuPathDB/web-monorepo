@@ -72,13 +72,15 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     var $scope = {}; // gets bound to form state, with some extras. used for template
 
 
-    Handlebars.registerPartial("samples", $element.find("#samples-partial").html());
-    Handlebars.registerPartial("foldChange", $element.find("#foldChange-partial").html());
-    Handlebars.registerPartial("formula", $element.find("#formula-partial").html());
+    var templateImports = { imports: {
+      samplesPartial: _.template($element.find("#samples-partial").html()),
+      foldChangePartial: _.template($element.find("#foldChange-partial").html()),
+      formulaPartial: _.template($element.find("#formula-partial").html())
+    }};
 
-    helpTmpl = Handlebars.compile($element.find("#help-template").html());
-    oneDirectionTmpl = Handlebars.compile($element.find("#one-direction-template").html());
-    twoDirectionTmpl = Handlebars.compile($element.find("#two-direction-template").html());
+    helpTmpl = _.template($element.find("#help-template").html(), null, templateImports);
+    oneDirectionTmpl = _.template($element.find("#one-direction-template").html(), null, templateImports);
+    twoDirectionTmpl = _.template($element.find("#two-direction-template").html(), null, templateImports);
 
     $img = $element.find(".fold-change-img");
     $form = $element.closest("form");
@@ -111,12 +113,12 @@ wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
     return;
   };
 
-  var update = function($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl) {
+  var update = _.debounce(function($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl) {
     setParams($form);
     setScope($scope, $form);
     setGraph($scope, $img, oneDirectionTmpl, twoDirectionTmpl);
     setHelp($scope, $form, helpTmpl);
-  };
+  }, 50);
 
   // make some params readonly in certain conditions
   var setParams = function($form) {

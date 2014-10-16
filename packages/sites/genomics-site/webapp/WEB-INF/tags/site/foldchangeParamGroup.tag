@@ -60,10 +60,10 @@
       <div class="param-line">
         <span class="text">with a
           <span class="prompt">Fold change</span> &amp;gt;=</span>
-        <imp:stringParamInput qp="${fold_change}"/>
+        <imp:stringParamInput qp="${fold_changeParam}"/>
         <imp:image class="help-link"
           style="cursor:pointer"
-          title="${fn:escapeXml(fold_change.help)}"
+          title="${fn:escapeXml(fold_changeParam.help)}"
           src="wdk/images/question.png" />
       </div>
 
@@ -167,117 +167,116 @@
       </div>
     </div>
 
-    <script id="formula-partial" type="text/x-handlebars-template">
+    <script id="formula-partial" type="text/x-jst">
+    <![CDATA[
       <div class="formula">
-        <div class="left-hand-side">{{{leftHandSide}}}</div>
+        <div class="left-hand-side"><%= leftHandSide %></div>
         <div class="right-hand-side">
           <div class="division">
-            <div class="numerator">{{{numerator}}}</div>
-            <div class="denominator">{{{denominator}}}</div>
+            <div class="numerator"><%= numerator %></div>
+            <div class="denominator"><%= denominator %></div>
           </div>
         </div>
       </div>
+    ]]>
     </script>
 
-    <script id="help-template" type="text/x-handlebars-template">
-      <p>You are searching for genes that are <b>{{direction}}</b> between
-        {{#if multipleRef}}
+    <script id="help-template" type="text/x-jst">
+    <![CDATA[
+      <p>You are searching for genes that are <b><%= direction %></b> between
+        <% if (multipleRef) { %>
           at least two <b>reference samples</b>
-        {{else}}
+        <% } else { %>
           one <b>reference sample</b>
-        {{/if}}
+        <% } %>
         and
-        {{#if multipleComp}}
+        <% if (multipleComp) { %>
           at least two <b>comparison samples</b>.
-        {{else}}
+        <% } else { %>
           one <b>comparison sample</b>.
-        {{/if}}
+        <% } %>
       </p>
       <br/>
       <p>For each gene, the search calculates:</p>
-      {{#each formulas}}
-      {{> formula}}
-      {{/each}}
-      <p>and returns genes when {{{criteria}}}.
-        {{#if narrowest}}
+      <%= _.map(formulas, formulaPartial).join('') %>
+      <p>and returns genes when <%= criteria %>.
+
+        <% if (narrowest) { %>
           This calculation creates the <b>narrowest</b> window of expression values in
           which to look for genes that meet your fold change cutoff.
-        {{/if}}
-        {{#if broadest}}
+        <% } %>
+
+        <% if (broadest) { %>
           This calculation creates the <b>broadest</b> window of expression values in
           which to look for genes that meet your fold change cutoff.
-        {{/if}}
+        <% } %>
 
-        {{#if toNarrow}}
-          To narrow the window, use the {{toNarrow}}.
-        {{/if}}
+        <% if (toNarrow) { %>
+        To narrow the window, use the <%= toNarrow %>.
+          <% } %>
 
-        {{#if toBroaden}}
-          To broaden the window, use the {{toBroaden}}.
-        {{/if}}
+        <% if (toBroaden) { %>
+          To broaden the window, use the <%= toBroaden %>.
+        <% } %>
       </p>
+    ]]>
     </script>
 
-    <script id="samples-partial" type="text/x-handlebars-template">
-      <div class="samples {{type}}-samples">
-        <div class="sample-operation {{operationLevel}}">
-          <div class="operation-line"><jsp:text/></div>
-          {{operationLabel}}
+    <script id="samples-partial" type="text/x-jst">
+    <![CDATA[
+      <div class="samples <%= type %>-samples">
+        <div class="sample-operation <%= operationLabel %>">
+          <div class="operation-line"></div>
+          <%= operationLabel %>
 
-          {{#each samples}}
-          <div class="sample" style="top: {{top}}%"><jsp:text/></div>
-          {{/each}}
+          <% _.map(samples, function(sample) { %>
+            <div class="sample" style="top: <%- sample.top %>%"></div>
+          <% }).join(''); %>
 
         </div>
         <div class="samples-label">
-          {{samplesLabel}} <br/> Samples
+          <%= samplesLabel %> <br/> Samples
         </div>
       </div>
+    ]]>
     </script>
 
-    <script id="foldChange-partial" type="text/x-handlebars-template">
-      <div class="fold-change-label">
-        <div class="up-arrow"><jsp:text/></div>
-        <div class="label">{{foldChange}} fold</div>
-        <div class="down-arrow"><jsp:text/></div>
+    <script id="foldChange-partial" type="text/x-jst">
+    <![CDATA[
+      <% if (foldChange > 0) { %>
+        <div class="fold-change-label">
+          <div class="up-arrow"></div>
+          <div class="label"><%= foldChange %> fold</div>
+          <div class="down-arrow"></div>
+        </div>
+      <% } %>
+    ]]>
+    </script>
+
+    <script id="one-direction-template" type="text/x-jst">
+    <![CDATA[
+    <div class="<%= direction %>">
+      <div class="title"><%= title %></div>
+      <%= foldChangePartial({ foldChange: foldChange }) %>
+      <%= _.map(sampleGroups, samplesPartial).join('') %>
       </div>
+    ]]>
     </script>
 
-    <script id="one-direction-template" type="text/x-handlebars/template">
-      <div class="{{direction}}">
-        <div class="title">{{title}}</div>
-        {{#if foldChange}}
-        {{> foldChange}}
-        {{/if}}
-
-        {{#each sampleGroups}}
-        {{> samples}}
-        {{/each}}
-      </div>
-    </script>
-
-    <script id="two-direction-template" type="text/x-handlebars/template">
+    <script id="two-direction-template" type="text/x-jst">
+    <![CDATA[
       <div class="up-or-down-regulated">
-        <div class="title">{{title}}</div>
+        <div class="title"><%= title %></div>
         <div class="left-samples">
-          {{#if foldChange}}
-          {{> foldChange}}
-          {{/if}}
-
-          {{#each leftSampleGroups}}
-          {{> samples}}
-          {{/each}}
+          <%= foldChangePartial({ foldChange: foldChange }) %>
+          <%= _.map(leftSampleGroups, samplesPartial).join('') %>
         </div>
         <div class="right-samples">
-          {{#if foldChange}}
-          {{> foldChange}}
-          {{/if}}
-
-          {{#each rightSampleGroups}}
-          {{> samples}}
-          {{/each}}
+          <%= foldChangePartial({ foldChange: foldChange }) %>
+          <%= _.map(rightSampleGroups, samplesPartial).join('') %>
         </div>
       </div>
+    ]]>
     </script>
 
   </div> <!-- .fold-change -->

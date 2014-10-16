@@ -7,7 +7,7 @@
 .formula { font-style: italic;font-weight:bold; }
 .formula .left-hand-side, .formula .right-hand-side { display: inline-block; vertical-align: middle; }
 .formula .left-hand-side::after { content: " ="; }
-.formula .right-hand-side { padding-left: 0.4em; }
+.formula .right-hand-side { padding-left: .1em; }
 .formula .division > div { text-align: center; padding: 0px 4px; }
 .formula .division .numerator { border-bottom: 1px solid; }
 
