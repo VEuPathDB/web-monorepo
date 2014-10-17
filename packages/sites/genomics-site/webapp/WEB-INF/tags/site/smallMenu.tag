@@ -41,7 +41,7 @@
 	        <c:if test="${refer eq 'summary'}">
 	          <li><a href="javascript:void(0)" onclick="wdk.dyk.dykOpen()">Did You Know...</a></li>
 	        </c:if>
-	        <li><a href="${baseUrl}/resetSession.jsp">Reset Browser</a></li>
+	        <li><a title="Login first to keep your work." href="${baseUrl}/resetSession.jsp">Reset ${project} Session</a></li>
 	        <li><a href="${constants.youtubeUrl}">YouTube Tutorials Channel</a></li>
 	        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Tutorials">Web Tutorials</a></li>
 	        <li><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
