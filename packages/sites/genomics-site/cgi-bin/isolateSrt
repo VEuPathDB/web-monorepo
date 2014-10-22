@@ -5,12 +5,12 @@ use strict;
 use lib "@targetDir@/lib/perl";
 $ENV{GUS_HOME} = '@targetDir@';
 
-use ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolGeneOrf;
+use ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolContigs;
 
 my $app =
-  ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolGeneOrf->new();
+  ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolContigs->new();
 
-$app->{geneOrOrf} = 'Isolate';
+$app->{type} = 'Isolate';
 
 $app->go();
 
