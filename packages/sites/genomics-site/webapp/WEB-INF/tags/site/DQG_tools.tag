@@ -61,20 +61,11 @@
 
 	<c:choose>
 	<c:when test="${sName == 'Crypto'}">
-
-                <li><a href="http://apicyc.apidb.org/CPARVUM/server.html"><strong>${cycName}</strong></a>
-                        <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
-                </li>
-
 		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
 			<ul><li style="border:0">Learn about web service access to our data</li></ul>
 		</li>
 	</c:when>
 	<c:when test="${sName == 'EuPath'}">
-                <li><a href="http://apicyc.apidb.org/"><strong>ApiCyc</strong></a>
-                        <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
-                </li>
-
 		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
 			<ul><li style="border:0">Learn about web service access to our data</li></ul>
 		</li>
@@ -88,11 +79,6 @@
 			<i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
 
-<%--          
-                <li><a href="http://apicyc.apidb.org/${sName}/server.html"><strong>${cycName}</strong></a>
-                        <ul><li  style="border:0">Explore Automatically Defined Metabolic Pathways</li></ul>
-                </li>
---%>
 	</c:when>
 	<c:otherwise>   <%----- Giardia, Trich and TriTryp:  fill in 2 empty lines to keep buckets aligned -----%>
 
