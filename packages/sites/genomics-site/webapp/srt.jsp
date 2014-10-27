@@ -77,8 +77,8 @@
       <tr><td colspan="2" valign="top"><b>Enter a list of Genomic Sequence IDs (each ID on a separate line):</b></td><tr>
       <tr><td colspan="2">
           <textarea name="ids" rows="4" cols="60">${contigsIds.default}
-            ${contigsIds2.default} (14..700)
-            ${contigsIds3.default} reverse (100..2000)</textarea>
+${contigsIds2.default}:14..700
+${contigsIds3.default}:100..2000:r</textarea>
       </td></tr>
       <tr><td colspan="2">Default region (for sequences in the list without a specified region):</td></tr>
       <tr><td colspan="2">
@@ -97,9 +97,13 @@
             </td></tr>
             <tr><td align="left"><input name="go" value="Get Sequences" type="submit"/></td></tr>        
       </table></td></tr>
-
     </table>
   </form>
+<p><b> Note :</b> Valid formats of specified Genomic Sequence IDs are :<br>
+&nbsp; 'ID' for full sequence, <br>
+&nbsp; 'ID:start..end' for sequence from start to end, <br>
+&nbsp; 'ID:start..end:r' for sequence from start to end, reverse-complemented. <br>
+<br>
   <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
 
 

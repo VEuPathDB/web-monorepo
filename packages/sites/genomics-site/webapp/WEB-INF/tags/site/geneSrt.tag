@@ -125,7 +125,7 @@
     <tr><td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
   </table>
 
-<p><sup>***</sup> Note: <br>
+<p><b> Note: </b><br>
 For "genomic" sequence: If UTRs have not been annotated for a gene, then choosing "transcription start" may have the same effect as choosing "translation start".<BR>
 For "protein" sequence: you can only retrieve sequence contained within the ID(s) listed. i.e. from upstream of amino acid sequence start (ie. Methionine = 0) to downstream of the amino acid end (last amino acid in the protein = 0).
 </p>
