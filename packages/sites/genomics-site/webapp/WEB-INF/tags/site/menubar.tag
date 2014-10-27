@@ -118,15 +118,8 @@
           <li><a href="http://gecco.org.chemie.uni-frankfurt.de/plasmit">PlasMit</a>
           </li>
         </c:if>
-        <c:if test="${project == 'CryptoDB'}" >
-          <li><a href="http://apicyc.apidb.org/CPARVUM/server.html">CryptoCyc</a></li>
-        </c:if>
-        <c:if test="${project == 'PlasmoDB'}" >
-          <li><a href="http://apicyc.apidb.org/PLASMO/server.html">PlasmoCyc</a></li>
-        </c:if>
         <c:if test="${project == 'ToxoDB'}" >
           <li><a href="http://ancillary.toxodb.org">Ancillary Genome Browser</a></li>
-          <li><a href="http://apicyc.apidb.org/TOXO/server.html">ToxoCyc</a></li>
         </c:if>
         <li><a href="<c:url value="/serviceList.jsp"/>"> Searches via Web Services</a></li>
       </ul>
