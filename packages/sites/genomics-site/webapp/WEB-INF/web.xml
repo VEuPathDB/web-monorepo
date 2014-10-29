@@ -42,9 +42,9 @@
     <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
 
-  <listener>
+  <!-- <listener>
     <listener-class>net.bull.javamelody.SessionListener</listener-class>
-  </listener>
+  </listener> -->
 
   <!-- The Apache file upload library starts a cleanup thread to remove temporary files -->
   <!--    This listener destroys that thread when the webapp is unloaded.               -->
