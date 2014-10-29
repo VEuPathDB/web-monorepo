@@ -98,7 +98,7 @@
   </filter-mapping>
 
   <!-- JavaMelody monitoring plugin configuration -->
-  <filter>
+  <!-- <filter>
     <filter-name>monitoring-display</filter-name>
     <filter-class>org.eupathdb.common.controller.MelodyDisplayFilter</filter-class>
   </filter>
@@ -125,9 +125,9 @@
   <filter-mapping>
     <filter-name>monitoring</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>
+  </filter-mapping> -->
   <!-- End JavaMelody monitoring plugin configuration -->
-  
+
   <!-- Struts servlet to serve out most of the site -->
   <servlet>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
