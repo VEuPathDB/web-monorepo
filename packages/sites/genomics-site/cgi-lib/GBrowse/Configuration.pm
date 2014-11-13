@@ -4,10 +4,10 @@ package GBrowse::Configuration;
 
 use ApiCommonWebsite::Model::ModelConfig;
 use EuPathSiteCommon::Model::ModelXML;
-
 use ApiCommonWebsite::Model::DbUtils;
+use Bio::Graphics::Browser2::ConnectionCache;
 
-use DAS::Util::SynView; 
+use DAS::Util::SynView;
 
 use HTML::Template;
 
@@ -28,8 +28,9 @@ sub new {
   my $dsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
   my $user = $c->appDb->login;
   my $pass = $c->appDb->password;
-  my $dbh = DBI->connect( $dsn, $user, $pass)
-        or $self->throw("unable to open db handle");
+  my $dbh = Bio::Graphics::Browser2::ConnectionCache->get_instance->connect($dsn, $user, $pass, "Configuration");
+  #         #17815: Use ConnectionCache to share connection with GUS.pm
+  #         DBI->connect( $dsn, $user, $pass) or $self->throw("unable to open db handle");
   bless ($self, $class);
   $self->dbh($dbh);
   $self->{dbh}{InactiveDestroy} = 1;
