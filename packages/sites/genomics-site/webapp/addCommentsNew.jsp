@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic" %>
@@ -11,9 +10,11 @@
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
 <c:set var="to" value="${wdkModel.projectId}_annotators@pcbi.upenn.edu" /> 
-<c:set var="from" value="${wdkModel.projectId}_annotators@pcbi.upenn.edu" />
-<c:set var="subject" value="${commentForm.commentTargetId} comment ${commentForm.stableId}" />
+<c:set var="toRedmine" value="redmine@apidb.org" /> 
+<c:set var="from" value="annotator@apidb.org" />
+<c:set var="subject" value="${wdkModel.projectId} ${commentForm.commentTargetId} comment ${commentForm.stableId}" />
 <c:set var="body" value="${body}" />
+<c:set var="bodyRedmine" value="${bodyRedmine}" />
 
 <c:set var="strand" value="${commentForm.strand}" /> 
 
@@ -162,20 +163,27 @@ function openPubmedWindow(searchBoxId) {
         <c:choose>
 
           <c:when test="${param.bulk ne 'yes'}">
-            <imp:email
-                  to="${wdkUser.email}, ${to}"
-                  from="${from}"
-                  subject="${subject}"
-                  body="${body}"
-            />
+
+            <imp:email to="${wdkUser.email}, ${to}"
+                       from="${from}"
+                       subject="${subject}"
+                       body="${body}" />
+
+            <imp:email to="${toRedmine}"
+                       from="${from}"
+                       subject="${subject}"
+                       body="${bodyRedmine}" />
           </c:when>
           <c:otherwise>
-            <imp:email
-                  to="${to}"
-                  from="${from}"
-                  subject="${subject}"
-                  body="${body}"
-            />
+            <imp:email to="${to}"
+                       from="${from}"
+                       subject="${subject}"
+                       body="${body}" />
+
+            <imp:email to="${toRedmine}"
+                       from="${from}"
+                       subject="${subject}"
+                       body="${bodyRedmine}" />
           </c:otherwise>
 
         </c:choose>
