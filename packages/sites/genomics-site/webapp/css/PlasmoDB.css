@@ -332,4 +332,20 @@ div.colCopy {
   color: #5f0f47;
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter param overrides
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* Don't show :hover alternate color */
+.field-list ul a:link,
+.field-list ul a:visited,
+.field-list ul div.divlink,
+.field-list ul .link,
+.field-list ul a:hover,
+.field-list ul a:active,
+.field-list ul a:focus,
+.field-list ul div.divlink:hover,
+.field-list ul .link:hover {
+	color: #6600CC;
+}
+
 /*THE END */
