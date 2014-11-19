@@ -317,4 +317,6 @@ ${datasetId.value}
 
 </div>   
 
+  <%-- This provides the deferred <wdk-ajax> loading facility --%>
+  <imp:script src="wdkCustomization/js/records/allRecords.js"/>
 </imp:pageFrame>
