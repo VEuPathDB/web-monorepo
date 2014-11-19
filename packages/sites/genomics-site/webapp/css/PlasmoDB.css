@@ -348,4 +348,16 @@ div.colCopy {
 	color: #6600CC;
 }
 
+.field-list ul .active a:link,
+.field-list ul .active a:visited,
+.field-list ul .active div.divlink,
+.field-list ul .active .link,
+.field-list ul .active a:hover,
+.field-list ul .active a:active,
+.field-list ul .active a:focus,
+.field-list ul .active div.divlink:hover,
+.field-list ul .active .link:hover {
+	color: #8f0165;
+}
+
 /*THE END */
