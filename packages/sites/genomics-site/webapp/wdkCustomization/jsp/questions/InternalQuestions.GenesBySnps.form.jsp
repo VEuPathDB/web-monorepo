@@ -10,6 +10,8 @@
 
 <%-- QUESTIONS --%>
 <c:set var="amoebaQuestions" value="GeneQuestions.GenesByHtsSnps"/>
+<c:set var="piroplasmaQuestions" value="GeneQuestions.GenesByHtsSnps"/>
+<c:set var="giardiaQuestions" value="GeneQuestions.GenesByHtsSnps"/>
 <c:set var="eupathQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
 <c:set var="cryptoQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
 <c:set var="plasmoQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
@@ -33,14 +35,21 @@
 <c:when test = "${project == 'AmoebaDB'}">
 	<imp:queryList columns="${columns}" questions="${amoebaQuestions}"/>
 </c:when>
+<c:choose>
 <c:when test = "${project == 'CryptoDB'}">
 	<imp:queryList columns="${columns}" questions="${cryptoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'EuPathDB'}">
 	<imp:queryList columns="${columns}" questions="${eupathQuestions}"/>
 </c:when>
+<c:when test = "${project == 'GiardiaDB'}">
+	<imp:queryList columns="${columns}" questions="${giardiaQuestions}"/>
+</c:when>
 <c:when test = "${project == 'PlasmoDB'}">
 	<imp:queryList columns="${columns}" questions="${plasmoQuestions}"/>
+</c:when>
+<c:when test = "${project == 'PiroplasmaDB'}">
+	<imp:queryList columns="${columns}" questions="${piroplasmaQuestions}"/>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
 	<imp:queryList columns="${columns}" questions="${toxoQuestions}"/>
