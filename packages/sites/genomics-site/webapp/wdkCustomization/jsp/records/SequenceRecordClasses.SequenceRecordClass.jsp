@@ -58,7 +58,7 @@
 
 <%--#############################################################--%>
 <!--------------  NOTE on data with ReleasePolicy, or default text for Unpublished data ---------------->
-<c:if test="${projectId ne 'TrichDB' }">
+<%--<c:if test="${projectId ne 'TrichDB' }">
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
     <b>NOTE: ${attrs['release_policy'].value }</b>
@@ -70,7 +70,7 @@
   </c:otherwise>
   </c:choose>
 </c:if>
-
+--%>
 <c:set var="append" value="" />
 
 <c:set var="attr" value="${attrs['overview']}"/>
@@ -266,7 +266,7 @@ ${externalLinks}
 
 
  <c:choose>
- <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB' || projectId eq 'PlasmoDB' || projectId eq 'CryptoDB' || projectId eq 'MicrosporidiaDB' || projectId eq 'ToxoDB' || projectId eq 'AmoebaDB' || projectId eq 'GiardiaDB' || projectId eq 'TriTrypDB' }">
+ <c:when test="${projectId eq 'PiroplasmaDB' || projectId eq 'FungiDB' || projectId eq 'PlasmoDB' || projectId eq 'CryptoDB' || projectId eq 'MicrosporidiaDB' || projectId eq 'ToxoDB' || projectId eq 'AmoebaDB' || projectId eq 'GiardiaDB' || projectId eq 'TriTrypDB' || projectId eq 'TrichDB' }">
 
     <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
@@ -278,13 +278,13 @@ ${externalLinks}
 
  </c:when>
 
-
+<%--
     <c:when test="${projectId eq 'TrichDB'}">
     <c:set var="reference">
      T. vaginalis sequence from Jane Carlton (NYU,TIGR). PMID: 17218520
     </c:set>
     </c:when>
-
+--%>
 <c:otherwise>
     <c:set var="reference">
   <b>ERROR: can't find attribution information for organism "${organism}",
