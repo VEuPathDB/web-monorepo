@@ -325,3 +325,50 @@ div.colCopy {
 #dataset-records th {
   color: #7b5a37;
 }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter param overrides
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* Don't show :hover alternate color */
+.field-list ul a:link,
+.field-list ul a:visited,
+.field-list ul div.divlink,
+.field-list ul .link,
+.field-list ul a:hover,
+.field-list ul a:active,
+.field-list ul a:focus,
+.field-list ul div.divlink:hover,
+.field-list ul .link:hover,
+.filter-items a:link,
+.filter-items a:visited,
+.filter-items div.divlink,
+.filter-items .link,
+.filter-items a:hover,
+.filter-items a:active,
+.filter-items a:focus,
+.filter-items div.divlink:hover,
+.filter-items .link:hover {
+	color: #538001;
+}
+
+.field-list ul .active a:link,
+.field-list ul .active a:visited,
+.field-list ul .active div.divlink,
+.field-list ul .active .link,
+.field-list ul .active a:hover,
+.field-list ul .active a:active,
+.field-list ul .active a:focus,
+.field-list ul .active div.divlink:hover,
+.field-list ul .active .link:hover,
+.filter-items .selected a:link,
+.filter-items .selected a:visited,
+.filter-items .selected div.divlink,
+.filter-items .selected .link,
+.filter-items .selected a:hover,
+.filter-items .selected a:active,
+.filter-items .selected a:focus,
+.filter-items .selected div.divlink:hover,
+.filter-items .selected .link:hover {
+	color: #7B5A37;
+}
+

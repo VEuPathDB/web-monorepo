@@ -344,7 +344,16 @@ div.colCopy {
 .field-list ul a:active,
 .field-list ul a:focus,
 .field-list ul div.divlink:hover,
-.field-list ul .link:hover {
+.field-list ul .link:hover,
+.filter-items a:link,
+.filter-items a:visited,
+.filter-items div.divlink,
+.filter-items .link,
+.filter-items a:hover,
+.filter-items a:active,
+.filter-items a:focus,
+.filter-items div.divlink:hover,
+.filter-items .link:hover {
 	color: #6600CC;
 }
 
@@ -356,8 +365,18 @@ div.colCopy {
 .field-list ul .active a:active,
 .field-list ul .active a:focus,
 .field-list ul .active div.divlink:hover,
-.field-list ul .active .link:hover {
+.field-list ul .active .link:hover,
+.filter-items .selected a:link,
+.filter-items .selected a:visited,
+.filter-items .selected div.divlink,
+.filter-items .selected .link,
+.filter-items .selected a:hover,
+.filter-items .selected a:active,
+.filter-items .selected a:focus,
+.filter-items .selected div.divlink:hover,
+.filter-items .selected .link:hover {
 	color: #8f0165;
 }
+
 
 /*THE END */
