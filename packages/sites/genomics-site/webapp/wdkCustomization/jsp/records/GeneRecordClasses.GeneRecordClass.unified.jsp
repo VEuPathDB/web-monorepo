@@ -233,7 +233,7 @@ organismFull:   Plasmodium falciparum 3D7
 </div>
 
 <!--------------  NOTE on data with ReleasePolicy, or default text for Unpublished data ---------------->
-<%--<c:if test="${projectId ne 'TrichDB' }">
+
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
     <b>NOTE: ${attrs['release_policy'].value }</b>
@@ -244,8 +244,8 @@ organismFull:   Plasmodium falciparum 3D7
     </c:if>
   </c:otherwise>
   </c:choose>
-</c:if>
---%>
+
+
 <%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
 
 <%----giardia COMMUNITY EXPERT ANNOTATION -----------%>
