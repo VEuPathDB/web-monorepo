@@ -222,7 +222,7 @@
 
     });
 
-    form.on("submit", function validateAndFormfix() {
+    form.on("submit", function validateAndFormfix(event) {
       var $chromosomeOptional = getChromosomeParam();
 
       if ($chromosomeOptional.prop('disabled') &&
