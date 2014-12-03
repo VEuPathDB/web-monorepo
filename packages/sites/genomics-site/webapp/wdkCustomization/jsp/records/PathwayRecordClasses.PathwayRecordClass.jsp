@@ -136,7 +136,9 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
     <li><a href="javascript:void(0)">Layout
     <imp:image title="Choose a Layout for the Pathway Map"  src="wdk/images/question.png" /></a>
         <ul>
-            <li><a  href="javascript:void(0)" onclick="changeLayout('Preset')">Kegg</a></li>
+  <c:if test="${pathwaySource eq 'KEGG'}"> 
+            <li><a  href="javascript:void(0)" onclick="changeLayout('Preset')">Kegg</a></li>  
+</c:if>
             <li><a  href="javascript:void(0)" onclick="changeLayout('ForceDirected')">ForceDirected</a></li>
             <li><a href="javascript:void(0)" onclick="changeLayout('Tree')">Tree</a></li>
             <li><a href="javascript:void(0)" onclick="changeLayout('Circle')">Circle</a></li>
