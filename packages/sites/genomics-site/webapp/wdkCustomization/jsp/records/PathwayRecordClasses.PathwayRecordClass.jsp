@@ -220,10 +220,16 @@ pe Web"/></a>
 
 
   <c:set var="reference">
+  <c:if test="${pathwaySource eq 'KEGG'}"> 
 <br>Data for KEGG Metabolic Pathways were procured from the <a href="http://www.kegg.jp/">Kyoto Encyclopedia of Genes and Genomes (KEGG)</a>.
+ </c:if>
+  <c:if test="${pathwaySource eq 'TrypanoCyc'}"> 
+<br>Data for TrypanoCyc Metabolic Pathways were procured from the <a href="http://vm-trypanocyc.toulouse.inra.fr/">TrypanoCyc</a>, a community annotated Pathway/Genome Database of </i>Trypanosoma brucei</i>.
+ </c:if>
 <br> This data was mapped to EC Numbers obtained from the official genome annotations of organisms, and to Compounds from the NCBI repository.<br>
 <!-- The images and maps for KEGG pathways are copyright of <a href="http://www.kanehisa.jp/">Kanehisa Laboratories</a> (<a href="http://www.kegg.jp/kegg/legal.html">Copyright 1995-2012</a>).-->
 Coloring of the pathway maps was performed in house with custom scripts and annotation information.<br>
+
   </c:set>
 <br>
 <br>
