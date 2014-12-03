@@ -14,13 +14,17 @@ var vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
 
-function drawVisualization(pathwayId) {
+function drawVisualization(pathwayId, pathwaySource) {
   $.ajax({
     url: "/common/downloads/pathwayFiles/" + pathwayId + ".xgmml",
     dataType: "text",
     success: function(data){
       vis.draw(options);
-      vis.draw({ network: data , layout: 'Preset' });
+      if (pathwaySource == 'TrypanoCyc') {
+            vis.draw({ network: data , layout: 'ForceDirected' });
+      } else {
+            vis.draw({ network: data , layout: 'Preset' });
+      }
     },
     error: function(){
       alert("Error loading file");

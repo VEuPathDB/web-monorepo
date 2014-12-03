@@ -17,6 +17,7 @@
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="pathwayImageId" value="${attrs['image_id'].value}" />
 <c:set var="pathwayName" value="${attrs['description'].value}" />
+<c:set var="pathwaySource" value="${attrs['pathway_source'].value}" />
 
 <imp:pageFrame title="${wdkModel.displayName} : Met Pathway ${id}"
              refer="recordPage"
@@ -80,7 +81,7 @@
 <script type="text/javascript">
   // get xgmml and draw the visualization
   $(function() {
-    drawVisualization("${id}");
+    drawVisualization("${id}", "${pathwaySource}");
   });
 </script>        
 
