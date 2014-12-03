@@ -457,10 +457,12 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 
 
 <%-- PlasmoGem --%>
-<c:if test="${attrs['has_plasmogem_info'] eq '1'}">
-  <imp:panel 
-    displayName="PlasmoGem"
-    content="${attrs['plasmogem_link']}" />
+<c:if test="${project_id eq 'PlasmoDB'}">
+  <c:if test="${attrs['has_plasmogem_info'] eq '1'}">
+    <imp:panel 
+      displayName="PlasmoGem"
+      content="${attrs['plasmogem_link']}" />
+  </c:if>
 </c:if>
 
 <%-- from giardia new in build21--%>
@@ -469,7 +471,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 </c:if> 
 
 
-<!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not loaded in rebuild --> 
+<!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not l?project_id=oaded in rebuild --> 
 <%-- imp:wdkTable tblName="GeneDeprecation" isOpen="true"/ --%>
 
 <%-- was already commented out
@@ -690,7 +692,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 
 <c:set var="seq">
  <pre><w:wrap size="60" break="<br>">${totSeq}</w:wrap></pre>
-  Sequence Length: ${fn:length(totSeq)} bp<br/>
+  Sequence Length: ${fn:length(totSeq)} b<pbr/>
 </c:set>
 
 <c:set var="downloadLink">
