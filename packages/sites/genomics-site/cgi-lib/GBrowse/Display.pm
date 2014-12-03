@@ -1113,6 +1113,9 @@ SHORT_OVERLAP_NU_READS:
   The number of reads mapping across the junction for which their alignment
   is not unique and they have less than 8 bases on one (or both) sides of
   the junction
+	<br/><br/>
+CANONICAL:
+	This refers to the splice junction.  If the splice junction is the standard splice signal GTAG then this is reported as "true", otherwise it is reported as "false".
 EOL
 
 } 
