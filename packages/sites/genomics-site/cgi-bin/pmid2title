@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
+use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonShared/Model";
 use pcbiPubmed;
 use XMLUtils;
 use CGI; 
