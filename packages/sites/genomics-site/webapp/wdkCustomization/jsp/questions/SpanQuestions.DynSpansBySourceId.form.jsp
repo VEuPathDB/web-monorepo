@@ -14,9 +14,16 @@
 		 padding: 5px;
 		 }
 		 #span-location #span-params { 
-		 vertical-align: middle; 
+		 vertical-align: top; 
 		 border-right: 3px double black;
 		 }
+     #span-location #span-params, #span-location #span-search-list {
+       display: inline-block;
+       width: 49%;
+     }
+     #span-location select, #span-location input {
+       max-width: 96%;
+     }
 		 /* #span-location #span-search-list #span_id td { font-weight:bold; } */
 		 #span_id td.disabled,#span_id tr.disabled {
 		 cursor:default;
@@ -24,48 +31,36 @@
 		-->
 </style>
 <!-- <br> -->
-<table id="span-location">
-	<tr style="font-weight:bold">
-		<td class="h4left" width="30%">1. Generate a list of segment IDs</td>
-		<td style=" border-left: 3px double black;" class="h4left" width="70%">2. When your list is ready, hit button below "Get Answer"</td>
-	</tr>
-	<tr>
-		<td style=" border-right: 3px double black;padding-top:0;padding-bottom:0"  width="30%" ></td>
-		<td style=" border-right: 3px double black;padding-top:0;padding-bottom:0"  width="70%" ></td>
-	</tr>
-  <tr>
-    <td id="span-params" width="30%">
-      <imp:question/>
-      <br />
-      <div style="text-align:center">
-				<span style="font-size:150%">>>></span>
-        <input id="span-compose" type="button" name="compose" value="Add Location" />
-				<span style="font-size:150%">>>></span>
-      </div> 
-      <br />
-      <ul style="text-align:left;list-style-type: square;list-style-position:inside;">
-				<li><i>The max length of each segment is 100Kbps
-						<li><b>End Location</b> cannot be smaller than <b>Start</b></i>
-      </ul>
-    </td>
-    <td width="70%">
-      <div><i>You may also enter directly genomic segments separated by comma, in the box below.
-					The format of a segment is:</i>
-      </div>
-      <br />
-      <div align="center">
-				<b>sequence_id:start-end:strand</b>
-        <br />
-        <span style="font-size:90%;font-style:italic">(Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)</span>
-      </div>
 
+<div id="span-location">
+  <div id="span-params">
+    <h4 class="h4left">1. Generate a list of segment IDs</h4>
+    <imp:question/>
+    <br />
+    <div style="text-align:center">
+      <span style="font-size:150%">>>></span>
+      <input id="span-compose" type="button" name="compose" value="Add Location" />
+      <span style="font-size:150%">>>></span>
+    </div> 
+    <br />
+    <ul style="text-align:left;list-style-type: square;list-style-position:inside;">
+      <li><i>The max length of each segment is 100Kbps
+          <li><b>End Location</b> cannot be smaller than <b>Start</b></i>
+    </ul>
+  </div>
+  <div id="span-search-list">
+    <h4 class="h4left">2. When your list is ready, hit button below "Get Answer"</h4>
+    <div><i>You may also enter directly genomic segments separated by comma, in the box below.
+        The format of a segment is:</i>
+    </div>
+    <br />
+    <div align="center">
+      <b>sequence_id:start-end:strand</b>
       <br />
-      <div id="span-search-list">
-
-      </div>
-    </td>
-  </tr>
-</table>
+      <span style="font-size:90%;font-style:italic">(Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)</span>
+    </div>
+    <br />
+  </div>
+</div>
 
 <div id="span-extra"></div>
-
