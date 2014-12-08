@@ -360,12 +360,12 @@ organismFull:   Plasmodium falciparum 3D7
    <c:set var="revCompOn" value="1"/>
 </c:if>
 
-
-<imp:mercatorTable tblName="MercatorTable" isOpen="false" 
-     cgiUrl="/cgi-bin" projectId="${projectId}" 
-     revCompOn="${revCompOn}" contigId="${sequence_id}" 
-     start="${start}" end="${end}" /> 
-
+<c:if test="${projectId ne 'TrichDB'}">
+      <imp:mercatorTable tblName="MercatorTable" isOpen="false" 
+           cgiUrl="/cgi-bin" projectId="${projectId}" 
+           revCompOn="${revCompOn}" contigId="${sequence_id}" 
+           start="${start}" end="${end}" /> 
+</c:if>
 
 <%-------COMMENT OUT FOR DEBUGGING: MetaTable --%> 
 <%--
