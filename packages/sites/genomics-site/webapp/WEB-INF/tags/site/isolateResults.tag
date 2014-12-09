@@ -172,7 +172,7 @@
             <c:set var="resultsAction" value="javascript:wdk.resultsPage.getResultsPage('${commandUrl}&command=remove&attribute=${attrName}', true, true)" />
             <a href="${resultsAction}"
                         title="Remove ${sumAttrib} column">
-              <imp:image src="/dk/images/results_x.png" alt="Remove" border="0" /></a>
+              <imp:image src="wdk/images/results_x.png" alt="Remove" border="0" /></a>
           </td>
         </c:if>
 
