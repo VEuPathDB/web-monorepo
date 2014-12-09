@@ -285,7 +285,7 @@ sub citationFromExtDatabaseNamePattern {
 
   my $sql =<<EOL;
 WITH pubs as (select name, id, listagg(publication,',') WITHIN GROUP (order by publication) PMIDS, contact_email from ( SELECT nvl(ds.dataset_name_pattern, ds.name) as name, ds.dataset_presenter_id as id, c.email as contact_email, p.pmid as publication from ApidbTuning.DatasetPresenter ds, APIDBTUNING.datasetcontact c,APIDBTUNING.datasetpublication p where ds.dataset_presenter_id = c.dataset_presenter_id and ds.dataset_presenter_id = p.dataset_presenter_id and c.is_primary_contact =1 )group by name, id, contact_email)
-SELECT name, dbms_lob.substr(description,4000,1) ||' Primary Contact Email: '||nvl(email,'unavailable')||' PMID: ' || publications as citation 
+SELECT name, dbms_lob.substr(description,4000,1) || '<br/>' || ' Primary Contact Email: '||nvl(email,'unavailable')|| '<br/>' || ' PMID: ' || publications as citation 
 FROM (SELECT nvl(ds.dataset_name_pattern, ds.name) as name, ds.summary as description, pubs.contact_email as email, pubs.PMIDS as publications FROM ApidbTuning.DatasetPresenter ds, pubs where ds.dataset_presenter_id = pubs.id )
 EOL
   my $sth = $self->{dbh}->prepare($sql);
