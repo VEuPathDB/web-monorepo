@@ -694,34 +694,21 @@ sub fosmidTitle {
 
 
 
-sub invertedRepeatTitle { 
+sub transposableElementsTitle { 
   my $f = shift;
   my $bulkFeatureName = shift;
   my $trackName = shift;
-
-
 
   my $start = $f->start;
   my $stop  = $f->stop;
   my $length = $stop - $start + 1;
   my $cname = $f->name;
   my @data; 
-  push @data, [ "End-Sequenced Inverted Repeat:"     => $cname ]; 
-  push @data, [ 'Clone Size:'     => $length ]; 
-  push @data, [ 'Clone Location:' => "$start..$stop"];
-  push @data, [ '<hr>'            => '<hr>' ];
-  my @subs = $f->sub_SeqFeature("$bulkFeatureName");
-  my $count = 0;
-  foreach(@subs) {
-    $count++;
-    my $name  = $_->name; 
-    my $start = $_->start;
-    my $stop  = $_->stop;
-    push @data, [ "Inverted Repeats End:"      => $name ]; 
-    push @data, [ 'Location:'  => "$start..$stop" ];
-    push @data, [ '<hr>' => '<hr>' ] if $count % 2;
-  }
-    hover($f, \@data);
+  push @data, [ "Transposable Element:"     => $cname ]; 
+  push @data, [ 'Size:'     => $length ]; 
+  push @data, [ 'Location:' => "$start..$stop"];
+  
+  hover($f, \@data);
 }
 
 sub genericEndFeatureTitle { 
