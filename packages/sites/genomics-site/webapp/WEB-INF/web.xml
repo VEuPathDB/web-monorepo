@@ -147,7 +147,7 @@
   </servlet-mapping>
   <!-- End Struts servlet and mapping -->
 
-  <!-- WSF Restful service filter -->
+  <!-- WSF RESTful service filter -->
   <servlet>
     <servlet-name>WSF</servlet-name>
     <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
@@ -162,6 +162,21 @@
   </servlet-mapping>
   <!-- End of WSF Restful service filter -->
 
+  <!-- WDK RESTful service filter -->
+  <servlet>
+    <servlet-name>WDK</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>org.gusdb.wdk.service.WdkServiceApplication</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WDK</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
+  <!-- End of WSF Restful service filter -->
+  
   <!-- The Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
