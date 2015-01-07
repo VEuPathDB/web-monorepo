@@ -145,7 +145,8 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target='_blank'>protein</a>"
   var recordLink = "<a href='../../../gene/" + sourceId + "'>Gene Page</a>";
   var gbLink = "<a href='../../../../cgi-bin/gbrowse/" + projectId.toLowerCase() + "/?" + gbLinkParams + "'>GBrowse</a>";
-  
+  var orthomclLink = "<a href='http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
+
   // format into html table rows
   var rows = new Array();
   rows.push(twoColRow('Species:', taxon));
@@ -168,7 +169,11 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
   if (soTerm =='Protein Coding') {
       rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
-      rows.push(twoColRow('OrthoMCL', orthomcl));
+      if ( orthomcl.substring(0,3) == 'OG2') {
+	  rows.push(twoColRow('OrthoMCL', orthomclLink));
+      } else {
+	  rows.push(twoColRow('OrthoMCL', orthomcl));
+      }
   }
   rows.push(twoColRow('Links:', gbLink + " | " + recordLink));
   
