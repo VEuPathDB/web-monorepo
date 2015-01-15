@@ -44,6 +44,16 @@ class WdkCache extends JolModule {
     return $response[0]->is_success();
   }
 
+  public function toggleWdkIsCaching() {
+    $req = new JolRequest($this->jol_base_url);
+    $exec = new JolExecOperation(array(
+                'mbean' => $this->wdk_mbean_domain . ':type=Cache,path=' . $this->path_name,
+                'operation' => 'toggleWdkIsCaching',
+            ));
+    $req->add_operation($exec);
+    $response = $req->invoke();
+    return $response[0]->is_success();  
+  }
 }
 
 ?>
