@@ -10,6 +10,7 @@ require_once dirname(__FILE__) . "/modules/ProxyInfo.php";
 require_once dirname(__FILE__) . "/modules/WdkMeta.php";
 require_once dirname(__FILE__) . "/modules/Webapp.php";
 require_once dirname(__FILE__) . "/modules/Jvm.php";
+require_once dirname(__FILE__) . "/modules/WdkCache.php";
 require_once dirname(__FILE__) . "/LdapTnsNameResolver.php";
 
 /**
@@ -55,6 +56,9 @@ class PrivateAPI {
     $jvm = new Jvm();
     $jvm_attr = $jvm->attributes();
 
+    $cache = new WdkCache();
+    $cache_attr = $cache->attributes();
+
     $build = new BuildInfo();
     $proxy = new ProxyInfo();
     $proxy_attr = $proxy->attributes();
@@ -88,6 +92,10 @@ class PrivateAPI {
                     'aliases' => $this->array_to_map($ldap_resolver->resolve($udb_attr{'service_name'}), 'alias'),
                 )
             ),
+            'querycache' => array(
+                'enabled' => ($cache_attr{'WdkIsCaching'}) ? 'true' : 'false',
+                'tablecount' => $cache_attr{'cache_table_count'},
+             ),
             'modelconfig' => $this->normalize_keys_in_array($model_config_attr),
             'commentconfig' => $this->normalize_keys_in_array($comment_config_attr),
             'modelprop' => $this->normalize_keys_in_array($wdk_properties_attr),
