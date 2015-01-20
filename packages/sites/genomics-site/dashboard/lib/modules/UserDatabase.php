@@ -15,7 +15,7 @@ class UserDatabase extends Database {
 
   public function __construct() {
     parent::__construct();
-    $this->role = 'UserDB';
+    $this->role = 'USER';
   }
 
 }

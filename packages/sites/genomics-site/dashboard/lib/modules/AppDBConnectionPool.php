@@ -15,7 +15,7 @@ class AppDBConnectionPool extends ConnectionPool {
 
   public function __construct() {
     parent::__construct();
-    $this->role = 'AppDB';
+    $this->role = 'APP';
   }
 
 }
