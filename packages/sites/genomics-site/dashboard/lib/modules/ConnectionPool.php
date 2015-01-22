@@ -10,13 +10,13 @@ require_once dirname(__FILE__) . "/JolModule.php";
  * @subpackage Database
 
  */
-abstract class ConnectionPool extends JolModule {
+class ConnectionPool extends JolModule {
 
-  private $mbean;
   protected $role;
 
-  public function __construct() {
+  public function __construct($dbName) {
     parent::__construct();
+    $this->role = $dbName;
   }
 
   /**
