@@ -1,7 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . "/modules/UserDatabase.php";
-require_once dirname(__FILE__) . "/modules/AppDatabase.php";
+require_once dirname(__FILE__) . "/modules/Database.php";
 require_once dirname(__FILE__) . "/modules/WdkProperties.php";
 require_once dirname(__FILE__) . "/modules/ModelConfig.php";
 require_once dirname(__FILE__) . "/modules/CommentConfig.php";
@@ -32,11 +31,11 @@ class PrivateAPI {
   private function init() {
     $this->api_dataset = array();
 
-    $app_database = new AppDatabase();
+    $app_database = new Database('APP');
     $adb_attr = $app_database->attributes();
 
-    $user_databse = new UserDatabase();
-    $udb_attr = $user_databse->attributes();
+    $user_database = new Database('USER');
+    $udb_attr = $user_database->attributes();
 
     $wdk_properties = new WdkProperties();
     $wdk_properties_attr = $wdk_properties->attributes();

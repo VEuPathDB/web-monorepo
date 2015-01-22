@@ -20,7 +20,7 @@ class ConnectionPool extends JolModule {
   }
 
   /**
-   * @return array Application Database attributes
+   * @return array Database attributes
    */
   public function attributes() {
     $req = new JolRequest($this->jol_base_url);
