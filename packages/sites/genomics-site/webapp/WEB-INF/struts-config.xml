@@ -273,6 +273,30 @@
       <forward name="show_summary" path="showSummary.do"/>
     </action>
     <action
+      path="/getFilterSummary"
+      type="org.gusdb.wdk.controller.action.GetFilterSummaryAction"
+      scope="request">
+    </action>    
+    <action
+      path="/applyFilter"
+      type="org.gusdb.wdk.controller.action.ApplyFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/removeFilter"
+      type="org.gusdb.wdk.controller.action.RemoveFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>    
+    <action
+      path="/toggleFilter"
+      type="org.gusdb.wdk.controller.action.ToggleFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    
+    <action
       path="/showQuestion"
       type="org.apidb.apicommon.controller.action.CustomShowQuestionAction"
       scope="request"
