@@ -30,7 +30,7 @@
 		 </c:forEach>
 -->
 
-<table>
+<table id="geneFilters">
 
 	<!-- ========================PHYLUM (if provided) and  FAMILY TITLE (includes all and orthologs)  ================ -->
 	<!-- ================================================= -->
@@ -41,12 +41,12 @@
       <th rowspan=4>All<br>Results</th>
       <th rowspan=4>Ortholog<br>Groups</th>
     <c:forEach items="${layout.superFamilyCountMap}" var="phylum" >
-      <th colspan="${phylum.value}"><i>${phylum.key}</i></th>
+      <th class="phylum" colspan="${phylum.value}"><i>${phylum.key}</i></th>
 	  </c:forEach>
     </tr>
     <tr>
     <c:forEach items="${layout.sortedFamilyCountMap}" var="family" >
-    	<th colspan="${family.value}"><i>${fn:substringAfter(family.key,'-')}</i></th>
+    	<th class="genus" colspan="${family.value}"><i>${fn:substringAfter(family.key,'-')}</i></th>
  		</c:forEach>
     </tr>
   </c:when>
@@ -55,7 +55,7 @@
       <th rowspan=3>All<br>Results</th>
       <th rowspan=3>Ortholog<br>Groups</th>
  		<c:forEach items="${layout.sortedFamilyCountMap}" var="family" >
-    	<th colspan="${family.value}"><i>${fn:substringAfter(family.key,'-')}</i></th>
+    	<th  class="genus"  colspan="${family.value}"><i>${fn:substringAfter(family.key,'-')}</i></th>
  		</c:forEach>
     </tr>
   </c:when>
@@ -64,7 +64,7 @@
       <th rowspan=3>All<br>Results</th>
       <th rowspan=3>Ortholog<br>Groups</th>
  		<c:forEach items="${layout.sortedFamilyCountMap}" var="family" >
-    	<th colspan="${family.value}"><i>${family.key}</i></th>
+    	<th  class="genus"  colspan="${family.value}"><i>${family.key}</i></th>
  		</c:forEach>
     </tr>
   </c:otherwise>
