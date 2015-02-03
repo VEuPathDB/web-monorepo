@@ -219,9 +219,16 @@ organismFull:   Plasmodium falciparum 3D7
 <c:if test="${is_genedb_organism == 1}">
   <div style="margin:12px;padding:5px">
 
-    <c:if test="${attrs['updated_annotation'].value != null}">
-      ${attrs['GeneDB_updated'].value}
-    </c:if>
+    <c:choose>
+      <c:when test="${attrs['updated_annotation'].value != null && 
+                     (attrs['reviewed_comment_in_genedb'].value > 0 || attrs['reviewed_comment_in_eupathdb'].value > 0)}">
+        ${attrs['GeneDB_updated'].value} <br/>
+        <span style="font-size:75%;font-weight:normal">User comment has been incorpated into official annoation.</font>
+      </c:when>
+      <c:when test="${attrs['updated_annotation'].value != null}">
+        ${attrs['GeneDB_updated'].value}
+      </c:when> 
+    </c:choose>
 
     <c:if test="${attrs['new_product_name'].value != null}">
       <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
