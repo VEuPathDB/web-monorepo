@@ -223,7 +223,7 @@ organismFull:   Plasmodium falciparum 3D7
       <c:when test="${attrs['updated_annotation'].value != null && 
                      (attrs['reviewed_comment_in_genedb'].value > 0 || attrs['reviewed_comment_in_eupathdb'].value > 0)}">
         ${attrs['GeneDB_updated'].value} <br/>
-        <span style="font-size:75%;font-weight:normal">User comment has been incorpated into official annotation.</font>
+        <span style="font-size:75%;font-weight:normal">User comment has been incorporated into official annotation.</font>
       </c:when>
       <c:when test="${attrs['updated_annotation'].value != null}">
         ${attrs['GeneDB_updated'].value}
@@ -234,7 +234,7 @@ organismFull:   Plasmodium falciparum 3D7
       <c:when test="${attrs['new_product_name'].value != null && 
                      (attrs['reviewed_comment_in_genedb'].value > 0 || attrs['reviewed_comment_in_eupathdb'].value > 0)}">
         <span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span><br/>
-        <span style="font-size:75%;font-weight:normal">User comment has been incorpated into official annotation.</font>
+        <span style="font-size:75%;font-weight:normal">User comment has been incorporated into official annotation.</font>
       </c:when>
       <c:when test="${attrs['new_product_name'].value != null}">
         <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
