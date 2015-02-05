@@ -93,7 +93,9 @@ ${tableList}
   <form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
   <c:set var="i" value="0"/>
 
-<table >
+
+ <table>
+
 <c:forEach var="row" items="${tbl}">
   <c:set var="i" value="${i+1}"/>
   <c:if test="${i % 8 == 1}">
@@ -119,7 +121,7 @@ ${tableList}
   <table width="100%">
   <tr>
     <td align=center>
-      <br>We have ${i} SNP datasets for alignment.<br>
+      <br>We have ${i} Isolate strains for alignment.<br>
       <input type="button" value="Show Alignment on Checked Strains" onClick="goToHTSStrain(this,'htsSNP','${attrs['sequence_id']}','${attrs['start_min']}','${attrs['end_max']}')" /> 
       <input type="button" name="CheckAll" value="Check All"  onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
       <input type="button" name="UnCheckAll" value="Uncheck All" onClick="wdk.api.checkboxNone(jQuery('input:checkbox[name=selectedFields]'))">
@@ -145,7 +147,7 @@ ${tableList}
     <c:set var="id" value="${pkValues['source_id']}" />
 
 	  <table id="dt_${tblName}" 
-           class="dataTable ${tableClassName}" 
+           class="${tableClassName}" 
            title="Click to go to the comments page"  
            style="cursor:pointer" 
            onclick="window.location='<c:url value="/showComment.do?projectId=${projectId}&stableId=${id}&commentTargetId=gene"/>';">
@@ -153,8 +155,9 @@ ${tableList}
 
 <%-- =========  OTHER TABLES ======================= --%>
   <c:otherwise>
+
 	  <table id="dt_${tblName}"
-           class="dataTable ${tableClassName}">
+           class="${tableClassName}">
   </c:otherwise>
   </c:choose>
 
@@ -213,8 +216,8 @@ ${tableList}
   </script>
 --%>
 
-  </c:otherwise> <%-- tables other than SNPsAlignment --%>
-  </c:choose>
+</c:otherwise> <%-- tables other than SNPsAlignment --%>
+</c:choose>
 
 
 <!--  CASE WHERE THE TABLE IS DEFINED BUT THERE IS NO DATA -->
