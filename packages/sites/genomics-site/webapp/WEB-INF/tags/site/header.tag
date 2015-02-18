@@ -15,6 +15,7 @@
   <c:set var="project" value="${props['PROJECT_ID']}"/>
   
   <c:set var="version" value="${applicationScope.wdkModel.version}" />
+  <c:set var="build" value="${applicationScope.wdkModel.build}" />
   <fmt:setLocale value="en-US"/> <!-- req. for date parsing when client browser (e.g. curl) does not send locale -->
   <fmt:parseDate  var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" pattern="dd MMMM yyyy HH:mm"/> 
   <fmt:formatDate var="releaseDate_formatted" value="${releaseDate}" pattern="d MMM yy"/>
@@ -62,12 +63,12 @@
   <c:choose>
   <c:when test="${project == 'HostDB'}">
     <a href="/" style="font-color:blue;font-size:600%;font-weight:bold;position:relative;left:30px;top:5px">HostDB</a>
-    <span style="position:relative;top:-30px;left:29px">Build 24</span> 
+    <span style="position:relative;top:-30px;left:29px">Build ${build}</span> 
     <span style="position:relative;top:-20px;left:-20px">${releaseDate_formatted}</span>
   </c:when>
   <c:otherwise>
   <a href="/"><imp:image src="images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
-    Build 24<br/>
+    Build ${build}<br/>
     ${releaseDate_formatted}
   </c:otherwise>
   </c:choose>
