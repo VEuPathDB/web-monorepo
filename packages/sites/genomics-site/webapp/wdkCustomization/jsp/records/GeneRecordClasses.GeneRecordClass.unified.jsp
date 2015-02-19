@@ -374,7 +374,7 @@ organismFull:   Plasmodium falciparum 3D7
    <c:set var="revCompOn" value="1"/>
 </c:if>
 
-<c:if test="${projectId ne 'TrichDB'}">
+<c:if test="${projectId ne 'TrichDB'  && projectId ne 'FungiDB' }">
       <imp:mercatorTable tblName="MercatorTable" isOpen="false" 
            cgiUrl="/cgi-bin" projectId="${projectId}" 
            revCompOn="${revCompOn}" contigId="${sequence_id}" 
