@@ -655,7 +655,6 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
   <imp:expressionGraphs organism="${organismFull}" species="${binomial}"/>
   <imp:wdkTable2 tblName="SpliceSites" isOpen="false" attribution=""/>
   <imp:wdkTable2 tblName="PolyASites" isOpen="false" attribution=""/>
-  <imp:wdkTable2 tblName="SageTags" attribution=""/>
 </c:if>
 
 
