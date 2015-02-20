@@ -59,13 +59,13 @@
     <c:set var="organism_full" value="${attrs['organism']}" />
 <c:choose>
   <c:when test="${projectId eq 'ToxoDB'}">
-    <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+AlignmentSNPs" />
+    <c:set var="tracks" value="Gene+EST+ORF+AlignmentSNPs" />
   </c:when>
   <c:when test="${projectId eq 'PlasmoDB'}">
-     <c:set var="tracks" value="Gene+EST+SAGEtags+ORF+CombinedSNPs" />
+     <c:set var="tracks" value="Gene+EST+ORF+CombinedSNPs" />
   </c:when>
   <c:otherwise>
-     <c:set var="tracks" value="Gene+EST+SAGEtags+ORF" />
+     <c:set var="tracks" value="Gene+EST+ORF" />
   </c:otherwise>
 </c:choose>
 
@@ -145,9 +145,6 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 	<br>
     </c:if>
 
-
-	<imp:wdkTable tblName="SageTags" isOpen="false"
-                 attribution=""/>
 
 	<br>
 	<imp:wdkTable tblName="ESTs" isOpen="false"
