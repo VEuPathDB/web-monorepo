@@ -145,8 +145,6 @@ Scaffolds,ChromosomeMap,ME49_Annotation,TgondiiGT1Scaffolds,TgondiiVegScaffolds,
 	<br>
     </c:if>
 
-
-	<br>
 	<imp:wdkTable tblName="ESTs" isOpen="false"
                  attribution=""/>
 
