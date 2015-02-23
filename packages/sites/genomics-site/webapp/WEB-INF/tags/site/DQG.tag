@@ -10,15 +10,17 @@
 <!--  SETTING GENERA
       (share with quick search and menubar!  -->
 
-<c:set var="AmoebaDBOrgs" value="Acanthamoeba, Entamoeba" />
-<c:set var="CryptoDBOrgs" value="Cryptosporidium" />				
-<c:set var="GiardiaDBOrgs" value="Giardia" />
-<c:set var="MicrosporidiaDBOrgs" value="Annacaliia, Edhazardia, Encephalitozoon, Enterocytozoon, Hamiltosporidium, Nematocida, Nosema, Vavraia, Vittaforma" />
+<c:set var="AmoebaDBOrgs" value="Acanthamoeba, Entamoeba, Naegleria" />
+<c:set var="CryptoDBOrgs" value="Chromera, Cryptosporidium, Gregarina, Vitrella" />	
+<c:set var="FungiDBOrgs" value="Agaricomycetes, Blastocladiomycetes, Chytridiomycetes, Eurotiomycetes, Leotiomycetes, Oomycetes, Pneumocystidomycetes, Pucciniomycetes, Saccharomycetes, Schizosaccharomycetes, Sordariomycetes, Tremellomycetes, Ustilaginomycetes, Zygomycetes"/>			
+<c:set var="GiardiaDBOrgs" value="Giardia, Spironucleus" />
+<c:set var="MicrosporidiaDBOrgs" value="Annacaliia, Edhazardia, Encephalitozoon, Enterocytozoon, Hamiltosporidium, Nematocida, Nosema, Spraguea, Trachipleistophora, Vavraia, Vittaforma" />
 <c:set var="PiroplasmaDBOrgs" value="Babesia, Theileria" />
 <c:set var="PlasmoDBOrgs" value="Plasmodium" />
-<c:set var="ToxoDBOrgs" value="Eimeria, Gregarina, Neospora, Toxoplasma" />
+<c:set var="ToxoDBOrgs" value="Eimeria, Hammondia, Neospora, Sarcocystis, Toxoplasma" />
 <c:set var="TrichDBOrgs" value="Trichomonas"/>
 <c:set var="TriTrypDBOrgs" value="Crithidia, Endotrypanum, Leishmania, Trypanosoma"/>
+
 
 <div id="contentwrapper">
 <div id="contentcolumn">
@@ -27,18 +29,17 @@
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
 
-	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens</b>:
-<br><i style="font-size:90%">(mouse over the logos:</i> <i>Acanthamoeba</i>, <i>Annacaliia</i>, <i>Babesia</i>, <i>Crithidia</i>, <i>Cryptosporidium</i>, <i>Edhazardia</i>, <i>Eimeria</i>, <i>Encephalitozoon</i>, <i>Endotrypanum</i>, <i>Entamoeba</i>, <i>Enterocytozoon</i>, <i>Giardia</i>, <i>Gregarina</i>, <i>Hamiltosporidium</i>, <i>Leishmania</i>, <i>Nematocida</i>, <i>Neospora</i>, <i>Nosema</i>, <i>Plasmodium</i>, <i>Theileria</i>, <i>Toxoplasma</i>, <i>Trichomonas</i>, <i>Trypanosoma</i>, <i>Vivraia</i>, <i>Vittaforma</i>).
-	<br>
+	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens in the following websites:</b>	<i style="font-size:90%">(mouse over the logos)</i> <br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
 <%--	<td align="center" width="12.5%"><a href="http://newsitedb.org"><imp:image border=0 src="images/newSite.png" width="55" alt="NewSiteDB logo" /></a></td> --%>
 
-<c:set var="mywidth" value="11.11%" />
+<c:set var="mywidth" value="10%" />
 
 	<td title="${AmoebaDBOrgs}" align="center" width="${mywidth}"><a href="http://amoebadb.org"><imp:image  border="0" src="images/AmoebaDB/amoebadb_w50.png" alt="AmoebaDB logo"/></a></td>
 	<td title="${CryptoDBOrgs}" align="center" width="${mywidth}"><a href="http://cryptodb.org"><imp:image border="0" src="images/CryptoDB/cryptodb_w50.png" alt="CryptoDB logo"/></a></td>
-        <td title="${GiardiaDBOrgs}" align="center" width="${mywidth}"><a href="http://giardiadb.org"><imp:image border="0" src="images/GiardiaDB/giardiadb_w50.png" alt="GiardiaDB logo"/></a></td>
+        <td title="${FungiDBOrgs}" align="center" width="${mywidth}"><a href="http://fungidb.org"><imp:image border="0" src="images/FungiDB/fungidb_w50.png" alt="FungiDB logo"/></a></td>
+ <td title="${GiardiaDBOrgs}" align="center" width="${mywidth}"><a href="http://giardiadb.org"><imp:image border="0" src="images/GiardiaDB/giardiadb_w50.png" alt="GiardiaDB logo"/></a></td>
         <td title="${MicrosporidiaDBOrgs}" align="center" width="${mywidth}"><a href="http://microsporidiadb.org"><imp:image border="0" src="images/MicrosporidiaDB/microdb_w50.png" alt="MicrosporidiaDB logo"/></a></td>
 	<td title="${PiroplasmaDBOrgs}" align="center" width="${mywidth}"><a href="http://piroplasmadb.org"><imp:image border="0" src="images/PiroplasmaDB/piroLogo-50.png" alt="PiroplasmaDB logo"/></a></td>
         <td title="${PlasmoDBOrgs}" align="center" width="${mywidth}"><a href="http://plasmodb.org"><imp:image border="0" src="images/PlasmoDB/plasmodb_w50.png" alt="PlasmoDB logo"/></a></td>
@@ -50,6 +51,7 @@
 	<tr>
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#67a790">AmoebaDB</td>
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#a03f43">CryptoDB</td>
+	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#672a87">FungiDB</td>
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#67678d">GiardiaDB</td>
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#320B7A">MicrosporidiaDB</td>
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#3b8ca0">PiroplasmaDB</td>
