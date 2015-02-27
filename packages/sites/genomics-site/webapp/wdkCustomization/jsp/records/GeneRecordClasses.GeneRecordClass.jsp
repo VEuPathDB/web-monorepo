@@ -23,6 +23,7 @@
                 projectId eq 'ToxoDB' || 
                 projectId eq 'TriTrypDB' ||
                 projectId eq 'TrichDB' || 
+                projectId eq 'SchistoDB' || 
                 projectId eq 'FungiDB' }">
    <jsp:include page="/wdkCustomization/jsp/records/GeneRecordClasses.GeneRecordClass.unified.jsp"/>
 </c:when>
