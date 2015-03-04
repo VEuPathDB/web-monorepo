@@ -70,10 +70,7 @@ var RadioParamsView = Backbone.View.extend({
   },
 
   submit: function(e) {
-    // keep form from submitting radio params so validation doesn't break
-    this.$('[name="active-param"]').prop('disabled', true);
-
-    // add nonsense value to inactive params
+    // add "empty" value to inactive params
     this.$('.param-item.inactive').find('input').val(this.nonsenseValue);
     this.$('.param-item.inactive').find('select')
       .append('<option value="' + this.nonsenseValue + '"/>').val(this.nonsenseValue);
