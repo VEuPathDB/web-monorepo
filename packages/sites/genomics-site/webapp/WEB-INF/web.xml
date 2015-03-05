@@ -147,6 +147,17 @@
   </servlet-mapping>
   <!-- End Struts servlet and mapping -->
 
+  <!-- WDK Client-side render filter -->
+  <servlet>
+    <servlet-name>WDKClient</servlet-name>
+    <jsp-file>/wdkCustomization/app.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WDKClient</servlet-name>
+    <url-pattern>/app/*</url-pattern>
+  </servlet-mapping>
+  <!-- End of WDK Client-side render filter -->
+  
   <!-- WSF RESTful service filter -->
   <servlet>
     <servlet-name>WSF</servlet-name>
