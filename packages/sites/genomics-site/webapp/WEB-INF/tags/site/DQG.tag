@@ -78,10 +78,6 @@
 </div>
 --%>
 
-<script type="text/javascript">
-    $(function() { wdk.tooltips.assignTooltipsLeft('.dqg-tooltip', -3); });
-</script>
-
 <table id="bubbles" width="100%" border="0" class="threecolumn">
 <tr>
     <td width="33%" align="center">
