@@ -1,0 +1,341 @@
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(/assets/images/SchistoDB/background_s.jpg);
+}
+
+a:link, a:visited {
+	color: #374251;
+}
+
+a:hover, a:active {
+	color: #2c2c7d;  /* 79da7c; */
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header {
+	background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
+}
+
+#header2 {
+	background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
+}
+
+
+#header_rt {
+   color: #2c2c7d;
+}
+
+#header_rt a:link, #header_rt a:visited {
+   color: #2c2c7d;
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+#nav_top {
+	color: #2c2c7d;
+}
+
+#nav_top a:link, #nav_top a:visited {
+	color: #2c2c7d;
+}
+#nav_top li ul {  /* second-level lists */
+	background-image: url(../images/SchistoDB/footer.png);
+	border-color:#226723;
+	list-style-image: url(../images/SchistoDB/bullet_arrow.gif);
+}
+
+#nav_top li ul a:link, #nav_top li ul a:visited {
+	color: #2c2c7d;
+}
+
+#nav_top li ul a:hover, #nav_top li ul a:active {
+	color: #26267b;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+/* #menubar #mysearch {
+	background-image: url(../images/SchistoDB/my_hist_menubar.png);
+	border: 1px solid #393966;
+} */
+ 
+#contentcolumn {
+	background-image: url(../images/SchistoDB/footer.png);
+	border: 1px solid #c4d4d5;
+}
+
+#contentcolumn2 {
+	background-image: url(../images/SchistoDB/footer.png);
+	border: 1px solid #c4d4d5;
+}
+
+#mysearchhist {
+	background-image: url(../images/SchistoDB/bubble_my_searchbox.png);
+	border: 1px solid #a3dca4;
+}
+
+#main_tools {
+	background-image: url(../images/SchistoDB/tools_bckgnd.jpg);
+}
+
+#about_us_left {
+	background-color: #bfbfdc;
+	list-style-image: url(../images/SchistoDB/bullet_arrow.gif);
+}
+
+#pink_title {
+	color: #282868;
+	background-image: url(../images/SchistoDB/trheader.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+#menu a:hover, #menu a:active, span#stratTitle, #strategy_tabs #selected a {
+	color:#000068;
+}
+
+#menu ul ul a:link, #menu ul ul a:visited{
+	border-bottom-color: #2c2c7d;
+}
+
+#menu ul ul a:hover, #menu ul ul a:active{
+	border-bottom-color: #2c2c7d;
+	color: #b30101;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Menu Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.menu_lefttop_drop {
+   border-color: #c4d4d5;  /* color as in contentcolumn border */
+}
+
+#menu_lefttop a.heading {
+	background-image: url(../images/SchistoDB/menu_lft2.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Search Boxes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.search-box{
+   border: solid 1px #1c7c12;
+} 
+
+.search-box .textbox{
+	border: solid 1px #b3b3b3;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Fonts 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+h1 {
+	color: #226723;
+}
+h2 {
+  	color: #226723;
+}
+.h2center, .h3left,.h3center, .h4left {
+  	color: #2c2c7d;   /* 5f0f47; */
+}
+.subcolor {
+	color: #4c5a82
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+#footer{
+   background-image: url(../images/SchistoDB/footer.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TABLES 
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+td.headerrow {
+	color: #282868;
+	background-image: url(../images/SchistoDB/trheader.png);
+}
+
+
+tr.headerrow {
+	color: #282868;
+}
+
+tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
+	background-image: url(../images/SchistoDB/trheader.png);
+}
+
+.flexigrid tr.headerrow th:hover {
+	background-image: url(../images/SchistoDB/trhover.png);
+}
+
+td.subheaderrow {
+	background-image: url(../images/SchistoDB/trsubhead.png);
+}
+
+tr.subheaderrow th {
+	background-image: url(../images/SchistoDB/trsubhead.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.headerrow2 td{
+        color: #282868;
+	background-image: url(../images/SchistoDB/trheader.png);
+}
+
+tr.subheaderrow2 td{
+	background-image: url(../images/SchistoDB/trsubhead.png);
+}
+
+a.queryGridInactive {
+        color:              #C8C8C8;
+}
+a.queryGridActive {
+        color:              #282868;
+}
+td.lines2 {
+	padding-top: 3px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =END OF TABLES FOR QUERY GRID
+	 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+tr.subheaderrow th {
+	border-color: #227124;
+}
+
+tr.headerrow th { 
+	border-color: #227124;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =RED BUTTON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WorkSpace Divs 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ABOUT US and HELP PAGES SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.twoColHybLt #sidebar1 {
+	background-image: url(../images/SchistoDB/aboutus.jpg);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WARNING BOXES 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ADVANCED STRATEGY PAGING 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =used in help.jsp, classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MISC 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+span.marker a:link, span.marker a:visited {
+	color: #7D0101;
+}
+
+/* APPLICATION PAGE STYLES */
+
+#strategy_tabs a:link, #strategy_tabs a:visited {
+    background-color: #E8EBF0;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = styles for blockUI popups
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.blockMsg{
+	border: 1px solid #226723;
+}
+
+.blockPage{
+	background-image: url(/assets/images/SchistoDB/footer.png);
+}
+
+.flexigrid div.hDiv
+{
+	background-image:url(/assets/images/SchistoDB/trheader.png);
+}
+
+.flexigrid div.hDiv th.thMove
+{
+	background-image:url(/assets/images/SchistoDB/trheader.png);
+}
+
+div.colCopy
+{
+	background-image:url(/assets/images/SchistoDB/trheader.png);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 history.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 Strategy.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 filter_menu.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#query_form {
+	border: 1px solid #2c2c7d;
+}
+
+
+
+/*THE END */
+
