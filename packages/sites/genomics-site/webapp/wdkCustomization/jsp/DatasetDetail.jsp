@@ -93,7 +93,6 @@
           <c:set var="name" value="${attributes['dataset_name']}" />
           <c:set var="displayName" value="${attributes['display_name']}" />
           <c:set var="categories" value="${attributes['category']}" />
-          <c:set var="organism" value="${attributes['organisms']}" />
           <c:set var="description" value="${attributes['description']}" />
           <c:set var="contact" value="${attributes['contact']}" />
           <c:set var="institution" value="${attributes['institution']}" />        
@@ -136,10 +135,7 @@ ${datasetId.value}
 <%-------    Organisms and Contact  ----------------%>
             <div class="detail">
               <table>
-                <c:if test='${not empty organism.value}'>    
-                  <tr><td><span class="caption"><b>${organism.displayName}:</b> </span></td>
-                      <td> ${organism.value}</td></tr>  
-                </c:if>
+
                 <tr><td><span class="caption"><b>${contact.displayName}:</b></span></td>
                     <td> <c:if test='${not empty contact.value}'>${contact.value}</c:if>
                          <c:if test='${not empty institution.value}'> - ${institution.value}</c:if>
