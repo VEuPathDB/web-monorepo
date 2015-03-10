@@ -128,12 +128,10 @@
     <li><a>Data Summary</a>
       <ul>
           <li><a href="<c:url value='/getDataset.do?display=detail'/>">Data Sets</a></li>
-          <li style="padding-top:0;margin-top:0">
-            <a style="padding-top:0;margin-top:0" 
+          <li title="Please contact us with your feedback.">
+            <a style="padding-top:0" 
               href="<c:url value='/app/answer/DatasetQuestions.AllDatasets'/>">New Data Sets page!
-                <imp:image alt="Beta feature icon" title="Please contact us with your feedback." 
-         	        src="wdk/images/beta2-30.png" />
-            </a>
+                <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
           </li>
         <c:if test="${project == 'EuPathDB'}">
           <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods'/>">Analysis Methods</a></li>  
