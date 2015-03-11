@@ -102,7 +102,9 @@
     <li><a>Tools</a>
       <ul>
         <li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
-        <li><a href="<c:url value="/analysisTools.jsp"/>"> Results Analysis</a></li>
+        <li><a style="padding-top:0"  href="<c:url value="/analysisTools.jsp"/>"> Results Analysis
+              <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
+        </li>
         <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
         <li><a href="http://pathogenportal.org"> Pathogen Portal</a></li>
 

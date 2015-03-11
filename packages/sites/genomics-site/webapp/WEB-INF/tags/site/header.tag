@@ -20,12 +20,13 @@
   <fmt:parseDate  var="releaseDate" value="${applicationScope.wdkModel.releaseDate}" pattern="dd MMMM yyyy HH:mm"/> 
   <fmt:formatDate var="releaseDate_formatted" value="${releaseDate}" pattern="d MMM yy"/>
 
+  <!-- not using FreeFind
   <c:if test="${refer ne 'home'}">
-    <![CDATA[ <!-- FreeFind Begin No Index --> ]]>
+    <![CDATA[ (removed html comments) FreeFind Begin No Index  ]]>
   </c:if>
-
+  -->
   <!-- site search: freefind engine instructs to position this right after body tag -->
-  <imp:freefind_header/>
+  <!-- not in use <imp:freefind_header/> -->
 
   <!-- helper divs with generic information used by javascript; vars can also be used in any page using this header -->
   <!-- moved to wdkJavascripts tag
@@ -33,9 +34,7 @@
   -->
 
   <div id="header2">
-
     <div id="header_rt">
-  
       <div id="toplink">
         <c:if test="${project eq 'TriTrypDB'}">
           <map name="partof">
@@ -52,24 +51,23 @@
           </c:otherwise>
         </c:choose>
       </div>   <!-- id="toplink" -->
-   
       <br/>
       <imp:quickSearch />                <!-- <div id="quick-search" -->
       <imp:smallMenu refer="${refer}"/>  <!-- <div id="nav_topdiv" -->
-  
     </div>  <!-- id="header_rt" -->
 
     <!--~~~~~~~ TOP LEFT: SITE name and release DATE ~~~~~~~-->
   <c:choose>
   <c:when test="${project == 'HostDB'}">
     <a href="/" style="font-color:blue;font-size:600%;font-weight:bold;position:relative;left:30px;top:5px">HostDB</a>
-    <span style="position:relative;top:-30px;left:29px">Build ${build}</span> 
+    <span style="position:relative;top:-30px;left:29px">Version ${build}</span> 
     <span style="position:relative;top:-20px;left:-20px">${releaseDate_formatted}</span>
   </c:when>
   <c:otherwise>
-  <a href="/"><imp:image src="images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
-    Build ${build}<br/>
-    ${releaseDate_formatted}
+    <a title="Check the news for an explanation why we are skipping EuPathDB Version numbers." 
+      href="/"><imp:image src="images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
+      Version ${build}<br/>
+      ${releaseDate_formatted}
   </c:otherwise>
   </c:choose>
   </div>
@@ -78,9 +76,9 @@
 
   <imp:menubar refer="${refer}"/>
 
-	<c:set var="showBanner">
-		<imp:extraBanner refer="${refer}" title="${title}"/>
-	</c:set>
+  <c:set var="showBanner">
+    <imp:extraBanner refer="${refer}" title="${title}"/>
+  </c:set>
   <imp:siteAnnounce refer="${refer}" showBanner="${showBanner}"/>
 
   <!-- include noscript tag on all pages to check if javascript enabled -->
