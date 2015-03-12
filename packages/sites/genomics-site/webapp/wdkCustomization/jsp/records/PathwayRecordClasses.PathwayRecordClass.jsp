@@ -182,6 +182,14 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,,Homo,Mus', 'genus', '1')">Microsporidia,Human,Mouse</a></li>
 	  </c:if>
 
+	  <c:if test="${projectId eq 'SchistoDB'}"> 
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Schistosoma,Homo,Mus', 'genus', '1')">Schistosoma,Human,Mouse</a></li>
+	  </c:if>
+
+	  <c:if test="${projectId eq 'TrichDB'}"> 
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Trichomonas,Homo,Mus', 'genus', '1')">Trichomonas,Human,Mouse</a></li>
+	  </c:if>
+
 	  <c:if test="${projectId eq 'TriTrypDB'}"> 
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Crithidia,Leishmania,Trypanosoma,Homo,Mus', 'genus', '1')">Crithidia,Leishmania,Trypanosoma,Human,Mouse</a></li>
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus', 'genus','1')">Cryp,Toxo,Plas,Tryp,Human,Mouse</a></li>
