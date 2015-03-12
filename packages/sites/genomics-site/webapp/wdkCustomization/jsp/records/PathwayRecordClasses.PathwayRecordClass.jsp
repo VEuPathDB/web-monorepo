@@ -164,7 +164,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 
 
 	  <c:if test="${projectId eq 'AmoebaDB'}"> 
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Acanthamoeba,Entamoeba,Homo,Mus', 'genus', '1')">Acanthamoeba,Entamoeba,Human,Mouse</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus', 'genus', '1')">Acanthamoeba,Entamoeba,Human,Mouse</a></li>
 	  </c:if>
 
 	  <%-- Apicomplexa ---%>
@@ -179,7 +179,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 	  </c:if>
 
 	  <c:if test="${projectId eq 'MicrosporidiaDB'}"> 
-            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,,Homo,Mus', 'genus', '1')">Microsporidia,Human,Mouse</a></li>
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus', 'genus', '1')">Microsporidia,Human,Mouse</a></li>
 	  </c:if>
 
 	  <c:if test="${projectId eq 'SchistoDB'}"> 
