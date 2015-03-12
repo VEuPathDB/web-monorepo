@@ -56,7 +56,7 @@
 <!-- GENE ID -->
       <td>
         <div align="right">
-          <html:form method="get" action="/processQuestionSetsFlat">
+          <html:form method="post" action="/processQuestionSetsFlat">
             <div class="wdk-tooltip" title="Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs.">
               <label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" >Gene ID:</a></b></label>
          		  <input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
@@ -70,7 +70,7 @@
 			 
 <!-- TEXT SEARCH -->
              <td><div align="right">
-               <html:form method="get" action="/processQuestionSetsFlat">
+               <html:form method="post" action="/processQuestionSetsFlat">
           		<div class="wdk-tooltip" title="Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" >Gene Text Search:</a></b></label>
 
