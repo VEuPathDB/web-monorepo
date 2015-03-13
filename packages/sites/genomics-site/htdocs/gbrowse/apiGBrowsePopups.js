@@ -76,9 +76,9 @@ function removeGeneFromBasket(projectId, sourceId) {
 /****** Utility link functions for GBrowse ******/
 
 function checkLogin() {
-	if (!wdk.isUserLoggedIn()) {
+	if (!wdk.user.isUserLoggedIn()) {
 		Balloon.prototype.hideTooltip(1);
-		popLogin();
+		jQuery("#wdk-dialog-login-form").dialog("open");
 		return; // if user logs in, will not get here
 	}
 }
@@ -99,7 +99,7 @@ function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, ne
 
 function getSaveRowLinks(projectId, sourceId) {
 	var saveRowLinks;
-	if (wdk.isUserLoggedIn()) {
+	if (wdk.user.isUserLoggedIn()) {
 		// enable saving as favorite or to basket
 		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + saveFavTextLink + "</a></span>";
 		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">" + saveBasketTextLink + "</a></span>";
