@@ -1,9 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
+<%@ taglib prefix="bean" uri="http://struts.apache.org/tags-bean" %>
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -25,9 +25,7 @@
     <body>
     <imp:errors/>
     <div id='error'/>
-    <html:form method="post" action="/communityUpload.do" 
-               styleId='uploadForm'
-               enctype="multipart/form-data">
+    <html:form method="post" action="/communityUpload.do" enctype="multipart/form-data">
 
     <div class="h2center" style="font-size: 18px;">Upload Files</div>
     This form allows you to upload and share documents, images, small datasets and other files 
