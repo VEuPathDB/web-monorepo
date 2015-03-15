@@ -38,7 +38,13 @@
       </c:when>
       <c:when test="${type == 'SnpRecordClasses.SnpRecordClass'}">
         <li>
-          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SnpQuestions.SnpBySourceId&skip_to_download=1&snp_id_type=data&snp_id_data=${id}" />
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SnpQuestions.NgsSnpBySourceId&skip_to_download=1&ngs_snp_id_type=data&ngs_snp_id_data=${id}" />
+          <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
+        </li>
+      </c:when>
+      <c:when test="${type == 'SnpChipRecordClasses.SnpChipRecordClass'}">
+        <li>
+          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SnpChipQuestions.SnpBySourceId&skip_to_download=1&snp_id_type=data&snp_id_data=${id}" />
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
