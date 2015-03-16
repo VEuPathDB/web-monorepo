@@ -178,6 +178,10 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Giardia,Spironucleus,Homo,Mus', 'genus', '1')">Giardia,Spironucleus,Human,Mouse</a></li>
 	  </c:if>
 
+	  <c:if test="${projectId eq 'FungiDB'}"> 
+            <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus', 'genus', '1')">Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse</a></li>
+	  </c:if>
+
 	  <c:if test="${projectId eq 'MicrosporidiaDB'}"> 
             <li><a href="javascript:void(0)" onclick="changeExperiment('type=PathwayGenera&project_id=${projectId}&sid=Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus', 'genus', '1')">Microsporidia,Human,Mouse</a></li>
 	  </c:if>
