@@ -222,7 +222,7 @@
 <%--   Data table by some graphs --%>
 
 
-
+<c:if test="${type ne 'compound'}">
 <imp:toggle
     name="${tableId}"     
     displayName="Data Table"
@@ -230,7 +230,7 @@
     isOpen="${row['dataOpen'].value}"
     noData="${noProfileDataTable}"
     attribution=""/>   
-
+</c:if>
 
        		<br /><br />
        		<div class="small">
