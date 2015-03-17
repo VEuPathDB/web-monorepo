@@ -11,7 +11,7 @@ function openOrthologFilter(strat_back_id, step_id){
 
         if(wdk.step.openDetail != null) wdk.step.hideDetails(); 
 
-        var url = "wizard.do?stage=show_ortholog&action=revise";
+        var url = "wizard.do?stage=show_ortholog&action=add";
         url += "&strategy=" + strat_back_id + "&step=" + step_id;
         url += "&questionFullName=InternalQuestions.GenesByOrthologs";
 
