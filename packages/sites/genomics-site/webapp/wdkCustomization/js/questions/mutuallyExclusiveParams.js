@@ -165,7 +165,7 @@
     // Then, get the form name
     // Then, determine which groups to use based on form name.
 
-    var form = $("form#form_question").has("div#questionName").last(),
+    var form = $("form[name=questionForm]").has("div#questionName").last(),
         questionName = form.find("div#questionName").attr("name"),
         getChromosomeParam = function() { return form.find('[id^="chromosomeOptional"]:input'); },
         sequenceR = /(\(Example: .*\)|No match)/i,
