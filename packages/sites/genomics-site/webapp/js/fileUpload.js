@@ -4,15 +4,6 @@ var filesTable = '#fileSelTbl';
 $(document).ready(function(){
   addFileSelRow();
 
-  $('#uploadForm').validate({
-    rules: {
-      title: {
-          required: true
-      }
-    }
-  });
-  
-  
   $('#newfile').click(function(){
     addFileSelRow();
   });
