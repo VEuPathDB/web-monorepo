@@ -529,7 +529,6 @@
       scope="session"
       input="/addCommentsNew.jsp"
       name="commentForm">
-      <forward name="add_comment" path="/addComment.do"/>
    </action> 
    <action
       path="/editComment"
