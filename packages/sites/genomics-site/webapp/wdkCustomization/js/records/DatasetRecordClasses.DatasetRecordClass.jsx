@@ -87,14 +87,12 @@ wdk.namespace('eupathdb.records', function(ns) {
     },
 
     _renderSearch(search, index) {
-      var name = search.find(attr => attr.get('name') == 'target_name');
-      var names = [
-        'Identify Genes based on P berghei ANKA 5 asexual and sexual stage transcriptomes RNASeq (fold change)',
-        'Identify Genes based on P berghei ANKA 5 asexual and sexual stage transcriptomes RNASeq (fold change w/ pvalue)',
-        'Identify Genes based on P berghei ANKA 5 asexual and sexual stage transcriptomes RNASeq (percentile)'
-      ];
+      var name = search.find(attr => attr.get('name') == 'target_name').get('value');
+      var question = this.props.questions.find(q => q.get('name') === name).get('displayName');
       return (
-        <li key={index}><a href={'/a/showQuestion.do?questionFullName=' + name.get('value')}>{name.get('value')}</a></li>
+        <li key={index}>
+          <a href={'/a/showQuestion.do?questionFullName=' + name}>{question}</a>
+        </li>
       );
     },
 
@@ -277,7 +275,7 @@ wdk.namespace('eupathdb.records', function(ns) {
           <hr/>
 
           <Organisms organisms={organisms}/>
-          <Searches searches={References} links={HyperLinks}/>
+          <Searches searches={References} links={HyperLinks} questions={this.props.questions}/>
           <Links links={HyperLinks}/>
           <ContactsAndPublications contacts={Contacts} publications={Publications}/>
 
