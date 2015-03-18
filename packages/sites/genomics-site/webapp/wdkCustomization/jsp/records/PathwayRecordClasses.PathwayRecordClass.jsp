@@ -130,7 +130,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
         <ul>
           <li> <a href="javascript:exportVisualization('xgmml', '${id}')">Save XGMML (XML)</a></li>
           <li> <a href="javascript:exportVisualization('png', '${id}')">Save image (PNG)</a></li>
-          <li> <a href="/common/downloads/pathwayFiles/${id}.xgmml">Get Download XGMML (XML) file</a></li>
+          <li> <a href="/common/downloads/Current_Release/pathwayFiles/${id}.xgmml">Get Download XGMML (XML) file</a></li>
         </ul>
     </li>
     <li><a href="javascript:void(0)">Layout
