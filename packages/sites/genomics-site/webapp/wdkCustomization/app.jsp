@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=utf8" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <imp:pageFrame>
-  <imp:stylesheet rel="stylesheet" href="wdk/css/wdk3.css"/>
   <style>
     .eupathdb-DatasetRecord-summary {
       font-size: 1.2em;
