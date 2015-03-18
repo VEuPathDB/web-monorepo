@@ -236,7 +236,7 @@ wdk.namespace('eupathdb.records', function(ns) {
       return (
         <div className="eupathdb-DatasetRecord">
           <h1 dangerouslySetInnerHTML={{
-            __html: 'Data set: <span class="' + titleClass + '">' + id + '</span>'
+            __html: 'Data Set: <span class="' + titleClass + '">' + id + '</span>'
           }}/>
 
           <hr/>
