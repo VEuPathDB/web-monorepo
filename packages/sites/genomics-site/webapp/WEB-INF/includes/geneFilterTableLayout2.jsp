@@ -10,24 +10,30 @@
 <c:set var="layout" value="${requestScope.filter_layout}"/>
 
 <!-- DEBUGGING 
-- family.values is the count of organisms per family, for family colspan
 - sortedInstances contains all filter instances (java objects AnswerFilterInstance) sorted by instance (filter) name, 
    which sets distinct filters before instance filters, for a given species
-- instanceCountMap contains {family-species, count of organisms within a species}, for species colspan
-   sorted by key, but we do not need the sorting here, just used as map.
-
-		 <c:forEach items="${layout.sortedFamilyCountMap}" var="family" >
-			 <br>---${family.key}----${family.value}----<br>
-		 </c:forEach>
+- instanceCountMap contains organism count per species, used for the species level colspan
+   (sorted by key, but we do not need the sorting here, just used as map.)
+- sortedFamilyCountMap contains organism count per genus (family), used for the genus level colspan
+- superFamilyCountMap contains organism count per phylum (superfamily), used for the phylum level colspan
 
 		 <c:forEach items="${layout.sortedInstances}" var="instance">
 			 <c:set var="familySpecies" value="${fn:substringBefore(instance.name,'_')}" />
 			 <br>${familySpecies} -----  ${layout.instanceCountMap[familySpecies]} ---- ${instance.name} <br>
 		 </c:forEach>
 
-     <c:forEach items="${layout.instanceCountMap}" var="instance">
-			 <br>${instance} <br>
+     <c:forEach items="${layout.instanceCountMap}" var="perSpeciesCounts">
+			 <br>${perSpeciesCounts} <br>    <%-- SAME AS:  ${perSpeciesCounts.key} = ${perSpeciesCounts.value} --%>
 		 </c:forEach>
+
+	   <c:forEach items="${layout.sortedFamilyCountMap}" var="perGenusCounts" >
+       <br>${perGenusCounts}<br>
+		 </c:forEach>
+
+     <c:forEach items="${layout.superFamilyCountMap}" var="perPhylumCounts" >
+       <br>${perPhylumCounts}<br>
+		 </c:forEach>
+
 -->
 
 <table id="geneFilters">
@@ -68,6 +74,7 @@
  		</c:forEach>
     </tr>
   </c:otherwise>
+
   </c:choose>
 
 	<!-- ========================= SPECIES TITLE  (if distinct true will generate a gene count) ================ -->
