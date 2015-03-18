@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=utf8" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <imp:pageFrame>
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <imp:stylesheet rel="stylesheet" href="wdk/css/wdk3.css"/>
   <style>
     .eupathdb-DatasetRecord-summary {
