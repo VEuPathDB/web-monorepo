@@ -88,10 +88,12 @@ wdk.namespace('eupathdb.records', function(ns) {
 
     _renderSearch(search, index) {
       var name = search.find(attr => attr.get('name') == 'target_name').get('value');
-      var question = this.props.questions.find(q => q.get('name') === name).get('displayName');
+      var question = this.props.questions.find(q => q.get('name') === name);
+      var recordClass = this.props.recordClasses.find(r => r.get('fullName') === question.get('class'));
+      var searchName = `Identify ${recordClass.get('displayNamePlural')} by ${question.get('displayName')}`;
       return (
         <li key={index}>
-          <a href={'/a/showQuestion.do?questionFullName=' + name}>{question}</a>
+          <a href={'/a/showQuestion.do?questionFullName=' + name}>{searchName}</a>
         </li>
       );
     },
@@ -214,7 +216,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
   var DatasetRecord = React.createClass({
     render() {
-      var { record } = this.props;
+      var { record, questions, recordClasses } = this.props;
       var attributes = record.get('attributes');
       var tables = record.get('tables');
       var titleClass = 'eupathdb-DatasetRecord-title';
@@ -275,13 +277,15 @@ wdk.namespace('eupathdb.records', function(ns) {
           <hr/>
 
           <Organisms organisms={organisms}/>
-          <Searches searches={References} links={HyperLinks} questions={this.props.questions}/>
-          <Links links={HyperLinks}/>
-          <ContactsAndPublications contacts={Contacts} publications={Publications}/>
 
+          <Searches searches={References} links={HyperLinks} questions={questions} recordClasses={recordClasses}/>
+
+          <Links links={HyperLinks}/>
 
           <h3>Detailed Description</h3>
           <div dangerouslySetInnerHTML={{__html: description}}/>
+
+          <ContactsAndPublications contacts={Contacts} publications={Publications}/>
 
           <Graphs graphs={ExampleGraphs}/>
         </div>
