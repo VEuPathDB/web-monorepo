@@ -133,7 +133,18 @@
       <!-- reading strain name from filter instance displayName (popup title) -->
       <c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
       <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
-      <c:set var="strain" value="${fn:substringAfter(dispNameOrg, fn:substringAfter(species,' ') )}" />
+
+      <!-- to deal with species names that contain dash - (Fungi: Melampsora larici-populina-->
+      <c:set var="temp" value="${fn:substringAfter(species, ' ' )}" />
+      <c:choose>
+      <c:when test='${not empty temp}'>
+        <c:set var="strain" value="${fn:substringAfter(dispNameOrg, temp )}" />
+      </c:when>
+      <c:otherwise>
+        <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species )}" />
+      </c:otherwise>
+      </c:choose>
+
       <c:set var="strain" value="${fn:trim(strain)}" /> 
       ${strain}
 
