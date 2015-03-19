@@ -223,6 +223,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       var id = record.get('id');
       var summary = attributes.getIn(['summary', 'value']);
+      var releaseInfo = attributes.getIn(['build_number_introduced', 'value']);
       var primaryPublication = tables.getIn(['Publications', 'rows', 0]);
       var contact = attributes.getIn(['contact', 'value']);
       var institution = attributes.getIn(['institution', 'value']);
@@ -268,6 +269,13 @@ wdk.namespace('eupathdb.records', function(ns) {
                 <tr>
                   <th>Source version:</th>
                   <td>{renderSourceVersion(version)}</td>
+                </tr>
+              ) : null}
+
+              {releaseInfo ? (
+                <tr>
+                  <th>EuPathDB release:</th>
+                  <td>{releaseInfo}</td>
                 </tr>
               ) : null}
 
