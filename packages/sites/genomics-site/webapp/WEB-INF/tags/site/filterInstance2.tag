@@ -80,10 +80,12 @@
 </c:choose>
 
 
-<!--    the use of = (equal) in spaces inside the species name (eg: "sp. 1" becomes "sp.=1"), is set injector AnnotatedGenome.java -->
-<!--    this is done because the filter instance name cannot have spaces (it would break the javascript associated with filters).
-        Here we 'undo' that process. 
+<!--    = was used to escape forbidden chars like space, dash and underscore inside the species name 
+          (eg: "sp. 1" becomes "sp.=1") in the injector AnnotatedGenome.java    
 -->
+
+<c:set var="species" value="${fn:replace(species, '=-', '-')}" />
+<c:set var="species" value="${fn:replace(species, '=_', '_')}" />
 <c:set var="species" value="${fn:replace(species, '=', ' ')}" />
 
 <c:choose>
@@ -133,18 +135,7 @@
       <!-- reading strain name from filter instance displayName (popup title) -->
       <c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
       <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
-
-      <!-- to deal with species names that contain dash - (Fungi: Melampsora larici-populina-->
-      <c:set var="temp" value="${fn:substringAfter(species, ' ' )}" />
-      <c:choose>
-      <c:when test='${not empty temp}'>
-        <c:set var="strain" value="${fn:substringAfter(dispNameOrg, temp )}" />
-      </c:when>
-      <c:otherwise>
-        <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species )}" />
-      </c:otherwise>
-      </c:choose>
-
+      <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species )}" />
       <c:set var="strain" value="${fn:trim(strain)}" /> 
       ${strain}
 
