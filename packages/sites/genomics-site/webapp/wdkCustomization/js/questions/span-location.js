@@ -4,23 +4,19 @@
   // Cannot use const keyword, since IE doesn't support it.
   var SPAN_LENGTH_LIMIT = 100000;
 
+  window.wdk.registerQuestionEvent(questionEventHandler);
 
-  if (window.wdk == undefined) window.wdk = new WDK();
-
-  var spanLocation = new SpanLocation();
-  window.wdk.registerQuestionEvent(spanLocation.questionEventHandler);
-
+  function questionEventHandler() {
+    var spanLocation = new SpanLocation();
+    spanLocation.createLayout();
+  }
 
   function SpanLocation() {
-
-    this.questionEventHandler = function() {
-      var spanLocation = new SpanLocation();
-      spanLocation.createLayout();
-    }
+    this.$form = $("#query-search-form form[name=questionForm]");
   }
 
   SpanLocation.prototype.createLayout = function() {
-    var $form = $("form[name=questionForm]");
+    var $form = this.$form;
     var questionName = $form.find("input[name=questionFullName]").val();
     if (questionName != "SpanQuestions.DynSpansBySourceId") return;
 
@@ -42,8 +38,8 @@
     spanIdInput.parents(".param-item").remove();
 
     // register events
-    $form.find("#span-location #span-compose").click(this.composeId);
-    $form.submit(this.validateIds);
+    $form.find("#span-location #span-compose").click(this.composeId.bind(this));
+    $form.submit(this.validateIds.bind(this));
 
     // fix param label width
     $form.find("label").css("width", "130px");
@@ -59,7 +55,7 @@
   };
 
   SpanLocation.prototype.composeId = function() {
-    var $form = $("form[name=questionForm");
+    var $form = this.$form;
     var params = $form.find(".params");
     var sequenceIdsInput = params.find("input#sequenceId");
     var sequenceIds = $.trim(sequenceIdsInput.val());
@@ -102,7 +98,7 @@
   };
 
   SpanLocation.prototype.validateIds = function() {
-    var $form = $("form[name=questionForm");
+    var $form = this.$form;
     var idInputType = $form.find("#span-search-list input#span_id_type").val();
     // if the input is not from text area, don't validate
     if (idInputType == 'file') {
