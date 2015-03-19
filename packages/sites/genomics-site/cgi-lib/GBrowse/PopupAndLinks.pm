@@ -216,7 +216,7 @@ sub snpTitleQuick {
   my $refAAString = ''; 
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
      $type = "Coding (synonymous)";
-     $type = "Coding (non-synonymous)" if $nonSyn =~ /yes/;
+     $type = "Coding (non-synonymous)" if ($nonSyn == 1);
      $refAAString = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$reference_aa";
   }
 
