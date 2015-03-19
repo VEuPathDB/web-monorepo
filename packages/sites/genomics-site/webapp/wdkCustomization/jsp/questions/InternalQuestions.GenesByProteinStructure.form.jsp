@@ -11,7 +11,7 @@
 <imp:errors/>
 
 <%-- div needed for Add Step --%>
-<div id="form_question">
+<div>
 
 <table width="100%">
 <c:set value="1" var="columns"/>

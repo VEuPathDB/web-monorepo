@@ -16,7 +16,7 @@
 <div class='usererror'><api:errors/></div>
 
 <%-- div needed for Add Step --%>
-<div id="form_question">
+<div>
 
 
 <!--    questions will be displayed in columns -number of columns is determined above

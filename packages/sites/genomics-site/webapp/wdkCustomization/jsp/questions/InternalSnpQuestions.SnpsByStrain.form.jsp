@@ -15,7 +15,7 @@
 <div class='usererror'><api:errors/></div>
 
 <%-- div needed for Add Step --%>
-<div id="form_question">
+<div>
 
 <center><table width="90%">
 

@@ -15,7 +15,7 @@
 <imp:errors/>
 
 <%-- div needed for Add Step --%>
-<div id="form_question">
+<div>
 
 <!--    questions will be displayed in columns -number of columns is determined above
         queryList.tag relies on EITHER the question displayName having the organism acronym (P.f.) as first characters 
