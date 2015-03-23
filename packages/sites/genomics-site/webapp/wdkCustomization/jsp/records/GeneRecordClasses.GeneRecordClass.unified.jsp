@@ -453,7 +453,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
   <a name="goTerm"></a>
   <c:set var="goEvidenceLink">
     <div>
-    <br> <a target="_blank" href="http://www.geneontology.org/page/introduction">View documentation on GO Evidence Codes</a>
+    <br> <a target="_blank" href="http://geneontology.org/page/guide-go-evidence-codes">View documentation on GO Evidence Codes</a>
     </div>
   </c:set>
   <imp:wdkTable2 tblName="GoTerms" attribution="" postscript="${goEvidenceLink}"/>
