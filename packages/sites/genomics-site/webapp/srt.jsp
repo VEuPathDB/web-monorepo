@@ -40,8 +40,10 @@
         <b><center>Download Sequences By <br>
             <a href="#gene">Gene IDs</a> | 
             <a href="#sequence">Genomic Sequence IDs</a> |  
+ <c:if test="${project != 'HostDB'}" >
             <a href="#est">EST IDs</a> |  
             <a href="#est">Isolate IDs</a> |  
+</c:if>
             <%--
                <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
                  <a href="#msa">Alignments</a> |
@@ -106,7 +108,7 @@ ${contigsIds3.default}:100..2000:r</textarea>
 <br>
   <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
 
-
+ <c:if test="${project != 'HostDB'}" >
   <hr>
   <h3><a name="est">Retrieve Sequences By EST IDs</a></h3>
   <form action="/cgi-bin/${eSrt}" method="post">
@@ -137,7 +139,7 @@ ${contigsIds3.default}:100..2000:r</textarea>
     </table>
   </form>
   <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
-
+</c:if>
 
   <%--
      <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
@@ -151,6 +153,8 @@ ${contigsIds3.default}:100..2000:r</textarea>
      </c:if>
      --%>
 
+
+ <c:if test="${project != 'HostDB'}" >
   <hr>
 
   <h3><a name="isolate">Retrieve Sequences By Isolate IDs</a></h3>
@@ -182,7 +186,7 @@ ${contigsIds3.default}:100..2000:r</textarea>
     </table>
   </form>
   <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
-
+</c:if>
 
   <%--
      <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
