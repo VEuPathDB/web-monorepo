@@ -25,10 +25,10 @@ var RadioParamsView = Backbone.View.extend({
 
     var radioStr = this.radioStr;
 
-    var termWrapper = this.$('.param-item:has([id^="' +
+    var termWrapper = this.$('.param-item:has([name="' +
       this.termName + '"])');
 
-    var wildcardWrapper = this.$('.param-item:has([id^="' +
+    var wildcardWrapper = this.$('.param-item:has([name="' +
       this.wildcardName + '"])');
 
     var wildcardValue = wildcardWrapper.find('input[name="value(' +
