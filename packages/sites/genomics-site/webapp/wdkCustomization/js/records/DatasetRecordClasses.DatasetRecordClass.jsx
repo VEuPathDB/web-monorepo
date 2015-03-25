@@ -413,7 +413,8 @@ wdk.namespace('eupathdb.records', function(ns) {
       var text = `<div style="max-height: 200px; overflow-y: auto; padding: 2px;">${this.props.text}</div>`;
       $(this.getDOMNode()).wdkTooltip({
         content: { text },
-        position: { viewport: false }
+        position: { viewport: false },
+        show: { delay: 1000 }
       });
     },
     componentWillUnmount() {
