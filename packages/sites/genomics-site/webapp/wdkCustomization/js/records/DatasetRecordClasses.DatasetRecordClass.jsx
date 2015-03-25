@@ -1,5 +1,5 @@
 /* global _, Wdk, wdk */
-/* jshint esnext: true, -W014 */
+/* jshint esnext: true, eqnull: true, -W014 */
 
 /**
  * This file provides a custom Record Component which is used by the new Wdk
@@ -90,6 +90,9 @@ wdk.namespace('eupathdb.records', function(ns) {
     _renderSearch(search, index) {
       var name = search.find(attr => attr.get('name') == 'target_name').get('value');
       var question = this.props.questions.find(q => q.get('name') === name);
+
+      if (question == null) return null;
+
       var recordClass = this.props.recordClasses.find(r => r.get('fullName') === question.get('class'));
       var searchName = `Identify ${recordClass.get('displayNamePlural')} by ${question.get('displayName')}`;
       return (
