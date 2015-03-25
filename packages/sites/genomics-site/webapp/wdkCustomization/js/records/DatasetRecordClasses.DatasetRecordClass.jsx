@@ -1,4 +1,5 @@
 /* global _, Wdk, wdk */
+/* jshint esnext: true, -W014 */
 
 /**
  * This file provides a custom Record Component which is used by the new Wdk
@@ -188,6 +189,103 @@ wdk.namespace('eupathdb.records', function(ns) {
     }
   });
 
+  var ReleaseHistory = React.createClass({
+    render() {
+      var { history } = this.props;
+      if (history.get('rows').size === 0) return null;
+      return (
+        <div>
+          <h3>Data Set Release History</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>EuPathDB Release</th>
+                <th>Genome Source</th>
+                <th>Annotation Source</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.get('rows').map(this._renderRow).toArray()}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
+
+    _renderRow(attributes) {
+      var attrs = _.indexBy(attributes.toJS(), 'name');
+
+      var release = attrs.build.value ? 'Release ' + attrs.build.value
+        : 'Initial release';
+
+      var releaseDate = new Date(attrs.release_date.value)
+        .toDateString()
+        .split(' ')
+        .slice(1)
+        .join(' ');
+
+      var genomeSource = attrs.genome_source.value
+        ? attrs.genome_source.value + ' (' + attrs.genome_version.value + ')'
+        : '';
+
+      var annotationSource = attrs.annotation_source.value
+        ? attrs.annotation_source.value + ' (' + attrs.annotation_version.value + ')'
+        : '';
+
+      return (
+        <tr>
+          <td>{release} ({releaseDate}, {attrs.project.value} {attrs.release_number.value})</td>
+          <td>{genomeSource}</td>
+          <td>{annotationSource}</td>
+          <td>{attrs.note.value}</td>
+        </tr>
+      );
+    }
+  });
+
+  var Versions = React.createClass({
+    render() {
+      var { versions } = this.props;
+      var rows = versions.get('rows');
+
+      if (rows.size === 0) return null;
+
+      return (
+        <div>
+          <h3>Version</h3>
+          <p>
+            The data set version shown here is the data provider's version
+            number or publication date indicated on the site from which we
+            downloaded the data. In the rare case that these are not available,
+            the version is the date that the data set was downloaded.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Organism</th>
+                <th>Provider's Version</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(this._renderRow).toArray()}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
+
+    _renderRow(attributes) {
+      var attrs = _.indexBy(attributes.toJS(), 'name');
+      return (
+        <tr>
+          <td>{attrs.organism.value}</td>
+          <td>{attrs.version.value}</td>
+        </tr>
+      );
+    }
+  });
+
   var Graphs = React.createClass({
     render() {
       var { graphs } = this.props;
@@ -234,6 +332,8 @@ wdk.namespace('eupathdb.records', function(ns) {
       var Contacts = tables.get('Contacts');
       var Publications = tables.get('Publications');
       var description = attributes.getIn(['description', 'value']);
+      var GenomeHistory = tables.get('GenomeHistory');
+      var Version = tables.get('Version');
       var ExampleGraphs = tables.get('ExampleGraphs');
 
       return (
@@ -244,13 +344,13 @@ wdk.namespace('eupathdb.records', function(ns) {
 
           <hr/>
 
-          <p
-            className="eupathdb-DatasetRecord-summary"
-            dangerouslySetInnerHTML={{__html: summary}}
-          />
-
           <table className="eupathdb-DatasetRecord-headerTable">
             <tbody>
+
+              <tr>
+                <th>Summary:</th>
+                <td dangerouslySetInnerHTML={{__html: summary}}/>
+              </tr>
               {primaryPublication ? (
                 <tr>
                   <th>Primary publication:</th>
@@ -294,6 +394,10 @@ wdk.namespace('eupathdb.records', function(ns) {
           <div dangerouslySetInnerHTML={{__html: description}}/>
 
           <ContactsAndPublications contacts={Contacts} publications={Publications}/>
+
+          <ReleaseHistory history={GenomeHistory}/>
+
+          <Versions versions={Version}/>
 
           <Graphs graphs={ExampleGraphs}/>
         </div>
