@@ -426,7 +426,6 @@ wdk.namespace('eupathdb.records', function(ns) {
       $(this.getDOMNode()).wdkTooltip({
         overwrite: true,
         content: { text },
-        position: { viewport: false },
         show: { delay: 1000 }
       });
     },
