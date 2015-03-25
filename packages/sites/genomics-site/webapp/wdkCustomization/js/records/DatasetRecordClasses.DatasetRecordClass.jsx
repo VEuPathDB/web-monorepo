@@ -410,35 +410,46 @@ wdk.namespace('eupathdb.records', function(ns) {
 
   var Tooltip = React.createClass({
     componentDidMount() {
+      this._setupTooltip();
+    },
+    componentDidUpdate() {
+      this._setupTooltip();
+    },
+    componentWillUnmount() {
+      // if _setupTooltip doesn't do anything, this is a noop
+      $(this.getDOMNode()).qtip('destroy', true);
+    },
+    _setupTooltip() {
+      if (this.props.text == null) return;
+
       var text = `<div style="max-height: 200px; overflow-y: auto; padding: 2px;">${this.props.text}</div>`;
       $(this.getDOMNode()).wdkTooltip({
+        overwrite: true,
         content: { text },
         position: { viewport: false },
         show: { delay: 1000 }
       });
     },
-    componentWillUnmount() {
-      $(this.getDOMNode()).qtip('destroy', true);
-    },
     render() {
-      return (
-        <div>
-          {this.props.children}
-        </div>
-      );
+      // FIXME - Figure out why we lose the fixed-data-table className
+      // Losing the fixed-data-table className for some reason... adding it back.
+      var child = React.Children.only(this.props.children);
+      child.props.className += " public_fixedDataTableCell_cellContent";
+      return child;
+      //return this.props.children;
     }
   });
 
   function datasetCellRenderer(attribute, attributeName, attributes, index, columnData, width, defaultRenderer) {
+    var reactElement = defaultRenderer(attribute, attributeName, attributes, index, columnData, width);
+
     if (attribute.get('name') === 'primary_key') {
       return (
-        <Tooltip text={attributes.get('description').get('value')}>
-          {defaultRenderer(attribute, attributeName, attributes, index, columnData, width)}
-        </Tooltip>
+        <Tooltip text={attributes.get('description').get('value')}>{reactElement}</Tooltip>
       );
     }
     else {
-      return defaultRenderer(attribute, attributeName, attributes, index, columnData, width);
+      return reactElement;
     }
   }
 
