@@ -410,14 +410,14 @@ wdk.namespace('eupathdb.records', function(ns) {
 
   var Tooltip = React.createClass({
     componentDidMount() {
-      var text = `<div style="max-height: 200px; overflow: auto; padding: 2px;">${this.props.text}</div>`;
+      var text = `<div style="max-height: 200px; overflow-y: auto; padding: 2px;">${this.props.text}</div>`;
       $(this.getDOMNode()).wdkTooltip({
         content: { text },
         position: { viewport: false }
       });
     },
-    componentDidUnmount() {
-      $(this.getDOMNode()).qtip('destroy');
+    componentWillUnmount() {
+      $(this.getDOMNode()).qtip('destroy', true);
     },
     render() {
       return (
