@@ -408,5 +408,39 @@ wdk.namespace('eupathdb.records', function(ns) {
     }
   });
 
+  var Tooltip = React.createClass({
+    componentDidMount() {
+      var text = `<div style="max-height: 200px; overflow: auto; padding: 2px;">${this.props.text}</div>`;
+      $(this.getDOMNode()).wdkTooltip({
+        content: { text },
+        position: { viewport: false }
+      });
+    },
+    componentDidUnmount() {
+      $(this.getDOMNode()).qtip('destroy');
+    },
+    render() {
+      return (
+        <div>
+          {this.props.children}
+        </div>
+      );
+    }
+  });
+
+  function datasetCellRenderer(attribute, attributeName, attributes, index, columnData, width, defaultRenderer) {
+    if (attribute.get('name') === 'primary_key') {
+      return (
+        <Tooltip text={attributes.get('description').get('value')}>
+          {defaultRenderer(attribute, attributeName, attributes, index, columnData, width)}
+        </Tooltip>
+      );
+    }
+    else {
+      return defaultRenderer(attribute, attributeName, attributes, index, columnData, width);
+    }
+  }
+
   ns.DatasetRecord = DatasetRecord;
+  ns.datasetCellRenderer = datasetCellRenderer;
 });
