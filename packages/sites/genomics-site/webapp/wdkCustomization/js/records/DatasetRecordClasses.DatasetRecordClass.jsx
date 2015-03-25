@@ -51,7 +51,7 @@ wdk.namespace('eupathdb.records', function(ns) {
       if (!organisms) return null;
       return (
         <div>
-          <h3>Organisms this data set is mapped to in PlasmoDB</h3>
+          <h2>Organisms this data set is mapped to in PlasmoDB</h2>
           <ul>{organisms.split(/,\s*/).map(this._renderOrganism).toArray()}</ul>
         </div>
       );
@@ -73,7 +73,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       return (
         <div>
-          <h3>Search or view this data set in PlasmoDB</h3>
+          <h2>Search or view this data set in PlasmoDB</h2>
           <ul>
             {searches.map(this._renderSearch).toArray()}
             {links.get('rows').map(this._renderLink).toArray()}
@@ -118,7 +118,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       return (
         <div>
-          <h3>External Links</h3>
+          <h2>External Links</h2>
           <ul> {links.get('rows').map(this._renderLink).toArray()} </ul>
         </div>
       );
@@ -184,7 +184,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       return (
         <div>
-          <h3>Additional Contacts and Publications</h3>
+          <h2>Additional Contacts and Publications</h2>
           <Contacts contacts={contacts}/>
           <Publications publications={publications}/>
         </div>
@@ -198,7 +198,7 @@ wdk.namespace('eupathdb.records', function(ns) {
       if (history.get('rows').size === 0) return null;
       return (
         <div>
-          <h3>Data Set Release History</h3>
+          <h2>Data Set Release History</h2>
           <table>
             <thead>
               <tr>
@@ -256,7 +256,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       return (
         <div>
-          <h3>Version</h3>
+          <h2>Version</h2>
           <p>
             The data set version shown here is the data provider's version
             number or publication date indicated on the site from which we
@@ -296,7 +296,7 @@ wdk.namespace('eupathdb.records', function(ns) {
       if (rows.size === 0) return null;
       return (
         <div>
-          <h3>Example Graphs</h3>
+          <h2>Example Graphs</h2>
           <ul>{rows.map(this._renderGraph).toArray()}</ul>
         </div>
       );
@@ -304,13 +304,34 @@ wdk.namespace('eupathdb.records', function(ns) {
 
     _renderGraph(graph, index) {
       var g = _.indexBy(graph.toJS(), 'name');
-      var url = '/cgi-bin/dataPlotter.pl' +
+
+      var displayName = g.display_name.value;
+
+      var baseUrl = '/cgi-bin/dataPlotter.pl' +
         '?type=' + g.module.value +
         '&project_id=' + g.project_id.value +
         '&dataset=' + g.dataset_name.value +
-        '&template=1&fmt=png&id=' + g.graph_ids.value;
+        '&template=' + (g.is_graph_custom.value === 'false' ? 1 : '') +
+        '&id=' + g.graph_ids.value;
+
+      var imgUrl = baseUrl + '&fmt=png';
+      var tableUrl = baseUrl + '&fmt=table';
+
       return (
-        <li key={index}><img src={url}/></li>
+        <li key={index}>
+          <h3>{displayName}</h3>
+          <div className="eupathdb-DatasetRecord-GraphMeta">
+            <h3>Description</h3>
+            <p dangerouslySetInnerHTML={{__html: g.description.value}}/>
+            <h3>X-axis</h3>
+            <p>{g.x_axis.value}</p>
+            <h3>Y-axis</h3>
+            <p>{g.y_axis.value}</p>
+          </div>
+          <div className="eupathdb-DatasetRecord-GraphData">
+            <img src={imgUrl}/>
+          </div>
+        </li>
       );
     }
   });
@@ -393,7 +414,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
           <Links links={HyperLinks}/>
 
-          <h3>Detailed Description</h3>
+          <h2>Detailed Description</h2>
           <div dangerouslySetInnerHTML={{__html: description}}/>
 
           <ContactsAndPublications contacts={Contacts} publications={Publications}/>

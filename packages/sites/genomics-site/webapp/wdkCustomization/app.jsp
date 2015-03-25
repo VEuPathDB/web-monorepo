@@ -2,6 +2,12 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <imp:pageFrame>
   <style>
+    .eupathdb-DatasetRecord h2,
+    .eupathdb-DatasetRecord h3 {
+      margin: 22px 0 11px;
+      color: #333333;
+      font-family: Arial, Helvetica, sans-serif;
+    }
     .eupathdb-DatasetRecord-summary {
       font-size: 1.2em;
     }
@@ -20,6 +26,21 @@
       vertical-align: top;
       text-align: right;
       border: none;
+    }
+
+    @media (min-width: 1150px) {
+      .eupathdb-DatasetRecord-GraphMeta {
+        width: 58%;
+        float: right;
+      }
+      .eupathdb-DatasetRecord-GraphData {
+        width: 450px;
+      }
+    }
+    @media (min-width: 1300px) {
+      .eupathdb-DatasetRecord-GraphMeta {
+        width: 65%;
+      }
     }
   </style>
   <main></main>
