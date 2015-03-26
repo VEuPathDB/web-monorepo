@@ -28,6 +28,36 @@
       border: none;
     }
 
+    .eupathdb-DatasetRecord-GraphImg {
+      width: 450px;
+    }
+
+    /*
+    @media (min-width: 1175px) {
+      .eupathdb-DatasetRecord {
+        padding: 0 20px;
+        max-width: 1350px;
+        margin: auto;
+      }
+      .eupathdb-DatasetRecord-Main {
+        float: left;
+        max-width: 700px;
+      }
+      .eupathdb-DatasetRecord-Sidebar {
+        max-width: 375px;
+        float: right;
+        font-size: 95%;
+        color: #333333;
+      }
+      .eupathdb-DatasetRecord-Sidebar ul {
+        padding-left: 0;
+      }
+      .eupathdb-DatasetRecord-Sidebar table {
+        width: 100%;
+      }
+    }
+    */
+
     @media (min-width: 1150px) {
       .eupathdb-DatasetRecord-GraphMeta {
         width: 58%;

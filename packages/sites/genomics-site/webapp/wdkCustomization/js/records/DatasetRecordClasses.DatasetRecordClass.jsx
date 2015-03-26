@@ -329,7 +329,7 @@ wdk.namespace('eupathdb.records', function(ns) {
             <p>{g.y_axis.value}</p>
           </div>
           <div className="eupathdb-DatasetRecord-GraphData">
-            <img src={imgUrl}/>
+            <img className="eupathdb-DatasetRecord-GraphImg" src={imgUrl}/>
           </div>
         </li>
       );
@@ -361,68 +361,70 @@ wdk.namespace('eupathdb.records', function(ns) {
       var ExampleGraphs = tables.get('ExampleGraphs');
 
       return (
-        <div className="eupathdb-DatasetRecord">
+        <div className="eupathdb-DatasetRecord ui-helper-clearfix">
           <h1 dangerouslySetInnerHTML={{
             __html: 'Data Set: <span class="' + titleClass + '">' + id + '</span>'
           }}/>
 
-          <hr/>
+          <div className="eupathdb-DatasetRecord-Container ui-helper-clearfix">
 
-          <table className="eupathdb-DatasetRecord-headerTable">
-            <tbody>
+            <hr/>
 
-              <tr>
-                <th>Summary:</th>
-                <td dangerouslySetInnerHTML={{__html: summary}}/>
-              </tr>
-              {primaryPublication ? (
+            <table className="eupathdb-DatasetRecord-headerTable">
+              <tbody>
+
                 <tr>
-                  <th>Primary publication:</th>
-                  <td>{renderPrimaryPublication(primaryPublication)}</td>
+                  <th>Summary:</th>
+                  <td dangerouslySetInnerHTML={{__html: summary}}/>
                 </tr>
-              ) : null}
+                {primaryPublication ? (
+                  <tr>
+                    <th>Primary publication:</th>
+                    <td>{renderPrimaryPublication(primaryPublication)}</td>
+                  </tr>
+                ) : null}
 
-              {contact && institution ? (
-                <tr>
-                  <th>Primary contact:</th>
-                  <td>{renderPrimaryContact(contact, institution)}</td>
-                </tr>
-              ) : null}
+                {contact && institution ? (
+                  <tr>
+                    <th>Primary contact:</th>
+                    <td>{renderPrimaryContact(contact, institution)}</td>
+                  </tr>
+                ) : null}
 
-              {version ? (
-                <tr>
-                  <th>Source version:</th>
-                  <td>{renderSourceVersion(version)}</td>
-                </tr>
-              ) : null}
+                {version ? (
+                  <tr>
+                    <th>Source version:</th>
+                    <td>{renderSourceVersion(version)}</td>
+                  </tr>
+                ) : null}
 
-              {releaseInfo ? (
-                <tr>
-                  <th>EuPathDB release:</th>
-                  <td>{releaseInfo}</td>
-                </tr>
-              ) : null}
+                {releaseInfo ? (
+                  <tr>
+                    <th>EuPathDB release:</th>
+                    <td>{releaseInfo}</td>
+                  </tr>
+                ) : null}
 
-            </tbody>
-          </table>
+              </tbody>
+            </table>
 
-          <hr/>
+            <hr/>
 
-          <Organisms organisms={organisms}/>
+            <div className="eupathdb-DatasetRecord-Main">
+              <h2>Detailed Description</h2>
+              <div dangerouslySetInnerHTML={{__html: description}}/>
+              <ContactsAndPublications contacts={Contacts} publications={Publications}/>
+            </div>
 
-          <Searches searches={References} links={HyperLinks} questions={questions} recordClasses={recordClasses}/>
+            <div className="eupathdb-DatasetRecord-Sidebar">
+              <Organisms organisms={organisms}/>
+              <Searches searches={References} links={HyperLinks} questions={questions} recordClasses={recordClasses}/>
+              <Links links={HyperLinks}/>
+              <ReleaseHistory history={GenomeHistory}/>
+              <Versions versions={Version}/>
+            </div>
 
-          <Links links={HyperLinks}/>
-
-          <h2>Detailed Description</h2>
-          <div dangerouslySetInnerHTML={{__html: description}}/>
-
-          <ContactsAndPublications contacts={Contacts} publications={Publications}/>
-
-          <ReleaseHistory history={GenomeHistory}/>
-
-          <Versions versions={Version}/>
-
+          </div>
           <Graphs graphs={ExampleGraphs}/>
         </div>
       );
@@ -438,17 +440,23 @@ wdk.namespace('eupathdb.records', function(ns) {
     },
     componentWillUnmount() {
       // if _setupTooltip doesn't do anything, this is a noop
-      $(this.getDOMNode()).qtip('destroy', true);
+      if (this.$target) {
+        this.$target.qtip('destroy', true);
+      }
     },
     _setupTooltip() {
       if (this.props.text == null) return;
 
       var text = `<div style="max-height: 200px; overflow-y: auto; padding: 2px;">${this.props.text}</div>`;
-      $(this.getDOMNode()).wdkTooltip({
-        overwrite: true,
-        content: { text },
-        show: { delay: 1000 }
-      });
+      var width = this.props.width;
+
+      this.$target = $(this.getDOMNode()).find('.wdk-RecordTable-recordLink')
+        .wdkTooltip({
+          overwrite: true,
+          content: { text },
+          show: { delay: 1000 },
+          position: { my: 'top left', at: 'bottom left', adjust: { y: 12 } }
+        });
     },
     render() {
       // FIXME - Figure out why we lose the fixed-data-table className
@@ -465,7 +473,10 @@ wdk.namespace('eupathdb.records', function(ns) {
 
     if (attribute.get('name') === 'primary_key') {
       return (
-        <Tooltip text={attributes.get('description').get('value')}>{reactElement}</Tooltip>
+        <Tooltip
+          text={attributes.get('description').get('value')}
+          width={width}
+        >{reactElement}</Tooltip>
       );
     }
     else {
