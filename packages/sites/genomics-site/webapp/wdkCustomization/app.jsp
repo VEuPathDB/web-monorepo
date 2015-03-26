@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=utf8" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<imp:pageFrame>
+<imp:pageFrame refer="betaApp">
   <style>
     .eupathdb-DatasetRecord h2,
     .eupathdb-DatasetRecord h3 {
