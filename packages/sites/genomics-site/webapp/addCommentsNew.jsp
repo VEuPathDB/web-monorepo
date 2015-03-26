@@ -9,7 +9,7 @@
 <c:set var="exp" scope="request" value="${requestScope['org.apache.struts.action.EXCEPTION']}"/>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
-<c:set var="to" value="${wdkModel.projectId}_annotators@pcbi.upenn.edu" /> 
+<c:set var="to" value="EUPATHDB_ANNOTATORS@lists.upenn.edu" /> 
 <c:set var="toRedmine" value="redmine@apidb.org" /> 
 <c:set var="from" value="annotator@apidb.org" />
 <c:set var="subject" value="${wdkModel.projectId} ${commentForm.commentTargetId} comment ${commentForm.stableId}" />
