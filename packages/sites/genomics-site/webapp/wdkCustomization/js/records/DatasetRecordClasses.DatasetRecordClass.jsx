@@ -436,13 +436,11 @@ wdk.namespace('eupathdb.records', function(ns) {
       this._setupTooltip();
     },
     componentDidUpdate() {
+      this._destroyTooltip();
       this._setupTooltip();
     },
     componentWillUnmount() {
-      // if _setupTooltip doesn't do anything, this is a noop
-      if (this.$target) {
-        this.$target.qtip('destroy', true);
-      }
+      this._destroyTooltip();
     },
     _setupTooltip() {
       if (this.props.text == null) return;
@@ -457,6 +455,12 @@ wdk.namespace('eupathdb.records', function(ns) {
           show: { delay: 1000 },
           position: { my: 'top left', at: 'bottom left', adjust: { y: 12 } }
         });
+    },
+    _destroyTooltip() {
+      // if _setupTooltip doesn't do anything, this is a noop
+      if (this.$target) {
+        this.$target.qtip('destroy', true);
+      }
     },
     render() {
       // FIXME - Figure out why we lose the fixed-data-table className
