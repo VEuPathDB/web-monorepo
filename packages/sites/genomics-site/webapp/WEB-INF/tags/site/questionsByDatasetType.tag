@@ -12,7 +12,7 @@
   <c:set var="action" value="${requestScope.action}"/>
   <c:choose>
     <c:when test="${wdkStep == null}">
-      <c:set var="quesitonUrl" value=""/>
+      <c:set var="questionUrl" value=""/>
     </c:when>
     <c:otherwise>
       <c:url var="questionUrl" value="/wizard.do?stage=question&amp;action=${action}&amp;strategy=${wdkStrategy.strategyId}&amp;step=${wdkStep.stepId}&amp;questionFullName=${q.fullName}" />
