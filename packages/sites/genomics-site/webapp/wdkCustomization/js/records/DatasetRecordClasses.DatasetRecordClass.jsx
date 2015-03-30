@@ -345,7 +345,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       var id = record.get('id');
       var summary = attributes.getIn(['summary', 'value']);
-      var releaseInfo = attributes.getIn(['build_number_introduced', 'value']);
+      var releaseInfo = attributes.getIn(['eupath_release', 'value']);
       var primaryPublication = tables.getIn(['Publications', 'rows', 0]);
       var contact = attributes.getIn(['contact', 'value']);
       var institution = attributes.getIn(['institution', 'value']);
@@ -400,7 +400,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
                 {releaseInfo ? (
                   <tr>
-                    <th>EuPathDB release:</th>
+                    <th>EuPathDB release # / date:</th>
                     <td>{releaseInfo}</td>
                   </tr>
                 ) : null}
