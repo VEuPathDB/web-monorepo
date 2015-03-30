@@ -97,6 +97,7 @@
           <c:set var="description" value="${attributes['description']}" />
           <c:set var="contact" value="${attributes['contact']}" />
           <c:set var="institution" value="${attributes['institution']}" />        
+          <c:set var="org_prefix" value="${attributes['organism_prefix']}" />        
           <c:set var="tables" value="${record.tables}" />
           <c:set var="publications" value="${tables['Publications']}" />
           <c:set var="contacts" value="${tables['Contacts']}" />
@@ -136,9 +137,13 @@ ${datasetId.value}
 <%-------    Organisms and Contact  ----------------%>
             <div class="detail">
               <table>
-
+              <c:if test='${not empty org_prefix.value}'>
+                <tr><td><span title="In functional data sets this is not the source organism but the one the data set is mapped to, and is returned in search results." class="caption"><b>${org_prefix.displayName}:</b></span></td>
+                  <td  style="font-size:120%;font-weight:bold"> ${org_prefix.value}
+                  </td></tr>
+              </c:if>
                 <tr><td><span class="caption"><b>${contact.displayName}:</b></span></td>
-                    <td> <c:if test='${not empty contact.value}'>${contact.value}</c:if>
+                    <td>  <c:if test='${not empty contact.value}'>${contact.value}</c:if>
                          <c:if test='${not empty institution.value}'> - ${institution.value}</c:if>
                     </td></tr>
               </table>
