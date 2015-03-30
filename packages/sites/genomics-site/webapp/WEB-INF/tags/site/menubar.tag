@@ -127,7 +127,7 @@
       </ul>
     </li>
 
-    <li><a>Data Summary</a>
+    <li><a style="padding-top:0">Data Summary <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
       <ul>
           <li><a href="<c:url value='/getDataset.do?display=detail'/>">Data Sets</a></li>
           <li title="Please contact us with your feedback.">
