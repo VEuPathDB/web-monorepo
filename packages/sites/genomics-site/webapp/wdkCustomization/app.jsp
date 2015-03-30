@@ -72,8 +72,29 @@
         width: 65%;
       }
     }
+    .eupathdb-Beta-Announcement {
+      float: right;
+      position: relative;
+      top: -10px;
+      z-index: 1;
+      padding: 0 2em;
+      display: inline-block;
+      font-style: italic;
+      font-size: 1.2em;
+    }
   </style>
+
+  <div class="eupathdb-Beta-Announcement">
+    <p>
+      <%-- <i class="fa fa-lg fa-exclamation-circle" style="color: rgb(25, 89, 200);"></i> --%>
+      You are viewing a <strong>BETA</strong> page.
+      <a data-name="contact_us" class="new-window" href="contact.do">Feedback and comments</a>
+      are welcome!
+    </p>
+  </div>
+
   <main></main>
+
   <imp:script src="wdk/js/wdk-3.0.js"/>
   <imp:script src="wdkCustomization/js/records/DatasetRecordClasses.DatasetRecordClass.js"/>
   <script>
