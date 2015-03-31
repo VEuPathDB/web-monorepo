@@ -78,17 +78,15 @@ wdk.namespace('eupathdb.records', function(ns) {
 
   var Searches = React.createClass({
     render() {
-      var links = this.props.links;
       var searches = this.props.searches.get('rows').filter(this._rowIsQuestion);
 
-      if (searches.size === 0 && links.get('rows').size === 0) return null;
+      if (searches.size === 0) return null;
 
       return (
         <div>
           <h2>Search or view this data set in PlasmoDB</h2>
           <ul>
             {searches.map(this._renderSearch).toArray()}
-            {links.get('rows').map(this._renderLink).toArray()}
           </ul>
         </div>
       );
@@ -112,13 +110,6 @@ wdk.namespace('eupathdb.records', function(ns) {
           <a href={'/a/showQuestion.do?questionFullName=' + name}>{searchName}</a>
         </li>
       );
-    },
-
-    _renderLink(link, index) {
-      var hyperLink = link.find(attr => attr.get('name') == 'hyper_link');
-      return (
-        <li key={index}>{formatLink(hyperLink.get('value'))}</li>
-      );
     }
   });
 
@@ -130,7 +121,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       return (
         <div>
-          <h2>External Links</h2>
+          <h2>Links</h2>
           <ul> {links.get('rows').map(this._renderLink).toArray()} </ul>
         </div>
       );
@@ -435,7 +426,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
             <div className="eupathdb-DatasetRecord-Sidebar">
               <Organisms organisms={organisms}/>
-              <Searches searches={References} links={HyperLinks} questions={questions} recordClasses={recordClasses}/>
+              <Searches searches={References} questions={questions} recordClasses={recordClasses}/>
               <Links links={HyperLinks}/>
               <ReleaseHistory history={GenomeHistory}/>
               <Versions versions={Version}/>
