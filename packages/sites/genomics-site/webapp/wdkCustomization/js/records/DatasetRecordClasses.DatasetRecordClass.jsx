@@ -17,12 +17,24 @@ wdk.namespace('eupathdb.records', function(ns) {
 
   var React = Wdk.React;
 
+  // Use Element.innerText to strip XML
+  function stripXML(str) {
+    var div = document.createElement('div');
+    div.innerHTML = str;
+    return div.textContent;
+  }
+
   // format is {text}({link})
   var formatLink = function formatLink(link, opts) {
     opts = opts || {};
     var newWindow = !!opts.newWindow;
     var match = /(.*)\((.*)\)/.exec(link.replace(/\n/g, ' '));
-    return match ? ( <a target={newWindow ? '_blank' : '_self'} href={match[2]}>{match[1]}</a> ) : null;
+    if (match) {
+      var text = stripXML(match[1]);
+      var url = match[2];
+      return ( <a target={newWindow ? '_blank' : '_self'} href={url}>{text}</a> );
+    }
+    return null;
   };
 
   var renderPrimaryPublication = function renderPrimaryPublication(publication) {
@@ -222,11 +234,7 @@ wdk.namespace('eupathdb.records', function(ns) {
       var release = attrs.build.value ? 'Release ' + attrs.build.value
         : 'Initial release';
 
-      var releaseDate = new Date(attrs.release_date.value)
-        .toDateString()
-        .split(' ')
-        .slice(1)
-        .join(' ');
+      var releaseDate = attrs.release_date.value.split(/\s+/)[0];
 
       var genomeSource = attrs.genome_source.value
         ? attrs.genome_source.value + ' (' + attrs.genome_version.value + ')'
@@ -256,7 +264,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       return (
         <div>
-          <h2>Version</h2>
+          <h2>Provider's Version</h2>
           <p>
             The data set version shown here is the data provider's version
             number or publication date indicated on the site from which we
@@ -350,6 +358,7 @@ wdk.namespace('eupathdb.records', function(ns) {
       var contact = attributes.getIn(['contact', 'value']);
       var institution = attributes.getIn(['institution', 'value']);
       var version = attributes.getIn(['Version', 'rows', 0]);
+      var organism = attributes.getIn(['organism_prefix', 'value']);
       var organisms = attributes.getIn(['organisms', 'value']);
       var References = tables.get('References');
       var HyperLinks = tables.get('HyperLinks');
@@ -377,6 +386,14 @@ wdk.namespace('eupathdb.records', function(ns) {
                   <th>Summary:</th>
                   <td dangerouslySetInnerHTML={{__html: summary}}/>
                 </tr>
+
+                {organism ? (
+                  <tr>
+                    <th>Organism (source or reference):</th>
+                    <td dangerouslySetInnerHTML={{__html: organism}}/>
+                  </tr>
+                ) : null}
+
                 {primaryPublication ? (
                   <tr>
                     <th>Primary publication:</th>
