@@ -220,7 +220,7 @@ ${datasetId.value}
 
               <table class="headerRow">
                 <tr>
-                  <th>EuPathDB Build</th>
+                  <th>EuPathDB Release</th>
                   <th>Genome Source</th>
                   <th>Annotation Source</th>
                   <th>Notes</th>
