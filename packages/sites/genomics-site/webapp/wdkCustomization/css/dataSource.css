@@ -72,6 +72,8 @@
   text-align: center;
   border: 3px double;
   padding: 5px;
+  position:relative;
+  left:150px;
 }
 
 #data-sets .category-content .data-set .wdk-toggle {
@@ -113,4 +115,13 @@
 
 #data-sets .wdk-toggle-content th {
 	color: #555;
+}
+
+#data-sets #beta-page {
+  float:right;
+  font-style:italic;
+  font-size: 1.2em;
+  position:relative;
+  bottom:60px;
+  right:20px;
 }

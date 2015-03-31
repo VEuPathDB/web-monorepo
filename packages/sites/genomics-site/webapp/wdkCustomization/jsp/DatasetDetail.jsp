@@ -49,12 +49,12 @@
 <%-- show all xml question sets --%>
 <div id="data-sets">
   <a name="_top"></a>
-  <h1>Data Sets 
-  <a title="Please contact us with your feedback." style="padding-top:0;font-size:70%;position:relative;left:270px;bottom:20px" 
-              href="<c:url value='/app/answer/DatasetQuestions.AllDatasets'/>">New Data Sets page!
-                <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
-  </h1>
-   
+  <h1>Data Sets</h1>  
+  <div id="beta-page"><a title="Please contact us with your feedback." 
+                       href="<c:url value='/app/answer/DatasetQuestions.AllDatasets'/>">New Data Sets page!
+                       <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
+  </div>
+
   <div class="ui-helper-clearfix">
     <div class="toggle-all">
       <p><a class="wdk-toggle-group"
