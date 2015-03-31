@@ -34,7 +34,7 @@
 	<table class="center" style="padding:2px;" width="95%"><tr>
 <%--	<td align="center" width="12.5%"><a href="http://newsitedb.org"><imp:image border=0 src="images/newSite.png" width="55" alt="NewSiteDB logo" /></a></td> --%>
 
-<c:set var="mywidth" value="10%" />
+<c:set var="mywidth" value="9%" />
 
 	<td title="${AmoebaDBOrgs}" align="center" width="${mywidth}"><a href="http://amoebadb.org"><imp:image  border="0" src="images/AmoebaDB/amoebadb_w50.png" alt="AmoebaDB logo"/></a></td>
 	<td title="${CryptoDBOrgs}" align="center" width="${mywidth}"><a href="http://cryptodb.org"><imp:image border="0" src="images/CryptoDB/cryptodb_w50.png" alt="CryptoDB logo"/></a></td>
@@ -46,6 +46,7 @@
         <td title="${ToxoDBOrgs}" align="center" width="${mywidth}"><a href="http://toxodb.org"><imp:image border="0" src="images/ToxoDB/toxodb_w50.png" alt="ToxoDB logo"/></a></td>
         <td title="${TrichDBOrgs}" align="center" width="${mywidth}"><a href="http://trichdb.org"><imp:image border="0" src="images/TrichDB/trichdb_w65.png" alt="TrichDB logo"/></a></td>
         <td title="${TriTrypDBOrgs}" align="center" width="${mywidth}" ><a href="http://tritrypdb.org"><imp:image border="0" src="images/TriTrypDB/tritrypdb_w40.png" alt="TriTrypDB logo"/></a></td>
+ <td  align="center" width="${mywidth}" ><a href="http://orthomcl.org"><imp:image border="0" src="images/OrthoMCL/Ortho-3D-lighter-50.png" width="55" alt="OrthoMCL logo"/></a></td>
 	</tr>
 
 	<tr>
@@ -59,6 +60,7 @@
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#a50837">ToxoDB</td>
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#8d7658">TrichDB</td>
 	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#4f9cce">TriTrypDB</td>
+	<td align="center" width="${mywidth}" style="font-weight:bold;font-style: italic;color:#7a3838">OrthoMCL</td>
 	</tr>
 	</table>
 
