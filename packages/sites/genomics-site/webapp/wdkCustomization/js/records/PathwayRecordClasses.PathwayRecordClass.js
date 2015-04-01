@@ -14,13 +14,17 @@ var vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
 
-function drawVisualization(pathwayId) {
+function drawVisualization(pathwayId, pathwaySource) {
   $.ajax({
-    url: "/common/downloads/pathwayFiles/" + pathwayId + ".xgmml",
+    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
     dataType: "text",
     success: function(data){
       vis.draw(options);
-      vis.draw({ network: data , layout: 'Preset' });
+      if (pathwaySource == 'TrypanoCyc') {
+            vis.draw({ network: data , layout: 'ForceDirected' });
+      } else {
+            vis.draw({ network: data , layout: 'Preset' });
+      }
     },
     error: function(){
       alert("Error loading file");
@@ -157,19 +161,20 @@ vis.ready(function() {
 		if(target.data.Description) {
 		    print("<b>Name:</b>  " + target.data["Description"] + "<br />");
 		}
+		if(target.data["CID"]) {
+		    print("<a href='/a/showRecord.do?name=CompoundRecordClasses.CompoundRecordClass&source_id=CID:" + target.data["CID"] + "'>View on this site</a>");
+		}
+
 		print ("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["label"] + "'>View in KEGG</a>");
 
-		if(target.data["CID"]) {
-		    print("<a href='/a/showRecord.do?name=CompoundRecordClasses.CompoundRecordClass&project_id=PlasmoDB&source_id=CID:" + target.data["CID"] + "'>View in PlasmoDB</a>");
-		}
 		if(target.data["SID"]) {
-		    print("<a href='http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=" + target.data["SID"] + "'>View on NCBI</a>");
+		    print("<a href='http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=" + target.data["SID"] + "'>View in PubChem</a>");
 		    print("<img src='http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&sid=" + target.data["SID"] + "'>");
 		}
 	    }
 
 	    if(type == "map") {
-		print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&project_id=PlasmoDB&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
+		print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
 		print("");
 		print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["Description"] + "'>View in KEGG</a>");
 	    }

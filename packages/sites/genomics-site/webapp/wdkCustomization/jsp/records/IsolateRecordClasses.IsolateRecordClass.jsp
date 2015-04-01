@@ -54,11 +54,11 @@
 <a style="font-size:70%;font-weight:normal;cursor:hand" href="${commentsUrl}">Add the first user comment
 </c:when>
 <c:otherwise>
-<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="wdk.api.showLayer('UserComments')">This gene has <span style='color:red'>${count}
+<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="wdk.api.showLayer('UserComments')">This isolate has <span style='color:red'>${count}
     </span> user comments
 		</c:otherwise>
 		</c:choose>
-		<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+		<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 		</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 
@@ -99,7 +99,7 @@
 
 <b>
 <a href="${commentsUrl}"><font size='-2'>Add a comment on ${id}</font></a>
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </b>
 
 <br/><br/>

@@ -62,7 +62,7 @@ sub snpBgFromIsCodingAndNonSyn {
   my $f = shift;
   my ($isCoding) = $f->get_tag_values("IsCoding"); 
   my $color = 'white';
-  if ($isCoding =~ /yes/i) {
+  if ($isCoding == 1 || $isCoding =~ /yes/i) {
     my ($nonSyn) = $f->get_tag_values("NonSyn"); 
     $color = $nonSyn? 'blue' : 'lightblue'; 
   }
@@ -75,7 +75,7 @@ sub snpColor {
              my ($isCoding) = $f->get_tag_values("IsCoding");
              my $color = 'white';
              my ($nonSyn) = $f->get_tag_values("NonSyn");
-             if ($isCoding eq 'yes') {
+             if ($isCoding == 1 || $isCoding eq 'yes') {
                $color = $nonSyn? 'blue' : 'lightblue';
              }
              return $color;
@@ -102,10 +102,11 @@ sub SnpBgFromMatchingReference {
 sub SnpBgcolorForGenotyping {
 #  red for 75k chip, blue 3k chip and green for barcoding.
       my $f = shift;
-      my ($source) = $f->get_tag_values('IsoDbName');
       my ($freq) = $f->get_tag_values('MinorAlleleFreq');
+      my ($type) = $f->get_tag_values('Type');
 
-      if ($source eq 'pfal3D7_SNP_Broad75KGenotyping_RSRC') {
+
+      if ($type eq 'pfal3D7_SNP_Broad75KGenotyping_RSRC') {
           if ($freq <= 0.1) {
             return '#FF0000';
           } elsif ($freq <= 0.2) {
@@ -117,7 +118,7 @@ sub SnpBgcolorForGenotyping {
           } else {
             return '#800000';
           }
-      } elsif ($source eq 'pfal3D7_SNP_Broad3KGenotyping_RSRC') {
+      } elsif ($type eq 'pfal3D7_SNP_Broad3KGenotyping_RSRC') {
           if ($freq <= 0.1) {
             return '#0000FF';
           } elsif ($freq <= 0.2) {
@@ -252,6 +253,9 @@ sub rumIntronBgColorFromScore {
 
   my ($lours) = $f->get_tag_values('LOURS');
   my ($sours) =  $f->get_tag_values('SOURS');
+  
+  ($lours) = $f->get_tag_values('LOUR') unless $lours;
+  ($sours) = $f->get_tag_values('SOUR') unless $sours;
 
   my $sum_lour = eval join '+', split /[,|\|]/, $lours;
   my $sum_sour = eval join '+', split /[,|\|]/, $sours;
@@ -267,6 +271,7 @@ sub rumIntronBgColorFromScore {
   return '#7E3517' if $sum <= 200; # Sienna4
   return '#7E2217';   # Indian Red4
 }
+
 
 sub rumIntronHeightFromScore {
   my $f = shift;
@@ -922,6 +927,17 @@ sub colorSegmentByScore {
          return '#000000';
 }
 
+sub bgColorForBamTracks {
+    my $f = shift;
+    my $strand = $f->query->strand;
+    return $strand == 1 ? 'cornflowerblue' : 'coral';
+    }
+
+sub mismatchColorForBamTracks {
+    my $f = shift;
+    my $strand = $f->query->strand;
+    return $strand == 1 ? 'coral' : 'cornflowerblue';
+    }
 
 
 #--------------------------------------------------------------------------------
@@ -992,16 +1008,45 @@ sub changeType {
 
 sub synSpanRelativeCoords { 
   my $f = shift; 
-  my ($off) = $f->get_tag_values("SynStart"); 
+
+  my ($leftAnchSyntenicLoc) = $f->get_tag_values("LeftAnchSyntenicLoc"); 
+  my ($rightAnchSyntenicLoc) = $f->get_tag_values("RightAnchSyntenicLoc"); 
+  my ($leftAnchRefLoc) = $f->get_tag_values("LeftAnchRefLoc"); 
+  my ($rightAnchRefLoc) = $f->get_tag_values("RightAnchRefLoc"); 
+  my ($leftAnchPrevRefLoc) = $f->get_tag_values("LeftAnchPrevRefLoc"); 
+  my ($rightAnchNextRefLoc) = $f->get_tag_values("LeftAnchNextRefLoc"); 
+
   my ($scale) = $f->get_tag_values("Scale");
-  return int($off*$scale+0.5);
+
+  my $strand = $f->strand();
+  my $start = $f->start();
+  my $end = $f->end();
+
+  # Forward Span Starts w/in Window;  Left anchor syntenic loc is exact position
+  if($strand == 1 && $leftAnchPrevRefLoc == -9999999999) {
+    return $leftAnchSyntenicLoc;
+  }
+
+  # Reverse Span Starts w/in Window;  Right anchor syntenic loc is exact position
+  if($strand == -1 && $rightAnchNextRefLoc == 9999999999) {
+    return $rightAnchSyntenicLoc;
+  }
+
+  if($strand == 1) {
+    return ($leftAnchSyntenicLoc - ($leftAnchRefLoc - $start) / $scale) * $scale;
+  }
+
+  if($strand == -1) {
+    return ($rightAnchSyntenicLoc + ($end - $rightAnchRefLoc) / $scale) * $scale;
+  }
+
 }
 
 
 sub synSpanScale { 
   my $f = shift; 
   my ($scale) = $f->get_tag_values("Scale");
-  return int($scale+0.5);
+  return $scale;
 }
 
 sub synSpanOffset { 
@@ -1032,7 +1077,7 @@ sub warnNote {
 			"<br>1. Make sure you are viewing the correct species/strain to which the data was mapped." .
 			"<br>2.<a style='font-weight:bold' href='/cgi-bin/gbrowse/$project/?reset=1'> Reset your GBrowse</a> and try again." .
 			"</div></td>" .
-			"<td style='font-size:120%;font-weight:bold;text-align:center;vertical-align:middle'><a onclick='poptastic(this.href); return false;' target='_blank' href='http://www.youtube.com/watch?v=jxA6VMN97Y8'>EuPathDB GBrowse Tutorial <img border='0' src='/assets/images/smallYoutube-icon.png' alt='YouTube icon' style='vertical-align:middle' title='YouTube tutorial'></a></td></tr></table>";
+			"<td style='font-size:120%;font-weight:bold;text-align:center;vertical-align:middle'><a onclick='poptastic(this.href); return false;' target='_blank' href='http://www.youtube.com/watch?v=jxA6VMN97Y8'>EuPathDB GBrowse Tutorial <img border='0' src='/a/images/smallYoutube-icon.png' alt='YouTube icon' style='vertical-align:middle' title='YouTube tutorial'></a></td></tr></table>";
 
   return $txt;
 }
@@ -1072,6 +1117,9 @@ SHORT_OVERLAP_NU_READS:
   The number of reads mapping across the junction for which their alignment
   is not unique and they have less than 8 bases on one (or both) sides of
   the junction
+	<br/><br/>
+CANONICAL:
+	This refers to the splice junction.  If the splice junction is the standard splice signal GTAG then this is reported as "true", otherwise it is reported as "false".
 EOL
 
 } 

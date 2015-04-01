@@ -1,7 +1,7 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -48,7 +48,7 @@
 <tr><td colspan="3">  
     <div class="smallBlack" align="center">
 	(Click on &nbsp; 
-	<img src="/assets/images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a search in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
+	<imp:image src="images/eupathdb_letter.gif" border='0' alt='eupathdb'/> &nbsp; to access a search in <b><a href="http://eupathdb.org">EuPathDB.org</a></b>)
 	</div>
 </td></tr>
 
@@ -62,13 +62,39 @@
 </td></tr>
 
 <%-----------------------------------------------------------------------------%>
-<%--  Isolates  --%>
+
+<tr>
+
+ <%--  All SNP Queries TABLE --%>
+    <td >    
+<div class="innertube2"> 
+	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
+		<tr class="headerrow2">
+			<td   align="center"><b>Identify SNPs by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<imp:queryGridSNPs/>
+		</td></tr>
+   	</table> 
+</div>
+    </td>
+
+<%--  All SNP CHIP Queries TABLE --%>
+    <td >    
+<div class="innertube2"> 
+	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
+		<tr class="headerrow2">
+			<td   align="center"><b>Identify SNPs (from Chips) by:</b></td>
+		</tr>
+		<tr><td align="center">
+			<imp:queryGridSNPChips/>
+		</td></tr>
+   	</table> 
+</div>
+    </td>
 
 
-  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Isolates by:</b></td></tr>
-  <tr><td colspan="3" align="center">
-	<imp:queryGridIsolates/> 
-  </td></tr>
+</tr>
 
 <%-----------------------------------------------------------------------------%>
 <%--  All Pathways and Compounds  --%>
@@ -81,7 +107,7 @@
 			<td style="padding-top:0"  align="center"><b>Identify Pathways by:</b>
 
 <imp:image alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
- header." src="/wdk/images/beta2-40.png" />
+ header." src="wdk/images/beta2-40.png" />
 
 </td>
 		</tr>
@@ -100,7 +126,7 @@
 			<td  style="padding-top:0"  align="center"><b>Identify Compounds by:
 
 <imp:image alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
- header." src="/wdk/images/beta2-40.png" />
+ header." src="wdk/images/beta2-40.png" />
 
 </b></td>
 		</tr>
@@ -113,7 +139,7 @@
 </tr>
 
 <%-----------------------------------------------------------------------------%>
-<%--  All Genomic and SNP  --%>
+<%--  All Genomic and Segments  --%>
 <tr>
     <%-- All Genomic Sequences (CONTIG) Queries TABLE  --%>
     <td >     
@@ -145,7 +171,7 @@
 </tr>
 
 <%-----------------------------------------------------------------------------%>
-<%--  All EST and EST Assemblies --%>
+<%--  All EST and ISOLATES --%>
 <tr>
     <%-- All EST Queries TABLE  --%>
     <td >     
@@ -159,23 +185,22 @@
 		</td></tr>	
 	</table> 
 </div>
-</div>
     </td>
 
-    <%--  All SNP Queries TABLE --%>
-    <td >    
+   <%--  Isolates  --%>
+
+ <td >     
 <div class="innertube2"> 
-	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
-		<tr class="headerrow2">
-			<td   align="center"><b>Identify SNPs by:</b></td>
-		</tr>
-		<tr><td align="center">
-			<imp:queryGridSNPs/>
-		</td></tr>
-   	</table> 
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+
+  <tr class="headerrow2"><td colspan="2" align="center"><b>Identify Isolates by:</b></td></tr>
+  <tr><td colspan="3" align="center">
+	<imp:queryGridIsolates/> 
+  </td></tr>
+
+	</table> 
 </div>
     </td>
-
 
 </tr>
 

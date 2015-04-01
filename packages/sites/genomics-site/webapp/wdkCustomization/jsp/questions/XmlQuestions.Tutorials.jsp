@@ -2,8 +2,8 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
+<%@ taglib prefix="nested" uri="http://struts.apache.org/tags-nested" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -67,16 +67,16 @@
 				<li id='t-${attrs['uid']}'><span style="font-size:120%;font-weight:bold">${attrs['title']}</span><br />
 					${attrs['description']}<br />${row[5].value}&nbsp;&nbsp;&nbsp;
                              		<c:if test="${urlMov != 'unavailable'}">
-                          		 	<a href="${urlMov}"><img title="YouTube tutorial" style="vertical-align:middle" alt="YouTube icon" src="/assets/images/smallYoutube-icon.png" border='0'></a>
+                          		 	<a href="${urlMov}"><imp:image title="YouTube tutorial" style="vertical-align:middle" alt="YouTube icon" src="images/smallYoutube-icon.png" border='0'/></a>
                              		</c:if>
                              		<c:if test="${urlAvi != 'unavailable'}">
                           		 	(<a href="${urlAvi}">Windows media</a>)
                              		</c:if>
                              		<c:if test="${urlFlv != 'unavailable'}">
-                          		 	<a href="${urlFlv}"><img title="Flash tutorial" style="vertical-align:middle" width="20" alt="Flash icon" src="/assets/images/smallAdobe_Flash_Player_icon.png" border='0'></a>
+                          		 	<a href="${urlFlv}"><imp:image title="Flash tutorial" style="vertical-align:middle" width="20" alt="Flash icon" src="images/smallAdobe_Flash_Player_icon.png" border='0'/></a>
                              		</c:if>
 					<c:if test="${urlPdf != 'unavailable'}">
-                          		 	<a href="${urlPdf}"><img title="Download a PDF" style="vertical-align:middle" alt="PDF icon" src="/assets/images/smallPDF.png" border='0'></a>
+                          		 	<a href="${urlPdf}"><imp:image title="Download a PDF" style="vertical-align:middle" alt="PDF icon" src="images/smallPDF.png" border='0'/></a>
                              		</c:if>
 				</li>
 

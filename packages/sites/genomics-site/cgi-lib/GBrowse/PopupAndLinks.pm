@@ -107,6 +107,7 @@ sub synGeneTitle {
   my ($desc) = $f->get_tag_values("Note");
 
   my ($soTerm) = $f->get_tag_values("SOTerm");
+  my ($orthomclName) = $f->get_tag_values("orthomcl_name");
   my ($isPseudo) = $f->get_tag_values("IsPseudo");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
@@ -123,7 +124,7 @@ sub synGeneTitle {
   my ($trunc) = $f->get_tag_values("Truncated");
   my $location = "$seqId: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "");
   
-  return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams'))};
+  return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams', '$orthomclName'))};
 }
 
 sub synSpanTitle {
@@ -213,9 +214,9 @@ sub snpTitleQuick {
   my $type = 'Non-coding';
   my  $refNA = $gene_strand == 1 ? $revArray{$reference_na} : $reference_na;
   my $refAAString = ''; 
-  if ($isCoding =~ /yes/i) {
+  if ($isCoding == 1 || $isCoding =~ /yes/i) {
      $type = "Coding (synonymous)";
-     $type = "Coding (non-synonymous)" if $nonSyn =~ /yes/;
+     $type = "Coding (non-synonymous)" if ($nonSyn == 1);
      $refAAString = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$reference_aa";
   }
 
@@ -223,7 +224,7 @@ sub snpTitleQuick {
   push(@data, ['SNP' => $link]);
   push(@data, ['Location' => $start]);
   push(@data, ['Gene' => $gene]) if $gene;
-  if ($isCoding =~ /yes/i) {
+  if ($isCoding == 1 || $isCoding =~ /yes/i) {
     push(@data, ['Position&nbsp;in&nbsp;CDS' => $position_in_CDS]);
     push(@data, ['Position&nbsp;in&nbsp;protein' => $position_in_protein]);
   }
@@ -242,7 +243,7 @@ sub snpTitleQuick {
     my $na = $var[1];
     $na = $revArray{$na} if ($gene_strand == 1);
 
-    my $aa_seq =  ($isCoding == 'yes') ? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$var[2]"  : '';
+    my $aa_seq =  ($isCoding == 1 || $isCoding == 'yes') ? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$var[2]"  : '';
 
     push(@data, [$strain => "NA=$na $aa_seq" ]);
 
@@ -309,21 +310,17 @@ sub snpTitleFromMatchToReference {
    my $f = shift;
    my @data;
    my $name = $f->name;
-   #my ($source) = $f->get_tag_values("IsoDbName");
    my ($location) = $f->start;
    my ($majorAllele) = $f->get_tag_values("MajorAllele");
-   my ($minorAllele) = $f->get_tag_values("MinorAllele");
+   my ($majorAlleleFreq) = $f->get_tag_values("MajorAlleleFreq");
    my ($minorAlleleFreq) = $f->get_tag_values("MinorAlleleFreq");
-   my ($numIsolates) = $f->get_tag_values("NumIsolates");
    my ($snpid) = $f->get_tag_values("SnpId");
-   my $link = qq(<a href="/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$name">$name</a>);
-   push @data, [ 'Name:'  => $name ];
-   #push @data, [ 'Data Source:'  => $source ];
+   my $link = qq(<a href="/a/showRecord.do?name=SnpChipRecordClasses.SnpChipRecordClass&primary_key=$name">$name</a>);
+   push @data, [ 'Name:'  => $link ];
    push @data, [ 'Location:' => $location ];
    push @data, [ 'Major Allele:'  => $majorAllele ];
-   push @data, [ 'Minor Allele:'  => $minorAllele ];
+   push @data, [ 'Major Allele Frequency:'  => $majorAlleleFreq ];
    push @data, [ 'Minor Allele Frequency:'  => $minorAlleleFreq ];
-   push @data, [ '# of isolates:'  => $numIsolates ];
    return hover($f, \@data); 
  }
 
@@ -397,6 +394,7 @@ sub geneTitleGB2 {
   
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
+  my ($orthomclName) = $f->get_tag_values("orthomcl_name");
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
   $soTerm .= " (pseudogene)" if $isPseudo == '1';
@@ -417,7 +415,7 @@ sub geneTitleGB2 {
   my ($seqId) = $f->get_tag_values("Contig");
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams'))};
+  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName'))};
 } 
 
 
@@ -694,6 +692,25 @@ sub fosmidTitle {
 }
 
 
+
+
+sub transposableElementsTitle { 
+  my $f = shift;
+  my $bulkFeatureName = shift;
+  my $trackName = shift;
+
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my $length = $stop - $start + 1;
+  my $cname = $f->name;
+  my @data; 
+  push @data, [ "Transposable Element:"     => $cname ]; 
+  push @data, [ 'Size:'     => $length ]; 
+  push @data, [ 'Location:' => "$start..$stop"];
+  
+  hover($f, \@data);
+}
+
 sub genericEndFeatureTitle { 
   my $f = shift;
   my $bulkFeatureName = shift;
@@ -814,8 +831,8 @@ sub rumIntronTitleUnified {
   my $note = "The overall score is the sum of the short and long overlap unique reads from all samples.";
   my @data;
   push @data, [ 'Location:'  => "$start - $stop"];
-  push @data, [ 'Score'     => $sum ];
-  push @data, [ 'Note'     => $note ];
+  push @data, [ '<b>Score</b>'     => "<b>$sum</b>" ];
+  push @data, [ '<b>Note</b>'     => $note ];
 
 
   my $count = 0;
@@ -1326,7 +1343,9 @@ sub lowcomplexitySegTitle {
 
 sub ExportPredTitle{
    my $f = shift;
+   my ($name) = $f->get_tag_values("DomainName");
    my @data;
+   push @data, [ 'Name:' => $name ];
    push @data, [ 'Coordinates:' => $f->start . '..' . $f->end ];
 
    hover($f, \@data); 
@@ -1376,6 +1395,12 @@ sub riteshMassSpec {
   return hover($f,\@data);
 }
 
+sub BamFileSeqBalloon {
+    my $f = shift;
+    my $seq = $f->query->dna;
+    my $len = length($seq);
+    return "$seq ($len bp)";
+}
 
 
 1;

@@ -17,11 +17,11 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<link rel="stylesheet" href="${base}/wdkCustomization/css/superfish/css/superfish.css" type="text/css"/>
+<imp:stylesheet rel="stylesheet" href="wdkCustomization/css/superfish/css/superfish.css" type="text/css"/>
 
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
-<link rel="stylesheet" href="/assets/css/AllSites.css"           type="text/css" /> 
-<link rel="stylesheet" href="/assets/css/${project}.css"         type="text/css" />
+<imp:stylesheet rel="stylesheet" href="css/AllSites.css" type="text/css" /> 
+<imp:stylesheet rel="stylesheet" href="css/${project}.css" type="text/css" />
 
 <!-- JQuery library is included by WDK -->
 
@@ -32,19 +32,24 @@
 -->
 
 <c:if test="${refer == 'summary'}">
-    <link rel="stylesheet" href="${base}/wdkCustomization/css/spanlogic.css" type="text/css" />
-    <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/span-genome-view.css"/>
+    <imp:stylesheet rel="stylesheet" href="wdkCustomization/css/spanlogic.css" type="text/css" />
+    <imp:stylesheet rel="StyleSheet" type="text/css" href="wdkCustomization/css/genome-view.css"/>
 </c:if>
 
 <c:if test="${refer == 'question' || refer == 'summary'}">
-  <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/question.css"/>
-  <link rel="stylesheet" type="text/css" href="${base}/wdkCustomization/css/fold-change.css"/>
-  <link rel="stylesheet" type="text/css" href="${base}/wdkCustomization/css/radio-params.css"/>
+  <imp:stylesheet rel="styleSheet" type="text/css" href="wdkCustomization/css/question.css"/>
+  <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/fold-change.css"/>
+  <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/radio-params.css"/>
+</c:if>
+
+<!-- step analysis -->
+<c:if test="${refer == 'summary'}">
+  <imp:stylesheet rel="styleSheet" type="text/css" href="wdkCustomization/css/analysis/enrichment.css"/>
 </c:if>
 
 <!-- Data source page -->
 <c:if test="${refer == 'data-set'}">
-  <link rel="StyleSheet" type="text/css" href="${base}/wdkCustomization/css/dataSource.css"/>
+  <imp:stylesheet rel="styleSheet" type="text/css" href="wdkCustomization/css/dataSource.css"/>
 </c:if>
 
 <%-- need to review these --%>
@@ -57,9 +62,9 @@
 <![endif]-->
 
 <!--[if lt IE 8]>
-  <link rel="stylesheet" href="/assets/css/ie7.css" type="text/css" />
+  <imp:stylesheet rel="stylesheet" href="css/ie7.css" type="text/css" />
 <![endif]-->
 
 <!--[if lt IE 7]>
-  <link rel="stylesheet" href="/assets/css/ie6.css" type="text/css" />
+  <imp:stylesheet rel="stylesheet" href="css/ie6.css" type="text/css" />
 <![endif]-->

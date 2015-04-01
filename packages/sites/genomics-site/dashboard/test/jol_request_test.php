@@ -113,19 +113,19 @@ function attributes() {
   $req = new JolRequest();
   $req->set_base_url($jol_base_url);
   $read = new JolReadOperation(array(
-              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,group=Databases,type=AppDB',
+              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,type=Database,role=AppDB',
           ));
   $exec = new JolExecOperation(array(
-              'mbean' => 'org.apidb.wdk:group=Databases,type=AppDB,path=//localhost/toxo.mheiges',
+              'mbean' => 'org.apidb.wdk:type=Database,role=AppDB,path=//localhost/toxo.mheiges',
               'operation' => 'refresh',
               'arguments' => null,
           ));
   $read_error = new JolReadOperation(array(
-              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,group=Databases,type=AppDB',
+              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,type=Database,role=AppDB',
               'attribute' => 'BOGUSATTR',
           ));
   $read_again = new JolReadOperation(array(
-              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,group=Databases,type=AppDB',
+              'mbean' => 'org.apidb.wdk:path=//localhost/toxo.mheiges,type=Database,role=AppDB',
               'attribute' => 'system_date',
           ));
   $req->add_operation($read);

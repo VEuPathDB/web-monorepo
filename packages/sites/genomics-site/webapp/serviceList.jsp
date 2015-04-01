@@ -1,10 +1,11 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <!-- serviceList.jsp -->
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+
 
 <!-- get wdkModel name to display as page header -->
 <c:set value="${wdkModel.displayName}" var="wdkModelDispName"/>
@@ -57,7 +58,7 @@
   <%-- copied from siteAnnounce.tag --%>
   <div class="info announcebox" style="color:darkred;font-size:120%">
     <table><tr>
-			<td><img src="/assets/images/clearInfoIcon.png" alt="warningSign" /></td>
+			<td><imp:image src="images/clearInfoIcon.png" alt="warningSign" /></td>
     	<td>
       	<span class="warningMessage" style="line-height: 16px">
           Currently, some searches (demarcated with a &dagger;) do not work properly
@@ -102,6 +103,31 @@ Find all (${organism}) genes that have molecular weight between 10,000 and 50,00
 </span>
 
 <br><br><br>
+<c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
+<c:set var="gqSet" value="${qSetMap['GenomicSequenceQuestions']}"/>
+<c:set var="gqMap" value="${gqSet.questionsMap}"/>
+
+<c:set var="seqByIdQuestion" value="${gqMap['SequenceBySourceId']}"/>
+<c:set var="sidqpMap" value="${seqByIdQuestion.paramsMap}"/>
+<c:set var="seqIdParam" value="${sidqpMap['sequenceId']}"/>
+
+
+<b style="font-size:120%">Note about downloading sequences in a FASTA format:</b><br>
+Please use the following URL's to download FASTA files with DNA sequence for specific genomic segments:
+<ul>
+<li>To download one sequence, please use one of the following formats:
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700">
+  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700</a>
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)">
+  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)</a>
+</li>
+<li>For multiple sequences use the line feed character (%0A) as separator (comma or semicolon or carriage return do not work):
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)">
+http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)</a>
+</li>
+</ul>
+
+<br><br>
 
 <hr>
 
@@ -117,7 +143,7 @@ Click on a search below to access its <a href="http://www.w3.org/Submission/wadl
 </ul>
 </span>
 
-<br><br>
+
 <!-- show all questionSets in model, driven by categories as in menubar -->
 <imp:drop_down_QG2 from="webservices" />
 

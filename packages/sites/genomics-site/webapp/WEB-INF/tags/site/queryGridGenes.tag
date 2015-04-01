@@ -293,7 +293,7 @@
                 </td></tr>
 
                 <tr>
-                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByNgsSnps" linktext="NGS SNPs" existsOn="Am C P T Tt"/>
+                    <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByNgsSnps" linktext="NGS SNPs" existsOn="Am C G Pi P T Tt"/>
                 </tr>
                 <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesBySnps" linktext="Sanger SNPs" existsOn="A C P T"/>

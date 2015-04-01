@@ -1,4 +1,4 @@
-wdk.questionView('GeneQuestions.GenesByBindingSiteFeature', wdk.views.View.extend({
+wdk.questionView('GeneQuestions.GenesByBindingSiteFeature', wdk.views.core.View.extend({
 
   events: {
     'change #tfbs_name': 'swapTfbsImage'

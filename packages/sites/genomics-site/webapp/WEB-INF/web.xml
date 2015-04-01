@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.4"
     xmlns="http://java.sun.com/xml/ns/j2ee"
-    xmlns:web="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
@@ -28,17 +27,23 @@
     <param-value>/WEB-INF/wdk-model/config/</param-value>
   </context-param>
 
+  <!--
   <listener>
-    <listener-class>org.gusdb.wdk.controller.ApplicationInitListener</listener-class>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  -->
+
+  <listener>
+    <listener-class>org.apidb.apicommon.controller.ApplicationInitListener</listener-class>
   </listener>
 
   <listener>
     <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
 
-  <listener>
+  <!-- <listener>
     <listener-class>net.bull.javamelody.SessionListener</listener-class>
-  </listener>
+  </listener> -->
 
   <!-- The Apache file upload library starts a cleanup thread to remove temporary files -->
   <!--    This listener destroys that thread when the webapp is unloaded.               -->
@@ -54,6 +59,19 @@
     <filter-name>MDCServletFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
+  <!-- UrlRewrite filter -->
+  <!-- This is used in conjuction with the asset fingerprinting utilities in EuPathSiteCommon.
+       We also set some cache-related headers here (see /WEB-INF/urlrewrite.xml). -->
+  <filter>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!-- End UrlRewrite filter -->
 
   <filter>
     <filter-name>CheckLoginFilter</filter-name>
@@ -79,7 +97,7 @@
   </filter-mapping>
 
   <!-- JavaMelody monitoring plugin configuration -->
-  <filter>
+  <!-- <filter>
     <filter-name>monitoring-display</filter-name>
     <filter-class>org.eupathdb.common.controller.MelodyDisplayFilter</filter-class>
   </filter>
@@ -106,9 +124,10 @@
   <filter-mapping>
     <filter-name>monitoring</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>
+  </filter-mapping> -->
   <!-- End JavaMelody monitoring plugin configuration -->
-  
+
+  <!-- Struts servlet to serve out most of the site -->
   <servlet>
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -126,39 +145,49 @@
     <servlet-name>wdkEuPathDbBrc</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
+  <!-- End Struts servlet and mapping -->
 
-  <!-- Internal WSF Support -->
+  <!-- WDK Client-side render filter -->
   <servlet>
-    <servlet-name>AxisServlet</servlet-name>
-    <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
+    <servlet-name>WDKClient</servlet-name>
+    <jsp-file>/wdkCustomization/app.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/servlet/AxisServlet</url-pattern>
+    <servlet-name>WDKClient</servlet-name>
+    <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>*.jws</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/services/*</url-pattern>
-  </servlet-mapping>
+  <!-- End of WDK Client-side render filter -->
+  
+  <!-- WSF RESTful service filter -->
   <servlet>
-    <servlet-name>SOAPMonitorService</servlet-name>
-    <servlet-class>org.apache.axis.monitor.SOAPMonitorService</servlet-class>
+    <servlet-name>WSF</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
     <init-param>
-      <param-name>SOAPMonitorPort</param-name>
-      <param-value>5001</param-value>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>org.gusdb.wsf.service.WsfServiceApplication</param-value>
     </init-param>
-    <load-on-startup>100</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>SOAPMonitorService</servlet-name>
-    <url-pattern>/SOAPMonitor</url-pattern>
+    <servlet-name>WSF</servlet-name>
+    <url-pattern>/services/WsfService/*</url-pattern>
   </servlet-mapping>
-  <!-- End Internal WSF support -->
+  <!-- End of WSF Restful service filter -->
 
+  <!-- WDK RESTful service filter -->
+  <servlet>
+    <servlet-name>WDK</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>org.gusdb.wdk.service.WdkServiceApplication</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WDK</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
+  <!-- End of WSF Restful service filter -->
+  
   <!-- The Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
@@ -181,21 +210,5 @@
      <error-code>500</error-code>
      <location>/500.jsp</location>
   </error-page>
-
-  <!-- Declare tag libs for JSP and tags -->
-  <jsp-config>
-    <taglib>
-      <taglib-uri>/WEB-INF/tld-third-party/struts-html.tld</taglib-uri>
-      <taglib-location>/WEB-INF/tld-third-party/struts-html.tld</taglib-location>
-    </taglib>
-    <taglib>
-      <taglib-uri>/WEB-INF/tld-third-party/pager-taglib.tld</taglib-uri>
-      <taglib-location>/WEB-INF/tld-third-party/pager-taglib.tld</taglib-location>
-    </taglib>
-    <taglib>
-      <taglib-uri>http://jakarta.apache.org/taglibs/random-1.0</taglib-uri>
-      <taglib-location>/WEB-INF/tld-third-party/taglibs-random.tld</taglib-location>
-    </taglib>
-  </jsp-config>
 
 </web-app>

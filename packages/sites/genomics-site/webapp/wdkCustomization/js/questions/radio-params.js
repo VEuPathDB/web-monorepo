@@ -25,10 +25,10 @@ var RadioParamsView = Backbone.View.extend({
 
     var radioStr = this.radioStr;
 
-    var termWrapper = this.$('.param-item:has([id^="' +
+    var termWrapper = this.$('.param-item:has([name="' +
       this.termName + '"])');
 
-    var wildcardWrapper = this.$('.param-item:has([id^="' +
+    var wildcardWrapper = this.$('.param-item:has([name="' +
       this.wildcardName + '"])');
 
     var wildcardValue = wildcardWrapper.find('input[name="value(' +
@@ -39,9 +39,6 @@ var RadioParamsView = Backbone.View.extend({
 
     this.nonsenseValue = this.nonsenseValue;
     var nonsenseValueR = new RegExp('^(nil|' + this.nonsenseValue + ')$', 'i');
-
-    this.inlineSubmit = this.el.onsubmit;
-    this.el.onsubmit = null;
 
     // default term to be selected, unless wildcard has value
     if (wildcardValue && !nonsenseValueR.test(wildcardValue.trim())) {
@@ -73,17 +70,10 @@ var RadioParamsView = Backbone.View.extend({
   },
 
   submit: function(e) {
-    // keep form from submitting radio params so validation doesn't break
-    this.$('[name="active-param"]').prop('disabled', true);
-
-    // add nonsense value to inactive params
+    // add "empty" value to inactive params
     this.$('.param-item.inactive').find('input').val(this.nonsenseValue);
     this.$('.param-item.inactive').find('select')
       .append('<option value="' + this.nonsenseValue + '"/>').val(this.nonsenseValue);
-
-    if ('function' === typeof this.inlineSubmit) {
-      this.inlineSubmit.call(this.el);
-    }
   }
 
 });
@@ -101,4 +91,24 @@ wdk.questionView('GeneQuestions.GenesByEcNumber', RadioParamsView.extend({
 wdk.questionView('GeneQuestions.GenesByInterproDomain', RadioParamsView.extend({
   termName: 'domain_typeahead',
   wildcardName: 'domain_accession'
+}));
+
+wdk.questionView('GeneQuestions.GenesByMetabolicPathwayKegg', RadioParamsView.extend({
+  termName: 'metabolic_pathway_id_with_genes',
+  wildcardName: 'pathway_wildcard'
+}));
+
+wdk.questionView('CompoundQuestions.CompoundsByPathway', RadioParamsView.extend({
+  termName: 'metabolic_pathway_id_with_compounds',
+  wildcardName: 'pathway_wildcard'
+}));
+
+wdk.questionView('PathwayQuestions.PathwaysByPathwayID', RadioParamsView.extend({
+  termName: 'metabolic_pathway_id',
+  wildcardName: 'pathway_wildcard'
+}));
+
+wdk.questionView('IsolateQuestions.IsolateByProduct', RadioParamsView.extend({
+  termName: 'product',
+  wildcardName: 'product_wildcard'
 }));

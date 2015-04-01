@@ -89,6 +89,13 @@ h2 {
 p {
     font-size: 12px;
     margin: 12px 8px;
+    text-align: left;
+}
+
+span.pre {
+  white-space: pre;
+  font-family: monospace;
+  display: block;
 }
 
 .clickable {
@@ -113,6 +120,12 @@ p {
   font-size:8px
 }
 
+table.dataTable {
+  width: auto;
+  border-spacing: 3px;
+  border-collapse: separate;
+}
+
 table.p {
     font-size: 12px;
     margin: 12px 8px;
@@ -122,37 +135,48 @@ td.p {
     padding-left: 10px; 
 }
 
-tr.rowMedium {
+table.dataTable.row-border tbody th, 
+table.dataTable.row-border tbody td, 
+table.dataTable.display tbody th, 
+table.dataTable.display tbody td {
+    border-top: none;
+}
+
+tr.rowMedium, table.dataTable.display tr.rowMedium  {
     background-color: #C4CFCB;
     color: black;
-    font-family: arial;
-    font-size: 10pt;
 }
-tr.rowMedium td {
+tr.rowMedium td,
+table.dataTable.display tr.rowMedium td {
     padding-left:   5px;
     padding-top:    1px;
     padding-bottom: 1px;
+    white-space: nowrap;
 }
-tr.rowLight {
-    background-color: #FFFFFF;
+tr.rowLight, table.dataTable.display tr.rowLight {
+    background-color: white;
     color: black;
-    font-family: arial;
-    font-size: 10pt;
 }
-tr.rowLight td {
+
+tr.rowLight td,
+table.dataTable.display tr.rowLight td {
     padding-left:   5px;
     padding-top:    1px;
     padding-bottom: 1px;
+    white-space: nowrap;
 }    
 
+    
 tr.headerRow {
     background: #EFEFEF;
 }
-tr.headerRow  td,th {
+tr.headerRow  td,th, table.dataTable thead th  {
    border-width:2px 0;
    border-style:solid;
    border-color:#336699;
    padding-left: 5px;
+   padding-top: 3px;
+   padding-bottom: 3px;
 }
 
 div.related_dashboard_links {

@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%@ attribute name="from" description="page using this tag" %>
@@ -12,9 +12,7 @@
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
 
 <%-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
-     Two reasons why the model was used:
-      - to avoid fake questions; 
-          now with the new flag "usedBy" we could read from categories.xml, using "usedBy='website'" on fake questions.
+     the reason being:
       - categories.xml does not provide the questionSet name (e.g. EstQuestions) that is needed to form the WS URL.
           one could obtain the questionSet name either by 
             - hardcoding it below (there is already an if that could be used)
@@ -22,7 +20,7 @@
  --%>
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
 
-<ul>
+<ul style="margin:0;padding:0;list-style:none">
   <c:forEach items="${rootCatMap}" var="rootCatEntry">
     <c:set var="recType" value="${rootCatEntry.key}" />
     <c:set var="rootCat" value="${rootCatEntry.value}" />
@@ -161,16 +159,18 @@
         <c:set var="cat" value="${catEntry.value}" />
         <c:if test="${fn:length(cat.websiteQuestions) > 0}">
           <c:choose>
+
+             <%-- WEBSERVICES PAGE  --%>
             <c:when test="${from == 'webservices'}">
               <c:forEach items="${questionSets}" var="qSet">
-<!-- DEBUG 
+<!-- DEBUG
 <br>
 ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 <br>
--->
+ -->
                 <c:if test="${qSet.internal == false}">
                   <c:if test="${qSet.displayName == cat.displayName}">
-                    <br><br>
+                   
                     <li>
                       <a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
                       <ul>
@@ -205,13 +205,15 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
             <c:otherwise>  
               <li>
                 <a href="#" class="dropdown">${cat.displayName}
-                  <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
+                  <!-- BETA on menus at category level, no question level -->
+                  <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
                     <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
                       <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
-                                 src="/wdk/images/beta2-30.png" />
+                                 src="wdk/images/beta2-30.png" />
                     </c:if>
                   </c:if>
                 </a> 
+
                 <ul>
                   <c:forEach items="${cat.websiteQuestions}" var="q">
                     <li>

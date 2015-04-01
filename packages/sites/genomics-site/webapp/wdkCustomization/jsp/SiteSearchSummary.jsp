@@ -30,7 +30,7 @@
 <%-- display page header with recordClass type in banner --%>
 <imp:pageFrame banner="Site Search">
 
-<link rel="Stylesheet" type="text/css" href="<c:url value='/wdkCustomization/css/site-search.css' />"/>
+<imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/site-search.css"/>
 
 
 
@@ -129,6 +129,6 @@
 
 </div><!-- END of site-search -->
 
-<script type="text/javascript" src="<c:url value='/wdkCustomization/js/site-search.js'/>"></script>
+<imp:script src="wdkCustomization/js/site-search.js"/>
 
 </imp:pageFrame>

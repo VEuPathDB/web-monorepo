@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
@@ -38,18 +38,18 @@
   <div id="scale_${groupName}" class="regionGraphic"></div>
   <fieldset id="set_${groupName}Fields">
     <ul class="horizontal singeline">
-      <li style="padding-bottom:4px"><input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="exact" onclick="${regionOnClick}" checked>Exact</input></li>
+      <li style="padding-bottom:4px"><input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="exact" onclick="${regionOnClick}" checked> Exact</input></li>
       <li>
-        <input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="upstream" onclick="${regionOnClick}">Upstream:</input>
+        <input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="upstream" onclick="${regionOnClick}"> Upstream:</input>
         <input type="text" class="regionText" name="upstream_region_${groupName}" value="1000"/>&nbsp;bp
       </li>
       <li>
-        <input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="downstream" onclick="${regionOnClick}">Downstream:</input>
+        <input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="downstream" onclick="${regionOnClick}"> Downstream:</input>
         <input type="text" class="regionText" name="downstream_region_${groupName}" value="1000"/>&nbsp;bp
       </li>
     </ul>
     <ul class="horizontal">
-      <li><input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="custom" onclick="${regionOnClick}">Custom:</input></li>
+      <li><input type="radio" name="value(region_${groupName})" id="region_${groupName}" value="custom" onclick="${regionOnClick}"> Custom:</input></li>
       <li>
     <table class="offsetOptions">
       <tr>

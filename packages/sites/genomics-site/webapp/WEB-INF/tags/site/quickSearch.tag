@@ -1,12 +1,12 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- TRANSPARENT PNGS for IE6 --%>
-<%--  <script defer type="text/javascript" src="/assets/js/pngfix.js"></script>   --%>
+<%--  <imp:script defer src="js/pngfix.js"/>   --%>
 
 <%-- get wdkModel saved in application scope --%>
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -41,10 +41,6 @@
     </c:forEach>
 </c:catch>
 
-<script type="text/javascript">
-  $(function() { wdk.tooltips.assignTooltips('.head-search-tip'); });
-</script>
-
 <div id="quick-search">
 	<table style="float:right;margin-bottom:10px">
            <tr>
@@ -60,22 +56,22 @@
 <!-- GENE ID -->
       <td>
         <div align="right">
-          <html:form method="get" action="/processQuestionSetsFlat">
-            <span class="head-search-tip" title="Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs.">
+          <html:form method="post" action="/processQuestionSetsFlat">
+            <div class="wdk-tooltip" title="Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs.">
               <label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" >Gene ID:</a></b></label>
          		  <input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
 	  			    <input type="text" class="search-box" name="value(${geneIdParam.name})" value="${geneIdParam.default}" />  <!-- size is defined in class -->
 	  			    <input type="hidden" name="questionSubmit" value="Get Answer"/>
-	  			    <input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle"/>
-	  			  </span>
+              <input name="go" value="go" type="image" src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle"/>
+	  			  </div>
          </html:form>
 		   </div>
 		 </td>
 			 
 <!-- TEXT SEARCH -->
              <td><div align="right">
-               <html:form method="get" action="/processQuestionSetsFlat">
-          		<span class="head-search-tip" title="Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.">
+               <html:form method="post" action="/processQuestionSetsFlat">
+          		<div class="wdk-tooltip" title="Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" >Gene Text Search:</a></b></label>
 
           <c:set var="textFields" value="Gene ID,Alias,Gene product,GO terms and definitions,Gene notes,User comments,Protein domain names and descriptions,EC descriptions"/>
@@ -102,8 +98,8 @@
           		<input type="text" class="search-box ts_ie" name="value(${textParam.name})" value="${textParam.default}"/>
                         <input type="hidden" name="value(timestamp)" value="${timestampParam.default}"/>
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
-	  			<input name="go" value="go" type="image" src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
-                     </span>
+              <input name="go" value="go" type="image" src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
+                     </div>
           	   </html:form>
 			 </div></td>
 
@@ -125,7 +121,7 @@
 		  <span class="head-search-tip" title="Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase.">
                      <input type="text" class="search-box ts_ie" name="keyword" value="synth*" />
                      <input name="go" value="go" type="image" 
-                         	src="/assets/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
+                     src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
 		  </span>
                 </form>
               </td>

@@ -50,19 +50,21 @@
 
     $table.wdkDataTable({
       // sort by p-value
-      aaSorting: [[ 7, 'asc' ]],
+      order: [ 7, 'asc' ],
+			// positions total (i) and filter (f) before he table
+			dom: 'lipft',
+  		// instead of defaults: "Showing x to y of z entries", "Search"
+      // overrides values defined in WDK datatables.js
+      oLanguage: {
+					sInfo: 'Got a total of _TOTAL_ results',
+          sSearch: 'Filter : '
+      },
       // order p-value cols numerically
-      aoColumnDefs: [{
-        sType: 'numeric',
-        aTargets: [7, 8, 9]
+      columnDefs: [{
+        type: 'scientific',
+        targets: [7, 8, 9]
       }]
     });
-
-    $(window)
-      .off('resize.enrichment' + analysis.id)
-      .on('resize.enrichment' + analysis.id, _.debounce(function() {
-        $table.dataTable().fnDraw();
-      }, 300));
   }
 
   function removeEvents(analysis) {

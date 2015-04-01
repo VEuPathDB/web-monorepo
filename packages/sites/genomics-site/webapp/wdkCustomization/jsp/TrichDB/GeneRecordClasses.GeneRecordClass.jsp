@@ -89,7 +89,7 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="wdk.api.showLayer('UserComments')">This gene has <span style='color:red'>${count}</span> user comments
 </c:otherwise>
 </c:choose>
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -113,21 +113,6 @@ ${id}<br><span style="font-size:70%">${prd}</span><br/>
 <c:set var="content">
 ${attrs['organism'].value}<br>
 </c:set>
-
-<!--
-<c:if test="${attrs['cyc_gene_id'].value ne 'null'}">
-  <c:set var="content">
-    ${content}<br>
-    ${attrs['cyc_db'].value}
-  </c:set>
-</c:if>
-
-<imp:panel 
-    displayName="Links to Other Web Pages"
-    content="${content}" />
-<br>
--->
-
 
      <c:set var="dna_gtracks" value="${attrs['dna_gtracks'].value}"/>
   
@@ -205,7 +190,7 @@ T.vaginalis_scaffolds,T.vaginalis_Annotation
 </c:url>
 --%>
 <b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a></b><br><br>
 
 

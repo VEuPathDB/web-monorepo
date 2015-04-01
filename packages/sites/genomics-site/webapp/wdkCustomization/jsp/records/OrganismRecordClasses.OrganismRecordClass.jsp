@@ -52,7 +52,7 @@
 </div>
 
 <%------------------------------------------------------------------%>
- <c:if test="${projectId ne 'TrichDB' && attrs['is_published'].value == 0}">
+ <%--<c:if test="${projectId ne 'TrichDB' && attrs['is_published'].value == 0}">
   <c:choose>
     <c:when test="${attrs['release_policy'].value  != null}">
 <b>NOTE: ${attrs['release_policy'].value }</b>
@@ -62,7 +62,7 @@
     </c:otherwise>
   </c:choose>
 </c:if>
-
+--%>
 <%------------------------------------------------------------------%>
 
 <c:set var="attr" value="${attrs['overview']}"/>

@@ -1,7 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . "/modules/UserDatabase.php";
-require_once dirname(__FILE__) . "/modules/AppDatabase.php";
+require_once dirname(__FILE__) . "/modules/Database.php";
 require_once dirname(__FILE__) . "/modules/WdkProperties.php";
 require_once dirname(__FILE__) . "/modules/ModelConfig.php";
 require_once dirname(__FILE__) . "/modules/CommentConfig.php";
@@ -10,6 +9,7 @@ require_once dirname(__FILE__) . "/modules/ProxyInfo.php";
 require_once dirname(__FILE__) . "/modules/WdkMeta.php";
 require_once dirname(__FILE__) . "/modules/Webapp.php";
 require_once dirname(__FILE__) . "/modules/Jvm.php";
+require_once dirname(__FILE__) . "/modules/WdkCache.php";
 require_once dirname(__FILE__) . "/LdapTnsNameResolver.php";
 
 /**
@@ -31,11 +31,11 @@ class PrivateAPI {
   private function init() {
     $this->api_dataset = array();
 
-    $app_database = new AppDatabase();
+    $app_database = new Database('APP');
     $adb_attr = $app_database->attributes();
 
-    $user_databse = new UserDatabase();
-    $udb_attr = $user_databse->attributes();
+    $user_database = new Database('USER');
+    $udb_attr = $user_database->attributes();
 
     $wdk_properties = new WdkProperties();
     $wdk_properties_attr = $wdk_properties->attributes();
@@ -54,6 +54,9 @@ class PrivateAPI {
 
     $jvm = new Jvm();
     $jvm_attr = $jvm->attributes();
+
+    $cache = new WdkCache();
+    $cache_attr = $cache->attributes();
 
     $build = new BuildInfo();
     $proxy = new ProxyInfo();
@@ -88,6 +91,10 @@ class PrivateAPI {
                     'aliases' => $this->array_to_map($ldap_resolver->resolve($udb_attr{'service_name'}), 'alias'),
                 )
             ),
+            'querycache' => array(
+                'enabled' => ($cache_attr{'WdkIsCaching'}) ? 'true' : 'false',
+                'tablecount' => $cache_attr{'cache_table_count'},
+             ),
             'modelconfig' => $this->normalize_keys_in_array($model_config_attr),
             'commentconfig' => $this->normalize_keys_in_array($comment_config_attr),
             'modelprop' => $this->normalize_keys_in_array($wdk_properties_attr),

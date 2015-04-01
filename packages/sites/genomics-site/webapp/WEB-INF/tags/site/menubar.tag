@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
@@ -102,6 +102,9 @@
     <li><a>Tools</a>
       <ul>
         <li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
+        <li><a style="padding-top:0"  href="<c:url value="/analysisTools.jsp"/>"> Results Analysis
+              <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
+        </li>
         <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
         <li><a href="http://pathogenportal.org"> Pathogen Portal</a></li>
 
@@ -117,23 +120,21 @@
           <li><a href="http://gecco.org.chemie.uni-frankfurt.de/plasmit">PlasMit</a>
           </li>
         </c:if>
-        <c:if test="${project == 'CryptoDB'}" >
-          <li><a href="http://apicyc.apidb.org/CPARVUM/server.html">CryptoCyc</a></li>
-        </c:if>
-        <c:if test="${project == 'PlasmoDB'}" >
-          <li><a href="http://apicyc.apidb.org/PLASMO/server.html">PlasmoCyc</a></li>
-        </c:if>
         <c:if test="${project == 'ToxoDB'}" >
           <li><a href="http://ancillary.toxodb.org">Ancillary Genome Browser</a></li>
-          <li><a href="http://apicyc.apidb.org/TOXO/server.html">ToxoCyc</a></li>
         </c:if>
         <li><a href="<c:url value="/serviceList.jsp"/>"> Searches via Web Services</a></li>
       </ul>
     </li>
 
-    <li><a>Data Summary</a>
+    <li><a style="padding-top:0">Data Summary <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
       <ul>
           <li><a href="<c:url value='/getDataset.do?display=detail'/>">Data Sets</a></li>
+          <li title="Please contact us with your feedback.">
+            <a style="padding-top:0" 
+              href="<c:url value='/app/answer/DatasetQuestions.AllDatasets'/>">New Data Sets page!
+                <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
+          </li>
         <c:if test="${project == 'EuPathDB'}">
           <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods'/>">Analysis Methods</a></li>  
         </c:if>
@@ -144,14 +145,14 @@
           <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
         </c:if>
 
-        <c:if test="${project != 'TrichDB'}">
           <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">Genomes and Data Types</a></li> 
           <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics"/>">Gene Metrics</a></li>
-        </c:if>
-        <c:if test="${project == 'TrichDB'}">
+      
+<%--        <c:if test="${project == 'TrichDB'}">
           <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Genomes and Data Types</a></li> 
           <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">Gene Metrics</a></li>
         </c:if>
+--%>
       </ul>
     </li>
 
@@ -230,14 +231,14 @@
       <c:choose>
         <c:when test="${wdkUser == null || wdkUser.guest}">
           <li id="favorite-menu"><a id="mybasket" onclick="wdk.user.login('/showFavorite.do');" href="javascript:void(0)">
-            <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="/wdk/images/favorite_color.gif"/>&nbsp;
+            <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="wdk/images/favorite_color.gif"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>
           </li>
         </c:when>
         <c:otherwise>
           <li id="favorite-menu"><a href="<c:url value="/showFavorite.do"/>">
-            <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="/wdk/images/favorite_color.gif"/>&nbsp;
+            <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="wdk/images/favorite_color.gif"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>
           </li>

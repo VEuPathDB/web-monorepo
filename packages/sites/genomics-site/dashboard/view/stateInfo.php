@@ -37,5 +37,31 @@ This is equivalent to the command,<br>
 Some cached data may be resident in memory, so reloading the webapp may also be required.
 See the <a href='?p=Tomcat'>Tomcat tab</a> for webapp reloading.
 
+<hr>
+
+<b>Global caching is enabled: </b><span id="wdk_is_caching"><?php 
+  ( ! $cattr{'WdkIsCaching'}) &&  print "<span class='fatal'>";
+  print var_export($cattr{'WdkIsCaching'});
+  ( ! $cattr{'WdkIsCaching'}) && print "</span>";
+?></span>
+
+<?php 
+/** 
+ * only give access to the Toggle button on websites in QA stage or lower. If you
+ * really must toggle a public site, use jconsole. 
+*/
+if (getenv('WEBSITE_RELEASE_STAGE')  <= getenv('WEBSITE_RELEASE_STAGE_QA') ) {
+?>
+  <button type="submit" id="toggleWdkIsCaching" value="toggleWdkIsCaching" onclick="toggleWdkIsCaching()">Toggle</button>
+<?php } ?>
+
+<p>
+When global caching is enabled, each individual sqlQuery defined in the model will control their
+own cache behavior. When global caching is disabled, then sqlQuery caching will not be used,
+regardless of the individual setting on the query. This flag has no effect on
+processQueries, which are always cached. This option to disable caching is 
+intended to aid benchmarking of database and other system tunings. Disabling global caching can cause severe  
+degradation of website performance and will break some searches.  Caching should never be disabled on public, 
+production websites.
 
 <p>

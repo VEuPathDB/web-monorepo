@@ -40,6 +40,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/> 
 
+    <c:if test="${refer eq 'betaApp'}">
+      <base href="${pageContext.servletContext.contextPath}/"/>
+    </c:if>
+
     <link rel="alternate" type="application/rss+xml" 
           title="${rssorigin} News" href="${newsRss}" />
     <link rel="alternate" type="application/rss+xml" 
@@ -54,7 +58,7 @@
     </title>
 
     <!-- no needed with next line: <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"/> --> <!-- standard -->
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/${project}/favicon.ico"/> <!-- for IE7 -->
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.servletContext.contextPath}/images/${project}/favicon.ico"/> <!-- for IE7 -->
 
     <!-- StyleSheets provided by Site -->
     <imp:stylesheets refer="${refer}" /> 

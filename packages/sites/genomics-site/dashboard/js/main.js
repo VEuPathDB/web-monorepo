@@ -85,6 +85,16 @@ function resetWdkCache() {
     });   
 }
 
+function toggleWdkIsCaching() {
+  $("#wdk_is_caching").load("view/wdkIsCaching.php", { 'toggle': '1' }, 
+  function(response, status, xhr) {
+    if (status == "error") {
+      var msg = "Sorry but there was an error: ";
+      $("#wdk_is_caching").html(msg + xhr.status + " " + xhr.statusText);
+  }
+  });
+}
+
 function reloadWebapp() {
   content = "Are you sure?<br>"
           + "</span>";

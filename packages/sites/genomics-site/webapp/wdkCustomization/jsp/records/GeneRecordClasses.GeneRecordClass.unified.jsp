@@ -115,29 +115,29 @@ organismFull:   Plasmodium falciparum 3D7
 <table width="100%">
 <tr>
   <td align="center" style="padding:6px"><a href="#Annotation">Annotation</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
 
   <c:if test="${isCodingGene}">
   <td align="center"><a href="#Protein">Protein</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
   </c:if>
 
 <c:if test="${hasPhenotype}">
   <td align="center"><a href="#Phenotype">Phenotype</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
   </c:if>
 
   <c:if test="${attrs['hasExpression'].value eq '1'}">
   <td align="center"><a href="#Expression">Expression</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
   </c:if>
 
   <td align="center"><a href="#Sequence">Sequence</a>
-     <img src="<c:url value='/images/arrow.gif'/>">
+    <imp:image src="images/arrow.gif"/>
   </td>
 </tr>
 </table>
@@ -203,7 +203,7 @@ organismFull:   Plasmodium falciparum 3D7
 	<a style="font-size:70%;font-weight:normal;cursor:hand" href="#Annotation" onclick="wdk.api.showLayer('UserComments')">This gene has <span style='color:red'>${count}</span> user comments
 </c:otherwise>
 </c:choose>
-<img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+<imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a>
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -219,32 +219,45 @@ organismFull:   Plasmodium falciparum 3D7
 <c:if test="${is_genedb_organism == 1}">
   <div style="margin:12px;padding:5px">
 
-    <c:if test="${attrs['updated_annotation'].value != null}">
-      ${attrs['GeneDB_updated'].value}
-    </c:if>
+    <c:choose>
+      <c:when test="${attrs['updated_annotation'].value != null && 
+                     (attrs['reviewed_comment_in_genedb'].value > 0 || attrs['reviewed_comment_in_eupathdb'].value > 0)}">
+        ${attrs['GeneDB_updated'].value} <br/>
+        <span style="font-size:75%;font-weight:normal">User comment has been incorporated into official annotation.</font>
+      </c:when>
+      <c:when test="${attrs['updated_annotation'].value != null}">
+        ${attrs['GeneDB_updated'].value}
+      </c:when> 
+    </c:choose>
 
-    <c:if test="${attrs['new_product_name'].value != null}">
-      <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
-    </c:if>
+    <c:choose>
+      <c:when test="${attrs['new_product_name'].value != null && 
+                     (attrs['reviewed_comment_in_genedb'].value > 0 || attrs['reviewed_comment_in_eupathdb'].value > 0)}">
+        <span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span><br/>
+        <span style="font-size:75%;font-weight:normal">User comment has been incorporated into official annotation.</font>
+      </c:when>
+      <c:when test="${attrs['new_product_name'].value != null}">
+        <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+      </c:when>
+    </c:choose>
 
   </div>
 
 </c:if>
 </div>
 
-<!--------------  NOTE on Unpublished data as it was in Plasmo page ----------------------->
+<!--------------  NOTE on data with ReleasePolicy, or default text for Unpublished data ---------------->
 
-<c:if test="${projectId ne 'TrichDB' && attrs['is_annotated'].value == 0}">
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
     <b>NOTE: ${attrs['release_policy'].value }</b>
   </c:when>
   <c:otherwise>
+    <c:if test="${attrs['is_annotated'].value == 0}">
     <b>NOTE: The data for this genome is unpublished. You should consult with the Principal Investigators before undertaking large scale analyses of the annotation or underlying sequence.</b>
+    </c:if>
   </c:otherwise>
   </c:choose>
-</c:if>
-
 
 
 <%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
@@ -285,10 +298,10 @@ organismFull:   Plasmodium falciparum 3D7
     </c:set>
 
     <center>
-		    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+		    <a id="gbView" href="${gbrowseUrl}">View in Genome Browser</a>
 				<div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
 				<div id="${gnCtxDivId}"></div>
-		    <a id="gbView" href="${gbrowseUrl}"><font size='-2'>View in Genome Browser</font></a>
+		    <a id="gbView" href="${gbrowseUrl}">View in Genome Browser</a>
 				<div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
 		</center>
 
@@ -341,7 +354,7 @@ organismFull:   Plasmodium falciparum 3D7
   showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_HaploGrpSimilarity&value%28lod_score%29=1.5&value%28percentage_sim_haploblck%29=25&value%28pf_gene_id%29=${id}&weight=10
 </c:set>
 <c:set var="extraInfo">
-  <a id="assocQueryLink" href="${queryURL}"><font size='-2'>Other genes that have similar associations based on eQTL experiments</font></a><br><font size="-1">(<i>use right click or ctrl-click to open in a new window</i>)</font>
+  <a id="assocQueryLink" href="${queryURL}">Other genes that have similar associations based on eQTL experiments</a><br>(<i>use right click or ctrl-click to open in a new window</i>)
 </c:set>
 <imp:wdkTable2 tblName="Plasmo_eQTL_Table" isOpen="true" attribution="" postscript="${extraInfo}" />
 
@@ -361,12 +374,12 @@ organismFull:   Plasmodium falciparum 3D7
    <c:set var="revCompOn" value="1"/>
 </c:if>
 
-
-<imp:mercatorTable tblName="MercatorTable" isOpen="false" 
-     cgiUrl="/cgi-bin" projectId="${projectId}" 
-     revCompOn="${revCompOn}" contigId="${sequence_id}" 
-     start="${start}" end="${end}" /> 
-
+<c:if test="${projectId ne 'TrichDB'  && projectId ne 'FungiDB' && projectId ne 'SchistoDB'}">
+      <imp:mercatorTable tblName="MercatorTable" isOpen="false" 
+           cgiUrl="/cgi-bin" projectId="${projectId}" 
+           revCompOn="${revCompOn}" contigId="${sequence_id}" 
+           start="${start}" end="${end}" /> 
+</c:if>
 
 <%-------COMMENT OUT FOR DEBUGGING: MetaTable --%> 
 <%--
@@ -381,30 +394,11 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- User comments -->
 <a name="user-comment"/>
 <b><a title="Click to go to the comments page" style="font-size:120%" href="${commentsUrl}">Add a comment on ${id}
-  <img style="position:relative;top:2px" width="28" src="/assets/images/commentIcon12.png">
+  <imp:image style="position:relative;top:2px" width="28" src="images/commentIcon12.png"/>
 </a></b>
 <br><br>
 
 <imp:wdkTable2 tblName="UserComments" isOpen="true" attribution="" />
-
-
-<!-- EC number -->
-<a name="ecNumber"></a>
-<c:if test="${isCodingGene}">
-  <imp:wdkTable2 tblName="EcNumber" isOpen="false" attribution=""/>
-</c:if>
-
-
-<!-- metabolic pathways -->
-<imp:wdkTable2 tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
-
-
-<!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not loaded in rebuild --> 
-<%-- imp:wdkTable tblName="GeneDeprecation" isOpen="true"/ --%>
-
-
-<!-- External Links --> 
-<imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
 <!-- Orthologs and Paralogs -->
 <c:if test="${isCodingGene}">
@@ -417,7 +411,11 @@ organismFull:   Plasmodium falciparum 3D7
     </c:when>
     <c:otherwise>
     <div>
-    <br> <a target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
+    <br> <a title="This gene maps to an existing 'group' in OrthoMCL.org. Click on this link to get information about the 'group', for example descriptions of the other gene members. 
+
+It is possible that this gene will not show as a member in this 'group' at the OrthoMCL.org website; OrthoMCL.org contains data (version 5) from a few years ago, which might not have included this gene.
+
+We are currently in the process of creating an updated version 6 of OrthoMCL.org." target="_blank" href="<imp:orthomcl orthomcl_name='${orthomcl_name}'/>">View the group (${orthomcl_name}) containing this gene (${id}) in the OrthoMCL database</a>
     </div>
     </c:otherwise>
   </c:choose>
@@ -428,18 +426,38 @@ organismFull:   Plasmodium falciparum 3D7
 </c:if>
 
 
+<!-- gene alias table -->
+<imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
+
+
+<!-- External Links --> 
+<imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
+
+
+<!-- Hagai -->
+<c:if test="${isCodingGene}">
+  <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
+</c:if>
+
+<!-- metabolic pathways -->
+<imp:wdkTable2 tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
+
+<!-- EC number -->
+<a name="ecNumber"></a>
+<c:if test="${isCodingGene}">
+  <imp:wdkTable2 tblName="EcNumber" isOpen="false" attribution=""/>
+</c:if>
+
 <!-- GO TERMS -->
 <c:if test="${isCodingGene}">
   <a name="goTerm"></a>
-  <imp:wdkTable2 tblName="GoTerms" attribution=""/>
+  <c:set var="goEvidenceLink">
+    <div>
+    <br> <a target="_blank" href="http://geneontology.org/page/guide-go-evidence-codes">View documentation on GO Evidence Codes</a>
+    </div>
+  </c:set>
+  <imp:wdkTable2 tblName="GoTerms" attribution="" postscript="${goEvidenceLink}"/>
 </c:if>
-
-<%-- from giardia new in build21--%>
-<imp:wdkTable2 tblName="CellularLocalization" isOpen="true" attribution=""/>
-
-
-<!-- gene alias table -->
-<imp:wdkTable2 tblName="Alias" isOpen="FALSE" attribution=""/>
 
 <!-- Notes from annotator == in toxo only shown if externalDbName.value eq 'Roos Lab T. gondii apicoplast-->
 <imp:wdkTable2 tblName="Notes" attribution="" />
@@ -448,30 +466,35 @@ organismFull:   Plasmodium falciparum 3D7
 <!-- phenotype -->
 <imp:wdkTable2 tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
 
-
-<!-- Hagai -->
-<c:if test="${isCodingGene}">
-  <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
-</c:if>
-
-
-<!-- TODO  plasmocyc -->
-<c:if test="${projectId eq 'PlasmoDB'}">
-  <c:set var="plasmocyc" value="${attrs['PlasmoCyc']}"/>  
-  <c:set var="plasmocycurl" value="${plasmocyc.url}"/>  
-  <imp:panel 
-    displayName="PlasmoCyc <a href='${plasmocycurl}'>View</a>"
-    content="" />
-</c:if>
-
-
 <%-- mr4reagents  --%>
 <imp:wdkTable2 tblName="Mr4Reagents" attribution=""/>
 
 
+<%-- PlasmoGem --%>
+<c:if test="${project_id eq 'PlasmoDB'}">
+  <c:if test="${attrs['has_plasmogem_info'] eq '1'}">
+    <imp:panel 
+      displayName="PlasmoGem"
+      content="${attrs['plasmogem_link']}" />
+  </c:if>
+</c:if>
+
+<%-- from giardia new in build21--%>
+<c:if test="${projectId eq 'GiardiaDB' && attrs['has_image'].value eq '1'}">
+  <imp:wdkTable tblName="CellularLocalization" isOpen="true" attribution=""/>
+</c:if> 
+
+
+<!-- Giardia: Gene Deprecation:  TODO.  Temporarily remove because not l?project_id=oaded in rebuild --> 
+<%-- imp:wdkTable tblName="GeneDeprecation" isOpen="true"/ --%>
+
 <%-- was already commented out
 <imp:wdkTable2 tblName="AnnotationChanges"/>
 --%>
+
+
+
+
 
 
 <%--##########################   PROTEIN      ################################--%>
@@ -489,6 +512,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 <c:if test="${protein_gtracks ne ''}">
   <c:set var="proteinFeaturesImg">
+  <%--
     <noindex follow><center>
     <c:catch var="e">
       <c:import url="${proteinFeaturesUrl}"/>
@@ -499,6 +523,10 @@ organismFull:   Plasmodium falciparum 3D7
             e="${e}" />
     </c:if> 
     </center></noindex>
+    --%>
+    <center>
+      <wdk-ajax manual url="${proteinFeaturesUrl}"></wdk-ajax>
+    </center>
   </c:set>
 
   <imp:toggle name="proteinContext"  displayName="Protein Features" 
@@ -650,7 +678,7 @@ organismFull:   Plasmodium falciparum 3D7
   <c:set var="proteinSequence" value="${attrs['protein_sequence']}"/>
   <c:set var="proteinSequenceContent">
     <pre><w:wrap size="60">${attrs['protein_sequence'].value}</w:wrap></pre>
-    <font size="-1">Sequence Length: ${fn:length(proteinSequence.value)} aa</font><br/>
+    Sequence Length: ${fn:length(proteinSequence.value)} aa<br/>
   </c:set>
   <imp:toggle name="proteinSequence" displayName="${proteinSequence.displayName}"
              content="${proteinSequenceContent}" isOpen="false"/>
@@ -660,7 +688,7 @@ organismFull:   Plasmodium falciparum 3D7
 <c:set var="transcriptSequence" value="${attrs['transcript_sequence']}"/>
 <c:set var="transcriptSequenceContent">
   <pre><w:wrap size="60">${transcriptSequence.value}</w:wrap></pre>
-  <font size="-1">Sequence Length: ${fn:length(transcriptSequence.value)} bp</font><br/>
+  Sequence Length: ${fn:length(transcriptSequence.value)} bp<br/>
 </c:set>
 <imp:toggle name="transcriptSequence"
              displayName="${transcriptSequence.displayName}"
@@ -678,7 +706,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 <c:set var="seq">
  <pre><w:wrap size="60" break="<br>">${totSeq}</w:wrap></pre>
-  <font size="-1">Sequence Length: ${fn:length(totSeq)} bp</font><br/>
+  Sequence Length: ${fn:length(totSeq)} b<pbr/>
 </c:set>
 
 <c:set var="downloadLink">
@@ -686,7 +714,7 @@ organismFull:   Plasmodium falciparum 3D7
 </c:set>
 <imp:toggle name="genomicSequence" isOpen="false"
     displayName="Genomic Sequence (introns shown in lower case)"
-    content="${seq}" downloadLink="${downloadLink}"/>
+    content="${seq}" displayLink="${downloadLink}"/>
 
 
 
@@ -695,7 +723,7 @@ organismFull:   Plasmodium falciparum 3D7
   <c:set var="cds" value="${attrs['cds']}"/>
   <c:set var="cdsContent">
     <pre><w:wrap size="60">${cds.value}</w:wrap></pre>
-    <font size="-1">Sequence Length: ${fn:length(cds.value)} bp</font><br/>
+    Sequence Length: ${fn:length(cds.value)} bp<br/>
   </c:set>
   <imp:toggle name="cds" displayName="${cds.displayName}"
              content="${cdsContent}" isOpen="false"/>
@@ -722,6 +750,7 @@ organismFull:   Plasmodium falciparum 3D7
 
 <script type='text/javascript' src='/gbrowse/apiGBrowsePopups.js'></script>
 <script type='text/javascript' src='/gbrowse/wz_tooltip.js'></script>
+<imp:script src="wdkCustomization/js/records/allRecords.js"/>
 
 </imp:pageFrame>
 </c:otherwise>

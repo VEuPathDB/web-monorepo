@@ -44,8 +44,18 @@ class Webapp extends JolModule {
                 $this->engine_host . $this->context_path .
                 ',J2EEApplication=none,J2EEServer=none',
                 'attribute' => array('startTime', 'path'),
-            ));   $req->add_operation($loader);
+            ));   
+
+    // list of all the other webapp paths deployed in the instance
+    $all_deployed_webmodules = new JolReadOperation(array(
+               'mbean' => "$this->domain:" .
+               'j2eeType=WebModule,*' ,
+               'attribute' => array('path'),
+           ));   
+
+    $req->add_operation($loader);
     $req->add_operation($app);
+    $req->add_operation($all_deployed_webmodules);
 
     $response = $req->invoke();
 
@@ -54,9 +64,19 @@ class Webapp extends JolModule {
     }
 
     $this->attributes = array_merge_recursive($response[0]->value(), $response[1]->value());
+
+    $this->attributes{'other_deployed_webapps'} = array();
+    $all_webmodules = array_merge_recursive($response[2]->value());
+    foreach ($all_webmodules as $module) {
+        if ($this->attributes{'path'} == $module{'path'}) { continue; }
+        $webapp = preg_replace('/^\//', '', $module{'path'});
+        array_push($this->attributes{'other_deployed_webapps'}, ($webapp ?: 'ROOT'));    
+    }
+
     $this->set_uptime_as_text($this->attributes{'startTime'});
     return $this->attributes;
   }
+
 
   /**
    * Reloads the webapp and refreshes the attributes collection.

@@ -25,14 +25,42 @@
               <tr>
                 <td>
                   <label>
+                    <span style="font-weight:bold">Organism</span>
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
+                        title="${fn:escapeXml(viewModel.organismParamHelp)}"/>
+                  </label>
+                </td>
+                <td>
+                  <select name="organism">
+                    <c:forEach var="item" items="${viewModel.organismOptions}">
+                      <option value="${item.term}">${item.display}</option>
+                    </c:forEach>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label>
                     <span style="font-weight:bold">Ontology</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.ontologyParamHelp)}"/>
                   </label>
                 </td>
                 <td>
                   <c:forEach var="item" items="${viewModel.ontologyOptions}">
-                    <label><input type="radio" name="goAssociationsOntologies" value="${item}"/> ${item}</label><br/>
+                    <c:choose>
+                      <c:when test="${item.display eq 'Biological Process'}">
+                        <label>
+                          <input checked="checked" type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}
+                        </label>
+                      </c:when>
+                      <c:otherwise>
+                        <label>
+                          <input type="radio" name="goAssociationsOntologies" value="${item.term}"/> ${item.display}
+                        </label>
+                      </c:otherwise>
+                    </c:choose>
+                    <br/>
                   </c:forEach>
                 </td>
               </tr>
@@ -40,14 +68,14 @@
                 <td>
                   <label>
                     <span style="font-weight:bold">GO Association Sources</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.sourcesParamHelp)}"/>
                   </label>
                 </td>
                 <td>
                   <div><a href="#select-all">Select all</a> | <a href="#clear-all">Clear all</a></div>
                   <c:forEach var="item" items="${viewModel.sourceOptions}">
-                    <label><input checked="checked" type="checkbox" name="goAssociationsSources" value="${item}"/> ${item}</label><br/>
+                    <label><input checked="checked" type="checkbox" name="goAssociationsSources" value="${item.term}"/> ${item.display}</label><br/>
                   </c:forEach>
                 </td>
               </tr>
@@ -57,7 +85,7 @@
                     <span style="font-weight:bold">
                       P-Value Cutoff <span style="color:blue;font-size:0.95em;font-family:monospace">(0 - 1.0)</span>
                     </span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="/wdk/images/question.png"
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.pvalueParamHelp)}"/>
                   </label>
                 </td>

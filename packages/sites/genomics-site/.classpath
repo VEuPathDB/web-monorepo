@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry combineaccessrules="false" kind="src" path="/EuPath Common Model"/>
-	<classpathentry kind="lib" path="/EuPath Common Model/lib/java/javamelody-1.44.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

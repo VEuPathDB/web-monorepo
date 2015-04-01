@@ -10,6 +10,8 @@ use ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolContigs;
 my $app =
   ApiCommonWebsite::View::CgiApp::SequenceRetrievalToolContigs->new();
 
+$app->{type} = 'contig';
+
 $app->go();
 
 

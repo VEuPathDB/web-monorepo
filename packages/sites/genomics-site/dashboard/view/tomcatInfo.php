@@ -6,15 +6,15 @@
 
 require_once dirname(__FILE__) . "/../lib/modules/Jvm.php";
 require_once dirname(__FILE__) . "/../lib/modules/Webapp.php";
-require_once dirname(__FILE__) . "/../lib/modules/Catalina.php";
+require_once dirname(__FILE__) . "/../lib/modules/ServletInfo.php";
 
 $jvm = new Jvm();
 $webapp = new Webapp();
-$catalina = new Catalina();
+$servletinfo = new ServletInfo();
 
 $jvm_data = $jvm->attributes();
 $webapp_data = $webapp->attributes();
-$catalina_data = $catalina->attributes();
+$servlet_data = $servletinfo->attributes();
 
 // TODO - if possible show undeployed or stopped instead of error for webapp uptime
 ?>
@@ -41,9 +41,20 @@ $catalina_data = $catalina->attributes();
 </td></tr>
 
 <tr><td>&nbsp;</td></tr>
-<tr><td><b>Servlet container:</b> </td><td class="p"><?php print $catalina_data{'ServerInfo'}; ?></td></tr>
-<tr><td><b>Servlet API version:</b> </td><td class="p"><?php print $catalina_data{'ServletApiVersion'}; ?></td></tr>
-<tr><td><b>JSP spec version:</b> </td><td class="p"><?php print $catalina_data{'JspSpecVersion'}; ?></td></tr>
+<tr valign='top'><td><b>Other webapps deployed in this instance:</b> </td>
+<td class="p">
+  <?php 
+  sort($webapp_data{'other_deployed_webapps'});
+  foreach($webapp_data{'other_deployed_webapps'} as $other_app) {
+    print $other_app . "<br>";
+  };
+  ?>
+</td></tr>
+
+<tr><td>&nbsp;</td></tr>
+<tr><td><b>Servlet container:</b> </td><td class="p"><?php print $servlet_data{'ServerInfo'}; ?></td></tr>
+<tr><td><b>Servlet API version:</b> </td><td class="p"><?php print $servlet_data{'ServletApiVersion'}; ?></td></tr>
+<tr><td><b>JSP spec version:</b> </td><td class="p"><?php print $servlet_data{'JspSpecVersion'}; ?></td></tr>
 </table>
 <p>
 

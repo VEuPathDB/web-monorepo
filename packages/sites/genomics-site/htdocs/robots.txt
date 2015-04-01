@@ -1,5 +1,2 @@
-User-agent: FreeFind
-Disallow:
-
 User-agent: *
 Disallow: /

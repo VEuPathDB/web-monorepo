@@ -1,4 +1,4 @@
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -35,7 +35,7 @@
 						
 </style>
 
-<html:form styleId="form_question" method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="wdk.addStepPopup.callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
+<html:form method="post" enctype='multipart/form-data' action="/wizard.do"  onsubmit="wdk.addStepPopup.callWizard('wizard.do?action=${requestScope.action}&step=${wdkStep.stepId}&',this,null,null,'submit')">
 <c:if test="${action == 'revise'}">
   <c:set var="spanStep" value="${wdkStep}"/>
   <c:set var="wdkStep" value="${wdkStep.previousStep}"/>
@@ -45,10 +45,10 @@
 <div class="h2center" style="text-align:center;">Genomic Colocation
 <span>
 <a href="<c:url value="/help_spanlogic.jsp"/>" target="_blank" onClick="poptastic(this.href); return false;">
-  <imp:image title="Help text in a popup window" src="/wdk/images/spanhelp.png" width="19"  alt="help with combining IDs via relative genomic location" />
+  <imp:image title="Help text in a popup window" src="wdk/images/spanhelp.png" width="19"  alt="help with combining IDs via relative genomic location" />
 </a>
 <a href="http://eupathdb.org/tutorials/colocate/colocate_viewlet_swf.html" target="_blank" onClick="poptastic(this.href); return false;">
-	<img style="position:relative;right:8px" title="7-minute flash tutorial on a popup window" src="/assets/images/camera.png" width="22" alt="help with combining IDs via relative genomic location" />
+	<imp:image style="position:relative;right:8px" title="7-minute flash tutorial on a popup window" src="images/camera.png" width="22" alt="help with combining IDs via relative genomic location" />
 </a>
 </span>
 </div>

@@ -65,7 +65,7 @@
         <td valign="top" bgcolor="#efefef">
            <xsl:for-each select="presence/projects/project">         
                <img>
-               <xsl:attribute name="src">/assets/images/<xsl:value-of select="normalize-space(.)"/>/favicon.jpg</xsl:attribute>
+               <xsl:attribute name="src">/a/images/<xsl:value-of select="normalize-space(.)"/>/favicon.jpg</xsl:attribute>
                </img>
                <xsl:value-of select="normalize-space(.)"/>
                <xsl:if test="position() &lt; $projCount"><br/></xsl:if>

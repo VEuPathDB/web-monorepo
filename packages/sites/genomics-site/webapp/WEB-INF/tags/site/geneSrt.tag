@@ -24,10 +24,10 @@
     <tr>
       <td colspan="2">
         <b>Choose the type of sequence:</b>
-        <input type="radio" name="type" value="genomic" checked onclick="setEnable(true)">genomic
-        <input type="radio" name="type" value="protein" onclick="setEnable(false)">protein
-        <input type="radio" name="type" value="CDS" onclick="setEnable(false)">CDS
-        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false)">transcript
+        <input type="radio" name="type" value="genomic" checked onclick="setEnable(true);setEnable3(false);">genomic
+        <input type="radio" name="type" value="protein" onclick="setEnable(false);setEnable3(true);">protein
+        <input type="radio" name="type" value="CDS" onclick="setEnable(false);setEnable3(false);">CDS
+        <input type="radio" name="type" value="processed_transcript" onclick="setEnable(false);setEnable3(false);">transcript
       </td>
     </tr>
     <tr>
@@ -79,6 +79,40 @@
             </td>
           </tr>
         </table>
+
+        <table id="offsetOptions3" cellpadding="2">
+          <tr>
+            <td colspan="3">
+              <b>Choose the region of the protein sequence(s):</b>
+            </td>
+          </tr>
+          <tr>
+            <td>begin at</td>
+            <td align="left">
+              <select name="startAnchor3">
+                <option value="Start" selected>downstream from Start</option>
+                <option value="End">upstream from End</option>
+              </select>
+            </td>
+            <td align="left">
+              <input id="startOffset3" name="startOffset3" value="0" size="6"/> aminoacids
+            </td>
+          </tr>
+          <tr>
+            <td>end at</td>
+            <td align="left">
+              <select name="endAnchor3">
+                <option value="Start">downstream from Start</option>
+                <option value="End"  selected>upstream from End</option>
+              </select>
+            </td>
+            <td align="left">
+              <input id="endOffset3" name="endOffset3" value="0" size="6"> aminoacids
+            </td>
+          </tr>
+        </table>
+
+
       </td>
     </tr>
     <tr>
@@ -91,7 +125,10 @@
     <tr><td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
   </table>
 
-<p><sup>***</sup> Note: If UTRs have not been annotated for a gene, then choosing "transcription start" may have the same effect as choosing "translation start".</p>
+<p><b> Note: </b><br>
+For "genomic" sequence: If UTRs have not been annotated for a gene, then choosing "transcription start" may have the same effect as choosing "translation start".<BR>
+For "protein" sequence: you can only retrieve sequence contained within the ID(s) listed. i.e. from downstream of amino acid sequence start (ie. Methionine = 0) to upstream of the amino acid end (last amino acid in the protein = 0).
+</p>
 <br><br>
 
 </form>

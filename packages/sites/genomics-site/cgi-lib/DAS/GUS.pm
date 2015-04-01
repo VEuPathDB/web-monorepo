@@ -51,6 +51,7 @@ use Bio::Root::Root;
 use Bio::DasI;
 use Bio::PrimarySeq;
 use DBI;
+use Bio::Graphics::Browser2::ConnectionCache;
 use Carp qw(longmess);
 use vars qw($VERSION @ISA);
 
@@ -90,8 +91,9 @@ sub new {
   $self->{db_args}->{username} = $username;
   $self->{db_args}->{password} = $password;
 
-  my $dbh = DBI->connect( $dsn, $username, $password )
-      or $self->throw("unable to open db handle");
+  my $dbh = Bio::Graphics::Browser2::ConnectionCache->get_instance->connect($dsn, $username, $password, "GUS");
+  #         #17815: Use ConnectionCache to share connection with Configuration.pm
+  #         DBI->connect( $dsn, $username, $password ) or $self->throw("unable to open db handle");
 
   # solve oracle clob problem
   $dbh->{LongTruncOk} = 0;

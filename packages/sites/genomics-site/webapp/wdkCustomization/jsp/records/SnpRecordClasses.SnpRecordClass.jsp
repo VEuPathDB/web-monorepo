@@ -18,13 +18,13 @@
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
 <c:set var="junk" value="${attrs['organism']}"/>
-  <c:set var="snp_position" value="${attrs['start_min'].value}"/>
-  <c:set var="start" value="${snp_position-25}"/>
-  <c:set var="end"   value="${snp_position+25}"/>
-   <c:if test="${attrs['gene_strand'].value == 'reverse'}">
-    <c:set var="revCompOn" value="1"/>
-   </c:if>
-  <c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
+<c:set var="snp_position" value="${attrs['location'].value}"/>
+<c:set var="start" value="${snp_position-25}"/>
+<c:set var="end"   value="${snp_position+25}"/>
+<c:set var="sequence_id" value="${attrs['seq_source_id'].value}"/>
+<c:if test="${attrs['gene_strand'].value == 'reverse'}">
+  <c:set var="revCompOn" value="1"/>
+</c:if>
 </c:catch>
 
 <imp:pageFrame title="${wdkModel.displayName} : SNP ${id}"
@@ -69,14 +69,17 @@
     content="${attr.value}" 
     attribute="${attr.name}"/>
 
-<!-- strains table: one for HTS SNPs and one for sequencing SNPs -->
+<!-- Allele count table -->
+<imp:wdkTable tblName="AlleleCount" isOpen="true"/>
 
-<c:choose>
-  <c:when  test="${attrs['type'].value == 'HTS'}">
+<!-- Product count table -->
+<imp:wdkTable tblName="ProductCount" isOpen="true"/>
 
-<c:set var="start" value="${attrs['start_min_text']}"/>
-<c:set var="startm" value="${fn:replace(start,',','') - 39}" /> </h4>
-<c:set var="end" value="${fn:replace(start,',','') + 40}" /> </h4>
+<!-- strains table: for HTS SNPs only -->
+
+<c:set var="start" value="${attrs['location_text']}"/>
+<c:set var="alignment_start" value="${fn:replace(start,',','') - 39}" /> </h4>
+<c:set var="alignment_end" value="${fn:replace(start,',','') + 40}" /> </h4>
 
 <form name="checkHandleForm" method="post" action="/dosomething.jsp" onsubmit="return false;">
 
@@ -89,23 +92,8 @@
   <tr>
     <td align=center>
 
-  <c:choose>
-    <c:when test = "${projectId == 'ToxoDB'}">
-      <c:set var="snp" value="${fn:split(primaryKey, '.')}" />
-      <c:set var="part1" value="${snp[1]}" />
-      <c:set var="part2" value="${snp[2]}" />
-      <c:set var="ref_seq" value="${part1}.${part2}" />
-      <c:set var="snp_start" value="${snp[3] - 25}" />
-      <c:set var="snp_end" value="${snp[3] + 24}" />
-
       <input type="button" value="Run Clustalw on Checked Strains" 
-           onClick="goToIsolate(this,'htsSNP','${ref_seq}','${snp_start}', '${snp_end}')" />
-    </c:when>
-    <c:otherwise>
-      <input type="button" value="Run Clustalw on Checked Strains" 
-           onClick="goToIsolate(this,'htsSNP','${attrs['seq_source_id']}','${startm}', '${end}')" />
-    </c:otherwise>
-  </c:choose>
+           onClick="goToIsolate(this,'htsSNP','${sequence_id}','${alignment_start}', '${alignment_end}')" />
 
       <input type="button" name="CheckAll" value="Check All" 
            onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
@@ -116,13 +104,9 @@
 </table>
 </form>
 
-  </c:when>
-  <c:otherwise>
-    <imp:wdkTable tblName="Strains" isOpen="true"/>
-  </c:otherwise>
-</c:choose>
-
-<imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
+<c:if test = "${projectId == 'PlasmoDB'}">
+  <imp:wdkTable tblName="Providers_other_SNPs" isOpen="true"/>
+</c:if>
 
 
 </c:otherwise>

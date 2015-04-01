@@ -40,40 +40,27 @@
        cellpadding="0" 
        cellspacing="1" 
        width="100%">
-<tr><td style="padding:3px;"><font size="-2" face="Arial,Helvetica">
-    <b>${displayName}</b></font>
-</td>
+<tr><td style="padding:3px;"><b>${displayName}</b></td>
 
 <c:choose>
   <c:when test='${trimmedAttribution != null && trimmedAttribution != ""}'>
     <td align="right">
-     <font size="-2" face="Arial,Helvetica">
-     [<a href="getDataset.do?display=detail&datasets=${trimmedAttribution}&title=${displayName}">
-     Data Sets</a>]
-     </font>
+     [<a href="getDataset.do?display=detail&datasets=${trimmedAttribution}&title=${displayName}">Data Sets</a>]
     </td>
   </c:when>
   <c:when test="${attribute != null && attribute !='' && ds_ref_table != null && ds_ref_table != ''}">
         <td align="right">
-          <font size="-2" face="Arial,Helvetica">
           [<a href="<c:url value='/getDataset.do?reference=${attribute}&recordClass=${rcName}&display=detail' />">Data Sets</a>]
-          </font>
         </td>
   </c:when>
   <c:when test="${attribute != null && attribute !='' && ds_ref_attribute != null && ds_ref_attribute != ''}">
     <td align="right">
-     <font size="-2" face="Arial,Helvetica">
-     [<a href="<c:url value='/getDataset.do?reference=${attribute}&recordClass=${rcName}&display=detail' />">
-     Data Sets</a>]
-     </font>
+     [<a href="<c:url value='/getDataset.do?reference=${attribute}&recordClass=${rcName}&display=detail' />">Data Sets</a>]
     </td>
   </c:when>
   <c:when test="${attribute != null && attribute !='' && ds_ref_profile_graph != null && ds_ref_profile_graph != ''}">
     <td align="right">
-     <font size="-2" face="Arial,Helvetica">
-     [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">
-     Data Sets</a>]
-     </font>
+     [<a href="<c:url value='/getDataset.do?reference=${attribute}&display=detail' />">Data Sets</a>]
     </td>
   </c:when>
 </c:choose>

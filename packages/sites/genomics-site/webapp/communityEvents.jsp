@@ -82,7 +82,7 @@ http://${pageContext.request.serverName}/assets/xsl/communityEvents.xsl
 <div style="text-align:right;">
   <c:url var='eventsRss' value='/communityEventsRss.jsp'/>
   <a href="${eventsRss}">
-    <img src="${pageContext.request.contextPath}/images/feed-icon16x16.png" alt="" border='0'>
+    <imp:image src="images/feed-icon16x16.png" alt="" border='0'/>
   <font size='-2' color='black'>RSS</font></a>
 </div>
 

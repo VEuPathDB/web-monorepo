@@ -108,7 +108,7 @@
                 <div id="${textId}"  class="coloredtext"></div>
               </c:when>
               <c:otherwise>
-                <div id="${textId}"  class="coloredtext">WARNING:  This Gene (${row['source_id'].value}) does not have data for this experiment.  Instead, we are showing data for the selected Gene (${selected_graph_id}) which was discovered to be in the same gene group.  This may or may NOT accurately represent the gene you are interested in.</div>
+                <div id="${textId}"  class="coloredtext"><b><font color="red">WARNING</font></b>:  This Gene (${row['source_id'].value}) <b>does not have data for this experiment</b>.  Instead, we are showing data for this same gene from the reference strain for this species (${selected_graph_id}).  <b>This may or may NOT accurately represent the gene you are interested in.</b></div>
               </c:otherwise>
             </c:choose>
 	    </c:if>
@@ -206,7 +206,7 @@
         <table id="profileContent">
         <tr>
         <td>
-          <img  id="${imgId}" src="<c:url value='/images/spacer.gif'/>">
+          <imp:image  id="${imgId}" src="images/spacer.gif"/>
         </td>
 
         <td class="centered">
@@ -215,13 +215,14 @@
          		<c:set var="profileDataTable">
            			<c:set var="prefix" 		value="http://${pageContext.request.serverName}" />
 
-           			<c:import url="${prefix}${tableSrc}"  />  
+                <%-- <c:import url="${prefix}${tableSrc}"  /> --%>
+                <wdk-ajax manual url="${tableSrc}"> </wdk-ajax>
          		</c:set>
 
 <%--   Data table by some graphs --%>
 
 
-
+<c:if test="${type ne 'compound'}">
 <imp:toggle
     name="${tableId}"     
     displayName="Data Table"
@@ -229,7 +230,7 @@
     isOpen="${row['dataOpen'].value}"
     noData="${noProfileDataTable}"
     attribution=""/>   
-
+</c:if>
 
        		<br /><br />
        		<div class="small">

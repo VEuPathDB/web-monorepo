@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
@@ -40,7 +40,7 @@
 </c:choose>
 
 <div class="threecolumndiv">
-<img class="threecolumndivimg" src="/assets/images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
+<imp:image class="threecolumndivimg" src="images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
 <c:choose>
 
 <%---------------------------------   TOOLS  -------------------------%>
@@ -65,13 +65,13 @@
 
                                         <c:set var="display" value="${fn:substring(cat.displayName, 11, -1)}" />
 					<li>
-                                            <img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
+                                            <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                                             <a class="heading" href="javascript:void(0)">&nbsp;${display}
 
-<c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
+<c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
 <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
 	<imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
-         	src="/wdk/images/beta2-30.png" />
+         	src="wdk/images/beta2-30.png" />
 </c:if>
 </c:if>
 
@@ -117,7 +117,7 @@
 			<c:set var="cat" value="${catEntry.value}" />
 			<c:if test="${fn:length(cat.websiteQuestions) > 0}">
 				<li>
-				<img class="plus-minus plus" src="/assets/images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
+				<imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
 				<a class="heading" href="javascript:void(0)">${cat.displayName}
 
 
@@ -125,7 +125,7 @@
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${cat.displayName eq 'Transcript Expression'}">
 	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="/wdk/images/revised-small.png" />
+         	src="wdk/images/revised-small.png" />
 </c:if>
 </c:if>
  --%>
@@ -146,7 +146,7 @@
 <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
 <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
 	<imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-         	src="/wdk/images/revised-small.png" />
+         	src="wdk/images/revised-small.png" />
 </c:if>
 </c:if>
  --%>
@@ -168,5 +168,5 @@
 </c:otherwise>
 </c:choose>	
 
-<!--<img src="/assets/images/bubble_bottom.png" alt="" width="247" height="35" />-->
+<!--<imp:image src="images/bubble_bottom.png" alt="" width="247" height="35" />-->
 </div>

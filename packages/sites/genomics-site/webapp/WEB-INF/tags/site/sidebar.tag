@@ -53,7 +53,7 @@
 
 <c:if test="${project == 'AmoebaDB' || project == 'TriTrypDB' || project == 'ToxoDB'}">
 --------------  SITE SEARCH  ---------------------------------------------
-	<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+	<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
   <a class="heading" id='stats'  href="#">Site Search</a>
   <div class="menu_lefttop_drop" style="text-align:center;">
 		<imp:freefind_form searchSite="${project}"/>
@@ -63,7 +63,7 @@
 --%>
 
 <%--------------  EUPATHDB DATA STATS---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading" id='stats'  href="#">Data Summary</a>
 
 <c:choose>
@@ -82,7 +82,7 @@
 
     <tr><td style="padding:0;">
 	    <a style="white-space:nowrap;font-size:12pt;font-weight:bold" href="<c:url value="${linkToDataSummary}"/>">
-	    <img style="border: 2px solid #666666;" src="/assets/images/genomeTable.png" width="190" height="100"></a>
+	    <imp:image style="border: 2px solid #666666;" src="images/genomeTable.png" width="190" height="100"/></a>
     </td><tr>
 
     <tr><td style="text-align:left;">
@@ -97,7 +97,7 @@
 <!-- number of news items to show in sidebar (there is scrollbar) -->
 <c:set var="NewsCount" value="50"/>
 
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading"  href="#">News and Tweets</a>
 
 <div class="menu_lefttop_drop" id="News">
@@ -201,27 +201,17 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   </c:choose>
 
 
-<!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB account settings -->
- 		 <a class="twitter-timeline" data-chrome="nofooter" height="50"  href="https://twitter.com/eupathdb" data-widget-id="344817818073714691">Tweets by @eupathdb</a>
-		 <script>
-		 !function(d,s,id){
-				var js,fjs=d.getElementsByTagName(s)[0],
-								p=/^http:/.test(d.location)?'http':'https';
-				if(!d.getElementById(id)){
-								js=d.createElement(s);
-								js.id=id;
-								js.src=p+"://platform.twitter.com/widgets.js";
-								fjs.parentNode.insertBefore(js,fjs);
-								}
-				}(document,"script","twitter-wjs");
-		 </script>
-
+  <!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB and FungiDB account settings -->
+  <c:set var="props" value="${applicationScope.wdkModel.properties}" />
+  <a class="twitter-timeline" data-chrome="nofooter"  height="50"  href="https://twitter.com/${props['TWITTER_ID']}" data-widget-id="${props['TWITTER_WIDGET_ID']}"></a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs")
+;</script>
 
 </div>  <%-- section that opens and closes --%>
 
 
 <%--------------  COMMUNITY RESOURCES ---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a  class="heading" id='community' href="#">Community Resources</a>
 
 <div class="menu_lefttop_drop">
@@ -279,19 +269,20 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 </div>
 
 <%--------------  TUTORIALS ---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
 <div class="menu_lefttop_drop">
   <ul id="education">
     <li id='edu-05'><a target="_blank" href="${constants.youtubeUrl}">
       YouTube Tutorials Channel
-      <img style="width:20px;display:inline;vertical-align:middle;" src="/assets/images/youtube_32x32.png"/>
+      <imp:image style="width:20px;display:inline;vertical-align:middle;" src="images/youtube_32x32.png"/>
       </a>
     </li>
 	  <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</li>
-    <li id='edu-2'><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
-    <li id='edu-3-1'><a href="http://workshop.eupathdb.org/most_recent/index.php?page=schedule">Exercises from our most recent Workshop</a> (English)</li>
-    <li id='edu-3-2'><a href="http://workshop.eupathdb.org/athens/2011/index.php?page=schedule">Exercises from 2011 Workshop</a> (English and Spanish)</li>
+     <li id='edu-1'><a href="http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068">Global view of EuPathDB training</a></li>
+    <li id='edu-2'><a href="http://workshop.eupathdb.org">EuPathDB Workshops</a></li>
+  <!--  <li id='edu-3-1'><a href="http://workshop.eupathdb.org/most_recent/index.php?page=schedule">Exercises from our most recent Workshop at UGA</a> (English)</li> -->
+    <li id='edu-3-2'><a href="http://workshop.eupathdb.org/athens/2011/index.php?page=schedule">Exercises from 2011 Workshop at UGA</a> (English and Spanish)</li>
 	  <li id='edu-4'><a href="http://www.genome.gov/Glossary/">NCBI's Glossary of Terms</a></li>
 	  <li id='edu-5'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Our Glossary</a></li>
     <li id='edu-6'><a href="${pageContext.request.contextPath}/contact.do" class="new-window
@@ -301,7 +292,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
 
 <%--------------  INFO AND HELP ---------------------------------------------%>
-<img src="/assets/images/${project}/menu_lft1.png" alt="" width="208" height="12" />
+<imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
 <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
 <div class="menu_lefttop_drop">
   <ul id="information">

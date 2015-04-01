@@ -1,6 +1,6 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -28,7 +28,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/expStages.png" border=1>
+      <imp:image src="images/expStages.png" border="1"/>
     </td>
   </tr>
 
@@ -57,7 +57,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/expressionIntensityPercentile.png" border=1>
+      <imp:image src="images/expressionIntensityPercentile.png" border="1"/>
     </td>
   </tr>
 

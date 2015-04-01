@@ -52,7 +52,7 @@ print <<_END_OF_TEXT_
         <html xmlns="http://www.w3.org/1999/xhtml" >
 	<head>
 	<title>AMS Console</title>
-        <link href="/assets/css/messageStyles.css" rel="stylesheet" type="text/css" />
+        <link href="/a/css/messageStyles.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
         <script language="javascript">
          function submitWindow()
@@ -137,9 +137,9 @@ while ((@row=$sth->fetchrow_array) ){
 <td>$row[4]</td>
 <td class="message">@{[$row[5] || '']}</td>
 <td>
-<img id="image_id" src="/assets/images/deleteButtongs.png" onclick="confirmDelete($row[0])" 
-onmouseover="change_image(this, '/assets/images/deleteButton.png')" 
-onmouseout="change_image(this, '/assets/images/deleteButtongs.png')" border="0"/></a>
+<img id="image_id" src="/a/images/deleteButtongs.png" onclick="confirmDelete($row[0])" 
+onmouseover="change_image(this, '/a/images/deleteButton.png')" 
+onmouseout="change_image(this, '/a/images/deleteButtongs.png')" border="0"/></a>
 </td>
 </tr> 
           

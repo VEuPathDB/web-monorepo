@@ -1,6 +1,6 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 
 <!-- get wdkModel saved in application scope -->
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -36,7 +36,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/winz_sorb_ratios_derisi_ratios_correlation.png" border=1>
+      <imp:image src="images/winz_sorb_ratios_derisi_ratios_correlation.png" border="1"/>
     </td>
   </tr>
 
@@ -53,7 +53,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/w.s.d.hb3.rankCorr.tpMap.png" border=1>
+      <imp:image src="images/w.s.d.hb3.rankCorr.tpMap.png" border="1"/>
     </td>
   </tr>
 
@@ -78,7 +78,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/d.3d7.d.hb3.rankCorr.tpMap.png" border=1>
+      <imp:image src="images/d.3d7.d.hb3.rankCorr.tpMap.png" border="1"/>
     </td>
   </tr>
 
@@ -102,7 +102,7 @@
 
   <tr align="center">
     <td>
-      <img src="images/tpMapLabeled.png" border=1>
+      <imp:image src="images/tpMapLabeled.png" border="1"/>
     </td>
   </tr>
 </table>

@@ -21,7 +21,7 @@
 
 <c:choose>
   <c:when test="${isTruncate == 'true'}">
-    <p>The number of ${displayNamePlural} in the result exceeds the display limit (2000 IDs), Genomic Summary View is not available for the result.</p>
+    <p>The number of ${displayNamePlural} in the result exceeds the display limit (10000 IDs), Genomic Summary View is not available for the result.</p>
   </c:when>
   <c:otherwise> <%-- display genomic view --%>
 
@@ -38,7 +38,7 @@
  </div>
 
 <%--
-<div style="float:left;position:relative;bottom:35px;left:30px;"><imp:image src="/wdk/images/betatesting.png" /></div>
+<div style="float:left;position:relative;bottom:35px;left:30px;"><imp:image src="wdk/images/betatesting.png" /></div>
 
 <div style="float:left;position:relative;top:5px;left:30px;font-weight:bold">
 <a onclick="poptastic(this.href); return false;" target="_blank" href="<c:url value='/betatester.jsp' />">

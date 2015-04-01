@@ -1,7 +1,7 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
-<%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
+<%@ taglib prefix="bean" uri="http://struts.apache.org/tags-bean" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- get wdkQuestion; setup requestScope HashMap to collect help info for footer --%>
@@ -42,8 +42,8 @@
   { <c:forEach var='indent' varStatus="loop" items='${indentMap}'> "${indent.key}" : "${indent.value}" <c:if test="${loop.last eq false}">,</c:if> </c:forEach> }
 </c:set>
 
-  <%-- The following is done in html/assets/js/orthologpattern.js now
-  <!-- js values used in html/assets/js/orthologpatern.js -->
+  <%-- The following is done in orthologpattern.js now
+  <!-- js values used in orthologpatern.js -->
   <!-- I think this script is only needed to build question page when adding/editing a step -->
   <script>
   <!-- //
@@ -107,7 +107,7 @@
             <span style="font-weight:bold">Find genes in these organisms</span>
             <imp:image title="Find genes in these organisms that belong to an ortholog group with the profile you select below" 
                class="help-link"
-               src="/wdk/images/question.png" 
+               src="wdk/images/question.png" 
                style="cursor:pointer" 
                aria-describedby="ui-tooltip-2"/>
           </label>
@@ -127,18 +127,18 @@
             <span style="font-weight:bold">Select orthology profile</span>
             <imp:image title="If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself." 
                 class="help-link" 
-                src="/wdk/images/question.png" 
+                src="wdk/images/question.png" 
                 style="cursor:pointer" 
                 aria-describedby="ui-tooltip-2"/>
           </label>
 
           <div class="param-control">
-            <div>Click on <img src="images/dc.gif"> to determine which organisms to
+            <div>Click on <imp:image src="images/dc.gif"/> to determine which organisms to
                 include or exclude in the orthology profile.<br>
-              <i style="font-size:95%">(<img src="images/dc.gif">=no constraints |
-              <img src="images/yes.gif">=must be in group |
-              <img src="images/no.gif">=must not be in group |
-              <img src="images/unk.gif">=mixture of constraints)</i>
+              <i style="font-size:95%">(<imp:image src="images/dc.gif"/>=no constraints |
+              <imp:image src="images/yes.gif"/>=must be in group |
+              <imp:image src="images/no.gif"/>=must not be in group |
+              <imp:image src="images/unk.gif"/>=mixture of constraints)</i>
             </div>
 
             <c:set var="idx" value="1"/>
@@ -154,7 +154,7 @@
 
             <div style="padding-top:1em"> <%-- start WRAPPER --%>
               <a href="javascript:void(0)" onclick="eupathdb.orthologPattern.toggle(0)">
-                <img border=0 id="img0" src="<c:url value="/images/dc.gif"/>">
+                <imp:image border="0" id="img0" src="images/dc.gif"/>
               </a>
               &nbsp;<b>All Organisms</b>
               &nbsp;<a style="font-size:90%" href="javascript:void(0)" onclick="myshowTree()">expand all</a>
@@ -195,8 +195,8 @@
 
                   <li id="${sp}-node">
                     <!-- ${sp} -->
-                    <a href="javascript:void(0)" onclick="eupathdb.orthologPattern.toggle(${idx})"><img alt=""
-                        border="0" id="img${idx}" src="<c:url value="/images/dc.gif"/>"/></a>&nbsp;
+                    <a href="javascript:void(0)" onclick="eupathdb.orthologPattern.toggle(${idx})"><imp:image alt=""
+                        border="0" id="img${idx}" src="images/dc.gif"/></a>&nbsp;
                     <span>
                     <c:choose>
                       <c:when test="${category == 1}"><b><i>${spDisp}</i></b></c:when>

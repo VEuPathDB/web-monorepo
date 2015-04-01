@@ -251,14 +251,14 @@ td.search-mechanism a {
   display: inline-block;
   width: 22px;
   height: 22px;
-  background: url(/assets/images/mag_glass.png);
+  background: url(../../images/mag_glass.png);
   vertical-align: middle;
 }
 .info {
   display: inline-block;
   width: 13px;
   height: 12px;
-  background: url(../../assets/wdk/images/question.png);
+  background: url(../../wdk/images/question.png);
   vertical-align: middle;
   position: absolute;
   left: 6px;

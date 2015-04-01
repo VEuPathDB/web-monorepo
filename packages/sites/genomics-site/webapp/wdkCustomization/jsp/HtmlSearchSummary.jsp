@@ -24,7 +24,7 @@
 <%-- display page header with recordClass type in banner --%>
 <imp:pageFrame banner="Site Search">
 
-<link rel="Stylesheet" type="text/css" href="<c:url value='/wdkCustomization/css/site-search.css' />"/>
+<imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/site-search.css"/>
 
 
 

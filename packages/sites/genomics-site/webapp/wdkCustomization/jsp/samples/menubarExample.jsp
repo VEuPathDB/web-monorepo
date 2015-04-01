@@ -5,9 +5,9 @@
   <html>
     <head>
       <title>Menubar Example Page (using Superfish)</title>
-      <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/wdkCustomization/css/superfish/css/superfish.css"/>
-      <script type="text/javascript" src="${pageContext.request.contextPath}/assets/wdk/lib/jquery.js"><jsp:text/></script>
-      <script type="text/javascript" src="${pageContext.request.contextPath}/wdkCustomization/js/lib/superfish.js"><jsp:text/></script>
+      <imp:stylesheet type="text/css" href="wdkCustomization/css/superfish/css/superfish.css"/>
+      <imp:script src="wdk/lib/jquery.js"/>
+      <imp:script src="wdkCustomization/js/lib/superfish.js"/>
       <script type="text/javascript">
         jQuery(function(){
         	jQuery('#menudiv .sf-menu').superfish();

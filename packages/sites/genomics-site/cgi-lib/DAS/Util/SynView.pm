@@ -53,11 +53,11 @@ sub postgridGB2 {
       my $polygon = GD::Polygon->new();
       $polygon->addPt($x1, $y2);
       $polygon->addPt($x2, $y2);
-      $polygon->addPt($ox2, $oy1+10);
-      $polygon->addPt($ox1, $oy1+10);
+      $polygon->addPt($ox2, $oy1);
+      $polygon->addPt($ox1, $oy1);
       $gd->filledPolygon($polygon, $gd->colorAllocateAlpha($panel->color_name_to_rgb("darkgray"), 100));
-      $gd->line($x1, $y2, $ox1, $oy1+10, $panel->translate_color("lightsteelblue"));
-      $gd->line($x2, $y2, $ox2, $oy1+10, $panel->translate_color("lightsteelblue"));
+      $gd->line($x1, $y2, $ox1, $oy1, $panel->translate_color("lightsteelblue"));
+      $gd->line($x2, $y2, $ox2, $oy1, $panel->translate_color("lightsteelblue"));
     }
   }
 }

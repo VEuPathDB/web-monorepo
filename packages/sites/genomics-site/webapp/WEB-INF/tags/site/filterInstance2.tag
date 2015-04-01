@@ -1,7 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="nested" uri="http://jakarta.apache.org/struts/tags-nested" %>
+<%@ taglib prefix="nested" uri="http://struts.apache.org/tags-nested" %>
+
+<%-- THIS FILE IS USED FOR GENE ORGANISM FILTER 3 bottom ROWS CONTAINING:
+      SPECIES ROW (sometimes with distinct filter count), 
+      STRAINS ROW
+      COUNTS ROW --%>
 
 <%@ attribute name="strategyId"
     required="true"
@@ -20,13 +25,14 @@
     required="true"
     description="the name of the filter instance"
     %>
+
 <%@ attribute name="distinct"
     required="false"
-    description="if true we need to return titleSpecies and gene count because we are on a species with more than one strain"
+    description="if true we need to write titleSpecies and gene count because we are on a species with more than one strain"
     %>
 <%@ attribute name="titleSpecies"
     required="false"
-    description="true if we are on a species with only one strain AND if we are on a species with more than one strain but we do not have a reference strain defined in classes.xml (therefore no distinct filter generated in model), we return the Species name"
+    description="true if we are on a species with only one strain OR if we are on a species with more than one strain but we do not have a reference strain defined in classes.xml (therefore no distinct filter generated in model), we write the Species name"
     %>
 <%@ attribute name="missRefStrain"
     required="false"
@@ -34,8 +40,10 @@
     %>
 <%@ attribute name="titleStrain"
     required="false"
-    description="true if we are on a species with only one strain, we return the Strain name"
+    description="true if we are on a species with only one strain, we write the Strain name"
     %>
+<%-- =========================================================================== --%>
+
 <c:set var="recordClass" value="${answerValue.recordClass}" />
 <c:set var="instance" value="${recordClass.filterMap[instanceName]}" />
 
@@ -47,23 +55,38 @@
   </c:choose>
 </c:set>
 
-<!-- reading family and species name from filter (instance) name -->
-<!--    the use of _ to separate parts of the filter name is set in the geneFilterTemplate.dst -->
-<!--    the use of - to separate family from species (in familySpecies) is set in injector AnnotatedGenome.java -->
+<!-- All this painful string manipulation to extract the (1) phylum, (2) family (genus), (3) species and (4) strain names 
+    for a given organism is due to the fact that we do not have those distinct values as part of the genome information, 
+    *anywhere* in our system. 
+-->
+<!-- Reading phylum (if exists), family (aka genus) and species from filter name -->
+<!--    the use of _ (underscore) to separate parts of the filter name is set in the geneFilterTemplate.dst -->
+<!--    the use of - (dash) to separate family - species (in familySpecies) is set in injector AnnotatedGenome.java -->
+
 <c:set var="instanceNameParts" value="${fn:split(instance.name, '_')}" />
 <c:set var="familySpecies" value="${instanceNameParts[0]}" />
 <c:set var="speciesNameParts" value="${fn:split(familySpecies, '-')}" />
-<c:set var="family" value="${speciesNameParts[0]}" />
-<c:set var="species" value="${speciesNameParts[1]}" />
 
-<!--    the use of = in spaces inside the species name (eg: "sp. 1" becomes "sp.=1"), is set injector AnnotatedGenome.java -->
-<!--    this is done because the filter instance name cannot have spaces 
-        (it would break the javascript associated with filters).
-        Here we 'undo' that process. -->
+<c:choose>
+<c:when test="${fn:length(speciesNameParts[2]) > 0}" >
+  <c:set var="phylum" value="${speciesNameParts[0]}" />
+  <c:set var="family" value="${speciesNameParts[1]}" />
+  <c:set var="species" value="${speciesNameParts[2]}" />
+</c:when>
+<c:otherwise>
+  <c:set var="family" value="${speciesNameParts[0]}" />
+  <c:set var="species" value="${speciesNameParts[1]}" />
+</c:otherwise>
+</c:choose>
+
+
+<!--    = was used to escape forbidden chars like space, dash and underscore inside the species name 
+          (eg: "sp. 1" becomes "sp.=1") in the injector AnnotatedGenome.java    
+-->
+
+<c:set var="species" value="${fn:replace(species, '=-', '-')}" />
+<c:set var="species" value="${fn:replace(species, '=_', '_')}" />
 <c:set var="species" value="${fn:replace(species, '=', ' ')}" />
-
-<!-- All this painful mess to being able to extract clearly the (1) family, (2) species and (3) strain names for a given organism is due to the fact that we do not have those 3 distinct values as part of the genome information, anywhere in our system. 
-  -->
 
 <c:choose>
 
@@ -88,14 +111,14 @@
 
       <i>${fn:substring(family,0,1)}.${species}</i>&nbsp;&nbsp; ( nr Genes:
 
-      <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&revise=${stepId}&filter=${instance.name}" />
+      <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
       <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
-      <a id="link-${instance.name}" class="link-url" href="javascript:void(0)" countref="${countUrl}" 
-         strId="${strategyId}" stpId="${stpId}" linkUrl="${linkUrl}">
+      <a id="link-${instance.name}" data-filter="${instance.name}" class="link-url" href="javascript:void(0)" countref="${countUrl}" 
+         strId="${strategyId}" stpId="${stepId}" linkUrl="${linkUrl}">
 
         <c:choose>
           <c:when test="${current}">${answerValue.resultSize}</c:when>
-          <c:otherwise><imp:image class="loading" src="/wdk/images/filterLoading.gif" /></c:otherwise>
+          <c:otherwise><imp:image class="loading" src="wdk/images/filterLoading.gif" /></c:otherwise>
         </c:choose>
       </a>
       )
@@ -112,7 +135,7 @@
       <!-- reading strain name from filter instance displayName (popup title) -->
       <c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
       <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
-      <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species)}" />
+      <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species )}" />
       <c:set var="strain" value="${fn:trim(strain)}" /> 
       ${strain}
 
@@ -125,14 +148,14 @@
         <c:when test="${current}"><div class="current"></c:when>
         <c:otherwise><div></c:otherwise>
       </c:choose>
-      <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&revise=${stepId}&filter=${instance.name}" />
+      <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
       <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
 
-      <a id="link-${instance.name}" class="link-url" href="javascript:void(0)" countref="${countUrl}" 
-         strId="${strategyId}" stpId="${stpId}" linkUrl="${linkUrl}">
+      <a id="link-${instance.name}" data-filter="${instance.name}" class="link-url" href="javascript:void(0)" countref="${countUrl}" 
+         strId="${strategyId}" stpId="${stepId}" linkUrl="${linkUrl}">
         <c:choose>
           <c:when test="${current}">${answerValue.resultSize}</c:when>
-          <c:otherwise><imp:image class="loading" src="/wdk/images/filterLoading.gif" /></c:otherwise>
+          <c:otherwise><imp:image class="loading" src="wdk/images/filterLoading.gif" /></c:otherwise>
         </c:choose>
 
       </a>

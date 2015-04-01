@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!DOCTYPE struts-config PUBLIC
-       "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
-       "http://jakarta.apache.org/struts/dtds/strutc-config_1_1.dtd">
+          "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+          "http://struts.apache.org/dtds/struts-config_1_3.dtd">
 
 <struts-config>
 
@@ -273,6 +273,30 @@
       <forward name="show_summary" path="showSummary.do"/>
     </action>
     <action
+      path="/getFilterSummary"
+      type="org.gusdb.wdk.controller.action.GetFilterSummaryAction"
+      scope="request">
+    </action>    
+    <action
+      path="/applyFilter"
+      type="org.gusdb.wdk.controller.action.ApplyFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/removeFilter"
+      type="org.gusdb.wdk.controller.action.RemoveFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>    
+    <action
+      path="/toggleFilter"
+      type="org.gusdb.wdk.controller.action.ToggleFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    
+    <action
       path="/showQuestion"
       type="org.apidb.apicommon.controller.action.CustomShowQuestionAction"
       scope="request"
@@ -331,6 +355,10 @@
     </action>
     <action path="/runStepAnalysis"
         parameter="org.gusdb.wdk.controller.action.analysis.RunStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
+    <action path="/rerunStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.RerunStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
     <action path="/renameStepAnalysis"
@@ -501,7 +529,6 @@
       scope="session"
       input="/addCommentsNew.jsp"
       name="commentForm">
-      <forward name="add_comment" path="/addComment.do"/>
    </action> 
    <action
       path="/editComment"
@@ -572,6 +599,13 @@
     <action
       path="/getVocab"
       type="org.gusdb.wdk.controller.action.GetVocabAction"
+      scope="request"
+      name="questionForm"
+      validate="false">
+    </action>
+    <action
+      path="/getMetadata"
+      type="org.gusdb.wdk.controller.action.GetMetadataAction"
       scope="request"
       name="questionForm"
       validate="false">

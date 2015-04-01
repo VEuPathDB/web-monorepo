@@ -1,7 +1,7 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -10,6 +10,8 @@
 
 <%-- QUESTIONS --%>
 <c:set var="amoebaQuestions" value="GeneQuestions.GenesByHtsSnps"/>
+<c:set var="piroplasmaQuestions" value="GeneQuestions.GenesByHtsSnps"/>
+<c:set var="giardiaQuestions" value="GeneQuestions.GenesByHtsSnps"/>
 <c:set var="eupathQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
 <c:set var="cryptoQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
 <c:set var="plasmoQuestions" value="GeneQuestions.GenesBySnps,GeneQuestions.GenesByHtsSnps"/>
@@ -21,7 +23,7 @@
 <div class='usererror'><api:errors/></div>
 
 <%-- div needed for Add Step --%>
-<div id="form_question">
+<div>
 
 <center><table width="90%">
 
@@ -33,14 +35,21 @@
 <c:when test = "${project == 'AmoebaDB'}">
 	<imp:queryList columns="${columns}" questions="${amoebaQuestions}"/>
 </c:when>
+<c:choose>
 <c:when test = "${project == 'CryptoDB'}">
 	<imp:queryList columns="${columns}" questions="${cryptoQuestions}"/>
 </c:when>
 <c:when test = "${project == 'EuPathDB'}">
 	<imp:queryList columns="${columns}" questions="${eupathQuestions}"/>
 </c:when>
+<c:when test = "${project == 'GiardiaDB'}">
+	<imp:queryList columns="${columns}" questions="${giardiaQuestions}"/>
+</c:when>
 <c:when test = "${project == 'PlasmoDB'}">
 	<imp:queryList columns="${columns}" questions="${plasmoQuestions}"/>
+</c:when>
+<c:when test = "${project == 'PiroplasmaDB'}">
+	<imp:queryList columns="${columns}" questions="${piroplasmaQuestions}"/>
 </c:when>
 <c:when test = "${project == 'ToxoDB'}">
 	<imp:queryList columns="${columns}" questions="${toxoQuestions}"/>

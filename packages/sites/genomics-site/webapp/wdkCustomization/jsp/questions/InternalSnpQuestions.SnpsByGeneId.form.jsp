@@ -1,7 +1,7 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html" %>
+<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
@@ -15,7 +15,7 @@
 <div class='usererror'><api:errors/></div>
 
 <%-- div needed for Add Step --%>
-<div id="form_question">
+<div>
 
 <center><table width="90%">
 
