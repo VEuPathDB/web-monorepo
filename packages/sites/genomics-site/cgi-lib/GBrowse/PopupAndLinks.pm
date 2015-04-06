@@ -696,15 +696,19 @@ sub fosmidTitle {
 
 sub transposableElementsTitle { 
   my $f = shift;
-  my $bulkFeatureName = shift;
-  my $trackName = shift;
+
+  my ($teName) = $f->get_tag_values("te_name");
 
   my $start = $f->start;
   my $stop  = $f->stop;
   my $length = $stop - $start + 1;
-  my $cname = $f->name;
+
+  my $sourceId = $f->name;
   my @data; 
-  push @data, [ "Transposable Element:"     => $cname ]; 
+
+
+  push @data, [ "Transposable Element:"     => $sourceId ]; 
+  push @data, [ "Name:"     => $teName ]; 
   push @data, [ 'Size:'     => $length ]; 
   push @data, [ 'Location:' => "$start..$stop"];
   
