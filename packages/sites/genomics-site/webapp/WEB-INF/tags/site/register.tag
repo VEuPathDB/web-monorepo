@@ -48,7 +48,7 @@
      <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
   </c:if>
 
-  <p> <b>IMPORTANT</b>: If you already registered in another site<br>(AmoebaDB, EuPathDB, CryptoDB ,GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, ToxoDB, TrichDB or TriTrypDB)<br>you do NOT need to register again.</p>
+  <p> <b>IMPORTANT</b>: If you already registered in another site<br>(AmoebaDB, CryptoDB, EuPathDB, FungiDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB or TriTrypDB)<br>you do NOT need to register again.</p>
 
    <br>
 
@@ -117,6 +117,14 @@
            </c:otherwise>
         </c:choose>
         <c:choose>
+           <c:when test="${requestScope.preference_global_email_cryptodb != null}">
+              <input type="checkbox" name="preference_global_email_cryptodb" checked>CryptoDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_cryptodb">CryptoDB</input>
+           </c:otherwise>
+        </c:choose>
+        <c:choose>
            <c:when test="${requestScope.preference_global_email_apidb != null}">
               <input type="checkbox" name="preference_global_email_apidb" checked>EuPathDB</input>
            </c:when>
@@ -125,11 +133,11 @@
            </c:otherwise>
         </c:choose>
         <c:choose>
-           <c:when test="${requestScope.preference_global_email_cryptodb != null}">
-              <input type="checkbox" name="preference_global_email_cryptodb" checked>CryptoDB</input>
+           <c:when test="${requestScope.preference_global_email_fungidb != null}">
+              <input type="checkbox" name="preference_global_email_fungidb" checked>FungiDB</input>
            </c:when>
            <c:otherwise>
-              <input type="checkbox" name="preference_global_email_cryptodb">CryptoDB</input>
+              <input type="checkbox" name="preference_global_email_fungidb">FungiDB</input>
            </c:otherwise>
         </c:choose>
         <c:choose>
@@ -167,6 +175,14 @@
               <input type="checkbox" name="preference_global_email_plasmodb">PlasmoDB</input>
            </c:otherwise>
         </c:choose>
+         <c:choose>
+           <c:when test="${requestScope.preference_global_email_schistodb != null}">
+              <input type="checkbox" name="preference_global_email_schistodb" checked>SchistoDB</input>
+           </c:when>
+           <c:otherwise>
+              <input type="checkbox" name="preference_global_email_schistodb">SchistoDB</input>
+           </c:otherwise>
+        </c:choose>
         <c:choose>
            <c:when test="${requestScope.preference_global_email_toxodb != null}">
               <input type="checkbox" name="preference_global_email_toxodb" checked>ToxoDB</input>
@@ -195,8 +211,8 @@
     </td>
     </tr>
     <tr>
-       <td colspan="2" align="center">
-           <input type="submit" name="registerButton" value="Register"  onclick="return validateFields();" />
+       <td style="font-size:120%" colspan="2" align="center">
+           <br><input type="submit" name="registerButton" value="Register"  onclick="return validateFields();" />
               <c:if test="${includeCancel}">
                  <input type="submit" value="Cancel" style="width:76px;" onclick="$.unblockUI();return false;"/>
                </c:if>
