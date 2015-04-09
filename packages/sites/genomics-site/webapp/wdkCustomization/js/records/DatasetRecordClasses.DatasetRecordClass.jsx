@@ -222,10 +222,11 @@ wdk.namespace('eupathdb.records', function(ns) {
     _renderRow(attributes) {
       var attrs = _.indexBy(attributes.toJS(), 'name');
 
-      var release = attrs.build.value ? 'Release ' + attrs.build.value
-        : 'Initial release';
-
       var releaseDate = attrs.release_date.value.split(/\s+/)[0];
+
+      var release = attrs.build.value == 0
+        ? 'Initial release'
+        : `${attrs.project.value} ${attrs.release_number.value} ${releaseDate}`;
 
       var genomeSource = attrs.genome_source.value
         ? attrs.genome_source.value + ' (' + attrs.genome_version.value + ')'
@@ -237,7 +238,7 @@ wdk.namespace('eupathdb.records', function(ns) {
 
       return (
         <tr>
-          <td>{release} ({releaseDate}, {attrs.project.value} {attrs.release_number.value})</td>
+          <td>{release}</td>
           <td>{genomeSource}</td>
           <td>{annotationSource}</td>
           <td>{attrs.note.value}</td>
