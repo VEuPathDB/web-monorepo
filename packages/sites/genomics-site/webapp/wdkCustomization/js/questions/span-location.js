@@ -12,7 +12,7 @@
   }
 
   function SpanLocation() {
-    this.$form = $("#query-search-form form[name=questionForm]");
+    this.$form = $("#query-search-form, #query_form").find("form[name=questionForm]");
   }
 
   SpanLocation.prototype.createLayout = function() {
