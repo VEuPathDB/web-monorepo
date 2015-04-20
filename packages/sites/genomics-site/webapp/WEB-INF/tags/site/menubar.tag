@@ -15,6 +15,7 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
 <!-- for genes that have user comments -->
 <!-- some might not be needed since now this is its own question, used to be based on text search -->
@@ -67,7 +68,7 @@
 
   <ul class="sf-menu">
     <%-- default style for this ul establishes 9em --%>
-    <li><a href="<c:url value="/"/>">Home</a></li>
+    <li><a href="${baseUrl}/">Home</a></li>
     <%-- was needed when New Search was first choice 
       <ul style="width:0.5em;border:0"><li></li></ul>
     --%>
@@ -77,7 +78,7 @@
     </li>
 
     <%-- some javascript fills the count in the span --%>
-    <li><a id="mysearch" href="<c:url value="/showApplication.do"/>" title="Access your Search Strategies Workspace">
+    <li><a id="mysearch" href="${baseUrl}/showApplication.do" title="Access your Search Strategies Workspace">
       My Strategies <%--<span title="You have ${count} strategies" class="subscriptCount">
       (${count})</span>--%>
       </a>
@@ -93,7 +94,7 @@
           <li><a id="mybasket" onclick="wdk.addStepPopup.showPanel('basket');" href="javascript:void(0)" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
           </c:when>
           <c:otherwise>
-          <li><a id="mybasket" onclick="wdk.stratTabCookie.setCurrentTabCookie('application', 'basket');" href="<c:url value="/showApplication.do"/>" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
+          <li><a id="mybasket" onclick="wdk.stratTabCookie.setCurrentTabCookie('application', 'basket');" href="${baseUrl}/showApplication.do" title="Group IDs together to later make a step in a strategy.">My Basket <span class="subscriptCount" style="vertical-align:top">(${basketCount})</span></a></li>
           </c:otherwise>
         </c:choose>
       </c:otherwise>
@@ -101,11 +102,11 @@
 
     <li><a>Tools</a>
       <ul>
-        <li><a href="<c:url value="/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"/>"> BLAST</a></li>
-        <li><a style="padding-top:0"  href="<c:url value="/analysisTools.jsp"/>"> Results Analysis
+        <li><a href="${baseUrl}/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"> BLAST</a></li>
+        <li><a style="padding-top:0"  href="${baseUrl}/analysisTools.jsp"> Results Analysis
               <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
         </li>
-        <li><a href="<c:url value="/srt.jsp"/>"> Sequence Retrieval</a></li>
+        <li><a href="${baseUrl}/srt.jsp"> Sequence Retrieval</a></li>
         <li><a href="http://pathogenportal.org"> Pathogen Portal</a></li>
 
         <li><a href="/pubcrawler/${project}"> PubMed and Entrez</a></li>
@@ -123,34 +124,34 @@
         <c:if test="${project == 'ToxoDB'}" >
           <li><a href="http://ancillary.toxodb.org">Ancillary Genome Browser</a></li>
         </c:if>
-        <li><a href="<c:url value="/serviceList.jsp"/>"> Searches via Web Services</a></li>
+        <li><a href="${baseUrl}/serviceList.jsp"> Searches via Web Services</a></li>
       </ul>
     </li>
 
     <li><a style="padding-top:0">Data Summary <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
       <ul>
-          <li><a href="<c:url value='/getDataset.do?display=detail'/>">Data Sets</a></li>
+          <li><a href="${baseUrl}/getDataset.do?display=detail">Data Sets</a></li>
           <li title="Please contact us with your feedback.">
             <a style="padding-top:0" 
-              href="<c:url value='/app/answer/DatasetQuestions.AllDatasets'/>">New Data Sets page!
+              href="${baseUrl}/app/answer/DatasetQuestions.AllDatasets">New Data Sets page!
                 <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
           </li>
         <c:if test="${project == 'EuPathDB'}">
-          <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods'/>">Analysis Methods</a></li>  
+          <li><a href="baseUrl/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods">Analysis Methods</a></li>  
         </c:if>
         <c:if test="${project != 'EuPathDB'}">
-          <li><a href="<c:url value='/showXmlDataContent.do?name=XmlQuestions.Methods'/>">Analysis Methods</a></li>
+          <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
         </c:if>
         <c:if test="${project == 'CryptoDB'}">
           <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
         </c:if>
 
-          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes"/>">Genomes and Data Types</a></li> 
-          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics"/>">Gene Metrics</a></li>
+          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Genomes and Data Types</a></li> 
+          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics">Gene Metrics</a></li>
       
 <%--        <c:if test="${project == 'TrichDB'}">
-          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GenomeDataType"/>">Genomes and Data Types</a></li> 
-          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics"/>">Gene Metrics</a></li>
+          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GenomeDataType">Genomes and Data Types</a></li> 
+          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GeneMetrics">Gene Metrics</a></li>
         </c:if>
 --%>
       </ul>
@@ -158,7 +159,7 @@
 
     <li><a>Downloads</a>
       <ul>
-        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.AboutAll#downloads"/>">Understanding Downloads</a></li>
+        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.AboutAll#downloads">Understanding Downloads</a></li>
 
         <c:choose>
           <c:when test="${project eq 'EuPathDB'}">
@@ -182,15 +183,15 @@
           </c:otherwise>
         </c:choose>
 
-        <li><a href="<c:url value="/srt.jsp"/>">Sequence Retrieval</a>
+        <li><a href="${baseUrl}/srt.jsp">Sequence Retrieval</a>
 
-        <%--  <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods"/>">Protocols and Methods</a></li> --%>
+        <%--  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods">Protocols and Methods</a></li> --%>
 
         <c:if test="${project != 'EuPathDB'}" >
-          <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-          <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+          <li><a href="${baseUrl}/communityUpload.jsp">Upload Community Files</a></li>
+          <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="${baseUrl}/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads">Download Community Files</a></li>
         </c:if>
-        <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs"/>">EuPathDB Publications</a></li> 
+        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li> 
       </ul>
     </li>
     
@@ -203,22 +204,22 @@
 
        <c:if test="${project != 'EuPathDB'}" >    
         <li><a title="Add your comments to your gene of interest: start at the gene page" onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
-               href="<c:url value="/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>"/>Find Genes with Comments from the ${project} Community</a></li>
+               href="${baseUrl}/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>Find Genes with Comments from the ${project} Community</a></li>
 
-        <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
+        <li><a href="${baseUrl}/communityUpload.jsp">Upload Community Files</a></li>
 
         <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
-               href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+               href="${baseUrl}/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
       </c:if>
 
-      <li><a href="<c:url value="/communityEvents.jsp"/>">Upcoming Events</a></li>
+      <li><a href="${baseUrl}/communityEvents.jsp">Upcoming Events</a></li>
 
         <c:choose>
           <c:when test="${extlAnswer_exception != null}">
             <li><a href="#"><font color="#CC0033"><i>Error. related sites temporarily unavailable</i></font></a></li>
           </c:when>
           <c:otherwise>
-            <li><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.ExternalLinks"/>">Related Sites</a></li>
+            <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.ExternalLinks">Related Sites</a></li>
           </c:otherwise>
         </c:choose>
         
@@ -237,7 +238,7 @@
           </li>
         </c:when>
         <c:otherwise>
-          <li id="favorite-menu"><a href="<c:url value="/showFavorite.do"/>">
+          <li id="favorite-menu"><a href="${baseUrl}/showFavorite.do">
             <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="wdk/images/favorite_color.gif"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>

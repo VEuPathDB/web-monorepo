@@ -11,6 +11,7 @@
 <c:set var="question" value="${requestScope.question}" />
 <c:set var="recordClass" value="${requestScope.recordClass}" />
 <c:set var='project' value='${wdkModel.name}'/>
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
 <imp:pageFrame banner="Data Sets" refer="data-set" >
 
@@ -51,7 +52,7 @@
   <a name="_top"></a>
   <h1>Data Sets</h1>  
   <div id="beta-page"><a title="Please contact us with your feedback." 
-                       href="<c:url value='/app/answer/DatasetQuestions.AllDatasets'/>">New Data Sets page!
+                       href="${baseUrl}/app/answer/DatasetQuestions.AllDatasets">New Data Sets page!
                        <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
   </div>
 
@@ -286,7 +287,7 @@ ${datasetId.value}
                       <c:if test="${question != null}">
                         <c:set var="hasQuestion" value="${true}" />
                         <c:set var="display" value="Identify ${question.recordClass.displayNamePlural} based on ${question.displayName}" />
-                        <c:url var="questionUrl" value="/showQuestion.do?questionFullName=${question.fullName}" />
+                        <c:set var="questionUrl" value="${baseUrl}/showQuestion.do?questionFullName=${question.fullName}" />
                         <c:choose>
                           <c:when test="${question.isTransform}">
                             <li>${display}</li>
@@ -317,7 +318,7 @@ ${datasetId.value}
 
   <%-- if we came to this page to show only a few datasets (would be specified in the url) --%>
   <c:if test="${fn:length(param.reference) > 0}">
-    <p style="text-align:center;font-size:120%"><a href="<c:url value='/getDataset.do?display=detail' />">
+    <p style="text-align:center;font-size:120%"><a href="${baseUrl}/getDataset.do?display=detail">
       Click here to see the complete list of Data Sets</a></p>
   </c:if>
 

@@ -276,6 +276,15 @@ sub wdkReference {
 
 
 
+sub citationAndText {
+    my ($self, $extdb, $text) = @_;
+
+    my $citation = $self->citationFromExtDatabaseNamePattern($extdb);
+    return $citation . $text;
+}
+
+
+
 sub citationFromExtDatabaseNamePattern {
   my ($self,$extdb) = @_;
 
