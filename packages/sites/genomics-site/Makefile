@@ -1,5 +1,5 @@
 PATH                := $(PROJECT_HOME)/WDK/View/node_modules/.bin:$(PATH)
-application_bundle  := $(BASE_GUS)/webapp/wdkCustomization/js/application.bundle.js
+application_bundle  := dist/wdkCustomization/js/application.bundle.js
 application_sources := webapp/wdkCustomization/js/application.js
 
 
