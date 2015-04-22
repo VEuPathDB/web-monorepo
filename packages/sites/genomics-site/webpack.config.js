@@ -4,14 +4,29 @@ var path = require('path');
 var projectHome = process.env.PROJECT_HOME;
 var wdkRoot = path.join(projectHome, 'WDK/View');
 
+// Get Wdk's webpack.config.
 var config = require(path.join(wdkRoot, 'webpack.config'));
 
-initializeProps(config, 'resolve.alias');
+// Make sure properties are initialized on config, without overwriting values.
 initializeProps(config, 'resolveLoader');
+initializeProps(config, 'externals', []);
 
-config.resolve.fallback = config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
-config.resolve.alias.wdk = path.join(wdkRoot, 'webapp/wdk/js');
+// This lets us use build tools Wdk has already loaded.
+config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
 
+// Map external libraries Wdk exposes so we can do things like:
+//
+//    import Wdk from 'wdk;
+//    import React from 'react';
+//
+// This will give us more flexibility in changing how we load libraries
+// without having to rewrite a bunch of application code.
+config.externals.push({
+  wdk: 'Wdk',
+  react: 'Wdk.React',
+  immutable: 'Wdk.Immutable',
+  _: 'Wdk._'
+});
 module.exports = config;
 
 

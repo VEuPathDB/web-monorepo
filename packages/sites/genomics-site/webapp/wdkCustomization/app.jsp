@@ -98,5 +98,6 @@
     data-serviceUrl="${pageContext.request.contextPath}/service"
   ></main>
 
+  <imp:script src="wdk/js/wdk-3.0.js"/>
   <imp:script src="wdkCustomization/js/application.bundle.js"/>
 </imp:pageFrame>

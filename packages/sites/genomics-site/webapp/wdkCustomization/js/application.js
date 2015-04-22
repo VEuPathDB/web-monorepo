@@ -1,4 +1,4 @@
-import Wdk from 'wdk/flux';
+import Wdk from 'wdk';
 import {
   DatasetRecord,
   datasetCellRenderer
