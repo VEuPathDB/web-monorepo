@@ -142,7 +142,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   var proteinLink = "<a href='../../../cgi-bin/geneSrt?project_id=" + projectId
         + "&ids=" + sourceId
         + "&ignore_gene_alias=" + ignore_gene_alias
-        + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&go=Get+Sequences' target='_blank'>protein</a>"
+        + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&endAnchor3=End&go=Get+Sequences' target='_blank'>protein</a>"
   var recordLink = "<a href='../../../gene/" + sourceId + "'>Gene Page</a>";
   var gbLink = "<a href='../../../../cgi-bin/gbrowse/" + projectId.toLowerCase() + "/?" + gbLinkParams + "'>GBrowse</a>";
   var orthomclLink = "<a href='http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
