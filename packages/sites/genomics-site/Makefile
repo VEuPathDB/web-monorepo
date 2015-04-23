@@ -1,5 +1,7 @@
 PATH                := $(PROJECT_HOME)/WDK/View/node_modules/.bin:$(PATH)
-wdk_bundle          := $(WEBAPP)/wdk/js/wdk-3.0.js
+SHELL               := /bin/bash
+
+wdk3_bundle          := $(PROJECT_HOME)/WDK/View/dist/wdk/js/wdk-3.0.js
 application_bundle  := dist/wdkCustomization/js/application.bundle.js
 application_sources := webapp/wdkCustomization/js/application.js
 
