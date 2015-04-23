@@ -22,11 +22,13 @@ config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
 // This will give us more flexibility in changing how we load libraries
 // without having to rewrite a bunch of application code.
 config.externals.push({
-  wdk: 'Wdk',
-  react: 'Wdk.React',
-  immutable: 'Wdk.Immutable',
-  _: 'Wdk._'
+  wdk            : 'Wdk',
+  react          : 'React',
+  'react-router' : 'ReactRouter',
+  immutable      : 'Immutable',
+  _: '_'
 });
+
 module.exports = config;
 
 
