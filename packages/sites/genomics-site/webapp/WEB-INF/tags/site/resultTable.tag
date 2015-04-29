@@ -9,7 +9,22 @@
               description="Step bean we are looking at"
 %>
 
-<wdk:resultTable step="${step}" />
+<c:set var="wdkAnswer" value="${step.answerValue}"/>
+<c:set
+  var="missingTranscriptsCount"
+  value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}"
+/>
+
+<div>
+  <%-- FIXME Remove hardcoded flag --%>
+  <c:if test="${missingTranscriptsCount gt 0 or wdkAnswer.params['Exon Count >='] eq '5'}">
+  <p style="text-align: center;">
+    <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle wdk-tooltip" title="# missing transcripts: ${missingTranscriptsCount}"></i>
+    <strong>Some Genes in your result have transcripts that did not match your search.</strong>
+  </p>
+  </c:if>
+  <wdk:resultTable step="${step}" />
+</div>
 
 <c:set var="model" value="${applicationScope.wdkModel}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
