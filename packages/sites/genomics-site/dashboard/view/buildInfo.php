@@ -176,7 +176,11 @@ Any subversion working directories in project_home that are not defined as depen
                   foreach ($build as $prop => $data) {
                     if (strpos($prop, '.svn.info')) {
                       $info = svninfo_from_build_data($prop, $data);
-                      print "svn switch -r" . $info['Revision'] . " " . $info['URL'] . " " . $info['Working Directory'] . ";<br>";
+                      if ($info === NULL) {
+                        print "ERROR: $data<br>";
+                      } else {
+                        print "svn switch -r" . $info['Revision'] . " " . $info['URL'] . " " . $info['Working Directory'] . ";<br>";
+                      }
                     }
                   }
                 ?>
@@ -186,7 +190,11 @@ Any subversion working directories in project_home that are not defined as depen
                   foreach ($build as $prop => $data) {
                     if (strpos($prop, '.svn.info')) {
                       $info = svninfo_from_build_data($prop, $data);
-                      print "svn checkout -r" . $info['Revision'] . " " . $info['URL'] . " " . $info['Working Directory'] . ";<br>";
+                      if ($info === NULL) {
+                        print "ERROR: $data<br>";
+                      } else {
+                        print "svn checkout -r" . $info['Revision'] . " " . $info['URL'] . " " . $info['Working Directory'] . ";<br>";
+                      }
                     }
                   }
                 ?>
@@ -227,7 +235,11 @@ function svninfo_from_build_data($prop, $data) {
         # so we don't split on the colons in the url or timestamps).
         $pairs = explode(':', $attr, 2);
         # That should create a two element array. Combine those
-        $info[$pairs[0]] = trim($pairs[1]);
+        if (count($pairs) == 2) {
+          $info[$pairs[0]] = trim($pairs[1]);
+        } else {
+          return NULL;
+        }
       }
       # Extract the working directory name from the $prop . e.g.
       # strip off '.svn.info'.
