@@ -2,6 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="wdk" tagdir="/WEB-INF/tags/wdk" %>
+<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <%@ attribute name="step"
               type="org.gusdb.wdk.model.jspwrap.StepBean"
@@ -29,6 +30,43 @@
         to the strategy based on the missing transcripts.
       </strong>
     </p>
+  </c:if>
+
+  <c:if test="${step.isBoolean}">
+    <!-- selected values -->
+    <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
+    <c:set var="values" value="${option.value}"/>
+
+    <style>
+      .gene-boolean-filter {
+        text-align: center;
+      }
+      .gene-boolean-filter table {
+        margin: 1em auto;
+      }
+      .gene-boolean-filter th, td {
+        text-align: center;
+      }
+      .gene-boolean-filter tr > td:last-child {
+        text-align: right;
+      }
+    </style>
+
+    <div class="gene-boolean-filter"
+      data-step="${step.stepId}"
+      data-filter="gene_boolean_filter_array">
+      <form action="applyFilter.do" name="apply-gene-boolean-filter">
+        <input type="hidden" name="step" value="${step.stepId}"/>
+        <input type="hidden" name="filter" value="gene_boolean_filter_array"/>
+        <div class="gene-boolean-filter-summary">
+          Loading filters...
+        </div>
+        <button>Apply filter</button>
+      </form>
+      <script type="application/json" class="gene-boolean-filter-values">
+        ${values}
+      </script>
+    </div>
   </c:if>
 
   <wdk:resultTable step="${step}" />
