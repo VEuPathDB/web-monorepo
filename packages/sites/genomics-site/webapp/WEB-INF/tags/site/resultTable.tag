@@ -25,9 +25,8 @@
       <strong>
         ${genesMissingTranscriptsCount}
         ${genesMissingTranscriptsCount eq 1 ? recordClass.displayName : recordClass.displayNamePlural}
-        in your result have transcripts that did not match your search.
-        To investigate, you may <a href="#" onClick="${addTransformAction}">add a transform</a>
-        to the strategy based on the missing transcripts.
+        in your result have transcripts that did not match your search. To investigate,
+        <a href="#" onClick="${addTransformAction}">add this transform</a> to your strategy.
       </strong>
     </p>
   </c:if>
