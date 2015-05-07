@@ -44,6 +44,10 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         }
         if ($filter.find('table').data('display')) {
           $filter.css('display', 'block');
+          $filter.accordion({
+            active: false,
+            collapsible: true
+          });
         }
       });
   }

@@ -37,13 +37,19 @@
     <c:set var="values" value="${option.value}"/>
 
     <style>
-      .gene-boolean-filter {
+      .gene-boolean-filter,
+      .gene-boolean-filter.ui-widget {
         text-align: center;
         display: none;
+        font-size: 90%;
+        margin-bottom: 4px;
+      }
+      .gene-boolean-filter h3 {
+        font-size: 90%;
       }
       .gene-boolean-filter table {
-        margin: 1em auto;
-        border-spacing: 0 .5em;
+        margin: auto;
+        border-spacing: 0 4px;
         border-collapse: separate;
       }
       .gene-boolean-filter th, .gene-boolean-filter td {
@@ -64,25 +70,33 @@
       }
       .gene-boolean-filter-apply-button {
         position: relative;
-        top: -1.5em;
-        left: 2em;
+        top: -1em;
+        left: -2em;
       }
     </style>
 
     <div class="gene-boolean-filter ui-helper-clearfix"
       data-step="${step.stepId}"
       data-filter="gene_boolean_filter_array">
-      <form action="applyFilter.do" name="apply-gene-boolean-filter">
-        <input type="hidden" name="step" value="${step.stepId}"/>
-        <input type="hidden" name="filter" value="gene_boolean_filter_array"/>
-        <div class="gene-boolean-filter-summary">
-          Loading filters...
-        </div>
-        <button class="gene-boolean-filter-apply-button">Apply filter</button>
-      </form>
-      <script type="application/json" class="gene-boolean-filter-values">
-        ${values}
-      </script>
+      <h3 style="text-align: center;">
+        <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
+        <strong>
+          One or both of the steps you are combining have Genes with unmatched Transcripts. Explore these.
+        </strong>
+      </h3>
+      <div>
+        <form action="applyFilter.do" name="apply-gene-boolean-filter">
+          <input type="hidden" name="step" value="${step.stepId}"/>
+          <input type="hidden" name="filter" value="gene_boolean_filter_array"/>
+          <button class="gene-boolean-filter-apply-button">Apply filter</button>
+          <div class="gene-boolean-filter-summary">
+            Loading filters...
+          </div>
+        </form>
+        <script type="application/json" class="gene-boolean-filter-values">
+          ${values}
+        </script>
+      </div>
     </div>
   </c:if>
 
