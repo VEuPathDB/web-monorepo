@@ -44,16 +44,33 @@
       }
       .gene-boolean-filter table {
         margin: 1em auto;
+        border-spacing: 0 .5em;
+        border-collapse: separate;
       }
-      .gene-boolean-filter th, td {
+      .gene-boolean-filter th, .gene-boolean-filter td {
         text-align: center;
+        font-weight: bold;
       }
-      .gene-boolean-filter tr > td:last-child {
-        text-align: right;
+      .gene-boolean-filter tr > td {
+        border: 1px solid rgb(189, 189, 189);
+        background: rgb(237, 237, 237);
+      }
+      .gene-boolean-filter tr > td:last-child,
+      .gene-boolean-filter tr > td:first-child {
+        border: none;
+        background: none;
+      }
+      .gene-boolean-filter-summary {
+        display: inline-block;
+      }
+      .gene-boolean-filter-apply-button {
+        position: relative;
+        top: -1.5em;
+        left: 2em;
       }
     </style>
 
-    <div class="gene-boolean-filter"
+    <div class="gene-boolean-filter ui-helper-clearfix"
       data-step="${step.stepId}"
       data-filter="gene_boolean_filter_array">
       <form action="applyFilter.do" name="apply-gene-boolean-filter">
@@ -62,7 +79,7 @@
         <div class="gene-boolean-filter-summary">
           Loading filters...
         </div>
-        <button>Apply filter</button>
+        <button class="gene-boolean-filter-apply-button">Apply filter</button>
       </form>
       <script type="application/json" class="gene-boolean-filter-values">
         ${values}

@@ -23,11 +23,11 @@
   <c:set var="NN" value="${summary.counts['00']}"/>
 
   <table data-display="${YN ne null or NY ne null or NN ne null}">
-    <tr>
-      <th><!-- checkbox --></th>
-      <th>Matches Step ${step.frontId - 1}</th>
-      <th>Matches Step ${step.frontId}</th>
-      <th><!-- count --></th>
+    <tr class="headerrow">
+      <td><!-- checkbox --></td>
+      <th>Matches prev step</th>
+      <th>Matches this step</th>
+      <td><!-- count --></td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="11"/></td>
