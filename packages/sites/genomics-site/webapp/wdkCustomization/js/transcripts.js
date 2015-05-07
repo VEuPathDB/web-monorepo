@@ -30,6 +30,9 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
             checkbox.checked = values.values.indexOf(checkbox.value) > -1;
           });
         }
+        if ($filter.find('table').data('display')) {
+          $filter.css('display', 'block');
+        }
       });
   }
 

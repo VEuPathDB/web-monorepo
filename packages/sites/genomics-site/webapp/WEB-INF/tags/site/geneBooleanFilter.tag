@@ -22,7 +22,7 @@
   <c:set var="NY" value="${summary.counts['01']}"/>
   <c:set var="NN" value="${summary.counts['00']}"/>
 
-  <table>
+  <table data-display="${YN ne null or NY ne null or NN ne null}">
     <tr>
       <th><!-- checkbox --></th>
       <th>Matches Step ${step.frontId - 1}</th>

@@ -40,6 +40,7 @@
     <style>
       .gene-boolean-filter {
         text-align: center;
+        display: none;
       }
       .gene-boolean-filter table {
         margin: 1em auto;
