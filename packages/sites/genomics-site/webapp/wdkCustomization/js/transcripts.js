@@ -19,10 +19,22 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
   function loadGeneBooleanFilter(event) {
     var $filter = $(event.target).find('.gene-boolean-filter');
+    reallyLoadGeneBooleanFilter($filter);
+  }
+
+  function reallyLoadGeneBooleanFilter($filter, count) {
+    count = count || 0;
     var data = $filter.data();
     $filter
       .find('.gene-boolean-filter-summary')
-      .load('getFilterSummary.do', data, function() {
+      .load('getFilterSummary.do', data, function(response, status) {
+
+        // FIXME Remove before release
+        // retry once, for some fault tolerance
+        if (status == 'error' && count < 1) {
+          reallyLoadGeneBooleanFilter($filter, ++count);
+        }
+
         var valuesStr = $filter.find('.gene-boolean-filter-values').html().trim();
         if (valuesStr) {
           var values = JSON.parse(valuesStr);
