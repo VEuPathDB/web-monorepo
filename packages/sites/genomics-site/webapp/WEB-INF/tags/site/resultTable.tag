@@ -20,7 +20,7 @@
     <c:set var="addTransformAction"
            value="eupathdb.transcripts.openTransform(${step.stepId}); return false;"/>
 
-    <p style="text-align: center;">
+    <p style="text-align: center; margin: .4em 0;">
       <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
       <strong>
         ${genesMissingTranscriptsCount}
@@ -41,13 +41,16 @@
       .gene-boolean-filter.ui-widget {
         text-align: center;
         display: none;
-        font-size: 90%;
         margin-bottom: 4px;
       }
+      .gene-boolean-filter-controls {
+        display: none;
+      }
       .gene-boolean-filter h3 {
-        font-size: 90%;
+        font-size: 100%;
       }
       .gene-boolean-filter table {
+        font-size: 90%;
         margin: auto;
         border-spacing: 0 4px;
         border-collapse: separate;
@@ -78,13 +81,14 @@
     <div class="gene-boolean-filter ui-helper-clearfix"
       data-step="${step.stepId}"
       data-filter="gene_boolean_filter_array">
-      <h3 style="text-align: center;">
+      <p style="text-align: center; margin: .4em 0;">
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
-          One or both of the steps you are combining have Genes with unmatched Transcripts. Explore these.
+          One or both of the steps you are combining have Genes with unmatched Transcripts.
+          <a href="#" class="gene-boolean-filter-controls-toggle">Explore these.</a>
         </strong>
-      </h3>
-      <div>
+      </p>
+      <div class="gene-boolean-filter-controls">
         <form action="applyFilter.do" name="apply-gene-boolean-filter">
           <input type="hidden" name="step" value="${step.stepId}"/>
           <input type="hidden" name="filter" value="gene_boolean_filter_array"/>

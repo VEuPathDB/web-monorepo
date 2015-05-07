@@ -19,6 +19,10 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
   function loadGeneBooleanFilter(event) {
     var $filter = $(event.target).find('.gene-boolean-filter');
+    $filter.on('click', '.gene-boolean-filter-controls-toggle', function(e) {
+      e.preventDefault();
+      $filter.find('.gene-boolean-filter-controls').toggle(400);
+    });
     reallyLoadGeneBooleanFilter($filter);
   }
 
@@ -44,10 +48,6 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         }
         if ($filter.find('table').data('display')) {
           $filter.css('display', 'block');
-          $filter.accordion({
-            active: false,
-            collapsible: true
-          });
         }
       });
   }
