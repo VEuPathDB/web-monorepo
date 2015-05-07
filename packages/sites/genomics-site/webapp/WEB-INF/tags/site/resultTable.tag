@@ -88,7 +88,7 @@
         <form action="applyFilter.do" name="apply-gene-boolean-filter">
           <input type="hidden" name="step" value="${step.stepId}"/>
           <input type="hidden" name="filter" value="gene_boolean_filter_array"/>
-          <button class="gene-boolean-filter-apply-button">Apply filter</button>
+          <button class="gene-boolean-filter-apply-button">Apply selection</button>
           <div class="gene-boolean-filter-summary">
             Loading filters...
           </div>
