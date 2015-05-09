@@ -54,12 +54,6 @@
           <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
         </li>
       </c:when>
-      <c:when test="${type == 'SageTagRecordClasses.SageTagRecordClass'}">
-        <li>
-          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SageTagQuestions.SageTagByRadSourceId&skip_to_download=1&rad_source_id_type=data&rad_source_id_data=${id}" />
-          <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
-        </li>
-      </c:when>
  <c:when test="${type == 'DynSpanRecordClasses.DynSpanRecordClass'}">
         <li>
           <c:url var="downloadUrl" value="/showSummary.do?questionFullName=SpanQuestions.DynSpansBySourceId&skip_to_download=1&span_id_type=data&span_id_data=${id}&array(organism)=Plasmodium berghei ANKA&array(chromosomeOptional)=Choose chromosome&value(start_point)=1&value(end_point_segment)=100&array(sequence_strand)=f" />

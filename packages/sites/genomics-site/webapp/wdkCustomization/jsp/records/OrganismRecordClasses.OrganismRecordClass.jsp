@@ -98,12 +98,6 @@
    <td>${attrs['gocount'].value}</td>
  </tr>
 
- <tr class="rowLight">
-   <td>SAGE Tags Alignments</td>
-   <td align="center"><a href="${attrs['hasSageTag'].url}">${attrs['hasSageTag'].displayText}</a></td>
-   <td>${attrs['sagetagcount'].value}</td>
- </tr>
-
  <tr class="rowMedium">
    <td>RNASeq Reads</td>
    <td align="center"><a href="${attrs['hasRNASeq'].url}">${attrs['hasRNASeq'].displayText}</a></td>
