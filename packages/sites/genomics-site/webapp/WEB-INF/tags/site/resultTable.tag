@@ -84,7 +84,7 @@
       <p style="text-align: center; margin: .4em 0;">
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
-          One or both of the steps you are combining have Genes with unmatched Transcripts.
+          One or both of the steps you are combining have Genes whose transcripts did not all match the search.
           <a href="#" class="gene-boolean-filter-controls-toggle">Explore these.</a>
         </strong>
       </p>
