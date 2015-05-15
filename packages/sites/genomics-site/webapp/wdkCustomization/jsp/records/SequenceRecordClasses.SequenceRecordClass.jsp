@@ -58,7 +58,6 @@
 
 <%--#############################################################--%>
 <!--------------  NOTE on data with ReleasePolicy, or default text for Unpublished data ---------------->
-<%--<c:if test="${projectId ne 'TrichDB' }">
   <c:choose>
   <c:when test="${attrs['release_policy'].value  != null}">
     <b>NOTE: ${attrs['release_policy'].value }</b>
@@ -69,8 +68,7 @@
     </c:if>
   </c:otherwise>
   </c:choose>
-</c:if>
---%>
+
 <c:set var="append" value="" />
 
 <c:set var="attr" value="${attrs['overview']}"/>
