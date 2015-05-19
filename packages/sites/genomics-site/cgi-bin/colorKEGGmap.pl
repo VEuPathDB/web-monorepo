@@ -98,7 +98,7 @@ $factorColorMap = &getColorMap(\@coloringFactor,$colors);
 my $ecMapSql = "SELECT DISTINCT pn.display_label, ec.organisms,
                        pn.x, pn.y,pn.width, pn.height, pn.node_type
                 FROM   (Select apidb.tab_to_string(set(cast(COLLECT(ga.organism) AS apidb.varchartab))) as organisms,ec.ec_number 
-                       from  ApidbTuning.GenomicSequence gs,
+                       from  ApidbTuning.GenomicSequenceAttributes gs,
                              dots.Transcript t, dots.translatedAaFeature taf,
                              dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
                        Where  gs.na_sequence_id = ga.na_sequence_id $appendSQL ga.na_feature_id = t.parent_id
