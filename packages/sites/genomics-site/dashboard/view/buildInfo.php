@@ -173,45 +173,81 @@ Any subversion working directories in project_home that are not defined as depen
           </ul>
           <div id="tab-svn-switch">
                 <?php
-                foreach ($build as $p => $v) {
-                  if ($trunc = strpos($p, '.svn.info')) {
-                    $start = strpos($v, 'Revision: ') + strlen('Revision: ');
-                    $end = strpos($v, 'Last Changed Rev: ') - $start;
-                    $svnrevision = trim(substr($v, $start, $end));
-        
-                    $start = strpos($v, 'URL: ') + strlen('URL: ');
-                    $end = strpos($v, 'Revision: ') - $start;
-                    $svnbranch = trim(substr($v, $start, $end));
-        
-                    $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
-        
-        
-                    print "svn switch -r$svnrevision $svnbranch $svnproject;<br>";
+                  foreach ($build as $prop => $data) {
+                    if (strpos($prop, '.svn.info')) {
+                      $info = svninfo_from_build_data($prop, $data);
+                      if ($info === NULL) {
+                        print "ERROR: $data<br>";
+                      } else {
+                        print "svn switch -r" . $info['Revision'] . " " . $info['URL'] . " " . $info['Working Directory'] . ";<br>";
+                      }
+                    }
                   }
-                }
                 ?>
           </div>
           <div id="tab-svn-checkout">
                 <?php
-                foreach ($build as $p => $v) {
-                  if ($trunc = strpos($p, '.svn.info')) {
-                    $start = strpos($v, 'Revision: ') + strlen('Revision: ');
-                    $end = strpos($v, 'Last Changed Rev: ') - $start;
-                    $svnrevision = trim(substr($v, $start, $end));
-        
-                    $start = strpos($v, 'URL: ') + strlen('URL: ');
-                    $end = strpos($v, 'Revision: ') - $start;
-                    $svnbranch = trim(substr($v, $start, $end));
-        
-                    $svnproject = str_replace('.', '/', substr($p, 0, $trunc));
-        
-        
-                    print "svn checkout -r$svnrevision $svnbranch $svnproject;<br>";
+                  foreach ($build as $prop => $data) {
+                    if (strpos($prop, '.svn.info')) {
+                      $info = svninfo_from_build_data($prop, $data);
+                      if ($info === NULL) {
+                        print "ERROR: $data<br>";
+                      } else {
+                        print "svn checkout -r" . $info['Revision'] . " " . $info['URL'] . " " . $info['Working Directory'] . ";<br>";
+                      }
+                    }
                   }
-                }
                 ?>
           </div>
         </div>
     </td></tr>
   </table>
 </div>
+
+
+<?php
+function svninfo_from_build_data($prop, $data) {
+    if ($end_of_proj_name = strpos($prop, '.svn.info')) {
+      # $prop matches '.svn.info'. $data, e.g. is:
+      #    Path: ApiCommonShared
+      #    Working Copy Root Path: /var/www/AmoebaDB/amoeba.integrate/project_home/ApiCommonShared
+      #    URL: https://www.cbil.upenn.edu/svn/apidb/ApiCommonShared/trunk
+      #    Relative URL: ^/ApiCommonShared/trunk
+      #    Repository Root: https://www.cbil.upenn.edu/svn/apidb
+      #    Repository UUID: 735e2a04-f8fc-0310-8a1b-f2942603c481
+      #    Revision: 67558
+      #    Node Kind: directory
+      #    Schedule: normal
+      #    Last Changed Author: crouchk
+      #    Last Changed Rev: 67525
+      #    Last Changed Date: 2015-04-24 11:33:36 -0400 (Fri, 24 Apr 2015)
+      #
+      # Split that on newlines...
+      $infoset = explode("\n", $data);
+      foreach ($infoset as $attr) {
+        if (strlen($attr) == 0) { continue; }
+        # $attr is of the form
+        #     Path: ApiCommonShared
+        # and
+        #     URL: https://www.cbil.upenn.edu/svn/apidb/ApiCommonShared/trunk
+        # etc. 
+        # Split each of those by ':' (with a array lenght limit of '2'
+        # so we don't split on the colons in the url or timestamps).
+        $pairs = explode(':', $attr, 2);
+        # That should create a two element array. Combine those
+        if (count($pairs) == 2) {
+          $info[$pairs[0]] = trim($pairs[1]);
+        } else {
+          return NULL;
+        }
+      }
+      # Extract the working directory name from the $prop . e.g.
+      # strip off '.svn.info'.
+      #   EuPathSiteCommon.svn.info
+      # becomes
+      #   EuPathSiteCommon
+      $info['Working Directory'] = str_replace('.', '/', substr($prop, 0, $end_of_proj_name));
+      return $info;
+    }
+}
+?>

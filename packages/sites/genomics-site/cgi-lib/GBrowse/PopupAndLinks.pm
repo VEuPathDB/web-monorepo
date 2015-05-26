@@ -58,13 +58,6 @@ sub orfLink {
   return $link;
 }
 
-sub sageTagLink { 
-  my $f = shift;
-  my $name = $f->name;
-  my $link = "/a/showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&primary_key=$name";
-  return $link;
-}
-
 sub ArrayElementLink {
 #  my $f = shift;
 #  my $name = $f->name;
@@ -1098,41 +1091,6 @@ sub blastxTitle {
   push @data, [ 'Description:' => $desc ];
   hover($f, \@data); 
 }
-
-
-
-# TODO:  There is a link to a ToxoDB specific Database... is this needed?  can we get this from the sage tag record page?  Want to make the popup as generic as possible so all sites can use
-sub sageTagTitle { 
-  my ($f, $note) = @_;
-  my $name         = $f->name;
-  my ($sourceId)    = $f->get_tag_values('SourceID'); 
-  my $start        = $f->start; 
-  my $stop         = $f->stop; 
-  my $strand       = $f->strand;
-  ($start,$stop) = ($stop,$start) if ($strand == -1); 
-  my ($tag)        = $f->get_tag_values('Sequence'); 
-#  my $sageDb_url = "<a target='new' href=http://vmbmod10.msu.montana.edu/vmb/cgi-bin/sage.cgi?prevpage=newsage4.htm;normal=yes;database=toxoditagscorrect;library=sp;intag=" 
-#    . $tag . ">TgSAGEDB</a>";
-  my ($occurrence) = $f->get_tag_values('Occurrence'); 
-  my @data; 
-  push @data, [ 'Name:'          => "$name" ];
-  push @data, [ 'Source ID:'          => "$sourceId" ];
-  push @data, [ 'Temporary external ID:' => "$name" ];
-  push @data, [ 'Location:'        => "$start..$stop" ];
-  push @data, [ 'Sequence:'        => $tag ];
-  push @data, [ 'Found in genome:' => $occurrence ];
-  push @data, [ 'Note:'            => $note ] if $note;
-#  push @data, [ 'Link'             => $sageDb_url];
-  my $bulkEntries = $f->bulkAttributes();
-  push @data, [ "<b>Library</b>" => "<b>Percent | RawCount</b>" ];
-  foreach my $item (@$bulkEntries) {
-    my $lib = $item->{LIBRARY_NAME};
-    my $raw_count = $item->{RAW_COUNT};
-    my $percent = sprintf("%.3f", $item->{LIBRARY_TAG_PERCENTAGE});
-    push @data, [ "$lib" => "$percent % | $raw_count" ];
-  }
-  hover($f, \@data); 
-} 
 
 
 sub geneticMarkersTitle {

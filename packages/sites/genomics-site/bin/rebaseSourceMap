@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+
+var args = process.argv.slice(2);
+
+if (args.length !== 3) {
+  process.stdout.write(
+    '\nUsage: rebaseSourceMap <sourceMap> <search> <replace>\n\n' +
+    'Replace source paths that match <search> with <replace>.\n'
+  );
+  process.exit();
+}
+
+var sourceMapFile = args[0];
+// var search = fs.realpathSync(args[1]);
+var search = args[1];
+var replace = args[2];
+
+var sourceMapRaw = fs.readFileSync(sourceMapFile);
+var sourceMap = JSON.parse(sourceMapRaw);
+
+console.log('Rebasing path %s to %s in sourcemap %s', search, replace, sourceMapFile);
+
+sourceMap.sources = sourceMap.sources.map(function(source) {
+  return source.replace(search, replace);
+});
+
+fs.writeFileSync(sourceMapFile, JSON.stringify(sourceMap));

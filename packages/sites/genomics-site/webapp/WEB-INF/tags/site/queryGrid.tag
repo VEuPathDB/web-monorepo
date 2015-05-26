@@ -206,23 +206,9 @@
 
 
 <%-----------------------------------------------------------------------------%>
-<%--  All Sage Tags and ORF --%>
+<%--  All ORF Queries TABLE --%>
 <tr>
-    <%-- All SageTags Queries TABLE  --%>
-    <td > 
-<div class="innertube2">     
-	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
-		<tr class="headerrow2">
-			<td   align="center"><b>Identify Sage Tag Alignments by:</b></td>
-		</tr>
-		<tr><td align="center">
-			<imp:queryGridSage/>
-		</td></tr>	
-	</table>
-</div> 
-    </td>
 
-    <%--  All ORF Queries TABLE --%>
     <td >   
 <div class="innertube2">   
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 

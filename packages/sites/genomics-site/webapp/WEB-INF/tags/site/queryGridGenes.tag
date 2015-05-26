@@ -110,9 +110,6 @@
                 <tr>
                     <imp:queryGridMakeUrl qset="GeneQuestions" qname="GenesByESTOverlap" linktext="EST Evidence" existsOn="A Am C G M Pi P T Tr Tt"/>
                 </tr>
-                <tr>
-                    <imp:queryGridMakeUrl qset="InternalQuestions" qname="GenesBySageTagEvidence" linktext="SAGE Tag Evidence" existsOn="A G P T Tt"/>
-                </tr>
  		<tr>
                     <imp:queryGridMakeUrl qset="InternalGeneDatasetQuestions" qname="GenesByRTPCREvidence" linktext="RT PCR Evidence" existsOn="A C"/>
                 </tr>

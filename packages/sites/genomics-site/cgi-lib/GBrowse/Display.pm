@@ -33,19 +33,6 @@ sub synSpanLabel {
   return $name; 
 }
 
-# not sure why this is returning the name ... should only be 1 or 0
-sub sageTagLabel {
-  my $f = shift;
-  my $start = $f->start;
-  my $stop  = $f->stop;
-  my $strand  = $f->strand;
-  $start = $stop if ($strand == -1);
-  my ($tag_seq) = $f->get_tag_values("Tag"); 
-  my ($count) = $f->get_tag_values("Occurrence"); 
-  return  $start . " [" . $count . "]"; 
-}
-
-
 
 #--------------------------------------------------------------------------------
 #  Methods For Color
@@ -157,28 +144,6 @@ sub MassSpecScoreBgColor {
    return '#500000';
 }
 
-sub sageTagFgColor { 
-  my $f            = shift;
-  my $strand       = $f->strand; 
-  my ($occurrence) = $f->get_tag_values('Occurrence'); 
-  if ($strand  eq "+1") {
-    return "lightblue" if ($occurrence < 3);
-    return "darkblue" if ($occurrence > 5);
-    return "blue";
-  } else {
-    return "pink" if ($occurrence < 3);
-    return "darkred" if ($occurrence > 5);
-    return "red";
-  }
-}
-
-sub sageTagUniqueMapFgColor { 
-  my $f            = shift;
-  my $strand       = $f->strand; 
-  my ($occurrence) = $f->get_tag_values('Occurrence'); 
-  return "grey" if ($occurrence > 1);
-  ($strand eq "+1") ? "blue" : "darkred";
-}
 
 sub rumIntronBgColorFromSample {
   my $f = shift;
