@@ -5,15 +5,15 @@ import {
 } from './records/DatasetRecordClasses.DatasetRecordClass';
 
 var rootElement = document.getElementsByTagName('main')[0];
-var baseUrl = rootElement.getAttribute('data-baseUrl');
-var serviceUrl = rootElement.getAttribute('data-serviceUrl');
+var rootUrl = rootElement.getAttribute('data-baseUrl');
+var endpoint = rootElement.getAttribute('data-serviceUrl');
 
 Wdk.createApplication({
-  baseUrl                 : baseUrl,
-  serviceUrl              : serviceUrl,
-  rootElement             : rootElement,
-  recordComponentResolver : recordComponentResolver,
-  cellRendererResolver    : cellRendererResolver
+  rootUrl,
+  endpoint,
+  rootElement,
+  recordComponentResolver,
+  cellRendererResolver
 });
 
 // This is called when rendering the record page. `DefaultComponent` is
