@@ -17,10 +17,10 @@
                            description="Step being filtered."/>
 
   <!-- counts -->
-  <c:set var="YY" value="${summary.counts['11']}"/>
-  <c:set var="YN" value="${summary.counts['10']}"/>
-  <c:set var="NY" value="${summary.counts['01']}"/>
-  <c:set var="NN" value="${summary.counts['00']}"/>
+  <c:set var="YY" value="${summary.counts['YY']}"/>
+  <c:set var="YN" value="${summary.counts['YN']}"/>
+  <c:set var="NY" value="${summary.counts['NY']}"/>
+  <c:set var="NN" value="${summary.counts['NN']}"/>
 
   <table data-display="${YN ne null or NY ne null or NN ne null}">
     <tr class="headerrow">
@@ -30,25 +30,25 @@
       <td><!-- count --></td>
     </tr>
     <tr>
-      <td><input name="values" type="checkbox" value="11"/></td>
+      <td><input name="values" type="checkbox" value="YY"/></td>
       <td>Y</td>
       <td>Y</td>
       <td>${YY eq null ? 0 : YY}</td>
     </tr>
     <tr>
-      <td><input name="values" type="checkbox" value="10"/></td>
+      <td><input name="values" type="checkbox" value="YN"/></td>
       <td>Y</td>
       <td>N</td>
       <td>${YN eq null ? 0 : YN}</td>
     </tr>
     <tr>
-      <td><input name="values" type="checkbox" value="01"/></td>
+      <td><input name="values" type="checkbox" value="NY"/></td>
       <td>N</td>
       <td>Y</td>
       <td>${NY eq null ? 0 : NY}</td>
     </tr>
     <tr>
-      <td><input name="values" type="checkbox" value="00"/></td>
+      <td><input name="values" type="checkbox" value="NN"/></td>
       <td>N</td>
       <td>N</td>
       <td>${NN eq null ? 0 : NN}</td>
