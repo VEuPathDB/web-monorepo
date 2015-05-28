@@ -67,7 +67,7 @@ calling functions at the right time.
  </div>
 
  <div>
-<BR><a href="/common/downloads/pathwayFiles/${pathwayId}.xgmml">XGMML data file</a>
+<BR><a href="/common/downloads/Current_Release/pathwayFiles/${pathwayId}.xgmml">XGMML data file</a>
 </div>
  <div align="right">
 <a href="http://cytoscapeweb.cytoscape.org/">
