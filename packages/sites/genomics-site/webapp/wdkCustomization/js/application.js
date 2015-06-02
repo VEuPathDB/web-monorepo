@@ -8,7 +8,7 @@ var rootElement = document.getElementsByTagName('main')[0];
 var rootUrl = rootElement.getAttribute('data-baseUrl');
 var endpoint = rootElement.getAttribute('data-serviceUrl');
 
-Wdk.createApplication({
+window._app = Wdk.createApplication({
   rootUrl,
   endpoint,
   rootElement,
