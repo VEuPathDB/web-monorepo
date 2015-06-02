@@ -340,10 +340,9 @@ var IsolatesList = React.createClass({
 export var DatasetRecord = React.createClass({
   render() {
     var titleClass = 'eupathdb-DatasetRecord-title';
-
     var { record, questions, recordClasses } = this.props;
-    var { id, attributes, tables } = record;
-
+    var { attributes, tables } = record;
+    var title = attributes.primary_key.value;
     var {
       summary,
       eupath_release,
@@ -371,7 +370,7 @@ export var DatasetRecord = React.createClass({
     return (
       <div className="eupathdb-DatasetRecord ui-helper-clearfix">
         <h1 dangerouslySetInnerHTML={{
-          __html: 'Data Set: <span class="' + titleClass + '">' + id + '</span>'
+          __html: 'Data Set: <span class="' + titleClass + '">' + title + '</span>'
         }}/>
 
         <div className="eupathdb-DatasetRecord-Container ui-helper-clearfix">
