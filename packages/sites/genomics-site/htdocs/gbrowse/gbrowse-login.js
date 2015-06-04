@@ -21,6 +21,7 @@ var GB = {
         var project = GB.getParameterByName('project');
         var redirectUrl = GB.getParameterByName('redirectUrl');
         var cookieMaxAge = GB.getParameterByName('cookieMaxAge');
+        var userDisplayName = GB.getParameterByName('userDisplayName');
 
         // try to split cookie into email and checksum
         var creds = GB.splitAuthCookie(jQuery.cookies.get(GB.WDK_COOKIE_NAME));
@@ -31,6 +32,11 @@ var GB = {
             window.top.location.href = redirectUrl;
         }
         else {
+            // add user's display name to progress bar
+            if (userDisplayName != '') {
+                jQuery('#personalize-name').text(" as " + userDisplayName);
+            }
+
             // make main div visible
             jQuery('#progressbar').show();
 
