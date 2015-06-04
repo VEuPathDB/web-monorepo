@@ -2,43 +2,39 @@ import React from 'react';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
-  var div = document.createElement('div');
+  let div = document.createElement('div');
   div.innerHTML = str;
   return div.textContent;
 }
 
 // format is {text}({link})
-var formatLink = function formatLink(link, opts) {
+let formatLink = function formatLink(link, opts) {
   opts = opts || {};
-  var newWindow = !!opts.newWindow;
+  let newWindow = !!opts.newWindow;
   return (
     <a href={link.url} target={newWindow ? '_blank' : '_self'}>{stripXML(link.displayText)}</a>
   );
 };
 
-var renderPrimaryPublication = function renderPrimaryPublication(publication) {
-  var pubmedLink = publication.find(function(pub) {
-    return pub.name == 'pubmed_link';
-  });
-  return formatLink(pubmedLink.value, { newWindow: true });
+let renderPrimaryPublication = function renderPrimaryPublication(publication) {
+  return formatLink(publication.pubmed_link, { newWindow: true });
 };
 
-var renderPrimaryContact = function renderPrimaryContact(contact, institution) {
+let renderPrimaryContact = function renderPrimaryContact(contact, institution) {
   return contact + ', ' + institution;
 };
 
-var renderSourceVersion = function(version) {
-  var name = version.find(v => v.name === 'version');
+let renderSourceVersion = function(version) {
   return (
-    name.value + ' (The data provider\'s version number or publication date, from' +
+    version.version + ' (The data provider\'s version number or publication date, from' +
     ' the site the data was acquired. In the rare case neither is available,' +
     ' the download date.)'
   );
 };
 
-var Organisms = React.createClass({
+let Organisms = React.createClass({
   render() {
-    var { organisms } = this.props;
+    let { organisms } = this.props;
     if (!organisms) return null;
     return (
       <div>
@@ -55,10 +51,9 @@ var Organisms = React.createClass({
   }
 });
 
-var Searches = React.createClass({
+let Searches = React.createClass({
   render() {
-    var rows = this.props.searches.rows;
-    rows.map(row => _.indexBy(row, 'name')).filter(this._rowIsQuestion);
+    let rows = this.props.searches.filter(search => search.target_type === 'question');
 
     if (rows.length === 0) return null;
 
@@ -72,19 +67,14 @@ var Searches = React.createClass({
     );
   },
 
-  _rowIsQuestion(row) {
-    var target_type = row.target_type;
-    return target_type && target_type.value == 'question';
-  },
-
   _renderSearch(row, index) {
-    var name = row.find(attr => attr.name == 'target_name').value;
-    var question = this.props.questions.find(q => q.name === name);
+    let name = row.target_name;
+    let question = this.props.questions.find(q => q.name === name);
 
     if (question == null) return null;
 
-    var recordClass = this.props.recordClasses.find(r => r.fullName === question.class);
-    var searchName = `Identify ${recordClass.displayNamePlural} by ${question.displayName}`;
+    let recordClass = this.props.recordClasses.find(r => r.fullName === question.class);
+    let searchName = `Identify ${recordClass.displayNamePlural} by ${question.displayName}`;
     return (
       <li key={index}>
         <a href={'/a/showQuestion.do?questionFullName=' + name}>{searchName}</a>
@@ -93,77 +83,72 @@ var Searches = React.createClass({
   }
 });
 
-var Links = React.createClass({
+let Links = React.createClass({
   render() {
-    var { links } = this.props;
+    let { links } = this.props;
 
-    if (links.rows.length === 0) return null;
+    if (links.length === 0) return null;
 
     return (
       <div>
         <h2>Links</h2>
-        <ul> {links.rows.map(this._renderLink)} </ul>
+        <ul> {links.map(this._renderLink)} </ul>
       </div>
     );
   },
 
   _renderLink(link, index) {
-    var hyperLink = link.find(attr => attr.name == 'hyper_link');
     return (
-      <li key={index}>{formatLink(hyperLink.value)}</li>
+      <li key={index}>{formatLink(link.hyper_link)}</li>
     );
   }
 });
 
-var Contacts = React.createClass({
+let Contacts = React.createClass({
   render() {
-    var { contacts } = this.props;
-    if (contacts.rows.length === 0) return null;
+    let { contacts } = this.props;
+    if (contacts.length === 0) return null;
     return (
       <div>
         <h4>Contacts</h4>
         <ul>
-          {contacts.rows.map(this._renderContact)}
+          {contacts.map(this._renderContact)}
         </ul>
       </div>
     );
   },
 
   _renderContact(contact, index) {
-    var contact_name = contact.find(c => c.name == 'contact_name');
-    var affiliation = contact.find(c => c.name == 'affiliation');
     return (
-      <li key={index}>{contact_name.value}, {affiliation.value}</li>
+      <li key={index}>{contact.contact_name}, {contact.affiliation}</li>
     );
   }
 });
 
-var Publications = React.createClass({
+let Publications = React.createClass({
   render() {
-    var { publications } = this.props;
-    var rows = publications.rows;
-    if (rows.length === 0) return null;
+    let { publications } = this.props;
+    if (publications.length === 0) return null;
     return (
       <div>
         <h4>Publications</h4>
-        <ul>{rows.map(this._renderPublication)}</ul>
+        <ul>{publications.map(this._renderPublication)}</ul>
       </div>
     );
   },
 
   _renderPublication(publication, index) {
-    var pubmed_link = publication.find(p => p.name == 'pubmed_link');
     return (
-      <li key={index}>{formatLink(pubmed_link.value)}</li>
+      <li key={index}>{formatLink(publication.pubmed_link)}</li>
     );
   }
 });
 
-var ContactsAndPublications = React.createClass({
+let ContactsAndPublications = React.createClass({
   render() {
-    var { contacts, publications } = this.props;
+    let { contacts, publications } = this.props;
 
-    if (contacts.rows.length === 0 && publications.rows.length === 0) return null;
+    if (contacts.length === 0 && publications.length === 0) return null;
 
     return (
       <div>
@@ -175,10 +160,10 @@ var ContactsAndPublications = React.createClass({
   }
 });
 
-var ReleaseHistory = React.createClass({
+let ReleaseHistory = React.createClass({
   render() {
-    var { history } = this.props;
-    if (history.rows.length === 0) return null;
+    let { history } = this.props;
+    if (history.length === 0) return null;
     return (
       <div>
         <h2>Data Set Release History</h2>
@@ -192,7 +177,7 @@ var ReleaseHistory = React.createClass({
             </tr>
           </thead>
           <tbody>
-            {history.rows.map(this._renderRow)}
+            {history.map(this._renderRow)}
           </tbody>
         </table>
       </div>
@@ -200,20 +185,18 @@ var ReleaseHistory = React.createClass({
   },
 
   _renderRow(attributes) {
-    var attrs = _.indexBy(attributes, 'name');
+    let releaseDate = attributes.release_date.split(/\s+/)[0];
 
-    var releaseDate = attrs.release_date.value.split(/\s+/)[0];
-
-    var release = attrs.build.value == 0
+    let release = attributes.build == 0
       ? 'Initial release'
-      : `${attrs.project.value} ${attrs.release_number.value} ${releaseDate}`;
+      : `${attributes.project} ${attributes.release_number} ${releaseDate}`;
 
-    var genomeSource = attrs.genome_source.value
-      ? attrs.genome_source.value + ' (' + attrs.genome_version.value + ')'
+    let genomeSource = attributes.genome_source
+      ? attributes.genome_source + ' (' + attributes.genome_version + ')'
       : '';
 
-    var annotationSource = attrs.annotation_source.value
-      ? attrs.annotation_source.value + ' (' + attrs.annotation_version.value + ')'
+    let annotationSource = attributes.annotation_source
+      ? attributes.annotation_source + ' (' + attributes.annotation_version + ')'
       : '';
 
     return (
@@ -221,18 +204,17 @@ var ReleaseHistory = React.createClass({
         <td>{release}</td>
         <td>{genomeSource}</td>
         <td>{annotationSource}</td>
-        <td>{attrs.note.value}</td>
+        <td>{attributes.note}</td>
       </tr>
     );
   }
 });
 
-var Versions = React.createClass({
+let Versions = React.createClass({
   render() {
-    var { versions } = this.props;
-    var rows = versions.rows;
+    let { versions } = this.props;
 
-    if (rows.length === 0) return null;
+    if (versions.length === 0) return null;
 
     return (
       <div>
@@ -251,7 +233,7 @@ var Versions = React.createClass({
             </tr>
           </thead>
           <tbody>
-            {rows.map(this._renderRow)}
+            {versions.map(this._renderRow)}
           </tbody>
         </table>
       </div>
@@ -259,54 +241,50 @@ var Versions = React.createClass({
   },
 
   _renderRow(attributes) {
-    var attrs = _.indexBy(attributes, 'name');
     return (
       <tr>
-        <td>{attrs.organism.value}</td>
-        <td>{attrs.version.value}</td>
+        <td>{attributes.organism}</td>
+        <td>{attributes.version}</td>
       </tr>
     );
   }
 });
 
-var Graphs = React.createClass({
+let Graphs = React.createClass({
   render() {
-    var { graphs } = this.props;
-    var rows = graphs.rows;
-    if (rows.length === 0) return null;
+    let { graphs } = this.props;
+    if (graphs.length === 0) return null;
     return (
       <div>
         <h2>Example Graphs</h2>
-        <ul>{rows.map(this._renderGraph)}</ul>
+        <ul>{graphs.map(this._renderGraph)}</ul>
       </div>
     );
   },
 
   _renderGraph(graph, index) {
-    var g = _.indexBy(graph, 'name');
+    let displayName = graph.display_name;
 
-    var displayName = g.display_name.value;
+    let baseUrl = '/cgi-bin/dataPlotter.pl' +
+      '?type=' + graph.module +
+      '&project_id=' + graph.project_id +
+      '&dataset=' + graph.dataset_name +
+      '&template=' + (graph.is_graph_custom === 'false' ? 1 : '') +
+      '&id=' + graph.graph_ids;
 
-    var baseUrl = '/cgi-bin/dataPlotter.pl' +
-      '?type=' + g.module.value +
-      '&project_id=' + g.project_id.value +
-      '&dataset=' + g.dataset_name.value +
-      '&template=' + (g.is_graph_custom.value === 'false' ? 1 : '') +
-      '&id=' + g.graph_ids.value;
-
-    var imgUrl = baseUrl + '&fmt=png';
-    var tableUrl = baseUrl + '&fmt=table';
+    let imgUrl = baseUrl + '&fmt=png';
+    let tableUrl = baseUrl + '&fmt=table';
 
     return (
       <li key={index}>
         <h3>{displayName}</h3>
         <div className="eupathdb-DatasetRecord-GraphMeta">
           <h3>Description</h3>
-          <p dangerouslySetInnerHTML={{__html: g.description.value}}/>
+          <p dangerouslySetInnerHTML={{__html: graph.description}}/>
           <h3>X-axis</h3>
-          <p>{g.x_axis.value}</p>
+          <p>{graph.x_axis}</p>
           <h3>Y-axis</h3>
-          <p>{g.y_axis.value}</p>
+          <p>{graph.y_axis}</p>
         </div>
         <div className="eupathdb-DatasetRecord-GraphData">
           <img className="eupathdb-DatasetRecord-GraphImg" src={imgUrl}/>
@@ -316,34 +294,32 @@ var Graphs = React.createClass({
   }
 });
 
-var IsolatesList = React.createClass({
+let IsolatesList = React.createClass({
 
   render() {
-    var { rows } = this.props.isolates;
-    if (rows.length === 0) return null;
+    let { isolates } = this.props;
+    if (isolates.length === 0) return null;
     return (
       <div>
         <h2>Isolates / Samples</h2>
-        <ul>{rows.map(this._renderRow)}</ul>
+        <ul>{isolates.map(this._renderRow)}</ul>
       </div>
     );
   },
 
   _renderRow(attributes) {
-    var isolate_link = attributes.find(attr => attr.name === 'isolate_link');
     return (
-      <li>{formatLink(isolate_link.value)}</li>
+      <li>{formatLink(attributes.isolate_link)}</li>
     );
   }
 });
 
-export var DatasetRecord = React.createClass({
+export let DatasetRecord = React.createClass({
   render() {
-    var titleClass = 'eupathdb-DatasetRecord-title';
-    var { record, questions, recordClasses } = this.props;
-    var { attributes, tables } = record;
-    var title = attributes.primary_key.value;
-    var {
+    let titleClass = 'eupathdb-DatasetRecord-title';
+    let { record, questions, recordClasses } = this.props;
+    let { attributes, tables } = record;
+    let {
       summary,
       eupath_release,
       contact,
@@ -353,10 +329,10 @@ export var DatasetRecord = React.createClass({
       description
     } = attributes;
 
-    var version = tables.Version.rows[0];
-    var primaryPublication = tables.Publications.rows[0];
+    let version = tables.Version[0];
+    let primaryPublication = tables.Publications[0];
 
-    var {
+    let {
       References,
       HyperLinks,
       Contacts,
@@ -370,7 +346,7 @@ export var DatasetRecord = React.createClass({
     return (
       <div className="eupathdb-DatasetRecord ui-helper-clearfix">
         <h1 dangerouslySetInnerHTML={{
-          __html: 'Data Set: <span class="' + titleClass + '">' + title + '</span>'
+          __html: 'Data Set: <span class="' + titleClass + '">' + attributes.primary_key + '</span>'
         }}/>
 
         <div className="eupathdb-DatasetRecord-Container ui-helper-clearfix">
@@ -382,13 +358,13 @@ export var DatasetRecord = React.createClass({
 
               <tr>
                 <th>Summary:</th>
-                <td dangerouslySetInnerHTML={{__html: summary.value}}/>
+                <td dangerouslySetInnerHTML={{__html: summary}}/>
               </tr>
 
-              {organism_prefix.value ? (
+              {organism_prefix ? (
                 <tr>
                   <th>Organism (source or reference):</th>
-                  <td dangerouslySetInnerHTML={{__html: organism_prefix.value}}/>
+                  <td dangerouslySetInnerHTML={{__html: organism_prefix}}/>
                 </tr>
               ) : null}
 
@@ -399,10 +375,10 @@ export var DatasetRecord = React.createClass({
                 </tr>
               ) : null}
 
-              {contact.value && institution.value ? (
+              {contact && institution ? (
                 <tr>
                   <th>Primary contact:</th>
-                  <td>{renderPrimaryContact(contact.value, institution.value)}</td>
+                  <td>{renderPrimaryContact(contact, institution)}</td>
                 </tr>
               ) : null}
 
@@ -413,10 +389,10 @@ export var DatasetRecord = React.createClass({
                 </tr>
               ) : null}
 
-              {eupath_release.value ? (
+              {eupath_release ? (
                 <tr>
                   <th>EuPathDB release # / date:</th>
-                  <td>{eupath_release.value}</td>
+                  <td>{eupath_release}</td>
                 </tr>
               ) : null}
 
@@ -427,7 +403,7 @@ export var DatasetRecord = React.createClass({
 
           <div className="eupathdb-DatasetRecord-Main">
             <h2>Detailed Description</h2>
-            <div dangerouslySetInnerHTML={{__html: description.value}}/>
+            <div dangerouslySetInnerHTML={{__html: description}}/>
             <ContactsAndPublications contacts={Contacts} publications={Publications}/>
           </div>
 
@@ -447,7 +423,7 @@ export var DatasetRecord = React.createClass({
   }
 });
 
-var Tooltip = React.createClass({
+let Tooltip = React.createClass({
   componentDidMount() {
     //this._setupTooltip();
     this.$target = $(this.getDOMNode()).find('.wdk-RecordTable-recordLink');
@@ -462,8 +438,8 @@ var Tooltip = React.createClass({
   _setupTooltip() {
     if (this.props.text == null || this.$target.data('hasqtip') != null) return;
 
-    var text = `<div style="max-height: 200px; overflow-y: auto; padding: 2px;">${this.props.text}</div>`;
-    var width = this.props.width;
+    let text = `<div style="max-height: 200px; overflow-y: auto; padding: 2px;">${this.props.text}</div>`;
+    let width = this.props.width;
 
     this.$target
       .wdkTooltip({
@@ -482,7 +458,7 @@ var Tooltip = React.createClass({
   render() {
     // FIXME - Figure out why we lose the fixed-data-table className
     // Losing the fixed-data-table className for some reason... adding it back.
-    var child = React.Children.only(this.props.children);
+    let child = React.Children.only(this.props.children);
     return React.addons.cloneWithProps(child, {
       className: child.props.className + " public_fixedDataTableCell_cellContent",
       onMouseOver: this._setupTooltip
@@ -490,13 +466,13 @@ var Tooltip = React.createClass({
   }
 });
 
-export function datasetCellRenderer(attribute, attributeName, attributes, index, columnData, width, defaultRenderer) {
-  var reactElement = defaultRenderer(attribute, attributeName, attributes, index, columnData, width);
+export function datasetCellRenderer(attributeValue, attributeName, attributes, index, columnData, width, defaultRenderer) {
+  let reactElement = defaultRenderer(attributeValue, attributeName, attributes, index, columnData, width);
 
-  if (attribute.name === 'primary_key') {
+  if (attributeName === 'primary_key') {
     return (
       <Tooltip
-        text={attributes.description.value}
+        text={attributes.description}
         width={width}
       >{reactElement}</Tooltip>
     );
