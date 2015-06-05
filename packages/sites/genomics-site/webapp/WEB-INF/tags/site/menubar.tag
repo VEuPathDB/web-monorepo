@@ -209,7 +209,7 @@
         <li><a href="${baseUrl}/communityUpload.jsp">Upload Community Files</a></li>
 
         <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
-               href="${baseUrl}/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+               href="${baseUrl}/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads">Download Community Files</a></li>
       </c:if>
 
       <li><a href="${baseUrl}/communityEvents.jsp">Upcoming Events</a></li>

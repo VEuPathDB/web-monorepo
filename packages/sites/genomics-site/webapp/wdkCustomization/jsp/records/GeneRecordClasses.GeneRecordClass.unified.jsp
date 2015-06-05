@@ -462,7 +462,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <c:if test="${project_id eq 'PlasmoDB'}">
   <c:if test="${attrs['has_plasmogem_info'] eq '1'}">
     <imp:panel 
-      displayName="PlasmoGem"
+      displayName="PlasmoGEM"
       content="${attrs['plasmogem_link']}" />
   </c:if>
 </c:if>
