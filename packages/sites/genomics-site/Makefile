@@ -1,12 +1,10 @@
 PATH                := $(PROJECT_HOME)/WDK/View/node_modules/.bin:$(PATH)
 SHELL               := /bin/bash
 
-wdk3_bundle          := $(PROJECT_HOME)/WDK/View/dist/wdk/js/wdk-3.0.js
-
 application_bundle  := dist/wdkCustomization/js/application.bundle.js
 application_sources := webapp/wdkCustomization/js/application.js \
                        webapp/wdkCustomization/js/records/DatasetRecordClasses.DatasetRecordClass.js \
-                       $(wdk3_bundle)
+                       webpack.config.js
 
 
 .PHONY: all clean

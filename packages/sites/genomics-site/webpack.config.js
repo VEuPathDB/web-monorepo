@@ -7,6 +7,11 @@ var wdkRoot = path.join(projectHome, 'WDK/View');
 // Get Wdk's webpack.config.
 var config = require(path.join(wdkRoot, 'webpack.config'));
 
+// clear wdk entry config and code splitting
+config.entry = null;
+config.output = null;
+config.plugins.pop();
+
 // Make sure properties are initialized on config, without overwriting values.
 initializeProps(config, 'resolveLoader');
 initializeProps(config, 'externals', []);
