@@ -450,7 +450,6 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <!-- Notes from annotator == in toxo only shown if externalDbName.value eq 'Roos Lab T. gondii apicoplast-->
 <imp:wdkTable2 tblName="Notes" attribution="" />
 
-
 <!-- phenotype -->
 <imp:wdkTable2 tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
 
@@ -458,8 +457,8 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <imp:wdkTable2 tblName="Mr4Reagents" attribution=""/>
 
 
-<%-- PlasmoGem --%>
-<c:if test="${project_id eq 'PlasmoDB'}">
+<%-- PlasmoGEM --%>
+<c:if test="${projectId eq 'PlasmoDB'}">
   <c:if test="${attrs['has_plasmogem_info'] eq '1'}">
     <imp:panel 
       displayName="PlasmoGEM"
