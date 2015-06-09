@@ -30,6 +30,8 @@
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
+<c:set var="leftBubbleCategory" value="TranscriptRecordClasses.TranscriptRecordClass"/>
+
 <c:choose>
 <c:when test="${wdkUser.stepCount == null}">
 <c:set var="count" value="0"/>
@@ -54,7 +56,7 @@
 	<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 	<ul class="heading_list">
 		<c:forEach items="${rootCats}" var="rootCatEntry">
-		<c:if test="${rootCatEntry.key != 'GeneRecordClasses.GeneRecordClass'}">
+    <c:if test="${rootCatEntry.key != leftBubbleCategory}">
 			<c:set var="rootCat" value="${rootCatEntry.value}" />
 			<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 				<c:set var="cat" value="${catEntry.value}" />
@@ -112,7 +114,7 @@
 	<div class="info">
 	<p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
 	<ul class="heading_list">
-		<c:set var="rootCat" value="${rootCats['GeneRecordClasses.GeneRecordClass']}" />
+		<c:set var="rootCat" value="${rootCats[leftBubbleCategory]}" />
 		<c:forEach items="${rootCat.websiteChildren}" var="catEntry">
 			<c:set var="cat" value="${catEntry.value}" />
 			<c:if test="${fn:length(cat.websiteQuestions) > 0}">
@@ -131,7 +133,7 @@
  --%>
 
 </a>
-				<a class="detail_link small" href="categoryPage.jsp?record=GeneRecordClasses.GeneRecordClass&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;<i>description</i></a>
+<a class="detail_link small" href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;<i>description</i></a>
 				<div class="sub_list">
 				<ul>
 				<c:forEach items="${cat.websiteQuestions}" var="q">
