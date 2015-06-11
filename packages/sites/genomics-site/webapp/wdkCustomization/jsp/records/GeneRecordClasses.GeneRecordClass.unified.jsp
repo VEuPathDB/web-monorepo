@@ -623,7 +623,13 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 
 <c:set var="geneDbLink">
   <div align="left">
-    <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
+   
+    <c:if test="${projectId eq 'TriTrypDB'}">
+    <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a></small>
+    </c:if>
+    <c:if test="${projectId eq 'FungiDB'}">
+    <br><small>Phenotypes curated from the literature by Diane Inglis.</small>
+    </c:if>
 </small></div>
 </c:set>
 
