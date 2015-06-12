@@ -421,6 +421,7 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <!-- External Links --> 
 <imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
+<!-- PubMed --> 
 <imp:wdkTable2 tblName="PubMed" isOpen="true" attribution=""/>
 
 <!-- Hagai -->
