@@ -4,8 +4,8 @@
 <%@ taglib prefix="nested" uri="http://struts.apache.org/tags-nested" %>
 
 <%-- THIS FILE IS USED FOR GENE ORGANISM FILTER 3 bottom ROWS CONTAINING:
-      SPECIES ROW (sometimes with distinct filter count), 
-      STRAINS ROW
+      SPECIES ROW (sometimes with distinct filter count), (GENUS row in Fungi)
+      STRAINS ROW                                         (SPECIES STRAIN in Fungi)
       COUNTS ROW --%>
 
 <%@ attribute name="strategyId"
@@ -144,7 +144,11 @@
       <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
       <c:set var="strain" value="${fn:substringAfter(dispNameOrg, species )}" />
       <c:set var="strain" value="${fn:trim(strain)}" /> 
-      ${strain}
+
+      <c:choose>
+        <c:when test="${phylum eq 'Fungi'}">${fn:substring(species,0,1)}.${strain}</c:when>
+        <c:otherwise>${strain}</c:otherwise>
+      </c:choose>
 
   </c:when>
 
