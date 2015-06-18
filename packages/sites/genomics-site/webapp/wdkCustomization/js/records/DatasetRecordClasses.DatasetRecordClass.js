@@ -38,7 +38,7 @@ let Organisms = React.createClass({
     if (!organisms) return null;
     return (
       <div>
-        <h2>Organisms this data set is mapped to in PlasmoDB</h2>
+        <h2>Organisms this data set is mapped to in {wdk.MODEL_NAME}</h2>
         <ul>{organisms.split(/,\s*/).map(this._renderOrganism)}</ul>
       </div>
     );
@@ -59,7 +59,7 @@ let Searches = React.createClass({
 
     return (
       <div>
-        <h2>Search or view this data set in PlasmoDB</h2>
+        <h2>Search or view this data set in {wdk.MODEL_NAME}</h2>
         <ul>
           {rows.map(this._renderSearch)}
         </ul>
