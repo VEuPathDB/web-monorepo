@@ -17,6 +17,15 @@
 - sortedFamilyCountMap contains organism count per genus (family), used for the genus level colspan
 - superFamilyCountMap contains organism count per phylum (superfamily), used for the phylum level colspan
 
+Some examples of filter names the injector system generates:
+-Fungi-Eurotiomycetes-Aspergillus-aculeatus_AA_distinct_gene_instances"
+-Fungi-Eurotiomycetes-Aspergillus-aculeatus_AacuATCC16872_instances
+-Fungi-Eurotiomycetes-Aspergillus-niger_AA_distinct_gene_instances"
+-Fungi-Eurotiomycetes-Aspergillus-niger_AnigCBS513-88_instances
+-Apicomplexa-Cryptosporidium-hominis_AA_distinct_gene_instances
+-Apicomplexa-Cryptosporidium-hominis_chomTU502_instances
+
+
 		 <c:forEach items="${layout.sortedInstances}" var="instance">
 			 <c:set var="familySpecies" value="${fn:substringBefore(instance.name,'_')}" />
 			 <br>${familySpecies} -----  ${layout.instanceCountMap[familySpecies]} ---- ${instance.name} <br>
