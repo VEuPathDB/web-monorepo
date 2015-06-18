@@ -39,6 +39,7 @@
               <td>
                 <ul>
                   <c:forEach items="${internalQuestions}" var="question">
+                    ${question}
                     <li>
                       <a href="showQuestion.do?questionFullName=${question.fullName}"
                         target="_blank">${question.fullName}</a>
@@ -102,7 +103,7 @@
       <tbody>
       <c:forEach items="${questions_by_dataset_map}" var="questionsByDataset">
         <c:set var="datasetRecord" value="${questionsByDataset.key}"/>
-        <c:set var="internalQuestions" value="${questionsByDataset.value}"/>
+        <c:set var="internalQuestionsMap" value="${questionsByDataset.value}"/>
 
         <c:set var="organism" value="${datasetRecord.attributes['organism_prefix']}"/>
         <c:set var="short_attribution" value="${datasetRecord.attributes['short_attribution']}"/>
@@ -150,17 +151,24 @@
               <c:otherwise>${dataset_summary}</c:otherwise>
             </c:choose>
           </td>
+          <c:set var="tabIndex" value="0"/>
           <c:forEach items="${display_categories}" var="displayCategory">
-            <c:set var="question" value="${internalQuestions[displayCategory['name']]}"/>
+            <c:set var="questions" value="${internalQuestionsMap[displayCategory['name']]}"/>
             <td class="search-mechanism">
-              <c:if test="${question ne null}">
+              <c:if test="${questions ne null}">
+                <c:set var="fullNames" value=""/>
+                <c:forEach items="${questions}" var="question">
+                  <c:set var="fullNames" value="${fullNames} ${question.fullName}"/>
+                </c:forEach>
                 <a class="wdk-tooltip question-link btn btn-cyan"
                   data-adjust-y="5"
                   data-category="${displayCategory['displayName']}"
-                  data-full-name="${question.fullName}"
+                  data-full-names="${fullNames}"
+                  data-tab-index="${tabIndex}"
                   title="${displayCategory['description']}"
-                  href="showQuestion.do?questionFullName=${question.fullName}">
+                  href="showQuestion.do?questionFullName=${questions[0].fullName}">
                   ${displayCategory['shortDisplayName']}</a>
+                <c:set var="tabIndex" value="${tabIndex + fn:length(questions)}"/>
               </c:if>
             </td>
           </c:forEach>
@@ -174,10 +182,12 @@
 
     <script type="text/x-jst" id="dataset-tabs">
     <![CDATA[
-      <div id="question-set-{{datasetId}}" class="tabs">
+      <div id="question-set-<%- datasetId %>" class="tabs">
         <ul>
           <% _.forEach(questions, function(question) { %>
-            <li><a href="<%- question.url %>"><%- question.category %><span></span></a></li>
+          <li question-fullname="<%- question.fullName %>">
+            <a href="<%- question.url %>"><%- question.category %><span></span></a>
+          </li>
           <% }); %>
         </ul>
       </div>
