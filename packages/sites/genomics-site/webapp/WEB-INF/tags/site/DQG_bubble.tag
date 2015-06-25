@@ -98,7 +98,16 @@
 				</c:if>
 			</c:forEach>
 		</c:if>
-		</c:forEach>	
+		</c:forEach>
+
+<li> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     <a class="heading" href="app/answer/DatasetQuestions.AllDatasets">&nbsp;Data Sets
+<imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
+         	src="wdk/images/beta2-30.png" />
+</a>
+</li>
+
 	</ul>
 	</div>
 		

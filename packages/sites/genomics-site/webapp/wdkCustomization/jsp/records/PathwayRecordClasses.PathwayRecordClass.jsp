@@ -125,10 +125,11 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
 
 <ul id="vis-menu" class="sf-menu">
     <li><a href="#">File
-    <imp:image title="NOTE: Saving of some XGMML or image files is not working at present. We apologize, and will try to fix this issue soon."  src="wdk/images/question.png" /></a>
+    <!--imp:image title="NOTE: Saving of some XGMML or image files is not working at present. We apologize, and will try to fix this issue soon."  src="wdk/images/question.png" /-->
+    </a>
         <ul>
-          <li> <a href="javascript:exportVisualization('xgmml', '${id}')">Save XGMML (XML)</a></li>
-          <li> <a href="javascript:exportVisualization('png', '${id}')">Save image (PNG)</a></li>
+          <!-- li> <a href="javascript:exportVisualization('xgmml', '${id}')">Save XGMML (XML)</a></li -->
+          <!-- li> <a href="javascript:exportVisualization('png', '${id}')">Save image (PNG)</a></li -->
           <li> <a href="/common/downloads/Current_Release/pathwayFiles/${id}.xgmml">Get Download XGMML (XML) file</a></li>
         </ul>
     </li>

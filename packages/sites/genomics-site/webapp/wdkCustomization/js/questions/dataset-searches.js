@@ -78,7 +78,7 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
       if (e.ctrlKey || e.metaKey || e.shiftKey) return;
       e.preventDefault();
 
-      var fullName = e.currentTarget.getAttribute('data-full-name');
+      var fullName = e.currentTarget.getAttribute('data-full-names').trim().split(' ')[0];
 
       if ($attrs.callWizardUrl) {
         wdk.addStepPopup.callWizard($attrs.callWizardUrl + fullName, null, null, null, "next");
@@ -105,7 +105,7 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
     function selectQuestion(fullName) {
       var $link, $row, $data, $questionTabs, tabIdx;
 
-      $link = $element.find('.question-link[data-full-name="' + fullName + '"]');
+      $link = $element.find('.question-link[data-full-names~="' + fullName + '"]');
 
       if (!$link.length) return;
 
@@ -123,8 +123,8 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
       // set link to active
       $link.addClass("btn-active");
 
-      // get the index for tab in question tabs (equivalent to link index)
-      tabIdx = $row.find(".search-mechanism .question-link").index($link);
+      // get the index for tab in question tabs (equivalent to link index plus the fullName index)
+      tabIdx = $link.data('tabIndex') + $link.data('fullNames').trim().split(' ').indexOf(fullName);
 
       // update active row
       $row.addClass("active");
@@ -136,13 +136,24 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
         $questionTabs.tabs("option", "active", tabIdx).show();
       } else {
         // render new tabs and append
-        var questions = $row.find('.question-link').toArray()
+        var questions = _($row.find('.question-link').toArray())
           .map(function(link) {
-            return {
-              url: link.getAttribute('href') + '&partial=true',
-              category: link.getAttribute('data-category')
-            };
+            var href = link.getAttribute('href');
+            var fullNames = link.getAttribute('data-full-names').trim().split(' ');
+            var nameToReplace = fullNames[0];
+            var shouldEnumerate = fullNames.length > 1;
+
+            return fullNames.map(function(fullName, index) {
+              return {
+                fullName: fullName,
+                url: href.replace(nameToReplace, fullName) + '&partial=true',
+                category: link.getAttribute('data-category') +
+                  (shouldEnumerate ? ' ' + (index + 1) : '')
+              };
+            });
           })
+          .flatten()
+          .value();
 
         var tabsHtml = datasetTabsTmpl({
           datasetId: $data.datasetId,
@@ -151,7 +162,15 @@ wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
 
         $questionWrapper.append(tabsHtml).addClass('active')
           .find('.tabs:last')
-            .tabs({ active: tabIdx })
+            .tabs({
+              active: tabIdx,
+              activate: function(event, ui) {
+                location.hash = ui.newTab.attr('question-fullname');
+              },
+              create: function(event, ui) {
+                location.hash = ui.tab.attr('question-fullname');
+              }
+            })
             .show();
       }
 

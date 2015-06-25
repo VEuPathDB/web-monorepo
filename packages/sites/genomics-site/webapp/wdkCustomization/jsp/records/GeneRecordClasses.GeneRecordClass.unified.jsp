@@ -421,6 +421,8 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <!-- External Links --> 
 <imp:wdkTable2 tblName="GeneLinkouts" isOpen="true" attribution=""/>
 
+<!-- PubMed --> 
+<imp:wdkTable2 tblName="PubMed" isOpen="true" attribution=""/>
 
 <!-- Hagai -->
 <c:if test="${isCodingGene}">
@@ -450,7 +452,6 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <!-- Notes from annotator == in toxo only shown if externalDbName.value eq 'Roos Lab T. gondii apicoplast-->
 <imp:wdkTable2 tblName="Notes" attribution="" />
 
-
 <!-- phenotype -->
 <imp:wdkTable2 tblName="RodMalPhenotype" isOpen="false"  attribution=""/>
 
@@ -458,8 +459,8 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <imp:wdkTable2 tblName="Mr4Reagents" attribution=""/>
 
 
-<%-- PlasmoGem --%>
-<c:if test="${project_id eq 'PlasmoDB'}">
+<%-- PlasmoGEM --%>
+<c:if test="${projectId eq 'PlasmoDB'}">
   <c:if test="${attrs['has_plasmogem_info'] eq '1'}">
     <imp:panel 
       displayName="PlasmoGEM"
@@ -624,7 +625,13 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 
 <c:set var="geneDbLink">
   <div align="left">
-    <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a>
+   
+    <c:if test="${projectId eq 'TriTrypDB'}">
+    <br><small>Phenotypes curated from the literature by <a href="http://www.genedb.org/">Gene<b>DB</b></a></small>
+    </c:if>
+    <c:if test="${projectId eq 'FungiDB'}">
+    <br><small>Phenotypes curated from the literature by Diane Inglis.</small>
+    </c:if>
 </small></div>
 </c:set>
 

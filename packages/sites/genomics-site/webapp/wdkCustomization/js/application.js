@@ -8,7 +8,7 @@ var rootElement = document.getElementsByTagName('main')[0];
 var rootUrl = rootElement.getAttribute('data-baseUrl');
 var endpoint = rootElement.getAttribute('data-serviceUrl');
 
-window._app = Wdk.createApplication({
+window._app = Wdk.flux.createApplication({
   rootUrl,
   endpoint,
   rootElement,
