@@ -110,15 +110,22 @@
     <a name="newsItem${i}"/>
     <a name="${tag}"/>
     <table id="news">
-  
-    <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
-    <tr class="rowLight"><td>
- <!-- these headlines do not need to link once in the news page
-      <a href="showXmlDataContent.do?name=XmlQuestions.News&amp;tag=${tag}"> -->
-      <font color='black'><b>${headline}</b></font>
-<!-- </a>  -->
-	 (${fdate})<br><br>
-      ${item}</td></tr></table>
+      <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
+
+      <tr class="rowLight">
+        <td>
+          <article>
+            <h1>
+              <%-- <a href="showXmlDataContent.do?name=XmlQuestions.News#${tag}"> --%>
+                ${headline} <i class="date">${fdate}</i>
+                <%-- </a> --%>
+            </h1>
+            ${item}
+          </article>
+        </td>
+      </tr>
+
+    </table>
     <c:set var="i" value="${i+1}"/>
   </c:if>
 
