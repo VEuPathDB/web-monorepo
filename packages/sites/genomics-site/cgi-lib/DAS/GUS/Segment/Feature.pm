@@ -365,6 +365,12 @@ sub gff_string {
     push @group,[ID => $name] if !defined($parent) || $name ne $parent;
 
   my $display_name = $self->name;
+
+  # several chip peak display name contains '/', '+'... which causes the problem
+  # added the following line to remove non word character 
+  # https://redmine.apidb.org/issues/19788 
+  $display_name =~ s/\W//g;
+
   push @group,[Name => $display_name] if $name !~ /$display_name$/;
   }
 
