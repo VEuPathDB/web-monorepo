@@ -87,7 +87,7 @@
   <div class="eupathdb-Beta-Announcement" title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
     <p>
       <%-- <i class="fa fa-lg fa-exclamation-circle" style="color: rgb(25, 89, 200);"></i> --%>
-      You are viewing a <strong>BETA</strong> page.
+      You are viewing a <strong>BETA</strong> (pre-release) page.
       <a data-name="contact_us" class="new-window" href="contact.do">Feedback and comments</a>
       are welcome!
     </p>
