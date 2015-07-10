@@ -35,7 +35,7 @@
             <tr>
               <c:set var="datasetRecord" value="${questionsByDataset.key}"/>
               <c:set var="internalQuestions" value="${questionsByDataset.value}"/>
-              <td>${datasetRecord.attributes['display_name_piece']}</td>
+              <td>${datasetRecord.attributes['display_name']}</td>
               <td>
                 <ul>
                   <c:forEach items="${internalQuestions}" var="question">
@@ -108,7 +108,7 @@
         <c:set var="organism" value="${datasetRecord.attributes['organism_prefix']}"/>
         <c:set var="short_attribution" value="${datasetRecord.attributes['short_attribution']}"/>
         <c:set var="dataset_id" value="${datasetRecord.attributes['dataset_id']}"/>
-        <c:set var="dataset_name" value="${datasetRecord.attributes['display_name_piece']}"/>
+        <c:set var="dataset_name" value="${datasetRecord.attributes['display_name']}"/>
         <c:set var="dataset_summary" value="${datasetRecord.attributes['summary']}"/>
         <c:set var="dataset_description" value="${datasetRecord.attributes['description']}"/>
         <c:set var="build_number_introduced" value="${datasetRecord.attributes['build_number_introduced']}"/>
