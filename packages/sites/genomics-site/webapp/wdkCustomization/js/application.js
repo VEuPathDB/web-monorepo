@@ -3,9 +3,6 @@ import {
   DatasetRecord,
   Tooltip
 } from './records/DatasetRecordClasses.DatasetRecordClass';
-import {
-  GeneRecord
-} from './records/GeneRecordClasses.GeneRecordClass';
 
 let rootElement = document.getElementsByTagName('main')[0];
 let rootUrl = rootElement.getAttribute('data-baseUrl');
