@@ -10,18 +10,6 @@
   });
 </script>
 
-<div class='related_dashboard_links'>
-  Related Links
-  <ul>
-    <li>CBIL DBA Interface (password required)
-      <ul>
-        <li><a href="https://www.cbil.upenn.edu/dba/uga.php">UGA databases</a></li>
-        <li><a href="https://www.cbil.upenn.edu/dba/">Penn databases</a></li>
-      </ul>
-    </li>
-  </ul>
-</div>
-
 <p>
   <b><a href="?p=Database%20Connection%20Pool">Connection pool activity</a></b>
 </p>

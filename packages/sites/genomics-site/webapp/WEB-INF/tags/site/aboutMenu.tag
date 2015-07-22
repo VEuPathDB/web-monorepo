@@ -71,6 +71,6 @@
 	
 	<li><a href="/documents/EuPathDB_Section_508.pdf">Accessibility VPAT</a></li>
 	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Infrastructure">EuPathDB Infrastructure</a></li>
-	<li><a href="/proxystats/awstats.pl?config=${fn:toLowerCase(project)}.org">Website Usage Statistics</a></li>
+	<li><a href="/proxystats/awstats.pl">Website Usage Statistics</a></li>
     
 </jsp:root>

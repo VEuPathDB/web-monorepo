@@ -307,14 +307,11 @@ EOL
   return $self->{citation_from_ext_database_name_pattern}->{$extdb};  
 }
 
-sub proteomicsCitationFromExtDatabaseNamePattern {
+sub proteomicsCitationFromExtDatabaseName {
   my ($self,$extdb) = @_;
 
-
-
-
-  if(defined $self->{proteomics_citation_from_ext_database_name_pattern}) {
-    return $self->{proteomics_citation_from_ext_database_name_pattern}->{$extdb};
+  if(defined $self->{proteomics_citation_from_ext_database_name}) {
+    return $self->{proteomics_citation_from_ext_database_name}->{$extdb};
   }
 
   my $sql =<<EOL;
@@ -326,10 +323,10 @@ EOL
   
   while (my ($name,$value)  = $sth->fetchrow_array) {
     
-    $self->{proteomics_citation_from_ext_database_name_pattern}->{$name} = $value;
+    $self->{proteomics_citation_from_ext_database_name}->{$name} = $value;
   }
   $sth->finish();
-  print STDERR 
-  return $self->{proteomics_citation_from_ext_database_name_pattern}->{$extdb};
+
+  return $self->{proteomics_citation_from_ext_database_name}->{$extdb};
 }
 1;

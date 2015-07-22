@@ -316,7 +316,8 @@
 <table width="100%">
 	<tr align=center>
     	  <td> <b><br/> 
-     	  Please select at least two isolates to run ClustalW. Note: only isolates from a single page will be aligned. <br/>
+     	  Please select at least two isolates to run Clustalw. Note: only isolates from a single page will be aligned. <br/>
+       The result is an alignment of the locus that was used to type the isolates.<br/>
      	  (Increase the page size in 'Advanced Paging' to increase the number that can be aligned).  </b>
     	  </td>
   	</tr>

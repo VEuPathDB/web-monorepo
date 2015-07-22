@@ -427,6 +427,10 @@ We are currently in the process of creating an updated version 6 of OrthoMCL.org
 <!-- Hagai -->
 <c:if test="${isCodingGene}">
   <imp:wdkTable2 tblName="MetabolicPathways" attribution=""/>
+  <c:if test="${projectId eq 'PlasmoDB'}">
+    <div><a target="_blank" href="http://mpmp.huji.ac.il/Search/SearchByPFid?pfid=${id}">View all MPMP entries for this gene.</a>
+    </div><br>
+  </c:if>
 </c:if>
 
 <!-- metabolic pathways -->

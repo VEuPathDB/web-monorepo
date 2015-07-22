@@ -1,41 +1,50 @@
 import Wdk from 'wdk';
 import {
   DatasetRecord,
-  datasetCellRenderer
+  Tooltip
 } from './records/DatasetRecordClasses.DatasetRecordClass';
 
-var rootElement = document.getElementsByTagName('main')[0];
-var rootUrl = rootElement.getAttribute('data-baseUrl');
-var endpoint = rootElement.getAttribute('data-serviceUrl');
+let rootElement = document.getElementsByTagName('main')[0];
+let rootUrl = rootElement.getAttribute('data-baseUrl');
+let endpoint = rootElement.getAttribute('data-serviceUrl');
+
+let recordComponentsMap = {
+  "DatasetRecordClasses.DatasetRecordClass": DatasetRecord
+};
+
+Wdk.flux.components.Record.wrapComponent(function(Record) {
+  let RecordComponentResolver =  React.createClass({
+    render() {
+      let Component = recordComponentsMap[this.props.recordClass.fullName] || Record;
+      return (
+        <Component {...this.props}/>
+      );
+    }
+  });
+  return RecordComponentResolver;
+});
+
+Wdk.flux.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
+  return React.createClass({
+    render() {
+      let cell = <AnswerTableCell {...this.props}/>;
+
+      if (this.props.recordClass === "DatasetRecordClasses.DatasetRecordClass"
+         && this.props.attribute.name === "primary_key") {
+        return (
+          <Tooltip text={this.props.record.attributes.description.value} witdh={this.props.width}>
+            {cell}
+          </Tooltip>
+        );
+      }
+
+      return cell;
+    }
+  });
+});
 
 window._app = Wdk.flux.createApplication({
   rootUrl,
   endpoint,
-  rootElement,
-  recordComponentResolver,
-  cellRendererResolver
+  rootElement
 });
-
-// This is called when rendering the record page. `DefaultComponent` is
-// passed as a child to the component returned by this function. This
-// makes it possible to decorate the default component, or to replace it.
-function recordComponentResolver(recordClassName, DefaultComponent) {
-  switch (recordClassName) {
-    case "DatasetRecordClasses.DatasetRecordClass":
-      return DatasetRecord;
-    default:
-      return DefaultComponent;
-  }
-}
-
-// This is called when rendering a table cell. `defaultRenderer` is passed
-// as an argument to the function returned by this function. This makes it
-// possible to decorate the default renderer, or to replace it.
-function cellRendererResolver(recordClassName, defaultRenderer) {
-  switch (recordClassName) {
-    case "DatasetRecordClasses.DatasetRecordClass":
-      return datasetCellRenderer;
-    default:
-      return defaultRenderer;
-  }
-}
