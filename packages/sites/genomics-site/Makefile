@@ -4,7 +4,6 @@ SHELL               := /bin/bash
 application_bundle  := dist/wdkCustomization/js/application.bundle.js
 application_sources := webapp/wdkCustomization/js/application.js \
                        webapp/wdkCustomization/js/records/DatasetRecordClasses.DatasetRecordClass.js \
-                       webapp/wdkCustomization/js/records/GeneRecordClasses.GeneRecordClass.js \
                        webpack.config.js
 
 
