@@ -39,7 +39,7 @@ let Organisms = React.createClass({
     return (
       <div>
         <h2>Organisms this data set is mapped to in {wdk.MODEL_NAME}</h2>
-        <ul>{organisms.split(/,\s*/).map(this._renderOrganism)}</ul>
+        <ul>{organisms.value.split(/,\s*/).map(this._renderOrganism)}</ul>
       </div>
     );
   },
@@ -346,7 +346,7 @@ export let DatasetRecord = React.createClass({
     return (
       <div className="eupathdb-DatasetRecord ui-helper-clearfix">
         <h1 dangerouslySetInnerHTML={{
-          __html: 'Data Set: <span class="' + titleClass + '">' + attributes.primary_key + '</span>'
+          __html: 'Data Set: <span class="' + titleClass + '">' + attributes.primary_key.value + '</span>'
         }}/>
 
         <div className="eupathdb-DatasetRecord-Container ui-helper-clearfix">
@@ -358,13 +358,13 @@ export let DatasetRecord = React.createClass({
 
               <tr>
                 <th>Summary:</th>
-                <td dangerouslySetInnerHTML={{__html: summary}}/>
+                <td dangerouslySetInnerHTML={{__html: summary.value}}/>
               </tr>
 
               {organism_prefix ? (
                 <tr>
                   <th>Organism (source or reference):</th>
-                  <td dangerouslySetInnerHTML={{__html: organism_prefix}}/>
+                  <td dangerouslySetInnerHTML={{__html: organism_prefix.value}}/>
                 </tr>
               ) : null}
 
@@ -378,7 +378,7 @@ export let DatasetRecord = React.createClass({
               {contact && institution ? (
                 <tr>
                   <th>Primary contact:</th>
-                  <td>{renderPrimaryContact(contact, institution)}</td>
+                  <td>{renderPrimaryContact(contact.value, institution.value)}</td>
                 </tr>
               ) : null}
 
@@ -392,7 +392,7 @@ export let DatasetRecord = React.createClass({
               {eupath_release ? (
                 <tr>
                   <th>EuPathDB release # / date:</th>
-                  <td>{eupath_release}</td>
+                  <td>{eupath_release.value}</td>
                 </tr>
               ) : null}
 
@@ -403,7 +403,7 @@ export let DatasetRecord = React.createClass({
 
           <div className="eupathdb-DatasetRecord-Main">
             <h2>Detailed Description</h2>
-            <div dangerouslySetInnerHTML={{__html: description}}/>
+            <div dangerouslySetInnerHTML={{__html: description.value}}/>
             <ContactsAndPublications contacts={Contacts} publications={Publications}/>
           </div>
 
@@ -423,14 +423,14 @@ export let DatasetRecord = React.createClass({
   }
 });
 
-let Tooltip = React.createClass({
+export let Tooltip = React.createClass({
   componentDidMount() {
-    //this._setupTooltip();
-    this.$target = $(this.getDOMNode()).find('.wdk-RecordTable-recordLink');
+    this.$target = $(React.findDOMNode(this));
+    this._setupTooltip();
   },
   componentDidUpdate() {
     this._destroyTooltip();
-    //this._setupTooltip();
+    this._setupTooltip();
   },
   componentWillUnmount() {
     this._destroyTooltip();
@@ -456,28 +456,6 @@ let Tooltip = React.createClass({
     }
   },
   render() {
-    // FIXME - Figure out why we lose the fixed-data-table className
-    // Losing the fixed-data-table className for some reason... adding it back.
-    let child = React.Children.only(this.props.children);
-    return React.addons.cloneWithProps(child, {
-      className: child.props.className + " public_fixedDataTableCell_cellContent",
-      onMouseOver: this._setupTooltip
-    });
+    return this.props.children;
   }
 });
-
-export function datasetCellRenderer(attributeValue, attributeName, attributes, index, columnData, width, defaultRenderer) {
-  let reactElement = defaultRenderer(attributeValue, attributeName, attributes, index, columnData, width);
-
-  if (attributeName === 'primary_key') {
-    return (
-      <Tooltip
-        text={attributes.description}
-        width={width}
-      >{reactElement}</Tooltip>
-    );
-  }
-  else {
-    return reactElement;
-  }
-}
