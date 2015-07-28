@@ -82,6 +82,23 @@
       font-style: italic;
       font-size: 1.2em;
     }
+
+    .eupathdb-TranscriptRecordNavList {
+      font-size: 80%;
+      font-weight: normal;
+      list-style: none;
+      padding: 0;
+    }
+
+    .eupathdb-TranscriptRecordNavList > li a {
+      border-left: 2px solid transparent;
+      padding-left: 4px;
+    }
+    .eupathdb-TranscriptRecordNavList > li a:hover,
+    .eupathdb-TranscriptRecordNavList > li a.active {
+      font-weight: bold;
+      border-left: 2px solid;
+    }
   </style>
 
   <div class="eupathdb-Beta-Announcement" title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
