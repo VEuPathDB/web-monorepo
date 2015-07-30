@@ -64,11 +64,9 @@
 
 <imp:wdkTable tblName="Synonyms" isOpen="false" attribution=""/>
 
-<imp:wdkTable tblName="SubstanceProps" isOpen="true" attribution=""/>
-
 <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 
-<imp:profileGraphs type='compound' tableName="MassSpecGraphs"/>
+<!-- imp:profileGraphs type='compound' tableName="MassSpecGraphs"/-- > 
 
 
 </c:otherwise>
