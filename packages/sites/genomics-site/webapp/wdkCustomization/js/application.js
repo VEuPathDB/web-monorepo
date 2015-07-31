@@ -50,7 +50,7 @@ let TranscriptList = React.createClass({
             });
             return (
               <li key={transcript_id}>
-                <Link to="record" params={params} query={query}>
+                <Link to="record" params={params} query={query} onClick={() => scrollToElementById('trans_parent')}>
                   {row.transcript_id}
                 </Link>
               </li>
@@ -205,7 +205,7 @@ Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) 
             ) : (
               <section key={transcript_id}>
                 <h1 style={{ opacity: '0.6', marginBottom: '1em' }} className="wdk-Record-sectionHeader">
-                  <Link to="record" params={params} query={query} style={{ color: 'inherit' }}>
+                  <Link to="record" params={params} query={query} style={{ color: 'inherit' }} onClick={() => scrollToElementById('trans_parent')}>
                     {'Transcript ' + transcript_id}
                   </Link>
                 </h1>
@@ -220,6 +220,11 @@ Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) 
 
   return ApiRecordMainSection;
 });
+
+function scrollToElementById(id) {
+  let el = document.getElementById(id);
+  if (el) el.scrollIntoView();
+}
 
 window._app = Wdk.flux.createApplication({
   rootUrl,
