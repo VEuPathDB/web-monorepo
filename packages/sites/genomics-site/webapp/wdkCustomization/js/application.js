@@ -5,6 +5,7 @@ import {
 } from './records/DatasetRecordClasses.DatasetRecordClass';
 
 let Link = ReactRouter.Link;
+let Sticky = Wdk.flux.components.Sticky;
 
 let rootElement = document.getElementsByTagName('main')[0];
 let rootUrl = rootElement.getAttribute('data-baseUrl');
@@ -189,30 +190,31 @@ Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) 
     renderTransCategory(category) {
       let { recordClass, record } = this.props;
       return (
-        <div id={category.name} key={category.name}>
-          {this.props.record.tables.GeneTranscripts.map(row => {
-            let { transcript_id } = row;
-            let isActive = transcript_id === record.id.source_id;
-            let query = Object.assign({}, record.id, { source_id: transcript_id });
-            let params = { class: recordClass.fullName };
-            return isActive ? (
-              <section key={transcript_id}>
-                <h1 style={{ marginBottom: '1em' }} className="wdk-Record-sectionHeader">
-                  {'Transcript ' + transcript_id}
-                </h1>
-                <RecordMainSection {...this.props} categories={category.subCategories}/>
-              </section>
-            ) : (
-              <section key={transcript_id}>
-                <h1 style={{ opacity: '0.6', marginBottom: '1em' }} className="wdk-Record-sectionHeader">
-                  <Link to="record" params={params} query={query} style={{ color: 'inherit' }} onClick={() => scrollToElementById('trans_parent')}>
-                    {'Transcript ' + transcript_id}
+        <section id={category.name} key={category.name}>
+          <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
+            <h1 className="eupathdb-TranscriptHeading">Transcripts</h1>
+            <nav className="eupathdb-TranscriptTabList">
+              {this.props.record.tables.GeneTranscripts.map(row => {
+                let { transcript_id } = row;
+                let isActive = transcript_id === record.id.source_id;
+                let query = Object.assign({}, record.id, { source_id: transcript_id });
+                let params = { class: recordClass.fullName };
+                return (
+                  <Link
+                    to="record"
+                    params={params}
+                    query={query}
+                    className="eupathdb-TranscriptLink"
+                    activeClassName="eupathdb-TranscriptLink-active"
+                  >
+                    {transcript_id}
                   </Link>
-                </h1>
-              </section>
-            );
-          })}
-        </div>
+                );
+              })}
+            </nav>
+          </Sticky>
+          <RecordMainSection {...this.props} categories={category.subCategories}/>
+        </section>
       );
     }
 
@@ -223,7 +225,10 @@ Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) 
 
 function scrollToElementById(id) {
   let el = document.getElementById(id);
-  if (el) el.scrollIntoView();
+  if (el === undefined) return;
+  let rect = el.getBoundingClientRect();
+  if (rect.top < 0) return;
+  el.scrollIntoView();
 }
 
 window._app = Wdk.flux.createApplication({

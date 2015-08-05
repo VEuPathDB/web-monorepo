@@ -99,6 +99,46 @@
       font-weight: bold;
       border-left: 2px solid;
     }
+    .eupathdb-TranscriptSticky {
+      background: white;
+    }
+    .eupathdb-TranscriptSticky-fixed {
+      z-index: 1;
+      border-bottom: 1px solid #B7B7B7;
+      box-shadow: 0px 1px 0px #E4E4E4;
+    }
+    .eupathdb-TranscriptHeading {
+      margin: 0;
+      padding-top: 22px;
+    }
+    .eupathdb-TranscriptTabList {
+      padding: 10px 0 22px 0;
+    }
+    .eupathdb-TranscriptLink {
+      display: inline-block;
+      padding: .8em;
+      font-weight: bold;
+      border: 1px solid #d8d8d8;
+      margin-left: -1px;
+    }
+    .eupathdb-TranscriptLink:hover,
+    .eupathdb-TranscriptLink:focus {
+      background-color: #f9f9f9;
+      z-index: 1;
+    }
+    .eupathdb-TranscriptLink:first-child {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    .eupathdb-TranscriptLink:last-child {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .eupathdb-TranscriptLink-active,
+    .eupathdb-TranscriptLink-active:hover,
+    .eupathdb-TranscriptLink-active:focus {
+      background-color: #eee;
+    }
   </style>
 
   <div class="eupathdb-Beta-Announcement" title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
