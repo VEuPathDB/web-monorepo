@@ -101,43 +101,51 @@
     }
     .eupathdb-TranscriptSticky {
       background: white;
+      border-bottom: 1px solid #B7B7B7;
+      margin-bottom: -1px;
+      padding-top: 1em;
+    }
+    .eupathdb-TranscriptSticky:after {
+      clear: both;
+      content: " ";
+      height: 0;
     }
     .eupathdb-TranscriptSticky-fixed {
       z-index: 1;
-      border-bottom: 1px solid #B7B7B7;
-      box-shadow: 0px 1px 0px #E4E4E4;
+      border-color: #999;
     }
     .eupathdb-TranscriptHeading {
+      float: left;
       margin: 0;
-      padding-top: 22px;
+      padding-right: 1em;
     }
     .eupathdb-TranscriptTabList {
-      padding: 10px 0 22px 0;
     }
     .eupathdb-TranscriptLink {
       display: inline-block;
       padding: .8em;
-      font-weight: bold;
-      border: 1px solid #d8d8d8;
-      margin-left: -1px;
+      font-size: 1.3em;
+      font-weight: 400;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      margin-right: 2px;
     }
     .eupathdb-TranscriptLink:hover,
     .eupathdb-TranscriptLink:focus {
-      background-color: #f9f9f9;
+      background-color: #ccc;
       z-index: 1;
-    }
-    .eupathdb-TranscriptLink:first-child {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-    }
-    .eupathdb-TranscriptLink:last-child {
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
     }
     .eupathdb-TranscriptLink-active,
     .eupathdb-TranscriptLink-active:hover,
     .eupathdb-TranscriptLink-active:focus {
-      background-color: #eee;
+      background-color: white;
+      border-color: #aaa;
+    }
+    .eupathdb-TranscriptTabContent {
+      border: 1px solid #aaa;
+      padding: 8px;
     }
   </style>
 

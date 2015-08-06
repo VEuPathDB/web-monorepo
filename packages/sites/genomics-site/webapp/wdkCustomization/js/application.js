@@ -150,7 +150,7 @@ Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) 
       let { recordClass, categories, depth = 1 } = this.props;
 
       if (recordClass.fullName == 'TranscriptRecordClasses.TranscriptRecordClass' && depth == 1) {
-        let uncategorized = categories.find(c => c.name === 'uncategorized');
+        let uncategorized = categories.find(c => c.name === undefined);
         categories = categories.filter(c => c !== uncategorized);
         return(
           <div>
@@ -188,11 +188,12 @@ Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) 
     },
 
     renderTransCategory(category) {
-      let { recordClass, record } = this.props;
+      let { recordClass, record, hiddenCategories } = this.props;
+      let allCategoriesHidden = category.subCategories.every(cat => hiddenCategories.includes(cat.name));
       return (
         <section id={category.name} key={category.name}>
           <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
-            <h1 className="eupathdb-TranscriptHeading">Transcripts</h1>
+            <h1 className="eupathdb-TranscriptHeading">Transcript</h1>
             <nav className="eupathdb-TranscriptTabList">
               {this.props.record.tables.GeneTranscripts.map(row => {
                 let { transcript_id } = row;
@@ -213,7 +214,11 @@ Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) 
               })}
             </nav>
           </Sticky>
-          <RecordMainSection {...this.props} categories={category.subCategories}/>
+          <div className="eupathdb-TranscriptTabContent">
+            {allCategoriesHidden
+              ? <p>All Transcript categories are currently hidden.</p>
+              :  <RecordMainSection {...this.props} categories={category.subCategories}/>}
+          </div>
         </section>
       );
     }
