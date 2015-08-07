@@ -12,7 +12,7 @@ let recordComponentsMap = {
   "DatasetRecordClasses.DatasetRecordClass": DatasetRecord
 };
 
-Wdk.flux.components.Record.wrapComponent(function(Record) {
+Wdk.client.components.Record.wrapComponent(function(Record) {
   let RecordComponentResolver =  React.createClass({
     render() {
       let Component = recordComponentsMap[this.props.recordClass.fullName] || Record;
@@ -24,7 +24,7 @@ Wdk.flux.components.Record.wrapComponent(function(Record) {
   return RecordComponentResolver;
 });
 
-// Wdk.flux.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
+// Wdk.client.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
 //   return React.createClass({
 //     render() {
 //       let cell = <AnswerTableCell {...this.props}/>;
@@ -43,7 +43,7 @@ Wdk.flux.components.Record.wrapComponent(function(Record) {
 //   });
 // });
 
-window._app = Wdk.flux.createApplication({
+window._app = Wdk.client.createApplication({
   rootUrl,
   endpoint,
   rootElement

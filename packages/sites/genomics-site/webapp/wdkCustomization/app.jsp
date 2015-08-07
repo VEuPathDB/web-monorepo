@@ -98,6 +98,6 @@
     data-serviceUrl="${pageContext.request.contextPath}/service"
   ></main>
 
-  <imp:script src="wdk/js/wdk.flux.js"/>
+  <imp:script src="wdk/js/wdk.client.js"/>
   <imp:script src="wdkCustomization/js/application.bundle.js"/>
 </imp:pageFrame>
