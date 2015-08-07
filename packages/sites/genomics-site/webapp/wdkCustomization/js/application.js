@@ -24,24 +24,24 @@ Wdk.flux.components.Record.wrapComponent(function(Record) {
   return RecordComponentResolver;
 });
 
-Wdk.flux.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
-  return React.createClass({
-    render() {
-      let cell = <AnswerTableCell {...this.props}/>;
-
-      if (this.props.recordClass === "DatasetRecordClasses.DatasetRecordClass"
-         && this.props.attribute.name === "primary_key") {
-        return (
-          <Tooltip text={this.props.record.attributes.description.value} witdh={this.props.width}>
-            {cell}
-          </Tooltip>
-        );
-      }
-
-      return cell;
-    }
-  });
-});
+// Wdk.flux.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
+//   return React.createClass({
+//     render() {
+//       let cell = <AnswerTableCell {...this.props}/>;
+// 
+//       if (this.props.recordClass === "DatasetRecordClasses.DatasetRecordClass"
+//          && this.props.attribute.name === "primary_key") {
+//         return (
+//           <Tooltip text={this.props.record.attributes.description.value} witdh={this.props.width}>
+//             {cell}
+//           </Tooltip>
+//         );
+//       }
+// 
+//       return cell;
+//     }
+//   });
+// });
 
 window._app = Wdk.flux.createApplication({
   rootUrl,
