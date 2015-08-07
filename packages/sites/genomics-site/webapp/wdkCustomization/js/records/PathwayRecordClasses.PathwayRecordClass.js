@@ -13,10 +13,10 @@ var options = {
 var vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
-
+//    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
 function drawVisualization(pathwayId, pathwaySource) {
   $.ajax({
-    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
+    url: "/path40/" + pathwayId + ".xgmml",
     dataType: "text",
     success: function(data){
       vis.draw(options);
@@ -155,7 +155,7 @@ vis.ready(function() {
 
 	    } 
 	    
-	    if(type == "compound") {
+	    if(type == "molecular entity") {
 		print("<b>Compound ID:</b>  " + target.data["label"] + "<br />");
 		
 		if(target.data.Description) {
@@ -215,14 +215,14 @@ vis.ready(function() {
 	    attrName: "Type",
 	    entries: [ { attrValue: "map", value: "#ccffff" },
 		                { attrValue: "enzyme", value: "#ffffcc" },
-		                { attrValue: "compound", value: "#0000ff" } ]
+		                { attrValue: "molecular entity", value: "#0000ff" } ]
 	};
 		 
 	var shapeMapper = {
 	    attrName: "Type",
 	    entries: [ { attrValue: "map", value: "ROUNDRECT" },
 		                { attrValue: "enzyme", value: "SQUARE" },
-		                { attrValue: "compound", value: "CIRCLE" } ]
+		                { attrValue: "molecular entity", value: "CIRCLE" } ]
 	};
 
 	var sizeMapper = {
@@ -233,24 +233,24 @@ vis.ready(function() {
 	var widthMapper = {
 	    attrName: "Type",
 	    entries: [ { attrValue: "enzyme", value: 50 },
-		                { attrValue: "compound", value: 15 } ]
+		                { attrValue: "molecular entity", value: 15 } ]
 	};
 
 	var heightMapper = {
 	    attrName: "Type",
 	    entries: [{ attrValue: "map", value: 20 },
 		                { attrValue: "enzyme", value: 20 },
-		                { attrValue: "compound", value: 15 } ]
+		                { attrValue: "molecular entity", value: 15 } ]
 	};
 
 	var labelPosition = {
 	    attrName: "Type",
-	    entries: [{attrValue: "compound", value: 'right' } ]
+	    entries: [{attrValue: "molecular entity", value: 'right' } ]
 	};
 
 	var labelSize = {
 	    attrName: "Type",
-	    entries: [{ attrValue: "compound", value: 0 } ],
+	    entries: [{ attrValue: "molecular entity", value: 0 } ],
 	};
 
 	// to not show arrowhead for a Reversible reaction
@@ -355,7 +355,7 @@ vis.ready(function() {
 			style.nodes[n.data.id] = { color: "#00FF00" , border : 2};
 
 			//vis.updateData([n]);
-		    } else if (type == ("compound") && label == nodeArray[j]  ) {
+		    } else if (type == ("molecular entity") && label == nodeArray[j]  ) {
 			style.nodes[n.data.id] = { color: "#00FF00" };
 
 		    }

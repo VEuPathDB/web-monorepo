@@ -64,7 +64,7 @@ my $ecMapSql = "SELECT DISTINCT p.source_id as source_id,  ec.ec_number as displ
                        (pn.x + (pn.width/2)) as x2, (pn.y + (pn.height/2)) as y2,
                        apidb.tab_to_string(set(cast(COLLECT(ga.organism) AS apidb.varchartab)), ', ') as organisms,
                        apidb.tab_to_string(set(cast(COLLECT(ga.source_id) AS apidb.varchartab)), ', ') as genes
-                FROM    ApidbTuning.GenomicSequenceAttributes gs,
+                FROM    ApidbTuning.GenomicSeqAttributes gs,
                        dots.Transcript t, dots.translatedAaFeature taf,apidb.pathway p, apidb.pathwaynode pn,
                        dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,ApidbTuning.GeneAttributes ga
                 WHERE  gs.na_sequence_id = ga.na_sequence_id  $appendSQL ga.na_feature_id = t.parent_id
