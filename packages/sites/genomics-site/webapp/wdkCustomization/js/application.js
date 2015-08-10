@@ -5,31 +5,46 @@ import {
 } from './records/DatasetRecordClasses.DatasetRecordClass';
 
 let Link = ReactRouter.Link;
-let Sticky = Wdk.flux.components.Sticky;
+let Sticky = Wdk.client.components.Sticky;
 
 let rootElement = document.getElementsByTagName('main')[0];
 let rootUrl = rootElement.getAttribute('data-baseUrl');
 let endpoint = rootElement.getAttribute('data-serviceUrl');
 
-Wdk.flux.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
-  let ApiAnswerTableCell = React.createClass({
+let recordComponentsMap = {
+  "DatasetRecordClasses.DatasetRecordClass": DatasetRecord
+};
+
+Wdk.client.components.Record.wrapComponent(function(Record) {
+  let RecordComponentResolver =  React.createClass({
     render() {
-      let cell = <AnswerTableCell {...this.props}/>;
-
-      if (this.props.recordClass === "DatasetRecordClasses.DatasetRecordClass"
-         && this.props.attribute.name === "primary_key") {
-        return (
-          <Tooltip text={this.props.record.attributes.description.value} witdh={this.props.width}>
-            {cell}
-          </Tooltip>
-        );
-      }
-
-      return cell;
+      let Component = recordComponentsMap[this.props.recordClass.fullName] || Record;
+      return (
+        <Component {...this.props}/>
+      );
     }
   });
-  return ApiAnswerTableCell;
+  return RecordComponentResolver;
 });
+
+// Wdk.client.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
+//   return React.createClass({
+//     render() {
+//       let cell = <AnswerTableCell {...this.props}/>;
+// 
+//       if (this.props.recordClass === "DatasetRecordClasses.DatasetRecordClass"
+//          && this.props.attribute.name === "primary_key") {
+//         return (
+//           <Tooltip text={this.props.record.attributes.description.value} witdh={this.props.width}>
+//             {cell}
+//           </Tooltip>
+//         );
+//       }
+// 
+//       return cell;
+//     }
+//   });
+// });
 
 let TranscriptList = React.createClass({
 
@@ -64,7 +79,7 @@ let TranscriptList = React.createClass({
 
 });
 
-Wdk.flux.components.Record.wrapComponent(function(Record) {
+Wdk.client.components.Record.wrapComponent(function(Record) {
   let TranscriptRecord = React.createClass({
       componentDidMount() {
         this.setStateFromProps(this.props);
@@ -115,7 +130,7 @@ Wdk.flux.components.Record.wrapComponent(function(Record) {
   return ApiRecord;
 });
 
-Wdk.flux.components.RecordNavigationSection.wrapComponent(function(RecordNavigationSection) {
+Wdk.client.components.RecordNavigationSection.wrapComponent(function(RecordNavigationSection) {
   let ApiRecordNavigationSection = React.createClass({
     render() {
       let { recordClass, categories } = this.props;
@@ -143,7 +158,7 @@ Wdk.flux.components.RecordNavigationSection.wrapComponent(function(RecordNavigat
   return ApiRecordNavigationSection;
 });
 
-Wdk.flux.components.RecordMainSection.wrapComponent(function(RecordMainSection) {
+Wdk.client.components.RecordMainSection.wrapComponent(function(RecordMainSection) {
   let ApiRecordMainSection = React.createClass({
 
     render() {
@@ -236,7 +251,7 @@ function scrollToElementById(id) {
   el.scrollIntoView();
 }
 
-window._app = Wdk.flux.createApplication({
+window._app = Wdk.client.createApplication({
   rootUrl,
   endpoint,
   rootElement
