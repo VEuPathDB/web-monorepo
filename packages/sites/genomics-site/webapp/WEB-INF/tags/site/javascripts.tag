@@ -42,6 +42,7 @@
     <imp:script src="wdkCustomization/js/export-basket.js"/>
     <imp:script src="wdkCustomization/js/spanlogic.js"/>
     <imp:script src="wdkCustomization/js/genome-view.js"/>
+    <imp:script src="wdkCustomization/js/transcript-view.js"/>
 
       <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"><jsp:text/></script> -->
       <!-- moved to isolateResults.tag

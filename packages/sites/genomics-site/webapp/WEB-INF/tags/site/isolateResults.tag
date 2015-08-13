@@ -49,7 +49,7 @@
           scope="request"
           items="${wdk_paging_total}"
           maxItems="${wdk_paging_total}"
-          url="${wdk_paging_url}"
+          url="${requestUri}"
           maxPageItems="${wdk_paging_pageSize}"
           export="offset,currentPageNumber=pageNumber">
   <c:forEach var="paramName" items="${wdk_paging_params}">
