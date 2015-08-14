@@ -13,10 +13,9 @@ var options = {
 var vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
-//    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
 function drawVisualization(pathwayId, pathwaySource) {
   $.ajax({
-    url: "/path40/" + pathwayId + ".xgmml",
+    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
     dataType: "text",
     success: function(data){
       vis.draw(options);
@@ -173,7 +172,7 @@ vis.ready(function() {
 		}
 	    }
 
-	    if(type == "map") {
+	    if(type == "metabolic process") {
 		print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
 		print("");
 		print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["Description"] + "'>View in KEGG</a>");
@@ -213,21 +212,21 @@ vis.ready(function() {
 
 	var colorMapper = {
 	    attrName: "Type",
-	    entries: [ { attrValue: "map", value: "#ccffff" },
+	    entries: [ { attrValue: "metabolic process", value: "#ccffff" },
 		                { attrValue: "enzyme", value: "#ffffcc" },
 		                { attrValue: "molecular entity", value: "#0000ff" } ]
 	};
 		 
 	var shapeMapper = {
 	    attrName: "Type",
-	    entries: [ { attrValue: "map", value: "ROUNDRECT" },
+	    entries: [ { attrValue: "metabolic process", value: "ROUNDRECT" },
 		                { attrValue: "enzyme", value: "SQUARE" },
 		                { attrValue: "molecular entity", value: "CIRCLE" } ]
 	};
 
 	var sizeMapper = {
 	    attrName: "Type",
-	    entries: [ { attrValue: "map", value: 'auto' }]
+	    entries: [ { attrValue: "metabolic process", value: 'auto' }]
 	};
 
 	var widthMapper = {
@@ -238,7 +237,7 @@ vis.ready(function() {
 
 	var heightMapper = {
 	    attrName: "Type",
-	    entries: [{ attrValue: "map", value: 20 },
+	    entries: [{ attrValue: "metabolic process", value: 20 },
 		                { attrValue: "enzyme", value: 20 },
 		                { attrValue: "molecular entity", value: 15 } ]
 	};
