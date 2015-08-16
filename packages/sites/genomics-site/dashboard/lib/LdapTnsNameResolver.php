@@ -10,7 +10,7 @@ class LdapTnsNameResolver {
   public function __construct($service_name = null) {
       $this->dn = "cn=OracleContext,ou=applications,dc=apidb,dc=org";
       $this->attrs = array("cn");
-      $this->ldap_url = "ds2.apidb.org ds4.apidb.org";
+      $this->ldap_url = "ds1.apidb.org ds4.apidb.org";
   }
   
 
