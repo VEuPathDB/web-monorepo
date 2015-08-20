@@ -94,7 +94,7 @@
   </div>
 
   <main
-    data-baseUrl="${pageContext.request.contextPath}/app"
+    data-baseUrl="${pageContext.request.contextPath}/app/"
     data-serviceUrl="${pageContext.request.contextPath}/service"
   ></main>
 
