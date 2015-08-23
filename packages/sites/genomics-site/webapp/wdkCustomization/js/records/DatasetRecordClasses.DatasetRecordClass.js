@@ -39,7 +39,7 @@ let Organisms = React.createClass({
     return (
       <div>
         <h2>Organisms this data set is mapped to in {wdk.MODEL_NAME}</h2>
-        <ul>{organisms.value.split(/,\s*/).map(this._renderOrganism)}</ul>
+        <ul>{organisms.split(/,\s*/).map(this._renderOrganism)}</ul>
       </div>
     );
   },
@@ -346,7 +346,7 @@ export let DatasetRecord = React.createClass({
     return (
       <div className="eupathdb-DatasetRecord ui-helper-clearfix">
         <h1 dangerouslySetInnerHTML={{
-          __html: 'Data Set: <span class="' + titleClass + '">' + attributes.primary_key.value + '</span>'
+          __html: 'Data Set: <span class="' + titleClass + '">' + attributes.primary_key + '</span>'
         }}/>
 
         <div className="eupathdb-DatasetRecord-Container ui-helper-clearfix">
@@ -358,13 +358,13 @@ export let DatasetRecord = React.createClass({
 
               <tr>
                 <th>Summary:</th>
-                <td dangerouslySetInnerHTML={{__html: summary.value}}/>
+                <td dangerouslySetInnerHTML={{__html: summary}}/>
               </tr>
 
               {organism_prefix ? (
                 <tr>
                   <th>Organism (source or reference):</th>
-                  <td dangerouslySetInnerHTML={{__html: organism_prefix.value}}/>
+                  <td dangerouslySetInnerHTML={{__html: organism_prefix}}/>
                 </tr>
               ) : null}
 
@@ -378,7 +378,7 @@ export let DatasetRecord = React.createClass({
               {contact && institution ? (
                 <tr>
                   <th>Primary contact:</th>
-                  <td>{renderPrimaryContact(contact.value, institution.value)}</td>
+                  <td>{renderPrimaryContact(contact, institution)}</td>
                 </tr>
               ) : null}
 
@@ -392,7 +392,7 @@ export let DatasetRecord = React.createClass({
               {eupath_release ? (
                 <tr>
                   <th>EuPathDB release # / date:</th>
-                  <td>{eupath_release.value}</td>
+                  <td>{eupath_release}</td>
                 </tr>
               ) : null}
 
@@ -403,7 +403,7 @@ export let DatasetRecord = React.createClass({
 
           <div className="eupathdb-DatasetRecord-Main">
             <h2>Detailed Description</h2>
-            <div dangerouslySetInnerHTML={{__html: description.value}}/>
+            <div dangerouslySetInnerHTML={{__html: description}}/>
             <ContactsAndPublications contacts={Contacts} publications={Publications}/>
           </div>
 
