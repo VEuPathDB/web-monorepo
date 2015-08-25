@@ -10,8 +10,7 @@
               description="Step bean we are looking at"
 %>
 
-<c:set var="wdkAnswer" value="${step.answerValue}"/>
-<c:set var="recordClass" value="${wdkAnswer.question.recordClass}"/>
+<c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
 
