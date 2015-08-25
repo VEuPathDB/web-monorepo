@@ -192,12 +192,14 @@ ${species}  <!--  Aspergillus      knowlesi     -->
         <c:otherwise><div></c:otherwise>
       </c:choose>
       <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
-      <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
+<%--  unused, we run showResultSize.do once to return map with all filter sizes, wdk/js/controllers/filter.js will set the count below.
+       <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
+--%>
 
       <a id="link-${instance.name}" data-filter="${instance.name}" class="link-url" href="javascript:void(0)" countref="${countUrl}" 
          strId="${strategyId}" stpId="${stepId}" linkUrl="${linkUrl}">
         <c:choose>
-          <c:when test="${current}">${answerValue.resultSize}</c:when>
+          <c:when test="${current}"></c:when>
           <c:otherwise><imp:image class="loading" src="wdk/images/filterLoading.gif" /></c:otherwise>
         </c:choose>
 
