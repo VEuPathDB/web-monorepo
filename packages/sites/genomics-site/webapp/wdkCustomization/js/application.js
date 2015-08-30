@@ -81,36 +81,37 @@ let TranscriptList = React.createClass({
 
 Wdk.client.components.Record.wrapComponent(function(Record) {
   let TranscriptRecord = React.createClass({
-      componentDidMount() {
-        this.setStateFromProps(this.props);
-        this.fetchTranscripts(this.props);
-      },
-      componentWillReceiveProps(nextProps) {
-        this.setStateFromProps(nextProps);
-        this.fetchTranscripts(nextProps);
-      },
-      setStateFromProps(props) {
-        if ('GeneTranscripts' in props.record.tables) {
+    componentDidMount() {
+      this.handleNewProps(this.props);
+    },
+    componentWillReceiveProps(nextProps) {
+      this.handleNewProps(nextProps);
+    },
+    handleNewProps(props) {
+      if (!('GeneTranscripts' in props.record.tables)) {
+        if (this.fetching) return;
+        let { recordClass } = props;
+        let spec = {
+          primaryKey: props.record.id,
+          attributes: [],
+          tables: [ 'GeneTranscripts' ]
+        };
+        this.fetching = true;
+        props.recordActions.fetchRecordDetails(recordClass.fullName, spec)
+        .then(() => {
+          this.fetching = false;
           this.setState(props);
-        }
-      },
-      fetchTranscripts(props) {
-        if (!('GeneTranscripts' in props.record.tables)) {
-          let { recordClass } = props;
-          let spec = {
-            primaryKey: props.record.id,
-            attributes: [],
-            tables: [ 'GeneTranscripts' ]
-          };
-          props.recordActions.fetchRecordDetails(recordClass.fullName, spec);
-        }
-      },
-      render() {
-        if (this.state === null) return null;
-        return (
-          <Record {...this.state}/>
-        );
+        });
+      } else {
+        this.setState(props);
       }
+    },
+    render() {
+      if (this.state === null) return null;
+      return (
+        <Record {...this.state}/>
+      );
+    }
   });
 
   let ApiRecord = React.createClass({
