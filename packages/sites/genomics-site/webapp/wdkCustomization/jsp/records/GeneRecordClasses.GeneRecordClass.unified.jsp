@@ -212,40 +212,75 @@ organismFull:   Plasmodium falciparum 3D7
 <imp:recordPageBasketIcon />
 </div>
 
-<!-------------- Updated Product Name from GeneDB ---------------------------->
+<%-- page-top notifications and linkouts --%>
+
+<%-- set release_policy --%>
+  <c:choose>
+    <c:when test="${attrs['release_policy'].value  != null}">
+      <c:set var="release_policy" value="NOTE: ${attrs['release_policy'].value}"/>
+    </c:when>
+    <c:when test="${attrs['is_annotated'].value == 0}">
+      <c:set var="release_policy" value="NOTE: The data for this genome is unpublished. You should consult with the Principal Investigators before undertaking large scale analyses of the annotation or underlying sequence."/>
+    </c:when>
+  </c:choose>
+
 
 <c:set var="is_genedb_organism" value="${attrs['is_genedb_organism'].value}"/> 
+<c:set var="link_url" value="${attrs['link_url'].value}"/>
+<c:set var="ext_id" value="${attrs['ext_id'].value}"/>
+<c:set var="display_text" value="${attrs['display_text'].value}"/>
 
-<c:if test="${is_genedb_organism == 1}">
-  <div style="margin:12px;padding:5px">
+<c:choose>
+  <c:when test="${is_genedb_organism == 1}">
+    <div style="margin:12px;padding:5px">
 
+    <c:choose>
 
-    <c:if test="${attrs['updated_annotation'].value != null}">
-      ${attrs['GeneDB_updated'].value}
-    </c:if>
+      <%-- annotation change for this gene --%>
+      <c:when test="${attrs['updated_annotation'].value != null}">
+        <c:set var="genedb_url" value="${attrs['GeneDB_updated_url'].value}"/>
+        <c:set var="genedb_text" value="${attrs['GeneDB_updated_text'].value}"/>
+        <a href="${genedb_url}" title="${release_policy}">${genedb_text}</a>
+        <c:if test="${attrs['new_product_name'].value != null}">
+          <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+        </c:if>
+      </c:when>
 
+      <%-- special linkout for this genome--%>
+      <c:when test="${link_url ne 'no link'}">
+        <a href="${link_url}" title="${release_policy}">${display_text}</a>
+        <c:if test="${attrs['new_product_name'].value != null}">
+          <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+        </c:if>
+      </c:when>
 
-    <c:if test="${attrs['new_product_name'].value != null}">
-      <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
-    </c:if>
+      <c:otherwise>
+        <c:if test="${attrs['new_product_name'].value != null}">
+          <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+        </c:if>
+        <b>${release_policy}</b>
+      </c:otherwise>
 
-  </div>
+    </c:choose>
+    </div>
 
-</c:if>
+  </c:when> <%-- end when GeneDB organism --%>
+
+  <c:otherwise>
+    <%-- non-GeneDB organism --%>
+
+      <%-- special linkout for this genome--%>
+      <c:if test="${link_url} ne 'no link'">
+        <a href="${link_url}">${display_text}</a>
+      </c:if>
+
+      <b>${release_policy}</b>
+
+  </c:otherwise>
+
+</c:choose>
 </div>
 
-<!--------------  NOTE on data with ReleasePolicy, or default text for Unpublished data ---------------->
-
-  <c:choose>
-  <c:when test="${attrs['release_policy'].value  != null}">
-    <b>NOTE: ${attrs['release_policy'].value }</b>
-  </c:when>
-  <c:otherwise>
-    <c:if test="${attrs['is_annotated'].value == 0}">
-    <b>NOTE: The data for this genome is unpublished. You should consult with the Principal Investigators before undertaking large scale analyses of the annotation or underlying sequence.</b>
-    </c:if>
-  </c:otherwise>
-  </c:choose>
 
 
 <%--##########################  SECTION  BEFORE ANNOTATION   ################################--%>
