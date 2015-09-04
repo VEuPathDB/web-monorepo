@@ -43,8 +43,12 @@ Wdk.client.components.Record.wrapComponent(function(Record) {
 //   });
 // });
 
-window._app = Wdk.client.createApplication({
+let app = window._app = Wdk.client.createApplication({
   rootUrl,
   endpoint,
   rootElement
 });
+
+// Get POSTed data and dispatch as an action
+let postData = apicommGetPostData();
+app.store.dispatch(postData);

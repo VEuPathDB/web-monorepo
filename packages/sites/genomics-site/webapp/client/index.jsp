@@ -98,7 +98,11 @@
     data-serviceUrl="${pageContext.request.contextPath}/service"
   ></main>
 
-  <script type="application/json" id="post-data">${model}</script>
+  <script>
+    function apicommGetPostData() {
+      return (${model});
+    }
+  </script>
   <imp:script src="wdk/js/wdk.client.js"/>
   <imp:script src="wdkCustomization/js/application.bundle.js"/>
 </imp:pageFrame>
