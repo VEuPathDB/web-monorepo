@@ -182,7 +182,7 @@ organismFull:   Plasmodium falciparum 3D7
 <!----------- Previous IDS  --- ONLY PLASMO according to Omar -------------->
 <c:if test="${projectId eq 'PlasmoDB'}">
 <c:if test="${attrs['old_ids'].value != null && attrs['old_ids'].value ne id }">
-  <br><span style="font-size:70%">${attrs['OldIds'].value}</span><br>
+  <br><span style="font-size:70%">${attrs['OldIds'].value}</span>
 </c:if>
 </c:if>
 
@@ -211,6 +211,7 @@ organismFull:   Plasmodium falciparum 3D7
 <!----------- Basket and Favorites  ----------------->
 <imp:recordPageBasketIcon />
 </div>
+</div>
 
 <%-- page-top notifications and linkouts --%>
 
@@ -219,7 +220,7 @@ organismFull:   Plasmodium falciparum 3D7
     <c:when test="${attrs['release_policy'].value  != null}">
       <c:set var="release_policy" value="NOTE: ${attrs['release_policy'].value}"/>
     </c:when>
-    <c:when test="${attrs['is_annotated'].value == 0}">
+    <c:when test="${attrs['is_published'].value == 0}">
       <c:set var="release_policy" value="NOTE: The data for this genome is unpublished. You should consult with the Principal Investigators before undertaking large scale analyses of the annotation or underlying sequence."/>
     </c:when>
   </c:choose>
@@ -230,56 +231,42 @@ organismFull:   Plasmodium falciparum 3D7
 <c:set var="ext_id" value="${attrs['ext_id'].value}"/>
 <c:set var="display_text" value="${attrs['display_text'].value}"/>
 
+<%-- div style="margin:2px;padding:5px;font-size:75%" --%>
+<div class="h2center" style="font-size:120%">
+
 <c:choose>
-  <c:when test="${is_genedb_organism == 1}">
-    <div style="margin:12px;padding:5px">
 
-    <c:choose>
+  <%-- annotation change for this gene --%>
+  <c:when test="${attrs['updated_annotation'].value != null}">
+    <c:set var="genedb_url" value="${attrs['GeneDB_updated_url'].value}"/>
+    <c:set var="genedb_text" value="${attrs['GeneDB_updated_text'].value}"/>
+    <a href="${genedb_url}" title="${release_policy}">${genedb_text}</a>
+    <c:if test="${attrs['new_product_name'].value != null}">
+      <br><span style="font-size:90%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
+  </c:when>
 
-      <%-- annotation change for this gene --%>
-      <c:when test="${attrs['updated_annotation'].value != null}">
-        <c:set var="genedb_url" value="${attrs['GeneDB_updated_url'].value}"/>
-        <c:set var="genedb_text" value="${attrs['GeneDB_updated_text'].value}"/>
-        <a href="${genedb_url}" title="${release_policy}">${genedb_text}</a>
-        <c:if test="${attrs['new_product_name'].value != null}">
-          <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
-        </c:if>
-      </c:when>
-
-      <%-- special linkout for this genome--%>
-      <c:when test="${link_url ne 'no link'}">
-        <a href="${link_url}" title="${release_policy}">${display_text}</a>
-        <c:if test="${attrs['new_product_name'].value != null}">
-          <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
-        </c:if>
-      </c:when>
-
-      <c:otherwise>
-        <c:if test="${attrs['new_product_name'].value != null}">
-          <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
-        </c:if>
-        <b>${release_policy}</b>
-      </c:otherwise>
-
-    </c:choose>
-    </div>
-
-  </c:when> <%-- end when GeneDB organism --%>
+  <%-- special linkout for this genome--%>
+  <c:when test="${link_url ne 'no link'}">
+    <a href="${link_url}" title="${release_policy}">${display_text}</a>
+    <c:if test="${attrs['new_product_name'].value != null}">
+      <br><span style="font-size:75%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
+  </c:when>
 
   <c:otherwise>
-    <%-- non-GeneDB organism --%>
-
-      <%-- special linkout for this genome--%>
-      <c:if test="${link_url} ne 'no link'">
-        <a href="${link_url}">${display_text}</a>
-      </c:if>
-
-      <b>${release_policy}</b>
-
+    <c:if test="${attrs['new_product_name'].value != null}">
+      <br><span style="font-size:90%">${attrs['GeneDB_New_Product'].value}</span>
+    </c:if>
   </c:otherwise>
 
 </c:choose>
 </div>
+
+<c:if test="${release_policy != null}">
+  <b><i>${release_policy}</b></i>
+</c:if>
+
 
 
 
