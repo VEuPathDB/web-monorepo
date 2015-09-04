@@ -146,18 +146,30 @@
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
   <!-- End Struts servlet and mapping -->
-
-  <!-- WDK Client-side render filter -->
+  
+  <!-- WDK RESTful client filter -->
   <servlet>
     <servlet-name>WDKClient</servlet-name>
-    <jsp-file>/wdkCustomization/app.jsp</jsp-file>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>org.gusdb.wdk.client.WdkClientApplication</param-value>
+    </init-param>
+    <init-param>
+      <param-name>jersey.config.server.provider.classnames</param-name>
+      <param-value>org.glassfish.jersey.server.mvc.jsp.JspMvcFeature</param-value>
+    </init-param>
+    <init-param>
+      <param-name>jersey.config.server.mvc.templateBasePath.jsp</param-name>
+      <param-value>/client/</param-value>
+    </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>WDKClient</servlet-name>
     <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
-  <!-- End of WDK Client-side render filter -->
-  
+
+  <!-- End of WDK Restful client filter -->
   <!-- WSF RESTful service filter -->
   <servlet>
     <servlet-name>WSF</servlet-name>
@@ -172,7 +184,7 @@
     <url-pattern>/services/WsfService/*</url-pattern>
   </servlet-mapping>
   <!-- End of WSF Restful service filter -->
-
+  
   <!-- WDK RESTful service filter -->
   <servlet>
     <servlet-name>WDK</servlet-name>
