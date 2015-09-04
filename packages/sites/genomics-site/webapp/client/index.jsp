@@ -82,6 +82,71 @@
       font-style: italic;
       font-size: 1.2em;
     }
+
+    .eupathdb-TranscriptRecordNavList {
+      font-size: 80%;
+      font-weight: normal;
+      list-style: none;
+      padding: 0;
+    }
+
+    .eupathdb-TranscriptRecordNavList > li a {
+      border-left: 2px solid transparent;
+      padding-left: 4px;
+    }
+    .eupathdb-TranscriptRecordNavList > li a:hover,
+    .eupathdb-TranscriptRecordNavList > li a.active {
+      font-weight: bold;
+      border-left: 2px solid;
+    }
+    .eupathdb-TranscriptSticky {
+      background: white;
+      border-bottom: 1px solid #B7B7B7;
+      margin-bottom: -1px;
+      padding-top: 1em;
+    }
+    .eupathdb-TranscriptSticky:after {
+      clear: both;
+      content: " ";
+      height: 0;
+    }
+    .eupathdb-TranscriptSticky-fixed {
+      z-index: 1;
+      border-color: #999;
+    }
+    .eupathdb-TranscriptHeading {
+      float: left;
+      margin: 0;
+      padding-right: 1em;
+    }
+    .eupathdb-TranscriptTabList {
+    }
+    .eupathdb-TranscriptLink {
+      display: inline-block;
+      padding: .8em;
+      font-size: 1.3em;
+      font-weight: 400;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      margin-right: 2px;
+    }
+    .eupathdb-TranscriptLink:hover,
+    .eupathdb-TranscriptLink:focus {
+      background-color: #ccc;
+      z-index: 1;
+    }
+    .eupathdb-TranscriptLink-active,
+    .eupathdb-TranscriptLink-active:hover,
+    .eupathdb-TranscriptLink-active:focus {
+      background-color: white;
+      border-color: #aaa;
+    }
+    .eupathdb-TranscriptTabContent {
+      border: 1px solid #aaa;
+      padding: 8px;
+    }
   </style>
 
   <div class="eupathdb-Beta-Announcement" title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
@@ -98,7 +163,6 @@
     data-serviceUrl="${pageContext.request.contextPath}/service"
   ></main>
 
-  <script type="application/json" id="post-data">${model}</script>
   <imp:script src="wdk/js/wdk.client.js"/>
   <imp:script src="wdkCustomization/js/application.bundle.js"/>
 </imp:pageFrame>
