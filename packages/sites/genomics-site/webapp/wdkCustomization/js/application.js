@@ -252,8 +252,15 @@ function scrollToElementById(id) {
   el.scrollIntoView();
 }
 
-window._app = Wdk.client.createApplication({
-  rootUrl,
-  endpoint,
-  rootElement
+let config = window.getApiClientConfig();
+let app = window._app = Wdk.client.createApplication({
+  rootUrl: config.rootUrl,
+  endpoint: config.endpoint,
+  rootElement: config.rootElement
 });
+
+// TODO Convert initialData to an action
+if (config.initialData) {
+  let action = config.initialData;
+  app.store.dispatch(action);
+}
