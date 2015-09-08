@@ -4,10 +4,6 @@ import {
   Tooltip
 } from './records/DatasetRecordClasses.DatasetRecordClass';
 
-let rootElement = document.getElementsByTagName('main')[0];
-let rootUrl = rootElement.getAttribute('data-baseUrl');
-let endpoint = rootElement.getAttribute('data-serviceUrl');
-
 let recordComponentsMap = {
   "DatasetRecordClasses.DatasetRecordClass": DatasetRecord
 };
@@ -43,12 +39,15 @@ Wdk.client.components.Record.wrapComponent(function(Record) {
 //   });
 // });
 
+let config = window.getApiClientConfig();
 let app = window._app = Wdk.client.createApplication({
-  rootUrl,
-  endpoint,
-  rootElement
+  rootUrl: config.rootUrl,
+  endpoint: config.endpoint,
+  rootElement: config.rootElement
 });
 
-// Get POSTed data and dispatch as an action
-let postData = apicommGetPostData();
-app.store.dispatch(postData);
+// TODO Convert initialData to an action
+if (config.initialData) {
+  let action = config.initialData;
+  app.store.dispatch(action);
+}

@@ -99,8 +99,13 @@
   ></main>
 
   <script>
-    function apicommGetPostData() {
-      return (${model});
+    function getApiClientConfig() {
+      return {
+        rootUrl: "${pageContext.request.contextPath}/app/",
+        endpoint: "${pageContext.request.contextPath}/service",
+        rootElement: document.querySelector("main"),
+        initialData: (function(initialData) { return initialData }(${model})) // guard against empty data
+      };
     }
   </script>
   <imp:script src="wdk/js/wdk.client.js"/>
