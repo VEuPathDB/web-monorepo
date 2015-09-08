@@ -337,10 +337,15 @@ organismFull:   Plasmodium falciparum 3D7
                                        fn:contains(header['User-Agent'], 'Netscape') }"/>
 --%>
 
+<%---------- alternate products table ---------------%>
+
+<c:if test="${attrs['has_alternate_products'].value eq 'Yes'}">
+  <imp:wdkTable2 tblName="AlternateProducts" isOpen="true"  attribution=""/>
+</c:if>
+
 <%-- === from toxo ===== --%>
 <!-- strains comparison table -->
 <imp:wdkTable2 tblName="Strains" isOpen="true"  attribution=""/>
-
 
 <%---------- HTS SNP OVERVIEW --------- BASED ON ATTRIBUTE  ------%>
 <c:if test="${attrs['hasHtsSnps'].value eq '1'}">
