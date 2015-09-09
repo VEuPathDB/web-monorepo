@@ -237,14 +237,14 @@ organismFull:   Plasmodium falciparum 3D7
 <c:choose>
 
   <%-- annotation change for this gene --%>
-  <c:when test="${attrs['updated_annotation'].value != null}">
+  <c:when test="${(projectId eq 'PlasmoDB' || projectId eq 'TriTrypDB') && attrs['updated_annotation'].value != null}">
     <c:set var="genedb_url" value="${attrs['GeneDB_updated_url'].value}"/>
     <c:set var="genedb_text" value="${attrs['GeneDB_updated_text'].value}"/>
     <a href="${genedb_url}" title="${release_policy}">${genedb_text}</a>
     <c:if test="${attrs['new_product_name'].value != null}">
       <br><span style="font-size:90%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
-  </c:when>
+
 
   <%-- special linkout for this genome--%>
   <c:when test="${link_url ne 'no link'}">
@@ -259,7 +259,7 @@ organismFull:   Plasmodium falciparum 3D7
       <br><span style="font-size:90%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
   </c:otherwise>
-
+  </c:when>
 </c:choose>
 </div>
 
