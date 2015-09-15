@@ -560,11 +560,6 @@
       name="deleteCommentForm">
     </action>
     <action
-      path="/savePreference"
-      type="org.gusdb.wdk.controller.action.user.ProcessSavePreferenceAction"
-      scope="request">
-    </action>
-    <action
       path="/goRemote"
       type="org.gusdb.wdk.controller.action.services.RemoteLoginAction"
       scope="request">
