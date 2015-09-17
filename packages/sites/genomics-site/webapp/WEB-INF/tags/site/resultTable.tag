@@ -28,10 +28,12 @@
     <p style="text-align: center; margin: .4em 0;">
       <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
       <strong>
-        ${genesMissingTranscriptsCount}
+ <%--       ${genesMissingTranscriptsCount}
         ${genesMissingTranscriptsCount eq 1 ? recordClass.displayName : recordClass.displayNamePlural}
-        in your result have some Transcripts that behaved differently. Please 
-        <a href="#" onClick="${addTransformAction}">explore</a>.
+--%> 
+        Some ${recordClass.displayNamePlural}
+        in your result have Transcript(s) with divergent function or characteristics. 
+        <a href="#" onClick="${addTransformAction}"> Explore these!</a>
       </strong>
     </p>
  </c:if>
