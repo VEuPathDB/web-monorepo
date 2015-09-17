@@ -7,4 +7,4 @@
   <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" onclick="javascript:toggleRepresentativeTranscripts(this)">
   View Only Representative Transcripts
 </div>
-<imp:resultTable step="${requestScope.wdkStep}" />
+<imp:resultTable step="${requestScope.wdkStep}" view="transcripts"/>

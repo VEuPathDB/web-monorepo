@@ -9,6 +9,11 @@
               required="true"
               description="Step bean we are looking at"
 %>
+<%@ attribute name="view"
+              type="java.lang.String"
+              required="false"
+              description="tab we are looking at"
+%>
 
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
 <c:set var="genesMissingTranscriptsCount"
@@ -19,15 +24,18 @@
     <c:set var="addTransformAction"
            value="eupathdb.transcripts.openTransform(${step.stepId}); return false;"/>
 
+ <c:if test="${view eq 'transcripts'}">
     <p style="text-align: center; margin: .4em 0;">
       <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
       <strong>
         ${genesMissingTranscriptsCount}
         ${genesMissingTranscriptsCount eq 1 ? recordClass.displayName : recordClass.displayNamePlural}
-        in your result have some Transcripts that did not match your search. To investigate,
-        <a href="#" onClick="${addTransformAction}">add this transform</a> to your strategy.
+        in your result have some Transcripts that behaved differently. Please 
+        <a href="#" onClick="${addTransformAction}">explore</a>.
       </strong>
     </p>
+ </c:if>
+
   </c:if>
 
   <c:if test="${step.isBoolean}">
@@ -76,7 +84,7 @@
         left: -2em;
       }
     </style>
-
+<%--
     <div class="gene-boolean-filter ui-helper-clearfix"
       data-step="${step.stepId}"
       data-filter="gene_boolean_filter_array">
@@ -101,6 +109,8 @@
         </script>
       </div>
     </div>
+--%>
+
   </c:if>
 
   <wdk:resultTable step="${step}" />
