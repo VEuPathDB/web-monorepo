@@ -21,15 +21,18 @@
 
 <c:if test="${view eq 'transcripts'}">
     <c:set var="showNativeCount" value="true"/>
+
 </c:if>
 
 <div>
-  <c:if test="${genesMissingTranscriptsCount gt 0}">
-     <c:set var="missingNative" value="true"/>
-    <c:set var="addTransformAction"
+
+<c:choose>
+<c:when test="${genesMissingTranscriptsCount gt 0}">
+  <c:set var="missingNative" value="true"/>
+  <c:set var="addTransformAction"
            value="eupathdb.transcripts.openTransform(${step.stepId}); return false;"/>
 
- <c:if test="${view eq 'transcripts'}">
+  <c:if test="${view eq 'transcripts'}">
     <p style="text-align: center; margin: .4em 0;">
       <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
       <strong>
@@ -41,15 +44,21 @@
         <a href="#" onClick="${addTransformAction}"> Explore these!</a>
       </strong>
     </p>
- </c:if>
+  </c:if>
 
 <script>
   if ($("i#tr-warning").length == 0){
     $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' class='fa fa-lg fa-exclamation-circle'></i>" ) );
   }
 </script>
-
+</c:when>
+<c:otherwise>
+   <c:if test="${view eq 'transcripts'}">
+     <p style="text-align: center; margin: .4em 0;">$nbsp;</p>
   </c:if>
+</c:otherwise>
+</c:choose>
+
 
   <c:if test="${step.isBoolean}">
     <!-- selected values -->
