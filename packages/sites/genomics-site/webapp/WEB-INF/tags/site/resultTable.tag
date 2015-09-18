@@ -43,6 +43,12 @@
     </p>
  </c:if>
 
+<script>
+  if ($("i#tr-warning").length == 0){
+    $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+  }
+</script>
+
   </c:if>
 
   <c:if test="${step.isBoolean}">
