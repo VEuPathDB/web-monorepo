@@ -86,25 +86,28 @@
 
   <div class="eupathdb-Beta-Announcement" title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
     <p>
-      <%-- <i class="fa fa-lg fa-exclamation-circle" style="color: rgb(25, 89, 200);"></i> --%>
+      <!-- <i class="fa fa-lg fa-exclamation-circle" style="color: rgb(25, 89, 200);"></i> -->
       You are viewing a <strong>BETA</strong> (pre-release) page.
       <a data-name="contact_us" class="new-window" href="contact.do">Feedback and comments</a>
       are welcome!
     </p>
   </div>
 
-  <main
-    data-baseUrl="${pageContext.request.contextPath}/app/"
-    data-serviceUrl="${pageContext.request.contextPath}/service"
-  ></main>
+  <!-- We will pass this to WDK as the root element within which the client will render HTML -->
+  <main id="wdk-container"/>
 
+  <!-- `getApiClientConfig` is created in the global scope, so we can call this
+       from other JavaScript code where we initialize the WDK client
+       (see wdkCustomization/js/application.js) -->
   <script>
     function getApiClientConfig() {
       return {
         rootUrl: "${pageContext.request.contextPath}/app/",
         endpoint: "${pageContext.request.contextPath}/service",
-        rootElement: document.querySelector("main"),
-        initialData: (function(initialData) { return initialData }(${model})) // guard against empty data
+        rootElement: document.getElementById("wdk-container"),
+        // Use an immediately-invoked function expression in case ${model} is empty
+        // to prevent a syntax error.
+        initialData: (function(initialData) { return initialData; }(${model}))
       };
     }
   </script>
