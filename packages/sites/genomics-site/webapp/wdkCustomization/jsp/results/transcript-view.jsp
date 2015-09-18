@@ -3,7 +3,7 @@
 
 <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
 
-<div style="text-align:right;margin:10px">
+<div style="text-align:right;margin:6px 10px 10px;float:right;>
   <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" onclick="javascript:toggleRepresentativeTranscripts(this)">
   View Only Representative Transcripts
 </div>
