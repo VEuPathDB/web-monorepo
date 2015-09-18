@@ -19,8 +19,13 @@
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
 
+<c:if test="${view eq 'transcripts'}">
+    <c:set var="showNativeCount" value="true"/>
+</c:if>
+
 <div>
   <c:if test="${genesMissingTranscriptsCount gt 0}">
+     <c:set var="missingNative" value="true"/>
     <c:set var="addTransformAction"
            value="eupathdb.transcripts.openTransform(${step.stepId}); return false;"/>
 
@@ -115,7 +120,7 @@
 
   </c:if>
 
-  <wdk:resultTable step="${step}" />
+  <wdk:resultTable step="${step}" showNativeCount="${showNativeCount}" missingNative="${missingNative}"/>
 </div>
 
 <c:set var="model" value="${applicationScope.wdkModel}" />
