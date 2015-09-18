@@ -54,7 +54,7 @@
 </c:when>
 <c:otherwise>
    <c:if test="${view eq 'transcripts'}">
-     <p style="text-align: center; margin: .4em 0;">$nbsp;</p>
+     <p style="text-align: center; margin: .4em 0;">&nbsp;</p>
   </c:if>
 </c:otherwise>
 </c:choose>
