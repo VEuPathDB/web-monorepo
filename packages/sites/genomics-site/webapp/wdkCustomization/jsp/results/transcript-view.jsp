@@ -5,6 +5,6 @@
 
 <div style="text-align:right;margin:6px 10px 10px;float:right">
   <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" onclick="javascript:toggleRepresentativeTranscripts(this)">
-  View Only Representative Transcripts
+  Show one transcript per gene
 </div>
 <imp:resultTable step="${requestScope.wdkStep}" view="transcripts"/>
