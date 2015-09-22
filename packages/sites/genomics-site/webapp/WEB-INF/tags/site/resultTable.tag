@@ -46,6 +46,14 @@
     </p>
   </c:if>
 
+  <c:if test="${view eq 'missing-transcripts'}">
+    <p style="text-align: center; margin: .4em 0;">
+      <strong>
+        This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. These are transcripts from genes in your result, but that were <i>not matched by the search</i>.
+      </strong>
+    </p>
+  </c:if>
+
 <script>
   if ($("i#tr-warning").length == 0){
     $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' class='fa fa-lg fa-exclamation-circle'></i>" ) );
