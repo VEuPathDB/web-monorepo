@@ -1,7 +1,8 @@
 import Wdk from 'wdk';
+
+// Import custom components
 import {
-  DatasetRecord,
-  Tooltip
+  DatasetRecord
 } from './records/DatasetRecordClasses.DatasetRecordClass';
 
 let Link = ReactRouter.Link;
@@ -15,36 +16,32 @@ let recordComponentsMap = {
   "DatasetRecordClasses.DatasetRecordClass": DatasetRecord
 };
 
+// Customize the Record component
 Wdk.client.components.Record.wrapComponent(function(Record) {
+  // Map record class names to custom components
+  function recordComponent(recordClassName) {
+    switch (recordClassName) {
+      case 'DatasetRecordClasses.DatasetRecordClass':
+        return DatasetRecord;
+
+      default:
+        return Record;
+    }
+  }
+
+  // This React component will delegate to custom components defined in the
+  // Object defined above.
   let RecordComponentResolver =  React.createClass({
     render() {
-      let Component = recordComponentsMap[this.props.recordClass.fullName] || Record;
+      let Component = recordComponent(this.props.recordClass.fullName);
       return (
         <Component {...this.props}/>
       );
     }
   });
+
   return RecordComponentResolver;
 });
-
-// Wdk.client.components.AnswerTableCell.wrapComponent(function(AnswerTableCell) {
-//   return React.createClass({
-//     render() {
-//       let cell = <AnswerTableCell {...this.props}/>;
-// 
-//       if (this.props.recordClass === "DatasetRecordClasses.DatasetRecordClass"
-//          && this.props.attribute.name === "primary_key") {
-//         return (
-//           <Tooltip text={this.props.record.attributes.description.value} witdh={this.props.width}>
-//             {cell}
-//           </Tooltip>
-//         );
-//       }
-// 
-//       return cell;
-//     }
-//   });
-// });
 
 let TranscriptList = React.createClass({
 
@@ -252,6 +249,9 @@ function scrollToElementById(id) {
   el.scrollIntoView();
 }
 
+// Bootstrap the WDK client application
+
+// getApiClientConfig() is defined in /client/index.jsp
 let config = window.getApiClientConfig();
 let app = window._app = Wdk.client.createApplication({
   rootUrl: config.rootUrl,
