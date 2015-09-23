@@ -25,34 +25,36 @@
   <table data-display="${YN ne null or NY ne null or NN ne null}">
     <tr class="headerrow">
       <td><!-- checkbox --></td>
-      <th>Matches prev step</th>
-      <th>Matches this step</th>
-      <td><!-- count --></td>
+      <th>Transcripts included...</th>
+      <th>...in top step result</th>
+      <th>...in previous step result</th>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="YY"/></td>
-      <td>Y</td>
-      <td>Y</td>
       <td>${YY eq null ? 0 : YY}</td>
+      <td>Y</td>
+      <td>Y</td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="YN"/></td>
+      <td>${YN eq null ? 0 : YN}</td>
       <td>Y</td>
       <td>N</td>
-      <td>${YN eq null ? 0 : YN}</td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="NY"/></td>
+      <td>${NY eq null ? 0 : NY}</td>
       <td>N</td>
       <td>Y</td>
-      <td>${NY eq null ? 0 : NY}</td>
     </tr>
+<!--
     <tr>
       <td><input name="values" type="checkbox" value="NN"/></td>
       <td>N</td>
       <td>N</td>
       <td>${NN eq null ? 0 : NN}</td>
     </tr>
+-->
   </table>
 
 </jsp:root>

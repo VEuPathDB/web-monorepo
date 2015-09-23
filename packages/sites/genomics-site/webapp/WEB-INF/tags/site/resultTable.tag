@@ -19,56 +19,26 @@
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
 
+<c:if test="${genesMissingTranscriptsCount gt 0}">
+  <c:set var="missingNative" value="true"/>
+</c:if>
+
 <c:if test="${view eq 'transcripts'}">
     <c:set var="showNativeCount" value="true"/>
-
 </c:if>
 
 <div>
 
-<c:choose>
-<c:when test="${genesMissingTranscriptsCount gt 0}">
-  <c:set var="missingNative" value="true"/>
-  <c:set var="addTransformAction"
-           value="eupathdb.transcripts.openTransform(${step.stepId}); return false;"/>
+<c:if test="${view eq 'missing-transcripts'}">
+  <p style="text-align: center; margin: .4em 0;">
+    <strong>
+      This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. 
+      These are transcripts from genes in your result, but that were <i>not matched by the search</i>.      
+    </strong>
+  </p>
+</c:if>
 
-  <c:if test="${view eq 'transcripts'}">
-    <p style="text-align: center; margin: .4em 0;">
-      <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
-      <strong>
- <%--       ${genesMissingTranscriptsCount}
-        ${genesMissingTranscriptsCount eq 1 ? recordClass.displayName : recordClass.displayNamePlural}
---%> 
-        Some ${recordClass.displayNamePlural}
-        in your result have Transcript(s) with divergent function or characteristics. 
-        <a href="#" onClick="${addTransformAction}"> Explore these!</a>
-      </strong>
-    </p>
-  </c:if>
-
-  <c:if test="${view eq 'missing-transcripts'}">
-    <p style="text-align: center; margin: .4em 0;">
-      <strong>
-        This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. These are transcripts from genes in your result, but that were <i>not matched by the search</i>.
-      </strong>
-    </p>
-  </c:if>
-
-<script>
-  if ($("i#tr-warning").length == 0){
-    $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' class='fa fa-lg fa-exclamation-circle'></i>" ) );
-  }
-</script>
-</c:when>
-<c:otherwise>
-   <c:if test="${view eq 'transcripts'}">
-     <p style="text-align: center; margin: .4em 0;">&nbsp;</p>
-  </c:if>
-</c:otherwise>
-</c:choose>
-
-
-  <c:if test="${step.isBoolean}">
+<c:if test="${step.isBoolean}">
     <!-- selected values -->
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
@@ -100,7 +70,7 @@
         border: 1px solid rgb(189, 189, 189);
         background: rgb(237, 237, 237);
       }
-      .gene-boolean-filter tr > td:last-child,
+/*      .gene-boolean-filter tr > td:last-child,*/
       .gene-boolean-filter tr > td:first-child {
         border: none;
         background: none;
@@ -111,40 +81,62 @@
       .gene-boolean-filter-apply-button {
         position: relative;
         top: -1em;
-        left: -2em;
+        left: 2em;
       }
     </style>
-<%--
+
+<c:choose>
+<c:when test="true"> <%-- TODO: check for counts in YN and NY --%>
+
+  <c:if test="${view eq 'transcripts'}">
+   <!-- a jsp/tag file with name geneBooleanFilter will generate the ${values} -->
     <div class="gene-boolean-filter ui-helper-clearfix"
       data-step="${step.stepId}"
       data-filter="gene_boolean_filter_array">
       <p style="text-align: center; margin: .4em 0;">
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
-          One or both of the steps you are combining have Genes whose transcripts did not all match the search.
-          <a href="#" class="gene-boolean-filter-controls-toggle">Explore these.</a>
+          Some transcripts in your result did not match one of the input searches.
+          <a href="#" class="gene-boolean-filter-controls-toggle">Please explore.</a>
         </strong>
       </p>
       <div class="gene-boolean-filter-controls">
         <form action="applyFilter.do" name="apply-gene-boolean-filter">
           <input type="hidden" name="step" value="${step.stepId}"/>
           <input type="hidden" name="filter" value="gene_boolean_filter_array"/>
-          <button class="gene-boolean-filter-apply-button">Apply selection</button>
           <div class="gene-boolean-filter-summary">
             Loading filters...
           </div>
+          <button class="gene-boolean-filter-apply-button">Apply selection</button>
         </form>
         <script type="application/json" class="gene-boolean-filter-values">
           ${values}
         </script>
       </div>
     </div>
---%>
-
   </c:if>
 
+  <script>
+    if ($("i#tr-warning").length == 0){
+      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This boolean step contains transcripts that did not match one of the input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+    }
+  </script>
+</c:when>
+
+<c:otherwise>
+   <c:if test="${view eq 'transcripts'}">
+
+  </c:if>
+</c:otherwise>
+</c:choose>
+
+</c:if> <!-- if boolean step -->
+
   <wdk:resultTable step="${step}" showNativeCount="${showNativeCount}" missingNative="${missingNative}"/>
+
 </div>
+
+
 
 <c:set var="model" value="${applicationScope.wdkModel}" />
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
