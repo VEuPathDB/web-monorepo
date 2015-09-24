@@ -9,7 +9,7 @@
       <div style="text-align:center">
         <form>
           <div style="display:inline-block">
-            <imp:checkboxTree rootNode="${viewModel}" id="myTree-${idgen.nextId}" checkboxName="myTree"/><br/>
+            <imp:checkboxTree tree="${viewModel}" id="myTree-${idgen.nextId}" checkboxName="myTree"/><br/>
             <input type="submit" value="Submit"/>
           </div>
         </form>
