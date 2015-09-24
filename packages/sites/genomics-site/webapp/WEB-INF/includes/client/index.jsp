@@ -1,7 +1,17 @@
 <%@ page contentType="text/html; charset=utf8" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<imp:pageFrame refer="betaApp">
+<imp:pageFrameFixed refer="betaApp">
   <style>
+    body, h1, h2, h3, h4, h5, h6 {
+      font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+    }
+    #wdk-container {
+      position: relative;
+      min-height: 200px;
+    }
+    .wdk-PageColumn {
+      top: 131px;
+    }
     .eupathdb-DatasetRecord h2,
     .eupathdb-DatasetRecord h3 {
       margin: 22px 0 11px;
@@ -74,7 +84,7 @@
     }
     .eupathdb-Beta-Announcement {
       position: absolute;
-      top: 136px;
+      top: 4px;
       right: 0;
       z-index: 1;
       padding: 0 2em;
@@ -84,17 +94,8 @@
     }
   </style>
 
-  <div class="eupathdb-Beta-Announcement" title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
-    <p>
-      <!-- <i class="fa fa-lg fa-exclamation-circle" style="color: rgb(25, 89, 200);"></i> -->
-      You are viewing a <strong>BETA</strong> (pre-release) page.
-      <a data-name="contact_us" class="new-window" href="contact.do">Feedback and comments</a>
-      are welcome!
-    </p>
-  </div>
-
   <!-- We will pass this to WDK as the root element within which the client will render HTML -->
-  <main id="wdk-container"/>
+  <div id="wdk-container"><jsp:text/></div>
 
   <!-- `getApiClientConfig` is created in the global scope, so we can call this
        from other JavaScript code where we initialize the WDK client
@@ -113,4 +114,4 @@
   </script>
   <imp:script src="wdk/js/wdk.client.js"/>
   <imp:script src="wdkCustomization/js/application.bundle.js"/>
-</imp:pageFrame>
+</imp:pageFrameFixed>

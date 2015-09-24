@@ -161,7 +161,7 @@
     </init-param>
     <init-param>
       <param-name>jersey.config.server.mvc.templateBasePath.jsp</param-name>
-      <param-value>/client/</param-value>
+      <param-value>/WEB-INF/includes/client/</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
