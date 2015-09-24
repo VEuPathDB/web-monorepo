@@ -94,7 +94,7 @@
     }
 
     .eupathdb-TranscriptRecordNavList {
-      font-size: 80%;
+      font-size: 75%;
       font-weight: normal;
       list-style: none;
       padding: 0;
@@ -124,7 +124,7 @@
       z-index: 1;
       border-color: #999;
     }
-    .eupathdb-TranscriptHeading {
+    #wdk-container .eupathdb-TranscriptHeading {
       float: left;
       margin: 0;
       padding-right: 1em;
