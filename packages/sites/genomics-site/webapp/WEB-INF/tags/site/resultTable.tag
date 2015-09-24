@@ -21,6 +21,8 @@
 
 <c:if test="${genesMissingTranscriptsCount gt 0}">
   <c:set var="missingNative" value="true"/>
+  <c:set var="addTransformAction"
+           value="eupathdb.transcripts.openTransform(${step.stepId}); return false;"/>
 </c:if>
 
 <c:if test="${view eq 'transcripts'}">
@@ -32,13 +34,28 @@
 <c:if test="${view eq 'missing-transcripts'}">
   <p style="text-align: center; margin: .4em 0;">
     <strong>
-      This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. 
-      These are transcripts from genes in your result, but that were <i>not matched by the search</i>.      
+      This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>.
+      These are transcripts from genes in your result that were <i>not returned by the search</i>.
+      <br>(In a boolean step result, these are transcripts from genes in your result that were not returned in both input step searches.)
+      <br><a href="#" onClick="${addTransformAction}"> Add a these to my strategy.</a>     
     </strong>
   </p>
 </c:if>
 
-<c:if test="${step.isBoolean}">
+<c:if test="${step.isBoolean}"> 
+
+<!-- while in any view... not sure we need tab icon to warn YN/NY count > 0 
+  <script>
+    if ($("i#tr-warning").length == 0){
+      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This boolean step contains transcripts that did not match one of the input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+    }
+  </script>
+-->
+
+  <!-- in transcript view, show table (the whole div will only show if YN or NY count > 0, 
+       specified partly in tag file and indirectly via js) -->
+  <c:if test="${view eq 'transcripts'}">
+
     <!-- selected values -->
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
@@ -85,11 +102,7 @@
       }
     </style>
 
-<c:choose>
-<c:when test="true"> <%-- TODO: check for counts in YN and NY --%>
-
-  <c:if test="${view eq 'transcripts'}">
-   <!-- a jsp/tag file with name geneBooleanFilter will generate the ${values} -->
+   <!-- YY/NY/YN table:  a jsp/tag file with name geneBooleanFilter will generate the table -->
     <div class="gene-boolean-filter ui-helper-clearfix"
       data-step="${step.stepId}"
       data-filter="gene_boolean_filter_array">
@@ -114,23 +127,19 @@
         </script>
       </div>
     </div>
-  </c:if>
 
-  <script>
-    if ($("i#tr-warning").length == 0){
-      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This boolean step contains transcripts that did not match one of the input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
-    }
-  </script>
-</c:when>
+  </c:if> <!-- if view is transcripts -->
+</c:if>   <!-- if boolean step && YN/NY ne 0 -->
 
-<c:otherwise>
-   <c:if test="${view eq 'transcripts'}">
+<c:if test="${view eq 'transcripts'}">
+  <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
+  <div style="text-align:right;font-size:120%;padding-bottom:5px">
+    <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
+           onclick="javascript:toggleRepresentativeTranscripts(this)">
+      Show one transcript per gene
+  </div>
+</c:if>
 
-  </c:if>
-</c:otherwise>
-</c:choose>
-
-</c:if> <!-- if boolean step -->
 
   <wdk:resultTable step="${step}" showNativeCount="${showNativeCount}" missingNative="${missingNative}"/>
 

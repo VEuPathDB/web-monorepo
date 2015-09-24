@@ -22,7 +22,8 @@
   <c:set var="NY" value="${summary.counts['NY']}"/>
   <c:set var="NN" value="${summary.counts['NN']}"/>
 
-  <table data-display="${YN ne null or NY ne null or NN ne null}">
+<!--   <table data-display="${YN ne null or NY ne null or NN ne null}"> -->
+  <table data-display="${YN ne null or NY ne null}"> 
     <tr class="headerrow">
       <td><!-- checkbox --></td>
       <th>Transcripts included...</th>
