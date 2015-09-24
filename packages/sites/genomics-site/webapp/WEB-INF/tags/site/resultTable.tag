@@ -31,18 +31,18 @@
 
 <div>
 
+
 <c:if test="${view eq 'missing-transcripts'}">
-  <p style="text-align: center; margin: .4em 0;">
-    <strong>
-      This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>.
-      These are transcripts from genes in your result that were <i>not returned by the search</i>.
-      <br>(In a boolean step result, these are transcripts from genes in your result that were not returned in both input step searches.)
-      <br><a href="#" onClick="${addTransformAction}"> Add a these to my strategy.</a>     
-    </strong>
-  </p>
+    <p style="text-align: center; margin: .4em 0;">
+      <strong>
+        This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. These are transcripts from genes in your result, but that were <i>not matched by the search</i>.  <a href="#" onClick="${addTransformAction}">Advanced options</a>
+
+      </strong>
+    </p>
 </c:if>
 
 <c:if test="${step.isBoolean}"> 
+
 
 <!-- while in any view... not sure we need tab icon to warn YN/NY count > 0 
   <script>
@@ -51,6 +51,7 @@
     }
   </script>
 -->
+
 
   <!-- in transcript view, show table (the whole div will only show if YN or NY count > 0, 
        specified partly in tag file and indirectly via js) -->
