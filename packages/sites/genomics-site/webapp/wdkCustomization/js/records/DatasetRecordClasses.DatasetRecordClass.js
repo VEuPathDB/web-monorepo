@@ -1,5 +1,7 @@
 import React from 'react';
 
+let { Main } = Wdk.client.components;
+
 // Use Element.innerText to strip XML
 function stripXML(str) {
   let div = document.createElement('div');
@@ -344,7 +346,7 @@ export let DatasetRecord = React.createClass({
     } = tables;
 
     return (
-      <div className="eupathdb-DatasetRecord ui-helper-clearfix">
+      <Main className="eupathdb-DatasetRecord">
         <h1 dangerouslySetInnerHTML={{
           __html: 'Data Set: <span class="' + titleClass + '">' + attributes.primary_key + '</span>'
         }}/>
@@ -418,7 +420,7 @@ export let DatasetRecord = React.createClass({
 
         </div>
         <Graphs graphs={ExampleGraphs}/>
-      </div>
+      </Main>
     );
   }
 });

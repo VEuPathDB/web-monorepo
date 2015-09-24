@@ -76,6 +76,30 @@ sub snpLink {
 #  Methods for Titles (Popups)
 #--------------------------------------------------------------------------------
 
+
+sub gffTssChabbert {
+  my $f = shift;
+
+  my @data;
+
+  my $gene;
+
+  my ($assignedFeat) = $f->get_tag_values('AssignedFeat');
+  my ($assignedFeature) = $f->get_tag_values('AssignedFeature');
+
+  if($assignedFeat eq "NewTranscript" || $assignedFeature eq "NewTranscript") {
+    push @data, [ 'Assigned Feature'=> "New Transcript"];
+  }
+  else {
+    my $gene = defined $assignedFeature ? $assignedFeature : $assignedFeat;
+
+    my  $link = "<a href='/a/showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$gene'>$gene</a>";
+    push @data, [ 'Assigned Feature'=> $link];
+  }
+
+  hover($f, \@data);
+}
+
 sub syntenyTitle {
   my $f = shift;
   my ($syntype) = $f->get_tag_values('SynType');
