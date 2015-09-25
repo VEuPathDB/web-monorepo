@@ -28,7 +28,7 @@
 
       <%-- ================================= GENES   ================================= --%>
 
-      <c:when test="${recType=='GeneRecordClasses.GeneRecordClass'}">
+      <c:when test="${recType=='TranscriptRecordClasses.TranscriptRecordClass'}">
         <li>
           <c:choose>
             <c:when test="${from == 'webservices'}">
