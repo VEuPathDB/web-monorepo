@@ -16,6 +16,8 @@
 %>
 
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
+
+<!-- in the residual transcripts view the step is a transform -->
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
 
@@ -35,7 +37,7 @@
 <c:if test="${view eq 'missing-transcripts'}">
     <p style="text-align: center; margin: .4em 0;">
       <strong>
-        This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. These are transcripts from genes in your result, but that were <i>not matched by the search</i>.  <a href="#" onClick="${addTransformAction}">Advanced options</a>
+        This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. These are transcripts from genes in your result that were <i>not returned by the step</i>.  <a href="#" onClick="${addTransformAction}">Advanced options</a>
 
       </strong>
     </p>
@@ -47,7 +49,7 @@
 <!-- while in any view... not sure we need tab icon to warn YN/NY count > 0 
   <script>
     if ($("i#tr-warning").length == 0){
-      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This boolean step contains transcripts that did not match one of the input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This boolean step contains transcripts that were not returned by one of the input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
     }
   </script>
 -->
@@ -110,7 +112,7 @@
       <p style="text-align: center; margin: .4em 0;">
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
-          Some transcripts in your result did not match one of the input searches.
+          Some transcripts in your result were not returned by one of the input searches.
           <a href="#" class="gene-boolean-filter-controls-toggle">Please explore.</a>
         </strong>
       </p>
