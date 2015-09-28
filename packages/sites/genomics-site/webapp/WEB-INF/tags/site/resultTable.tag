@@ -112,7 +112,7 @@
       <p style="text-align: center; margin: .4em 0;">
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
-          Some transcripts in your result were not returned by one of the input searches.
+          Some transcripts in your combined result were not returned by one of the two input searches.
           <a href="#" class="gene-boolean-filter-controls-toggle">Please explore.</a>
         </strong>
       </p>
