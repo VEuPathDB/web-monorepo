@@ -48,6 +48,14 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         }
         if ($filter.find('table').data('display')) {
           $filter.css('display', 'block');
+          // icon in tab
+          if ( $("i#tr-warning").length == 0 ){
+            $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This boolean step contains transcripts that were not returned by one of the input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+          }
+          // do not show warning sentence if in genes view
+          if ( $("div#genes").parent().css('display') != 'none'){
+            $("div#genes div.gene-boolean-filter").remove();
+          }
         }
       });
   }
@@ -66,10 +74,13 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
       .map(function(el) {
         return el.value.replace(/1/g, 'Y').replace(/0/g, 'N').split('');
       });
-
-    $.post('applyFilter.do', $form.serialize(), function() {
-      ctrl.fetchStrategies(ctrl.updateStrategies);
-    });
+    if(!$.isEmptyObject(values)) {
+      $.post('applyFilter.do', $form.serialize(), function() {
+          ctrl.fetchStrategies(ctrl.updateStrategies);
+        });
+    } else {
+      alert("Oops! please select at least one option");
+    }
   }
 
   $(document).on('submit', '[name=apply-gene-boolean-filter]', applyGeneBooleanFilter);
