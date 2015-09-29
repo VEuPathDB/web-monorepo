@@ -94,7 +94,7 @@
     }
 
     .eupathdb-TranscriptRecordNavList {
-      font-size: 75%;
+      font-size: 55%;
       font-weight: normal;
       list-style: none;
       padding: 0;
