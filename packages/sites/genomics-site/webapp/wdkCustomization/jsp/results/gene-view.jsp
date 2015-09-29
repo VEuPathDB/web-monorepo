@@ -2,4 +2,4 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
 <!-- Use modified step that always applies representative transcript filter -->
-<imp:resultTable step="${requestScope.geneFilteredStep}" view="genes"/>
+<imp:resultTable step="${requestScope.geneFilteredStep}" />
