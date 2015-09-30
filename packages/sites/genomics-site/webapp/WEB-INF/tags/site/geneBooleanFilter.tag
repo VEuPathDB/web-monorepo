@@ -22,40 +22,32 @@
   <c:set var="NY" value="${summary.counts['NY']}"/>
   <c:set var="NN" value="${summary.counts['NN']}"/>
 
-<!--   <table data-display="${YN ne null or NY ne null or NN ne null}"> -->
   <table data-display="${YN ne null or NY ne null}"> 
-    <tr class="headerrow">
-      <td><!-- checkbox --></td>
-      <th>Transcripts included...</th>
-      <th>...in top step result</th>
-      <th>...in previous step result</th>
-    </tr>
+  <tr>
+  <td style="font-weight:bold">Select transcripts returned by: </td>
+  <td>
+    <table>
+    <c:if test="${YY ne null}">
     <tr>
       <td><input name="values" type="checkbox" value="YY"/></td>
-      <td>${YY eq null ? 0 : YY}</td>
-      <td>Y</td>
-      <td>Y</td>
+      <td>both your previous step and latest search (${YY eq null ? 0 : YY})</td>
     </tr>
+    </c:if>
+    <c:if test="${YN ne null}">
     <tr>
       <td><input name="values" type="checkbox" value="YN"/></td>
-      <td>${YN eq null ? 0 : YN}</td>
-      <td>Y</td>
-      <td>N</td>
+      <td>your previous step, but not your latest search (${YN eq null ? 0 : YN})</td>
     </tr>
+    </c:if>
+    <c:if test="${NY ne null}">
     <tr>
       <td><input name="values" type="checkbox" value="NY"/></td>
-      <td>${NY eq null ? 0 : NY}</td>
-      <td>N</td>
-      <td>Y</td>
+      <td>your latest search, but not your previous step (${NY eq null ? 0 : NY})</td>
     </tr>
-<!--
-    <tr>
-      <td><input name="values" type="checkbox" value="NN"/></td>
-      <td>N</td>
-      <td>N</td>
-      <td>${NN eq null ? 0 : NN}</td>
-    </tr>
--->
+    </c:if>
+    </table>
+  </td>
+  </tr>
   </table>
 
 </jsp:root>
