@@ -56,13 +56,13 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           if ( $("div#genes").parent().css('display') != 'none'){
             $("div#genes div.gene-boolean-filter").remove();
           } else {
-						// if only transcripts in one option no need for checkboxes
-						if ($("div.gene-boolean-filter table tr").length === 1) {
-							$("div.gene-boolean-filter button").remove();
-							$("div.gene-boolean-filter table input").remove();
-						}
-					}
-				}
+            // if only transcripts in one option no need for checkboxes
+            if ($("div.gene-boolean-filter table tr").length === 1) {
+              $("div.gene-boolean-filter button").remove();
+              $("div.gene-boolean-filter table input").remove();
+            }
+          }
+        }
       });
   }
 
