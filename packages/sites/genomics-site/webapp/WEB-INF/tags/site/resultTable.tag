@@ -67,9 +67,6 @@
      /*   border: 1px solid grey;
         padding: 6px; */
       }
-      .gene-boolean-filter td {
-        text-align: left;
-      }
 /*
       .gene-boolean-filter th, .gene-boolean-filter td {
         text-align: center;
