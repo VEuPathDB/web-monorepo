@@ -127,7 +127,7 @@
     <div style="text-align:right;font-size:120%;padding-bottom:5px">
       <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
              onclick="javascript:toggleRepresentativeTranscripts(this)">
-      Show one transcript per gene
+      Show Only One Transcript Per Gene
     </div>
   </c:if>
 
