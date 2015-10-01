@@ -39,22 +39,22 @@
     <table>
     <tr>
       <td><input name="values" type="checkbox" value="YY" ${YYdisabled} ${YYchecked} /></td>
-      <td class="${YY eq null ? 'muted' : ''}">both your previous step and latest search</td>
+      <td class="${YY eq null ? 'muted' : ''} aleft">both your previous step and latest search</td>
       <td class="${YY eq null ? 'muted' : ''} aright">${YY eq null ? 0 : YY}</td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="YN" ${YNdisabled} ${YNchecked} /></td>
-      <td class="${YN eq null ? 'muted' : ''}">your previous step, but not your latest search</td>
+      <td class="${YN eq null ? 'muted' : ''} aleft">your previous step, but not your latest search</td>
       <td class="${YN eq null ? 'muted' : ''} aright">${YN eq null ? 0 : YN}</td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="NY" ${NYdisabled} ${NYchecked} /></td>
-      <td class="${NY eq null ? 'muted' : ''}">your latest search, but not your previous step</td>
+      <td class="${NY eq null ? 'muted' : ''} aleft">your latest search, but not your previous step</td>
       <td class="${NY eq null ? 'muted' : ''} aright">${NY eq null ? 0 : NY}</td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="NN" ${NNdisabled} ${NNchecked} /></td>
-      <td class="${NN eq null ? 'muted' : ''}">neither your latest search nor your previous step</td>
+      <td class="${NN eq null ? 'muted' : ''} aleft">neither your latest search nor your previous step</td>
       <td class="${NN eq null ? 'muted' : ''} aright">${NN eq null ? 0 : NN}</td>
     </tr>
     </table>
