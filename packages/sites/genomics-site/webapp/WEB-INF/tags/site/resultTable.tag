@@ -67,6 +67,9 @@
      /*   border: 1px solid grey;
         padding: 6px; */
       }
+      .gene-boolean-filter td {
+        text-align: left;
+      }
 /*
       .gene-boolean-filter th, .gene-boolean-filter td {
         text-align: center;
@@ -101,7 +104,7 @@
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
           Some transcripts in your combined result were not returned by one of the two input searches.
-          <a href="#" class="gene-boolean-filter-controls-toggle">Please explore.</a>
+          <a href="#" class="gene-boolean-filter-controls-toggle">Explore these.</a>
         </strong>
       </p>
       <div class="gene-boolean-filter-controls">

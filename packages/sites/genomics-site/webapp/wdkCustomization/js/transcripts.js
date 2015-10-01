@@ -50,17 +50,11 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           $filter.css('display', 'block');
           // icon in tab
           if ( $("i#tr-warning").length == 0 ){
-            $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This combined result contains transcripts that were not returned by one of the two input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+            $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This combined result contains transcripts that were not returned by one or both input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
           }
           // do not show warning sentence in genes view
           if ( $("div#genes").parent().css('display') != 'none'){
             $("div#genes div.gene-boolean-filter").remove();
-          } else {
-            // if only transcripts in one option no need for checkboxes
-            if ($("div.gene-boolean-filter table tr").length === 1) {
-              $("div.gene-boolean-filter button").remove();
-              $("div.gene-boolean-filter table input").remove();
-            }
           }
         }
       });
