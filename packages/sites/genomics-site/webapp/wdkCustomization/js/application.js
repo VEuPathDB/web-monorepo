@@ -321,8 +321,8 @@ Wdk.client.components.RecordMainSection.wrapComponent(function(RecordMainSection
     },
 
     renderTransCategory(category) {
-      let { recordClass, record, hiddenCategories } = this.props;
-      let allCategoriesHidden = category.subCategories.every(cat => hiddenCategories.includes(cat.name));
+      let { recordClass, record, collapsedCategories } = this.props;
+      let allCategoriesHidden = category.subCategories.every(cat => collapsedCategories.includes(cat.name));
       return (
         <section id={category.name} key={category.name}>
           <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
