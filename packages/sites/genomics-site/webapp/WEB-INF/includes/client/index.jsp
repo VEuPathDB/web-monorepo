@@ -5,13 +5,33 @@
     body, h1, h2, h3, h4, h5, h6 {
       font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
     }
+    h1 {
+      text-align: left;
+      margin: 0;
+      padding: 22px 0;
+      font-size: 2.5em;
+      font-weight: 300;
+    }
+    h2 {
+      font-size: 1.8em;
+      font-weight: 400;
+      margin: 0;
+      padding: 12px 0 8px 0;
+    }
+    h3 {
+      margin: 0;
+      padding: 22px 0 8px 0;
+    }
+    h4 {
+      margin: 0;
+      padding: 10px 0 8px 0;
+    }
+
     #wdk-container {
+      height: calc(100% - 132px);
       position: relative;
-      min-height: 200px;
     }
-    .wdk-PageColumn {
-      top: 131px;
-    }
+
     .eupathdb-DatasetRecord h2,
     .eupathdb-DatasetRecord h3 {
       margin: 22px 0 11px;
@@ -83,14 +103,10 @@
       }
     }
     .eupathdb-Beta-Announcement {
-      position: absolute;
-      top: 4px;
-      right: 0;
-      z-index: 1;
-      padding: 0 2em;
-      display: inline-block;
+      float: right;
       font-style: italic;
       font-size: 1.2em;
+      padding: 4px 0;
     }
   </style>
 
