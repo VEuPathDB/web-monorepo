@@ -28,6 +28,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
   function reallyLoadGeneBooleanFilter($filter, count) {
     count = count || 0;
+		// example of data:  { step=103340140,  filter="gene_boolean_filter_array"}
     var data = $filter.data();
     $filter
       .find('.gene-boolean-filter-summary')
@@ -38,7 +39,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         if (status == 'error' && count < 1) {
           reallyLoadGeneBooleanFilter($filter, ++count);
         }
-
+				/* done in jsp
         var valuesStr = $filter.find('.gene-boolean-filter-values').html().trim();
         if (valuesStr) {
           var values = JSON.parse(valuesStr);
@@ -46,6 +47,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
             checkbox.checked = values.values.indexOf(checkbox.value) > -1;
           });
         }
+				*/
         if ($filter.find('table').data('display')) {
           $filter.css('display', 'block');
           // icon in tab
@@ -66,7 +68,17 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
     var form = event.target;
     var $form = $(form);
     var $filter = $form.parent('.gene-boolean-filter');
+		// what for?
     var data = $filter.data();
+		/*  all filter values YY YN NY NN
+		  console.log([].slice.call(form.values));
+		   ["YN", "NY", "NN"]  user selections (disabled or not)
+		  console.log([].slice.call(form.values).filter(function(el) {
+					return el.checked;
+				}).map(function(el) {
+						return el.value;
+					}));
+		*/
     var values = [].slice.call(form.values)
       .filter(function(el) {
         return el.checked;
@@ -74,7 +86,13 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
       .map(function(el) {
         return el.value.replace(/1/g, 'Y').replace(/0/g, 'N').split('');
       });
+
+		// this includes disabled checked checkboxes, we might want to check that we have among user selections at least one input > 0
     if(!$.isEmptyObject(values)) {
+			//enable inputs, so checked ones are sent in post even if the result was 0
+			$("form").submit(function() {
+					$("input").removeAttr("disabled");
+				});
       $.post('applyFilter.do', $form.serialize(), function() {
           ctrl.fetchStrategies(ctrl.updateStrategies);
         });

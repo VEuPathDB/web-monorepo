@@ -21,7 +21,7 @@
 
   <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
   <c:set var="values" value="${option.value}"/>
-<%-- ${values}  contains:   {"values":["YY","YN","NY"]} 
+<%-- ${values}  contains default checkboxes or what was stored in the step, eg:  {"values":["YY","YN","NY"]} 
 --%>
   <c:set var="YYchecked" value="${fn:contains(values,'YY') ? 'checked' : 'unchecked'}" />
   <c:set var="YNchecked" value="${fn:contains(values,'YN') ? 'checked' : 'unchecked'}" />
