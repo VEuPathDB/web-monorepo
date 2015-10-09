@@ -134,7 +134,7 @@ Wdk.client.components.Main.wrapComponent(function(Main) {
 });
 
 // Customize the Record component
-Wdk.client.components.Record.wrapComponent(function(Record) {
+Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
   // Map record class names to custom components
   function recordComponent(recordClassName) {
     switch (recordClassName) {
@@ -142,7 +142,7 @@ Wdk.client.components.Record.wrapComponent(function(Record) {
         return DatasetRecord;
 
       default:
-        return Record;
+        return RecordUI;
     }
   }
 

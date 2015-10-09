@@ -32,6 +32,10 @@
       position: relative;
     }
 
+    .eupathdb-DatasetRecord {
+      padding: 0 2em;
+    }
+
     .eupathdb-DatasetRecord h2,
     .eupathdb-DatasetRecord h3 {
       margin: 22px 0 11px;
