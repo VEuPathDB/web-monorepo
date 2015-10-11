@@ -196,7 +196,7 @@ let TranscriptList = React.createClass({
 
 });
 
-Wdk.client.components.Record.wrapComponent(function(Record) {
+Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
   let TranscriptRecord = React.createClass({
     componentDidMount() {
       this.handleNewProps(this.props);
@@ -214,7 +214,7 @@ Wdk.client.components.Record.wrapComponent(function(Record) {
           tables: [ 'GeneTranscripts' ]
         };
         this.fetching = true;
-        props.recordActions.fetchRecordDetails(recordClass.fullName, spec)
+        props.actions.fetchRecordDetails(recordClass.fullName, spec)
         .then(() => {
           this.fetching = false;
           this.setState(props);
@@ -226,7 +226,7 @@ Wdk.client.components.Record.wrapComponent(function(Record) {
     render() {
       if (this.state === null) return null;
       return (
-        <Record {...this.state}/>
+        <RecordUI {...this.state}/>
       );
     }
   });
@@ -240,7 +240,7 @@ Wdk.client.components.Record.wrapComponent(function(Record) {
         case 'TranscriptRecordClasses.TranscriptRecordClass':
           return <TranscriptRecord {...this.props}/>
         default:
-          return <Record {...this.props}/>
+          return <RecordUI {...this.props}/>
       }
     }
   });
