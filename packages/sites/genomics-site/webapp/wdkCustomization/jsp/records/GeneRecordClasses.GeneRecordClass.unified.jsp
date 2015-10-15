@@ -230,7 +230,7 @@ organismFull:   Plasmodium falciparum 3D7
 
   <%-- annotation change for this gene --%>
   <c:when test="${attrs['is_genedb_organism'].value == 1 && attrs['updated_annotation'].value != null}">
-    <a href="${attrs['GeneDB_updated_text'].value}" title="${release_policy}">${attrs['GeneDB_updated_text'].value}</a>
+    <a href="${attrs['GeneDB_updated_url'].value}" title="${release_policy}">${attrs['GeneDB_updated_text'].value}</a>
     <c:if test="${attrs['new_product_name'].value != null}">
       <br><span style="font-size:90%">${attrs['GeneDB_New_Product'].value}</span>
     </c:if>
