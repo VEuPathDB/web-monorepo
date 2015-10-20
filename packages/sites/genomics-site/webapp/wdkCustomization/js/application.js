@@ -1,6 +1,6 @@
 import Wdk from 'wdk';
 
-// Import custom components
+// Import custom Components
 import {
   DatasetRecord
 } from './records/DatasetRecordClasses.DatasetRecordClass';
@@ -114,7 +114,7 @@ let Footer = React.createClass({
 });
 
 // Add footer to main content
-Wdk.client.components.Main.wrapComponent(function(Main) {
+Wdk.client.Components.Main.wrapComponent(function(Main) {
   let ApiMain = React.createClass({
     render() {
       return (
@@ -133,9 +133,9 @@ Wdk.client.components.Main.wrapComponent(function(Main) {
   return ApiMain;
 });
 
-// Customize the Record component
-Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
-  // Map record class names to custom components
+// Customize the Record Component
+Wdk.client.Components.RecordUI.wrapComponent(function(RecordUI) {
+  // Map record class names to custom Components
   function recordComponent(recordClassName) {
     switch (recordClassName) {
       case 'DatasetRecordClasses.DatasetRecordClass':
@@ -146,7 +146,7 @@ Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
     }
   }
 
-  // This React component will delegate to custom components defined in the
+  // This React Component will delegate to custom Components defined in the
   // Object defined above.
   let RecordComponentResolver =  React.createClass({
     render() {
@@ -165,7 +165,7 @@ Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
 
 // getApiClientConfig() is defined in /client/index.jsp
 let config = window.getApiClientConfig();
-let app = window._app = Wdk.client.createApplication({
+let app = window._app = Wdk.client.run({
   rootUrl: config.rootUrl,
   endpoint: config.endpoint,
   rootElement: config.rootElement
