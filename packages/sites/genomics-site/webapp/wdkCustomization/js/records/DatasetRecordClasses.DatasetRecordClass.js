@@ -1,6 +1,6 @@
 import React from 'react';
 
-let { Main } = Wdk.client.components;
+let { Main } = Wdk.client.Components;
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
