@@ -6,7 +6,7 @@ import {
 } from './records/DatasetRecordClasses.DatasetRecordClass';
 
 let Link = ReactRouter.Link;
-let Sticky = Wdk.client.components.Sticky;
+let Sticky = Wdk.client.Components.Sticky;
 
 let Img = React.createClass({
 
@@ -196,7 +196,7 @@ let TranscriptList = React.createClass({
 
 });
 
-Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
+Wdk.client.Components.RecordUI.wrapComponent(function(RecordUI) {
   let TranscriptRecord = React.createClass({
     componentDidMount() {
       this.handleNewProps(this.props);
@@ -214,12 +214,12 @@ Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
           tables: [ 'GeneTranscripts' ]
         };
         this.fetching = true;
-        props.actions.fetchRecordDetails(recordClass.fullName, spec)
-        .then(() => {
-          this.fetching = false;
-          this.setState(props);
+        setTimeout(() => {
+          props.actions.fetchRecordDetails(recordClass.fullName, spec)
         });
-      } else {
+      }
+      else {
+        this.fetching = false;
         this.setState(props);
       }
     },
@@ -238,7 +238,7 @@ Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
         case 'DatasetRecordClasses.DatasetRecordClass':
           return <DatasetRecord {...this.props}/>
         case 'TranscriptRecordClasses.TranscriptRecordClass':
-          return <TranscriptRecord {...this.props}/>
+          // return <TranscriptRecord {...this.props}/>
         default:
           return <RecordUI {...this.props}/>
       }
@@ -248,7 +248,7 @@ Wdk.client.components.RecordUI.wrapComponent(function(RecordUI) {
   return ApiRecord;
 });
 
-Wdk.client.components.RecordNavigationSection.wrapComponent(function(RecordNavigationSection) {
+Wdk.client.Components.RecordNavigationSection.wrapComponent(function(RecordNavigationSection) {
   let ApiRecordNavigationSection = React.createClass({
     render() {
       let { recordClass, categories } = this.props;
@@ -276,7 +276,7 @@ Wdk.client.components.RecordNavigationSection.wrapComponent(function(RecordNavig
   return ApiRecordNavigationSection;
 });
 
-Wdk.client.components.RecordMainSection.wrapComponent(function(RecordMainSection) {
+Wdk.client.Components.RecordMainSection.wrapComponent(function(RecordMainSection) {
   let ApiRecordMainSection = React.createClass({
 
     render() {
