@@ -41,7 +41,7 @@
 		<li><a href="${urlBase}/srt.jsp"><strong>Sequence Retrieval</strong></a>
 			<ul><li  style="border:0">Retrieve Specific Sequences using IDs and coordinates</li></ul>
 		</li>
-	<li><a href="http://pathogenportal.org"><strong>Pathogen Portal</strong></a>
+	<li><a href="http://rnaseq.pathogenportal.org"><strong>Pathogen Portal</strong></a>
 			<ul><li  style="border:0">RNA sequence analysis, interactome maps and more</li></ul>
 		</li>
 		<li><a href="/pubcrawler/${modelName}"><strong>PubMed and Entrez</strong></a>
