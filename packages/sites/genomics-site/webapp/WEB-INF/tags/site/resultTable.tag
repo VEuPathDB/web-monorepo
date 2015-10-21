@@ -33,7 +33,7 @@
 
 <div id="${view}">
 
-  <c:if test="${view eq 'missing-transcripts'}">
+  <c:if test="${view eq 'transcripts'}">
     <p style="text-align: center; margin: .4em 0;">
       <strong>This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. These are transcripts from genes in your result that were <i>not returned by the step</i>.  <a href="#" onClick="${addTransformAction}">Advanced options</a>
       </strong>
@@ -93,7 +93,7 @@
 */
     </style>
 
-    <!-- YY/NY/YN table:  a jsp/tag file with name geneBooleanFilter will generate the table -->
+    <!-- YY/NY/YN table:  a jsp/tag (geneBooleanFilter) will generate the table -->
     <div class="gene-boolean-filter ui-helper-clearfix"
          data-step="${step.stepId}"
          data-filter="gene_boolean_filter_array">
@@ -120,7 +120,7 @@
         </script>
       </div>
     </div>
-  </c:if>   <!-- if boolean step && YN/NY ne 0 -->
+  </c:if>   <!-- if boolean step  -->
 
   <c:if test="${view eq 'transcripts'}">
     <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
