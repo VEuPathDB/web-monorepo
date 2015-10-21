@@ -52,7 +52,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           $filter.css('display', 'block');
           // icon in tab
           if ( $("i#tr-warning").length == 0 ){
-            $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This combined result contains transcripts that were not returned by one or both input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+            $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This combined result contains Transcripts that were not returned by one or both input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
           }
           // do not show warning sentence in genes view
           if ( $("div#genes").parent().css('display') != 'none'){

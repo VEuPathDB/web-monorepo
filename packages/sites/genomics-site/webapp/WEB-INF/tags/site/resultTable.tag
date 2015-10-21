@@ -14,10 +14,10 @@
               required="false"
               description="tab we are looking at"
 %>
-
+<!-- In a boolean step, when in the residual transcripts view (if defined in the model), 
+     the step here is not a boolean, but a transform 
+-->
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
-
-<!-- in the residual transcripts view the step is a transform -->
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
 
@@ -25,6 +25,14 @@
   <c:set var="missingNative" value="true"/>
   <c:set var="addTransformAction"
          value="eupathdb.transcripts.openTransform(${step.stepId}); return false;"/>
+  <!-- if there are missing trasncripts the warning icon is shown in the tr-tab, in ANY step, while seeing results in ANY view 
+       (a boolean step will show the icon TOO under YN/NY conditions, below)
+  -->
+  <script>
+    if ($("i#tr-warning").length == 0){
+        $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='Some ${recordClass.displayNamePlural} in your result have Transcripts with divergent function or characteristics.'  class='fa fa-lg fa-exclamation-circle'></i>" ) );
+    }
+  </script>
 </c:if>
 
 <c:if test="${view eq 'transcripts'}">
@@ -33,17 +41,22 @@
 
 <div id="${view}">
 
-  <c:if test="${view eq 'transcripts'}">
+  <!-- leaf step, transcripts view warning -->
+  <c:if test="${view eq 'transcripts' && !step.isBoolean && genesMissingTranscriptsCount gt 0}">
     <p style="text-align: center; margin: .4em 0;">
-      <strong>This tab shows ${genesMissingTranscriptsCount} <i>residual transcripts</i>. These are transcripts from genes in your result that were <i>not returned by the step</i>.  <a href="#" onClick="${addTransformAction}">Advanced options</a>
+      <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
+      <strong>
+        Some ${recordClass.displayNamePlural}
+        in your result have ${genesMissingTranscriptsCount} Transcripts with divergent function or characteristics. 
+        <a href="#" onClick="${addTransformAction}"> Explore these!</a>
       </strong>
     </p>
   </c:if>
 
+  <!-- boolean step, icon and transcripts view warning -->
   <c:if test="${step.isBoolean}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
-
     <style>
       .gene-boolean-filter,
       .gene-boolean-filter.ui-widget {
@@ -54,54 +67,27 @@
       .gene-boolean-filter-controls {
         display: none;
       }
-/*
-      .gene-boolean-filter h3 {
-        font-size: 100%;
-      }
-*/
       .gene-boolean-filter table {
-    /*    margin: auto;
-        border-spacing: 0 4px;  */
         border-collapse: separate;
         color: black;
-     /*   border: 1px solid grey;
-        padding: 6px; */
       }
-/*
-      .gene-boolean-filter th, .gene-boolean-filter td {
-        text-align: center;
-        font-weight: bold;
-      }
-      .gene-boolean-filter tr > td {
-        border: 1px solid rgb(189, 189, 189);
-        background: rgb(237, 237, 237);
-      }
-      .gene-boolean-filter tr > td:first-child {
-        border: none;
-        background: none;
-      }
-*/
       .gene-boolean-filter-summary {
         display: inline-block;
       }
-/*
-      .gene-boolean-filter-apply-button {
-        position: relative;
-        top: -1em;
-        left: 2em;
-      }
-*/
     </style>
 
-    <!-- YY/NY/YN table:  a jsp/tag (geneBooleanFilter) will generate the table -->
+    <!-- YY/NY/YN table:  
+         - a jsp/tag (geneBooleanFilter) will generate the table with correct display
+         - the condition to show the icon in a boolean step requires this table's counts 
+         - the icon is shown in the tr-tab while we see results in ANY view -->
     <div class="gene-boolean-filter ui-helper-clearfix"
          data-step="${step.stepId}"
          data-filter="gene_boolean_filter_array">
       <p style="text-align: center; margin: .4em 0;">
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
-          Some transcripts in your combined result were not returned by one of the two input searches.
-          <a href="#" class="gene-boolean-filter-controls-toggle">Explore these.</a>
+          Some Transcripts in your combined result were not returned by one of the two input searches.
+          <a href="#" class="gene-boolean-filter-controls-toggle">Explore these!</a>
         </strong>
       </p>
       <div class="gene-boolean-filter-controls">
