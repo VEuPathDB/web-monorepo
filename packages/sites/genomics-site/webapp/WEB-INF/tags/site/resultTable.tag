@@ -48,7 +48,7 @@
       <strong>
         Some ${recordClass.displayNamePlural}
         in your result have ${genesMissingTranscriptsCount} Transcripts with divergent function or characteristics. 
-        <a href="#" onClick="${addTransformAction}"> Explore these!</a>
+        <a href="#" onClick="${addTransformAction}"> Explore these.</a>
       </strong>
     </p>
   </c:if>
@@ -87,7 +87,7 @@
         <i style="color: #0039FF;" class="fa fa-lg fa-exclamation-circle"></i>
         <strong>
           Some Transcripts in your combined result were not returned by one of the two input searches.
-          <a href="#" class="gene-boolean-filter-controls-toggle">Explore these!</a>
+          <a href="#" class="gene-boolean-filter-controls-toggle">Explore these.</a>
         </strong>
       </p>
       <div class="gene-boolean-filter-controls">
