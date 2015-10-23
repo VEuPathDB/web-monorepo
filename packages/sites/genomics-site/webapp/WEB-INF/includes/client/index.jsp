@@ -121,13 +121,21 @@
     }
 
     .eupathdb-TranscriptRecordNavList > li a {
-      border-left: 2px solid transparent;
-      padding-left: 4px;
+      padding-left: 1em;
+      position: relative;
     }
     .eupathdb-TranscriptRecordNavList > li a:hover,
     .eupathdb-TranscriptRecordNavList > li a.active {
       font-weight: bold;
-      border-left: 2px solid;
+    }
+    .eupathdb-TranscriptRecordNavList > li a:hover:before,
+    .eupathdb-TranscriptRecordNavList > li a.active:before {
+      font-family: FontAwesome;
+      font-size: larger;
+      opacity: 0.8;
+      position: absolute;
+      left: 2px;
+      content: '\f105 ';
     }
     .eupathdb-TranscriptSticky {
       background: white;
