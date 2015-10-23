@@ -29,7 +29,7 @@
 <c:choose>
 <c:when test="${project == 'EuPathDB'}">
 
-	<p><b>EuPathDB <a href="http://www.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens in the following websites:</b>	<i style="font-size:90%">(mouse over the logos)</i> <br>
+	<p><b>EuPathDB <a href="http://rnaseq.pathogenportal.org/">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens in the following websites:</b>	<i style="font-size:90%">(mouse over the logos)</i> <br>
 
 	<table class="center" style="padding:2px;" width="95%"><tr>
 <%--	<td align="center" width="12.5%"><a href="http://newsitedb.org"><imp:image border=0 src="images/newSite.png" width="55" alt="NewSiteDB logo" /></a></td> --%>
