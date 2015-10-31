@@ -173,7 +173,7 @@ let TranscriptList = React.createClass({
     if (record.tables.GeneTranscripts == null) return null;
 
     return (
-      <div>
+      <div className="eupathdb-TranscriptListContainer">
         <div>Transcript</div>
         <ul className="eupathdb-TranscriptRecordNavList">
           {record.tables.GeneTranscripts.map(row => {
@@ -256,7 +256,7 @@ Wdk.client.Components.RecordNavigationSection.wrapComponent(function(RecordNavig
         let geneCategory = categories.find(cat => cat.name === 'gene_parent');
         let transCategory = categories.find(cat => cat.name === 'trans_parent');
         return (
-          <div>
+          <div className="eupathdb-TranscriptRecordNavigationSectionContainer">
             <RecordNavigationSection
               {...this.props}
               categories={geneCategory.subCategories}

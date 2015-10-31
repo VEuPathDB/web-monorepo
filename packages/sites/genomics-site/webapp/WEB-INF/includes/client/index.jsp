@@ -113,6 +113,17 @@
       padding: 4px 0;
     }
 
+    .eupathdb-TranscriptRecordNavigationSectionContainer
+    .wdk-RecordNavigationSection:nth-child(2)
+    .wdk-RecordNavigationSearch {
+      display: none;
+    }
+
+    .eupathdb-TranscriptListContainer {
+      display: inline-block;
+      vertical-align: top;
+    }
+
     .eupathdb-TranscriptRecordNavList {
       font-size: 55%;
       font-weight: normal;
@@ -151,6 +162,9 @@
     .eupathdb-TranscriptSticky-fixed {
       z-index: 1;
       border-color: #999;
+      position: fixed;
+      top: 0;
+      width: calc(100vw - 366px);
     }
     #wdk-container .eupathdb-TranscriptHeading {
       float: left;
