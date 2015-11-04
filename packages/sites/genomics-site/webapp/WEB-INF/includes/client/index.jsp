@@ -144,11 +144,10 @@
     .eupathdb-TranscriptRecordNavList > li a:hover:before,
     .eupathdb-TranscriptRecordNavList > li a.active:before {
       font-family: FontAwesome;
-      font-size: larger;
       opacity: 0.8;
       position: absolute;
-      left: 2px;
-      content: '\f105 ';
+      left: -2px;
+      content: '\f178 ';
     }
     .eupathdb-TranscriptSticky {
       background: white;
