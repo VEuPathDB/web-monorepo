@@ -151,14 +151,7 @@
     }
     .eupathdb-TranscriptSticky {
       background: white;
-      border-bottom: 1px solid #B7B7B7;
-      margin-bottom: -1px;
       padding-top: 1em;
-    }
-    .eupathdb-TranscriptSticky:after {
-      clear: both;
-      content: " ";
-      height: 0;
     }
     .eupathdb-TranscriptSticky-fixed {
       z-index: 1;
@@ -174,9 +167,20 @@
       padding-right: 1em;
     }
     .eupathdb-TranscriptTabList {
+      border-bottom: 1px solid #aaa;
+    }
+    .eupathdb-TranscriptTabList:before,
+    .eupathdb-TranscriptTabList:after {
+      content: "";
+      display: table;
+      border-collapse: collapse;
+    }
+    .eupathdb-TranscriptTabList:after {
+      clear: both;
     }
     .eupathdb-TranscriptLink {
-      display: inline-block;
+      display: block;
+      float: left;
       padding: .8em;
       font-size: 1.3em;
       font-weight: 400;
@@ -185,6 +189,7 @@
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
       margin-right: 2px;
+      margin-bottom: -1px;
     }
     .eupathdb-TranscriptLink:hover,
     .eupathdb-TranscriptLink:focus {
@@ -199,6 +204,7 @@
     }
     .eupathdb-TranscriptTabContent {
       border: 1px solid #aaa;
+      border-top: none;
       padding: 8px;
     }
   </style>
