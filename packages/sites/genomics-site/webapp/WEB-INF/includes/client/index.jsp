@@ -114,12 +114,14 @@
     }
 
     .eupathdb-TranscriptRecordNavigationSectionContainer h3 {
+      padding-top: 18px;
+    }
+
+    .eupathdb-TranscriptRecordNavigationSectionContainer h3:first-child {
       padding-top: 10px;
     }
 
     .eupathdb-TranscriptListContainer {
-      display: inline-block;
-      vertical-align: top;
       margin-bottom: 6px;
     }
 
@@ -133,6 +135,7 @@
     .eupathdb-TranscriptRecordNavList > li a {
       padding-left: 1em;
       position: relative;
+      display: block;
     }
     .eupathdb-TranscriptRecordNavList > li a:hover,
     .eupathdb-TranscriptRecordNavList > li a.active {
