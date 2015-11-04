@@ -113,22 +113,21 @@
       padding: 4px 0;
     }
 
-    .eupathdb-TranscriptRecordNavigationSectionContainer
-    .wdk-RecordNavigationSection:nth-child(2)
-    .wdk-RecordNavigationSearch {
-      display: none;
+    .eupathdb-TranscriptRecordNavigationSectionContainer h3 {
+      padding-top: 10px;
     }
 
     .eupathdb-TranscriptListContainer {
       display: inline-block;
       vertical-align: top;
+      margin-bottom: 6px;
     }
 
     .eupathdb-TranscriptRecordNavList {
-      font-size: 55%;
-      font-weight: normal;
       list-style: none;
       padding: 0;
+      margin: 0;
+      font-weight: 300;
     }
 
     .eupathdb-TranscriptRecordNavList > li a {
@@ -137,7 +136,7 @@
     }
     .eupathdb-TranscriptRecordNavList > li a:hover,
     .eupathdb-TranscriptRecordNavList > li a.active {
-      font-weight: bold;
+      font-weight: 400;
     }
     .eupathdb-TranscriptRecordNavList > li a:hover:before,
     .eupathdb-TranscriptRecordNavList > li a.active:before {

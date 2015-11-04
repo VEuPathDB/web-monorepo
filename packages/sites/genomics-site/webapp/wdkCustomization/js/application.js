@@ -174,7 +174,6 @@ let TranscriptList = React.createClass({
 
     return (
       <div className="eupathdb-TranscriptListContainer">
-        <div>Transcript</div>
         <ul className="eupathdb-TranscriptRecordNavList">
           {record.tables.GeneTranscripts.map(row => {
             let { transcript_id } = row;
@@ -248,8 +247,8 @@ Wdk.client.Components.RecordUI.wrapComponent(function(RecordUI) {
   return ApiRecord;
 });
 
-Wdk.client.Components.RecordNavigationSection.wrapComponent(function(RecordNavigationSection) {
-  let ApiRecordNavigationSection = React.createClass({
+Wdk.client.Components.RecordNavigationSectionCategories.wrapComponent(function(RecordNavigationSectionCategories) {
+  let ApiRecordNavigationSectionCategories = React.createClass({
     render() {
       let { recordClass, categories } = this.props;
       if (recordClass.fullName == 'TranscriptRecordClasses.TranscriptRecordClass') {
@@ -257,23 +256,24 @@ Wdk.client.Components.RecordNavigationSection.wrapComponent(function(RecordNavig
         let transCategory = categories.find(cat => cat.name === 'trans_parent');
         return (
           <div className="eupathdb-TranscriptRecordNavigationSectionContainer">
-            <RecordNavigationSection
+            <h3>Gene</h3>
+            <RecordNavigationSectionCategories
               {...this.props}
               categories={geneCategory.subCategories}
-              heading="Gene"
             />
-            <RecordNavigationSection
+            <h3>Transcript</h3>
+            <TranscriptList {...this.props}/>
+            <RecordNavigationSectionCategories
               {...this.props}
               categories={transCategory.subCategories}
-              heading={<TranscriptList {...this.props}/>}
             />
           </div>
         );
       }
-      return <RecordNavigationSection {...this.props}/>
+      return <RecordNavigationSectionCategories {...this.props}/>
     }
   });
-  return ApiRecordNavigationSection;
+  return ApiRecordNavigationSectionCategories;
 });
 
 Wdk.client.Components.RecordMainSection.wrapComponent(function(RecordMainSection) {
