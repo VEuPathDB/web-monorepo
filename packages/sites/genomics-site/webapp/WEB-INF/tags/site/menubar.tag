@@ -136,12 +136,7 @@
               href="${baseUrl}/app/answer/DatasetQuestions.AllDatasets">New Data Sets page!
                 <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
           </li>
-        <c:if test="${project == 'EuPathDB'}">
-          <li><a href="baseUrl/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods">Analysis Methods</a></li>  
-        </c:if>
-        <c:if test="${project != 'EuPathDB'}">
           <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
-        </c:if>
         <c:if test="${project == 'CryptoDB'}">
           <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
         </c:if>
