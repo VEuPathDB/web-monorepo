@@ -13,9 +13,10 @@ var options = {
 var vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
+//    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
 function drawVisualization(pathwayId, pathwaySource) {
   $.ajax({
-    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
+    url: "/path40/" + pathwayId + ".xgmml",
     dataType: "text",
     success: function(data){
       vis.draw(options);
@@ -275,6 +276,7 @@ vis.ready(function() {
 	    edges: {
 		color :"#000000", width: 1, 
 		targetArrowShape:  { discreteMapper: edgeArrow  },
+		lineStyle:"dotted",
 	    }
 	};
 
