@@ -34,7 +34,6 @@
 </c:when>
 
 <c:otherwise>
-<c:set var="data_type" value="${attrs['data_type']}" />
 
 <%-- quick tool-box for the record --%>
 <imp:recordToolbox />
@@ -121,38 +120,8 @@
 <br>
 
 <%--#############################################################--%>
-<%-- Link to SNPs ------------------------------------------------%>
-
-<c:if test="${data_type eq '3kChip' || data_type eq 'HD_Array' || data_type eq 'Barcode'}">
-
-<br><b><a href="processQuestion.do?questionFullName=SnpQuestions.SnpsByIsolateId&value(isolate_id)=${id}">Click here to retrieve SNPs</a></b> that were assayed in this isolate.<br><br>
-
-</c:if>
-
-<%-- RFLP tables ------------------------------------------------%>
-<c:if test="${data_type eq 'RFLP Typed'}">
-
-<imp:wdkTable tblName="RFLPgenotype" isOpen="true"
-     attribution=""/>
-
-<imp:wdkTable tblName="RFLPdata" isOpen="true"
-     attribution=""/>
-<br>
-
-
-  <c:if test="${wdkRecord.attributes['external_db_name'].value eq 'Toxoplasma_RFLP_Su_RSRC'}">
-  <a href="/Standards_gel_pics.pdf"><b>Click here for associated RFLP images</b></a> in PDF format.
-  
-  <br/>
-  </c:if>
-
-</c:if>
-
-<%--#############################################################--%>
 
 <%-- Alignments and Genes ------------------------------------------------%>
-
-<c:if test="${data_type eq 'Sequencing Typed'}">
 
 <imp:wdkTable tblName="GeneOverlap" isOpen="true"
      attribution=""/>
@@ -183,9 +152,6 @@
 <br>
 
 </c:forEach>
-</c:if>
-
-<c:if test="${data_type eq 'Sequencing Typed' || data_type eq 'Barcode'}">
 
 <%-- GENOME SEQUENCE ------------------------------------------------%>
 <c:set var="attr" value="${attrs['sequence']}" />
@@ -201,12 +167,6 @@
   displayName="${attr.displayName}"
   content="${seq}" />
 <br>
-</c:if>
-
-<c:if test="${data_type eq 'HTS'}">
-  <imp:wdkTable tblName="BioMaterialCharacteristics" isOpen="true"/>
-  <imp:wdkTable tblName="HtsContacts" isOpen="true"/>
-</c:if>
 
 </c:otherwise>
 </c:choose>
