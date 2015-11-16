@@ -13,6 +13,7 @@
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 
+<!-----------  SET ISVALIDRECORD  ----------------------------------->
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
       and set isValidRecord to false if appropriate. 

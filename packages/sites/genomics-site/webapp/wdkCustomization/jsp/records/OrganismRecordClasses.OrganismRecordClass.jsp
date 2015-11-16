@@ -13,23 +13,15 @@
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
-
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
-
 <c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
-<c:set var="organism" value="${attrs['organism'].value}" />
-<c:set var="genecount" value="${attrs['genecount'].value}" />
-<c:set var="codinggenecount" value="${attrs['codinggenecount'].value}" />
-<c:set var="pseudogenecount" value="${attrs['pseudogenecount'].value}" />
-<c:set var="othergenecount" value="${attrs['othergenecount'].value}" />
-
-
+<!-----------  SET ISVALIDRECORD  ----------------------------------->
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
-<c:set var="junk" value="${attrs['organism']}"/>
+<c:set var="junk" value="${attrs['source_id']}"/>
 </c:catch>
 
 <imp:pageFrame title="${id}"
@@ -38,6 +30,19 @@
              division="queries_tools">
 
 <br/>
+<c:choose>
+<c:when test="${!wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The ${recordName} '${id}' was not found.</h2>
+</c:when>
+<c:otherwise>
+
+
+<c:set var="organism" value="${attrs['organism'].value}" />
+<c:set var="genecount" value="${attrs['genecount'].value}" />
+<c:set var="codinggenecount" value="${attrs['codinggenecount'].value}" />
+<c:set var="pseudogenecount" value="${attrs['pseudogenecount'].value}" />
+<c:set var="othergenecount" value="${attrs['othergenecount'].value}" />
+
 
 <%-- quick tool-box for the record --%>
 <imp:recordToolbox />
@@ -206,6 +211,7 @@
     content="${reference}" />
 <br>
 
-
-
+</c:otherwise>
+</c:choose>
 </imp:pageFrame>
+

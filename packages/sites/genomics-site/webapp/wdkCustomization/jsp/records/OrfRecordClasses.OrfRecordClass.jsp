@@ -16,11 +16,12 @@
 <c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 
+<!-----------  SET ISVALIDRECORD  ----------------------------------->
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
-<c:set var="junk" value="${attrs['organism']}"/>
+<c:set var="junk" value="${attrs['source_id']}"/>
 </c:catch>
 
 <imp:pageFrame title="${id}"
