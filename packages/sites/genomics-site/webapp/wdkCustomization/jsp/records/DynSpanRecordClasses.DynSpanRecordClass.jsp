@@ -13,12 +13,8 @@
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
 <c:set var="id" value="${pkValues['source_id']}" />
 
-<c:catch var="err">
-<%-- force RecordInstance.fillColumnAttributeValues() to run
-      and set isValidRecord to false if appropriate. 
-      wdkRecord.isValidRecord is tested in the project's RecordClass --%>
-<c:set var="junk" value="${attrs['organism']}"/>
-</c:catch>
+<!-----------  SET ISVALIDRECORD  ----------------------------------->
+<%-- unlike other record pages, this is not a good test for this record since the SQL always returns a row, even if with empty or Unknown values --%>
 
 <imp:pageFrame title="${wdkModel.displayName} : DynSpan ${id}"
              refer="recordPage"
@@ -27,7 +23,7 @@
              division="queries_tools">
 
 <c:choose>
-<c:when test="${!wdkRecord.validRecord}">
+<c:when test="${attrs['organism'] eq ''}">
   <h2 style="text-align:center;color:#CC0000;">The DynSpan '${id}' was not found.</h2>
 </c:when>
 <c:otherwise>

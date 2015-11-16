@@ -4,8 +4,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
 
-<%/* get wdkRecord from proper scope */%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
+
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 
@@ -15,9 +15,14 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
-<c:set var="pathwayImageId" value="${attrs['image_id'].value}" />
-<c:set var="pathwayName" value="${attrs['description'].value}" />
-<c:set var="pathwaySource" value="${attrs['pathway_source'].value}" />
+
+<!-----------  SET ISVALIDRECORD  ----------------------------------->
+<c:catch var="err">
+<%-- force RecordInstance.fillColumnAttributeValues() to run
+      and set isValidRecord to false if appropriate. 
+      wdkRecord.isValidRecord is tested in the project's RecordClass --%>
+<c:set var="junk" value="${attrs['source_id']}"/>
+</c:catch>
 
 <imp:pageFrame title="${wdkModel.displayName} : Met Pathway ${id}"
              refer="recordPage"
@@ -26,10 +31,15 @@
              division="queries_tools">
 
 <c:choose>
-  <c:when test="${!wdkRecord.validRecord}">
-    <h2 style="text-align:center;color:#CC0000;">The ${recordName} '${id}' was not found.</h2>
-  </c:when>
+<c:when test="${!wdkRecord.validRecord}">
+  <h2 style="text-align:center;color:#CC0000;">The ${recordName} '${id}' was not found.</h2>
+</c:when>
+
 <c:otherwise>
+
+<c:set var="pathwayImageId" value="${attrs['image_id'].value}" />
+<c:set var="pathwayName" value="${attrs['description'].value}" />
+<c:set var="pathwaySource" value="${attrs['pathway_source'].value}" />
 
 <%-- quick tool-box for the record --%>
 <imp:recordToolbox />
@@ -238,8 +248,7 @@ pe Web"/></a>
 <%-- Reaction Table ------------------------------------------------%>
   <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true"/>
 
-</c:otherwise>
-</c:choose>
+
 
 
   <c:set var="reference">
@@ -266,6 +275,7 @@ Coloring of the pathway maps was performed in house with custom scripts and anno
 
 <hr>
 
-
+</c:otherwise>
+</c:choose>
 </imp:pageFrame>
 

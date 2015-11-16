@@ -16,11 +16,12 @@
 
 <c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
 
+<!-----------  SET ISVALIDRECORD  ----------------------------------->
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
       and set isValidRecord to false if appropriate. 
       wdkRecord.isValidRecord is tested in the project's RecordClass --%>
-<c:set var="junk" value="${attrs['organism']}"/>
+<c:set var="junk" value="${attrs['source_id']}"/>
 </c:catch>
 
 <imp:pageFrame title="${wdkModel.displayName} : EST ${id}"

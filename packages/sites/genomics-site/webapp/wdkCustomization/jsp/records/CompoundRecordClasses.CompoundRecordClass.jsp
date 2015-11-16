@@ -4,17 +4,20 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
-<%-- get wdkRecord from proper scope --%>
 <c:set value="${requestScope.wdkRecord}" var="wdkRecord"/>
 
 <c:set var="primaryKey" value="${wdkRecord.primaryKey}"/>
 <c:set var="pkValues" value="${primaryKey.values}" />
 <c:set var="projectId" value="${pkValues['project_id']}" />
-<c:set var="id" value="${pkValues['compound_id']}" />
+<c:set var="id" value="${pkValues['source_id']}" />
+
 <c:set var="source_id" value="${pkValues['source_id']}" />
 
 <c:set var="attrs" value="${wdkRecord.attributes}"/>
 <c:set var="recordName" value="${wdkRecord.recordClass.displayName}" />
+
+
+<!-----------  SET ISVALIDRECORD  ----------------------------------->
 
 <c:catch var="err">
 <%-- force RecordInstance.fillColumnAttributeValues() to run
@@ -23,17 +26,22 @@
 <c:set var="junk" value="${attrs['source_id']}"/>
 </c:catch>
 
-
+<%--
 <imp:pageFrame  title="${recordName} : ${source_id} - ${attrs['name']}"
+--%>
+<imp:pageFrame  title="${wdkModel.displayName} : compound ${id}"
+             banner="compound ${id}"
              divisionName="PubChem Compound Record"
              refer="recordPage"
              division="queries_tools">
 
 <c:choose>
-<c:when test="${!wdkRecord.validRecord}">
+<c:when test="${!wdkRecord.validRecord}">    
+<!-----------   INVALID RECORD ----------------------------------->
   <h2 style="text-align:center;color:#CC0000;">The ${fn:toLowerCase(recordName)} '${source_id}' was not found.</h2>
 </c:when>
-<c:otherwise>
+
+<c:otherwise>         <!-----------  VALID RECORD  ----------------------------------->
 
 <!-- Overview -->
 <c:set var="attr" value="${attrs['overview']}" />
@@ -71,12 +79,10 @@
 <imp:profileGraphs type='compound' tableName="MassSpecGraphs"/>
 
 
-</c:otherwise>
-</c:choose>
-  <c:set var="reference">
-<br> Compounds were procured from the <a href="http://pubchem.ncbi.nlm.nih.gov/">PubChem Compound Database</a> and associations were identified with KEGG Metabolic Pathways.<br>
+<c:set var="reference">
+ <br> Compounds were procured from the <a href="http://pubchem.ncbi.nlm.nih.gov/">PubChem Compound Database</a> and associations were identified with KEGG Metabolic Pathways.<br>
      Compounds were associated to genes via their interactions with enzymes in pathways (EC Numbers).
-  </c:set>
+</c:set>
 <br>
 <br>
 
@@ -85,7 +91,6 @@
     content="${reference}" />
 <br>
 
-<%------------------------------------------------------------------%>
-
+</c:otherwise>
+</c:choose>
 </imp:pageFrame>
-
