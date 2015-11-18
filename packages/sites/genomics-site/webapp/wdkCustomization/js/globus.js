@@ -25,7 +25,7 @@ function container() {
 }
 
 function workflows() {
-  return jQuery.getJSON('/api/workflows');
+  return window.parent.jQuery.getJSON('/api/workflows');
 }
 
 function dom(workflows) {
