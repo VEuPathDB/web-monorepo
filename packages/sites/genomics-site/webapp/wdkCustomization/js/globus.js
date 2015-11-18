@@ -15,11 +15,10 @@ function render(element, rootNode) {
 
 function container() {
   var container = document.getElementById('eupathdb-container');
-  var center = document.getElementById('center');
 
   if (container == null) {
     container = element('div', { id: 'eupathdb-container'});
-    center.insertBefore(container, center.children[0])
+    document.body.insertBefore(container, document.body.children[0])
   }
 
   return container;
