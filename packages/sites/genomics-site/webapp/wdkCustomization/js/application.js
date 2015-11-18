@@ -177,8 +177,8 @@ let TranscriptList = React.createClass({
         <ul className="eupathdb-TranscriptRecordNavList">
           {record.tables.GeneTranscripts.map(row => {
             let { transcript_id } = row;
-            let query = React.addons.update(record.id, {
-              source_id: { $set: transcript_id }
+            let query = Object.assign({}, record.id, {
+              source_id: transcript_id
             });
             return (
               <li key={transcript_id}>
