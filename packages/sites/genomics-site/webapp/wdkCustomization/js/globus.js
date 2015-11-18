@@ -48,7 +48,7 @@ function dom(workflows) {
 }
 
 function element(name, props /*, ...children */) {
-  var children = _.flatten(_.rest(arguments, 2));
+  var children = flatten(rest(arguments, 2));
   var e = document.createElement(name);
   for (var i = 0; i < children.length; i++) {
     if (children[i] != null)
@@ -62,4 +62,16 @@ function element(name, props /*, ...children */) {
 
 function text(str) {
   return document.createTextNode(str);
+}
+
+function rest(arr, start) {
+  return [].slice.call(arr, start == null ? 1 : start);
+}
+
+function flatten(arr) {
+  var r = [];
+  for (var i = 0; i < arr.length; i++) {
+    r = r.concat(arr[i]);
+  }
+  return r;
 }
