@@ -32,6 +32,25 @@
       position: relative;
     }
 
+    .eupathdb-ExpressionGraphContainer {
+      overflow: auto;
+      position: relative;
+    }
+
+    .eupathdb-ExpressionGraphLoading {
+      position: absolute;
+      top: 1em;
+      left: 1em;
+    }
+
+    .eupathdb-ExpressionGraph {
+      float: left;
+    }
+
+    .eupathdb-ExpressionGraphDetails {
+      margin-left: 500px;
+    }
+
     .eupathdb-DatasetRecord {
       padding: 0 2em;
     }
