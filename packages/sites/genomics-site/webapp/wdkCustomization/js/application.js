@@ -154,13 +154,13 @@ let ExpressionGraph = React.createClass({
         </div>
         <div className="eupathdb-ExpressionGraphDetails">
           <h4>Description</h4>
-          <p dangerouslySetInnerHTML={{__html: rowData.description}}/>
+          <div dangerouslySetInnerHTML={{__html: rowData.description}}/>
 
           <h4>X-axis</h4>
-          <p>{rowData.x_axis}</p>
+          <div>{rowData.x_axis}</div>
 
           <h4>Y-axis</h4>
-          <p>{rowData.y_axis}</p>
+          <div>{rowData.y_axis}</div>
 
           <h4>Choose gene for which to display graph</h4>
           {graphIds.map(graphId => {
@@ -461,13 +461,27 @@ function scrollToElementById(id) {
   el.scrollIntoView();
 }
 
+let expressionRE = /ExpressionGraphs$/;
+
 Wdk.client.Components.RecordTable.wrapComponent(RecordTable => props => {
-  if (props.tableMeta.name === 'ExpressionGraphs') {
-    return <RecordTable
-      {...props}
-      childRow={childProps => <ExpressionGraph rowData={props.table[childProps.rowIndex]}/>}
-    />
+  if (expressionRE.test(props.tableMeta.name)) {
+
+    let included = props.tableMeta.propertyLists.includeInTable || [];
+
+    let tableMeta = Object.assign({}, props.tableMeta, {
+      attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
+    });
+
+    return (
+      <RecordTable
+        {...props}
+        tableMeta={tableMeta}
+        childRow={childProps =>
+          <ExpressionGraph rowData={props.table[childProps.rowIndex]}/>}
+      />
+    );
   }
+
   return <RecordTable {...props} />
 });
 
