@@ -1,6 +1,6 @@
 wdk.questionView('IsolateQuestions.IsolateByTaxon', wdk.views.core.View.extend({
 
-  MAX_SELECTED: 900,
+  MAX_SELECTED: 2000,
 
   events: {
     'submit': 'addStrainCountCheck'
