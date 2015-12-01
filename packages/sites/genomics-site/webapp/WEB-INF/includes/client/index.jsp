@@ -37,6 +37,11 @@
       margin-top: -42px;
     }
 
+    #trans_parent .wdk-RecordSection {
+      margin-top: -84px;
+      padding-top: 64px;
+    }
+
     .eupathdb-ExpressionGraphContainer {
       overflow: auto;
       position: relative;
@@ -190,7 +195,7 @@
     }
     .eupathdb-TranscriptSticky {
       background: white;
-      padding-top: 1em;
+      padding-top: 36px;
     }
     .eupathdb-TranscriptSticky-fixed {
       z-index: 1;
