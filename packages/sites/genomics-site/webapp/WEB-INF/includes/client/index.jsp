@@ -32,6 +32,11 @@
       position: relative;
     }
 
+    .wdk-RecordSection {
+      padding-top: 32px;
+      margin-top: -42px;
+    }
+
     .eupathdb-ExpressionGraphContainer {
       overflow: auto;
       position: relative;
