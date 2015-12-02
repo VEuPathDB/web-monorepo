@@ -175,6 +175,7 @@ let ReleaseHistory = React.createClass({
               <th>EuPathDB Release</th>
               <th>Genome Source</th>
               <th>Annotation Source</th>
+              <th>Functional Annotation Source</th>
               <th>Notes</th>
             </tr>
           </thead>
@@ -201,11 +202,15 @@ let ReleaseHistory = React.createClass({
       ? attributes.annotation_source + ' (' + attributes.annotation_version + ')'
       : '';
 
+    let functionalAnnotationSource = attributes.functional_annotation_source
+      ? attributes.functional_annotation_source + ' (' + attributes.functional_annotation_version + ')'
+      : '';
     return (
       <tr>
         <td>{release}</td>
         <td>{genomeSource}</td>
         <td>{annotationSource}</td>
+         <td>{functionalAnnotationSource}</td>
         <td>{attributes.note}</td>
       </tr>
     );

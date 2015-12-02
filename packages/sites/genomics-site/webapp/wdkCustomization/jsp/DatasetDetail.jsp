@@ -224,6 +224,7 @@ ${datasetId.value}
                   <th>EuPathDB Release</th>
                   <th>Genome Source</th>
                   <th>Annotation Source</th>
+                  <th>Functional Annotation Source</th>
                   <th>Notes</th>
                 </tr>
 
@@ -244,6 +245,7 @@ ${datasetId.value}
                   </td>
                   <td>${genHistoryRow['genome_source']} (${genHistoryRow['genome_version']})</td>
                   <td>${genHistoryRow['annotation_source']} (${genHistoryRow['annotation_version']})</td>
+                  <td>${genHistoryRow['functional_annotation_source']} (${genHistoryRow['functional_annotation_version']})</td>
                   <td>${genHistoryRow['note']}</td>
                 </tr>
 
