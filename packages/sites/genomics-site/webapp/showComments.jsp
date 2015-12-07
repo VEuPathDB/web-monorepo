@@ -288,7 +288,7 @@ $(document).ready(function() {
                         <th width=20>#</th>
                         <th width=150>Name/Link</th>
                         <th width=200>Description</th>
-                        <th width=100>Preview</th>
+                        <th width=100>Preview<br><span style="font-size:70%;">(only if image)</span></th>
                       </tr>
                     </c:if>
 
@@ -300,9 +300,13 @@ $(document).ready(function() {
                         <c:out value="${file[1]}"/></a>
                       </td>
                       <td>${file[2]}</td>
-                      <td>
+                      <td>&nbsp;
+  <c:if test="${ fn:containsIgnoreCase(file[1], '.png') || 
+                 fn:containsIgnoreCase(file[1], '.jpg') ||
+                 fn:containsIgnoreCase(file[1], '.jpeg')   }">
                        <a href="/common/community/${comment.projectName}/${file[1]}">
                         <img src='/common/community/${comment.projectName}/${file[1]}' width=80 height=80/></a>
+  </c:if>
                       </td>
 
                     </tr>
