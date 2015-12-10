@@ -30,8 +30,11 @@
     if ($("i#tr-warning").length == 0){
 
 // $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color:#0039FF;' title='Some ${recordClass.displayNamePlural} in your result have Transcripts do not meet the search criteria.'  class='fa fa-lg fa-exclamation-circle'></i>" ) );
+
  $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' title='Some ${recordClass.displayNamePlural} in your result have Transcripts do not meet the search criteria.'  class='fa fa-lg fa-exclamation-triangle'></i>" ) );
- //       $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'  class='fa-stack fa-lg' style='vertical-align:super;height:0;line-height:0;' title='Some ${recordClass.displayNamePlural} in your result have Transcripts that do not meet the search criteria.' > <i class='fa fa-exclamation-triangle fa-stack-1x' style='color:yellow;'></i><i class='fa fa-exclamation fa-stack-1x' style='color:black;'></i></i>") );
+
+// $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'  class='fa-stack' style="font-size:.9em title='Some ${recordClass.displayNamePlural} in your result have Transcripts that do not meet the search criteria.' > <i class='fa fa-exclamation-triangle fa-stack-2x' style='color:yellow;font-size:1.5em'></i><i class='fa fa-exclamation fa-stack-1x' style='color:black;font-size:1em'></i></i>") );
+
 //  $( "li#transcript-view a span" ).append( $( "<img src='/a/wdk/images/warningIcon2.png' style='width:20px;' title='Some ${recordClass.displayNamePlural} in your result have Transcripts that do not meet the search criteria.' >") );
 
     }
@@ -83,13 +86,6 @@
       .gene-boolean-filter-summary {
         display: inline-block;
       }
-      .gene-boolean-filter-apply-button {
-  /*    transform:scale(1.2);
-        color:grey;
-        padding:5px;
-        height: 30px;
-        border: 1px solid black;*/
-      }
     </style>
 
     <!-- YY/NY/YN table:  
@@ -115,7 +111,7 @@
             Loading filters...
           </div>
           <p style="text-align: center; margin: .4em 0;">
-            <button disabled class="gene-boolean-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selection</button>
+            <button class="gene-boolean-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selection</button>
           </p>
         </form>
         <script type="application/json" class="gene-boolean-filter-values">
