@@ -36,7 +36,19 @@
 
 
 <style>
+  table#booleanFilter td#prompt{
+    font-weight:bold;
+  }
+  table#booleanFilter table img  {
+    width:80px;
+  }
+</style>
 
+
+<!-- VERTICAL layout
+
+<style>
+/* bigger font, checkboxes and button */
   div.gene-boolean-filter-controls button {
     margin-top:10px;
     transform:scale(1.2);
@@ -44,19 +56,17 @@
   table#booleanFilter {
     font-size:120%;
   }
+  table#booleanFilter table input {
+    transform:scale(1.2);
+  }
+
+/* other */
   table#booleanFilter table td{
     padding:1px;
   }
-  table#booleanFilter td#prompt{
-    font-weight:bold;
-  }
-  table#booleanFilter input {
-    transform:scale(1.2);
-  }
-  table#booleanFilter img  {
+  table#booleanFilter table img  {
     vertical-align: text-bottom; 
     margin-left:10px;
-    width:80px;
   }
 </style>
 
@@ -94,16 +104,11 @@
 </tr>
 </table>
 
+-->
 
-<!--
+<!-- HORIZONTAL layout -->
+
 <style>
-
-  table#booleanFilter td#prompt{
-    font-weight:bold;
-  }
-  table#booleanFilter img  {
-    width:80px;
-  }
  table#booleanFilter table td {
     border-right:1px solid grey;
     padding-right:30px;
@@ -145,4 +150,4 @@
   </tr>
 </table>
 
--->
+
