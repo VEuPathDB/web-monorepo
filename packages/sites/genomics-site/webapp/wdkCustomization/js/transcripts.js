@@ -48,14 +48,15 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           });
         }
 				*/
+				// if either one YN/NY/NN is > 0 we show table
         if ($filter.find('table').data('display')) {
           $filter.css('display', 'block');
           // icon in tab
-					/*
           if ( $("i#tr-warning").length == 0 ){
-            $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This combined result contains Transcripts that were not returned by one or both input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
+$( "li#transcript-view a span" ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that do not meet the search criteria.' ></i>") );
+					//	$( "li#transcript-view a span" ).append( $( "<i id='tr-warning'  class='fa-stack' style='font-size:.8em;cursor:pointer' title='Some Genes in your result have Transcripts that do not meet the search criteria.' > <i class='fa fa-exclamation-triangle fa-stack-2x' style='color:yellow;font-size:1.5em'></i><i class='fa fa-exclamation fa-stack-1x' style='color:black;font-size:0.9em'></i></i>") );
+						// $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color: #0039FF;' title='This combined result contains Transcripts that were not returned by one or both input searches.' class='fa fa-lg fa-exclamation-circle'></i>" ) );
           }
-					*/
           // do not show warning sentence in genes view
           if ( $("div#genes").parent().css('display') != 'none'){
             $("div#genes div.gene-boolean-filter").remove();

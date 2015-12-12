@@ -16,6 +16,9 @@
 %>
 
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
+<c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
+  <c:set var="trRecord" value="true"/>
+</c:if>
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
 
@@ -23,20 +26,18 @@
      if there are missing trasncripts the warning icon is shown in the tr-tab
      (a combined step will show the icon TOO if  NN <> 0)
 -->
-<c:if test="${genesMissingTranscriptsCount gt 0}">
-  <c:set var="missingNative" value="true"/>
+
+<!-- SINGLE STEP -->
+ <c:if test="${genesMissingTranscriptsCount gt 0 && !step.isBoolean }">
+  <c:set var="missingNative" value="true"/>   
 
   <script>
-    if ($("i#tr-warning").length == 0){
-
+    if ($("i#tr-warning").length == 0){    
 // $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' style='color:#0039FF;' title='Some ${recordClass.displayNamePlural} in your result have Transcripts do not meet the search criteria.'  class='fa fa-lg fa-exclamation-circle'></i>" ) );
+// $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' title='Some ${recordClass.displayNamePlural} in your result have Transcripts do not meet the search criteria.'  class='fa fa-lg fa-exclamation-triangle'></i>" ) );  
+// $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' class='tr-warning fa-stack' style='font-size:.9em;cursor:pointer' title='Some Genes in your result have Transcripts that do not meet the search criteria.' > <i class='fa fa-exclamation-triangle fa-stack-2x' style='color:yellow;font-size:1.5em'></i><i class='fa fa-exclamation fa-stack-1x' style='color:black;font-size:0.9em'></i></i>") );
 
- $( "li#transcript-view a span" ).append( $( "<i id='tr-warning' title='Some ${recordClass.displayNamePlural} in your result have Transcripts do not meet the search criteria.'  class='fa fa-lg fa-exclamation-triangle'></i>" ) );
-
-// $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'  class='fa-stack' style="font-size:.9em title='Some ${recordClass.displayNamePlural} in your result have Transcripts that do not meet the search criteria.' > <i class='fa fa-exclamation-triangle fa-stack-2x' style='color:yellow;font-size:1.5em'></i><i class='fa fa-exclamation fa-stack-1x' style='color:black;font-size:1em'></i></i>") );
-
-//  $( "li#transcript-view a span" ).append( $( "<img src='/a/wdk/images/warningIcon2.png' style='width:20px;' title='Some ${recordClass.displayNamePlural} in your result have Transcripts that do not meet the search criteria.' >") );
-
+  $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that do not meet the search criteria.' ></i>") );
     }
   </script>
 
@@ -52,7 +53,7 @@
 -->
 <div id="${view}">
 
-  <!-- leaf step transcripts tab: icon and warning sentence -->
+  <!-- leaf step, transcripts tab: icon/warning sentence -->
   <c:if test="${view eq 'transcripts' && !step.isBoolean && genesMissingTranscriptsCount gt 0}">
     <p style="text-align: center; margin: .4em 0;">
       <i class="fa fa-lg fa-exclamation-triangle"></i>
@@ -64,8 +65,9 @@
     </p>
   </c:if>
 
-  <!-- boolean step transcripts tab: icon and warning sentence -->
-  <c:if test="${step.isBoolean}"> 
+  <!-- boolean step: only if this is a transcript Record:
+         generate transcripts counts, to later decide if the tab icon/warning sentence are needed -->
+  <c:if test="${step.isBoolean && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
     <style>
@@ -97,7 +99,7 @@
          data-step="${step.stepId}"
          data-filter="gene_boolean_filter_array">
       <p style="text-align: center; margin: .4em 0;">
-        <i class="fa fa-lg fa-exclamation-triangle"></i>
+        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that do not meet the search criteria.' >
         <strong>
           Some Genes in your result have Transcripts that were not returned by one or both of the two input searches.
           <a href="#" class="gene-boolean-filter-controls-toggle">Explore.</a>

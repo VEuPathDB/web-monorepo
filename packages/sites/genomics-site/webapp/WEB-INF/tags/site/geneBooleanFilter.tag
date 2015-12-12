@@ -111,7 +111,7 @@
 <style>
  table#booleanFilter table td {
     border-right:1px solid grey;
-    padding-right:30px;
+    padding-right:60px;
   }
   table#booleanFilter table td:last-child {
     border-right:0;
@@ -140,10 +140,10 @@
       <td><imp:image src="images/NN.png" /></td>
     </tr>
     <tr>
-      <td class="center ${YY eq null ? 'muted' : ''}">${YY eq null ? 0 : YY} transcripts</td>
-      <td class="center ${YN eq null ? 'muted' : ''}">${YN eq null ? 0 : YN} transcripts</td>
-      <td class="center ${NY eq null ? 'muted' : ''}">${NY eq null ? 0 : NY} transcripts</td>
-      <td class="center ${NN eq null ? 'muted' : ''}">${NN eq null ? 0 : NN} transcripts</td>
+      <td class="center ${YY eq null ? 'muted' : ''}"><b>${YY eq null ? 0 : YY}</b> transcripts</td>
+      <td class="center ${YN eq null ? 'muted' : ''}"><b>${YN eq null ? 0 : YN}</b> transcripts</td>
+      <td class="center ${NY eq null ? 'muted' : ''}"><b>${NY eq null ? 0 : NY}</b> transcripts</td>
+      <td class="center ${NN eq null ? 'muted' : ''}"><b>${NN eq null ? 0 : NN}</b> transcripts</td>
     </tr>
     </table>
     </td>
