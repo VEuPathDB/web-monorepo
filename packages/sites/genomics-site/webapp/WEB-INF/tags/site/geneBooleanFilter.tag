@@ -45,6 +45,52 @@
 </style>
 
 
+<!-- HORIZONTAL layout   (vertical layout table is below commented out)  -->
+
+<style>
+ table#booleanFilter table td {
+    padding-right:60px;
+  }
+  table#booleanFilter table td:last-child {
+    border-right:0;
+    padding-right:0;
+  }
+</style>
+
+
+<table id="booleanFilter" data-display="${YN ne null or NY ne null or NN ne null}" data-YY="${YY}" data-YN="${YN}" data-NY="${NY}" data-NN="${NN}"> 
+  <tr>
+    <td id="prompt" class="acenter"><br>Include Transcripts returned by: </td>
+  </tr>
+  <tr>
+    <td>
+    <table>
+    <tr>
+      <td class="${YY eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="YY" ${YYdisabled} ${YYchecked} /> both searches</td>
+      <td class="${YN eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="YN" ${YNdisabled} ${YNchecked} /> just your previous search</td>
+      <td class="${NY eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="NY" ${NYdisabled} ${NYchecked} /> just your latest search</td>
+      <td class="${NN eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="NN" ${NNdisabled} ${NNchecked} /> neither search</td>
+    </tr>
+    <tr>
+      <td><imp:image src="images/YY.png" /></td>
+      <td><imp:image src="images/YN.png" /></td>
+      <td><imp:image src="images/NY.png" /></td>
+      <td><imp:image src="images/NN.png" /></td>
+    </tr>
+    <tr>
+      <td class="center ${YY eq null ? 'muted' : ''}"><b>${YY eq null ? 0 : YY}</b> transcripts</td>
+      <td class="center ${YN eq null ? 'muted' : ''}"><b>${YN eq null ? 0 : YN}</b> transcripts</td>
+      <td class="center ${NY eq null ? 'muted' : ''}"><b>${NY eq null ? 0 : NY}</b> transcripts</td>
+      <td class="center ${NN eq null ? 'muted' : ''}"><b>${NN eq null ? 0 : NN}</b> transcripts</td>
+    </tr>
+    </table>
+    </td>
+  </tr>
+</table>
+
+
+
+
 <!-- VERTICAL layout
 
 <style>
@@ -105,49 +151,3 @@
 </table>
 
 -->
-
-<!-- HORIZONTAL layout -->
-
-<style>
- table#booleanFilter table td {
-    border-right:1px solid grey;
-    padding-right:60px;
-  }
-  table#booleanFilter table td:last-child {
-    border-right:0;
-    padding-right:0;
-  }
-</style>
-
-
-<table id="booleanFilter" data-display="${YN ne null or NY ne null or NN ne null}" data-YY="${YY}" data-YN="${YN}" data-NY="${NY}" data-NN="${NN}"> 
-  <tr>
-    <td id="prompt" class="acenter"><br>Include Transcripts returned by: </td>
-  </tr>
-  <tr>
-    <td>
-    <table>
-    <tr>
-      <td class="${YY eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="YY" ${YYdisabled} ${YYchecked} /> both searches</td>
-      <td class="${YN eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="YN" ${YNdisabled} ${YNchecked} /> just your previous search</td>
-      <td class="${NY eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="NY" ${NYdisabled} ${NYchecked} /> just your latest search</td>
-      <td class="${NN eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="NN" ${NNdisabled} ${NNchecked} /> neither search</td>
-    </tr>
-    <tr>
-      <td><imp:image src="images/YY.png" /></td>
-      <td><imp:image src="images/YN.png" /></td>
-      <td><imp:image src="images/NY.png" /></td>
-      <td><imp:image src="images/NN.png" /></td>
-    </tr>
-    <tr>
-      <td class="center ${YY eq null ? 'muted' : ''}"><b>${YY eq null ? 0 : YY}</b> transcripts</td>
-      <td class="center ${YN eq null ? 'muted' : ''}"><b>${YN eq null ? 0 : YN}</b> transcripts</td>
-      <td class="center ${NY eq null ? 'muted' : ''}"><b>${NY eq null ? 0 : NY}</b> transcripts</td>
-      <td class="center ${NN eq null ? 'muted' : ''}"><b>${NN eq null ? 0 : NN}</b> transcripts</td>
-    </tr>
-    </table>
-    </td>
-  </tr>
-</table>
-
-
