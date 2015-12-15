@@ -196,7 +196,7 @@
     </action>
     <action
       path="/processBasket"
-      type="org.gusdb.wdk.controller.action.ProcessBasketAction"
+      type="org.apidb.apicommon.controller.action.CustomProcessBasketAction"
       scope="request"
       validate="false">
     </action>
