@@ -27,7 +27,7 @@
      (a combined step will show the icon TOO if  NN <> 0)
 -->
 
-<!-- SINGLE STEP -->
+<!-- LEAF STEP -->
  <c:if test="${genesMissingTranscriptsCount gt 0 && !step.isBoolean }">
   <c:set var="missingNative" value="true"/>   
 
@@ -43,8 +43,7 @@
 
 </c:if>
 
-<!-- will be used in wdk:resultTable 
--->
+<!-- might be used in wdk:resultTable -->
 <c:if test="${view eq 'transcripts'}">
   <c:set var="showNativeCount" value="true"/>
 </c:if>
@@ -53,20 +52,71 @@
 -->
 <div id="${view}">
 
-  <!-- leaf step, transcripts tab: icon/warning sentence -->
+<!-- Leaf step, Transcripts tab: icon/warning sentence -->
   <c:if test="${view eq 'transcripts' && !step.isBoolean && genesMissingTranscriptsCount gt 0}">
-    <p style="text-align: center; margin: .4em 0;">
-      <i class="fa fa-lg fa-exclamation-triangle"></i>
-      <strong>
-        Some ${recordClass.displayNamePlural}
-        in your result have Transcripts that do not meet the search criteria.
-        <a href="#" onClick="${addTransformAction}"> Explore.</a>
-      </strong>
-    </p>
+
+ <c:set var="option" value="${step.filterOptions.filterOptions['gene_leaf_filter_array']}"/>
+    <c:set var="values" value="${option.value}"/>
+    <style>
+      .gene-leaf-filter
+ /*    ,.gene-leaf-filter.ui-widget */
+      {
+        text-align: center;
+        display: none;
+        margin-bottom: 4px;
+      }
+      .gene-leaf-filter-controls {
+        display: none;
+      }
+      .gene-leaf-filter table {
+        border-collapse: separate;
+        color: black;
+      }
+      .gene-leaf-filter-summary {
+        display: inline-block;
+      }
+    </style>
+
+    <!-- YN table:  
+         - a jsp/tag (geneLeafFilter) will generate the table with correct display
+         - the condition to show the icon and table in a leaf step DOES NOT require this table's counts 
+         - the icon is shown in the tr-tab, independently of what tab is opened
+    -->
+    <div class="gene-leaf-filter ui-helper-clearfix"
+         data-step="${step.stepId}"
+         data-filter="gene_leaf_filter_array">
+
+      <p style="text-align: center; margin: .4em 0;">
+        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that do not meet the search criteria.' >
+        <strong>
+          Some Genes in your result have Transcripts that do not meet the search criteria.
+          <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
+        </strong>
+      </p>
+
+
+      <div class="gene-leaf-filter-controls">
+        <form action="applyFilter.do" name="apply-gene-leaf-filter">
+          <input type="hidden" name="step" value="${step.stepId}"/>
+          <input type="hidden" name="filter" value="gene_leaf_filter_array"/>
+          <div class="gene-leaf-filter-summary">
+            Loading filters...
+          </div>
+          <p style="text-align: center; margin: .4em 0;">
+            <button class="gene-leaf-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selection</button>
+          </p>
+        </form>
+        <script type="application/json" class="gene-leaf-filter-values">
+          ${values}
+        </script>
+      </div>
+    </div>
+
   </c:if>
 
-  <!-- boolean step: only if this is a transcript Record:
-         generate transcripts counts, to later decide if the tab icon/warning sentence are needed -->
+
+<!-- Boolean step: only if this is a Transcript Record:
+         generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
   <c:if test="${step.isBoolean && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
@@ -88,6 +138,10 @@
       .gene-boolean-filter-summary {
         display: inline-block;
       }
+      .gene-boolean-filter-controls button:disabled {
+ 			  color:grey;
+     }
+
     </style>
 
     <!-- YY/NY/YN table:  
@@ -113,7 +167,7 @@
             Loading filters...
           </div>
           <p style="text-align: center; margin: .4em 0;">
-            <button class="gene-boolean-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selection</button>
+            <button disabled="yes" class="gene-boolean-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selection</button>
           </p>
         </form>
         <script type="application/json" class="gene-boolean-filter-values">
@@ -121,6 +175,9 @@
         </script>
       </div>
     </div>
+
+
+
   </c:if>   <!-- if boolean step  -->
 
   <c:if test="${view eq 'transcripts'}">
