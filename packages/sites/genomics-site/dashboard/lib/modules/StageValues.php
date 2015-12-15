@@ -16,8 +16,8 @@ class StageValues {
       $this->data_map = parse_properties('/etc/sysconfig/httpd');
       // clean up key names, remove non-RELEASE keys
       foreach ($this->data_map as $key => $value) {
-        if (preg_match('/export\s+WEBSITE_RELEASE_STAGE_/', $key)) {
-          $newkey = ltrim(preg_replace('/export\s+WEBSITE_RELEASE_STAGE_/', '', $key));
+        if (preg_match('/^(?:export\s+)?WEBSITE_RELEASE_STAGE_/', $key)) {
+          $newkey = ltrim(preg_replace('/(?:export\s+)?WEBSITE_RELEASE_STAGE_/', '', $key));
           $this->data_map[$newkey] = $this->data_map[$key];
         }
       unset($this->data_map[$key]);
