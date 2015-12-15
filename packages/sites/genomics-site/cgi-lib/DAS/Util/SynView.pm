@@ -30,7 +30,7 @@ sub postgridGB2 {
         my @orthologs = $f->get_tag_values("Ortholog");
         next unless @orthologs;
         foreach (@orthologs) {
-          my $g = @$_->[0];
+          my $g = @$_[0];
           $seen{$g}++;
           push @og, $g;
         }
