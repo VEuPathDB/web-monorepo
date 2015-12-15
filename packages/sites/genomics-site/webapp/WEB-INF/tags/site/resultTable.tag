@@ -72,7 +72,7 @@
             Loading filters...
           </div>
           <p style="text-align: center; margin: .4em 0;">
-            <button disabled="yes" class="gene-leaf-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply transcript selection to your step</button>
+            <button disabled="yes" class="gene-leaf-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selection</button>
           </p>
         </form>
         <script type="application/json" class="gene-leaf-filter-values">
@@ -112,16 +112,18 @@
             Loading filters...
           </div>
           <p style="text-align: center; margin: .4em 0;">
-            <button disabled="yes" class="gene-boolean-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selected transcript sets into the step</button>
+            <button disabled="yes" class="gene-boolean-filter-apply-button" title="To enable this button, select/unselect transcript sets.">Apply selection</button>
           </p>
         </form>
+
+        <p id="trSelection">(Your initial selection was ${values})<br>(Your current selection is <span>${values}</span>)</p>
         <script type="application/json" class="gene-boolean-filter-values">
           ${values}
         </script>
       </div>
     </div>
   </c:if>  
-
+ 
 
 <!-- if TRANSCRIPT VIEW -->
   <c:if test="${view eq 'transcripts'}">

@@ -23,6 +23,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
     // using $ in a var name is convention to indicate it is a jquery object and we can apply jquery methods without using parenthesis
     var $filter = $(event.target).find('.gene-boolean-filter');
+
     // when user clicks on "Explore"
     $filter.on('click', '.gene-boolean-filter-controls-toggle', function(e) {
         e.preventDefault();
@@ -34,6 +35,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           $('a.gene-boolean-filter-controls-toggle').text('Collapse');
         };
       });
+
     // load filter table even if user did not click on "explore", cause we need to show icon
     reallyLoadGeneBooleanFilter($filter);
   }
@@ -55,20 +57,33 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         if ($filter.find('table').data('display')) {
           // this shows the warning sentence only; the table has display none, controlled by toggle via class name association
           $filter.css('display', 'block');
-          // icon in tab
-          if ( $("i#tr-warning").length == 0 ){
-            $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that do not meet the search criteria.' ></i>") );
+          // icon in transcript tab
+          if ( $('i#tr-warning').length == 0 ){
+            $( 'li#transcript-view a span' ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that do not meet the search criteria.' ></i>") );
           }
-          // store initial checked values
-					// use checkBoxState()
-          var initialCheckboxState = "1101";
+          // store initial checked values as eg: "1101"
+          var initialCheckboxesState = checkBoxesState($filter).trim();
 
-          // when boolean filter input boxes clicked
+          // when a boolean filter input box is clicked
           $filter.on('click', '#booleanFilter input[type=checkbox]', function(e) {
-						// check new state for checkboxes (one has been added or removed) 
-            // if different from initialCheckboxState, enable						
-            $("button.gene-boolean-filter-apply-button").removeAttr("disabled");
-            });
+            // check new state for checkboxes (one has been added or removed) 
+            var currChBxState = checkBoxesState($filter);
+						console.log("initial is: ",initialCheckboxesState," and now it is:", currChBxState);
+						// show user its current selection
+						$('p#trSelection span').text(currChBxState);
+
+            // if different from initialCheckboxesState, enable Apply button, otherwise disable; set consistent popup message
+						if( initialCheckboxesState !=  currChBxState ) {
+							console.log("different");
+              $('button.gene-boolean-filter-apply-button').removeProp('disabled');
+						  $('button.gene-boolean-filter-apply-button').prop('title','If selection is applied, it will change the step results and therefore have an effect on the rest of your strategy.');
+						}
+            else {
+							console.log("same");
+							$('button.gene-boolean-filter-apply-button').prop('disabled', true);
+							$('button.gene-boolean-filter-apply-button').prop('title','To enable this button, select/unselect transcript sets.');
+						}
+          });
 
           // do not show warning sentence in genes view
           if ( $("div#genes").parent().css('display') != 'none'){
@@ -78,14 +93,23 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
       });
   }
 
-  // parameters: filter jquery object
-	// returns string representing state (assuming YY,YN,NY,NN) eg:  1101)
+  // parameter: filter jquery object
+  // returns string representing state; eg: if values == [YY,YN,NY,NN] and only NN is unchecked, we return '1110'
   function checkBoxesState ($filter) {
     var state = '';
-		// read table.BooleanFilter checkboxes
-
+    // read table.BooleanFilter checkboxes
+    var valuesStr = $filter.find('.gene-boolean-filter-values').html().trim();
+    if (valuesStr) {
+      var values = JSON.parse(valuesStr);
+      $filter.find('[name=values]').each(function(index, checkbox) {
+        if( checkbox.checked ) state = state + '1';
+				else state = state + '0';
+        });
+      }
     return state;
   }
+
+
 
   function applyGeneBooleanFilter(event) {
     event.preventDefault();
@@ -116,7 +140,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
     if(!$.isEmptyObject(values)) {
       //enable inputs, so checked ones are sent in post even if the result was 0
       $("form").submit(function() {
-          $("input").removeAttr("disabled");
+          $("input").removeProp("disabled");
         });
       $.post('applyFilter.do', $form.serialize(), function() {
           ctrl.fetchStrategies(ctrl.updateStrategies);
@@ -131,10 +155,9 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
   // when boolean filter form submitted
   $(document).on('submit', '[name=apply-gene-boolean-filter]', applyGeneBooleanFilter);
 
-  // check if we have a leaf filter
+	/*
   $(document).on('wdk-results-loaded', loadGeneLeafFilter);
-  // when leaf filter form submitted
   $(document).on('submit', '[name=apply-gene-leaf-filter]', applyGeneLeafFilter);
-
+	*/
   ns.openTransform = openTransform;
 });
