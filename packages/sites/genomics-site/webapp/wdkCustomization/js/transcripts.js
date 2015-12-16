@@ -68,21 +68,19 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           $filter.on('click', '#booleanFilter input[type=checkbox]', function(e) {
             // check new state for checkboxes (one has been added or removed) 
             var currChBxState = checkBoxesState($filter);
-						console.log("initial is: ",initialCheckboxesState," and now it is:", currChBxState);
-						// show user its current selection
-						$('p#trSelection span').text(currChBxState);
+            //console.log("initial is: ",initialCheckboxesState," and now it is:", currChBxState);
+            // show user its current selection
+            $('p#trSelection span').text(currChBxState);
 
             // if different from initialCheckboxesState, enable Apply button, otherwise disable; set consistent popup message
-						if( initialCheckboxesState !=  currChBxState ) {
-							console.log("different");
+            if( initialCheckboxesState !=  currChBxState ) {
               $('button.gene-boolean-filter-apply-button').removeProp('disabled');
-						  $('button.gene-boolean-filter-apply-button').prop('title','If selection is applied, it will change the step results and therefore have an effect on the rest of your strategy.');
-						}
+              $('button.gene-boolean-filter-apply-button').prop('title','If selection is applied, it will change the step results and therefore have an effect on the rest of your strategy.');
+            }
             else {
-							console.log("same");
-							$('button.gene-boolean-filter-apply-button').prop('disabled', true);
-							$('button.gene-boolean-filter-apply-button').prop('title','To enable this button, select/unselect transcript sets.');
-						}
+              $('button.gene-boolean-filter-apply-button').prop('disabled', true);
+              $('button.gene-boolean-filter-apply-button').prop('title','To enable this button, select/unselect transcript sets.');
+            }
           });
 
           // do not show warning sentence in genes view
@@ -99,13 +97,13 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
     var state = '';
     // read table.BooleanFilter checkboxes
     var valuesStr = $filter.find('.gene-boolean-filter-values').html().trim();
-		//console.log(valuesStr); //{"values":["YY","YN"]}
+    //console.log(valuesStr); //{"values":["YY","YN"]}
     if (valuesStr) {
       var values = JSON.parse(valuesStr);
-		 	//console.log(values); 	//["YY", "YN"]
+      //console.log(values);  //["YY", "YN"]
       $filter.find('[name=values]').each(function(index, checkbox) {
         if( checkbox.checked ) state = state + '1';
-				else state = state + '0';
+        else state = state + '0';
         });
       }
     return state;
@@ -121,7 +119,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
     var $filter = $form.parent('.gene-boolean-filter');
     // what for?
     var data = $filter.data();
-		// values contains: [["Y", "N"], ["N", "Y"]]
+    // values contains: [["Y", "N"], ["N", "Y"]]
     var values = [].slice.call(form.values)
       .filter(function(el) {
         return el.checked;
@@ -131,20 +129,20 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
       });
     // is there any checked checkbox?  (includes disabled checked checkboxes)
     if(!$.isEmptyObject(values)) {
-			console.log(values); // the new selection is: eg: [["Y", "N"], ["N", "N"]]
+      console.log(values); // the new selection is: eg: [["Y", "N"], ["N", "N"]]
 
-			// check that we have, among user selections, at least one input > 0
+      // check that we have, among user selections, at least one input > 0
       var trSelected = 0;
       $('#booleanFilter input[type=checkbox]:checked').each(function() {
-				trSelected = parseInt(trSelected) + parseInt($(this).attr('amount'));
-				//console.log("found one: ", trSelected);
+        trSelected = parseInt(trSelected) + parseInt($(this).attr('amount'));
+        //console.log("found one: ", trSelected);
       });
-			if(trSelected > 0) {
+      if(trSelected > 0) {
         //enable inputs, so checked ones are sent in post even if the result was 0
         $("#booleanFilter input[type=checkbox]:checked").each(function() {
-							$(this).prop('disabled', false);
+              $(this).prop('disabled', false);
         });
-				//console.log(values); // the new selection is: eg: [["Y", "N"], ["N", "N"]]
+        //console.log(values); // the new selection is: eg: [["Y", "N"], ["N", "N"]]
         $.post('applyFilter.do', $form.serialize(), function() {
           ctrl.fetchStrategies(ctrl.updateStrategies);
         });
@@ -152,7 +150,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
       else {
         alert("Oops! please select at least one option with a count > 0");
       } 
-		}
+    }
     else {
       alert("Oops! please select at least one option");
     }
@@ -163,9 +161,9 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
   // when boolean filter form submitted
   $(document).on('submit', '[name=apply-gene-boolean-filter]', applyGeneBooleanFilter);
 
-	/*
+  /*
   $(document).on('wdk-results-loaded', loadGeneLeafFilter);
   $(document).on('submit', '[name=apply-gene-leaf-filter]', applyGeneLeafFilter);
-	*/
+  */
   ns.openTransform = openTransform;
 });
