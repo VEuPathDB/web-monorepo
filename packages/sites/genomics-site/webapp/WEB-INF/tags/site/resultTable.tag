@@ -116,7 +116,9 @@
           </p>
         </form>
 
-        <p id="trSelection">(Your initial selection was ${values})<br>(Your current selection is <span>${values}</span>)</p>
+        <!-- DEBUG
+        <p id="trSelection">(Your initial selection was ${values})<br>(Your current selection is <span>${values}</span>)</p> 
+        -->
         <script type="application/json" class="gene-boolean-filter-values">
           ${values}
         </script>
