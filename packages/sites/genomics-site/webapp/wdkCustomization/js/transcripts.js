@@ -99,8 +99,10 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
     var state = '';
     // read table.BooleanFilter checkboxes
     var valuesStr = $filter.find('.gene-boolean-filter-values').html().trim();
+		//console.log(valuesStr); //{"values":["YY","YN"]}
     if (valuesStr) {
       var values = JSON.parse(valuesStr);
+		 	//console.log(values); 	//["YY", "YN"]
       $filter.find('[name=values]').each(function(index, checkbox) {
         if( checkbox.checked ) state = state + '1';
 				else state = state + '0';
@@ -119,15 +121,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
     var $filter = $form.parent('.gene-boolean-filter');
     // what for?
     var data = $filter.data();
-    /*  all filter values YY YN NY NN
-      console.log([].slice.call(form.values));
-       ["YN", "NY", "NN"]  user selections (disabled or not)
-      console.log([].slice.call(form.values).filter(function(el) {
-          return el.checked;
-        }).map(function(el) {
-            return el.value;
-          }));
-    */
+		// values contains: [["Y", "N"], ["N", "Y"]]
     var values = [].slice.call(form.values)
       .filter(function(el) {
         return el.checked;
@@ -135,17 +129,31 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
       .map(function(el) {
         return el.value.replace(/1/g, 'Y').replace(/0/g, 'N').split('');
       });
-
-    // this includes disabled checked checkboxes, we might want to check that we have among user selections at least one input > 0
+    // is there any checked checkbox?  (includes disabled checked checkboxes)
     if(!$.isEmptyObject(values)) {
-      //enable inputs, so checked ones are sent in post even if the result was 0
-      $("form").submit(function() {
-          $("input").removeProp("disabled");
+			console.log(values); // the new selection is: eg: [["Y", "N"], ["N", "N"]]
+
+			// check that we have, among user selections, at least one input > 0
+      var trSelected = 0;
+      $('#booleanFilter input[type=checkbox]:checked').each(function() {
+				trSelected = parseInt(trSelected) + parseInt($(this).attr('amount'));
+				//console.log("found one: ", trSelected);
+      });
+			if(trSelected > 0) {
+        //enable inputs, so checked ones are sent in post even if the result was 0
+        $("#booleanFilter input[type=checkbox]:checked").each(function() {
+							$(this).prop('disabled', false);
         });
-      $.post('applyFilter.do', $form.serialize(), function() {
+				//console.log(values); // the new selection is: eg: [["Y", "N"], ["N", "N"]]
+        $.post('applyFilter.do', $form.serialize(), function() {
           ctrl.fetchStrategies(ctrl.updateStrategies);
         });
-    } else {
+      }
+      else {
+        alert("Oops! please select at least one option with a count > 0");
+      } 
+		}
+    else {
       alert("Oops! please select at least one option");
     }
   }
