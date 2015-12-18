@@ -111,7 +111,7 @@
           <div class="gene-boolean-filter-summary">
             Loading filters...
           </div>
-          <p style="text-align: center; margin: .4em 0;">
+          <p>
             <button disabled="yes" class="gene-boolean-filter-apply-button" title="To enable this button, select/unselect transcript sets.">Apply selection</button>
           </p>
         </form>
