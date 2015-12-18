@@ -103,7 +103,8 @@ foreach ($db_names as $db_name) {
 <p>
   <b>Aliases</b> (from LDAP): <?php print implode(", ", $adb_aliases_ar) ?><br/><br/>
   <b>Hosted on</b>: <?php print strtolower($adb{'server_name'})?><br/>
-  <b>Oracle Version</b>: <?php print $adb{'version'}?>
+  <b>Oracle Version</b>: <?php print $adb{'version'}?><br/>
+  <b>Character encoding</b>: <?php print $adb{'character_encoding'}?>
 </p>
 <p>
   <b>Client login name</b>: <?php print strtolower($adb{'login'})?><br/>
