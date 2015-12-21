@@ -158,7 +158,7 @@
 
   <!-- `getApiClientConfig` is created in the global scope, so we can call this
        from other JavaScript code where we initialize the WDK client
-       (see wdkCustomization/js/application.js) -->
+       (see wdkCustomization/js/client/main.js) -->
   <script>
     function getApiClientConfig() {
       return {
@@ -172,5 +172,5 @@
     }
   </script>
   <imp:script src="wdk/js/wdk.client.js"/>
-  <imp:script src="wdkCustomization/js/application.bundle.js"/>
+  <imp:script src="wdkCustomization/js/client.js"/>
 </imp:pageFrameFixed>
