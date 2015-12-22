@@ -19,15 +19,15 @@
 <c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
   <c:set var="trRecord" value="true"/>
 </c:if>
+
+<!-- might be used in wdk:resultTable -->
+<c:if test="${view eq 'transcripts'}">
+  <c:set var="showNativeCount" value="true"/>
+</c:if>
+
+<%-- we are not setting thi svalue correctly any longer (LEAF STEP)
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
-
-<!-- step could be single or combined;
-     if there are missing trasncripts the warning icon is shown in the tr-tab
-     (a combined step will show the icon TOO if  NN <> 0)
--->
-
-<!-- LEAF STEP with missing transcripts -->
 <c:if test="${genesMissingTranscriptsCount gt 0 && !step.isBoolean }">
   <c:set var="missingNative" value="true"/>   
   <script>
@@ -36,26 +36,30 @@
     }
   </script>
 </c:if>
+--%>
 
-<!-- might be used in wdk:resultTable -->
-<c:if test="${view eq 'transcripts'}">
-  <c:set var="showNativeCount" value="true"/>
-</c:if>
-
+<!-- step could be single or combined:
+     single: will show icon in the tr-tab if there are missing trasncripts (N <> 0)
+     combined: will show the icon in the tr-tab if either YN,NY,NN <> 0
+-->
 
 <!-- ANY TAB ANY STEP -->
 <div id="${view}">
 
-<!-- if LEAF step, Transcripts tab: icon/warning sentence -->
-  <c:if test="${view eq 'transcripts' && !step.isBoolean && genesMissingTranscriptsCount gt 0}">
-    <c:set var="option" value="${step.filterOptions.filterOptions['gene_leaf_filter_array']}"/>
+<!-- if LEAF step: if this is a Transcript Record:
+         generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
+  <c:if test="${!step.isBoolean && trRecord eq 'true'}"> 
+    <c:set var="option" value="${step.filterOptions.filterOptions['matched_transcript_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
 
-	  <-- Y/N table, initial display is none, only the warning sentence is visible -->
+    <!-- Y/N table:  
+         - a jsp/tag (matchesResultFilter) will generate the table with correct display
+         - the condition to show the icon and table in a boolean step requires the N count 
+         - the icon is shown in the tr-tab, independently of what tab is opened (gene view or tr view)
+    -->
     <div class="gene-leaf-filter ui-helper-clearfix"
          data-step="${step.stepId}"
-         data-filter="gene_leaf_filter_array">
-
+         data-filter="matched_transcript_filter_array">
       <p style="text-align: center; margin: .4em 0;">
         <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that do not meet the search criteria.' >
         <strong>
@@ -63,24 +67,27 @@
           <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
         </strong>
       </p>
-
       <div class="gene-leaf-filter-controls">
         <form action="applyFilter.do" name="apply-gene-leaf-filter">
           <input type="hidden" name="step" value="${step.stepId}"/>
-          <input type="hidden" name="filter" value="gene_leaf_filter_array"/>
+          <input type="hidden" name="filter" value="matched_transcript_filter_array"/>
           <div class="gene-leaf-filter-summary">
             Loading filters...
           </div>
-          <p style="text-align: center; margin: .4em 0;">
-            <button disabled="yes" class="gene-leaf-filter-apply-button" title="This will change the step results and therefore have an effect on the strategy.">Apply selection</button>
+          <p>
+            <button disabled="yes" class="gene-leaf-filter-apply-button" title="To enable this button, select/unselect transcript sets.">Apply selection</button>
           </p>
         </form>
+
+        <!-- DEBUG
+        <p id="trSelection">(Your initial selection was ${values})<br>(Your current selection is <span>${values}</span>)</p> 
+        -->
         <script type="application/json" class="gene-leaf-filter-values">
           ${values}
         </script>
       </div>
     </div>
-  </c:if>
+  </c:if>  
 
 
 <!-- if BOOLEAN step: if this is a Transcript Record:
