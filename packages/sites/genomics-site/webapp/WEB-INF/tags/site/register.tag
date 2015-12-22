@@ -14,6 +14,13 @@
 
 <style type="text/css">
   .blockUI {   min-width: 750px; }
+
+  p#regConf {
+    font-weight: bold;
+    font-size: 120%;
+    color: green;
+    margin: 10px 0 30px;
+  }
 </style>
 
 <div align="center">
@@ -25,8 +32,9 @@
     <b>You have registered successfully.</b>
   </h1>
 
-  <p>We have sent you an email with a temporary password.</p>
-  <p>Please login and change your password to one that you'll remember.</p>
+  <p id="regConf">We have sent you an email with a temporary password.<br>
+    Please log in within the next week (to avoid having this registration purged).
+  </p>
 </c:when>
 
 
