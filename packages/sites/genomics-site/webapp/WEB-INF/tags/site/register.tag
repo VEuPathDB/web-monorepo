@@ -16,7 +16,7 @@
   .blockUI {   min-width: 750px; }
 </style>
 
-<div align="center"
+<div align="center">
 <c:choose>
 
 <%-- REGISTRATION CONFIRMATION --%>
