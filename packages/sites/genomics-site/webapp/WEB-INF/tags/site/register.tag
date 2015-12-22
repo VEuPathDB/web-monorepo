@@ -7,72 +7,65 @@
 <%@ attribute name="showError"
               required="false"
 %>
-
 <%@ attribute name="includeCancel"
               required="false"
 %>
-
+<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
 
 <style type="text/css">
-        .blockUI {   min-width: 750px; }
+  .blockUI {   min-width: 750px; }
+
+  p#regConf {
+    font-weight: bold;
+    font-size: 120%;
+    color: green;
+    margin: 10px 0 30px;
+  }
 </style>
 
-
-<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-
-
-<!-- get user object from session scope -->
-<c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-
-  <div align="center">
-
-<!-- display the success information, if the user registered successfully -->
+<div align="center">
 <c:choose>
-  <c:when test="${requestScope.registerSucceed != null}">
 
+<%-- REGISTRATION CONFIRMATION --%>
+<c:when test="${requestScope.registerSucceed != null}">
   <h1>
     <b>You have registered successfully.</b>
   </h1>
 
-  <p>We have sent you an email with a temporary password.</p>
-  <p>Please login and change your password to one that you'll remember.</p>
+  <p id="regConf">We have sent you an email with a temporary password.<br>
+    Please log in within the next week (to avoid having this registration purged).
+  </p>
+</c:when>
 
-  </c:when>
 
-  <c:otherwise>
-  <!-- continue registration fomr -->
+<%-- REGISTRATION FORM --%>
+<c:otherwise>    
+  <html:form method="POST" action='/processRegister.do' >
+    <c:if test="${requestScope.refererUrl != null}">
+      <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
+    </c:if>
+    <p> <b>IMPORTANT</b>: If you already registered in another site<br>(AmoebaDB, CryptoDB, EuPathDB, FungiDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB or TriTrypDB)<br>you do NOT need to register again.</p>
+    <br>
 
-<html:form method="POST" action='/processRegister.do' >
+    <table id="regForm" width="650">
+    <c:choose>
 
-  <c:if test="${requestScope.refererUrl != null}">
-     <input type="hidden" name="refererUrl" value="${requestScope.refererUrl}">
-  </c:if>
-
-  <p> <b>IMPORTANT</b>: If you already registered in another site<br>(AmoebaDB, CryptoDB, EuPathDB, FungiDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB or TriTrypDB)<br>you do NOT need to register again.</p>
-
-   <br>
-
-  <table width="650">
-
-  <c:choose>
-  <c:when test="${wdkUser != null && wdkUser.guest != true}">
-
+<%-- ALREADY LOGIN, PROFILE UPDATE? --%>
+    <c:when test="${wdkUser != null && wdkUser.guest != true}">
     <tr>
       <td colspan="2"><p>You are logged in. </p>
         <p>To change your password or profile go <a href="<c:url value='/showProfile.do'/>">here</a>.</p></td>
     </tr>
+    </c:when>
 
-  </c:when>
-
-  <c:otherwise>
-
-    <!-- check if there's an error message to display -->
+<%-- NEW USER --%>
+    <c:otherwise>
     <c:if test="${requestScope.registerError != null}">
-       <tr>
-          <td colspan="2">
-             <font color="red">${requestScope.registerError}</font>
-          </td>
-       </tr>
+      <tr>
+      <td colspan="2">
+        <font color="red">${requestScope.registerError}</font>
+      </td>
+      </tr>
     </c:if>
 
     <tr>
@@ -104,10 +97,10 @@
       <td align="left"><input type="text" name="openId" value="${requestScope.openId}" size="50"/></td>
     </tr>--%>
     <tr>
-    <td align="right" width="50%" nowrap>
+      <td align="right" width="50%" nowrap>
           Send me email alerts about: 
-    </td>
-    <td nowrap>
+      </td>
+      <td nowrap>
         <c:choose>
            <c:when test="${requestScope.preference_global_email_amoebadb != null}">
               <input type="checkbox" name="preference_global_email_amoebadb" checked>AmoebaDB</input>
@@ -156,10 +149,10 @@
               <input type="checkbox" name="preference_global_email_microsporidiadb">MicrosporidiaDB</input>
            </c:otherwise>
         </c:choose>
-    </td></tr>
-    <td align="right" width="50%" nowrap>
-    <td nowrap>
-	<c:choose>
+      </td></tr>
+      <td align="right" width="50%" nowrap>
+      <td nowrap>
+        <c:choose>
            <c:when test="${requestScope.preference_global_email_piroplasmadb != null}">
               <input type="checkbox" name="preference_global_email_piroplasmadb" checked>PiroplasmaDB</input>
            </c:when>
@@ -175,7 +168,7 @@
               <input type="checkbox" name="preference_global_email_plasmodb">PlasmoDB</input>
            </c:otherwise>
         </c:choose>
-         <c:choose>
+        <c:choose>
            <c:when test="${requestScope.preference_global_email_schistodb != null}">
               <input type="checkbox" name="preference_global_email_schistodb" checked>SchistoDB</input>
            </c:when>
@@ -191,7 +184,6 @@
               <input type="checkbox" name="preference_global_email_toxodb">ToxoDB</input>
            </c:otherwise>
         </c:choose>
-
         <c:choose>
            <c:when test="${requestScope.preference_global_email_trichdb != null}">
               <input type="checkbox" name="preference_global_email_trichdb" checked>TrichDB</input>
@@ -208,27 +200,23 @@
               <input type="checkbox" name="preference_global_email_tritrypdb">TriTrypDB</input>
            </c:otherwise>
         </c:choose>
-    </td>
+      </td>
     </tr>
     <tr>
-       <td style="font-size:120%" colspan="2" align="center">
-           <br><input type="submit" name="registerButton" value="Register"  onclick="return validateFields();" />
-              <c:if test="${includeCancel}">
-                 <input type="submit" value="Cancel" style="width:76px;" onclick="$.unblockUI();return false;"/>
-               </c:if>
-       </td>
+      <td style="font-size:120%" colspan="2" align="center">
+        <br><input type="submit" name="registerButton" value="Register"  onclick="return validateFields();" />
+        <c:if test="${includeCancel}">
+          <input type="submit" value="Cancel" style="width:76px;" onclick="$.unblockUI();return false;"/>
+        </c:if>
+      </td>
     </tr>
+    </c:otherwise>
+    </c:choose>
+    </table>
+  </html:form>
 
-  </c:otherwise>
-
-  </c:choose>
-
-  </table>
-</html:form>
-
- <br>
- <div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
-
+  <br>
+  <div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
   <p><b>Why register/subscribe?</b> So you can:</p>
   <div id="cirbulletlist">
   <ul>
@@ -242,14 +230,15 @@
   </div>
   </div>
 
-  </c:otherwise>
-
+</c:otherwise>
 </c:choose>
+<!-- END OF REGISTRATION FORM/CONFIRMATION -->
 
 
+<!-- PRIVACY POLICY -->
 <div align="left" style="width:550px;margin:5px;border:1px  solid black;padding:5px;line-height:1.5em;">
 <div style="font-size:1.2em;">
-<b>&nbsp;&nbsp;&nbsp;EuPathDB Websites Privacy Policy</b> 
+<b>EuPathDB Websites Privacy Policy</b> 
 </div>
 
 <table><tr>
@@ -273,12 +262,12 @@
 </ul>
 </div>
 </td>
-
 </tr></table>
 
-</div>  <%-- div align left --%>
+</div> <!-- div PRIVACY POLICY -->
 
-</div> <%-- div align center --%>
+
+</div> <!-- div whole page - align center -->
 
 
 <script language="JavaScript" type="text/javascript">
