@@ -19,7 +19,7 @@
 <div align="center"
 <c:choose>
 
-<!-- REGISTRATION CONFIRMATION -->
+<%-- REGISTRATION CONFIRMATION --%>
 <c:when test="${requestScope.registerSucceed != null}">
   <h1>
     <b>You have registered successfully.</b>
@@ -30,7 +30,7 @@
 </c:when>
 
 
-<!-- REGISTRATION FORM -->
+<%-- REGISTRATION FORM --%>
 <c:otherwise>    
   <html:form method="POST" action='/processRegister.do' >
     <c:if test="${requestScope.refererUrl != null}">
@@ -42,7 +42,7 @@
     <table id="regForm" width="650">
     <c:choose>
 
-<!-- ALREADY LOGIN, PROFILE UPDATE? -->
+<%-- ALREADY LOGIN, PROFILE UPDATE? --%>
     <c:when test="${wdkUser != null && wdkUser.guest != true}">
     <tr>
       <td colspan="2"><p>You are logged in. </p>
@@ -50,7 +50,7 @@
     </tr>
     </c:when>
 
-<!-- NEW USER -->
+<%-- NEW USER --%>
     <c:otherwise>
     <c:if test="${requestScope.registerError != null}">
       <tr>
