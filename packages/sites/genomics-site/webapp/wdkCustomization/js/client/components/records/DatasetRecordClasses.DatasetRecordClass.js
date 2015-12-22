@@ -321,7 +321,7 @@ let IsolatesList = React.createClass({
   }
 });
 
-export let DatasetRecord = React.createClass({
+export let RecordUI = React.createClass({
   render() {
     let titleClass = 'eupathdb-DatasetRecord-title';
     let { record, questions, recordClasses } = this.props;

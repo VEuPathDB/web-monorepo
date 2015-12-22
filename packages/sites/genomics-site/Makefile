@@ -1,10 +1,10 @@
 PATH                := $(PROJECT_HOME)/WDK/View/node_modules/.bin:$(PATH)
 SHELL               := /bin/bash
 
-application_bundle  := dist/wdkCustomization/js/application.bundle.js
-application_sources := webapp/wdkCustomization/js/application.js \
-                       webapp/wdkCustomization/js/records/DatasetRecordClasses.DatasetRecordClass.js \
-                       webpack.config.js
+client_bundle  := dist/wdkCustomization/js/client.js
+client_sources := webapp/wdkCustomization/js/client/main.js \
+                  $(shell find webapp/wdkCustomization/js/client -type f -name '*.js') \
+                  webpack.config.js
 
 
 .PHONY: all clean
@@ -12,11 +12,11 @@ application_sources := webapp/wdkCustomization/js/application.js \
 
 ## TODO Add CSS build tools
 
-all: $(application_bundle)
+all: $(client_bundle)
 
 clean:
-	rm $(application_bundle)
+	rm $(client_bundle)
 
-$(application_bundle): $(application_sources)
+$(client_bundle): $(client_sources)
 	webpack $< $@
 	rebaseSourceMap $@.map $$(readlink -f $(PROJECT_HOME)/WDK/View) .
