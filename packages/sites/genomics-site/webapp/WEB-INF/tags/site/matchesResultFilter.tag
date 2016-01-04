@@ -33,14 +33,14 @@
 
 <table id="leafFilter" data-display="${N ne null}" data-Y="${Y}" data-N="${N}"> 
   <tr>
-    <td id="prompt" class="acenter"><br>Include Transcripts returned by: </td>
+    <td id="prompt" class="acenter"><br>Include Transcripts that: </td>
   </tr>
   <tr>
     <td>
     <table>
     <tr>
-      <td class="${Y eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="Y" ${Ydisabled} ${Ychecked} amount="${Y eq null ? 0 : Y}"/> matched</td>
-      <td class="${N eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="N" ${Ndisabled} ${Nchecked} amount="${N eq null ? 0 : N}"/> did not match</td>
+      <td class="${Y eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="Y" ${Ydisabled} ${Ychecked} amount="${Y eq null ? 0 : Y}"/> met the search criteria</td>
+      <td class="${N eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="N" ${Ndisabled} ${Nchecked} amount="${N eq null ? 0 : N}"/> did not meet the search criteria</td>
     </tr>
     <tr>
       <td class="center ${Y eq null ? 'muted' : ''}"><b>${Y eq null ? 0 : Y}</b> transcripts</td>
@@ -58,17 +58,17 @@
 
 <table id="leafFilter" data-display="${N ne null}" data-Y="${Y}" data-N="${N}" >
 <tr>
-  <td id="prompt">Include Transcripts returned by: </td>
+  <td id="prompt">Include Transcripts that: </td>
   <td>
     <table>
     <tr>
       <td><input name="values" type="checkbox" value="Y" ${Ydisabled} ${Ychecked} amount="${Y eq null ? 0 : Y}"/></td>
-      <td class="${Y eq null ? 'muted' : ''} aleft">matched</td>
+      <td class="${Y eq null ? 'muted' : ''} aleft">met the search criteria</td>
       <td class="${Y eq null ? 'muted' : ''} aright"><b>${Y eq null ? 0 : Y}</b> transcripts</td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="N" ${Ndisabled} ${Nchecked} amount="${N eq null ? 0 : N}"/></td>
-      <td class="${N eq null ? 'muted' : ''} aleft">did not match</td>
+      <td class="${N eq null ? 'muted' : ''} aleft">did not meet the search criteria</td>
       <td class="${N eq null ? 'muted' : ''} aright"><b>${N eq null ? 0 : N}</b> transcripts</td>
     </tr>
     </table>
