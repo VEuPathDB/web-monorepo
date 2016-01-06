@@ -63,7 +63,7 @@
     <table>
     <tr>
       <td><input name="values" type="checkbox" value="Y" ${Ydisabled} ${Ychecked} amount="${Y eq null ? 0 : Y}"/></td>
-      <td class="${Y eq null ? 'muted' : ''} aleft">met the search criteria</td>
+      <td class="${Y eq null ? 'muted' : ''} aleft">did meet the search criteria</td>
       <td class="${Y eq null ? 'muted' : ''} aright"><b>${Y eq null ? 0 : Y}</b> transcripts</td>
     </tr>
     <tr>

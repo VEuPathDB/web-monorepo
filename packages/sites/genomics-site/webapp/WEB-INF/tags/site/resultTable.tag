@@ -32,7 +32,7 @@
   <c:set var="missingNative" value="true"/>   
   <script>
     if ($("i#tr-warning").length == 0){    
-      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that do not meet the search criteria.' ></i>") );
+      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that did not meet the search criteria.' ></i>") );
     }
   </script>
 </c:if>
@@ -63,7 +63,7 @@
       <p style="text-align: center; margin: .4em 0;">
         <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that do not meet the search criteria.' >
         <strong>
-          Some Genes in your result have Transcripts that do not meet the search criteria.
+          Some Genes in your result have Transcripts that did not meet the search criteria.
           <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
         </strong>
       </p>
