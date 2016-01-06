@@ -61,7 +61,7 @@
          data-step="${step.stepId}"
          data-filter="matched_transcript_filter_array">
       <p style="text-align: center; margin: .4em 0;">
-        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that do not meet the search criteria.' >
+        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >
         <strong>
           Some Genes in your result have Transcripts that did not meet the search criteria.
           <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
@@ -105,7 +105,7 @@
          data-step="${step.stepId}"
          data-filter="gene_boolean_filter_array">
       <p style="text-align: center; margin: .4em 0;">
-        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that do not meet the search criteria.' >
+        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that did not meet the search criteria.' >
         <strong>
           Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.
           <a href="#" class="gene-boolean-filter-controls-toggle">Explore.</a>
