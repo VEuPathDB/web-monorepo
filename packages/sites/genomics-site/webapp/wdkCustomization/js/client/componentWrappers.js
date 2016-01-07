@@ -37,7 +37,7 @@ export function RecordTable(RecordTable) {
   return function ApiRecordTable(props) {
     if (expressionRE.test(props.tableMeta.name)) {
 
-      let included = props.tableMeta.propertyLists.includeInTable || [];
+      let included = props.tableMeta.properties.includeInTable || [];
 
       let tableMeta = Object.assign({}, props.tableMeta, {
         attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
