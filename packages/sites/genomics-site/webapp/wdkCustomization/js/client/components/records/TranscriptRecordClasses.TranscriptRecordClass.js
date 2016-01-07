@@ -1,3 +1,5 @@
+import ExpressionGraph from '../common/ExpressionGraph';
+
 let Link = ReactRouter.Link;
 let Sticky = Wdk.client.Components.Sticky;
 
@@ -130,3 +132,74 @@ export let RecordMainSection = React.createClass({
   }
 
 });
+
+export function ExpressionGraphTable(props) {
+  let included = props.tableMeta.propertyLists.includeInTable || [];
+
+  let tableMeta = Object.assign({}, props.tableMeta, {
+    attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
+  });
+
+  return (
+    <props.DefaultComponent
+      {...props}
+      tableMeta={tableMeta}
+      childRow={childProps =>
+        <ExpressionGraph rowData={props.table[childProps.rowIndex]}/>}
+    />
+  );
+}
+
+
+export function MercatorTable(props) {
+  return (
+    <div className="eupathdb-MercatorTable">
+      <form action="/cgi-bin/pairwiseMercator">
+        <input type="hidden" name="project_id" value={wdk.MODEL_NAME}/>
+
+        <div className="form-group">
+          <label><strong>Contig ID:</strong> <input name="contig" defaultValue={props.record.attributes.sequence_id}/></label>
+        </div>
+
+        <div className="form-group">
+          <label>
+            <strong>Nucleotide positions: </strong>
+            <input
+              name="start"
+              defaultValue={props.record.attributes.gene_start_min}
+              maxLength="10"
+              size="10"
+            />
+          </label>
+          <label> to <input
+              name="stop"
+              defaultValue={props.record.attributes.gene_end_max}
+              maxLength="10"
+              size="10"
+            />
+          </label>
+          <label> <input name="revComp" type="checkbox" defaultChecked={true}/> Reverse & compliment </label>
+        </div>
+
+        <div className="form-group">
+          <strong>Genomes to align:</strong>
+          <Wdk.client.Components.CheckboxList
+            name="genomes"
+            items={props.table.map(row => ({
+              value: row.abbrev,
+              display: row.organism
+            }))}
+          />
+        </div>
+
+        <div className="form-group">
+          <strong>Select output:</strong>
+          <div className="form-radio"><label><input name="type" type="radio" value="clustal" defaultChecked={true}/> Multiple sequence alignment (clustal)</label></div>
+          <div className="form-radio"><label><input name="type" type="radio" value="fasta_ungapped"/> Multi-FASTA</label></div>
+        </div>
+
+        <input type="submit"/>
+      </form>
+    </div>
+  );
+}

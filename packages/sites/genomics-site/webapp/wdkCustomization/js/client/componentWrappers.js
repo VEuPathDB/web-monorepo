@@ -1,5 +1,4 @@
 import Footer from './components/common/Footer';
-import ExpressionGraph from './components/common/ExpressionGraph';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
 import * as Transcript from './components/records/TranscriptRecordClasses.TranscriptRecordClass';
 
@@ -62,24 +61,13 @@ export function RecordNavigationSectionCategories(DefaultComponent) {
 let expressionRE = /ExpressionGraphs$/;
 export function RecordTable(RecordTable) {
   return function ApiRecordTable(props) {
+    let Table = RecordTable;
     if (expressionRE.test(props.tableMeta.name)) {
-
-      let included = props.tableMeta.propertyLists.includeInTable || [];
-
-      let tableMeta = Object.assign({}, props.tableMeta, {
-        attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
-      });
-
-      return (
-        <RecordTable
-          {...props}
-          tableMeta={tableMeta}
-          childRow={childProps =>
-            <ExpressionGraph rowData={props.table[childProps.rowIndex]}/>}
-          />
-      );
+      Table = Transcript.ExpressionGraphTable;
     }
-
-    return <RecordTable {...props}/>;
+    if (props.tableMeta.name === 'MercatorTable') {
+      Table = Transcript.MercatorTable;
+    }
+    return <Table {...props} DefaultComponent={RecordTable}/>;
   };
 }
