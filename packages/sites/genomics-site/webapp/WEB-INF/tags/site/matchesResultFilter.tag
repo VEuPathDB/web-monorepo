@@ -28,32 +28,6 @@
 <c:set var="Ydisabled" value="${Y eq null ? 'disabled' : ''}" />
 <c:set var="Ndisabled" value="${N eq null ? 'disabled' : ''}" />
 
-
-<!-- HORIZONTAL LAYOUT
-
-<table id="leafFilter" data-display="${N ne null}" data-Y="${Y}" data-N="${N}"> 
-  <tr>
-    <td id="prompt" class="acenter"><br>Include Transcripts that: </td>
-  </tr>
-  <tr>
-    <td>
-    <table>
-    <tr>
-      <td class="${Y eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="Y" ${Ydisabled} ${Ychecked} amount="${Y eq null ? 0 : Y}"/> met the search criteria</td>
-      <td class="${N eq null ? 'muted' : ''}"><input name="values" type="checkbox" value="N" ${Ndisabled} ${Nchecked} amount="${N eq null ? 0 : N}"/> did not meet the search criteria</td>
-    </tr>
-    <tr>
-      <td class="center ${Y eq null ? 'muted' : ''}"><b>${Y eq null ? 0 : Y}</b> transcripts</td>
-      <td class="center ${N eq null ? 'muted' : ''}"><b>${N eq null ? 0 : N}</b> transcripts</td>
-    </tr>
-    </table>
-    </td>
-  </tr>
-</table>
-
--->
-
-
 <!-- VERTICAL layout -->
 
 <table id="leafFilter" data-display="${N ne null}" data-Y="${Y}" data-N="${N}" >
@@ -64,11 +38,13 @@
     <tr>
       <td><input name="values" type="checkbox" value="Y" ${Ydisabled} ${Ychecked} amount="${Y eq null ? 0 : Y}"/></td>
       <td class="${Y eq null ? 'muted' : ''} aleft">did meet the search criteria</td>
+      <td><imp:image  src="wdk/images/checkY-2.png" /></td>
       <td class="${Y eq null ? 'muted' : ''} aright"><b>${Y eq null ? 0 : Y}</b> transcripts</td>
     </tr>
     <tr>
       <td><input name="values" type="checkbox" value="N" ${Ndisabled} ${Nchecked} amount="${N eq null ? 0 : N}"/></td>
       <td class="${N eq null ? 'muted' : ''} aleft">did not meet the search criteria</td>
+      <td><imp:image  src="wdk/images/checkN-2.png" /></td>
       <td class="${N eq null ? 'muted' : ''} aright"><b>${N eq null ? 0 : N}</b> transcripts</td>
     </tr>
     </table>
