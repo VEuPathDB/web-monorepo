@@ -1,5 +1,7 @@
 wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
+  var GENE_BOOLEAN_FILTER_EXPANDED_KEY = "eupathdb::gene_boolean_filter_expanded";
+
   // was used for leaf step, still available in Add Step
   function openTransform(stepId) {
     var currentStrategyFrontId = wdk.addStepPopup.current_Front_Strategy_Id;
@@ -21,32 +23,20 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
 
 
-  // BOOLEAN STEP FILTER
-  function loadGeneBooleanFilter(event) {
-
+  /**
+   * BOOLEAN STEP FILTER
+   *
+   * @param {ClickEvent} event
+   * @param {Number} count Recursive invocation count used for retry logic.
+   */
+  function loadGeneBooleanFilter(event, count) {
+    count = count || 0;
     // using $ in a var name is convention to indicate it is a jquery object and we can apply jquery methods without using parenthesis
     var $filter = $(event.target).find('.gene-boolean-filter');
 
-    // when user clicks on "Explore"
-    $filter.on('click', '.gene-boolean-filter-controls-toggle', function(e) {
-        e.preventDefault();
-        $filter.find('.gene-boolean-filter-controls').toggle(400);
-        if ( $('a.gene-boolean-filter-controls-toggle').text() === 'Collapse' ) {
-          $('a.gene-boolean-filter-controls-toggle').text('Explore');
-        }
-        else {
-          $('a.gene-boolean-filter-controls-toggle').text('Collapse');
-        };
-      });
-
-    // load filter table even if user did not click on "explore", cause we need to show icon
-    reallyLoadGeneBooleanFilter($filter);
-  }
-
-  function reallyLoadGeneBooleanFilter($filter, count) {
-    count = count || 0;
     // example of data:  { step=103340140,  filter="gene_boolean_filter_array"}
     var data = $filter.data();
+
     $filter
       .find('.gene-boolean-filter-summary')
       .load('getFilterSummary.do', data, function(response, status) {
@@ -54,44 +44,74 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         // FIXME Remove before release
         // retry once, for some fault tolerance
         if (status == 'error' && count < 1) {
-          reallyLoadGeneBooleanFilter($filter, ++count);
+          loadGeneBooleanFilter(event, ++count);
+          return;
         }
+
         // if either one YN/NY/NN is > 0 we show table
-        if ($filter.find('table').data('display')) {
-          // this shows the warning sentence only; the table has display none, controlled by toggle via class name association
-          $filter.css('display', 'block');
-          // icon in transcript tab
-          if ( $('i#tr-warning').length == 0 ){
-            $( 'li#transcript-view a span' ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' ></i>") );
+        if (!$filter.find('table').data('display')) {
+          return;
+        }
+
+        // get expand state of controls
+        var expand = JSON.parse(window.localStorage.getItem(GENE_BOOLEAN_FILTER_EXPANDED_KEY) || false);
+
+        // store initial checked values as eg: "1101"
+        var initialCheckboxesState = checkBooleanBoxesState($filter).trim();
+
+        // expand filter controls if expanded is true
+        toggleGeneBooleanFilterExpansion($filter, expand);
+
+        // this shows the warning sentence only; the table has display none, controlled by toggle via class name association
+        $filter.css('display', 'block');
+
+        // icon in transcript tab
+        if ( $('i#tr-warning').length == 0 ){
+          $( 'li#transcript-view a span' ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' ></i>") );
+        }
+
+        // when user clicks on "Explore"
+        $filter.on('click', '.gene-boolean-filter-controls-toggle', function(e) {
+          e.preventDefault();
+          toggleGeneBooleanFilterExpansion($filter);
+        });
+
+        // when a boolean filter input box is clicked
+        $filter.on('click', '#booleanFilter input[type=checkbox]', function(e) {
+          // check new state for checkboxes (one has been added or removed) 
+          var currChBxState = checkBooleanBoxesState($filter);
+          //console.log("initial is: ",initialCheckboxesState," and now it is:", currChBxState);
+          // show user its current selection
+          $('p#trSelection span').text(currChBxState);
+
+          // if different from initialCheckboxesState, enable Apply button, otherwise disable; set consistent popup message
+          if( initialCheckboxesState !=  currChBxState ) {
+            $('button.gene-boolean-filter-apply-button').removeProp('disabled');
+            $('button.gene-boolean-filter-apply-button').prop('title','If selection is applied, it will change the step results and therefore have an effect on the rest of your strategy.');
           }
-          // store initial checked values as eg: "1101"
-          var initialCheckboxesState = checkBooleanBoxesState($filter).trim();
-
-          // when a boolean filter input box is clicked
-          $filter.on('click', '#booleanFilter input[type=checkbox]', function(e) {
-            // check new state for checkboxes (one has been added or removed) 
-            var currChBxState = checkBooleanBoxesState($filter);
-            //console.log("initial is: ",initialCheckboxesState," and now it is:", currChBxState);
-            // show user its current selection
-            $('p#trSelection span').text(currChBxState);
-
-            // if different from initialCheckboxesState, enable Apply button, otherwise disable; set consistent popup message
-            if( initialCheckboxesState !=  currChBxState ) {
-              $('button.gene-boolean-filter-apply-button').removeProp('disabled');
-              $('button.gene-boolean-filter-apply-button').prop('title','If selection is applied, it will change the step results and therefore have an effect on the rest of your strategy.');
-            }
-            else {
-              $('button.gene-boolean-filter-apply-button').prop('disabled', true);
-              $('button.gene-boolean-filter-apply-button').prop('title','To enable this button, select/unselect transcript sets.');
-            }
-          });
-
-          // do not show warning sentence in genes view
-          if ( $("div#genes").parent().css('display') != 'none'){
-            $("div#genes div.gene-boolean-filter").remove();
+          else {
+            $('button.gene-boolean-filter-apply-button').prop('disabled', true);
+            $('button.gene-boolean-filter-apply-button').prop('title','To enable this button, select/unselect transcript sets.');
           }
+        });
+
+        // do not show warning sentence in genes view
+        if ( $("div#genes").parent().css('display') != 'none'){
+          $("div#genes div.gene-boolean-filter").remove();
         }
       });
+  }
+
+  /**
+   * @param {jQuery} $filter jQuery container for DOM node
+   * @param {Boolean} expand? Optional state. If not provided, the current state will be toggled
+   */
+  function toggleGeneBooleanFilterExpansion($filter, expand) {
+    var $controls = $filter.find('.gene-boolean-filter-controls');
+    var label = expand ? 'Collapse' : 'Explore';
+    $controls.toggle(expand);
+    $('a.gene-boolean-filter-controls-toggle').text(label);
+    window.localStorage.setItem(GENE_BOOLEAN_FILTER_EXPANDED_KEY, expand);
   }
 
   // parameter: filter jquery object
