@@ -13,7 +13,7 @@ function scrollToElementById(id) {
 
 function TranscriptList(props) {
   let { record, recordClass } = props;
-  let params = { class: recordClass.fullName };
+  let params = { class: recordClass.name };
   if (record.tables.GeneTranscripts == null) return null;
 
   return (
@@ -46,13 +46,13 @@ export function RecordNavigationSectionCategories(props) {
       <h3>Gene</h3>
       <props.DefaultComponent
         {...props}
-        categories={geneCategory.subCategories}
+        categories={geneCategory.categories}
       />
       <h3>Transcript</h3>
       <TranscriptList {...props}/>
       <props.DefaultComponent
         {...props}
-        categories={transCategory.subCategories}
+        categories={transCategory.categories}
       />
     </div>
   );
@@ -90,14 +90,14 @@ export let RecordMainSection = React.createClass({
   renderGeneCategory(category) {
     return (
       <section id={category.name} key={category.name}>
-        <this.props.DefaultComponent {...this.props} categories={category.subCategories}/>
+        <this.props.DefaultComponent {...this.props} categories={category.categories}/>
       </section>
     );
   },
 
   renderTransCategory(category) {
     let { recordClass, record, collapsedCategories } = this.props;
-    let allCategoriesHidden = category.subCategories.every(cat => collapsedCategories.includes(cat.name));
+    let allCategoriesHidden = category.categories.every(cat => collapsedCategories.includes(cat.name));
     return (
       <section id={category.name} key={category.name}>
         <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
@@ -107,7 +107,7 @@ export let RecordMainSection = React.createClass({
               let { transcript_id } = row;
               let isActive = transcript_id === record.id.source_id;
               let query = Object.assign({}, record.id, { source_id: transcript_id });
-              let params = { class: recordClass.fullName };
+              let params = { class: recordClass.name };
               return (
                 <Link
                   to="record"
@@ -125,7 +125,7 @@ export let RecordMainSection = React.createClass({
         <div className="eupathdb-TranscriptTabContent">
           {allCategoriesHidden
             ? <p>All Transcript categories are currently hidden.</p>
-            :  <this.props.DefaultComponent {...this.props} categories={category.subCategories}/>}
+            :  <this.props.DefaultComponent {...this.props} categories={category.categories}/>}
         </div>
       </section>
     );

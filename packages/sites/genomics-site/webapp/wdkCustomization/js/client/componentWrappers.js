@@ -22,7 +22,7 @@ export function Main(DefaultComponent) {
 // Customize the Record Component
 export function RecordUI(DefaultComponent) {
   return function ApiRecordUI(props) {
-    switch (props.recordClass.fullName) {
+    switch (props.recordClass.name) {
       case 'DatasetRecordClasses.DatasetRecordClass':
         return <Dataset.RecordUI {...props}/>
 
@@ -34,7 +34,7 @@ export function RecordUI(DefaultComponent) {
 
 export function RecordMainSection(DefaultComponent) {
   return function ApiRecordMainSection(props) {
-    if (props.recordClass.fullName == 'TranscriptRecordClasses.TranscriptRecordClass' && props.depth == null) {
+    if (props.recordClass.name == 'TranscriptRecordClasses.TranscriptRecordClass' && props.depth == null) {
       return <Transcript.RecordMainSection {...props} DefaultComponent={DefaultComponent}/>;
     }
     return <DefaultComponent {...props}/>
@@ -43,7 +43,7 @@ export function RecordMainSection(DefaultComponent) {
 
 export function RecordNavigationSectionCategories(DefaultComponent) {
   return function ApiRecordNavigationSectionCategories(props) {
-    switch (props.recordClass.fullName) {
+    switch (props.recordClass.name) {
       case 'TranscriptRecordClasses.TranscriptRecordClass':
         return (
           <Transcript.RecordNavigationSectionCategories
