@@ -134,7 +134,7 @@ export let RecordMainSection = React.createClass({
 });
 
 export function ExpressionGraphTable(props) {
-  let included = props.tableMeta.propertyLists.includeInTable || [];
+  let included = props.tableMeta.properties.includeInTable || [];
 
   let tableMeta = Object.assign({}, props.tableMeta, {
     attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
