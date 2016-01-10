@@ -48,13 +48,13 @@
 
 <!-- if LEAF step: if this is a Transcript Record:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
-  <c:if test="${!step.isBoolean && trRecord eq 'true'}"> 
+  <c:if test="${!step.isCombined && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['matched_transcript_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
 
     <!-- Y/N table:  
          - a jsp/tag (matchesResultFilter) will generate the table with correct display
-         - the condition to show the icon and table in a boolean step requires the N count 
+         - the condition to show the icon and table in a step requires the N count 
          - the icon is shown in the tr-tab, independently of what tab is opened (gene view or tr view)
     -->
     <div class="gene-leaf-filter ui-helper-clearfix"
@@ -90,7 +90,7 @@
   </c:if>  
 
 
-<!-- if BOOLEAN step: if this is a Transcript Record:
+<!-- if COMBINED (boolean or spanlogic) step: if this is a Transcript Record:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
   <c:if test="${step.isBoolean && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
