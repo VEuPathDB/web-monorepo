@@ -69,6 +69,14 @@ h4 {
   margin-left: 500px;
 }
 
+.wdk-RecordAttributeSectionItem.wdk-RecordAttributeSectionItem__fasta_transcript_sequence {
+  width: 100%;
+}
+
+.wdk-RecordAttributeSectionItem.wdk-RecordAttributeSectionItem__fasta_transcript_sequence .wdk-RecordAttributeName {
+  display: block;
+}
+
 .wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__eupathdb_release {
   width: 125px;;
 }
