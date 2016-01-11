@@ -54,7 +54,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         }
 
         // get expand state of controls
-        var expand = JSON.parse(window.localStorage.getItem(GENE_BOOLEAN_FILTER_EXPANDED_KEY) || false);
+        var expand = wdk.user.getPreference(GENE_BOOLEAN_FILTER_EXPANDED_KEY, false);
 
         // store initial checked values as eg: "1101"
         var initialCheckboxesState = checkBooleanBoxesState($filter).trim();
@@ -73,7 +73,9 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         // when user clicks on "Explore"
         $filter.on('click', '.gene-boolean-filter-controls-toggle', function(e) {
           e.preventDefault();
-          toggleGeneBooleanFilterExpansion($filter);
+          expand = !expand;
+          wdk.user.setPreference(GENE_BOOLEAN_FILTER_EXPANDED_KEY, expand);
+          toggleGeneBooleanFilterExpansion($filter, expand);
         });
 
         // when a boolean filter input box is clicked
@@ -107,11 +109,10 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
    * @param {Boolean} expand? Optional state. If not provided, the current state will be toggled
    */
   function toggleGeneBooleanFilterExpansion($filter, expand) {
-    var $controls = $filter.find('.gene-boolean-filter-controls');
-    var label = expand ? 'Collapse' : 'Explore';
-    $controls.toggle(expand);
-    $('a.gene-boolean-filter-controls-toggle').text(label);
-    window.localStorage.setItem(GENE_BOOLEAN_FILTER_EXPANDED_KEY, expand);
+    $filter
+      .find('.gene-boolean-filter-controls').toggle(expand)
+      .end()
+      .find('.gene-boolean-filter-controls-toggle').text(expand ? 'Collapse' : 'Explore');
   }
 
   // parameter: filter jquery object
