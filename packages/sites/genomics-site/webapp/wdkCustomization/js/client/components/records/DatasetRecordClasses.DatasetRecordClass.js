@@ -75,7 +75,7 @@ let Searches = React.createClass({
 
     if (question == null) return null;
 
-    let recordClass = this.props.recordClasses.find(r => r.name === question.class);
+    let recordClass = this.props.recordClasses.find(r => r.name === question.recordClass);
     let searchName = `Identify ${recordClass.displayNamePlural} by ${question.displayName}`;
     return (
       <li key={index}>
