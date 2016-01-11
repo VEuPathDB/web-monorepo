@@ -32,6 +32,23 @@ export function RecordUI(DefaultComponent) {
   };
 }
 
+export function RecordOverview(DefaultComponent) {
+  return function ApiRecordOverview(props) {
+    switch (props.recordClass.name) {
+      case 'TranscriptRecordClasses.TranscriptRecordClass':
+        return (
+          <Transcript.RecordOverview
+            {...props}
+            DefaultComponent={DefaultComponent}
+          />
+        );
+
+      default:
+        return <DefaultComponent {...props}/>
+    }
+  };
+}
+
 export function RecordMainSection(DefaultComponent) {
   return function ApiRecordMainSection(props) {
     if (props.recordClass.name == 'TranscriptRecordClasses.TranscriptRecordClass' && props.depth == null) {

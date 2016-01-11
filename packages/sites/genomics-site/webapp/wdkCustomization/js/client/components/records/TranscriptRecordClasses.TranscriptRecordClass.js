@@ -37,6 +37,35 @@ function TranscriptList(props) {
   );
 }
 
+export function RecordOverview(props) {
+  let {
+    gbrowseLink,
+    project_id,
+    sequence_id,
+    gene_context_start,
+    gene_context_end,
+    gene_source_id,
+    dna_gtracks = 'test'
+  } = props.record.attributes;
+  let iframeUrl = `/cgi-bin/gbrowse_img/${project_id.toLowerCase()}/?name=${sequence_id}:${gene_context_start}..${gene_context_end};hmap=gbrowseSyn;l=${dna_gtracks};width=800;embed=1;h_feat=${gene_source_id.toLowerCase()}@yellow;genepage=1`;
+  return (
+    <div>
+      <props.DefaultComponent {...props}/>
+      <div>
+        <center>
+          <strong>Genomic Context</strong>
+          <a id="gbView" href={gbrowseLink}>View in Genome Browser</a>
+          <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
+          <div id="${gnCtxDivId}"></div>
+          <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} />
+          <a id="gbView" href={gbrowseLink}>View in Genome Browser</a>
+          <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
+        </center>
+      </div>
+    </div>
+  );
+}
+
 export function RecordNavigationSectionCategories(props) {
   let { categories } = props;
   let geneCategory = categories.find(cat => cat.name === 'gene_parent');
