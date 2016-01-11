@@ -22,7 +22,7 @@ export function Main(DefaultComponent) {
 // Customize the Record Component
 export function RecordUI(DefaultComponent) {
   return function ApiRecordUI(props) {
-    switch (props.recordClass.fullName) {
+    switch (props.recordClass.name) {
       case 'DatasetRecordClasses.DatasetRecordClass':
         return <Dataset.RecordUI {...props}/>
 
