@@ -52,7 +52,7 @@
   <a name="_top"></a>
   <h1>Data Sets</h1>  
   <div id="beta-page"><a title="Please contact us with your feedback." 
-                       href="${baseUrl}/app/answer/DatasetQuestions.AllDatasets">New Data Sets page!
+                       href="${baseUrl}/app/record/dataset/search/AllDatasets/result">New Data Sets page!
                        <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
   </div>
 
