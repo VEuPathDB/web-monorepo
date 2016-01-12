@@ -21,13 +21,14 @@ function TranscriptList(props) {
     <ul className="eupathdb-TranscriptRecordNavList">
     {record.tables.GeneTranscripts.map(row => {
       let { transcript_id } = row;
-      let query = Object.assign({}, record.id, {
-        source_id: transcript_id
-      });
+      let params = {
+        recordClass: recordClass.urlSegment,
+        splat: record.id.map(p => p.name === 'source_id' ? transcript_id : p.value).join('/')
+      };
       return (
         <li key={transcript_id}>
-        <Link to="record" params={params} query={query} onClick={() => scrollToElementById('trans_parent')}>
-        {row.transcript_id}
+        <Link to="record" params={params} onClick={() => scrollToElementById('trans_parent')}>
+          {transcript_id}
         </Link>
         </li>
       );
@@ -135,13 +136,14 @@ export let RecordMainSection = React.createClass({
             {this.props.record.tables.GeneTranscripts.map(row => {
               let { transcript_id } = row;
               let isActive = transcript_id === record.id.source_id;
-              let query = Object.assign({}, record.id, { source_id: transcript_id });
-              let params = { class: recordClass.name };
+              let params = {
+                recordClass: recordClass.urlSegment,
+                splat: record.id.map(p => p.value).join('/')
+              };
               return (
                 <Link
                   to="record"
                   params={params}
-                  query={query}
                   className="eupathdb-TranscriptLink"
                   activeClassName="eupathdb-TranscriptLink-active"
                 >
