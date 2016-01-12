@@ -140,6 +140,7 @@ let Publications = React.createClass({
   },
 
   _renderPublication(publication, index) {
+    if (publication.pubmed_link == null) return null;
     return (
       <li key={index}>{formatLink(publication.pubmed_link)}</li>
     );
@@ -375,7 +376,7 @@ export let RecordUI = React.createClass({
                 </tr>
               ) : null}
 
-              {primaryPublication ? (
+              {primaryPublication && primaryPublication.pubmed_link ? (
                 <tr>
                   <th>Primary publication:</th>
                   <td>{renderPrimaryPublication(primaryPublication)}</td>
