@@ -14,7 +14,8 @@
               description="truncate the result"
 %>
 
-<%@ attribute name="recordName"
+<%@ attribute name="recordClass"
+              type="org.gusdb.wdk.model.jspwrap.RecordClassBean"
               required="false"
               description="The full name of the record class, to be used to render primary key attribute"
 %> 
@@ -62,7 +63,7 @@
       <!-- display a link to record page -->
       <imp:recordLink
         primaryKeyAttributeValue="${attributeValue}"
-        recordName="${recordName}"
+        recordClass="${recordClass}"
       />
     </c:when>
 

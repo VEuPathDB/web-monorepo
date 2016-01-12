@@ -11,17 +11,15 @@
   />
 
   <jsp:directive.attribute
-    name="recordName"
-    required="false"
+    name="recordClass"
+    type="org.gusdb.wdk.model.jspwrap.RecordClassBean"
+    required="true"
     description="The full name of the record class"
   />
 
-  <c:url var="recordLink" value="/app/record/${recordName}?" />
+  <c:url var="recordLink" value="/app/record/${recordClass.urlSegment}" />
   <c:forEach items="${primaryKeyAttributeValue.values}" var="pkValue" varStatus="loop">
-    <c:set var="recordLink" value="${recordLink}${pkValue.key}=${pkValue.value}" />
-    <c:if test="${not loop.end}">
-      <c:set var="recordLink" value="${recordLink}&amp;"/>
-    </c:if>
+    <c:set var="recordLink" value="${recordLink}/${pkValue.value}" />
   </c:forEach>
 
   <a href="${recordLink}">${primaryKeyAttributeValue.value}</a>
