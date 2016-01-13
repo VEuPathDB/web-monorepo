@@ -10,10 +10,19 @@ import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecor
 export function RecordController(DefaultComponent) {
   return function ApiRecordController(props) {
     let { splat, recordClass } = props.params;
+    let projectIdUrl = '/' + wdk.MODEL_NAME;
+    let hasProjectId = splat.endsWith(projectIdUrl);
 
-    if (recordClass != 'dataset' && !splat.endsWith('/' + wdk.MODEL_NAME)) {
+    if (hasProjectId) {
+      setTimeout(function() {
+        props.router.replaceWith(props.path.replace(projectIdUrl, ''));
+      }, 0);
+      return <Wdk.client.Components.Loading/>;
+    }
+
+    if (recordClass != 'dataset' && !hasProjectId) {
       let params = Object.assign({}, props.params, {
-        splat: splat + '/' + wdk.MODEL_NAME
+        splat: splat + projectIdUrl
       });
       return (
         <DefaultComponent {...props} params={params}/>
