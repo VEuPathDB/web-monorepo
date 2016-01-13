@@ -133,7 +133,7 @@
           <li><a href="${baseUrl}/getDataset.do?display=detail">Data Sets</a></li>
           <li title="Please contact us with your feedback.">
             <a style="padding-top:0" 
-              href="${baseUrl}/app/record/dataset/search/AllDatasets/result">New Data Sets page!
+              href="${baseUrl}/app/search/dataset/AllDatasets/result">New Data Sets page!
                 <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
           </li>
           <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
