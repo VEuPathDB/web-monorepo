@@ -2,6 +2,28 @@ import Footer from './components/common/Footer';
 import ExpressionGraph from './components/common/ExpressionGraph';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
 
+// Add project id to url.
+//
+// `splat` refers to a wildcard dynamic url segment
+// as defined by the record route. The value of splat is essentially primary key
+// values separated by a '/'.
+export function RecordController(DefaultComponent) {
+  return function ApiRecordController(props) {
+    let { splat } = props.params;
+
+    if (!splat.endsWith('/' + wdk.MODEL_NAME)) {
+      let params = Object.assign({}, props.params, {
+        splat: splat + '/' + wdk.MODEL_NAME
+      });
+      return (
+        <DefaultComponent {...props} params={params}/>
+      );
+    }
+
+    return <DefaultComponent {...props} />
+  };
+}
+
 // Add footer and beta message to Main content
 export function Main(DefaultComponent) {
   return function ApiMain(props) {
