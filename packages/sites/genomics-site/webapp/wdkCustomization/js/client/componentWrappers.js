@@ -11,7 +11,7 @@ export function RecordController(DefaultComponent) {
   return function ApiRecordController(props) {
     let { splat, recordClass } = props.params;
 
-    if (!recordClass == 'dataset' && !splat.endsWith('/' + wdk.MODEL_NAME)) {
+    if (recordClass != 'dataset' && !splat.endsWith('/' + wdk.MODEL_NAME)) {
       let params = Object.assign({}, props.params, {
         splat: splat + '/' + wdk.MODEL_NAME
       });
