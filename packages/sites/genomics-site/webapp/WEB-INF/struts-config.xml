@@ -451,20 +451,12 @@
       <forward name="pq-show-basket" path="/showBasket.do"/>
     </action>
 
-    <!-- Replaced with client RecordPageAdapter below -->
-    <!--
     <action
       path="/showRecord"
       type="org.apidb.apicommon.controller.action.CustomShowRecordAction"
       scope="request">
       <forward name="show_record" path="/record.jsp"/>
       <forward name="run-question" path="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&amp;value(single_gene_id)=${SOURCE_ID}&amp;questionSubmit=Get+Answer"/>
-    </action>
-    -->
-    <action
-      path="/showRecord"
-      parameter="org.gusdb.wdk.controller.actions.client.RecordPageAdapter"
-      type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
     <action
       path="/configDownload"
