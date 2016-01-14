@@ -29,6 +29,7 @@
       <imp:header refer="${refer}" title= "${title}" />
       <jsp:doBody/>
       <imp:IEWarning version="8"/>
+      <imp:dialogs/>
     </body>
   </html>
 </jsp:root>
