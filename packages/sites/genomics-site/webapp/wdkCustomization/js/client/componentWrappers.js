@@ -2,6 +2,16 @@ import Footer from './components/common/Footer';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
 import * as Transcript from './components/records/TranscriptRecordClasses.TranscriptRecordClass';
 
+// Remove project_id from record links
+export function RecordLink(DefaultComponent) {
+  return function ApiRecordLink(props) {
+    let recordId = props.recordId.filter(p => p.name !== 'project_id');
+    return (
+      <DefaultComponent {...props} recordId={recordId}/>
+    );
+  };
+}
+
 // Add project id to url.
 //
 // `splat` refers to a wildcard dynamic url segment
