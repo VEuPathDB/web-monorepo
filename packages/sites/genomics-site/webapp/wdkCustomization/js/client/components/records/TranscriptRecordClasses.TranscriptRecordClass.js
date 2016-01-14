@@ -59,6 +59,9 @@ function TranscriptList(props) {
 }
 
 export function RecordOverview(props) {
+  // FIXME Remove early return when attributes for GBrowse are available
+  return <props.DefaultComponent {...props} />;
+
   let {
     gbrowseLink,
     project_id,
