@@ -12,12 +12,6 @@
 <div id="record-toolbox">
   <ul>
     <c:choose>
-      <c:when test="${type == 'GeneRecordClasses.GeneRecordClass'}">
-        <li>
-          <c:url var="downloadUrl" value="/showSummary.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&skip_to_download=1&value(single_gene_id)=${id}" />
-          <a class="download" href="${downloadUrl}" title="Download this ${recordType}">Download</a>
-        </li>
-      </c:when>
       <c:when test="${type == 'EstRecordClasses.EstRecordClass'}">
         <li>
           <c:url var="downloadUrl" value="/showSummary.do?questionFullName=EstQuestions.EstBySourceId&skip_to_download=1&est_id_type=data&est_id_data=${id}" />
