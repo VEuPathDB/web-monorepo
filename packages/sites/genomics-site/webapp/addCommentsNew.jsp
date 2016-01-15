@@ -142,7 +142,7 @@ function openPubmedWindow(searchBoxId) {
 
           <c:when test="${commentForm.commentTargetId eq 'gene'}">
             <c:set var="returnUrl">
-            <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${commentForm.stableId}"/>
+            <c:url value="/app/record/gene/${commentForm.stableId}"/>
             </c:set>
           </c:when>
 

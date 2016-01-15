@@ -105,7 +105,7 @@ $(document).ready(function(){
       <c:when test="${submitStatus eq 'success'}">
       
         <c:set var="returnUrl">
-        <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${phenotypeForm.stableId}"/>
+        <c:url value="/app/record/gene/${phenotypeForm.stableId}"/>
         </c:set>
 
         <imp:email

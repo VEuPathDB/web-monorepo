@@ -30,7 +30,7 @@ $(document).ready(function() {
 <c:choose>
   <c:when test="${comment_target_id eq 'gene'}">
     <c:set var="returnUrl">
-      <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${stable_id}"/>
+      <c:url value="/app/record/gene/${stable_id}"/>
     </c:set>
   </c:when>
 
@@ -210,7 +210,7 @@ $(document).ready(function() {
                     <c:forEach items="${comment.associatedStableIds}" var="row">
 
                      <c:if test="${comment.commentTarget eq 'gene'}">
-                     <a href="showRecord.do?name=GeneRecordClasses.GeneRecordClass&source_id=<c:out value="${row}"/>"><c:out value="${row}"/> </a>
+                     <a href="app/record/gene/<c:out value="${row}"/>"><c:out value="${row}"/> </a>
                      </c:if>
 
                      <c:if test="${comment.commentTarget eq 'isolate'}">

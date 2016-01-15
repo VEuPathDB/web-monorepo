@@ -93,7 +93,7 @@ sub gffTssChabbert {
   else {
     my $gene = defined $assignedFeature ? $assignedFeature : $assignedFeat;
 
-    my  $link = "<a href='/a/showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$gene'>$gene</a>";
+    my  $link = "<a href='/a/app/record/gene/$gene'>$gene</a>";
     push @data, [ 'Assigned Feature'=> $link];
   }
 
