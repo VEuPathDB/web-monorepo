@@ -12,11 +12,13 @@ export function RecordLink(DefaultComponent) {
   };
 }
 
-// Add project id to url.
+
+// Munge url so that we can hide pieces of primary key we don't want users to see.
 //
 // `splat` refers to a wildcard dynamic url segment
 // as defined by the record route. The value of splat is essentially primary key
 // values separated by a '/'.
+const DEFAULT_TRANSCRIPT_MAGIC_STRING = '_DEFAULT_TRANSCRIPT_';
 export function RecordController(DefaultComponent) {
   return function ApiRecordController(props) {
     let { splat, recordClass } = props.params;
@@ -30,16 +32,23 @@ export function RecordController(DefaultComponent) {
       return <Wdk.client.Components.Loading/>;
     }
 
-    if (recordClass != 'dataset' && !hasProjectId) {
-      let params = Object.assign({}, props.params, {
-        splat: splat + projectIdUrl
-      });
-      return (
-        <DefaultComponent {...props} params={params}/>
-      );
+    if (recordClass === 'dataset') {
+      return ( <DefaultComponent {...props} /> );
     }
 
-    return <DefaultComponent {...props} />
+    let params = recordClass === 'gene' && splat.split('/').length === 1
+
+      ? Object.assign({}, props.params, {
+          splat: [ splat, DEFAULT_TRANSCRIPT_MAGIC_STRING, wdk.MODEL_NAME ].join('/')
+        })
+
+      : Object.assign({}, props.params, {
+          splat: [ splat, wdk.MODEL_NAME ].join('/')
+        });
+
+    return (
+      <DefaultComponent {...props} params={params}/>
+    );
   };
 }
 
