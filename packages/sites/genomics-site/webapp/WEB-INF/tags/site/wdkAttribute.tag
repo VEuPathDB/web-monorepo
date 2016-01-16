@@ -18,7 +18,7 @@
               type="org.gusdb.wdk.model.jspwrap.RecordClassBean"
               required="false"
               description="The full name of the record class, to be used to render primary key attribute"
-%> 
+%>
 
 <c:set var="toTruncate" value="${truncate != null && truncate == 'true'}" />
 <c:set var="attributeField" value="${attributeValue.attributeField}" />
@@ -37,7 +37,7 @@
 </c:if>
 
 <td style="padding:2px;vertical-align:middle">
-  <div class="attribute-summary" ${align} style="${nowrap}padding:3px 2px">   
+  <div class="attribute-summary" ${align} style="${nowrap}padding:3px 2px">
   <!-- need to know if fieldVal should be hot linked -->
   <c:choose>
 
@@ -62,6 +62,7 @@
 
       <!-- display a link to record page -->
       <imp:recordLink
+        displayValue="${displayValue}"
         primaryKeyAttributeValue="${attributeValue}"
         recordClass="${recordClass}"
       />
