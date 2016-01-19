@@ -50,7 +50,7 @@ div.question .left {
 </style>
 
 <c:set var="type" value="Gene Questions: ${category}" />
-<c:if test="${record != 'GeneRecordClasses.GeneRecordClass'}">
+<c:if test="${record != 'TranscriptRecordClasses.TranscriptRecordClass'}">
 	<c:set var="type" value="${category} Questions" />
 </c:if>
 
