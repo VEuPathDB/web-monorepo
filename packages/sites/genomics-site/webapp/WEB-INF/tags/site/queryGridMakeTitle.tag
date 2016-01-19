@@ -15,7 +15,7 @@
 %>
 
 
-<c:set value="${wdkModel.rootCategoryMap['GeneRecordClasses.GeneRecordClass']}" var="rootCat"/>
+<c:set value="${wdkModel.rootCategoryMap['TranscriptRecordClasses.TranscriptRecordClass']}" var="rootCat"/>
 
 <c:set var="found" value="false"/>
 <c:forEach items="${rootCat.children}" var="catEntry">
