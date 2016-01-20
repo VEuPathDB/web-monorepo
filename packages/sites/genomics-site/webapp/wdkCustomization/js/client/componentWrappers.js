@@ -19,7 +19,12 @@ export function RecordLink(DefaultComponent) {
 // as defined by the record route. The value of splat is essentially primary key
 // values separated by a '/'.
 const DEFAULT_TRANSCRIPT_MAGIC_STRING = '_DEFAULT_TRANSCRIPT_';
-export function RecordController(DefaultComponent) {
+
+// Project id is not needed for these record classes.
+// Matches urlSegment.
+const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
+
+export function RecordController(WdkRecordController) {
   return function ApiRecordController(props) {
     let { splat, recordClass } = props.params;
     let projectIdUrl = '/' + wdk.MODEL_NAME;
@@ -32,8 +37,10 @@ export function RecordController(DefaultComponent) {
       return <Wdk.client.Components.Loading/>;
     }
 
-    if (recordClass === 'dataset') {
-      return ( <DefaultComponent {...props} /> );
+    // These record classes do not need the project id as a part of the primary key
+    // so we just render with the url params as-is.
+    if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
+      return ( <WdkRecordController {...props} /> );
     }
 
     let params = recordClass === 'gene' && splat.split('/').length === 1
@@ -47,7 +54,7 @@ export function RecordController(DefaultComponent) {
         });
 
     return (
-      <DefaultComponent {...props} params={params}/>
+      <WdkRecordController {...props} params={params}/>
     );
   };
 }
