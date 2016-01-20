@@ -20,7 +20,7 @@
               <a title="Click to access this ID's page" href="<c:url value='${url}' />">${pkValues['gene_source_id']}</a>
 </c:when>
 <c:otherwise>
-              <c:set var="url" value="/app/record/${recordClass.urlsegment}/${pkValues['source_id']}" />
+              <c:set var="url" value="/app/record/${recordClass.urlSegment}/${pkValues['source_id']}" />
               <a title="Click to access this ID's page" href="<c:url value='${url}' />">${pkValues['source_id']}</a>
 </c:otherwise>
 </c:choose>
