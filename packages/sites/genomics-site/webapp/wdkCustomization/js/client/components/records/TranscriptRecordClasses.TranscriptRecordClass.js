@@ -1,6 +1,10 @@
 import ExpressionGraph from '../common/ExpressionGraph';
 
 let {
+  OntologyUtils
+} = Wdk.client;
+
+let {
   CheckboxList,
   RecordLink,
   Sticky
@@ -90,22 +94,39 @@ export function RecordOverview(props) {
   );
 }
 
+let treeCache = new WeakMap;
+function extractGeneAndTranscriptTrees(categories) {
+  if (!treeCache.has(categories)) {
+    let fakeOntology = { tree: { children: categories } };
+    let geneCategory = OntologyUtils.getTree(
+      fakeOntology,
+      node => _.get(node, 'properties.geneOrTranscript[0]') === 'gene'
+    );
+    let transCategory = OntologyUtils.getTree(
+      fakeOntology,
+      node => _.get(node, 'properties.geneOrTranscript[0]') === 'transcript'
+    );
+    treeCache.set(categories, { geneCategory, transCategory });
+  }
+
+  return treeCache.get(categories);
+}
+
 export function RecordNavigationSectionCategories(props) {
   let { categories } = props;
-  let geneCategory = categories.find(cat => cat.name === 'gene_parent');
-  let transCategory = categories.find(cat => cat.name === 'trans_parent');
+  let { geneCategory, transCategory } = extractGeneAndTranscriptTrees(categories);
   return (
     <div className="eupathdb-TranscriptRecordNavigationSectionContainer">
       <h3>Gene</h3>
       <props.DefaultComponent
         {...props}
-        categories={geneCategory.categories}
+        categories={geneCategory.children}
       />
       <h3>Transcript</h3>
       <TranscriptList {...props}/>
       <props.DefaultComponent
         {...props}
-        categories={transCategory.categories}
+        categories={transCategory.children}
       />
     </div>
   );
@@ -115,44 +136,31 @@ export let RecordMainSection = React.createClass({
 
   render() {
     let { categories } = this.props;
+    let { geneCategory, transCategory } = extractGeneAndTranscriptTrees(categories);
 
     let uncategorized = categories.find(c => c.name === undefined);
     categories = categories.filter(c => c !== uncategorized);
     return(
       <div>
-        {categories.map(this.renderCategory)}
+        {this.renderGeneCategory(geneCategory)}
+        {this.renderTransCategory(transCategory)}
       </div>
-    );
-  },
-
-  renderCategory(category) {
-    if (category.name == 'gene_parent') {
-      return this.renderGeneCategory(category);
-    }
-    if (category.name == 'trans_parent') {
-      return this.renderTransCategory(category);
-    }
-    return (
-      <section id={category.name} key={category.name}>
-        <h1>{category.displayName}</h1>
-        <this.props.DefaultComponent {...this.props} categories={[category]}/>
-      </section>
     );
   },
 
   renderGeneCategory(category) {
     return (
-      <section id={category.name} key={category.name}>
-        <this.props.DefaultComponent {...this.props} categories={category.categories}/>
+      <section id='gene'>
+        <this.props.DefaultComponent {...this.props} categories={category.children}/>
       </section>
     );
   },
 
   renderTransCategory(category) {
     let { recordClass, record, collapsedCategories } = this.props;
-    let allCategoriesHidden = category.categories.every(cat => collapsedCategories.includes(cat.name));
+    let allCategoriesHidden = category.children.every(cat => collapsedCategories.includes(cat.name));
     return (
-      <section id={category.name} key={category.name}>
+      <section id='trans'>
         <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
           <h1 className="eupathdb-TranscriptHeading">Transcript</h1>
           <nav className="eupathdb-TranscriptTabList">
@@ -177,7 +185,7 @@ export let RecordMainSection = React.createClass({
         <div className="eupathdb-TranscriptTabContent">
           {allCategoriesHidden
             ? <p>All Transcript categories are currently hidden.</p>
-            :  <this.props.DefaultComponent {...this.props} categories={category.categories}/>}
+            :  <this.props.DefaultComponent {...this.props} categories={category.children}/>}
         </div>
       </section>
     );
