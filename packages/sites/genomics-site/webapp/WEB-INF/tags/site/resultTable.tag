@@ -16,6 +16,7 @@
 %>
 
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
+<c:set var="questionName" value="${step.answerValue.question.name}"/>
 <c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
   <c:set var="trRecord" value="true"/>
 </c:if>
@@ -25,7 +26,7 @@
   <c:set var="showNativeCount" value="true"/>
 </c:if>
 
-<%-- we are not setting thi svalue correctly any longer (LEAF STEP)
+<%-- we are not setting this value correctly any longer (LEAF STEP)
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
 <c:if test="${genesMissingTranscriptsCount gt 0 && !step.isBoolean }">
@@ -41,14 +42,20 @@
 <!-- step could be single or combined:
      single: will show icon in the tr-tab if there are missing trasncripts (N <> 0)
      combined: will show the icon in the tr-tab if either YN,NY,NN <> 0
+     exceptions: basket result step:       do not show anything
+                 span logic combined step: do not show anything
 -->
 
-<!-- ANY TAB ANY STEP -->
+<!-- ANY TAB, ANY STEP -->
 <div id="${view}">
 
-<!-- if LEAF step: if this is a Transcript Record:
-         generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
-  <c:if test="${!step.isCombined && trRecord eq 'true'}"> 
+<!-- if LEAF step, if this is a Transcript Record and not a basket result:
+         generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed
+-->
+<!-- THIS condition is used too in MatchedTranscriptFilter.defaultValue(), accessed by every newly created step.
+       defaultValue() will be null for the leaf steps outside the condition 
+-->
+  <c:if test="${!step.isCombined && trRecord eq 'true' && !fn:containsIgnoreCase(questionName, 'basket') }"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['matched_transcript_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
 
@@ -90,7 +97,7 @@
   </c:if>  
 
 
-<!-- if COMBINED (boolean or spanlogic) step: if this is a Transcript Record:
+<!-- if boolean step (spanlogic does not need filter for now): if this is a Transcript Record:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
   <c:if test="${step.isBoolean && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
