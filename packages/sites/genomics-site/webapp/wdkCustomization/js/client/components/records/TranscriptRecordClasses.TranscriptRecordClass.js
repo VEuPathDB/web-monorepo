@@ -10,9 +10,12 @@ let {
   Sticky
 } = Wdk.client.Components;
 
+const GENE_ID = 'gene';
+const TRANSCRIPT_ID = 'transcript';
+
 function scrollToElementById(id) {
   let el = document.getElementById(id);
-  if (el === undefined) return;
+  if (el == undefined) return;
   let rect = el.getBoundingClientRect();
   if (rect.top < 0) return;
   el.scrollIntoView();
@@ -27,7 +30,7 @@ function scrollToElementById(id) {
 function makeRecordId(oldId, newParts) {
   return oldId.map(idPart => {
     return Object.assign({}, idPart, {
-      value: newParts[idPart] || idPart.value
+      value: newParts[idPart.name] || idPart.value
     });
   });
 }
@@ -50,7 +53,7 @@ function TranscriptList(props) {
           <RecordLink
             recordId={recordId}
             recordClass={recordClass}
-            onClick={() => scrollToElementById('trans_parent')}
+            onClick={() => scrollToElementById(TRANSCRIPT_ID)}
           >
             {transcript_id}
           </RecordLink>
@@ -100,11 +103,11 @@ function extractGeneAndTranscriptTrees(categories) {
     let fakeOntology = { tree: { children: categories } };
     let geneCategory = OntologyUtils.getTree(
       fakeOntology,
-      node => _.get(node, 'properties.geneOrTranscript[0]') === 'gene'
+      node => _.get(node, 'properties.geneOrTranscript[0]') === GENE_ID
     );
     let transCategory = OntologyUtils.getTree(
       fakeOntology,
-      node => _.get(node, 'properties.geneOrTranscript[0]') === 'transcript'
+      node => _.get(node, 'properties.geneOrTranscript[0]') === TRANSCRIPT_ID
     );
     treeCache.set(categories, { geneCategory, transCategory });
   }
@@ -150,7 +153,7 @@ export let RecordMainSection = React.createClass({
 
   renderGeneCategory(category) {
     return (
-      <section id='gene'>
+      <section id={GENE_ID}>
         <this.props.DefaultComponent {...this.props} categories={category.children}/>
       </section>
     );
@@ -160,7 +163,7 @@ export let RecordMainSection = React.createClass({
     let { recordClass, record, collapsedCategories } = this.props;
     let allCategoriesHidden = category.children.every(cat => collapsedCategories.includes(cat.name));
     return (
-      <section id='trans'>
+      <section id={TRANSCRIPT_ID}>
         <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
           <h1 className="eupathdb-TranscriptHeading">Transcript</h1>
           <nav className="eupathdb-TranscriptTabList">
