@@ -21,6 +21,31 @@ function scrollToElementById(id) {
   el.scrollIntoView();
 }
 
+// For use on the Transcript Record page.
+// This will load the target transcript without calling the router, thus
+// keeping the URL the same.
+function TranscriptLink(props, context) {
+  return (
+    <a
+      {...props}
+      href
+      onClick={(event) => {
+        event.preventDefault();
+        context.actionCreators.RecordViewActionCreator.fetchRecordDetails(
+          props.recordClass.urlSegment,
+          props.recordId.map(p => p.value)
+        );
+        props.onClick(event);
+      }}
+    >
+      {props.children}
+    </a>
+  );
+}
+TranscriptLink.contextTypes = {
+  actionCreators: React.PropTypes.object
+};
+
 /**
  * Create a new record ID based on an existing ID.
  *
@@ -35,7 +60,7 @@ function makeRecordId(oldId, newParts) {
   });
 }
 
-function TranscriptList(props) {
+function TranscriptList(props, context) {
   let { record, recordClass } = props;
   let params = { class: recordClass.name };
   if (record.tables.GeneTranscripts == null) return null;
@@ -51,14 +76,16 @@ function TranscriptList(props) {
       let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
       return (
         <li key={transcript_id}>
-          <RecordLink
+          <TranscriptLink
             className={active ? 'active' : ''}
             recordId={recordId}
             recordClass={recordClass}
-            onClick={() => scrollToElementById(TRANSCRIPT_ID)}
+            onClick={() => {
+              scrollToElementById(TRANSCRIPT_ID);
+            }}
           >
             {transcript_id}
-          </RecordLink>
+          </TranscriptLink>
         </li>
       );
     })}
@@ -180,14 +207,14 @@ export let RecordMainSection = React.createClass({
                 active ? 'eupathdb-TranscriptLink-active active': ''
               ].join(' ');
               return (
-                <RecordLink
+                <TranscriptLink
                   key={transcript_id}
                   recordId={recordId}
                   recordClass={recordClass}
                   className={className}
                 >
                   {transcript_id}
-                </RecordLink>
+                </TranscriptLink>
               );
             })}
           </nav>
