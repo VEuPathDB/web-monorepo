@@ -48,9 +48,11 @@ function TranscriptList(props) {
       let recordId = makeRecordId(record.id, {
         source_id: transcript_id
       });
+      let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
       return (
         <li key={transcript_id}>
           <RecordLink
+            className={active ? 'active' : ''}
             recordId={recordId}
             recordClass={recordClass}
             onClick={() => scrollToElementById(TRANSCRIPT_ID)}
@@ -172,12 +174,17 @@ export let RecordMainSection = React.createClass({
               let recordId = makeRecordId(record.id, {
                 source_id: transcript_id
               });
+              let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
+              let className = [
+                'eupathdb-TranscriptLink',
+                active ? 'eupathdb-TranscriptLink-active active': ''
+              ].join(' ');
               return (
                 <RecordLink
+                  key={transcript_id}
                   recordId={recordId}
                   recordClass={recordClass}
-                  className="eupathdb-TranscriptLink"
-                  activeClassName="eupathdb-TranscriptLink-active"
+                  className={className}
                 >
                   {transcript_id}
                 </RecordLink>
