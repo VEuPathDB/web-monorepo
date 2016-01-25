@@ -101,6 +101,7 @@
                         </c:when>
                         <c:otherwise>
                           <a href="javascript:void(0)" class="dropdown">${cat.displayName}</a>
+                          <c:set var="questions" value="${cat.websiteQuestions}" />
                         </c:otherwise>
                       </c:choose>
                       <ul>
