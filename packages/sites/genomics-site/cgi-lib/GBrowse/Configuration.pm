@@ -341,56 +341,59 @@ EOL
 
 
 sub getOntologyCategoryFromTrackName {
-  my ($trackName) = @_;
-
+  my ($trackName, $optionalTerminus) = @_;
 
   if($self->{_ontology_category_from_track_name}->{$trackName}) {
-    return $self->{_ontology_category_from_track_name}->{$trackName};
-  }
-
-  my $ua = LWP::UserAgent->new;
-  
-  my $server_endpoint = "http://$ENV{HTTP_HOST}/$ENV{CONTEXT_PATH}/service/ontology/Categories/path";
-
-  print STDERR $server_endpoint . "\n";
- 
-# set custom HTTP request header fields
-  my $req = HTTP::Request->new(POST => $server_endpoint);
-  $req->header('content-type' => 'application/json');
- 
-# add POST data to HTTP request body
-  my $post_data = '{ "scope": "gbrowse" }';
-  $req->content($post_data);
- 
-  my $resp = $ua->request($req);
-  if ($resp->is_success) {
-  my $decoded_json = decode_json( $resp->decoded_content  );
-
-  my %trackNameToPathHashRef;
-  foreach my $pathArrayRef (@$decoded_json) {
-
-    my @pathLabels;
-
-    my $lastIndex = scalar @$pathArrayRef - 1;
-
-    for(my $i = 1; $i < $lastIndex; $i ++) {
-      push @pathLabels, $pathArrayRef->[$i]->{label}->[0];
-
-    }
-
-    my $pathLabelsAsString = join(" : ", @pathLabels);
-    my $trackName = $pathArrayRef->[$lastIndex]->{name}->[0];
-    $trackNameToPathHashRef{$trackName} = $pathLabelsAsString;
-  }
-  
-  $self->{_ontology_category_from_track_name} = \%trackNameToPathHashRef;
+    $rv = $self->{_ontology_category_from_track_name}->{$trackName};
   }
   else {
-    print STDERR "HTTP POST error code: ", $resp->code, "\n";
-    print STDERR "HTTP POST error message: ", $resp->message, "\n";
+    my $ua = LWP::UserAgent->new;
+  
+    my $server_endpoint = "http://$ENV{HTTP_HOST}/$ENV{CONTEXT_PATH}/service/ontology/Categories/path";
+
+    # set custom HTTP request header fields
+    my $req = HTTP::Request->new(POST => $server_endpoint);
+    $req->header('content-type' => 'application/json');
+ 
+    # add POST data to HTTP request body
+    my $post_data = '{ "scope": "gbrowse" }';
+    $req->content($post_data);
+ 
+    my $resp = $ua->request($req);
+    if ($resp->is_success) {
+      my $decoded_json = decode_json( $resp->decoded_content  );
+
+      my %trackNameToPathHashRef;
+      foreach my $pathArrayRef (@$decoded_json) {
+    
+        my @pathLabels;
+
+        my $lastIndex = scalar @$pathArrayRef - 1;
+
+        for(my $i = 1; $i < $lastIndex; $i ++) {
+          push @pathLabels, $pathArrayRef->[$i]->{displayName}->[0];
+          
+        }
+
+        my $track = $pathArrayRef->[$lastIndex]->{name}->[0];
+        my $pathLabelsAsString = join(" : ", @pathLabels);
+
+        $trackNameToPathHashRef{$track} = $pathLabelsAsString;
+      }
+  
+      $self->{_ontology_category_from_track_name} = \%trackNameToPathHashRef;
+    }
+    else {
+      print STDERR "HTTP POST error code: ", $resp->code, "\n";
+      print STDERR "HTTP POST error message: ", $resp->message, "\n";
+    }
+    $rv = $self->{_ontology_category_from_track_name}->{$trackName};
   }
 
-  return $self->{_ontology_category_from_track_name}->{$trackName};
+  if($optionalTerminus) {
+    return "$rv : $optionalTerminus";
+  }
+  return $rv;
 }
 
 
