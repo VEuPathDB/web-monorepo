@@ -1,7 +1,8 @@
 import ExpressionGraph from '../common/ExpressionGraph';
 
 let {
-  OntologyUtils
+  OntologyUtils,
+  TreeUtils
 } = Wdk.client;
 
 let {
@@ -19,6 +20,17 @@ function scrollToElementById(id) {
   let rect = el.getBoundingClientRect();
   if (rect.top < 0) return;
   el.scrollIntoView();
+}
+
+// Clone ontology tree, adding a prefix to the label property
+function prefixLabel(prefix, root) {
+  return Object.assign({}, root, {
+    properties: Object.assign({}, root.properties, {
+      label: [ prefix + '-' + OntologyUtils.getPropertyValue('label', root) ]
+    }),
+    children: root.children.map(child => prefixLabel(prefix, child)),
+    __original: root
+  });
 }
 
 // For use on the Transcript Record page.
@@ -130,35 +142,38 @@ let treeCache = new WeakMap;
 function extractGeneAndTranscriptTrees(categories) {
   if (!treeCache.has(categories)) {
     let fakeOntology = { tree: { children: categories } };
-    let geneCategory = OntologyUtils.getTree(
+    let geneRoot = prefixLabel(GENE_ID, OntologyUtils.getTree(
       fakeOntology,
       node => _.get(node, 'properties.geneOrTranscript[0]') === GENE_ID
-    );
-    let transCategory = OntologyUtils.getTree(
+    ));
+
+    let transcriptRoot = prefixLabel(TRANSCRIPT_ID, OntologyUtils.getTree(
       fakeOntology,
       node => _.get(node, 'properties.geneOrTranscript[0]') === TRANSCRIPT_ID
-    );
-    treeCache.set(categories, { geneCategory, transCategory });
-  }
+    ));
 
+    treeCache.set(categories, { geneRoot, transcriptRoot });
+  }
   return treeCache.get(categories);
 }
 
 export function RecordNavigationSectionCategories(props) {
   let { categories } = props;
-  let { geneCategory, transCategory } = extractGeneAndTranscriptTrees(categories);
+  let { geneRoot, transcriptRoot } = extractGeneAndTranscriptTrees(categories);
   return (
     <div className="eupathdb-TranscriptRecordNavigationSectionContainer">
       <h3>Gene</h3>
       <props.DefaultComponent
         {...props}
-        categories={geneCategory.children}
+        isVisible={node => props.isVisible(node.__original)}
+        categories={geneRoot.children}
       />
       <h3>Transcript</h3>
       <TranscriptList {...props}/>
       <props.DefaultComponent
         {...props}
-        categories={transCategory.children}
+        isVisible={node => props.isVisible(node.__original)}
+        categories={transcriptRoot.children}
       />
     </div>
   );
@@ -168,14 +183,14 @@ export let RecordMainSection = React.createClass({
 
   render() {
     let { categories } = this.props;
-    let { geneCategory, transCategory } = extractGeneAndTranscriptTrees(categories);
+    let { geneRoot, transcriptRoot } = extractGeneAndTranscriptTrees(categories);
 
     let uncategorized = categories.find(c => c.name === undefined);
     categories = categories.filter(c => c !== uncategorized);
     return(
       <div>
-        {this.renderGeneCategory(geneCategory)}
-        {this.renderTransCategory(transCategory)}
+        {this.renderGeneCategory(geneRoot)}
+        {this.renderTransCategory(transcriptRoot)}
       </div>
     );
   },
