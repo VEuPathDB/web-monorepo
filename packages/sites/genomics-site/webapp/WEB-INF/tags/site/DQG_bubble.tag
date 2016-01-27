@@ -65,7 +65,7 @@
                   <%-- SAME CODE AS IN drop_down_QG2.tag --%>
                   <%-- fixing plural and uppercase --%>
 
-                  <c:set var="display" value="${fn:substring(cat.displayName, 11, -1)}" />
+                  <c:set var="display" value="${cat.displayName}" />
                   <li>
                     <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                     <a class="heading" href="javascript:void(0)">&nbsp;${display}
@@ -126,7 +126,7 @@
           <c:set var="rootCat" value="${rootCats[leftBubbleCategory]}" />
           <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
             <c:set var="cat" value="${catEntry.value}" />
-            <c:if test="${fn:length(cat.websiteQuestions) > 0}">
+         <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
               <li>
                 <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
                 <a class="heading" href="javascript:void(0)">${cat.displayName}
@@ -166,7 +166,7 @@
                   </ul>
                 </div>
               </li>
-            </c:if>
+        <%--     </c:if> --%>
           </c:forEach>
         </ul> 
       </div>
