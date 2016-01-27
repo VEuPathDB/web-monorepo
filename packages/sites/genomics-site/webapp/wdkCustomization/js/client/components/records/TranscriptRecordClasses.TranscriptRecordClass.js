@@ -108,34 +108,70 @@ function TranscriptList(props, context) {
 
 export function RecordOverview(props) {
   // FIXME Remove early return when attributes for GBrowse are available
-  return <props.DefaultComponent {...props} />;
+  // return <props.DefaultComponent {...props} />;
 
+  return (
+    <div>
+      <props.DefaultComponent {...props}/>
+      <GbrowseContext record={props.record}/>
+    </div>
+  );
+}
+
+export function GbrowseContext(props) {
   let {
-    gbrowseLink,
-    project_id,
     sequence_id,
     gene_context_start,
     gene_context_end,
     gene_source_id,
     dna_gtracks = 'test'
   } = props.record.attributes;
-  let iframeUrl = `/cgi-bin/gbrowse_img/${project_id.toLowerCase()}/?name=${sequence_id}:${gene_context_start}..${gene_context_end};hmap=gbrowseSyn;l=${dna_gtracks};width=800;embed=1;h_feat=${gene_source_id.toLowerCase()}@yellow;genepage=1`;
+
+  let lowerProjectId = wdk.MODEL_NAME.toLowerCase();
+  let lowerGeneId = gene_source_id.toLowerCase();
+
+  let queryParams = {
+    name: `${sequence_id}:${gene_context_start}..${gene_context_end}`,
+    hmap: 'gbrowseSyn',
+    l: dna_gtracks,
+    width: 800,
+    embed: 1,
+    h_feat: `${lowerGeneId}@yellow`,
+    genepage: 1
+  };
+
+  let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
+  let iframeUrl = `/cgi-bin/gbrowse_img/${lowerProjectId}/?${queryParamString}`;
+  let gbrowseUrl = `/cgi-bin/gbrowse/${lowerProjectId}/?name=${sequence_id}:${gene_context_start}..${gene_context_end};h_feat=${lowerGeneId}@yellow`;
+
   return (
     <div>
-      <props.DefaultComponent {...props}/>
-      <div>
-        <center>
-          <strong>Genomic Context</strong>
-          <a id="gbView" href={gbrowseLink}>View in Genome Browser</a>
-          <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
-          <div id="${gnCtxDivId}"></div>
-          <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} />
-          <a id="gbView" href={gbrowseLink}>View in Genome Browser</a>
-          <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
-        </center>
-      </div>
+      <center>
+        <strong>Genomic Context</strong>
+        <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
+        <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
+        <div id="${gnCtxDivId}"></div>
+        <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} ref={injectGbrowseScripts} />
+        <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
+        <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
+      </center>
     </div>
   );
+}
+
+let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
+function injectGbrowseScripts(iframe) {
+  let gbrowseWindow = iframe.contentWindow.window;
+  let gbrowseDocumentBody = iframe.contentWindow.document.body;
+
+  gbrowseWindow.wdk = wdk;
+  gbrowseWindow.jQuery = jQuery;
+
+  for (let scriptUrl of gbrowseScripts) {
+    let script = document.createElement('script');
+    script.src = scriptUrl;
+    gbrowseDocumentBody.appendChild(script);
+  }
 }
 
 let treeCache = new WeakMap;

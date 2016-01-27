@@ -89,22 +89,22 @@ export function RecordUI(DefaultComponent) {
   };
 }
 
-export function RecordOverview(DefaultComponent) {
-  return function ApiRecordOverview(props) {
-    switch (props.recordClass.name) {
-      case 'TranscriptRecordClasses.TranscriptRecordClass':
-        return (
-          <Transcript.RecordOverview
-            {...props}
-            DefaultComponent={DefaultComponent}
-          />
-        );
-
-      default:
-        return <DefaultComponent {...props}/>
-    }
-  };
-}
+// export function RecordOverview(DefaultComponent) {
+//   return function ApiRecordOverview(props) {
+//     switch (props.recordClass.name) {
+//       case 'TranscriptRecordClasses.TranscriptRecordClass':
+//         return (
+//           <Transcript.RecordOverview
+//             {...props}
+//             DefaultComponent={DefaultComponent}
+//           />
+//         );
+//
+//       default:
+//         return <DefaultComponent {...props}/>
+//     }
+//   };
+// }
 
 export function RecordMainSection(DefaultComponent) {
   return function ApiRecordMainSection(props) {
@@ -143,5 +143,14 @@ export function RecordTable(RecordTable) {
       Table = Transcript.MercatorTable;
     }
     return <Table {...props} DefaultComponent={RecordTable}/>;
+  };
+}
+
+export function RecordAttribute(WdkRecordAttribute) {
+  return function ApiRecordAttribute(props) {
+    if (props.name === 'GBrowse') {
+      return ( <Transcript.GbrowseContext {...props} /> );
+    }
+    return ( <WdkRecordAttribute {...props}/> );
   };
 }
