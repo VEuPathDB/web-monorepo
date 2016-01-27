@@ -115,6 +115,7 @@ export function RecordMainSection(DefaultComponent) {
   };
 }
 
+/*
 export function RecordNavigationSectionCategories(DefaultComponent) {
   return function ApiRecordNavigationSectionCategories(props) {
     switch (props.recordClass.name) {
@@ -131,6 +132,7 @@ export function RecordNavigationSectionCategories(DefaultComponent) {
     }
   };
 }
+*/
 
 let expressionRE = /ExpressionGraphs$/;
 export function RecordTable(RecordTable) {

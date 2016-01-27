@@ -37,6 +37,7 @@ function prefixLabel(prefix, root) {
 // This will load the target transcript without calling the router, thus
 // keeping the URL the same.
 function TranscriptLink(props, context) {
+  let { onClick = () => {} } = props;
   return (
     <a
       {...props}
@@ -47,7 +48,7 @@ function TranscriptLink(props, context) {
           props.recordClass.urlSegment,
           props.recordId.map(p => p.value)
         );
-        props.onClick(event);
+        onClick(event);
       }}
     >
       {props.children}
@@ -229,6 +230,44 @@ export function RecordNavigationSectionCategories(props) {
   );
 }
 
+export function RecordMainSection(props) {
+  let { recordClass, record } = props;
+  return (
+    <div>
+      <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
+        <h2 className="eupathdb-TranscriptHeading">Transcript</h2>
+        <nav className="eupathdb-TranscriptTabList">
+          {props.record.tables.GeneTranscripts.map(row => {
+            let { transcript_id } = row;
+            let recordId = makeRecordId(record.id, {
+              source_id: transcript_id
+            });
+            let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
+            let className = [
+              'eupathdb-TranscriptLink',
+              active ? 'eupathdb-TranscriptLink-active active': ''
+            ].join(' ');
+            return (
+              <TranscriptLink
+                key={transcript_id}
+                recordId={recordId}
+                recordClass={recordClass}
+                className={className}
+              >
+                {transcript_id}
+              </TranscriptLink>
+            );
+          })}
+        </nav>
+      </Sticky>
+      <div className="eupathdb-TranscriptTabContent">
+        <props.DefaultComponent {...props} />
+      </div>
+    </div>
+  );
+}
+
+/*
 export let RecordMainSection = React.createClass({
 
   render() {
@@ -294,6 +333,7 @@ export let RecordMainSection = React.createClass({
   }
 
 });
+*/
 
 export function ExpressionGraphTable(props) {
   let included = props.tableMeta.properties.includeInTable || [];
