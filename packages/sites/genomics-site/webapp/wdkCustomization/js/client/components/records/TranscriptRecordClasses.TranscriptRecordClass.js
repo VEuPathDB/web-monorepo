@@ -174,6 +174,20 @@ function injectGbrowseScripts(iframe) {
   }
 }
 
+export function ProteinContext(props) {
+  let { gene_source_id, protein_length, protein_gtracks } = props.record.attributes;
+
+  return (
+    <div>
+      <strong>Protein Features</strong>
+      <iframe
+        src={`/cgi-bin/gbrowse_img/${wdk.MODEL_NAME.toLowerCase()}aa/?name=${gene_source_id.toLowerCase()}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;width=800;embed=1;genepage=1`}
+        style={{ width: '1000px', border: 'none' }}
+      />
+    </div>
+  );
+}
+
 let treeCache = new WeakMap;
 function extractGeneAndTranscriptTrees(categories) {
   if (!treeCache.has(categories)) {
