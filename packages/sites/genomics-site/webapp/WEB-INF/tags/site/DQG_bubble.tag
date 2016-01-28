@@ -42,7 +42,7 @@
 </c:choose>
 
 <div class="threecolumndiv">
-  <imp:image class="threecolumndivimg" src="images/${project}/${banner}" alt="${alt_banner}" width="247" height="46" />
+  <imp:image class="threecolumndivimg" src="images/${project}/${banner}" alt="${alt_banner}" width="294" height="46" />
   <c:choose>
 
     <%---------------------------------   TOOLS  -------------------------%>
