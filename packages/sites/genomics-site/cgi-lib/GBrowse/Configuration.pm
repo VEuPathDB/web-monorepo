@@ -371,7 +371,7 @@ sub getOntologyCategoryFromTrackName {
         my $lastIndex = scalar @$pathArrayRef - 1;
 
         for(my $i = 1; $i < $lastIndex; $i ++) {
-          push @pathLabels, $pathArrayRef->[$i]->{displayName}->[0];
+          push @pathLabels, $pathArrayRef->[$i]->{'EuPathDB alternative term'}->[0];
           
         }
 
