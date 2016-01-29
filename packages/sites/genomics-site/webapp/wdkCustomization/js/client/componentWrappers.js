@@ -3,12 +3,20 @@ import Footer from './components/common/Footer';
 import ExpressionGraph from './components/common/ExpressionGraph';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
 
+// load individual reporter forms
+import TabularReporterForm from './components/reporters/TabularReporterForm';
+import FastaReporterForm from './components/reporters/FastaReporterForm';
+import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
+import TextReporterForm from './components/reporters/TextReporterForm';
+import XmlReporterForm from './components/reporters/XmlReporterForm';
+import JsonReporterForm from './components/reporters/JsonReporterForm';
+
 // Add project id to url.
 //
 // `splat` refers to a wildcard dynamic url segment
 // as defined by the record route. The value of splat is essentially primary key
 // values separated by a '/'.
-export function RecordController(DefaultComponent) {
+export function RecordController(WdkRecordController) {
   return function ApiRecordController(props) {
     let { splat, recordClass } = props.params;
     let projectIdUrl = '/' + wdk.MODEL_NAME;
@@ -26,19 +34,19 @@ export function RecordController(DefaultComponent) {
         splat: splat + projectIdUrl
       });
       return (
-        <DefaultComponent {...props} params={params}/>
+        <WdkRecordController {...props} params={params}/>
       );
     }
 
-    return <DefaultComponent {...props} />
+    return <WdkRecordController {...props} />
   };
 }
 
 // Add footer and beta message to Main content
-export function Main(DefaultComponent) {
+export function Main(WdkMain) {
   return function ApiMain(props) {
     return (
-      <DefaultComponent {...props}>
+      <WdkMain {...props}>
         <div
           className="eupathdb-Beta-Announcement"
           title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
@@ -46,26 +54,50 @@ export function Main(DefaultComponent) {
         </div>
         {props.children}
         <Footer/>
-      </DefaultComponent>
+      </WdkMain>
     );
   };
 }
 
 // Customize the Record Component
-export function RecordUI(DefaultComponent) {
+export function RecordUI(WdkRecordUI) {
   return function ApiRecordUI(props) {
     switch (props.recordClass.name) {
       case 'DatasetRecordClasses.DatasetRecordClass':
         return <Dataset.RecordUI {...props}/>
 
       default:
-        return <DefaultComponent {...props}/>
+        return <WdkRecordUI {...props}/>
     }
   };
 }
 
+// Customize the reporter form to select the correct
+export function StepDownloadForm(WdkStepDownloadForm) {
+  return function ApiStepDownloadForm(props) {
+    switch(props.selectedReporter) {
+      case 'tabular':
+        return ( <TabularReporterForm {...props}/> );
+      case 'srt':
+        return ( <FastaReporterForm {...props}/> );
+      case 'gff3':
+        return ( <Gff3ReporterForm {...props}/> );
+      case 'fullRecord':
+        return ( <TextReporterForm {...props}/> );
+      case 'xml':
+        return ( <XmlReporterForm {...props}/> );
+      case 'json':
+        return ( <JsonReporterForm {...props}/> );
+      default:
+        return null;
+        // uncomment to show form for Standard WDK JSON when select has "Choose Reporter..."
+        //return ( <WdkStepDownloadForm {...props}/> );
+    }
+  }
+}
+
 let expressionRE = /ExpressionGraphs$/;
-export function RecordTable(RecordTable) {
+export function RecordTable(WdkRecordTable) {
   return function ApiRecordTable(props) {
     if (expressionRE.test(props.tableMeta.name)) {
 
@@ -76,7 +108,7 @@ export function RecordTable(RecordTable) {
       });
 
       return (
-        <RecordTable
+        <WdkRecordTable
           {...props}
           tableMeta={tableMeta}
           childRow={childProps =>
@@ -85,6 +117,6 @@ export function RecordTable(RecordTable) {
       );
     }
 
-    return <RecordTable {...props}/>;
+    return <WdkRecordTable {...props}/>;
   };
 }
