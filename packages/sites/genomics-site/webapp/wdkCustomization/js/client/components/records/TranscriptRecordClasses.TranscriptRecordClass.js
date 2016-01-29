@@ -162,6 +162,10 @@ export function GbrowseContext(props) {
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
 function injectGbrowseScripts(iframe) {
+  if (iframe == null) return;
+
+  iframe.addEventListener('load', resizeIframe);
+
   let gbrowseWindow = iframe.contentWindow.window;
   let gbrowseDocumentBody = iframe.contentWindow.document.body;
 
@@ -173,6 +177,11 @@ function injectGbrowseScripts(iframe) {
     script.src = scriptUrl;
     gbrowseDocumentBody.appendChild(script);
   }
+}
+
+function resizeIframe(event) {
+  let iframe = event.target;
+  iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
 }
 
 export function ProteinContext(props) {
