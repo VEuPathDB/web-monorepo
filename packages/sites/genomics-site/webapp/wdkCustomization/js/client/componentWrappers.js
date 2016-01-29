@@ -1,3 +1,4 @@
+import { Components } from 'wdk-client';
 import Footer from './components/common/Footer';
 import ExpressionGraph from './components/common/ExpressionGraph';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
@@ -17,7 +18,7 @@ export function RecordController(DefaultComponent) {
       setTimeout(function() {
         props.router.replaceWith(props.path.replace(projectIdUrl, ''));
       }, 0);
-      return <Wdk.client.Components.Loading/>;
+      return <Components.Loading/>;
     }
 
     if (recordClass != 'dataset' && !hasProjectId) {

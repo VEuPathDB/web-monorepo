@@ -1,3 +1,5 @@
+import { Components } from 'wdk-client';
+
 export default class ExpressionGraph extends React.Component {
 
   constructor(...args) {
@@ -31,7 +33,7 @@ export default class ExpressionGraph extends React.Component {
     return (
       <div className="eupathdb-ExpressionGraphContainer">
         {this.state.loading
-          ? <Wdk.client.Components.Loading radius={4} className="eupathdb-ExpressionGraphLoading"/>
+          ? <Components.Loading radius={4} className="eupathdb-ExpressionGraphLoading"/>
           : null}
         <div className="eupathdb-ExpressionGraph">
           <img src={imgUrl} onLoad={() => this.setState({ loading: false })}/>

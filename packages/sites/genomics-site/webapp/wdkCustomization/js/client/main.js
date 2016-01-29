@@ -1,24 +1,24 @@
 // Bootstrap the WDK client application
 // ====================================
 
-import Wdk from 'wdk';
+import { run, Components } from 'wdk-client';
 
 // Import Component wrappers
 import * as wrappers from './componentWrappers';
 
 // apply wrappers
 for (let key in wrappers) {
-  let Component = Wdk.client.Components[key];
+  let Component = Components[key];
   if (Component == null) {
     console.warn("Cannot wrap unknown WDK Component", key);
     continue;
   }
-  Wdk.client.Components[key].wrapComponent(wrappers[key]);
+  Components[key].wrapComponent(wrappers[key]);
 }
 
 // getApiClientConfig() is defined in /client/index.jsp
 let config = window.getApiClientConfig();
-let app = window._app = Wdk.client.run({
+let app = window._app = run({
   rootUrl: config.rootUrl,
   endpoint: config.endpoint,
   rootElement: config.rootElement
