@@ -166,10 +166,11 @@ export function StepDownloadForm(WdkStepDownloadForm) {
         return ( <XmlReporterForm {...props}/> );
       case 'json':
         return ( <JsonReporterForm {...props}/> );
+      // uncomment if adding service json reporter to model
+      //case 'wdk-service-json':
+      //  return ( <Components.WdkServiceJsonReporterForm {...props}/> );
       default:
-        return null;
-        // uncomment to show form for Standard WDK JSON when select has "Choose Reporter..."
-        //return ( <WdkStepDownloadForm {...props}/> );
+        return ( <noscript/> );
     }
   }
 }
