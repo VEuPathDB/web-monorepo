@@ -49,6 +49,7 @@ export function RecordController(WdkRecordController) {
     // so we just render with the url params as-is.
     if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
       return ( <WdkRecordController {...props} /> );
+    }
 
     if (recordClass != 'dataset' && !hasProjectId) {
       let params = Object.assign({}, props.params, {
