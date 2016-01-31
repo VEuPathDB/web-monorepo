@@ -51,15 +51,6 @@ export function RecordController(WdkRecordController) {
       return ( <WdkRecordController {...props} /> );
     }
 
-    if (recordClass != 'dataset' && !hasProjectId) {
-      let params = Object.assign({}, props.params, {
-        splat: splat + projectIdUrl
-      });
-      return (
-        <WdkRecordController {...props} params={params}/>
-      );
-    }
-
     let params = recordClass === 'gene' && splat.split('/').length === 1
 
       ? Object.assign({}, props.params, {
