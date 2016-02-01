@@ -249,7 +249,7 @@ export function RecordMainSection(props) {
   return (
     <div>
       <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
-        <h2 className="eupathdb-TranscriptHeading">Transcript</h2>
+      {/*  <h2 className="eupathdb-TranscriptHeading">Transcript</h2> */ }
         <nav className="eupathdb-TranscriptTabList">
           {props.record.tables.GeneTranscripts.map(row => {
             let { transcript_id } = row;
