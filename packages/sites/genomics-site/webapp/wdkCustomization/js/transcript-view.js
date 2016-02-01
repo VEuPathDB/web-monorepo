@@ -1,6 +1,7 @@
 function toggleRepresentativeTranscripts(checkboxElem) {
   var stepId = jQuery(checkboxElem).data('stepid');
   var checked = jQuery(checkboxElem).prop('checked');
+
   // swap value of representative transcript filter flag
   var url = '/service/step/' + stepId + '/transcript-view/config';
   jQuery.blockUI();
@@ -17,7 +18,9 @@ function toggleRepresentativeTranscripts(checkboxElem) {
       // no actual data should be returned in success case
       // reload the current tab (should still be transcript view)
       var currentIndex = $("#Summary_Views").tabs("option", "active");
-      $('#Summary_Views').tabs("load", currentIndex, { skipCache: true });
+
+			//need to ensure this element corresponds to the right #Summary_Views (basket OR strategy step)
+      $(checkboxElem).closest("#Summary_Views").tabs("load", currentIndex, { skipCache: true });
     },
     error: function(jqXHR, textStatus, errorThrown) {
       jQuery(checkboxElem).prop('checked', !checked);
@@ -28,4 +31,5 @@ function toggleRepresentativeTranscripts(checkboxElem) {
       jQuery.unblockUI();
     }
   });
+
 }
