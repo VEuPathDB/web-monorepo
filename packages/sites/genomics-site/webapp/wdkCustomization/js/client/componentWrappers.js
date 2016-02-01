@@ -21,17 +21,31 @@ export function RecordLink(WdkRecordLink) {
   };
 }
 
-// Munge url so that we can hide pieces of primary key we don't want users to see.
-//
-// `splat` refers to a wildcard dynamic url segment
-// as defined by the record route. The value of splat is essentially primary key
-// values separated by a '/'.
 const DEFAULT_TRANSCRIPT_MAGIC_STRING = '_DEFAULT_TRANSCRIPT_';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
 
+
+/**
+ * Munge url so that we can hide pieces of primary key we don't want users to see.
+ *
+ * The general operation that is happening below is that we are intercepting the
+ * props sent to the WDK RecordController component and adding the project id
+ * when it is needed.
+ *
+ * Conceptually, this could also be done at the action creator level. If WDK
+ * provided a way to customize a view controller's action creator, we could
+ * just append the project id when needed.
+ *
+ * Note that we are doing a few other things here, which is to say this override
+ * is a bit of a jumble at the moment.
+ *
+ * `splat` refers to a wildcard dynamic url segment
+ * as defined by the record route. The value of splat is essentially primary key
+ * values separated by a '/'.
+ */
 export function RecordController(WdkRecordController) {
   return function ApiRecordController(props) {
     let { splat, recordClass } = props.params;
@@ -51,15 +65,25 @@ export function RecordController(WdkRecordController) {
       return ( <WdkRecordController {...props} /> );
     }
 
-    let params = recordClass === 'gene' && splat.split('/').length === 1
+    if (recordClass === Transcript.GENE_ID) {
+      let [ geneId, transcriptId ] = splat.split('/');
 
-      ? Object.assign({}, props.params, {
-          splat: [ splat, DEFAULT_TRANSCRIPT_MAGIC_STRING, wdk.MODEL_NAME ].join('/')
-        })
+      if (transcriptId == null) {
 
-      : Object.assign({}, props.params, {
-          splat: [ splat, wdk.MODEL_NAME ].join('/')
-        });
+        // only the gene id is requested... either use the last transcript id the
+        // user requested for the gene id, or use the default
+        transcriptId = window.sessionStorage.getItem(
+          Transcript.TRANSCRIPT_ID_KEY_PREFIX + geneId) || DEFAULT_TRANSCRIPT_MAGIC_STRING;
+
+        // add transcript id to request
+        splat = `${geneId}/${transcriptId}`;
+      }
+    }
+
+    // Append project id to request
+    let params = Object.assign({}, props.params, {
+      splat: `${splat}/${wdk.MODEL_NAME}`
+    });
 
     return (
       <WdkRecordController {...props} params={params}/>

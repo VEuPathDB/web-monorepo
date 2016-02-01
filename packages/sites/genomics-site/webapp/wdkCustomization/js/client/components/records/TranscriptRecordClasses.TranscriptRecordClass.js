@@ -11,8 +11,9 @@ let {
   Sticky
 } = Wdk.client.Components;
 
-const GENE_ID = 'gene';
-const TRANSCRIPT_ID = 'transcript';
+export const GENE_ID = 'gene';
+export const TRANSCRIPT_ID = 'transcript';
+export const TRANSCRIPT_ID_KEY_PREFIX = 'eupathdb::previousTranscriptId::';
 
 function scrollToElementById(id) {
   let el = document.getElementById(id);
@@ -38,12 +39,16 @@ function prefixLabel(prefix, root) {
 // keeping the URL the same.
 function TranscriptLink(props, context) {
   let { onClick = () => {} } = props;
+  let geneId = props.recordId.find(p => p.name === 'gene_source_id').value;
+  let transcriptId = props.recordId.find(p => p.name === 'source_id').value;
   return (
     <a
       {...props}
-      href
+      href={'./geneId'}
       onClick={(event) => {
         event.preventDefault();
+        // store the last requested transcript id for the gene id
+        window.sessionStorage.setItem(TRANSCRIPT_ID_KEY_PREFIX + geneId, transcriptId);
         context.actionCreators.RecordViewActionCreator.fetchRecordDetails(
           props.recordClass.urlSegment,
           props.recordId.map(p => p.value)
