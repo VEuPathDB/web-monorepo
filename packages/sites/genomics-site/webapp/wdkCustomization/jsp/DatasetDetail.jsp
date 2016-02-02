@@ -87,7 +87,7 @@
   <c:forEach items="${datasets}" var="category">
     <div class="category">
       <div class="anchor">[ <a href="#_top">Top</a> ]</div>
-      <a name="${category.key}"></a>
+      <a name="${category.key}"></a><br>
       <div class="h3center ctitle">${category.key}</div>
 
       <div class="category-content">
