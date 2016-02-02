@@ -3,7 +3,7 @@ SHELL               := /bin/bash
 
 client_bundle  := dist/wdkCustomization/js/client.js
 client_sources := webapp/wdkCustomization/js/client/main.js \
-                  $(shell find webapp/wdkCustomization/js/client -type f -name '*.js') \
+                  $(shell find webapp/wdkCustomization/js/client -type f -name '*.js' -or -name '*.jsx') \
                   webpack.config.js
 
 
