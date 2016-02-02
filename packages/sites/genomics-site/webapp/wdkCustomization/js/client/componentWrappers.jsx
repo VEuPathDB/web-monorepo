@@ -1,9 +1,9 @@
 import { Components } from 'wdk-client';
 import Footer from './components/common/Footer';
-import ExpressionGraph from './components/common/ExpressionGraph';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
+import * as Transcript from './components/records/TranscriptRecordClasses.TranscriptRecordClass';
 
-// load individual reporter forms
+// load individual reporter forms                                                                        
 import TabularReporterForm from './components/reporters/TabularReporterForm';
 import FastaReporterForm from './components/reporters/FastaReporterForm';
 import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
@@ -11,11 +11,41 @@ import TextReporterForm from './components/reporters/TextReporterForm';
 import XmlReporterForm from './components/reporters/XmlReporterForm';
 import JsonReporterForm from './components/reporters/JsonReporterForm';
 
-// Add project id to url.
-//
-// `splat` refers to a wildcard dynamic url segment
-// as defined by the record route. The value of splat is essentially primary key
-// values separated by a '/'.
+// Remove project_id from record links
+export function RecordLink(WdkRecordLink) {
+  return function ApiRecordLink(props) {
+    let recordId = props.recordId.filter(p => p.name !== 'project_id');
+    return (
+      <WdkRecordLink {...props} recordId={recordId}/>
+    );
+  };
+}
+
+const DEFAULT_TRANSCRIPT_MAGIC_STRING = '_DEFAULT_TRANSCRIPT_';
+
+// Project id is not needed for these record classes.
+// Matches urlSegment.
+const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
+
+
+/**
+ * Munge url so that we can hide pieces of primary key we don't want users to see.
+ *
+ * The general operation that is happening below is that we are intercepting the
+ * props sent to the WDK RecordController component and adding the project id
+ * when it is needed.
+ *
+ * Conceptually, this could also be done at the action creator level. If WDK
+ * provided a way to customize a view controller's action creator, we could
+ * just append the project id when needed.
+ *
+ * Note that we are doing a few other things here, which is to say this override
+ * is a bit of a jumble at the moment.
+ *
+ * `splat` refers to a wildcard dynamic url segment
+ * as defined by the record route. The value of splat is essentially primary key
+ * values separated by a '/'.
+ */
 export function RecordController(WdkRecordController) {
   return function ApiRecordController(props) {
     let { splat, recordClass } = props.params;
@@ -29,16 +59,35 @@ export function RecordController(WdkRecordController) {
       return <Components.Loading/>;
     }
 
-    if (recordClass != 'dataset' && !hasProjectId) {
-      let params = Object.assign({}, props.params, {
-        splat: splat + projectIdUrl
-      });
-      return (
-        <WdkRecordController {...props} params={params}/>
-      );
+    // These record classes do not need the project id as a part of the primary key
+    // so we just render with the url params as-is.
+    if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
+      return ( <WdkRecordController {...props} /> );
     }
 
-    return <WdkRecordController {...props} />
+    if (recordClass === Transcript.GENE_ID) {
+      let [ geneId, transcriptId ] = splat.split('/');
+
+      if (transcriptId == null) {
+
+        // only the gene id is requested... either use the last transcript id the
+        // user requested for the gene id, or use the default
+        transcriptId = window.sessionStorage.getItem(
+          Transcript.TRANSCRIPT_ID_KEY_PREFIX + geneId) || DEFAULT_TRANSCRIPT_MAGIC_STRING;
+
+        // add transcript id to request
+        splat = `${geneId}/${transcriptId}`;
+      }
+    }
+
+    // Append project id to request
+    let params = Object.assign({}, props.params, {
+      splat: `${splat}/${wdk.MODEL_NAME}`
+    });
+
+    return (
+      <WdkRecordController {...props} params={params}/>
+    );
   };
 }
 
@@ -72,6 +121,51 @@ export function RecordUI(WdkRecordUI) {
   };
 }
 
+// export function RecordOverview(WdkRecordOverview) {
+//   return function ApiRecordOverview(props) {
+//     switch (props.recordClass.name) {
+//       case 'TranscriptRecordClasses.TranscriptRecordClass':
+//         return (
+//           <Transcript.RecordOverview
+//             {...props}
+//             DefaultComponent={WdkRecordOverview}
+//           />
+//         );
+//
+//       default:
+//         return <WdkRecordOverview {...props}/>
+//     }
+//   };
+// }
+
+export function RecordMainSection(WdkRecordMainSection) {
+  return function ApiRecordMainSection(props) {
+    if (props.recordClass.name == 'TranscriptRecordClasses.TranscriptRecordClass' && props.depth == null) {
+      return <Transcript.RecordMainSection {...props} DefaultComponent={WdkRecordMainSection}/>;
+    }
+    return <WdkRecordMainSection {...props}/>
+  };
+}
+
+/*
+export function RecordNavigationSectionCategories(WdkRecordNavigationSectionCategories) {
+  return function ApiRecordNavigationSectionCategories(props) {
+    switch (props.recordClass.name) {
+      case 'TranscriptRecordClasses.TranscriptRecordClass':
+        return (
+          <Transcript.RecordNavigationSectionCategories
+            {...props}
+            DefaultComponent={WdkRecordNavigationSectionCategories}
+          />
+        );
+
+      default:
+        return <WdkRecordNavigationSectionCategories {...props}/>
+    }
+  };
+}
+*/
+
 // Customize the reporter form to select the correct
 export function StepDownloadForm(WdkStepDownloadForm) {
   return function ApiStepDownloadForm(props) {
@@ -100,24 +194,27 @@ export function StepDownloadForm(WdkStepDownloadForm) {
 let expressionRE = /ExpressionGraphs$/;
 export function RecordTable(WdkRecordTable) {
   return function ApiRecordTable(props) {
+    let Table = WdkRecordTable;
     if (expressionRE.test(props.tableMeta.name)) {
+      Table = Transcript.ExpressionGraphTable;
+    }
+    if (props.tableMeta.name === 'MercatorTable') {
+      Table = Transcript.MercatorTable;
+    }
+    return <Table {...props} DefaultComponent={WdkRecordTable}/>;
+  };
+}
 
-      let included = props.tableMeta.properties.includeInTable || [];
-
-      let tableMeta = Object.assign({}, props.tableMeta, {
-        attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
-      });
-
-      return (
-        <WdkRecordTable
-          {...props}
-          tableMeta={tableMeta}
-          childRow={childProps =>
-            <ExpressionGraph rowData={props.table[childProps.rowIndex]}/>}
-          />
-      );
+export function RecordAttribute(WdkRecordAttribute) {
+  return function ApiRecordAttribute(props) {
+    if (props.name === 'dna_gtracks') {
+      return ( <Transcript.GbrowseContext {...props} /> );
     }
 
-    return <WdkRecordTable {...props}/>;
+    if (props.name === 'protein_gtracks') {
+      return ( <Transcript.ProteinContext {...props} /> );
+    }
+
+    return ( <WdkRecordAttribute {...props}/> );
   };
 }
