@@ -16,14 +16,12 @@ let attachmentTypes = [
 
 let SharedReporterForm = React.createClass({
 
-  componentWillMount() {
+  componentDidMount() {
     let { formState, preferences, question, onFormChange, onFormUiChange } = this.props;
     let newFormState = this.discoverFormState(formState, preferences, question);
-    setTimeout(() => {
-      onFormChange(newFormState);
-      // currently no special UI state on this form
-      onFormUiChange({});
-    }, 0);
+    onFormChange(newFormState);
+    // currently no special UI state on this form
+    onFormUiChange({});
   },
 
   discoverFormState(formState, preferences, question) {
@@ -55,7 +53,7 @@ let SharedReporterForm = React.createClass({
   },
 
   render() {
-    let { question, recordClass, preferences, formState } = this.props;
+    let { question, recordClass, preferences, formState, onSubmit } = this.props;
     let realFormState = this.discoverFormState(formState, preferences, question);
     let includeEmptyTablesStr = (realFormState.includeEmptyTables ? "true" : "false");
     return (
@@ -83,6 +81,9 @@ let SharedReporterForm = React.createClass({
             <RadioList name="attachmentType" value={realFormState.attachmentType}
                 onChange={this.onAttachmentTypeChange} items={attachmentTypes}/>
           </div>
+        </div>
+        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
+          <input type="button" value="Submit" onClick={onSubmit}/>
         </div>
       </div>
     );
