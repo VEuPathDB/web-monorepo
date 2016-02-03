@@ -1,15 +1,6 @@
 import React from 'react';
-import * as Wdk from 'wdk-client';
+import SharedReporterForm from './SharedReporterForm';
 
-let utils = Wdk.ReporterUtils;
-let ReporterCheckboxList = Wdk.Components.ReporterCheckboxList;
-
-let XmlReporterForm = React.createClass({
-
-  render() {
-    return ( <div>I'm the form for XML!</div> );
-  }
-
-});
+let XmlReporterForm = props => ( <SharedReporterForm {...props}/> );
 
 export default XmlReporterForm;

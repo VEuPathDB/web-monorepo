@@ -4,18 +4,17 @@ import * as Wdk from 'wdk-client';
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
 let { RadioList, ReporterCheckboxList } = Wdk.Components;
 
-let includeHeaderValues = [
+let includeEmptyTablesValues = [
   { value: "true", display: "Include" },
   { value: "false", display: "Exclude" }
 ];
 
 let attachmentTypes = [
   { value: "text", display: "Text File" },
-  { value: "excel", display: "Excel File" },
   { value: "plain", display: "Show in Browser"}
 ];
 
-let TabularReporterForm = React.createClass({
+let SharedReporterForm = React.createClass({
 
   componentWillMount() {
     let { formState, preferences, question, onFormChange, onFormUiChange } = this.props;
@@ -29,9 +28,11 @@ let TabularReporterForm = React.createClass({
 
   discoverFormState(formState, preferences, question) {
     let currentAttributes = (formState == null ? undefined : formState.attributes);
+    let currentTables = (formState == null ? undefined : formState.tables);
     return {
       attributes: util.getAttributeSelections(currentAttributes, preferences, question),
-      includeHeader: util.getValueOrDefault(formState, "includeHeader", "true"),
+      tables: util.getTableSelections(currentTables),
+      includeEmptyTables: util.getValueOrDefault(formState, "includeEmptyTables", "true"),
       attachmentType: util.getValueOrDefault(formState, "attachmentType", "plain")
     };
   },
@@ -40,9 +41,13 @@ let TabularReporterForm = React.createClass({
     this.props.onFormChange(Object.assign({}, this.props.formState, { attributes: newAttributes }));
   },
 
-  onIncludeHeaderChange(newValue) {
+  onTablesChange(newTables) {
+    this.props.onFormChange(Object.assign({}, this.props.formState, { tables: newTables }));
+  },
+
+  onIncludeEmptyTablesChange(newValue) {
     newValue = (newValue === "true"); // convert from string -> boolean
-    this.props.onFormChange(Object.assign({}, this.props.formState, { includeHeader: newValue }));
+    this.props.onFormChange(Object.assign({}, this.props.formState, { includeEmptyTables: newValue }));
   },
 
   onAttachmentTypeChange(newValue) {
@@ -52,7 +57,7 @@ let TabularReporterForm = React.createClass({
   render() {
     let { question, recordClass, preferences, formState } = this.props;
     let realFormState = this.discoverFormState(formState, preferences, question);
-    let includeHeaderStr = (realFormState.includeHeader ? "true" : "false");
+    let includeEmptyTablesStr = (realFormState.includeEmptyTables ? "true" : "false");
     return (
       <div>
         <ReporterCheckboxList
@@ -60,17 +65,22 @@ let TabularReporterForm = React.createClass({
           allValues={util.getAllAttributes(recordClass, question, util.isInReport)}
           selectedValueNames={realFormState.attributes}
           onChange={this.onAttributesChange}/>
+        <ReporterCheckboxList
+          name="tables" title="Choose Tables"
+          allValues={util.getAllTables(recordClass, util.isInReport)}
+          selectedValueNames={realFormState.tables}
+          onChange={this.onTablesChange}/>
         <div>
-          <h3>Column Names:</h3>
+          <h3>Empty Tables:</h3>
           <div style={{marginLeft:"2em"}}>
-            <RadioList name="includeHeader" className="" value={includeHeaderStr}
-                onChange={this.onIncludeHeaderChange} items={includeHeaderValues}/>
+            <RadioList name="includeEmptyTables" value={includeEmptyTablesStr}
+                onChange={this.onIncludeEmptyTablesChange} items={includeEmptyTablesValues}/>
           </div>
         </div>
         <div>
-          <h3>Download Type and Format:</h3>
+          <h3>Download Type:</h3>
           <div style={{marginLeft:"2em"}}>
-            <RadioList name="attachmentType" className="" value={realFormState.attachmentType}
+            <RadioList name="attachmentType" value={realFormState.attachmentType}
                 onChange={this.onAttachmentTypeChange} items={attachmentTypes}/>
           </div>
         </div>
@@ -80,4 +90,4 @@ let TabularReporterForm = React.createClass({
 
 });
 
-export default TabularReporterForm;
+export default SharedReporterForm;
