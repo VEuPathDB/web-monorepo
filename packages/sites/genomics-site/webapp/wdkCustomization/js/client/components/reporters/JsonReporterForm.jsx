@@ -1,15 +1,6 @@
 import React from 'react';
-import * as Wdk from 'wdk-client';
+import SharedReporterForm from './SharedReporterForm';
 
-let utils = Wdk.ReporterUtils;
-let ReporterCheckboxList = Wdk.Components.ReporterCheckboxList;
-
-let JsonReporterForm = React.createClass({
-
-  render() {
-    return ( <div>I'm the form for JSON!</div> );
-  }
-
-});
+let JsonReporterForm = props => ( <SharedReporterForm {...props}/> );
 
 export default JsonReporterForm;
