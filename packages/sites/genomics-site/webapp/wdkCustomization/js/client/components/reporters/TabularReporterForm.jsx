@@ -5,11 +5,11 @@ let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
 let { RadioList, ReporterCheckboxList } = Wdk.Components;
 
 let includeHeaderValues = [
-  { value: "true", display: "include" },
-  { value: "false", display: "exclude" }
+  { value: "true", display: "Include" },
+  { value: "false", display: "Exclude" }
 ];
 
-let downloadTypes = [
+let attachmentTypes = [
   { value: "text", display: "Text File" },
   { value: "excel", display: "Excel File" },
   { value: "plain", display: "Show in Browser"}
@@ -45,7 +45,7 @@ let TabularReporterForm = React.createClass({
     this.props.onFormChange(Object.assign({}, this.props.formState, { includeHeader: newValue }));
   },
 
-  onDownloadTypeChange(newValue) {
+  onAttachmentTypeChange(newValue) {
     this.props.onFormChange(Object.assign({}, this.props.formState, { attachmentType: newValue }));
   },
 
@@ -70,8 +70,8 @@ let TabularReporterForm = React.createClass({
         <div>
           <h3>Download Type and Format:</h3>
           <div style={{marginLeft:"2em"}}>
-            <RadioList name="downloadType" className="" value={realFormState.attachmentType}
-                onChange={this.onDownloadTypeChange} items={downloadTypes}/>
+            <RadioList name="attachmentType" className="" value={realFormState.attachmentType}
+                onChange={this.onAttachmentTypeChange} items={attachmentTypes}/>
           </div>
         </div>
       </div>
