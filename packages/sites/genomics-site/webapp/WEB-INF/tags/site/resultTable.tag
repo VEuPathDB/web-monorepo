@@ -21,11 +21,6 @@
   <c:set var="trRecord" value="true"/>
 </c:if>
 
-<!-- might be used in wdk:resultTable -->
-<c:if test="${view eq 'transcripts'}">
-  <c:set var="showNativeCount" value="true"/>
-</c:if>
-
 <%-- we are not setting this value correctly any longer (LEAF STEP)
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
@@ -49,7 +44,7 @@
 <!-- ANY TAB, ANY STEP -->
 <div id="${view}">
 
-<!-- if LEAF step, if this is a Transcript Record and not a basket result:
+<!-- if LEAF step, if this is a Transcript Record and NOT a basket result:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed
 -->
 <!-- THIS condition is used too in MatchedTranscriptFilter.defaultValue(), accessed by every newly created step.
@@ -149,11 +144,12 @@
              onclick="javascript:toggleRepresentativeTranscripts(this)">
       Show Only One Transcript Per Gene
     </div>
+    <c:set var="excludeBasketColumn" value="true" />
   </c:if>
 
 
 <!-- ANY STEP, ANY VIEW -->
-  <wdk:resultTable step="${step}" showNativeCount="${showNativeCount}" missingNative="${missingNative}"/>
+  <wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}"/>
 
 </div>  <!--  end div ${view} -->
 
