@@ -1,12 +1,12 @@
 import React from 'react';
 import * as Wdk from 'wdk-client';
 
-let util = Wdk.ReporterUtils;
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
 let { RadioList, ReporterCheckboxList } = Wdk.Components;
 
 let includeHeaderValues = [
-  { value: "yes", display: "include" },
-  { value: "no", display: "exclude" }
+  { value: "true", display: "include" },
+  { value: "false", display: "exclude" }
 ];
 
 let downloadTypes = [
@@ -31,38 +31,28 @@ let TabularReporterForm = React.createClass({
     let currentAttributes = (formState == null ? undefined : formState.attributes);
     return {
       attributes: util.getAttributeSelections(currentAttributes, preferences, question),
-      includeHeader: util.getValueOrDefault(formState, "includeHeader", "yes"),
-      downloadType: util.getValueOrDefault(formState, "downloadType", "plain")
+      includeHeader: util.getValueOrDefault(formState, "includeHeader", "true"),
+      attachmentType: util.getValueOrDefault(formState, "attachmentType", "plain")
     };
   },
 
   onAttributesChange(newAttributes) {
-    this.props.onFormChange({
-      attributes: newAttributes,
-      includeHeader: this.props.formState.includeHeader,
-      downloadType: this.props.formState.downloadType
-    });
+    this.props.onFormChange(Object.assign({}, this.props.formState, { attributes: newAttributes }));
   },
 
   onIncludeHeaderChange(newValue) {
-    this.props.onFormChange({
-      attributes: this.props.formState.attributes,
-      includeHeader: newValue,
-      downloadType: this.props.formState.downloadType
-    });
+    newValue = (newValue === "true"); // convert from string -> boolean
+    this.props.onFormChange(Object.assign({}, this.props.formState, { includeHeader: newValue }));
   },
 
   onDownloadTypeChange(newValue) {
-    this.props.onFormChange({
-      attributes: this.props.formState.attributes,
-      includeHeader: this.props.formState.includeHeader,
-      downloadType: newValue
-    });
+    this.props.onFormChange(Object.assign({}, this.props.formState, { attachmentType: newValue }));
   },
 
   render() {
     let { question, recordClass, preferences, formState } = this.props;
     let realFormState = this.discoverFormState(formState, preferences, question);
+    let includeHeaderStr = (realFormState.includeHeader ? "true" : "false");
     return (
       <div>
         <ReporterCheckboxList
@@ -71,14 +61,18 @@ let TabularReporterForm = React.createClass({
           selectedValueNames={realFormState.attributes}
           onChange={this.onAttributesChange}/>
         <div>
-          <span>Column Names:</span>
-          <RadioList name="includeHeader" className="horizontal-list" value={realFormState.includeHeader}
-              onChange={this.onIncludeHeaderChange} items={includeHeaderValues}/>
+          <h3>Column Names:</h3>
+          <div style={{marginLeft:"2em"}}>
+            <RadioList name="includeHeader" className="" value={includeHeaderStr}
+                onChange={this.onIncludeHeaderChange} items={includeHeaderValues}/>
+          </div>
         </div>
         <div>
-          <span>Download Type and Format:</span>
-          <RadioList name="downloadType" className="horizontal-list" value={realFormState.downloadType}
-              onChange={this.onDownloadTypeChange} items={downloadTypes}/>
+          <h3>Download Type and Format:</h3>
+          <div style={{marginLeft:"2em"}}>
+            <RadioList name="downloadType" className="" value={realFormState.attachmentType}
+                onChange={this.onDownloadTypeChange} items={downloadTypes}/>
+          </div>
         </div>
       </div>
     );
