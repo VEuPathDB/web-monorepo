@@ -792,15 +792,11 @@ sub ArrayElementTitle {
   hover($f, \@data);
 }
 
-sub rumIntronTitle {  
+sub gsnapIntronTitle {  
   my ($f) = @_;
   my ($sample) = $f->get_tag_values('Sample');
-  my ($lour) = $f->get_tag_values('LOUR');
-  my ($sour) =  $f->get_tag_values('SOUR');
-  my ($lonr) =  $f->get_tag_values('LONR');
-  my ($sonr) =  $f->get_tag_values('SONR');
-  my ($canonical) =  $f->get_tag_values('Canonical');
-  my ($knowintron) = $f->get_tag_values('KnownIntron');
+  my ($ur) = $f->get_tag_values('UR');
+  my ($nr) =  $f->get_tag_values('NR');
   my $start = $f->start;
   my $stop = $f->stop;
 
@@ -808,17 +804,14 @@ sub rumIntronTitle {
   push @data, [ 'Sample:' => $sample ];
   push @data, [ 'Genome Location:' => "$start - $stop"];
   push @data, [ 'Score'   => $f->score ];
-  push @data, [ 'Signal is canonical:'        => "$canonical" ];
-  push @data, [ 'Long Overlap Unique Reads:'  => "$lour" ];
-  push @data, [ 'Short Overlap Unique Reads:' => "$sour" ];
-  push @data, [ 'Long Overlap NU Reads:'      => "$lonr" ];
-  push @data, [ 'Short Overlap NU Reads:'     => "$sonr" ];
-
+  push @data, [ 'Unique Reads:'  => "$ur" ];
+  push @data, [ 'NU Reads:'     => "$nr" ];
+print STDERR "$sample / $start / $stop / $ur / $nr " .  $f->score . "\n";
 #  hover('Splice Site Junctions', \@data);
     hover($f, \@data);
 }
 
-sub rumIntronTitleUnified {  
+sub gsnapIntronTitleUnified {  
   my ($f) = @_;
   my ($samples) = $f->get_tag_values('Samples');
   my ($scores) = $f->get_tag_values('Scores');

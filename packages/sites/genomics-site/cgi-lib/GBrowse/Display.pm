@@ -145,7 +145,7 @@ sub MassSpecScoreBgColor {
 }
 
 
-sub rumIntronBgColorFromSample {
+sub gsnapIntronBgColorFromSample {
   my $f = shift;
 
   my %colors = (#Pf-RNASeq_Newbold
@@ -213,7 +213,7 @@ sub rumIntronBgColorFromSample {
   return '#F87431';  # Sienna1
 } 
 
-sub rumIntronBgColorFromScore {
+sub gsnapIntronBgColorFromScore {
   my $f = shift;
 
   my ($lours) = $f->get_tag_values('LOURS');
@@ -238,7 +238,7 @@ sub rumIntronBgColorFromScore {
 }
 
 
-sub rumIntronHeightFromScore {
+sub gsnapIntronHeightFromScore {
   my $f = shift;
 
   my ($lours) = $f->get_tag_values('LOURS');
@@ -259,7 +259,7 @@ sub rumIntronHeightFromScore {
   return 11;   # Indian Red4
 }
 
-sub rumIntronUnifiedWidth {
+sub gsnapIntronUnifiedWidth {
   my $f = shift;
   my ($scores) = $f->get_tag_values('Scores'); 
   my $sum = eval join '+', split /;/, $scores;
@@ -1055,7 +1055,7 @@ sub dustCitation {
   return "Selecting this option displays regions of low compositional complexity, as defined by the DUST algorithm of Tatusov and Lipman.  For more information on DUST click <a href=\"ftp://ftp.ncbi.nlm.nih.gov/pub/agarwala/windowmasker/windowmasker_suppl.pdf\">here</a>.";
 }
 
-sub rumIntronCitation {
+sub gsnapIntronCitation {
   return <<EOL;
   Mouse-over column description: <br/><br/>
 SCORE: 
