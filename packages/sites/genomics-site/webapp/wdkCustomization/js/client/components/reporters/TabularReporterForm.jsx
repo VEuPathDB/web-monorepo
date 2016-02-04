@@ -11,20 +11,18 @@ let includeHeaderValues = [
 
 let attachmentTypes = [
   { value: "text", display: "Text File" },
-  { value: "excel", display: "Excel File" },
+  { value: "excel", display: "Excel File**" },
   { value: "plain", display: "Show in Browser"}
 ];
 
 let TabularReporterForm = React.createClass({
 
-  componentWillMount() {
+  componentDidMount() {
     let { formState, preferences, question, onFormChange, onFormUiChange } = this.props;
     let newFormState = this.discoverFormState(formState, preferences, question);
-    setTimeout(() => {
-      onFormChange(newFormState);
-      // currently no special UI state on this form
-      onFormUiChange({});
-    }, 0);
+    onFormChange(newFormState);
+    // currently no special UI state on this form
+    onFormUiChange({});
   },
 
   discoverFormState(formState, preferences, question) {
@@ -50,7 +48,7 @@ let TabularReporterForm = React.createClass({
   },
 
   render() {
-    let { question, recordClass, preferences, formState } = this.props;
+    let { question, recordClass, preferences, formState, onSubmit } = this.props;
     let realFormState = this.discoverFormState(formState, preferences, question);
     let includeHeaderStr = (realFormState.includeHeader ? "true" : "false");
     return (
@@ -74,6 +72,17 @@ let TabularReporterForm = React.createClass({
                 onChange={this.onAttachmentTypeChange} items={attachmentTypes}/>
           </div>
         </div>
+        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
+          <input type="button" value="Submit" onClick={onSubmit}/>
+        </div>
+        <hr/>
+        <div style={{margin:'0.5em 2em'}}>
+          **Note: If you choose "Excel File" as Download Type, you can only download a
+          maximum 10M (in bytes) of the results and the rest will be discarded.<br/>
+          Opening a huge Excel file may crash your system. If you need to get the
+          complete results, please choose "Text File" or "Show in Browser".
+        </div>
+        <hr/>
       </div>
     );
   }
