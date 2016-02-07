@@ -60,8 +60,11 @@ body {
 /* #bubbles .info {
   min-height: 299px;
 } */
+
 .threecolumndiv div.heading {
-	background-image: url(../images/PlasmoDB/menu_lft2.png);
+/*	background-image: url(../images/PlasmoDB/menu_lft2.png); */
+  background-color: #9070AF;  /* rebeccapurple; */
+
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 

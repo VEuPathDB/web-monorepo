@@ -41,7 +41,7 @@
 </c:choose>
 
 <div class="threecolumndiv">
-  <imp:image id="heading" src="images/${project}/menu_lft1.png" alt="bubble round top heading" width="267" height="12" />
+  <!-- <imp:image id="heading" src="images/${project}/menu_lft1.png" alt="bubble round top heading" width="267" height="12" /> -->
 
   <c:choose>
 
