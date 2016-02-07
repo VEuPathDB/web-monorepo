@@ -29,7 +29,6 @@
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-
 <c:set var="leftBubbleCategory" value="TranscriptRecordClasses.TranscriptRecordClass"/>
 
 <c:choose>
@@ -42,16 +41,20 @@
 </c:choose>
 
 <div class="threecolumndiv">
-  <imp:image class="threecolumndivimg" src="images/${project}/${banner}" alt="${alt_banner}" width="294" height="46" />
+  <imp:image id="heading" src="images/${project}/menu_lft1.png" alt="bubble round top heading" width="267" height="12" />
+
   <c:choose>
 
     <%---------------------------------   TOOLS  -------------------------%>
     <c:when test="${recordClasses == null}">
+       <div class="heading">Tools</div> 
       <imp:DQG_tools />
     </c:when>
 
     <%---------------------------------   RECORDCLASSSES OTHER THAN GENES  -------------------------%>
     <c:when test="${recordClasses == 'others'}">
+      <div class="heading">Search for Other Data Types</div>  
+
       <div class="info">
         <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
         <ul class="heading_list">
@@ -120,6 +123,7 @@
 
     <%---------------------------------   GENES  -------------------------%>
     <c:otherwise>
+      <div class="heading">Search for Genes by</div>  
       <div class="info">
         <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
         <ul class="heading_list">
