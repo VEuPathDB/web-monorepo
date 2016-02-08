@@ -19,7 +19,7 @@ let GffInputs = React.createClass({
   },
 
   render() {
-    if (this.props.recordClass.name != "GeneRecordClasses.GeneRecordClass") {
+    if (this.props.recordClass.name != "TranscriptRecordClasses.TranscriptRecordClass") {
       return ( <noscript/> );
     }
     return (
@@ -47,14 +47,13 @@ let Gff3ReporterForm = React.createClass({
 
   discoverFormState(formState, recordClass) {
     return (formState != null ? formState :
-      recordClass.name == "SequenceRecordClasses.SequenceRecordClass" ? {
-        attachmentType: 'plain'
-      } :
-      recordClass.name == "GeneRecordClasses.GeneRecordClass" ? {
+      recordClass.name == "TranscriptRecordClasses.TranscriptRecordClass" ? {
         hasTranscript: false,
         hasProtein: false,
         attachmentType: 'plain'
-      } : {});
+      } : {
+        attachmentType: 'plain'
+      });
   },
 
   handleFormUpdate(valuesObject) {
