@@ -276,12 +276,7 @@ ${contigsIds3.default}:100..2000:r</textarea>
 
   <hr>
 
-  <b><a name="help">Help</a></b>
-  <br>
-  <br>
-  <imp:image src="images/genemodel.gif" align="top" />
-
-  <br>
+  <b><a name="help">Help</a></b><br/>
 
   <imp:srtHelp/>
 
