@@ -1,7 +1,6 @@
-// Helper to normalize img src url
-let Img = props => (
-  <img {...props} src={wdk.assetsUrl(props.src)}/>
-);
+import * as Wdk from 'wdk-client';
+
+let { Image } = Wdk.Components;
 
 export default function Footer() {
   let siteName = wdk.MODEL_NAME;
@@ -24,7 +23,7 @@ export default function Footer() {
         <ul className="attributions">
           <li>
             <a href="http://code.google.com/p/strategies-wdk/">
-              <Img border="0" src="wdk/images/stratWDKlogo.png" width="120"/>
+              <Image border="0" src="wdk/images/stratWDKlogo.png" width="120"/>
             </a>
           </li>
         </ul>
@@ -34,62 +33,62 @@ export default function Footer() {
         <ul className="site-icons">
           <li title="EuPathDB.org">
             <a href="http://www.eupathdb.org">
-              <Img src="images/eupathdblink.png" alt="Link to EuPathDB homepage"/>
+              <Image src="images/eupathdblink.png" alt="Link to EuPathDB homepage"/>
             </a>
           </li>
           <li className="short-space" title="AmoebaDB.org">
             <a href="http://amoebadb.org">
-              <Img src="images/AmoebaDB/footer-logo.png"/>
+              <Image src="images/AmoebaDB/footer-logo.png"/>
             </a>
           </li>
           <li className="short-space" title="CryptoDB.org">
             <a href="http://cryptodb.org">
-              <Img src="images/CryptoDB/footer-logo.png"/>
+              <Image src="images/CryptoDB/footer-logo.png"/>
             </a>
           </li>
           <li className="short-space" title="FungiDB.org">
             <a href="http://fungidb.org">
-              <Img src="images/FungiDB/footer-logo.png"/>
+              <Image src="images/FungiDB/footer-logo.png"/>
             </a>
           </li>
           <li className="short-space" title="GiardiaDB.org">
             <a href="http://giardiadb.org">
-              <Img src="images/GiardiaDB/footer-logo.png"/>
+              <Image src="images/GiardiaDB/footer-logo.png"/>
             </a>
           </li>
           <li className="long-space" title="MicrosporidiaDB.org">
             <a href="http://microsporidiadb.org">
-              <Img src="images/MicrosporidiaDB/footer-logo.png"/>
+              <Image src="images/MicrosporidiaDB/footer-logo.png"/>
             </a>
           </li>
           <li className="short-space" title="PiroplasmaDB.org">
             <a href="http://piroplasmadb.org">
-              <Img src="images/PiroplasmaDB/footer-logo.png"/>
+              <Image src="images/PiroplasmaDB/footer-logo.png"/>
             </a>
           </li>
           <li className="long-space" title="PlasmoDB.org">
             <a href="http://plasmodb.org">
-              <Img src="images/PlasmoDB/footer-logo.png"/>
+              <Image src="images/PlasmoDB/footer-logo.png"/>
             </a>
           </li>
           <li className="long-space" title="ToxoDB.org">
             <a href="http://toxodb.org">
-              <Img src="images/ToxoDB/footer-logo.png"/>
+              <Image src="images/ToxoDB/footer-logo.png"/>
             </a>
           </li>
           <li className="short-space" title="TrichDB.org">
             <a href="http://trichdb.org">
-              <Img src="images/TrichDB/footer-logo.png"/>
+              <Image src="images/TrichDB/footer-logo.png"/>
             </a>
           </li>
           <li className="short-space" title="TriTrypDB.org">
             <a href="http://tritrypdb.org">
-              <Img src="images/TriTrypDB/footer-logo.png"/>
+              <Image src="images/TriTrypDB/footer-logo.png"/>
             </a>
           </li>
           <li className="short-space" title="OrthoMCL.org">
             <a href="http://orthomcl.org">
-              <Img src="images/OrthoMCL/footer-logo.png"/>
+              <Image src="images/OrthoMCL/footer-logo.png"/>
             </a>
           </li>
         </ul>

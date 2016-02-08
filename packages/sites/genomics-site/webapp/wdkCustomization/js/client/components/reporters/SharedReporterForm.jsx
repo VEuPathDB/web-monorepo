@@ -35,21 +35,17 @@ let SharedReporterForm = React.createClass({
     };
   },
 
-  onAttributesChange(newAttributes) {
-    this.props.onFormChange(Object.assign({}, this.props.formState, { attributes: newAttributes }));
+  // returns a handler function that will update the form state 
+  getUpdateHandler(fieldName) {
+    return (newValue => {
+      this.props.onFormChange(Object.assign({}, this.props.formState, { [fieldName]: newValue }));
+    });
   },
 
-  onTablesChange(newTables) {
-    this.props.onFormChange(Object.assign({}, this.props.formState, { tables: newTables }));
-  },
-
+  // need a custom handler to convert string value to boolean
   onIncludeEmptyTablesChange(newValue) {
     newValue = (newValue === "true"); // convert from string -> boolean
     this.props.onFormChange(Object.assign({}, this.props.formState, { includeEmptyTables: newValue }));
-  },
-
-  onAttachmentTypeChange(newValue) {
-    this.props.onFormChange(Object.assign({}, this.props.formState, { attachmentType: newValue }));
   },
 
   render() {
@@ -62,12 +58,12 @@ let SharedReporterForm = React.createClass({
           name="attributes" title="Choose Attributes"
           allValues={util.getAllAttributes(recordClass, question, util.isInReport)}
           selectedValueNames={realFormState.attributes}
-          onChange={this.onAttributesChange}/>
+          onChange={this.getUpdateHandler('attributes')}/>
         <ReporterCheckboxList
           name="tables" title="Choose Tables"
           allValues={util.getAllTables(recordClass, util.isInReport)}
           selectedValueNames={realFormState.tables}
-          onChange={this.onTablesChange}/>
+          onChange={this.getUpdateHandler('tables')}/>
         <div>
           <h3>Empty Tables:</h3>
           <div style={{marginLeft:"2em"}}>
@@ -79,7 +75,7 @@ let SharedReporterForm = React.createClass({
           <h3>Download Type:</h3>
           <div style={{marginLeft:"2em"}}>
             <RadioList name="attachmentType" value={realFormState.attachmentType}
-                onChange={this.onAttachmentTypeChange} items={attachmentTypes}/>
+                onChange={this.getUpdateHandler('attachmentType')} items={attachmentTypes}/>
           </div>
         </div>
         <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
