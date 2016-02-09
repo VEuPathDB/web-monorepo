@@ -341,7 +341,7 @@ EOL
 
 
 sub getOntologyCategoryFromTrackName {
-  my ($trackName, $optionalTerminus) = @_;
+  my ($trackName, $allTracks, $optionalTerminus) = @_;
 
   if($self->{_ontology_category_from_track_name}->{$trackName}) {
     $rv = $self->{_ontology_category_from_track_name}->{$trackName};
@@ -361,26 +361,63 @@ sub getOntologyCategoryFromTrackName {
  
     my $resp = $ua->request($req);
     if ($resp->is_success) {
+      my %allTracks;
+
+      foreach(@$allTracks) {
+        $allTracks{$_} = 1;
+      }
+
       my $decoded_json = decode_json( $resp->decoded_content  );
 
       my %trackNameToPathHashRef;
+      my %nodeDisplayOrder;
+
+      my $reallyBigOrderNumber = 10000000;
+
       foreach my $pathArrayRef (@$decoded_json) {
-    
+
         my @pathLabels;
 
         my $lastIndex = scalar @$pathArrayRef - 1;
 
+        my $track = $pathArrayRef->[$lastIndex]->{name}->[0];
+
+        next unless($allTracks{$track});
+
         for(my $i = 1; $i < $lastIndex; $i ++) {
-          push @pathLabels, $pathArrayRef->[$i]->{'EuPathDB alternative term'}->[0];
-          
+          my $pathLabel = $pathArrayRef->[$i]->{'EuPathDB alternative term'}->[0];
+
+          my $displayOrder = defined $pathArrayRef->[$i]->{'display order'} ? $pathArrayRef->[$i]->{'display order'}->[0] : $reallyBigOrderNumber;
+
+          push @pathLabels, $pathLabel;
+          $nodeDisplayOrder{$pathLabel} = $displayOrder;
         }
 
-        my $track = $pathArrayRef->[$lastIndex]->{name}->[0];
-        my $pathLabelsAsString = join(" : ", @pathLabels);
 
-        $trackNameToPathHashRef{$track} = $pathLabelsAsString;
+        $trackNameToPathHashRef{$track} = \@pathLabels;
       }
   
+      my @sortedNodeNames = sort { $nodeDisplayOrder{$a} <=> $nodeDisplayOrder{$b} || $a cmp $b } keys(%nodeDisplayOrder);
+      my $neededZeros = length(scalar(@sortedNodeNames)) - 1;
+
+      for(my $i = 0; $i < scalar @sortedNodeNames; $i++) {
+
+        my $orderPrefix = sprintf("%0${$neededZeros}d", $i+1);
+
+        # replace w/ new display order
+        $nodeDisplayOrder{$sortedNodeNames[$i]} = $orderPrefix;
+
+      }
+
+      foreach my $trackName (keys %trackNameToPathHashRef) {
+        my $pathLabels = $trackNameToPathHashRef{$trackName};
+        my $firstNode = $pathLabels->[0];
+        $pathLabels->[0] = $nodeDisplayOrder{$firstNode} . " $firstNode";
+
+        my $pathLabelsAsString = join(" : ", @$pathLabels);
+        $trackNameToPathHashRef{$trackName} = $pathLabelsAsString;
+      }
+
       $self->{_ontology_category_from_track_name} = \%trackNameToPathHashRef;
     }
     else {
@@ -398,3 +435,8 @@ sub getOntologyCategoryFromTrackName {
 
 
 1;
+
+
+
+
+
