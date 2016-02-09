@@ -26,8 +26,7 @@
 <div id="contentcolumn">
 <div class="innertube">
 
-<c:choose>
-<c:when test="${project == 'EuPathDB'}">
+<c:if test="${project == 'EuPathDB'}">
 
 	<p><b>EuPathDB <a href="https://www.niaid.nih.gov/labsandresources/resources/dmid/brc/pages/default.aspx">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens in the following websites:</b>	<i style="font-size:90%">(mouse over the logos)</i> <br>
 
@@ -67,12 +66,8 @@
 	<br> 
 	</p>
 
+</c:if>
 
-</c:when>
-<c:otherwise>
-	<p>&nbsp;</p>
-</c:otherwise>
-</c:choose>
 
 <%--
 <div style="padding:3px 10px;">

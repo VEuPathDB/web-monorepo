@@ -83,7 +83,7 @@
 
                     </a>
                     <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
-                      <a class="detail_link small" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;description</a>
+                      <a class="detail_link small" title="Click for popup with description" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
                     </c:if>
                     <div class="sub_list">
                       <ul>
@@ -146,7 +146,7 @@
                        --%>
 
                 </a>
-                <a class="detail_link small" href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;<i>description</i></a>
+                <a class="detail_link small"  title="Click for popup with description"  href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
                 <div class="sub_list">
                   <ul>
                     <c:forEach items="${cat.websiteQuestions}" var="q">
