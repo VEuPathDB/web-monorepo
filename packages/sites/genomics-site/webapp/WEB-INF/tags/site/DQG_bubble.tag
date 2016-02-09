@@ -47,7 +47,7 @@
 
     <%---------------------------------   TOOLS  -------------------------%>
     <c:when test="${recordClasses == null}">
-       <div class="heading">Tools</div> 
+      <div class="heading">Tools</div> 
       <imp:DQG_tools />
     </c:when>
 
@@ -130,47 +130,47 @@
           <c:set var="rootCat" value="${rootCats[leftBubbleCategory]}" />
           <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
             <c:set var="cat" value="${catEntry.value}" />
-         <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
-              <li>
-                <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
-                <a class="heading" href="javascript:void(0)">${cat.displayName}
+            <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
+            <li>
+              <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
+              <a class="heading" href="javascript:void(0)">${cat.displayName}
 
 
-                  <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
-                       <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-                         <c:if test="${cat.displayName eq 'Transcript Expression'}">
-                           <imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-                                      src="wdk/images/revised-small.png" />
-                         </c:if>
+                <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
+                     <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
+                       <c:if test="${cat.displayName eq 'Transcript Expression'}">
+                         <imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
+                                    src="wdk/images/revised-small.png" />
                        </c:if>
-                       --%>
+                     </c:if>
+                     --%>
 
-                </a>
-                <a class="detail_link small"  title="Click for popup with description"  href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
-                <div class="sub_list">
-                  <ul>
-                    <c:forEach items="${cat.websiteQuestions}" var="q">
-                      <c:set var="popup" value="${q.summary}"/>
-                      <li>
-                        <a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" 
-                           class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a>
-                        <imp:questionFeature question="${q}" />
+              </a>
+              <a class="detail_link small"  title="Click for popup with description"  href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
+              <div class="sub_list">
+                <ul>
+                  <c:forEach items="${cat.websiteQuestions}" var="q">
+                    <c:set var="popup" value="${q.summary}"/>
+                    <li>
+                      <a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" 
+                         class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a>
+                      <imp:questionFeature question="${q}" />
 
 
-                        <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
-                             <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-                               <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
-                                 <imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-                                            src="wdk/images/revised-small.png" />
-                               </c:if>
+                      <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
+                           <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
+                             <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
+                               <imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
+                                          src="wdk/images/revised-small.png" />
                              </c:if>
-                             --%>
-                      </li>
-                    </c:forEach>
-                  </ul>
-                </div>
-              </li>
-        <%--     </c:if> --%>
+                           </c:if>
+                           --%>
+                    </li>
+                  </c:forEach>
+                </ul>
+              </div>
+            </li>
+            <%--     </c:if> --%>
           </c:forEach>
         </ul> 
       </div>
