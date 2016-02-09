@@ -220,14 +220,14 @@ sub gsnapIntronBgColorFromScore {
   my $sum = eval join '+', split /[,|\|]/, $urs;
 
   # http://www.computerhope.com/htmcolor.htm
-  return '#B6B6B4' if $sum <= 5;   # Gray Cloud
+  return '#B6B6B4' if $sum <= 2;   # Gray Cloud
   return '#F88017' if $sum <= 5;   # Dark Orange
   return '#F87217' if $sum <= 10;  # Dark Orange1
   return '#E56717' if $sum <= 20;  # Dark Orange2
   return '#C35617' if $sum <= 50;  # Dark Orange3
   return '#8A4117' if $sum <= 100; # Sienna
   return '#7E3517' if $sum <= 200; # Sienna4
-  return '#7E2217';   # Indian Red4
+  return '#800517';   # Firebrick
 }
 
 
@@ -245,7 +245,7 @@ sub gsnapIntronHeightFromScore {
   return 8 if $sum <= 50;  # Dark Orange3
   return 9 if $sum <= 100; # Sienna
   return 10 if $sum <= 200; # Sienna4
-  return 11;   # Indian Red4
+  return 11;   # Firebrick
 }
 
 sub gsnapIntronUnifiedWidth {
@@ -1061,12 +1061,21 @@ UNIQUE_READS:
 NU_READS:
   The number of reads mapping across the junction for which their alignment
   is not unique and they have at least 8 bases on each side of the junction
-  <br/><br/>
-CANONICAL:
-	This refers to the splice junction.  If the splice junction is the standard splice signal GTAG then this is reported as "true", otherwise it is reported as "false".
+  <br/><br/><br/>
+Color of glyph changes with the Score as follow:
+  <p><table width="50%">
+  <tr><th align="left">Color</th><th align="left">Score</th></th></tr>
+  <tr><td bgcolor='white'><font color="#B6B6B4"><b>Gray</b></font></td><td>&nbsp  less than 2</tr>
+  <tr><td bgcolor='white'><font color="#F88017"><b>Orange</b></font></td><td>&nbsp  between 2 and 5</tr>
+  <tr><td bgcolor='white'><font color="#F87217"><b>Dark Orange1</b></font></td><td>&nbsp between 5 and 10</tr>
+  <tr><td bgcolor='white'><font color="#E56717"><b>Dark Orange2</b></font></td><td>&nbsp between 10 and 20</tr>
+  <tr><td bgcolor='white'><font color="#C35617"><b>Dark Orange3</b></font></td><td>&nbsp between 20 and 50</tr>
+  <tr><td bgcolor='white'><font color="#8A4117"><b>Sienna</b></font></td><td>&nbsp between 50 and 100</tr>
+  <tr><td bgcolor='white'><font color="#7E3517"><b>Sienna4</b></font></td><td>&nbsp between 100 and 200</tr>
+  <tr><td bgcolor='white'><font color="#800517"><b>Firebrick</b></font></td><td>&nbsp greater than 200</tr>
+</table>
 EOL
-
-} 
+}
 
 sub massSpecKey {
   my $projectId = $ENV{PROJECT_ID};
