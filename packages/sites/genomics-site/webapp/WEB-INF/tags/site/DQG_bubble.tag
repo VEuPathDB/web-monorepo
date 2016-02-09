@@ -47,13 +47,13 @@
 
     <%---------------------------------   TOOLS  -------------------------%>
     <c:when test="${recordClasses == null}">
-      <div class="heading">Tools</div> 
+      <div class="heading">Tools:</div> 
       <imp:DQG_tools />
     </c:when>
 
     <%---------------------------------   RECORDCLASSSES OTHER THAN GENES  -------------------------%>
     <c:when test="${recordClasses == 'others'}">
-      <div class="heading">Search for Other Data Types</div>  
+      <div class="heading">Search for Other Data Types:</div>  
 
       <div class="info">
         <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
@@ -123,7 +123,7 @@
 
     <%---------------------------------   GENES  -------------------------%>
     <c:otherwise>
-      <div class="heading">Search for Genes by</div>  
+      <div class="heading">Search for Genes by:</div>  
       <div class="info">
         <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
         <ul class="heading_list">
