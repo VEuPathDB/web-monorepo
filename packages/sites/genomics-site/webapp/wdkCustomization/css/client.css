@@ -326,7 +326,7 @@ h4 {
   content: '\f178 ';
 }
 .eupathdb-TranscriptSticky {
-  background: white;
+  background: #fcfcfc;
   padding-top: 36px;
 }
 .eupathdb-TranscriptSticky-fixed {
@@ -376,7 +376,7 @@ h4 {
 .eupathdb-TranscriptLink-active,
 .eupathdb-TranscriptLink-active:hover,
 .eupathdb-TranscriptLink-active:focus {
-  background-color: white;
+  background-color: #fcfcfc;
   border-color: #aaa;
 }
 .eupathdb-TranscriptTabContent {
