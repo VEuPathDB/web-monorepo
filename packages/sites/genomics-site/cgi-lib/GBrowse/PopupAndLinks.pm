@@ -406,9 +406,7 @@ sub geneTitleGB2 {
     $loc .= $_->location->to_FTstring. "<br />";
   }
 
-
-
-  
+  my ($gene_id) = $f->get_tag_values("geneId");
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
   my ($orthomclName) = $f->get_tag_values("orthomcl_name");
@@ -795,8 +793,8 @@ sub ArrayElementTitle {
 sub gsnapIntronTitle {  
   my ($f) = @_;
   my ($sample) = $f->get_tag_values('Sample');
-  my ($ur) = $f->get_tag_values('UR');
-  my ($nr) =  $f->get_tag_values('NR');
+  my ($urs) = $f->get_tag_values('URS');
+  my ($nrs) =  $f->get_tag_values('NRS');
   my $start = $f->start;
   my $stop = $f->stop;
 
@@ -804,9 +802,9 @@ sub gsnapIntronTitle {
   push @data, [ 'Sample:' => $sample ];
   push @data, [ 'Genome Location:' => "$start - $stop"];
   push @data, [ 'Score'   => $f->score ];
-  push @data, [ 'Unique Reads:'  => "$ur" ];
-  push @data, [ 'NU Reads:'     => "$nr" ];
-print STDERR "$sample / $start / $stop / $ur / $nr " .  $f->score . "\n";
+  push @data, [ 'Unique Reads:'  => "$urs" ];
+  push @data, [ 'NU Reads:'     => "$nrs" ];
+print STDERR "$sample / $start / $stop / $urs / $nrs " .  $f->score . "\n";
 #  hover('Splice Site Junctions', \@data);
     hover($f, \@data);
 }
@@ -838,7 +836,7 @@ sub gsnapIntronTitleUnified {
   push @data, [ '<b>Note</b>'     => $note ];
 
   my $count = 0;
-  my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th><th>Long Unique</th><th>Short Unique</th><th>Long Non-Unique</th><th>Short Non-Unique</th><th>Canonical</th></tr>";
+  my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th><th>Unique</th><th>Non-Unique</th></tr>";
   foreach my $exp (@exp_arr) {
      my $sample = $sample_arr[$count];
      my $score = $score_arr[$count];

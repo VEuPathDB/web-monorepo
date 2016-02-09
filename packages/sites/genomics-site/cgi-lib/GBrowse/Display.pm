@@ -216,18 +216,11 @@ sub gsnapIntronBgColorFromSample {
 sub gsnapIntronBgColorFromScore {
   my $f = shift;
 
-  my ($lours) = $f->get_tag_values('LOURS');
-  my ($sours) =  $f->get_tag_values('SOURS');
-  
-  ($lours) = $f->get_tag_values('LOUR') unless $lours;
-  ($sours) = $f->get_tag_values('SOUR') unless $sours;
-
-  my $sum_lour = eval join '+', split /[,|\|]/, $lours;
-  my $sum_sour = eval join '+', split /[,|\|]/, $sours;
-
-  my $sum = $sum_lour + $sum_sour;
+  my ($urs) = $f->get_tag_values('URS');
+  my $sum = eval join '+', split /[,|\|]/, $urs;
 
   # http://www.computerhope.com/htmcolor.htm
+  return '#B6B6B4' if $sum <= 5;   # Gray Cloud
   return '#F88017' if $sum <= 5;   # Dark Orange
   return '#F87217' if $sum <= 10;  # Dark Orange1
   return '#E56717' if $sum <= 20;  # Dark Orange2
@@ -241,15 +234,11 @@ sub gsnapIntronBgColorFromScore {
 sub gsnapIntronHeightFromScore {
   my $f = shift;
 
-  my ($lours) = $f->get_tag_values('LOURS');
-  my ($sours) =  $f->get_tag_values('SOURS');
-
-  my $sum_lour = eval join '+', split /[,|\|]/, $lours;
-  my $sum_sour = eval join '+', split /[,|\|]/, $sours;
-
-  my $sum = $sum_lour + $sum_sour;
+  my ($urs) = $f->get_tag_values('URS');
+  my $sum = eval join '+', split /[,|\|]/, $urs;
 
   # http://www.computerhope.com/htmcolor.htm
+  return 3 if $sum <= 2;   # Gray Cloud
   return 5 if $sum <= 5;   # Dark Orange
   return 6 if $sum <= 10;  # Dark Orange1
   return 7 if $sum <= 20;  # Dark Orange2
@@ -1064,25 +1053,15 @@ SCORE:
   splice signal.  So if the splice signals are not characterized the score
   is zero.
   <br/><br/>
-LONG_OVERLAP_UNIQUE_READS: 
+UNIQUE_READS: 
   The number of reads mapping across the junction for which their alignment
   is unique and they have at least 8 bases on each side of the junction.
   These are the ones that count towards the "score". 
   <br/><br/>
-SHORT_OVERLAP_UNIQUE_READS:
-  The number of reads mapping across the junction for which their alignment
-  is unique and they have less than 8 bases on one (or both) sides of the
-  junction 
-  <br/><br/>
-LONG_OVERLAP_NU_READS:
+NU_READS:
   The number of reads mapping across the junction for which their alignment
   is not unique and they have at least 8 bases on each side of the junction
   <br/><br/>
-SHORT_OVERLAP_NU_READS:
-  The number of reads mapping across the junction for which their alignment
-  is not unique and they have less than 8 bases on one (or both) sides of
-  the junction
-	<br/><br/>
 CANONICAL:
 	This refers to the splice junction.  If the splice junction is the standard splice signal GTAG then this is reported as "true", otherwise it is reported as "false".
 EOL
