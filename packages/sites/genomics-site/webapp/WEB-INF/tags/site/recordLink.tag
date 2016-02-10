@@ -76,7 +76,7 @@
           <a href="${recordLink}">${displayValue}</a>
         </c:when>
         <c:otherwise> <!-- in transcript view we want to add the basket icon/checkbox by the geneid -->
-          <a href="${recordLink}">${basket} ${displayValue}</a>
+          <span style="white-space:nowrap">${basket} <a href="${recordLink}"> ${displayValue}</a></span>
         </c:otherwise>
       </c:choose>
 
