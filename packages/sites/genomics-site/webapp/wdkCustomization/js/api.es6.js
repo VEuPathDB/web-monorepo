@@ -1,3 +1,3 @@
-import WdkService from 'wdk-service';
+import WdkService from 'wdk-client-utils/WdkService';
 
 console.log('WdkService', WdkService);
