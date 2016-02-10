@@ -116,7 +116,7 @@ let SequenceRegionInputs = function(props) {
   }
 }
 
-let FastaReporterForm = React.createClass({
+let FastaGeneReporterForm = React.createClass({
 
   componentDidMount() {
     this.props.onFormChange(this.discoverFormState(this.props.formState));
@@ -131,16 +131,6 @@ let FastaReporterForm = React.createClass({
     return (newValue => {
       this.props.onFormChange(Object.assign({}, this.props.formState, { [fieldName]: newValue }));
     });
-  },
-
-  // this form does not submit to the answer service; SRT processing is done by a CGI script
-  submitForm() {
-    FormSubmitter.submitAsForm({
-      method: 'post',
-      target: '_blank',
-      action: 'http://plasmodb.org/cgi-bin/geneSrt',
-      inputs: this.props.formState
-    })
   },
 
   render() {
@@ -160,7 +150,7 @@ let FastaReporterForm = React.createClass({
             onChange={this.getUpdateHandler('attachmentType')} items={attachmentTypes}/>
         </div>
         <div style={{margin:'0.8em'}}>
-          <input type="button" value="Get Sequences" onClick={this.submitForm}/>
+          <input type="button" value="Get Sequences" onClick={this.props.onSubmit}/>
         </div>
         <div>
           <hr/>
@@ -179,4 +169,4 @@ let FastaReporterForm = React.createClass({
 
 });
 
-export default FastaReporterForm;
+export default FastaGeneReporterForm;
