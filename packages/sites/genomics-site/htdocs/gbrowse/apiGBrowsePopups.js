@@ -126,7 +126,7 @@ function getSaveRowLinks(projectId, sourceId) {
 /****** Pop-up functions for various record types ******/
 
 // Gene title
-function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl) {
+function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl, geneId) {
 
   // In ToxoDB, sequences of alternative gene models have to be returned
   var ignore_gene_alias = 0;
@@ -152,6 +152,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   var rows = new Array();
   rows.push(twoColRow('Species:', taxon));
   rows.push(twoColRow('ID:', sourceId));
+  rows.push(twoColRow('Gene ID:', geneId)) if (geneId);
   rows.push(twoColRow('Gene Type:', soTerm));
   rows.push(twoColRow('Description:', product));
 
