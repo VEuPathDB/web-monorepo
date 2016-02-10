@@ -21,6 +21,7 @@
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
 
 <ul style="margin:0;padding:0;list-style:none">
+
   <c:forEach items="${rootCatMap}" var="rootCatEntry">
     <c:set var="recType" value="${rootCatEntry.key}" />
     <c:set var="rootCat" value="${rootCatEntry.value}" />
@@ -41,6 +42,8 @@
             </c:otherwise>
           </c:choose>
           <ul>       <%-- GENE CATEGORIES --%>
+<li><a href="/plasmo.aurreco/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
+</li>
             <c:forEach items="${children}" var="catEntry">
               <c:set var="cat" value="${catEntry.value}" />
           <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>

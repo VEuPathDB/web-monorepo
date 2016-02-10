@@ -127,6 +127,8 @@
       <div class="info">
         <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
         <ul class="heading_list">
+<li><a style="padding-left:21px" id="GeneQuestions_GenesByTextSearch" class="dqg-tooltip" href="showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch" data-hasqtip="10" oldtitle="Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways." title="" aria-describedby="qtip-10">Text (product name, notes, etc.)</a>
+</li>
           <c:set var="rootCat" value="${rootCats[leftBubbleCategory]}" />
           <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
             <c:set var="cat" value="${catEntry.value}" />
