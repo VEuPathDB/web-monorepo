@@ -7,6 +7,8 @@ import { run, Components } from 'wdk-client';
 import * as wrappers from './componentWrappers';
 import { routes } from './routes';
 
+console.log(require.context('./components/records', true, /^\.\/.*\.jsx?$/));
+
 // apply wrappers
 for (let key in wrappers) {
   let Component = Components[key];

@@ -94,6 +94,9 @@
 
   <!-- show/hide the tables in the Record page -->
   <imp:script src="js/show_hide_tables.js"/>
+ 
+  <!-- webpack generated bundle -->
+  <imp:script src="wdkCustomization/js/api.js"/>
 
   <!-- SRT page -->
   <c:if test="${refer == 'srt'}">

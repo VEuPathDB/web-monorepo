@@ -13,8 +13,11 @@ config.output = null;
 config.plugins.pop();
 
 // Make sure properties are initialized on config, without overwriting values.
+initializeProps(config, 'resolve.alias', {});
 initializeProps(config, 'resolveLoader');
 initializeProps(config, 'externals', []);
+
+config.resolve.alias['wdk-service'] = path.join(wdkRoot, 'webapp/wdk/js/client/utils/WdkService');
 
 // This lets us use build tools Wdk has already loaded.
 config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
@@ -30,6 +33,7 @@ config.externals.push({
   'wdk'            : 'Wdk',
   'wdk-client'     : 'Wdk.client',
   'react'          : 'React',
+  'react-dom'      : 'ReactDOM',
   'react-router'   : 'ReactRouter',
   'immutable'      : 'Immutable',
   'lodash'         : '_'
