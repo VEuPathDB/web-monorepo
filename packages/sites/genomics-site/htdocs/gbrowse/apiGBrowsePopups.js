@@ -152,7 +152,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   var rows = new Array();
   rows.push(twoColRow('Species:', taxon));
   rows.push(twoColRow('ID:', sourceId));
-  rows.push(twoColRow('Gene ID:', geneId)) if (geneId);
+  rows.push(twoColRow('Gene ID:', geneId)); 
   rows.push(twoColRow('Gene Type:', soTerm));
   rows.push(twoColRow('Description:', product));
 
