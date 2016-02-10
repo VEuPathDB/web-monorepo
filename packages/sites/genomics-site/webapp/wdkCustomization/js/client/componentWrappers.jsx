@@ -5,7 +5,7 @@ import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecor
 
 // load individual reporter forms
 import TabularReporterForm from './components/reporters/TabularReporterForm';
-import FastaReporterForm from './components/reporters/FastaReporterForm';
+import FastaGeneReporterForm from './components/reporters/FastaGeneReporterForm';
 import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
 import TextReporterForm from './components/reporters/TextReporterForm';
 import XmlReporterForm from './components/reporters/XmlReporterForm';
@@ -75,11 +75,17 @@ export function RecordUI(WdkRecordUI) {
 // Customize the reporter form to select the correct
 export function StepDownloadForm(WdkStepDownloadForm) {
   return function ApiStepDownloadForm(props) {
-    switch(props.selectedReporter) {
+    switch (props.selectedReporter) {
       case 'tabular':
         return ( <TabularReporterForm {...props}/> );
       case 'srt':
-        return ( <FastaReporterForm {...props}/> );
+        switch (props.recordClass.name) {
+          case'GeneRecordClasses.GeneRecordClass':
+            return ( <FastaGeneReporterForm {...props}/> );
+          default:
+            console.error("Unsupported FASTA recordClass: " + props.recordClass.name);
+            return ( <noscript/> );
+        }
       case 'gff3':
         return ( <Gff3ReporterForm {...props}/> );
       case 'fullRecord':
