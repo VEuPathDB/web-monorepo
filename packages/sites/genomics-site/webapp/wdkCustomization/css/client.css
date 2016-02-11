@@ -145,6 +145,7 @@ h4 {
   height: auto;
   width: 710px;
   box-shadow: 0px 0px 14px #ddd;
+  left: 30em;
 }
 
 .eupathdb-TranscriptThumbnail:hover img {

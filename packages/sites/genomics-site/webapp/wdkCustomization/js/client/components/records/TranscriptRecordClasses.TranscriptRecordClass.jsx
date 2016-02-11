@@ -1,3 +1,4 @@
+import React from 'react';
 import ExpressionGraph from '../common/ExpressionGraph';
 
 let {
@@ -151,7 +152,7 @@ export function GbrowseContext(props) {
   let gbrowseUrl = `/cgi-bin/gbrowse/${lowerProjectId}/?name=${sequence_id}:${gene_context_start}..${gene_context_end};h_feat=${lowerGeneId}@yellow`;
 
   return (
-    <div>
+    <div id="genomic-context">
       <center>
         <strong>Genomic Context</strong>
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
@@ -190,13 +191,13 @@ function resizeIframe(event) {
 }
 
 export function ProteinContext(props) {
-  let { gene_source_id, protein_length, protein_gtracks } = props.record.attributes;
+  let { source_id, protein_length, protein_gtracks } = props.record.attributes;
 
   return (
-    <div>
+    <div id="protein-features">
       <strong>Protein Features</strong>
       <iframe
-        src={`/cgi-bin/gbrowse_img/${wdk.MODEL_NAME.toLowerCase()}aa/?name=${gene_source_id.toLowerCase()}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;width=800;embed=1;genepage=1`}
+        src={`/cgi-bin/gbrowse_img/${wdk.MODEL_NAME.toLowerCase()}aa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;width=800;embed=1;genepage=1`}
         style={{ width: '1000px', border: 'none' }}
       />
     </div>
