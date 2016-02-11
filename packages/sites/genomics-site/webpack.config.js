@@ -18,6 +18,7 @@ initializeProps(config, 'resolveLoader');
 initializeProps(config, 'externals', []);
 
 config.resolve.alias['wdk-client-utils'] = path.join(wdkRoot, 'webapp/wdk/js/client/utils');
+config.resolve.alias['wdk-client-components'] = path.join(wdkRoot, 'webapp/wdk/js/client/components');
 
 // This lets us use build tools Wdk has already loaded.
 config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
