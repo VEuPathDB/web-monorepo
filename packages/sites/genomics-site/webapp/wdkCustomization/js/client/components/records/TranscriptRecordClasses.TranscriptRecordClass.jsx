@@ -126,8 +126,9 @@ export function RecordOverview(props) {
 }
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
-function injectGbrowseScripts(iframe) {
-  if (iframe == null) return;
+function injectGbrowseScripts(event) {
+  resizeIframe(event);
+  let iframe = event.target;
 
   let gbrowseWindow = iframe.contentWindow.window;
   let gbrowseDocumentBody = iframe.contentWindow.document.body;
@@ -139,6 +140,7 @@ function injectGbrowseScripts(iframe) {
     let script = document.createElement('script');
     script.src = scriptUrl;
     gbrowseDocumentBody.appendChild(script);
+    console.log(gbrowseDocumentBody, script);
   }
 }
 
@@ -180,7 +182,7 @@ export function GbrowseContext(props) {
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
         <div id="${gnCtxDivId}"></div>
-        <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} ref={injectGbrowseScripts} onLoad={resizeIframe}/>
+        <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} onLoad={injectGbrowseScripts} />
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
       </center>
