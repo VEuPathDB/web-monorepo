@@ -125,6 +125,28 @@ export function RecordOverview(props) {
   );
 }
 
+let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
+function injectGbrowseScripts(iframe) {
+  if (iframe == null) return;
+
+  let gbrowseWindow = iframe.contentWindow.window;
+  let gbrowseDocumentBody = iframe.contentWindow.document.body;
+
+  gbrowseWindow.wdk = wdk;
+  gbrowseWindow.jQuery = jQuery;
+
+  for (let scriptUrl of gbrowseScripts) {
+    let script = document.createElement('script');
+    script.src = scriptUrl;
+    gbrowseDocumentBody.appendChild(script);
+  }
+}
+
+function resizeIframe(event) {
+  let iframe = event.target;
+  iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20 + 'px';
+}
+
 export function GbrowseContext(props) {
   let {
     sequence_id,
@@ -158,36 +180,12 @@ export function GbrowseContext(props) {
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
         <div id="${gnCtxDivId}"></div>
-        <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} ref={injectGbrowseScripts} />
+        <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} ref={injectGbrowseScripts} onLoad={resizeIframe}/>
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
       </center>
     </div>
   );
-}
-
-let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
-function injectGbrowseScripts(iframe) {
-  if (iframe == null) return;
-
-  iframe.addEventListener('load', resizeIframe);
-
-  let gbrowseWindow = iframe.contentWindow.window;
-  let gbrowseDocumentBody = iframe.contentWindow.document.body;
-
-  gbrowseWindow.wdk = wdk;
-  gbrowseWindow.jQuery = jQuery;
-
-  for (let scriptUrl of gbrowseScripts) {
-    let script = document.createElement('script');
-    script.src = scriptUrl;
-    gbrowseDocumentBody.appendChild(script);
-  }
-}
-
-function resizeIframe(event) {
-  let iframe = event.target;
-  iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
 }
 
 export function ProteinContext(props) {
@@ -198,6 +196,7 @@ export function ProteinContext(props) {
       <strong>Protein Features</strong>
       <iframe
         src={`/cgi-bin/gbrowse_img/${wdk.MODEL_NAME.toLowerCase()}aa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;width=800;embed=1;genepage=1`}
+        onLoad={resizeIframe}
         style={{ width: '1000px', border: 'none' }}
       />
     </div>
