@@ -19,7 +19,7 @@ es6_sources := webapp/wdkCustomization/js/api.es6.js \
 all: $(client_bundle) $(es6_bundle)
 
 clean:
-	rm $(client_bundle) $(es6_bundle)
+	rm -rf $(client_bundle) $(es6_bundle)
 
 $(es6_bundle): $(es6_sources)
 	webpack $< $@
