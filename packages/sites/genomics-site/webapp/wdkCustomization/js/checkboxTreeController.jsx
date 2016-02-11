@@ -38,7 +38,6 @@ export default class CheckboxTreeController {
   }
 
   displayCheckboxTree() {
-    console.log("Element again is " + JSON.stringify(this.element[0]));
     ReactDOM.render(
       <CheckboxTree tree={this.tree}
                     selectedList={this.selectedList}
