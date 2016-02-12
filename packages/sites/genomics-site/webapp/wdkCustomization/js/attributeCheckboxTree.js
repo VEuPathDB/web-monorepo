@@ -79,13 +79,13 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
    * @param categoryTree - the munged ontology tree
    * @param viewName - the name of the view (not sure how that will fly if everything else is _default
    */
-  function addSearchSpecificSubtree(question, categoryTree, viewName) {
+  function addSearchSpecificSubtree(question, categoryTree) {
     if(question.dynamicAttributes.length > 0) {
       let subtree = {
         "question":true,
         "id": "search-specific-subtree",
         "displayName": "Search Specific",
-        "description": "Information about the " + viewName + "s returned that is specific to the search you ran, and the parameters you specified",
+        "description": "Information about the records returned that is specific to the search you ran, and the parameters you specified",
         "children": []
       };
       question.dynamicAttributes.forEach(attribute => {
