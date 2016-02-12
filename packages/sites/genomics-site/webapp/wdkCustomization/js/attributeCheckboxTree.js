@@ -45,7 +45,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
        service.findRecordClass(recordClass => recordClass.name === recordClassName)]
     ).then(([categoriesOntology, question, recordClass]) => {
         let categoryTree = getTree(categoriesOntology, isQualifying(recordClassName, viewName));
-        addSearchSpecificSubtree(question, categoryTree, viewName);
+        addSearchSpecificSubtree(question, categoryTree, recordClassName, viewName);
         let selectedList = currentSelectedList || defaultSelectedList;
         let callback = getAttributes(recordClass);
         let controller = new CheckboxTreeController(element, "attributeList_" + viewName, categoryTree.children, selectedList, defaultSelectedList, callback);
@@ -77,10 +77,12 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
    * of nodes in the ontology tree
    * @param question - question posited
    * @param categoryTree - the munged ontology tree
+   * @param recordClassName - full name of the record class
    * @param viewName - the name of the view (not sure how that will fly if everything else is _default
    */
-  function addSearchSpecificSubtree(question, categoryTree) {
-    if(question.dynamicAttributes.length > 0) {
+  function addSearchSpecificSubtree(question, categoryTree, recordClassName, viewName) {
+    if(question.dynamicAttributes.length > 0 && (recordClassName != 'TranscriptRecordClasses.TranscriptRecordClass' ||
+       (!question.properties.questionType || (question.properties.questionType.indexOf('transcript') > -1 && viewName==="transcript")))) {
       let subtree = {
         "question":true,
         "id": "search-specific-subtree",
