@@ -69,18 +69,16 @@
                   <%-- fixing plural and uppercase --%>
 
                   <c:set var="display" value="${cat.displayName}" />
-                  <li>
-                    <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
-                    <a class="heading" href="javascript:void(0)">&nbsp;${display}
-
+                  <li> 
+               <!--     <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" /> -->
+                    <i class="fa fa-caret-right fa-lg" style="cursor: pointer"></i>
+                    <a class="heading" href="javascript:void(0)">${display}
                       <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
                         <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
                           <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
                                      src="wdk/images/beta2-30.png" />
                         </c:if>
                       </c:if>
-
-
                     </a>
                     <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
                       <a class="detail_link small" title="Click for popup with description" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
@@ -104,8 +102,7 @@
           </c:forEach>
 
           <li> 
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a class="heading" href="app/search/dataset/AllDatasets/result">&nbsp;Data Sets
+            <a class="heading" href="app/search/dataset/AllDatasets/result" style="padding-left:15px">Data Sets
               <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
                          src="wdk/images/beta2-30.png" />
             </a>
@@ -127,27 +124,16 @@
       <div class="info">
         <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
         <ul class="heading_list">
-<li><a style="padding-left:21px" id="GeneQuestions_GenesByTextSearch" class="dqg-tooltip" href="showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch" data-hasqtip="10" oldtitle="Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways." title="" aria-describedby="qtip-10">Text (product name, notes, etc.)</a>
+<li><a style="padding-left:16px" id="GeneQuestions_GenesByTextSearch" class="dqg-tooltip" href="showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch" data-hasqtip="10" oldtitle="Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways." title="" aria-describedby="qtip-10">Text (product name, notes, etc.)</a>
 </li>
           <c:set var="rootCat" value="${rootCats[leftBubbleCategory]}" />
           <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
             <c:set var="cat" value="${catEntry.value}" />
             <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
             <li>
-              <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;
-              <a class="heading" href="javascript:void(0)">${cat.displayName}
-
-
-                <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
-                     <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-                       <c:if test="${cat.displayName eq 'Transcript Expression'}">
-                         <imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-                                    src="wdk/images/revised-small.png" />
-                       </c:if>
-                     </c:if>
-                     --%>
-
-              </a>
+             <!-- <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;-->
+              <i class="fa fa-caret-right fa-lg" style="cursor: pointer"></i> 
+              <a class="heading" href="javascript:void(0)">${cat.displayName}</a>
               <a class="detail_link small"  title="Click for popup with description"  href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
               <div class="sub_list">
                 <ul>
