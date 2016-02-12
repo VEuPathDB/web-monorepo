@@ -213,7 +213,7 @@ export function RecordTable(WdkRecordTable) {
 
 export function RecordAttribute(WdkRecordAttribute) {
   return function ApiRecordAttribute(props) {
-    if (props.name === 'dna_gtracks') {
+    if (props.name === 'GBrowse') {
       return ( <Transcript.GbrowseContext {...props} /> );
     }
 
