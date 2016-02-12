@@ -3,7 +3,7 @@ import Footer from './components/common/Footer';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
 import * as Transcript from './components/records/TranscriptRecordClasses.TranscriptRecordClass';
 
-// load individual reporter forms                                                                        
+// load individual reporter forms
 import TabularReporterForm from './components/reporters/TabularReporterForm';
 import FastaGeneReporterForm from './components/reporters/FastaGeneReporterForm';
 import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
@@ -121,22 +121,22 @@ export function RecordUI(WdkRecordUI) {
   };
 }
 
-// export function RecordOverview(WdkRecordOverview) {
-//   return function ApiRecordOverview(props) {
-//     switch (props.recordClass.name) {
-//       case 'TranscriptRecordClasses.TranscriptRecordClass':
-//         return (
-//           <Transcript.RecordOverview
-//             {...props}
-//             DefaultComponent={WdkRecordOverview}
-//           />
-//         );
-//
-//       default:
-//         return <WdkRecordOverview {...props}/>
-//     }
-//   };
-// }
+export function RecordOverview(WdkRecordOverview) {
+  return function ApiRecordOverview(props) {
+    switch (props.recordClass.name) {
+      case 'TranscriptRecordClasses.TranscriptRecordClass':
+        return (
+          <Transcript.RecordOverview
+            {...props}
+            DefaultComponent={WdkRecordOverview}
+          />
+        );
+
+      default:
+        return <WdkRecordOverview {...props}/>
+    }
+  };
+}
 
 export function RecordMainSection(WdkRecordMainSection) {
   return function ApiRecordMainSection(props) {

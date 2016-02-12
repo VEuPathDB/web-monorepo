@@ -47,9 +47,13 @@ h4 {
 }
 
 .wdk-RecordOverview {
-  overflow: auto;
-  clear: both;
   color: #555555;
+}
+
+.wdk-RecordOverview:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .wdk-RecordSidebar__fixed {
@@ -61,12 +65,15 @@ h4 {
 }
 
 .GeneOverviewLeft {
-  max-width: 30em;
+  max-width: 35em;
   margin-right: 2em;
 }
 
 .GeneOverviewRight {
-  max-width: calc(100% - 35em);
+  max-width: calc(100% - 40em);
+  position: relative;
+  top: -4.5em;
+  margin-bottom: -4.5em;
 }
 
 .GeneOverviewLeft h1, .GeneOverviewRight .GeneOverviewProduct {
@@ -74,8 +81,11 @@ h4 {
 }
 
 .GeneOverviewRight .GeneOverviewProduct {
-  font-size: 3em;
+  font-size: 2em;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .GeneOverviewItem, .eupathdb-TranscriptThumbnailLabel {
@@ -84,14 +94,18 @@ h4 {
   font-weight: 300;
 }
 
+.GeneOverviewItem label {
+  font-weight: bold;
+}
+
+.GeneOverviewItem label:after {
+  content: ":";
+}
+
 .GeneOverviewIntent {
   font-size: 1.2em;
   font-style: italic;
   margin: .2em 0 2em 0;
-}
-
-.GeneOverviewItem:first-letter {
-  text-transform: upperCase;
 }
 
 .GeneOverviewGeneType {
@@ -104,9 +118,11 @@ h4 {
   padding: .4em 1.5em .4em 1em;
 }
 
+/*
 .wdk-RecordContainer__TranscriptRecordClasses\.TranscriptRecordClass .wdk-RecordHeading {
   display: none;
 }
+*/
 
 .eupathdb-TranscriptTabContent .wdk-RecordSection {
   margin-top: -84px;

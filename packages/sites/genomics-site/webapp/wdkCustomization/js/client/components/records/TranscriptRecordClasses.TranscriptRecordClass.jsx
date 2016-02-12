@@ -1,4 +1,5 @@
 import React from 'react';
+import lodash from 'lodash';
 import ExpressionGraph from '../common/ExpressionGraph';
 
 let {
@@ -114,13 +115,87 @@ function TranscriptList(props, context) {
 }
 
 export function RecordOverview(props) {
-  // FIXME Remove early return when attributes for GBrowse are available
-  // return <props.DefaultComponent {...props} />;
+  let {
+    gene_name,
+    gene_type,
+    chromosome,
+    sequence_id,
+    location_text,
+    genus_species,
+    gene_strain,
+    gene_status,
+    gene_product,
+    gene_context_start,
+    gene_context_end,
+    source_id,
+    gene_source_id,
+    protein_length,
+    protein_gtracks
+  } = props.record.attributes;
 
+  let thumbnails = [
+    {
+      targetId: 'genomic-context',
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${gene_context_start}..${gene_context_end};l=Gene;hmap=gbrowseSyn;width=800`,
+      label: 'Gene Model'
+    },
+    {
+      targetId: 'genomic-context',
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${gene_context_start}..${gene_context_end};l=Synteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcyn_span+pcyn_gene+prei_span+prei_gene+pber_span+pber_gene+py17X_span+py17X_gene+pyXNL_span+pyXNL_gene+pyYM_span+pyYM_gene+pcha_span+pcha_gene;hmap=pbrowse;width=800`,
+      label: 'Synteny'
+    },
+    {
+      targetId: 'protein-features',
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodbaa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;genepage=1;width=800`,
+      label: 'Protein Features'
+    }
+
+  ];
   return (
-    <div>
-      <props.DefaultComponent {...props}/>
-      <GbrowseContext record={props.record}/>
+    <div className="wdk-RecordOverview">
+      <div className="GeneOverviewLeft">
+        <OverviewItem label="Gene" value={gene_name}/>
+        <OverviewItem label="Type" value={gene_type}/>
+        <OverviewItem label="Chromosome" value={chromosome}/>
+        <OverviewItem label="Location" value={location_text}/>
+        <br/>
+        <OverviewItem label="Species" value={genus_species}/>
+        <OverviewItem label="Strain" value={gene_strain}/>
+        <OverviewItem label="Status" value={gene_status}/>
+      </div>
+
+      <div className="GeneOverviewRight">
+        <div className="GeneOverviewProduct">{gene_product}</div>
+        <div className="GeneOverviewItem GeneOverviewIntent">This Gene Page reflects ongoing unpublished curation at GeneDB, enabling annotators to incorporate User Comments into the official record.  Users interested in publishing whole genome or other large-scale analysis should use PlasmoDB v5.3 (download here) or contact the primary investigator.</div>
+
+        <OverviewThumbnails thumbnails={thumbnails}/>
+      </div>
+    </div>
+  );
+}
+
+function OverviewItem(props) {
+  let { label, value = 'undefined' } = props;
+  return value == null ? <noscript/> : (
+    <div className="GeneOverviewItem"><label>{label}</label> {lodash.capitalize(value)}</div>
+  );
+}
+
+function OverviewThumbnails(props) {
+  return (
+    <div className="eupathdb-TranscriptThumbnails">
+      {props.thumbnails.map(thumbnail => (
+        <div className="eupathdb-TranscriptThumbnailWrapper">
+          <div className="eupathdb-TranscriptThumbnail">
+            <a href={'#' + thumbnail.targetId}>
+              <img width="200" src={thumbnail.imgUrl}/>
+            </a>
+          </div>
+          <div className="eupathdb-TranscriptThumbnailLabel">
+            <a href={'#' + thumbnail.targetId}>{thumbnail.label}</a>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -211,12 +286,12 @@ function extractGeneAndTranscriptTrees(categories) {
     let fakeOntology = { tree: { children: categories } };
     let geneRoot = prefixLabel(GENE_ID, OntologyUtils.getTree(
       fakeOntology,
-      node => _.get(node, 'properties.geneOrTranscript[0]') === GENE_ID
+      node => lodash.get(node, 'properties.geneOrTranscript[0]') === GENE_ID
     ));
 
     let transcriptRoot = prefixLabel(TRANSCRIPT_ID, OntologyUtils.getTree(
       fakeOntology,
-      node => _.get(node, 'properties.geneOrTranscript[0]') === TRANSCRIPT_ID
+      node => lodash.get(node, 'properties.geneOrTranscript[0]') === TRANSCRIPT_ID
     ));
 
     treeCache.set(categories, { geneRoot, transcriptRoot });
