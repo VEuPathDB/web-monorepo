@@ -427,18 +427,18 @@ export let RecordMainSection = React.createClass({
 */
 
 export function ExpressionGraphTable(props) {
-  let included = props.tableMeta.properties.includeInTable || [];
+  let included = props.table.properties.includeInTable || [];
 
-  let tableMeta = Object.assign({}, props.tableMeta, {
-    attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
+  let table = Object.assign({}, props.table, {
+    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
   });
 
   return (
     <props.DefaultComponent
       {...props}
-      tableMeta={tableMeta}
+      table={table}
       childRow={childProps =>
-        <ExpressionGraph rowData={props.table[childProps.rowIndex]}/>}
+        <ExpressionGraph rowData={props.value[childProps.rowIndex]}/>}
     />
   );
 }
@@ -478,7 +478,7 @@ export function MercatorTable(props) {
           <strong>Genomes to align:</strong>
           <CheckboxList
             name="genomes"
-            items={props.table.map(row => ({
+            items={props.value.map(row => ({
               value: row.abbrev,
               display: row.organism
             }))}

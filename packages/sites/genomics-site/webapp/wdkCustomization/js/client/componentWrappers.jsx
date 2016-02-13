@@ -201,10 +201,10 @@ let expressionRE = /ExpressionGraphs$/;
 export function RecordTable(WdkRecordTable) {
   return function ApiRecordTable(props) {
     let Table = WdkRecordTable;
-    if (expressionRE.test(props.tableMeta.name)) {
+    if (expressionRE.test(props.table.name)) {
       Table = Transcript.ExpressionGraphTable;
     }
-    if (props.tableMeta.name === 'MercatorTable') {
+    if (props.table.name === 'MercatorTable') {
       Table = Transcript.MercatorTable;
     }
     return <Table {...props} DefaultComponent={WdkRecordTable}/>;
