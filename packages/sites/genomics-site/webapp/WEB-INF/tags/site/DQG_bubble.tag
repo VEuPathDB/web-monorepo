@@ -69,9 +69,9 @@
                   <%-- fixing plural and uppercase --%>
 
                   <c:set var="display" value="${cat.displayName}" />
-                  <li> 
+                  <li title="Click to expand/collapse section"> 
                <!--     <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" /> -->
-                    <i class="fa fa-caret-right fa-lg" style="cursor: pointer"></i>
+                    <i class="fa fa-caret-right fa-lg"></i>
                     <a class="heading" href="javascript:void(0)">${display}
                       <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
                         <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
@@ -130,9 +130,9 @@
           <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
             <c:set var="cat" value="${catEntry.value}" />
             <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
-            <li>
+            <li title="Click to expand/collapse section">
              <!-- <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;-->
-              <i class="fa fa-caret-right fa-lg" style="cursor: pointer"></i> 
+              <i class="fa fa-caret-right fa-lg"></i> 
               <a class="heading" href="javascript:void(0)">${cat.displayName}</a>
               <a class="detail_link small"  title="Click for popup with description"  href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
               <div class="sub_list">
