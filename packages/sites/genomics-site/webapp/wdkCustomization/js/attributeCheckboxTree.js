@@ -11,14 +11,12 @@ import {
   getDisplayName,
   getDescription
 } from 'wdk-client-utils/OntologyUtils';
-import {
-  getAttribute
-} from 'wdk-client-utils/WdkUtils';
 import WdkService from 'wdk-client-utils/WdkService';
 
 
 wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
   "use strict";
+
 
   /**
    * Entry into checkbox tree load for the attribute checkbox tree which appears when the user
@@ -47,13 +45,13 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
         let categoryTree = getTree(categoriesOntology, isQualifying(recordClassName, viewName));
         addSearchSpecificSubtree(question, categoryTree, recordClassName, viewName);
         let selectedList = currentSelectedList || defaultSelectedList;
-        let callback = getAttributes(recordClass);
-        let controller = new CheckboxTreeController(element, "attributeList_" + viewName, categoryTree.children, selectedList, defaultSelectedList, callback);
+        let controller = new CheckboxTreeController(element, "attributeList_" + viewName, categoryTree.children, selectedList, defaultSelectedList);
         controller.displayCheckboxTree();
     }).catch(function(error) {
       throw new Error(error.message);
     });
   }
+
 
   /**
    * Create a predicate function to filter out of the Categories ontology tree those items appropriate for the
@@ -72,6 +70,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
       return qualified;
   };
 
+
   /**
    * Create a separate search specific subtree, based upon the question asked and tack it onto the start of top level array
    * of nodes in the ontology tree
@@ -84,18 +83,26 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     if(question.dynamicAttributes.length > 0 && (recordClassName != 'TranscriptRecordClasses.TranscriptRecordClass' ||
        (!question.properties.questionType || (question.properties.questionType.indexOf('transcript') > -1 && viewName==="transcript")))) {
       let subtree = {
-        "question":true,
-        "id": "search-specific-subtree",
-        "displayName": "Search Specific",
-        "description": "Information about the records returned that is specific to the search you ran, and the parameters you specified",
-        "children": []
+        "properties":{
+          "targetType" : ["attribute"],
+          "name" : ["search_specific_subtree"]
+        },
+        "wdkReference" : {
+          "displayName" : "Search Specific",
+          "help" : "Information about the records returned that is specific to the search you ran, and the parameters you specified"
+        },
+        "children" : []
       };
       question.dynamicAttributes.forEach(attribute => {
         let node = {
-          "question":true,
-          "id": attribute.name,
-          "displayName": attribute.displayName,
-          "descripton": attribute.help,
+          "properties" : {
+            "targetType" : ["attribute"],
+            "name" : [attribute.name]
+          },
+          "wdkReference" : {
+            "displayName" : attribute.displayName,
+            "help" : attribute.help
+          },
           "children":[]
         };
         subtree.children.push(node);
@@ -104,16 +111,6 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     }
   }
 
-  /**
-   * Curried function that returned an record class attribute lookup based upon record class and given node.
-   * @param recordClass - the record class containing the attributes to check
-   * @returns {Function} - function with node argument to return the record class attribute, if found, related to the given node
-   */
-  function getAttributes(recordClass) {
-    return node => {
-      return getAttribute(recordClass, getRefName(node));
-    }
-  }
 
   ns.setupCheckboxTree = setupCheckboxTree;
   

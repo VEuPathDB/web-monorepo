@@ -17,11 +17,10 @@ import {
 // serves as MVC controller for checkbox tree on results page
 export default class CheckboxTreeController {
 
-  constructor(element, name, tree, selectedList, defaultSelectedList, getAttributes) {
+  constructor(element, name, tree, selectedList, defaultSelectedList) {
     this.element = element;
     this.name = name;
     this.tree = tree;
-    this.getAttributes = getAttributes;
     this.displayCheckboxTree = this.displayCheckboxTree.bind(this);
     this.updateSelectedList = this.updateSelectedList.bind(this);
     this.updateExpandedList = this.updateExpandedList.bind(this);
@@ -30,7 +29,6 @@ export default class CheckboxTreeController {
     this.getNodeReactElement = this.getNodeReactElement.bind(this);
     this.getNodeFormValue = this.getNodeFormValue.bind(this);
     this.getNodeChildren = this.getNodeChildren.bind(this);
-    this.getNodeData = this.getNodeData.bind(this);
     this.selectedList = selectedList;
     this.expandedList = this.setExpandedList(this.tree, this.selectedList);
     this.defaultSelectedList = defaultSelectedList;
@@ -100,68 +98,71 @@ export default class CheckboxTreeController {
     return expandedList;
   }
 
-  getNodeData(node) {
-    let data = {};
-    if(node.question) {
-      data.id = node.id;
-      data.displayName = node.displayName;
-      data.description = node.description;
-      return data;
-    }
-    let targetType = getTargetType(node);
-    if (targetType === 'attribute') {
-      let attribute = this.getAttributes(node);
-      if(attribute == null) {
-      // This should not happen...will replace with an exception
-      data.displayName = getRefName(node) + "??";
-      data.description = getRefName(node) + "??";
-      data.id =  "attribute_" + getId(node);
-      }
-      else {
-        data.displayName = attribute.displayName;
-        data.description = attribute.help;
-        data.id = getRefName(node);
-      }
-    }
-    else {
-      data.id = getId(node);
-      data.displayName = getDisplayName(node);
-      data.description = getDescription(node);
-    }
-    return data;
-  }
 
+  /**
+   * Callback to provide the value/id of the node (i.e., checkbox value).  Using 'name' for
+   * leaves and processed 'label' for branches
+   * @param node - given id
+   * @returns {*} - id/value of node
+   */
   getNodeFormValue(node) {
-    return this.getNodeData(node).id
+    return getTargetType(node) === 'attribute' ? getRefName(node) : getId(node);
   }
 
 
+  /**
+   * Callback to provide a React element holding the display name and description for the node
+   * @param node - given node
+   * @returns {XML} - React element
+   */
   getNodeReactElement(node) {
-    let data = this.getNodeData(node);
-    return <span title={data.description}>{data.displayName}</span>
+    return <span title={getDescription(node)}>{getDisplayName(node)}</span>
   }
 
 
+  /**
+   * Callback to provide the node children
+   * @param node - given node
+   * @returns {Array}  child nodes
+   */
   getNodeChildren(node) {
     return node.children;
   }
 
+
+  /**
+   * Callback to update the selected node list nd re-render the tree
+   * @param selectedList - array of the values of the selected nodes
+   */
   updateSelectedList(selectedList) {
     this.selectedList = selectedList;
     this.displayCheckboxTree();
   }
 
+
+  /**
+   * Callback to update the expanded node list and re-render the tree
+   * @param expandedList - array of the values of the expanded nodes
+   */
   updateExpandedList(expandedList) {
     this.expandedList = expandedList;
     this.displayCheckboxTree();
   }
 
+
+  /**
+   * Callback to update the selected node list to reflect the default selected list and re-render the tree
+   */
   loadDefaultSelectedList() {
     this.updateSelectedList(this.defaultSelectedList);
   }
 
+
+  /**
+   * Callback to update the selected node list to reflect the selections in place when the add columns form was last submitted
+   * or the current user preferences and to re-render the tree
+   */
   loadCurrentSelectedList() {
-    console.log("Current selected list " + JSON.stringify(this.currentSelectedList));
     this.updateSelectedList(this.currentSelectedList);
   }
 }
