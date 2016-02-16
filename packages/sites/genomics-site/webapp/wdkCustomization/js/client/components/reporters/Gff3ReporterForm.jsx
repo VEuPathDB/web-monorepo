@@ -9,6 +9,17 @@ let attachmentTypes = [
   { value: "plain", display: "Show in Browser"}
 ];
 
+let initialStateMap = {
+  "SequenceRecordClasses.SequenceRecordClass": {
+    attachmentType: 'plain'
+  },
+  "GeneRecordClasses.GeneRecordClass": {
+    hasTranscript: false,
+    hasProtein: false,
+    attachmentType: 'plain'
+  }
+};
+
 let GffInputs = props => {
   let { recordClass, formState, getUpdateHandler } = props;
   if (recordClass.name != "GeneRecordClasses.GeneRecordClass") {
@@ -22,17 +33,6 @@ let GffInputs = props => {
       Include Predicted Protein Sequence<br/>
     </div>
   );
-};
-
-let initialStateMap = {
-  "SequenceRecordClasses.SequenceRecordClass": {
-    attachmentType: 'plain'
-  },
-  "GeneRecordClasses.GeneRecordClass": {
-    hasTranscript: false,
-    hasProtein: false,
-    attachmentType: 'plain'
-  }
 };
 
 let Gff3ReporterForm = React.createClass({
