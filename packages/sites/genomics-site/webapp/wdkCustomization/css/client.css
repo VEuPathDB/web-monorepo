@@ -154,17 +154,22 @@ h4 {
 }
 
 .eupathdb-TranscriptThumbnail {
+  /*
   height: 100px;
   width: 170px;
   overflow: hidden;
-  border: 1px solid #ccc;
+  */
+  border: 1px solid #aaa;
 }
 
 .eupathdb-TranscriptThumbnail img {
+  /*
   position: relative;
   left: -24px;
+  */
 }
 
+/*
 .eupathdb-TranscriptThumbnail:hover {
   position: absolute;
   z-index: 1;
@@ -178,6 +183,7 @@ h4 {
   width: 800px;
   left: -90px;
 }
+*/
 
 .eupathdb-ExpressionGraphContainer {
   overflow: auto;

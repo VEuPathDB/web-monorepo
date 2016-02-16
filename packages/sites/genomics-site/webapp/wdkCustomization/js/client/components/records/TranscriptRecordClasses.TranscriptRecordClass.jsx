@@ -190,13 +190,13 @@ function OverviewThumbnails(props) {
     <div className="eupathdb-TranscriptThumbnails">
       {props.thumbnails.map(thumbnail => (
         <div className="eupathdb-TranscriptThumbnailWrapper">
-          <div className="eupathdb-TranscriptThumbnail">
-            <a href={'#' + thumbnail.targetId}>
-              <img width="200" src={thumbnail.imgUrl}/>
-            </a>
-          </div>
           <div className="eupathdb-TranscriptThumbnailLabel">
             <a href={'#' + thumbnail.targetId}>{thumbnail.label}</a>
+          </div>
+          <div className="eupathdb-TranscriptThumbnail">
+            <a href={'#' + thumbnail.targetId}>
+              <img width="175" src={thumbnail.imgUrl}/>
+            </a>
           </div>
         </div>
       ))}
