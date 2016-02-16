@@ -17,10 +17,11 @@ import {
 // serves as MVC controller for checkbox tree on results page
 export default class CheckboxTreeController {
 
-  constructor(element, name, tree, selectedList, defaultSelectedList) {
+  constructor(element, name, tree, fieldName, selectedList, defaultSelectedList) {
     this.element = element;
     this.name = name;
     this.tree = tree;
+    this.fieldName = fieldName;
     this.displayCheckboxTree = this.displayCheckboxTree.bind(this);
     this.updateSelectedList = this.updateSelectedList.bind(this);
     this.updateExpandedList = this.updateExpandedList.bind(this);
@@ -41,6 +42,7 @@ export default class CheckboxTreeController {
                     selectedList={this.selectedList}
                     expandedList={this.expandedList}
                     name={this.name}
+                    fieldName={this.fieldName}
                     onSelectedListUpdated={this.updateSelectedList}
                     onExpandedListUpdated={this.updateExpandedList}
                     onDefaultSelectedListLoaded={this.loadDefaultSelectedList}
