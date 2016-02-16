@@ -8,7 +8,7 @@ let {
 } = Wdk.client;
 
 let {
-  CheckboxList,
+  NativeCheckboxList,
   RecordLink,
   Sticky
 } = Wdk.client.Components;
@@ -481,7 +481,7 @@ export function MercatorTable(props) {
 
         <div className="form-group">
           <strong>Genomes to align:</strong>
-          <CheckboxList
+          <NativeCheckboxList
             name="genomes"
             items={props.value.map(row => ({
               value: row.abbrev,
