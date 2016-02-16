@@ -8,10 +8,10 @@ import TabularReporterForm from './components/reporters/TabularReporterForm';
 import TextReporterForm from './components/reporters/TextReporterForm';
 import XmlReporterForm from './components/reporters/XmlReporterForm';
 import JsonReporterForm from './components/reporters/JsonReporterForm';
+import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
 import FastaGeneReporterForm from './components/reporters/FastaGeneReporterForm';
 import FastaGenomicSequenceReporterForm from './components/reporters/FastaGenomicSequenceReporterForm';
 import FastaOrfReporterForm from './components/reporters/FastaOrfReporterForm';
-import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
 
 // Remove project_id from record links
 export function RecordLink(WdkRecordLink) {

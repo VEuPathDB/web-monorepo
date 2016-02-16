@@ -50,8 +50,8 @@ let FastaGenomicSequenceReporterForm = React.createClass({
         </div>
         <div style={{marginLeft:"2em"}}>
           <b>Nucleotide positions:</b>
-          <TextBox name="start" value={realFormState.start} size="6"> to
-          <TextBox name="end" value={realFormState.end} size="6">
+          <TextBox name="start" value={realFormState.start} size="6"/> to
+          <TextBox name="end" value={realFormState.end} size="6"/>
         </div>
         <hr/>
         <h3>Download Type:</h3>
@@ -64,7 +64,7 @@ let FastaGenomicSequenceReporterForm = React.createClass({
         </div>
         <div>
           <hr/>
-          <h3>Options:<h3>
+          <h3>Options:</h3>
           <ul>
             <li>
               <i><b>complete sequence</b></i> to retrieve the complete sequence
