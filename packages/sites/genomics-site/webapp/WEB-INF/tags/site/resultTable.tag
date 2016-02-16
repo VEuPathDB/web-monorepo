@@ -21,17 +21,14 @@
   <c:set var="trRecord" value="true"/>
 </c:if>
 
-<%-- we are not setting this value correctly any longer (LEAF STEP)
+<%-- gene count with missing tr --%>
 <c:set var="genesMissingTranscriptsCount"
        value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
-<c:if test="${genesMissingTranscriptsCount gt 0 && !step.isBoolean }">
-  <c:set var="missingNative" value="true"/>   
-  <script>
-    if ($("i#tr-warning").length == 0){    
-      $( "li#transcript-view a span" ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that did not meet the search criteria.' ></i>") );
-    }
-  </script>
-</c:if>
+
+<%-- debug:
+<br>
+genes with missing transcripts: ${genesMissingTranscriptsCount}
+<br> 
 --%>
 
 <!-- step could be single or combined:
@@ -64,7 +61,7 @@
          data-filter="matched_transcript_filter_array">
       <p style="text-align: center; margin: .4em 0;">
         <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >
-        <strong>
+        <strong title="${genesMissingTranscriptsCount}">
           Some Genes in your result have Transcripts that did not meet the search criteria.
           <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
         </strong>
