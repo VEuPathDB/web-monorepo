@@ -23,8 +23,8 @@ clean:
 
 $(es6_bundle): $(es6_sources)
 	webpack $< $@
-	rebaseSourceMap $@.map $$(readlink -f $(PROJECT_HOME)/WDK/View) .
+# 	rebaseSourceMap $@.map $$(readlink -f $(PROJECT_HOME)/WDK/View) .
 
 $(client_bundle): $(client_sources)
 	webpack $< $@
-	rebaseSourceMap $@.map $$(readlink -f $(PROJECT_HOME)/WDK/View) .
+# 	rebaseSourceMap $@.map $$(readlink -f $(PROJECT_HOME)/WDK/View) .
