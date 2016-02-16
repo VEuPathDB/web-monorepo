@@ -9,6 +9,7 @@ client_sources := webapp/wdkCustomization/js/client/main.js \
 es6_bundle  := dist/wdkCustomization/js/api.js
 es6_sources := webapp/wdkCustomization/js/api.es6.js \
                   $(shell find webapp/wdkCustomization/js -type f -name '*.js' -or -name '*.jsx') \
+                  $(shell find $(PROJECT_HOME)/WDK/View/webapp/wdk/js -type f -name '*.js' -or -name '*.jsx') \
                   webpack.config.js
 
 .PHONY: all clean
