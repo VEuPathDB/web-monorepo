@@ -2,6 +2,7 @@ import React from 'react';
 import * as Wdk from 'wdk-client';
 import SrtHelp from '../common/SrtHelp';
 
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
 let { RadioList, SingleSelect, TextBox } = Wdk.Components;
 
 let sequenceTypes = [
@@ -28,11 +29,6 @@ let signs = [
   { value: 'minus', display: '-' }
 ];
 
-let attachmentTypes = [
-  { value: "text", display: "Text File" },
-  { value: "plain", display: "Show in Browser"}
-];
-
 let defaultFormState = {
   attachmentType: 'plain',
   type: 'genomic',
@@ -52,61 +48,65 @@ let defaultFormState = {
   endOffset3: 0
 };
 
-let SequenceRegionInputs = function(props) {
+let SequenceRegionRange = props => {
+  let { label, anchor, sign, offset, formState, getUpdateHandler } = props;
+  return (
+    <div>
+      <span>{label}</span>
+      <SingleSelect name={anchor} value={formState[anchor]}
+          onChange={getUpdateHandler(anchor)} items={genomicAnchorValues}/>
+      <SingleSelect name={sign} value={formState[sign]}
+          onChange={getUpdateHandler(sign)} items={signs}/>
+      <TextBox name={offset} value={formState[offset]}
+          onChange={getUpdateHandler(offset)} size="6"/>
+      nucleotides
+    </div>
+  );
+};
+
+let ProteinRegionRange = props => {
+  let { label, anchor, offset, formState, getUpdateHandler } = props;
+  return (
+    <div>
+      <span>{label}</span>
+      <SingleSelect name={anchor} value={formState[anchor]}
+          onChange={getUpdateHandler(anchor)} items={proteinAnchorValues}/>
+      <TextBox name={offset} value={formState[offset]}
+          onChange={getUpdateHandler(offset)} size="6"/>
+      aminoacids
+    </div>
+  );
+};
+
+let SequenceRegionInputs = props => {
   let { formState, getUpdateHandler } = props;
   switch (formState.type) {
     case 'genomic':
       return (
         <div>
+          <hr/>
           <h3>Choose the region of the sequence(s):</h3>
-          <div>
-            <span>Begin at</span>
-            <SingleSelect name="upstreamAnchor" value={formState.upstreamAnchor}
-                onChange={getUpdateHandler('upstreamAnchor')} items={genomicAnchorValues}/>
-            <SingleSelect name="upstreamSign" value={formState.upstreamSign}
-                onChange={getUpdateHandler('upstreamSign')} items={signs}/>
-            <TextBox name="upstreamOffset" value={formState.upstreamOffset}
-                onChange={getUpdateHandler('upstreamOffset')} size="6"/>
-            nucleotides
-          </div>
-          <div>
-            <span>End at</span>
-            <SingleSelect name="downstreamAnchor" value={formState.downstreamAnchor}
-                onChange={getUpdateHandler('downstreamAnchor')} items={genomicAnchorValues}/>
-            <SingleSelect name="downstreamSign" value={formState.downstreamSign}
-                onChange={getUpdateHandler('downstreamSign')} items={signs}/>
-            <TextBox name="downstreamOffset" value={formState.downstreamOffset}
-                onChange={getUpdateHandler('downstreamOffset')} size="6"/>
-            nucleotides
-          </div>
+          <SequenceRegionRange label="Begin at" anchor="upstreamAnchor" sign="upstreamSign"
+            offset="upstreamOffset" formState={formState} getUpdateHandler={getUpdateHandler}/>
+          <SequenceRegionRange label="End at" anchor="downstreamAnchor" sign="downstreamSign"
+            offset="downstreamOffset" formState={formState} getUpdateHandler={getUpdateHandler}/>
         </div>
       );
     case 'protein':
       return (
         <div>
+          <hr/>
           <h3>Choose the region of the protein sequence(s):</h3>
-          <div>
-            <span>Begin at</span>
-            <SingleSelect name="startAnchor3" value={formState.startAnchor3}
-                onChange={getUpdateHandler('startAnchor3')} items={proteinAnchorValues}/>
-            <TextBox name="startOffset3" value={formState.startOffset3}
-                onChange={getUpdateHandler('startOffset3')} size="6"/>
-            aminoacids
-          </div>
-          <div>
-            <span>End at</span>
-            <SingleSelect name="endAnchor3" value={formState.endAnchor3}
-                onChange={getUpdateHandler('endAnchor3')} items={proteinAnchorValues}/>
-            <TextBox name="endOffset3" value={formState.endOffset3}
-                onChange={getUpdateHandler('endOffset3')} size="6"/>
-            aminoacids
-          </div>
+          <ProteinRegionRange label="Begin at" anchor="startAnchor3" offset="startOffset3"
+            formState={formState} getUpdateHandler={getUpdateHandler}/>
+          <ProteinRegionRange label="End at" anchor="endAnchor3" offset="endOffset3"
+            formState={formState} getUpdateHandler={getUpdateHandler}/>
         </div>
       );
     default:
       return ( <noscript/> );
   }
-}
+};
 
 let FastaGeneReporterForm = React.createClass({
 
@@ -120,9 +120,7 @@ let FastaGeneReporterForm = React.createClass({
 
   // returns a handler function that will update the form state 
   getUpdateHandler(fieldName) {
-    return (newValue => {
-      this.props.onFormChange(Object.assign({}, this.props.formState, { [fieldName]: newValue }));
-    });
+    return util.getChangeHandler(fieldName, this.props.onFormChange, this.props.formState);
   },
 
   render() {
@@ -139,7 +137,7 @@ let FastaGeneReporterForm = React.createClass({
         <h3>Download Type:</h3>
         <div style={{marginLeft:"2em"}}>
           <RadioList name="attachmentType" value={realFormState.attachmentType}
-            onChange={this.getUpdateHandler('attachmentType')} items={attachmentTypes}/>
+            onChange={this.getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
         </div>
         <div style={{margin:'0.8em'}}>
           <input type="button" value="Get Sequences" onClick={this.props.onSubmit}/>
@@ -158,7 +156,6 @@ let FastaGeneReporterForm = React.createClass({
       </div>
     );
   }
-
 });
 
 export default FastaGeneReporterForm;
