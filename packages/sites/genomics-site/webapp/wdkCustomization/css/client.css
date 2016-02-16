@@ -56,6 +56,33 @@ h4 {
   clear: both;
 }
 
+.wdk-RecordContainer__TranscriptRecordClasses\.TranscriptRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
+.GeneOverviewTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding: 1em 0;
+  font-size: 2em;
+}
+
+.GeneOverviewId, .GeneOverviewProduct {
+  display: inline;
+}
+
+.GeneOverviewId {
+  font-size: 1.5em;
+}
+
+.GeneOverviewProduct {
+  font-weight: 500;
+  font-size: 1em;
+  margin-left: 1em;
+}
+
 .wdk-RecordSidebar__fixed {
   left: -298px;
 }
@@ -65,27 +92,16 @@ h4 {
 }
 
 .GeneOverviewLeft {
-  max-width: 35em;
+  width: 300px;
   margin-right: 2em;
 }
 
 .GeneOverviewRight {
-  max-width: calc(100% - 40em);
-  position: relative;
-  top: -4.5em;
-  margin-bottom: -4.5em;
+  max-width: calc(100% - 330px);
 }
 
 .GeneOverviewLeft h1, .GeneOverviewRight .GeneOverviewProduct {
   padding: 10px 0;
-}
-
-.GeneOverviewRight .GeneOverviewProduct {
-  font-size: 2em;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .GeneOverviewItem, .eupathdb-TranscriptThumbnailLabel {
@@ -117,12 +133,6 @@ h4 {
 .wdk-Record-sidebar-title {
   padding: .4em 1.5em .4em 1em;
 }
-
-/*
-.wdk-RecordContainer__TranscriptRecordClasses\.TranscriptRecordClass .wdk-RecordHeading {
-  display: none;
-}
-*/
 
 .eupathdb-TranscriptTabContent .wdk-RecordSection {
   margin-top: -84px;

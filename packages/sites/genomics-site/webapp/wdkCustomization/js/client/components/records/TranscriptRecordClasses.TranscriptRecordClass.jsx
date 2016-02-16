@@ -153,6 +153,11 @@ export function RecordOverview(props) {
   ];
   return (
     <div className="wdk-RecordOverview">
+      <div className="GeneOverviewTitle">
+        <h1 className="GeneOverviewId">{props.record.displayName}</h1>
+        {' '}
+        <h2 className="GeneOverviewProduct">{gene_product}</h2>
+      </div>
       <div className="GeneOverviewLeft">
         <OverviewItem label="Gene" value={gene_name}/>
         <OverviewItem label="Type" value={gene_type}/>
@@ -165,7 +170,6 @@ export function RecordOverview(props) {
       </div>
 
       <div className="GeneOverviewRight">
-        <div className="GeneOverviewProduct">{gene_product}</div>
         <div className="GeneOverviewItem GeneOverviewIntent">This Gene Page reflects ongoing unpublished curation at GeneDB, enabling annotators to incorporate User Comments into the official record.  Users interested in publishing whole genome or other large-scale analysis should use PlasmoDB v5.3 (download here) or contact the primary investigator.</div>
 
         <OverviewThumbnails thumbnails={thumbnails}/>
@@ -257,7 +261,7 @@ export function GbrowseContext(props) {
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
         <div id="${gnCtxDivId}"></div>
-        <iframe src={iframeUrl} style={{ width: '1000px', border: 'none' }} onLoad={injectGbrowseScripts} />
+        <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={injectGbrowseScripts} />
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
       </center>
@@ -273,8 +277,9 @@ export function ProteinContext(props) {
       <strong>Protein Features</strong>
       <iframe
         src={`/cgi-bin/gbrowse_img/${wdk.MODEL_NAME.toLowerCase()}aa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;width=800;embed=1;genepage=1`}
+        seamless
+        style={{ width: '100%', border: 'none' }}
         onLoad={resizeIframe}
-        style={{ width: '1000px', border: 'none' }}
       />
     </div>
   );
