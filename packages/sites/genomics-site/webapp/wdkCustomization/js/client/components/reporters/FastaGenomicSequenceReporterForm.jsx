@@ -2,12 +2,8 @@ import React from 'react';
 import * as Wdk from 'wdk-client';
 import SrtHelp from '../common/SrtHelp';
 
-let { RadioList } = Wdk.Components;
-
-let attachmentTypes = [
-  { value: "text", display: "Text File" },
-  { value: "plain", display: "Show in Browser"}
-];
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
+let { RadioList, Checkbox, TextBox } = Wdk.Components;
 
 let defaultFormState = {
   attachmentType: 'plain',
@@ -16,17 +12,10 @@ let defaultFormState = {
   end: 0
 };
 
-let TextBox = function(props) {
-  let onChange = function(event) {
-    props.onChange(event.target.value);
-  };
-  return ( <input type="text" {...props} onChange={onChange}/> );
-}
-
 let FastaGenomicSequenceReporterForm = React.createClass({
 
   componentDidMount() {
-    this.props.onFormChange(this.discoverFormState(this.props.formState));
+    this.props.initializeFormState(this.discoverFormState(this.props.formState));
   },
 
   discoverFormState(formState) {
@@ -35,9 +24,7 @@ let FastaGenomicSequenceReporterForm = React.createClass({
 
   // returns a handler function that will update the form state 
   getUpdateHandler(fieldName) {
-    return (newValue => {
-      this.props.onFormChange(Object.assign({}, this.props.formState, { [fieldName]: newValue }));
-    });
+    return util.getChangeHandler(fieldName, this.props.onFormChange, this.props.formState);
   },
 
   render() {
@@ -45,19 +32,19 @@ let FastaGenomicSequenceReporterForm = React.createClass({
     return (
       <div>
         <h3>Choose the region of the sequence(s):</h3>
-        <div style={{marginLeft:"2em"}}>
-          <input type="checkbox" name="revComp" checked={realFormState.revComp}/> Reverse & Complement" +
+        <div style={{margin:"2em"}}>
+          <Checkbox value={realFormState.revComp} onChange={this.getUpdateHandler('revComp')}/> Reverse & Complement
         </div>
-        <div style={{marginLeft:"2em"}}>
+        <div style={{margin:"2em"}}>
           <b>Nucleotide positions:</b>
-          <TextBox name="start" value={realFormState.start} size="6"/> to
-          <TextBox name="end" value={realFormState.end} size="6"/>
+          <TextBox value={realFormState.start} onChange={this.getUpdateHandler('start')} size="6"/> to
+          <TextBox value={realFormState.end} onChange={this.getUpdateHandler('end')} size="6"/> (0 = end)
         </div>
         <hr/>
         <h3>Download Type:</h3>
         <div style={{marginLeft:"2em"}}>
-          <RadioList name="attachmentType" value={realFormState.attachmentType}
-            onChange={this.getUpdateHandler('attachmentType')} items={attachmentTypes}/>
+          <RadioList value={realFormState.attachmentType} items={util.attachmentTypes}
+              onChange={this.getUpdateHandler('attachmentType')}/>
         </div>
         <div style={{margin:'0.8em'}}>
           <input type="button" value="Get Sequences" onClick={this.props.onSubmit}/>
@@ -68,7 +55,7 @@ let FastaGenomicSequenceReporterForm = React.createClass({
           <ul>
             <li>
               <i><b>complete sequence</b></i> to retrieve the complete sequence
-              for the requested genomic regions, use "Nucleotide positions 1 to 0"
+              for the requested genomic regions, use "Nucleotide positions 1 to 10000"
             </li>
             <li>
               <i><b>specific sequence region</b></i> to retrieve a specific region
