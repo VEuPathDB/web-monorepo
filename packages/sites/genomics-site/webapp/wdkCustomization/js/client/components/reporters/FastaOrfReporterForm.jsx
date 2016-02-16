@@ -2,7 +2,8 @@ import React from 'react';
 import * as Wdk from 'wdk-client';
 import SrtHelp from '../common/SrtHelp';
 
-let { RadioList, SingleSelect, TextBox } = Wdk.Components;
+let { RadioList, SingleSelect } = Wdk.Components;
+let FormSubmitter = Wdk.FormSubmitter;
 
 let sequenceTypes = [
   { value: 'genomic', display: 'Genomic' },
@@ -51,6 +52,13 @@ let defaultFormState = {
   endAnchor3: 'End',
   endOffset3: 0
 };
+
+let TextBox = function(props) {
+  let onChange = function(event) {
+    props.onChange(event.target.value);
+  };
+  return ( <input type="text" {...props} onChange={onChange}/> );
+}
 
 let SequenceRegionInputs = function(props) {
   let { formState, getUpdateHandler } = props;
@@ -108,7 +116,7 @@ let SequenceRegionInputs = function(props) {
   }
 }
 
-let FastaGeneReporterForm = React.createClass({
+let FastaOrfReporterForm = React.createClass({
 
   componentDidMount() {
     this.props.onFormChange(this.discoverFormState(this.props.formState));
@@ -161,4 +169,4 @@ let FastaGeneReporterForm = React.createClass({
 
 });
 
-export default FastaGeneReporterForm;
+export default FastaOrfReporterForm;

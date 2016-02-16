@@ -5,11 +5,13 @@ import * as Transcript from './components/records/TranscriptRecordClasses.Transc
 
 // load individual reporter forms
 import TabularReporterForm from './components/reporters/TabularReporterForm';
-import FastaGeneReporterForm from './components/reporters/FastaGeneReporterForm';
-import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
 import TextReporterForm from './components/reporters/TextReporterForm';
 import XmlReporterForm from './components/reporters/XmlReporterForm';
 import JsonReporterForm from './components/reporters/JsonReporterForm';
+import FastaGeneReporterForm from './components/reporters/FastaGeneReporterForm';
+import FastaGenomicSequenceReporterForm from './components/reporters/FastaGenomicSequenceReporterForm';
+import FastaOrfReporterForm from './components/reporters/FastaOrfReporterForm';
+import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
 
 // Remove project_id from record links
 export function RecordLink(WdkRecordLink) {
@@ -166,7 +168,8 @@ export function RecordNavigationSectionCategories(WdkRecordNavigationSectionCate
 }
 */
 
-// Customize the reporter form to select the correct
+// Customize StepDownloadForm to show the appropriate form based on the
+//   selected reporter and record class
 export function StepDownloadForm(WdkStepDownloadForm) {
   return function ApiStepDownloadForm(props) {
     switch (props.selectedReporter) {
@@ -174,8 +177,12 @@ export function StepDownloadForm(WdkStepDownloadForm) {
         return ( <TabularReporterForm {...props}/> );
       case 'srt':
         switch (props.recordClass.name) {
-          case'GeneRecordClasses.GeneRecordClass':
+          case 'GeneRecordClasses.GeneRecordClass':
             return ( <FastaGeneReporterForm {...props}/> );
+          case 'SequenceRecordClasses.SequenceRecordClass':
+            return ( <FastaGenomicSequenceReporterForm {...props}/> );
+          case 'OrfRecordClasses.OrfRecordClass':
+            return ( <FastaOrfReporterForm {...props}/> );
           default:
             console.error("Unsupported FASTA recordClass: " + props.recordClass.name);
             return ( <noscript/> );
