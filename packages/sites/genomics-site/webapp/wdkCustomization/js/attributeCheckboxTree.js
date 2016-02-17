@@ -82,32 +82,34 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
   function addSearchSpecificSubtree(question, categoryTree, recordClassName, viewName) {
     if(question.dynamicAttributes.length > 0 && (recordClassName != 'TranscriptRecordClasses.TranscriptRecordClass' ||
        (!question.properties.questionType || (question.properties.questionType.indexOf('transcript') > -1 && viewName==="transcript")))) {
-      let subtree = {
-        "properties":{
-          "targetType" : ["attribute"],
-          "name" : ["search_specific_subtree"]
-        },
-        "wdkReference" : {
-          "displayName" : "Search Specific",
-          "help" : "Information about the records returned that is specific to the search you ran, and the parameters you specified"
-        },
-        "children" : []
-      };
+      let subtree = createNode("search_specific_subtree","Search Specific",
+                               "Information about the records returned that is specific to the search you ran, and the parameters you specified");
       question.dynamicAttributes.forEach(attribute => {
-        let node = {
-          "properties" : {
-            "targetType" : ["attribute"],
-            "name" : [attribute.name]
-          },
-          "wdkReference" : {
-            "displayName" : attribute.displayName,
-            "help" : attribute.help
-          },
-          "children":[]
-        };
-        subtree.children.push(node);
+        subtree.children.push(createNode(attribute.name, attribute.displayName, attribute.help));
       });
       categoryTree.children.unshift(subtree);
+    }
+  }
+
+  /**
+   * Returns a JSON object representing a simplified category tree node that will be properly interpreted
+   * by the checkboxTreeController
+   * @param id - name or id of the node
+   * @param displayName - name to be displayed
+   * @param description - tooltip
+   * @returns {{properties: {targetType: string[], name: *[]}, wdkReference: {displayName: *, help: *}, children: Array}}
+   */
+  function createNode(id, displayName, description) {
+    return {
+      "properties" : {
+        "targetType" : ["attribute"],
+        "name" : [name]
+      },
+      "wdkReference" : {
+        "displayName" : displayName,
+        "help" : description
+      },
+      "children":[]
     }
   }
 
