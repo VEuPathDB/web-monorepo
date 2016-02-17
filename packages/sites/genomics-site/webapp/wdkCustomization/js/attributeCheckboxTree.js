@@ -85,7 +85,8 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
       let subtree = createNode("search_specific_subtree","Search Specific",
                                "Information about the records returned that is specific to the search you ran, and the parameters you specified");
       question.dynamicAttributes.forEach(attribute => {
-        subtree.children.push(createNode(attribute.name, attribute.displayName, attribute.help));
+        let node = createNode(attribute.name, attribute.displayName, attribute.help);
+        subtree.children.push(node);
       });
       categoryTree.children.unshift(subtree);
     }
@@ -103,7 +104,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     return {
       "properties" : {
         "targetType" : ["attribute"],
-        "name" : [name]
+        "name" : [id]
       },
       "wdkReference" : {
         "displayName" : displayName,
