@@ -169,6 +169,36 @@ h4 {
   */
 }
 
+.eupathdb-TranscriptThumbnailPopover {
+  position: absolute;
+  z-index: 100;
+  right: 10px;
+  top: 20px;
+  background: #1f1f1f;
+  color: #fafafa;
+  border: 1px solid #aaa;
+  box-shadow: 0px 0px 20px #999;
+  border-radius: 10px;
+  padding: 6px;
+}
+
+.eupathdb-TranscriptThumbnailPopover h3 {
+  text-align: center;
+  padding: 8px 0;
+  font-weight: 400;
+}
+
+.eupathdb-TranscriptThumbnailPopover div {
+  text-align: center;
+  padding-bottom: 8px;
+}
+
+.eupathdb-TranscriptThumbnailPopover img {
+  max-height: 80vh;
+  max-width: 80vw;
+  border: 1px solid #aaa;
+}
+
 /*
 .eupathdb-TranscriptThumbnail:hover {
   position: absolute;

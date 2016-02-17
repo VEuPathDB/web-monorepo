@@ -136,17 +136,17 @@ export function RecordOverview(props) {
   let thumbnails = [
     {
       targetId: 'genomic-context',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Gene;hmap=gbrowseSyn;width=800`,
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Gene;hmap=gbrowseSyn;width=600`,
       label: 'Gene Model'
     },
     {
       targetId: 'genomic-context',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Synteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcyn_span+pcyn_gene+prei_span+prei_gene+pber_span+pber_gene+py17X_span+py17X_gene+pyXNL_span+pyXNL_gene+pyYM_span+pyYM_gene+pcha_span+pcha_gene;hmap=pbrowse;width=800`,
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Synteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcyn_span+pcyn_gene+prei_span+prei_gene+pber_span+pber_gene+py17X_span+py17X_gene+pyXNL_span+pyXNL_gene+pyYM_span+pyYM_gene+pcha_span+pcha_gene;hmap=pbrowse;width=600`,
       label: 'Synteny'
     },
     {
       targetId: 'protein-features',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodbaa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;genepage=1;width=800`,
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodbaa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;genepage=1;width=600`,
       label: 'Protein Features'
     }
 
@@ -185,23 +185,80 @@ function OverviewItem(props) {
   );
 }
 
-function OverviewThumbnails(props) {
-  return (
-    <div className="eupathdb-TranscriptThumbnails">
-      {props.thumbnails.map(thumbnail => (
-        <div className="eupathdb-TranscriptThumbnailWrapper">
-          <div className="eupathdb-TranscriptThumbnailLabel">
-            <a href={'#' + thumbnail.targetId}>{thumbnail.label}</a>
+// TODO Smart position of popover
+class OverviewThumbnails extends React.Component {
+
+  constructor(...args) {
+    super(...args);
+    this.timeoutId = null;
+    this.state = {
+      showPopover: false
+    };
+  }
+
+  setActiveThumbnail(event, thumbnail) {
+    console.log(event.target);
+    this.setState({
+      activeThumbnail: thumbnail
+    });
+  }
+
+  showPopover() {
+    this._setShowPopover(true, 200);
+  }
+
+  hidePopover() {
+    this._setShowPopover(false, 800);
+  }
+
+  _setShowPopover(show, delay) {
+    clearTimeout(this.timeoutId);
+    this.timeoutId = setTimeout(() => {
+      this.setState({
+        showPopover: show
+      });
+    }, delay);
+  }
+
+  render() {
+    return (
+      <div className="eupathdb-TranscriptThumbnails">
+        {this.props.thumbnails.map(thumbnail => (
+          <div className="eupathdb-TranscriptThumbnailWrapper">
+            <div className="eupathdb-TranscriptThumbnailLabel">
+              <a href={'#' + thumbnail.targetId}>{thumbnail.label}</a>
+            </div>
+            <div className="eupathdb-TranscriptThumbnail"
+              onMouseEnter={event => { this.showPopover(); this.setActiveThumbnail(event, thumbnail) }}
+              onMouseLeave={() => this.hidePopover()}>
+              <a href={'#' + thumbnail.targetId}>
+                <img width="150" src={thumbnail.imgUrl}/>
+              </a>
+            </div>
           </div>
-          <div className="eupathdb-TranscriptThumbnail">
-            <a href={'#' + thumbnail.targetId}>
-              <img width="175" src={thumbnail.imgUrl}/>
-            </a>
-          </div>
+        ))}
+        {this.renderPopover()}
+      </div>
+    );
+  }
+
+  renderPopover() {
+    if (this.state.showPopover) {
+      return (
+        <div className="eupathdb-TranscriptThumbnailPopover"
+          onMouseEnter={event => { this.showPopover() }}
+          onMouseLeave={() => { this.hidePopover() }}>
+          <h3>{this.state.activeThumbnail.label}</h3>
+          <div>(Click on image to view section on page)</div>
+          <a href={'#' + this.state.activeThumbnail.targetId}
+            onClick={() => this.setState({ showPopover: false })}>
+            <img src={this.state.activeThumbnail.imgUrl}/>
+          </a>
         </div>
-      ))}
-    </div>
-  );
+      );
+    }
+  }
+
 }
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
