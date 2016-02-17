@@ -1,7 +1,7 @@
 import { Components } from 'wdk-client';
 import Footer from './components/common/Footer';
 import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
-import * as Transcript from './components/records/TranscriptRecordClasses.TranscriptRecordClass';
+import * as Gene from './components/records/GeneRecordClasses.GeneRecordClass';
 
 // load individual reporter forms
 import TabularReporterForm from './components/reporters/TabularReporterForm';
@@ -22,8 +22,6 @@ export function RecordLink(WdkRecordLink) {
     );
   };
 }
-
-const DEFAULT_TRANSCRIPT_MAGIC_STRING = '_DEFAULT_TRANSCRIPT_';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -67,7 +65,8 @@ export function RecordController(WdkRecordController) {
       return ( <WdkRecordController {...props} /> );
     }
 
-    if (recordClass === Transcript.GENE_ID) {
+    /*
+    if (recordClass === Gene.GENE_ID) {
       let [ geneId, transcriptId ] = splat.split('/');
 
       if (transcriptId == null) {
@@ -75,12 +74,13 @@ export function RecordController(WdkRecordController) {
         // only the gene id is requested... either use the last transcript id the
         // user requested for the gene id, or use the default
         transcriptId = window.sessionStorage.getItem(
-          Transcript.TRANSCRIPT_ID_KEY_PREFIX + geneId) || DEFAULT_TRANSCRIPT_MAGIC_STRING;
+          Gene.TRANSCRIPT_ID_KEY_PREFIX + geneId) || DEFAULT_TRANSCRIPT_MAGIC_STRING;
 
         // add transcript id to request
         splat = `${geneId}/${transcriptId}`;
       }
     }
+    */
 
     // Append project id to request
     let params = Object.assign({}, props.params, {
@@ -126,9 +126,9 @@ export function RecordUI(WdkRecordUI) {
 export function RecordOverview(WdkRecordOverview) {
   return function ApiRecordOverview(props) {
     switch (props.recordClass.name) {
-      case 'TranscriptRecordClasses.TranscriptRecordClass':
+      case Gene.RECORD_CLASS_NAME:
         return (
-          <Transcript.RecordOverview
+          <Gene.RecordOverview
             {...props}
             DefaultComponent={WdkRecordOverview}
           />
@@ -140,14 +140,16 @@ export function RecordOverview(WdkRecordOverview) {
   };
 }
 
+/*
 export function RecordMainSection(WdkRecordMainSection) {
   return function ApiRecordMainSection(props) {
-    if (props.recordClass.name == 'TranscriptRecordClasses.TranscriptRecordClass' && props.depth == null) {
-      return <Transcript.RecordMainSection {...props} DefaultComponent={WdkRecordMainSection}/>;
+    if (props.recordClass.name ==  Gene.RECORD_CLASS_NAME && props.depth == null) {
+      return <Gene.RecordMainSection {...props} DefaultComponent={WdkRecordMainSection}/>;
     }
     return <WdkRecordMainSection {...props}/>
   };
 }
+*/
 
 /*
 export function RecordNavigationSectionCategories(WdkRecordNavigationSectionCategories) {
@@ -155,7 +157,7 @@ export function RecordNavigationSectionCategories(WdkRecordNavigationSectionCate
     switch (props.recordClass.name) {
       case 'TranscriptRecordClasses.TranscriptRecordClass':
         return (
-          <Transcript.RecordNavigationSectionCategories
+          <Gene.RecordNavigationSectionCategories
             {...props}
             DefaultComponent={WdkRecordNavigationSectionCategories}
           />
@@ -209,10 +211,10 @@ export function RecordTable(WdkRecordTable) {
   return function ApiRecordTable(props) {
     let Table = WdkRecordTable;
     if (expressionRE.test(props.table.name)) {
-      Table = Transcript.ExpressionGraphTable;
+      Table = Gene.ExpressionGraphTable;
     }
     if (props.table.name === 'MercatorTable') {
-      Table = Transcript.MercatorTable;
+      Table = Gene.MercatorTable;
     }
     return <Table {...props} DefaultComponent={WdkRecordTable}/>;
   };
@@ -220,12 +222,12 @@ export function RecordTable(WdkRecordTable) {
 
 export function RecordAttribute(WdkRecordAttribute) {
   return function ApiRecordAttribute(props) {
-    if (props.name === 'GBrowse') {
-      return ( <Transcript.GbrowseContext {...props} /> );
+    if (props.name === 'dna_gtracks') {
+      return ( <Gene.GbrowseContext {...props} /> );
     }
 
     if (props.name === 'protein_gtracks') {
-      return ( <Transcript.ProteinContext {...props} /> );
+      return ( <Gene.ProteinContext {...props} /> );
     }
 
     return ( <WdkRecordAttribute {...props}/> );

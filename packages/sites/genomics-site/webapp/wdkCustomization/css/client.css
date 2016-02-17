@@ -56,7 +56,7 @@ h4 {
   clear: both;
 }
 
-.wdk-RecordContainer__TranscriptRecordClasses\.TranscriptRecordClass .wdk-RecordHeading {
+.wdk-RecordContainer__GeneRecordClasses\.GeneRecordClass .wdk-RecordHeading {
   display: none;
 }
 

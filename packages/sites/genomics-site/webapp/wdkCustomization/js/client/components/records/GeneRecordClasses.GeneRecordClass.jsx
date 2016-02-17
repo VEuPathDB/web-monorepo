@@ -16,6 +16,7 @@ let {
 export const GENE_ID = 'gene';
 export const TRANSCRIPT_ID = 'transcript';
 export const TRANSCRIPT_ID_KEY_PREFIX = 'eupathdb::previousTranscriptId::';
+export const RECORD_CLASS_NAME = 'GeneRecordClasses.GeneRecordClass';
 
 function scrollToElementById(id) {
   let el = document.getElementById(id);
@@ -116,19 +117,18 @@ function TranscriptList(props, context) {
 
 export function RecordOverview(props) {
   let {
-    gene_name,
+    name,
     gene_type,
     chromosome,
     sequence_id,
     location_text,
     genus_species,
-    gene_strain,
-    gene_status,
-    gene_product,
-    gene_context_start,
-    gene_context_end,
+    strain,
+    status,
+    product,
+    context_start,
+    context_end,
     source_id,
-    gene_source_id,
     protein_length,
     protein_gtracks
   } = props.record.attributes;
@@ -136,12 +136,12 @@ export function RecordOverview(props) {
   let thumbnails = [
     {
       targetId: 'genomic-context',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${gene_context_start}..${gene_context_end};l=Gene;hmap=gbrowseSyn;width=800`,
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Gene;hmap=gbrowseSyn;width=800`,
       label: 'Gene Model'
     },
     {
       targetId: 'genomic-context',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${gene_context_start}..${gene_context_end};l=Synteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcyn_span+pcyn_gene+prei_span+prei_gene+pber_span+pber_gene+py17X_span+py17X_gene+pyXNL_span+pyXNL_gene+pyYM_span+pyYM_gene+pcha_span+pcha_gene;hmap=pbrowse;width=800`,
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Synteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcyn_span+pcyn_gene+prei_span+prei_gene+pber_span+pber_gene+py17X_span+py17X_gene+pyXNL_span+pyXNL_gene+pyYM_span+pyYM_gene+pcha_span+pcha_gene;hmap=pbrowse;width=800`,
       label: 'Synteny'
     },
     {
@@ -156,17 +156,17 @@ export function RecordOverview(props) {
       <div className="GeneOverviewTitle">
         <h1 className="GeneOverviewId">{props.record.displayName}</h1>
         {' '}
-        <h2 className="GeneOverviewProduct">{gene_product}</h2>
+        <h2 className="GeneOverviewProduct">{product}</h2>
       </div>
       <div className="GeneOverviewLeft">
-        <OverviewItem label="Gene" value={gene_name}/>
+        <OverviewItem label="Gene" value={name}/>
         <OverviewItem label="Type" value={gene_type}/>
         <OverviewItem label="Chromosome" value={chromosome}/>
         <OverviewItem label="Location" value={location_text}/>
         <br/>
         <OverviewItem label="Species" value={genus_species}/>
-        <OverviewItem label="Strain" value={gene_strain}/>
-        <OverviewItem label="Status" value={gene_status}/>
+        <OverviewItem label="Strain" value={strain}/>
+        <OverviewItem label="Status" value={status}/>
       </div>
 
       <div className="GeneOverviewRight">
@@ -231,17 +231,17 @@ function resizeIframe(event) {
 export function GbrowseContext(props) {
   let {
     sequence_id,
-    gene_context_start,
-    gene_context_end,
-    gene_source_id,
+    context_start,
+    context_end,
+    source_id,
     dna_gtracks = 'test'
   } = props.record.attributes;
 
   let lowerProjectId = wdk.MODEL_NAME.toLowerCase();
-  let lowerGeneId = gene_source_id.toLowerCase();
+  let lowerGeneId = source_id.toLowerCase();
 
   let queryParams = {
-    name: `${sequence_id}:${gene_context_start}..${gene_context_end}`,
+    name: `${sequence_id}:${context_start}..${context_end}`,
     hmap: 'gbrowseSyn',
     l: dna_gtracks,
     width: 800,
@@ -252,7 +252,7 @@ export function GbrowseContext(props) {
 
   let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
   let iframeUrl = `/cgi-bin/gbrowse_img/${lowerProjectId}/?${queryParamString}`;
-  let gbrowseUrl = `/cgi-bin/gbrowse/${lowerProjectId}/?name=${sequence_id}:${gene_context_start}..${gene_context_end};h_feat=${lowerGeneId}@yellow`;
+  let gbrowseUrl = `/cgi-bin/gbrowse/${lowerProjectId}/?name=${sequence_id}:${context_start}..${context_end};h_feat=${lowerGeneId}@yellow`;
 
   return (
     <div id="genomic-context">
@@ -464,14 +464,14 @@ export function MercatorTable(props) {
             <strong>Nucleotide positions: </strong>
             <input
               name="start"
-              defaultValue={props.record.attributes.gene_start_min}
+              defaultValue={props.record.attributes.start_min}
               maxLength="10"
               size="10"
             />
           </label>
           <label> to <input
               name="stop"
-              defaultValue={props.record.attributes.gene_end_max}
+              defaultValue={props.record.attributes.end_max}
               maxLength="10"
               size="10"
             />
