@@ -194,30 +194,39 @@ class OverviewThumbnails extends React.Component {
     this.state = {
       showPopover: false
     };
+    this._computePosition = this._computePosition.bind(this);
   }
 
   setActiveThumbnail(event, thumbnail) {
-    console.log(event.target);
+    if (thumbnail === this.state.activeThumbnail) return;
     this.setState({
-      activeThumbnail: thumbnail
+      activeThumbnail: thumbnail,
+      screenX: event.screenX
     });
   }
 
   showPopover() {
-    this._setShowPopover(true, 200);
+    this._setShowPopover(true, 250);
   }
 
   hidePopover() {
-    this._setShowPopover(false, 800);
+    this._setShowPopover(false, 250);
   }
 
   _setShowPopover(show, delay) {
     clearTimeout(this.timeoutId);
     this.timeoutId = setTimeout(() => {
-      this.setState({
-        showPopover: show
-      });
+      this.setState({ showPopover: show });
     }, delay);
+  }
+
+  _computePosition(popoverNode) {
+    if (popoverNode == null) return;
+    let popoverWidth = popoverNode.clientWidth;
+    let popoverLeft = this.state.screenX + popoverWidth + 10 > window.innerWidth
+      ? 10
+      : this.state.screenX + 10;
+    this.setState({ popoverLeft });
   }
 
   render() {
@@ -246,6 +255,8 @@ class OverviewThumbnails extends React.Component {
     if (this.state.showPopover) {
       return (
         <div className="eupathdb-TranscriptThumbnailPopover"
+          style={{ left: this.state.popoverLeft || '' }}
+          ref={this._computePosition}
           onMouseEnter={event => { this.showPopover() }}
           onMouseLeave={() => { this.hidePopover() }}>
           <h3>{this.state.activeThumbnail.label}</h3>
