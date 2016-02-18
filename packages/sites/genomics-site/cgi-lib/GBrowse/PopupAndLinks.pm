@@ -682,10 +682,10 @@ sub estTitle {
   push @data, [ 'Percent Identity:' => $percent_identity ]; 
   push @data, [ 'Length:' => abs($stop - $start) . ' nt' ]; 
   push @data, [ 'Score:' => $score ]; 
-  push @data, [ 'Library:' => $library ]; 
-  push @data, [ 'Vector:' => $vector ]; 
-  push @data, [ 'Primer:' => $primer ]; 
-  push @data, [ 'Stage:' => $stage ]; 
+  push @data, [ 'Library:' => $library ];
+  push @data, [ 'Vector:' => $vector ] if ($vector);
+  push @data, [ 'Primer:' => $primer ] if ($primer);
+  push @data, [ 'Stage:' => $stage ] if ($stage);
   hover($f, \@data); 
 }
 
