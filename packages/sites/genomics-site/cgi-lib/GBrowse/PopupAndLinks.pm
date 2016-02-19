@@ -615,8 +615,8 @@ sub HaploBlockTitle {
     my ($sequenceId)        = $f->get_tag_values('SequenceId');
     my $libContlink = "<a target='_blank' href='/a/showQuestion.do?questionFullName=GeneQuestions.GenesByLocation&value%28sequenceId%29=$sequenceId&value%28organism%29=Plasmodium+falciparum&value%28end_point%29=$end_max&value%28start_point%29=$start_min&weight=10'>Query for Contained Genes</a>";
     my $consrvContlink = "<a target='_blank' href='/a/showQuestion.do?questionFullName=GeneQuestions.GenesByLocation&value%28sequenceId%29=$sequenceId&value%28organism%29=Plasmodium+falciparum&value%28end_point%29=$end_min&value%28start_point%29=$start_max&weight=10'>Query for Contained Genes</a>";
-    my $libAssoclink = "<a target='_blank' href='/a/showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_Segments&value%28lod_score%29=1.5&value%28end_point_segment%29=$end_max&value%28sequence_id%29=$sequenceId&value%28liberal_conservative%29=Liberal+Locations&value%28start_point%29=$start_min&weight=10'>Query for Associated Genes</a>";
-    my $consrvAssoclink = "<a target='_blank' href='/a/showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_Segments&value%28lod_score%29=1.5&value%28end_point_segment%29=$end_min&value%28sequence_id%29=$sequenceId&value%28liberal_conservative%29=Conservative+Locations&value%28start_point%29=$start_max&weight=10'>Query for Associated Genes</a>";
+    my $libAssoclink = "<a target='_blank' href='/a/showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_Segments&value%28lod_score%29=1.5&value%28end_point_segment%29=$end_max&value%28pf_seqid%29=$sequenceId&value%28liberal_conservative%29=Liberal+Locations&value%28start_point%29=$start_min&weight=10'>Query for Associated Genes</a>";
+    my $consrvAssoclink = "<a target='_blank' href='/a/showQuestion.do?questionFullName=GeneQuestions.GenesByEQTL_Segments&value%28lod_score%29=1.5&value%28end_point_segment%29=$end_min&value%28pf_seqid%29=$sequenceId&value%28liberal_conservative%29=Conservative+Locations&value%28start_point%29=$start_max&weight=10'>Query for Associated Genes</a>";
 
     my @data;
     push @data, [ 'Name (Centimorgan value appended):'        => $name ];
