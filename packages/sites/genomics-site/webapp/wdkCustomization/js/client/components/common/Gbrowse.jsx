@@ -44,7 +44,7 @@ export function GbrowseContext(props) {
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
         <div id="${gnCtxDivId}"></div>
-        <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={injectGbrowseScripts} />
+        <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={gbrowseOnload} />
         <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
         <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
       </center>
@@ -68,10 +68,14 @@ export function ProteinContext(props) {
   );
 }
 
-function injectGbrowseScripts(event) {
-  resizeIframe(event);
+function gbrowseOnload(event) {
   let iframe = event.target;
+  setBaseTarget(iframe);
+  injectGbrowseScripts(iframe);
+  resizeIframe(iframe);
+}
 
+function injectGbrowseScripts(iframe) {
   let gbrowseWindow = iframe.contentWindow.window;
   let gbrowseDocumentBody = iframe.contentWindow.document.body;
 
@@ -85,8 +89,15 @@ function injectGbrowseScripts(event) {
   }
 }
 
-function resizeIframe(event) {
-  let iframe = event.target;
+function resizeIframe(iframe) {
   iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20 + 'px';
 }
 
+function setBaseTarget(iframe) {
+  let base = iframe.contentDocument.querySelector('base');
+  if (base == null) {
+    base = document.createElement('base');
+    iframe.contentDocument.head.appendChild(base);
+  }
+  base.target = '_top';
+}
