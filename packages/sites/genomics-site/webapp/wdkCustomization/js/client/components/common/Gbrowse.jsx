@@ -38,16 +38,9 @@ export function GbrowseContext(props) {
   let gbrowseUrl = `/cgi-bin/gbrowse/${lowerProjectId}/?name=${sequence_id}:${contextStart}..${contextEnd};h_feat=${lowerGeneId}@yellow`;
 
   return (
-    <div id="genomic-context">
-      <center>
-        <strong>Genomic Context</strong>
-        <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
-        <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
-        <div id="${gnCtxDivId}"></div>
-        <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={gbrowseOnload} />
-        <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
-        <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
-      </center>
+    <div id={props.name} className="wdk-RecordAttributeSectionItem" style={{ display: 'block', width: '100%' }}>
+      <div className="wdk-RecordAttributeName"><strong>{props.displayName}</strong></div>
+      <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={gbrowseOnload} />
     </div>
   );
 }
