@@ -1,6 +1,7 @@
 import React from 'react';
 import lodash from 'lodash';
 import ExpressionGraph from '../common/ExpressionGraph';
+import * as Gbrowse from '../common/Gbrowse';
 
 let {
   OntologyUtils,
@@ -123,14 +124,14 @@ export function RecordOverview(props) {
     sequence_id,
     location_text,
     genus_species,
-    strain,
-    status,
+    strain = '3D7',
+    status = 'Curated reference',
     product,
     context_start,
     context_end,
     source_id,
-    protein_length,
-    protein_gtracks
+    protein_length = 865,
+    protein_gtracks = 'InterproDomains%1ESignalP%1ETMHMM%1EExportPred%1EHydropathyPlot%1EBLASTP%1ELowComplexity%1ESecondaryStructure'
   } = props.record.attributes;
 
   let thumbnails = [
@@ -146,7 +147,7 @@ export function RecordOverview(props) {
     },
     {
       targetId: 'protein-features',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodbaa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;genepage=1;width=600`,
+      imgUrl: `/cgi-bin/gbrowse_img/plasmodbaa/?name=${source_id}.1:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;genepage=1;width=600`,
       label: 'Protein Features'
     }
 
@@ -154,15 +155,16 @@ export function RecordOverview(props) {
   return (
     <div className="wdk-RecordOverview">
       <div className="GeneOverviewTitle">
-        <h1 className="GeneOverviewId">{props.record.displayName}</h1>
-        {' '}
+        <h1 className="GeneOverviewId">{props.record.displayName + ' '}</h1>
         <h2 className="GeneOverviewProduct">{product}</h2>
       </div>
       <div className="GeneOverviewLeft">
         <OverviewItem label="Gene" value={name}/>
+        <div className="GeneOverviewItem" style={{ paddingLeft: '2ex' }}><a href="javascript:void(0)"><span style={{color: 'red'}}>1</span> user comment</a></div>
         <OverviewItem label="Type" value={gene_type}/>
         <OverviewItem label="Chromosome" value={chromosome}/>
-        <OverviewItem label="Location" value={location_text}/>
+        <OverviewItem label="Location" value={location_text.replace('$$strand_plus_minus$$', '+')}/>
+        <div className="GeneOverviewItem" style={{ paddingLeft: '2ex' }}><a href="javascript:void(0)">View updated annotation at GeneDB</a></div>
         <br/>
         <OverviewItem label="Species" value={genus_species}/>
         <OverviewItem label="Strain" value={strain}/>
@@ -201,7 +203,8 @@ class OverviewThumbnails extends React.Component {
     if (thumbnail === this.state.activeThumbnail) return;
     this.setState({
       activeThumbnail: thumbnail,
-      screenX: event.screenX
+      screenX: event.screenX,
+      showPopover: false
     });
   }
 
@@ -272,85 +275,17 @@ class OverviewThumbnails extends React.Component {
 
 }
 
-let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
-function injectGbrowseScripts(event) {
-  resizeIframe(event);
-  let iframe = event.target;
-
-  let gbrowseWindow = iframe.contentWindow.window;
-  let gbrowseDocumentBody = iframe.contentWindow.document.body;
-
-  gbrowseWindow.wdk = wdk;
-  gbrowseWindow.jQuery = jQuery;
-
-  for (let scriptUrl of gbrowseScripts) {
-    let script = document.createElement('script');
-    script.src = scriptUrl;
-    gbrowseDocumentBody.appendChild(script);
-    console.log(gbrowseDocumentBody, script);
+export function GeneRecordAttribute(props) {
+  let context = Gbrowse.contexts.find(context => context.name === props.name);
+  if (context != null) {
+    return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
   }
-}
 
-function resizeIframe(event) {
-  let iframe = event.target;
-  iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20 + 'px';
-}
+  if (props.name === 'protein_gtracks') {
+    return ( <Gbrowse.ProteinContext {...props} /> );
+  }
 
-export function GbrowseContext(props) {
-  let {
-    sequence_id,
-    context_start,
-    context_end,
-    source_id,
-    dna_gtracks = 'test'
-  } = props.record.attributes;
-
-  let lowerProjectId = wdk.MODEL_NAME.toLowerCase();
-  let lowerGeneId = source_id.toLowerCase();
-
-  let queryParams = {
-    name: `${sequence_id}:${context_start}..${context_end}`,
-    hmap: 'gbrowseSyn',
-    l: dna_gtracks,
-    width: 800,
-    embed: 1,
-    h_feat: `${lowerGeneId}@yellow`,
-    genepage: 1
-  };
-
-  let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
-  let iframeUrl = `/cgi-bin/gbrowse_img/${lowerProjectId}/?${queryParamString}`;
-  let gbrowseUrl = `/cgi-bin/gbrowse/${lowerProjectId}/?name=${sequence_id}:${context_start}..${context_end};h_feat=${lowerGeneId}@yellow`;
-
-  return (
-    <div id="genomic-context">
-      <center>
-        <strong>Genomic Context</strong>
-        <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
-        <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
-        <div id="${gnCtxDivId}"></div>
-        <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={injectGbrowseScripts} />
-        <a id="gbView" href={gbrowseUrl}>View in Genome Browser</a>
-        <div>(<i>use right click or ctrl-click to open in a new window</i>)</div>
-      </center>
-    </div>
-  );
-}
-
-export function ProteinContext(props) {
-  let { source_id, protein_length, protein_gtracks } = props.record.attributes;
-
-  return (
-    <div id="protein-features">
-      <strong>Protein Features</strong>
-      <iframe
-        src={`/cgi-bin/gbrowse_img/${wdk.MODEL_NAME.toLowerCase()}aa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;width=800;embed=1;genepage=1`}
-        seamless
-        style={{ width: '100%', border: 'none' }}
-        onLoad={resizeIframe}
-      />
-    </div>
-  );
+  return ( <props.WdkRecordAttribute {...props}/> );
 }
 
 let treeCache = new WeakMap;

@@ -222,14 +222,12 @@ export function RecordTable(WdkRecordTable) {
 
 export function RecordAttribute(WdkRecordAttribute) {
   return function ApiRecordAttribute(props) {
-    if (props.name === 'dna_gtracks') {
-      return ( <Gene.GbrowseContext {...props} /> );
-    }
+    switch (props.recordClass.name) {
+      case Gene.RECORD_CLASS_NAME:
+        return <Gene.GeneRecordAttribute {...props} WdkRecordAttribute={WdkRecordAttribute}/>
 
-    if (props.name === 'protein_gtracks') {
-      return ( <Gene.ProteinContext {...props} /> );
+      default:
+        return <WdkRecordAttribute {...props}/>
     }
-
-    return ( <WdkRecordAttribute {...props}/> );
   };
 }
