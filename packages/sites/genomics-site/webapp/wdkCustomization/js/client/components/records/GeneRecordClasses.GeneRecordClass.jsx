@@ -160,15 +160,16 @@ export function RecordOverview(props) {
       </div>
       <div className="GeneOverviewLeft">
         <OverviewItem label="Gene" value={name}/>
-        <div className="GeneOverviewItem" style={{ paddingLeft: '2ex' }}><a href="javascript:void(0)"><span style={{color: 'red'}}>1</span> user comment</a></div>
         <OverviewItem label="Type" value={gene_type}/>
         <OverviewItem label="Chromosome" value={chromosome}/>
         <OverviewItem label="Location" value={location_text.replace('$$strand_plus_minus$$', '+')}/>
-        <div className="GeneOverviewItem" style={{ paddingLeft: '2ex' }}><a href="javascript:void(0)">View updated annotation at GeneDB</a></div>
         <br/>
         <OverviewItem label="Species" value={genus_species}/>
         <OverviewItem label="Strain" value={strain}/>
         <OverviewItem label="Status" value={status}/>
+        <br/>
+        <div className="GeneOverviewItem"><a href="javascript:void(0)">View <span style={{color: 'red'}}>1</span> user comment</a></div>
+        <div className="GeneOverviewItem"><a href="javascript:void(0)">View updated annotation at GeneDB</a></div>
       </div>
 
       <div className="GeneOverviewRight">
