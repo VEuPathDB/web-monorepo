@@ -48,6 +48,7 @@ h4 {
 
 .wdk-RecordOverview {
   color: #555555;
+  margin-bottom: -1em;
 }
 
 .wdk-RecordOverview:after {
@@ -65,7 +66,7 @@ h4 {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
-  padding: 1em 0;
+  padding: .5em 0;
   font-size: 2em;
 }
 
@@ -80,7 +81,6 @@ h4 {
 .GeneOverviewProduct {
   font-weight: 500;
   font-size: 1em;
-  margin-left: 1em;
 }
 
 .wdk-RecordSidebar__fixed {
@@ -121,7 +121,6 @@ h4 {
 .GeneOverviewIntent {
   font-size: 1.2em;
   font-style: italic;
-  margin: .2em 0 2em 0;
 }
 
 .GeneOverviewGeneType {
@@ -140,17 +139,18 @@ h4 {
 }
 
 .eupathdb-TranscriptThumbnails {
-  /*
-  position: relative;
-  top: -4em;
-  left: 4em;
-  */
+  border: 1px solid #aaa;
+  padding: 4px 6px;
+  background: #efefef;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 10px 0;
 }
 
 .eupathdb-TranscriptThumbnailWrapper {
   display: inline-block;
   vertical-align: top;
-  margin-right: 2em;
+  margin: 0 1em;
 }
 
 .eupathdb-TranscriptThumbnail {
@@ -172,7 +172,7 @@ h4 {
 .eupathdb-TranscriptThumbnailPopover {
   position: fixed;
   z-index: 100;
-  bottom: 20px;
+  bottom: 10px;
   background: #1f1f1f;
   color: #fafafa;
   border: 1px solid #aaa;
@@ -183,13 +183,13 @@ h4 {
 
 .eupathdb-TranscriptThumbnailPopover h3 {
   text-align: center;
-  padding: 8px 0;
+  padding: 2px 0;
   font-weight: 400;
 }
 
 .eupathdb-TranscriptThumbnailPopover div {
   text-align: center;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
 }
 
 .eupathdb-TranscriptThumbnailPopover img {
