@@ -177,7 +177,7 @@ export function RecordOverview(props) {
 function OverviewItem(props) {
     let { label, value = 'undefined' } = props;
     return value == null ? <noscript/> : (
-        <div className="GeneOverviewItem"><label>{label}</label> {lodash.capitalize(value)}</div>
+        <div className="GeneOverviewItem"><label>{label}</label> {Wdk.client.ComponentUtils.safeHtml(value)}</div>
     );
 }
 
