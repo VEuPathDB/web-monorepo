@@ -124,8 +124,12 @@ export function RecordOverview(props) {
     sequence_id,
     location_text,
     genus_species,
-    strain = '3D7',
-    status = 'Curated reference',
+    strain,
+    genome_status,
+    data_release_policy,
+    special_link,
+    user_comment_link,
+    new_product_name,
     product,
     context_start,
     context_end,
@@ -151,18 +155,18 @@ export function RecordOverview(props) {
         <OverviewItem label="Gene" value={name}/>
         <OverviewItem label="Type" value={gene_type}/>
         <OverviewItem label="Chromosome" value={chromosome}/>
-        <OverviewItem label="Location" value={location_text.replace('$$strand_plus_minus$$', '+')}/>
+        <OverviewItem label="Location" value={location_text}/>
         <br/>
         <OverviewItem label="Species" value={genus_species}/>
         <OverviewItem label="Strain" value={strain}/>
-        <OverviewItem label="Status" value={status}/>
+        <OverviewItem label="Status" value={genome_status}/>
         <br/>
-        <div className="GeneOverviewItem"><a href="javascript:void(0)">View <span style={{color: 'red'}}>1</span> user comment</a></div>
-        <div className="GeneOverviewItem"><a href="javascript:void(0)">View updated annotation at GeneDB</a></div>
+        <div className="GeneOverviewItem">{user_comment_link}</div>
+        <div className="GeneOverviewItem">{special_link}</div>
       </div>
 
       <div className="GeneOverviewRight">
-        <div className="GeneOverviewItem GeneOverviewIntent">This Gene Page reflects ongoing unpublished curation at GeneDB, enabling annotators to incorporate User Comments into the official record.  Users interested in publishing whole genome or other large-scale analysis should use PlasmoDB v5.3 (download here) or contact the primary investigator.</div>
+        <div className="GeneOverviewItem GeneOverviewIntent">{data_release_policy}</div>
 
         <OverviewThumbnails  thumbnails={Gbrowse.contexts}/>
       </div>
