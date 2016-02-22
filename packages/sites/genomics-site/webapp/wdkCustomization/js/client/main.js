@@ -1,27 +1,20 @@
 // Bootstrap the WDK client application
 // ====================================
 
-import { run, Components } from 'wdk-client';
+import { run, wrapComponents, wrapStores } from 'wdk-client';
 
-// Import Component wrappers
-import * as wrappers from './componentWrappers';
+// Import apicomm wrappers and additional routes
+import * as componentWrappers from './componentWrappers';
+import * as storeWrappers from './storeWrappers';
 import { routes } from './routes';
 
 console.log(require.context('./components/records', true, /^\.\/.*\.jsx?$/));
 
-// apply wrappers
-for (let key in wrappers) {
-  let Component = Components[key];
-  if (Component == null) {
-    console.warn("Cannot wrap unknown WDK Component '" + key + "'.  Skipping...");
-    continue;
-  }
-  if (!("wrapComponent" in Components[key])) {
-    console.warn("WDK Component '" + key + "' is not wrappable.  WDK version will be used.");
-    continue;
-  }
-  Components[key].wrapComponent(wrappers[key]);
-}
+// apply component wrappers
+wrapComponents(componentWrappers);
+
+// apply store wrappers
+wrapStores(storeWrappers);
 
 // getApiClientConfig() is defined in /client/index.jsp
 let config = window.getApiClientConfig();
@@ -31,9 +24,3 @@ let app = window._app = run({
   rootElement: config.rootElement,
   applicationRoutes: routes
 });
-
-// TODO Convert initialData to an action
-// if (config.initialData) {
-//   let action = config.initialData;
-//   app.store.dispatch(action);
-// }

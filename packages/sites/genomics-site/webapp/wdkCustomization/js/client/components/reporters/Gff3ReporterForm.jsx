@@ -13,7 +13,7 @@ let initialStateMap = {
   "SequenceRecordClasses.SequenceRecordClass": {
     attachmentType: 'plain'
   },
-  "GeneRecordClasses.GeneRecordClass": {
+  "TranscriptRecordClasses.TranscriptRecordClass": {
     hasTranscript: false,
     hasProtein: false,
     attachmentType: 'plain'
@@ -22,7 +22,7 @@ let initialStateMap = {
 
 let GffInputs = props => {
   let { recordClass, formState, getUpdateHandler } = props;
-  if (recordClass.name != "GeneRecordClasses.GeneRecordClass") {
+  if (recordClass.name != "TranscriptRecordClasses.TranscriptRecordClass") {
     return ( <noscript/> );
   }
   return (

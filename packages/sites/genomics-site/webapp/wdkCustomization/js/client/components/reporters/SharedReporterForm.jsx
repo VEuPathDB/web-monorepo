@@ -1,8 +1,9 @@
 import React from 'react';
 import * as Wdk from 'wdk-client';
 
-let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
-let { RadioList, Checkbox } = Wdk.Components;
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.OntologyUtils);
+let { RadioList, Checkbox, CheckboxTree } = Wdk.Components;
+let { isQualifying, addSearchSpecificSubtree } = eupathdb.attributeCheckboxTree;
 
 let SharedReporterForm = React.createClass({
 
@@ -28,8 +29,10 @@ let SharedReporterForm = React.createClass({
   },
 
   render() {
-    let { question, recordClass, preferences, formState, onSubmit } = this.props;
+    let { question, recordClass, preferences, formState, onSubmit, ontology } = this.props;
     let realFormState = this.discoverFormState(formState, preferences, question);
+    let attributeTree = util.getTree(ontology, isQualifying('download'));
+
     return (
       <div>
         {util.getReporterCheckboxList("Choose Attributes", this.getUpdateHandler('attributes'),

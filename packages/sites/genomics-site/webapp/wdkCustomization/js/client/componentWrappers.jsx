@@ -181,7 +181,7 @@ export function StepDownloadForm(WdkStepDownloadForm) {
         return ( <TabularReporterForm {...props}/> );
       case 'srt':
         switch (props.recordClass.name) {
-          case 'GeneRecordClasses.GeneRecordClass':
+          case 'TranscriptRecordClass.TranscriptRecordClass':
             return ( <FastaGeneReporterForm {...props}/> );
           case 'SequenceRecordClasses.SequenceRecordClass':
             return ( <FastaGenomicSequenceReporterForm {...props}/> );

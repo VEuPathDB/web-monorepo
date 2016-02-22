@@ -42,7 +42,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
        service.findQuestion(question => question.name === questionName),
        service.findRecordClass(recordClass => recordClass.name === recordClassName)]
     ).then(([categoriesOntology, question, recordClass]) => {
-        let categoryTree = getTree(categoriesOntology, isQualifying(recordClassName, viewName));
+        let categoryTree = getTree(categoriesOntology, isQualifying(recordClassName, viewName, 'results'));
         addSearchSpecificSubtree(question, categoryTree, recordClassName, viewName);
         let selectedList = currentSelectedList || defaultSelectedList;
         let controller = new CheckboxTreeController(element, "attributeList_" + viewName, categoryTree.children, "selectedFields", selectedList, defaultSelectedList);
@@ -54,16 +54,17 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
 
 
   /**
-   * Create a predicate function to filter out of the Categories ontology tree those items appropriate for the
-   * results page that identify attributes for the current record class.  In the case of the Transcript Record Class, a
+   * Create a predicate function to filter out of the Categories ontology tree those items appropriate for the given
+   * scope that identify attributes for the current record class.  In the case of the Transcript Record Class, a
    * distinction is made depending on whether the summary view applies to transcripts or genes.
+   * 
    * @param recordClassName - full name of the current record class
    * @param viewName - either gene or transcript depending on the summary view
    */
-  let isQualifying = (recordClassName, viewName) => node => {
+  let isQualifying = (recordClassName, viewName, scope) => node => {
       let qualified = nodeHasProperty('targetType', 'attribute', node)
                     && nodeHasProperty('recordClassName', recordClassName, node)
-                    && nodeHasProperty('scope', 'results', node);
+                    && nodeHasProperty('scope', scope, node);
       if(qualified && recordClassName === 'TranscriptRecordClasses.TranscriptRecordClass' && viewName==="gene") {
         qualified = nodeHasProperty('geneOrTranscript', "gene", node);
       }
@@ -114,7 +115,8 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     }
   }
 
-
   ns.setupCheckboxTree = setupCheckboxTree;
-  
+  ns.isQualifying = isQualifying;
+  ns.addSearchSpecificSubtree = addSearchSpecificSubtree;
+
 });
