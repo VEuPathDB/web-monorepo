@@ -1,12 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SearchableCheckboxTree from 'wdk-client-components/SearchableCheckboxTree';
 import CheckboxTree from 'wdk-client-components/CheckboxTree';
 import {
   getTargetType,
   getRefName,
   getId,
   getDisplayName,
-  getDescription
+  getDescription,
+  getNodeFormValue,
+  getBasicNodeReactElement,
+  getNodeChildren
 } from 'wdk-client-utils/OntologyUtils';
 import {
   isLeafNode,
@@ -22,114 +26,71 @@ export default class CheckboxTreeController {
     this.name = name;
     this.tree = tree;
     this.fieldName = fieldName;
+    this.searchText = "";
+    this.setSearchText = this.setSearchText.bind(this);
+    this.resetSearchText = this.resetSearchText.bind(this);
+    this.searchNodes = this.searchNodes.bind(this);
     this.displayCheckboxTree = this.displayCheckboxTree.bind(this);
     this.updateSelectedList = this.updateSelectedList.bind(this);
     this.updateExpandedList = this.updateExpandedList.bind(this);
     this.loadDefaultSelectedList = this.loadDefaultSelectedList.bind(this);
     this.loadCurrentSelectedList = this.loadCurrentSelectedList.bind(this);
-    this.getNodeReactElement = this.getNodeReactElement.bind(this);
-    this.getNodeFormValue = this.getNodeFormValue.bind(this);
-    this.getNodeChildren = this.getNodeChildren.bind(this);
+    this.getBasicNodeReactElement = getBasicNodeReactElement.bind(this);
+    this.getNodeFormValue = getNodeFormValue.bind(this);
+    this.getNodeChildren = getNodeChildren.bind(this);
     this.selectedList = selectedList;
-    this.expandedList = this.setExpandedList(this.tree, this.selectedList);
+    this.expandedList = CheckboxTree.setExpandedList(this.tree, this.getNodeFormValue, this.getNodeChildren, this.selectedList);
     this.defaultSelectedList = defaultSelectedList;
     this.currentSelectedList = (selectedList || []).concat();
+    this.searchableTextMap = this.createSearchableTextMap(this.tree);
   }
 
   displayCheckboxTree() {
     ReactDOM.render(
-      <CheckboxTree tree={this.tree}
+      <SearchableCheckboxTree tree={this.tree}
+      //<CheckboxTree tree={this.tree}
                     selectedList={this.selectedList}
                     expandedList={this.expandedList}
                     name={this.name}
                     fieldName={this.fieldName}
+                    searchText={this.searchText}
+                    onSearchTextSet={this.setSearchText}
+                    onSearchTextReset={this.resetSearchText}
+                    onSearch={this.searchNodes}
                     onSelectedListUpdated={this.updateSelectedList}
                     onExpandedListUpdated={this.updateExpandedList}
                     onDefaultSelectedListLoaded={this.loadDefaultSelectedList}
                     onCurrentSelectedListLoaded={this.loadCurrentSelectedList}
-                    getNodeReactElement={this.getNodeReactElement}
+                    getBasicNodeReactElement={this.getBasicNodeReactElement}
                     getNodeFormValue={this.getNodeFormValue}
                     getNodeChildren={this.getNodeChildren}
       />, this.element[0]);
   }
 
-  /**
-   * Returns boolean indicating whether the given node is indeterminate
-   */
-  isIndeterminate(node, selectedList) {
 
-    // if only some of the descendent leaf nodes are in the selected nodes list, the given
-    // node is indeterminate.  If the given node is a leaf node, it cannot be indeterminate
-    let indeterminate = false;
+  setSearchText(value) {
+    this.searchText = value;
+    this.displayCheckboxTree();
+  }
 
-    // If the selected list is empty, or non-existant no nodes are intermediate and there is nothing to do.
-    if (selectedList) {
-      if (!isLeafNode(node, this.getNodeChildren)) {
-        let leafNodes = getLeaves(node, this.getNodeChildren);
-        let total = leafNodes.reduce((count, leafNode) => {
-          return selectedList.indexOf(this.getNodeFormValue(leafNode)) > -1 ? count + 1 : count;
-        }, 0);
-        if (total > 0 && total < leafNodes.length) {
-          indeterminate = true;
-        }
-      }
+  resetSearchText() {
+    this.searchText = "";
+    CheckboxTree.setExpandedList(this.tree, getNodeFormValue, getNodeChildren, this.selectedList);
+    this.displayCheckboxTree();
+  }
+
+  searchNodes(node) {
+    if(this.searchText.length > 0) {
+      let nodeSearchText = this.searchableTextMap[getNodeFormValue(node)];
+      return nodeSearchText == undefined || nodeSearchText == null ? false : nodeSearchText.indexOf(this.searchText.toLowerCase()) > -1;
     }
-    return indeterminate;
-  }
-
-
-  /**
-   * Used to replace a non-existant expanded list with one obeying business rules (called recursively).
-   * Invokes action callback for updating the new expanded list.
-   */
-  setExpandedList(nodes, selectedList, expandedList = []) {
-
-    // If the selected list is empty or non-existant, the expanded list is likewise empty and there is nothing
-    // more to do.
-    if (selectedList && selectedList.length > 0) {
-      nodes.forEach(node => {
-
-        // According to the business rule, indeterminate nodes get expanded.
-        if (this.isIndeterminate(node, selectedList)) {
-          expandedList.push(this.getNodeFormValue(node));
-        }
-        // descend the tree
-        this.setExpandedList(this.getNodeChildren(node), selectedList, expandedList);
-      });
+    else {
+      return undefined;
     }
-    return expandedList;
   }
 
 
-  /**
-   * Callback to provide the value/id of the node (i.e., checkbox value).  Using 'name' for
-   * leaves and processed 'label' for branches
-   * @param node - given id
-   * @returns {*} - id/value of node
-   */
-  getNodeFormValue(node) {
-    return getTargetType(node) === 'attribute' ? getRefName(node) : getId(node);
-  }
 
-
-  /**
-   * Callback to provide a React element holding the display name and description for the node
-   * @param node - given node
-   * @returns {XML} - React element
-   */
-  getNodeReactElement(node) {
-    return <span title={getDescription(node)}>{getDisplayName(node)}</span>
-  }
-
-
-  /**
-   * Callback to provide the node children
-   * @param node - given node
-   * @returns {Array}  child nodes
-   */
-  getNodeChildren(node) {
-    return node.children;
-  }
 
 
   /**
@@ -167,4 +128,67 @@ export default class CheckboxTreeController {
   loadCurrentSelectedList() {
     this.updateSelectedList(this.currentSelectedList);
   }
+
+
+
+  createSearchableTextMap(nodes) {
+    let searchableTextMap = {};
+    let parentMap = this.computeParents(nodes);
+    nodes.forEach(node => {
+      let leaves = getLeaves(node, getNodeChildren);
+      leaves.forEach(leaf => {
+        let nodeList = [];
+        nodeList.push(getNodeFormValue(leaf));
+        let searchableText = [];
+        searchableText.push(getDisplayName(leaf).toLowerCase());
+        if(getDescription(leaf) != undefined) {
+          searchableText.push(getDescription(leaf).toLowerCase());
+        }
+        this.getAncestors(leaf, parentMap).forEach(ancestor => {
+          nodeList.push(getNodeFormValue(ancestor));
+          searchableText.push(getDisplayName(ancestor).toLowerCase());
+          if(getDescription(ancestor) != undefined) {
+            searchableText.push(getDescription(ancestor).toLowerCase());
+          }
+        });
+        nodeList.forEach(item => {
+          searchableTextMap[item] = searchableTextMap[item] ? searchableTextMap[item] + " " + searchableText.join(" ") : searchableText.join(" ");
+        });
+      });
+    });
+    return searchableTextMap;
+  }
+
+
+  getAncestors(node, parentMap, ancestors = []) {
+    if(parentMap[getNodeFormValue(node)] === undefined) {
+      return ancestors;
+    }
+    let parent = parentMap[getNodeFormValue(node)];
+    ancestors.push(parent);
+    this.getAncestors(parent, parentMap, ancestors);
+    return ancestors;
+  }
+
+
+  computeParents(nodes) {
+    let parentMap = {};
+    nodes.forEach(node => {
+      parentMap[getNodeFormValue(node)] = undefined;
+      this.addParents(node, parentMap);
+    });
+    return parentMap;
+  }
+
+
+  addParents(parentNode, parentMap) {
+    if(!isLeafNode(parentNode, getNodeChildren)) {
+      getNodeChildren(parentNode).forEach(childNode => {
+        parentMap[getNodeFormValue(childNode)] = parentNode;
+        this.addParents(childNode, parentMap);
+      });
+    }
+  }
+
+
 }
