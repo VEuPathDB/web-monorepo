@@ -1,41 +1,36 @@
 export let contexts = [
-  {
-    name: 'dna_gtracks',
-    start: 'context_start',
-    end: 'context_end',
-    thumbnail: true
-  }
+    {
+        gbrowse_url: 'GeneModelGbrowseUrl',
+        displayName: 'Gene Model',
+        thumbnail: false
+    },
+    {
+        gbrowse_url: 'SyntenyGbrowseUrl',
+        displayName: 'Synteny',
+        thumbnail: true
+    },
+    {
+        gbrowse_url: 'SnpsGbrowseUrl',
+        displayName: 'SNPs',
+        thumbnail: true
+    },
 ];
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
 
 export function GbrowseContext(props) {
-  let { context } = props;
 
-  let {
-    sequence_id,
-    source_id,
-  } = props.record.attributes;
-
-  let tracks = props.record.attributes[props.name];
-  let contextStart = props.record.attributes[context.start];
-  let contextEnd = props.record.attributes[context.end];
-  let lowerProjectId = wdk.MODEL_NAME.toLowerCase();
-  let lowerGeneId = source_id.toLowerCase();
+    let gbrowseUrl = props.record.attributes[props.name];
+//    let lowerGeneId = source_id.toLowerCase();
 
   let queryParams = {
-    name: `${sequence_id}:${contextStart}..${contextEnd}`,
-    hmap: 'gbrowseSyn',
-    l: tracks,
     width: 800,
     embed: 1,
-    h_feat: `${lowerGeneId}@yellow`,
-    genepage: 1
+//    h_feat: `${lowerGeneId}@yellow`,
   };
 
   let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
-  let iframeUrl = `/cgi-bin/gbrowse_img/${lowerProjectId}/?${queryParamString}`;
-  let gbrowseUrl = `/cgi-bin/gbrowse/${lowerProjectId}/?name=${sequence_id}:${contextStart}..${contextEnd};h_feat=${lowerGeneId}@yellow`;
+      let iframeUrl = `${gbrowseUrl};${queryParamString}`;
 
   return (
     <div id={props.name} className="wdk-RecordAttributeSectionItem" style={{ display: 'block', width: '100%' }}>

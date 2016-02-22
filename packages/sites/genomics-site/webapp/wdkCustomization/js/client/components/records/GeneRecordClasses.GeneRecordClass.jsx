@@ -134,24 +134,13 @@ export function RecordOverview(props) {
     protein_gtracks = 'InterproDomains%1ESignalP%1ETMHMM%1EExportPred%1EHydropathyPlot%1EBLASTP%1ELowComplexity%1ESecondaryStructure'
   } = props.record.attributes;
 
-  let thumbnails = [
-    {
-      targetId: 'genomic-context',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Gene;hmap=gbrowseSyn;width=600`,
-      label: 'Gene Model'
-    },
-    {
-      targetId: 'genomic-context',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodb/?name=${sequence_id}:${context_start}..${context_end};l=Synteny/pfal_span+pfal_gene+pfit_span+pfit_gene+pviv_span+pviv_gene+pkno_span+pkno_gene+pcyn_span+pcyn_gene+prei_span+prei_gene+pber_span+pber_gene+py17X_span+py17X_gene+pyXNL_span+pyXNL_gene+pyYM_span+pyYM_gene+pcha_span+pcha_gene;hmap=pbrowse;width=600`,
-      label: 'Synteny'
-    },
-    {
-      targetId: 'protein-features',
-      imgUrl: `/cgi-bin/gbrowse_img/plasmodbaa/?name=${source_id}.1:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;genepage=1;width=600`,
-      label: 'Protein Features'
-    }
 
-  ];
+    // TODO:  get the attribute name from the model instead of the hard coded one in contexts
+    Gbrowse.contexts.map(thumbnail => (
+        thumbnail.imgUrl = props.record.attributes[thumbnail.gbrowse_url]
+    ));
+
+
   return (
     <div className="wdk-RecordOverview">
       <div className="GeneOverviewTitle">
@@ -175,111 +164,111 @@ export function RecordOverview(props) {
       <div className="GeneOverviewRight">
         <div className="GeneOverviewItem GeneOverviewIntent">This Gene Page reflects ongoing unpublished curation at GeneDB, enabling annotators to incorporate User Comments into the official record.  Users interested in publishing whole genome or other large-scale analysis should use PlasmoDB v5.3 (download here) or contact the primary investigator.</div>
 
-        <OverviewThumbnails thumbnails={thumbnails}/>
+        <OverviewThumbnails  thumbnails={Gbrowse.contexts}/>
       </div>
     </div>
   );
 }
 
 function OverviewItem(props) {
-  let { label, value = 'undefined' } = props;
-  return value == null ? <noscript/> : (
-    <div className="GeneOverviewItem"><label>{label}</label> {lodash.capitalize(value)}</div>
-  );
+    let { label, value = 'undefined' } = props;
+    return value == null ? <noscript/> : (
+        <div className="GeneOverviewItem"><label>{label}</label> {lodash.capitalize(value)}</div>
+    );
 }
 
 // TODO Smart position of popover
 class OverviewThumbnails extends React.Component {
 
-  constructor(...args) {
-    super(...args);
-    this.timeoutId = null;
-    this.state = {
-      showPopover: false
-    };
-    this._computePosition = this._computePosition.bind(this);
-  }
-
-  setActiveThumbnail(event, thumbnail) {
-    if (thumbnail === this.state.activeThumbnail) return;
-    this.setState({
-      activeThumbnail: thumbnail,
-      screenX: event.screenX,
-      showPopover: false
-    });
-  }
-
-  showPopover() {
-    this._setShowPopover(true, 250);
-  }
-
-  hidePopover() {
-    this._setShowPopover(false, 250);
-  }
-
-  _setShowPopover(show, delay) {
-    clearTimeout(this.timeoutId);
-    this.timeoutId = setTimeout(() => {
-      this.setState({ showPopover: show });
-    }, delay);
-  }
-
-  _computePosition(popoverNode) {
-    if (popoverNode == null) return;
-    let popoverWidth = popoverNode.clientWidth;
-    let popoverLeft = this.state.screenX + popoverWidth + 10 > window.innerWidth
-      ? 10
-      : this.state.screenX + 10;
-    this.setState({ popoverLeft });
-  }
-
-  render() {
-    return (
-      <div className="eupathdb-TranscriptThumbnails">
-        {this.props.thumbnails.map(thumbnail => (
-          <div className="eupathdb-TranscriptThumbnailWrapper">
-            <div className="eupathdb-TranscriptThumbnailLabel">
-              <a href={'#' + thumbnail.targetId}>{thumbnail.label}</a>
-            </div>
-            <div className="eupathdb-TranscriptThumbnail"
-              onMouseEnter={event => { this.showPopover(); this.setActiveThumbnail(event, thumbnail) }}
-              onMouseLeave={() => this.hidePopover()}>
-              <a href={'#' + thumbnail.targetId}>
-                <img width="150" src={thumbnail.imgUrl}/>
-              </a>
-            </div>
-          </div>
-        ))}
-        {this.renderPopover()}
-      </div>
-    );
-  }
-
-  renderPopover() {
-    if (this.state.showPopover) {
-      return (
-        <div className="eupathdb-TranscriptThumbnailPopover"
-          style={{ left: this.state.popoverLeft || '' }}
-          ref={this._computePosition}
-          onMouseEnter={event => { this.showPopover() }}
-          onMouseLeave={() => { this.hidePopover() }}>
-          <h3>{this.state.activeThumbnail.label}</h3>
-          <div>(Click on image to view section on page)</div>
-          <a href={'#' + this.state.activeThumbnail.targetId}
-            onClick={() => this.setState({ showPopover: false })}>
-            <img src={this.state.activeThumbnail.imgUrl}/>
-          </a>
-        </div>
-      );
+    constructor(...args) {
+        super(...args);
+        this.timeoutId = null;
+        this.state = {
+            showPopover: false
+        };
+        this._computePosition = this._computePosition.bind(this);
     }
-  }
+
+    setActiveThumbnail(event, thumbnail) {
+        if (thumbnail === this.state.activeThumbnail) return;
+        this.setState({
+            activeThumbnail: thumbnail,
+            screenX: event.screenX,
+            showPopover: false
+        });
+    }
+
+    showPopover() {
+        this._setShowPopover(true, 250);
+    }
+
+    hidePopover() {
+        this._setShowPopover(false, 250);
+    }
+
+    _setShowPopover(show, delay) {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = setTimeout(() => {
+            this.setState({ showPopover: show });
+        }, delay);
+    }
+
+    _computePosition(popoverNode) {
+        if (popoverNode == null) return;
+        let popoverWidth = popoverNode.clientWidth;
+        let popoverLeft = this.state.screenX + popoverWidth + 10 > window.innerWidth
+                        ? 10
+                        : this.state.screenX + 10;
+        this.setState({ popoverLeft });
+    }
+
+    render() {
+        return (
+            <div className="eupathdb-TranscriptThumbnails">
+                {this.props.thumbnails.map(thumbnail => (
+                    <div className="eupathdb-TranscriptThumbnailWrapper">
+                         <div className="eupathdb-TranscriptThumbnailLabel">
+                             <a href={'#' + thumbnail.gbrowse_url}>{thumbnail.displayName}</a>
+                         </div>
+                         <div className="eupathdb-TranscriptThumbnail"
+                              onMouseEnter={event => { this.showPopover(); this.setActiveThumbnail(event, thumbnail) }}
+                              onMouseLeave={() => this.hidePopover()}>
+                             <a href={'#' + thumbnail.gbrowse_url}>
+                                 <img width="150" src={thumbnail.imgUrl}/>
+                             </a>
+                         </div>
+                     </div>
+                 ))}
+                     {this.renderPopover()}
+            </div>
+        );
+    }
+
+    renderPopover() {
+        if (this.state.showPopover) {
+            return (
+                <div className="eupathdb-TranscriptThumbnailPopover"
+                     style={{ left: this.state.popoverLeft || '' }}
+                     ref={this._computePosition}
+                     onMouseEnter={event => { this.showPopover() }}
+                     onMouseLeave={() => { this.hidePopover() }}>
+                    <h3>{this.state.activeThumbnail.gbrowse_ur}</h3>
+                    <div>(Click on image to view section on page)</div>
+                    <a href={'#' + this.state.activeThumbnail.gbrowse_url}
+                       onClick={() => this.setState({ showPopover: false })}>
+                        <img src={this.state.activeThumbnail.imgUrl}/>
+                    </a>
+                </div>
+            );
+        }
+    }
 
 }
 
 export function GeneRecordAttribute(props) {
-  let context = Gbrowse.contexts.find(context => context.name === props.name);
-  if (context != null) {
-    return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
+    let context = Gbrowse.contexts.find(context => context.gbrowse_url === props.name);
+    if (context != null) {
+      return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
   }
 
   if (props.name === 'protein_gtracks') {
