@@ -104,7 +104,7 @@ h4 {
   padding: 10px 0;
 }
 
-.GeneOverviewItem, .eupathdb-TranscriptThumbnailLabel {
+.GeneOverviewItem, .eupathdb-GeneThumbnailLabel {
   margin: .2em 0;
   font-size: 1.4em;
   font-weight: 300;
@@ -138,41 +138,36 @@ h4 {
   padding-top: 64px;
 }
 
-.eupathdb-TranscriptThumbnails {
-  border: 1px solid #aaa;
-  padding: 4px 6px;
-  background: #efefef;
+.eupathdb-GeneThumbnails {
+  border: 1px solid #d8d8d8;
+  padding: 4px 6px 8px;
+  background: #f2f2f2;
   border-radius: 4px;
-  display: inline-block;
   margin-top: 16px;
+  display: inline-block;
+  max-width: 100%;
+  overflow: auto;
+  white-space: nowrap;
 }
 
-.eupathdb-TranscriptThumbnailWrapper {
+.eupathdb-GeneThumbnailWrapper {
   display: inline-block;
   vertical-align: top;
   margin: 0 1em;
 }
 
-.eupathdb-TranscriptThumbnail {
-  /*
-  height: 100px;
-  width: 170px;
-  overflow: hidden;
-  */
-  border: 1px solid #aaa;
+.eupathdb-GeneThumbnail {
+  border: 1px solid #d8d8d8;
 }
 
-.eupathdb-TranscriptThumbnail img {
-  /*
-  position: relative;
-  left: -24px;
-  */
+.eupathdb-GeneThumbnail img {
+  display: block;
 }
 
-.eupathdb-TranscriptThumbnailPopover {
+.eupathdb-GeneThumbnailPopover {
   position: fixed;
   z-index: 100;
-  bottom: 10px;
+  bottom: 22px;
   background: #1f1f1f;
   color: #fafafa;
   border: 1px solid #aaa;
@@ -181,25 +176,25 @@ h4 {
   padding: 6px;
 }
 
-.eupathdb-TranscriptThumbnailPopover h3 {
+.eupathdb-GeneThumbnailPopover h3 {
   text-align: center;
   padding: 2px 0;
   font-weight: 400;
 }
 
-.eupathdb-TranscriptThumbnailPopover div {
+.eupathdb-GeneThumbnailPopover div {
   text-align: center;
   padding-bottom: 4px;
 }
 
-.eupathdb-TranscriptThumbnailPopover img {
-  max-height: 80vh;
+.eupathdb-GeneThumbnailPopover img {
+  max-height: 75vh;
   max-width: 80vw;
   border: 1px solid #aaa;
 }
 
 /*
-.eupathdb-TranscriptThumbnail:hover {
+.eupathdb-GeneThumbnail:hover {
   position: absolute;
   z-index: 1;
   height: auto;
@@ -208,7 +203,7 @@ h4 {
   left: 30em;
 }
 
-.eupathdb-TranscriptThumbnail:hover img {
+.eupathdb-GeneThumbnail:hover img {
   width: 800px;
   left: -90px;
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import lodash from 'lodash';
 import ExpressionGraph from '../common/ExpressionGraph';
 import * as Gbrowse from '../common/Gbrowse';
+import { isNodeOverflowing } from '../../utils';
 
 let {
   ComponentUtils,
@@ -176,32 +177,42 @@ export function RecordOverview(props) {
 }
 
 function OverviewItem(props) {
-    let { label, value = 'undefined' } = props;
-    return value == null ? <noscript/> : (
-        <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.safeHtml(value)}</div>
-    );
+  let { label, value = 'undefined' } = props;
+  return value == null ? <noscript/> : (
+    <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.safeHtml(value)}</div>
+  );
 }
 
 // TODO Smart position of popover
 class OverviewThumbnails extends React.Component {
 
-    constructor(...args) {
-        super(...args);
-        this.timeoutId = null;
-        this.state = {
-            showPopover: false
-        };
-        this._computePosition = this._computePosition.bind(this);
-    }
+  constructor(...args) {
+    super(...args);
+    this.timeoutId = null;
+    this.node = null;
+    this.state = {
+      showPopover: false
+    };
+    this._computePosition = this._computePosition.bind(this);
+    this._detectOverflow = lodash.throttle(this._detectOverflow.bind(this), 250);
+  }
 
-    setActiveThumbnail(event, thumbnail) {
-        if (thumbnail === this.state.activeThumbnail) return;
-        this.setState({
-            activeThumbnail: thumbnail,
-            screenX: event.screenX,
-            showPopover: false
-        });
-    }
+  componentDidMount() {
+    window.addEventListener('resize', this._detectOverflow);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._detectOverflow);
+  }
+
+  setActiveThumbnail(event, thumbnail) {
+    if (thumbnail === this.state.activeThumbnail) return;
+    this.setState({
+      activeThumbnail: thumbnail,
+      screenX: event.target.offsetLeft + event.target.clientWidth,
+      showPopover: false
+    });
+  }
 
     showPopover() {
         this._setShowPopover(true, 250);
@@ -227,46 +238,50 @@ class OverviewThumbnails extends React.Component {
         this.setState({ popoverLeft });
     }
 
-    render() {
-        return (
-            <div className="eupathdb-TranscriptThumbnails">
-                {this.props.thumbnails.map(thumbnail => (
-                    <div className="eupathdb-TranscriptThumbnailWrapper">
-                         <div className="eupathdb-TranscriptThumbnailLabel">
-                             <a href={'#' + thumbnail.gbrowse_url}>{thumbnail.displayName}</a>
-                         </div>
-                         <div className="eupathdb-TranscriptThumbnail"
-                              onMouseEnter={event => { this.showPopover(); this.setActiveThumbnail(event, thumbnail) }}
-                              onMouseLeave={() => this.hidePopover()}>
-                             <a href={'#' + thumbnail.gbrowse_url}>
-                                 <img width="150" src={thumbnail.imgUrl}/>
-                             </a>
-                         </div>
-                     </div>
-                 ))}
-                     {this.renderPopover()}
-            </div>
-        );
-    }
+  _detectOverflow() {
+    console.log('is overflowed', isNodeOverflowing(this.node));
+  }
 
-    renderPopover() {
-        if (this.state.showPopover) {
-            return (
-                <div className="eupathdb-TranscriptThumbnailPopover"
-                     style={{ left: this.state.popoverLeft || '' }}
-                     ref={this._computePosition}
-                     onMouseEnter={event => { this.showPopover() }}
-                     onMouseLeave={() => { this.hidePopover() }}>
-                    <h3>{this.state.activeThumbnail.gbrowse_ur}</h3>
-                    <div>(Click on image to view section on page)</div>
-                    <a href={'#' + this.state.activeThumbnail.gbrowse_url}
-                       onClick={() => this.setState({ showPopover: false })}>
-                        <img src={this.state.activeThumbnail.imgUrl}/>
-                    </a>
-                </div>
-            );
-        }
+  render() {
+    return (
+      <div ref={ n => this.node = n } className="eupathdb-GeneThumbnails">
+        {this.props.thumbnails.map(thumbnail => (
+          <div className="eupathdb-GeneThumbnailWrapper">
+            <div className="eupathdb-GeneThumbnailLabel">
+              <a href={'#' + thumbnail.gbrowse_url}>{thumbnail.displayName}</a>
+            </div>
+            <div className="eupathdb-GeneThumbnail"
+              onMouseEnter={event => { this.showPopover(); this.setActiveThumbnail(event, thumbnail) }}
+              onMouseLeave={() => this.hidePopover()}>
+              <a href={'#' + thumbnail.gbrowse_url}>
+                <img width="150" src={thumbnail.imgUrl}/>
+              </a>
+            </div>
+          </div>
+        ))}
+        {this.renderPopover()}
+      </div>
+    );
+  }
+
+  renderPopover() {
+    if (this.state.showPopover) {
+      return (
+        <div className="eupathdb-GeneThumbnailPopover"
+          style={{ left: this.state.popoverLeft || '' }}
+          ref={this._computePosition}
+          onMouseEnter={event => { this.showPopover() }}
+          onMouseLeave={() => { this.hidePopover() }}>
+          <h3>{this.state.activeThumbnail.displayName}</h3>
+          <div>(Click on image to view section on page)</div>
+          <a href={'#' + this.state.activeThumbnail.gbrowse_url}
+            onClick={() => this.setState({ showPopover: false })}>
+            <img src={this.state.activeThumbnail.imgUrl}/>
+          </a>
+        </div>
+      );
     }
+  }
 
 }
 
