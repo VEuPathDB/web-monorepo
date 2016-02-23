@@ -41,13 +41,14 @@ export function GbrowseContext(props) {
 }
 
 export function ProteinContext(props) {
-  let { source_id, protein_length, protein_gtracks } = props.record.attributes;
+    let url = props.rowData.ProteinPropsPbrowseUrl;
+    let divId = "protein-features-" + props.rowData.transcript_id
 
   return (
-    <div id="protein-features">
+      <div id={divId}>
       <strong>Protein Features</strong>
       <iframe
-        src={`/cgi-bin/gbrowse_img/${wdk.MODEL_NAME.toLowerCase()}aa/?name=${source_id}:1..${protein_length};l=${protein_gtracks};hmap=pbrowse;width=800;embed=1;genepage=1`}
+        src={`${url};width=800;embed=1;genepage=1`}
         seamless
         style={{ width: '100%', border: 'none' }}
         onLoad={resizeIframe}

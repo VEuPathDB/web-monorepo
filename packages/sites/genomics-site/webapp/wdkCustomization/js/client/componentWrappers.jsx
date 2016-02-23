@@ -218,7 +218,10 @@ export function RecordTable(WdkRecordTable) {
     if (props.table.name === 'MercatorTable') {
       Table = Gene.MercatorTable;
     }
-    return <Table {...props} DefaultComponent={WdkRecordTable}/>;
+    if (props.table.name === 'ProteinProperties') {
+      Table = Gene.ProteinPropertiesTable;
+    }
+      return <Table {...props} DefaultComponent={WdkRecordTable}/>;
   };
 }
 

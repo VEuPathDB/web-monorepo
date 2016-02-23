@@ -291,9 +291,9 @@ export function GeneRecordAttribute(props) {
       return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
   }
 
-  if (props.name === 'protein_gtracks') {
-    return ( <Gbrowse.ProteinContext {...props} /> );
-  }
+//  if (props.name === 'protein_gtracks') {
+//    return ( <Gbrowse.ProteinContext {...props} /> );
+//  }
 
   return ( <props.WdkRecordAttribute {...props}/> );
 }
@@ -460,6 +460,24 @@ export function ExpressionGraphTable(props) {
     />
   );
 }
+
+export function ProteinPropertiesTable(props) {
+  let included = props.table.properties.includeInTable || [];
+
+  let table = Object.assign({}, props.table, {
+    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
+  });
+
+  return (
+    <props.DefaultComponent
+      {...props}
+      table={table}
+      childRow={childProps =>
+        <Gbrowse.ProteinContext rowData={props.value[childProps.rowIndex]}/>}
+    />
+  );
+}
+
 
 
 export function MercatorTable(props) {
