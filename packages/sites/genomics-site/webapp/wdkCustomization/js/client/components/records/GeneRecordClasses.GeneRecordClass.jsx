@@ -4,6 +4,7 @@ import ExpressionGraph from '../common/ExpressionGraph';
 import * as Gbrowse from '../common/Gbrowse';
 
 let {
+  ComponentUtils,
   OntologyUtils,
   TreeUtils
 } = Wdk.client;
@@ -161,12 +162,12 @@ export function RecordOverview(props) {
         <OverviewItem label="Strain" value={strain}/>
         <OverviewItem label="Status" value={genome_status}/>
         <br/>
-        <div className="GeneOverviewItem">{user_comment_link}</div>
-        <div className="GeneOverviewItem">{special_link}</div>
+        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(user_comment_link)}</div>
+        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(special_link)}</div>
       </div>
 
       <div className="GeneOverviewRight">
-        <div className="GeneOverviewItem GeneOverviewIntent">{data_release_policy}</div>
+        <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.safeHtml(data_release_policy)}</div>
 
         <OverviewThumbnails  thumbnails={Gbrowse.contexts}/>
       </div>
@@ -177,7 +178,7 @@ export function RecordOverview(props) {
 function OverviewItem(props) {
     let { label, value = 'undefined' } = props;
     return value == null ? <noscript/> : (
-        <div className="GeneOverviewItem"><label>{label}</label> {Wdk.client.ComponentUtils.safeHtml(value)}</div>
+        <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.safeHtml(value)}</div>
     );
 }
 
