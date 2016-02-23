@@ -164,10 +164,11 @@ export function RecordOverview(props) {
         <OverviewItem label="Status" value={genome_status}/>
         <br/>
         <div className="GeneOverviewItem">{ComponentUtils.safeHtml(user_comment_link)}</div>
-        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(special_link)}</div>
       </div>
 
       <div className="GeneOverviewRight">
+        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(new_product_name)}</div>
+        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(special_link)}</div>
         <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.safeHtml(data_release_policy)}</div>
 
         <OverviewThumbnails  thumbnails={Gbrowse.contexts}/>
