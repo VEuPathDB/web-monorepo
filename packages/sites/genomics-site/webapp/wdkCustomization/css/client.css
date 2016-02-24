@@ -41,11 +41,6 @@ h4 {
   text-rendering: optimizeLegibility;
 }
 
-.wdk-RecordSection {
-  padding-top: 32px;
-  margin-top: -42px;
-}
-
 .wdk-RecordOverview {
   color: #555555;
   margin-bottom: -1em;
@@ -449,3 +444,18 @@ h4 {
   border-top: none;
   padding: 2em;
 }
+
+/* offset so things don't hide under menubar */
+.wdk-RecordSection,
+.wdk-RecordSubsection {
+  padding-top: 32px;
+  margin-top: -42px;
+}
+
+.wdk-RecordTableContainer,
+.wdk-RecordAttributeSectionItem,
+.eupathdb-GbrowseContext {
+  padding-top: 32px;
+  margin-top: -32px;
+}
+
