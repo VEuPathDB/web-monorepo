@@ -142,7 +142,7 @@ function RecordAttributionSection(props) {
 export function RecordOverview(DefaultComponent) {
   return function ApiRecordOverview(props) {
     let ResolvedComponent =
-      findComponent('RecordOverivew', props.recordClass.name) || DefaultComponent;
+      findComponent('RecordOverview', props.recordClass.name) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
