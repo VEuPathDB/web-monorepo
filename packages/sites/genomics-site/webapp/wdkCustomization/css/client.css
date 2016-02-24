@@ -87,8 +87,8 @@ h4 {
 }
 
 .GeneOverviewLeft {
-  width: 450px;
-  margin-right: 2em;
+  max-width: 450px;
+  margin-right: 60px;
 }
 
 .GeneOverviewRight {
