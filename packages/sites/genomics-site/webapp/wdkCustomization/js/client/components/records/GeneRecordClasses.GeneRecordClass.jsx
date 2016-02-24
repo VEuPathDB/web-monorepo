@@ -1,20 +1,21 @@
 import React from 'react';
 import lodash from 'lodash';
+import {
+  Components,
+  ComponentUtils,
+  OntologyUtils,
+  TreeUtils
+} from 'wdk-client';
 import ExpressionGraph from '../common/ExpressionGraph';
 import * as Gbrowse from '../common/Gbrowse';
 import { isNodeOverflowing } from '../../utils';
 
-let {
-  ComponentUtils,
-  OntologyUtils,
-  TreeUtils
-} = Wdk.client;
 
 let {
   NativeCheckboxList,
   RecordLink,
   Sticky
-} = Wdk.client.Components;
+} = Components;
 
 export const GENE_ID = 'gene';
 export const TRANSCRIPT_ID = 'transcript';
