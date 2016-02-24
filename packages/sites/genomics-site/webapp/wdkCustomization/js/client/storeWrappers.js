@@ -1,5 +1,5 @@
 
-export let StepDownloadFormViewStore = {
+export let StepDownloadFormViewStore2 = {
 
   getInitialState(origGetInitialState) {
     return () => {
