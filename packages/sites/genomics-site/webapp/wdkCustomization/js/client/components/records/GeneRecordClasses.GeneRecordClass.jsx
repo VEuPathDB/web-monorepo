@@ -177,6 +177,23 @@ export function RecordOverview(props) {
   );
 }
 
+let expressionRE = /ExpressionGraphs$/;
+export function RecordTable(props) {
+  let Table = props.DefaultComponent;
+
+  if (expressionRE.test(props.table.name)) {
+    Table = ExpressionGraphTable;
+  }
+  if (props.table.name === 'MercatorTable') {
+    Table = MercatorTable;
+  }
+  if (props.table.name === 'ProteinProperties') {
+    Table = ProteinPropertiesTable;
+  }
+
+  return <Table {...props}/>
+}
+
 function OverviewItem(props) {
   let { label, value = 'undefined' } = props;
   return value == null ? <noscript/> : (
@@ -286,7 +303,7 @@ class OverviewThumbnails extends React.Component {
 
 }
 
-export function GeneRecordAttribute(props) {
+export function RecordAttribute(props) {
     let context = Gbrowse.contexts.find(context => context.gbrowse_url === props.name);
     if (context != null) {
       return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
@@ -296,7 +313,7 @@ export function GeneRecordAttribute(props) {
 //    return ( <Gbrowse.ProteinContext {...props} /> );
 //  }
 
-  return ( <props.WdkRecordAttribute {...props}/> );
+  return ( <props.DefaultComponent {...props}/> );
 }
 
 let treeCache = new WeakMap;
@@ -445,7 +462,7 @@ export let RecordMainSection = React.createClass({
 });
 */
 
-export function ExpressionGraphTable(props) {
+function ExpressionGraphTable(props) {
   let included = props.table.properties.includeInTable || [];
 
   let table = Object.assign({}, props.table, {
@@ -462,7 +479,7 @@ export function ExpressionGraphTable(props) {
   );
 }
 
-export function ProteinPropertiesTable(props) {
+function ProteinPropertiesTable(props) {
   let included = props.table.properties.includeInTable || [];
 
   let table = Object.assign({}, props.table, {
@@ -481,7 +498,7 @@ export function ProteinPropertiesTable(props) {
 
 
 
-export function MercatorTable(props) {
+function MercatorTable(props) {
   return (
     <div className="eupathdb-MercatorTable">
       <form action="/cgi-bin/pairwiseMercator">

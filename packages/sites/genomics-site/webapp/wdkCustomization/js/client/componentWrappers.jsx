@@ -1,7 +1,6 @@
 import { Components } from 'wdk-client';
 import Footer from './components/common/Footer';
-import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
-import * as Gene from './components/records/GeneRecordClasses.GeneRecordClass';
+import { findComponent } from './components/records';
 
 // load individual reporter forms
 import TabularReporterForm from './components/reporters/TabularReporterForm';
@@ -113,32 +112,38 @@ export function Main(WdkMain) {
 }
 
 // Customize the Record Component
-export function RecordUI(WdkRecordUI) {
+export function RecordUI(DefaultComponent) {
   return function ApiRecordUI(props) {
-    switch (props.recordClass.name) {
-      case 'DatasetRecordClasses.DatasetRecordClass':
-        return <Dataset.RecordUI {...props}/>
-
-      default:
-        return <WdkRecordUI {...props}/>
-    }
+    let ResolvedComponent =
+      findComponent('RecordUI', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
 
-export function RecordOverview(WdkRecordOverview) {
-  return function ApiRecordOverview(props) {
-    switch (props.recordClass.name) {
-      case Gene.RECORD_CLASS_NAME:
-        return (
-          <Gene.RecordOverview
-            {...props}
-            DefaultComponent={WdkRecordOverview}
-          />
-        );
+export function Record(DefaultComponent) {
+  return function ApiRecord(props) {
+    let ResolvedComponent =
+      findComponent('Record', props.recordClass.name) || DefaultComponent;
+    return (
+      <div>
+        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+        <RecordAttributionSection {...props}/>
+      </div>
+    );
+  };
+}
 
-      default:
-        return <WdkRecordOverview {...props}/>
-    }
+function RecordAttributionSection(props) {
+  let ResolvedComponent =
+    findComponent('RecordAttributionSection', props.recordClass.name) || 'noscript';
+  return <ResolvedComponent {...props}/>
+}
+
+export function RecordOverview(DefaultComponent) {
+  return function ApiRecordOverview(props) {
+    let ResolvedComponent =
+      findComponent('RecordOverivew', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
 
@@ -208,31 +213,18 @@ export function StepDownloadForm(WdkStepDownloadForm) {
   }
 }
 
-let expressionRE = /ExpressionGraphs$/;
-export function RecordTable(WdkRecordTable) {
+export function RecordTable(DefaultComponent) {
   return function ApiRecordTable(props) {
-    let Table = WdkRecordTable;
-    if (expressionRE.test(props.table.name)) {
-      Table = Gene.ExpressionGraphTable;
-    }
-    if (props.table.name === 'MercatorTable') {
-      Table = Gene.MercatorTable;
-    }
-    if (props.table.name === 'ProteinProperties') {
-      Table = Gene.ProteinPropertiesTable;
-    }
-      return <Table {...props} DefaultComponent={WdkRecordTable}/>;
+    let ResolvedComponent =
+      findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
 
-export function RecordAttribute(WdkRecordAttribute) {
+export function RecordAttribute(DefaultComponent) {
   return function ApiRecordAttribute(props) {
-    switch (props.recordClass.name) {
-      case Gene.RECORD_CLASS_NAME:
-        return <Gene.GeneRecordAttribute {...props} WdkRecordAttribute={WdkRecordAttribute}/>
-
-      default:
-        return <WdkRecordAttribute {...props}/>
-    }
+    let ResolvedComponent =
+      findComponent('RecordAttribute', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Components } from 'wdk-client';
 
+export const RECORD_CLASS_NAME = 'DatasetRecordClasses.DatasetRecordClass';
+
 let { Main } = Components;
 
 // Use Element.innerText to strip XML
