@@ -53,7 +53,6 @@ export default class CheckboxTreeController {
                     expandedList={this.expandedList}
                     name={this.name}
                     fieldName={this.fieldName}
-                    searchText={this.searchText}
                     onSearchTextSet={this.setSearchText}
                     onSearchTextReset={this.resetSearchText}
                     onSearch={this.searchNodes}
