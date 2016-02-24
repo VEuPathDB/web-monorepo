@@ -193,6 +193,14 @@ h4 {
   border: 1px solid #aaa;
 }
 
+.eupathdb-GbrowseContext {
+  padding: 0 1em;
+}
+
+.eupathdb-GbrowseContextHeader {
+  font-weight: bold;
+}
+
 /*
 .eupathdb-GeneThumbnail:hover {
   position: absolute;

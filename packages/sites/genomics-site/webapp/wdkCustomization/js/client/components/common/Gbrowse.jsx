@@ -1,3 +1,8 @@
+import React from 'react';
+import { Components } from 'wdk-client';
+
+let { CollapsibleSection } = Components;
+
 export let contexts = [
     {
         gbrowse_url: 'GeneModelGbrowseUrl',
@@ -18,27 +23,43 @@ export let contexts = [
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
 
-export function GbrowseContext(props) {
+export let GbrowseContext = React.createClass({
 
-    let gbrowseUrl = props.record.attributes[props.name];
-//    let lowerGeneId = source_id.toLowerCase();
+  getInitialState() {
+    return {
+      isCollapsed: true
+    };
+  },
 
-  let queryParams = {
-    width: 800,
-    embed: 1,
-//    h_feat: `${lowerGeneId}@yellow`,
-  };
+  render() {
 
-  let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
-      let iframeUrl = `${gbrowseUrl};${queryParamString}`;
+      let gbrowseUrl = this.props.record.attributes[this.props.name];
+  //    let lowerGeneId = source_id.toLowerCase();
 
-  return (
-    <div id={props.name} className="wdk-RecordAttributeSectionItem" style={{ display: 'block', width: '100%' }}>
-      <div className="wdk-RecordAttributeName"><strong>{props.displayName}</strong></div>
-      <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={gbrowseOnload} />
-    </div>
-  );
-}
+    let queryParams = {
+      width: 800,
+      embed: 1,
+  //    h_feat: `${lowerGeneId}@yellow`,
+    };
+
+    let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
+        let iframeUrl = `${gbrowseUrl};${queryParamString}`;
+
+    return (
+      <CollapsibleSection
+        id={this.props.name}
+        className="eupathdb-GbrowseContext"
+        style={{ display: 'block', width: '100%' }}
+        headerContent={this.props.displayName}
+        isCollapsed={this.state.isCollapsed}
+        onCollapsedChange={isCollapsed => this.setState({ isCollapsed })}
+      >
+        <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={gbrowseOnload}/>
+      </CollapsibleSection>
+    );
+  }
+
+});
 
 export function ProteinContext(props) {
     let url = props.rowData.ProteinPropsPbrowseUrl;
