@@ -88,7 +88,7 @@ export function ProteinContext(props) {
         src={`${url};width=800;embed=1;genepage=1`}
         seamless
         style={{ width: '100%', border: 'none' }}
-        onLoad={resizeIframe}
+        onLoad={pbrowseOnLoad}
       />
     </div>
   );
@@ -98,6 +98,12 @@ function gbrowseOnload(event) {
   let iframe = event.target;
   setBaseTarget(iframe);
   injectGbrowseScripts(iframe);
+  resizeIframe(iframe);
+}
+
+function pbrowseOnLoad(event) {
+  let iframe = event.target;
+  setBaseTarget(iframe);
   resizeIframe(iframe);
 }
 
