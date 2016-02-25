@@ -148,6 +148,9 @@ export function RecordOverview(props) {
     ));
 
 
+    let filteredGBrowseContexts = Gbrowse.contexts.filter(context => !context.isPbrowse || (context.isPbrowse && gene_type == 'protein coding' ));
+
+
   return (
     <div className="wdk-RecordOverview">
       <div className="GeneOverviewTitle">
@@ -172,7 +175,7 @@ export function RecordOverview(props) {
         <div className="GeneOverviewItem">{ComponentUtils.safeHtml(special_link)}</div>
         <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.safeHtml(data_release_policy)}</div>
 
-        <OverviewThumbnails  thumbnails={Gbrowse.contexts}/>
+        <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
       </div>
     </div>
   );
