@@ -7,27 +7,32 @@ export let contexts = [
     {
         gbrowse_url: 'GeneModelGbrowseUrl',
         displayName: 'Gene Model',
-        anchor: 'GeneModelGbrowseUrl'
+        anchor: 'GeneModelGbrowseUrl',
+        isPbrowse: false
     },
     {
         gbrowse_url: 'SyntenyGbrowseUrl',
         displayName: 'Synteny',
         anchor: 'SyntenyGbrowseUrl',
+        isPbrowse: false
     },
     {
         gbrowse_url: 'SnpsGbrowseUrl',
         displayName: 'SNPs',
         anchor: 'SnpsGbrowseUrl',
+        isPbrowse: false
     },
     {
         gbrowse_url: 'FeaturesPbrowseUrl',
         displayName: 'Protein Features',
-        anchor: 'ProteinProperties'
+        anchor: 'ProteinProperties',
+        isPbrowse: true
     },
     {
         gbrowse_url: 'ProteomicsPbrowseUrl',
         displayName: 'Proteomics',
-        anchor: 'ProteinExpressionPBrowse'
+        anchor: 'ProteinExpressionPBrowse',
+        isPbrowse: true
     },
 ];
 
