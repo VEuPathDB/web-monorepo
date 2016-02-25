@@ -189,7 +189,10 @@ export function RecordTable(props) {
     Table = MercatorTable;
   }
   if (props.table.name === 'ProteinProperties') {
-    Table = ProteinPropertiesTable;
+    Table = ProteinPbrowseTable;
+  }
+  if (props.table.name === 'ProteinExpressionPBrowse') {
+    Table = ProteinPbrowseTable;
   }
 
   return <Table {...props}/>
@@ -267,12 +270,12 @@ class OverviewThumbnails extends React.Component {
         {this.props.thumbnails.map(thumbnail => (
           <div className="eupathdb-GeneThumbnailWrapper">
             <div className="eupathdb-GeneThumbnailLabel">
-              <a href={thumbnail.isPbrowse ? '#protein-properties' : '#' + thumbnail.gbrowse_url}>{thumbnail.displayName}</a>
+              <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
             </div>
             <div className="eupathdb-GeneThumbnail"
               onMouseEnter={event => { this.showPopover(); this.setActiveThumbnail(event, thumbnail) }}
               onMouseLeave={() => this.hidePopover()}>
-              <a href={thumbnail.isPbrowse ? '#protein-properties' : '#' + thumbnail.gbrowse_url}>
+              <a href={'#' + thumbnail.anchor}>
                 <img width="150" src={thumbnail.imgUrl}/>
               </a>
             </div>
@@ -293,7 +296,7 @@ class OverviewThumbnails extends React.Component {
           onMouseLeave={() => { this.hidePopover() }}>
           <h3>{this.state.activeThumbnail.displayName}</h3>
           <div>(Click on image to view section on page)</div>
-          <a href={this.state.activeThumbnail.isPbrowse ? '#protein-properties' : '#' + this.state.activeThumbnail.gbrowse_url}
+          <a href={'#' + this.state.activeThumbnail.anchor}
             onClick={() => this.setState({ showPopover: false })}>
             <img src={this.state.activeThumbnail.imgUrl}/>
           </a>
@@ -480,7 +483,7 @@ function ExpressionGraphTable(props) {
   );
 }
 
-function ProteinPropertiesTable(props) {
+function ProteinPbrowseTable(props) {
   let included = props.table.properties.includeInTable || [];
 
   let table = Object.assign({}, props.table, {
@@ -492,7 +495,7 @@ function ProteinPropertiesTable(props) {
       {...props}
       table={table}
       childRow={childProps =>
-        <Gbrowse.ProteinContext rowData={props.value[childProps.rowIndex]}/>}
+        <Gbrowse.ProteinContext {...props} rowData={props.value[childProps.rowIndex]}/>}
     />
   );
 }

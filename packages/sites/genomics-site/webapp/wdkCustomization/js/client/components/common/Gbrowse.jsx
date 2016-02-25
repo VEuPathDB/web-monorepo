@@ -7,24 +7,30 @@ export let contexts = [
     {
         gbrowse_url: 'GeneModelGbrowseUrl',
         displayName: 'Gene Model',
-        isPbrowse: false
+        anchor: 'GeneModelGbrowseUrl'
     },
     {
         gbrowse_url: 'SyntenyGbrowseUrl',
         displayName: 'Synteny',
-        isPbrowse: false
+        anchor: 'SyntenyGbrowseUrl',
     },
     {
         gbrowse_url: 'SnpsGbrowseUrl',
         displayName: 'SNPs',
-        isPbrowse: false
+        anchor: 'SnpsGbrowseUrl',
     },
     {
         gbrowse_url: 'FeaturesPbrowseUrl',
         displayName: 'Protein Features',
-        isPbrowse: true
+        anchor: 'ProteinProperties'
+    },
+    {
+        gbrowse_url: 'ProteomicsPbrowseUrl',
+        displayName: 'Proteomics',
+        anchor: 'ProteinExpressionPBrowse'
     },
 ];
+
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
 
@@ -67,12 +73,12 @@ export let GbrowseContext = React.createClass({
 });
 
 export function ProteinContext(props) {
-    let url = props.rowData.ProteinPropsPbrowseUrl;
-    let divId = "protein-features-" + props.rowData.transcript_id
+    let url = props.rowData.ProteinPbrowseUrl;
+    let divId = props.table.name + "-" + props.rowData.transcript_id
 
   return (
       <div id={divId}>
-      <strong>Protein Features</strong>
+      <strong>{props.table.displayName}</strong>
       <iframe
         src={`${url};width=800;embed=1;genepage=1`}
         seamless
