@@ -92,7 +92,7 @@ h4 {
 }
 
 .GeneOverviewRight {
-  max-width: calc(100% - 480px);
+  max-width: calc(100% - 535px);
 }
 
 .GeneOverviewLeft h1, .GeneOverviewRight .GeneOverviewProduct {
