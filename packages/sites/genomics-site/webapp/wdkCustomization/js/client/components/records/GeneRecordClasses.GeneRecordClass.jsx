@@ -133,6 +133,8 @@ export function RecordOverview(props) {
     special_link,
     user_comment_link,
     new_product_name,
+    gbrowse_link,
+    pbrowse_link,
     product,
     context_start,
     context_end,
@@ -167,15 +169,16 @@ export function RecordOverview(props) {
         <OverviewItem label="Strain" value={strain}/>
         <OverviewItem label="Status" value={genome_status}/>
         <br/>
-        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(user_comment_link)}</div>
+        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(user_comment_link)}</div>
       </div>
 
       <div className="GeneOverviewRight">
-        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(new_product_name)}</div>
-        <div className="GeneOverviewItem">{ComponentUtils.safeHtml(special_link)}</div>
-        <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.safeHtml(data_release_policy)}</div>
+        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(new_product_name)}</div>
+        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(special_link)}</div>
+        <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.renderAttributeValue(data_release_policy)}</div>
 
         <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
+        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(gbrowse_link)}, {ComponentUtils.renderAttributeValue(pbrowse_link)}</div>
       </div>
     </div>
   );
@@ -204,7 +207,7 @@ export function RecordTable(props) {
 function OverviewItem(props) {
   let { label, value = 'undefined' } = props;
   return value == null ? <noscript/> : (
-    <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.safeHtml(value)}</div>
+    <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.renderAttributeValue(value)}</div>
   );
 }
 
