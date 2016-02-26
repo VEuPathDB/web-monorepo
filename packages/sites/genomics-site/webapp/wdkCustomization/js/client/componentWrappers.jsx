@@ -1,4 +1,4 @@
-import { Components } from 'wdk-client';
+import { Components, ComponentUtils } from 'wdk-client';
 import Footer from './components/common/Footer';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -135,9 +135,15 @@ export function Record(DefaultComponent) {
 }
 
 function RecordAttributionSection(props) {
-  let ResolvedComponent =
-    findComponent('RecordAttributionSection', props.recordClass.name) || 'noscript';
-  return <ResolvedComponent {...props}/>
+  if ('attribution' in props.record.attributes) {
+    return (
+      <div>
+        <h3>Record Attribution</h3>
+        {ComponentUtils.renderAttributeValue(props.record.attributes.attribution)}
+      </div>
+    )
+  }
+  return <noscript/>
 }
 
 export function RecordOverview(DefaultComponent) {

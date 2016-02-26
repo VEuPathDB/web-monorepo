@@ -1,6 +1,9 @@
 export function findComponent(componentName, recordClassName) {
-  let record = require('./records/' + recordClassName);
-  if (record != null) {
-    return record[componentName];
+  try {
+     let record = require('./records/' + recordClassName);
+     return record[componentName];
+  }
+  catch(e) {
+    // ignore error
   }
 }
