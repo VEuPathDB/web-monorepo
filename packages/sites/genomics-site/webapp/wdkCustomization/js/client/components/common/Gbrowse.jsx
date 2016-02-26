@@ -1,5 +1,7 @@
 import React from 'react';
+import lodash from 'lodash';
 import { Components } from 'wdk-client';
+import RemoteContent from './RemoteContent';
 
 let { CollapsibleSection } = Components;
 
@@ -39,6 +41,14 @@ export let contexts = [
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
 
+let injectScripts = lodash.once(function injectScripts() {
+  for (let scriptUrl of gbrowseScripts) {
+    let script = document.createElement('script');
+    script.src = scriptUrl;
+    document.body.appendChild(script);
+  }
+});
+
 export let GbrowseContext = React.createClass({
 
   getInitialState() {
@@ -70,7 +80,7 @@ export let GbrowseContext = React.createClass({
         isCollapsed={this.state.isCollapsed}
         onCollapsedChange={isCollapsed => this.setState({ isCollapsed })}
       >
-        <iframe src={iframeUrl} seamless style={{ width: '100%', border: 'none' }} onLoad={gbrowseOnload}/>
+        <RemoteContent url={iframeUrl} onLoad={injectScripts} />
       </CollapsibleSection>
     );
   }
@@ -78,58 +88,12 @@ export let GbrowseContext = React.createClass({
 });
 
 export function ProteinContext(props) {
-    let url = props.rowData.ProteinPbrowseUrl;
-    let divId = props.table.name + "-" + props.rowData.transcript_id
+  let url = props.rowData.ProteinPbrowseUrl;
+  let divId = props.table.name + "-" + props.rowData.transcript_id
 
   return (
-      <div id={divId}>
-      <strong>{props.table.displayName}</strong>
-      <iframe
-        src={`${url};width=800;embed=1;genepage=1`}
-        seamless
-        style={{ width: '100%', border: 'none' }}
-        onLoad={pbrowseOnLoad}
-      />
+    <div id={divId}>
+      <RemoteContent url={`${url};width=800;embed=1;genepage=1`} />
     </div>
   );
-}
-
-function gbrowseOnload(event) {
-  let iframe = event.target;
-  setBaseTarget(iframe);
-  injectGbrowseScripts(iframe);
-  resizeIframe(iframe);
-}
-
-function pbrowseOnLoad(event) {
-  let iframe = event.target;
-  setBaseTarget(iframe);
-  resizeIframe(iframe);
-}
-
-function injectGbrowseScripts(iframe) {
-  let gbrowseWindow = iframe.contentWindow.window;
-  let gbrowseDocumentBody = iframe.contentWindow.document.body;
-
-  gbrowseWindow.wdk = wdk;
-  gbrowseWindow.jQuery = jQuery;
-
-  for (let scriptUrl of gbrowseScripts) {
-    let script = document.createElement('script');
-    script.src = scriptUrl;
-    gbrowseDocumentBody.appendChild(script);
-  }
-}
-
-function resizeIframe(iframe) {
-  iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 20 + 'px';
-}
-
-function setBaseTarget(iframe) {
-  let base = iframe.contentDocument.querySelector('base');
-  if (base == null) {
-    base = document.createElement('base');
-    iframe.contentDocument.head.appendChild(base);
-  }
-  base.target = '_top';
 }
