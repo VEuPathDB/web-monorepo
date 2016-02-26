@@ -120,6 +120,7 @@ function TranscriptList(props, context) {
 }
 
 export function RecordOverview(props) {
+  let { attributes } = props.record;
   let {
     name,
     type_with_pseudo,
@@ -140,16 +141,21 @@ export function RecordOverview(props) {
     context_start,
     context_end,
     source_id
-  } = props.record.attributes;
+  } = attributes;
 
 
     // TODO:  get the attribute name from the model instead of the hard coded one in contexts
-    Gbrowse.contexts.map(thumbnail => (
-        thumbnail.imgUrl = props.record.attributes[thumbnail.gbrowse_url]
-    ));
-
-
-    let filteredGBrowseContexts = Gbrowse.contexts.filter(context => !context.isPbrowse || (context.isPbrowse && type_with_pseudo == 'protein coding' ));
+    // Filter out contexts that are not available in this gene record and add imgUrl
+    let filteredGBrowseContexts = Gbrowse.contexts
+    .filter(context => {
+      if (context.gbrowse_url in attributes) {
+        return  !context.isPbrowse || (context.isPbrowse && type_with_pseudo == 'protein coding' );
+      }
+      return false;
+    })
+    .map(thumbnail => Object.assign({}, thumbnail, {
+      imgUrl: attributes[thumbnail.gbrowse_url]
+    }));
 
 
   return (
@@ -311,15 +317,6 @@ class OverviewThumbnails extends React.Component {
     }
   }
 
-}
-
-export function RecordAttribute(props) {
-    let context = Gbrowse.contexts.find(context => context.gbrowse_url === props.name);
-    if (context != null) {
-      return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
-  }
-
-  return ( <props.DefaultComponent {...props}/> );
 }
 
 let treeCache = new WeakMap;
