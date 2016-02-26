@@ -164,6 +164,14 @@ export function RecordOverview(props) {
         <h1 className="GeneOverviewId">{props.record.displayName + ' '}</h1>
         <h2 className="GeneOverviewProduct">{product}</h2>
       </div>
+
+      {new_product_name ? (
+        <div className="GeneOverviewSubtitle">
+          <h1 className="GeneOverviewHiddenId">{props.record.displayName + ' '}</h1>
+          <div className="GeneOverviewNewProduct">{ComponentUtils.renderAttributeValue(new_product_name)}</div>
+        </div>
+      ) : null}
+
       <div className="GeneOverviewLeft">
         <OverviewItem label="Name" value={name}/>
         <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(new_gene_name)}</div>
@@ -180,7 +188,6 @@ export function RecordOverview(props) {
       </div>
 
       <div className="GeneOverviewRight">
-        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(new_product_name)}</div>
         <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.renderAttributeValue(data_release_policy)}</div>
 
         <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>

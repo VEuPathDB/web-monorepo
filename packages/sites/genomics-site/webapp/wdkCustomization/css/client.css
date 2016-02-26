@@ -56,26 +56,52 @@ h4 {
   display: none;
 }
 
-.GeneOverviewTitle {
+
+.GeneOverviewTitle, .GeneOverviewSubtitle {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
-  padding: .5em 0;
+  padding: .5em 0 0;
   font-size: 2em;
 }
 
-.GeneOverviewId, .GeneOverviewProduct {
+.GeneOverviewSubtitle {
+  padding: 0 !important; /* i give up */
+  font-size: 1rem;
+}
+
+.eupathdb-GeneOverviewHighlighted {
+  background-color: #FEE4EC;
+  font-weight: 400;
+}
+
+.GeneOverviewId, .GeneOverviewHiddenId, .GeneOverviewProduct, .GeneOverviewNewProduct {
   display: inline;
 }
 
-.GeneOverviewId {
+.GeneOverviewId, .GeneOverviewHiddenId {
   font-size: 1.5em;
+}
+
+.GeneOverviewHiddenId {
+  visibility: hidden;
+  line-height: 0;
+  display: inline-block;
+  height: 0;
+  padding: 0 10px 0;
+  font-size: 2.2em;
 }
 
 .GeneOverviewProduct {
   font-weight: 500;
   font-size: 1em;
+}
+
+.GeneOverviewNewProduct {
+  font-size: 1rem;
+  font-style: italic;
+  vertical-align: text-top;
 }
 
 .wdk-RecordSidebar__fixed {
@@ -84,6 +110,7 @@ h4 {
 
 .GeneOverviewLeft, .GeneOverviewRight {
   float: left;
+  margin-top: 1em;
 }
 
 .GeneOverviewLeft {
@@ -463,4 +490,3 @@ h4 {
   padding-top: 32px;
   margin-top: -32px;
 }
-
