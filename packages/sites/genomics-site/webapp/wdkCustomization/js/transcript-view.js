@@ -19,7 +19,7 @@ function toggleRepresentativeTranscripts(checkboxElem) {
       // reload the current tab (should still be transcript view)
       var currentIndex = $("#Summary_Views").tabs("option", "active");
 
-			//need to ensure this element corresponds to the right #Summary_Views (basket OR strategy step)
+      // need to ensure this element corresponds to the right #Summary_Views (basket OR strategy step)
       $(checkboxElem).closest("#Summary_Views").tabs("load", currentIndex, { skipCache: true });
     },
     error: function(jqXHR, textStatus, errorThrown) {
