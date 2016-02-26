@@ -24,7 +24,7 @@ export let RecordViewStore = {
 
   reduce(origReduce) {
     return function(state, action) {
-      let nextState = origReduce(state, action);
+      let nextState = origReduce.call(this, state, action);
 
       switch (action.type) {
         case 'record/set-active-record': {
