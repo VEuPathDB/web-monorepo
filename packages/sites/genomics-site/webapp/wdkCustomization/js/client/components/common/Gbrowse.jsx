@@ -36,6 +36,12 @@ export let contexts = [
         anchor: 'ProteinExpressionPBrowse',
         isPbrowse: true
     },
+    {
+        gbrowse_url: 'dnaContextUrl',
+        displayName: 'Features',
+        anchor: 'FeaturesGBrowse',
+        isPbrowse: false
+    },
 ];
 
 
