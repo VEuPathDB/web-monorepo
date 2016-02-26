@@ -122,7 +122,7 @@ function TranscriptList(props, context) {
 export function RecordOverview(props) {
   let {
     name,
-    gene_type,
+    type_with_pseudo,
     chromosome,
     sequence_id,
     location_text,
@@ -133,14 +133,13 @@ export function RecordOverview(props) {
     special_link,
     user_comment_link,
     new_product_name,
+    new_gene_name,
     gbrowse_link,
     pbrowse_link,
     product,
     context_start,
     context_end,
-    source_id,
-    protein_length = 865,
-    protein_gtracks = 'InterproDomains%1ESignalP%1ETMHMM%1EExportPred%1EHydropathyPlot%1EBLASTP%1ELowComplexity%1ESecondaryStructure'
+    source_id
   } = props.record.attributes;
 
 
@@ -150,7 +149,7 @@ export function RecordOverview(props) {
     ));
 
 
-    let filteredGBrowseContexts = Gbrowse.contexts.filter(context => !context.isPbrowse || (context.isPbrowse && gene_type == 'protein coding' ));
+    let filteredGBrowseContexts = Gbrowse.contexts.filter(context => !context.isPbrowse || (context.isPbrowse && type_with_pseudo == 'protein coding' ));
 
 
   return (
@@ -160,8 +159,9 @@ export function RecordOverview(props) {
         <h2 className="GeneOverviewProduct">{product}</h2>
       </div>
       <div className="GeneOverviewLeft">
-        <OverviewItem label="Gene" value={name}/>
-        <OverviewItem label="Type" value={gene_type}/>
+        <OverviewItem label="Name" value={name}/>
+        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(new_gene_name)}</div>
+        <OverviewItem label="Type" value={type_with_pseudo}/>
         <OverviewItem label="Chromosome" value={chromosome}/>
         <OverviewItem label="Location" value={location_text}/>
         <br/>
@@ -169,12 +169,12 @@ export function RecordOverview(props) {
         <OverviewItem label="Strain" value={strain}/>
         <OverviewItem label="Status" value={genome_status}/>
         <br/>
+        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(special_link)}</div>
         <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(user_comment_link)}</div>
       </div>
 
       <div className="GeneOverviewRight">
         <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(new_product_name)}</div>
-        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(special_link)}</div>
         <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.renderAttributeValue(data_release_policy)}</div>
 
         <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
@@ -318,10 +318,6 @@ export function RecordAttribute(props) {
     if (context != null) {
       return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
   }
-
-//  if (props.name === 'protein_gtracks') {
-//    return ( <Gbrowse.ProteinContext {...props} /> );
-//  }
 
   return ( <props.DefaultComponent {...props}/> );
 }
