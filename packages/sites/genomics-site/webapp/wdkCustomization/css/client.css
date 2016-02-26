@@ -141,6 +141,7 @@ h4 {
   margin-top: 16px;
   display: inline-block;
   max-width: 100%;
+  min-height: 140px;
   overflow: auto;
   white-space: nowrap;
 }
