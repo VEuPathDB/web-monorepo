@@ -19,7 +19,12 @@ export default class RemoteContent extends React.Component {
   loadContent(url) {
     // Fetch the html and append it.
     // Handling script tags in the received html is hard, so using jquery for the time being.
-    $(this.node).load(url, () => this.props.onLoad(this.node));
+    $.get(url)
+    .always(response => {
+      let html = typeof response === 'string' ? response : response.responseText;
+      $(html).appendTo(this.node);
+      this.props.onLoad(this.node);
+    });
   }
 
   render() {
