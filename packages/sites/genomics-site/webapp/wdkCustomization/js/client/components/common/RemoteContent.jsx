@@ -5,15 +5,18 @@
  */
 import $ from 'jquery';
 import React from 'react';
+import { ComponentUtils } from 'wdk-client';
 
-export default class RemoteContent extends React.Component {
+export default class RemoteContent extends ComponentUtils.PureComponent {
 
   componentDidMount() {
     this.loadContent(this.props.url);
   }
 
   componentWillReceiveProps(props) {
-    this.loadContent(props.url);
+    if (props.url !== this.props.url) {
+      this.loadContent(props.url);
+    }
   }
 
   loadContent(url) {
@@ -22,7 +25,7 @@ export default class RemoteContent extends React.Component {
     $.get(url)
     .always(response => {
       let html = typeof response === 'string' ? response : response.responseText;
-      $(html).appendTo(this.node);
+      $(this.node).html(html);
       this.props.onLoad(this.node);
     });
   }
