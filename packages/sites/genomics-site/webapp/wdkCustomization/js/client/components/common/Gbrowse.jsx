@@ -42,6 +42,12 @@ export let contexts = [
         anchor: 'FeaturesGBrowse',
         isPbrowse: false
     },
+    {
+        gbrowse_url: 'orfGbrowseImageUrl',
+        displayName: 'Genomic Context',
+        anchor: 'orfGenomicContext',
+        isPbrowse: false
+    },
 ];
 
 
