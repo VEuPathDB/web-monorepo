@@ -1,6 +1,6 @@
 import React from 'react';
 import lodash from 'lodash';
-import { Components } from 'wdk-client';
+import { Components, ComponentUtils } from 'wdk-client';
 import RemoteContent from './RemoteContent';
 
 let { CollapsibleSection } = Components;
@@ -61,43 +61,47 @@ let injectScripts = lodash.once(function injectScripts() {
   }
 });
 
-export let GbrowseContext = React.createClass({
+export class GbrowseContext extends ComponentUtils.PureComponent {
 
-  getInitialState() {
-    return {
-      isCollapsed: true
+  constructor(...args) {
+    super(...args);
+    this.state = { isCollapsed: true };
+    this.style = { display: 'block', width: '100%' };
+
+    this.updateCollapsed = isCollapsed => {
+      this.setState({ isCollapsed });
     };
-  },
+  }
 
   render() {
 
-      let gbrowseUrl = this.props.record.attributes[this.props.name];
-  //    let lowerGeneId = source_id.toLowerCase();
+    let gbrowseUrl = this.props.record.attributes[this.props.name];
+    //    let lowerGeneId = source_id.toLowerCase();
 
     let queryParams = {
       width: 800,
       embed: 1,
-  //    h_feat: `${lowerGeneId}@yellow`,
+      //    h_feat: `${lowerGeneId}@yellow`,
     };
 
     let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
-        let iframeUrl = `${gbrowseUrl};${queryParamString}`;
+    let iframeUrl = `${gbrowseUrl};${queryParamString}`;
 
     return (
       <CollapsibleSection
         id={this.props.name}
         className="eupathdb-GbrowseContext"
-        style={{ display: 'block', width: '100%' }}
+        style={this.style}
         headerContent={this.props.displayName}
         isCollapsed={this.state.isCollapsed}
-        onCollapsedChange={isCollapsed => this.setState({ isCollapsed })}
+        onCollapsedChange={this.updateCollapsed}
       >
         <RemoteContent url={iframeUrl} onLoad={injectScripts} />
       </CollapsibleSection>
     );
   }
 
-});
+}
 
 export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
