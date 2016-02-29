@@ -10,6 +10,7 @@
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
+<c:set var="rootCatMapWS" value="${wdkModel.webserviceRootCategories}" />
 
 <%-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
      the reason being:
@@ -34,7 +35,15 @@
           <c:choose>
             <c:when test="${from == 'webservices'}">
               <a title="This one WADL contains documentation for all gene web service searches"  href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Genes</h3></a>
-              <c:set var="children" value="${rootCat.webserviceChildren}" />
+
+    <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
+    <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
+    <c:set var="rootCatWS" value="${rootCatEntryWS.value}" />
+    <c:if test="${recTypeWS==recType}">
+              <c:set var="children" value="${rootCatWS.webserviceChildren}" />
+    </c:if>
+    </c:forEach>
+
             </c:when>
             <c:otherwise>
               <a href="#" class="dropdown">Genes</a>
@@ -42,8 +51,11 @@
             </c:otherwise>
           </c:choose>
           <ul>       <%-- GENE CATEGORIES --%>
-<li><a href="/plasmo.aurreco/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
-</li>
+
+<c:if test="${from != 'webservices'}">
+  <li><a href="/plasmo.aurreco/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
+  </li>
+</c:if>
             <c:forEach items="${children}" var="catEntry">
               <c:set var="cat" value="${catEntry.value}" />
           <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
@@ -149,7 +161,15 @@
       <c:set var="qByCat" value="${catByRec.value}" />
       <c:choose>
         <c:when test="${from == 'webservices'}">
-          <c:set var="children" value="${rootCat.webserviceChildren}" />
+
+    <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
+    <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
+    <c:set var="rootCatWS" value="${rootCatEntryWS.value}" />
+    <c:if test="${recTypeWS==recType}">
+              <c:set var="children" value="${rootCatWS.webserviceChildren}" />
+    </c:if>
+    </c:forEach>
+
         </c:when>
         <c:otherwise>
           <c:set var="children" value="${rootCat.websiteChildren}" />
