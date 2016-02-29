@@ -230,20 +230,49 @@ class OverviewThumbnails extends React.Component {
   constructor(...args) {
     super(...args);
     this.timeoutId = null;
-    this.node = null;
     this.state = {
       showPopover: false
     };
-    this._computePosition = this._computePosition.bind(this);
-    this._detectOverflow = lodash.throttle(this._detectOverflow.bind(this), 250);
+
+    this.setNode = node => { this.node = node; };
+
+    this.computePosition = popoverNode => {
+      if (popoverNode == null) return;
+      let popoverWidth = popoverNode.clientWidth;
+      let popoverLeft = this.state.screenX + popoverWidth + 10 > window.innerWidth
+                      ? 10
+                      : this.state.screenX + 10;
+      this.setState({ popoverLeft });
+    };
+
+    this.detectOverflow = lodash.throttle(() => {
+      console.log('is overflowed', isNodeOverflowing(this.node));
+    }, 250);
+
+    this.handleThumbnailMouseEnter = thumbnail => event => {
+      this.setShowPopover(true, 250);
+      this.setActiveThumbnail(event, thumbnail);
+    };
+
+    this.handlePopoverMouseEnter = () => {
+      this.setShowPopover(true, 250);
+    };
+
+    this.handleThumbnailMouseLeave = this.handlePopoverMouseLeave = () => {
+      this.setShowPopover(false, 250);
+    };
+
+    this.handlePopoverClick = () => {
+      this.setShowPopover(false, 0);
+    };
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this._detectOverflow);
+    window.addEventListener('resize', this.detectOverflow);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this._detectOverflow);
+    window.removeEventListener('resize', this.detectOverflow);
   }
 
   setActiveThumbnail(event, thumbnail) {
@@ -255,45 +284,24 @@ class OverviewThumbnails extends React.Component {
     });
   }
 
-    showPopover() {
-        this._setShowPopover(true, 250);
-    }
-
-    hidePopover() {
-        this._setShowPopover(false, 250);
-    }
-
-    _setShowPopover(show, delay) {
-        clearTimeout(this.timeoutId);
-        this.timeoutId = setTimeout(() => {
-            this.setState({ showPopover: show });
-        }, delay);
-    }
-
-    _computePosition(popoverNode) {
-        if (popoverNode == null) return;
-        let popoverWidth = popoverNode.clientWidth;
-        let popoverLeft = this.state.screenX + popoverWidth + 10 > window.innerWidth
-                        ? 10
-                        : this.state.screenX + 10;
-        this.setState({ popoverLeft });
-    }
-
-  _detectOverflow() {
-    console.log('is overflowed', isNodeOverflowing(this.node));
+  setShowPopover(show, delay) {
+    clearTimeout(this.timeoutId);
+    this.timeoutId = setTimeout(() => {
+      this.setState({ showPopover: show });
+    }, delay);
   }
 
   render() {
     return (
-      <div ref={ n => this.node = n } className="eupathdb-GeneThumbnails">
+      <div ref={this.setNode} className="eupathdb-GeneThumbnails">
         {this.props.thumbnails.map(thumbnail => (
           <div className="eupathdb-GeneThumbnailWrapper">
             <div className="eupathdb-GeneThumbnailLabel">
               <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
             </div>
             <div className="eupathdb-GeneThumbnail"
-              onMouseEnter={event => { this.showPopover(); this.setActiveThumbnail(event, thumbnail) }}
-              onMouseLeave={() => this.hidePopover()}>
+              onMouseEnter={this.handleThumbnailMouseEnter(thumbnail)}
+              onMouseLeave={this.handleThumbnailMouseLeave}>
               <a href={'#' + thumbnail.anchor}>
                 <img width="150" src={thumbnail.imgUrl}/>
               </a>
@@ -310,13 +318,13 @@ class OverviewThumbnails extends React.Component {
       return (
         <div className="eupathdb-GeneThumbnailPopover"
           style={{ left: this.state.popoverLeft || '' }}
-          ref={this._computePosition}
-          onMouseEnter={event => { this.showPopover() }}
-          onMouseLeave={() => { this.hidePopover() }}>
+          ref={this.computePosition}
+          onMouseEnter={this.handlePopoverMouseEnter}
+          onMouseLeave={this.handlePopoverMouseLeave}>
           <h3>{this.state.activeThumbnail.displayName}</h3>
           <div>(Click on image to view section on page)</div>
           <a href={'#' + this.state.activeThumbnail.anchor}
-            onClick={() => this.setState({ showPopover: false })}>
+            onClick={this.handlePopoverClick}>
             <img src={this.state.activeThumbnail.imgUrl}/>
           </a>
         </div>
