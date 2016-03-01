@@ -15,7 +15,7 @@ let EmptyReporter = props => ( <noscript/> );
 
 EmptyReporter.getInitialState = () => ({ formState: null, formUiState: null });
 
-export function getReporterComponent(reporterName, recordClassName) {
+export function selectReporterComponent(reporterName, recordClassName) {
   switch (reporterName) {
     case 'tabular':
       return TabularReporterForm;

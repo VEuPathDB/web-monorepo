@@ -2,7 +2,7 @@ import { Components, ComponentUtils } from 'wdk-client';
 import Footer from './components/common/Footer';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
-import { getReporterComponent } from './util/reporterUtil';
+import { selectReporterComponent } from './util/reporterSelector';
 
 // Remove project_id from record links
 export function RecordLink(WdkRecordLink) {
@@ -179,7 +179,7 @@ export function RecordNavigationSectionCategories(WdkRecordNavigationSectionCate
 //   selected reporter and record class
 export function StepDownloadForm(WdkStepDownloadForm) {
   return function ApiStepDownloadForm(props) {
-    let Reporter = getReporterComponent(props.selectedReporter, props.recordClass.name);
+    let Reporter = selectReporterComponent(props.selectedReporter, props.recordClass.name);
     return ( <Reporter {...props}/> );
   }
 }

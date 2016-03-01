@@ -1,5 +1,5 @@
 import { Stores } from 'wdk-client';
-import { getReporterComponent } from './util/reporterUtil';
+import { selectReporterComponent } from './util/reporterSelector';
 
 export let StepDownloadFormViewStore = {
 
@@ -9,7 +9,7 @@ export let StepDownloadFormViewStore = {
 
       // if new reporter was just selected, update form state to initial state of that form
       if (action.type == Stores.StepDownloadFormViewStore.actionTypes.STEP_DOWNLOAD_SELECT_REPORTER) {
-        let Reporter = getReporterComponent(nextState.selectedReporter, nextState.recordClass.name);
+        let Reporter = selectReporterComponent(nextState.selectedReporter, nextState.recordClass.name);
         let userStoreState = this._storeContainer.UserStore.getState();
         let { formState, formUiState } = Reporter.getInitialState(nextState, userStoreState);
         nextState.formState = formState;
