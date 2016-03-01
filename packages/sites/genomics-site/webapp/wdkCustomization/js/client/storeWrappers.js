@@ -1,23 +1,24 @@
+import { Stores } from 'wdk-client';
+import { getReporterComponent } from './util/reporterUtil';
 
-export let StepDownloadFormViewStore2 = {
-
-  getInitialState(origGetInitialState) {
-    return () => {
-      let parentState = origGetInitialState();
-      // supplement with additional state
-      parentState.numCalls = 0;
-      return parentState;
-    }
-  },
+export let StepDownloadFormViewStore = {
 
   reduce(origReduce) {
-    return (state, action) => {
-      let newNumCalls = state.numCalls + 1;
-      let newState = origReduce(state, action);
-      newState.numCalls = newNumCalls;
-      return newState;
+    return function(state, action) {
+      let nextState = origReduce.call(this, state, action);
+
+      // if new reporter was just selected, update form state to initial state of that form
+      if (action.type == Stores.StepDownloadFormViewStore.actionTypes.STEP_DOWNLOAD_SELECT_REPORTER) {
+        let Reporter = getReporterComponent(nextState.selectedReporter, nextState.recordClass.name);
+        let userStoreState = this._storeContainer.UserStore.getState();
+        let { formState, formUiState } = Reporter.getInitialState(nextState, userStoreState);
+        nextState.formState = formState;
+        nextState.formUiState = formUiState;
+      }
+      return nextState;
     }
   }
+
 }
 
 export let RecordViewStore = {

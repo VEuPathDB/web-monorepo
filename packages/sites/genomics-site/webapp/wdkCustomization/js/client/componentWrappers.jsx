@@ -2,16 +2,7 @@ import { Components, ComponentUtils } from 'wdk-client';
 import Footer from './components/common/Footer';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
-
-// load individual reporter forms
-import TabularReporterForm from './components/reporters/TabularReporterForm';
-import TextReporterForm from './components/reporters/TextReporterForm';
-import XmlReporterForm from './components/reporters/XmlReporterForm';
-import JsonReporterForm from './components/reporters/JsonReporterForm';
-import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
-import FastaGeneReporterForm from './components/reporters/FastaGeneReporterForm';
-import FastaGenomicSequenceReporterForm from './components/reporters/FastaGenomicSequenceReporterForm';
-import FastaOrfReporterForm from './components/reporters/FastaOrfReporterForm';
+import { getReporterComponent } from './util/reporterUtil';
 
 // Remove project_id from record links
 export function RecordLink(WdkRecordLink) {
@@ -188,35 +179,8 @@ export function RecordNavigationSectionCategories(WdkRecordNavigationSectionCate
 //   selected reporter and record class
 export function StepDownloadForm(WdkStepDownloadForm) {
   return function ApiStepDownloadForm(props) {
-    switch (props.selectedReporter) {
-      case 'tabular':
-        return ( <TabularReporterForm {...props}/> );
-      case 'srt':
-        switch (props.recordClass.name) {
-          case 'TranscriptRecordClass.TranscriptRecordClass':
-            return ( <FastaGeneReporterForm {...props}/> );
-          case 'SequenceRecordClasses.SequenceRecordClass':
-            return ( <FastaGenomicSequenceReporterForm {...props}/> );
-          case 'OrfRecordClasses.OrfRecordClass':
-            return ( <FastaOrfReporterForm {...props}/> );
-          default:
-            console.error("Unsupported FASTA recordClass: " + props.recordClass.name);
-            return ( <noscript/> );
-        }
-      case 'gff3':
-        return ( <Gff3ReporterForm {...props}/> );
-      case 'fullRecord':
-        return ( <TextReporterForm {...props}/> );
-      case 'xml':
-        return ( <XmlReporterForm {...props}/> );
-      case 'json':
-        return ( <JsonReporterForm {...props}/> );
-      // uncomment if adding service json reporter to model
-      //case 'wdk-service-json':
-      //  return ( <Components.WdkServiceJsonReporterForm {...props}/> );
-      default:
-        return ( <noscript/> );
-    }
+    let Reporter = getReporterComponent(props.selectedReporter, props.recordClass.name);
+    return ( <Reporter {...props}/> );
   }
 }
 

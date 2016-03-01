@@ -5,61 +5,48 @@ let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.Ontology
 let { RadioList, Checkbox, CheckboxTree } = Wdk.Components;
 let { isQualifying, addSearchSpecificSubtree } = eupathdb.attributeCheckboxTree;
 
-let SharedReporterForm = React.createClass({
+let SharedReporterForm = props => {
 
-  componentDidMount() {
-    let { formState, preferences, question, initializeFormState } = this.props;
-    initializeFormState(this.discoverFormState(formState, preferences, question));
-  },
+  let { question, recordClass, formState, onFormChange, onSubmit, ontology } = props;
+  let attributeTree = util.getTree(ontology, isQualifying('download'));
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
 
-  discoverFormState(formState, preferences, question) {
-    let currentAttributes = (formState == null ? undefined : formState.attributes);
-    let currentTables = (formState == null ? undefined : formState.tables);
-    return {
-      attributes: util.getAttributeSelections(currentAttributes, preferences, question),
-      tables: util.getTableSelections(currentTables),
-      includeEmptyTables: util.getValueOrDefault(formState, "includeEmptyTables", true),
-      attachmentType: util.getValueOrDefault(formState, "attachmentType", "plain")
-    };
-  },
-
-  // returns a handler function that will update the form state 
-  getUpdateHandler(fieldName) {
-    return util.getChangeHandler(fieldName, this.props.onFormChange, this.props.formState);
-  },
-
-  render() {
-    let { question, recordClass, preferences, formState, onSubmit, ontology } = this.props;
-    let realFormState = this.discoverFormState(formState, preferences, question);
-    let attributeTree = util.getTree(ontology, isQualifying('download'));
-
-    return (
+  return (
+    <div>
+      {util.getReporterCheckboxList("Choose Attributes", getUpdateHandler('attributes'),
+        util.getAllAttributes(recordClass, question, util.isInReport), formState.attributes)}
+      {util.getReporterCheckboxList("Choose Tables", getUpdateHandler('tables'),
+        util.getAllTables(recordClass, util.isInReport), formState.tables)}
       <div>
-        {util.getReporterCheckboxList("Choose Attributes", this.getUpdateHandler('attributes'),
-          util.getAllAttributes(recordClass, question, util.isInReport), realFormState.attributes)}
-        {util.getReporterCheckboxList("Choose Tables", this.getUpdateHandler('tables'),
-          util.getAllTables(recordClass, util.isInReport), realFormState.tables)}
-        <div>
-          <h3>Additional Options:</h3>
-          <div style={{marginLeft:"2em"}}>
-            <Checkbox value={realFormState.includeEmptyTables} onChange={this.getUpdateHandler('includeEmptyTables')}/>
-            <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
-          </div>
-        </div>
-        <div>
-          <h3>Download Type:</h3>
-          <div style={{marginLeft:"2em"}}>
-            <RadioList name="attachmentType" value={realFormState.attachmentType}
-                onChange={this.getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
-          </div>
-        </div>
-        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
-          <input type="button" value="Submit" onClick={onSubmit}/>
+        <h3>Additional Options:</h3>
+        <div style={{marginLeft:"2em"}}>
+          <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
+          <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
         </div>
       </div>
-    );
-  }
+      <div>
+        <h3>Download Type:</h3>
+        <div style={{marginLeft:"2em"}}>
+          <RadioList name="attachmentType" value={formState.attachmentType}
+              onChange={getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
+        </div>
+      </div>
+      <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
+        <input type="button" value="Submit" onClick={onSubmit}/>
+      </div>
+    </div>
+  );
+};
 
+SharedReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => ({
+  formState: {
+    attributes: util.getAttributeSelections(
+        userStoreState.preferences, downloadFormStoreState.question),
+    tables: [],
+    includeEmptyTables: true,
+    attachmentType: "plain"
+  },
+  formUiState: null
 });
 
 export default SharedReporterForm;
