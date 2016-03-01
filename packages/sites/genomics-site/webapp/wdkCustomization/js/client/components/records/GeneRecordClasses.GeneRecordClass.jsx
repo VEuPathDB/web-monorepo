@@ -8,7 +8,7 @@ import {
 } from 'wdk-client';
 import ExpressionGraph from '../common/ExpressionGraph';
 import * as Gbrowse from '../common/Gbrowse';
-import { isNodeOverflowing } from '../../utils';
+import { getBestPosition, isNodeOverflowing } from '../../utils';
 
 
 let {
@@ -238,11 +238,12 @@ class OverviewThumbnails extends React.Component {
 
     this.computePosition = popoverNode => {
       if (popoverNode == null) return;
-      let popoverWidth = popoverNode.clientWidth;
-      let popoverLeft = this.state.screenX + popoverWidth + 10 > window.innerWidth
-                      ? 10
-                      : this.state.screenX + 10;
-      this.setState({ popoverLeft });
+      let { offsetLeft, offsetTop } = getBestPosition(
+        popoverNode,
+        this.state.activeThumbnailNode
+      );
+      popoverNode.style.left = offsetLeft + 'px';
+      popoverNode.style.top = offsetTop + 'px';
     };
 
     this.detectOverflow = lodash.throttle(() => {
@@ -279,7 +280,7 @@ class OverviewThumbnails extends React.Component {
     if (thumbnail === this.state.activeThumbnail) return;
     this.setState({
       activeThumbnail: thumbnail,
-      screenX: event.target.offsetLeft + event.target.clientWidth,
+      activeThumbnailNode: event.target,
       showPopover: false
     });
   }
@@ -317,7 +318,6 @@ class OverviewThumbnails extends React.Component {
     if (this.state.showPopover) {
       return (
         <div className="eupathdb-GeneThumbnailPopover"
-          style={{ left: this.state.popoverLeft || '' }}
           ref={this.computePosition}
           onMouseEnter={this.handlePopoverMouseEnter}
           onMouseLeave={this.handlePopoverMouseLeave}>

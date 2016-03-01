@@ -190,7 +190,6 @@ h4 {
 .eupathdb-GeneThumbnailPopover {
   position: fixed;
   z-index: 100;
-  bottom: 22px;
   background: #1f1f1f;
   color: #fafafa;
   border: 1px solid #aaa;
