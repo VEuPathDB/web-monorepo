@@ -17,6 +17,7 @@
 
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
 <c:set var="questionName" value="${step.answerValue.question.name}"/>
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 <c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
   <c:set var="trRecord" value="true"/>
 </c:if>
@@ -60,7 +61,7 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
          data-step="${step.stepId}"
          data-filter="matched_transcript_filter_array">
       <p style="text-align: center; margin: .4em 0;">
-        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >
+        <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >
         <strong title="${genesMissingTranscriptsCount}">
           Some Genes in your result have Transcripts that did not meet the search criteria.
           <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
@@ -104,7 +105,7 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
          data-step="${step.stepId}"
          data-filter="gene_boolean_filter_array">
       <p style="text-align: center; margin: .4em 0;">
-        <img src='/a/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' >
+        <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' >
         <strong>
           Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.
           <a href="#" class="gene-boolean-filter-controls-toggle">Explore.</a>

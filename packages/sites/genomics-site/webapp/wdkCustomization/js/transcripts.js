@@ -67,7 +67,8 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
         // icon in transcript tab
         if ( $('i#tr-warning').length == 0 ){
-          $( 'li#transcript-view a span' ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' ></i>") );
+          var warningImageUrl = wdk.webappUrl('images/warningIcon2.png');
+          $( 'li#transcript-view a span' ).append( $( "<i id='tr-warning'><img src='" + warningImageUrl + "' style='width:16px;vertical-align:top' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' ></i>") );
         }
 
         // when user clicks on "Explore"
@@ -241,7 +242,8 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           $filter.css('display', 'block');
           // icon in transcript tab
           if ( $('i#tr-warning').length == 0 ){
-            $( 'li#transcript-view a span' ).append( $( "<i id='tr-warning'><img src='/a/images/warningIcon2.png' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that did not meet the search criteria.' ></i>") );
+            var warningImageUrl = wdk.webappUrl('images/warningIcon2.png');
+            $( 'li#transcript-view a span' ).append( $( "<i id='tr-warning'><img src='" + warningImageUrl + "' style='width:16px;vertical-align:top' title='Some Genes in your result have Transcripts that did not meet the search criteria.' ></i>") );
           }
           // store initial checked values as eg: "1101"
           var initialCheckboxesState = checkBoxesState($filter).trim();
