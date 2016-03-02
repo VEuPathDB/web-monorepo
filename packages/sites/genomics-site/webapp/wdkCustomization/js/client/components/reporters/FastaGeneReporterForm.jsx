@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Wdk from 'wdk-client';
 import SrtHelp from '../common/SrtHelp';
 

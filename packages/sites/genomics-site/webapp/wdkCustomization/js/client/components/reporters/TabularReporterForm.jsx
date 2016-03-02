@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Wdk from 'wdk-client';
 
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
