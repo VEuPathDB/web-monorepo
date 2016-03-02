@@ -7,6 +7,7 @@ import {
   TreeUtils
 } from 'wdk-client';
 import ExpressionGraph from '../common/ExpressionGraph';
+import Sequence from '../common/Sequence';
 import * as Gbrowse from '../common/Gbrowse';
 import { getBestPosition, isNodeOverflowing } from '../../utils';
 
@@ -212,6 +213,9 @@ export function RecordTable(props) {
   }
   if (props.table.name === 'ProteinExpressionPBrowse') {
     Table = ProteinPbrowseTable;
+  }
+  if (props.table.name === 'Sequences') {
+    Table = SequencesTable;
   }
 
   return <Table {...props}/>
@@ -510,6 +514,85 @@ function ProteinPbrowseTable(props) {
       table={table}
       childRow={childProps =>
         <Gbrowse.ProteinContext {...props} rowData={props.value[childProps.rowIndex]}/>}
+    />
+  );
+}
+
+
+function SequencesTable(props) {
+  let included = props.table.properties.includeInTable || [];
+  let table = Object.assign({}, props.table, {
+    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
+  });
+
+  return (
+    <props.DefaultComponent
+      {...props}
+      table={table}
+      childRow={childProps => {
+        let utrColor = 'rgb(252, 181, 203)';
+        let intronColor = 'rgb(144, 212, 111)';
+
+        let {
+          protein_sequence,
+          transcript_sequence,
+          genomic_sequence,
+          protein_length,
+          transcript_length,
+          genomic_sequence_length,
+          five_prime_utr_coords,
+          three_prime_utr_coords,
+          gen_rel_intron_utr_coords
+        } = childProps.rowData;
+
+        let transcriptHighlightRegions = [
+          JSON.parse(five_prime_utr_coords || '[]'),
+          JSON.parse(three_prime_utr_coords || '[]')
+        ]
+        .map(coords => {
+          return { color: utrColor, start: coords[0], end: coords[1] };
+        });
+
+        let genomicHighlightRegions = JSON.parse(gen_rel_intron_utr_coords || '[]')
+        .map(coord => {
+          return {
+            color: coord[0] === 'Intron' ? intronColor : utrColor,
+            start: coord[1],
+            end: coord[2]
+          };
+        });
+
+
+        return (
+          <div>
+            {protein_sequence == null ? null : (
+              <div style={{ padding: '1em' }}>
+                <h3>Predicted Protein Sequence</h3>
+                <div>{protein_length} bp</div>
+                <Sequence sequence={protein_sequence}/>
+              </div>
+            )}
+
+            {protein_sequence == null ? null : <hr/>}
+
+            <div style={{ padding: '1em' }}>
+              <h3>Predicted RNA/mRNA Sequence (introns spliced out; utrs highlighted)</h3>
+              <div>{transcript_length} bp</div>
+              <Sequence sequence={transcript_sequence}
+                highlightRegions={transcriptHighlightRegions}/>
+            </div>
+
+            <div style={{ padding: '1em' }}>
+              <h3>Genomic Sequence (introns and utrs highlighted)</h3>
+              <div>{genomic_sequence_length} bp</div>
+              <Sequence sequence={genomic_sequence}
+                highlightRegions={genomicHighlightRegions}/>
+              <div>Sequence length: {genomic_sequence.length} bp</div>
+            </div>
+
+          </div>
+        );
+      }}
     />
   );
 }
