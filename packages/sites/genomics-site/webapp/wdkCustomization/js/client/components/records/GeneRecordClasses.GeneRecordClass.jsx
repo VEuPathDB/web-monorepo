@@ -546,9 +546,10 @@ function SequencesTable(props) {
         } = childProps.rowData;
 
         let transcriptHighlightRegions = [
-          JSON.parse(five_prime_utr_coords || '[]'),
-          JSON.parse(three_prime_utr_coords || '[]')
+          JSON.parse(five_prime_utr_coords) || undefined,
+          JSON.parse(three_prime_utr_coords) || undefined
         ]
+        .filter(coords => coords != null)
         .map(coords => {
           return { color: utrColor, start: coords[0], end: coords[1] };
         });
