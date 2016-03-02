@@ -1,4 +1,5 @@
-import { Components } from 'wdk-client';
+import $ from 'jquery';
+import { Components, ComponentUtils } from 'wdk-client';
 
 // Renders an Expression graph with the provided rowData.
 // rowData comes from an ExpressionTable record table.
@@ -8,7 +9,7 @@ import { Components } from 'wdk-client';
 // This means that when we get new rowData, we first have to make a request for
 // the available parts, and then we can update the state of the Component. This
 // flow will ensure that we have a consistent state when rendering.
-export default class ExpressionGraph extends React.Component {
+export default class ExpressionGraph extends ComponentUtils.PureComponent {
 
   constructor(...args) {
     super(...args);
@@ -65,8 +66,10 @@ export default class ExpressionGraph extends React.Component {
   }
 
   setGraphId(graphId) {
-    this.setState({ graphId });
-    setStateFromProps(this.props);
+    if (this.state.graphId !== graphId) {
+      this.setState({ graphId });
+      this.setStateFromProps(this.props);
+    }
   }
 
   renderLoading() {
@@ -138,7 +141,7 @@ export default class ExpressionGraph extends React.Component {
                 <input
                   type="radio"
                   checked={graphId === this.state.graphId}
-                  onChange={() => this.setGraphId({ graphId })}
+                  onChange={() => this.setGraphId(graphId)}
                 /> {graphId} </label>
             );
           })}
