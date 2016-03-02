@@ -65,7 +65,7 @@ export class GbrowseContext extends ComponentUtils.PureComponent {
 
   constructor(...args) {
     super(...args);
-    this.state = { isCollapsed: true };
+    this.state = { isCollapsed: false };
     this.style = { display: 'block', width: '100%' };
 
     this.updateCollapsed = isCollapsed => {
@@ -97,6 +97,9 @@ export class GbrowseContext extends ComponentUtils.PureComponent {
         onCollapsedChange={this.updateCollapsed}
       >
         <RemoteContent url={iframeUrl} onLoad={injectScripts} />
+        <div style={{textAlign: 'right' }}>
+          <a target="_blank" href={gbrowseUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
+        </div>
       </CollapsibleSection>
     );
   }

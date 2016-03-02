@@ -22,6 +22,7 @@ export default class RemoteContent extends ComponentUtils.PureComponent {
   loadContent(url) {
     // Fetch the html and append it.
     // Handling script tags in the received html is hard, so using jquery for the time being.
+    $(this.node).html('Loading...');
     $.get(url)
     .always(response => {
       let html = typeof response === 'string' ? response : response.responseText;
