@@ -215,21 +215,24 @@ sub snpTitleQuick {
   my ($reference_aa) = $f->get_tag_values("reference_aa");
   my ($gene_strand) = $f->get_tag_values("gene_strand");
   my ($reference_na) = $f->get_tag_values("reference_na");
+  my ($major_allele) = $f->get_tag_values("major_allele");
+  my ($minor_allele) = $f->get_tag_values("minor_allele");
+  my ($major_allele_count) = $f->get_tag_values("major_allele_count");
+  my ($minor_allele_count) = $f->get_tag_values("minor_allele_count");
+  my ($major_product) = $f->get_tag_values("major_product");
+  my ($minor_product) = $f->get_tag_values("minor_product");
   my ($source_id) = $f->get_tag_values("source_id");
 
-  my $variants = $f->bulkAttributes();
-  my @vars;
-  foreach my $variant (@$variants) {
-    push(@vars, "$variant->{STRAIN}:$variant->{ALLELE}:$variant->{PRODUCT}");
-  }
-
   my $start = $f->start();
-  my %revArray = { 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' };
+  my %revArray = ( 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' );
 
   my $link = "<a href='/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$source_id'>$source_id</a>";
          
   my $type = 'Non-coding';
-  my  $refNA = $gene_strand == 1 ? $revArray{$reference_na} : $reference_na;
+  my  $refNA = $gene_strand == -1 ? $revArray{$reference_na} : $reference_na;
+
+  my $testNA = $reference_na;
+
   my $refAAString = ''; 
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
      $type = "Coding (synonymous)";
@@ -241,30 +244,26 @@ sub snpTitleQuick {
   push(@data, ['SNP' => $link]);
   push(@data, ['Location' => $start]);
   push(@data, ['Gene' => $gene]) if $gene;
+
+  my ($majorProductString, $minorProductString);
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
     push(@data, ['Position&nbsp;in&nbsp;CDS' => $position_in_CDS]);
     push(@data, ['Position&nbsp;in&nbsp;protein' => $position_in_protein]);
+
+    $majorProductString = "AA=$major_product ";
+    $minorProductString = "AA=$minor_product ";
   }
 
   push(@data, ['Type' => $type]);
-  push(@data, ["$reference_strain"."&nbsp;(reference)" => "NA=$refNA $refAAString"]);
+  push(@data, ["$reference_strain"."&nbsp;(reference)" => " NA=$refNA $refAAString"]);
 
-  # make one row per SNP allele
-  my $size = @vars;
-  for (my $i=0; $i< $size; $i++) {
-    my @var = split /\:/, $vars[$i];
-    my $strain = $var[0];
+  
+  $major_allele = $revArray{$major_allele} if($gene_strand == -1);
+  $minor_allele = $revArray{$minor_allele} if($gene_strand == -1);
 
-    next if ($strain eq $reference_strain);
+  push(@data, ['Major Allele' => "NA=$major_allele $majorProductString($major_allele_count)"]);
+  push(@data, ['Minor Allele' => "NA=$minor_allele $minorProductString($minor_allele_count)"]);
 
-    my $na = $var[1];
-    $na = $revArray{$na} if ($gene_strand == 1);
-
-    my $aa_seq =  ($isCoding == 1 || $isCoding == 'yes') ? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$var[2]"  : '';
-
-    push(@data, [$strain => "NA=$na $aa_seq" ]);
-
-  }
   hover($f, \@data);
 }
 
