@@ -198,12 +198,12 @@ export function RecordOverview(props) {
   );
 }
 
-let expressionRE = /ExpressionGraphs$/;
+let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
 export function RecordTable(props) {
   let Table = props.DefaultComponent;
 
   if (expressionRE.test(props.table.name)) {
-    Table = ExpressionGraphTable;
+      Table = ExpressionGraphTable;
   }
   if (props.table.name === 'MercatorTable') {
     Table = MercatorTable;
