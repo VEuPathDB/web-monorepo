@@ -6,9 +6,9 @@ import SampleForm from './components/samples/SampleForm';
 // define routes to api-specific pages
 export let routes = [
 
-  { name: "fasta-tool", handler: FastaConfigController },
+  { path: "fasta-tool", component: FastaConfigController },
 
   // test/demonstration pages
-  { name: "sample-form", handler: SampleForm }
+  { path: "sample-form", component: SampleForm }
 
 ];
