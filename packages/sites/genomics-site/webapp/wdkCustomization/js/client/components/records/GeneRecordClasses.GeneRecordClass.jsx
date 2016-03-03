@@ -142,7 +142,8 @@ export function RecordOverview(props) {
     context_start,
     context_end,
       source_id,
-      gene_type
+      gene_type,
+     protein_expression_gtracks
   } = attributes;
 
 
@@ -153,7 +154,9 @@ export function RecordOverview(props) {
     let filteredGBrowseContexts = Gbrowse.contexts
     .filter(context => {
       if (context.gbrowse_url in attributes) {
-        return  !context.isPbrowse || (context.isPbrowse && isProteinCoding);
+          return  !context.isPbrowse || 
+                  (isProteinCoding && context.gbrowse_url !== 'ProteomicsPbrowseUrl') ||  
+                  (isProteinCoding && context.gbrowse_url === 'ProteomicsPbrowseUrl' && protein_expression_gtracks);
       }
       return false;
     })
