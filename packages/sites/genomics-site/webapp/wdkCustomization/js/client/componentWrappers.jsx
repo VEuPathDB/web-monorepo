@@ -45,7 +45,7 @@ export function RecordController(WdkRecordController) {
 
     if (hasProjectId) {
       setTimeout(function() {
-        props.router.replaceWith(props.path.replace(projectIdUrl, ''));
+        props.router.replace(props.location.pathname.replace(projectIdUrl, ''));
       }, 0);
       return <Components.Loading/>;
     }
