@@ -48,6 +48,12 @@ export let contexts = [
         anchor: 'orfGenomicContext',
         isPbrowse: false
     },
+    {
+        gbrowse_url: 'spanGbrowseImageUrl',
+        displayName: 'Genomic Context',
+        anchor: 'spanGenomicContext',
+        isPbrowse: false
+    },
 ];
 
 
