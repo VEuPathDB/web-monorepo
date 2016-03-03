@@ -340,7 +340,7 @@ EOL
 }
 
 sub getPbrowseOntologyCategoryFromTrackName {
-  &getOntologyCategoryFromTrackName(@_, 'pbrowse');
+ &getOntologyCategoryFromTrackName(@_,  'pbrowse');
 }
 
 
@@ -362,7 +362,7 @@ sub getOntologyCategoryFromTrackName {
     $req->header('content-type' => 'application/json');
  
     # add POST data to HTTP request body
-    my $post_data = '{ "scope": "$scope" }';
+    my $post_data = "{ 'scope': '$scope' }";
     $req->content($post_data);
  
     my $resp = $ua->request($req);
