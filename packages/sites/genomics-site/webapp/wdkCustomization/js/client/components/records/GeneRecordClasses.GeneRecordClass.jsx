@@ -141,16 +141,19 @@ export function RecordOverview(props) {
     product,
     context_start,
     context_end,
-    source_id
+      source_id,
+      gene_type
   } = attributes;
 
+
+    let isProteinCoding = gene_type == 'protein coding';
 
     // TODO:  get the attribute name from the model instead of the hard coded one in contexts
     // Filter out contexts that are not available in this gene record and add imgUrl
     let filteredGBrowseContexts = Gbrowse.contexts
     .filter(context => {
       if (context.gbrowse_url in attributes) {
-        return  !context.isPbrowse || (context.isPbrowse && type_with_pseudo == 'protein coding' );
+        return  !context.isPbrowse || (context.isPbrowse && isProteinCoding);
       }
       return false;
     })
@@ -192,7 +195,10 @@ export function RecordOverview(props) {
         <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.renderAttributeValue(data_release_policy)}</div>
 
         <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
-        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(gbrowse_link)}, {ComponentUtils.renderAttributeValue(pbrowse_link)}</div>
+      { isProteinCoding ? (
+          <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(gbrowse_link)},{ComponentUtils.renderAttributeValue(pbrowse_link)}</div>
+      ) : ( <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(gbrowse_link)}</div> )}
+
       </div>
     </div>
   );
