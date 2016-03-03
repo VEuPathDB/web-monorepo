@@ -339,9 +339,15 @@ EOL
   return $self->{proteomics_citation_from_ext_database_name}->{$extdb};
 }
 
+sub getPbrowseOntologyCategoryFromTrackName {
+  &getOntologyCategoryFromTrackName(@_, 'pbrowse');
+}
+
 
 sub getOntologyCategoryFromTrackName {
-  my ($trackName, $allTracks, $optionalTerminus) = @_;
+  my ($trackName, $allTracks, $optionalTerminus, $optionalScope) = @_;
+
+  my $scope = $optionalScope ? $optionalScope : 'gbrowse';
 
   if($self->{_ontology_category_from_track_name}->{$trackName}) {
     $rv = $self->{_ontology_category_from_track_name}->{$trackName};
@@ -356,7 +362,7 @@ sub getOntologyCategoryFromTrackName {
     $req->header('content-type' => 'application/json');
  
     # add POST data to HTTP request body
-    my $post_data = '{ "scope": "gbrowse" }';
+    my $post_data = '{ "scope": "$scope" }';
     $req->content($post_data);
  
     my $resp = $ua->request($req);
