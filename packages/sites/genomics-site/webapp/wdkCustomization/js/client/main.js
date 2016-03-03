@@ -1,14 +1,14 @@
 // Bootstrap the WDK client application
 // ====================================
 
+// TODO Remove auth_tkt from url before proceeding
+
 import { run, wrapComponents, wrapStores } from 'wdk-client';
 
 // Import apicomm wrappers and additional routes
 import * as componentWrappers from './componentWrappers';
 import * as storeWrappers from './storeWrappers';
 import { routes } from './routes';
-
-console.log(require.context('./components/records', true, /^\.\/.*\.jsx?$/));
 
 // apply component wrappers
 wrapComponents(componentWrappers);
