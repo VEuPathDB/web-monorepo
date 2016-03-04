@@ -603,7 +603,7 @@ function SequencesTable(props) {
             </div>
 
             <div style={{ padding: '1em' }}>
-              <h3>Genomic Sequence ({genomicRegionTypes.map(t => t + 's').join(' and ')} highlighted)</h3>
+              <h3>Genomic Sequence { genomicRegionTypes.length > 0 ? ' (' + genomicRegionTypes.map(t => t + 's').join(' and ') + ' highlighted)' : null}</h3>
               <div>
                 <span style={legendStyle}>{genomic_sequence_length} bp</span>
                 {genomicRegionTypes.map(t => {
