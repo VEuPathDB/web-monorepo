@@ -27,6 +27,8 @@
   </c:if>
   -->
 
+
+
   <imp:script src="wdkCustomization/js/lib/hoverIntent.js"/>
   <imp:script src="wdkCustomization/js/lib/superfish.js"/>
   <imp:script src="wdkCustomization/js/common.js"/>
@@ -62,6 +64,12 @@
     <imp:recordPageScript />
   </c:if>
   -->
+
+
+
+  <!-- Flash embed script for pathway record page -->
+  <imp:script src="js/AC_OETags.min.js"/>
+
 
   <c:if test="${refer == 'recordPage'}">
     <!-- TODO Move to webapp -->

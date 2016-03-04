@@ -23,6 +23,9 @@
 <imp:stylesheet rel="stylesheet" href="css/AllSites.css" type="text/css" /> 
 <imp:stylesheet rel="stylesheet" href="css/${project}.css" type="text/css" />
 
+<!-- Only needed for pathway record -->
+<imp:stylesheet rel="stylesheet" href="wdkCustomization/css/pathway.css" />
+
 <!-- JQuery library is included by WDK -->
 
 <!-- comment out, since it is commented out below
