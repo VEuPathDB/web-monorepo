@@ -28,7 +28,7 @@ Sequence.propTypes = {
 
   /** Regions to highlight, using 1-based indexing for start and end **/
   highlightRegions: React.PropTypes.arrayOf(React.PropTypes.shape({
-    color: React.PropTypes.string,
+    className: React.PropTypes.string,
     coords: React.PropTypes.shape({
       start: React.PropTypes.number,
       end: React.PropTypes.number
