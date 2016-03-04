@@ -13,11 +13,11 @@ var div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 // initialization options
 var options = {
   // where you have the Cytoscape Web SWF
-  //swfPath: "/swf/CytoscapeWeb",
-  swfPath: "http://www.plasmodb.org/swf/CytoscapeWeb",
+  swfPath: "/swf/CytoscapeWeb",
+  //swfPath: "http://www.plasmodb.org/swf/CytoscapeWeb",
   // where you have the Flash installer SWF
-  //flashInstallerPath: "/swf/playerProductInstall"
-  flashInstallerPath: "http://www.plasmodb.org/swf/playerProductInstall"
+  flashInstallerPath: "/swf/playerProductInstall"
+  //flashInstallerPath: "http://www.plasmodb.org/swf/playerProductInstall"
 };
 
 // init and draw
@@ -26,8 +26,8 @@ var presetLayout;
 
 let drawVisualization = (pathwayId, pathwaySource) => {
   // Added bogus url file is not on localhost
-  let network$ = getNetwork("/plasmodb/data/" + pathwayId + ".xgmml");
-  //let network$ = getNetwork("/common/downloads/pathwayFiles/KEGG/" + pathwayId + ".xgmml");
+  //let network$ = getNetwork("/plasmodb/data/" + pathwayId + ".xgmml");
+  let network$ = getNetwork("/common/downloads/pathwayFiles/KEGG/" + pathwayId + ".xgmml");
   network$.then(data => {
     vis.draw(options);
     if (pathwaySource === 'TrypanoCyc') {
