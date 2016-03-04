@@ -489,3 +489,14 @@ h4 {
   padding-top: 32px;
   margin-top: -32px;
 }
+
+.eupathdb-UtrSequenceNucleotide {
+  background-color: #cae4ff;
+  text-transform: lowercase;
+}
+
+.eupathdb-IntronSequenceNucleotide {
+  background-color: #dddddd;
+  color: #333;;
+  text-transform: lowercase;
+}

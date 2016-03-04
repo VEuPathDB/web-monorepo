@@ -5,11 +5,11 @@ export default function Sequence(props) {
   let { highlightRegions, sequence } = props;
 
   let sequenceChars = highlightRegions.reduce((sequenceChars, highlightRegion) => {
-    let { color, start, end } = highlightRegion;
+    let { className, start, end } = highlightRegion;
     return [
       ...sequenceChars.slice(0, start - 1),
       ...sequenceChars.slice(start - 1, end).map(c =>
-        <span style={{ backgroundColor: color }}>{c}</span>
+        <span className={className}>{c}</span>
       ),
       ...sequenceChars.slice(end)
     ];

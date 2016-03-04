@@ -539,8 +539,8 @@ function SequencesTable(props) {
       {...props}
       table={table}
       childRow={childProps => {
-        let utrColor = 'rgb(252, 181, 203)';
-        let intronColor = 'rgb(144, 212, 111)';
+        let utrClassName = 'eupathdb-UtrSequenceNucleotide';
+        let intronClassName = 'eupathdb-IntronSequenceNucleotide';
 
         let {
           protein_sequence,
@@ -554,31 +554,38 @@ function SequencesTable(props) {
           gen_rel_intron_utr_coords
         } = childProps.rowData;
 
-        let transcriptHighlightRegions = [
+        let transcriptRegions = [
           JSON.parse(five_prime_utr_coords) || undefined,
           JSON.parse(three_prime_utr_coords) || undefined
-        ]
-        .filter(coords => coords != null)
-        .map(coords => {
-          return { color: utrColor, start: coords[0], end: coords[1] };
+        ].filter(coords => coords != null)
+
+        let transcriptHighlightRegions = transcriptRegions.map(coords => {
+          return { className: utrClassName, start: coords[0], end: coords[1] };
         });
 
-        let genomicHighlightRegions = JSON.parse(gen_rel_intron_utr_coords || '[]')
-        .map(coord => {
+        let genomicRegions = JSON.parse(gen_rel_intron_utr_coords || '[]');
+
+        let genomicHighlightRegions = genomicRegions.map(coord => {
           return {
-            color: coord[0] === 'Intron' ? intronColor : utrColor,
+            className: coord[0] === 'Intron' ? intronClassName : utrClassName,
             start: coord[1],
             end: coord[2]
           };
         });
 
+        let genomicRegionTypes = lodash(genomicRegions)
+        .map(region => region[0])
+        .sortBy()
+        .uniq(true)
+        .value();
 
+        let legendStyle = { marginRight: '1em', textDecoration: 'underline' };
         return (
           <div>
             {protein_sequence == null ? null : (
               <div style={{ padding: '1em' }}>
                 <h3>Predicted Protein Sequence</h3>
-                <div>{protein_length} bp</div>
+                <div><span style={legendStyle}>{protein_length} bp</span></div>
                 <Sequence sequence={protein_sequence}/>
               </div>
             )}
@@ -586,18 +593,28 @@ function SequencesTable(props) {
             {protein_sequence == null ? null : <hr/>}
 
             <div style={{ padding: '1em' }}>
-              <h3>Predicted RNA/mRNA Sequence (introns spliced out; utrs highlighted)</h3>
-              <div>{transcript_length} bp</div>
+              <h3>Predicted RNA/mRNA Sequence (Introns spliced out{ transcriptRegions.length > 0 ? '; UTRs highlighted' : null })</h3>
+              <div>
+                <span style={legendStyle}>{transcript_length} bp</span>
+                { transcriptRegions.length > 0 ? <span style={legendStyle} className={utrClassName}>&nbsp;UTR&nbsp;</span> : null }
+              </div>
               <Sequence sequence={transcript_sequence}
                 highlightRegions={transcriptHighlightRegions}/>
             </div>
 
             <div style={{ padding: '1em' }}>
-              <h3>Genomic Sequence (introns and utrs highlighted)</h3>
-              <div>{genomic_sequence_length} bp</div>
+              <h3>Genomic Sequence ({genomicRegionTypes.map(t => t + 's').join(' and ')} highlighted)</h3>
+              <div>
+                <span style={legendStyle}>{genomic_sequence_length} bp</span>
+                {genomicRegionTypes.map(t => {
+                  let className = t === 'Intron' ? intronClassName : utrClassName;
+                  return (
+                    <span style={legendStyle} className={className}>&nbsp;{t}&nbsp;</span>
+                  );
+                })}
+              </div>
               <Sequence sequence={genomic_sequence}
                 highlightRegions={genomicHighlightRegions}/>
-              <div>Sequence length: {genomic_sequence.length} bp</div>
             </div>
 
           </div>
