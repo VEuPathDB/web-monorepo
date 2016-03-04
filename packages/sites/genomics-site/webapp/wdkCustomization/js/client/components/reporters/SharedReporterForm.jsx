@@ -12,10 +12,14 @@ let SharedReporterForm = props => {
 
   return (
     <div>
-      {util.getReporterCheckboxList("Choose Attributes", getUpdateHandler('attributes'),
-        util.getAllAttributes(recordClass, question, util.isInReport), formState.attributes)}
-      {util.getReporterCheckboxList("Choose Tables", getUpdateHandler('tables'),
-        util.getAllTables(recordClass, util.isInReport), formState.tables)}
+      <ReporterCheckboxList title="Choose Attributes"
+        onChange={getUpdateHandler('attributes')}
+        fields={util.getAllAttributes(recordClass, question, util.isInReport)}
+        selectedFields={formState.attributes}/>
+      <ReporterCheckboxList title="Choose Tables"
+        onChange={getUpdateHandler('tables')}
+        fields={util.getAllTables(recordClass, util.isInReport)}
+        selectedFields={formState.tables}/>
       <div>
         <h3>Additional Options:</h3>
         <div style={{marginLeft:"2em"}}>

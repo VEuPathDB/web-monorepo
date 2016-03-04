@@ -16,8 +16,10 @@ let TabularReporterForm = props => {
 
   return (
     <div>
-      {util.getReporterCheckboxList("Choose Attributes", getUpdateHandler('attributes'),
-        util.getAllAttributes(recordClass, question, util.isInReport), formState.attributes)}
+      <ReporterCheckboxList title="Choose Attributes"
+          onChange={getUpdateHandler('attributes')}
+          fields={util.getAllAttributes(recordClass, question, util.isInReport)}
+          selectedFields={formState.attributes}/>
       <div>
         <h3>Additional Options:</h3>
         <div style={{marginLeft:"2em"}}>
