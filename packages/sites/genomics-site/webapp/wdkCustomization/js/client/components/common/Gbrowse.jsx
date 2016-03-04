@@ -103,8 +103,8 @@ export class GbrowseContext extends ComponentUtils.PureComponent {
         onCollapsedChange={this.updateCollapsed}
       >
         <RemoteContent url={iframeUrl} onLoad={injectScripts} />
-        <div style={{textAlign: 'right' }}>
-          <a target="_blank" href={gbrowseUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
+        <div>
+          <a href={gbrowseUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
         </div>
       </CollapsibleSection>
     );
