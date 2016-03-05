@@ -1,4 +1,5 @@
-import WdkService from 'wdk-client-utils/WdkService';
-import './attributeCheckboxTree';
+/**
+ * Import ES6 modules here that should be included for legacy (JSP) pages.
+ */
 
-console.log('WdkService', WdkService);
+import './attributeCheckboxTree';
