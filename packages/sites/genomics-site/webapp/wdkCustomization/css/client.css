@@ -71,9 +71,12 @@ h4 {
   font-size: 1rem;
 }
 
+.GeneOverviewSubtitle[data-new-product-name=''] {
+  display: none;
+}
+
 .eupathdb-GeneOverviewHighlighted {
-  background-color: #FEE4EC;
-  font-weight: 400;
+  color: darkred;
 }
 
 .GeneOverviewId, .GeneOverviewHiddenId, .GeneOverviewProduct, .GeneOverviewNewProduct {
@@ -89,7 +92,7 @@ h4 {
   line-height: 0;
   display: inline-block;
   height: 0;
-  padding: 0 10px 0;
+  padding: 0 10px 0 0;
   font-size: 2.2em;
 }
 
@@ -108,36 +111,45 @@ h4 {
   left: -298px;
 }
 
-.GeneOverviewLeft, .GeneOverviewRight {
+.eupathdb-RecordOverviewLeft, .eupathdb-RecordOverviewRight {
   float: left;
   margin-top: 1em;
 }
 
-.GeneOverviewLeft {
+.eupathdb-RecordOverviewLeft {
   max-width: 450px;
   margin-right: 60px;
 }
 
-.GeneOverviewRight {
+.eupathdb-RecordOverviewRight {
   max-width: calc(100% - 535px);
 }
 
-.GeneOverviewLeft h1, .GeneOverviewRight .GeneOverviewProduct {
+.eupathdb-RecordOverviewLeft h1, .eupathdb-RecordOverviewRight .GeneOverviewProduct {
   padding: 10px 0;
 }
 
-.GeneOverviewItem, .eupathdb-GeneThumbnailLabel {
+.eupathdb-RecordOverviewItem, .eupathdb-GeneThumbnailLabel {
   margin: .2em 0;
   font-size: 1.4em;
   font-weight: 300;
 }
 
-.GeneOverviewItem label {
+.eupathdb-RecordOverviewItem[data-label]:before {
+  content: attr(data-label) ": ";
   font-weight: bold;
 }
 
-.GeneOverviewItem label:after {
-  content: ":";
+.eupathdb-RecordOverviewItem:empty {
+  display: none;
+}
+
+.eupathdb-RecordOverview[data-show-gene-type] {
+  display: none;
+}
+
+.eupathdb-RecordOverview[data-gene-type="protein coding"] [data-show-gene-type="protein coding"] {
+  display: initial;
 }
 
 .GeneOverviewIntent {

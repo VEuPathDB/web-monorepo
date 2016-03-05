@@ -120,91 +120,46 @@ function TranscriptList(props, context) {
   );
 }
 
-export function RecordOverview(props) {
-  let { attributes } = props.record;
-  let {
-    name,
-    type_with_pseudo,
-    chromosome,
-    sequence_id,
-    location_text,
-    genus_species,
-    strain,
-    genome_status,
-    data_release_policy,
-    special_link,
-    user_comment_link,
-    new_product_name,
-    new_gene_name,
-    gbrowse_link,
-    pbrowse_link,
-    product,
-    context_start,
-    context_end,
-      source_id,
-      gene_type,
-     protein_expression_gtracks
-  } = attributes;
+/**
+ * Render thumbnails at eupathdb-GeneThumbnailsContainer
+ */
+export class RecordOverview extends React.Component {
 
-
-    let isProteinCoding = gene_type == 'protein coding';
-
-    // TODO:  get the attribute name from the model instead of the hard coded one in contexts
-    // Filter out contexts that are not available in this gene record and add imgUrl
-    let filteredGBrowseContexts = Gbrowse.contexts
-    .filter(context => {
-      if (context.gbrowse_url in attributes) {
-          return  !context.isPbrowse || 
-                  (isProteinCoding && context.gbrowse_url !== 'ProteomicsPbrowseUrl') ||  
-                  (isProteinCoding && context.gbrowse_url === 'ProteomicsPbrowseUrl' && protein_expression_gtracks);
-      }
-      return false;
+  componentDidMount() {
+    let { recordClass } = this.props;
+    let { attributes } = this.props.record;
+    let { gene_type, protein_expression_gtracks } = attributes;
+    let isProteinCoding = gene_type === 'protein coding';
+    let filteredGBrowseContexts = Gbrowse.contexts.filter(context => {
+      return context.gbrowse_url in attributes && (
+        !context.isPbrowse || (isProteinCoding && context.gbrowse_url !== 'ProteomicsPbrowseUrl') ||
+        (isProteinCoding && context.gbrowse_url === 'ProteomicsPbrowseUrl' && protein_expression_gtracks)
+      );
     })
     .map(thumbnail => Object.assign({}, thumbnail, {
-      imgUrl: attributes[thumbnail.gbrowse_url]
+      imgUrl: attributes[thumbnail.gbrowse_url],
+      displayName: recordClass.attributesMap.get(thumbnail.gbrowse_url).displayName
     }));
+    let thumbsContainer = this.node.querySelector('.eupathdb-GeneThumbnailsContainer');
+    if (thumbsContainer == null) {
+      console.error('Warning: Could not find GeneThumbnailsContainer');
+    }
+    else {
+      ReactDOM.render((
+        <OverviewThumbnails thumbnails={filteredGBrowseContexts}/>
+      ), thumbsContainer);
+    }
+  }
 
-
-  return (
-    <div className="wdk-RecordOverview">
-      <div className="GeneOverviewTitle">
-        <h1 className="GeneOverviewId">{props.record.displayName + ' '}</h1>
-        <h2 className="GeneOverviewProduct">{product}</h2>
+  render() {
+    let { DefaultComponent } = this.props;
+    return (
+      <div ref={node => this.node = node}>
+        <DefaultComponent {...this.props}/>
       </div>
+    );
+  }
 
-      {new_product_name ? (
-        <div className="GeneOverviewSubtitle">
-          <h1 className="GeneOverviewHiddenId">{props.record.displayName + ' '}</h1>
-          <div className="GeneOverviewNewProduct">{ComponentUtils.renderAttributeValue(new_product_name)}</div>
-        </div>
-      ) : null}
-
-      <div className="GeneOverviewLeft">
-        <OverviewItem label="Name" value={name}/>
-        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(new_gene_name)}</div>
-        <OverviewItem label="Type" value={type_with_pseudo}/>
-        <OverviewItem label="Chromosome" value={chromosome}/>
-        <OverviewItem label="Location" value={location_text}/>
-        <br/>
-        <OverviewItem label="Species" value={genus_species}/>
-        <OverviewItem label="Strain" value={strain}/>
-        <OverviewItem label="Status" value={genome_status}/>
-        <br/>
-        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(special_link)}</div>
-        <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(user_comment_link)}</div>
-      </div>
-
-      <div className="GeneOverviewRight">
-        <div className="GeneOverviewItem GeneOverviewIntent">{ComponentUtils.renderAttributeValue(data_release_policy)}</div>
-
-        <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
-      { isProteinCoding ? (
-          <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(gbrowse_link)},{ComponentUtils.renderAttributeValue(pbrowse_link)}</div>
-      ) : ( <div className="GeneOverviewItem">{ComponentUtils.renderAttributeValue(gbrowse_link)}</div> )}
-
-      </div>
-    </div>
-  );
 }
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
