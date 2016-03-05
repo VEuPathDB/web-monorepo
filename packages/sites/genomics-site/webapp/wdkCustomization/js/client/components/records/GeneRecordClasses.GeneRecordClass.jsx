@@ -127,6 +127,14 @@ function TranscriptList(props, context) {
 export class RecordOverview extends React.Component {
 
   componentDidMount() {
+    this.renderThumbnails();
+  }
+
+  componentDidUpdate(nextProps) {
+    this.renderThumbnails();
+  }
+
+  renderThumbnails() {
     let { recordClass } = this.props;
     let { attributes } = this.props.record;
     let { gene_type, protein_expression_gtracks } = attributes;
