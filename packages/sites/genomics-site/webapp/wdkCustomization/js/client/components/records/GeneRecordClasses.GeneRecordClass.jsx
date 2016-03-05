@@ -264,7 +264,7 @@ class OverviewThumbnails extends React.Component {
     return (
       <div ref={this.setNode} className="eupathdb-GeneThumbnails">
         {this.props.thumbnails.map(thumbnail => (
-          <div className="eupathdb-GeneThumbnailWrapper">
+          <div className="eupathdb-GeneThumbnailWrapper" key={thumbnail.gbrowse_url}>
             <div className="eupathdb-GeneThumbnailLabel">
               <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
             </div>
