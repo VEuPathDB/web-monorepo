@@ -130,7 +130,7 @@ export class RecordOverview extends React.Component {
     this.renderThumbnails();
   }
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate() {
     this.renderThumbnails();
   }
 
