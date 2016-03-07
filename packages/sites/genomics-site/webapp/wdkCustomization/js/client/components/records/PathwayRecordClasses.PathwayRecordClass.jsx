@@ -7,11 +7,14 @@ export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
 let { Main } = Components;
 
-//var div_id = "cytoscapeweb";
-var div_id = "eupathdb-PathwayRecord-cytoscapeweb";
+let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
+//let pathwayFilesBaseUrl = "/plasmodb/data/";
+let pathwayFileExt = ".xgmml";
+
+let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
 // initialization options
-var options = {
+let options = {
   // where you have the Cytoscape Web SWF
   swfPath: "/swf/CytoscapeWeb",
   //swfPath: "http://www.plasmodb.org/swf/CytoscapeWeb",
@@ -21,13 +24,17 @@ var options = {
 };
 
 // init and draw
-var vis = new org.cytoscapeweb.Visualization(div_id, options);
+let vis = new org.cytoscapeweb.Visualization(div_id, options);
 var presetLayout;
 
+/**
+ * Creates and resolves a Promise object that collects the requested pathway and
+ * draws it
+ * @param pathwayId - pathway id
+ * @param pathwaySource - source of pathway (e.g., KEGG)
+ */
 let drawVisualization = (pathwayId, pathwaySource) => {
-  // Added bogus url file is not on localhost
-  //let network$ = getNetwork("/plasmodb/data/" + pathwayId + ".xgmml");
-  let network$ = getNetwork("/common/downloads/pathwayFiles/KEGG/" + pathwayId + ".xgmml");
+  let network$ = getNetwork(pathwayFilesBaseUrl + pathwaySource + "/" + pathwayId + pathwayFileExt);
   network$.then(data => {
     vis.draw(options);
     if (pathwaySource === 'TrypanoCyc') {
@@ -40,6 +47,12 @@ let drawVisualization = (pathwayId, pathwaySource) => {
   });
 };
 
+/**
+ * Provides a Promise object representing the output of an XHR call
+ * to the provided url
+ * @param url - url object of the XHR call
+ * @returns {Promise} - Promise
+ */
 let getNetwork = function(url)  {
   return new Promise(function (resolve, reject) {
     let xhr = new XMLHttpRequest();
@@ -133,6 +146,10 @@ function getEcToOrganismMap(id) {
 
 
 // callback when Cytoscape Web has finished drawing
+/**
+ * Callback that is issued when Cytoscape Web has finished drawing
+ * Does additional styling, adds event handlers in drawing and on menu
+ */
 vis.ready(function() {
 
   // listener for when nodes and edges are clicked
@@ -301,12 +318,12 @@ vis.ready(function() {
       borderColor: {customMapper: {functionName: "customBorder"}},
       borderWidth: 1,
       tooltipText: {customMapper: {functionName: "customTooltip"}},
-      labelFontSize: {discreteMapper: labelSize},
+      labelFontSize: {discreteMapper: labelSize}
     },
     edges: {
       color: "#000000", width: 1,
       targetArrowShape: {discreteMapper: edgeArrow},
-      lineStyle: "dotted",
+      lineStyle: "dotted"
     }
   };
 
@@ -361,13 +378,7 @@ vis.ready(function() {
     if (current.name == "Preset") {
       presetLayout = current;
     }
-
-    if (val == "Preset") {
-      vis.layout(presetLayout);
-    }
-    else {
-      vis.layout(val);
-    }
+    (val === "Preset") ? vis.layout(presetLayout) : vis.layout(val);
   };
 
   colorNodes = function (val) {
@@ -410,31 +421,6 @@ vis.ready(function() {
 });
 // end ready
 
-// Resize cytoscape container to height of viewport
-jQuery(function($) {
-  function resizeMap() {
-    $('#' + div_id).height($(window).height() - 10);
-  }
-
-  $(window).on('resize', resizeMap);
-  resizeMap();
-
-  if ($.fn.superfish) {
-    var menu = $('#vis-menu')
-      .superfish()
-      .on('click', 'a', function(e) {
-        var a = $(this);
-        if (a.is('.sf-with-ul')) {
-          // prevent page jumps
-          e.preventDefault();
-        } else {
-          // hide menu when an action is clicked
-          menu.hideSuperfishUl();
-        }
-      });
-  }
-
-});
 
 export let RecordOverview = React.createClass({
 
@@ -471,21 +457,129 @@ export let RecordOverview = React.createClass({
   },
 
   render() {
-    let titleClass = 'eupathdb-PathwayRecord-title';
     let projectId = wdk.MODEL_NAME;
-    let { record, questions, recordClasses } = this.props;
+    let { record } = this.props;
     let { attributes, tables } = record;
     let {
       primary_key,
       pathway_source
       } = attributes;
-
     let {
       PathwayGraphs
       } = tables;
     let red = {color: 'red'};
+
+    let experimentData = [
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['AmoebaDB'],
+        "linkData":[
+          {"sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+           "display": "Acanthamoeba,Entamoeba,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
+        "linkData": [
+          {
+            "sid": "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
+            "display": "Apicomplexa"
+          },
+          {
+            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
+            "display": "Cryp,Toxo,Plas,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['GiardiaDB'],
+        "linkData": [
+          {
+            "sid": "Giardia,Spironucleus,Homo,Mus",
+            "display": "Giardia,Spironucleus,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['FungiDB'],
+        "linkData": [
+          {
+            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["MicrosporidiaDB"],
+        "linkData": [
+          {
+            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+            "display": "Microsporidia,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["SchistoDB"],
+        "linkData": [
+          {
+            "sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["TrichDB"],
+        "linkData": [
+          {
+            "sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["TriTrypDB"],
+        "linkData": [
+          {
+            "sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
+          },
+          {
+            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus", "display": "Cryp,Toxo,Plas,Tryp,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['HostDB'],
+        "linkData": [
+          {
+            "sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+            "display": "Acanthamoeba,Entamoeba,Human,Mouse"
+          },
+          {"sid": "Giardia,Spironucleus,Homo,Mus", "display": "Giardia,Spironucleus,Human,Mouse"},
+          {"sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus", "display": "Cryp,Toxo,Plas,Human,Mouse"},
+          {
+            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+          },
+          {
+            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+            "display": "Microsporidia,Human,Mouse"
+          },
+          {"sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"},
+          {"sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"},
+          {"sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"}
+        ]
+      }
+    ];
+
     return (
-      <div>
+      <div id="eupathdb-PathwayRecord-cytoscape">
         <div id="draggable">
           <p>
             Click on nodes for more info.
@@ -494,8 +588,8 @@ export let RecordOverview = React.createClass({
             <br />
           </p>
         </div>
-        {this.renderVisMenu(pathway_source, primary_key, PathwayGraphs, projectId)}
-        <div align="right">
+        {this.renderVisMenu(pathway_source, primary_key, PathwayGraphs, projectId, experimentData)}
+        <div id="eupathdb-PathwayRecord-cytoscapeIcon">
           <a href="http://cytoscapeweb.cytoscape.org/">
             <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytoscape Web"/>
           </a>
@@ -517,14 +611,14 @@ export let RecordOverview = React.createClass({
   },
 
 
-  renderVisMenu(pathway_source, primary_key, PathwayGraphs, projectId) {
+  renderVisMenu(pathway_source, primary_key, PathwayGraphs, projectId, experimentData) {
     return(
       <ul id="vis-menu" className="sf-menu">
         <li>
           <a href="#">File</a>
           <ul>
             <li>
-              <a href={"/common/downloads/Current_Release/pathwayFiles/" + primary_key + ".xgmml"}>
+              <a href={pathwayFilesBaseUrl + pathway_source + "/" + primary_key + pathwayFileExt}>
                 Get Download XGMML (XML) file
               </a>
             </li>
@@ -537,13 +631,13 @@ export let RecordOverview = React.createClass({
           </a>
           <ul>
             {pathway_source === "KEGG" ?
-              <li><a href="javascript:void(0)" onClick={() => vis.changeLayout('Preset')}>Kegg</a></li> :
+              <li key='Preset'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Preset')}>Kegg</a></li> :
               ""
             }
-            <li><a  href="javascript:void(0)" onClick={() => vis.changeLayout('ForceDirected')}>ForceDirected</a></li>
-            <li><a href="javascript:void(0)" onClick={() => vis.changeLayout('Tree')}>Tree</a></li>
-            <li><a href="javascript:void(0)" onClick={() => vis.changeLayout('Circle')}>Circle</a></li>
-            <li><a href="javascript:void(0)" onClick={() => vis.changeLayout('Radial')}>Radial</a></li>
+            <li key='ForceDirected' ><a href="javascript:void(0)" onClick={() => vis.changeLayout('ForceDirected')}>ForceDirected</a></li>
+            <li key='Tree'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Tree')}>Tree</a></li>
+            <li key='Circle'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Circle')}>Circle</a></li>
+            <li key='Radial'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Radial')}>Radial</a></li>
           </ul>
         </li>
         <li>
@@ -561,37 +655,7 @@ export let RecordOverview = React.createClass({
             Paint Genera
             <Image title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map "  src="wdk/images/question.png" />
           </a>
-          <ul>
-            <li>
-              <a href="javascript:void(0)" onClick={() => vis.changeExperiment('')}>
-                None
-              </a>
-            </li>
-            {projectId === 'AmoebaDB' ?
-              <li>
-                <a href="javascript:void(0)" onClick={() => vis.changeExperiment('type=PathwayGenera&project_id=' + projectId + '&sid=Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus', 'genus', '1')}>
-                  Acanthamoeba,Entamoeba,Human,Mouse
-                </a>
-              </li> :
-              ""
-            }
-            {(projectId === 'CryptoDB' || projectId === 'PiroplasmaDB' || projectId === 'PlasmoDB' || projectId === 'ToxoDB') ?
-              <li>
-                <a href="javascript:void(0)" onClick={() => vis.changeExperiment('type=PathwayGenera&project_id=' + projectId + '&sid=Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma', 'genus', '1')}>
-                  Apicomplexa
-                </a>
-              </li> :
-              ""
-            }
-            {(projectId === 'CryptoDB' || projectId === 'PiroplasmaDB' || projectId === 'PlasmoDB' || projectId === 'ToxoDB') ?
-              <li>
-                <a href="javascript:void(0)" onClick={() => vis.changeExperiment('type=PathwayGenera&project_id=' + projectId + '&sid=Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus', 'genus','1')}>
-                  Cryp,Toxo,Plas,Human,Mouse
-                </a>
-              </li> :
-              ""
-            }
-          </ul>
+          {this.renderExperimentMenuItems(experimentData, projectId, "PathwayGenera")}
         </li>
       </ul>
     );
@@ -606,8 +670,28 @@ export let RecordOverview = React.createClass({
         </a>
       </li>
     )
-  }
+  },
 
+  renderExperimentMenuItems(experimentData, projectId, type) {
+    let entries = experimentData
+      .filter(datum => {return datum.type === type && datum.projectIds.includes(projectId)})
+      .reduce(function (arr, expt) {return arr.concat(expt.linkData)}, [])
+      .map((item) => {
+        let params = "type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'";
+        let id = type + "_" + projectId + "_" + item.sid;
+        return (<li key={id}><a href='javascript:void(0)' onClick={() => vis.changeExperiment("type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'")}>{item.display}</a></li>);
+      });
+    return(
+      <ul>
+        <li>
+          <a href="javascript:void(0)" onClick={() => vis.changeExperiment('')}>
+            None
+          </a>
+        </li>
+        {entries}
+      </ul>
+    );
+  }
 
 
 });

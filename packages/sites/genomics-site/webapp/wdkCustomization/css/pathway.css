@@ -32,6 +32,9 @@ html, body {
   padding-bottom: 26px;
 }
 
+#eupathdb-PathwayRecord-cytoscapeIcon {
+  align: right;
+}
 
 #vis-menu {
   background: -webkit-linear-gradient(rgb(191,191,191), rgb(121,121,121));
