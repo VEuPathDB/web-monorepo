@@ -1,5 +1,6 @@
 import { Stores } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
+import * as persistence from './util/persistence';
 
 export let StepDownloadFormViewStore = {
 
@@ -37,8 +38,27 @@ export let RecordViewStore = {
               return label !== 'Protein properties' && label !== 'Proteomics';
             });
           }
+
+          // get collapsedSections from localStorage
+          try {
+            nextState.collapsedSections = persistence.get(
+              'collapsedSections/' + nextState.recordClass.name, nextState.collapsedSections);
+          }
+          catch (error) {
+            console.error('Warning: Could not retrieve collapsed section from local storage.', error);
+          }
+
           return nextState;
         }
+
+        // Store collapsed sections to localStorage
+        // XXX It might be nice if WDK had a dedicated API for registering
+        // side-effects for particular actions.
+        case 'record/show-section':
+        case 'record/hide-section':
+          persistence.set('collapsedSections/' + nextState.recordClass.name,
+            nextState.collapsedSections || []);
+          return nextState;
 
         default:
           return nextState;
