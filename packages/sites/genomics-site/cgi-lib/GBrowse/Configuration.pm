@@ -340,8 +340,10 @@ EOL
 }
 
 sub getPbrowseOntologyCategoryFromTrackName {
- &getOntologyCategoryFromTrackName(@_,  'pbrowse');
+  my ($trackName, $allTracks, $optionalTerminus) = @_;
+  &getOntologyCategoryFromTrackName($trackName, $allTracks, $optionalTerminus,  'pbrowse');
 }
+
 
 
 sub getOntologyCategoryFromTrackName {
