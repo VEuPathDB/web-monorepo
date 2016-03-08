@@ -20,6 +20,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       graphId: null,
       visibleParts: null
     };
+
   }
 
   componentDidMount() {
@@ -27,16 +28,16 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.rowData !== nextProps.rowData) {
-      this.setStateFromProps(nextProps);
-    }
+      if (this.props.rowData !== nextProps.rowData) {
+          this.setStateFromProps(nextProps);
+      }
   }
 
   // TODO Better name
   setStateFromProps(props) {
     this.setState({ loading: true });
 
-    let { rowData } = props;
+    let { rowData, dataTable  } = props;
     let graphIds = rowData.graph_ids.split(/\s*,\s*/);
     let graphId = this.state.graphId || graphIds[0];
     let baseUrl = '/cgi-bin/dataPlotter.pl?' +
@@ -45,6 +46,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       'datasetId=' + rowData.dataset_id + '&' +
       'template=' + (rowData.is_graph_custom === 'false' ? 1 : '') + '&' +
       'id=' + graphId;
+
 
     $.get(baseUrl + '&declareParts=1').then(partsString => {
       let parts = partsString.split(/\s*,\s*/);
@@ -60,7 +62,9 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
           description: rowData.description,
           x_axis: rowData.x_axis,
           y_axis: rowData.y_axis
-        }
+        },
+          datasetId: rowData.dataset_id,
+          dataTable: dataTable
       })
     });
   }
@@ -95,7 +99,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       return this.renderLoading();
     }
 
-    let { visibleParts, graphId } = this.state;
+    let { visibleParts, graphId, dataTable, datasetId} = this.state;
 
     let {
       baseUrl,
@@ -103,7 +107,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       graphIds,
       description,
       x_axis,
-      y_axis
+      y_axis,
     } = this.state.details;
 
     let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=_LEGEND,${visibleParts}`;
@@ -125,6 +129,14 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
           {this.renderImgError()}
         </div>
         <div className="eupathdb-ExpressionGraphDetails">
+
+          <dataTable.DefaultComponent
+            record={dataTable.record}
+            recordClass={dataTable.recordClass}
+            table={dataTable.table}
+            value={dataTable.value.filter(dat => dat.dataset_id == datasetId)}
+          />
+
           <h4>Description</h4>
           <div dangerouslySetInnerHTML={{__html: description}}/>
 

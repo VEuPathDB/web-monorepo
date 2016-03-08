@@ -90,35 +90,35 @@ function makeRecordId(oldId, newParts) {
 function TranscriptList(props, context) {
   let { record, recordClass } = props;
   let params = { class: recordClass.name };
-  if (record.tables.GeneTranscripts == null) return null;
+    if (record.tables.GeneTranscripts == null) return null;
 
-  return (
-    <div className="eupathdb-TranscriptListContainer">
-    <ul className="eupathdb-TranscriptRecordNavList">
-    {record.tables.GeneTranscripts.map(row => {
-      let { transcript_id } = row;
-      let recordId = makeRecordId(record.id, {
-        source_id: transcript_id
-      });
-      let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
-      return (
-        <li key={transcript_id}>
-          <TranscriptLink
-            className={active ? 'active' : ''}
-            recordId={recordId}
-            recordClass={recordClass}
-            onClick={() => {
-              scrollToElementById(TRANSCRIPT_ID);
-            }}
-          >
-            {transcript_id}
-          </TranscriptLink>
-        </li>
-      );
-    })}
-    </ul>
-    </div>
-  );
+    return (
+        <div className="eupathdb-TranscriptListContainer">
+            <ul className="eupathdb-TranscriptRecordNavList">
+                {record.tables.GeneTranscripts.map(row => {
+                     let { transcript_id } = row;
+                     let recordId = makeRecordId(record.id, {
+                         source_id: transcript_id
+                     });
+                     let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
+                     return (
+                         <li key={transcript_id}>
+                             <TranscriptLink
+                                 className={active ? 'active' : ''}
+                                 recordId={recordId}
+                                 recordClass={recordClass}
+                                 onClick={() => {
+                                         scrollToElementById(TRANSCRIPT_ID);
+                                     }}
+                             >
+                                 {transcript_id}
+                             </TranscriptLink>
+                         </li>
+                     );
+                 })}
+            </ul>
+        </div>
+    );
 }
 
 /**
@@ -126,351 +126,369 @@ function TranscriptList(props, context) {
  */
 export class RecordOverview extends React.Component {
 
-  componentDidMount() {
-    this.renderThumbnails();
-  }
-
-  componentDidUpdate() {
-    this.renderThumbnails();
-  }
-
-  renderThumbnails() {
-    let { recordClass } = this.props;
-    let { attributes } = this.props.record;
-    let { gene_type, protein_expression_gtracks } = attributes;
-    let isProteinCoding = gene_type === 'protein coding';
-    let filteredGBrowseContexts = Gbrowse.contexts.filter(context => {
-      return context.gbrowse_url in attributes && (
-        !context.isPbrowse || (isProteinCoding && context.gbrowse_url !== 'ProteomicsPbrowseUrl') ||
-        (isProteinCoding && context.gbrowse_url === 'ProteomicsPbrowseUrl' && protein_expression_gtracks)
-      );
-    })
-    .map(thumbnail => Object.assign({}, thumbnail, {
-      imgUrl: attributes[thumbnail.gbrowse_url],
-      displayName: recordClass.attributesMap.get(thumbnail.gbrowse_url).displayName
-    }));
-    let thumbsContainer = this.node.querySelector('.eupathdb-GeneThumbnailsContainer');
-    if (thumbsContainer == null) {
-      console.error('Warning: Could not find GeneThumbnailsContainer');
+    componentDidMount() {
+        this.renderThumbnails();
     }
-    else {
-      ReactDOM.render((
-        <OverviewThumbnails thumbnails={filteredGBrowseContexts}/>
-      ), thumbsContainer);
-    }
-  }
 
-  render() {
-    let { DefaultComponent } = this.props;
-    return (
-      <div ref={node => this.node = node}>
-        <DefaultComponent {...this.props}/>
-      </div>
-    );
-  }
+    componentDidUpdate() {
+        this.renderThumbnails();
+    }
+
+    renderThumbnails() {
+        let { recordClass } = this.props;
+        let { attributes } = this.props.record;
+        let { gene_type, protein_expression_gtracks } = attributes;
+        let isProteinCoding = gene_type === 'protein coding';
+        let filteredGBrowseContexts = Gbrowse.contexts.filter(context => {
+            return context.gbrowse_url in attributes && (
+                !context.isPbrowse || (isProteinCoding && context.gbrowse_url !== 'ProteomicsPbrowseUrl') ||
+                (isProteinCoding && context.gbrowse_url === 'ProteomicsPbrowseUrl' && protein_expression_gtracks)
+            );
+        })
+                                             .map(thumbnail => Object.assign({}, thumbnail, {
+                                                 imgUrl: attributes[thumbnail.gbrowse_url],
+                                                 displayName: recordClass.attributesMap.get(thumbnail.gbrowse_url).displayName
+                                             }));
+        let thumbsContainer = this.node.querySelector('.eupathdb-GeneThumbnailsContainer');
+        if (thumbsContainer == null) {
+            console.error('Warning: Could not find GeneThumbnailsContainer');
+        }
+        else {
+            ReactDOM.render((
+                <OverviewThumbnails thumbnails={filteredGBrowseContexts}/>
+            ), thumbsContainer);
+        }
+    }
+
+    render() {
+        let { DefaultComponent } = this.props;
+        return (
+            <div ref={node => this.node = node}>
+                <DefaultComponent {...this.props}/>
+            </div>
+        );
+    }
 
 }
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
 export function RecordTable(props) {
-  let Table = props.DefaultComponent;
+    let Table = props.DefaultComponent;
 
-  if (expressionRE.test(props.table.name)) {
-      Table = ExpressionGraphTable;
-  }
-  if (props.table.name === 'MercatorTable') {
-    Table = MercatorTable;
-  }
-  if (props.table.name === 'ProteinProperties') {
-    Table = ProteinPbrowseTable;
-  }
-  if (props.table.name === 'ProteinExpressionPBrowse') {
-    Table = ProteinPbrowseTable;
-  }
-  if (props.table.name === 'Sequences') {
-    Table = SequencesTable;
-  }
+    if (expressionRE.test(props.table.name)) {
+        Table = ExpressionGraphTable;
+    }
+    if (props.table.name === 'MercatorTable') {
+        Table = MercatorTable;
+    }
+    if (props.table.name === 'ProteinProperties') {
+        Table = ProteinPbrowseTable;
+    }
+    if (props.table.name === 'ProteinExpressionPBrowse') {
+        Table = ProteinPbrowseTable;
+    }
+    if (props.table.name === 'Sequences') {
+        Table = SequencesTable;
+    }
 
-  return <Table {...props}/>
+    return <Table {...props}/>
 }
 
 function OverviewItem(props) {
-  let { label, value = 'undefined' } = props;
-  return value == null ? <noscript/> : (
-    <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.renderAttributeValue(value)}</div>
-  );
+    let { label, value = 'undefined' } = props;
+    return value == null ? <noscript/> : (
+        <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.renderAttributeValue(value)}</div>
+    );
 }
 
 // TODO Smart position of popover
 class OverviewThumbnails extends React.Component {
 
-  constructor(...args) {
-    super(...args);
-    this.timeoutId = null;
-    this.state = {
-      showPopover: false
-    };
+    constructor(...args) {
+        super(...args);
+        this.timeoutId = null;
+        this.state = {
+            showPopover: false
+        };
 
-    this.setNode = node => { this.node = node; };
+        this.setNode = node => { this.node = node; };
 
-    this.computePosition = popoverNode => {
-      if (popoverNode == null) return;
-      let { offsetLeft, offsetTop } = getBestPosition(
-        popoverNode,
-        this.state.activeThumbnailNode
-      );
-      popoverNode.style.left = offsetLeft + 'px';
-      popoverNode.style.top = offsetTop + 'px';
-    };
+        this.computePosition = popoverNode => {
+            if (popoverNode == null) return;
+            let { offsetLeft, offsetTop } = getBestPosition(
+                popoverNode,
+                this.state.activeThumbnailNode
+            );
+            popoverNode.style.left = offsetLeft + 'px';
+            popoverNode.style.top = offsetTop + 'px';
+        };
 
-    this.detectOverflow = lodash.throttle(() => {
-      console.log('is overflowed', isNodeOverflowing(this.node));
-    }, 250);
+        this.detectOverflow = lodash.throttle(() => {
+            console.log('is overflowed', isNodeOverflowing(this.node));
+        }, 250);
 
-    this.handleThumbnailMouseEnter = thumbnail => event => {
-      this.setShowPopover(true, 250);
-      this.setActiveThumbnail(event, thumbnail);
-    };
+        this.handleThumbnailMouseEnter = thumbnail => event => {
+            this.setShowPopover(true, 250);
+            this.setActiveThumbnail(event, thumbnail);
+        };
 
-    this.handlePopoverMouseEnter = () => {
-      this.setShowPopover(true, 250);
-    };
+        this.handlePopoverMouseEnter = () => {
+            this.setShowPopover(true, 250);
+        };
 
-    this.handleThumbnailMouseLeave = this.handlePopoverMouseLeave = () => {
-      this.setShowPopover(false, 250);
-    };
+        this.handleThumbnailMouseLeave = this.handlePopoverMouseLeave = () => {
+            this.setShowPopover(false, 250);
+        };
 
-    this.handlePopoverClick = () => {
-      this.setShowPopover(false, 0);
-    };
-  }
-
-  componentDidMount() {
-    window.addEventListener('resize', this.detectOverflow);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.detectOverflow);
-  }
-
-  setActiveThumbnail(event, thumbnail) {
-    if (thumbnail === this.state.activeThumbnail) return;
-    this.setState({
-      activeThumbnail: thumbnail,
-      activeThumbnailNode: event.target,
-      showPopover: false
-    });
-  }
-
-  setShowPopover(show, delay) {
-    clearTimeout(this.timeoutId);
-    this.timeoutId = setTimeout(() => {
-      this.setState({ showPopover: show });
-    }, delay);
-  }
-
-  render() {
-    return (
-      <div ref={this.setNode} className="eupathdb-GeneThumbnails">
-        {this.props.thumbnails.map(thumbnail => (
-          <div className="eupathdb-GeneThumbnailWrapper" key={thumbnail.gbrowse_url}>
-            <div className="eupathdb-GeneThumbnailLabel">
-              <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
-            </div>
-            <div className="eupathdb-GeneThumbnail"
-              onMouseEnter={this.handleThumbnailMouseEnter(thumbnail)}
-              onMouseLeave={this.handleThumbnailMouseLeave}>
-              <a href={'#' + thumbnail.anchor}>
-                <img width="150" src={thumbnail.imgUrl}/>
-              </a>
-            </div>
-          </div>
-        ))}
-        {this.renderPopover()}
-      </div>
-    );
-  }
-
-  renderPopover() {
-    if (this.state.showPopover) {
-      return (
-        <div className="eupathdb-GeneThumbnailPopover"
-          ref={this.computePosition}
-          onMouseEnter={this.handlePopoverMouseEnter}
-          onMouseLeave={this.handlePopoverMouseLeave}>
-          <h3>{this.state.activeThumbnail.displayName}</h3>
-          <div>(Click on image to view section on page)</div>
-          <a href={'#' + this.state.activeThumbnail.anchor}
-            onClick={this.handlePopoverClick}>
-            <img src={this.state.activeThumbnail.imgUrl}/>
-          </a>
-        </div>
-      );
+        this.handlePopoverClick = () => {
+            this.setShowPopover(false, 0);
+        };
     }
-  }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.detectOverflow);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.detectOverflow);
+    }
+
+    setActiveThumbnail(event, thumbnail) {
+        if (thumbnail === this.state.activeThumbnail) return;
+        this.setState({
+            activeThumbnail: thumbnail,
+            activeThumbnailNode: event.target,
+            showPopover: false
+        });
+    }
+
+    setShowPopover(show, delay) {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = setTimeout(() => {
+            this.setState({ showPopover: show });
+        }, delay);
+    }
+
+    render() {
+        return (
+            <div ref={this.setNode} className="eupathdb-GeneThumbnails">
+                {this.props.thumbnails.map(thumbnail => (
+                     <div className="eupathdb-GeneThumbnailWrapper" key={thumbnail.gbrowse_url}>
+                         <div className="eupathdb-GeneThumbnailLabel">
+                             <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
+                         </div>
+                         <div className="eupathdb-GeneThumbnail"
+                              onMouseEnter={this.handleThumbnailMouseEnter(thumbnail)}
+                              onMouseLeave={this.handleThumbnailMouseLeave}>
+                             <a href={'#' + thumbnail.anchor}>
+                                 <img width="150" src={thumbnail.imgUrl}/>
+                             </a>
+                         </div>
+                     </div>
+                 ))}
+                     {this.renderPopover()}
+            </div>
+        );
+    }
+
+    renderPopover() {
+        if (this.state.showPopover) {
+            return (
+                <div className="eupathdb-GeneThumbnailPopover"
+                     ref={this.computePosition}
+                     onMouseEnter={this.handlePopoverMouseEnter}
+                     onMouseLeave={this.handlePopoverMouseLeave}>
+                    <h3>{this.state.activeThumbnail.displayName}</h3>
+                    <div>(Click on image to view section on page)</div>
+                    <a href={'#' + this.state.activeThumbnail.anchor}
+                       onClick={this.handlePopoverClick}>
+                        <img src={this.state.activeThumbnail.imgUrl}/>
+                    </a>
+                </div>
+            );
+        }
+    }
 
 }
 
 let treeCache = new WeakMap;
 function extractGeneAndTranscriptTrees(categories) {
-  if (!treeCache.has(categories)) {
-    let fakeOntology = { tree: { children: categories } };
-    let geneRoot = prefixLabel(GENE_ID, OntologyUtils.getTree(
-      fakeOntology,
-      node => lodash.get(node, 'properties.geneOrTranscript[0]') === GENE_ID
-    ));
+    if (!treeCache.has(categories)) {
+        let fakeOntology = { tree: { children: categories } };
+        let geneRoot = prefixLabel(GENE_ID, OntologyUtils.getTree(
+            fakeOntology,
+            node => lodash.get(node, 'properties.geneOrTranscript[0]') === GENE_ID
+        ));
 
-    let transcriptRoot = prefixLabel(TRANSCRIPT_ID, OntologyUtils.getTree(
-      fakeOntology,
-      node => lodash.get(node, 'properties.geneOrTranscript[0]') === TRANSCRIPT_ID
-    ));
+        let transcriptRoot = prefixLabel(TRANSCRIPT_ID, OntologyUtils.getTree(
+            fakeOntology,
+            node => lodash.get(node, 'properties.geneOrTranscript[0]') === TRANSCRIPT_ID
+        ));
 
-    treeCache.set(categories, { geneRoot, transcriptRoot });
-  }
-  return treeCache.get(categories);
+        treeCache.set(categories, { geneRoot, transcriptRoot });
+    }
+    return treeCache.get(categories);
 }
 
 export function RecordNavigationSectionCategories(props) {
-  let { categories } = props;
-  let { geneRoot, transcriptRoot } = extractGeneAndTranscriptTrees(categories);
-  return (
-    <div className="eupathdb-TranscriptRecordNavigationSectionContainer">
-      <h3>Gene</h3>
-      <props.DefaultComponent
+    let { categories } = props;
+    let { geneRoot, transcriptRoot } = extractGeneAndTranscriptTrees(categories);
+    return (
+        <div className="eupathdb-TranscriptRecordNavigationSectionContainer">
+            <h3>Gene</h3>
+            <props.DefaultComponent
         {...props}
         isVisible={node => props.isVisible(node.__original)}
         categories={geneRoot.children}
-      />
-      <h3>Transcript</h3>
-      <TranscriptList {...props}/>
-      <props.DefaultComponent
+            />
+            <h3>Transcript</h3>
+            <TranscriptList {...props}/>
+            <props.DefaultComponent
         {...props}
         isVisible={node => props.isVisible(node.__original)}
         categories={transcriptRoot.children}
-      />
-    </div>
-  );
+            />
+        </div>
+    );
 }
 
 export function RecordMainSection(props) {
-  let { recordClass, record } = props;
-  return (
-    <div>
-      <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
-      {/*  <h2 className="eupathdb-TranscriptHeading">Transcript</h2> */ }
-        <nav className="eupathdb-TranscriptTabList">
-          {props.record.tables.GeneTranscripts.map(row => {
-            let { transcript_id } = row;
-            let recordId = makeRecordId(record.id, {
-              source_id: transcript_id
-            });
-            let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
-            let className = [
-              'eupathdb-TranscriptLink',
-              active ? 'eupathdb-TranscriptLink-active active': ''
-            ].join(' ');
-            return (
-              <TranscriptLink
-                key={transcript_id}
-                recordId={recordId}
-                recordClass={recordClass}
-                className={className}
-              >
-                {transcript_id}
-              </TranscriptLink>
-            );
-          })}
-        </nav>
-      </Sticky>
-      <div className="eupathdb-TranscriptTabContent">
-        <props.DefaultComponent {...props} />
-      </div>
-    </div>
-  );
+    let { recordClass, record } = props;
+    return (
+        <div>
+            <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
+                {/*  <h2 className="eupathdb-TranscriptHeading">Transcript</h2> */ }
+                <nav className="eupathdb-TranscriptTabList">
+                    {props.record.tables.GeneTranscripts.map(row => {
+                         let { transcript_id } = row;
+                         let recordId = makeRecordId(record.id, {
+                             source_id: transcript_id
+                         });
+                         let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
+                         let className = [
+                             'eupathdb-TranscriptLink',
+                             active ? 'eupathdb-TranscriptLink-active active': ''
+                         ].join(' ');
+                         return (
+                             <TranscriptLink
+                                 key={transcript_id}
+                                 recordId={recordId}
+                                 recordClass={recordClass}
+                                 className={className}
+                             >
+                                 {transcript_id}
+                             </TranscriptLink>
+                         );
+                     })}
+                </nav>
+            </Sticky>
+            <div className="eupathdb-TranscriptTabContent">
+                <props.DefaultComponent {...props} />
+            </div>
+        </div>
+    );
 }
 
 /*
-export let RecordMainSection = React.createClass({
+   export let RecordMainSection = React.createClass({
 
-  render() {
-    let { categories } = this.props;
-    let { geneRoot, transcriptRoot } = extractGeneAndTranscriptTrees(categories);
+   render() {
+   let { categories } = this.props;
+   let { geneRoot, transcriptRoot } = extractGeneAndTranscriptTrees(categories);
 
-    let uncategorized = categories.find(c => c.name === undefined);
-    categories = categories.filter(c => c !== uncategorized);
-    return(
-      <div>
-        {this.renderGeneCategory(geneRoot)}
-        {this.renderTransCategory(transcriptRoot)}
-      </div>
-    );
-  },
+   let uncategorized = categories.find(c => c.name === undefined);
+   categories = categories.filter(c => c !== uncategorized);
+   return(
+   <div>
+   {this.renderGeneCategory(geneRoot)}
+   {this.renderTransCategory(transcriptRoot)}
+   </div>
+   );
+   },
 
-  renderGeneCategory(category) {
-    return (
-      <section id={GENE_ID}>
-        <this.props.DefaultComponent {...this.props} categories={category.children}/>
-      </section>
-    );
-  },
+   renderGeneCategory(category) {
+   return (
+   <section id={GENE_ID}>
+   <this.props.DefaultComponent {...this.props} categories={category.children}/>
+   </section>
+   );
+   },
 
-  renderTransCategory(category) {
-    let { recordClass, record, collapsedCategories } = this.props;
-    let allCategoriesHidden = category.children.every(cat => collapsedCategories.includes(cat.name));
-    return (
-      <section id={TRANSCRIPT_ID}>
-        <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
-          <h1 className="eupathdb-TranscriptHeading">Transcript</h1>
-          <nav className="eupathdb-TranscriptTabList">
-            {this.props.record.tables.GeneTranscripts.map(row => {
-              let { transcript_id } = row;
-              let recordId = makeRecordId(record.id, {
-                source_id: transcript_id
-              });
-              let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
-              let className = [
-                'eupathdb-TranscriptLink',
-                active ? 'eupathdb-TranscriptLink-active active': ''
-              ].join(' ');
-              return (
-                <TranscriptLink
-                  key={transcript_id}
-                  recordId={recordId}
-                  recordClass={recordClass}
-                  className={className}
-                >
-                  {transcript_id}
-                </TranscriptLink>
-              );
-            })}
-          </nav>
-        </Sticky>
-        <div className="eupathdb-TranscriptTabContent">
-          {allCategoriesHidden
-            ? <p>All Transcript categories are currently hidden.</p>
-            :  <this.props.DefaultComponent {...this.props} categories={category.children}/>}
-        </div>
-      </section>
-    );
-  }
+   renderTransCategory(category) {
+   let { recordClass, record, collapsedCategories } = this.props;
+   let allCategoriesHidden = category.children.every(cat => collapsedCategories.includes(cat.name));
+   return (
+   <section id={TRANSCRIPT_ID}>
+   <Sticky className="eupathdb-TranscriptSticky" fixedClassName="eupathdb-TranscriptSticky-fixed">
+   <h1 className="eupathdb-TranscriptHeading">Transcript</h1>
+   <nav className="eupathdb-TranscriptTabList">
+   {this.props.record.tables.GeneTranscripts.map(row => {
+   let { transcript_id } = row;
+   let recordId = makeRecordId(record.id, {
+   source_id: transcript_id
+   });
+   let active = record.id.find(p => p.name === 'source_id').value === transcript_id;
+   let className = [
+   'eupathdb-TranscriptLink',
+   active ? 'eupathdb-TranscriptLink-active active': ''
+   ].join(' ');
+   return (
+   <TranscriptLink
+   key={transcript_id}
+   recordId={recordId}
+   recordClass={recordClass}
+   className={className}
+   >
+   {transcript_id}
+   </TranscriptLink>
+   );
+   })}
+   </nav>
+   </Sticky>
+   <div className="eupathdb-TranscriptTabContent">
+   {allCategoriesHidden
+   ? <p>All Transcript categories are currently hidden.</p>
+   :  <this.props.DefaultComponent {...this.props} categories={category.children}/>}
+   </div>
+   </section>
+   );
+   }
 
-});
-*/
+   });
+ */
 
 function ExpressionGraphTable(props) {
-  let included = props.table.properties.includeInTable || [];
+    let included = props.table.properties.includeInTable || [];
 
-  let table = Object.assign({}, props.table, {
-    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
-  });
 
-  return (
-    <props.DefaultComponent
+
+    let dataTable;
+
+    if(props.table.name == "ExpressionGraphs") {
+        dataTable = Object.assign({}, {
+            value: props.record.tables.ExpressionGraphsDataTable,
+            table: props.recordClass.tables.find(obj => obj.name == "ExpressionGraphsDataTable"),
+            record: props.record,
+            recordClass: props.recordClass,
+            DefaultComponent: props.DefaultComponent
+                }
+        );
+
+    }
+
+
+    let table = Object.assign({}, props.table, {
+        attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
+    });
+
+
+    return (
+        <props.DefaultComponent
       {...props}
       table={table}
       childRow={childProps =>
-        <ExpressionGraph rowData={props.value[childProps.rowIndex]}/>}
-    />
+          <ExpressionGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
+      />
   );
 }
 
