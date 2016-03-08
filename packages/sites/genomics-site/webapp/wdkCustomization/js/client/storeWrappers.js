@@ -1,15 +1,14 @@
-import { Stores } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 
-export let StepDownloadFormViewStore = {
-
-  reduce(origReduce) {
-    return function(state, action) {
-      let nextState = origReduce.call(this, state, action);
-
+/** Return subcass of the provided StepDownloadFormViewStore */
+export function StepDownloadFormViewStore(WdkStepDownloadFormViewStore) {
+  let { STEP_DOWNLOAD_SELECT_REPORTER } = WdkStepDownloadFormViewStore.actionTypes;
+  return class ApiStoreDownloadFormViewStore extends WdkStepDownloadFormViewStore {
+    reduce(state, action) {
+      let nextState = super.reduce(state, action);
       // if new reporter was just selected, update form state to initial state of that form
-      if (action.type == Stores.StepDownloadFormViewStore.actionTypes.STEP_DOWNLOAD_SELECT_REPORTER) {
+      if (action.type == STEP_DOWNLOAD_SELECT_REPORTER) {
         let Reporter = selectReporterComponent(nextState.selectedReporter, nextState.recordClass.name);
         let userStoreState = this._storeContainer.UserStore.getState();
         let { formState, formUiState } = Reporter.getInitialState(nextState, userStoreState);
@@ -19,51 +18,64 @@ export let StepDownloadFormViewStore = {
       return nextState;
     }
   }
-
 }
 
-export let RecordViewStore = {
-
-  reduce(origReduce) {
-    return function(state, action) {
-      let nextState = origReduce.call(this, state, action);
-
+/** Return a subclass of the provided RecordViewStore */
+export function RecordViewStore(WdkRecordViewStore) {
+  let { actionTypes } = WdkRecordViewStore;
+  return class ApiRecordViewStore extends WdkRecordViewStore {
+    reduce(state, action) {
+      let nextState = super.reduce(state, action);
       switch (action.type) {
-        case 'record/set-active-record': {
-          // Hide Protein properties and Proteomics categories for non- protein coding genes
-          let { record, recordClass, categoryTree } = nextState;
-          if (recordClass.name === 'GeneRecordClasses.GeneRecordClass' && record.attributes.gene_type !== 'protein coding') {
-            categoryTree.children = categoryTree.children.filter(function(category) {
-              let label = category.properties.label[0];
-              return label !== 'Protein properties' && label !== 'Proteomics';
-            });
+        case actionTypes.SET_ACTIVE_RECORD: {
+          let { record, recordClass } = nextState;
+          if (recordClass.name === 'GeneRecordClasses.GeneRecordClass' &&
+              record.attributes.gene_type !== 'protein coding') {
+            nextState.categoryTree = removeProteinCategories(nextState.categoryTree);
           }
-
-          // get collapsedSections from localStorage
-          try {
-            nextState.collapsedSections = persistence.get(
-              'collapsedSections/' + nextState.recordClass.name, nextState.collapsedSections);
-          }
-          catch (error) {
-            console.error('Warning: Could not retrieve collapsed section from local storage.', error);
-          }
-
+          nextState.collapsedSections = getCollapsedSections(nextState);
           return nextState;
         }
-
-        // Store collapsed sections to localStorage
-        // XXX It might be nice if WDK had a dedicated API for registering
-        // side-effects for particular actions.
-        case 'record/show-section':
-        case 'record/hide-section':
-          persistence.set('collapsedSections/' + nextState.recordClass.name,
-            nextState.collapsedSections || []);
+        case actionTypes.SHOW_SECTION:
+        case actionTypes.HIDE_SECTION:
+          setCollapsedSections(nextState);
           return nextState;
-
         default:
           return nextState;
       }
     }
   }
+}
 
+/** Remove protein related categories from tree */
+function removeProteinCategories(categoryTree) {
+  return Object.assign({}, categoryTree, {
+    children: categoryTree.children.filter(function(category) {
+      let label = category.properties.label[0];
+      return label !== 'Protein properties' && label !== 'Proteomics';
+    })
+  });
+}
+
+/** Get collapsed categories from localStorage */
+function getCollapsedSections(state) {
+  try {
+    return persistence.get(
+      'collapsedSections/' + state.recordClass.name, state.collapsedSections);
+  }
+  catch (error) {
+    console.error('Warning: Could not retrieve collapsed section from local storage.', error);
+    return state.collapsedSections;
+  }
+}
+
+/** Set collapsed categories to localStorage */
+function setCollapsedSections(state) {
+  try {
+    persistence.set('collapsedSections/' + state.recordClass.name,
+      state.collapsedSections || []);
+  }
+  catch (error) {
+    console.error('Warning: Could not set collapsed section to local storage.', error);
+  }
 }
