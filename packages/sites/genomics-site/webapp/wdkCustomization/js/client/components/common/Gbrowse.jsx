@@ -56,43 +56,20 @@ export let contexts = [
     },
 ];
 
-
-let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ]
-
-let injectScripts = lodash.once(function injectScripts() {
-  for (let scriptUrl of gbrowseScripts) {
-    let script = document.createElement('script');
-    script.src = scriptUrl;
-    document.body.appendChild(script);
-  }
-});
-
 export class GbrowseContext extends ComponentUtils.PureComponent {
 
   constructor(...args) {
     super(...args);
     this.state = { isCollapsed: false };
     this.style = { display: 'block', width: '100%' };
-
     this.updateCollapsed = isCollapsed => {
       this.setState({ isCollapsed });
     };
   }
 
   render() {
-
     let gbrowseUrl = this.props.record.attributes[this.props.name];
-    //    let lowerGeneId = source_id.toLowerCase();
-
-    let queryParams = {
-      width: 800,
-      embed: 1,
-      //    h_feat: `${lowerGeneId}@yellow`,
-    };
-
-    let queryParamString = Object.keys(queryParams).reduce((str, key) => `${str};${key}=${queryParams[key]}` , '');
-    let iframeUrl = `${gbrowseUrl};${queryParamString}`;
-
+    let iframeUrl = gbrowseUrl + ';width=800;embed=1';
     return (
       <CollapsibleSection
         id={this.props.name}
@@ -102,7 +79,7 @@ export class GbrowseContext extends ComponentUtils.PureComponent {
         isCollapsed={this.state.isCollapsed}
         onCollapsedChange={this.updateCollapsed}
       >
-        <RemoteContent url={iframeUrl} onLoad={injectScripts} />
+        <iframe src={iframeUrl} onLoad={gbrowseOnload} height="500"/>
         <div>
           <a href={gbrowseUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
         </div>
@@ -118,7 +95,50 @@ export function ProteinContext(props) {
 
   return (
     <div id={divId}>
-      <RemoteContent url={`${url};width=800;embed=1;genepage=1`} />
+      <iframe src={`${url};width=800;embed=1;genepage=1`} onLoad={pbrowseOnload} height="500"/>
     </div>
   );
+}
+
+let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ];
+
+function gbrowseOnload(event) {
+  let iframe = event.target;
+  setBaseTarget(iframe);
+  injectGbrowseScripts(iframe);
+  resizeIframe(iframe);
+}
+
+function pbrowseOnLoad(event) {
+  let iframe = event.target;
+  setBaseTarget(iframe);
+  resizeIframe(iframe);
+}
+
+function injectGbrowseScripts(iframe) {
+  let gbrowseWindow = iframe.contentWindow.window;
+  let gbrowseDocumentBody = iframe.contentWindow.document.body;
+
+  gbrowseWindow.wdk = wdk;
+  gbrowseWindow.jQuery = jQuery;
+
+  for (let scriptUrl of gbrowseScripts) {
+    let script = document.createElement('script');
+    script.src = scriptUrl;
+    gbrowseDocumentBody.appendChild(script);
+  }
+}
+
+function resizeIframe(iframe) {
+  let height = Math.max(500, iframe.contentWindow.document.body.scrollHeight + 20);
+  iframe.style.height = height + 'px';
+}
+
+function setBaseTarget(iframe) {
+  let base = iframe.contentDocument.querySelector('base');
+  if (base == null) {
+    base = document.createElement('base');
+    iframe.contentDocument.head.appendChild(base);
+  }
+  base.target = '_top';
 }
