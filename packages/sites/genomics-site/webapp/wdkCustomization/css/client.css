@@ -233,13 +233,17 @@ h4 {
 }
 
 .eupathdb-GbrowseContext iframe {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   background-color: white;
   width: 100%;
 }
 
 .eupathdb-GbrowseContextHeader {
   font-weight: bold;
+}
+
+.eupathdb-GbrowseContextContent {
+  padding-bottom: 1em;
 }
 
 /*
