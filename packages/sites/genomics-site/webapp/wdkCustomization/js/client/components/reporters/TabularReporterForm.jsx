@@ -1,7 +1,7 @@
 import * as Wdk from 'wdk-client';
 
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
-let { RadioList, Checkbox } = Wdk.Components;
+let { ReporterCheckboxList, RadioList, Checkbox } = Wdk.Components;
 
 let attachmentTypes = [
   { value: "text", display: "Text File" },

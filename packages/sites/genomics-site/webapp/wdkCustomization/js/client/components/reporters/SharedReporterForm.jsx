@@ -1,7 +1,7 @@
 import * as Wdk from 'wdk-client';
 
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.OntologyUtils);
-let { RadioList, Checkbox, CheckboxTree } = Wdk.Components;
+let { RadioList, Checkbox, ReporterCheckboxList } = Wdk.Components;
 let { isQualifying, addSearchSpecificSubtree } = eupathdb.attributeCheckboxTree;
 
 let SharedReporterForm = props => {
