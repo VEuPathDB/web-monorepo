@@ -110,7 +110,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       y_axis,
     } = this.state.details;
 
-    let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=_LEGEND,${visibleParts}`;
+    let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}`;
 
     let imgUrl = baseUrlWithState + '&fmt=png';
     let tableUrl = baseUrlWithState + '&fmt=table';
