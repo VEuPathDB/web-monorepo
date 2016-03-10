@@ -1,21 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import lodash from 'lodash';
-import {
-    Components,
-    ComponentUtils,
-    OntologyUtils,
-    TreeUtils
-} from 'wdk-client';
 
 import { getBestPosition, isNodeOverflowing } from '../../utils';
-
-
-let {
-    NativeCheckboxList,
-    RecordLink,
-    Sticky
-} = Components;
 
 
 // TODO Smart position of popover
