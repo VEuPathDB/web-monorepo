@@ -253,7 +253,7 @@ h4 {
 
 .eupathdb-ExpressionGraphsDataTableContainer td:nth-child(1),
 .eupathdb-ExpressionGraphsDataTableContainer td:nth-child(2) {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 /*
@@ -306,6 +306,7 @@ h4 {
 .wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__display_name {
   max-width: 300px;
 }
+
 
 .wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell {
   overflow: hidden;
