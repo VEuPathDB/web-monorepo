@@ -354,11 +354,12 @@ export function RecordMainSection(props) {
 function ExpressionGraphTable(props) {
     let included = props.table.properties.includeInTable || [];
 
-
-
     let dataTable;
 
-    if(props.table.name == "ExpressionGraphs") {
+    if(props.table.name == "HostResponseGraphs") {
+        // TODO
+    }
+    else {
         dataTable = Object.assign({}, {
             value: props.record.tables.ExpressionGraphsDataTable,
             table: props.recordClass.tables.find(obj => obj.name == "ExpressionGraphsDataTable"),
@@ -369,7 +370,6 @@ function ExpressionGraphTable(props) {
         );
 
     }
-
 
     let table = Object.assign({}, props.table, {
         attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
