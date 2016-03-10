@@ -79,7 +79,7 @@ export class GbrowseContext extends ComponentUtils.PureComponent {
         isCollapsed={this.state.isCollapsed}
         onCollapsedChange={this.updateCollapsed}
       >
-        <iframe src={iframeUrl} onLoad={gbrowseOnload} height="500"/>
+        <iframe src={iframeUrl} onLoad={gbrowseOnLoad} height="500"/>
         <div>
           <a href={gbrowseUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
         </div>
@@ -95,14 +95,14 @@ export function ProteinContext(props) {
 
   return (
     <div id={divId}>
-      <iframe src={`${url};width=800;embed=1;genepage=1`} onLoad={pbrowseOnload} height="500"/>
+      <iframe src={`${url};width=800;embed=1;genepage=1`} onLoad={pbrowseOnLoad} height="500"/>
     </div>
   );
 }
 
 let gbrowseScripts = [ '/gbrowse/apiGBrowsePopups.js', '/gbrowse/wz_tooltip.js' ];
 
-function gbrowseOnload(event) {
+function gbrowseOnLoad(event) {
   let iframe = event.target;
   setBaseTarget(iframe);
   injectGbrowseScripts(iframe);
