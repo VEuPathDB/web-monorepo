@@ -94,7 +94,7 @@ export function ProteinContext(props) {
   let divId = props.table.name + "-" + props.rowData.transcript_id
 
   return (
-    <div id={divId}>
+    <div id={divId} className="eupathdb-GbrowseContext">
       <iframe src={`${url};width=800;embed=1;genepage=1`} onLoad={pbrowseOnLoad} height="500"/>
     </div>
   );
