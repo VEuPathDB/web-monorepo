@@ -130,7 +130,7 @@ h4 {
   padding: 10px 0;
 }
 
-.eupathdb-RecordOverviewItem, .eupathdb-GeneThumbnailLabel {
+.eupathdb-RecordOverviewItem, .eupathdb-ThumbnailLabel {
   margin: .2em 0;
   font-size: 1.4em;
   font-weight: 300;
@@ -173,7 +173,7 @@ h4 {
   padding-top: 64px;
 }
 
-.eupathdb-GeneThumbnails {
+.eupathdb-ThumbnailsContainer {
   border: 1px solid #d8d8d8;
   padding: 4px 6px 8px;
   background: #f2f2f2;
@@ -186,21 +186,21 @@ h4 {
   white-space: nowrap;
 }
 
-.eupathdb-GeneThumbnailWrapper {
+.eupathdb-ThumbnailWrapper {
   display: inline-block;
   vertical-align: top;
   margin: 0 1em;
 }
 
-.eupathdb-GeneThumbnail {
+.eupathdb-Thumbnail {
   border: 1px solid #d8d8d8;
 }
 
-.eupathdb-GeneThumbnail img {
+.eupathdb-Thumbnail img {
   display: block;
 }
 
-.eupathdb-GeneThumbnailPopover {
+.eupathdb-ThumbnailPopover {
   position: fixed;
   z-index: 100;
   background: #1f1f1f;
@@ -211,18 +211,18 @@ h4 {
   padding: 6px;
 }
 
-.eupathdb-GeneThumbnailPopover h3 {
+.eupathdb-ThumbnailPopover h3 {
   text-align: center;
   padding: 2px 0;
   font-weight: 400;
 }
 
-.eupathdb-GeneThumbnailPopover div {
+.eupathdb-ThumbnailPopover div {
   text-align: center;
   padding-bottom: 4px;
 }
 
-.eupathdb-GeneThumbnailPopover img {
+.eupathdb-ThumbnailPopover img {
   max-height: 75vh;
   max-width: 80vw;
   border: 1px solid #aaa;
@@ -257,7 +257,7 @@ h4 {
 }
 
 /*
-.eupathdb-GeneThumbnail:hover {
+.eupathdb-Thumbnail:hover {
   position: absolute;
   z-index: 1;
   height: auto;
@@ -266,7 +266,7 @@ h4 {
   left: 30em;
 }
 
-.eupathdb-GeneThumbnail:hover img {
+.eupathdb-Thumbnail:hover img {
   width: 800px;
   left: -90px;
 }
