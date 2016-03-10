@@ -2,6 +2,7 @@ import { Components, ComponentUtils } from 'wdk-client';
 import Footer from './components/common/Footer';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
+import Sequence from './components/common/Sequence';
 import { selectReporterComponent } from './util/reporterSelector';
 
 // Remove project_id from record links
@@ -196,8 +197,15 @@ export function RecordAttribute(DefaultComponent) {
   return function ApiRecordAttribute(props) {
     let context = Gbrowse.contexts.find(context => context.gbrowse_url === props.name);
     if (context != null) {
-      return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
+        return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
     }
+
+      let sequenceRE = /sequence$/;
+      if (sequenceRE.test(props.name)) {
+          console.log(props);
+          return ( <Sequence sequence={props.value}/> );
+      }
+
 
     let ResolvedComponent =
       findComponent('RecordAttribute', props.recordClass.name) || DefaultComponent;
