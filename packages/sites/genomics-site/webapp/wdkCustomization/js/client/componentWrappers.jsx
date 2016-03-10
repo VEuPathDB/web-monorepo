@@ -202,7 +202,6 @@ export function RecordAttribute(DefaultComponent) {
 
       let sequenceRE = /sequence$/;
       if (sequenceRE.test(props.name)) {
-          console.log(props);
           return ( <Sequence sequence={props.value}/> );
       }
 
