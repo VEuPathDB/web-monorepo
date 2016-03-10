@@ -246,6 +246,16 @@ h4 {
   padding-bottom: 1em;
 }
 
+.eupathdb-ExpressionGraphsDataTableContainerHeader {
+  font-weight: 500;
+  margin: 0;
+}
+
+.eupathdb-ExpressionGraphsDataTableContainer td:nth-child(1),
+.eupathdb-ExpressionGraphsDataTableContainer td:nth-child(2) {
+  white-space: nowrap;
+}
+
 /*
 .eupathdb-GeneThumbnail:hover {
   position: absolute;

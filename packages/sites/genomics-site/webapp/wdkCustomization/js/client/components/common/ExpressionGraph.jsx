@@ -18,9 +18,12 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       imgError: false,
       details: null,
       graphId: null,
-      visibleParts: null
+      visibleParts: null,
+      dataTableCollapsed: true
     };
-
+    this.handleDataTableCollapseChange = dataTableCollapsed => {
+      this.setState({ dataTableCollapsed });
+    }
   }
 
   componentDidMount() {
@@ -130,12 +133,19 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
         </div>
         <div className="eupathdb-ExpressionGraphDetails">
 
-          <dataTable.DefaultComponent
-            record={dataTable.record}
-            recordClass={dataTable.recordClass}
-            table={dataTable.table}
-            value={dataTable.value.filter(dat => dat.dataset_id == datasetId)}
-          />
+          <Components.CollapsibleSection
+            className={"eupathdb-" + this.props.dataTable.table.name + "Container"}
+            headerContent="Data table"
+            headerComponent='h4'
+            isCollapsed={this.state.dataTableCollapsed}
+            onCollapsedChange={this.handleDataTableCollapseChange}>
+            <dataTable.DefaultComponent
+              record={dataTable.record}
+              recordClass={dataTable.recordClass}
+              table={dataTable.table}
+              value={dataTable.value.filter(dat => dat.dataset_id == datasetId)}
+            />
+          </Components.CollapsibleSection>
 
           <h4>Description</h4>
           <div dangerouslySetInnerHTML={{__html: description}}/>
@@ -149,7 +159,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
           <h4>Choose gene for which to display graph</h4>
           {graphIds.map(graphId => {
             return (
-              <label>
+              <label key={graphId}>
                 <input
                   type="radio"
                   checked={graphId === this.state.graphId}
@@ -161,7 +171,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
           <h4>Choose graph(s) to display</h4>
           {parts.map(part => {
             return (
-              <label>
+              <label key={part}>
                 <input
                   type="checkbox"
                   checked={this.state.visibleParts.indexOf(part) > -1}
