@@ -306,16 +306,26 @@ h4 {
   display: block;
 }
 
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__eupathdb_release {
-  width: 125px;;
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTable,
+.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTable {
+  table-layout: fixed;
+  width: 100%;
 }
 
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__display_name {
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__eupathdb_release,
+.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell__short_attribution,
+.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell__assay_type {
+  width: 125px;
+}
+
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__display_name,
+.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__display_name {
   max-width: 300px;
 }
 
 
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell {
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell,
+.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -336,6 +346,21 @@ h4 {
   margin: 1em 0;
 }
 
+/** record table cell overrides */
+
+/** content in these cells should not wrap */
+.wdk-DataTableCell__transcript_id,
+.wdk-DataTableCell__transcript_ids,
+.wdk-DataTableCell__Pvalue,
+.wdk-DataTableCell__rmgmid_rodmal_link,
+.wdk-DataTableCell__pubmed_link,
+.wdk-DataTableCell__doi_link,
+.wdk-DataTableCell__term_name {
+  white-space: nowrap;
+}
+
+
+/** Dataset page */
 .eupathdb-DatasetRecord {
   padding: 0 2em;
 }
