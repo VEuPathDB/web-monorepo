@@ -26,7 +26,7 @@ while(<F>) {
 	$html.= "<tr><td>$h</td><td>$c</td></tr>";
 }
 $html .= "</table>";
-$html .= '<script language="text/javascript"> alert("Yay!"); </script>';
+# $html .= '<script language="text/javascript"> alert("Yay!"); </script>';
 
 close F;
 print header;

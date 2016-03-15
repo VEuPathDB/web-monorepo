@@ -246,6 +246,12 @@ h4 {
   padding-bottom: 1em;
 }
 
+.eupathdb-GbrowseImageMapTooltip {
+  font-size: 1.2em;
+  line-height: 1.2;
+  max-width: 600px;
+}
+
 .eupathdb-ExpressionGraphsDataTableContainerHeader {
   font-weight: 500;
   margin: 0;
