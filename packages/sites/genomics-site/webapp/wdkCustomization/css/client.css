@@ -78,6 +78,7 @@ h4 {
 .eupathdb-GeneOverviewHighlighted {
   color: darkred;
   font-weight: 400;
+  background-color: #E6E6E6;
 }
 
 .GeneOverviewId, .GeneOverviewHiddenId, .GeneOverviewProduct, .GeneOverviewNewProduct {
