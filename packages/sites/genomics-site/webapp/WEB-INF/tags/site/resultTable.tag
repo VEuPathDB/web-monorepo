@@ -142,7 +142,7 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
              onclick="javascript:toggleRepresentativeTranscripts(this)">
       Show Only One Transcript Per Gene
     </div>
-    <c:set var="excludeBasketColumn" value="true" />
+   <%-- <c:set var="excludeBasketColumn" value="true" />  not needed since we have only one tab the _default view--%>
   </c:if>
 
 

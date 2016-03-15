@@ -59,13 +59,8 @@
 
   <c:set var="wdkView" value="${requestScope.wdkView}" />
 
-  <c:choose>          <!-- PATHWAYS: use old URL, we need to keep using the old record page until ported to react -->
-    <c:when test="${recordClass.fullName eq 'PathwayRecordClasses.PathwayRecordClass'}">
-      <wdk:recordLink
-         displayValue="${displayValue}"
-         primaryKeyAttributeValue="${primaryKeyAttributeValue}"
-         recordClass="${recordClass}"/>
-    </c:when>         <!-- TRANSCRIPTS: do not want to show transcript and project in URL, and we want to point to the GENE record-->
+  <c:choose> 
+    <!-- TRANSCRIPTS: do not want to show transcript and project in URL, and we want to point to the GENE record-->
     <c:when test="${recordClass.fullName eq 'TranscriptRecordClasses.TranscriptRecordClass'}">
       <c:url var="recordLink" value="/app/record/gene/${primaryKeyAttributeValue.values['gene_source_id']}" />
 
