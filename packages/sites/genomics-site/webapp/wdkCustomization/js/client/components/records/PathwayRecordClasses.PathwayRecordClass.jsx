@@ -1,11 +1,11 @@
 import React from 'react';
 import { Components } from 'wdk-client';
 import Image from 'wdk-client-components/Image';
+import RecordAttribute from 'wdk-client-components/RecordAttribute';
 import {cytoscape} from '../../../../../js/cytoscapeweb.min.js';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
-let { Main } = Components;
 
 let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
 //let pathwayFilesBaseUrl = "/plasmodb/data/";
@@ -209,7 +209,7 @@ vis.ready(function() {
         print("<b>Name:</b>  " + target.data["Description"] + "<br />");
       }
       if (target.data["CID"]) {
-        print("<a href='/a/showRecord.do?name=CompoundRecordClasses.CompoundRecordClass&source_id=CID:" + target.data["CID"] + "'>View on this site</a>");
+        print("<a href='" + wdk.webappUrl("/app/record/compound/" + target.data["CID"]) + "'>View on this site</a>");
       }
 
       print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["label"] + "'>View in KEGG</a>");
@@ -221,7 +221,8 @@ vis.ready(function() {
     }
 
     if (type == "metabolic process") {
-      print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
+      //print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
+      print("<b>Pathway:  </b>" + "<a href='" + wdk.webappUrl("/app/record/pathway/" + target.data["Description"] ) + "'>" + target.data["label"] + "</a>");
       print("");
       print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["Description"] + "'>View in KEGG</a>");
     }
@@ -458,241 +459,265 @@ export let RecordOverview = React.createClass({
 
   render() {
     let projectId = wdk.MODEL_NAME;
-    let { record } = this.props;
+    let { record, recordClass } = this.props;
     let { attributes, tables } = record;
-    let {
-      primary_key,
-      pathway_source
-      } = attributes;
-    let {
-      PathwayGraphs
-      } = tables;
-    let red = {color: 'red'};
-
-    let experimentData = [
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['AmoebaDB'],
-        "linkData":[
-          {"sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-           "display": "Acanthamoeba,Entamoeba,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
-        "linkData": [
-          {
-            "sid": "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
-            "display": "Apicomplexa"
-          },
-          {
-            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
-            "display": "Cryp,Toxo,Plas,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['GiardiaDB'],
-        "linkData": [
-          {
-            "sid": "Giardia,Spironucleus,Homo,Mus",
-            "display": "Giardia,Spironucleus,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['FungiDB'],
-        "linkData": [
-          {
-            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["MicrosporidiaDB"],
-        "linkData": [
-          {
-            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-            "display": "Microsporidia,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["SchistoDB"],
-        "linkData": [
-          {
-            "sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["TrichDB"],
-        "linkData": [
-          {
-            "sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["TriTrypDB"],
-        "linkData": [
-          {
-            "sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
-          },
-          {
-            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus", "display": "Cryp,Toxo,Plas,Tryp,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['HostDB'],
-        "linkData": [
-          {
-            "sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-            "display": "Acanthamoeba,Entamoeba,Human,Mouse"
-          },
-          {"sid": "Giardia,Spironucleus,Homo,Mus", "display": "Giardia,Spironucleus,Human,Mouse"},
-          {"sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus", "display": "Cryp,Toxo,Plas,Human,Mouse"},
-          {
-            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-          },
-          {
-            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-            "display": "Microsporidia,Human,Mouse"
-          },
-          {"sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"},
-          {"sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"},
-          {"sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"}
-        ]
-      }
-    ];
-
+    let { primary_key, pathway_source } = attributes;
+    let { PathwayGraphs } = tables;
     return (
-      <div id="eupathdb-PathwayRecord-cytoscape">
-        <div id="draggable">
-          <p>
-            Click on nodes for more info.
-            <br />Nodes highlighted in <span style={red}>red</span> are EC numbers that we have mapped to at least one gene.
-            <br />The nodes, as well as this info box, can be repositioned by dragging.
-            <br />
-          </p>
-        </div>
-        {this.renderVisMenu(pathway_source, primary_key, PathwayGraphs, projectId, experimentData)}
-        <div id="eupathdb-PathwayRecord-cytoscapeIcon">
-          <a href="http://cytoscapeweb.cytoscape.org/">
-            <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytoscape Web"/>
-          </a>
-        </div>
-        <div>
-          <p>
-            <strong>NOTE </strong>
-            Click on nodes for more info.  Nodes highlighted in <span style={red}>red</span> are EC numbers that we
-            have mapped to at least one gene. The nodes, as well as the info box, can be repositioned by dragging.
-            <br />
-          </p>
-        </div>
-        <div id={div_id}>
-          Cytoscape Web will replace the contents of this div with your graph.
-        </div>
-
+      <div>
+        <PathwayOverview recordClass = {recordClass} attributes = {attributes} />
+        <CytoscapeDrawing projectId = {projectId}
+                          PathwayGraphs = {PathwayGraphs}
+                          primary_key = {primary_key}
+                          pathway_source = {pathway_source} />
       </div>
     );
-  },
+  }
+});
 
 
-  renderVisMenu(pathway_source, primary_key, PathwayGraphs, projectId, experimentData) {
-    return(
-      <ul id="vis-menu" className="sf-menu">
-        <li>
-          <a href="#">File</a>
-          <ul>
-            <li>
-              <a href={pathwayFilesBaseUrl + pathway_source + "/" + primary_key + pathwayFileExt}>
-                Get Download XGMML (XML) file
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="javascript:void(0)">
-            Layout
-            <Image title="Choose a Layout for the Pathway Map"  src="wdk/images/question.png" />
-          </a>
-          <ul>
-            {pathway_source === "KEGG" ?
-              <li key='Preset'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Preset')}>Kegg</a></li> :
-              ""
-            }
-            <li key='ForceDirected' ><a href="javascript:void(0)" onClick={() => vis.changeLayout('ForceDirected')}>ForceDirected</a></li>
-            <li key='Tree'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Tree')}>Tree</a></li>
-            <li key='Circle'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Circle')}>Circle</a></li>
-            <li key='Radial'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Radial')}>Radial</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="javascript:void(0)">
-            Paint Experiment
-            <Image title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map"  src="wdk/images/question.png" />
-          </a>
-          <ul>
-            <li><a href="javascript:void(0)" onClick={() => vis.changeExperiment('')}>None</a></li>
-            {PathwayGraphs.map(graph => this.renderPathwayGraph(graph))}
-          </ul>
-        </li>
-        <li>
-          <a href="#">
-            Paint Genera
-            <Image title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map "  src="wdk/images/question.png" />
-          </a>
-          {this.renderExperimentMenuItems(experimentData, projectId, "PathwayGenera")}
-        </li>
-      </ul>
-    );
-  },
+function PathwayOverview(props) {
+  let { recordClass, attributes } = props;
+  return (
+    <div>
+      {recordClass.attributes.filter(item => { return item.isDisplayable }).map((filteredItem) => {
+        return attributes[filteredItem.name] != null ? <RecordAttribute displayName={filteredItem.displayName} value={attributes[filteredItem.name]} /> : ""
+      })}
+    </div>
+  );
+}
 
-  renderPathwayGraph(graph) {
-    return(
-      <li key={graph.internal}>
-        <a href="javascript:void(0)"
-           onClick={() => vis.changeExperiment(graph.internal + "," + graph.xaxis_description)} >
-          {graph.display_name}
+
+function CytoscapeDrawing(props) {
+  let { projectId, PathwayGraphs, primary_key, pathway_source } = props;
+  let red = {color: 'red'};
+  let experimentData = [
+    {
+      "type": "PathwayGenera",
+      "projectIds": ['AmoebaDB'],
+      "linkData":[
+        {"sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+          "display": "Acanthamoeba,Entamoeba,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
+      "linkData": [
+        {
+          "sid": "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
+          "display": "Apicomplexa"
+        },
+        {
+          "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
+          "display": "Cryp,Toxo,Plas,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ['GiardiaDB'],
+      "linkData": [
+        {
+          "sid": "Giardia,Spironucleus,Homo,Mus",
+          "display": "Giardia,Spironucleus,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ['FungiDB'],
+      "linkData": [
+        {
+          "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+          "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ["MicrosporidiaDB"],
+      "linkData": [
+        {
+          "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+          "display": "Microsporidia,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ["SchistoDB"],
+      "linkData": [
+        {
+          "sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ["TrichDB"],
+      "linkData": [
+        {
+          "sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ["TriTrypDB"],
+      "linkData": [
+        {
+          "sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
+        },
+        {
+          "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus", "display": "Cryp,Toxo,Plas,Tryp,Human,Mouse"
+        }
+      ]
+    },
+    {
+      "type": "PathwayGenera",
+      "projectIds": ['HostDB'],
+      "linkData": [
+        {
+          "sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+          "display": "Acanthamoeba,Entamoeba,Human,Mouse"
+        },
+        {"sid": "Giardia,Spironucleus,Homo,Mus", "display": "Giardia,Spironucleus,Human,Mouse"},
+        {"sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus", "display": "Cryp,Toxo,Plas,Human,Mouse"},
+        {
+          "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+          "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+        },
+        {
+          "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+          "display": "Microsporidia,Human,Mouse"
+        },
+        {"sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"},
+        {"sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"},
+        {"sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"}
+      ]
+    }
+  ];
+
+  return (
+    <div id="eupathdb-PathwayRecord-cytoscape">
+      <div id="draggable">
+        <p>
+          Click on nodes for more info.
+          <br />Nodes highlighted in <span style={red}>red</span> are EC numbers that we have mapped to at least one gene.
+          <br />The nodes, as well as this info box, can be repositioned by dragging.
+          <br />
+        </p>
+      </div>
+      <RenderVisMenu pathway_source = {pathway_source}
+                     primary_key = {primary_key}
+                     PathwayGraphs = {PathwayGraphs}
+                     projectId = {projectId}
+                     experimentData = {experimentData} />
+      <div id="eupathdb-PathwayRecord-cytoscapeIcon">
+        <a href="http://cytoscapeweb.cytoscape.org/">
+          <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytoscape Web"/>
+        </a>
+      </div>
+      <div>
+        <p>
+          <strong>NOTE </strong>
+          Click on nodes for more info.  Nodes highlighted in <span style={red}>red</span> are EC numbers that we
+          have mapped to at least one gene. The nodes, as well as the info box, can be repositioned by dragging.
+          <br />
+        </p>
+      </div>
+      <div id={div_id}>
+        Cytoscape Web will replace the contents of this div with your graph.
+      </div>
+
+    </div>
+  );
+}
+
+function RenderVisMenu(props) {
+  let { pathway_source, primary_key, PathwayGraphs, projectId, experimentData } = props;
+  return(
+    <ul id="vis-menu" className="sf-menu">
+      <li key="File">
+        <a href="#">File</a>
+        <ul>
+          <li>
+            <a href={pathwayFilesBaseUrl + pathway_source + "/" + primary_key + pathwayFileExt}>
+              Get Download XGMML (XML) file
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li key="Layout">
+        <a href="javascript:void(0)">
+          Layout
+          <Image title="Choose a Layout for the Pathway Map"  src="wdk/images/question.png" />
+        </a>
+        <ul>
+          {pathway_source === "KEGG" ?
+            <li key='Preset'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Preset')}>Kegg</a></li> :
+            ""
+          }
+          <li key='ForceDirected' ><a href="javascript:void(0)" onClick={() => vis.changeLayout('ForceDirected')}>ForceDirected</a></li>
+          <li key='Tree'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Tree')}>Tree</a></li>
+          <li key='Circle'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Circle')}>Circle</a></li>
+          <li key='Radial'><a href="javascript:void(0)" onClick={() => vis.changeLayout('Radial')}>Radial</a></li>
+        </ul>
+      </li>
+      <li key="PaintExperiment">
+        <a href="javascript:void(0)">
+          Paint Experiment
+          <Image title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map"  src="wdk/images/question.png" />
+        </a>
+        <ul>
+          <li><a href="javascript:void(0)" onClick={() => vis.changeExperiment('')}>None</a></li>
+          {PathwayGraphs.map(graph => <RenderPathwayGraph graph={graph} />)}
+        </ul>
+      </li>
+      <li key="PaintGenera">
+        <a href="#">
+          Paint Genera
+          <Image title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map "  src="wdk/images/question.png" />
+        </a>
+        <RenderExperimentMenuItems experimentData={experimentData} projectId={projectId} type="PathwayGenera" />
+      </li>
+    </ul>
+  );
+}
+
+function RenderPathwayGraph(props) {
+  let {graph} = props;
+  return(
+    <li key={graph.internal}>
+      <a href="javascript:void(0)"
+         onClick={() => vis.changeExperiment(graph.internal + "," + graph.xaxis_description)} >
+        {graph.display_name}
+      </a>
+    </li>
+  )
+}
+
+function RenderExperimentMenuItems(props) {
+  let { experimentData, projectId, type } = props;
+  let entries = experimentData
+    .filter(datum => {return datum.type === type && datum.projectIds.includes(projectId)})
+    .reduce(function (arr, expt) {return arr.concat(expt.linkData)}, [])
+    .map((item) => {
+      let params = "type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'";
+      let id = type + "_" + projectId + "_" + item.sid;
+      return (<li key={id}><a href='javascript:void(0)' onClick={() => vis.changeExperiment("type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'")}>{item.display}</a></li>);
+    });
+  return(
+    <ul>
+      <li>
+        <a href="javascript:void(0)" onClick={() => vis.changeExperiment('')}>
+          None
         </a>
       </li>
-    )
-  },
-
-  renderExperimentMenuItems(experimentData, projectId, type) {
-    let entries = experimentData
-      .filter(datum => {return datum.type === type && datum.projectIds.includes(projectId)})
-      .reduce(function (arr, expt) {return arr.concat(expt.linkData)}, [])
-      .map((item) => {
-        let params = "type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'";
-        let id = type + "_" + projectId + "_" + item.sid;
-        return (<li key={id}><a href='javascript:void(0)' onClick={() => vis.changeExperiment("type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'")}>{item.display}</a></li>);
-      });
-    return(
-      <ul>
-        <li>
-          <a href="javascript:void(0)" onClick={() => vis.changeExperiment('')}>
-            None
-          </a>
-        </li>
-        {entries}
-      </ul>
-    );
-  }
-
-
-});
+      {entries}
+    </ul>
+  );
+}
 
