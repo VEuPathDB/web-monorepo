@@ -1,7 +1,6 @@
 import React from 'react';
 import { Components } from 'wdk-client';
 import Image from 'wdk-client-components/Image';
-import RecordAttribute from 'wdk-client-components/RecordAttribute';
 import {cytoscape} from '../../../../../js/cytoscapeweb.min.js';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
@@ -423,7 +422,7 @@ vis.ready(function() {
 // end ready
 
 
-export let RecordOverview = React.createClass({
+export let CytoscapeDrawing = React.createClass({
 
   componentWillMount() {
     drawVisualization(this.props.record.attributes.primary_key, this.props.record.attributes.pathway_source);
@@ -463,178 +462,152 @@ export let RecordOverview = React.createClass({
     let { attributes, tables } = record;
     let { primary_key, pathway_source } = attributes;
     let { PathwayGraphs } = tables;
+    let red = {color: 'red'};
+    let experimentData = [
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['AmoebaDB'],
+        "linkData":[
+          {"sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+            "display": "Acanthamoeba,Entamoeba,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
+        "linkData": [
+          {
+            "sid": "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
+            "display": "Apicomplexa"
+          },
+          {
+            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
+            "display": "Cryp,Toxo,Plas,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['GiardiaDB'],
+        "linkData": [
+          {
+            "sid": "Giardia,Spironucleus,Homo,Mus",
+            "display": "Giardia,Spironucleus,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['FungiDB'],
+        "linkData": [
+          {
+            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["MicrosporidiaDB"],
+        "linkData": [
+          {
+            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+            "display": "Microsporidia,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["SchistoDB"],
+        "linkData": [
+          {
+            "sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["TrichDB"],
+        "linkData": [
+          {
+            "sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ["TriTrypDB"],
+        "linkData": [
+          {
+            "sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
+          },
+          {
+            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus", "display": "Cryp,Toxo,Plas,Tryp,Human,Mouse"
+          }
+        ]
+      },
+      {
+        "type": "PathwayGenera",
+        "projectIds": ['HostDB'],
+        "linkData": [
+          {
+            "sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+            "display": "Acanthamoeba,Entamoeba,Human,Mouse"
+          },
+          {"sid": "Giardia,Spironucleus,Homo,Mus", "display": "Giardia,Spironucleus,Human,Mouse"},
+          {"sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus", "display": "Cryp,Toxo,Plas,Human,Mouse"},
+          {
+            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+          },
+          {
+            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+            "display": "Microsporidia,Human,Mouse"
+          },
+          {"sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"},
+          {"sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"},
+          {"sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"}
+        ]
+      }
+    ];
+
     return (
-      <div>
-        <PathwayOverview recordClass = {recordClass} attributes = {attributes} />
-        <CytoscapeDrawing projectId = {projectId}
-                          PathwayGraphs = {PathwayGraphs}
-                          primary_key = {primary_key}
-                          pathway_source = {pathway_source} />
+      <div id="eupathdb-PathwayRecord-cytoscape">
+        <div id="draggable">
+          <p>
+            Click on nodes for more info.
+            <br />Nodes highlighted in <span style={red}>red</span> are EC numbers that we have mapped to at least one gene.
+            <br />The nodes, as well as this info box, can be repositioned by dragging.
+            <br />
+          </p>
+        </div>
+        <RenderVisMenu pathway_source = {pathway_source}
+                       primary_key = {primary_key}
+                       PathwayGraphs = {PathwayGraphs}
+                       projectId = {projectId}
+                       experimentData = {experimentData} />
+        <div id="eupathdb-PathwayRecord-cytoscapeIcon">
+          <a href="http://cytoscapeweb.cytoscape.org/">
+            <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytoscape Web"/>
+          </a>
+        </div>
+        <div>
+          <p>
+            <strong>NOTE </strong>
+            Click on nodes for more info.  Nodes highlighted in <span style={red}>red</span> are EC numbers that we
+            have mapped to at least one gene. The nodes, as well as the info box, can be repositioned by dragging.
+            <br />
+          </p>
+        </div>
+        <div id={div_id}>
+          Cytoscape Web will replace the contents of this div with your graph.
+        </div>
+
       </div>
     );
   }
 });
-
-
-function PathwayOverview(props) {
-  let { recordClass, attributes } = props;
-  return (
-    <div>
-      {recordClass.attributes.filter(item => { return item.isDisplayable }).map((filteredItem) => {
-        return attributes[filteredItem.name] != null ? <RecordAttribute displayName={filteredItem.displayName} value={attributes[filteredItem.name]} /> : ""
-      })}
-    </div>
-  );
-}
-
-
-function CytoscapeDrawing(props) {
-  let { projectId, PathwayGraphs, primary_key, pathway_source } = props;
-  let red = {color: 'red'};
-  let experimentData = [
-    {
-      "type": "PathwayGenera",
-      "projectIds": ['AmoebaDB'],
-      "linkData":[
-        {"sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-          "display": "Acanthamoeba,Entamoeba,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
-      "linkData": [
-        {
-          "sid": "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
-          "display": "Apicomplexa"
-        },
-        {
-          "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
-          "display": "Cryp,Toxo,Plas,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ['GiardiaDB'],
-      "linkData": [
-        {
-          "sid": "Giardia,Spironucleus,Homo,Mus",
-          "display": "Giardia,Spironucleus,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ['FungiDB'],
-      "linkData": [
-        {
-          "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-          "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ["MicrosporidiaDB"],
-      "linkData": [
-        {
-          "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-          "display": "Microsporidia,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ["SchistoDB"],
-      "linkData": [
-        {
-          "sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ["TrichDB"],
-      "linkData": [
-        {
-          "sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ["TriTrypDB"],
-      "linkData": [
-        {
-          "sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
-        },
-        {
-          "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus", "display": "Cryp,Toxo,Plas,Tryp,Human,Mouse"
-        }
-      ]
-    },
-    {
-      "type": "PathwayGenera",
-      "projectIds": ['HostDB'],
-      "linkData": [
-        {
-          "sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-          "display": "Acanthamoeba,Entamoeba,Human,Mouse"
-        },
-        {"sid": "Giardia,Spironucleus,Homo,Mus", "display": "Giardia,Spironucleus,Human,Mouse"},
-        {"sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus", "display": "Cryp,Toxo,Plas,Human,Mouse"},
-        {
-          "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-          "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-        },
-        {
-          "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-          "display": "Microsporidia,Human,Mouse"
-        },
-        {"sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"},
-        {"sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"},
-        {"sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"}
-      ]
-    }
-  ];
-
-  return (
-    <div id="eupathdb-PathwayRecord-cytoscape">
-      <div id="draggable">
-        <p>
-          Click on nodes for more info.
-          <br />Nodes highlighted in <span style={red}>red</span> are EC numbers that we have mapped to at least one gene.
-          <br />The nodes, as well as this info box, can be repositioned by dragging.
-          <br />
-        </p>
-      </div>
-      <RenderVisMenu pathway_source = {pathway_source}
-                     primary_key = {primary_key}
-                     PathwayGraphs = {PathwayGraphs}
-                     projectId = {projectId}
-                     experimentData = {experimentData} />
-      <div id="eupathdb-PathwayRecord-cytoscapeIcon">
-        <a href="http://cytoscapeweb.cytoscape.org/">
-          <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytoscape Web"/>
-        </a>
-      </div>
-      <div>
-        <p>
-          <strong>NOTE </strong>
-          Click on nodes for more info.  Nodes highlighted in <span style={red}>red</span> are EC numbers that we
-          have mapped to at least one gene. The nodes, as well as the info box, can be repositioned by dragging.
-          <br />
-        </p>
-      </div>
-      <div id={div_id}>
-        Cytoscape Web will replace the contents of this div with your graph.
-      </div>
-
-    </div>
-  );
-}
 
 function RenderVisMenu(props) {
   let { pathway_source, primary_key, PathwayGraphs, projectId, experimentData } = props;
@@ -719,5 +692,22 @@ function RenderExperimentMenuItems(props) {
       {entries}
     </ul>
   );
+}
+
+
+/**
+ * Overrides the Cytoscape Drawing attribute in the Pathway Record class with a call to the
+ * element rendering the Cytoscape drawing.
+ * @param props
+ * @returns {XML}
+ * @constructor
+ */
+export function RecordAttribute(props) {
+  if (props.name === 'drawing') {
+    return <CytoscapeDrawing {...props}/>
+  }
+  else {
+    return <props.DefaultComponent {...props}/>;
+  }
 }
 
