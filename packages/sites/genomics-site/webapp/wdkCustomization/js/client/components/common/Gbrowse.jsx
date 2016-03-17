@@ -181,7 +181,11 @@ class GbrowseImageMap extends ComponentUtils.PureComponent {
     .append(areas)
     .find('area')
     .wdkTooltip({
-      position: { effect: false },
+      position: {
+        my: 'bottom center',
+        at: 'center center',
+        effect: false
+      },
       style: {
         classes: 'qtip-bootstrap eupathdb-GbrowseImageMapTooltip',
         tip: { height: 12, width: 18 }
