@@ -156,31 +156,39 @@ class GbrowseImageMap extends ComponentUtils.PureComponent {
     let container = document.createElement('div');
     container.innerHTML = areaTagsHtml;
     let areas = container.querySelectorAll('area[onmouseover]');
-    for (let area of areas) {
-      let matches = onMouseOverRegexp.exec(area.getAttribute('onmouseover'));
-      if (matches == null) {
-        continue;
-      }
-      let [, pragma = '', content = '' ] = matches;
-      if (pragma === 'javascript:') {
-        let contentFn = new Function('"use strict"; return ' + content.replace(/^escape\((.*)\)$/, '$1').replace(/\\/g, ''));
-        area.setAttribute('title', contentFn.call(area));
-      }
-      else if (pragma === 'url:') {
-        area.setAttribute('data-url', content);
-      }
-      else {
-        area.setAttribute('title', content);
-      }
-      area.removeAttribute('onmouseover');
-      area.onmouseover = null;
-    }
-
     $(this.mapContainerNode)
     .empty()
     .append(areas)
     .find('area')
+    .attr('gbrowse-onmouseover', function() {
+      let onmouseoverValue = this.getAttribute('onmouseover');
+      this.removeAttribute('onmouseover');
+      this.onmouseover = null;
+      return onmouseoverValue;
+    })
     .wdkTooltip({
+      content: {
+        text(event, api) {
+          let matches = onMouseOverRegexp.exec(this.attr('gbrowse-onmouseover'));
+          if (matches == null) {
+            return;
+          }
+          let [, pragma = '', content = '' ] = matches;
+          if (pragma === 'javascript:') {
+            let contentFn = new Function('"use strict"; return ' + content.replace(/^escape\((.*)\)$/, '$1').replace(/\\/g, ''));
+            return contentFn.call(this.get(0));
+          }
+          else if (pragma === 'url:') {
+            $.get(content).then(
+              (data) => api.set('content.text', data),
+              (xhr, status, error) => api.set('content.text', status + ': ' + error)
+            );
+          }
+          else {
+            return content;
+          }
+        }
+      },
       position: {
         my: 'bottom center',
         at: 'center center',
