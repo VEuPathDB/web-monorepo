@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import { Components, ComponentUtils } from 'wdk-client';
 
+let { CollapsibleSection } = Components;
+
 // Renders an Expression graph with the provided rowData.
 // rowData comes from an ExpressionTable record table.
 //
@@ -19,11 +21,18 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       details: null,
       graphId: null,
       visibleParts: null,
-      dataTableCollapsed: true
+      dataTableCollapsed: true,
+      coverageCollapsed: true
     };
     this.handleDataTableCollapseChange = dataTableCollapsed => {
       this.setState({ dataTableCollapsed });
     }
+
+       this.handleCoverageCollapseChange = coverageCollapsed => {
+           this.setState({ coverageCollapsed });
+       }
+
+
   }
 
   componentDidMount() {
@@ -59,6 +68,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
         visibleParts,
         graphId,
         details: {
+          assay_type: rowData.assay_type,
           baseUrl,
           parts,
           graphIds,
@@ -67,7 +77,8 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
           y_axis: rowData.y_axis
         },
           datasetId: rowData.dataset_id,
-          dataTable: dataTable
+          dataTable: dataTable,
+          dataset_name: rowData.dataset_name
       })
     });
   }
@@ -102,9 +113,10 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       return this.renderLoading();
     }
 
-    let { visibleParts, graphId, dataTable, datasetId} = this.state;
+    let { visibleParts, graphId, dataTable, datasetId, dataset_name} = this.state;
 
     let {
+      assay_type,
       baseUrl,
       parts,
       graphIds,
@@ -116,7 +128,8 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
     let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}`;
 
     let imgUrl = baseUrlWithState + '&fmt=png';
-    let tableUrl = baseUrlWithState + '&fmt=table';
+
+    let covImgUrl = dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'Coverage';
 
     return (
       <div className="eupathdb-ExpressionGraphContainer">
@@ -130,6 +143,24 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
             onError={() => this.setState({ loading: false, imgError: true })}
           />
           {this.renderImgError()}
+
+
+          {assay_type == 'RNA-seq' ?
+           <CollapsibleSection 
+               id={dataset_name + "Coverage"}
+               className="eupathdb-GbrowseContext"
+               headerContent="Coverage"
+               isCollapsed={this.state.coverageCollapsed}
+               onCollapsedChange={this.handleCoverageCollapseChange}>
+               <div>
+                   <a href={covImgUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
+               </div>
+ 
+               <img width="450" src={covImgUrl}/>
+           </CollapsibleSection>
+           : null}
+
+
         </div>
         <div className="eupathdb-ExpressionGraphDetails">
 
