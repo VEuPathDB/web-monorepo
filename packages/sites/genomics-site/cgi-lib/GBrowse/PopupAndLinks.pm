@@ -68,7 +68,8 @@ sub ArrayElementLink {
 sub snpLink {
   my $f = shift;
   my $name = $f->name;
-  my $link = "/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$name";
+  my ($type) = $f->get_tag_values('type');
+  my $link = "/a/app/record/$type/$name";
   return $link;
 }
 
@@ -206,6 +207,7 @@ sub snpTitleQuick {
   my ($gene) = $f->get_tag_values("Gene"); 
   my ($isCoding) = $f->get_tag_values("IsCoding"); 
   my ($nonSyn) = $f->get_tag_values("NonSyn"); 
+  my ($nonsense) = $f->get_tag_values("Nonsense"); 
   my ($rend) = $f->get_tag_values("rend"); 
   my ($base_start) = $f->get_tag_values("base_start");
   my $zoom_level = $rend - $base_start; 
@@ -219,50 +221,56 @@ sub snpTitleQuick {
   my ($minor_allele) = $f->get_tag_values("minor_allele");
   my ($major_allele_count) = $f->get_tag_values("major_allele_count");
   my ($minor_allele_count) = $f->get_tag_values("minor_allele_count");
+  my ($major_allele_freq) = $f->get_tag_values("major_allele_freq");
+  my ($minor_allele_freq) = $f->get_tag_values("minor_allele_freq");
   my ($major_product) = $f->get_tag_values("major_product");
   my ($minor_product) = $f->get_tag_values("minor_product");
   my ($source_id) = $f->get_tag_values("source_id");
+  my ($link_type) = $f->get_tag_values("type");
 
   my $start = $f->start();
   my %revArray = ( 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' );
 
-  my $link = "<a href='/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$source_id'>$source_id</a>";
+  my $link = "<a href='/a/app/record/$link_type/$source_id'>$source_id</a>";
          
   my $type = 'Non-coding';
   my  $refNA = $gene_strand == -1 ? $revArray{$reference_na} : $reference_na;
+
+  my $num_strains = $major_allele_count + $minor_allele_count;
 
   my $testNA = $reference_na;
 
   my $refAAString = ''; 
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
-     $type = "Coding (synonymous)";
-     $type = "Coding (non-synonymous)" if ($nonSyn == 1);
+     $type = "Coding (".($nonsense ? "nonsense)" : $nonSyn ? "non-synonymous)" : "synonymous)");
      $refAAString = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$reference_aa";
-  }
+     $minor_product = $nonsense || $nonSyn ? $minor_product : $major_product;
+   }else{
+     $minor_product = '&nbsp';
+   }
+
 
   my @data;
   push(@data, ['SNP' => $link]);
   push(@data, ['Location' => $start]);
+  push(@data, ['Number of strains' => $num_strains]);
   push(@data, ['Gene' => $gene]) if $gene;
 
-  my ($majorProductString, $minorProductString);
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
     push(@data, ['Position&nbsp;in&nbsp;CDS' => $position_in_CDS]);
     push(@data, ['Position&nbsp;in&nbsp;protein' => $position_in_protein]);
-
-    $majorProductString = "AA=$major_product ";
-    $minorProductString = "AA=$minor_product ";
   }
 
   push(@data, ['Type' => $type]);
-  push(@data, ["$reference_strain"."&nbsp;(reference)" => " NA=$refNA $refAAString"]);
+  push(@data, ['' => 'NA&nbsp;&nbsp;&nbsp;'.($isCoding ? 'AA&nbsp;&nbsp;&nbsp;(frequency)' : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(frequency)')]);
+  push(@data, ["$reference_strain"."&nbsp;(reference)" => "&nbsp;$refNA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp$reference_aa"]);
 
   
   $major_allele = $revArray{$major_allele} if($gene_strand == -1);
   $minor_allele = $revArray{$minor_allele} if($gene_strand == -1);
 
-  push(@data, ['Major Allele' => "NA=$major_allele $majorProductString($major_allele_count)"]);
-  push(@data, ['Minor Allele' => "NA=$minor_allele $minorProductString($minor_allele_count)"]);
+  push(@data, ['Major Allele' => "&nbsp;$major_allele&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$major_product&nbsp;&nbsp;&nbsp;&nbsp;($major_allele_freq)"]);
+  push(@data, ['Minor Allele' => "&nbsp;$minor_allele&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$minor_product&nbsp;&nbsp;&nbsp;&nbsp;($minor_allele_freq)"]);
 
   hover($f, \@data);
 }
