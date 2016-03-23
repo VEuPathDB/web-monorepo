@@ -129,7 +129,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
 
     let imgUrl = baseUrlWithState + '&fmt=png';
 
-    let covImgUrl = dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'Coverage';
+    let covImgUrl = dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'CoverageUnlogged';
 
     return (
       <div className="eupathdb-ExpressionGraphContainer">
