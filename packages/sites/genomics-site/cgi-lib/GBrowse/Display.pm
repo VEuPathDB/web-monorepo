@@ -249,6 +249,22 @@ sub gsnapIntronHeightFromScore {
   return 11;   # Firebrick
 }
 
+sub gsnapIntronHeightFromPercent {
+  my $f = shift;
+
+  my ($perc) = $f->get_tag_values('IntronPercent'); 
+
+  # http://www.computerhope.com/htmcolor.htm
+  return 3 if $perc <= 5;   # Gray Cloud
+  return 5 if $perc <= 20;   # Dark Orange
+##  return 6 if $score <= 10;  # Dark Orange1
+  return 7 if $perc <= 40;  # Dark Orange2
+##  return 8 if $score <= 50;  # Dark Orange3
+  return 9 if $perc <= 60; # Sienna
+  return 11 if $perc <= 80; # Sienna4
+  return 13;   # Firebrick
+}
+
 sub gsnapIntronUnifiedWidth {
   my $f = shift;
   my ($scores) = $f->get_tag_values('Scores'); 
