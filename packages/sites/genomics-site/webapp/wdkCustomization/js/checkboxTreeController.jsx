@@ -92,4 +92,14 @@ export default class CheckboxTreeController {
   loadCurrentSelectedList() {
     this.updateSelectedList(this.currentSelectedList);
   }
+
+  /**
+   * Resets state to original inputs
+   */
+  resetState() {
+    this.searchText = "";
+    this.selectedList = this.currentSelectedList.concat();
+    this.expandedList = null;
+    this.displayCheckboxTree();
+  }
 }

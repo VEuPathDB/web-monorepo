@@ -21,7 +21,7 @@
 <c:set var="currentSelectedList" value="${wdkAnswer.displayableAttributeTree.selectedAsList}" />
 <c:set var="viewName" value="${requestScope.wdkView.name}" />
 
-<input type="button" onclick="wdk.resultsPage.openAttributeList(this);" class="addAttributesButton" value="Add Columns" />
+<input type="button" onclick="wdk.resultsPage.openAttributeList(this,'${viewName}');" class="addAttributesButton" value="Add Columns" />
 
 <div class="attributesList formPopup" title="Select Columns">
 

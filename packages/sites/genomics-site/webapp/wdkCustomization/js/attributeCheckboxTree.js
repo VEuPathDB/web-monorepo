@@ -6,6 +6,9 @@ import WdkService from 'wdk-client-utils/WdkService';
 wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
   "use strict";
 
+  // will map from summary views to attribute tree controller for that view
+  let controllerMap = {};
+  
   /**
    * Entry into a custom attribute selector pop-up, which appears when the user
    * clicks the Add Columns button on the header of the results table.  It has
@@ -36,6 +39,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
         let selectedList = currentSelectedList || defaultSelectedList;
         let controller = new CheckboxTreeController(element, "selectedFields",
             categoryTree, selectedList, defaultSelectedList);
+        controllerMap[attributes.viewName] = controller;
         controller.displayCheckboxTree();
       }
       catch (error) {
@@ -49,6 +53,14 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     });
   }
 
+  function resetCheckboxTree(viewName) {
+    let controller = controllerMap[viewName];
+    if (controller) {
+      controller.resetState();
+    }
+  }
+  
   ns.setupCheckboxTree = setupCheckboxTree;
+  ns.resetCheckboxTree = resetCheckboxTree;
 
 });
