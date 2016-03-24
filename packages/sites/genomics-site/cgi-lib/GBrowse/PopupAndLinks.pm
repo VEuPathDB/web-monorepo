@@ -829,7 +829,7 @@ sub gsnapIntronTitleUnified {
   my $start = $f->start;
   my $stop = $f->stop;
 
-  my $sum = eval join '+', split /[,|\|]/, $urs;
+  my $sum = eval join '+', split /[,|\|]/, $scores;
 
   my @sample_arr = split /\|/, $samples;
   my @score_arr  = split /\|/, $scores;
