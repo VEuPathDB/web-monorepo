@@ -824,6 +824,7 @@ sub gsnapIntronTitleUnified {
   my ($urs) = $f->get_tag_values('URS');
   my ($nrs) =  $f->get_tag_values('NRS');
   my ($perc) = $f->get_tag_values('IntronPercent'); 
+  my ($ratio) = $f->get_tag_values('IntronRatio'); 
 
   my $start = $f->start;
   my $stop = $f->stop;
@@ -837,11 +838,12 @@ sub gsnapIntronTitleUnified {
   my @ur_arr    = split /\|/, $urs;
   my @nrs_arr    = split /\|/, $nrs;
 
-  my $note = "The overall score is the sum of the short and long overlap unique reads from all samples.";
+  my $note = "The overall score is the sum of the unique and non-unique reads from all samples.";
   my @data;
   push @data, [ 'Location:'  => "$start - $stop"];
-  push @data, [ '<b>Percent</b>'  => "<b>$perc</b>"] if $perc;
   push @data, [ '<b>Score</b>'     => "<b>$sum</b>" ];
+  push @data, [ '<b>Percent of Max</b>'  => "<b>$perc</b>"] if $perc;
+  push @data, [ '<b>Score/Expression</b>'  => "<b>$ratio</b>"] if $ratio;
   push @data, [ '<b>Note</b>'     => $note ];
 
   my $count = 0;
