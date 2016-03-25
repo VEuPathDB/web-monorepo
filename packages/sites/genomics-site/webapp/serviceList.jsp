@@ -104,18 +104,23 @@ Find all (${organism}) genes that have molecular weight between 10,000 and 50,00
 
 <br><br><br>
 <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
+
 <c:set var="gqSet" value="${qSetMap['GenomicSequenceQuestions']}"/>
 <c:set var="gqMap" value="${gqSet.questionsMap}"/>
-
 <c:set var="seqByIdQuestion" value="${gqMap['SequenceBySourceId']}"/>
 <c:set var="sidqpMap" value="${seqByIdQuestion.paramsMap}"/>
 <c:set var="seqIdParam" value="${sidqpMap['sequenceId']}"/>
 
+<c:set var="geneqSet" value="${qSetMap['GeneQuestions']}"/>
+<c:set var="geneqMap" value="${geneqSet.questionsMap}"/>
+<c:set var="geneByIdQuestion" value="${geneqMap['GeneByLocusTag']}"/>
+<c:set var="gidqpMap" value="${geneByIdQuestion.paramsMap}"/>
+<c:set var="geneIdParam" value="${gidqpMap['ds_gene_ids']}"/>
 
-<b style="font-size:120%">Note about downloading sequences in a FASTA format:</b><br>
-Please use the following URL's to download FASTA files with DNA sequence for specific genomic segments:
+<b style="font-size:120%">Downloading DNA sequences in a text file in FASTA format:</b><br>
+<br>For specific genomic segments:
 <ul>
-<li>To download one sequence, please use one of the following formats:
+<li>To download one sequence, please use one of the following URL formats:
 <br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700">
   http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700</a>
 <br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)">
@@ -124,6 +129,13 @@ Please use the following URL's to download FASTA files with DNA sequence for spe
 <li>For multiple sequences use the line feed character (%0A) as separator (comma or semicolon or carriage return do not work):
 <br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)">
 http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)</a>
+</li>
+</ul>
+
+For gene related regions:
+<ul>
+<li>To download one sequence, please use one of the following URL format:
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/geneSrt?project_id=${wdkModelDispName}&ids=${geneIdParam.default}&type=genomic&upstreamAnchor=Start&upstreamSign=minus&upstreamOffset=10&downstreamAnchor=End&downstreamSign=plus&downstreamOffset=2000">http://${wdkModelDispName}.org/cgi-bin/geneSrt?project_id=${wdkModelDispName}&ids=${geneIdParam.default}&type=genomic&upstreamAnchor=Start&upstreamSign=minus&upstreamOffset=10&downstreamAnchor=End&downstreamSign=plus&downstreamOffset=2000</a>
 </li>
 </ul>
 
