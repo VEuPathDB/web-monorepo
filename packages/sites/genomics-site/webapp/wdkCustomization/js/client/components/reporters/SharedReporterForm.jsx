@@ -7,7 +7,6 @@ let { isQualifying, addSearchSpecificSubtree } = eupathdb.attributeCheckboxTree;
 let SharedReporterForm = props => {
 
   let { question, recordClass, formState, onFormChange, onSubmit, ontology } = props;
-  let attributeTree = util.getTree(ontology, isQualifying('download'));
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
 
   return (
