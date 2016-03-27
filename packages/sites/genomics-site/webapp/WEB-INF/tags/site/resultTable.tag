@@ -137,8 +137,8 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
 <!-- if TRANSCRIPT VIEW -->
   <c:if test="${view eq 'transcripts'}">
     <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
-    <div style="font-size:120%;padding-bottom:5px">
-      <input style="transform:scale(1.5);margin:0 10px 0;" type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
+    <div style="padding:0 2px 4px">
+      <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
              onclick="javascript:toggleRepresentativeTranscripts(this)">
       Show Only One Transcript Per Gene
     </div>
