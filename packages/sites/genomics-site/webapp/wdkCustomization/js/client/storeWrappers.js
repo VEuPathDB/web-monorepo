@@ -27,7 +27,7 @@ export function RecordViewStore(WdkRecordViewStore) {
     reduce(state, action) {
       let nextState = super.reduce(state, action);
       switch (action.type) {
-        case actionTypes.SET_ACTIVE_RECORD: {
+        case actionTypes.ACTIVE_RECORD_RECEIVED: {
           let { record, recordClass } = nextState;
           if (recordClass.name === 'GeneRecordClasses.GeneRecordClass' &&
               record.attributes.gene_type !== 'protein coding') {
