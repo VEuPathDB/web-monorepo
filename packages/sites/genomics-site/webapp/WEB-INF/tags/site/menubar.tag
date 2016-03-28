@@ -40,6 +40,7 @@
     <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 </c:catch>
 
+<%-- unused
 <c:choose>
 <c:when test="${wdkUser.stepCount == null}">
 <c:set var="count" value="0"/>
@@ -48,6 +49,8 @@
 <c:set var="count" value="${wdkUser.strategyCount}"/>
 </c:otherwise>
 </c:choose>
+--%>
+
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
 
 <%-- this isn't needed anymore with the superfish menu bar
