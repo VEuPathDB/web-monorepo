@@ -16,7 +16,6 @@ export function isNodeOverflowing(node) {
  */
 export function getBestPosition(element, aroundElement = null) {
   let elementRectangle = element.getBoundingClientRect();
-  console.log('elementRectangle', elementRectangle);
   let containerRectangle = {
     left: 0,
     right: window.innerWidth,
@@ -31,7 +30,6 @@ export function getBestPosition(element, aroundElement = null) {
 
   if (aroundElement != null) {
     let aroundRectangle = aroundElement.getBoundingClientRect();
-    console.log('aroundRectangle', aroundRectangle);
     let goRight = containerRectangle.right - aroundRectangle.right > elementRectangle.width;
     let goLeft = !goRight && aroundRectangle.left - containerRectangle.left > elementRectangle.width;
     let goUp = aroundRectangle.top - containerRectangle.top > elementRectangle.height;
