@@ -53,7 +53,7 @@
           <ul>       <%-- GENE CATEGORIES --%>
 
 <c:if test="${from != 'webservices'}">
-  <li><a href="/plasmo.aurreco/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
+  <li><a href="showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
   </li>
 </c:if>
             <c:forEach items="${children}" var="catEntry">
