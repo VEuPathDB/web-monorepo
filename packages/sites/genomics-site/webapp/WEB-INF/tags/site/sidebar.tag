@@ -211,7 +211,7 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
  <a class="twitter-timeline" data-chrome="nofooter"  height="50"  href="https://twitter.com/eupathdb" data-widget-id="344817818073714691"></a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs")
 ;</script>
-</cif>
+</c:if>
 
 </div>  <%-- section that opens and closes --%>
 
