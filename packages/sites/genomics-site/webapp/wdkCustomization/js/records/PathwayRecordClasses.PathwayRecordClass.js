@@ -317,10 +317,12 @@ vis.ready(function() {
 			n.data.image = "";
 			n.data.xaxis = "";
 		    }
-		    vis.updateData([n]);
+		    //vis.updateData([n]);
 		}  // if enzyme
 	    }
-
+	    vis.updateData(nodes.filter(node => {
+	      node.data.Type === "enzyme"
+	    }));
 	    vis.nodeTooltipsEnabled(true);
 	    vis.visualStyleBypass(style);
 	};
