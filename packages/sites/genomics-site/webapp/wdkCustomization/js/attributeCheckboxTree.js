@@ -20,7 +20,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
    * class name, default selected list, current selected list, view name
    * @returns {Promise.<T>}
    */
-  function setupCheckboxTree(element, attributes) {
+  function setUpCheckboxTree(element, attributes) {
     let questionName = attributes.questionName;
     let recordClassName = attributes.recordClassName;
     let defaultSelectedList = attributes.defaultSelectedList.replace(/'/g,"").split(",");
@@ -40,7 +40,6 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
         let controller = new CheckboxTreeController(element, "selectedFields",
             categoryTree, selectedList, defaultSelectedList);
         controllerMap[attributes.viewName] = controller;
-        controller.displayCheckboxTree();
       }
       catch (error) {
         console.error(error);
@@ -53,14 +52,23 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     });
   }
 
-  function resetCheckboxTree(viewName) {
+  function mountCheckboxTree(viewName) {
     let controller = controllerMap[viewName];
     if (controller) {
-      controller.resetState();
+      controller.renderTree();
+    }
+    
+  }
+
+  function unmountCheckboxTree(viewName) {
+    let controller = controllerMap[viewName];
+    if (controller) {
+      controller.unmountTree();
     }
   }
   
-  ns.setupCheckboxTree = setupCheckboxTree;
-  ns.resetCheckboxTree = resetCheckboxTree;
+  ns.setUpCheckboxTree = setUpCheckboxTree;
+  ns.mountCheckboxTree = mountCheckboxTree;
+  ns.unmountCheckboxTree = unmountCheckboxTree;
 
 });

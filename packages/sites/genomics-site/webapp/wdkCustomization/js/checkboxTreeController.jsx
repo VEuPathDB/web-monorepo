@@ -16,20 +16,25 @@ export default class CheckboxTreeController {
     this.currentSelectedList = (selectedList ? selectedList.concat() : []);
 
     // set dynamic properties that change over the life of this object
-    this.searchText = "";
-    this.selectedList = selectedList;
-    this.expandedList = null; // let the checkbox tree decide for now
+    this.state = this.getOriginalState();
 
-    // bind functions that reference 'this' to this object
+    // bind functions to this object will be called as stand-alone functions
     this.setSearchText = this.setSearchText.bind(this);
-    this.displayCheckboxTree = this.displayCheckboxTree.bind(this);
     this.updateSelectedList = this.updateSelectedList.bind(this);
     this.updateExpandedList = this.updateExpandedList.bind(this);
-    this.loadDefaultSelectedList = this.loadDefaultSelectedList.bind(this);
-    this.loadCurrentSelectedList = this.loadCurrentSelectedList.bind(this);
   }
 
-  displayCheckboxTree() {
+  // returns a deep copy of original state so original state stays independent
+  getOriginalState() {
+    return {
+      searchText: "",
+      selectedList: this.currentSelectedList.concat(),
+      // let the checkbox tree calculate
+      expandedList: null
+    };
+  }
+  
+  renderTree() {
     let treeProps = {
       tree: this.tree,
       getNodeId: getNodeId,
@@ -37,9 +42,9 @@ export default class CheckboxTreeController {
       onExpansionChange: this.updateExpandedList,
       showRoot: false,
       nodeComponent: BasicNodeComponent,
-      expandedList: this.expandedList,
+      expandedList: this.state.expandedList,
       isSelectable: true,
-      selectedList: this.selectedList,
+      selectedList: this.state.selectedList,
       name: this.name,
       onSelectionChange: this.updateSelectedList,
       currentList: this.currentSelectedList,
@@ -48,7 +53,7 @@ export default class CheckboxTreeController {
       showSearchBox: true,
       searchBoxPlaceholder: "Search Columns...",
       searchBoxHelp: "Each column's name and description will be searched for your exact input text",
-      searchText: this.searchText,
+      searchText: this.state.searchText,
       onSearchTextChange: this.setSearchText,
       searchPredicate: nodeSearchPredicate
     };
@@ -56,8 +61,8 @@ export default class CheckboxTreeController {
   }
 
   setSearchText(value) {
-    this.searchText = value;
-    this.displayCheckboxTree();
+    this.state.searchText = value;
+    this.renderTree();
   }
 
   /**
@@ -65,8 +70,8 @@ export default class CheckboxTreeController {
    * @param selectedList - array of the values of the selected nodes
    */
   updateSelectedList(selectedList) {
-    this.selectedList = selectedList;
-    this.displayCheckboxTree();
+    this.state.selectedList = selectedList;
+    this.renderTree();
   }
 
   /**
@@ -74,32 +79,15 @@ export default class CheckboxTreeController {
    * @param expandedList - array of the values of the expanded nodes
    */
   updateExpandedList(expandedList) {
-    this.expandedList = expandedList;
-    this.displayCheckboxTree();
-  }
-
-  /**
-   * Callback to update the selected node list to reflect the default selected list and re-render the tree
-   */
-  loadDefaultSelectedList() {
-    this.updateSelectedList(this.defaultSelectedList);
-  }
-
-  /**
-   * Callback to update the selected node list to reflect the selections in place when the add columns form was last submitted
-   * or the current user preferences and to re-render the tree
-   */
-  loadCurrentSelectedList() {
-    this.updateSelectedList(this.currentSelectedList);
+    this.state.expandedList = expandedList;
+    this.renderTree();
   }
 
   /**
    * Resets state to original inputs
    */
-  resetState() {
-    this.searchText = "";
-    this.selectedList = this.currentSelectedList.concat();
-    this.expandedList = null;
-    this.displayCheckboxTree();
+  unmountTree() {
+    ReactDOM.unmountComponentAtNode(this.element[0]);
+    this.state = this.getOriginalState();
   }
 }

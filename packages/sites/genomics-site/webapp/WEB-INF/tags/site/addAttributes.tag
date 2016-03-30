@@ -37,7 +37,7 @@
          data-default-selected-list="${defaultSelectedList}"
          data-current-selected-list="${currentSelectedList}"
          data-view-name="${viewName}"
-         data-controller="eupathdb.attributeCheckboxTree.setupCheckboxTree">
+         data-controller="eupathdb.attributeCheckboxTree.setUpCheckboxTree">
     </div>
    
     <div class="formButtonPanel">
