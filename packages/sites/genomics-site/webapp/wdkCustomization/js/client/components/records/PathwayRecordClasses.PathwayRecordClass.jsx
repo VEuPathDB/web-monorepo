@@ -222,7 +222,7 @@ let makeVis = function(pathwayId, pathwaySource) {
 
       if (type == "metabolic process") {
         //print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&source_id=" + target.data["Description"] + "'>" + target.data["label"] + "</a>");
-        print("<b>Pathway:  </b>" + "<a href='" + wdk.webappUrl("/app/record/pathway/" + target.data["Description"] + "/" + pathwaySource) + "'>" + target.data["label"] + "</a>");
+        print("<b>Pathway:  </b>" + "<a href='" + wdk.webappUrl("/app/record/pathway/" + pathwaySource + "/" + target.data["Description"]) + "'>" + target.data["label"] + "</a>");
         print("");
         print("<a href='http://www.genome.jp/dbget-bin/www_bget?" + target.data["Description"] + "'>View in KEGG</a>");
       }
