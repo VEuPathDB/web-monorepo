@@ -351,7 +351,7 @@ export let RecordUI = React.createClass({
       GenomeHistory,
       Version,
       ExampleGraphs,
-      Isolates
+    //  Isolates
     } = tables;
 
     return (
@@ -419,16 +419,16 @@ export let RecordUI = React.createClass({
           </div>
 
           <div className="eupathdb-DatasetRecord-Sidebar">
-            <Organisms organisms={organisms}/>
-            <Searches searches={References} questions={questions} recordClasses={recordClasses}/>
+         {/*    <Organisms organisms={organisms}/>
+            <Searches searches={References} questions={questions} recordClasses={recordClasses}/>  */}
             <Links links={HyperLinks}/>
-            <IsolatesList isolates={Isolates}/>
-            <ReleaseHistory history={GenomeHistory}/>
+          {/*  <IsolatesList isolates={Isolates}/> 
+            <ReleaseHistory history={GenomeHistory}/>  */}
             <Versions versions={Version}/>
           </div>
 
         </div>
-        <Graphs graphs={ExampleGraphs}/>
+        <Graphs graphs={ExampleGraphs}/> 
       </Main>
     );
   }
