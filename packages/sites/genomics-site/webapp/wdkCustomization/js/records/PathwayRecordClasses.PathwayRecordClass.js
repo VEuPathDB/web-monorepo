@@ -321,7 +321,7 @@ vis.ready(function() {
 		}  // if enzyme
 	    }
 	    vis.updateData(nodes.filter(node => {
-	      node.data.Type === "enzyme"
+	      return node.data.Type === "enzyme"
 	    }));
 	    vis.nodeTooltipsEnabled(true);
 	    vis.visualStyleBypass(style);
