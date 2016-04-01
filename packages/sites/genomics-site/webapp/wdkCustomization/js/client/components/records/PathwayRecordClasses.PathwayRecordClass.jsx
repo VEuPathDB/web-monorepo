@@ -298,7 +298,7 @@ let makeVis = function(pathwayId, pathwaySource) {
 
     var labelSize = {
       attrName: "Type",
-      entries: [{attrValue: "molecular entity", value: 0}],
+      entries: [{attrValue: "molecular entity", value: 0}]
     };
 
     // to not show arrowhead for a Reversible reaction
@@ -366,10 +366,12 @@ let makeVis = function(pathwayId, pathwaySource) {
             n.data.image = "";
             n.data.xaxis = "";
           }
-          vis.updateData([n]);
+          //vis.updateData([n]);
         }  // if enzyme
       }
-
+      vis.updateData(nodes.filter(node => {
+        return node.data.Type === "enzyme"
+      }));
       vis.nodeTooltipsEnabled(true);
       vis.visualStyleBypass(style);
     };
