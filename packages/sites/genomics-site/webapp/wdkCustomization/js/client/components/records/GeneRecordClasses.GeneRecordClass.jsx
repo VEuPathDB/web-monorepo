@@ -224,6 +224,37 @@ function extractGeneAndTranscriptTrees(categories) {
     return treeCache.get(categories);
 }
 
+export function RecordHeading(props) {
+  let { attributes: a } = props.record;
+  let params = {
+    stableId: a.source_id,
+    commentTargetId: 'gene',
+    externalDbName: a.external_db_name,
+    externalDbVersion: a.external_dn_version,
+    organism: a.genus_species,
+    locations: a.start_min + '-' + a.end_max,
+    contig: a.sequence_id,
+    strand: a.strand_plus_minus,
+    flag: 0,
+    bulk: 0
+  };
+  let queryParams = Object.keys(params)
+  .map(key => `${key}=${params[key]}`)
+  .join('&');
+  let url = `addComment.do?${queryParams}`;
+  let headerActions = props.headerActions.concat({
+    label: 'Add a comment',
+    iconClassName: 'fa fa-lg fa-comments',
+    onClick(event) {
+      event.preventDefault();
+      window.location = wdk.webappUrl(url);
+    }
+  });
+  return (
+    <props.DefaultComponent {...props} headerActions={headerActions}/>
+  );
+}
+
 export function RecordNavigationSectionCategories(props) {
     let { categories } = props;
     let { geneRoot, transcriptRoot } = extractGeneAndTranscriptTrees(categories);

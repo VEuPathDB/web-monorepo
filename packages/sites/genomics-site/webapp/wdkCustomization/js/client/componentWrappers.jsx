@@ -113,6 +113,15 @@ export function RecordUI(DefaultComponent) {
   };
 }
 
+// Customize the Record Component
+export function RecordHeading(DefaultComponent) {
+  return function ApiRecordHeading(props) {
+    let ResolvedComponent =
+      findComponent('RecordHeading', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+  };
+}
+
 export function Record(DefaultComponent) {
   return function ApiRecord(props) {
     let ResolvedComponent =
