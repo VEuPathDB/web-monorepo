@@ -18,19 +18,20 @@
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
 <c:set var="questionName" value="${step.answerValue.question.name}"/>
 <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
+
 <c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
+  <c:set var="showViewFilter" value="${step.answerValue.resultSize != step.answerValue.displayResultSize}"/>
   <c:set var="trRecord" value="true"/>
+  <%-- gene count with missing tr --%>
+  <c:set var="genesMissingTranscriptsCount" 
+         value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
+  <%-- debug:
+  <br>
+     genes with missing transcripts: ${genesMissingTranscriptsCount}
+  <br> 
+  --%>
 </c:if>
 
-<%-- gene count with missing tr --%>
-<c:set var="genesMissingTranscriptsCount"
-       value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
-
-<%-- debug:
-<br>
-genes with missing transcripts: ${genesMissingTranscriptsCount}
-<br> 
---%>
 
 <!-- step could be single or combined:
      single: will show icon in the tr-tab if there are missing trasncripts (N <> 0)
@@ -39,15 +40,15 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
                  span logic combined step: do not show anything
 -->
 
-<!-- ANY TAB, ANY STEP -->
+<!-- ANY TAB, ANY STEP, ANY RECORD -->
 <div id="${view}">
 
-<!-- if LEAF step, if this is a Transcript Record and NOT a basket result:
+  <!-- if LEAF step, if this is a Transcript Record and NOT a basket result:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed
--->
-<!-- THIS condition is used too in MatchedTranscriptFilter.defaultValue(), accessed by every newly created step.
+  -->
+  <!-- THIS condition is used too in MatchedTranscriptFilter.defaultValue(), accessed by every newly created step.
        defaultValue() will be null for the leaf steps outside the condition 
--->
+  -->
   <c:if test="${!step.isCombined && trRecord eq 'true' && !fn:containsIgnoreCase(questionName, 'basket') }"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['matched_transcript_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
@@ -60,7 +61,7 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
     <div class="gene-leaf-filter ui-helper-clearfix"
          data-step="${step.stepId}"
          data-filter="matched_transcript_filter_array">
-      <p style="text-align: center; margin: .4em 0;">
+      <p>
         <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >
         <strong title="${genesMissingTranscriptsCount}">
           Some Genes in your result have Transcripts that did not meet the search criteria.
@@ -90,7 +91,7 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
   </c:if>  
 
 
-<!-- if boolean step (spanlogic does not need filter for now): if this is a Transcript Record:
+  <!-- if boolean step (spanlogic does not need filter for now): if this is a Transcript Record:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
   <c:if test="${step.isBoolean && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
@@ -104,7 +105,7 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
     <div class="gene-boolean-filter ui-helper-clearfix"
          data-step="${step.stepId}"
          data-filter="gene_boolean_filter_array">
-      <p style="text-align: center; margin: .4em 0;">
+      <p>
         <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' >
         <strong>
           Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.
@@ -118,9 +119,10 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
           <div class="gene-boolean-filter-summary">
             Loading filters...
           </div>
-          <p>
+          <p style="text-align:center">
             <button disabled="yes" class="gene-boolean-filter-apply-button" title="To enable this button, select/unselect transcript sets.">Apply selection</button>
           </p>
+
         </form>
 
         <!-- DEBUG
@@ -134,19 +136,20 @@ genes with missing transcripts: ${genesMissingTranscriptsCount}
   </c:if>  
  
 
-<!-- if TRANSCRIPT VIEW -->
-  <c:if test="${view eq 'transcripts'}">
+<!-- if TRANSCRIPT VIEW, if Transcript count different than Gene count we show the view filter 'show only one transcript per gene' -->
+<%--   <c:if test="${view eq 'transcripts'}">  --%>
+  <c:if test="${showViewFilter eq 'true'}"> 
     <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
-    <div style="padding:0 2px 4px">
+    <div id="onlyOneTrPerGene">
       <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
              onclick="javascript:toggleRepresentativeTranscripts(this)">
-      Show Only One Transcript Per Gene
+      <span>Show Only One Transcript Per Gene</span>
     </div>
    <%-- <c:set var="excludeBasketColumn" value="true" />  not needed since we have only one tab the _default view--%>
   </c:if>
 
 
-<!-- ANY STEP, ANY VIEW -->
+<!-- ANY TAB, ANY STEP, ANY RECORD -->
   <wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}"/>
 
 </div>  <!--  end div ${view} -->

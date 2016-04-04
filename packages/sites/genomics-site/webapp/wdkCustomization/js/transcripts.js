@@ -63,7 +63,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         toggleGeneBooleanFilterExpansion($filter, expand);
 
         // this shows the warning sentence only; the table has display none, controlled by toggle via class name association
-        $filter.css('display', 'block');
+        $filter.css('display', 'inline-block');
 
 	/*
         // icon in transcript tab
@@ -241,7 +241,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         // if N > 0 we show table
         if ($filter.find('table').data('display')) {
           // this shows the warning sentence only; the table has display none, controlled by toggle via class name association
-          $filter.css('display', 'block');
+          $filter.css('display', 'inline-block');
 	  /*
           // icon in transcript tab
           if ( $('i#tr-warning').length == 0 ){
