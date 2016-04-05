@@ -1,6 +1,6 @@
 wdk.namespace('eupathdb.transcripts', function(ns, $) {
 
-  var GENE_BOOLEAN_FILTER_EXPANDED_KEY = "eupathdb::gene_boolean_filter_expanded";
+  var GENE_TRANSCRIPT_MATCH_FILTER_EXPANDED_KEY = "eupathdb::gene_transcript_match_filter_expanded";
 
   // was used for leaf step, still available in Add Step
   function openTransform(stepId) {
@@ -29,14 +29,31 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
    * @param {ClickEvent} event
    * @param {Number} count Recursive invocation count used for retry logic.
    */
-  function loadGeneBooleanFilter(event, count) {
-    count = count || 0;
+  function initializeGeneBooleanFilter(event) {
     // using $ in a var name is convention to indicate it is a jquery object and we can apply jquery methods without using parenthesis
     var $filter = $(event.target).find('.gene-boolean-filter');
 
+    // get expand state of controls
+    var expand = wdk.user.getPreference(GENE_TRANSCRIPT_MATCH_FILTER_EXPANDED_KEY, false);
+
+    // expand filter controls if expanded is true
+    toggleGeneBooleanFilterExpansion($filter, expand);
+
+    // when user clicks on "Explore"
+    $filter.on('click', '.gene-boolean-filter-controls-toggle', function(e) {
+      e.preventDefault();
+      expand = !expand;
+      wdk.user.setPreference(GENE_TRANSCRIPT_MATCH_FILTER_EXPANDED_KEY, expand);
+      toggleGeneBooleanFilterExpansion($filter, expand);
+    });
+
+    loadGeneBooleanFilter($filter);
+  }
+
+  function loadGeneBooleanFilter($filter, count) {
+    count = count || 0;
     // example of data:  { step=103340140,  filter="gene_boolean_filter_array"}
     var data = $filter.data();
-
     $filter
       .find('.gene-boolean-filter-summary')
       .load('getFilterSummary.do', data, function(response, status) {
@@ -53,14 +70,6 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           return;
         }
 
-        // get expand state of controls
-        var expand = wdk.user.getPreference(GENE_BOOLEAN_FILTER_EXPANDED_KEY, false);
-
-        // store initial checked values as eg: "1101"
-        var initialCheckboxesState = checkBooleanBoxesState($filter).trim();
-
-        // expand filter controls if expanded is true
-        toggleGeneBooleanFilterExpansion($filter, expand);
 
         // this shows the warning sentence only; the table has display none, controlled by toggle via class name association
         $filter.css('display', 'inline-block');
@@ -73,13 +82,8 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         }
 	*/
 
-        // when user clicks on "Explore"
-        $filter.on('click', '.gene-boolean-filter-controls-toggle', function(e) {
-          e.preventDefault();
-          expand = !expand;
-          wdk.user.setPreference(GENE_BOOLEAN_FILTER_EXPANDED_KEY, expand);
-          toggleGeneBooleanFilterExpansion($filter, expand);
-        });
+        // store initial checked values as eg: "1101"
+        var initialCheckboxesState = checkBooleanBoxesState($filter).trim();
 
         // when a boolean filter input box is clicked
         $filter.on('click', '#booleanFilter input[type=checkbox]', function(e) {
@@ -182,50 +186,35 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
   }
 
 
-
-	// ===============================================
-
-
-  // check if we have a boolean filter
-  $(document).on('wdk-results-loaded', loadGeneBooleanFilter);
-  // when boolean filter form submitted
-  $(document).on('submit', '[name=apply-gene-boolean-filter]', applyGeneBooleanFilter);
-
-
-  $(document).on('wdk-results-loaded', loadGeneLeafFilter);
-  $(document).on('submit', '[name=apply-gene-leaf-filter]', applyGeneLeafFilter);
-
-  ns.openTransform = openTransform;
-});
-
-
 	// ===================================================
 
 	// LEAF STEP FILTER
 
 
-  function loadGeneLeafFilter(event) {
+  function initializeGeneLeafFilter(event) {
 
     // using $ in a var name is convention to indicate it is a jquery object and we can apply jquery methods without using parenthesis
     var $filter = $(event.target).find('.gene-leaf-filter');
 
+    // get expand state of controls
+    var expand = wdk.user.getPreference(GENE_TRANSCRIPT_MATCH_FILTER_EXPANDED_KEY, false);
+
+    // expand filter controls if expanded is true
+    toggleGeneLeafFilterExpansion($filter, expand);
+
     // when user clicks on "Explore"
     $filter.on('click', '.gene-leaf-filter-controls-toggle', function(e) {
         e.preventDefault();
-        $filter.find('.gene-leaf-filter-controls').toggle(400);
-        if ( $('a.gene-leaf-filter-controls-toggle').text() === 'Collapse' ) {
-          $('a.gene-leaf-filter-controls-toggle').text('Explore');
-        }
-        else {
-          $('a.gene-leaf-filter-controls-toggle').text('Collapse');
-        };
+        expand = !expand;
+        wdk.user.setPreference(GENE_TRANSCRIPT_MATCH_FILTER_EXPANDED_KEY, expand);
+        toggleGeneLeafFilterExpansion($filter, expand);
       });
 
     // load filter table even if user did not click on "explore", cause we need to show icon
-    reallyLoadGeneLeafFilter($filter);
+    loadGeneLeafFilter($filter);
   }
 
-  function reallyLoadGeneLeafFilter($filter, count) {
+  function loadGeneLeafFilter($filter, count) {
     count = count || 0;
     // example of data:  { step=103340140,  filter="matched_transcript_filter_array"}
     var data = $filter.data();
@@ -236,7 +225,7 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
         // FIXME Remove before release
         // retry once, for some fault tolerance
         if (status == 'error' && count < 1) {
-          reallyLoadGeneLeafFilter($filter, ++count);
+          loadGeneLeafFilter($filter, ++count);
         }
         // if N > 0 we show table
         if ($filter.find('table').data('display')) {
@@ -277,6 +266,17 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
           }
         }
       });
+  }
+
+  /**
+   * @param {jQuery} $filter jQuery container for DOM node
+   * @param {Boolean} expand? Optional state. If not provided, the current state will be toggled
+   */
+  function toggleGeneLeafFilterExpansion($filter, expand) {
+    $filter
+      .find('.gene-leaf-filter-controls').toggle(expand)
+      .end()
+      .find('.gene-leaf-filter-controls-toggle').text(expand ? 'Collapse' : 'Explore');
   }
 
   // parameter: filter jquery object
@@ -347,3 +347,19 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
 	// ===================================================
 
 
+
+
+	// ===============================================
+
+
+  // check if we have a boolean filter
+  $(document).on('wdk-results-loaded', initializeGeneBooleanFilter);
+  // when boolean filter form submitted
+  $(document).on('submit', '[name=apply-gene-boolean-filter]', applyGeneBooleanFilter);
+
+
+  $(document).on('wdk-results-loaded', initializeGeneLeafFilter);
+  $(document).on('submit', '[name=apply-gene-leaf-filter]', applyGeneLeafFilter);
+
+  ns.openTransform = openTransform;
+});
