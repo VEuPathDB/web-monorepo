@@ -98,7 +98,7 @@
     <c:set var="values" value="${option.value}"/>
 
     <!-- YY/NY/YN table:  
-         - a jsp/tag (geneBooleanFilter) will generate the table with correct display
+         - a jsp/tag (geneBoolean Filter) will generate the table with correct display
          - the condition to show the icon and table in a boolean step requires this table's counts 
          - the icon is shown in the tr-tab, independently of what tab is opened (gene view or tr view)
     -->
@@ -119,7 +119,7 @@
           <div class="gene-boolean-filter-summary">
             Loading filters...
           </div>
-          <p style="text-align:center">
+          <p>
             <button disabled="yes" class="gene-boolean-filter-apply-button" title="To enable this button, select/unselect transcript sets.">Apply selection</button>
           </p>
 
