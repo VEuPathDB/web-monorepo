@@ -245,10 +245,8 @@ export function RecordHeading(props) {
   let headerActions = props.headerActions.concat({
     label: 'Add a comment',
     iconClassName: 'fa fa-lg fa-comments',
-    onClick(event) {
-      event.preventDefault();
-      window.location = wdk.webappUrl(url);
-    }
+    href: wdk.webappUrl(url),
+    external: true
   });
   return (
     <props.DefaultComponent {...props} headerActions={headerActions}/>
