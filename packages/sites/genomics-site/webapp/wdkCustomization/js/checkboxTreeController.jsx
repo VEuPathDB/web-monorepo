@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
-import CheckboxTree from 'wdk-client-components/CheckboxTree';
-import { getNodeChildren } from 'wdk-client-utils/OntologyUtils';
-import { getNodeId, nodeSearchPredicate, BasicNodeComponent } from 'wdk-client-utils/CategoryUtils';
+import { CheckboxTree } from 'wdk-client/Components';
+import { getNodeChildren } from 'wdk-client/OntologyUtils';
+import { getNodeId, nodeSearchPredicate, BasicNodeComponent } from 'wdk-client/CategoryUtils';
 
 // serves as MVC controller for checkbox tree on results page
 export default class CheckboxTreeController {

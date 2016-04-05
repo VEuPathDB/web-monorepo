@@ -17,9 +17,6 @@ initializeProps(config, 'resolve.alias', {});
 initializeProps(config, 'resolveLoader');
 initializeProps(config, 'externals', []);
 
-config.resolve.alias['wdk-client-utils'] = path.join(wdkRoot, 'webapp/wdk/js/client/utils');
-config.resolve.alias['wdk-client-components'] = path.join(wdkRoot, 'webapp/wdk/js/client/components');
-
 // This lets us use build tools Wdk has already loaded.
 config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
 
@@ -32,13 +29,12 @@ config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
 // without having to rewrite a bunch of application code.
 config.externals.push({
   'wdk'            : 'Wdk',
-  'wdk-client'     : 'Wdk.client',
   'react'          : 'React',
   'react-dom'      : 'ReactDOM',
   'react-router'   : 'ReactRouter',
   'immutable'      : 'Immutable',
   'lodash'         : '_'
-});
+}, resolveWdkClientExternal);
 
 module.exports = config;
 
@@ -56,4 +52,19 @@ function initializeProps(target, path, value) {
     }
     target = target[prop];
   }
+}
+
+// See http://localhost:8080/plasmodb/app/record/dataset/DS_20c45d8ed1
+var wdkClientRe = /^wdk-client(\/(.*))?/;
+function resolveWdkClientExternal(context, request, callback) {
+  var matches = wdkClientRe.exec(request);
+  if (matches != null) {
+    if (matches[2]) {
+      return callback(null, 'var Wdk.client.' + matches[2]);
+    }
+    else {
+      return callback(null, 'var Wdk.client');
+    }
+  }
+  callback();
 }

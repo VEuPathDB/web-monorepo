@@ -22,6 +22,5 @@
       };
     }
   </script>
-  <imp:script src="wdk/js/wdk.client.js"/>
   <imp:script src="wdkCustomization/js/client.js"/>
 </imp:pageFrameFixed>

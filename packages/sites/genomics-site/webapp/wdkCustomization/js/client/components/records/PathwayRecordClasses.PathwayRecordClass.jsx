@@ -1,6 +1,5 @@
 import React from 'react';
-import { Components } from 'wdk-client';
-import Image from 'wdk-client-components/Image';
+import {Image} from 'wdk-client/Components';
 import {cytoscape} from '../../../../../js/cytoscapeweb.min.js';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';

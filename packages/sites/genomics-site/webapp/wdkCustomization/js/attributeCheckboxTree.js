@@ -1,7 +1,7 @@
 import CheckboxTreeController from './checkboxTreeController';
-import { getTree } from 'wdk-client-utils/OntologyUtils';
-import { isQualifying, addSearchSpecificSubtree } from 'wdk-client-utils/CategoryUtils';
-import WdkService from 'wdk-client-utils/WdkService';
+import { getTree } from 'wdk-client/OntologyUtils';
+import { isQualifying, addSearchSpecificSubtree } from 'wdk-client/CategoryUtils';
+import WdkService from 'wdk-client/WdkService';
 
 wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
   "use strict";
