@@ -44,7 +44,7 @@
 <div id="${view}">
 
   <!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count we show the view filter 'show only one transcript per gene' -->
-  <c:if test="${view eq 'transcripts && showViewFilter eq 'true'}"> 
+  <c:if test="${view eq 'transcripts' && showViewFilter eq 'true'}"> 
     <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
     <div id="onlyOneTrPerGene" title="Some genes in your result have more than one transcript in your result.">
       <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
@@ -102,7 +102,7 @@
   </c:if>  
 
 
-  <!-- if boolean step (spanlogic does not need filter for now): if this is a Transcript Record:
+  <!-- if BOOLEAN step (spanlogic does not need filter for now): if this is a Transcript Record:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
   <c:if test="${step.isBoolean && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
