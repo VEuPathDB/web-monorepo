@@ -28,6 +28,21 @@
     <body class="${refer}">
       <imp:header refer="${refer}" title= "${title}" />
       <jsp:doBody/>
+      <!-- `getApiClientConfig` is created in the global scope, so we can call this
+           from other JavaScript code where we initialize the WDK client
+           (see wdkCustomization/js/client/main.js) -->
+      <script>
+        function getApiClientConfig() {
+          return {
+            rootUrl: "${pageContext.request.contextPath}/app/",
+            endpoint: "${pageContext.request.contextPath}/service",
+            rootElement: document.getElementById("wdk-container"),
+            renderView: true
+          };
+        }
+      </script>
+      <imp:script src="wdkCustomization/js/client.js"/>
+
       <imp:IEWarning version="8"/>
       <imp:dialogs/>
     </body>

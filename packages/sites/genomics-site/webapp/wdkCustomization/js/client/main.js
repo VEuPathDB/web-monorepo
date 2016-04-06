@@ -22,7 +22,7 @@ let config = window.getApiClientConfig();
 // replace '/a/' with '/${webapp}/'
 let pathname = window.location.pathname;
 let aliasUrl = config.rootUrl.replace(/^\/[^/]+\/(.*)$/, '/a/$1');
-if (pathname.indexOf(aliasUrl) === 0) {
+if (pathname.startsWith(aliasUrl)) {
   window.history.replaceState(null, '', pathname.replace(aliasUrl, config.rootUrl));
 }
 
@@ -33,4 +33,4 @@ let app = window._app = initialize({
   applicationRoutes: routes
 });
 
-app.render();
+if (config.renderView) app.render();

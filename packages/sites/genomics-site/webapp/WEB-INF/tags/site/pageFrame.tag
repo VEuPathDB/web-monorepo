@@ -81,6 +81,19 @@
         </c:otherwise>
       </c:choose>
       
+      <!-- `getApiClientConfig` is created in the global scope, so we can call this
+           from other JavaScript code where we initialize the WDK client
+           (see wdkCustomization/js/client/main.js) -->
+      <script>
+        function getApiClientConfig() {
+          return {
+            rootUrl: "${pageContext.request.contextPath}/app/",
+            endpoint: "${pageContext.request.contextPath}/service",
+            renderView: false
+          };
+        }
+      </script>
+      <imp:script src="wdkCustomization/js/client.js"/>
       <imp:dialogs/>
       <imp:footer refer="${refer}"/>
       <imp:IEWarning version="8"/>
