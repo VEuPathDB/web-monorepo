@@ -28,7 +28,7 @@ config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
 // This will give us more flexibility in changing how we load libraries
 // without having to rewrite a bunch of application code.
 config.externals.push({
-  'wdk'            : 'Wdk',
+  'wdk'            : 'wdk',
   'react'          : 'React',
   'react-dom'      : 'ReactDOM',
   'react-router'   : 'ReactRouter',
@@ -60,10 +60,10 @@ function resolveWdkClientExternal(context, request, callback) {
   var matches = wdkClientRe.exec(request);
   if (matches != null) {
     if (matches[2]) {
-      return callback(null, 'var Wdk.client.' + matches[2]);
+      return callback(null, 'var wdk.client.' + matches[2]);
     }
     else {
-      return callback(null, 'var Wdk.client');
+      return callback(null, 'var wdk.client');
     }
   }
   callback();

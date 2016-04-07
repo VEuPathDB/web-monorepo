@@ -14,7 +14,6 @@
   <c:set var="debug" value="${requestScope.WEBSITE_RELEASE_STAGE eq websiteRelease.development}"/>
   <!-- JavaScript provided by WDK -->
   <imp:wdkJavascripts refer="${refer}" debug="${debug}"/>
-  <imp:script src="wdk/js/wdk.client.js"/>
 
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />
