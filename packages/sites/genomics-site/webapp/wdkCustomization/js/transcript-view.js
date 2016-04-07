@@ -33,3 +33,25 @@ function toggleRepresentativeTranscripts(checkboxElem) {
   });
 
 }
+
+
+$(document).on('wdk-results-loaded', function() {
+
+  // set icon visible or not, change tooltip and verbiage accordingly
+  var $oneTrFilter = $( 'div#oneTr-filter');
+  var $prompt = $( 'div#oneTr-filter span#prompt');
+  var $filterIcon = $( 'div#oneTr-filter span#filter-icon' );
+
+  var checked =  $( 'div#oneTr-filter input' ).prop('checked');
+  if ( checked === true ) {
+    $oneTrFilter.prop('title','Your result is filtered, showing only one transcript per gene. The transcript returned is the first one when sorted by name');
+    $prompt.html('Showing Only One Transcript Per Gene');
+    $filterIcon.css('visibility','visible'); 
+  }
+  else {
+    $oneTrFilter.prop('title','Some genes have more than one transcript in your result. Click to select one transcript per gene in your result. We will return the first one sorted by name. This filter will not affect the strategy.');
+    $prompt.html('Show Only One Transcript Per Gene');
+    $filterIcon.css('visibility','hidden');
+  }
+
+});

@@ -15,13 +15,15 @@
               description="tab we are looking at"
 %>
 
+<c:set var="wdkAnswer" value="${step.answerValue}"/>
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
 <c:set var="questionName" value="${step.answerValue.question.name}"/>
 <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
 <c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
-  <c:set var="showViewFilter" value="${step.answerValue.resultSize != step.answerValue.displayResultSize}"/>
   <c:set var="trRecord" value="true"/>
+  <c:set var="showViewFilter" value="${step.answerValue.resultSize != step.answerValue.displayResultSize}"/>
+
   <%-- gene count with missing tr --%>
   <c:set var="genesMissingTranscriptsCount" 
          value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
@@ -43,16 +45,7 @@
 <!-- ANY TAB, ANY STEP, ANY RECORD -->
 <div id="${view}">
 
-  <!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count we show the view filter 'show only one transcript per gene' -->
-  <c:if test="${view eq 'transcripts' && showViewFilter eq 'true'}"> 
-    <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
-    <div id="onlyOneTrPerGene" title="Some genes in your result have more than one transcript in your result.">
-      <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
-             onclick="javascript:toggleRepresentativeTranscripts(this)">
-      <span>Show Only One Transcript Per Gene</span>
-    </div>
-   <%-- <c:set var="excludeBasketColumn" value="true" />  not needed since we have only one tab the _default view--%>
-  </c:if>
+ 
 
   <!-- if LEAF step, if this is a Transcript Record and NOT a basket result:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed
@@ -146,6 +139,28 @@
     </div>
   </c:if>  
  
+              
+<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count we show the view filter 'show only one transcript per gene' -->
+  <c:if test="${view eq 'transcripts' && showViewFilter eq 'true'}"> 
+    <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
+    <div id="oneTr-filter">
+      <!-- only when checked -->
+      <span id="filter-icon" style="visibility:hidden"><imp:image height="14px" src="wdk/images/filter-short.png"/></span>
+      <span id="gene-count" style="padding-right: 2em">
+        ${wdkAnswer.displayResultSize eq 1 ? step.recordClass.displayName : step.recordClass.displayNamePlural}:
+        <span>${wdkAnswer.displayResultSize}</span>
+      </span>
+      <span id="transcript-count" style="padding-right: 2em">
+        ${wdkAnswer.resultSize eq 1 ? wdkAnswer.question.recordClass.nativeDisplayName : wdkAnswer.question.recordClass.nativeDisplayNamePlural}:
+        <span>${wdkAnswer.resultSize}</span>
+      </span>
+      <input type="checkbox" ${checkToggleBox} data-stepid="${requestScope.wdkStep.stepId}" 
+             onclick="javascript:toggleRepresentativeTranscripts(this)">
+      <span id="prompt">Show Only One Transcript Per Gene</span>
+    </div>
+    <%-- <c:set var="excludeBasketColumn" value="true" />  not needed since we have only one tab the _default view--%>
+  </c:if>
+
 
 <!-- ANY TAB, ANY STEP, ANY RECORD -->
   <wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}"/>
