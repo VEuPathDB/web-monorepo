@@ -138,19 +138,19 @@
       </div>
     </div>
   </c:if>  
- 
-              
-<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count we show the view filter 'show only one transcript per gene' -->
+    
+                
+<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count we show the representative transcript filter -->
   <c:if test="${view eq 'transcripts' && showViewFilter eq 'true'}"> 
     <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
     <div id="oneTr-filter">
       <!-- only when checked -->
       <span id="filter-icon" style="visibility:hidden"><imp:image height="14px" src="wdk/images/filter-short.png"/></span>
-      <span id="gene-count" style="padding-right: 2em">
+      <span id="gene-count">
         ${wdkAnswer.displayResultSize eq 1 ? step.recordClass.displayName : step.recordClass.displayNamePlural}:
         <span>${wdkAnswer.displayResultSize}</span>
       </span>
-      <span id="transcript-count" style="padding-right: 2em">
+      <span id="transcript-count">
         ${wdkAnswer.resultSize eq 1 ? wdkAnswer.question.recordClass.nativeDisplayName : wdkAnswer.question.recordClass.nativeDisplayNamePlural}:
         <span>${wdkAnswer.resultSize}</span>
       </span>
