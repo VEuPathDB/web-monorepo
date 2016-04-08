@@ -1,7 +1,6 @@
 import CheckboxTreeController from './checkboxTreeController';
 import { getTree } from 'wdk-client/OntologyUtils';
 import { isQualifying, addSearchSpecificSubtree } from 'wdk-client/CategoryUtils';
-import WdkService from 'wdk-client/WdkService';
 
 wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
   "use strict";
@@ -21,16 +20,16 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
    * @returns {Promise.<T>}
    */
   function setUpCheckboxTree(element, attributes) {
+    let { wdkService } = wdk.client.runtime;
     let questionName = attributes.questionName;
     let recordClassName = attributes.recordClassName;
     let defaultSelectedList = attributes.defaultSelectedList.replace(/'/g,"").split(",");
     let currentSelectedList = attributes.currentSelectedList.replace(/'/g,"").split(",");
     let viewName = {'_default':'gene', 'transcript-view':'transcript'}[attributes.viewName];
-    let service = new WdkService(wdk.webappUrl("/service"));
     return Promise.all([
-      service.getOntology(),
-      service.findQuestion(question => question.name === questionName),
-      service.findRecordClass(recordClass => recordClass.name === recordClassName)
+      wdkService.getOntology(),
+      wdkService.findQuestion(question => question.name === questionName),
+      wdkService.findRecordClass(recordClass => recordClass.name === recordClassName)
     ])
     .then(([ categoriesOntology, question, recordClass]) => {
       try {
