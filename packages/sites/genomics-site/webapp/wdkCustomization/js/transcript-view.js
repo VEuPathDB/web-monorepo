@@ -3,15 +3,15 @@ function toggleRepresentativeTranscripts(checkboxElem) {
   var checked = jQuery(checkboxElem).prop('checked');
 
   // swap value of representative transcript filter flag
-  var url = '/service/step/' + stepId + '/transcript-view/config';
+  var url = '/service/user/current/preference';
   jQuery.blockUI();
   jQuery.ajax({
 
     // properties defining data sent, how and where
     url: wdk.webappUrl(url),
-    method: 'POST',
+    method: 'PATCH',
     contentType: 'application/json',
-    data: JSON.stringify({"representativeTranscriptOnly": (checked ? true : false)}),
+    data: JSON.stringify({"representativeTranscriptOnly": (checked ? "true" : "false")}),
 
     // properties defining data expected
     success: function(data) {
