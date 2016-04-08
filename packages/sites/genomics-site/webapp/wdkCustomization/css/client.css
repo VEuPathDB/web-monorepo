@@ -328,9 +328,9 @@ h4 {
 }
 
 
-.wdk-RecordTable__ExampleGraphs .wdk-DataTableCell,
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell,
-.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell {
+.wdk-RecordTable__ExampleGraphs .wdk-DataTableCellContent,
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCellContent,
+.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCellContent {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
