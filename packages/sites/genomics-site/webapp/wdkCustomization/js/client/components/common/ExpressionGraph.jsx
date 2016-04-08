@@ -129,7 +129,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
 
     let imgUrl = baseUrlWithState + '&fmt=png';
 
-    let covImgUrl = dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'CoverageUnlogged';
+    let covImgUrl = dataTable && dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'CoverageUnlogged';
 
     return (
       <div className="eupathdb-ExpressionGraphContainer">
@@ -145,7 +145,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
           {this.renderImgError()}
 
 
-          {assay_type == 'RNA-seq' ?
+          {assay_type == 'RNA-seq' && covImgUrl ?
            <CollapsibleSection 
                id={dataset_name + "Coverage"}
                className="eupathdb-GbrowseContext"
@@ -164,19 +164,20 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
         </div>
         <div className="eupathdb-ExpressionGraphDetails">
 
-          <Components.CollapsibleSection
-            className={"eupathdb-" + this.props.dataTable.table.name + "Container"}
-            headerContent="Data table"
-            headerComponent='h4'
-            isCollapsed={this.state.dataTableCollapsed}
-            onCollapsedChange={this.handleDataTableCollapseChange}>
-            <dataTable.DefaultComponent
-              record={dataTable.record}
-              recordClass={dataTable.recordClass}
-              table={dataTable.table}
-              value={dataTable.value.filter(dat => dat.dataset_id == datasetId)}
-            />
-          </Components.CollapsibleSection>
+          {this.props.dataTable &&
+            <Components.CollapsibleSection
+              className={"eupathdb-" + this.props.dataTable.table.name + "Container"}
+              headerContent="Data table"
+              headerComponent='h4'
+              isCollapsed={this.state.dataTableCollapsed}
+              onCollapsedChange={this.handleDataTableCollapseChange}>
+              <dataTable.DefaultComponent
+                record={dataTable.record}
+                recordClass={dataTable.recordClass}
+                table={dataTable.table}
+                value={dataTable.value.filter(dat => dat.dataset_id == datasetId)}
+              />
+            </Components.CollapsibleSection> }
 
           <h4>Description</h4>
           <div dangerouslySetInnerHTML={{__html: description}}/>
