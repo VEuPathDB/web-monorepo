@@ -21,6 +21,7 @@
 
 <%-- When definitions are in conflict, the next one overrides the previous one  --%>
 <imp:stylesheet rel="stylesheet" href="css/AllSites.css" type="text/css" /> 
+<imp:stylesheet rel="stylesheet" href="css/AllApiSites.css" type="text/css" /> 
 <imp:stylesheet rel="stylesheet" href="css/${project}.css" type="text/css" />
 
 <!-- Only needed for pathway record -->

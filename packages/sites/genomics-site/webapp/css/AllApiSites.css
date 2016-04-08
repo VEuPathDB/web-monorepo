@@ -1,0 +1,72 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      = Results Table: Boolean and Leaf transcript Filters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+ 
+/* BOOLEAN, combined?  */
+
+  .gene-boolean-filter, .gene-leaf-filter  {
+    display: none;
+    margin-bottom: 4px;
+  }
+  .gene-boolean-filter-controls, .gene-leaf-filter-controls {
+    display: none;
+    text-align: center;
+   }
+  .gene-boolean-filter table, .gene-leaf-filter table {
+    border-collapse: separate;
+    color: black;
+  }
+  .gene-boolean-filter-summary, .gene-leaf-filter-summary {
+    display: inline-block;
+  }
+  .gene-boolean-filter-controls p, .gene-leaf-filter-controls p  {
+    text-align: center; 
+    margin: 1em 0 .4em;
+  }
+  .gene-boolean-filter-controls button:disabled {
+ 		color:grey;
+  }
+
+/* LEAF step */
+
+  .gene-leaf-filter p {
+    margin: 0.4em 0 .4em;
+  }
+  .gene-leaf-filter-controls button:disabled {
+ 		color:grey;
+  }
+ 
+
+  table#booleanFilter td#prompt{
+    font-weight:bold;
+  }
+  table#booleanFilter table td{
+    padding:0 8px;
+  }
+  table#booleanFilter table img  {
+    width:80px;
+  }
+
+  table#booleanFilter table img, table#leafFilter table img  {
+    vertical-align: text-bottom;
+    margin-left:10px;
+  }
+
+  table#leafFilter table img  {
+    width:20px; /* same size as in attribute column in site/wdkAttribute.tag */
+  }
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      = results table view filter (representative transcript)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+  div#oneTr-filter {
+    font-family: Verdana;
+    font-weight: bold;
+    background-color: #eee; /* as in WDK result table header */
+  }
+  div#oneTr-filter span#prompt,  div#oneTr-filter span span {
+    color: darkred;
+    padding-right: 1em;
+  }
