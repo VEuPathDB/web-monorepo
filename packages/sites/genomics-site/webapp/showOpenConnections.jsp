@@ -40,7 +40,7 @@ ${db.value.unclosedConnectionInfo}
         </c:forEach>
       </c:if>
       <c:if test="${not validUser}">
-        <h2>Permission Denied</h2>
+        <h2>Permission Denied.  You must log in as an admin to access this functionality.</h2>
       </c:if>
     </body>
   </html>
