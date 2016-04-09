@@ -1,4 +1,5 @@
 import CheckboxTreeController from './checkboxTreeController';
+import { trimBooleanQuestionAttribs } from './client/util/modelSpecificUtil';
 import { getTree } from 'wdk-client/OntologyUtils';
 import { isQualifying, addSearchSpecificSubtree } from 'wdk-client/CategoryUtils';
 
@@ -34,6 +35,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     .then(([ categoriesOntology, question, recordClass]) => {
       try {
         let categoryTree = getTree(categoriesOntology, isQualifying(recordClassName, 'results'));
+        categoryTree = trimBooleanQuestionAttribs(question, categoryTree);
         addSearchSpecificSubtree(question, categoryTree, recordClassName, viewName);
         let selectedList = currentSelectedList || defaultSelectedList;
         let controller = new CheckboxTreeController(element, "selectedFields",
