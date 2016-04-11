@@ -1,7 +1,7 @@
 import * as Wdk from 'wdk-client';
 
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
-let { ReporterCheckboxList, RadioList, Checkbox } = Wdk.Components;
+let { CategoriesCheckboxTree, RadioList, Checkbox } = Wdk.Components;
 
 let attachmentTypes = [
   { value: "text", display: "Text File" },
@@ -11,15 +11,28 @@ let attachmentTypes = [
 
 let TabularReporterForm = props => {
 
-  let { question, recordClass, formState, onFormChange, onSubmit } = props;
+  let { question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
+  let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
 
   return (
     <div>
-      <ReporterCheckboxList title="Choose Attributes"
+      <CategoriesCheckboxTree
+          // title and layout of the tree
+          title="Choose Attributes"
+          searchBoxPlaceholder="Search Attributes..."
+          tree={util.getAttributeTree(ontology, recordClass, question)}
+
+          // state of the tree
+          selectedLeaves={formState.attributes}
+          expandedBranches={formUiState.expandedAttributeNodes}
+          searchText={formUiState.attributeSearchText}
+      
+          // change handlers for each state element controlled by the tree
           onChange={getUpdateHandler('attributes')}
-          fields={util.getAllAttributes(recordClass, question, util.isInReport)}
-          selectedFields={formState.attributes}/>
+          onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
+          onSearchTextChange={getUiUpdateHandler('attributeSearchText')}
+      />
       <div>
         <h3>Additional Options:</h3>
         <div style={{marginLeft:"2em"}}>
