@@ -7,7 +7,10 @@
 
   .gene-boolean-filter, .gene-leaf-filter  {
     display: none;
-    margin-bottom: 4px;
+    margin-bottom: 1em;
+  }
+  .gene-boolean-filter p, .gene-leaf-filter p {
+    margin: 0.4em 0 0.6em;
   }
   .gene-boolean-filter-controls, .gene-leaf-filter-controls {
     display: none;
@@ -24,19 +27,10 @@
     text-align: center; 
     margin: 1em 0 .4em;
   }
-  .gene-boolean-filter-controls button:disabled {
+  .gene-boolean-filter-controls button:disabled,  .gene-leaf-filter-controls button:disabled   {
  		color:grey;
   }
 
-/* LEAF step */
-
-  .gene-leaf-filter p {
-    margin: 0.4em 0 .4em;
-  }
-  .gene-leaf-filter-controls button:disabled {
- 		color:grey;
-  }
- 
 
   table#booleanFilter td#prompt{
     font-weight:bold;
@@ -47,16 +41,13 @@
   table#booleanFilter table img  {
     width:80px;
   }
-
+  table#leafFilter table img  {
+    width:20px; /* same size as in attribute column in site/wdkAttribute.tag */
+  }
   table#booleanFilter table img, table#leafFilter table img  {
     vertical-align: text-bottom;
     margin-left:10px;
   }
-
-  table#leafFilter table img  {
-    width:20px; /* same size as in attribute column in site/wdkAttribute.tag */
-  }
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = results table view filter (representative transcript)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/

@@ -145,7 +145,8 @@
     <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
     <div id="oneTr-filter">
       <!-- only when checked -->
-      <span id="filter-icon" style="visibility:hidden"><imp:image height="14px" src="wdk/images/filter-short.png"/></span>
+<!--      <span id="filter-icon" style="visibility:hidden"><imp:image height="14px" src="wdk/images/filter-short.png"/></span>
+--> 
       <span id="gene-count">
         ${wdkAnswer.displayResultSize eq 1 ? step.recordClass.displayName : step.recordClass.displayNamePlural}:
         <span>${wdkAnswer.displayResultSize}</span>

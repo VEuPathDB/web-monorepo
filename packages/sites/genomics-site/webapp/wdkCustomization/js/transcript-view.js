@@ -48,7 +48,7 @@ $(document).on('wdk-results-loaded', function() {
   if ( checked === true ) {
     $oneTrFilter.prop('title','Your result is filtered, showing only one transcript per gene. The transcript returned is the longest in the result.');
     $prompt.html('Showing Only One Transcript Per Gene');
-    $filterIcon.css('visibility','visible'); 
+ //   $filterIcon.css('visibility','visible'); 
     $trCountSpan.css('color','grey');
     $trCount.css('color','grey');
   }
