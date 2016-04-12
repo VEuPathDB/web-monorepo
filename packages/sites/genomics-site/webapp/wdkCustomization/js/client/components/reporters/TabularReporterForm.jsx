@@ -3,12 +3,6 @@ import * as Wdk from 'wdk-client';
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
 let { CategoriesCheckboxTree, RadioList, Checkbox } = Wdk.Components;
 
-let attachmentTypes = [
-  { value: "text", display: "Text File" },
-  { value: "excel", display: "Excel File**" },
-  { value: "plain", display: "Show in Browser"}
-];
-
 let TabularReporterForm = props => {
 
   let { question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
@@ -43,7 +37,7 @@ let TabularReporterForm = props => {
       <div>
         <h3>Download Type and Format:</h3>
         <div style={{marginLeft:"2em"}}>
-          <RadioList value={formState.attachmentType} items={attachmentTypes}
+          <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
             onChange={getUpdateHandler('attachmentType')}/>
         </div>
       </div>
@@ -69,7 +63,10 @@ TabularReporterForm.getInitialState = (downloadFormStoreState, userStoreState) =
     includeHeader: true,
     attachmentType: "plain"
   },
-  formUiState: null
+  formUiState: {
+    expandedAttributeNodes: null,
+    attributeSearchText: ""
+  }
 });
 
 export default TabularReporterForm;
