@@ -136,6 +136,13 @@ h4 {
   padding: 10px 0;
 }
 
+.eupathdb-RecordOverviewItem {
+  white-space: nowrap;
+  width: 100%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 .eupathdb-RecordOverviewItem, .eupathdb-ThumbnailLabel {
   margin: .2em 0;
   font-size: 1.4em;
