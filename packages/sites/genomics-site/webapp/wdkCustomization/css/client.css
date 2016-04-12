@@ -41,6 +41,11 @@ h4 {
   text-rendering: optimizeLegibility;
 }
 
+/* 230px is based on height of header, footer, and margin/padding of wdk-RootContainer */
+.wdk-RootContainer {
+  min-height: calc(100vh - 230px);
+}
+
 .wdk-RecordOverview {
   color: #555555;
   margin-bottom: -1em;
