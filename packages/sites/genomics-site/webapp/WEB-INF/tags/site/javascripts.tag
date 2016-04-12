@@ -78,6 +78,7 @@
 
   <c:if test="${refer == 'question' || refer == 'summary'}">
     <!-- <imp:parameterScript /> -->
+    <imp:script src="wdkCustomization/js/datasetsByQuestion.js"/>
     <imp:script src="wdkCustomization/js/questions/orthologpattern.js"/>
     <imp:script src="wdkCustomization/js/questions/span-location.js"/>
     <imp:script src="wdkCustomization/js/questions/mutuallyExclusiveParams.js"/>

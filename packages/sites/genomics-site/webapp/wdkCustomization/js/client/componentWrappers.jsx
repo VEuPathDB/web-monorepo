@@ -86,10 +86,10 @@ export function RecordController(WdkRecordController) {
 }
 
 // Add footer and beta message to Main content
-export function Main(WdkMain) {
-  return function ApiMain(props) {
+export function AppController(WdkAppController) {
+  return function ApiAppController(props) {
     return (
-      <WdkMain {...props}>
+      <div>
         {/*
         <div
           className="eupathdb-Beta-Announcement"
@@ -97,9 +97,9 @@ export function Main(WdkMain) {
             You are viewing a <strong>BETA</strong> (pre-release) page. <a data-name="contact_us" className="new-window" href="contact.do">Feedback and comments</a> are welcome!
         </div>
         */}
-        {props.children}
+        <WdkAppController {...props}/>
         <Footer/>
-      </WdkMain>
+      </div>
     );
   };
 }
