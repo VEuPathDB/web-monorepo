@@ -456,7 +456,24 @@ sub getOntologyCategoryFromTrackName {
   return $rv;
 }
 
-
+sub getSyntenySubtracks {
+    my ($self) = @_;
+    my $dbh = $self->dbh();
+    my $sh = $dbh->prepare("select organism, public_abbrev,  phylum, kingdom, genus, species, class  from apidbtuning.OrganismSelectTaxonRank order by kingdom, class, phylum, genus, species, organism");
+    $sh->execute();
+    my @rv;
+    my @synTypes = ('contig','genes');
+    while (my ($organism, $publicAbbrev, $phylum, $kingdom, $genus, $species, $class)= $sh->fetchrow_array()){
+	foreach my $synType (@synTypes) { 
+	my $displayName = ":$publicAbbrev $synType";
+	my $urlName = "=${publicAbbrev}_$synType";
+	my $synRow = [$displayName, $kingdom, $class, $phylum, $genus, $species, $organism, $synType, $urlName];
+	push @rv, $synRow;
+	}
+}
+    $sh->finish();
+    return @rv;
+}
 1;
 
 
