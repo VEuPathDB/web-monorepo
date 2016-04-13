@@ -73,12 +73,16 @@
                <!--     <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" /> -->
                     <i class="fa fa-caret-right fa-lg"></i>
                     <a class="heading" href="javascript:void(0)">${display}
+<%--
                       <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
+
                         <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
                           <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
                                      src="wdk/images/beta2-30.png" />
                         </c:if>
+
                       </c:if>
+--%>
                     </a>
                     <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
                       <a class="detail_link small" title="Click for popup with description" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
@@ -102,10 +106,7 @@
           </c:forEach>
 
           <li> 
-            <a class="heading" href="app/search/dataset/AllDatasets/result" style="padding-left:15px">Data Sets
-              <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
-                         src="wdk/images/beta2-30.png" />
-            </a>
+            <a class="heading" href="app/search/dataset/AllDatasets/result" style="padding-left:15px">Data Sets</a>
           </li>
 
         </ul>

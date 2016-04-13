@@ -229,12 +229,14 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
               <li>
                 <a href="#" class="dropdown">${cat.displayName}
                   <!-- BETA on menus at category level, no question level -->
+<%--
                   <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
                     <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
                       <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
                                  src="wdk/images/beta2-30.png" />
                     </c:if>
                   </c:if>
+--%>
                 </a> 
 
                 <ul>

@@ -131,13 +131,13 @@
       </ul>
     </li>
 
-    <li><a style="padding-top:0">Data Summary <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
+    <li><a>Data Summary</a>
       <ul>
-          <li><a href="${baseUrl}/getDataset.do?display=detail">Data Sets</a></li>
+         <!-- <li><a href="${baseUrl}/getDataset.do?display=detail">Data Sets</a></li> -->
           <li title="Please contact us with your feedback.">
             <a style="padding-top:0" 
-              href="${baseUrl}/app/search/dataset/AllDatasets/result">New Data Sets page!
-                <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
+              href="${baseUrl}/app/search/dataset/AllDatasets/result">Data Sets</a>
+            <%--    <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /> --%>
           </li>
           <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
         <c:if test="${project == 'CryptoDB'}">
