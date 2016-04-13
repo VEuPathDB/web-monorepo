@@ -66,7 +66,8 @@
          data-step="${step.stepId}"
          data-filter="matched_transcript_filter_array">
       <p>
-        <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >
+        <imp:image height="14px" src="wdk/images/filter-short.png"/>
+     <!--   <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >  -->
         <strong title="${genesMissingTranscriptsCount}">
           Some Genes in your result have Transcripts that did not meet the search criteria.
           <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
@@ -140,11 +141,12 @@
   </c:if>  
     
                 
-<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count we show the representative transcript filter -->
-  <c:if test="${view eq 'transcripts' && showViewFilter eq 'true'}"> 
-    <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
+<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count, or if set,  we show the representative transcript filter -->
+  <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
+  <c:if test="${view eq 'transcripts' &&  (showViewFilter eq 'true' || !empty checkToggleBox) }"> 
+
     <div id="oneTr-filter">
-      <!-- only when checked -->
+      <!-- icon only when checked -->
 <!--      <span id="filter-icon" style="visibility:hidden"><imp:image height="14px" src="wdk/images/filter-short.png"/></span>
 --> 
       <span id="gene-count">
@@ -160,6 +162,7 @@
       <span id="prompt">Show Only One Transcript Per Gene</span>
     </div>
     <%-- <c:set var="excludeBasketColumn" value="true" />  not needed since we have only one tab the _default view--%>
+
   </c:if>
 
 
