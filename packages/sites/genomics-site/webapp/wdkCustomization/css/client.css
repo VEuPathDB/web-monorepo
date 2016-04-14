@@ -294,6 +294,7 @@ h4 {
 .eupathdb-ExpressionGraphContainer {
   overflow: auto;
   position: relative;
+  padding: 0 4px;
 }
 
 .eupathdb-ExpressionGraphLoading {
