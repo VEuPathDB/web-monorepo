@@ -1,3 +1,4 @@
+import lodash from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
@@ -29,7 +30,7 @@ export function RecordViewStore(WdkRecordViewStore) {
       let nextState = super.reduce(state, action);
       switch (action.type) {
         case actionTypes.ACTIVE_RECORD_RECEIVED: {
-          return pruneCategories(nextState);
+          return handleRecordReceived(nextState);
         }
         case actionTypes.SHOW_SECTION:
         case actionTypes.HIDE_SECTION:
@@ -40,6 +41,15 @@ export function RecordViewStore(WdkRecordViewStore) {
       }
     }
   }
+}
+
+let handleRecordReceived = lodash.flow(mergeCollapsedSections, pruneCategories);
+
+/** merge stored collapsedSections */
+function mergeCollapsedSections(state) {
+  return Object.assign({}, state, {
+    collapsedSections: getCollapsedSections(state)
+  });
 }
 
 /** prune categoryTree */
@@ -54,7 +64,7 @@ function pruneCategories(nextState) {
 
 /** Remove protein related categories from tree */
 function removeProteinCategories(categoryTree, record) {
-  if (record.attributes.gene_type === 'protein coding') {
+  if (record.attributes.gene_type !== 'protein coding') {
     let children = categoryTree.children.filter(function(category) {
       let label = category.properties.label[0];
       return label !== 'Protein properties' && label !== 'Proteomics';
