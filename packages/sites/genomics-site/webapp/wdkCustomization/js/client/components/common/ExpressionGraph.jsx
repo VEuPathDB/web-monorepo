@@ -3,14 +3,16 @@ import { Components, ComponentUtils } from 'wdk-client';
 
 let { CollapsibleSection } = Components;
 
-// Renders an Expression graph with the provided rowData.
-// rowData comes from an ExpressionTable record table.
-//
-// rowData will include the available gene ids (graph_ids), but the available
-// graphs for the dataset (visible_parts) has to be fetched from dataPlotter.pl.
-// This means that when we get new rowData, we first have to make a request for
-// the available parts, and then we can update the state of the Component. This
-// flow will ensure that we have a consistent state when rendering.
+/**
+ * Renders an Expression graph with the provided rowData.
+ * rowData comes from an ExpressionTable record table.
+ *
+ * rowData will include the available gene ids (graph_ids), but the available
+ * graphs for the dataset (visible_parts) has to be fetched from dataPlotter.pl.
+ * This means that when we get new rowData, we first have to make a request for
+ * the available parts, and then we can update the state of the Component. This
+ * flow will ensure that we have a consistent state when rendering.
+ */
 export default class ExpressionGraph extends ComponentUtils.PureComponent {
 
   constructor(...args) {
@@ -21,18 +23,19 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
       details: null,
       graphId: null,
       visibleParts: null,
+      descriptionCollapsed: true,
       dataTableCollapsed: true,
       coverageCollapsed: true
     };
+    this.handleDescriptionCollapseChange = descriptionCollapsed => {
+      this.setState({ descriptionCollapsed });
+    };
     this.handleDataTableCollapseChange = dataTableCollapsed => {
       this.setState({ dataTableCollapsed });
-    }
-
-       this.handleCoverageCollapseChange = coverageCollapsed => {
-           this.setState({ coverageCollapsed });
-       }
-
-
+    };
+    this.handleCoverageCollapseChange = coverageCollapsed => {
+      this.setState({ coverageCollapsed });
+    };
   }
 
   componentDidMount() {
@@ -179,8 +182,14 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
               />
             </Components.CollapsibleSection> }
 
-          <h4>Description</h4>
-          <div dangerouslySetInnerHTML={{__html: description}}/>
+          <Components.CollapsibleSection
+            className={"eupathdb-ExpressionGraphDescription"}
+            headerContent="Description"
+            headerComponent="h4"
+            isCollapsed={this.state.descriptionCollapsed}
+            onCollapsedChange={this.handleDescriptionCollapseChange}>
+            <div dangerouslySetInnerHTML={{__html: description}}/>
+          </Components.CollapsibleSection>
 
           <h4>X-axis</h4>
           <div dangerouslySetInnerHTML={{__html: x_axis}}/>
