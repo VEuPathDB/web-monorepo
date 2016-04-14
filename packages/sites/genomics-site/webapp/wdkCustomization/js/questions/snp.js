@@ -20,6 +20,8 @@
       return field.term === 'StrainOrLine';
     });
 
+    if (field == null) return;
+
     filterService.getFieldDistribution(field)
       .then(function(distribution) {
         filterService.distributionMap[field.term] = distribution;
