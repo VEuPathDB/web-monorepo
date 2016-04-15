@@ -13,7 +13,11 @@
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" /> 
-<c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
+<%--
+  Replaced with line below as SITE_ADMIN_EMAIL is being deprecated in favor of adminEmail from the model-config.xml file - CWL 08APR16
+  <c:set var="to" value="${props['SITE_ADMIN_EMAIL']}" />
+--%>
+<c:set var="to" value="${wdkModel.model.modelConfig.adminEmail}"/>
 <c:set var="from" value="phenotype_comment_${phenotypeForm.stableId}@${wdkModel.displayName}.org" />
 <c:set var="subject" value="${subject}" />
 <c:set var="body" value="${body}" />
