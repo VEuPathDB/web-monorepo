@@ -22,6 +22,8 @@
     description="Class of queries to be displayed in the bubble"
     %>
 
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
+
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCats" value="${wdkModel.websiteRootCategories}" />
 
@@ -106,7 +108,7 @@
           </c:forEach>
 
           <li> 
-            <a class="heading" href="app/search/dataset/AllDatasets/result" style="padding-left:15px">Data Sets</a>
+            <a  href="${baseUrl}/app/search/dataset/AllDatasets/result" style="padding-left:15px">Data Sets</a>
           </li>
 
         </ul>
