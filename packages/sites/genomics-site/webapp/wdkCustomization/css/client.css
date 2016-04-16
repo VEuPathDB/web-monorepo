@@ -143,7 +143,7 @@ h4 {
   text-overflow: ellipsis;
 }
 
-.eupathdb-RecordOverviewItem, .eupathdb-ThumbnailLabel {
+.eupathdb-RecordOverviewItem, .eupathdb-RecordOverviewLink, .eupathdb-ThumbnailLabel {
   margin: .2em 0;
   font-size: 1.4em;
   font-weight: 300;
@@ -158,11 +158,27 @@ h4 {
   display: none;
 }
 
+/* Hide sections based on gene type */
 .eupathdb-RecordOverview[data-show-gene-type] {
   display: none;
 }
 
 .eupathdb-RecordOverview[data-gene-type="protein coding"] [data-show-gene-type="protein coding"] {
+  display: initial;
+}
+
+/* Hide sections based on number of comments */
+.eupathdb-RecordOverview [data-show-num-user-comments] {
+  display: none;
+}
+
+/* if data-show-num-user-comments begins with a '+' and we have comments, show section */
+.eupathdb-RecordOverview:not([data-num-user-comments=""]):not([data-num-user-comments="0"]) [data-show-num-user-comments="+1"] {
+  display: initial;
+}
+
+/* if data-show-num-user-comments equals '+2' and we have more than 2 comments, show section */
+.eupathdb-RecordOverview:not([data-num-user-comments=""]):not([data-num-user-comments="0"]):not([data-num-user-comments="1"]) [data-show-num-user-comments="+2"] {
   display: initial;
 }
 

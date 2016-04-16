@@ -176,25 +176,23 @@ export class RecordOverview extends React.Component {
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
 export function RecordTable(props) {
-    let Table = props.DefaultComponent;
 
-    if (expressionRE.test(props.table.name)) {
-        Table = ExpressionGraphTable;
-    }
-    if (props.table.name === 'MercatorTable') {
-        Table = MercatorTable;
-    }
-    if (props.table.name === 'ProteinProperties') {
-        Table = ProteinPbrowseTable;
-    }
-    if (props.table.name === 'ProteinExpressionPBrowse') {
-        Table = ProteinPbrowseTable;
-    }
-    if (props.table.name === 'Sequences') {
-        Table = SequencesTable;
-    }
-
-    return <Table {...props}/>
+  return expressionRE.test(props.table.name)              ? <ExpressionGraphTable {...props} />
+       : props.table.name === 'MercatorTable'             ? <MercatorTable {...props} />
+       : props.table.name === 'ProteinProperties'         ? <ProteinPbrowseTable {...props} />
+       : props.table.name === 'ProteinExpressionPBrowse'  ? <ProteinPbrowseTable {...props} />
+       : props.table.name === 'Sequences'                 ? <SequencesTable {...props} />
+       : props.table.name === 'UserComments'              ? (
+         <div>
+           <p>
+             <a href={props.record.attributes.user_comment_link_url}>
+               Add a comment <i className="fa fa-comment"/>
+             </a>
+           </p>
+           <props.DefaultComponent {...props} />
+         </div>
+       )
+       : <props.DefaultComponent {...props} />
 }
 
 function OverviewItem(props) {
@@ -222,35 +220,6 @@ function extractGeneAndTranscriptTrees(categories) {
         treeCache.set(categories, { geneRoot, transcriptRoot });
     }
     return treeCache.get(categories);
-}
-
-export function RecordHeading(props) {
-  let { attributes: a } = props.record;
-  let params = {
-    stableId: a.source_id,
-    commentTargetId: 'gene',
-    externalDbName: a.external_db_name,
-    externalDbVersion: a.external_dn_version,
-    organism: a.genus_species,
-    locations: a.start_min + '-' + a.end_max,
-    contig: a.sequence_id,
-    strand: a.strand_plus_minus,
-    flag: 0,
-    bulk: 0
-  };
-  let queryParams = Object.keys(params)
-  .map(key => `${key}=${params[key]}`)
-  .join('&');
-  let url = `addComment.do?${queryParams}`;
-  let headerActions = props.headerActions.concat({
-    label: 'Add a comment',
-    iconClassName: 'fa fa-lg fa-comment',
-    href: wdk.webappUrl(url),
-    external: true
-  });
-  return (
-    <props.DefaultComponent {...props} headerActions={headerActions}/>
-  );
 }
 
 export function RecordNavigationSectionCategories(props) {
