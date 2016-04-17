@@ -45,7 +45,7 @@
 <!-- ANY TAB, ANY STEP, ANY RECORD -->
 <div id="${view}">
 
- 
+  
 
   <!-- if LEAF step, if this is a Transcript Record and NOT a basket result:
          generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed
@@ -66,12 +66,22 @@
          data-step="${step.stepId}"
          data-filter="matched_transcript_filter_array">
       <p>
-        <imp:image height="14px" src="wdk/images/filter-short.png"/>
-     <!--   <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' >  -->
+       <%--  <imp:image height="14px" src="wdk/images/filter-short.png"/> --%>
+        <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' > 
         <strong title="${genesMissingTranscriptsCount}">
           Some Genes in your result have Transcripts that did not meet the search criteria.
           <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
         </strong>
+<%--
+        <c:choose>
+        <c:when test="${values eq '{"values":["Y"]}'}">
+          <div class="trFilter-filter-icon">Filter not applied</div>
+        </c:when>
+        <c:otherwise>
+          <div class="trFilter-filter-icon">&nbsp;&nbsp;&nbsp;<imp:image height="14px" src="wdk/images/filter-short.png"/>Filter applied</div>
+        </c:otherwise>
+        </c:choose>
+--%>
       </p>
       <div class="gene-leaf-filter-controls">
         <form action="applyFilter.do" name="apply-gene-leaf-filter">
@@ -85,9 +95,9 @@
           </p>
         </form>
 
-        <!-- DEBUG
+      <%-- DEBUG    ${values } contains a json string, eg: {"values":["Y","N"]}  
         <p id="trSelection">(Your initial selection was ${values})<br>(Your current selection is <span>${values}</span>)</p> 
-        -->
+       --%>
         <script type="application/json" class="gene-leaf-filter-values">
           ${values}
         </script>
@@ -141,7 +151,7 @@
   </c:if>  
     
                 
-<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count, or if set,  we show the representative transcript filter -->
+<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count, or *if set*,  we show the representative transcript filter -->
   <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
   <c:if test="${view eq 'transcripts' &&  (showViewFilter eq 'true' || !empty checkToggleBox) }"> 
 
@@ -164,8 +174,8 @@
     <%-- <c:set var="excludeBasketColumn" value="true" />  not needed since we have only one tab the _default view--%>
 
   </c:if>
-
-
+    
+    
 <!-- ANY TAB, ANY STEP, ANY RECORD -->
   <wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}"/>
 

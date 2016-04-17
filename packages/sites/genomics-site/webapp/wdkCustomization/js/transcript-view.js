@@ -44,15 +44,31 @@ $(document).on('wdk-results-loaded', function() {
   var $trCountSpan = $( 'div#oneTr-filter span#transcript-count' );
   var $trCount = $( 'div#oneTr-filter span#transcript-count span' );
 
+  // compare counts, if equal we will grey out the whole sentence
+  var $geneCountSpan = $( 'div#oneTr-filter span#gene-count' );
+  var $geneCount = $( 'div#oneTr-filter span#gene-count span' );
+  var gCount = $geneCount.text();
+  var tCount = $trCount.text();
+
+  // is filter setup?
   var checked =  $( 'div#oneTr-filter input' ).prop('checked');
+
+  if ( tCount === gCount) { 
+    $trCountSpan.css('color','grey');
+    $trCount.css('color','grey');
+    $geneCountSpan.css('color','grey');
+    $geneCount.css('color','grey');
+    $prompt.css('color','grey');
+  }
+
   if ( checked === true ) {
     $oneTrFilter.prop('title','Your result is filtered, showing only one transcript per gene. The transcript returned is the longest in the result.');
     $prompt.html('Showing Only One Transcript Per Gene');
- //   $filterIcon.css('visibility','visible'); 
+    //$filterIcon.css('visibility','visible'); 
     $trCountSpan.css('color','grey');
     $trCount.css('color','grey');
   }
-  // this all could be in the css/tag files coming from server, 
+  // this all could be in the css/tag files coming from server, being the default situation, 
   //    left here to have only one file where to coordinate verbiage between the checked and unchecked options
   else {
     $oneTrFilter.prop('title','Some genes have more than one transcript in your result. Click to select one transcript per gene in your result. We will return the longest in the result. This filter will not affect the strategy.');
