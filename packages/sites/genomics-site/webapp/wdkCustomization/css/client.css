@@ -175,6 +175,12 @@ h4 {
   display: none;
 }
 
+/* if data-show-num-user-comments is '0' and we don't have comments, show section */
+.eupathdb-RecordOverview[data-num-user-comments=""] [data-show-num-user-comments="0"],
+.eupathdb-RecordOverview[data-num-user-comments="0"] [data-show-num-user-comments="0"] {
+  display: initial;
+}
+
 /* if data-show-num-user-comments begins with a '+' and we have comments, show section */
 .eupathdb-RecordOverview:not([data-num-user-comments=""]):not([data-num-user-comments="0"]) [data-show-num-user-comments="+1"] {
   display: initial;
