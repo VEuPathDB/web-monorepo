@@ -1,10 +1,12 @@
 import React from 'react';
 import lodash from 'lodash';
+import {getBestPosition} from '../../utils';
+import VerticalScrollHelper from './VerticalScrollHelper';
 
-import { getBestPosition, isNodeOverflowing } from '../../utils';
 
-
-// TODO Smart position of popover
+/**
+ * Thumbnails for overview section of record page.
+ */
 export class OverviewThumbnails extends React.Component {
 
   constructor(...args) {
@@ -62,23 +64,25 @@ export class OverviewThumbnails extends React.Component {
 
   render() {
     return (
-      <div ref={this.setNode} className="eupathdb-Thumbnails">
-        {this.props.thumbnails.map(thumbnail => (
-          <div className="eupathdb-ThumbnailWrapper" key={thumbnail.gbrowse_url}>
-            <div className="eupathdb-ThumbnailLabel">
-              <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
+      <VerticalScrollHelper>
+        <div ref={this.setNode} className="eupathdb-Thumbnails">
+          {this.props.thumbnails.map(thumbnail => (
+            <div className="eupathdb-ThumbnailWrapper" key={thumbnail.gbrowse_url}>
+              <div className="eupathdb-ThumbnailLabel">
+                <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
+              </div>
+              <div className="eupathdb-Thumbnail"
+                onMouseEnter={this.handleThumbnailMouseEnter(thumbnail) }
+                onMouseLeave={this.handleThumbnailMouseLeave}>
+                <a href={'#' + thumbnail.anchor}>
+                  <img width="150" src={thumbnail.imgUrl}/>
+                </a>
+              </div>
             </div>
-            <div className="eupathdb-Thumbnail"
-              onMouseEnter={this.handleThumbnailMouseEnter(thumbnail) }
-              onMouseLeave={this.handleThumbnailMouseLeave}>
-              <a href={'#' + thumbnail.anchor}>
-                <img width="150" src={thumbnail.imgUrl}/>
-              </a>
-            </div>
-          </div>
-        )) }
-        {this.renderPopover() }
-      </div>
+          )) }
+          {this.renderPopover() }
+        </div>
+      </VerticalScrollHelper>
     );
   }
 

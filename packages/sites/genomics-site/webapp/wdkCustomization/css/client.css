@@ -211,6 +211,38 @@ h4 {
   padding-top: 64px;
 }
 
+.eupathdb-VerticalScrollHelper {
+  padding: 0 30px;
+  position: relative;
+  height: 100%;
+}
+
+.eupathdb-VerticalScrollHelperButton {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  border: none;
+  background: transparent;
+}
+
+.eupathdb-VerticalScrollHelperButton:hover {
+  color: black;
+}
+
+.eupathdb-VerticalScrollHelperButton[disabled] {
+  color: lightgrey;
+}
+
+.eupathdb-VerticalScrollHelperButton:first-child {
+  left: 0;
+  border-right: 1px inset #ccc;;
+}
+
+.eupathdb-VerticalScrollHelperButton:last-child {
+  right: 0;
+  border-left: 1px inset #ccc;;
+}
+
 .eupathdb-ThumbnailsContainer {
   border: 1px solid #d8d8d8;
   padding: 4px 6px 8px;
@@ -219,8 +251,7 @@ h4 {
   margin-top: 16px;
   display: inline-block;
   max-width: 100%;
-  min-height: 140px;
-  overflow: auto;
+  height: 140px;
   white-space: nowrap;
 }
 
