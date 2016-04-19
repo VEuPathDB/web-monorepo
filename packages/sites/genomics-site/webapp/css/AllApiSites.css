@@ -7,10 +7,11 @@
 
   .gene-boolean-filter, .gene-leaf-filter  {
     display: none;
-    margin-bottom: 1em;
+    margin-bottom: 1em; 
   }
-  .gene-boolean-filter p, .gene-leaf-filter p {
-    margin: 0.4em 0 0.6em;
+  .gene-boolean-filter a.gene-boolean-filter-controls-toggle, 
+  .gene-leaf-filter a.gene-leaf-filter-controls-toggle  {
+    padding-left:0.5em;
   }
   .gene-boolean-filter-controls, .gene-leaf-filter-controls {
     display: none;
@@ -25,14 +26,14 @@
   }
   .gene-boolean-filter-controls p, .gene-leaf-filter-controls p  {
     text-align: center; 
-    margin: 1em 0 .4em;
   }
   .gene-boolean-filter-controls button:disabled,  .gene-leaf-filter-controls button:disabled   {
  		color:grey;
   }
-
-
-  table#booleanFilter td#prompt{
+  span.trFilter-filter-icon {
+    font-weight: normal;
+  }
+  table#booleanFilter td#prompt, table#leafFilter td#prompt{
     font-weight:bold;
   }
   table#booleanFilter table td{
@@ -51,13 +52,15 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = results table view filter (representative transcript)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
+ 
   div#oneTr-filter {
     font-family: Verdana;
     font-weight: bold;
-    background-color: #eee; /* as in WDK result table header */
+    background-color: #eee; /* as in WDK result table header */ 
+    padding: 0.5em;
   }
   div#oneTr-filter span#prompt,  div#oneTr-filter span span {
     color: darkred;
     padding-right: 1em;
   }
+  
