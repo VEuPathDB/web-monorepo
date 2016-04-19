@@ -235,12 +235,12 @@ h4 {
 
 .eupathdb-VerticalScrollHelperButton:first-child {
   left: 0;
-  border-right: 1px inset #ccc;;
+  border-right: 1px solid #ccc;;
 }
 
 .eupathdb-VerticalScrollHelperButton:last-child {
   right: 0;
-  border-left: 1px inset #ccc;;
+  border-left: 1px solid #ccc;;
 }
 
 .eupathdb-ThumbnailsContainer {
