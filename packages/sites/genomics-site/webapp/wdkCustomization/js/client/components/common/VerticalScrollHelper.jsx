@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import {Component, PropTypes, cloneElement} from 'react';
 import {bindAll, throttle} from 'lodash';
 import {isNodeOverflowing} from '../../utils';
@@ -41,17 +42,18 @@ export default class VerticalScrollHelper extends Component {
 
   scrollLeft(event) {
     event.preventDefault();
-    this.updateScroll((this.node.clientWidth - 20) * -1);
+    this.updateScroll((this.node.clientWidth) * -1);
   }
 
   scrollRight(event) {
     event.preventDefault();
-    this.updateScroll(this.node.clientWidth - 20);
+    this.updateScroll(this.node.clientWidth);
   }
 
   updateScroll(scrollDelta) {
-    this.node.scrollLeft += scrollDelta;
-    this.updateButtonState();
+    // this.node.scrollLeft += scrollDelta;
+    $(this.node).animate({ scrollLeft: this.node.scrollLeft + scrollDelta },
+                         this.updateButtonState);
   }
 
   renderLeftButton() {
