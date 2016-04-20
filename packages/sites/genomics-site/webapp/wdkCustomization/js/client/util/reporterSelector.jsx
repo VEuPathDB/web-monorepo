@@ -10,6 +10,9 @@ import Gff3ReporterForm from '../components/reporters/Gff3ReporterForm';
 import FastaGeneReporterForm from '../components/reporters/FastaGeneReporterForm';
 import FastaGenomicSequenceReporterForm from '../components/reporters/FastaGenomicSequenceReporterForm';
 import FastaOrfReporterForm from '../components/reporters/FastaOrfReporterForm';
+import TableReporterForm from '../components/reporters/TableReporterForm';
+import TranscriptTableReporterForm from '../components/reporters/TranscriptTableReporterForm';
+import TranscriptAttributesReporterForm from '../components/reporters/TranscriptAttributesReporterForm';
 
 let EmptyReporter = props => ( <noscript/> );
 
@@ -17,6 +20,20 @@ EmptyReporter.getInitialState = () => ({ formState: null, formUiState: null });
 
 export function selectReporterComponent(reporterName, recordClassName) {
   switch (reporterName) {
+    case 'attributesTabular':
+      switch (recordClassName) {
+        case 'TranscriptRecordClasses.TranscriptRecordClass':
+          return TranscriptAttributesReporterForm;
+        default:
+          return TabularReporterForm;
+      }
+    case 'tableTabular':
+      switch (recordClassName) {
+        case 'TranscriptRecordClasses.TranscriptRecordClass':
+          return TranscriptTableReporterForm;
+        default:
+          return TableReporterForm;
+      }
     case 'tabular':
       return TabularReporterForm;
     case 'srt':
