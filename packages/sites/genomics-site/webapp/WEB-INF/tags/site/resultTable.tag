@@ -23,44 +23,40 @@
 <c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
   <c:set var="trRecord" value="true"/>
   <c:set var="showViewFilter" value="${step.answerValue.resultSize != step.answerValue.displayResultSize}"/>
-
-  <%-- gene count with missing tr --%>
   <c:set var="genesMissingTranscriptsCount" 
          value="${step.answerValue.resultProperties['genesMissingTranscriptsCount']}" />
-  <%-- debug:
+  <%-- debug: this property SQL defined in transcriptSummaryQueries.xml is not counting genes with missing transripts, 
+              due to the dynamic column 'matched_result' missing in boolean steps
   <br>
-     genes with missing transcripts: ${genesMissingTranscriptsCount}
-  <br> 
-  --%>
+     genes with missing transcripts or ?: ${genesMissingTranscriptsCount}<br> 
+   --%>
 </c:if>
 
-
-<!-- step could be single or combined:
-     single:   will show icon in the tr-tab if there are missing trasncripts (N <> 0)
-     combined: will show the icon in the tr-tab if either YN,NY,NN <> 0
-     exceptions: basket result step:       do not show anything
-                 span logic combined step: do not show anything
+<!-- a transcript step could be single or combined:
+       single:   will show icon/sentence if there are missing transcripts (N <> 0)
+       combined: will show the icon/sentence if either YN,NY,NN <> 0
+       exceptions: basket result step:       do not show anything
+                   span logic combined step: do not show anything
 -->
+
 
 <!-- ANY TAB, ANY STEP, ANY RECORD -->
 <div id="${view}">
 
-   
 
+<!-- ===================================================== -->
   <!-- if LEAF step, if this is a Transcript Record and NOT a basket result:
-         generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed
-  -->
-  <!-- THIS condition is used too in MatchedTranscriptFilter.defaultValue(), accessed by every newly created step.
-       defaultValue() will be null for the leaf steps outside the condition 
+         generate transcripts counts, to later (js) decide if the tab icon/warning sentence is needed
+       In MatchedTranscriptFilter.defaultValue(), accessed by every newly created step,
+         defaultValue() will be null for the leaf steps outside the condition 
   -->
   <c:if test="${!step.isCombined && trRecord eq 'true' && !fn:containsIgnoreCase(questionName, 'basket') }"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['matched_transcript_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
 
     <!-- Y/N table:  
-         - a jsp/tag (matchesResultFilter) will generate the table with correct display
-         - the condition to show the icon and table in a step requires the N count 
-         - the icon is shown in the tr-tab, independently of what tab is opened (gene view or tr view)
+         - a jsp/tag (matchesResultFilter.tag) will generate the table with correct display
+         - the condition to show the icon/sentence in a step requires the N count 
     --> 
     <div class="gene-leaf-filter ui-helper-clearfix"
          data-step="${step.stepId}"
@@ -68,11 +64,13 @@
 
       <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' > 
      
-      <strong title="${genesMissingTranscriptsCount} transcripts did not meet criteria">
-        <span>Some Genes in your result have Transcripts that did not meet the search criteria.</span>
-        <c:if test="${ fn:contains(values, 'N') }">
-          <span class="trFilter-filter-icon"><imp:image height="14px" src="wdk/images/filter-short.png"/>Filter applied.</span>
-        </c:if>
+      <strong>
+        <span>Some Genes in your result have Transcripts that did not meet the search criteria
+          <c:if test="${ fn:contains(values, 'N') }">
+            <%--  <imp:image height="14px" src="wdk/images/filter-short.png"/> --%>
+            <img height="14px" src="wdk/images/filter-short.png" title="Your transcript selection in this step is different from the original selection (only transcripts that met the search criteria).">
+          </c:if>
+        .</span>
         <a href="#" class="gene-leaf-filter-controls-toggle">Explore.</a>
       </strong>
  
@@ -84,7 +82,7 @@
             Loading filters...
           </div>
           <p>
-            <button disabled="yes" class="gene-leaf-filter-apply-button" title="To enable this button, select/unselect transcript sets.">Selection is applied</button>
+            <button disabled="yes" class="gene-leaf-filter-apply-button" title="To enable this button, select/unselect transcript sets.">Apply selection</button>
           </p>
         </form>
 
@@ -97,18 +95,17 @@
       </div>
     </div>
   </c:if>  
-  
-
+ 
+<!-- ===================================================== -->
   <!-- if BOOLEAN step (spanlogic does not need filter for now): if this is a Transcript Record:
-         generate transcripts counts, to later (js) decide if the tab icon/warning sentence are needed -->
+         generate transcripts counts, to later (js) decide if the tab icon/warning sentence is needed -->
   <c:if test="${step.isBoolean && trRecord eq 'true'}"> 
     <c:set var="option" value="${step.filterOptions.filterOptions['gene_boolean_filter_array']}"/>
     <c:set var="values" value="${option.value}"/>
 
     <!-- YY/NY/YN table:  
-         - a jsp/tag (geneBoolean Filter) will generate the table with correct display
-         - the condition to show the icon and table in a boolean step requires this table's counts 
-         - the icon is shown in the tr-tab, independently of what tab is opened (gene view or tr view)
+         - a jsp/tag (geneBooleanFilter.tag) will generate the table with correct display
+         - the condition to show the icon/sentence in a boolean step requires this table's counts 
     -->
     <div class="gene-boolean-filter ui-helper-clearfix"
          data-step="${step.stepId}"
@@ -117,10 +114,12 @@
       <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' >
 
       <strong>
-        <span>Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.</span>
+        <span>Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches</span>
         <c:if test="${ fn:contains(values, 'NN') || !fn:contains(values, 'YY') || !fn:contains(values, 'YN') || !fn:contains(values, 'NY') }">
-          <span class="trFilter-filter-icon"><imp:image height="14px" src="wdk/images/filter-short.png"/>Filter applied.</span>
-        </c:if>
+            <%--  <imp:image height="14px" src="wdk/images/filter-short.png"/> --%>
+            <img height="14px" src="wdk/images/filter-short.png" title="Your transcript selection in this step is different from the original selection (transcripts that met the search criteria in either input step).">
+          </c:if>
+        .</span>
         <a href="#" class="gene-boolean-filter-controls-toggle">Explore.</a>
       </strong>
 
@@ -147,17 +146,17 @@
     </div>
   </c:if>  
     
-                 
-<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count, or *if set*,  we show the representative transcript filter -->
-  <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
-<%--  <c:if test="${view eq 'transcripts' &&  (showViewFilter eq 'true' || !empty checkToggleBox) }">  --%>
+              
+<!-- ===================================================== -->   
+<!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count, we show the representative transcript filter -->
+  <%--  <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
+        <c:if test="${view eq 'transcripts' &&  (showViewFilter eq 'true' || !empty checkToggleBox) }">  
+  --%>
   <c:if test="${view eq 'transcripts' && showViewFilter eq 'true' }"> 
 
-    <div id="oneTr-filter">
+    <div id="oneTr-filter" title="Some genes in this result have more than one transcript that matched. Click on this option to display only one of those transcripts (the longest) per gene.  The other transcripts are still part of your result, but are hidden.">
       <!-- icon only when checked -->
-<!--      <span id="filter-icon" style="visibility:hidden"><imp:image height="14px" src="wdk/images/filter-short.png"/></span>
---> 
-     <!-- <span id="filter-icon"><img src="${baseUrl}/images/warningIcon2.png" style="width:20px;vertical-align:sub" title="Filter applied"</span>  -->
+      <!-- <span id="filter-icon"><img src="${baseUrl}/images/warningIcon2.png" style="width:20px;vertical-align:sub" ></span>  -->
       <span id="gene-count">
         ${wdkAnswer.displayResultSize eq 1 ? step.recordClass.displayName : step.recordClass.displayNamePlural}:
         <span>${wdkAnswer.displayResultSize}</span>
@@ -173,7 +172,9 @@
     <%-- <c:set var="excludeBasketColumn" value="true" />  not needed since we have only one tab the _default view--%>
 
   </c:if>
-     
+      
+
+
      
 <!-- ANY TAB, ANY STEP, ANY RECORD -->
   <wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}"/>

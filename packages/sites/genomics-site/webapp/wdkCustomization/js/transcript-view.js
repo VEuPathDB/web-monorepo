@@ -49,6 +49,7 @@ $(document).on('wdk-results-loaded', function() {
   var $geneCount = $( 'div#oneTr-filter span#gene-count span' );
   var gCount = $geneCount.text();
   var tCount = $trCount.text();
+  var hidingtCount = tCount - gCount;
 
   // is filter setup?
   var checked =  $( 'div#oneTr-filter input' ).prop('checked');
@@ -57,16 +58,15 @@ $(document).on('wdk-results-loaded', function() {
     $oneTrFilter.prop('title','Your result has one transcript per gene; the filter is applied but has no effect. ');
   }
   else if ( checked === true ) {
-    $oneTrFilter.prop('title','Your result is filtered, showing only one transcript per gene. The transcript returned is the longest in the result.');
-    $prompt.html('Showing Only One Transcript Per Gene');
+    //$oneTrFilter.prop('title','Your result is filtered, showing only one transcript per gene. The transcript returned is the longest in the result.');
     $filterIcon.css('visibility','visible'); 
-    $trCount.text('showing ' + gCount + ' of ' + tCount); 
+    //$trCount.text('showing ' + gCount + ' of ' + tCount); 
+    $trCount.text(tCount + ' (hiding ' + hidingtCount + ')'); 
   }
   //  being the default situation this is/could be in the files coming from server,
   //    it is left here to coordinate verbiage here between the checked and unchecked options
   else {
-    $oneTrFilter.prop('title','Some genes have more than one transcript in your result. Click to select one transcript per gene in your result. We will return the longest in the result. This filter will not affect the strategy.');
-    //$prompt.html('Show Only One Transcript Per Gene');
+    //$oneTrFilter.prop('title','Some genes have more than one transcript in your result. Click to select one transcript per gene in your result. We will return the longest in the result. This filter will not affect the strategy.');
     $filterIcon.css('visibility','hidden');
   }
 

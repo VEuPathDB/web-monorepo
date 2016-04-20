@@ -30,9 +30,6 @@
   .gene-boolean-filter-controls button:disabled,  .gene-leaf-filter-controls button:disabled   {
  		color:grey;
   }
-  span.trFilter-filter-icon {
-    font-weight: normal;
-  }
   table#booleanFilter td#prompt, table#leafFilter td#prompt{
     font-weight:bold;
   }

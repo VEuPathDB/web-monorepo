@@ -252,12 +252,10 @@ wdk.namespace('eupathdb.transcripts', function(ns, $) {
             // if different from initialCheckboxesState, enable Apply button, otherwise disable; set consistent popup message
             if( initialCheckboxesState !=  currChBxState ) {
               $('button.gene-leaf-filter-apply-button').removeProp('disabled');
-              $('button.gene-leaf-filter-apply-button').text('Apply selection');
-              $('button.gene-leaf-filter-apply-button').prop('title','This changes the step results and therefore has an effect on the rest of your strategy.');
+              $('button.gene-leaf-filter-apply-button').prop('title','Applying the current selection will change the step and therefore might affect the rest of your strategy.');
             }
             else {
               $('button.gene-leaf-filter-apply-button').prop('disabled', true);
-              $('button.gene-leaf-filter-apply-button').text('Selection is applied');
               $('button.gene-leaf-filter-apply-button').prop('title','To enable this button, select/unselect transcript sets.');
             }
           });
