@@ -149,8 +149,8 @@
               
 <!-- ===================================================== -->   
 <!-- if TRANSCRIPT VIEW, if Transcript count <> Gene count, we show the representative transcript filter -->
-  <%--  <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
-        <c:if test="${view eq 'transcripts' &&  (showViewFilter eq 'true' || !empty checkToggleBox) }">  
+  <c:set var="checkToggleBox" value="${requestScope.representativeTranscriptOnly ? 'checked=\"checked\"' : '' }"/>
+  <%--     <c:if test="${view eq 'transcripts' &&  (showViewFilter eq 'true' || !empty checkToggleBox) }">  
   --%>
   <c:if test="${view eq 'transcripts' && showViewFilter eq 'true' }"> 
 
