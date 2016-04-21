@@ -34,7 +34,7 @@
 <c:set var="NYdisabled" value="${NY eq null ? 'disabled' : ''}" />
 <c:set var="NNdisabled" value="${NN eq null ? 'disabled' : ''}" />
 
-<c:set var="colTooltip" value="Click on 'Add Columns' to select search specific columns that will show if a transcript matched the previous and/or the latest search." />
+<c:set var="colTooltip" value="Click on 'Add Columns' to select search specific columns to show if a transcript matched the previous and/or the latest search." />
 
 <!-- VERTICAL layout -->
 
