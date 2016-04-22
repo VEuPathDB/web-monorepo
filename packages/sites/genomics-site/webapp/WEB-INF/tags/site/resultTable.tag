@@ -64,7 +64,7 @@
 
       <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' > 
      
-      <strong>
+      <strong title="Click on 'Add Columns' to add columns with transcript counts (under 'Gene Models)'.">
         <span>Some Genes in your result have Transcripts that did not meet the search criteria
           <c:if test="${ fn:contains(values, 'N') }">
             <%--  <imp:image height="14px" src="wdk/images/filter-short.png"/> --%>
@@ -113,7 +113,7 @@
 
       <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' >
 
-      <strong>
+      <strong title=""Click on 'Add Columns' to add 2 columns (at the top) that show if a transcript matched the previous and/or the latest search.">
         <span>Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches</span>
         <c:if test="${ fn:contains(values, 'NN') || !fn:contains(values, 'YY') || !fn:contains(values, 'YN') || !fn:contains(values, 'NY') }">
             <%--  <imp:image height="14px" src="wdk/images/filter-short.png"/> --%>
