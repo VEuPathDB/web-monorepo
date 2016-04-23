@@ -46,19 +46,8 @@ export function RecordOverview(props) {
     description
   } = attributes;
 
-  let version = tables.Version[0];
-  let primaryPublication = tables.Publications[0];
-
-  let {
-    References,
-    HyperLinks,
-    Contacts,
-    Publications,
-    GenomeHistory,
-    Version,
-    ExampleGraphs,
-    Isolates
-  } = tables;
+  let version = tables.Version && tables.Version[0];
+  let primaryPublication = tables.Publications && tables.Publications[0];
 
   return (
     <div className="wdk-RecordOverview eupathdb-RecordOverview">
