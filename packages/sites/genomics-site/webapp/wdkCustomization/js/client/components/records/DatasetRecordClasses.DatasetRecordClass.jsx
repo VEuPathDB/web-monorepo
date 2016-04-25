@@ -1,4 +1,5 @@
 import React from 'react';
+import {injectWdkModel} from 'wdk-client/ComponentUtils';
 import ExpressionGraph from '../common/ExpressionGraph';
 
 // Use Element.innerText to strip XML
@@ -94,18 +95,6 @@ export function RecordOverview(props) {
   );
 }
 
-export function RecordTable(props) {
-  /* Need to make questions available for this to work
-  if (props.table.name === 'References') {
-    return <References {...props}/>;
-  }
-  */
-  if (props.table.name === 'ExampleGraphs') {
-    return <ExpressionGraphTable {...props}/>;
-  }
-  return <props.DefaultComponent {...props}/>;
-}
-
 function ExpressionGraphTable(props) {
   let included = props.table.properties.includeInTable || [];
   let table = Object.assign({}, props.table, {
@@ -121,21 +110,33 @@ function ExpressionGraphTable(props) {
       />
   );
 }
-function References(props) {
+let References = injectWdkModel(function References(props, context) {
+  let {questions, recordClasses, config} = context.wdkModel;
   let value = props.value
   .filter(row => row.target_type === 'question')
   .map(row => {
     let name = row.target_name;
-    let question = props.questions.find(q => q.name === name);
+    let question = questions.find(q => q.name === name);
 
     if (question == null) return null;
 
-    let recordClass = props.recordClasses.find(r => r.name === question.recordClassName);
+    let recordClass = recordClasses.find(r => r.name === question.recordClassName);
     let searchName = `Identify ${recordClass.displayNamePlural} by ${question.displayName}`;
     return (
-      <li key={index}>
-        <a href={'/a/showQuestion.do?questionFullName=' + name}>{searchName}</a>
+      <li key={name}>
+        <a href={`${config.webAppUrl}/showQuestion.do?questionFullName=${name}`}>{searchName}</a>
       </li>
     );
   });
+  return value.length === 0 ? <em>No data available</em> : <ul>{value}</ul>;
+});
+
+export function RecordTable(props) {
+  if (props.table.name === 'References') {
+    return <References {...props}/>;
+  }
+  if (props.table.name === 'ExampleGraphs') {
+    return <ExpressionGraphTable {...props}/>;
+  }
+  return <props.DefaultComponent {...props}/>;
 }
