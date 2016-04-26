@@ -121,7 +121,6 @@ foreach ($db_names as $db_name) {
       <th align="left"><font size="-2">username</font></th>
       <th align="left"><font size="-2">host</font></th>
       <th align="left"><font size="-2">created</font></th>
-      <th align="left"><font size="-2">valid</font></th>
     </tr>
 <?php
 $dblink_map = $adb{'DblinkList'};
@@ -135,15 +134,6 @@ foreach ($dblink_map as $dblink) {
       <td><?php print strtolower($dblink{'username'})?></td>
       <td><?php print strtolower($dblink{'host'})?></td>
       <td><?php print strtolower($dblink{'created'})?></td>
-      <td align='center'><?php 
-        if ($dblink{'isValid'} == '1') {
-          print "<span style='color:green''>&#10004;</span>";
-        } elseif ($dblink{'isValid'} == '0') {
-          print "<span style='color:red'>&#10008;</span>";
-        } else {
-          print "<span style='color:yellow; font-weight: bold'>?</span>";
-        }
-        ?></td>
     </tr>
 <?php
   $row++;
@@ -151,9 +141,6 @@ foreach ($dblink_map as $dblink) {
 ?>
   </table>
 </p>
-<span style='color:green''>&#10004;</span> Valid.
-<span style='color:red'>&#10008;</span> Not valid.
-<span style='color:yellow; font-weight: bold'>?</span> Unable to test.
 
 <hr/>
 <b>Information on this page was last updated</b>: <?php print $adb{'system_date'}?><br/>
