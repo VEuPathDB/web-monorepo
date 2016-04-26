@@ -59,23 +59,6 @@ export function RecordController(WdkRecordController) {
       return ( <WdkRecordController {...props} /> );
     }
 
-    /*
-    if (recordClass === Gene.GENE_ID) {
-      let [ geneId, transcriptId ] = splat.split('/');
-
-      if (transcriptId == null) {
-
-        // only the gene id is requested... either use the last transcript id the
-        // user requested for the gene id, or use the default
-        transcriptId = window.sessionStorage.getItem(
-          Gene.TRANSCRIPT_ID_KEY_PREFIX + geneId) || DEFAULT_TRANSCRIPT_MAGIC_STRING;
-
-        // add transcript id to request
-        splat = `${geneId}/${transcriptId}`;
-      }
-    }
-    */
-
     // Append project id to request
     let params = Object.assign({}, props.params, {
       splat: `${splat}/${wdk.MODEL_NAME}`
@@ -92,13 +75,6 @@ export function AppController(WdkAppController) {
   return function ApiAppController(props) {
     return (
       <div>
-        {/*
-        <div
-          className="eupathdb-Beta-Announcement"
-          title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
-            You are viewing a <strong>BETA</strong> (pre-release) page. <a data-name="contact_us" className="new-window" href="contact.do">Feedback and comments</a> are welcome!
-        </div>
-        */}
         <WdkAppController {...props}/>
         <Footer/>
       </div>
@@ -156,36 +132,6 @@ export function RecordOverview(DefaultComponent) {
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
-
-/*
-export function RecordMainSection(WdkRecordMainSection) {
-  return function ApiRecordMainSection(props) {
-    if (props.recordClass.name ==  Gene.RECORD_CLASS_NAME && props.depth == null) {
-      return <Gene.RecordMainSection {...props} DefaultComponent={WdkRecordMainSection}/>;
-    }
-    return <WdkRecordMainSection {...props}/>
-  };
-}
-*/
-
-/*
-export function RecordNavigationSectionCategories(WdkRecordNavigationSectionCategories) {
-  return function ApiRecordNavigationSectionCategories(props) {
-    switch (props.recordClass.name) {
-      case 'TranscriptRecordClasses.TranscriptRecordClass':
-        return (
-          <Gene.RecordNavigationSectionCategories
-            {...props}
-            DefaultComponent={WdkRecordNavigationSectionCategories}
-          />
-        );
-
-      default:
-        return <WdkRecordNavigationSectionCategories {...props}/>
-    }
-  };
-}
-*/
 
 // Customize StepDownloadForm to show the appropriate form based on the
 //   selected reporter and record class
