@@ -11,31 +11,34 @@ let TranscriptAttributesReporterForm = props => {
 
   return (
     <div>
+      <div>
+        <h3>Choose Rows:</h3>
+        <div style={{marginLeft:"2em"}}>
+          <Checkbox value={formState.applyFilter} onChange={getUpdateHandler('applyFilter')}/>
+          <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene</span>
+        </div>
+      </div>
       <CategoriesCheckboxTree
           // title and layout of the tree
-          title="Choose Attributes"
+          title="Choose Attributes:"
           searchBoxPlaceholder="Search Attributes..."
           tree={util.getAttributeTree(ontology, recordClass, question)}
 
           // state of the tree
           selectedLeaves={formState.attributes}
           expandedBranches={formUiState.expandedAttributeNodes}
-          searchText={formUiState.attributeSearchText}
-      
+          searchTerm={formUiState.attributeSearchText}
+
           // change handlers for each state element controlled by the tree
           onChange={getUpdateHandler('attributes')}
           onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
-          onSearchTextChange={getUiUpdateHandler('attributeSearchText')}
+          onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
       />
       <div>
         <h3>Additional Options:</h3>
         <div style={{marginLeft:"2em"}}>
           <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
           <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
-        </div>
-        <div style={{marginLeft:"2em"}}>
-          <Checkbox value={formState.applyFilter} onChange={getUpdateHandler('applyFilter')}/>
-          <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene</span>
         </div>
       </div>
       <div>

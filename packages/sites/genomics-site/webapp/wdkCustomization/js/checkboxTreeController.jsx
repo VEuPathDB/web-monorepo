@@ -53,8 +53,8 @@ export default class CheckboxTreeController {
       showSearchBox: true,
       searchBoxPlaceholder: "Search Columns...",
       searchBoxHelp: "Each column's name and description will be searched for your exact input text",
-      searchText: this.state.searchText,
-      onSearchTextChange: this.setSearchText,
+      searchTerm: this.state.searchText,
+      onSearchTermChange: this.setSearchText,
       searchPredicate: nodeSearchPredicate
     };
     ReactDOM.render(<CheckboxTree {...treeProps}/>, this.element[0]);

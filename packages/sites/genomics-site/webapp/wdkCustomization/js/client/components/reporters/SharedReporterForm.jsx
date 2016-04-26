@@ -20,12 +20,12 @@ let SharedReporterForm = props => {
           // state of the tree
           selectedLeaves={formState.attributes}
           expandedBranches={formUiState.expandedAttributeNodes}
-          searchText={formUiState.attributeSearchText}
+          searchTerm={formUiState.attributeSearchText}
 
           // change handlers for each state element controlled by the tree
           onChange={getUpdateHandler('attributes')}
           onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
-          onSearchTextChange={getUiUpdateHandler('attributeSearchText')}
+          onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
       />
 
       <CategoriesCheckboxTree
@@ -37,12 +37,12 @@ let SharedReporterForm = props => {
           // state of the tree
           selectedLeaves={formState.tables}
           expandedBranches={formUiState.expandedTableNodes}
-          searchText={formUiState.tableSearchText}
+          searchTerm={formUiState.tableSearchText}
 
           // change handlers for each state element controlled by the tree
           onChange={getUpdateHandler('tables')}
           onUiChange={getUiUpdateHandler('expandedTableNodes')}
-          onSearchTextChange={getUiUpdateHandler('tableSearchText')}
+          onSearchTermChange={getUiUpdateHandler('tableSearchText')}
       />
 
       <div>

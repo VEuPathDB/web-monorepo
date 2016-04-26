@@ -1,6 +1,6 @@
 import * as Wdk from 'wdk-client';
 
-let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.CategoryUtils);
 let { CategoriesCheckboxTree, RadioList, Checkbox } = Wdk.Components;
 
 let TableReporterForm = props => {
@@ -21,13 +21,13 @@ let TableReporterForm = props => {
           // state of the tree
           selectedLeaves={formState.tables}
           expandedBranches={formUiState.expandedTableNodes}
-          searchText={formUiState.tableSearchText}
+          searchTerm={formUiState.tableSearchText}
           isMultiPick={false}
 
           // change handlers for each state element controlled by the tree
           onChange={getUpdateHandler('tables')}
           onUiChange={getUiUpdateHandler('expandedTableNodes')}
-          onSearchTextChange={getUiUpdateHandler('tableSearchText')}
+          onSearchTermChange={getUiUpdateHandler('tableSearchText')}
       />
       <div>
         <h3>Additional Options:</h3>
@@ -61,7 +61,10 @@ let TableReporterForm = props => {
 TableReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => ({
   formState: {
     stepId: downloadFormStoreState.step.id.toString(),
-    tables: [],
+    tables: [ util.findFirstLeafId(util.getTableTree(
+        downloadFormStoreState.ontology,
+        downloadFormStoreState.recordClass,
+        downloadFormStoreState.question)) ],
     includeHeader: true,
     attachmentType: "plain"
   },
