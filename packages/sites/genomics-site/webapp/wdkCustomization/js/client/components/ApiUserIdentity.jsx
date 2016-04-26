@@ -2,6 +2,13 @@ import React from 'react';
 import { TextBox } from 'wdk-client/Components';
 import { getChangeHandler } from 'wdk-client/ComponentUtils';
 
+/**
+ * This React stateless function is an override of the WDK React component that displays the Identification fieldset of the User Profile / Account form.
+ * Title and department data are not currently collected by the ApiDB and so are left off this version of the fieldset.
+ * @param props
+ * @returns {XML} - modified identification fieldset
+ * @constructor
+ */
 const ApiUserIdentity = (props) => {
   let user = props.user;
   return (

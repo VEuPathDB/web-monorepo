@@ -2,8 +2,6 @@ import React from 'react';
 import { CheckboxList } from 'wdk-client/Components';
 import { getValueOrDefault, filterOutProps } from 'wdk-client/ComponentUtils';
 
-const APPLICATION_SPECIFIC_PROPERTIES = "applicationSpecificProperties";
-
 /**
  * Provides hardcode relationships between user email preferences and the display labels in the order the data
  * should be displayed.
@@ -22,6 +20,10 @@ const EMAIL_PREFERENCE_DATA = [{value:'preference_global_email_amoebadb', displa
   {value:'preference_global_email_trichdb', display:'TrichDB'},
   {value:'preference_global_email_tritrypdb', display:'TriTrypDB'}];
 
+/**
+ * This React component displays in a fieldset, the possible email alert preferences in the form of a checkbox list, overlaid
+ * with the user's current selections.
+ */
 const ApiApplicationSpecificProperties = React.createClass({
 
   render() {
@@ -37,18 +39,36 @@ const ApiApplicationSpecificProperties = React.createClass({
     );
   },
 
+
+  /**
+   * Separates key = value pairs into object with name and value attributes.
+   * @param keys
+   * @param object
+   * @returns {*}
+   */
   toNamedMap(keys, object) {
     return keys.map(key => ({name: key, value: object[key]}));
   },
 
+
+  /**
+   * This is a callback function issued by the checkbox list when a checkbox is altered.  The selected items are munged into
+   * a key = value format expected for the user object and the existing application specific properties are replaced with
+   * these and delivered to the store.
+   * @param newPreferences -  an array of selected items.
+   */
   onEmailPreferenceChange(newPreferences) {
-    let properties = getValueOrDefault(this.props.user, APPLICATION_SPECIFIC_PROPERTIES, {});
+    let properties = getValueOrDefault(this.props.user, this.props.name, {});
     Object.keys(properties).forEach(function (key) {
       if (key.startsWith('preference_global_email_')) delete properties[key];
     });
     // Replace with new email preferences
-    let newProperties = newPreferences.reduce((currentPreferences, newPreference) => Object.assign(currentPreferences, {[newPreference]: "on"}), properties);
-    this.props.onFormStateChange(Object.assign({}, filterOutProps(this.props.user, [APPLICATION_SPECIFIC_PROPERTIES]), {[APPLICATION_SPECIFIC_PROPERTIES]: newProperties}));
+    let newProperties = newPreferences.reduce(
+      (currentPreferences, newPreference) => Object.assign(currentPreferences, {[newPreference]: "on"}), properties
+    );
+    this.props.onFormStateChange(
+      Object.assign({}, filterOutProps(this.props.user, [this.props.name]), {[this.props.name]: newProperties})
+    );
   }
 
 });
