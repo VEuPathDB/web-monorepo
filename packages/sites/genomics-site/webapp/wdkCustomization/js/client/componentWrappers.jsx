@@ -4,6 +4,8 @@ import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
 import { selectReporterComponent } from './util/reporterSelector';
+import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
+import ApiUserIdentity from './components/ApiUserIdentity';
 
 // Remove project_id from record links
 export function RecordLink(WdkRecordLink) {
@@ -220,3 +222,16 @@ export function RecordAttribute(DefaultComponent) {
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
+
+export function UserIdentity() {
+  return ApiUserIdentity;
+}
+
+export function UserContact() {
+  return function() { return <noscript /> };
+}
+
+export function ApplicationSpecificProperties() {
+  return ApiApplicationSpecificProperties;
+}
+
