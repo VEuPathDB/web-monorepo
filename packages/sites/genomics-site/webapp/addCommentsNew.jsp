@@ -459,7 +459,7 @@ function openPubmedWindow(searchBoxId) {
           </c:when>
 
           <c:otherwise>
-            <td valign=top>Gene Identifiers</td>
+            <td valign=top>Gene Identifiers (please do not include ${commentForm.stableId})</td>
           </c:otherwise>
         </c:choose>
 
