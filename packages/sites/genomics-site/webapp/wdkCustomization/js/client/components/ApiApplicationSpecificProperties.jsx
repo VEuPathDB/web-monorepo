@@ -27,7 +27,8 @@ const EMAIL_PREFERENCE_DATA = [{value:'preference_global_email_amoebadb', displa
 const ApiApplicationSpecificProperties = React.createClass({
 
   render() {
-    let properties = this.toNamedMap(Object.keys(this.props.user.applicationSpecificProperties), this.props.user.applicationSpecificProperties);
+    let applicationSpecificProperties = this.props.user[this.props.name];
+    let properties = this.toNamedMap(Object.keys(applicationSpecificProperties), applicationSpecificProperties);
     let emailPreferenceSelections = properties.filter(property => property.name.startsWith('preference_global_email_')).map(property => property.name);
     return (
       <fieldset>
@@ -58,6 +59,7 @@ const ApiApplicationSpecificProperties = React.createClass({
    * @param newPreferences -  an array of selected items.
    */
   onEmailPreferenceChange(newPreferences) {
+    console.log("App Props: " + JSON.stringify(this.props.user[this.props.name]));
     let properties = getValueOrDefault(this.props.user, this.props.name, {});
     Object.keys(properties).forEach(function (key) {
       if (key.startsWith('preference_global_email_')) delete properties[key];
