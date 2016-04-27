@@ -1,3 +1,4 @@
+/* global wdk */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
@@ -25,7 +26,7 @@ export class RecordOverview extends React.Component {
 
   renderThumbnails() {
     let { recordClass } = this.props;
-    let { attributes } = this.props.record;
+    let { attributes, tables } = this.props.record;
     let { gene_type, protein_expression_gtracks } = attributes;
     let isProteinCoding = gene_type === 'protein coding';
     let filteredGBrowseContexts = Gbrowse.contexts.filter(context => {
@@ -37,7 +38,16 @@ export class RecordOverview extends React.Component {
     .map(thumbnail => Object.assign({}, thumbnail, {
       imgUrl: attributes[thumbnail.gbrowse_url],
       displayName: recordClass.attributesMap.get(thumbnail.gbrowse_url).displayName
-    }));
+    }))
+    .concat({
+      displayName: 'Transcriptomics',
+      imgUrl: wdk.assetsUrl('wdkCustomization/images/transcriptomics.jpg'),
+      anchor: 'ExpressionGraphs',
+      data: {
+        count: tables && tables.ExpressionGraphs && tables.ExpressionGraphs.length
+      }
+    });
+
     let thumbsContainer = this.node.querySelector('.eupathdb-ThumbnailsContainer');
 
     if (thumbsContainer == null) {

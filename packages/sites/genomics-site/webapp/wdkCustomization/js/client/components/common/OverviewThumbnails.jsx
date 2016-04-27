@@ -1,13 +1,18 @@
-import React from 'react';
+import {Component, PropTypes} from 'react';
 import lodash from 'lodash';
 import {getBestPosition} from '../../utils';
 import VerticalScrollHelper from './VerticalScrollHelper';
 
+let ThumbnailPropType = PropTypes.shape({
+  anchor: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
+  imgUrl: PropTypes.string.isRequired
+});
 
 /**
  * Thumbnails for overview section of record page.
  */
-export class OverviewThumbnails extends React.Component {
+export class OverviewThumbnails extends Component {
 
   constructor(...args) {
     super(...args);
@@ -67,17 +72,17 @@ export class OverviewThumbnails extends React.Component {
       <VerticalScrollHelper>
         <div ref={this.setNode} className="eupathdb-Thumbnails">
           {this.props.thumbnails.map(thumbnail => (
-            <div className="eupathdb-ThumbnailWrapper" key={thumbnail.gbrowse_url}>
+            <div className="eupathdb-ThumbnailWrapper" key={thumbnail.anchor}>
               <div className="eupathdb-ThumbnailLabel">
                 <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
               </div>
-              <div className="eupathdb-Thumbnail"
+              <a className={'eupathdb-Thumbnail eupathdb-Thumbnail__' + thumbnail.anchor}
+                {...getDataProps(thumbnail)}
                 onMouseEnter={this.handleThumbnailMouseEnter(thumbnail) }
-                onMouseLeave={this.handleThumbnailMouseLeave}>
-                <a href={'#' + thumbnail.anchor}>
-                  <img width="150" src={thumbnail.imgUrl}/>
-                </a>
-              </div>
+                onMouseLeave={this.handleThumbnailMouseLeave}
+                href={'#' + thumbnail.anchor}>
+                <img width="150" src={thumbnail.imgUrl}/>
+              </a>
             </div>
           )) }
           {this.renderPopover() }
@@ -96,6 +101,8 @@ export class OverviewThumbnails extends React.Component {
           <h3>{this.state.activeThumbnail.displayName}</h3>
           <div>(Click on image to view section on page) </div>
           <a href={'#' + this.state.activeThumbnail.anchor}
+            className={'eupathdb-Thumbnail eupathdb-Thumbnail__' + this.state.activeThumbnail.anchor}
+            {...getDataProps(this.state.activeThumbnail)}
             onClick={this.handlePopoverClick}>
             <img src={this.state.activeThumbnail.imgUrl}/>
           </a>
@@ -104,4 +111,15 @@ export class OverviewThumbnails extends React.Component {
     }
   }
 
+}
+
+OverviewThumbnails.propTypes = {
+  thumbnails: PropTypes.arrayOf(ThumbnailPropType).isRequired
+};
+
+function getDataProps(thumbnail) {
+  let { data = {} } = thumbnail;
+  return lodash.mapKeys(data, function(value, key) {
+    return 'data-' + key;
+  });
 }

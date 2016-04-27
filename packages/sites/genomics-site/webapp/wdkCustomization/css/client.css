@@ -252,7 +252,7 @@ h4 {
   display: inline-block;
   max-width: 100%;
   width: 410px;
-  height: 140px;
+  min-height: 140px;
   white-space: nowrap;
 }
 
@@ -268,9 +268,9 @@ h4 {
   }
 }
 
-@media all and (min-width 1515px) {
+@media all and (min-width: 1515px) {
   .eupathdb-ThumbnailsContainer {
-    width: 940px;
+    width: auto;
   }
 }
 
@@ -282,10 +282,43 @@ h4 {
 
 .eupathdb-Thumbnail {
   border: 1px solid #d8d8d8;
+  display: inline-block;
 }
 
 .eupathdb-Thumbnail img {
   display: block;
+}
+
+.eupathdb-Thumbnail__ExpressionGraphs {
+  position: relative;
+}
+
+.eupathdb-Thumbnail__ExpressionGraphs:before {
+  content: attr(data-count) " data sets";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  line-height: 100px;
+  font-size: 1.8em;
+  font-weight: 300;
+  text-align: center;
+  text-shadow: 0px 0px 1px black;
+  color: white;
+  background: rgba(0,0,0,.4);
+  z-index: 1;
+}
+
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail__ExpressionGraphs:before {
+  font-size: 10vh;
+  line-height: 75vh;
+}
+
+.eupathdb-Thumbnail__ExpressionGraphs img {
+  -moz-filter: grayscale(.7) blur(1px);
+  -webkit-filter: grayscale(.7) blur(1px);
+  -o-filter: grayscale(.7) blur(1px);
+  -ms-filter: grayscale(.7) blur(1px);
+  filter: grayscale(.7) blur(1px);
 }
 
 .eupathdb-ThumbnailPopover {

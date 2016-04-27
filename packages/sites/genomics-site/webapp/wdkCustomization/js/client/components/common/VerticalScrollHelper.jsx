@@ -24,6 +24,10 @@ export default class VerticalScrollHelper extends Component {
     window.addEventListener('resize', this.updateButtonState);
   }
 
+  componentWillReceiveProps() {
+    this.updateButtonState();
+  }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateButtonState);
   }
