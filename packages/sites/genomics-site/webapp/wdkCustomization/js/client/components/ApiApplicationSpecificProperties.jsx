@@ -59,7 +59,6 @@ const ApiApplicationSpecificProperties = React.createClass({
    * @param newPreferences -  an array of selected items.
    */
   onEmailPreferenceChange(newPreferences) {
-    console.log("App Props: " + JSON.stringify(this.props.user[this.props.name]));
     let properties = getValueOrDefault(this.props.user, this.props.name, {});
     Object.keys(properties).forEach(function (key) {
       if (key.startsWith('preference_global_email_')) delete properties[key];
