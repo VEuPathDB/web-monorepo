@@ -24,6 +24,8 @@ export function RecordViewStore(WdkRecordViewStore) {
         }
         case actionTypes.SHOW_SECTION:
         case actionTypes.HIDE_SECTION:
+        case actionTypes.SHOW_ALL_FIELDS:
+        case actionTypes.HIDE_ALL_FIELDS:
           setCollapsedSections(nextState);
           return nextState;
         default:
