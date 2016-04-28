@@ -1,16 +1,17 @@
 import * as Wdk from 'wdk-client';
 
-let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.OntologyUtils);
-let { CategoriesCheckboxTree, RadioList, Checkbox } = Wdk.Components;
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.OntologyUtils, Wdk.CategoryUtils);
+let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.Components;
 
 let SharedReporterForm = props => {
 
-  let { question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
+  let { scope, question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
 
   return (
     <div>
+      <ReporterSortMessage scope={scope}/>
       <CategoriesCheckboxTree
           // title and layout of the tree
           title="Choose Attributes"
@@ -66,20 +67,28 @@ let SharedReporterForm = props => {
   );
 };
 
-SharedReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => ({
-  formState: {
-    attributes: util.getAttributeSelections(
-        userStoreState.preferences, downloadFormStoreState.question),
-    tables: [],
-    includeEmptyTables: true,
-    attachmentType: "plain"
-  },
-  formUiState: {
-    expandedAttributeNodes: null,
-    attributeSearchText: "",
-    expandedTableNodes: null,
-    tableSearchText: ""
-  }
-});
+SharedReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
+  let { scope, question, recordClass, ontology } = downloadFormStoreState;
+  // select all attribs and tables for record page, else column user prefs and no tables
+  let attribs = (scope === 'results' ?
+      util.getAttributeSelections(userStoreState.preferences, question) :
+      util.getAllLeafIds(util.getAttributeTree(ontology, recordClass, question)));
+  let tables = (scope === 'results' ? [] :
+      util.getAllLeafIds(util.getTableTree(ontology, recordClass)));
+  return {
+    formState: {
+      attributes: attribs,
+      tables: tables,
+      includeEmptyTables: true,
+      attachmentType: "plain"
+    },
+    formUiState: {
+      expandedAttributeNodes: null,
+      attributeSearchText: "",
+      expandedTableNodes: null,
+      tableSearchText: ""
+    }
+  };
+}
 
 export default SharedReporterForm;

@@ -1,16 +1,17 @@
 import * as Wdk from 'wdk-client';
 
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.CategoryUtils);
-let { CategoriesCheckboxTree, RadioList, Checkbox } = Wdk.Components;
+let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.Components;
 
 let TableReporterForm = props => {
 
-  let { question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
+  let { scope, question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
 
   return (
     <div>
+      <ReporterSortMessage scope={scope}/>
       <CategoriesCheckboxTree
           // title and layout of the tree
           title="Choose a Table"
@@ -58,20 +59,24 @@ let TableReporterForm = props => {
   );
 }
 
-TableReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => ({
-  formState: {
-    stepId: downloadFormStoreState.step.id.toString(),
-    tables: [ util.findFirstLeafId(util.getTableTree(
-        downloadFormStoreState.ontology,
-        downloadFormStoreState.recordClass,
-        downloadFormStoreState.question)) ],
-    includeHeader: true,
-    attachmentType: "plain"
-  },
-  formUiState: {
-    expandedTableNodes: null,
-    tableSearchText: ""
-  }
-});
+TableReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
+  let tableTree = util.getTableTree(
+      downloadFormStoreState.ontology,
+      downloadFormStoreState.recordClass,
+      downloadFormStoreState.question);
+  let firstLeafName = util.findFirstLeafId(tableTree);
+  return {
+    formState: {
+      stepId: downloadFormStoreState.step.id.toString(),
+      tables: [ firstLeafName ],
+      includeHeader: true,
+      attachmentType: "plain"
+    },
+    formUiState: {
+      expandedTableNodes: null,
+      tableSearchText: ""
+    }
+  };
+}
 
 export default TableReporterForm;

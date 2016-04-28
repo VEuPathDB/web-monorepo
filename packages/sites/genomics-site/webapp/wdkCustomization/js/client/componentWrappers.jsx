@@ -200,3 +200,17 @@ export function UserContact() {
 export function ApplicationSpecificProperties() {
   return ApiApplicationSpecificProperties;
 }
+
+/**
+ * Trims PROJECT_ID off the tail end of a comma-delimited list of primary key value parts
+ */
+export function PrimaryKeySpan(DefaultComponent) {
+  return function(props) {
+    let pkValues = props.primaryKeyString.split(',');
+    let newPkString = pkValues[0];
+    for (let i = 1; i < pkValues.length - 1; i++) {
+      newPkString += ", " + pkValues[i];
+    }
+    return ( <span>{newPkString}</span> );
+  };
+}

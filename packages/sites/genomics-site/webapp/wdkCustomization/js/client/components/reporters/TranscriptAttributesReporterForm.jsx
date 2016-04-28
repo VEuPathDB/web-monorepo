@@ -1,16 +1,17 @@
 import * as Wdk from 'wdk-client';
 
-let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
-let { CategoriesCheckboxTree, RadioList, Checkbox } = Wdk.Components;
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.CategoryUtils);
+let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.Components;
 
 let TranscriptAttributesReporterForm = props => {
 
-  let { question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
+  let { scope, question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
 
   return (
     <div>
+      <ReporterSortMessage scope={scope}/>
       <div>
         <h3>Choose Rows:</h3>
         <div style={{marginLeft:"2em"}}>
@@ -68,18 +69,24 @@ function getUserPrefFilterValue(prefs) {
   return (prefValue !== undefined && prefValue === "true");
 }
 
-TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => ({
-  formState: {
-    attributes: util.getAttributeSelections(
-        userStoreState.preferences, downloadFormStoreState.question),
-    includeHeader: true,
-    attachmentType: "plain",
-    applyFilter: getUserPrefFilterValue(userStoreState.preferences)
-  },
-  formUiState: {
-    expandedAttributeNodes: null,
-    attributeSearchText: ""
-  }
-});
+TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
+  let { scope, question, recordClass, ontology } = downloadFormStoreState;
+  // select all attribs and tables for record page, else column user prefs and no tables
+  let attribs = (scope === 'results' ?
+      util.getAttributeSelections(userStoreState.preferences, question) :
+      util.getAllLeafIds(util.getAttributeTree(ontology, recordClass, question)));
+  return {
+    formState: {
+      attributes: attribs,
+      includeHeader: true,
+      attachmentType: "plain",
+      applyFilter: getUserPrefFilterValue(userStoreState.preferences)
+    },
+    formUiState: {
+      expandedAttributeNodes: null,
+      attributeSearchText: ""
+    }
+  };
+}
 
 export default TranscriptAttributesReporterForm;
