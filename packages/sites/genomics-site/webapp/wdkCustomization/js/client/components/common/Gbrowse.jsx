@@ -57,39 +57,26 @@ export let contexts = [
     },
 ];
 
-export class GbrowseContext extends ComponentUtils.PureComponent {
-
-  constructor(...args) {
-    super(...args);
-    this.state = { isCollapsed: false };
-    this.style = { display: 'block', width: '100%' };
-    this.updateCollapsed = isCollapsed => {
-      this.setState({ isCollapsed });
-    };
-  }
-
-  render() {
-    let gbrowseUrl = this.props.record.attributes[this.props.name];
-    let iframeUrl = gbrowseUrl + ';width=800;embed=1';
-    let mapName = this.props.name + '_map';
-    return (
-      <CollapsibleSection
-        id={this.props.name}
-        className="eupathdb-GbrowseContext"
-        style={this.style}
-        headerContent={this.props.displayName}
-        isCollapsed={this.state.isCollapsed}
-        onCollapsedChange={this.updateCollapsed}
-      >
-        <img src={gbrowseUrl} useMap={'#' + mapName}/>
-        <GbrowseImageMap url={iframeUrl} name={mapName}/>
-        <div>
-          <a href={gbrowseUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
-        </div>
-      </CollapsibleSection>
-    );
-  }
-
+export function GbrowseContext(props) {
+  let gbrowseUrl = props.record.attributes[props.name];
+  let iframeUrl = gbrowseUrl + ';width=800;embed=1';
+  let mapName = props.name + '_map';
+  return (
+    <CollapsibleSection
+      id={props.name}
+      className="eupathdb-GbrowseContext"
+      style={{display: 'block', width: '100%' }}
+      headerContent={props.displayName}
+      isCollapsed={props.isCollapsed}
+      onCollapsedChange={props.onCollapsedChange}
+    >
+      <img src={gbrowseUrl} useMap={'#' + mapName}/>
+      <GbrowseImageMap url={iframeUrl} name={mapName}/>
+      <div>
+        <a href={gbrowseUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
+      </div>
+    </CollapsibleSection>
+  );
 }
 
 export function ProteinContext(props) {

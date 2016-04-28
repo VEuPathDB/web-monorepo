@@ -73,7 +73,6 @@ export class RecordOverview extends React.Component {
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
 export function RecordTable(props) {
-
   return expressionRE.test(props.table.name)              ? <ExpressionGraphTable {...props} />
        : props.table.name === 'MercatorTable'             ? <MercatorTable {...props} />
        : props.table.name === 'ProteinProperties'         ? <ProteinPbrowseTable {...props} />
