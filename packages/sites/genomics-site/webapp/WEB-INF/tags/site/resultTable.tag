@@ -154,7 +154,7 @@
   --%>
   <c:if test="${view eq 'transcripts' && showViewFilter eq 'true' }"> 
 
-    <div id="oneTr-filter" title="Some genes in this result have more than one transcript that matched. Click on this option to display only one of those transcripts (the longest) per gene.  The other transcripts are still part of your result, but are hidden.">
+    <div id="oneTr-filter" title="Some genes in this result have more than one transcript that matched. Click on this option to display only one of those transcripts (the longest) per gene.  The other transcripts are still part of your result, but will be hidden, for readability.">
       <!-- icon only when checked -->
       <!-- <span id="filter-icon"><img src="${baseUrl}/images/warningIcon2.png" style="width:20px;vertical-align:sub" ></span>  -->
       <span id="gene-count">
