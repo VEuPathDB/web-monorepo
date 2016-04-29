@@ -1,3 +1,6 @@
+
+var escapeSelectorComponent = wdk.util.escapeSelectorComponent;
+
 function initializeGenomeView() {
     var tooltip = window.wdk.tooltips;
     $(".genome-view").each(function() {
@@ -7,7 +10,7 @@ function initializeGenomeView() {
         // register events onto sequences
         genomeView.find(".datatables .sequence").each(function() {
             var sequence = $(this);
-            var sequenceId = sequence.find(".sequence-id").text();
+            var sequenceId = escapeSelectorComponent(sequence.find(".sequence-id").text());
             var canvas = sequence.find(".canvas");
             var sequenceData = genomeView.find("#sequences #" + sequenceId + ".sequence");
 
@@ -18,9 +21,11 @@ function initializeGenomeView() {
 
             // register events on region
             canvas.find(".region").click(function() {
-                var regionId = $(this).attr("data-id");
+                var regionId = escapeSelectorComponent( $(this).attr("data-id") );
                 var content = sequenceData.find(".regions #" + regionId).clone();
-
+                if (content.length === 0) { 
+                  console.error("the element with id: " + regionId + " cannot be found"); 
+                }
                 var flag = content.data("registered");
                 if (flag != "true") {
                     content.data("registered", "true");
