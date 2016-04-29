@@ -278,6 +278,7 @@ h4 {
   display: inline-block;
   vertical-align: top;
   margin: 0 1em;
+  min-width: 152px;
 }
 
 .eupathdb-Thumbnail {
@@ -285,8 +286,9 @@ h4 {
   display: inline-block;
 }
 
-.eupathdb-Thumbnail img {
+.eupathdb-ThumbnailWrapper img {
   display: block;
+  width: 150px;
 }
 
 .eupathdb-Thumbnail__ExpressionGraphs {
@@ -338,7 +340,7 @@ h4 {
   font-weight: 400;
 }
 
-.eupathdb-ThumbnailPopover div {
+.eupathdb-ThumbnailPopover > div {
   text-align: center;
   padding-bottom: 4px;
 }
@@ -347,6 +349,7 @@ h4 {
   max-height: 75vh;
   max-width: 80vw;
   border: 1px solid #aaa;
+  display: block;
 }
 
 .eupathdb-GbrowseContext {

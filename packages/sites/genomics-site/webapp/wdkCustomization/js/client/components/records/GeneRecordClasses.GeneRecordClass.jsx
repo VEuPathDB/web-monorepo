@@ -36,12 +36,12 @@ export class RecordOverview extends React.Component {
       );
     })
     .map(thumbnail => Object.assign({}, thumbnail, {
-      imgUrl: attributes[thumbnail.gbrowse_url],
+      element: <Gbrowse.GbrowseImage url={attributes[thumbnail.gbrowse_url]}/>,
       displayName: recordClass.attributesMap.get(thumbnail.gbrowse_url).displayName
     }))
     .concat({
       displayName: 'Transcriptomics',
-      imgUrl: wdk.assetsUrl('wdkCustomization/images/transcriptomics.jpg'),
+      element: <img src={wdk.assetsUrl('wdkCustomization/images/transcriptomics.jpg')}/>,
       anchor: 'ExpressionGraphs',
       data: {
         count: tables && tables.ExpressionGraphs && tables.ExpressionGraphs.length

@@ -6,7 +6,7 @@ import VerticalScrollHelper from './VerticalScrollHelper';
 let ThumbnailPropType = PropTypes.shape({
   anchor: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
-  imgUrl: PropTypes.string.isRequired
+  element: PropTypes.element.isRequired
 });
 
 /**
@@ -81,7 +81,7 @@ export class OverviewThumbnails extends Component {
                 onMouseEnter={this.handleThumbnailMouseEnter(thumbnail) }
                 onMouseLeave={this.handleThumbnailMouseLeave}
                 href={'#' + thumbnail.anchor}>
-                <img width="150" src={thumbnail.imgUrl}/>
+                {thumbnail.element}
               </a>
             </div>
           )) }
@@ -104,7 +104,7 @@ export class OverviewThumbnails extends Component {
             className={'eupathdb-Thumbnail eupathdb-Thumbnail__' + this.state.activeThumbnail.anchor}
             {...getDataProps(this.state.activeThumbnail)}
             onClick={this.handlePopoverClick}>
-            <img src={this.state.activeThumbnail.imgUrl}/>
+            {this.state.activeThumbnail.element}
           </a>
         </div>
       );
