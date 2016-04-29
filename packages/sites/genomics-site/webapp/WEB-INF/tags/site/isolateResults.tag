@@ -33,7 +33,7 @@
 <c:set var="dispModelName" value="${applicationScope.wdkModel.displayName}" />
 
 
-<c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'IsolateRecordClasses.IsolateRecordClass') }
+<c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'PopsetRecordClasses.PopsetRecordClass') }
 </c:set> 
 
 <c:set var="type" value="${wdkStep.recordClass.displayNamePlural}"/>
