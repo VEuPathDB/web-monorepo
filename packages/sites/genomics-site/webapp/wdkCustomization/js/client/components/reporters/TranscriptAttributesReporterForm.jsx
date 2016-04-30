@@ -21,9 +21,9 @@ let TranscriptAttributesReporterForm = props => {
       </div>
       <CategoriesCheckboxTree
           // title and layout of the tree
-          title="Choose Attributes:"
-          searchBoxPlaceholder="Search Attributes..."
-          tree={util.getAttributeTree(ontology, recordClass, question)}
+          title="Choose Columns:"
+          searchBoxPlaceholder="Search Columns..."
+          tree={util.getAttributeTree(ontology, recordClass.name, question)}
 
           // state of the tree
           selectedLeaves={formState.attributes}
@@ -31,7 +31,7 @@ let TranscriptAttributesReporterForm = props => {
           searchTerm={formUiState.attributeSearchText}
 
           // change handlers for each state element controlled by the tree
-          onChange={getUpdateHandler('attributes')}
+          onChange={util.getAttributesChangeHandler('attributes', onFormChange, formState, recordClass)}
           onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
           onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
       />
@@ -70,11 +70,11 @@ function getUserPrefFilterValue(prefs) {
 }
 
 TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
-  let { scope, question, recordClass, ontology } = downloadFormStoreState;
+  let { scope, step, question, recordClass, ontology } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
   let attribs = (scope === 'results' ?
-      util.getAttributeSelections(userStoreState.preferences, question) :
-      util.getAllLeafIds(util.getAttributeTree(ontology, recordClass, question)));
+      util.addPk(util.getAttributeSelections(userStoreState.preferences, question), recordClass) :
+      util.addPk(util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)), recordClass));
   return {
     formState: {
       attributes: attribs,
