@@ -20,23 +20,26 @@ class CompoundStructures extends Component {
   }
 
   render() {
+    let [ primary, ...other ] = this.props.value;
     return (
       <div className="eupathdb-CompoundStructures">
         <div>
-          <CompoundStructure moleculeText={this.props.value[0].structure}/>
+          <CompoundStructure moleculeText={primary.structure}/>
         </div>
-        <CollapsibleSection
-          headerContent="Alternate compound structures"
-          onCollapsedChange={this.toggleOther}
-          isCollapsed={!this.state.otherVisible}
-          className="eupathdb-OtherCompoundStructures"
-        >
-          {this.props.value.slice(1).map(value => {
-            return (
-              <CompoundStructure key={value.struct_num} moleculeText={value.structure}/>
-            );
-          })}
+        {other.length > 0 && (
+          <CollapsibleSection
+            headerContent="Alternate compound structures"
+            onCollapsedChange={this.toggleOther}
+            isCollapsed={!this.state.otherVisible}
+            className="eupathdb-OtherCompoundStructures"
+          >
+            {other.map(row => {
+              return (
+                <CompoundStructure key={row.struct_num} moleculeText={row.structure}/>
+              );
+            })}
           </CollapsibleSection>
+        )}
       </div>
     );
   }
