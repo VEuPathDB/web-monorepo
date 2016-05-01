@@ -97,7 +97,7 @@ function changeQuestion() {
                 recordClass.val("IsolateRecordClasses.IsolateRecordClass");
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
-                recordClass.val("TranscriptRecordClasses.TrsnacriptRecordClass");
+                recordClass.val("TranscriptRecordClasses.TranscriptRecordClass");
 	}
 	$('#questionFullName').val(questionName);
 }
