@@ -1,3 +1,4 @@
+import lodash from 'lodash';
 import { Components, ComponentUtils } from 'wdk-client';
 import Footer from './components/common/Footer';
 import { findComponent } from './components/records';
@@ -144,6 +145,7 @@ export function StepDownloadForm(WdkStepDownloadForm) {
 
 export function RecordTable(DefaultComponent) {
   return function ApiRecordTable(props) {
+    if (lodash.isEmpty(props.value)) return <DefaultComponent {...props}/>;
     let ResolvedComponent =
       findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
