@@ -78,16 +78,7 @@ export function RecordTable(props) {
        : props.table.name === 'ProteinProperties'         ? <ProteinPbrowseTable {...props} />
        : props.table.name === 'ProteinExpressionPBrowse'  ? <ProteinPbrowseTable {...props} />
        : props.table.name === 'Sequences'                 ? <SequencesTable {...props} />
-       : props.table.name === 'UserComments'              ? (
-         <div>
-           <p>
-             <a href={props.record.attributes.user_comment_link_url}>
-               Add a comment <i className="fa fa-comment"/>
-             </a>
-           </p>
-           <props.DefaultComponent {...props} />
-         </div>
-       )
+       : props.table.name === 'UserComments'              ? <UserCommentsTable {...props} />
        : <props.DefaultComponent {...props} />
 }
 
@@ -149,7 +140,6 @@ function ProteinPbrowseTable(props) {
     />
   );
 }
-
 
 function SequencesTable(props) {
   let included = props.table.properties.includeInTable || [];
@@ -298,4 +288,17 @@ function MercatorTable(props) {
       </form>
     </div>
   );
+}
+
+function UserCommentsTable(props) {
+  return (
+    <div>
+      <p>
+        <a href={props.record.attributes.user_comment_link_url}>
+          Add a comment <i className="fa fa-comment"/>
+        </a>
+      </p>
+      <props.DefaultComponent {...props} />
+    </div>
+  )
 }
