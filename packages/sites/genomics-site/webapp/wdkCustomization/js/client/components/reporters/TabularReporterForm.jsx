@@ -31,8 +31,10 @@ let TabularReporterForm = props => {
       <div>
         <h3>Additional Options:</h3>
         <div style={{marginLeft:"2em"}}>
-          <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
-          <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
+          <label>
+            <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
+            <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
+          </label>
         </div>
       </div>
       <div>

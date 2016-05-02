@@ -49,8 +49,10 @@ let SharedReporterForm = props => {
       <div>
         <h3>Additional Options:</h3>
         <div style={{marginLeft:"2em"}}>
-          <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
-          <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
+          <label>
+            <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
+            <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
+          </label>
         </div>
       </div>
       <div>
