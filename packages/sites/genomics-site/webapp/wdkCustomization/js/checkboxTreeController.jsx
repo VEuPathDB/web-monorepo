@@ -52,7 +52,7 @@ export default class CheckboxTreeController {
       isSearchable: true,
       showSearchBox: true,
       searchBoxPlaceholder: "Search Columns...",
-      searchBoxHelp: "Each column's name and description will be searched for your exact input text",
+      searchBoxHelp: "Each column name will be searched. The column names will contain all your terms. Your terms are partially matched; for example, the term typ will match typically, type, atypical.",
       searchTerm: this.state.searchText,
       onSearchTermChange: this.setSearchText,
       searchPredicate: nodeSearchPredicate
