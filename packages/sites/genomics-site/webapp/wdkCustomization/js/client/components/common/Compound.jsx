@@ -8,6 +8,7 @@ import {Component, PropTypes} from 'react';
 import lodash from 'lodash';
 import $ from 'jquery';
 import {CollapsibleSection} from 'wdk-client/Components';
+import {registerCustomElement} from '../customElements';
 
 /** Load the ChemDoodle JS library once */
 let loadChemDoodleWeb = lodash.once(function() {
@@ -26,7 +27,7 @@ export class CompoundStructure extends Component {
     this.drawStructure = () => {
       this.node.innerHTML = `<canvas id="${this.canvasId}"/>`;
       new ChemDoodle.ViewerCanvas(this.canvasId, this.props.width, this.props.height)
-      .loadMolecule(ChemDoodle.readMOL(this.props.moleculeText));
+      .loadMolecule(ChemDoodle.readMOL(this.props.children));
     };
   }
 
@@ -38,12 +39,6 @@ export class CompoundStructure extends Component {
     return (
       <div className="eupathdb-CompoundStructureWrapper">
         <span ref={node => this.node = node}/>
-        {/*
-        <br/>
-        <a href={`data:text/plain;charset=utf-8,${encodeURIComponent(this.props.moleculeText)}`}>
-          <i className="fa fa-download"/> download structure
-        </a>
-        */}
       </div>
 
     );
@@ -52,7 +47,7 @@ export class CompoundStructure extends Component {
 }
 
 CompoundStructure.propTypes = {
-  moleculeText: PropTypes.string.isRequired,
+  children: PropTypes.string.isRequired,
   height: PropTypes.number,
   width: PropTypes.number
 };
@@ -61,3 +56,5 @@ CompoundStructure.defaultProps = {
   height: 200,
   width: 200
 };
+
+registerCustomElement('compound-structure', CompoundStructure);
