@@ -1,4 +1,5 @@
 import * as Wdk from 'wdk-client';
+import ExcelNote from './ExcelNote';
 
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.CategoryUtils);
 let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.Components;
