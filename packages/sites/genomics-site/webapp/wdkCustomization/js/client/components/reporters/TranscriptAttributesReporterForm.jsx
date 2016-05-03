@@ -12,7 +12,7 @@ let TranscriptAttributesReporterForm = props => {
 
   let transcriptAttribChangeHandler = newAttribsArray => {
     onFormChange(Object.assign({}, formState, { ['attributes']:
-      addPk(util.prependAttrib('source_id', newAttribsArray), recordClass) }));
+      util.addPk(util.prependAttrib('source_id', newAttribsArray), recordClass) }));
   };
 
   return (
