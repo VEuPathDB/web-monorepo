@@ -1,4 +1,5 @@
 import * as Wdk from 'wdk-client';
+import ExcelNote from './ExcelNote';
 
 let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.CategoryUtils);
 let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.Components;
@@ -9,6 +10,11 @@ let TranscriptAttributesReporterForm = props => {
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
 
+  let transcriptAttribChangeHandler = newAttribsArray => {
+    onFormChange(Object.assign({}, formState, { ['attributes']:
+      addPk(util.prependAttrib('source_id', newAttribsArray), recordClass) }));
+  };
+
   return (
     <div>
       <ReporterSortMessage scope={scope}/>
@@ -17,7 +23,7 @@ let TranscriptAttributesReporterForm = props => {
         <div style={{marginLeft:"2em"}}>
           <label>
             <Checkbox value={formState.applyFilter} onChange={getUpdateHandler('applyFilter')}/>
-            <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene</span>
+            <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene (the longest)</span>
           </label>
         </div>
       </div>
@@ -33,7 +39,7 @@ let TranscriptAttributesReporterForm = props => {
           searchTerm={formUiState.attributeSearchText}
 
           // change handlers for each state element controlled by the tree
-          onChange={util.getAttributesChangeHandler('attributes', onFormChange, formState, recordClass)}
+          onChange={transcriptAttribChangeHandler}
           onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
           onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
       />
@@ -58,10 +64,7 @@ let TranscriptAttributesReporterForm = props => {
       </div>
       <hr/>
       <div style={{margin:'0.5em 2em'}}>
-        **Note: If you choose "Excel File" as Download Type, you can only download a
-        maximum 10M (in bytes) of the results and the rest will be discarded.<br/>
-        Opening a huge Excel file may crash your system. If you need to get the
-        complete results, please choose "Text File".
+        <ExcelNote/>
       </div>
       <hr/>
     </div>
@@ -76,9 +79,10 @@ function getUserPrefFilterValue(prefs) {
 TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
   let { scope, step, question, recordClass, ontology } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
-  let attribs = (scope === 'results' ?
-      util.addPk(util.getAttributeSelections(userStoreState.preferences, question), recordClass) :
-      util.addPk(util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)), recordClass));
+  let attribs = util.addPk(util.prependAttrib('source_id',
+      (scope === 'results' ?
+          util.getAttributeSelections(userStoreState.preferences, question) :
+          util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)))), recordClass);
   return {
     formState: {
       attributes: attribs,
