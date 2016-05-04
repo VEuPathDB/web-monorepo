@@ -65,7 +65,8 @@
     font-family: Verdana;
     font-weight: bold;
     background-color: #eee; /* as in WDK result table header */ 
-    padding: 0.5em;
+    padding-left: 0.5em;
+    margin-top: 1em;
   }
   div#oneTr-filter span#prompt,  div#oneTr-filter span span {
     color: darkred;
