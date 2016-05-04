@@ -18,50 +18,60 @@ let TranscriptAttributesReporterForm = props => {
   return (
     <div>
       <ReporterSortMessage scope={scope}/>
-      <div>
-        <h3>Choose Rows:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <label>
-            <Checkbox value={formState.applyFilter} onChange={getUpdateHandler('applyFilter')}/>
-            <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene (the longest)</span>
-          </label>
-        </div>
-      </div>
-      <CategoriesCheckboxTree
-          // title and layout of the tree
-          title="Choose Columns:"
-          searchBoxPlaceholder="Search Columns..."
-          tree={util.getAttributeTree(ontology, recordClass.name, question)}
+      <div className="eupathdb-ReporterForm">
 
-          // state of the tree
-          selectedLeaves={formState.attributes}
-          expandedBranches={formUiState.expandedAttributeNodes}
-          searchTerm={formUiState.attributeSearchText}
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__right">
+          <div>
+            <h3>Choose Rows</h3>
+            <div>
+              <label>
+                <Checkbox value={formState.applyFilter} onChange={getUpdateHandler('applyFilter')}/>
+                <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene (the longest)</span>
+              </label>
+            </div>
+          </div>
+          <CategoriesCheckboxTree
+              // title and layout of the tree
+              title="Choose Columns"
+              searchBoxPlaceholder="Search Columns..."
+              tree={util.getAttributeTree(ontology, recordClass.name, question)}
 
-          // change handlers for each state element controlled by the tree
-          onChange={transcriptAttribChangeHandler}
-          onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
-          onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
-      />
-      <div>
-        <h3>Additional Options:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <label>
-            <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
-            <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
-          </label>
+              // state of the tree
+              selectedLeaves={formState.attributes}
+              expandedBranches={formUiState.expandedAttributeNodes}
+              searchTerm={formUiState.attributeSearchText}
+
+              // change handlers for each state element controlled by the tree
+              onChange={transcriptAttribChangeHandler}
+              onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
+              onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+          />
         </div>
-      </div>
-      <div>
-        <h3>Download Type and Format:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
-            onChange={getUpdateHandler('attachmentType')}/>
+        
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">
+          <div>
+            <h3>Download Type</h3>
+            <div>
+              <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
+                onChange={getUpdateHandler('attachmentType')}/>
+            </div>
+          </div>
+          <div>
+            <h3>Additional Options</h3>
+            <div>
+              <label>
+                <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
+                <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
+              </label>
+            </div>
+          </div>
+          <div style={{margin:'2em 0'}}>
+            <input type="button" value="Submit" onClick={onSubmit}/>
+          </div>
         </div>
+
       </div>
-      <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
-        <input type="button" value="Submit" onClick={onSubmit}/>
-      </div>
+
       <hr/>
       <div style={{margin:'0.5em 2em'}}>
         <ExcelNote/>
@@ -77,7 +87,7 @@ function getUserPrefFilterValue(prefs) {
 }
 
 TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
-  let { scope, step, question, recordClass, ontology } = downloadFormStoreState;
+  let { scope, question, recordClass, ontology } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
   let attribs = util.addPk(util.prependAttrib('source_id',
       (scope === 'results' ?

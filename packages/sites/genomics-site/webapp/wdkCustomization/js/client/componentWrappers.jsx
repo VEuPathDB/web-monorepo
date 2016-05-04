@@ -139,7 +139,12 @@ export function RecordOverview(DefaultComponent) {
 export function StepDownloadForm(WdkStepDownloadForm) {
   return function ApiStepDownloadForm(props) {
     let Reporter = selectReporterComponent(props.selectedReporter, props.recordClass.name);
-    return ( <Reporter {...props}/> );
+    return (
+      <div>
+        <hr/>
+        <Reporter {...props}/>
+      </div>
+    );
   }
 }
 

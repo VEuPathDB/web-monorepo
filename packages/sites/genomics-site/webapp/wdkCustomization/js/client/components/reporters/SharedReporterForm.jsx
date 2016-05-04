@@ -10,61 +10,67 @@ let SharedReporterForm = props => {
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
 
   return (
-    <div>
+    <div className="eupathdb-ReporterForm">
       <ReporterSortMessage scope={scope}/>
-      <CategoriesCheckboxTree
-          // title and layout of the tree
-          title="Choose Columns:"
-          searchBoxPlaceholder="Search Columns..."
-          tree={util.getAttributeTree(ontology, recordClass.name, question)}
 
-          // state of the tree
-          selectedLeaves={formState.attributes}
-          expandedBranches={formUiState.expandedAttributeNodes}
-          searchTerm={formUiState.attributeSearchText}
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__right">
+          <CategoriesCheckboxTree
+              // title and layout of the tree
+              title="Choose Columns"
+              searchBoxPlaceholder="Search Columns..."
+              tree={util.getAttributeTree(ontology, recordClass.name, question)}
 
-          // change handlers for each state element controlled by the tree
-          onChange={util.getAttributesChangeHandler('attributes', onFormChange, formState, recordClass)}
-          onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
-          onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
-      />
+              // state of the tree
+              selectedLeaves={formState.attributes}
+              expandedBranches={formUiState.expandedAttributeNodes}
+              searchTerm={formUiState.attributeSearchText}
 
-      <CategoriesCheckboxTree
-          // title and layout of the tree
-          title="Choose Tables:"
-          searchBoxPlaceholder="Search Tables..."
-          tree={util.getTableTree(ontology, recordClass.name)}
+              // change handlers for each state element controlled by the tree
+              onChange={util.getAttributesChangeHandler('attributes', onFormChange, formState, recordClass)}
+              onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
+              onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+          />
 
-          // state of the tree
-          selectedLeaves={formState.tables}
-          expandedBranches={formUiState.expandedTableNodes}
-          searchTerm={formUiState.tableSearchText}
+          <CategoriesCheckboxTree
+              // title and layout of the tree
+              title="Choose Tables"
+              searchBoxPlaceholder="Search Tables..."
+              tree={util.getTableTree(ontology, recordClass.name)}
 
-          // change handlers for each state element controlled by the tree
-          onChange={getUpdateHandler('tables')}
-          onUiChange={getUiUpdateHandler('expandedTableNodes')}
-          onSearchTermChange={getUiUpdateHandler('tableSearchText')}
-      />
+              // state of the tree
+              selectedLeaves={formState.tables}
+              expandedBranches={formUiState.expandedTableNodes}
+              searchTerm={formUiState.tableSearchText}
 
-      <div>
-        <h3>Additional Options:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <label>
-            <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
-            <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
-          </label>
+              // change handlers for each state element controlled by the tree
+              onChange={getUpdateHandler('tables')}
+              onUiChange={getUiUpdateHandler('expandedTableNodes')}
+              onSearchTermChange={getUiUpdateHandler('tableSearchText')}
+          />
+        </div>
+
+      <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">
+        <div className="eupathdb-ReporterFormDownloadType">
+          <h3>Download Type</h3>
+          <div>
+            <RadioList name="attachmentType" value={formState.attachmentType}
+                onChange={getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
+          </div>
+        </div>
+        <div className="eupathdb-ReporterFormAddtionOptions">
+          <h3>Additional Options</h3>
+          <div>
+            <label>
+              <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
+              <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
+            </label>
+          </div>
+        </div>
+        <div style={{margin:'2em 0'}}>
+          <input type="button" value="Submit" onClick={onSubmit}/>
         </div>
       </div>
-      <div>
-        <h3>Download Type:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <RadioList name="attachmentType" value={formState.attachmentType}
-              onChange={getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
-        </div>
-      </div>
-      <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
-        <input type="button" value="Submit" onClick={onSubmit}/>
-      </div>
+
     </div>
   );
 };

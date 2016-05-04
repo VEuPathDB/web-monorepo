@@ -1,7 +1,19 @@
-// Test a node to see if its content is overflowwing
+/**
+ * Test a node to see if its content is overflowwing
+ *
+ * @param {HTMLElement} node
+ * @return {boolean}
+ */
 export function isNodeOverflowing(node) {
   return node.clientWidth !== node.scrollWidth;
 }
+
+/**
+ * @typedef BestPosition
+ * @type {object}
+ * @property {number} offsetTop
+ * @property {number} offsetLeft
+ */
 
 /**
  * Calculate the offsetLeft and offsetTop for `element` such that it is visble
@@ -12,7 +24,7 @@ export function isNodeOverflowing(node) {
  *
  * @param {HTMLElement} element
  * @param {HTMLElement?} aroundElement
- * @return { offsetTop: number; offsetLeft: number; }
+ * @return {BestPosition}
  */
 export function getBestPosition(element, aroundElement = null) {
   let elementRectangle = element.getBoundingClientRect();
@@ -43,8 +55,8 @@ export function getBestPosition(element, aroundElement = null) {
             : goUp ? aroundRectangle.top - elementRectangle.height
             : centerTop;
 
-    return { offsetLeft, offsetTop };
+    return { offsetTop, offsetLeft };
   }
 
-  return { top: centerTop, left: centerLeft };
+  return { offestTop: centerTop, offsetLeft: centerLeft };
 }

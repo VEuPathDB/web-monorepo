@@ -716,3 +716,20 @@ h4 {
   border: 1px solid #d8d8d8;
   margin: 4px;
 }
+
+
+@media all and (min-width: 850px) {
+  .eupathdb-ReporterForm {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .eupathdb-ReporterFormGroup:first-of-type {
+    margin-left: 100px;
+    width: calc(50% - 100px);
+  }
+}
+
+.eupathdb-ReporterFormGroup .wdk-CheckboxTree-list li label {
+  white-space: initial;
+}
