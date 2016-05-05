@@ -36,7 +36,7 @@ wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
       try {
         let categoryTree = getTree(categoriesOntology, isQualifying('attribute', recordClassName, 'results'));
         categoryTree = trimBooleanQuestionAttribs(question, categoryTree);
-        addSearchSpecificSubtree(question, categoryTree, recordClassName, viewName);
+        categoryTree = addSearchSpecificSubtree(question, categoryTree);
         let selectedList = currentSelectedList || defaultSelectedList;
         let controller = new CheckboxTreeController(element, "selectedFields",
             categoryTree, selectedList, defaultSelectedList);
