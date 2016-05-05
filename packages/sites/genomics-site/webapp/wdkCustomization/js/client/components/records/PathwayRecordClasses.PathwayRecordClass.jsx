@@ -688,7 +688,7 @@ function RenderExperimentMenuItems(props) {
     .map((item) => {
       let params = "type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'";
       let id = type + "_" + projectId + "_" + item.sid;
-      return (<li key={id}><a href='javascript:void(0)' onClick={() => vis.changeExperiment("type=" + type + "&project_id=" + projectId + "&sid=" + item.sid + ", 'genus' , '1'")}>{item.display}</a></li>);
+      return (<li key={id}><a href='javascript:void(0)' onClick={() => vis.changeExperiment('type=' + type + '&project_id=' + projectId + '&sid=' + item.sid, 'genus' , '1')}>{item.display}</a></li>);
     });
   return(
     <ul>
