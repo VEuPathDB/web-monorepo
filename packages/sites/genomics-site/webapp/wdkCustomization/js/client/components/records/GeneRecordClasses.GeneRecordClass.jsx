@@ -2,14 +2,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
-import {NativeCheckboxList, RecordLink, Sticky} from 'wdk-client/Components';
+import {NativeCheckboxList} from 'wdk-client/Components';
 import {renderAttributeValue} from 'wdk-client/ComponentUtils';
-import {getPropertyValue, getTree} from 'wdk-client/OntologyUtils';
 import ExpressionGraph from '../common/ExpressionGraph';
 import Sequence from '../common/Sequence';
 import * as Thumbnails from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
-import {getBestPosition, isNodeOverflowing} from '../../utils';
+import {SnpsAlignmentTable} from '../common/Snps';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -79,13 +78,17 @@ export function RecordTable(props) {
        : props.table.name === 'ProteinExpressionPBrowse'  ? <ProteinPbrowseTable {...props} />
        : props.table.name === 'Sequences'                 ? <SequencesTable {...props} />
        : props.table.name === 'UserComments'              ? <UserCommentsTable {...props} />
+       : props.table.name === 'SNPsAlignment'             ? <SnpsAlignmentTable {...props}
+                                                              strainAttributeName="strain"
+                                                              startAttributeName="context_start"
+                                                              endAttributeName="context_end" />
        : <props.DefaultComponent {...props} />
 }
 
 function OverviewItem(props) {
     let { label, value = 'undefined' } = props;
     return value == null ? <noscript/> : (
-        <div className="GeneOverviewItem"><label>{label}</label> {ComponentUtils.renderAttributeValue(value)}</div>
+        <div className="GeneOverviewItem"><label>{label}</label> {renderAttributeValue(value)}</div>
     );
 }
 
