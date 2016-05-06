@@ -61,11 +61,11 @@ export default class VerticalScrollHelper extends Component {
   }
 
   renderLeftButton() {
-    return this.renderButton( '\u25c0', this.state.leftButtonActive, this.scrollLeft);
+    return this.renderButton(<i className="fa fa-lg fa-chevron-left"/>, this.state.leftButtonActive, this.scrollLeft);
   }
 
   renderRightButton() {
-    return this.renderButton('\u25b6', this.state.rightButtonActive, this.scrollRight);
+    return this.renderButton(<i className="fa fa-lg fa-chevron-right"/>, this.state.rightButtonActive, this.scrollRight);
   }
 
   renderButton(text, active, onClick) {
@@ -74,7 +74,7 @@ export default class VerticalScrollHelper extends Component {
         className="eupathdb-VerticalScrollHelperButton"
         disabled={!active}
         onClick={onClick}
-      > {text} </button>
+      >{text}</button>
     );
   }
 
