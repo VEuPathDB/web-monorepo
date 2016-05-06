@@ -9,25 +9,33 @@ export class SnpsAlignmentTable extends PureComponent {
       event.preventDefault();
       this.getCheckboxes().prop('checked', true);
       this.udpateSubmitDisabled();
+      this.updateIsolateIds();
     })
     .on('click', '.clear-all', event => {
       event.preventDefault();
       this.getCheckboxes().prop('checked', false);
       this.udpateSubmitDisabled();
+      this.updateIsolateIds();
     })
-    .on('change', '[name="isolate_ids"]:checkbox', () => {
+    .on('change', ':checkbox', () => {
       this.udpateSubmitDisabled();
+      this.updateIsolateIds();
     })
 
   }
 
   getCheckboxes() {
-    return $(this.node).find('[name="isolate_ids"]:checkbox');
+    return $(this.node).find(':checkbox');
   }
 
   udpateSubmitDisabled() {
     let isDisabled = this.getCheckboxes().filter(':checked').length === 0;
     $(this.node).find(':submit').prop('disabled', isDisabled);
+  }
+
+  updateIsolateIds() {
+    let isolateIds = this.getCheckboxes().filter(':checked').toArray().map(el => el.value);
+    $(this.node).find('[name="isolate_ids"]').val(isolateIds.join(','));
   }
 
   renderFormButtons() {
@@ -41,14 +49,14 @@ export class SnpsAlignmentTable extends PureComponent {
   }
 
   render() {
-    let { strainAttributeName, startAttributeName, endAttributeName, record } = this.props;
+    let { strainAttributeName, startAttributeName, endAttributeName, seqIdAttributeName, record } = this.props;
     let start = record.attributes[startAttributeName];
     let end = record.attributes[endAttributeName];
-    let sid = record.attributes.seq_source_id;
+    let sid = record.attributes[seqIdAttributeName];
     let value = this.props.value.map((row) => {
       let strain = row[strainAttributeName];
       return Object.assign({}, row, {
-        [strainAttributeName]: `<label><input name="isolate_ids" value="${strain}" type="checkbox"/> ${strain}</label>`
+        [strainAttributeName]: `<label><input value="${strain}" type="checkbox"/> ${strain}</label>`
       })
     });
     return (
@@ -59,6 +67,7 @@ export class SnpsAlignmentTable extends PureComponent {
           <input name="sid" value={sid} type="hidden"/>
           <input name="end" value={end} type="hidden"/>
           <input name="start" value={start} type="hidden"/>
+          <input name="isolate_ids" type="hidden"/>
 
           {this.renderFormButtons()}
           <this.props.DefaultComponent {...this.props} value={value}/>

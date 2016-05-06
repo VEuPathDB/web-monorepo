@@ -79,6 +79,7 @@ export function RecordTable(props) {
        : props.table.name === 'Sequences'                 ? <SequencesTable {...props} />
        : props.table.name === 'UserComments'              ? <UserCommentsTable {...props} />
        : props.table.name === 'SNPsAlignment'             ? <SnpsAlignmentTable {...props}
+                                                              seqIdAttributeName="sequence_id"
                                                               strainAttributeName="strain"
                                                               startAttributeName="context_start"
                                                               endAttributeName="context_end" />
