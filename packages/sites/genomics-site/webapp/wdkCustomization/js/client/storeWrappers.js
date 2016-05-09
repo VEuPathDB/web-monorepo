@@ -22,11 +22,12 @@ export function RecordViewStore(WdkRecordViewStore) {
         case actionTypes.ACTIVE_RECORD_RECEIVED: {
           return handleRecordReceived(nextState);
         }
-        case actionTypes.SHOW_SECTION:
-        case actionTypes.HIDE_SECTION:
-        case actionTypes.SHOW_ALL_FIELDS:
-        case actionTypes.HIDE_ALL_FIELDS:
-          setCollapsedSections(nextState);
+        case actionTypes.SECTION_VISIBILITY_CHANGED:
+        case actionTypes.ALL_FIELD_VISIBILITY_CHANGED:
+          setStateInStorage('collapsedSections', nextState);
+          return nextState;
+        case actionTypes.NAVIGATION_VISIBILITY_CHANGED:
+          setStateInStorage('navigationVisible', nextState);
           return nextState;
         default:
           return nextState;
@@ -35,12 +36,18 @@ export function RecordViewStore(WdkRecordViewStore) {
   }
 }
 
-let handleRecordReceived = lodash.flow(mergeCollapsedSections, pruneCategories);
+let handleRecordReceived = lodash.flow(updateNavigationVisibility, mergeCollapsedSections, pruneCategories);
+
+/** Show navigation for genes, but hide for all other record types */
+function updateNavigationVisibility(state) {
+  let navigationVisible = getStateFromStorage('navigationVisible', state, state.recordClass.name === 'GeneRecordClasses.GeneRecordClass');
+  return Object.assign(state, {}, { navigationVisible });
+}
 
 /** merge stored collapsedSections */
 function mergeCollapsedSections(state) {
   return Object.assign({}, state, {
-    collapsedSections: getCollapsedSections(state)
+    collapsedSections: getStateFromStorage('collapsedSections', state)
   });
 }
 
@@ -89,25 +96,23 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
   )
 }
 
-/** Get collapsed categories from localStorage */
-function getCollapsedSections(state) {
+function getStateFromStorage(property, state, defaultValue = state[property]) {
   try {
     return persistence.get(
-      'collapsedSections/' + state.recordClass.name, state.collapsedSections);
+      property + '/' + state.recordClass.name, defaultValue);
   }
   catch (error) {
-    console.error('Warning: Could not retrieve collapsed section from local storage.', error);
+    console.error('Warning: Could not retrieve % from local storage.', property, error);
     return state.collapsedSections;
   }
 }
 
-/** Set collapsed categories to localStorage */
-function setCollapsedSections(state) {
+function setStateInStorage(property, state) {
   try {
-    persistence.set('collapsedSections/' + state.recordClass.name,
+    persistence.set(property + '/' + state.recordClass.name,
       state.collapsedSections || []);
   }
   catch (error) {
-    console.error('Warning: Could not set collapsed section to local storage.', error);
+    console.error('Warning: Could not set %s to local storage.', property, error);
   }
 }
