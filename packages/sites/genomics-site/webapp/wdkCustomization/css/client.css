@@ -67,6 +67,16 @@ h4 {
   display: none;
 }
 
+/* Hide default record ID printed by WDK for popsets */
+.wdk-RecordContainer__PopsetRecordClasses\.PopsetRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
+/* Hide default record ID printed by WDK for ests */
+.wdk-RecordContainer__EstRecordClasses\.EstRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
 
 .wdk-RecordNavigationSectionHeader {
   color: #777;
