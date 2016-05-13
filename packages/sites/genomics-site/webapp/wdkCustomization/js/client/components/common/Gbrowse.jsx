@@ -56,6 +56,12 @@ export let contexts = [
         isPbrowse: false
     },
     {
+        gbrowse_url: 'snpGbrowseImageUrl',
+        displayName: 'Genomic Context',
+        anchor: 'snpGenomicContext',
+        isPbrowse: false
+    },
+    {
         gbrowse_url: 'spanGbrowseImageUrl',
         displayName: 'Genomic Context',
         anchor: 'spanGenomicContext',
