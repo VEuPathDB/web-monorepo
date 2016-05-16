@@ -268,27 +268,8 @@ h4 {
   margin-top: 16px;
   display: inline-block;
   max-width: 100%;
-  max-width: 410px;
   min-height: 140px;
   white-space: nowrap;
-}
-
-@media all and (min-width: 1170px) {
-  .eupathdb-ThumbnailsContainer {
-    max-width: 590px;
-  }
-}
-
-@media all and (min-width: 1335px) {
-  .eupathdb-ThumbnailsContainer {
-    max-width: 764px;
-  }
-}
-
-@media all and (min-width: 1515px) {
-  .eupathdb-ThumbnailsContainer {
-    max-width: auto;
-  }
 }
 
 .eupathdb-ThumbnailWrapper {
