@@ -1,31 +1,20 @@
 PATH                := $(PROJECT_HOME)/WDK/View/node_modules/.bin:$(PATH)
 SHELL               := /bin/bash
 
-client_bundle  := dist/wdkCustomization/js/client.js
-client_sources := webapp/wdkCustomization/js/client/main.js \
-                  $(shell find webapp/wdkCustomization/js/client -type f -name '*.js' -or -name '*.jsx') \
-                  webpack.config.js
-
-es6_bundle  := dist/wdkCustomization/js/api.js
-es6_sources := webapp/wdkCustomization/js/api.es6.js \
-                  $(shell find webapp/wdkCustomization/js -type f -name '*.js' -or -name '*.jsx') \
-                  $(shell find $(PROJECT_HOME)/WDK/View/webapp/wdk/js -type f -name '*.js' -or -name '*.jsx') \
-                  webpack.config.js
+apidb_bundle  := dist/apidb.build.js
+apidb_sources := webapp/apidb.js \
+  $(shell find webapp -type f -name '*.js' -or -name '*.jsx') \
+  webpack.config.js
 
 .PHONY: all clean
 
 
 ## TODO Add CSS build tools
 
-all: $(client_bundle) $(es6_bundle)
+all: $(apidb_bundle)
 
 clean:
-	rm -rf $(client_bundle) $(es6_bundle)
+	rm -rf $(apidb_bundle)
 
-$(es6_bundle): $(es6_sources)
+$(apidb_bundle): $(apidb_sources)
 	webpack $< $@
-# 	rebaseSourceMap $@.map $$(readlink -f $(PROJECT_HOME)/WDK/View) .
-
-$(client_bundle): $(client_sources)
-	webpack $< $@
-# 	rebaseSourceMap $@.map $$(readlink -f $(PROJECT_HOME)/WDK/View) .

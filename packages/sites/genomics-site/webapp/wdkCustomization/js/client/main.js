@@ -29,8 +29,11 @@ if (pathname.startsWith(aliasUrl)) {
 let app = window._app = initialize({
   rootUrl: config.rootUrl,
   endpoint: config.endpoint,
-  rootElement: config.rootElement,
   applicationRoutes: routes
 });
 
-if (config.renderView) app.render();
+if (config.renderView) {
+  document.addEventListener('DOMContentLoaded', function() {
+    app.render(document.querySelector(config.rootElement));
+  });
+}

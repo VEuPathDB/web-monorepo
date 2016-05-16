@@ -15,6 +15,21 @@
   <!-- JavaScript provided by WDK -->
   <imp:wdkJavascripts refer="${refer}" debug="${debug}"/>
 
+  <!-- `getApiClientConfig` is created in the global scope, so we can call this
+       from other JavaScript code where we initialize the WDK client
+       (see wdkCustomization/js/client/main.js) -->
+  <script>
+    function getApiClientConfig() {
+      return {
+        rootUrl: "${pageContext.request.contextPath}/app/",
+        endpoint: "${pageContext.request.contextPath}/service",
+        rootElement: "#wdk-container",
+        renderView: true
+      };
+    }
+  </script>
+  <imp:script src="apidb.build.js"/>
+
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />
   <c:set var="project" value="${props['PROJECT_ID']}" />
@@ -26,17 +41,6 @@
     <c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" />
   </c:if>
   -->
-
-
-
-  <imp:script src="wdkCustomization/js/lib/hoverIntent.js"/>
-  <imp:script src="wdkCustomization/js/lib/superfish.js"/>
-  <imp:script src="wdkCustomization/js/common.js"/>
-  <imp:script src="wdkCustomization/js/custom-login.js"/>
-
-  <!-- Contact Us window -->
-  <imp:script src='js/newwindow.js'/>
-
   <c:if test="${refer == 'summary'}">
     <imp:script src="wdkCustomization/js/customStrategy.js"/>
     <imp:script src="wdkCustomization/js/ortholog.js"/>
@@ -88,24 +92,6 @@
     <imp:script src="wdkCustomization/js/questions/snp.js"/>
     <imp:script src="wdkCustomization/js/analysis/enrichment.js"/>
   </c:if>
-
-  <!-- Quick search box -->
-  <imp:script src="js/quicksearch.js"/>
-
-  <!-- Dynamic query grid (bubbles in home page) -->
-  <imp:script src="js/dqg.js"/>
-
-  <!-- Sidebar news/events, yellow background -->
-  <imp:script src="js/newitems.js"/>
-
-  <!-- Access twitter/facebook links, and configure menubar (superfish) -->
-  <imp:script src="js/nav.js"/>
-
-  <!-- show/hide the tables in the Record page -->
-  <imp:script src="js/show_hide_tables.js"/>
- 
-  <!-- webpack generated bundle -->
-  <imp:script src="wdkCustomization/js/api.js"/>
 
   <!-- SRT page -->
   <c:if test="${refer == 'srt'}">

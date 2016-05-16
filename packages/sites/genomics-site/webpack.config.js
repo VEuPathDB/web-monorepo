@@ -13,12 +13,16 @@ config.output = null;
 config.plugins.pop();
 
 // Make sure properties are initialized on config, without overwriting values.
-initializeProps(config, 'resolve.alias', {});
+initializeProps(config, 'resolve.alias', { });
 initializeProps(config, 'resolveLoader');
 initializeProps(config, 'externals', []);
 
 // This lets us use build tools Wdk has already loaded.
 config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
+
+config.resolve.alias.wdk = path.join(projectHome, 'WDK/View/webapp/wdk');
+config.resolve.alias.apidb = path.join(projectHome, 'ApiCommonWebsite/Site/webapp');
+config.resolve.alias.eupathdb = path.join(projectHome, 'EuPathSiteCommon/Site/webapp');
 
 // Map external libraries Wdk exposes so we can do things like:
 //
@@ -28,7 +32,6 @@ config.resolveLoader.fallback = path.join(wdkRoot, 'node_modules');
 // This will give us more flexibility in changing how we load libraries
 // without having to rewrite a bunch of application code.
 config.externals.push({
-  'wdk'            : 'wdk',
   'react'          : 'React',
   'react-dom'      : 'ReactDOM',
   'react-router'   : 'ReactRouter',
