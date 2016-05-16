@@ -32,8 +32,7 @@ let app = window._app = initialize({
   applicationRoutes: routes
 });
 
-if (config.renderView) {
-  document.addEventListener('DOMContentLoaded', function() {
-    app.render(document.querySelector(config.rootElement));
-  });
-}
+document.addEventListener('DOMContentLoaded', function() {
+  let rootEl = document.querySelector(config.rootElement);
+  if (rootEl != null) app.render(rootEl);
+});

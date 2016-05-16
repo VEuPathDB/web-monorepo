@@ -23,8 +23,7 @@
       return {
         rootUrl: "${pageContext.request.contextPath}/app/",
         endpoint: "${pageContext.request.contextPath}/service",
-        rootElement: "#wdk-container",
-        renderView: true
+        rootElement: "#wdk-container"
       };
     }
   </script>
