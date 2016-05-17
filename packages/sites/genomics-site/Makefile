@@ -1,10 +1,13 @@
-PATH                := $(PROJECT_HOME)/WDK/View/node_modules/.bin:$(PATH)
-SHELL               := /bin/bash
+PATH          := $(PROJECT_HOME)/WDK/View/node_modules/.bin:$(PATH)
+SHELL         := /bin/bash
 
 apidb_bundle  := dist/apidb.build.js
+# WDK and EuPathDB resources are included
 apidb_sources := webapp/apidb.js \
-  $(shell find webapp -type f -name '*.js' -or -name '*.jsx') \
-  webpack.config.js
+                 $(shell find webapp -type f -name '*.js' -or -name '*.jsx' -or -name '*.css') \
+                 $(shell find $(PROJECT_HOME)/WDK/View/webapp/wdk -type f) \
+                 $(shell find $(PROJECT_HOME)/EuPathSiteCommon/Site/webapp -type f) \
+                 webpack.config.js
 
 .PHONY: all clean
 
