@@ -9,6 +9,7 @@
 <c:set var="nodeList"  value="${param.nodeList}" />
 <c:set var="pathwayId" value="${param.pathway}" />
 <c:set var="projectId" value="${param.model}" />
+<c:set var="pathway_source" value="${param.pathway_source}" />
 
 <base target="_parent" />
 
@@ -92,7 +93,7 @@ pe Web"/></a>
 <script type="text/javascript">
   // get xgmml and draw the visualization
   $(function() {
-    drawVisualization("${pathwayId}");
+    drawVisualization("${pathwayId}", "${pathway_source}");
   });
 </script>        
 

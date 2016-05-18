@@ -16,7 +16,8 @@ var presetLayout;
 //    url: "/common/downloads/Current_Release/pathwayFiles/" + pathwayId + ".xgmml",
 function drawVisualization(pathwayId, pathwaySource) {
   $.ajax({
-    url: "/path40/" + pathwayId + ".xgmml",
+    url:"/common/downloads/pathwayFiles/" + pathwaySource + "/" + pathwayId + ".xgmml",
+ //   url: "/path40/" + pathwayId + ".xgmml",
     dataType: "text",
     success: function(data){
       vis.draw(options);
