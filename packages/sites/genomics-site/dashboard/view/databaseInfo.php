@@ -23,10 +23,13 @@
 require_once dirname(__FILE__) . "/../lib/modules/DBInstances.php";
 require_once dirname(__FILE__) . "/../lib/modules/Database.php";
 require_once dirname(__FILE__) . "/../lib/modules/TuningManagerStatus.php";
+require_once dirname(__FILE__) . "/../lib/modules/WorkflowStatus.php";
 require_once dirname(__FILE__) . "/../lib/LdapTnsNameResolver.php";
 
 $ldap_resolver = new LdapTnsNameResolver();
 $tuning_manager_status = new TuningManagerStatus();
+
+$workflow_status = new WorkflowStatus();
 
 $db_instances_obj = new DBInstances();
 $db_instances_attribs = $db_instances_obj->attributes();
@@ -50,6 +53,8 @@ foreach ($db_names as $db_name) {
   $adb = $database->attributes();
   $adb_aliases_ar = $ldap_resolver->resolve($adb{'service_name'});
   $tuning_status_attrs = $tuning_manager_status->attributes();
+
+  $workflow_status_attrs = $workflow_status->attributes();
 ?>
 
 <h2><?php print $db_display_name ?> Database</h2>
@@ -201,7 +206,49 @@ foreach ($tm_status_map as $table) {
 <?php
 }
 ?>
+
+
       </tbody>
     </table>
   </div> <!-- constrain jquery datatables -->
 </div> <!-- div expandable -->
+
+
+<!-- JB Start -->
+<h2>Workflow Status</h2>
+<p class="clickable">Workflow Status &#8593;&#8595;</p>
+<div class="expandable" >
+
+         <div style="display: inline-block; padding-left: 10px;"><!-- constrain jquery datatables -->
+    <table id="workflow" class='display' cellspacing="3" cellpadding="2" align="">
+      <thead>
+        <tr class="secondary3">
+          <th align="left"><font size="-2">step</font></th>
+          <th align="left"><font size="-2">off_line</font></th>
+          <th align="left"><font size="-2">state</font></th>
+        </tr>
+      </thead>
+      <tbody>
+<?php
+$wf_status_map = $workflow_status_attrs{'table_statuses'};
+$row = 0;
+foreach ($wf_status_map as $table) {
+?>
+        <tr>
+          <td><?php print $table{'step'}?> </td>
+          <td><?php print $table{'off_line'}?></td>
+          <td><?php print $table{'state'}?></td>
+        </tr>
+<?php
+}
+?>
+
+
+      </tbody>
+    </table>
+  </div> <!-- constrain jquery datatables -->
+</div> <!-- div expandable -->
+
+
+<!-- JB END -->
+
