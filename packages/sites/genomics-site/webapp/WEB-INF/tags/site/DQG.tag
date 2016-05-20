@@ -71,31 +71,23 @@
          </div>
          --%>
 
-      <table id="bubbles" width="100%" border="0" class="threecolumn">
-        <tr>
-          <td width="33%" align="center">
-            <c:set var="qSetName" value="GeneQuestions" />
-            <imp:DQG_bubble 
-               banner="bubble_id_genes_by2.png" 
-               alt_banner="Identify Genes By:" 
-               recordClasses="genes"
-               />
-          </td>
-          <td width="34%"  align="center">
-            <imp:DQG_bubble 
-               banner="bubble_id_other_data2.png" 
-               alt_banner="Identify Other Data Types:" 
-               recordClasses="others"
-               />
-          </td>
-          <td width="33%"  align="center">
-            <imp:DQG_bubble 
-               banner="bubble_id_third_option2.png" 
-               alt_banner="Tools:"
-               />
-          </td>
-        </tr>
-      </table>
+      <div id="bubbles" width="100%" border="0" class="threecolumn">
+        <c:set var="qSetName" value="GeneQuestions" />
+        <imp:DQG_bubble 
+           banner="bubble_id_genes_by2.png" 
+           alt_banner="Search for Genes"
+           recordClasses="genes"
+           />
+        <imp:DQG_bubble 
+           banner="bubble_id_other_data2.png"
+           alt_banner="Search for Other Data Types"
+           recordClasses="others"
+           />
+        <imp:DQG_bubble
+           banner="bubble_id_third_option2.png"
+           alt_banner="Tools"
+           />
+      </div>
 
     </div>
   </div>
