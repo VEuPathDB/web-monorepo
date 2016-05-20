@@ -36,7 +36,7 @@ h4 {
 }
 
 #wdk-container {
-  height: calc(100% - 132px);
+  height: calc(100% - 206px);
   position: relative;
   text-rendering: optimizeLegibility;
 }

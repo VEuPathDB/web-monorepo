@@ -17,8 +17,6 @@
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
-<imp:stylesheet rel="stylesheet" href="css/${project}.css" type="text/css" />
-
 <!-- JQuery library is included by WDK -->
 
 <!-- comment out, since it is commented out below
