@@ -49,7 +49,6 @@
   <%-- for testing SITE SEARCH : add more sites as they are being indexed
   <c:if test="${project == 'AmoebaDB' || project == 'TriTrypDB' || project == 'ToxoDB'}">
     --------------  SITE SEARCH  ---------------------------------------------
-    <imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
     <a class="heading" id='stats'  href="#">Site Search</a>
     <div class="menu_lefttop_drop" style="text-align:center;">
       <imp:freefind_form searchSite="${project}"/>
@@ -58,7 +57,6 @@
   --%>
 
   <%--------------  EUPATHDB DATA STATS---------------------------------------------%>
-  <imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
   <a class="heading" id='stats'  href="#">Data Summary</a>
 
   <c:choose>
@@ -93,7 +91,6 @@
   <!-- number of news items to show in sidebar (there is scrollbar) -->
   <c:set var="NewsCount" value="50"/>
 
-  <imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
   <a class="heading"  href="#">News and Tweets</a>
   <div class="menu_lefttop_drop" id="News">
     <c:choose>
@@ -203,7 +200,6 @@
 
 
   <%--------------  COMMUNITY RESOURCES ---------------------------------------------%>
-  <imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
   <a  class="heading" id='community' href="#">Community Resources</a>
   <div class="menu_lefttop_drop">
     <ul><imp:socialMedia label="true"/></ul>
@@ -260,7 +256,6 @@
   </div>
 
   <%--------------  TUTORIALS ---------------------------------------------%>
-  <imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
   <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
   <div class="menu_lefttop_drop">
     <ul id="education">
@@ -283,7 +278,6 @@
 
 
   <%--------------  INFO AND HELP ---------------------------------------------%>
-  <imp:image src="images/${project}/menu_lft1.png" alt="" width="208" height="12" />
   <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
   <div class="menu_lefttop_drop">
     <ul id="information">
