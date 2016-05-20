@@ -43,136 +43,38 @@
 </c:choose>
 
 <div class="threecolumndiv">
-  <!-- <imp:image id="heading" src="images/${project}/menu_lft1.png" alt="bubble round top heading" width="267" height="12" /> -->
-
   <c:choose>
-
     <%---------------------------------   TOOLS  -------------------------%>
     <c:when test="${recordClasses == null}">
-      <div class="heading">Tools:</div> 
+      <div class="heading">Tools</div> 
       <imp:DQG_tools />
     </c:when>
 
     <%---------------------------------   RECORDCLASSSES OTHER THAN GENES  -------------------------%>
     <c:when test="${recordClasses == 'others'}">
-      <div class="heading">Search for Other Data Types:</div>  
+      <%-- Generate an array of record class names to pass to javascript code --%>
+      <c:set var="recordClassesCSV"/>
+      <c:forEach items="${rootCats}" var="rootCatEntry">
+        <c:if test="${rootCatEntry.key != leftBubbleCategory}">
+          <c:choose>
+            <c:when test="${not empty recordClassesCSV}">
+              <c:set var="recordClassesCSV" value='${recordClassesCSV},"${rootCatEntry.key}"'/>
+            </c:when>
+            <c:otherwise>
+              <c:set var="recordClassesCSV" value='"${rootCatEntry.key}"'/>
+            </c:otherwise>
+          </c:choose>
+        </c:if>
+      </c:forEach>
 
-      <div class="info">
-        <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
-        <ul class="heading_list">
-          <c:forEach items="${rootCats}" var="rootCatEntry">
-            <c:if test="${rootCatEntry.key != leftBubbleCategory}">
-              <c:set var="rootCat" value="${rootCatEntry.value}" />
-              <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
-                <c:set var="cat" value="${catEntry.value}" />
-                <c:if test="${fn:length(cat.websiteQuestions) > 0}">
-
-                  <%-- SAME CODE AS IN drop_down_QG2.tag --%>
-                  <%-- fixing plural and uppercase --%>
-
-                  <c:set var="display" value="${cat.displayName}" />
-                  <li title="Click to expand/collapse section"> 
-               <!--     <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" /> -->
-                    <i class="fa fa-caret-right fa-lg"></i>
-                    <a class="heading" href="javascript:void(0)">${display}
-<%--
-                      <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
-
-                        <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
-                          <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
-                                     src="wdk/images/beta2-30.png" />
-                        </c:if>
-
-                      </c:if>
---%>
-                    </a>
-                    <c:if test="${rootCatEntry.key != 'DynSpanRecordClasses.DynSpanRecordClass'}">
-                      <a class="detail_link small" title="Click for popup with description" href="categoryPage.jsp?record=${rootCat.name}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
-                    </c:if>
-                    <div class="sub_list">
-                      <ul>
-                        <c:forEach items="${cat.websiteQuestions}" var="q">
-                          <c:set var="popup" value="${q.summary}"/>
-                          <li>
-                            <a href="showQuestion.do?questionFullName=${q.fullName}" class="dqg-tooltip" 
-                               id="${q.questionSetName}_${q.name}" title="${fn:escapeXml(popup)}">${q.displayName}</a>
-                            <imp:questionFeature question="${q}" />
-                          </li>
-                        </c:forEach>
-                      </ul>
-                    </div>
-                  </li>
-                </c:if>
-              </c:forEach>
-            </c:if>
-          </c:forEach>
-
-          <li> 
-            <a  href="${baseUrl}/app/search/dataset/AllDatasets/result" style="padding-left:15px">Data Sets</a>
-          </li>
-
-        </ul>
-      </div>
-      
-      <div class="infobottom">
-        <%--  <div id="mysearchhist">
-              <a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
-        </div>  --%>
-      </div>
+      <div class="heading">Search for Other Data Types</div>
+      <div class="info" data-controller="apidb.bubble.initialize" data-record-classes='[${recordClassesCSV}]'><jsp:text/></div>
     </c:when>
 
     <%---------------------------------   GENES  -------------------------%>
     <c:otherwise>
-      <div class="heading">Search for Genes by:</div>  
-      <div class="info">
-        <p class="small" align="center"><a href="true">Expand All</a> | <a href="false">Collapse All</a></p>
-        <ul class="heading_list">
-<li><a style="padding-left:16px" id="GeneQuestions_GenesByTextSearch" class="dqg-tooltip" href="showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch" data-hasqtip="10" oldtitle="Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways." title="" aria-describedby="qtip-10">Text (product name, notes, etc.)</a>
-</li>
-          <c:set var="rootCat" value="${rootCats[leftBubbleCategory]}" />
-          <c:forEach items="${rootCat.websiteChildren}" var="catEntry">
-            <c:set var="cat" value="${catEntry.value}" />
-            <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
-            <li title="Click to expand/collapse section">
-             <!-- <imp:image class="plus-minus plus" src="images/sqr_bullet_plus.gif" alt="" />&nbsp;&nbsp;-->
-              <i class="fa fa-caret-right fa-lg"></i> 
-              <a class="heading" href="javascript:void(0)">${cat.displayName}</a>
-              <a class="detail_link small"  title="Click for popup with description"  href="categoryPage.jsp?record=${leftBubbleCategory}&category=${cat.name}"  target="_blank" onClick="poptastic(this.href); return false;">&nbsp;&nbsp;&nbsp;&nbsp;</a>
-              <div class="sub_list">
-                <ul>
-                  <c:forEach items="${cat.websiteQuestions}" var="q">
-                    <c:set var="popup" value="${q.summary}"/>
-                    <li>
-                      <a href="showQuestion.do?questionFullName=${q.fullName}" id="${q.questionSetName}_${q.name}" 
-                         class="dqg-tooltip" title="${fn:escapeXml(popup)}">${q.displayName}</a>
-                      <imp:questionFeature question="${q}" />
-
-
-                      <%-- adding symbols for build14, until we get this from the model  https://redmine.apidb.org/issues/9045
-                           <c:if test="${project eq 'PlasmoDB' || project eq 'EuPathDB'}">
-                             <c:if test="${q.displayName eq 'Microarray Evidence'  || q.displayName eq 'RNA Seq Evidence'}">
-                               <imp:image width="40" alt="Revised feature icon" title="This category has been revised" 
-                                          src="wdk/images/revised-small.png" />
-                             </c:if>
-                           </c:if>
-                           --%>
-                    </li>
-                  </c:forEach>
-                </ul>
-              </div>
-            </li>
-            <%--     </c:if> --%>
-          </c:forEach>
-        </ul> 
-      </div>
-
-      <div class="infobottom">
-        <%--  <div id="mysearchhist">
-              <a href="<c:url value="/showApplication.do?showHistory=true"/>">My Searches: ${count}</a>
-        </div> --%>
-      </div>
+      <div class="heading">Search for Genes</div>
+      <div class="info" data-controller="apidb.bubble.initialize" data-record-classes='["${leftBubbleCategory}"]'><jsp:text/></div>
     </c:otherwise>
   </c:choose> 
-
-  <!--<imp:image src="images/bubble_bottom.png" alt="" width="247" height="35" />-->
 </div>

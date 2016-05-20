@@ -20,6 +20,9 @@ import '!!script!eupathdb/js/newwindow';
 // <!-- Quick search box -->
 import 'apidb/js/quicksearch';
 
+// home page bubbles
+import 'apidb/js/bubbles';
+
 // <!-- Sidebar news/events, yellow background -->
 import '!!script!apidb/js/newitems';
 
