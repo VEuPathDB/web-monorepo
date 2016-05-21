@@ -464,7 +464,8 @@ h4 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  height: 1em;
+  height: 1.4em;
+  line-height: 1.8em;
 }
 
 .eupathdb-MercatorTable {
