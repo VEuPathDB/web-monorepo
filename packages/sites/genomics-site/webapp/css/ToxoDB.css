@@ -86,7 +86,8 @@ body {
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/ToxoDB/menu_lft2.png);
+  /* background-image: url(../images/ToxoDB/menu_lft2.png); */
+  background: #8b465c;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
