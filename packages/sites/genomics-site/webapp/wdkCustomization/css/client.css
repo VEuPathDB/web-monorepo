@@ -733,3 +733,50 @@ h4 {
 .eupathdb-ReporterFormGroup .wdk-CheckboxTree-list li label {
   white-space: initial;
 }
+
+
+/* Query Grid CSS */
+
+
+#eupathdb-QueryGrid ul {
+  list-style-type: none;
+  font-size: 12px;
+  font-weight: 400;
+  text-align:left;
+  clear: both;
+}
+
+#eupathdb-QueryGrid > ul {
+  clear:both;
+}
+
+#eupathdb-QueryGrid > ul > li {
+  text-align: center;
+  font-weight: bold;
+  width:100%;
+}
+
+#eupathdb-QueryGrid li.category {
+  font-weight: bold;
+  display: inline-block;
+  float:left;
+  vertical-align: top;
+  line-height: 1.5em;
+  padding-bottom: 2em;
+  width: 33%;
+}
+
+
+#eupathdb-QueryGrid  li.category:nth-child(3n) {
+  clear:left;
+}
+
+#eupathdb-QueryGrid li.category ul {
+  margin: 0;
+  padding: 0;
+  margin-top: 0.5em;
+}
+
+#eupathdb-QueryGrid ul.basic {
+
+}
