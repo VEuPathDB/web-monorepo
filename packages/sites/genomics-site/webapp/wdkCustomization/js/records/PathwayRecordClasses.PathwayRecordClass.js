@@ -320,7 +320,7 @@ vis.ready(function() {
 		    //vis.updateData([n]);
 		}  // if enzyme
 	    }
-	    vis.updateData(nodes.filter(node => {
+	    vis.updateData(nodes.filter(function(node) {
 	      return node.data.Type === "enzyme"
 	    }));
 	    vis.nodeTooltipsEnabled(true);
