@@ -14,6 +14,7 @@ wdk.namespace('apidb.bubble', ns => {
       let recordClassMap = indexBy(recordClasses, 'name');
       let searchTrees = attrs.recordClasses
       .map(name => recordClassMap[name])
+      .filter(recordClass => recordClass != null)
       .map(makeSearchTree(ontology));
       let tree = searchTrees.length === 1
         // render single tree with categories
