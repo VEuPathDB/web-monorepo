@@ -1,5 +1,5 @@
-
-let QueryGrid = React.createClass({
+let QueryGrid;
+QueryGrid = React.createClass({
 
   render() {
     return (
@@ -12,36 +12,50 @@ let QueryGrid = React.createClass({
 
   setUpGrid(grid) {
     return (
-      <ul className="searchTypes">
-        {grid.map(item => {return <li>ID {item.recordClassName.split(".")[0]} By:
-          {item.categories.length > 0 ? this.setUpCategories(item.categories) : this.setUpSearches(item.searches, false) }
-        </li>})}
-      </ul>
+      <div>
+        <ul>
+          {grid.filter(item => {
+            return item.categories.length > 0
+          }).map(item => {
+            return <li className="threeTierList">ID {item.recordClassName.split(".")[0]} By:
+              {this.setUpCategories(item.categories)}
+            </li>
+          })}
+        </ul>
+        <ul>
+          {grid.filter(item => {
+            return item.categories.length === 0
+          }).map(item => {
+            return <li className="twoTierList">ID {item.recordClassName.split(".")[0]} By:
+              {this.setUpSearches(item.searches)}
+            </li>
+          })}
+        </ul>
+      </div>
     );
   },
 
   setUpCategories(categories) {
-    return(
+    return (
       <ul>
         {categories.map(category => {
           return <li className="category">{category.categoryName}
-            {this.setUpSearches(category.searches, true)}
+            {this.setUpSearches(category.searches)}
           </li>
         })}
       </ul>
     );
   },
 
-  setUpSearches(searches, withinCategory) {
-    return(
-      <ul className={withinCategory ? "" : "basic"}>
+  setUpSearches(searches) {
+    return (
+      <ul>
         {searches.map(search => {
           return <li>{search.displayName}</li>
         })}
       </ul>
     );
   }
-
 
 });
 

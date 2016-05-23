@@ -746,11 +746,11 @@ h4 {
   clear: both;
 }
 
-#eupathdb-QueryGrid > ul {
+#eupathdb-QueryGrid > div > ul {
   clear:both;
 }
 
-#eupathdb-QueryGrid > ul > li {
+#eupathdb-QueryGrid > div > ul > li {
   text-align: center;
   font-weight: bold;
   width:100%;
@@ -777,6 +777,13 @@ h4 {
   margin-top: 0.5em;
 }
 
-#eupathdb-QueryGrid ul.basic {
-
+#eupathdb-QueryGrid li.twoTierList {
+  display: inline-block;
+  float:left;
+  width: 50%;
 }
+
+#eupathdb-QueryGrid li.twoTierList:nth-child(2n) {
+  clear:left;
+}
+
