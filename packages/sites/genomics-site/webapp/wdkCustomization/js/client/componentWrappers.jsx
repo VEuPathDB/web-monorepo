@@ -1,6 +1,5 @@
 import lodash from 'lodash';
 import { Components, ComponentUtils } from 'wdk-client';
-import Footer from './components/common/Footer';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
@@ -67,18 +66,6 @@ export function RecordController(WdkRecordController) {
 
     return (
       <WdkRecordController {...props} params={params}/>
-    );
-  };
-}
-
-// Add footer and beta message to Main content
-export function AppController(WdkAppController) {
-  return function ApiAppController(props) {
-    return (
-      <div>
-        <WdkAppController {...props}/>
-        <Footer/>
-      </div>
     );
   };
 }
