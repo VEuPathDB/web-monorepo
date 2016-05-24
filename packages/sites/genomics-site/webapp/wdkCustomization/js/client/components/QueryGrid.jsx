@@ -49,9 +49,12 @@ QueryGrid = React.createClass({
 
   setUpSearches(searches) {
     return (
-      <ul>
+      <ul className="fa-ul">
         {searches.map(search => {
-          return <li>{search.displayName}</li>
+          return(
+            search.displayName == null ? "" :
+              <li><i className="bullet fa-li fa fa-circle-o"></i>{search.displayName}</li>
+          )
         })}
       </ul>
     );

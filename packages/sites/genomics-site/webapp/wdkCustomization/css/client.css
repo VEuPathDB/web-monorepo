@@ -740,24 +740,36 @@ h4 {
 
 
 #eupathdb-QueryGrid ul {
-  list-style-type: none;
   font-size: 12px;
   font-weight: 400;
-  text-align:left;
+  text-align: left;
+  background-color: #FFF;
+  margin: 0;
+  padding: 2em;
 }
 
 #eupathdb-QueryGrid > div > ul > li {
+  list-style-type: none;
   text-align: center;
   font-weight: bold;
   width:100%;
 }
 
+#eupathdb-QueryGrid > div > ul > li.threeTierList, #eupathdb-QueryGrid > div > ul > li.twoTierList {
+  background-color: #DDD;
+}
+
 #eupathdb-QueryGrid li.category {
+  background-color: #FFF;
   font-weight: bold;
   display: inline-block;
   vertical-align: top;
   padding-bottom: 2em;
   width: 33%;
+}
+
+#eupathdb-QueryGrid .bullet {
+  color:  #3b99fc;
 }
 
 

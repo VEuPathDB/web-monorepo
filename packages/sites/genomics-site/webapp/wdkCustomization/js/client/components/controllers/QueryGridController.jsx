@@ -10,7 +10,7 @@ let QueryGridController = React.createClass({
     this.setState({isLoading: true, ontology: null, questions: []});
     return Promise.all([
         this.props.wdkService.getOntology(),
-        this.props.wdkService.getQuestions(),
+        this.props.wdkService.getQuestions()
       ])
       .then(([ ontology, questions]) => {
         try {
@@ -94,7 +94,6 @@ let QueryGridController = React.createClass({
       return +(a.name > b.name) || +(a.name === b.name) - 1;
     });
 
-
     grid.forEach((item, i) => {
       detailQuestions.forEach(detailQuestion => {
         if(detailQuestion.recordClassName === item.recordClassName) {
@@ -113,6 +112,7 @@ let QueryGridController = React.createClass({
         }
       });
     });
+    
     return grid;
   },
 
