@@ -37,10 +37,10 @@ let makeVis = function(pathwayId, pathwaySource) {
     let network$ = getNetwork(pathwayFilesBaseUrl + pathwaySource + "/" + pathwayId + pathwayFileExt);
     network$.then(data => {
       vis.draw(options);
-      if (pathwaySource === 'TrypanoCyc') {
-        vis.draw({network: data, layout: 'ForceDirected'});
-      } else {
+      if (pathwaySource === 'KEGG') {
         vis.draw({network: data, layout: 'Preset'});
+      } else {
+        vis.draw({network: data, layout: 'ForceDirected'});
       }
     }).catch(error => {
       alert("Error loading file " + error);
