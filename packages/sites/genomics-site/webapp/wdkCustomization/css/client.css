@@ -743,11 +743,6 @@ h4 {
   font-size: 12px;
   font-weight: 400;
   text-align:left;
-  clear: both;
-}
-
-#eupathdb-QueryGrid > div > ul {
-  clear:both;
 }
 
 #eupathdb-QueryGrid > div > ul > li {
@@ -759,17 +754,11 @@ h4 {
 #eupathdb-QueryGrid li.category {
   font-weight: bold;
   display: inline-block;
-  float:left;
   vertical-align: top;
-  line-height: 1.5em;
   padding-bottom: 2em;
   width: 33%;
 }
 
-
-#eupathdb-QueryGrid  li.category:nth-child(3n) {
-  clear:left;
-}
 
 #eupathdb-QueryGrid li.category ul {
   margin: 0;
@@ -779,11 +768,19 @@ h4 {
 
 #eupathdb-QueryGrid li.twoTierList {
   display: inline-block;
-  float:left;
+  vertical-align: top;
   width: 50%;
 }
 
-#eupathdb-QueryGrid li.twoTierList:nth-child(2n) {
-  clear:left;
+#eupathdb-QueryGrid li.twoTierList ul {
+  padding-top: 0.5em;
 }
+
+
+#eupathdb-QueryGrid li.twoTierList li {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+}
+
 
