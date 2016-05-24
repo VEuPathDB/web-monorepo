@@ -126,6 +126,7 @@ h4 {
 .eupathdb-RecordOverviewDescription {
   font-weight: 300;
   font-size: 1.3em;
+  margin-left: .5em;
 }
 
 .eupathdb-GeneOverviewSubtitle .eupathdb-RecordOverviewDescription {
