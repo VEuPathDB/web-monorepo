@@ -6,7 +6,7 @@ import {NativeCheckboxList} from 'wdk-client/Components';
 import {renderAttributeValue} from 'wdk-client/ComponentUtils';
 import ExpressionGraph from '../common/ExpressionGraph';
 import Sequence from '../common/Sequence';
-import * as Thumbnails from '../common/OverviewThumbnails';
+import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
 import {SnpsAlignmentTable} from '../common/Snps';
 
@@ -54,7 +54,7 @@ export class RecordOverview extends React.Component {
     }
     else {
       ReactDOM.render((
-        <Thumbnails.OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
+        <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
       ), thumbsContainer);
     }
   }
