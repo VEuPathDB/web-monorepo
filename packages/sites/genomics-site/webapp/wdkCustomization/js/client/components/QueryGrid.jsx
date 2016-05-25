@@ -1,3 +1,5 @@
+import {Tooltip} from 'wdk-client/Components';
+
 let QueryGrid;
 QueryGrid = React.createClass({
 
@@ -5,7 +7,7 @@ QueryGrid = React.createClass({
     return (
       <div id="eupathdb-QueryGrid">
         <h1>All Available Searches</h1>
-        <p>Select a search, which will be the first step in you new strategy.</p>
+        <p>Select a search to start a new search strategy.</p>
         {this.setUpGrid(this.props.grid)}
       </div>
     );
@@ -55,17 +57,18 @@ QueryGrid = React.createClass({
   },
 
   setUpSearches(searches) {
-    let questionUrl = "/showQuestion.do?questionFullName=";
     return (
       <ul className="fa-ul">
         {searches.map(search => {
           return(
             search.displayName == null ? "" :
-              <li title={search.description}>
+              <li>
                 <i className="bullet fa fa-li fa-circle"></i>
+                <Tooltip content={search.description}>
                 <a href={wdk.webappUrl('showQuestion.do?questionFullName=' + search.fullName)}>
                   {search.displayName}
                 </a>
+                </Tooltip>
               </li>
           )
         })}

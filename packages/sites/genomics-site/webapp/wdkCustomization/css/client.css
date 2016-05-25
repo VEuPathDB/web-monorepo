@@ -755,9 +755,7 @@ h4 {
 /* Query Grid CSS */
 
 #eupathdb-QueryGrid p {
-  text-align: center;
-  width: 100%;
-  font-size: 1em;
+  font-size: 1.2em;
 }
 
 #eupathdb-QueryGrid ul {
@@ -775,8 +773,8 @@ h4 {
   list-style-type: none;
   text-align: center;
   font-weight: bold;
-  font-size: 1.25em;
-  line-height: 1.5em;
+  font-size: 1.3em;
+  line-height: 1.55em;
   width:100%;
 }
 
