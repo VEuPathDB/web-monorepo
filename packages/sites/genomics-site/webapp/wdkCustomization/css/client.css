@@ -780,10 +780,6 @@ h4 {
   width:100%;
 }
 
-#eupathdb-QueryGrid li.twoTierList div {
-  display: inline;
-}
-
 #eupathdb-QueryGrid li.threeTierList > ul > li {
   background-color: #DDD;
   font-weight: bold;
