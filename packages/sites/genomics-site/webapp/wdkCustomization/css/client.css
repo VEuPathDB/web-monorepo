@@ -761,12 +761,13 @@ h4 {
 }
 
 #eupathdb-QueryGrid ul {
-  font-size: 12px;
+  font-size: 0.95em;
   font-weight: 400;
   text-align: left;
   background-color: #FFF;
   margin: 0;
   padding: 0.3em 0 1em 0;
+  line-height: 1.25em;
 }
 
 #eupathdb-QueryGrid li.threeTierList, #eupathdb-QueryGrid li.twoTierList {
@@ -774,8 +775,13 @@ h4 {
   list-style-type: none;
   text-align: center;
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1.25em;
+  line-height: 1.5em;
   width:100%;
+}
+
+#eupathdb-QueryGrid li.twoTierList div {
+  display: inline;
 }
 
 #eupathdb-QueryGrid li.threeTierList > ul > li {
@@ -784,7 +790,8 @@ h4 {
   display: inline-block;
   vertical-align: top;
   margin-left: 0.5em;
-  width: 32%;
+  line-height: 1.3em;
+  width: 32.5%;
 }
 
 #eupathdb-QueryGrid li.threeTierList > ul > li > span {

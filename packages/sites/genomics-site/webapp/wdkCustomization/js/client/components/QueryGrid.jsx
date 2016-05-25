@@ -27,9 +27,12 @@ QueryGrid = React.createClass({
           {grid.filter(item => {
             return item.categories.length === 0
           }).map(item => {
-            return <li className="twoTierList">{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches
-              {this.setUpSearches(item.searches)}
-            </li>
+            return(
+              <li className="twoTierList">
+                <span>{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches</span>
+                {this.setUpSearches(item.searches)}
+              </li>
+            )
           })}
         </ul>
       </div>
