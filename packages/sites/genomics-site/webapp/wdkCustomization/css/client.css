@@ -754,6 +754,12 @@ h4 {
 
 /* Query Grid CSS */
 
+#eupathdb-QueryGrid p {
+  text-align: center;
+  width: 100%;
+  font-weight: bold;
+  font-size: 1.5em;
+}
 
 #eupathdb-QueryGrid ul {
   font-size: 12px;
@@ -764,19 +770,13 @@ h4 {
   padding: 1em 0 1em 0;
 }
 
-#eupathdb-QueryGrid > div > ul > li {
+#eupathdb-QueryGrid li.threeTierList, #eupathdb-QueryGrid li.twoTierList {
+  background-color: #DDD;
   list-style-type: none;
   text-align: center;
   font-weight: bold;
+  font-size: 1.2em;
   width:100%;
-}
-
-#eupathdb-QueryGrid li.threeTierList, #eupathdb-QueryGrid li.twoTierList {
-  background-color: #DDD;
-}
-
-#eupathdb-QueryGrid li.threeTierList > ul, #eupathdb-QueryGrid li.twoTierList > ul {
-
 }
 
 #eupathdb-QueryGrid li.threeTierList > ul > li {
@@ -788,9 +788,12 @@ h4 {
   width: 32%;
 }
 
+#eupathdb-QueryGrid li.threeTierList > ul > li > span {
+  padding-left: 1em;
+}
+
 #eupathdb-QueryGrid li.threeTierList > ul > li > ul {
   padding-left: 1.5em;
-  list-style-type: disc;
 }
 
 #eupathdb-QueryGrid li.twoTierList {
@@ -802,12 +805,18 @@ h4 {
 
 #eupathdb-QueryGrid li.twoTierList > ul {
   padding-left: 1.5em;
-  list-style-type: disc;
 }
 
 #eupathdb-QueryGrid li.twoTierList > ul > li {
   display: inline-block;
   vertical-align: top;
   width: 50%;
+}
+
+#eupathdb-QueryGrid .bullet {
+  color: #000;
+  font-size: 0.4em;
+  height: 1em;
+  top: 1.2em;
 }
 

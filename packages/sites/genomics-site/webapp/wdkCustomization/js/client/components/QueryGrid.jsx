@@ -4,7 +4,7 @@ QueryGrid = React.createClass({
   render() {
     return (
       <div id="eupathdb-QueryGrid">
-        <h1>Query Grid</h1>
+        <p>Select a search, which will be the first step in you new strategy.</p>
         {this.setUpGrid(this.props.grid)}
       </div>
     );
@@ -17,7 +17,7 @@ QueryGrid = React.createClass({
           {grid.filter(item => {
             return item.categories.length > 0
           }).map(item => {
-            return <li className="threeTierList">Identify {item.recordClassName.split(".")[0].replace("RecordClasses","s")} By:
+            return <li className="threeTierList">{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches
               {this.setUpCategories(item.categories)}
             </li>
           })}
@@ -26,7 +26,7 @@ QueryGrid = React.createClass({
           {grid.filter(item => {
             return item.categories.length === 0
           }).map(item => {
-            return <li className="twoTierList">Identify {item.recordClassName.split(".")[0].replace("RecordClasses","s")} By:
+            return <li className="twoTierList">{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches
               {this.setUpSearches(item.searches)}
             </li>
           })}
@@ -39,9 +39,12 @@ QueryGrid = React.createClass({
     return (
       <ul>
         {categories.map(category => {
-          return <li>{category.categoryName}
-            {this.setUpSearches(category.searches)}
+          return(
+            <li>
+              <span>{category.categoryName}</span>
+              {this.setUpSearches(category.searches)}
           </li>
+          )
         })}
       </ul>
     );
@@ -50,11 +53,12 @@ QueryGrid = React.createClass({
   setUpSearches(searches) {
     let questionUrl = "/showQuestion.do?questionFullName=";
     return (
-      <ul>
+      <ul className="fa-ul">
         {searches.map(search => {
           return(
             search.displayName == null ? "" :
               <li title={search.description}>
+                <i className="bullet fa fa-li fa-circle"></i>
                 <a href={wdk.webappUrl('showQuestion.do?questionFullName=' + search.fullName)}>
                   {search.displayName}
                 </a>
