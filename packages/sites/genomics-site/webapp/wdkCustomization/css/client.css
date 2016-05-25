@@ -774,6 +774,7 @@ h4 {
 
 #eupathdb-QueryGrid li.threeTierList > ul > li > ul {
   padding-left: 1.5em;
+  list-style-type: disc;
 }
 
 #eupathdb-QueryGrid li.twoTierList {
@@ -785,15 +786,12 @@ h4 {
 
 #eupathdb-QueryGrid li.twoTierList > ul {
   padding-left: 1.5em;
+  list-style-type: disc;
 }
 
 #eupathdb-QueryGrid li.twoTierList > ul > li {
   display: inline-block;
   vertical-align: top;
   width: 50%;
-}
-
-#eupathdb-QueryGrid .bullet {
-  color:  #3b99fc;
 }
 
