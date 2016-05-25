@@ -20,16 +20,7 @@ let TranscriptAttributesReporterForm = props => {
       <ReporterSortMessage scope={scope}/>
       <div className="eupathdb-ReporterForm">
 
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__right">
-          <div>
-            <h3>Choose Rows</h3>
-            <div>
-              <label>
-                <Checkbox value={formState.applyFilter} onChange={getUpdateHandler('applyFilter')}/>
-                <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene (the longest)</span>
-              </label>
-            </div>
-          </div>
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__columns">
           <CategoriesCheckboxTree
               // title and layout of the tree
               title="Choose Columns"
@@ -47,8 +38,17 @@ let TranscriptAttributesReporterForm = props => {
               onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
           />
         </div>
-        
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">
+
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
+          <div>
+            <h3>Choose Rows</h3>
+            <div>
+              <label>
+                <Checkbox value={formState.applyFilter} onChange={getUpdateHandler('applyFilter')}/>
+                <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene (the longest)</span>
+              </label>
+            </div>
+          </div>
           <div>
             <h3>Download Type</h3>
             <div>
@@ -65,14 +65,16 @@ let TranscriptAttributesReporterForm = props => {
               </label>
             </div>
           </div>
-          <div style={{margin:'2em 0'}}>
-            <input type="button" value="Submit" onClick={onSubmit}/>
-          </div>
         </div>
 
       </div>
 
+      <div className="eupathdb-ReporterFormSubmit">
+        <input type="button" value="Submit" onClick={onSubmit}/>
+      </div>
+
       <hr/>
+
       <div style={{margin:'0.5em 2em'}}>
         <ExcelNote/>
       </div>

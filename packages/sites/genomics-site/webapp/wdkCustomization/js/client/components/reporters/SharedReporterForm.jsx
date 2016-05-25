@@ -10,10 +10,11 @@ let SharedReporterForm = props => {
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
 
   return (
-    <div className="eupathdb-ReporterForm">
-      <ReporterSortMessage scope={scope}/>
+    <div>
+      <div className="eupathdb-ReporterForm eupathdb-ReporterForm__shared">
+        <ReporterSortMessage scope={scope}/>
 
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__right">
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__columns">
           <CategoriesCheckboxTree
               // title and layout of the tree
               title="Choose Columns"
@@ -30,47 +31,51 @@ let SharedReporterForm = props => {
               onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
               onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
           />
+        </div>
 
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__tables">
           <CategoriesCheckboxTree
-              // title and layout of the tree
-              title="Choose Tables"
-              searchBoxPlaceholder="Search Tables..."
-              tree={util.getTableTree(ontology, recordClass.name)}
+            // title and layout of the tree
+            title="Choose Tables"
+            searchBoxPlaceholder="Search Tables..."
+            tree={util.getTableTree(ontology, recordClass.name)}
 
-              // state of the tree
-              selectedLeaves={formState.tables}
-              expandedBranches={formUiState.expandedTableNodes}
-              searchTerm={formUiState.tableSearchText}
+            // state of the tree
+            selectedLeaves={formState.tables}
+            expandedBranches={formUiState.expandedTableNodes}
+            searchTerm={formUiState.tableSearchText}
 
-              // change handlers for each state element controlled by the tree
-              onChange={getUpdateHandler('tables')}
-              onUiChange={getUiUpdateHandler('expandedTableNodes')}
-              onSearchTermChange={getUiUpdateHandler('tableSearchText')}
+            // change handlers for each state element controlled by the tree
+            onChange={getUpdateHandler('tables')}
+            onUiChange={getUiUpdateHandler('expandedTableNodes')}
+            onSearchTermChange={getUiUpdateHandler('tableSearchText')}
           />
         </div>
 
-      <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">
-        <div className="eupathdb-ReporterFormDownloadType">
-          <h3>Download Type</h3>
-          <div>
-            <RadioList name="attachmentType" value={formState.attachmentType}
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
+          <div className="eupathdb-ReporterFormDownloadType">
+            <h3>Download Type</h3>
+            <div>
+              <RadioList name="attachmentType" value={formState.attachmentType}
                 onChange={getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
+            </div>
+          </div>
+          <div className="eupathdb-ReporterFormAddtionOptions">
+            <h3>Additional Options</h3>
+            <div>
+              <label>
+                <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
+                <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
+              </label>
+            </div>
           </div>
         </div>
-        <div className="eupathdb-ReporterFormAddtionOptions">
-          <h3>Additional Options</h3>
-          <div>
-            <label>
-              <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
-              <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
-            </label>
-          </div>
-        </div>
-        <div style={{margin:'2em 0'}}>
-          <input type="button" value="Submit" onClick={onSubmit}/>
-        </div>
+
       </div>
 
+      <div className="eupathdb-ReporterFormSubmit">
+        <input type="button" value="Submit" onClick={onSubmit}/>
+      </div>
     </div>
   );
 };

@@ -15,7 +15,7 @@ let TableReporterForm = props => {
       <ReporterSortMessage scope={scope}/>
 
       <div className="eupathdb-ReporterForm">
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__right">
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__tables">
           <CategoriesCheckboxTree
               // title and layout of the tree
               title="Choose a Table"
@@ -35,7 +35,7 @@ let TableReporterForm = props => {
               onSearchTermChange={getUiUpdateHandler('tableSearchText')}
           />
         </div>
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
           <div>
             <h3>Download Type</h3>
             <div>
@@ -52,10 +52,10 @@ let TableReporterForm = props => {
               </label>
             </div>
           </div>
-          <div style={{margin:'2em 0'}}>
-            <input type="button" value="Submit" onClick={onSubmit}/>
-          </div>
         </div>
+      </div>
+      <div className="eupathdb-ReporterFormSubmit">
+        <input type="button" value="Submit" onClick={onSubmit}/>
       </div>
       <hr/>
       <div style={{margin:'0.5em 2em'}}>
