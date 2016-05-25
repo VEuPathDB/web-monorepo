@@ -48,12 +48,13 @@ QueryGrid = React.createClass({
   },
 
   setUpSearches(searches) {
+    let questionUrl = "/showQuestion.do?questionFullName=";
     return (
       <ul className="fa-ul">
         {searches.map(search => {
           return(
             search.displayName == null ? "" :
-              <li><i className="bullet fa-li fa fa-search"></i>{search.displayName}</li>
+              <li><a href={wdk.webappUrl('showQuestion.do?questionFullName=' + search.fullName)}><i className="bullet fa-li fa fa-search"></i>{search.displayName}</a></li>
           )
         })}
       </ul>
