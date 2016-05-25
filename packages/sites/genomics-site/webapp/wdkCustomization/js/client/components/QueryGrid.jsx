@@ -17,7 +17,7 @@ QueryGrid = React.createClass({
           {grid.filter(item => {
             return item.categories.length > 0
           }).map(item => {
-            return <li className="threeTierList">ID {item.recordClassName.split(".")[0]} By:
+            return <li className="threeTierList">Identify {item.recordClassName.split(".")[0].replace("RecordClasses","s")} By:
               {this.setUpCategories(item.categories)}
             </li>
           })}
@@ -26,7 +26,7 @@ QueryGrid = React.createClass({
           {grid.filter(item => {
             return item.categories.length === 0
           }).map(item => {
-            return <li className="twoTierList">ID {item.recordClassName.split(".")[0]} By:
+            return <li className="twoTierList">Identify {item.recordClassName.split(".")[0].replace("RecordClasses","s")} By:
               {this.setUpSearches(item.searches)}
             </li>
           })}
@@ -54,7 +54,11 @@ QueryGrid = React.createClass({
         {searches.map(search => {
           return(
             search.displayName == null ? "" :
-              <li><a href={wdk.webappUrl('showQuestion.do?questionFullName=' + search.fullName)}><i className="bullet fa-li fa fa-search"></i>{search.displayName}</a></li>
+              <li title={search.description}>
+                <a href={wdk.webappUrl('showQuestion.do?questionFullName=' + search.fullName)}>
+                  <i className="bullet fa-li fa fa-search"></i>{search.displayName}
+                </a>
+              </li>
           )
         })}
       </ul>
