@@ -757,8 +757,7 @@ h4 {
 #eupathdb-QueryGrid p {
   text-align: center;
   width: 100%;
-  font-weight: bold;
-  font-size: 1.5em;
+  font-size: 1em;
 }
 
 #eupathdb-QueryGrid ul {
@@ -767,7 +766,7 @@ h4 {
   text-align: left;
   background-color: #FFF;
   margin: 0;
-  padding: 1em 0 1em 0;
+  padding: 0.3em 0 1em 0;
 }
 
 #eupathdb-QueryGrid li.threeTierList, #eupathdb-QueryGrid li.twoTierList {

@@ -4,6 +4,7 @@ QueryGrid = React.createClass({
   render() {
     return (
       <div id="eupathdb-QueryGrid">
+        <h1>All Available Searches</h1>
         <p>Select a search, which will be the first step in you new strategy.</p>
         {this.setUpGrid(this.props.grid)}
       </div>
