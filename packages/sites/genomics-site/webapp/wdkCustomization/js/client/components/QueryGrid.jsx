@@ -39,7 +39,7 @@ QueryGrid = React.createClass({
     return (
       <ul>
         {categories.map(category => {
-          return <li className="category">{category.categoryName}
+          return <li>{category.categoryName}
             {this.setUpSearches(category.searches)}
           </li>
         })}
@@ -53,7 +53,7 @@ QueryGrid = React.createClass({
         {searches.map(search => {
           return(
             search.displayName == null ? "" :
-              <li><i className="bullet fa-li fa fa-circle-o"></i>{search.displayName}</li>
+              <li><i className="bullet fa-li fa fa-search"></i>{search.displayName}</li>
           )
         })}
       </ul>

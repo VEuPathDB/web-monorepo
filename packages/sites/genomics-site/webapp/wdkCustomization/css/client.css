@@ -745,7 +745,7 @@ h4 {
   text-align: left;
   background-color: #FFF;
   margin: 0;
-  padding: 2em;
+  padding: 1em 0 1em 0;
 }
 
 #eupathdb-QueryGrid > div > ul > li {
@@ -755,45 +755,45 @@ h4 {
   width:100%;
 }
 
-#eupathdb-QueryGrid > div > ul > li.threeTierList, #eupathdb-QueryGrid > div > ul > li.twoTierList {
+#eupathdb-QueryGrid li.threeTierList, #eupathdb-QueryGrid li.twoTierList {
   background-color: #DDD;
 }
 
-#eupathdb-QueryGrid li.category {
-  background-color: #FFF;
+#eupathdb-QueryGrid li.threeTierList > ul, #eupathdb-QueryGrid li.twoTierList > ul {
+
+}
+
+#eupathdb-QueryGrid li.threeTierList > ul > li {
+  background-color: #DDD;
   font-weight: bold;
   display: inline-block;
   vertical-align: top;
-  padding-bottom: 2em;
-  width: 33%;
+  margin-left: 0.5em;
+  width: 32%;
 }
 
-#eupathdb-QueryGrid .bullet {
-  color:  #3b99fc;
-}
-
-
-#eupathdb-QueryGrid li.category ul {
-  margin: 0;
-  padding: 0;
-  margin-top: 0.5em;
+#eupathdb-QueryGrid li.threeTierList > ul > li > ul {
+  padding-left: 1.5em;
 }
 
 #eupathdb-QueryGrid li.twoTierList {
   display: inline-block;
   vertical-align: top;
-  width: 50%;
+  margin-left: 0.5em;
+  width: 49%;
 }
 
-#eupathdb-QueryGrid li.twoTierList ul {
-  padding-top: 0.5em;
+#eupathdb-QueryGrid li.twoTierList > ul {
+  padding-left: 1.5em;
 }
 
-
-#eupathdb-QueryGrid li.twoTierList li {
+#eupathdb-QueryGrid li.twoTierList > ul > li {
   display: inline-block;
   vertical-align: top;
   width: 50%;
 }
 
+#eupathdb-QueryGrid .bullet {
+  color:  #3b99fc;
+}
 
