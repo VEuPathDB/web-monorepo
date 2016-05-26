@@ -20,9 +20,12 @@ QueryGrid = React.createClass({
           {grid.filter(item => {
             return item.categories.length > 0
           }).map(item => {
-            return <li className="threeTierList">{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches
-              {this.setUpCategories(item.categories)}
-            </li>
+            return(
+              <li className="threeTierList">
+                <div>{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches</div>
+                {this.setUpCategories(item.categories)}
+              </li>
+            )
           })}
         </ul>
         <ul>
@@ -31,7 +34,7 @@ QueryGrid = React.createClass({
           }).map(item => {
             return(
               <li className="twoTierList">
-                <span>{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches</span>
+                <div>{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches</div>
                 {this.setUpSearches(item.searches)}
               </li>
             )
@@ -47,7 +50,7 @@ QueryGrid = React.createClass({
         {categories.map(category => {
           return(
             <li>
-              <span>{category.categoryName}</span>
+              <div>{category.categoryName}</div>
               {this.setUpSearches(category.searches)}
           </li>
           )

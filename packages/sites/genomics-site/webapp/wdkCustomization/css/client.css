@@ -763,14 +763,12 @@ h4 {
   font-size: 0.95em;
   font-weight: 400;
   text-align: left;
-  background-color: #FFF;
   margin: 0;
   padding: 0.3em 0 1em 0;
   line-height: 1.25em;
 }
 
 #eupathdb-QueryGrid li.threeTierList, #eupathdb-QueryGrid li.twoTierList {
-  background-color: #DDD;
   list-style-type: none;
   text-align: center;
   font-weight: bold;
@@ -779,8 +777,11 @@ h4 {
   width:100%;
 }
 
-#eupathdb-QueryGrid li.threeTierList > ul > li {
+#eupathdb-QueryGrid li.threeTierList div, #eupathdb-QueryGrid li.twoTierList div {
   background-color: #DDD;
+}
+
+#eupathdb-QueryGrid li.threeTierList > ul > li {
   font-weight: bold;
   display: inline-block;
   vertical-align: top;
@@ -789,8 +790,9 @@ h4 {
   width: 32.5%;
 }
 
-#eupathdb-QueryGrid li.threeTierList > ul > li > span {
+#eupathdb-QueryGrid li.threeTierList > ul > li > div {
   padding-left: 1em;
+  background-color: #DDD;
 }
 
 #eupathdb-QueryGrid li.threeTierList > ul > li > ul {
