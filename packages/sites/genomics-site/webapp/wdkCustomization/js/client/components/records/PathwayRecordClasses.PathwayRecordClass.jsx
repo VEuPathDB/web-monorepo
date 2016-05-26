@@ -6,18 +6,18 @@ export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
 let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
-//let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
-let pathwayFilesBaseUrl = "/plasmodb/data/";
+let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
+//let pathwayFilesBaseUrl = "/plasmodb/data/";
 let pathwayFileExt = ".xgmml";
 
 // initialization options
 let options = {
   // where you have the Cytoscape Web SWF
-   //swfPath: "/swf/CytoscapeWeb",
-  swfPath: "http://www.plasmodb.org/swf/CytoscapeWeb",
+  swfPath: "/swf/CytoscapeWeb",
+  //swfPath: "http://www.plasmodb.org/swf/CytoscapeWeb",
   // where you have the Flash installer SWF
-  //flashInstallerPath: "/swf/playerProductInstall"
-  flashInstallerPath: "http://www.plasmodb.org/swf/playerProductInstall"
+  flashInstallerPath: "/swf/playerProductInstall"
+  //flashInstallerPath: "http://www.plasmodb.org/swf/playerProductInstall"
 };
 
 // init and draw
