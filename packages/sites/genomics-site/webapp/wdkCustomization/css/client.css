@@ -44,6 +44,7 @@ h4 {
 /* 230px is based on height of header, footer, and margin/padding of wdk-RootContainer */
 .wdk-RootContainer {
   min-height: calc(100vh - 230px);
+  background-color: #ffffff;
 }
 
 .wdk-RecordOverview {
