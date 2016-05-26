@@ -1,7 +1,7 @@
 import {Tooltip} from 'wdk-client/Components';
+import { getPropertyValue, nodeHasChildren, getNodeChildren } from 'wdk-client/OntologyUtils';
 
-let QueryGrid;
-QueryGrid = React.createClass({
+let QueryGrid = React.createClass({
 
   render() {
     return (
@@ -17,25 +17,25 @@ QueryGrid = React.createClass({
     return (
       <div>
         <ul>
-          {grid.filter(item => {
-            return item.categories.length > 0
+          {getNodeChildren(grid).filter(item => {
+            return nodeHasChildren(getNodeChildren(item)[0])
           }).map(item => {
             return(
               <li className="threeTierList">
-                <div>{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches</div>
-                {this.setUpCategories(item.categories)}
+                <div>{getPropertyValue("EuPathDB alternative term", item).replace("s","")} Searches</div>
+                {this.setUpCategories(getNodeChildren(item))}
               </li>
             )
           })}
         </ul>
         <ul>
-          {grid.filter(item => {
-            return item.categories.length === 0
+          {getNodeChildren(grid).filter(item => {
+            return !nodeHasChildren(getNodeChildren(item)[0])
           }).map(item => {
             return(
               <li className="twoTierList">
-                <div>{item.recordClassName.split(".")[0].replace("RecordClasses","")} Searches</div>
-                {this.setUpSearches(item.searches)}
+                <div>{getPropertyValue("EuPathDB alternative term", item).replace("s","")} Searches</div>
+                {this.setUpSearches(getNodeChildren(item))}
               </li>
             )
           })}
@@ -50,8 +50,8 @@ QueryGrid = React.createClass({
         {categories.map(category => {
           return(
             <li>
-              <div>{category.categoryName}</div>
-              {this.setUpSearches(category.searches)}
+              <div>{getPropertyValue("EuPathDB alternative term",category)}</div>
+              {this.setUpSearches(getNodeChildren(category))}
           </li>
           )
         })}
@@ -64,12 +64,11 @@ QueryGrid = React.createClass({
       <ul className="fa-ul">
         {searches.map(search => {
           return(
-            search.displayName == null ? "" :
               <li>
                 <i className="bullet fa fa-li fa-circle"></i>
-                <Tooltip content={search.description}>
-                <a href={wdk.webappUrl('showQuestion.do?questionFullName=' + search.fullName)}>
-                  {search.displayName}
+                <Tooltip content={search.wdkReference.description}>
+                <a href={wdk.webappUrl('showQuestion.do?questionFullName=' + getPropertyValue("name", search))}>
+                  { search.wdkReference.displayName }
                 </a>
                 </Tooltip>
               </li>
