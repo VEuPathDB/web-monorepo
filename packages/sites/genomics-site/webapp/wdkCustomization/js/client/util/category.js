@@ -7,7 +7,7 @@ import {getRecordClassName, isQualifying} from 'wdk-client/CategoryUtils';
 let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
 
 /**
- * Gets Category ontology and returns an array of trees, where each root node
+ * Gets Category ontology and returns a tree, where each immediate child node
  * is a recordClass. Optionally, indicate record classes to include or exclude
  * via the `options` object. If `options.include` is defined, `options.exclude`
  * will be ignored.
