@@ -1,7 +1,8 @@
-import {indexBy, propertyOf, difference} from 'lodash';
+/* global wdk */
+import {indexBy, propertyOf} from 'lodash';
 import {preorderSeq, pruneDescendantNodes} from 'wdk-client/TreeUtils';
 import {getTree} from 'wdk-client/OntologyUtils';
-import {getTargetType, getScope, getRecordClassName, isQualifying} from 'wdk-client/CategoryUtils';
+import {getRecordClassName, isQualifying} from 'wdk-client/CategoryUtils';
 
 let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
 
