@@ -1,7 +1,7 @@
 /* global wdk */
 import {render} from 'react-dom';
 import {pick} from 'lodash';
-import {getTargetType, getDisplayName, getRefName} from 'wdk-client/CategoryUtils';
+import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip} from 'wdk-client/Components';
 import {getSearchMenuCategoryTree} from '../wdkCustomization/js/client/util/category';
 
@@ -38,11 +38,14 @@ function merge(source, props) {
 
 function BubbleNode(props) {
   let { node } = props;
-  return getTargetType(node) === 'search'
-    ? <Tooltip content={node.wdkReference.summary}>
-        <a href={'showQuestion.do?questionFullName=' + getRefName(node)}>
-          {getDisplayName(node)}
-        </a>
-      </Tooltip>
+  let displayElement = getTargetType(node) === 'search'
+    ? <a href={'showQuestion.do?questionFullName=' + getRefName(node)}>
+        {getDisplayName(node)}
+      </a>
     : <span>{getDisplayName(node)}</span>
+  return (
+    <Tooltip content={getTooltipContent(node)}>
+      {displayElement}
+    </Tooltip>
+  );
 }
