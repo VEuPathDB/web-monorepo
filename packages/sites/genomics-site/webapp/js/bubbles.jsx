@@ -1,35 +1,20 @@
 /* global wdk */
 import {render} from 'react-dom';
-import {indexBy} from 'lodash';
-import {isQualifying, getTargetType, getDisplayName, getRefName} from 'wdk-client/CategoryUtils';
-import {getTree} from 'wdk-client/OntologyUtils';
-import {preorderSeq} from 'wdk-client/TreeUtils';
+import {pick} from 'lodash';
+import {getTargetType, getDisplayName, getRefName} from 'wdk-client/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip} from 'wdk-client/Components';
+import {getSearchMenuCategoryTree} from '../wdkCustomization/js/client/util/category';
 
 wdk.namespace('apidb.bubble', ns => {
   ns.initialize = ($el, attrs) => {
-    let ontology$ = wdk.client.runtime.wdkService.getOntology();
-    let recordClasses$ = wdk.client.runtime.wdkService.getRecordClasses();
-    Promise.all([ontology$, recordClasses$]).then(([ontology, recordClasses]) => {
-      let recordClassMap = indexBy(recordClasses, 'name');
-      let searchTrees = attrs.recordClasses
-      .map(name => recordClassMap[name])
-      .filter(recordClass => recordClass != null)
-      .map(makeSearchTree(ontology));
-      let tree = searchTrees.length === 1
-        // render single tree with categories
-        ? searchTrees[0]
-        // render multiple trees without ontology categories
-        : {
-            children: searchTrees.map(searchTree => {
-              return Object.assign(searchTree, {
-                // assign the array of all leaf nodes to children of searchTree
-                children: preorderSeq(searchTree).filter(node => node.children.length === 0).toArray()
-              });
-            })
-          };
-      renderBubble({ tree }, $el[0]);
-    });
+    let options = pick(attrs, 'include', 'exclude');
+    getSearchMenuCategoryTree(wdk.client.runtime.wdkService, options).then(tree => {
+      if (tree.children.length === 1) {
+        renderBubble({ tree: tree.children[0] }, $el[0]);
+      } else {
+        renderBubble({ tree }, $el[0]);
+      }
+    }).catch(console.error.bind(console));
   };
 });
 
@@ -41,10 +26,14 @@ function renderBubble(props, el) {
       searchBoxPlaceholder="Find a search"
       leafType="search"
       nodeComponent={BubbleNode}
-      onUiChange={expandedBranches => renderBubble(Object.assign({}, props, {expandedBranches}), el)}
-      onSearchTermChange={searchTerm => renderBubble(Object.assign({}, props, {searchTerm}), el)}
+      onUiChange={expandedBranches => renderBubble(merge(props, {expandedBranches}), el)}
+      onSearchTermChange={searchTerm => renderBubble(merge(props, {searchTerm}), el)}
     />
   ), el);
+}
+
+function merge(source, props) {
+  return Object.assign({}, source, props);
 }
 
 function BubbleNode(props) {
@@ -56,18 +45,4 @@ function BubbleNode(props) {
         </a>
       </Tooltip>
     : <span>{getDisplayName(node)}</span>
-}
-
-function makeSearchTree(ontology) {
-  return recordClass => {
-    let tree = getTree(ontology, isQualifying('search', recordClass.name, 'menu'))
-    // replace the root of the tree with a record class category node
-    return {
-      properties: {
-        label: [recordClass.name],
-        'EuPathDB alternative term': [recordClass.displayNamePlural]
-      },
-      children: tree.children
-    };
-  };
 }
