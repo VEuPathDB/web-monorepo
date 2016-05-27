@@ -261,7 +261,7 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 </c:forEach>
 
 <c:if test="${from ne 'webservices'}">
-  <li><a href="<c:url value="/queries_tools.jsp"/>">View all available searches</a></li>
+  <li><a href="<c:url value="/app/query-grid"/>">View all available searches</a></li>
 </c:if>
 
 </ul>
