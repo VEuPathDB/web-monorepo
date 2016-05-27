@@ -6,30 +6,6 @@
 <c:set var="cycName" value="${sName}Cyc" />
 <c:set var="urlBase" value="${pageContext.request.contextPath}"/>
 
-<c:choose>
-        <c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
-		<c:set var="listOrganisms" value="Eukaryotic Pathogens"/>
-	</c:when>
-        <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium"/>
-	</c:when>
-        <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-                <c:set var="listOrganisms" value="Eimeria, Gregarina, Neospora, Toxoplasma"/>
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
-		<c:set var="listOrganisms" value="Plasmodium"/>
-	</c:when>
- 	<c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
-		<c:set var="listOrganisms" value="Giardia"/>
-	</c:when>
- 	<c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
-		<c:set var="listOrganisms" value="Trichomonas"/>
-	</c:when>
- 	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-		<c:set var="listOrganisms" value="Crithidia, Endotrypanum, Leishmania, Trypanosoma"/>
-	</c:when>
-</c:choose> 
-
 <div class="info">
     	<ul> 
 		<li><a href="${urlBase}/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"><strong>BLAST</strong></a>
@@ -41,9 +17,12 @@
 		<li><a href="${urlBase}/srt.jsp"><strong>Sequence Retrieval</strong></a>
 			<ul><li  style="border:0">Retrieve Specific Sequences using IDs and coordinates</li></ul>
 		</li>
-	<li><a href="http://rnaseq.pathogenportal.org"><strong>Pathogen Portal</strong></a>
+<!--	  <li><a href="http://rnaseq.pathogenportal.org"><strong>Pathogen Portal</strong></a>
 			<ul><li  style="border:0">RNA sequence analysis, interactome maps and more</li></ul>
-		</li>
+		</li>  -->
+    <li><a href="https://companion.sanger.ac.uk"><strong>Companion</strong></a>
+		  <ul><li  style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
+    </li>
 		<li><a href="/pubcrawler/${modelName}"><strong>PubMed and Entrez</strong></a>
 			<ul><li  style="border:0">View the Latest Pubmed and Entrez Results</li></ul>
 		</li>

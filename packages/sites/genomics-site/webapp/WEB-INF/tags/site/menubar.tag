@@ -110,7 +110,9 @@
               <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
         </li>
         <li><a href="${baseUrl}/srt.jsp"> Sequence Retrieval</a></li>
-        <li><a href="http://rnaseq.pathogenportal.org"> Pathogen Portal</a></li>
+<!--        <li><a href="http://rnaseq.pathogenportal.org"> Pathogen Portal</a></li> -->
+        <li title="Annotate your sequence and determine orthology, phylogeny & synteny">
+          <a href="https://companion.sanger.ac.uk"> Companion</a></li>
 
         <li><a href="/pubcrawler/${project}"> PubMed and Entrez</a></li>
         <c:if test="${project != 'EuPathDB'}" >
