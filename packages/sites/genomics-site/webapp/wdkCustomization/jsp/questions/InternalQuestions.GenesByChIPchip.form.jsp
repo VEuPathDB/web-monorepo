@@ -9,8 +9,8 @@
 <c:set var="project" value="${wdkModel.displayName}"/>
 
 <%-- QUESTIONS --%>
-<c:set var="plasmoQuestions" value="GeneQuestions.GenesByChIPchipPlasmo" />
-<c:set var="toxoQuestions" value="GeneQuestions.GenesByChIPchipToxo"/>
+<c:set var="plasmoQuestions" value="GeneQuestions.GenesByChIPchip" />
+<c:set var="toxoQuestions" value="GeneQuestions.GenesByChIPchip"/>
 
 <!-- show error messages, if any -->
 <div class='usererror'><api:errors/></div>
