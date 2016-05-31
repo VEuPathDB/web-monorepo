@@ -757,6 +757,7 @@ h4 {
 
 #eupathdb-QueryGrid p {
   font-size: 1.2em;
+  margin-top: 0;
 }
 
 #eupathdb-QueryGrid ul {
@@ -779,6 +780,7 @@ h4 {
 
 #eupathdb-QueryGrid li.threeTierList div, #eupathdb-QueryGrid li.twoTierList div {
   background-color: #DDD;
+  margin-bottom: 0.3em;
 }
 
 #eupathdb-QueryGrid li.threeTierList > ul > li {
