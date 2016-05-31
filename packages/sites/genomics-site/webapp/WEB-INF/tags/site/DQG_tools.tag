@@ -6,12 +6,12 @@
 <c:set var="cycName" value="${sName}Cyc" />
 <c:set var="urlBase" value="${pageContext.request.contextPath}"/>
 
-<div class="info">
+<div class="tools">
     	<ul> 
 		<li><a href="${urlBase}/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"><strong>BLAST</strong></a>
 			<ul><li style="border:0">Identify Sequence Similarities</li></ul>
 		</li>
-		<li><a href="${urlBase}/analysisTools.jsp"><strong>Results Analysis</strong></a>
+	 	<li><a href="${urlBase}/analysisTools.jsp"><strong>Results Analysis</strong></a>
 			<ul><li  style="border:0">Analyze Your Strategy Results</li></ul>
 		</li>
 		<li><a href="${urlBase}/srt.jsp"><strong>Sequence Retrieval</strong></a>
@@ -31,9 +31,9 @@
 		<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browser</strong></a>
 			<ul><li  style="border:0">View Sequences and Features in the genome browser</li></ul>
 		</li>
-</c:if>
+</c:if> 
     
-
+        
 
 <c:choose>   <%-- SITES WITH FEW TOOLS, SO THERE IS SPACE IN BUCKET FOR DESCRIPTIONS --%>
 <c:when test="${sName != 'Plasmo'}">
@@ -52,8 +52,7 @@
 	<c:when test="${sName == 'Toxo'}">
 		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary Genome Browse</strong></a>
                         <ul><li  style="border:0">Access Probeset data and <i>Toxoplasma</i> Array info</li></ul>
-                </li>
-
+    </li>
 		<li><p>
 			<i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
@@ -83,5 +82,3 @@
 
 </div>
 
-<div class="infobottom tools">
-</div><!--end info-->
