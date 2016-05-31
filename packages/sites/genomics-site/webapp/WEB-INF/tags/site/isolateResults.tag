@@ -119,7 +119,7 @@
 
                         <c:choose>
                           <c:when test="${wdkUser.guest}">
-                            <c:set var="basketClick" value="wdk.user.login();" />
+                            <c:set var="basketClick" value="wdk.user.login('use baskets');" />
                           </c:when>
                           <c:otherwise>
                             <c:set var="basketClick" value="wdk.basket.updateBasket(this, '${step.stepId}', '0', '0', '${recordName}');" /> <!-- fourth param is unused (basket.js) -->
@@ -177,7 +177,7 @@
             <th>
               <c:choose>
                 <c:when test="${wdkUser.guest}">
-                  <c:set var="basketClick" value="wdk.user.login()" />
+                  <c:set var="basketClick" value="wdk.user.login('use baskets')" />
                 </c:when>
                 <c:otherwise>
                   <c:set var="basketClick" value="wdk.basket.updateBasket(this,'page', '0', '${modelName}', '${wdkAnswer.recordClass.fullName}')" />
