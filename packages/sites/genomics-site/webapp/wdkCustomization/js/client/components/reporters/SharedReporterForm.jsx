@@ -74,7 +74,7 @@ let SharedReporterForm = props => {
       </div>
 
       <div className="eupathdb-ReporterFormSubmit">
-        <input type="button" value="Submit" onClick={onSubmit}/>
+        <input type="submit" value="Submit" onClick={onSubmit}/>
       </div>
     </div>
   );
