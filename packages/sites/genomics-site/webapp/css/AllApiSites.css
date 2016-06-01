@@ -64,7 +64,6 @@
   div#oneTr-filter {
     font-family: Verdana;
     font-weight: bold;
-    background-color: #eee; /* as in WDK result table header */ 
     padding-left: 0.5em;
     margin-top: 1em;
   }
