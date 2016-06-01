@@ -123,6 +123,7 @@
         name="registerForm">
       <forward name="input" path="/wdkCustomization/jsp/Register.jsp" redirect="false"/>
       <forward name="success" path="/showLogin.do" redirect="true"/>
+      <forward name="profile" path="/showProfile.do" redirect="true"/>
     </action>
     <action path="/showProfile"
         parameter="org.gusdb.wdk.controller.action.standard.PrivatePageAction"
