@@ -5,6 +5,8 @@
 
 <%@ attribute name="from" description="page using this tag" %>
 
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
+
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
@@ -34,7 +36,7 @@
         <li>
           <c:choose>
             <c:when test="${from == 'webservices'}">
-              <a title="This one WADL contains documentation for all gene web service searches"  href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Genes</h3></a>
+            <a title="This one WADL contains documentation for all gene web service searches"  href="${baseUrl}/webservices/GeneQuestions.wadl"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Genes</h3></a>
 
     <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
     <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
@@ -53,7 +55,7 @@
           <ul>       <%-- GENE CATEGORIES --%>
 
 <c:if test="${from != 'webservices'}">
-  <li><a href="showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
+  <li><a href="${baseUrl}/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
   </li>
 </c:if>
             <c:forEach items="${children}" var="catEntry">
@@ -79,7 +81,7 @@
                       <c:choose>
                       <c:when test="${from == 'webservices'}">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
+                        <a href="${baseUrl}/webservices/GeneQuestions/${q.name}.wadl">${q.displayName}
                           <imp:questionFeature question="${q}" refer="${from}"/>
                         </a>
                         <c:if test="${project eq 'EuPathDB'}">
@@ -95,7 +97,7 @@
                         </c:if>
                       </c:when>
                       <c:otherwise>      <%-- WEBSITE --%>
-                        <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+                      <a href="${baseUrl}/showQuestion.do?questionFullName=${q.fullName}">${q.displayName}
                           <imp:questionFeature question="${q}" />
                         </a>
                       </c:otherwise>
@@ -122,7 +124,7 @@
                             <c:choose>
                               <c:when test="${from == 'webservices'}">
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
+                                <a href="${baseUrl}/webservices/GeneQuestions/${q.name}.wadl">${q.displayName}
                                   <imp:questionFeature question="${q}" refer='${from}'/>
                                 </a>
                                 <c:if test="${project eq 'EuPathDB'}">
@@ -138,7 +140,7 @@
                                 </c:if>
                               </c:when>
                               <c:otherwise>
-                                <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+                              <a href="${baseUrl}/showQuestion.do?questionFullName=${q.fullName}">${q.displayName}
                                   <imp:questionFeature question="${q}" />
                                 </a>
                               </c:otherwise>
@@ -195,12 +197,12 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
                   <c:if test="${fn:contains(qSet.displayName,cat.displayName)}">
                    
                     <li>
-                      <a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
+                      <a href="${baseUrl}/webservices/${qSet.name}.wadl"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
                       <ul>
                         <c:forEach items="${qSet.questions}" var="q">
 <c:if test="${!fn:contains(q.name,'BySpanLogic')  && !fn:contains(q.name,'ByWeightFilter')}">
                           <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}
+                            <a href="${baseUrl}/webservices/${qSet.name}/${q.name}.wadl">${q.displayName}
                               <imp:questionFeature question="${q}" refer="${from}" />
                             </a>
                             <c:if test="${project eq 'EuPathDB'}">
@@ -242,7 +244,7 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
                 <ul>
                   <c:forEach items="${cat.websiteQuestions}" var="q">
                     <li>
-                      <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+                      <a href="${baseUrl}/showQuestion.do?questionFullName=${q.fullName}">${q.displayName}
                         <imp:questionFeature question="${q}" refer="${from}" />
                       </a>
                     </li>
@@ -261,7 +263,7 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 </c:forEach>
 
 <c:if test="${from ne 'webservices'}">
-  <li><a href="<c:url value="/app/query-grid"/>">View all available searches</a></li>
+  <li><a href="${baseUrl}/app/query-grid">View all available searches</a></li>
 </c:if>
 
 </ul>
