@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import {NativeCheckboxList} from 'wdk-client/Components';
 import {renderAttributeValue} from 'wdk-client/ComponentUtils';
+import {seq} from 'wdk-client/IterableUtils';
 import {isNodeOverflowing} from '../../utils';
 import ExpressionGraph from '../common/ExpressionGraph';
 import Sequence from '../common/Sequence';
@@ -12,21 +13,30 @@ import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
 import {SnpsAlignmentTable} from '../common/Snps';
 
+let transcriptomicsThumbnail = {
+  displayName: 'Transcriptomics',
+  element: <img src={wdk.assetsUrl('wdkCustomization/images/transcriptomics.jpg')}/>,
+  anchor: 'ExpressionGraphs'
+};
+
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
  */
 export class RecordOverview extends React.Component {
 
   componentDidMount() {
-    this.renderThumbnails();
     this.addProductTooltip();
+    this.thumbsContainer = this.node.querySelector('.eupathdb-ThumbnailsContainer');
+    if (this.thumbsContainer) this.renderThumbnails();
+    else console.error('Warning: Could not find ThumbnailsContainer');
   }
 
   componentDidUpdate() {
-    this.renderThumbnails();
+    if (this.thumbsContainer) this.renderThumbnails();
   }
 
   componentWillUnmount() {
+    if (this.thumbsContainer) ReactDOM.unmountComponentAtNode(this.thumbsContainer);
     $(this.node).find('.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle').qtip('destroy', true);
   }
 
@@ -53,35 +63,34 @@ export class RecordOverview extends React.Component {
     let { attributes, tables } = this.props.record;
     let { gene_type, protein_expression_gtracks } = attributes;
     let isProteinCoding = gene_type === 'protein coding';
-    let filteredGBrowseContexts = Gbrowse.contexts.filter(context => {
-      return context.gbrowse_url in attributes && (
+    let filteredGBrowseContexts = seq(Gbrowse.contexts)
+    // inject transcriptomicsThumbnail before protein thumbnails
+    .flatMap(context => context.gbrowse_url === 'FeaturesPbrowseUrl'
+      ? [ transcriptomicsThumbnail, context ]
+      : [ context ]
+    )
+    .filter(context => {
+      return context === transcriptomicsThumbnail || context.gbrowse_url in attributes && (
         !context.isPbrowse || (isProteinCoding && context.gbrowse_url !== 'ProteomicsPbrowseUrl') ||
           (isProteinCoding && context.gbrowse_url === 'ProteomicsPbrowseUrl' && protein_expression_gtracks)
       );
     })
-    .map(thumbnail => Object.assign({}, thumbnail, {
-      element: <Gbrowse.GbrowseImage url={attributes[thumbnail.gbrowse_url]}/>,
-      displayName: recordClass.attributesMap.get(thumbnail.gbrowse_url).displayName
-    }))
-    .concat({
-      displayName: 'Transcriptomics',
-      element: <img src={wdk.assetsUrl('wdkCustomization/images/transcriptomics.jpg')}/>,
-      anchor: 'ExpressionGraphs',
-      data: {
-        count: tables && tables.ExpressionGraphs && tables.ExpressionGraphs.length
-      }
-    });
+    .map(context => context === transcriptomicsThumbnail
+      ? Object.assign({}, context, {
+          data: {
+            count: tables && tables.ExpressionGraphs && tables.ExpressionGraphs.length
+          }
+        })
+      : Object.assign({}, context, {
+          element: <Gbrowse.GbrowseImage url={attributes[context.gbrowse_url]}/>,
+          displayName: recordClass.attributesMap.get(context.gbrowse_url).displayName
+        })
+    )
+    .toArray();
 
-    let thumbsContainer = this.node.querySelector('.eupathdb-ThumbnailsContainer');
-
-    if (thumbsContainer == null) {
-      console.error('Warning: Could not find ThumbnailsContainer');
-    }
-    else {
-      ReactDOM.render((
-        <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
-      ), thumbsContainer);
-    }
+    ReactDOM.render((
+      <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
+    ), this.thumbsContainer);
   }
 
   render() {
