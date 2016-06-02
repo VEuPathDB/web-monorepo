@@ -236,7 +236,7 @@ function SequencesTable(props) {
             {protein_sequence == null ? null : (
               <div style={{ padding: '1em' }}>
                 <h3>Predicted Protein Sequence</h3>
-                <div><span style={legendStyle}>{protein_length} bp</span></div>
+                <div><span style={legendStyle}>{protein_length} aa</span></div>
                 <Sequence sequence={protein_sequence}/>
               </div>
             )}
