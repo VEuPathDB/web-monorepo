@@ -26,7 +26,7 @@ export let contexts = [
   },
   {
     gbrowse_url: 'FeaturesPbrowseUrl',
-    displayName: 'Protein Features',
+    displayName: 'Protein Properties',
     anchor: 'ProteinProperties',
     isPbrowse: true
   },
