@@ -98,19 +98,17 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 
 function getStateFromStorage(property, state, defaultValue = state[property]) {
   try {
-    return persistence.get(
-      property + '/' + state.recordClass.name, defaultValue);
+    return persistence.get(property + '/' + state.recordClass.name, defaultValue);
   }
   catch (error) {
     console.error('Warning: Could not retrieve % from local storage.', property, error);
-    return state.collapsedSections;
+    return defaultValue;
   }
 }
 
 function setStateInStorage(property, state) {
   try {
-    persistence.set(property + '/' + state.recordClass.name,
-      state.collapsedSections || []);
+    persistence.set(property + '/' + state.recordClass.name, state[property]);
   }
   catch (error) {
     console.error('Warning: Could not set %s to local storage.', property, error);
