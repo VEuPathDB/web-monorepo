@@ -2,71 +2,70 @@ import {PropTypes} from 'react';
 import lodash from 'lodash';
 import $ from 'jquery';
 import { Components, ComponentUtils } from 'wdk-client';
-import RemoteContent from './RemoteContent';
 
 let { CollapsibleSection } = Components;
 
 export let contexts = [
-    {
-        gbrowse_url: 'GeneModelGbrowseUrl',
-        displayName: 'Gene Model',
-        anchor: 'GeneModelGbrowseUrl',
-        isPbrowse: false
-    },
-    {
-        gbrowse_url: 'SyntenyGbrowseUrl',
-        displayName: 'Synteny',
-        anchor: 'SyntenyGbrowseUrl',
-        isPbrowse: false
-    },
-    {
-        gbrowse_url: 'SnpsGbrowseUrl',
-        displayName: 'SNPs',
-        anchor: 'SnpsGbrowseUrl',
-        isPbrowse: false
-    },
-    {
-        gbrowse_url: 'FeaturesPbrowseUrl',
-        displayName: 'Protein Features',
-        anchor: 'ProteinProperties',
-        isPbrowse: true
-    },
-    {
-        gbrowse_url: 'ProteomicsPbrowseUrl',
-        displayName: 'Proteomics',
-        anchor: 'ProteinExpressionPBrowse',
-        isPbrowse: true
-    },
-    {
-        gbrowse_url: 'dnaContextUrl',
-        displayName: 'Features',
-        anchor: 'FeaturesGBrowse',
-        isPbrowse: false
-    },
-    {
-        gbrowse_url: 'orfGbrowseImageUrl',
-        displayName: 'Genomic Context',
-        anchor: 'orfGenomicContext',
-        isPbrowse: false
-    },
-    {
-        gbrowse_url: 'snpChipGbrowseImageUrl',
-        displayName: 'Genomic Context',
-        anchor: 'snpChipGenomicContext',
-        isPbrowse: false
-    },
-    {
-        gbrowse_url: 'snpGbrowseImageUrl',
-        displayName: 'Genomic Context',
-        anchor: 'snpGenomicContext',
-        isPbrowse: false
-    },
-    {
-        gbrowse_url: 'spanGbrowseImageUrl',
-        displayName: 'Genomic Context',
-        anchor: 'spanGenomicContext',
-        isPbrowse: false
-    },
+  {
+    gbrowse_url: 'GeneModelGbrowseUrl',
+    displayName: 'Gene Model',
+    anchor: 'GeneModelGbrowseUrl',
+    isPbrowse: false
+  },
+  {
+    gbrowse_url: 'SyntenyGbrowseUrl',
+    displayName: 'Synteny',
+    anchor: 'SyntenyGbrowseUrl',
+    isPbrowse: false
+  },
+  {
+    gbrowse_url: 'SnpsGbrowseUrl',
+    displayName: 'SNPs',
+    anchor: 'SnpsGbrowseUrl',
+    isPbrowse: false
+  },
+  {
+    gbrowse_url: 'FeaturesPbrowseUrl',
+    displayName: 'Protein Features',
+    anchor: 'ProteinProperties',
+    isPbrowse: true
+  },
+  {
+    gbrowse_url: 'ProteomicsPbrowseUrl',
+    displayName: 'Proteomics',
+    anchor: 'ProteinExpressionPBrowse',
+    isPbrowse: true
+  },
+  {
+    gbrowse_url: 'dnaContextUrl',
+    displayName: 'Features',
+    anchor: 'FeaturesGBrowse',
+    isPbrowse: false
+  },
+  {
+    gbrowse_url: 'orfGbrowseImageUrl',
+    displayName: 'Genomic Context',
+    anchor: 'orfGenomicContext',
+    isPbrowse: false
+  },
+  {
+    gbrowse_url: 'snpChipGbrowseImageUrl',
+    displayName: 'Genomic Context',
+    anchor: 'snpChipGenomicContext',
+    isPbrowse: false
+  },
+  {
+    gbrowse_url: 'snpGbrowseImageUrl',
+    displayName: 'Genomic Context',
+    anchor: 'snpGenomicContext',
+    isPbrowse: false
+  },
+  {
+    gbrowse_url: 'spanGbrowseImageUrl',
+    displayName: 'Genomic Context',
+    anchor: 'spanGenomicContext',
+    isPbrowse: false
+  }
 ];
 
 export function GbrowseContext(props) {
