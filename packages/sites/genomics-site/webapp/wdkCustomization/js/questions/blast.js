@@ -111,7 +111,7 @@ function changeAlgorithms() {
 
 	// determine appropriate URL to get list of valid algorithms for this database
 	if (type == 'EST' || type == 'Transcripts' || type == 'Genome' ||
-		type == 'Genome Survey Sequences' || type == 'Isolates' || type == 'Assemblies'  || type == 'Reference Isolates') {
+		type == 'Genome Survey Sequences' || type == 'PopSet' || type == 'Assemblies'  || type == 'Reference Isolates') {
 		sendReqUrl = tgeUrl;
 	}
 	else if (type == 'ORF' || type == 'Proteins'){
