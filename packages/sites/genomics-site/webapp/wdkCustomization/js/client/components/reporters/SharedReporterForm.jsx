@@ -17,8 +17,8 @@ let SharedReporterForm = props => {
         <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__columns">
           <CategoriesCheckboxTree
               // title and layout of the tree
-              title="Choose Columns"
-              searchBoxPlaceholder="Search Columns..."
+              title="Choose Attributes"
+              searchBoxPlaceholder="Search Attributes..."
               tree={util.getAttributeTree(ontology, recordClass.name, question)}
 
               // state of the tree
