@@ -17,22 +17,60 @@ export function RecordViewStore(WdkRecordViewStore) {
   let { actionTypes } = WdkRecordViewStore;
   return class ApiRecordViewStore extends WdkRecordViewStore {
     reduce(state, action) {
-      let nextState = super.reduce(state, action);
+      state = Object.assign({}, super.reduce(state, action), {
+        pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action)
+      });
       switch (action.type) {
         case actionTypes.ACTIVE_RECORD_RECEIVED: {
-          return handleRecordReceived(nextState);
+          return handleRecordReceived(state);
         }
         case actionTypes.SECTION_VISIBILITY_CHANGED:
         case actionTypes.ALL_FIELD_VISIBILITY_CHANGED:
-          setStateInStorage('collapsedSections', nextState);
-          return nextState;
+          setStateInStorage('collapsedSections', state);
+          return state;
         case actionTypes.NAVIGATION_VISIBILITY_CHANGED:
-          setStateInStorage('navigationVisible', nextState);
-          return nextState;
+          setStateInStorage('navigationVisible', state);
+          return state;
         default:
-          return nextState;
+          return state;
       }
     }
+  }
+}
+
+let initialPathwayRecordState = {
+  activeNode: null,
+  activeCompound: null,
+  compoundError: null
+};
+
+function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
+  switch(action.type) {
+    case 'pathway-record/set-active-node':
+      return Object.assign({}, initialPathwayRecordState, {
+        activeNode: action.payload.activeNode
+      });
+    case 'pathway-record/set-pathway-error':
+      return Object.assign({}, initialPathwayRecordState, {
+        error: action.payload.error
+      });
+    case 'pathway-record/compound-loading':
+      return Object.assign({}, state, {
+        activeCompound: null,
+        compoundError: null
+      });
+    case 'pathway-record/compound-loaded':
+      return Object.assign({}, state, {
+        activeCompound: action.payload.compound,
+        compoundError: null
+      });
+    case 'pathway-record/compound-error':
+      return Object.assign({}, state, {
+        activeCompound: null,
+        compoundError: action.payload.error
+      });
+    default:
+      return state;
   }
 }
 
@@ -95,6 +133,8 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     categoryTree
   )
 }
+
+// TODO Declare type and clear value if it doesn't conform
 
 function getStateFromStorage(property, state, defaultValue = state[property]) {
   try {

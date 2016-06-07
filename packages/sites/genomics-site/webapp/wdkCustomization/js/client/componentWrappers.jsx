@@ -1,4 +1,6 @@
+/* global wdk */
 import lodash from 'lodash';
+import React from 'react';
 import { Components, ComponentUtils } from 'wdk-client';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -41,33 +43,53 @@ const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
  * values separated by a '/'.
  */
 export function RecordController(WdkRecordController) {
-  return function ApiRecordController(props) {
-    let { splat, recordClass } = props.params;
-    let projectIdUrl = '/' + wdk.MODEL_NAME;
-    let hasProjectId = splat.endsWith(projectIdUrl);
+  class ApiRecordController extends React.Component {
 
-    if (hasProjectId) {
-      setTimeout(function() {
-        props.history.replace(props.location.pathname.replace(projectIdUrl, ''));
-      }, 0);
-      return <Components.Loading/>;
+    getChildContext() {
+      return {
+        dispatchAction: this.props.dispatchAction,
+        viewStore: this.props.stores.RecordViewStore
+      };
     }
 
-    // These record classes do not need the project id as a part of the primary key
-    // so we just render with the url params as-is.
-    if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
-      return ( <WdkRecordController {...props} /> );
+    render() {
+      let { splat, recordClass } = this.props.params;
+      let projectIdUrl = '/' + wdk.MODEL_NAME;
+      let hasProjectId = splat.endsWith(projectIdUrl);
+
+      if (hasProjectId) {
+        setTimeout(function() {
+          this.props.history.replace(this.props.location.pathname.replace(projectIdUrl, ''));
+        }, 0);
+        return <Components.Loading/>;
+      }
+
+      // These record classes do not need the project id as a part of the primary key
+      // so we just render with the url params as-is.
+      if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
+        return (
+          <WdkRecordController {...this.props} />
+        );
+      }
+
+      // Append project id to request
+      let params = Object.assign({}, this.props.params, {
+        splat: `${splat}/${wdk.MODEL_NAME}`
+      });
+
+      return (
+        <WdkRecordController {...this.props} params={params} />
+      );
     }
 
-    // Append project id to request
-    let params = Object.assign({}, props.params, {
-      splat: `${splat}/${wdk.MODEL_NAME}`
-    });
+  }
 
-    return (
-      <WdkRecordController {...props} params={params}/>
-    );
+  ApiRecordController.childContextTypes = {
+    dispatchAction: React.PropTypes.func,
+    viewStore: React.PropTypes.object
   };
+
+  return ApiRecordController;
 }
 
 // Customize the Record Component

@@ -29,7 +29,7 @@ class CompoundStructures extends Component {
     return (
       <div className="eupathdb-CompoundStructures">
         <div>
-          <CompoundStructure>{primary.structure}</CompoundStructure>
+          <CompoundStructure moleculeString={primary.structure} />
         </div>
         {other.length > 0 && (
           <CollapsibleSection
@@ -40,7 +40,7 @@ class CompoundStructures extends Component {
           >
             {other.map(row => {
               return (
-                <CompoundStructure key={row.struct_num}>{row.structure}</CompoundStructure>
+                <CompoundStructure key={row.struct_num} moleculeString={row.structure} />
               );
             })}
           </CollapsibleSection>

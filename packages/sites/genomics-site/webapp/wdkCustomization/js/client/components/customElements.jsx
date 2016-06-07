@@ -9,7 +9,7 @@ let reactCustomElements = new Map;
 let nodeNameRegexp = /^[a-z]+(-[a-z]+)+$/;
 
 /** register a node name with a React Component */
-export function registerCustomElement(nodeName, ReactComponent) {
+export function registerCustomElement(nodeName, reactElementFactory) {
   if (!nodeNameRegexp.test(nodeName)) {
     throw new Error("The nodeName format of `%s` is not acceptable. Only " +
                     "lowercase letters and dashes are allowed, and nodeName " +
@@ -19,7 +19,7 @@ export function registerCustomElement(nodeName, ReactComponent) {
     console.error("Warning: A React Component as already been registered with the nodeName `%s`.", nodeName);
     return;
   }
-  reactCustomElements.set(nodeName, ReactComponent);
+  reactCustomElements.set(nodeName, reactElementFactory);
 }
 
 /**
@@ -39,14 +39,11 @@ class ReactElementsContainer extends Component {
 
   componentDidMount() {
     this.node.innerHTML = this.props.html;
-    for (let [nodeName, ReactComponent] of reactCustomElements) {
+    for (let [nodeName, reactElementFactory] of reactCustomElements) {
       for (let target of this.node.querySelectorAll(nodeName)) {
         this.targets.push(target);
-        let props = Array.from(target.attributes).reduce(function(acc, attr) {
-          acc[attr.name] = attr.value;
-          return acc;
-        }, {});
-        render(<ReactComponent {...props}>{target.innerHTML}</ReactComponent>, target);
+        let reactElement = reactElementFactory(target);
+        render(reactElement, target);
       }
     }
   }
