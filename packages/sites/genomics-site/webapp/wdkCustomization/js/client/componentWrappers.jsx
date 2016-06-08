@@ -58,7 +58,7 @@ export function RecordController(WdkRecordController) {
       let hasProjectId = splat.endsWith(projectIdUrl);
 
       if (hasProjectId) {
-        setTimeout(function() {
+        setTimeout(() => {
           this.props.history.replace(this.props.location.pathname.replace(projectIdUrl, ''));
         }, 0);
         return <Components.Loading/>;
