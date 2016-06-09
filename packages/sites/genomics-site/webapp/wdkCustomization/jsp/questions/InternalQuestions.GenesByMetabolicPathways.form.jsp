@@ -8,7 +8,7 @@
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 
 <%-- QUESTIONS --%>
-<c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayKegg,GeneQuestions.GenesByReactionCompounds"/>
+<c:set var="pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathway,GeneQuestions.GenesByReactionCompounds"/>
 <c:set var="plasmoToxo_pathwayQuestions" value="GeneQuestions.GenesByMetabolicPathwayHagai" />
 <%-- END OF QUESTIONS --%>
 
