@@ -1,5 +1,5 @@
 import {PropTypes} from 'react';
-import lodash from 'lodash';
+import {once, memoize, throttle} from 'lodash';
 import $ from 'jquery';
 import { Components, ComponentUtils } from 'wdk-client';
 
@@ -119,11 +119,18 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
     super(props);
     this.containerNode = null;
     this.xhr = null;
+    this.img = null;
+    this.map = null;
+    this.mapCoordsCache = null;
     this.state = { error: null };
+    this.scaleImageMap = throttle(this.scaleImageMap.bind(this), 250);
   }
 
   componentDidMount() {
     loadGbrowseScripts().then(() => this.loadImage(this.props));
+    window.addEventListener('resize', this.scaleImageMap);
+    window.addEventListener('focus', this.scaleImageMap);
+    window.addEventListener('click', this.scaleImageMap);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -131,6 +138,12 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
       this.xhr && this.xhr.abort();
       this.loadImage(nextProps);
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.scaleImageMap);
+    window.removeEventListener('focus', this.scaleImageMap);
+    window.removeEventListener('click', this.scaleImageMap);
   }
 
   loadImage(props) {
@@ -144,7 +157,8 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
   handleImageLoad(data) {
     let $container = $(this.containerNode).empty();
     let nodes = $.parseHTML(data);
-    let img = nodes.find(node => node.nodeName === 'IMG');
+    let img = this.img = nodes.find(node => node.nodeName === 'IMG');
+    img.className = 'eupathdb-GbrowseImage';
 
     if (!this.props.includeImageMap) {
       img.removeAttribute('usemap');
@@ -152,7 +166,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
     }
 
     else {
-      let map = nodes.find(node => node.nodeName === 'MAP');
+      let map = this.map = nodes.find(node => node.nodeName === 'MAP');
       $container.append(img).append(map)
       .find('area[onmouseover]')
       .attr('gbrowse-onmouseover', function() {
@@ -194,6 +208,13 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
           tip: { height: 12, width: 18 }
         }
       });
+
+      this.mapCoordsCache = [];
+      for (let area of map.querySelectorAll('area')) {
+        this.mapCoordsCache.push(area.getAttribute('coords'));
+      }
+
+      img.addEventListener('onload', this.scaleImageMap);
     }
   }
 
@@ -203,6 +224,22 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
     let error = 'Unable to load mouseover details for tracks.';
     this.setState({ error })
     console.error('Error: %s. %o', error, jqXHR);
+  }
+
+  scaleImageMap() {
+    if (this.img == null || this.map == null) return;
+    let { height, width, naturalHeight, naturalWidth } = this.img;
+    let heightScale = height / naturalHeight;
+    let widthScale = width / naturalWidth;
+    let index = 0;
+    for (let area of this.map.querySelectorAll('area')) {
+      let orignalCoords = this.mapCoordsCache[index++];
+      let coords = orignalCoords
+      .split(/\s*,\s*/)
+      .map((coord, i) => Number(coord) * (i % 2 === 0 ? widthScale : heightScale)) // only works for shape="rect"
+      .join(',');
+      area.setAttribute('coords', coords);
+    }
   }
 
   renderError() {
@@ -232,8 +269,8 @@ GbrowseImage.defaultProps = {
   includeImageMap: false
 };
 
-let loadGbrowseScripts = lodash.once(() => {
+let loadGbrowseScripts = once(() => {
   return $.getScript('/gbrowse/apiGBrowsePopups.js');
 });
 
-let get = lodash.memoize($.get.bind($));
+let get = memoize($.get.bind($));

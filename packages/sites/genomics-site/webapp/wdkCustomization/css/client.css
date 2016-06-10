@@ -357,18 +357,16 @@ h4 {
   padding: 0 1em;
 }
 
-.eupathdb-GbrowseContext iframe {
-  border: 1px solid #ddd;
-  background-color: white;
-  width: 100%;
-}
-
 .eupathdb-GbrowseContextHeader {
   font-weight: bold;
 }
 
 .eupathdb-GbrowseContextContent {
   padding-bottom: 1em;
+}
+
+.eupathdb-GbrowseImage {
+  width: 100%;
 }
 
 .eupathdb-GbrowseImageMapTooltip {
