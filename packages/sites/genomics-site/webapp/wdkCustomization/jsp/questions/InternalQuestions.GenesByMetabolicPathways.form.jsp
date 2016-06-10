@@ -31,7 +31,7 @@
 
 <c:choose>
 <c:when test = "${project == 'PlasmoDB' || project == 'ToxoDB'}">
-      <imp:queryList columns="${columns}" questions="${plasmoToxo_pathwayQuestions},${pathwayQuestions}"/>
+      <imp:queryList columns="${columns}" questions="${pathwayQuestions},${plasmoToxo_pathwayQuestions}"/>
 </c:when>
 <c:otherwise>
       <imp:queryList columns="${columns}" questions="${pathwayQuestions}"/>
