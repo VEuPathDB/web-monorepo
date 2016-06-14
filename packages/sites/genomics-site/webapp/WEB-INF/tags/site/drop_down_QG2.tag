@@ -53,11 +53,13 @@
             </c:otherwise>
           </c:choose>
           <ul>       <%-- GENE CATEGORIES --%>
-
+<%--
 <c:if test="${from != 'webservices'}">
   <li><a href="${baseUrl}/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
   </li>
 </c:if>
+--%>
+
             <c:forEach items="${children}" var="catEntry">
               <c:set var="cat" value="${catEntry.value}" />
           <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
