@@ -58,6 +58,11 @@ h4 {
   clear: both;
 }
 
+/* FIXME: Remove when rest of page is responsive */
+.wdk-RecordContainer {
+  max-width: calc(100vw - 8em);
+}
+
 /* Hide default record ID printed by WDK for genes */
 .wdk-RecordContainer__GeneRecordClasses\.GeneRecordClass .wdk-RecordHeading {
   display: none;
@@ -140,19 +145,25 @@ h4 {
   left: -298px;
 }
 
-/* gene page overview */
 .eupathdb-RecordOverviewLeft, .eupathdb-RecordOverviewRight {
-  float: left;
-  margin-top: 2em;
+  margin-top: 1em;
 }
 
-.eupathdb-RecordOverviewLeft {
-  max-width: 450px;
-  margin-right: 60px;
-}
+/* gene page overview */
+@media all and (min-width: 1000px) {
+  .eupathdb-RecordOverviewLeft, .eupathdb-RecordOverviewRight {
+    float: left;
+    margin-top: 2em;
+  }
 
-.eupathdb-RecordOverviewRight {
-  max-width: calc(100% - 535px);
+  .eupathdb-RecordOverviewLeft {
+    max-width: 450px;
+    margin-right: 60px;
+  }
+
+  .eupathdb-RecordOverviewRight {
+    max-width: calc(100% - 535px);
+  }
 }
 
 .eupathdb-RecordOverviewLeft h1, .eupathdb-RecordOverviewRight .GeneOverviewProduct {
@@ -366,7 +377,7 @@ h4 {
 }
 
 .eupathdb-GbrowseImage {
-  width: 100%;
+  max-width: 100%;
 }
 
 .eupathdb-GbrowseImageMapTooltip {
