@@ -60,6 +60,15 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>ResponseLoggingFilter</filter-name>
+    <filter-class>org.gusdb.wdk.controller.filter.ResponseLoggingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ResponseLoggingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <!-- UrlRewrite filter -->
   <!-- This is used in conjuction with the asset fingerprinting utilities in EuPathSiteCommon.
        We also set some cache-related headers here (see /WEB-INF/urlrewrite.xml). -->
