@@ -76,6 +76,8 @@ function changeQuestion() {
     var recordClass = $("input[name='value(BlastRecordClass)']");
 	// stores mapping from blast databases to questions	
 	var blastDb = getSelectedDatabaseName().toLowerCase();
+console.log(blastDb);
+
 	var questionName;
 	if (blastDb.indexOf("est") >= 0) {
 		questionName = "EstQuestions.EstsBySimilarity";
@@ -92,9 +94,9 @@ function changeQuestion() {
 	} else 	if (blastDb.indexOf("genom") >= 0) {
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
                 recordClass.val("SequenceRecordClasses.SequenceRecordClass");
-	} else 	if (blastDb.indexOf("iso") >= 0) {
-		questionName = "IsolateQuestions.IsolatesBySimilarity";
-                recordClass.val("IsolateRecordClasses.IsolateRecordClass");
+	} else 	if (blastDb.indexOf("popset") >= 0) {
+		questionName = "PopsetQuestions.PopsetsBySimilarity";
+                recordClass.val("PopsetRecordClasses.PopsetRecordClass");
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
                 recordClass.val("TranscriptRecordClasses.TranscriptRecordClass");
