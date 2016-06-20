@@ -5,12 +5,12 @@
  */
 
 import {Component, PropTypes} from 'react';
-import lodash from 'lodash';
+import {once, uniqueId, isEmpty} from 'lodash';
 import $ from 'jquery';
 import {registerCustomElement} from '../customElements';
 
 /** Load the ChemDoodle JS library once */
-let loadChemDoodleWeb = lodash.once(function() {
+let loadChemDoodleWeb = once(function() {
   return $.getScript(wdk.webappUrl('js/ChemDoodleWeb.js'));
 });
 
@@ -22,7 +22,7 @@ export class CompoundStructure extends Component {
 
   constructor(props) {
     super(props);
-    this.canvasId = lodash.uniqueId('chemdoodle');
+    this.canvasId = uniqueId('chemdoodle');
   }
 
   drawStructure(props) {
@@ -65,7 +65,7 @@ registerCustomElement('compound-structure', function (el) {
   let moleculeString = el.innerHTML;
   let height = el.hasAttribute('height') ? Number(el.getAttribute('height')) : undefined;
   let width = el.hasAttribute('width') ? Number(el.getAttribute('width')) : undefined;
-  return (
+  return isEmpty(moleculeString) ? <noscript/> : (
     <CompoundStructure moleculeString={moleculeString} height={height} width={width} />
   );
 });
