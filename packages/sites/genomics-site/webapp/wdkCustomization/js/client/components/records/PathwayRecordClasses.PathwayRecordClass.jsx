@@ -760,11 +760,10 @@ function MolecularEntityNodeDetails(props) {
         <div><a href={wdk.webappUrl('/app/record/compound/' + nodeData.CID)}>View on this site</a></div>
       )}
 
-      <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + nodeData.label}>View in KEGG</a></div>
 
       {nodeData.SID && (
         <div>
-          <div><a href={'http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?sid=' + nodeData.SID}>View in PubChem</a></div>
+          <div><a href={'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=' + nodeData.CID}>View in CHEBI</a></div>
           {/*<div><img src={'http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&sid=' + nodeData.SID}/></div>*/}
         </div>
       )}
