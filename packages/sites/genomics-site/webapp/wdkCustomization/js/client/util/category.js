@@ -1,5 +1,5 @@
 /* global wdk */
-import {indexBy, propertyOf} from 'lodash';
+import {seq} from 'wdk-client/IterableUtils';
 import {preorderSeq, pruneDescendantNodes} from 'wdk-client/TreeUtils';
 import {getTree} from 'wdk-client/OntologyUtils';
 import {getRecordClassName, isQualifying} from 'wdk-client/CategoryUtils';
@@ -24,7 +24,7 @@ export function getSearchMenuCategoryTree(wdkService, options) {
   let ontology$ = wdk.client.runtime.wdkService.getOntology();
   let recordClasses$ = wdk.client.runtime.wdkService.getRecordClasses();
   return Promise.all([ ontology$, recordClasses$ ]).then(([ ontology, recordClasses ]) => {
-    let recordClassMap = indexBy(recordClasses, 'name');
+    let recordClassMap = new Map(recordClasses.map( rc => [ rc.name, rc ] ));
     // get searches scoped for menu
     let categoryTree = getTree(ontology, isSearchMenuScope);
     return groupByRecordClass(categoryTree, recordClassMap, options);
@@ -32,20 +32,13 @@ export function getSearchMenuCategoryTree(wdkService, options) {
 }
 
 function groupByRecordClass(categoryTree, recordClassMap, options) {
-  let recordClassCategories = preorderSeq(categoryTree)
-  .filter(isLeafNode)
-  .map(getRecordClassName)
-  .uniq()
-  .filter(isDefined)
+  let recordClassCategories = seq(recordClassMap.keys())
   .filter(includeExclude(options))
-  .map(propertyOf(recordClassMap))
+  .map(name => recordClassMap.get(name))
   .map(getRecordClassTree(categoryTree))
+  .filter(isDefined)
   .toArray();
   return { children: recordClassCategories };
-}
-
-function isLeafNode(node) {
-  return node.children.length === 0;
 }
 
 function isDefined(maybe) {
@@ -63,6 +56,7 @@ function includeExclude({ include, exclude }) {
 function getRecordClassTree(categoryTree) {
   return function(recordClass) {
     let tree = pruneDescendantNodes(isRecordClassTreeNode(recordClass), categoryTree);
+    if (tree.children.length === 0) return;
     return {
       properties: {
         label: [recordClass.name],
