@@ -12,9 +12,9 @@ let TranscriptTableReporterForm = props => {
   return (<TableReporterForm {...newProps}/>);
 }
 
-TranscriptTableReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
+TranscriptTableReporterForm.getInitialState = (downloadFormStoreState) => {
   let newDownloadFormStoreState = Object.assign({}, downloadFormStoreState, recordClassOverride);
-  return TableReporterForm.getInitialState(newDownloadFormStoreState, userStoreState);
+  return TableReporterForm.getInitialState(newDownloadFormStoreState);
 }
 
 export default TranscriptTableReporterForm;

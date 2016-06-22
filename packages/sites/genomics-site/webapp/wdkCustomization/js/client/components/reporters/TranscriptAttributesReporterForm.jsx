@@ -6,12 +6,12 @@ let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.C
 
 let TranscriptAttributesReporterForm = props => {
 
-  let { scope, question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
-  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
-  let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
+  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, ontology } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+  let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormUiState, formUiState);
 
   let transcriptAttribChangeHandler = newAttribsArray => {
-    onFormChange(Object.assign({}, formState, { ['attributes']:
+    updateFormState(Object.assign({}, formState, { ['attributes']:
       util.addPk(util.prependAttrib('source_id', newAttribsArray), recordClass) }));
   };
 
@@ -88,19 +88,19 @@ function getUserPrefFilterValue(prefs) {
   return (prefValue !== undefined && prefValue === "true");
 }
 
-TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
-  let { scope, question, recordClass, ontology } = downloadFormStoreState;
+TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState) => {
+  let { scope, question, recordClass, ontology, preferences } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
   let attribs = util.addPk(util.prependAttrib('source_id',
       (scope === 'results' ?
-          util.getAttributeSelections(userStoreState.preferences, question) :
+          util.getAttributeSelections(preferences, question) :
           util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)))), recordClass);
   return {
     formState: {
       attributes: attribs,
       includeHeader: true,
       attachmentType: "plain",
-      applyFilter: getUserPrefFilterValue(userStoreState.preferences)
+      applyFilter: getUserPrefFilterValue(preferences)
     },
     formUiState: {
       expandedAttributeNodes: null,

@@ -1,7 +1,7 @@
 /* global wdk */
 import lodash from 'lodash';
 import React from 'react';
-import { Components, ComponentUtils } from 'wdk-client';
+import { Controllers, Components, ComponentUtils } from 'wdk-client';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
@@ -45,13 +45,6 @@ const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
 export function RecordController(WdkRecordController) {
   class ApiRecordController extends React.Component {
 
-    getChildContext() {
-      return {
-        dispatchAction: this.props.dispatchAction,
-        viewStore: this.props.stores.RecordViewStore
-      };
-    }
-
     render() {
       let { splat, recordClass } = this.props.params;
       let projectIdUrl = '/' + wdk.MODEL_NAME;
@@ -83,11 +76,6 @@ export function RecordController(WdkRecordController) {
     }
 
   }
-
-  ApiRecordController.childContextTypes = {
-    dispatchAction: React.PropTypes.func,
-    viewStore: React.PropTypes.object
-  };
 
   return ApiRecordController;
 }
@@ -143,10 +131,10 @@ export function RecordOverview(DefaultComponent) {
   };
 }
 
-// Customize StepDownloadForm to show the appropriate form based on the
+// Customize DownloadForm to show the appropriate form based on the
 //   selected reporter and record class
-export function StepDownloadForm(WdkStepDownloadForm) {
-  return function ApiStepDownloadForm(props) {
+export function DownloadForm(WdkDownloadForm) {
+  return function ApiDownloadForm(props) {
     let Reporter = selectReporterComponent(props.selectedReporter, props.recordClass.name);
     return (
       <div>

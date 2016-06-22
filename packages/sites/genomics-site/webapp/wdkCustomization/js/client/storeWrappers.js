@@ -1,11 +1,13 @@
 import lodash from 'lodash';
-import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
+import { TreeUtils as tree, CategoryUtils as cat, StaticDataUtils } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 
+let { StaticDataProps } = StaticDataUtils;
+
 /** Return subcass of the provided StepDownloadFormViewStore */
-export function StepDownloadFormViewStore(WdkStepDownloadFormViewStore) {
-  return class ApiStoreDownloadFormViewStore extends WdkStepDownloadFormViewStore {
+export function DownloadFormStore(WdkDownloadFormStore) {
+  return class ApiDownloadFormStore extends WdkDownloadFormStore {
     getSelectedReporter(selectedReporterName, recordClassName) {
       return selectReporterComponent(selectedReporterName, recordClassName);
     }
@@ -16,14 +18,19 @@ export function StepDownloadFormViewStore(WdkStepDownloadFormViewStore) {
 export function RecordViewStore(WdkRecordViewStore) {
   let { actionTypes } = WdkRecordViewStore;
   return class ApiRecordViewStore extends WdkRecordViewStore {
+
+    getRequiredStaticDataProps() {
+      return super.getRequiredStaticDataProps().concat(StaticDataProps.CONFIG,
+          StaticDataProps.QUESTIONS, StaticDataProps.RECORDCLASSES);
+    }
+
     reduce(state, action) {
       state = Object.assign({}, super.reduce(state, action), {
         pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action)
       });
       switch (action.type) {
-        case actionTypes.ACTIVE_RECORD_RECEIVED: {
+        case actionTypes.ACTIVE_RECORD_RECEIVED:
           return handleRecordReceived(state);
-        }
         case actionTypes.SECTION_VISIBILITY_CHANGED:
         case actionTypes.ALL_FIELD_VISIBILITY_CHANGED:
           setStateInStorage('collapsedSections', state);

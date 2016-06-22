@@ -24,8 +24,8 @@ let GffInputs = props => {
 };
 
 let Gff3ReporterForm = props => {
-  let { formState, recordClass, onFormChange, onSubmit } = props;
-  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
+  let { formState, recordClass, updateFormState, onSubmit } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   return (
     <div>
       <h3>Generate a report of your query result in GFF3 format</h3>
@@ -55,7 +55,7 @@ let initialStateMap = {
   }
 };
 
-Gff3ReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
+Gff3ReporterForm.getInitialState = (downloadFormStoreState) => {
   let recordClassName = downloadFormStoreState.recordClass.name;
   return {
     formState: (recordClassName in initialStateMap ? initialStateMap[recordClassName] : {}),

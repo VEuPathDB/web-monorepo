@@ -1,5 +1,4 @@
 import React from 'react';
-import {injectWdkModel} from 'wdk-client/ComponentUtils';
 import ExpressionGraph from '../common/ExpressionGraph';
 
 // Use Element.innerText to strip XML
@@ -110,8 +109,12 @@ function ExpressionGraphTable(props) {
       />
   );
 }
-let References = injectWdkModel(function References(props, context) {
-  let {questions, recordClasses, config} = context.wdkModel;
+
+function References(props, context) {
+  let {questions, recordClasses, config} = context.store.getState();
+  if (questions == null || recordClasses == null || config == null) {
+    return <noscript/>;
+  }
   let value = props.value
   .filter(row => row.target_type === 'question')
   .map(row => {
@@ -129,7 +132,11 @@ let References = injectWdkModel(function References(props, context) {
     );
   });
   return value.length === 0 ? <em>No data available</em> : <ul>{value}</ul>;
-});
+}
+
+References.contextTypes = {
+  store: React.PropTypes.object.isRequired
+};
 
 export function RecordTable(props) {
   if (props.table.name === 'References') {

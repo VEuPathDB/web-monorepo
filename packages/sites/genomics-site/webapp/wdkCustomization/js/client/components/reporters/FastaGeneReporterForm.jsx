@@ -89,8 +89,8 @@ let SequenceRegionInputs = props => {
 };
 
 let FastaGeneReporterForm = props => {
-  let { formState, onFormChange, onSubmit } = props;
-  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
+  let { formState, updateFormState, onSubmit } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   return (
     <div>
       <h3>Choose the type of sequence:</h3>

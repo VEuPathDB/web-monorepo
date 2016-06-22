@@ -6,9 +6,9 @@ let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.C
 
 let TableReporterForm = props => {
 
-  let { scope, question, recordClass, formState, formUiState, onFormChange, onFormUiChange, onSubmit, ontology } = props;
-  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormChange, formState);
-  let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, onFormUiChange, formUiState);
+  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, ontology } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+  let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormUiState, formUiState);
 
   return (
     <div>
@@ -66,7 +66,7 @@ let TableReporterForm = props => {
   );
 }
 
-TableReporterForm.getInitialState = (downloadFormStoreState, userStoreState) => {
+TableReporterForm.getInitialState = (downloadFormStoreState) => {
   let tableTree = util.getTableTree(
       downloadFormStoreState.ontology,
       downloadFormStoreState.recordClass.name,
