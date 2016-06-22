@@ -1,5 +1,5 @@
 /**
- * Test a node to see if its content is overflowwing
+ * Test a node to see if its content is overflowing
  *
  * @param {HTMLElement} node
  * @return {boolean}
@@ -16,7 +16,7 @@ export function isNodeOverflowing(node) {
  */
 
 /**
- * Calculate the offsetLeft and offsetTop for `element` such that it is visble
+ * Calculate the offsetLeft and offsetTop for `element` such that it is visible
  * within the viewport, relative to another element. The positions are absolute,
  * and above and to the right of `aroundElement` is preferred.
  *

@@ -364,19 +364,19 @@ export class CytoscapeDrawing extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.resizeMap = _.throttle(this.resizeMap.bind(this), 250);
-    this.state = this.context.viewStore.getState().pathwayRecord;
+    this.state = context.store.getState().pathwayRecord;
   }
 
   componentDidMount() {
-    let { viewStore } = this.context;
+    let { store } = this.context;
     this.resizeMap();
     this.initMenu();
     this.initVis();
     $(this.detailContainer).draggable({
       iframeFix: '#eupathdb-PathwayRecord-cytoscapeweb embed'
     });
-    this.storeSub = viewStore.addListener(() => {
-      this.setState(viewStore.getState().pathwayRecord);
+    this.storeSub = store.addListener(() => {
+      this.setState(store.getState().pathwayRecord);
     });
     $(window).on('resize', this.resizeMap);
   }
@@ -595,7 +595,7 @@ export class CytoscapeDrawing extends React.Component {
 
 CytoscapeDrawing.contextTypes = {
   dispatchAction: React.PropTypes.func.isRequired,
-  viewStore: React.PropTypes.object.isRequired
+  store: React.PropTypes.object.isRequired
 };
 
 function VisMenu(props) {

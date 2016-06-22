@@ -6,7 +6,7 @@ import lodash from 'lodash';
 import {NativeCheckboxList} from 'wdk-client/Components';
 import {renderAttributeValue} from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
-import {isNodeOverflowing} from '../../utils';
+import {isNodeOverflowing} from '../../util/domUtils';
 import ExpressionGraph from '../common/ExpressionGraph';
 import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';

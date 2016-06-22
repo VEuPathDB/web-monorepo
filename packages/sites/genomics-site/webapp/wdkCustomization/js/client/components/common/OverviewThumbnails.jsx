@@ -1,6 +1,6 @@
 import {Component, PropTypes} from 'react';
 import lodash from 'lodash';
-import {getBestPosition} from '../../utils';
+import {getBestPosition} from '../../util/domUtils';
 import VerticalScrollHelper from './VerticalScrollHelper';
 
 let ThumbnailPropType = PropTypes.shape({

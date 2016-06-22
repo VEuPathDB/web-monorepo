@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import {Component, PropTypes, cloneElement} from 'react';
 import {bindAll, throttle} from 'lodash';
-import {isNodeOverflowing} from '../../utils';
+import {isNodeOverflowing} from '../../util/domUtils';
 
 /**
  * Renders buttons to scroll scroll vertically.
