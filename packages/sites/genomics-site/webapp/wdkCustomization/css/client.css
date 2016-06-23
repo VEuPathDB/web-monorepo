@@ -452,40 +452,20 @@ h4 {
   display: block;
 }
 
-.wdk-RecordTable__ExampleGraphs .wdk-DataTable,
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTable,
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTable,
-.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTable {
-  table-layout: fixed;
-  width: 100%;
-}
-
 .wdk-DataTableCellExpand {
   color: #777;
 }
 
-.wdk-RecordTable__ExampleGraphs .wdk-DataTableCell.wdk-DataTableCell__source_id,
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__eupathdb_release,
-.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell__short_attribution,
+
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell__display_name {
+  min-width: 18em;
+}
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell__summary {
+  max-width: 35em;
+}
+
 .wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell__assay_type {
-  width: 125px;
-}
-
-.wdk-RecordTable__ExampleGraphs .wdk-DataTableCell.wdk-DataTableCell__display_name,
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__display_name,
-.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell.wdk-DataTableCell__display_name {
-  max-width: 300px;
-}
-
-
-.wdk-RecordTable__ExampleGraphs .wdk-DataTableCellContent,
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCellContent,
-.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCellContent {
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
-  height: 1.4em;
-  line-height: 1.8em;
 }
 
 .eupathdb-MercatorTable {
