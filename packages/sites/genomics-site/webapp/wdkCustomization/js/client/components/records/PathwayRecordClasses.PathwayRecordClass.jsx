@@ -654,7 +654,7 @@ function PathwayGraph(props) {
   return(
     <li>
       <a href="javascript:void(0)"
-         onClick={() => vis.changeExperiment(graph.internal + "," + graph.xaxis_description)} >
+         onClick={() => vis.changeExperiment(graph.internal)} >
         {graph.display_name}
       </a>
     </li>
