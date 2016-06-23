@@ -8,7 +8,7 @@ import {CompoundStructure} from '../common/Compound';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
-const EC_NUMBER_SEARCH_PREFIX = '/a/processQuestion.do?questionFullName=' +
+const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
   'GeneQuestions.InternalGenesByEcNumber&organism=all&array%28ec_source%29=all' +
   '&questionSubmit=Get+Answer&ec_number_pattern=N/A&ec_wildcard=';
 
@@ -708,8 +708,11 @@ function EnzymeNodeDetails(props) {
   let { nodeData } = props;
   return (
     <div>
-      <p><b>EC Number:</b> {nodeData.label}</p>
-      <p><b>Enzyme Name or Description:</b> {nodeData.Description}</p>
+      <p><b>EC Number or Reaction:</b> {nodeData.label}</p>
+
+      {nodeData.Description && (  
+        <p><b>Enzyme Name or Description:</b> {nodeData.Description}</p>
+      )}  
 
       {nodeData.Organisms && (
         <div>
@@ -730,9 +733,12 @@ function EnzymeNodeDetails(props) {
               <li key={organism}>{organism}</li>
             ))}
           </ul>
-          <div>
-            <a href={EC_NUMBER_SEARCH_PREFIX + nodeData.label}>Search for Gene(s) By EC Number</a>
-          </div>
+        </div>
+      )}
+    
+      {nodeData.Organisms && (
+        <div>
+          <a href={wdk.webappUrl(EC_NUMBER_SEARCH_PREFIX + nodeData.label)}>Search for Gene(s) By EC Number</a>
         </div>
       )}
 
