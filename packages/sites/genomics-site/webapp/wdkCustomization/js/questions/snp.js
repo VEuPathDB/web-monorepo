@@ -8,9 +8,9 @@
   // per a request from BB.
   //
   // FIXME Remove this when BB reloads SNPs.
-  function injectDefaultFilter(event, filterParam) {
+  function injectDefaultFilter(event) {
     var $form = $(event.target).closest('form');
-    var filterService = filterParam.filterService;
+    var filterService = $(event.target).data('filterService');
 
     if ($form.is('.is-revise')) return;
     if (!paramNames.includes(filterService.name)) return;
