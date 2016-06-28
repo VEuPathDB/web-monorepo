@@ -7,7 +7,7 @@ html, body {
 
 .link {
   text-decoration: underline;
-  color: #0b94b1;
+  /*color: #0b94b1;*/
   cursor: pointer;
 }
 
