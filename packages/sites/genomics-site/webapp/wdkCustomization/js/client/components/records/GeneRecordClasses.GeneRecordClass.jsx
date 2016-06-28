@@ -11,7 +11,7 @@ import ExpressionGraph from '../common/ExpressionGraph';
 import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
-import {SnpsAlignmentTable} from '../common/Snps';
+import {SnpsAlignmentForm} from '../common/Snps';
 
 let transcriptomicsThumbnail = {
   displayName: 'Transcriptomics',
@@ -112,7 +112,7 @@ export function RecordTable(props) {
        : props.table.name === 'ProteinExpressionPBrowse'  ? <ProteinPbrowseTable {...props} />
        : props.table.name === 'Sequences'                 ? <SequencesTable {...props} />
        : props.table.name === 'UserComments'              ? <UserCommentsTable {...props} />
-       : props.table.name === 'SNPsAlignment'             ? <SnpsAlignmentTable {...props}
+       : props.table.name === 'SNPsAlignment'             ? <SnpsAlignmentForm {...props}
                                                               seqIdAttributeName="sequence_id"
                                                               strainAttributeName="strain"
                                                               startAttributeName="context_start"

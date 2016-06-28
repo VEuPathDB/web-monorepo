@@ -1,6 +1,8 @@
 /* global wdk */
 import $ from 'jquery';
+import { difference } from 'lodash';
 import {PureComponent} from 'wdk-client/ComponentUtils';
+import { FilterParam } from './FilterParam';
 
 export class SnpsAlignmentTable extends PureComponent {
   componentDidMount() {
@@ -74,6 +76,44 @@ export class SnpsAlignmentTable extends PureComponent {
           {this.renderFormButtons()}
         </form>
       </div>
+    )
+  }
+}
+
+export class SnpsAlignmentForm extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { isolateIds: [] };
+    this.handleChange = (filterParamState) => {
+      let { filteredData, ignoredData } = filterParamState;
+      let isolateIds = difference(filteredData, ignoredData).map(d => d.term);
+      this.setState({ isolateIds });
+    };
+  }
+  render() {
+    let { isolateIds } = this.state;
+    let { startAttributeName, endAttributeName, seqIdAttributeName, record } = this.props;
+    let start = record.attributes[startAttributeName];
+    let end = record.attributes[endAttributeName];
+    let sid = record.attributes[seqIdAttributeName];
+
+    return (
+      <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">
+        <input name="project_id" value={wdk.MODEL_NAME} type="hidden"/>
+        <input name="type" value="htsSnp" type="hidden"/>
+        <input name="sid" value={sid} type="hidden"/>
+        <input name="end" value={end} type="hidden"/>
+        <input name="start" value={start} type="hidden"/>
+        <input name="isolate_ids" type="hidden" value={isolateIds.join(',')}/>
+        <input type="submit"
+          value="Run Clustalw on Selected Strains"
+          disabled={isolateIds.length === 0} />
+        <FilterParam
+          displayName="Isolates"
+          questionName="GeneQuestions.GenesByNgsSnps"
+          dependedValue={{ organismSinglePick: [ record.attributes.organism_full ] }}
+          onChange={this.handleChange} />
+      </form>
     )
   }
 }
