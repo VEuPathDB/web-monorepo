@@ -24,11 +24,20 @@ let transcriptomicsThumbnail = {
  */
 export class RecordOverview extends React.Component {
 
+  constructor(...args) {
+    super(...args);
+    this.handleThumbnailClick = this.handleThumbnailClick.bind(this);
+  }
+
   componentDidMount() {
     this.addProductTooltip();
     this.thumbsContainer = this.node.querySelector('.eupathdb-ThumbnailsContainer');
     if (this.thumbsContainer) this.renderThumbnails();
     else console.error('Warning: Could not find ThumbnailsContainer');
+  }
+
+  handleThumbnailClick(thumbnail) {
+    this.context.eventHandlers.toggleSection(thumbnail.anchor, true);
   }
 
   componentDidUpdate() {
@@ -89,7 +98,7 @@ export class RecordOverview extends React.Component {
     .toArray();
 
     ReactDOM.render((
-      <OverviewThumbnails  thumbnails={filteredGBrowseContexts}/>
+      <OverviewThumbnails thumbnails={filteredGBrowseContexts} onThumbnailClick={this.handleThumbnailClick}/>
     ), this.thumbsContainer);
   }
 
@@ -103,6 +112,10 @@ export class RecordOverview extends React.Component {
   }
 
 }
+
+RecordOverview.contextTypes = {
+  eventHandlers: React.PropTypes.object.isRequired
+};
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
 export function RecordTable(props) {

@@ -47,6 +47,7 @@ export class OverviewThumbnails extends Component {
     };
 
     this.handlePopoverClick = () => {
+      this.props.onThumbnailClick(this.state.activeThumbnail);
       this.setShowPopover(false, 0);
     };
   }
@@ -74,7 +75,10 @@ export class OverviewThumbnails extends Component {
           {this.props.thumbnails.map(thumbnail => (
             <div className="eupathdb-ThumbnailWrapper" key={thumbnail.anchor}>
               <div className="eupathdb-ThumbnailLabel">
-                <a href={'#' + thumbnail.anchor}>{thumbnail.displayName}</a>
+                <a href={'#' + thumbnail.anchor}
+                  onClick={() => this.props.onThumbnailClick(thumbnail)}>
+                  {thumbnail.displayName}
+                </a>
               </div>
               <a className={'eupathdb-Thumbnail eupathdb-Thumbnail__' + thumbnail.anchor}
                 {...getDataProps(thumbnail)}
@@ -114,7 +118,12 @@ export class OverviewThumbnails extends Component {
 }
 
 OverviewThumbnails.propTypes = {
-  thumbnails: PropTypes.arrayOf(ThumbnailPropType).isRequired
+  thumbnails: PropTypes.arrayOf(ThumbnailPropType).isRequired,
+  onThumbnailClick: PropTypes.func
+};
+
+OverviewThumbnails.defaultProps = {
+  onThumbnailClick(){}
 };
 
 function getDataProps(thumbnail) {
