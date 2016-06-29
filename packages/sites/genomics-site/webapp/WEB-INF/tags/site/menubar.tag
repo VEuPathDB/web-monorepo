@@ -135,24 +135,17 @@
 
     <li><a>Data Summary</a>
       <ul>
-         <!-- <li><a href="${baseUrl}/getDataset.do?display=detail">Data Sets</a></li> -->
-          <li>
-            <a href="${baseUrl}/app/search/dataset/AllDatasets/result">Data Sets</a>
-            <%-- <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /> --%>
-          </li>
-          <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
+        <li><a href="${baseUrl}/app/search/dataset/AllDatasets/result">Data Sets</a></li>
+        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
         <c:if test="${project == 'CryptoDB'}">
           <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
         </c:if>
-
-          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Genomes and Data Types</a></li> 
-          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics">Gene Metrics</a></li>
-      
-<%--        <c:if test="${project == 'TrichDB'}">
+        <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Genomes and Data Types</a></li> 
+        <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics">Gene Metrics</a></li>
+        <%-- <c:if test="${project == 'TrichDB'}">
           <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GenomeDataType">Genomes and Data Types</a></li> 
           <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GeneMetrics">Gene Metrics</a></li>
-        </c:if>
---%>
+        </c:if> --%>
       </ul>
     </li>
 
