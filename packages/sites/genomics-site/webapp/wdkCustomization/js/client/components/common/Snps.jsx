@@ -98,22 +98,26 @@ export class SnpsAlignmentForm extends PureComponent {
     let sid = record.attributes[seqIdAttributeName];
 
     return (
-      <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">
-        <input name="project_id" value={wdk.MODEL_NAME} type="hidden"/>
-        <input name="type" value="htsSnp" type="hidden"/>
-        <input name="sid" value={sid} type="hidden"/>
-        <input name="end" value={end} type="hidden"/>
-        <input name="start" value={start} type="hidden"/>
-        <input name="isolate_ids" type="hidden" value={isolateIds.join(',')}/>
-        <input type="submit"
-          value="Run Clustalw on Selected Strains"
-          disabled={isolateIds.length === 0} />
-        <FilterParam
-          displayName="Isolates"
-          questionName="GeneQuestions.GenesByNgsSnps"
-          dependedValue={{ organismSinglePick: [ record.attributes.organism_full ] }}
-          onChange={this.handleChange} />
-      </form>
+      <div>
+        <p>Select strains using the panel below and click "Run Clustalw" to view a multiple
+          sequence alignment.</p>
+        <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">
+          <input name="project_id" value={wdk.MODEL_NAME} type="hidden"/>
+          <input name="type" value="htsSnp" type="hidden"/>
+          <input name="sid" value={sid} type="hidden"/>
+          <input name="end" value={end} type="hidden"/>
+          <input name="start" value={start} type="hidden"/>
+          <input name="isolate_ids" type="hidden" value={isolateIds.join(',')}/>
+          <FilterParam
+            displayName="Strains"
+            questionName="GeneQuestions.GenesByNgsSnps"
+            dependedValue={{ organismSinglePick: [ record.attributes.organism_full ] }}
+            onChange={this.handleChange} />
+          <p style={{ textAlign: 'center' }}>
+            <input type="submit" value="Run Clustalw" disabled={isolateIds.length === 0} />
+          </p>
+        </form>
+      </div>
     )
   }
 }

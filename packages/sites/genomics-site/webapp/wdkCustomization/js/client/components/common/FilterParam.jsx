@@ -63,6 +63,7 @@ export class FilterParam extends Component {
       <div className="filter-param">
         <AttributeFilter
           displayName={this.props.displayName}
+          collapsible={false}
           fields={fields}
           filters={filters}
           dataCount={data.length}
