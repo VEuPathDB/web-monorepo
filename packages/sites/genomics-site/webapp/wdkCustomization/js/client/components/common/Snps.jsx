@@ -99,7 +99,7 @@ export class SnpsAlignmentForm extends PureComponent {
 
     return (
       <div>
-        <p>Select strains using the panel below and click "Run Clustalw" to view a multiple
+        <p>Select strains using the panel below. Then click "Run Clustalw" to view a multiple
           sequence alignment.</p>
         <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">
           <input name="project_id" value={wdk.MODEL_NAME} type="hidden"/>
@@ -114,7 +114,7 @@ export class SnpsAlignmentForm extends PureComponent {
             dependedValue={{ organismSinglePick: [ record.attributes.organism_full ] }}
             onChange={this.handleChange} />
           <p style={{ textAlign: 'center' }}>
-            <input type="submit" value="Run Clustalw" disabled={isolateIds.length === 0} />
+            <button type="submit" disabled={isolateIds.length === 0}>Run Clustalw</button>
           </p>
         </form>
       </div>
