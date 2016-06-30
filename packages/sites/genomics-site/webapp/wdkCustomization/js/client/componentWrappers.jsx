@@ -156,16 +156,17 @@ export function RecordTable(DefaultComponent) {
 
 export function RecordAttribute(DefaultComponent) {
   return function ApiRecordAttribute(props) {
+    // render attribute as a GbrowseContext if attribute name is in Gbrowse.contextx
     let context = Gbrowse.contexts.find(context => context.gbrowse_url === props.name);
     if (context != null) {
-        return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
+      return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
     }
 
-      let sequenceRE = /sequence$/;
-      if (sequenceRE.test(props.name)) {
-          return ( <Sequence sequence={props.value}/> );
-      }
-
+    // Render attribute as a Sequence if attribute name ends with "sequence".
+    let sequenceRE = /sequence$/;
+    if (sequenceRE.test(props.name)) {
+      return ( <Sequence sequence={props.value}/> );
+    }
 
     let ResolvedComponent =
       findComponent('RecordAttribute', props.recordClass.name) || DefaultComponent;
