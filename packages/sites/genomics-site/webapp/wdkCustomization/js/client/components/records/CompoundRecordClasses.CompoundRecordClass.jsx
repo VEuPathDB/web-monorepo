@@ -1,11 +1,6 @@
 import {Component} from 'react';
 import {CollapsibleSection} from 'wdk-client/Components';
 import {CompoundStructure} from '../common/Compound';
-import {renderWithCustomElements} from '../customElements';
-
-export function RecordOverview(props) {
-  return renderWithCustomElements(props.record.overview);
-}
 
 export function RecordTable(props) {
   return props.table.name === 'Structures' ? <CompoundStructures {...props}/>

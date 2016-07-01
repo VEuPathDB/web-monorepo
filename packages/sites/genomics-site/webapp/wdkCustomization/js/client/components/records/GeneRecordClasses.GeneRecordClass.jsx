@@ -103,10 +103,9 @@ export class RecordOverview extends React.Component {
   }
 
   render() {
-    let { DefaultComponent } = this.props;
     return (
       <div ref={node => this.node = node}>
-        <DefaultComponent {...this.props}/>
+        {this.props.children}
       </div>
     );
   }

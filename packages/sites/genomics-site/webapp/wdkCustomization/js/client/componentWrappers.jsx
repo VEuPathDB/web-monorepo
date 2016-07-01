@@ -1,7 +1,8 @@
 /* global wdk */
 import lodash from 'lodash';
 import React from 'react';
-import { Controllers, Components, ComponentUtils } from 'wdk-client';
+import { Components, ComponentUtils } from 'wdk-client';
+import {renderWithCustomElements} from './components/customElements';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
@@ -9,7 +10,7 @@ import { selectReporterComponent } from './util/reporterSelector';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import ApiUserIdentity from './components/ApiUserIdentity';
 
-// Remove project_id from record links
+/** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
   return function ApiRecordLink(props) {
     let recordId = props.recordId.filter(p => p.name !== 'project_id');
@@ -94,7 +95,12 @@ export function RecordHeading(DefaultComponent) {
   return function ApiRecordHeading(props) {
     let ResolvedComponent =
       findComponent('RecordHeading', props.recordClass.name) || DefaultComponent;
-    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+    return (
+      <div>
+        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+        <RecordOverview {...props}/>
+      </div>
+    );
   };
 }
 
@@ -120,20 +126,21 @@ function RecordAttributionSection(props) {
       </div>
     )
   }
-  return <noscript/>
+  return null;
 }
 
-export function RecordOverview(DefaultComponent) {
-  return function ApiRecordOverview(props) {
-    let ResolvedComponent =
-      findComponent('RecordOverview', props.recordClass.name) || DefaultComponent;
-    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-  };
+function RecordOverview(props) {
+  let Wrapper = findComponent('RecordOverview', props.recordClass.name) || 'div';
+  return (
+    <Wrapper {...props}>
+      {renderWithCustomElements(props.record.attributes.record_overview)}
+    </Wrapper>
+  );
 }
 
 // Customize DownloadForm to show the appropriate form based on the
 //   selected reporter and record class
-export function DownloadForm(WdkDownloadForm) {
+export function DownloadForm() {
   return function ApiDownloadForm(props) {
     let Reporter = selectReporterComponent(props.selectedReporter, props.recordClass.name);
     return (
@@ -209,7 +216,7 @@ export function ApplicationSpecificProperties() {
 /**
  * Trims PROJECT_ID off the tail end of a comma-delimited list of primary key value parts
  */
-export function PrimaryKeySpan(DefaultComponent) {
+export function PrimaryKeySpan() {
   return function(props) {
     let pkValues = props.primaryKeyString.split(',');
     let newPkString = pkValues[0];
