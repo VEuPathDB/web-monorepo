@@ -43,7 +43,7 @@ export class SnpsAlignmentTable extends PureComponent {
   renderFormButtons() {
     return (
       <p>
-        <input type="submit" value="Run Clustalw on Selected Strains" disabled={true} />{' '}
+        <input type="submit" value="Show Alignment" disabled={true} />{' '}
         <a className="select-all" href="#">Select all</a>{' | '}
         <a className="clear-all" href="#">Clear all</a>
       </p>
@@ -99,7 +99,7 @@ export class SnpsAlignmentForm extends PureComponent {
 
     return (
       <div>
-        <p>Select strains using the panel below. Then click "Run Clustalw" to view a multiple
+        <p>Select strains using the panel below. Then click "Show Alignment" to view a multiple
           sequence alignment.</p>
         <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">
           <input name="project_id" value={wdk.MODEL_NAME} type="hidden"/>
@@ -114,7 +114,7 @@ export class SnpsAlignmentForm extends PureComponent {
             dependedValue={{ organismSinglePick: [ record.attributes.organism_full ] }}
             onChange={this.handleChange} />
           <p style={{ textAlign: 'center' }}>
-            <button type="submit" disabled={isolateIds.length === 0}>Run Clustalw</button>
+            <button type="submit" disabled={isolateIds.length === 0}>Show Alignment</button>
           </p>
         </form>
       </div>
