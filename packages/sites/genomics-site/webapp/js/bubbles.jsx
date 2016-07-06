@@ -23,7 +23,7 @@ function renderBubble(props, el) {
     <CategoriesCheckboxTree
       {...props}
       isSelectable={false}
-      searchBoxPlaceholder="Find a search"
+      searchBoxPlaceholder="Find a search..."
       leafType="search"
       nodeComponent={BubbleNode}
       onUiChange={expandedBranches => renderBubble(merge(props, {expandedBranches}), el)}
