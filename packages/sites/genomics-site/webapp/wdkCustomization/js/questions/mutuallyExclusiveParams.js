@@ -156,7 +156,6 @@
 
 }(jQuery));
 
-
 // *ByLocation questions have mutually exclusive params:
   wdk.registerQuestionEvent(function() {
     var $ = jQuery;
@@ -176,33 +175,40 @@
       return;
     }
 
-    if (questionName === "NgsSnpsByLocation") {
-      groups = [
-        {
-          name: "Chromosome",
-          params: ['chromosomeOptionalForNgsSnps']
-        },
-        {
-          name: "Sequence ID",
-          params: ['sequenceId']
-        }
-      ];
-    } else if (/ByLocation$/.exec(questionName) ||
-        questionName === "DynSpansBySourceId") {
-      groups = [
-        {
-          name: "Chromosome",
-          params: ['organism', 'chromosomeOptional']
-        },
-        {
-          name: "Sequence ID",
-          params: ['sequenceId']
-        }
-      ];
-    } else {
-      // no param grouping needed for now
-      return;
-    }
+    groups = questionName === "NgsSnpsByLocation" ? [
+      {
+        name: "Chromosome",
+        params: ['chromosomeOptionalForNgsSnps']
+      },
+      {
+        name: "Sequence ID",
+        params: ['sequenceId']
+      }
+    ]
+    : questionName === "SnpsByLocation" ? [
+      {
+        name: "Chromosome",
+        params: [ 'chromosomeOptional' ]
+      },
+      {
+        name: "Sequence ID",
+        params: [ 'sequenceId' ]
+      }
+    ]
+    : /ByLocation$/.exec(questionName) || questionName === "DynSpansBySourceId" ? [
+      {
+        name: "Chromosome",
+        params: ['organismSinglePick', 'chromosomeOptional']
+      },
+      {
+        name: "Sequence ID",
+        params: ['sequenceId']
+      }
+    ]
+    : undefined;
+
+    // no param grouping needed for now
+    if (!groups) return;
 
     form.mutuallyExclusiveParams({
       groups: groups,
@@ -241,7 +247,7 @@
         chromosomeFakeNull.appendTo($chromosomeOptional).attr("selected", true);
       }
 
-      this.organism.disabled = false;
+      this['value(organismSinglePick)'].disabled = false;
 
     }).on("change", function() {
       form.mutuallyExclusiveParams("change");
