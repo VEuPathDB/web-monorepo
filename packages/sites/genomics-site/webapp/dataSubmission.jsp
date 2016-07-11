@@ -137,9 +137,8 @@ mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>&#8226;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>
 -->
-We prefer to receive the raw read data in FASTQ
-or FASTA file format. We integrate your data into the database using the raw reads. We also use the raw reads during future 
-database releases to remap your data when the reference genome is reloaded and to update our analyses when needed.
+We prefer to download the raw read data in FASTQ format from a sequence read archive. We integrate your data into the database using the raw reads and use the raw reads during future 
+database releases to remap or update our analyses when necessary.
 
 
 </p>
@@ -154,7 +153,7 @@ one of these three options:</p>
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
 l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>PREFERRED: Upload
 your data to a sequence read archive such as DNA Data Bank of Japan, the
 European Nucleotide Archive or NCBI's Sequence Read Archive. If your data is
 already submitted to a data repository, there is no need to re-transfer the
