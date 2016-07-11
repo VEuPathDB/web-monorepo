@@ -82,12 +82,12 @@ body {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #6f223a; //  color as sidebar header color
+   border-color: #6f223a;  
 }
 
 #menu_lefttop a.heading {
   /* background-image: url(../images/ToxoDB/menu_lft2.png); */
-  background: #8b465c;
+  background: #8b465c; /*   color as sidebar header color */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
