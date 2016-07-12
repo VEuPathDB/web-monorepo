@@ -69,21 +69,15 @@ export let contexts = [
 ];
 
 export function GbrowseContext(props) {
-  let url = props.record.attributes[props.name];
+  let { attribute, record } = props;
+  let url = record.attributes[attribute.name];
   return (
-    <CollapsibleSection
-      id={props.name}
-      className="eupathdb-GbrowseContext"
-      style={{display: 'block', width: '100%' }}
-      headerContent={props.displayName}
-      isCollapsed={props.isCollapsed}
-      onCollapsedChange={props.onCollapsedChange}
-    >
+    <div>
       <GbrowseImage url={url} includeImageMap={true} />
       <div>
         <a href={url.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
       </div>
-    </CollapsibleSection>
+    </div>
   );
 }
 

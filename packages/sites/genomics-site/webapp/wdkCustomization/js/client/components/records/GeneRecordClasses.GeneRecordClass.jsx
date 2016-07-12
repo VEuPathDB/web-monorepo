@@ -140,37 +140,38 @@ function OverviewItem(props) {
 }
 
 function ExpressionGraphTable(props) {
-    let included = props.table.properties.includeInTable || [];
+  let included = props.table.properties.includeInTable || [];
 
-    let dataTable;
+  let dataTable;
 
-    if(props.table.name == "HostResponseGraphs") {
-        // TODO
+  if(props.table.name == "HostResponseGraphs") {
+    // TODO
+  }
+  else {
+    dataTable = Object.assign({}, {
+      value: props.record.tables.ExpressionGraphsDataTable,
+      table: props.recordClass.tables.find(obj => obj.name == "ExpressionGraphsDataTable"),
+      record: props.record,
+      recordClass: props.recordClass,
+      DefaultComponent: props.DefaultComponent
     }
-    else {
-        dataTable = Object.assign({}, {
-            value: props.record.tables.ExpressionGraphsDataTable,
-            table: props.recordClass.tables.find(obj => obj.name == "ExpressionGraphsDataTable"),
-            record: props.record,
-            recordClass: props.recordClass,
-            DefaultComponent: props.DefaultComponent
-                }
-        );
+    );
 
-    }
+  }
 
-    let table = Object.assign({}, props.table, {
-        attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
-    });
+  let table = Object.assign({}, props.table, {
+    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
+  });
 
-
-    return (
-        <props.DefaultComponent
-      {...props}
-      table={table}
-      childRow={childProps =>
+  return (
+    <div>
+      <props.DefaultComponent
+        {...props}
+        table={table}
+        childRow={childProps =>
           <ExpressionGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
       />
+    </div>
   );
 }
 
@@ -294,13 +295,14 @@ function MercatorTable(props) {
         <input type="hidden" name="project_id" value={wdk.MODEL_NAME}/>
 
         <div className="form-group">
-          <label><strong>Contig ID:</strong> <input name="contig" defaultValue={props.record.attributes.sequence_id}/></label>
+          <label><strong>Contig ID:</strong> <input type="text" name="contig" defaultValue={props.record.attributes.sequence_id}/></label>
         </div>
 
         <div className="form-group">
           <label>
             <strong>Nucleotide positions: </strong>
             <input
+              type="text"
               name="start"
               defaultValue={props.record.attributes.start_min}
               maxLength="10"
@@ -308,6 +310,7 @@ function MercatorTable(props) {
             />
           </label>
           <label> to <input
+              type="text"
               name="stop"
               defaultValue={props.record.attributes.end_max}
               maxLength="10"

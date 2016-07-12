@@ -1,7 +1,7 @@
 /* global wdk */
 import lodash from 'lodash';
 import React from 'react';
-import { Components, ComponentUtils } from 'wdk-client';
+import { CollapsibleSection, RecordAttribute } from 'wdk-client/Components';
 import {renderWithCustomElements} from './components/customElements';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -26,59 +26,36 @@ const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
 
 
 /**
- * Munge url so that we can hide pieces of primary key we don't want users to see.
- *
- * The general operation that is happening below is that we are intercepting the
- * props sent to the WDK RecordController component and adding the project id
- * when it is needed.
- *
- * Conceptually, this could also be done at the action creator level. If WDK
- * provided a way to customize a view controller's action creator, we could
- * just append the project id when needed.
- *
- * Note that we are doing a few other things here, which is to say this override
- * is a bit of a jumble at the moment.
+ * In ./routes.js, we redirect urls to the record page that have the project ID
+ * included such that the project ID is removed. In this component, we add it
+ * back for record classes that use project ID as a part of the primary key.
+ * The objective is to hide the project ID from the URL whenever possible.
  *
  * `splat` refers to a wildcard dynamic url segment
  * as defined by the record route. The value of splat is essentially primary key
  * values separated by a '/'.
  */
 export function RecordController(WdkRecordController) {
-  class ApiRecordController extends React.Component {
+  return function ApiRecordController(props) {
+    let { splat, recordClass } = props.params;
 
-    render() {
-      let { splat, recordClass } = this.props.params;
-      let projectIdUrl = '/' + wdk.MODEL_NAME;
-      let hasProjectId = splat.endsWith(projectIdUrl);
-
-      if (hasProjectId) {
-        setTimeout(() => {
-          this.props.history.replace(this.props.location.pathname.replace(projectIdUrl, ''));
-        }, 0);
-        return <Components.Loading/>;
-      }
-
-      // These record classes do not need the project id as a part of the primary key
-      // so we just render with the url params as-is.
-      if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
-        return (
-          <WdkRecordController {...this.props} />
-        );
-      }
-
-      // Append project id to request
-      let params = Object.assign({}, this.props.params, {
-        splat: `${splat}/${wdk.MODEL_NAME}`
-      });
-
+    // These record classes do not need the project id as a part of the primary key
+    // so we just render with the url params as-is.
+    if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
       return (
-        <WdkRecordController {...this.props} params={params} />
+        <WdkRecordController {...props} />
       );
     }
 
-  }
+    // Append project id to request
+    let params = Object.assign({}, props.params, {
+      splat: `${splat}/${wdk.MODEL_NAME}`
+    });
 
-  return ApiRecordController;
+    return (
+      <WdkRecordController {...props} params={params} />
+    );
+  }
 }
 
 // Customize the Record Component
@@ -122,7 +99,11 @@ function RecordAttributionSection(props) {
     return (
       <div>
         <h3>Record Attribution</h3>
-        {ComponentUtils.renderAttributeValue(props.record.attributes.attribution)}
+        <RecordAttribute
+          attribute={props.recordClass.attributesMap.get('attribution')}
+          record={props.record}
+          recordClass={props.recordClass}
+        />
       </div>
     )
   }
@@ -161,22 +142,36 @@ export function RecordTable(DefaultComponent) {
   };
 }
 
-export function RecordAttribute(DefaultComponent) {
-  return function ApiRecordAttribute(props) {
+export function RecordAttributeSection(DefaultComponent) {
+  return function ApiRecordAttributeSection(props) {
+    let { attribute, record } = props;
+
     // render attribute as a GbrowseContext if attribute name is in Gbrowse.contextx
-    let context = Gbrowse.contexts.find(context => context.gbrowse_url === props.name);
+    let context = Gbrowse.contexts.find(context => context.gbrowse_url === attribute.name);
     if (context != null) {
-      return ( <Gbrowse.GbrowseContext {...props} context={context} /> );
+      return (
+        <CollapsibleSection
+          id={attribute.name}
+          className="eupathdb-GbrowseContext"
+          style={{display: 'block', width: '100%' }}
+          headerContent={attribute.displayName}
+          isCollapsed={props.isCollapsed}
+          onCollapsedChange={props.onCollapsedChange}
+        >
+          <Gbrowse.GbrowseContext {...props} context={context} />
+        </CollapsibleSection>
+      );
     }
 
     // Render attribute as a Sequence if attribute name ends with "sequence".
     let sequenceRE = /sequence$/;
-    if (sequenceRE.test(props.name)) {
-      return ( <Sequence sequence={props.value}/> );
+    if (sequenceRE.test(attribute.name)) {
+      return ( <Sequence sequence={record.attributes[attribute.name]}/> );
     }
 
+    // use standard record class overriding
     let ResolvedComponent =
-      findComponent('RecordAttribute', props.recordClass.name) || DefaultComponent;
+      findComponent('RecordAttributeSection', props.recordClass.name) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
