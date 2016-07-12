@@ -7,7 +7,7 @@ import {NativeCheckboxList} from 'wdk-client/Components';
 import {renderAttributeValue} from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
 import {isNodeOverflowing} from '../../util/domUtils';
-import ExpressionGraph from '../common/ExpressionGraph';
+import DatasetGraph from '../common/DatasetGraph';
 import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
@@ -118,7 +118,7 @@ RecordOverview.contextTypes = {
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
 export function RecordTable(props) {
-  return expressionRE.test(props.table.name)              ? <ExpressionGraphTable {...props} />
+  return expressionRE.test(props.table.name)              ? <DatasetGraphTable {...props} />
        : props.table.name === 'MercatorTable'             ? <MercatorTable {...props} />
        : props.table.name === 'ProteinProperties'         ? <ProteinPbrowseTable {...props} />
        : props.table.name === 'ProteinExpressionPBrowse'  ? <ProteinPbrowseTable {...props} />
@@ -139,7 +139,7 @@ function OverviewItem(props) {
     );
 }
 
-function ExpressionGraphTable(props) {
+function DatasetGraphTable(props) {
   let included = props.table.properties.includeInTable || [];
 
   let dataTable;
@@ -169,7 +169,7 @@ function ExpressionGraphTable(props) {
         {...props}
         table={table}
         childRow={childProps =>
-          <ExpressionGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
+          <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
       />
     </div>
   );

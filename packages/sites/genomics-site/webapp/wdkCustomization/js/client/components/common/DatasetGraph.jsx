@@ -4,7 +4,7 @@ import { Components, ComponentUtils } from 'wdk-client';
 let { CollapsibleSection } = Components;
 
 /**
- * Renders an Expression graph with the provided rowData.
+ * Renders an Dataset graph with the provided rowData.
  * rowData comes from an ExpressionTable record table.
  *
  * rowData will include the available gene ids (graph_ids), but the available
@@ -13,7 +13,7 @@ let { CollapsibleSection } = Components;
  * the available parts, and then we can update the state of the Component. This
  * flow will ensure that we have a consistent state when rendering.
  */
-export default class ExpressionGraph extends ComponentUtils.PureComponent {
+export default class DatasetGraph extends ComponentUtils.PureComponent {
 
   constructor(...args) {
     super(...args);
@@ -96,7 +96,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
   renderLoading() {
     if (this.state.loading) {
       return (
-        <Components.Loading radius={4} className="eupathdb-ExpressionGraphLoading"/>
+        <Components.Loading radius={4} className="eupathdb-DatasetGraphLoading"/>
       );
     }
   }
@@ -113,7 +113,11 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
 
   render() {
     if (this.state.details == null) {
-      return this.renderLoading();
+      return (
+        <div className="eupathdb-DatasetGraphContainer">
+          {this.renderLoading()}
+        </div>
+      );
     }
 
     let { visibleParts, graphId, dataTable, datasetId, dataset_name} = this.state;
@@ -135,11 +139,11 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
     let covImgUrl = dataTable && dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'CoverageUnlogged';
 
     return (
-      <div className="eupathdb-ExpressionGraphContainer">
+      <div className="eupathdb-DatasetGraphContainer">
 
         {this.renderLoading()}
 
-        <div className="eupathdb-ExpressionGraph">
+        <div className="eupathdb-DatasetGraph">
           <img
             src={imgUrl}
             onLoad={() => this.setState({ loading: false })}
@@ -165,7 +169,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
 
 
         </div>
-        <div className="eupathdb-ExpressionGraphDetails">
+        <div className="eupathdb-DatasetGraphDetails">
 
           {this.props.dataTable &&
             <Components.CollapsibleSection
@@ -183,7 +187,7 @@ export default class ExpressionGraph extends ComponentUtils.PureComponent {
             </Components.CollapsibleSection> }
 
           <Components.CollapsibleSection
-            className={"eupathdb-ExpressionGraphDescription"}
+            className={"eupathdb-DatasetGraphDescription"}
             headerContent="Description"
             headerComponent="h4"
             isCollapsed={this.state.descriptionCollapsed}

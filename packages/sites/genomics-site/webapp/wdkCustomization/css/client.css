@@ -416,27 +416,28 @@ h4 {
 }
 */
 
-.eupathdb-ExpressionGraphContainer {
+.eupathdb-DatasetGraphContainer {
   overflow: auto;
   position: relative;
   padding: 0 4px;
+  min-height: 100px;
 }
 
-.eupathdb-ExpressionGraphLoading {
+.eupathdb-DatasetGraphLoading {
   position: absolute;
   top: 1em;
   left: 1em;
 }
 
-.eupathdb-ExpressionGraph {
+.eupathdb-DatasetGraph {
   float: left;
 }
 
-.eupathdb-ExpressionGraphDetails {
+.eupathdb-DatasetGraphDetails {
   margin-left: 500px;
 }
 
-.eupathdb-ExpressionGraphDescriptionHeader {
+.eupathdb-DatasetGraphDescriptionHeader {
   margin: 0;
 }
 

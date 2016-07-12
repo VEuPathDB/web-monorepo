@@ -1,5 +1,5 @@
 import React from 'react';
-import ExpressionGraph from '../common/ExpressionGraph';
+import DatasetGraph from '../common/DatasetGraph';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -94,7 +94,7 @@ export function RecordOverview(props) {
   );
 }
 
-function ExpressionGraphTable(props) {
+function DatasetGraphTable(props) {
   let included = props.table.properties.includeInTable || [];
   let table = Object.assign({}, props.table, {
     attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
@@ -105,7 +105,7 @@ function ExpressionGraphTable(props) {
       {...props}
       table={table}
       childRow={childProps =>
-        <ExpressionGraph rowData={props.value[childProps.rowIndex]}/>}
+        <DatasetGraph rowData={props.value[childProps.rowIndex]}/>}
       />
   );
 }
@@ -143,7 +143,7 @@ export function RecordTable(props) {
     return <References {...props}/>;
   }
   if (props.table.name === 'ExampleGraphs') {
-    return <ExpressionGraphTable {...props}/>;
+    return <DatasetGraphTable {...props}/>;
   }
   return <props.DefaultComponent {...props}/>;
 }
