@@ -59,9 +59,9 @@
     <!--~~~~~~~ TOP LEFT: SITE name and release DATE ~~~~~~~-->
   <c:choose>
   <c:when test="${project == 'HostDB'}">
-    <a href="/" style="font-color:blue;font-size:600%;font-weight:bold;position:relative;left:30px;top:5px">HostDB</a>
-    <span style="position:relative;top:-30px;left:29px">Release ${build}</span> 
-    <span style="position:relative;top:-20px;left:-20px">${releaseDate_formatted}</span>
+    <a href="/" style="font-color:blue;font-size:600%;font-weight:bold;position:relative;left:30px;top:32px">HostDB</a>
+    <span style="position:relative;top:-18px;left:29px">Release ${build}</span> 
+    <span style="position:relative;top:-8px;left:-20px">${releaseDate_formatted}</span>
   </c:when>
   <c:otherwise>
     <a title="Check the news for an explanation why we are skipping EuPathDB Version numbers." 
