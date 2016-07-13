@@ -4,7 +4,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import {NativeCheckboxList} from 'wdk-client/Components';
-import {renderAttributeValue} from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
 import {isNodeOverflowing} from '../../util/domUtils';
 import DatasetGraph from '../common/DatasetGraph';
@@ -124,19 +123,19 @@ export function RecordTable(props) {
        : props.table.name === 'ProteinExpressionPBrowse'  ? <ProteinPbrowseTable {...props} />
        : props.table.name === 'Sequences'                 ? <SequencesTable {...props} />
        : props.table.name === 'UserComments'              ? <UserCommentsTable {...props} />
-       : props.table.name === 'SNPsAlignment'             ? <SnpsAlignmentForm {...props}
-                                                              seqIdAttributeName="sequence_id"
-                                                              strainAttributeName="strain"
-                                                              startAttributeName="context_start"
-                                                              endAttributeName="context_end" />
+       : props.table.name === 'SNPsAlignment'             ? <SNPsAlignment {...props} />
        : <props.DefaultComponent {...props} />
 }
 
-function OverviewItem(props) {
-    let { label, value = 'undefined' } = props;
-    return value == null ? <noscript/> : (
-        <div className="GeneOverviewItem"><label>{label}</label> {renderAttributeValue(value)}</div>
-    );
+function SNPsAlignment(props) {
+  let { context_start, context_end, sequence_id, organism_full } = props.record.attributes;
+  return (
+    <SnpsAlignmentForm
+      start={context_start}
+      end={context_end}
+      sequenceId={sequence_id}
+      organism={organism_full} />
+  )
 }
 
 function DatasetGraphTable(props) {
