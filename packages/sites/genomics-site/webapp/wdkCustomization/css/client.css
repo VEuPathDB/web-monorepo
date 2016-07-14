@@ -421,6 +421,8 @@ h4 {
   position: relative;
   padding: 0 4px;
   min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .eupathdb-DatasetGraphLoading {
@@ -430,11 +432,13 @@ h4 {
 }
 
 .eupathdb-DatasetGraph {
-  float: left;
+  width: 500px;
+  flex-grow: 1;
 }
 
 .eupathdb-DatasetGraphDetails {
-  margin-left: 500px;
+  width: 50%;
+  flex-grow: 1;
 }
 
 .eupathdb-DatasetGraphDescriptionHeader {
