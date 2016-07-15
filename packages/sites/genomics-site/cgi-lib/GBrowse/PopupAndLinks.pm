@@ -902,6 +902,7 @@ sub gsnapUnifiedIntronJunctionTitle {
   my ($intronPercent) = $f->get_tag_values('IntronPercent'); 
   my ($intronRatio) = $f->get_tag_values('IntronRatio'); 
   my ($matchesGeneStrand) = $f->get_tag_values('MatchesGeneStrand'); 
+  my ($isReversed) = $f->get_tag_values('IsReversed'); 
 
   my $start = $f->start;
   my $stop = $f->stop;
@@ -924,12 +925,12 @@ sub gsnapUnifiedIntronJunctionTitle {
   push @data, [ '<b>Sum Unique Reads</b>'     => "<b>$totalScore</b>" ];
   push @data, [ '<b>Percent of Max</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
   push @data, [ '<b>Score/Expression</b>'  => "<b>$intronRatio</b>"] if $intronRatio;
-##  push @data, [ '<b>Consistent Strand</b>'  => "<b>".($matchesGeneStrand == 1 ? "Yes" : $matchesGeneStrand == -1 ? "NA" : "No")." ($matchesGeneStrand)</b>"];
+  push @data, [ '<b>Strand (consistent)</b>'  => "<b>".($isReversed ? "Reverse" : "Forward").($intronPercent ? ($matchesGeneStrand == 1 ? " (Yes)" : " (No)") : "")."</b>"];
 
   my $count = 0;
   my $html;
   if($intronPercent){
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ Sample</th><th>ISRPM/ AvgExp</th><th>% Sample</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ Gene</th><th>ISRPM/ AvgExp</th><th>% Sample</th></tr>";
   }else{
     $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgExp</th></tr>";
   }

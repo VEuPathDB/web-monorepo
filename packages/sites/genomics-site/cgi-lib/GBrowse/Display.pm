@@ -231,6 +231,24 @@ sub gsnapIntronBgColorFromScore {
   return '#800517';   # Firebrick
 }
 
+sub gsnapIntronBgColorFromScoreAndCS {
+  my $f = shift;
+
+  my ($matchesGeneStrand) = $f->get_tag_values('MatchesGeneStrand'); 
+  my ($sum) = $f->get_tag_values('TotalScore'); 
+
+  # http://www.computerhope.com/htmcolor.htm
+  return '#B6B6B4' if $matchesGeneStrand != 1;   # Gray Cloud
+  return '#B6B6B4' if $sum <= 4;   # Gray Cloud
+  return '#F88017' if $sum <= 20;   # Dark Orange
+  return '#F87217' if $sum <= 50;  # Dark Orange1
+  return '#E56717' if $sum <= 100;  # Dark Orange2
+  return '#C35617' if $sum <= 300;  # Dark Orange3
+  return '#8A4117' if $sum <= 750; # Sienna
+  return '#7E3517' if $sum <= 1500; # Sienna4
+  return '#800517';   # Firebrick
+}
+
 
 sub gsnapIntronHeightFromScore {
   my $f = shift;
