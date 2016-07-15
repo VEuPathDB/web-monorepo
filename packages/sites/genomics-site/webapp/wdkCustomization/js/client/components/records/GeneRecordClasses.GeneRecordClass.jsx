@@ -343,10 +343,16 @@ function MercatorTable(props) {
 }
 
 function UserCommentsTable(props) {
+  let { user_comment_link_url } = props.record.attributes;
   return (
     <div>
       <p>
-        <a href={props.record.attributes.user_comment_link_url}>
+        <a href={user_comment_link_url}
+          onClick={e => {
+            e.preventDefault();
+            wdk.user.login('add a comment', user_comment_link_url);
+          }}
+        >
           Add a comment <i className="fa fa-comment"/>
         </a>
       </p>
