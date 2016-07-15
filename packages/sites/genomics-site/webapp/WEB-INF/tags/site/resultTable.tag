@@ -20,6 +20,10 @@
 <c:set var="questionName" value="${step.answerValue.question.name}"/>
 <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
+<c:set var="warningIcon">
+  <i class="fa fa-exclamation-circle fa-2x" aria-hidden="true" style="color:blue" title="Some Genes in your result have Transcripts that did not meet the search criteria."></i>
+</c:set>
+
 <c:if test="${fn:contains(recordClass.name,'Transcript')}"> 
   <c:set var="trRecord" value="true"/>
   <c:set var="showViewFilter" value="${step.answerValue.resultSize != step.answerValue.displayResultSize}"/>
@@ -61,9 +65,11 @@
     <div class="gene-leaf-filter ui-helper-clearfix"
          data-step="${step.stepId}"
          data-filter="matched_transcript_filter_array">
-
+<!--
       <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your result have Transcripts that did not meet the search criteria.' > 
-     
+-->
+      ${warningIcon}
+
       <strong title="Click on 'Add Columns' to add columns with transcript counts (under 'Gene Models)'.">
         <span>Some Genes in your result have Transcripts that did not meet the search criteria
           <c:if test="${ fn:contains(values, 'N') }">
@@ -110,8 +116,10 @@
     <div class="gene-boolean-filter ui-helper-clearfix"
          data-step="${step.stepId}"
          data-filter="gene_boolean_filter_array">
-
+<!--
       <img src='${baseUrl}/images/warningIcon2.png' style='width:20px;vertical-align:sub' title='Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.' >
+-->
+      ${warningIcon}
 
       <strong title=""Click on 'Add Columns' to add 2 columns (at the top) that show if a transcript matched the previous and/or the latest search.">
         <span>Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches</span>
