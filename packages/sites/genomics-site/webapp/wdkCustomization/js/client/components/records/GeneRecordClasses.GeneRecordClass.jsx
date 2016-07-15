@@ -349,6 +349,7 @@ function UserCommentsTable(props) {
       <p>
         <a href={user_comment_link_url}
           onClick={e => {
+            if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
             e.preventDefault();
             wdk.user.login('add a comment', user_comment_link_url);
           }}
