@@ -81,10 +81,10 @@ export function RecordHeading(DefaultComponent) {
   };
 }
 
-export function Record(DefaultComponent) {
+export function RecordMainSection(DefaultComponent) {
   return function ApiRecord(props) {
     let ResolvedComponent =
-      findComponent('Record', props.recordClass.name) || DefaultComponent;
+      findComponent('RecordMainSection', props.recordClass.name) || DefaultComponent;
     return (
       <div>
         <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
