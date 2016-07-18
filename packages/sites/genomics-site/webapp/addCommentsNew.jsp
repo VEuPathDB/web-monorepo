@@ -128,8 +128,8 @@ function openPubmedWindow(searchBoxId) {
 
   <c:when test="${empty wdkUser || wdkUser.guest}">
     <div style="margin:0 auto">
-      <p>Please login to post a comment.</p>
-      <imp:loginForm showCancel="false"/>
+      <h3>Please <a href="javascript:wdk.user.login()">login</a> to post a
+        comment to ${commentForm.commentTargetId} ${commentForm.stableId}</h3>
     </div>
   </c:when>
   
