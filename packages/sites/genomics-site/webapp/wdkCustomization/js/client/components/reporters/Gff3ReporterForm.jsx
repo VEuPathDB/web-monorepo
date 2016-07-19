@@ -37,8 +37,8 @@ let Gff3ReporterForm = props => {
               onChange={getUpdateHandler('attachmentType')} items={attachmentTypes}/>
         </div>
       </div>
-      <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
-        <input type="button" value="Submit" onClick={onSubmit}/>
+      <div className="eupathdb-ReporterFormSubmit">
+        <input type="submit" value="Submit" onClick={onSubmit}/>
       </div>
     </div>
   );
