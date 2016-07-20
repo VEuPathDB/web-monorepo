@@ -1,81 +1,84 @@
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TAGS 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-body {
-	background-image: url(../images/PlasmoDB/background_s.jpg);
-}
 
+body {
+	background-image: url(../images/CryptoDB/background_s.jpg);
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =FOOTER
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
 #fixed-footer {
-  background-color: #efedf2;
-  border: 1px solid #dfdfdf;
+  background-color: #fffff0; 
+  border: 1px solid #fffff0; 
 }
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
+/*
 #header {
-	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
+	background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
 }
 
 #header2 {
-	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
+	background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
 }
 
 #header_rt {
-   color: #6e549c;
+   color: #4a5f72;
 }
 
 #header_rt a:link, #header_rt a:visited {
-   color: #543792;
+   color: #33587a;
 }
+*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
+/*
 #nav-top {
-	color: #634697;
+	color: #255f95;
 }
 
 #nav-top a:link, #nav-top a:visited {
-	color: #634697;
+	color: #255f95;
 }
 
-#nav-top li ul {  /* second-level lists */
-	background-image: url(../images/PlasmoDB/footer.png);
-	border-color:#634697;
-	list-style-image: url(../images/PlasmoDB/bullet_arrow.gif);
+#nav-top li ul { 
+	background-image: url(../images/EuPathDB/footer.png);
+	border-color:#14426d;
+	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #634697;
+	color: #255f95;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #8f0165;
+	color: #717775;
 }
+*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  =HOME Page:  BUBBLE Lists
+	 =HOME Page:  BUBBLE Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-/* #bubbles .info {
-  min-height: 299px;
-} */
 
 .threecolumndiv div.heading {
 /*	background-image: url(../images/PlasmoDB/menu_lft2.png); */
-  background-color: #9070AF;  /* rebeccapurple; */
+  background-color:  #72a6c1;
+/* #346079  dark swoosh color */  /* #a3c8d0; #8bbfc8  header schisto  #41b6c4;  light blue */  /* #a1dab4;  greenish */
 
 }
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,25 +87,42 @@ body {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #888; /* #634697;  color as in contentcolumn border */
+   border-color: #888; /* #14426D;   color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-  background: #985c86;
+/*	background-image: url(../images/EuPathDB/menu_lft2.png); */
+  background:  #365e9b;
+/* #8d608b; small swoosh purple */   /* #346079; dark swoosh color */     /*  #2c7fb8; blue2   #253494;  dark blue */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =OLD FOOTER
+	 =Search Boxes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+.search-box{
+   border: solid 1px #255f95;
+} 
 
-
-#footer{
-   background-image: url(../images/PlasmoDB/footer.png);
+.search-box .textbox{
+	border: solid 1px #255f95;
 }
 
+*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =OLD FOOTER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+#footer{
+   background-image: url(../images/EuPathDB/footer.png);
+}
+
+
+
+/*THE END */
