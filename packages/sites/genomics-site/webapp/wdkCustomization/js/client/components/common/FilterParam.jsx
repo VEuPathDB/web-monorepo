@@ -17,12 +17,13 @@ export class FilterParam extends Component {
 
   componentDidMount() {
     let { questionName, dependedValue } = this.props;
-    $.getJSON(wdk.webappUrl('/getVocab.do?' +
+    this.xhr = $.getJSON(wdk.webappUrl('/getVocab.do?' +
       'questionFullName=' + questionName +
       '&name=ngsSnp_strain_meta' +
       '&dependedValue=' + JSON.stringify(dependedValue) +
-      '&json=true'))
-    .then(filterData => {
+      '&json=true'));
+
+    this.xhr.then(filterData => {
       this.filterService = new LazyFilterService({
         name: 'ngsSnp_strain_meta',
         fields: Object.keys(filterData.metadataSpec).map(key => Object.assign({
@@ -35,12 +36,13 @@ export class FilterParam extends Component {
       });
       this.handleServiceChange();
       this.setState({ isVocabLoading: false });
-      this.filterService.on('change', this.handleServiceChange);
+      this.subscription = this.filterService.addListener(this.handleServiceChange);
     });
   }
 
   componentWillUnmount() {
-    this.filterService && this.filterService.off('change', this.setStateFromService);
+    this.xhr.abort();
+    this.subscription && this.subscription.remove();
   }
 
   render() {
