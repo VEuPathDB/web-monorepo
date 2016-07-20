@@ -3,7 +3,7 @@ import { trimBooleanQuestionAttribs } from './client/util/modelSpecificUtil';
 import { getTree } from 'wdk-client/OntologyUtils';
 import { isQualifying, addSearchSpecificSubtree } from 'wdk-client/CategoryUtils';
 
-wdk.util.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
+wdk.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
   "use strict";
 
   // will map from summary views to attribute tree controller for that view

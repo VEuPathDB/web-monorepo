@@ -1,4 +1,4 @@
-wdk.util.namespace("eupathdb.foldChange", function(ns, $) {
+wdk.namespace("eupathdb.foldChange", function(ns, $) {
   "use strict";
 
   var SampleCollection = function(type) {

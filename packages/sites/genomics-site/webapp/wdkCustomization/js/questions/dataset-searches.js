@@ -1,4 +1,4 @@
-wdk.util.namespace("eupathdb.datasetSearches", function(ns, $) {
+wdk.namespace("eupathdb.datasetSearches", function(ns, $) {
   "use strict";
   ns.init = function($element, $attrs) {
 
