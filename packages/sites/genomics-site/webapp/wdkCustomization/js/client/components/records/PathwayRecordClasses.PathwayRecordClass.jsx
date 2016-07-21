@@ -805,9 +805,14 @@ function MetabolicProcessNodeDetails(props) {
  * @returns {XML}
  * @constructor
  */
-export function RecordAttribute(props) {
-  if (props.name === 'drawing') {
-    return <CytoscapeDrawing {...props}/>
+export function RecordAttributeSection(props) {
+  if (props.attribute.name === 'drawing') {
+    return (
+      <div>
+        <h4>{props.attribute.displayName}</h4>
+        <CytoscapeDrawing {...props}/>
+      </div>
+    )
   }
   else {
     return <props.DefaultComponent {...props}/>;

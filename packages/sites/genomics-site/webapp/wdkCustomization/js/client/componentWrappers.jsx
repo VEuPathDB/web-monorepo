@@ -1,7 +1,7 @@
 /* global wdk */
 import lodash from 'lodash';
 import React from 'react';
-import { CollapsibleSection, RecordAttribute } from 'wdk-client/Components';
+import { CollapsibleSection, RecordAttribute as WdkRecordAttribute } from 'wdk-client/Components';
 import {renderWithCustomElements} from './components/customElements';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -99,7 +99,7 @@ function RecordAttributionSection(props) {
     return (
       <div>
         <h3>Record Attribution</h3>
-        <RecordAttribute
+        <WdkRecordAttribute
           attribute={props.recordClass.attributesMap.get('attribution')}
           record={props.record}
           recordClass={props.recordClass}
@@ -138,6 +138,16 @@ export function RecordTable(DefaultComponent) {
     if (lodash.isEmpty(props.value)) return <DefaultComponent {...props}/>;
     let ResolvedComponent =
       findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+  };
+}
+
+export function RecordAttribute(DefaultComponent) {
+  return function ApiRecordAttribute(props) {
+    let { attribute, record } = props;
+    if (record.attributes[attribute.name] == null) return <DefaultComponent {...props}/>;
+    let ResolvedComponent =
+      findComponent('RecordAttribute', props.recordClass.name) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
