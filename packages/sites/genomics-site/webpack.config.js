@@ -63,10 +63,10 @@ function resolveWdkClientExternal(context, request, callback) {
   var matches = wdkClientRe.exec(request);
   if (matches != null) {
     if (matches[2]) {
-      return callback(null, 'var wdk.client.' + matches[2]);
+      return callback(null, 'var Wdk.' + matches[2]);
     }
     else {
-      return callback(null, 'var wdk.client');
+      return callback(null, 'var Wdk');
     }
   }
   callback();

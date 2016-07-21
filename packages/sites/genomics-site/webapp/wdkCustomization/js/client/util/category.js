@@ -3,6 +3,7 @@ import {seq} from 'wdk-client/IterableUtils';
 import {preorderSeq, pruneDescendantNodes} from 'wdk-client/TreeUtils';
 import {getTree} from 'wdk-client/OntologyUtils';
 import {getRecordClassName, isQualifying} from 'wdk-client/CategoryUtils';
+import context from '../main';
 
 let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
 
@@ -21,8 +22,8 @@ let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
  * @returns Promise<RecordClassTree[]>
  */
 export function getSearchMenuCategoryTree(wdkService, options) {
-  let ontology$ = wdk.client.runtime.wdkService.getOntology();
-  let recordClasses$ = wdk.client.runtime.wdkService.getRecordClasses();
+  let ontology$ = context.wdkService.getOntology();
+  let recordClasses$ = context.wdkService.getRecordClasses();
   return Promise.all([ ontology$, recordClasses$ ]).then(([ ontology, recordClasses ]) => {
     let recordClassMap = new Map(recordClasses.map( rc => [ rc.name, rc ] ));
     // get searches scoped for menu

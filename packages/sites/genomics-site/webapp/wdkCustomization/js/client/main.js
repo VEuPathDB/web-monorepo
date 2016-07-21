@@ -24,10 +24,10 @@ if (pathname.startsWith(aliasUrl)) {
 }
 
 // initialize the application
-window._app = initialize({
+export default (window.__context__ = initialize({
   rootUrl,
   rootElement,
   endpoint,
   applicationRoutes,
   storeWrappers
-});
+}));

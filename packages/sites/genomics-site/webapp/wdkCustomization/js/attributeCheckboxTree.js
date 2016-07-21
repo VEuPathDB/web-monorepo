@@ -2,6 +2,7 @@ import CheckboxTreeController from './checkboxTreeController';
 import { trimBooleanQuestionAttribs } from './client/util/modelSpecificUtil';
 import { getTree } from 'wdk-client/OntologyUtils';
 import { isQualifying, addSearchSpecificSubtree } from 'wdk-client/CategoryUtils';
+import context from './client/main';
 
 wdk.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
   "use strict";
@@ -21,7 +22,7 @@ wdk.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
    * @returns {Promise.<T>}
    */
   function setUpCheckboxTree(element, attributes) {
-    let { wdkService } = wdk.client.runtime;
+    let { wdkService } = context;
     let questionName = attributes.questionName;
     let recordClassName = attributes.recordClassName;
     let defaultSelectedList = attributes.defaultSelectedList.replace(/'/g,"").split(",");

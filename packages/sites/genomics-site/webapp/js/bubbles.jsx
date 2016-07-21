@@ -4,11 +4,12 @@ import {pick} from 'lodash';
 import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip} from 'wdk-client/Components';
 import {getSearchMenuCategoryTree} from '../wdkCustomization/js/client/util/category';
+import context from '../wdkCustomization/js/client/main';
 
 wdk.namespace('apidb.bubble', ns => {
   ns.initialize = ($el, attrs) => {
     let options = pick(attrs, 'include', 'exclude');
-    getSearchMenuCategoryTree(wdk.client.runtime.wdkService, options).then(tree => {
+    getSearchMenuCategoryTree(context.wdkService, options).then(tree => {
       if (tree.children.length === 1) {
         renderBubble({ tree: tree.children[0] }, $el[0]);
       } else {
