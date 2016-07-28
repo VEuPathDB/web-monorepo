@@ -40,7 +40,7 @@ body {
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/ToxoDB/footer.png);
+/* 	background-image: url(../images/ToxoDB/footer.png); */
 	border-color:#3c8935;
 	list-style-image: url(../images/ToxoDB/bullet_arrow.gif);
 }

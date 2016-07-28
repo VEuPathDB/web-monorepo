@@ -30,7 +30,7 @@ body {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-/*
+
 #nav-top {
 	color: #395b8e;
 }
@@ -40,7 +40,7 @@ body {
 }
 
 #nav-top li ul { 
-	background-image: url(../images/CryptoDB/footer.png);
+/*	background-image: url(../images/CryptoDB/footer.png); */
 	border-color:#395b8e;
 	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
 }
@@ -52,13 +52,12 @@ body {
 #nav-top li ul a:hover, #nav-top li ul a:active {
 	color: #630d0d;
 }
-*/
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 .threecolumndiv div.heading {
-/*	background-image: url(../images/PlasmoDB/menu_lft2.png); */
   background-color: #274f94;
 }
 
