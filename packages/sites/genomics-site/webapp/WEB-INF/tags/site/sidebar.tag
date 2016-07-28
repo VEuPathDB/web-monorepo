@@ -216,7 +216,7 @@
     </c:if>
 
     <!--  EVENTS -->
-    <b>Upcoming Events</b>
+    <b>Upcoming Events with EuPathDB presence</b>
     <imp:communityEventListing/>
     <br><br>
     <hr>
