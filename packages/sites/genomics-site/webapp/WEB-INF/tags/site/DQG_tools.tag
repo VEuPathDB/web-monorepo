@@ -23,6 +23,9 @@
     <li><a href="https://companion.sanger.ac.uk"><strong>Companion</strong></a>
 		  <ul><li  style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
     </li>
+    <li><a href="http://grna.ctegd.uga.edu"><strong>EuPaGDT</strong></a>
+			<ul><li  style="border:0">Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool</li></ul>
+		</li>
 		<li><a href="/pubcrawler/${modelName}"><strong>PubMed and Entrez</strong></a>
 			<ul><li  style="border:0">View the Latest Pubmed and Entrez Results</li></ul>
 		</li>
