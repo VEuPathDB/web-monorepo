@@ -3,7 +3,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(../images/CryptoDB/background_s.jpg);
+	background-image: url(../images/MicrobiomeDB/background_s.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,6 +26,7 @@ body {
 #header2 {
 	background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
 }
+*/
 
 #header_rt {
    color: #4a5f72;
@@ -34,12 +35,12 @@ body {
 #header_rt a:link, #header_rt a:visited {
    color: #33587a;
 }
-*/
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-/*
+
 #nav-top {
 	color: #255f95;
 }
@@ -49,7 +50,7 @@ body {
 }
 
 #nav-top li ul { 
-	background-image: url(../images/EuPathDB/footer.png);
+/* 	background-image: url(../images/EuPathDB/footer.png); */
 	border-color:#14426d;
 	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
 }
@@ -61,68 +62,39 @@ body {
 #nav-top li ul a:hover, #nav-top li ul a:active {
 	color: #717775;
 }
-*/
+
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME Page:  BUBBLE Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-
 .threecolumndiv div.heading {
-/*	background-image: url(../images/PlasmoDB/menu_lft2.png); */
-  background-color:  #72a6c1;
-/* #346079  dark swoosh color */  /* #a3c8d0; #8bbfc8  header schisto  #41b6c4;  light blue */  /* #a1dab4;  greenish */
-
+  background-color:  #517bb8;  /* #517bb8;  num 2 and  dark crypto */  /*  #75b4c4;  num 3 and shisto header light blue-green  */
 }
+
+
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #888; /* #14426D;   color as in contentcolumn border */
+   border-color: #888; 
 }
 
 #menu_lefttop a.heading {
-/*	background-image: url(../images/EuPathDB/menu_lft2.png); */
-  background:  #365e9b;
-/* #8d608b; small swoosh purple */   /* #346079; dark swoosh color */     /*  #2c7fb8; blue2   #253494;  dark blue */
+  background: #292d94;        /* #517bb8; num2 and dark crypto */  /* #292d94; num 1 */    
+      /* #34607b; blue as in shisto dark header */  
+      /* #365e9b; blue as in title as in crypto swoosh  */
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Search Boxes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*
-.search-box{
-   border: solid 1px #255f95;
-} 
-
-.search-box .textbox{
-	border: solid 1px #255f95;
-}
-
-*/
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =OLD FOOTER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
-#footer{
-   background-image: url(../images/EuPathDB/footer.png);
-}
-
 
 
 /*THE END */
