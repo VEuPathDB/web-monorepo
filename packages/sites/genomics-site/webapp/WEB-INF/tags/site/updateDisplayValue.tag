@@ -7,15 +7,23 @@
               required="true"
               description="column value to be updated, passed from wdkAttribute"
 %>
+<%@ attribute name="columnName"
+              required="false"
+              description="name of the column"
+%>
 
 <c:choose>
-<c:when test="${displayValue eq 'Y'}">
-  <imp:image src="wdk/images/checkY-2.png" width="20px" />
-</c:when>
-<c:when test="${displayValue eq 'N'}">
-  <imp:image src="wdk/images/checkN-2.png" width="20px" />
+<%-- transcript result dynamic column --%>
+<c:when test="${columnName eq 'matched_result'}">
+  <c:if test="${displayValue eq 'Y'}">
+    <imp:image src="wdk/images/checkY-2.png" width="20px" />
+  </c:if>
+  <c:if test="${displayValue eq 'N'}">
+     <imp:image src="wdk/images/checkN-2.png" width="20px" />
+  </c:if>
 </c:when>
 <c:otherwise>
   <wdk:updateDisplayValue displayValue = "${displayValue}" /> 
 </c:otherwise>
+
 </c:choose>
