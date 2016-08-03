@@ -1,6 +1,7 @@
 import {Component} from 'react';
 import {CollapsibleSection} from 'wdk-client/Components';
 import {CompoundStructure} from '../common/Compound';
+import DatasetGraph from '../common/DatasetGraph';
 
 export function RecordTable(props) {
   return props.table.name === 'Structures' ? <CompoundStructures {...props}/>
@@ -43,4 +44,40 @@ class CompoundStructures extends Component {
       </div>
     );
   }
+}
+
+let expressionRE = /MassSpecGraphs$/;
+export function RecordTable(props) {
+  return expressionRE.test(props.table.name)              ? <DatasetGraphTable {...props} />
+       : <props.DefaultComponent {...props} />
+}
+
+
+function DatasetGraphTable(props) {
+  let included = props.table.properties.includeInTable || [];
+
+  let dataTable;
+     dataTable = Object.assign({}, {
+        value: props.record.tables.MassSpecGraphsDataTable,
+        table: props.recordClass.tables.find(obj => obj.name == "MassSpecGraphsDataTable"),
+        record: props.record,
+        recordClass: props.recordClass,
+        DefaultComponent: props.DefaultComponent
+    }
+    );
+
+    let table = Object.assign({}, props.table, {
+        attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
+    });
+    
+    return (
+        <div>
+            <props.DefaultComponent
+            {...props}
+            table={table}
+            childRow={childProps =>
+                <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
+            />
+        </div>
+    );
 }
