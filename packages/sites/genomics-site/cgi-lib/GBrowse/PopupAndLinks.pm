@@ -903,6 +903,7 @@ sub gsnapUnifiedIntronJunctionTitle {
   my ($intronRatio) = $f->get_tag_values('IntronRatio'); 
   my ($matchesGeneStrand) = $f->get_tag_values('MatchesGeneStrand'); 
   my ($isReversed) = $f->get_tag_values('IsReversed'); 
+  my ($annotIntron) = $f->get_tag_values('AnnotatedIntron'); 
 
   my $start = $f->start;
   my $stop = $f->stop;
@@ -926,6 +927,7 @@ sub gsnapUnifiedIntronJunctionTitle {
   push @data, [ '<b>Percent of Max</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
   push @data, [ '<b>Score/Expression</b>'  => "<b>$intronRatio</b>"] if $intronRatio;
   push @data, [ '<b>Strand (consistent)</b>'  => "<b>".($isReversed ? "Reverse" : "Forward").($intronPercent ? ($matchesGeneStrand == 1 ? " (Yes)" : " (No)") : "")."</b>"];
+  push @data, [ '<b>Annotated</b>'  => "<b>$annotIntron</b>"] if $intronRatio;
 
   my $count = 0;
   my $html;
