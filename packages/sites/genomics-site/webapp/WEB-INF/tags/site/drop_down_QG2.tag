@@ -36,7 +36,7 @@
         <li>
           <c:choose>
             <c:when test="${from == 'webservices'}">
-            <a title="This one WADL contains documentation for all gene web service searches"  href="${baseUrl}/webservices/GeneQuestions.wadl"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Genes</h3></a>
+            <a title="This one WADL contains documentation for all gene web service searches"  href="${baseUrl}/webservices/GeneQuestions.wadl"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Gene Attributes</h3></a>
 
     <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
     <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
@@ -53,13 +53,6 @@
             </c:otherwise>
           </c:choose>
           <ul>       <%-- GENE CATEGORIES --%>
-<%--
-<c:if test="${from != 'webservices'}">
-  <li><a href="${baseUrl}/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch">Text (product name, notes, etc.)</a>
-  </li>
-</c:if>
---%>
-
             <c:forEach items="${children}" var="catEntry">
               <c:set var="cat" value="${catEntry.value}" />
           <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
@@ -166,38 +159,67 @@
       <c:choose>
         <c:when test="${from == 'webservices'}">
 
-    <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
-    <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
-    <c:set var="rootCatWS" value="${rootCatEntryWS.value}" />
-    <c:if test="${recTypeWS==recType}">
-              <c:set var="children" value="${rootCatWS.webserviceChildren}" />
-    </c:if>
-    </c:forEach>
-
+        <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
+          <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
+          <%-- rootCatWS is  a SearchCategory(.java) displayName comes from eupathCategoriesFactory for recordtypes--%>
+          <c:set var="rootCatWS" value="${rootCatEntryWS.value}" />
+<%--  DEBUG
+<br>
+**** ${recTypeWS} **** ${recType}  ****  rootCatWS is: ${rootCatWS.name} ==  ${rootCatWS.displayName} 
+<br>
+--%>
+          <c:if test="${recTypeWS==recType}">
+<%--  DEBUG
+<br>
+**** matched recType:  setting children for webservices
+<br>
+--%>
+            <c:set var="children" value="${rootCatWS.webserviceChildren}" />
+          </c:if>
+        </c:forEach>
         </c:when>
         <c:otherwise>
           <c:set var="children" value="${rootCat.websiteChildren}" />
         </c:otherwise>
       </c:choose>
-      
+<%--  DEBUG    
+<br>
+*************************************  CHILDREN IN PLACE for ${recType}, now loop on children
+<br>
+--%>
       <c:forEach items="${children}" var="catEntry">
         <c:set var="cat" value="${catEntry.value}" />
+<%--
+<br>
+************************************* FOR EACH CHILD.. do we have (website or webservice) questions ?
+<br>
+--%>
         <c:if test="${fn:length(cat.websiteQuestions) > 0}">
           <c:choose>
 
-             <%-- WEBSERVICES PAGE  --%>
+            <%-- WEBSERVICES PAGE  --%>
             <c:when test="${from == 'webservices'}">
+<%--
+<br>
+************************************* WE DO!! 
+<br>
+--%>
               <c:forEach items="${questionSets}" var="qSet">
-<!-- DEBUG 
+<%-- DEBUG
 <br>
-${qSet.displayName}---${qSet.internal}---${cat.displayName}
+checking if third string is contained in first :   ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 <br>
--->
-                <c:if test="${qSet.internal == false}">
+--%>
 
-                <%--   <c:if test="${qSet.displayName == cat.displayName}"> --%>
+                <c:if test="${qSet.internal == false}">
                   <c:if test="${fn:contains(qSet.displayName,cat.displayName)}">
-                   
+<%-- DEBUG
+<br> MATCHED CATEGORY DISPLAYNAME WITH QSET DISPLAYNAME
+****${qSet.displayName}---${qSet.internal}---${cat.displayName}
+<br>
+READY TO ADD NEW RECORD TYPE SECTION
+<br><br>
+--%>
                     <li>
                       <a href="${baseUrl}/webservices/${qSet.name}.wadl"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
                       <ul>
