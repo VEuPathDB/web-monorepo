@@ -1,18 +1,21 @@
-import GalaxyTerms from "../GalaxyTerms";
-import { WdkViewController, UserActionCreators } from 'wdk-client/Components';
+import { WdkViewController } from 'wdk-client/Controllers';
+import { UserActionCreators } from 'wdk-client/ActionCreators';
+import GalaxyTerms from '../GalaxyTerms';
+
+let updateUserPreference = UserActionCreators.updateUserPreference;
 
 class GalaxyTermsController extends WdkViewController {
 
   getStoreName() {
-    return "UserProfileStore";
+    return "GalaxyTermsStore";
   }
 
   getActionCreators() {
-    return UserActionCreators;
+    return { updateUserPreference };
   }
 
   isRenderDataLoaded(state) {
-    return (state.user != null);
+    return (state.preferences != null);
   }
 
   getTitle() {

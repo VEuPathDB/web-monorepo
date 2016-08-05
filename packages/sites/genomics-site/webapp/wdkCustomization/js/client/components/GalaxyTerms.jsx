@@ -20,26 +20,28 @@ let GalaxyTerms = React.createClass({
           is a preview, so you know what to expect.
         </p>
         <table>
-          <tr>
-            <td>Image 1</td>
-            <td>Image 2</td>
-            <td>Image 3</td>
-          </tr>
-          <tr>
-            <td>
-              (1) Their Terms and Conditions.<br />
-              <strong>Please read and click Agree</strong>
-            </td>
-            <td>
-              (2) If you already have a Globus accunt, you can
-              link it to your new EuPathDB account.  <strong>Your choice.</strong>
-              If you don't have a prior Globus account, choose <strong>No Thanks.</strong>
-            </td>
-            <td>
-              (3) Permission to share identity with us.<br />
-              <strong>Please click Allow.</strong>
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>Image 1</td>
+              <td>Image 2</td>
+              <td>Image 3</td>
+            </tr>
+            <tr>
+              <td>
+                (1) Their Terms and Conditions.<br />
+                <strong>Please read and click Agree</strong>
+              </td>
+              <td>
+                (2) If you already have a Globus accunt, you can
+                link it to your new EuPathDB account.  <strong>Your choice.</strong>
+                If you don't have a prior Globus account, choose <strong>No Thanks.</strong>
+              </td>
+              <td>
+                (3) Permission to share identity with us.<br />
+                <strong>Please click Allow.</strong>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
     )

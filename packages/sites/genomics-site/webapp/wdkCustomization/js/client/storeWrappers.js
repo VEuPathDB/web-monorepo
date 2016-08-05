@@ -1,5 +1,6 @@
 import lodash from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat, StaticDataUtils } from 'wdk-client';
+import { WdkStore } from 'wdk-client/Stores';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 
@@ -12,6 +13,17 @@ export function DownloadFormStore(WdkDownloadFormStore) {
       return selectReporterComponent(selectedReporterName, recordClassName);
     }
   }
+}
+
+export function GalaxyTermsStore() {
+  return class ApiGalaxyTermsStore extends WdkStore {
+    getRequiredStaticDataProps() {
+      return [ StaticDataProps.PREFERENCES ];
+    }
+    getInitialState() {
+      return { preferences: null };
+    }
+  };
 }
 
 /** Return a subclass of the provided RecordViewStore */
