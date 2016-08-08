@@ -15,7 +15,7 @@ class GalaxyTermsController extends WdkViewController {
   }
 
   isRenderDataLoaded(state) {
-    return (state.preferences != null);
+    return (state.preferences != null && state.user != null);
   }
 
   getTitle() {

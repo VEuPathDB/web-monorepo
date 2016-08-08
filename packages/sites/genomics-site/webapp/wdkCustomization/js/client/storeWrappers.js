@@ -18,10 +18,10 @@ export function DownloadFormStore(WdkDownloadFormStore) {
 export function GalaxyTermsStore() {
   return class ApiGalaxyTermsStore extends WdkStore {
     getRequiredStaticDataProps() {
-      return [ StaticDataProps.PREFERENCES ];
+      return [ StaticDataProps.PREFERENCES, StaticDataProps.USER ];
     }
     getInitialState() {
-      return { preferences: null };
+      return { preferences: null, user: null };
     }
   };
 }
