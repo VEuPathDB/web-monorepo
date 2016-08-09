@@ -827,15 +827,20 @@ h4 {
   width: 100%;
 }
 
-#eupathdb-GalaxyTerms-imageTable {
+#eupathdb-GalaxyTerms-login {
+  width: 33%;
+}
+
+#eupathdb-GalaxyTerms-initial {
   width: 100%;
 }
 
-#eupathdb-GalaxyTerms-imageTable img {
+#eupathdb-GalaxyTerms img {
   width: 90%;
+  border: solid #365EA2 1px;
 }
 
-#eupathdb-GalaxyTerms-imageTable td {
+#eupathdb-GalaxyTerms td {
   width: 33%;
 }
 
