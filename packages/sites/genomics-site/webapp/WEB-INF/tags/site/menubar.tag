@@ -220,6 +220,13 @@
       </ul>
     </li>
 
+  <li >
+    <a style="padding:5px 1em" onclick="" href="">
+      <imp:image src="wdk/images/new-feature.png" height="14" />
+      <span>Analyze my experiment</span>
+    </a>
+  </li>
+
     <c:if test="${project != 'EuPathDB'}" >
 
       <c:choose>
