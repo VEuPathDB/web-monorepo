@@ -1,5 +1,4 @@
 import {Image} from 'wdk-client/Components';
-import {isNullOrUndefined} from 'wdk-client/'
 
 let GalaxyTerms = React.createClass({
 
@@ -70,8 +69,8 @@ let GalaxyTerms = React.createClass({
       alert("Please log in first");
     }
     else {
-      //this.props.galaxyTermsActions.updateUserPreference("show-galaxy-orientation-page",false);
-      location.href = "https://eupathdb.globusgenomics.org";
+      this.props.galaxyTermsActions.updateUserPreference("show-galaxy-orientation-page",false);
+      //location.href = "https://eupathdb.globusgenomics.org";
     }
   }
 });
