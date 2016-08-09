@@ -59,18 +59,20 @@ let GalaxyTerms = React.createClass({
       </div>
     );
   },
+
   checkForFlag() {
-    if(!this.props.user.isGuest && this.props.preferences["show-galaxy-orientation-page"] != null) {
+    if (!this.props.user.isGuest && this.props.preferences["show-galaxy-orientation-page"] == "false") {
       location.href = "https://eupathdb.globusgenomics.org";
     }
   },
+
   onSubmit() {
-    if(this.props.user.isGuest) {
+    if (this.props.user.isGuest) {
+      // TODO: Tell user they must log in to perform this operation and give them the option
       alert("Please log in first");
     }
     else {
-      this.props.galaxyTermsActions.updateUserPreference("show-galaxy-orientation-page",false);
-      //location.href = "https://eupathdb.globusgenomics.org";
+      this.props.galaxyTermsActions.updateUserPreference("show-galaxy-orientation-page", "false");
     }
   }
 });
