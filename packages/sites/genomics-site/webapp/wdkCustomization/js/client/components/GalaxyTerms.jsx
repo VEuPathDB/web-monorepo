@@ -1,9 +1,11 @@
-import {Image} from 'wdk-client/Components';
+import { Image, Loading } from 'wdk-client/Components';
 
 let GalaxyTerms = React.createClass({
 
   render() {
-    this.checkForFlag();
+    if (this.willRedirectToGlobus()) {
+      return <Loading/>;
+    }
     return (
       <div id="eupathdb-GalaxyTerms">
         <h1>Analyze My Experiment</h1>
@@ -60,10 +62,12 @@ let GalaxyTerms = React.createClass({
     );
   },
 
-  checkForFlag() {
+  willRedirectToGlobus() {
     if (!this.props.user.isGuest && this.props.preferences["show-galaxy-orientation-page"] == "false") {
       location.href = "https://eupathdb.globusgenomics.org";
+      return true;
     }
+    return false;
   },
 
   onSubmit() {
