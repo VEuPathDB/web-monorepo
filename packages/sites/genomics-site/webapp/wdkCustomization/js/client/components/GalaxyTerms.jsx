@@ -38,14 +38,14 @@ let GalaxyTerms = React.createClass({
             </tr>
             <tr>
               <td>
-                (1) Their Terms and Conditions.<br />
-                <strong>Please read and click Agree</strong>
-              </td>
-              <td>
-                (2) If you already have a Globus account, you can
+                (1) If you already have a Globus account, you can
                 link it to your new EuPathDB account.
                 <strong>Your choice.</strong> If you don't
                 have a prior Globus account, choose <strong>No Thanks.</strong>
+              </td>
+              <td>
+                (2) Their Terms and Conditions.<br />
+                <strong>Please read and click Agree</strong>
               </td>
               <td>
                 (3) Permission to share identity with us.<br />
