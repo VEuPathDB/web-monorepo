@@ -64,7 +64,8 @@ let GalaxyTerms = React.createClass({
 
   willRedirectToGlobus() {
     if (!this.props.user.isGuest && this.props.preferences["show-galaxy-orientation-page"] == "false") {
-      location.href = "https://eupathdb.globusgenomics.org";
+      history.replaceState("https://eupathdb.globusgenomics.org");
+      //location.href = "https://eupathdb.globusgenomics.org";
       return true;
     }
     return false;
@@ -72,8 +73,7 @@ let GalaxyTerms = React.createClass({
 
   onSubmit() {
     if (this.props.user.isGuest) {
-      // TODO: Tell user they must log in to perform this operation and give them the option
-      alert("Please log in first");
+      return this.props.galaxyTermsActions.showLoginWarning("use Galaxy")
     }
     else {
       this.props.galaxyTermsActions.updateUserPreference("show-galaxy-orientation-page", "false");
