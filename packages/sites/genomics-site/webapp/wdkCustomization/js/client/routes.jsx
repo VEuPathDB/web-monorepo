@@ -15,7 +15,7 @@ export let routes = (
 
     <Route path="fasta-tool" component={FastaConfigController}/>
     <Route path="query-grid" component={QueryGridController}/>
-    <Route path="galaxy-terms" component={GalaxyTermsController}/>
+    <Route path="galaxy-orientation" component={GalaxyTermsController}/>
 
     {/* test/demonstration pages */}
     <Route path="sample-form" component={SampleForm}/>

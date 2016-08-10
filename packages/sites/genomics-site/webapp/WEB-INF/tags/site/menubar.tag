@@ -221,7 +221,7 @@
     </li>
 
   <li >
-    <a style="padding:5px 1em" onclick="" href="${baseUrl}/app/galaxy-terms">
+    <a style="padding:5px 1em" onclick="" href="${baseUrl}/app/galaxy-orientation">
       <imp:image src="wdk/images/new-feature.png" height="14" />
       <span>Analyze my experiment</span>
     </a>
