@@ -3,6 +3,7 @@ import { UserActionCreators } from 'wdk-client/ActionCreators';
 import GalaxyTerms from '../GalaxyTerms';
 
 let updateUserPreference = UserActionCreators.updateUserPreference;
+let showLoginWarning = UserActionCreators.showLoginWarning
 
 class GalaxyTermsController extends WdkViewController {
 
@@ -11,7 +12,7 @@ class GalaxyTermsController extends WdkViewController {
   }
 
   getActionCreators() {
-    return { updateUserPreference };
+    return { updateUserPreference, showLoginWarning };
   }
 
   isRenderDataLoaded(state) {
