@@ -64,8 +64,7 @@ let GalaxyTerms = React.createClass({
 
   willRedirectToGlobus() {
     if (!this.props.user.isGuest && this.props.preferences["show-galaxy-orientation-page"] == "false") {
-      //history.replaceState(null, null, "https://eupathdb.globusgenomics.org");
-      location.href = "https://eupathdb.globusgenomics.org";
+      location.replace("https://eupathdb.globusgenomics.org");
       return true;
     }
     return false;
