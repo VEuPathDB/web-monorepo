@@ -16,7 +16,7 @@ let GalaxyTerms = React.createClass({
                 <p>It looks like this is the first time you are exploring this service.</p>
                 <p>We have a little paperwork to get out of the way.</p>
                 <p>The EuPathDB Galaxy service is hosted by Globus Genomics, an affiate of Globus.</p>
-                <p>This first login screen will always appear:</p>
+                <p>This login screen to the right will always appear.  Please click <strong>Continue</strong>.</p>
               </td>
               <td width="40%" align="right"><Image title="Globus Login Gateway" src="wdkCustomization/images/globus-01-log-in.jpg"/></td>
             </tr>
