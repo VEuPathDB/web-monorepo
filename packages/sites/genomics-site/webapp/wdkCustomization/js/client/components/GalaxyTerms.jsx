@@ -9,21 +9,18 @@ let GalaxyTerms = React.createClass({
     return (
       <div id="eupathdb-GalaxyTerms">
         <h1>Analyze My Experiment</h1>
-        <p>
-          It looks like this is the first time you are exploring this service.
-        </p>
-        <p>
-          We have a little paperwork to get out of the way.
-        </p>
-        <p>
-          The EuPathDB Galaxy service is hosted by Globus Genomics, an affiate of Globus.
-        </p>
-        <p>
-          The following login screen will always appear.
-        </p>
+       
         <table id="eupathdb-GalaxyTerms-login">
           <tbody>
-            <tr><td><Image title="Screenshot of Globus Page" src="wdkCustomization/images/globusGalaxy.png"/></td></tr>
+            <tr>
+              <td width="60%">
+                <p>It looks like this is the first time you are exploring this service.</p>
+                <p>We have a little paperwork to get out of the way.</p>
+                <p>The EuPathDB Galaxy service is hosted by Globus Genomics, an affiate of Globus.</p>
+                <p>This first login screen will always appear:</p>
+              </td>
+              <td width="40%" align="right"><Image title="Screenshot of Globus Page" src="wdkCustomization/images/globusGalaxy.png"/></td>
+            </tr>
           </tbody>
         </table>
         <p>
