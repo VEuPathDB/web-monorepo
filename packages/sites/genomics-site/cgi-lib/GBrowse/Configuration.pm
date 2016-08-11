@@ -34,6 +34,7 @@ sub new {
   my $user = $c->appDb->login;
   my $pass = $c->appDb->password;
   my $dbh = Bio::Graphics::Browser2::ConnectionCache->get_instance->connect($dsn, $user, $pass, "Configuration");
+  $dbh->{'LongReadLen'} = 500000;  ##increase as overflowing in intron junction track
   #         #17815: Use ConnectionCache to share connection with GUS.pm
   #         DBI->connect( $dsn, $user, $pass) or $self->throw("unable to open db handle");
   bless ($self, $class);
@@ -218,7 +219,7 @@ sub popup_template {
 
 
 sub hover {
-  my ($f, $data) = @_;
+  my ($f, $data, $spanLast) = @_;
 
   my $type = $f->type;
   my $name = $f->feature_id;
@@ -233,7 +234,7 @@ sub hover {
     }
     close F;
   }
-  return "url:/cgi-bin/gp?t=$type&n=$name";
+  return "url:/cgi-bin/gp?t=$type&n=$name".($spanLast ? "&c=yes" : "");
 }
 
 

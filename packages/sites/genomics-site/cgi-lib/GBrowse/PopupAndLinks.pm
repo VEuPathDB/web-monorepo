@@ -920,57 +920,59 @@ sub gsnapUnifiedIntronJunctionTitle {
   my @avgExpRatio_arr = split /\|/, $avgExpRatio;
   my @isrpmAvgExpRatio_arr = split /\|/, $isrpmAvgExpRatio;
 
-
-  my @data;
-  push @data, [ 'Location:'  => "$start - $stop (".($stop - $start + 1).")"];
-  push @data, [ '<b>Sum Unique Reads</b>'     => "<b>$totalScore</b>" ];
-  push @data, [ '<b>Percent of Max</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
-  push @data, [ '<b>Score/Expression</b>'  => "<b>$intronRatio</b>"] if $intronRatio;
-  push @data, [ '<b>Strand (consistent)</b>'  => "<b>".($isReversed ? "Reverse" : "Forward").($intronPercent ? ($matchesGeneStrand == 1 ? " (Yes)" : " (No)") : "")."</b>"];
-  push @data, [ '<b>Annotated</b>'  => "<b>$annotIntron</b>"] if $intronRatio;
-
+  ##First build the html table so can capture max isrpm and thus maxRatio
   my $count = 0;
   my $html;
   if($intronPercent){
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ Gene</th><th>ISRPM/ AvgExp</th><th>% Sample</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ FPKM</th><th>% Sample</th></tr>";
   }else{
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgExp</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th></tr>";
   }
+
+  my $maxRatio = [0,0,'sample here'];
+  my $sumIsrpm = 0;
   foreach my $exp (@exp_arr) {
-
-#     $exp =~ s/_RSRC$//g;
-#     $exp =~ s/RNASeq//ig;
-#     $exp =~ s/_/ /g;
-
-     my @sa = split /,/, $sample_arr[$count];
-     my @ur = split /,/, $ur_arr[$count];
-     my @isrpm = split /,/, $isrpm_arr[$count];
-     my @nrs = split /,/, $nrs_arr[$count];
-     my @rs = split /,/, $isrpmExpRatio_arr[$count];
-     my @rt = split /,/, $isrpmAvgExpRatio_arr[$count];
-     my @ps = split /,/, $percSamp_arr[$count];
-
-     for(my $i = 0; $i < $#sa + 1; $i++) {
-
-       if($i == 0) {
-         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
-       } else {
-         $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
-       }
-       if($intronPercent){
-         $html .= "<td>$rs[$i]</td><td>$rt[$i]</td><td>$ps[$i]</td></tr>";
-       }else{
-         $html .= "<td>$rt[$i]</td></tr>";
-       }
-     }
-     $count++;
+    
+    my @sa = split /,/, $sample_arr[$count];
+    my @ur = split /,/, $ur_arr[$count];
+    my @isrpm = split /,/, $isrpm_arr[$count];
+    my @nrs = split /,/, $nrs_arr[$count];
+    my @rs = split /,/, $isrpmExpRatio_arr[$count];
+    my @rt = split /,/, $isrpmAvgExpRatio_arr[$count];
+    my @ps = split /,/, $percSamp_arr[$count];
+    
+    my $i = 0;
+    for($i; $i < $#sa + 1; $i++) {
+      $maxRatio = [ $isrpm[$i],$intronPercent ? $rs[$i] : $rt[$i], $sa[$i] ] if $isrpm[$i] > $maxRatio->[0];
+      $sumIsrpm += $isrpm[$i];
+      
+      if($i == 0) {
+        $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
+      } else {
+        $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
+      }
+      if($intronPercent){
+        $html .= "<td>$rs[$i]</td><td>$ps[$i]</td></tr>";
+      }else{
+        $html .= "<td>$rt[$i]</td></tr>";
+      }
+    }
+    $count++;
   }
   $html .= "</table>";
-  push @data, [ '' => $html ];
+  
+  my @data;
+  push @data, [ '<b>Location (length):</b>'  => "<b>$start - $stop (".($stop - $start + 1).")".($annotIntron eq "Yes" ? " - Annotated</b>" : "</b>")];
+  push @data, [ '<b>Sum Unique Reads (ISRPM):</b>'     => "<b>$totalScore ($sumIsrpm)</b>" ];
+  push @data, [ '<b>Percent of Max:</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
+  push @data, [ '<b>Highest Sample (ISRPM):</b>'  => "<b>$maxRatio->[2] ($maxRatio->[0])</b>"];
+  push @data, [ $intronPercent ? '<b>Best ISRPM / FPKM:</b>' : '<b>Best ISRPM / avg(FPKM)</b>'  => "<b>$maxRatio->[1]</b>"];
 
+
+  push @data, [ $html ];
 
 #  hover('Unified Splice Site Junctions - RNASeq', \@data);
-  hover($f, \@data); 
+  hover($f, \@data,1); 
 }
 
 sub massSpecTitle {  
