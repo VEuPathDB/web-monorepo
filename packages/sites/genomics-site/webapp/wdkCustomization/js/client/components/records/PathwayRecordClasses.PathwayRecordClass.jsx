@@ -5,6 +5,7 @@ import $ from 'jquery';
 import {Image} from 'wdk-client/Components';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {CompoundStructure} from '../common/Compound';
+import { CheckboxList } from 'wdk-client/Components';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
@@ -16,7 +17,7 @@ const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
 let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
 let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
-//let pathwayFilesBaseUrl = "/plasmodb/data/";
+//let pathwayFilesBaseUrl = "/plasmodb/data/downloads/pathwayFiles/";
 let pathwayFileExt = ".xgmml";
 
 // initialization options
@@ -424,6 +425,48 @@ export class CytoscapeDrawing extends React.Component {
     });
   }
 
+  onGeneraChange(newSelections, dispatchAction) {
+    dispatchAction({"type": 'pathway-record/genera-selected', "payload": {"generaSelection": newSelections}});
+  }
+
+  paintCustomGenera(generaSelection, projectId, vis) {
+    let sid = generaSelection.join(",");
+    let arg = "type=PathwayGenera&project_id=" + projectId + "&sid=" + sid;    
+    vis.changeExperiment( arg, 'genus' , '1');
+    $('#eupathdb-PathwayRecord-generaSelector-wrapper').hide();
+  }
+
+  loadGenera() {
+    return [
+      {value:'Cryp', display:'Cryptosporidium'},
+      {value:'Giardia', display:'Giardia'},
+      {value:'Homo', display:'Human'},
+      {value:'Mus', display:'Mouse'},
+      {value:'Spironucleus', display:'Spironucleus'},
+      {value:'Toxo', display:'Toxoplasma'},
+      {value:'Plas', display:'Plasmodium'},
+      {value:'Entamoeba', display:'Entamoeba'},
+      {value:'Acanthamoeba', display:'Acanthamoeba'},
+      {value:'10', display:'Genus 10'},
+      {value:'11', display:'Genus 11'},
+      {value:'12', display:'Genus 12'},
+      {value:'13', display:'Genus 13'},
+      {value:'14', display:'Genus 14'},
+      {value:'15', display:'Genus 15'},
+      {value:'16', display:'Genus 16'},
+      {value:'17', display:'Genus 17'},
+      {value:'18', display:'Genus 18'},
+      {value:'19', display:'Genus 19'},
+      {value:'20', display:'Genus 20'},
+      {value:'21', display:'Genus 21'},
+      {value:'22', display:'Genus 22'},
+      {value:'23', display:'Genus 23'},
+      {value:'24', display:'Genus 24'},
+      {value:'25', display:'Genus 25'},
+      {value:'26', display:'Genus 26'}
+    ];
+  }
+
   renderError() {
     if (this.state.error) {
       return (
@@ -435,12 +478,14 @@ export class CytoscapeDrawing extends React.Component {
   }
 
   render() {
+    let dispatchAction = this.context.dispatchAction;
     let projectId = wdk.MODEL_NAME;
     let { record } = this.props;
     let { attributes, tables } = record;
     let { primary_key, pathway_source } = attributes;
     let { PathwayGraphs } = tables;
     let red = {color: 'red'};
+    let generaOptions = this.loadGenera();
     let experimentData = [
       {
         "type": "PathwayGenera",
@@ -460,7 +505,7 @@ export class CytoscapeDrawing extends React.Component {
             "display": "Apicomplexa"
           },
           {
-            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
+            "sid": "Cryptosporidium,Plasmodium,,Homo,Mus",
             "display": "Cryp,Toxo,Plas,Human,Mouse"
           }
         ]
@@ -576,6 +621,15 @@ export class CytoscapeDrawing extends React.Component {
             <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytoscape Web"/>
           </a>
         </div>
+        <div id="eupathdb-PathwayRecord-generaSelector-wrapper">
+          <GeneraSelector generaOptions={generaOptions}
+                          generaSelection={this.state.generaSelection}
+                          onGeneraChange={this.onGeneraChange}
+                          paintCustomGenera={this.paintCustomGenera}
+                          dispatchAction={dispatchAction}
+                          vis={this.vis}
+                          projectId={projectId} />
+        </div>
         <div>
           <p>
             <strong>NOTE </strong>
@@ -587,7 +641,6 @@ export class CytoscapeDrawing extends React.Component {
         <div id={div_id} ref={node => this.cytoContainer = node}>
           Cytoscape Web will replace the contents of this div with your graph.
         </div>
-
       </div>
     );
   }
@@ -678,7 +731,23 @@ function ExperimentMenuItems(props) {
         </a>
       </li>
       {entries}
+      <li>
+        <a href="javascript:void(0)" onClick={function() {$('#eupathdb-PathwayRecord-generaSelector-wrapper').show()}}>
+          Custom Selection
+        </a>
+      </li>
     </ul>
+  );
+}
+
+function GeneraSelector(props) {
+  return (
+    <div id="eupathdb-PathwayRecord-generaSelector">
+      <h3>Genera Selector</h3>
+      <CheckboxList name="genera" items={props.generaOptions} value={props.generaSelection}
+                    onChange={function(newSelections) { props.onGeneraChange(newSelections, props.dispatchAction)}}/>
+      <input type="submit" value="Paint" onClick={function() { props.paintCustomGenera(props.generaSelection, props.projectId, props.vis) }} />
+    </div>
   );
 }
 
@@ -854,3 +923,4 @@ function loadCompoundStructure(compoundId) {
     })));
   }
 }
+

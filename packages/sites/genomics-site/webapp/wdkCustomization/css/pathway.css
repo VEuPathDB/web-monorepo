@@ -37,6 +37,38 @@ html, body {
   width: 100%;
 }
 
+#eupathdb-PathwayRecord-generaSelector-wrapper {
+  position: absolute;
+  background: none;
+  display: none;
+}
+
+#eupathdb-PathwayRecord-generaSelector {
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+  z-axis: 500;
+  background-color: #FFF;
+  left: 425px;
+  position: relative;
+  width: 620px;
+}
+
+#eupathdb-PathwayRecord-generaSelector  .wdk-CheckboxListItem {
+  display: inline-block;
+  line-height: 1.5em;
+  width: 200px;
+  max-width: 625px;
+}
+
+#eupathdb-PathwayRecord-generaSelector .wdk-CheckboxListItem label {
+  text-align: left;
+}
+
+#eupathdb-PathwayRecord-generaSelector .wdk-CheckboxListItem input {
+  margin-right: 0.5em;
+}
+
 #vis-menu {
   background: -webkit-linear-gradient(rgb(191,191,191), rgb(121,121,121));
   background: -o-linear-gradient(rgb(191,191,191), rgb(121,121,121));
