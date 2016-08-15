@@ -38,6 +38,32 @@ body {
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER Site name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header2 a#MicrobiomeDB {
+  color:#292d94;
+  font-size:500%;
+  font-weight:bold;
+  position:relative;
+  left:30px;
+  top:32px;
+  text-decoration:none;
+}
+
+#header2 span#rel-num {
+  position:relative;
+  top:-8px;
+  left:29px;
+}
+
+#header2 span#rel-date {
+  position:relative;
+  top:0px;
+  left:-20px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 

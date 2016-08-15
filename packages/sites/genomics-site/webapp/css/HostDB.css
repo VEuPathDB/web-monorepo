@@ -26,6 +26,26 @@ body {
    color: #6f223a;    /*    #9a5b37;   #6f4230; */
 }
 
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER Site name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header2 a#HostDB {
+  color:#006699;font-size:600%;font-weight:bold;position:relative;left:30px;top:32px;
+}
+
+#header2 span#rel-num {
+  position:relative;top:-18px;left:29px;
+}
+
+#header2 span#rel-date {
+  position:relative;top:-8px;left:-20px;
+}
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
