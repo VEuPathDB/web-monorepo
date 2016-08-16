@@ -253,7 +253,6 @@ sub snpTitleQuick {
   my @data;
   push(@data, ['SNP' => $link]);
   push(@data, ['Location' => $start]);
-  push(@data, ['Number of strains' => $num_strains]);
   push(@data, ['Gene' => $gene]) if $gene;
 
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
@@ -262,6 +261,7 @@ sub snpTitleQuick {
   }
 
   push(@data, ['Type' => $type]);
+  push(@data, ['Number of strains' => $num_strains]);
   push(@data, ['' => 'NA&nbsp;&nbsp;&nbsp;'.($isCoding ? 'AA&nbsp;&nbsp;&nbsp;(frequency)' : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(frequency)')]);
   push(@data, ["$reference_strain"."&nbsp;(reference)" => "&nbsp;$refNA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp$reference_aa"]);
 
@@ -949,7 +949,7 @@ sub gsnapUnifiedIntronJunctionTitle {
       if($i == 0) {
         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
       } else {
-        $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
+        $html .= "<tr><td></td><td>".($sa[$i] ? "$sa[$i]" : "na")."</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>".(defined $nrs[$i] ? "$nrs[$i]" : "na")."</td>"; 
       }
       if($intronPercent){
         $html .= "<td>$rs[$i]</td><td>$ps[$i]</td></tr>";
