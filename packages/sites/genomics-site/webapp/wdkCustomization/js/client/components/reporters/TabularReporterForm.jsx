@@ -51,7 +51,7 @@ let TabularReporterForm = props => {
             </div>
           </div>
           <div style={{margin:'2em 0'}}>
-            <input type="button" value="Submit" onClick={onSubmit}/>
+            <input type="submit" value="Submit" onClick={onSubmit}/>
           </div>
         </div>
       </div>

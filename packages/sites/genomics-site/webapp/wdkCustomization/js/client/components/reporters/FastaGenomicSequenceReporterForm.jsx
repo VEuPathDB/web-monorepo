@@ -27,7 +27,7 @@ let FastaGenomicSequenceReporterForm = props => {
             onChange={getUpdateHandler('attachmentType')}/>
       </div>
       <div style={{margin:'0.8em'}}>
-        <input type="button" value="Get Sequences" onClick={onSubmit}/>
+        <input type="submit" value="Get Sequences" onClick={onSubmit}/>
       </div>
       <div>
         <hr/>
