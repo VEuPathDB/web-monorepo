@@ -929,7 +929,7 @@ sub gsnapUnifiedIntronJunctionTitle {
     $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th></tr>";
   }
 
-  my $maxRatio = [0,0,'sample here'];
+  my $maxRatio = [0,0,'sample here','experiment'];
   my $sumIsrpm = 0;
   foreach my $exp (@exp_arr) {
     
@@ -943,13 +943,13 @@ sub gsnapUnifiedIntronJunctionTitle {
     
     my $i = 0;
     for($i; $i < $#sa + 1; $i++) {
-      $maxRatio = [ $isrpm[$i],$intronPercent ? $rs[$i] : $rt[$i], $sa[$i] ] if $isrpm[$i] > $maxRatio->[0];
+      $maxRatio = [ $isrpm[$i],$intronPercent ? $rs[$i] : $rt[$i], $sa[$i], $exp ] if $isrpm[$i] > $maxRatio->[0];
       $sumIsrpm += $isrpm[$i];
       
       if($i == 0) {
         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
       } else {
-        $html .= "<tr><td></td><td>".($sa[$i] ? "$sa[$i]" : "na")."</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>".(defined $nrs[$i] ? "$nrs[$i]" : "na")."</td>"; 
+        $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
       }
       if($intronPercent){
         $html .= "<td>$rs[$i]</td><td>$ps[$i]</td></tr>";
@@ -965,7 +965,7 @@ sub gsnapUnifiedIntronJunctionTitle {
   push @data, [ '<b>Location (length):</b>'  => "<b>$start - $stop (".($stop - $start + 1).")".($annotIntron eq "Yes" ? " - Annotated</b>" : "</b>")];
   push @data, [ '<b>Sum Unique Reads (ISRPM):</b>'     => "<b>$totalScore ($sumIsrpm)</b>" ];
   push @data, [ '<b>Percent of Max:</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
-  push @data, [ '<b>Highest Sample (ISRPM):</b>'  => "<b>$maxRatio->[2] ($maxRatio->[0])</b>"];
+  push @data, [ '<b>Highest Sample (ISRPM):</b>'  => "<b>$maxRatio->[3]: $maxRatio->[2] ($maxRatio->[0])</b>"];
   push @data, [ $intronPercent ? '<b>Best ISRPM / FPKM:</b>' : '<b>Best ISRPM / avg(FPKM)</b>'  => "<b>$maxRatio->[1]</b>"];
 
 
