@@ -475,9 +475,49 @@ sub getSyntenySubtracks {
     $sh->finish();
     return @rv;
 }
-1;
+
+
+sub subTrackTable {
+    my ($self, $experimentName, $subTrackAttr) = @_;
+    if ($subTrackAttr eq 'no_sub') {
+        return;
+    }
+
+    my $dbh = $self->dbh();
+    my $sh = $dbh->prepare("SELECT * FROM (
+                                SELECT DISTINCT term
+                                , value
+                                FROM apidbtuning.pancharacteristicmetadata
+                                WHERE dataset_name = '$experimentName'
+                                UNION
+                                SELECT DISTINCT term
+                                , value
+                                FROM apidbtuning.panprotocolmetadata
+                                WHERE dataset_name = '$experimentName'
+                                )
+                            WHERE term = '$subTrackAttr'");
+    $sh->execute();
+    my @subtrackTable;
+    while (my ($term, $value) = $sh->fetchrow_array()) {
+        push (@subtrackTable, [":$value", $value]);
+    }
+    $sh->finish();
+
+    return @subtrackTable;
+}
 
 
 
+sub subTrackSelect {
+    my $subTrackAttr = shift;
+    if ($subTrackAttr eq 'no_sub') {
+        return;
+    }
 
+    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 'genotype information' => 'Genotype'};
+    my $displayName = $ontologyTermToDisplayName->{$subTrackAttr};
+    my $subTrackSelect = [$displayName, 'tag_value', $subTrackAttr];
+    return $subTrackSelect;
+}
+1;   
 
