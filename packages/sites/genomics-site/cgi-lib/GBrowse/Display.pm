@@ -793,10 +793,10 @@ sub haploHeight {
 
 sub chipColor { 
   my $f   = shift;
-  my ($a) = $f->get_tag_values('Antibody');
+  my ($a) = $f->get_tag_values('antibody');
   my ($t) = $f->get_tag_values('Treatment');
   my ($r) = $f->get_tag_values('Rep');
-  my ($g) = $f->get_tag_values('Genotype');
+  my ($g) = $f->get_tag_values('genotype information');
   my ($anls) = $f->get_tag_values('Analysis');
 
   return '#D80000' if($anls eq 'H4_schizont');
