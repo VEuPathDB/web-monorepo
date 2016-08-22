@@ -5,7 +5,7 @@ let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.C
 
 let SharedReporterForm = props => {
 
-  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, ontology } = props;
+  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, globalData: { ontology } } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormUiState, formUiState);
 
@@ -81,10 +81,10 @@ let SharedReporterForm = props => {
 };
 
 SharedReporterForm.getInitialState = (downloadFormStoreState) => {
-  let { scope, question, recordClass, ontology } = downloadFormStoreState;
+  let { scope, question, recordClass, globalData: { ontology, preferences } } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
   let attribs = (scope === 'results' ?
-      util.addPk(util.getAttributeSelections(downloadFormStoreState.preferences, question), recordClass) :
+      util.addPk(util.getAttributeSelections(preferences, question), recordClass) :
       util.addPk(util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)), recordClass));
   let tables = (scope === 'results' ? [] :
       util.getAllLeafIds(util.getTableTree(ontology, recordClass.name)));

@@ -41,10 +41,10 @@ h4 {
   text-rendering: optimizeLegibility;
 }
 
-/* 230px is based on height of header, footer, and margin/padding of wdk-RootContainer */
-.wdk-RootContainer {
-  min-height: calc(100vh - 230px);
+/* 230px is based on height of header, footer, and margin/padding of wdk-PageContent */
+.wdk-PageContent {
   background-color: #ffffff;
+  min-height: calc(100vh - 230px);
 }
 
 .wdk-RecordOverview {
@@ -153,24 +153,20 @@ h4 {
   left: -298px;
 }
 
-.eupathdb-RecordOverviewLeft, .eupathdb-RecordOverviewRight {
-  margin-top: 1em;
+.eupathdb-RecordOverviewPanels {
+  margin-top: 2em;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /* gene page overview */
 @media all and (min-width: 1000px) {
-  .eupathdb-RecordOverviewLeft, .eupathdb-RecordOverviewRight {
-    float: left;
-    margin-top: 2em;
-  }
-
   .eupathdb-RecordOverviewLeft {
-    max-width: 450px;
     margin-right: 60px;
+    max-width: 450px;
   }
-
   .eupathdb-RecordOverviewRight {
-    max-width: calc(100% - 535px);
+    flex: 1;
   }
 }
 
@@ -282,33 +278,56 @@ h4 {
   border-left: 1px solid #ccc;;
 }
 
+.eupathdb-ThumbnailsTitle {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin: 16px 0 12px 0;
+}
+
 .eupathdb-ThumbnailsContainer {
   border: 1px solid #d8d8d8;
-  padding: 4px 6px 8px;
   background: #f2f2f2;
   border-radius: 4px;
-  margin-top: 16px;
   display: inline-block;
   max-width: 100%;
-  min-height: 140px;
+  min-height: 100px;
   white-space: nowrap;
 }
 
+.eupathdb-Thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .eupathdb-ThumbnailWrapper {
-  display: inline-block;
-  vertical-align: top;
-  margin: 0 1em;
-  min-width: 152px;
+  margin: .5em 1em;
+  position: relative;
 }
 
 .eupathdb-Thumbnail {
-  border: 1px solid #d8d8d8;
-  display: inline-block;
+  border: 1px solid #a9a9a9;
+  display: block;
+  margin-left: auto;
+  height: 50px;
+  width: 85px;
+  overflow: hidden;
+  background: white;
+}
+
+.eupathdb-ThumbnailZoomButton {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 0;
+  border-top-left-radius: 4px;
+  z-index: 1;
 }
 
 .eupathdb-ThumbnailWrapper img {
   display: block;
-  width: 150px;
+  width: 100%;
 }
 
 .eupathdb-Thumbnail__ExpressionGraphs {
@@ -330,6 +349,13 @@ h4 {
   z-index: 1;
 }
 
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail {
+  width: auto;
+  height: auto;
+  overflow: auto;
+  margin: 0 auto;
+}
+
 .eupathdb-ThumbnailPopover .eupathdb-Thumbnail__ExpressionGraphs:before {
   font-size: 10vh;
   line-height: 75vh;
@@ -345,13 +371,25 @@ h4 {
 
 .eupathdb-ThumbnailPopover {
   position: fixed;
+  top: 0;
+  left: 0;
   z-index: 100;
   background: #1f1f1f;
-  color: #fafafa;
+  /*
   border: 1px solid #aaa;
   box-shadow: 0px 0px 20px #999;
   border-radius: 10px;
+  */
   padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.eupathdb-ThumbnailPopoverText {
+  color: #fafafa;
 }
 
 .eupathdb-ThumbnailPopover h3 {
@@ -366,8 +404,8 @@ h4 {
 }
 
 .eupathdb-ThumbnailPopover img {
-  max-height: 75vh;
-  max-width: 80vw;
+  max-height: calc(100vh - 100px);
+  /* max-width: 80vw; */
   border: 1px solid #aaa;
   display: block;
 }

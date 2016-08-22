@@ -1,6 +1,6 @@
-/* global wdk */
 import lodash from 'lodash';
 import React from 'react';
+import { projectId } from './config';
 import { CollapsibleSection, RecordAttribute as WdkRecordAttribute } from 'wdk-client/Components';
 import {renderWithCustomElements} from './components/customElements';
 import { findComponent } from './components/records';
@@ -9,6 +9,11 @@ import Sequence from './components/common/Sequence';
 import { selectReporterComponent } from './util/reporterSelector';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import ApiUserIdentity from './components/ApiUserIdentity';
+import ApiHeader from './components/Header';
+import ApiFooter from './components/Footer';
+
+export let Header = () => ApiHeader;
+export let Footer = () => ApiFooter;
 
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
@@ -36,26 +41,42 @@ const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
  * values separated by a '/'.
  */
 export function RecordController(WdkRecordController) {
-  return function ApiRecordController(props) {
-    let { splat, recordClass } = props.params;
+  return class ApiRecordController extends WdkRecordController {
 
-    // These record classes do not need the project id as a part of the primary key
-    // so we just render with the url params as-is.
-    if (RECORD_CLASSES_WITHOUT_PROJECT_ID.indexOf(recordClass) > -1) {
-      return (
-        <WdkRecordController {...props} />
-      );
+    getActionCreators() {
+      let wdkActionCreators = super.getActionCreators();
+      return Object.assign({}, wdkActionCreators, {
+        updateBasketStatus: (...args) => (dispatch, { wdkService }) => {
+          dispatch(wdkActionCreators.updateBasketStatus(...args))
+          .then(() => {
+            if (this.state.globalData.user.isGuest) return;
+            wdkService.getBasketCounts().then(basketCounts => {
+              dispatch({
+                type: 'apidb/basket',
+                payload: {basketCounts}
+              });
+            });
+          });
+        }
+      })
     }
 
-    // Append project id to request
-    let params = Object.assign({}, props.params, {
-      splat: `${splat}/${wdk.MODEL_NAME}`
-    });
+    loadData(state, props, previousProps) {
+      let { splat, recordClass } = props.params;
 
-    return (
-      <WdkRecordController {...props} params={params} />
-    );
-  }
+      // These record classes do not need the project id as a part of the primary key
+      // so we just render with the url params as-is.
+      if (!RECORD_CLASSES_WITHOUT_PROJECT_ID.includes(recordClass)) {
+        // Append project id to request
+        let params = Object.assign({}, props.params, {
+          splat: `${splat}/${projectId}`
+        });
+        // reassign props to modified props object
+        props = Object.assign({}, props, { params });
+      }
+      super.loadData(state, props, previousProps);
+    }
+  };
 }
 
 // Customize the Record Component

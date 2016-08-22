@@ -15,17 +15,15 @@
   <!-- JavaScript provided by WDK -->
   <imp:wdkJavascripts refer="${refer}" debug="${debug}"/>
 
-  <!-- `getApiClientConfig` is created in the global scope, so we can call this
-       from other JavaScript code where we initialize the WDK client
-       (see wdkCustomization/js/client/main.js) -->
   <script>
-    function getApiClientConfig() {
-      return {
-        rootUrl: "${pageContext.request.contextPath}/app/",
-        endpoint: "${pageContext.request.contextPath}/service",
-        rootElement: "#wdk-container"
-      };
-    }
+    // used to measure time to reach a goal
+    window.__perf__ = { start: performance.now() };
+    // used by apidb to initialize wdk
+    window.__WDK_CONFIG__ = {
+      projectId: "${applicationScope.wdkModel.projectId}",
+      webAppUrl: "${pageContext.request.contextPath}",
+      endpoint: "${pageContext.request.contextPath}/service"
+    };
   </script>
   <imp:script src="apidb.build.js"/>
 

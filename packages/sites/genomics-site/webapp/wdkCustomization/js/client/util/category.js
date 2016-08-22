@@ -1,9 +1,7 @@
-/* global wdk */
 import {seq} from 'wdk-client/IterableUtils';
 import {preorderSeq, pruneDescendantNodes} from 'wdk-client/TreeUtils';
 import {getTree} from 'wdk-client/OntologyUtils';
 import {getRecordClassName, isQualifying} from 'wdk-client/CategoryUtils';
-import context from '../main';
 
 let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
 
@@ -15,23 +13,27 @@ let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
  *
  * This is used by bubbles and query grid (and soon menus).
  *
- * @param {WdkService} wdkService
+ * @param {Object} ontology
+ * @param {Object[]} recordClasses
  * @param {Object} options
- * @param {string[]} options.include Record classes to include
- * @param {string[]} options.exclude Record classes to exclude
+ * @param {string[]} options.include? Record classes to include
+ * @param {string[]} options.exclude? Record classes to exclude
  * @returns Promise<RecordClassTree[]>
  */
-export function getSearchMenuCategoryTree(wdkService, options) {
-  let ontology$ = context.wdkService.getOntology();
-  let recordClasses$ = context.wdkService.getRecordClasses();
-  return Promise.all([ ontology$, recordClasses$ ]).then(([ ontology, recordClasses ]) => {
-    let recordClassMap = new Map(recordClasses.map( rc => [ rc.name, rc ] ));
-    // get searches scoped for menu
-    let categoryTree = getTree(ontology, isSearchMenuScope);
-    return groupByRecordClass(categoryTree, recordClassMap, options);
-  });
+export function getSearchMenuCategoryTree(ontology, recordClasses, options) {
+  let recordClassMap = new Map(recordClasses.map( rc => [ rc.name, rc ] ));
+  // get searches scoped for menu
+  let categoryTree = getTree(ontology, isSearchMenuScope);
+  return groupByRecordClass(categoryTree, recordClassMap, options);
 }
 
+/**
+ *
+ * @param categoryTree
+ * @param recordClassMap
+ * @param options
+ * @returns {RecordClassTree[]}
+ */
 function groupByRecordClass(categoryTree, recordClassMap, options) {
   let recordClassCategories = seq(recordClassMap.keys())
   .filter(includeExclude(options))

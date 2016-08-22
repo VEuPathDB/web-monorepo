@@ -1,9 +1,7 @@
 import {PropTypes} from 'react';
 import {once, memoize, throttle} from 'lodash';
 import $ from 'jquery';
-import { Components, ComponentUtils } from 'wdk-client';
-
-let { CollapsibleSection } = Components;
+import { ComponentUtils } from 'wdk-client';
 
 export let contexts = [
   {
@@ -99,8 +97,6 @@ export function ProteinContext(props) {
 
 /** Image map mouseover regexp */
 const onMouseOverRegexp = /GBubble\.showTooltip\(event,'(\w+:)?(.*)'.*$/;
-/** Regexp to get inner html of a map element */
-const areaTagsRegexp = /<map [^>]*>([\s\S]*)<\/map>/;
 
 
 /**
@@ -121,7 +117,10 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
   }
 
   componentDidMount() {
-    loadGbrowseScripts().then(() => this.loadImage(this.props));
+    loadGbrowseScripts().then(
+      () => this.loadImage(this.props),
+      (error) => this.setState({ error })
+    );
     window.addEventListener('resize', this.scaleImageMap);
     window.addEventListener('focus', this.scaleImageMap);
     window.addEventListener('click', this.scaleImageMap);
@@ -169,7 +168,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
         this.onmouseover = null;
         return onmouseoverValue;
       })
-      .wdkTooltip({
+      .qtip({
         content: {
           text(event, api) {
             let matches = onMouseOverRegexp.exec(this.attr('gbrowse-onmouseover'));
@@ -178,6 +177,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
             }
             let [, pragma = '', content = '' ] = matches;
             if (pragma === 'javascript:') {
+              // FIXME inject helpers here?
               let contentFn = new Function('"use strict"; return ' + content.replace(/^escape\((.*)\)$/, '$1').replace(/\\/g, ''));
               return contentFn.call(this.get(0));
             }
@@ -196,6 +196,10 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
           my: 'bottom center',
           at: 'center center',
           effect: false
+        },
+        hide: {
+          fixed: true,
+          delay: 250
         },
         style: {
           classes: 'qtip-bootstrap eupathdb-GbrowseImageMapTooltip',
@@ -264,7 +268,12 @@ GbrowseImage.defaultProps = {
 };
 
 let loadGbrowseScripts = once(() => {
-  return $.getScript('/gbrowse/apiGBrowsePopups.js');
+  return new Promise(function(resolve, reject) {
+    $.getScript('/gbrowse/apiGBrowsePopups.js').then(
+      () => resolve(),
+      (jqxhr, settings, exception) => reject(String(exception))
+    );
+  });
 });
 
 let get = memoize($.get.bind($));

@@ -1,8 +1,8 @@
-/* global wdk, org */
+/* global org */
 import React from 'react';
+import { Link } from 'react-router';
 import _ from 'lodash';
 import $ from 'jquery';
-import {Image} from 'wdk-client/Components';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {CompoundStructure} from '../common/Compound';
 import { CheckboxList } from 'wdk-client/Components';
@@ -30,12 +30,15 @@ let options = {
   //flashInstallerPath: "http://www.plasmodb.org/swf/playerProductInstall"
 };
 
-let loadCytoscapeWeb = _.once(function() {
-  return Promise.resolve($.getScript(wdk.webappUrl('js/cytoscapeweb.min.js')));
+let loadCytoscapeWeb = _.once(function(webAppUrl) {
+  return Promise.all([
+    Promise.resolve($.getScript(webAppUrl + '/js/AC_OETags.min.js')),
+    Promise.resolve($.getScript(webAppUrl + '/js/cytoscapeweb.min.js'))
+  ]);
 });
 
-function makeVis(pathwayId, pathwaySource) {
-  return loadCytoscapeWeb().then(function() {
+function makeVis(pathwayId, pathwaySource, wdkConfig) {
+  return loadCytoscapeWeb(wdkConfig.webAppUrl).then(function() {
     // init and draw
     let vis = new org.cytoscapeweb.Visualization(div_id, options);
 
@@ -88,11 +91,6 @@ function makeVis(pathwayId, pathwaySource) {
       });
     };
 
-    // function exportVisualization(vis, type, name) {
-    //   var link = wdk.webappUrl('exportCytoscapeNetwork.do?type=' + type + '&name=' + name);
-    //   vis.exportNetwork(type, link);
-    // }
-
     // Transform a JSON request from webservices to
     // a more usable data structure. This is used
     // by `getEcToOrganismMap`
@@ -134,28 +132,6 @@ function makeVis(pathwayId, pathwaySource) {
 
       return ecNumberList;
     }
-
-
-    // Requests JSON from webservice and tranforms the JSON to
-    // a map of ecNumbers -> sources -> organisms
-    //
-    // Example:
-    //   getEcToOrganismMap(id).done(function(ecNumberMap) {
-    //     vis.nodes().forEach(function(node) {
-    //       // get ecNumber from node somehow ...
-    //       var ecMapItem = ecNumberMap[ecNumber];
-    //       for (var source in ecMapItem) {
-    //         var genes = ecMapItem[source]; // returns an array
-    //         // do something with ecNumber, source, and genes ...
-    //       }
-    //     });
-    //   });
-
-    // function getEcToOrganismMap(id) {
-    //   var url = wdk.webappUrl('/webservices/GeneQuestions/GenesByMetabolicPathwayIDKegg.json?metabolic_pathway_id_with_genes=' +
-    //     encodeURIComponent(id) + '&o-fields=organism,EcNumber');
-    //   return $.getJSON(url).then(transformToEcNumberList);
-    // }
 
 
     // callback when Cytoscape Web has finished drawing
@@ -365,7 +341,9 @@ export class CytoscapeDrawing extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.resizeMap = _.throttle(this.resizeMap.bind(this), 250);
-    this.state = context.store.getState().pathwayRecord;
+    let storeState = context.store.getState();
+    this.state = storeState.pathwayRecord;
+    this.wdkConfig = storeState.globalData.config;
   }
 
   componentDidMount() {
@@ -409,14 +387,14 @@ export class CytoscapeDrawing extends React.Component {
 
   initVis() {
     let { primary_key, pathway_source } = this.props.record.attributes;
-    makeVis(primary_key, pathway_source).then(vis => {
+    makeVis(primary_key, pathway_source, this.wdkConfig).then(vis => {
       this.vis = vis;
       // listener for when nodes and edges are clicked
       vis.addListener("click", "nodes", (event) => {
         let { data } = event.target;
         this.context.dispatchAction(setActiveNode(event.target));
         if (data.Type === 'molecular entity' && data.CID) {
-          this.context.dispatchAction(loadCompoundStructure(data.CID));
+          this.context.dispatchAction(loadCompoundStructure(data.CID, this.wdkConfig.projectId));
         }
       });
     })
@@ -478,8 +456,7 @@ export class CytoscapeDrawing extends React.Component {
   }
 
   render() {
-    let dispatchAction = this.context.dispatchAction;
-    let projectId = wdk.MODEL_NAME;
+    let { projectId } = this.wdkConfig;
     let { record } = this.props;
     let { attributes, tables } = record;
     let { primary_key, pathway_source } = attributes;
@@ -606,11 +583,13 @@ export class CytoscapeDrawing extends React.Component {
               <br />The nodes, as well as this info box, can be repositioned by dragging.
               <br />
             </p>
-            ) : <NodeDetails nodeData={this.state.activeNode.data}
+            ) : <NodeDetails wdkConfig={this.wdkConfig}
+                             nodeData={this.state.activeNode.data}
                              compoundRecord={this.state.activeCompound}
                              pathwaySource={pathway_source}/>}
         </div>
         <VisMenu pathway_source = {pathway_source}
+                       webAppUrl={this.wdkConfig.webAppUrl}
                        primary_key = {primary_key}
                        PathwayGraphs = {PathwayGraphs}
                        projectId = {projectId}
@@ -626,7 +605,7 @@ export class CytoscapeDrawing extends React.Component {
                           generaSelection={this.state.generaSelection}
                           onGeneraChange={this.onGeneraChange}
                           paintCustomGenera={this.paintCustomGenera}
-                          dispatchAction={dispatchAction}
+                          dispatchAction={this.context.dispatchAction}
                           vis={this.vis}
                           projectId={projectId} />
         </div>
@@ -668,7 +647,7 @@ function VisMenu(props) {
       <li>
         <a href="javascript:void(0)">
           Layout
-          <Image title="Choose a Layout for the Pathway Map"  src="wdk/images/question.png" />
+          <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ul>
           {pathway_source === "KEGG" ?
@@ -684,7 +663,10 @@ function VisMenu(props) {
       <li>
         <a href="javascript:void(0)">
           Paint Experiment
-          <Image title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map"  src="wdk/images/question.png" />
+          <img
+            title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map"
+            src={props.webAppUrl + "/wdk/images/question.png"}
+          />
         </a>
         <ul>
           <li><a href="javascript:void(0)" onClick={() => vis.changeExperiment('')}>None</a></li>
@@ -694,7 +676,10 @@ function VisMenu(props) {
       <li>
         <a href="#">
           Paint Genera
-          <Image title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map "  src="wdk/images/question.png" />
+          <img
+            title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map " 
+            src={props.webAppUrl + "/wdk/images/question.png"}
+          />
         </a>
         <ExperimentMenuItems experimentData={experimentData} projectId={projectId} type="PathwayGenera" vis={vis} />
       </li>
@@ -807,7 +792,7 @@ function EnzymeNodeDetails(props) {
     
       {nodeData.Organisms && (
         <div>
-          <a href={wdk.webappUrl(EC_NUMBER_SEARCH_PREFIX + nodeData.label)}>Search for Gene(s) By EC Number</a>
+          <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + nodeData.label}>Search for Gene(s) By EC Number</a>
         </div>
       )}
 
@@ -832,14 +817,15 @@ function MolecularEntityNodeDetails(props) {
       )}
 
       {nodeData.CID && (
-        <div><a href={wdk.webappUrl('/app/record/compound/' + nodeData.CID)}>View on this site</a></div>
+        <div>
+          <Link to={'/record/compound/' + nodeData.CID}>View on this site</Link>
+        </div>
       )}
 
 
       {nodeData.SID && (
         <div>
           <div><a href={'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=' + nodeData.CID}>View in CHEBI</a></div>
-          {/*<div><img src={'http://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?t=l&sid=' + nodeData.SID}/></div>*/}
         </div>
       )}
 
@@ -856,11 +842,12 @@ function MolecularEntityNodeDetails(props) {
 }
 
 function MetabolicProcessNodeDetails(props) {
-  //print("<b>Pathway:  </b>" + "<a href='/a/showRecord.do?name=PathwayRecordClasses.PathwayRecordClass&source_id=" + nodeData["Description"] + "'>" + nodeData["label"] + "</a>");
   let { nodeData, pathwaySource } = props;
   return (
     <div>
-      <div><b>Pathway: </b> <a href={wdk.webappUrl('/app/record/pathway/' + pathwaySource + '/' + nodeData.Description)}>{nodeData.label}</a></div>
+      <div><b>Pathway: </b>
+        <Link to={'/record/pathway/' + pathwaySource + '/' + nodeData.Description}>{nodeData.label}</Link>
+      </div>
       <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + nodeData.Description}>View in KEGG</a></div>
     </div>
   );
@@ -903,11 +890,11 @@ function setPathwayError(error) {
   };
 }
 
-function loadCompoundStructure(compoundId) {
+function loadCompoundStructure(compoundId, projectId) {
   let recordClassName = 'CompoundRecordClasses.CompoundRecordClass';
   let primaryKey = [
     { name: 'source_id', value: compoundId },
-    { name: 'project_id', value: wdk.MODEL_NAME }
+    { name: 'project_id', value: projectId }
   ];
   let options = { attributes: [ 'default_structure' ] };
   return function run(dispatch, { wdkService }) {

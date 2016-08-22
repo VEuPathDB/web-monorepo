@@ -3,9 +3,11 @@ import {CollapsibleSection} from 'wdk-client/Components';
 import {CompoundStructure} from '../common/Compound';
 import DatasetGraph from '../common/DatasetGraph';
 
+let expressionRE = /MassSpecGraphs$/;
 export function RecordTable(props) {
-  return props.table.name === 'Structures' ? <CompoundStructures {...props}/>
-                                           : <props.DefaultComponent {...props}/>;
+  return props.table.name === 'Structures'   ? <CompoundStructures {...props}/>
+       : expressionRE.test(props.table.name) ? <DatasetGraphTable {...props} />
+                                             : <props.DefaultComponent {...props}/>;
 }
 
 /**
@@ -45,13 +47,6 @@ class CompoundStructures extends Component {
     );
   }
 }
-
-let expressionRE = /MassSpecGraphs$/;
-export function RecordTable(props) {
-  return expressionRE.test(props.table.name)              ? <DatasetGraphTable {...props} />
-       : <props.DefaultComponent {...props} />
-}
-
 
 function DatasetGraphTable(props) {
   let included = props.table.properties.includeInTable || [];

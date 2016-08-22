@@ -1,4 +1,4 @@
-/* global wdk, ChemDoodle */
+/* global ChemDoodle */
 
 /**
  * React Components related to Compounds
@@ -8,10 +8,11 @@ import {Component, PropTypes} from 'react';
 import {once, uniqueId, isEmpty} from 'lodash';
 import $ from 'jquery';
 import {registerCustomElement} from '../customElements';
+import { webAppUrl } from '../../config';
 
 /** Load the ChemDoodle JS library once */
 let loadChemDoodleWeb = once(function() {
-  return $.getScript(wdk.webappUrl('js/ChemDoodleWeb.js'));
+  return $.getScript(webAppUrl + '/js/ChemDoodleWeb.js');
 });
 
 /**
@@ -31,12 +32,16 @@ export class CompoundStructure extends Component {
     vc.loadMolecule(ChemDoodle.readMOL(moleculeString));
   }
 
+  loadLibs(props) {
+    loadChemDoodleWeb().then(() => this.drawStructure(props));
+  }
+
   componentDidMount() {
-    loadChemDoodleWeb().then(() => this.drawStructure(this.props));
+    this.loadLibs(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    loadChemDoodleWeb().then(() => this.drawStructure(nextProps));
+    this.loadLibs(nextProps);
   }
 
   render() {

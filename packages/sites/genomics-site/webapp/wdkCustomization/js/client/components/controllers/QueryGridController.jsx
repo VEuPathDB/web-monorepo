@@ -1,17 +1,24 @@
+import React from 'react';
 import QueryGrid from "../QueryGrid";
 import { Loading } from 'wdk-client/Components';
-import { Doc } from 'wdk-client/Components';
-import { getTree, nodeHasProperty, getPropertyValue, nodeHasChildren, getNodeChildren } from 'wdk-client/OntologyUtils';
+import { getPropertyValue, getNodeChildren } from 'wdk-client/OntologyUtils';
 import { getSearchMenuCategoryTree } from '../../util/category.js';
 
 let QueryGridController = React.createClass({
 
   componentWillMount() {
     this.setState({isLoading: true, grid: {}});
-    getSearchMenuCategoryTree(this.props.wdkService, {}).then(grid => {
+    Promise.all([
+      this.props.wdkService.getOntology(),
+      this.props.wdkService.getRecordClasses()
+    ]).then(([ ontology, recordClasses ]) => getSearchMenuCategoryTree(ontology, recordClasses, {})).then(grid => {
       this.putGeneSearchesFirst(grid);
       this.setState({isLoading: false, grid: grid});
     });
+  },
+
+  componentDidMount() {
+    document.title = 'Query Grid';
   },
 
   /**
@@ -28,11 +35,10 @@ let QueryGridController = React.createClass({
   },
 
   render() {
-    let title = "Query Grid";
     if (this.state.isLoading) {
-      return ( <Doc title={title}><Loading/></Doc> );
+      return ( <Loading/> );
     }
-    return ( <Doc title={title}><QueryGrid {...this.state} /></Doc> );
+    return ( <QueryGrid {...this.state} /> );
   }
 
 });

@@ -6,7 +6,7 @@ let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.C
 
 let TranscriptAttributesReporterForm = props => {
 
-  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, ontology } = props;
+  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, globalData: { ontology } } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormUiState, formUiState);
 
@@ -89,7 +89,7 @@ function getUserPrefFilterValue(prefs) {
 }
 
 TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState) => {
-  let { scope, question, recordClass, ontology, preferences } = downloadFormStoreState;
+  let { scope, question, recordClass, globalData: { ontology, preferences } } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
   let attribs = util.addPk(util.prependAttrib('source_id',
       (scope === 'results' ?

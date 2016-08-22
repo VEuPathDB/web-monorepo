@@ -9,7 +9,10 @@ import context from '../wdkCustomization/js/client/main';
 wdk.namespace('apidb.bubble', ns => {
   ns.initialize = ($el, attrs) => {
     let options = pick(attrs, 'include', 'exclude');
-    getSearchMenuCategoryTree(context.wdkService, options).then(tree => {
+    Promise.all([
+      context.wdkService.getOntology(),
+      context.wdkService.getRecordClasses()
+    ]).then(([ ontology, recordClasses ]) => getSearchMenuCategoryTree(ontology, recordClasses, options)).then(tree => {
       if (tree.children.length === 1) {
         renderBubble({ tree: tree.children[0] }, $el[0]);
       } else {

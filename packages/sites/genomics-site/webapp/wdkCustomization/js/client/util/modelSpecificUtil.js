@@ -28,3 +28,10 @@ export function trimBooleanQuestionAttribs(question, categoryTree) {
 
   return pruneDescendantNodes(node => nodeHasChildren(node) || !trimLeafPredicate(node), categoryTree);
 }
+
+let MONTHS = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec' ];
+export function formatReleaseDate(releaseDateString) {
+  let date = new Date(releaseDateString);
+  return `${date.getDay()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`
+}
+

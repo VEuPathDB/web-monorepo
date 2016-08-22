@@ -1,9 +1,28 @@
-import { Image, Loading } from 'wdk-client/Components';
+import { Loading } from 'wdk-client/Components';
 
 let GalaxyTerms = React.createClass({
 
+  componentDidMount() {
+   if (this.shouldRedirectToGlobus()) {
+     location.replace("https://eupathdb.globusgenomics.org");
+   }
+  },
+
+  shouldRedirectToGlobus() {
+    return !this.props.globalData.user.isGuest && this.props.globalData.preferences["show-galaxy-orientation-page"] == "false";
+  },
+
+  onSubmit() {
+    if (this.props.globalData.user.isGuest) {
+      return this.props.galaxyTermsActions.showLoginWarning("use Galaxy")
+    }
+    else {
+      this.props.galaxyTermsActions.updateUserPreference("show-galaxy-orientation-page", "false");
+    }
+  },
+
   render() {
-    if (this.willRedirectToGlobus()) {
+    if (this.shouldRedirectToGlobus()) {
       return <Loading/>;
     }
     return (
@@ -16,12 +35,12 @@ let GalaxyTerms = React.createClass({
              <a href="https://www.globus.org/genomics"> Globus Genomics</a>, an affiliate of &nbsp;
              <a href="https://www.globus.org">Globus</a>.
           </p>
-          <p>The easy-to-use services offered are:
+          <div>The easy-to-use services offered are:
             <ul>
-            <li> RNA Sequencing </li>
-            <li> SNP Calling    </li>
+              <li> RNA Sequencing </li>
+              <li> SNP Calling    </li>
             </ul>
-          </p>
+          </div>
         </div>
         <br />
         <div>
@@ -30,7 +49,7 @@ let GalaxyTerms = React.createClass({
           </p>
           <div id="eupathdb-GalaxyTerms-initial">
           <span className="column-left" >
-            <Image title="Option to link an existing Globus Account" src="wdkCustomization/images/globus-02-link-account.jpg"/>
+            <img title="Option to link an existing Globus Account" src="/a/wdkCustomization/images/globus-02-link-account.jpg"/>
               <p>
                 (1) If you already have a Globus account, you can link it to
                 your EuPathDB account. <strong>Your choice.</strong> If you
@@ -38,14 +57,14 @@ let GalaxyTerms = React.createClass({
               </p>
           </span>
           <span className="column-center">
-            <Image title="Agree to Globus account terms" src="wdkCustomization/images/globus-03-account-terms.jpg"/>
+            <img title="Agree to Globus account terms" src="/a/wdkCustomization/images/globus-03-account-terms.jpg"/>
             <p>
                 (2) Complete your account information and agree to Globus's
                 Terms and Conditions. Please read, make your selections, and click <strong>Continue</strong>.
             </p>
           </span>
           <span className="column-right">
-            <Image title="Grant permission to access your Globus account" src="wdkCustomization/images/globus-04-oauth-perms.jpg"/>
+            <img title="Grant permission to access your Globus account" src="/a/wdkCustomization/images/globus-04-oauth-perms.jpg"/>
             <p>
                 (3) Grant permission to share your Globus identity and files
                 with us. Please click <strong>Allow</strong>.
@@ -58,24 +77,8 @@ let GalaxyTerms = React.createClass({
         </div>
       </div>
     );
-  },
-
-  willRedirectToGlobus() {
-    if (!this.props.user.isGuest && this.props.preferences["show-galaxy-orientation-page"] == "false") {
-      location.replace("https://eupathdb.globusgenomics.org");
-      return true;
-    }
-    return false;
-  },
-
-  onSubmit() {
-    if (this.props.user.isGuest) {
-      return this.props.galaxyTermsActions.showLoginWarning("use Galaxy")
-    }
-    else {
-      this.props.galaxyTermsActions.updateUserPreference("show-galaxy-orientation-page", "false");
-    }
   }
+
 });
 
 export default GalaxyTerms;

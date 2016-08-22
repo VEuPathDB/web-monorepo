@@ -1,11 +1,20 @@
 import lodash from 'lodash';
-import { TreeUtils as tree, CategoryUtils as cat, StaticDataUtils } from 'wdk-client';
-import { WdkStore } from 'wdk-client/Stores';
+import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 
-let { StaticDataProps } = StaticDataUtils;
-
+export function GlobalDataStore(WdkGlobalDataStore) {
+  return class ApiGlobalDataStore extends WdkGlobalDataStore {
+    handleAction(state, action) {
+      if (action.type === 'apidb/basket') {
+        return Object.assign({}, state, {
+          basketCounts: action.payload.basketCounts
+        });
+      }
+      return state;
+    }
+  }
+}
 /** Return subcass of the provided StepDownloadFormViewStore */
 export function DownloadFormStore(WdkDownloadFormStore) {
   return class ApiDownloadFormStore extends WdkDownloadFormStore {
@@ -15,27 +24,14 @@ export function DownloadFormStore(WdkDownloadFormStore) {
   }
 }
 
-export function GalaxyTermsStore() {
-  return class ApiGalaxyTermsStore extends WdkStore {
-    getRequiredStaticDataProps() {
-      return [ StaticDataProps.PREFERENCES, StaticDataProps.USER ];
-    }
-    getInitialState() {
-      return { preferences: null, user: null };
-    }
-  };
+export function GalaxyTermsStore(WdkStore) {
+  return class ApiGalaxyTermsStore extends WdkStore { };
 }
 
 /** Return a subclass of the provided RecordViewStore */
 export function RecordViewStore(WdkRecordViewStore) {
   let { actionTypes } = WdkRecordViewStore;
   return class ApiRecordViewStore extends WdkRecordViewStore {
-
-    getRequiredStaticDataProps() {
-      return super.getRequiredStaticDataProps().concat(StaticDataProps.CONFIG,
-          StaticDataProps.QUESTIONS, StaticDataProps.RECORDCLASSES);
-    }
-
     reduce(state, action) {
       state = Object.assign({}, super.reduce(state, action), {
         pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action)
@@ -67,11 +63,13 @@ let initialPathwayRecordState = {
 function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
   switch(action.type) {
     case 'pathway-record/set-active-node':
-      return Object.assign({}, initialPathwayRecordState, {
-        activeNode: action.payload.activeNode
+      return Object.assign({}, state, {
+        activeNode: action.payload.activeNode,
+        activeCompound: null,
+        compoundError: null
       });
     case 'pathway-record/set-pathway-error':
-      return Object.assign({}, initialPathwayRecordState, {
+      return Object.assign({}, state, {
         error: action.payload.error
       });
     case 'pathway-record/compound-loading':

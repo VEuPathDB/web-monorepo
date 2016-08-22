@@ -1,8 +1,8 @@
-/* global wdk */
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
+import { projectId, webAppUrl } from '../../config';
 import {NativeCheckboxList} from 'wdk-client/Components';
 import {seq} from 'wdk-client/IterableUtils';
 import {isNodeOverflowing} from '../../util/domUtils';
@@ -11,12 +11,6 @@ import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
 import {SnpsAlignmentForm} from '../common/Snps';
-
-let transcriptomicsThumbnail = {
-  displayName: 'Transcriptomics',
-  element: <img src={wdk.assetsUrl('wdkCustomization/images/transcriptomics.jpg')}/>,
-  anchor: 'ExpressionGraphs'
-};
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -50,7 +44,7 @@ export class RecordOverview extends React.Component {
 
   addProductTooltip() {
     $(this.node).find('.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle')
-    .wdkTooltip({
+    .qtip({
       content: {
         text: (event, api) => {
           return api.elements.target.find('.eupathdb-RecordOverviewDescription').text();
@@ -71,6 +65,12 @@ export class RecordOverview extends React.Component {
     let { attributes, tables } = this.props.record;
     let { gene_type, protein_expression_gtracks } = attributes;
     let isProteinCoding = gene_type === 'protein coding';
+    let transcriptomicsThumbnail = {
+      displayName: 'Transcriptomics',
+      element: <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}/>,
+      anchor: 'ExpressionGraphs'
+    };
+
     let filteredGBrowseContexts = seq(Gbrowse.contexts)
     // inject transcriptomicsThumbnail before protein thumbnails
     .flatMap(context => context.gbrowse_url === 'FeaturesPbrowseUrl'
@@ -97,7 +97,10 @@ export class RecordOverview extends React.Component {
     .toArray();
 
     ReactDOM.render((
-      <OverviewThumbnails thumbnails={filteredGBrowseContexts} onThumbnailClick={this.handleThumbnailClick}/>
+      <OverviewThumbnails
+        title="Gene Features"
+        thumbnails={filteredGBrowseContexts}
+        onThumbnailClick={this.handleThumbnailClick}/>
     ), this.thumbsContainer);
   }
 
@@ -112,7 +115,8 @@ export class RecordOverview extends React.Component {
 }
 
 RecordOverview.contextTypes = {
-  eventHandlers: React.PropTypes.object.isRequired
+  eventHandlers: React.PropTypes.object.isRequired,
+  store: React.PropTypes.object.isRequired
 };
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
@@ -291,7 +295,7 @@ function MercatorTable(props) {
   return (
     <div className="eupathdb-MercatorTable">
       <form action="/cgi-bin/pairwiseMercator">
-        <input type="hidden" name="project_id" value={wdk.MODEL_NAME}/>
+        <input type="hidden" name="project_id" value={projectId}/>
 
         <div className="form-group">
           <label><strong>Contig ID:</strong> <input type="text" name="contig" defaultValue={props.record.attributes.sequence_id}/></label>
@@ -342,7 +346,7 @@ function MercatorTable(props) {
   );
 }
 
-function UserCommentsTable(props) {
+function UserCommentsTable(props, context) {
   let { user_comment_link_url } = props.record.attributes;
   return (
     <div>
@@ -351,7 +355,7 @@ function UserCommentsTable(props) {
           onClick={e => {
             if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
             e.preventDefault();
-            wdk.user.login('add a comment', user_comment_link_url);
+            context.eventHandlers.showLoginWarning('add a comment', user_comment_link_url);
           }}
         >
           Add a comment <i className="fa fa-comment"/>
@@ -361,3 +365,7 @@ function UserCommentsTable(props) {
     </div>
   )
 }
+
+UserCommentsTable.contextTypes = {
+  eventHandlers: React.PropTypes.object.isRequired
+};

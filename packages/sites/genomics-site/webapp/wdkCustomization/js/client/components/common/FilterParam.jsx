@@ -1,12 +1,11 @@
-/* global wdk */
 import $ from 'jquery';
 import { Component, PropTypes } from 'react';
-let { AttributeFilter } = wdk.components.attributeFilter;
-let { LazyFilterService } = wdk.models.filter;
+import { AttributeFilter } from 'wdk-client/Components';
+import LazyFilterService from 'wdk-client/LazyFilterService';
 
 export class FilterParam extends Component {
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
     this.state = { isVocabLoading: true };
     this.handleServiceChange = () => {
       let serviceState = this.filterService.getState();
@@ -17,11 +16,12 @@ export class FilterParam extends Component {
 
   componentDidMount() {
     let { questionName, dependedValue } = this.props;
-    this.xhr = $.getJSON(wdk.webappUrl('/getVocab.do?' +
+    let { webAppUrl } = this.context.store.getState().globalData.config;
+    this.xhr = $.getJSON(webAppUrl + '/getVocab.do?' +
       'questionFullName=' + questionName +
       '&name=ngsSnp_strain_meta' +
       '&dependedValue=' + JSON.stringify(dependedValue) +
-      '&json=true'));
+      '&json=true');
 
     this.xhr.then(filterData => {
       this.filterService = new LazyFilterService({
@@ -32,7 +32,8 @@ export class FilterParam extends Component {
         }, filterData.metadataSpec[key])),
         data: filterData.values,
         questionName: 'GeneQuestions.GenesByNgsSnps',
-        dependedValue
+        dependedValue,
+        metadataUrl: webAppUrl + '/getMetadata.do'
       });
       this.handleServiceChange();
       this.setState({ isVocabLoading: false });
@@ -88,6 +89,10 @@ export class FilterParam extends Component {
     )
   }
 }
+
+FilterParam.contextTypes = {
+  store: PropTypes.object.isRequired
+};
 
 FilterParam.propTypes = {
   displayName: PropTypes.string.isRequired,

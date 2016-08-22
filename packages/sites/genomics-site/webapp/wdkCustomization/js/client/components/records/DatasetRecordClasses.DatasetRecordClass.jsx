@@ -111,7 +111,7 @@ function DatasetGraphTable(props) {
 }
 
 function References(props, context) {
-  let {questions, recordClasses, config} = context.store.getState();
+  let {questions, recordClasses, config} = context.store.getState().globalData || {};
   if (questions == null || recordClasses == null || config == null) {
     return <noscript/>;
   }

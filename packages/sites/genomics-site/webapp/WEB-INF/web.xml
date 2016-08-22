@@ -149,20 +149,18 @@
   
   <!-- WDK RESTful client filter -->
   <servlet>
+    <servlet-name>WDKSlimClient</servlet-name>
+    <jsp-file>/WEB-INF/includes/client2/index.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WDKSlimClient</servlet-name>
+    <url-pattern>/app2/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- WDK RESTful client filter -->
+  <servlet>
     <servlet-name>WDKClient</servlet-name>
-    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-    <init-param>
-      <param-name>javax.ws.rs.Application</param-name>
-      <param-value>org.gusdb.wdk.client.WdkClientApplication</param-value>
-    </init-param>
-    <init-param>
-      <param-name>jersey.config.server.provider.classnames</param-name>
-      <param-value>org.glassfish.jersey.server.mvc.jsp.JspMvcFeature</param-value>
-    </init-param>
-    <init-param>
-      <param-name>jersey.config.server.mvc.templateBasePath.jsp</param-name>
-      <param-value>/WEB-INF/includes/client/</param-value>
-    </init-param>
+    <jsp-file>/WEB-INF/includes/client/index.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>WDKClient</servlet-name>

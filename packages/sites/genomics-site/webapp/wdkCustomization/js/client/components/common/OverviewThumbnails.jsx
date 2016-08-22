@@ -1,7 +1,6 @@
 import {Component, PropTypes} from 'react';
 import lodash from 'lodash';
 import {getBestPosition} from '../../util/domUtils';
-import VerticalScrollHelper from './VerticalScrollHelper';
 
 let ThumbnailPropType = PropTypes.shape({
   anchor: PropTypes.string.isRequired,
@@ -16,94 +15,108 @@ export class OverviewThumbnails extends Component {
 
   constructor(...args) {
     super(...args);
-    this.timeoutId = null;
+    this.thumbnailNodes = new Map();
     this.state = {
-      showPopover: false
+      activeThumbnail: null
     };
 
     this.setNode = node => { this.node = node; };
 
     this.computePosition = popoverNode => {
       if (popoverNode == null) return;
-      let { offsetLeft, offsetTop } = getBestPosition(
-        popoverNode,
-        this.state.activeThumbnailNode
-      );
-      popoverNode.style.left = offsetLeft + 'px';
-      popoverNode.style.top = offsetTop + 'px';
-    };
-
-    this.handleThumbnailMouseEnter = thumbnail => event => {
-      this.setShowPopover(true, 250);
-      this.setActiveThumbnail(event, thumbnail);
-    };
-
-    this.handlePopoverMouseEnter = () => {
-      this.setShowPopover(true, 250);
-    };
-
-    this.handleThumbnailMouseLeave = this.handlePopoverMouseLeave = () => {
-      this.setShowPopover(false, 250);
+      // popoverNode.style.left = (window.innerWidth - popoverNode.clientWidth) / 2 + 'px';
+      // popoverNode.style.top = (window.innerHeight - popoverNode.clientHeight) / 2 + 'px';
+      // let { offsetLeft, offsetTop } = getBestPosition(
+      //   popoverNode,
+      //   this.state.activeThumbnailNode
+      // );
+      // popoverNode.style.left = offsetLeft + 'px';
+      // popoverNode.style.top = offsetTop + 'px';
     };
 
     this.handlePopoverClick = () => {
       this.props.onThumbnailClick(this.state.activeThumbnail);
-      this.setShowPopover(false, 0);
+      this.setState({ activeThumbnail: null });
+    };
+
+    this.handleKeyPress = event => {
+      if (this.state.activeThumbnail) {
+        let index = this.props.thumbnails.indexOf(this.state.activeThumbnail);
+        let prev = this.props.thumbnails[index - 1];
+        let next = this.props.thumbnails[index + 1];
+        if (event.key === "ArrowRight") {
+          if (next) this.setActiveThumbnail(next);
+        }
+        else if (event.key === "ArrowLeft") {
+          if (prev) this.setActiveThumbnail(prev);
+        }
+        else if (event.key === "Escape") {
+          this.setActiveThumbnail(null);
+        }
+      }
     };
   }
 
-  setActiveThumbnail(event, thumbnail) {
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
+  }
+
+  setActiveThumbnail(thumbnail) {
     if (thumbnail === this.state.activeThumbnail) return;
     this.setState({
       activeThumbnail: thumbnail,
-      activeThumbnailNode: event.target,
-      showPopover: false
+      activeThumbnailNode: this.thumbnailNodes.get(thumbnail)
     });
-  }
-
-  setShowPopover(show, delay) {
-    clearTimeout(this.timeoutId);
-    this.timeoutId = setTimeout(() => {
-      this.setState({ showPopover: show });
-    }, delay);
   }
 
   render() {
     return (
-      <VerticalScrollHelper>
-        <div ref={this.setNode} className="eupathdb-Thumbnails">
-          {this.props.thumbnails.map(thumbnail => (
-            <div className="eupathdb-ThumbnailWrapper" key={thumbnail.anchor}>
-              <div className="eupathdb-ThumbnailLabel">
-                <a href={'#' + thumbnail.anchor}
-                  onClick={() => this.props.onThumbnailClick(thumbnail)}>
-                  {thumbnail.displayName}
-                </a>
-              </div>
-              <a className={'eupathdb-Thumbnail eupathdb-Thumbnail__' + thumbnail.anchor}
-                {...getDataProps(thumbnail)}
-                onMouseEnter={this.handleThumbnailMouseEnter(thumbnail) }
-                onMouseLeave={this.handleThumbnailMouseLeave}
-                href={'#' + thumbnail.anchor}>
-                {thumbnail.element}
+      <div ref={this.setNode} className="eupathdb-Thumbnails">
+        {this.props.thumbnails.map(thumbnail => (
+          <div className="eupathdb-ThumbnailWrapper" key={thumbnail.anchor}
+            ref={node => this.thumbnailNodes.set(thumbnail, node)}>
+            <div className="eupathdb-ThumbnailLabel">
+              <a href={'#' + thumbnail.anchor}
+                onClick={() => this.props.onThumbnailClick(thumbnail)}>
+                {thumbnail.displayName}
               </a>
             </div>
+            <a {...getDataProps(thumbnail)}
+              className={'eupathdb-Thumbnail eupathdb-Thumbnail__' + thumbnail.anchor}
+              href={'#' + thumbnail.anchor}
+              onClick={() => this.props.onThumbnailClick(thumbnail)}
+            >
+              {thumbnail.element}
+            </a>
+            <button className="eupathdb-ThumbnailZoomButton" type="button" title="View larger image" onClick={() => this.setActiveThumbnail(thumbnail)}><i className="fa fa-search-plus"/></button>
+          </div>
           )) }
           {this.renderPopover() }
         </div>
-      </VerticalScrollHelper>
     );
   }
 
   renderPopover() {
-    if (this.state.showPopover) {
+    if (this.state.activeThumbnail) {
+      let index = this.props.thumbnails.indexOf(this.state.activeThumbnail);
+      let prev = this.props.thumbnails[index - 1];
+      let next = this.props.thumbnails[index + 1];
       return (
         <div className="eupathdb-ThumbnailPopover"
-          ref={this.computePosition}
+          ref={(node) => this.computePosition(node)}
           onMouseEnter={this.handlePopoverMouseEnter}
           onMouseLeave={this.handlePopoverMouseLeave}>
-          <h3>{this.state.activeThumbnail.displayName}</h3>
-          <div>(Click on image to view section on page) </div>
+          <h3 className="eupathdb-ThumbnailPopoverText">{this.state.activeThumbnail.displayName}</h3>
+          <div className="eupathdb-ThumbnailPopoverText">(Click on image to view section on page) </div>
+          <div>
+            <button type="button" disabled={prev == null} onClick={() => this.setActiveThumbnail(prev)}>Prev</button>
+            <button type="button" disabled={next == null} onClick={() => this.setActiveThumbnail(next)}>Next</button>
+            <button type="button" onClick={() => this.setState({ activeThumbnail: null })}>Close</button>
+          </div>
           <a href={'#' + this.state.activeThumbnail.anchor}
             className={'eupathdb-Thumbnail eupathdb-Thumbnail__' + this.state.activeThumbnail.anchor}
             {...getDataProps(this.state.activeThumbnail)}

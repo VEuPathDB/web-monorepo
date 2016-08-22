@@ -1,3 +1,5 @@
+import React from 'react';
+import { webAppUrl } from '../config';
 import {Tooltip} from 'wdk-client/Components';
 import { getPropertyValue, nodeHasChildren, getNodeChildren } from 'wdk-client/OntologyUtils';
 
@@ -67,9 +69,9 @@ let QueryGrid = React.createClass({
               <li>
                 <i className="bullet fa fa-li fa-circle"></i>
                 <Tooltip content={search.wdkReference.description}>
-                <a href={wdk.webappUrl('showQuestion.do?questionFullName=' + getPropertyValue("name", search))}>
-                  { search.wdkReference.displayName }
-                </a>
+                  <a href={webAppUrl + '/showQuestion.do?questionFullName=' + getPropertyValue("name", search)}>
+                    { search.wdkReference.displayName }
+                  </a>
                 </Tooltip>
               </li>
           )
