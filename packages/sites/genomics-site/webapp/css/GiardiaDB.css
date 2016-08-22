@@ -46,7 +46,7 @@ body {
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #227124; //green
+	color: #227124;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,7 +57,7 @@ body {
   min-height: 299px;
 } */
 .threecolumndiv div.heading {
-  background-color: #569551;  /* #274f94; */
+  background-color: #569551;  /* green #274f94; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,7 +79,7 @@ body {
 }
 
 #menu_lefttop a.heading {
-	background: #274f94;  /* #569551;  */
+	background: #274f94;  /* blue  #569551;  */
 }
 
 
