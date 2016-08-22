@@ -893,9 +893,9 @@ sub gsnapUnifiedIntronJunctionTitle {
   my ($isrpm) = $f->get_tag_values('ISRPM');
   my ($nrs) =  $f->get_tag_values('NRS');
   my ($percSamp) = $f->get_tag_values('PerMaxSample'); 
-  my ($expRatio) = $f->get_tag_values('ExpRatio'); 
+#  my ($expRatio) = $f->get_tag_values('ExpRatio'); 
   my ($isrpmExpRatio) = $f->get_tag_values('IsrpmExpRatio'); 
-  my ($avgExpRatio) = $f->get_tag_values('AvgExpRatio'); 
+#  my ($avgExpRatio) = $f->get_tag_values('AvgExpRatio'); 
   my ($isrpmAvgExpRatio) = $f->get_tag_values('IsrpmAvgExpRatio'); 
   ##attributes
   my ($totalScore) = $f->get_tag_values('TotalScore'); 
@@ -915,9 +915,7 @@ sub gsnapUnifiedIntronJunctionTitle {
   my @isrpm_arr    = split /\|/, $isrpm;
   my @nrs_arr    = split /\|/, $nrs;
   my @percSamp_arr = split /\|/, $percSamp;
-  my @expRatio_arr = split /\|/, $expRatio;
   my @isrpmExpRatio_arr = split /\|/, $isrpmExpRatio;
-  my @avgExpRatio_arr = split /\|/, $avgExpRatio;
   my @isrpmAvgExpRatio_arr = split /\|/, $isrpmAvgExpRatio;
 
   ##First build the html table so can capture max isrpm and thus maxRatio
