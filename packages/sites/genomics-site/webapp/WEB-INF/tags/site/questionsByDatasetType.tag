@@ -60,6 +60,13 @@
     </div>
   </c:if>
 
+
+<!-- SET in CUSTOMSHOWQUESTIONACTION
+questions_by_dataset_map (questionsByDataset in action)
+uncategorized_questions_by_dataset_map (uncatQuestionsMap in action)
+display_categories  (fold change, percentile etc) (displayCategorySet in action)
+-->
+
   <imp:stylesheet rel="stylesheet" href="wdkCustomization/css/dataset-searches.css"/>
   <div class="dataset-searches"
     data-controller="eupathdb.datasetSearches.init"

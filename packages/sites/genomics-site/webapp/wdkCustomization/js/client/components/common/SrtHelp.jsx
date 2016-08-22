@@ -1,11 +1,7 @@
-import * as Wdk from 'wdk-client';
-
-let { Image } = Wdk.Components;
-
 export default function SrtHelp() {
   return (
     <div>
-      <Image src="images/genemodel.gif"/>
+      <img src="/a/images/genemodel.gif"/>
       <br/>
       Types of sequences:
       <table width="100%" cellPadding="4">

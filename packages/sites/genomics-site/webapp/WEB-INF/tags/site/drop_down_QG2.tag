@@ -5,11 +5,14 @@
 
 <%@ attribute name="from" description="page using this tag" %>
 
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
+
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
 <c:set var="project" value="${props['PROJECT_ID']}" />
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}" />
 <c:set var="rootCatMap" value="${wdkModel.websiteRootCategories}" />
+<c:set var="rootCatMapWS" value="${wdkModel.webserviceRootCategories}" />
 
 <%-- model questions are used by webservices for OTHER recordClasses, instead of the categories.xml. 
      the reason being:
@@ -21,6 +24,7 @@
 <c:set value="${wdkModel.questionSets}" var="questionSets"/>
 
 <ul style="margin:0;padding:0;list-style:none">
+
   <c:forEach items="${rootCatMap}" var="rootCatEntry">
     <c:set var="recType" value="${rootCatEntry.key}" />
     <c:set var="rootCat" value="${rootCatEntry.value}" />
@@ -28,23 +32,30 @@
 
       <%-- ================================= GENES   ================================= --%>
 
-      <c:when test="${recType=='GeneRecordClasses.GeneRecordClass'}">
+      <c:when test="${recType=='TranscriptRecordClasses.TranscriptRecordClass'}">
         <li>
           <c:choose>
             <c:when test="${from == 'webservices'}">
-              <a title="This one WADL contains documentation for all gene web service searches"  href="<c:url value='/webservices/GeneQuestions.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Genes</h3></a>
-              <c:set var="children" value="${rootCat.webserviceChildren}" />
+            <a title="This one WADL contains documentation for all gene web service searches"  href="${baseUrl}/webservices/GeneQuestions.wadl"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">Search for Gene Attributes</h3></a>
+
+    <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
+    <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
+    <c:set var="rootCatWS" value="${rootCatEntryWS.value}" />
+    <c:if test="${recTypeWS==recType}">
+              <c:set var="children" value="${rootCatWS.webserviceChildren}" />
+    </c:if>
+    </c:forEach>
+
             </c:when>
             <c:otherwise>
-              <a href="#" class="dropdown">Search for Genes</a>
+              <a href="#" class="dropdown">Genes</a>
               <c:set var="children" value="${rootCat.websiteChildren}" />
             </c:otherwise>
           </c:choose>
-          <ul>
+          <ul>       <%-- GENE CATEGORIES --%>
             <c:forEach items="${children}" var="catEntry">
               <c:set var="cat" value="${catEntry.value}" />
-              <c:if test="${fn:length(cat.websiteQuestions) > 0}">
-
+          <%--    <c:if test="${fn:length(cat.websiteQuestions) > -1}"> --%>
                 <%-- GENE CATEGORY --%>
                 <li>     
                   <c:choose>
@@ -59,15 +70,13 @@
                       <c:set var="categories" value="${cat.websiteChildren}" /> 
                     </c:otherwise>
                   </c:choose>
-                  <ul>
+                  <ul>           <%-- GENE QUESTIONS --%>
                     <c:forEach items="${questions}" var="q">
-
-                      <%-- GENE QUESTION --%>
                       <li>
                       <c:choose>
                       <c:when test="${from == 'webservices'}">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
+                        <a href="${baseUrl}/webservices/GeneQuestions/${q.name}.wadl">${q.displayName}
                           <imp:questionFeature question="${q}" refer="${from}"/>
                         </a>
                         <c:if test="${project eq 'EuPathDB'}">
@@ -82,15 +91,15 @@
                           ${flag}
                         </c:if>
                       </c:when>
-                      <c:otherwise>
-                        <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+                      <c:otherwise>      <%-- WEBSITE --%>
+                      <a href="${baseUrl}/showQuestion.do?questionFullName=${q.fullName}">${q.displayName}
                           <imp:questionFeature question="${q}" />
                         </a>
                       </c:otherwise>
                     </c:choose>
                   </li>
                 </c:forEach>
-                          
+                             <%-- GENE SUBCATEGORIES --%>
                 <c:forEach items="${categories}" var="cEntry">
                   <c:set var="cat" value="${cEntry.value}" />
                     <li>
@@ -101,6 +110,7 @@
                         </c:when>
                         <c:otherwise>
                           <a href="javascript:void(0)" class="dropdown">${cat.displayName}</a>
+                          <c:set var="questions" value="${cat.websiteQuestions}" />
                         </c:otherwise>
                       </c:choose>
                       <ul>
@@ -109,7 +119,7 @@
                             <c:choose>
                               <c:when test="${from == 'webservices'}">
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a href="<c:url value="/webservices/GeneQuestions/${q.name}.wadl"/>">${q.displayName}
+                                <a href="${baseUrl}/webservices/GeneQuestions/${q.name}.wadl">${q.displayName}
                                   <imp:questionFeature question="${q}" refer='${from}'/>
                                 </a>
                                 <c:if test="${project eq 'EuPathDB'}">
@@ -125,7 +135,7 @@
                                 </c:if>
                               </c:when>
                               <c:otherwise>
-                                <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+                              <a href="${baseUrl}/showQuestion.do?questionFullName=${q.fullName}">${q.displayName}
                                   <imp:questionFeature question="${q}" />
                                 </a>
                               </c:otherwise>
@@ -137,7 +147,7 @@
                   </c:forEach>   
                 </ul>
               </li>
-            </c:if>
+       <%--     </c:if> --%>
           </c:forEach>
         </ul>
       </li>
@@ -148,36 +158,75 @@
       <c:set var="qByCat" value="${catByRec.value}" />
       <c:choose>
         <c:when test="${from == 'webservices'}">
-          <c:set var="children" value="${rootCat.webserviceChildren}" />
+
+        <c:forEach items="${rootCatMapWS}" var="rootCatEntryWS">
+          <c:set var="recTypeWS" value="${rootCatEntryWS.key}" />
+          <%-- rootCatWS is  a SearchCategory(.java) displayName comes from eupathCategoriesFactory for recordtypes--%>
+          <c:set var="rootCatWS" value="${rootCatEntryWS.value}" />
+<%--  DEBUG
+<br>
+**** ${recTypeWS} **** ${recType}  ****  rootCatWS is: ${rootCatWS.name} ==  ${rootCatWS.displayName} 
+<br>
+--%>
+          <c:if test="${recTypeWS==recType}">
+<%--  DEBUG
+<br>
+**** matched recType:  setting children for webservices
+<br>
+--%>
+            <c:set var="children" value="${rootCatWS.webserviceChildren}" />
+          </c:if>
+        </c:forEach>
         </c:when>
         <c:otherwise>
           <c:set var="children" value="${rootCat.websiteChildren}" />
         </c:otherwise>
       </c:choose>
-      
+<%--  DEBUG    
+<br>
+*************************************  CHILDREN IN PLACE for ${recType}, now loop on children
+<br>
+--%>
       <c:forEach items="${children}" var="catEntry">
         <c:set var="cat" value="${catEntry.value}" />
+<%--
+<br>
+************************************* FOR EACH CHILD.. do we have (website or webservice) questions ?
+<br>
+--%>
         <c:if test="${fn:length(cat.websiteQuestions) > 0}">
           <c:choose>
 
-             <%-- WEBSERVICES PAGE  --%>
+            <%-- WEBSERVICES PAGE  --%>
             <c:when test="${from == 'webservices'}">
+<%--
+<br>
+************************************* WE DO!! 
+<br>
+--%>
               <c:forEach items="${questionSets}" var="qSet">
-<!-- DEBUG
+<%-- DEBUG
 <br>
-${qSet.displayName}---${qSet.internal}---${cat.displayName}
+checking if third string is contained in first :   ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 <br>
- -->
+--%>
+
                 <c:if test="${qSet.internal == false}">
-                  <c:if test="${qSet.displayName == cat.displayName}">
-                   
+                  <c:if test="${fn:contains(qSet.displayName,cat.displayName)}">
+<%-- DEBUG
+<br> MATCHED CATEGORY DISPLAYNAME WITH QSET DISPLAYNAME
+****${qSet.displayName}---${qSet.internal}---${cat.displayName}
+<br>
+READY TO ADD NEW RECORD TYPE SECTION
+<br><br>
+--%>
                     <li>
-                      <a href="<c:url value='/webservices/${qSet.name}.wadl'/>"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
+                      <a href="${baseUrl}/webservices/${qSet.name}.wadl"><h3 style="font-size:150%;margin-bottom:10px;margin-left:10px;">${qSet.displayName}</h3></a>
                       <ul>
                         <c:forEach items="${qSet.questions}" var="q">
 <c:if test="${!fn:contains(q.name,'BySpanLogic')  && !fn:contains(q.name,'ByWeightFilter')}">
                           <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="<c:url value='/webservices/${qSet.name}/${q.name}.wadl'/>">${q.displayName}
+                            <a href="${baseUrl}/webservices/${qSet.name}/${q.name}.wadl">${q.displayName}
                               <imp:questionFeature question="${q}" refer="${from}" />
                             </a>
                             <c:if test="${project eq 'EuPathDB'}">
@@ -206,18 +255,20 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
               <li>
                 <a href="#" class="dropdown">${cat.displayName}
                   <!-- BETA on menus at category level, no question level -->
+<%--
                   <c:if test="${project ne 'TrichDB' && project ne 'EuPathDB'}">
                     <c:if test="${fn:containsIgnoreCase(cat.displayName,'Pathways') || fn:containsIgnoreCase(cat.displayName,'Compounds')}">
                       <imp:image alt="Beta feature icon" title="This category is new and is under active revision, please contact us with your feedback." 
                                  src="wdk/images/beta2-30.png" />
                     </c:if>
                   </c:if>
+--%>
                 </a> 
 
                 <ul>
                   <c:forEach items="${cat.websiteQuestions}" var="q">
                     <li>
-                      <a href="<c:url value="/showQuestion.do?questionFullName=${q.fullName}"/>">${q.displayName}
+                      <a href="${baseUrl}/showQuestion.do?questionFullName=${q.fullName}">${q.displayName}
                         <imp:questionFeature question="${q}" refer="${from}" />
                       </a>
                     </li>
@@ -236,7 +287,7 @@ ${qSet.displayName}---${qSet.internal}---${cat.displayName}
 </c:forEach>
 
 <c:if test="${from ne 'webservices'}">
-  <li><a href="<c:url value="/queries_tools.jsp"/>">View all available searches</a></li>
+  <li><a href="${baseUrl}/app/query-grid">View all available searches</a></li>
 </c:if>
 
 </ul>

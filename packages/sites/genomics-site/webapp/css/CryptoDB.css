@@ -6,33 +6,10 @@ body {
 	background-image: url(../images/CryptoDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink, .link  {
-	color: #0b4796;
-}
-
-a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #610b0b;    /* for contrast 08438F; */        /*  #83a6d4; */
-}
-
-a[name]:link {
-	color: black;
-}
-
-a[name]:visited {
-	color: black;
-}
-
-a[name]:hover, a[name]:active {
-	color:  black;
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-#header {
-	background-image: url(../images/CryptoDB/backgroundtop_s.jpg);
-}
 
 #header2 {
 	background-image: url(../images/CryptoDB/backgroundtop_s.jpg);
@@ -58,8 +35,8 @@ a[name]:hover, a[name]:active {
 	color: #395b8e;
 }
 
-#nav-top li ul {  /* second-level lists */
-	background-image: url(../images/CryptoDB/footer.png);
+#nav-top li ul { 
+/*	background-image: url(../images/CryptoDB/footer.png); */
 	border-color:#395b8e;
 	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
 }
@@ -76,319 +53,32 @@ a[name]:hover, a[name]:active {
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#bubbles .info {
-  min-height: 351px;
+.threecolumndiv div.heading {
+  background-color: #274f94;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-/* #menubar #mysearch {
-	background-image: url(../images/CryptoDB/my_hist_menubar.png);
-	border: 1px solid #6e2929;
-} */
- 
-#contentcolumn {
-	background-image: url(../images/CryptoDB/footer.png);
-	border: 1px solid #345d9b;
-}
-
-#contentcolumn2 {
-	background-image: url(../images/CryptoDB/footer.png);
-	border: 1px solid #345d9b;
-}
-
-#mysearchhist {
-	background-image: url(../images/CryptoDB/bubble_my_searchbox.png);
-	border: 1px solid #aebed7;
-}
-
-#main_tools {
-	background-image: url(../images/CryptoDB/tools_bckgnd.jpg);
-}
-
-#about_us_left {
-	background-color: #bfccdf;
-	list-style-image: url(../images/CryptoDB/bullet_arrow.gif);
-}
-
-#pink_title {
-	color: #5f140e;
-	background-image: url(../images/CryptoDB/trheader.png);
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#560000;
-}
-
-#menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #610b0b;
-}
-
-#menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #610b0b;
-	color: #610b0b;
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
+	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #345d9b;  /* color as in contentcolumn border */
+   border-color: #888;
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/CryptoDB/menu_lft2.png);
+  background: #8b465c;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Search Boxes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.search-box{
-   border: solid 1px #5376ae;
-} 
-
-.search-box .textbox{
-	border: solid 1px #5376ae;    /* b3b3b3; */
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Fonts 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-h1 {
-	color: #610b0b; /*#345d9b; */
-}
-
-h2 {
-  	color: #610b0b; /*#345d9b;*/
-}
-
-.h2center, .h3left, .h3center, .h4left {
-        color: #610b0b;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
-#footer{
-   background-image: url(../images/CryptoDB/footer.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TABLES 
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-td.headerrow {
-	color: #5f140e;
-	background-image: url(../images/CryptoDB/trheader.png);
-}
-
-tr.headerrow {
-	color: #5f140e;
-}
-
-tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/CryptoDB/trheader.png);
-}
-
-.flexigrid tr.headerrow th:hover {
-	background-image: url(../images/CryptoDB/trhover.png);
-}
-
-td.subheaderrow {
-	background-image: url(../images/CryptoDB/trsubhead.png);
-}
-
-tr.subheaderrow th {
-	background-image: url(../images/CryptoDB/trsubhead.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.headerrow2 td{
-        color: #5f140e;
-	background-image: url(../images/CryptoDB/trheader.png);
-}
-
-tr.subheaderrow2 td{
-	background-image: url(../images/CryptoDB/trsubhead.png);
-}
-
-a.queryGridInactive {
-        color:              #C8C8C8;
-}
-
-a.queryGridActive {
-        color:              #0b4796;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =END OF TABLES FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.subheaderrow th {
-	border-color: #5F140E;
-}
-
-tr.headerrow th { 
-	border-color: #5F140E;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WorkSpace Divs 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-div.Workspace {
-	border-color: #0B4796;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ABOUT US and HELP PAGES SIDEBAR
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* seems unused, not in other component sites 
-.twoColHybLt #container_au { 
-	background-image: url(../images/CryptoDB/aboutus.png);
-}
-*/
-.twoColHybLt #sidebar1 {
-	background-image: url(../images/CryptoDB/aboutus.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ADVANCED STRATEGY PAGING 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in contact.do, classic bullet list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =MISC 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-span.marker a:link, span.marker a:visited {
-	color: #7D0101;
-}
-
-#strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E8EBF0;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = styles for blockUI popups
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.blockMsg{
-	border: 1px solid #345d9b;
-}
-
-.blockPage{
-	background-image: url(../images/CryptoDB/footer.png);
-}
-
-.flexigrid div.hDiv {
-	background-image:url(../images/CryptoDB/trheader.png);
-}
-
-.flexigrid div.hDiv th.thMove {
-	background-image:url(../images/CryptoDB/trheader.png);
-}
-
-div.colCopy {
-	background-image:url(../images/CryptoDB/trheader.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 history.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter_menu.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#query_form {
-	border: 1px solid #345d9b;	
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 dataset-searches.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#dataset-records th {
-  color: #610b0b;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter param overrides
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* Don't show :hover alternate color */
-.field-list ul a:link,
-.field-list ul a:visited,
-.field-list ul div.divlink,
-.field-list ul .link,
-.field-list ul a:hover,
-.field-list ul a:active,
-.field-list ul a:focus,
-.field-list ul div.divlink:hover,
-.field-list ul .link:hover,
-.filter-items a:link,
-.filter-items a:visited,
-.filter-items div.divlink,
-.filter-items .link,
-.filter-items a:hover,
-.filter-items a:active,
-.filter-items a:focus,
-.filter-items div.divlink:hover,
-.filter-items .link:hover {
-	color: #0b4796;
-}
-
-.field-list ul .active a:link,
-.field-list ul .active a:visited,
-.field-list ul .active div.divlink,
-.field-list ul .active .link,
-.field-list ul .active a:hover,
-.field-list ul .active a:active,
-.field-list ul .active a:focus,
-.field-list ul .active div.divlink:hover,
-.field-list ul .active .link:hover,
-.filter-items .selected a:link,
-.filter-items .selected a:visited,
-.filter-items .selected div.divlink,
-.filter-items .selected .link,
-.filter-items .selected a:hover,
-.filter-items .selected a:active,
-.filter-items .selected a:focus,
-.filter-items .selected div.divlink:hover,
-.filter-items .selected .link:hover {
-	color: #610b0b;
-}
 
 
 /*THE END */

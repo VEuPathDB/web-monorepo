@@ -8,9 +8,9 @@
   // per a request from BB.
   //
   // FIXME Remove this when BB reloads SNPs.
-  function injectDefaultFilter(event, filterParam) {
+  function injectDefaultFilter(event) {
     var $form = $(event.target).closest('form');
-    var filterService = filterParam.filterService;
+    var filterService = $(event.target).data('filterService');
 
     if ($form.is('.is-revise')) return;
     if (!paramNames.includes(filterService.name)) return;
@@ -19,6 +19,8 @@
     var field = filterService.fields.find(function(field) {
       return field.term === 'StrainOrLine';
     });
+
+    if (field == null) return;
 
     filterService.getFieldDistribution(field)
       .then(function(distribution) {

@@ -75,6 +75,8 @@
     <!-- JavaScript provided by Site -->
     <imp:javascripts refer="${refer}"/>
 
+    <!-- include project specific CSS here since it overrides rules included in JS bundle -->
+    <imp:stylesheet rel="stylesheet" href="css/${project}.css" type="text/css" />
 
   </head>
   

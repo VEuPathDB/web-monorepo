@@ -93,7 +93,7 @@ The result of a web service request is a list of records (genes, ESTs, etc) in e
 REST services can be executed in a browser by typing a specific URL. 
 
 <br><br>For example, this URL:
-<br><span style="position:relative;left:${margin};font-size:110%"><a href="<c:url value="/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&organism=${organism}&o-fields=gene_type,organism"/>">http://${wdkModelDispName}.org/webservices/GeneQuestions/GenesByMolecularWeight.xml?<br>min_molecular_weight=10000&<br>max_molecular_weight=50000&<br>organism=${organism}&<br>o-fields=gene_type,organism</a></span>
+<br><span style="position:relative;left:${margin};font-size:110%"><a href="<c:url value="/webservices/GeneQuestions/GenesByMolecularWeight.xml?min_molecular_weight=10000&max_molecular_weight=50000&reference_strains_only=Yes&organism=${organism}&o-fields=gene_type,organism"/>">http://${wdkModelDispName}.org/webservices/GeneQuestions/GenesByMolecularWeight.xml?<br>min_molecular_weight=10000&<br>max_molecular_weight=50000&<br>reference_strains_only=Yes&<br>organism=${organism}&<br>o-fields=gene_type,organism</a></span>
 
 <br><br>Corresponds to this request: 
 <br><span style="font-style:italic;font-weight:bold;position:relative;left:${margin};">
@@ -123,12 +123,12 @@ Find all (${organism}) genes that have molecular weight between 10,000 and 50,00
 <li>To download one sequence, please use one of the following URL formats:
 <br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700">
   http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}&start=14&end=700</a>
-<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)">
-  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)</a>
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}:14..700">
+  http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}:14..700</a>
 </li>
 <li>For multiple sequences use the line feed character (%0A) as separator (comma or semicolon or carriage return do not work):
-<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)">
-http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}%20(14..700)%0A${seqIdParam.default}%20(800..900)</a>
+<br><a target="_blank" href="http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}:14..700%0A${seqIdParam.default}:800..900">
+http://${wdkModelDispName}.org/cgi-bin/contigSrt?project_id=${wdkModelDispName}&ids=${seqIdParam.default}:14..700%0A${seqIdParam.default}:800..900</a>
 </li>
 </ul>
 

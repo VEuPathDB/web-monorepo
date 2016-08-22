@@ -47,6 +47,12 @@
 </a></div>
 --%>
 
+<%-- Accommodates the fact that transcript records go to the gene page --%>
+<c:set var="recordType" value="${recordClass.urlSegment}" />
+<c:if test="${recordType == 'transcript'}">
+  <c:set var="recordType" value="gene" />
+</c:if>
+
 <div id="sequences">
   <c:forEach items="${sequences}" var="sequence">
     <div id="${sequence.sourceId}" class="sequence"
@@ -95,7 +101,7 @@
                 <c:forEach items="${region.features}" var="feature">
                  <tr>
                   <td>
-                    <a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />">
+                    <a href="<c:url value='/app/record/${recordType}/${feature.sourceId}' />">
                       <u>${feature.sourceId}</u>
                     </a>
                   </td>
@@ -118,7 +124,9 @@
                      on ${feature.strand} strand of ${sequence.sourceId}</p>
                   <p>${feature.description}</p>
                   <ul>
-                    <li><a href="<c:url value='/showRecord.do?name=${recordClass.fullName}&source_id=${feature.sourceId}' />"><u>Record page</u></a></li>
+                    <li>
+                      <a href="<c:url value='/app/record/${recordType}/${feature.sourceId}' />"><u>Record page</u></a>
+                    </li>
                     <li><a href="/cgi-bin/gbrowse/${siteName}/?name=${feature.context};h_feat=${feature.sourceId}@yellow"><u>Gbrowse</u></a></li>
                   <ul>
                 </div>
@@ -148,7 +156,7 @@
   <tbody>
   <c:forEach items="${sequences}" var="sequence">
     <tr class="sequence">
-      <c:url var="sequenceUrl" value="/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&source_id=${sequence.sourceId}" />
+      <c:url var="sequenceUrl" value="/app/record/genomic-sequence/${sequence.sourceId}" />
       <td class="sequence-id" nowrap><a href="${sequenceUrl}">${sequence.sourceId}</a></td>
       <td class="organism" nowrap><i>${sequence.organism}</i></td>
       <td class="chromosome" nowrap>${sequence.chromosome}</td>

@@ -67,7 +67,7 @@
       <imp:header refer="${refer}" title= "${title}" />
       
       <c:choose>
-        <c:when test="${refer ne 'home' and refer ne 'home2' and refer ne 'summary'}">
+        <c:when test="${refer ne 'home' and refer ne 'home2' and refer ne 'summary' and refer ne 'betaApp'}">
           <div id="contentwrapper">
             <div id="contentcolumn2">
               <div class="innertube">
@@ -80,11 +80,9 @@
           <jsp:doBody/>
         </c:otherwise>
       </c:choose>
-      
-      <imp:dialogs/>
       <imp:footer refer="${refer}"/>
       <imp:IEWarning version="8"/>
-
+      <imp:dialogs/>
     </body>
   </html>
 </jsp:root>

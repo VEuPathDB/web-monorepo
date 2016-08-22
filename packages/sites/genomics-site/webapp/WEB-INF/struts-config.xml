@@ -123,6 +123,7 @@
         name="registerForm">
       <forward name="input" path="/wdkCustomization/jsp/Register.jsp" redirect="false"/>
       <forward name="success" path="/showLogin.do" redirect="true"/>
+      <forward name="profile" path="/showProfile.do" redirect="true"/>
     </action>
     <action path="/showProfile"
         parameter="org.gusdb.wdk.controller.action.standard.PrivatePageAction"
@@ -196,7 +197,7 @@
     </action>
     <action
       path="/processBasket"
-      type="org.gusdb.wdk.controller.action.ProcessBasketAction"
+      type="org.apidb.apicommon.controller.action.CustomProcessBasketAction"
       scope="request"
       validate="false">
     </action>
@@ -450,6 +451,7 @@
       <forward name="show-summary-view" path="/showSummaryView.do"/>
       <forward name="pq-show-basket" path="/showBasket.do"/>
     </action>
+
     <action
       path="/showRecord"
       type="org.apidb.apicommon.controller.action.CustomShowRecordAction"

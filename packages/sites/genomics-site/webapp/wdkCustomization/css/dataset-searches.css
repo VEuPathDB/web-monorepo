@@ -188,13 +188,13 @@ th.searches {
   text-indent: 1.5em;
 }
 .dataTable th.sorting {
-  background-image: url('../../wdk/images/sort_both.png');
+  background-image: url('~wdk/images/sort_both.png');
 }
 .dataTable th.sorting_asc {
-  background-image: url('../../wdk/images/sort_asc.png');
+  background-image: url('~wdk/images/sort_asc.png');
 }
 .dataTable th.sorting_desc {
-  background-image: url('../../wdk/images/sort_desc.png');
+  background-image: url('~wdk/images/sort_desc.png');
 }
 .dataTable td.description {
 }
@@ -258,7 +258,7 @@ td.search-mechanism a {
   display: inline-block;
   width: 13px;
   height: 12px;
-  background: url(../../wdk/images/question.png);
+  background: url(~wdk/images/question.png);
   vertical-align: middle;
   position: absolute;
   left: 6px;

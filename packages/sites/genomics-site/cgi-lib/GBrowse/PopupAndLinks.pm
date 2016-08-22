@@ -58,13 +58,6 @@ sub orfLink {
   return $link;
 }
 
-sub sageTagLink { 
-  my $f = shift;
-  my $name = $f->name;
-  my $link = "/a/showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&primary_key=$name";
-  return $link;
-}
-
 sub ArrayElementLink {
 #  my $f = shift;
 #  my $name = $f->name;
@@ -75,7 +68,8 @@ sub ArrayElementLink {
 sub snpLink {
   my $f = shift;
   my $name = $f->name;
-  my $link = "/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$name";
+  my ($type) = $f->get_tag_values('type');
+  my $link = "/a/app/record/$type/$name";
   return $link;
 }
 
@@ -100,7 +94,7 @@ sub gffTssChabbert {
   else {
     my $gene = defined $assignedFeature ? $assignedFeature : $assignedFeat;
 
-    my  $link = "<a href='/a/showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$gene'>$gene</a>";
+    my  $link = "<a href='/a/app/record/gene/$gene'>$gene</a>";
     push @data, [ 'Assigned Feature'=> $link];
   }
 
@@ -213,6 +207,7 @@ sub snpTitleQuick {
   my ($gene) = $f->get_tag_values("Gene"); 
   my ($isCoding) = $f->get_tag_values("IsCoding"); 
   my ($nonSyn) = $f->get_tag_values("NonSyn"); 
+  my ($nonsense) = $f->get_tag_values("Nonsense"); 
   my ($rend) = $f->get_tag_values("rend"); 
   my ($base_start) = $f->get_tag_values("base_start");
   my $zoom_level = $rend - $base_start; 
@@ -222,56 +217,61 @@ sub snpTitleQuick {
   my ($reference_aa) = $f->get_tag_values("reference_aa");
   my ($gene_strand) = $f->get_tag_values("gene_strand");
   my ($reference_na) = $f->get_tag_values("reference_na");
+  my ($major_allele) = $f->get_tag_values("major_allele");
+  my ($minor_allele) = $f->get_tag_values("minor_allele");
+  my ($major_allele_count) = $f->get_tag_values("major_allele_count");
+  my ($minor_allele_count) = $f->get_tag_values("minor_allele_count");
+  my ($major_allele_freq) = $f->get_tag_values("major_allele_freq");
+  my ($minor_allele_freq) = $f->get_tag_values("minor_allele_freq");
+  my ($major_product) = $f->get_tag_values("major_product");
+  my ($minor_product) = $f->get_tag_values("minor_product");
   my ($source_id) = $f->get_tag_values("source_id");
-
-  my $variants = $f->bulkAttributes();
-  my @vars;
-  foreach my $variant (@$variants) {
-    push(@vars, "$variant->{STRAIN}:$variant->{ALLELE}:$variant->{PRODUCT}");
-  }
+  my ($link_type) = $f->get_tag_values("type");
 
   my $start = $f->start();
-  my %revArray = { 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' };
+  my %revArray = ( 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' );
 
-  my $link = "<a href='/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$source_id'>$source_id</a>";
+  my $link = "<a href='/a/app/record/$link_type/$source_id'>$source_id</a>";
          
   my $type = 'Non-coding';
-  my  $refNA = $gene_strand == 1 ? $revArray{$reference_na} : $reference_na;
+  my  $refNA = $gene_strand == -1 ? $revArray{$reference_na} : $reference_na;
+
+  my $num_strains = $major_allele_count + $minor_allele_count;
+
+  my $testNA = $reference_na;
+
   my $refAAString = ''; 
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
-     $type = "Coding (synonymous)";
-     $type = "Coding (non-synonymous)" if ($nonSyn == 1);
+     $type = "Coding (".($nonsense ? "nonsense)" : $nonSyn ? "non-synonymous)" : "synonymous)");
      $refAAString = "&nbsp;&nbsp;&nbsp;&nbsp;AA=$reference_aa";
-  }
+     $minor_product = $nonsense || $nonSyn ? $minor_product : $major_product;
+   }else{
+     $minor_product = '&nbsp';
+   }
+
 
   my @data;
   push(@data, ['SNP' => $link]);
   push(@data, ['Location' => $start]);
   push(@data, ['Gene' => $gene]) if $gene;
+
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
     push(@data, ['Position&nbsp;in&nbsp;CDS' => $position_in_CDS]);
     push(@data, ['Position&nbsp;in&nbsp;protein' => $position_in_protein]);
   }
 
   push(@data, ['Type' => $type]);
-  push(@data, ["$reference_strain"."&nbsp;(reference)" => "NA=$refNA $refAAString"]);
+  push(@data, ['Number of strains' => $num_strains]);
+  push(@data, ['' => 'NA&nbsp;&nbsp;&nbsp;'.($isCoding ? 'AA&nbsp;&nbsp;&nbsp;(frequency)' : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(frequency)')]);
+  push(@data, ["$reference_strain"."&nbsp;(reference)" => "&nbsp;$refNA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp$reference_aa"]);
 
-  # make one row per SNP allele
-  my $size = @vars;
-  for (my $i=0; $i< $size; $i++) {
-    my @var = split /\:/, $vars[$i];
-    my $strain = $var[0];
+  
+  $major_allele = $revArray{$major_allele} if($gene_strand == -1);
+  $minor_allele = $revArray{$minor_allele} if($gene_strand == -1);
 
-    next if ($strain eq $reference_strain);
+  push(@data, ['Major Allele' => "&nbsp;$major_allele&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$major_product&nbsp;&nbsp;&nbsp;&nbsp;($major_allele_freq)"]);
+  push(@data, ['Minor Allele' => "&nbsp;$minor_allele&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$minor_product&nbsp;&nbsp;&nbsp;&nbsp;($minor_allele_freq)"]);
 
-    my $na = $var[1];
-    $na = $revArray{$na} if ($gene_strand == 1);
-
-    my $aa_seq =  ($isCoding == 1 || $isCoding == 'yes') ? "&nbsp;&nbsp;&nbsp;&nbsp;AA=$var[2]"  : '';
-
-    push(@data, [$strain => "NA=$na $aa_seq" ]);
-
-  }
   hover($f, \@data);
 }
 
@@ -413,9 +413,7 @@ sub geneTitleGB2 {
     $loc .= $_->location->to_FTstring. "<br />";
   }
 
-
-
-  
+  my ($gene_id) = $f->get_tag_values("geneId");
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
   my ($orthomclName) = $f->get_tag_values("orthomcl_name");
@@ -439,7 +437,7 @@ sub geneTitleGB2 {
   my ($seqId) = $f->get_tag_values("Contig");
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName'))};
+  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id'))};
 } 
 
 
@@ -691,10 +689,10 @@ sub estTitle {
   push @data, [ 'Percent Identity:' => $percent_identity ]; 
   push @data, [ 'Length:' => abs($stop - $start) . ' nt' ]; 
   push @data, [ 'Score:' => $score ]; 
-  push @data, [ 'Library:' => $library ]; 
-  push @data, [ 'Vector:' => $vector ]; 
-  push @data, [ 'Primer:' => $primer ]; 
-  push @data, [ 'Stage:' => $stage ]; 
+  push @data, [ 'Library:' => $library ];
+  push @data, [ 'Vector:' => $vector ] if ($vector);
+  push @data, [ 'Primer:' => $primer ] if ($primer);
+  push @data, [ 'Stage:' => $stage ] if ($stage);
   hover($f, \@data); 
 }
 
@@ -799,15 +797,11 @@ sub ArrayElementTitle {
   hover($f, \@data);
 }
 
-sub rumIntronTitle {  
+sub gsnapIntronTitle {  
   my ($f) = @_;
   my ($sample) = $f->get_tag_values('Sample');
-  my ($lour) = $f->get_tag_values('LOUR');
-  my ($sour) =  $f->get_tag_values('SOUR');
-  my ($lonr) =  $f->get_tag_values('LONR');
-  my ($sonr) =  $f->get_tag_values('SONR');
-  my ($canonical) =  $f->get_tag_values('Canonical');
-  my ($knowintron) = $f->get_tag_values('KnownIntron');
+  my ($urs) = $f->get_tag_values('URS');
+  my ($nrs) =  $f->get_tag_values('NRS');
   my $start = $f->start;
   my $stop = $f->stop;
 
@@ -815,64 +809,50 @@ sub rumIntronTitle {
   push @data, [ 'Sample:' => $sample ];
   push @data, [ 'Genome Location:' => "$start - $stop"];
   push @data, [ 'Score'   => $f->score ];
-  push @data, [ 'Signal is canonical:'        => "$canonical" ];
-  push @data, [ 'Long Overlap Unique Reads:'  => "$lour" ];
-  push @data, [ 'Short Overlap Unique Reads:' => "$sour" ];
-  push @data, [ 'Long Overlap NU Reads:'      => "$lonr" ];
-  push @data, [ 'Short Overlap NU Reads:'     => "$sonr" ];
-
+  push @data, [ 'Unique Reads:'  => "$urs" ];
+  push @data, [ 'NU Reads:'     => "$nrs" ];
+print STDERR "$sample / $start / $stop / $urs / $nrs " .  $f->score . "\n";
 #  hover('Splice Site Junctions', \@data);
     hover($f, \@data);
 }
 
-sub rumIntronTitleUnified {  
+sub gsnapIntronTitleUnified {  
   my ($f) = @_;
   my ($samples) = $f->get_tag_values('Samples');
   my ($scores) = $f->get_tag_values('Scores');
   my ($exps) = $f->get_tag_values('Exps');
-  my ($lours) = $f->get_tag_values('LOURS');
-  my ($sours) =  $f->get_tag_values('SOURS');
-  my ($lonrs) =  $f->get_tag_values('LONRS');
-  my ($sonrs) =  $f->get_tag_values('SONRS');
-
-  my ($notCans)  =  $f->get_tag_values('NOTCAN');
+  my ($urs) = $f->get_tag_values('URS');
+  my ($nrs) =  $f->get_tag_values('NRS');
+  my ($perc) = $f->get_tag_values('IntronPercent'); 
+  my ($ratio) = $f->get_tag_values('IntronRatio'); 
 
   my $start = $f->start;
   my $stop = $f->stop;
 
-  my $sum_lour = eval join '+', split /[,|\|]/, $lours;
-  my $sum_sour = eval join '+', split /[,|\|]/, $sours;
-
-  # sum=Score;  this should be the sum of the long and short unique reads;  bug int he score in the db
-  my $sum = $sum_lour + $sum_sour;
+  my $sum = eval join '+', split /[,|\|]/, $urs;
 
   my @sample_arr = split /\|/, $samples;
   my @score_arr  = split /\|/, $scores;
   my @exp_arr    = split /\|/, $exps;
 
-  my @lour_arr    = split /\|/, $lours;
-  my @sour_arr    = split /\|/, $sours;
-  my @lonrs_arr    = split /\|/, $lonrs;
-  my @sonrs_arr    = split /\|/, $sonrs;
-  my @notCan_arr   = split /\|/, $notCans;
+  my @ur_arr    = split /\|/, $urs;
+  my @nrs_arr    = split /\|/, $nrs;
 
-  my $note = "The overall score is the sum of the short and long overlap unique reads from all samples.";
+  my $note = "The overall score is the sum of the unique and non-unique reads from all samples.";
   my @data;
   push @data, [ 'Location:'  => "$start - $stop"];
   push @data, [ '<b>Score</b>'     => "<b>$sum</b>" ];
+  push @data, [ '<b>Percent of Max</b>'  => "<b>$perc</b>"] if $perc;
+  push @data, [ '<b>Score/Expression</b>'  => "<b>$ratio</b>"] if $ratio;
   push @data, [ '<b>Note</b>'     => $note ];
 
-
   my $count = 0;
-  my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th><th>Long Unique</th><th>Short Unique</th><th>Long Non-Unique</th><th>Short Non-Unique</th><th>Canonical</th></tr>";
+  my $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Score</th><th>Unique</th><th>Non-Unique</th></tr>";
   foreach my $exp (@exp_arr) {
      my $sample = $sample_arr[$count];
      my $score = $score_arr[$count];
-     my $lour_exps = $lour_arr[$count];
-     my $sour_exps = $sour_arr[$count];
-     my $lonrs_exps = $lonrs_arr[$count];
-     my $sonrs_exps = $sonrs_arr[$count];
-     my $notCan_exps = $notCan_arr[$count];
+     my $ur_exps = $ur_arr[$count];
+     my $nrs_exps = $nrs_arr[$count];
 
      $exp =~ s/_RSRC$//g;
      $exp =~ s/RNASeq//ig;
@@ -880,22 +860,17 @@ sub rumIntronTitleUnified {
 
      my @sa = split /,/, $sample;
      my @sc = split /,/, $score;
-     my @lour = split /,/, $lour_exps;
-     my @sour = split /,/, $sour_exps;
-     my @lonrs = split /,/, $lonrs_exps;
-     my @sonrs = split /,/, $sonrs_exps;
-     my @notCans = split /,/, $notCan_exps;
+     my @ur = split /,/, $ur_exps;
+     my @nrs = split /,/, $nrs_exps;
 
      my $seen = 0;
      for(my $i = 0; $i < $#sa + 1; $i++) {
-
-       my $isCanonical = $notCans[$i] ? 'false' : 'true';
-       my $score = $lour[$i] + $sour[$i];
+       my $score = $ur[$i];
 
        if($seen == 0) {
-         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$score</td><td>$lour[$i]</td><td>$sour[$i]</td><td>$lonrs[$i]</td><td>$sonrs[$i]</td><td>$isCanonical</td></tr>"; 
+         $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$score</td><td>$ur[$i]</td><td>$nrs[$i]</td></tr>"; 
        } else {
-         $html .= "<tr><td></td><td>$sa[$i]</td><td>$score</td><td>$lour[$i]</td><td>$sour[$i]</td><td>$lonrs[$i]</td><td>$sonrs[$i]</td><td>$isCanonical</td></tr>"; 
+         $html .= "<tr><td></td><td>$sa[$i]</td><td>$score</td><td>$ur[$i]</td><td>$nrs[$i]</td></tr>"; 
        }
        $seen = 1;
      }
@@ -907,6 +882,95 @@ sub rumIntronTitleUnified {
 
 #  hover('Unified Splice Site Junctions - RNASeq', \@data);
   hover($f, \@data); 
+}
+
+sub gsnapUnifiedIntronJunctionTitle {  
+  my ($f) = @_;
+  ##arrays
+  my ($exps) = $f->get_tag_values('Exps');
+  my ($samples) = $f->get_tag_values('Samples');
+  my ($urs) = $f->get_tag_values('URS');
+  my ($isrpm) = $f->get_tag_values('ISRPM');
+  my ($nrs) =  $f->get_tag_values('NRS');
+  my ($percSamp) = $f->get_tag_values('PerMaxSample'); 
+#  my ($expRatio) = $f->get_tag_values('ExpRatio'); 
+  my ($isrpmExpRatio) = $f->get_tag_values('IsrpmExpRatio'); 
+#  my ($avgExpRatio) = $f->get_tag_values('AvgExpRatio'); 
+  my ($isrpmAvgExpRatio) = $f->get_tag_values('IsrpmAvgExpRatio'); 
+  ##attributes
+  my ($totalScore) = $f->get_tag_values('TotalScore'); 
+  my ($intronPercent) = $f->get_tag_values('IntronPercent'); 
+  my ($intronRatio) = $f->get_tag_values('IntronRatio'); 
+  my ($matchesGeneStrand) = $f->get_tag_values('MatchesGeneStrand'); 
+  my ($isReversed) = $f->get_tag_values('IsReversed'); 
+  my ($annotIntron) = $f->get_tag_values('AnnotatedIntron'); 
+
+  my $start = $f->start;
+  my $stop = $f->stop;
+
+
+  my @exp_arr    = split /\|/, $exps;
+  my @sample_arr = split /\|/, $samples;
+  my @ur_arr    = split /\|/, $urs;
+  my @isrpm_arr    = split /\|/, $isrpm;
+  my @nrs_arr    = split /\|/, $nrs;
+  my @percSamp_arr = split /\|/, $percSamp;
+  my @isrpmExpRatio_arr = split /\|/, $isrpmExpRatio;
+  my @isrpmAvgExpRatio_arr = split /\|/, $isrpmAvgExpRatio;
+
+  ##First build the html table so can capture max isrpm and thus maxRatio
+  my $count = 0;
+  my $html;
+  if($intronPercent){
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ FPKM</th><th>% Sample</th></tr>";
+  }else{
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th></tr>";
+  }
+
+  my $maxRatio = [0,0,'sample here','experiment'];
+  my $sumIsrpm = 0;
+  foreach my $exp (@exp_arr) {
+    
+    my @sa = split /,/, $sample_arr[$count];
+    my @ur = split /,/, $ur_arr[$count];
+    my @isrpm = split /,/, $isrpm_arr[$count];
+    my @nrs = split /,/, $nrs_arr[$count];
+    my @rs = split /,/, $isrpmExpRatio_arr[$count];
+    my @rt = split /,/, $isrpmAvgExpRatio_arr[$count];
+    my @ps = split /,/, $percSamp_arr[$count];
+    
+    my $i = 0;
+    for($i; $i < $#sa + 1; $i++) {
+      $maxRatio = [ $isrpm[$i],$intronPercent ? $rs[$i] : $rt[$i], $sa[$i], $exp ] if $isrpm[$i] > $maxRatio->[0];
+      $sumIsrpm += $isrpm[$i];
+      
+      if($i == 0) {
+        $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
+      } else {
+        $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
+      }
+      if($intronPercent){
+        $html .= "<td>$rs[$i]</td><td>$ps[$i]</td></tr>";
+      }else{
+        $html .= "<td>$rt[$i]</td></tr>";
+      }
+    }
+    $count++;
+  }
+  $html .= "</table>";
+  
+  my @data;
+  push @data, [ '<b>Location (length):</b>'  => "<b>$start - $stop (".($stop - $start + 1).")".($annotIntron eq "Yes" ? " - Annotated</b>" : "</b>")];
+  push @data, [ '<b>Sum Unique Reads (ISRPM):</b>'     => "<b>$totalScore ($sumIsrpm)</b>" ];
+  push @data, [ '<b>Percent of Max:</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
+  push @data, [ '<b>Highest Sample (ISRPM):</b>'  => "<b>$maxRatio->[3]: $maxRatio->[2] ($maxRatio->[0])</b>"];
+  push @data, [ $intronPercent ? '<b>Best ISRPM / FPKM:</b>' : '<b>Best ISRPM / avg(FPKM)</b>'  => "<b>$maxRatio->[1]</b>"];
+
+
+  push @data, [ $html ];
+
+#  hover('Unified Splice Site Junctions - RNASeq', \@data);
+  hover($f, \@data,1); 
 }
 
 sub massSpecTitle {  
@@ -1122,41 +1186,6 @@ sub blastxTitle {
   push @data, [ 'Description:' => $desc ];
   hover($f, \@data); 
 }
-
-
-
-# TODO:  There is a link to a ToxoDB specific Database... is this needed?  can we get this from the sage tag record page?  Want to make the popup as generic as possible so all sites can use
-sub sageTagTitle { 
-  my ($f, $note) = @_;
-  my $name         = $f->name;
-  my ($sourceId)    = $f->get_tag_values('SourceID'); 
-  my $start        = $f->start; 
-  my $stop         = $f->stop; 
-  my $strand       = $f->strand;
-  ($start,$stop) = ($stop,$start) if ($strand == -1); 
-  my ($tag)        = $f->get_tag_values('Sequence'); 
-#  my $sageDb_url = "<a target='new' href=http://vmbmod10.msu.montana.edu/vmb/cgi-bin/sage.cgi?prevpage=newsage4.htm;normal=yes;database=toxoditagscorrect;library=sp;intag=" 
-#    . $tag . ">TgSAGEDB</a>";
-  my ($occurrence) = $f->get_tag_values('Occurrence'); 
-  my @data; 
-  push @data, [ 'Name:'          => "$name" ];
-  push @data, [ 'Source ID:'          => "$sourceId" ];
-  push @data, [ 'Temporary external ID:' => "$name" ];
-  push @data, [ 'Location:'        => "$start..$stop" ];
-  push @data, [ 'Sequence:'        => $tag ];
-  push @data, [ 'Found in genome:' => $occurrence ];
-  push @data, [ 'Note:'            => $note ] if $note;
-#  push @data, [ 'Link'             => $sageDb_url];
-  my $bulkEntries = $f->bulkAttributes();
-  push @data, [ "<b>Library</b>" => "<b>Percent | RawCount</b>" ];
-  foreach my $item (@$bulkEntries) {
-    my $lib = $item->{LIBRARY_NAME};
-    my $raw_count = $item->{RAW_COUNT};
-    my $percent = sprintf("%.3f", $item->{LIBRARY_TAG_PERCENTAGE});
-    push @data, [ "$lib" => "$percent % | $raw_count" ];
-  }
-  hover($f, \@data); 
-} 
 
 
 sub geneticMarkersTitle {

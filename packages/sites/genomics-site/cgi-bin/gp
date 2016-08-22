@@ -10,6 +10,7 @@ use CGI qw(param header);
 my $f = param('f');  # feature full name e.g. gene:annotation(PF11_0240)
 my $t = param('t');  # feature type e.g. gene:annotation
 my $n = param('n');  # feature name e.g. PF11_0240
+my $c = param('c');  # colspan last row so is a single column (can include nested table this way full width)
 
 #return unless $f;
 
@@ -21,12 +22,22 @@ exit unless ($f || ($t && $n));
 
 my $html = "<table border=0>";
 
-while(<F>) {
-  my ($h, $c) = split /\t/, $_;
-	$html.= "<tr><td>$h</td><td>$c</td></tr>";
+my @f = <F>;
+close F;
+my $last = pop(@f);
+
+foreach my $a (@f) {
+  my ($h, $c) = split /\t/, $a;
+  next unless $h && $c;
+  $html .= "<tr><td>$h</td><td>$c</td></tr>";
+}
+if($c =~ /yes/i){
+  $html.= "<tr><td colspan=2>$last</td></tr>";
+}else{
+  my ($h, $c) = split /\t/, $last;
+  $html.= "<tr><td>$h</td><td>$c</td></tr>";
 }
 $html .= "</table>";
-$html .= '<script language="text/javascript"> alert("Yay!"); </script>';
 
 close F;
 print header;

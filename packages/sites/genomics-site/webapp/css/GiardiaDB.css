@@ -6,33 +6,10 @@ body {
 	background-image: url(../images/GiardiaDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink, .link {
-	color: #227124; //green
-}
-
-a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #2c2c7d;  //blue, towards purple
-}
-
-a[name]:link {
-	color: black;
-}
-
-a[name]:visited {
-	color: black;
-}
-
-a[name]:hover, a[name]:active {
-	color:  black;
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-#header {
-	background-image: url(../images/GiardiaDB/backgroundtop_s.jpg);
-}
 
 #header2 {
 	background-image: url(../images/GiardiaDB/backgroundtop_s.jpg);
@@ -59,7 +36,7 @@ a[name]:hover, a[name]:active {
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/GiardiaDB/footer.png);
+/* 	background-image: url(../images/GiardiaDB/footer.png); */
 	border-color:#226723;
 	list-style-image: url(../images/GiardiaDB/bullet_arrow.gif);
 }
@@ -69,7 +46,7 @@ a[name]:hover, a[name]:active {
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #227124; //green
+	color: #227124;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,319 +56,32 @@ a[name]:hover, a[name]:active {
 /* #bubbles .info {
   min-height: 299px;
 } */
+.threecolumndiv div.heading {
+  background-color: #569551;  /* green #274f94; */
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-/* #menubar #mysearch {
-	background-image: url(../images/GiardiaDB/my_hist_menubar.png);
-	border: 1px solid #393966;
-} */
- 
-#contentcolumn {
-	background-image: url(../images/GiardiaDB/footer.png);
-	border: 1px solid #226723;
-}
-
-#contentcolumn2 {
-	background-image: url(../images/GiardiaDB/footer.png);
-	border: 1px solid #226723;
-}
-
-#mysearchhist {
-	background-image: url(../images/GiardiaDB/bubble_my_searchbox.png);
-	border: 1px solid #a3dca4;
-}
-
-#main_tools {
-	background-image: url(../images/GiardiaDB/tools_bckgnd.jpg);
-}
-
-#about_us_left {
-	background-color: #bfbfdc;
-	list-style-image: url(../images/GiardiaDB/bullet_arrow.gif);
-}
-
-#pink_title {
-	color: #282868;
-	background-image: url(../images/GiardiaDB/trheader.png);
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Top Menu Bar Dropdown List
 	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#000068;
-}
-
-#menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #2c2c7d;
-}
-
-#menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #2c2c7d;
-	color: #2c2c7d;
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Menu Lists
+	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #226723;  /* color as in contentcolumn border */
+   border-color: #888;  /* #226723; color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/GiardiaDB/menu_lft2.png);
+	background: #274f94;  /* blue  #569551;  */
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Search Boxes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.search-box{
-   border: solid 1px #1c7c12;
-} 
-
-.search-box .textbox{
-	border: solid 1px #b3b3b3;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Fonts 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-h1 {
-	color: #226723;
-}
-
-h2 {
-  	color: #226723;
-}
-
-.h2center, .h3left,.h3center, .h4left {
-  	color: #2c2c7d;   /* 5f0f47; */
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
-#footer{
-   background-image: url(../images/GiardiaDB/footer.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TABLES 
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-td.headerrow {
-	color: #282868;
-	background-image: url(../images/GiardiaDB/trheader.png);
-}
-
-tr.headerrow {
-	color: #282868;
-}
-
-tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/GiardiaDB/trheader.png);
-}
-
-.flexigrid tr.headerrow th:hover {
-	background-image: url(../images/GiardiaDB/trhover.png);
-}
-
-td.subheaderrow {
-	background-image: url(../images/GiardiaDB/trsubhead.png);
-}
-
-tr.subheaderrow th {
-	background-image: url(../images/GiardiaDB/trsubhead.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.headerrow2 td{
-        color: #282868;
-	background-image: url(../images/GiardiaDB/trheader.png);
-}
-
-tr.subheaderrow2 td{
-	background-image: url(../images/GiardiaDB/trsubhead.png);
-}
-
-a.queryGridInactive {
-        color:              #C8C8C8;
-}
-
-a.queryGridActive {
-        color:              #282868;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =END OF TABLES FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.subheaderrow th {
-	border-color: #227124;
-}
-
-tr.headerrow th { 
-	border-color: #227124;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WorkSpace Divs 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-div.Workspace {
-	border-color: #227124;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ABOUT US and HELP PAGES SIDEBAR
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.twoColHybLt #sidebar1 {
-	background-image: url(../images/GiardiaDB/aboutus.jpg);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ADVANCED STRATEGY PAGING 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in contact.do, classic bullet list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =MISC 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-span.marker a:link, span.marker a:visited {
-	color: #7D0101;
-}
-
-#strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #E8EBF0;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = styles for blockUI popups
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.blockMsg{
-	border: 1px solid #226723;
-}
-
-.blockPage{
-	background-image: url(../images/GiardiaDB/footer.png);
-}
-
-.flexigrid div.hDiv {
-	background-image:url(../images/GiardiaDB/trheader.png);
-}
-
-.flexigrid div.hDiv th.thMove {
-	background-image:url(../images/GiardiaDB/trheader.png);
-}
-
-div.colCopy {
-	background-image:url(../images/GiardiaDB/trheader.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 history.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter_menu.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#query_form {
-	border: 1px solid #2c2c7d;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 dataset-searches.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#dataset-records th {
-  color: #226723;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter param overrides
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* Don't show :hover alternate color */
-.field-list ul a:link,
-.field-list ul a:visited,
-.field-list ul div.divlink,
-.field-list ul .link,
-.field-list ul a:hover,
-.field-list ul a:active,
-.field-list ul a:focus,
-.field-list ul div.divlink:hover,
-.field-list ul .link:hover,
-.filter-items a:link,
-.filter-items a:visited,
-.filter-items div.divlink,
-.filter-items .link,
-.filter-items a:hover,
-.filter-items a:active,
-.filter-items a:focus,
-.filter-items div.divlink:hover,
-.filter-items .link:hover {
-	color: #227124;
-}
-
-.field-list ul .active a:link,
-.field-list ul .active a:visited,
-.field-list ul .active div.divlink,
-.field-list ul .active .link,
-.field-list ul .active a:hover,
-.field-list ul .active a:active,
-.field-list ul .active a:focus,
-.field-list ul .active div.divlink:hover,
-.field-list ul .active .link:hover,
-.filter-items .selected a:link,
-.filter-items .selected a:visited,
-.filter-items .selected div.divlink,
-.filter-items .selected .link,
-.filter-items .selected a:hover,
-.filter-items .selected a:active,
-.filter-items .selected a:focus,
-.filter-items .selected div.divlink:hover,
-.filter-items .selected .link:hover {
-	color: #2c2c7d;
-}
 
 /*THE END */
 

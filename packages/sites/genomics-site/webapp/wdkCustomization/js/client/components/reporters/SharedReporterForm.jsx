@@ -1,62 +1,107 @@
-import React from 'react';
 import * as Wdk from 'wdk-client';
 
-let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
-let { RadioList, Checkbox } = Wdk.Components;
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.OntologyUtils, Wdk.CategoryUtils);
+let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.Components;
 
-let SharedReporterForm = React.createClass({
+let SharedReporterForm = props => {
 
-  componentDidMount() {
-    let { formState, preferences, question, initializeFormState } = this.props;
-    initializeFormState(this.discoverFormState(formState, preferences, question));
-  },
+  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, globalData: { ontology } } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+  let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormUiState, formUiState);
 
-  discoverFormState(formState, preferences, question) {
-    let currentAttributes = (formState == null ? undefined : formState.attributes);
-    let currentTables = (formState == null ? undefined : formState.tables);
-    return {
-      attributes: util.getAttributeSelections(currentAttributes, preferences, question),
-      tables: util.getTableSelections(currentTables),
-      includeEmptyTables: util.getValueOrDefault(formState, "includeEmptyTables", true),
-      attachmentType: util.getValueOrDefault(formState, "attachmentType", "plain")
-    };
-  },
+  return (
+    <div>
+      <div className="eupathdb-ReporterForm eupathdb-ReporterForm__shared">
+        <ReporterSortMessage scope={scope}/>
 
-  // returns a handler function that will update the form state 
-  getUpdateHandler(fieldName) {
-    return util.getChangeHandler(fieldName, this.props.onFormChange, this.props.formState);
-  },
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__columns">
+          <CategoriesCheckboxTree
+              // title and layout of the tree
+              title="Choose Attributes"
+              searchBoxPlaceholder="Search Attributes..."
+              tree={util.getAttributeTree(ontology, recordClass.name, question)}
 
-  render() {
-    let { question, recordClass, preferences, formState, onSubmit } = this.props;
-    let realFormState = this.discoverFormState(formState, preferences, question);
-    return (
-      <div>
-        {util.getReporterCheckboxList("Choose Attributes", this.getUpdateHandler('attributes'),
-          util.getAllAttributes(recordClass, question, util.isInReport), realFormState.attributes)}
-        {util.getReporterCheckboxList("Choose Tables", this.getUpdateHandler('tables'),
-          util.getAllTables(recordClass, util.isInReport), realFormState.tables)}
-        <div>
-          <h3>Additional Options:</h3>
-          <div style={{marginLeft:"2em"}}>
-            <Checkbox value={realFormState.includeEmptyTables} onChange={this.getUpdateHandler('includeEmptyTables')}/>
-            <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
+              // state of the tree
+              selectedLeaves={formState.attributes}
+              expandedBranches={formUiState.expandedAttributeNodes}
+              searchTerm={formUiState.attributeSearchText}
+
+              // change handlers for each state element controlled by the tree
+              onChange={util.getAttributesChangeHandler('attributes', updateFormState, formState, recordClass)}
+              onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
+              onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+          />
+        </div>
+
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__tables">
+          <CategoriesCheckboxTree
+            // title and layout of the tree
+            title="Choose Tables"
+            searchBoxPlaceholder="Search Tables..."
+            tree={util.getTableTree(ontology, recordClass.name)}
+
+            // state of the tree
+            selectedLeaves={formState.tables}
+            expandedBranches={formUiState.expandedTableNodes}
+            searchTerm={formUiState.tableSearchText}
+
+            // change handlers for each state element controlled by the tree
+            onChange={getUpdateHandler('tables')}
+            onUiChange={getUiUpdateHandler('expandedTableNodes')}
+            onSearchTermChange={getUiUpdateHandler('tableSearchText')}
+          />
+        </div>
+
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
+          <div className="eupathdb-ReporterFormDownloadType">
+            <h3>Download Type</h3>
+            <div>
+              <RadioList name="attachmentType" value={formState.attachmentType}
+                onChange={getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
+            </div>
+          </div>
+          <div className="eupathdb-ReporterFormAddtionOptions">
+            <h3>Additional Options</h3>
+            <div>
+              <label>
+                <Checkbox value={formState.includeEmptyTables} onChange={getUpdateHandler('includeEmptyTables')}/>
+                <span style={{marginLeft:'0.5em'}}>Include empty tables</span>
+              </label>
+            </div>
           </div>
         </div>
-        <div>
-          <h3>Download Type:</h3>
-          <div style={{marginLeft:"2em"}}>
-            <RadioList name="attachmentType" value={realFormState.attachmentType}
-                onChange={this.getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
-          </div>
-        </div>
-        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
-          <input type="button" value="Submit" onClick={onSubmit}/>
-        </div>
+
       </div>
-    );
-  }
 
-});
+      <div className="eupathdb-ReporterFormSubmit">
+        <input type="submit" value="Submit" onClick={onSubmit}/>
+      </div>
+    </div>
+  );
+};
+
+SharedReporterForm.getInitialState = (downloadFormStoreState) => {
+  let { scope, question, recordClass, globalData: { ontology, preferences } } = downloadFormStoreState;
+  // select all attribs and tables for record page, else column user prefs and no tables
+  let attribs = (scope === 'results' ?
+      util.addPk(util.getAttributeSelections(preferences, question), recordClass) :
+      util.addPk(util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)), recordClass));
+  let tables = (scope === 'results' ? [] :
+      util.getAllLeafIds(util.getTableTree(ontology, recordClass.name)));
+  return {
+    formState: {
+      attributes: attribs,
+      tables: tables,
+      includeEmptyTables: true,
+      attachmentType: "plain"
+    },
+    formUiState: {
+      expandedAttributeNodes: null,
+      attributeSearchText: "",
+      expandedTableNodes: null,
+      tableSearchText: ""
+    }
+  };
+}
 
 export default SharedReporterForm;

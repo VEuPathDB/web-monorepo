@@ -104,12 +104,7 @@
 <div class="innertube2">
 	<table width="100%" border="0" cellspacing="10" cellpadding="10"> 
 		<tr class="headerrow2">
-			<td style="padding-top:0"  align="center"><b>Identify Pathways by:</b>
-
-<imp:image alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
- header." src="wdk/images/beta2-40.png" />
-
-</td>
+			<td style="padding-top:0"  align="center"><b>Identify Pathways by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<imp:queryGridPathways/>
@@ -123,12 +118,7 @@
 <div class="innertube2">     
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
 		<tr class="headerrow2">
-			<td  style="padding-top:0"  align="center"><b>Identify Compounds by:
-
-<imp:image alt="Beta feature icon" title="This search is new and under revision, please provide feedback using the Contact Us link on the top
- header." src="wdk/images/beta2-40.png" />
-
-</b></td>
+			<td  style="padding-top:0"  align="center"><b>Identify Compounds by:</b></td>
 		</tr>
 		<tr><td align="center">
 			<imp:queryGridCompounds/>
@@ -206,23 +196,9 @@
 
 
 <%-----------------------------------------------------------------------------%>
-<%--  All Sage Tags and ORF --%>
+<%--  All ORF Queries TABLE --%>
 <tr>
-    <%-- All SageTags Queries TABLE  --%>
-    <td > 
-<div class="innertube2">     
-	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 
-		<tr class="headerrow2">
-			<td   align="center"><b>Identify Sage Tag Alignments by:</b></td>
-		</tr>
-		<tr><td align="center">
-			<imp:queryGridSage/>
-		</td></tr>	
-	</table>
-</div> 
-    </td>
 
-    <%--  All ORF Queries TABLE --%>
     <td >   
 <div class="innertube2">   
 	<table width="100%" border="0" cellspacing="0" cellpadding="0"> 

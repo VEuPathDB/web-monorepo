@@ -9,7 +9,11 @@
 <c:set var="query_string" value="${requestScope['javax.servlet.forward.query_string']}" />
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
+<%--
+  Replaced with line below as SITE_ADMIN_EMAIL is being deprecated in favor of adminEmail from the config.xml file - CWL 08APR16
 <c:set var="siteAdminEmail" value="${props['SITE_ADMIN_EMAIL']}"/>
+--%>
+<c:set var="siteAdminEmail" value="${wdkModel.model.modelConfig.adminEmail}"/>
 
 <imp:pageFrame title="Unexpected Error" refer="exception">
 
@@ -74,13 +78,14 @@ ${error}
   </pre>
 </c:when>
 <c:otherwise>
-  <c:if test="${header['Referer'] != null or param.debug == 1}">
-  <imp:email 
-    to="${siteAdminEmail}"
-    from="tomcat@${serverName}"
-    subject="${wdkModel.displayName} Site Error - ${pageContext.request.remoteHost}" 
-    body="${error}" 
-  />
+  <%-- siteAdminEmail is optional - CWL 08APR16 --%>
+  <c:if test="${(header['Referer'] != null or param.debug == 1) && !empty siteAdminEmail}">
+    <imp:email 
+      to="${siteAdminEmail}"
+      from="tomcat@${serverName}"
+      subject="${wdkModel.displayName} Site Error - ${pageContext.request.remoteHost}" 
+      body="${error}" 
+    /> 
   <p>
   refered from <a href="${header['Referer']}">${header['Referer']}</a>
   </c:if>

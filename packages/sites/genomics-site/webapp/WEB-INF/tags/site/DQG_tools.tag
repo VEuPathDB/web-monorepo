@@ -6,43 +6,25 @@
 <c:set var="cycName" value="${sName}Cyc" />
 <c:set var="urlBase" value="${pageContext.request.contextPath}"/>
 
-<c:choose>
-        <c:when test="${fn:containsIgnoreCase(modelName, 'EuPathDB')}">
-		<c:set var="listOrganisms" value="Eukaryotic Pathogens"/>
-	</c:when>
-        <c:when test="${fn:containsIgnoreCase(modelName, 'CryptoDB')}">
-		<c:set var="listOrganisms" value="Cryptosporidium"/>
-	</c:when>
-        <c:when test="${fn:containsIgnoreCase(modelName, 'ToxoDB')}">
-                <c:set var="listOrganisms" value="Eimeria, Gregarina, Neospora, Toxoplasma"/>
-        </c:when>
-	<c:when test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
-		<c:set var="listOrganisms" value="Plasmodium"/>
-	</c:when>
- 	<c:when test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
-		<c:set var="listOrganisms" value="Giardia"/>
-	</c:when>
- 	<c:when test="${fn:containsIgnoreCase(modelName, 'TrichDB')}">
-		<c:set var="listOrganisms" value="Trichomonas"/>
-	</c:when>
- 	<c:when test="${fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
-		<c:set var="listOrganisms" value="Crithidia, Endotrypanum, Leishmania, Trypanosoma"/>
-	</c:when>
-</c:choose> 
-
-<div class="info">
+<div class="tools">
     	<ul> 
 		<li><a href="${urlBase}/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"><strong>BLAST</strong></a>
 			<ul><li style="border:0">Identify Sequence Similarities</li></ul>
 		</li>
-		<li><a href="${urlBase}/analysisTools.jsp"><strong>Results Analysis</strong></a>
+	 	<li><a href="${urlBase}/analysisTools.jsp"><strong>Results Analysis</strong></a>
 			<ul><li  style="border:0">Analyze Your Strategy Results</li></ul>
 		</li>
 		<li><a href="${urlBase}/srt.jsp"><strong>Sequence Retrieval</strong></a>
 			<ul><li  style="border:0">Retrieve Specific Sequences using IDs and coordinates</li></ul>
 		</li>
-	<li><a href="http://rnaseq.pathogenportal.org"><strong>Pathogen Portal</strong></a>
+<!--	  <li><a href="http://rnaseq.pathogenportal.org"><strong>Pathogen Portal</strong></a>
 			<ul><li  style="border:0">RNA sequence analysis, interactome maps and more</li></ul>
+		</li>  -->
+    <li><a href="https://companion.sanger.ac.uk"><strong>Companion</strong></a>
+		  <ul><li  style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
+    </li>
+    <li><a href="http://grna.ctegd.uga.edu"><strong>EuPaGDT</strong></a>
+			<ul><li  style="border:0">Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool</li></ul>
 		</li>
 		<li><a href="/pubcrawler/${modelName}"><strong>PubMed and Entrez</strong></a>
 			<ul><li  style="border:0">View the Latest Pubmed and Entrez Results</li></ul>
@@ -52,9 +34,9 @@
 		<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browser</strong></a>
 			<ul><li  style="border:0">View Sequences and Features in the genome browser</li></ul>
 		</li>
-</c:if>
+</c:if> 
     
-
+        
 
 <c:choose>   <%-- SITES WITH FEW TOOLS, SO THERE IS SPACE IN BUCKET FOR DESCRIPTIONS --%>
 <c:when test="${sName != 'Plasmo'}">
@@ -73,8 +55,7 @@
 	<c:when test="${sName == 'Toxo'}">
 		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary Genome Browse</strong></a>
                         <ul><li  style="border:0">Access Probeset data and <i>Toxoplasma</i> Array info</li></ul>
-                </li>
-
+    </li>
 		<li><p>
 			<i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
@@ -104,5 +85,3 @@
 
 </div>
 
-<div class="infobottom tools">
-</div><!--end info-->

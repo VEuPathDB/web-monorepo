@@ -89,7 +89,7 @@
 
     <c:choose>
       <c:when test="${wdkUser == null || wdkUser.guest}">
-        <li><a id="mybasket" onclick="wdk.stratTabCookie.setCurrentTabCookie('application', 'basket');wdk.user.login(wdk.webappUrl('/showApplication.do'));" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
+        <li><a id="mybasket" onclick="wdk.stratTabCookie.setCurrentTabCookie('application', 'basket');wdk.user.login('use baskets', wdk.webappUrl('/showApplication.do'));" href="javascript:void(0)"  title="Group IDs together to work with them. You can add IDs from a result, or from a details page.">My Basket <span class="subscriptCount" style="vertical-align:top">(0)</span></a></li>
       </c:when>
       <c:otherwise>
         <c:choose>
@@ -110,8 +110,11 @@
               <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
         </li>
         <li><a href="${baseUrl}/srt.jsp"> Sequence Retrieval</a></li>
-        <li><a href="http://rnaseq.pathogenportal.org"> Pathogen Portal</a></li>
-
+<!--        <li><a href="http://rnaseq.pathogenportal.org"> Pathogen Portal</a></li> -->
+        <li title="Annotate your sequence and determine orthology, phylogeny & synteny">
+          <a href="https://companion.sanger.ac.uk"> Companion</a></li>
+        <li title="Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool">
+          <a href="http://grna.ctegd.uga.edu"> EuPaGDT</a></li>
         <li><a href="/pubcrawler/${project}"> PubMed and Entrez</a></li>
         <c:if test="${project != 'EuPathDB'}" >
           <li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(project)}/">Genome Browser </a></li>
@@ -131,27 +134,19 @@
       </ul>
     </li>
 
-    <li><a style="padding-top:0">Data Summary <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
+    <li><a>Data Summary</a>
       <ul>
-          <li><a href="${baseUrl}/getDataset.do?display=detail">Data Sets</a></li>
-          <li title="Please contact us with your feedback.">
-            <a style="padding-top:0" 
-              href="${baseUrl}/app/search/dataset/AllDatasets/result">New Data Sets page!
-                <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
-          </li>
-          <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
+        <li><a href="${baseUrl}/app/search/dataset/AllDatasets/result">Data Sets</a></li>
+        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Methods">Analysis Methods</a></li>
         <c:if test="${project == 'CryptoDB'}">
           <li id='h-'><a href="http://cryptodb.org/static/SOP/">SOPs for <i>C.parvum</i> Annotation</a></li>
         </c:if>
-
-          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Genomes and Data Types</a></li> 
-          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics">Gene Metrics</a></li>
-      
-<%--        <c:if test="${project == 'TrichDB'}">
+        <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Genomes and Data Types</a></li> 
+        <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics">Gene Metrics</a></li>
+        <%-- <c:if test="${project == 'TrichDB'}">
           <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GenomeDataType">Genomes and Data Types</a></li> 
           <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GeneMetrics">Gene Metrics</a></li>
-        </c:if>
---%>
+        </c:if> --%>
       </ul>
     </li>
 
@@ -225,11 +220,18 @@
       </ul>
     </li>
 
+  <li >
+    <a style="padding:5px 1em" onclick="" href="${baseUrl}/app/galaxy-orientation">
+      <imp:image src="wdk/images/new-feature.png" height="14" />
+      <span>Analyze My Experiment</span>
+    </a>
+  </li>
+
     <c:if test="${project != 'EuPathDB'}" >
 
       <c:choose>
         <c:when test="${wdkUser == null || wdkUser.guest}">
-          <li id="favorite-menu"><a id="mybasket" onclick="wdk.user.login(wdk.webappUrl('/showFavorite.do'));" href="javascript:void(0)">
+          <li id="favorite-menu"><a id="mybasket" onclick="wdk.user.login('use favorites', wdk.webappUrl('/showFavorite.do'));" href="javascript:void(0)">
             <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="wdk/images/favorite_color.gif"/>&nbsp;
             <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
             </a>

@@ -2,43 +2,28 @@
  * Add radio buttons around term and wildcard params
  */
 
-var RadioParamsView = Backbone.View.extend({
+function makeRadioParamsInitializer(options) {
+  if (options.termName === null || options.wildcardName === null) {
+    throw new Error('The "termName" and "wildcardName" properties must be specified.');
+  }
 
-  termName: null,
+  return function radioParamsInitializer($form) {
+    var radioStr = '<div class="param-radio"><input type="radio" name="active-param"/></div>';
+    var nonsenseValue = 'N/A';
 
-  wildcardName: null,
+    var termWrapper = $form.find('.param-item:has([name="' +
+      options.termName + '"])');
 
-  radioStr: '<div class="param-radio"><input type="radio" name="active-param"/></div>',
-
-  nonsenseValue: 'N/A',
-
-  events: {
-    'click .param-item:has([name="active-param"]:not(:checked))': 'handleClick',
-    'click [name="active-param"]': 'handleClick',
-    'submit': 'submit'
-  },
-
-  initialize: function(options) {
-    if (this.termName === null || this.wildcardName === null) {
-      throw new Error('The "termName" and "wildcardName" properties must be specified.');
-    }
-
-    var radioStr = this.radioStr;
-
-    var termWrapper = this.$('.param-item:has([name="' +
-      this.termName + '"])');
-
-    var wildcardWrapper = this.$('.param-item:has([name="' +
-      this.wildcardName + '"])');
+    var wildcardWrapper = $form.find('.param-item:has([name="' +
+      options.wildcardName + '"])');
 
     var wildcardValue = wildcardWrapper.find('input[name="value(' +
-      this.wildcardName + ')"]').val();
+      options.wildcardName + ')"]').val();
 
     termWrapper.find('.param-control').prepend(radioStr);
     wildcardWrapper.find('.param-control').prepend(radioStr);
 
-    this.nonsenseValue = this.nonsenseValue;
-    var nonsenseValueR = new RegExp('^(nil|' + this.nonsenseValue + ')$', 'i');
+    var nonsenseValueR = new RegExp('^(nil|' + nonsenseValue + ')$', 'i');
 
     // default term to be selected, unless wildcard has value
     if (wildcardValue && !nonsenseValueR.test(wildcardValue.trim())) {
@@ -47,68 +32,71 @@ var RadioParamsView = Backbone.View.extend({
       termWrapper.find('[name="active-param"]').prop('checked', true);
     }
 
-    this.setActive();
+    setActive();
 
-  },
+    $form.on('click', '.param-item:has([name="active-param"]:not(:checked))', handleClick);
+    $form.on('click', '[name="active-param"]', handleClick)
+    $form.on('submit', handleSubmit);
 
-  setActive: function() {
-    // get selected radio
-    var radios = this.$('[name="active-param"]'),
-        checked = radios.filter(':checked');
+    function setActive() {
+      // get selected radio
+      var radios = $form.find('[name="active-param"]'),
+          checked = radios.filter(':checked');
 
-    radios.parents('.param-item').addClass('inactive');
-    checked.parents('.param-item').removeClass('inactive');
-  },
+      radios.parents('.param-item').addClass('inactive');
+      checked.parents('.param-item').removeClass('inactive');
+    }
 
-  handleClick: function(e) {
-    var target = e.currentTarget;
-    var paramItem = $(target).closest('.param-item');
-    // check the .active-param radio for this param
-    paramItem.find('[name="active-param"]').prop('checked', true);
-    paramItem.find('input:not(:radio)').focus().select();
-    this.setActive();
-  },
+    function handleClick(e) {
+      var target = e.currentTarget;
+      var paramItem = $(target).closest('.param-item');
+      // check the .active-param radio for this param
+      paramItem.find('[name="active-param"]').prop('checked', true);
+      paramItem.find('input:not(:radio)').focus().select();
+      setActive();
+    }
 
-  submit: function(e) {
-    // add "empty" value to inactive params
-    this.$('.param-item.inactive').find('input').val(this.nonsenseValue);
-    this.$('.param-item.inactive').find('select')
-      .append('<option value="' + this.nonsenseValue + '"/>').val(this.nonsenseValue);
+    function handleSubmit() {
+      // add "empty" value to inactive params
+      $form.find('.param-item.inactive').find('input').val(nonsenseValue);
+      $form.find('.param-item.inactive').find('select')
+        .append('<option value="' + nonsenseValue + '"/>').val(nonsenseValue);
+    }
   }
+}
 
-});
-
-wdk.questionView('GeneQuestions.GenesByGoTerm',  RadioParamsView.extend({
+wdk.question.registerInitializer('GeneQuestions.GenesByGoTerm', makeRadioParamsInitializer({
   termName: 'go_typeahead',
-  wildcardName: 'go_term',
+  wildcardName: 'go_term'
 }));
 
-wdk.questionView('GeneQuestions.GenesByEcNumber', RadioParamsView.extend({
+wdk.question.registerInitializer('GeneQuestions.GenesByEcNumber', makeRadioParamsInitializer({
   termName: 'ec_number_pattern',
   wildcardName: 'ec_wildcard'
 }));
 
-wdk.questionView('GeneQuestions.GenesByInterproDomain', RadioParamsView.extend({
+wdk.question.registerInitializer('GeneQuestions.GenesByInterproDomain', makeRadioParamsInitializer({
   termName: 'domain_typeahead',
   wildcardName: 'domain_accession'
 }));
 
-wdk.questionView('GeneQuestions.GenesByMetabolicPathwayKegg', RadioParamsView.extend({
+wdk.question.registerInitializer('GeneQuestions.GenesByMetabolicPathway', makeRadioParamsInitializer({
   termName: 'metabolic_pathway_id_with_genes',
   wildcardName: 'pathway_wildcard'
 }));
 
-wdk.questionView('CompoundQuestions.CompoundsByPathway', RadioParamsView.extend({
-  termName: 'metabolic_pathway_id_with_compounds',
-  wildcardName: 'pathway_wildcard'
-}));
-
-wdk.questionView('PathwayQuestions.PathwaysByPathwayID', RadioParamsView.extend({
+wdk.question.registerInitializer('CompoundQuestions.CompoundsByPathway', makeRadioParamsInitializer({
   termName: 'metabolic_pathway_id',
   wildcardName: 'pathway_wildcard'
 }));
 
-wdk.questionView('IsolateQuestions.IsolateByProduct', RadioParamsView.extend({
+wdk.question.registerInitializer('PathwayQuestions.PathwaysByPathwayID', makeRadioParamsInitializer({
+  termName: 'metabolic_pathway_id',
+  wildcardName: 'pathway_wildcard'
+}));
+
+// FIXME Where did you go, question?
+wdk.question.registerInitializer('IsolateQuestions.IsolateByProduct', makeRadioParamsInitializer({
   termName: 'product',
   wildcardName: 'product_wildcard'
 }));

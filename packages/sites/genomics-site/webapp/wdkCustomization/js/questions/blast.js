@@ -76,6 +76,8 @@ function changeQuestion() {
     var recordClass = $("input[name='value(BlastRecordClass)']");
 	// stores mapping from blast databases to questions	
 	var blastDb = getSelectedDatabaseName().toLowerCase();
+console.log(blastDb);
+
 	var questionName;
 	if (blastDb.indexOf("est") >= 0) {
 		questionName = "EstQuestions.EstsBySimilarity";
@@ -92,12 +94,12 @@ function changeQuestion() {
 	} else 	if (blastDb.indexOf("genom") >= 0) {
 		questionName = "GenomicSequenceQuestions.SequencesBySimilarity";
                 recordClass.val("SequenceRecordClasses.SequenceRecordClass");
-	} else 	if (blastDb.indexOf("iso") >= 0) {
-		questionName = "IsolateQuestions.IsolatesBySimilarity";
-                recordClass.val("IsolateRecordClasses.IsolateRecordClass");
+	} else 	if (blastDb.indexOf("popset") >= 0) {
+		questionName = "PopsetQuestions.PopsetsBySimilarity";
+                recordClass.val("PopsetRecordClasses.PopsetRecordClass");
 	} else {
 		questionName = "GeneQuestions.GenesBySimilarity";
-                recordClass.val("GeneRecordClasses.GeneRecordClass");
+                recordClass.val("TranscriptRecordClasses.TranscriptRecordClass");
 	}
 	$('#questionFullName').val(questionName);
 }
@@ -111,7 +113,7 @@ function changeAlgorithms() {
 
 	// determine appropriate URL to get list of valid algorithms for this database
 	if (type == 'EST' || type == 'Transcripts' || type == 'Genome' ||
-		type == 'Genome Survey Sequences' || type == 'Isolates' || type == 'Assemblies'  || type == 'Reference Isolates') {
+		type == 'Genome Survey Sequences' || type == 'PopSet' || type == 'Assemblies'  || type == 'Reference Isolates') {
 		sendReqUrl = tgeUrl;
 	}
 	else if (type == 'ORF' || type == 'Proteins'){

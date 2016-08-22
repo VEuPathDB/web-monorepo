@@ -8,26 +8,23 @@
   // Each callback function is called with an analysis object.
   //
   // An analysis object has the following properties:
-  //  - $el:  Reference to the jQuery-wrapped tab pane element
   //  - name: The name of the analysis instance, as defined in the model
   //  - id:   The analysis ID
-  wdk.on({
-    'analysis:formload:go-enrichment': formload,
-    'analysis:resultsload:go-enrichment': resultsload,
-    'analysis:remove:go-enrichment': removeEvents,
+  $(document).on('analysis:formload:go-enrichment', formload);
+  $(document).on('analysis:resultsload:go-enrichment', resultsload);
+  $(document).on('analysis:remove:go-enrichment', removeEvents);
 
-    'analysis:formload:pathway-enrichment': formload,
-    'analysis:resultsload:pathway-enrichment': resultsload,
-    'analysis:remove:pathway-enrichment': removeEvents,
+  $(document).on('analysis:formload:pathway-enrichment', formload);
+  $(document).on('analysis:resultsload:pathway-enrichment', resultsload);
+  $(document).on('analysis:remove:pathway-enrichment', removeEvents);
 
-    'analysis:formload:word-enrichment': formload,
-    'analysis:resultsload:word-enrichment': resultsload,
-    'analysis:remove:word-enrichment': removeEvents
-  });
+  $(document).on('analysis:formload:word-enrichment', formload);
+  $(document).on('analysis:resultsload:word-enrichment', resultsload);
+  $(document).on('analysis:remove:word-enrichment', removeEvents);
 
   // handle select all and clear all links on form
-  function formload(analysis) {
-    analysis.$el
+  function formload(event) {
+    $(event.target)
       .on('click', '[href="#select-all"]', preventEvent(function() {
         $(this).closest('td').find(':input').prop('checked', true);
       }))
@@ -37,8 +34,8 @@
   }
 
   // use datatable for results and add fancy tooltips
-  function resultsload(analysis) {
-    var $table = analysis.$el.find('.step-analysis-results-pane table');
+  function resultsload(event) {
+    var $table = $(event.target).find('.step-analysis-results-pane table');
 
     $table.find('tbody tr > td:nth-child(8)').each(toTwoDecimals);
     $table.find('tbody tr > td:nth-child(9)').each(toTwoDecimals);
@@ -67,7 +64,7 @@
     });
   }
 
-  function removeEvents(analysis) {
+  function removeEvents(event, analysis) {
     $(window).off('resize.enrichment' + analysis.id);
   }
 

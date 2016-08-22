@@ -15,6 +15,9 @@
 <c:set var="projectId" value="${pkValues['project_id']}" />
 <c:set var="id" value="${pkValues['source_id']}" />
 <c:set var="projectIdLowerCase" value="${fn:toLowerCase(projectId)}"/>
+<c:set var="pathwayImageId" value="${attrs['image_id'].value}" />
+<c:set var="pathwayName" value="${attrs['description'].value}" />
+<c:set var="pathwaySource" value="${attrs['pathway_source'].value}" />
 
 <!-----------  SET ISVALIDRECORD  ----------------------------------->
 <c:catch var="err">

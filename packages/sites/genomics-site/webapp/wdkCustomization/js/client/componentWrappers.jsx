@@ -1,136 +1,254 @@
-import { Components } from 'wdk-client';
-import Footer from './components/common/Footer';
-import ExpressionGraph from './components/common/ExpressionGraph';
-import * as Dataset from './components/records/DatasetRecordClasses.DatasetRecordClass';
+import lodash from 'lodash';
+import React from 'react';
+import { projectId } from './config';
+import { CollapsibleSection, RecordAttribute as WdkRecordAttribute } from 'wdk-client/Components';
+import {renderWithCustomElements} from './components/customElements';
+import { findComponent } from './components/records';
+import * as Gbrowse from './components/common/Gbrowse';
+import Sequence from './components/common/Sequence';
+import { selectReporterComponent } from './util/reporterSelector';
+import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
+import ApiUserIdentity from './components/ApiUserIdentity';
+import ApiHeader from './components/Header';
+import ApiFooter from './components/Footer';
 
-// load individual reporter forms
-import TabularReporterForm from './components/reporters/TabularReporterForm';
-import TextReporterForm from './components/reporters/TextReporterForm';
-import XmlReporterForm from './components/reporters/XmlReporterForm';
-import JsonReporterForm from './components/reporters/JsonReporterForm';
-import Gff3ReporterForm from './components/reporters/Gff3ReporterForm';
-import FastaGeneReporterForm from './components/reporters/FastaGeneReporterForm';
-import FastaGenomicSequenceReporterForm from './components/reporters/FastaGenomicSequenceReporterForm';
-import FastaOrfReporterForm from './components/reporters/FastaOrfReporterForm';
+export let Header = () => ApiHeader;
+export let Footer = () => ApiFooter;
 
-// Add project id to url.
-//
-// `splat` refers to a wildcard dynamic url segment
-// as defined by the record route. The value of splat is essentially primary key
-// values separated by a '/'.
-export function RecordController(WdkRecordController) {
-  return function ApiRecordController(props) {
-    let { splat, recordClass } = props.params;
-    let projectIdUrl = '/' + wdk.MODEL_NAME;
-    let hasProjectId = splat.endsWith(projectIdUrl);
-
-    if (hasProjectId) {
-      setTimeout(function() {
-        props.router.replaceWith(props.path.replace(projectIdUrl, ''));
-      }, 0);
-      return <Components.Loading/>;
-    }
-
-    if (recordClass != 'dataset' && !hasProjectId) {
-      let params = Object.assign({}, props.params, {
-        splat: splat + projectIdUrl
-      });
-      return (
-        <WdkRecordController {...props} params={params}/>
-      );
-    }
-
-    return <WdkRecordController {...props} />
-  };
-}
-
-// Add footer and beta message to Main content
-export function Main(WdkMain) {
-  return function ApiMain(props) {
+/** Remove project_id from record links */
+export function RecordLink(WdkRecordLink) {
+  return function ApiRecordLink(props) {
+    let recordId = props.recordId.filter(p => p.name !== 'project_id');
     return (
-      <WdkMain {...props}>
-        <div
-          className="eupathdb-Beta-Announcement"
-          title="BETA means pre-release; a beta page is given out to a large group of users to try under real conditions. Beta versions have gone through alpha testing inhouse and are generally fairly close in look, feel and function to the final product; however, design changes often occur as a result.">
-            You are viewing a <strong>BETA</strong> (pre-release) page. <a data-name="contact_us" className="new-window" href="contact.do">Feedback and comments</a> are welcome!
-        </div>
-        {props.children}
-        <Footer/>
-      </WdkMain>
+      <WdkRecordLink {...props} recordId={recordId}/>
     );
   };
 }
 
-// Customize the Record Component
-export function RecordUI(WdkRecordUI) {
-  return function ApiRecordUI(props) {
-    switch (props.recordClass.name) {
-      case 'DatasetRecordClasses.DatasetRecordClass':
-        return <Dataset.RecordUI {...props}/>
+// Project id is not needed for these record classes.
+// Matches urlSegment.
+const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
 
-      default:
-        return <WdkRecordUI {...props}/>
+
+/**
+ * In ./routes.js, we redirect urls to the record page that have the project ID
+ * included such that the project ID is removed. In this component, we add it
+ * back for record classes that use project ID as a part of the primary key.
+ * The objective is to hide the project ID from the URL whenever possible.
+ *
+ * `splat` refers to a wildcard dynamic url segment
+ * as defined by the record route. The value of splat is essentially primary key
+ * values separated by a '/'.
+ */
+export function RecordController(WdkRecordController) {
+  return class ApiRecordController extends WdkRecordController {
+
+    getActionCreators() {
+      let wdkActionCreators = super.getActionCreators();
+      return Object.assign({}, wdkActionCreators, {
+        updateBasketStatus: (...args) => (dispatch, { wdkService }) => {
+          dispatch(wdkActionCreators.updateBasketStatus(...args))
+          .then(() => {
+            if (this.state.globalData.user.isGuest) return;
+            wdkService.getBasketCounts().then(basketCounts => {
+              dispatch({
+                type: 'apidb/basket',
+                payload: {basketCounts}
+              });
+            });
+          });
+        }
+      })
+    }
+
+    loadData(state, props, previousProps) {
+      let { splat, recordClass } = props.params;
+
+      // These record classes do not need the project id as a part of the primary key
+      // so we just render with the url params as-is.
+      if (!RECORD_CLASSES_WITHOUT_PROJECT_ID.includes(recordClass)) {
+        // Append project id to request
+        let params = Object.assign({}, props.params, {
+          splat: `${splat}/${projectId}`
+        });
+        // reassign props to modified props object
+        props = Object.assign({}, props, { params });
+      }
+      super.loadData(state, props, previousProps);
     }
   };
 }
 
-// Customize StepDownloadForm to show the appropriate form based on the
+// Customize the Record Component
+export function RecordUI(DefaultComponent) {
+  return function ApiRecordUI(props) {
+    let ResolvedComponent =
+      findComponent('RecordUI', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+  };
+}
+
+// Customize the Record Component
+export function RecordHeading(DefaultComponent) {
+  return function ApiRecordHeading(props) {
+    let ResolvedComponent =
+      findComponent('RecordHeading', props.recordClass.name) || DefaultComponent;
+    return (
+      <div>
+        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+        <RecordOverview {...props}/>
+      </div>
+    );
+  };
+}
+
+export function RecordMainSection(DefaultComponent) {
+  return function ApiRecord(props) {
+    let ResolvedComponent =
+      findComponent('RecordMainSection', props.recordClass.name) || DefaultComponent;
+    return (
+      <div>
+        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+        <RecordAttributionSection {...props}/>
+      </div>
+    );
+  };
+}
+
+function RecordAttributionSection(props) {
+  if ('attribution' in props.record.attributes) {
+    return (
+      <div>
+        <h3>Record Attribution</h3>
+        <WdkRecordAttribute
+          attribute={props.recordClass.attributesMap.get('attribution')}
+          record={props.record}
+          recordClass={props.recordClass}
+        />
+      </div>
+    )
+  }
+  return null;
+}
+
+function RecordOverview(props) {
+  let Wrapper = findComponent('RecordOverview', props.recordClass.name) || 'div';
+  return (
+    <Wrapper {...props}>
+      {renderWithCustomElements(props.record.attributes.record_overview)}
+    </Wrapper>
+  );
+}
+
+// Customize DownloadForm to show the appropriate form based on the
 //   selected reporter and record class
-export function StepDownloadForm(WdkStepDownloadForm) {
-  return function ApiStepDownloadForm(props) {
-    switch (props.selectedReporter) {
-      case 'tabular':
-        return ( <TabularReporterForm {...props}/> );
-      case 'srt':
-        switch (props.recordClass.name) {
-          case 'GeneRecordClasses.GeneRecordClass':
-            return ( <FastaGeneReporterForm {...props}/> );
-          case 'SequenceRecordClasses.SequenceRecordClass':
-            return ( <FastaGenomicSequenceReporterForm {...props}/> );
-          case 'OrfRecordClasses.OrfRecordClass':
-            return ( <FastaOrfReporterForm {...props}/> );
-          default:
-            console.error("Unsupported FASTA recordClass: " + props.recordClass.name);
-            return ( <noscript/> );
-        }
-      case 'gff3':
-        return ( <Gff3ReporterForm {...props}/> );
-      case 'fullRecord':
-        return ( <TextReporterForm {...props}/> );
-      case 'xml':
-        return ( <XmlReporterForm {...props}/> );
-      case 'json':
-        return ( <JsonReporterForm {...props}/> );
-      // uncomment if adding service json reporter to model
-      //case 'wdk-service-json':
-      //  return ( <Components.WdkServiceJsonReporterForm {...props}/> );
-      default:
-        return ( <noscript/> );
-    }
+export function DownloadForm() {
+  return function ApiDownloadForm(props) {
+    let Reporter = selectReporterComponent(props.selectedReporter, props.recordClass.name);
+    return (
+      <div>
+        <hr/>
+        <Reporter {...props}/>
+      </div>
+    );
   }
 }
 
-let expressionRE = /ExpressionGraphs$/;
-export function RecordTable(WdkRecordTable) {
+export function RecordTable(DefaultComponent) {
   return function ApiRecordTable(props) {
-    if (expressionRE.test(props.tableMeta.name)) {
+    if (lodash.isEmpty(props.value)) return <DefaultComponent {...props}/>;
+    let ResolvedComponent =
+      findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+  };
+}
 
-      let included = props.tableMeta.properties.includeInTable || [];
+export function RecordAttribute(DefaultComponent) {
+  return function ApiRecordAttribute(props) {
+    let { attribute, record } = props;
+    if (record.attributes[attribute.name] == null) return <DefaultComponent {...props}/>;
+    let ResolvedComponent =
+      findComponent('RecordAttribute', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+  };
+}
 
-      let tableMeta = Object.assign({}, props.tableMeta, {
-        attributes: props.tableMeta.attributes.filter(tm => included.indexOf(tm.name) > -1)
-      });
+export function RecordAttributeSection(DefaultComponent) {
+  return function ApiRecordAttributeSection(props) {
+    let { attribute, record } = props;
 
+    // render attribute as a GbrowseContext if attribute name is in Gbrowse.contextx
+    let context = Gbrowse.contexts.find(context => context.gbrowse_url === attribute.name);
+    if (context != null) {
       return (
-        <WdkRecordTable
-          {...props}
-          tableMeta={tableMeta}
-          childRow={childProps =>
-            <ExpressionGraph rowData={props.table[childProps.rowIndex]}/>}
-          />
+        <CollapsibleSection
+          id={attribute.name}
+          className="eupathdb-GbrowseContext"
+          style={{display: 'block', width: '100%' }}
+          headerContent={attribute.displayName}
+          isCollapsed={props.isCollapsed}
+          onCollapsedChange={props.onCollapsedChange}
+        >
+          <Gbrowse.GbrowseContext {...props} context={context} />
+        </CollapsibleSection>
       );
     }
 
-    return <WdkRecordTable {...props}/>;
+    // Render attribute as a Sequence if attribute name ends with "sequence".
+    let sequenceRE = /sequence$/;
+    if (sequenceRE.test(attribute.name)) {
+      return ( <Sequence sequence={record.attributes[attribute.name]}/> );
+    }
+
+    // use standard record class overriding
+    let ResolvedComponent =
+      findComponent('RecordAttributeSection', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+  };
+}
+
+/**
+ * Overrides the Identification fieldset on the User Profile/Account form from the WDK.  ApiDB
+ * does not use all the fields that the WDK provides
+ * @returns {function()} - React component overriding the original WDK component
+ * @constructor
+ */
+export function UserIdentity() {
+  return ApiUserIdentity;
+}
+
+/**
+ * Overrides the Contact fieldset on the User Profile/Account form from the WDK.  ApiDB
+ * does not collect contact information.  Consequently, the WDK UserContact component is
+ * replaced with an empty React component
+ * @returns {Function} - Empty React component
+ * @constructor
+ */
+export function UserContact() {
+  return function() { return <noscript /> };
+}
+
+/**
+ * Overrides the Preferences fieldset on the User Profile/Account form from the WDK.  The WDK
+ * has no application specific properties although it provides for that possibility.  The empty
+ * React component placeholder is overriden with an ApiDB specific component.
+ * @returns {*} - Application specific properties component
+ * @constructor
+ */
+export function ApplicationSpecificProperties() {
+  return ApiApplicationSpecificProperties;
+}
+
+/**
+ * Trims PROJECT_ID off the tail end of a comma-delimited list of primary key value parts
+ */
+export function PrimaryKeySpan() {
+  return function(props) {
+    let pkValues = props.primaryKeyString.split(',');
+    let newPkString = pkValues[0];
+    for (let i = 1; i < pkValues.length - 1; i++) {
+      newPkString += ", " + pkValues[i];
+    }
+    return ( <span>{newPkString}</span> );
   };
 }

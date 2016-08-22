@@ -1,0 +1,122 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(../images/MicrobiomeDB/background_s.jpg);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#fixed-footer {
+  background-color: #fffff0; 
+  border: 1px solid #fffff0; 
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+/*
+#header2 {
+	background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
+}
+*/
+
+#header_rt {
+   color: #4a5f72;
+}
+
+#header_rt a:link, #header_rt a:visited {
+   color: #33587a;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER Site name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header2 a#MicrobiomeDB {
+  color:#292d94;
+  font-size:500%;
+  font-weight:bold;
+  position:relative;
+  left:30px;
+  top:32px;
+  text-decoration:none;
+}
+
+#header2 span#rel-num {
+  position:relative;
+  top:-8px;
+  left:29px;
+}
+
+#header2 span#rel-date {
+  position:relative;
+  top:0px;
+  left:-20px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#nav-top {
+	color: #255f95;
+}
+
+#nav-top a:link, #nav-top a:visited {
+	color: #255f95;
+}
+
+#nav-top li ul { 
+/* 	background-image: url(../images/EuPathDB/footer.png); */
+	border-color:#14426d;
+	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
+}
+
+#nav-top li ul a:link, #nav-top li ul a:visited {
+	color: #255f95;
+}
+
+#nav-top li ul a:hover, #nav-top li ul a:active {
+	color: #717775;
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HOME Page:  BUBBLE Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+.threecolumndiv div.heading {
+  background-color:  #517bb8;  /* #517bb8;  num 2 and  dark crypto */  /*  #75b4c4;  num 3 and shisto header light blue-green  */
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.menu_lefttop_drop {
+   border-color: #888; 
+}
+
+#menu_lefttop a.heading {
+  background: #292d94;        /* #517bb8; num2 and dark crypto */  /* #292d94; num 1 */    
+      /* #34607b; blue as in shisto dark header */  
+      /* #365e9b; blue as in title as in crypto swoosh  */
+}
+
+
+/*THE END */

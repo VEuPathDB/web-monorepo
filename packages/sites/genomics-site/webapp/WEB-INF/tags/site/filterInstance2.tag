@@ -55,6 +55,13 @@
   </c:choose>
 </c:set>
 
+<!-- in trunk we were setting step filter to "all_results" in database at creation time...
+     now we dont.. so we probably should highlight all_results when no filter is applied -->
+<c:if test="${empty currentFilter && instance.name == 'all_results'}">
+   <c:set var="current" value="true" />
+</c:if>
+
+
 <!-- All this painful string manipulation to extract the (1) phylum, (2) family (genus), (3) species and (4) strain names 
     for a given organism is due to the fact that we do not have those distinct values as part of the genome information, 
     *anywhere* in our system. 

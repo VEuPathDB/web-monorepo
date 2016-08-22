@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Wdk from 'wdk-client';
 import SrtHelp from '../common/SrtHelp';
 
@@ -28,25 +27,6 @@ let signs = [
   { value: 'plus', display: '+' },
   { value: 'minus', display: '-' }
 ];
-
-let defaultFormState = {
-  attachmentType: 'plain',
-  type: 'genomic',
-
-  // sequence region inputs for 'genomic'
-  upstreamAnchor: 'Start',
-  upstreamSign: 'plus',
-  upstreamOffset: 0,
-  downstreamAnchor: 'End',
-  downstreamSign: 'plus',
-  downstreamOffset: 0,
-
-  // sequence region inputs for 'protein'
-  startAnchor3: 'Start',
-  startOffset3: 0,
-  endAnchor3: 'End',
-  endOffset3: 0
-};
 
 let SequenceRegionRange = props => {
   let { label, anchor, sign, offset, formState, getUpdateHandler } = props;
@@ -108,54 +88,61 @@ let SequenceRegionInputs = props => {
   }
 };
 
-let FastaGeneReporterForm = React.createClass({
-
-  componentDidMount() {
-    this.props.onFormChange(this.discoverFormState(this.props.formState));
-  },
-
-  discoverFormState(formState) {
-    return (formState != null ? formState : defaultFormState);
-  },
-
-  // returns a handler function that will update the form state 
-  getUpdateHandler(fieldName) {
-    return util.getChangeHandler(fieldName, this.props.onFormChange, this.props.formState);
-  },
-
-  render() {
-    let realFormState = this.discoverFormState(this.props.formState);
-    return (
-      <div>
-        <h3>Choose the type of sequence:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <RadioList name="type" value={realFormState.type}
-              onChange={this.getUpdateHandler('type')} items={sequenceTypes}/>
-        </div>
-        <SequenceRegionInputs formState={realFormState} getUpdateHandler={this.getUpdateHandler}/>
-        <hr/>
-        <h3>Download Type:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <RadioList name="attachmentType" value={realFormState.attachmentType}
-            onChange={this.getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
-        </div>
-        <div style={{margin:'0.8em'}}>
-          <input type="button" value="Get Sequences" onClick={this.props.onSubmit}/>
-        </div>
-        <div>
-          <hr/>
-          <b>Note:</b><br/>
-          For "genomic" sequence: If UTRs have not been annotated for a gene, then choosing
-          "transcription start" may have the same effect as choosing "translation start".<br/>
-          For "protein" sequence: you can only retrieve sequence contained within the ID(s)
-          listed. i.e. from downstream of amino acid sequence start (ie. Methionine = 0) to
-          upstream of the amino acid end (last amino acid in the protein = 0).<br/>
-          <hr/>
-        </div>
-        <SrtHelp/>
+let FastaGeneReporterForm = props => {
+  let { formState, updateFormState, onSubmit } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+  return (
+    <div>
+      <h3>Choose the type of sequence:</h3>
+      <div style={{marginLeft:"2em"}}>
+        <RadioList name="type" value={formState.type}
+            onChange={getUpdateHandler('type')} items={sequenceTypes}/>
       </div>
-    );
-  }
+      <SequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>
+      <hr/>
+      <h3>Download Type:</h3>
+      <div style={{marginLeft:"2em"}}>
+        <RadioList name="attachmentType" value={formState.attachmentType}
+          onChange={getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
+      </div>
+      <div style={{margin:'0.8em'}}>
+        <input type="button" value="Get Sequences" onClick={onSubmit}/>
+      </div>
+      <div>
+        <hr/>
+        <b>Note:</b><br/>
+        For "genomic" sequence: If UTRs have not been annotated for a gene, then choosing
+        "transcription start" may have the same effect as choosing "translation start".<br/>
+        For "protein" sequence: you can only retrieve sequence contained within the ID(s)
+        listed. i.e. from downstream of amino acid sequence start (ie. Methionine = 0) to
+        upstream of the amino acid end (last amino acid in the protein = 0).<br/>
+        <hr/>
+      </div>
+      <SrtHelp/>
+    </div>
+  );
+};
+
+FastaGeneReporterForm.getInitialState = () => ({
+  formState: {
+    attachmentType: 'plain',
+    type: 'genomic',
+  
+    // sequence region inputs for 'genomic'
+    upstreamAnchor: 'Start',
+    upstreamSign: 'plus',
+    upstreamOffset: 0,
+    downstreamAnchor: 'End',
+    downstreamSign: 'plus',
+    downstreamOffset: 0,
+  
+    // sequence region inputs for 'protein'
+    startAnchor3: 'Start',
+    startOffset3: 0,
+    endAnchor3: 'End',
+    endOffset3: 0
+  },
+  formUiState: {}
 });
 
 export default FastaGeneReporterForm;

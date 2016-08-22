@@ -1,3 +1,4 @@
+/* global jQuery */
 
 //********************************************************************************/
 // Two configurations available for gene pop-ups:
@@ -35,8 +36,8 @@ function fiveColRow(one, two, three, four, five) {
 
 /****** Favorite link functions for GBrowse ******/
 
-var saveFavTextLink = 'As Favorite <img width="20" src="' + wdk.assetsUrl('wdk/images/favorite_gray.gif') + '"/>';
-var removeFavTextLink = 'Remove From Favorites <img width="20" src="' + wdk.assetsUrl('wdk/images/favorite_color.gif') + '"/>';
+var saveFavTextLink = 'As Favorite <img width="20" src="/a/wdk/images/favorite_gray.gif"/>';
+var removeFavTextLink = 'Remove From Favorites <img width="20" src="/a/wdk/images/favorite_color.gif"/>';
 
 function applyCorrectFavoriteLink(sourceId, projectId) {
 	wdk.favorite.performIfItemIsFavorite(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
@@ -55,8 +56,8 @@ function removeGeneAsFavorite(projectId, sourceId) {
 
 /****** Basket link functions for GBrowse ******/
 
-var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="' + wdk.assetsUrl('wdk/images/basket_gray.png') + '"/>';
-var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="' + wdk.assetsUrl('wdk/images/basket_color.png') + '"/>';
+var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="/a/wdk/images/basket_gray.png"/>';
+var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="/a/wdk/images/basket_color.png"/>';
 
 function applyCorrectBasketLink(sourceId, projectId) {
 	wdk.basket.performIfItemInBasket(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
@@ -77,15 +78,16 @@ function removeGeneFromBasket(projectId, sourceId) {
 
 function checkLogin() {
 	if (!wdk.user.isUserLoggedIn()) {
-		Balloon.prototype.hideTooltip(1);
-		jQuery("#wdk-dialog-login-form").dialog("open");
+    // Balloon is not used on gene pages
+		if ('Balloon' in window) Balloon.prototype.hideTooltip(1);
+		wdk.user.login();
 		return; // if user logs in, will not get here
 	}
 }
 
 function performSavedItemOp(funcToCall, projectId, sourceId, selectionSuffix, nextFunction, nextLinkText) {
 	checkLogin();
-	jQuery('#'+sourceId+'_'+selectionSuffix).html('<img width="20" src="' + wdk.assetsUrl('wdk/images/loading.gif') + '"/>');
+	jQuery('#'+sourceId+'_'+selectionSuffix).html('<img width="20" src="/a/wdk/images/loading.gif"/>');
 	funcToCall(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
 		    function(result) {
 				setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText);
@@ -103,7 +105,7 @@ function getSaveRowLinks(projectId, sourceId) {
 		// enable saving as favorite or to basket
 		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + saveFavTextLink + "</a></span>";
 		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">" + saveBasketTextLink + "</a></span>";
-		
+
 		if (GbrowsePopupConfig.showFavoriteLinks) {
 			saveRowLinks = favoriteLink + " | " + basketLink;
 			// now set appropriate links based on whether gene is already in basket/favorites
@@ -114,7 +116,7 @@ function getSaveRowLinks(projectId, sourceId) {
 			saveRowLinks = basketLink;
 			applyCorrectBasketLink(sourceId, projectId);
 		}
-		
+
 	} else {
 		// prompt user to log in if he wants to to save genes
 		saveRowLinks = "<a onclick=\"checkLogin()\" href=\"javascript:void(0)\">Log in</a> to save genes.";
@@ -126,13 +128,13 @@ function getSaveRowLinks(projectId, sourceId) {
 /****** Pop-up functions for various record types ******/
 
 // Gene title
-function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl) {
+function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl, geneId) {
 
   // In ToxoDB, sequences of alternative gene models have to be returned
   var ignore_gene_alias = 0;
   if (projectId == 'ToxoDB') {
     ignore_gene_alias = 1;
-  } 
+  }
 
   // expand minimalist input data
   var cdsLink = "<a href='../../../cgi-bin/geneSrt?project_id=" + projectId
@@ -143,7 +145,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
         + "&ids=" + sourceId
         + "&ignore_gene_alias=" + ignore_gene_alias
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&endAnchor3=End&go=Get+Sequences' target='_blank'>protein</a>"
-  var recordLink = "<a href='../../../gene/" + sourceId + "'>Gene Page</a>";
+  var recordLink = '<a href="../../../app/record/gene/' + geneId + '">Gene Page</a>';
   var gbLink = "<a href='../../../../cgi-bin/gbrowse/" + projectId.toLowerCase() + "/?" + gbLinkParams + "'>GBrowse</a>";
   var orthomclLink = "<a href='http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
 
@@ -151,6 +153,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   var rows = new Array();
   rows.push(twoColRow('Species:', taxon));
   rows.push(twoColRow('ID:', sourceId));
+  rows.push(twoColRow('Gene ID:', geneId));
   rows.push(twoColRow('Gene Type:', soTerm));
   rows.push(twoColRow('Description:', product));
 
@@ -166,7 +169,8 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   if(utr != '') {
     rows.push(twoColRow('UTR:', utr));
   }
-  rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
+  // TO FIX for GUS4
+  //  rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
   if (soTerm =='Protein Coding') {
       rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
       if ( orthomcl.substring(0,3) == 'OG2') {
@@ -176,7 +180,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
       }
   }
   rows.push(twoColRow('Links:', gbLink + " | " + recordLink));
-  
+
   //tip.T_BGCOLOR = 'lightskyblue';
   tip.T_TITLE = 'Annotated Gene ' + sourceId;
   return table(rows);
@@ -187,8 +191,8 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
 function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, location, gbLinkParams, orthomcl) {
 
 	var gbLink = '<a href="../../../../cgi-bin/gbrowse/' + projectId.toLowerCase() + '/?' + gbLinkParams + '">GBrowse</a>';
-	var recordLink = '<a href="../../../gene/' + sourceId + '">Gene Page</a>';
-	
+	var recordLink = '<a href="../../../app/record/gene/' + sourceId + '">Gene Page</a>';
+
 	// format into html table rows
 	var rows = new Array();
 	rows.push(twoColRow('Gene:', sourceId));
@@ -214,7 +218,7 @@ function est (tip, paramsString) {
   // split paramsString on asterisk (to avoid library name characters)
   var v = new Array();
   v = paramsString.split('*');
-  
+
   var ACCESSION = 0;
   var START = ACCESSION + 1;
   var STOP = START + 1;
@@ -238,7 +242,7 @@ function blt (tip, paramsString) {
   // split paramsString on asterisk (to avoid defline characters)
   var v = new Array();
   v = paramsString.split('*');
-  
+
   var ACCESSION = 0;
   var DEFLINE = ACCESSION + 1;
   var START = DEFLINE + 1;
@@ -273,22 +277,22 @@ function pst (tip, paramsString) {
   revArray['G'] = 'C';
 
   var POS_IN_CDS     = 0;
-  var POS_IN_PROTEIN = POS_IN_CDS + 1; 
-  var REF_STRAIN     = POS_IN_PROTEIN + 1; 
-  var REF_AA         = REF_STRAIN + 1; 
-  var REVERSED       = REF_AA + 1; 
-  var REF_NA         = REVERSED + 1; 
-  var SOURCE_ID      = REF_NA + 1; 
-  var VARIANTS       = SOURCE_ID + 1; 
+  var POS_IN_PROTEIN = POS_IN_CDS + 1;
+  var REF_STRAIN     = POS_IN_PROTEIN + 1;
+  var REF_AA         = REF_STRAIN + 1;
+  var REVERSED       = REF_AA + 1;
+  var REF_NA         = REVERSED + 1;
+  var SOURCE_ID      = REF_NA + 1;
+  var VARIANTS       = SOURCE_ID + 1;
   var START          = VARIANTS + 1;
-  var GENE           = START + 1; 
+  var GENE           = START + 1;
   var IS_CODING      = GENE + 1;
   var NON_SYN        = IS_CODING + 1;
   var WEBAPP         = NON_SYN + 1;
 
   // expand minimalist input data
   var link = "<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
- 
+
   var type = 'Non-coding';
   var refNA = (v[REVERSED] == '1')? revArray[v[REF_NA]] : v[REF_NA];
   var refAAString = '';
@@ -308,7 +312,7 @@ function pst (tip, paramsString) {
     rows.push(twoColRow('Position&nbsp;in&nbsp;protein', v[POS_IN_PROTEIN]));
   }
   rows.push(twoColRow('Type', type));
-  rows.push(twoColRow(v[REF_STRAIN] + '&nbsp;(reference)', 'NA=' + refNA + refAAString));  
+  rows.push(twoColRow(v[REF_STRAIN] + '&nbsp;(reference)', 'NA=' + refNA + refAAString));
 
   // make one row per SNP allele
   var variants = new Array();
@@ -319,11 +323,11 @@ function pst (tip, paramsString) {
     var strain = variant[0];
     if (strain == v[REF_STRAIN]) continue;
     var na = variant[1];
-    if (v[REVERSED] == '1') na = revArray[na]; 
+    if (v[REVERSED] == '1') na = revArray[na];
     var aa = variant[2];
-    var info = 
+    var info =
      'NA=' + na + ((v[IS_CODING] == 'yes')? '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + aa : '');
-    rows.push(twoColRow(strain, info));    
+    rows.push(twoColRow(strain, info));
   }
 
   //  tip.T_BGCOLOR = 'lightskyblue';
@@ -345,22 +349,22 @@ function htspst (tip, paramsString) {
   revArray['G'] = 'C';
 
   var POS_IN_CDS     = 0;
-  var POS_IN_PROTEIN = POS_IN_CDS + 1; 
-  var REF_STRAIN     = POS_IN_PROTEIN + 1; 
-  var REF_AA         = REF_STRAIN + 1; 
-  var REVERSED       = REF_AA + 1; 
-  var REF_NA         = REVERSED + 1; 
-  var SOURCE_ID      = REF_NA + 1; 
-  var VARIANTS       = SOURCE_ID + 1; 
+  var POS_IN_PROTEIN = POS_IN_CDS + 1;
+  var REF_STRAIN     = POS_IN_PROTEIN + 1;
+  var REF_AA         = REF_STRAIN + 1;
+  var REVERSED       = REF_AA + 1;
+  var REF_NA         = REVERSED + 1;
+  var SOURCE_ID      = REF_NA + 1;
+  var VARIANTS       = SOURCE_ID + 1;
   var START          = VARIANTS + 1;
-  var GENE           = START + 1; 
+  var GENE           = START + 1;
   var IS_CODING      = GENE + 1;
   var NON_SYN        = IS_CODING + 1;
   var WEBAPP         = NON_SYN + 1;
 
   // expand minimalist input data
   var link = "<a href=/a/showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=" + v[SOURCE_ID] + ">" + v[SOURCE_ID] + "</a>";
- 
+
   var type = 'Non-coding';
   var refNA = (v[REVERSED] == '1')? revArray[v[REF_NA]] : v[REF_NA];
   var refAAString = '';
@@ -393,9 +397,9 @@ function htspst (tip, paramsString) {
     var strain = variant[0];
     if (strain == v[REF_STRAIN]) continue;
     var na = variant[1];
-    if (v[REVERSED] == '1') na = revArray[na]; 
+    if (v[REVERSED] == '1') na = revArray[na];
     var aa = variant[2];
-    var info = 
+    var info =
      'NA=' + na + ((v[IS_CODING] == 'yes')? '&nbsp;&nbsp;&nbsp;&nbsp;AA=' + aa : '');
     strains.push(fiveColRow(strain, na, (v[IS_CODING] == 'yes') ? aa : '&nbsp;',variant[3],variant[4]));
   }

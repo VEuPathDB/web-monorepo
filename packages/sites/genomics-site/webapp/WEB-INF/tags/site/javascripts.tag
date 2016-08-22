@@ -15,6 +15,18 @@
   <!-- JavaScript provided by WDK -->
   <imp:wdkJavascripts refer="${refer}" debug="${debug}"/>
 
+  <script>
+    // used to measure time to reach a goal
+    window.__perf__ = { start: performance.now() };
+    // used by apidb to initialize wdk
+    window.__WDK_CONFIG__ = {
+      projectId: "${applicationScope.wdkModel.projectId}",
+      webAppUrl: "${pageContext.request.contextPath}",
+      endpoint: "${pageContext.request.contextPath}/service"
+    };
+  </script>
+  <imp:script src="apidb.build.js"/>
+
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />
   <c:set var="project" value="${props['PROJECT_ID']}" />
@@ -26,21 +38,14 @@
     <c:set var="gkey" value="AIzaSyBD4YDJLqvZWsXRpPP8u9dJGj3gMFXCg6s" />
   </c:if>
   -->
-
-  <imp:script src="wdkCustomization/js/lib/hoverIntent.js"/>
-  <imp:script src="wdkCustomization/js/lib/superfish.js"/>
-  <imp:script src="wdkCustomization/js/common.js"/>
-  <imp:script src="wdkCustomization/js/custom-login.js"/>
-
-  <!-- Contact Us window -->
-  <imp:script src='js/newwindow.js'/>
-
   <c:if test="${refer == 'summary'}">
     <imp:script src="wdkCustomization/js/customStrategy.js"/>
     <imp:script src="wdkCustomization/js/ortholog.js"/>
+    <imp:script src="wdkCustomization/js/transcripts.js"/>
     <imp:script src="wdkCustomization/js/export-basket.js"/>
     <imp:script src="wdkCustomization/js/spanlogic.js"/>
     <imp:script src="wdkCustomization/js/genome-view.js"/>
+    <imp:script src="wdkCustomization/js/gene-view.js"/>
     <imp:script src="wdkCustomization/js/transcript-view.js"/>
 
       <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"><jsp:text/></script> -->
@@ -61,6 +66,12 @@
   </c:if>
   -->
 
+
+
+  <!-- Flash embed script for pathway record page -->
+  <imp:script src="js/AC_OETags.min.js"/>
+
+
   <c:if test="${refer == 'recordPage'}">
     <!-- TODO Move to webapp -->
     <imp:script src="wdkCustomization/js/isolateResults.js"/>
@@ -78,21 +89,6 @@
     <imp:script src="wdkCustomization/js/questions/snp.js"/>
     <imp:script src="wdkCustomization/js/analysis/enrichment.js"/>
   </c:if>
-
-  <!-- Quick search box -->
-  <imp:script src="js/quicksearch.js"/>
-
-  <!-- Dynamic query grid (bubbles in home page) -->
-  <imp:script src="js/dqg.js"/>
-
-  <!-- Sidebar news/events, yellow background -->
-  <imp:script src="js/newitems.js"/>
-
-  <!-- Access twitter/facebook links, and configure menubar (superfish) -->
-  <imp:script src="js/nav.js"/>
-
-  <!-- show/hide the tables in the Record page -->
-  <imp:script src="js/show_hide_tables.js"/>
 
   <!-- SRT page -->
   <c:if test="${refer == 'srt'}">

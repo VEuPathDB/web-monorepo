@@ -128,8 +128,8 @@ function openPubmedWindow(searchBoxId) {
 
   <c:when test="${empty wdkUser || wdkUser.guest}">
     <div style="margin:0 auto">
-      <p>Please login to post a comment.</p>
-      <imp:loginForm showCancel="false"/>
+      <h3>Please <a href="javascript:wdk.user.login()">login</a> to post a
+        comment to ${commentForm.commentTargetId} ${commentForm.stableId}</h3>
     </div>
   </c:when>
   
@@ -142,7 +142,7 @@ function openPubmedWindow(searchBoxId) {
 
           <c:when test="${commentForm.commentTargetId eq 'gene'}">
             <c:set var="returnUrl">
-            <c:url value="/showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=${wdkModel.projectId}&primary_key=${commentForm.stableId}"/>
+            <c:url value="/app/record/gene/${commentForm.stableId}"/>
             </c:set>
           </c:when>
 
@@ -459,7 +459,7 @@ function openPubmedWindow(searchBoxId) {
           </c:when>
 
           <c:otherwise>
-            <td valign=top>Gene Identifiers</td>
+            <td valign=top>Gene Identifiers (please do not include ${commentForm.stableId})</td>
           </c:otherwise>
         </c:choose>
 

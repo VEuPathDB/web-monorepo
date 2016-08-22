@@ -145,7 +145,6 @@ The EuPathDB <a href="http://rnaseq.pathogenportal.org"><b>Bioinformatics Resour
     <th class="mythStyle" title="Microarray">Micro<br>array</th>
     <th class="mythStyle" title="RNA Seq">RNA<br>Seq</th>
     <th class="mythStyle" title="RT PCR">RT-<br>PCR</th>
-    <th class="mythStyle" title="Sage Tags">SAGE<br>Tags</th>
     <th class="mythStyle" title="Proteomics">Prote<br>omics</th>
     <th class="mythStyle" title="Metabolic Pathways">Path<br>ways</th>
 
@@ -352,17 +351,6 @@ The EuPathDB <a href="http://rnaseq.pathogenportal.org"><b>Bioinformatics Resour
 </c:otherwise>
 </c:choose>
 
-
-<c:choose>
-<c:when test="${record.attributesMap['SageTags'] == 'yes'}">
-    <td class="mytdStyle" style="${separation}">
-	<a href="http://${website}.org/${webapp}/getDataset.do?display=detail">	
-		<imp:image border="0" src="images/reddot.gif" width="8" alt="yes"/></a></td>
-</c:when>
-<c:otherwise>
-    <td class="mytdStyle" style="${separation}"></td>
-</c:otherwise>
-</c:choose>
 
 <c:choose>
 <c:when test="${record.attributesMap['Proteomics'] == 'yes'}">

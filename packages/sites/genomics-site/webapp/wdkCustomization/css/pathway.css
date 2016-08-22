@@ -1,0 +1,84 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.link {
+  text-decoration: underline;
+  /*color: #0b94b1;*/
+  cursor: pointer;
+}
+
+
+#draggable {
+  z-index:10000;
+  margin-left:18px;
+  position:absolute;
+  margin-top: 400px;
+  background-color:white;
+  border:1px solid black;
+  border-radius:5px;
+  width: 350px;
+  padding: 0.5em;
+}
+
+#eupathdb-PathwayRecord-cytoscapeweb {
+  border:1px solid black;
+  border-radius:5px;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 26px;
+}
+
+#eupathdb-PathwayRecord-cytoscapeIcon {
+  text-align: right;
+  width: 100%;
+}
+
+#eupathdb-PathwayRecord-generaSelector-wrapper {
+  position: absolute;
+  background: none;
+  display: none;
+}
+
+#eupathdb-PathwayRecord-generaSelector {
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+  z-axis: 500;
+  background-color: #FFF;
+  left: 425px;
+  position: relative;
+  width: 620px;
+}
+
+#eupathdb-PathwayRecord-generaSelector  .wdk-CheckboxListItem {
+  display: inline-block;
+  line-height: 1.5em;
+  width: 200px;
+  max-width: 625px;
+}
+
+#eupathdb-PathwayRecord-generaSelector .wdk-CheckboxListItem label {
+  text-align: left;
+}
+
+#eupathdb-PathwayRecord-generaSelector .wdk-CheckboxListItem input {
+  margin-right: 0.5em;
+}
+
+#vis-menu {
+  background: -webkit-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  background: -o-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  background: -moz-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  background: linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  background-color: rgb(171,171,171);
+  margin-bottom: inherit;
+  width: auto;
+}
+
+#vis-menu li {
+  z-index: 96;
+}

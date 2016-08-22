@@ -38,10 +38,6 @@ a[name]:hover, a[name]:active {
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#header {
-	background-image: url(../images/EuPathDB/backgroundtop_s.jpg);
-}
-
 #header2 {
 	background-image: url(../images/EuPathDB/backgroundtop_s.jpg);
 }

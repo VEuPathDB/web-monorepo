@@ -70,13 +70,13 @@
 
 <imp:wdkTable tblName="Properties" isOpen="true" attribution=""/>
 
-<imp:wdkTable tblName="Synonyms" isOpen="false" attribution=""/>
+<imp:wdkTable tblName="IupacNames" isOpen="false" attribution=""/>
 
-<imp:wdkTable tblName="SubstanceProps" isOpen="true" attribution=""/>
+<imp:wdkTable tblName="Synonyms" isOpen="false" attribution=""/>
 
 <imp:wdkTable tblName="CompoundsMetabolicPathways" isOpen="true" attribution=""/>
 
-<imp:profileGraphs type='compound' tableName="MassSpecGraphs"/>
+<!-- imp:profileGraphs type='compound' tableName="MassSpecGraphs"/-- > 
 
 
 <c:set var="reference">

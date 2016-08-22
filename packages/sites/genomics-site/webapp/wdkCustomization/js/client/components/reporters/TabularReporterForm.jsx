@@ -1,72 +1,87 @@
-import React from 'react';
 import * as Wdk from 'wdk-client';
+import ExcelNote from './ExcelNote';
 
-let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils);
-let { RadioList, Checkbox } = Wdk.Components;
+let util = Object.assign({}, Wdk.ComponentUtils, Wdk.ReporterUtils, Wdk.CategoryUtils);
+let { CategoriesCheckboxTree, RadioList, Checkbox, ReporterSortMessage } = Wdk.Components;
 
-let attachmentTypes = [
-  { value: "text", display: "Text File" },
-  { value: "excel", display: "Excel File**" },
-  { value: "plain", display: "Show in Browser"}
-];
+let TabularReporterForm = props => {
 
-let TabularReporterForm = React.createClass({
+  let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, globalData: { ontology } } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+  let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormUiState, formUiState);
 
-  componentDidMount() {
-    let { formState, preferences, question, initializeFormState } = this.props;
-    initializeFormState(this.discoverFormState(formState, preferences, question));
-  },
+  return (
+    <div>
+      <ReporterSortMessage scope={scope}/>
 
-  discoverFormState(formState, preferences, question) {
-    let currentAttributes = (formState == null ? undefined : formState.attributes);
-    return {
-      attributes: util.getAttributeSelections(currentAttributes, preferences, question),
-      includeHeader: util.getValueOrDefault(formState, "includeHeader", true),
-      attachmentType: util.getValueOrDefault(formState, "attachmentType", "plain")
-    };
-  },
+      <div className="eupathdb-ReporterForm">
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__right">
+          <CategoriesCheckboxTree
+              // title and layout of the tree
+              title="Choose Columns"
+              searchBoxPlaceholder="Search Columns..."
+              tree={util.getAttributeTree(ontology, recordClass.name, question)}
 
-  // returns a handler function that will update the form state 
-  getUpdateHandler(fieldName) {
-    return util.getChangeHandler(fieldName, this.props.onFormChange, this.props.formState);
-  },
-
-  render() {
-    let { question, recordClass, preferences, formState, onSubmit } = this.props;
-    let realFormState = this.discoverFormState(formState, preferences, question);
-    return (
-      <div>
-        {util.getReporterCheckboxList("Choose Attributes", this.getUpdateHandler('attributes'),
-          util.getAllAttributes(recordClass, question, util.isInReport), realFormState.attributes)}
-        <div>
-          <h3>Additional Options:</h3>
-          <div style={{marginLeft:"2em"}}>
-            <Checkbox value={realFormState.includeHeader} onChange={this.getUpdateHandler('includeHeader')}/>
-            <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
+              // state of the tree
+              selectedLeaves={formState.attributes}
+              expandedBranches={formUiState.expandedAttributeNodes}
+              searchTerm={formUiState.attributeSearchText}
+          
+              // change handlers for each state element controlled by the tree
+              onChange={util.getAttributesChangeHandler('attributes', updateFormState, formState, recordClass)}
+              onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
+              onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+          />
+        </div>
+        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">
+          <div>
+            <h3>Download Type</h3>
+            <div>
+              <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
+                onChange={getUpdateHandler('attachmentType')}/>
+            </div>
+          </div>
+          <div>
+            <h3>Additional Options</h3>
+            <div>
+              <label>
+                <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
+                <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
+              </label>
+            </div>
+          </div>
+          <div style={{margin:'2em 0'}}>
+            <input type="submit" value="Submit" onClick={onSubmit}/>
           </div>
         </div>
-        <div>
-          <h3>Download Type and Format:</h3>
-          <div style={{marginLeft:"2em"}}>
-            <RadioList value={realFormState.attachmentType} items={attachmentTypes}
-              onChange={this.getUpdateHandler('attachmentType')}/>
-          </div>
-        </div>
-        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
-          <input type="button" value="Submit" onClick={onSubmit}/>
-        </div>
-        <hr/>
-        <div style={{margin:'0.5em 2em'}}>
-          **Note: If you choose "Excel File" as Download Type, you can only download a
-          maximum 10M (in bytes) of the results and the rest will be discarded.<br/>
-          Opening a huge Excel file may crash your system. If you need to get the
-          complete results, please choose "Text File".
-        </div>
-        <hr/>
       </div>
-    );
-  }
 
-});
+      <hr/>
+      <div style={{margin:'0.5em 2em'}}>
+        <ExcelNote/>
+      </div>
+      <hr/>
+    </div>
+  );
+}
+
+TabularReporterForm.getInitialState = (downloadFormStoreState) => {
+  let { scope, question, recordClass, globalData: { ontology, preferences } } = downloadFormStoreState;
+  // select all attribs and tables for record page, else column user prefs and no tables
+  let attribs = (scope === 'results' ?
+      util.addPk(util.getAttributeSelections(preferences, question), recordClass) :
+      util.addPk(util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)), recordClass));
+  return {
+    formState: {
+      attributes: attribs,
+      includeHeader: true,
+      attachmentType: "plain"
+    },
+    formUiState: {
+      expandedAttributeNodes: null,
+      attributeSearchText: ""
+    }
+  };
+}
 
 export default TabularReporterForm;

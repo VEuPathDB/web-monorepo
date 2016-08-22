@@ -21,7 +21,7 @@ function customEditStep(questionName, url) {
 // Include orthologs link in gene details boxes in all sites
 function customCreateDetails(jsonstep, modelstep, strat) {
    var orthologs = "";
-   if(jsonstep.dataType == "GeneRecordClasses.GeneRecordClass"){
+   if(jsonstep.dataType == "TranscriptRecordClasses.TranscriptRecordClass"){
       var orthologTgt;
       if (jsonstep.isboolean){
          orthologTgt = modelstep.back_boolean_Id;
