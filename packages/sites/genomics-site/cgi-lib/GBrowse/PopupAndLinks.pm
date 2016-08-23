@@ -348,18 +348,30 @@ sub snpTitleFromMatchToReference {
    return hover($f, \@data); 
  }
 
+
 sub peakTitle {
-  my $f  = shift;
-  my $name = $f->name;
-  my $score = $f->score;
-  my ($analysis) = $f->get_tag_values("Analysis");
-  my ($a) = $f->get_tag_values('Antibody');
-  my @data;
-  push @data, [ 'Name:' => $name ];
-  push @data, [ 'Analysis:' => $analysis ];
-  push @data, [ 'Antibody:' => $a ];
-  push @data, [ 'Score:' => $score ];
-  hover( $f, \@data); 
+    my $f = shift;
+    my @data;
+    my ($expt) = $f->source_tag();
+    $expt =~ s/_/ /g;
+    my $score = $f->score;
+    my $start = $f->start;
+    my $end = $f->end;
+    push @data, ['Experiment:' => $expt];
+    push @data, ['Start:' => $start];
+    push @data, ['End:' => $end];
+    push @data, ['Score:' => $score];
+    my @tags = $f->get_all_tags();
+
+    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 'genotype information' => 'Genotype'};
+
+    foreach my $tag (@tags) {
+        if (exists $ontologyTermToDisplayName->{$tag}) {
+            my ($value) = $f->get_tag_values($tag);
+            push @data, [$ontologyTermToDisplayName->{$tag} => $value];
+        }
+    }
+    hover($f, \@data);
 }
 
 sub altPeakTitle {
