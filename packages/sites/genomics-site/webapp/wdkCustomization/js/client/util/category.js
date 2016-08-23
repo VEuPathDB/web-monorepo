@@ -15,7 +15,7 @@ let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
  *
  * @param {Object} ontology
  * @param {Object[]} recordClasses
- * @param {Object} options
+ * @param {Object} options?
  * @param {string[]} options.include? Record classes to include
  * @param {string[]} options.exclude? Record classes to exclude
  * @returns Promise<RecordClassTree[]>
@@ -31,7 +31,7 @@ export function getSearchMenuCategoryTree(ontology, recordClasses, options) {
  *
  * @param categoryTree
  * @param recordClassMap
- * @param options
+ * @param options?
  * @returns {RecordClassTree[]}
  */
 function groupByRecordClass(categoryTree, recordClassMap, options) {
@@ -48,7 +48,7 @@ function isDefined(maybe) {
   return maybe !== undefined;
 }
 
-function includeExclude({ include, exclude }) {
+function includeExclude({ include, exclude } = {}) {
   return function(item) {
     return include != null ? include.indexOf(item) > -1
          : exclude != null ? exclude.indexOf(item) === -1
