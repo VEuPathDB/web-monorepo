@@ -326,7 +326,7 @@ sub gsnapIntronWidthFromIsAnnotated {
   my ($perc) = $f->get_tag_values('IntronPercent'); 
   my ($annotatedIntron) = $f->get_tag_values('AnnotatedIntron'); 
   my ($matchesGeneStrand) = $f->get_tag_values('MatchesGeneStrand'); 
-  return 3 if $annotatedIntron eq 'Yes';
+  return 2 if $annotatedIntron eq 'Yes';
 #  return 2 if $matchesGeneStrand == 1;
   return 1;
 }
