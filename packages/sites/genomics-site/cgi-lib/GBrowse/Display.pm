@@ -257,14 +257,23 @@ sub gsnapIntronColorFromStrandAndScore {
 
   # http://www.computerhope.com/htmcolor.htm
   if($isReversed == 1){
-    return '#FDD7E4' if $sum <= 4;   # pig pink
-    return '#FAAFBE' if $sum <= 20;   # pink
-    return '#F778A1' if $sum <= 50;  # carnation pink
-    return '#E4287C' if $sum <= 100;  # pink lemonade
-    return '#FF0000' if $sum <= 300;  # red
-    return '#C11B17' if $sum <= 750; # chili pepper
-    return '#9F000F' if $sum <= 1500; # cranberry
-    return '#800517';   # firebrick
+    return '#FFCCCC' if $sum <= 4;
+    return '#FF9999' if $sum <= 20;
+    return '#FF6666' if $sum <= 50;
+    return '#FF3333' if $sum <= 100;
+    return '#FF0000' if $sum <= 300; 
+    return '#CC0000' if $sum <= 750; 
+    return '#990000' if $sum <= 1500; 
+    return '#660000';   
+        
+    # return '#FDD7E4' if $sum <= 4;   # pig pink
+    # return '#FAAFBE' if $sum <= 20;   # pink
+    # return '#F778A1' if $sum <= 50;  # carnation pink
+    # return '#E4287C' if $sum <= 100;  # pink lemonade
+    # return '#FF0000' if $sum <= 300;  # red
+    # return '#C11B17' if $sum <= 750; # chili pepper
+    # return '#9F000F' if $sum <= 1500; # cranberry
+    # return '#800517';   # firebrick
   }else{
     return '#C2DFFF' if $sum <= 4;   # sea blue
     return '#82CAFA' if $sum <= 20;   # light sky blue
