@@ -2,16 +2,23 @@ import lodash from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
+import { actionTypes } from './actioncreators/GlobalActionCreators';
 
 export function GlobalDataStore(WdkGlobalDataStore) {
   return class ApiGlobalDataStore extends WdkGlobalDataStore {
-    handleAction(state, action) {
-      if (action.type === 'apidb/basket') {
-        return Object.assign({}, state, {
-          basketCounts: action.payload.basketCounts
+    handleAction(state, { type, payload }) {
+      switch(type) {
+        case actionTypes.BASKETS_LOADED: return Object.assign({}, state, {
+          basketCounts: payload.basketCounts
         });
+
+        case actionTypes.QUICK_SEARCH_LOADED: return Object.assign({}, state, {
+          quickSearches: payload.questions,
+          quickSearchesLoading: false
+        });
+
+        default: return state;
       }
-      return state;
     }
   }
 }
@@ -26,6 +33,14 @@ export function DownloadFormStore(WdkDownloadFormStore) {
 
 export function GalaxyTermsStore(WdkStore) {
   return class ApiGalaxyTermsStore extends WdkStore { };
+}
+
+export function QueryGridViewStore(WdkStore) {
+  return class ApiQueryGridViewStore extends WdkStore { };
+}
+
+export function FastaConfigStore(WdkStore) {
+  return class ApiFastaConfigStore extends WdkStore { };
 }
 
 /** Return a subclass of the provided RecordViewStore */

@@ -11,6 +11,7 @@ import ApiApplicationSpecificProperties from './components/ApiApplicationSpecifi
 import ApiUserIdentity from './components/ApiUserIdentity';
 import ApiHeader from './components/Header';
 import ApiFooter from './components/Footer';
+import { loadBasketCounts } from './actioncreators/GlobalActionCreators';
 
 export let Header = () => ApiHeader;
 export let Footer = () => ApiFooter;
@@ -48,15 +49,7 @@ export function RecordController(WdkRecordController) {
       return Object.assign({}, wdkActionCreators, {
         updateBasketStatus: (...args) => (dispatch, { wdkService }) => {
           dispatch(wdkActionCreators.updateBasketStatus(...args))
-          .then(() => {
-            if (this.state.globalData.user.isGuest) return;
-            wdkService.getBasketCounts().then(basketCounts => {
-              dispatch({
-                type: 'apidb/basket',
-                payload: {basketCounts}
-              });
-            });
-          });
+          .then(dispatch(loadBasketCounts()));
         }
       })
     }

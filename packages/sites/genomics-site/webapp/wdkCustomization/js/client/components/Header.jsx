@@ -31,13 +31,13 @@ let quickSearches = [
 ];
 
 let connect = compose(
-  withStore(state => pick(state.globalData, 'user', 'ontology', 'recordClasses', 'basketCounts')),
+  withStore(state => pick(state.globalData, 'user', 'ontology', 'recordClasses', 'basketCounts', 'quickSearches')),
   withActions(UserActionCreators)
 );
 
 /** Header */
 function Header(props) {
-  let { user, ontology, recordClasses, basketCounts, showLoginForm, showLoginWarning, showLogoutWarning } = props;
+  let { user, ontology, recordClasses, basketCounts, showLoginForm, showLoginWarning, showLogoutWarning, quickSearches } = props;
   let totalBasketCount = reduce(basketCounts, add, 0);
   return (
     <div id="header">
@@ -48,7 +48,7 @@ function Header(props) {
               <img alt="Link to EuPathDB homepage" src={webAppUrl + '/images/' + projectId + '/partofeupath.png'}/>
             </a>
           </div>
-          <QuickSearch webAppUrl={webAppUrl} searches={quickSearches}/>
+          <QuickSearch webAppUrl={webAppUrl} questions={quickSearches}/>
           {user && <SmallMenu projectConfig={projectConfig} user={user} onLogin={showLoginForm} onLogout={showLogoutWarning} />}
         </div>
         <a href="/">

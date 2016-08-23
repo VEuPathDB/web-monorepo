@@ -6,11 +6,11 @@ import { getSearchMenuCategoryTree } from '../../util/category.js';
 export default class QueryGridController extends WdkViewController {
 
   getStoreName() {
-    return 'GlobalDataStore';
+    return 'QueryGridViewStore';
   }
 
   isRenderDataLoaded(state) {
-    return state.ontology && state.recordClasses;
+    return state.globalData.ontology && state.globalData.recordClasses;
   }
 
   getTitle() {
@@ -18,7 +18,7 @@ export default class QueryGridController extends WdkViewController {
   }
 
   renderView(state) {
-    let grid = getSearchMenuCategoryTree(state.ontology, state.recordClasses);
+    let grid = getSearchMenuCategoryTree(state.globalData.ontology, state.globalData.recordClasses);
     return ( <QueryGrid grid={grid} /> );
   }
 

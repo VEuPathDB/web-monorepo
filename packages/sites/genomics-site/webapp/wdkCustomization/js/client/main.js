@@ -4,6 +4,8 @@
 // TODO Remove auth_tkt from url before proceeding
 
 import { initialize, wrapComponents } from 'wdk-client';
+import { loadBasketCounts, loadQuickSearches } from './actioncreators/GlobalActionCreators';
+import { quickSearches } from './config';
 
 // import apicomm wrappers and additional routes
 import { rootUrl, rootElement, endpoint } from './config';
@@ -37,22 +39,7 @@ apidb.context = initialize({
 console.log('time to init', performance.now() - window.__perf__.start)
 
 // load basket counts for menu bar
-apidb.context.dispatchAction(function(dispatch, { wdkService }) {
-  wdkService.getCurrentUser().then(user => {
-    if (!user.isGuest) {
-      return wdkService.getBasketCounts().then(basketCounts => {
-        dispatch({
-          type: 'apidb/basket',
-          payload: { basketCounts }
-        });
-      });
-    }
-  })
-  .catch(serviceError => {
-    if (serviceError.status !== 403) {
-      console.error('Unexpected error while attempting to retrieve basket counts.', serviceError);
-    }
-  });
-});
+apidb.context.dispatchAction(loadBasketCounts());
+apidb.context.dispatchAction(loadQuickSearches(quickSearches));
 
 export default apidb.context;

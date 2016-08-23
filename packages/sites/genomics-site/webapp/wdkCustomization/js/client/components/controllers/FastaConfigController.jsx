@@ -1,3 +1,4 @@
+import { WdkViewController } from 'wdk-client/Controllers';
 
 /**
  * This will eventually be the view controller for the SRT page (srt.jsp).  It
@@ -5,10 +6,12 @@
  * step download page.  However, since this is working ok for now, we will
  * have duplicate functionality for a "limited" time. :)
  */
-let FastaConfigController = React.createClass({
-  render() {
+export default class FastaConfigController extends WdkViewController {
+  getStoreName() {
+    return "FastaConfigStore";
+  }
+
+  renderView() {
     return ( <h1>FASTA!</h1> );
   }
-});
-
-export default FastaConfigController;
+}
