@@ -37,8 +37,8 @@ let GalaxyTerms = React.createClass({
           </p>
           <div>The easy-to-use services offered are:
             <ul>
-              <li> RNA Sequencing </li>
-              <li> SNP Calling    </li>
+              <li> RNA Sequencing: read alignment</li>
+              <li> SNP Calling (future)  </li>
             </ul>
           </div>
         </div>
@@ -67,7 +67,7 @@ let GalaxyTerms = React.createClass({
             <img title="Grant permission to access your Globus account" src="/a/wdkCustomization/images/globus-04-oauth-perms.jpg"/>
             <p>
                 (3) Grant permission to share your Globus identity and files
-                with us. Please click <strong>Allow</strong>.
+                with us. Please click <strong>Allow</strong>.  (We will only perform file transfers that you explicitly request, between Galaxy and other resources, including EuPathDB.)
             </p>
           </span>
           </div>
