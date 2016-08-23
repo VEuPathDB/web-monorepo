@@ -181,7 +181,7 @@ h4 {
   text-overflow: ellipsis;
 }
 
-.eupathdb-RecordOverviewItem, .eupathdb-RecordOverviewLink, .eupathdb-ThumbnailLabel {
+.eupathdb-RecordOverviewItem, .eupathdb-RecordOverviewLink {
   margin: .2em 0;
   font-size: 1.4em;
   font-weight: 300;
@@ -278,6 +278,12 @@ h4 {
   border-left: 1px solid #ccc;;
 }
 
+.eupathdb-ThumbnailLabel {
+  font-weight: 300;
+  font-size: 1.2em;
+  margin: .2em 0;
+}
+
 .eupathdb-ThumbnailsTitle {
   font-size: 1.5em;
   font-weight: 500;
@@ -308,8 +314,8 @@ h4 {
   border: 1px solid #a9a9a9;
   display: block;
   margin-left: auto;
-  height: 50px;
-  width: 85px;
+  height: 60px;
+  width: 100px;
   overflow: hidden;
   background: white;
 }
