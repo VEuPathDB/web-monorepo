@@ -1,18 +1,17 @@
 import NewWindowLink from './NewWindowLink';
 import { formatReleaseDate } from '../util/modelSpecificUtil';
+import { buildNumber, releaseDate, projectId, webAppUrl } from '../config';
 
-export default function Footer(props) {
-  let { config } = props;
+/** Application footer */
+export default function Footer() {
   return (
     <div className="wide-footer ui-helper-clearfix" id="fixed-footer">
       <div className="left">
         <div className="build-info">
-          {config && (
-            <span>
-              <a href={'http://' + config.displayName.toLowerCase() + '.org'}>{config.displayName}</a>
-              <span> {config.buildNumber} &nbsp;&nbsp; {formatReleaseDate(config.releaseDate)}</span>
-            </span>
-          )}
+          <span>
+            <a href={'http://' + projectId.toLowerCase() + '.org'}>{projectId}</a>
+            <span> {buildNumber} &nbsp;&nbsp; {formatReleaseDate(releaseDate)}</span>
+          </span>
           <br/>
         </div>
         <div className="copyright">©{new Date().getFullYear()} The EuPathDB Project Team</div>
@@ -21,7 +20,7 @@ export default function Footer(props) {
         <ul className="attributions">
           <li>
             <a href="http://code.google.com/p/strategies-wdk/">
-              <img width="120" src="/plasmo.dfalke/wdk/images/stratWDKlogo.png" border="0"/>
+              <img width="120" src={webAppUrl + '/wdk/images/stratWDKlogo.png'} border="0"/>
             </a>
           </li>
         </ul>
@@ -33,62 +32,62 @@ export default function Footer(props) {
         <ul className="site-icons">
           <li title="EuPathDB.org">
             <a href="http://www.eupathdb.org">
-              <img alt="Link to EuPathDB homepage" src="/plasmo.dfalke/images/eupathdblink.png"/>
+              <img alt="Link to EuPathDB homepage" src={webAppUrl + '/images/eupathdblink.png'}/>
             </a>
           </li>
           <li title="AmoebaDB.org" className="short-space">
             <a href="http://amoebadb.org">
-              <img src="/plasmo.dfalke/images/AmoebaDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/AmoebaDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="CryptoDB.org" className="short-space">
             <a href="http://cryptodb.org">
-              <img src="/plasmo.dfalke/images/CryptoDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/CryptoDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="FungiDB.org" className="short-space">
             <a href="http://fungidb.org">
-              <img src="/plasmo.dfalke/images/FungiDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/FungiDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="GiardiaDB.org" className="short-space">
             <a href="http://giardiadb.org">
-              <img src="/plasmo.dfalke/images/GiardiaDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/GiardiaDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="MicrosporidiaDB.org" className="long-space">
             <a href="http://microsporidiadb.org">
-              <img src="/plasmo.dfalke/images/MicrosporidiaDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/MicrosporidiaDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="PiroplasmaDB.org" className="short-space">
             <a href="http://piroplasmadb.org">
-              <img src="/plasmo.dfalke/images/PiroplasmaDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/PiroplasmaDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="PlasmoDB.org" className="long-space">
             <a href="http://plasmodb.org">
-              <img src="/plasmo.dfalke/images/PlasmoDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/PlasmoDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="ToxoDB.org" className="long-space">
             <a href="http://toxodb.org">
-              <img src="/plasmo.dfalke/images/ToxoDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/ToxoDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="TrichDB.org" className="short-space">
             <a href="http://trichdb.org">
-              <img src="/plasmo.dfalke/images/TrichDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/TrichDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="TriTrypDB.org" className="short-space">
             <a href="http://tritrypdb.org">
-              <img src="/plasmo.dfalke/images/TriTrypDB/footer-logo.png"/>
+              <img src={webAppUrl + '/images/TriTrypDB/footer-logo.png'}/>
             </a>
           </li>
           <li title="OrthoMCL.org" className="short-space">
             <a href="http://orthomcl.org">
-              <img src="/plasmo.dfalke/images/OrthoMCL/footer-logo.png"/>
+              <img src={webAppUrl + '/images/OrthoMCL/footer-logo.png'}/>
             </a>
           </li>
         </ul>
