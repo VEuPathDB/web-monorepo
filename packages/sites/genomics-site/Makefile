@@ -11,7 +11,7 @@ apidb_sources := webapp/apidb.js \
 
 apidb_client_bundle    := dist/apidb-client.bundle.js
 apidb_client_sources   := webapp/wdkCustomization/js/client/index.js \
-                          $(shell find webapp/wdkCustomization/js/client -type f -name '*.js' -or -name '*.jsx' -or -name '*.css') \
+                          $(shell find webapp -type f -name '*.js' -or -name '*.jsx' -or -name '*.css') \
                           $(shell find $(PROJECT_HOME)/WDK/View/webapp/wdk -type f) \
                           $(shell find $(PROJECT_HOME)/EuPathSiteCommon/Site/webapp -type f) \
                           webpack.config.js
