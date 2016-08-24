@@ -4,7 +4,7 @@ import { projectId } from './config';
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
-import GalaxyTermsController from './components/controllers/GalaxyTermsContoller';
+import GalaxyTermsController from './components/controllers/GalaxyTermsController';
 import SampleForm from './components/samples/SampleForm';
 
 const apidbRoutes = (

@@ -81,7 +81,7 @@ export default class SmallMenu extends Component {
               </li>
             </ul>
           </li>
-          <li>
+          <li style={{ whiteSpace: 'nowrap' }}>
             {user.isGuest
               ? <a href="#login" onClick={e => onLogin() && e.preventDefault()}>Login</a>
               : <Link to="user/profile">{`${user.firstName} ${user.lastName}`}'s Profile</Link>}
@@ -94,7 +94,6 @@ export default class SmallMenu extends Component {
           <li className="empty-divider">
             <NewWindowLink href={webAppUrl + '/contact.do'}>Contact Us</NewWindowLink>
           </li>
-          {/* FIXME Read account ids from config */}
           <li className="socmedia-link no-divider">
             <a href={'http://twitter.com/' + twitterId} target="_blank">
               <span title="Follow us on Twitter!" className="twitter small"></span>

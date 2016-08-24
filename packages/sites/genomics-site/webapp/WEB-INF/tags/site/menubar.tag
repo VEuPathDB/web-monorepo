@@ -15,6 +15,7 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<c:set var="userPrefs" value="${wdkUser.user.projectPreferences}"/>
 <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
 <!-- for genes that have user comments -->
@@ -221,7 +222,8 @@
     </li>
 
   <li >
-    <a style="padding:5px 1em" onclick="" href="${baseUrl}/app/galaxy-orientation">
+    <c:set var="galaxyRoute" value="${baseUrl}/app/galaxy-orientation"/>
+    <a style="padding:5px 1em" href="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? galaxyRoute : 'https://eupathdb.globusgenomics.org/'}">
       <imp:image src="wdk/images/new-feature.png" height="14" />
       <span>Analyze My Experiment</span>
     </a>

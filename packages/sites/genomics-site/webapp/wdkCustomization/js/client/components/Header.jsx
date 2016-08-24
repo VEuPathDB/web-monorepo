@@ -9,36 +9,24 @@ import { formatReleaseDate } from '../util/modelSpecificUtil';
 import { withActions, withStore } from '../util/component';
 import { getId, getDisplayName, getTargetType } from 'wdk-client/CategoryUtils';
 import { UserActionCreators } from 'wdk-client/ActionCreators'
+import { SHOW_GALAXY_PAGE_PREFERENCE } from './controllers/GalaxyTermsController';
 
 let { projectId, twitterId, facebookId, buildNumber, webAppUrl, releaseDate } = projectConfig;
 
-// FIXME Read from model and add additional parameters for text search
-let quickSearches = [
-  {
-    name: 'GeneQuestions.GeneBySingleLocusTag',
-    displayName: 'Gene ID',
-    textParamName: 'value(single_gene_id)',
-    textParamDefaultValue: 'PF3D7_1133400',
-    help: "Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs."
-  },
-  {
-    name: 'GeneQuestions.GenesByTextSearch',
-    displayName: 'Gene Text Search',
-    textParamName: 'value(single_gene_id)',
-    textParamDefaultValue: 'PF3D7_1133400',
-    help: "Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs."
-  }
-];
+let globalDataItems = [ 'user', 'ontology', 'recordClasses', 'basketCounts',
+  'quickSearches', 'preferences' ];
 
 let connect = compose(
-  withStore(state => pick(state.globalData, 'user', 'ontology', 'recordClasses', 'basketCounts', 'quickSearches')),
+  withStore(state => pick(state.globalData, globalDataItems)),
   withActions(UserActionCreators)
 );
 
 /** Header */
 function Header(props) {
-  let { user, ontology, recordClasses, basketCounts, showLoginForm, showLoginWarning, showLogoutWarning, quickSearches } = props;
+  let { basketCounts, ontology, preferences, quickSearches, recordClasses,
+    showLoginForm, showLoginWarning, showLogoutWarning, user } = props;
   let totalBasketCount = reduce(basketCounts, add, 0);
+  let shouldShowGalaxyOrientation = preferences && preferences[SHOW_GALAXY_PAGE_PREFERENCE] !== 'false';
   return (
     <div id="header">
       <div id="header2">
@@ -250,7 +238,14 @@ function Header(props) {
             webAppUrl: '/showApplication.do?tab=public_strat'
           }
         ]},
-        { id: 'analyze', text: 'Analyze My Experiment', route: 'galaxy-orientation', new: true },
+        {
+          id: 'analyze',
+          text: 'Analyze My Experiment',
+          new: true,
+          route: shouldShowGalaxyOrientation ? 'galaxy-orientation' : undefined,
+          url: !shouldShowGalaxyOrientation ? 'https://eupathdb.globusgenomics.org/' : undefined,
+          target: !shouldShowGalaxyOrientation ? '_blank' : undefined
+        },
         {
           id: 'favorites',
           text: (
