@@ -1,9 +1,9 @@
 /**
  * Created by dfalke on 8/19/16.
  */
-import { Component, PropTypes } from 'react';
+import { PropTypes } from 'react';
 import { identity } from 'lodash';
-import { wrapActions } from 'wdk-client/ComponentUtils';
+import { wrapActions, PureComponent } from 'wdk-client/ComponentUtils';
 
 /**
  * A function that takes a React Component (class or function) and
@@ -52,7 +52,7 @@ import { wrapActions } from 'wdk-client/ComponentUtils';
  * @return {ComponentDecorator}
  */
 export let withStore = (getStateFromStore = identity) => (TargetComponent) => {
-  class StoreProvider extends Component {
+  class StoreProvider extends PureComponent {
 
     constructor(props, context) {
       super(props, context);
@@ -107,7 +107,7 @@ export let withStore = (getStateFromStore = identity) => (TargetComponent) => {
  * @return {ComponentDecorator}
  */
 export let withActions = (actionCreators = {}) => (TargetComponent) => {
-  class WrappActionCreatorsProvider extends Component {
+  class WrappActionCreatorsProvider extends PureComponent {
 
     constructor(props, context) {
       super(props, context);
