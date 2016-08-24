@@ -38,8 +38,21 @@ apidb.context = initialize({
 
 console.log('time to init', performance.now() - window.__perf__.start)
 
-// load basket counts for menu bar
-apidb.context.dispatchAction(loadBasketCounts());
-apidb.context.dispatchAction(loadQuickSearches(quickSearches));
+let { dispatchAction, stores: { GlobalDataStore } } = apidb.context;
+
+// load quick search data
+dispatchAction(loadQuickSearches(quickSearches));
+
+// load basket counts, but only if user is logged in
+let basketSub = GlobalDataStore.addListener(() => {
+  let globalData = GlobalDataStore.getState();
+  if (globalData.user != null) {
+    basketSub.remove();
+
+    // load basket counts for menu bar
+    if (!globalData.user.isGuest)
+      dispatchAction(loadBasketCounts());
+  }
+})
 
 export default apidb.context;
