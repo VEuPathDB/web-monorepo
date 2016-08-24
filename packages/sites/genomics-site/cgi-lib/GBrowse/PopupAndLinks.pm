@@ -368,7 +368,7 @@ sub peakTitle {
     foreach my $tag (@tags) {
         if (exists $ontologyTermToDisplayName->{$tag}) {
             my ($value) = $f->get_tag_values($tag);
-            push @data, [$ontologyTermToDisplayName->{$tag} => $value];
+            push @data, ["$ontologyTermToDisplayName->{$tag}:" => $value];
         }
     }
     hover($f, \@data);
