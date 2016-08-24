@@ -74,9 +74,6 @@ export default function GalaxyTerms(props) {
               disabled={user.isGuest}
               onChange={e => setShowPagePreference(!e.target.checked)}
             /> Don't show this page again.</label>
-          <div style={{ fontSize: 'smaller', margin: '0.5em 0'}}>
-            You can always come back to this page from the Help menu in this web site's header.
-          </div>
         </p>
       </div>
     </div>
