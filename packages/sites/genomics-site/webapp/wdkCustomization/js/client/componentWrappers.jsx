@@ -114,7 +114,7 @@ function RecordAttributionSection(props) {
       <div>
         <h3>Record Attribution</h3>
         <WdkRecordAttribute
-          attribute={props.recordClass.attributesMap.get('attribution')}
+          attribute={props.recordClass.attributesMap.attribution}
           record={props.record}
           recordClass={props.recordClass}
         />

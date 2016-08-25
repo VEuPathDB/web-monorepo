@@ -91,7 +91,7 @@ export class RecordOverview extends React.Component {
         })
       : Object.assign({}, context, {
           element: <Gbrowse.GbrowseImage url={attributes[context.gbrowse_url]}/>,
-          displayName: recordClass.attributesMap.get(context.gbrowse_url).displayName
+          displayName: recordClass.attributesMap[context.gbrowse_url].displayName
         })
     )
     .toArray();
