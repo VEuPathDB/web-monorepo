@@ -10,18 +10,21 @@ export let actionTypes = {
 
 export function loadBasketCounts() {
   return function run(dispatch, { wdkService }) {
-    return wdkService.getBasketCounts().then(basketCounts => {
-      return dispatch({
-        type: actionTypes.BASKETS_LOADED,
-        payload: { basketCounts }
+    wdkService.getCurrentUser().then(user => {
+      if (user.isGuest) return;
+      wdkService.getBasketCounts().then(basketCounts => {
+        dispatch({
+          type: actionTypes.BASKETS_LOADED,
+          payload: { basketCounts }
+        });
+      })
+      .catch(error => {
+        if (error.status !== 403) {
+          console.error('Unexpected error while attempting to retrieve basket counts.', error);
+        }
       });
-    })
-    .catch(serviceError => {
-      if (serviceError.status !== 403) {
-        console.error('Unexpected error while attempting to retrieve basket counts.', serviceError);
-      }
     });
-  }
+  };
 }
 
 /**
