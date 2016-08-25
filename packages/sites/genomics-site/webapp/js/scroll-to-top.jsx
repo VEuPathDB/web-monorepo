@@ -5,9 +5,11 @@ import { render } from 'react-dom'
 import { throttle, memoize } from 'lodash'
 
 const visibleStyle = {
-  background: 'transparent',
+  color: 'white',
+  background: 'rgba(0, 0, 0, 0.19)',
   border: 'none',
   outline: 'none',
+  padding: '8px',
   position: 'fixed',
   bottom: '85px',
   right: '16px',
