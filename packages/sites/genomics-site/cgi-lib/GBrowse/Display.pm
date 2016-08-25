@@ -258,12 +258,12 @@ sub gsnapIntronColorFromStrandAndScore {
   # http://www.computerhope.com/htmcolor.htm
   if($isReversed == 1){
     return '#FFCCCC' if $sum <= 4;
-    return '#FF9999' if $sum <= 20;
-    return '#FF6666' if $sum <= 50;
-    return '#FF3333' if $sum <= 100;
-    return '#FF0000' if $sum <= 300; 
-    return '#CC0000' if $sum <= 750; 
-    return '#990000' if $sum <= 1500; 
+    return '#FF9999' if $sum <= 16;
+    return '#FF6666' if $sum <= 64;
+    return '#FF3333' if $sum <= 256;
+    return '#FF0000' if $sum <= 1024; 
+    return '#CC0000' if $sum <= 4096; 
+    return '#990000' if $sum <= 16000; 
     return '#660000';   
         
     # return '#FDD7E4' if $sum <= 4;   # pig pink
@@ -276,13 +276,12 @@ sub gsnapIntronColorFromStrandAndScore {
     # return '#800517';   # firebrick
   }else{
     return '#C2DFFF' if $sum <= 4;   # sea blue
-    return '#82CAFA' if $sum <= 20;   # light sky blue
-    return '#5CB3FF' if $sum <= 50;  # crystal blue
-    return '#56A5EC' if $sum <= 100;  # iceberg
-    return '#1589FF' if $sum <= 300;  # dodger blue
-    return '#2B65EC' if $sum <= 750; # ocean blue
-    return '#0020C2' if $sum <= 1500; # cobalt blue
-    return '#0000A0';   # earth blue
+    return '#82CAFA' if $sum <= 16;   # light sky blue
+    return '#5CB3FF' if $sum <= 64;  # crystal blue
+    return '#56A5EC' if $sum <= 256;  # iceberg
+    return '#1589FF' if $sum <= 1024;  # dodger blue
+    return '#2B65EC' if $sum <= 4096; # ocean blue
+    return '#0020C2' if $sum <= 16000; # cobal
   }
 }
 
