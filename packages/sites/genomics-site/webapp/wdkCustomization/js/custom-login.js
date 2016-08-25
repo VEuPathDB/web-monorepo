@@ -21,7 +21,6 @@ function doCustomLogin(form, contextPath) {
   // get values user entered into the visible form
   var email = jQuery(form).find("#email").val();
   var password = jQuery(form).find("#password").val();
-  //var openid = jQuery(form).find("#openid").val();
   var remember = (jQuery(form).find("#remember").prop('checked') ? "on" : "");
   var redirectUrl = jQuery(form).find("#redirectUrl").val();
   // only pull redirectUrl from address bar if doesn't exist in form
@@ -53,7 +52,6 @@ function doCustomLogin(form, contextPath) {
     '      <form name="loginForm" method="post" action="' + contextPath + '/processLogin.do">' +
     '        <input type="hidden" name="email" value="' + email + '"/>' +
     '        <input type="hidden" name="password" value="' + password + '"/>' +
-    //'        <input type="hidden" name="openid" value="' + openid + '"/>' +
     '        <input type="hidden" name="remember" value="' + remember + '"/>' +
     '        <input type="hidden" name="redirectUrl" value="' + redirectUrl + '"/>' +
     '      </form>' +

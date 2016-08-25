@@ -92,10 +92,6 @@
       <td align="right" width="50%" nowrap><font color="red">*</font> Institution: </td>
       <td align="left"><input type="text" name="organization" value="${requestScope.organization}" size="50"></td>
     </tr>
-    <%--<tr>
-      <td align="right" width="50%" nowrap="nowrap"> OpenID (<a class="open-dialog-about-openid" href="javascript:void(0)">What is this?</a>): </td>
-      <td align="left"><input type="text" name="openId" value="${requestScope.openId}" size="50"/></td>
-    </tr>--%>
     <tr>
       <td align="right" width="50%" nowrap>
           Send me email alerts about: 
