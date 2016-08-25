@@ -16,8 +16,6 @@
   <imp:wdkJavascripts refer="${refer}" debug="${debug}"/>
 
   <script>
-    // used to measure time to reach a goal
-    window.__perf__ = { start: performance.now() };
     // used by apidb to initialize wdk
     window.__WDK_CONFIG__ = {
       projectId: "${applicationScope.wdkModel.projectId}",

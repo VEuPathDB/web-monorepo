@@ -36,8 +36,6 @@ apidb.context = initialize({
   storeWrappers
 });
 
-console.log('time to init', performance.now() - window.__perf__.start)
-
 let { dispatchAction } = apidb.context;
 
 // load quick search data
