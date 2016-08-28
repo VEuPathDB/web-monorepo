@@ -52,8 +52,12 @@ body {
 	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.menu_lefttop_drop, #menu_lefttop a.heading {
-  background:  #8b465c;  
+.menu_lefttop_drop {
+  border-color: #8b465c; 
+}
+
+#menu_lefttop a.heading {
+  background: #8b465c;  
 }
 
 

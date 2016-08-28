@@ -45,14 +45,19 @@ body {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 .threecolumndiv div.heading {
-  background-color: #82bca6;
+  background-color: #82bca6;  /* greenish lighter */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.menu_lefttop_drop, #menu_lefttop a.heading {
+.menu_lefttop_drop {
+   border-color:  #726249;
+}
+
+
+#menu_lefttop a.heading {
   background-color: #726249; /*  brownish */
 }
 
