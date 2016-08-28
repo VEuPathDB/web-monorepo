@@ -6,26 +6,6 @@ body {
 	background-image: url(../images/TrichDB/background_s.jpg);
 }
 
-a:link, a:visited, div.divlink, .link {
-	color: #538001;
-}
-
-a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color: #7B5A37;  /* #a9cb6d; */
-}
-
-a[name]:link {
-	color: black;
-}
-
-a[name]:visited {
-	color: black;
-}
-
-a[name]:hover, a[name]:active {
-	color:  black;
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
@@ -34,87 +14,37 @@ a[name]:hover, a[name]:active {
 	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
 }
 
-#header_rt {
-   color: #8c8b35;
-}
-
-#header_rt a:link, #header_rt a:visited {
-   color: #8c8b35;
+#header_rt, #header_rt a:link, #header_rt a:visited {
+   color:  #455F15;  
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#nav-top {
-	color: #8c8b35;
-}
-
-#nav-top a:link, #nav-top a:visited {
-	color: #8c8b35;
+#nav-top, #nav-top a:link, #nav-top a:visited {
+	color:  #455F15;
 }
 
 #nav-top li ul {  /* second-level lists */
-	background-image: url(../images/TrichDB/footer.png);
-	border-color:#8c8b35;
+	border-color: #455F15;
 	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #8c8b35;
+	color: #455F15;
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #605f0e;
+	color: #997852;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-/* #bubbles .info {
-  min-height: 299px;
-} */
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =STRUCTURE 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
- 
-#contentcolumn {
-	background-image: url(../images/TrichDB/footer.png);
-	border: 1px solid #455f15;
-}
-
-#contentcolumn2 {
-	background-image: url(../images/TrichDB/footer.png);
-	border: 1px solid #455f15;
-}
-
-#mysearchhist {
-	background-image: url(../images/TrichDB/bubble_my_searchbox.png);
-	border: 1px solid #c9dea4;
-}
-
-#main_tools {
-	background-image: url(../images/TrichDB/tools_bckgnd.jpg);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Top Menu Bar Dropdown List
-	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#menu a:hover, #menu a:active, #strategy_tabs #selected a {
-	color:#560000;
-}
-
-#menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color: #7b5a37;
-}
-
-#menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #7b5a37;
-	color: #7b5a37;
+.threecolumndiv div.heading {
+  background-color: #6e8446;  /* #8ba758; */  /* #718747; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,249 +52,10 @@ a[name]:hover, a[name]:active {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #455F15;  /* color as in contentcolumn border */
+   border-color: #455F15;  
 }
 
 #menu_lefttop a.heading {
-	background-image: url(../images/TrichDB/menu_lft2.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Search Boxes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.search-box{
-   border: solid 1px #3f5d27;
-} 
-
-.search-box .textbox{
-	border: solid 1px #b3b3b3;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Fonts 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-h1 {
-	color: #7b5a37;   /*455f15;*/
-}
-
-h2 {
-  	color: #7b5a37; 
-}
-
-.h2center, .h3left,.h3center, .h4left {
-  	color: #7b5a37;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
-#footer{
-   background-image: url(../images/TrichDB/footer.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TABLES 
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-td.headerrow {
-	color: #585b0f;
-	background-image: url(../images/TrichDB/trheader.png);
-}
-
-tr.headerrow {
-	color: #585b0f;
-}
-
-tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/TrichDB/trheader.png);
-}
-
-.flexigrid tr.headerrow th:hover {
-	background-image: url(../images/TrichDB/trhover.png);
-}
-
-td.subheaderrow {
-	background-image: url(../images/TrichDB/trsubhead.png);
-}
-
-tr.subheaderrow th {
-	background-image: url(../images/TrichDB/trsubhead.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.headerrow2 td{
-        color: #585b0f;
-	background-image: url(../images/TrichDB/trheader.png);
-}
-
-tr.subheaderrow2 td{
-	background-image: url(../images/TrichDB/trsubhead.png);
-}
-
-a.queryGridInactive {
-        color:              #C8C8C8;
-}
-
-a.queryGridActive {
-        color:              #538001;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =END OF TABLES FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.subheaderrow th {
-	border-color: #538001;
-}
-
-tr.headerrow th { 
-	border-color: #538001;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    =RED BUTTON
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WorkSpace Divs 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-div.Workspace {
-	border-color: #538001;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ABOUT US and HELP PAGES SIDEBAR
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.twoColHybLt #sidebar1 {
-	background-image: url(../images/TrichDB/aboutus.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ADVANCED STRATEGY PAGING 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =MISC 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-span.marker a:link, span.marker a:visited {
-	color: #717001;
-}
-
-#strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #e9eee5;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = styles for blockUI popups
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.blockMsg{
-	border: 1px solid #455f15;
-}
-
-.blockPage{
-	background-image: url(../images/TrichDB/footer.png);
-}
-
-.flexigrid div.hDiv {
-	background-image:url(../images/TrichDB/trheader.png);
-}
-
-.flexigrid div.hDiv th.thMove {
-	background-image:url(../images/TrichDB/trheader.png);
-}
-
-div.colCopy {
-	background-image:url(../images/TrichDB/trheader.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 history.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter_menu.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#query_form {
-	border: 1px solid #7b5a37;	
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 dataset-searches.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#dataset-records th {
-  color: #7b5a37;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter param overrides
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* Don't show :hover alternate color */
-.field-list ul a:link,
-.field-list ul a:visited,
-.field-list ul div.divlink,
-.field-list ul .link,
-.field-list ul a:hover,
-.field-list ul a:active,
-.field-list ul a:focus,
-.field-list ul div.divlink:hover,
-.field-list ul .link:hover,
-.filter-items a:link,
-.filter-items a:visited,
-.filter-items div.divlink,
-.filter-items .link,
-.filter-items a:hover,
-.filter-items a:active,
-.filter-items a:focus,
-.filter-items div.divlink:hover,
-.filter-items .link:hover {
-	color: #538001;
-}
-
-.field-list ul .active a:link,
-.field-list ul .active a:visited,
-.field-list ul .active div.divlink,
-.field-list ul .active .link,
-.field-list ul .active a:hover,
-.field-list ul .active a:active,
-.field-list ul .active a:focus,
-.field-list ul .active div.divlink:hover,
-.field-list ul .active .link:hover,
-.filter-items .selected a:link,
-.filter-items .selected a:visited,
-.filter-items .selected div.divlink,
-.filter-items .selected .link,
-.filter-items .selected a:hover,
-.filter-items .selected a:active,
-.filter-items .selected a:focus,
-.filter-items .selected div.divlink:hover,
-.filter-items .selected .link:hover {
-	color: #7B5A37;
+	background-color: #997852;  /* #cadbaf; */
 }
 
