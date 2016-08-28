@@ -6,29 +6,6 @@ body {
 	background-image: url(../images/AmoebaDB/background_s.jpg);
 }
 
-a:link, div.divlink, .link {
-	color: #02935c;     //green
-}
-
-a:visited {
-	color: #628276;     //paler green
-}
-
-a:hover, a:active, a:focus, div.divlink:hover, .link:hover {
-	color:  #58441F;    //brown
-}
-
-a[name]:link {
-	color: black;
-}
-
-a[name]:visited {
-	color: black;
-}
-
-a[name]:hover, a[name]:active {
-	color:  black;
-}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
@@ -38,352 +15,45 @@ a[name]:hover, a[name]:active {
 	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
 }
 
-
-#header_rt {
-   color: #58441F; //brown
-}
-
-#header_rt a:link, #header_rt a:visited {
+/*  quick search  brown  */
+#header_rt, #header_rt a:link, #header_rt a:visited {
    color: #58441F;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-#nav-top {
+#nav-top, #nav-top a:link, #nav-top a:visited {
 	color: #58441F;
 }
 
-#nav-top a:link, #nav-top a:visited {
-	color: #58441F;
-}
-
-#nav-top li ul {  /* second-level lists */
-	background-image: url(../images/AmoebaDB/footer.png);
+#nav-top li ul { 
 	border-color:#58441F;
 	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #58441F;
+	color: #58441F;  /* brownish */
 }
 
 #nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #4f7f6d;  
+	color: #4f7f6d;   /* greenish */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-/* #bubbles .info {
-  min-height: 351px;
-} */
 
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =STRUCTURE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-/* #menubar #mysearch {
-	background-image: url(../images/AmoebaDB/my_hist_menubar.png);
-	border: 1px solid #792861;
-} */
- 
-#contentcolumn {
-	background-image: url(../images/AmoebaDB/footer.png);
-	border: 1px solid #4F3D1B; //brown
-}
-
-#contentcolumn2 {
-	background-image: url(../images/AmoebaDB/footer.png);
-	border: 1px solid #4F3D1B;
-}
-/* commented out in DQG_bubble.tag
-#mysearchhist {
-	background-image: url(../images/AmoebaDB/bubble_my_searchbox.png);
-	border: 1px solid #b5a3d4;
-}
-*/
-#main_tools {
-	background-image: url(../images/AmoebaDB/tools_bckgnd.jpg);
-}
-/* not in use, remove in a few rounds
-#about_us_left {
-	background-color: #cdc3de;
-	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
-}
-
-#pink_title {
-	color: #4F3D1B; //brown
-	background-image: url(../images/AmoebaDB/trheader.png);
-}
-*/
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Top Menu Bar Dropdown List
-	
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#menu a:hover, #menu a:active, #strategy_tabs #selected a  {
-	color:#58441F;
-}
-
-#menu ul ul a:link, #menu ul ul a:visited{
-	border-bottom-color:  #58441F;
-}
-
-#menu ul ul a:hover, #menu ul ul a:active{
-	border-bottom-color: #58441F;
-	color: #4f7f6d;  
+.threecolumndiv div.heading {
+  background-color: #82bca6;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.menu_lefttop_drop {
-   border-color:  #4F3D1B;  /* color as in contentcolumn border */
-}
-
-#menu_lefttop a.heading {
-	background-image: url(../images/AmoebaDB/menu_lft2.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Search Boxes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.search-box{
-    border: solid 1px #58441F;
-}
-
-.search-box .textbox{
-	border: solid 1px #58441F;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =Fonts 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-h1 {
-	color: #58441F;
-}
-
-h2 {
-  	color: #58441F;
-}
-
-.h2center, .h3left,.h3center, .h4left {
-  	color: #58441F;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	
-#footer{
-   background-image: url(../images/AmoebaDB/footer.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =TABLES 
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-td.headerrow {
-	color: #58441F;
-	background-image: url(../images/AmoebaDB/trheader.png);
-}
-
-tr.headerrow {
-	color: #58441F;
-}
-
-tr.headerrow th, .flexigrid tr.headerrow th#primary_key:hover {
-	background-image: url(../images/AmoebaDB/trheader.png);
-}
-
-.flexigrid tr.headerrow th:hover {
-	background-image: url(../images/AmoebaDB/trhover.png);
-}
-
-td.subheaderrow {
-	background-image: url(../images/AmoebaDB/trsubhead.png);
-}
-
-tr.subheaderrow th {
-	background-image: url(../images/AmoebaDB/trsubhead.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.headerrow2 td{
-        color: #58441F; 
-	background-image: url(../images/AmoebaDB/trheader.png);
-}
-
-tr.subheaderrow2 td{
-	background-image: url(../images/AmoebaDB/trsubhead.png);
-}
-
-a.queryGridInactive {
-        color: #C8C8C8;
-}
-
-a.queryGridActive {
-        color: #58441F;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =END OF TABLES FOR QUERY GRID
-	 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-tr.subheaderrow th {
-	border-color: #58441F;
-}
-
-tr.headerrow th { 
-	border-color: #58441F;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WorkSpace Divs 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-div.Workspace {
-	border-color: #02935c;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ABOUT US and HELP PAGES SIDEBAR
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.twoColHybLt #sidebar1 {
-	background-image: url(../images/AmoebaDB/aboutus.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =WARNING BOXES 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =ADVANCED STRATEGY PAGING 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =used in contact.do, classic bullet list
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =MISC 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* maybe used in genePage.js which deals with seeing gen page in results page , unused at the moment */
-span.marker a:link, span.marker a:visited {
-	color: #800158;   //pink
-}
-
-#strategy_tabs a:link, #strategy_tabs a:visited {
-    background-color: #e9e6ee;   //very light colored grey
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 = styles for blockUI popups
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-.blockMsg{
-	border: 1px solid  #58441F; //brown
-}
-
-.blockPage{
-	background-image: url(../images/AmoebaDB/footer.png);
-}
-
-.flexigrid div.hDiv {
-	background-image:url(../images/AmoebaDB/trheader.png);
-}
-
-.flexigrid div.hDiv th.thMove {
-	background-image:url(../images/AmoebaDB/trheader.png);
-}
-
-div.colCopy {
-	background-image:url(../images/AmoebaDB/trheader.png);
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 history.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 Strategy.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter_menu.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#query_form {
-	border: 1px solid #58441F;     //brown
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 dataset-searches.css
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-#dataset-records th {
-  color: #58441F;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 filter param overrides
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/* Don't show :hover alternate color */
-.field-list ul a:link,
-.field-list ul a:visited,
-.field-list ul div.divlink,
-.field-list ul .link,
-.field-list ul a:hover,
-.field-list ul a:active,
-.field-list ul a:focus,
-.field-list ul div.divlink:hover,
-.field-list ul .link:hover,
-.filter-items a:link,
-.filter-items a:visited,
-.filter-items div.divlink,
-.filter-items .link,
-.filter-items a:hover,
-.filter-items a:active,
-.filter-items a:focus,
-.filter-items div.divlink:hover,
-.filter-items .link:hover {
-	color: #02935c;
-}
-
-.field-list ul .active a:link,
-.field-list ul .active a:visited,
-.field-list ul .active div.divlink,
-.field-list ul .active .link,
-.field-list ul .active a:hover,
-.field-list ul .active a:active,
-.field-list ul .active a:focus,
-.field-list ul .active div.divlink:hover,
-.field-list ul .active .link:hover,
-.filter-items .selected a:link,
-.filter-items .selected a:visited,
-.filter-items .selected div.divlink,
-.filter-items .selected .link,
-.filter-items .selected a:hover,
-.filter-items .selected a:active,
-.filter-items .selected a:focus,
-.filter-items .selected div.divlink:hover,
-.filter-items .selected .link:hover {
-	color: #58441F;
+.menu_lefttop_drop, #menu_lefttop a.heading {
+  background-color: #726249; /*  brownish */
 }
 
 
