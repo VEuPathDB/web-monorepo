@@ -340,7 +340,6 @@ export class CytoscapeDrawing extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.resizeMap = _.throttle(this.resizeMap.bind(this), 250);
     let storeState = context.store.getState();
     this.state = storeState.pathwayRecord;
     this.wdkConfig = storeState.globalData.config;
@@ -348,7 +347,6 @@ export class CytoscapeDrawing extends React.Component {
 
   componentDidMount() {
     let { store } = this.context;
-    this.resizeMap();
     this.initMenu();
     this.initVis();
     $(this.detailContainer).draggable({
@@ -357,17 +355,10 @@ export class CytoscapeDrawing extends React.Component {
     this.storeSub = store.addListener(() => {
       this.setState(store.getState().pathwayRecord);
     });
-    $(window).on('resize', this.resizeMap);
   }
 
   componentWillUnmount() {
     this.storeSub.remove();
-    $(window).off('resize', this.resizeMap);
-  }
-
-  // Resize cytoscape container to height of viewport
-  resizeMap() {
-    $(this.cytoContainer).height($(window).height() - 10);
   }
 
   initMenu() {

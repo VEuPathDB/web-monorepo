@@ -195,7 +195,12 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
         position: {
           my: 'bottom center',
           at: 'center center',
-          effect: false
+          effect: false,
+          target: 'event',
+          viewport: $(window),
+          adjust: {
+            method: 'shift'
+          }
         },
         hide: {
           fixed: true,
