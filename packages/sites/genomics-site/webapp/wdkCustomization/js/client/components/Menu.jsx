@@ -1,7 +1,10 @@
-import { Component } from 'react';
+import { Component, PropTypes } from 'react';
 import { Link } from 'wdk-client/Components';
 import { isEmpty } from 'lodash';
 
+/**
+ * Site menu
+ */
 export default class Menu extends Component {
 
   constructor(props) {
@@ -49,6 +52,15 @@ export default class Menu extends Component {
   }
 }
 
+Menu.propTypes = {
+  webAppUrl: PropTypes.string.isRequired,
+  showLoginWarning: PropTypes.func.isRequired,
+  entries: PropTypes.array.isRequired
+};
+
+/**
+ * Site menu entry.
+ */
 function MenuEntry(props) {
   let { entry, webAppUrl, showLoginWarning } = props;
   let handleClick = (e) => {
@@ -80,3 +92,9 @@ function MenuEntry(props) {
     </li>
   );
 }
+
+MenuEntry.propTypes = {
+  webAppUrl: PropTypes.string.isRequired,
+  showLoginWarning: PropTypes.func.isRequired,
+  entry: PropTypes.object.isRequired
+};

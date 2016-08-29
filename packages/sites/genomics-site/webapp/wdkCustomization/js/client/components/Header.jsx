@@ -13,13 +13,18 @@ import { SHOW_GALAXY_PAGE_PREFERENCE } from './controllers/GalaxyTermsController
 
 let { projectId, twitterId, facebookId, buildNumber, webAppUrl, releaseDate } = projectConfig;
 
-let globalDataItems = [ 'user', 'ontology', 'recordClasses', 'basketCounts',
-  'quickSearches', 'preferences' ];
-
-let connect = compose(
-  withStore(state => pick(state.globalData, globalDataItems)),
-  withActions(UserActionCreators)
-);
+/* eslint-disable no-unused-vars */
+let isAmoebaDB = projectId === 'AmoebaDB';
+let isCryptoDB = projectId === 'CryptoDB';
+let isGiardiaDB = projectId === 'GiardiaDB';
+let isMicrosporidiaDB = projectId === 'MicrosporidiaDB';
+let isPiroplasmaDB = projectId === 'PiroplasmaDB';
+let isPlasmoDB = projectId === 'PlasmoDB';
+let isToxoDB = projectId === 'ToxoDB';
+let isTrichDB = projectId === 'TrichDB';
+let isTriTrypDB = projectId === 'TriTrypDB';
+let isEuPathDB = projectId === 'EuPathDB';
+/* eslint-enable no-unused-vars */
 
 /** Header */
 function Header(props) {
@@ -103,23 +108,33 @@ function Header(props) {
           {
             id: 'gbrowse',
             text: 'Genome Browser',
-            url: '/cgi-bin/gbrowse/' + projectId.toLowerCase() // XXX is this correct?
+            url: '/cgi-bin/gbrowse/' + projectId.toLowerCase(),
+            exclude: 'EuPathDB'
           },
-          {
-            id: 'plasmoap',
-            text: 'PlasmoAP',
-            url: 'http://v4-4.plasmodb.org/restricted/PlasmoAPcgi.shtml'
-          },
-          {
-            id: 'pats',
-            text: 'PATS',
-            url: 'http://gecco.org.chemie.uni-frankfurt.de/pats/pats-index.php'
-          },
-          {
-            id: 'plasmit',
-            text: 'PlasMit',
-            url: 'http://gecco.org.chemie.uni-frankfurt.de/plasmit'
-          },
+          ...(isPlasmoDB ? [
+            {
+              id: 'plasmoap',
+              text: 'PlasmoAP',
+              url: 'http://v4-4.plasmodb.org/restricted/PlasmoAPcgi.shtml'
+            },
+            {
+              id: 'pats',
+              text: 'PATS',
+              url: 'http://gecco.org.chemie.uni-frankfurt.de/pats/pats-index.php'
+            },
+            {
+              id: 'plasmit',
+              text: 'PlasMit',
+              url: 'http://gecco.org.chemie.uni-frankfurt.de/plasmit'
+            }
+          ] : []),
+          ...(isToxoDB ? [
+            {
+              id: 'ancillary-genome-browser',
+              text: 'Ancillary Genome Browser',
+              url: 'http://ancillary.toxodb.org'
+            }
+          ] : []),
           {
             id: 'webservices',
             text: 'Searched via Web Services',
@@ -137,6 +152,13 @@ function Header(props) {
             text: 'Analysis Methods',
             webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Methods'
           },
+          ...(isCryptoDB ?[
+            {
+              id: 'annotation-sops',
+              text: <span>SOPs for <i>C.parvum</i> Annotation</span>,
+              url: 'http://cryptodb.org/static/SOP/'
+            }
+          ] : []),
           {
             id: 'genomes-and-data-types',
             text: 'Genomes and Data Types',
@@ -156,26 +178,83 @@ function Header(props) {
             text: 'Understanding Downloads',
             webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.AboutAll#downloads'
           },
-          {
-            id: 'data-files',
-            text: 'Data Files',
-            url: '/common/downloads'
-          },
+          ...(!isEuPathDB ? [
+            {
+              id: 'data-files',
+              text: 'Data Files',
+              url: '/common/downloads',
+              exclude: 'EuPathDB'
+            }
+          ] : [
+            {
+              id: 'data-files',
+              text: 'Data Files',
+              children: [
+                {
+                  id: 'AmoebaDB',
+                  text: 'AmoebaDB',
+                  url: 'http://amoebadb.org/common/downloads'
+                },
+                {
+                  id: 'CryptoDB',
+                  text: 'CryptoDB',
+                  url: 'http://cryptodb.org/common/downloads'
+                },
+                {
+                  id: 'GiardiaDB',
+                  text: 'GiardiaDB',
+                  url: 'http://giardiadb.org/common/downloads'
+                },
+                {
+                  id: 'MicrosporidiaDB',
+                  text: 'MicrosporidiaDB',
+                  url: 'http://microsporidiadb.org/common/downloads'
+                },
+                {
+                  id: 'PiroplasmaDB',
+                  text: 'PiroplasmaDB',
+                  url: 'http://piroplasmadb.org/common/downloads'
+                },
+                {
+                  id: 'PlasmoDB',
+                  text: 'PlasmoDB',
+                  url: 'http://plasmodb.org/common/downloads'
+                },
+                {
+                  id: 'ToxoDB',
+                  text: 'ToxoDB',
+                  url: 'http://toxodb.org/common/downloads'
+                },
+                {
+                  id: 'TrichDB',
+                  text: 'TrichDB',
+                  url: 'http://trichdb.org/common/downloads'
+                },
+                {
+                  id: 'TriTrypDB',
+                  text: 'TriTrypDB',
+                  url: 'http://tritrypdb.org/common/downloads'
+                }
+              ]
+            }
+          ]),
           {
             id: 'srt',
             text: 'Sequence Retrieval',
             webAppUrl: '/srt.jsp'
           },
-          {
-            id: 'community-upload',
-            text: 'Upload Community Files',
-            webAppUrl: '/communityUpload.jsp'
-          },
-          {
-            id: 'community-download',
-            text: 'Download Community Files',
-            webAppUrl: '/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads'
-          },
+          ...(!isEuPathDB ? [
+            {
+              id: 'community-upload',
+              text: 'Upload Community Files',
+              webAppUrl: '/communityUpload.jsp'
+            },
+            {
+              id: 'community-download',
+              text: 'Download Community Files',
+              webAppUrl: '/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads'
+            }
+          ] : []),
           {
             id: 'eupathdb-publications',
             text: 'EuPathDB Publications',
@@ -206,22 +285,24 @@ function Header(props) {
             text: 'EuPathDB Data Submission & Release Policies',
             url: '/EuPathDB_datasubm_SOP.pdf'
           },
-          {
-            id: 'comments',
-            text: 'Find Genes with Comments from the ' + projectId + ' Community',
-            tooltip: 'Add your comments to your gene of interest: start at the gene page',
-            webAppUrl: '/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=817205'
-          },
-          {
-            id: 'community-upload',
-            text: 'Upload Community Files',
-            webAppUrl: '/communityUpload.jsp'
-          },
-          {
-            id: 'community-download',
-            text: 'Download Community Files',
-            webAppUrl: '/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads'
-          },
+          ...(!isEuPathDB ? [
+            {
+              id: 'comments',
+              text: 'Find Genes with Comments from the ' + projectId + ' Community',
+              tooltip: 'Add your comments to your gene of interest: start at the gene page',
+              webAppUrl: '/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=817205'
+            },
+            {
+              id: 'community-upload',
+              text: 'Upload Community Files',
+              webAppUrl: '/communityUpload.jsp'
+            },
+            {
+              id: 'community-download',
+              text: 'Download Community Files',
+              webAppUrl: '/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads'
+            }
+          ] : []),
           {
             id: 'events',
             text: 'Upcoming Events',
@@ -246,7 +327,7 @@ function Header(props) {
           url: !shouldShowGalaxyOrientation ? 'https://eupathdb.globusgenomics.org/' : undefined,
           target: !shouldShowGalaxyOrientation ? '_blank' : undefined
         },
-        {
+        ...(!isEuPathDB ? [{
           id: 'favorites',
           text: (
             <div>
@@ -265,12 +346,29 @@ function Header(props) {
             </div>
           ),
           webAppUrl: '/showFavorite.do',
-          loginRequired: true
-        }
+          loginRequired: true,
+          exclude: 'EuPathDB'
+        }] : [])
       ]}/>
     </div>
   );
 }
+
+Header.propTypes = {
+  user: PropTypes.object.isRequired,
+  ontology: PropTypes.object.isRequired,
+  recordClasses: PropTypes.array.isRequired,
+  basketCounts: PropTypes.object.isRequired,
+  quickSearches: PropTypes.array.isRequired,
+  preferences: PropTypes.object.isRequired
+};
+
+let globalDataItems = Object.keys(Header.propTypes);
+
+let connect = compose(
+  withStore(state => pick(state.globalData, globalDataItems)),
+  withActions(UserActionCreators)
+);
 
 export default connect(Header);
 
@@ -286,6 +384,7 @@ function getSearchEntries(ontology, recordClasses) {
     .children.map(createMenuEntry);
 }
 
+/** Map a search node to a meny entry */
 function createMenuEntry(searchNode) {
   return {
     id: getId(searchNode),
