@@ -83,13 +83,13 @@ export default class SmallMenu extends Component {
           </li>
           <li style={{ whiteSpace: 'nowrap' }}>
             {user.isGuest
-              ? <a href="#login" onClick={e => onLogin() && e.preventDefault()}>Login</a>
+              ? <a href="#login" onClick={e => { e.preventDefault(); onLogin(); }}>Login</a>
               : <Link to="user/profile">{`${user.firstName} ${user.lastName}`}'s Profile</Link>}
           </li>
           <li>
             {user.isGuest
               ? <a href={webAppUrl + '/showRegister.do'}>Register</a>
-              : <a href="#logout" onClick={e => onLogout() && e.preventDefault()}>Logout</a>}
+              : <a href="#logout" onClick={e => { e.preventDefault(); onLogout(); }}>Logout</a>}
           </li>
           <li className="empty-divider">
             <NewWindowLink href={webAppUrl + '/contact.do'}>Contact Us</NewWindowLink>
