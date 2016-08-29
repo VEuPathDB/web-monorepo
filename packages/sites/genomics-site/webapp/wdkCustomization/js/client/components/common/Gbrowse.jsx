@@ -209,6 +209,14 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
         style: {
           classes: 'qtip-bootstrap eupathdb-GbrowseImageMapTooltip',
           tip: { height: 12, width: 18 }
+        },
+        events: {
+          show() {
+            document.body.style.overflow = 'hidden';
+          },
+          hide() {
+            document.body.style.overflow = '';
+          }
         }
       });
 

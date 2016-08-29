@@ -426,6 +426,11 @@ h4 {
   max-width: 600px;
 }
 
+.eupathdb-GbrowseImageMapTooltip .qtip-content {
+  max-height: calc(100vh - 25px);
+  overflow: auto;
+}
+
 .eupathdb-ExpressionGraphsDataTableContainerHeader {
   font-weight: 500;
   margin: 0;
