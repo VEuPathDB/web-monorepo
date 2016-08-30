@@ -71,9 +71,9 @@ export function GbrowseContext(props) {
   let url = record.attributes[attribute.name];
   return (
     <div>
-      <GbrowseImage url={url} includeImageMap={true} />
+      <GbrowseImage url={url.replace('/cgi-bin/', '/fcgi-bin/')} includeImageMap={true} />
       <div>
-        <a href={url.replace('/gbrowse_img/', '/gbrowse/').replace('/fcgi-bin/', '/cgi-bin/')}>View in genome browser</a>
+        <a href={url.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
       </div>
     </div>
   );
@@ -84,9 +84,9 @@ export function ProteinContext(props) {
   let divId = props.table.name + "-" + props.rowData.transcript_id
   return (
     <div id={divId} className="eupathdb-GbrowseContext">
-      <GbrowseImage url={url} includeImageMap={true} />
+      <GbrowseImage url={url.replace('/cgi-bin/', '/fcgi-bin/')} includeImageMap={true} />
       <div>
-        <a href={url.replace('/gbrowse_img/', '/gbrowse/').replace('/fcgi-bin/', '/cgi-bin/')}>View in genome browser</a>
+        <a href={url.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
       </div>
     </div>
   );
