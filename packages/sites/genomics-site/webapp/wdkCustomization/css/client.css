@@ -47,11 +47,6 @@ h4 {
   min-height: calc(100vh - 230px);
 }
 
-.wdk-RecordOverview {
-  color: #555555;
-  margin-bottom: -1em;
-}
-
 .wdk-RecordOverview:after {
   content: "";
   display: table;
