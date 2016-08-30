@@ -185,7 +185,7 @@
 
      
 <!-- ANY TAB, ANY STEP, ANY RECORD -->
-  <wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}"/>
+<wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}" feature__newDownloadPage="${true}"/>
 
 </div>  <!--  end div ${view} -->
 
