@@ -25,11 +25,13 @@ function renderPrimaryContact(contact, institution) {
 }
 
 function renderSourceVersion(version) {
-  return (
-    version.version + ' (The data provider\'s version number or publication date, from' +
-    ' the site the data was acquired. In the rare case neither is available,' +
-    ' the download date.)'
-  );
+  return [
+    version.version + ' ',
+    <i className="fa fa-question-circle" style={{ color: 'blue' }}
+      title={'The data provider\'s version number or publication date, from' +
+      ' the site the data was acquired. In the rare case neither is available,' +
+      ' the download date.'}/>
+  ];
 }
 
 export function RecordOverview(props) {
