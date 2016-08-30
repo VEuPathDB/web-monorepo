@@ -355,12 +355,12 @@ function Header(props) {
 }
 
 Header.propTypes = {
-  user: PropTypes.object.isRequired,
-  ontology: PropTypes.object.isRequired,
-  recordClasses: PropTypes.array.isRequired,
-  basketCounts: PropTypes.object.isRequired,
-  quickSearches: PropTypes.array.isRequired,
-  preferences: PropTypes.object.isRequired
+  user: PropTypes.object,
+  ontology: PropTypes.object,
+  recordClasses: PropTypes.array,
+  basketCounts: PropTypes.object,
+  quickSearches: PropTypes.array,
+  preferences: PropTypes.object
 };
 
 let globalDataItems = Object.keys(Header.propTypes);
