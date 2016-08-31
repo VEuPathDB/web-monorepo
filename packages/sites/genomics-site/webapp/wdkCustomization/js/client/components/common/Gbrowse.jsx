@@ -73,7 +73,7 @@ export function GbrowseContext(props) {
     <div>
       <GbrowseImage url={url} includeImageMap={true} />
       <div>
-        <a href={url.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
+        <a href={makeGbrowseLinkUrl(url)}>View in genome browser</a>
       </div>
     </div>
   );
@@ -86,7 +86,7 @@ export function ProteinContext(props) {
     <div id={divId} className="eupathdb-GbrowseContext">
       <GbrowseImage url={url} includeImageMap={true} />
       <div>
-        <a href={url.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
+        <a href={makeGbrowseLinkUrl(url)}>View in genome browser</a>
       </div>
     </div>
   );
@@ -290,3 +290,14 @@ let loadGbrowseScripts = once(() => {
 });
 
 let get = memoize($.get.bind($));
+
+/**
+ * Replace the query param `l` with `embed` so that listed tracks are merged
+ * with user's existing tracks, and replace `gbrowse_img` with `gbrowse`;
+ */
+function makeGbrowseLinkUrl(url) {
+  return url
+    .replace(/([?;])l=/, '$1embed=')
+    .replace(/(;genepage=1|genepage=1;)/, '')
+    .replace('/gbrowse_img/', '/gbrowse/');
+}
