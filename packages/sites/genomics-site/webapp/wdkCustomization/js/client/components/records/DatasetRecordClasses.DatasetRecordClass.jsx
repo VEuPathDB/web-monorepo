@@ -55,7 +55,7 @@ export function RecordOverview(props) {
     <div className="wdk-RecordOverview eupathdb-RecordOverview">
       <div className="eupathdb-RecordOverviewItem">
         <strong>Summary: </strong>
-        <span dangerouslySetInnerHTML={{__html: summary}}/>
+        <span style={{ whiteSpace: 'normal' }} dangerouslySetInnerHTML={{__html: summary}}/>
       </div>
 
       {organism_prefix ? (
