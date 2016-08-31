@@ -71,7 +71,7 @@ export function GbrowseContext(props) {
   let url = record.attributes[attribute.name];
   return (
     <div>
-      <GbrowseImage url={url.replace('/cgi-bin/', '/fcgi-bin/')} includeImageMap={true} />
+      <GbrowseImage url={url} includeImageMap={true} />
       <div>
         <a href={url.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
       </div>
@@ -84,7 +84,7 @@ export function ProteinContext(props) {
   let divId = props.table.name + "-" + props.rowData.transcript_id
   return (
     <div id={divId} className="eupathdb-GbrowseContext">
-      <GbrowseImage url={url.replace('/cgi-bin/', '/fcgi-bin/')} includeImageMap={true} />
+      <GbrowseImage url={url} includeImageMap={true} />
       <div>
         <a href={url.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
       </div>
@@ -140,7 +140,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
   }
 
   loadImage(props) {
-    this.xhr = get(props.url + ';width=800;embed=1;genepage=1');
+    this.xhr = get(props.url.replace('/cgi-bin/', '/fcgi-bin/') + ';width=800;embed=1;genepage=1');
     this.xhr.promise().then(
       data => this.handleImageLoad(data),
       jqXhr => this.handleError(jqXhr)
