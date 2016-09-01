@@ -466,7 +466,9 @@ sub getSyntenySubtracks {
     my @synTypes = ('span','gene');
     while (my ($organism, $publicAbbrev, $phylum, $kingdom, $genus, $species, $class)= $sh->fetchrow_array()){
 	foreach my $synType (@synTypes) { 
-	my $displayName = ":$publicAbbrev $synType";
+
+        my $displaySynType = $synType eq 'span' ? 'contig' : 'genes';
+	my $displayName = ":$publicAbbrev $displaySynType";
 	my $urlName = "=${publicAbbrev}_$synType";
 	my $synRow = [$displayName, $kingdom, $class, $phylum, $genus, $species, $organism, $synType, $urlName];
 	push @rv, $synRow;
