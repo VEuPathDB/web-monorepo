@@ -463,7 +463,7 @@ sub getSyntenySubtracks {
     my $sh = $dbh->prepare("select organism, public_abbrev,  phylum, kingdom, genus, species, class  from apidbtuning.OrganismSelectTaxonRank order by kingdom, class, phylum, genus, species, organism");
     $sh->execute();
     my @rv;
-    my @synTypes = ('contig','genes');
+    my @synTypes = ('span','gene');
     while (my ($organism, $publicAbbrev, $phylum, $kingdom, $genus, $species, $class)= $sh->fetchrow_array()){
 	foreach my $synType (@synTypes) { 
 	my $displayName = ":$publicAbbrev $synType";
