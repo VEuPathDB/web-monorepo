@@ -291,13 +291,35 @@ let loadGbrowseScripts = once(() => {
 
 let get = memoize($.get.bind($));
 
+
+/** Gbrowse url track separator */
+const TRACKS_SEPARATOR = '%1E';
+
+/** Regexp to match `l` param. Captures value of `l` in match group 1 */
+const TRACKS_PARAM_REGEXP = /([?;])l=([^;]+)/;
+
+/** Regexp to match `genepage` param. */
+const GENEPAGE_PARAM_REGEXP = /[?;]genepage=1/;
+
 /**
- * Replace the query param `l` with `embed` so that listed tracks are merged
+ * Function passed to replace function used with `TRACKS_PARAM_REGEXP`
+ * that will reverse tracks order.
+ */
+function tracksReplacer(_, prefix, tracks) {
+  return prefix + 'enable=' +
+    (tracks
+      .split(TRACKS_SEPARATOR)
+      .reverse()
+      .join(TRACKS_SEPARATOR));
+}
+
+/**
+ * Replace the query param `l` with `enable` so that listed tracks are merged
  * with user's existing tracks, and replace `gbrowse_img` with `gbrowse`;
  */
 function makeGbrowseLinkUrl(url) {
   return url
-    .replace(/([?;])l=/, '$1embed=')
-    .replace(/(;genepage=1|genepage=1;)/, '')
+    .replace(TRACKS_PARAM_REGEXP, tracksReplacer)
+    .replace(GENEPAGE_PARAM_REGEXP, '')
     .replace('/gbrowse_img/', '/gbrowse/');
 }
