@@ -864,7 +864,7 @@ sub ChromosomeFgcolor {
     my $f = shift;
     my ($chr) =$f->get_tag_values("Chromosome");
     my ($syntype) =$f->get_tag_values("SynType");
-    if ($syntype =~ /contig/) { 
+    if ($syntype =~ /span/) { 
       my ($col) = $f->get_tag_values("ChrColor");
       return $col if $col;
       return "orange" if ($f->strand == 1); 

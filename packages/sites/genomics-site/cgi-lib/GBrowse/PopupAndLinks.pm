@@ -104,9 +104,9 @@ sub gffTssChabbert {
 sub syntenyTitle {
   my $f = shift;
   my ($syntype) = $f->get_tag_values('SynType');
-  if($syntype eq 'genes') {
+  if($syntype eq 'gene') {
     &synGeneTitle($f);
-  } elsif($syntype eq 'contig') {
+  } elsif($syntype eq 'span') {
     &synSpanTitle($f);
   } else {
     my $p = $f->parent;
