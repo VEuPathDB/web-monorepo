@@ -7,14 +7,14 @@ apidb_sources := webapp/apidb.js \
                  $(shell find webapp -type f -name '*.js' -or -name '*.jsx' -or -name '*.css') \
                  $(shell find $(PROJECT_HOME)/WDK/View/webapp/wdk -type f) \
                  $(shell find $(PROJECT_HOME)/EuPathSiteCommon/Site/webapp -type f) \
-                 webpack.config.js
+                 $(PROJECT_HOME)/EuPathSiteCommon/Site/webpack.config.js
 
 apidb_client_bundle    := dist/apidb-client.bundle.js
 apidb_client_sources   := webapp/wdkCustomization/js/client/index.js \
                           $(shell find webapp -type f -name '*.js' -or -name '*.jsx' -or -name '*.css') \
                           $(shell find $(PROJECT_HOME)/WDK/View/webapp/wdk -type f) \
                           $(shell find $(PROJECT_HOME)/EuPathSiteCommon/Site/webapp -type f) \
-                          webpack.config.js
+                          $(PROJECT_HOME)/EuPathSiteCommon/Site/webpack.config.js
 
 .PHONY: all clean
 
@@ -27,7 +27,7 @@ clean:
 	rm -rf $(apidb_bundle) $(apidb_client_bundle)
 
 $(apidb_bundle): $(apidb_sources)
-	webpack $< $@
+	webpack --config $(PROJECT_HOME)/EuPathSiteCommon/Site/webpack.config.js $< $@
 
 $(apidb_client_bundle): $(apidb_client_sources)
-	webpack $< $@
+	webpack --config $(PROJECT_HOME)/EuPathSiteCommon/Site/webpack.config.js $< $@
