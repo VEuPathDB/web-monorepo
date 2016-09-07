@@ -62,7 +62,7 @@
 	  <!-- Contains HTML head tag, meta, and includes for all sites -->
     <imp:head refer="${refer}" title="${title}" banner="${banner}"/>
 
-    <body>
+    <body class="${refer}">
    
       <imp:header refer="${refer}" title= "${title}" />
       
