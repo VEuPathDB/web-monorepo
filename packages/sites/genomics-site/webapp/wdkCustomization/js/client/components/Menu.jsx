@@ -43,6 +43,7 @@ export default class Menu extends Component {
               key={entry.id}
               entry={entry}
               webAppUrl={this.props.webAppUrl}
+              isGuest={this.props.isGuest}
               showLoginWarning={this.props.showLoginWarning}
             />
           ))}
@@ -55,16 +56,17 @@ export default class Menu extends Component {
 Menu.propTypes = {
   webAppUrl: PropTypes.string.isRequired,
   showLoginWarning: PropTypes.func.isRequired,
-  entries: PropTypes.array.isRequired
+  entries: PropTypes.array.isRequired,
+  isGuest: PropTypes.bool.isRequired
 };
 
 /**
  * Site menu entry.
  */
 function MenuEntry(props) {
-  let { entry, webAppUrl, showLoginWarning } = props;
+  let { entry, webAppUrl, showLoginWarning, isGuest } = props;
   let handleClick = (e) => {
-    if (entry.loginRequired) {
+    if (entry.loginRequired && isGuest) {
       e.preventDefault();
       showLoginWarning('use this feature', e.currentTarget.href);
     }
@@ -96,5 +98,6 @@ function MenuEntry(props) {
 MenuEntry.propTypes = {
   webAppUrl: PropTypes.string.isRequired,
   showLoginWarning: PropTypes.func.isRequired,
-  entry: PropTypes.object.isRequired
+  entry: PropTypes.object.isRequired,
+  isGuest: PropTypes.bool.isRequired
 };

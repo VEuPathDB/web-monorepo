@@ -59,7 +59,7 @@ function Header(props) {
           </span>
         </div>
         {/* TODO Put entries into an external JSON file. */}
-        <Menu webAppUrl={webAppUrl} showLoginWarning={showLoginWarning} entries={[
+        <Menu webAppUrl={webAppUrl} showLoginWarning={showLoginWarning} isGuest={user ? user.isGuest : true} entries={[
           { id: 'home', text: 'Home', tooltip: 'Go to the home page', url: webAppUrl },
           { id: 'search', text: 'New Search', tooltip: 'Start a new search strategy', children: [
             ...getSearchEntries(ontology, recordClasses),
