@@ -1,6 +1,7 @@
+import { get } from 'lodash';
+import { cloneElement } from 'react';
 import { WdkViewController } from 'wdk-client/Controllers';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
-import GalaxyTerms from '../GalaxyTerms';
 
 let { updateUserPreference, showLoginForm } = UserActionCreators;
 
@@ -10,8 +11,7 @@ export default class GalaxyTermsController extends WdkViewController {
 
   constructor(...args) {
     super(...args);
-    this.setShowPagePreference = this.setShowPagePreference.bind(this);
-    this.goToGalaxy = this.goToGalaxy.bind(this);
+    this.onGalaxyNavigate = this.onGalaxyNavigate.bind(this);
   }
 
   getStoreName() {
@@ -26,44 +26,31 @@ export default class GalaxyTermsController extends WdkViewController {
   }
 
   getStateFromStore(store) {
-    let { globalData: { user, preferences } } = store.getState();
-    let showPagePreference;
-
-    // only initialize `showPagePreference` when `preferences` are initialized
-    if (preferences != null) {
-      showPagePreference = preferences[SHOW_GALAXY_PAGE_PREFERENCE] === 'true';
-    }
-
-    return { user, showPagePreference };
+    return {
+      user: get(store.getState(), 'globalData.user')
+    };
   }
 
   isRenderDataLoaded(state) {
-    return (state.showPagePreference != null && state.user != null);
+    return state.user != null;
   }
 
   getTitle() {
     return "Galaxy Terms";
   }
 
-  setShowPagePreference(showPagePreference) {
-    this.setState({ showPagePreference });
-  }
-
-  goToGalaxy() {
-    this.eventHandlers.updateUserPreference(SHOW_GALAXY_PAGE_PREFERENCE,
-      this.state.showPagePreference ? 'true' : 'false');
-    window.open('https://eupathdb.globusgenomics.org', '_blank');
+  onGalaxyNavigate() {
+    this.eventHandlers.updateUserPreference(SHOW_GALAXY_PAGE_PREFERENCE, 'false');
   }
 
   renderView(state, eventHandlers) {
-    return (
-      <GalaxyTerms
-        {...state}
-        {...eventHandlers}
-        setShowPagePreference={this.setShowPagePreference}
-        goToGalaxy={this.goToGalaxy}
-      />
-    );
+    // this.props.children is defined in routes.jsx as a child route.
+    // It is the component assigned to the route that matched the url.
+    return cloneElement(this.props.children, Object.assign({},
+      state,
+      eventHandlers,
+      { onGalaxyNavigate: this.onGalaxyNavigate }
+    ));
   }
 
 }

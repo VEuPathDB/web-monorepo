@@ -859,9 +859,9 @@ h4 {
   top: 1.2em;
 }
 
-/* =================== */
-/* Orientation page */
-/* =================== */
+/* ======================= */
+/* Galaxy Orientation page */
+/* ======================= */
 
 #eupathdb-GalaxyTerms {
   width: 100%;
@@ -869,6 +869,7 @@ h4 {
 }
 #eupathdb-GalaxyTerms-initial {
  text-align: center;
+ margin: 2em 0;
 }
 #eupathdb-GalaxyTerms img {
   width: 95%;
@@ -887,6 +888,30 @@ h4 {
   font-size: 150%;
   margin-top: 0;
 }
+
+/** 3-column grid with left and right columns at 20%, and middle column at 50% */
+.eupathdb-GalaxyWelcomeGrid {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 2em 0;
+}
+.eupathdb-GalaxyWelcomeGrid > div {
+  width: 50%;
+}
+.eupathdb-GalaxyWelcomeGrid > div:first-of-type,
+.eupathdb-GalaxyWelcomeGrid > div:last-of-type {
+  width: 20%;
+}
+.eupathdb-GalaxyWelcomeAnalysisList {
+  margin: 0;
+}
+.eupathdb-GalaxyTermsContinueLink {
+  text-align: center;
+  font-size: 130%;
+  margin: 1em 0;
+}
+
 .column-left{ float: left; width: 33%; }
 .column-right{ float: right; width: 33%; }
 .column-center{ display: inline-block; width: 33%; }

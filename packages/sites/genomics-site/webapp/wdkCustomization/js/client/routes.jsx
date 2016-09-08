@@ -1,17 +1,22 @@
 import { cloneElement, Children } from 'react';
-import { Route } from 'react-router';
+import { Route, IndexRoute } from 'react-router';
 import { projectId } from './config';
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
 import GalaxyTermsController from './components/controllers/GalaxyTermsController';
+import GalaxyTerms from './components/GalaxyTerms';
+import GalaxySignUp from './components/GalaxySignUp';
 import SampleForm from './components/samples/SampleForm';
 
 const apidbRoutes = (
   <Route path="/">
     <Route path="fasta-tool" component={FastaConfigController}/>
     <Route path="query-grid" component={QueryGridController}/>
-    <Route path="galaxy-orientation" component={GalaxyTermsController}/>
+    <Route path="galaxy-orientation" component={GalaxyTermsController}>
+      <IndexRoute component={GalaxyTerms}/>
+      <Route path="sign-up" component={GalaxySignUp}/>
+    </Route>
 
     {/* test/demonstration pages */}
     <Route path="sample-form" component={SampleForm}/>
