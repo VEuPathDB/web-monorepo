@@ -36,7 +36,7 @@ export default class Menu extends Component {
   render() {
     let { position, top } = this.state;
     return (
-      <div ref={node => this.trackingNode = node} style={{ overflow: 'auto'}}>
+      <div ref={node => this.trackingNode = node} style={{ overflow: 'visible'}}>
         <ul className="eupathdb-Menu" style={{ position, top }}>
           {this.props.entries.map((entry) => (
             <MenuEntry
