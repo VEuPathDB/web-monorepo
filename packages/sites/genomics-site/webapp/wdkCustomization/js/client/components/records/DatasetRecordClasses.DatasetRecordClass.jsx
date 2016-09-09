@@ -1,4 +1,5 @@
 import React from 'react';
+import {pure} from 'wdk-client/ComponentUtils';
 import DatasetGraph from '../common/DatasetGraph';
 
 // Use Element.innerText to strip XML
@@ -96,7 +97,7 @@ export function RecordOverview(props) {
   );
 }
 
-function DatasetGraphTable(props) {
+const DatasetGraphTable = pure(function DatasetGraphTable(props) {
   let included = props.table.properties.includeInTable || [];
   let table = Object.assign({}, props.table, {
     attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
@@ -110,7 +111,7 @@ function DatasetGraphTable(props) {
         <DatasetGraph rowData={props.value[childProps.rowIndex]}/>}
       />
   );
-}
+});
 
 function References(props, context) {
   let {questions, recordClasses, config} = context.store.getState().globalData || {};

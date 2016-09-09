@@ -1,9 +1,10 @@
 import $ from 'jquery';
-import React from 'react';
+import { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import { projectId, webAppUrl } from '../../config';
 import {NativeCheckboxList} from 'wdk-client/Components';
+import { pure } from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
 import {isNodeOverflowing} from '../../util/domUtils';
 import DatasetGraph from '../common/DatasetGraph';
@@ -15,7 +16,7 @@ import {SnpsAlignmentForm} from '../common/Snps';
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
  */
-export class RecordOverview extends React.Component {
+export class RecordOverview extends Component {
 
   constructor(...args) {
     super(...args);
@@ -115,8 +116,8 @@ export class RecordOverview extends React.Component {
 }
 
 RecordOverview.contextTypes = {
-  eventHandlers: React.PropTypes.object.isRequired,
-  store: React.PropTypes.object.isRequired
+  eventHandlers: PropTypes.object.isRequired,
+  store: PropTypes.object.isRequired
 };
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
@@ -142,7 +143,7 @@ function SNPsAlignment(props) {
   )
 }
 
-function DatasetGraphTable(props) {
+const DatasetGraphTable = pure(function DatasetGraphTable(props) {
   let included = props.table.properties.includeInTable || [];
 
   let dataTable;
@@ -176,9 +177,9 @@ function DatasetGraphTable(props) {
       />
     </div>
   );
-}
+});
 
-function ProteinPbrowseTable(props) {
+const ProteinPbrowseTable = pure(function ProteinPbrowseTable(props) {
   let included = props.table.properties.includeInTable || [];
 
   let table = Object.assign({}, props.table, {
@@ -193,9 +194,9 @@ function ProteinPbrowseTable(props) {
         <Gbrowse.ProteinContext {...props} rowData={props.value[childProps.rowIndex]}/>}
     />
   );
-}
+});
 
-function SequencesTable(props) {
+const SequencesTable = pure(function SequencesTable(props) {
   let included = props.table.properties.includeInTable || [];
   let table = Object.assign({}, props.table, {
     attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
@@ -289,7 +290,7 @@ function SequencesTable(props) {
       }}
     />
   );
-}
+});
 
 function MercatorTable(props) {
   return (
@@ -367,5 +368,5 @@ function UserCommentsTable(props, context) {
 }
 
 UserCommentsTable.contextTypes = {
-  eventHandlers: React.PropTypes.object.isRequired
+  eventHandlers: PropTypes.object.isRequired
 };

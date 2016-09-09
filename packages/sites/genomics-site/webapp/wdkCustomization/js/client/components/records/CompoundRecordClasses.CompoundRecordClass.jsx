@@ -1,5 +1,6 @@
 import {Component} from 'react';
 import {CollapsibleSection} from 'wdk-client/Components';
+import {pure} from 'wdk-client/ComponentUtils';
 import {CompoundStructure} from '../common/Compound';
 import DatasetGraph from '../common/DatasetGraph';
 
@@ -48,7 +49,7 @@ class CompoundStructures extends Component {
   }
 }
 
-function DatasetGraphTable(props) {
+const DatasetGraphTable = pure(function DatasetGraphTable(props) {
   let included = props.table.properties.includeInTable || [];
 
   let dataTable;
@@ -75,4 +76,4 @@ function DatasetGraphTable(props) {
             />
         </div>
     );
-}
+});
