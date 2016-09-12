@@ -549,6 +549,7 @@ sub spliceSiteTitleUnified {
   my ($gene) = $f->get_tag_values('gene_id');
   my ($utr_len) = $f->get_tag_values('utr_length');
   $utr_len = ($utr_len < 0)? "N/A (within gene)": $utr_len;
+  my ($first_atg_dist) = $f->get_tag_values('dist_to_first_atg');
   my $name = $f->name;
 
   # sum over count_per_mill values for each sample
@@ -559,27 +560,25 @@ sub spliceSiteTitleUnified {
   my @uniq_arr  = split /,/, $isUniq;
   my @mismatch_arr  = split /,/, $mismatch;
 
-  my $count = 0;
-  my $html = "<table><tr><th>Sample</th><th>Count per million</th><th>Unique Alignment</th><th>Avg. Mismatches</th></tr>";
-  foreach my $exp (@sample_arr) {
-     my $sample = $sample_arr[$count];
-     my $ctpm = $ctpm_arr[$count];
-     my $uniq = $uniq_arr[$count];
-     $uniq = ($uniq == 1)? "yes" : "no";
-     my $mismatch = $mismatch_arr[$count];
-     $html .= "<tr><td>$sample</td><td>$ctpm</td><td>$uniq</td><td>$mismatch</td></tr>";
-     $count++;
-   }
-  $html .= "</table>";
-
   my $note = "The overall count is the sum of the count per million for each sample.";
   my @data;
-  push @data, [ '' => $html ];
   push @data, [ 'Location:'  => "$loc"];
   push(@data, ['Gene ID:' => $gene]) if ($gene);
   push(@data, ['UTR Length:' => $utr_len]) if ($gene);
-  push @data, [ 'Count'     => $sum ];
-  push @data, [ 'Note'     => $note ];
+  push @data, [ 'Distance to first ATG' => $first_atg_dist ];
+  push @data, [ 'Count:'     => $sum ];
+  push @data, [ 'Note:'     => $note ];
+
+  my $count = 0;
+  my $html = "<table><tr><th>Sample</th><th>Count per million</th></tr>";
+  foreach my $exp (@sample_arr) {
+    my $sample = $sample_arr[$count];
+    my $ctpm = $ctpm_arr[$count];
+    $html .= "<tr><td>$sample</td><td>$ctpm</td></tr>";
+    $count++;
+  }
+  $html .= "</table>";
+  push @data, [ '' => $html ];
   hover($f, \@data); 
 }
 
