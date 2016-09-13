@@ -265,15 +265,6 @@ sub gsnapIntronColorFromStrandAndScore {
     return '#CC0000' if $sum <= 4096; 
     return '#990000' if $sum <= 16000; 
     return '#660000';   
-        
-    # return '#FDD7E4' if $sum <= 4;   # pig pink
-    # return '#FAAFBE' if $sum <= 20;   # pink
-    # return '#F778A1' if $sum <= 50;  # carnation pink
-    # return '#E4287C' if $sum <= 100;  # pink lemonade
-    # return '#FF0000' if $sum <= 300;  # red
-    # return '#C11B17' if $sum <= 750; # chili pepper
-    # return '#9F000F' if $sum <= 1500; # cranberry
-    # return '#800517';   # firebrick
   }else{
     return '#C2DFFF' if $sum <= 4;   # sea blue
     return '#82CAFA' if $sum <= 16;   # light sky blue
@@ -282,6 +273,7 @@ sub gsnapIntronColorFromStrandAndScore {
     return '#1589FF' if $sum <= 1024;  # dodger blue
     return '#2B65EC' if $sum <= 4096; # ocean blue
     return '#0020C2' if $sum <= 16000; # cobal
+    return '#000099';   
   }
 }
 
@@ -1137,33 +1129,36 @@ sub dustCitation {
 
 sub gsnapIntronCitation {
   return <<EOL;
-  Mouse-over column description: <br/><br/>
-SCORE: 
-  The number of reads which map across the junction that (a) map uniquely,
-  (b) have at least 8 bases on either side, and (c) have a characterized
-  splice signal.  So if the splice signals are not characterized the score
-  is zero.
+Note that annotated introns are indicated with bold (wider) glyphs.
+   <br/><br/>
+<b>SCORE</b>: 
+  The total number of uniquely mapped reads (all samples) which map across the junction and are on the appropriate strand.  GSNAP uses splice site consensus sequences to determine strand of the mapped read.
   <br/><br/>
-UNIQUE_READS: 
-  The number of reads mapping across the junction for which their alignment
-  is unique and they have at least 8 bases on each side of the junction.
-  These are the ones that count towards the "score". 
+<b>ISRPM</b>: 
+  Intron Spanning Reads Per Million unique intron spanning reads and thus represents a normalized count of unique reads.
   <br/><br/>
-NU_READS:
-  The number of reads mapping across the junction for which their alignment
-  is not unique and they have at least 8 bases on each side of the junction
-  <br/><br/><br/>
-Color of glyph changes with the Score as follow:
+<b>Percent of Max</b>:
+  The percentage (Scoreof this junction / Score of maximum junction for this gene) of this junction over the maximum for this gene.
+  <br/><br/>
+<b>Highest Sample</b>:
+   The sample that has the highest ISRPM for this gene.
+  <br/><br/>
+<b>Best ISRPM / FPKM</b>:
+  The ratio of the ISRPM / FPKM (normalized expression) for the highest sample.  
+  <br/><br/>
+  The table shows all experiments and samples that provide evidence for this intron junction. 
+  <br/><br/>
+The color of glyph changes with the Score as follows:
   <p><table width="50%">
-  <tr><th align="left">Color</th><th align="left">Score</th></th></tr>
-  <tr><td bgcolor='white'><font color="#B6B6B4"><b>Gray</b></font></td><td>&nbsp  less than 2</tr>
-  <tr><td bgcolor='white'><font color="#F88017"><b>Orange</b></font></td><td>&nbsp  between 2 and 5</tr>
-  <tr><td bgcolor='white'><font color="#F87217"><b>Dark Orange1</b></font></td><td>&nbsp between 5 and 10</tr>
-  <tr><td bgcolor='white'><font color="#E56717"><b>Dark Orange2</b></font></td><td>&nbsp between 10 and 20</tr>
-  <tr><td bgcolor='white'><font color="#C35617"><b>Dark Orange3</b></font></td><td>&nbsp between 20 and 50</tr>
-  <tr><td bgcolor='white'><font color="#8A4117"><b>Sienna</b></font></td><td>&nbsp between 50 and 100</tr>
-  <tr><td bgcolor='white'><font color="#7E3517"><b>Sienna4</b></font></td><td>&nbsp between 100 and 200</tr>
-  <tr><td bgcolor='white'><font color="#800517"><b>Firebrick</b></font></td><td>&nbsp greater than 200</tr>
+  <tr><th align="left">Reverse</th><th align="left">Forward</th></tr>
+  <tr><td bgcolor='white'><font color="#FFCCCC"><b>less than 5</b></font></td><td bgcolor='white'><font color="#C2DFFF"><b>less than 5</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF9999"><b>5-15</b></font></td><td bgcolor='white'><font color="#82CAFA"><b>5-15</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF6666"><b>17-64</b></font></td><td bgcolor='white'><font color="#5CB3FF"><b>17-64</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF3333"><b>65-256</b></font></td><td bgcolor='white'><font color="#56A5EC"><b>65-256</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF0000"><b>257-1024</b></font></td><td bgcolor='white'><font color="#1589FF"><b>257-1024</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#CC0000"><b>1025-4096</b></font></td><td bgcolor='white'><font color="#2B65EC"><b>1025-4096</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#990000"><b>4097-16000</b></font></td><td bgcolor='white'><font color="#0020C2"><b>4097-16000</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#660000"><b>greater than 16000</b></font></td><td bgcolor='white'><font color="#000099"><b>greater than 16000</b></font></td></tr>
 </table>
 EOL
 }
