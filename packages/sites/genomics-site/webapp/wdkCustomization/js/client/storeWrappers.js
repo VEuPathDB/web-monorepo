@@ -3,6 +3,7 @@ import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 import { actionTypes } from './actioncreators/GlobalActionCreators';
+import { TABLE_STATE_UPDATED } from './actioncreators/RecordViewActionCreators';
 
 export function GlobalDataStore(WdkGlobalDataStore) {
   return class ApiGlobalDataStore extends WdkGlobalDataStore {
@@ -49,7 +50,8 @@ export function RecordViewStore(WdkRecordViewStore) {
   return class ApiRecordViewStore extends WdkRecordViewStore {
     reduce(state, action) {
       state = Object.assign({}, super.reduce(state, action), {
-        pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action)
+        pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
+        eupathdb: handleEuPathDBAction(state.eupathdb, action)
       });
       switch (action.type) {
         case actionTypes.ACTIVE_RECORD_RECEIVED:
@@ -108,6 +110,17 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
       });
     default:
       return state;
+  }
+}
+
+function handleEuPathDBAction(state = { tables: {} }, { type, payload }) {
+  switch(type) {
+    case TABLE_STATE_UPDATED: return Object.assign({}, state, {
+      tables: Object.assign({}, state.tables, {
+        [payload.tableName]: payload.tableState
+      })
+    });
+    default: return state;
   }
 }
 

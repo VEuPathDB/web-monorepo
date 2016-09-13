@@ -11,6 +11,7 @@ import ApiApplicationSpecificProperties from './components/ApiApplicationSpecifi
 import ApiUserIdentity from './components/ApiUserIdentity';
 import ApiHeader from './components/Header';
 import ApiFooter from './components/Footer';
+import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadBasketCounts } from './actioncreators/GlobalActionCreators';
 
 export let Header = () => ApiHeader;
@@ -47,7 +48,7 @@ export function RecordController(WdkRecordController) {
     getActionCreators() {
       let wdkActionCreators = super.getActionCreators();
       return Object.assign({}, wdkActionCreators, {
-        updateBasketStatus: (...args) => (dispatch, { wdkService }) => {
+        updateBasketStatus: (...args) => (dispatch) => {
           dispatch(wdkActionCreators.updateBasketStatus(...args))
           .then(dispatch(loadBasketCounts()));
         }
@@ -152,7 +153,11 @@ export function RecordTable(DefaultComponent) {
     if (lodash.isEmpty(props.value)) return <DefaultComponent {...props}/>;
     let ResolvedComponent =
       findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
-    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+    return (
+      <RecordTableContainer {...props}>
+        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+      </RecordTableContainer>
+    );
   };
 }
 

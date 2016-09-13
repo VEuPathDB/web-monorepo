@@ -98,18 +98,12 @@ export function RecordOverview(props) {
 }
 
 const DatasetGraphTable = pure(function DatasetGraphTable(props) {
-  let included = props.table.properties.includeInTable || [];
-  let table = Object.assign({}, props.table, {
-    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
-  });
-
   return (
     <props.DefaultComponent
       {...props}
-      table={table}
       childRow={childProps =>
         <DatasetGraph rowData={props.value[childProps.rowIndex]}/>}
-      />
+    />
   );
 });
 

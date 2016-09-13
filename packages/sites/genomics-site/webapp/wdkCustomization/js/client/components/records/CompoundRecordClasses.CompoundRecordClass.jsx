@@ -50,30 +50,19 @@ class CompoundStructures extends Component {
 }
 
 const DatasetGraphTable = pure(function DatasetGraphTable(props) {
-  let included = props.table.properties.includeInTable || [];
+  let dataTable = Object.assign({}, {
+    value: props.record.tables.MassSpecGraphsDataTable,
+    table: props.recordClass.tables.find(obj => obj.name == "MassSpecGraphsDataTable"),
+    record: props.record,
+    recordClass: props.recordClass,
+    DefaultComponent: props.DefaultComponent
+  });
 
-  let dataTable;
-     dataTable = Object.assign({}, {
-        value: props.record.tables.MassSpecGraphsDataTable,
-        table: props.recordClass.tables.find(obj => obj.name == "MassSpecGraphsDataTable"),
-        record: props.record,
-        recordClass: props.recordClass,
-        DefaultComponent: props.DefaultComponent
-    }
-    );
-
-    let table = Object.assign({}, props.table, {
-        attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
-    });
-    
-    return (
-        <div>
-            <props.DefaultComponent
-            {...props}
-            table={table}
-            childRow={childProps =>
-                <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
-            />
-        </div>
-    );
+  return (
+    <props.DefaultComponent
+      {...props}
+      childRow={childProps =>
+        <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
+    />
+  );
 });

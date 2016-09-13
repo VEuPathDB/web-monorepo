@@ -42,6 +42,10 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
     this.setStateFromProps(this.props);
   }
 
+  componentWillUnmount() {
+    console.trace('DatasetGraph is unmounting');
+  }
+
   componentWillReceiveProps(nextProps) {
       if (this.props.rowData !== nextProps.rowData) {
           this.setStateFromProps(nextProps);

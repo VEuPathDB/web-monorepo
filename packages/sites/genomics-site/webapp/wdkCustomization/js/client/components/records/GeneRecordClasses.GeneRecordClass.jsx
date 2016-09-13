@@ -12,6 +12,7 @@ import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
 import {SnpsAlignmentForm} from '../common/Snps';
+import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -30,8 +31,8 @@ export class RecordOverview extends Component {
     else console.error('Warning: Could not find ThumbnailsContainer');
   }
 
-  handleThumbnailClick(thumbnail) {
-    this.context.eventHandlers.toggleSection(thumbnail.anchor, true);
+  handleThumbnailClick({ anchor }) {
+    this.context.eventHandlers.toggleSection(anchor, true);
   }
 
   componentDidUpdate() {
@@ -144,8 +145,6 @@ function SNPsAlignment(props) {
 }
 
 const DatasetGraphTable = pure(function DatasetGraphTable(props) {
-  let included = props.table.properties.includeInTable || [];
-
   let dataTable;
 
   if(props.table.name == "HostResponseGraphs") {
@@ -163,33 +162,19 @@ const DatasetGraphTable = pure(function DatasetGraphTable(props) {
 
   }
 
-  let table = Object.assign({}, props.table, {
-    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
-  });
-
   return (
-    <div>
-      <props.DefaultComponent
-        {...props}
-        table={table}
-        childRow={childProps =>
-          <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
-      />
-    </div>
+    <props.DefaultComponent
+      {...props}
+      childRow={childProps =>
+        <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
+    />
   );
 });
 
 const ProteinPbrowseTable = pure(function ProteinPbrowseTable(props) {
-  let included = props.table.properties.includeInTable || [];
-
-  let table = Object.assign({}, props.table, {
-    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
-  });
-
   return (
     <props.DefaultComponent
       {...props}
-      table={table}
       childRow={childProps =>
         <Gbrowse.ProteinContext {...props} rowData={props.value[childProps.rowIndex]}/>}
     />
@@ -197,15 +182,9 @@ const ProteinPbrowseTable = pure(function ProteinPbrowseTable(props) {
 });
 
 const SequencesTable = pure(function SequencesTable(props) {
-  let included = props.table.properties.includeInTable || [];
-  let table = Object.assign({}, props.table, {
-    attributes: props.table.attributes.filter(tm => included.indexOf(tm.name) > -1)
-  });
-
   return (
     <props.DefaultComponent
       {...props}
-      table={table}
       childRow={childProps => {
         let utrClassName = 'eupathdb-UtrSequenceNucleotide';
         let intronClassName = 'eupathdb-IntronSequenceNucleotide';

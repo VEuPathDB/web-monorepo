@@ -56,17 +56,24 @@ export let withStore = (getStateFromStore = identity) => (TargetComponent) => {
 
     constructor(props, context) {
       super(props, context);
-      this.state = this.getStateFromStore();
+      this.state = this.getStateFromStore(this.props);
     }
 
-    getStateFromStore() {
-      return getStateFromStore(this.context.store.getState());
+    getStateFromStore(props) {
+      return getStateFromStore(this.context.store.getState(), props);
     }
 
     componentDidMount() {
       this.subscription = this.context.store.addListener(() => {
-        this.setState(this.getStateFromStore());
+        this.setState(this.getStateFromStore(this.props));
       })
+    }
+
+    componentWillReceiveProps(nextProps) {
+      // only update store's state if `getStateFromStore` is using props
+      if (getStateFromStore.length === 2) {
+        this.setState(this.getStateFromStore(nextProps));
+      }
     }
 
     componentWillUnmount() {
