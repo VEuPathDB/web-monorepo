@@ -1,10 +1,28 @@
-import lodash from 'lodash';
+import { flow, get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 import { actionTypes } from './actioncreators/GlobalActionCreators';
 import { TABLE_STATE_UPDATED } from './actioncreators/RecordViewActionCreators';
 
+let storageItems = {
+  tables: {
+    path: 'eupathdb.tables',
+    isRecordScoped: true
+  },
+  collapsedSections: {
+    path: 'collapsedSections',
+    isRecordScoped: false
+  },
+  navigationVisible: {
+    path: 'navigationVisible',
+    isRecordScoped: false
+  }
+};
+
+/**
+ * Add handling of basket and quick search actions.
+ */
 export function GlobalDataStore(WdkGlobalDataStore) {
   return class ApiGlobalDataStore extends WdkGlobalDataStore {
     handleAction(state, { type, payload }) {
@@ -23,6 +41,7 @@ export function GlobalDataStore(WdkGlobalDataStore) {
     }
   }
 }
+
 /** Return subcass of the provided StepDownloadFormViewStore */
 export function DownloadFormStore(WdkDownloadFormStore) {
   return class ApiDownloadFormStore extends WdkDownloadFormStore {
@@ -32,14 +51,17 @@ export function DownloadFormStore(WdkDownloadFormStore) {
   }
 }
 
+/** Provide GalaxyTermsStore */
 export function GalaxyTermsStore(WdkStore) {
   return class ApiGalaxyTermsStore extends WdkStore { };
 }
 
+/** Provide QueryGridViewStore */
 export function QueryGridViewStore(WdkStore) {
   return class ApiQueryGridViewStore extends WdkStore { };
 }
 
+/** Provide FastConfigStore */
 export function FastaConfigStore(WdkStore) {
   return class ApiFastaConfigStore extends WdkStore { };
 }
@@ -58,10 +80,13 @@ export function RecordViewStore(WdkRecordViewStore) {
           return handleRecordReceived(state);
         case actionTypes.SECTION_VISIBILITY_CHANGED:
         case actionTypes.ALL_FIELD_VISIBILITY_CHANGED:
-          setStateInStorage('collapsedSections', state);
+          setStateInStorage(storageItems.collapsedSections, state);
           return state;
         case actionTypes.NAVIGATION_VISIBILITY_CHANGED:
-          setStateInStorage('navigationVisible', state);
+          setStateInStorage(storageItems.navigationVisible, state);
+          return state;
+        case TABLE_STATE_UPDATED:
+          setStateInStorage(storageItems.tables, state);
           return state;
         default:
           return state;
@@ -77,6 +102,7 @@ let initialPathwayRecordState = {
   generaSelection: []
 };
 
+/** Handle pathway actions */
 function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
   switch(action.type) {
     case 'pathway-record/set-active-node':
@@ -113,6 +139,7 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
   }
 }
 
+/** Handle eupathdb actions */
 function handleEuPathDBAction(state = { tables: {} }, { type, payload }) {
   switch(type) {
     case TABLE_STATE_UPDATED: return Object.assign({}, state, {
@@ -124,19 +151,27 @@ function handleEuPathDBAction(state = { tables: {} }, { type, payload }) {
   }
 }
 
-let handleRecordReceived = lodash.flow(updateNavigationVisibility, mergeCollapsedSections, pruneCategories);
+let handleRecordReceived = flow(updateNavigationVisibility, mergeCollapsedSections, mergeTableState,  pruneCategories);
 
 /** Show navigation for genes, but hide for all other record types */
 function updateNavigationVisibility(state) {
-  let navigationVisible = getStateFromStorage('navigationVisible', state, state.recordClass.name === 'GeneRecordClasses.GeneRecordClass');
+  let navigationVisible = getStateFromStorage(storageItems.navigationVisible, state, state.recordClass.name === 'GeneRecordClasses.GeneRecordClass');
   return Object.assign(state, {}, { navigationVisible });
 }
 
 /** merge stored collapsedSections */
 function mergeCollapsedSections(state) {
   return Object.assign({}, state, {
-    collapsedSections: getStateFromStorage('collapsedSections', state)
+    collapsedSections: getStateFromStorage(storageItems.collapsedSections, state)
   });
+}
+
+/** merge stored table state */
+function mergeTableState(state) {
+  let eupathdb = Object.assign({}, state.eupathdb, {
+    tables: getStateFromStorage(storageItems.tables, state)
+  });
+  return Object.assign({}, state, { eupathdb });
 }
 
 /** prune categoryTree */
@@ -184,23 +219,35 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
   )
 }
 
+
 // TODO Declare type and clear value if it doesn't conform
 
-function getStateFromStorage(property, state, defaultValue = state[property]) {
+/** Read state property value from storage */
+function getStateFromStorage(descriptor, state, defaultValue = get(state, descriptor.path)) {
   try {
-    return persistence.get(property + '/' + state.recordClass.name, defaultValue);
+    let key = getStorageKey(descriptor, state);
+    return persistence.get(key, defaultValue);
   }
   catch (error) {
-    console.error('Warning: Could not retrieve % from local storage.', property, error);
+    console.error('Warning: Could not retrieve %s from local storage.', descriptor.path, error);
     return defaultValue;
   }
 }
 
-function setStateInStorage(property, state) {
+/** Write state property value to storage */
+function setStateInStorage(descriptor, state) {
   try {
-    persistence.set(property + '/' + state.recordClass.name, state[property]);
+    let key = getStorageKey(descriptor, state);
+    persistence.set(key, get(state, descriptor.path));
   }
   catch (error) {
-    console.error('Warning: Could not set %s to local storage.', property, error);
+    console.error('Warning: Could not set %s to local storage.', descriptor.path, error);
   }
+}
+
+/** Create storage key for property */
+function getStorageKey(descriptor, state) {
+  let { path, isRecordScoped } = descriptor;
+  return path + '/' + state.recordClass.name +
+    (isRecordScoped ? '/' + state.record.id.map(p => p.value).join('/') : '');
 }

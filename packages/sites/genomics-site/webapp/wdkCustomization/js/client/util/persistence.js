@@ -4,31 +4,38 @@
  * keys in a uniform way, and it handles string/js conversion.
  */
 
+const store = window.sessionStorage;
 const prefix = '@@eupathdb';
 
+/**
+ * Set the value for the key in the store
+ */
 export function set(key, value) {
   try {
-    window.localStorage.setItem(
-      prefix + '/' + key,
-      JSON.stringify({ value })
-    );
+    store.setItem(prefix + '/' + key, JSON.stringify(value));
   }
   catch(e) {
     rethrow("Unable to set value to localStorage.", e);
   }
 }
 
+/**
+ * Get the value for the key from the store
+ */
 export function get(key, defaultValue) {
   try {
-    let entry = JSON.parse(window.localStorage.getItem(prefix + '/' + key));
-    return entry == null ? defaultValue : entry.value;
+    let item = store.getItem(prefix + '/' + key);
+    return item == null ? defaultValue : JSON.parse(item);
   }
   catch(e) {
     rethrow("Unable to get value from localStorage.", e);
   }
 }
 
+/**
+ * Prefix error message to help with debugging
+ */
 function rethrow(prefix, error) {
-  e.message = prefix + " " + e.message;
-  throw e;
+  error.message = prefix + " " + error.message;
+  throw error;
 }
