@@ -128,7 +128,7 @@ function getSaveRowLinks(projectId, sourceId) {
 /****** Pop-up functions for various record types ******/
 
 // Gene title
-function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl, geneId) {
+function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl, geneId, baseRecordUrl) {
 
   // In ToxoDB, sequences of alternative gene models have to be returned
   var ignore_gene_alias = 0;
@@ -145,7 +145,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
         + "&ids=" + sourceId
         + "&ignore_gene_alias=" + ignore_gene_alias
         + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&endAnchor3=End&go=Get+Sequences' target='_blank'>protein</a>"
-  var recordLink = '<a href="../../../app/record/gene/' + geneId + '">Gene Page</a>';
+  var recordLink = '<a href="' + baseRecordUrl + '/app/record/gene/' + geneId + '">Gene Page</a>';
   var gbLink = "<a href='../../../../cgi-bin/gbrowse/" + projectId.toLowerCase() + "/?" + gbLinkParams + "'>GBrowse</a>";
   var orthomclLink = "<a href='http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
 
@@ -188,10 +188,10 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
 
 
 // Syntetic Gene title
-function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, location, gbLinkParams, orthomcl) {
+function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, location, gbLinkParams, orthomcl, baseRecordUrl) {
 
 	var gbLink = '<a href="../../../../cgi-bin/gbrowse/' + projectId.toLowerCase() + '/?' + gbLinkParams + '">GBrowse</a>';
-	var recordLink = '<a href="../../../app/record/gene/' + sourceId + '">Gene Page</a>';
+	var recordLink = '<a href="' + baseRecordUrl + '/app/record/gene/' + sourceId + '">Gene Page</a>';
 
 	// format into html table rows
 	var rows = new Array();

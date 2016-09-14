@@ -138,11 +138,12 @@ sub synGeneTitle {
   my $linkStart = $start - $window;
   my $linkStop = $end + $window;
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
+  my $baseRecordUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST} . $ENV{CONTEXT_PATH};
 
   my ($trunc) = $f->get_tag_values("Truncated");
   my $location = "$seqId: $start - $end".($trunc ? " (truncated by syntenic region to $trunc)" : "");
   
-  return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams', '$orthomclName'))};
+  return qq{javascript:escape(syn_gene_title(this,'$projectId','$sourceId','$taxon','$soTerm','$desc','$location','$gbLinkParams', '$orthomclName','$baseRecordUrl'))};
 }
 
 sub synSpanTitle {
@@ -449,7 +450,9 @@ sub geneTitleGB2 {
   my ($seqId) = $f->get_tag_values("Contig");
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id'))};
+  my $baseRecordUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST} . $ENV{CONTEXT_PATH};
+
+  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseRecordUrl'))};
 } 
 
 
