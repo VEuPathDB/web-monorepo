@@ -150,7 +150,7 @@ export function DownloadForm() {
 
 export function RecordTable(DefaultComponent) {
   return function ApiRecordTable(props) {
-    if (lodash.isEmpty(props.value)) return <DefaultComponent {...props}/>;
+    // if (lodash.isEmpty(props.value)) return <DefaultComponent {...props}/>;
     let ResolvedComponent =
       findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
     return (
