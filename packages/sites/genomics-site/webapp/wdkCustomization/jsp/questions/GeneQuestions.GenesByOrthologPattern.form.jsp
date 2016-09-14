@@ -29,8 +29,6 @@
 <c:set var="excludedSpecies" value="${qParams['excluded_species']}"/>
 <c:set var="excludedSpeciesName" value="${excludedSpecies.name}"/>
 
-<c:set var="referenceOnly" value="${qParams['reference_strains_only']}"/>
-
 <c:set var="resultSpecies" value="${qParams['organism']}"/>
 <c:set var="resultSpeciesName" value="${resultSpecies.name}"/>
 <c:set var="ind" value="${qParams['phyletic_indent_map']}"/>
@@ -103,18 +101,6 @@
 
     <div class="param-group content-pane">
       <div class="group-detail">
-
-        <div class="param-item">
-          <label>
-            <span style="font-weight:bold">Reference strains only</span>
-            <imp:image title="Choose whether to include only organisms that are reference organisms for each species." 
-               class="help-link"
-               src="wdk/images/question.png" 
-               style="cursor:pointer" 
-               aria-describedby="ui-tooltip-2"/>
-          </label>
-          <div class="param-control"><imp:enumParamInput qp="${referenceOnly}" /></div>
-        </div>
 
         <div class="param-item">
           <label>
