@@ -190,7 +190,9 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
             else {
               return content;
             }
-          }
+          },
+          title: 'Track details', // adds the top border that the close button resides within
+          button: true // close button
         },
         position: {
           my: 'bottom center',
@@ -202,7 +204,12 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
             method: 'shift'
           }
         },
+        show: {
+          solo: true,
+          delay: 100
+        },
         hide: {
+          event: false,
           fixed: true,
           delay: 250
         },
@@ -212,10 +219,10 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
         },
         events: {
           show() {
-            document.body.style.overflow = 'hidden';
+            // document.body.style.overflow = 'hidden';
           },
           hide() {
-            document.body.style.overflow = '';
+            // document.body.style.overflow = '';
           }
         }
       });
