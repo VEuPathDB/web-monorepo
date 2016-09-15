@@ -450,9 +450,10 @@ sub geneTitleGB2 {
   my ($seqId) = $f->get_tag_values("Contig");
   my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
 
+  my $baseUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST};
   my $baseRecordUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST} . $ENV{CONTEXT_PATH};
 
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseRecordUrl'))};
+  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseUrl','$baseRecordUrl'))};
 } 
 
 
