@@ -6,6 +6,7 @@ import { projectId, webAppUrl } from '../../config';
 import {NativeCheckboxList} from 'wdk-client/Components';
 import { pure } from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
+import {preorderSeq} from 'wdk-client/TreeUtils';
 import {isNodeOverflowing} from '../../util/domUtils';
 import DatasetGraph from '../common/DatasetGraph';
 import Sequence from '../common/Sequence';
@@ -63,10 +64,19 @@ export class RecordOverview extends Component {
   }
 
   renderThumbnails() {
+    let { store } = this.context;
     let { recordClass } = this.props;
     let { attributes, tables } = this.props.record;
     let { gene_type, protein_expression_gtracks } = attributes;
     let isProteinCoding = gene_type === 'protein coding';
+    // Get field present in record instance. This is leveraging the fact that
+    // we filter the category tree in the store based on the contents of
+    // MetaTable.
+    let instanceFields = new Set(
+      preorderSeq(store.getState().categoryTree)
+      .filter(node => !node.children.length)
+      .map(node => node.properties.name[0])
+      .toArray());
     let transcriptomicsThumbnail = {
       displayName: 'Transcriptomics',
       element: <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}/>,
@@ -75,16 +85,12 @@ export class RecordOverview extends Component {
 
     let filteredGBrowseContexts = seq(Gbrowse.contexts)
     // inject transcriptomicsThumbnail before protein thumbnails
-    .flatMap(context => context.gbrowse_url === 'FeaturesPbrowseUrl'
+    .flatMap(context => (context.gbrowse_url === 'FeaturesPbrowseUrl')
       ? [ transcriptomicsThumbnail, context ]
       : [ context ]
     )
-    .filter(context => {
-      return context === transcriptomicsThumbnail || context.gbrowse_url in attributes && (
-        !context.isPbrowse || (isProteinCoding && context.gbrowse_url !== 'ProteomicsPbrowseUrl') ||
-          (isProteinCoding && context.gbrowse_url === 'ProteomicsPbrowseUrl' && protein_expression_gtracks)
-      );
-    })
+    // remove thumbnails whose associated fields are not present in record instance
+    .filter(context => instanceFields.has(context.anchor))
     .map(context => context === transcriptomicsThumbnail
       ? Object.assign({}, context, {
           data: {
