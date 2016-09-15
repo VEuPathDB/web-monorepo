@@ -50,7 +50,7 @@
 	metadata that are publicly available either at official repositories or here on PlasmoDB.<br><br>
 	</section>
 	Example timeline of an Experiment:<br>
-	<img align="middle" src="images/Ex3WF.jpg" height="208px" width="500px">
+	<img align="middle" src="images/expt3WF.jpg" height="208px" width="500px">
 	
 	</div>
    </div>
@@ -76,7 +76,7 @@
     <section>
     MaHPIC Experiment 04 consisted of 5 Rhesus macaques (Macacca mulatta), infected with Plasmodium cynomolgi (B strain) over a 100-day period.
     
-    <img align="middle" src="images/Ex3WF.jpg" height="208px" width="500px">
+    <img align="middle" src="images/expt3WF.jpg" height="208px" width="500px">
     
 	 <ul>
 	  <li>Description of experiment goals</li>
