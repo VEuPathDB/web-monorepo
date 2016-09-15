@@ -121,7 +121,7 @@ RecordOverview.contextTypes = {
   store: PropTypes.object.isRequired
 };
 
-let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
+let expressionRE = /ExpressionGraphs|HostResponseGraphs|CrisprPhenotypeGraphs|PhenotypeGraphs$/;
 
 export function RecordTable(props) {
   return expressionRE.test(props.table.name)              ? <DatasetGraphTable {...props} />
@@ -159,6 +159,17 @@ const DatasetGraphTable = pure(function DatasetGraphTable(props) {
     }
     );
 
+  }
+  else if(props.table.name == "CrisprPhenotypeGraphs") {
+
+    dataTable = Object.assign({}, {
+      value: props.record.tables.CrisprPhenotypeGraphsDataTable,
+      table: props.recordClass.tables.find(obj => obj.name == "CrisprPhenotypeGraphsDataTable"),
+      record: props.record,
+      recordClass: props.recordClass,
+      DefaultComponent: props.DefaultComponent
+    }
+    );
   }
   else {
     dataTable = Object.assign({}, {
