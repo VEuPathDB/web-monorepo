@@ -1,4 +1,4 @@
-/* global jQuery */
+/* global Balloon, jQuery, Wdk, apidb */
 
 //********************************************************************************/
 // Two configurations available for gene pop-ups:
@@ -20,6 +20,16 @@ function getGbrowsePopupConfig(showFav, saveRowTitle, addBasketText, removeBaske
 	return config;
 }
 
+/**
+ * Record descriptor used for wdkService calls
+ */
+function createRecordDescriptor(sourceId, projectId) {
+  return {
+    id: [ { name: 'project_id', value: projectId }, { name: 'source_id', value: sourceId } ],
+    recordClassName: 'GeneRecordClasses.GeneRecordClass'
+  };
+}
+
 /****** Table-building utilities ******/
 
 function table(rows) {
@@ -36,75 +46,108 @@ function fiveColRow(one, two, three, four, five) {
 
 /****** Favorite link functions for GBrowse ******/
 
-var saveFavTextLink = 'As Favorite <img width="20" src="/a/wdk/images/favorite_gray.gif"/>';
-var removeFavTextLink = 'Remove From Favorites <img width="20" src="/a/wdk/images/favorite_color.gif"/>';
+var saveFavTextLink = '<img width="16" src="/a/wdk/images/favorite_gray.gif"/> Add As Favorite';
+var removeFavTextLink = '<img width="16" src="/a/wdk/images/favorite_color.gif"/> Remove From Favorites';
+var loadingFavTextLink = '<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> <span class="sr-only">Loading...</span>';
 
 function applyCorrectFavoriteLink(sourceId, projectId) {
-	wdk.favorite.performIfItemIsFavorite(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
-			function() { setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', removeFavTextLink); },
-			function() { /* no action needed if not a favorite */ });
+  apidb.context.wdkService.getFavoriteStatus(createRecordDescriptor(sourceId, projectId))
+    .then(function(isInFavorites) {
+      if (isInFavorites)
+        return setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', removeFavTextLink);
+
+      else
+        return setSavedItemLink(projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', saveFavTextLink);
+    }).catch(logAndAlert);
 }
 
 function addGeneAsFavorite(projectId, sourceId) {
-	performSavedItemOp(addToFavorites, projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', removeFavTextLink);
+  if (checkLogin())
+    setSavedItemLink(projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', loadingFavTextLink);
+    apidb.context.wdkService.updateFavoriteStatus(createRecordDescriptor(sourceId, projectId), true)
+      .then(function() {
+        setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', removeFavTextLink);
+      }).catch(logAndAlert);
 }
 
 function removeGeneAsFavorite(projectId, sourceId) {
-	performSavedItemOp(removeFromFavorites, projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', saveFavTextLink);
+  if (checkLogin())
+    setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', loadingFavTextLink);
+    apidb.context.wdkService.updateFavoriteStatus(createRecordDescriptor(sourceId, projectId), false)
+      .then(function() {
+        setSavedItemLink(projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', saveFavTextLink);
+      }).catch(logAndAlert);
 }
 
 
 /****** Basket link functions for GBrowse ******/
 
-var saveBasketTextLink = GbrowsePopupConfig.addBasketText + ' <img width="20" src="/a/wdk/images/basket_gray.png"/>';
-var removeBasketTextLink = GbrowsePopupConfig.removeBasketText + ' <img width="20" src="/a/wdk/images/basket_color.png"/>';
+var saveBasketTextLink = '<img width="16" src="/a/wdk/images/basket_gray.png"/> ' + GbrowsePopupConfig.addBasketText;
+var removeBasketTextLink = '<img width="16" src="/a/wdk/images/basket_color.png"/> ' + GbrowsePopupConfig.removeBasketText;
+var loadingBasketTextLink = '<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> <span class="sr-only">Loading...</span>';
 
 function applyCorrectBasketLink(sourceId, projectId) {
-	wdk.basket.performIfItemInBasket(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
-			function() { setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink); },
-			function() { /* no action needed if not in basket */ });
+  apidb.context.wdkService.getBasketStatus(createRecordDescriptor(sourceId, projectId))
+    .then(function(isInBasket) {
+      if (isInBasket)
+        setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
+
+      else
+        setSavedItemLink(projectId, sourceId, 'gbbasket', 'addGeneToBasket', saveBasketTextLink);
+    }).catch(logAndAlert);
 }
 
 function addGeneToBasket(projectId, sourceId) {
-	performSavedItemOp(wdk.basket.addToBasket, projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
+  if (checkLogin())
+    setSavedItemLink(projectId, sourceId, 'gbbasket', 'addGeneToBasket', loadingBasketTextLink);
+    apidb.context.wdkService.updateBasketStatus(createRecordDescriptor(sourceId, projectId), true)
+      .then(function() {
+        setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
+      }).catch(logAndAlert);
 }
 
 function removeGeneFromBasket(projectId, sourceId) {
-	performSavedItemOp(wdk.basket.removeFromBasket, projectId, sourceId, 'gbbasket', 'addGeneToBasket', saveBasketTextLink);
+  if (checkLogin())
+    setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', loadingBasketTextLink);
+    apidb.context.wdkService.updateBasketStatus(createRecordDescriptor(sourceId, projectId), false)
+      .then(function() {
+        setSavedItemLink(projectId, sourceId, 'gbbasket', 'addGeneToBasket', saveBasketTextLink);
+      }).catch(logAndAlert);
 }
 
 
 /****** Utility link functions for GBrowse ******/
 
-function checkLogin() {
-	if (!wdk.user.isUserLoggedIn()) {
-    // Balloon is not used on gene pages
-		if ('Balloon' in window) Balloon.prototype.hideTooltip(1);
-		wdk.user.login();
-		return; // if user logs in, will not get here
-	}
+function logAndAlert(error) {
+  console.error(error);
+  alert('Unable to complete the action.');
 }
 
-function performSavedItemOp(funcToCall, projectId, sourceId, selectionSuffix, nextFunction, nextLinkText) {
-	checkLogin();
-	jQuery('#'+sourceId+'_'+selectionSuffix).html('<img width="20" src="/a/wdk/images/loading.gif"/>');
-	funcToCall(projectId, sourceId, 'GeneRecordClasses.GeneRecordClass',
-		    function(result) {
-				setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText);
-			});
+function checkLogin() {
+  var user = apidb.context.stores.GlobalDataStore.getState().user;
+  if (user.isGuest) {
+    // Balloon is not used on gene pages
+    if ('Balloon' in window) Balloon.prototype.hideTooltip(1);
+    apidb.context.dispatchAction(Wdk.ActionCreators.UserActionCreators.showLoginForm())
+  }
+  return !user.isGuest;
 }
 
 function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText) {
-	jQuery('#'+sourceId+'_'+selectionSuffix)
-    	.html("<a href=\"javascript:void(0);\" onclick=\""+nextFunction+"('"+projectId+"','"+sourceId+"');\">"+nextLinkText+"</a>");
+  jQuery('#' + sourceId + '_' + selectionSuffix).html(
+    '<button' +
+      ' type="button"' +
+      ' onclick="' + nextFunction + '(\'' + projectId + '\',\'' + sourceId + '\')"' +
+      ' style="width: 105px">' + nextLinkText + '</button>');
 }
 
 function getSaveRowLinks(projectId, sourceId) {
 	var saveRowLinks;
-	if (wdk.user.isUserLoggedIn()) {
+  var user = apidb.context.stores.GlobalDataStore.getState().user;
+	if (!user.isGuest) {
 		// enable saving as favorite or to basket
-		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><a href=\"javascript:void(0);\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + saveFavTextLink + "</a></span>";
-		var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><a href=\"javascript:void(0);\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">" + saveBasketTextLink + "</a></span>";
+		var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><button style=\"width: 105px\" type=\"button\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + loadingFavTextLink + "</button></span>";
+    var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><button style=\"width: 105px\" type=\"button\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">" + loadingBasketTextLink + "</button></span>";
 
 		if (GbrowsePopupConfig.showFavoriteLinks) {
 			saveRowLinks = favoriteLink + " | " + basketLink;
