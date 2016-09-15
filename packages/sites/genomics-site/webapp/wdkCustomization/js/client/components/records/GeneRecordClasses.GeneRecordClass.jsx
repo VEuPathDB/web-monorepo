@@ -122,6 +122,7 @@ RecordOverview.contextTypes = {
 };
 
 let expressionRE = /ExpressionGraphs|HostResponseGraphs|PhenotypeGraphs$/;
+
 export function RecordTable(props) {
   return expressionRE.test(props.table.name)              ? <DatasetGraphTable {...props} />
        : props.table.name === 'MercatorTable'             ? <MercatorTable {...props} />
@@ -148,7 +149,16 @@ const DatasetGraphTable = pure(function DatasetGraphTable(props) {
   let dataTable;
 
   if(props.table.name == "HostResponseGraphs") {
-    // TODO
+
+    dataTable = Object.assign({}, {
+      value: props.record.tables.HostResponseGraphsDataTable,
+      table: props.recordClass.tables.find(obj => obj.name == "HostResponseGraphsDataTable"),
+      record: props.record,
+      recordClass: props.recordClass,
+      DefaultComponent: props.DefaultComponent
+    }
+    );
+
   }
   else {
     dataTable = Object.assign({}, {
