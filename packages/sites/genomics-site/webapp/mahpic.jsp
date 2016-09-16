@@ -17,8 +17,7 @@
 
 
 <div class="wdk-toggle" data-show="false">
-<h3 class="wdk-toggle-name"><a href="#">High Throughput or Next Generation Sequencing</a>
-   &#8211; RNA, DNA or ChIP Sequencing</h3>
+<h3 class="wdk-toggle-name"><a href="#">What is MaHPIC</a></h3>
 <div class="wdk-toggle-content">
 
   <h3>What is MaHPIC?</h3>
