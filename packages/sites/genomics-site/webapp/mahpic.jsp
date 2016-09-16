@@ -56,9 +56,11 @@
 	
 	<section>
 	<b>Suggested by Susanne:</b><br>
-	MaHPIC experiments are longitudinal studies of Plasmodium infections in non-human primates designed to elucidate host-pathogen interactions. 
-    Animals are infected with sporozoites and monitored daily over 100 days for clinical parameters.  At certain milestones of disease progression, blood and bone 
-	marrow samples are collected and analyzed with 5 omics technologies by the MaHPIC teams to produce a diverse set of data and 
+	MaHPIC experiments are longitudinal studies of Plasmodium infections in non-human primates 
+	designed to elucidate host-pathogen interactions. 
+    Infected animals and uninfected controls are monitored daily over 100 days for clinical parameters.  
+    In addition, blood and bone marrow samples are collected at certain milestones of disease progression, 
+    and analyzed with 5 omics technologies by the MaHPIC teams. The experimental strategy produces a diverse set of data and 
 	metadata.  The result is a comprehensive array of omics data sets plus clinical data and 
 	metadata that are publicly available either at official repositories, here on PlasmoDB or on HostDB.<br><br>
 	</section>
@@ -110,7 +112,6 @@
 </div>	
 </body>
 
-hello
 
 
 
