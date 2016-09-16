@@ -509,6 +509,11 @@ h4 {
   white-space: nowrap;
 }
 
+.wdk-RecordTable__UserComments th.wdk-DataTableCell,
+.wdk-RecordTable__UserComments .wdk-DataTableCell__comment_date {
+  white-space: nowrap;
+}
+
 .eupathdb-MercatorTable {
   padding: 0 1em;
   border: 1px solid lightgray;
