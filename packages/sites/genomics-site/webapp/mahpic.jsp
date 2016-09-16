@@ -20,7 +20,7 @@
 <h3 class="wdk-toggle-name"><a href="#">What is MaHPIC</a></h3>
 <div class="wdk-toggle-content">
 
-  <h3>What is MaHPIC?</h3>
+ <!-- <h3>What is MaHPIC?</h3> -->
     <section>
 	The <a href="http://www.systemsbiology.emory.edu/index.html">Malaria Host-Pathogen Interaction Center (MaHPIC)</a> was established 
 	in September 2012 by the 
@@ -37,8 +37,13 @@
 	<p>
 </div>
 </div>	
+
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">What is a MaHPIC 'Experiment'?</a></h3>
+<div class="wdk-toggle-content">	
 	
-  <h3>What is a MaHPIC 'Experiment'?</h3>	
+	 <!-- <h3>What is a MaHPIC Experiment?</h3> -->
 	<section>
 	The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  Experiments are usually 
 	planned for 100 day periods.  In addition to uninfected control experiments, NHPs are infected with Plasmodium parasites and physical samples 
@@ -52,16 +57,23 @@
 	<section>
 	<b>Suggested by Susanne:</b><br>
 	MaHPIC experiments are longitudinal studies of Plasmodium infections in non-human primates designed to elucidate host-pathogen interactions. 
-    Animals are infected with sporozoites and monitored daily for clinical parameters.  At certain milestones of disease progression, blood and bone 
-	marrow samples are collected and analized with 5 omics technologies.  The result is a comprehensive array of data sets including clinical data and 
-	metadata that are publicly available either at official repositories or here on PlasmoDB.<br><br>
+    Animals are infected with sporozoites and monitored daily over 100 days for clinical parameters.  At certain milestones of disease progression, blood and bone 
+	marrow samples are collected and analyzed with 5 omics technologies by the MaHPIC teams to produce a diverse set of data and 
+	metadata.  The result is a comprehensive array of omics data sets plus clinical data and 
+	metadata that are publicly available either at official repositories, here on PlasmoDB or on HostDB.<br><br>
 	</section>
 	Example timeline of an Experiment:<br>
-	<img align="middle" src="images/expt3WF.jpg" height="208px" width="400px">
+	<img align="middle" src="images/expt3WF.jpg" height="300px" width="400px">
 	
 	</div>
+</div>
+</div>
 
-<div style="margin-left: 1em;">   
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">What is a MaHPIC 'Experiment'?</a></h3>
+<div class="wdk-toggle-content">
+
+  <div style="margin-left: 1em;">   
   <h3>Which MaHPIC Data are Available?</h3>
     <section>
 	Susanne would like to make some suggestions for the What is MaHPIC section but this will have to wait till next week.
@@ -74,6 +86,8 @@
 	from a MaHPIC Experiment.  The results produced by the MaHPIC Malaria Core are the backbone of MaHPIC experiments.<br><br>
 	The list of available datasets, publications, and associated data in other public repositories shown below will be updated!
     </section>
+   </div>
+</div>
 </div>
 
 <div style="margin-left: 1em;">	
