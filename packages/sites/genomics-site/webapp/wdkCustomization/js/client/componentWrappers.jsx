@@ -1,7 +1,6 @@
-import lodash from 'lodash';
 import React from 'react';
 import { projectId } from './config';
-import { CollapsibleSection, RecordAttribute as WdkRecordAttribute } from 'wdk-client/Components';
+import { CollapsibleSection, RecordAttribute as WdkRecordAttribute, Link } from 'wdk-client/Components';
 import {renderWithCustomElements} from './components/customElements';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -16,6 +15,8 @@ import { loadBasketCounts } from './actioncreators/GlobalActionCreators';
 
 export let Header = () => ApiHeader;
 export let Footer = () => ApiFooter;
+
+const stopPropagation = event => event.stopPropagation();
 
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
@@ -150,7 +151,6 @@ export function DownloadForm() {
 
 export function RecordTable(DefaultComponent) {
   return function ApiRecordTable(props) {
-    // if (lodash.isEmpty(props.value)) return <DefaultComponent {...props}/>;
     let ResolvedComponent =
       findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
     return (
@@ -159,6 +159,35 @@ export function RecordTable(DefaultComponent) {
       </RecordTableContainer>
     );
   };
+}
+
+export function RecordTableSection(DefaultComponent) {
+  return function ApiRecordTableSection(props) {
+    return (
+      <DefaultComponent {...props} table={Object.assign({}, props.table, {
+        displayName: (
+          <span>
+            {props.table.displayName}
+            <Link
+              style={{
+                fontSize: '.8em',
+                fontWeight: 'normal',
+                marginLeft: '1em'
+              }}
+              onClick={stopPropagation}
+              to={{
+                pathname: 'search/dataset/DatasetsByReferenceName/result',
+                query: {
+                  record_class: props.record.recordClassName,
+                  reference_name: props.table.name
+                }
+              }}
+            ><i className="fa fa-database"/> Data sets</Link>
+          </span>
+        )
+      })}/>
+    );
+  }
 }
 
 export function RecordAttribute(DefaultComponent) {
