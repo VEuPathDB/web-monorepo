@@ -16,6 +16,11 @@
 <div style="margin-left: 1em;">
 
 
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">High Throughput or Next Generation Sequencing</a>
+   &#8211; RNA, DNA or ChIP Sequencing</h3>
+<div class="wdk-toggle-content">
+
   <h3>What is MaHPIC?</h3>
     <section>
 	The <a href="http://www.systemsbiology.emory.edu/index.html">Malaria Host-Pathogen Interaction Center (MaHPIC)</a> was established 
@@ -50,10 +55,11 @@
 	metadata that are publicly available either at official repositories or here on PlasmoDB.<br><br>
 	</section>
 	Example timeline of an Experiment:<br>
-	<img align="middle" src="images/expt3WF.jpg" height="208px" width="500px">
+	<img align="middle" src="images/expt3WF.jpg" height="208px" width="400px">
 	
 	</div>
    </div>
+  </div> 
 <div style="margin-left: 1em;">   
   <h3>Which MaHPIC Data are Available?</h3>
     <section>
@@ -76,7 +82,7 @@
     <section>
     MaHPIC Experiment 04 consisted of 5 Rhesus macaques (Macacca mulatta), infected with Plasmodium cynomolgi (B strain) over a 100-day period.
     
-    <img align="middle" src="images/expt3WF.jpg" height="208px" width="500px">
+    <img align="middle" src="images/expt3WF.jpg" height="208px" width="400px">
     
 	 <ul>
 	  <li>Description of experiment goals</li>
