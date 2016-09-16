@@ -11,7 +11,7 @@
 <imp:pageFrame title="${wdkModel.displayName} :: MaHPIC">
 
 <h1>MaHPIC - The Malaria Host-Pathogen Interaction Center</h1>
-
+<center><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a>	<a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></center>
 <h2>An Introduction to MaHPIC</h2>
 <div style="margin-left: 1em;">
 
@@ -35,7 +35,8 @@
 	fundamental to developing and evaluating new malaria diagnostic tools, antimalarial drugs and vaccines for different types of malaria.
 	</section/>
 	<p>
-	
+</div>
+</div>	
 	
   <h3>What is a MaHPIC 'Experiment'?</h3>	
 	<section>
@@ -45,7 +46,9 @@
 	Samples are then analyzed by the MaHPIC teams and a diverse set of data and metadata are produced.  
 	</section>
 	<p>
+	
 	<div style="margin-left: 1em;">	
+	
 	<section>
 	<b>Suggested by Susanne:</b><br>
 	MaHPIC experiments are longitudinal studies of Plasmodium infections in non-human primates designed to elucidate host-pathogen interactions. 
@@ -57,8 +60,7 @@
 	<img align="middle" src="images/expt3WF.jpg" height="208px" width="400px">
 	
 	</div>
-   </div>
-  </div> 
+
 <div style="margin-left: 1em;">   
   <h3>Which MaHPIC Data are Available?</h3>
     <section>
