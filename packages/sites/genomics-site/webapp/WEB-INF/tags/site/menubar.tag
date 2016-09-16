@@ -223,7 +223,9 @@
 
   <li >
     <c:set var="galaxyRoute" value="${baseUrl}/app/galaxy-orientation"/>
-    <a style="padding:5px 1em" href="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? galaxyRoute : 'https://eupathdb.globusgenomics.org/'}">
+    <a style="padding:5px 1em"
+      href="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? galaxyRoute : 'https://eupathdb.globusgenomics.org/'}"
+      target="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? '' : '_blank'}">
       <imp:image src="wdk/images/new-feature.png" height="14" />
       <span>Analyze My Experiment</span>
     </a>
