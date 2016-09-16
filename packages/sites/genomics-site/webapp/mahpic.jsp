@@ -10,7 +10,7 @@
 
 <imp:pageFrame title="${wdkModel.displayName} :: MaHPIC">
 
-<h1>MaHPIC - The Malaria Host-Pathogen Interaction Center</h1>
+<h1>Access Data from <br>MaHPIC - The Malaria Host-Pathogen Interaction Center</h1>
 <center><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></center>
 <h2>An Introduction to MaHPIC</h2>
 <div style="margin-left: 1em;">
@@ -72,7 +72,7 @@
 </div>
 
 <div class="wdk-toggle" data-show="false">
-<h3 class="wdk-toggle-name"><a href="#">What is a MaHPIC 'Experiment'?</a></h3>
+<h3 class="wdk-toggle-name"><a href="#">Which MaHPIC Data are Available?</a></h3>
 <div class="wdk-toggle-content">
 
   <div style="margin-left: 1em;">   
