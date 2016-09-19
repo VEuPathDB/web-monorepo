@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import { projectId, webAppUrl } from '../../config';
@@ -13,7 +13,6 @@ import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
 import {SnpsAlignmentForm} from '../common/Snps';
-import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -33,7 +32,7 @@ export class RecordOverview extends Component {
   }
 
   handleThumbnailClick({ anchor }) {
-    this.context.eventHandlers.toggleSection(anchor, true);
+    this.context.eventHandlers.updateSectionVisibility(anchor, true);
   }
 
   componentDidUpdate() {
@@ -127,17 +126,21 @@ RecordOverview.contextTypes = {
   store: PropTypes.object.isRequired
 };
 
-let expressionRE = /ExpressionGraphs|HostResponseGraphs|CrisprPhenotypeGraphs|PhenotypeGraphs$/;
-
 export function RecordTable(props) {
-  return expressionRE.test(props.table.name)              ? <DatasetGraphTable {...props} />
-       : props.table.name === 'MercatorTable'             ? <MercatorTable {...props} />
-       : props.table.name === 'ProteinProperties'         ? <ProteinPbrowseTable {...props} />
-       : props.table.name === 'ProteinExpressionPBrowse'  ? <ProteinPbrowseTable {...props} />
-       : props.table.name === 'Sequences'                 ? <SequencesTable {...props} />
-       : props.table.name === 'UserComments'              ? <UserCommentsTable {...props} />
-       : props.table.name === 'SNPsAlignment'             ? <SNPsAlignment {...props} />
-       : <props.DefaultComponent {...props} />
+  switch(props.table.name) {
+    case 'ExpressionGraphs':
+    case 'ProteinExpressionGraphs':   return <DatasetGraphTable {...props} dataTableName="ExpressionGraphsDataTable"/>
+    case 'HostResponseGraphs':        return <DatasetGraphTable {...props} dataTableName="HostResponseGraphsDataTable"/>
+    case 'CrisprPhenotypeGraphs':     return <DatasetGraphTable {...props} dataTableName="CrisprPhenotypeGraphsDataTable"/>
+    case 'PhenotypeGraphs':           return <DatasetGraphTable {...props} dataTableName="PhenotypeGraphsDataTable"/>
+    case 'MercatorTable':             return <MercatorTable {...props} />
+    case 'ProteinProperties':         return <ProteinPbrowseTable {...props} />
+    case 'ProteinExpressionPBrowse':  return <ProteinPbrowseTable {...props} />
+    case 'Sequences':                 return <SequencesTable {...props} />
+    case 'UserComments':              return <UserCommentsTable {...props} />
+    case 'SNPsAlignment':             return <SNPsAlignment {...props} />
+    default:                          return <props.DefaultComponent {...props} />
+  }
 }
 
 function SNPsAlignment(props) {
@@ -151,152 +154,122 @@ function SNPsAlignment(props) {
   )
 }
 
-const DatasetGraphTable = pure(function DatasetGraphTable(props) {
-  let dataTable;
-
-  if(props.table.name == "HostResponseGraphs") {
-
-    dataTable = Object.assign({}, {
-      value: props.record.tables.HostResponseGraphsDataTable,
-      table: props.recordClass.tables.find(obj => obj.name == "HostResponseGraphsDataTable"),
-      record: props.record,
-      recordClass: props.recordClass,
-      DefaultComponent: props.DefaultComponent
-    }
-    );
-
-  }
-  else if(props.table.name == "CrisprPhenotypeGraphs") {
-
-    dataTable = Object.assign({}, {
-      value: props.record.tables.CrisprPhenotypeGraphsDataTable,
-      table: props.recordClass.tables.find(obj => obj.name == "CrisprPhenotypeGraphsDataTable"),
-      record: props.record,
-      recordClass: props.recordClass,
-      DefaultComponent: props.DefaultComponent
-    }
-    );
-  }
-  else {
-    dataTable = Object.assign({}, {
-      value: props.record.tables.ExpressionGraphsDataTable,
-      table: props.recordClass.tables.find(obj => obj.name == "ExpressionGraphsDataTable"),
-      record: props.record,
-      recordClass: props.recordClass,
-      DefaultComponent: props.DefaultComponent
-    }
-    );
-
-  }
-
+function DatasetGraphTable(props) {
+  let dataTable = {
+    value: props.record.tables[props.dataTableName],
+    table: props.recordClass.tablesMap[props.dataTableName],
+    record: props.record,
+    recordClass: props.recordClass,
+    DefaultComponent: props.DefaultComponent
+  };
   return (
     <props.DefaultComponent
       {...props}
-      childRow={childProps =>
-        <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
+      childRow={childProps => <DatasetGraph {...childProps} dataTable={dataTable} />}
     />
   );
-});
+}
 
-const ProteinPbrowseTable = pure(function ProteinPbrowseTable(props) {
+function ProteinPbrowseTable(props) {
   return (
     <props.DefaultComponent
       {...props}
-      childRow={childProps =>
-        <Gbrowse.ProteinContext {...props} rowData={props.value[childProps.rowIndex]}/>}
+      childRow={childProps => <Gbrowse.ProteinContext {...childProps} />}
     />
   );
-});
+}
 
-const SequencesTable = pure(function SequencesTable(props) {
+const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
+  let utrClassName = 'eupathdb-UtrSequenceNucleotide';
+  let intronClassName = 'eupathdb-IntronSequenceNucleotide';
+
+  let {
+    protein_sequence,
+    transcript_sequence,
+    genomic_sequence,
+    protein_length,
+    transcript_length,
+    genomic_sequence_length,
+    five_prime_utr_coords,
+    three_prime_utr_coords,
+    gen_rel_intron_utr_coords
+  } = props.rowData;
+
+  let transcriptRegions = [
+    JSON.parse(five_prime_utr_coords) || undefined,
+    JSON.parse(three_prime_utr_coords) || undefined
+  ].filter(coords => coords != null)
+
+  let transcriptHighlightRegions = transcriptRegions.map(coords => {
+    return { className: utrClassName, start: coords[0], end: coords[1] };
+  });
+
+  let genomicRegions = JSON.parse(gen_rel_intron_utr_coords || '[]');
+
+  let genomicHighlightRegions = genomicRegions.map(coord => {
+    return {
+      className: coord[0] === 'Intron' ? intronClassName : utrClassName,
+      start: coord[1],
+      end: coord[2]
+    };
+  });
+
+  let genomicRegionTypes = lodash(genomicRegions)
+    .map(region => region[0])
+    .sortBy()
+    .uniq(true)
+    .value();
+
+  let legendStyle = { marginRight: '1em', textDecoration: 'underline' };
   return (
-    <props.DefaultComponent
-      {...props}
-      childRow={childProps => {
-        let utrClassName = 'eupathdb-UtrSequenceNucleotide';
-        let intronClassName = 'eupathdb-IntronSequenceNucleotide';
+    <div>
+      {protein_sequence == null ? null : (
+        <div style={{ padding: '1em' }}>
+          <h3>Predicted Protein Sequence</h3>
+          <div><span style={legendStyle}>{protein_length} aa</span></div>
+          <Sequence sequence={protein_sequence}/>
+        </div>
+        )}
 
-        let {
-          protein_sequence,
-          transcript_sequence,
-          genomic_sequence,
-          protein_length,
-          transcript_length,
-          genomic_sequence_length,
-          five_prime_utr_coords,
-          three_prime_utr_coords,
-          gen_rel_intron_utr_coords
-        } = childProps.rowData;
+        {protein_sequence == null ? null : <hr/>}
 
-        let transcriptRegions = [
-          JSON.parse(five_prime_utr_coords) || undefined,
-          JSON.parse(three_prime_utr_coords) || undefined
-        ].filter(coords => coords != null)
-
-        let transcriptHighlightRegions = transcriptRegions.map(coords => {
-          return { className: utrClassName, start: coords[0], end: coords[1] };
-        });
-
-        let genomicRegions = JSON.parse(gen_rel_intron_utr_coords || '[]');
-
-        let genomicHighlightRegions = genomicRegions.map(coord => {
-          return {
-            className: coord[0] === 'Intron' ? intronClassName : utrClassName,
-            start: coord[1],
-            end: coord[2]
-          };
-        });
-
-        let genomicRegionTypes = lodash(genomicRegions)
-        .map(region => region[0])
-        .sortBy()
-        .uniq(true)
-        .value();
-
-        let legendStyle = { marginRight: '1em', textDecoration: 'underline' };
-        return (
+        <div style={{ padding: '1em' }}>
+          <h3>Predicted RNA/mRNA Sequence (Introns spliced out{ transcriptRegions.length > 0 ? '; UTRs highlighted' : null })</h3>
           <div>
-            {protein_sequence == null ? null : (
-              <div style={{ padding: '1em' }}>
-                <h3>Predicted Protein Sequence</h3>
-                <div><span style={legendStyle}>{protein_length} aa</span></div>
-                <Sequence sequence={protein_sequence}/>
-              </div>
-            )}
-
-            {protein_sequence == null ? null : <hr/>}
-
-            <div style={{ padding: '1em' }}>
-              <h3>Predicted RNA/mRNA Sequence (Introns spliced out{ transcriptRegions.length > 0 ? '; UTRs highlighted' : null })</h3>
-              <div>
-                <span style={legendStyle}>{transcript_length} bp</span>
-                { transcriptRegions.length > 0 ? <span style={legendStyle} className={utrClassName}>&nbsp;UTR&nbsp;</span> : null }
-              </div>
-              <Sequence sequence={transcript_sequence}
-                highlightRegions={transcriptHighlightRegions}/>
-            </div>
-
-            <div style={{ padding: '1em' }}>
-              <h3>Genomic Sequence { genomicRegionTypes.length > 0 ? ' (' + genomicRegionTypes.map(t => t + 's').join(' and ') + ' highlighted)' : null}</h3>
-              <div>
-                <span style={legendStyle}>{genomic_sequence_length} bp</span>
-                {genomicRegionTypes.map(t => {
-                  let className = t === 'Intron' ? intronClassName : utrClassName;
-                  return (
-                    <span style={legendStyle} className={className}>&nbsp;{t}&nbsp;</span>
-                  );
-                })}
-              </div>
-              <Sequence sequence={genomic_sequence}
-                highlightRegions={genomicHighlightRegions}/>
-            </div>
-
+            <span style={legendStyle}>{transcript_length} bp</span>
+            { transcriptRegions.length > 0 ? <span style={legendStyle} className={utrClassName}>&nbsp;UTR&nbsp;</span> : null }
           </div>
-        );
-      }}
-    />
+          <Sequence sequence={transcript_sequence}
+            highlightRegions={transcriptHighlightRegions}/>
+        </div>
+
+        <div style={{ padding: '1em' }}>
+          <h3>Genomic Sequence { genomicRegionTypes.length > 0 ? ' (' + genomicRegionTypes.map(t => t + 's').join(' and ') + ' highlighted)' : null}</h3>
+          <div>
+            <span style={legendStyle}>{genomic_sequence_length} bp</span>
+            {genomicRegionTypes.map(t => {
+              let className = t === 'Intron' ? intronClassName : utrClassName;
+              return (
+                <span style={legendStyle} className={className}>&nbsp;{t}&nbsp;</span>
+                );
+            })}
+          </div>
+          <Sequence sequence={genomic_sequence}
+            highlightRegions={genomicHighlightRegions}/>
+        </div>
+
+      </div>
   );
 });
+
+function SequencesTable(props) {
+  return (
+    <props.DefaultComponent
+      {...props}
+      childRow={childProps => <SequencesTableChildRow {...childProps} />}
+    />
+  );
+}
 
 function MercatorTable(props) {
   return (

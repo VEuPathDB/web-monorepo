@@ -81,9 +81,8 @@ export function GbrowseContext(props) {
 
 export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
-  let divId = props.table.name + "-" + props.rowData.transcript_id
   return (
-    <div id={divId} className="eupathdb-GbrowseContext">
+    <div className="eupathdb-GbrowseContext">
       <GbrowseImage url={url} includeImageMap={true} />
       <div>
         <a href={makeGbrowseLinkUrl(url)}>View in genome browser</a>

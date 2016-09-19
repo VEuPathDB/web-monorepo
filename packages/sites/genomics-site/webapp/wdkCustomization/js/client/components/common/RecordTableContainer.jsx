@@ -1,4 +1,4 @@
-import { cloneElement, PropTypes } from 'react';
+import { cloneElement, Component, PropTypes } from 'react';
 import { compose, get } from 'lodash';
 import { withStore, withActions } from '../../util/component';
 import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
@@ -6,23 +6,36 @@ import { updateTableState } from '../../actioncreators/RecordViewActionCreators'
 // always open the first row
 const defaultExpandedRows = [ 0 ];
 
-const updateExpandedRowsWith = ({ updateTableState, table, tableState }) => (expandedRows) =>
-  updateTableState(table.name,
-    Object.assign({}, tableState, { expandedRows }))
-
 /**
  * Handle state changes to table
  */
-function RecordTableContainer(props) {
-  return cloneElement(props.children, {
-    expandedRows: get(props, 'tableState.expandedRows', defaultExpandedRows),
-    onExpandedRowsChange: updateExpandedRowsWith(props)
-  });
+class RecordTableContainer extends Component {
+
+  constructor(props) {
+    super(props);
+    this.updateExpandedRows = this.updateExpandedRows.bind(this);
+  }
+
+  updateExpandedRows(expandedRows) {
+    const { updateTableState, table, tableState } = this.props;
+    updateTableState(table.name, Object.assign({}, tableState, { expandedRows }));
+  }
+
+  render() {
+    return cloneElement(this.props.children, {
+      expandedRows: get(this.props, 'tableState.expandedRows', defaultExpandedRows),
+      onExpandedRowsChange: this.updateExpandedRows
+    });
+  }
+
 }
 
 RecordTableContainer.propTypes = {
-  children: PropTypes.element.isRequired
-}
+  children: PropTypes.element.isRequired,
+  table: PropTypes.object.isRequired,
+  tableState: PropTypes.object,
+  updateTableState: PropTypes.func.isRequired
+};
 
 const enhance = compose(
   withActions({ updateTableState }),

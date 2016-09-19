@@ -104,7 +104,7 @@ export function RecordMainSection(DefaultComponent) {
     return (
       <div>
         <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-        <RecordAttributionSection {...props}/>
+        {props.depth === 1 && <RecordAttributionSection {...props}/>}
       </div>
     );
   };
