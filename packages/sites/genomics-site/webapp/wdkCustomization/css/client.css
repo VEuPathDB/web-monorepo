@@ -874,7 +874,7 @@ h4 {
 
 #eupathdb-GalaxyTerms {
   width: 100%;
- /*  font-size: 110%; */
+  font-size: 1.2em;
 }
 #eupathdb-GalaxyTerms-initial {
  text-align: center;
@@ -882,23 +882,26 @@ h4 {
 }
 #eupathdb-GalaxyTerms img {
   width: 95%;
-  border: solid #365EA2 1px; 
+  border: solid #365EA2 1px;
 }
 #eupathdb-GalaxyTerms-submit {
   margin-top: 2em;
   text-align: center;
-  font-size: 120%;
 }
 .eupath-bold {
   font-weight: bold;
 }
 .eupath-bigItalic {
   font-style: italic;
-  font-size: 150%;
+  font-size: 1.2em;
   margin-top: 0;
 }
 
-/** 3-column grid with left and right columns at 20%, and middle column at 50% */
+.eupathdb-GalaxyTermsLead {
+  font-size: 1.2em;
+}
+
+/** 2-column grid */
 .eupathdb-GalaxyWelcomeGrid {
   display: flex;
   align-items: center;
@@ -907,20 +910,37 @@ h4 {
 }
 .eupathdb-GalaxyWelcomeGrid > div {
   width: 50%;
+  font-size: 1.1em;
 }
-.eupathdb-GalaxyWelcomeGrid > div:first-of-type,
-.eupathdb-GalaxyWelcomeGrid > div:last-of-type {
-  width: 20%;
+.eupathdb-GalaxyWelcomeGrid > div:first-of-type {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
 }
 .eupathdb-GalaxyWelcomeAnalysisList {
   margin: 0;
 }
 .eupathdb-GalaxyTermsContinueLink {
   text-align: center;
-  font-size: 130%;
+  font-size: 1.1em;
   margin: 1em 0;
 }
 
 .column-left{ float: left; width: 33%; }
 .column-right{ float: right; width: 33%; }
 .column-center{ display: inline-block; width: 33%; }
+
+.eupathdb-GalaxySignUpScreens {
+  display: flex;
+  justify-content: space-between;
+}
+.eupathdb-GalaxySignUpScreens > div {
+  width: 30%;
+}
+.eupathdb-GalaxySignUpScreenCaption {
+  font-size: 90%;
+  margin: .5em 0;
+}
+.eupathdb-GalaxySignUpScreen {
+  width: 320px;
+}
