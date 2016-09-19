@@ -25,7 +25,8 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
       visibleParts: null,
       descriptionCollapsed: true,
       dataTableCollapsed: true,
-      coverageCollapsed: true
+      coverageCollapsed: true,
+      showLogScale: true
     };
     this.handleDescriptionCollapseChange = descriptionCollapsed => {
       this.setState({ descriptionCollapsed });
@@ -124,7 +125,7 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
       );
     }
 
-    let { visibleParts, graphId, dataTable, datasetId, dataset_name} = this.state;
+    let { visibleParts, showLogScale, graphId, dataTable, datasetId, dataset_name} = this.state;
 
     let {
       assay_type,
@@ -133,10 +134,10 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
       graphIds,
       description,
       x_axis,
-      y_axis,
+      y_axis
     } = this.state.details;
 
-    let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}`;
+    let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}&wl=${showLogScale ? '1' : '0'}`;
 
     let imgUrl = baseUrlWithState + '&fmt=png';
 
@@ -157,7 +158,7 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
 
 
           {assay_type == 'RNA-seq' && covImgUrl ?
-           <CollapsibleSection 
+           <CollapsibleSection
                id={dataset_name + "Coverage"}
                className="eupathdb-GbrowseContext"
                headerContent="Coverage"
@@ -166,7 +167,7 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
                <div>
                    <a href={covImgUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
                </div>
- 
+
                <img width="450" src={covImgUrl}/>
            </CollapsibleSection>
            : null}
@@ -233,6 +234,18 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
                 /> {part} </label>
             );
           })}
+
+          <h4>Graph options</h4>
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                checked={showLogScale}
+                onClick={e => this.setState({ loading: true, showLogScale: e.target.checked })}
+              /> Show log Scale (not applicable for log(ratio) graphs, percentile graphs or data tables)
+            </label>
+          </div>
+
         </div>
       </div>
     );
