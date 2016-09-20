@@ -1,7 +1,8 @@
 import {PropTypes} from 'react';
 import {once, memoize, throttle} from 'lodash';
 import $ from 'jquery';
-import { ComponentUtils } from 'wdk-client';
+import { PureComponent } from 'wdk-client/ComponentUtils';
+import { Loading } from 'wdk-client/Components';
 
 export let contexts = [
   {
@@ -66,15 +67,19 @@ export let contexts = [
   }
 ];
 
+const GbrowseLink = ({ url }) =>
+  <div style={{ textAlign: 'center', margin: 6 }}>
+    <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in genome browser</a>
+  </div>
+
 export function GbrowseContext(props) {
   let { attribute, record } = props;
   let url = record.attributes[attribute.name];
   return (
     <div>
+      <GbrowseLink url={url}/>
       <GbrowseImage url={url} includeImageMap={true} />
-      <div>
-        <a href={makeGbrowseLinkUrl(url)}>View in genome browser</a>
-      </div>
+      <GbrowseLink url={url}/>
     </div>
   );
 }
@@ -83,10 +88,9 @@ export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
   return (
     <div className="eupathdb-GbrowseContext">
+      <GbrowseLink url={url}/>
       <GbrowseImage url={url} includeImageMap={true} />
-      <div>
-        <a href={makeGbrowseLinkUrl(url)}>View in genome browser</a>
-      </div>
+      <GbrowseLink url={url}/>
     </div>
   );
 }
@@ -103,7 +107,7 @@ const onMouseOverRegexp = /GBubble\.showTooltip\(event,'(\w+:)?(.*)'.*$/;
  * custom tooltips, etc. This is needed to avoid loading Prototype.js in the
  * page, which breaks many parts of the app in subtle ways.
  */
-export class GbrowseImage extends ComponentUtils.PureComponent {
+export class GbrowseImage extends PureComponent {
   constructor(props) {
     super(props);
     this.containerNode = null;
@@ -111,7 +115,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
     this.img = null;
     this.map = null;
     this.mapCoordsCache = null;
-    this.state = { error: null };
+    this.state = { error: null, loading: true };
     this.scaleImageMap = throttle(this.scaleImageMap.bind(this), 250);
   }
 
@@ -139,6 +143,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
   }
 
   loadImage(props) {
+    this.setState({ loading: true });
     this.xhr = get(props.url.replace('/cgi-bin/', '/fcgi-bin/') + ';width=800;embed=1;genepage=1');
     this.xhr.promise().then(
       data => this.handleImageLoad(data),
@@ -208,21 +213,12 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
           delay: 100
         },
         hide: {
-          event: false,
           fixed: true,
-          delay: 250
+          delay: 2000
         },
         style: {
           classes: 'qtip-bootstrap eupathdb-GbrowseImageMapTooltip',
           tip: { height: 12, width: 18 }
-        },
-        events: {
-          show() {
-            // document.body.style.overflow = 'hidden';
-          },
-          hide() {
-            // document.body.style.overflow = '';
-          }
         }
       });
 
@@ -233,6 +229,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
 
       img.addEventListener('onload', this.scaleImageMap);
     }
+    this.setState({ loading: false });
   }
 
   handleError(jqXHR) {
@@ -241,6 +238,7 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
     let error = 'Unable to load mouseover details for tracks.';
     this.setState({ error })
     console.error('Error: %s. %o', error, jqXHR);
+    this.setState({ loading: false });
   }
 
   scaleImageMap() {
@@ -267,9 +265,20 @@ export class GbrowseImage extends ComponentUtils.PureComponent {
     }
   }
 
+  renderLoading() {
+    if (this.state.loading) {
+      return (
+        <div style={{ position: 'relative', height: 50 }}>
+          <Loading/>
+        </div>
+      );
+    }
+  }
+
   render() {
     return (
       <div>
+        {this.renderLoading()}
         {this.renderError()}
         <div ref={node => this.containerNode = node}/>
       </div>
