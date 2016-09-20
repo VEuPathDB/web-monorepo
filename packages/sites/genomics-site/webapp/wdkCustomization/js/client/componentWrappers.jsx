@@ -32,6 +32,27 @@ export function RecordLink(WdkRecordLink) {
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
 
+/**
+ * Adds projectId primary key record to splat of props for pages referencing
+ * a single record.  If recordclass of that record does not include the
+ * projectId as a PK value, props are returned unchanged.
+ */
+function addProjectIdPkValue(props) {
+  let { splat, recordClass } = props.params;
+
+  // These record classes do not need the project id as a part of the primary key
+  // so we just render with the url params as-is.
+  if (RECORD_CLASSES_WITHOUT_PROJECT_ID.includes(recordClass)) {
+    return props;
+  }
+
+  // Append project id to request
+  let params = Object.assign({}, props.params, {
+    splat: `${splat}/${projectId}`
+  });
+  // reassign props to modified props object
+  return Object.assign({}, props, { params });
+}
 
 /**
  * In ./routes.js, we redirect urls to the record page that have the project ID
@@ -57,21 +78,19 @@ export function RecordController(WdkRecordController) {
     }
 
     loadData(state, props, previousProps) {
-      let { splat, recordClass } = props.params;
-
-      // These record classes do not need the project id as a part of the primary key
-      // so we just render with the url params as-is.
-      if (!RECORD_CLASSES_WITHOUT_PROJECT_ID.includes(recordClass)) {
-        // Append project id to request
-        let params = Object.assign({}, props.params, {
-          splat: `${splat}/${projectId}`
-        });
-        // reassign props to modified props object
-        props = Object.assign({}, props, { params });
-      }
-      super.loadData(state, props, previousProps);
+      let newProps = addProjectIdPkValue(props);
+      super.loadData(state, newProps, previousProps);
     }
   };
+}
+
+export function DownloadFormController(WdkDownloadFormController) {
+  return class ApiDownloadFormController extends WdkDownloadFormController {
+    loadData(state, props, previousProps) {
+      let newProps = addProjectIdPkValue(props);
+      super.loadData(state, newProps, previousProps);
+    }
+  }
 }
 
 // Customize the Record Component
