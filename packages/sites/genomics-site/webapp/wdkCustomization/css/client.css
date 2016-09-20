@@ -422,7 +422,7 @@ h4 {
 }
 
 .eupathdb-GbrowseImageMapTooltip .qtip-content {
-  max-height: calc(100vh - 25px);
+  max-height: calc(100vh - 60px);
   overflow: auto;
 }
 
