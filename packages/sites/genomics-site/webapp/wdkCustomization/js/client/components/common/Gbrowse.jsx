@@ -1,5 +1,5 @@
 import {PropTypes} from 'react';
-import {once, memoize, throttle} from 'lodash';
+import {once, memoize, debounce} from 'lodash';
 import $ from 'jquery';
 import { PureComponent } from 'wdk-client/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
@@ -116,7 +116,7 @@ export class GbrowseImage extends PureComponent {
     this.map = null;
     this.mapCoordsCache = null;
     this.state = { error: null, loading: true };
-    this.scaleImageMap = throttle(this.scaleImageMap.bind(this), 250);
+    this.scaleImageMap = debounce(this.scaleImageMap.bind(this), 250);
   }
 
   componentDidMount() {
