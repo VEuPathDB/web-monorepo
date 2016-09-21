@@ -83,9 +83,10 @@ let SharedReporterForm = props => {
 SharedReporterForm.getInitialState = (downloadFormStoreState) => {
   let { scope, question, recordClass, globalData: { ontology, preferences } } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
-  let attribs = (scope === 'results' ?
-      util.addPk(util.getAttributeSelections(preferences, question), recordClass) :
-      util.addPk(util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)), recordClass));
+  let allReportScopedAttrs = util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question));
+  let attribs = util.addPk((scope === 'results' ?
+      util.getAttributeSelections(preferences, question, allReportScopedAttrs) :
+      allReportScopedAttrs), recordClass);
   let tables = (scope === 'results' ? [] :
       util.getAllLeafIds(util.getTableTree(ontology, recordClass.name)));
   return {

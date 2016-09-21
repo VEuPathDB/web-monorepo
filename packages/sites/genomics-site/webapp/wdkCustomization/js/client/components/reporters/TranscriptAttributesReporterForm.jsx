@@ -91,10 +91,11 @@ function getUserPrefFilterValue(prefs) {
 TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState) => {
   let { scope, question, recordClass, globalData: { ontology, preferences } } = downloadFormStoreState;
   // select all attribs and tables for record page, else column user prefs and no tables
+  let allReportScopedAttrs = util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question));
   let attribs = util.addPk(util.prependAttrib('source_id',
       (scope === 'results' ?
-          util.getAttributeSelections(preferences, question) :
-          util.getAllLeafIds(util.getAttributeTree(ontology, recordClass.name, question)))), recordClass);
+          util.getAttributeSelections(preferences, question, allReportScopedAttrs) :
+          allReportScopedAttrs)), recordClass);
   return {
     formState: {
       attributes: attribs,
