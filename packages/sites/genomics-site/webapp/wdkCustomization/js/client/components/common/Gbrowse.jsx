@@ -18,6 +18,12 @@ export let contexts = [
     isPbrowse: false
   },
   {
+    gbrowse_url: 'BlatAlignmentsGbrowseUrl',
+    displayName: 'Blat Alignments',
+    anchor: 'BlatAlignmentsGbrowseUrl',
+    isPbrowse: false
+  },
+  {
     gbrowse_url: 'SnpsGbrowseUrl',
     displayName: 'SNPs',
     anchor: 'SnpsGbrowseUrl',
