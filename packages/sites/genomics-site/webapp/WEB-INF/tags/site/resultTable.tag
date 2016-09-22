@@ -14,11 +14,20 @@
               required="false"
               description="tab we are looking at"
 %>
+<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
 <c:set var="wdkAnswer" value="${step.answerValue}"/>
 <c:set var="recordClass" value="${step.answerValue.question.recordClass}"/>
 <c:set var="questionName" value="${step.answerValue.question.name}"/>
-<c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
+<c:set var="isBooleanStep" value="${step.answerValue.isBoolean}"/>
+
+<c:if test="${isBooleanStep}">
+  <c:set var="bOperation" value="${step.answerValue.booleanOperation}"/> 
+</c:if>
+<c:set var="UNION" value="${bOperation == 'UNION'}"/>
+<c:set var="INTERSECTION" value="${bOperation == 'INTERSECT'}"/>
+<c:set var="LEFT_MINUS" value="${bOperation == 'MINUS'}"/>
+<c:set var="RIGHT_MINUS" value="${bOperation == 'RMINUS'}"/>
 
 <c:set var="warningIcon">
   <i class="fa fa-exclamation-circle fa-2x" aria-hidden="true" style="color:blue" title="Some Genes in your result have Transcripts that did not meet the search criteria."></i>
@@ -108,8 +117,20 @@
       ${warningIcon}
       <strong title=""Click on 'Add Columns' to add 2 columns (at the top) that show if a transcript matched the previous and/or the latest search.">
         <span>Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches</span>
-          <c:if test="${ fn:contains(values, 'NN') || !fn:contains(values, 'YY') || !fn:contains(values, 'YN') || !fn:contains(values, 'NY') }">
-            <img height="14px" src="wdk/images/filter-short.png" title="Your transcript selection in this step is different from the original selection (transcripts that met the search criteria in either input step).">
+
+<!-- Default filters for boolean operations are defined in GeneBooleanFilter.java:
+      case UNION: return getFilterValueArray("YY", "YN", "NY");
+      case INTERSECT: return getFilterValueArray("YY");
+      case LEFT_MINUS: return getFilterValueArray("YN");
+      case RIGHT_MINUS: return getFilterValueArray("NY");
+      default: return getFilterValueArray("YY", "YN", "NY");
+-->
+          <c:if test="${ (UNION && ( fn:contains(values, 'NN') || !fn:contains(values, 'YY') || !fn:contains(values, 'YN') || !fn:contains(values, 'NY') )) ||
+               (INTERSECTION && ( fn:contains(values, 'NN') || !fn:contains(values, 'YY') || fn:contains(values, 'YN') || fn:contains(values, 'NY') )) ||
+               (LEFT_MINUS && ( fn:contains(values, 'NN') || fn:contains(values, 'YY') || !fn:contains(values, 'YN') || fn:contains(values, 'NY') )) ||
+               (RIGHT_MINUS && ( fn:contains(values, 'NN') || fn:contains(values, 'YY') || fn:contains(values, 'YN') || !fn:contains(values, 'NY') )) }">
+
+            <img height="14px" src="wdk/images/filter-short.png" title="This icon indicates that your transcript selection is different from the boolean ${bOperation} default; you might be adding or excluding genes.">
           </c:if>
         .</span>
         <a href="#" class="gene-boolean-filter-controls-toggle">Explore.</a>
