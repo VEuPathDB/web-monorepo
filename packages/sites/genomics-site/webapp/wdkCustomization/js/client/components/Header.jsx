@@ -329,7 +329,7 @@ function Header(props) {
             url: !shouldShowGalaxyOrientation ? 'https://eupathdb.globusgenomics.org/' : undefined,
             target: !shouldShowGalaxyOrientation ? '_blank' : undefined
           },
-          ...(!isEuPathDB ? [{
+          {
             id: 'favorites',
             text: (
               <div>
@@ -348,9 +348,8 @@ function Header(props) {
               </div>
             ),
             webAppUrl: '/showFavorite.do',
-            loginRequired: true,
-            exclude: 'EuPathDB'
-          }] : [])
+            loginRequired: true
+          }
         ]}/>
       </div>
       <Announcements projectId={projectId} webAppUrl={webAppUrl}/>
