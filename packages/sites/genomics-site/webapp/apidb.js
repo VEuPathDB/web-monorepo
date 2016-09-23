@@ -17,6 +17,9 @@ import 'eupathdb/wdkCustomization/js/common';
 import '!!script!./wdkCustomization/js/custom-login';
 import '!!script!eupathdb/js/newwindow';
 
+// include scroll to top button
+import 'eupathdb/js/scroll-to-top';
+
 // <!-- Quick search box -->
 import 'site/js/quicksearch';
 
