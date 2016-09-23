@@ -182,6 +182,7 @@ export function RecordTable(DefaultComponent) {
 
 export function RecordTableSection(DefaultComponent) {
   return function ApiRecordTableSection(props) {
+    let customName = `Data sets used by ${String.fromCharCode(8220)}${props.table.displayName}${String.fromCharCode(8221)}`
     return (
       <DefaultComponent {...props} table={Object.assign({}, props.table, {
         displayName: (
@@ -195,7 +196,7 @@ export function RecordTableSection(DefaultComponent) {
               }}
               onClick={stopPropagation}
               to={{
-                pathname: 'search/dataset/DatasetsByReferenceName/result',
+                pathname: `search/dataset/DatasetsByReferenceName:${customName}/result`,
                 query: {
                   record_class: props.record.recordClassName,
                   reference_name: props.table.name
