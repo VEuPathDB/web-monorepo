@@ -41,52 +41,19 @@
     <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 </c:catch>
 
-<%-- unused
-<c:choose>
-<c:when test="${wdkUser.stepCount == null}">
-<c:set var="count" value="0"/>
-</c:when>
-<c:otherwise>
-<c:set var="count" value="${wdkUser.strategyCount}"/>
-</c:otherwise>
-</c:choose>
---%>
-
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
-
-<%-- this isn't needed anymore with the superfish menu bar
-     end div at end of file
-<!-- piroplasma is using the background image menubar.png from its own directory -->
-<c:choose>
-<c:when test="${project eq 'PiroplasmaDB'}">
-  <div  id="piro_menubar" >
-</c:when>
-<c:otherwise>
-  <div id="menubar">
-</c:otherwise>
-</c:choose>
---%>
 
 <span class="onload-function" data-function="eupath.setup.configureMenuBar"><jsp:text/></span>
 <div id="menu" class="ui-helper-clearfix">
 
   <ul class="sf-menu">
-    <%-- default style for this ul establishes 9em --%>
     <li><a href="${baseUrl}/">Home</a></li>
-    <%-- was needed when New Search was first choice 
-      <ul style="width:0.5em;border:0"><li></li></ul>
-    --%>
 
     <li><a title="START a NEW search strategy. Searches are organized by the genomic feature they return." >New Search</a>
-      <imp:drop_down_QG2 />
-    </li>
+      <imp:drop_down_QG2 /></li>
 
-    <%-- some javascript fills the count in the span --%>
     <li><a id="mysearch" href="${baseUrl}/showApplication.do" title="Access your Search Strategies Workspace">
-      My Strategies <%--<span title="You have ${count} strategies" class="subscriptCount">
-      (${count})</span>--%>
-      </a>
-    </li>
+      My Strategies</a></li>
 
     <c:choose>
       <c:when test="${wdkUser == null || wdkUser.guest}">
@@ -108,10 +75,8 @@
       <ul>
         <li><a href="${baseUrl}/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast"> BLAST</a></li>
         <li><a style="padding-top:0"  href="${baseUrl}/analysisTools.jsp"> Results Analysis
-              <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a>
-        </li>
+              <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a></li>
         <li><a href="${baseUrl}/srt.jsp"> Sequence Retrieval</a></li>
-<!--        <li><a href="http://rnaseq.pathogenportal.org"> Pathogen Portal</a></li> -->
         <li title="Annotate your sequence and determine orthology, phylogeny & synteny">
           <a href="https://companion.sanger.ac.uk"> Companion</a></li>
         <li title="Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool">
@@ -144,25 +109,22 @@
         </c:if>
         <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Genomes and Data Types</a></li> 
         <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics">Gene Metrics</a></li>
-        <%-- <c:if test="${project == 'TrichDB'}">
-          <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GenomeDataType">Genomes and Data Types</a></li> 
-          <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.GeneMetrics">Gene Metrics</a></li>
-        </c:if> --%>
       </ul>
     </li>
 
     <li><a>Downloads</a>
       <ul>
         <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.AboutAll#downloads">Understanding Downloads</a></li>
-
         <c:choose>
           <c:when test="${project eq 'EuPathDB'}">
             <li><a name="data-files">Data Files</a>
               <ul>
                 <li><a href="http://amoebadb.org/common/downloads">AmoebaDB</a></li>
                 <li><a href="http://cryptodb.org/common/downloads">CryptoDB</a></li>
+                <li><a href="http://fungidb.org/common/downloads">FungiDB</a></li>
                 <li><a href="http://giardiadb.org/common/downloads">GiardiaDB</a></li>
                 <li><a href="http://microsporidiadb.org/common/downloads">MicrosporidiaDB</a></li>
+                <li><a href="http://orthomcl.org/common/downloads">OrthoMCL</a></li>
                 <li><a href="http://piroplasmadb.org/common/downloads">PiroplasmaDB</a></li>
                 <li><a href="http://plasmodb.org/common/downloads">PlasmoDB</a></li>
                 <li><a href="http://toxodb.org/common/downloads">ToxoDB</a></li>
@@ -179,12 +141,11 @@
 
         <li><a href="${baseUrl}/srt.jsp">Sequence Retrieval</a>
 
-        <%--  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#protocols_methods">Protocols and Methods</a></li> --%>
-
         <c:if test="${project != 'EuPathDB'}" >
           <li><a href="${baseUrl}/communityUpload.jsp">Upload Community Files</a></li>
           <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" href="${baseUrl}/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads">Download Community Files</a></li>
         </c:if>
+
         <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li> 
       </ul>
     </li>
@@ -195,18 +156,17 @@
 
         <li><a href="/EuPathDB_datasubm_SOP.pdf">EuPathDB Data Submission & Release Policies</a></li>
 
-
-       <c:if test="${project != 'EuPathDB'}" >    
-        <li><a title="Add your comments to your gene of interest: start at the gene page" onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
+        <c:if test="${project != 'EuPathDB'}" >    
+          <li><a title="Add your comments to your gene of interest: start at the gene page" onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
                href="${baseUrl}/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=${timestampParam.default}"/>Find Genes with Comments from the ${project} Community</a></li>
 
-        <li><a href="${baseUrl}/communityUpload.jsp">Upload Community Files</a></li>
+          <li><a href="${baseUrl}/communityUpload.jsp">Upload Community Files</a></li>
 
-        <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
+          <li><a onclick="wdk.stratTabCookie.setCurrentTabCookie('application','strategy_results');" 
                href="${baseUrl}/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads">Download Community Files</a></li>
-      </c:if>
+        </c:if>
 
-      <li><a href="${baseUrl}/communityEvents.jsp">Upcoming Events</a></li>
+        <li><a href="${baseUrl}/communityEvents.jsp">Upcoming Events</a></li>
 
         <c:choose>
           <c:when test="${extlAnswer_exception != null}">
@@ -221,42 +181,30 @@
       </ul>
     </li>
 
-  <li >
-    <c:set var="galaxyRoute" value="${baseUrl}/app/galaxy-orientation"/>
-    <a style="padding:5px 1em"
-      href="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? galaxyRoute : 'https://eupathdb.globusgenomics.org/'}"
-      target="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? '' : '_blank'}">
-      <imp:image src="wdk/images/new-feature.png" height="14" />
-      <span>Analyze My Experiment</span>
-    </a>
-  </li>
+    <li >
+      <c:set var="galaxyRoute" value="${baseUrl}/app/galaxy-orientation"/>
+      <a style="padding:5px 1em"
+        href="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? galaxyRoute : 'https://eupathdb.globusgenomics.org/'}"
+        target="${userPrefs['show-galaxy-orientation-page'] ne 'false' ? '' : '_blank'}">
+        <imp:image src="wdk/images/new-feature.png" height="14" />
+        <span>Analyze My Experiment</span>
+      </a>
+    </li>
 
-    <c:if test="${project != 'EuPathDB'}" >
-
-      <c:choose>
-        <c:when test="${wdkUser == null || wdkUser.guest}">
-          <li id="favorite-menu"><a id="mybasket" onclick="wdk.user.login('use favorites', wdk.webappUrl('/showFavorite.do'));" href="javascript:void(0)">
+    <c:choose>
+      <c:when test="${wdkUser == null || wdkUser.guest}">
+        <li id="favorite-menu"><a id="mybasket" onclick="wdk.user.login('use favorites', wdk.webappUrl('/showFavorite.do'));" href="javascript:void(0)">
             <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="wdk/images/favorite_color.gif"/>&nbsp;
-            <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
-            </a>
-          </li>
-        </c:when>
-        <c:otherwise>
-          <li id="favorite-menu"><a href="${baseUrl}/showFavorite.do">
-            <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="wdk/images/favorite_color.gif"/>&nbsp;
-            <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span>
-            </a>
-          </li>
-        </c:otherwise>
-      </c:choose>
-
-    </c:if>
-
+            <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span></a></li>
+      </c:when>
+      <c:otherwise>
+        <li id="favorite-menu"><a href="${baseUrl}/showFavorite.do">
+          <imp:image style="vertical-align:middle" height="20" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time." src="wdk/images/favorite_color.gif"/>&nbsp;
+          <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span></a></li>
+      </c:otherwise>
+    </c:choose>
   </ul>
 
 </div>
 
-<%-- closing menubar div
-</div>
---%>
 <a name="skip" id="skip"></a>
