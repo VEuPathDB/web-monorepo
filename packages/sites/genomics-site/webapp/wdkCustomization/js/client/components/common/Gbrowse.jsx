@@ -143,6 +143,7 @@ export class GbrowseImage extends PureComponent {
     if (this.props.url !== nextProps.url) {
       this.request && this.request.abort();
       this.setState({ loading: true });
+      $(this.containerNode).find('area').qtip('destroy', true);
       this.loadImage(nextProps);
     }
   }
@@ -151,6 +152,7 @@ export class GbrowseImage extends PureComponent {
     window.removeEventListener('resize', this.scaleImageMap);
     window.removeEventListener('focus', this.scaleImageMap);
     window.removeEventListener('click', this.scaleImageMap);
+    $(this.containerNode).find('area').qtip('destroy', true);
     this.request && this.request.abort();
   }
 
