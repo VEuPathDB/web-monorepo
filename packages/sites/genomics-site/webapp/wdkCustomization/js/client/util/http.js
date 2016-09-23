@@ -13,7 +13,7 @@ export function httpGet(url) {
   const xhr = get(url);
   return {
     promise() {
-      return xhr.promise().then(identity, mapError);
+      return Promise.resolve(xhr.promise()).then(identity, mapError);
     },
     abort() {
       if (xhr.status == null) {
