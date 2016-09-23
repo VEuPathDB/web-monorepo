@@ -1,5 +1,7 @@
 import {PropTypes} from 'react';
-import {once, memoize, debounce} from 'lodash';
+import {once, debounce} from 'lodash';
+import { httpGet } from '../../util/http';
+import { adjustScrollOnLoad } from '../../util/domUtils';
 import $ from 'jquery';
 import { PureComponent } from 'wdk-client/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
@@ -107,6 +109,7 @@ export function ProteinContext(props) {
 /** Image map mouseover regexp */
 const onMouseOverRegexp = /GBubble\.showTooltip\(event,'(\w+:)?(.*)'.*$/;
 
+const loadingHeight = 50;
 
 /**
  * Helper Component that loads and parses a Gbrowse image map in order to provide
@@ -117,7 +120,7 @@ export class GbrowseImage extends PureComponent {
   constructor(props) {
     super(props);
     this.containerNode = null;
-    this.xhr = null;
+    this.request = null;
     this.img = null;
     this.map = null;
     this.mapCoordsCache = null;
@@ -126,6 +129,7 @@ export class GbrowseImage extends PureComponent {
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     loadGbrowseScripts().then(
       () => this.loadImage(this.props),
       (error) => this.setState({ error })
@@ -137,7 +141,8 @@ export class GbrowseImage extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.url !== nextProps.url) {
-      this.xhr && this.xhr.abort();
+      this.request && this.request.abort();
+      this.setState({ loading: true });
       this.loadImage(nextProps);
     }
   }
@@ -146,12 +151,12 @@ export class GbrowseImage extends PureComponent {
     window.removeEventListener('resize', this.scaleImageMap);
     window.removeEventListener('focus', this.scaleImageMap);
     window.removeEventListener('click', this.scaleImageMap);
+    this.request && this.request.abort();
   }
 
   loadImage(props) {
-    this.setState({ loading: true });
-    this.xhr = get(props.url.replace('/cgi-bin/', '/fcgi-bin/') + ';width=800;embed=1;genepage=1');
-    this.xhr.promise().then(
+    this.request = httpGet(props.url.replace('/cgi-bin/', '/fcgi-bin/') + ';width=800;embed=1;genepage=1');
+    this.request.promise().then(
       data => this.handleImageLoad(data),
       jqXhr => this.handleError(jqXhr)
     );
@@ -161,11 +166,17 @@ export class GbrowseImage extends PureComponent {
     let $container = $(this.containerNode).empty();
     let nodes = $.parseHTML(data);
     let img = this.img = nodes.find(node => node.nodeName === 'IMG');
+
     img.className = 'eupathdb-GbrowseImage';
+
+    img.addEventListener('load', () => {
+      this.setState({ loading: false });
+    })
 
     if (!this.props.includeImageMap) {
       img.removeAttribute('usemap');
       $container.append(img);
+      adjustScrollOnLoad(img);
     }
 
     else {
@@ -192,7 +203,7 @@ export class GbrowseImage extends PureComponent {
               return contentFn.call(this.get(0));
             }
             else if (pragma === 'url:') {
-              get(content).then(
+              httpGet(content).promise().then(
                 (data) => api.set('content.text', data),
                 (xhr, status, error) => api.set('content.text', status + ': ' + error)
               );
@@ -228,14 +239,15 @@ export class GbrowseImage extends PureComponent {
         }
       });
 
+      adjustScrollOnLoad(img);
+
       this.mapCoordsCache = [];
       for (let area of map.querySelectorAll('area')) {
         this.mapCoordsCache.push(area.getAttribute('coords'));
       }
 
-      img.addEventListener('onload', this.scaleImageMap);
+      img.addEventListener('load', this.scaleImageMap);
     }
-    this.setState({ loading: false });
   }
 
   handleError(jqXHR) {
@@ -274,7 +286,7 @@ export class GbrowseImage extends PureComponent {
   renderLoading() {
     if (this.state.loading) {
       return (
-        <div style={{ position: 'relative', height: 50 }}>
+        <div style={{ position: 'relative', height: loadingHeight }}>
           <Loading/>
         </div>
       );
@@ -309,9 +321,6 @@ let loadGbrowseScripts = once(() => {
     );
   });
 });
-
-let get = memoize($.get.bind($));
-
 
 /** Gbrowse url track separator */
 const TRACKS_SEPARATOR = '%1E';

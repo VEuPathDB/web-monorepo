@@ -19,7 +19,7 @@ export class SnpsAlignmentForm extends PureComponent {
     let { projectId } = this.context.store.getState().globalData.config;
 
     return (
-      <div>
+      <div style={{ minHeight: 560 }}>
         <p>Select strains using the panel below. Then click "Show Alignment" to view a multiple
           sequence alignment.</p>
         <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">

@@ -9,13 +9,12 @@ export default class Menu extends Component {
 
   constructor(props) {
     super(props);
-    this.trackingNode = null;
     this.setPosition = this.setPosition.bind(this);
     this.state = { position: '', top: 0 };
   }
 
   setPosition() {
-    let shouldFix = this.trackingNode.getBoundingClientRect().top < 0;
+    let shouldFix = this.refs.trackingNode.getBoundingClientRect().top < 0;
     if (shouldFix && this.state.position !== 'fixed') {
       this.setState({ position: 'fixed'});
     }
@@ -36,7 +35,7 @@ export default class Menu extends Component {
   render() {
     let { position, top } = this.state;
     return (
-      <div ref={node => this.trackingNode = node} style={{ overflow: 'visible'}}>
+      <div ref="trackingNode" style={{ overflow: 'visible'}}>
         <ul className="eupathdb-Menu" style={{ position, top }}>
           {this.props.entries.map((entry) => (
             <MenuEntry

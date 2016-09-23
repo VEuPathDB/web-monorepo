@@ -23,7 +23,6 @@
         twitterId: "${props.TWITTER_ID}"
       };
     </script>
-    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdk/css/wdk.min.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="css/${model.projectId}.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/client.css"/>
@@ -32,5 +31,6 @@
   </head>
   <body>
     <div id="wdk-container">Loading...</div>
+    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
   </body>
 </html>

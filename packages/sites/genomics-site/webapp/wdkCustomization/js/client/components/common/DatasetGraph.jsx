@@ -1,7 +1,7 @@
-import $ from 'jquery';
-import { Components, ComponentUtils } from 'wdk-client';
-
-let { CollapsibleSection } = Components;
+import { httpGet } from '../../util/http';
+import { adjustScrollOnLoad } from '../../util/domUtils';
+import { CollapsibleSection, Loading } from 'wdk-client/Components';
+import { PureComponent } from 'wdk-client/ComponentUtils';
 
 /**
  * Renders an Dataset graph with the provided rowData.
@@ -13,20 +13,21 @@ let { CollapsibleSection } = Components;
  * the available parts, and then we can update the state of the Component. This
  * flow will ensure that we have a consistent state when rendering.
  */
-export default class DatasetGraph extends ComponentUtils.PureComponent {
+export default class DatasetGraph extends PureComponent {
 
   constructor(...args) {
     super(...args);
+    let graphIds = this.props.rowData.graph_ids.split(/\s*,\s*/);
     this.state = {
       loading: true,
       imgError: false,
-      details: null,
-      graphId: null,
+      parts: null,
       visibleParts: null,
       descriptionCollapsed: true,
       dataTableCollapsed: true,
       coverageCollapsed: true,
-      showLogScale: true
+      showLogScale: true,
+      graphId: graphIds[0]
     };
     this.handleDescriptionCollapseChange = descriptionCollapsed => {
       this.setState({ descriptionCollapsed });
@@ -40,68 +41,56 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
   }
 
   componentDidMount() {
-    this.setStateFromProps(this.props);
+    this.getGraphParts(this.props);
   }
 
   componentWillUnmount() {
+    this.request.abort();
     console.trace('DatasetGraph is unmounting');
   }
 
   componentWillReceiveProps(nextProps) {
-      if (this.props.rowData !== nextProps.rowData) {
-          this.setStateFromProps(nextProps);
-      }
+    if (this.props.rowData !== nextProps.rowData) {
+      this.request.abort();
+      this.getGraphParts(nextProps);
+    }
   }
 
-  // TODO Better name
-  setStateFromProps(props) {
-    this.setState({ loading: true });
-
-    let { rowData, dataTable  } = props;
+  makeBaseUrl({ rowData }) {
     let graphIds = rowData.graph_ids.split(/\s*,\s*/);
     let graphId = this.state.graphId || graphIds[0];
-    let baseUrl = '/cgi-bin/dataPlotter.pl?' +
+    return (
+      '/cgi-bin/dataPlotter.pl?' +
       'type=' + rowData.module + '&' +
       'project_id=' + rowData.project_id + '&' +
       'datasetId=' + rowData.dataset_id + '&' +
       'template=' + (rowData.is_graph_custom === 'false' ? 1 : '') + '&' +
-      'id=' + graphId;
+      'id=' + graphId
+    );
+  }
 
-
-    $.get(baseUrl + '&declareParts=1').then(partsString => {
+  getGraphParts(props) {
+    let baseUrl = this.makeBaseUrl(props);
+    this.setState({ loading: true });
+    this.request = httpGet(baseUrl + '&declareParts=1');
+    this.request.promise().then(partsString => {
       let parts = partsString.split(/\s*,\s*/);
       let visibleParts = parts.slice(0, 1);
-      this.setState({
-        imgError: false,
-        visibleParts,
-        graphId,
-        details: {
-          assay_type: rowData.assay_type,
-          baseUrl,
-          parts,
-          graphIds,
-          description: rowData.description,
-          x_axis: rowData.x_axis,
-          y_axis: rowData.y_axis
-        },
-          datasetId: rowData.dataset_id,
-          dataTable: dataTable,
-          dataset_name: rowData.dataset_name
-      })
+      this.setState({ parts, visibleParts, loading: false })
     });
   }
 
   setGraphId(graphId) {
     if (this.state.graphId !== graphId) {
       this.setState({ graphId });
-      this.setStateFromProps(this.props);
+      this.getGraphParts(this.props);
     }
   }
 
   renderLoading() {
     if (this.state.loading) {
       return (
-        <Components.Loading radius={4} className="eupathdb-DatasetGraphLoading"/>
+        <Loading radius={4} className="eupathdb-DatasetGraphLoading"/>
       );
     }
   }
@@ -117,30 +106,20 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
   }
 
   render() {
-    if (this.state.details == null) {
-      return (
-        <div className="eupathdb-DatasetGraphContainer">
-          {this.renderLoading()}
-        </div>
-      );
-    }
-
-    let { visibleParts, showLogScale, graphId, dataTable, datasetId, dataset_name} = this.state;
-
-    let {
+    let { dataTable, rowData: {
       assay_type,
-      baseUrl,
-      parts,
-      graphIds,
+      graph_ids,
+      dataset_id,
+      dataset_name,
       description,
       x_axis,
       y_axis
-    } = this.state.details;
-
+    } } = this.props;
+    let graphIds = graph_ids.split(/\s*,\s*/);
+    let { parts, visibleParts, showLogScale, graphId } = this.state;
+    let baseUrl = this.makeBaseUrl(this.props);
     let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}&wl=${showLogScale ? '1' : '0'}`;
-
     let imgUrl = baseUrlWithState + '&fmt=png';
-
     let covImgUrl = dataTable && dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'CoverageUnlogged';
 
     return (
@@ -149,11 +128,15 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
         {this.renderLoading()}
 
         <div className="eupathdb-DatasetGraph">
-          <img
-            src={imgUrl}
-            onLoad={() => this.setState({ loading: false })}
-            onError={() => this.setState({ loading: false, imgError: true })}
-          />
+          {visibleParts && (
+            <img
+              ref={adjustScrollOnLoad}
+              src={imgUrl}
+              onLoad={() => {
+                this.setState({loading: false});
+              }}
+              onError={() => this.setState({ loading: false, imgError: true })}
+            />)}
           {this.renderImgError()}
 
 
@@ -177,7 +160,7 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
         <div className="eupathdb-DatasetGraphDetails">
 
           {this.props.dataTable &&
-            <Components.CollapsibleSection
+            <CollapsibleSection
               className={"eupathdb-" + this.props.dataTable.table.name + "Container"}
               headerContent="Data table"
               headerComponent='h4'
@@ -187,18 +170,18 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
                 record={dataTable.record}
                 recordClass={dataTable.recordClass}
                 table={dataTable.table}
-                value={dataTable.value.filter(dat => dat.dataset_id == datasetId)}
+                value={dataTable.value.filter(dat => dat.dataset_id == dataset_id)}
               />
-            </Components.CollapsibleSection> }
+            </CollapsibleSection> }
 
-          <Components.CollapsibleSection
+          <CollapsibleSection
             className={"eupathdb-DatasetGraphDescription"}
             headerContent="Description"
             headerComponent="h4"
             isCollapsed={this.state.descriptionCollapsed}
             onCollapsedChange={this.handleDescriptionCollapseChange}>
             <div dangerouslySetInnerHTML={{__html: description}}/>
-          </Components.CollapsibleSection>
+          </CollapsibleSection>
 
           <h4>X-axis</h4>
           <div dangerouslySetInnerHTML={{__html: x_axis}}/>
@@ -219,17 +202,17 @@ export default class DatasetGraph extends ComponentUtils.PureComponent {
           })}
 
           <h4>Choose graph(s) to display</h4>
-          {parts.map(part => {
+          {parts && visibleParts && parts.map(part => {
             return (
               <label key={part}>
                 <input
                   type="checkbox"
-                  checked={this.state.visibleParts.indexOf(part) > -1}
+                  checked={visibleParts.indexOf(part) > -1}
                   onChange={e => this.setState({
                     loading: true,
                     visibleParts: e.target.checked
-                      ? this.state.visibleParts.concat(part)
-                      : this.state.visibleParts.filter(p => p !== part)
+                      ? visibleParts.concat(part)
+                      : visibleParts.filter(p => p !== part)
                   })}
                 /> {part} </label>
             );

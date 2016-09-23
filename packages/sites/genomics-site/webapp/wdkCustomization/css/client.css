@@ -486,7 +486,7 @@ h4 {
 }
 
 
-.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell__thumbnail {
+td.wdk-DataTableCell__thumbnail {
   vertical-align: middle;
   height: 50px;
 }

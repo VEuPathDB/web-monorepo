@@ -60,3 +60,19 @@ export function getBestPosition(element, aroundElement = null) {
 
   return { offestTop: centerTop, offsetLeft: centerLeft };
 }
+
+export function adjustScrollOnLoad(img) {
+  if (img != null) {
+    img.addEventListener('load', function() {
+      let { hash } = location;
+      let target = document.getElementById(hash.slice(1));
+      if (target) {
+        let imageRect = img.getBoundingClientRect();
+        if (imageRect.top < 44) {
+          console.log('scrolling to target', target, performance.now());
+          target.scrollIntoView();
+        }
+      }
+    });
+  }
+}
