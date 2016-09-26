@@ -13,7 +13,7 @@ use Time::HiRes qw(gettimeofday);
 use DBI;
 use List::Util qw(min max);
 use Getopt::Long qw(GetOptions);
-use EuPathSiteCommon::Model::ModelConfig;
+use WDK::Model::ModelConfig;
 use ApiCommonWebsite::Model::SqlXmlParser;
 $| = 1;
 my ($model, $gbrowseFile, $indexOnly, $failuresOnly, $skipTo, $stopAfter, $showParse, $showSql, $showCommentedSql, $sqlMode, $showDbInfo);
@@ -224,7 +224,7 @@ sub getQueryParamNames {
 sub getDbHandle {
   my ($showDbInfo) = @_;
 
-  my $c = new EuPathSiteCommon::Model::ModelConfig($model);
+  my $c = new WDK::Model::ModelConfig($model);
 
   my $dsn = $c->getDbiDsn();
   my $login = $c->getLogin();
