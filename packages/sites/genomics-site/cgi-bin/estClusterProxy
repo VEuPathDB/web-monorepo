@@ -19,7 +19,7 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Model::DoTS::Assembly;
 
 use lib map { /(.*)/ } split /:/ => $ENV{PERL5LIB}; # untaint PERL5LIB
-use ApiCommonWebsite::Model::ModelConfig;
+use EuPathSiteCommon::Model::ModelConfig;
 
 BEGIN {
 
@@ -36,7 +36,7 @@ BEGIN {
 my $q = new CGI;
 $q->param('project_id') or die "valid 'project_id' is required";
 
-my $c = new ApiCommonWebsite::Model::ModelConfig( $q->param('project_id') );
+my $c = new EuPathSiteCommon::Model::ModelConfig( $q->param('project_id') );
 my $dsn = $c->getDbiDsn;
 my $username = $c->getLogin;
 my $password = $c->getPassword;

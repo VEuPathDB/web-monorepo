@@ -3,7 +3,7 @@ package  DAS::GUS::QueryLogger;
 use Time::HiRes qw ( time );
 use Fcntl qw(:flock SEEK_END);
 use File::Path;
-use ApiCommonWebsite::Model::ModelConfig;
+use EuPathSiteCommon::Model::ModelConfig;
 use strict;
 
 # Log gbrowse queries.
@@ -28,7 +28,7 @@ sub new {
     my $self = {};
 
     my $projectId = $ENV{PROJECT_ID};
-    my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
+    my $c = new EuPathSiteCommon::Model::ModelConfig($projectId);
 
     $self->{baselineThreshold} = .1;
     $self->{slowThreshold} = 2;

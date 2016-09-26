@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Simple cgi script for testing cgi or mod-perl Apache::Registry configurations
-# and ApiCommonWebsite::Model::ModelConfig. 
+# and EuPathSiteCommon::Model::ModelConfig. 
 # Returns SYSDATE from dual.
 # Requires WDK model-config file for DBI connection strings.
 
@@ -10,7 +10,7 @@ use lib $ENV{GUS_HOME};
 use DBI;
 use CGI qw/:standard/;
 use CGI::Carp qw(fatalsToBrowser set_message);
-use ApiCommonWebsite::Model::ModelConfig;
+use EuPathSiteCommon::Model::ModelConfig;
 
 BEGIN {
 
@@ -33,7 +33,7 @@ WDK model file not specified. Example expectations:
 @{[$q->url]}?model=ToxoDB
 EOF
 
-my $c = new ApiCommonWebsite::Model::ModelConfig($model);
+my $c = new EuPathSiteCommon::Model::ModelConfig($model);
 
 
 my $dbh = DBI->connect(

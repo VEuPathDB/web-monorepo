@@ -4,7 +4,7 @@ use strict;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser set_message);
 use GUS::ObjRelP::DbiDatabase;
-use ApiCommonWebsite::Model::ModelConfig;
+use EuPathSiteCommon::Model::ModelConfig;
 
 BEGIN {
     # Carp callback for sending fatal messages to browser
@@ -22,7 +22,7 @@ $q->param('project_id') or die "valid 'project_id' is required";
 my $snpId = $q->param('snpId') || $ARGV[0];
 my $width = $q->param('width') || $ARGV[1]; # width of window on each side of SNP
 
-my $c = new ApiCommonWebsite::Model::ModelConfig( $q->param('project_id') );
+my $c = new EuPathSiteCommon::Model::ModelConfig( $q->param('project_id') );
 my $db = new GUS::ObjRelP::DbiDatabase(
     $c->getDbiDsn,
     $c->getLogin,

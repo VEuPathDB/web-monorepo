@@ -2,9 +2,9 @@ package GBrowse::Configuration;
 
 @main::rainbow = qw(red green yellow blue khaki pink orange cyan purple);
 
-use ApiCommonWebsite::Model::ModelConfig;
+use EuPathSiteCommon::Model::ModelConfig;
 use EuPathSiteCommon::Model::ModelXML;
-use ApiCommonWebsite::Model::DbUtils;
+use EuPathSiteCommon::Model::DbUtils;
 use Bio::Graphics::Browser2::ConnectionCache;
 
 use DAS::Util::SynView;
@@ -29,8 +29,8 @@ sub new {
   my $self  = { track_no => 0 };
 
   my $projectId = $ENV{PROJECT_ID};
-  my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
-  my $dsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
+  my $c = new EuPathSiteCommon::Model::ModelConfig($projectId);
+  my $dsn = EuPathSiteCommon::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
   my $user = $c->appDb->login;
   my $pass = $c->appDb->password;
   my $dbh = Bio::Graphics::Browser2::ConnectionCache->get_instance->connect($dsn, $user, $pass, "Configuration");
@@ -58,8 +58,8 @@ sub init {
   my ($file) = shift; # the xml file
   my $projectId = $ENV{PROJECT_ID};
   my $docRoot = $ENV{DOCUMENT_ROOT};
-  my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
-  my $resolvedDsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
+  my $c = new EuPathSiteCommon::Model::ModelConfig($projectId);
+  my $resolvedDsn = EuPathSiteCommon::Model::DbUtils->resolveOracleDSN($c->appDb->dbiDsn);
   { -sqlfile   => $ENV{GUS_HOME} . '/lib/xml/gbrowse/' . $file,
     -dsn       => $resolvedDsn,
     -user      => $c->appDb->login,
@@ -142,8 +142,8 @@ sub bigwig_file_path {
 
 sub userDB {
   my $projectId = $ENV{PROJECT_ID};
-  my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
-  my $resolvedDsn = ApiCommonWebsite::Model::DbUtils->resolveOracleDSN($c->userDb->dbiDsn);
+  my $c = new EuPathSiteCommon::Model::ModelConfig($projectId);
+  my $resolvedDsn = EuPathSiteCommon::Model::DbUtils->resolveOracleDSN($c->userDb->dbiDsn);
   return { 
      -dsn     => $resolvedDsn,
      -user    => $c->userDb->login,

@@ -12,7 +12,7 @@ use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # untaint PERL5LIB
 use DBI;
 use CGI qw/:standard/;
 use CGI::Carp qw(fatalsToBrowser set_message);
-use ApiCommonWebsite::Model::ModelConfig;
+use EuPathSiteCommon::Model::ModelConfig;
 
 BEGIN {
     # Carp callback for sending fatal messages to browser
@@ -42,7 +42,7 @@ my ($source_id)  = $q->param('id') =~ m/(^\w+$)/               if $q->param('id'
 ($project_id) or die "valid 'project_id' is required";
 ($source_id)  or die "valid 'source_id' is required";
 
-my $c = new ApiCommonWebsite::Model::ModelConfig($project_id);
+my $c = new EuPathSiteCommon::Model::ModelConfig($project_id);
 
 my $dbh = DBI->connect(
     $c->getDbiDsn,

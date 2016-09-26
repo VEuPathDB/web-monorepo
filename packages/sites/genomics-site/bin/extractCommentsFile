@@ -98,8 +98,8 @@ sub getDbHandle {
   
   if ($useWdkModel) {
     
-    require ApiCommonWebsite::Model::CommentConfig;
-    my $c = new ApiCommonWebsite::Model::CommentConfig($projectId);
+    require EuPathSiteCommon::Model::CommentConfig;
+    my $c = new EuPathSiteCommon::Model::CommentConfig($projectId);
 
     $dsn    = $c->getDbiDsn();
     $login  = $c->getLogin();
