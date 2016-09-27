@@ -10,7 +10,7 @@
 
 <imp:pageFrame title="${wdkModel.displayName} :: MaHPIC">
 
-<h1>Access Data from MaHPIC<br>The Malaria Host-Pathogen Interaction Center</h1>
+<h1>Access Data from MaHPIC &ndash<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></center>
 <h2>An Introduction to MaHPIC</h2>
 <div style="margin-left: 1em;">
@@ -33,17 +33,31 @@
 	The MaHPIC effort includes many groups working together to produce and analyze data and metadata.  These groups include Clinical Malaria, 
 	Functional Genomics, Proteomics, Lipidomics, Immunology, Metabolomics, Bioinformatics, and Computational Modeling teams. This research is 
 	fundamental to developing and evaluating new malaria diagnostic tools, antimalarial drugs and vaccines for different types of malaria.
-	</section/>
+	</section>
 	<p>
 </div>
 </div>	
+
+<div class="wdk-toggle" data-show="false">
+<h3 class="wdk-toggle-name"><a href="#">What is the MaHPIC-PlasmoDB Interaction?</a></h3>
+<div class="wdk-toggle-content">
+
+<section>
+	<img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="400px">
+	<p>
+	PlasmoDB integrates and displays MaHPIC data.  blah blah
+	</section>
+	<p>
+</div>
+</div>	
+
 
 
 <div class="wdk-toggle" data-show="false">
 <h3 class="wdk-toggle-name"><a href="#">What is a MaHPIC 'Experiment'?</a></h3>
 <div class="wdk-toggle-content">	
 	
-	 <!-- <h3>What is a MaHPIC Experiment?</h3> -->
+	 <!-- <h3>What is a MaHPIC Experiment?</h3> 
 	<section>
 	The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  Experiments are usually 
 	planned for 100 day periods.  In addition to uninfected control experiments, NHPs are infected with Plasmodium parasites and physical samples 
@@ -51,7 +65,7 @@
 	Samples are then analyzed by the MaHPIC teams and a diverse set of data and metadata are produced.  
 	</section>
 	<p>
-	
+	-->
 	<div style="margin-left: 1em;">	
 	
 	<section>
