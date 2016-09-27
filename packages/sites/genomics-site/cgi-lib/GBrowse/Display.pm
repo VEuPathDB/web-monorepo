@@ -797,12 +797,12 @@ sub chipColor {
   my ($t) = $f->get_tag_values('Treatment');
   my ($r) = $f->get_tag_values('Rep');
   my ($g) = $f->get_tag_values('genotype information');
-  my ($anls) = $f->get_tag_values('Analysis');
+  my ($anls) = $f->get_tag_values('name');
 
-  return '#D80000' if($anls eq 'H4_schizont');
-  return '#006633' if($anls eq 'H4_trophozoite');
-  return '#27408B' if($anls eq 'H4_ring');
-  return '#524818' if($anls eq 'H3K9ac_troph');
+  return '#D80000' if($anls eq 'H4_schizonti_smoothed (ChIP-chip)');
+  return '#006633' if($anls eq 'H4_trophozoite_smoothed (ChIP-chip)');
+  return '#27408B' if($anls eq 'H4_ring_smoothed (ChIP-chip)');
+  return '#524818' if($anls eq 'H3K9ac_troph_smoothed (ChIP-chip)');
 
   return '#000080' if($a eq 'CenH3_H3K9me2');
   return '#B0E0E6' if($a eq 'CenH3');

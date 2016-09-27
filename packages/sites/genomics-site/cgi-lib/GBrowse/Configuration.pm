@@ -365,6 +365,8 @@ sub getPbrowseOntologyCategoryFromTrackName {
 sub getOntologyCategoryFromTrackName {
   my ($trackName, $allTracks, $optionalTerminus, $optionalScope) = @_;
 
+  print STDERR Dumper $trackName;
+
   my $scope = $optionalScope ? $optionalScope : 'gbrowse';
 
   if($self->{_ontology_category_from_track_name}->{$trackName}) {
@@ -480,7 +482,7 @@ sub getSyntenySubtracks {
 
 
 sub subTrackTable {
-    my ($self, $experimentName, $subTrackAttr) = @_;
+    my ($self, $experimentName, $subTrackAttr, $type) = @_;
     if ($subTrackAttr eq 'no_sub') {
         return;
     }
@@ -489,19 +491,28 @@ sub subTrackTable {
     my $sh = $dbh->prepare("SELECT * FROM (
                                 SELECT DISTINCT term
                                 , value
+                                , value as display
                                 FROM apidbtuning.pancharacteristicmetadata
                                 WHERE dataset_name = '$experimentName'
                                 UNION
                                 SELECT DISTINCT term
                                 , value
+                                , value as display
                                 FROM apidbtuning.panprotocolmetadata
                                 WHERE dataset_name = '$experimentName'
+                                UNION
+                                SELECT DISTINCT term_name as term
+                                , pan_name as value
+                                , replace(replace(regexp_replace(pan_name, '\\(.+\\)', ''), '_smoothed', ''), '_', ' ') as display
+                                FROM apidbtuning.fallbackmetadata
+                                WHERE dataset_name = '$experimentName'
+                                AND pan_name like '%$type%'
                                 )
                             WHERE term = '$subTrackAttr'");
     $sh->execute();
     my @subtrackTable;
-    while (my ($term, $value) = $sh->fetchrow_array()) {
-        push (@subtrackTable, [":$value", $value]);
+    while (my ($term, $value, $display) = $sh->fetchrow_array()) {
+        push (@subtrackTable, [":$display", $value]);
     }
     $sh->finish();
 
@@ -516,7 +527,7 @@ sub subTrackSelect {
         return;
     }
 
-    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 'genotype information' => 'Genotype'};
+    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 'genotype information' => 'Genotype', 'name' => 'Name'};
     my $displayName = $ontologyTermToDisplayName->{$subTrackAttr};
     my $subTrackSelect = [$displayName, 'tag_value', $subTrackAttr];
     return $subTrackSelect;
