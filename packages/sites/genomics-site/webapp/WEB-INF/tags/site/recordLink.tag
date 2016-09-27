@@ -30,9 +30,16 @@
   <c:set var="wdkView" value="${requestScope.wdkView}" />
 
   <c:choose>
-    <!-- TRANSCRIPTS: do not want to show transcript and project in URL, and we want to point to the GENE record-->
+    <c:when test="${modelName eq 'EuPathDB'}">
+      <wdk:recordLink
+        primaryKeyAttributeValue="${primaryKeyAttributeValue}"
+        recordClass="${recordClass}"
+        displayValue="${displayValue}"
+      />
+    </c:when>
+    <!-- TRANSCRIPTS: do not want to show transcript id URL, and we want to point to the GENE record-->
     <c:when test="${recordClass.fullName eq 'TranscriptRecordClasses.TranscriptRecordClass'}">
-      <c:url var="recordLink" value="/app/record/gene/${primaryKeyAttributeValue.values['gene_source_id']}" />
+      <c:url var="recordLink" value="/app/record/gene/${primaryKeyAttributeValue.values['gene_source_id']}/${primaryKeyAttributeValue.values['project_id']}" />
       <a href="${recordLink}">${displayValue}</a>
     </c:when>
     <!-- REST of recordtypes, using all PK parts n URL, eg:  source_id, project_id, etc) -->
