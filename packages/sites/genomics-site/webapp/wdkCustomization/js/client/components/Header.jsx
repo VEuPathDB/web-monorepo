@@ -46,16 +46,15 @@ function Header(props) {
             <QuickSearch webAppUrl={webAppUrl} questions={quickSearches}/>
             {user && <SmallMenu projectConfig={projectConfig} user={user} onLogin={showLoginForm} onLogout={showLogoutWarning} />}
           </div>
-          <a href="/">
+          <a id={projectId} href="/">
             <img alt={"Link to " + projectId + " homepage"} style={{ textAlign: "left" }} src={webAppUrl + "/images/" + projectId + "/title_s.png"}/>
           </a>
           <span style={{
             display: 'inline-block',
             verticalAlign: 'top'
           }}>
-            Release {buildNumber}
-            <br/>
-            {formatReleaseDate(releaseDate)}
+            <span id="rel-num">Release {buildNumber}</span><br/>
+            <span id="rel-date">{formatReleaseDate(releaseDate)}</span>
           </span>
         </div>
         {/* TODO Put entries into an external JSON file. */}
