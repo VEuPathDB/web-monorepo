@@ -43,7 +43,7 @@
 <div class="wdk-toggle-content">
 
 <section>
-	<img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="400px">
+	<img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="520px">
 	<p>
 	PlasmoDB integrates and displays MaHPIC data.  blah blah
 	</section>
