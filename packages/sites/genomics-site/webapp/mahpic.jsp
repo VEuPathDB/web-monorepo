@@ -10,7 +10,7 @@
 
 <imp:pageFrame title="${wdkModel.displayName} :: MaHPIC">
 
-<h1>Access Data from MaHPIC &ndash<br>The Malaria Host-Pathogen Interaction Center</h1>
+<h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></center>
 <h2>An Introduction to MaHPIC</h2>
 <div style="margin-left: 1em;">
@@ -111,9 +111,11 @@
   <div style="margin-left: 1em;">	
    <h4>Experiment 4</h4>
     <section>
-    MaHPIC Experiment 04 consisted of 5 Rhesus macaques (Macacca mulatta), infected with Plasmodium cynomolgi (B strain) over a 100-day period.
+    For MaHPIC Experiment 04, 5 Rhesus macaques (Macacca mulatta) were infected with <i>Plasmodium cynomolgi</i> (B strain) and monitored 
+    over a 100-day period. Daily clinical parameters as well as blood bone marrow samples taken at milestones of disease progression 
+    were collected.  
     
-    <img align="middle" src="images/expt3WF.jpg" height="208px" width="400px">
+    <img align="middle" src="images/expt3WF.jpg" height="312px" width="500px">
     
 	 <ul>
 	  <li>Description of experiment goals</li>
