@@ -29,16 +29,17 @@ body {
 	 =HEADER Site name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
-#header2 a#HostDB {
-  color:#006699;font-size:600%;font-weight:bold;position:relative;left:30px;top:32px;
+#header2 a#HostDB img {
+  position:relative;
+  top:20px;
 }
 
 #header2 span#rel-num {
-  position:relative;top:-18px;left:29px;
+  position:relative;top:29px;left:-4px;
 }
 
 #header2 span#rel-date {
-  position:relative;top:-8px;left:-20px;
+  position:relative;top:28px;left:-5px;
 }
 
 

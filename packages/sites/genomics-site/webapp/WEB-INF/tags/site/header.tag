@@ -58,16 +58,17 @@
 
     <!--~~~~~~~ TOP LEFT: SITE name and release DATE ~~~~~~~-->
   <c:choose>
-  <c:when test="${project == 'MicrobiomeDB' || project == 'HostDB'}">
+  <c:when test="${project == 'MicrobiomeDB'}">
     <a id="${project}" href="/">${project}</a>
     <span id="rel-num" >Release ${build}</span> 
     <span id="rel-date" >${releaseDate_formatted}</span>
   </c:when>
   <c:otherwise>
-    <a title="Check the news for an explanation why we are skipping EuPathDB Version numbers." 
+    <a id="${project}" title="Check the news for an explanation why we are skipping EuPathDB Version numbers." 
       href="/"><imp:image src="images/${project}/title_s.png" alt="Link to ${project} homepage" align="left" /></a>
-      Release ${build}<br/>
-      ${releaseDate_formatted}
+    <span id="rel-num" >Release ${build}</span> <br/>
+    <span id="rel-date" >${releaseDate_formatted}</span>
+
   </c:otherwise>
   </c:choose>
   </div>
