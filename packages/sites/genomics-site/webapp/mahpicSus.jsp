@@ -16,11 +16,17 @@
 <div style="margin-left: 1em;">
 
 
-<div class="wdk-toggle" data-show="false">
-<h3 class="wdk-toggle-name"><a href="#">What is MaHPIC</a></h3>
-<div class="wdk-toggle-content">
+<div class="item">
 
- <!-- <h3>What is MaHPIC?</h3> -->
+  <h3>What is MaHPIC?</h3><br>
+  <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC</a> is an 
+  <a href="https://www.niaid.nih.gov/">NIAID</a>-funded initiative to characterize biological interactions between host and pathogen during malaria 
+  infections of non-human primates. By correlating clinical parameters that define disease progression 
+  with the status of host biological systems during infection, MaHPIC researchers hope that their publicly available data sets that can be 
+  used to develop new diagnostics, drugs and vaccines to reduce the global suffering caused by this disease.
+  <a href="#" class="read_more">Read More...</a><br/>
+
+  <span class="more_text">
     <section>
 	The <a href="http://www.systemsbiology.emory.edu/index.html">Malaria Host-Pathogen Interaction Center (MaHPIC)</a> was established 
 	in September 2012 by the 
@@ -34,9 +40,10 @@
 	Functional Genomics, Proteomics, Lipidomics, Immunology, Metabolomics, Bioinformatics, and Computational Modeling teams. This research is 
 	fundamental to developing and evaluating new malaria diagnostic tools, antimalarial drugs and vaccines for different types of malaria.
 	</section>
-	<p>
+  </span>	
+
 </div>
-</div>	
+
 
 <div class="wdk-toggle" data-show="false">
 <h3 class="wdk-toggle-name"><a href="#">What is the MaHPIC-PlasmoDB Interaction?</a></h3>
