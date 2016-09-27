@@ -75,25 +75,20 @@
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" >Gene Text Search:</a></b></label>
 
           <c:set var="textFields" value="Gene ID,Alias,Gene product,GO terms and definitions,Gene notes,User comments,Protein domain names and descriptions,EC descriptions"/>
-          <c:if test="${fn:containsIgnoreCase(modelName, 'PlasmoDB')}">
-             <c:set var="textFields" value="${textFields},Genes of previous release"/>
-          </c:if>
+
           <c:if test="${fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
              <c:set var="textFields" value="${textFields},Cellular localization"/>
           </c:if>
           <c:if test="${fn:containsIgnoreCase(modelName, 'TriTrypDB') || fn:containsIgnoreCase(modelName, 'EuPathDB')}">
              <c:set var="textFields" value="${textFields},Phenotype"/>
           </c:if>
-          <c:if test="${fn:containsIgnoreCase(modelName, 'ToxoDB') || fn:containsIgnoreCase(modelName, 'GiardiaDB')}">
-             <c:set var="textFields" value="${textFields},Community annotation"/>
-          </c:if>
+
           <c:if test="${not fn:containsIgnoreCase(modelName, 'CryptoDB') && not fn:containsIgnoreCase(modelName, 'GiardiaDB') && not fn:containsIgnoreCase(modelName, 'TrichDB') && not fn:containsIgnoreCase(modelName, 'TriTrypDB')}">
              <c:set var="textFields" value="${textFields},Metabolic pathway names and descriptions"/>
           </c:if>
            		<input type="hidden" name="questionFullName" value="GeneQuestions.GenesByTextSearch"/>
 		        <input type="hidden" name="array(${orgParam.name})" value="${listOrganisms}"/>
           		<input type="hidden" name="array(text_fields)" value="${textFields}"/>
-          		<input type="hidden" name="array(whole_words)" value="no"/>
           		<input type="hidden" name="value(max_pvalue)" value="-30"/>
           		<input type="text" class="search-box ts_ie" name="value(${textParam.name})" value="${textParam.default}"/>
                         <input type="hidden" name="value(timestamp)" value="${timestampParam.default}"/>
