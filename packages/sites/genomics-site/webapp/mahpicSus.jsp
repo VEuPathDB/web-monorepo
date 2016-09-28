@@ -10,6 +10,31 @@
 
 <imp:pageFrame title="${wdkModel.displayName} :: MaHPIC">
 
+  <%--
+  The following style and script tags are used for the "Read More" functionality.
+  The expected structure is:
+
+    .item
+      .read_more
+      .more_text
+
+  --%>
+
+  <style>
+    .item .more_text {
+      display: none;
+    }
+  </style>
+
+  <script>
+    (function($) {
+      $('.item').on('click', '.read_more', function(event) {
+        event.preventDefault();
+        $(event.delegateTarget).find('.more_text').toggle();
+      });
+    }(jQuery));
+  </script>
+
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></center>
 <h2>An Introduction to MaHPIC</h2>
@@ -150,10 +175,5 @@
 	 </ul> 
   </div>
   </div>	
-</body>
-
-
-
-
 
 </imp:pageFrame>
