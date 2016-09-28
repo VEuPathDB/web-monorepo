@@ -25,6 +25,7 @@ let isToxoDB = projectId === 'ToxoDB';
 let isTrichDB = projectId === 'TrichDB';
 let isTriTrypDB = projectId === 'TriTrypDB';
 let isEuPathDB = projectId === 'EuPathDB';
+let isMicrobiomeDB = projectId === 'MicrobiomeDB';
 /* eslint-enable no-unused-vars */
 
 /** Header */
@@ -38,12 +39,16 @@ function Header(props) {
       <div id="header">
         <div id="header2">
           <div id="header_rt">
-            <div id="toplink">
-              <a href="http://eupathdb.org">
-                <img alt="Link to EuPathDB homepage" src={webAppUrl + '/images/' + projectId + '/partofeupath.png'}/>
-              </a>
-            </div>
-            <QuickSearch webAppUrl={webAppUrl} questions={quickSearches}/>
+            {!isMicrobiomeDB &&
+              <div id="toplink">
+                <a href="http://eupathdb.org">
+                  <img alt="Link to EuPathDB homepage" src={webAppUrl + '/images/' + projectId + '/partofeupath.png'}/>
+                </a>
+              </div>
+            }
+            {!isMicrobiomeDB &&
+              <QuickSearch webAppUrl={webAppUrl} questions={quickSearches}/>
+            }
             {user && <SmallMenu projectConfig={projectConfig} user={user} onLogin={showLoginForm} onLogout={showLogoutWarning} />}
           </div>
           <a id={projectId} href="/">
@@ -71,6 +76,7 @@ function Header(props) {
             webAppUrl: '/showApplication.do?tab=basket',
             loginRequired: true
           },
+          ...(isMicrobiomeDB ? [] : [
           { id: 'tools', text: 'Tools', children: [
             { id: 'blast', text: 'BLAST',  webAppUrl: '/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast' },
             {
@@ -327,7 +333,7 @@ function Header(props) {
             route: shouldShowGalaxyOrientation ? 'galaxy-orientation' : undefined,
             url: !shouldShowGalaxyOrientation ? 'https://eupathdb.globusgenomics.org/' : undefined,
             target: !shouldShowGalaxyOrientation ? '_blank' : undefined
-          },
+          }]),
           {
             id: 'favorites',
             text: (

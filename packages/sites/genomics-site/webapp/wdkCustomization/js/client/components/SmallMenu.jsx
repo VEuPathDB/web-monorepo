@@ -94,21 +94,21 @@ export default class SmallMenu extends Component {
           <li className="empty-divider">
             <NewWindowLink href={webAppUrl + '/contact.do'}>Contact Us</NewWindowLink>
           </li>
-          <li className="socmedia-link no-divider">
+          {projectId !== 'MicrobiomeDB' && <li className="socmedia-link no-divider">
             <a href={'http://twitter.com/' + twitterId} target="_blank">
               <span title="Follow us on Twitter!" className="twitter small"></span>
             </a>
-          </li>
-          <li className="socmedia-link no-divider">
+          </li>}
+          {projectId !== 'MicrobiomeDB' && <li className="socmedia-link no-divider">
             <a href={'http://facebook.com/' + facebookId} target="_blank">
               <span title="Follow us on Facebook!" className="facebook small"></span>
             </a>
-          </li>
-          <li className="socmedia-link no-divider">
+          </li>}
+          {projectId !== 'MicrobiomeDB' && <li className="socmedia-link no-divider">
             <a href="http://www.youtube.com/user/EuPathDB/videos?sort=dd&amp;flow=list&amp;view=1" target="_blank">
               <span title="Follow us on YouTube!" className="youtube small"></span>
             </a>
-          </li>
+          </li>}
         </ul>
       </div>
     );

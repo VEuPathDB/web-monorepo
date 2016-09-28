@@ -35,24 +35,26 @@
 
   <div id="header2">
     <div id="header_rt">
-      <div id="toplink">
-        <c:if test="${project eq 'TriTrypDB'}">
-          <map name="partof">
-            <area shape="rect" coords="0,0 172,22" href="http://eupathdb.org" alt="EuPathDB home page"/>
-            <area shape="rect" coords="310,0 380,22" href="http://www.genedb.org" alt="GeneDB home page"/>
-          </map>
-        </c:if>
-        <c:choose>
-          <c:when test="${project eq 'TriTrypDB'}">
-            <imp:image usemap="#partof" src="images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
-          </c:when>
-          <c:otherwise>
-            <a href="http://eupathdb.org"><imp:image src="images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
-          </c:otherwise>
-        </c:choose>
-      </div>   <!-- id="toplink" -->
-      <br/>
-      <imp:quickSearch />                <!-- <div id="quick-search" -->
+      <c:if test="${project ne 'MicrobiomeDB'}">
+        <div id="toplink">
+          <c:if test="${project eq 'TriTrypDB'}">
+            <map name="partof">
+              <area shape="rect" coords="0,0 172,22" href="http://eupathdb.org" alt="EuPathDB home page"/>
+              <area shape="rect" coords="310,0 380,22" href="http://www.genedb.org" alt="GeneDB home page"/>
+            </map>
+          </c:if>
+          <c:choose>
+            <c:when test="${project eq 'TriTrypDB'}">
+              <imp:image usemap="#partof" src="images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/>
+            </c:when>
+            <c:otherwise>
+              <a href="http://eupathdb.org"><imp:image src="images/${project}/partofeupath.png" alt="Link to EuPathDB homepage"/></a>   
+            </c:otherwise>
+          </c:choose>
+        </div>   <!-- id="toplink" -->
+        <br/>
+        <imp:quickSearch />                <!-- <div id="quick-search" -->
+      </c:if>
       <imp:smallMenu refer="${refer}"/>  <!-- <div id="nav_topdiv" -->
     </div>  <!-- id="header_rt" -->
 
