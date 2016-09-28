@@ -86,52 +86,48 @@
 <div class="item">
 
    <h3>What is the MaHPIC-PlasmoDB Interaction?</h3><br>
-   PlasmoDB serves as a gateway for the scientific community to access MaHPIC data.
-   <a href="#" class="read_more">Read More...</a>
    
-     <span class="more_text">
-     <img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="520px"><br><br>
+   <div style="margin-left: 1em;">
+     PlasmoDB serves as a gateway for the scientific community to access MaHPIC data.
+     <a href="#" class="read_more">Read More...</a>
    
-     The MaHPIC project produces large amounts of data, both clinical and omics.  MaHPIC data is stored in public repositories whenever possible 
-     (e.g. <a href="https://www.ncbi.nlm.nih.gov/sra">NCBI's Sequence Read Archive</a> for RNA Sequencing). When an appropriate public 
-     repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Download Section.  The Access Data section 
-     of this page provides links to all available MaHPIC data. <br><br>
+      <span class="more_text">
+       <img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="520px"><br><br>
    
-     As part of the MaHPIC’s data deposition effort, data sets composed of experimental results from the Clinical Malaria team are 
-     hosted at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of 
-     individual MaHPIC experiments. Each ‘data set’ consists of a set of files, including a descriptive README, that contain clinical, 
-     veterinary, and animal husbandry results from a MaHPIC Experiment.  The results produced by the MaHPIC Clinical Malaria Team are the 
-     backbone of MaHPIC experiments.<br><br>
+       The MaHPIC project produces large amounts of data, both clinical and omics.  MaHPIC data is stored in public repositories whenever possible 
+       (e.g. <a href="https://www.ncbi.nlm.nih.gov/sra">NCBI's Sequence Read Archive</a> for RNA Sequencing). When an appropriate public 
+       repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Download Section.  The Access Data section 
+       of this page provides links to all available MaHPIC data. <br><br>
+   
+       As part of the MaHPIC’s data deposition effort, data sets composed of experimental results from the Clinical Malaria team are 
+       hosted at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of 
+       individual MaHPIC experiments. Each ‘data set’ consists of a set of files, including a descriptive README, that contain clinical, 
+       veterinary, and animal husbandry results from a MaHPIC Experiment.  The results produced by the MaHPIC Clinical Malaria Team are the 
+       backbone of MaHPIC experiments.<br><br>
      </span>
+  </div>
 </div>
-
    
 <div class="item">  
    <h3> MaHPIC Experimental Design </h3><br>
-   MaHPIC experiments are longitudinal studies of Plasmodium infections (or uninfected controls) in non-human primates designed to elucidate 
-   host-pathogen interactions and address disease progression, recrudescence, relapse, host susceptibility and co-infections. 
-   <a href="#" class="read_more">Read More...</a>
+   
+   <div style="margin-left: 1em;">
+     MaHPIC experiments are longitudinal studies of Plasmodium infections (or uninfected controls) in non-human primates designed to elucidate 
+     host-pathogen interactions and address disease progression, recrudescence, relapse, host susceptibility and co-infections. 
+     <a href="#" class="read_more">Read More...</a>
    
      <span class="more_text">
-     <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br><br>
+       <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br><br>
    
-     The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
-     of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
-     treatments that clear parasites from the blood but not the liver which is the source of relapse.  Animals receive a curative treatment 
-     at the end of the experiment. At specific milestones during disease progression, blood and bone marrow samples are collected and 
-     analyzed by the MaHPIC teams and a diverse set of data and metadata are produced.
+       The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
+       of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
+       treatments that clear parasites from the blood but not the liver which is the source of relapse.  Animals receive a curative treatment 
+       at the end of the experiment. At specific milestones during disease progression, blood and bone marrow samples are collected and 
+       analyzed by the MaHPIC teams and a diverse set of data and metadata are produced.
  
-	
-	<!--<section>
-	The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  Experiments are usually 
-	planned for 100 day periods.  In addition to uninfected control experiments, NHPs are infected with Plasmodium parasites and physical samples 
-	are collected either daily or at specific time points, depending on the specimen type (blood, bone marrow, etc) as the infection progresses.  
-	Samples are then analyzed by the MaHPIC teams and a diverse set of data and metadata are produced.  
-	</section>
-	-->
-	</span>
-</div>	
-
+	 </span>
+   </div>	
+</div>
 
 <div class="item"> 
 
@@ -174,5 +170,6 @@
 	 </ul> 
   </div>
   </div>	
+  </div>
 
 </imp:pageFrame>
