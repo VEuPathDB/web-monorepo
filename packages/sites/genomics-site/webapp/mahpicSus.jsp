@@ -126,10 +126,14 @@
 </div>
 
 
-<div style="margin-left: 1em;">	
   <h3>MaHPIC Experiments</h3>
   <div style="margin-left: 1em;">	
-   <h4>Experiment 4</h4>
+   
+   <div class="wdk-toggle" data-show="false">
+   <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4>
+   <div class="wdk-toggle-content">
+   
+
     <section>
     For MaHPIC Experiment 04, 5 Rhesus macaques (Macacca mulatta) were infected with <i>Plasmodium cynomolgi</i> (B strain) and monitored 
     over a 100-day period. Daily clinical parameters as well as blood bone marrow samples taken at milestones of disease progression 
@@ -145,7 +149,7 @@
 	  <li>Lists of links to other public respositories with data from this Experiment.</li>
 	 </ul> 
   </div>
-</div>	
+  </div>	
 </body>
 
 
