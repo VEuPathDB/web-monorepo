@@ -37,17 +37,22 @@
 
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></center>
-
-
+<br>
+ <img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="520px"><br>
+ 
 <div class="item">
 
-  <h3>What is MaHPIC?</h3><br>
+  <h3>What is MaHPIC?</h3>
 
   <div style="margin-left: 1em;">
     <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC</a> is an 
     <a href="https://www.niaid.nih.gov/">NIAID</a>-funded initiative to characterize host-pathogen interactions during malaria 
     infections of non-human primates. 
+    <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">MaHPIC's teams</a> of outstanding scientists 
+    work together to perform experiments and produce and analyze data and metadata.
     <a href="#" class="read_more">Read More...</a>
+  
+  
   
      <span class="more_text">
       MaHPIC's experimental infections are carefully planned and monitored, producing publicly available data sets (clinical and 
