@@ -36,9 +36,9 @@
   </script>
 
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
-<center><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></center>
-<br>
- <img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="520px"><br>
+  <center><p style="font-size:30px"><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></p>
+      </center> <br>
+  <center> <img align="middle" src="" height="300px" width="520px"></center><br>
  
 <div class="item">
 
@@ -48,9 +48,11 @@
     <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC</a> is an 
     <a href="https://www.niaid.nih.gov/">NIAID</a>-funded initiative to characterize host-pathogen interactions during malaria 
     infections of non-human primates. 
-    <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">MaHPIC's teams</a> of outstanding scientists 
-    work together to perform experiments and produce and analyze data and metadata.
-    <a href="#" class="read_more">Read More...</a>
+    <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">MaHPIC's 8 teams</a> of 
+    <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">outstanding scientists</a> 
+    use a "systems biology" approach to study the molecular details of how malaria parasites 
+	  interact with their human and other animal hosts to cause disease.
+    <a href="#" class="read_more">Read More...</a><br>
   
   
   
