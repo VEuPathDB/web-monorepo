@@ -37,30 +37,30 @@ body {
 	 =HEADER Site name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
+#header2 {
+  position: relative;
+}
+
 #header2 a#MicrobiomeDB {
   color: #292d94;
   font-size: 500%;
   font-weight: bold;
-  position: relative;
-  left: 4px;
+  position: absolute;
   top: 26px;
+  left: 4px;
   text-decoration: none;
 }
 
-#header2 a#MicrobiomeDB img {
-  position: relative;
-}
-
 #header2 span#rel-num {
-  position:relative;
-  top: -6px;
-  left: 0px;
+  position: absolute;
+  top: 40px;
+  left: 330px;
 }
 
 #header2 span#rel-date {
-  position:relative;
-  top: -15px;
-  left: 0px;
+  position: absolute;
+  top: 52px;
+  left: 330px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
