@@ -65,7 +65,7 @@
    PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. READ MORE<br><br>
    <a href="#" class="read_more">Read More...</a><br><br>
    
-   The MaHPIC project produces a lot of data, both clinical and omics.  MaHPIC data is stored in public repositories whenever possible 
+   The MaHPIC project produces large amounts of data, both clinical and omics.  MaHPIC data is stored in public repositories whenever possible 
    (e.g. <a href="https://www.ncbi.nlm.nih.gov/sra">NCBI's Sequence Read Archive</a> for RNA Sequencing). When an appropriate public 
    repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Download Section.  The Access Data section 
    of this page provides links to all available MaHPIC data. <br><br>
@@ -74,7 +74,7 @@
    
    
    
-  <h3> MaHPIC Experimental Design <h3>
+  <h3> MaHPIC Experimental Design </h3>
    As part of the MaHPIC’s data deposition effort, datasets composed of experimental results from the Clinical Malaria team are 
    being hosted at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of 
    individual MaHPIC experiments. Each ‘dataset’ consists of a set of files, including a descriptive README, that contain clinical, 
