@@ -27,12 +27,12 @@
   </style>
 
   <script>
-    (function($) {
+    jQuery(function($) {
       $('.item').on('click', '.read_more', function(event) {
         event.preventDefault();
         $(event.delegateTarget).find('.more_text').toggle();
       });
-    }(jQuery));
+    });
   </script>
 
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
