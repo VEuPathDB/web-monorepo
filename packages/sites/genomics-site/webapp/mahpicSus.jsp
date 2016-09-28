@@ -46,8 +46,8 @@
   <h3>What is MaHPIC?</h3><br>
   <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC</a> is an 
   <a href="https://www.niaid.nih.gov/">NIAID</a>-funded initiative to characterize host-pathogen interactions during malaria 
-  infections of non-human primates. READ MORE
-  <a href="#" class="read_more">Read More...</a><br><br>
+  infections of non-human primates. 
+  <a href="#" class="read_more">Read More...</a>
   
   <span class="more_text">
      MaHPIC's experimental infections are carefully planned and monitored, producing publicly available data sets (clinical and 
@@ -87,8 +87,8 @@
 <div class="item">
 
    <h3>What is the MaHPIC-PlasmoDB Interaction?</h3><br>
-   PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. READ MORE<br><br>
-   <a href="#" class="read_more">Read More...</a><br><br>
+   PlasmoDB serves as a gateway for the scientific community to access MaHPIC data.
+   <a href="#" class="read_more">Read More...</a>
    
      <span class="more_text">
      <img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="520px"><br><br>
@@ -111,7 +111,7 @@
    <h3> MaHPIC Experimental Design </h3><br>
    MaHPIC experiments are longitudinal studies of Plasmodium infections (or uninfected controls) in non-human primates designed to elucidate 
    host-pathogen interactions and address disease progression, recrudescence, relapse, host susceptibility and co-infections. 
-   <a href="#" class="read_more">Read More...</a><br><br> 
+   <a href="#" class="read_more">Read More...</a>
    
      <span class="more_text">
      <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br><br>
@@ -138,7 +138,7 @@
 
    <h3>Which MaHPIC Data are Available?</h3><br>
    Need text here
-   <a href="#" class="read_more">Read More...</a><br><br> 
+   <a href="#" class="read_more">Read More...</a>
     
      <span class="more_text">
 
