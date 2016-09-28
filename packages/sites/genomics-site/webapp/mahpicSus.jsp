@@ -109,27 +109,22 @@
 </div>	
 
 
+<div class="item"> 
 
-<div class="wdk-toggle" data-show="false">
-<h3 class="wdk-toggle-name"><a href="#">Which MaHPIC Data are Available?</a></h3>
-<div class="wdk-toggle-content">
+   <h3>Which MaHPIC Data are Available?</h3><br>
+   Need text here
+   <a href="#" class="read_more">Read More...</a><br><br> 
+    
+     <span class="more_text">
 
-  <div style="margin-left: 1em;">   
-  <h3>Which MaHPIC Data are Available?</h3>
-    <section>
-	Susanne would like to make some suggestions for the What is MaHPIC section but this will have to wait till next week.
-	</section>
-	<p>
-	<section>
-	As part of the MaHPIC's data deposition effort, datasets composed of experimental results from the Clinical Malaria team are being hosted 
-	at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of individual MaHPIC experiments. 
-	Each ‘dataset’ consists of a set of files, including a descriptive README, that contain clinical, veterinary, and animal husbandry results 
-	from a MaHPIC Experiment.  The results produced by the MaHPIC Malaria Core are the backbone of MaHPIC experiments.<br><br>
-	The list of available datasets, publications, and associated data in other public repositories shown below will be updated!
-    </section>
-   </div>
+	 As part of the MaHPIC's data deposition effort, datasets composed of experimental results from the Clinical Malaria team are being hosted 
+	 at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of individual MaHPIC experiments. 
+	 Each ‘dataset’ consists of a set of files, including a descriptive README, that contain clinical, veterinary, and animal husbandry results 
+	 from a MaHPIC Experiment.  The results produced by the MaHPIC Malaria Core are the backbone of MaHPIC experiments.<br><br>
+	 The list of available datasets, publications, and associated data in other public repositories shown below will be updated!
+     </span>
 </div>
-</div>
+
 
 <div style="margin-left: 1em;">	
   <h3>MaHPIC Experiments</h3>
