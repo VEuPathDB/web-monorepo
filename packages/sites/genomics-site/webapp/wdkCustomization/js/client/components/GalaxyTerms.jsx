@@ -12,7 +12,7 @@ export default function GalaxyTerms(props) {
       <h1>Analyze My Experiment</h1>
 
       <p className="eupathdb-GalaxyTermsLead">
-        <em>Welcome to the free EuPathDB Galaxy Data Analysis Services.</em>
+        <em>Welcome to the free EuPathDB Galaxy Data Analysis Service. </em>
         This service uses a dedicated Galaxy site preloaded with EuPathDB genomes and
         workflows, and is hosted by <a href="https://www.globus.org/genomics">
         Globus Genomics</a>, an affiliate of <a href="https://www.globus.org">Globus</a>.
