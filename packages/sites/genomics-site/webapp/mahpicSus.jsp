@@ -38,7 +38,7 @@
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
   <center><p style="font-size:16px"><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></p>
       </center> <br>
-  <center> <img align="middle" src="images/MaHPIC_TopCenter.png" height="250px" width="550px"></center><br>
+  <center> <img align="middle" src="images/MaHPIC_TopCenter.png" height="220px" width="550px"></center><br>
  
 <div class="item">
 
