@@ -98,32 +98,10 @@
 </div>
 
 
-<div class="item">
 
-   <h3>The PlasmoDB-MaHPIC Interface</h3><br>
-   
-   <div style="margin-left: 1em;">
-     PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Access MaHPIC Data</a> 
-     section of this page provides information about and links to all available MaHPIC data.
-     <a href="#" class="read_more">Read More...</a>
-   
-      <span class="more_text">
-   
-        The MaHPIC project produces large amounts 
-       of data, both clinical and omics, that is stored in public repositories whenever possible. When an appropriate public 
-       repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Downloads Section.   <br><br>
-   
-       As part of the MaHPIC’s data deposition effort, data sets composed of experimental results from the Clinical Malaria team are 
-       hosted at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of 
-       individual MaHPIC experiments. Each Clinical Malaria data set consists of a set of files, including a descriptive README, that contain clinical, 
-       veterinary, and animal husbandry results from a MaHPIC Experiment.  The results produced by the MaHPIC Clinical Malaria Team are the 
-       backbone of MaHPIC experiments.<br><br>
-     </span>
-  </div>
-</div>
    
 <div class="item">  
-   <h3> A Systems Biology Approach </h3><br>
+   <h3>Systems Biology and the Experimental Strategy</h3><br>
    
    <div style="margin-left: 1em;">
      For the study of malaria in the context of MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
@@ -145,24 +123,32 @@
    </div>	
 </div>
 
+<div class="item">
 
-<div class="item"> 
-
-   <h3>Which MaHPIC Data are Available?</h3><br>
-   Need text here
-   <a href="#" class="read_more">Read More...</a>
-    
-     <span class="more_text">
-
-	 As part of the MaHPIC's data deposition effort, data sets composed of experimental results from the Clinical Malaria team are being hosted 
-	 at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of individual MaHPIC experiments. 
-	 Each ‘dataset’ consists of a set of files, including a descriptive README, that contain clinical, veterinary, and animal husbandry results 
-	 from a MaHPIC Experiment.  The results produced by the MaHPIC Malaria Core are the backbone of MaHPIC experiments.<br><br>
-	 The list of available datasets, publications, and associated data in other public repositories shown below will be updated!
+   <h3>The PlasmoDB-MaHPIC Interface makes MaHPIC data available</h3><br>
+   
+   <div style="margin-left: 1em;">
+     PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Access MaHPIC Data</a> 
+     section of this page provides information about and links to all available MaHPIC data.
+     <a href="#" class="read_more">Read More...</a><br><br>
+   
+      <span class="more_text">
+   
+        The MaHPIC project produces large amounts 
+       of data, both clinical and omics, that is stored in public repositories whenever possible. When an appropriate public 
+       repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Downloads Section.   <br><br>
+   
+       As part of the MaHPIC’s data deposition effort, data sets composed of experimental results from the Clinical Malaria team are 
+       hosted at PlasmoDB and HostDB.  Results include a rich collection of data and metadata collected over the course of 
+       individual MaHPIC experiments. Each Clinical Malaria data set consists of a set of files, including a descriptive README, that contain clinical, 
+       veterinary, and animal husbandry results from a MaHPIC Experiment.  The results produced by the MaHPIC Clinical Malaria Team are the 
+       backbone of MaHPIC experiments.<br><br>
      </span>
+  </div>
 </div>
-  <br><br>
-<hr size="3" width="75%" align="center">
+
+
+<hr size="3" width="100%" align="right">
 
   <h2 id="access">Access MaHPIC Data Here</h2>
   <h3>MaHPIC Experiments</h3>
@@ -178,7 +164,7 @@
     over a 100-day period. Daily clinical parameters as well as blood bone marrow samples taken at milestones of disease progression 
     were collected.  <br>
     
-    <img align="middle" src="images/expt3WF.jpg" height="312px" width="500px">
+    <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px">
     
 	 <ul>
 	  <li>Description of experiment goals</li>
@@ -188,8 +174,8 @@
 	 </ul> 
 	 
 	 <ul>
-	    <li>Clinical Malaria - <a href="http://plasmodb.org/common/downloads/">Expt 4 clinical data and metadata in PlasmoDB Downloads</a></li>
-	    <li>Functional Genomics - <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Expt 4 raw sequence data at NCBI's SRA</a>, <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expt 4 expression data at GEO</a> </li>
+	    <li>Clinical Malaria - <a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads (Expt 4)</a></li>
+	    <li>Functional Genomics - <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>,   <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO</a> </li>
 	    <li>Proteomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Proteomics data at MassIVE</a>, <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Expt 4 data at PRIDE</a></li>
 	    <li>Lipidomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Lipidomics data at MassIVE</a></li> 
 	    <li>Immunology - <a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="blank">Expt 4 Immunomics at ImmPort</a></li>
