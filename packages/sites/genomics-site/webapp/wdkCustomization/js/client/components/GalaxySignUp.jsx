@@ -7,11 +7,9 @@ export default function GalaxySignUp(props) {
       <h1>Analyze My Experiment</h1>
 
       <p>
-        The first time you visit EuPathDB Galaxy you will be asked to sign up
-        with <a href="https://www.globus.org">Globus</a>, EuPathDB’s Galaxy
-        manager, in order to set up your private Galaxy workspace.
-        This is a <u>three-step</u> sign-up process (screenshots below), which
-        will be opened in a new tab.
+        The first time you visit EuPathDB Galaxy you will be asked to sign up with Globus, EuPathDB’s Galaxy manager,
+        in order to set up your private Galaxy workspace. This is a three-step sign-up process (screenshots below),
+        which will be opened in a new tab.
       </p>
 
       <p>
@@ -20,7 +18,7 @@ export default function GalaxySignUp(props) {
 
       <div className="eupathdb-GalaxySignUpScreens">
         <div>
-          <div className="eupathdb-GalaxySignUpScreenCaption">
+          <div className="eupathdb-GalaxySignUpScreenHeader">
             <strong>1. Create new or link existing Globus account.</strong>
           </div>
           <img title="Option to link an existing Globus Account" src="/a/wdkCustomization/images/globus-02-link-account.jpg"/>
@@ -31,7 +29,7 @@ export default function GalaxySignUp(props) {
           </div>
         </div>
         <div>
-          <div className="eupathdb-GalaxySignUpScreenCaption">
+          <div className="eupathdb-GalaxySignUpScreenHeader">
             <strong>2. Register your credentials.</strong>
           </div>
           <img title="Agree to Globus account terms" src="/a/wdkCustomization/images/globus-03-account-terms.jpg"/>
@@ -41,7 +39,7 @@ export default function GalaxySignUp(props) {
           </div>
         </div>
         <div>
-          <div className="eupathdb-GalaxySignUpScreenCaption">
+          <div className="eupathdb-GalaxySignUpScreenHeader">
             <strong>3. Grant EuPathDB Galaxy access to your account.</strong>
           </div>
           <img title="Grant permission to access your Globus account" src="/a/wdkCustomization/images/globus-04-oauth-perms.jpg"/>

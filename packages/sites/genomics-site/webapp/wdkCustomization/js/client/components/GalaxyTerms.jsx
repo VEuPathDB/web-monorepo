@@ -34,11 +34,11 @@ export default function GalaxyTerms(props) {
             e.preventDefault();
             showLoginForm('/a/app/galaxy-orientation/sign-up')
           }} className="eupathdb-BigButton">
-            Continue with Galaxy Sign-up
+            Go to Galaxy
           </a>
         ) : (
           <Link to="/galaxy-orientation/sign-up" className="eupathdb-BigButton">
-            Continue with Galaxy Sign-up
+            Go to Galaxy
           </Link>
         )}
       </div>

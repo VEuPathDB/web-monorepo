@@ -929,9 +929,13 @@ td.wdk-DataTableCell__thumbnail {
 .eupathdb-GalaxySignUpScreens > div {
   width: 30%;
 }
+.eupathdb-GalaxySignUpScreenHeader,
 .eupathdb-GalaxySignUpScreenCaption {
-  font-size: 90%;
+  font-size: 85%;
   margin: .5em 0;
+}
+.eupathdb-GalaxySignUpScreenCaption {
+  font-style: italic;
 }
 .eupathdb-GalaxySignUpScreen {
   width: 320px;
