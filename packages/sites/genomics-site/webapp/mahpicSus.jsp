@@ -124,7 +124,7 @@
 
 <div class="item">
 
-   <h3>The PlasmoDB-MaHPIC Interface makes MaHPIC data available</h3><br>
+   <h3>The PlasmoDB-MaHPIC Interface Makes MaHPIC Data Available</h3><br>
    
    <div style="margin-left: 1em;">
      PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Access MaHPIC Data</a> 
@@ -147,18 +147,17 @@
 </div>
 
 
-  <h3>MaHPIC Experiments</h3>
+  <h3>MaHPIC Experiment Information and Data Links</h3>
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-      <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4>
+      <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4> - Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> and 
+      treated with artemether over a 100-day study to observe multiple disease relapses. 
    <div class="wdk-toggle-content">
    
-     Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> and 
-      treated with artemether over a 100-day study to observe multiple disease relapses. <br>
-    
     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px">
     
+     <h4>Experiment Information</h4>
 	 <ul>
 	  <li>Description of experiment goals</li>
 	  <li>Experiment start and end dates</li>
