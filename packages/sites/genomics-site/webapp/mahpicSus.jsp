@@ -127,7 +127,7 @@
    <div style="margin-left: 1em;">
      MaHPIC experiments are longitudinal studies of Plasmodium infections (or uninfected controls) in non-human primates designed to elucidate 
      host-pathogen interactions and address disease progression, recrudescence, relapse, host susceptibility and co-infections. 
-     <a href="#" class="read_more">Read More...</a>
+     <a href="#" class="read_more">Read More...</a><br>
    
      <span class="more_text">
        <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br><br>
@@ -142,6 +142,8 @@
    </div>	
 </div>
 
+
+<hr size="3" width="75%" align="center">
 <div class="item"> 
 
    <h3>Which MaHPIC Data are Available?</h3><br>
@@ -170,7 +172,7 @@
     <section>
     For MaHPIC Experiment 04, 5 Rhesus macaques (Macacca mulatta) were infected with <i>Plasmodium cynomolgi</i> (B strain) and monitored 
     over a 100-day period. Daily clinical parameters as well as blood bone marrow samples taken at milestones of disease progression 
-    were collected.  
+    were collected.  <br>
     
     <img align="middle" src="images/expt3WF.jpg" height="312px" width="500px">
     
