@@ -35,11 +35,18 @@
     });
   </script>
 
-<h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
+<div style="text-align:right"> 
+<a href="#access">Access MaHPIC Data Here</a>
+</div>
+
+<h1>Access Data from MaHPIC -
+<br>The Malaria Host-Pathogen Interaction Center</h1>
+
   <center><p style="font-size:16px"><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></p>
-      </center> <br>
+      </center> 
+        
   <center> <img align="middle" src="images/MaHPIC_TopCenter.png" height="220px" width="550px"></center><br>
- 
+
 <div class="item">
 
   <h3>What is MaHPIC?</h3>
@@ -99,9 +106,9 @@
      <a href="#" class="read_more">Read More...</a>
    
       <span class="more_text">
-       <img align="middle" src="images/MaHPICtoPlasmo.png" height="300px" width="520px"><br><br>
    
-       The Access Data section of this page provides links to all available MaHPIC data. The MaHPIC project produces large amounts of data, both clinical and omics, that is stored in public repositories whenever possible. 
+       The Access Data section of this page provides links to all available MaHPIC data. The MaHPIC project produces large amounts 
+       of data, both clinical and omics, that is stored in public repositories whenever possible. 
        (e.g. <a href="https://www.ncbi.nlm.nih.gov/sra">NCBI's Sequence Read Archive</a> for RNA Sequencing). When an appropriate public 
        repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Download Section.   <br><br>
    
@@ -150,8 +157,8 @@
 	 The list of available datasets, publications, and associated data in other public repositories shown below will be updated!
      </span>
 </div>
-
-  <h2>Access MaHPIC Data Here</h2>
+  
+  <h2 id="access">Access MaHPIC Data Here</h2>
   <h3>MaHPIC Experiments</h3>
   <div style="margin-left: 1em;">	
    
