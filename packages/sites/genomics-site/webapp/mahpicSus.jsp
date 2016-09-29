@@ -36,11 +36,10 @@
   </script>
 
 <div style="text-align:right"> 
-<a href="#access">Access MaHPIC Data Here</a>
+<a href="#access">Take me to the data links</a>
 </div>
 
-<h1>Access Data from MaHPIC -
-<br>The Malaria Host-Pathogen Interaction Center</h1>
+<h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 
   <center><p style="font-size:16px"><a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC info at NIH</a></p>
       </center> 
@@ -101,7 +100,7 @@
 
    
 <div class="item">  
-   <h3>Systems Biology and the Experimental Strategy</h3><br>
+   <h3>Systems Biology and Experimental Strategy</h3>
    
    <div style="margin-left: 1em;">
      For the study of malaria in the context of MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
@@ -115,7 +114,7 @@
    
        The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
        of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
-       treatments that clear parasites from the blood but not the liver which is the source of relapse.  Animals receive a curative treatment 
+       treatments that clear parasites from the blood but not the liver, which is the source of relapse.  Animals receive a curative treatment 
        at the end of the experiment. At specific milestones during disease progression, blood and bone marrow samples are collected and 
        analyzed by the MaHPIC teams and a diverse set of data and metadata are produced.
  
@@ -170,7 +169,7 @@
 	  <li>Description of experiment goals</li>
 	  <li>Experiment start and end dates</li>
 	  <li>Link to dataset at PlasmoDB / HostDB download pages</li>
-	  <li>Publications:  <a href"https://www.ncbi.nlm.nih.gov/pubmed/27590312>Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a></li>
+	  <li>Publication:  <a href"https://www.ncbi.nlm.nih.gov/pubmed/27590312">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a></li>
 	 </ul> 
 	 
 	 <ul>
