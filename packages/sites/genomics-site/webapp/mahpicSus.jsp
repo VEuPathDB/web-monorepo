@@ -147,21 +147,15 @@
 </div>
 
 
-<hr size="3" width="100%" align="right">
-
-  <h2 id="access">Access MaHPIC Data Here</h2>
   <h3>MaHPIC Experiments</h3>
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-   <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4>
+      <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4>
    <div class="wdk-toggle-content">
    
-
-    <section>
-    For MaHPIC Experiment 04, 5 Rhesus macaques (Macacca mulatta) were infected with <i>Plasmodium cynomolgi</i> (B strain) and monitored 
-    over a 100-day period. Daily clinical parameters as well as blood bone marrow samples taken at milestones of disease progression 
-    were collected.  <br>
+     Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> and 
+      treated with artemether over a 100-day study to observe multiple disease relapses. <br>
     
     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px">
     
@@ -171,7 +165,7 @@
 	  <li>Link to dataset at PlasmoDB / HostDB download pages</li>
 	  <li>Publication:  <a href"https://www.ncbi.nlm.nih.gov/pubmed/27590312">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a></li>
 	 </ul> 
-	 
+	 <h4>Data Links</h4> 
 	 <ul>
 	    <li>Clinical Malaria - <a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads (Expt 4)</a></li>
 	    <li>Functional Genomics - <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>  OR  <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO</a> </li>
