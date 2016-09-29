@@ -181,8 +181,30 @@
 	  <li>Description of publications including these results</li>
 	  <li>Lists of links to other public respositories with data from this Experiment.</li>
 	 </ul> 
+	 
+	 <ul>
+	    <li>Clinical Malaria - <a href="http://plasmodb.org/common/downloads/>Expt 4 clinical data and metadata in PlasmoDB Downloads</a></li>
+	    <li>Functional Genomics - <a href="https://www.ncbi.nlm.nih.gov/sra">Expt 4 raw sequence data at NCBI's SRA</a>, <a href=" https://www.ncbi.nlm.nih.gov/geo/">Expt 4 expression data at GEO</a> </li>
+	    <li>Proteomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">Expt 4 Proteomics data at MassIVE</a>, <a href=" https://www.ebi.ac.uk/pride/archive/">Expt 4 data at PRIDE</a></li>
+	    <li>Lipidomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">Expt 4 Lipidomics data at MassIVE</a></li> 
+	    <li>Immunology - determines immune profiles of peripheral blood and bone marrow in the course of malaria infections of non-human primates. </li>
+	    <li>Metabolomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">Expt 4 Metabolomics data at MassIVE</a></li>
+	    <li>Computational Modeling - no site chosen yet </li>
+	   </ul>
   </div>
   </div>	
+  
+     <div class="wdk-toggle" data-show="false">
+     <h4 class="wdk-toggle-name"><a href="#">Experiment 13</a></h4>
+     <div class="wdk-toggle-content">
+  </div>
+  </div>
+  
+       <div class="wdk-toggle" data-show="false">
+     <h4 class="wdk-toggle-name"><a href="#">Experiment 23</a></h4>
+     <div class="wdk-toggle-content">
+  </div>
+  </div>
   </div>
 
 </imp:pageFrame>
