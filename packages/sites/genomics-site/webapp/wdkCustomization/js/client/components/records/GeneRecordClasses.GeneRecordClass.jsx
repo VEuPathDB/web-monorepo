@@ -132,7 +132,7 @@ export function RecordTable(props) {
     case 'ProteinExpressionGraphs':   return <DatasetGraphTable {...props} dataTableName="ExpressionGraphsDataTable"/>
     case 'HostResponseGraphs':        return <DatasetGraphTable {...props} dataTableName="HostResponseGraphsDataTable"/>
     case 'CrisprPhenotypeGraphs':     return <DatasetGraphTable {...props} dataTableName="CrisprPhenotypeGraphsDataTable"/>
-    case 'PhenotypeGraphs':           return <DatasetGraphTable {...props} dataTableName="ExpressionGraphsDataTable"/>
+    case 'PhenotypeGraphs':           return <DatasetGraphTable {...props} dataTableName="PhenotypeGraphsDataTable"/>
     case 'MercatorTable':             return <MercatorTable {...props} />
     case 'ProteinProperties':         return <ProteinPbrowseTable {...props} />
     case 'ProteinExpressionPBrowse':  return <ProteinPbrowseTable {...props} />
