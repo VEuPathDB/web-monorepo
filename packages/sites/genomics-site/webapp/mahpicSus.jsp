@@ -30,7 +30,9 @@
     jQuery(function($) {
       $('.item').on('click', '.read_more', function(event) {
         event.preventDefault();
-        $(event.delegateTarget).find('.more_text').toggle();
+        $(event.delegateTarget).find('.more_text').toggle(0, function() {
+          $(event.target).text($(this).is(':visible') ? 'Read Less...' : 'Read More...');
+        });
       });
     });
   </script>
