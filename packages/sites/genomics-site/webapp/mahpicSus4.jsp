@@ -39,7 +39,7 @@
 <center><b><div style="font-size:18px">Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</b></<br><br>
         <div style="font-size:14px">NIAID Contract: # HHSN272201200031C<br>
         <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to the data links</a></div>
-        <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="150px" width="500px"></center><br>
+        <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="120px" width="500px"></center><br>
 
 <div class="item">
 
@@ -152,13 +152,13 @@
       treated with artemether over a 100-day study to observe multiple disease relapses. 
    <div class="wdk-toggle-content">
    
-    <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px">
+    <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="100px" width="450px">
     
      <h4>Experiment Information</h4>
 	 <ul>
 	  <li>Description of experiment goals</li>
 	  <li>Experiment start and end dates</li>
-	  <li>Detailed Experimental Information: <a href="http://eupath/data/apiSiteFiles/downloadSite/PlasmoDB/MaHPIC/EX04_Sub_Template.xlsx">Experimnetal Metadata (Excel file)</a></li>
+	  <li>Detailed Experimental Information: <a href="http://plasmodb.org/common/downloads/MaHPIC/">Experimnetal Metadata (Excel file)</a></li>
 	  <li>Publication:  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a></li>
 	 </ul> 
 	 <h4>Data Links</h4> 
