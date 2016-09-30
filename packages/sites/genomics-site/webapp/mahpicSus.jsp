@@ -43,7 +43,7 @@
   <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to the data links</a></div>
   </center> 
         
-  <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="100px" width="450px"></center><br>
+  <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="150px" width="675px"></center><br><br>
 
 <div class="item">
 
@@ -128,7 +128,8 @@
    
      <span class="more_text">
        <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br><br>
-   
+       <a href="images/MaHPIC_Generic_Timeline.png">View Larger Image</a>
+       
        The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
        of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
        treatments that clear parasites from the blood but not the liver, which is the source of relapse.  Animals receive a curative treatment 
@@ -149,7 +150,8 @@
      <a href="#" class="read_more">Read More...</a><br><br>
    
       <span class="more_text">
-      <img align="middle" src="images/MaHPICtoPlasmo_Interface.png" height="260px" width="520px"><br><br>
+      <img align="middle" src="images/MaHPICtoPlasmo_Interface.png" height="260px" width="520px">
+      <a href="images/MaHPICtoPlasmo_Interface.png">View Larger Image</a><br><br>
         The MaHPIC project produces large amounts 
        of data, both clinical and omics, that is stored in public repositories whenever possible. When an appropriate public 
        repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Downloads Section. Results 
@@ -170,6 +172,7 @@
    <div class="wdk-toggle-content">
    
     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px">
+    <a href="images/MaHPIC_Ex04_Timeline.png">View Larger Image</a>
     
      <h4>Experiment Information</h4>
 	 <ul>
