@@ -39,7 +39,7 @@
 <center><b><div style="font-size:18px">Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</b></<br><br>
         <div style="font-size:14px">NIAID Contract: # HHSN272201200031C<br>
         <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to the data links</a></div>
-        <img align="middle" src="images/MaHPIC_TopCenter_3.png" height="150px" width="500px"></center><br>
+        <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="150px" width="500px"></center><br>
 
 <div class="item">
 
@@ -131,7 +131,7 @@
      <a href="#" class="read_more">Read More...</a><br><br>
    
       <span class="more_text">
-   
+       <img align="middle" src="images/MaHPICtoPlasmo_Interface.png" height="260px" width="520px"><br><br>
         The MaHPIC project produces large amounts 
        of data, both clinical and omics, that is stored in public repositories whenever possible. When an appropriate public 
        repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Downloads Section. Results 
