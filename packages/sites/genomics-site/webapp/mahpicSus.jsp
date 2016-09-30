@@ -158,12 +158,13 @@
 	  <li>Title: Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> and 
       treated with artemether over a 100-day study to observe multiple disease relapses.</li>
 	  <li>Experiment start and end dates</li>
-	  <li>Detailed Experimental Information: <a href="http://eupath/data/apiSiteFiles/downloadSite/PlasmoDB/MaHPIC/EX04_Sub_Template.xlsx">Experimental Metadata (Excel file)</a></li>
+	  <li>MaHPIC's Read Me: <a href="/eupath/data/apiSiteFiles/downloadSite/PlasmoDB/MaHPIC/E04ClinicalMalaria/E04M99MEMmCyDaWB_07122016-README_MULTIPL.txt">E04 READ ME (Text file)</a></li>
+	  <li>Experimental Metadata: <a href="/eupath/data/apiSiteFiles/downloadSite/PlasmoDB/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx">Submission Template (Excel file)</a></li>
 	  <li>Publication:  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a></li>
 	 </ul> 
 	 <h4>Data Links</h4> 
 	 <ul>
-	    <li>Clinical Malaria - <a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads (Expt 4)</a></li>
+	    <li>Clinical Malaria: <a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads (Expt 4)</a></li>
 	    <li>Functional Genomics - <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>  OR  <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO</a> </li>
 	    <li>Proteomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Proteomics data at MassIVE</a>  OR  <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Expt 4 data at PRIDE</a></li>
 	    <li>Lipidomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Lipidomics data at MassIVE</a></li> 
