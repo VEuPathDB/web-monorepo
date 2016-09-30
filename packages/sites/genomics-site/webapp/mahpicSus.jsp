@@ -127,8 +127,8 @@
      <a href="#" class="read_more">Read More...</a><br>
    
      <span class="more_text">
-       <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br><br>
-       <a href="images/MaHPIC_Generic_Timeline.png">View Larger Image</a>
+       <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br>
+       <a href="images/MaHPIC_Generic_Timeline.png">View Larger Image</a><br><br>
        
        The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
        of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
@@ -150,7 +150,7 @@
      <a href="#" class="read_more">Read More...</a><br><br>
    
       <span class="more_text">
-      <img align="middle" src="images/MaHPICtoPlasmo_Interface.png" height="260px" width="520px">
+      <img align="middle" src="images/MaHPICtoPlasmo_Interface.png" height="260px" width="520px"><br>
       <a href="images/MaHPICtoPlasmo_Interface.png">View Larger Image</a><br><br>
         The MaHPIC project produces large amounts 
        of data, both clinical and omics, that is stored in public repositories whenever possible. When an appropriate public 
@@ -171,8 +171,8 @@
       <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4>
    <div class="wdk-toggle-content">
    
-    <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px">
-    <a href="images/MaHPIC_Ex04_Timeline.png">View Larger Image</a>
+    <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
+    <a href="images/MaHPIC_Ex04_Timeline.png">View Larger Image</a><br>
     
      <h4>Experiment Information</h4>
 	 <ul>
