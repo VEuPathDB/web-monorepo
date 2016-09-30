@@ -166,7 +166,7 @@
 	 </ul> 
 	 <h4>Data Links</h4> 
 	 <ul>
-	    <li>Clinical Malaria: <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/">PlasmoDB Downloads (Expt 4)</a> AND <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx#Sheet3!A1:B15>File Descriptions</a></li>
+	    <li>Clinical Malaria: <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/">PlasmoDB Downloads (Expt 4)</a> AND <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx#Sheet3!A1:B15">File Descriptions</a></li>
 	    <li>Functional Genomics - <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>  OR  <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO</a> </li>
 	    <li>Proteomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Proteomics data at MassIVE</a>  OR  <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Expt 4 data at PRIDE</a></li>
 	    <li>Lipidomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Lipidomics data at MassIVE</a></li> 
