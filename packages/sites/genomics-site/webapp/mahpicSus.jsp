@@ -36,8 +36,8 @@
   </script>
 
 
-<h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1><br>
-<center><div style="font-size:16px">NIAID Contract: # HHSN272201200031C<br>
+<h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
+<br><center><div style="font-size:16px">NIAID Contract: # HHSN272201200031C<br>
   <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to the data links</a></div>
   </center> 
         
@@ -166,13 +166,13 @@
 	 </ul> 
 	 <h4>Data Links</h4> 
 	 <ul>
-	    <li>Clinical Malaria: <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/">PlasmoDB Downloads (Expt 4)</a> AND 
-	                          <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx#Sheet3!A1:B15">File Descriptions</a></li>
-	    <li>Functional Genomics - <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>  OR  <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO</a> </li>
-	    <li>Proteomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Proteomics data at MassIVE</a>  OR  <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Expt 4 data at PRIDE</a></li>
-	    <li>Lipidomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Lipidomics data at MassIVE</a></li> 
-	    <li>Immunology - <a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">Expt 4 Immunomics at ImmPort</a></li>
-	    <li>Metabolomics - <a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Metabolomics data at MassIVE</a></li>
+	    <li>Clinical Malaria: Coming Soon <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/">PlasmoDB Downloads (Expt 4)</a> AND 
+	                          <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx#Sheet5!A1:B15">File Descriptions</a>--></li>
+	    <li>Functional Genomics - Coming Soon <!--<a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>  OR  <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO--></a> </li>
+	    <li>Proteomics - Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Proteomics data at MassIVE</a>  OR  <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Expt 4 data at PRIDE--></a></li>
+	    <li>Lipidomics - Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Lipidomics data at MassIVE</a>--></li> 
+	    <li>Immunology - Coming Soon <!--<a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">Expt 4 Immunomics at ImmPort</a>--></li>
+	    <li>Metabolomics - Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Metabolomics data at MassIVE</a>--></li>
 	    <li>Computational Modeling - no site chosen yet </li>
 	   </ul>
   </div>
