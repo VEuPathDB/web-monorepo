@@ -123,7 +123,7 @@
 
 <div class="item">
 
-   <h3>The PlasmoDB-MaHPIC Interface Makes MaHPIC Data Available</h3><br>
+   <h3>The PlasmoDB-MaHPIC Interface Makes MaHPIC Data Available</h3>
    
    <div style="margin-left: 1em;">
      PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Access MaHPIC Data</a> 
@@ -148,17 +148,17 @@
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-      <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4> - Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> and 
-      treated with artemether over a 100-day study to observe multiple disease relapses. 
+      <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4>
    <div class="wdk-toggle-content">
    
     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px">
     
      <h4>Experiment Information</h4>
 	 <ul>
-	  <li>Description of experiment goals</li>
+	  <li>Title: Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> and 
+      treated with artemether over a 100-day study to observe multiple disease relapses.</li>
 	  <li>Experiment start and end dates</li>
-	  <li>Detailed Experimental Information: <a href="http://eupath/data/apiSiteFiles/downloadSite/PlasmoDB/MaHPIC/EX04_Sub_Template.xlsx">Experimnetal Metadata (Excel file)</a></li>
+	  <li>Detailed Experimental Information: <a href="http://eupath/data/apiSiteFiles/downloadSite/PlasmoDB/MaHPIC/EX04_Sub_Template.xlsx">Experimental Metadata (Excel file)</a></li>
 	  <li>Publication:  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a></li>
 	 </ul> 
 	 <h4>Data Links</h4> 

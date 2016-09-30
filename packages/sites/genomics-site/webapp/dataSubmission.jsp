@@ -26,8 +26,7 @@ p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing, p.MsoListParagraph {
 
 <h1>Submit Your Data to ${project}</h1>
 
-<p class=MsoNoSpacing align=center style='text-align:center'><b
-style='mso-bidi-font-weight:normal'><span style='font-size:14.0pt'><o:p>&nbsp;</o:p></span></b></p>
+
 
 <p class=MsoNoSpacing style='text-align:justify'>EuPathDB welcomes submissions
 of genomic-scale data concerning eukaryotic pathogens and host-pathogen
@@ -35,9 +34,6 @@ interactions.
 <a href="http://${project}.org/EuPathDB_datasubm_SOP.pdf"> Please review our Data Submission Policy</a>. </p>
 
 
-
-<p class=MsoNoSpacing style='text-align:justify'><span style='color:#2E74B5;
-mso-themecolor:accent1;mso-themeshade:191'><o:p>&nbsp;</o:p></span></p>
 
 <p class=MsoNoSpacing style='text-align:justify'>
 Our most common data types include transcriptomics, proteomics,
@@ -58,7 +54,7 @@ href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact U
 link to 
 make suggestions. We look forward to working with you!</p>
 
-<p class=MsoNoSpacing style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
 
 
 <p class=MsoNoSpacing><o:p>&nbsp;</o:p></p>
