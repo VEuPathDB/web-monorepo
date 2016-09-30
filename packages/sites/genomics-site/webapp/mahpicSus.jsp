@@ -40,7 +40,7 @@
 
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><div style="font-size:16px">NIAID Contract: # HHSN272201200031C<br>
-  <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to Exp Info and Data Links</a></div>
+  <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to Exp Info and Data Links</a></div>
   </center> 
         
   <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="133px" width="600px"></center><br><br>
@@ -128,7 +128,7 @@
    
      <span class="more_text">
        <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br>
-       <a href="images/MaHPIC_Generic_Timeline.png" target="_blank">View Larger Image</a><br><br>
+       <a href="images/MaHPIC_Generic_Timeline.png" >View Larger Image</a><br><br>
        
        The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
        of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
