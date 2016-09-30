@@ -2,11 +2,13 @@ import $ from 'jquery';
 import { identity, memoize } from 'lodash';
 
 const get = memoize($.get);
+const pendingPromise = { then() {} };
 
 function mapError(xhr) {
   if (xhr.statusText !== 'abort') {
     throw xhr.statusText;
   }
+  return pendingPromise;
 }
 
 export function httpGet(url) {
