@@ -63,10 +63,10 @@
       MaHPIC's experimental infections are carefully planned and monitored, producing results data sets (clinical 
       and a wide range of omics) that will be made available to the public. Results datasets will offer unprecedented 
       detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
-      the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease."<br><br>
+      the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.<br><br>
 
 
-	  The Malaria Host-Pathogen Interaction Center was established in September 2012 by the 
+	  MaHPIC was established in September 2012 by the 
 	  National Institute of Allergy and Infectious Diseases, 
 	  part of the US National Institutes of Health. The MaHPIC team uses a "systems biology" strategy to study how malaria parasites 
 	  interact with their human and other animal hosts to cause disease in molecular detail. The central hypothesis is that 
@@ -105,7 +105,7 @@
    <h3>Systems Biology and Experimental Strategy</h3>
    
    <div style="margin-left: 1em;">
-     For the study of malaria in the context of MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
+     For the study of malaria in the context of the MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
      how a <i>Plasmodium</i> parasite infection produces changes in host and parasite genes, proteins, lipids, the immune response and metabolism.
      MaHPIC experiments are longitudinal studies of <i>Plasmodium</i> infections (or uninfected controls) in non-human primates. 
      <a href="#" class="read_more">Read More...</a><br>
@@ -128,7 +128,7 @@
    <h3>The PlasmoDB-MaHPIC Interface Makes MaHPIC Data Available</h3>
    
    <div style="margin-left: 1em;">
-     PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Access MaHPIC Data</a> 
+     PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">MaHPIC Experiment Information and Data Links</a> 
      section of this page provides information about and links to all available MaHPIC data.
      <a href="#" class="read_more">Read More...</a><br><br>
    
@@ -179,16 +179,11 @@
   </div>	
   
      <div class="wdk-toggle" data-show="false">
-     <h4 class="wdk-toggle-name"><a href="#">Experiment 13</a></h4>
+     <h4 class="wdk-toggle-name"><a href="#">Experiment 13</a></h4> Coming Soon
      <div class="wdk-toggle-content">
   </div>
   </div>
   
-       <div class="wdk-toggle" data-show="false">
-     <h4 class="wdk-toggle-name"><a href="#">Experiment 23</a></h4>
-     <div class="wdk-toggle-content">
-  </div>
-  </div>
   </div>
 
 </imp:pageFrame>
