@@ -36,12 +36,10 @@
   </script>
 
 
-<h2>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h2><br>
-<center><div style="font-size:14px">NIAID Contract: # HHSN272201200031C<br>
-  <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to the data links</a></div>
-  </center> 
-        
-  <center> <img align="middle" src="images/MaHPIC_TopCenter_2.png" height="220px" width="550px"></center><br>
+<center><h2>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h2><br>
+        <div style="font-size:14px">NIAID Contract: # HHSN272201200031C<br>
+        <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to the data links</a></div>
+        <img align="middle" src="images/MaHPIC_TopCenter_2.png" height="150px" width="500px"></center><br>
 
 <div class="item">
 
@@ -123,7 +121,7 @@
 
 <div class="item">
 
-   <h3>The PlasmoDB-MaHPIC Interface Makes MaHPIC Data Available</h3><br>
+   <h3>The PlasmoDB-MaHPIC Interface Makes MaHPIC Data Available</h3>
    
    <div style="margin-left: 1em;">
      PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Access MaHPIC Data</a> 
