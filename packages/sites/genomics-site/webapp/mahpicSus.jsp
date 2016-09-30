@@ -128,7 +128,7 @@
    
      <span class="more_text">
        <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br>
-       <a href="images/MaHPIC_Generic_Timeline.png">View Larger Image</a><br><br>
+       <a href="images/MaHPIC_Generic_Timeline.png" target="_blank">View Larger Image</a><br><br>
        
        The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
        of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
@@ -151,7 +151,7 @@
    
       <span class="more_text">
       <img align="middle" src="images/MaHPICtoPlasmo_Interface.png" height="260px" width="520px"><br>
-      <a href="images/MaHPICtoPlasmo_Interface.png">View Larger Image</a><br><br>
+      <a href="images/MaHPICtoPlasmo_Interface.png" target="_blank">View Larger Image</a><br><br>
         The MaHPIC project produces large amounts 
        of data, both clinical and omics, that is stored in public repositories whenever possible. When an appropriate public 
        repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Downloads Section. Results 
@@ -172,7 +172,7 @@
    <div class="wdk-toggle-content">
    
     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
-    <a href="images/MaHPIC_Ex04_Timeline.png">View Larger Image</a><br>
+    <a href="images/MaHPIC_Ex04_Timeline.png" target="_blank">View Larger Image</a><br>
     
      <h4>Experiment Information</h4>
 	 <ul>
@@ -184,19 +184,8 @@
 	  
 	 </ul> 
 	 <h4>Data Links</h4> 
-	   <!--
-	   <ul>
-	    <li><b>Clinical Malaria Results:</b> Coming Soon <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/">PlasmoDB Downloads (Exp04)</a> AND 
-	                          <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx#Sheet5!A1:B15">File Descriptions</a>--></li>
-	    <li><b>Functional Genomics Results:</b> Coming Soon <!--<a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>  OR  <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO--></a> </li>
-	    <li><b>Proteomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Exp04 Proteomics data at MassIVE</a>  OR  <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Exp04 data at PRIDE--></a></li>
-	    <li><b>Lipidomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Exp04 Lipidomics data at MassIVE</a>--></li> 
-	    <li><b>Immunology Results:</b> Coming Soon <!--<a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">Exp04 Immunomics at ImmPort</a>--></li>
-	    <li><b>Metabolomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Exp04 Metabolomics data at MassIVE</a>--></li>
-	    <li><b>Computational Modeling Results:</b> Coming Soon </li>
-	   </ul>
-	   -->
-	   <div style="margin-left: 3em;">
+	   
+	   <div style="margin-left: 2.5em;">
         <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
         <b>Clinical Malaria</b> - Coming Soon <br>
         <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">
@@ -211,8 +200,7 @@
         <b>Bioinformatics</b> - Coming Soon<br>
         <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
         <b>Computational Modeling</b> - Coming Soon<br>
-	   
-	   
+	   </div>	   
 	   
 	   
 	 <h4>Publication</h4>
