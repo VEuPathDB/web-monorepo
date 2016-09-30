@@ -43,7 +43,7 @@
   <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to Exp Info and Data Links</a></div>
   </center> 
         
-  <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="150px" width="675px"></center><br><br>
+  <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="133px" width="600px"></center><br><br>
 
 <div class="item">
 
