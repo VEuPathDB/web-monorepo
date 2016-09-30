@@ -40,7 +40,7 @@
 
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><div style="font-size:16px">NIAID Contract: # HHSN272201200031C<br>
-  <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to the data links</a></div>
+  <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to Exp Info and Data Links</a></div>
   </center> 
         
   <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="150px" width="675px"></center><br><br>
@@ -186,13 +186,13 @@
 	 <h4>Data Links</h4> 
 	   <!--
 	   <ul>
-	    <li><b>Clinical Malaria Results:</b> Coming Soon <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/">PlasmoDB Downloads (Expt 4)</a> AND 
+	    <li><b>Clinical Malaria Results:</b> Coming Soon <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/">PlasmoDB Downloads (Exp04)</a> AND 
 	                          <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx#Sheet5!A1:B15">File Descriptions</a>--></li>
 	    <li><b>Functional Genomics Results:</b> Coming Soon <!--<a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank" >Sequence data at SRA</a>  OR  <a href=" https://www.ncbi.nlm.nih.gov/geo/" target="_blank">Expression data at GEO--></a> </li>
-	    <li><b>Proteomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Proteomics data at MassIVE</a>  OR  <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Expt 4 data at PRIDE--></a></li>
-	    <li><b>Lipidomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Lipidomics data at MassIVE</a>--></li> 
-	    <li><b>Immunology Results:</b> Coming Soon <!--<a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">Expt 4 Immunomics at ImmPort</a>--></li>
-	    <li><b>Metabolomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Expt 4 Metabolomics data at MassIVE</a>--></li>
+	    <li><b>Proteomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Exp04 Proteomics data at MassIVE</a>  OR  <a href=" https://www.ebi.ac.uk/pride/archive/" target="_blank">Exp04 data at PRIDE--></a></li>
+	    <li><b>Lipidomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Exp04 Lipidomics data at MassIVE</a>--></li> 
+	    <li><b>Immunology Results:</b> Coming Soon <!--<a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">Exp04 Immunomics at ImmPort</a>--></li>
+	    <li><b>Metabolomics Results:</b> Coming Soon <!--<a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">Exp04 Metabolomics data at MassIVE</a>--></li>
 	    <li><b>Computational Modeling Results:</b> Coming Soon </li>
 	   </ul>
 	   -->
