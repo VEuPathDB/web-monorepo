@@ -385,19 +385,12 @@ sub peakTitleChipSeq {
     my @data;
     my ($expt) = $f->source_tag();
     $expt =~ s/_//g;
-  #  my $tagCount = $f->score1;
-  #  my $fc = $f->score2;
-  #  my $pValue = $f->p_value;
     my $start = $f->start;
     my $end = $f->end;
     push @data, ['Experiment:' => $expt];
     push @data, ['Start:' => $start];
     push @data, ['End:' => $end];
-  #  push @data, ['Normalised Tag Count:' => $tagCount];
-  #  push @data, ['Fold Change:' => $fc];
-  #  push @data, ['P Value:' => $pValue];
     my @tags = $f->get_all_tags();
-    print STDERR Dumper @tags;
 
     my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
                                      'genotype information' => 'Genotype', 
@@ -411,8 +404,6 @@ sub peakTitleChipSeq {
     foreach my $tag (@tags) {
         if (exists $ontologyTermToDisplayName->{$tag}) {
             my ($value) = $f->get_tag_values($tag);
-            print STDERR Dumper $tag;
-            print STDERR Dumper $value;
             push @data, ["$ontologyTermToDisplayName->{$tag}:" => $value];
         }
     }
