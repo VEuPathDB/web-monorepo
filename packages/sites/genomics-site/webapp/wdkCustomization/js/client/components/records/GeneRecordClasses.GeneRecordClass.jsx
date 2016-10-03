@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
@@ -7,7 +6,7 @@ import {NativeCheckboxList} from 'wdk-client/Components';
 import { pure } from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
-import {isNodeOverflowing} from '../../util/domUtils';
+import {findChildren, isNodeOverflowing} from '../../util/domUtils';
 import DatasetGraph from '../common/DatasetGraph';
 import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
@@ -22,10 +21,12 @@ export class RecordOverview extends Component {
   constructor(...args) {
     super(...args);
     this.handleThumbnailClick = this.handleThumbnailClick.bind(this);
+    this.addProductTooltip = lodash.debounce(this.addProductTooltip.bind(this), 300);
   }
 
   componentDidMount() {
     this.addProductTooltip();
+    window.addEventListener('resize', this.addProductTooltip);
     this.thumbsContainer = this.node.querySelector('.eupathdb-ThumbnailsContainer');
     if (this.thumbsContainer) this.renderThumbnails();
     else console.error('Warning: Could not find ThumbnailsContainer');
@@ -41,33 +42,28 @@ export class RecordOverview extends Component {
 
   componentWillUnmount() {
     if (this.thumbsContainer) ReactDOM.unmountComponentAtNode(this.thumbsContainer);
-    $(this.node).find('.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle').qtip('destroy', true);
+    window.removeEventListener('resize', this.addProductTooltip);
   }
 
   addProductTooltip() {
-    $(this.node).find('.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle')
-    .qtip({
-      content: {
-        text: (event, api) => {
-          return api.elements.target.find('.eupathdb-RecordOverviewDescription').text();
-        }
-      },
-      events: {
-        show: (event, api) => {
-          if (!isNodeOverflowing(api.elements.target[0])) {
-            event.preventDefault();
-          }
-        }
-      }
-    });
+    let products = seq(
+      this.node.querySelectorAll(
+        '.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle'))
+      .filter(isNodeOverflowing)
+      .flatMap(findChildren('.eupathdb-RecordOverviewDescription'));
+
+    let items = seq(
+      this.node.querySelectorAll('.eupathdb-RecordOverviewItem'))
+      .filter(isNodeOverflowing);
+
+    products.concat(items)
+      .forEach(target => { target.title = target.textContent });
   }
 
   renderThumbnails() {
     let { store } = this.context;
     let { recordClass } = this.props;
     let { attributes, tables } = this.props.record;
-    let { gene_type, protein_expression_gtracks } = attributes;
-    let isProteinCoding = gene_type === 'protein coding';
     // Get field present in record instance. This is leveraging the fact that
     // we filter the category tree in the store based on the contents of
     // MetaTable.

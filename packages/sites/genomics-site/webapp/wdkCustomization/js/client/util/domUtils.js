@@ -76,3 +76,5 @@ export function adjustScrollOnLoad(img) {
     });
   }
 }
+
+export const findChildren = childSelector => node => node.querySelectorAll(childSelector);
