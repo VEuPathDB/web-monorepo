@@ -368,6 +368,7 @@ sub peakTitle {
                                      'genotype information' => 'Genotype', 
                                      'compound based treatment' => 'Treatment',
                                      'replicate' => 'Replicate',
+                                     'life cycle stage' => 'Lifecycle Stage',
                                      'strain'   => 'Strain'};
 
     foreach my $tag (@tags) {
@@ -396,6 +397,7 @@ sub peakTitleChipSeq {
                                      'genotype information' => 'Genotype', 
                                      'compound based treatment' => 'Treatment',
                                      'replicate' => 'Replicate',
+                                     'life cycle stage' => 'Lifecycle Stage',
                                      'strain'   => 'Strain',
                                      'tag_count' => 'Normalised Tag Count',
                                      'fold_change' => 'Fold Change',

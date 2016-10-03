@@ -797,6 +797,7 @@ sub chipColor {
   my ($t) = $f->get_tag_values('compound based treatment');
   my ($r) = $f->get_tag_values('replicate');
   my ($g) = $f->get_tag_values('genotype information');
+  my ($l) = $f->get_tag_values('life cycle stage');
   my ($anls) = $f->get_tag_values('name');
 
   return '#D80000' if($anls eq 'H4_schizonti_smoothed (ChIP-chip)');
@@ -824,12 +825,12 @@ sub chipColor {
   #return '#175487' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   #return '#54B5B5' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
-  return '#00C800' if($anls =~ /replicate/i && $r =~ /replicate1/i);
-  return '#FA9600' if($anls =~ /replicate/i && $r =~ /replicate2/i);
-  return '#884C00' if($anls =~ /replicate/i && $r =~ /replicate3/i);
+  return '#00C800' if($r eq 'replicate1');
+  return '#FA9600' if($r eq 'replicate2');
+  return '#884C00' if($r eq 'replicate3');
 
-  return '#B22222' if($anls =~ /early_log/i);
-  return '#4682B4' if($anls =~ /stationary/i);
+  return '#B22222' if($l =~ /early-log promastigotes/i);
+  return '#4682B4' if($l =~ /stationary promastigotes/i);
 
   return '#00C800' if($a =~ /H3K4me3/i);
   return '#FA9600' if($a =~ /H3K9Ac/i);
@@ -837,15 +838,15 @@ sub chipColor {
   return '#E6E600' if($a =~ /H3/i );
   return '#F00000' if($a =~ /H4K20me3/i);
 
-  return '#600000' if($a =~ /SET8/i && $r == 1 );
-  return '#600000' if($a =~ /TBP1/i && $r == 1 );
-  return '#600000' if($a =~ /TBP2/i && $r == 1 );
-  return '#600000' if($a =~ /RPB9_RNA_pol_II/i && $r == 1);
+  return '#600000' if($a =~ /SET8/i && $r eq 'replicate1' );
+  return '#600000' if($a =~ /TBP1/i && $r eq 'replicate1' );
+  return '#600000' if($a =~ /TBP2/i && $r eq 'replicate1' );
+  return '#600000' if($a =~ /RPB9_RNA_pol_II/i && $r eq 'replicate1');
 
-  return '#C00000' if($a =~ /SET8/i && $r == 2 );
-  return '#C00000' if($a =~ /TBP1/i && $r == 2 );
-  return '#C00000' if($a =~ /TBP2/i && $r == 2 );
-  return '#C00000' if($a =~ /RPB9_RNA_pol_II/i && $r == 2 );
+  return '#C00000' if($a =~ /SET8/i && $r eq 'replicate2' );
+  return '#C00000' if($a =~ /TBP1/i && $r eq 'replicate2' );
+  return '#C00000' if($a =~ /TBP2/i && $r eq 'replicate2' );
+  return '#C00000' if($a =~ /RPB9_RNA_pol_II/i && $r eq 'replicate2' );
 
 
   return '#B84C00';
