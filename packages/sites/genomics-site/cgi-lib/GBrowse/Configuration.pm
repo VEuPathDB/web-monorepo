@@ -506,7 +506,7 @@ sub subTrackTable {
                                 , replace(replace(regexp_replace(pan_name, '\\(.+\\)', ''), '_smoothed', ''), '_', ' ') as display
                                 FROM apidbtuning.fallbackmetadata
                                 WHERE dataset_name = '$experimentName'
-                                AND pan_name like '%$type%'
+                                AND (pan_name like '%$type%' OR '$type' = 'none')
                                 )
                             WHERE term = '$subTrackAttr'");
     $sh->execute();
@@ -527,7 +527,13 @@ sub subTrackSelect {
         return;
     }
 
-    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 'genotype information' => 'Genotype', 'name' => 'Name'};
+    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
+                                     'genotype information' => 'Genotype', 
+                                     'name' => 'Name',
+                                     'compound based treatment' => 'Treatment',
+                                     'replicate' => 'Replicate',
+                                     'strain'   => 'Strain'};
+
     my $displayName = $ontologyTermToDisplayName->{$subTrackAttr};
     my $subTrackSelect = [$displayName, 'tag_value', $subTrackAttr];
     return $subTrackSelect;

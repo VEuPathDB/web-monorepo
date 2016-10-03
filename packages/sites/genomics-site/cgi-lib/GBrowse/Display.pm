@@ -794,8 +794,8 @@ sub haploHeight {
 sub chipColor { 
   my $f   = shift;
   my ($a) = $f->get_tag_values('antibody');
-  my ($t) = $f->get_tag_values('Treatment');
-  my ($r) = $f->get_tag_values('Rep');
+  my ($t) = $f->get_tag_values('compound based treatment');
+  my ($r) = $f->get_tag_values('replicate');
   my ($g) = $f->get_tag_values('genotype information');
   my ($anls) = $f->get_tag_values('name');
 

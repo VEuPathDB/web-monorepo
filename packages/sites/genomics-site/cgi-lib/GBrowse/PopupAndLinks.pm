@@ -355,20 +355,64 @@ sub peakTitle {
     my @data;
     my ($expt) = $f->source_tag();
     $expt =~ s/_/ /g;
-    my $score = $f->score;
     my $start = $f->start;
     my $end = $f->end;
+    my $score = $f->score;
     push @data, ['Experiment:' => $expt];
     push @data, ['Start:' => $start];
     push @data, ['End:' => $end];
     push @data, ['Score:' => $score];
     my @tags = $f->get_all_tags();
 
-    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 'genotype information' => 'Genotype'};
+    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
+                                     'genotype information' => 'Genotype', 
+                                     'compound based treatment' => 'Treatment',
+                                     'replicate' => 'Replicate',
+                                     'strain'   => 'Strain'};
 
     foreach my $tag (@tags) {
         if (exists $ontologyTermToDisplayName->{$tag}) {
             my ($value) = $f->get_tag_values($tag);
+            push @data, ["$ontologyTermToDisplayName->{$tag}:" => $value];
+        }
+    }
+    hover($f, \@data);
+}
+
+
+sub peakTitleChipSeq {
+    my $f = shift;
+    my @data;
+    my ($expt) = $f->source_tag();
+    $expt =~ s/_//g;
+  #  my $tagCount = $f->score1;
+  #  my $fc = $f->score2;
+  #  my $pValue = $f->p_value;
+    my $start = $f->start;
+    my $end = $f->end;
+    push @data, ['Experiment:' => $expt];
+    push @data, ['Start:' => $start];
+    push @data, ['End:' => $end];
+  #  push @data, ['Normalised Tag Count:' => $tagCount];
+  #  push @data, ['Fold Change:' => $fc];
+  #  push @data, ['P Value:' => $pValue];
+    my @tags = $f->get_all_tags();
+    print STDERR Dumper @tags;
+
+    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
+                                     'genotype information' => 'Genotype', 
+                                     'compound based treatment' => 'Treatment',
+                                     'replicate' => 'Replicate',
+                                     'strain'   => 'Strain',
+                                     'tag_count' => 'Normalised Tag Count',
+                                     'fold_change' => 'Fold Change',
+                                     'p_value' => 'P Value'};
+
+    foreach my $tag (@tags) {
+        if (exists $ontologyTermToDisplayName->{$tag}) {
+            my ($value) = $f->get_tag_values($tag);
+            print STDERR Dumper $tag;
+            print STDERR Dumper $value;
             push @data, ["$ontologyTermToDisplayName->{$tag}:" => $value];
         }
     }
