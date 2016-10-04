@@ -604,7 +604,7 @@ sub spliceSiteTitleUnified {
   my @data;
   push @data, [ 'Location:'  => "$loc"];
   push(@data, ['Gene ID:' => $gene]) if ($gene);
-  push(@data, ['UTR Length:' => $utr_len]) if ($gene);
+  push(@data, ['UTR Length:' => $utr_len]) if ($gene) && ($utr_len);
   push @data, [ 'Count:'     => $sum ];
   push @data, [ 'Note:'     => $note ];
 
