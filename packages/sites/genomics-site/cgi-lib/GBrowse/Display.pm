@@ -1,6 +1,7 @@
 package GBrowse::Display;
 
 use strict;
+use Data::Dumper;
 
 #--------------------------------------------------------------------------------
 #  Methods which Return 1 or 0 for determining the Label
@@ -794,6 +795,7 @@ sub haploHeight {
 sub chipColor { 
   my $f   = shift;
   my ($a) = $f->get_tag_values('antibody');
+  ($a) = (defined $a) ? $a : $f->get_tag_values('immunoglobulin complex, circulating');
   my ($t) = $f->get_tag_values('compound based treatment');
   my ($r) = $f->get_tag_values('replicate');
   my ($g) = $f->get_tag_values('genotype information');
@@ -807,6 +809,9 @@ sub chipColor {
 
   return '#000080' if($a eq 'CenH3_H3K9me2');
   return '#B0E0E6' if($a eq 'CenH3');
+
+  #print STDERR Dumper $a;
+  #print STDERR Dumper $g;
 
   return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));

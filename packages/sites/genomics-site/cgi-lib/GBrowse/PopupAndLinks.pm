@@ -365,6 +365,7 @@ sub peakTitle {
     my @tags = $f->get_all_tags();
 
     my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
+                                     'immunoglobulin complex, circulating' => 'Antibody',
                                      'genotype information' => 'Genotype', 
                                      'compound based treatment' => 'Treatment',
                                      'replicate' => 'Replicate',
@@ -394,6 +395,7 @@ sub peakTitleChipSeq {
     my @tags = $f->get_all_tags();
 
     my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
+                                     'immunoglobulin complex, circulating' => 'Antibody',
                                      'genotype information' => 'Genotype', 
                                      'compound based treatment' => 'Treatment',
                                      'replicate' => 'Replicate',

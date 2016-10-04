@@ -533,6 +533,7 @@ sub subTrackSelect {
                                      'compound based treatment' => 'Treatment',
                                      'replicate' => 'Replicate',
                                      'life cycle stage' => 'Lifecycle Stage',
+                                     'immunoglobulin complex, circulating' => 'Antibody',
                                      'strain'   => 'Strain'};
 
     my $displayName = $ontologyTermToDisplayName->{$subTrackAttr};
