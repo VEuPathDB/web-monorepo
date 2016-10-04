@@ -473,7 +473,7 @@ export class CytoscapeDrawing extends React.Component {
             "display": "Apicomplexa"
           },
           {
-            "sid": "Cryptosporidium,Plasmodium,,Homo,Mus",
+            "sid": "Cryptosporidium,Toxoplasma,Plasmodium,Homo,Mus",
             "display": "Cryp,Toxo,Plas,Human,Mouse"
           }
         ]
