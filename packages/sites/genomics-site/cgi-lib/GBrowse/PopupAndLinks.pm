@@ -589,8 +589,7 @@ sub spliceSiteTitleUnified {
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
   my ($gene) = $f->get_tag_values('gene_id');
   my ($utr_len) = $f->get_tag_values('utr_length');
-  $utr_len = ($utr_len < 0)? "N/A (within gene)": $utr_len;
-  my ($first_atg_dist) = $f->get_tag_values('dist_to_first_atg');
+  $utr_len = ($utr_len eq '') ? "N/A (within gene)" : $utr_len;
   my $name = $f->name;
 
   # sum over count_per_mill values for each sample
@@ -606,7 +605,6 @@ sub spliceSiteTitleUnified {
   push @data, [ 'Location:'  => "$loc"];
   push(@data, ['Gene ID:' => $gene]) if ($gene);
   push(@data, ['UTR Length:' => $utr_len]) if ($gene);
-  push @data, [ 'Distance to first ATG' => $first_atg_dist ];
   push @data, [ 'Count:'     => $sum ];
   push @data, [ 'Note:'     => $note ];
 
