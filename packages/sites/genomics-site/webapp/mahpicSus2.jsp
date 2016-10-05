@@ -37,7 +37,7 @@
     });
   </script>
 
-<center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="133px" width="600px"></center>
+<center> <img align="middle" src="images/MaHPIC_TopCenter_5.png" height="150px" width="600px"></center>
 <h1>Download Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><div style="font-size:16px">NIAID Contract: # HHSN272201200031C<br>
   <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Download MaHPIC Data</a></div>
