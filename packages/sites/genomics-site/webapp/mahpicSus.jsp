@@ -37,14 +37,11 @@
     });
   </script>
 
-
+<center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="133px" width="600px"></center>
 <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><div style="font-size:16px">NIAID Contract: # HHSN272201200031C<br>
-  <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Take me to Exp Info and Data Links</a></div>
+  <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Download MaHPIC Data</a></div>
   </center> 
-        
-  <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="133px" width="600px"></center><br><br>
-
 <div class="item">
 
   <h3>An Introduction to MaHPIC</h3>
@@ -101,6 +98,8 @@
         Proteomics - develops detailed proteomics profiles from blood and bone marrow<br>
         <img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px">
         Lipidomics - investigates lipids and biochemical responses associated with lipids from blood and bone marrow<br>
+        <img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px">
+        Immune Profiling - profiles white blood cells in the peripheral blood and progenitors in the bone marrow<br> 
         <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
         Metabolomics - provides detailed metabolomics data for plasma and associated cellular fractions<br>
         <img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px">
@@ -118,7 +117,7 @@
 
    
 <div class="item">  
-   <h3>Systems Biology and Experimental Strategy</h3>
+   <h3>MaHPIC Experimental Design</h3>
    
    <div style="margin-left: 1em;">
      For the study of malaria in the context of the MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
@@ -142,10 +141,10 @@
 
 <div class="item">
 
-   <h3>The PlasmoDB-MaHPIC Interface Makes MaHPIC Data Available</h3>
+   <h3>What data is available?</h3>
    
    <div style="margin-left: 1em;">
-     PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">MaHPIC Experiment Information and Data Links</a> 
+     PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Download MaHPIC Data</a> 
      section of this page provides information about and links to all available MaHPIC data.
      <a href="#" class="read_more">Read More...</a><br><br>
    
@@ -164,7 +163,7 @@
 </div>
 
 
-  <h3 id="DataLinks">MaHPIC Experiment Information and Data Links</h3>
+  <h3 id="DataLinks">Download MaHPIC Data</h3>
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
@@ -194,6 +193,8 @@
         <b>Proteomics</b> - Coming Soon<br>
         <img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px">
         <b>Lipidomics</b> - Coming Soon<br>
+        <img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px">
+        <b>Immune Profiling<b> - coming soon<br>
         <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
         <b>Metabolomics</b> - Coming Soon<br>
         <img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px">
