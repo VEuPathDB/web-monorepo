@@ -38,7 +38,7 @@
   </script>
 
 <center> <img align="middle" src="images/MaHPIC_TopCenter_4.png" height="133px" width="600px"></center>
-<h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
+<h1>Download Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
 <center><div style="font-size:16px">NIAID Contract: # HHSN272201200031C<br>
   <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Download MaHPIC Data</a></div>
   </center> 
@@ -54,7 +54,7 @@
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">outstanding scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
 	  interact with their human and other animal hosts to cause disease.
-    <a href="#" class="read_more">Read More...</a><br><br>
+    <a href="#" class="read_more">Read More...</a><br>
   
   
   
@@ -138,7 +138,7 @@
 	 </span>
    </div>	
 </div>
-
+<!--
 <div class="item">
 
    <h3>What data is available?</h3>
@@ -161,11 +161,21 @@
      </span>
   </div>
 </div>
-
+-->
 
   <h3 id="DataLinks">Download MaHPIC Data</h3>
   <div style="margin-left: 1em;">	
+   PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. Here you will find links to the rich collection of 
+   data and metadata from each MaHPIC experiment.  Results produced by the MaHPIC Clinical Malaria Team are the 
+   backbone of MaHPIC experiments and are housed in PlasmoDB Downloads. Results from other teams are housed at 
+   public respositories.<br>
    
+   <!--
+   The MaHPIC project produces large amounts 
+       of data, both clinical and omics, that is stored in public repositories whenever possible. When an appropriate public 
+       repository does not exist (e.g. clinical data and metadata), PlasmoDB stores the data in our Downloads Section. Results 
+       include a rich collection of data and metadata collected over the course of 
+       individual MaHPIC experiments. -->
    <div class="wdk-toggle" data-show="false">
       <h4 class="wdk-toggle-name"><a href="#">Experiment 4</a></h4>
    <div class="wdk-toggle-content">
