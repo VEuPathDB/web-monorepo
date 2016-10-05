@@ -810,9 +810,6 @@ sub chipColor {
   return '#000080' if($a eq 'CenH3_H3K9me2');
   return '#B0E0E6' if($a eq 'CenH3');
 
-  #print STDERR Dumper $a;
-  #print STDERR Dumper $g;
-
   return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
@@ -826,9 +823,6 @@ sub chipColor {
 
   return '#4B0082' if($t =~ /DMSO/ );
   return '#F08080' if($t =~ /FR235222/ );
-
-  #return '#175487' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
-  #return '#54B5B5' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
   return '#00C800' if($r eq 'replicate1');
   return '#FA9600' if($r eq 'replicate2');
