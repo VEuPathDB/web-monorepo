@@ -1,8 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
+<%@ taglib prefix="api" uri="http://apidb.org/taglib"%>
+
 <c:set var="model" value="${applicationScope.wdkModel.model}"/>
 <c:set var="props" value="${model.properties}"/>
 <c:set var="webAppUrl" value="${pageContext.request.contextPath}"/>
+
+<api:messages var="information" projectName="${model.projectId}" messageCategory="Information"/>
+<api:messages var="degraded" projectName="${model.projectId}" messageCategory="Degraded"/>
+<api:messages var="down" projectName="${model.projectId}" messageCategory="Down"/>
 
 <!doctype html>
 <html>
@@ -21,6 +27,11 @@
         webAppUrl: "${webAppUrl}",
         facebookId: "${props.FACEBOOK_ID}",
         twitterId: "${props.TWITTER_ID}"
+      };
+      window.__EUPATHDB_ANNOUNCEMENTS__ = {
+        information: ${information},
+        degraded: ${degraded},
+        down: ${down}
       };
     </script>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdk/css/wdk.min.css"/>

@@ -12,7 +12,7 @@ import { getId, getDisplayName, getTargetType } from 'wdk-client/CategoryUtils';
 import { UserActionCreators } from 'wdk-client/ActionCreators'
 import { SHOW_GALAXY_PAGE_PREFERENCE } from './controllers/GalaxyTermsController';
 
-let { projectId, twitterId, facebookId, buildNumber, webAppUrl, releaseDate } = projectConfig;
+let { projectId, twitterId, facebookId, buildNumber, webAppUrl, releaseDate, announcements } = projectConfig;
 
 /* eslint-disable no-unused-vars */
 let isAmoebaDB = projectId === 'AmoebaDB';
@@ -357,7 +357,7 @@ function Header(props) {
           }
         ]}/>
       </div>
-      <Announcements projectId={projectId} webAppUrl={webAppUrl}/>
+      <Announcements projectId={projectId} webAppUrl={webAppUrl} announcements={announcements}/>
     </div>
   );
 }
