@@ -334,6 +334,14 @@ const TRACKS_PARAM_REGEXP = /([?;])l=([^;]+)/;
 const GENEPAGE_PARAM_REGEXP = /[?;]genepage=1/;
 
 /**
+ * Remove subtracks from track identifier. We do this since using the Gbrowse
+ * 'embed' command does not support subtracks. See #23506.
+ */
+function removeSubtracks(track) {
+  return track.replace(/\/.*$/, '');
+}
+
+/**
  * Function passed to replace function used with `TRACKS_PARAM_REGEXP`
  * that will reverse tracks order.
  */
@@ -341,6 +349,7 @@ function tracksReplacer(_, prefix, tracks) {
   return prefix + 'enable=' +
     (tracks
       .split(TRACKS_SEPARATOR)
+      .map(removeSubtracks)
       .reverse()
       .join(TRACKS_SEPARATOR));
 }
