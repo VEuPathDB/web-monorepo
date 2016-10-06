@@ -29,7 +29,7 @@ export default class Menu extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.setPosition);
+    window.removeEventListener('scroll', this.setPosition, { passive: true });
   }
 
   render() {
