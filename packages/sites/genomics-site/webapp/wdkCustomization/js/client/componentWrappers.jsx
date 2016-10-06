@@ -182,6 +182,12 @@ export function RecordTable(DefaultComponent) {
 
 export function RecordTableSection(DefaultComponent) {
   return function ApiRecordTableSection(props) {
+    if (props.recordClass.name === 'DatasetRecordClasses.DatasetRecordClass') {
+      return (
+        <DefaultComponent {...props}/>
+      );
+    }
+
     let customName = `Data sets used by ${String.fromCharCode(8220)}${props.table.displayName}${String.fromCharCode(8221)}`
     return (
       <DefaultComponent {...props} table={Object.assign({}, props.table, {
