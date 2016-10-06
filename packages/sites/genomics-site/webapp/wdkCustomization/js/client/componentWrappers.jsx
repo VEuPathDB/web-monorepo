@@ -30,7 +30,7 @@ export function RecordLink(WdkRecordLink) {
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
-const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence' ];
+const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'sample' ];
 
 /**
  * Adds projectId primary key record to splat of props for pages referencing
