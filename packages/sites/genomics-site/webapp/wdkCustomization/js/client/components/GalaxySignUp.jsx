@@ -5,7 +5,7 @@ import GalaxyPageLayout from './GalaxyPageLayout';
  * Sign up page
  */
 export default function GalaxySignUp(props) {
-  let { onGalaxyNavigate } = props;
+  let { onGalaxyNavigate, securityAgreementStatus, updateSecurityAgreementStatus } = props;
   return (
     <GalaxyPageLayout>
       <p>
@@ -53,16 +53,27 @@ export default function GalaxySignUp(props) {
       </div>
 
       <div className="eupathdb-GalaxyTermsContinueLink">
-        <a href="https://eupathdb.globusgenomics.org"
-          target="_blank"
+        <button
           className="eupathdb-BigButton"
           onClick={onGalaxyNavigate}
-        >Continue to Galaxy</a>
+          disabled={!securityAgreementStatus}
+        >Continue to Galaxy</button>
+        <p style={{ fontSize: 'small' }}>
+          <label>
+            <input
+              type="checkbox"
+              checked={securityAgreementStatus}
+              onClick={e => updateSecurityAgreementStatus(e.target.checked)}
+            /> I agree to security terms. <strong style={{color: 'red' }}>TODO</strong>
+          </label>
+        </p>
       </div>
     </GalaxyPageLayout>
   );
 }
 
 GalaxySignUp.propTypes = {
-  onGalaxyNavigate: PropTypes.func.isRequired
+  onGalaxyNavigate: PropTypes.func.isRequired,
+  updateSecurityAgreementStatus: PropTypes.func.isRequired,
+  securityAgreementStatus: PropTypes.bool.isRequired
 };

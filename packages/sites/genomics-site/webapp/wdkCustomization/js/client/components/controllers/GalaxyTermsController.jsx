@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { cloneElement } from 'react';
 import { WdkViewController } from 'wdk-client/Controllers';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
+import { updateSecurityAgreementStatus } from '../../actioncreators/GalaxyTermsActionCreators';
 
 let { updateUserPreference, showLoginForm } = UserActionCreators;
 
@@ -21,13 +22,15 @@ export default class GalaxyTermsController extends WdkViewController {
   getActionCreators() {
     return {
       showLoginForm,
-      updateUserPreference
+      updateUserPreference,
+      updateSecurityAgreementStatus
     };
   }
 
   getStateFromStore(store) {
     return {
-      user: get(store.getState(), 'globalData.user')
+      user: get(store.getState(), 'globalData.user'),
+      securityAgreementStatus: get(store.getState(), 'securityAgreementStatus', false)
     };
   }
 
@@ -41,6 +44,7 @@ export default class GalaxyTermsController extends WdkViewController {
 
   onGalaxyNavigate() {
     this.eventHandlers.updateUserPreference(SHOW_GALAXY_PAGE_PREFERENCE, 'false');
+    window.open('https://eupathdb.globusgenomics.org', '_blank');
   }
 
   renderView(state, eventHandlers) {

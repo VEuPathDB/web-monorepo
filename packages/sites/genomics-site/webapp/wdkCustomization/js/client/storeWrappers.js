@@ -4,6 +4,7 @@ import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 import { actionTypes } from './actioncreators/GlobalActionCreators';
 import { TABLE_STATE_UPDATED } from './actioncreators/RecordViewActionCreators';
+import { SECURITY_AGREEMENT_STATUS_CHANGED } from './actioncreators/GalaxyTermsActionCreators';
 
 let storageItems = {
   tables: {
@@ -53,7 +54,16 @@ export function DownloadFormStore(WdkDownloadFormStore) {
 
 /** Provide GalaxyTermsStore */
 export function GalaxyTermsStore(WdkStore) {
-  return class ApiGalaxyTermsStore extends WdkStore { };
+  return class ApiGalaxyTermsStore extends WdkStore {
+    handleAction(state, { type, payload }) {
+      switch(type) {
+        case SECURITY_AGREEMENT_STATUS_CHANGED: return Object.assign({}, state, {
+          securityAgreementStatus: payload.status
+        });
+        default: return state;
+      }
+    }
+  };
 }
 
 /** Provide QueryGridViewStore */
