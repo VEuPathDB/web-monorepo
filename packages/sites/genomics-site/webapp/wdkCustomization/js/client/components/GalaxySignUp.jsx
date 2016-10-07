@@ -1,11 +1,13 @@
 import { PropTypes } from 'react';
+import GalaxyPageLayout from './GalaxyPageLayout';
 
+/**
+ * Sign up page
+ */
 export default function GalaxySignUp(props) {
   let { onGalaxyNavigate } = props;
   return (
-    <div id="eupathdb-GalaxyTerms">
-      <h1>Analyze My Experiment</h1>
-
+    <GalaxyPageLayout>
       <p>
         The first time you visit EuPathDB Galaxy you will be asked to sign up with Globus, EuPathDB’s Galaxy manager,
         in order to set up your private Galaxy workspace. This is a three-step sign-up process (screenshots below),
@@ -57,7 +59,7 @@ export default function GalaxySignUp(props) {
           onClick={onGalaxyNavigate}
         >Continue to Galaxy</a>
       </div>
-    </div>
+    </GalaxyPageLayout>
   );
 }
 

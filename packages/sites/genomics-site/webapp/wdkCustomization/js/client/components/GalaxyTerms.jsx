@@ -1,6 +1,7 @@
 import { PropTypes } from 'react';
 import { Link } from 'wdk-client/Components';
 import { projectId } from '../config';
+import GalaxyPageLayout from './GalaxyPageLayout';
 
 /**
  * Galaxy page component
@@ -8,9 +9,7 @@ import { projectId } from '../config';
 export default function GalaxyTerms(props) {
   let { user, showLoginForm } = props;
   return (
-    <div id="eupathdb-GalaxyTerms">
-      <h1>Analyze My Experiment</h1>
-
+    <GalaxyPageLayout>
       <p className="eupathdb-GalaxyTermsLead">
         <em>Welcome to the free EuPathDB Galaxy Data Analysis Service. </em>
         This service uses a dedicated Galaxy site preloaded with EuPathDB genomes and
@@ -42,7 +41,7 @@ export default function GalaxyTerms(props) {
           </Link>
         )}
       </div>
-    </div>
+    </GalaxyPageLayout>
   );
 }
 
