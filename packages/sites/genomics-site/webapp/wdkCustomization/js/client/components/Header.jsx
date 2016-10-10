@@ -76,7 +76,15 @@ function Header(props) {
             webAppUrl: '/showApplication.do?tab=basket',
             loginRequired: true
           },
-          ...(isMicrobiomeDB ? [] : [
+          ...(isMicrobiomeDB ? [
+            { id: 'data-summary', text: 'Data Summary', children: [
+              {
+                id: 'datasets',
+                text: 'Data Sets',
+                route: 'search/dataset/AllDatasets/result'
+              }
+            ] }
+          ] : [
           { id: 'tools', text: 'Tools', children: [
             { id: 'blast', text: 'BLAST',  webAppUrl: '/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast' },
             {
