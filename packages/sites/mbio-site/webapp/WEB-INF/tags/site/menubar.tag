@@ -54,6 +54,13 @@
           <span style="vertical-align:middle" title="Store IDs for easy access to their details page. You can add IDs *only* from the details page, one at a time.">My Favorites</span></a></li>
       </c:otherwise>
     </c:choose>
+
+    <li><a>Data Summary</a>
+      <ul>
+        <li><a href="${baseUrl}/app/search/dataset/AllDatasets/result">Data Sets</a></li>
+      </ul>
+    </li>
+
   </ul>
 
 </div>
