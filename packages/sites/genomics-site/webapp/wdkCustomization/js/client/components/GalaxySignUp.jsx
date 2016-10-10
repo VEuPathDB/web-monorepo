@@ -53,6 +53,14 @@ export default function GalaxySignUp(props) {
       </div>
 
       <div className="eupathdb-GalaxyTermsContinueLink">
+        <button
+          className="eupathdb-BigButton"
+          onClick={onGalaxyNavigate}
+          disabled={!securityAgreementStatus}
+          title={securityAgreementStatus
+            ? 'Open Galaxy in a new tab/window.'
+            : 'Please read and agree to the information below.'}
+        >Continue to Galaxy</button>
         <p style={{ fontSize: 'small', textAlign: 'justify' }}>
           EuPathDB Galaxy workspaces are provided free of charge. We encrypt
           data transfers and storage but ultimately we cannot guarantee the
@@ -77,14 +85,6 @@ export default function GalaxySignUp(props) {
             <strong> I have read and understand the information above.</strong>
           </label>
         </p>
-        <button
-          className="eupathdb-BigButton"
-          onClick={onGalaxyNavigate}
-          disabled={!securityAgreementStatus}
-          title={securityAgreementStatus
-            ? 'Open Galaxy in a new tab/window.'
-            : 'Please read and agree to the information above.'}
-        >Continue to Galaxy</button>
       </div>
     </GalaxyPageLayout>
   );
