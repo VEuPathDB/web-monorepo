@@ -53,20 +53,38 @@ export default function GalaxySignUp(props) {
       </div>
 
       <div className="eupathdb-GalaxyTermsContinueLink">
-        <button
-          className="eupathdb-BigButton"
-          onClick={onGalaxyNavigate}
-          disabled={!securityAgreementStatus}
-        >Continue to Galaxy</button>
-        <p style={{ fontSize: 'small' }}>
+        <p style={{ fontSize: 'small', textAlign: 'justify' }}>
+          EuPathDB Galaxy workspaces are provided free of charge. We encrypt
+          data transfers and storage but ultimately we cannot guarantee the
+          security of data transmissions between EuPathDB, Globus and
+          affiliates, Amazon Cloud Services, and the user. It is your
+          responsibility to backup your data and obtain any required permissions
+          from your study and/or institution prior to uploading data for
+          analyses on the EuPathDB Galaxy platform. Do not use, transmit, upload
+          or share any human identifiable information in the files you analyze.
+          EuPathDB, Globus and affiliates, University of Georgia, University of
+          Pennsylvania, University of Liverpool, and Amazon Cloud Services do
+          not take any responsibility and are not liable for the loss and/or
+          release of any data you analyze via the EuPathDB Galaxy platform.
+        </p>
+        <p style={{fontSize: 'small'}}>
           <label>
             <input
               type="checkbox"
               checked={securityAgreementStatus}
               onClick={e => updateSecurityAgreementStatus(e.target.checked)}
-            /> I agree to security terms. <strong style={{color: 'red' }}>TODO</strong>
+            />
+            <strong> I have read and understand the information above.</strong>
           </label>
         </p>
+        <button
+          className="eupathdb-BigButton"
+          onClick={onGalaxyNavigate}
+          disabled={!securityAgreementStatus}
+          title={securityAgreementStatus
+            ? 'Open Galaxy in a new tab/window.'
+            : 'Please read and agree to the information above.'}
+        >Continue to Galaxy</button>
       </div>
     </GalaxyPageLayout>
   );
