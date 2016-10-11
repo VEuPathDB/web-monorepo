@@ -165,7 +165,7 @@
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-      <h3 class="wdk-toggle-name"><img src="images/MaHPIC_purple_arrow.png" height="13px" width="39px"><a href="#">Experiment 4</a></h3>
+    <img src="images/MaHPIC_purple_arrow.png" height="13px" width="39px">  <h3 class="wdk-toggle-name"><a href="#">Experiment 4</a></h3>
    <div class="wdk-toggle-content">
    
     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
@@ -272,12 +272,13 @@
 	    <div style="margin-left: 2.5em;">
         <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
 	     Plasmodium cynomolgi infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
-  </div>
+        </div>
   </div>	
-  
+  </div>
      <div class="wdk-toggle" data-show="false">
      <h3 class="wdk-toggle-name"><a href="#">Experiment 13: Coming Soon</a></h3>
      <div class="wdk-toggle-content">
+
   </div>
   </div>
   
