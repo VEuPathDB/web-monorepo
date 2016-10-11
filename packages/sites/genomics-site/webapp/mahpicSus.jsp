@@ -184,9 +184,9 @@
 	   
 	   <div style="margin-left: 2.5em;">
         <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
-        <b>Clinical Malaria</b> - Coming Soon <br>
+        <b>Clinical Malaria</b> - <a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a><br>
         <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">
-        <b>Functional Genomics</b> - Coming Soon <br>
+        <b>Functional Genomics</b> - <a href="https://www.ncbi.nlm.nih.gov/sra">E04 Raw Reads at NCBI's SRA</a><br>
         <img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px">
         <b>Proteomics</b> - Coming Soon<br>
         <img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px">
@@ -210,7 +210,7 @@
            padding-right: 5px;
            padding-top: 5px;
            padding-bottom: 5px;
-           border: 0px solid black;
+           border: 1px solid black;
            }
            #DataLinks {
            margin-left : 5 em;
@@ -223,7 +223,7 @@
              <th>Data Integrated into PlasmoDB Searches</th>
              <th>Data Available in External Resources</th>
            </tr>
-             <td><<img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
              <td><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a></td>
              <td>N/A</td>
              <td>N/A</td>
@@ -237,7 +237,6 @@
            </table>
 <br><br>
 
-<div style="margin-left: 2.5em;">
 	   <style>
            #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
            text-align : center;
@@ -245,7 +244,7 @@
            padding-right: 5px;
            padding-top: 5px;
            padding-bottom: 5px;
-           border: 0px solid black;
+           border: 1px solid black;
            }
            #DataLinks {
            margin-left : 5 em;
