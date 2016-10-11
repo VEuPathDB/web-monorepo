@@ -266,6 +266,7 @@
              <td>N/A</td>
            </tr>
            </table>
+           </div>
 <br><br>
 	   
 	 <h4>Publication</h4>
