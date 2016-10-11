@@ -1,10 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="api" uri="http://apidb.org/taglib"%>
 
 <c:set var="model" value="${applicationScope.wdkModel.model}"/>
 <c:set var="props" value="${model.properties}"/>
 <c:set var="webAppUrl" value="${pageContext.request.contextPath}"/>
+<c:set var="gaId" value="${applicationScope.wdkModel.properties['GOOGLE_ANALYTICS_ID']}"/>
 
 <api:messages var="information" projectName="${model.projectId}" messageCategory="Information"/>
 <api:messages var="degraded" projectName="${model.projectId}" messageCategory="Degraded"/>
@@ -33,6 +35,13 @@
         degraded: ${degraded},
         down: ${down}
       };
+
+      <%-- Initialize google analytics. A pageview event will be sent in the JavaScript code. --%>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', '${gaId}', 'auto');
     </script>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdk/css/wdk.min.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/client.css"/>

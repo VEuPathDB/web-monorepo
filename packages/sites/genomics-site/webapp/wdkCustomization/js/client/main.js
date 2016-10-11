@@ -33,7 +33,8 @@ apidb.context = initialize({
   rootElement,
   endpoint,
   wrapRoutes,
-  storeWrappers
+  storeWrappers,
+  onLocationChange
 });
 
 let { dispatchAction } = apidb.context;
@@ -43,3 +44,25 @@ dispatchAction(loadQuickSearches(quickSearches));
 dispatchAction(loadBasketCounts());
 
 export default apidb.context;
+
+
+// save previousLocation so we can conditionally send pageview events
+let previousLocation;
+
+/** Send pageview events to Google Analytics */
+function onLocationChange(location) {
+  // skip if google analytics object is not defined
+  if (!window.ga) return;
+
+  // skip if the previous pathname and new pathname are the same, since
+  // hash changes are currently detected.
+  if (previousLocation && previousLocation.pathname === location.pathname) return;
+
+  // update previousLocation
+  previousLocation = location;
+
+  window.ga('send', 'pageview', {
+    page: location.pathname,
+    title: location.pathname
+  });
+}
