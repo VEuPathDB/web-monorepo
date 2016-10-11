@@ -36,11 +36,13 @@
       });
     });
   </script>
+  
+<div style="margin-left: 3em;">
 
 <center> <img align="middle" src="images/MaHPIC_TopCenter_5.png" height="120px" width="500px"></center>
 <h1>Download Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1>
-<center><div style="font-size:14px">NIAID Contract: # HHSN272201200031C<br>
-  <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Download MaHPIC Data</a></div>
+<center><div style="font-size:14px"><br>
+  <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC Info at Emory</a> &nbsp; &nbsp; &ndash; &nbsp; &nbsp; <a href="" target="_blank">MaHPIC Info at NIH</a>&nbsp; &nbsp; &ndash; &nbsp; &nbsp;<a href="#DataLinks">Download MaHPIC Data</a></div>
   </center> 
 <div class="item">
 
@@ -48,19 +50,16 @@
 
   <div style="margin-left: 1em;">
     <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC</a> is an 
-    <a href="https://www.niaid.nih.gov/">NIAID</a>-funded initiative to characterize host-pathogen interactions during malaria 
+    <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">NIAID</a>-funded initiative to characterize host-pathogen interactions during malaria 
     infections of non-human primates. 
     <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">MaHPIC's 8 teams</a> of 
-    <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">outstanding scientists</a> 
+    <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
-	  interact with their human and other animal hosts to cause disease.
-    <a href="#" class="read_more">Read More...</a><br>
+	  interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)<br><br>
   
-  
-  
-     <span class="more_text">
-      MaHPIC's experimental infections are carefully planned and monitored, producing results data sets (clinical 
-      and a wide range of omics) that will be made available to the public. Results datasets will offer unprecedented 
+      MaHPIC is organized into a compendium of 22 experiments.  Experiments are carefully planned and monitored, producing results data sets (clinical 
+      and a wide range of omics) that will be made available to the public. In total, MaHPIC results data sets will be 
+      composed of thousands of files and several data types. Results datasets will offer unprecedented 
       detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
       the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.<br><br>
 
@@ -228,5 +227,5 @@
   </div>
   
   </div>
-
+</div>
 </imp:pageFrame>
