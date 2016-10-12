@@ -247,7 +247,7 @@
         chromosomeFakeNull.appendTo($chromosomeOptional).attr("selected", true);
       }
 
-      this['value(organismSinglePick)'].disabled = false;
+      form.find('#organismSinglePick').prop('disabled', false);
 
     }).on("change", function() {
       form.mutuallyExclusiveParams("change");
