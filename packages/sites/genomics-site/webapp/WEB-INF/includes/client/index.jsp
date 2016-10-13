@@ -8,7 +8,9 @@
 <c:set var="webAppUrl" value="${pageContext.request.contextPath}"/>
 <c:set var="gaId" value="${applicationScope.wdkModel.properties['GOOGLE_ANALYTICS_ID']}"/>
 
-<api:messages var="information" projectName="${model.projectId}" messageCategory="Information"/>
+<%-- only show information on home page. this jsp never gets loaded on home page --%>
+<%-- FIXME Add logic to show information messages on homepage if this gets used for homepage --%>
+<c:set var="information" value="[]"/>
 <api:messages var="degraded" projectName="${model.projectId}" messageCategory="Degraded"/>
 <api:messages var="down" projectName="${model.projectId}" messageCategory="Down"/>
 
