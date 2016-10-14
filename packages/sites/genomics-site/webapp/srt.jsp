@@ -42,7 +42,7 @@
             <a href="#sequence">Genomic Sequence IDs</a> |  
  <c:if test="${project != 'HostDB'}" >
             <a href="#est">EST IDs</a> |  
-            <a href="#est">Isolate IDs</a> |  
+            <a href="#est">Popset Isolate IDs</a> |  
 </c:if>
             <%--
                <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
@@ -157,11 +157,11 @@ ${contigsIds3.default}:100..2000:r</textarea>
  <c:if test="${project != 'HostDB'}" >
   <hr>
 
-  <h3><a name="isolate">Retrieve Sequences By Isolate IDs</a></h3>
+  <h3><a name="isolate">Retrieve Sequences By Popset Isolate IDs</a></h3>
   <form action="/cgi-bin/${iSrt}" method="post">
     <input type="hidden" name="project_id" value="${wdkModel.name}"/>
     <table border="0" width="100%" cellpadding="2">
-      <tr><td colspan="2" valign="top"><b>Enter a list of Isolate IDs (each ID on a separate line):</b></td><tr>
+      <tr><td colspan="2" valign="top"><b>Enter a list of Popset Isolate IDs (each ID on a separate line):</b></td><tr>
       <tr><td colspan="2">
           <textarea name="ids" rows="4" cols="60"></textarea>
       </td></tr>
