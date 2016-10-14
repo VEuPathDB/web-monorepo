@@ -23,6 +23,7 @@
                   <c:set var="desc" value="${viewModel.headerDescription}"/>
                   <th title="${desc.pathwayId}">${row.pathwayId}</th>
                   <th title="${desc.pathwayName}">${row.pathwayName}</th>
+                  <th title="${desc.pathwaySource}">${row.pathwaySource}</th>
                   <th title="${desc.bgdGenes}">${row.bgdGenes}</th>
                   <th title="${desc.resultGenes}">${row.resultGenes}</th>
                   <th title="${desc.percentInResult}">${row.percentInResult}</th>
@@ -36,8 +37,9 @@
               <tbody>
                 <c:forEach var="row" items="${viewModel.resultData}">
                   <tr>
-                    <td><a href="${viewModel.pathwayBaseUrl}${row.pathwayId}" target="_blank">${row.pathwayId}</a></td>
+                    <td><a href="${viewModel.pathwayBaseUrl}${row.pathwaySource}/${row.pathwayId}" target="_blank">${row.pathwayId}</a></td>
                     <td>${row.pathwayName}</td>
+                    <td>${row.pathwaySource}</td>
                     <td class="enrich-centered">${row.bgdGenes}</td>
                     <td class="enrich-centered">${row.resultGenes}</td>
                     <td class="enrich-centered">${row.percentInResult}</td>
