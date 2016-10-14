@@ -28,7 +28,9 @@ if (rootUrl) {
 }
 
 // remove jsessionid from url
-window.history.replaceState(null, '', window.location.pathname.replace(/;jsessionid=\w{32}/i, ''));
+window.history.replaceState(null, '',
+  window.location.pathname.replace(/;jsessionid=\w{32}/i, '') +
+  window.location.search + window.location.hash);
 
 // initialize the application
 apidb.context = initialize({
