@@ -1,5 +1,5 @@
 import { pruneDescendantNodes } from 'wdk-client/TreeUtils';
-import { getTree, nodeHasChildren } from 'wdk-client/OntologyUtils';
+import { nodeHasChildren } from 'wdk-client/OntologyUtils';
 import { getNodeId } from 'wdk-client/CategoryUtils';
 
 let booleanQuestionPrefixes = [
