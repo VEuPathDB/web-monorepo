@@ -6,6 +6,7 @@
   xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
 
   <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
+  <c:set var="question" value="${wdkModel.questionSetsMap['SampleQuestions'].questionsMap['MicrobiomeSampleByMetadata']}"/>
 
   <div id="contentwrapper">
     <div id="contentcolumn">
@@ -40,28 +41,15 @@
         </div>
         <div style="padding-right: 290px;">
           <p>
-            <strong>MicrobiomeDB</strong> is a data mining website for microbiomic samples.
+            <strong>MicrobiomeDB</strong> is a data mining website for interrogating microbiome expeirments.
           </p>
 
-          <p>You can interrogate microbiomic samples by:</p>
-
-          <ul class="fa-ul">
-            <c:forEach items="${wdkModel.questionSetsMap['SampleQuestions'].questions}" var="question">
-              <c:set
-                var="iconClass"
-                value="${fn:containsIgnoreCase(question.displayName, 'metadata') ? 'fa-sitemap' : 'fa-barcode'}"
-              />
-              <li style="margin: .5em 0;">
-                <a
-                  href="${pageContext.request.contextPath}/showQuestion.do?questionFullName=${question.fullName}"
-                  title="${question.summary}"
-                >
-                  <i class="fa-li fa ${iconClass}"><jsp:text/></i>
-                  ${question.displayName}
-                </a>
-              </li>
-            </c:forEach>
-          </ul>
+          <p>To being, please select samples based on
+            <a href="${pageContext.request.contextPath}/showQuestion.do?questionFullName=${question.fullName}"
+              title="${question.summary}">
+              <i class="fa fa-sitemap"><jsp:text/></i> ${question.displayName}
+            </a>
+          </p>
         </div>
       </div>
     </div>
