@@ -30,7 +30,8 @@
         releaseDate: "${model.releaseDate}",
         webAppUrl: "${webAppUrl}",
         facebookId: "${props.FACEBOOK_ID}",
-        twitterId: "${props.TWITTER_ID}"
+        twitterId: "${props.TWITTER_ID}",
+        youtubeId: "${props.YOUTUBE_ID}"
       };
       window.__EUPATHDB_ANNOUNCEMENTS__ = {
         information: ${information},
