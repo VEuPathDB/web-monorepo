@@ -29,9 +29,6 @@
 <c:set var="orgParam" value="${gkwqpMap['text_search_organism']}"/>
 <c:set var="timestampParam" value="${gkwqpMap['timestamp']}"/>
 
-<%-- JSP constants --%>
-<jsp:useBean id="constants" class="org.eupathdb.common.model.JspConstants"/>
-
 <!-- for external links -->
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>

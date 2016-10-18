@@ -5,8 +5,7 @@
 <%@ taglib prefix="api" uri="http://apidb.org/taglib" %>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 
-<%-- JSP constants --%>
-<jsp:useBean id="constants" class="org.eupathdb.common.model.JspConstants"/>
+<c:set var="props" value="${applicationScope.wdkModel.properties}" />
 
 <%-- Limit the number of items that appear in the sidebar menus.
      Change the value here to change the length of these menus. --%>
@@ -187,7 +186,6 @@
     </c:choose>
 
     <!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB and FungiDB account settings -->
-    <c:set var="props" value="${applicationScope.wdkModel.properties}" />
     <a class="twitter-timeline" data-chrome="nofooter"  height="50"  href="https://twitter.com/${props['TWITTER_ID']}" data-widget-id="${props['TWITTER_WIDGET_ID']}"></a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
@@ -260,7 +258,7 @@
   <div class="menu_lefttop_drop">
     <ul id="education">
       <li id='edu-05'>
-        <a target="_blank" href="${constants.youtubeUrl}">
+        <a target="_blank" href="https://youtube.com/user/${props.youtube}/videos?sort=dd&amp;flow=list&amp;view=1">
           YouTube Tutorials Channel
           <imp:image style="width:20px;display:inline;vertical-align:middle;" src="images/youtube_32x32.png"/>
         </a>
