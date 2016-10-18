@@ -165,7 +165,7 @@
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <img src="images/MaHPIC_purple_arrow.png" height="13px" width="39px"><a href="#">Experiment 4</a></h3><br>
+   <h3 class="wdk-toggle-name"> <img src="images/MaHPIC_purple_arrow.png" height="13px" width="39px"><a href="#">Experiment 4</a></h3> Relapse of <i>M. mulata</i> infected with <i>P. cynomolgi</i> B<br>
    <div class="wdk-toggle-content">
    
     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
