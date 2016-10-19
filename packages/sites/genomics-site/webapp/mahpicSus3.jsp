@@ -110,7 +110,7 @@
 <div style="margin-left: 2.5em;">
 	   <style>
            #MahpicGroups table, #MahpicGroups td, #MahpicGroups th, #MahpicGroups tr {
-           text-align : right;
+           
            padding-left: 5px;
            padding-right: 5px;
            padding-top: 5px;
@@ -120,6 +120,8 @@
            #MahpicGroups {
            margin-left : 5 em;
            }
+           
+           #MahpicGroups td:first-child { text-align: center;}
          </style> 
          <table id="MahpicGroups"> 
            <tr>
