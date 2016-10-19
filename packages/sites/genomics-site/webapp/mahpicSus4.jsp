@@ -88,6 +88,7 @@
            margin-left : 5 em;
            }
            
+           #MahpicSideBy td {vertical-align: middle;}
            #MahpicSideBy td:first-child { text-align: center;}
          </style> 
          <table id="MahpicSideBy"> 	
