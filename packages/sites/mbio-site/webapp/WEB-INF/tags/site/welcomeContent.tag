@@ -44,11 +44,34 @@
             <strong>MicrobiomeDB</strong> is a data mining website for interrogating microbiome expeirments.
           </p>
 
-          <p>To being, please select samples based on
+          <p>To begin, please select samples based on
             <a href="${pageContext.request.contextPath}/showQuestion.do?questionFullName=${question.fullName}"
-              title="${question.summary}">
-              <i class="fa fa-sitemap"><jsp:text/></i> ${question.displayName}
-            </a>
+              title="${question.summary}"><i class="fa fa-sitemap"><jsp:text/></i> ${question.displayName}</a>.
+          </p>
+          <p>
+            Or try one of these canned searches:
+            <ul>
+              <li>
+                <a href="${pageContext.request.contextPath}/im.do?s=daef3a35685875a1">
+                  What is the impact of delivery mode on the infant gut microbiome in the first month of life?
+                </a>
+              </li>
+              <li>
+                <a href="${pageContext.request.contextPath}/im.do?s=d7186967e70f3a95">
+                  What is the influence of diet on establishment of the infant gut microbiome?
+                </a>
+              </li>
+              <li>
+                <a href="${pageContext.request.contextPath}/im.do?s=12ff6d8cf07ba7a1">
+                  To what extent is the microbial environment in a home influenced by its inhabitants?
+                </a>
+              </li>
+              <li>
+                <a href="${pageContext.request.contextPath}/im.do?s=10b5c57c2e89bfaa">
+                  Does having a dog influence the microbial environment in the home?
+                </a>
+              </li>
+            </ul>
           </p>
         </div>
       </div>
