@@ -70,9 +70,9 @@
 	  <p>
 	  The MaHPIC effort includes many teams working together to produce and analyze data and metadata.  These teams are briefly described below 
 	  but more detailed information can be found at 
-	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">Emory's MaHPIC site</a>. 
+	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">Emory's MaHPIC site</a>. <br><br>
 	
-
+     <img align="middle" src="images/MaHPICtoPlasmo_Interface_2.png" height="260px" width="520px"><br>
 
 <div style="margin-left: 2.5em;">
 	   <style>
