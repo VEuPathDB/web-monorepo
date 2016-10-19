@@ -46,10 +46,10 @@
 
           <p>To begin, please select samples based on
             <a href="${pageContext.request.contextPath}/showQuestion.do?questionFullName=${question.fullName}"
-              title="${question.summary}"><i class="fa fa-sitemap"><jsp:text/></i> ${question.displayName}</a>.
+              title="${question.summary}">${question.displayName}</a>.
           </p>
           <p>
-            Or try one of these canned searches:
+            Or try one of these example searches:
             <ul>
               <li>
                 <a href="${pageContext.request.contextPath}/im.do?s=daef3a35685875a1">
