@@ -50,22 +50,8 @@
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 4: Relapse of <i>M. mulata</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
    <div class="wdk-toggle-content">
    
-    <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
-    <a href="images/MaHPIC_Ex04_Timeline.png" target="_blank">View Larger Image</a><br>
-    
-     <h4>Experiment Information</h4>
-	 <ul>
-	  <li><b>Title:</b> Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> B strain and 
-      treated with artemether over a 100-day study to observe multiple disease relapses.</li>
-	  <li><b>Experiment Description:</b> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of Anopheles dirus salivary gland material that included malaria sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</li>
-	  <li><b>MaHPIC's Read Me:</b> <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/E04M99MEMmCyDaWB_07122016-README_MULTIPL.txt">E04 READ ME (Text file)</a></li>
-	  <li><b>Experimental Details File:</b> <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx">Submission Template (Excel file)</a></li>	  
-	 </ul> 
+   <h4>Data Links</h4> 
 	 
-	 
-	 <h4>Data Links</h4> 
-	    
-	   
 	   <div style="margin-left: 2.5em;">
 
 	   <style>
@@ -80,7 +66,7 @@
            #DataLinks {
            margin-left : 5 em;
            }
-         </style> 
+        </style> 
          <table id="DataLinks"> 
            <tr>
              <th>Data from MaHPIC Team</th>
@@ -127,8 +113,22 @@
              <td>N/A</td>
            </tr>
            </table>
-           </div>
-<br><br>
+          </div>
+          
+     <h4>Experiment Information</h4>
+	   <ul>
+	    <li><b>Title:</b> Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> B strain and 
+        treated with artemether over a 100-day study to observe multiple disease relapses.</li>
+	    <li><b>Experiment Description:</b> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of Anopheles dirus salivary gland material that included malaria sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</li>
+	    <li><b>MaHPIC's Read Me:</b> <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/E04M99MEMmCyDaWB_07122016-README_MULTIPL.txt">E04 READ ME (Text file)</a></li>
+	    <li><b>Experimental Details File:</b> <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx">Submission Template (Excel file)</a></li>	  
+	   </ul> 
+     <p>
+   
+    <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
+    <a href="images/MaHPIC_Ex04_Timeline.png" target="_blank">View Larger Image</a><br>
+    
+     <p>
 	   
 	 <h4>Publication</h4>
 	    <div style="margin-left: 2.5em;">
@@ -137,6 +137,8 @@
         </div>
   </div>	
   </div>
+  
+  
      <div class="wdk-toggle" data-show="false">
      <h3 class="wdk-toggle-name"><a href="#">Experiment 13: Coming Soon</a></h3>
      <div class="wdk-toggle-content">
@@ -159,9 +161,11 @@
     <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">MaHPIC's 8 teams</a> of 
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
-	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)<br><br>
-	
-	<div style="margin-left: 2.5em;">
+	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)<br>
+    <a href="#" class="read_more">Read More...</a><br>
+
+     <span class="more_text">
+	 <div style="margin-left: 2.5em;">
 	   <style>
            #MahpicSideBy table, #MahpicSideBy td, #MahpicSideBy th, #MahpicSideBy tr {
            
@@ -236,12 +240,9 @@
 	           </td>
 	          </tr>
 	          </table>
+         </div>
+	  <p>
 
-   </div>
-	
-	<a href="#" class="read_more">Read More...</a><br>
-
-     <span class="more_text">
       MaHPIC is organized into a compendium of 22 experiments.  Experiments are carefully planned and monitored, producing results data sets (clinical 
       and a wide range of omics) that will be made available to the public. In total, MaHPIC results data sets will be 
       composed of thousands of files and several data types. Results datasets will offer unprecedented 
