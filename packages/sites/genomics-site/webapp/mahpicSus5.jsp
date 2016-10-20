@@ -52,7 +52,7 @@
     <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">MaHPIC's 8 teams</a> of 
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
-	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)
+	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)<br>
 	<a href="#" class="read_more">Read More...</a><br>
 
       <span class="more_text">
@@ -166,7 +166,7 @@
    <div style="margin-left: 1em;">
      For the study of malaria in the context of the MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
      how a <i>Plasmodium</i> parasite infection produces changes in host and parasite gene expression, proteins, lipids, metabolism and the host immune response.
-     MaHPIC experiments are longitudinal studies of <i>Plasmodium</i> infections (or uninfected controls) in non-human primates. 
+     MaHPIC experiments are longitudinal studies of <i>Plasmodium</i> infections (or uninfected controls) in non-human primates. <br>
      <a href="#" class="read_more">Read More...</a><br>
    
      <span class="more_text">
