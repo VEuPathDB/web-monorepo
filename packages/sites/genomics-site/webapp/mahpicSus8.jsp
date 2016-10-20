@@ -149,7 +149,7 @@
   
   </div>  
   
- 
+ <!-- GOOD UNTIL HERE -->
   
 <div class="item">
 
@@ -163,10 +163,30 @@
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
 	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)<br>
-    <a href="#" class="read_more">Read More...</a><br>
+	<a href="#" class="read_more">Read More...</a><br>
 
-     <span class="more_text">
-	 <div style="margin-left: 2.5em;">
+      <span class="more_text">
+      MaHPIC is organized into a compendium of 22 experiments.  Experiments are carefully planned and monitored, producing results data sets (clinical 
+      and a wide range of omics) that will be made available to the public. In total, MaHPIC results data sets will be 
+      composed of thousands of files and several data types. Results datasets will offer unprecedented 
+      detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
+      the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.
+      <p>
+      
+	  MaHPIC was established in September 2012 by the 
+	  National Institute of Allergy and Infectious Diseases, 
+	  part of the US National Institutes of Health. The MaHPIC team uses a "systems biology" strategy to study how malaria parasites 
+	  interact with their human and other animal hosts to cause disease in molecular detail. The central hypothesis is that 
+	  "Non-Human Primate host interactions with Plasmodium pathogens as model systems will provide insights into mechanisms, 
+	  as well as indicators for, human malarial disease conditions".
+	  <p>
+	  The MaHPIC effort includes many teams working together to produce and analyze data and metadata.  These teams are briefly described below 
+	  but more detailed information can be found at 
+	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">Emory's MaHPIC site</a>. 
+      <p>
+
+
+     <div style="margin-left: 2.5em;">
 	   <style>
            #MahpicSideBy table, #MahpicSideBy td, #MahpicSideBy th, #MahpicSideBy tr {
            
@@ -187,85 +207,67 @@
 	      <tr> 
 	       <td><img align="middle" src="images/MaHPICtoPlasmo_Interface_2.png" height="260px" width="520px"></td>
 	       <td><style>
-              #MahpicGroups table, #MahpicGroups td, #MahpicGroups th, #MahpicGroups tr {
+           #MahpicGroups table, #MahpicGroups td, #MahpicGroups th, #MahpicGroups tr {
            
-              padding-left: 10px;
-              padding-right: 10px;
-              padding-top: 5px;
-              padding-bottom: 5px;
-              border: 0px solid black;
-              }
-              #MahpicGroups {
-              margin-left : 5 em;
-              }
+           padding-left: 10px;
+           padding-right: 10px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #MahpicGroups {
+           margin-left : 5 em;
+           }
            
-              #MahpicGroups td:first-child { text-align: center;}
-            </style> 
-            <table id="MahpicGroups"> 
-              <tr>
-                <th>MaHPIC Team</th>
-                <th>Description</th>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"></td>
-                <td> Clinical Malaria - designs and implements experimental plans involving infection of non-human primates</td>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"></td>
-                <td>Functional Genomics - develops gene expression profiles from blood and bone marrow</td>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"></td>
-                <td>Proteomics - develops detailed proteomics profiles from blood and bone marrow</td>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"></td>
-                <td>Lipidomics - investigates lipids and biochemical responses associated with lipids from blood and bone marrow</td>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"></td>
-                <td>Immune Profiling - profiles white blood cells in the peripheral blood and progenitors in the bone marrow</td>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"></td>
-                <td>Metabolomics - provides detailed metabolomics data for plasma and associated cellular fractions</td>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px"></td>
-                <td>Bioinformatics - standardizes, warehouses, maps and integrates the data generated by the experimental cores</td>
-              </tr>
-              <tr>
-                <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"></td>
-                <td>Computational Modeling - integrates the data sets generated by the experimental cores into static and dynamic models</td>
-              </tr>
+           #MahpicGroups td:first-child { text-align: center;}
+         </style> 
+         <table id="MahpicGroups"> 
+           <tr>
+             <th>MaHPIC Team</th>
+             <th>Description</th>
+           </tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"></td>
+             <td> Clinical Malaria - designs and implements experimental plans involving infection of non-human primates</td>
+           </tr>
+           </tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"></td>
+             <td>Functional Genomics - develops gene expression profiles from blood and bone marrow</td>
+           </tr>
+           </tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"></td>
+             <td>Proteomics - develops detailed proteomics profiles from blood and bone marrow</td>
+           </tr>
+           </tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"></td>
+             <td>Lipidomics - investigates lipids and biochemical responses associated with lipids from blood and bone marrow</td>
+           </tr>
+           </tr>
+             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"></td>
+             <td>Immune Profiling - profiles white blood cells in the peripheral blood and progenitors in the bone marrow</td>
+           </tr>
+           </tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"></td>
+             <td>Metabolomics - provides detailed metabolomics data for plasma and associated cellular fractions</td>
+           </tr>
+           </tr>
+             <td><img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px"></td>
+             <td>Bioinformatics - standardizes, warehouses, maps and integrates the data generated by the experimental cores</td>
+           </tr>
+           </tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"></td>
+             <td>Computational Modeling - integrates the data sets generated by the experimental cores into static and dynamic models</td>
+           </tr>
            </table>
+	           </td>
+	          </tr>
+	          </table>
+	
 
-         </div>
-	  <p>
-
-      MaHPIC is organized into a compendium of 22 experiments.  Experiments are carefully planned and monitored, producing results data sets (clinical 
-      and a wide range of omics) that will be made available to the public. In total, MaHPIC results data sets will be 
-      composed of thousands of files and several data types. Results datasets will offer unprecedented 
-      detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
-      the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.
-      <p>
-      
-	  MaHPIC was established in September 2012 by the 
-	  National Institute of Allergy and Infectious Diseases, 
-	  part of the US National Institutes of Health. The MaHPIC team uses a "systems biology" strategy to study how malaria parasites 
-	  interact with their human and other animal hosts to cause disease in molecular detail. The central hypothesis is that 
-	  "Non-Human Primate host interactions with Plasmodium pathogens as model systems will provide insights into mechanisms, 
-	  as well as indicators for, human malarial disease conditions".
-	  <p>
-	  The MaHPIC effort includes many teams working together to produce and analyze data and metadata.  These teams are briefly described below 
-	  but more detailed information can be found at 
-	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">Emory's MaHPIC site</a>. 
-      <p>
-	 </span>
-
+     </span>
    </div>
 </div>
 </div>
+
 
    
 <div class="item">  
