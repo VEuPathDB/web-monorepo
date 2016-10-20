@@ -54,7 +54,7 @@
     use a "systems biology" approach to study the molecular details of how malaria parasites 
 	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)
 	<a href="#" class="read_more">Read More...</a><br>
-   
+
       <span class="more_text">
       MaHPIC is organized into a compendium of 22 experiments.  Experiments are carefully planned and monitored, producing results data sets (clinical 
       and a wide range of omics) that will be made available to the public. In total, MaHPIC results data sets will be 
@@ -75,7 +75,7 @@
 	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">Emory's MaHPIC site</a>. 
       <p>
 
-<!-- THIS STARTS THE SIDE BY TABLE-->	
+
 <div style="margin-left: 2.5em;">
 	   <style>
            #MahpicSideBy table, #MahpicSideBy td, #MahpicSideBy th, #MahpicSideBy tr {
@@ -151,12 +151,12 @@
 	           </td>
 	          </tr>
 	          </table>
-<!-- THIS ENDS THE SIDE BY SIDE TABLE-->	
+	
 
      </span>
    </div>
 </div>
-
+</div>
 
 
    
@@ -191,7 +191,7 @@
    
    <div style="margin-left: 1em;">
      PlasmoDB serves as a gateway for the scientific community to access MaHPIC data. The <a href="#access">Download MaHPIC Data</a> 
-     section of this page provides information about and links to all available MaHPIC data.
+     section of this page provides information about and links to all available MaHPIC data.<br>
      <a href="#" class="read_more">Read More...</a><br><br>
    
       <span class="more_text">
