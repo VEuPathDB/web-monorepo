@@ -257,7 +257,37 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td> <a href="https://www.ncbi.nlm.nih.gov/sra">E04 data on NCBI's SRA</a></td>
+             <td> <a href="https://www.ncbi.nlm.nih.gov/sra">E04 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/">E04 Expression Results on NCBI's GEO</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><a href="https://www.ebi.ac.uk/pride/archive/">E04 Proteomics at EBI's PRIDE</a><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">E04 Proteomics at UC San Diego's MassIVE</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
+             <td><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">E04 Lipidomics at UC San Diego's MassIVE</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
+             <td><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full">E04 Immune Profiles at NIAID's ImmPort</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">E04 Metabolomics at UC San Diego's MassIVE</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px"> <b>Informatics</b></td>
+             <td>Coming soon</td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"><b>Computational Modeling</b></td>
+             <td>Coming soon</td>
              <td>N/A</td>
            </tr>
            </table>
