@@ -250,11 +250,12 @@
              <th>Data Available from</th>
              <th>Data Integrated into PlasmoDB Searches</th>
            </tr>
+           <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
              <td><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a></td>
              <td>N/A</td>
            </tr>
-           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
              <td> <a href="https://www.ncbi.nlm.nih.gov/sra">E04 data on NCBI's SRA</a></td>
              <td>N/A</td>
