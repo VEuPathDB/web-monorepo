@@ -230,62 +230,7 @@
 	  
 	 </ul> 
 	 <h4>Data Links</h4> 
-	   
-	   <div style="margin-left: 2.5em;">
-        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
-        <b>Clinical Malaria</b> - <a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a><br>
-        <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">
-        <b>Functional Genomics</b> - <a href="https://www.ncbi.nlm.nih.gov/sra">E04 Raw Reads at NCBI's SRA</a><br>
-        <img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px">
-        <b>Proteomics</b> - Coming Soon<br>
-        <img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px">
-        <b>Lipidomics</b> - Coming Soon<br>
-        <img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px">
-        <b>Immune Profiling<b> - coming soon<br>
-        <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
-        <b>Metabolomics</b> - Coming Soon<br>
-        <img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px">
-        <b>Bioinformatics</b> - Coming Soon<br>
-        <img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px">
-        <b>Computational Modeling</b> - Coming Soon<br>
-	   </div>	
-	   <br><br>   
-	   
-	   <div style="margin-left: 2.5em;">
-	   <style>
-           #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
-           text-align : center;
-           padding-left: 5px;
-           padding-right: 5px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 1px solid black;
-           }
-           #DataLinks {
-           margin-left : 5 em;
-           }
-         </style> 
-         <table id="DataLinks"> 
-           <tr>
-             <th>Data from MaHPIC Team</th>
-             <th>Data Available in PlasmoDB</th>
-             <th>Data Integrated into PlasmoDB Searches</th>
-             <th>Data Available in External Resources</th>
-           </tr>
-             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a></td>
-             <td>N/A</td>
-             <td>N/A</td>
-           </tr>
-           </tr>
-             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td> N/A</a></td>
-             <td>N/A</td>
-             <td> <a href="https://www.ncbi.nlm.nih.gov/sra">E04 data on NCBI's SRA</a></td>
-           </tr>
-           </table>
-<br><br>
-
+       <div style="margin-left: 2.5em;">
 	   <style>
            #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
            text-align : center;
