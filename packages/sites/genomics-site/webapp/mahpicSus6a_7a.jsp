@@ -209,7 +209,7 @@
   </div>
 </div>
 -->
-
+<div class="item">
   <h3 id="DataLinks">Where to Access MaHPIC Data</h3>
   <div style="margin-left: 1em;">	
    
@@ -306,6 +306,7 @@
      <h3 class="wdk-toggle-name"><a href="#">Experiment 13: Coming Soon</a></h3>
      <div class="wdk-toggle-content">
 
+  </div>
   </div>
   </div>
   
