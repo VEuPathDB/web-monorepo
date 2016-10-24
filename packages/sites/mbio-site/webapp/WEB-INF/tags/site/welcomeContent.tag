@@ -83,7 +83,7 @@
                 </td>
                 <td>
                   Graphically analyze your set of samples.
-                  <strong><a href="javascript:void(0)">Learn how</a></strong>.
+                  <strong><a href="https://docs.google.com/document/u/1/d/1a_9lPf5lV0fTW1VcA48pGsnFAcwhMOWqCTQlyHEVoAQ/pub" target="_blank">Learn how</a></strong>.
                 </td>
                 <tr/>
               </tbody>
