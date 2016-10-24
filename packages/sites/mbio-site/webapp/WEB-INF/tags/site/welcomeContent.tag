@@ -44,7 +44,7 @@
           position: relative;
           top: -3em;
         ">
-          <img src="/mbio.dfalke/images/18170.png" />
+          <img src="/mbio/images/18170.png" />
         </div>
 
         <div style="padding-right: 290px;">
@@ -54,7 +54,7 @@
               <strong>MicrobiomeDB</strong> is a data mining website for interrogating microbiome expeirments.
             </div>
             <div style="font-size: small;">
-              It currently houses <a href="/mbio.dfalke/app/search/dataset/AllDatasets/result">nine datasets</a> with 13656 samples.
+              It currently houses <a href="/mbio/app/search/dataset/AllDatasets/result">nine datasets</a> with 13656 samples.
             </div>
           </div>
 
@@ -64,18 +64,18 @@
               <tbody>
                 <tr>
                   <td>
-                    <img src="/mbio.dfalke/images/MicrobiomeDB/filter_by_environment.png" />
+                    <img src="/mbio/images/MicrobiomeDB/filter_by_environment.png" />
                   </td>
                   <td style="vertical-align: middle; width: 30%;">
                     <i class="fa fa-long-arrow-right fa-5x" style="color: #26689c;"></i>
                   </td>
                   <td>
-                    <img src="/mbio.dfalke/images/MicrobiomeDB/analyze_abundance.png" />
+                    <img src="/mbio/images/MicrobiomeDB/analyze_abundance.png" />
                   </td>
                 </tr>
                 <td>
                   Use a series of filters to find samples of interest.
-                  <strong><a title="Find Microbiomic Samples based on Host and Sample metadata." href="/mbio.dfalke/showQuestion.do?questionFullName=SampleQuestions.MicrobiomeSampleByMetadata">Get started</a>!
+                  <strong><a title="Find Microbiomic Samples based on Host and Sample metadata." href="/mbio/showQuestion.do?questionFullName=SampleQuestions.MicrobiomeSampleByMetadata">Get started</a>!
                   </strong>
                 </td>
                 <td>
@@ -93,22 +93,22 @@
             Try one of these examples:
             <ul>
               <li>
-                <a href="/mbio.dfalke/im.do?s=daef3a35685875a1">
+                <a href="/mbio/im.do?s=daef3a35685875a1">
                   What is the impact of delivery mode on the infant gut microbiome in the first month of life?
                 </a>
               </li>
               <li>
-                <a href="/mbio.dfalke/im.do?s=d7186967e70f3a95">
+                <a href="/mbio/im.do?s=d7186967e70f3a95">
                   What is the influence of diet on establishment of the infant gut microbiome?
                 </a>
               </li>
               <li>
-                <a href="/mbio.dfalke/im.do?s=12ff6d8cf07ba7a1">
+                <a href="/mbio/im.do?s=12ff6d8cf07ba7a1">
                   To what extent is the microbial environment in a home influenced by its inhabitants?
                 </a>
               </li>
               <li>
-                <a href="/mbio.dfalke/im.do?s=10b5c57c2e89bfaa">
+                <a href="/mbio/im.do?s=10b5c57c2e89bfaa">
                   Does having a dog influence the microbial environment in the home?
                 </a>
               </li>
