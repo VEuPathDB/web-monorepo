@@ -155,15 +155,15 @@
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
 	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)<br>
-	<a href="#" class="read_more">Read More...</a><p>
+	<a href="#" class="read_more">Read More...</a><br><br>
 
       <span class="more_text">
       MaHPIC is organized into a compendium of 22 experiments.  Experiments are carefully planned and monitored, producing results data sets (clinical 
       and a wide range of omics) that will be made available to the public. In total, MaHPIC results data sets will be 
       composed of thousands of files and several data types. Results datasets will offer unprecedented 
       detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
-      the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.
-      <p>
+      the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.<br><br>
+      
       
 	  MaHPIC was established in September 2012 by the 
 	  National Institute of Allergy and Infectious Diseases, 
@@ -174,11 +174,11 @@
 	  <p>
 	  The MaHPIC effort includes many teams working together to produce and analyze data and metadata.  These teams are briefly described below 
 	  but more detailed information can be found at 
-	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">Emory's MaHPIC site</a>. 
-      <p>
+	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">Emory's MaHPIC site</a>. <br><br>
+      
 
 
-<div style="margin-left: 2.5em;">
+     <div style="margin-left: 2.5em;">
 	   <style>
            #MahpicSideBy table, #MahpicSideBy td, #MahpicSideBy th, #MahpicSideBy tr {
            
