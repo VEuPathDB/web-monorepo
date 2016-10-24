@@ -42,7 +42,7 @@
   <center> <img align="middle" src="images/MaHPIC_TopCenter_5.png" height="120px" width="550px"></center>
   <h1>How to Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1> 
   
-<div class="item">
+
   <h3 id="DataLinks">Where to Access MaHPIC Data</h3>
   <div style="margin-left: 1em;">	
    
