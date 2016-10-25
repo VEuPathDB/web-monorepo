@@ -55,8 +55,8 @@
 	   <style>
            #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
            text-align : center;
-           padding-left: 5px;
-           padding-right: 5px;
+           padding-left: 7px;
+           padding-right: 7px;
            padding-top: 5px;
            padding-bottom: 5px;
            border: 1px solid black;
@@ -81,36 +81,31 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td> <a href="https://www.ncbi.nlm.nih.gov/sra">E04 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/">E04 Expression Results on NCBI's GEO</a></td>
+             <td> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E04 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E04 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E04 BioProject record at NCBI</a></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><a href="https://www.ebi.ac.uk/pride/archive/">E04 Proteomics at EBI's PRIDE</a><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">E04 Proteomics at UC San Diego's MassIVE</a></td>
+             <td><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E04 Proteomics at EBI's PRIDE</a></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">E04 Lipidomics at UC San Diego's MassIVE</a></td>
+             <td><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UC San Diego's MassIVE</a></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full">E04 Immune Profiles at NIAID's ImmPort</a></td>
+             <td><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E04 Immune Profiles at NIAID's ImmPort</a></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp">E04 Metabolomics at UC San Diego's MassIVE</a></td>
+             <td><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UC San Diego's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UC San Diego's Metabolomics Workbench</a>     </td>
              <td>N/A</td>
            </tr>
            <tr>
-             <td><img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px"> <b>Informatics</b></td>
-             <td>Coming soon</td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"><b>Computational Modeling</b></td>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
              <td>Coming soon</td>
              <td>N/A</td>
            </tr>
@@ -123,8 +118,11 @@
       treated with artemether over a 100-day study to observe multiple disease relapses.</li>
 	  <li><b>Experiment Description:</b> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of Anopheles dirus salivary gland material that included malaria sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</li>
 	  <li><b>MaHPIC's Read Me:</b> <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/E04M99MEMmCyDaWB_07122016-README_MULTIPL.txt">E04 READ ME (Text file)</a></li>
-	  <li><b>Experimental Details File:</b> <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/EX04_Sub_Template.xlsx">Submission Template (Excel file)</a></li>
 	 </ul> 
+	 
+	 
+	 
+	 
 	   
 	 <h4>Publication</h4>
 	    <div style="margin-left: 2.5em;">
