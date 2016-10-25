@@ -54,7 +54,7 @@
               <strong>MicrobiomeDB</strong> is a data mining website for interrogating microbiome expeirments.
             </div>
             <div style="font-size: small;">
-              It currently houses <a href="/mbio/app/search/dataset/AllDatasets/result">nine datasets</a> with 13656 samples.
+              It currently houses <a href="/mbio/app/search/dataset/AllDatasets/result">nine datasets</a> with 13565 samples.
             </div>
           </div>
 
