@@ -113,13 +113,7 @@
            </div>
 <br><br>
 	 <h4>Experiment Information</h4>
-	 <ul>
-	  <li><b>Title:</b> Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> B strain and 
-      treated with artemether over a 100-day study to observe multiple disease relapses.</li>
-	  <li><b>Experiment Description:</b> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of Anopheles dirus salivary gland material that included malaria sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</li>
-	  <li><b>MaHPIC's Read Me:</b> <a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/E04M99MEMmCyDaWB_07122016-README_MULTIPL.txt">E04 READ ME (Text file)</a></li>
-	 </ul> 
-	 <br>
+	 <div style="margin-left: 2.5em;">
 	 <style>
            #ExpInfo table, #ExpInfo td, #ExpInfo th, #ExpInfo tr {
            text-align : left;
@@ -138,20 +132,17 @@
            <tr>
              <td><b>Title:</b></td>
              <td>Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> B strain and treated with artemether over a 100-day study to observe multiple disease relapses.</td>
-             <td>N/A</td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
              <td> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of Anopheles dirus salivary gland material that included malaria sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</td>
-             <td>N/A</td>
            </tr>
            <tr>
              <td><b>MaHPIC's Read Me:</b> </td>
              <td><a href="http://plasmodb.org/common/downloads/MaHPIC/E04ClinicalMalaria/E04M99MEMmCyDaWB_07122016-README_MULTIPL.txt">E04 READ ME (Text file)</a></td>
-             <td>N/A</td>
            </tr>
          </table>
-	 <br>
+      </div>   
 	 
 	   
 	 <h4>Publication</h4>
