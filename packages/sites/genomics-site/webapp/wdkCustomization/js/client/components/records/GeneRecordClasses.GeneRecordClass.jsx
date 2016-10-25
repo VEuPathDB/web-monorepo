@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import { projectId, webAppUrl } from '../../config';
 import {NativeCheckboxList} from 'wdk-client/Components';
+import { UserActionCreators } from 'wdk-client/ActionCreators';
 import { pure } from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
 import {findChildren, isNodeOverflowing} from '../../util/domUtils';
+import { withActions, withStore } from '../../util/component';
 import DatasetGraph from '../common/DatasetGraph';
 import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
@@ -322,16 +324,24 @@ function MercatorTable(props) {
   );
 }
 
-function UserCommentsTable(props, context) {
+
+const withUserAndAction = lodash.compose(
+  withStore(state => ({ user: state.globalData.user })),
+  withActions(UserActionCreators)
+);
+
+const UserCommentsTable = withUserAndAction(function UserCommentsTable(props) {
   let { user_comment_link_url } = props.record.attributes;
   return (
     <div>
       <p>
         <a href={user_comment_link_url}
           onClick={e => {
-            if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) return;
+            const modifierPressed = e.metaKey || e.altKey || e.ctrlKey || e.shiftKey;
+            const { isGuest } = props.user;
+            if (modifierPressed || !isGuest) return;
             e.preventDefault();
-            context.eventHandlers.showLoginWarning('add a comment', user_comment_link_url);
+            props.showLoginWarning('add a comment', user_comment_link_url);
           }}
         >
           Add a comment <i className="fa fa-comment"/>
@@ -340,8 +350,4 @@ function UserCommentsTable(props, context) {
       <props.DefaultComponent {...props} />
     </div>
   )
-}
-
-UserCommentsTable.contextTypes = {
-  eventHandlers: PropTypes.object.isRequired
-};
+});
