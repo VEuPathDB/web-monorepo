@@ -64,6 +64,9 @@
            #DataLinks {
            margin-left : 5 em;
            }
+           
+           #DataLinks td {vertical-align: middle;}
+           #DataLinks td:first-child { text-align: left;}
          </style> 
          <table id="DataLinks"> 
            <tr>
