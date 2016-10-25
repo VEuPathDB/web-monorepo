@@ -5,8 +5,11 @@
   xmlns:fn="http://java.sun.com/jsp/jstl/functions"
   xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
 
+  <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
   <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
   <c:set var="question" value="${wdkModel.questionSetsMap['SampleQuestions'].questionsMap['MicrobiomeSampleByMetadata']}"/>
+  <c:set var="helpUrl" value="https://docs.google.com/document/u/1/d/1a_9lPf5lV0fTW1VcA48pGsnFAcwhMOWqCTQlyHEVoAQ/pub"/>
+  <c:set var="getStartedUrl" value="${baseUrl}/showQuestion.do?questionFullName=SampleQuestions.MicrobiomeSampleByMetadata"/>
 
   <style>
     .workflow { margin: 1em 0; }
@@ -51,10 +54,10 @@
 
           <div style="margin: 1em 0;">
             <div>
-              <strong>MicrobiomeDB</strong> is a data mining website for interrogating microbiome expeirments.
+              <strong>MicrobiomeDB</strong> is a data mining website for interrogating microbiome experiments.
             </div>
             <div style="font-size: small;">
-              It currently houses <a href="/mbio/app/search/dataset/AllDatasets/result">nine datasets</a> with 13565 samples.
+              It currently houses <a href="${baseUrl}/app/search/dataset/AllDatasets/result">nine datasets</a> with 13565 samples.
             </div>
           </div>
 
@@ -64,26 +67,33 @@
               <tbody>
                 <tr>
                   <td>
-                    <imp:image src="images/MicrobiomeDB/filter_by_environment.png" />
+                    <a title="${question.description}" href="${getStartedUrl}">
+                      <imp:image src="images/MicrobiomeDB/filter_by_environment.png" />
+                    </a>
                   </td>
-                  <td style="vertical-align: middle; width: 30%;">
+                  <td style="vertical-align: middle; width: 75px;">
                     <i class="fa fa-long-arrow-right fa-5x" style="color: #26689c;"></i>
                   </td>
                   <td>
-                    <imp:image src="images/MicrobiomeDB/analyze_abundance.png" />
+                    <a title="Learn how" href="${helpUrl}" target="_blank">
+                      <imp:image src="images/MicrobiomeDB/analyze_abundance.png" />
+                    </a>
                   </td>
                 </tr>
                 <td>
                   Use a series of filters to find samples of interest.
-                  <strong><a title="Find Microbiomic Samples based on Host and Sample metadata." href="/mbio/showQuestion.do?questionFullName=SampleQuestions.MicrobiomeSampleByMetadata">Get started</a>!
-                  </strong>
                 </td>
                 <td>
-                  Then
+                  <div style="margin-bottom: 1em;">Then</div>
+                  <div>
+                    <a href="${helpUrl}" target="_blank">Learn how</a>
+                  </div>
+                  <div>
+                    <a title="${question.description}" href="${getStartedUrl}">Get started</a>
+                  </div>
                 </td>
                 <td>
                   Graphically analyze your set of samples.
-                  <strong><a href="https://docs.google.com/document/u/1/d/1a_9lPf5lV0fTW1VcA48pGsnFAcwhMOWqCTQlyHEVoAQ/pub" target="_blank">Learn how</a></strong>.
                 </td>
                 <tr/>
               </tbody>
@@ -93,22 +103,22 @@
             Try one of these examples:
             <ul>
               <li>
-                <a href="/mbio/im.do?s=daef3a35685875a1">
+                <a href="${baseUrl}/im.do?s=daef3a35685875a1">
                   What is the impact of delivery mode on the infant gut microbiome in the first month of life?
                 </a>
               </li>
               <li>
-                <a href="/mbio/im.do?s=d7186967e70f3a95">
+                <a href="${baseUrl}/im.do?s=d7186967e70f3a95">
                   What is the influence of diet on establishment of the infant gut microbiome?
                 </a>
               </li>
               <li>
-                <a href="/mbio/im.do?s=12ff6d8cf07ba7a1">
+                <a href="${baseUrl}/im.do?s=12ff6d8cf07ba7a1">
                   To what extent is the microbial environment in a home influenced by its inhabitants?
                 </a>
               </li>
               <li>
-                <a href="/mbio/im.do?s=10b5c57c2e89bfaa">
+                <a href="${baseUrl}/im.do?s=10b5c57c2e89bfaa">
                   Does having a dog influence the microbial environment in the home?
                 </a>
               </li>
