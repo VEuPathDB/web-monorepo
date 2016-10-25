@@ -44,7 +44,7 @@
           position: relative;
           top: -3em;
         ">
-          <img src="/mbio/images/18170.png" />
+          <imp:image src="images/18170.png" />
         </div>
 
         <div style="padding-right: 290px;">
@@ -64,13 +64,13 @@
               <tbody>
                 <tr>
                   <td>
-                    <img src="/mbio/images/MicrobiomeDB/filter_by_environment.png" />
+                    <imp:image src="images/MicrobiomeDB/filter_by_environment.png" />
                   </td>
                   <td style="vertical-align: middle; width: 30%;">
                     <i class="fa fa-long-arrow-right fa-5x" style="color: #26689c;"></i>
                   </td>
                   <td>
-                    <img src="/mbio/images/MicrobiomeDB/analyze_abundance.png" />
+                    <imp:image src="images/MicrobiomeDB/analyze_abundance.png" />
                   </td>
                 </tr>
                 <td>
