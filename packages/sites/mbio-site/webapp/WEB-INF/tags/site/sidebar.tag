@@ -10,7 +10,7 @@
 <fmt:setLocale value="en-US"/>
 
 <%------------------------------------------%>
-<div id="menu_lefttop">
+<div id="menu_lefttop" data-default-open-id="Help">
 
   <%--------------  DATA STATS---------------------------------------------%>
   <a class="heading" id='stats'  href="#">Data Summary</a>
@@ -34,7 +34,7 @@
 
   <%--------------  INFO AND HELP ---------------------------------------------%>
   <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
-  <div class="menu_lefttop_drop">
+  <div id="Help" class="menu_lefttop_drop">
     <a href="${pageContext.servletContext.contextPath}/about.jsp">About MicrobiomeDB</a>
   </div>
 
