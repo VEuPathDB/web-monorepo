@@ -15,7 +15,7 @@
     .workflow { margin: 1em 0; }
     .workflow tr > td { text-align: center; font-size: small; }
     .workflow tr > td:first-child { text-align: left; }
-    .workflow tr > td:last-child { text-align: left; }
+    .workflow tr > td:last-child { text-align: left; width: 155px; }
     .workflow img { height: 8vw; border: 1px solid #26689c; }
   </style>
 
@@ -71,8 +71,8 @@
                       <imp:image src="images/MicrobiomeDB/filter_by_environment.png" />
                     </a>
                   </td>
-                  <td style="vertical-align: middle; width: 75px;">
-                    <i class="fa fa-long-arrow-right fa-5x" style="color: #26689c;"></i>
+                  <td style="vertical-align: middle; width: 7em;">
+                    <i class="fa fa-long-arrow-right fa-4x" style="color: #26689c;"></i>
                   </td>
                   <td>
                     <a title="Learn how" href="${helpUrl}" target="_blank">
@@ -84,11 +84,11 @@
                   Use a series of filters to find samples of interest.
                 </td>
                 <td>
-                  <div style="margin-bottom: 1em;">Then</div>
-                  <div>
+                  <div style="margin-bottom: 3em;">Then</div>
+                  <div style="font-size: 1.2em;">
                     <a href="${helpUrl}" target="_blank">Learn how</a>
                   </div>
-                  <div>
+                  <div style="font-size: 1.2em;">
                     <a title="${question.description}" href="${getStartedUrl}">Get started</a>
                   </div>
                 </td>
