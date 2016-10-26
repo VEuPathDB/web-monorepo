@@ -9,6 +9,7 @@ import { getSearchMenuCategoryTree } from '../util/category';
 import { formatReleaseDate } from '../util/modelSpecificUtil';
 import { withActions, withStore } from '../util/component';
 import { getId, getDisplayName, getTargetType } from 'wdk-client/CategoryUtils';
+import { preorderSeq } from 'wdk-client/TreeUtils';
 import { UserActionCreators } from 'wdk-client/ActionCreators'
 import { SHOW_GALAXY_PAGE_PREFERENCE } from './controllers/GalaxyTermsController';
 
@@ -65,7 +66,9 @@ function Header(props) {
         {/* TODO Put entries into an external JSON file. */}
         <Menu webAppUrl={webAppUrl} showLoginWarning={showLoginWarning} isGuest={user ? user.isGuest : true} entries={[
           { id: 'home', text: 'Home', tooltip: 'Go to the home page', url: webAppUrl },
-          { id: 'search', text: 'New Search', tooltip: 'Start a new search strategy', children: [
+          { id: 'search', text: 'New Search', tooltip: 'Start a new search strategy', children: isMicrobiomeDB ?
+            getSearchEntries(ontology, recordClasses).map(node => preorderSeq(node).filter(node => node.children.length === 0).toArray())[0]
+          : [
             ...getSearchEntries(ontology, recordClasses),
             { id: 'query-grid', text: 'View all available searches', route: 'query-grid' }
           ]},
