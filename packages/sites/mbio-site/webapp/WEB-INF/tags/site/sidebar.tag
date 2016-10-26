@@ -35,7 +35,9 @@
   <%--------------  INFO AND HELP ---------------------------------------------%>
   <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
   <div id="Help" class="menu_lefttop_drop">
-    <a href="${pageContext.servletContext.contextPath}/about.jsp">About MicrobiomeDB</a>
+    <ul style="padding-left: 1em;">
+      <imp:aboutLinks/>
+    </ul>
   </div>
 
 </div>

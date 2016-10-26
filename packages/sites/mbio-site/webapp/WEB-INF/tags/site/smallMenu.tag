@@ -26,6 +26,9 @@
       <!-- ABOUT -->
       <li>
         <a href="${pageContext.request.contextPath}/about.jsp">About ${siteName}</a>
+        <ul>
+          <imp:aboutLinks/>
+        </ul>
       </li>
 
       <!-- HELP -->
