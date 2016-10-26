@@ -57,9 +57,11 @@ $(document).ready(function(){
     });
 
     var top_div = $("div#menu_lefttop");
+    var open_id = top_div.data("default-open-id") || "News";
+    console.log('open_id', open_id);
     $("div", top_div).hide();
-    var op = $("div#News",top_div);
-    $("div#News",top_div).show();
+    var op = $("div#" + open_id, top_div);
+    $("div#" + open_id, top_div).show();
 
     $("a.heading, a.heading p", top_div).click(function(){
       me = this;
