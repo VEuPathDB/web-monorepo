@@ -85,10 +85,10 @@
                 </td>
                 <td>
                   <div style="margin-bottom: 3em;">Then</div>
-                  <div style="font-size: 1.2em;">
+                  <div style="font-size: 1.2em; white-space: nowrap;">
                     <a href="${helpUrl}" target="_blank">Learn how</a>
                   </div>
-                  <div style="font-size: 1.2em;">
+                  <div style="font-size: 1.2em; white-space: nowrap;">
                     <a title="${question.description}" href="${getStartedUrl}">Get started</a>
                   </div>
                 </td>
