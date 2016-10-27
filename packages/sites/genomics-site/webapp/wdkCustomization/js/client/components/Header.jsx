@@ -8,7 +8,7 @@ import * as projectConfig from '../config';
 import { getSearchMenuCategoryTree } from '../util/category';
 import { formatReleaseDate } from '../util/modelSpecificUtil';
 import { withActions, withStore } from '../util/component';
-import { getId, getDisplayName, getTargetType } from 'wdk-client/CategoryUtils';
+import { getId, getDisplayName, getTargetType, isIndividual } from 'wdk-client/CategoryUtils';
 import { preorderSeq } from 'wdk-client/TreeUtils';
 import { UserActionCreators } from 'wdk-client/ActionCreators'
 import { SHOW_GALAXY_PAGE_PREFERENCE } from './controllers/GalaxyTermsController';
@@ -67,7 +67,7 @@ function Header(props) {
         <Menu webAppUrl={webAppUrl} showLoginWarning={showLoginWarning} isGuest={user ? user.isGuest : true} entries={[
           { id: 'home', text: 'Home', tooltip: 'Go to the home page', url: webAppUrl },
           { id: 'search', text: 'New Search', tooltip: 'Start a new search strategy', children: isMicrobiomeDB ?
-            getSearchEntries(ontology, recordClasses).map(node => preorderSeq(node).filter(node => node.children.length === 0).toArray())[0]
+            getSearchEntries(ontology, recordClasses, true)
           : [
             ...getSearchEntries(ontology, recordClasses),
             { id: 'query-grid', text: 'View all available searches', route: 'query-grid' }
@@ -395,12 +395,15 @@ export default connect(Header);
 // helpers
 
 /**
- * Map search tree to menu entries
+ * Map search tree to menu entries. If flatten is true, return a flat
+ * list of search entries. Otherwise, return the full tree of search
+ * entries.
  */
-function getSearchEntries(ontology, recordClasses) {
+function getSearchEntries(ontology, recordClasses, flatten = false) {
   if (ontology == null || recordClasses == null) return [];
-  return getSearchMenuCategoryTree(ontology, recordClasses, {})
-    .children.map(createMenuEntry);
+  let tree = getSearchMenuCategoryTree(ontology, recordClasses, {});
+  return flatten ? preorderSeq(tree).filter(isIndividual).map(createMenuEntry)
+                 : tree.children.map(createMenuEntry);
 }
 
 /** Map a search node to a meny entry */
