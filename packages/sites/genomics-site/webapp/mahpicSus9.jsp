@@ -43,124 +43,7 @@
   <h1>How to Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1> 
   
 
-  <h3 id="DataLinks">Where to Access MaHPIC Data</h3>
-  <div style="margin-left: 1em;">	
-   
-   <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 4: Relapse of <i>M. mulata</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
-   <div class="wdk-toggle-content">
 
-	 <h4>Data Links</h4> 
-       <div style="margin-left: 2.5em;">
-	   <style>
-           #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
-           text-align : center;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 1px solid black;
-           }
-           #DataLinks {
-           margin-left : 5 em;
-           }
-           
-           #DataLinks td {vertical-align: middle;}
-           #DataLinks td:first-child { text-align: left;}
-         </style> 
-         <table id="DataLinks"> 
-           <tr>
-             <th>Data from MaHPIC Team</th>
-             <th>Data Available from</th>
-             <th>Data Integrated into PlasmoDB Searches</th>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming Soon</b><br><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b><br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E04 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E04 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b><br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E04 Proteomics at EBI's PRIDE</a></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UC San Diego's MassIVE</a></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b><br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E04 Immune Profiles at NIAID's ImmPort</a></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UC San Diego's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UC San Diego's Metabolomics Workbench</a>     </td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
-             <td><b>Coming soon</b></td>
-             <td>N/A</td>
-           </tr>
-           </table>
-           </div>
-<br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfo table, #ExpInfo td, #ExpInfo th, #ExpInfo tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfo {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfo"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>E04- Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> B strain and treated with artemether over a 100-day study to observe multiple disease relapses.</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of <i>Anopheles dirus</i> salivary gland material that included sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</td>
-           </tr>
-         </table>
-      </div>   
-	 
-	   
-	 <h4>Publication(s)</h4>
-	    <div style="margin-left: 2.5em;">
-        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
-	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
-        </div>
-        <p>
-     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
-     <a href="images/MaHPIC_Ex04_Timeline.png" target="_blank">View Larger Image</a><br>
-    
-        
-  </div>	
-  </div>
-     <div class="wdk-toggle" data-show="false">
-     <h3 class="wdk-toggle-name"><a href="#">Experiment 13: Coming Soon</a></h3>
-     <div class="wdk-toggle-content">
-
-  </div>
-  </div>
-  </div>
-  
 <div class="item">
 
   <h3>An Introduction to MaHPIC</h3>
@@ -303,6 +186,127 @@
 	 </span>
    </div>	
 </div>
+
+
+  <h3 id="DataLinks">Where to Access MaHPIC Data</h3>
+  <div style="margin-left: 1em;">	
+   
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 4: Relapse of <i>M. mulata</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
+   <div class="wdk-toggle-content">
+
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
+           text-align : center;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks td {vertical-align: middle;}
+           #DataLinks td:first-child { text-align: left;}
+         </style> 
+         <table id="DataLinks"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b>Coming Soon</b><br><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b>Coming Soon</b><br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E04 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E04 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b>Coming Soon</b><br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E04 Proteomics at EBI's PRIDE</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
+             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UC San Diego's MassIVE</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
+             <td><b>Coming Soon</b><br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E04 Immune Profiles at NIAID's ImmPort</a></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UC San Diego's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UC San Diego's Metabolomics Workbench</a>     </td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
+             <td><b>Coming soon</b></td>
+             <td>N/A</td>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo table, #ExpInfo td, #ExpInfo th, #ExpInfo tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>E04- Five <i>Macaca mulatta</i> individuals infected with <i>Plasmodium cynomolgi</i> B strain and treated with artemether over a 100-day study to observe multiple disease relapses.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of <i>Anopheles dirus</i> salivary gland material that included sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</td>
+           </tr>
+         </table>
+      </div>   
+	 
+	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_Ex04_Timeline.png" target="_blank">View Larger Image</a><br>
+    
+        
+  </div>	
+  </div>
+     <div class="wdk-toggle" data-show="false">
+     <h3 class="wdk-toggle-name"><a href="#">Experiment 13: Coming Soon</a></h3>
+     <div class="wdk-toggle-content">
+
+  </div>
+  </div>
+  </div>
+  
+
 
 <!--
 <div class="item">
