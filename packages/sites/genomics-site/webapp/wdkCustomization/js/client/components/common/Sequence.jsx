@@ -1,7 +1,8 @@
 import React from 'react';
-import lodash from 'lodash';
+import {chunk} from 'lodash';
+import {withPlainTextCopy} from '../../util/component';
 
-export default function Sequence(props) {
+function Sequence(props) {
   let { highlightRegions, sequence } = props;
 
   let sequenceChars = highlightRegions.reduce((sequenceChars, highlightRegion) => {
@@ -17,7 +18,7 @@ export default function Sequence(props) {
 
   return (
     <pre>
-      {lodash.chunk(sequenceChars, 80).map(s => <div>{s}</div>)}
+      {chunk(sequenceChars, 80).map(s => <div>{s}</div>)}
     </pre>
   );
 }
@@ -39,3 +40,5 @@ Sequence.propTypes = {
 Sequence.defaultProps = {
   highlightRegions: []
 };
+
+export default withPlainTextCopy(Sequence);

@@ -133,3 +133,21 @@ export let withActions = (actionCreators = {}) => (TargetComponent) => {
 
   return WrappActionCreatorsProvider;
 };
+
+/**
+ * Decorates a component so that when any of part of it is copied, all rich
+ * formatting is removed.
+ */
+export let withPlainTextCopy = (TargetComponent) =>
+  function PlainTextCopyWrapper(props) {
+    return (
+      <div onCopy={handleCopy}>
+        <TargetComponent {...props} />
+      </div>
+    );
+  }
+
+function handleCopy(event) {
+  event.clipboardData.setData('text/plain', window.getSelection().toString());
+  event.preventDefault();
+}
