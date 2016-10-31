@@ -95,8 +95,7 @@ wdk.question.registerInitializer('PathwayQuestions.PathwaysByPathwayID', makeRad
   wildcardName: 'pathway_wildcard'
 }));
 
-// FIXME Where did you go, question?
-wdk.question.registerInitializer('IsolateQuestions.IsolateByProduct', makeRadioParamsInitializer({
+wdk.question.registerInitializer('PopsetQuestions.PopsetByProduct', makeRadioParamsInitializer({
   termName: 'product',
   wildcardName: 'product_wildcard'
 }));
