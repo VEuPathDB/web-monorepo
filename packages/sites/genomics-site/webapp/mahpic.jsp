@@ -28,8 +28,7 @@
        padding: 4px;
        margin: 0; 
      }
-     
-    .h3 {
+     h3 {
        padding: 4px;
      }
   </style>
