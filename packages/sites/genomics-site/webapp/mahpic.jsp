@@ -29,6 +29,9 @@
        margin: 0; 
      }
      
+    .h3 {
+       padding: 4px;
+     }
   </style>
 
   <script>
