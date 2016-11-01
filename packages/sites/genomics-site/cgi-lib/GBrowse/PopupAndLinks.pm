@@ -1365,7 +1365,7 @@ sub interproLink {
   if($db eq 'INTERPRO') { 
     $url = qq|http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=$pi|;
   } elsif( $db eq 'PFAM') { 
-    $url = qq|http://pfam.sanger.ac.uk/family?acc=$pi|;
+    $url = qq|http://pfam.xfam.org/family?acc=$pi|;
   } elsif( $db eq 'PRINTS') {
     $url = qq|http://umber.sbs.man.ac.uk/cgi-bin/dbbrowser/sprint/searchprintss.cgi?prints_accn=$pi&display_opts=Prints&category=None&queryform=false&regexpr=off|;
   } elsif( $db eq 'PRODOM') {
