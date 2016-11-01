@@ -48,7 +48,7 @@
 <div style="margin-left: 3em;">
 
   <center> <img align="middle" src="images/MaHPIC_TopCenter_5.png" height="120px" width="550px"></center>
-  <h1>How to Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1> 
+  <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1> 
   
 
 
@@ -196,7 +196,7 @@
 </div>
 
 
-  <h3 id="DataLinks">Where to Access MaHPIC Data</h3>
+  <h3 id="DataLinks">Access MaHPIC Data Here</h3>
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
