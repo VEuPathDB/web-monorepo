@@ -24,6 +24,11 @@
     .item .more_text {
       display: none;
     }
+    .wdk-toggle-name {
+       padding: 4px;
+       margin: 0; 
+     }
+     
   </style>
 
   <script>
@@ -50,12 +55,12 @@
 
   <div style="margin-left: 1em;">
     <a href="http://www.systemsbiology.emory.edu/index.html">MaHPIC</a> is an 
-    <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">NIAID</a>-funded initiative to characterize host-pathogen interactions during malaria 
+    <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic">NIAID</a>-funded (# HHSN272201200031C) initiative to characterize host-pathogen interactions during malaria 
     infections of non-human primates. 
     <a href="http://www.systemsbiology.emory.edu/research/cores/index.html">MaHPIC's 8 teams</a> of 
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
-	interact with their human and other animal hosts to cause disease. (NIAID Contract: # HHSN272201200031C)<br>
+	interact with their human and other animal hosts to cause disease. <br>
 	<a href="#" class="read_more">Read More...</a><br><br>
 
       <span class="more_text">
@@ -299,7 +304,7 @@
   </div>	
   </div>
      <div class="wdk-toggle" data-show="false">
-     <h3 class="wdk-toggle-name"><a href="#">Experiment 13: Coming Soon</a></h3>
+     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Coming Soon</a></h3>
      <div class="wdk-toggle-content">
 
   </div>
