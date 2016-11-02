@@ -169,7 +169,7 @@
 
    
 <div class="item">  
-   <h3>MaHPIC Experimental Design</h3>
+   <h3>MaHPIC Experimental Design JUNK</h3>
    
    <div style="margin-left: 1em;">
      For the study of malaria in the context of the MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
