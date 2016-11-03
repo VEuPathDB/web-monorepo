@@ -218,7 +218,6 @@
            }
            
            #DataLinks td {vertical-align: middle;}
-           #DataLinks td:nth-child(3) { text-align: center;}
          </style> 
          <table id="DataLinks"> 
            <tr>
