@@ -206,7 +206,7 @@
        <div style="margin-left: 2.5em;">
 	   <style>
            #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
-           text-align : center;
+           text-align : left;
            padding-left: 7px;
            padding-right: 7px;
            padding-top: 5px;
@@ -218,8 +218,7 @@
            }
            
            #DataLinks td {vertical-align: middle;}
-           #DataLinks td:first-child { text-align: left;}
-           #DataLinks td:nth-child(2) { text-align: left;}
+           #DataLinks td:nth-child(3) { text-align: center;}
          </style> 
          <table id="DataLinks"> 
            <tr>
@@ -244,7 +243,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UC San Diego's MassIVE</a></td>
+             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UCSD's MassIVE</a></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -254,7 +253,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UC San Diego's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UC San Diego's Metabolomics Workbench</a>     </td>
+             <td><b>Coming Soon</b><br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UCSD's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UCSD's Metabolomics Workbench</a>     </td>
              <td>N/A</td>
            </tr>
            <tr>
