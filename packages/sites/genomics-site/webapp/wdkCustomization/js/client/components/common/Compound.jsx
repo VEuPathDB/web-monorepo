@@ -28,8 +28,34 @@ export class CompoundStructure extends Component {
 
   drawStructure(props) {
     let { moleculeString, height, width } = props;
-    let vc = new ChemDoodle.ViewerCanvas(this.canvasId, width, height);
-    vc.loadMolecule(ChemDoodle.readMOL(moleculeString));
+
+    var structure = ChemDoodle.readMOL(moleculeString)
+    var xy = structure.getDimension();
+
+    let vc = new ChemDoodle.ViewerCanvas(this.canvasId, xy.x + 15, xy.y + 15);
+   //the width of the bonds should be .6 pixels
+  vc.specs.bonds_width_2D = .6;
+  //the spacing between higher order bond lines should be 18% of the length of the bond
+  vc.specs.bonds_saturationWidth_2D = .18;
+  //the hashed wedge spacing should be 2.5 pixels
+  vc.specs.bonds_hashSpacing_2D = 2.5;
+  //the atom label font size should be 10
+  vc.specs.atoms_font_size_2D = 10;
+  //we define a cascade of acceptable font families
+  //if Helvetica is not found, Arial will be used
+  vc.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif'];
+  //display carbons labels if they are terminal
+  vc.specs.atoms_displayTerminalCarbonLabels_2D = true;
+  //add some color by using JMol colors for elements
+  vc.specs.atoms_useJMOLColors = true;
+
+    structure.scaleToAverageBondLength(14.4);
+
+
+    vc.loadMolecule(structure);
+
+
+
   }
 
   loadLibs(props) {
