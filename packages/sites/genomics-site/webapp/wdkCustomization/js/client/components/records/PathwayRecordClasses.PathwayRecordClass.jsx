@@ -735,6 +735,9 @@ function GeneraSelector(props) {
   return (
     <div id="eupathdb-PathwayRecord-generaSelector">
       <h3>Genera Selector</h3>
+      <div className="hideMenu" onClick={function() {$('#eupathdb-PathwayRecord-generaSelector-wrapper').hide()}}>
+        X
+      </div>
       <CheckboxList name="genera" items={props.generaOptions} value={props.generaSelection}
                     onChange={function(newSelections) { props.onGeneraChange(newSelections, props.dispatchAction)}}/>
       <input type="submit" value="Paint" onClick={function() { props.paintCustomGenera(props.generaSelection, props.projectId, props.vis) }} />

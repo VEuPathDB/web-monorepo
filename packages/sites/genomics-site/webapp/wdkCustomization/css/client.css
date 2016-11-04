@@ -860,6 +860,20 @@ td.wdk-DataTableCell__thumbnail {
   top: 1.2em;
 }
 
+/* Pathways CSS */
+#eupathdb-PathwayRecord-generaSelector h3 {
+  display: inline;
+}
+
+#eupathdb-PathwayRecord-generaSelector .hideMenu {
+  float: right;
+  width: 12px;
+  cursor: pointer;
+  margin-right: 1em;
+}
+
+
+
 /* ======================= */
 /* Galaxy Orientation page */
 /* ======================= */
