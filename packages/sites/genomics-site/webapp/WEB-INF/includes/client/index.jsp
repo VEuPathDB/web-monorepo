@@ -46,15 +46,15 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
       ga('create', '${gaId}', 'auto');
     </script>
-    <imp:script charset="utf8" src="wdk/js/wdk-common.bundle.js"/>
-    <imp:script charset="utf8" src="wdk/js/wdk-client.bundle.js" ></imp:script>
-    <imp:script charset="utf8" src="apidb-client.bundle.js" ></imp:script>
+    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdk/css/wdk.min.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/client.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="css/${model.projectId}.css"/>
+    <imp:script charset="utf8" src="wdk/js/wdk-common.bundle.js"/>
+    <imp:script charset="utf8" src="wdk/js/wdk-client.bundle.js" ></imp:script>
+    <imp:script charset="utf8" src="apidb-client.bundle.js" ></imp:script>
   </head>
   <body>
     <div id="wdk-container">Loading...</div>
-    <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
   </body>
 </html>
