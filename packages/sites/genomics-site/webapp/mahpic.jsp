@@ -57,8 +57,9 @@
 
   <div style="margin-left: 1em;">
     <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC</a> is an 
-    <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">NIAID</a>-funded (# HHSN272201200031C) initiative to characterize host-pathogen interactions during malaria 
-    infections of non-human primates. 
+    <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">NIAID</a>
+    -funded (# HHSN272201200031C) initiative to characterize host-pathogen interactions during malaria infections of non-human primates 
+    and clinical studies via collaborations with investigators in malaria endemic countries. 
     <a href="http://www.systemsbiology.emory.edu/research/cores/index.html" target="_blank">MaHPIC's 8 teams</a> of 
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html" target="_blank">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
@@ -174,9 +175,9 @@
    <h3>MaHPIC Experimental Design</h3>
    
    <div style="margin-left: 1em;">
-     For the study of malaria in the context of the MaHPIC project, “systems biology” means collecting and analyzing comprehensive data on 
+     For the study of malaria in the context of the MaHPIC project, "systems biology" means collecting and analyzing comprehensive data on 
      how a <i>Plasmodium</i> parasite infection produces changes in host and parasite gene expression, proteins, lipids, metabolism and the host immune response.
-     MaHPIC experiments are longitudinal studies of <i>Plasmodium</i> infections (or uninfected controls) in non-human primates. <br>
+     MaHPIC experiments include longitudinal studies of <i>Plasmodium infections</i> (or uninfected controls) in non-human primates, and clinical and metabolomics studies of human samples. <br>
      <a href="#" class="read_more">Read More...</a><p>
    
      <span class="more_text">
@@ -199,7 +200,7 @@
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 4: Relapse of <i>M. mulata</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse.</h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -286,7 +287,7 @@
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td> The experimental design of this <i>Plasmodium cynomolgi</i> B strain infection of <i>Macaca mulatta</i> was approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and is as follows. Five naive males (RFa14, RFv13, Rlc14, RMe14, RSb14) approximately 2 years of age were inoculated intravenously with a preparation of <i>Anopheles dirus</i> salivary gland material that included sporozoites and then profiled for clinical and omic measurements over the course of a 100-day experiment. The drug Artemether was administered to subjects during the 100-day experiment.   Samples were generated and analyzed as part of a multi-omic approach to understanding at the molecular level the course and effects of infection and relapse on both host and parasite.  Samples were generated daily and at an additional 7 time points over the experiment.  The drugs chloroquine and primaquine were administered to subjects at the end of the 100-day experiment.</td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug Artemether was subcuratively administered to two subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs Chloroquine and Primaquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
            </tr>
          </table>
       </div>   
@@ -298,7 +299,7 @@
 	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
         </div>
         <p>
-     <img align="middle" src="images/MaHPIC_Ex04_Timeline.png" height="300px" width="500px"><br>
+     <img align="middle" src="images/MaHPIC_E04_Timeline.png" height="300px" width="500px"><br>
      <a href="images/MaHPIC_Ex04_Timeline.png" target="_blank">View Larger Image</a><br>
     
         
