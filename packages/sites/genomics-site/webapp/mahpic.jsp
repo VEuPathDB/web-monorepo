@@ -200,7 +200,7 @@
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: Infection and Relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: Infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -283,7 +283,7 @@
          <table id="ExpInfo"> 
            <tr>
              <td><b>Title:</b></td>
-             <td> <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse.</td>
+             <td>Experiment 04: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse.</td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
