@@ -300,7 +300,7 @@
         </div>
         <p>
      <img align="middle" src="images/MaHPIC_E04_Timeline.png" height="300px" width="500px"><br>
-     <a href="images/MaHPIC_Ex04_Timeline.png" target="_blank">View Larger Image</a><br>
+     <a href="images/MaHPIC_E04_Timeline.png" target="_blank">View Larger Image</a><br>
     
         
   </div>	
