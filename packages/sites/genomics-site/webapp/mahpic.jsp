@@ -177,7 +177,7 @@
    <div style="margin-left: 1em;">
      For the study of malaria in the context of the MaHPIC project, "systems biology" means collecting and analyzing comprehensive data on 
      how a <i>Plasmodium</i> parasite infection produces changes in host and parasite gene expression, proteins, lipids, metabolism and the host immune response.
-     MaHPIC experiments include longitudinal studies of <i>Plasmodium infections</i> (or uninfected controls) in non-human primates, and clinical and metabolomics studies of human samples. <br>
+     MaHPIC experiments include longitudinal studies of <i>Plasmodium</i> infections (or uninfected controls) in non-human primates, and clinical and metabolomics studies of human samples. <br>
      <a href="#" class="read_more">Read More...</a><p>
    
      <span class="more_text">
@@ -200,7 +200,7 @@
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse.</h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse.</a></h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
