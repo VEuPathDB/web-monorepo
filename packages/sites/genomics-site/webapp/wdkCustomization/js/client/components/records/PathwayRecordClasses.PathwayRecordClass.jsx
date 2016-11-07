@@ -176,43 +176,52 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
 
             cy.changeExperiment = function (val, xaxis, doAllNodes) {
 
-                // use bypass to hide labelling of EC num that have expression graphs
-                var nodes = cy.nodes();
+                var nodes = cy.elements('node[node_type= "enzyme"]');
 
-                for (var i in nodes) {
+                for (var i = 0; i < nodes.length; i++) {
+
                     var n = nodes[i];
 
-                    var type = n.data("node_type");
+                    var ecNum = n.data("node_identifier");
 
-                    if (type == ("enzyme")) {
-                        var ecNum = n.data.label; // TODO
+                    if (val && (doAllNodes || n.data("OrganismsInferredByOthoMCL") || n.data("Organisms"))) {
+                        var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
+                        var link = linkPrefix + '&fmt=png&h=20&w=50&compact=1';
 
-                        if (val && (doAllNodes || n.data.OrganismsInferredByOthoMCL || n.data.Organisms)) {
-                            var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
-                            var link = linkPrefix + '&fmt=png&h=20&w=50&compact=1';
 
-                            style.nodes[n.data.id] = {image: link, label: ""};
-                            n.data.image = linkPrefix;
+                        n.data('hasImage', true);
 
-                            if (xaxis) {
-                                n.data.xaxis = xaxis;
-                            } else {
-                                n.data.xaxis = "";
-                            }
+                        n.style({
+                            'background-image':link,
+                            'background-fit':'contain',
+                        });
 
-                        } else {
-                            style.nodes[n.data.id] = {image: ""};
-                            n.data.image = "";
-                            n.data.xaxis = "";
-                        }
-                        //cy.updateData([n]);
-                    }  // if enzyme
+                        
+                        /* if (xaxis) {
+                           n.data.xaxis = xaxis;
+                           } else {
+                           n.data.xaxis = "";
+                           }
+
+                           } else {
+                           style.nodes[n.data.id] = {image: ""};
+                           n.data.image = "";
+                           n.data.xaxis = "";
+                           }
+                         */
+                    }
+                    else {
+                        n.data('hasImage', false);
+
+
+                    }
+
                 }
-                cy.updateData(nodes.filter(node => {
-                    return node.data.Type === "enzyme"
-                }));
-                cy.nodeTooltipsEnabled(true);
-                cy.visualStyleBypass(style);
+
+
+                cy.style().selector('node[node_type= "enzyme"][!hasImage]').style({'label':'data(display_label)', 'background-image-opacity':0}).update();
+                cy.style().selector('node[node_type= "enzyme"][?hasImage]').style({'label':null}).update();
+
             };
 
 
@@ -439,7 +448,9 @@ function _JB_makeVis(pathwayId, pathwaySource, wdkConfig) {
         // use bypass to hide labelling of EC num that have expression graphs
         var nodes = vis.nodes();
 
-        for (var i in nodes) {
+
+
+          for (var i in nodes) {
           var n = nodes[i];
 
           var type = n.data.Type;
