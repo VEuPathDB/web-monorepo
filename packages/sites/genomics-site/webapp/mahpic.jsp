@@ -58,17 +58,18 @@
   <div style="margin-left: 1em;">
     <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC</a> is an 
     <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">NIAID</a>
-    -funded (# HHSN272201200031C) initiative to characterize host-pathogen interactions during malaria infections of non-human primates 
+    -funded (# HHSN272201200031C) initiative to characterize host-pathogen interactions during malaria infections of non-human primates (NHP)
     and clinical studies via collaborations with investigators in malaria endemic countries. 
     <a href="http://www.systemsbiology.emory.edu/research/cores/index.html" target="_blank">MaHPIC's 8 teams</a> of 
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html" target="_blank">transdisciplinary scientists</a> 
     use a "systems biology" approach to study the molecular details of how malaria parasites 
-	interact with their human and other animal hosts to cause disease. <br>
+	interact with their human and NHP hosts to cause disease. <br>
 	<a href="#" class="read_more">Read More...</a><br><br>
 
       <span class="more_text">
-      MaHPIC is organized into a compendium of 22 experiments.  Experiments are carefully planned and monitored, producing results data sets (clinical 
-      and a wide range of omics) that will be made available to the public. In total, MaHPIC results data sets will be 
+      MaHPIC is organized into a compendium of 22 experiments. Experiments are carefully planned and monitored, 
+      producing results data sets (clinical and a wide range of omics) that will be made available to the public. 
+      In total, MaHPIC results data sets will be 
       composed of thousands of files and several data types. Results datasets will offer unprecedented 
       detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
       the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.<br><br>
@@ -77,8 +78,8 @@
 	  MaHPIC was established in September 2012 by the 
 	  National Institute of Allergy and Infectious Diseases, 
 	  part of the US National Institutes of Health. The MaHPIC team uses a "systems biology" strategy to study how malaria parasites 
-	  interact with their human and other animal hosts to cause disease in molecular detail. The central hypothesis is that 
-	  "Non-Human Primate host interactions with Plasmodium pathogens as model systems will provide insights into mechanisms, 
+	  interact with their human and NHP hosts to cause disease in molecular detail. The central hypothesis is that 
+	  "Non-Human Primate host interactions with <i>Plasmodium</i> pathogens as model systems will provide insights into mechanisms, 
 	  as well as indicators for, human malarial disease conditions".
 	  <p>
 	  The MaHPIC effort includes many teams working together to produce and analyze data and metadata.  These teams are briefly described below 
@@ -287,7 +288,7 @@
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug Artemether was subcuratively administered to two subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs Chloroquine and Primaquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites isolated at the Centers for Disease Control and Prevention from multiple Anopheles species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug Artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs Primaquine and Chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
            </tr>
          </table>
       </div>   
