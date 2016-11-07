@@ -182,8 +182,8 @@
      <a href="#" class="read_more">Read More...</a><p>
    
      <span class="more_text">
-       <img align="middle" src="images/MaHPIC_Generic_Timeline.png" height="260px" width="520px"><br>
-       <a href="images/MaHPIC_Generic_Timeline.png" target="_blank">View Larger Image</a><br><br>
+       <img align="middle" src="images/MaHPIC_Generic_Timeline_7NOV2016.png" height="260px" width="520px"><br>
+       <a href="images/MaHPIC_Generic_Timeline_7NOV2016.png" target="_blank">View Larger Image</a><br><br>
        
        The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
        of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, NHPs receive antimalarial treatments 
