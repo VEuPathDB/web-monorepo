@@ -67,8 +67,8 @@
 	<a href="#" class="read_more">Read More...</a><br><br>
 
       <span class="more_text">
-      MaHPIC is organized into a compendium of 22 experiments. Experiments are carefully planned and monitored, 
-      producing results data sets (clinical and a wide range of omics) that will be made available to the public. 
+      MaHPIC data and metadata from NHP experiments and clinical collaborations involving human subjects from malaria 
+      endemic countries include a wide range of data types and are carefully validated before release to the public. 
       In total, MaHPIC results data sets will be 
       composed of thousands of files and several data types. Results datasets will offer unprecedented 
       detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
@@ -186,8 +186,8 @@
        <a href="images/MaHPIC_Generic_Timeline.png" target="_blank">View Larger Image</a><br><br>
        
        The MaHPIC strategy is to collect physical specimens from non-human primates (NHPs) over the course of an experiment.  The clinical parameters 
-       of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, animals receive blood-stage 
-       treatments that clear parasites from the blood but not the liver, which is the source of relapse.  Animals receive a curative treatment 
+       of infected animals and uninfected controls are monitored daily for about 100 days. During the experiment, NHPs receive antimalarial treatments 
+       to mimic relapse or recrudescence depending on the infecting species.  Animals receive a curative treatment 
        at the end of the experiment. At specific milestones during disease progression, blood and bone marrow samples are collected and 
        analyzed by the MaHPIC teams and a diverse set of data and metadata are produced.<br><br>
 
