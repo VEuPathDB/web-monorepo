@@ -30,9 +30,11 @@ export class CompoundStructure extends Component {
     let { moleculeString, height, width } = props;
 
     var structure = ChemDoodle.readMOL(moleculeString)
+    structure.scaleToAverageBondLength(14.4);
+
     var xy = structure.getDimension();
 
-    let vc = new ChemDoodle.ViewerCanvas(this.canvasId, xy.x + 15, xy.y + 15);
+    let vc = new ChemDoodle.ViewerCanvas(this.canvasId, xy.x + 35, xy.y + 35);
    //the width of the bonds should be .6 pixels
   vc.specs.bonds_width_2D = .6;
   //the spacing between higher order bond lines should be 18% of the length of the bond
@@ -49,7 +51,7 @@ export class CompoundStructure extends Component {
   //add some color by using JMol colors for elements
   vc.specs.atoms_useJMOLColors = true;
 
-    structure.scaleToAverageBondLength(14.4);
+
 
 
     vc.loadMolecule(structure);
