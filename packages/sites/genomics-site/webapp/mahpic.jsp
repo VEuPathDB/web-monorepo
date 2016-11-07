@@ -300,8 +300,8 @@
 	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
         </div>
         <p>
-     <img align="middle" src="images/MaHPIC_E04_Timeline.png" height="300px" width="500px"><br>
-     <a href="images/MaHPIC_E04_Timeline.png" target="_blank">View Larger Image</a><br>
+     <img align="middle" src="images/MaHPIC_Ex04_Timeline_1.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_Ex04_Timeline_1.png" target="_blank">View Larger Image</a><br>
     
         
   </div>	
