@@ -197,8 +197,8 @@
 </div>
 
 
-  <h3 id="DataLinks">Access MaHPIC Data Here</h3><br>
-  All results are a product of the MaHPIC.  For more information on the MaHPIC, please visit <a href="http://www.systemsbiology.emory.edu/" target="_blank">http://www.systemsbiology.emory.edu/</a>. <br>
+  <h3 id="DataLinks">Access MaHPIC Data Here</h3>
+   All results are a product of the MaHPIC.  For more information on the MaHPIC, please visit <a href="http://www.systemsbiology.emory.edu/" target="_blank">http://www.systemsbiology.emory.edu/</a>. <br>
   <div style="margin-left: 1em;">	
    
    <div class="wdk-toggle" data-show="false">
