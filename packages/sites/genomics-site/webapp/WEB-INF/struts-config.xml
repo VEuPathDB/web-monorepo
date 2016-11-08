@@ -580,7 +580,7 @@
    </action>
     <action
       path="/showResultSize"
-      type="org.gusdb.wdk.controller.action.ShowResultSizeAction"
+      type="org.apidb.apicommon.controller.CustomShowResultSizeAction"
       scope="request">
    </action>
     <action
