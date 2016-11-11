@@ -404,7 +404,7 @@
 	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
         </div>
         <br><br>
-     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="300px" width="550px"><br>
+     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="270px" width="550px"><br>
      <a href="images/MaHPIC_E13_Timeline.png" target="_blank">View Larger Image</a><br>
     
         
