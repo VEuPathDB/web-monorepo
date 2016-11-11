@@ -400,7 +400,7 @@
 	   
 	 <h4>Publication(s)</h4>
 	    <div style="margin-left: 2.5em;">
-        <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">
+        <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">  <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
 	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
         </div>
         <br><br>
