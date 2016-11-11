@@ -209,6 +209,9 @@
       <ul>
         <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
         <li><a href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+        <c:if test="${project == 'PlasmoDB'}" >
+          <li><a title="Access MaHPIC Data" href="${pageContext.request.contextPath}/mahpic.jsp">MaHPIC Data</a></li>
+        </c:if>
       </ul>
       <hr>
     </c:if>

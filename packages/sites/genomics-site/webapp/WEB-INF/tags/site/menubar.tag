@@ -40,6 +40,12 @@
 
 <c:set var="basketCount" value="${wdkUser.basketCount}"/>
 
+<c:set var="mahpicListItem">
+  <c:if test="${project == 'PlasmoDB'}" >
+    <li><a title="Access MaHPIC Data" href="${baseUrl}/mahpic.jsp">MaHPIC Data</a></li>
+  </c:if>
+</c:set>
+
 <span class="onload-function" data-function="eupath.setup.configureMenuBar"><jsp:text/></span>
 <div id="menu" class="ui-helper-clearfix">
 
@@ -106,6 +112,7 @@
         </c:if>
         <li><a title="Table summarizing all the genomes and their different data types available in ${project}" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes">Genomes and Data Types</a></li> 
         <li><a title="Table summarizing gene counts for all the available genomes, and evidence supporting them" href="${baseUrl}/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics">Gene Metrics</a></li>
+        </li>
       </ul>
     </li>
 
@@ -144,6 +151,7 @@
         </c:if>
 
         <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">EuPathDB Publications</a></li> 
+        ${mahpicListItem}
       </ul>
     </li>
     
@@ -175,6 +183,7 @@
         </c:choose>
         
         <li><a href="javascript:wdk.publicStrats.goToPublicStrats()">Public Strategies</a></li>
+        ${mahpicListItem}
       </ul>
     </li>
 

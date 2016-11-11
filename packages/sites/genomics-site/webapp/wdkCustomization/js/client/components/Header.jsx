@@ -29,6 +29,13 @@ let isEuPathDB = projectId === 'EuPathDB';
 let isMicrobiomeDB = projectId === 'MicrobiomeDB';
 /* eslint-enable no-unused-vars */
 
+let mahpicDataEntry = {
+  id: 'mahpic-data',
+  text: 'MaHPIC Data',
+  tooltop: 'Access MaHPIC Data',
+  webAppUrl: '/mahpic.jsp'
+};
+
 /** Header */
 function Header(props) {
   let { basketCounts, ontology, preferences, quickSearches, recordClasses,
@@ -277,7 +284,8 @@ function Header(props) {
               id: 'eupathdb-publications',
               text: 'EuPathDB Publications',
               webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs'
-            }
+            },
+            ...(isPlasmoDB ? [mahpicDataEntry] : [])
           ]},
           { id: 'community', text: 'Community', children: [
             {
@@ -335,7 +343,8 @@ function Header(props) {
               id: 'public-strategies',
               text: 'Public Strategies',
               webAppUrl: '/showApplication.do?tab=public_strat'
-            }
+            },
+            ...(isPlasmoDB ? [mahpicDataEntry] : [])
           ]},
           {
             id: 'analyze',
