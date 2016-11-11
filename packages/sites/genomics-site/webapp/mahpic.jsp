@@ -230,12 +230,12 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a>-->
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_04/">E04 Clinical Data in PlasmoDB Downloads</b></a></td>  
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E04 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E04 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
+             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E04 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E04 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
              <td>N/A</td>
            </tr>
            <tr>
@@ -307,10 +307,109 @@
         
   </div>	
   </div>
+  
+  
      <div class="wdk-toggle" data-show="false">
-     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Coming Soon</a></h3>
+     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>Macaca mulatta</i> exposed to pyrimethamine</a></h3>
      <div class="wdk-toggle-content">
 
+       <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE13 table, #DataLinksE13 td, #DataLinksE13 th, #DataLinksE13 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE13 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksE13 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE13"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b>Coming Soon</b></td>  <!--<br><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b><a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results at NCBI's GEO</b></a></td>   <!--<br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E04 Proteomics at EBI's PRIDE</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
+             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UCSD's MassIVE</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b>Coming Soon</b></td> <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UCSD's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UCSD's Metabolomics Workbench</a> -->    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
+             <td><b>Coming soon</b></td>
+             <td>N/A</td>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE13 table, #ExpInfoE13 td, #ExpInfoE13 th, #ExpInfoE13 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE13 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE13"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 13: Uninfected <i>Macaca mulatta</i> exposed to pyrimethamine to produce clinical, hematological, and omics control measures.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Uninfected, malaria-naive, male rhesus macaques (<i>Macaca mulatta</i>), approximately two years of age, were inoculated intravenously with a preparation of salivary gland material derived from non-infected <i>Anopheles dirus</i> and profiled for clinical, hematological, functional genomic, lipidomic, proteomic, and metabolomic measurements.  Samples were generated and analyzed to investigate the effects of the pharmacological intervention with the anti-malarial drug pyrimethamine on normal individuals.  The experiment was designed for 100 days plus a follow-up period, with pyrimethamine administered at three different time points to coincide with the predicted treatment days of experimentally infected rhesus macaques. Capillary blood samples were collected daily for the measurement of CBCs and reticulocytes.  Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood samples and bone marrow aspirates were collected at seven time points before and after three rounds of drug administration for functional genomic, proteomic, and lipidomic analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+	 
+	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">  <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
+	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
+        </div>
+        <br><br>
+     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="270px" width="550px"><br>
+     <a href="images/MaHPIC_E13_Timeline.png" target="_blank">View Larger Image</a><br>
+    
+        
+  </div>	
+  </div>
   </div>
   </div>
   </div>
