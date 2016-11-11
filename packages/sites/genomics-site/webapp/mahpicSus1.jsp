@@ -343,7 +343,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><br> <a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results on NCBI's GEO</a></td>   <!--<br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
+             <td><b><a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data on NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results on NCBI's GEO</b></a></td>   <!--<br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
              <td>N/A</td>
            </tr>
            <tr>
@@ -404,8 +404,8 @@
 	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
         </div>
         <br><br>
-     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="300px" width="500px"><br>
-     <a href="images/MaHPIC_Ex04_Timeline_1.png" target="_blank">View Larger Image</a><br>
+     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="300px" width="550px"><br>
+     <a href="images/MaHPIC_E13_Timeline.png" target="_blank">View Larger Image</a><br>
     
         
   </div>	
