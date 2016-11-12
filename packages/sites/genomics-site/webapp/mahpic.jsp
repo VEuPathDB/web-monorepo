@@ -45,6 +45,7 @@
   </script>
   
 <div style="margin-left: 3em;">
+<div style="right-left: 3em;">
 
   <center> <img align="middle" src="images/MaHPIC_TopCenter_5.png" height="120px" width="550px"></center>
   <h1>Access Data from MaHPIC -<br>The Malaria Host-Pathogen Interaction Center</h1> 
@@ -198,8 +199,9 @@
 
 
   <h3 id="DataLinks">Access MaHPIC Data Here</h3>
+   <div style="margin-left: 1em;">
    All results are a product of the MaHPIC.  For more information on the MaHPIC, please visit <a href="http://www.systemsbiology.emory.edu/" target="_blank">http://www.systemsbiology.emory.edu/</a>. <br>
-  <div style="margin-left: 1em;">	
+ 	
    
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: Measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
@@ -444,5 +446,6 @@
 
   
   </div>
+</div>
 </div>
 </imp:pageFrame>
