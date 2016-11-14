@@ -193,12 +193,13 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
 
                     var n = nodes[i];
 
-                    var ecNum = n.data("node_identifier");
+                    var ecNum = n.data("display_label");
 
-                    if (val && (doAllNodes || n.data("OrganismsInferredByOthoMCL") || n.data("Organisms"))) {
-                        var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
+                    if (val && (doAllNodes || n.data("gene_count") > 0 )) {
+                        var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&' + val + '&id=' + ecNum;
                         var link = linkPrefix + '&fmt=png&h=20&w=50&compact=1';
 
+                        n.data('image', linkPrefix);
 
                         n.data('hasImage', true);
 
@@ -207,7 +208,6 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
                             'background-fit':'contain',
                         });
 
-                        
                         /* if (xaxis) {
                            n.data.xaxis = xaxis;
                            } else {
@@ -223,16 +223,12 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
                     }
                     else {
                         n.data('hasImage', false);
-
-
+                        n.data('image', null);
                     }
-
                 }
-
 
                 cy.style().selector('node[node_type= "enzyme"][!hasImage]').style({'label':'data(display_label)', 'background-image-opacity':0}).update();
                 cy.style().selector('node[node_type= "enzyme"][?hasImage]').style({'label':null}).update();
-
             };
 
 
@@ -241,305 +237,6 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
         return cy;
 
     });
-}
-
-
-
-function _JB_makeVis(pathwayId, pathwaySource, wdkConfig) {
-    return loadCytoscapeWeb(wdkConfig.webAppUrl).then(function() {
-    // init and draw
-    let vis = new org.cytoscapeweb.Visualization(div_id, options);
-
-    var presetLayout;
-
-    /**
-     * Creates and resolves a Promise object that collects the requested pathway and
-     * draws it
-     * @param pathwayId - pathway id
-     * @param pathwaySource - source of pathway (e.g., KEGG)
-     */
-    let drawVisualization = (pathwayId, pathwaySource) => {
-      let network$ = getNetwork(pathwayFilesBaseUrl + pathwaySource + "/" + pathwayId + pathwayFileExt);
-      network$.then(data => {
-        vis.draw(options);
-        if (pathwaySource === 'KEGG') {
-          vis.draw({network: data, layout: 'Preset'});
-        } else {
-          vis.draw({network: data, layout: 'ForceDirected'});
-        }
-      }).catch(error => {
-        alert("Error loading file " + error);
-      });
-    };
-
-    /**
-     * Provides a Promise object representing the output of an XHR call
-     * to the provided url
-     * @param url - url object of the XHR call
-     * @returns {Promise} - Promise
-     */
-    let getNetwork = function (url) {
-      return new Promise(function (resolve, reject) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("get", url);
-        xhr.onload = function () {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(xhr.response, xhr.statusText, xhr);
-          }
-          else {
-            var error = new Error(xhr.statusText);
-            error.response = xhr.response;
-            reject(error);
-          }
-        };
-        xhr.onerror = function () {
-          reject(xhr.statusText);
-        };
-        xhr.send();
-      });
-    };
-
-    // Transform a JSON request from webservices to
-    // a more usable data structure. This is used
-    // by `getEcToOrganismMap`
-    function transformToEcNumberList(data) {
-      if (!(data.response && data.response.recordset && data.response.recordset.records)) {
-        throw new Error("Received an unexpected response object");
-      }
-
-      var ecNumberList = {};
-      var records = data.response.recordset.records;
-
-      records.forEach(function (record) {
-        var organism = _(record.fields).findWhere({name: 'organism'});
-        var ecTable = _(record.tables).findWhere({name: 'EC Number'});
-
-        ecTable.rows.forEach(function (row) {
-          var ecItem;
-          var ecNumber = _(row.fields).findWhere({name: 'ec_number'});
-          var source = _(row.fields).findWhere({name: 'source'});
-
-          if (!_(ecNumberList).has(ecNumber.value)) {
-            // create new entry in ecNumberList
-            ecItem = ecNumberList[ecNumber.value] = {};
-          } else {
-            // return existing entry
-            ecItem = ecNumberList[ecNumber.value]
-          }
-
-          if (!_(ecItem).has(source.value)) {
-            ecItem[source.value] = [];
-          }
-
-          if (ecItem[source.value].indexOf(organism.value) === -1) {
-            ecItem[source.value].push(organism.value);
-          }
-
-        });
-      });
-
-      return ecNumberList;
-    }
-
-
-
-
-            // callback when Cytoscape Web has finished drawing
-            /**
-             * Callback that is issued when Cytoscape Web has finished drawing
-             * Does additional styling, adds event handlers in drawing and on menu
-     */
-        vis.ready(function () {
-      // Add new field 'xaxis' to nodes:
-      var xAxisField = {name: "xaxis", type: "string", defValue: ''};
-      vis.addDataField("nodes", xAxisField);
-
-      // customTooltip function
-      vis["customTooltip"] = function (data) {
-        //  var value = Math.round(100 * data["weight"]) + "%";
-        var value = data["label"];
-        if (data["Description"]) {
-          value = value + ": " + data["Description"];
-        }
-        return (value);
-      };
-
-      // customBorder function : if node has Organisms, then border should be a different color
-      vis["customBorder"] = function (data) {
-        var value = data["label"];
-        if (data["OrganismsInferredByOthoMCL"] || data["Organisms"]) {
-          value = "#FF0000";
-        } else {
-          value = "#000000";
-        }
-        return (value);
-      };
-
-      var colorMapper = {
-        attrName: "Type",
-          entries: [{attrValue: "metabolic process", value: "#ccffff"},
-                  {attrValue: "enzyme", value: "#ffffcc"},
-                  {attrValue: "molecular entity", value: "#0000ff"}]
-      };
-
-      var shapeMapper = {
-        attrName: "Type",
-        entries: [{attrValue: "metabolic process", value: "ROUNDRECT"},
-          {attrValue: "enzyme", value: "SQUARE"},
-          {attrValue: "molecular entity", value: "CIRCLE"}]
-      };
-
-      var sizeMapper = {
-        attrName: "Type",
-        entries: [{attrValue: "metabolic process", value: 'auto'}]
-      };
-
-      var widthMapper = {
-        attrName: "Type",
-        entries: [{attrValue: "enzyme", value: 50},
-          {attrValue: "molecular entity", value: 15}]
-      };
-
-      var heightMapper = {
-        attrName: "Type",
-        entries: [{attrValue: "metabolic process", value: 20},
-          {attrValue: "enzyme", value: 20},
-          {attrValue: "molecular entity", value: 15}]
-      };
-
-      // var labelPosition = {
-      //   attrName: "Type",
-      //   entries: [{attrValue: "molecular entity", value: 'right'}]
-      // };
-
-      var labelSize = {
-        attrName: "Type",
-        entries: [{attrValue: "molecular entity", value: 0}]
-      };
-
-      // to not show arrowhead for a Reversible reaction
-      var edgeArrow = {
-        attrName: "direction",
-        entries: [{attrValue: "Reversible", value: "NONE"},
-          {attrValue: "Irreversible", value: "DELTA"}]
-      };
-
-
-      var style = {
-        nodes: {
-          color: {discreteMapper: colorMapper},
-          shape: {discreteMapper: shapeMapper},
-          width: {discreteMapper: widthMapper},
-          size: {discreteMapper: sizeMapper},
-          height: {discreteMapper: heightMapper},
-          borderColor: {customMapper: {functionName: "customBorder"}},
-          borderWidth: 1,
-          tooltipText: {customMapper: {functionName: "customTooltip"}},
-          labelFontSize: {discreteMapper: labelSize}
-        },
-        edges: {
-          color: "#000000", width: 1,
-          targetArrowShape: {discreteMapper: edgeArrow},
-          lineStyle: "dotted"
-        }
-      };
-
-      //  node attribute to store the image
-      var imageField = {name: "image", type: "string", defValue: ""};
-      vis.addDataField("nodes", imageField);
-
-      vis.nodeTooltipsEnabled(true);
-      vis.visualStyle(style);
-
-
-
-
-      vis.changeExperiment = function (val, xaxis, doAllNodes) {
-
-        // use bypass to hide labelling of EC num that have expression graphs
-        var nodes = vis.nodes();
-
-
-
-          for (var i in nodes) {
-          var n = nodes[i];
-
-          var type = n.data.Type;
-
-          if (type == ("enzyme")) {
-            var ecNum = n.data.label;
-
-            if (val && (doAllNodes || n.data.OrganismsInferredByOthoMCL || n.data.Organisms)) {
-              var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&' + val + '&id=' + ecNum;
-              var link = linkPrefix + '&fmt=png&h=20&w=50&compact=1';
-
-              style.nodes[n.data.id] = {image: link, label: ""};
-              n.data.image = linkPrefix;
-
-              if (xaxis) {
-                n.data.xaxis = xaxis;
-              } else {
-                n.data.xaxis = "";
-              }
-
-            } else {
-              style.nodes[n.data.id] = {image: ""};
-              n.data.image = "";
-              n.data.xaxis = "";
-            }
-            //vis.updateData([n]);
-          }  // if enzyme
-        }
-        vis.updateData(nodes.filter(node => {
-          return node.data.Type === "enzyme"
-        }));
-        vis.nodeTooltipsEnabled(true);
-        vis.visualStyleBypass(style);
-      };
-
-
-      var colorNodes = function (val) {
-        //  to color the ec numbers that correspond to a set of genes
-        var nodes = vis.nodes();
-
-        for (var i in nodes) {
-          var n = nodes[i];
-          var type = n.data.Type;
-          var label = n.data.label;
-
-          var nodeArray = val.split(/,/);
-          for (var j = 0; j < nodeArray.length; j++) {
-            if (type == ("enzyme") && label == nodeArray[j]) {
-              style.nodes[n.data.id] = {color: "#00FF00", border: 2};
-
-              //vis.updateData([n]);
-            } else if (type == ("molecular entity") && label == nodeArray[j]) {
-              style.nodes[n.data.id] = {color: "#00FF00"};
-
-            }
-          }
-        }
-        vis.nodeTooltipsEnabled(true);
-        vis.visualStyleBypass(style);
-      };
-
-
-      // color EC Numbers, if any specified
-      var nodeList = $('#' + div_id).data('node-list');
-      colorNodes(nodeList);
-
-      // set the style programmatically
-      document.getElementById("color").onclick = function () {
-        vis.visualStyleBypass(style);
-      };
-
-    });
-    // end ready
-
-    drawVisualization(pathwayId, pathwaySource);
-
-    return vis;
-  });
 }
 
 
@@ -590,14 +287,13 @@ export class CytoscapeDrawing extends React.Component {
       this.cy = cy;
       // listener for when nodes and edges are clicked
 
-        cy.on("click", 'node[node_type= "molecular entity"]', {context:this.context, projectId:this.wdkConfig.projectId}, function(event) {
-
+        cy.on("click", 'node', {context:this.context, projectId:this.wdkConfig.projectId}, function(event) {
             var context = event.data.context;
             var projectId = event.data.projectId;
-          var node = event.cyTarget;
+            var node = event.cyTarget;
 
             context.dispatchAction(setActiveNode(node));
-            if (node.data("node_identifier")) {
+            if (node.data("node_type") == 'molecular entity') {
                 context.dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
             }
       });
@@ -960,7 +656,6 @@ function GeneraSelector(props) {
 function NodeDetails(props) {
   var Type = props.node.data("node_type");
 
-
   if (Type == "enzyme")
     return <EnzymeNodeDetails {...props}/>
 
@@ -981,47 +676,34 @@ NodeDetails.propTypes = {
 
 function EnzymeNodeDetails(props) {
   let { node } = props;
+
   return (
     <div>
-      <p><b>EC Number or Reaction:</b> {node.data.label}</p>
+        <p><b>EC Number or Reaction:</b> {node.data("display_label")}</p>
 
-      {node.data.Description && (  
-        <p><b>Enzyme Name or Description:</b> {node.data.Description}</p>
+      {node.data("name") && (  
+           <p><b>Enzyme Name:</b> {node.data("name")}</p>
       )}  
 
-      {node.data.Organisms && (
+      {node.data("gene_count") && (
         <div>
-          <b>Organism(s):</b>
-          <ul>
-            {node.data.Organisms.split(',').sort().map(organism => (
-              <li key={organism}>{organism}</li>
-            ))}
-          </ul>
+          <b>Count of Genes which match this Node:</b>
+              {node.data("gene_count")}
         </div>
       )}
 
-      {node.data.OrganismsInferredByOthoMCL && (
+      {node.data("gene_count") && (
         <div>
-          <b>Organism(s) inferred from OrthoMCL:</b>
-          <ul>
-            {node.data.OrganismsInferredByOthoMCL.split(',').sort().map(organism => (
-              <li key={organism}>{organism}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    
-      {node.data.Organisms && (
-        <div>
-          <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + node.data.label}>Search for Gene(s) By EC Number</a>
+          <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + node.data("display_label")}>Search for Gene(s) By EC Number</a>
         </div>
       )}
 
-      {node.data.image && (
+
+      {node.data("image") && (
         <div>
-          <img src={node.data.image + '&fmt=png&h=250&w=350'}/>
-          {node.data.xaxis && <div><b>x-axis</b>: {node.data.xaxis}</div>}
-        </div>
+          <img src={node.data("image") + '&fmt=png&h=250&w=350'}/>
+          </div>
+
       )}
     </div>
   );
@@ -1029,8 +711,6 @@ function EnzymeNodeDetails(props) {
 
 function MolecularEntityNodeDetails(props) {
   let { node, compoundRecord, compoundError } = props;
-
-    console.log(node);
 
   return (
     <div>
@@ -1064,9 +744,9 @@ function MetabolicProcessNodeDetails(props) {
   return (
     <div>
       <div><b>Pathway: </b>
-        <Link to={'/record/pathway/' + pathwaySource + '/' + node.data.Description}>{node.data.label}</Link>
+        <Link to={'/record/pathway/' + pathwaySource + '/' + node.data("name")}>{node.data("display_label")}</Link>
       </div>
-      <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + node.data.Description}>View in KEGG</a></div>
+      <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + node.data("name")}>View in KEGG</a></div>
     </div>
   );
 }
