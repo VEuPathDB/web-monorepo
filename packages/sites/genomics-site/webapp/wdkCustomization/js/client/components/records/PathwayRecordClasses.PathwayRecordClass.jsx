@@ -17,7 +17,9 @@ let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
 let loadCytoscapeJs = _.once(function(webAppUrl) {
   return Promise.all([
-    Promise.resolve($.getScript(webAppUrl + '/js/cytoscape.js')),
+      Promise.resolve($.getScript(webAppUrl + '/js/dagre.js')),
+      Promise.resolve($.getScript(webAppUrl + '/js/cytoscape.js')),
+      Promise.resolve($.getScript(webAppUrl + '/js/cytoscape-dagre.js')),
   ]);
 });
 
@@ -54,8 +56,8 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
     return loadCytoscapeJs(wdkConfig.webAppUrl).then(function() {
 
         var myLayout = {
-            name: 'cose',
-            randomize:true,
+            name: 'dagre',
+            rankDir:'LR',
             
         };
         
@@ -152,6 +154,15 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
             },
 
 
+            {
+                selector: 'node[node_type= "enzyme"][gene_count > 0]',
+                style: {
+                    'border-color':'red',
+                },
+            },
+
+
+
         ] ,
         layout:myLayout,
         zoom:0.5
@@ -166,7 +177,7 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
                 cy.zoom(0.5);
                 if(val === 'preset') {
                     cy.nodes().map(function(node){node.renderedPosition({x:node.data("x"), y:node.data("y")})});
-                    cy.elements('node[node_type= "nodeOfNOdes"]').layout({ name: 'cose' });
+                    cy.elements('node[node_type= "nodeOfNodes"]').layout({ name: 'cose' });
                     }
                 else {
                     cy.layout({name:val});
@@ -585,9 +596,6 @@ export class CytoscapeDrawing extends React.Component {
             var projectId = event.data.projectId;
           var node = event.cyTarget;
 
-            console.log("NODE");
-            console.log(node);
-
             context.dispatchAction(setActiveNode(node));
             if (node.data("node_identifier")) {
                 context.dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
@@ -864,10 +872,8 @@ function VisMenu(props) {
             <li key='Preset'><a href="javascript:void(0)" onClick={() => cy.changeLayout('preset')}>Kegg</a></li> :
             ""
           }
+            <li key='dagre'><a href="javascript:void(0)" onClick={() => cy.changeLayout('dagre')}>Directed Graph</a></li>
             <li key='cose' ><a href="javascript:void(0)" onClick={() => cy.changeLayout('cose')}>Compound Spring Embedder</a></li>
-            <li key='circle'><a href="javascript:void(0)" onClick={() => cy.changeLayout('circle')}>Circle</a></li>
-            <li key='concentric'><a href="javascript:void(0)" onClick={() => cy.changeLayout('concentric')}>Concentric</a></li>
-            <li key='breadthfirst'><a href="javascript:void(0)" onClick={() => cy.changeLayout('breadthfirst')}>Breadthfirst</a></li>
             <li key='grid'><a href="javascript:void(0)" onClick={() => cy.changeLayout('grid')}>Grid</a></li>
         </ul>
       </li>
@@ -1121,5 +1127,6 @@ function loadCompoundStructure(compoundId, projectId) {
       payload: { compoundId, error }
     })));
   }
+
 }
 
