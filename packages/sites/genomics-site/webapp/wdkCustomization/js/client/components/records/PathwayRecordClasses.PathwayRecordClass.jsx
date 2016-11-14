@@ -178,7 +178,12 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
                 if(val === 'preset') {
                     cy.nodes().map(function(node){node.renderedPosition({x:node.data("x"), y:node.data("y")})});
                     cy.elements('node[node_type= "nodeOfNodes"]').layout({ name: 'cose' });
-                    }
+                }
+
+                if(val === 'dagre') {
+                    cy.layout({name:val, rankDir:'LR'});
+                }
+
                 else {
                     cy.layout({name:val});
                     }
@@ -504,15 +509,16 @@ export class CytoscapeDrawing extends React.Component {
                              pathwaySource={pathway_source}/>}
         </div>
         <VisMenu pathway_source = {pathway_source}
-                       webAppUrl={this.wdkConfig.webAppUrl}
+                 webAppUrl={this.wdkConfig.webAppUrl}
                        primary_key = {primary_key}
                        PathwayGraphs = {PathwayGraphs}
                        projectId = {projectId}
                        experimentData = {experimentData}
                        cy={this.cy} />
         <div id="eupathdb-PathwayRecord-cytoscapeIcon">
-          <a href="http://cytoscapeweb.cytoscape.org/">
-            <img src="http://cytoscapeweb.cytoscape.org/img/logos/cw_s.png" alt="Cytoscape Web"/>
+            <a href="http://js.cytoscape.org/">
+                 Cytoscape JS
+                <img src={this.wdkConfig.webAppUrl + "images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
           </a>
         </div>
         <div id="eupathdb-PathwayRecord-generaSelector-wrapper">
@@ -561,7 +567,7 @@ function VisMenu(props) {
       <li>
         <a href="javascript:void(0)">
           Layout
-          <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
+            <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ul>
           {pathway_source === "KEGG" ?
