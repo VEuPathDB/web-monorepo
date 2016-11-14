@@ -517,9 +517,11 @@ export class CytoscapeDrawing extends React.Component {
                        cy={this.cy} />
         <div id="eupathdb-PathwayRecord-cytoscapeIcon">
             <a href="http://js.cytoscape.org/">
-                 Cytoscape JS
+
                 <img src={this.wdkConfig.webAppUrl + "images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
           </a>
+        < br/>
+          Cytoscape JS
         </div>
         <div id="eupathdb-PathwayRecord-generaSelector-wrapper">
           <GeneraSelector generaOptions={generaOptions}
