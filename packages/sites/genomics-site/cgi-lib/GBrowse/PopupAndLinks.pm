@@ -386,7 +386,7 @@ sub peakTitleChipSeq {
     my $f = shift;
     my @data;
     my ($expt) = $f->source_tag();
-    $expt =~ s/_//g;
+    $expt =~ s/_/ /g;
     my $start = $f->start;
     my $end = $f->end;
     push @data, ['Experiment:' => $expt];
