@@ -21,7 +21,7 @@
   border-radius:5px;
   width: 100%;
   height: 100%;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 160px);
   padding-bottom: 26px;
 }
 
@@ -40,7 +40,7 @@
   border: 1px solid black;
   margin: 5px;
   padding: 5px;
-  z-axis: 500;
+  z-index: 500;
   background-color: #FFF;
   left: 425px;
   position: relative;
@@ -60,6 +60,18 @@
 
 #eupathdb-PathwayRecord-generaSelector .wdk-CheckboxListItem input {
   margin-right: 0.5em;
+}
+
+/* Pathways CSS */
+#eupathdb-PathwayRecord-generaSelector h3 {
+  display: inline;
+}
+
+#eupathdb-PathwayRecord-generaSelector .hideMenu {
+  float: right;
+  width: 12px;
+  cursor: pointer;
+  margin-right: 1em;
 }
 
 #vis-menu {

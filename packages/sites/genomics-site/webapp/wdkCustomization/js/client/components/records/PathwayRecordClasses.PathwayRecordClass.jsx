@@ -1,7 +1,5 @@
-/* global org */
 import React from 'react';
 import { Link } from 'react-router';
-import _ from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {CompoundStructure} from '../common/Compound';
@@ -15,18 +13,31 @@ const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
 
 let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
-let loadCytoscapeJs = _.once(function(webAppUrl) {
-  return Promise.all([
-      Promise.resolve($.getScript(webAppUrl + '/js/dagre.js')),
-      Promise.resolve($.getScript(webAppUrl + '/js/cytoscape.js')),
-      Promise.resolve($.getScript(webAppUrl + '/js/cytoscape-dagre.js')),
-  ]);
-});
+function loadCytoscapeJs() {
+  return new Promise(function(resolve) {
+    require.ensure([
+      'cytoscape',
+      'cytoscape-dagre',
+      'dagre',
+      'cytoscape-panzoom',
+      'cytoscape-panzoom/cytoscape.js-panzoom.css'
+    ], function(require) {
+      const cytoscape = require('cytoscape');
+      const cyDagre = require('cytoscape-dagre');
+      const dagre = require('dagre');
+      const panzoom = require('cytoscape-panzoom');
+      require('cytoscape-panzoom/cytoscape.js-panzoom.css');
+      panzoom(cytoscape, $);
+      cyDagre(cytoscape, dagre);
+      resolve(cytoscape);
+    });
+  });
+}
 
 
 
-                      let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
-                                                let pathwayFileExt = ".xgmml";
+let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
+let pathwayFileExt = ".xgmml";
 
 let options = {
   // where you have the Cytoscape Web SWF
@@ -51,9 +62,9 @@ function makeEdge(obj) {
 
 
 
-function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig) {
+function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
 
-    return loadCytoscapeJs(wdkConfig.webAppUrl).then(function() {
+    return loadCytoscapeJs().then(function(cytoscape) {
 
         var myLayout = {
             name: 'dagre',
@@ -153,13 +164,20 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges, wdkConfig)
                 },
             },
 
+          {
+            selector: 'node.eupathdb-CytoscapeActiveNode',
+            style: {
+              'border-width': '6px',
+            }
+          },
 
             {
-                selector: 'node[node_type= "enzyme"][gene_count > 0]',
-                style: {
-                    'border-color':'red',
-                },
+              selector: 'node[node_type= "enzyme"][gene_count > 0]',
+              style: {
+                'border-color':'red',
+              },
             },
+
 
 
 
@@ -252,15 +270,14 @@ export class CytoscapeDrawing extends React.Component {
     let storeState = context.store.getState();
     this.state = storeState.pathwayRecord;
     this.wdkConfig = storeState.globalData.config;
+    this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
+    this.paintCustomGenera = this.paintCustomGenera.bind(this);
   }
 
   componentDidMount() {
     let { store } = this.context;
     this.initMenu();
     this.initVis();
-    $(this.detailContainer).draggable({
-      iframeFix: '#eupathdb-PathwayRecord-cytoscapeweb embed'
-    });
     this.storeSub = store.addListener(() => {
       this.setState(store.getState().pathwayRecord);
     });
@@ -286,36 +303,60 @@ export class CytoscapeDrawing extends React.Component {
   }
 
   initVis() {
-      let { primary_key, pathway_source } = this.props.record.attributes;
-      let { PathwayNodes, PathwayEdges } = this.props.record.tables;
-    makeCy(primary_key, pathway_source, PathwayNodes, PathwayEdges, this.wdkConfig).then(cy => {
-      this.cy = cy;
+    let { primary_key, pathway_source } = this.props.record.attributes;
+    let { PathwayNodes, PathwayEdges } = this.props.record.tables;
+    let { dispatchAction } = this.context;
+    let { projectId } = this.wdkConfig;
+    makeCy(primary_key, pathway_source, PathwayNodes, PathwayEdges).then(cy => {
       // listener for when nodes and edges are clicked
 
-        cy.on("click", 'node', {context:this.context, projectId:this.wdkConfig.projectId}, function(event) {
-            var context = event.data.context;
-            var projectId = event.data.projectId;
-            var node = event.cyTarget;
+      // The nodes collection event listener will be called before the
+      // unrestricted event listener that follows below. Since we don't
+      // want the latter to be called after the former, we are invoking
+      // the `event.stopPropagation()` method so it is not triggered.
 
-            context.dispatchAction(setActiveNode(node));
-            if (node.data("node_type") == 'molecular entity') {
-                context.dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
-            }
+      cy.nodes().on('tap', event => {
+        var node = event.cyTarget;
+        dispatchAction(setActiveNodeData(Object.assign({}, node.data())));
+        if (node.data("node_identifier")) {
+          dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
+        }
+        cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
+        node.addClass('eupathdb-CytoscapeActiveNode');
+        event.stopPropagation();
       });
+
+      cy.on('tap', () => {
+        cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
+        dispatchAction(setActiveNodeData(null));
+      });
+
+      // dispatch action when active node data changes
+      cy.on('data', 'node.eupathdb-CytoscapeActiveNode', event => {
+        dispatchAction(setActiveNodeData(Object.assign({}, event.cyTarget.data())));
+      });
+
+      cy.panzoom();
+
+      this.setState({ cy });
     })
     .catch(error => {
-      this.context.dispatchAction(setPathwayError(error));
+      dispatchAction(setPathwayError(error));
     });
+  }
+
+  clearActiveNodeData() {
+    this.context.dispatchAction(setActiveNodeData(null))
   }
 
   onGeneraChange(newSelections, dispatchAction) {
     dispatchAction({"type": 'pathway-record/genera-selected', "payload": {"generaSelection": newSelections}});
   }
 
-  paintCustomGenera(generaSelection, projectId, vis) {
+  paintCustomGenera(generaSelection, projectId, cy) {
     let sid = generaSelection.join(",");
-    let arg = "type=PathwayGenera&project_id=" + projectId + "&sid=" + sid;    
-    vis.changeExperiment( arg, 'genus' , '1');
+    let arg = "type=PathwayGenera&project_id=" + projectId + "&sid=" + sid;
+    cy.changeExperiment( arg, 'genus' , '1');
     $('#eupathdb-PathwayRecord-generaSelector-wrapper').hide();
   }
 
@@ -495,32 +536,21 @@ export class CytoscapeDrawing extends React.Component {
     return (
       <div id="eupathdb-PathwayRecord-cytoscape">
         {this.renderError()}
-        <div id="draggable" ref={node => this.detailContainer = node}>
-          {this.state.activeNode == null ? (
-            <p>
-              Click on nodes for more info.
-              <br />Nodes highlighted in <span style={red}>red</span> are EC numbers that we have mapped to at least one gene.
-              <br />The nodes, as well as this info box, can be repositioned by dragging.
-              <br />
-            </p>
-            ) : <NodeDetails wdkConfig={this.wdkConfig}
-                             node={this.state.activeNode}
-                             compoundRecord={this.state.activeCompound}
-                             pathwaySource={pathway_source}/>}
-        </div>
-        <VisMenu pathway_source = {pathway_source}
-                 webAppUrl={this.wdkConfig.webAppUrl}
-                       primary_key = {primary_key}
-                       PathwayGraphs = {PathwayGraphs}
-                       projectId = {projectId}
-                       experimentData = {experimentData}
-                       cy={this.cy} />
+        <VisMenu
+          pathway_source={pathway_source}
+          webAppUrl={this.wdkConfig.webAppUrl}
+          primary_key={primary_key}
+          PathwayGraphs={PathwayGraphs}
+          projectId={projectId}
+          experimentData={experimentData}
+          cy={this.state.cy}
+        />
         <div id="eupathdb-PathwayRecord-cytoscapeIcon">
             <a href="http://js.cytoscape.org/">
 
                 <img src={this.wdkConfig.webAppUrl + "images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
           </a>
-        < br/>
+        <br/>
           Cytoscape JS
         </div>
         <div id="eupathdb-PathwayRecord-generaSelector-wrapper">
@@ -529,7 +559,7 @@ export class CytoscapeDrawing extends React.Component {
                           onGeneraChange={this.onGeneraChange}
                           paintCustomGenera={this.paintCustomGenera}
                           dispatchAction={this.context.dispatchAction}
-                          cy={this.cy}
+                          cy={this.state.cy}
                           projectId={projectId} />
         </div>
         <div>
@@ -540,7 +570,17 @@ export class CytoscapeDrawing extends React.Component {
             <br />
           </p>
         </div>
-        <div id={div_id} ref={node => this.cytoContainer = node}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div id={div_id} ref={node => this.cytoContainer = node} style={{ borderColor: '#999999' }}></div>
+          {this.state.activeNodeData && (
+            <NodeDetails
+              onClose={this.clearActiveNodeData}
+              wdkConfig={this.wdkConfig}
+              nodeData={this.state.activeNodeData}
+              compoundRecord={this.state.activeCompound}
+              pathwaySource={pathway_source}
+            />
+          )}
         </div>
       </div>
     );
@@ -560,9 +600,13 @@ function VisMenu(props) {
         <a href="#">File</a>
         <ul>
           <li>
-            <a href={pathwayFilesBaseUrl + pathway_source + "/" + primary_key + pathwayFileExt}>
-              Get Download XGMML (XML) file
-            </a>
+            <a href="#" download={primary_key + '.png'} onClick={event => event.target.href = cy.png()}>PNG</a>
+          </li>
+          <li>
+            <a href="#" download={primary_key + '.jpg'} onClick={event => event.target.href = cy.jpg()}>JPG</a>
+          </li>
+          <li>
+            <a href="#" download={primary_key + '.json'} onClick={event => event.target.href = 'data:application/json,' + JSON.stringify(cy.json())}>JSON</a>
           </li>
         </ul>
       </li>
@@ -651,7 +695,7 @@ function GeneraSelector(props) {
     <div id="eupathdb-PathwayRecord-generaSelector">
       <h3>Genera Selector</h3>
       <div className="hideMenu" onClick={function() {$('#eupathdb-PathwayRecord-generaSelector-wrapper').hide()}}>
-        X
+        <button><i className="fa fa-close"/></button>
       </div>
       <CheckboxList name="genera" items={props.generaOptions} value={props.generaSelection}
                     onChange={function(newSelections) { props.onGeneraChange(newSelections, props.dispatchAction)}}/>
@@ -661,55 +705,97 @@ function GeneraSelector(props) {
 }
 
 /** Render pathway node details */
-function NodeDetails(props) {
-  var Type = props.node.data("node_type");
+class NodeDetails extends React.Component {
 
-  if (Type == "enzyme")
-    return <EnzymeNodeDetails {...props}/>
+  componentDidMount() {
+    $(this.refs.container).draggable({
+      handle: this.refs.handle
+    });
+  }
 
-  else if (Type == "molecular entity")
-    return <MolecularEntityNodeDetails {...props}/>
+  render() {
+    const type = this.props.nodeData.node_type;
+    const details = type === 'enzyme' ? <EnzymeNodeDetails {...this.props}/>
+                : type === 'molecular entity' ? <MolecularEntityNodeDetails {...this.props}/>
+                : type === 'metabolic process' ? <MetabolicProcessNodeDetails {...this.props}/>
+                : null;
 
-  else if (Type == "metabolic process")
-    return <MetabolicProcessNodeDetails {...props}/>
-
-  else
-    return <noscript/>
+    return (
+      <div
+        ref="container"
+        style={{
+          position: 'absolute',
+          top: 25,
+          right: 25,
+          minWidth: 350,
+          minHeight: 200,
+          border: '1px solid #999',
+          borderRadius: 4,
+          background: 'white',
+          boxShadow: '0px 0px 4px rgba(0, 0, 0, .2)'
+        }}
+      >
+        <div
+          ref="handle"
+          style={{
+            fontWeight: 'bold',
+            fontSize: '1.2em',
+            cursor: 'move',
+            position: 'relative',
+            padding: '6px 12px',
+            background: '#ddd',
+            borderTopLeftRadius: 4,
+            borderTopRightRadius: 4
+          }}
+        >
+          <button
+            type="button"
+            style={{ position: 'absolute', right: 6, top: 3 }}
+            onClick={this.props.onClose}
+          ><i className="fa fa-close"/>
+          </button>
+          <div>Node Details</div>
+        </div>
+        <div style={{ padding: '12px' }}>{details}</div>
+      </div>
+    );
+  }
 }
 
 NodeDetails.propTypes = {
-  node: React.PropTypes.object.isRequired,
-  pathwaySource: React.PropTypes.string.isRequired
+  nodeData: React.PropTypes.object.isRequired,
+  pathwaySource: React.PropTypes.string.isRequired,
+  onClose: React.PropTypes.func.isRequired
 };
 
 function EnzymeNodeDetails(props) {
-  let { node } = props;
+  let { display_label, name, gene_count, image } = props.nodeData;
 
   return (
     <div>
-        <p><b>EC Number or Reaction:</b> {node.data("display_label")}</p>
+        <p><b>EC Number or Reaction:</b> {display_label}</p>
 
-      {node.data("name") && (  
-           <p><b>Enzyme Name:</b> {node.data("name")}</p>
+      {name && (  
+           <p><b>Enzyme Name:</b> {name}</p>
       )}  
 
-      {node.data("gene_count") && (
+      {gene_count && (
         <div>
           <b>Count of Genes which match this Node:</b>
-              {node.data("gene_count")}
+              {gene_count}
         </div>
       )}
 
-      {node.data("gene_count") && (
+      {gene_count && (
         <div>
-          <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + node.data("display_label")}>Search for Gene(s) By EC Number</a>
+          <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + display_label}>Search for Gene(s) By EC Number</a>
         </div>
       )}
 
 
-      {node.data("image") && (
+      {image && (
         <div>
-          <img src={node.data("image") + '&fmt=png&h=250&w=350'}/>
+          <img src={image + '&fmt=png&h=250&w=350'}/>
           </div>
 
       )}
@@ -718,19 +804,19 @@ function EnzymeNodeDetails(props) {
 }
 
 function MolecularEntityNodeDetails(props) {
-  let { node, compoundRecord, compoundError } = props;
+  let { nodeData: { node_identifier, name }, compoundRecord, compoundError } = props;
 
   return (
     <div>
-      <p><b>ID:</b> {node.data("node_identifier")}</p>
+      <p><b>ID:</b> {node_identifier}</p>
 
-      {node.data("name") && (
-        <p><b>Name:</b> {safeHtml(node.data("name"))}</p>
+      {name && (
+        <p><b>Name:</b> {safeHtml(name)}</p>
       )}
 
-      {node.data("node_identifier") && (
+      {node_identifier && (
         <div>
-          <Link to={'/record/compound/' + node.data("node_identifier")}>View on this site</Link>
+          <Link to={'/record/compound/' + node_identifier}>View on this site</Link>
         </div>
       )}
 
@@ -748,13 +834,13 @@ function MolecularEntityNodeDetails(props) {
 }
 
 function MetabolicProcessNodeDetails(props) {
-  let { node, pathwaySource } = props;
+  let { nodeData: { name, display_label }, pathwaySource } = props;
   return (
     <div>
       <div><b>Pathway: </b>
-        <Link to={'/record/pathway/' + pathwaySource + '/' + node.data("name")}>{node.data("display_label")}</Link>
+        <Link to={'/record/pathway/' + pathwaySource + '/' + name}>{display_label}</Link>
       </div>
-      <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + node.data("name")}>View in KEGG</a></div>
+      <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + name}>View in KEGG</a></div>
     </div>
   );
 }
@@ -781,10 +867,10 @@ export function RecordAttributeSection(props) {
   }
 }
 
-function setActiveNode(activeNode) {
+function setActiveNodeData(activeNodeData) {
   return {
     type: 'pathway-record/set-active-node',
-    payload: { activeNode }
+    payload: { activeNodeData }
   };
 }
 
@@ -817,4 +903,3 @@ function loadCompoundStructure(compoundId, projectId) {
   }
 
 }
-

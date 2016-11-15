@@ -106,7 +106,7 @@ export function RecordViewStore(WdkRecordViewStore) {
 }
 
 let initialPathwayRecordState = {
-  activeNode: null,
+  activeNodeData: null,
   activeCompound: null,
   compoundError: null,
   generaSelection: []
@@ -117,7 +117,7 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
   switch(action.type) {
     case 'pathway-record/set-active-node':
       return Object.assign({}, state, {
-        activeNode: action.payload.activeNode,
+        activeNodeData: action.payload.activeNodeData,
         activeCompound: null,
         compoundError: null
       });

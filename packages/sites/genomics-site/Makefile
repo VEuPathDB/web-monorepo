@@ -16,15 +16,18 @@ apidb_client_sources   := webapp/wdkCustomization/js/client/index.js \
                           $(shell find $(PROJECT_HOME)/EuPathSiteCommon/Site/webapp -type f) \
                           $(PROJECT_HOME)/EuPathSiteCommon/Site/webpack.config.js
 
-.PHONY: all clean
+.PHONY: all clean yarn
 
 
 ## TODO Add CSS build tools
 
-all: $(apidb_bundle) $(apidb_client_bundle)
+all: yarn $(apidb_bundle) $(apidb_client_bundle)
 
 clean:
 	rm -rf $(apidb_bundle) $(apidb_client_bundle)
+
+yarn:
+	yarn install
 
 $(apidb_bundle): $(apidb_sources)
 	webpack --config $(PROJECT_HOME)/EuPathSiteCommon/Site/webpack.config.js $< $@

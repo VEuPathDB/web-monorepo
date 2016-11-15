@@ -1,3 +1,5 @@
+__webpack_public_path__ = '/a/';
+
 import './main';
 
 // include css files

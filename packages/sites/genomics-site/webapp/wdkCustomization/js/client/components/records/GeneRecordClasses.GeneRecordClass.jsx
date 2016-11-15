@@ -326,7 +326,7 @@ function MercatorTable(props) {
 
 
 const withUserAndAction = lodash.compose(
-  withStore(state => ({ user: state.globalData.user })),
+  withStore(state => ({ user: state.globalData.user, location: state.globalData.location })),
   withActions(UserActionCreators)
 );
 

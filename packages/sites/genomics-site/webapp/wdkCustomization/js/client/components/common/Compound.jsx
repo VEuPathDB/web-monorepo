@@ -5,15 +5,26 @@
  */
 
 import {Component, PropTypes} from 'react';
-import {once, uniqueId, isEmpty} from 'lodash';
+import {once, uniqueId, isEmpty, memoize} from 'lodash';
 import $ from 'jquery';
 import {registerCustomElement} from '../customElements';
 import { webAppUrl } from '../../config';
 
-/** Load the ChemDoodle JS library once */
-let loadChemDoodleWeb = once(function() {
-  return $.getScript(webAppUrl + '/js/ChemDoodleWeb.js');
+let loadScript = memoize(function(url) {
+  let req = $.getScript(url);
+  let _abort = req.abort;
+  return Object.assign(req, {
+    abort() {
+      _abort.call(req);
+      if (req.statusText === 'abort') loadScript.cache.delete(url);
+    }
+  });
 });
+
+/** Load the ChemDoodle JS library once */
+function loadChemDoodleWeb() {
+  return loadScript(webAppUrl + '/js/ChemDoodleWeb.js');
+}
 
 /**
  * Wrapper for ChemDoodle structure drawing library.
@@ -61,7 +72,8 @@ export class CompoundStructure extends Component {
   }
 
   loadLibs(props) {
-    loadChemDoodleWeb().then(() => this.drawStructure(props));
+    this.req = loadChemDoodleWeb();
+    this.req.then(() => this.drawStructure(props));
   }
 
   componentDidMount() {
@@ -70,6 +82,10 @@ export class CompoundStructure extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.loadLibs(nextProps);
+  }
+
+  componentWillUnmount() {
+    if (this.req) this.req.abort();
   }
 
   render() {
