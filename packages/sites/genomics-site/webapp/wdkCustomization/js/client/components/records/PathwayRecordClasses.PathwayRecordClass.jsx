@@ -708,9 +708,7 @@ function GeneraSelector(props) {
 class NodeDetails extends React.Component {
 
   componentDidMount() {
-    $(this.refs.container).draggable({
-      handle: this.refs.handle
-    });
+    $(this.refs.container).draggable({ handle: this.refs.handle });
   }
 
   render() {
@@ -726,7 +724,7 @@ class NodeDetails extends React.Component {
         style={{
           position: 'absolute',
           top: 25,
-          right: 25,
+          left: 75,
           minWidth: 350,
           minHeight: 200,
           border: '1px solid #999',
