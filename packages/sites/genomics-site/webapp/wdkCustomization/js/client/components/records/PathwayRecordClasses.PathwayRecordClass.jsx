@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
+import {uniqueId} from 'lodash';
+import _ from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {CompoundStructure} from '../common/Compound';
@@ -20,7 +22,7 @@ function loadCytoscapeJs() {
       'cytoscape-dagre',
       'dagre',
       'cytoscape-panzoom',
-      'cytoscape-panzoom/cytoscape.js-panzoom.css'
+      'cytoscape-panzoom/cytoscape.js-panzoom.css',
     ], function(require) {
       const cytoscape = require('cytoscape');
       const cyDagre = require('cytoscape-dagre');
@@ -33,6 +35,7 @@ function loadCytoscapeJs() {
     });
   });
 }
+
 
 
 
@@ -49,10 +52,52 @@ let options = {
 };
 
 
-
-
 // transform wdk row into Cyto Node
 function makeNode(obj) {
+
+    if(obj.node_type == 'molecular entity' && obj.default_structure) {
+        var structure = ChemDoodle.readMOL(obj.default_structure);
+        structure.scaleToAverageBondLength(14.4);
+
+        var xy = structure.getDimension();
+
+        var uniqueChemdoodle = uniqueId('chemdoodle');
+
+        var canvas = document.createElement("canvas");
+        canvas.id =uniqueChemdoodle;
+
+        document.body.appendChild(canvas);
+
+        let vc = new ChemDoodle.ViewerCanvas(uniqueChemdoodle, xy.x + 35, xy.y + 35);
+
+        document.getElementById(uniqueChemdoodle).style.visibility = "hidden";
+
+        //the width of the bonds should be .6 pixels
+        vc.specs.bonds_width_2D = .6;
+        //the spacing between higher order bond lines should be 18% of the length of the bond
+        vc.specs.bonds_saturationWidth_2D = .18;
+        //the hashed wedge spacing should be 2.5 pixels
+        vc.specs.bonds_hashSpacing_2D = 2.5;
+        //the atom label font size should be 10
+        vc.specs.atoms_font_size_2D = 10;
+        //we define a cascade of acceptable font families
+        //if Helvetica is not found, Arial will be used
+        vc.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif'];
+        //display carbons labels if they are terminal
+        vc.specs.atoms_displayTerminalCarbonLabels_2D = true;
+        //add some color by using JMol colors for elements
+        vc.specs.atoms_useJMOLColors = true;
+
+        vc.loadMolecule(structure);
+
+        var dataURL = canvas.toDataURL();
+        
+        obj.image = dataURL;
+        obj.width = (xy.x + 35) * .75;
+        obj.height = (xy.y + 35)  * .75;
+    }
+
+
     return { data:obj,  renderedPosition:{x:obj.x, y:obj.y }, position:{x:obj.x, y:obj.y }};
 }
 
@@ -77,7 +122,6 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
                 name: 'preset',
             };
         }
-
 
     var cy = cytoscape({
         container: document.getElementById(div_id),
@@ -142,8 +186,24 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
             },
 
 
+
+
+
             {
-                selector: 'node[node_type= "molecular entity"]',
+                selector: 'node[node_type= "molecular entity"][?image]',
+                style: {
+                    shape: 'rectangle',
+                    width:'data(width)',
+                    height:'data(height)',
+                    'border-width':0,
+                    'background-image':'data(image)',
+                    'background-fit':'contain',
+                },
+            },
+
+
+            {
+                selector: 'node[node_type= "molecular entity"][!image]',
                 style: {
                     shape: 'ellipse',
                     'background-color': '#0000ff',
@@ -308,8 +368,8 @@ export class CytoscapeDrawing extends React.Component {
     let { dispatchAction } = this.context;
     let { projectId } = this.wdkConfig;
     makeCy(primary_key, pathway_source, PathwayNodes, PathwayEdges).then(cy => {
-      // listener for when nodes and edges are clicked
 
+      // listener for when nodes and edges are clicked
       // The nodes collection event listener will be called before the
       // unrestricted event listener that follows below. Since we don't
       // want the latter to be called after the former, we are invoking
@@ -318,7 +378,7 @@ export class CytoscapeDrawing extends React.Component {
       cy.nodes().on('tap', event => {
         var node = event.cyTarget;
         dispatchAction(setActiveNodeData(Object.assign({}, node.data())));
-        if (node.data("node_identifier")) {
+        if (node.data("node_type") == 'molecular entity') {
           dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
         }
         cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
