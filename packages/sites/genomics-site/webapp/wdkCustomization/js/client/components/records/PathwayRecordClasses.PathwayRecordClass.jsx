@@ -17,13 +17,7 @@ let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
 function loadCytoscapeJs() {
   return new Promise(function(resolve) {
-    require.ensure([
-      'cytoscape',
-      'cytoscape-dagre',
-      'dagre',
-      'cytoscape-panzoom',
-      'cytoscape-panzoom/cytoscape.js-panzoom.css',
-    ], function(require) {
+    require.ensure([], function(require) {
       const cytoscape = require('cytoscape');
       const cyDagre = require('cytoscape-dagre');
       const dagre = require('dagre');
@@ -31,6 +25,7 @@ function loadCytoscapeJs() {
       require('cytoscape-panzoom/cytoscape.js-panzoom.css');
       panzoom(cytoscape, $);
       cyDagre(cytoscape, dagre);
+      require('!!script!site/js/ChemDoodleWeb');
       resolve(cytoscape);
     });
   });

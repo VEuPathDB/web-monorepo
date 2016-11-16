@@ -5,25 +5,22 @@
  */
 
 import {Component, PropTypes} from 'react';
-import {once, uniqueId, isEmpty, memoize} from 'lodash';
-import $ from 'jquery';
+import {uniqueId, isEmpty} from 'lodash';
 import {registerCustomElement} from '../customElements';
-import { webAppUrl } from '../../config';
-
-let loadScript = memoize(function(url) {
-  let req = $.getScript(url);
-  let _abort = req.abort;
-  return Object.assign(req, {
-    abort() {
-      _abort.call(req);
-      if (req.statusText === 'abort') loadScript.cache.delete(url);
-    }
-  });
-});
 
 /** Load the ChemDoodle JS library once */
 function loadChemDoodleWeb() {
-  return loadScript(webAppUrl + '/js/ChemDoodleWeb.js');
+  return new Promise(function(resolve, reject) {
+    require.ensure([], function(require) {
+      try {
+        require('!!script!site/js/ChemDoodleWeb');
+        resolve(ChemDoodle);
+      }
+      catch(err) {
+        reject(err);
+      }
+    });
+  });
 }
 
 /**
@@ -35,10 +32,13 @@ export class CompoundStructure extends Component {
   constructor(props) {
     super(props);
     this.canvasId = uniqueId('chemdoodle');
+    this.mounted = false;
   }
 
-  drawStructure(props) {
-    let { moleculeString, height, width } = props;
+  drawStructure(props, ChemDoodle) {
+    if (!this.mounted) return;
+
+    let { moleculeString } = props;
 
     var structure = ChemDoodle.readMOL(moleculeString)
     structure.scaleToAverageBondLength(14.4);
@@ -72,12 +72,12 @@ export class CompoundStructure extends Component {
   }
 
   loadLibs(props) {
-    this.req = loadChemDoodleWeb();
-    this.req.then(() => this.drawStructure(props));
+    loadChemDoodleWeb().then(ChemDoodle => this.drawStructure(props, ChemDoodle));
   }
 
   componentDidMount() {
     this.loadLibs(this.props);
+    this.mounted = true;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -85,7 +85,7 @@ export class CompoundStructure extends Component {
   }
 
   componentWillUnmount() {
-    if (this.req) this.req.abort();
+    this.mounted = false;
   }
 
   render() {
