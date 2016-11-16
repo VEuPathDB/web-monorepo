@@ -24,7 +24,6 @@ export class SnpsAlignmentForm extends PureComponent {
           sequence alignment.</p>
         <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">
           <input name="project_id" value={projectId} type="hidden"/>
-          <input name="type" value="htsSnp" type="hidden"/>
           <input name="sid" value={sequenceId} type="hidden"/>
           <input name="end" value={end} type="hidden"/>
           <input name="start" value={start} type="hidden"/>
@@ -34,9 +33,13 @@ export class SnpsAlignmentForm extends PureComponent {
             questionName="GeneQuestions.GenesByNgsSnps"
             dependedValue={{ organismSinglePick: [ organism ] }}
             onChange={this.handleChange} />
-          <p style={{ textAlign: 'center' }}>
-            <button type="submit" disabled={isolateIds.length === 0}>Show Alignment</button>
-          </p>
+
+        <div className="form-group">
+          <strong>Select output:</strong>
+          <div className="form-radio"><label><input name="type" type="radio" value="htsSnp" defaultChecked={true}/> Show Alignment</label></div>
+          <div className="form-radio"><label><input name="type" type="radio" value="fasta"/> Multi-FASTA</label></div>
+        </div>
+        <input type="submit"/>
         </form>
       </div>
     )

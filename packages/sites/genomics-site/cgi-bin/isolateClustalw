@@ -13,7 +13,8 @@ my $app;
 my $cgi = new CGI;
 
 my $type  = $cgi->param('type');
-if($type =~ /htsSNP/i) {
+
+if($type =~ /htsSNP/i || $type =~ /fasta/i) {
   $app = ApiCommonWebsite::View::CgiApp::HtsSNPAlignment->
     new(ConfigFile => "cryptoModel");
 } else {
