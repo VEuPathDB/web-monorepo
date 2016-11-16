@@ -134,6 +134,7 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
                 style: {
                     'line-color':'black',
                     'width':1,
+                    'curve-style':'bezier',
                 },
             },
 
