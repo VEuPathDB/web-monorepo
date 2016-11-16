@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router';
 import {uniqueId} from 'lodash';
-import _ from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
-import {CompoundStructure} from '../common/Compound';
+import {loadChemDoodleWeb, CompoundStructure} from '../common/Compound';
 import { CheckboxList } from 'wdk-client/Components';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
@@ -16,18 +15,22 @@ const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
 let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
 function loadCytoscapeJs() {
-  return new Promise(function(resolve) {
-    require.ensure([], function(require) {
-      const cytoscape = require('cytoscape');
-      const cyDagre = require('cytoscape-dagre');
-      const dagre = require('dagre');
-      const panzoom = require('cytoscape-panzoom');
-      require('cytoscape-panzoom/cytoscape.js-panzoom.css');
-      panzoom(cytoscape, $);
-      cyDagre(cytoscape, dagre);
-      require('!!script!site/js/ChemDoodleWeb');
-      resolve(cytoscape);
-    });
+  return new Promise(function(resolve, reject) {
+    try {
+      require.ensure([], function(require) {
+        const cytoscape = require('cytoscape');
+        const cyDagre = require('cytoscape-dagre');
+        const dagre = require('dagre');
+        const panzoom = require('cytoscape-panzoom');
+        require('cytoscape-panzoom/cytoscape.js-panzoom.css');
+        panzoom(cytoscape, $);
+        cyDagre(cytoscape, dagre);
+        resolve(cytoscape);
+      });
+    }
+    catch(err) {
+      reject(err);
+    }
   });
 }
 
@@ -104,7 +107,8 @@ function makeEdge(obj) {
 
 function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
 
-    return loadCytoscapeJs().then(function(cytoscape) {
+  return Promise.all([loadCytoscapeJs(), loadChemDoodleWeb()])
+    .then(function([ cytoscape ]) {
 
         var myLayout = {
             name: 'dagre',

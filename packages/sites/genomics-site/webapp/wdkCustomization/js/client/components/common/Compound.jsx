@@ -9,17 +9,17 @@ import {uniqueId, isEmpty} from 'lodash';
 import {registerCustomElement} from '../customElements';
 
 /** Load the ChemDoodle JS library once */
-function loadChemDoodleWeb() {
+export function loadChemDoodleWeb() {
   return new Promise(function(resolve, reject) {
-    require.ensure([], function(require) {
-      try {
+    try {
+      require.ensure([], function(require) {
         require('!!script!site/js/ChemDoodleWeb');
         resolve(ChemDoodle);
-      }
-      catch(err) {
-        reject(err);
-      }
-    });
+      });
+    }
+    catch(err) {
+      reject(err);
+    }
   });
 }
 
