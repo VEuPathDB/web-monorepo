@@ -177,7 +177,7 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
                 selector: 'node[node_type= "enzyme"]',
                 style: {
                     shape: 'rectangle',
-                    'background-color': '#ffffcc',
+                    'background-color': 'white',
                     label: 'data(display_label)',
                     width:50,
                     height:20,
