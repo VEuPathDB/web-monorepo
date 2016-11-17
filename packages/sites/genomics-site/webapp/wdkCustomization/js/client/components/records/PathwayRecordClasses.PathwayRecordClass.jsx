@@ -315,6 +315,16 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
             };
 
 
+            if (pathwaySource !== 'KEGG') {
+                // Find all enzymes which have an input which is a non root compound and  change node shape for input compounds which are roots
+                // Do the same for leaves
+                // the effect here is to hide side compounds 
+                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').roots()).outgoers('node[node_type="enzyme"]').incomers('node[node_type= "molecular entity"]').roots().style({'label':null, shape: 'ellipse','background-color': '#0000ff',width:15,height:15, 'background-image-opacity':0,});
+                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').leaves()).incomers('node[node_type="enzyme"]').outgoers('node[node_type= "molecular entity"]').leaves().style({'label':null, shape: 'ellipse','background-color': '#0000ff',width:15,height:15, 'background-image-opacity':0,});
+            }
+           
+
+
         });
 
         return cy;
