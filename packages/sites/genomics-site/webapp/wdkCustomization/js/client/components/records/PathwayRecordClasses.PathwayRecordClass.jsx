@@ -841,7 +841,8 @@ function EnzymeNodeDetails(props) {
 
   return (
     <div>
-        <p><b>EC Number or Reaction:</b> {display_label}</p>
+        <p><b>EC Number or Reaction:</b> 
+	 <a href={'http://enzyme.expasy.org/EC/' + display_label}> {display_label}</a> </p>
 
       {name && (  
            <p><b>Enzyme Name:</b> {name}</p>
