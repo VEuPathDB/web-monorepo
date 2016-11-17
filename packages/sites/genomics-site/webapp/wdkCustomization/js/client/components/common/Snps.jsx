@@ -27,6 +27,7 @@ export class SnpsAlignmentForm extends PureComponent {
           <input name="sid" value={sequenceId} type="hidden"/>
           <input name="end" value={end} type="hidden"/>
           <input name="start" value={start} type="hidden"/>
+          <input name="organism" value={organism} type="hidden"/>
           <input name="isolate_ids" type="hidden" value={isolateIds.join(',')}/>
           <FilterParam
             displayName="Strains"
