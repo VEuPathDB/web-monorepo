@@ -113,7 +113,6 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
         var myLayout = {
             name: 'dagre',
             rankDir:'LR',
-            
         };
         
         if (pathwaySource === 'KEGG') {
@@ -179,9 +178,9 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
                     shape: 'rectangle',
                     'background-color': 'white',
                     label: 'data(display_label)',
-                    width:50,
-                    height:20,
-                    'font-size':11
+                    width:60,
+                    height:30,
+                    'font-size':13
                 },
             },
 
@@ -388,8 +387,8 @@ export class CytoscapeDrawing extends React.Component {
       cy.nodes().on('tap', event => {
         var node = event.cyTarget;
         dispatchAction(setActiveNodeData(Object.assign({}, node.data())));
-        if (node.data("node_type") == 'molecular entity') {
-          dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
+          if (node.data("node_type") == 'molecular entity' && node.data("node_identifier")) {
+            dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
         }
         cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
         node.addClass('eupathdb-CytoscapeActiveNode');
