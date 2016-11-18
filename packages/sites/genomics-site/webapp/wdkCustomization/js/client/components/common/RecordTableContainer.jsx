@@ -1,5 +1,5 @@
 import { cloneElement, Component, PropTypes } from 'react';
-import { compose, get } from 'lodash';
+import { flowRight, get } from 'lodash';
 import { withStore, withActions } from '../../util/component';
 import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 
@@ -37,7 +37,7 @@ RecordTableContainer.propTypes = {
   updateTableState: PropTypes.func.isRequired
 };
 
-const enhance = compose(
+const enhance = flowRight(
   withActions({ updateTableState }),
   withStore((state, props) => ({
     tableState: get(state, 'eupathdb.tables.' + props.table.name)

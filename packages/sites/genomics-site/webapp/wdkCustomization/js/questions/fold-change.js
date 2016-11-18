@@ -78,9 +78,9 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
       formulaPartial: _.template($element.find("#formula-partial").html())
     }};
 
-    helpTmpl = _.template($element.find("#help-template").html(), null, templateImports);
-    oneDirectionTmpl = _.template($element.find("#one-direction-template").html(), null, templateImports);
-    twoDirectionTmpl = _.template($element.find("#two-direction-template").html(), null, templateImports);
+    helpTmpl = _.template($element.find("#help-template").html(), templateImports);
+    oneDirectionTmpl = _.template($element.find("#one-direction-template").html(), templateImports);
+    twoDirectionTmpl = _.template($element.find("#two-direction-template").html(), templateImports);
 
     $img = $element.find(".fold-change-img");
     $form = $element.closest("form");

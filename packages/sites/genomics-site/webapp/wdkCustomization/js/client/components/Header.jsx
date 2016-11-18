@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { add, compose, pick, reduce } from 'lodash';
+import { add, flowRight, pick, reduce } from 'lodash';
 import QuickSearch from './QuickSearch';
 import SmallMenu from './SmallMenu';
 import Announcements from 'eupathdb/wdkCustomization/js/client/components/Announcements';
@@ -393,7 +393,7 @@ Header.propTypes = {
 
 let globalDataItems = Object.keys(Header.propTypes);
 
-let connect = compose(
+let connect = flowRight(
   withStore(state => pick(state.globalData, globalDataItems)),
   withActions(UserActionCreators)
 );

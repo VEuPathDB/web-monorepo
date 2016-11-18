@@ -325,7 +325,7 @@ function MercatorTable(props) {
 }
 
 
-const withUserAndAction = lodash.compose(
+const withUserAndAction = lodash.flowRight(
   withStore(state => ({ user: state.globalData.user, location: state.globalData.location })),
   withActions(UserActionCreators)
 );
