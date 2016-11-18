@@ -177,10 +177,17 @@ function ProteinPbrowseTable(props) {
   );
 }
 
-const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
-  let utrClassName = 'eupathdb-UtrSequenceNucleotide';
-  let intronClassName = 'eupathdb-IntronSequenceNucleotide';
 
+// SequenceTable Components
+// ------------------------
+
+const renderUtr = str =>
+  <span style={{ backgroundColor: '#cae4ff' }}>{str.toLowerCase()}</span>
+
+const renderIntron = str =>
+  <span style={{ backgroundColor: '#dddddd', color: '#333' }}>{str.toLowerCase()}</span>
+
+const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
   let {
     protein_sequence,
     transcript_sequence,
@@ -199,14 +206,14 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
   ].filter(coords => coords != null)
 
   let transcriptHighlightRegions = transcriptRegions.map(coords => {
-    return { className: utrClassName, start: coords[0], end: coords[1] };
+    return { renderRegion: renderUtr, start: coords[0], end: coords[1] };
   });
 
   let genomicRegions = JSON.parse(gen_rel_intron_utr_coords || '[]');
 
   let genomicHighlightRegions = genomicRegions.map(coord => {
     return {
-      className: coord[0] === 'Intron' ? intronClassName : utrClassName,
+      renderRegion: coord[0] === 'Intron' ? renderIntron : renderUtr,
       start: coord[1],
       end: coord[2]
     };
@@ -215,7 +222,7 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
   let genomicRegionTypes = lodash(genomicRegions)
     .map(region => region[0])
     .sortBy()
-    .uniq(true)
+    .sortedUniq()
     .value();
 
   let legendStyle = { marginRight: '1em', textDecoration: 'underline' };
@@ -235,7 +242,9 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
           <h3>Predicted RNA/mRNA Sequence (Introns spliced out{ transcriptRegions.length > 0 ? '; UTRs highlighted' : null })</h3>
           <div>
             <span style={legendStyle}>{transcript_length} bp</span>
-            { transcriptRegions.length > 0 ? <span style={legendStyle} className={utrClassName}>&nbsp;UTR&nbsp;</span> : null }
+            { transcriptRegions.length > 0
+              ? <span style={legendStyle}>{renderUtr('UTR')}</span>
+              : null }
           </div>
           <Sequence sequence={transcript_sequence}
             highlightRegions={transcriptHighlightRegions}/>
@@ -246,10 +255,10 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
           <div>
             <span style={legendStyle}>{genomic_sequence_length} bp</span>
             {genomicRegionTypes.map(t => {
-              let className = t === 'Intron' ? intronClassName : utrClassName;
+              const renderStr = t === 'Intron' ? renderIntron : renderUtr;
               return (
-                <span style={legendStyle} className={className}>&nbsp;{t}&nbsp;</span>
-                );
+                <span style={legendStyle}>{renderStr(t)}</span>
+              );
             })}
           </div>
           <Sequence sequence={genomic_sequence}
