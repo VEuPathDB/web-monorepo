@@ -4,9 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "ciena-dagre": "^1.0.0",
     "cytoscape": "^2.7.11",
     "cytoscape-dagre": "^1.3.0",
     "cytoscape-panzoom": "^2.4.0",
     "dagre": "^0.7.4"
+  },
+  "browser": {
+    "dagre": "ciena-dagre/lib"
   }
 }
