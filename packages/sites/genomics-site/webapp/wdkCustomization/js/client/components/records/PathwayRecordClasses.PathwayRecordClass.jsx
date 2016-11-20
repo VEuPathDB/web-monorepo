@@ -335,7 +335,7 @@ const enhance = flow(
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
-    nodeList: state.location.query.node_list
+    nodeList: state.globalData.location.query.node_list
   })),
   withActions({
     setActiveNodeData,
