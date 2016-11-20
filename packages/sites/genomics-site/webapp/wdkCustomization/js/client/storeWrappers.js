@@ -107,8 +107,6 @@ export function RecordViewStore(WdkRecordViewStore) {
 
 let initialPathwayRecordState = {
   activeNodeData: null,
-  activeCompound: null,
-  compoundError: null,
   generaSelection: []
 };
 
@@ -117,28 +115,11 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
   switch(action.type) {
     case 'pathway-record/set-active-node':
       return Object.assign({}, state, {
-        activeNodeData: action.payload.activeNodeData,
-        activeCompound: null,
-        compoundError: null
+        activeNodeData: action.payload.activeNodeData
       });
     case 'pathway-record/set-pathway-error':
       return Object.assign({}, state, {
         error: action.payload.error
-      });
-    case 'pathway-record/compound-loading':
-      return Object.assign({}, state, {
-        activeCompound: null,
-        compoundError: null
-      });
-    case 'pathway-record/compound-loaded':
-      return Object.assign({}, state, {
-        activeCompound: action.payload.compound,
-        compoundError: null
-      });
-    case 'pathway-record/compound-error':
-      return Object.assign({}, state, {
-        activeCompound: null,
-        compoundError: action.payload.error
       });
     case 'pathway-record/genera-selected':
       return Object.assign({}, state, {

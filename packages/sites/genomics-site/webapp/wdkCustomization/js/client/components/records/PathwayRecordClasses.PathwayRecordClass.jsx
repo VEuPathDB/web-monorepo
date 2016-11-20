@@ -1,18 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router';
-import {uniqueId} from 'lodash';
+import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
-import {loadChemDoodleWeb, CompoundStructure} from '../common/Compound';
+import {loadChemDoodleWeb} from '../common/Compound';
 import { CheckboxList } from 'wdk-client/Components';
+import { withStore, withActions } from '../../util/component';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
 const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
   'GeneQuestions.InternalGenesByEcNumber&organism=all&array%28ec_source%29=all' +
   '&questionSubmit=Get+Answer&ec_number_pattern=N/A&ec_wildcard=';
-
-let div_id = "eupathdb-PathwayRecord-cytoscapeweb";
 
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
@@ -105,7 +104,7 @@ function makeEdge(obj) {
 
 
 
-function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
+function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
 
   return Promise.all([loadCytoscapeJs(), loadChemDoodleWeb()])
     .then(function([ cytoscape ]) {
@@ -122,7 +121,7 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
         }
 
     var cy = cytoscape({
-        container: document.getElementById(div_id),
+        container,
 
         elements:PathwayNodes.map(makeNode).concat(PathwayEdges.map(makeEdge)), 
 
@@ -332,28 +331,31 @@ function makeCy(pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
 }
 
 
-export class CytoscapeDrawing extends React.Component {
+const enhance = flow(
+  withStore(state => ({
+    pathwayRecord: state.pathwayRecord,
+    config: state.globalData.config,
+    nodeList: state.location.query.node_list
+  })),
+  withActions({
+    setActiveNodeData,
+    setPathwayError,
+    setGeneraSelection
+  })
+);
+const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    let storeState = context.store.getState();
-    this.state = storeState.pathwayRecord;
-    this.wdkConfig = storeState.globalData.config;
+    this.state = {};
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
     this.paintCustomGenera = this.paintCustomGenera.bind(this);
+    this.onGeneraChange = this.onGeneraChange.bind(this);
   }
 
   componentDidMount() {
-    let { store } = this.context;
     this.initMenu();
     this.initVis();
-    this.storeSub = store.addListener(() => {
-      this.setState(store.getState().pathwayRecord);
-    });
-  }
-
-  componentWillUnmount() {
-    this.storeSub.remove();
   }
 
   initMenu() {
@@ -374,52 +376,49 @@ export class CytoscapeDrawing extends React.Component {
   initVis() {
     let { primary_key, pathway_source } = this.props.record.attributes;
     let { PathwayNodes, PathwayEdges } = this.props.record.tables;
-    let { dispatchAction } = this.context;
-    let { projectId } = this.wdkConfig;
-    makeCy(primary_key, pathway_source, PathwayNodes, PathwayEdges).then(cy => {
+    let { projectId } = this.props.config;
+    makeCy(this.refs.cytoContainer, primary_key, pathway_source, PathwayNodes, PathwayEdges)
+      .then(cy => {
 
-      // listener for when nodes and edges are clicked
-      // The nodes collection event listener will be called before the
-      // unrestricted event listener that follows below. Since we don't
-      // want the latter to be called after the former, we are invoking
-      // the `event.stopPropagation()` method so it is not triggered.
+        // listener for when nodes and edges are clicked
+        // The nodes collection event listener will be called before the
+        // unrestricted event listener that follows below. Since we don't
+        // want the latter to be called after the former, we are invoking
+        // the `event.stopPropagation()` method so it is not triggered.
 
-      cy.nodes().on('tap', event => {
-        var node = event.cyTarget;
-        dispatchAction(setActiveNodeData(Object.assign({}, node.data())));
-          if (node.data("node_type") == 'molecular entity' && node.data("node_identifier")) {
-            dispatchAction(loadCompoundStructure(node.data("node_identifier"), projectId));
-        }
-        cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
-        node.addClass('eupathdb-CytoscapeActiveNode');
-        event.stopPropagation();
+        cy.nodes().on('tap', event => {
+          var node = event.cyTarget;
+          this.props.setActiveNodeData(Object.assign({}, node.data()));
+          cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
+          node.addClass('eupathdb-CytoscapeActiveNode');
+          event.stopPropagation();
+        });
+
+        cy.on('tap', () => {
+          cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
+          this.props.setActiveNodeData(null);
+        });
+
+        // dispatch action when active node data changes
+        cy.on('data', 'node.eupathdb-CytoscapeActiveNode', event => {
+          this.props.setActiveNodeData(Object.assign({}, event.cyTarget.data()));
+        });
+
+        cy.panzoom();
+
+        this.setState({ cy });
+      })
+      .catch(error => {
+        this.props.setPathwayError(error);
       });
-
-      cy.on('tap', () => {
-        cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
-        dispatchAction(setActiveNodeData(null));
-      });
-
-      // dispatch action when active node data changes
-      cy.on('data', 'node.eupathdb-CytoscapeActiveNode', event => {
-        dispatchAction(setActiveNodeData(Object.assign({}, event.cyTarget.data())));
-      });
-
-      cy.panzoom();
-
-      this.setState({ cy });
-    })
-    .catch(error => {
-      dispatchAction(setPathwayError(error));
-    });
   }
 
   clearActiveNodeData() {
-    this.context.dispatchAction(setActiveNodeData(null))
+    this.props.setActiveNodeData(null);
   }
 
-  onGeneraChange(newSelections, dispatchAction) {
-    dispatchAction({"type": 'pathway-record/genera-selected', "payload": {"generaSelection": newSelections}});
+  onGeneraChange(newSelections) {
+    this.props.setGeneraSelection(newSelections);
   }
 
   paintCustomGenera(generaSelection, projectId, cy) {
@@ -476,7 +475,7 @@ export class CytoscapeDrawing extends React.Component {
   }
 
   renderError() {
-    if (this.state.error) {
+    if (this.props.pathwayRecord.error) {
       return (
         <div style={{color: 'red' }}>
           Error: The Pathway Network could not be loaded.
@@ -486,7 +485,7 @@ export class CytoscapeDrawing extends React.Component {
   }
 
   render() {
-    let { projectId } = this.wdkConfig;
+    let { projectId } = this.props.config;
     let { record } = this.props;
     let { attributes, tables } = record;
     let { primary_key, pathway_source } = attributes;
@@ -607,27 +606,26 @@ export class CytoscapeDrawing extends React.Component {
         {this.renderError()}
         <VisMenu
           pathway_source={pathway_source}
-          webAppUrl={this.wdkConfig.webAppUrl}
+          webAppUrl={this.props.config.webAppUrl}
           primary_key={primary_key}
           PathwayGraphs={PathwayGraphs}
           projectId={projectId}
           experimentData={experimentData}
           cy={this.state.cy}
         />
-        <div id="eupathdb-PathwayRecord-cytoscapeIcon">
+        <div className="eupathdb-PathwayRecord-cytoscapeIcon">
             <a href="http://js.cytoscape.org/">
 
-                <img src={this.wdkConfig.webAppUrl + "images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
+                <img src={this.props.config.webAppUrl + "images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
           </a>
         <br/>
           Cytoscape JS
         </div>
         <div id="eupathdb-PathwayRecord-generaSelector-wrapper">
           <GeneraSelector generaOptions={generaOptions}
-                          generaSelection={this.state.generaSelection}
+                          generaSelection={this.props.pathwayRecord.generaSelection}
                           onGeneraChange={this.onGeneraChange}
                           paintCustomGenera={this.paintCustomGenera}
-                          dispatchAction={this.context.dispatchAction}
                           cy={this.state.cy}
                           projectId={projectId} />
         </div>
@@ -640,13 +638,12 @@ export class CytoscapeDrawing extends React.Component {
           </p>
         </div>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div id={div_id} ref={node => this.cytoContainer = node} style={{ borderColor: '#999999' }}></div>
-          {this.state.activeNodeData && (
+          <div ref="cytoContainer" className="eupathdb-PathwayRecord-CytoscapeContainer" />
+          {this.props.pathwayRecord.activeNodeData && (
             <NodeDetails
               onClose={this.clearActiveNodeData}
-              wdkConfig={this.wdkConfig}
-              nodeData={this.state.activeNodeData}
-              compoundRecord={this.state.activeCompound}
+              wdkConfig={this.props.config}
+              nodeData={this.props.pathwayRecord.activeNodeData}
               pathwaySource={pathway_source}
             />
           )}
@@ -654,12 +651,7 @@ export class CytoscapeDrawing extends React.Component {
       </div>
     );
   }
-}
-
-CytoscapeDrawing.contextTypes = {
-  dispatchAction: React.PropTypes.func.isRequired,
-  store: React.PropTypes.object.isRequired
-};
+});
 
 function VisMenu(props) {
   let { cy, pathway_source, primary_key, PathwayGraphs, projectId, experimentData } = props;
@@ -767,7 +759,7 @@ function GeneraSelector(props) {
         <button><i className="fa fa-close"/></button>
       </div>
       <CheckboxList name="genera" items={props.generaOptions} value={props.generaSelection}
-                    onChange={function(newSelections) { props.onGeneraChange(newSelections, props.dispatchAction)}}/>
+                    onChange={function(newSelections) { props.onGeneraChange(newSelections)}}/>
       <input type="submit" value="Paint" onClick={function() { props.paintCustomGenera(props.generaSelection, props.projectId, props.cy) }} />
     </div>
   );
@@ -788,33 +780,8 @@ class NodeDetails extends React.Component {
                 : null;
 
     return (
-      <div
-        ref="container"
-        style={{
-          position: 'absolute',
-          top: 25,
-          left: 75,
-          minWidth: 350,
-          minHeight: 200,
-          border: '1px solid #999',
-          borderRadius: 4,
-          background: 'white',
-          boxShadow: '0px 0px 4px rgba(0, 0, 0, .2)'
-        }}
-      >
-        <div
-          ref="handle"
-          style={{
-            fontWeight: 'bold',
-            fontSize: '1.2em',
-            cursor: 'move',
-            position: 'relative',
-            padding: '6px 12px',
-            background: '#ddd',
-            borderTopLeftRadius: 4,
-            borderTopRightRadius: 4
-          }}
-        >
+      <div ref="container" className="eupathdb-PathwayNodeDetailsContainer">
+        <div ref="handle" className="eupathdb-PathwayNodeDetailsHeader">
           <button
             type="button"
             style={{ position: 'absolute', right: 6, top: 3 }}
@@ -864,7 +831,7 @@ function EnzymeNodeDetails(props) {
       {image && (
         <div>
           <img src={image + '&fmt=png&h=250&w=350'}/>
-          </div>
+        </div>
 
       )}
     </div>
@@ -872,7 +839,7 @@ function EnzymeNodeDetails(props) {
 }
 
 function MolecularEntityNodeDetails(props) {
-  let { nodeData: { node_identifier, name }, compoundRecord, compoundError } = props;
+  let { nodeData: { node_identifier, name, image } } = props;
 
   return (
     <div>
@@ -889,14 +856,12 @@ function MolecularEntityNodeDetails(props) {
       )}
 
 
-      {compoundRecord && (
-        <CompoundStructure width={200} height={200}
-                           moleculeString={compoundRecord.attributes.default_structure} />
+      {image && (
+        <div>
+          <img src={image}/>
+        </div>
       )}
 
-      {compoundError && (
-        <div style={{color: 'red'}}>Unable to load compound structure</div>
-      )}
     </div>
   );
 }
@@ -950,24 +915,9 @@ function setPathwayError(error) {
   };
 }
 
-function loadCompoundStructure(compoundId, projectId) {
-  let recordClassName = 'CompoundRecordClasses.CompoundRecordClass';
-  let primaryKey = [
-    { name: 'source_id', value: compoundId },
-    { name: 'project_id', value: projectId }
-  ];
-  let options = { attributes: [ 'default_structure' ] };
-  return function run(dispatch, { wdkService }) {
-    dispatch({ type: 'pathway-record/compound-loading' });
-    dispatch(wdkService.getRecord(recordClassName, primaryKey, options)
-    .then(compound => ({
-      type: 'pathway-record/compound-loaded',
-      payload: { compound }
-    }))
-    .catch(error => ({
-      type: 'pathway-record/compound-error',
-      payload: { compoundId, error }
-    })));
-  }
-
+function setGeneraSelection(generaSelection) {
+  return {
+    type: 'pathway-record/genera-selected',
+    payload: { generaSelection }
+  };
 }

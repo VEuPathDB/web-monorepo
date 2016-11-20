@@ -4,19 +4,30 @@
   cursor: pointer;
 }
 
-#draggable {
-  z-index:10000;
-  margin-left:18px;
-  position:absolute;
-  margin-top: 400px;
-  background-color:white;
-  border:1px solid black;
-  border-radius:5px;
-  width: 350px;
-  padding: 0.5em;
+.eupathdb-PathwayNodeDetailsContainer {
+  position: absolute;
+  top: 25px;
+  left: 75px;
+  min-width: 350px;
+  min-height: 200px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: white;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, .2);
 }
 
-#eupathdb-PathwayRecord-cytoscapeweb {
+.eupathdb-PathwayNodeDetailsHeader {
+  font-eight: bold;
+  font-size: 1.2em;
+  cursor: move;
+  position: relative;
+  padding: 6px 12px;
+  background: #ddd;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.eupathdb-PathwayRecord-CytoscapeContainer {
   border:1px solid black;
   border-radius:5px;
   width: 100%;
@@ -25,7 +36,7 @@
   padding-bottom: 26px;
 }
 
-#eupathdb-PathwayRecord-cytoscapeIcon {
+.eupathdb-PathwayRecord-cytoscapeIcon {
   text-align: right;
   width: 100%;
 }
