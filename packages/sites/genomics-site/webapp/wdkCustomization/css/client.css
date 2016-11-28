@@ -80,6 +80,14 @@ h4 {
   color: #777;
 }
 
+.wdk-UserDatasetOverview {
+  font-size: 1.4em;
+}
+
+.wdk-UserDatasetOverviewItemText {
+  font-weight: 300;
+}
+
 .eupathdb-RecordOverview {
   overflow: auto;
 }
