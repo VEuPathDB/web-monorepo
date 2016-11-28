@@ -88,6 +88,15 @@ h4 {
   font-weight: 300;
 }
 
+.wdk-UserDatasetSection {
+  font-size: 1.2em;
+  font-weight: 300;
+}
+
+.wdk-UserDatasetSectionHeading {
+  font-size: 1.4em;
+}
+
 .eupathdb-RecordOverview {
   overflow: auto;
 }
