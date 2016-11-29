@@ -85,9 +85,13 @@ function MenuEntry(props) {
 
       { !isEmpty(entry.children) &&
         <ul className="eupathdb-Submenu">
-          {entry.children.map(childEntry => {
-            return <MenuEntry key={childEntry.id} entry={childEntry} webAppUrl={webAppUrl}/>
-          })}
+          {entry.children.map(childEntry =>
+            <MenuEntry
+              {...props}
+              key={childEntry.id}
+              entry={childEntry}
+            />
+          )}
         </ul> }
 
     </li>

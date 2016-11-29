@@ -20,7 +20,7 @@ export default function Footer() {
         <ul className="attributions">
           <li>
             <a href="http://code.google.com/p/strategies-wdk/">
-              <img width="120" src={webAppUrl + '/wdk/images/stratWDKlogo.png'} border="0"/>
+              <img width="120" src={webAppUrl + '/wdk/images/stratWDKlogo.png'} />
             </a>
           </li>
         </ul>
