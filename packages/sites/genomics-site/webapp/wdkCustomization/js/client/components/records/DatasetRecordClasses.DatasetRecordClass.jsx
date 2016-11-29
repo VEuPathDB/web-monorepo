@@ -26,17 +26,18 @@ function renderPrimaryContact(contact, institution) {
 }
 
 function renderSourceVersion(version) {
-  return [
-    version.version + ' ',
-    <i className="fa fa-question-circle" style={{ color: 'blue' }}
-      title={'The data provider\'s version number or publication date, from' +
-      ' the site the data was acquired. In the rare case neither is available,' +
-      ' the download date.'}/>
-  ];
+  return (
+    <span>
+      {version.version}&nbsp;
+      <i className="fa fa-question-circle" style={{ color: 'blue' }}
+        title={'The data provider\'s version number or publication date, from' +
+        ' the site the data was acquired. In the rare case neither is available,' +
+        ' the download date.'}/>
+    </span>
+  );
 }
 
 export function RecordOverview(props) {
-  let titleClass = 'eupathdb-DatasetRecord-title';
   let { record, questions, recordClasses } = props;
   let { attributes, tables } = record;
   let {
@@ -44,9 +45,7 @@ export function RecordOverview(props) {
     eupath_release,
     contact,
     institution,
-    organism_prefix,
-    organisms,
-    description
+    organism_prefix
   } = attributes;
 
   let version = tables.Version && tables.Version[0];
