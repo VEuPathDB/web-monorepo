@@ -51,7 +51,7 @@ function setMarkers(map, locations) {
      var country = loc[0];
      var total = loc[1];
      var type = loc[2];
-     var content = country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+"&value(type)="+type+"'> Click for Details</a>";
+     var content = country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=PopsetQuestions.PopsetByCountry&array(country)="+country+"&value(type)="+type+"'> Click for Details</a>";
     
      var $icon; 
      if(total < 2) {
@@ -100,7 +100,7 @@ function createMarker(country, total, type) {
       google.maps.event.addListener(marker, 'click', function() {
          
         var infoWindow = new google.maps.InfoWindow();
-        infoWindow.setContent(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=IsolateQuestions.IsolateByCountry&array(country)="+country+type+"'> Click for Details</a>");
+        infoWindow.setContent(country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=PopsetQuestions.PopsetByCountry&array(country)="+country+type+"'> Click for Details</a>");
         infoWindow.open(map,marker);
       });
     } else {
