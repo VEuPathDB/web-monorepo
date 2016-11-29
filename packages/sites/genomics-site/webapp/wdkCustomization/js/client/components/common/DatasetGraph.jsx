@@ -224,7 +224,7 @@ export default class DatasetGraph extends PureComponent {
               <input
                 type="checkbox"
                 checked={showLogScale}
-                onClick={e => this.setState({ loading: true, showLogScale: e.target.checked })}
+                onChange={e => this.setState({ loading: true, showLogScale: e.target.checked })}
               /> Show log Scale (not applicable for log(ratio) graphs, percentile graphs or data tables)
             </label>
           </div>
