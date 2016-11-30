@@ -26,9 +26,10 @@ export default class DatasetGraph extends PureComponent {
       descriptionCollapsed: true,
       dataTableCollapsed: true,
       coverageCollapsed: true,
-      showLogScale: true,
+      showLogScale: (this.props.rowData.assay_type == 'RNA-seq')? false:true,
       graphId: graphIds[0]
     };
+
     this.handleDescriptionCollapseChange = descriptionCollapsed => {
       this.setState({ descriptionCollapsed });
     };
@@ -115,8 +116,10 @@ export default class DatasetGraph extends PureComponent {
       x_axis,
       y_axis
     } } = this.props;
+
     let graphIds = graph_ids.split(/\s*,\s*/);
     let { parts, visibleParts, showLogScale, graphId } = this.state;
+
     let baseUrl = this.makeBaseUrl(this.props);
     let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}&wl=${showLogScale ? '1' : '0'}`;
     let imgUrl = baseUrlWithState + '&fmt=png';
