@@ -7,10 +7,10 @@
           xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
   <jsp:directive.attribute
-     name="primaryKeyAttributeValue"
-     type="org.gusdb.wdk.model.record.attribute.PrimaryKeyAttributeValue"
+     name="primaryKeyValue"
+     type="org.gusdb.wdk.model.record.PrimaryKeyValue"
      required="true"
-     description="The primary key AttributeValue instance"
+     description="The primary key value"
      />
 
   <jsp:directive.attribute
@@ -32,20 +32,20 @@
   <c:choose>
     <c:when test="${modelName eq 'EuPathDB'}">
       <wdk:recordLink
-        primaryKeyAttributeValue="${primaryKeyAttributeValue}"
+        primaryKeyValue="${primaryKeyValue}"
         recordClass="${recordClass}"
         displayValue="${displayValue}"
       />
     </c:when>
     <!-- TRANSCRIPTS: do not want to show transcript id URL, and we want to point to the GENE record-->
     <c:when test="${recordClass.fullName eq 'TranscriptRecordClasses.TranscriptRecordClass'}">
-      <c:url var="recordLink" value="/app/record/gene/${primaryKeyAttributeValue.values['gene_source_id']}/${primaryKeyAttributeValue.values['project_id']}" />
+      <c:url var="recordLink" value="/app/record/gene/${primaryKeyValue.values['gene_source_id']}/${primaryKeyValue.values['project_id']}" />
       <a href="${recordLink}">${displayValue}</a>
     </c:when>
     <!-- REST of recordtypes, using all PK parts n URL, eg:  source_id, project_id, etc) -->
     <c:otherwise>
       <c:url var="recordLink" value="/app/record/${recordClass.urlSegment}" />
-      <c:forEach items="${primaryKeyAttributeValue.values}" var="pkValue" varStatus="loop">
+      <c:forEach items="${primaryKeyValue.values}" var="pkValue" varStatus="loop">
         <c:set var="recordLink" value="${recordLink}/${pkValue.value}" />
       </c:forEach>
       <a href="${recordLink}">${displayValue}</a>

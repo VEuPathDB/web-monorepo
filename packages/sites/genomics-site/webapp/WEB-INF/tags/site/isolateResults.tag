@@ -290,7 +290,7 @@
                     <c:set var="basket_img" value="basket_color.png"/>
                           <c:set var="basketTitle" value="Click to remove this item from the basket." />
                         </c:if>
-                        <c:set var="basketClick" value="wdk.basket.updateBasket(this, 'single', '${primaryKey.value}', '${modelName}', '${recordName}')" />
+                        <c:set var="basketClick" value="wdk.basket.updateBasket(this, 'single', '${record.idAttributeValue.value}', '${modelName}', '${recordName}')" />
                       </c:when>
                       <c:otherwise>
                         <c:set var="basketTitle" value="Please log in to use the basket." />
@@ -335,7 +335,7 @@
 
                   <c:choose>
                     <c:when test = "${eupathIsolatesQuestion}">
-                      <a href="showRecord.do?name=${recNam}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${primaryKey.value}">
+                      <a href="showRecord.do?name=${recNam}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${record.idAttributeValue.value}">
                       <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
                     </c:when>
                     <c:otherwise>
