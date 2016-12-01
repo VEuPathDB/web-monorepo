@@ -29,11 +29,11 @@ jQuery(document).ready(function(){
     //  describes the first and second <td> in the row.
     var $name = $row.find(':nth-child(1)').text();
     var $count = $row.find(':nth-child(2)').text();
-    var $type = $row.find(':nth-child(3)').text();
-    var $lat = $row.find(':nth-child(4)').text();
-    var $lng = $row.find(':nth-child(5)').text();
+    var $lat = $row.find(':nth-child(3)').text();
+    var $lng = $row.find(':nth-child(4)').text();
+    var $gaz = $row.find(':nth-child(5)').text();
 
-    locations.push([$name, $count, $type, $lat, $lng]);
+    locations.push([$name, $count, $lat, $lng, $gaz]);
   }).get();
 
   setMarkers(map, locations);
@@ -47,11 +47,11 @@ function setMarkers(map, locations) {
 
   for (var i = 0; i < locations.length; i++ ) {
      var loc = locations[i];
-     var latLng = new google.maps.LatLng(loc[3], loc[4]);
+     var latLng = new google.maps.LatLng(loc[2], loc[3]);
      var country = loc[0];
      var total = loc[1];
-     var type = loc[2];
-     var content = country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=PopsetQuestions.PopsetByCountry&array(country)="+country+"&value(type)="+type+"'> Click for Details</a>";
+     var gaz = loc[4];
+     var content = country + ' ' + total + ' isolates. <br />' + "<a href='processQuestion.do?questionFullName=PopsetQuestions.PopsetByCountry&array(country)="+gaz+"'> Click to find all isolates in this country</a>";
     
      var $icon; 
      if(total < 2) {

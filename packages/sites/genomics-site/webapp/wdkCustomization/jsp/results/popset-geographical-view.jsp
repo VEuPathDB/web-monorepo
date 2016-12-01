@@ -15,6 +15,11 @@
 <table id="pins">
 <tr>
   <td valign=center>
+  Pin color indicates the number of isolates in each country.
+  </td>
+</tr>
+<tr>
+  <td valign=center>
     <imp:image src="images/isolate/1.png"/>
     <imp:image src="images/isolate/2.png"/>
     <imp:image src="images/isolate/3.png"/>
@@ -25,27 +30,31 @@
     <imp:image src="images/isolate/8.png"/>
     <imp:image src="images/isolate/9.png"/>
     <imp:image src="images/isolate/10.png"/>
-  Indicates the number of isolates from each location
   </td>
 </tr>
 </table>
 
 <table id="isolate-view" class="datatables">
+
 <thead>
  <th>Country</th>
  <th>Number of Isolates</th>
- <th>Isolate Type</th>
  <th>Latitude</th>
  <th>Longitude</th>
-
+ <th>GAZ Ontology ID</th>
 </thead>
+
 <tbody>
   <c:forEach items="${sequences}" var="sequence">
-  <tr>
-<td>${sequence.country}</td><td> ${sequence.total} </td><td>${sequence.type}</td><td>${sequence.lat}</td><td>${sequence.lng}</td>
-</tr>
+    <tr>
+      <td>${sequence.country}</td>
+      <td>${sequence.total}</td>
+      <td>${sequence.lat}</td>
+      <td>${sequence.lng}</td>
+      <td>${sequence.gaz}</td>
+    </tr>
   </c:forEach>
-
 </tbody>
+
 </table>
 
