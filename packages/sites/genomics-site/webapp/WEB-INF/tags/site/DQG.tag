@@ -25,8 +25,7 @@
     <div class="innertube">
 
       <c:if test="${project == 'EuPathDB'}">
-
-        <p style="margin-left:2em;margin-right:2em;font-size:120%"><b>EuPathDB <a href="https://www.niaid.nih.gov/labsandresources/resources/dmid/brc/pages/default.aspx">Bioinformatics Resource Center</a> for Biodefense and Emerging/Re-emerging Infectious Diseases is a portal for accessing genomic-scale datasets associated with the eukaryotic pathogens in the following websites:</b> <i style="font-size:90%">(mouse over the logos)</i>
+        <p style="margin-left:2em;margin-right:2em;font-size:120%"><b>The EuPathDB <a href="https://www.niaid.nih.gov/labsandresources/resources/dmid/brc/pages/default.aspx">Bioinformatics Resource Center</a> provides a portal for accessing genomic-scale datasets associated with the diverse eukaryotic microbes </b> <i style="font-size:90%>">(mouse-over the following logos for information on component websites):</i>
         </p>
 
         <table class="center" style="padding:2px;" width="95%">

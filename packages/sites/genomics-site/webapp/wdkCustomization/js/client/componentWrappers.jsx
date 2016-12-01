@@ -188,7 +188,7 @@ export function RecordTableSection(DefaultComponent) {
       );
     }
 
-    let customName = `Data sets used by ${String.fromCharCode(8220)}${props.table.displayName}${String.fromCharCode(8221)}`
+    let customName = `Data sets used by ${String.fromCharCode(8220)}${props.table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
     return (
       <DefaultComponent {...props} table={Object.assign({}, props.table, {
         displayName: (
