@@ -8,7 +8,8 @@ export let {
   releaseDate,
   webAppUrl,
   facebookId,
-  twitterId
+  twitterId,
+  youtubeId
 } = window.__WDK_CONFIG__;
 
 // __EUPATHDB_ANNOUNCEMENTS__ is defined in index.jsp
