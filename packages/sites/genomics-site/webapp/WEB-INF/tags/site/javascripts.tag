@@ -45,15 +45,7 @@
     <imp:script src="wdkCustomization/js/genome-view.js"/>
     <imp:script src="wdkCustomization/js/gene-view.js"/>
     <imp:script src="wdkCustomization/js/transcript-view.js"/>
-
-      <!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=${gkey}&sensor=false"><jsp:text/></script> -->
-      <!-- moved to isolateResults.tag
-      <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"><jsp:text/></script>
-      <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/styledmarker/src/StyledMarker.js"><jsp:text/></script>
-      -->
-
-      <!-- TODO Move to webapp -->
-      <imp:script src="wdkCustomization/js/isolateResults.js"/>
+    <imp:script src="wdkCustomization/js/isolateResults.js"/>
   </c:if>
 
   <!-- this seems unneeded since it only contains:

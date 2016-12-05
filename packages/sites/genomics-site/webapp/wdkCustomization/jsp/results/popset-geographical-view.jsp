@@ -7,6 +7,7 @@
 <c:set var="sequences" value="${requestScope.isolates}" />
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
 
+<imp:script src="js/lib/google-maps-api__sensor_false.js"/>
 <imp:script src="js/google_map.js"/>
 
 
