@@ -4,6 +4,7 @@
 // TODO Remove auth_tkt from url before proceeding
 
 import { initialize, wrapComponents } from 'wdk-client';
+import { debounce } from 'lodash';
 import { loadBasketCounts, loadQuickSearches } from './actioncreators/GlobalActionCreators';
 import { quickSearches } from './config';
 
@@ -39,7 +40,7 @@ apidb.context = initialize({
   endpoint,
   wrapRoutes,
   storeWrappers,
-  onLocationChange
+  onLocationChange: debounce(onLocationChange, 1000)
 });
 
 let { dispatchAction } = apidb.context;
