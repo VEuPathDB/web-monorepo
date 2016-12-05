@@ -140,11 +140,11 @@ display_categories  (fold change, percentile etc) (displayCategorySet in action)
                     <c:otherwise>${dataset_summary}</c:otherwise>
                   </c:choose>
                 </div>
-                <c:if test="${fn:length(publications) > 0}">
+                <c:if test="${publications.numRows > 0}">
                   <br/>
                   <h4>Publications</h4>
                   <ul>
-                    <c:forEach items="${publications}" var="publication">
+                    <c:forEach items="${publications.iterator}" var="publication">
                       <li><a target="_blank" href="${publication['pubmed_link'].url}">${publication['pubmed_link'].displayText}</a></li>
                     </c:forEach>
                   </ul>
