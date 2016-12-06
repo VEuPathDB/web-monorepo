@@ -1486,6 +1486,22 @@ sub jcviPasaTitle {
   return hover($f,\@data);
 }
 
+sub oldAnnotationTitle {
+  my $f = shift;
+  my $start = $f->start;
+  my $stop  = $f->stop;
+  my ($id) = $f->name;
+  my ($descr) = $f->get_tag_values('description');
+  $descr =~s/\+/ /g;
+
+  my @data;
+  push(@data, ['ID:'  => $id]);
+  push(@data, ['Description:'    => $descr]);
+  push(@data, ['Position:'   => "$start..$stop"]);
+
+  return hover($f,\@data);
+}
+
 sub riteshMassSpec {
   my $f = shift;
 
