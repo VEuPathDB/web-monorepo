@@ -7,12 +7,12 @@ import { PureComponent } from 'wdk-client/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 
 export let contexts = [
-  {
-    gbrowse_url: 'GeneModelGbrowseUrl',
-    displayName: 'Gene Model',
-    anchor: 'GeneModelGbrowseUrl',
-    isPbrowse: false
-  },
+  // {
+  //   gbrowse_url: 'GeneModelGbrowseUrl',
+  //   displayName: 'Gene Model',
+  //   anchor: 'GeneModelGbrowseUrl',
+  //   isPbrowse: false
+  // },
   {
     gbrowse_url: 'SyntenyGbrowseUrl',
     displayName: 'Synteny',
@@ -129,7 +129,6 @@ export class GbrowseImage extends PureComponent {
   }
 
   componentDidMount() {
-    this.setState({ loading: true });
     loadGbrowseScripts().then(
       () => this.loadImage(this.props),
       (error) => this.setState({ error })

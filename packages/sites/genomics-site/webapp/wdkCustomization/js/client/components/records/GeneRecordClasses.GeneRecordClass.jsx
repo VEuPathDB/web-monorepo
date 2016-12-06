@@ -74,30 +74,50 @@ export class RecordOverview extends Component {
       .filter(node => !node.children.length)
       .map(node => node.properties.name[0])
       .toArray());
+
     let transcriptomicsThumbnail = {
       displayName: 'Transcriptomics',
       element: <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}/>,
       anchor: 'ExpressionGraphs'
     };
 
+    let phenotypeThumbnail = {
+      displayName: 'Phenotype',
+      element: <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}/>,
+      anchor: 'PhenotypeGraphs'
+    };
+
+    let crisprPhenotypeThumbnail = {
+      displayName: 'Phenotype',
+      element: <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}/>,
+      anchor: 'CrisprPhenotypeGraphs'
+    };
+
     let filteredGBrowseContexts = seq(Gbrowse.contexts)
     // inject transcriptomicsThumbnail before protein thumbnails
-    .flatMap(context => (context.gbrowse_url === 'FeaturesPbrowseUrl')
-      ? [ transcriptomicsThumbnail, context ]
-      : [ context ]
-    )
+    .flatMap(context => {
+      if (context.gbrowse_url === 'SnpsGbrowseUrl') {
+        return [ phenotypeThumbnail, crisprPhenotypeThumbnail, context ];
+      }
+      if (context.gbrowse_url === 'FeaturesPbrowseUrl') {
+        return [ transcriptomicsThumbnail, context ];
+      }
+      return [ context ];
+    })
     // remove thumbnails whose associated fields are not present in record instance
     .filter(context => instanceFields.has(context.anchor))
     .map(context => context === transcriptomicsThumbnail
-      ? Object.assign({}, context, {
-          data: {
-            count: tables && tables.ExpressionGraphs && tables.ExpressionGraphs.length
-          }
-        })
-      : Object.assign({}, context, {
-          element: <Gbrowse.GbrowseImage url={attributes[context.gbrowse_url]} includeImageMap={true}/>,
-          displayName: recordClass.attributesMap[context.gbrowse_url].displayName
-        })
+                 || context === phenotypeThumbnail
+                 || context === crisprPhenotypeThumbnail
+                  ? Object.assign({}, context, {
+                      data: {
+                        count: tables && tables[context.anchor] && tables[context.anchor].length
+                      }
+                    })
+                  : Object.assign({}, context, {
+                      element: <Gbrowse.GbrowseImage url={attributes[context.gbrowse_url]} includeImageMap={true}/>,
+                      displayName: recordClass.attributesMap[context.gbrowse_url].displayName
+                    })
     )
     .toArray();
 

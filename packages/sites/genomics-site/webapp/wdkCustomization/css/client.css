@@ -40,6 +40,10 @@ h4 {
   min-height: calc(100vh - 230px);
 }
 
+.wdk-NotFound p {
+  font-size: 1.2em;
+}
+
 .wdk-RecordOverview:after {
   content: "";
   display: table;
@@ -341,10 +345,14 @@ h4 {
   width: 100%;
 }
 
+.eupathdb-Thumbnail__PhenotypeGraphs,
+.eupathdb-Thumbnail__CrisprPhenotypeGraphs,
 .eupathdb-Thumbnail__ExpressionGraphs {
   position: relative;
 }
 
+.eupathdb-Thumbnail__PhenotypeGraphs:before,
+.eupathdb-Thumbnail__CrisprPhenotypeGraphs:before,
 .eupathdb-Thumbnail__ExpressionGraphs:before {
   content: attr(data-count) " data sets";
   position: absolute;
@@ -369,11 +377,15 @@ h4 {
   max-width: calc(100vw - 100px);
 }
 
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail__PhenotypeGraphs:before,
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail__CrisprPhenotypeGraphs:before,
 .eupathdb-ThumbnailPopover .eupathdb-Thumbnail__ExpressionGraphs:before {
   font-size: 10vh;
   line-height: 75vh;
 }
 
+.eupathdb-Thumbnail__PhenotypeGraphs img,
+.eupathdb-Thumbnail__CrisprPhenotypeGraphs img,
 .eupathdb-Thumbnail__ExpressionGraphs img {
   -moz-filter: grayscale(.7) blur(1px);
   -webkit-filter: grayscale(.7) blur(1px);
