@@ -635,12 +635,8 @@
     </action>
     <action
       path="/getDataset"
-      type="org.apidb.apicommon.controller.action.GetDatasetAction"
+      type="org.apidb.apicommon.controller.action.GetDatasetRedirect"
       scope="request">
-      <forward name="show_list" redirect="false" path="/wdkCustomization/jsp/DatasetList.jsp"/>
-      <forward name="show_detail" redirect="false" path="/wdkCustomization/jsp/DatasetDetail.jsp"/>
-      <forward name="show_xml_list" redirect="false" path="/showXmlDataList.do?name=XmlQuestions.Datasets"/>
-      <forward name="show_xml_detail" redirect="false" path="/showXmlDataContent.do?name=XmlQuestions.Datasets"/>
     </action>
     <action
       path="/exportBasket"
