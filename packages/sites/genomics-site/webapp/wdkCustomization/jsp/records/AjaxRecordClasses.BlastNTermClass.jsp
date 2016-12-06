@@ -10,6 +10,6 @@
     var="tbl" value="${wdkRecord.tables['BlastNTerms']}"
 /><data><terms>
 <c:forEach 
-    var="row" items="${tbl}"
+    var="row" items="${tbl.iterator}"
 ><term id="${row['internal'].value}">${row['term'].value}</term>
 </c:forEach></terms></data>

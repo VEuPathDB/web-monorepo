@@ -96,7 +96,7 @@ ${tableList}
 
  <table>
 
-<c:forEach var="row" items="${tbl}">
+<c:forEach var="row" items="${tbl.iterator}">
   <c:set var="i" value="${i+1}"/>
   <c:if test="${i % 8 == 1}">
      <tr>
@@ -178,7 +178,7 @@ ${tableList}
   <tbody>
     <%-- table rows --%>
     <c:set var="i" value="0"/>
-    <c:forEach var="row" items="${tbl}">
+    <c:forEach var="row" items="${tbl.iterator}">
         <c:set var="hasRow" value="true" />
         <c:choose>
             <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>

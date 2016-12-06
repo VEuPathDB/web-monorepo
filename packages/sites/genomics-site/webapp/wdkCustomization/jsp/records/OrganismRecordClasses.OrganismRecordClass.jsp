@@ -196,7 +196,7 @@
 
 
 
-     <c:forEach var="row" items="${referenceTable}">
+     <c:forEach var="row" items="${referenceTable.iterator}">
          <c:set var="reference" value="${row['description'].value}"/>
      </c:forEach>
 

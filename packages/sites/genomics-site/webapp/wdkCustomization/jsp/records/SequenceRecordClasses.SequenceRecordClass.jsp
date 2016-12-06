@@ -274,7 +274,7 @@ ${externalLinks}
 
     <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
 
-     <c:forEach var="row" items="${referenceTable}">
+     <c:forEach var="row" items="${referenceTable.iterator}">
          <c:set var="reference" value="${row['description'].value}"/>
      </c:forEach>
 

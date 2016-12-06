@@ -124,7 +124,7 @@ return true;
   <form name="checkHandleForm-mercator" method="post" action="/dosomething.jsp" onsubmit="return false;">
 
 <table >
-<c:forEach var="row" items="${tbl}">
+<c:forEach var="row" items="${tbl.iterator}">
   <c:set var="i" value="${i+1}"/>
   <c:if test="${i % 4 == 1}">
      <tr>

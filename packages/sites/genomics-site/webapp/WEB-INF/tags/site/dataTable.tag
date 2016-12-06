@@ -38,7 +38,7 @@
 
 <%-- table rows --%>
 <c:set var="i" value="0"/>
-<c:forEach var="row" items="${tbl}">
+<c:forEach var="row" items="${tbl.iterator}">
     
     <c:choose>
     <c:when test="${i % 2 == 0}"><tr class="rowLight"></c:when>

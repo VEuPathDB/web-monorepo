@@ -15,6 +15,6 @@ JSTL below is formatted to prevent blank lines
     var="tbl" value="${wdkRecord.tables['Chromosomes']}"
 /><data><terms>
 <c:forEach 
-    var="row" items="${tbl}"
+    var="row" items="${tbl.iterator}"
 ><term id="${row['term'].value}">${row['term'].value}</term>
 </c:forEach></terms></data>

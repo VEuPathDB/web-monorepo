@@ -82,7 +82,7 @@
 ${id}<br><span style="font-size:70%">${prd}</span><br/>
 
 <c:set var="count" value="0"/>
-<c:forEach var="row" items="${wdkRecord.tables['UserComments']}">
+<c:forEach var="row" items="${wdkRecord.tables['UserComments'].iterator}">
         <c:set var="count" value="${count +  1}"/>
 </c:forEach>
 <c:choose>
@@ -407,7 +407,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/hostdbaa/?name=${wd
 <c:set value="${wdkRecord.tables['GeneModel']}" var="geneModelTable"/>
 
 <c:set var="i" value="0"/>
-<c:forEach var="row" items="${geneModelTable}">
+<c:forEach var="row" items="${geneModelTable.iterator}">
   <c:set var="totSeq" value="${totSeq}${row['sequence'].value}"/>
   <c:set var="i" value="${i +  1}"/>
 </c:forEach>
@@ -447,7 +447,7 @@ http://${pageContext.request.serverName}/cgi-bin/gbrowse_img/hostdbaa/?name=${wd
 <c:set value="${wdkRecord.tables['GenomeSequencingAndAnnotationAttribution']}" var="referenceTable"/>
 
 <c:set value="Error:  No Attribution Available for This Genome!!" var="reference"/>
-<c:forEach var="row" items="${referenceTable}">
+<c:forEach var="row" items="${referenceTable.iterator}">
     <c:set var="reference" value="${row['description'].value}"/>
 </c:forEach>
 

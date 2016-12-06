@@ -21,7 +21,7 @@
 <c:set var="plotBaseUrl" value="/cgi-bin/dataPlotter.pl"/>
 <c:set var="i" value="0"/>
 
-<c:forEach var="row" items="${tbl}">
+<c:forEach var="row" items="${tbl.iterator}">
 
   <c:if test="${(species eq row['species'].value) || (type eq 'compound') || (type eq 'dataset')}">
 
@@ -302,7 +302,7 @@
   </c:if>
 
   <c:set var="i" value="${i +  1}"/>      
-</c:forEach>  	<%-- var="row" items="${tbl}" --%>
+</c:forEach>  	<%-- var="row" items="${tbl.iterator}" --%>
 
 
 <script type="text/javascript">

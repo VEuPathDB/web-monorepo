@@ -165,7 +165,7 @@ $( "#draggable" ).draggable({ iframeFix: '#cytoscapeweb embed' });
         <ul>
             <li><a href="javascript:void(0)" onclick="changeExperiment('')">None</a></li>
 <c:set value="${wdkRecord.tables['PathwayGraphs']}" var="pathwayGraphs"/>
-<c:forEach var="row" items="${pathwayGraphs}">
+<c:forEach var="row" items="${pathwayGraphs.iterator}">
             <li><a href="javascript:void(0)" onclick="changeExperiment('${row['internal'].value}','${row['xaxis_description'].value}')">${row['display_name'].value}</a></li>
 </c:forEach>
         </ul>

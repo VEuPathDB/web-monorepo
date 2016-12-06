@@ -16,7 +16,7 @@
 <c:set var="commentsTable" value="${requestScope.wdkRecord.tables['UserComments']}"/>
    
 <table cellspacing=8 width="60%">
-	<c:forEach var="row" items="${commentsTable.visibleRows}">
+	<c:forEach var="row" items="${commentsTable.iterator}">
 	
 		<c:set var="commentId" value="${row['comment_id'].value}"/>	
 		<c:set var="headline" value="${row['headline'].value}"/>

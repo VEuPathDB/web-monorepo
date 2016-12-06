@@ -45,7 +45,7 @@
 <div class="h3center" style="font-size:130%">
 
 <c:set var="count" value="0"/>
-<c:forEach var="row" items="${wdkRecord.tables['IsolateComments']}">
+<c:forEach var="row" items="${wdkRecord.tables['IsolateComments'].iterator}">
 <c:set var="count" value="${count +  1}"/>
 </c:forEach>
 <c:choose>
@@ -136,7 +136,7 @@
 
 <c:set value="${wdkRecord.tables['ProteinSequence']}" var="proteinSequenceTable" />
 
-<c:forEach var="row" items="${proteinSequenceTable}">
+<c:forEach var="row" items="${proteinSequenceTable.iterator}">
 
 <c:set var="proteinSeq">    
   <noindex> <%-- exclude htdig --%>    
