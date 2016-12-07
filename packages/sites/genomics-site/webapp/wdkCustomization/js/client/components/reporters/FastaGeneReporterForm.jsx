@@ -112,7 +112,7 @@ let FastaGeneReporterForm = props => {
       { /* show filter if type not genomic */
         formState.type === 'genomic' ? '' :
         <div>
-          <h3>Choose sequence selection:</h3>
+          <h3>Choose Genes or Transcripts:</h3>
           <div style={{marginLeft:"2em"}}>
             <RadioList name="sourceIdFilter" value={formState.sourceIdFilter}
                 onChange={getUpdateHandler('sourceIdFilter')} items={sourceIdFilterTypes}/>
