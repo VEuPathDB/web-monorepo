@@ -1131,14 +1131,14 @@ sub gsnapIntronCitation {
   return <<EOL;
 Note that annotated introns are indicated with bold (wider) glyphs.
    <br/><br/>
-<b>SCORE</b>: 
-  The total number of uniquely mapped reads (all samples) which map across the junction and are on the appropriate strand.  GSNAP uses splice site consensus sequences to determine strand of the mapped read.
+<b>Sum Unique Reads (ISRPM)</b>: 
+  The total number of uniquely mapped reads (all samples) which map across the junction and are on the appropriate strand.  GSNAP uses splice site consensus sequences to determine strand of the mapped read. 
   <br/><br/>
 <b>ISRPM</b>: 
   Intron Spanning Reads Per Million unique intron spanning reads and thus represents a normalized count of unique reads.
   <br/><br/>
 <b>Percent of Max</b>:
-  The percentage (Scoreof this junction / Score of maximum junction for this gene) of this junction over the maximum for this gene.
+  The percentage (Score of this junction / Score of maximum junction for this gene) of this junction over the maximum for this gene.
   <br/><br/>
 <b>Highest Sample</b>:
    The sample that has the highest ISRPM for this gene.
