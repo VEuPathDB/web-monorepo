@@ -11,6 +11,13 @@ let sequenceTypes = [
   { value: 'processed_transcript', display: 'Transcript' }
 ];
 
+let defaultSourceIdFilterValue = 'genesOnly';
+
+let sourceIdFilterTypes = [
+  { value: 'genesOnly', display: 'One sequence per gene in your result' },
+  { value: 'transcriptsOnly', display: 'One sequence per transcript in your result' }
+];
+
 let genomicAnchorValues = [
   { value: 'Start', display: 'Transcription Start***' },
   { value: 'CodeStart', display: 'Translation Start (ATG)' },
@@ -91,13 +98,27 @@ let SequenceRegionInputs = props => {
 let FastaGeneReporterForm = props => {
   let { formState, updateFormState, onSubmit } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+  let typeUpdateHandler = function(newTypeValue) {
+    // any time type changes, revert sourceIdFilter back to default value
+    updateFormState(Object.assign({}, formState, { type: newTypeValue, sourceIdFilter: defaultSourceIdFilterValue }));
+  };
   return (
     <div>
       <h3>Choose the type of sequence:</h3>
       <div style={{marginLeft:"2em"}}>
         <RadioList name="type" value={formState.type}
-            onChange={getUpdateHandler('type')} items={sequenceTypes}/>
+            onChange={typeUpdateHandler} items={sequenceTypes}/>
       </div>
+      { /* show filter if type not genomic */
+        formState.type === 'genomic' ? '' :
+        <div>
+          <h3>Choose sequence selection:</h3>
+          <div style={{marginLeft:"2em"}}>
+            <RadioList name="sourceIdFilter" value={formState.sourceIdFilter}
+                onChange={getUpdateHandler('sourceIdFilter')} items={sourceIdFilterTypes}/>
+          </div>
+        </div>
+      }
       <SequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>
       <hr/>
       <h3>Download Type:</h3>
@@ -127,7 +148,8 @@ FastaGeneReporterForm.getInitialState = () => ({
   formState: {
     attachmentType: 'plain',
     type: 'genomic',
-  
+    sourceIdFilter: defaultSourceIdFilterValue,
+
     // sequence region inputs for 'genomic'
     upstreamAnchor: 'Start',
     upstreamSign: 'plus',
