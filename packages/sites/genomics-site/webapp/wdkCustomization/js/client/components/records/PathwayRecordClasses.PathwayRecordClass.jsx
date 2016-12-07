@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router';
 import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {loadChemDoodleWeb} from '../common/Compound';
-import { CheckboxList } from 'wdk-client/Components';
+import { CheckboxList, Link } from 'wdk-client/Components';
 import { withStore, withActions } from '../../util/component';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
