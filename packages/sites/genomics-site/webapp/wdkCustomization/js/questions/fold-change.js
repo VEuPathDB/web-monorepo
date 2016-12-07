@@ -37,6 +37,7 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
         steps = (isHigh) ? bigSteps : smallSteps;
         break;
 
+      case "median":
       case "average":
         if (stepCount === 2) {
           steps = [-90, 90];
