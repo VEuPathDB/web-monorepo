@@ -94,6 +94,7 @@ export class RecordOverview extends Component {
     };
 
     let filteredGBrowseContexts = seq(Gbrowse.contexts)
+    .filter(context => context.includeInThumbnails !== false)
     // inject transcriptomicsThumbnail before protein thumbnails
     .flatMap(context => {
       if (context.gbrowse_url === 'SnpsGbrowseUrl') {

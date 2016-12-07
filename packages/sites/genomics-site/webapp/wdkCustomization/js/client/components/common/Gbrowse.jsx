@@ -6,13 +6,44 @@ import $ from 'jquery';
 import { PureComponent } from 'wdk-client/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 
+/**
+ * Each entry below is used in two scenarios:
+ *
+ *   1. To display a thumbnail in the overview section of a record page
+ *   2. To Render a gbrowse image in the place of an attribute on the record page.
+ *
+ * The structure of an entry is as follows:
+ *
+ *   type Context = {
+ *     // The name of the attribute with the gbrowse url.
+ *     gbrowse_url: string;
+ *
+ *     // The name of the section (category, attribute, or table) to link to
+ *     anchor: string;
+ *
+ *     // The display name to show for the thumbnail.
+ *     displayName: string;
+ *
+ *     // Flag to indicate if a thumbnail should be used.
+ *     // If not present, true is assumed.
+ *     includeInThumbnails?: boolean;
+ *
+ *     // Flag to indicate if context is for pbrowse.
+ *     // This was used to filter out pbrowse contexts if gene was
+ *     // not protein coding. This is not necessary any more since
+ *     // the category tree is pruned based on that, and we only show
+ *     // contexts that are in the category tree.
+ *     isPbrowse: boolean;
+ *   }
+ */
 export let contexts = [
-  // {
-  //   gbrowse_url: 'GeneModelGbrowseUrl',
-  //   displayName: 'Gene Model',
-  //   anchor: 'GeneModelGbrowseUrl',
-  //   isPbrowse: false
-  // },
+  {
+    gbrowse_url: 'GeneModelGbrowseUrl',
+    displayName: 'Gene Model',
+    anchor: 'GeneModelGbrowseUrl',
+    isPbrowse: false,
+    includeInThumbnails: false
+  },
   {
     gbrowse_url: 'SyntenyGbrowseUrl',
     displayName: 'Synteny',
