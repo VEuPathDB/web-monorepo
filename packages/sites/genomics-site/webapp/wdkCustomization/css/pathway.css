@@ -48,13 +48,6 @@
 }
 
 #eupathdb-PathwayRecord-generaSelector {
-  border: 1px solid black;
-  margin: 5px;
-  padding: 5px;
-  z-index: 500;
-  background-color: #FFF;
-  left: 425px;
-  position: relative;
   width: 620px;
 }
 

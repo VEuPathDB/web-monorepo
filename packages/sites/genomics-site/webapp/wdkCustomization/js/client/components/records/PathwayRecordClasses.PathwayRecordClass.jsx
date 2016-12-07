@@ -3,7 +3,7 @@ import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {loadChemDoodleWeb} from '../common/Compound';
-import { CheckboxList, Link } from 'wdk-client/Components';
+import { CheckboxList, Link, Dialog } from 'wdk-client/Components';
 import { withStore, withActions } from '../../util/component';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
@@ -349,7 +349,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
   constructor(props, context) {
     super(props, context);
-    this.state = {};
+    this.state = {
+      generaSelectorOpen: false
+    };
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
     this.paintCustomGenera = this.paintCustomGenera.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
@@ -403,7 +405,10 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         // dispatch action when active node data changes
         cy.on('data', 'node.eupathdb-CytoscapeActiveNode', event => {
-          this.props.setActiveNodeData(Object.assign({}, event.cyTarget.data()));
+          const { activeNodeData } = this.props.pathwayRecord;
+          if (activeNodeData && activeNodeData.id === event.cyTarget.data('id')) {
+            this.props.setActiveNodeData(Object.assign({}, event.cyTarget.data()));
+          }
         });
 
         cy.panzoom();
@@ -427,7 +432,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let sid = generaSelection.join(",");
     let arg = "type=PathwayGenera&project_id=" + projectId + "&sid=" + sid;
     cy.changeExperiment( arg, 'genus' , '1');
-    $('#eupathdb-PathwayRecord-generaSelector-wrapper').hide();
+    this.setState({ generaSelectorOpen: false });
   }
 
   loadGenera() {
@@ -613,6 +618,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           PathwayGraphs={PathwayGraphs}
           projectId={projectId}
           experimentData={experimentData}
+          onGeneraSelectorClick={() => this.setState({ generaSelectorOpen: !this.state.generaSelectorOpen })}
           cy={this.state.cy}
         />
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
@@ -623,14 +629,18 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         <br/>
           Cytoscape JS
         </div>
-        <div id="eupathdb-PathwayRecord-generaSelector-wrapper">
+        <Dialog
+          title="Genera Selector"
+          open={this.state.generaSelectorOpen}
+          onClose={() => this.setState({ generaSelectorOpen: false })}
+        >
           <GeneraSelector generaOptions={generaOptions}
                           generaSelection={this.props.pathwayRecord.generaSelection}
                           onGeneraChange={this.onGeneraChange}
                           paintCustomGenera={this.paintCustomGenera}
                           cy={this.state.cy}
                           projectId={projectId} />
-        </div>
+        </Dialog>
         <div>
           <p>
             <strong>NOTE </strong>
@@ -656,7 +666,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 });
 
 function VisMenu(props) {
-  let { cy, pathway_source, primary_key, PathwayGraphs, projectId, experimentData } = props;
+  let { cy, pathway_source, primary_key, PathwayGraphs, projectId, experimentData, onGeneraSelectorClick } = props;
   return(
     <ul id="vis-menu" className="sf-menu">
       <li>
@@ -675,8 +685,7 @@ function VisMenu(props) {
       </li>
       <li>
         <a href="javascript:void(0)">
-          Layout
-            <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
+          Layout <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ul>
           {pathway_source === "KEGG" ?
@@ -690,11 +699,7 @@ function VisMenu(props) {
       </li>
       <li>
         <a href="javascript:void(0)">
-          Paint Experiment
-          <img
-            title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map"
-            src={props.webAppUrl + "/wdk/images/question.png"}
-          />
+          Paint Experiment <img title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map" src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ul>
           <li><a href="javascript:void(0)" onClick={() => cy.changeExperiment('')}>None</a></li>
@@ -702,14 +707,10 @@ function VisMenu(props) {
         </ul>
       </li>
       <li>
-        <a href="#">
-          Paint Genera
-          <img
-            title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map " 
-            src={props.webAppUrl + "/wdk/images/question.png"}
-          />
+        <a href="javascript:void(0)">
+          Paint Genera <img title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map " src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
-        <ExperimentMenuItems experimentData={experimentData} projectId={projectId} type="PathwayGenera" cy={cy} />
+        <ExperimentMenuItems onGeneraSelectorClick={onGeneraSelectorClick} experimentData={experimentData} projectId={projectId} type="PathwayGenera" cy={cy} />
       </li>
     </ul>
   );
@@ -728,7 +729,7 @@ function PathwayGraph(props) {
 }
 
 function ExperimentMenuItems(props) {
-  let { experimentData, projectId, type, cy } = props;
+  let { experimentData, projectId, type, cy, onGeneraSelectorClick } = props;
   let entries = experimentData
     .filter(datum => {return datum.type === type && datum.projectIds.includes(projectId)})
     .reduce(function (arr, expt) {return arr.concat(expt.linkData)}, [])
@@ -745,7 +746,7 @@ function ExperimentMenuItems(props) {
       </li>
       {entries}
       <li>
-        <a href="javascript:void(0)" onClick={function() {$('#eupathdb-PathwayRecord-generaSelector-wrapper').show()}}>
+        <a href="javascript:void(0)" onClick={onGeneraSelectorClick}>
           Custom Selection
         </a>
       </li>
@@ -756,13 +757,16 @@ function ExperimentMenuItems(props) {
 function GeneraSelector(props) {
   return (
     <div id="eupathdb-PathwayRecord-generaSelector">
-      <h3>Genera Selector</h3>
-      <div className="hideMenu" onClick={function() {$('#eupathdb-PathwayRecord-generaSelector-wrapper').hide()}}>
-        <button><i className="fa fa-close"/></button>
-      </div>
-      <CheckboxList name="genera" items={props.generaOptions} value={props.generaSelection}
-                    onChange={function(newSelections) { props.onGeneraChange(newSelections)}}/>
-      <input type="submit" value="Paint" onClick={function() { props.paintCustomGenera(props.generaSelection, props.projectId, props.cy) }} />
+      <CheckboxList
+        name="genera"
+        items={props.generaOptions}
+        value={props.generaSelection}
+        onChange={props.onGeneraChange}/>
+      <input
+        style={{ margin: '10px 0' }}
+        type="submit"
+        value="Paint"
+        onClick={() => props.paintCustomGenera(props.generaSelection, props.projectId, props.cy)} />
     </div>
   );
 }
