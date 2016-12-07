@@ -226,10 +226,10 @@
 
 <hr>
 
-<div><b>Data sources:</b></div>
+<div><b>Data Sets used by this search</b></div>
 <div>
   <ul> 
-  <li><a href="getDataset.do?question=IsolateQuestions.IsolateByRFLPGenotype&display=detail#61">Toxoplasma RFLP sequences from Chunlei Su </a> </li> 
+  <li><a href="app/record/dataset/DS_5dfd0d0bb2"><i>T. gondii</i> RFLP genotypes (Chunlei Su lab)</a> </li> 
   </ul> 
 </div> 
 
