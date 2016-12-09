@@ -22,6 +22,34 @@
     </c:otherwise>
   </c:choose>
 
+  <c:if test="${fn:length(missing_inModel_questions_by_dataset_map) gt 0 }">
+
+  <div class="ui-widget ui-state-error">
+    <h1 style="color:darkred">ALERT MISSING QUESTIONS IN MODEL (probably mispelled)</h1>
+    <table align="center">
+        <thead>
+          <tr><th>Dataset</th><th>Questions</th></tr>
+        </thead>
+        <tbody>
+          <c:forEach items="${missing_inModel_questions_by_dataset_map}" var="questionsByDataset">
+            <tr>
+              <c:set var="datasetRecord" value="${questionsByDataset.key}"/>
+              <c:set var="internalQuestions" value="${questionsByDataset.value}"/>
+              <td>${datasetRecord.attributes['display_name']}</td>
+              <td>
+                <ul>
+                  <c:forEach items="${internalQuestions}" var="question">
+                    ${question}
+                  </c:forEach>
+                </ul>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+      <br/><br/>
+  	</div>
+	</c:if>
   <c:if test="${fn:length(uncategorized_questions_by_dataset_map) gt 0}">
     <div class="ui-widget ui-state-error">
       <p><strong>The following questions are not categorized, or are in multiple categories.
