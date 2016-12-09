@@ -567,7 +567,7 @@ sub spliceSiteTitle {
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
   my ($gene) = $f->get_tag_values('gene_id');
   my ($utr_len) = $f->get_tag_values('utr_length');
-  $utr_len = ($utr_len < 0)? "N/A (within gene)": $utr_len;
+  $utr_len = ($utr_len < 0)? "N/A (within CDS)": $utr_len;
   my $name = $f->name;
 
   my @data;
@@ -591,7 +591,7 @@ sub spliceSiteTitleUnified {
   my ($mismatch) = $f->get_tag_values('avg_mismatches');
   my ($gene) = $f->get_tag_values('gene_id');
   my ($utr_len) = $f->get_tag_values('utr_length');
-  $utr_len = ($utr_len eq '') ? "N/A (within gene)" : $utr_len;
+  $utr_len = ($utr_len eq '') ? "N/A (within CDS)" : $utr_len;
   my $name = $f->name;
 
   # sum over count_per_mill values for each sample
