@@ -3,8 +3,10 @@ import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {loadChemDoodleWeb} from '../common/Compound';
-import { CheckboxList, Link, Dialog } from 'wdk-client/Components';
+import { CheckboxList, CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
 import { withStore, withActions } from '../../util/component';
+import * as Ontology from 'wdk-client/OntologyUtils';
+import * as Category from 'wdk-client/CategoryUtils';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
@@ -18,12 +20,7 @@ const ORTHOMCL_LINK = 'http://orthomcl.org/orthomcl/processQuestion.do?questionF
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
     try {
-      require.ensure([], function(require) {
-        const cytoscape = require('cytoscape');
-        const cyDagre = require('cytoscape-dagre');
-        const dagre = require('dagre');
-        const panzoom = require('cytoscape-panzoom');
-        require('cytoscape-panzoom/cytoscape.js-panzoom.css');
+      require([ 'cytoscape', 'cytoscape-dagre', 'dagre', 'cytoscape-panzoom', 'cytoscape-panzoom/cytoscape.js-panzoom.css' ], function(cytoscape, cyDagre, dagre, panzoom) {
         panzoom(cytoscape, $);
         cyDagre(cytoscape, dagre);
         resolve(cytoscape);
@@ -268,7 +265,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
 
             };
 
-            cy.changeExperiment = function (val, xaxis, doAllNodes) {
+            cy.changeExperiment = function (linkPrefix, xaxis, doAllNodes) {
 
                 var nodes = cy.elements('node[node_type= "enzyme"]');
 
@@ -278,9 +275,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
 
                     var ecNum = n.data("display_label");
 
-                    if (val && (doAllNodes || n.data("gene_count") > 0 )) {
-                        var linkPrefix = '/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&' + val + '&id=' + ecNum;
-                        var link = linkPrefix + '&fmt=png&h=20&w=50&compact=1';
+                    if (linkPrefix && (doAllNodes || n.data("gene_count") > 0 )) {
+                        var link = `${linkPrefix}${ecNum}&h=20&w=50&compact=1`;
 
                         n.data('image', linkPrefix);
 
@@ -332,12 +328,19 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
     });
 }
 
+const getGraphCategoryTree = state =>
+  Ontology.getTree(state.globalData.ontology, Category.isQualifying({
+    recordClassName: state.recordClass.name,
+    targetType: 'attribute',
+    scope: 'graph-internal'
+  }))
 
 const enhance = flow(
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
-    nodeList: state.globalData.location.query.node_list
+    nodeList: state.globalData.location.query.node_list,
+    graphCategoryTree: getGraphCategoryTree(state)
   })),
   withActions({
     setActiveNodeData,
@@ -345,6 +348,7 @@ const enhance = flow(
     setGeneraSelection
   })
 );
+
 const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component {
 
   constructor(props, context) {
@@ -355,6 +359,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
     this.paintCustomGenera = this.paintCustomGenera.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
+    this.onGraphChange = this.onGraphChange.bind(this);
   }
 
   componentDidMount() {
@@ -380,7 +385,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
   initVis() {
     let { primary_key, pathway_source } = this.props.record.attributes;
     let { PathwayNodes, PathwayEdges } = this.props.record.tables;
-    let { projectId } = this.props.config;
     makeCy(this.refs.cytoContainer, primary_key, pathway_source, PathwayNodes, PathwayEdges)
       .then(cy => {
 
@@ -426,6 +430,11 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
   onGeneraChange(newSelections) {
     this.props.setGeneraSelection(newSelections);
+  }
+
+  onGraphChange(graph) {
+    this.setState({graphSelectorOpen: false});
+    this.state.cy.changeExperiment(this.props.record.attributes[graph]);
   }
 
   paintCustomGenera(generaSelection, projectId, cy) {
@@ -493,10 +502,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
   render() {
     let { projectId } = this.props.config;
-    let { record } = this.props;
-    let { attributes, tables } = record;
+    let { record, graphCategoryTree } = this.props;
+    let { attributes } = record;
     let { primary_key, pathway_source } = attributes;
-    let { PathwayGraphs } = tables;
     let red = {color: 'red'};
     let generaOptions = this.loadGenera();
     let experimentData = [
@@ -615,10 +623,10 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           pathway_source={pathway_source}
           webAppUrl={this.props.config.webAppUrl}
           primary_key={primary_key}
-          PathwayGraphs={PathwayGraphs}
           projectId={projectId}
           experimentData={experimentData}
-          onGeneraSelectorClick={() => this.setState({ generaSelectorOpen: !this.state.generaSelectorOpen })}
+          onGeneraSelectorClick={() => this.setState({ generaSelectorOpen: true })}
+          onGraphSelectorClick={() => this.setState({graphSelectorOpen: true})}
           cy={this.state.cy}
         />
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
@@ -633,6 +641,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           title="Genera Selector"
           open={this.state.generaSelectorOpen}
           onClose={() => this.setState({ generaSelectorOpen: false })}
+          draggable
         >
           <GeneraSelector generaOptions={generaOptions}
                           generaSelection={this.props.pathwayRecord.generaSelection}
@@ -640,6 +649,16 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
                           paintCustomGenera={this.paintCustomGenera}
                           cy={this.state.cy}
                           projectId={projectId} />
+        </Dialog>
+        <Dialog
+          title="Experiment Selector"
+          open={this.state.graphSelectorOpen}
+          onClose={() => this.setState({graphSelectorOpen: false})}
+        >
+          <GraphSelector
+            graphCategoryTree={graphCategoryTree}
+            onChange={this.onGraphChange}
+          />
         </Dialog>
         <div>
           <p>
@@ -666,11 +685,11 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 });
 
 function VisMenu(props) {
-  let { cy, pathway_source, primary_key, PathwayGraphs, projectId, experimentData, onGeneraSelectorClick } = props;
+  let { cy, pathway_source, primary_key, projectId, experimentData, onGeneraSelectorClick, onGraphSelectorClick } = props;
   return(
     <ul id="vis-menu" className="sf-menu">
       <li>
-        <a href="#">File</a>
+        <a>File</a>
         <ul>
           <li>
             <a href="#" download={primary_key + '.png'} onClick={event => event.target.href = cy.png()}>PNG</a>
@@ -684,7 +703,7 @@ function VisMenu(props) {
         </ul>
       </li>
       <li>
-        <a href="javascript:void(0)">
+        <a>
           Layout <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ul>
@@ -698,34 +717,30 @@ function VisMenu(props) {
         </ul>
       </li>
       <li>
-        <a href="javascript:void(0)">
+        <a>
           Paint Experiment <img title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map" src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ul>
-          <li><a href="javascript:void(0)" onClick={() => cy.changeExperiment('')}>None</a></li>
-          {PathwayGraphs.map(graph => <PathwayGraph key={graph.internal} graph={graph} cy={cy} />)}
+          <li>
+            <a href="javascript:void(0)" onClick={() => cy.changeExperiment('')}>
+              None
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onClick={onGraphSelectorClick}>
+              Choose Experiment
+            </a>
+          </li>
         </ul>
       </li>
       <li>
-        <a href="javascript:void(0)">
+        <a>
           Paint Genera <img title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map " src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ExperimentMenuItems onGeneraSelectorClick={onGeneraSelectorClick} experimentData={experimentData} projectId={projectId} type="PathwayGenera" cy={cy} />
       </li>
     </ul>
   );
-}
-
-function PathwayGraph(props) {
-  let {graph, cy} = props;
-  return(
-    <li>
-      <a href="javascript:void(0)"
-         onClick={() => cy.changeExperiment(graph.internal)} >
-        {graph.display_name}
-      </a>
-    </li>
-  )
 }
 
 function ExperimentMenuItems(props) {
@@ -735,7 +750,14 @@ function ExperimentMenuItems(props) {
     .reduce(function (arr, expt) {return arr.concat(expt.linkData)}, [])
     .map((item) => {
       let id = type + "_" + projectId + "_" + item.sid;
-      return (<li key={id}><a href='javascript:void(0)' onClick={() => cy.changeExperiment('type=' + type + '&project_id=' + projectId + '&sid=' + item.sid, 'genus' , '1')}>{item.display}</a></li>);
+      let imageUrl = `/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&type=${type}&project_id=${projectId}&sid=${item.sid}&id=`;
+      return (
+        <li key={id}>
+          <a href='javascript:void(0)' onClick={() => cy.changeExperiment(imageUrl, 'genus' , '1')} >
+            {item.display}
+          </a>
+        </li>
+      );
     });
   return(
     <ul>
@@ -769,6 +791,68 @@ function GeneraSelector(props) {
         onClick={() => props.paintCustomGenera(props.generaSelection, props.projectId, props.cy)} />
     </div>
   );
+}
+
+class GraphSelector extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandedBranches: Category.getAllBranchIds(this.props.graphCategoryTree)
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleUiChange = this.handleUiChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
+  }
+
+  handleChange(selectedLeaves) {
+    this.setState({selectedLeaves});
+  }
+
+  handleUiChange(expandedBranches) {
+    this.setState({expandedBranches});
+  }
+
+  handleSubmit() {
+    this.props.onChange(this.state.selectedLeaves[0]);
+  }
+
+  handleSearchTermChange(searchTerm) {
+    this.setState({searchTerm});
+  }
+
+  render() {
+    return (
+      <div className="eupathdb-PathwayGraphSelector">
+        <div style={{ textAlign: 'center', margin: '10px 0' }}>
+          <button
+            type="submit"
+            onClick={() => this.props.onChange(this.state.selectedLeaves[0])}
+          >Paint</button>
+        </div>
+        <CategoriesCheckboxTree
+          searchBoxPlaceholder="Search for graphs"
+          autoFocusSearchBox
+          tree={this.props.graphCategoryTree}
+          leafType="graph"
+          isMultiPick={false}
+          selectedLeaves={this.state.selectedLeaves}
+          expandedBranches={this.state.expandedBranches}
+          searchTerm={this.state.searchTerm}
+          onChange={this.handleChange}
+          onUiChange={this.handleUiChange}
+          onSearchTermChange={this.handleSearchTermChange}
+        />
+        <div style={{ textAlign: 'center', margin: '10px 0' }}>
+          <button
+            type="submit"
+            onClick={() => this.props.onChange(this.state.selectedLeaves[0])}
+          >Paint</button>
+        </div>
+      </div>
+    );
+  }
 }
 
 /** Render pathway node details */

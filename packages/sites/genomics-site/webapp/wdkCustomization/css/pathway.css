@@ -91,3 +91,9 @@
 #vis-menu li {
   z-index: 96;
 }
+
+.eupathdb-PathwayGraphSelector {
+  width: 800px;
+  max-width: 90vw;
+  height: 80vh;
+}
