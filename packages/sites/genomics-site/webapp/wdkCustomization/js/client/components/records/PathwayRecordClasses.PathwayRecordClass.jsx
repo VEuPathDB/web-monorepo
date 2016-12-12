@@ -112,7 +112,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
             name: 'dagre',
             rankDir:'LR',
         };
-        
+
         if (pathwaySource === 'KEGG') {
             myLayout = {
                 name: 'preset',
@@ -383,9 +383,10 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
   }
 
   initVis() {
-    let { primary_key, pathway_source } = this.props.record.attributes;
+    let { primary_key, source } = this.props.record.attributes;
     let { PathwayNodes, PathwayEdges } = this.props.record.tables;
-    makeCy(this.refs.cytoContainer, primary_key, pathway_source, PathwayNodes, PathwayEdges)
+
+    makeCy(this.refs.cytoContainer, primary_key, source, PathwayNodes, PathwayEdges)
       .then(cy => {
 
         // listener for when nodes and edges are clicked
@@ -504,7 +505,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let { projectId } = this.props.config;
     let { record, graphCategoryTree } = this.props;
     let { attributes } = record;
-    let { primary_key, pathway_source } = attributes;
+    let { primary_key, source } = attributes;
     let red = {color: 'red'};
     let generaOptions = this.loadGenera();
     let experimentData = [
@@ -620,7 +621,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
       <div id="eupathdb-PathwayRecord-cytoscape">
         {this.renderError()}
         <VisMenu
-          pathway_source={pathway_source}
+          source={source}
           webAppUrl={this.props.config.webAppUrl}
           primary_key={primary_key}
           projectId={projectId}
@@ -675,7 +676,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
               onClose={this.clearActiveNodeData}
               wdkConfig={this.props.config}
               nodeData={this.props.pathwayRecord.activeNodeData}
-              pathwaySource={pathway_source}
+              pathwaySource={source}
             />
           )}
         </div>
@@ -685,7 +686,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 });
 
 function VisMenu(props) {
-  let { cy, pathway_source, primary_key, projectId, experimentData, onGeneraSelectorClick, onGraphSelectorClick } = props;
+  let { cy, source, primary_key, projectId, experimentData, onGeneraSelectorClick, onGraphSelectorClick } = props;
   return(
     <ul id="vis-menu" className="sf-menu">
       <li>
@@ -707,7 +708,7 @@ function VisMenu(props) {
           Layout <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
         </a>
         <ul>
-          {pathway_source === "KEGG" ?
+          {source === "KEGG" ?
             <li key='Preset'><a href="javascript:void(0)" onClick={() => cy.changeLayout('preset')}>Kegg</a></li> :
             ""
           }
