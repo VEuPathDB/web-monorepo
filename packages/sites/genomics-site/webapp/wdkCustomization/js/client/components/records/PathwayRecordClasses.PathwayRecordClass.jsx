@@ -332,7 +332,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     return child.data("node_identifier");
                 });
 
-                parent.data("childrenNodes", children);
+                
+                parent.data("childrenNodes", children.join('<br>'));
             }
         });
 
