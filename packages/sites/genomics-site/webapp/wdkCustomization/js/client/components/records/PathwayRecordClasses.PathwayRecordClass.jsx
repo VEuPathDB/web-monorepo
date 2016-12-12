@@ -325,7 +325,15 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
             }
            
 
+            var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
+            for (var i = 0; i < nodesOfNodes.length; i++) {
+                var parent = nodesOfNodes[i];
+                var children = parent.children().map(function(child) {
+                    return child.data("node_identifier");
+                });
 
+                parent.data("childrenNodes", children);
+            }
         });
 
         return cy;
@@ -872,7 +880,8 @@ class NodeDetails extends React.Component {
     const type = this.props.nodeData.node_type;
     const details = type === 'enzyme' ? <EnzymeNodeDetails {...this.props}/>
                 : type === 'molecular entity' ? <MolecularEntityNodeDetails {...this.props}/>
-                : type === 'metabolic process' ? <MetabolicProcessNodeDetails {...this.props}/>
+                  : type === 'metabolic process' ? <MetabolicProcessNodeDetails {...this.props}/>
+                  : type === 'nodeOfNodes' ? <NodeOfNodesNodeDetails {...this.props}/>
                 : null;
 
     return (
@@ -910,20 +919,14 @@ function EnzymeNodeDetails(props) {
            <p><b>Enzyme Name:</b> {name}</p>
       )}  
 
-      {gene_count && (
+
+      {gene_count > 0&& (
         <div>
-          <b>Count of Genes which match this Node:</b>
-              {gene_count}
+            <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + display_label}>Show {gene_count} gene(s) which match this EC Number</a>
         </div>
       )}
 
-      {gene_count && (
-        <div>
-          <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + display_label}>Search for Gene(s) By EC Number</a>
-        </div>
-      )}
-
-      <p><a href={ORTHOMCL_LINK + display_label + '*'}>Search for OrthoMCL groups with this EC Number</a></p>
+      <p><a href={ORTHOMCL_LINK + display_label + '*'}>Search on OrthoMCL for groups with this EC Number</a></p>
 
       {image && (
         <div>
@@ -945,7 +948,7 @@ function MolecularEntityNodeDetails(props) {
       <p><b>ID:</b> {node_identifier}</p>
 
       {name && (
-        <p><b>Name:</b> {safeHtml(name)}</p>
+           <p><b>Name:</b> {safeHtml(name)}</p>
       )}
 
       {node_identifier && (
@@ -966,16 +969,28 @@ function MolecularEntityNodeDetails(props) {
 }
 
 function MetabolicProcessNodeDetails(props) {
-  let { nodeData: { name, display_label }, pathwaySource } = props;
-  return (
-    <div>
-      <div><b>Pathway: </b>
-        <Link to={'/record/pathway/' + pathwaySource + '/' + name}>{display_label}</Link>
-      </div>
-      <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + name}>View in KEGG</a></div>
-    </div>
-  );
+    let { nodeData: { name, display_label }, pathwaySource } = props;
+    return (
+        <div>
+            <div><b>Pathway: </b>
+                <Link to={'/record/pathway/' + pathwaySource + '/' + name}>{display_label}</Link>
+            </div>
+            <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + name}>View in KEGG</a></div>
+        </div>
+    );
 }
+
+
+function NodeOfNodesNodeDetails(props) {
+    let { nodeData: { name, childrenNodes }, pathwaySource } = props;
+    return (
+        <div>
+            <div><b>Node Group: </b><p>{safeHtml(childrenNodes)}</p>
+            </div>
+        </div>
+    );
+}
+
 
 
 /**
