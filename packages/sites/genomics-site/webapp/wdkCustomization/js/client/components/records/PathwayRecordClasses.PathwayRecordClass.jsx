@@ -176,9 +176,9 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     shape: 'rectangle',
                     'background-color': 'white',
                     label: 'data(display_label)',
-                    width:60,
-                    height:30,
-                    'font-size':13
+                    width:50,
+                    height:25,
+                    'font-size':10
                 },
             },
 
@@ -195,6 +195,11 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     'border-width':0,
                     'background-image':'data(image)',
                     'background-fit':'contain',
+                    label:'data(name)',
+                    'text-valign': 'bottom',
+                    'text-halign': 'center',
+                    'text-margin-y':-9,
+                    'font-size':6
                 },
             },
 
