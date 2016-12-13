@@ -256,10 +256,6 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     'border-width':1,
                     'boder-style':'solid',
                     'boder-color':'black',
-                    'padding-left':0,
-                    'padding-right':0,
-                    'padding-top':0,
-                    'padding-bottom':0,
                 },
             },
             
@@ -291,8 +287,11 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     label:'data(name)',
                     'text-valign': 'bottom',
                     'text-halign': 'center',
-                    'text-margin-y':-9,
-                    'font-size':6
+                    'text-margin-y':-7,
+                    'font-size':9,
+                    'text-wrap':'wrap',
+                    'text-max-width':'data(width)',
+
                 },
             },
 
@@ -300,11 +299,14 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
             {
                 selector: 'node[node_type= "molecular entity"][!image]',
                 style: {
-                    shape: 'ellipse',
-                    'background-color': '#0000ff',
-                    width:15,
-                    height:15,
 
+                    shape: 'ellipse',
+                    width:'label',
+                    height:'label', 
+                    'background-color':'white',
+                    'background-image-opacity':0,
+                    'border-width':0,
+                    label:'data(name)'
                 },
             },
             {
@@ -421,11 +423,12 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                 // Find all enzymes which have an input which is a non root compound and  change node shape for input compounds which are roots
                 // Do the same for leaves
                 // the effect here is to hide side compounds 
-                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').roots()).outgoers('node[node_type="enzyme"]').incomers('node[node_type= "molecular entity"]').roots().style({'label':null, shape: 'ellipse','background-color': '#0000ff',width:15,height:15, 'background-image-opacity':0,});
-                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').leaves()).incomers('node[node_type="enzyme"]').outgoers('node[node_type= "molecular entity"]').leaves().style({'label':null, shape: 'ellipse','background-color': '#0000ff',width:15,height:15, 'background-image-opacity':0,});
+                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').roots()).outgoers('node[node_type="enzyme"]').incomers('node[node_type= "molecular entity"]').roots().style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0});
+                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').leaves()).incomers('node[node_type="enzyme"]').outgoers('node[node_type= "molecular entity"]').leaves().style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0});
             }
            
 
+//'#0000ff'
             var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
             for (var i = 0; i < nodesOfNodes.length; i++) {
                 var parent = nodesOfNodes[i];
@@ -538,10 +541,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         this.setState({ cy });
 
-          
-
-          console.log("PROPS=");
-          console.log(this.props);
       })
       .catch(error => {
         this.props.setPathwayError(error);
@@ -928,13 +927,14 @@ function MolecularEntityNodeDetails(props) {
 }
 
 function MetabolicProcessNodeDetails(props) {
-    let { nodeData: { name, display_label }, pathwaySource } = props;
+    let { nodeData: { name, node_identifier }, pathwaySource } = props;
     return (
         <div>
-            <div><b>Pathway: </b>
-                <Link to={'/record/pathway/' + pathwaySource + '/' + name}>{display_label}</Link>
-            </div>
-            <div><a href={'http://www.genome.jp/dbget-bin/www_bget?' + name}>View in KEGG</a></div>
+            <p><b>Pathway: </b>
+                <Link to={'/record/pathway/' + pathwaySource + '/' + node_identifier}>{name}</Link>
+            </p>
+
+            <p><a href={'http://www.genome.jp/dbget-bin/www_bget?' + node_identifier}>View in KEGG</a></p>
         </div>
     );
 }
