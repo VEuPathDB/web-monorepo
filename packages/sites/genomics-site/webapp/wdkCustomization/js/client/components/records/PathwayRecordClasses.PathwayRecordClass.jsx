@@ -634,7 +634,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           </p>
 
             {this.props.nodeList && (
-                 <p>The following Input Nodes are being highlighted in <span style={purple}>purple:  {this.props.nodeList}</span>.</p>
+                 <p>The following Nodes are being highlighted in <span style={purple}>purple:  {this.props.nodeList}</span>.</p>
             )}
             <br />
         </div>
