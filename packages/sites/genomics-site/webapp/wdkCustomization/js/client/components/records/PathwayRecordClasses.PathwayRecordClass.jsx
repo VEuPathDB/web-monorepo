@@ -256,6 +256,10 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     'border-width':1,
                     'boder-style':'solid',
                     'boder-color':'black',
+                    'padding-left':0,
+                    'padding-right':0,
+                    'padding-top':0,
+                    'padding-bottom':0,
                 },
             },
             
