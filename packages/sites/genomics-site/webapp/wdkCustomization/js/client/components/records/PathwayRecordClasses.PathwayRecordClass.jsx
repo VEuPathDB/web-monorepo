@@ -526,7 +526,20 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         cy.panzoom();
 
+        //decorate nodes from node_list
+        if(this.props.nodeList) {
+            var nodesToHighlight = this.props.nodeList.split(/,\s*/g);
+            nodesToHighlight.forEach(function(n){
+                cy.elements("node[node_identifier = '" + n + "']").style({'background-color': '#f0afe7'});
+            });
+        }
+
         this.setState({ cy });
+
+          
+
+          console.log("PROPS=");
+          console.log(this.props);
       })
       .catch(error => {
         this.props.setPathwayError(error);
@@ -615,6 +628,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let { attributes } = record;
     let { primary_key, source } = attributes;
     let red = {color: 'red'};
+    let purple = {color: 'purple'};
     let generaOptions = this.loadGenera();
 
     return (
@@ -666,8 +680,12 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             <strong>NOTE </strong>
             Click on nodes for more info.  Nodes highlighted in <span style={red}>red</span> are EC numbers that we
             have mapped to at least one gene. The nodes, as well as the info box, can be repositioned by dragging.
-            <br />
           </p>
+
+            {this.props.nodeList && (
+                 <p>The following Input Nodes are being highlighted in <span style={purple}>purple:  {this.props.nodeList}</span>.</p>
+            )}
+            <br />
         </div>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div ref="cytoContainer" className="eupathdb-PathwayRecord-CytoscapeContainer" />
