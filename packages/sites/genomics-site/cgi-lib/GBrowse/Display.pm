@@ -641,9 +641,10 @@ sub colorBySpliceSiteCount {
   $f = $f->parent if (! $f->get_tag_values('count_per_mill'));
   my ($count) = $f->get_tag_values('count_per_mill');
   my ($dom) = ($f->get_tag_values('is_dominant'));
+  my ($type) = ($f->get_tag_values('type'));
   my $strand = $f->strand;
 
-  if ($strand eq '+'){
+  if (($strand eq '+' && $type eq 'SpliceSite') || ($strand eq '-' && $type eq 'Poly A')) {
     if ($dom && $fg){
       # if splice site is dominant, return red for foreground color
       return 'red';
