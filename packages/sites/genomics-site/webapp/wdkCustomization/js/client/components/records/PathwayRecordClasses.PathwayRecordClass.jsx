@@ -17,6 +17,99 @@ const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
 const ORTHOMCL_LINK = 'http://orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
   'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=*';
 
+let generaPresets = [
+  {
+    projectIds: ['AmoebaDB'],
+    values: "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+    display: "Acanthamoeba,Entamoeba,Human,Mouse"
+  },
+  {
+    projectIds: ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
+    values: "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
+    display: "Apicomplexa"
+  },
+  {
+    projectIds: ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
+    values: "Cryptosporidium,Toxoplasma,Plasmodium,Homo,Mus",
+    display: "Cryp,Toxo,Plas,Human,Mouse"
+  },
+  {
+    projectIds: ['GiardiaDB'],
+    values: "Giardia,Spironucleus,Homo,Mus",
+    display: "Giardia,Spironucleus,Human,Mouse"
+  },
+  {
+    projectIds: ['FungiDB'],
+    values: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+    display: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+  },
+  {
+    projectIds: ["MicrosporidiaDB"],
+    values: "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+    display: "Microsporidia,Human,Mouse"
+  },
+  {
+    projectIds: ["SchistoDB"],
+    values: "Schistosoma,Homo,Mus",
+    display: "Schistosoma,Human,Mouse"
+  },
+  {
+    projectIds: ["TrichDB"],
+    values: "Trichomonas,Homo,Mus",
+    display: "Trichomonas,Human,Mouse"
+  },
+  {
+    projectIds: ["TriTrypDB"],
+    values: "Crithidia,Leishmania,Trypanosoma,Homo,Mus",
+    display: "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
+  },
+  {
+    projectIds: ["TriTrypDB"],
+    values: "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus",
+    display: "Cryp,Toxo,Plas,Tryp,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
+    display: "Acanthamoeba,Entamoeba,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Giardia,Spironucleus,Homo,Mus",
+    display: "Giardia,Spironucleus,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
+    display: "Cryp,Toxo,Plas,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
+    display: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
+    display: "Microsporidia,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Schistosoma,Homo,Mus",
+    display: "Schistosoma,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Trichomonas,Homo,Mus",
+    display: "Trichomonas,Human,Mouse"
+  },
+  {
+    projectIds: ['HostDB'],
+    values: "Crithidia,Leishmania,Trypanosoma,Homo,Mus",
+    display: "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
+  }
+];
+
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
     try {
@@ -281,14 +374,15 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     var ecNum = n.data("display_label");
 
                     if (linkPrefix && (doAllNodes || n.data("gene_count") > 0 )) {
-                        var link = `${linkPrefix}${ecNum}&h=20&w=50&compact=1`;
+                        var link = linkPrefix + ecNum;
+                        var smallLink = link + '&h=20&w=50&compact=1';
 
-                        n.data('image', linkPrefix);
+                        n.data('image', link);
 
                         n.data('hasImage', true);
 
                         n.style({
-                            'background-image':link,
+                            'background-image':smallLink,
                             'background-fit':'contain',
                         });
 
@@ -454,7 +548,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
   paintCustomGenera(generaSelection, projectId, cy) {
     let sid = generaSelection.join(",");
-    let arg = "type=PathwayGenera&project_id=" + projectId + "&sid=" + sid;
+    let arg = "/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&type=PathwayGenera&project_id=" + projectId + "&sid=" + sid + "&id=";
     cy.changeExperiment( arg, 'genus' , '1');
     this.setState({ generaSelectorOpen: false });
   }
@@ -522,114 +616,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let { primary_key, source } = attributes;
     let red = {color: 'red'};
     let generaOptions = this.loadGenera();
-    let experimentData = [
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['AmoebaDB'],
-        "linkData":[
-          {"sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-            "display": "Acanthamoeba,Entamoeba,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
-        "linkData": [
-          {
-            "sid": "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
-            "display": "Apicomplexa"
-          },
-          {
-            "sid": "Cryptosporidium,Toxoplasma,Plasmodium,Homo,Mus",
-            "display": "Cryp,Toxo,Plas,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['GiardiaDB'],
-        "linkData": [
-          {
-            "sid": "Giardia,Spironucleus,Homo,Mus",
-            "display": "Giardia,Spironucleus,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['FungiDB'],
-        "linkData": [
-          {
-            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["MicrosporidiaDB"],
-        "linkData": [
-          {
-            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-            "display": "Microsporidia,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["SchistoDB"],
-        "linkData": [
-          {
-            "sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["TrichDB"],
-        "linkData": [
-          {
-            "sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ["TriTrypDB"],
-        "linkData": [
-          {
-            "sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
-          },
-          {
-            "sid": "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus", "display": "Cryp,Toxo,Plas,Tryp,Human,Mouse"
-          }
-        ]
-      },
-      {
-        "type": "PathwayGenera",
-        "projectIds": ['HostDB'],
-        "linkData": [
-          {
-            "sid": "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-            "display": "Acanthamoeba,Entamoeba,Human,Mouse"
-          },
-          {"sid": "Giardia,Spironucleus,Homo,Mus", "display": "Giardia,Spironucleus,Human,Mouse"},
-          {"sid": "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus", "display": "Cryp,Toxo,Plas,Human,Mouse"},
-          {
-            "sid": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-            "display": "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-          },
-          {
-            "sid": "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-            "display": "Microsporidia,Human,Mouse"
-          },
-          {"sid": "Schistosoma,Homo,Mus", "display": "Schistosoma,Human,Mouse"},
-          {"sid": "Trichomonas,Homo,Mus", "display": "Trichomonas,Human,Mouse"},
-          {"sid": "Crithidia,Leishmania,Trypanosoma,Homo,Mus", "display": "Crithidia,Leishmania,Trypanosoma,Human,Mouse"}
-        ]
-      }
-    ];
 
     return (
       <div id="eupathdb-PathwayRecord-cytoscape">
@@ -639,7 +625,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           webAppUrl={this.props.config.webAppUrl}
           primary_key={primary_key}
           projectId={projectId}
-          experimentData={experimentData}
           onGeneraSelectorClick={() => this.setState({ generaSelectorOpen: true })}
           onGraphSelectorClick={() => this.setState({graphSelectorOpen: true})}
           cy={this.state.cy}
@@ -660,6 +645,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         >
           <GeneraSelector generaOptions={generaOptions}
                           generaSelection={this.props.pathwayRecord.generaSelection}
+                          presets={generaPresets.filter(preset => preset.projectIds.includes(projectId))}
                           onGeneraChange={this.onGeneraChange}
                           paintCustomGenera={this.paintCustomGenera}
                           cy={this.state.cy}
@@ -700,7 +686,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 });
 
 function VisMenu(props) {
-  let { cy, source, primary_key, projectId, experimentData, onGeneraSelectorClick, onGraphSelectorClick } = props;
+  let { cy, source, primary_key, onGeneraSelectorClick, onGraphSelectorClick } = props;
   return(
     <ul id="vis-menu" className="sf-menu">
       <li>
@@ -733,77 +719,71 @@ function VisMenu(props) {
       </li>
       <li>
         <a>
-          Paint Experiment <img title="Choose an Experiment, to display its (average) expression profile on enzymes in the Map" src={props.webAppUrl + "/wdk/images/question.png"} />
+          Paint Enzymes <img src={props.webAppUrl + "/wdk/images/question.png"}
+            title="Choose an Experiment to display each enzyme's corresponding average expression profile, or choose a Genera set to display their presence or absence for all enzymes in the Map"/>
         </a>
         <ul>
           <li>
             <a href="javascript:void(0)" onClick={() => cy.changeExperiment('')}>
-              None
+              Clear all
             </a>
           </li>
           <li>
             <a href="javascript:void(0)" onClick={onGraphSelectorClick}>
-              Choose Experiment
+              By Experiment
+            </a>
+          </li>
+          <li>
+            <a href="javascript:void(0)" onClick={onGeneraSelectorClick}>
+              By Genera
             </a>
           </li>
         </ul>
       </li>
-      <li>
-        <a>
-          Paint Genera <img title="Choose a Genera set, to display the presence or absence of these for all enzymes in the Map " src={props.webAppUrl + "/wdk/images/question.png"} />
-        </a>
-        <ExperimentMenuItems onGeneraSelectorClick={onGeneraSelectorClick} experimentData={experimentData} projectId={projectId} type="PathwayGenera" cy={cy} />
-      </li>
     </ul>
   );
 }
 
-function ExperimentMenuItems(props) {
-  let { experimentData, projectId, type, cy, onGeneraSelectorClick } = props;
-  let entries = experimentData
-    .filter(datum => {return datum.type === type && datum.projectIds.includes(projectId)})
-    .reduce(function (arr, expt) {return arr.concat(expt.linkData)}, [])
-    .map((item) => {
-      let id = type + "_" + projectId + "_" + item.sid;
-      let imageUrl = `/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&type=${type}&project_id=${projectId}&sid=${item.sid}&id=`;
-      return (
-        <li key={id}>
-          <a href='javascript:void(0)' onClick={() => cy.changeExperiment(imageUrl, 'genus' , '1')} >
-            {item.display}
-          </a>
-        </li>
-      );
-    });
-  return(
-    <ul>
-      <li>
-        <a href="javascript:void(0)" onClick={() => cy.changeExperiment('')}>
-          None
-        </a>
-      </li>
-      {entries}
-      <li>
-        <a href="javascript:void(0)" onClick={onGeneraSelectorClick}>
-          Custom Selection
-        </a>
-      </li>
-    </ul>
-  );
-}
 
 function GeneraSelector(props) {
   return (
     <div id="eupathdb-PathwayRecord-generaSelector">
-      <CheckboxList
-        name="genera"
-        items={props.generaOptions}
-        value={props.generaSelection}
-        onChange={props.onGeneraChange}/>
-      <input
-        style={{ margin: '10px 0' }}
-        type="submit"
-        value="Paint"
-        onClick={() => props.paintCustomGenera(props.generaSelection, props.projectId, props.cy)} />
+      <div className="eupathdb-PathwayGeneraInfo">
+        <i
+          className="fa fa-info-circle"
+          style={{ color: 'blue' }}
+        /> Choose a preconfigured selection, or make a custom selection below.
+      </div>
+      <div className="eupathdb-PathwayGeneraPresets">
+        <h3 className="eupathdb-PathwayGeneraHeading">Preconfigured Selection</h3>
+        <select
+          className="eupathdb-PathwayGeneraPresetOptions"
+          onChange={event => props.onGeneraChange(event.target.value.split(','))}
+        >
+          <option value="">None</option>
+          {props.presets.map(preset =>
+            <option key={preset.values} value={preset.values}>
+              {preset.display}
+            </option>
+          )}
+        </select>
+      </div>
+      <div className="eupathdb-PathwayGeneraCustom">
+        <h3 className="eupathdb-PathwayGeneraHeading">Custom Selection</h3>
+        <CheckboxList
+          name="genera"
+          items={props.generaOptions}
+          value={props.generaSelection}
+          onChange={props.onGeneraChange}/>
+      </div>
+      <div
+        style={{ margin: '10px 0', textAlign: 'center' }}
+      >
+        <input
+          type="submit"
+          value="Paint"
+          onClick={() => props.paintCustomGenera(props.generaSelection, props.projectId, props.cy)} />
+      </div>
     </div>
   );
 }
@@ -931,7 +911,7 @@ function EnzymeNodeDetails(props) {
 
       {image && (
         <div>
-          <img src={image + '&fmt=png&h=250&w=350'}/>
+          <img src={image + '&h=250&w=350'}/>
         </div>
 
       )}

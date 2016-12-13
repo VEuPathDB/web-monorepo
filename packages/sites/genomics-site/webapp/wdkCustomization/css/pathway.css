@@ -66,11 +66,6 @@
   margin-right: 0.5em;
 }
 
-/* Pathways CSS */
-#eupathdb-PathwayRecord-generaSelector h3 {
-  display: inline;
-}
-
 #eupathdb-PathwayRecord-generaSelector .hideMenu {
   float: right;
   width: 12px;
@@ -96,4 +91,27 @@
   width: 800px;
   max-width: 90vw;
   height: 80vh;
+}
+
+.eupathdb-PathwayGeneraInfo {
+  font-size: 110%;
+  font-style: italic;
+  margin: 10px 0;
+}
+
+.eupathdb-PathwayGeneraHeading {
+  padding: 10px 0;
+}
+
+.eupathdb-PathwayGeneraPresets {
+  margin: 10px 0;
+}
+
+.eupathdb-PathwayGeneraPresetEntry {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.eupathdb-PathwayGeneraPresetOptions {
+  font-size: smaller !important;
 }
