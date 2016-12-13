@@ -530,7 +530,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         if(this.props.nodeList) {
             var nodesToHighlight = this.props.nodeList.split(/,\s*/g);
             nodesToHighlight.forEach(function(n){
-                cy.elements("node[node_identifier = '" + n + "']").style({'background-color': '#f0afe7'});
+                cy.elements("node[node_identifier = '" + n + "']").style({'border-color': 'purple', 'border-width':4});
             });
         }
 
