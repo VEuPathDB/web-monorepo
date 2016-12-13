@@ -318,13 +318,20 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     'border-width':0,
                 },
             },
+            {
+              selector: 'node.eupathdb-CytoscapeHighlightNode',
+              style: {
+                'border-color': 'purple',
+                'border-width': '4px'
+              }
+            },
 
-          {
-            selector: 'node.eupathdb-CytoscapeActiveNode',
-            style: {
-              'border-width': '6px',
-            }
-          },
+            {
+              selector: 'node.eupathdb-CytoscapeActiveNode',
+              style: {
+                'border-width': '6px',
+              }
+            },
 
             {
               selector: 'node[node_type= "enzyme"][gene_count > 0]',
@@ -521,10 +528,12 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         //decorate nodes from node_list
         if(this.props.nodeList) {
-            var nodesToHighlight = this.props.nodeList.split(/,\s*/g);
-            nodesToHighlight.forEach(function(n){
-                cy.elements("node[node_identifier = '" + n + "']").style({'border-color': 'purple', 'border-width':4});
-            });
+          var nodesToHighlight = this.props.nodeList.split(/,\s*/g);
+          cy.nodes().removeClass('eupathdb-CytoscapeHighlightNode');
+          nodesToHighlight.forEach(function(n){
+            cy.elements("node[node_identifier = '" + n + "']")
+            .addClass('eupathdb-CytoscapeHighlightNode');
+          });
         }
 
         this.setState({ cy });
