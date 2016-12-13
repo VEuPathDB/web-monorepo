@@ -436,19 +436,13 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
     });
 }
 
-const getGraphCategoryTree = state =>
-  Ontology.getTree(state.globalData.ontology, Category.isQualifying({
-    recordClassName: state.recordClass.name,
-    targetType: 'attribute',
-    scope: 'graph-internal'
-  }))
-
 const enhance = flow(
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
     nodeList: state.globalData.location.query.node_list,
-    graphCategoryTree: getGraphCategoryTree(state)
+    experimentCategoryTree: getExperimentCategoryTree(state),
+    generaCategoryTree: getGeneraCategoryTree(state)
   })),
   withActions({
     setActiveNodeData,
@@ -465,9 +459,8 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
       generaSelectorOpen: false
     };
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
-    this.paintCustomGenera = this.paintCustomGenera.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
-    this.onGraphChange = this.onGraphChange.bind(this);
+    this.onExperimentChange = this.onExperimentChange.bind(this);
   }
 
   componentDidMount() {
@@ -550,66 +543,17 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.props.setActiveNodeData(null);
   }
 
-  onGeneraChange(newSelections) {
-    this.props.setGeneraSelection(newSelections);
-  }
-
-  onGraphChange(graph) {
-    this.setState({graphSelectorOpen: false});
+  onExperimentChange(graph) {
     this.state.cy.changeExperiment(this.props.record.attributes[graph]);
+    this.setState({graphSelectorOpen: false});
   }
 
-  paintCustomGenera(generaSelection, projectId, cy) {
+  onGeneraChange(generaSelection) {
+    let {projectId} = this.props.config;
     let sid = generaSelection.join(",");
-    let arg = "/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&type=PathwayGenera&project_id=" + projectId + "&sid=" + sid + "&id=";
-    cy.changeExperiment( arg, 'genus' , '1');
+    let imageLink = "/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&type=PathwayGenera&project_id=" + projectId + "&sid=" + sid + "&id=";
+    this.state.cy.changeExperiment( imageLink, 'genus' , '1');
     this.setState({ generaSelectorOpen: false });
-  }
-
-  loadGenera() {
-    return [
-      {value:'Acanthamoeba', display:'Acanthamoeba'},
-      {value:'Entamoeba', display:'Entamoeba'},
-      {value:'Naegleria', display:'Naegleria'},
-      {value:'Cryptosporidium', display:'Cryptosporidium'},
-      {value:'Chromera', display:'Chromera'},
-      {value:'Vitrella', display:'Vitrella'},
-      {value:'Eimeria', display:'Eimeria'},
-      {value:'Gregarina', display:'Gregarina'},
-      {value:'Neospora', display:'Neospora'},
-      {value:'Toxoplasma', display:'Toxoplasma'},
-      {value:'Plasmodium', display:'Plasmodium'},
-      {value:'Babesia', display:'Babesia'},
-      {value:'Theileria', display:'Theileria'},
-      {value:'Giardia', display:'Giardia'},
-      {value:'Spironucleus', display:'Spironucleus'},
-      {value:'Crithidia', display:'Crithidia'},
-      {value:'Leishmania', display:'Leishmania'},
-      {value:'Trypanosoma', display:'Trypanosoma'},
-      {value:'Anncaliia', display:'Anncaliia'},
-      {value:'Edhazardia', display:'Edhazardia'},
-      {value:'Encephalitozoon', display:'Encephalitozoon'},
-      {value:'Enterocytozoon', display:'Enterocytozoon'},
-      {value:'Nematocida', display:'Nematocida'},
-      {value:'Nosema', display:'Nosema'},
-      {value:'Spraguea', display:'Spraguea'},
-      {value:'Vavraia', display:'Vavraia'},
-      {value:'Vittaforma', display:'Vittaforma'},
-      {value:'Schistosoma', display:'Schistosoma'},
-      {value:'Aspergillus', display:'Aspergillus'},
-      {value:'Phytophthora', display:'Phytophthora'},
-      {value:'Pythium', display:'Pythium'},
-      {value:'Aphanomyces', display:'Aphanomyces'},
-      {value:'Saprolegnia', display:'Saprolegnia'},
-      {value:'Neurospora', display:'Neurospora'},
-      {value:'Albugo', display:'Albugo'},
-      {value:'Fusarium', display:'Fusarium'},
-      {value:'Coccidioides', display:'Coccidioides'},
-      {value:'Talaromyces', display:'Talaromyces'},
-      {value:'Trichomonas', display:'Trichomonas'},
-      {value:'Homo', display:'Homo'},
-      {value:'Mus', display:'Mus'}
-    ];
   }
 
   renderError() {
@@ -624,12 +568,11 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
   render() {
     let { projectId } = this.props.config;
-    let { record, graphCategoryTree } = this.props;
+    let { record, experimentCategoryTree } = this.props;
     let { attributes } = record;
     let { primary_key, source } = attributes;
     let red = {color: 'red'};
     let purple = {color: 'purple'};
-    let generaOptions = this.loadGenera();
 
     return (
       <div id="eupathdb-PathwayRecord-cytoscape">
@@ -657,22 +600,30 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           onClose={() => this.setState({ generaSelectorOpen: false })}
           draggable
         >
-          <GeneraSelector generaOptions={generaOptions}
+          <GraphSelector
+            isMultiPick
+            displayName="Genera"
+            graphCategoryTree={this.props.generaCategoryTree}
+            onChange={this.onGeneraChange}
+          />
+          {/*<GeneraSelector generaOptions={generaOptions}
                           generaSelection={this.props.pathwayRecord.generaSelection}
                           presets={generaPresets.filter(preset => preset.projectIds.includes(projectId))}
                           onGeneraChange={this.onGeneraChange}
                           paintCustomGenera={this.paintCustomGenera}
                           cy={this.state.cy}
-                          projectId={projectId} />
+                          projectId={projectId} />*/}
         </Dialog>
         <Dialog
           title="Experiment Selector"
           open={this.state.graphSelectorOpen}
           onClose={() => this.setState({graphSelectorOpen: false})}
+          draggable
         >
           <GraphSelector
-            graphCategoryTree={graphCategoryTree}
-            onChange={this.onGraphChange}
+            displayName="Experiments"
+            graphCategoryTree={experimentCategoryTree}
+            onChange={this.onExperimentChange}
           />
         </Dialog>
         <div>
@@ -828,7 +779,7 @@ class GraphSelector extends React.Component {
   }
 
   handleSubmit() {
-    this.props.onChange(this.state.selectedLeaves[0]);
+    this.props.onChange(this.props.isMultiPick ? this.state.selectedLeaves : this.state.selectedLeaves[0]);
   }
 
   handleSearchTermChange(searchTerm) {
@@ -841,15 +792,15 @@ class GraphSelector extends React.Component {
         <div style={{ textAlign: 'center', margin: '10px 0' }}>
           <button
             type="submit"
-            onClick={() => this.props.onChange(this.state.selectedLeaves[0])}
+            onClick={this.handleSubmit}
           >Paint</button>
         </div>
         <CategoriesCheckboxTree
-          searchBoxPlaceholder="Search for graphs"
+          searchBoxPlaceholder={`Search for ${this.props.displayName}`}
           autoFocusSearchBox
           tree={this.props.graphCategoryTree}
           leafType="graph"
-          isMultiPick={false}
+          isMultiPick={!!this.props.isMultiPick}
           selectedLeaves={this.state.selectedLeaves}
           expandedBranches={this.state.expandedBranches}
           searchTerm={this.state.searchTerm}
@@ -860,7 +811,7 @@ class GraphSelector extends React.Component {
         <div style={{ textAlign: 'center', margin: '10px 0' }}>
           <button
             type="submit"
-            onClick={() => this.props.onChange(this.state.selectedLeaves[0])}
+            onClick={this.handleSubmit}
           >Paint</button>
         </div>
       </div>
@@ -1033,4 +984,66 @@ function setGeneraSelection(generaSelection) {
     type: 'pathway-record/genera-selected',
     payload: { generaSelection }
   };
+}
+
+function getExperimentCategoryTree(state) {
+  return Ontology.getTree(state.globalData.ontology, Category.isQualifying({
+    recordClassName: state.recordClass.name,
+    targetType: 'attribute',
+    scope: 'graph-internal'
+  }))
+}
+
+/**
+ * Create a CategoryTree for genera.
+ * Category.createNode takes four params:
+ *   1. id
+ *   2. displayName
+ *   3. description (optional)
+ *   4. array of child nodes (optional)
+ */
+function getGeneraCategoryTree() {
+  return Category.createNode('genera', 'Genera', null, [
+    Category.createNode('Acanthamoeba', 'Acanthamoeba'),
+    Category.createNode('Entamoeba', 'Entamoeba'),
+    Category.createNode('Naegleria', 'Naegleria'),
+    Category.createNode('Cryptosporidium', 'Cryptosporidium'),
+    Category.createNode('Chromera', 'Chromera'),
+    Category.createNode('Vitrella', 'Vitrella'),
+    Category.createNode('Eimeria', 'Eimeria'),
+    Category.createNode('Gregarina', 'Gregarina'),
+    Category.createNode('Neospora', 'Neospora'),
+    Category.createNode('Toxoplasma', 'Toxoplasma'),
+    Category.createNode('Plasmodium', 'Plasmodium'),
+    Category.createNode('Babesia', 'Babesia'),
+    Category.createNode('Theileria', 'Theileria'),
+    Category.createNode('Giardia', 'Giardia'),
+    Category.createNode('Spironucleus', 'Spironucleus'),
+    Category.createNode('Crithidia', 'Crithidia'),
+    Category.createNode('Leishmania', 'Leishmania'),
+    Category.createNode('Trypanosoma', 'Trypanosoma'),
+    Category.createNode('Anncaliia', 'Anncaliia'),
+    Category.createNode('Edhazardia', 'Edhazardia'),
+    Category.createNode('Encephalitozoon', 'Encephalitozoon'),
+    Category.createNode('Enterocytozoon', 'Enterocytozoon'),
+    Category.createNode('Nematocida', 'Nematocida'),
+    Category.createNode('Nosema', 'Nosema'),
+    Category.createNode('Spraguea', 'Spraguea'),
+    Category.createNode('Vavraia', 'Vavraia'),
+    Category.createNode('Vittaforma', 'Vittaforma'),
+    Category.createNode('Schistosoma', 'Schistosoma'),
+    Category.createNode('Aspergillus', 'Aspergillus'),
+    Category.createNode('Phytophthora', 'Phytophthora'),
+    Category.createNode('Pythium', 'Pythium'),
+    Category.createNode('Aphanomyces', 'Aphanomyces'),
+    Category.createNode('Saprolegnia', 'Saprolegnia'),
+    Category.createNode('Neurospora', 'Neurospora'),
+    Category.createNode('Albugo', 'Albugo'),
+    Category.createNode('Fusarium', 'Fusarium'),
+    Category.createNode('Coccidioides', 'Coccidioides'),
+    Category.createNode('Talaromyces', 'Talaromyces'),
+    Category.createNode('Trichomonas', 'Trichomonas'),
+    Category.createNode('Homo', 'Homo'),
+    Category.createNode('Mus', 'Mus')
+  ]);
 }
