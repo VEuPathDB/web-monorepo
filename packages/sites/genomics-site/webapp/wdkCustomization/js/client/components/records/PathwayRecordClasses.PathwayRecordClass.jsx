@@ -1003,56 +1003,84 @@ function getExperimentCategoryTree(state) {
   }))
 }
 
-/**
- * Create a CategoryTree for genera.
- * Category.createNode takes four params:
- *   1. id
- *   2. displayName
- *   3. description (optional)
- *   4. array of child nodes (optional)
- */
+// Alias used in getGeneraCategoryTree
+//
+// Category.createNode takes four params:
+//   1. id
+//   2. displayName
+//   3. description (optional)
+//   4. array of child nodes (optional)
+const n = Category.createNode; // helper for below
+
+/** Return a category tree for genera */
 function getGeneraCategoryTree() {
-  return Category.createNode('genera', 'Genera', null, [
-    Category.createNode('Acanthamoeba', 'Acanthamoeba'),
-    Category.createNode('Entamoeba', 'Entamoeba'),
-    Category.createNode('Naegleria', 'Naegleria'),
-    Category.createNode('Cryptosporidium', 'Cryptosporidium'),
-    Category.createNode('Chromera', 'Chromera'),
-    Category.createNode('Vitrella', 'Vitrella'),
-    Category.createNode('Eimeria', 'Eimeria'),
-    Category.createNode('Gregarina', 'Gregarina'),
-    Category.createNode('Neospora', 'Neospora'),
-    Category.createNode('Toxoplasma', 'Toxoplasma'),
-    Category.createNode('Plasmodium', 'Plasmodium'),
-    Category.createNode('Babesia', 'Babesia'),
-    Category.createNode('Theileria', 'Theileria'),
-    Category.createNode('Giardia', 'Giardia'),
-    Category.createNode('Spironucleus', 'Spironucleus'),
-    Category.createNode('Crithidia', 'Crithidia'),
-    Category.createNode('Leishmania', 'Leishmania'),
-    Category.createNode('Trypanosoma', 'Trypanosoma'),
-    Category.createNode('Anncaliia', 'Anncaliia'),
-    Category.createNode('Edhazardia', 'Edhazardia'),
-    Category.createNode('Encephalitozoon', 'Encephalitozoon'),
-    Category.createNode('Enterocytozoon', 'Enterocytozoon'),
-    Category.createNode('Nematocida', 'Nematocida'),
-    Category.createNode('Nosema', 'Nosema'),
-    Category.createNode('Spraguea', 'Spraguea'),
-    Category.createNode('Vavraia', 'Vavraia'),
-    Category.createNode('Vittaforma', 'Vittaforma'),
-    Category.createNode('Schistosoma', 'Schistosoma'),
-    Category.createNode('Aspergillus', 'Aspergillus'),
-    Category.createNode('Phytophthora', 'Phytophthora'),
-    Category.createNode('Pythium', 'Pythium'),
-    Category.createNode('Aphanomyces', 'Aphanomyces'),
-    Category.createNode('Saprolegnia', 'Saprolegnia'),
-    Category.createNode('Neurospora', 'Neurospora'),
-    Category.createNode('Albugo', 'Albugo'),
-    Category.createNode('Fusarium', 'Fusarium'),
-    Category.createNode('Coccidioides', 'Coccidioides'),
-    Category.createNode('Talaromyces', 'Talaromyces'),
-    Category.createNode('Trichomonas', 'Trichomonas'),
-    Category.createNode('Homo', 'Homo'),
-    Category.createNode('Mus', 'Mus')
+  return n('genera', 'Genera', null, [
+    n('Amoebozoa', 'Amoebozoa', null, [
+      n('Acanthamoeba', 'Acanthamoeba'),
+      n('Entamoeba', 'Entamoeba'),
+      n('Naegleria', 'Naegleria')
+    ]),
+    n('Apicomplexa', 'Apicomplexa', null, [
+      n('Babesia', 'Babesia'),
+      n('Cryptosporidium', 'Cryptosporidium'),
+      n('Eimeria', 'Eimeria'),
+      n('Gregarina', 'Gregarina'),
+      n('Neospora', 'Neospora'),
+      n('Plasmodium', 'Plasmodium'),
+      n('Theileria', 'Theileria'),
+      n('Toxoplasma', 'Toxoplasma')
+    ]),
+    n('Chromerida', 'Chromerida', null, [
+      n('Chromera', 'Chromera'),
+      n('Vitrella', 'Vitrella')
+    ]),
+    n('Diplomonadida', 'Diplomonadida', null, [
+      n('Giardia', 'Giardia'),
+      n('Spironucleus', 'Spironucleus')
+    ]),
+    n('Fungi', 'Fungi', null, [
+      n('Eurotiomycetes', 'Eurotiomycetes', null, [
+        n('Aspergillus', 'Aspergillus'),
+        n('Coccidioides', 'Coccidioides'),
+        n('Talaromyces', 'Talaromyces')
+      ]),
+      n('Microsporidia', 'Microsporidia', null, [
+        n('Anncaliia', 'Anncaliia'),
+        n('Edhazardia', 'Edhazardia'),
+        n('Encephalitozoon', 'Encephalitozoon'),
+        n('Enterocytozoon', 'Enterocytozoon'),
+        n('Nematocida', 'Nematocida'),
+        n('Nosema', 'Nosema'),
+        n('Spraguea', 'Spraguea'),
+        n('Vavraia', 'Vavraia'),
+        n('Vittaforma', 'Vittaforma')
+      ]),
+      n('Sordariomycetes', 'Sordariomycetes', null, [
+        n('Fusarium', 'Fusarium'),
+        n('Neurospora', 'Neurospora')
+      ])
+    ]),
+    n('Kinetoplastida', 'Kinetoplastida', null, [
+      n('Crithidia', 'Crithidia'),
+      n('Leishmania', 'Leishmania'),
+      n('Trypanosoma', 'Trypanosoma')
+    ]),
+    n('Oomycetes', 'Oomycetes', null, [
+      n('Albugo', 'Albugo'),
+      n('Aphanomyces', 'Aphanomyces'),
+      n('Phytophthora', 'Phytophthora'),
+      n('Pythium', 'Pythium'),
+      n('Saprolegnia', 'Saprolegnia')
+    ]),
+    n('Trichomonadida', 'Trichomonadida', null, [
+      n('Trichomonas', 'Trichomonas')
+    ]),
+    n('Schistosomatidae', 'Schistosomatidae', null, [
+      n('Schistosoma', 'Schistosoma')
+    ]),
+    n('Mammalia', 'Mammalia', null, [
+      n('Homo', 'Homo'),
+      n('Mus', 'Mus')
+    ])
   ]);
 }
