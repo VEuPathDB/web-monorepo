@@ -26,10 +26,23 @@ export default function QuickSearch(props) {
                     <input key={`${typeTag}(${name})`} type="hidden" name={name} value={defaultValue}/>
                   );
                 })}
-                <b><a href={'/a/showQuestion.do?questionFullName=' + question.name}>{quickSearchDisplayName}: </a></b>
-                <input type="text" className="search-box" defaultValue={searchParam.defaultValue} name={'value(' + searchParam.name + ')'}/>
-                <input name="go" value="go" type="image" src="/a/images/mag_glass.png" alt="Click to search" width="23"
-                       height="23" className="img_align_middle"/>
+                <b><a href={webAppUrl + 'showQuestion.do?questionFullName=' + question.name}>{quickSearchDisplayName}: </a></b>
+                <input
+                  type="text"
+                  className="search-box"
+                  defaultValue={searchParam.defaultValue}
+                  name={'value(' + searchParam.name + ')'}
+                />
+                <input
+                  name="go"
+                  value="go"
+                  type="image"
+                  src={webAppUrl + 'images/mag_glass.png'}
+                  alt="Click to search"
+                  width="23"
+                  height="23"
+                  className="img_align_middle"
+                />
               </form>
             </Tooltip>
           </div>

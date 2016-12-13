@@ -28,7 +28,7 @@
         projectId: "${model.projectId}",
         buildNumber: "${model.buildNumber}",
         releaseDate: "${model.releaseDate}",
-        webAppUrl: "${webAppUrl}",
+        webAppUrl: "${webAppUrl}/",
         facebookId: "${props.FACEBOOK_ID}",
         twitterId: "${props.TWITTER_ID}",
         youtubeId: "${props.YOUTUBE_ID}"
