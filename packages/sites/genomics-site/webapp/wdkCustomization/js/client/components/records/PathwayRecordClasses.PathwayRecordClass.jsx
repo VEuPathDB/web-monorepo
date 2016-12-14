@@ -324,20 +324,6 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     'border-width':0,
                 },
             },
-            {
-              selector: 'node.eupathdb-CytoscapeHighlightNode',
-              style: {
-                'border-color': 'purple',
-                'border-width': '4px'
-              }
-            },
-
-            {
-              selector: 'node.eupathdb-CytoscapeActiveNode',
-              style: {
-                'border-width': '6px',
-              }
-            },
 
             {
               selector: 'node[node_type= "enzyme"][gene_count > 0]',
@@ -346,6 +332,20 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
               },
             },
 
+            {
+                selector: 'node.eupathdb-CytoscapeHighlightNode',
+                style: {
+                    'border-color': 'purple',
+                    'border-width': '4px'
+                }
+            },
+
+            {
+                selector: 'node.eupathdb-CytoscapeActiveNode',
+                style: {
+                    'border-width': '6px',
+                }
+            },
 
 
 
