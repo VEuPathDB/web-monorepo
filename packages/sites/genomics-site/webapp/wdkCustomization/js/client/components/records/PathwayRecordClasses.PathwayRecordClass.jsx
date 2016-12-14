@@ -432,7 +432,6 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
             }
            
 
-//'#0000ff'
             var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
             for (var i = 0; i < nodesOfNodes.length; i++) {
                 var parent = nodesOfNodes[i];
@@ -443,6 +442,9 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                 
                 parent.data("childrenNodes", children.join('<br>'));
             }
+
+            cy.boxSelectionEnabled(true);
+
         });
 
         return cy;
