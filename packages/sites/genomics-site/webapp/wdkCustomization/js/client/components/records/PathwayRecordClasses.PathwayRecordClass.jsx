@@ -286,6 +286,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     width:'data(width)',
                     height:'data(height)',
                     'border-width':0,
+                    'background-color': 'white',
                     'background-image':'data(image)',
                     'background-fit':'contain',
                     label:'data(name)',
