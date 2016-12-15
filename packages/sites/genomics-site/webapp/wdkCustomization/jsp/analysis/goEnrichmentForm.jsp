@@ -67,15 +67,15 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">GO Association Sources</span>
+                    <span style="font-weight:bold">Evidence</span>
                     <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.sourcesParamHelp)}"/>
+                        title="${fn:escapeXml(viewModel.evidenceParamHelp)}"/>
                   </label>
                 </td>
                 <td>
                   <div><a href="#select-all">Select all</a> | <a href="#clear-all">Clear all</a></div>
-                  <c:forEach var="item" items="${viewModel.sourceOptions}">
-                    <label><input checked="checked" type="checkbox" name="goAssociationsSources" value="${item.term}"/> ${item.display}</label><br/>
+                  <c:forEach var="item" items="${viewModel.evidCodeOptions}">
+                    <label><input checked="checked" type="checkbox" name="goEvidenceCodes" value="${item.term}"/> ${item.display}</label><br/>
                   </c:forEach>
                 </td>
               </tr>
