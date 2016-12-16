@@ -551,7 +551,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         });
 
           cy.minZoom(0.1);
-          cy.maxZoom(1);
+          cy.maxZoom(2);
           cy.panzoom();
 
 
