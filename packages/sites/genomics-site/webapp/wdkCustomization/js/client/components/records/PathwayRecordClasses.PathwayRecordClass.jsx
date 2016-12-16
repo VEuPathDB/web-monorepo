@@ -180,10 +180,26 @@ function makeNode(obj) {
         vc.loadMolecule(structure);
 
         var dataURL = canvas.toDataURL();
-        
+
         obj.image = dataURL;
-        obj.width = (xy.x + 35) * .75;
-        obj.height = (xy.y + 35)  * .75;
+
+        var widthPadding = 35;        
+        var defaultScaling = 0.75;
+        var maxSize = 100;
+
+        obj.width = (xy.x + widthPadding) * defaultScaling;
+        obj.height = (xy.y + widthPadding)  * defaultScaling;
+
+        // scale further if width above a max
+        if(obj.width > maxSize || obj.height > maxSize) {
+            var widthScalingFactor = maxSize / obj.width ;
+            var heightScalingFactor = maxSize / obj.height ;
+
+            var scalingFactor = Math.min(widthScalingFactor, heightScalingFactor);
+            obj.width = obj.width * scalingFactor;
+            obj.height = obj.height * scalingFactor;
+        }
+
     }
 
 
@@ -534,7 +550,10 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           }
         });
 
-        cy.panzoom();
+          cy.minZoom(0.1);
+          cy.maxZoom(1);
+          cy.panzoom();
+
 
         //decorate nodes from node_list
         if(this.props.nodeList) {
