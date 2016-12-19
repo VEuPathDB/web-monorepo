@@ -80,6 +80,7 @@ h4 {
 }
 
 
+.wdk-RecordSidebarToggle,
 .wdk-RecordNavigationSectionHeader {
   color: #777;
 }
@@ -244,10 +245,6 @@ h4 {
   position: relative;
   top: -1em;
   font-weight: normal;
-}
-
-.wdk-Record-sidebar-title {
-  padding: .4em 1.5em .4em 1em;
 }
 
 .eupathdb-TranscriptTabContent .wdk-RecordSection {
