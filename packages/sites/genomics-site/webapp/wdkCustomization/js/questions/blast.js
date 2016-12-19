@@ -4,6 +4,7 @@ $(function() {
 });
 
 function setUpBlastPage() {
+  disableTargetTypeOnRevise();
 
   // alert user if their sequence input will cause an error
   validateInputsOnSubmit();
@@ -28,6 +29,15 @@ function setUpBlastPage() {
   // set these based on whatever defaults come out of the question page
   changeQuestion();
   changeAlgorithms();
+}
+
+function disableTargetTypeOnRevise() {
+  $('#BlastQuerySequence').closest('form').filter('.is-revise')
+    .find('input[name="array(BlastDatabaseType)"]')
+    .prop('disabled', true)
+    .parent()
+    .css({ color: 'gray' })
+    .attr('title', 'Target Data Type cannot be changed when revising a search.');
 }
 
 // error messages for sequence validation
