@@ -61,6 +61,13 @@ export function getBestPosition(element, aroundElement = null) {
   return { offestTop: centerTop, offsetLeft: centerLeft };
 }
 
+/**
+ * When the img loads, scroll the the element whose id matches the location
+ * hash value. If no such elements existed, abort. This assumes that the
+ * location is kept up-to-date as the user scrolls. A possible UX improvement
+ * would be to track a anchor element here, so it is indepdendent of the rest
+ * of the system. (See https://github.com/WICG/ScrollAnchoring).
+ */
 export function adjustScrollOnLoad(img) {
   if (img != null) {
     img.addEventListener('load', function() {
@@ -68,8 +75,8 @@ export function adjustScrollOnLoad(img) {
       let target = document.getElementById(hash.slice(1));
       if (target) {
         let imageRect = img.getBoundingClientRect();
-        if (imageRect.top < 44) {
-          console.log('scrolling to target', target, performance.now());
+        let targetRect = target.getBoundingClientRect();
+        if (imageRect.top < targetRect.top) {
           target.scrollIntoView();
         }
       }
