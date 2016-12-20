@@ -10,13 +10,12 @@
 
   <c:set var="profilesetParam" value="${paramGroup['profileset']}"/>
   <c:set var="regulated_dirParam" value="${paramGroup['regulated_dir']}"/>
-  <c:set var="fold_changeParam" value="${paramGroup['fold_change']}"/>
+  <c:set var="fold_change_compoundParam" value="${paramGroup['fold_change_compound']}"/>
 
   <c:set var="samples_fc_ref_genericParam" value="${paramGroup['samples_fc_ref_generic']}"/>
   <c:set var="min_max_avg_refParam" value="${paramGroup['min_max_avg_ref']}"/>
   <c:set var="samples_fc_comp_genericParam" value="${paramGroup['samples_fc_comp_generic']}"/>
   <c:set var="min_max_avg_compParam" value="${paramGroup['min_max_avg_comp']}"/>
-
 
   <div class="fold-change ui-helper-clearfix" data-controller="eupathdb.foldChange.init">
 
@@ -43,10 +42,10 @@
       <div class="param-line">
         <span class="text">with a
           <span class="prompt">Fold change</span> &amp;gt;=</span>
-        <imp:stringParamInput qp="${fold_changeParam}"/>
+        <imp:stringParamInput qp="${fold_change_compoundParam}"/>
         <imp:image class="help-link"
           style="cursor:pointer"
-          title="${fn:escapeXml(fold_changeParam.help)}"
+          title="${fn:escapeXml(fold_change_compoundParam.help)}"
           src="wdk/images/question.png" />
       </div>
 
@@ -75,19 +74,6 @@
           <div id="samples_fc_ref_genericaaa">
             <imp:enumParamInput qp="${samples_fc_ref_genericParam}"/>
           </div>
-          <!--
-          <div id="min_max_avg_refaaa" class="param-line">
-            <span class="text">Calculate each gene's fold change using its</span>
-            <imp:enumParamInput qp="${min_max_avg_refParam}"/>
-            <imp:image class="help-link"
-              style="cursor:pointer"
-              title="${fn:escapeXml(min_max_avg_refParam.help)}"
-              src="wdk/images/question.png" />
-            <span class="text">
-              <span class="prompt">expression value</span>
-              in my chosen reference samples.</span>
-          </div>
-          -->
         </div>
 
         <div id="min_max_avg_compaaa" class="param-line">
@@ -99,6 +85,7 @@
             title="${fn:escapeXml(min_max_avg_compParam.help)}"
             src="wdk/images/question.png" />
         </div>
+
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
             in the following <span class="samples-tab comparison">Comparison Samples</span>
@@ -114,22 +101,9 @@
           <div id="samples_fc_comp_genericaaa">
             <imp:enumParamInput qp="${samples_fc_comp_genericParam}"/>
           </div>
-          <!--
-          <div id="min_max_avg_compaaa" class="param-line">
-            <span class="text">Calculate each gene's fold change using its</span>
-            <imp:enumParamInput qp="${min_max_avg_compParam}"/>
-            <imp:image class="help-link"
-            style="cursor:pointer"
-            title="${fn:escapeXml(min_max_avg_compParam.help)}"
-            src="wdk/images/question.png" /
-            <span class="text">
-              <span class="prompt">expression value</span>
-              in my chosen comparison samples.</span>
-          </div>
-          -->
         </div>
       </div>
-    </div> <!-- .fold-change-params -->
+    </div>
 
     <div class="fold-change-graphic">
       <div class="title">Example showing one compound that would meet search criteria</div>
