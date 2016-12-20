@@ -1,10 +1,10 @@
 wdk.namespace("eupathdb.foldChange", function(ns, $) {
   "use strict";
 
-  var SampleCollection = function(type) {
+  var SampleCollection = function(type, valueType) {
     this.type = type;
     this.samplesLabel = type[0].toUpperCase() + type.slice(1);
-    this.operationLabel = type[0].toUpperCase() + type.slice(1);
+    this.operationLabel = valueType.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1);}) + ' ' + type[0].toUpperCase() + type.slice(1);
     this.samples = [];
   };
 
@@ -163,11 +163,19 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
   var setScope = function($scope, $form) {
 
     $scope.foldChange = $form.find("#fold_change").val();
+    $scope.foldChangeCompound = $form.find("#fold_change_compound").val();
     $scope.direction = $form.find("select[name*='regulated_dir']").val();
     $scope.refCount = $form.find("input[name*='samples_fc_ref_generic']:checked").length;
     $scope.compCount = $form.find("input[name*='samples_fc_comp_generic']:checked").length;
     $scope.refOperation = $form.find("select[name*='min_max_avg_ref']").find(":selected").text();
     $scope.compOperation = $form.find("select[name*='min_max_avg_comp']").find(":selected").text();
+
+    if ($scope.foldChangeCompound) {
+        $scope.valueType = "metabolite level";
+        $scope.foldChange = $scope.foldChangeType;
+    } else {
+        $scope.valueType = "expression value";
+    }
 
     $scope.className = [
       $scope.direction.replace(/\s+/g, "-"),
@@ -183,18 +191,18 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
 
     if ($scope.multipleRef) {
       refFormula = '<span class="reference-label">' +
-        $scope.refOperation + '</span> expression value in ' +
+        $scope.refOperation + '</span> ' + $scope.valueType + ' in ' +
         '<span class="reference-label">reference</span> samples';
     } else {
-      refFormula = '<span class="reference-label">reference</span> expression value';
+      refFormula = '<span class="reference-label">reference</span> ' + $scope.valueType;
     }
 
     if ($scope.multipleComp) {
       compFormula = '<span class="comparison-label">' +
-        $scope.compOperation + '</span> expression value in ' +
+        $scope.compOperation + '</span> ' + $scope.valueType + ' in ' +
         '<span class="comparison-label">comparison</span> samples';
     } else {
-      compFormula = '<span class="comparison-label">comparison</span> expression value';
+      compFormula = '<span class="comparison-label">comparison</span> ' + $scope.valueType;
     }
 
     if ($scope.direction === "up-regulated") {
@@ -329,15 +337,15 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
       var leftSampleGroups = [],
           rightSampleGroups = [];
       if ($scope.refCount) {
-        leftSampleGroups.push(new SampleCollection("reference")
+        leftSampleGroups.push(new SampleCollection("reference", $scope.valueType)
             .setup($scope.refCount, $scope.refOperation));
-        rightSampleGroups.push(new SampleCollection("reference")
+        rightSampleGroups.push(new SampleCollection("reference", $scope.valueType)
             .setup($scope.refCount, $scope.refOperation, true));
       }
       if ($scope.compCount) {
-        leftSampleGroups.push(new SampleCollection("comparison")
+        leftSampleGroups.push(new SampleCollection("comparison", $scope.valueType)
             .setup($scope.compCount, $scope.compOperation, true));
-        rightSampleGroups.push(new SampleCollection("comparison")
+        rightSampleGroups.push(new SampleCollection("comparison", $scope.valueType)
             .setup($scope.compCount, $scope.compOperation));
       }
       html = twoDirectionTmpl({
@@ -348,8 +356,8 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
       });
     } else {
       var sampleCollections = [];
-      var refSamples = new SampleCollection("reference");
-      var compSamples = new SampleCollection("comparison");
+      var refSamples = new SampleCollection("reference", $scope.valueType);
+      var compSamples = new SampleCollection("comparison", $scope.valueType);
 
       refSamples.setup($scope.refCount, $scope.refOperation, $scope.direction === "down-regulated");
       compSamples.setup($scope.compCount, $scope.compOperation, $scope.direction === "up-regulated");
