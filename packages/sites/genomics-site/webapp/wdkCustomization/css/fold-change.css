@@ -327,6 +327,7 @@
 .fold-change-graphic .left-samples .sample-operation,
 .fold-change-graphic .right-samples .sample-operation {
   width: 7em;
+  height: 2em;
   right: -9px;
   font-size: 75%;
 }
