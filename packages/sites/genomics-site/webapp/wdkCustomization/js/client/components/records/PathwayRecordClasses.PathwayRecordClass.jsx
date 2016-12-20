@@ -364,6 +364,15 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                 }
             },
 
+          {
+            selector: 'node:selected',
+            style: {
+              'overlay-color': '#2196F3',
+              'overlay-opacity': .3,
+              'overlay-padding': 0
+            }
+          },
+
 
 
         ] ,
@@ -529,18 +538,18 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         // want the latter to be called after the former, we are invoking
         // the `event.stopPropagation()` method so it is not triggered.
 
-        cy.nodes().on('tap', event => {
+        cy.nodes().on('tap', withoutModifier(event => {
           var node = event.cyTarget;
           this.props.setActiveNodeData(Object.assign({}, node.data()));
           cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
           node.addClass('eupathdb-CytoscapeActiveNode');
           event.stopPropagation();
-        });
+        }));
 
-        cy.on('tap', () => {
+        cy.on('tap', withoutModifier(() => {
           cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
           this.props.setActiveNodeData(null);
-        });
+        }));
 
         // dispatch action when active node data changes
         cy.on('data', 'node.eupathdb-CytoscapeActiveNode', event => {
@@ -550,10 +559,12 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           }
         });
 
-          cy.minZoom(0.1);
-          cy.maxZoom(2);
-          cy.panzoom();
-
+        cy.minZoom(0.1);
+        cy.maxZoom(2);
+        cy.panzoom({
+          minZoom: 0.1,
+          maxZoom: 2
+        });
 
         //decorate nodes from node_list
         if(this.props.nodeList) {
@@ -1109,4 +1120,11 @@ function getGeneraCategoryTree() {
       n('Mus', 'Mus')
     ])
   ]);
+}
+
+function withoutModifier(f) {
+  return function skipModified(event) {
+    let { altKey, ctrlKey, metaKey, shiftKey } = event.originalEvent;
+    if (!(altKey || ctrlKey || metaKey || shiftKey)) f(event);
+  }
 }
