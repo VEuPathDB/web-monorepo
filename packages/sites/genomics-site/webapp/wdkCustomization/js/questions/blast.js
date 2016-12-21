@@ -71,6 +71,12 @@ function validateInputsOnSubmit() {
         if (sequence.indexOf(">") != -1) {
             return handleValidationFailure(onlyOneSequenceMessage, event);
         }
+
+        // allow value to be passed to server
+        $('#BlastQuerySequence').closest('form')
+          .find('input[name="array(BlastDatabaseType)"]')
+          .prop('disabled', false);
+
         // passed all our tests; appears to be a single valid BLAST sequence
         return true;
     });
