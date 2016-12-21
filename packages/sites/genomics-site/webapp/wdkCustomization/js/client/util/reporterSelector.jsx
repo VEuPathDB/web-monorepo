@@ -38,6 +38,8 @@ export function selectReporterComponent(reporterName, recordClassName) {
       return TabularReporterForm;
     case 'srt':
       switch (recordClassName) {
+        // both gene and transcript use the same reporter
+        case 'GeneRecordClasses.GeneRecordClass':
         case 'TranscriptRecordClasses.TranscriptRecordClass':
           return FastaGeneReporterForm;
         case 'SequenceRecordClasses.SequenceRecordClass':
