@@ -947,6 +947,8 @@ sub gsnapUnifiedIntronJunctionTitle {
   my ($percSamp) = $f->get_tag_values('PerMaxSample'); 
   my ($isrCovRatio) = $f->get_tag_values('IsrCovRatio'); 
   my ($isrAvgCovRatio) = $f->get_tag_values('IsrAvgCovRatio'); 
+  my ($normIsrCovRatio) = $f->get_tag_values('NormIsrCovRatio'); 
+  my ($normIsrAvgCovRatio) = $f->get_tag_values('NormIsrAvgCovRatio'); 
   my ($isrpmExpRatio) = $f->get_tag_values('IsrpmExpRatio'); 
 #  my ($avgExpRatio) = $f->get_tag_values('AvgExpRatio'); 
   my ($isrpmAvgExpRatio) = $f->get_tag_values('IsrpmAvgExpRatio'); 
@@ -972,14 +974,16 @@ sub gsnapUnifiedIntronJunctionTitle {
   my @isrpmAvgExpRatio_arr = split /\|/, $isrpmAvgExpRatio;
   my @isrCovRatio_arr = split /\|/, $isrCovRatio;
   my @isrAvgCovRatio_arr = split /\|/, $isrAvgCovRatio;
+  my @normIsrCovRatio_arr = split /\|/, $normIsrCovRatio;
+  my @normIsrAvgCovRatio_arr = split /\|/, $normIsrAvgCovRatio;
 
   ##First build the html table so can capture max isrpm and thus maxRatio
   my $count = 0;
   my $html;
   if($intronPercent){
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ FPKM</th><th>ISR/Cov</th><th>% Sample</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ FPKM</th><th>ISR/Cov</th><th>Norm ISR/Cov</th><th>% Sample</th></tr>";
   }else{
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th><th>ISR/AvgCov</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th><th>ISR/AvgCov</th><th>Norm ISR/AvgCov</th></tr>";
   }
 
   my $maxRatio = [0,0,'sample here','experiment'];
@@ -994,11 +998,13 @@ sub gsnapUnifiedIntronJunctionTitle {
     my @rt = split /,/, $isrpmAvgExpRatio_arr[$count];
     my @rcs = split /,/, $isrCovRatio_arr[$count];
     my @rct = split /,/, $isrAvgCovRatio_arr[$count];
+    my @nrcs = split /,/, $normIsrCovRatio_arr[$count];
+    my @nrct = split /,/, $normIsrAvgCovRatio_arr[$count];
     my @ps = split /,/, $percSamp_arr[$count];
     
     my $i = 0;
     for($i; $i < $#sa + 1; $i++) {
-      $maxRatio = [ $isrpm[$i],$intronPercent ? $rcs[$i] : $rct[$i], $sa[$i], $exp ] if $isrpm[$i] > $maxRatio->[0];
+      $maxRatio = [ $isrpm[$i],$intronPercent ? $rcs[$i] : $rct[$i], $sa[$i], $exp, $intronPercent ? $nrcs[$i] : $nrct[$i] ] if $isrpm[$i] > $maxRatio->[0];
       $sumIsrpm += $isrpm[$i];
       
       if($i == 0) {
@@ -1007,9 +1013,9 @@ sub gsnapUnifiedIntronJunctionTitle {
         $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
       }
       if($intronPercent){
-        $html .= "<td>$rs[$i]</td><td>$rcs[$i]</td><td>$ps[$i]</td></tr>";
+        $html .= "<td>$rs[$i]</td><td>$rcs[$i]</td><td>$nrcs[$i]</td><td>$ps[$i]</td></tr>";
       }else{
-        $html .= "<td>$rt[$i]</td><td>$rct[$i]</td></tr>";
+        $html .= "<td>$rt[$i]</td><td>$rct[$i]</td><td>$nrct[$i]</td></tr>";
       }
     }
     $count++;
@@ -1021,7 +1027,7 @@ sub gsnapUnifiedIntronJunctionTitle {
   push @data, [ '<b>Sum Unique Reads (ISRPM):</b>'     => "<b>$totalScore ($sumIsrpm)</b>" ];
   push @data, [ '<b>Percent of Max:</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
   push @data, [ '<b>Highest Sample (ISRPM):</b>'  => "<b>$maxRatio->[3]: $maxRatio->[2] ($maxRatio->[0])</b>"];
-  push @data, [ $intronPercent ? '<b>Best ISR / Coverage:</b>' : '<b>Best ISR / avg(Coverage)</b>'  => "<b>$maxRatio->[1]</b>"];
+  push @data, [ $intronPercent ? '<b>Best ISR / Coverage (Normalized):</b>' : '<b>Best ISR / avg(Coverage)</b>'  => "<b>$maxRatio->[1] ($maxRatio->[4])</b>"];
 
 
   push @data, [ $html ];
