@@ -365,8 +365,6 @@ sub getPbrowseOntologyCategoryFromTrackName {
 sub getOntologyCategoryFromTrackName {
   my ($trackName, $allTracks, $optionalTerminus, $optionalScope) = @_;
 
-  print STDERR Dumper $trackName;
-
   my $scope = $optionalScope ? $optionalScope : 'gbrowse';
 
   if($self->{_ontology_category_from_track_name}->{$trackName}) {
@@ -466,16 +464,24 @@ sub getSyntenySubtracks {
     $sh->execute();
     my @rv;
     my @synTypes = ('span','gene');
+
+    my $i = 1;
     while (my ($organism, $publicAbbrev, $phylum, $kingdom, $genus, $species, $class)= $sh->fetchrow_array()){
 	foreach my $synType (@synTypes) { 
 
+          # strip off "-" and "." from public abbrev
+          my $cleanPublicAbbrev = $publicAbbrev;
+          $cleanPublicAbbrev =~ s/[\.-]//g;
+
         my $displaySynType = $synType eq 'span' ? 'contig' : 'genes';
 	my $displayName = ":$publicAbbrev $displaySynType";
-	my $urlName = "=${publicAbbrev}_$synType";
+	my $urlName = "=${cleanPublicAbbrev}_$synType";
 	my $synRow = [$displayName, $kingdom, $class, $phylum, $genus, $species, $organism, $synType, $urlName];
+
 	push @rv, $synRow;
 	}
-}
+    }
+
     $sh->finish();
     return @rv;
 }
