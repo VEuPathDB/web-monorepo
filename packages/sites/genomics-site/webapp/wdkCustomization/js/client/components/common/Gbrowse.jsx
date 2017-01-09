@@ -107,9 +107,15 @@ export let contexts = [
 ];
 
 const GbrowseLink = ({ url }) =>
-  <div style={{ textAlign: 'center', margin: 6 }}>
-    <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in genome browser</a>
-  </div>
+    <div style={{ textAlign: 'center', margin: 6 }}>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in genome browser</a>
+</div>
+
+const PbrowseLink = ({ url }) =>
+    <div style={{ textAlign: 'center', margin: 6 }}>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in protein browser</a>
+</div>
+
 
 export function GbrowseContext(props) {
   let { attribute, record } = props;
@@ -127,9 +133,9 @@ export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
   return (
     <div className="eupathdb-GbrowseContext">
-      <GbrowseLink url={url}/>
+      <PbrowseLink url={url}/>
       <GbrowseImage url={url} includeImageMap={true} />
-      <GbrowseLink url={url}/>
+      <PbrowseLink url={url}/>
     </div>
   );
 }
