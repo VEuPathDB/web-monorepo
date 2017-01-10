@@ -75,6 +75,7 @@
     <imp:script src="wdkCustomization/js/questions/dataset-searches.js"/>
     <imp:script src="wdkCustomization/js/questions/fold-change.js"/>
     <imp:script src="wdkCustomization/js/questions/radio-params.js"/>
+    <imp:script src="wdkCustomization/js/questions/uniq-value-params.js"/>
     <imp:script src="wdkCustomization/js/questions/isolatesByTaxon.js"/>
     <imp:script src="wdkCustomization/js/questions/snp.js"/>
     <imp:script src="wdkCustomization/js/analysis/enrichment.js"/>
