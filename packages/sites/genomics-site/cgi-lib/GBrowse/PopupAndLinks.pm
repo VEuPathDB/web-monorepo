@@ -451,12 +451,8 @@ sub geneTitleGB2 {
   my $sourceId = $f->name;
   my $chr = $f->seq_id;
 
-
-
-
 #  my $loc = $f->location->to_FTstring;
 #  $loc =~ s/(\d+\.\.)/<br \/>&nbsp;&nbsp;$1/g;
-
 
   my @cdss = $f->sub_SeqFeature("CDS");
   my $loc = '';
@@ -468,21 +464,26 @@ sub geneTitleGB2 {
   my ($gene_id) = $f->get_tag_values("geneId");
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
+
+  # real OrthoMCL group identifiers begin "OG<number>_"
   my ($orthomclName) = $f->get_tag_values("orthomcl_name");
+  $orthomclName = ""
+    unless $orthomclName =~ /^OG\d*_/;
+
   $soTerm =~ s/\_/ /g;
   $soTerm =~ s/\b(\w)/\U$1/g;
   $soTerm .= " (pseudogene)" if $isPseudo == '1';
-  
+
   my ($product) = $f->get_tag_values("product");
   my ($taxon) = $f->get_tag_values("taxon");
-  
+
   my @utrs = $f->sub_SeqFeature("UTR");
   my $utr = '';
   foreach (@utrs) {
     next if $_->type !~ /utr/i;
     $utr .= $_->location->to_FTstring. "<br />";
   }
-  
+
   my $window = 500; # width on either side of gene
   my $linkStart = ($f->start) - $window;
   my $linkStop= ($f->stop) + $window;
@@ -493,7 +494,7 @@ sub geneTitleGB2 {
   my $baseRecordUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST} . $ENV{CONTEXT_PATH};
 
   return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseUrl','$baseRecordUrl'))};
-} 
+}
 
 
 sub sequenceAlignmentTitle {

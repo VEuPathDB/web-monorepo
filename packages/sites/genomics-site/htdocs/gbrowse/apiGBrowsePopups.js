@@ -222,10 +222,8 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   //  rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
   if (soTerm =='Protein Coding') {
     rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
-    if ( orthomcl.substring(0,3) == 'OG2') {
+    if ( orthomcl != '') {
       rows.push(twoColRow('OrthoMCL', orthomclLink));
-    } else {
-      rows.push(twoColRow('OrthoMCL', orthomcl));
     }
   }
   rows.push(twoColRow('Links:', gbLink + " | " + recordLink));
