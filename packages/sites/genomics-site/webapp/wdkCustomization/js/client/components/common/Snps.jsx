@@ -35,8 +35,8 @@ export class SnpsAlignmentForm extends PureComponent {
             dependedValue={{ organismSinglePick: [ organism ] }}
             onChange={this.handleChange} />
         <div className="form-group">
-          <strong>Include macrodata in the output: 
-          <input name="macrodata" value="1" type="checkbox"/>
+          <strong>Include metadata in the output: 
+          <input name="metadata" value="1" type="checkbox"/>
 	  </strong>
         </div>
 
