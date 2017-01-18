@@ -960,6 +960,7 @@ sub gsnapUnifiedIntronJunctionTitle {
   my ($matchesGeneStrand) = $f->get_tag_values('MatchesGeneStrand'); 
   my ($isReversed) = $f->get_tag_values('IsReversed'); 
   my ($annotIntron) = $f->get_tag_values('AnnotatedIntron'); 
+  my ($gene_source_id) = $f->get_tag_values('GeneSourceId'); 
 
   my $start = $f->start;
   my $stop = $f->stop;
@@ -982,9 +983,9 @@ sub gsnapUnifiedIntronJunctionTitle {
   my $count = 0;
   my $html;
   if($intronPercent){
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ FPKM</th><th>ISR/Cov</th><th>Norm ISR/Cov</th><th>% Sample</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ FPKM</th><th>ISR/Cov</th><th>% Sample</th></tr>";
   }else{
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th><th>ISR/AvgCov</th><th>Norm ISR/AvgCov</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th><th>ISR/AvgCov</th></tr>";
   }
 
   my $maxRatio = [0,0,'sample here','experiment'];
@@ -1005,7 +1006,7 @@ sub gsnapUnifiedIntronJunctionTitle {
     
     my $i = 0;
     for($i; $i < $#sa + 1; $i++) {
-      $maxRatio = [ $isrpm[$i],$intronPercent ? $rcs[$i] : $rct[$i], $sa[$i], $exp, $intronPercent ? $nrcs[$i] : $nrct[$i] ] if $isrpm[$i] > $maxRatio->[0];
+      $maxRatio = [ $isrpm[$i],$intronPercent ? $rcs[$i] : $rct[$i], $sa[$i], $exp, $intronPercent ? $rcs[$i] : $rct[$i] ] if $isrpm[$i] > $maxRatio->[0];
       $sumIsrpm += $isrpm[$i];
       
       if($i == 0) {
@@ -1014,9 +1015,9 @@ sub gsnapUnifiedIntronJunctionTitle {
         $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
       }
       if($intronPercent){
-        $html .= "<td>$rs[$i]</td><td>$rcs[$i]</td><td>$nrcs[$i]</td><td>$ps[$i]</td></tr>";
+        $html .= "<td>$rs[$i]</td><td>$rcs[$i]</td><td>$ps[$i]</td></tr>";
       }else{
-        $html .= "<td>$rt[$i]</td><td>$rct[$i]</td><td>$nrct[$i]</td></tr>";
+        $html .= "<td>$rt[$i]</td><td>$rct[$i]</td></tr>";
       }
     }
     $count++;
@@ -1027,8 +1028,8 @@ sub gsnapUnifiedIntronJunctionTitle {
   push @data, [ '<b>Location (length):</b>'  => "<b>$start - $stop (".($stop - $start + 1).")".($annotIntron eq "Yes" ? " - Annotated</b>" : "</b>")];
   push @data, [ '<b>Sum Unique Reads (ISRPM):</b>'     => "<b>$totalScore ($sumIsrpm)</b>" ];
   push @data, [ '<b>Percent of Max:</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
-  push @data, [ '<b>Highest Sample (ISRPM):</b>'  => "<b>$maxRatio->[3]: $maxRatio->[2] ($maxRatio->[0])</b>"];
-  push @data, [ $intronPercent ? '<b>Best ISR / Coverage (Normalized):</b>' : '<b>Best ISR / avg(Coverage)</b>'  => "<b>$maxRatio->[1] ($maxRatio->[4])</b>"];
+  push @data, [ '<b>Sample with highest ISRPM:</b>'  => "<b>$maxRatio->[3]: $maxRatio->[2]</b>"];
+  push @data, [ $intronPercent ? '&nbsp;&nbsp;ISRPM, ISR/AvgCoverage '.$gene_source_id.':' : '&nbsp;&nbsp;ISRPM, ISR/AvgCoverage all genes'  => "&nbsp;&nbsp;$maxRatio->[0], $maxRatio->[1]"];
 
 
   push @data, [ $html ];
