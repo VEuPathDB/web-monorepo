@@ -38,8 +38,8 @@ let mahpicDataEntry = {
 
 /** Header */
 function Header(props) {
-  let { basketCounts, ontology, preferences, quickSearches, recordClasses,
-    showLoginForm, showLoginWarning, showLogoutWarning, user } = props;
+  let { basketCounts, ontology, preferences, quickSearches, recordClasses, user,
+    showLoginForm, showLoginWarning, showLogoutWarning, location } = props;
   let totalBasketCount = reduce(basketCounts, add, 0);
   let shouldShowGalaxyOrientation = preferences && preferences[SHOW_GALAXY_PAGE_PREFERENCE] !== 'false';
   return (
@@ -378,7 +378,7 @@ function Header(props) {
           }
         ]}/>
       </div>
-      <Announcements projectId={projectId} webAppUrl={webAppUrl} announcements={announcements}/>
+      <Announcements projectId={projectId} webAppUrl={webAppUrl} location={location} announcements={announcements}/>
     </div>
   );
 }
@@ -389,7 +389,8 @@ Header.propTypes = {
   recordClasses: PropTypes.array,
   basketCounts: PropTypes.object,
   quickSearches: PropTypes.array,
-  preferences: PropTypes.object
+  preferences: PropTypes.object,
+  location: PropTypes.object
 };
 
 let globalDataItems = Object.keys(Header.propTypes);
