@@ -72,6 +72,16 @@ EOF;
 </table>
 
 <p>
+<b>Dump <?php print $db_display_name?>DB stats to log</b></br>
+Open connection information will be recorded to the Log4J log for this webapp.</br>
+<button type="submit" id="dump_<?php print $db_display_name?>_db_connection_stats_to_log"
+        value="<?php print $db_display_name?>DB"
+        onclick="dumpDbConnectionStatsToLog('<?php print $db_display_name?>DB')">
+Dump
+</button><span id="<?php print $db_display_name?>DB_conn_stats_dumped"></span>
+</p>
+
+<p>
   <b>Configuration</b>
 </p>
 <p>

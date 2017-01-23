@@ -41,6 +41,21 @@ class OpenConnections extends JolModule {
            ',path=' . $this->path_name;
   }
 
+  /**
+   *
+   * @return boolean TRUE if operation was successful, otherwise FALSE
+   */
+  public function dumpDbConnectionStatsToLog($dbclass) {
+    $req = new JolRequest($this->jol_base_url);
+    $exec = new JolExecOperation(array(
+                'mbean' => $this->get_mbean(),
+                'operation' => "dumpOpen${dbclass}Connections",
+            ));
+    $req->add_operation($exec);
+    $response = $req->invoke();
+    return $response[0]->is_success();
+  }
+
 }
 
 ?>

@@ -53,6 +53,15 @@ function refreshWdkCacheCount() {
   });
 }
 
+function dumpDbConnectionStatsToLog(dbclass) {
+  $("#" + dbclass + "_conn_stats_dumped").load("view/dumpDbConnectionStatsToLog.php", {'dbclass': dbclass}, function(response, status, xhr) {
+  if (status == "error") {
+    var msg = "Sorry but there was an error: ";
+    $("#" + dbclass + "_conn_stats_dumped").html(msg + xhr.status + " " + xhr.statusText);
+  }
+  });
+}
+
 function resetWdkCache() {
   content = "Are you sure?<br>"
           + "<span class=\"smalltext\">"
