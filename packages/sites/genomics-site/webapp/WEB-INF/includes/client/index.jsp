@@ -20,6 +20,9 @@
     <meta charset="UTF-8">
     <imp:stylesheet href="images/${model.projectId}/favicon.ico" type="image/x-icon" rel="shortcut icon"/>
     <script>
+      // used for webpack. remove this when this can be set at build time.
+      window.__asset_path_remove_me_please__ = "${model.modelConfig.assetsUrl}/";
+
       // used by apidb to initialize wdk
       window.__WDK_CONFIG__ = {
         rootElement: "#wdk-container",
@@ -50,8 +53,8 @@
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdk/css/wdk.min.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/client.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="css/${model.projectId}.css"/>
-    <imp:script charset="utf8" src="wdk/js/wdk-common.bundle.js"/>
-    <imp:script charset="utf8" src="wdk/js/wdk-client.bundle.js" ></imp:script>
+    <imp:script charset="utf8" src="wdk-common.bundle.js"/>
+    <imp:script charset="utf8" src="wdk-client.bundle.js" ></imp:script>
     <imp:script charset="utf8" src="apidb-client.bundle.js" ></imp:script>
   </head>
   <body>

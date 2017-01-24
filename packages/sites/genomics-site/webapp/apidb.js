@@ -9,6 +9,8 @@ import 'site/wdkCustomization/css/pathway.css';
 // Include javascript files
 // Those starting with '!!script!' are loaded with script semantics
 // rather than ES module semantics (i.e., code is executed in the global scope).
+
+// This is imported solely for gbrowse.
 import 'site/wdkCustomization/js/client/main';
 import 'site/wdkCustomization/js/attributeCheckboxTree';
 import 'eupathdb/wdkCustomization/js/lib/hoverIntent';
