@@ -45,6 +45,7 @@ export class RecordOverview extends Component {
   componentWillUnmount() {
     if (this.thumbsContainer) ReactDOM.unmountComponentAtNode(this.thumbsContainer);
     window.removeEventListener('resize', this.addProductTooltip);
+    this.addProductTooltip.cancel();
   }
 
   addProductTooltip() {
