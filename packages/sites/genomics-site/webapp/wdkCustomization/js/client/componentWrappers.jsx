@@ -72,7 +72,7 @@ export function RecordController(WdkRecordController) {
       return Object.assign({}, wdkActionCreators, {
         updateBasketStatus: (...args) => (dispatch) => {
           dispatch(wdkActionCreators.updateBasketStatus(...args))
-          .then(dispatch(loadBasketCounts()));
+            .then(() => dispatch(loadBasketCounts()));
         }
       })
     }
