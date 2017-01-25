@@ -970,22 +970,17 @@ sub gsnapUnifiedIntronJunctionTitle {
   my @sample_arr = split /\|/, $samples;
   my @ur_arr    = split /\|/, $urs;
   my @isrpm_arr    = split /\|/, $isrpm;
-  my @nrs_arr    = split /\|/, $nrs;
   my @percSamp_arr = split /\|/, $percSamp;
-  my @isrpmExpRatio_arr = split /\|/, $isrpmExpRatio;
-  my @isrpmAvgExpRatio_arr = split /\|/, $isrpmAvgExpRatio;
   my @isrCovRatio_arr = split /\|/, $isrCovRatio;
   my @isrAvgCovRatio_arr = split /\|/, $isrAvgCovRatio;
-  my @normIsrCovRatio_arr = split /\|/, $normIsrCovRatio;
-  my @normIsrAvgCovRatio_arr = split /\|/, $normIsrAvgCovRatio;
 
   ##First build the html table so can capture max isrpm and thus maxRatio
   my $count = 0;
   my $html;
   if($intronPercent){
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ FPKM</th><th>ISR/Cov</th><th>% Sample</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>ISR/Cov</th><th>% MAI</th></tr>";
   }else{
-    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>Non-Unique</th><th>ISRPM/ AvgFPKM</th><th>ISR/AvgCov</th></tr>";
+    $html = "<table><tr><th>Experiment</th><th>Sample</th><th>Unique</th><th>ISRPM</th><th>ISR/AvgCov</th></tr>";
   }
 
   my $maxRatio = [0,0,'sample here','experiment'];
@@ -995,13 +990,8 @@ sub gsnapUnifiedIntronJunctionTitle {
     my @sa = split /,/, $sample_arr[$count];
     my @ur = split /,/, $ur_arr[$count];
     my @isrpm = split /,/, $isrpm_arr[$count];
-    my @nrs = split /,/, $nrs_arr[$count];
-    my @rs = split /,/, $isrpmExpRatio_arr[$count];
-    my @rt = split /,/, $isrpmAvgExpRatio_arr[$count];
     my @rcs = split /,/, $isrCovRatio_arr[$count];
     my @rct = split /,/, $isrAvgCovRatio_arr[$count];
-    my @nrcs = split /,/, $normIsrCovRatio_arr[$count];
-    my @nrct = split /,/, $normIsrAvgCovRatio_arr[$count];
     my @ps = split /,/, $percSamp_arr[$count];
     
     my $i = 0;
@@ -1010,14 +1000,14 @@ sub gsnapUnifiedIntronJunctionTitle {
       $sumIsrpm += $isrpm[$i];
       
       if($i == 0) {
-        $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
+        $html .= "<tr><td>$exp</td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td>"; 
       } else {
-        $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td><td>$nrs[$i]</td>"; 
+        $html .= "<tr><td></td><td>$sa[$i]</td><td>$ur[$i]</td><td>$isrpm[$i]</td>"; 
       }
       if($intronPercent){
-        $html .= "<td>$rs[$i]</td><td>$rcs[$i]</td><td>$ps[$i]</td></tr>";
+        $html .= "<td>$rcs[$i]</td><td>$ps[$i]</td></tr>";
       }else{
-        $html .= "<td>$rt[$i]</td><td>$rct[$i]</td></tr>";
+        $html .= "<td>$rct[$i]</td></tr>";
       }
     }
     $count++;
@@ -1025,11 +1015,13 @@ sub gsnapUnifiedIntronJunctionTitle {
   $html .= "</table>";
   
   my @data;
-  push @data, [ '<b>Location (length):</b>'  => "<b>$start - $stop (".($stop - $start + 1).")".($annotIntron eq "Yes" ? " - Annotated</b>" : "</b>")];
-  push @data, [ '<b>Sum Unique Reads (ISRPM):</b>'     => "<b>$totalScore ($sumIsrpm)</b>" ];
-  push @data, [ '<b>Percent of Max:</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
-  push @data, [ '<b>Sample with highest ISRPM:</b>'  => "<b>$maxRatio->[3]: $maxRatio->[2]</b>"];
-  push @data, [ $intronPercent ? '&nbsp;&nbsp;ISRPM, ISR/AvgCoverage '.$gene_source_id.':' : '&nbsp;&nbsp;ISRPM, ISR/AvgCoverage all genes'  => "&nbsp;&nbsp;$maxRatio->[0], $maxRatio->[1]"];
+  push @data, [ '<b>Intron Location:</b>'  => "<b>$start - $stop (".($stop - $start + 1).' nt)</b>'];
+  push @data, [ '<b>Intron Spanning Reads (ISR):</b>'     => "<b>$totalScore</b>" ];
+  push @data, [ '<b>ISR per million (ISRPM):</b>'     => "<b>$sumIsrpm</b>" ];
+  push @data, [ '<b>Gene assignment:</b>'  => "<b>$gene_source_id".($annotIntron eq "Yes" ? " - annotated intron" : "")."</b>"] if $intronPercent;
+  push @data, [ '<b>&nbsp;&nbsp;&nbsp;% of Most Abundant Intron (MAI):</b>'  => "<b>$intronPercent</b>"] if $intronPercent;
+  push @data, [ '<b>Most abundant in:</b>'  => "<b>$maxRatio->[3]: $maxRatio->[2]</b>"];
+  push @data, [ '<b>&nbsp;&nbsp;&nbsp;ISRPM (ISR /'.($annotIntron eq 'Yes' ? ' gene coverage)' : ' avg coverage)').'</b>' => "<b>$maxRatio->[0] ($maxRatio->[1])</b>"];
 
 
   push @data, [ $html ];

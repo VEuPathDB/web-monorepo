@@ -1132,24 +1132,24 @@ sub gsnapIntronCitation {
   return <<EOL;
 Note that annotated introns are indicated with bold (wider) glyphs.
    <br/><br/>
-<b>Sum Unique Reads (ISRPM)</b>: 
+<b>Intron Spanning Reads (ISR)</b>: 
   The total number of uniquely mapped reads (all samples) which map across the junction and are on the appropriate strand.  GSNAP uses splice site consensus sequences to determine strand of the mapped read. 
   <br/><br/>
-<b>ISRPM</b>: 
-  Intron Spanning Reads Per Million unique intron spanning reads and thus represents a normalized count of unique reads.
+<b>ISR per million (ISRPM)</b>: 
+  Intron Spanning Reads Per Million intron spanning reads and thus represents a normalized count of unique reads.
   <br/><br/>
-<b>Percent of Max</b>:
-  The percentage (Score of this junction / Score of maximum junction for this gene) of this junction over the maximum for this gene.
+<b>% of Most Abundant Intron (MAI)</b>:
+  The percentage (ISRPM of this junction / ISRPM of maximum junction for this gene) of this junction over the maximum for this gene.
   <br/><br/>
-<b>Highest Sample</b>:
-   The sample that has the highest ISRPM for this gene.
+<b>Most abundant in</b>:
+   The experiment and sample that has the highest ISRPM for this gene.
   <br/><br/>
-<b>Best ISRPM / FPKM</b>:
-  The ratio of the ISRPM / FPKM (normalized expression) for the highest sample.  
+<b>ISRPM, (ISR / coverage)</b>:
+  ISRPM from sample with highest ISRPM and the ISR/coverage for that same sample. 
   <br/><br/>
-  The table shows all experiments and samples that provide evidence for this intron junction. 
+  The table shows all experiments and samples that provide evidence for this intron junction.  Note that the values for each row are based on each specific sample.
   <br/><br/>
-The color of glyph changes with the Score as follows:
+The color of the glyph changes with the Score as follows:
   <p><table width="50%">
   <tr><th align="left">Reverse</th><th align="left">Forward</th></tr>
   <tr><td bgcolor='white'><font color="#FFCCCC"><b>less than 5</b></font></td><td bgcolor='white'><font color="#C2DFFF"><b>less than 5</b></font></td></tr>
