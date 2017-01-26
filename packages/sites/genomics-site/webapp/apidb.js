@@ -16,8 +16,8 @@ import 'site/wdkCustomization/js/attributeCheckboxTree';
 import 'eupathdb/wdkCustomization/js/lib/hoverIntent';
 import 'eupathdb/wdkCustomization/js/lib/superfish';
 import 'eupathdb/wdkCustomization/js/common';
-import '!!script!./wdkCustomization/js/custom-login';
-import '!!script!eupathdb/js/newwindow';
+import '!!script-loader!./wdkCustomization/js/custom-login';
+import '!!script-loader!eupathdb/js/newwindow';
 
 // <!-- Quick search box -->
 import 'site/js/quicksearch';
@@ -26,13 +26,13 @@ import 'site/js/quicksearch';
 import 'site/js/bubbles';
 
 // <!-- Sidebar news/events, yellow background -->
-import '!!script!site/js/newitems';
+import '!!script-loader!site/js/newitems';
 
 // <!-- Dynamic query grid (bubbles in home page) -->
-import '!!script!site/js/dqg';
+import '!!script-loader!site/js/dqg';
 
 // <!-- Access twitter/facebook links, and configure menubar (superfish) -->
-import '!!script!eupathdb/js/nav';
+import '!!script-loader!eupathdb/js/nav';
 
 // <!-- show/hide the tables in the Record page -->
 import 'site/js/show_hide_tables';

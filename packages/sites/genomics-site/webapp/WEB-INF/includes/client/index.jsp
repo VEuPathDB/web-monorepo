@@ -53,7 +53,6 @@
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdk/css/wdk.min.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="wdkCustomization/css/client.css"/>
     <imp:stylesheet rel="stylesheet" type="text/css" href="css/${model.projectId}.css"/>
-    <imp:script charset="utf8" src="wdk-common.bundle.js"/>
     <imp:script charset="utf8" src="wdk-client.bundle.js" ></imp:script>
     <imp:script charset="utf8" src="apidb-client.bundle.js" ></imp:script>
   </head>

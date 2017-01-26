@@ -13,7 +13,7 @@ export function loadChemDoodleWeb() {
   return new Promise(function(resolve, reject) {
     try {
       require.ensure([], function(require) {
-        require('!!script!site/js/ChemDoodleWeb');
+        require('!!script-loader!site/js/ChemDoodleWeb');
         resolve(ChemDoodle);
       });
     }
