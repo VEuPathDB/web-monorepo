@@ -309,6 +309,50 @@
         
   </div>	
   </div>
+
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">MaHPIC Genomes</a></h3> 
+   <div class="wdk-toggle-content">
+
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Organism</th>
+             <th>Data Integrated into PlasmoDB</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987"><i>Plasmodium coatneyi</i> strain Hackeri</b></a></td>  
+             <td><b><a href="http://plasmodb.org/plasmo/app/record/dataset/DS_597478d531"><i>Plasmodium coatneyi</i> strain Hackeri</b></a></td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b>Plasmodium knowlesi strain H</b></td>  
+             <td>Coming soon</td>
+           </tr>
+
+           </table>
+           </div>       
+  </div>	
+  </div>
+  
   
   
      <div class="wdk-toggle" data-show="false">
