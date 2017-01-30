@@ -333,19 +333,22 @@
          </style> 
          <table id="DataLinks"> 
            <tr>
-             <th>Data from MaHPIC Team</th>
              <th>Organism</th>
-             <th>Data Integrated into PlasmoDB</th>
+             <th>Repository</th>
+             <th>Integrated into PlasmoDB</th>
+             <th>Publication</th>
            </tr>
            <tr>
-             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987"><i>Plasmodium coatneyi</i> strain Hackeri</b></a></td>  
+             <td><b><i>Plasmodium coatneyi</i> strain Hackeri</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987"><i>GenBank</b></a></td>  
              <td><b><a href="http://plasmodb.org/plasmo/app/record/dataset/DS_597478d531">2 Feb 2017</b></a></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/pubmed/27587810">PMID:27587810</a></b></td>
            </tr>
            <tr>
-             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Plasmodium knowlesi strain H</b></td>  
+             <td><b><i>Plasmodium knowlesi</i> strain H</b></td>
+             <td>Available Soon</td>  
              <td>Coming soon</td>
+             <td>N/A</td>
            </tr>
 
            </table>
