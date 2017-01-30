@@ -8,9 +8,5 @@
     "cytoscape": "^2.7.11",
     "cytoscape-dagre": "^1.3.0",
     "cytoscape-panzoom": "^2.4.0"
-  },
-  "browser": {
-    "ciena-dagre": "ciena-dagre/lib",
-    "ciena-graphlib": "ciena-graphlib/lib"
   }
 }
