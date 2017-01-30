@@ -634,7 +634,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
             <a href="http://js.cytoscape.org/">
 
-                <img src={this.props.config.webAppUrl + "images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
+              <img src={this.props.config.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
           </a>
         <br/>
           Cytoscape JS
