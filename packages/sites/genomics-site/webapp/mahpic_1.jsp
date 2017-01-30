@@ -340,7 +340,7 @@
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
              <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987"><i>Plasmodium coatneyi</i> strain Hackeri</b></a></td>  
-             <td><b><a href="http://plasmodb.org/plasmo/app/record/dataset/DS_597478d531"><i>Plasmodium coatneyi</i> strain Hackeri</b></a></td>
+             <td><b><a href="http://plasmodb.org/plasmo/app/record/dataset/DS_597478d531">2 Feb 2017</b></a></td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
