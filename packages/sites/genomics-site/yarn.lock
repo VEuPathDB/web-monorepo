@@ -3,8 +3,8 @@
 
 
 ciena-dagre@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ciena-dagre/-/ciena-dagre-1.0.0.tgz#f49d36d8cce013c077ae521fde566e53597e13cc"
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/ciena-dagre/-/ciena-dagre-1.0.1.tgz#0db39d9fe5f98a1ee7f8e2946e66e06c0a88585f"
   dependencies:
     ciena-graphlib "^1.0.0"
     lodash "^4.15.0"
@@ -26,29 +26,12 @@ cytoscape-panzoom@^2.4.0:
   resolved "https://registry.yarnpkg.com/cytoscape-panzoom/-/cytoscape-panzoom-2.4.0.tgz#e060e2278c29d77302b740acc2dfd44e675b761f"
 
 cytoscape@^2.7.11:
-  version "2.7.11"
-  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-2.7.11.tgz#64739074cec00820841266ce4611582ebb9bea31"
-
-dagre@^0.7.4:
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.7.4.tgz#de72f0e74a550ce11ce638f0a136fed712398022"
-  dependencies:
-    graphlib "^1.0.5"
-    lodash "^3.10.0"
-
-graphlib@^1.0.5:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-1.0.7.tgz#0cab2df0ffe6abe070b2625bfa1edb6ec967b8b1"
-  dependencies:
-    lodash "^3.10.0"
-
-lodash@^3.10.0:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
+  version "2.7.14"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-2.7.14.tgz#a7795db9d507465bee0c7f42b0a05724847aa9bf"
 
 lodash@^4.11.1, lodash@^4.15.0:
-  version "4.17.2"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.2.tgz#34a3055babe04ce42467b607d700072c7ff6bf42"
+  version "4.17.4"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
 npm-install-security-check@^1.0.2:
   version "1.0.4"

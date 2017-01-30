@@ -113,7 +113,7 @@ let generaPresets = [
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
     try {
-      require([ 'cytoscape', 'cytoscape-dagre', 'dagre', 'cytoscape-panzoom', 'cytoscape-panzoom/cytoscape.js-panzoom.css' ], function(cytoscape, cyDagre, dagre, panzoom) {
+      require([ 'cytoscape', 'cytoscape-dagre', 'ciena-dagre/lib', 'cytoscape-panzoom', 'cytoscape-panzoom/cytoscape.js-panzoom.css' ], function(cytoscape, cyDagre, dagre, panzoom) {
         panzoom(cytoscape, $);
         cyDagre(cytoscape, dagre);
         resolve(cytoscape);
