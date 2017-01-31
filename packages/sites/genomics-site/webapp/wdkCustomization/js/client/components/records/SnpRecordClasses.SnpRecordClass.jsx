@@ -8,8 +8,8 @@ export function RecordAttributeSection(props) {
 
 function SnpsAlignment(props) {
   let {
-    context_start,
-    context_end,
+    align_context_start,
+    align_context_end,
     seq_source_id,
     organism_text
   } = props.record.attributes;
@@ -21,8 +21,8 @@ function SnpsAlignment(props) {
       onCollapsedChange={props.onCollapsedChange}
     >
       <SnpsAlignmentForm
-        start={context_start}
-        end={context_end}
+        start={align_context_start}
+        end={align_context_end}
         sequenceId={seq_source_id}
         organism={organism_text}
       />
