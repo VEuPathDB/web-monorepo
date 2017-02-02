@@ -202,6 +202,54 @@
    <div style="margin-left: 1em;">
    All results are a product of the MaHPIC.  For more information on the MaHPIC, please visit <a href="http://www.systemsbiology.emory.edu/" target="_blank">http://www.systemsbiology.emory.edu/</a>. <br>
  	
+  
+  
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">MaHPIC Genomes</a></h3> 
+   <div class="wdk-toggle-content">
+
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks"> 
+           <tr>
+             <th>Organism</th>
+             <th>Repository</th>
+             <th>Integrated into PlasmoDB</th>
+             <th>Publication</th>
+           </tr>
+           <tr>
+             <td><b><i>Plasmodium coatneyi</i> strain Hackeri</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987"><b>GenBank</b></a></td>  
+             <td><b><a href="http://plasmodb.org/plasmo/app/record/dataset/DS_597478d531">2 Feb 2017</b></a></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/pubmed/27587810">PMID:27587810</a></b></td>
+           </tr>
+           <tr>
+             <td><b><i>Plasmodium knowlesi</i> strain H</b></td>
+             <td>Coming Soon</td>  
+             <td>Coming soon</td>
+             <td>N/A</td>
+           </tr>
+
+           </table>
+           </div>       
+  </div>	
+  </div>
+  
    
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: Measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
@@ -309,6 +357,7 @@
         
   </div>	
   </div>
+
   
   
      <div class="wdk-toggle" data-show="false">
