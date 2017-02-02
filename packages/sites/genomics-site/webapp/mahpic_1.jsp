@@ -240,7 +240,7 @@
            </tr>
            <tr>
              <td><b><i>Plasmodium knowlesi</i> strain H</b></td>
-             <td>Available Soon</td>  
+             <td>Coming Soon</td>  
              <td>Coming soon</td>
              <td>N/A</td>
            </tr>
