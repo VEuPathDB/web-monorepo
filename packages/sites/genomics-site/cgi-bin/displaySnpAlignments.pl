@@ -24,9 +24,9 @@ my $width = $q->param('width') || $ARGV[1]; # width of window on each side of SN
 
 my $c = new WDK::Model::ModelConfig( $q->param('project_id') );
 my $db = new GUS::ObjRelP::DbiDatabase(
-    $c->getDbiDsn,
-    $c->getLogin,
-    $c->getPassword,
+    $c->getAppDbDbiDsn,
+    $c->getAppDbLogin,
+    $c->getAppDbPassword,
     0,1,undef,'core');
 my $dbh = $db->getQueryHandle(0);
 
