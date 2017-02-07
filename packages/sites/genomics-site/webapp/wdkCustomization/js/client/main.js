@@ -46,6 +46,7 @@ apidb.context = initialize({
 let { dispatchAction } = apidb.context;
 
 // load quick search data
+// TODO Move to controller override
 dispatchAction(loadQuickSearches(quickSearches));
 dispatchAction(loadBasketCounts());
 

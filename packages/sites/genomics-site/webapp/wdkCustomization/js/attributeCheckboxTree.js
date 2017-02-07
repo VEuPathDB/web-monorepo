@@ -1,15 +1,17 @@
+/* global wdk */
 import CheckboxTreeController from './checkboxTreeController';
 import { trimBooleanQuestionAttribs } from './client/util/modelSpecificUtil';
 import { getTree } from 'wdk-client/OntologyUtils';
 import { isQualifying, addSearchSpecificSubtree } from 'wdk-client/CategoryUtils';
-import context from './client/main';
+import WdkService from 'wdk-client/WdkService';
 
-wdk.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
+wdk.namespace("eupathdb.attributeCheckboxTree", function(ns) {
   "use strict";
 
   // will map from summary views to attribute tree controller for that view
   let controllerMap = {};
-  
+  let wdkService = new WdkService(wdk.webappUrl('/service'));
+
   /**
    * Entry into a custom attribute selector pop-up, which appears when the user
    * clicks the Add Columns button on the header of the results table.  It has
@@ -22,18 +24,15 @@ wdk.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
    * @returns {Promise.<T>}
    */
   function setUpCheckboxTree(element, attributes) {
-    let { wdkService } = context;
     let questionName = attributes.questionName;
     let recordClassName = attributes.recordClassName;
     let defaultSelectedList = attributes.defaultSelectedList.replace(/'/g,"").split(",");
     let currentSelectedList = attributes.currentSelectedList.replace(/'/g,"").split(",");
-    let viewName = {'_default':'gene', 'transcript-view':'transcript'}[attributes.viewName];
     return Promise.all([
       wdkService.getOntology(),
-      wdkService.findQuestion(question => question.name === questionName),
-      wdkService.findRecordClass(recordClass => recordClass.name === recordClassName)
+      wdkService.findQuestion(question => question.name === questionName)
     ])
-    .then(([ categoriesOntology, question, recordClass]) => {
+    .then(([categoriesOntology, question]) => {
       try {
         let categoryTree = getTree(categoriesOntology, isQualifying({
           targetType: 'attribute',
@@ -63,7 +62,6 @@ wdk.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
     if (controller) {
       controller.renderTree();
     }
-    
   }
 
   function unmountCheckboxTree(viewName) {
@@ -72,7 +70,7 @@ wdk.namespace("eupathdb.attributeCheckboxTree", function(ns, $) {
       controller.unmountTree();
     }
   }
-  
+
   ns.setUpCheckboxTree = setUpCheckboxTree;
   ns.mountCheckboxTree = mountCheckboxTree;
   ns.unmountCheckboxTree = unmountCheckboxTree;

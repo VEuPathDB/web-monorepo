@@ -4,14 +4,16 @@ import {pick} from 'lodash';
 import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip} from 'wdk-client/Components';
 import {getSearchMenuCategoryTree} from '../wdkCustomization/js/client/util/category';
-import context from '../wdkCustomization/js/client/main';
+import WdkService from 'wdk-client/WdkService';
 
 wdk.namespace('apidb.bubble', ns => {
+  const wdkService = new WdkService(wdk.webappUrl('/service'));
+
   ns.initialize = ($el, attrs) => {
     let options = pick(attrs, 'include', 'exclude');
     Promise.all([
-      context.wdkService.getOntology(),
-      context.wdkService.getRecordClasses()
+      wdkService.getOntology(),
+      wdkService.getRecordClasses()
     ]).then(([ ontology, recordClasses ]) => getSearchMenuCategoryTree(ontology, recordClasses, options)).then(tree => {
       if (tree.children.length === 1) {
         renderBubble({ tree: tree.children[0] }, $el[0]);

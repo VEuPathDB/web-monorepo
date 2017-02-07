@@ -78,7 +78,6 @@ export function FastaConfigStore(WdkStore) {
 
 /** Return a subclass of the provided RecordViewStore */
 export function RecordViewStore(WdkRecordViewStore) {
-  let { actionTypes } = WdkRecordViewStore;
   return class ApiRecordViewStore extends WdkRecordViewStore {
     reduce(state, action) {
       state = Object.assign({}, super.reduce(state, action), {
@@ -86,13 +85,13 @@ export function RecordViewStore(WdkRecordViewStore) {
         eupathdb: handleEuPathDBAction(state.eupathdb, action)
       });
       switch (action.type) {
-        case actionTypes.ACTIVE_RECORD_RECEIVED:
+        case 'record-view/active-record-received':
           return handleRecordReceived(state);
-        case actionTypes.SECTION_VISIBILITY_CHANGED:
-        case actionTypes.ALL_FIELD_VISIBILITY_CHANGED:
+        case 'record-view/section-visibility-changed':
+        case 'record-view/all-fields-visibility-changed':
           setStateInStorage(storageItems.collapsedSections, state);
           return state;
-        case actionTypes.NAVIGATION_VISIBILITY_CHANGED:
+        case 'record-view/navigation-visibility-changed':
           setStateInStorage(storageItems.navigationVisible, state);
           return state;
         case TABLE_STATE_UPDATED:
