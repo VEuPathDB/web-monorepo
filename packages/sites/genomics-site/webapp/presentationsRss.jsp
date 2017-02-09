@@ -9,7 +9,7 @@
 %><%@ 
     taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><%@ 
-    taglib prefix="api" uri="http://apidb.org/taglib"
+    taglib prefix="api" uri="http://eupathdb.org/taglib"
 %><fmt:setLocale 
     value="en-US"
 /><c:set

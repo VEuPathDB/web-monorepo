@@ -23,7 +23,7 @@
       endpoint: "${pageContext.request.contextPath}/service"
     };
   </script>
-  <imp:script src="apidb-site.bundle.js"/>
+  <imp:script src="site-legacy.bundle.js"/>
 
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />

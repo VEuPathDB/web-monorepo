@@ -7,7 +7,7 @@ Transform XML message into Upcoming and Past events tables.
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<%@ taglib prefix="api" uri="http://apidb.org/taglib"%>
+<%@ taglib prefix="api" uri="http://eupathdb.org/taglib"%>
 
 <%-- obsolete method to fetch data via cgi
 <c:set var='currentDataUrl'>

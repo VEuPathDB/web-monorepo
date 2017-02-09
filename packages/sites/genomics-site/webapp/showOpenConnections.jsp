@@ -3,7 +3,7 @@
     xmlns:jsp="http://java.sun.com/JSP/Page"
     xmlns:c="http://java.sun.com/jsp/jstl/core"
     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-    xmlns:api="http://apidb.org/taglib">
+    xmlns:api="http://eupathdb.org/taglib">
   <jsp:directive.page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"/>
   <c:set var="adminEmailProp" value="${wdkModel.model.modelConfig.adminEmail}"/>
   <c:set var="adminEmailProp" value="${fn:replace(adminEmailProp,' ','')}"/>
