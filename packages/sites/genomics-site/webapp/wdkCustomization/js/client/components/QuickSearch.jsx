@@ -26,7 +26,7 @@ export default function QuickSearch(props) {
                     <input key={`${typeTag}(${name})`} type="hidden" name={name} value={defaultValue}/>
                   );
                 })}
-                <b><a href={webAppUrl + 'showQuestion.do?questionFullName=' + question.name}>{quickSearchDisplayName}: </a></b>
+                <b><a href={webAppUrl + '/showQuestion.do?questionFullName=' + question.name}>{quickSearchDisplayName}: </a></b>
                 <input
                   type="text"
                   className="search-box"
@@ -37,7 +37,7 @@ export default function QuickSearch(props) {
                   name="go"
                   value="go"
                   type="image"
-                  src={webAppUrl + 'images/mag_glass.png'}
+                  src={webAppUrl + '/images/mag_glass.png'}
                   alt="Click to search"
                   width="23"
                   height="23"
