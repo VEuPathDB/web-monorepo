@@ -295,7 +295,7 @@
 
         <!-- FOR EACH COLUMN -->
           <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
-            <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
+            <c:set value="${record.attributes[sumAttrName]}" var="recAttr"/>
 
         <!-- ~~~~~~~~~~~~~ IN wdkAttribute.tag for data types using wdk default view ~~~~~~~~~~~~~~~~~ -->
 

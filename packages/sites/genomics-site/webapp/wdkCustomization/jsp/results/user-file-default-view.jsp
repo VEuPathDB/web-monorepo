@@ -196,7 +196,7 @@
                 <tbody class="rootBody">
 
 <c:forEach items="${wdkAnswer.records}" var="r">
-    <c:set value="${r.summaryAttributes['filename']}" var="filename"/>
+    <c:set value="${r.attributes['filename']}" var="filename"/>
 </c:forEach>
                   <c:set var="i" value="0"/>
 									<!-- FOR EACH ROW -->
@@ -210,7 +210,7 @@
                       <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="sumAttrName">
 
  <c:if test="${j != 0}">
-                        <c:set value="${record.summaryAttributes[sumAttrName]}" var="recAttr"/>
+                        <c:set value="${record.attributes[sumAttrName]}" var="recAttr"/>
 
 
 <!-- ~~~~~~~~~~~~~ IN wdkAttribute.tag for data types using wdk default view ~~~~~~~~~~~~~~~~~ -->

@@ -15,7 +15,7 @@
 <c:set var="j" value="0"/>
 <c:forEach items="${wdkAnswer.summaryAttributeNames}" var="attrName">
 <c:if test="${j != 0}">
-<c:set var="recAttr" value="${record.summaryAttributes[attrName]}" />
+<c:set var="recAttr" value="${record.attributes[attrName]}" />
 <td align="left">
    <c:set value="${recAttr.briefDisplay}" var="fieldVal"/>
      ${fieldVal}
