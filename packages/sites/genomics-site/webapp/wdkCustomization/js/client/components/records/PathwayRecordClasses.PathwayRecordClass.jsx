@@ -210,6 +210,88 @@ function makeEdge(obj) {
     return { data:obj };
 }
 
+function mean(array) {
+    return (array.reduce(function(a, b) { return (parseFloat(a) + parseFloat(b)); }) / array.length);
+}
+
+function min(array) {
+    return (array.reduce(function(a, b) {return (Math.min(parseFloat(a), parseFloat(b)))}));
+}
+
+function max(array) {
+    return (array.reduce(function(a, b) {return (Math.max(parseFloat(a), parseFloat(b)))}));
+}
+
+function getCoords(nodes, pos) {
+    return nodes.map(function(node) {
+        return node.data(pos);
+    });
+}
+
+function tagSides(nodes) {
+    nodes.map(function(node) {
+        node.data('side', 'true');
+    });
+}
+
+function placeSideNodes (node, orientation, values) {
+    getSideNodeCoords (node, orientation, values, 'in');
+    getSideNodeCoords (node, orientation, values, 'out');
+}
+
+
+function getSideNodeCoords (node, orientation, values, direction) {
+    var sideNodes = (direction === 'in') ? node.incomers('node[!x]') : node.outgoers('node[!x]');
+    if (node.isChild()) {
+        sideNodes = (direction === 'in') ? node.parent().children().incomers('node[!x]') : node.parent().children().outgoers('node[!x]');
+    }
+    var minVal = min(values);
+    var split = ((max(values) - minVal) / (sideNodes.size() + 1));
+    var count = 0;
+    for (var i=0; i<sideNodes.size(); i++) {
+        var sideNode =  sideNodes[i];
+        var coord;
+        var offset;
+        //handle compound nodes with no coords that aren't leaves
+        if (sideNode.connectedEdges().size() > 1) {
+            if (orientation === 'vertical') {
+                coord = (direction === 'in') ? mean(getCoords(node.incomers('node[?x]'), 'y')) : mean(getCoords(node.outgoers('node[?x]'), 'y'));
+            } else {
+                coord = (direction === 'in') ? mean(getCoords(node.incomers('node[?x]'), 'x')) : mean(getCoords(node.outgoers('node[?x]'), 'x'));
+            }
+            offset = 40 + (10*count);
+            count ++;
+        } else {
+            coord = (minVal + (split * (i+1)));
+            offset = 40;
+        }
+        if (orientation === 'vertical') {
+            direction === 'in' ? sideNode.data('x', node.data('x') - offset) : sideNode.data('x', node.data('x') + offset);
+            sideNode.data('y', coord);
+        } else {
+            direction === 'in' ? sideNode.data('y', node.data('y') - offset) : sideNode.data('y', node.data('y') + offset);
+            sideNode.data('x', coord);
+        }
+        sideNode.renderedPosition({x: sideNode.data('x'), y: sideNode.data('y') });
+        sideNode.style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0, 'color':'grey'});
+        sideNode.connectedEdges().style({'line-color':'grey', 'mid-target-arrow-color':'grey'});
+    }  
+}
+ 
+
+function resetOverlappingNodes(node, offset) {
+    if (node.data('placed') === 'true') {
+        node.data('x', node.data('x') + offset);
+        node.renderedPosition({x: node.data('x'), y: node.data('y')});
+        nullSides(node);
+        (node.data('orientation') === 'vertical') ? placeSideNodes(node, node.data('orientation'), node.data('yVals')) : placeSideNodes(node, node.data('orientation'), node.data('xVals'));
+    }
+}
+
+function nullSides(node) {
+    node.incomers('node[?side]').data({x: null, y: null});
+    node.outgoers('node[?side]').data({x: null, y: null});
+}
 
 
 function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges) {
@@ -217,16 +299,10 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
   return Promise.all([loadCytoscapeJs(), loadChemDoodleWeb()])
     .then(function([ cytoscape ]) {
 
-        var myLayout = {
-            name: 'dagre',
-            rankDir:'LR',
-        };
-
-        if (pathwaySource === 'KEGG') {
-            myLayout = {
+            var myLayout = {
                 name: 'preset',
+                fit:  false,
             };
-        }
 
     var cy = cytoscape({
         container,
@@ -330,6 +406,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                     label:'data(name)'
                 },
             },
+            
             {
                 selector: 'node[node_type= "metabolic process"]',
                 style: {
@@ -379,7 +456,6 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
         layout:myLayout,
         zoom:0.5
     });
-
 
 
         cy.ready(function () {
@@ -453,9 +529,101 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                 // Find all enzymes which have an input which is a non root compound and  change node shape for input compounds which are roots
                 // Do the same for leaves
                 // the effect here is to hide side compounds 
-                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').roots()).outgoers('node[node_type="enzyme"]').incomers('node[node_type= "molecular entity"]').roots().style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0});
-                cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').leaves()).incomers('node[node_type="enzyme"]').outgoers('node[node_type= "molecular entity"]').leaves().style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0});
+                //cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').roots()).outgoers('node[node_type="enzyme"]').incomers('node[node_type= "molecular entity"]').roots().style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0});
+                //cy.nodes('node[node_type= "molecular entity"]').subtract(cy.nodes('node[node_type= "molecular entity"]').leaves()).incomers('node[node_type="enzyme"]').outgoers('node[node_type= "molecular entity"]').leaves().style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0});
+
+
+
+                // set positions of enzyme nodes based on compounds with coordinates
+                cy.nodes('node[node_type="enzyme"]').map(function(node) {
+                    //if node is a child, get the parent
+                    node = (node.isChild()) ? node.parent()[0] : node;
+
+                    //tag sides so non-leaf sides are excluded from second node
+                    tagSides(node.incomers('node[!x]'));
+                    tagSides(node.outgoers('node[!x]'));
+
+                    //for each enzyme, get all incoming and outgoing nodes with coordinates
+                    var incomingNodes = node.incomers('node[?x][!side]');
+                    var outgoingNodes = node.outgoers('node[?x][!side]');
+                                    
+                    //extract coordinates
+                    var xValuesIn = getCoords(incomingNodes, 'x');
+                    var xValuesOut = getCoords(outgoingNodes, 'x');
+                    var yValuesIn = getCoords(incomingNodes, 'y');
+                    var yValuesOut = getCoords(outgoingNodes, 'y');
+                                        
+                    //only reposition if enzyme has an incomer and and outgoer with coords
+                    if (incomingNodes.size() >= 1 && outgoingNodes.size() >= 1) {
+                        //mean x and mean y for all incomers/outgoers
+                        var meanX = mean(xValuesIn.concat(xValuesOut));
+                        var meanY = mean(yValuesIn.concat(yValuesOut));
+                        var orientation = (Math.abs(mean(xValuesIn) - mean(xValuesOut)) >= Math.abs(mean(yValuesIn) - mean(yValuesOut))) ? 'horizontal' : 'vertical';
+
+                        if (node.data('placed') != 'true') {
+                            node.data('x', meanX);
+                            node.data('y', meanY);
+                            node.renderedPosition({ x:meanX, y:meanY });
+                            //flag node as placed to avoid repeatedly placing parent nodes
+                            node.data('placed', 'true');
+                            //if node is a parent, place the children
+                            if (node.isParent()) {
+                                //use i to ensure child nodes aren't place on top of each other
+                                //TODO right now stacked vertically - may need to think about changing this if many children
+                                for (var i=0; i<node.children().size(); i++) {
+                                    node.children()[i].data('x', meanX);
+                                    node.children()[i].data('y', ((i*15) + meanY));
+                                    node.children()[i].renderedPosition({x: meanX, y: ((i*15) + meanY)});
+                                    node.data('placed', 'true');
+                                    node.children()[i].data('placed', 'true');
+                                    (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
+                                }
+                            }
+                        } 
+                        
+                        
+                        //place side nodes
+                        //var orientation = (Math.abs(mean(xValuesIn) - mean(xValuesOut)) >= Math.abs(mean(yValuesIn) - mean(yValuesOut))) ? 'horizontal' : 'vertical';
+                        (orientation === 'vertical') ? placeSideNodes(node, orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node, orientation, xValuesIn.concat(xValuesOut));
+                        node.data('orientation', orientation);
+                        node.data('xVals', xValuesIn.concat(xValuesOut));
+                        node.data('yVals', yValuesIn.concat(yValuesOut));
+                    }
+                       
+                });
+                
+
+                // reset nodes that overlap
+                var enzymeNodes = cy.nodes('node[node_type="enzyme"]');
+                for (var i=0; i < enzymeNodes.size(); i++) {
+                    for (var j=0; j < enzymeNodes.size(); j++) {
+                        //Find enzyme nodes with identical coords and reset
+                        if (enzymeNodes[i].id() != enzymeNodes[j].id() && enzymeNodes[i].data('x') === enzymeNodes[j].data('x') && enzymeNodes[i].data('y') === enzymeNodes[j].data('y')) {
+                            resetOverlappingNodes(enzymeNodes[i], -60);
+                            resetOverlappingNodes(enzymeNodes[j], 60);
+                        }
+                    }
+                }
+                            
+                //Handle nodes with no preset position
+                cy.elements('node[!x]').layout({ name: 'cose' });
             }
+    
+            //clean up unplaced and orphan nodes
+            enzymeNodes.map(function(node) {
+                if (node.data('placed') != 'true') {
+                    cy.remove(node);
+                    if (node.isChild()) {
+                        cy.remove(node.parent());
+                    }
+                }
+            });
+
+            cy.nodes('node[node_type="molecular entity"]').map(function(node) {
+                if (node.incomers().size() === 0 && node.outgoers().size() === 0) {
+                    cy.remove(node);
+                }
+            });
            
 
             var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
@@ -565,6 +733,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           minZoom: 0.1,
           maxZoom: 2
         });
+        cy.fit();
 
         //decorate nodes from node_list
         if(this.props.nodeList) {
