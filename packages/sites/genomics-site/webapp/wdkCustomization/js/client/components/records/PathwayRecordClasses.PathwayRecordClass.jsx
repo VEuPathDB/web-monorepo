@@ -607,23 +607,26 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges)
                             
                 //Handle nodes with no preset position
                 cy.elements('node[!x]').layout({ name: 'cose' });
-            }
+            
     
-            //clean up unplaced and orphan nodes
-            enzymeNodes.map(function(node) {
-                if (node.data('placed') != 'true') {
-                    cy.remove(node);
-                    if (node.isChild()) {
-                        cy.remove(node.parent());
+                //clean up unplaced and orphan nodes
+                enzymeNodes.map(function(node) {
+                    if (node.data('placed') != 'true') {
+                        cy.remove(node);
+                        if (node.isChild()) {
+                            cy.remove(node.parent());
+                        }
                     }
-                }
-            });
+                });
 
-            cy.nodes('node[node_type="molecular entity"]').map(function(node) {
-                if (node.incomers().size() === 0 && node.outgoers().size() === 0) {
-                    cy.remove(node);
-                }
-            });
+
+                cy.nodes('node[node_type="molecular entity"]').map(function(node) {
+                    if (node.incomers().size() === 0 && node.outgoers().size() === 0) {
+                        cy.remove(node);
+                    }
+                });
+
+            }
            
 
             var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
