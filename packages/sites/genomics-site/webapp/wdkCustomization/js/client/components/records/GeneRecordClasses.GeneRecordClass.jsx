@@ -14,6 +14,8 @@ import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import * as Gbrowse from '../common/Gbrowse';
 import {SnpsAlignmentForm} from '../common/Snps';
+import { CategoriesCheckboxTree } from 'wdk-client/Components';
+import * as Category from 'wdk-client/CategoryUtils';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -300,7 +302,37 @@ function SequencesTable(props) {
   );
 }
 
+function makeTree(rows){
+    const n = Category.createNode; // helper for below
+    
+    let myTree = n('root', 'root', null, []);
+
+    addChildren(myTree, rows, n);
+
+    return myTree;
+}
+
+function addChildren(t, rows, n) {
+    for(let i = 0; i < rows.length; i++){
+        let parent = rows[i].parent;
+        let organism = rows[i].organism;
+        let abbrev = rows[i].abbrev;
+
+        if(parent == Category.getId(t) ){
+            let node = n(abbrev, organism, null, []);
+            t.children.push(node);
+        }
+    }
+
+    for(let j = 0; j < t.children.length; j++) {
+        addChildren(t.children[j], rows, n);
+    }
+}
+
+
 function MercatorTable(props) {
+
+
   return (
     <div className="eupathdb-MercatorTable">
       <form action="/cgi-bin/pairwiseMercator">
@@ -332,16 +364,10 @@ function MercatorTable(props) {
           <label> <input name="revComp" type="checkbox" defaultChecked={true}/> Reverse & compliment </label>
         </div>
 
-        <div className="form-group">
-          <strong>Genomes to align:</strong>
-          <NativeCheckboxList
-            name="genomes"
-            items={props.value.map(row => ({
-              value: row.abbrev,
-              display: row.organism
-            }))}
+          <OrganismSelector
+            displayName="Organisms"
+            organismTree={makeTree(props.value)}
           />
-        </div>
 
         <div className="form-group">
           <strong>Select output:</strong>
@@ -382,3 +408,58 @@ const UserCommentsTable = withUserAndAction(function UserCommentsTable(props) {
     </div>
   )
 });
+
+
+class OrganismSelector extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+//      expandedBranches: Category.getAllBranchIds(this.props.organismTree)
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleUiChange = this.handleUiChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
+  }
+
+  handleChange(selectedLeaves) {
+    this.setState({selectedLeaves});
+  }
+
+  handleUiChange(expandedBranches) {
+    this.setState({expandedBranches});
+  }
+
+  handleSubmit() {
+    this.props.onChange(this.props.isMultiPick ? this.state.selectedLeaves : this.state.selectedLeaves[0]);
+  }
+
+  handleSearchTermChange(searchTerm) {
+    this.setState({searchTerm});
+  }
+
+  render() {
+    return (
+        <div className="form-group">
+          <strong>Genomes to align:</strong>
+
+        <CategoriesCheckboxTree
+          searchBoxPlaceholder={`Search for Organism`}
+          autoFocusSearchBox={false}
+          tree={this.props.organismTree}
+          leafType="string"
+          isMultiPick={true}
+          searchTerm={this.state.searchTerm}
+          onChange={this.handleChange}
+          onUiChange={this.handleUiChange}
+          selectedLeaves={this.state.selectedLeaves}
+          expandedBranches={this.state.expandedBranches}
+          onSearchTermChange={this.handleSearchTermChange}
+
+        />
+        </div>
+
+    );
+  }
+}
