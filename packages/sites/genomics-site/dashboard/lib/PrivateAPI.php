@@ -81,6 +81,7 @@ class PrivateAPI {
                     'globalname' => $adb_attr{'global_name'},
                     'dbuniquename' => $adb_attr{'db_unique_name'},
                     'servername' => $adb_attr{'server_name'},
+                    'sizeondisk' => $adb_attr{'dbf_gb_on_disk'},
                     'aliases' => $this->array_to_map($ldap_resolver->resolve($adb_attr{'service_name'}), 'alias'),
                 ),
                 'userdb' => array(
@@ -88,6 +89,7 @@ class PrivateAPI {
                     'instancename' => $udb_attr{'instance_name'},
                     'globalname' => $udb_attr{'global_name'},
                     'servername' => $udb_attr{'server_name'},
+                    'sizeondisk' => $udb_attr{'dbf_gb_on_disk'},
                     'aliases' => $this->array_to_map($ldap_resolver->resolve($udb_attr{'service_name'}), 'alias'),
                 )
             ),
