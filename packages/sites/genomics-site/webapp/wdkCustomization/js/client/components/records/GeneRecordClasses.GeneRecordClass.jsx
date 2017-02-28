@@ -445,6 +445,7 @@ class OrganismSelector extends React.Component {
           <strong>Genomes to align:</strong>
 
         <CategoriesCheckboxTree
+          name="genomes"
           searchBoxPlaceholder={`Search for Organism`}
           autoFocusSearchBox={false}
           tree={this.props.organismTree}
