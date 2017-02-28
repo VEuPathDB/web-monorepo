@@ -442,11 +442,10 @@ class OrganismSelector extends React.Component {
   render() {
     return (
         <div className="form-group">
-          <strong>Genomes to align:</strong>
 
         <CategoriesCheckboxTree
           name="genomes"
-          searchBoxPlaceholder={`Search for Organism`}
+          searchBoxPlaceholder={`Search for Organism(s) to include in the alignment or expand the tree below`}
           autoFocusSearchBox={false}
           tree={this.props.organismTree}
           leafType="string"
