@@ -1,6 +1,6 @@
 import React from 'react';
 import {chunk} from 'lodash';
-import {withPlainTextCopy} from '../../util/component';
+import {withPlainTextCopy} from 'eupathdb/wdkCustomization/js/client/util/component';
 
 function Sequence(props) {
   let { highlightRegions, sequence } = props;

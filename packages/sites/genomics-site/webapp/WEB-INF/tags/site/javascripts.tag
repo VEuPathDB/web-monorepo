@@ -2,28 +2,16 @@
 <jsp:root version="2.0"
     xmlns:jsp="http://java.sun.com/JSP/Page"
     xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
+    xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp"
+    xmlns:common="urn:jsptagdir:/WEB-INF/tags/site-common">
 
   <jsp:directive.attribute name="refer" 
       type="java.lang.String"
       required="true" 
       description="Page calling this tag"/>
 
-  <jsp:useBean id="websiteRelease" class="org.eupathdb.common.controller.WebsiteReleaseConstants"/>
 
-  <c:set var="debug" value="${requestScope.WEBSITE_RELEASE_STAGE eq websiteRelease.development}"/>
-  <!-- JavaScript provided by WDK -->
-  <imp:wdkJavascripts refer="${refer}" debug="${debug}"/>
-
-  <script>
-    // used by apidb to initialize wdk
-    window.__WDK_CONFIG__ = {
-      projectId: "${applicationScope.wdkModel.projectId}",
-      webAppUrl: "${pageContext.request.contextPath}",
-      endpoint: "${pageContext.request.contextPath}/service"
-    };
-  </script>
-  <imp:script src="site-legacy.bundle.js"/>
+  <common:javascripts refer="${refer}"/>
 
   <c:set var="base" value="${pageContext.request.contextPath}"/>
   <c:set var="props" value="${applicationScope.wdkModel.properties}" />
@@ -47,20 +35,6 @@
     <imp:script src="wdkCustomization/js/transcript-view.js"/>
     <imp:script src="wdkCustomization/js/isolateResults.js"/>
   </c:if>
-
-  <!-- this seems unneeded since it only contains:
-          <script type="text/javascript" src="${base}/wdk/lib/json.js"><jsp:text/></script>
-    which is already in the wdk:includes.tag
-  <c:if test="${refer == 'record'}">
-    <imp:recordPageScript />
-  </c:if>
-  -->
-
-
-
-  <!-- Flash embed script for pathway record page -->
-  <imp:script src="js/AC_OETags.min.js"/>
-
 
   <c:if test="${refer == 'recordPage'}">
     <!-- TODO Move to webapp -->

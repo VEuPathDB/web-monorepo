@@ -3,7 +3,7 @@ import {render} from 'react-dom';
 import {pick} from 'lodash';
 import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip} from 'wdk-client/Components';
-import {getSearchMenuCategoryTree} from '../wdkCustomization/js/client/util/category';
+import {getSearchMenuCategoryTree} from 'eupathdb/wdkCustomization/js/client/util/category';
 import WdkService from 'wdk-client/WdkService';
 
 wdk.namespace('apidb.bubble', ns => {

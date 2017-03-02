@@ -34,11 +34,11 @@ export class SnpsAlignmentForm extends PureComponent {
             questionName="GeneQuestions.GenesByNgsSnps"
             dependedValue={{ organismSinglePick: [ organism ] }}
             onChange={this.handleChange} />
-        <div className="form-group">
-          <strong>Include metadata in the output: 
-          <input name="metadata" value="1" type="checkbox"/>
-	  </strong>
-        </div>
+          <div className="form-group">
+            <strong>Include metadata in the output: 
+              <input name="metadata" value="1" type="checkbox"/>
+            </strong>
+          </div>
 
         <div className="form-group">
           <strong>Select output:</strong>

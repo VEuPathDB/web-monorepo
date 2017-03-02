@@ -4,7 +4,7 @@ import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {loadChemDoodleWeb} from '../common/Compound';
 import { CheckboxList, CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
-import { withStore, withActions } from '../../util/component';
+import { withStore, withActions } from 'eupathdb/wdkCustomization/js/client/util/component';
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
 

@@ -8,7 +8,7 @@ import { pure } from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
 import {findChildren, isNodeOverflowing} from '../../util/domUtils';
-import { withActions, withStore } from '../../util/component';
+import { withActions, withStore } from 'eupathdb/wdkCustomization/js/client/util/component';
 import DatasetGraph from '../common/DatasetGraph';
 import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';

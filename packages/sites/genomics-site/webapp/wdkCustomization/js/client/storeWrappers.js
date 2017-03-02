@@ -2,7 +2,6 @@ import { flow, get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
-import { actionTypes } from './actioncreators/GlobalActionCreators';
 import { TABLE_STATE_UPDATED } from './actioncreators/RecordViewActionCreators';
 import { SECURITY_AGREEMENT_STATUS_CHANGED } from './actioncreators/GalaxyTermsActionCreators';
 
@@ -20,28 +19,6 @@ let storageItems = {
     isRecordScoped: false
   }
 };
-
-/**
- * Add handling of basket and quick search actions.
- */
-export function GlobalDataStore(WdkGlobalDataStore) {
-  return class ApiGlobalDataStore extends WdkGlobalDataStore {
-    handleAction(state, { type, payload }) {
-      switch(type) {
-        case actionTypes.BASKETS_LOADED: return Object.assign({}, state, {
-          basketCounts: payload.basketCounts
-        });
-
-        case actionTypes.QUICK_SEARCH_LOADED: return Object.assign({}, state, {
-          quickSearches: payload.questions,
-          quickSearchesLoading: false
-        });
-
-        default: return state;
-      }
-    }
-  }
-}
 
 /** Return subcass of the provided StepDownloadFormViewStore */
 export function DownloadFormStore(WdkDownloadFormStore) {

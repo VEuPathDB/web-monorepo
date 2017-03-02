@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.4"
     xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:web="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
@@ -8,13 +9,6 @@
     <param-name>GUS_HOME</param-name>
     <param-value>/WEB-INF/wdk-model/</param-value>
   </context-param>
-
-  <!-- For the EuPathDB-BRC project, the model param goes in the webapp's context xml
-  <context-param>
-    <param-name>model</param-name>
-    <param-value>SomeDB</param-value>
-  </context-param>
-  -->
 
   <context-param>
     <param-name>wdkAlwaysGoToSummary_param</param-name>
@@ -155,16 +149,6 @@
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
   <!-- End Struts servlet and mapping -->
-  
-  <!-- WDK RESTful client filter -->
-  <servlet>
-    <servlet-name>WDKSlimClient</servlet-name>
-    <jsp-file>/WEB-INF/includes/client2/index.jsp</jsp-file>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>WDKSlimClient</servlet-name>
-    <url-pattern>/app2/*</url-pattern>
-  </servlet-mapping>
 
   <!-- WDK RESTful client filter -->
   <servlet>
@@ -175,8 +159,8 @@
     <servlet-name>WDKClient</servlet-name>
     <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
-
   <!-- End of WDK Restful client filter -->
+
   <!-- WSF RESTful service filter -->
   <servlet>
     <servlet-name>WSF</servlet-name>
@@ -191,7 +175,7 @@
     <url-pattern>/services/WsfService/*</url-pattern>
   </servlet-mapping>
   <!-- End of WSF Restful service filter -->
-  
+
   <!-- WDK RESTful service filter -->
   <servlet>
     <servlet-name>WDK</servlet-name>
@@ -206,7 +190,7 @@
     <url-pattern>/service/*</url-pattern>
   </servlet-mapping>
   <!-- End of WSF Restful service filter -->
-  
+
   <!-- The Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>

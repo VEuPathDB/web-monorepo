@@ -8,13 +8,8 @@ import Sequence from './components/common/Sequence';
 import { selectReporterComponent } from './util/reporterSelector';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import ApiUserIdentity from './components/ApiUserIdentity';
-import ApiHeader from './components/Header';
-import ApiFooter from './components/Footer';
 import RecordTableContainer from './components/common/RecordTableContainer';
-import { loadBasketCounts } from './actioncreators/GlobalActionCreators';
-
-export let Header = () => ApiHeader;
-export let Footer = () => ApiFooter;
+import { loadBasketCounts } from 'eupathdb/wdkCustomization/js/client/actioncreators/GlobalActionCreators';
 
 const stopPropagation = event => event.stopPropagation();
 

@@ -1,6 +1,6 @@
 import { cloneElement, Component, PropTypes } from 'react';
 import { flowRight, get } from 'lodash';
-import { withStore, withActions } from '../../util/component';
+import { withStore, withActions } from 'eupathdb/wdkCustomization/js/client/util/component';
 import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 
 // always open the first row

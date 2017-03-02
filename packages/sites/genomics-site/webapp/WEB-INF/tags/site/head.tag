@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jsp:root version="2.0"
-    xmlns:jsp="http://java.sun.com/JSP/Page"
-    xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:apifn="http://eupathdb.org/common/functions"
-    xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:apifn="http://eupathdb.org/common/functions"
+  xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp"
+  xmlns:common="urn:jsptagdir:/WEB-INF/tags/site-common">
 
   <jsp:directive.attribute name="refer" required="false" 
-              description="Page calling this tag"/>
-              
+    description="Page calling this tag"/>
+
   <jsp:directive.attribute name="title" required="false"
-              description="Value to appear in page's title"/>
+    description="Value to appear in page's title"/>
 
   <jsp:directive.attribute name="banner" required="false"
-              description="Value to appear at top of page if there is no title provided"/>
+    description="Value to appear at top of page if there is no title provided"/>
 
   <c:set var="project" value="${applicationScope.wdkModel.properties['PROJECT_ID']}" />
   <c:set var="banner" value="${apifn:defaultBanner(banner,project)}"/>
-  
+
   <!--~~~~~~~ links to news and events ~~~~~~~-->
   <c:choose>
     <c:when test="${project eq 'EuPathDB'}">
@@ -36,48 +37,14 @@
   </c:choose>
 
   <!--~~~~~~~ HEAD of HTML doc ~~~~~~~-->
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1"/> 
-
-    <!--
-    <c:if test="${refer eq 'betaApp'}">
-      <base href="${pageContext.servletContext.contextPath}/"/>
-    </c:if>
-    -->
-
+  <common:head title="${title}" banner="${banner}" refer="${refer}">
     <link rel="alternate" type="application/rss+xml" 
-          title="${rssorigin} News" href="${newsRss}" />
+      title="${rssorigin} News" href="${newsRss}" />
     <link rel="alternate" type="application/rss+xml" 
-          title="${rssorigin} Community Events" href="${eventsRss}" />
+      title="${rssorigin} Community Events" href="${eventsRss}" />
     <link rel="alternate" type="application/rss+xml" 
-          title="${rssorigin} Releases" href="${releasesRss}" />
+      title="${rssorigin} Releases" href="${releasesRss}" />
     <link rel="alternate" type="application/rss+xml" 
-          title="EuPathDB BRC Publications" href="${publicationsRss}" />
-
-    <title>
-      <jsp:text>${empty title ? banner : title}</jsp:text>
-    </title>
-
-    <!-- no needed with next line: <link rel="icon" type="image/png" href="/assets/images/${project}/favicon.ico"/> --> <!-- standard -->
-    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.servletContext.contextPath}/images/${project}/favicon.ico"/> <!-- for IE7 -->
-
-    <!-- StyleSheets provided by Site -->
-    <imp:stylesheets refer="${refer}" /> 
-
-    <!-- extra styling to get around the sidebar on home page. -->
-    <c:if test="${refer eq 'home'}">
-      <style>
-        noscript .announcebox.warn { margin-left: 220px; }
-      </style>
-    </c:if>
-
-    <!-- JavaScript provided by Site -->
-    <imp:javascripts refer="${refer}"/>
-
-    <!-- include project specific CSS here since it overrides rules included in JS bundle -->
-    <imp:stylesheet rel="stylesheet" href="css/${project}.css" type="text/css" />
-
-  </head>
-  
+      title="EuPathDB BRC Publications" href="${publicationsRss}" />
+  </common:head>
 </jsp:root>

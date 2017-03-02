@@ -1,5 +1,5 @@
-// __WDK_CONFIG__ is defined in index.jsp
-export let {
+// __SITE_CONFIG__ is defined in index.jsp
+export const {
   rootUrl,
   rootElement,
   endpoint,
@@ -10,13 +10,13 @@ export let {
   facebookId,
   twitterId,
   youtubeId
-} = window.__WDK_CONFIG__;
+} = window.__SITE_CONFIG__;
 
-// __EUPATHDB_ANNOUNCEMENTS__ is defined in index.jsp
-export let announcements = window.__EUPATHDB_ANNOUNCEMENTS__;
+// __SITE_ANNOUNCEMENTS__ is defined in index.jsp
+export const announcements = window.__SITE_ANNOUNCEMENTS__;
 
 // Question name and search param to use for quick search boxes in header
-export let quickSearches = [
+export const quickSearches = [
   { name: 'GeneBySingleLocusTag', quickSearchParamName: 'single_gene_id', quickSearchDisplayName: 'Gene ID' },
   { name: 'GenesByTextSearch', quickSearchParamName: 'text_expression', quickSearchDisplayName: 'Gene Text Search'}
 ];

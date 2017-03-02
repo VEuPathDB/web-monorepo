@@ -42,7 +42,7 @@
 </c:catch>
 
 <div id="quick-search">
-	<table style="float:right;margin-bottom:10px">
+	<table style="float:right;margin-bottom:5px">
            <tr>
 
 <c:choose>
