@@ -20,6 +20,9 @@ class CommentConfig extends JolModule {
             ));
     $req->add_operation($read);
     $response = $req->invoke();
+    if ($response->has_error()) {
+      return array();
+    }
     return $response[0]->value();
   }
 

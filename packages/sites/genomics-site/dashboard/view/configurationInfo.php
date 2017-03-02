@@ -47,7 +47,9 @@ foreach ($model_data_tree as $section => $data) {
 
 </div>
 
-
+<?php if (sizeof($comment) == 0) { ?>
+<p><i>WDK Comments Configuration not available</i></p>
+<?php } else { ?>
 <p class="clickable">WDK Comments Configuration &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">
 
@@ -66,6 +68,7 @@ foreach ($comment as $k => $v) {
 ?>
 </pre>
 </div>
+<?php } ?>
 
 <p class="clickable">WDK Properties &#8593;&#8595;</p>
 <div class="expandable" style="padding: 5px;">

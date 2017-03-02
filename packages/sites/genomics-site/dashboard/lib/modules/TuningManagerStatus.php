@@ -27,8 +27,9 @@ class TuningManagerStatus extends JolModule {
     $req->add_operation($read);
     $response = $req->invoke();
     if ($response->has_error()) {
-      $error1 = $response->get_errors();
-      throw new Exception($error1[0]->error() .  " for " . $req->curl_cli_equivalent());
+      return array();
+      #$error1 = $response->get_errors();
+      #throw new Exception($error1[0]->error() .  " for " . $req->curl_cli_equivalent());
     }
     return $response[0]->value();
   }

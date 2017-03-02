@@ -2,6 +2,17 @@
 <?php require_once dirname(__FILE__) . "/lib/UserAgent.php" ?>
 <html><?php include "head.php.inc"; ?>
 
+<?php
+/** Check if the page/tab has an 'exclude_hosts_re' regex matching
+  * currrent host */
+function exclude_this($pageMap, $key) {
+  if (array_key_exists('exclude_hosts_re', $pageMap[$key])) {
+    $exclude_hosts_re = $pageMap[$key]['exclude_hosts_re'];
+    return (preg_match("/$exclude_hosts_re/", $_SERVER['SERVER_NAME']));
+  }
+  return false;
+}
+?>
 <h3 class='banner' align='center'>
 <?php
   print "<a href='/'>";
@@ -31,6 +42,7 @@ $page = ( isset($_GET['p']) ) ? $_GET['p'] : 'Databases';
  <?php
     // Print tabs menu
     foreach ($pageMap as $key => $value) {
+        if ( exclude_this($pageMap, $key) ) { continue; }
         if ( ! $pageMap[$key]['tab']) { continue; }
         if ( $key == 'Proxy' && !isset($headers['Via']) ) { continue; }
         $active = ($key == $page) ? "class='active'" : '';
@@ -49,10 +61,14 @@ if (!$pageMap[$page]) {
     return;
 }
 
-if (strncmp($pageMap[$page]['module'], 'http', 4) == 0) {
-    readfile($pageMap[$page]['module']);
+if (exclude_this($pageMap, $page)) {
+  print "NA";
 } else {
-    virtual($pageMap[$page]['module']);
+    if (strncmp($pageMap[$page]['module'], 'http', 4) == 0) {
+        readfile($pageMap[$page]['module']);
+    } else {
+        virtual($pageMap[$page]['module']);
+    }
 }
 ?>
 

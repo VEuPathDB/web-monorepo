@@ -1,5 +1,7 @@
 <?php
 // keyworkd, module, and whether a menu tab should be made
+// exclude_hosts is an optional regex matching against
+// $_SERVER['SERVER_NAME']
 $pageMap = array(
     'Databases' => array(
         'module' => "view/databaseInfo.php",
@@ -27,7 +29,8 @@ $pageMap = array(
         'tab' => 1),
     'Announcements' => array(
         'module' => "/cgi-bin/admin/messageConsole.pl",
-        'tab' => 1),
+        'tab' => 1,
+        'exclude_hosts_re' => '.*orthomcl.org'),
     'Performance' => array(
         'module' => 'view/performance.php',
         'tab' => 1),

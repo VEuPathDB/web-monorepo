@@ -181,7 +181,9 @@ foreach ($dblink_map as $dblink) {
       </thead>
       <tbody>
 <?php
-$tm_status_map = $tuning_status_attrs{'table_statuses'};
+$tm_status_map = array_key_exists('table_statuses', $tuning_status_attrs) ?
+  $tuning_status_attrs{'table_statuses'} :
+  array();
 $row = 0;
 foreach ($tm_status_map as $table) {
 
@@ -231,7 +233,9 @@ foreach ($tm_status_map as $table) {
       </thead>
       <tbody>
 <?php
-$wf_status_map = $workflow_status_attrs{'table_statuses'};
+$wf_status_map = array_key_exists('table_statuses', $workflow_status_attrs) ?
+  $workflow_status_attrs{'table_statuses'} :
+  array();
 $row = 0;
 foreach ($wf_status_map as $table) {
 ?>
