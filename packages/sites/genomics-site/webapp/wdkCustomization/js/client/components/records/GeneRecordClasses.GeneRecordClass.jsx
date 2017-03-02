@@ -304,7 +304,7 @@ function SequencesTable(props) {
 
 function makeTree(rows){
     const n = Category.createNode; // helper for below
-    
+
     let myTree = n('root', 'root', null, []);
 
     addChildren(myTree, rows, n);
@@ -330,44 +330,97 @@ function addChildren(t, rows, n) {
 }
 
 
-function MercatorTable(props) {
+class MercatorTable extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedLeaves: [],
+      expandedBranches: []
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleUiChange = this.handleUiChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
+  }
 
-  return (
-    <div className="eupathdb-MercatorTable">
-      <form action="/cgi-bin/pairwiseMercator">
-        <input type="hidden" name="project_id" value={projectId}/>
+  handleChange(selectedLeaves) {
+    this.setState({selectedLeaves});
+  }
+
+  handleUiChange(expandedBranches) {
+    this.setState({expandedBranches});
+  }
+
+  handleSubmit() {
+    this.props.onChange(this.props.isMultiPick ? this.state.selectedLeaves : this.state.selectedLeaves[0]);
+  }
+
+  handleSearchTermChange(searchTerm) {
+    this.setState({searchTerm});
+  }
+
+  render() {
+    let exceededMaxOrganisms = this.state.selectedLeaves.length > 15;
+    return (
+      <div className="eupathdb-MercatorTable">
+        <form action="/cgi-bin/pairwiseMercator">
+          <input type="hidden" name="project_id" value={projectId}/>
+
+          <div className="form-group">
+            <label><strong>Contig ID:</strong> <input type="text" name="contig" defaultValue={this.props.record.attributes.sequence_id}/></label>
+          </div>
+
+          <div className="form-group">
+            <label>
+              <strong>Nucleotide positions: </strong>
+              <input
+                type="text"
+                name="start"
+                defaultValue={this.props.record.attributes.start_min}
+                maxLength="10"
+                size="10"
+              />
+            </label>
+            <label> to <input
+                type="text"
+                name="stop"
+                defaultValue={this.props.record.attributes.end_max}
+                maxLength="10"
+                size="10"
+              />
+            </label>
+            <label> <input name="revComp" type="checkbox" defaultChecked={true}/> Reverse &amp; compliment </label>
+          </div>
 
         <div className="form-group">
-          <label><strong>Contig ID:</strong> <input type="text" name="contig" defaultValue={props.record.attributes.sequence_id}/></label>
-        </div>
 
-        <div className="form-group">
-          <label>
-            <strong>Nucleotide positions: </strong>
-            <input
-              type="text"
-              name="start"
-              defaultValue={props.record.attributes.start_min}
-              maxLength="10"
-              size="10"
-            />
-          </label>
-          <label> to <input
-              type="text"
-              name="stop"
-              defaultValue={props.record.attributes.end_max}
-              maxLength="10"
-              size="10"
-            />
-          </label>
-          <label> <input name="revComp" type="checkbox" defaultChecked={true}/> Reverse & compliment </label>
-        </div>
+          <strong>Organisms to align: </strong>
 
-          <OrganismSelector
-            displayName="Organisms"
-            organismTree={makeTree(props.value)}
+          <p>
+            Select 15 or fewer organisms from the tree below.
+            <br/>
+            {exceededMaxOrganisms && <i className="fa fa-warning" style={{ color: 'darkorange', width: '1.5em' }}/>}
+            <span style={{ color: exceededMaxOrganisms ? 'darkred' : '' }}>
+              You have currently selected {this.state.selectedLeaves.length}
+            </span>
+          </p>
+
+          <CategoriesCheckboxTree
+            name="genomes"
+            searchBoxPlaceholder={`Search for Organism(s) to include in the alignment or expand the tree below`}
+            autoFocusSearchBox={false}
+            tree={makeTree(this.props.value)}
+            leafType="string"
+            isMultiPick={true}
+            searchTerm={this.state.searchTerm}
+            onChange={this.handleChange}
+            onUiChange={this.handleUiChange}
+            selectedLeaves={this.state.selectedLeaves}
+            expandedBranches={this.state.expandedBranches}
+            onSearchTermChange={this.handleSearchTermChange}
           />
+        </div>
 
         <div className="form-group">
           <strong>Select output:</strong>
@@ -375,10 +428,15 @@ function MercatorTable(props) {
           <div className="form-radio"><label><input name="type" type="radio" value="fasta_ungapped"/> Multi-FASTA</label></div>
         </div>
 
-        <input type="submit"/>
+        <input
+          disabled={exceededMaxOrganisms}
+          title={exceededMaxOrganisms ? 'Please fix errors listed above.' : 'Run alignment'}
+          type="submit"
+        />
       </form>
     </div>
-  );
+    );
+  }
 }
 
 
@@ -409,57 +467,3 @@ const UserCommentsTable = withUserAndAction(function UserCommentsTable(props) {
   )
 });
 
-
-class OrganismSelector extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-//      expandedBranches: Category.getAllBranchIds(this.props.organismTree)
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleUiChange = this.handleUiChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
-  }
-
-  handleChange(selectedLeaves) {
-    this.setState({selectedLeaves});
-  }
-
-  handleUiChange(expandedBranches) {
-    this.setState({expandedBranches});
-  }
-
-  handleSubmit() {
-    this.props.onChange(this.props.isMultiPick ? this.state.selectedLeaves : this.state.selectedLeaves[0]);
-  }
-
-  handleSearchTermChange(searchTerm) {
-    this.setState({searchTerm});
-  }
-
-  render() {
-    return (
-        <div className="form-group">
-
-        <CategoriesCheckboxTree
-          name="genomes"
-          searchBoxPlaceholder={`Search for Organism(s) to include in the alignment or expand the tree below`}
-          autoFocusSearchBox={false}
-          tree={this.props.organismTree}
-          leafType="string"
-          isMultiPick={true}
-          searchTerm={this.state.searchTerm}
-          onChange={this.handleChange}
-          onUiChange={this.handleUiChange}
-          selectedLeaves={this.state.selectedLeaves}
-          expandedBranches={this.state.expandedBranches}
-          onSearchTermChange={this.handleSearchTermChange}
-
-        />
-        </div>
-
-    );
-  }
-}
