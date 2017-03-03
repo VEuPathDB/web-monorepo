@@ -390,7 +390,7 @@ class MercatorTable extends React.Component {
                 size="10"
               />
             </label>
-            <label> <input name="revComp" type="checkbox" defaultChecked={true}/> Reverse &amp; compliment </label>
+            <label> <input name="revComp" type="checkbox" defaultChecked={false}/> Reverse &amp; compliment </label>
           </div>
 
         <div className="form-group">
