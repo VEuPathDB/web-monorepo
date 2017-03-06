@@ -30,7 +30,8 @@ export default class GalaxyTermsController extends WdkViewController {
   getStateFromStore(store) {
     return {
       user: get(store.getState(), 'globalData.user'),
-      securityAgreementStatus: get(store.getState(), 'securityAgreementStatus', false)
+      securityAgreementStatus: get(store.getState(), 'securityAgreementStatus', false),
+      webAppUrl: get(store.getState(), 'globalData.config.webAppUrl')
     };
   }
 

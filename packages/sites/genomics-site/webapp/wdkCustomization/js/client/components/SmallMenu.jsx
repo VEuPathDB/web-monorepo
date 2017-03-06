@@ -50,7 +50,7 @@ export default class SmallMenu extends Component {
 
                 <li><a href={webAppUrl + '/showXmlDataContent.do?name=XmlQuestions.About#citing'}>How to cite us</a></li>
                 <li><a href={webAppUrl + '/showXmlDataContent.do?name=XmlQuestions.About#citingproviders'}>Citing Data Providers</a></li>
-                <li><a href={'http://scholar.google.com/scholar?as_q=&amp;num=10&amp;as_epq=&amp;as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&amp;as_eq=encrypt+cryptography+hymenoptera&amp;as_occt=any&amp;as_sauthors=&amp;as_publication=&amp;as_ylo=&amp;as_yhi=&amp;as_sdt=1.&amp;as_sdtp=on&amp;as_sdtf=&amp;as_sdts=39&amp;btnG=Search+Scholar&amp;hl=en'}>Publications that Use our Resources</a></li>
+                <li><a href={'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'}>Publications that Use our Resources</a></li>
                 <li><a href={webAppUrl + '/showXmlDataContent.do?name=XmlQuestions.About#use'}>Data Access Policy</a></li>
 
                 <br/><span className="smallTitle">------ Who are we?</span>
@@ -83,7 +83,7 @@ export default class SmallMenu extends Component {
               Help
               <ul style={{display: visibleSubmenu === 'help' ? 'block' : 'none'}}>
                 <li><a href={webAppUrl + '/resetSession.jsp'} title="Login first to keep your work.">Reset {projectId} Session</a></li>
-                <li><a href={'http://www.youtube.com/user/EuPathDB/videos?sort=dd&amp;flow=list&amp;view=1'}>YouTube Tutorials Channel</a></li>
+                <li><a href={'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1'}>YouTube Tutorials Channel</a></li>
                 <li><a href={webAppUrl + '/showXmlDataContent.do?name=XmlQuestions.Tutorials'}>Web Tutorials</a></li>
                 <li><a href={'http://workshop.eupathdb.org/current/'}>EuPathDB Workshop</a></li>
                 <li><a href={'http://workshop.eupathdb.org/current/index.php?page=schedule'}>Exercises from Workshop</a></li>
@@ -119,7 +119,7 @@ export default class SmallMenu extends Component {
             </a>
           </li>}
           {youtubeId && <li className="socmedia-link no-divider">
-            <a href="http://www.youtube.com/user/{youtubeId}/videos?sort=dd&amp;flow=list&amp;view=1" target="_blank">
+            <a href="http://www.youtube.com/user/{youtubeId}/videos?sort=dd&flow=list&view=1" target="_blank">
               <span title="Follow us on YouTube!" className="youtube small"></span>
             </a>
           </li>}
