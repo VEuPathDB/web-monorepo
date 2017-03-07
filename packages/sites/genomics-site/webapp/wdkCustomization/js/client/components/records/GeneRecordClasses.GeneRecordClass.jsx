@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import { projectId, webAppUrl } from '../../config';
-import {NativeCheckboxList} from 'wdk-client/Components';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
 import { pure } from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
@@ -150,18 +149,41 @@ RecordOverview.contextTypes = {
 
 export function RecordTable(props) {
   switch(props.table.name) {
+
     case 'ExpressionGraphs':
-    case 'ProteinExpressionGraphs':   return <DatasetGraphTable {...props} dataTableName="ExpressionGraphsDataTable"/>
-    case 'HostResponseGraphs':        return <DatasetGraphTable {...props} dataTableName="HostResponseGraphsDataTable"/>
-    case 'CrisprPhenotypeGraphs':     return <DatasetGraphTable {...props} dataTableName="CrisprPhenotypeGraphsDataTable"/>
-    case 'PhenotypeGraphs':           return <DatasetGraphTable {...props} dataTableName="PhenotypeGraphsDataTable"/>
-    case 'MercatorTable':             return <MercatorTable {...props} />
-    case 'ProteinProperties':         return <ProteinPbrowseTable {...props} />
-    case 'ProteinExpressionPBrowse':  return <ProteinPbrowseTable {...props} />
-    case 'Sequences':                 return <SequencesTable {...props} />
-    case 'UserComments':              return <UserCommentsTable {...props} />
-    case 'SNPsAlignment':             return <SNPsAlignment {...props} />
-    default:                          return <props.DefaultComponent {...props} />
+    case 'ProteinExpressionGraphs':
+    case 'eQTLPhenotypeGraphs':
+      return <DatasetGraphTable {...props} dataTableName="ExpressionGraphsDataTable"/>
+
+    case 'HostResponseGraphs':
+      return <DatasetGraphTable {...props} dataTableName="HostResponseGraphsDataTable"/>
+
+    case 'CrisprPhenotypeGraphs':
+      return <DatasetGraphTable {...props} dataTableName="CrisprPhenotypeGraphsDataTable"/>
+
+    case 'PhenotypeGraphs':
+      return <DatasetGraphTable {...props} dataTableName="PhenotypeGraphsDataTable"/>
+
+    case 'MercatorTable':
+      return <MercatorTable {...props} />
+
+    case 'ProteinProperties':
+      return <ProteinPbrowseTable {...props} />
+
+    case 'ProteinExpressionPBrowse':
+      return <ProteinPbrowseTable {...props} />
+
+    case 'Sequences':
+      return <SequencesTable {...props} />
+
+    case 'UserComments':
+      return <UserCommentsTable {...props} />
+
+    case 'SNPsAlignment':
+      return <SNPsAlignment {...props} />
+
+    default:
+      return <props.DefaultComponent {...props} />
   }
 }
 
@@ -177,7 +199,7 @@ function SNPsAlignment(props) {
 }
 
 function DatasetGraphTable(props) {
-  let dataTable = {
+  let dataTable = props.dataTableName && {
     value: props.record.tables[props.dataTableName],
     table: props.recordClass.tablesMap[props.dataTableName],
     record: props.record,
