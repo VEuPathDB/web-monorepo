@@ -199,15 +199,18 @@ function SNPsAlignment(props) {
 }
 
 function DatasetGraphTable(props) {
-  let dataTable = props.dataTableName && {
-    value: props.record.tables[props.dataTableName],
-    table: props.recordClass.tablesMap[props.dataTableName],
-    record: props.record,
-    recordClass: props.recordClass,
-    DefaultComponent: props.DefaultComponent
+  let { dataTableName, record, recordClass, DefaultComponent } = props;
+
+  let dataTable = dataTableName && dataTableName in record.tables && {
+    value: record.tables[dataTableName],
+    table: recordClass.tablesMap[dataTableName],
+    record: record,
+    recordClass: recordClass,
+    DefaultComponent: DefaultComponent
   };
+
   return (
-    <props.DefaultComponent
+    <DefaultComponent
       {...props}
       childRow={childProps => <DatasetGraph {...childProps} dataTable={dataTable} />}
     />
