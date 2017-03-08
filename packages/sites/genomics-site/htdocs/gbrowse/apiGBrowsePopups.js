@@ -177,7 +177,7 @@ function getSaveRowLinks(projectId, sourceId) {
 /****** Pop-up functions for various record types ******/
 
 // Gene title
-function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl, geneId, baseUrl, baseRecordUrl) {
+function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon, utr, gbLinkParams, orthomcl, geneId, baseUrl, baseRecordUrl, aaseqid) {
 
   // In ToxoDB, sequences of alternative gene models have to be returned
   var ignore_gene_alias = 0;
@@ -220,7 +220,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
   }
   // TO FIX for GUS4
   //  rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
-  if (soTerm =='Protein Coding') {
+  if (soTerm =='Protein Coding' && aaseqid) {
     rows.push(twoColRow('Download:', cdsLink + " | " + proteinLink));
     if ( orthomcl != '') {
       rows.push(twoColRow('OrthoMCL', orthomclLink));
@@ -250,7 +250,7 @@ function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, locati
   rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
   rows.push(twoColRow('Links:', gbLink + ' | ' + recordLink));
 
-  if (geneType =='Protein Coding') {
+  if (geneType =='Protein Coding' && aaseqid) {
     rows.push(twoColRow('OrthoMCL', orthomcl));
   }
 
