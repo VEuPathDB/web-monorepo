@@ -1,7 +1,7 @@
 import { httpGet } from '../../util/http';
 import { adjustScrollOnLoad } from '../../util/domUtils';
 import { CollapsibleSection, Loading } from 'wdk-client/Components';
-import { PureComponent } from 'wdk-client/ComponentUtils';
+import { PureComponent, safeHtml } from 'wdk-client/ComponentUtils';
 
 /**
  * Renders an Dataset graph with the provided rowData.
@@ -144,19 +144,21 @@ export default class DatasetGraph extends PureComponent {
 
 
           {assay_type == 'RNA-seq' && covImgUrl ?
-           <CollapsibleSection
-               id={dataset_name + "Coverage"}
-               className="eupathdb-GbrowseContext"
-               headerContent="Coverage"
-               isCollapsed={this.state.coverageCollapsed}
-               onCollapsedChange={this.handleCoverageCollapseChange}>
-               <div>
-                   <a href={covImgUrl.replace('/gbrowse_img/', '/gbrowse/')}>View in genome browser</a>
-               </div>
+            <CollapsibleSection
+              id={dataset_name + "Coverage"}
+              className="eupathdb-GbrowseContext"
+              headerContent="Coverage"
+              isCollapsed={this.state.coverageCollapsed}
+              onCollapsedChange={this.handleCoverageCollapseChange}>
+              <div>
+                <a href={covImgUrl.replace('/gbrowse_img/', '/gbrowse/')}>
+                  View in genome browser
+                </a>
+              </div>
 
-               <img width="450" src={covImgUrl}/>
-           </CollapsibleSection>
-           : null}
+              <img width="450" src={covImgUrl}/>
+            </CollapsibleSection>
+          : null}
 
 
         </div>
@@ -183,14 +185,14 @@ export default class DatasetGraph extends PureComponent {
             headerComponent="h4"
             isCollapsed={this.state.descriptionCollapsed}
             onCollapsedChange={this.handleDescriptionCollapseChange}>
-            <div dangerouslySetInnerHTML={{__html: description}}/>
+            {safeHtml(description, {}, 'div')}
           </CollapsibleSection>
 
           <h4>X-axis</h4>
-          <div dangerouslySetInnerHTML={{__html: x_axis}}/>
+          {safeHtml(x_axis, {}, 'div')}
 
           <h4>Y-axis</h4>
-          <div dangerouslySetInnerHTML={{__html: y_axis}}/>
+          {safeHtml(y_axis, {}, 'div')}
 
           <h4>Choose gene for which to display graph</h4>
           {graphIds.map(graphId => {

@@ -464,6 +464,7 @@ sub geneTitleGB2 {
   my ($gene_id) = $f->get_tag_values("geneId");
   my ($soTerm) = $f->get_tag_values("soTerm");
   my ($isPseudo) = $f->get_tag_values("isPseudo");
+  my ($aaSeqId) = $f->get_tag_values("aaSeqId");
 
   # real OrthoMCL group identifiers begin "OG<number>_"
   my ($orthomclName) = $f->get_tag_values("orthomcl_name");
@@ -493,7 +494,7 @@ sub geneTitleGB2 {
   my $baseUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST};
   my $baseRecordUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST} . $ENV{CONTEXT_PATH};
 
-  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseUrl','$baseRecordUrl'))};
+  return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseUrl','$baseRecordUrl','$aaSeqId'))};
 }
 
 

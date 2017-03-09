@@ -5,7 +5,7 @@ import GalaxyPageLayout from './GalaxyPageLayout';
  * Sign up page
  */
 export default function GalaxySignUp(props) {
-  let { onGalaxyNavigate, securityAgreementStatus, updateSecurityAgreementStatus } = props;
+  let { onGalaxyNavigate, securityAgreementStatus, updateSecurityAgreementStatus, webAppUrl } = props;
   return (
     <GalaxyPageLayout>
       <p>
@@ -15,7 +15,7 @@ export default function GalaxySignUp(props) {
       </p>
 
       <p>
-        <a href="contact-us">Contact us</a> if you experience any difficulties.
+        <a href={`${webAppUrl}/contact.do`}>Contact us</a> if you experience any difficulties.
       </p>
 
       <div className="eupathdb-GalaxySignUpScreens">
