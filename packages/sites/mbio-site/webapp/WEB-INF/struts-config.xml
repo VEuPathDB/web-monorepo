@@ -20,14 +20,8 @@
     <form-bean name="showRegisterForm" type="org.gusdb.wdk.controller.form.ShowRegisterForm"/>
     <form-bean name="showPasswordForm" type="org.gusdb.wdk.controller.form.ShowPasswordForm"/>
     <form-bean name="showResetPasswordForm" type="org.gusdb.wdk.controller.form.ShowResetPasswordForm"/>
-    <form-bean name="phenotypeForm" type="org.apidb.apicommon.controller.PhenotypeForm"/>
-    <form-bean name="commentForm" type="org.apidb.apicommon.controller.NewCommentForm"/> 
-    <form-bean name="editCommentForm" type="org.apidb.apicommon.controller.EditCommentForm"/> 
-    <form-bean name="showCommentForm" type="org.apidb.apicommon.controller.ShowCommentForm"/>
-    <form-bean name="deleteCommentForm" type="org.apidb.apicommon.controller.DeleteCommentForm"/>
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.form.RenameStepForm"/>
     <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.form.RenameStrategyForm"/>
-    <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
     <form-bean name="wizardForm" type="org.gusdb.wdk.controller.form.WizardForm"/>
   </form-beans>
 
@@ -52,7 +46,7 @@
   </global-exceptions>
 
   <global-forwards type="org.apache.struts.action.ActionForward">
-    <forward name="home" path="/home.jsp"/>
+    <forward name="home" path="/index.jsp"/>
     <forward name="needs_login" path="/showLogin.do"/>
     <forward name="application_error" path="/wdkCustomization/jsp/Error.jsp"/>
   </global-forwards>
@@ -64,7 +58,7 @@
     <action path="/home"
         parameter="org.gusdb.wdk.controller.action.standard.GenericPageAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/home.jsp"/>
+      <forward name="success" path="/index.jsp"/>
     </action>
     <action path="/contact"
         parameter="org.gusdb.wdk.controller.action.standard.GenericPageAction"
@@ -192,7 +186,7 @@
     </action>
     <action
       path="/processBasket"
-      type="org.apidb.apicommon.controller.action.CustomProcessBasketAction"
+      type="org.gusdb.wdk.controller.action.ProcessBasketAction"
       scope="request"
       validate="false">
     </action>
@@ -294,7 +288,7 @@
     
     <action
       path="/showQuestion"
-      type="org.apidb.apicommon.controller.action.CustomShowQuestionAction"
+      type="org.gusdb.wdk.controller.action.ShowQuestionAction"
       scope="request"
       validate="false"
       name="questionForm">
@@ -450,10 +444,9 @@
 
     <action
       path="/showRecord"
-      type="org.apidb.apicommon.controller.action.CustomShowRecordAction"
+      type="org.gusdb.wdk.controller.action.ShowRecordAction"
       scope="request">
       <forward name="show_record" path="/record.jsp"/>
-      <forward name="run-question" path="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&amp;value(single_gene_id)=${SOURCE_ID}&amp;questionSubmit=Get+Answer"/>
     </action>
     <action
       path="/configDownload"
@@ -521,63 +514,11 @@
       type="org.gusdb.wdk.controller.action.ShowXmlDataContentAction"
       scope="request">
     </action>
-   <action
-      path="/addComment"
-      type="org.apidb.apicommon.controller.NewCommentAction"
-      scope="session"
-      input="/addCommentsNew.jsp"
-      name="commentForm">
-   </action> 
-   <action
-      path="/editComment"
-      type="org.apidb.apicommon.controller.EditCommentAction"
-      scope="request"
-      input="/showComments.jsp"
-      name="editCommentForm">
-      <forward name="add_comment" path="/addComment.do"/>
-   </action> 
-   <action
-      path="/addPhenotype"
-      type="org.apidb.apicommon.controller.PhenotypeAction"
-      scope="request"
-      input="/addPhenotype.jsp"
-      name="phenotypeForm">
-      <forward name="add_phenotype" path="/addPhenotype.do"/>
-   </action> 
-   <action
-      path="/showComment"
-      type="org.apidb.apicommon.controller.ShowCommentAction"
-      scope="session"
-      name="showCommentForm">
-      <forward name="show_comment" path="/showComment.jsp"/>
-    </action>
-   <action
-      path="/deleteComment"
-      type="org.apidb.apicommon.controller.DeleteCommentAction"
-      scope="session"
-      name="deleteCommentForm">
-    </action>
     <action
       path="/goRemote"
       type="org.gusdb.wdk.controller.action.services.RemoteLoginAction"
       scope="request">
     </action>
-    <action
-      path="/communityUpload"
-      type="org.apidb.apicommon.controller.UserFileUploadAction"
-      scope="request"
-      input="/communityUpload.jsp"
-      name="userFileUploadForm">
-      <forward name="community_upload" path="/communityUploadResult.jsp"/>
-   </action>
-    <action
-      path="/communityDownload"
-      type="org.apidb.apicommon.controller.UserFileDownloadAction"
-      name="communityDownload"
-      scope="request">
-      <forward name="isDir" path="/common/community"/>
-      <forward name="fileNotFound" path="/404.jsp"/>
-   </action>
     <action
       path="/showResultSize"
       type="org.gusdb.wdk.controller.action.ShowResultSizeAction"
@@ -634,21 +575,6 @@
       <forward name="show_strategy" path="/showStrategy.do"/>
     </action>
     <action
-      path="/getDataset"
-      type="org.apidb.apicommon.controller.action.GetDatasetAction"
-      scope="request">
-      <forward name="show_list" redirect="false" path="/wdkCustomization/jsp/DatasetList.jsp"/>
-      <forward name="show_detail" redirect="false" path="/wdkCustomization/jsp/DatasetDetail.jsp"/>
-      <forward name="show_xml_list" redirect="false" path="/showXmlDataList.do?name=XmlQuestions.Datasets"/>
-      <forward name="show_xml_detail" redirect="false" path="/showXmlDataContent.do?name=XmlQuestions.Datasets"/>
-    </action>
-    <action
-      path="/exportBasket"
-      type="org.apidb.apicommon.controller.action.ExportBasketAction"
-      scope="request"
-      validate="false">
-    </action>
-    <action
       path="/showSummaryView"
       type="org.gusdb.wdk.controller.action.ShowSummaryViewAction"
       scope="request"
@@ -667,22 +593,6 @@
       validate="false">
       <forward name="display" redirect="false" path="/wdk/jsp/results/attributePlugin.jsp"/>
     </action>
-    <action
-      path="/exportCytoscapeNetwork"
-      type="org.apidb.apicommon.controller.action.ExportCytoscapeNetworkAction"
-      scope="request"
-      validate="false">
-    </action>
-
-    <action
-      path="/siteSearch"
-      type="org.apidb.apicommon.controller.action.SiteSearchAction"
-      validate="false">
-      <forward name="to-question" redirect="false" path="/processQuestion.do?questionSubmit=Get+Answer"/>
-      <forward name="to-summary" redirect="false" path="/wdkCustomization/jsp/SiteSearchSummary.jsp"/>
-      <forward name="to-html" redirect="false" path="/wdkCustomization/jsp/HtmlSearchSummary.jsp" />
-    </action>
-
 
   </action-mappings>
 

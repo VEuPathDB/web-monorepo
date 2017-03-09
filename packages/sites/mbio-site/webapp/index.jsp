@@ -8,7 +8,6 @@
   <!-- header includes menubar and announcements tags -->
   <!-- refer is used to determine what css and javascript to load, and which announcements are shown -->
   <imp:pageFrame refer="home">
-    <imp:sidebar/>
     <imp:welcomeContent/>
   </imp:pageFrame>
 </jsp:root>

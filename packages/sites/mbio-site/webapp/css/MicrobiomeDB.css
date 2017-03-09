@@ -43,16 +43,6 @@ body {
   position: relative;
 }
 
-#header2 a#MicrobiomeDB {
-  color: #292d94;
-  font-size: 500%;
-  font-weight: bold;
-  position: absolute;
-  top: 40px;
-  left: 4px;
-  text-decoration: none;
-}
-
 #header2 span#rel-num {
   position: absolute;
   top: 50px;
@@ -65,6 +55,15 @@ body {
   left: 330px;
 }
 
+.eupathdb-Logo {
+  position: absolute;
+  top: 40px;
+}
+
+#sub-logo {
+  visibility: hidden;
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
@@ -75,7 +74,7 @@ body {
 
 #nav-top li ul { 
 	border-color:#14426d;
-	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
+	list-style-image: url(../images/MicrobiomeDB/bullet_arrow.gif);
 }
 
 #nav-top li ul a:link, #nav-top li ul a:visited {
@@ -105,7 +104,7 @@ body {
    border-color: #888; 
 }
 
-#menu_lefttop a.heading {
+#sidebar a.heading {
   background: #43669e;  /* #26689c; */
 }
 

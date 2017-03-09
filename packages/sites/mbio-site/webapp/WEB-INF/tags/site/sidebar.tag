@@ -9,11 +9,15 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <fmt:setLocale value="en-US"/>
 
+  <span class="onload-function" data-function="eupath.setup.configureSidebar"><jsp:text/></span>
+
 <%------------------------------------------%>
-<div id="menu_lefttop" data-default-open-id="Help">
+<div id="sidebar" data-default-open-index="2">
 
   <%--------------  DATA STATS---------------------------------------------%>
-  <a class="heading" id='stats'  href="#">Data Summary</a>
+  <h3>
+    <a href="#" class="heading" id='stats'>Data Summary</a>
+  </h3>
   <div class="menu_lefttop_drop" style="text-align:center;">
     <a style="white-space:nowrap;font-size:12pt;font-weight:bold"
       href="${pageContext.servletContext.contextPath}/app/search/dataset/AllDatasets/result">
@@ -25,7 +29,9 @@
   <!-- number of news items to show in sidebar (there is scrollbar) -->
   <c:set var="NewsCount" value="50"/>
 
-  <a class="heading"  href="#">News and Tweets</a>
+  <h3>
+    <a href="#" class="heading">News and Tweets</a>
+  </h3>
   <div id="News" class="menu_lefttop_drop">
     <!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB and FungiDB account settings -->
     <a class="twitter-timeline" data-chrome="nofooter" height="50" href="https://twitter.com/${props.TWITTER_ID}">Tweets by ${props.twitter}</a>
@@ -33,7 +39,9 @@
   </div>
 
   <%--------------  INFO AND HELP ---------------------------------------------%>
-  <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
+  <h3>
+    <a href="#" class="heading" id='informationAndHelp'>About ${project}</a>
+  </h3>
   <div id="Help" class="menu_lefttop_drop">
     <ul style="padding-left: 1em;">
       <imp:aboutLinks/>
