@@ -250,7 +250,7 @@ function syn_gene_title (tip, projectId, sourceId, taxon, geneType, desc, locati
   rows.push(twoColRow(GbrowsePopupConfig.saveRowTitle, getSaveRowLinks(projectId, sourceId)));
   rows.push(twoColRow('Links:', gbLink + ' | ' + recordLink));
 
-  if (geneType =='Protein Coding' && aaseqid) {
+  if (geneType =='Protein Coding') {
     rows.push(twoColRow('OrthoMCL', orthomcl));
   }
 
