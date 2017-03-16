@@ -7,9 +7,6 @@
 <c:set var="sequences" value="${requestScope.isolates}" />
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
 
-<imp:script src="js/lib/google-maps-api__sensor_false.js"/>
-<imp:script src="js/google_map.js"/>
-
 
 <div id="map_canvas" style="width: 1024px; height: 380px"></div>
 
@@ -59,3 +56,5 @@
 
 </table>
 
+<imp:script src="js/google_map.js"/>
+<script async defer src="http://maps.googleapis.com/maps/api/js?callback=initialize"></script>

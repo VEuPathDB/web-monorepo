@@ -14,10 +14,6 @@ function initialize() {
     mapTypeId: google.maps.MapTypeId.TERRAIN
   }
   map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-}
-
-jQuery(document).ready(function(){
-  initialize();
 
   //$('#isolate-view tbody tr').map(function() {
   var locations = [];
@@ -38,7 +34,7 @@ jQuery(document).ready(function(){
 
   setMarkers(map, locations);
 
-});
+}
 
 function setMarkers(map, locations) {
 
