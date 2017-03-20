@@ -13,7 +13,7 @@ import { preorderSeq } from 'wdk-client/TreeUtils';
 import { UserActionCreators } from 'wdk-client/ActionCreators'
 import { SHOW_GALAXY_PAGE_PREFERENCE } from './controllers/GalaxyTermsController';
 
-let { projectId, twitterId, facebookId, buildNumber, webAppUrl, releaseDate, announcements } = projectConfig;
+let { projectId, twitterUrl, facebookUrl, youtubeUrl, buildNumber, webAppUrl, releaseDate, announcements } = projectConfig;
 
 /* eslint-disable no-unused-vars */
 let isAmoebaDB = projectId === 'AmoebaDB';
@@ -292,19 +292,19 @@ function Header(props) {
             {
               id: 'twitter',
               text: <div><span className="twitter small"></span>&nbsp;&nbsp;&nbsp;&nbsp;Follow us on Twitter!</div>,
-              url: 'http://twitter.com/' + twitterId,
+              url: twitterUrl,
               target: '_blank'
             },
             {
               id: 'facebook',
               text: <div><span className="facebook small"></span>&nbsp;&nbsp;&nbsp;&nbsp;Follow us on Facebook!</div>,
-              url: 'http://facebook.com' + facebookId,
+              url: facebookUrl,
               target: '_blank'
             },
             {
               id: 'youtube',
               text: <div><span className="youtube small"></span>&nbsp;&nbsp;&nbsp;&nbsp;Follow us on YouTube!</div>,
-              url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
+              url: youtubeUrl,
               target: '_blank'
             },
             {

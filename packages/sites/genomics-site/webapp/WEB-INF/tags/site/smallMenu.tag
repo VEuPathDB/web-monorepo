@@ -40,7 +40,7 @@
 	          <li><a href="javascript:void(0)" onclick="wdk.dyk.dykOpen()">Did You Know...</a></li>
 	        </c:if>
 	        <li><a title="Login first to keep your work." href="${baseUrl}/resetSession.jsp">Reset ${project} Session</a></li>
-                                      <li><a target="_blank" href="https://youtube.com/user/${props.youtube}/videos?sort=dd&amp;flow=list&amp;view=1">YouTube Tutorials Channel</a></li>
+                                      <li><a target="_blank" href="${props.YOUTUBE_URL}">YouTube Tutorials Channel</a></li>
 	        <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Tutorials">Web Tutorials</a></li>
 	        <li><a href="http://workshop.eupathdb.org/current/">EuPathDB Workshop</a></li>
 	        <li><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from Workshop</a></li>

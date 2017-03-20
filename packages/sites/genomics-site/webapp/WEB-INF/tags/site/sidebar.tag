@@ -186,7 +186,7 @@
     </c:choose>
 
     <!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB and FungiDB account settings -->
-    <a class="twitter-timeline" data-chrome="nofooter"  height="50"  href="https://twitter.com/${props['TWITTER_ID']}" data-widget-id="${props['TWITTER_WIDGET_ID']}"></a>
+    <a class="twitter-timeline" data-chrome="nofooter"  height="50"  href="${props['TWITTER_URL']}" data-widget-id="${props['TWITTER_WIDGET_ID']}"></a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
     <c:if test="${project == 'FungiDB'}">
@@ -261,7 +261,7 @@
   <div class="menu_lefttop_drop">
     <ul id="education">
       <li id='edu-05'>
-        <a target="_blank" href="https://youtube.com/user/${props.youtube}/videos?sort=dd&amp;flow=list&amp;view=1">
+        <a target="_blank" href="${props.YOUTUBE_URL}">
           YouTube Tutorials Channel
           <imp:image style="width:20px;display:inline;vertical-align:middle;" src="images/youtube_32x32.png"/>
         </a>

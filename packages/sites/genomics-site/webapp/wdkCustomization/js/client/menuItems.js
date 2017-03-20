@@ -3,7 +3,7 @@ const CryptoDB = 'CryptoDB';
 const ToxoDB = 'ToxoDB';
 const EuPathDB = 'EuPathDB';
 
-export default ({ projectId, twitterId, facebookId }) => [
+export default ({ projectId, twitterUrl, facebookUrl, youtubeUrl }) => [
   {
     id: 'tools',
     text: 'Tools',
@@ -223,19 +223,19 @@ export default ({ projectId, twitterId, facebookId }) => [
       {
         id: 'twitter',
         text: 'Follow us on Twitter!',
-        url: 'http://twitter.com/' + twitterId,
+        url: twitterUrl,
         target: '_blank'
       },
       {
         id: 'facebook',
         text: 'Follow us on Facebook!',
-        url: 'http://facebook.com' + facebookId,
+        url: facebookUrl,
         target: '_blank'
       },
       {
         id: 'youtube',
         text: 'Follow us on YouTube!',
-        url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
+        url: youtubeUrl,
         target: '_blank'
       },
       {

@@ -7,9 +7,9 @@ export const {
   buildNumber,
   releaseDate,
   webAppUrl,
-  facebookId,
-  twitterId,
-  youtubeId
+  facebookUrl,
+  twitterUrl,
+  youtubeUrl
 } = window.__SITE_CONFIG__;
 
 // __SITE_ANNOUNCEMENTS__ is defined in index.jsp
