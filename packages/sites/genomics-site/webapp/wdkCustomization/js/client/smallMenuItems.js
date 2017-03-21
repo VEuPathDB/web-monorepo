@@ -1,5 +1,5 @@
 /** Additional small menu entries */
-export default ({ projectId }) => [
+export default ({ siteConfig: { projectId } }) => [
   {
     text: `About ${projectId}`,
     children: [

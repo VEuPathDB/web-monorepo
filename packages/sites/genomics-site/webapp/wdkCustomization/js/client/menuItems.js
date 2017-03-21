@@ -1,9 +1,16 @@
+import { get } from 'lodash';
+import { SHOW_GALAXY_PAGE_PREFERENCE } from './components/controllers/GalaxyTermsController';
+
 const PlasmoDB = 'PlasmoDB';
 const CryptoDB = 'CryptoDB';
 const ToxoDB = 'ToxoDB';
 const EuPathDB = 'EuPathDB';
 
-export default ({ projectId, twitterUrl, facebookUrl, youtubeUrl }) => [
+function shouldShowGalaxyOrientation(preferences) {
+  return get(preferences, SHOW_GALAXY_PAGE_PREFERENCE, 'true') === 'true';
+}
+
+export default ({ siteConfig: { projectId, twitterUrl, facebookUrl, youtubeUrl }, preferences }) => [
   {
     id: 'tools',
     text: 'Tools',
@@ -290,10 +297,8 @@ export default ({ projectId, twitterUrl, facebookUrl, youtubeUrl }) => [
     id: 'analyze',
     text: 'Analyze My Experiment',
     new: true,
-    webAppUrl: '/app/galaxy',
-    target: '_blank'
-    // route: shouldShowGalaxyOrientation ? 'galaxy-orientation' : undefined,
-    // url: !shouldShowGalaxyOrientation ? 'https://eupathdb.globusgenomics.org/' : undefined,
-    // target: !shouldShowGalaxyOrientation ? '_blank' : undefined
+    route: shouldShowGalaxyOrientation(preferences) ? 'galaxy-orientation' : undefined,
+    url: !shouldShowGalaxyOrientation(preferences) ? 'https://eupathdb.globusgenomics.org/' : undefined,
+    target: !shouldShowGalaxyOrientation(preferences) ? '_blank' : undefined
   }
 ];
