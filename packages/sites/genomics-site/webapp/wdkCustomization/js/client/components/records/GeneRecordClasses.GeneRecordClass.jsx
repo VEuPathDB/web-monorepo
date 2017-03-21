@@ -2,15 +2,14 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import { projectId, webAppUrl } from '../../config';
-import { UserActionCreators } from 'wdk-client/ActionCreators';
 import { pure } from 'wdk-client/ComponentUtils';
 import {seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
 import {findChildren, isNodeOverflowing} from '../../util/domUtils';
-import { withActions, withStore } from 'eupathdb/wdkCustomization/js/client/util/component';
 import DatasetGraph from '../common/DatasetGraph';
 import Sequence from '../common/Sequence';
 import {OverviewThumbnails} from '../common/OverviewThumbnails';
+import { addCommentLink } from '../common/UserComments';
 import * as Gbrowse from '../common/Gbrowse';
 import {SnpsAlignmentForm} from '../common/Snps';
 import { CategoriesCheckboxTree } from 'wdk-client/Components';
@@ -464,31 +463,4 @@ class MercatorTable extends React.Component {
   }
 }
 
-
-const withUserAndAction = lodash.flowRight(
-  withStore(state => ({ user: state.globalData.user, location: state.globalData.location })),
-  withActions(UserActionCreators)
-);
-
-const UserCommentsTable = withUserAndAction(function UserCommentsTable(props) {
-  let { user_comment_link_url } = props.record.attributes;
-  return (
-    <div>
-      <p>
-        <a href={user_comment_link_url}
-          onClick={e => {
-            const modifierPressed = e.metaKey || e.altKey || e.ctrlKey || e.shiftKey;
-            const { isGuest } = props.user;
-            if (modifierPressed || !isGuest) return;
-            e.preventDefault();
-            props.showLoginWarning('add a comment', user_comment_link_url);
-          }}
-        >
-          Add a comment <i className="fa fa-comment"/>
-        </a>
-      </p>
-      <props.DefaultComponent {...props} />
-    </div>
-  )
-});
-
+const UserCommentsTable = addCommentLink(props => props.record.attributes.user_comment_link_url);
