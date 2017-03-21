@@ -12,7 +12,7 @@ initialize({
       route: 'search/dataset/AllDatasets/result'
     }
   ],
-  smallMenuEntries: ({ projectId }) => [
+  smallMenuEntries: ({ siteConfig: { projectId } }) => [
     {
       text: `About ${projectId}`,
       webAppUrl: `about.jsp`,
