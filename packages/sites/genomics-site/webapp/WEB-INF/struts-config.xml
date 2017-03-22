@@ -399,28 +399,24 @@
     </action>
 
     <!-- * is question set name -->
-	<action
-		path="/*.wadl"
-		type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
-		scope="request"
-		validate="false" 
-		parameter="{1}.all::wadl">
-		<forward name="show_result" path="downloadResult.jsp"/>
-	</action>
+    <action
+        path="/*.wadl"
+        type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
+        scope="request"
+        validate="false" 
+        parameter="{1}.all::wadl"/>
 
     <!--
         {1} question set name
         {2} question name; if the name is "all" & {3} is wadl, it's equivalent to the action above.
         {3} json|xml|wadl
      -->
-	<action
-       path="/*/*.*"
-       type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
-       scope="request"
-	   validate="false"
-	   parameter="{1}.{2}::{3}">
-       <forward name="show_result" path="/downloadResult.jsp"/>
-    </action>
+    <action
+        path="/*/*.*"
+        type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
+        scope="request"
+        validate="false"
+        parameter="{1}.{2}::{3}"/>
 
     <action
       path="/showSummary"
