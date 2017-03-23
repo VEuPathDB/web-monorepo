@@ -1,6 +1,5 @@
 import { flow, get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
-import { selectReporterComponent } from './util/reporterSelector';
 import * as persistence from './util/persistence';
 import { TABLE_STATE_UPDATED } from './actioncreators/RecordViewActionCreators';
 import { SECURITY_AGREEMENT_STATUS_CHANGED } from './actioncreators/GalaxyTermsActionCreators';
@@ -19,15 +18,6 @@ let storageItems = {
     isRecordScoped: false
   }
 };
-
-/** Return subcass of the provided StepDownloadFormViewStore */
-export function DownloadFormStore(WdkDownloadFormStore) {
-  return class ApiDownloadFormStore extends WdkDownloadFormStore {
-    getSelectedReporter(selectedReporterName, recordClassName) {
-      return selectReporterComponent(selectedReporterName, recordClassName);
-    }
-  }
-}
 
 /** Provide GalaxyTermsStore */
 export function GalaxyTermsStore(WdkStore) {

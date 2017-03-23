@@ -5,7 +5,6 @@ import {renderWithCustomElements} from './components/customElements';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
-import { selectReporterComponent } from './util/reporterSelector';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import ApiUserIdentity from './components/ApiUserIdentity';
 import RecordTableContainer from './components/common/RecordTableContainer';
@@ -147,20 +146,6 @@ function RecordOverview(props) {
       {renderWithCustomElements(props.record.attributes.record_overview)}
     </Wrapper>
   );
-}
-
-// Customize DownloadForm to show the appropriate form based on the
-//   selected reporter and record class
-export function DownloadForm() {
-  return function ApiDownloadForm(props) {
-    let Reporter = selectReporterComponent(props.selectedReporter, props.recordClass.name);
-    return (
-      <div>
-        <hr/>
-        <Reporter {...props}/>
-      </div>
-    );
-  }
 }
 
 export function RecordTable(DefaultComponent) {
