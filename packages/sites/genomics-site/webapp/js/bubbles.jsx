@@ -7,7 +7,7 @@ import {getSearchMenuCategoryTree} from 'eupathdb/wdkCustomization/js/client/uti
 import WdkService from 'wdk-client/WdkService';
 
 wdk.namespace('apidb.bubble', ns => {
-  const wdkService = new WdkService(wdk.webappUrl('/service'));
+  const wdkService = WdkService.getInstance(wdk.webappUrl('/service'));
 
   ns.initialize = ($el, attrs) => {
     let options = pick(attrs, 'include', 'exclude');

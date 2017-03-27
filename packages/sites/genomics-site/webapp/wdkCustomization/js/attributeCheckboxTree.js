@@ -10,7 +10,7 @@ wdk.namespace("eupathdb.attributeCheckboxTree", function(ns) {
 
   // will map from summary views to attribute tree controller for that view
   let controllerMap = {};
-  let wdkService = new WdkService(wdk.webappUrl('/service'));
+  let wdkService = WdkService.getInstance(wdk.webappUrl('/service'));
 
   /**
    * Entry into a custom attribute selector pop-up, which appears when the user
