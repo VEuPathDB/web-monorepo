@@ -251,7 +251,7 @@
   </div>
  
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Acute, recrudescent, and chronic infections of <i>Macaca mulatta</i> with <i>Plasmodium coatneyi</i> Hackeri strain. </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Acute, recrudescent, and chronic infections of <i>Macaca mulatta</i> with <i>Plasmodium coatneyi</i> Hackeri strain. </a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
