@@ -791,6 +791,118 @@
   </div>	
   </div>  
 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 25: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> strain ceylonensis, in a heterologous challenge </a> </h3> 
+   <div class="wdk-toggle-content">
+
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE25 table, #DataLinksE25 td, #DataLinksE25 th, #DataLinksE25 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE25 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksE03 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE25"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_04/">E25 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E25 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E25 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E25 BioProject record at NCBI</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E25 Proteomics at EBI's PRIDE</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
+             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E25 Lipidomics at UCSD's MassIVE</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
+             <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E25 Immune Profiles at NIAID's ImmPort</a>-->
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b>Coming Soon</b></td> <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E25 Metabolomics at UCSD's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E03 Metabolomics at UCSD's Metabolomics Workbench</a> -->    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
+             <td><b>Coming soon</b></td>
+             <td>N/A</td>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE25 table, #ExpInfoE25 td, #ExpInfoE25 th, #ExpInfoE25 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE25 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE25"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 25: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> strain ceylonensis, in a heterologous challenge, to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses. </td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Male rhesus macaques (<i>Macaca mulatta</i>), cleared of previous infection with  <i>P. cynomolgi</i> B strain via treatment with the anti-malarial drugs artemether, chloroquine, and primaquine,  approximately five years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple Anopheles species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was conducted for 51 days, and pre- and post-51 day periods to prepare subjects and administer post-experiment curative treatments respectively.  The anti-malarial drug artemether was subcuratively administered to subjects at the initial peak of infection, if subjects were not able to self-resolve their parasitemias.  Peak infection was determined clinically for each subject.  The anti-malarial drugs primaquine and chloroquine were administered to all subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood samples were collected at five time points for functional genomic, lipidomic, proteomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 25'.  This is the third and final of a series of experiments that includes infection of malaria-naïve subjects (Experiment 23, <i>P. cynomolgi</i> B strain) and homologous challenge (Experiment 24, <i>P. cynomolgi</i> B strain) of individuals from the same cohort.  This dataset was produced by Alberto Moreno at Emory University.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
+           </tr>
+         </table>
+      </div>   
+	 
+<!--	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+  -->
+     <br><br> 
+     <img align="middle" src="images/MaHPIC_E25_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E25_Timeline.png" target="_blank">View Larger Image</a><br>
+    
+        
+  </div>	
+  </div>  
+
+
+
+
   </div>
   </div>
   </div>
