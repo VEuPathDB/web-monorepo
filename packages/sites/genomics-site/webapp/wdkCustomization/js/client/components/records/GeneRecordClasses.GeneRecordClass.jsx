@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import lodash from 'lodash';
 import { projectId, webAppUrl } from '../../config';
 import { pure } from 'wdk-client/ComponentUtils';
-import {seq} from 'wdk-client/IterableUtils';
+import {Seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
 import {findChildren, isNodeOverflowing} from '../../util/domUtils';
 import DatasetGraph from '../common/DatasetGraph';
@@ -49,13 +49,13 @@ export class RecordOverview extends Component {
   }
 
   addProductTooltip() {
-    let products = seq(
+    let products = Seq.from(
       this.node.querySelectorAll(
         '.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle'))
       .filter(isNodeOverflowing)
       .flatMap(findChildren('.eupathdb-RecordOverviewDescription'));
 
-    let items = seq(
+    let items = Seq.from(
       this.node.querySelectorAll('.eupathdb-RecordOverviewItem'))
       .filter(isNodeOverflowing);
 
@@ -73,8 +73,7 @@ export class RecordOverview extends Component {
     let instanceFields = new Set(
       preorderSeq(store.getState().categoryTree)
       .filter(node => !node.children.length)
-      .map(node => node.properties.name[0])
-      .toArray());
+      .map(node => node.properties.name[0]));
 
     let transcriptomicsThumbnail = {
       displayName: 'Transcriptomics',
@@ -94,7 +93,7 @@ export class RecordOverview extends Component {
       anchor: 'CrisprPhenotypeGraphs'
     };
 
-    let filteredGBrowseContexts = seq(Gbrowse.contexts)
+    let filteredGBrowseContexts = Seq.from(Gbrowse.contexts)
     .filter(context => context.includeInThumbnails !== false)
     // inject transcriptomicsThumbnail before protein thumbnails
     .flatMap(context => {
