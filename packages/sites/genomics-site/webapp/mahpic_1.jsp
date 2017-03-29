@@ -251,7 +251,7 @@
   </div>
  
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Acute, recrudescent, and chronic infections of <i>Macaca mulatta</i> with <i>P. coatneyi</i> Hackeri strain. </a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Experiment 03: Measures of infection and recrudescence in <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain </a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -573,7 +573,7 @@
   </div>
   
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 23: XXX </a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 23: <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses.</a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -683,7 +683,7 @@
 
  
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 24: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain, in a homologous challenge</a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 24: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain, in a homologous challenge</a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -792,7 +792,7 @@
   </div>  
 
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 25: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> strain ceylonensis, in a heterologous challenge </a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 25: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> strain ceylonensis, in a heterologous challenge </a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -875,7 +875,7 @@
          <table id="ExpInfoE25"> 
            <tr>
              <td><b>Title:</b></td>
-             <td>Experiment 25: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> strain ceylonensis, in a heterologous challenge, to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses. </td>
+             <td>Experiment 25: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> strain ceylonensis, in a heterologous challenge, to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses  </td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
