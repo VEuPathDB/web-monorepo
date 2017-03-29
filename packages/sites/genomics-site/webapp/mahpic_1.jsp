@@ -251,7 +251,7 @@
   </div>
  
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Experiment 03: Measures of infection and recrudescence in <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain </a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Measures of infection and recrudescence in <i>M. mulatta</i> infected with <i>P. coatneyi</i> Hackeri strain </a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -338,7 +338,7 @@
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately four years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug artemether was subcuratively administered to all subjects at the initial peak of infection, one out of the five macaques received four additional subcurative treatments for subsequent recrudescence peaks.  The experimental infection in one subject was ineffective but the macaque was followed-up for the same period of 100 days. The different clinical phases of the infection were clinically determined for each subject.  Blood-stage curative doses of artemether were administered to all subjects at the end of the study.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 03'.  This dataset was produced by <<<<<InfoCore will replace with data production lab head, e.g., ‘Dave Anderson at SRI International’>>>>>.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately four years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug artemether was subcuratively administered to all subjects at the initial peak of infection, one out of the five macaques received four additional subcurative treatments for subsequent recrudescence peaks.  The experimental infection in one subject was ineffective but the macaque was followed-up for the same period of 100 days. The different clinical phases of the infection were clinically determined for each subject.  Blood-stage curative doses of artemether were administered to all subjects at the end of the study.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 03'. This dataset was produced by Alberto Moreno at Emory University. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
            </tr>
          </table>
       </div>   
@@ -471,7 +471,7 @@
   
   
      <div class="wdk-toggle" data-show="false">
-     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>Macaca mulatta</i> exposed to pyrimethamine</a></h3>
+     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>M. mulatta</i> exposed to pyrimethamine</a></h3>
      <div class="wdk-toggle-content">
 
        <h4>Data Links</h4> 
