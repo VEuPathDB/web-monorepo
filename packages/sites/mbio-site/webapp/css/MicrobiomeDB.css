@@ -12,13 +12,17 @@ body {
 
 #fixed-footer {
   background-color: #fffff0; 
-  border: 1px solid #fffff0; 
+  border: 1px solid #fffff0;
 }
 
 #fixed-footer .site-icons {
   display: none;
 }
 
+a.eupathdb-SocialMedia__twitter {
+  position: relative;
+  top: 4px;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
@@ -64,6 +68,16 @@ body {
   visibility: hidden;
 }
 
+#menu #favorite-menu {
+    background-image: none;
+    border-left: 1px solid white;
+    float: left;
+    padding: 0;
+}
+
+.sf-menu li#favorite-menu > a {
+  padding: 8px 12px;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
@@ -107,6 +121,5 @@ body {
 #sidebar a.heading {
   background: #43669e;  /* #26689c; */
 }
-
 
 /*THE END */

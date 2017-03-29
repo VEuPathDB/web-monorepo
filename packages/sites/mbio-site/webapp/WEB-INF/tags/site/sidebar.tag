@@ -16,7 +16,7 @@
 
   <%--------------  DATA STATS---------------------------------------------%>
   <h3>
-    <a href="#" class="heading" id='stats'>Data Summary</a>
+    <a href="#" class="heading" id='stats'>Data Sets</a>
   </h3>
   <div class="menu_lefttop_drop" style="text-align:center;">
     <a style="white-space:nowrap;font-size:12pt;font-weight:bold"

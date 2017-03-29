@@ -12,8 +12,8 @@
   <c:set var="getStartedUrl" value="${baseUrl}/showQuestion.do?questionFullName=SampleQuestions.MicrobiomeSampleByMetadata"/>
 
   <style>
-    .workflow { margin: 1em 0; }
-    .workflow tr > td { text-align: center; font-size: small; }
+    .workflow { margin: 2em 0; }
+    .workflow tr > td { text-align: center; }
     .workflow tr > td:first-child { text-align: left; }
     .workflow tr > td:last-child { text-align: left; width: 155px; }
     .workflow img { height: 8vw; border: 1px solid #26689c; }
@@ -22,8 +22,8 @@
   <imp:sidebar/>
 
   <div style="
-    padding: 2em 3em;
-    margin: 0 4em 0 18em;
+    padding: 2em 0 3em 2em;
+    margin: 0 0 0 16em;
     font-size: 130%;
     border: 1px solid #26689c;
     border-radius: 20px;
@@ -37,36 +37,33 @@
       font-family: helvetica neue;
       font-size: 2em;
       padding: 0;
-      margin: 1rem 0;
     ">
       Welcome to MicrobiomeDB
     </h1>
     <div style="
       float: right;
-      padding: 0 20px;
       position: relative;
       top: -3em;
     ">
       <imp:image src="images/18170.png" />
     </div>
 
-    <div style="padding-right: 290px;">
-
+    <div style="padding-right: 255px;">
       <div style="margin: 1em 0;">
-        <div>
-          <strong>MicrobiomeDB</strong> is a data mining website for interrogating microbiome experiments.
-        </div>
-        <div style="font-size: small;">
-          It currently houses <a href="${baseUrl}/app/search/dataset/AllDatasets/result">nine datasets</a> with 13565 samples.
-        </div>
+        <p>
+          <strong>MicrobiomeDB</strong> provides a web-based data-mining platform for interrogating microbiome experiments.
+        </p>
+        <p>
+          This resource currently houses 13565 samples, from <a href="${baseUrl}/app/search/dataset/AllDatasets/result"><b>9 data sets</b></a>.
+        </p>
       </div>
 
       <div style="margin: 2em 0;">
-        On this site, you can:
+  <!--      <b>On this site, you can:</b>  -->
         <table class="workflow">
           <tbody>
             <tr>
-              <td>
+              <td width="30%">
                 <a title="${question.description}" href="${getStartedUrl}">
                   <imp:image src="images/MicrobiomeDB/filter_by_environment.png" />
                 </a>
@@ -81,27 +78,22 @@
               </td>
             </tr>
             <td>
-              Use a series of filters to find samples of interest.
+              <b>Identify samples of interest to you, filtering as desired,</b>
             </td>
             <td>
-              <div style="margin-bottom: 3em;">Then</div>
-              <div style="font-size: 1.2em; white-space: nowrap;">
-                <a href="${helpUrl}" target="_blank">Learn how</a>
-              </div>
-              <div style="font-size: 1.2em; white-space: nowrap;">
-                <a title="${question.description}" href="${getStartedUrl}">Get started</a>
-              </div>
+              ... then ...
             </td>
             <td>
-              Graphically analyze your set of samples.
+             <b>graphically analyze your selected samples.</b>
             </td>
             <tr/>
           </tbody>
         </table>
+        <a style="font-weight:bold" title="${question.description}" href="${getStartedUrl}">Get started</a> right away ...  or ... <a style="font-weight:bold" href="${helpUrl}" target="_blank">Learn how</a> (tutorial).
       </div>
-      <div style="margin: 1em 0; font-size: small;">
-        Try one of these examples:
-        <ul>
+      <div>
+        <p><b>... or try one of these example searches:</b></p>
+        <ul style="font-size: small;">
           <li>
             <a href="${baseUrl}/im.do?s=daef3a35685875a1">
               What is the impact of delivery mode on the infant gut microbiome in the first month of life?
