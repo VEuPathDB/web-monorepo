@@ -507,7 +507,7 @@ sub subTrackTable {
                                 FROM apidbtuning.panprotocolmetadata
                                 WHERE dataset_name = '$experimentName'
                                 UNION
-                                SELECT DISTINCT term_name as term
+                                SELECT DISTINCT 'name' as term
                                 , pan_name as value
                                 , replace(replace(regexp_replace(pan_name, '\\(.+\\)', ''), '_smoothed', ''), '_', ' ') as display
                                 FROM apidbtuning.fallbackmetadata
