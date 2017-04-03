@@ -2,7 +2,7 @@
 import {render} from 'react-dom';
 import {pick} from 'lodash';
 import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
-import {CategoriesCheckboxTree, Tooltip} from 'wdk-client/Components';
+import {CategoriesCheckboxTree, Tooltip, Icon} from 'wdk-client/Components';
 import {getSearchMenuCategoryTree} from 'eupathdb/wdkCustomization/js/client/util/category';
 import WdkService from 'wdk-client/WdkService';
 
@@ -34,6 +34,7 @@ function renderBubble(props, el) {
       nodeComponent={BubbleNode}
       onUiChange={expandedBranches => renderBubble(merge(props, {expandedBranches}), el)}
       onSearchTermChange={searchTerm => renderBubble(merge(props, {searchTerm}), el)}
+      noResultsComponent={NoResults}
     />
   ), el);
 }
@@ -54,4 +55,25 @@ function BubbleNode(props) {
       {displayElement}
     </Tooltip>
   );
+}
+
+function NoResults({ searchTerm, defaultMessage }) {
+  return (
+    <div>
+      <p>
+        <Icon type="warning"/> We could not find any searches matching "{searchTerm}".
+      </p>
+
+      <p>
+        If you are looking for a particular Gene, you can search by&nbsp;
+        <a
+          href={`/a/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag&ds_gene_ids_data=${searchTerm}`}
+        >Gene ID</a>
+        &nbsp;or by&nbsp;
+        <a
+          href={`/a/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch&value(text_expression)=${searchTerm}`}
+        >Gene Text</a>.
+      </p>
+    </div>
+  )
 }
