@@ -846,7 +846,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
 function VisMenu(props) {
   let { cy, source, primary_key, onGeneraSelectorClick, onGraphSelectorClick } = props;
-  var jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target'];
+  var jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
   return(
     <ul id="vis-menu" className="sf-menu">
       <li>
