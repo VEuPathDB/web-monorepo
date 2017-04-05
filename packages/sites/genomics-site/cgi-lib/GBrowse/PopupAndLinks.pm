@@ -522,6 +522,23 @@ sub sequenceAlignmentTitle {
 
 }
 
+sub sequenceTitle {
+  my $f = shift;
+  my $projectId = $ENV{PROJECT_ID};
+  my $sourceId = $f->name;
+  my $chr = $f->seq_id;
+  my $loc = $f->location->to_FTstring;
+
+  $loc =~ s/(\d+\.\.)/<br \/>&nbsp;&nbsp;$1/g;
+
+  my @data;
+  push(@data, ['ID:'       => $sourceId]);
+  push(@data, ['Location:' => $loc]);
+
+  return hover($f,\@data);
+
+}
+
 sub spliceSiteCuratedTitle {
   my $f = shift;
   my $id = $f->name;  
