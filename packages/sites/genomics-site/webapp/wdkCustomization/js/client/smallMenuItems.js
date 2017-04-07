@@ -1,5 +1,14 @@
+import {
+  dropWhile,
+  matchesProperty,
+  negate,
+  partialRight
+} from 'lodash';
+
+const getSmallMenuEntries = partialRight(dropWhile, negate(matchesProperty('id', 'profile-or-login')))
+
 /** Additional small menu entries */
-export default ({ siteConfig: { projectId } }) => [
+export default ({ siteConfig: { projectId } }, defaultEntries) => [
   {
     text: `About ${projectId}`,
     children: [
@@ -140,4 +149,4 @@ export default ({ siteConfig: { projectId } }) => [
       }
     ]
   }
-]
+].concat(getSmallMenuEntries(defaultEntries))
