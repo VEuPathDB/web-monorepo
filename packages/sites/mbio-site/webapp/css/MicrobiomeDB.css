@@ -19,9 +19,14 @@ body {
   display: none;
 }
 
+div.twitter-footer {
+  display: inline;
+}
+
 a.eupathdb-SocialMedia__twitter {
   position: relative;
   top: 4px;
+  padding-left :1em;
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 

@@ -20,9 +20,10 @@
   <fmt:formatDate var="formattedReleaseDate" value="${releaseDate}" pattern="d MMM yy"/>
 
   <div id="header2">
-    <div id="header_rt">
-      <imp:quickSearch/>
-      <imp:smallMenu/>
+    <div class="upennvet-Logo" style="float:right;position:relative;top:30px;right:13px">
+      <a href="http://www.vet.upenn.edu" target=":blank">
+        <imp:image width="210px" class="upenn-LogoImage" src="images/${project}/PennVet_Logo_PMS.png" alt="Link to UPenn Vet homepage" />
+      </a>
     </div>
     <div class="eupathdb-Logo">
       <a href="${pageContext.request.contextPath}/home.do">

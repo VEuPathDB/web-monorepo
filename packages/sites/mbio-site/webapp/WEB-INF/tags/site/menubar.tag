@@ -17,12 +17,12 @@
 
 
    <span class="onload-function" data-function="eupath.setup.configureMenuBar"><jsp:text/></span>
-  
+ 
   <div id="menu" class="ui-helper-clearfix">
     <ul class="sf-menu">
       <imp:wdkMenu />
 
-   <!--   <li><a href="${baseUrl}/app/search/dataset/AllDatasets/result">Data Sets</a></li> -->
+      <li><a href="${baseUrl}/app/search/dataset/AllDatasets/result">Data Sets</a></li> 
 
    <!-- LOGIN/REGISTER/PROFILE/LOGOUT -->
       <imp:login/>

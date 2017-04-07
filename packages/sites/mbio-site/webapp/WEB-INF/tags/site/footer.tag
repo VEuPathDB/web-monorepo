@@ -18,6 +18,7 @@
   
   <c:set var="footerClass" value="${refer eq 'home' or refer eq 'home2' ? 'skinny-footer' : 'wide-footer' }"/>
 
+
   <div id="fixed-footer" class="${footerClass} ui-helper-clearfix">
     <div class="left">
       <div class="build-info">
@@ -25,7 +26,11 @@
         <span class="release">${releaseDate_formatted}</span><br/>
       </div>
       <div class="copyright">&amp;copy;${copyrightYear}
-        The ${siteName eq 'MicrobiomeDB' ? 'MicrobiomeDB' : 'EuPathDB'} Project Team</div>
+        The ${siteName eq 'MicrobiomeDB' ? 'MicrobiomeDB' : 'EuPathDB'} Project Team
+      </div>
+      <div style="font-weight:bold">Follow us on 
+        <a class="eupathdb-SocialMedia eupathdb-SocialMedia__twitter" href="https://twitter.com/MicrobiomeDB" target="_blank"></a>
+      </div>
     </div>
 
     <div class="right">
@@ -39,7 +44,7 @@
       </ul>
       <div class="contact">
         Please <a href="${pageContext.request.contextPath}/contact.do"
-            class="new-window" data-name="contact_us">Contact Us</a> with any questions or comments
+            class="new-window" data-name="contact_us"><b>Contact Us</b></a> with any questions or comments
       </div>
     </div>
 

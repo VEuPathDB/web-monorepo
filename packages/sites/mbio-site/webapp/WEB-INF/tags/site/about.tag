@@ -41,7 +41,7 @@
   <h2 id="how-was-it-made">How was it made?</h2>
   <div>
     <div>
-      <imp:image width="60%" src="images/MicrobiomeDB/microbiome_schematic.png"/>
+      <imp:image width="60%" src="images/MicrobiomeDB/dataLoading_schematic.png"/>
     </div>
     <p>A key feature of MicrobiomeDB is the development of an automated pipeline for loading data from microbiome experiments using the standard <a href="http://biom-format.org/">Biological Observation Martix (.biom)</a> as input.  This file format can be produced for any experiment processed using the popular and powerful software suites QIIME and Mothur, and is also the standard format used by both the Earth Microbiome Project and the Human Microbiome Project.  Relative abundance data are extracted from the .biom file and mapped to the <a href="http://greengenes.lbl.gov/cgi-bin/nph-index.cgi">GreenGenes</a> database (by ID) to retrieve full 16S sequences, NCBI taxon identifiers, and taxonomic strings.  Alpha-diversity metrics are pre-calculated and these data are loaded together into the database.</p>
 
@@ -72,6 +72,7 @@
         Mark Heiges <sup>1</sup>,
         Christian J. Stoeckert Jr. <sup>3</sup>,
         Jie Zheng <sup>2,3</sup>,
+        Jessica Kissinger <sup>1</sup>,
         Brian Brunk <sup>4</sup>
       </div>
     </div>

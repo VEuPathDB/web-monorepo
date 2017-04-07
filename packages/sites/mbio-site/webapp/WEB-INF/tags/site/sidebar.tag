@@ -14,6 +14,16 @@
 <%------------------------------------------%>
 <div id="sidebar" data-default-open-index="2">
 
+  <%--------------  INFO AND HELP ---------------------------------------------%>
+  <h3>
+    <a href="#" class="heading" id='informationAndHelp'>About ${project}</a>
+  </h3>
+  <div id="Help" class="menu_lefttop_drop">
+    <ul style="padding-left: 1em;">
+      <imp:aboutLinks/>
+    </ul>
+  </div>
+
   <%--------------  DATA STATS---------------------------------------------%>
   <h3>
     <a href="#" class="heading" id='stats'>Data Sets</a>
@@ -25,7 +35,7 @@
     </a>
   </div>
 
-  <%--------------  NEWS ---------------------------------------------%>
+  <%--------------  NEWS AND TWITTER ---------------------------------------------%>
   <!-- number of news items to show in sidebar (there is scrollbar) -->
   <c:set var="NewsCount" value="50"/>
 
@@ -34,18 +44,10 @@
   </h3>
   <div id="News" class="menu_lefttop_drop">
     <!-- TWITTER WIDGET, code generated in twitter.com, EuPathDB and FungiDB account settings -->
-    <a class="twitter-timeline" data-chrome="nofooter" height="50" href="https://twitter.com/${props.TWITTER_ID}">Tweets by ${props.twitter}</a>
+  <!--  <a class="twitter-timeline" data-chrome="nofooter" height="50" href="https://twitter.com/${props.TWITTER_WIDGET_ID}">Tweets by ${props.project_id}</a>
     <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-  </div>
-
-  <%--------------  INFO AND HELP ---------------------------------------------%>
-  <h3>
-    <a href="#" class="heading" id='informationAndHelp'>About ${project}</a>
-  </h3>
-  <div id="Help" class="menu_lefttop_drop">
-    <ul style="padding-left: 1em;">
-      <imp:aboutLinks/>
-    </ul>
-  </div>
+-->
+<a class="twitter-timeline" href="https://twitter.com/microbiomeDB">Tweets by microbiomeDB</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script> 
+ </div>
 
 </div>
