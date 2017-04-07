@@ -58,7 +58,7 @@
   </filter-mapping>
 
   <!-- UrlRewrite filter -->
-  <!-- This is used in conjuction with the asset fingerprinting utilities in EuPathSiteCommon.
+  <!-- This is used in conjuction with the asset fingerprinting utilities in EbrcWebsiteCommon.
        We also set some cache-related headers here (see /WEB-INF/urlrewrite.xml). -->
   <filter>
     <filter-name>UrlRewriteFilter</filter-name>
