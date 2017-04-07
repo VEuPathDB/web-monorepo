@@ -4,7 +4,7 @@ use CGI qw/:standard/;
 use DBI qw(:sql_types);
 use HTTP::Headers;
 use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # Untaint PERL5LIB 
-use EuPathSiteCommon::Model::CommentConfig;
+use EbrcWebsiteCommon::Model::CommentConfig;
 use strict;
 use warnings;
 
@@ -18,7 +18,7 @@ print $headers->as_string() . "\n";
 
 # Create DB connection
 my $model=$ENV{'PROJECT_ID'};
-my $dbconnect=new EuPathSiteCommon::Model::CommentConfig($model);
+my $dbconnect=new EbrcWebsiteCommon::Model::CommentConfig($model);
 
 my $dbh = DBI->connect(
     $dbconnect->{dbiDsn},
