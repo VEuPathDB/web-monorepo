@@ -1,11 +1,7 @@
 import {
-  eq,
   find,
-  flow,
   get,
-  matchesProperty,
   negate,
-  partialRight,
   takeWhile
 } from 'lodash';
 
@@ -18,16 +14,49 @@ const CryptoDB = 'CryptoDB';
 const ToxoDB = 'ToxoDB';
 const EuPathDB = 'EuPathDB';
 
-const shouldShowGalaxyOrientation = flow(
-  partialRight(get, SHOW_GALAXY_PAGE_PREFERENCE, 'true'),
-  partialRight(eq, 'true')
-)
-const isFavorites = matchesProperty('id', 'favorites')
-const getInitialEntries = partialRight(takeWhile, negate(isFavorites))
-const findFavoritesEntry = partialRight(find, isFavorites)
+/**
+ * Determine if galaxy orientation page should be shown.
+ *
+ * @return {boolean}
+ */
+function shouldShowGalaxyOrientation(preferences) {
+  return get(preferences, SHOW_GALAXY_PAGE_PREFERENCE, 'true') === 'true';
+}
 
-export default ({ siteConfig: { projectId, twitterUrl, facebookUrl, youtubeUrl }, preferences }, defaultEntries) =>
-  getInitialEntries(defaultEntries).concat([
+/**
+ * Is Entry favorites link?
+ *
+ * @return {boolean}
+ */
+function isFavorites(entry) {
+  return entry.id === 'favorites';
+}
+
+/**
+ * Get subset of defaultEntries we want to show in menu.
+ *
+ * @return {Array<Entry>}
+ */
+function getInitialEntries(defaultEntries) {
+  return takeWhile(defaultEntries, negate(isFavorites));
+}
+
+/**
+ * Get favorites link menu entry
+ *
+ * @return {Entry}
+ */
+function findFavoritesEntry(defaultEntries) {
+  return find(defaultEntries, isFavorites);
+}
+
+/**
+ * Get menu entries
+ *
+ * @return {Array<Entry>}
+ */
+export default function menuItems({ siteConfig, preferences }, defaultEntries) {
+  return getInitialEntries(defaultEntries).concat([
     {
       id: 'tools',
       text: 'Tools',
@@ -74,7 +103,7 @@ export default ({ siteConfig: { projectId, twitterUrl, facebookUrl, youtubeUrl }
           id: 'gbrowse',
           text: 'Genome Browser',
           exclude: [EuPathDB],
-          url: '/cgi-bin/gbrowse/' + projectId.toLowerCase()
+          url: '/cgi-bin/gbrowse/' + siteConfig.projectId.toLowerCase()
         },
         {
           id: 'plasmoap',
@@ -131,7 +160,7 @@ export default ({ siteConfig: { projectId, twitterUrl, facebookUrl, youtubeUrl }
           id: 'genomes-and-data-types',
           text: 'Genomes and Data Types',
           webAppUrl: '/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes',
-          tooltip: 'Table summarizing all the genomes and their different data types available in ' + projectId
+          tooltip: 'Table summarizing all the genomes and their different data types available in ' + siteConfig.projectId
         },
         {
           id: 'gene-metrics',
@@ -247,19 +276,19 @@ export default ({ siteConfig: { projectId, twitterUrl, facebookUrl, youtubeUrl }
         {
           id: 'twitter',
           text: 'Follow us on Twitter!',
-          url: twitterUrl,
+          url: siteConfig.twitterUrl,
           target: '_blank'
         },
         {
           id: 'facebook',
           text: 'Follow us on Facebook!',
-          url: facebookUrl,
+          url: siteConfig.facebookUrl,
           target: '_blank'
         },
         {
           id: 'youtube',
           text: 'Follow us on YouTube!',
-          url: youtubeUrl,
+          url: siteConfig.youtubeUrl,
           target: '_blank'
         },
         {
@@ -269,7 +298,7 @@ export default ({ siteConfig: { projectId, twitterUrl, facebookUrl, youtubeUrl }
         },
         {
           id: 'comments',
-          text: 'Find Genes with Comments from the ' + projectId + ' Community',
+          text: 'Find Genes with Comments from the ' + siteConfig.projectId + ' Community',
           exclude: [EuPathDB],
           tooltip: 'Add your comments to your gene of interest: start at the gene page',
           webAppUrl: '/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=817205'
@@ -320,3 +349,4 @@ export default ({ siteConfig: { projectId, twitterUrl, facebookUrl, youtubeUrl }
     },
     findFavoritesEntry(defaultEntries)
   ]);
+}
