@@ -8,6 +8,12 @@ import { withStore, withActions } from 'eupathdb/wdkCustomization/js/client/util
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
 
+// include menu bar files
+// TODO Replace with React menu bar
+import 'eupathdb/wdkCustomization/css/superfish/css/superfish.css';
+import 'eupathdb/wdkCustomization/js/lib/superfish';
+import 'site/wdkCustomization/css/pathway.css';
+
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
 const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
