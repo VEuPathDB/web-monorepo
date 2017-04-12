@@ -91,6 +91,8 @@
         </table>
         <a style="font-weight:bold" title="${question.description}" href="${getStartedUrl}">Get started</a> right away ...  or ... <a style="font-weight:bold" href="${helpUrl}" target="_blank">Learn how</a> (tutorial).
       </div>
+
+<!--
       <div>
         <p><b>... or try one of these example searches:</b></p>
         <ul style="font-size: small;">
@@ -116,6 +118,7 @@
           </li>
         </ul>
       </div>
+-->
     </div>
   </div>
 
