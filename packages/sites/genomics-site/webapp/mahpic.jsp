@@ -57,9 +57,9 @@
   <h3>An Introduction to MaHPIC</h3>
 
   <div style="margin-left: 1em;">
-    <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC</a> is an 
+    <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC</a> is funded by the 
     <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">NIAID</a>
-    -funded (# HHSN272201200031C) initiative to characterize host-pathogen interactions during malaria infections of non-human primates (NHP)
+     (# HHSN272201200031C, September 2012 to September 2017) to characterize host-pathogen interactions during malaria infections of non-human primates (NHP)
     and clinical studies via collaborations with investigators in malaria endemic countries. 
     <a href="http://www.systemsbiology.emory.edu/research/cores/index.html" target="_blank">MaHPIC's 8 teams</a> of 
     <a href="http://www.systemsbiology.emory.edu/people/investigators/index.html" target="_blank">transdisciplinary scientists</a> 
@@ -75,17 +75,14 @@
       detail on disease progression, recrudescence, relapse, and host susceptibility and will be instrumental in 
       the development of new diagnostics, drugs, and vaccines to reduce the global suffering caused by this disease.<br><br>
       
-      
-	  MaHPIC was established in September 2012 by the 
-	  National Institute of Allergy and Infectious Diseases, 
-	  part of the US National Institutes of Health. The MaHPIC team uses a "systems biology" strategy to study how malaria parasites 
+      The MaHPIC team uses a "systems biology" strategy to study how malaria parasites 
 	  interact with their human and NHP hosts to cause disease in molecular detail. The central hypothesis is that 
 	  "Non-Human Primate host interactions with <i>Plasmodium</i> pathogens as model systems will provide insights into mechanisms, 
 	  as well as indicators for, human malarial disease conditions".
 	  <p>
 	  The MaHPIC effort includes many teams working together to produce and analyze data and metadata.  These teams are briefly described below 
 	  but more detailed information can be found at 
-	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html" target="_blank">Emory's MaHPIC site</a>. <br><br>
+	  <a href="http://www.systemsbiology.emory.edu/research/cores/index.html" target="_blank"> Emory's MaHPIC site</a>. <br><br>
       
 
 
