@@ -57,7 +57,7 @@ function BubbleNode(props) {
   );
 }
 
-function NoResults({ searchTerm, defaultMessage }) {
+function NoResults({ searchTerm }) {
   return (
     <div>
       <p>
@@ -65,14 +65,14 @@ function NoResults({ searchTerm, defaultMessage }) {
       </p>
 
       <p>
-        If you are looking for a particular Gene, you can search by&nbsp;
+        If you are looking for a particular Gene, you can&nbsp;
         <a
           href={`/a/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag&ds_gene_ids_data=${searchTerm}`}
-        >Gene ID</a>
-        &nbsp;or by&nbsp;
+        >search by Gene ID</a>
+        &nbsp;or&nbsp;
         <a
           href={`/a/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch&value(text_expression)=${searchTerm}`}
-        >Gene Text</a>.
+        >search based on text</a>.
       </p>
     </div>
   )
