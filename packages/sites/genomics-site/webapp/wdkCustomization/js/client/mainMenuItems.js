@@ -24,39 +24,39 @@ function shouldShowGalaxyOrientation(preferences) {
 }
 
 /**
- * Is Entry favorites link?
+ * Is Item favorites link?
  *
  * @return {boolean}
  */
-function isFavorites(entry) {
-  return entry.id === 'favorites';
+function isFavorites(item) {
+  return item.id === 'favorites';
 }
 
 /**
- * Get subset of defaultEntries we want to show in menu.
+ * Get subset of defaultItems we want to show in menu.
  *
- * @return {Array<Entry>}
+ * @return {Array<Item>}
  */
-function getInitialEntries(defaultEntries) {
-  return takeWhile(defaultEntries, negate(isFavorites));
+function getInitialItems(defaultItems) {
+  return takeWhile(defaultItems, negate(isFavorites));
 }
 
 /**
- * Get favorites link menu entry
+ * Get favorites link menu item
  *
- * @return {Entry}
+ * @return {Item}
  */
-function findFavoritesEntry(defaultEntries) {
-  return find(defaultEntries, isFavorites);
+function findFavoritesItem(defaultItems) {
+  return find(defaultItems, isFavorites);
 }
 
 /**
- * Get menu entries
+ * Get menu items
  *
- * @return {Array<Entry>}
+ * @return {Array<Item>}
  */
-export default function menuItems({ siteConfig, preferences }, defaultEntries) {
-  return getInitialEntries(defaultEntries).concat([
+export default function mainMenuItems({ siteConfig, preferences }, defaultItems) {
+  return getInitialItems(defaultItems).concat([
     {
       id: 'tools',
       text: 'Tools',
@@ -347,6 +347,6 @@ export default function menuItems({ siteConfig, preferences }, defaultEntries) {
       url: !shouldShowGalaxyOrientation(preferences) ? 'https://eupathdb.globusgenomics.org/' : undefined,
       target: !shouldShowGalaxyOrientation(preferences) ? '_blank' : undefined
     },
-    findFavoritesEntry(defaultEntries)
+    findFavoritesItem(defaultItems)
   ]);
 }
