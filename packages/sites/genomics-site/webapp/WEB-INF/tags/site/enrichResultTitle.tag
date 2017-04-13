@@ -5,10 +5,10 @@
 
 <div class="enrich-download-link">
   <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
-  <a href="${downloadUrl}">Download Analysis Results</a>
   <p class="enrich-result-p">
-    This analysis result may be lost if you change your gene result. To save this analysis result, please download.
-  </p>
+    This analysis result may be lost if you change your gene result. To save this analysis result, please <a href="${downloadUrl}">Download Analysis Results</a>
+ </p>
+
 </div>
 <h3>Analysis Results:   </h3>
 
