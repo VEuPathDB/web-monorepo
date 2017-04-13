@@ -2,9 +2,6 @@
 import 'eupathdb/wdkCustomization/css/superfish/css/superfish.css';
 import 'eupathdb/css/AllSites.css';
 import 'site/css/AllApiSites.css';
-// <!-- Only needed for pathway record -->
-import 'site/wdkCustomization/css/pathway.css';
-
 
 // Include javascript files
 // Those starting with '!!script!' are loaded with script semantics
@@ -15,7 +12,7 @@ import 'site/wdkCustomization/js/attributeCheckboxTree';
 import 'eupathdb/wdkCustomization/js/lib/hoverIntent';
 import 'eupathdb/wdkCustomization/js/lib/superfish';
 import 'eupathdb/wdkCustomization/js/common';
-import '!!script-loader!./wdkCustomization/js/custom-login';
+import '!!script-loader!site/wdkCustomization/js/custom-login';
 import '!!script-loader!eupathdb/js/newwindow';
 
 // <!-- Quick search box -->

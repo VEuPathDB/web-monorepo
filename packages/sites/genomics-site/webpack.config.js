@@ -2,7 +2,7 @@ var configure = require('../../EuPathSiteCommon/Site/site.webpack.config');
 
 module.exports = configure({
   entry: {
-    'legacy': __dirname + '/webapp/apidb.js',
+    'legacy': __dirname + '/webapp/js/main.js',
     'client': __dirname + '/webapp/wdkCustomization/js/client/main.js'
   },
   resolve: {
