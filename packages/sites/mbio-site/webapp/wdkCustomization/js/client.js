@@ -5,14 +5,14 @@ initialize({
   isPartOfEuPathDB: false,
   flattenSearches: true,
   includeQueryGrid: false,
-  additionalMenuEntries: () => [
+  mainMenuItems: () => [
     {
       id: 'datasets',
       text: 'Data Sets',
       route: 'search/dataset/AllDatasets/result'
     }
   ],
-  smallMenuEntries: ({ siteConfig: { projectId } }) => [
+  smallMenuItems: ({ siteConfig: { projectId } }) => [
     {
       text: `About ${projectId}`,
       webAppUrl: `about.jsp`,
