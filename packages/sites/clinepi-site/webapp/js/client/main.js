@@ -1,18 +1,19 @@
-import { takeWhile, dropWhile } from 'lodash';
 import 'eupathdb/wdkCustomization/css/client.css';
+import 'site/css/ClinEpiSite.css';
+
+import { takeWhile, dropWhile } from 'lodash';
 import { initialize } from 'eupathdb/wdkCustomization/js/client/bootstrap';
 
 initialize({
   isPartOfEuPathDB: false,
-  additionalMenuEntries,
-  smallMenuEntries
+  mainMenuItems,
+  smallMenuItems
 });
 
-
-function additionalMenuEntries(props, defaultEntries) {
+function mainMenuItems(props, defaultEntries) {
   return takeWhile(defaultEntries, entry => entry.id !== 'profile-or-login');
 }
 
-function smallMenuEntries(props, defaultEntries) {
+function smallMenuItems(props, defaultEntries) {
   return dropWhile(defaultEntries, entry => entry.id !== 'profile-or-login');
 }
