@@ -8,6 +8,14 @@ body {
   font-size: 12px;
 }
 
+.wdk-PageContent {
+  padding: 1em;
+}
+
+#header {
+  height: 93px;
+}
+
 #header2 {
   background: bgColor;
   color: hlColor;
@@ -37,7 +45,7 @@ body {
   float: left;
 }
 
-.eupathdb-Menu > .eupathdb-MenuItem:last-of-type {
+.eupathdb-MenuItem__favorites {
   float: none;
 }
 
@@ -105,10 +113,10 @@ a.eupathdb-MenuItemText,
   color: hlColor;
   padding-top: 1.6em;
   font-size: 1.6em;
-  font-weight: 300;
+  font-weight: 400;
 }
 
-.WelcomeSectionContent {
+.SearchContainer {
   text-align: center;
 }
 

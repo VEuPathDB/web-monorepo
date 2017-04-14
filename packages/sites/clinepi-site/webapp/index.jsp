@@ -1,5 +1,3 @@
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-
-<imp:pageFrame refer="welcome" title="ClinEpiDB" scaleMobile="true">
-  <imp:welcomeContent/>
-</imp:pageFrame>
+<%-- Redirect to client homepage --%>
+ <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+ <c:redirect url="app"/>

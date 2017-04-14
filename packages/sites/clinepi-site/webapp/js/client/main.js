@@ -3,11 +3,13 @@ import 'site/css/ClinEpiSite.css';
 
 import { takeWhile, dropWhile } from 'lodash';
 import { initialize } from 'eupathdb/wdkCustomization/js/client/bootstrap';
+import componentWrappers from './component-wrappers';
 
 initialize({
   isPartOfEuPathDB: false,
   mainMenuItems,
-  smallMenuItems
+  smallMenuItems,
+  componentWrappers
 });
 
 function mainMenuItems(props, defaultEntries) {
