@@ -7,7 +7,7 @@ body {
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =FOOTER
+	 =old and new FOOTER
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #fixed-footer {
@@ -29,7 +29,7 @@ a.eupathdb-SocialMedia__twitter {
   padding-left :1em;
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =HEADER 
+	 =old and new HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header_rt {
@@ -43,10 +43,6 @@ a.eupathdb-SocialMedia__twitter {
    color: #33587a;
 }
 
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =HEADER Site name
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
 #header2 {
   position: relative;
@@ -64,6 +60,7 @@ a.eupathdb-SocialMedia__twitter {
   left: 330px;
 }
 
+
 .eupathdb-Logo {
   position: absolute;
   top: 40px;
@@ -72,6 +69,11 @@ a.eupathdb-SocialMedia__twitter {
 #sub-logo {
   visibility: hidden;
 }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         =old  MENUBAR favorites 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu #favorite-menu {
     background-image: none;
@@ -83,30 +85,36 @@ a.eupathdb-SocialMedia__twitter {
 .sf-menu li#favorite-menu > a {
   padding: 8px 12px;
 }
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 =HEADER DROPDOWN MENU
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-
-#nav-top, #nav-top a:link, #nav-top a:visited {
-	color: #255f95;
-}
-
-#nav-top li ul { 
-	border-color:#14426d;
-	list-style-image: url(../images/MicrobiomeDB/bullet_arrow.gif);
-}
-
-#nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #255f95;
-}
-
-#nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #717775;
-}
-
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           =new  MENUBAR favorites 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+li.eupathdb-MenuItem__favorites {
+  float:none;
+}
+
+li.eupathdb-MenuItem__profile-or-login,
+li.eupathdb-MenuItem__register-or-logout,
+li.eupathdb-MenuItem__contact-us {
+  float:right;  
+}
+
+a.eupathdb-MenuItemText__contact-us {
+  border: none
+}
+
+a.eupathdb-MenuItemText__favorites::before {
+  background-image: none;
+}
+
+a.eupathdb-MenuItemText__favorites {
+  border-left: 1px solid #fff;
+  padding-left: 1em;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME Page:  BUBBLE Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
