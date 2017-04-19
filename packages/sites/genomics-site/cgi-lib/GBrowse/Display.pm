@@ -283,7 +283,7 @@ sub gsnapIntronWidthFromScore {
   # http://www.computerhope.com/htmcolor.htm
   return 1 if $sum <= 4096; 
   return 2 if $sum <= 16000; 
-  return 4;
+  return 3;
 }
 
 
