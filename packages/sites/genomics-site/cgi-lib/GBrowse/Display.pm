@@ -258,6 +258,46 @@ sub gsnapIntronColorFromStrandAndScore {
 
   # http://www.computerhope.com/htmcolor.htm
   if($isReversed == 1){
+    return 'rgb(255,219,219)' if $sum <= 4;
+    return 'rgb(255,182,182)' if $sum <= 16;
+    return 'rgb(255,146,146)' if $sum <= 64;
+    return 'rgb(255,109,109)' if $sum <= 256;
+    return 'rgb(255,73,73)' if $sum <= 1024; 
+    return 'rgb(255,36,36)';   
+  }else{
+    return 'rgb(219,219,255)' if $sum <= 4;
+    return 'rgb(182,182,255)' if $sum <= 16;
+    return 'rgb(146,146,255)' if $sum <= 64;
+    return 'rgb(109,109,255)' if $sum <= 256;
+    return 'rgb(73,73,255)' if $sum <= 1024; 
+    return 'rgb(36,36,255)';   
+  }
+}
+
+
+sub gsnapIntronWidthFromScore {
+  my $f = shift;
+
+  my ($sum) = $f->get_tag_values('TotalScore'); 
+
+  # http://www.computerhope.com/htmcolor.htm
+  return 1 if $sum <= 4096; 
+  return 2 if $sum <= 16000; 
+  return 4;
+}
+
+
+
+
+
+sub _gsnapIntronColorFromStrandAndScore {
+  my $f = shift;
+
+  my ($isReversed) = $f->get_tag_values('IsReversed'); 
+  my ($sum) = $f->get_tag_values('TotalScore'); 
+
+  # http://www.computerhope.com/htmcolor.htm
+  if($isReversed == 1){
     return '#FFCCCC' if $sum <= 4;
     return '#FF9999' if $sum <= 16;
     return '#FF6666' if $sum <= 64;
@@ -277,6 +317,7 @@ sub gsnapIntronColorFromStrandAndScore {
     return '#000099';   
   }
 }
+
 
 
 sub gsnapIntronHeightFromScore {
@@ -1006,6 +1047,9 @@ sub heightBySOTerm {
 
 sub heightByCount {
   my ($f, $height) = @_;
+
+  return 5;
+
   $f = $f->parent if (! $f->get_tag_values('Count'));
   my ($count) = $f->get_tag_values("Count");
   my $numeric_count = ($count =~ m/Unavailable/i) ? 1 : $count;
