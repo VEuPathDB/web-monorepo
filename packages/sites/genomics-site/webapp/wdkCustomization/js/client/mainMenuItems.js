@@ -23,32 +23,6 @@ function shouldShowGalaxyOrientation(preferences) {
   return get(preferences, SHOW_GALAXY_PAGE_PREFERENCE, 'true') === 'true';
 }
 
-/**
- * Is Item favorites link?
- *
- * @return {boolean}
- */
-function isFavorites(item) {
-  return item.id === 'favorites';
-}
-
-/**
- * Get subset of defaultItems we want to show in menu.
- *
- * @return {Array<Item>}
- */
-function getInitialItems(defaultItems) {
-  return takeWhile(defaultItems, negate(isFavorites));
-}
-
-/**
- * Get favorites link menu item
- *
- * @return {Item}
- */
-function findFavoritesItem(defaultItems) {
-  return find(defaultItems, isFavorites);
-}
 
 /**
  * Get menu items
@@ -56,7 +30,11 @@ function findFavoritesItem(defaultItems) {
  * @return {Array<Item>}
  */
 export default function mainMenuItems({ siteConfig, preferences }, defaultItems) {
-  return getInitialItems(defaultItems).concat([
+  return [
+    defaultItems.home,
+    defaultItems.search,
+    defaultItems.strategies,
+    defaultItems.basket,
     {
       id: 'tools',
       text: 'Tools',
@@ -347,6 +325,6 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
       url: !shouldShowGalaxyOrientation(preferences) ? 'https://eupathdb.globusgenomics.org/' : undefined,
       target: !shouldShowGalaxyOrientation(preferences) ? '_blank' : undefined
     },
-    findFavoritesItem(defaultItems)
-  ]);
+    defaultItems.favorites
+  ];
 }
