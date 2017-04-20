@@ -3,7 +3,7 @@ import { webAppUrl } from '../config';
 import {Tooltip} from 'wdk-client/Components';
 import { getPropertyValue, nodeHasChildren, getNodeChildren } from 'wdk-client/OntologyUtils';
 
-let QueryGrid = React.createClass({
+class QueryGrid extends React.Component {
 
   render() {
     return (
@@ -13,7 +13,7 @@ let QueryGrid = React.createClass({
         {this.setUpGrid(this.props.grid)}
       </div>
     );
-  },
+  }
 
   setUpGrid(grid) {
     return (
@@ -44,7 +44,7 @@ let QueryGrid = React.createClass({
         </ul>
       </div>
     );
-  },
+  }
 
   setUpCategories(categories) {
     return (
@@ -59,7 +59,7 @@ let QueryGrid = React.createClass({
         })}
       </ul>
     );
-  },
+  }
 
   setUpSearches(searches) {
     return (
@@ -80,7 +80,7 @@ let QueryGrid = React.createClass({
     );
   }
 
-});
+}
 
 
 
