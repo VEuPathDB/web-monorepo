@@ -1,9 +1,4 @@
-import {
-  find,
-  get,
-  negate,
-  takeWhile
-} from 'lodash';
+import { get } from 'lodash';
 
 import {
   SHOW_GALAXY_PAGE_PREFERENCE

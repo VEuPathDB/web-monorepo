@@ -1,21 +1,5 @@
-import {
-  dropWhile,
-  matchesProperty,
-  negate
-} from 'lodash';
-
-/**
- * Get subset of defaultEnties to append to small menu
- *
- * @return {Array<Entry>}
- */
-function getSmallMenuEntries(defaultEntries) {
-  return dropWhile(defaultEntries, negate(matchesProperty('id', 'profile-or-login')));
-}
-
 /**
  * Get small menu entries
- *
  * @return {Array<Entry>}
  */
 export default function smallMenuEntries({ siteConfig: { projectId } }, defaultEntries) {
@@ -159,6 +143,12 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
           target: '_blank'
         }
       ]
-    }
-  ].concat(getSmallMenuEntries(defaultEntries));
+    },
+    defaultEntries.profileOrLogin,
+    defaultEntries.registerOrLogout,
+    defaultEntries.contactUs,
+    defaultEntries.twitter,
+    defaultEntries.facebook,
+    defaultEntries.youtube
+  ];
 }
