@@ -10,6 +10,14 @@
  </p>
 
 </div>
+<div class="goCloud-download-link">
+  <c:url var="goDownloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.imageDownloadPath}"/>
+  <p class="enrich-result-q">
+    This analysis has also been made into a word Cloud to download  please <a href="${goDownloadUrl}">Click Here</a>
+ </p>
+
+</div>
+
 <h3>Analysis Results:   </h3>
 
 
