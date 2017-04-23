@@ -3,6 +3,11 @@
   font-weight:normal;
   margin:0;
 }
+.enrich-result-q {
+  font-size:90%;
+  font-weight:normal;
+  margin:0;
+}
 .enrich-table th {
   text-align:left;
 }
@@ -25,6 +30,14 @@
   width: 1200px;
   text-align:right;
 }
+.goCloud-download-link{
+  float:right;
+  font-weight: bold;
+  font-size: 110%;
+  width: 1200px;
+  text-align:right;
+}
+    
 .enrich-empty-results {
   font-weight: bold;
   margin: 25px auto;
