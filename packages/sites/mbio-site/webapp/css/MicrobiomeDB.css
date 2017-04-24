@@ -70,7 +70,13 @@ a.eupathdb-SocialMedia__twitter {
   visibility: hidden;
 }
 
-
+#private-Logo {
+   float: right;  
+   position: relative; 
+   right: 13px; 
+   top: 8px;
+   display: block;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          =old  MENUBAR favorites 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -94,16 +100,17 @@ a.eupathdb-SocialMedia__twitter {
 li.eupathdb-MenuItem__favorites {
   float:none;
 }
-
-li.eupathdb-MenuItem__profile-or-login,
+/*
+li.eupathdb-MenuItem__contact-us,
 li.eupathdb-MenuItem__register-or-logout,
-li.eupathdb-MenuItem__contact-us {
+li.eupathdb-MenuItem__profile-or-login {
   float:right;  
 }
 
 a.eupathdb-MenuItemText__contact-us {
   border: none
 }
+*/
 
 a.eupathdb-MenuItemText__favorites::before {
   background-image: none;
