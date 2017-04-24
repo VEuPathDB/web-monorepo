@@ -70,25 +70,25 @@ let ParamBox = props => {
 // will maintain the form state in this.state.  You can see this in the
 // onFormChange() function.  In a typical Flux implementation, onFormChange()
 // would, instead, call and action creator with the updated state.
-let SampleForm = React.createClass({
+class SampleForm extends React.Component {
 
   // set the form state to the initial state defined above
   componentWillMount() {
     this.setState(initialState);
-  },
+  }
 
   // child components (the input fields) will call this function with the
   // updated form state whenever they are modified
   onFormChange(newState) {
     this.setState(newState);
-  },
+  }
 
   // uses the getChangeHandler utility to generate an individual input change
   // handler, which will create an updated copy of the form's current state and
   // hand it to the form's onFormChange function
   getParamChangeHandler(name) {
     return utils.getChangeHandler(name, this.onFormChange, this.state);
-  },
+  }
 
   // renders a page with two panes: the left contains a form demonstrating
   // various form elements, the right contains the form state in JSON
@@ -133,6 +133,6 @@ let SampleForm = React.createClass({
       </div>
     );
   }
-});
+}
 
 export default SampleForm;

@@ -258,6 +258,46 @@ sub gsnapIntronColorFromStrandAndScore {
 
   # http://www.computerhope.com/htmcolor.htm
   if($isReversed == 1){
+    return 'rgb(255,219,219)' if $sum <= 4;
+    return 'rgb(255,182,182)' if $sum <= 16;
+    return 'rgb(255,146,146)' if $sum <= 64;
+    return 'rgb(255,109,109)' if $sum <= 256;
+    return 'rgb(255,73,73)' if $sum <= 1024; 
+    return 'rgb(255,36,36)';   
+  }else{
+    return 'rgb(219,219,255)' if $sum <= 4;
+    return 'rgb(182,182,255)' if $sum <= 16;
+    return 'rgb(146,146,255)' if $sum <= 64;
+    return 'rgb(109,109,255)' if $sum <= 256;
+    return 'rgb(73,73,255)' if $sum <= 1024; 
+    return 'rgb(36,36,255)';   
+  }
+}
+
+
+sub gsnapIntronWidthFromScore {
+  my $f = shift;
+
+  my ($sum) = $f->get_tag_values('TotalScore'); 
+
+  # http://www.computerhope.com/htmcolor.htm
+  return 1 if $sum <= 4096; 
+  return 2 if $sum <= 16000; 
+  return 3;
+}
+
+
+
+
+
+sub _gsnapIntronColorFromStrandAndScore {
+  my $f = shift;
+
+  my ($isReversed) = $f->get_tag_values('IsReversed'); 
+  my ($sum) = $f->get_tag_values('TotalScore'); 
+
+  # http://www.computerhope.com/htmcolor.htm
+  if($isReversed == 1){
     return '#FFCCCC' if $sum <= 4;
     return '#FF9999' if $sum <= 16;
     return '#FF6666' if $sum <= 64;
@@ -277,6 +317,7 @@ sub gsnapIntronColorFromStrandAndScore {
     return '#000099';   
   }
 }
+
 
 
 sub gsnapIntronHeightFromScore {
@@ -1006,6 +1047,9 @@ sub heightBySOTerm {
 
 sub heightByCount {
   my ($f, $height) = @_;
+
+  return 5;
+
   $f = $f->parent if (! $f->get_tag_values('Count'));
   my ($count) = $f->get_tag_values("Count");
   my $numeric_count = ($count =~ m/Unavailable/i) ? 1 : $count;
@@ -1128,7 +1172,7 @@ sub dustCitation {
   return "Selecting this option displays regions of low compositional complexity, as defined by the DUST algorithm of Tatusov and Lipman.  For more information on DUST click <a href=\"ftp://ftp.ncbi.nlm.nih.gov/pub/agarwala/windowmasker/windowmasker_suppl.pdf\">here</a>.";
 }
 
-sub gsnapIntronCitation {
+sub _gsnapIntronCitation {
   return <<EOL;
 Note that annotated introns are indicated with bold (wider) glyphs.
    <br/><br/>
@@ -1163,6 +1207,42 @@ The color of the glyph changes with the Score as follows:
 </table>
 EOL
 }
+
+
+sub gsnapIntronCitation {
+  return <<EOL;
+<b>Intron Spanning Reads (ISR)</b>: 
+  The total number of uniquely mapped reads (all samples) which map across the junction and are on the appropriate strand.  GSNAP uses splice site consensus sequences to determine strand of the mapped read. 
+  <br/><br/>
+<b>ISR per million (ISRPM)</b>: 
+  Intron Spanning Reads Per Million intron spanning reads and thus represents a normalized count of unique reads.
+  <br/><br/>
+<b>% of Most Abundant Intron (MAI)</b>:
+  The percentage (ISRPM of this junction / ISRPM of maximum junction for this gene) of this junction over the maximum for this gene.
+  <br/><br/>
+<b>Most abundant in</b>:
+   The experiment and sample that has the highest ISRPM for this gene.
+  <br/><br/>
+<b>ISRPM, (ISR / coverage)</b>:
+  ISRPM from sample with highest ISRPM and the ISR/coverage for that same sample. 
+  <br/><br/>
+  The table shows all experiments and samples that provide evidence for this intron junction.  Note that the values for each row are based on each specific sample.
+  <br/><br/>
+The color of the glyph changes with the Score as follows:
+  <p><table width="50%">
+  <tr><th align="left">Reverse</th><th align="left">Forward</th></tr>
+  <tr><td bgcolor='white'><font color="#FFDBDB">less than 5</font></td><td bgcolor='white'><font color="#DBDBFF">less than 5</font></td></tr>
+  <tr><td bgcolor='white'><font color="#FFB6B6">5-16</font></td><td bgcolor='white'><font color="#B6B6FF">5-16</font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF9292">17-64</font></td><td bgcolor='white'><font color="#9292FF">17-64</font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF6D6D">65-256</font></td><td bgcolor='white'><font color="#6D6DFF">65-256</font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF4949">257-1024</font></td><td bgcolor='white'><font color="#4949FF">257-1024</font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF2424">1025-4096</font></td><td bgcolor='white'><font color="#2424FF">1025-4096</font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF2424" ><b>4097-16000</b></font></td><td bgcolor='white'><font color="#2424FF"><b>4097-16000</b></font></td></tr>
+  <tr><td bgcolor='white'><font color="#FF2424" size="4"><b>greater than 16000</b></font></td><td bgcolor='white'><font color="#2424FF" size="4"><b>greater than 16000</b></font></td></tr>
+</table>
+EOL
+}
+
 
 sub massSpecKey {
   my $projectId = $ENV{PROJECT_ID};

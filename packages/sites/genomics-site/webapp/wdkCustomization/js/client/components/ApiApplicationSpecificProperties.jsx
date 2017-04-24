@@ -24,7 +24,12 @@ const EMAIL_PREFERENCE_DATA = [{value:'preference_global_email_amoebadb', displa
  * This React component displays in a fieldset, the possible email alert preferences in the form of a checkbox list, overlaid
  * with the user's current selections.
  */
-const ApiApplicationSpecificProperties = React.createClass({
+class ApiApplicationSpecificProperties extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.onEmailPreferenceChange = this.onEmailPreferenceChange.bind(this);
+  }
 
   render() {
     let applicationSpecificProperties = this.props.user[this.props.name];
@@ -38,7 +43,7 @@ const ApiApplicationSpecificProperties = React.createClass({
                       onChange={this.onEmailPreferenceChange}/>
       </fieldset>
     );
-  },
+  }
 
 
   /**
@@ -49,7 +54,7 @@ const ApiApplicationSpecificProperties = React.createClass({
    */
   toNamedMap(keys, object) {
     return keys.map(key => ({name: key, value: object[key]}));
-  },
+  }
 
 
   /**
@@ -71,7 +76,6 @@ const ApiApplicationSpecificProperties = React.createClass({
       Object.assign({}, filterOutProps(this.props.user, [this.props.name]), {[this.props.name]: newProperties})
     );
   }
-
-});
+}
 
 export default ApiApplicationSpecificProperties;
