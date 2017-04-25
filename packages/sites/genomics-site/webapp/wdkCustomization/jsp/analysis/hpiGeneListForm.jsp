@@ -61,7 +61,7 @@
                 <td>
                   <label>
                     <span style="font-weight:bold">
-                      Threshold <span style="color:blue;font-size:0.95em;font-family:monospace">(number)</span>
+                      Threshold <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
                     </span>
                     <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.thresholdParamHelp)}"/>
@@ -87,6 +87,11 @@
                       <option value="${item.term}">${item.display}</option>
                     </c:forEach>
                   </select>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" style="text-align:center">
+                  <input type="submit" value="Submit"/>
                 </td>
               </tr>
 
