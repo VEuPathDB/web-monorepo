@@ -2,8 +2,8 @@
 
 use lib "$ENV{GUS_HOME}/lib/perl";
 
-use ApiCommonShared::Model::pcbiPubmed;
-use ApiCommonShared::Model::XMLUtils;
+use ApiCommonModel::Model::pcbiPubmed;
+use ApiCommonModel::Model::XMLUtils;
 use CGI; 
 use strict;
 
@@ -17,12 +17,12 @@ my @ids = split /[-|,]/, $idstr;
 foreach my $id (@ids) {
 
   next if($id.length == 0);
-	my $content = ApiCommonShared::Model::pcbiPubmed::setPubmedID($id);
+	my $content = ApiCommonModel::Model::pcbiPubmed::setPubmedID($id);
 
-	my $title   = ApiCommonShared::Model::pcbiPubmed::fetchTitle($content, "ArticleTitle");
-	my $journal = ApiCommonShared::Model::pcbiPubmed::fetchPublication($content, "Journal");
-	my $author  = ApiCommonShared::Model::pcbiPubmed::fetchAuthorList($content, "Author");
-	my $url     = ApiCommonShared::Model::pcbiPubmed::fetchPubmedUrl();
+	my $title   = ApiCommonModel::Model::pcbiPubmed::fetchTitle($content, "ArticleTitle");
+	my $journal = ApiCommonModel::Model::pcbiPubmed::fetchPublication($content, "Journal");
+	my $author  = ApiCommonModel::Model::pcbiPubmed::fetchAuthorList($content, "Author");
+	my $url     = ApiCommonModel::Model::pcbiPubmed::fetchPubmedUrl();
 
 print <<EOL
 <table class=mybox>

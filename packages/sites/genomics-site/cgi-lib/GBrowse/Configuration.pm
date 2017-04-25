@@ -3,7 +3,7 @@ package GBrowse::Configuration;
 @main::rainbow = qw(red green yellow blue khaki pink orange cyan purple);
 
 use WDK::Model::ModelConfig;
-use EuPathSiteCommon::Model::ModelXML;
+use EbrcWebsiteCommon::Model::ModelXML;
 use WDK::Model::DbUtils;
 use Bio::Graphics::Browser2::ConnectionCache;
 
@@ -73,7 +73,7 @@ sub init {
 # 
 #   my $versionType = shift || 'buildNumber' ; # version type is releaseVersion or buildNumber 
 # 
-#   my $model = EuPathSiteCommon::Model::ModelXML->new('apiCommonModel.xml');
+#   my $model = EbrcWebsiteCommon::Model::ModelXML->new('apiCommonModel.xml');
 #   my $projectId = $ENV{PROJECT_ID};
 # 
 #   if($versionType eq 'buildNumber') {
@@ -88,7 +88,7 @@ sub getBuildNumber {
   my ($self) = @_;
 
   unless ($self->{_site_version}) {
-    my $model = EuPathSiteCommon::Model::ModelXML->new('apiCommonModel.xml');
+    my $model = EbrcWebsiteCommon::Model::ModelXML->new('apiCommonModel.xml');
     my $projectId = $ENV{PROJECT_ID};
     $self->{_site_version} = $model->getBuildNumberByProjectId($projectId);
   }

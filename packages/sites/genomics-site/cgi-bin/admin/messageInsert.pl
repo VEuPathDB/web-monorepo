@@ -5,7 +5,7 @@ use warnings;
 use CGI::Carp qw(fatalsToBrowser);
 use DBI qw(:sql_types);
 use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # untaint PERL5LIB 
-use EuPathSiteCommon::Model::CommentConfig;
+use EbrcWebsiteCommon::Model::CommentConfig;
 use HTTP::Headers;
 use Time::Local;
 
@@ -20,7 +20,7 @@ print $headers->as_string() . "\n";
 
 # Open DB connection
 my $model=$ENV{'PROJECT_ID'};
-my $dbconnect=new EuPathSiteCommon::Model::CommentConfig($model);
+my $dbconnect=new EbrcWebsiteCommon::Model::CommentConfig($model);
 
 my $dbh = DBI->connect(
     $dbconnect->{dbiDsn},

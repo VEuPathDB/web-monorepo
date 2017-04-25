@@ -15,6 +15,9 @@
   <jsp:directive.attribute name="banner" required="false"
     description="Value to appear at top of page if there is no title provided"/>
 
+  <jsp:directive.attribute name="scaleMobile" required="false" type="java.lang.Boolean"
+              description="Set viewport initial scale to 1 (for mobile devices). Defaults to false"/>
+
   <c:set var="project" value="${applicationScope.wdkModel.properties['PROJECT_ID']}" />
   <c:set var="banner" value="${apifn:defaultBanner(banner,project)}"/>
 
@@ -37,7 +40,7 @@
   </c:choose>
 
   <!--~~~~~~~ HEAD of HTML doc ~~~~~~~-->
-  <common:head title="${title}" banner="${banner}" refer="${refer}">
+  <common:head title="${title}" banner="${banner}" refer="${refer}" scaleMobile="${scaleMobile}">
     <link rel="alternate" type="application/rss+xml" 
       title="${rssorigin} News" href="${newsRss}" />
     <link rel="alternate" type="application/rss+xml" 
