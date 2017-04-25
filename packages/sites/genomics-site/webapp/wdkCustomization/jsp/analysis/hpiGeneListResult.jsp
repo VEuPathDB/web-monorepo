@@ -16,7 +16,7 @@
             <div class="enrich-empty-results">No Experiment was found for this threshold you specified.</div>
           </c:if>
           <c:if test="${not empty viewModel.resultData}">
-            <table class="enrich-table">
+            <table>
               <thead>
                 <tr>
                   <c:set var="row" value="${viewModel.headerRow}"/>
@@ -32,11 +32,11 @@
               <tbody>
                 <c:forEach var="row" items="${viewModel.resultData}">
                   <tr>
-                  <td class="enrich-centered">${row.species}</td>
+                  <td>${row.species}</td>
                   <td><a href="${row.uri}" target="_blank">${row.experimentName}</a></td>
                   <td>${row.description}</td>
-                  <td class="enrich-centered">${row.type}</td>
-                  <td class="enrich-centered">${row.significance}</td>
+                  <td>${row.type}</td>
+                  <td><a href="${row.serverEndPoint}" target="_blank">${row.significance}</a></td>
                   </tr>
                 </c:forEach>
               </tbody>

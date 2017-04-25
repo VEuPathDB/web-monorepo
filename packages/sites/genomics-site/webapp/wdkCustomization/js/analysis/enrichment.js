@@ -22,6 +22,9 @@
   $(document).on('analysis:resultsload:word-enrichment', resultsload);
   $(document).on('analysis:remove:word-enrichment', removeEvents);
 
+
+  $(document).on('analysis:resultsload:hpiGeneList', hpiresultsload);
+
   // handle select all and clear all links on form
   function formload(event) {
     $(event.target)
@@ -31,6 +34,24 @@
       .on('click', '[href="#clear-all"]',preventEvent(function() {
         $(this).closest('td').find(':input').prop('checked', false);
       }));
+  }
+
+
+  function hpiresultsload(event) {
+    var $table = $(event.target).find('.step-analysis-results-pane table');
+
+    $table.wdkDataTable({
+	// positions total (i) and filter (f) before he table
+	dom: 'lipft',
+  	// instead of defaults: "Showing x to y of z entries", "Search"
+        // overrides values defined in WDK datatables.js
+        oLanguage: {
+	    sInfo: 'Got a total of _TOTAL_ results',
+            sSearch: 'Filter : '
+        },
+    });
+
+
   }
 
   // use datatable for results and add fancy tooltips
