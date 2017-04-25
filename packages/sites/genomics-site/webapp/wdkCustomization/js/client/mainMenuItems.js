@@ -246,19 +246,19 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
       id: 'community',
       text: 'Community',
       children: [
-        {
+        siteConfig.twitterUrl && {
           id: 'twitter',
           text: 'Follow us on Twitter!',
           url: siteConfig.twitterUrl,
           target: '_blank'
         },
-        {
+        siteConfig.facebookUrl && {
           id: 'facebook',
           text: 'Follow us on Facebook!',
           url: siteConfig.facebookUrl,
           target: '_blank'
         },
-        {
+        siteConfig.youtubeUrl && {
           id: 'youtube',
           text: 'Follow us on YouTube!',
           url: siteConfig.youtubeUrl,
