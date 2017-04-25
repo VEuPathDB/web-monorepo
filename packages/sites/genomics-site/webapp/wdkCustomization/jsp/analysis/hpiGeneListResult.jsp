@@ -22,25 +22,20 @@
                   <c:set var="row" value="${viewModel.headerRow}"/>
                   <c:set var="desc" value="${viewModel.headerDescription}"/>
 
-
-                  <th title="${desc.experimentId}">${row.experimentId}</th>
                   <th title="${desc.species}">${row.species}</th>
                   <th title="${desc.experimentName}">${row.experimentName}</th>
                   <th title="${desc.description}">${row.description}</th>
                   <th title="${desc.type}">${row.type}</th>
-                  <th title="${desc.uri}">${row.uri}</th>
                   <th title="${desc.significance}">${row.significance}</th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach var="row" items="${viewModel.resultData}">
                   <tr>
-                  <td class="enrich-centered">${row.experimentId}</td>
                   <td class="enrich-centered">${row.species}</td>
-                  <td class="enrich-centered">${row.experimentName}</td>
-                  <td class="enrich-centered">${row.description}</td>
+                  <td><a href="${row.uri}" target="_blank">${row.experimentName}</a></td>
+                  <td>${row.description}</td>
                   <td class="enrich-centered">${row.type}</td>
-                  <td class="enrich-centered">${row.uri}</td>
                   <td class="enrich-centered">${row.significance}</td>
                   </tr>
                 </c:forEach>
