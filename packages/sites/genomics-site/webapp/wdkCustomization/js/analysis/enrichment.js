@@ -24,6 +24,7 @@
 
 
   $(document).on('analysis:resultsload:hpiGeneList', hpiresultsload);
+  $(document).on('analysis:resultsload:datasetGeneList', hpiresultsload);
 
   // handle select all and clear all links on form
   function formload(event) {
