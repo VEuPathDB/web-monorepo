@@ -5,15 +5,16 @@
 
 <div class="enrich-download-link">
   <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
+  <c:url var="hiddenDownloadUrl" value ="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.hiddenDownloadPath}"/>
   <p class="enrich-result-p">
-    This analysis result may be lost if you change your gene result. To save this analysis result, please <a href="${downloadUrl}">Download Analysis Results</a>
+    This analysis result may be lost if you change your gene result. To save this analysis result, please <a href="${downloadUrl}">Download Analysis Results as shown below</a> or <a href="${hiddenDownloadUrl}">with geneIDs</a>
  </p>
 
 </div>
 <div class="goCloud-download-link">
   <c:url var="goDownloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.imageDownloadPath}"/>
   <p class="enrich-result-q">
-    This analysis has also been made into a word Cloud to download  please <a href="${goDownloadUrl}">Click Here</a>
+    Click on the image to see a GoSummaries word cloud of this analysis <a href="${goDownloadUrl}"><img border="1" src="ApiCommonWebsite/Site/webapp/WEB-INF/tags/site/enrichResultTitle.tag" width="125" height="50"></a>
  </p>
 
 </div>
