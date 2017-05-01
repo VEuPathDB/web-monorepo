@@ -236,7 +236,7 @@
              <td><b><a href="https://www.ncbi.nlm.nih.gov/pubmed/27587810">PMID:27587810</a></b></td>
            </tr>
            <tr>
-             <td><b><i>Plasmodium knowlesi</i> strain H</b></td>
+             <td><b><i>Plasmodium knowlesi</i> strain PK1(A+)</b></td>
              <td>Coming Soon</td>  
              <td>Coming soon</td>
              <td>N/A</td>
@@ -291,12 +291,12 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E03 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E03 Lipidomics Results at MassIVE</a>-->
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E03 Immune Profiles at NIAID's ImmPort</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=07e7da87660b4418aa48e26fce5c7a75" target="_blank">E03 Immune Profiles at NIAID's ImmPort</b></a></td>
              <td>N/A</td>
            </tr>
            <tr>
