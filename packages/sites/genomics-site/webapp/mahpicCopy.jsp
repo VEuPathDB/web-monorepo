@@ -403,7 +403,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=68c2e59511d04428bfecf9ce231c7ad0" target="_blank">E04 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -512,7 +512,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=c7e41c86aa6e4b15bc89b27a72fc9158" target="_blank">E13 Lipidomics Results at MassIVE </a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -614,7 +614,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E23 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=9dce6369a6c14b23b77b55825e5dd61d" target="_blank">E23 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
