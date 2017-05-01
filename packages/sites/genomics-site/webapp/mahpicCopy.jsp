@@ -291,12 +291,12 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E03 Lipidomics Results at MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=07e7da87660b4418aa48e26fce5c7a75" target="_blank">E03 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=07e7da87660b4418aa48e26fce5c7a75" target="_blank">E03 Immune Profiles at NIAID's ImmPort</b></a></td>
+             <td><b>Coming Soon</b></td> <!--<a href="XXXXXXX" target="_blank">E03 Immune Profiles at NIAID's ImmPort</b></a></td>-->
              <td>N/A</td>
            </tr>
            <tr>
