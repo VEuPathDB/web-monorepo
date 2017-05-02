@@ -280,35 +280,11 @@
              <td><b>Coming Soon</b><!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">HuA Clinical Data in PlasmoDB Downloads</a>--></td>  
              <td>N/A</td>
            </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">HuA Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">HuA Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E03 BioProject record at NCBI</a>-->
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">HuA Proteomics at EBI's PRIDE</a>-->
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b><!--<a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=07e7da87660b4418aa48e26fce5c7a75" target="_blank">HuA Lipidomics Results at MassIVE</a>--></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td> <!--<a href="XXXXXXX" target="_blank">HuA Immune Profiles at NIAID's ImmPort</b></a></td>-->
-             <td>N/A</td>
-           </tr>
-           <tr>
+          <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="http://www.metabolomicsworkbench.org//data/DRCCMetadata.php?Mode=Study&StudyID=ST000578&StudyType=MS&ResultType=5" target="_blank">HuA Metabolomics Results at Metabolomics Workbench</a></b></td>    
              <td>N/A</td>
            </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
-             <td><b>Coming soon</b></td>
-             <td>N/A</td>
            </tr>
            </table>
            </div>
