@@ -1,9 +1,10 @@
+/* global ChemDoodle */
 import React from 'react';
 import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {loadChemDoodleWeb} from '../common/Compound';
-import { CheckboxList, CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
 import { withStore, withActions } from 'eupathdb/wdkCustomization/js/client/util/component';
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
@@ -23,99 +24,6 @@ const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
 const ORTHOMCL_LINK = 'http://orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
   'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=*';
 
-let generaPresets = [
-  {
-    projectIds: ['AmoebaDB'],
-    values: "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-    display: "Acanthamoeba,Entamoeba,Human,Mouse"
-  },
-  {
-    projectIds: ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
-    values: "Babesia,Cryptosporidium,Eimeria,Gregarina,Neospora,Plasmodium,Theileria,Toxoplasma",
-    display: "Apicomplexa"
-  },
-  {
-    projectIds: ['CryptoDB','PiroplasmaDB','PlasmoDB','ToxoDB'],
-    values: "Cryptosporidium,Toxoplasma,Plasmodium,Homo,Mus",
-    display: "Cryp,Toxo,Plas,Human,Mouse"
-  },
-  {
-    projectIds: ['GiardiaDB'],
-    values: "Giardia,Spironucleus,Homo,Mus",
-    display: "Giardia,Spironucleus,Human,Mouse"
-  },
-  {
-    projectIds: ['FungiDB'],
-    values: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-    display: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-  },
-  {
-    projectIds: ["MicrosporidiaDB"],
-    values: "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-    display: "Microsporidia,Human,Mouse"
-  },
-  {
-    projectIds: ["SchistoDB"],
-    values: "Schistosoma,Homo,Mus",
-    display: "Schistosoma,Human,Mouse"
-  },
-  {
-    projectIds: ["TrichDB"],
-    values: "Trichomonas,Homo,Mus",
-    display: "Trichomonas,Human,Mouse"
-  },
-  {
-    projectIds: ["TriTrypDB"],
-    values: "Crithidia,Leishmania,Trypanosoma,Homo,Mus",
-    display: "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
-  },
-  {
-    projectIds: ["TriTrypDB"],
-    values: "Cryptosporidium,Plasmodium,Toxoplasma,Trypanosoma,Homo,Mus",
-    display: "Cryp,Toxo,Plas,Tryp,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Acanthamoeba,Entamoeba,Naegleria,Vitrella,Chromera,Homo,Mus",
-    display: "Acanthamoeba,Entamoeba,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Giardia,Spironucleus,Homo,Mus",
-    display: "Giardia,Spironucleus,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Cryptosporidium,Plasmodium,Toxoplasma,Homo,Mus",
-    display: "Cryp,Toxo,Plas,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Homo,Mus",
-    display: "Albugo,Aphanomyces,Aspergillus,Coccidioides,Fusarium,Neurospora,Phytophthora,Pythium,Saprolegnia,Talaromyces,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Anncaliia,Edhazardia,Encephalitozoon,Enterocytozoon,Nematocida,Nosema,Spraguea,Trachipleistophora,Vavraia,Vittaforma,Homo,Mus",
-    display: "Microsporidia,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Schistosoma,Homo,Mus",
-    display: "Schistosoma,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Trichomonas,Homo,Mus",
-    display: "Trichomonas,Human,Mouse"
-  },
-  {
-    projectIds: ['HostDB'],
-    values: "Crithidia,Leishmania,Trypanosoma,Homo,Mus",
-    display: "Crithidia,Leishmania,Trypanosoma,Human,Mouse"
-  }
-];
-
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
     try {
@@ -132,19 +40,6 @@ function loadCytoscapeJs() {
 }
 
 
-
-
-let pathwayFilesBaseUrl = "/common/downloads/pathwayFiles/";
-let pathwayFileExt = ".xgmml";
-
-let options = {
-  // where you have the Cytoscape Web SWF
-  swfPath: "/swf/CytoscapeWeb",
-  //swfPath: "http://www.plasmodb.org/swf/CytoscapeWeb",
-  // where you have the Flash installer SWF
-  flashInstallerPath: "/swf/playerProductInstall"
-  //flashInstallerPath: "http://www.plasmodb.org/swf/playerProductInstall"
-};
 
 
 // transform wdk row into Cyto Node
@@ -298,15 +193,6 @@ function nullSides(node) {
     node.incomers('node[?side]').data({x: null, y: null});
     node.outgoers('node[?side]').data({x: null, y: null});
 }
-
-
-function jsonReplacer(key, value) {
-    if (key === 'image') {
-        return undefined;
-    }
-    return value;
-}
-
 
 function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges, name) {
 
@@ -911,49 +797,6 @@ function VisMenu(props) {
 }
 
 
-function GeneraSelector(props) {
-  return (
-    <div id="eupathdb-PathwayRecord-generaSelector">
-      <div className="eupathdb-PathwayGeneraInfo">
-        <i
-          className="fa fa-info-circle"
-          style={{ color: 'blue' }}
-        /> Choose a preconfigured selection, or make a custom selection below.
-      </div>
-      <div className="eupathdb-PathwayGeneraPresets">
-        <h3 className="eupathdb-PathwayGeneraHeading">Preconfigured Selection</h3>
-        <select
-          className="eupathdb-PathwayGeneraPresetOptions"
-          onChange={event => props.onGeneraChange(event.target.value.split(','))}
-        >
-          <option value="">None</option>
-          {props.presets.map(preset =>
-            <option key={preset.values} value={preset.values}>
-              {preset.display}
-            </option>
-          )}
-        </select>
-      </div>
-      <div className="eupathdb-PathwayGeneraCustom">
-        <h3 className="eupathdb-PathwayGeneraHeading">Custom Selection</h3>
-        <CheckboxList
-          name="genera"
-          items={props.generaOptions}
-          value={props.generaSelection}
-          onChange={props.onGeneraChange}/>
-      </div>
-      <div
-        style={{ margin: '10px 0', textAlign: 'center' }}
-      >
-        <input
-          type="submit"
-          value="Paint"
-          onClick={() => props.paintCustomGenera(props.generaSelection, props.projectId, props.cy)} />
-      </div>
-    </div>
-  );
-}
-
 class GraphSelector extends React.Component {
 
   constructor(props) {
@@ -1060,7 +903,7 @@ function EnzymeNodeDetails(props) {
   return (
     <div>
         <p><b>EC Number or Reaction:</b> 
-	 <a href={'http://enzyme.expasy.org/EC/' + display_label}> {display_label}</a> </p>
+          <a href={'http://enzyme.expasy.org/EC/' + display_label}> {display_label}</a> </p>
 
       {name && (  
            <p><b>Enzyme Name:</b> {name}</p>
@@ -1130,13 +973,12 @@ function MetabolicProcessNodeDetails(props) {
 
 
 function NodeOfNodesNodeDetails(props) {
-    let { nodeData: { name, childrenNodes }, pathwaySource } = props;
-    return (
-        <div>
-            <div><b>Node Group: </b><p>{safeHtml(childrenNodes)}</p>
-            </div>
-        </div>
-    );
+  return (
+    <div>
+      <div><b>Node Group: </b><p>{safeHtml(props.nodeData.childrenNodes)}</p>
+      </div>
+    </div>
+  );
 }
 
 

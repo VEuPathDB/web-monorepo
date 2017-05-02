@@ -230,7 +230,6 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
         {
           id: 'eupathdb-publications',
           text: 'EuPathDB Publications',
-          include: [EuPathDB],
           webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs'
         },
         {

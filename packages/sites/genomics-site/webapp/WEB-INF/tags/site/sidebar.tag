@@ -44,7 +44,8 @@
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
 
 <%------------------------------------------%>
-<div id="menu_lefttop">
+<div id="menu_lefttop" data-controller="eupath.setup.configureSidebar">
+
   <%-- for testing SITE SEARCH : add more sites as they are being indexed
   <c:if test="${project == 'AmoebaDB' || project == 'TriTrypDB' || project == 'ToxoDB'}">
     --------------  SITE SEARCH  ---------------------------------------------
@@ -56,7 +57,9 @@
   --%>
 
   <%--------------  EUPATHDB DATA STATS---------------------------------------------%>
-  <a class="heading" id='stats'  href="#">Data Summary</a>
+  <h3>
+    <a class="heading" id='stats'  href="#">Data Summary</a>
+  </h3>
 
   <c:choose>
     <c:when test="${project == 'TrichDB'}">
@@ -90,7 +93,9 @@
   <!-- number of news items to show in sidebar (there is scrollbar) -->
   <c:set var="NewsCount" value="50"/>
 
-  <a class="heading"  href="#">News and Tweets</a>
+    <h3>
+      <a class="heading"  href="#">News and Tweets</a>
+    </h3>
   <div class="menu_lefttop_drop" id="News">
     <c:choose>
       <c:when test="${newsErr2 != null}">
@@ -198,7 +203,9 @@
 
 
   <%--------------  COMMUNITY RESOURCES ---------------------------------------------%>
-  <a  class="heading" id='community' href="#">Community Resources</a>
+  <h3>
+    <a  class="heading" id='community' href="#">Community Resources</a>
+  </h3>
   <div class="menu_lefttop_drop">
     <ul><imp:socialMedia label="true"/></ul>
     <hr>
@@ -257,7 +264,9 @@
   </div>
 
   <%--------------  TUTORIALS ---------------------------------------------%>
-  <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
+  <h3>
+    <a class="heading" id='tutorials' href="#">Education and Tutorials</a>
+  </h3>
   <div class="menu_lefttop_drop">
     <ul id="education">
       <li id='edu-05'>
@@ -279,7 +288,9 @@
 
 
   <%--------------  INFO AND HELP ---------------------------------------------%>
-  <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
+  <h3>
+    <a class="heading" id='informationAndHelp' href="#">About ${project}</a>
+  </h3>
   <div class="menu_lefttop_drop">
     <ul id="information">
       <imp:aboutMenu/>

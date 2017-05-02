@@ -21,11 +21,9 @@ body {
 	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
 }
 
-#header_rt {
-   color: #6e549c;
-}
-
-#header_rt a:link, #header_rt a:visited {
+#header_rt,
+#header_rt a:link,
+#header_rt a:visited {
    color: #543792;
 }
 

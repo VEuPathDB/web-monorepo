@@ -47,7 +47,7 @@
 
   <common:pageFrame title="${title}" refer="${refer}" banner="${banner}">
     <c:choose>
-      <c:when test="${refer ne 'home' and refer ne 'home2' and refer ne 'summary' and refer ne 'betaApp'}">
+      <c:when test="${refer ne 'home2' and refer ne 'summary' and refer ne 'betaApp'}">
         <div id="contentwrapper">
           <div id="contentcolumn2">
             <div class="innertube">

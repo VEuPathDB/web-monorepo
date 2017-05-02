@@ -1,4 +1,4 @@
-.ui-tooltip, .qtip { max-width:600px; }
+.gnome-view .ui-tooltip, .gnome-view .qtip { max-width:600px; }
 
 .genome-view { width: 100%; }
 .genome-view th { white-space:nowrap; }

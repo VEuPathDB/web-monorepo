@@ -1,4 +1,17 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = Sidebar
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
 
+#menu_lefttop .ui-accordion-header {
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+}
+
+#menu_lefttop .ui-accordion-content {
+  padding: 6px;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =NEW FOOTER (gene page)
