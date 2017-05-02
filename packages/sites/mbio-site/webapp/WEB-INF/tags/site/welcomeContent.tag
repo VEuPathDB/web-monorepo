@@ -28,7 +28,6 @@
     border: 1px solid #26689c;
     border-radius: 20px;
     min-height: 250px;
-    display: inline-block;
     overflow: auto;
   ">
     <h1 style="

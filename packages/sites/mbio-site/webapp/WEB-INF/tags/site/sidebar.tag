@@ -9,10 +9,8 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <fmt:setLocale value="en-US"/>
 
-  <span class="onload-function" data-function="eupath.setup.configureSidebar"><jsp:text/></span>
-
 <%------------------------------------------%>
-<div id="sidebar" data-default-open-index="2">
+<div id="sidebar" data-controller="eupath.setup.configureSidebar" data-default-open-index="2">
 
   <%--------------  INFO AND HELP ---------------------------------------------%>
   <h3>
