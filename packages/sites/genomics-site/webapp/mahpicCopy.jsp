@@ -607,6 +607,7 @@
              <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=c7e41c86aa6e4b15bc89b27a72fc9158" target="_blank">E13 Lipidomics Results at MassIVE </a></b></td>
              <td>N/A</td>
            </tr>
+      <!-- Susanne removed Immunomics on purpose.  This experiment will not have immunomics data-->
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000592" target="_blank">E13 Metabolomics Results at Metabolomics Workbench </a></b></td> 
@@ -709,7 +710,7 @@
              <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=9dce6369a6c14b23b77b55825e5dd61d" target="_blank">E23 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
-     <!--  <tr>
+           <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
              <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E23 Immune Profiles at NIAID's ImmPort</a>-->
              <td>N/A</td>
@@ -723,8 +724,7 @@
              <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
              <td><b>Coming soon</b></td>
              <td>N/A</td>
-           </tr>
-       -->     
+           </tr>    
            </table>
            </div>
 <br><br>
@@ -810,6 +810,7 @@
              <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E24 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E24 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E24 BioProject record at NCBI</a>-->
              <td>N/A</td>
            </tr>
+      <!--     
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
              <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E24 Proteomics at EBI's PRIDE</a>-->
@@ -820,6 +821,7 @@
              <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E24 Lipidomics at UCSD's MassIVE</a>-->
              <td>N/A</td>
            </tr>
+       -->
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
              <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E24 Immune Profiles at NIAID's ImmPort</a>-->
