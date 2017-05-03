@@ -370,7 +370,8 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E03 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E03 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E03 BioProject record at NCBI</a>-->
+             <td><b>Coming Soon</b></td>  
+                    <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E03 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E03 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E03 BioProject record at NCBI</a>-->
              <td>N/A</td>
            </tr>
            <tr>
@@ -591,7 +592,9 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b><a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results at NCBI's GEO</b></a></td>   <!--<br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
+                    <a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data at NCBI's SRA</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results at NCBI's GEO</a></b></td>   
              <td>N/A</td>
            </tr>
            <tr>
@@ -706,7 +709,7 @@
              <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=9dce6369a6c14b23b77b55825e5dd61d" target="_blank">E23 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
-           <tr>
+     <!--  <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
              <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E23 Immune Profiles at NIAID's ImmPort</a>-->
              <td>N/A</td>
@@ -721,6 +724,7 @@
              <td><b>Coming soon</b></td>
              <td>N/A</td>
            </tr>
+       -->     
            </table>
            </div>
 <br><br>
