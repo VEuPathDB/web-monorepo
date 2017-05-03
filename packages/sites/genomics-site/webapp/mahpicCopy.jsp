@@ -237,9 +237,9 @@
            </tr>
            <tr>
              <td><b><i>Plasmodium knowlesi</i> strain PK1(A+)</b></td>
-             <td>Coming Soon</td>  
-             <td>Coming soon</td>
-             <td>N/A</td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/PRJNA377737"><b>GenBank</b></a></td> 
+             <td>Coming Soon</td>
+             <td>Coming Soon</td>
            </tr>
 
            </table>
