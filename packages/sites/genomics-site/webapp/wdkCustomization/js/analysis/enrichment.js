@@ -42,6 +42,8 @@
     var $table = $(event.target).find('.step-analysis-results-pane table');
 
     $table.wdkDataTable({
+        // order by significance descending
+        order: [ 4, 'desc' ],
 	// positions total (i) and filter (f) before he table
 	dom: 'lipft',
   	// instead of defaults: "Showing x to y of z entries", "Search"
