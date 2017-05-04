@@ -236,16 +236,105 @@
              <td><b><a href="https://www.ncbi.nlm.nih.gov/pubmed/27587810">PMID:27587810</a></b></td>
            </tr>
            <tr>
-             <td><b><i>Plasmodium knowlesi</i> strain H</b></td>
-             <td>Coming Soon</td>  
-             <td>Coming soon</td>
-             <td>N/A</td>
+             <td><b><i>Plasmodium knowlesi</i> strain PK1(A+)</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/PRJNA377737">GenBank</b></a></td> 
+             <td>Coming Soon</td>
+             <td>Coming Soon</td>
            </tr>
 
            </table>
            </div>       
   </div>	
   </div>
+ 
+ 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment HuA: Metabolomics of plasma samples from humans infected with <i>Plasmodium vivax</i> </a> </h3> 
+   <div class="wdk-toggle-content">
+
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksHuA table, #DataLinksHuA td, #DataLinksHuA th, #DataLinksHuA tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksHuA {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksHuA td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksHuA"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b>Coming Soon</b><!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">HuA Clinical Data in PlasmoDB Downloads</a>--></td>  
+             <td>N/A</td>
+           </tr>
+          <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="http://www.metabolomicsworkbench.org//data/DRCCMetadata.php?Mode=Study&StudyID=ST000578&StudyType=MS&ResultType=5" target="_blank">HuA Metabolomics Results at Metabolomics Workbench</a></b></td>    
+             <td>N/A</td>
+           </tr>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoHuA table, #ExpInfoHuA td, #ExpInfoHuA th, #ExpInfoHuA tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoHuA {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoHuA"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Metabolomics of plasma samples from humans infected with <i>Plasmodium vivax</i></td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Patients with vivax malaria were enrolled in this study from June 2011 to December 2012 at the Fundacao de Medicina Tropical Doutor Heitor Vieira Dourado (FMT-HVD), an infectious disease referral center located in Manaus, Western Brazilian Amazon. This study, which required a 42-day follow-up period, was approved by the FMT-HVD Institutional Review Board and the Brazilian National Ethics Committee (CONEP) (IRB approval #: CAAE: 12516713.8.0000.0005). All protocols and documentation were reviewed and sample shipments approved by the Emory IRB. Male and female patients were eligible for inclusion if aged 6 months to 60 years, bodyweight &ge;5 kg, presenting a blood parasite density from 250 to 100,000 parasites/microliter and axillary temperature &ge;37.5 C or history of fever in the last 48 hours. Exclusion criteria were: use of antimalarials in the previous 30 days, refusal to be followed up for 42 days and any clinical complication. Patients received supervised treatment with 25 mg/kg of chloroquine (CQ) phosphate over a 3-day period (10 mg/kg on day 0 and 7.5 mg/kg on days 1 and 2). Primaquine (0.5 mg/kg per day for 7 days) was prescribed at the end of the 42-day follow-up period. Patients who vomited the first dose within 30 minutes after drug ingestion were re-treated with the same dose. Patients were evaluated on days 0, 1, 2, 3, 7, 14, 28 and 42 and, if they felt ill, at any time during the study period. Blood smear readings, complete blood counts, and diagnostic polymerase chain reaction (PCR) amplifications were performed at all time points. Three aliquots of 100 &mu;L of whole blood from the day of a recurrence were spotted onto filter paper for later analysis by high performance liquid chromatography (HPLC) to estimate the levels of CQ and desethylchloroquine (DCQ) as previously described. In this study, CQ-resistance with parasitological failure was defined as parasite recurrence in the presence of plasma concentrations of CQ and DSQ higher than 100 ng/mL and microsatellite analysis revealing the presence of the same clonal nature at diagnosis and recurrence. The CQ-sensitive control group consisted of patients with no parasitemia recurring during follow-up period. A group of 20 healthy individuals from Brazil was used as non-malarial control group. Samples were obtained in collaboration with Wuelton M. Monteiro (Universidade do Estado do Amazonas, Manaus, Amazonas, Brazil and Fundacao de Medicina Tropical Dr. Heitor Vieira Dourado, Manaus, Amazonas, Brazil) and Marcus V.G. Lacerda (Fundacao de Medicina Tropical Dr. Heitor Vieira Dourado, Manaus, Amazonas, Brazil and Instituto Leonidas & Maria Deane (FIOCRUZ), Manaus, Amazonas, Brazil).  Metabolomics results were produced by Dean Jones at Emory University.</td>
+           </tr>
+         </table>
+      </div>   
+	 
+<!--	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+
+     <br><br> 
+     <img align="middle" src="images/MaHPIC_E03_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E03_Timeline.png" target="_blank">View Larger Image</a><br>
+  -->    
+        
+  </div>	
+  </div>  
+
+ 
+ 
  
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Measures of infection and recrudescence in <i>M. mulatta</i> infected with <i>P. coatneyi</i> Hackeri strain </a> </h3> 
@@ -281,7 +370,8 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E03 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E03 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E03 BioProject record at NCBI</a>-->
+             <td><b>Coming Soon</b></td>  
+                    <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E03 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E03 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E03 BioProject record at NCBI</a>-->
              <td>N/A</td>
            </tr>
            <tr>
@@ -291,12 +381,12 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E03 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=07e7da87660b4418aa48e26fce5c7a75" target="_blank">E03 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E03 Immune Profiles at NIAID's ImmPort</a>-->
+             <td><b>Coming Soon</b></td> <!--<a href="XXXXXXX" target="_blank">E03 Immune Profiles at NIAID's ImmPort</b></a></td>-->
              <td>N/A</td>
            </tr>
            <tr>
@@ -392,7 +482,8 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E04 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E04 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE94273" target="_blank">E04 Bone Marrow Expression Results at NCBI's GEO</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -402,17 +493,17 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=68c2e59511d04428bfecf9ce231c7ad0" target="_blank">E04 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E04 Immune Profiles at NIAID's ImmPort</a>-->
+             <td><b><a href=" http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1015" target="_blank">E04 Immunology (Adaptive, Innate, Cytokine) Results at ImmPort </a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UCSD's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UCSD's Metabolomics Workbench</a> -->    
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a></b></td>    
              <td>N/A</td>
            </tr>
            <tr>
@@ -501,7 +592,9 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b><a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results at NCBI's GEO</b></a></td>   <!--<br><a href="https://www.ncbi.nlm.nih.gov/bioproject/315987" target="_blank">E04 BioProject record at NCBI</a>-->
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
+                    <a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data at NCBI's SRA</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results at NCBI's GEO</a></b></td>   
              <td>N/A</td>
            </tr>
            <tr>
@@ -511,12 +604,13 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=c7e41c86aa6e4b15bc89b27a72fc9158" target="_blank">E13 Lipidomics Results at MassIVE </a></b></td>
              <td>N/A</td>
            </tr>
+      <!-- Susanne removed Immunomics on purpose.  This experiment will not have immunomics data-->
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E04 Metabolomics at UCSD's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E04 Metabolomics at UCSD's Metabolomics Workbench</a> -->    
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000592" target="_blank">E13 Metabolomics Results at Metabolomics Workbench </a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -613,7 +707,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E23 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=9dce6369a6c14b23b77b55825e5dd61d" target="_blank">E23 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -630,7 +724,7 @@
              <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
              <td><b>Coming soon</b></td>
              <td>N/A</td>
-           </tr>
+           </tr>    
            </table>
            </div>
 <br><br>
@@ -713,17 +807,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E24 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E24 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E24 BioProject record at NCBI</a>-->
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E24 Proteomics at EBI's PRIDE</a>-->
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E24 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b>Coming Soon</b></td>  
              <td>N/A</td>
            </tr>
            <tr>
