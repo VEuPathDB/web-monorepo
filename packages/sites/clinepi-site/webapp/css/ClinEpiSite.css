@@ -1,3 +1,5 @@
+@import '~eupathdb/wdkCustomization/css/client.css';
+
 @value hlColor: #923937;
 @value bgColor: #85b3c3;
 
@@ -10,6 +12,7 @@ body {
 
 .wdk-PageContent {
   padding: 1em;
+  min-height: calc(100vh - 192px);
 }
 
 #header {
