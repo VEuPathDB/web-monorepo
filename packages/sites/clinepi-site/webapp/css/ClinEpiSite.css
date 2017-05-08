@@ -150,7 +150,7 @@ a.eupathdb-MenuItemText,
 }
 
 @media (min-width: 800px) {
-  .eupathdb-PageContent.eupathdb-PageContent__welcome {
+  .wdk-PageContent.wdk-PageContent__welcome {
     margin: auto;
     padding: 1em 2em;
   }
