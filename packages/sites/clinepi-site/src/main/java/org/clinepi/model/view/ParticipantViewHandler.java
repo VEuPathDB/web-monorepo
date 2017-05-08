@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.eupathdb.common.model.view.Isolate;
 import org.gusdb.fgputil.db.SqlUtils;
 import org.gusdb.wdk.model.WdkModel;
 import org.gusdb.wdk.model.WdkModelException;
@@ -16,6 +17,7 @@ import org.gusdb.wdk.model.WdkUserException;
 import org.gusdb.wdk.model.answer.AnswerValue;
 import org.gusdb.wdk.model.answer.SummaryViewHandler;
 import org.gusdb.wdk.model.user.Step;
+import org.gusdb.wdk.model.user.User;
 
 public abstract class ParticipantViewHandler implements SummaryViewHandler {
 
@@ -28,13 +30,12 @@ public abstract class ParticipantViewHandler implements SummaryViewHandler {
             WdkUserException;
 
     @Override
-    public Map<String, Object> process(Step step, Map<String, String[]> parameters) throws WdkModelException,
+    public Map<String, Object> process(Step step, Map<String, String[]> parameters, User user, WdkModel wdkModel) throws WdkModelException,
             WdkUserException {
         logger.debug("Entering DwellingViewHandler...");
 
         ResultSet resultSet = null;
         try {
-            WdkModel wdkModel = step.getQuestion().getWdkModel();
             AnswerValue answerValue = step.getAnswerValue();
             String sql = prepareSql(answerValue.getIdSql());
             DataSource dataSource = wdkModel.getAppDb().getDataSource();
@@ -77,7 +78,7 @@ public abstract class ParticipantViewHandler implements SummaryViewHandler {
             ex.printStackTrace();
             throw new WdkModelException(ex);
         } finally {
-            SqlUtils.closeResultSetAndStatement(resultSet);
+            SqlUtils.closeResultSetAndStatement(resultSet, null);
         }
     }
 }

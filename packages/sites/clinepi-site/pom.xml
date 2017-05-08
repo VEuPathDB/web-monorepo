@@ -30,35 +30,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.eupathdb</groupId>
+      <artifactId>ebrc-website-common-model</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.struts</groupId>
-      <artifactId>struts-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.struts</groupId>
-      <artifactId>struts-taglib</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jsp-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>

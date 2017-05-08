@@ -1,5 +1,6 @@
 package org.clinepi.model.view;
 
+import org.eupathdb.common.model.view.IsolateViewHandler;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.model.WdkUserException;
 
