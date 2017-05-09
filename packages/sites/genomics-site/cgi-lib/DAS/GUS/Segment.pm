@@ -387,9 +387,9 @@ sub features {
     $factory->getQueryLogger()->logQuery($startTime, $firstPageTime, $sql, "Segment.pm", $queryName, $rend - $base_start);
 
 
-    if($typeString =~ /blat/i) { 
-        @tempfeats = _feature_filter(\@tempfeats, 10);
-    }
+#    if($typeString =~ /blat/i) { 
+#        @tempfeats = _feature_filter(\@tempfeats, 10);
+#    }
 
     push(@features, @tempfeats);
 
