@@ -3,7 +3,7 @@
           xmlns:jsp="http://java.sun.com/JSP/Page"
           xmlns:c="http://java.sun.com/jsp/jstl/core"
           xmlns:wdk="urn:jsptagdir:/WEB-INF/tags/wdk"
-          xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp"
+          xmlns:common="urn:jsptagdir:/WEB-INF/tags/site-common"
           xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
   <jsp:directive.attribute
@@ -44,11 +44,11 @@
     </c:when>
     <!-- REST of recordtypes, using all PK parts n URL, eg:  source_id, project_id, etc) -->
     <c:otherwise>
-      <c:url var="recordLink" value="/app/record/${recordClass.urlSegment}" />
-      <c:forEach items="${primaryKeyValue.values}" var="pkValue" varStatus="loop">
-        <c:set var="recordLink" value="${recordLink}/${pkValue.value}" />
-      </c:forEach>
-      <a href="${recordLink}">${displayValue}</a>
+      <common:recordLink
+        primaryKeyValue="${primaryKeyValue}"
+        recordClass="${recordClass}"
+        displayValue="${displayValue}"
+      />
     </c:otherwise>
   </c:choose>
 
