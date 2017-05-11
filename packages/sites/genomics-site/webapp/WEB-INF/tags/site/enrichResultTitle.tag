@@ -14,7 +14,7 @@
 <div class="goCloud-download-link">
   <c:url var="goDownloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.imageDownloadPath}"/>
   <p class="enrich-result-q">
-    Click on the image to see a GoSummaries word cloud of this analysis <a href="${goDownloadUrl}"><img border="1" src="ApiCommonWebsite/Site/webapp/WEB-INF/tags/site/enrichResultTitle.tag" width="125" height="50"></a>
+    Click on the image to see a GoSummaries word cloud of this analysis <a href="${goDownloadUrl}"><img border="1" src="wdkCustomization/images/GOsummaries.png" width="125" height="50"></a>
  </p>
 
 </div>
