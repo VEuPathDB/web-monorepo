@@ -16,6 +16,7 @@ body {
 
 #header {
   height: 93px;
+  background: bgColor;
 }
 
 #header2 {
@@ -23,10 +24,18 @@ body {
   color: hlColor;
   height: 6.4em;
   min-width: 0;
+  max-width: 1200px;
+  margin: auto;
 }
 
 #header_rt {
   position: relative;
+  margin-right: 0;
+  margin-top: 16px;
+}
+
+#toplink {
+  right: 0;
 }
 
 #nav-top a,
@@ -41,6 +50,8 @@ body {
   background: bgColor;
   border: none;
   border-bottom: 1px solid #868686;
+  max-width: 1200px;
+  margin: auto;
 }
 
 #menu #favorite-menu {
@@ -79,12 +90,17 @@ a.eupathdb-MenuItemText,
 
 .SiteName {
   font-style: italic;
-  font-weight: bold;
+  font-weight: 400;
   color: hlColor;
 }
 
+.Welcome {
+  max-width: 1200px;
+  margin: auto;
+}
+
 .WelcomeHeadline {
-  font-size: 1.2em;
+  font-size: 1.6em;
   padding: 1em 0em;
 }
 
@@ -118,25 +134,62 @@ a.eupathdb-MenuItemText,
   font-weight: 400;
 }
 
+.WelcomeSectionContent {
+  margin-top: 1em;
+  margin-bottom: 3em;
+  min-height: 6em;
+}
+
+.AboutStudies {
+  font-size: 1.1em;
+}
+
 .SearchContainer {
   text-align: center;
 }
 
-.WelcomeBoxLink {
+a.WelcomeBoxLink {
   background: bgColor;
+  color: white;
   padding: 6px 0;
   border: 1px solid #b5b5b5;
-  border-radius: 2px;
+  border-radius: 4px;
   display: block;
   width: 100%;
   text-align: center;
   margin-top: 1em;
 }
 
+.AnalysisToolsContainer {
+  display: flex;
+  justify-content: space-around;
+}
+.AnalysisTool {
+  text-align: center;
+}
+
+.AnalysisToolImage {
+  border: 1px solid #777;
+  border-radius: 8px;
+}
+
+.SearchContainer {
+  display: flex;
+  justify-content: space-around;
+  max-width: 1000px;
+  margin-top: 1em;
+}
+
 .Search {
   display: inline-block;
   text-align: center;
-  width: 24%;
+  padding: 4px;
+}
+
+.SearchAlt {
+  display: inline-block;
+  text-align: center;
+  margin: 0 5px;
 }
 
 .SearchIcon {
@@ -144,8 +197,39 @@ a.eupathdb-MenuItemText,
   color: black;
 }
 
+.SearchIconAlt {
+  font-size: 5em;
+  border: 1px solid;
+  width: 1.1em;
+  padding: 5px;
+  border-radius: 8px;
+  /* resembles mockup with green background
+  color: black;
+  background: #bbd2a0;
+  */
+  color: white;
+  background: #202020;
+}
+
 .SearchIconCaption {
   color: black;
+}
+
+.SearchIconCaptionAlt {
+  margin-top: 4px;
+  font-size: 1.1em;
+}
+
+@media (min-width: 1000px) {
+  .ExploreContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4em;
+  }
+
+  .ExploreSection {
+    width: 45%;
+  }
 }
 
 @media (min-width: 800px) {
@@ -162,8 +246,8 @@ a.eupathdb-MenuItemText,
 
   .Experiences {
     position: absolute;
-    top: 0;
-    right: 50px;
+    top: 2em;
+    right: 0;
     padding: 0;
   }
 
@@ -174,6 +258,7 @@ a.eupathdb-MenuItemText,
   .WelcomeBoxContainer {
     display: flex;
     justify-content: space-between;
+    margin-top: 4em;
   }
 
   .WelcomeBox {

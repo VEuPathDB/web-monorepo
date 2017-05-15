@@ -4,7 +4,7 @@ import { initialize } from 'eupathdb/wdkCustomization/js/client/bootstrap';
 import componentWrappers from './component-wrappers';
 
 initialize({
-  isPartOfEuPathDB: false,
+  isPartOfEuPathDB: true,
   mainMenuItems,
   smallMenuItems,
   componentWrappers
@@ -12,10 +12,19 @@ initialize({
 
 function mainMenuItems(props, defaultItems) {
   return [
+    defaultItems.home,
     defaultItems.search,
     defaultItems.strategies,
-    defaultItems.basket,
-    defaultItems.favorites
+    {
+      id: 'studies',
+      text: 'Studies',
+      url: '#'
+    },
+    {
+      id: 'help',
+      text: 'Help',
+      url: '#'
+    }
   ]
 }
 
