@@ -101,7 +101,7 @@ a.eupathdb-MenuItemText,
 
 .WelcomeHeadline {
   font-size: 1.6em;
-  padding: 1em 0em;
+  padding: .6em 0em;
 }
 
 .Experiences {
@@ -129,7 +129,7 @@ a.eupathdb-MenuItemText,
 
 .WelcomeSectionHeader {
   color: hlColor;
-  padding-top: 1.6em;
+  padding-top: .6em;
   font-size: 1.6em;
   font-weight: 400;
 }
@@ -166,11 +166,13 @@ a.WelcomeBoxLink {
 }
 .AnalysisTool {
   text-align: center;
+  font-size: 1.1em;
 }
 
 .AnalysisToolImage {
   border: 1px solid #777;
   border-radius: 8px;
+  height: 4em;
 }
 
 .SearchContainer {
@@ -193,12 +195,12 @@ a.WelcomeBoxLink {
 }
 
 .SearchIcon {
-  font-size: 5em;
+  font-size: 4em;
   color: black;
 }
 
 .SearchIconAlt {
-  font-size: 5em;
+  font-size: 4em;
   border: 1px solid;
   width: 1.1em;
   padding: 5px;
@@ -224,7 +226,7 @@ a.WelcomeBoxLink {
   .ExploreContainer {
     display: flex;
     justify-content: space-between;
-    margin-top: 4em;
+    margin-top: 1em;
   }
 
   .ExploreSection {
@@ -258,7 +260,7 @@ a.WelcomeBoxLink {
   .WelcomeBoxContainer {
     display: flex;
     justify-content: space-between;
-    margin-top: 4em;
+    margin-top: 1em;
   }
 
   .WelcomeBox {
