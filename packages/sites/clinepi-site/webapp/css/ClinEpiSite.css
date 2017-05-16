@@ -24,8 +24,8 @@ body {
   color: hlColor;
   height: 6.4em;
   min-width: 0;
-  max-width: 1200px;
-  margin: auto;
+  /*max-width: 1200px;
+  margin: auto;*/
 }
 
 #header_rt {
@@ -50,8 +50,8 @@ body {
   background: bgColor;
   border: none;
   border-bottom: 1px solid #868686;
-  max-width: 1200px;
-  margin: auto;
+  /*max-width: 1200px;
+  margin: auto;*/
 }
 
 #menu #favorite-menu {
@@ -123,6 +123,7 @@ a.eupathdb-MenuItemText,
   display: block;
   width: 100%;
 }
+
 .ImagePlaceholder:after {
   content: "Image here";
 }
@@ -130,12 +131,12 @@ a.eupathdb-MenuItemText,
 .WelcomeSectionHeader {
   color: hlColor;
   padding-top: .6em;
+  padding-bottom: 1em;
   font-size: 1.6em;
   font-weight: 400;
 }
 
 .WelcomeSectionContent {
-  margin-top: 1em;
   margin-bottom: 3em;
   min-height: 6em;
 }
@@ -179,7 +180,6 @@ a.WelcomeBoxLink {
   display: flex;
   justify-content: space-around;
   max-width: 1000px;
-  margin-top: 1em;
 }
 
 .Search {
