@@ -7,7 +7,8 @@ import { getValueOrDefault, filterOutProps } from 'wdk-client/ComponentUtils';
  * should be displayed.
  * @type {*[]}
  */
-const EMAIL_PREFERENCE_DATA = [{value:'preference_global_email_amoebadb', display:'AmoebaDB'},
+const EMAIL_PREFERENCE_DATA = [
+  {value:'preference_global_email_amoebadb', display:'AmoebaDB'},
   {value:'preference_global_email_cryptodb', display:'CryptoDB'},
   {value:'preference_global_email_apidb', display:'EuPathDB'},
   {value:'preference_global_email_fungidb', display:'FungiDB'},
@@ -18,7 +19,8 @@ const EMAIL_PREFERENCE_DATA = [{value:'preference_global_email_amoebadb', displa
   {value:'preference_global_email_schistodb', display:'SchistoDB'},
   {value:'preference_global_email_toxodb', display:'ToxoDB'},
   {value:'preference_global_email_trichdb', display:'TrichDB'},
-  {value:'preference_global_email_tritrypdb', display:'TriTrypDB'}];
+  {value:'preference_global_email_tritrypdb', display:'TriTrypDB'}
+];
 
 /**
  * This React component displays in a fieldset, the possible email alert preferences in the form of a checkbox list, overlaid
@@ -32,7 +34,7 @@ class ApiApplicationSpecificProperties extends React.Component {
   }
 
   render() {
-    let applicationSpecificProperties = this.props.user[this.props.name];
+    let applicationSpecificProperties = this.props.user.properties;
     let properties = this.toNamedMap(Object.keys(applicationSpecificProperties), applicationSpecificProperties);
     let emailPreferenceSelections = properties.filter(property => property.name.startsWith('preference_global_email_')).map(property => property.name);
     return (
@@ -44,7 +46,6 @@ class ApiApplicationSpecificProperties extends React.Component {
       </fieldset>
     );
   }
-
 
   /**
    * Separates key = value pairs into object with name and value attributes.
