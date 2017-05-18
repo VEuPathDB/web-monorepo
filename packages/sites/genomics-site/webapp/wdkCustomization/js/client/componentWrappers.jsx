@@ -242,27 +242,6 @@ export function RecordAttributeSection(DefaultComponent) {
 }
 
 /**
- * Overrides the Identification fieldset on the User Profile/Account form from the WDK.  ApiDB
- * does not use all the fields that the WDK provides
- * @returns {function()} - React component overriding the original WDK component
- * @constructor
- */
-export function UserIdentity() {
-  return ApiUserIdentity;
-}
-
-/**
- * Overrides the Contact fieldset on the User Profile/Account form from the WDK.  ApiDB
- * does not collect contact information.  Consequently, the WDK UserContact component is
- * replaced with an empty React component
- * @returns {Function} - Empty React component
- * @constructor
- */
-export function UserContact() {
-  return function() { return <noscript /> };
-}
-
-/**
  * Overrides the Preferences fieldset on the User Profile/Account form from the WDK.  The WDK
  * has no application specific properties although it provides for that possibility.  The empty
  * React component placeholder is overriden with an ApiDB specific component.
