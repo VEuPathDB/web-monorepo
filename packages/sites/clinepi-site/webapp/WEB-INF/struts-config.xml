@@ -288,11 +288,12 @@
     
     <action
       path="/showQuestion"
-      type="org.gusdb.wdk.controller.action.ShowQuestionAction"
+      type="org.eupathdb.common.controller.action.CommonShowQuestionAction"
       scope="request"
       validate="false"
       name="questionForm">
       <forward name="skip_to_summary" path="/showSummary.do"/>
+      <forward name="wizard" path="/wdkCustomization/jsp/QuestionWizard.jsp"/>
     </action>
     <action
       path="/showQuestionSets"

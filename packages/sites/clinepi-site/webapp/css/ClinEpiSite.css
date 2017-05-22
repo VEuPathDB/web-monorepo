@@ -24,8 +24,7 @@ body {
   color: hlColor;
   height: 6.4em;
   min-width: 0;
-  /*max-width: 1200px;
-  margin: auto;*/
+  padding: 0 3em;
 }
 
 #header_rt {
@@ -38,20 +37,22 @@ body {
   right: 0;
 }
 
+.eupathdb-LogoRelease {
+  margin-top: 4px;
+}
+
 #nav-top a,
 #nav-top a:visited,
 #nav-top a:link {
   color: hlColor;
 }
 
-.eupathdb-Menu,
-#menu {
+.eupathdb-Menu {
   height: 2.4em;
   background: bgColor;
   border: none;
   border-bottom: 1px solid #868686;
-  /*max-width: 1200px;
-  margin: auto;*/
+  padding: 0 3em;
 }
 
 #menu #favorite-menu {
