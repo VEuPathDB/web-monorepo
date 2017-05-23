@@ -12,19 +12,19 @@ export default function Index(props) {
 
       <h2 className="WelcomeSectionHeader">Search the Data</h2>
       <div className="SearchContainer">
-        <a className="SearchAlt" href="#">
+        <a className="SearchAlt" href="/a/images/participant_slide.svg">
           <i className="SearchIconAlt fa fa-male"></i>
           <div className="SearchIconCaptionAlt">Participants</div>
         </a>
-        <a className="SearchAlt" href="#">
+        <a className="SearchAlt" href="/a/images/dwelling_slide.svg">
           <i className="SearchIconAlt fa fa-home"></i>
           <div className="SearchIconCaptionAlt">Dwellings</div>
         </a>
-        <a className="SearchAlt" href="#">
+        <a className="SearchAlt" href="/a/images/visit_slide.svg">
           <i className="SearchIconAlt fa fa-stethoscope"></i>
           <div className="SearchIconCaptionAlt">Visits</div>
         </a>
-        <a className="SearchAlt" href="#">
+        <a className="SearchAlt" href="/a/images/vector_slide.svg">
           <i className="SearchIconAlt fa fa-bug"></i>
           <div className="SearchIconCaptionAlt">Vectors</div>
         </a>
@@ -32,7 +32,7 @@ export default function Index(props) {
 
       <div className="ExploreContainer">
         <div className="ExploreSection">
-          <h2 className="WelcomeSectionHeader">Explore Sample Searches</h2>
+          <h2 className="WelcomeSectionHeader">Explore Example Searches</h2>
           <div>
             <ul>
               <li>
@@ -59,28 +59,28 @@ export default function Index(props) {
         </div>
 
         <div className="ExploreSection">
-          <h2 className="WelcomeSectionHeader">Explore Analysis Tools</h2>
+          <h2 className="WelcomeSectionHeader">Explore Example Analyses</h2>
           <div className="AnalysisToolsContainer">
             <div className="AnalysisTool">
-              <a href="#">
+              <a href="/a/images/analysis_slide.svg">
                 <img className="AnalysisToolImage" src="/a/images/bar-graph.png"/>
                 <div>Enrichment</div>
               </a>
             </div>
             <div className="AnalysisTool">
-              <a href="#">
+              <a href="/a/images/analysis_slide.svg">
                 <img className="AnalysisToolImage" src="/a/images/abundance.png"/>
                 <div>Abundance</div>
               </a>
             </div>
             <div className="AnalysisTool">
-              <a href="#">
+              <a href="/a/images/analysis_slide.svg">
                 <img className="AnalysisToolImage" src="/a/images/scatter.png"/>
                 <div>Correlation</div>
               </a>
             </div>
             <div className="AnalysisTool">
-              <a href="#">
+              <a href="/a/images/analysis_slide.svg">
                 <img className="AnalysisToolImage" src="/a/images/heatmap.png"/>
                 <div>Density</div>
               </a>

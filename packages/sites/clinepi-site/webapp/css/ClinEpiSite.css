@@ -24,8 +24,7 @@ body {
   color: hlColor;
   height: 6.4em;
   min-width: 0;
-  max-width: 1200px;
-  margin: auto;
+  padding: 0 3em;
 }
 
 #header_rt {
@@ -38,20 +37,22 @@ body {
   right: 0;
 }
 
+.eupathdb-LogoRelease {
+  margin-top: 4px;
+}
+
 #nav-top a,
 #nav-top a:visited,
 #nav-top a:link {
   color: hlColor;
 }
 
-.eupathdb-Menu,
-#menu {
+.eupathdb-Menu {
   height: 2.4em;
   background: bgColor;
   border: none;
   border-bottom: 1px solid #868686;
-  max-width: 1200px;
-  margin: auto;
+  padding: 0 3em;
 }
 
 #menu #favorite-menu {
@@ -101,7 +102,7 @@ a.eupathdb-MenuItemText,
 
 .WelcomeHeadline {
   font-size: 1.6em;
-  padding: 1em 0em;
+  padding: .6em 0em;
 }
 
 .Experiences {
@@ -123,19 +124,20 @@ a.eupathdb-MenuItemText,
   display: block;
   width: 100%;
 }
+
 .ImagePlaceholder:after {
   content: "Image here";
 }
 
 .WelcomeSectionHeader {
   color: hlColor;
-  padding-top: 1.6em;
+  padding-top: .6em;
+  padding-bottom: 1em;
   font-size: 1.6em;
   font-weight: 400;
 }
 
 .WelcomeSectionContent {
-  margin-top: 1em;
   margin-bottom: 3em;
   min-height: 6em;
 }
@@ -166,18 +168,19 @@ a.WelcomeBoxLink {
 }
 .AnalysisTool {
   text-align: center;
+  font-size: 1.1em;
 }
 
 .AnalysisToolImage {
   border: 1px solid #777;
   border-radius: 8px;
+  height: 4em;
 }
 
 .SearchContainer {
   display: flex;
   justify-content: space-around;
-  max-width: 1000px;
-  margin-top: 1em;
+  max-width: 800px;
 }
 
 .Search {
@@ -193,12 +196,12 @@ a.WelcomeBoxLink {
 }
 
 .SearchIcon {
-  font-size: 5em;
+  font-size: 4em;
   color: black;
 }
 
 .SearchIconAlt {
-  font-size: 5em;
+  font-size: 4em;
   border: 1px solid;
   width: 1.1em;
   padding: 5px;
@@ -224,7 +227,7 @@ a.WelcomeBoxLink {
   .ExploreContainer {
     display: flex;
     justify-content: space-between;
-    margin-top: 4em;
+    margin-top: 1em;
   }
 
   .ExploreSection {
@@ -258,7 +261,7 @@ a.WelcomeBoxLink {
   .WelcomeBoxContainer {
     display: flex;
     justify-content: space-between;
-    margin-top: 4em;
+    margin-top: 1em;
   }
 
   .WelcomeBox {
