@@ -42,16 +42,16 @@
     var $table = $(event.target).find('.step-analysis-results-pane table');
 
     $table.wdkDataTable({
-        // order by significance descending
-        order: [ 4, 'desc' ],
-	// positions total (i) and filter (f) before he table
-	dom: 'lipft',
-  	// instead of defaults: "Showing x to y of z entries", "Search"
-        // overrides values defined in WDK datatables.js
-        oLanguage: {
-	    sInfo: 'Got a total of _TOTAL_ results',
-            sSearch: 'Filter : '
-        },
+      // order by significance descending
+      order: [ 4, 'desc' ],
+      // positions total (i) and filter (f) before he table
+      dom: 'lipft',
+      // instead of defaults: "Showing x to y of z entries", "Search"
+      // overrides values defined in WDK datatables.js
+      oLanguage: {
+        sInfo: 'Got a total of _TOTAL_ results',
+        sSearch: 'Filter : '
+      },
     });
 
 
@@ -72,13 +72,13 @@
     $table.wdkDataTable({
       // sort by p-value
       order: [ 7, 'asc' ],
-			// positions total (i) and filter (f) before he table
-			dom: 'lipft',
-  		// instead of defaults: "Showing x to y of z entries", "Search"
+      // positions total (i) and filter (f) before he table
+      dom: 'lipft',
+      // instead of defaults: "Showing x to y of z entries", "Search"
       // overrides values defined in WDK datatables.js
       oLanguage: {
-					sInfo: 'Got a total of _TOTAL_ results',
-          sSearch: 'Filter : '
+        sInfo: 'Got a total of _TOTAL_ results',
+        sSearch: 'Filter : '
       },
       // order p-value cols numerically
       columnDefs: [{
@@ -96,7 +96,7 @@
   // Only show two decimal places.
   function toTwoDecimals() {
     var $el = $(this),
-        number = Number($el.text());
+      number = Number($el.text());
     $el.text(number.toExponential(2));
     $el.attr('title', number);
   }
