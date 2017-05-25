@@ -44,7 +44,7 @@ export default class GalaxyTermsController extends WdkViewController {
   }
 
   onGalaxyNavigate() {
-    this.eventHandlers.updateUserPreference(SHOW_GALAXY_PAGE_PREFERENCE, 'false');
+    this.eventHandlers.updateUserPreference("global", SHOW_GALAXY_PAGE_PREFERENCE, 'false');
     window.open('https://eupathdb.globusgenomics.org', '_blank');
   }
 
