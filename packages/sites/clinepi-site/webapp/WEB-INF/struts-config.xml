@@ -469,11 +469,6 @@
     </action>
     <action
       path="/downloadStep"
-      type="org.gusdb.wdk.controller.action.DownloadStepAnswerValueAction"
-      scope="request">
-    </action>
-    <action
-      path="/downloadStepRedirect"
       type="org.gusdb.wdk.controller.action.DownloadStepRedirectAction"
       scope="request">
     </action>
