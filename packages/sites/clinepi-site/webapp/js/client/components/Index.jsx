@@ -1,54 +1,96 @@
 import React from 'react';
 
+/**
+ * Home page for clinepidb sites
+ */
 export default function Index(props) {
   return (
     <div className="Welcome">
 
-      <div className="WelcomeHeadline">
-        The <span className="SiteName"> {props.displayName} </span>
-        database focuses on the longitudinal clinical epidemiological studies for
+      <h1 className="WelcomeHeadline">
+        <span className="SiteName"> {props.displayName} </span>
+        focuses on longitudinal clinical epidemiological studies for
         Malaria, Enteric disease and other globally significant disease.
+      </h1>
+
+      <h2 className="WelcomeSectionHeader">Search the Data</h2>
+      <div className="SearchContainer">
+        <a className="SearchAlt" href="/a/images/participant_slide.svg">
+          <i className="SearchIconAlt fa fa-male"></i>
+          <div className="SearchIconCaptionAlt">Participants</div>
+        </a>
+        <a className="SearchAlt" href="/a/images/dwelling_slide.svg">
+          <i className="SearchIconAlt fa fa-home"></i>
+          <div className="SearchIconCaptionAlt">Dwellings</div>
+        </a>
+        <a className="SearchAlt" href="/a/images/visit_slide.svg">
+          <i className="SearchIconAlt fa fa-stethoscope"></i>
+          <div className="SearchIconCaptionAlt">Visits</div>
+        </a>
+        <a className="SearchAlt" href="/a/images/vector_slide.svg">
+          <i className="SearchIconAlt fa fa-bug"></i>
+          <div className="SearchIconCaptionAlt">Vectors</div>
+        </a>
       </div>
 
-      <div className="WelcomeCenter">
+      <div className="ExploreContainer">
+        <div className="ExploreSection">
+          <h2 className="WelcomeSectionHeader">Explore Example Searches</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="#">
+                  Which children in the MAL-ED study had no diarrheal episodes over the first 24 months of life?
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  What is the correlation between neutralizing antibody responses to rotavirus vs poliovirus vaccination?
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  Find low HAZ children displaying a growth burst within the next 6 mo, for whom blood samples are available.
+                </a>
+              </li>
 
-        <h2 className="WelcomeSectionHeader">Welcome! Use this site to:</h2>
-        <ul>
-          <li>
-            Answer <a href="#">epidemiological</a>, <a href="#">immunological</a>, <a href="#">translational</a>, and <a href="#">data science</a> questions
-          </li>
-          <li>
-            Issue <a href="#">sophisticated searches</a> to mine the <a href="#">study data</a>
-          </li>
-          <li>
-            Use <a href="#">statistical analysis tools</a> to discover trends
-          </li>
-        </ul>
-
-        <h2 className="WelcomeSectionHeader">Recent News</h2>
-        <ul>
-          <li>
-            ClinEpiDB Release 2 includes studies from Research Group, including
-            advanced tech... <em><a href="#">read more</a></em>
-          </li>
-          <li>
-            Registration for the 2019 ClinEpiDB workshop has begun... <em><a href="#">read more</a></em>
-          </li>
-          <li>
-            <em><a href="#">Go to the news archive</a> &raquo;</em>
-          </li>
-        </ul>
-
-        <div className="Experiences">
-          <img className="ImagePlaceholder" width="300" height="200"/>
-          <div className="ExperienceTestimonial">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-            &mdash;Bryan Greenhouse, UCSF
+            </ul>
+            <p>
+              <a href="#"><em>Explore more sample search strategies</em> &raquo;</a>
+            </p>
           </div>
-          <a href="#">Read more scientific experiences</a>
         </div>
+
+        <div className="ExploreSection">
+          <h2 className="WelcomeSectionHeader">Explore Example Analyses</h2>
+          <div className="AnalysisToolsContainer">
+            <div className="AnalysisTool">
+              <a href="/a/images/analysis_slide.svg">
+                <img className="AnalysisToolImage" src="/a/images/bar-graph.png"/>
+                <div>Enrichment</div>
+              </a>
+            </div>
+            <div className="AnalysisTool">
+              <a href="/a/images/analysis_slide.svg">
+                <img className="AnalysisToolImage" src="/a/images/abundance.png"/>
+                <div>Abundance</div>
+              </a>
+            </div>
+            <div className="AnalysisTool">
+              <a href="/a/images/analysis_slide.svg">
+                <img className="AnalysisToolImage" src="/a/images/scatter.png"/>
+                <div>Correlation</div>
+              </a>
+            </div>
+            <div className="AnalysisTool">
+              <a href="/a/images/analysis_slide.svg">
+                <img className="AnalysisToolImage" src="/a/images/heatmap.png"/>
+                <div>Density</div>
+              </a>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div className="WelcomeBoxContainer">
@@ -57,71 +99,45 @@ export default function Index(props) {
           <h2 className="WelcomeSectionHeader">About the Studies</h2>
           <div className="WelcomeSectionContent">
             <div>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-              pariatur.
+              The studies housed in ClinEpiDB focus on longitudinal clinical
+              epidemiological data collected from areas where Malaria,
+              Enteric disase and other globally significant disease are endemic.
             </div>
             <a className="WelcomeBoxLink" href="#">Learn more about the studies</a>
           </div>
         </div>
 
         <div className="WelcomeBox">
-          <h2 className="WelcomeSectionHeader">Example Inquiries</h2>
+          <h2 className="WelcomeSectionHeader">Why Use this Site?</h2>
           <div className="WelcomeSectionContent">
             <ul>
               <li>
-                <a href="#">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </a>
+                Answer <a href="#">epidemiological</a>, <a href="#">immunological</a>, <a href="#">translational</a>, and <a href="#">data science</a> questions
               </li>
               <li>
-                <a href="#">
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </a>
+                Issue <a href="#">sophisticated searches</a> to mine the <a href="#">study data</a>
               </li>
               <li>
-                <a href="#">
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                </a>
+                Use <a href="#">statistical analysis tools</a> to discover trends
               </li>
-
             </ul>
-            <a className="WelcomeBoxLink" href="#">Explore more example inquiries</a>
+            <a className="WelcomeBoxLink" href="#">Find more help and tutorials</a>
           </div>
         </div>
 
         <div className="WelcomeBox">
-          <h2 className="WelcomeSectionHeader">Search for</h2>
+          <h2 className="WelcomeSectionHeader">Recent News</h2>
           <div className="WelcomeSectionContent">
-            <div className="SearchContainer">
-              <div className="Search">
-                <a href="#">
-                  <i className="SearchIcon fa fa-male"></i>
-                  <div className="SearchIconCaption">Participants</div>
-                </a>
-              </div>
-              <div className="Search">
-                <a href="#">
-                  <i className="SearchIcon fa fa-home"></i>
-                  <div className="SearchIconCaption">Dwelling</div>
-                </a>
-              </div>
-              <div className="Search">
-                <a href="#">
-                  <i className="SearchIcon fa fa-stethoscope"></i>
-                  <div className="SearchIconCaption">Visits</div>
-                </a>
-              </div>
-              <div className="Search">
-                <a href="#">
-                  <i className="SearchIcon fa fa-bug"></i>
-                  <div className="SearchIconCaption">Vectors</div>
-                </a>
-              </div>
-            </div>
+            <ul>
+              <li>
+                ClinEpiDB Release 2 includes studies from Research Group, including
+                advanced tech ... <em><a href="#">read more</a></em>
+              </li>
+              <li>
+                Registration for the 2019 ClinEpiDB workshop has begun ... <em><a href="#">read more</a></em>
+              </li>
+            </ul>
+            <a className="WelcomeBoxLink" href="#">Go to the news archive</a>
           </div>
         </div>
 
@@ -129,4 +145,8 @@ export default function Index(props) {
 
     </div>
   )
+}
+
+Index.propTypes = {
+  displayName: React.PropTypes.string.isRequired
 }
