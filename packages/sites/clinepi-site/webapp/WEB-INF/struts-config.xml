@@ -469,7 +469,7 @@
     </action>
     <action
       path="/downloadStep"
-      type="org.gusdb.wdk.controller.action.DownloadStepAnswerValueAction"
+      type="org.gusdb.wdk.controller.action.DownloadStepRedirectAction"
       scope="request">
     </action>
     <action path="/showPublicStrats"
