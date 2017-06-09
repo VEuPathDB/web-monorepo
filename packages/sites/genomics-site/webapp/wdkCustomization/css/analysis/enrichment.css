@@ -2,11 +2,13 @@
   font-size:90%;
   font-weight:normal;
   margin:0;
+  text-align: right;
 }
 .enrich-result-q {
   font-size:90%;
   font-weight:normal;
   margin:0;
+  text-algin:right;
 }
 .enrich-table th {
   text-align:left;
@@ -43,8 +45,15 @@
   margin: 25px auto;
   text-align: center;
 }
+/*.enrichment_goCloud {
+   width:100px; 
+   height:100px; 
+   background-image:url('/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.imageDownloadPath}');
+   margin:0;
+   padding:0;
+}
 
-/*
+
 div.step-analysis-results-pane div.dataTables_info {
   bottom: 30px;
   font-size: 120%;
