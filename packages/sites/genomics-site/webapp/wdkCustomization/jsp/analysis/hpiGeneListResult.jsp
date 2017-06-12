@@ -36,7 +36,8 @@
                   <td><a href="${row.uri}" target="_blank">${row.experimentName}</a></td>
                   <td>${row.description}</td>
                   <td>${row.type}</td>
-                  <td><a href="${row.serverEndPoint}" target="_blank">${row.significance}</a></td>
+                  <!-- td><a href="${row.serverEndPoint}" target="_blank">${row.significance}</a></td -->
+                  <td>${row.significance}</td>
                   </tr>
                 </c:forEach>
               </tbody>
