@@ -26,7 +26,7 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">BRC</span>
+                    <span style="font-weight:bold">Database</span>
                     <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.brcParamHelp)}"/>
                   </label>
@@ -43,7 +43,7 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Threshold Type</span>
+                    <span style="font-weight:bold">Cutoff Type</span>
                     <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.thresholdTypeParamHelp)}"/>
                   </label>
@@ -61,14 +61,14 @@
                 <td>
                   <label>
                     <span style="font-weight:bold">
-                      Threshold <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
+                      Cutoff <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
                     </span>
                     <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
                         title="${fn:escapeXml(viewModel.thresholdParamHelp)}"/>
                   </label>
                 </td>
                 <td>
-                  <input type="text" name="thresholdParam" size="10" value="80"/>
+                  <input type="text" name="thresholdParam" size="10" value="20"/>
                 </td>
               </tr>
 

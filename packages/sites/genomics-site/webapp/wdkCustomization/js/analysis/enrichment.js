@@ -86,6 +86,24 @@
         targets: [7, 8, 9]
       }]
     });
+
+
+  var $wordcloud = $(event.target).find('.goCloud-popup-content').dialog({
+    height: 400,
+    width: 700,
+    title: 'Word Cloud of Go Enrichment Analysis Results',
+    autoOpen: false
+  }); 
+
+  // add click handler to open the dialog created above
+  $(event.target).find(".goCloud-download-link a").on('click', function(event) {
+    // prevent the browser from navigating to link
+    event.preventDefault();
+
+    // invoke open method on dialog widget
+    $wordcloud.dialog('open');
+  });
+
   }
 
   function removeEvents(event, analysis) {
@@ -100,5 +118,6 @@
     $el.text(number.toExponential(2));
     $el.attr('title', number);
   }
+
 
 }(jQuery));

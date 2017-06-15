@@ -122,7 +122,8 @@ export default class DatasetGraph extends PureComponent {
 
     let baseUrl = this.makeBaseUrl(this.props);
     let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}&wl=${showLogScale ? '1' : '0'}`;
-    let imgUrl = baseUrlWithState + '&fmt=png';
+    let imgUrl = baseUrlWithState + '&fmt=svg';
+    let pngUrl = baseUrlWithState + '&fmt=png';
     let covImgUrl = dataTable && dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'CoverageUnlogged';
 
     return (
@@ -132,14 +133,16 @@ export default class DatasetGraph extends PureComponent {
 
         <div className="eupathdb-DatasetGraph">
           {visibleParts && (
-            <img
+            <object
               ref={adjustScrollOnLoad}
-              src={imgUrl}
+              data={imgUrl}
+	      type='image/svg+xml'
               onLoad={() => {
                 this.setState({loading: false});
               }}
-              onError={() => this.setState({ loading: false, imgError: true })}
-            />)}
+              onError={() => this.setState({ loading: false, imgError: true })}>
+              <img src={pngUrl}/>
+            </object>)}
           {this.renderImgError()}
 
 
