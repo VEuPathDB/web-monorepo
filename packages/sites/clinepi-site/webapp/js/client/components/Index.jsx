@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Home page for clinepidb sites
@@ -148,5 +149,5 @@ export default function Index(props) {
 }
 
 Index.propTypes = {
-  displayName: React.PropTypes.string.isRequired
+  displayName: PropTypes.string.isRequired
 }
