@@ -4,7 +4,8 @@
  * React Components related to Compounds
  */
 
-import {Component, PropTypes} from 'react';
+import {Component} from 'react';
+import PropTypes from 'prop-types';
 import {uniqueId, isEmpty} from 'lodash';
 import {registerCustomElement} from '../customElements';
 

@@ -1,5 +1,6 @@
 /* global ChemDoodle */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
@@ -892,9 +893,9 @@ class NodeDetails extends React.Component {
 }
 
 NodeDetails.propTypes = {
-  nodeData: React.PropTypes.object.isRequired,
-  pathwaySource: React.PropTypes.string.isRequired,
-  onClose: React.PropTypes.func.isRequired
+  nodeData: PropTypes.object.isRequired,
+  pathwaySource: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired
 };
 
 function EnzymeNodeDetails(props) {

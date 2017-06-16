@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import {Component, PropTypes, cloneElement} from 'react';
+import {Component} from 'react';
+import PropTypes from 'prop-types';
 import {bindAll, throttle} from 'lodash';
 import {isNodeOverflowing} from '../../util/domUtils';
 

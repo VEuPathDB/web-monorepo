@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {chunk} from 'lodash';
 import {withPlainTextCopy} from 'eupathdb/wdkCustomization/js/client/util/component';
 
@@ -23,13 +24,13 @@ function Sequence(props) {
 
 Sequence.propTypes = {
   /** The sequence to display **/
-  sequence: React.PropTypes.string.isRequired,
+  sequence: PropTypes.string.isRequired,
 
   /** Regions to highlight, using 1-based indexing for start and end **/
-  highlightRegions: React.PropTypes.arrayOf(React.PropTypes.shape({
-    renderRegion: React.PropTypes.func.isRequired,
-    start: React.PropTypes.number.isRequired,
-    end: React.PropTypes.number.isRequired
+  highlightRegions: PropTypes.arrayOf(PropTypes.shape({
+    renderRegion: PropTypes.func.isRequired,
+    start: PropTypes.number.isRequired,
+    end: PropTypes.number.isRequired
   }))
 };
 
