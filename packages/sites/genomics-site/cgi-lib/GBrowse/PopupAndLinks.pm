@@ -169,7 +169,7 @@ sub synSpanTitle {
 
   my @data;
   if (($type !~ /gap/i) && ($boolNotRef)){
-    push @data, [ 'Chromsome: '=> "$chromosome" ] if ($chromosome);
+    push @data, [ 'Chromosome: '=> "$chromosome" ] if ($chromosome);
     push @data, [ 'Syntenic Contig: ' => "$contigSourceId" ];
     push @data, [ 'Ref location: ' => "$refStart&nbsp;-&nbsp;$refEnd ($refLength&nbsp;bp)" ];
     push @data, [ 'Syn location: ' => "$synStart&nbsp;-&nbsp;$synEnd ($synLength&nbsp;bp)" ];
@@ -179,7 +179,7 @@ sub synSpanTitle {
     push @data, [ 'Scale: ' => "$scale" ];
     hover($f, \@data);
   } elsif ($type !~ /gap/i) {
-    push @data, [ 'Chromsome: '=> "$chromosome" ] if ($chromosome);
+    push @data, [ 'Chromosome: '=> "$chromosome" ] if ($chromosome);
     push @data, [ 'Contig: ' => "$contigSourceId" ];
     push @data, [ 'Location: ' => "$refStart&nbsp;-&nbsp;$refEnd ($refLength&nbsp;bp)" ];
     push @data, [ 'Total Contig Length: ' => "$refContigLength" ];
