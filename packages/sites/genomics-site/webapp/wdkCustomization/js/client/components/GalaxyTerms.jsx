@@ -1,4 +1,4 @@
-import { PropTypes } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'wdk-client/Components';
 import { projectId } from '../config';
 import GalaxyPageLayout from './GalaxyPageLayout';

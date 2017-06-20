@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import { Component, PropTypes } from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { AttributeFilter } from 'wdk-client/Components';
 import LazyFilterService from 'wdk-client/LazyFilterService';
 

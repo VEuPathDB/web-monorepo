@@ -1,4 +1,4 @@
-import {PropTypes} from 'react';
+import PropTypes from 'prop-types';
 import {once, debounce} from 'lodash';
 import { httpGet } from '../../util/http';
 import { adjustScrollOnLoad } from '../../util/domUtils';

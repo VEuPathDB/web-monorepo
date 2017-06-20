@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {pure} from 'wdk-client/ComponentUtils';
 import DatasetGraph from '../common/DatasetGraph';
 
@@ -131,7 +132,7 @@ function References(props, context) {
 }
 
 References.contextTypes = {
-  store: React.PropTypes.object.isRequired
+  store: PropTypes.object.isRequired
 };
 
 export function RecordTable(props) {

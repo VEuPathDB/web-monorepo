@@ -1,4 +1,4 @@
-import { PropTypes } from 'react';
+import PropTypes from 'prop-types';
 import { difference } from 'lodash';
 import {PureComponent} from 'wdk-client/ComponentUtils';
 import { FilterParam } from './FilterParam';

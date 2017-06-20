@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import lodash from 'lodash';
 import { projectId, webAppUrl } from '../../config';
 import { pure } from 'wdk-client/ComponentUtils';
