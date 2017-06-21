@@ -2,8 +2,8 @@ var configure = require('../../EbrcWebsiteCommon/Site/site.webpack.config');
 
 module.exports = configure({
   entry: {
-    'legacy': __dirname + '/webapp/js/main.js',
-    'client': __dirname + '/webapp/wdkCustomization/js/client/main.js'
+    'site-legacy': __dirname + '/webapp/js/main.js',
+    'site-client': __dirname + '/webapp/wdkCustomization/js/client/main.js'
   },
   resolve: {
     // alias 'ciena-*' entries to '/lib' directory since the default
