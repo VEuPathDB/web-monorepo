@@ -162,6 +162,7 @@ sub synSpanTitle {
   my ($refContigLength) = $f->get_tag_values("RefContigLength");
   my ($contigSourceId) = $f->get_tag_values("Contig");
   my ($chromosome) = $f->get_tag_values("Chromosome");
+  my ($taxon) = $f->get_tag_values("Taxon");
   my ($type) = $f->get_tag_values("Type");
   my ($scale) = $f->get_tag_values("Scale");
   $scale = sprintf("%.2f", $scale);
@@ -170,6 +171,7 @@ sub synSpanTitle {
   my @data;
   if (($type !~ /gap/i) && ($boolNotRef)){
     push @data, [ 'Chromosome: '=> "$chromosome" ] if ($chromosome);
+    push @data, [ 'Species: '=> "$taxon" ];
     push @data, [ 'Syntenic Contig: ' => "$contigSourceId" ];
     push @data, [ 'Ref location: ' => "$refStart&nbsp;-&nbsp;$refEnd ($refLength&nbsp;bp)" ];
     push @data, [ 'Syn location: ' => "$synStart&nbsp;-&nbsp;$synEnd ($synLength&nbsp;bp)" ];
@@ -180,6 +182,7 @@ sub synSpanTitle {
     hover($f, \@data);
   } elsif ($type !~ /gap/i) {
     push @data, [ 'Chromosome: '=> "$chromosome" ] if ($chromosome);
+    push @data, [ 'Species: '=> "$taxon" ];
     push @data, [ 'Contig: ' => "$contigSourceId" ];
     push @data, [ 'Location: ' => "$refStart&nbsp;-&nbsp;$refEnd ($refLength&nbsp;bp)" ];
     push @data, [ 'Total Contig Length: ' => "$refContigLength" ];
