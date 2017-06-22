@@ -906,14 +906,10 @@
              <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E25 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E25 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E25 BioProject record at NCBI</a>-->
              <td>N/A</td>
            </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E25 Proteomics at EBI's PRIDE</a>-->
-             <td>N/A</td>
-           </tr>
+           <!-- Susanne removed proteomics on purpose.  Expt 25 will not have proteomics data -->
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E25 Lipidomics at UCSD's MassIVE</a>-->
+             <td><b><a href="https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=dfe580b171df4a3c810c2b58304a408f" target="_blank">E25 Lipidomics Results at MassIVE </a><b>
              <td>N/A</td>
            </tr>
            <tr>
