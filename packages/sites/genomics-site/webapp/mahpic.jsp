@@ -975,7 +975,7 @@
   </div>  
 
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 30: Measures of acute infection of Macaca mulatta infected with Plasmodium knowlesi, pilot collection of telemetry data </a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 30: Measures of acute infection of <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i>, pilot collection of telemetry data </a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
