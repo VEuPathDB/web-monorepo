@@ -9,11 +9,9 @@ import { CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
 import { withStore, withActions } from 'eupathdb/wdkCustomization/js/client/util/component';
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
+import Menu from 'eupathdb/wdkCustomization/js/client/components/Menu';
 
 // include menu bar files
-// TODO Replace with React menu bar
-import 'eupathdb/wdkCustomization/css/superfish/css/superfish.css';
-import 'eupathdb/wdkCustomization/js/lib/superfish';
 import 'site/wdkCustomization/css/pathway.css';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
@@ -542,23 +540,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
   }
 
   componentDidMount() {
-    this.initMenu();
     this.initVis();
-  }
-
-  initMenu() {
-    if ($.fn.superfish) {
-      var menu = $('#vis-menu').superfish().on('click', 'a', function (e) {
-        var a = $(this);
-        if (a.is('.sf-with-ul')) {
-          // prevent page jumps
-          e.preventDefault();
-        } else {
-          // hide menu when an action is clicked
-          menu.hideSuperfishUl();
-        }
-      });
-    }
   }
 
   initVis() {
@@ -741,59 +723,113 @@ function VisMenu(props) {
   let { cy, source, primary_key, onGeneraSelectorClick, onGraphSelectorClick } = props;
   var jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
   return(
-    <ul id="vis-menu" className="sf-menu">
-      <li>
-        <a>File</a>
-        <ul>
-          <li>
-            <a href="#" download={primary_key + '.png'} onClick={event => event.target.href = cy.png()}>PNG</a>
-          </li>
-          <li>
-            <a href="#" download={primary_key + '.jpg'} onClick={event => event.target.href = cy.jpg()}>JPG</a>
-          </li>
-          <li>
-            <a href="#" download={primary_key + '.json'} onClick={event => event.target.href = 'data:application/json,' + JSON.stringify(cy.json(), jsonKeys)}>JSON</a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a>
-          Layout <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} />
-        </a>
-        <ul>
-          {source === "KEGG" ?
-            <li key='Preset'><a href="javascript:void(0)" onClick={() => cy.changeLayout('preset')}>Kegg</a></li> :
-            ""
-          }
-            <li key='dagre'><a href="javascript:void(0)" onClick={() => cy.changeLayout('dagre')}>Directed Graph</a></li>
-            <li key='cose' ><a href="javascript:void(0)" onClick={() => cy.changeLayout('cose')}>Compound Spring Embedder</a></li>
-            <li key='grid'><a href="javascript:void(0)" onClick={() => cy.changeLayout('grid')}>Grid</a></li>
-        </ul>
-      </li>
-      <li>
-        <a>
-          Paint Enzymes <img src={props.webAppUrl + "/wdk/images/question.png"}
-            title="Choose an Experiment to display each enzyme's corresponding average expression profile, or choose a Genera set to display their presence or absence for all enzymes in the Map"/>
-        </a>
-        <ul>
-          <li>
-            <a href="javascript:void(0)" onClick={() => cy.changeExperiment('')}>
-              Clear all
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)" onClick={onGraphSelectorClick}>
-              By Experiment
-            </a>
-          </li>
-          <li>
-            <a href="javascript:void(0)" onClick={onGeneraSelectorClick}>
-              By Genera
-            </a>
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <Menu
+      webAppUrl={props.webAppUrl}
+      projectId={props.projectId}
+      items={[
+        {
+          text: 'File',
+          children: [
+            {
+              text: 'PNG',
+              url: '#',
+              onClick(event) {
+                event.currentTarget.href = cy.png();
+                event.currentTarget.download = primary_key + '.png';
+              }
+            }, {
+              text: 'JPG',
+              url: '#',
+              onClick(event) {
+                event.currentTarget.href = cy.jpg();
+                event.currentTarget.download = primary_key + '.jpg';
+              }
+            }, {
+              text: 'JSON',
+              url: '#',
+              onClick(event) {
+                event.currentTarget.href = 'data:application/json,' +
+                  JSON.stringify(cy.json(), jsonKeys);
+                event.currentTarget.download = primary_key + '.json';
+              }
+            }
+          ]
+        }, {
+          text: (
+            <span>Layout <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} /></span>
+          ),
+          children: [
+            source === 'KEGG' ? {
+              text: 'KEGG',
+              url: '#kegg',
+              onClick(event) {
+                event.preventDefault();
+                cy.changeLayout('preset');
+              }
+            } : null,
+            {
+              text: 'Directed Graph',
+              url: '#dag',
+              onClick(event) {
+                event.preventDefault();
+                cy.changeLayout('dagre');
+              }
+            }, {
+              text: 'Compound Spring Embedder',
+              url: '#cse',
+              onClick(event) {
+                event.preventDefault();
+                cy.changeLayout('cose');
+              }
+            }, {
+              text: 'Grid',
+              url: '#grid',
+              onClick(event) {
+                event.preventDefault();
+                cy.changeLayout('grid');
+              }
+            }
+          ]
+        }, {
+          text: (
+            <span>
+              Paint Enzymes <img
+                src={props.webAppUrl + "/wdk/images/question.png"}
+                title={
+                  `Choose an Experiment to display each enzyme's ` +
+                  `corresponding average expression profile, or choose a ` +
+                  `Genera set to display their presence or absence for ` +
+                  `all enzymes in the Map`
+                } />
+            </span>
+          ),
+          children: [
+            {
+              text: 'Clear all',
+              url: '#clear',
+              onClick(event) {
+                event.preventDefault();
+                cy.changeExperiment('');
+              }
+            }, {
+              text: 'By Experiment',
+              url: '#experiment',
+              onClick(event) {
+                event.preventDefault();
+                onGraphSelectorClick();
+              }
+            }, {
+              text: 'By Genera',
+              url: '#genera',
+              onClick(event) {
+                event.preventDefault();
+                onGeneraSelectorClick();
+              }
+            }
+          ]
+        }
+      ]}
+    />
   );
 }
 
