@@ -888,7 +888,7 @@
            margin-left : 5 em;
            }
            
-           #DataLinksE03 td {vertical-align: middle;}
+           #DataLinksE25 td {vertical-align: middle;}
          </style> 
          <table id="DataLinksE25"> 
            <tr>
@@ -1003,18 +1003,23 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_25/">E25 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td><b>Coming soon<b>
+             <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_25/">E30 Clinical Data in PlasmoDB Downloads</a></td>  -->
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E25 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E25 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E25 BioProject record at NCBI</a>-->
+             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E30 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E25 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E25 BioProject record at NCBI</a>-->
              <td>N/A</td>
            </tr>
-           <!-- Susanne removed proteomics on purpose.  Expt 25 will not have proteomics data -->
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E30 Proteomics at EBI's PRIDE</a>-->
+             <td>N/A</td>
+           </tr>
            <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b><a href="https://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=dfe580b171df4a3c810c2b58304a408f" target="_blank">E25 Lipidomics Results at MassIVE </a><b>
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=c009507d03e7401b8231912ada653b75" target="_blank">E30 Lipidomics Results at MassIVE </a><b>
              <td>N/A</td>
            </tr>
            <tr>
