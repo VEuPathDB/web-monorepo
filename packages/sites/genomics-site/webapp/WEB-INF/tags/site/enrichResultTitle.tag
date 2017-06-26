@@ -17,14 +17,14 @@
 <div class="goCloud-download-link">
   <c:url var="goDownloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.imageDownloadPath}"/>
   <p class="enrich-result-q">
-   <strong> Word Cloud: </strong> <a href="${goDownloadUrl}"><img border="1" src="wdkCustomization/images/GOsummaries.png" width="60" height="20"></a>
+   <a href="${goDownloadUrl}">Word Cloud</a>
  </p>
 
 </div>
 
 <div class="goCloud-popup-content">
      <img src="${goDownloadUrl}" width="700" height="300"/>
-     <p> This word cloud was created using the P-values and the full GO terms from the GO Enrichment analysis via GOSummaries </p>
+     <p> This word cloud was created using the P-values and the full terms from the Enrichment analysis via a program called GOSummaries </p>
      <p> If you would like to download this image please <a href="${goDownloadUrl}">Click Here</a>
      </p>
 </div>
