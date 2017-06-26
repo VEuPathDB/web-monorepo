@@ -71,18 +71,18 @@ export function RecordController(WdkRecordController) {
       })
     }
 
-    loadData(state, props, previousProps) {
+    loadData(actionCreators, state, props, previousProps) {
       let newProps = addProjectIdPkValue(props);
-      super.loadData(state, newProps, previousProps);
+      super.loadData(actionCreators, state, newProps, previousProps);
     }
   };
 }
 
 export function DownloadFormController(WdkDownloadFormController) {
   return class ApiDownloadFormController extends WdkDownloadFormController {
-    loadData(state, props, previousProps) {
+    loadData(actionCreators, state, props, previousProps) {
       let newProps = addProjectIdPkValue(props);
-      super.loadData(state, newProps, previousProps);
+      super.loadData(actionCreators, state, newProps, previousProps);
     }
   }
 }
