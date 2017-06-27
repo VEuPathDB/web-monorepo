@@ -21,11 +21,11 @@
 
 
 <c:if test="${project == 'EuPathDB'}">
-  <div style="margin-left: 250px;">
-    <p style="font-size:120%"><b>The EuPathDB <a href="https://www.niaid.nih.gov/labsandresources/resources/dmid/brc/pages/default.aspx">Bioinformatics Resource Center</a> provides a portal for accessing genomic-scale datasets associated with the diverse eukaryotic microbes </b> <i style="font-size:90%>">(mouse-over the following logos for information on component websites):</i>
-    </p>
+  <div style="margin-left: 220px; padding: 0 2em;">
+    <div style="font-size:120%"><b>The EuPathDB <a href="https://www.niaid.nih.gov/labsandresources/resources/dmid/brc/pages/default.aspx">Bioinformatics Resource Center</a> provides a portal for accessing genomic-scale datasets associated with the diverse eukaryotic microbes </b> <i style="font-size:90%>">(mouse-over the following logos for information on component websites):</i>
+    </div>
 
-    <table class="center">
+    <table style="margin: 2em auto;">
       <tr>
       <%--  <td align="center" width="12.5%"><a href="http://newsitedb.org"><imp:image border=0 src="images/newSite.png" width="55" alt="NewSiteDB logo" /></a></td> --%>
       <c:set var="mywidth" value="9%" />
