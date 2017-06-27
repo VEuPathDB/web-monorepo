@@ -52,7 +52,7 @@ h4 {
 
 /* FIXME: Remove when rest of page is responsive */
 .wdk-RecordContainer {
-  max-width: calc(100vw - 8em);
+  max-width: calc(100vw - 4em);
 }
 
 /* Hide default record ID printed by WDK for genes */
@@ -895,7 +895,7 @@ td.wdk-DataTableCell__thumbnail {
 /* ======================= */
 
 #eupathdb-GalaxyTerms {
-  width: 100%;
+  padding: 0 2em;
   font-size: 1.2em;
 }
 #eupathdb-GalaxyTerms-initial {
