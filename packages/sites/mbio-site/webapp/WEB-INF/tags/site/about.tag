@@ -79,7 +79,7 @@
 
     <div style="padding: 1em 0">
       <div style="text-decoration: underline;">Collaborators outside the USA</div>
-      <div>Gabriel Fernandez <sup>6</sup></div>
+      <div>Gabriel Fernandes <sup>6</sup></div>
       <div>Francislon Silva de Oliveira <sup>6</sup></div>
     </div>
 
