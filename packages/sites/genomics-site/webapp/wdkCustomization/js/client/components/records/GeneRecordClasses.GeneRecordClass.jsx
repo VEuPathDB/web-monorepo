@@ -155,7 +155,7 @@ export function RecordTable(props) {
       return <DatasetGraphTable {...props} dataTableName="ExpressionGraphsDataTable"/>
 
     case 'HostResponseGraphs':
-      return <DatasetGraphTable {...props} dataTableName="HostResponseGraphsDataTable"/>
+      return <DatasetGraphTable {...props} dataTableName="HostResponseGraphsDataTable" facetMetadataTableName="FacetMetadata" contXAxisMetadataTableName="ContXAxisMetadata"/>
 
     case 'CrisprPhenotypeGraphs':
       return <DatasetGraphTable {...props} dataTableName="CrisprPhenotypeGraphsDataTable"/>
@@ -198,7 +198,7 @@ function SNPsAlignment(props) {
 }
 
 function DatasetGraphTable(props) {
-  let { dataTableName, record, recordClass, DefaultComponent } = props;
+  let { dataTableName, facetMetadataTableName, contXAxisMetadataTableName, record, recordClass, DefaultComponent } = props;
 
   let dataTable = dataTableName && dataTableName in record.tables && {
     value: record.tables[dataTableName],
@@ -208,10 +208,26 @@ function DatasetGraphTable(props) {
     DefaultComponent: DefaultComponent
   };
 
+ let facetMetadataTable = facetMetadataTableName && facetMetadataTableName in record.tables && {
+    value: record.tables[facetMetadataTableName],
+    table: recordClass.tablesMap[facetMetadataTableName],
+    record: record,
+    recordClass: recordClass,
+    DefaultComponent: DefaultComponent
+  };
+
+ let contXAxisMetadataTable = contXAxisMetadataTableName && contXAxisMetadataTableName in record.tables && {
+    value: record.tables[contXAxisMetadataTableName],
+    table: recordClass.tablesMap[contXAxisMetadataTableName],
+    record: record,
+    recordClass: recordClass,
+    DefaultComponent: DefaultComponent
+  };
+
   return (
     <DefaultComponent
       {...props}
-      childRow={childProps => <DatasetGraph {...childProps} dataTable={dataTable} />}
+      childRow={childProps => <DatasetGraph {...childProps} dataTable={dataTable} facetMetadataTable={facetMetadataTable} contXAxisMetadataTable={contXAxisMetadataTable}/>}
     />
   );
 }
