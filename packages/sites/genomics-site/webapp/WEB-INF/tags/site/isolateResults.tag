@@ -323,7 +323,7 @@
 
                   <c:choose>
                     <c:when test = "${eupathIsolatesQuestion}">
-                      <a href="showRecord.do?name=${recNam}&source_id=${id}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${record.idAttributeValue.value}">
+                      <a href="showRecord.do?name=${recNam}&source_id=${id}&project_id=${projectId}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${record.idAttributeValue.value}">
                       <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
                     </c:when>
                     <c:otherwise>
