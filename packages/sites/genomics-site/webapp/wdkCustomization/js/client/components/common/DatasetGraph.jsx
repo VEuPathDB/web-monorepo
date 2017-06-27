@@ -27,7 +27,9 @@ export default class DatasetGraph extends PureComponent {
       dataTableCollapsed: true,
       coverageCollapsed: true,
       showLogScale: (this.props.rowData.assay_type == 'RNA-seq')? false:true,
-      graphId: graphIds[0]
+      graphId: graphIds[0],
+      contXAxis: 'none',
+      facet: 'none'
     };
 
     this.handleDescriptionCollapseChange = descriptionCollapsed => {
@@ -65,7 +67,7 @@ export default class DatasetGraph extends PureComponent {
       'type=' + rowData.module + '&' +
       'project_id=' + rowData.project_id + '&' +
       'datasetId=' + rowData.dataset_id + '&' +
-      'template=' + (rowData.is_graph_custom === 'false' ? 1 : '') + '&' +
+      'template=' + (rowData.is_graph_custom === 'false' ? 1 : 0) + '&' +
       'id=' + graphId
     );
   }
@@ -88,6 +90,20 @@ export default class DatasetGraph extends PureComponent {
     }
   }
 
+  setFacet(myfacet) {
+    if (this.state.facet !== myfacet) {
+      this.setState({loading: true, 
+		     facet: myfacet});
+    }
+  }  
+
+  setContXAxis(myXAxis) {
+    if (this.state.contXAxis !== myXAxis) {
+      this.setState({loading: true,
+      		     contXAxis: myXAxis});
+    }
+  }
+
   renderLoading() {
     if (this.state.loading) {
       return (
@@ -107,7 +123,7 @@ export default class DatasetGraph extends PureComponent {
   }
 
   render() {
-    let { dataTable, rowData: {
+    let { dataTable, facetMetadataTable, contXAxisMetadataTable, rowData: {
       assay_type,
       graph_ids,
       dataset_id,
@@ -118,12 +134,13 @@ export default class DatasetGraph extends PureComponent {
     } } = this.props;
 
     let graphIds = graph_ids.split(/\s*,\s*/);
-    let { parts, visibleParts, showLogScale, graphId } = this.state;
+    let { parts, visibleParts, showLogScale, graphId, facet, contXAxis } = this.state;
 
     let baseUrl = this.makeBaseUrl(this.props);
     let baseUrlWithState = `${baseUrl}&id=${graphId}&vp=${visibleParts}&wl=${showLogScale ? '1' : '0'}`;
-    let imgUrl = baseUrlWithState + '&fmt=svg';
-    let pngUrl = baseUrlWithState + '&fmt=png';
+    let baseUrlWithMetadata = `${baseUrlWithState}&facet=${facet}&contXAxis=${contXAxis}`;
+    let imgUrl = baseUrlWithMetadata + '&fmt=svg';
+    let pngUrl = baseUrlWithMetadata + '&fmt=png';
     let covImgUrl = dataTable && dataTable.record.attributes.CoverageGbrowseUrl + '%1E' + dataset_name + 'CoverageUnlogged';
 
     return (
@@ -144,6 +161,35 @@ export default class DatasetGraph extends PureComponent {
               <img src={pngUrl}/>
             </object>)}
           {this.renderImgError()}
+
+	   
+	  <h4 hidden={this.props.contXAxisMetadataTable ? false : true}>
+	    Choose metadata category for X-axis:  
+	  </h4>
+           <select value={this.state.contXAxis} hidden={this.props.contXAxisMetadataTable ? false : true} onChange={event => this.setContXAxis(event.target.value)}>
+	     <option value='none'>None</option>
+             {this.props.contXAxisMetadataTable &&
+                contXAxisMetadataTable.value.filter(dat => dat.dataset_id == dataset_id).map(xAxisRow => {
+                  return (
+                    <option value={xAxisRow.property_id}>{xAxisRow.property}</option>
+                  );
+                })
+            }
+           </select>
+
+	   <h4 hidden={this.props.facetMetadataTable ? false : true}>
+	     Choose metadata category to facet graph on:
+	   </h4>
+	   <select value={this.state.facet} hidden={this.props.facetMetadataTable ? false : true} onChange={event => this.setFacet(event.target.value)}>
+	     <option value='none'>None</option>
+	     {this.props.facetMetadataTable &&
+		facetMetadataTable.value.filter(dat => dat.dataset_id == dataset_id).map(facetRow => {
+		  return (
+		    <option value={facetRow.property_id}>{facetRow.property}</option>
+		  ); 
+		})
+            }
+	   </select>
 
 
           {assay_type == 'RNA-seq' && covImgUrl ?
