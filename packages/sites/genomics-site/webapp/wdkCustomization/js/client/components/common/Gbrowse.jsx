@@ -242,8 +242,8 @@ export class GbrowseImage extends PureComponent {
             }
             else if (pragma === 'url:') {
               httpGet(content).promise().then(
-                (data) => api.set('content.text', data),
-                (xhr, status, error) => api.set('content.text', status + ': ' + error)
+                (data) => api.set('content.text', data).reposition(event, false),
+                (xhr, status, error) => api.set('content.text', status + ': ' + error).reposition(event, false)
               );
             }
             else {
@@ -265,7 +265,7 @@ export class GbrowseImage extends PureComponent {
         },
         show: {
           solo: true,
-          delay: 100
+          delay: 500
         },
         hide: {
           fixed: true,

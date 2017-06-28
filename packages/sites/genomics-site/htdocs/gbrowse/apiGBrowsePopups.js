@@ -130,7 +130,7 @@ function logAndAlert(error) {
 }
 
 function checkLogin() {
-  var user = window.ebrc.context.stores.GlobalDataStore.getState().user;
+  var user = window.ebrc.context.stores.WdkStore.getState().globalData.user;
   if (user.isGuest) {
     // Balloon is not used on gene pages
     if ('Balloon' in window) Balloon.prototype.hideTooltip(1);
@@ -149,7 +149,7 @@ function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, ne
 
 function getSaveRowLinks(projectId, sourceId) {
   var saveRowLinks;
-  var user = window.ebrc.context.stores.GlobalDataStore.getState().user;
+  var user = window.ebrc.context.stores.WdkStore.getState().globalData.user;
   if (!user.isGuest) {
     // enable saving as favorite or to basket
     var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><button style=\"width: 105px\" type=\"button\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + loadingFavTextLink + "</button></span>";
