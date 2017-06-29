@@ -53,6 +53,7 @@ body {
   border: none;
   border-bottom: 1px solid #868686;
   padding: 0 3em;
+  min-width: 0;
 }
 
 #menu #favorite-menu {
