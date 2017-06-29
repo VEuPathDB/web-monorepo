@@ -150,18 +150,15 @@ export default class DatasetGraph extends PureComponent {
 
         <div className="eupathdb-DatasetGraph">
           {visibleParts && (
-            <object
-              ref={adjustScrollOnLoad}
-              data={imgUrl}
-	      type='image/svg+xml'
+	    <img
+	      ref={adjustScrollOnLoad}
+	      src={pngUrl}
               onLoad={() => {
                 this.setState({loading: false});
               }}
               onError={() => this.setState({ loading: false, imgError: true })}>
-              <img src={pngUrl}/>
-            </object>)}
-          {this.renderImgError()}
-
+            </img>)}
+	   {this.renderImgError()}
 
 	  <h4 hidden={true/*this.props.contXAxisMetadataTable ? false : true */}>
 	    Choose metadata category for X-axis:  
