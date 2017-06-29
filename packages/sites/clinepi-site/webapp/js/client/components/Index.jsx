@@ -16,7 +16,7 @@ export default function Index(props) {
 
       <h2 className="WelcomeSectionHeader">Search the Data</h2>
       <div className="SearchContainer">
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByCharSteps">
+        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits">
           <i className="SearchIconAlt fa fa-male"></i>
           <div className="SearchIconCaptionAlt">Participants</div>
         </a>
@@ -24,7 +24,7 @@ export default function Index(props) {
           <i className="SearchIconAlt fa fa-home"></i>
           <div className="SearchIconCaptionAlt">Dwellings</div>
         </a>
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByAllData">
+        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits">
           <i className="SearchIconAlt fa fa-stethoscope"></i>
           <div className="SearchIconCaptionAlt">Visits</div>
         </a>
