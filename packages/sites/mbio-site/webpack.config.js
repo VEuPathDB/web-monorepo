@@ -1,6 +1,6 @@
-import configure from '../../EbrcWebsiteCommon/Site/site.webpack.config';
+var configure = require('../../EbrcWebsiteCommon/Site/site.webpack.config');
 
-export default configure({
+module.exports = configure({
   entry: {
     'site-legacy': [
       './webapp/wdkCustomization/js/client/main.js',
