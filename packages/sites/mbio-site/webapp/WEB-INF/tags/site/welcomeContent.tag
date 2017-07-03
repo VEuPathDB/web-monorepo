@@ -58,7 +58,7 @@
       </div>
 
       <div style="margin: 2em 0;">
-  <!--      <b>On this site, you can:</b>  -->
+      <b>On this site, you can:</b> 
         <table class="workflow">
           <tbody>
             <tr>
@@ -91,33 +91,33 @@
         <a style="font-weight:bold" title="${question.description}" href="${getStartedUrl}">Get started</a> right away ...  or ... <a style="font-weight:bold" href="${helpUrl}" target="_blank">Learn how</a> (tutorial).
       </div>
 
-<!--
+
       <div>
         <p><b>... or try one of these example searches:</b></p>
         <ul style="font-size: small;">
           <li>
-            <a href="${baseUrl}/im.do?s=daef3a35685875a1">
-              What is the impact of delivery mode on the infant gut microbiome in the first month of life?
+            <a href="${baseUrl}/im.do?s=a633d9e350dd39ca">Which sites show the lowest alpha diversity across the human body?
             </a>
           </li>
           <li>
-            <a href="${baseUrl}/im.do?s=d7186967e70f3a95">
-              What is the influence of diet on establishment of the infant gut microbiome?
+            <a href="${baseUrl}/im.do?s=df1de7c256128d62">How does community composition in the gut change with age?
             </a>
           </li>
           <li>
-            <a href="${baseUrl}/im.do?s=12ff6d8cf07ba7a1">
-              To what extent is the microbial environment in a home influenced by its inhabitants?
+            <a href="${baseUrl}/im.do?s=40f2927e13bb1b26">How does the region of 16S sequenced influence composition of the skin microbiome?
             </a>
           </li>
           <li>
-            <a href="${baseUrl}/im.do?s=10b5c57c2e89bfaa">
-              Does having a dog influence the microbial environment in the home?
+            <a href="${baseUrl}/im.do?s=740aadd817540719">How do the oral communities of dogs and humans differ?
+            </a>
+          </li>
+          <li>
+            <a href="${baseUrl}/im.do?s=2b12c0907798ed74">What is the impact of delivery mode and diet on the infant gut microbiome?
             </a>
           </li>
         </ul>
       </div>
--->
+
     </div>
   </div>
 
