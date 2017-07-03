@@ -94,7 +94,7 @@
 
       <div>
         <p><b>... or try one of these example searches:</b></p>
-        <ul style="font-size: small;">
+        <ul>
           <li>
             <a href="${baseUrl}/im.do?s=a633d9e350dd39ca">Which sites show the lowest alpha diversity across the human body?
             </a>
