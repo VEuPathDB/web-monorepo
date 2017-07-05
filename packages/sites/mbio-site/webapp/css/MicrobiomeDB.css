@@ -148,4 +148,13 @@ a.eupathdb-MenuItemText__favorites {
   background: #43669e;  /* #26689c; */
 }
 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *      =ANALYSIS TABs
+ *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+div.analysis-menu-tab-pane li.wdk-tooltip {
+  width: 109px;
+  height: 153px;
+}
 /*THE END */
