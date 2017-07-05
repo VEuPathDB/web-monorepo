@@ -1,7 +1,6 @@
 import React from 'react';
 import { projectId } from './config';
 import { CollapsibleSection, RecordAttribute as WdkRecordAttribute, Link } from 'wdk-client/Components';
-import {renderWithCustomElements} from './components/customElements';
 import { findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
@@ -87,26 +86,20 @@ export function DownloadFormController(WdkDownloadFormController) {
   }
 }
 
+export function RecordHeading(DefaultComponent) {
+  return function ApiRecordHeading(props) {
+    let ResolvedComponent =
+      findComponent('RecordHeading', props.recordClass.name) || DefaultComponent;
+    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+  }
+}
+
 // Customize the Record Component
 export function RecordUI(DefaultComponent) {
   return function ApiRecordUI(props) {
     let ResolvedComponent =
       findComponent('RecordUI', props.recordClass.name) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-  };
-}
-
-// Customize the Record Component
-export function RecordHeading(DefaultComponent) {
-  return function ApiRecordHeading(props) {
-    let ResolvedComponent =
-      findComponent('RecordHeading', props.recordClass.name) || DefaultComponent;
-    return (
-      <div>
-        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-        <RecordOverview {...props}/>
-      </div>
-    );
   };
 }
 
@@ -137,15 +130,6 @@ function RecordAttributionSection(props) {
     )
   }
   return null;
-}
-
-function RecordOverview(props) {
-  let Wrapper = findComponent('RecordOverview', props.recordClass.name) || 'div';
-  return (
-    <Wrapper {...props}>
-      {renderWithCustomElements(props.record.attributes.record_overview)}
-    </Wrapper>
-  );
 }
 
 export function RecordTable(DefaultComponent) {
