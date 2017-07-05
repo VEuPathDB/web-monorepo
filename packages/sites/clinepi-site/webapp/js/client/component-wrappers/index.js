@@ -1,16 +1,22 @@
-import { displayName } from 'eupathdb/wdkCustomization/js/client/config';
+import { get } from 'lodash';
 import Index from '../components/Index';
 
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
 
-    getTitle() {
-      return displayName;
+    getStateFromStore(store) {
+      return {
+        displayName: get(store.getState(), 'globalData.siteConfig.displayName')
+      };
     }
 
-    renderView() {
+    getTitle(state) {
+      return state.displayName;
+    }
+
+    renderView(state) {
       return (
-        <Index displayName={displayName} />
+        <Index displayName={state.displayName} />
       )
     }
 
