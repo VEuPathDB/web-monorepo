@@ -38,7 +38,7 @@ function renderSourceVersion(version) {
   );
 }
 
-export function RecordOverview(props) {
+export function RecordHeading(props) {
   let { record, questions, recordClasses } = props;
   let { attributes, tables } = record;
   let {
@@ -53,46 +53,49 @@ export function RecordOverview(props) {
   let primaryPublication = tables.Publications && tables.Publications[0];
 
   return (
-    <div className="wdk-RecordOverview eupathdb-RecordOverview">
-      <div className="eupathdb-RecordOverviewItem">
-        <strong>Summary: </strong>
-        <span style={{ whiteSpace: 'normal' }} dangerouslySetInnerHTML={{__html: summary}}/>
+    <div>
+      <props.DefaultComponent {...props}/>
+      <div className="wdk-RecordOverview eupathdb-RecordOverview">
+        <div className="eupathdb-RecordOverviewItem">
+          <strong>Summary: </strong>
+          <span style={{ whiteSpace: 'normal' }} dangerouslySetInnerHTML={{__html: summary}}/>
+        </div>
+
+        {organism_prefix ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>Organism (source or reference): </strong>
+            <span dangerouslySetInnerHTML={{__html: organism_prefix}}/>
+          </div>
+        ) : null}
+
+        {primaryPublication && primaryPublication.pubmed_link ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>Primary publication: </strong>
+            <span>{renderPrimaryPublication(primaryPublication)}</span>
+          </div>
+        ) : null}
+
+        {contact && institution ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>Primary contact: </strong>
+            <span>{renderPrimaryContact(contact, institution)}</span>
+          </div>
+        ) : null}
+
+        {version ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>Source version: </strong>
+            <span>{renderSourceVersion(version)}</span>
+          </div>
+        ) : null}
+
+        {eupath_release ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>EuPathDB release # / date: </strong>
+            <span>{eupath_release}</span>
+          </div>
+        ) : null}
       </div>
-
-      {organism_prefix ? (
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>Organism (source or reference): </strong>
-          <span dangerouslySetInnerHTML={{__html: organism_prefix}}/>
-        </div>
-      ) : null}
-
-      {primaryPublication && primaryPublication.pubmed_link ? (
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>Primary publication: </strong>
-          <span>{renderPrimaryPublication(primaryPublication)}</span>
-        </div>
-      ) : null}
-
-      {contact && institution ? (
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>Primary contact: </strong>
-          <span>{renderPrimaryContact(contact, institution)}</span>
-        </div>
-      ) : null}
-
-      {version ? (
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>Source version: </strong>
-          <span>{renderSourceVersion(version)}</span>
-        </div>
-      ) : null}
-
-      {eupath_release ? (
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>EuPathDB release # / date: </strong>
-          <span>{eupath_release}</span>
-        </div>
-      ) : null}
     </div>
   );
 }

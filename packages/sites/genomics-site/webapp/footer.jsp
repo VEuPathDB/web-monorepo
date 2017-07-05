@@ -4,7 +4,9 @@
     xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
   <jsp:directive.page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"/>
 
-  <![CDATA[</div></div></div>]]>
+    <!-- There are 5 closing div tags, even though header.jsp only creaates 4. -->
+    <!-- In gbrowse, there appears to be an imbalanced tag, so we're compensating here. -->
+  <![CDATA[</div></div></div></div></div>]]>
   <imp:dialogs/>
   <imp:footer refer="gbrowse"/>
   <![CDATA[</body></html>]]>

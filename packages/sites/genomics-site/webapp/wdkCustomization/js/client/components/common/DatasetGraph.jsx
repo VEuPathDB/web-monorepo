@@ -150,20 +150,22 @@ export default class DatasetGraph extends PureComponent {
 
         <div className="eupathdb-DatasetGraph">
           {visibleParts && (
-	    <img
-	      ref={adjustScrollOnLoad}
-	      src={pngUrl}
+	  <object
+              ref={adjustScrollOnLoad}
+              data={imgUrl}
+              type='image/svg+xml'
               onLoad={() => {
                 this.setState({loading: false});
               }}
               onError={() => this.setState({ loading: false, imgError: true })}>
-            </img>)}
-	   {this.renderImgError()}
+              <img src={pngUrl}/>
+            </object>)}
+          {this.renderImgError()}	   
 
-	  <h4 hidden={true/*this.props.contXAxisMetadataTable ? false : true */}>
+	  <h4 hidden={this.props.contXAxisMetadataTable ? false : true}>
 	    Choose metadata category for X-axis:  
 	  </h4>
-           <select value={this.state.contXAxis} hidden={true/*this.props.contXAxisMetadataTable ? false : true*/} onChange={event => this.setContXAxis(event.target.value)}>
+           <select value={this.state.contXAxis} hidden={this.props.contXAxisMetadataTable ? false : true} onChange={event => this.setContXAxis(event.target.value)}>
 	     <option value='none'>None</option>
              {this.props.contXAxisMetadataTable &&
                 contXAxisMetadataTable.value.filter(dat => dat.dataset_id == dataset_id).map(xAxisRow => {
@@ -174,10 +176,10 @@ export default class DatasetGraph extends PureComponent {
             }
            </select>
 
-	   <h4 hidden={true/*this.props.facetMetadataTable ? false : true*/}>
+	   <h4 hidden={this.props.facetMetadataTable ? false : true}>
 	     Choose metadata category to facet graph on:
 	   </h4>
-	   <select value={this.state.facet} hidden={true/*this.props.facetMetadataTable ? false : true*/} onChange={event => this.setFacet(event.target.value)}>
+	   <select value={this.state.facet} hidden={this.props.facetMetadataTable ? false : true} onChange={event => this.setFacet(event.target.value)}>
 	     <option value='none'>None</option>
 	     {this.props.facetMetadataTable &&
 		facetMetadataTable.value.filter(dat => dat.dataset_id == dataset_id).map(facetRow => {

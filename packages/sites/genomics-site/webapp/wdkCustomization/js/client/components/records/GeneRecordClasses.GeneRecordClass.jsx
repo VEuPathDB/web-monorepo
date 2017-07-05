@@ -19,7 +19,7 @@ import * as Category from 'wdk-client/CategoryUtils';
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
  */
-export class RecordOverview extends Component {
+export class RecordHeading extends Component {
 
   constructor(...args) {
     super(...args);
@@ -134,14 +134,14 @@ export class RecordOverview extends Component {
   render() {
     return (
       <div ref={node => this.node = node}>
-        {this.props.children}
+        <this.props.DefaultComponent {...this.props} />
       </div>
     );
   }
 
 }
 
-RecordOverview.contextTypes = {
+RecordHeading.contextTypes = {
   eventHandlers: PropTypes.object.isRequired,
   store: PropTypes.object.isRequired
 };
