@@ -31,6 +31,7 @@
   <imp:header refer="gbrowse"/>
   
   <![CDATA[
+    <div class="wdk-PageContent wdk-PageContent__external">
     <div id="contentwrapper">
     <div id="contentcolumn2">
     <div class="innertube">
