@@ -283,3 +283,11 @@ a.WelcomeBoxLink {
     padding: 1em 0;
   }
 }
+
+/* Icons for wizard */
+.ebrc-QuestionWizardIcon__ParticipantRecordClasses\.ParticipantRecordClass:after {
+  content: '\f183';
+}
+.ebrc-QuestionWizardIcon__ClinicalVisitRecordClasses\.ClinicalVisitRecordClass:after {
+  content: '\f0f1';
+}
