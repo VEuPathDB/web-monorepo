@@ -5,6 +5,7 @@ import componentWrappers from './component-wrappers';
 
 initialize({
   isPartOfEuPathDB: true,
+  includeQueryGrid: false,
   mainMenuItems,
   smallMenuItems,
   componentWrappers
@@ -18,7 +19,7 @@ function mainMenuItems(props, defaultItems) {
     {
       id: 'studies',
       text: 'Studies',
-      url: '#'
+      route: 'record/dataset/DS_c75ea37cb3'
     },
     {
       id: 'help',

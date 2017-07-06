@@ -37,6 +37,10 @@ body {
   right: 0;
 }
 
+.eupathdb-Logo {
+  position: relative;
+}
+
 /* Alpha Release Badge */
 .eupathdb-Logo:after {
   content: "Alpha Release";
@@ -303,4 +307,13 @@ a.WelcomeBoxLink {
 }
 .ebrc-QuestionWizardIcon__ClinicalVisitRecordClasses\.ClinicalVisitRecordClass:after {
   content: '\f0f1';
+}
+
+.ebrc-QuestionWizardHeading, .ebrc-QuestionWizardHackyStudyLink {
+  display: inline-block;
+}
+
+.ebrc-QuestionWizardHackyStudyLink {
+  font-style: italic;
+  margin-left: 1em;
 }
