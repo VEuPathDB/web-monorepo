@@ -37,6 +37,23 @@ body {
   right: 0;
 }
 
+.eupathdb-Logo {
+  position: relative;
+}
+
+/* Alpha Release Badge */
+.eupathdb-Logo:after {
+  content: "Alpha Release";
+  position: absolute;
+  bottom: 10px;
+  font-size: 1rem;
+  border: 1px solid;
+  padding: 2px 5px;
+  background: #923937;
+  color: white;
+  left: 260px;
+}
+
 .eupathdb-LogoRelease {
   margin-top: 4px;
 }
@@ -290,4 +307,13 @@ a.WelcomeBoxLink {
 }
 .ebrc-QuestionWizardIcon__ClinicalVisitRecordClasses\.ClinicalVisitRecordClass:after {
   content: '\f0f1';
+}
+
+.ebrc-QuestionWizardHeading, .ebrc-QuestionWizardHackyStudyLink {
+  display: inline-block;
+}
+
+.ebrc-QuestionWizardHackyStudyLink {
+  font-style: italic;
+  margin-left: 1em;
 }

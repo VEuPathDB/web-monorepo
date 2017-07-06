@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'wdk-client/Components';
 
 /**
  * Home page for clinepidb sites
@@ -57,7 +58,7 @@ export default function Index(props) {
 
             </ul>
             <p>
-              <a href="#"><em>Explore more sample search strategies</em> &raquo;</a>
+              <a href="/a/showApplication.do?tab=public_strat"><em>Explore more sample search strategies</em> &raquo;</a>
             </p>
           </div>
         </div>
@@ -104,7 +105,9 @@ export default function Index(props) {
               epidemiological data collected from areas where Malaria,
               Enteric disase and other globally significant disease are endemic.
             </div>
-            <a className="WelcomeBoxLink" href="#">Learn more about the studies</a>
+            <Link className="WelcomeBoxLink" to="record/dataset/DS_c75ea37cb3">
+              Learn more about the studies
+            </Link>
           </div>
         </div>
 
