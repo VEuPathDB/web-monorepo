@@ -11,7 +11,7 @@ body {
 }
 
 .wdk-PageContent {
-  min-height: calc(100vh - 192px);
+  min-height: calc(100vh - 168px);
 }
 
 #header {
@@ -43,14 +43,14 @@ body {
 
 /* Alpha Release Badge */
 .eupathdb-Logo:after {
-  content: "Alpha Release";
+  content: "Prototype";
   position: absolute;
   bottom: 10px;
   font-size: 1rem;
   border: 1px solid;
   padding: 2px 5px;
   background: #923937;
-  color: white;
+  color: #efefef;
   left: 260px;
 }
 
