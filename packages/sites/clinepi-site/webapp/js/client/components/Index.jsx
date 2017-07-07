@@ -23,7 +23,7 @@ export default function Index(props) {
         </a>
         <a className="SearchAlt" href="/a/images/dwelling_slide.svg">
           <i className="SearchIconAlt fa fa-home"></i>
-          <div className="SearchIconCaptionAlt">Dwellings</div>
+          <div className="SearchIconCaptionAlt">Households</div>
         </a>
         <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits">
           <i className="SearchIconAlt fa fa-stethoscope"></i>
