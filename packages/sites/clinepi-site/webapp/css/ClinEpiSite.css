@@ -309,13 +309,15 @@ a.WelcomeBoxLink {
   content: '\f0f1';
 }
 
-.ebrc-QuestionWizardHeading, .ebrc-QuestionWizardHackyStudyLink {
-  display: inline-block;
+.ebrc-QuestionWizardHeadingContainer {
+  display: flex;
+  flex-wrap: wrap-reverse;
 }
 
 .ebrc-QuestionWizardHackyStudyLink {
-  font-style: italic;
-  margin-left: 1em;
+  margin-left: auto;
+  padding-top: 2.5em;
+  padding-left: 1em;
 }
 
 #query_form {
