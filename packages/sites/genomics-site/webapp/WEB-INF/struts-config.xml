@@ -554,11 +554,6 @@
       name="deleteCommentForm">
     </action>
     <action
-      path="/goRemote"
-      type="org.gusdb.wdk.controller.action.services.RemoteLoginAction"
-      scope="request">
-    </action>
-    <action
       path="/communityUpload"
       type="org.apidb.apicommon.controller.UserFileUploadAction"
       scope="request"

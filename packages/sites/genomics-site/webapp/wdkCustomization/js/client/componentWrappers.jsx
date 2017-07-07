@@ -70,18 +70,18 @@ export function RecordController(WdkRecordController) {
       })
     }
 
-    loadData(state, props, previousProps) {
+    loadData(actionCreators, state, props, previousProps) {
       let newProps = addProjectIdPkValue(props);
-      super.loadData(state, newProps, previousProps);
+      super.loadData(actionCreators, state, newProps, previousProps);
     }
   };
 }
 
 export function DownloadFormController(WdkDownloadFormController) {
   return class ApiDownloadFormController extends WdkDownloadFormController {
-    loadData(state, props, previousProps) {
+    loadData(actionCreators, state, props, previousProps) {
       let newProps = addProjectIdPkValue(props);
-      super.loadData(state, newProps, previousProps);
+      super.loadData(actionCreators, state, newProps, previousProps);
     }
   }
 }
@@ -223,27 +223,6 @@ export function RecordAttributeSection(DefaultComponent) {
       findComponent('RecordAttributeSection', props.recordClass.name) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
-}
-
-/**
- * Overrides the Identification fieldset on the User Profile/Account form from the WDK.  ApiDB
- * does not use all the fields that the WDK provides
- * @returns {function()} - React component overriding the original WDK component
- * @constructor
- */
-export function UserIdentity() {
-  return ApiUserIdentity;
-}
-
-/**
- * Overrides the Contact fieldset on the User Profile/Account form from the WDK.  ApiDB
- * does not collect contact information.  Consequently, the WDK UserContact component is
- * replaced with an empty React component
- * @returns {Function} - Empty React component
- * @constructor
- */
-export function UserContact() {
-  return function() { return <noscript /> };
 }
 
 /**

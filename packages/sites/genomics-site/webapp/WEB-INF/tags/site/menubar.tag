@@ -15,7 +15,7 @@
 <c:set var="modelName" value="${applicationScope.wdkModel.name}" />
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
-<c:set var="userPrefs" value="${wdkUser.user.projectPreferences}"/>
+<c:set var="userPrefs" value="${wdkUser.projectPreferences}"/>
 <c:set var="baseUrl" value="${pageContext.request.contextPath}"/>
 
 <!-- for genes that have user comments -->

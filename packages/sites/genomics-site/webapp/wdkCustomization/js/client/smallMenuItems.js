@@ -44,7 +44,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
           text: '------ Usage and Citation'
         },
         {
-          text: 'How to site us',
+          text: 'How to cite us',
           webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#citing'
         },
         {
