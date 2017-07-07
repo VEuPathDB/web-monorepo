@@ -317,3 +317,7 @@ a.WelcomeBoxLink {
   font-style: italic;
   margin-left: 1em;
 }
+
+#query_form {
+  max-width: 90vw;
+}
