@@ -42,18 +42,18 @@ export default function Index(props) {
           <div>
             <ul>
               <li>
-                <a href="#">
-                  Which children in the MAL-ED study had no diarrheal episodes over the first 24 months of life?
+                <a href="/a/im.do?s=c33dedf5b259a705">
+                Find children from the PRISM cohort study living in households with low mosquito exposure but who had at least 2 malaria diagnoses / year during 2012-2013
                 </a>
               </li>
               <li>
-                <a href="#">
-                  What is the correlation between neutralizing antibody responses to rotavirus vs poliovirus vaccination?
+                <a href="/a/im.do?s=84ef7ee170217a94">
+                 Find households from the PRISM cohort study where two children under 5 respond differently to mosquito exposure (one with no malaria diagnoses and a second one with at least 2 diagnoses / year). 
                 </a>
               </li>
               <li>
-                <a href="#">
-                  Find low HAZ children displaying a growth burst within the next 6 mo, for whom blood samples are available.
+                <a href="/a/im.do?s=8ee09ec98be269b7">
+                 Find clinical visits in the PRISM cohort where children had 3 consecutive routine visits with asymptomatic parasitemia and a PBMC sample was collected at the middle visit
                 </a>
               </li>
 
