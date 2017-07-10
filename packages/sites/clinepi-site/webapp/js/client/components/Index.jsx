@@ -30,7 +30,7 @@ export default function Index(props) {
           <i className="SearchIconAlt fa fa-stethoscope"></i>
           <div className="SearchIconCaptionAlt">Visits</div>
         </a>
-        <a className="SearchAlt" href="/a/images/vector_slide.svg">
+        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=LighttrapQuestions.CollectionsByCharacteristics">
           <i className="SearchIconAlt fa fa-bug"></i>
           <div className="SearchIconCaptionAlt">Vectors</div>
         </a>
