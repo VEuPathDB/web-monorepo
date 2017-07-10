@@ -309,6 +309,12 @@ a.WelcomeBoxLink {
 .ebrc-QuestionWizardIcon__ClinicalVisitRecordClasses\.ClinicalVisitRecordClass:after {
   content: '\f0f1';
 }
+.ebrc-QuestionWizardIcon__DwellingRecordClasses\.DwellingRecordClass:after {
+  content: '\f015';
+}
+.ebrc-QuestionWizardIcon__LightTrapRecordClasses\.LightTrapRecordClass:after {
+  content: '\f188';
+}
 
 .ebrc-QuestionWizardHeadingContainer {
   display: flex;
