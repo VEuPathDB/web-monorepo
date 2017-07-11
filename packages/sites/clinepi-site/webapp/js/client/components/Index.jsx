@@ -11,8 +11,7 @@ export default function Index(props) {
 
       <h1 className="WelcomeHeadline">
         <span className="SiteName"> {props.displayName} </span>
-        focuses on clinical epidemiological studies for
-        Malaria, Enteric disease and other globally significant diseases.
+is a data repository designed to facilitate the exploration, accessibility and effective analyses of epidemiologic study data to advance global public health research.
       </h1>
 
       <h2 className="WelcomeSectionHeader">Search the Data</h2>
@@ -42,17 +41,17 @@ export default function Index(props) {
           <div>
             <ul>
               <li>
-                <a href="/a/im.do?s=c33dedf5b259a705">
+                <a href="/a/im.do?s=c8b23711dca1ca2e">
                 Find children from the PRISM cohort study living in households with low mosquito exposure but who had at least 2 malaria diagnoses / year during 2012-2013
                 </a>
               </li>
               <li>
-                <a href="/a/im.do?s=84ef7ee170217a94">
+                <a href="/a/im.do?s=efd94f0039d4f88f">
                  Find households from the PRISM cohort study where two children under 5 respond differently to mosquito exposure (one with no malaria diagnoses and a second one with at least 2 diagnoses / year). 
                 </a>
               </li>
               <li>
-                <a href="/a/im.do?s=8ee09ec98be269b7">
+                <a href="/a/im.do?s=4707c88d916d26b0">
                  Find clinical visits in the PRISM cohort where children had 3 consecutive routine visits with asymptomatic parasitemia and a PBMC sample was collected at the middle visit
                 </a>
               </li>
