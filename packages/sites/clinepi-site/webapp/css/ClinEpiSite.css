@@ -330,3 +330,6 @@ a.WelcomeBoxLink {
 #query_form {
   max-width: 90vw;
 }
+#query_form form {
+  width: 90vw;
+}
