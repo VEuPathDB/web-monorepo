@@ -11,8 +11,8 @@ export default function Index(props) {
 
       <h1 className="WelcomeHeadline">
         <span className="SiteName"> {props.displayName} </span>
-        focuses on longitudinal clinical epidemiological studies for
-        Malaria, Enteric disease and other globally significant disease.
+        focuses on clinical epidemiological studies for
+        Malaria, Enteric disease and other globally significant diseases.
       </h1>
 
       <h2 className="WelcomeSectionHeader">Search the Data</h2>
