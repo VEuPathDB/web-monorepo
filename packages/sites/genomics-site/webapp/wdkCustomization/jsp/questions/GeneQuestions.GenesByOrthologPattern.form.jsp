@@ -223,6 +223,7 @@
       </div> <%-- end group-detail --%>
     </div> <%-- end param-group --%>
   </div><%-- END OF PARAMS DIV --%>
+</div>
 
   <script>
 
