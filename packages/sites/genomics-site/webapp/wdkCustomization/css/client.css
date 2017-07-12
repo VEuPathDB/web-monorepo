@@ -784,38 +784,6 @@ td.wdk-DataTableCell__thumbnail {
 }
 
 
-.eupathdb-ReporterFormSubmit {
-  text-align: center;
-  width: 90vw;
-  padding: 2em 0;
-}
-
-@media all and (min-width: 800px) {
-  .eupathdb-ReporterForm {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .eupathdb-ReporterFormGroup { width: 350px; }
-
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions { order: 2; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables       { order: 3; }
-}
-
-/* break point based on combined width of all ReporterFormGroup elemens */
-@media all and (min-width: 1024px) {
-  .eupathdb-ReporterFormGroup { margin: 0 auto 0 2em; }
-  .eupathdb-ReporterFormGroup__otherOptions { width: auto; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables       { order: 2; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions { order: 3; }
-}
-
-.eupathdb-ReporterFormGroup .wdk-CheckboxTree-list li label {
-  white-space: initial;
-}
-
 
 /* Query Grid CSS */
 
