@@ -148,6 +148,8 @@ const onMouseOverRegexp = /GBubble\.showTooltip\(event,'(\w+:)?(.*)'.*$/;
 
 const loadingHeight = 50;
 
+let gbrowse_img_id = 1;
+
 /**
  * Helper Component that loads and parses a Gbrowse image map in order to provide
  * custom tooltips, etc. This is needed to avoid loading Prototype.js in the
@@ -158,6 +160,7 @@ export class GbrowseImage extends PureComponent {
     super(props);
     this.containerNode = null;
     this.request = null;
+    this.gbrowse_img_id = gbrowse_img_id++;
     this.img = null;
     this.map = null;
     this.mapCoordsCache = null;
@@ -177,6 +180,7 @@ export class GbrowseImage extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.url !== nextProps.url) {
+      this.gbrowse_img_id = gbrowse_img_id++;
       this.request && this.request.abort();
       this.setState({ loading: true });
       $(this.containerNode).find('area').qtip('destroy', true);
@@ -219,6 +223,9 @@ export class GbrowseImage extends PureComponent {
 
     else {
       let map = this.map = nodes.find(node => node.nodeName === 'MAP');
+      map.id += '__' + this.gbrowse_img_id;
+      map.name += '__' + this.gbrowse_img_id;
+      img.useMap += '__' + this.gbrowse_img_id;
       $container.append(img).append(map)
       .find('area[onmouseover]')
       .attr('gbrowse-onmouseover', function() {
