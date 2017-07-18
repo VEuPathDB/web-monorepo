@@ -14,6 +14,8 @@ const stopPropagation = event => event.stopPropagation();
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'sample' ];
 
+const projectRegExp = new RegExp('/' + projectId + '$');
+
 /**
  * Adds projectId primary key record to splat of props for pages referencing
  * a single record.  If recordclass of that record does not include the
@@ -42,8 +44,15 @@ function addProjectIdPkValue(props) {
 function addProjectIdPkValueMixin(BaseController) {
   return class ProjectIdFixer extends BaseController {
     loadData(actionCreators, state, props, previousProps) {
-      let newProps = addProjectIdPkValue(props);
-      super.loadData(actionCreators, state, newProps, previousProps);
+      if (projectRegExp.test(props.location.pathname)) {
+        // Remove projectId from the url. This is like a redirect.
+        props.router.replace(props.location.pathname.replace(projectRegExp, ''));
+      }
+      else {
+        // Add projectId back to props and call super's loadData
+        let newProps = addProjectIdPkValue(props);
+        super.loadData(actionCreators, state, newProps, previousProps);
+      }
     }
   }
 }

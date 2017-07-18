@@ -3,6 +3,8 @@ import { cloneElement } from 'react';
 import { WdkViewController } from 'wdk-client/Controllers';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
 import { updateSecurityAgreementStatus } from '../../actioncreators/GalaxyTermsActionCreators';
+import GalaxyTerms from '../GalaxyTerms';
+import GalaxySignUp from '../GalaxySignUp';
 
 let { updateUserPreference, showLoginForm } = UserActionCreators;
 
@@ -49,13 +51,16 @@ export default class GalaxyTermsController extends WdkViewController {
   }
 
   renderView(state, eventHandlers) {
-    // this.props.children is defined in routes.jsx as a child route.
-    // It is the component assigned to the route that matched the url.
-    return cloneElement(this.props.children, Object.assign({},
-      state,
-      eventHandlers,
-      { onGalaxyNavigate: this.onGalaxyNavigate }
-    ));
+    const ViewComponent = this.props.location.pathname.includes('/sign-up')
+      ? GalaxySignUp
+      : GalaxyTerms;
+    return (
+      <ViewComponent
+        {...state}
+        {...eventHandlers}
+        onGalaxyNavigate={this.onGalaxyNavigate}
+      />
+    );
   }
 
 }
