@@ -7,7 +7,7 @@
 import {Component} from 'react';
 import PropTypes from 'prop-types';
 import {uniqueId, isEmpty} from 'lodash';
-import {registerCustomElement} from 'eupathdb/wdkCustomization/js/client/util/customElements';
+import {registerCustomElement} from 'ebrc-client/util/customElements';
 
 /** Load the ChemDoodle JS library once */
 export function loadChemDoodleWeb() {

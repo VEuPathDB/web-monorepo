@@ -3,7 +3,7 @@ import 'eupathdb/css/AllSites.css';
 import 'site/css/AllApiSites.css';
 import 'site/wdkCustomization/css/client.css';
 
-import { initialize } from 'eupathdb/wdkCustomization/js/client/bootstrap';
+import { initialize } from 'ebrc-client/bootstrap';
 import mainMenuItems from './mainMenuItems';
 import smallMenuItems from './smallMenuItems';
 

@@ -1,6 +1,6 @@
 import { flowRight } from 'lodash';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
-import { withActions, withStore } from 'eupathdb/wdkCustomization/js/client/util/component';
+import { withActions, withStore } from 'ebrc-client/util/component';
 
 const withUserAndAction = flowRight(
   withStore(state => ({ user: state.globalData.user, location: state.globalData.location })),

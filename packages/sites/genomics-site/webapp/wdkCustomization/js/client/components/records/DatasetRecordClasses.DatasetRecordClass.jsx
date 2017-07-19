@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {pure} from 'wdk-client/ComponentUtils';
-import DatasetGraph from '../common/DatasetGraph';
+import DatasetGraph from 'ebrc-client/components/DatasetGraph';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {

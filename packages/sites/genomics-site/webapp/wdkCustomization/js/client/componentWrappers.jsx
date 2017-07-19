@@ -6,7 +6,7 @@ import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import RecordTableContainer from './components/common/RecordTableContainer';
-import { loadBasketCounts } from 'eupathdb/wdkCustomization/js/client/actioncreators/GlobalActionCreators';
+import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
 
 const stopPropagation = event => event.stopPropagation();
 
@@ -17,12 +17,12 @@ const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'samp
 const projectRegExp = new RegExp('/' + projectId + '$');
 
 /**
- * Adds projectId primary key record to splat of props for pages referencing
+ * Adds projectId primary key record to primaryKey of props for pages referencing
  * a single record.  If recordclass of that record does not include the
  * projectId as a PK value, props are returned unchanged.
  */
 function addProjectIdPkValue(props) {
-  let { splat, recordClass } = props.params;
+  let { primaryKey, recordClass } = props.match.params;
 
   // These record classes do not need the project id as a part of the primary key
   // so we just render with the url params as-is.
@@ -31,11 +31,15 @@ function addProjectIdPkValue(props) {
   }
 
   // Append project id to request
-  let params = Object.assign({}, props.params, {
-    splat: `${splat}/${projectId}`
+  let params = Object.assign({}, props.match.params, {
+    primaryKey: `${primaryKey}/${projectId}`
   });
+
+  // Create new match object with updated primaryKey segment
+  let match = Object.assign({}, props.match, { params });
+
   // reassign props to modified props object
-  return Object.assign({}, props, { params });
+  return Object.assign({}, props, { match });
 }
 
 /**
@@ -46,7 +50,7 @@ function addProjectIdPkValueMixin(BaseController) {
     loadData(actionCreators, state, props, previousProps) {
       if (projectRegExp.test(props.location.pathname)) {
         // Remove projectId from the url. This is like a redirect.
-        props.router.replace(props.location.pathname.replace(projectRegExp, ''));
+        props.history.replace(props.location.pathname.replace(projectRegExp, ''));
       }
       else {
         // Add projectId back to props and call super's loadData
@@ -63,8 +67,8 @@ function addProjectIdPkValueMixin(BaseController) {
  * back for record classes that use project ID as a part of the primary key.
  * The objective is to hide the project ID from the URL whenever possible.
  *
- * `splat` refers to a wildcard dynamic url segment
- * as defined by the record route. The value of splat is essentially primary key
+ * `primaryKey` refers to a wildcard dynamic url segment
+ * as defined by the record route. The value of primaryKey is essentially primary key
  * values separated by a '/'.
  */
 export function RecordController(WdkRecordController) {

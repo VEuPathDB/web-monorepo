@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {chunk} from 'lodash';
-import {withPlainTextCopy} from 'eupathdb/wdkCustomization/js/client/util/component';
+import {withPlainTextCopy} from 'ebrc-client/util/component';
 
 function Sequence(props) {
   let { highlightRegions, sequence } = props;

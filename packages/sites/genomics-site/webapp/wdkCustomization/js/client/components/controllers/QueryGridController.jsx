@@ -1,7 +1,7 @@
 import React from 'react';
 import QueryGrid from '../QueryGrid';
 import { WdkViewController } from 'wdk-client/Controllers';
-import { getSearchMenuCategoryTree } from 'eupathdb/wdkCustomization/js/client/util/category.js';
+import { getSearchMenuCategoryTree } from 'ebrc-client/util/category.js';
 
 export default class QueryGridController extends WdkViewController {
 

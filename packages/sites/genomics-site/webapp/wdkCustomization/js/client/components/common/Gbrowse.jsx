@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import {once, debounce} from 'lodash';
-import { httpGet } from '../../util/http';
-import { adjustScrollOnLoad } from '../../util/domUtils';
+import { httpGet } from 'ebrc-client/util/http';
+import { adjustScrollOnLoad } from 'ebrc-client/util/domUtils';
 import $ from 'jquery';
 import { PureComponent } from 'wdk-client/ComponentUtils';
 import { Loading } from 'wdk-client/Components';

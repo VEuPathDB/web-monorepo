@@ -2,7 +2,7 @@ import {Component} from 'react';
 import {CollapsibleSection} from 'wdk-client/Components';
 import {pure} from 'wdk-client/ComponentUtils';
 import {CompoundStructure} from '../common/Compound';
-import DatasetGraph from '../common/DatasetGraph';
+import DatasetGraph from 'ebrc-client/components/DatasetGraph';
 
 let expressionRE = /MassSpecGraphs$/;
 export function RecordTable(props) {
