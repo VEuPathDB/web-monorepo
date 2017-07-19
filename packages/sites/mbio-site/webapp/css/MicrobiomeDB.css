@@ -6,6 +6,10 @@ body {
 	background-image: url(../images/MicrobiomeDB/background_s.jpg);
 }
 
+.wdk-PageContent__home {
+  padding: 2em;
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =old and new FOOTER
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
