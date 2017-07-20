@@ -1,59 +1,4 @@
-body, h1, h2, h3, h4, h5, h6 {
-  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
-}
-h1 {
-  text-align: left;
-  font-size: 2.8em;
-  font-weight: 400;
-  color: #222;
-}
-h2 {
-  font-size: 1.8em;
-  font-weight: 500;
-}
-h3 {
-  font-size: 1.5em;
-  font-weight: 500;
-}
-h4 {
-  font-size: 1.2em;
-  font-weight: 500;
-}
-
-.form-group {
-  margin: .6em 0;
-}
-
-.form-radio {
-  margin: .4em;
-}
-
-#wdk-container {
-  min-height: calc(100% - 206px);
-  position: relative;
-  text-rendering: optimizeLegibility;
-}
-
-/* 230px is based on height of header, footer, and margin/padding of wdk-PageContent */
-.wdk-PageContent {
-  background-color: #ffffff;
-  min-height: calc(100vh - 230px);
-}
-
-.wdk-NotFound p {
-  font-size: 1.2em;
-}
-
-.wdk-RecordOverview:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* FIXME: Remove when rest of page is responsive */
-.wdk-RecordContainer {
-  max-width: calc(100vw - 4em);
-}
+@import '~eupathdb/wdkCustomization/css/client.css';
 
 /* Hide default record ID printed by WDK for genes */
 .wdk-RecordContainer__GeneRecordClasses\.GeneRecordClass .wdk-RecordHeading {
@@ -77,29 +22,6 @@ h4 {
 /* Hide default record IF printed by WDK for pathways */
 .wdk-RecordContainer__PathwayRecordClasses\.PathwayRecordClass .wdk-RecordHeading {
   display: none;
-}
-
-
-.wdk-RecordSidebarToggle,
-.wdk-RecordNavigationSectionHeader {
-  color: #777;
-}
-
-.wdk-UserDatasetOverview {
-  font-size: 1.4em;
-}
-
-.wdk-UserDatasetOverviewItemText {
-  font-weight: 300;
-}
-
-.wdk-UserDatasetSection {
-  font-size: 1.2em;
-  font-weight: 400;
-}
-
-.wdk-UserDatasetSectionHeading {
-  font-size: 1.4em;
 }
 
 .eupathdb-RecordOverview {
@@ -157,10 +79,6 @@ h4 {
   font-size: 1rem;
   font-style: italic;
   vertical-align: text-top;
-}
-
-.wdk-RecordSidebar__fixed {
-  left: -298px;
 }
 
 .eupathdb-RecordOverviewPanels {
@@ -445,16 +363,6 @@ h4 {
   overflow: auto;
 }
 
-.eupathdb-ExpressionGraphsDataTableContainerHeader {
-  font-weight: 500;
-  margin: 0;
-}
-
-.eupathdb-ExpressionGraphsDataTableContainer td:nth-child(1),
-.eupathdb-ExpressionGraphsDataTableContainer td:nth-child(2) {
-  white-space: normal;
-}
-
 /*
 .eupathdb-Thumbnail:hover {
   position: absolute;
@@ -471,35 +379,6 @@ h4 {
 }
 */
 
-.eupathdb-DatasetGraphContainer {
-  overflow: auto;
-  position: relative;
-  padding: 0 4px;
-  min-height: 100px;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.eupathdb-DatasetGraphLoading {
-  position: absolute;
-  top: 1em;
-  left: 1em;
-}
-
-.eupathdb-DatasetGraph {
-  width: 500px;
-  flex-grow: 1;
-}
-
-.eupathdb-DatasetGraphDetails {
-  width: 50%;
-  flex-grow: 1;
-}
-
-.eupathdb-DatasetGraphDescriptionHeader {
-  margin: 0;
-}
-
 .wdk-RecordAttributeSectionItem.wdk-RecordAttributeSectionItem__fasta_transcript_sequence {
   width: 100%;
 }
@@ -508,15 +387,6 @@ h4 {
   display: block;
 }
 
-.wdk-DataTableCellExpand {
-  color: #777;
-}
-
-
-td.wdk-DataTableCell__thumbnail {
-  vertical-align: middle;
-  height: 50px;
-}
 .wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell__display_name {
   min-width: 18em;
 }
@@ -560,89 +430,6 @@ td.wdk-DataTableCell__thumbnail {
 .wdk-DataTableCell__doi_link,
 .wdk-DataTableCell__term_name {
   white-space: nowrap;
-}
-
-
-/** Dataset page */
-.eupathdb-DatasetRecord {
-  padding: 0 2em;
-}
-
-.eupathdb-DatasetRecord h2,
-.eupathdb-DatasetRecord h3 {
-  margin: 22px 0 11px;
-  color: #333333;
-  font-family: Arial, Helvetica, sans-serif;
-}
-.eupathdb-DatasetRecord-summary {
-  font-size: 1.2em;
-}
-.eupathdb-DatasetRecord ul {
-  line-height: 1.6;
-  list-style: none;
-  padding-left: 1em;
-  margin: 0;
-}
-.eupathdb-DatasetRecord-title {
-  color: black;
-}
-.eupathdb-DatasetRecord-headerTable tr th {
-  white-space: nowrap;
-  padding-right: 1em;
-  vertical-align: top;
-  text-align: right;
-  border: none;
-}
-
-.eupathdb-DatasetRecord-GraphImg {
-  width: 450px;
-}
-
-/*
-@media (min-width: 1175px) {
-  .eupathdb-DatasetRecord {
-    padding: 0 20px;
-    max-width: 1350px;
-    margin: auto;
-  }
-  .eupathdb-DatasetRecord-Main {
-    float: left;
-    max-width: 700px;
-  }
-  .eupathdb-DatasetRecord-Sidebar {
-    max-width: 375px;
-    float: right;
-    font-size: 95%;
-    color: #333333;
-  }
-  .eupathdb-DatasetRecord-Sidebar ul {
-    padding-left: 0;
-  }
-  .eupathdb-DatasetRecord-Sidebar table {
-    width: 100%;
-  }
-}
-*/
-
-@media (min-width: 1150px) {
-  .eupathdb-DatasetRecord-GraphMeta {
-    width: 58%;
-    float: right;
-  }
-  .eupathdb-DatasetRecord-GraphData {
-    width: 450px;
-  }
-}
-@media (min-width: 1300px) {
-  .eupathdb-DatasetRecord-GraphMeta {
-    width: 65%;
-  }
-}
-.eupathdb-Beta-Announcement {
-  float: right;
-  font-style: italic;
-  font-size: 1.2em;
-  padding: 4px 0;
 }
 
 .eupathdb-TranscriptRecordNavigationSectionContainer h3 {
@@ -741,24 +528,6 @@ td.wdk-DataTableCell__thumbnail {
   padding: 2em;
 }
 
-.wdk-RecordSection__collapsed {
-  display: none;
-}
-
-/* offset so things don't hide under menubar */
-.wdk-RecordSection,
-.wdk-RecordSubsection {
-  padding-top: 32px;
-  margin-top: -42px;
-}
-
-.wdk-RecordTableContainer,
-.wdk-RecordAttributeSectionItem,
-.eupathdb-GbrowseContext {
-  padding-top: 32px;
-  margin-top: -32px;
-}
-
 .eupathdb-UtrSequenceNucleotide {
   background-color: #cae4ff;
   text-transform: lowercase;
@@ -782,7 +551,6 @@ td.wdk-DataTableCell__thumbnail {
   border: 1px solid #d8d8d8;
   margin: 4px;
 }
-
 
 
 /* Query Grid CSS */
