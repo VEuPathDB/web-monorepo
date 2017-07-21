@@ -1087,11 +1087,11 @@
         </div>
         <p>
   -->
-<!--  
+ 
      <br><br> 
-     <img align="middle" src="images/MaHPIC_E25_Timeline.png" height="300px" width="500px"><br>
-     <a href="images/MaHPIC_E25_Timeline.png" target="_blank">View Larger Image</a><br>
-  -->  
+     <img align="middle" src="images/MaHPIC_E30_Timeline.pdf" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E30_Timeline.pdf" target="_blank">View Larger Image</a><br>
+
         
   </div>	
   </div>  
