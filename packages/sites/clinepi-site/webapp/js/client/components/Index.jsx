@@ -51,7 +51,7 @@ is a data repository designed to facilitate the exploration, accessibility and e
                 </a>
               </li>
               <li>
-                <a href="/a/im.do?s=4707c88d916d26b0">
+                <a href="/a/im.do?s=1e3dde358477482a">
                  Find clinical visits in the PRISM cohort where children had 3 consecutive routine visits with asymptomatic parasitemia and a PBMC sample was collected at the middle visit
                 </a>
               </li>
