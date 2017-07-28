@@ -6,9 +6,7 @@ body {
 	background-image: url(../images/MicrobiomeDB/background_s.jpg);
 }
 
-.wdk-PageContent__home,
-.wdk-PageContent__question,
-.wdk-PageContent__favorite {
+.wdk-PageContent__home {
   padding: 2em;
 }
 
