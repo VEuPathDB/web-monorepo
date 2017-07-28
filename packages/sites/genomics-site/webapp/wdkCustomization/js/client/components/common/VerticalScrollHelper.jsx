@@ -2,7 +2,7 @@ import $ from 'jquery';
 import {Component} from 'react';
 import PropTypes from 'prop-types';
 import {bindAll, throttle} from 'lodash';
-import {isNodeOverflowing} from '../../util/domUtils';
+import {isNodeOverflowing} from 'ebrc-client/util/domUtils';
 
 /**
  * Renders buttons to scroll scroll vertically.

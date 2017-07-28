@@ -1,37 +1,28 @@
 import React from 'react';
 import { projectId } from './config';
-import { CollapsibleSection, RecordAttribute as WdkRecordAttribute, Link } from 'wdk-client/Components';
-import { findComponent } from './components/records';
+import { CollapsibleSection, Link } from 'wdk-client/Components';
+import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
-import ApiUserIdentity from './components/ApiUserIdentity';
 import RecordTableContainer from './components/common/RecordTableContainer';
-import { loadBasketCounts } from 'eupathdb/wdkCustomization/js/client/actioncreators/GlobalActionCreators';
+import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
 
 const stopPropagation = event => event.stopPropagation();
-
-/** Remove project_id from record links */
-export function RecordLink(WdkRecordLink) {
-  return function ApiRecordLink(props) {
-    let recordId = props.recordId.filter(p => p.name !== 'project_id');
-    return (
-      <WdkRecordLink {...props} recordId={recordId}/>
-    );
-  };
-}
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'sample' ];
 
+const projectRegExp = new RegExp('/' + projectId + '$');
+
 /**
- * Adds projectId primary key record to splat of props for pages referencing
+ * Adds projectId primary key record to primaryKey of props for pages referencing
  * a single record.  If recordclass of that record does not include the
  * projectId as a PK value, props are returned unchanged.
  */
 function addProjectIdPkValue(props) {
-  let { splat, recordClass } = props.params;
+  let { primaryKey, recordClass } = props.match.params;
 
   // These record classes do not need the project id as a part of the primary key
   // so we just render with the url params as-is.
@@ -40,11 +31,34 @@ function addProjectIdPkValue(props) {
   }
 
   // Append project id to request
-  let params = Object.assign({}, props.params, {
-    splat: `${splat}/${projectId}`
+  let params = Object.assign({}, props.match.params, {
+    primaryKey: `${primaryKey}/${projectId}`
   });
+
+  // Create new match object with updated primaryKey segment
+  let match = Object.assign({}, props.match, { params });
+
   // reassign props to modified props object
-  return Object.assign({}, props, { params });
+  return Object.assign({}, props, { match });
+}
+
+/**
+ * ViewController mixin that adds the primary key to the url if omitted.
+ */
+function addProjectIdPkValueMixin(BaseController) {
+  return class ProjectIdFixer extends BaseController {
+    loadData(actionCreators, state, props, previousProps) {
+      if (projectRegExp.test(props.location.pathname)) {
+        // Remove projectId from the url. This is like a redirect.
+        props.history.replace(props.location.pathname.replace(projectRegExp, ''));
+      }
+      else {
+        // Add projectId back to props and call super's loadData
+        let newProps = addProjectIdPkValue(props);
+        super.loadData(actionCreators, state, newProps, previousProps);
+      }
+    }
+  }
 }
 
 /**
@@ -53,13 +67,12 @@ function addProjectIdPkValue(props) {
  * back for record classes that use project ID as a part of the primary key.
  * The objective is to hide the project ID from the URL whenever possible.
  *
- * `splat` refers to a wildcard dynamic url segment
- * as defined by the record route. The value of splat is essentially primary key
+ * `primaryKey` refers to a wildcard dynamic url segment
+ * as defined by the record route. The value of primaryKey is essentially primary key
  * values separated by a '/'.
  */
 export function RecordController(WdkRecordController) {
-  return class ApiRecordController extends WdkRecordController {
-
+  return class ApiRecordController extends addProjectIdPkValueMixin(WdkRecordController) {
     getActionCreators() {
       let wdkActionCreators = super.getActionCreators();
       return Object.assign({}, wdkActionCreators, {
@@ -69,77 +82,21 @@ export function RecordController(WdkRecordController) {
         }
       })
     }
-
-    loadData(actionCreators, state, props, previousProps) {
-      let newProps = addProjectIdPkValue(props);
-      super.loadData(actionCreators, state, newProps, previousProps);
-    }
   };
 }
 
-export function DownloadFormController(WdkDownloadFormController) {
-  return class ApiDownloadFormController extends WdkDownloadFormController {
-    loadData(actionCreators, state, props, previousProps) {
-      let newProps = addProjectIdPkValue(props);
-      super.loadData(actionCreators, state, newProps, previousProps);
-    }
-  }
-}
+export const DownloadFormController = addProjectIdPkValueMixin;
+export const RecordHeading = makeDynamicWrapper('RecordHeading');
+export const RecordUI = makeDynamicWrapper('RecordUI');
+export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
+export const RecordTable = makeDynamicWrapper('RecordTable', RecordTableContainer);
 
-export function RecordHeading(DefaultComponent) {
-  return function ApiRecordHeading(props) {
-    let ResolvedComponent =
-      findComponent('RecordHeading', props.recordClass.name) || DefaultComponent;
-    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-  }
-}
-
-// Customize the Record Component
-export function RecordUI(DefaultComponent) {
-  return function ApiRecordUI(props) {
-    let ResolvedComponent =
-      findComponent('RecordUI', props.recordClass.name) || DefaultComponent;
-    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-  };
-}
-
-export function RecordMainSection(DefaultComponent) {
-  return function ApiRecord(props) {
-    let ResolvedComponent =
-      findComponent('RecordMainSection', props.recordClass.name) || DefaultComponent;
+/** Remove project_id from record links */
+export function RecordLink(WdkRecordLink) {
+  return function ApiRecordLink(props) {
+    let recordId = props.recordId.filter(p => p.name !== 'project_id');
     return (
-      <div>
-        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-        {!props.depth && <RecordAttributionSection {...props}/>}
-      </div>
-    );
-  };
-}
-
-function RecordAttributionSection(props) {
-  if ('attribution' in props.record.attributes) {
-    return (
-      <div>
-        <h3>Record Attribution</h3>
-        <WdkRecordAttribute
-          attribute={props.recordClass.attributesMap.attribution}
-          record={props.record}
-          recordClass={props.recordClass}
-        />
-      </div>
-    )
-  }
-  return null;
-}
-
-export function RecordTable(DefaultComponent) {
-  return function ApiRecordTable(props) {
-    let ResolvedComponent =
-      findComponent('RecordTable', props.recordClass.name) || DefaultComponent;
-    return (
-      <RecordTableContainer {...props}>
-        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-      </RecordTableContainer>
+      <WdkRecordLink {...props} recordId={recordId}/>
     );
   };
 }
@@ -181,15 +138,14 @@ export function RecordTableSection(DefaultComponent) {
   }
 }
 
-export function RecordAttribute(DefaultComponent) {
-  return function ApiRecordAttribute(props) {
-    let { attribute, record } = props;
-    if (record.attributes[attribute.name] == null) return <DefaultComponent {...props}/>;
-    let ResolvedComponent =
-      findComponent('RecordAttribute', props.recordClass.name) || DefaultComponent;
-    return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
-  };
-}
+export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
+  function MaybeDyamicWrapper(props) {
+    let { attribute, record, DefaultComponent } = props;
+    return record.attributes[attribute.name] == null
+      ? <DefaultComponent {...props} />
+      : props.children;
+  }
+);
 
 export function RecordAttributeSection(DefaultComponent) {
   return function ApiRecordAttributeSection(props) {

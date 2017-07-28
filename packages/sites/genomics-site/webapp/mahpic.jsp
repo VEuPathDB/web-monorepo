@@ -538,7 +538,7 @@
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites isolated at the Centers for Disease Control and Prevention from multiple Anopheles species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug Artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs Primaquine and Chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites isolated at the Centers for Disease Control and Prevention from multiple Anopheles species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug Artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs Primaquine and Chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
            </tr>
          </table>
       </div>   
@@ -560,7 +560,7 @@
   
   
      <div class="wdk-toggle" data-show="false">
-     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>Macaca mulatta</i> exposed to pyrimethamine</a></h3>
+     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>M mulatta</i> exposed to pyrimethamine</a></h3>
      <div class="wdk-toggle-content">
 
        <h4>Data Links</h4> 
@@ -588,7 +588,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="http://plasmodb.org/common/downloads/">PlasmoDB Downloads</a>-->
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_13/"><b>E13 Clinical Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -1015,8 +1015,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming soon<b>
-             <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_25/">E30 Clinical Data in PlasmoDB Downloads</a></td>  -->
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_30/"><b>E30 Clinical Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -1088,11 +1087,11 @@
         </div>
         <p>
   -->
-<!--  
+ 
      <br><br> 
-     <img align="middle" src="images/MaHPIC_E25_Timeline.png" height="300px" width="500px"><br>
-     <a href="images/MaHPIC_E25_Timeline.png" target="_blank">View Larger Image</a><br>
-  -->  
+     <img align="middle" src="images/MaHPIC_E30_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E30_Timeline.png" target="_blank">View Larger Image</a><br>
+
         
   </div>	
   </div>  

@@ -6,10 +6,10 @@ import $ from 'jquery';
 import {safeHtml} from 'wdk-client/ComponentUtils';
 import {loadChemDoodleWeb} from '../common/Compound';
 import { CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
-import { withStore, withActions } from 'eupathdb/wdkCustomization/js/client/util/component';
+import { withStore, withActions } from 'ebrc-client/util/component';
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
-import Menu from 'eupathdb/wdkCustomization/js/client/components/Menu';
+import Menu from 'ebrc-client/components/Menu';
 
 // include menu bar files
 import 'site/wdkCustomization/css/pathway.css';
@@ -516,7 +516,7 @@ const enhance = flow(
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
-    nodeList: state.globalData.location.query.node_list,
+    nodeList: state.globalData.location.query && state.globalData.location.query.node_list,
     experimentCategoryTree: getExperimentCategoryTree(state),
     generaCategoryTree: getGeneraCategoryTree(state)
   })),
