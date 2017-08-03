@@ -1148,7 +1148,6 @@ function getGeneraCategoryTree() {
     ]),
     n('Mammalia', 'Mammalia', null, [
       n('Homo', 'Homo'),
-      n('Macaca', 'Macaca'),
       n('Mus', 'Mus')
     ])
   ]);
