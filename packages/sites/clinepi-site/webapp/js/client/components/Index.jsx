@@ -16,20 +16,19 @@ is a data repository designed to facilitate the exploration, accessibility and e
 
       <h2 className="WelcomeSectionHeader">Search the Data</h2>
       <div className="SearchContainer">
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits">
+        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled">
           <i className="SearchIconAlt fa fa-male"></i>
           <div className="SearchIconCaptionAlt">Participants</div>
         </a>
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=DwellingQuestions.DwellingsByCharacteristics
-">
+        <a className="SearchAlt" href="">
           <i className="SearchIconAlt fa fa-home"></i>
           <div className="SearchIconCaptionAlt">Households</div>
         </a>
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits">
+        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled">
           <i className="SearchIconAlt fa fa-stethoscope"></i>
-          <div className="SearchIconCaptionAlt">Visits</div>
+          <div className="SearchIconCaptionAlt">Events</div>
         </a>
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=LighttrapQuestions.CollectionsByCharacteristics">
+        <a className="SearchAlt" href="">
           <i className="SearchIconAlt fa fa-bug"></i>
           <div className="SearchIconCaptionAlt">Vectors</div>
         </a>
@@ -41,17 +40,17 @@ is a data repository designed to facilitate the exploration, accessibility and e
           <div>
             <ul>
               <li>
-                <a href="/a/im.do?s=c8b23711dca1ca2e">
-                Find children from the PRISM cohort study living in households with low mosquito exposure but who had at least 2 malaria diagnoses / year during 2012-2013
+                <a href="/a/im.do?s=e6dc790ae7b9d3d7">
+                Find all children who at one month of age had a normal range z-score (-2&lt;x&lt;2) became stunted by 18 months & tested positive for any Campylobacter
                 </a>
               </li>
               <li>
-                <a href="/a/im.do?s=efd94f0039d4f88f">
-                 Find households from the PRISM cohort study where two children under 5 respond differently to mosquito exposure (one with no malaria diagnoses and a second one with at least 2 diagnoses / year). 
+                <a href="/a/im.do?s=1f1b4dc837ac87a9">
+                What children (or what percentage of children) of normal Height-for-Age at age 24 months have no positive lab test for Shigella (or Cryptosporidium, or whatever) by age 24 months?
                 </a>
               </li>
               <li>
-                <a href="/a/im.do?s=1e3dde358477482a">
+                <a href="">
                  Find clinical visits in the PRISM cohort where children had 3 consecutive routine visits with asymptomatic parasitemia and a PBMC sample was collected at the middle visit
                 </a>
               </li>
