@@ -17,6 +17,7 @@ body {
 #header {
   height: 122px;
   background: bgColor;
+  margin-bottom: 10px;
 }
 
 #header2 {
@@ -71,12 +72,16 @@ body {
 }
 
 .eupathdb-Menu {
-  height: 2.4em;
+  height: 2.8em;
   background: bgColor;
   border: none;
   border-bottom: 1px solid #868686;
   padding: 0 3em;
   min-width: 0;
+}
+
+.eupathdb-MenuItem, .eupathdb-SmallMenuItem {
+  font-size: 1.2em;
 }
 
 #menu #favorite-menu {
@@ -325,11 +330,32 @@ a.WelcomeBoxLink {
   display: flex;
   flex-wrap: wrap-reverse;
 }
+.ebrc-QuestionWizardHeading {
+  font-size: 2em;
+}
 
 .ebrc-QuestionWizardHackyStudyLink {
   margin-left: auto;
   padding-top: 2.5em;
   padding-left: 1em;
+}
+
+.ebrc-QuestionWizardParamGroupCount {
+  font-size: 1.2em;
+  color: #3c78d8;
+}
+
+.ebrc-QuestionWizardActiveGroupCount {
+  color: hlColor;
+  font-size: 1.3em;
+}
+
+
+button.ebrc-QuestionWizardParamGroupButton__active,
+button.ebrc-QuestionWizardParamGroupButton__active:active,
+button.ebrc-QuestionWizardParamGroupButton__active:focus,
+button.ebrc-QuestionWizardParamGroupButton__active:hover {
+  box-shadow: 0px 0px 0px 4px #9c242d;
 }
 
 #query_form {
