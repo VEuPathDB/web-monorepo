@@ -40,18 +40,18 @@ is a data repository designed to facilitate the exploration, accessibility and e
           <div>
             <ul>
               <li>
-                <a href="/a/im.do?s=e6dc790ae7b9d3d7">
-                Find all children who at one month of age had a normal range z-score (-2&lt;x&lt;2) became stunted by 18 months & tested positive for any Campylobacter
+                <a href="/a/im.do?s=5b458c4e9fbf0b69">
+                Events from children in India who had Diarrheal Episode and Crypto Positive within 14 days
                 </a>
               </li>
               <li>
-                <a href="/a/im.do?s=1f1b4dc837ac87a9">
-                What children (or what percentage of children) of normal Height-for-Age at age 24 months have no positive lab test for Shigella (or Cryptosporidium, or whatever) by age 24 months?
+                <a href="/a/im.do?s=24b1f88e741c809f">
+                This strategy displays participants who did not have any Cryptosporidium positive tests and had a normal (-2&lt;x&lt;2 HAZ score at their 24 month visit.
                 </a>
               </li>
               <li>
-                <a href="">
-                 Find clinical visits in the PRISM cohort where children had 3 consecutive routine visits with asymptomatic parasitemia and a PBMC sample was collected at the middle visit
+                <a href="/a/im.do?s=adfbeddb525f8b12">
+                Identifies children with at least three Camphlobacter+ diarrhea events (&gte; 3 days duration) who had &lt; 3 E.coli diarrhea events in first year followed by second year where at least 10 of their anthropometric visits they had a weigh for age Z-score &lt; -2.
                 </a>
               </li>
 
@@ -104,7 +104,7 @@ is a data repository designed to facilitate the exploration, accessibility and e
               epidemiological data collected from areas where Malaria,
               Enteric disase and other globally significant disease are endemic.
             </div>
-            <Link className="WelcomeBoxLink" to="record/dataset/DS_c75ea37cb3">
+            <Link className="WelcomeBoxLink" to="record/dataset/DS_61ac5d073c">
               Learn more about the studies
             </Link>
           </div>
