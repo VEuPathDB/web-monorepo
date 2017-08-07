@@ -40,20 +40,20 @@ body {
 
 .eupathdb-Logo {
   position: relative;
-  padding: 10px 0;
+  padding: 15px 0 5px;
 }
 
 /* Alpha Release Badge */
 .eupathdb-Logo:after {
   content: "Prototype";
   position: absolute;
-  bottom: 18px;
+  bottom: 25px;
   font-size: 1rem;
   border: 1px solid;
   padding: 2px 5px;
   background: #9c242d;
   color: #efefef;
-  left: 320px;
+  left: 370px;
 }
 
 .eupathdb-LogoRelease {
@@ -62,7 +62,7 @@ body {
 
 .eupathdb-LogoImage {
   margin: 0 20px 0 0;
-  max-width: 300px;
+  max-width: 350px;
 }
 
 #nav-top a,
