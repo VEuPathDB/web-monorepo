@@ -1,6 +1,6 @@
 @import '~eupathdb/wdkCustomization/css/client.css';
 
-@value hlColor: #923937;
+@value hlColor: #9c242d;
 @value bgColor: #85b3c3;
 
 body {
@@ -22,7 +22,7 @@ body {
 #header2 {
   background: bgColor;
   color: hlColor;
-  height: 6.4em;
+  height: 9.4em;
   min-width: 0;
   padding: 0 3em;
 }
@@ -30,7 +30,7 @@ body {
 #header_rt {
   position: relative;
   margin-right: 0;
-  margin-top: 16px;
+  margin-top: 45px;
 }
 
 #toplink {
@@ -39,23 +39,29 @@ body {
 
 .eupathdb-Logo {
   position: relative;
+  padding: 10px 0;
 }
 
 /* Alpha Release Badge */
 .eupathdb-Logo:after {
   content: "Prototype";
   position: absolute;
-  bottom: 10px;
+  bottom: 15px;
   font-size: 1rem;
   border: 1px solid;
   padding: 2px 5px;
-  background: #923937;
+  background: #9c242d;
   color: #efefef;
-  left: 260px;
+  left: 325px;
 }
 
 .eupathdb-LogoRelease {
   margin-top: 4px;
+}
+
+.eupathdb-LogoImage {
+  margin: 0 20px 0 0;
+  max-width: 300px;
 }
 
 #nav-top a,
