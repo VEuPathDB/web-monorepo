@@ -139,7 +139,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Contact Us',
-          url: '/contact.do',
+          webAppUrl: '/contact.do',
           target: '_blank'
         }
       ]
