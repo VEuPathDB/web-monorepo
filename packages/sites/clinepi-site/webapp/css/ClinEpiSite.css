@@ -83,6 +83,9 @@ body {
 .eupathdb-MenuItem, .eupathdb-SmallMenuItem {
   font-size: 1.2em;
 }
+.eupathdb-MenuItem:hover {
+  background-color: #548394;
+}
 
 #menu #favorite-menu {
   float: left;
@@ -349,6 +352,7 @@ a.WelcomeBoxLink {
   color: hlColor;
   font-size: 1.3em;
 }
+
 
 
 button.ebrc-QuestionWizardParamGroupButton__active,
