@@ -11,24 +11,40 @@ export default function Index(props) {
 
       <h1 className="WelcomeHeadline">
         <span className="SiteName"> {props.displayName} </span>
-is a data repository designed to facilitate the exploration, accessibility and effective analyses of epidemiologic study data to advance global public health research.
+        is a data repository designed to facilitate the exploration and mining of epidemiological study datasets, advancing global public health.
       </h1>
 
       <h2 className="WelcomeSectionHeader">Search the Data</h2>
       <div className="SearchContainer">
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled">
+        <a
+          className="SearchAlt"
+          title="Individuals for whom observations are available.  Depending on the nature of the study, this may include patients, caregivers, study subjects, etc"
+          href="/a/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled"
+        >
           <i className="SearchIconAlt fa fa-male"></i>
           <div className="SearchIconCaptionAlt">Participants</div>
         </a>
-        <a className="SearchAlt" href="">
+        <a
+          className="SearchAlt"
+          title="Households / dwellings, associated with information on geographic location, physical characteristics, socioeconomic data, etc; note that individual households may include multiple participants"
+          href=""
+        >
           <i className="SearchIconAlt fa fa-home"></i>
           <div className="SearchIconCaptionAlt">Households</div>
         </a>
-        <a className="SearchAlt" href="/a/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled">
+        <a
+          className="SearchAlt"
+          title="Depending on the nature of the study, events may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc"
+          href="/a/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled"
+        >
           <i className="SearchIconAlt fa fa-stethoscope"></i>
           <div className="SearchIconCaptionAlt">Events</div>
         </a>
-        <a className="SearchAlt" href="">
+        <a
+          className="SearchAlt"
+          title="Entomological collections (not available for all studies)"
+          href=""
+        >
           <i className="SearchIconAlt fa fa-bug"></i>
           <div className="SearchIconCaptionAlt">Vectors</div>
         </a>
