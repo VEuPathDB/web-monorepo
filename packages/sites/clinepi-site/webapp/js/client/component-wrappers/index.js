@@ -5,9 +5,9 @@ export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
 
     getStateFromStore(store) {
-      return {
-        displayName: get(store.getState(), 'globalData.siteConfig.displayName')
-      };
+      const displayName = get(store.getState(), 'globalData.siteConfig.displayName');
+      const webAppUrl = get(store.getState(), 'globalData.siteConfig.webAppUrl');
+      return { displayName, webAppUrl };
     }
 
     getTitle(state) {
@@ -16,7 +16,7 @@ export default {
 
     renderView(state) {
       return (
-        <Index displayName={state.displayName} />
+        <Index {...state} />
       )
     }
 
