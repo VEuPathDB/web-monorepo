@@ -28,7 +28,19 @@
      <p> If you would like to download this image please <a href="${goDownloadUrl}">Click Here</a>
      </p>
 </div>
+<div class="Revigo-analysis">
+     <c:url var="revigoInputList" value="${viewModel.revigoInputList}"/>
+     <form target="_blank" action="http://revigo.irb.hr/" method="post">
+      <textarea name="inputGoList" rows="10" cols="80" hidden="true">
+      ${revigoInputList}
+      </textarea>
+       <input name="isPValue" value="yes" hidden="true"/>
+       <input name="outputListSize" value="medium" hidden="true"/>
+      <input type="submit" name="startRevigo" value="Start Revigo Analysis" id="revigoSubmit"/>
+      </form>
+</div>      
       
+
 
 <h3>Analysis Results: </h3>
 

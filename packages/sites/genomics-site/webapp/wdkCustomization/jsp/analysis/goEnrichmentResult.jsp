@@ -10,7 +10,7 @@
     <body>
       <div>
         <div style="position:relative">
-          <imp:enrichResultTitle />
+          <imp:goEnrichResultTitle />
 
           <c:if test="${empty viewModel.resultData}">
             <div class="enrich-empty-results">No enrichment was found with significance at the P-value threshold you specified.</div>
