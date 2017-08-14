@@ -1,18 +1,11 @@
 import 'site/css/ClinEpiSite.css';
-
-import { initialize } from 'eupathdb/wdkCustomization/js/client/bootstrap';
+import { initialize } from 'ebrc-client/bootstrap';
 import componentWrappers from './component-wrappers';
 
 initialize({
   isPartOfEuPathDB: true,
   includeQueryGrid: false,
-  mainMenuItems,
-  smallMenuItems,
-  componentWrappers
-});
-
-function mainMenuItems(props, defaultItems) {
-  return [
+  mainMenuItems: (props, defaultItems) => [
     defaultItems.home,
     defaultItems.search,
     defaultItems.strategies,
@@ -26,13 +19,11 @@ function mainMenuItems(props, defaultItems) {
       text: 'Help',
       url: '#'
     }
-  ]
-}
-
-function smallMenuItems(props, defaultItems) {
-  return [
+  ],
+  smallMenuItems: (props, defaultItems) => [
     defaultItems.profileOrLogin,
     defaultItems.registerOrLogout,
     defaultItems.contactUs
-  ]
-}
+  ],
+  componentWrappers
+});
