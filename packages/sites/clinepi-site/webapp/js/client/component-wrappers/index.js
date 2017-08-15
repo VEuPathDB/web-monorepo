@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import Index from '../components/Index';
-import ClinEpiActiveGroup from '../components/ActiveGroup';
+// import ClinEpiActiveGroup from '../components/ActiveGroup';
 
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
@@ -23,7 +23,7 @@ export default {
 
   },
 
-  ActiveGroup: ActiveGroup => props =>
-    <ClinEpiActiveGroup {...props} DefaultComponent={ActiveGroup}/>
+  // ActiveGroup: ActiveGroup => props =>
+  //   <ClinEpiActiveGroup {...props} DefaultComponent={ActiveGroup}/>
 
 }
