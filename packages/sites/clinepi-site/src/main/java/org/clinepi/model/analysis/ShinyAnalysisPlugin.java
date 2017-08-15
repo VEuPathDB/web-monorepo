@@ -34,7 +34,7 @@ import org.gusdb.wdk.model.user.analysis.StatusLogger;
 public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
 
   // add this property to plugin configuration to filter metadata by dataset name
-  private static final String DATASET_NAME_PROPERTY = "dataset_name";
+  private static final String DATASET_NAME_PROPERTY = "datasetName";
 
   // name of output file dumped to analysis job directory
   private static final String ONT_ATTR_META_FILENAME = "ontologyMetadata.tab";
@@ -47,11 +47,11 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL);
 
   private static final Function<Boolean,String> getMetadataSql = useDatasetName ->
-      "select " + SOURCE_ID_COL + ", " + PROPERTY_COL + ", " + TYPE_COL +
-      "  from apidbtuning.metadatatype" +
-      "  where " + SOURCE_ID_COL + " is not null" +
+      "select ontology_term_source_id as " + SOURCE_ID_COL + ", ontology_term_name as " + PROPERTY_COL + ", " + TYPE_COL +
+      "  from apidbtuning.metadataontology" +
+      "  where ontology_term_source_id is not null" +
+      "    and type is not null" +
       (useDatasetName ? " and dataset_name = ?" : "");
-
 
   @Override
   public ExecutionStatus runAnalysis(AnswerValue answerValue, StatusLogger log)
