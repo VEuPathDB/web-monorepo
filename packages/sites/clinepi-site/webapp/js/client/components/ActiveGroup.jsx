@@ -139,7 +139,7 @@ export default function ClinEpiActiveGroup(props) {
         borderRadius: '4px'
       }}>
         {useRelativeVisits}
-        <Padded>Restrict the events speficied in</Padded>
+        <Padded>Restrict the events specified in</Padded>
         <FakeStep>Events</FakeStep>
         <Padded>to those that have a comparison event, as specified below.</Padded>
       </label>
