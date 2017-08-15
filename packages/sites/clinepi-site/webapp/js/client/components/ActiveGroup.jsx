@@ -18,7 +18,7 @@ const Padded = (props) => (
 )
 
 const FakeStep = (props) => (
-  <span style={{
+  <div style={{
     padding: '.5em',
     background: '#eee',
     borderRadius: '4px',
@@ -26,10 +26,13 @@ const FakeStep = (props) => (
     color: '#444',
     fontSize: '0.7em',
     fontWeight: 'bold',
-    boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.2)'
+    boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.2)',
+    maxWidth: '9em',
+    display: 'inline-block',
+    textAlign: 'center'
   }}>
     {props.children}
-  </span>
+  </div>
 )
 
 function RelativeVisitsLayout(props) {
@@ -107,31 +110,40 @@ export default function ClinEpiActiveGroup(props) {
     props.question.parameters.find(p => p.name === paramName).defaultValue === props.paramValues[paramName])
 
   const message = eventsIsDefault ? (
-    <p style={{
+    <div style={{
+      display: 'flex',
+      flexFlow: 'row wrap',
+      alignItems: 'center',
       padding: '1em 2em',
+      margin: '1em 0',
       background: 'rgba(139, 0, 0, 0.1)',
       border: '1px solid darkred',
       borderRadius: '4px'
     }}>
-      Before using <FakeStep>{props.activeGroup.displayName}</FakeStep>, please first specify events in the previous <FakeStep>{eventsGroup.displayName}</FakeStep> filter.
-    </p>
+      <Padded>Before using</Padded>
+      <FakeStep>{props.activeGroup.displayName}</FakeStep>,
+      <Padded>please first specify events in the previous</Padded>
+      <FakeStep>{eventsGroup.displayName}</FakeStep>
+      <Padded>filter.</Padded>
+    </div>
   ) : (
-    <p>
+    <div>
       <label style={{
         display: 'flex',
         flexFlow: 'row wrap',
         alignItems: 'center',
         padding: '1em 2em',
+        margin: '1em 0',
         background: '#cfe6ff',
         border: '1px solid #a5c9f1',
         borderRadius: '4px'
       }}>
         {useRelativeVisits}
-        <Padded>
-          Restrict the events speficied in <FakeStep>Events</FakeStep> to those that have a comparison event, as specified below.
-        </Padded>
+        <Padded>Restrict the events speficied in</Padded>
+        <FakeStep>Events</FakeStep>
+        <Padded>to those that have a comparison event, as specified below.</Padded>
       </label>
-    </p>
+    </div>
   );
 
   return (
