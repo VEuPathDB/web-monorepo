@@ -31,29 +31,31 @@ body {
 #header_rt {
   position: relative;
   margin-right: 0;
-  margin-top: 70px;
+  margin-top: 0;
 }
 
 #toplink {
-  right: 0;
+  margin-top: 10px;
+  margin-bottom: 52px;
+  position: initial;
 }
 
 .eupathdb-Logo {
   position: relative;
-  padding: 15px 0 5px;
+  padding: 4px 0 5px;
 }
 
 /* Alpha Release Badge */
 .eupathdb-Logo:after {
   content: "Prototype";
   position: absolute;
-  bottom: 8px;
   font-size: 1rem;
   border: 1px solid;
   padding: 2px 5px;
   background: #9c242d;
   color: #efefef;
-  left: 385px;
+  top: 16px;
+  left: 445px;
 }
 
 .eupathdb-LogoRelease {
@@ -72,7 +74,7 @@ body {
 }
 
 .eupathdb-Menu {
-  height: 2.8em;
+  height: 2.3em;
   background: bgColor;
   border: none;
   border-bottom: 1px solid #868686;
@@ -80,7 +82,7 @@ body {
   min-width: 0;
 }
 
-.eupathdb-MenuItem, .eupathdb-SmallMenuItem {
+.eupathdb-Menu, .eupathdb-SmallMenu {
   font-size: 1.2em;
 }
 .eupathdb-MenuItem:hover {
@@ -345,7 +347,7 @@ a.WelcomeBoxLink {
 
 .ebrc-QuestionWizardParamGroupCount {
   font-size: 1.2em;
-  color: #3c78d8;
+  /*color: #3c78d8;*/
 }
 
 .ebrc-QuestionWizardActiveGroupCount {
