@@ -34,11 +34,11 @@ export default function Index({ displayName, webAppUrl }) {
         </a>
         <a
           className="SearchAlt"
-          title="Depending on the nature of the study, events may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc"
+          title="Depending on the nature of the study, observations may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc"
           href={`${webAppUrl}/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled`}
         >
           <i className="SearchIconAlt fa fa-stethoscope"></i>
-          <div className="SearchIconCaptionAlt">Events</div>
+          <div className="SearchIconCaptionAlt">Observations</div>
         </a>
         <a
           className="SearchAlt"
@@ -57,7 +57,7 @@ export default function Index({ displayName, webAppUrl }) {
             <ul>
               <li>
                 <a href={`${webAppUrl}/im.do?s=5b458c4e9fbf0b69`}>
-                Events from children in India who had Diarrheal Episode and Crypto Positive within 14 days
+                Observations from children in India who had Diarrheal Episode and Crypto Positive within 14 days
                 </a>
               </li>
               <li>
@@ -67,7 +67,7 @@ export default function Index({ displayName, webAppUrl }) {
               </li>
               <li>
                 <a href={`${webAppUrl}/im.do?s=adfbeddb525f8b12`}>
-                Identifies children with at least three Camphlobacter+ diarrhea events (&gte; 3 days duration) who had &lt; 3 E.coli diarrhea events in first year followed by second year where at least 10 of their anthropometric visits they had a weigh for age Z-score &lt; -2.
+                Identifies children with at least three Camphlobacter+ diarrhea observations (&gte; 3 days duration) who had &lt; 3 E.coli diarrhea observations in first year followed by second year where at least 10 of their anthropometric visits they had a weigh for age Z-score &lt; -2.
                 </a>
               </li>
 
