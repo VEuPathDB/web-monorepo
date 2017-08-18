@@ -15,7 +15,7 @@ body {
 }
 
 #header {
-  height: 152px;
+  height: auto;
   background: bgColor;
   margin-bottom: 10px;
 }
@@ -23,9 +23,9 @@ body {
 #header2 {
   background: bgColor;
   color: hlColor;
-  height: 12em;
   min-width: 0;
   padding: 0 3em;
+  height: auto;
 }
 
 #header_rt {
@@ -36,7 +36,7 @@ body {
 
 #toplink {
   margin-top: 10px;
-  margin-bottom: 52px;
+  margin-bottom: 0;
   position: initial;
 }
 
@@ -55,7 +55,7 @@ body {
   background: #9c242d;
   color: #efefef;
   top: 16px;
-  left: 445px;
+  left: 336px;
 }
 
 .eupathdb-LogoRelease {
@@ -63,8 +63,9 @@ body {
 }
 
 .eupathdb-LogoImage {
-  margin: 0 18px;
-  max-width: 350px;
+  margin: 0 8px 0 18px;
+  height: 76px;
+  /*max-width: 350px;*/
 }
 
 #nav-top a,
@@ -78,7 +79,7 @@ body {
   background: bgColor;
   border: none;
   border-bottom: 1px solid #868686;
-  padding: 0 3em;
+  padding: 0 2.5em;
   min-width: 0;
 }
 
@@ -347,14 +348,7 @@ a.WelcomeBoxLink {
 
 .ebrc-QuestionWizardParamGroupCount {
   font-size: 1.2em;
-  /*color: #3c78d8;*/
 }
-
-.ebrc-QuestionWizardActiveGroupCount {
-  color: hlColor;
-  font-size: 1.3em;
-}
-
 
 
 button.ebrc-QuestionWizardParamGroupButton__active,
@@ -369,4 +363,59 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 }
 #query_form form {
   width: 90vw;
+}
+
+.RelativeVisitsLayout,
+.RelativeVisitsLayout > * {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-flow: row wrap;
+}
+
+.RelativeVisitsLayout {
+  margin: 1em 0;
+}
+
+.RelativeVisitsLayout input {
+  padding: 1px !important;
+  font-size: 1.1em;
+}
+
+.RelativeVisitsLayoutOverlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.7;
+  zIndex: 1;
+  background: white;
+}
+
+.Padded {
+  padding-right: 1ex;
+  padding-left: 1ex;
+}
+.Padded__first {
+  padding-left: 0;
+}
+.Padded__last {
+  padding-right: 0;
+}
+
+.RelativeVisitsMessage {
+  font-size: 1.2em;
+  padding: 1em 0;
+}
+.RelativeVisitsMessage__warning {
+  font-size: 1.4em;
+  color: darkred;
+}
+.RelativeVisitsContainer {
+  z-index: 1;
+  position: relative;
+}
+.RelativeVisitsContainer .ebrc-QuestionWizardActiveGroupDescription {
+  z-index: 2;
 }
