@@ -184,7 +184,7 @@ export default function ClinEpiActiveGroup(props) {
     <div className="RelativeVisitsMessage RelativeVisitsMessage__warning">
       Before using
       <FakeStep> {props.activeGroup.displayName}</FakeStep>,
-      please first specify events in the previous
+      please first specify observations in the previous
       <FakeStep> {eventsGroup.displayName} </FakeStep>
       filter.
     </div>
