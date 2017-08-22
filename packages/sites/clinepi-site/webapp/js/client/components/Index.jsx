@@ -14,41 +14,60 @@ export default function Index({ displayName, webAppUrl }) {
         is a data repository designed to facilitate the exploration and mining of epidemiological study datasets, advancing global public health.
       </h1>
 
-      <h2 className="WelcomeSectionHeader">Search the Data</h2>
-      <div className="SearchContainer">
-        <a
-          className="SearchAlt"
-          title="Individuals for whom observations are available.  Depending on the nature of the study, this may include patients, caregivers, study subjects, etc"
-          href={`${webAppUrl}/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled`}
-        >
-          <i className="SearchIconAlt fa fa-male"></i>
-          <div className="SearchIconCaptionAlt">Participants</div>
-        </a>
-        <a
-          className="SearchAlt"
-          title="Households / dwellings, associated with information on geographic location, physical characteristics, socioeconomic data, etc; note that individual households may include multiple participants"
-          href=""
-        >
-          <i className="SearchIconAlt fa fa-home"></i>
-          <div className="SearchIconCaptionAlt">Households</div>
-        </a>
-        <a
-          className="SearchAlt"
-          title="Depending on the nature of the study, observations may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc"
-          href={`${webAppUrl}/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled`}
-        >
-          <i className="SearchIconAlt fa fa-stethoscope"></i>
-          <div className="SearchIconCaptionAlt">Observations</div>
-        </a>
-        <a
-          className="SearchAlt"
-          title="Entomological collections (not available for all studies)"
-          href=""
-        >
-          <i className="SearchIconAlt fa fa-bug"></i>
-          <div className="SearchIconCaptionAlt">Vectors</div>
-        </a>
+      <div className="Welcome-Row">
+
+        <div className="Welcome-Column Welcome-Column-Wide">
+          <h2 className="WelcomeSectionHeader">About The Studies</h2>
+          <div className="Welcome-Blurb-Box" style={{ backgroundImage: 'url(' + webAppUrl + '/images/fade_arrow_right.png)' }}>
+            <div className="Welcome-Blurb-Icon">
+              <img src={webAppUrl + '/images/globe_icon.png'} />
+            </div>
+            <div className="Welcome-Blurb">
+              The <a>Studies in ClinEpiDB</a> focus on clinical epidemiological data collected from areas where malaria, enteric disease and other globally significant diseases are endemic.
+            </div>
+          </div>
+        </div>
+
+        <div className="Welcome-Column">
+          <h2 className="WelcomeSectionHeader">Search the Data</h2>
+          <div className="SearchContainer">
+            <a
+              className="SearchAlt"
+              title="Individuals for whom observations are available.  Depending on the nature of the study, this may include patients, caregivers, study subjects, etc"
+              href={`${webAppUrl}/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled`}
+            >
+              <i className="SearchIconAlt fa fa-male"></i>
+              <div className="SearchIconCaptionAlt">Participants</div>
+            </a>
+            <a
+              className="SearchAlt disabled"
+              title="Households / dwellings, associated with information on geographic location, physical characteristics, socioeconomic data, etc; note that individual households may include multiple participants"
+              href=""
+            >
+              <i className="SearchIconAlt fa fa-home"></i>
+              <div className="SearchIconCaptionAlt">Households</div>
+            </a>
+            <a
+              className="SearchAlt"
+              title="Depending on the nature of the study, observations may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc"
+              href={`${webAppUrl}/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled`}
+            >
+              <i className="SearchIconAlt fa fa-stethoscope"></i>
+              <div className="SearchIconCaptionAlt">Observations</div>
+            </a>
+            <a
+              className="SearchAlt disabled"
+              title="Entomological collections (not available for all studies)"
+              href=""
+            >
+              <i className="SearchIconAlt fa fa-bug"></i>
+              <div className="SearchIconCaptionAlt">Vectors</div>
+            </a>
+          </div>
+        </div>
       </div>
+
+
 
       <div className="ExploreContainer">
         <div className="ExploreSection">
@@ -110,7 +129,7 @@ export default function Index({ displayName, webAppUrl }) {
 
       </div>
 
-      <div className="WelcomeBoxContainer">
+      <div className="WelcomeBoxContainer hidden">
 
         <div className="WelcomeBox">
           <h2 className="WelcomeSectionHeader">About the Studies</h2>

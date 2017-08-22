@@ -140,6 +140,55 @@ a.eupathdb-MenuItemText,
   padding: .6em 0em;
 }
 
+.Welcome-Row {
+  display: flex;
+  align-items: center;
+  margin: 40px 0 80px;
+}
+
+.Welcome-Column {
+  flex: auto;
+  flex-basis: 50%;
+}
+
+.Welcome-Column-Wide {
+  flex: auto;
+  flex-basis: 60%;
+}
+
+.Welcome-Blurb-Box {
+  align-items: center;
+  display: flex;
+  background-size: 100% 100%;
+  background-position: -30px center;
+  background-repeat: no-repeat;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.Welcome-Blurb a {
+  color: #069;
+}
+
+
+.Welcome-Blurb, .Welcome-Blurb-Icon {
+  padding: 10px;
+  font-size: 1.2em;
+  line-height: 1.4em;
+  max-width: 650px;
+}
+.Welcome-Blurb {
+  padding-right: 50px;
+}
+
+.Welcome-Blurb-Icon {
+  background-color: #222;
+}
+
+.Welcome-Blurb-Icon img {
+  max-width: 80px;
+}
+
 .Experiences {
   position: relative;
   padding-top: 1.6em;
@@ -230,6 +279,12 @@ a.WelcomeBoxLink {
   margin: 0 5px;
 }
 
+.SearchAlt.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  color: #444;
+}
+
 .SearchIcon {
   font-size: 4em;
   color: black;
@@ -297,6 +352,10 @@ a.WelcomeBoxLink {
     display: flex;
     justify-content: space-between;
     margin-top: 1em;
+  }
+
+  .WelcomeBoxContainer.hidden {
+    display: none;
   }
 
   .WelcomeBox {
