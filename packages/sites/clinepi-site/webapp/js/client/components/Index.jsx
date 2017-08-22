@@ -23,7 +23,7 @@ export default function Index({ displayName, webAppUrl }) {
               <img src={webAppUrl + '/images/globe_icon.png'} />
             </div>
             <div className="Welcome-Blurb">
-              The <a>Studies in ClinEpiDB</a> focus on clinical epidemiological data collected from areas where malaria, enteric disease and other globally significant diseases are endemic.
+              The <a href={webAppUrl + '/app/record/dataset/DS_61ac5d073c'}>Studies in ClinEpiDB</a> focus on clinical epidemiological data collected from areas where malaria, enteric disease and other globally significant diseases are endemic.
             </div>
           </div>
         </div>

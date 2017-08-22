@@ -12,7 +12,7 @@ initialize({
     {
       id: 'studies',
       text: 'Studies',
-      route: 'record/dataset/DS_c75ea37cb3'
+      route: 'record/dataset/DS_61ac5d073c'
     },
     {
       id: 'help',
