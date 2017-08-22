@@ -166,10 +166,12 @@ export default function ClinEpiActiveGroup(props) {
   const useRelativeVisitsParam = question.parameters.find(p =>
     p.name === useRelativeObservationsParamName);
 
-  const useRelativeVisits = (
+  const useRelativeVisits = props.paramValues[useRelativeObservationsParamName] === 'Yes';
+
+  const useRelativeVisitsElement = (
     <input
       type="checkbox"
-      checked={props.paramValues[useRelativeObservationsParamName] === 'Yes'}
+      checked={useRelativeVisits}
       onChange={e => {
         props.onParamValueChange(useRelativeVisitsParam, e.target.checked ? 'Yes' : 'No');
       }}
@@ -192,7 +194,7 @@ export default function ClinEpiActiveGroup(props) {
   const message = !eventsIsDefault && (
     <div className="RelativeVisitsMessage">
       <label>
-        {useRelativeVisits} Enable the <FakeStep>{props.activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{props.activeGroup.displayName}</FakeStep>.
+        {useRelativeVisitsElement} Enable the <FakeStep>{props.activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{props.activeGroup.displayName}</FakeStep>.
       </label>
     </div>
   );
@@ -212,26 +214,29 @@ export default function ClinEpiActiveGroup(props) {
     />
   );
 
+  const wrapperClassName = "RelativeVisitsActiveGroupWrapper" +
+    (useRelativeVisits ? '' : ' RelativeVisitsActiveGroupWrapper__off');
+
   if (eventsIsDefault) {
     return (
-      <div>
+      <div className={wrapperClassName}>
         {warningMessage}
         <div className="RelativeVisitsContainer">
           <props.DefaultComponent {...props} question={modifiedQuestion} />
           {layout}
-          {props.paramValues[useRelativeObservationsParamName] === 'No' && overlay}
+          {!useRelativeVisits && overlay}
         </div>
       </div>
     )
   }
 
   return (
-    <div>
+    <div className={wrapperClassName}>
       <props.DefaultComponent {...props} question={modifiedQuestion} />
       {message}
       <div className="RelativeVisitsContainer">
         {layout}
-        {props.paramValues[useRelativeObservationsParamName] === 'No' && overlay}
+        {!useRelativeVisits && overlay}
       </div>
     </div>
   );
