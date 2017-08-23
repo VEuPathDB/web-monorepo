@@ -20,7 +20,7 @@ export default function Index({ displayName, webAppUrl }) {
     { category: 'malaria', name: 'Ugandan ICEMR (PRISM)' },
     { category: 'malaria', name: 'Amazonian ICEMR' },
     { category: 'malaria', name: 'Indian ICEMR' },
-    { category: 'malaria', name: '...' },
+    { category: 'malaria', name: <b>...</b> },
     { category: 'enteric', name: 'GEMS' },
     {
       category: 'enteric',
@@ -33,7 +33,7 @@ export default function Index({ displayName, webAppUrl }) {
         </span>
       )
     },
-    { category: 'enteric', name: '...' }
+    { category: 'enteric', name: <b>...</b> }
   ];
 
   const Searches = [
