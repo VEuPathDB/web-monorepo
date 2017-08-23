@@ -118,7 +118,7 @@ export default function Index({ displayName, webAppUrl }) {
             <div className="StudiesNav">
               {StudyCategories.map(category => {
                 return (
-                  <div>
+                  <div key={category.id}>
                     <h4><IconAlt fa="caret-down" /> {category.name}</h4>
                     <ul>
                       {AvailableStudies.filter(s => s.category === category.id).map(s => {
