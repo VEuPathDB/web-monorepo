@@ -189,6 +189,7 @@ a.eupathdb-MenuItemText,
 }
 .StudiesNav li::before {
   content: '- ';
+  opacity: 0.5;
 }
 
 .StudiesNav li.active {
