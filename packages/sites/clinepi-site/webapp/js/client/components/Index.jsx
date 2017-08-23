@@ -1,184 +1,193 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'wdk-client/Components';
+import { Link, IconAlt } from 'wdk-client/Components';
 
 /**
  * Home page for clinepidb sites
  */
 export default function Index({ displayName, webAppUrl }) {
+
+  const Text = {
+    headline: 'Facilitating the exploration and mining of epidemiological study datasets, to advance global public health.'
+  };
+
+  const StudyCategories = [
+    { id: 'malaria', name: 'Malaria' },
+    { id: 'enteric', name: 'Enteric Disease' }
+  ];
+
+  const AvailableStudies = [
+    { category: 'malaria', name: 'Ugandan ICEMR (PRISM)' },
+    { category: 'malaria', name: 'Amazonian ICEMR' },
+    { category: 'malaria', name: 'Indian ICEMR' },
+    { category: 'malaria', name: '...' },
+    { category: 'enteric', name: 'GEMS' },
+    {
+      category: 'enteric',
+      name: 'MAL-ED',
+      url: webAppUrl + '/record/dataset/DS_61ac5d073c',
+      active: true,
+      about: (
+        <span>
+          The MAL-ED project is a multinational and multidisciplinary study designed to elucidate the relationship between enteric pathogens, malnutrition, gut physiology, physical growth, cognitive development and immune responses, in infants and children up to 2 yr of age, in resource-poor environments. <em>Clin Infect Dis</em> <b>59S4:</b>193-206 (2014) PMID 235305287.
+        </span>
+      )
+    },
+    { category: 'enteric', name: '...' }
+  ];
+
+  const Searches = [
+    {
+      name: 'Households',
+      icon: 'home',
+      title: 'Households / dwellings, associated with information on geographic location, physical characteristics, socioeconomic data, etc; note that individual households may include multiple participants'
+    },
+    {
+      name: 'Participants',
+      icon: 'male',
+      url: webAppUrl + '/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled',
+      title: 'Individuals for whom observations are available.  Depending on the nature of the study, this may include patients, caregivers, study subjects, etc'
+    },
+    {
+      name: 'Observations',
+      icon: 'stethoscope',
+      url: webAppUrl + '/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled',
+      title: 'Depending on the nature of the study, observations may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc'
+    },
+    {
+      name: 'Vectors',
+      icon: 'bug',
+      title: 'Entomological collections (not available for all studies)'
+    }
+  ];
+
+  const Analyses = [
+    {
+      name: 'Histograms',
+      url: webAppUrl + '/images/analysis_slide.svg',
+      image: webAppUrl + '/images/bar-graph.png'
+    },
+    {
+      name: 'Correlations',
+      url: webAppUrl + '/images/analysis_slide.svg',
+      image: webAppUrl + '/images/scatter.png'
+    },
+    {
+      name: 'Distributions',
+      url: webAppUrl + '/images/analysis_slide.svg',
+      image: webAppUrl + '/images/distributions.png'
+    },
+    {
+      name: 'Growth Curves',
+      url: webAppUrl + '/images/analysis_slide.svg',
+      image: webAppUrl + '/images/growth-curves.png'
+    }
+  ];
+
+  const ExampleSearches = [
+    {
+      text: 'Participants from Vellore who had a diarrheal event and tested Crypto positive within 14 days.',
+      url: webAppUrl + '/im.do?s=990178beaf95723e'
+    },
+    {
+      text: 'Participants with a Low HAZ at any point followed by a normal HAZ within 6 months.',
+      url: webAppUrl + '/im.do?s=0284a711ff532118'
+    },
+    {
+      text: 'Normal @1M, Stunted at 18M & positive for Campy at least once over that time.',
+      url: webAppUrl + '/im.do?s=962acf9669b58cd6'
+    },
+    {
+      text: 'This strategy displays participants who did not have any Cryptosporidium positive tests and had a normal (-2 to +2) Z-Score',
+      url: webAppUrl + '/im.do?s=61fbead6228a3c00'
+    }
+  ];
+
+  const activeStudy = AvailableStudies.find(s => s.active);
+
   return (
     <div className="Welcome">
-
-      <h1 className="WelcomeHeadline">
-        <span className="SiteName"> {displayName} </span>
-        is a data repository designed to facilitate the exploration and mining of epidemiological study datasets, advancing global public health.
-      </h1>
+      <h1 className="WelcomeHeadline">{Text.headline}</h1>
 
       <div className="Welcome-Row">
 
+        {/* Left Side Column */}
+        <div className="Welcome-Column Welcome-Sidebar">
+          <div className="WelcomeContentSection">
+            <h2 className="WelcomeSectionHeader">Available Studies</h2>
+            <div className="StudiesNav">
+              {StudyCategories.map(category => {
+                return (
+                  <div>
+                    <h4><IconAlt fa="caret-down" /> {category.name}</h4>
+                    <ul>
+                      {AvailableStudies.filter(s => s.category === category.id).map(s => {
+                        const className = s.active ? 'active' : '';
+                        return (
+                          <li key={s.name} className={className}>{s.name}</li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )
+              })}
+            </div>
+            {activeStudy && activeStudy.about && (
+              <div className="StudiesInfo">
+                <h3>About the <b>{activeStudy.name}</b> study:</h3>
+                <p>
+                  {activeStudy.about}
+                  {activeStudy.url && <a href={activeStudy.url} className="LearnMoreLink">Learn More <IconAlt fa="chevron-right" /></a>}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side Column */}
         <div className="Welcome-Column Welcome-Column-Wide">
-          <h2 className="WelcomeSectionHeader">About The Studies</h2>
-          <div className="Welcome-Blurb-Box" style={{ backgroundImage: 'url(' + webAppUrl + '/images/fade_arrow_right.png)' }}>
-            <div className="Welcome-Blurb-Icon">
-              <img src={webAppUrl + '/images/globe_icon.png'} />
-            </div>
-            <div className="Welcome-Blurb">
-              The <a href={webAppUrl + '/app/record/dataset/DS_61ac5d073c'}>Studies in ClinEpiDB</a> focus on clinical epidemiological data collected from areas where malaria, enteric disease and other globally significant diseases are endemic.
-            </div>
-          </div>
-        </div>
 
-        <div className="Welcome-Column">
-          <h2 className="WelcomeSectionHeader">Search the Data</h2>
-          <div className="SearchContainer">
-            <a
-              className="SearchAlt"
-              title="Individuals for whom observations are available.  Depending on the nature of the study, this may include patients, caregivers, study subjects, etc"
-              href={`${webAppUrl}/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled`}
-            >
-              <i className="SearchIconAlt fa fa-male"></i>
-              <div className="SearchIconCaptionAlt">Participants</div>
-            </a>
-            <a
-              className="SearchAlt disabled"
-              title="Households / dwellings, associated with information on geographic location, physical characteristics, socioeconomic data, etc; note that individual households may include multiple participants"
-              href=""
-            >
-              <i className="SearchIconAlt fa fa-home"></i>
-              <div className="SearchIconCaptionAlt">Households</div>
-            </a>
-            <a
-              className="SearchAlt"
-              title="Depending on the nature of the study, observations may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc"
-              href={`${webAppUrl}/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled`}
-            >
-              <i className="SearchIconAlt fa fa-stethoscope"></i>
-              <div className="SearchIconCaptionAlt">Observations</div>
-            </a>
-            <a
-              className="SearchAlt disabled"
-              title="Entomological collections (not available for all studies)"
-              href=""
-            >
-              <i className="SearchIconAlt fa fa-bug"></i>
-              <div className="SearchIconCaptionAlt">Vectors</div>
-            </a>
-          </div>
-        </div>
-      </div>
-
-
-
-      <div className="ExploreContainer">
-        <div className="ExploreSection">
-          <h2 className="WelcomeSectionHeader">Explore Example Searches</h2>
-          <div>
-            <ul>
-              <li>
-                <a href={`${webAppUrl}/im.do?s=5b458c4e9fbf0b69`}>
-                Observations from children in India who had Diarrheal Episode and Crypto Positive within 14 days
+          {/* Searches */}
+          <div className="WelcomeContentSection">
+            <h2 className="WelcomeSectionHeader">Search the Data</h2>
+            <div className="SearchContainer">
+              {Searches.map(search => (
+                <a className={'SearchAlt' + (search.url ? '' : ' disabled')} title={search.title} key={search.name} href={search.url ? search.url : '#'}>
+                  <i className={'SearchIconAlt fa fa-' + search.icon} />
+                  <div className="SearchIconCaptionAlt">{search.name}</div>
                 </a>
-              </li>
-              <li>
-                <a href={`${webAppUrl}/im.do?s=24b1f88e741c809f`}>
-                This strategy displays participants who did not have any Cryptosporidium positive tests and had a normal (-2&lt;x&lt;2 HAZ score at their 24 month visit.
-                </a>
-              </li>
-              <li>
-                <a href={`${webAppUrl}/im.do?s=adfbeddb525f8b12`}>
-                Identifies children with at least three Camphlobacter+ diarrhea observations (&gte; 3 days duration) who had &lt; 3 E.coli diarrhea observations in first year followed by second year where at least 10 of their anthropometric visits they had a weigh for age Z-score &lt; -2.
-                </a>
-              </li>
-
-            </ul>
-            <p>
-              <a href={`${webAppUrl}/showApplication.do?tab=public_strat`}><em>Explore more sample search strategies</em> &raquo;</a>
-            </p>
-          </div>
-        </div>
-
-        <div className="ExploreSection">
-          <h2 className="WelcomeSectionHeader">Explore Example Analyses</h2>
-          <div className="AnalysisToolsContainer">
-            <div className="AnalysisTool">
-              <a href={`${webAppUrl}/images/analysis_slide.svg`}>
-                <img className="AnalysisToolImage" src={`${webAppUrl}/images/bar-graph.png`}/>
-                <div>Enrichment</div>
-              </a>
-            </div>
-            <div className="AnalysisTool">
-              <a href={`${webAppUrl}/images/analysis_slide.svg`}>
-                <img className="AnalysisToolImage" src={`${webAppUrl}/images/abundance.png`}/>
-                <div>Abundance</div>
-              </a>
-            </div>
-            <div className="AnalysisTool">
-              <a href={`${webAppUrl}/images/analysis_slide.svg`}>
-                <img className="AnalysisToolImage" src={`${webAppUrl}/images/scatter.png`}/>
-                <div>Correlation</div>
-              </a>
-            </div>
-            <div className="AnalysisTool">
-              <a href={`${webAppUrl}/images/analysis_slide.svg`}>
-                <img className="AnalysisToolImage" src={`${webAppUrl}/images/heatmap.png`}/>
-                <div>Density</div>
-              </a>
+              ))}
             </div>
           </div>
-        </div>
 
-      </div>
+          <div className="WelcomeContentSection">
+            <h2 className="WelcomeSectionHeader">Explore Example Analyses</h2>
+            <div className="AnalysisToolsContainer">
+              {Analyses.map(analysis => (
+                <div className="AnalysisTool" key={analysis.name}>
+                  <a href={analysis.url} target="_blank">
+                    <img className="AnalysisToolImage" src={analysis.image} />
+                    <div>{analysis.name}</div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <div className="WelcomeBoxContainer hidden">
-
-        <div className="WelcomeBox">
-          <h2 className="WelcomeSectionHeader">About the Studies</h2>
-          <div className="WelcomeSectionContent">
+          <div className="WelcomeContentSection">
+            <h2 className="WelcomeSectionHeader">Explore Example Searches</h2>
             <div>
-              The studies housed in ClinEpiDB focus on longitudinal clinical
-              epidemiological data collected from areas where Malaria,
-              Enteric disase and other globally significant disease are endemic.
+              <ul className="ExampleSearches">
+                {ExampleSearches.map(search => (
+                  <li key={search.text}><a href={search.url}>{search.text}</a></li>
+                ))}
+              </ul>
+              <p>
+                <a href={`${webAppUrl}/showApplication.do?tab=public_strat`}><em>Explore more sample search strategies</em> &raquo;</a>
+              </p>
             </div>
-            <Link className="WelcomeBoxLink" to="record/dataset/DS_61ac5d073c">
-              Learn more about the studies
-            </Link>
           </div>
         </div>
-
-        <div className="WelcomeBox">
-          <h2 className="WelcomeSectionHeader">Why Use this Site?</h2>
-          <div className="WelcomeSectionContent">
-            <ul>
-              <li>
-                Answer <a href="#">epidemiological</a>, <a href="#">immunological</a>, <a href="#">translational</a>, and <a href="#">data science</a> questions
-              </li>
-              <li>
-                Issue <a href="#">sophisticated searches</a> to mine the <a href="#">study data</a>
-              </li>
-              <li>
-                Use <a href="#">statistical analysis tools</a> to discover trends
-              </li>
-            </ul>
-            <a className="WelcomeBoxLink" href="#">Find more help and tutorials</a>
-          </div>
-        </div>
-
-        <div className="WelcomeBox">
-          <h2 className="WelcomeSectionHeader">Recent News</h2>
-          <div className="WelcomeSectionContent">
-            <ul>
-              <li>
-                ClinEpiDB Release 2 includes studies from Research Group, including
-                advanced tech ... <em><a href="#">read more</a></em>
-              </li>
-              <li>
-                Registration for the 2019 ClinEpiDB workshop has begun ... <em><a href="#">read more</a></em>
-              </li>
-            </ul>
-            <a className="WelcomeBoxLink" href="#">Go to the news archive</a>
-          </div>
-        </div>
-
       </div>
 
     </div>

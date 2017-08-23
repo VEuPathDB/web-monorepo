@@ -139,6 +139,9 @@ a.eupathdb-MenuItemText,
   font-size: 1.6em;
   margin-top: 30px;
   padding: .6em 0em;
+  text-align: center;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .Welcome-Row {
@@ -152,9 +155,73 @@ a.eupathdb-MenuItemText,
   flex-basis: 50%;
 }
 
+.Welcome-Sidebar {
+  flex: auto;
+  flex-basis: 30%;
+  margin-right: 10%;
+}
+
 .Welcome-Column-Wide {
   flex: auto;
   flex-basis: 60%;
+}
+
+.StudiesNav {
+  margin-top: -10px;
+}
+
+.StudiesNav h4 {
+  font-weight: bold;
+  padding-left: 20px;
+}
+
+.StudiesNav ul {
+  padding: none;
+  margin: 0;
+}
+
+.StudiesNav li {
+  list-style: none;
+  font-size: 1rem;
+  padding: 5px;
+  padding-left: 35px;
+  margin: 0;
+}
+.StudiesNav li::before {
+  content: '- ';
+}
+
+.StudiesNav li.active {
+  background-color: #e3ecf0;
+  font-weight: bold;
+  color: #069;
+}
+
+.StudiesInfo h3 {
+  color: #069;
+  font-style: italic;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.StudiesInfo a.LearnMoreLink {
+  display: block;
+  margin: 5px 0;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.StudiesInfo a.LearnMoreLink .fa {
+  margin-left: 5px;
+}
+
+.StudiesInfo p {
+  background-color: #e3ecf0;
+  padding: 15px;
+  font-size: 1rem;
+  line-height: 1.4em;
+  margin: 0;
+  border-radius: 10px;
 }
 
 .Welcome-Blurb-Box {
@@ -220,6 +287,26 @@ a.eupathdb-MenuItemText,
   padding-bottom: 1em;
   font-size: 1.6em;
   font-weight: 400;
+}
+
+.StudiesNav {
+  border: 1px solid #8db2c2;
+  padding: 10px 0;
+  border-radius: 10px;
+}
+
+.WelcomeContentSection {
+  margin-bottom: 3em;
+}
+
+ul.ExampleSearches {
+  padding-left: 20px;
+}
+
+ul.ExampleSearches li {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  line-height: 1.45em;
 }
 
 .WelcomeSectionContent {
@@ -322,7 +409,7 @@ a.WelcomeBoxLink {
   }
 
   .ExploreSection {
-    width: 45%;
+    /*width: 45%;*/
   }
 }
 
