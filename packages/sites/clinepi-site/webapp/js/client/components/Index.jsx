@@ -121,10 +121,10 @@ export default function Index({ displayName, webAppUrl }) {
                   <div key={category.id}>
                     <h4><IconAlt fa="caret-down" /> {category.name}</h4>
                     <ul>
-                      {AvailableStudies.filter(s => s.category === category.id).map(s => {
+                      {AvailableStudies.filter(s => s.category === category.id).map((s, idx) => {
                         const className = s.active ? 'active' : '';
                         return (
-                          <li key={s.name} className={className}>{s.name}</li>
+                          <li key={idx} className={className}>{s.name}</li>
                         );
                       })}
                     </ul>
