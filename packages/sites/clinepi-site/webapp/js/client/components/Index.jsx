@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link, IconAlt } from 'wdk-client/Components';
+import { Link, IconAlt as Icon } from 'wdk-client/Components';
 
 /**
  * Home page for clinepidb sites
@@ -107,7 +107,8 @@ export default function Index({ displayName, webAppUrl }) {
 
   return (
     <div className="Welcome">
-      <h1 className="WelcomeHeadline">{Text.headline}</h1>
+      {/* <h1 className="WelcomeHeadline">{Text.headline}</h1> */}
+      <img src={webAppUrl + '/images/blurb.png'} className="WelcomeHeadline" />
 
       <div className="Welcome-Row">
 
@@ -119,7 +120,7 @@ export default function Index({ displayName, webAppUrl }) {
               {StudyCategories.map(category => {
                 return (
                   <div key={category.id}>
-                    <h4><IconAlt fa="caret-down" /> {category.name}</h4>
+                    <h4><Icon fa="caret-down" /> {category.name}</h4>
                     <ul>
                       {AvailableStudies.filter(s => s.category === category.id).map((s, idx) => {
                         const className = s.active ? 'active' : '';
@@ -137,7 +138,7 @@ export default function Index({ displayName, webAppUrl }) {
                 <h3>About the <b>{activeStudy.name}</b> study:</h3>
                 <p>
                   {activeStudy.about}
-                  {activeStudy.url && <a href={activeStudy.url} className="LearnMoreLink">Learn More <IconAlt fa="chevron-right" /></a>}
+                  {activeStudy.url && <a href={activeStudy.url} className="LearnMoreLink">Learn More <Icon fa="chevron-right" /></a>}
                 </p>
               </div>
             )}
@@ -153,7 +154,7 @@ export default function Index({ displayName, webAppUrl }) {
             <div className="SearchContainer">
               {Searches.map(search => (
                 <a className={'SearchAlt' + (search.url ? '' : ' disabled')} title={search.title} key={search.name} href={search.url ? search.url : '#'}>
-                  <i className={'SearchIconAlt fa fa-' + search.icon} />
+                  <i className={'SearchIcon fa fa-' + search.icon} />
                   <div className="SearchIconCaptionAlt">{search.name}</div>
                 </a>
               ))}
@@ -163,14 +164,17 @@ export default function Index({ displayName, webAppUrl }) {
           <div className="WelcomeContentSection">
             <h2 className="WelcomeSectionHeader">Explore Example Analyses</h2>
             <div className="AnalysisToolsContainer">
-              {Analyses.map(analysis => (
-                <div className="AnalysisTool" key={analysis.name}>
-                  <a href={analysis.url} target="_blank">
-                    <img className="AnalysisToolImage" src={analysis.image} />
-                    <div>{analysis.name}</div>
-                  </a>
-                </div>
-              ))}
+              {Analyses.map(({ name, url, image }) => {
+                let Tag = url ? 'a' : 'span';
+                return (
+                  <div className="AnalysisTool" key={name}>
+                    <Tag href={url} target="_blank">
+                      {image && <img className="AnalysisToolImage" src={image} />}
+                      {name && <div>{name}</div>}
+                    </Tag>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -178,8 +182,10 @@ export default function Index({ displayName, webAppUrl }) {
             <h2 className="WelcomeSectionHeader">Explore Example Searches</h2>
             <div>
               <ul className="ExampleSearches">
-                {ExampleSearches.map(search => (
-                  <li key={search.text}><a href={search.url}>{search.text}</a></li>
+                {ExampleSearches.map(({ text, url }) => (
+                  <li key={text}>
+                    <a href={url}>{text}</a>
+                  </li>
                 ))}
               </ul>
               <p>
