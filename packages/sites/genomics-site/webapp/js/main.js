@@ -7,7 +7,6 @@ import 'site/css/AllApiSites.css';
 // rather than ES module semantics (i.e., code is executed in the global scope).
 
 import 'site/wdkCustomization/js/client/main';
-import 'site/wdkCustomization/js/attributeCheckboxTree';
 import 'eupathdb/wdkCustomization/js/common';
 import '!!script-loader!site/wdkCustomization/js/custom-login';
 import '!!script-loader!eupathdb/js/newwindow';
