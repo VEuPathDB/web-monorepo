@@ -25,7 +25,7 @@ export default function Index({ displayName, webAppUrl }) {
     {
       category: 'enteric',
       name: 'MAL-ED',
-      url: webAppUrl + '/record/dataset/DS_61ac5d073c',
+      url: webAppUrl + '/app/record/dataset/DS_61ac5d073c',
       active: true,
       about: (
         <span>
