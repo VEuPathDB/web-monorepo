@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Param from 'ebrc-client/components/Param';
-import NumberParam from 'ebrc-client/components/NumberParam';
+// import NumberParam from 'ebrc-client/components/NumberParam';
 
 // Property keys
 export const observationsGroupNameKey = "observationsGroupName";
@@ -71,9 +71,13 @@ function RelativeVisitsLayout(props) {
           {paramElements.get(relatedObservationsLayoutSettings[daysBetweenParamNameKey])}
           <Padded>days</Padded>
           {paramElements.get(relatedObservationsLayoutSettings[dateDirectionParamNameKey])}
-          {/*<Padded first>&nbsp;</Padded>*/}
-          {/*paramElements.get(numRelativeEventsParamName)*/}
-          <Padded>the <FakeStep>{props.group.displayName}</FakeStep> specified below</Padded>
+          <Padded>the <FakeStep>{props.group.displayName}</FakeStep></Padded>
+          {paramElements.has(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey]) && [
+            <Padded first>(number matched from</Padded>,
+            paramElements.get(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey]),
+            ')'
+          ]}
+          <Padded>specified below</Padded>
         </div>
       </div>
       <div>{paramElements.get(relatedObservationsLayoutSettings[relativeVisitsParamNameKey])}</div>
@@ -82,53 +86,57 @@ function RelativeVisitsLayout(props) {
 }
 
 function paramRenderer(param, props) {
-  const numRelativeEventsParamName =
-    props.relatedObservationsLayoutSettings[numRelativeEventsParamNameKey];
+  // const numRelativeEventsParamName =
+  //   props.relatedObservationsLayoutSettings[numRelativeEventsParamNameKey];
   const value = props.paramValues[param.name];
   const uiState = props.paramUIState[param.name];
-  const selectValues = {
-    between: 'between',
-    atLeast: 'at-least'
-  }
+  // const selectValues = {
+  //   between: 'between',
+  //   atLeast: 'at-least'
+  // }
 
-  if (param.name === numRelativeEventsParamName) {
-    return [(
-      <select
-        value={props.useRangeForNumRelativeEvents ? selectValues.between : selectValues.atLeast}
-        onChange={event => {
-          if (event.target.value === selectValues.atLeast) {
-            const parsedValue = JSON.parse(value);
-            props.onParamValueChange(
-              param,
-              JSON.stringify({ min: parsedValue.min, max: param.max })
-            );
-          }
-          props.onUseRangeForNumRelativeEventsChange(event.target.value === selectValues.between);
-        }}
-      >
-        <option value={selectValues.between}>between</option>
-        <option value={selectValues.atLeast}>at least</option>
-      </select>
-    ), <Padded first>&nbsp;</Padded>, props.useRangeForNumRelativeEvents ? (
-      <Param
-        param={param}
-        value={value}
-        uiState={uiState}
-        onActiveOntologyTermChange={props.onActiveOntologyTermChange}
-        onParamValueChange={props.onParamValueChange}
-      />
-    ) : (
-      <NumberParam
-        param={param}
-        value={JSON.parse(value).min}
-        uiState={uiState}
-        onActiveOntologyTermChange={props.onActiveOntologyTermChange}
-        onParamValueChange={(param, newValue) => props.onParamValueChange(
-          param,
-          JSON.stringify({ min: Number(newValue), max: param.max })
-        )}/>
-    )]
-  }
+  // if (param.name === numRelativeEventsParamName) {
+  //   return [
+  //     <Padded first>&nbsp;</Padded>,
+  //     (
+  //       <select
+  //         value={props.useRangeForNumRelativeEvents ? selectValues.between : selectValues.atLeast}
+  //         onChange={event => {
+  //           if (event.target.value === selectValues.atLeast) {
+  //             const parsedValue = JSON.parse(value);
+  //             props.onParamValueChange(
+  //               param,
+  //               JSON.stringify({ min: parsedValue.min, max: param.max })
+  //             );
+  //           }
+  //           props.onUseRangeForNumRelativeEventsChange(event.target.value === selectValues.between);
+  //         }}
+  //       >
+  //         <option value={selectValues.between}>between</option>
+  //         <option value={selectValues.atLeast}>at least</option>
+  //       </select>
+  //     ),
+  //     <Padded first>&nbsp;</Padded>,
+  //     props.useRangeForNumRelativeEvents ? (
+  //       <Param
+  //         param={param}
+  //         value={value}
+  //         uiState={uiState}
+  //         onActiveOntologyTermChange={props.onActiveOntologyTermChange}
+  //         onParamValueChange={props.onParamValueChange}
+  //       />
+  //     ) : (
+  //       <NumberParam
+  //         param={param}
+  //         value={JSON.parse(value).min}
+  //         uiState={uiState}
+  //         onActiveOntologyTermChange={props.onActiveOntologyTermChange}
+  //         onParamValueChange={(param, newValue) => props.onParamValueChange(
+  //           param,
+  //           JSON.stringify({ min: Number(newValue), max: param.max })
+  //         )}/>
+  //     )]
+  // }
   return (
     <Param
       param={param}
