@@ -89,11 +89,11 @@ export default function Index({ displayName, webAppUrl }) {
 
   const ExampleSearches = [
     {
-      text: 'Diarrheal observations in children from Vellore, India; with Cryptosporidium detected within 14 days',
+      text: <span>Diarrheal observations in children from Vellore, India; with <em>Cryptosporidium</em> detected within 14 days</span>,
       url: 'http://gates.clinepidb.org/ce.gates/im.do?s=990178beaf95723e'
     },
     {
-      text: 'Study children with a normal HAZ score (-2 to 2) at 24 months of age who never tested positive for Cryptosporidium',
+      text: <span>Study children with a normal HAZ score (-2 to 2) at 24 months of age who never tested positive for <em>Cryptosporidium</em></span>,
       url: 'http://gates.clinepidb.org/ce.gates/im.do?s=61fbead6228a3c00'
     },
     {
@@ -131,7 +131,7 @@ export default function Index({ displayName, webAppUrl }) {
     let status = url ? '' : ' disabled';
     let uri = url ? url : '#';
     return (
-      <stack className="xs-6 md-3 justify-center items-center" key={title}>
+      <stack className="xs-6 md-3 justify-center items-center" key={url}>
         <a title={title} href={uri} className={'SearchLink' + status} key={title}>
           {icon && <Icon fa={icon} className="SearchLink-Icon IconButton" />}
           {name && <label className="SearchLink-Caption">{name}</label>}
@@ -189,7 +189,7 @@ export default function Index({ displayName, webAppUrl }) {
 
   const SearchesList = Searches.map(search => <SearchLink key={search.title} search={search} />);
   const StudiesNav = StudyCategories.map(category => <StudyCategoryList key={category.id} category={category} />);
-  const ExampleSearchList = ExampleSearches.map(example => <ExampleSearch key={example.text} search={example} />);
+  const ExampleSearchList = ExampleSearches.map(example => <ExampleSearch key={example.url} search={example} />);
   const ExampleAnalysesList = Analyses.map(analysis => <AnalysisToolLink key={analysis.name} analysis={analysis} />);
 
   const active = AvailableStudies.find(s => s.active);
@@ -204,13 +204,18 @@ export default function Index({ displayName, webAppUrl }) {
       <box className="xs-12">
         <img
           src={webAppUrl + '/images/blurb.png'}
-          className="WelcomeBanner"
+          className="_sm-hide WelcomeBanner"
+          alt={Text.headline}
+        />
+        <img
+          src={webAppUrl + '/images/blurb-mobile.png'}
+          className="md_-hide WelcomeBanner"
           alt={Text.headline}
         />
       </box>
 
-      <row>
-        <box className="xs-12 md-3">
+      <row className="xs-12">
+        <box className="xs-12 md-4 xs-order-1 sm-order-1">
           <h2>
             <Icon fa="book" />
             Available Studies
@@ -221,7 +226,7 @@ export default function Index({ displayName, webAppUrl }) {
           {ActiveStudy}
         </box>
 
-        <stack className="xs-12 md-9 nowrap">
+        <stack className="xs-12 md-8 nowrap">
           <box className="xs-0">
             <h2>
               <Icon fa="search" />

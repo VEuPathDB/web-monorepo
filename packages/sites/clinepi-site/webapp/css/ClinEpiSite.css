@@ -153,8 +153,13 @@ a.eupathdb-MenuItemText,
   opacity: 1;
 }
 
+.HomePage * {
+  box-sizing: border-box;
+}
+
 .HomePage row box {
   padding: 15px;
+  margin-bottom: -15px;
 }
 
 .HomePage row {
@@ -166,10 +171,9 @@ a.eupathdb-MenuItemText,
 }
 
 img.WelcomeBanner {
-  max-width: 1200px;
-  margin: -10px auto;
+  margin: -10px auto -30px;
   width: 100%;
-  display: block;
+  min-width: 450px;
 }
 
 .StudiesNav {
