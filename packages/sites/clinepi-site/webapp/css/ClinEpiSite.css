@@ -131,6 +131,10 @@ a.eupathdb-MenuItemText,
 }
 
 /* New style */
+.HomePage {
+  nax-width: 1200px;
+}
+
 .HomePage h2 {
   color: hlColor;
   padding-top: .6em;
@@ -139,14 +143,23 @@ a.eupathdb-MenuItemText,
   font-weight: 700;
 }
 
-.HomePage row box {
-  padding: 15px;
-  margin-bottom: 20px;
+.HomePage h2 .fa {
+  margin-right: 15px;
+  opacity: 0.4;
+  transition: all 0.3s ease;
 }
 
-img.WelcomeHeadline {
+.HomePage h2:hover .fa {
+  opacity: 1;
+}
+
+.HomePage row box {
+  padding: 15px;
+}
+
+img.WelcomeBanner {
   max-width: 1200px;
-  margin: -10px auto 0;
+  margin: -10px auto;
   width: 100%;
   display: block;
 }
@@ -263,6 +276,60 @@ ul.ExampleSearches li {
   text-align: center;
 }
 
+.IconButton {
+  width: 5rem;
+  height: 5rem;
+  margin: 1rem auto;
+  display: block;
+  color: white;
+  background: #069;
+  text-align: center;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  border-bottom: 4px solid #b4b4b4;
+  border-left: 1px solid #b5b5b5;
+  border-right: 1px solid #b5b5b5;
+}
+
+.IconButton:hover {
+  box-shadow:
+    inset 0px -5px 30px rgba(100,170,230,0.7),
+    0px 0px 5px rgba(0,0,0,0.1);
+  transform: scale(1.05);
+}
+
+.SearchLink-Icon {
+  font-size: 3.5rem;
+  padding: 12px 5px;
+}
+
+.AnalysisLink-Icon {
+  overflow: hidden;
+}
+
+.AnalysisLink-Icon img {
+  opacity: 0.97;
+  height: 100%;
+  width: 100%;
+  transition: opacity 0.3s ease;
+}
+
+.AnalysisLink-Icon:hover img {
+  opacity: 1;
+}
+
+.SearchLink-Caption, .AnalysisLink-Caption {
+  text-align: center;
+  display: block;
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 500;
+  align-self: center;
+  margin: 10px auto;
+  color: black;
+}
+
 a.WelcomeBoxLink {
   background: bgColor;
   color: white;
@@ -308,7 +375,7 @@ a.WelcomeBoxLink {
   margin: 0 5px;
 }
 
-.SearchAlt.disabled {
+.SearchAlt.disabled, .SearchLink.disabled {
   opacity: 0.3;
   cursor: not-allowed;
   color: #444;

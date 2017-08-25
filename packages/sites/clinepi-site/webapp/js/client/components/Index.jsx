@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, IconAlt as Icon } from 'wdk-client/Components';
+import DisclaimerModal from './DisclaimerModal';
 
 /**
  * Home page for clinepidb sites
@@ -126,24 +127,35 @@ export default function Index({ displayName, webAppUrl }) {
   };
 
   const SearchLink = ({ search }) => {
-    const className = 'SearchAlt' + (search.url ? '' : ' disabled');
-    const url = search.url ? search.url : '#';
+    let { url, title, icon, name } = search;
+    let status = url ? '' : ' disabled';
+    let uri = url ? url : '#';
     return (
-      <a
-        className={className}
-        key={search.title}
-        title={search.title}
-        href={url}
-      >
-        <i className={'SearchIcon fa fa-' + search.icon} />
-        <div className="SearchIconCaptionAlt">{search.name}</div>
-      </a>
+      <stack className="xs-6 md-3 justify-center items-center" key={title}>
+        <a title={title} href={uri} className={'SearchLink' + status} key={title}>
+          {icon && <Icon fa={icon} className="SearchLink-Icon IconButton" />}
+          {name && <label className="SearchLink-Caption">{name}</label>}
+        </a>
+      </stack>
     );
   };
 
   const AnalysisToolLink = ({ analysis = {} }) => {
     let { name, url, image } = analysis;
-    let Tag = url ? 'a' : 'span';
+    let status = url ? '' : ' dud';
+    let icon = !image ? null : (
+      <span className="AnalysisLink-Icon IconButton">
+        <img src={image} />
+      </span>
+    );
+    return (
+      <stack className="xs-6 md-3 justify-center items-center">
+        <a title={name} href={url} className={'AnalysisLink' + status}>
+          {icon}
+          {name && <label className="AnalysisLink-Caption">{name}</label>}
+        </a>
+      </stack>
+    )
     return (
       <div className="AnalysisTool">
         <Tag href={url} target="_blank">
@@ -175,7 +187,7 @@ export default function Index({ displayName, webAppUrl }) {
     </div>
   );
 
-  const SearchesList = Searches.map(search => <SearchLink key={search.url} search={search} />);
+  const SearchesList = Searches.map(search => <SearchLink key={search.title} search={search} />);
   const StudiesNav = StudyCategories.map(category => <StudyCategoryList key={category.id} category={category} />);
   const ExampleSearchList = ExampleSearches.map(example => <ExampleSearch key={example.text} search={example} />);
   const ExampleAnalysesList = Analyses.map(analysis => <AnalysisToolLink key={analysis.name} analysis={analysis} />);
@@ -186,43 +198,51 @@ export default function Index({ displayName, webAppUrl }) {
   /** Page layout ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~= */
 
   return (
-    <grid className="HomePage">
+    <div className="HomePage grid-fluid">
 
       {/* TOP BLURB */}
       <box className="xs-12">
         <img
           src={webAppUrl + '/images/blurb.png'}
-          className="WelcomeHeadline"
+          className="WelcomeBanner"
           alt={Text.headline}
         />
       </box>
 
       <row>
         <box className="xs-12 md-3">
-          <h2>Available Studies</h2>
+          <h2>
+            <Icon fa="book" />
+            Available Studies
+          </h2>
           <div className="StudiesNav">
             {StudiesNav}
           </div>
           {ActiveStudy}
         </box>
 
-        <stack className="xs-12 md-9">
-          <box>
-            <h2>Search The Data</h2>
-            <div className="SearchContainer">
-              {SearchesList}
-            </div>
+        <stack className="xs-12 md-9 justify-start">
+          <box className="xs-0">
+            <h2>
+              <Icon fa="search" />
+              Search The Data
+            </h2>
+            <row>{SearchesList}</row>
           </box>
 
-          <box>
-            <h2>Explore Example Analyses</h2>
-            <div className="AnalysisToolsContainer">
-              {ExampleAnalysesList}
-            </div>
+          <box className="xs-0">
+            <h2>
+              <Icon fa="line-chart" />
+              Explore Example Analyses
+            </h2>
+            <row>{ExampleAnalysesList}</row>
           </box>
 
-          <box>
-            <h2>Explore Example Searches</h2>
+          <box className="xs-0">
+            <h2>
+              <Icon fa="binoculars" />
+              Explore Example Searches
+            </h2>
             <ul className="ExampleSearches">
               {ExampleSearchList}
             </ul>
@@ -236,7 +256,8 @@ export default function Index({ displayName, webAppUrl }) {
         </stack>
       </row>
 
-    </grid>
+      <DisclaimerModal />
+    </div>
   );
 }
 
