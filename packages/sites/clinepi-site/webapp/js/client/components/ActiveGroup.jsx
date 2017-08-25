@@ -71,15 +71,18 @@ function RelativeVisitsLayout(props) {
           {paramElements.get(relatedObservationsLayoutSettings[daysBetweenParamNameKey])}
           <Padded>days</Padded>
           {paramElements.get(relatedObservationsLayoutSettings[dateDirectionParamNameKey])}
-          <Padded>the <FakeStep>{props.group.displayName}</FakeStep></Padded>
-          {paramElements.has(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey]) && [
-            <Padded first>(number matched from</Padded>,
-            paramElements.get(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey]),
-            ')'
-          ]}
-          <Padded>specified below</Padded>
+          <Padded>the <FakeStep>{props.group.displayName}</FakeStep> specified below</Padded>
         </div>
       </div>
+      {paramElements.has(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey]) && (
+        <div className="RelativeVisitsLayout">
+          <div>
+            <Padded first>Require</Padded>
+            {paramElements.get(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey])}
+            <Padded><FakeStep>{props.group.displayName}</FakeStep> for each <FakeStep>Observation</FakeStep></Padded>
+          </div>
+        </div>
+      )}
       <div>{paramElements.get(relatedObservationsLayoutSettings[relativeVisitsParamNameKey])}</div>
     </div>
   );
