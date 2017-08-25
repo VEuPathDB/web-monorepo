@@ -198,7 +198,7 @@ export default function Index({ displayName, webAppUrl }) {
   /** Page layout ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~= */
 
   return (
-    <div className="HomePage grid-fluid">
+    <grid className="HomePage">
 
       {/* TOP BLURB */}
       <box className="xs-12">
@@ -221,7 +221,7 @@ export default function Index({ displayName, webAppUrl }) {
           {ActiveStudy}
         </box>
 
-        <stack className="xs-12 md-9 justify-start">
+        <stack className="xs-12 md-9 nowrap">
           <box className="xs-0">
             <h2>
               <Icon fa="search" />
@@ -257,7 +257,7 @@ export default function Index({ displayName, webAppUrl }) {
       </row>
 
       <DisclaimerModal />
-    </div>
+    </grid>
   );
 }
 

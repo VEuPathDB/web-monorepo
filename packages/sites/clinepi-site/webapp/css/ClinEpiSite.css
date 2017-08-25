@@ -132,7 +132,7 @@ a.eupathdb-MenuItemText,
 
 /* New style */
 .HomePage {
-  nax-width: 1200px;
+  /*nax-width: 1200px;*/
 }
 
 .HomePage h2 {
@@ -157,6 +157,14 @@ a.eupathdb-MenuItemText,
   padding: 15px;
 }
 
+.HomePage row {
+  align-items: flex-start;
+}
+
+.HomePage stack {
+  justify-content: flex-start;
+}
+
 img.WelcomeBanner {
   max-width: 1200px;
   margin: -10px auto;
@@ -174,7 +182,8 @@ img.WelcomeBanner {
 
 .StudiesNav h4 {
   font-weight: bold;
-  padding-left: 20px;
+  margin: 5px 0;
+  padding-left: 10px;
   padding-bottom: 0px;
 }
 
@@ -187,7 +196,7 @@ img.WelcomeBanner {
   list-style: none;
   font-size: 1rem;
   padding: 5px;
-  padding-left: 35px;
+  padding-left: 20px;
   margin: 0;
 }
 
