@@ -90,15 +90,15 @@ export default function Index({ displayName, webAppUrl }) {
   const ExampleSearches = [
     {
       text: <span>Diarrheal observations in children from Vellore, India; with <em>Cryptosporidium</em> detected within 14 days</span>,
-      url: 'http://gates.clinepidb.org/ce.gates/im.do?s=990178beaf95723e'
+      url: webAppUrl + '/im.do?s=5ac633418aa1bb1e'
     },
     {
       text: <span>Study children with a normal HAZ score (-2 to 2) at 24 months of age who never tested positive for <em>Cryptosporidium</em></span>,
-      url: 'http://gates.clinepidb.org/ce.gates/im.do?s=61fbead6228a3c00'
+      url: webAppUrl + '/im.do?s=61fbead6228a3c00'
     },
     {
       text: 'Study children with at least five diarrheal events in their first two years of life who had 10 or more stunted HAZ observations in their second year.',
-      url: 'http://gates.clinepidb.org/ce.gates/im.do?s=4c3e50de511930d9'
+      url: webAppUrl + '/im.do?s=4c3e50de511930d9'
     }
   ];
 
