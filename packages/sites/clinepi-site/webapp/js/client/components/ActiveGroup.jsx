@@ -205,7 +205,7 @@ export default function ClinEpiActiveGroup(props) {
   const message = !eventsIsDefault && (
     <div className="RelativeVisitsMessage">
       <label>
-        {useRelativeVisitsElement} Enable the <FakeStep>{props.activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{props.activeGroup.displayName}</FakeStep>.
+        {useRelativeVisitsElement} Enable the advanced <FakeStep>{props.activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{props.activeGroup.displayName}</FakeStep>.
       </label>
     </div>
   );
