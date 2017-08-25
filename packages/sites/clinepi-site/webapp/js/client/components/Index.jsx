@@ -7,8 +7,10 @@ import { Link, IconAlt as Icon } from 'wdk-client/Components';
  */
 export default function Index({ displayName, webAppUrl }) {
 
+  /** Data & Whatnot ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~ */
+
   const Text = {
-    headline: 'Facilitating the exploration and mining of epidemiological study datasets, to advance global public health.'
+    headline: 'Advancing global public health by facilitating the exploration and mining of epidemiological studies.'
   };
 
   const StudyCategories = [
@@ -86,118 +88,156 @@ export default function Index({ displayName, webAppUrl }) {
 
   const ExampleSearches = [
     {
-      text: 'Participants from Vellore who had a diarrheal event and tested Crypto positive within 14 days.',
-      url: webAppUrl + '/im.do?s=990178beaf95723e'
+      text: 'Diarrheal observations in children from Vellore, India; with Cryptosporidium detected within 14 days',
+      url: 'http://gates.clinepidb.org/ce.gates/im.do?s=990178beaf95723e'
     },
     {
-      text: 'Participants with a Low HAZ at any point followed by a normal HAZ within 6 months.',
-      url: webAppUrl + '/im.do?s=0284a711ff532118'
+      text: 'Study children with a normal HAZ score (-2 to 2) at 24 months of age who never tested positive for Cryptosporidium',
+      url: 'http://gates.clinepidb.org/ce.gates/im.do?s=61fbead6228a3c00'
     },
     {
-      text: 'Normal @1M, Stunted at 18M & positive for Campy at least once over that time.',
-      url: webAppUrl + '/im.do?s=962acf9669b58cd6'
-    },
-    {
-      text: 'This strategy displays participants who did not have any Cryptosporidium positive tests and had a normal (-2 to +2) Z-Score',
-      url: webAppUrl + '/im.do?s=61fbead6228a3c00'
+      text: 'Study children with at least five diarrheal events in their first two years of life who had 10 or more stunted HAZ observations in their second year.',
+      url: 'http://gates.clinepidb.org/ce.gates/im.do?s=4c3e50de511930d9'
     }
   ];
 
-  const activeStudy = AvailableStudies.find(s => s.active);
+  /** Renderers ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~~=~=~ */
+
+  const StudyListItem = ({ study }) => {
+    const className = study.active ? 'active' : '';
+    return (
+      <li className={className}>{study.name}</li>
+    );
+  };
+
+  const StudyCategoryList = ({ category }) => {
+    const listItems = AvailableStudies
+      .filter(s => s.category === category.id)
+      .map((study, idx) => <StudyListItem study={study} key={idx} />);
+
+    return (
+      <div>
+        <h4><Icon fa="caret-down" /> {category.name}</h4>
+        <ul>
+          {listItems}
+        </ul>
+      </div>
+    );
+  };
+
+  const SearchLink = ({ search }) => {
+    const className = 'SearchAlt' + (search.url ? '' : ' disabled');
+    const url = search.url ? search.url : '#';
+    return (
+      <a
+        className={className}
+        key={search.title}
+        title={search.title}
+        href={url}
+      >
+        <i className={'SearchIcon fa fa-' + search.icon} />
+        <div className="SearchIconCaptionAlt">{search.name}</div>
+      </a>
+    );
+  };
+
+  const AnalysisToolLink = ({ analysis = {} }) => {
+    let { name, url, image } = analysis;
+    let Tag = url ? 'a' : 'span';
+    return (
+      <div className="AnalysisTool">
+        <Tag href={url} target="_blank">
+          {image && <img className="AnalysisToolImage" src={image} />}
+          {name && <div>{name}</div>}
+        </Tag>
+      </div>
+    );
+  }
+
+  const ExampleSearch = ({ search = {} }) => {
+    const { text, url } = search;
+    return (
+      <li>
+        <a href={url}>{text}</a>
+      </li>
+    );
+  };
+
+  const StudyDetails = ({ study }) => (
+    <div className="StudyDetails">
+      {study.name && <h3>About the <b>{study.name}</b> study:</h3>}
+      {study.about && (
+        <p>
+          {study.about}
+          {study.url && <a href={study.url} className="LearnMoreLink">Learn More <Icon fa="chevron-right" /></a>}
+        </p>
+      )}
+    </div>
+  );
+
+  const SearchesList = Searches.map(search => <SearchLink key={search.url} search={search} />);
+  const StudiesNav = StudyCategories.map(category => <StudyCategoryList key={category.id} category={category} />);
+  const ExampleSearchList = ExampleSearches.map(example => <ExampleSearch key={example.text} search={example} />);
+  const ExampleAnalysesList = Analyses.map(analysis => <AnalysisToolLink key={analysis.name} analysis={analysis} />);
+
+  const active = AvailableStudies.find(s => s.active);
+  const ActiveStudy = !active || !active.about ? null : <StudyDetails study={active} />;
+
+  /** Page layout ~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~= */
 
   return (
-    <div className="Welcome">
-      {/* <h1 className="WelcomeHeadline">{Text.headline}</h1> */}
-      <img src={webAppUrl + '/images/blurb.png'} className="WelcomeHeadline" />
+    <grid className="HomePage">
 
-      <div className="Welcome-Row">
+      {/* TOP BLURB */}
+      <box className="xs-12">
+        <img
+          src={webAppUrl + '/images/blurb.png'}
+          className="WelcomeHeadline"
+          alt={Text.headline}
+        />
+      </box>
 
-        {/* Left Side Column */}
-        <div className="Welcome-Column Welcome-Sidebar">
-          <div className="WelcomeContentSection">
-            <h2 className="WelcomeSectionHeader">Available Studies</h2>
-            <div className="StudiesNav">
-              {StudyCategories.map(category => {
-                return (
-                  <div key={category.id}>
-                    <h4><Icon fa="caret-down" /> {category.name}</h4>
-                    <ul>
-                      {AvailableStudies.filter(s => s.category === category.id).map((s, idx) => {
-                        const className = s.active ? 'active' : '';
-                        return (
-                          <li key={idx} className={className}>{s.name}</li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )
-              })}
-            </div>
-            {activeStudy && activeStudy.about && (
-              <div className="StudiesInfo">
-                <h3>About the <b>{activeStudy.name}</b> study:</h3>
-                <p>
-                  {activeStudy.about}
-                  {activeStudy.url && <a href={activeStudy.url} className="LearnMoreLink">Learn More <Icon fa="chevron-right" /></a>}
-                </p>
-              </div>
-            )}
+      <row>
+        <box className="xs-12 md-3">
+          <h2>Available Studies</h2>
+          <div className="StudiesNav">
+            {StudiesNav}
           </div>
-        </div>
+          {ActiveStudy}
+        </box>
 
-        {/* Right Side Column */}
-        <div className="Welcome-Column Welcome-Column-Wide">
-
-          {/* Searches */}
-          <div className="WelcomeContentSection">
-            <h2 className="WelcomeSectionHeader">Search the Data</h2>
+        <stack className="xs-12 md-9">
+          <box>
+            <h2>Search The Data</h2>
             <div className="SearchContainer">
-              {Searches.map(search => (
-                <a className={'SearchAlt' + (search.url ? '' : ' disabled')} title={search.title} key={search.name} href={search.url ? search.url : '#'}>
-                  <i className={'SearchIcon fa fa-' + search.icon} />
-                  <div className="SearchIconCaptionAlt">{search.name}</div>
-                </a>
-              ))}
+              {SearchesList}
             </div>
-          </div>
+          </box>
 
-          <div className="WelcomeContentSection">
-            <h2 className="WelcomeSectionHeader">Explore Example Analyses</h2>
+          <box>
+            <h2>Explore Example Analyses</h2>
             <div className="AnalysisToolsContainer">
-              {Analyses.map(({ name, url, image }) => {
-                let Tag = url ? 'a' : 'span';
-                return (
-                  <div className="AnalysisTool" key={name}>
-                    <Tag href={url} target="_blank">
-                      {image && <img className="AnalysisToolImage" src={image} />}
-                      {name && <div>{name}</div>}
-                    </Tag>
-                  </div>
-                );
-              })}
+              {ExampleAnalysesList}
             </div>
-          </div>
+          </box>
 
-          <div className="WelcomeContentSection">
-            <h2 className="WelcomeSectionHeader">Explore Example Searches</h2>
-            <div>
-              <ul className="ExampleSearches">
-                {ExampleSearches.map(({ text, url }) => (
-                  <li key={text}>
-                    <a href={url}>{text}</a>
-                  </li>
-                ))}
-              </ul>
-              <p>
-                <a href={`${webAppUrl}/showApplication.do?tab=public_strat`}><em>Explore more sample search strategies</em> &raquo;</a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+          <box>
+            <h2>Explore Example Searches</h2>
+            <ul className="ExampleSearches">
+              {ExampleSearchList}
+            </ul>
+            <p>
+              <a href={webAppUrl + '/showApplication.do?tab=public_strat'}>
+                <em>Explore more sample search strategies</em> &raquo;
+              </a>
+            </p>
 
-    </div>
-  )
+          </box>
+        </stack>
+      </row>
+
+    </grid>
+  );
 }
 
 Index.propTypes = {
