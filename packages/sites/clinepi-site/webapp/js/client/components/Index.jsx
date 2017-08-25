@@ -82,7 +82,7 @@ export default function Index({ displayName, webAppUrl }) {
     },
     {
       name: 'Growth Curves',
-      url: webAppUrl + '/images/analysis_slide.svg',
+      url: 'http://gates.clinepidb.org/ce.gates/app/record/participant/HBGDP_1076/ClinEpiDB',
       image: webAppUrl + '/images/growth-curves.png'
     }
   ];
