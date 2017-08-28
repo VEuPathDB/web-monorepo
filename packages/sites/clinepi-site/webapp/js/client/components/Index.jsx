@@ -68,17 +68,22 @@ export default function Index({ displayName, webAppUrl }) {
     {
       name: 'Histograms',
       url: webAppUrl + '/images/analysis_slide.svg',
-      image: webAppUrl + '/images/bar-graph.png'
+      image: webAppUrl + '/images/bar-graph.png',
+      disabled: true,
+      spawn: true
     },
     {
       name: 'Correlations',
       url: webAppUrl + '/images/analysis_slide.svg',
-      image: webAppUrl + '/images/scatter.png'
+      image: webAppUrl + '/images/scatter.png',
+      disabled: true,
+      spawn: true
     },
     {
       name: 'Distributions',
-      url: webAppUrl + '/images/analysis_slide.svg',
-      image: webAppUrl + '/images/distributions.png'
+      url: webAppUrl + '/images/distribution-tutorial.jpg',
+      image: webAppUrl + '/images/distributions.png',
+      spawn: true
     },
     {
       name: 'Growth Curves',
@@ -141,8 +146,9 @@ export default function Index({ displayName, webAppUrl }) {
   };
 
   const AnalysisToolLink = ({ analysis = {} }) => {
-    let { name, url, image } = analysis;
-    let status = url ? '' : ' dud';
+    let { name, url, image, disabled, spawn } = analysis;
+    let status = (url ? '' : ' dud') + (disabled ? ' disabled' : '');
+    let target = (spawn ? '_blank' : '');
     let icon = !image ? null : (
       <span className="AnalysisLink-Icon IconButton">
         <img src={image} />
@@ -150,7 +156,7 @@ export default function Index({ displayName, webAppUrl }) {
     );
     return (
       <stack className="xs-6 md-3 justify-center items-center">
-        <a title={name} href={url} className={'AnalysisLink' + status}>
+        <a title={name} href={url} className={'AnalysisLink' + status} target={target}>
           {icon}
           {name && <label className="AnalysisLink-Caption">{name}</label>}
         </a>

@@ -132,7 +132,7 @@ a.eupathdb-MenuItemText,
 
 /* New style */
 .HomePage {
-  /*nax-width: 1200px;*/
+  margin-bottom: 50px;
 }
 
 .HomePage h2 {
@@ -300,6 +300,7 @@ ul.ExampleSearches li {
   border-radius: 8px;
   transition: all 0.3s ease;
   border: none;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
   border-bottom: 4px solid #b4b4b4;
   border-left: 1px solid #b5b5b5;
   border-right: 1px solid #b5b5b5;
@@ -309,12 +310,18 @@ ul.ExampleSearches li {
   box-shadow:
     inset 0px -5px 30px rgba(100,170,230,0.7),
     0px 0px 5px rgba(0,0,0,0.1);
-  transform: scale(1.05);
+  transform: scale(0.98) translateY(4px);
+  border-bottom: 1px solid #b5b4b4;
+}
+
+.SearchLink, .SearchLink-Caption:hover {
+  color: #069;
+  text-decoration: none;
 }
 
 .SearchLink-Icon {
   font-size: 3.5rem;
-  padding: 12px 5px;
+  padding: 11px 5px;
 }
 
 .AnalysisLink-Icon {
@@ -341,6 +348,15 @@ ul.ExampleSearches li {
   align-self: center;
   margin: 10px auto;
   color: black;
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+}
+.SearchLink:hover, .AnalysisLink:hover {
+  text-decoration: none;
+}
+.SearchLink:hover .SearchLink-Caption, .AnalysisLink:hover .AnalysisLink-Caption {
+  color: #069;
+  text-shadow: 0px 0px 10px rgba(0, 96, 143, 0.25);
 }
 
 a.WelcomeBoxLink {
@@ -388,7 +404,7 @@ a.WelcomeBoxLink {
   margin: 0 5px;
 }
 
-.SearchAlt.disabled, .SearchLink.disabled {
+.SearchAlt.disabled, .SearchLink.disabled, .AnalysisLink.disabled {
   opacity: 0.3;
   cursor: not-allowed;
   color: #444;
