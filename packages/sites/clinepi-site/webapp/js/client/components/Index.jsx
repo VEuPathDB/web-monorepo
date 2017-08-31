@@ -232,8 +232,8 @@ export default function Index({ displayName, webAppUrl }) {
           {ActiveStudy}
         </box>
 
-        <stack className="xs-12 md-8 nowrap">
-          <box className="xs-0">
+        <stack className="xs-12 md-8 nowrap" id="RightColumn">
+          <box className="xs-auto">
             <h2>
               <Icon fa="search" />
               Search The Data
@@ -241,7 +241,7 @@ export default function Index({ displayName, webAppUrl }) {
             <row>{SearchesList}</row>
           </box>
 
-          <box className="xs-0">
+          <box className="xs-auto">
             <h2>
               <Icon fa="line-chart" />
               Explore Example Analyses
@@ -249,7 +249,7 @@ export default function Index({ displayName, webAppUrl }) {
             <row>{ExampleAnalysesList}</row>
           </box>
 
-          <box className="xs-0">
+          <box className="xs-auto">
             <h2>
               <Icon fa="binoculars" />
               Explore Example Searches

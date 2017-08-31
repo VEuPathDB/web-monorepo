@@ -42,8 +42,10 @@ const flag = 'acceptedClinEpiDisclaimer=true';
 class DisclaimerModal extends React.Component {
   constructor (props) {
     super(props);
-    const showModal = document.cookie.indexOf(flag) < 0;
-    this.state = { showModal };
+    this.state = {
+      showModal: document.cookie.indexOf(flag) < 0
+    };
+
     this.acceptDisclaimer = this.acceptDisclaimer.bind(this);
   }
 

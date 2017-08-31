@@ -170,6 +170,16 @@ a.eupathdb-MenuItemText,
   justify-content: flex-start;
 }
 
+/* Fix for IE11 weirdness */
+
+@media all and (-ms-high-contrast:none) {
+  #RightColumn {
+    margin-left: -40px;
+    position: relative;
+    left: 40px;
+  }
+}
+
 img.WelcomeBanner {
   margin: -10px auto -30px;
   width: 100%;
