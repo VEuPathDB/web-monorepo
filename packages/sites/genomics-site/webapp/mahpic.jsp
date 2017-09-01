@@ -249,7 +249,7 @@
  
  
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment HuA: Metabolomics of plasma samples from humans infected with <i>Plasmodium vivax</i> </a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment HuA: Metabolomics of plasma samples from humans infected with <i>P. vivax</i> </a> </h3> 
    <div class="wdk-toggle-content">
 
 	 <h4>Data Links</h4> 
@@ -560,7 +560,7 @@
   
   
      <div class="wdk-toggle" data-show="false">
-     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>M mulatta</i> exposed to pyrimethamine</a></h3>
+     <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>M. mulatta</i> exposed to pyrimethamine</a></h3>
      <div class="wdk-toggle-content">
 
        <h4>Data Links</h4> 
