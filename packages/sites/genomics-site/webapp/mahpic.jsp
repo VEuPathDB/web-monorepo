@@ -1101,6 +1101,88 @@
 
 
 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</a> </h3> 
+   <div class="wdk-toggle-content">
+
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksS05 table, #DataLinksS05 td, #DataLinksS05 th, #DataLinksS05 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksS05 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksS05 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksS05"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD005769" target="_blank">S05 Proteomics Results at PRIDE</a></b></td>
+             <td>N/A</td>
+           </tr>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoS05 table, #ExpInfoS05 td, #ExpInfoS05 th, #ExpInfoS05 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoS05 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoS05"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>The apicomplexan parasite <i>Plasmodium vivax</i> reportedly caused 13.8 million cases of vivax malaria in 2015. Much of the unique biology of this pathogen remains unknown. To expand our proteomics interrogation of the blood-stage interaction with its host animal model <i>Saimiri boliviensis</i>, we analyzed the proteome of infected host reticulocytes undergoing transition from the trophozoite to schizont stages. Two biological replicates analyzed using five database search engines identified 1923 <i>P. vivax</i> and 3188 <i>S. boliviensis</i> proteins.  Within the MaHPIC, this project is known as 'Integral Supporting Project 05 (S05)'.   This dataset was produced by Dave Anderson at SRI International. </td>
+           </tr>
+         </table>
+      </div>   
+	 
+<!--	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+
+ 
+     <br><br> 
+     <img align="middle" src="images/MaHPIC_E30_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E30_Timeline.png" target="_blank">View Larger Image</a><br>
+  -->
+        
+  </div>	
+  </div>  
+
+
 
   </div>
   </div>
