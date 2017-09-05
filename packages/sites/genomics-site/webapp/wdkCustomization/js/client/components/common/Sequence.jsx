@@ -17,7 +17,7 @@ function Sequence(props) {
 
   return (
     <pre>
-      {chunk(sequenceChars, 80).map(s => <div>{s}</div>)}
+      {chunk(sequenceChars, 80).map((seqChars, index) => <div key={index}>{seqChars}</div>)}
     </pre>
   );
 }
