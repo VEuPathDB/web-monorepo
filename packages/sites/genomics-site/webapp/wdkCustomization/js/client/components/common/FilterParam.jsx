@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { mapValues } from 'lodash';
 import { AttributeFilter } from 'wdk-client/Components';
 import LazyFilterService from 'wdk-client/LazyFilterService';
 
@@ -28,10 +27,12 @@ export class FilterParam extends Component {
     this.xhr.then(filterData => {
       this.filterService = new LazyFilterService({
         name: 'ngsSnp_strain_meta',
-        fields: mapValues(filterData.metadataSpec, (field, key) => Object.assign({
-          term: key,
-          display: key
-        }, field)),
+        fields: new Map(filterData.metadataSpec.map(function(field) {
+          return [
+            field.term,
+            Object.assign({ display: field.term }, field)
+          ];
+        })),
         data: filterData.values,
         questionName: 'GeneQuestions.GenesByNgsSnps',
         dependedValue,
