@@ -7,10 +7,6 @@ import { WdkViewController } from 'wdk-client/Controllers';
  * have duplicate functionality for a "limited" time. :)
  */
 export default class FastaConfigController extends WdkViewController {
-  getStoreName() {
-    return "FastaConfigStore";
-  }
-
   renderView() {
     return ( <h1>FASTA!</h1> );
   }

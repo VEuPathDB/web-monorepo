@@ -45,18 +45,27 @@ function addProjectIdPkValue(props) {
 /**
  * ViewController mixin that adds the primary key to the url if omitted.
  */
-function addProjectIdPkValueMixin(BaseController) {
-  return class ProjectIdFixer extends BaseController {
-    loadData(actionCreators, state, props, previousProps) {
+function addProjectIdPkValueWrapper(InnerComponent) {
+  return class ProjectIdFixer extends React.Component {
+    componentDidMount() {
+      this.removeProjectId(this.props);
+    }
+    componentWillReceiveProps(nextProps) {
+      this.removeProjectId(nextProps);
+    }
+    removeProjectId(props) {
       if (projectRegExp.test(props.location.pathname)) {
         // Remove projectId from the url. This is like a redirect.
         props.history.replace(props.location.pathname.replace(projectRegExp, ''));
       }
-      else {
-        // Add projectId back to props and call super's loadData
-        let newProps = addProjectIdPkValue(props);
-        super.loadData(actionCreators, state, newProps, previousProps);
-      }
+    }
+    render() {
+      // Add projectId back to props and call super's loadData
+      const props = projectRegExp.test(this.props.location.pathname) ?
+        this.props : addProjectIdPkValue(this.props);
+      return (
+        <InnerComponent {...props} />
+      )
     }
   }
 }
@@ -72,7 +81,7 @@ function addProjectIdPkValueMixin(BaseController) {
  * values separated by a '/'.
  */
 export function RecordController(WdkRecordController) {
-  return class ApiRecordController extends addProjectIdPkValueMixin(WdkRecordController) {
+  class ApiRecordController extends WdkRecordController {
     getActionCreators() {
       let wdkActionCreators = super.getActionCreators();
       return Object.assign({}, wdkActionCreators, {
@@ -82,10 +91,11 @@ export function RecordController(WdkRecordController) {
         }
       })
     }
-  };
+  }
+  return addProjectIdPkValueWrapper(ApiRecordController);
 }
 
-export const DownloadFormController = addProjectIdPkValueMixin;
+export const DownloadFormController = addProjectIdPkValueWrapper;
 export const RecordHeading = makeDynamicWrapper('RecordHeading');
 export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');

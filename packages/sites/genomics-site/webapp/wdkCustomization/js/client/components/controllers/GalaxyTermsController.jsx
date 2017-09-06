@@ -1,7 +1,7 @@
 import { get } from 'lodash';
-import { cloneElement } from 'react';
-import { WdkViewController } from 'wdk-client/Controllers';
+import { AbstractViewController } from 'wdk-client/Controllers';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
+import GalaxyTermsStore from '../../stores/GalaxyTermsStore';
 import { updateSecurityAgreementStatus } from '../../actioncreators/GalaxyTermsActionCreators';
 import GalaxyTerms from '../GalaxyTerms';
 import GalaxySignUp from '../GalaxySignUp';
@@ -10,15 +10,15 @@ let { updateUserPreference, showLoginForm } = UserActionCreators;
 
 export const SHOW_GALAXY_PAGE_PREFERENCE = 'show-galaxy-orientation-page';
 
-export default class GalaxyTermsController extends WdkViewController {
+export default class GalaxyTermsController extends AbstractViewController {
 
   constructor(...args) {
     super(...args);
     this.onGalaxyNavigate = this.onGalaxyNavigate.bind(this);
   }
 
-  getStoreName() {
-    return "GalaxyTermsStore";
+  getStoreClass() {
+    return GalaxyTermsStore;
   }
 
   getActionCreators() {
@@ -29,16 +29,16 @@ export default class GalaxyTermsController extends WdkViewController {
     };
   }
 
-  getStateFromStore(store) {
+  getStateFromStore() {
     return {
-      user: get(store.getState(), 'globalData.user'),
-      securityAgreementStatus: get(store.getState(), 'securityAgreementStatus', false),
-      webAppUrl: get(store.getState(), 'globalData.config.webAppUrl')
+      user: get(this.store.getState(), 'globalData.user'),
+      securityAgreementStatus: get(this.store.getState(), 'securityAgreementStatus', false),
+      webAppUrl: get(this.store.getState(), 'globalData.config.webAppUrl')
     };
   }
 
-  isRenderDataLoaded(state) {
-    return state.user != null;
+  isRenderDataLoaded() {
+    return this.state.user != null;
   }
 
   getTitle() {
@@ -50,14 +50,14 @@ export default class GalaxyTermsController extends WdkViewController {
     window.open('https://eupathdb.globusgenomics.org', '_blank');
   }
 
-  renderView(state, eventHandlers) {
+  renderView() {
     const ViewComponent = this.props.location.pathname.includes('/sign-up')
       ? GalaxySignUp
       : GalaxyTerms;
     return (
       <ViewComponent
-        {...state}
-        {...eventHandlers}
+        {...this.state}
+        {...this.eventHandlers}
         onGalaxyNavigate={this.onGalaxyNavigate}
       />
     );

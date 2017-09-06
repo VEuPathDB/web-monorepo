@@ -5,20 +5,16 @@ import { getSearchMenuCategoryTree } from 'ebrc-client/util/category.js';
 
 export default class QueryGridController extends WdkViewController {
 
-  getStoreName() {
-    return 'QueryGridViewStore';
-  }
-
-  isRenderDataLoaded(state) {
-    return state.globalData.ontology && state.globalData.recordClasses;
+  isRenderDataLoaded() {
+    return this.state.globalData.ontology && this.state.globalData.recordClasses;
   }
 
   getTitle() {
     return 'Query Grid';
   }
 
-  renderView(state) {
-    let grid = getSearchMenuCategoryTree(state.globalData.ontology, state.globalData.recordClasses);
+  renderView() {
+    let grid = getSearchMenuCategoryTree(this.state.globalData.ontology, this.state.globalData.recordClasses);
     return ( <QueryGrid grid={grid} /> );
   }
 
