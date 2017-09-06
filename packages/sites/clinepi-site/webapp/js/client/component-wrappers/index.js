@@ -26,19 +26,19 @@ const requiredLayoutSettingKeys = [
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
 
-    getStateFromStore(store) {
-      const displayName = get(store.getState(), 'globalData.siteConfig.displayName');
-      const webAppUrl = get(store.getState(), 'globalData.siteConfig.webAppUrl');
+    getStateFromStore() {
+      const displayName = get(this.store.getState(), 'globalData.siteConfig.displayName');
+      const webAppUrl = get(this.store.getState(), 'globalData.siteConfig.webAppUrl');
       return { displayName, webAppUrl };
     }
 
-    getTitle(state) {
-      return state.displayName;
+    getTitle() {
+      return this.state.displayName;
     }
 
-    renderView(state) {
+    renderView() {
       return (
-        <Index {...state} />
+        <Index {...this.state} />
       )
     }
 
