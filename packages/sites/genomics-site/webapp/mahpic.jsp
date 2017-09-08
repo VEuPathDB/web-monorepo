@@ -560,6 +560,80 @@
   </div>	
   </div>
 
+
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04R: Resequencing of Experiment 04 Functional Genomics</a></h3> 
+   <div class="wdk-toggle-content">
+
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE04R table, #DataLinksE04R td, #DataLinksE04R th, #DataLinksE04R tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE04R {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksE04R td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE04R"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_04/">E04 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE103507" target="_blank">E04R Results at NCBI's GEO</a><br></td>
+             <td>N/A</td>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE04R table, #ExpInfoE04R td, #ExpInfoE04R th, #ExpInfoE04R tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE04R {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE04R"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 04R - Experiment 04 Functional Genomics Resequencing - <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs primaquine and chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 04R'. This dataset was produced by Yerkes Genomics Core. E04R is a 'resequencing' of the same samples from E04.  Resequencing for E04R was processed with SOPs and technology consistent with that used for E23R, E24, and  E25 so that results from these experiments could be reliably compared.  E04R does not replace E04, these are distinct datasets. Relative to E04, E04R is only for MaHPIC Yerkes Sequencing and Functional Genomics results.  Only E04R is intended for comparison with E23R, E24, and E25.The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+	 
+     
+  </div>	
+  </div>
+
   
   
      <div class="wdk-toggle" data-show="false">
