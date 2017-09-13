@@ -132,7 +132,7 @@ export function GbrowseContext(props) {
 export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
   return (
-    <div className="eupathdb-GbrowseContext">
+    <div>
       <PbrowseLink url={url}/>
       <GbrowseImage url={url} includeImageMap={true} />
       <PbrowseLink url={url}/>

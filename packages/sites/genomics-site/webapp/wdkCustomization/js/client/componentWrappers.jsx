@@ -167,7 +167,7 @@ export function RecordAttributeSection(DefaultComponent) {
       return (
         <CollapsibleSection
           id={attribute.name}
-          className="eupathdb-GbrowseContext"
+          className="wdk-RecordAttributeSectionItem"
           style={{display: 'block', width: '100%' }}
           headerContent={attribute.displayName}
           isCollapsed={props.isCollapsed}

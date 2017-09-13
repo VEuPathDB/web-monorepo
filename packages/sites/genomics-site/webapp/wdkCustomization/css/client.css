@@ -340,14 +340,6 @@
   display: block;
 }
 
-.eupathdb-GbrowseContextHeader {
-  font-weight: bold;
-}
-
-.eupathdb-GbrowseContextContent {
-  padding-bottom: 1em;
-}
-
 .eupathdb-GbrowseImage {
   max-width: 100%;
 }
