@@ -129,14 +129,24 @@ function logAndAlert(error) {
   alert('Unable to complete the action.');
 }
 
+function isGuestUser() {
+  var store = window.ebrc.context.stores.get(Wdk.Stores.WdkStore);
+  var user = store && store.getState().globalData.user;
+  if (user == null) {
+    console.warn('Cannot find current user. Assuming user is guest.');
+    return false;
+  }
+  return user.isGuest;
+}
+
 function checkLogin() {
-  var user = window.ebrc.context.stores.WdkStore.getState().globalData.user;
-  if (user.isGuest) {
+  var isGuest = isGuestUser();
+  if (isGuest) {
     // Balloon is not used on gene pages
     if ('Balloon' in window) Balloon.prototype.hideTooltip(1);
     window.ebrc.context.dispatchAction(Wdk.ActionCreators.UserActionCreators.showLoginForm())
   }
-  return !user.isGuest;
+  return !isGuest;
 }
 
 function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, nextLinkText) {
@@ -149,8 +159,8 @@ function setSavedItemLink(projectId, sourceId, selectionSuffix, nextFunction, ne
 
 function getSaveRowLinks(projectId, sourceId) {
   var saveRowLinks;
-  var user = window.ebrc.context.stores.WdkStore.getState().globalData.user;
-  if (!user.isGuest) {
+  var isGuest = isGuestUser();
+  if (!isGuest) {
     // enable saving as favorite or to basket
     var favoriteLink = "<span id=\"" + sourceId + "_gbfavorite\"><button style=\"width: 105px\" type=\"button\" onclick=\"addGeneAsFavorite('" + projectId + "','" + sourceId + "');\">" + loadingFavTextLink + "</button></span>";
     var basketLink = "<span id=\"" + sourceId + "_gbbasket\"><button style=\"width: 105px\" type=\"button\" onclick=\"addGeneToBasket('" + projectId + "','" + sourceId + "');\">" + loadingBasketTextLink + "</button></span>";
