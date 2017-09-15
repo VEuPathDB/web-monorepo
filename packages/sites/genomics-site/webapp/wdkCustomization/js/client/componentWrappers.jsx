@@ -133,7 +133,7 @@ export function RecordTableSection(DefaultComponent) {
               }}
               onClick={stopPropagation}
               to={{
-                pathname: `search/dataset/DatasetsByReferenceName:${customName}/result`,
+                pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
                 query: {
                   record_class: props.record.recordClassName,
                   reference_name: props.table.name,
