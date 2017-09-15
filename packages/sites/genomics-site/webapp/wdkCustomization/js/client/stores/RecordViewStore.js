@@ -30,7 +30,7 @@ export default class ApiRecordViewStore extends RecordViewStore {
       case 'record-view/active-record-received':
         return handleRecordReceived(state);
       case 'record-view/section-visibility-changed':
-      case 'record-view/all-fields-visibility-changed':
+      case 'record-view/all-field-visibility-changed':
         setStateInStorage(storageItems.collapsedSections, state);
         return state;
       case 'record-view/navigation-visibility-changed':

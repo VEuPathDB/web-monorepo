@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import {once, debounce} from 'lodash';
 import { httpGet } from 'ebrc-client/util/http';
-import { adjustScrollOnLoad } from 'ebrc-client/util/domUtils';
 import $ from 'jquery';
 import { PureComponent } from 'wdk-client/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
@@ -218,7 +217,6 @@ export class GbrowseImage extends PureComponent {
     if (!this.props.includeImageMap) {
       img.removeAttribute('usemap');
       $container.append(img);
-      adjustScrollOnLoad(img);
     }
 
     else {
@@ -283,8 +281,6 @@ export class GbrowseImage extends PureComponent {
           tip: { height: 12, width: 18 }
         }
       });
-
-      adjustScrollOnLoad(img);
 
       this.mapCoordsCache = [];
       for (let area of map.querySelectorAll('area')) {
