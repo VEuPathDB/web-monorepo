@@ -57,7 +57,7 @@
   <h3>An Introduction to MaHPIC</h3>
 
   <div style="margin-left: 1em;">
-    <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC</a> is funded by the 
+    <a href="http://www.systemsbiology.emory.edu/index.html" target="_blank">MaHPIC</a> was established with funding from the 
     <a href="https://www.niaid.nih.gov/research/malaria-host-pathogen-interaction-center-mahpic" target="_blank">NIAID</a>
      (# HHSN272201200031C, September 2012 to September 2017) to characterize host-pathogen interactions during malaria infections of non-human primates (NHP)
     and clinical studies via collaborations with investigators in malaria endemic countries. 
