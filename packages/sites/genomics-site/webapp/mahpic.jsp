@@ -252,6 +252,35 @@
    <h3 class="wdk-toggle-name"> <a href="#">Experiment HuA: Metabolomics of plasma samples from humans infected with <i>P. vivax</i> </a> </h3> 
    <div class="wdk-toggle-content">
 
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoHuA table, #ExpInfoHuA td, #ExpInfoHuA th, #ExpInfoHuA tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoHuA {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoHuA"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Metabolomics of plasma samples from humans infected with <i>Plasmodium vivax</i></td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Patients with vivax malaria were enrolled in this study from June 2011 to December 2012 at the Fundacao de Medicina Tropical Doutor Heitor Vieira Dourado (FMT-HVD), an infectious disease referral center located in Manaus, Western Brazilian Amazon. This study, which required a 42-day follow-up period, was approved by the FMT-HVD Institutional Review Board and the Brazilian National Ethics Committee (CONEP) (IRB approval #: CAAE: 12516713.8.0000.0005). All protocols and documentation were reviewed and sample shipments approved by the Emory IRB. Male and female patients were eligible for inclusion if aged 6 months to 60 years, bodyweight &ge;5 kg, presenting a blood parasite density from 250 to 100,000 parasites/microliter and axillary temperature &ge;37.5 C or history of fever in the last 48 hours. Exclusion criteria were: use of antimalarials in the previous 30 days, refusal to be followed up for 42 days and any clinical complication. Patients received supervised treatment with 25 mg/kg of chloroquine (CQ) phosphate over a 3-day period (10 mg/kg on day 0 and 7.5 mg/kg on days 1 and 2). Primaquine (0.5 mg/kg per day for 7 days) was prescribed at the end of the 42-day follow-up period. Patients who vomited the first dose within 30 minutes after drug ingestion were re-treated with the same dose. Patients were evaluated on days 0, 1, 2, 3, 7, 14, 28 and 42 and, if they felt ill, at any time during the study period. Blood smear readings, complete blood counts, and diagnostic polymerase chain reaction (PCR) amplifications were performed at all time points. Three aliquots of 100 &mu;L of whole blood from the day of a recurrence were spotted onto filter paper for later analysis by high performance liquid chromatography (HPLC) to estimate the levels of CQ and desethylchloroquine (DCQ) as previously described. In this study, CQ-resistance with parasitological failure was defined as parasite recurrence in the presence of plasma concentrations of CQ and DSQ higher than 100 ng/mL and microsatellite analysis revealing the presence of the same clonal nature at diagnosis and recurrence. The CQ-sensitive control group consisted of patients with no parasitemia recurring during follow-up period. A group of 20 healthy individuals from Brazil was used as non-malarial control group. Samples were obtained in collaboration with Wuelton M. Monteiro (Universidade do Estado do Amazonas, Manaus, Amazonas, Brazil and Fundacao de Medicina Tropical Dr. Heitor Vieira Dourado, Manaus, Amazonas, Brazil) and Marcus V.G. Lacerda (Fundacao de Medicina Tropical Dr. Heitor Vieira Dourado, Manaus, Amazonas, Brazil and Instituto Leonidas & Maria Deane (FIOCRUZ), Manaus, Amazonas, Brazil).  Metabolomics results were produced by Dean Jones at Emory University.</td>
+           </tr>
+         </table>
+      </div>   
+     <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -288,34 +317,7 @@
            </tr>
            </table>
            </div>
-<br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoHuA table, #ExpInfoHuA td, #ExpInfoHuA th, #ExpInfoHuA tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoHuA {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoHuA"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Metabolomics of plasma samples from humans infected with <i>Plasmodium vivax</i></td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Patients with vivax malaria were enrolled in this study from June 2011 to December 2012 at the Fundacao de Medicina Tropical Doutor Heitor Vieira Dourado (FMT-HVD), an infectious disease referral center located in Manaus, Western Brazilian Amazon. This study, which required a 42-day follow-up period, was approved by the FMT-HVD Institutional Review Board and the Brazilian National Ethics Committee (CONEP) (IRB approval #: CAAE: 12516713.8.0000.0005). All protocols and documentation were reviewed and sample shipments approved by the Emory IRB. Male and female patients were eligible for inclusion if aged 6 months to 60 years, bodyweight &ge;5 kg, presenting a blood parasite density from 250 to 100,000 parasites/microliter and axillary temperature &ge;37.5 C or history of fever in the last 48 hours. Exclusion criteria were: use of antimalarials in the previous 30 days, refusal to be followed up for 42 days and any clinical complication. Patients received supervised treatment with 25 mg/kg of chloroquine (CQ) phosphate over a 3-day period (10 mg/kg on day 0 and 7.5 mg/kg on days 1 and 2). Primaquine (0.5 mg/kg per day for 7 days) was prescribed at the end of the 42-day follow-up period. Patients who vomited the first dose within 30 minutes after drug ingestion were re-treated with the same dose. Patients were evaluated on days 0, 1, 2, 3, 7, 14, 28 and 42 and, if they felt ill, at any time during the study period. Blood smear readings, complete blood counts, and diagnostic polymerase chain reaction (PCR) amplifications were performed at all time points. Three aliquots of 100 &mu;L of whole blood from the day of a recurrence were spotted onto filter paper for later analysis by high performance liquid chromatography (HPLC) to estimate the levels of CQ and desethylchloroquine (DCQ) as previously described. In this study, CQ-resistance with parasitological failure was defined as parasite recurrence in the presence of plasma concentrations of CQ and DSQ higher than 100 ng/mL and microsatellite analysis revealing the presence of the same clonal nature at diagnosis and recurrence. The CQ-sensitive control group consisted of patients with no parasitemia recurring during follow-up period. A group of 20 healthy individuals from Brazil was used as non-malarial control group. Samples were obtained in collaboration with Wuelton M. Monteiro (Universidade do Estado do Amazonas, Manaus, Amazonas, Brazil and Fundacao de Medicina Tropical Dr. Heitor Vieira Dourado, Manaus, Amazonas, Brazil) and Marcus V.G. Lacerda (Fundacao de Medicina Tropical Dr. Heitor Vieira Dourado, Manaus, Amazonas, Brazil and Instituto Leonidas & Maria Deane (FIOCRUZ), Manaus, Amazonas, Brazil).  Metabolomics results were produced by Dean Jones at Emory University.</td>
-           </tr>
-         </table>
-      </div>   
+
 	 
 <!--	   
 	 <h4>Publication(s)</h4>
@@ -339,7 +341,37 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 03: Measures of infection and recrudescence in <i>M. mulatta</i> infected with <i>P. coatneyi</i> Hackeri strain </a> </h3> 
    <div class="wdk-toggle-content">
-
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE03 table, #ExpInfoE03 td, #ExpInfoE03 th, #ExpInfoE03 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE03 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE03"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 03: <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain to produce and integrate clinical, hematological, parasitological, and omics measures of acute, recrudescent, and chronic infections.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately four years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug artemether was subcuratively administered to all subjects at the initial peak of infection, one out of the five macaques received four additional subcurative treatments for subsequent recrudescence peaks.  The experimental infection in one subject was ineffective but the macaque was followed-up for the same period of 100 days. The different clinical phases of the infection were clinically determined for each subject.  Blood-stage curative doses of artemether were administered to all subjects at the end of the study.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 03'. This dataset was produced by Alberto Moreno at Emory University. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+	 
+     <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -404,34 +436,6 @@
            </tr>
            </table>
            </div>
-<br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoE03 table, #ExpInfoE03 td, #ExpInfoE03 th, #ExpInfoE03 tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoE03 {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoE03"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 03: <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain to produce and integrate clinical, hematological, parasitological, and omics measures of acute, recrudescent, and chronic infections.</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately four years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug artemether was subcuratively administered to all subjects at the initial peak of infection, one out of the five macaques received four additional subcurative treatments for subsequent recrudescence peaks.  The experimental infection in one subject was ineffective but the macaque was followed-up for the same period of 100 days. The different clinical phases of the infection were clinically determined for each subject.  Blood-stage curative doses of artemether were administered to all subjects at the end of the study.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 03'. This dataset was produced by Alberto Moreno at Emory University. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
-           </tr>
-         </table>
-      </div>   
 	 
 <!--	   
 	 <h4>Publication(s)</h4>
@@ -454,7 +458,38 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: Measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
    <div class="wdk-toggle-content">
-
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo table, #ExpInfo td, #ExpInfo th, #ExpInfo tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 04: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites isolated at the Centers for Disease Control and Prevention from multiple Anopheles species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug Artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs Primaquine and Chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+      
+      <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -517,35 +552,7 @@
            </tr>
            </table>
            </div>
-<br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfo table, #ExpInfo td, #ExpInfo th, #ExpInfo tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfo {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfo"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 04: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse.</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites isolated at the Centers for Disease Control and Prevention from multiple Anopheles species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug Artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs Primaquine and Chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
-           </tr>
-         </table>
-      </div>   
-	 
+     <br><br>
 	   
 	 <h4>Publication(s)</h4>
 	    <div style="margin-left: 2.5em;">
@@ -564,7 +571,36 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 04R: Resequencing of Experiment 04 Functional Genomics</a></h3> 
    <div class="wdk-toggle-content">
-
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE04R table, #ExpInfoE04R td, #ExpInfoE04R th, #ExpInfoE04R tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE04R {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE04R"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 04R - Experiment 04 Functional Genomics Resequencing - <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs primaquine and chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 04R'. This dataset was produced by Yerkes Genomics Core. E04R is a 'resequencing' of the same samples from E04.  Resequencing for E04R was processed with SOPs and technology consistent with that used for E23R, E24, and  E25 so that results from these experiments could be reliably compared.  E04R does not replace E04, these are distinct datasets. Relative to E04, E04R is only for MaHPIC Yerkes Sequencing and Functional Genomics results.  Only E04R is intended for comparison with E23R, E24, and E25.The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+	 <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -602,33 +638,6 @@
            </table>
            </div>
 <br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoE04R table, #ExpInfoE04R td, #ExpInfoE04R th, #ExpInfoE04R tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoE04R {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoE04R"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 04R - Experiment 04 Functional Genomics Resequencing - <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for 100 days, and pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. The anti-malarial drug artemether was subcuratively administered selectively to several subjects during the primary parasitemia to suppress clinical complications and to all animals for curative treatment of blood-stage infections to allow detection of relapses. One subject was euthanized during the 100-day experimental period due to clinical complications. The anti-malarial drugs primaquine and chloroquine were administered to all remaining subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 04R'. This dataset was produced by Yerkes Genomics Core. E04R is a 'resequencing' of the same samples from E04.  Resequencing for E04R was processed with SOPs and technology consistent with that used for E23R, E24, and  E25 so that results from these experiments could be reliably compared.  E04R does not replace E04, these are distinct datasets. Relative to E04, E04R is only for MaHPIC Yerkes Sequencing and Functional Genomics results.  Only E04R is intended for comparison with E23R, E24, and E25.The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
-           </tr>
-         </table>
-      </div>   
 	 
      
   </div>	
@@ -639,7 +648,38 @@
      <div class="wdk-toggle" data-show="false">
      <h3 class="wdk-toggle-name"> <a href="#">Experiment 13: Control measures from uninfected <i>M. mulatta</i> exposed to pyrimethamine</a></h3>
      <div class="wdk-toggle-content">
-
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE13 table, #ExpInfoE13 td, #ExpInfoE13 th, #ExpInfoE13 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE13 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE13"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 13: Uninfected <i>Macaca mulatta</i> exposed to pyrimethamine to produce clinical, hematological, and omics control measures.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Uninfected, malaria-naive, male rhesus macaques (<i>Macaca mulatta</i>), approximately two years of age, were inoculated intravenously with a preparation of salivary gland material derived from non-infected <i>Anopheles dirus</i> and profiled for clinical, hematological, functional genomic, lipidomic, proteomic, and metabolomic measurements.  Samples were generated and analyzed to investigate the effects of the pharmacological intervention with the anti-malarial drug pyrimethamine on normal individuals.  The experiment was designed for 100 days plus a follow-up period, with pyrimethamine administered at three different time points to coincide with the predicted treatment days of experimentally infected rhesus macaques. Capillary blood samples were collected daily for the measurement of CBCs and reticulocytes.  Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood samples and bone marrow aspirates were collected at seven time points before and after three rounds of drug administration for functional genomic, proteomic, and lipidomic analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>  
+      
+      <br><br>
+     
        <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -694,36 +734,8 @@
            </tr>
            </table>
            </div>
-<br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoE13 table, #ExpInfoE13 td, #ExpInfoE13 th, #ExpInfoE13 tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoE13 {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoE13"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 13: Uninfected <i>Macaca mulatta</i> exposed to pyrimethamine to produce clinical, hematological, and omics control measures.</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Uninfected, malaria-naive, male rhesus macaques (<i>Macaca mulatta</i>), approximately two years of age, were inoculated intravenously with a preparation of salivary gland material derived from non-infected <i>Anopheles dirus</i> and profiled for clinical, hematological, functional genomic, lipidomic, proteomic, and metabolomic measurements.  Samples were generated and analyzed to investigate the effects of the pharmacological intervention with the anti-malarial drug pyrimethamine on normal individuals.  The experiment was designed for 100 days plus a follow-up period, with pyrimethamine administered at three different time points to coincide with the predicted treatment days of experimentally infected rhesus macaques. Capillary blood samples were collected daily for the measurement of CBCs and reticulocytes.  Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood samples and bone marrow aspirates were collected at seven time points before and after three rounds of drug administration for functional genomic, proteomic, and lipidomic analyses.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
-           </tr>
-         </table>
-      </div>   
-	 
-	   
+     <br><br>
+	  
 	 <h4>Publication(s)</h4>
 	    <div style="margin-left: 2.5em;">
         <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">  <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
@@ -740,7 +752,37 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 23: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain</a> </h3> 
    <div class="wdk-toggle-content">
-
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE23 table, #ExpInfoE23 td, #ExpInfoE23 th, #ExpInfoE23 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE23 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE23"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 23: <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately four years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for about 100 days, with pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. During the 100-day period subjects experienced periods of patent and sub-patent infection. The anti-malarial drug artemether was subcuratively administered to subjects after the initial peak of infection, if subjects were not able to self-resolve.  Blood-stage curative artemether was administered to all subjects following peak infection, and following a period of relapse infection.  All peaks were clinically determined for each subject.  The anti-malarial drugs primaquine and chloroquine were administered to all subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 23'.  This is an iteration of Experiment 04 with the same parasite-host combination and sampling and treatment adjustments made, and this is the first in a series of experiments that includes subsequent homologous (Experiment 24, <i>P. cynomolgi</i> B strain) and heterologous (Experiment 25, <i>P. cynomolgi</i> strain ceylonensis) challenges of individuals from the Experiment 23 cohort.  One subject was not included in subsequent experiments due to persistent behavioral issues that prevented sample collection.  This dataset was produced by Alberto Moreno at Emory University.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+	 <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -801,34 +843,7 @@
            </tr>    
            </table>
            </div>
-<br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoE23 table, #ExpInfoE23 td, #ExpInfoE23 th, #ExpInfoE23 tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoE23 {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoE23"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 23: <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses.</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately four years of age, were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. The experiment was designed for about 100 days, with pre- and post-100 day periods to prepare subjects and administer curative treatments respectively. During the 100-day period subjects experienced periods of patent and sub-patent infection. The anti-malarial drug artemether was subcuratively administered to subjects after the initial peak of infection, if subjects were not able to self-resolve.  Blood-stage curative artemether was administered to all subjects following peak infection, and following a period of relapse infection.  All peaks were clinically determined for each subject.  The anti-malarial drugs primaquine and chloroquine were administered to all subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at seven time points for functional genomic, proteomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 23'.  This is an iteration of Experiment 04 with the same parasite-host combination and sampling and treatment adjustments made, and this is the first in a series of experiments that includes subsequent homologous (Experiment 24, <i>P. cynomolgi</i> B strain) and heterologous (Experiment 25, <i>P. cynomolgi</i> strain ceylonensis) challenges of individuals from the Experiment 23 cohort.  One subject was not included in subsequent experiments due to persistent behavioral issues that prevented sample collection.  This dataset was produced by Alberto Moreno at Emory University.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
-           </tr>
-         </table>
-      </div>   
+     <br><br>
 	 
 <!--	   
 	 <h4>Publication(s)</h4>
@@ -850,7 +865,43 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 24: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain, in a homologous challenge</a> </h3> 
    <div class="wdk-toggle-content">
-
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE24 table, #ExpInfoE24 td, #ExpInfoE24 th, #ExpInfoE24 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE24 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE24"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 24: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain, in a homologous challenge, to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Male rhesus macaques (<i>Macaca mulatta</i>), cleared of previous infection with <i>P. cynomolgi</i> B strain via treatment with 
+                 the anti-malarial drugs artemether, chloroquine, and primaquine,  approximately five years of age, were inoculated intravenously 
+                 with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> 
+                 species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, 
+                 immunological, functional genomic, lipidomic, and metabolomic measurements. 
+                 The experiment included, 1 pre-inoculation day, 35 experiment days, and 10 post-experiment days. The anti-malarial drugs primaquine and 
+                 chloroquine were administered to all subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood samples were collected at three time points for functional genomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 24'.  This is the second in a series of experiments that includes infection of malaria-naive subjects (Experiment 23, <i>P. cynomolgi</i> B strain) and heterologous challenge (Experiment 25, <i>P. cynomolgi</i> strain ceylonensis) for the individuals from the same cohort.  This dataset was produced by Alberto Moreno at Emory University.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -902,39 +953,7 @@
            </table>
            </div>
 <br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoE24 table, #ExpInfoE24 td, #ExpInfoE24 th, #ExpInfoE24 tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoE24 {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoE24"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 24: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain, in a homologous challenge, to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Male rhesus macaques (<i>Macaca mulatta</i>), cleared of previous infection with <i>P. cynomolgi</i> B strain via treatment with 
-                 the anti-malarial drugs artemether, chloroquine, and primaquine,  approximately five years of age, were inoculated intravenously 
-                 with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> 
-                 species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, 
-                 immunological, functional genomic, lipidomic, and metabolomic measurements. 
-                 The experiment included, 1 pre-inoculation day, 35 experiment days, and 10 post-experiment days. The anti-malarial drugs primaquine and 
-                 chloroquine were administered to all subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood samples were collected at three time points for functional genomic, lipidomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 24'.  This is the second in a series of experiments that includes infection of malaria-naive subjects (Experiment 23, <i>P. cynomolgi</i> B strain) and heterologous challenge (Experiment 25, <i>P. cynomolgi</i> strain ceylonensis) for the individuals from the same cohort.  This dataset was produced by Alberto Moreno at Emory University.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
-           </tr>
-         </table>
-      </div>   
+	 
 	 
 <!--	   
 	 <h4>Publication(s)</h4>
@@ -955,7 +974,43 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 25: Iterative measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> strain ceylonensis, in a heterologous challenge </a> </h3> 
    <div class="wdk-toggle-content">
-
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE25 table, #ExpInfoE25 td, #ExpInfoE25 th, #ExpInfoE25 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE25 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE25"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 25: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> strain ceylonensis, in a heterologous challenge, to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses  </td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Male rhesus macaques (<i>Macaca mulatta</i>), cleared of previous infection with  <i>P. cynomolgi</i> B strain via treatment with 
+                 the anti-malarial drugs artemether, chloroquine, and primaquine,  approximately five years of age, were inoculated intravenously 
+                 with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> 
+                 species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, 
+                 immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. 
+                 The experiment included, 8 pre-inoculation days, 49 experiment days, and 4 post-experiment days. The anti-malarial drug artemether was subcuratively administered to subjects at the initial peak of infection, if subjects were not 
+                 able to self-resolve their parasitemias.  Peak infection was determined clinically for each subject.  The anti-malarial drugs primaquine and chloroquine were administered to all subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood samples were collected at five time points for functional genomic, lipidomic, proteomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 25'.  This is the third and final of a series of experiments that includes infection of malaria-naive subjects (Experiment 23, <i>P. cynomolgi</i> B strain) and homologous challenge (Experiment 24, <i>P. cynomolgi</i> B strain) of individuals from the same cohort.  This dataset was produced by Alberto Moreno at Emory University.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
+           </tr>
+         </table>
+      </div>   
+	 <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -1013,39 +1068,6 @@
            </table>
            </div>
 <br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoE25 table, #ExpInfoE25 td, #ExpInfoE25 th, #ExpInfoE25 tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoE25 {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoE25"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 25: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> strain ceylonensis, in a heterologous challenge, to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses  </td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Male rhesus macaques (<i>Macaca mulatta</i>), cleared of previous infection with  <i>P. cynomolgi</i> B strain via treatment with 
-                 the anti-malarial drugs artemether, chloroquine, and primaquine,  approximately five years of age, were inoculated intravenously 
-                 with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> 
-                 species (<i>An. dirus</i>, <i>An. gambiae</i>, and <i>An. stephensi</i>) and then profiled for clinical, hematological, parasitological, 
-                 immunological, functional genomic, lipidomic, proteomic, and metabolomic measurements. 
-                 The experiment included, 8 pre-inoculation days, 49 experiment days, and 4 post-experiment days. The anti-malarial drug artemether was subcuratively administered to subjects at the initial peak of infection, if subjects were not 
-                 able to self-resolve their parasitemias.  Peak infection was determined clinically for each subject.  The anti-malarial drugs primaquine and chloroquine were administered to all subjects at the end of the study for curative treatment of the liver and blood-stage infections, respectively.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood samples were collected at five time points for functional genomic, lipidomic, proteomic, and immunological analyses. Within the MaHPIC, this project is known as 'Experiment 25'.  This is the third and final of a series of experiments that includes infection of malaria-naive subjects (Experiment 23, <i>P. cynomolgi</i> B strain) and homologous challenge (Experiment 24, <i>P. cynomolgi</i> B strain) of individuals from the same cohort.  This dataset was produced by Alberto Moreno at Emory University.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
-           </tr>
-         </table>
-      </div>   
 	 
 <!--	   
 	 <h4>Publication(s)</h4>
@@ -1066,7 +1088,37 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 30: Measures of acute infection of <i>M. mulatta</i> infected with <i>P. knowlesi</i>, pilot collection of telemetry data</a> </h3> 
    <div class="wdk-toggle-content">
-
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE30 table, #ExpInfoE30 td, #ExpInfoE30 th, #ExpInfoE30 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE30 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE30"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 30: Pilot experiment for <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> strain PK1 (A+) to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Telemetry devices (DSI, model L21) with blood pressure sensors and ECG leads were surgically implanted in two malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age.  After a resting period of two weeks, physiological data that include activity, temperature, ECG, and blood pressure were continuously collected.  Two weeks after activation of the telemetry implant, the macaques were inoculated intravenously with cryopreserved salivary gland sporozoites. The cryopreserved batch of <i>P. knowlesi</i> sporozoites were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention from <i>Anopheles dirus</i>.  After experimental infection, the macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, metabolomic, telemetric and histopathological measurements. The experiment was designed for terminal necropsies on days 11 (RKy15) or 19 (Red16).  The anti-malarial drug artemether was subcuratively administered selectively to one subject (REd16) during the primary parasitemia to suppress clinical complications. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at five timepoints for functional genomic, proteomic, lipidomic, and immunological analyses. Physiological data were continuously captured via telemetry.  Within the MaHPIC, this project is known as 'Experiment 30'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
+           </tr>
+         </table>
+      </div>   
+	 <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -1127,34 +1179,6 @@
            </tr>
            </table>
            </div>
-<br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoE30 table, #ExpInfoE30 td, #ExpInfoE30 th, #ExpInfoE30 tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoE30 {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoE30"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Experiment 30: Pilot experiment for <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> strain PK1 (A+) to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection.</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>Telemetry devices (DSI, model L21) with blood pressure sensors and ECG leads were surgically implanted in two malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age.  After a resting period of two weeks, physiological data that include activity, temperature, ECG, and blood pressure were continuously collected.  Two weeks after activation of the telemetry implant, the macaques were inoculated intravenously with cryopreserved salivary gland sporozoites. The cryopreserved batch of <i>P. knowlesi</i> sporozoites were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention from <i>Anopheles dirus</i>.  After experimental infection, the macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, metabolomic, telemetric and histopathological measurements. The experiment was designed for terminal necropsies on days 11 (RKy15) or 19 (Red16).  The anti-malarial drug artemether was subcuratively administered selectively to one subject (REd16) during the primary parasitemia to suppress clinical complications. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at five timepoints for functional genomic, proteomic, lipidomic, and immunological analyses. Physiological data were continuously captured via telemetry.  Within the MaHPIC, this project is known as 'Experiment 30'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
-           </tr>
-         </table>
-      </div>   
 	 
 <!--	   
 	 <h4>Publication(s)</h4>
@@ -1178,7 +1202,36 @@
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</a> </h3> 
    <div class="wdk-toggle-content">
-
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoS05 table, #ExpInfoS05 td, #ExpInfoS05 th, #ExpInfoS05 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoS05 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoS05"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>The apicomplexan parasite <i>Plasmodium vivax</i> reportedly caused 13.8 million cases of vivax malaria in 2015. Much of the unique biology of this pathogen remains unknown. To expand our proteomics interrogation of the blood-stage interaction with its host animal model <i>Saimiri boliviensis</i>, we analyzed the proteome of infected host reticulocytes undergoing transition from the trophozoite to schizont stages. Two biological replicates analyzed using five database search engines identified 1923 <i>P. vivax</i> and 3188 <i>S. boliviensis</i> proteins.  Within the MaHPIC, this project is known as 'Integral Supporting Project 05 (S05)'.   This dataset was produced by Dave Anderson at SRI International. </td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
@@ -1211,33 +1264,7 @@
            </table>
            </div>
 <br><br>
-	 <h4>Experiment Information</h4>
-	 <div style="margin-left: 2.5em;">
-	 <style>
-           #ExpInfoS05 table, #ExpInfoS05 td, #ExpInfoS05 th, #ExpInfoS05 tr {
-           text-align : left;
-           padding-left: 7px;
-           padding-right: 7px;
-           padding-top: 5px;
-           padding-bottom: 5px;
-           border: 0px solid black;
-           }
-           #ExpInfoS05 {
-           margin-left : 5 em;
-           }
-           
-         </style> 
-         <table id="ExpInfoS05"> 
-           <tr>
-             <td><b>Title:</b></td>
-             <td>Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</td>
-           </tr>
-           <tr>
-             <td><b>Experiment Description:</b></td>
-             <td>The apicomplexan parasite <i>Plasmodium vivax</i> reportedly caused 13.8 million cases of vivax malaria in 2015. Much of the unique biology of this pathogen remains unknown. To expand our proteomics interrogation of the blood-stage interaction with its host animal model <i>Saimiri boliviensis</i>, we analyzed the proteome of infected host reticulocytes undergoing transition from the trophozoite to schizont stages. Two biological replicates analyzed using five database search engines identified 1923 <i>P. vivax</i> and 3188 <i>S. boliviensis</i> proteins.  Within the MaHPIC, this project is known as 'Integral Supporting Project 05 (S05)'.   This dataset was produced by Dave Anderson at SRI International. </td>
-           </tr>
-         </table>
-      </div>   
+	 
 	 
 	   
 	 <h4>Publication(s)</h4>
