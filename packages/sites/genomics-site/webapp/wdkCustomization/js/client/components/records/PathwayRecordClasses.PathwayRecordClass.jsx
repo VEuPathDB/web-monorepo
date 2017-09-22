@@ -1,10 +1,11 @@
 /* global ChemDoodle */
+import * as QueryString from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
-import {safeHtml} from 'wdk-client/ComponentUtils';
-import {loadChemDoodleWeb} from '../common/Compound';
+import { safeHtml } from 'wdk-client/ComponentUtils';
+import { loadChemDoodleWeb } from '../common/Compound';
 import { CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
 import { withStore, withActions } from 'ebrc-client/util/component';
 import * as Ontology from 'wdk-client/OntologyUtils';
@@ -516,7 +517,7 @@ const enhance = flow(
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
-    nodeList: state.globalData.location.query && state.globalData.location.query.node_list,
+    nodeList: QueryString.parse(state.globalData.location.search.slice(1)).node_list,
     experimentCategoryTree: getExperimentCategoryTree(state),
     generaCategoryTree: getGeneraCategoryTree(state)
   })),
