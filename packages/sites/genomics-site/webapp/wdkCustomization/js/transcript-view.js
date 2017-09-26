@@ -1,39 +1,35 @@
+/**
+ * Toggles the value (and user preference on the server) of the representative
+ * transcript checkbox, then refreshes the results pane to display updated
+ * results.
+ * 
+ * @param {any} checkboxElem
+ */
 function toggleRepresentativeTranscripts(checkboxElem) {
   var stepId = jQuery(checkboxElem).data('stepid');
   var checked = jQuery(checkboxElem).prop('checked');
+  var wdkService = window.Wdk.WdkService.getInstance(wdk.webappUrl() + "service");
 
   // swap value of representative transcript filter flag
-  var url = '/service/user/current/preference';
   jQuery.blockUI();
-  jQuery.ajax({
+  wdkService.updateCurrentUserPreference("project","representativeTranscriptOnly",(checked ? "true" : "false"))
+    .then(function(data) {
 
-    // properties defining data sent, how and where
-    url: wdk.webappUrl(url),
-    method: 'PATCH',
-    contentType: 'application/json',
-    data: JSON.stringify({"representativeTranscriptOnly": (checked ? "true" : "false")}),
-
-    // properties defining data expected
-    success: function(data) {
       // no actual data should be returned in success case
       // reload the current tab (should still be transcript view)
       var currentIndex = $("#Summary_Views").tabs("option", "active");
 
       // need to ensure this element corresponds to the right #Summary_Views (basket OR strategy step)
       $(checkboxElem).closest("#Summary_Views").tabs("load", currentIndex, { skipCache: true });
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-      jQuery(checkboxElem).prop('checked', !checked);
-      alert("Error: Could not complete this action.  Please try again later.\n" + textStatus + "\n" + errorThrown);
-    },
-    complete: function () {
-      // regardless of result, unblock UI
+
       jQuery.unblockUI();
-    }
-  });
-
+    })
+    .catch(function(error) {
+      jQuery(checkboxElem).prop('checked', !checked);
+      alert("Error: Could not complete this action.  Please try again later.\n" + error);
+      jQuery.unblockUI();
+    });
 }
-
 
 $(document).on('wdk-results-loaded', function() {
 
