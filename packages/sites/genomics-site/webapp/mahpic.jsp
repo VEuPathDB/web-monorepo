@@ -426,7 +426,8 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000599" target="_blank">E03 Metabolomics Results at Metabolomics Workbench </a></b></td>    
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000599" target="_blank">E03 Metabolomics Results at Metabolomics Workbench </a><br>
+                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS518" target="_blank">E03 Metabolomics Results at MetaboLights</a></b></td>    
              <td>N/A</td>
            </tr>
            <tr>
@@ -527,7 +528,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E04 Proteomics at EBI's PRIDE</a>-->
+             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E04 + E18 Proteomics Results at PRIDE</a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -818,7 +819,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E23 Proteomics at EBI's PRIDE</a>-->
+             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007775" target="_blank">E23 Proteomics Results at PRIDE</a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -932,7 +933,8 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917">MaHPIC Umbrella BioProject</b></a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104101">o	E24 Expression Results at NCBI's GEO</a></td></td>  
              <td>N/A</td>
            </tr>
            <tr>
