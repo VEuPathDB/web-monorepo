@@ -592,7 +592,7 @@
          <table id="ExpInfoE04R"> 
            <tr>
              <td><b>Title:</b></td>
-             <td>Experiment 04R - Experiment 04 Functional Genomics Resequencing - <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse</td>
+             <td>Experiment 04R: Experiment 04 Functional Genomics Resequencing - <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce clinical and omics measures of infection and relapse</td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
@@ -1000,7 +1000,7 @@
          <table id="ExpInfoE23R"> 
            <tr>
              <td><b>Title:</b></td>
-             <td>Experiment 23R: Experiment 23 Functional Genomics Resequencing E23R: <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses.</td>
+             <td>Experiment 23R: Experiment 23 Functional Genomics Resequencing - <i>Macaca mulatta</i> infected with <i>Plasmodium cynomolgi</i> B strain to produce and integrate clinical, hematological, parasitological, and omics measures of acute primary infection and relapses.</td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
