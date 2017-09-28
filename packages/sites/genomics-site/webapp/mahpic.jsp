@@ -1041,7 +1041,7 @@
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
              <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
-                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104223" target="_blank">E23R Expression Results at NCBI's GEO</a></b></tr>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE104223" target="_blank">E23R Expression Results at NCBI's GEO</a></b></td>
              <td>N/A</td>
            </tr>
            </table>
