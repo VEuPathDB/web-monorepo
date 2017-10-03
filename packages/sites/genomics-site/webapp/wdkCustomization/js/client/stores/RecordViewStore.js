@@ -109,7 +109,7 @@ function mergeTableState(state) {
 function pruneCategories(nextState) {
   let { record, categoryTree } = nextState;
   if (record.recordClassName === 'GeneRecordClasses.GeneRecordClass') {
-    categoryTree = pruneCategoriesByMetaTable(removeProteinCategories(categoryTree, record), record);
+    categoryTree = pruneCategoryBasedOnShowStrains(pruneCategoriesByMetaTable(removeProteinCategories(categoryTree, record), record), record);
     nextState = Object.assign({}, nextState, { categoryTree });
   }
   return nextState;
@@ -126,6 +126,30 @@ function removeProteinCategories(categoryTree, record) {
   }
   return categoryTree;
 }
+
+
+/** Remove Strains based on value of show_strains attribute */
+function pruneCategoryBasedOnShowStrains(categoryTree, record) {
+ // Keep tree as-is if record is not protein coding, or if show_strains is true
+ if (
+     //  record.attributes.gene_type !== 'protein coding' ||
+   record.attributes.show_strains === 'Yes'
+ ) return categoryTree;
+
+ // Remove the table from the category tree
+ return tree.pruneDescendantNodes(individual => {
+   // keep everything that isn't the table we care about
+ return (
+       cat.getTargetType(individual) !== 'table' ||
+       cat.getRefName(individual) !== 'Strains' 
+     );
+
+ //if (cat.getTargetType(individual) !== 'table') return true;
+ //if (cat.getRefName(individual) !== 'Strains') return true;
+ //  return false;
+ }, categoryTree);
+}
+
 
 /** Use MetaTable to determine if a leaf is appropriate for record instance */
 function pruneCategoriesByMetaTable(categoryTree, record) {
