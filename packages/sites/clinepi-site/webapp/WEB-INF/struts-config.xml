@@ -11,15 +11,7 @@
     <form-bean name="downloadConfigForm" type="org.gusdb.wdk.controller.form.DownloadConfigForm"/>
     <form-bean name="booleanExpressionForm" type="org.gusdb.wdk.controller.form.BooleanExpressionForm"/>
     <form-bean name="loginForm" type="org.gusdb.wdk.controller.form.LoginForm"/>
-    <form-bean name="registerForm" type="org.gusdb.wdk.controller.form.RegisterForm"/>
     <form-bean name="logoutForm" type="org.gusdb.wdk.controller.form.LogoutForm"/>
-    <form-bean name="profileForm" type="org.gusdb.wdk.controller.form.ProfileForm"/>
-    <form-bean name="passwordForm" type="org.gusdb.wdk.controller.form.PasswordForm"/>
-    <form-bean name="resetPasswordForm" type="org.gusdb.wdk.controller.form.ResetPasswordForm"/>
-    <form-bean name="showProfileForm" type="org.gusdb.wdk.controller.form.ShowProfileForm"/>
-    <form-bean name="showRegisterForm" type="org.gusdb.wdk.controller.form.ShowRegisterForm"/>
-    <form-bean name="showPasswordForm" type="org.gusdb.wdk.controller.form.ShowPasswordForm"/>
-    <form-bean name="showResetPasswordForm" type="org.gusdb.wdk.controller.form.ShowResetPasswordForm"/>
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.form.RenameStepForm"/>
     <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.form.RenameStrategyForm"/>
     <form-bean name="wizardForm" type="org.gusdb.wdk.controller.form.WizardForm"/>
@@ -82,7 +74,7 @@
         parameter="org.gusdb.wdk.controller.action.user.ShowLoginAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="success" path="/wdkCustomization/jsp/Login.jsp"/>
-      <forward name="show_profile" path="showProfile.do" redirect="true"/>
+      <forward name="show_profile" path="/app/user/profile" redirect="true"/>
     </action>
     <action path="/processLogin"
         parameter="org.gusdb.wdk.controller.action.user.ProcessLoginAction"
@@ -100,61 +92,10 @@
         parameter="org.gusdb.wdk.controller.action.services.LoginCookieValidationService"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
-    <action path="/showRegister"
-        parameter="org.gusdb.wdk.controller.action.user.ShowRegisterAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/wdkCustomization/jsp/Register.jsp"/>
-      <forward name="show_profile" path="/showProfile.do" redirect="true"/>
-    </action>
-    <action path="/processRegister"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessRegisterAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
-        name="registerForm">
-      <forward name="input" path="/wdkCustomization/jsp/Register.jsp" redirect="false"/>
-      <forward name="success" path="/showLogin.do" redirect="true"/>
-      <forward name="profile" path="/showProfile.do" redirect="true"/>
-    </action>
-    <action path="/showProfile"
-        parameter="org.gusdb.wdk.controller.action.standard.PrivatePageAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/wdkCustomization/jsp/Profile.jsp"/>
-    </action>
-    <action path="/processProfile"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessProfileAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
-        name="profileForm">
-      <forward name="input" path="/wdkCustomization/jsp/Profile.jsp"/>
-      <forward name="success" path="/wdkCustomization/jsp/Profile.jsp"/>
-    </action>
+   
     <action path="/savePreference"
         parameter="org.gusdb.wdk.controller.action.user.ProcessSavePreferenceAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-    </action>
-    <action path="/showPassword"
-        parameter="org.gusdb.wdk.controller.action.user.ShowPasswordAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/wdkCustomization/jsp/Password.jsp"/>
-    </action>
-    <action path="/processPassword"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessPasswordAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
-        name="passwordForm">
-      <forward name="input" path="/showPassword.do" redirect="true"/>      
-      <forward name="success" path="/wdkCustomization/jsp/Password.jsp"/>
-    </action>
-    <action path="/showResetPassword"
-        parameter="org.gusdb.wdk.controller.action.user.ShowResetPasswordAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
-        name="showResetPasswordForm">
-      <forward name="success" path="/wdkCustomization/jsp/Resetpwd.jsp"/>
-      <forward name="show_password" path="/showPassword.do" redirect="true"/>
-    </action>
-    <action path="/processResetPassword"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessResetPasswordAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
-        name="resetPasswordForm">
-      <forward name="success" path="/wdkCustomization/jsp/Resetpwd.jsp"/>
-      <forward name="show_password" path="/showPassword.do" redirect="true"/>
     </action>
 
     <action
