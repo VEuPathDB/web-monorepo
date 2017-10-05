@@ -93,11 +93,6 @@
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
    
-    <action path="/savePreference"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessSavePreferenceAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-    </action>
-
     <action
         path="/uploadSample"
         parameter="org.gusdb.wdk.controller.action.UploadSampleAction"
