@@ -49,12 +49,12 @@ export default {
     // Attempt to get the relative observations layout settings and determine
     // if the active group should use the layout. If not, use the default layout.
 
-    if (!(layoutProperyKey in props.question.properties)) {
+    if (!(layoutProperyKey in props.wizardState.question.properties)) {
       return <ActiveGroup {...props}/>
     }
 
     try {
-      const relatedObservationsLayoutSettings = JSON.parse(props.question.properties[layoutProperyKey]);
+      const relatedObservationsLayoutSettings = JSON.parse(props.wizardState.question.properties[layoutProperyKey]);
 
       const missingKeys = requiredLayoutSettingKeys.filter(key =>
         !(key in relatedObservationsLayoutSettings));
@@ -64,7 +64,7 @@ export default {
           layoutProperyKey + " object: " + missingKeys.join(', '));
       }
 
-      if (relatedObservationsLayoutSettings[relatedObservationsGroupNameKey] !== props.activeGroup.name) {
+      if (relatedObservationsLayoutSettings[relatedObservationsGroupNameKey] !== props.wizardState.activeGroup.name) {
         return (
           <ActiveGroup {...props} />
         );
@@ -97,11 +97,11 @@ export default {
 
     getEventHandlers() {
       return Object.assign(super.getEventHandlers(), {
-        onUseRangeForNumRelativeEventsChange: this.onUseRangeForNumRelativeEventsChange
+        setUseRangeForNumRelativeEvents: this.setUseRangeForNumRelativeEvents
       });
     }
 
-    onUseRangeForNumRelativeEventsChange(useRangeForNumRelativeEvents) {
+    setUseRangeForNumRelativeEvents(useRangeForNumRelativeEvents) {
       this.setState({ useRangeForNumRelativeEvents });
     }
   }

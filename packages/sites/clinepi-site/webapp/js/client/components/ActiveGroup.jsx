@@ -3,7 +3,6 @@
 
 import React from 'react';
 import Param from 'ebrc-client/components/Param';
-// import NumberParam from 'ebrc-client/components/NumberParam';
 
 // Property keys
 export const observationsGroupNameKey = "observationsGroupName";
@@ -28,27 +27,8 @@ const Padded = (props) => (
 const FakeStep = (props) => (
   <strong>{props.children}</strong>
 )
-// const FakeStep = (props) => (
-//   <div style={{
-//     padding: '.5em',
-//     margin: '0 .5em',
-//     background: '#eee',
-//     borderRadius: '4px',
-//     border: '1px solid #444',
-//     color: '#444',
-//     fontSize: '0.7em',
-//     fontWeight: 'bold',
-//     boxShadow: 'rgba(0, 0, 0, 0.6) 1px 1px 3px',
-//     maxWidth: '9em',
-//     display: 'inline-block',
-//     textAlign: 'center'
-//   }}>
-//     {props.children}
-//   </div>
-// )
 
-
-/** 
+/**
  * Layout for related observations.
  */
 function RelativeVisitsLayout(props) {
@@ -56,11 +36,6 @@ function RelativeVisitsLayout(props) {
 
   const paramElements = new Map(props.parameters.map(param =>
     [ param.name, paramRenderer(param, props)]))
-
-  // const eventString = (
-  //   props.useRangeForNumRelativeEvents == false &&
-  //   JSON.parse(props.paramValues[numRelativeEventsParamName]).min == 1
-  // ) ? 'event' : 'events';
 
   return (
     <div>
@@ -89,64 +64,15 @@ function RelativeVisitsLayout(props) {
 }
 
 function paramRenderer(param, props) {
-  // const numRelativeEventsParamName =
-  //   props.relatedObservationsLayoutSettings[numRelativeEventsParamNameKey];
   const value = props.paramValues[param.name];
   const uiState = props.paramUIState[param.name];
-  // const selectValues = {
-  //   between: 'between',
-  //   atLeast: 'at-least'
-  // }
-
-  // if (param.name === numRelativeEventsParamName) {
-  //   return [
-  //     <Padded first>&nbsp;</Padded>,
-  //     (
-  //       <select
-  //         value={props.useRangeForNumRelativeEvents ? selectValues.between : selectValues.atLeast}
-  //         onChange={event => {
-  //           if (event.target.value === selectValues.atLeast) {
-  //             const parsedValue = JSON.parse(value);
-  //             props.onParamValueChange(
-  //               param,
-  //               JSON.stringify({ min: parsedValue.min, max: param.max })
-  //             );
-  //           }
-  //           props.onUseRangeForNumRelativeEventsChange(event.target.value === selectValues.between);
-  //         }}
-  //       >
-  //         <option value={selectValues.between}>between</option>
-  //         <option value={selectValues.atLeast}>at least</option>
-  //       </select>
-  //     ),
-  //     <Padded first>&nbsp;</Padded>,
-  //     props.useRangeForNumRelativeEvents ? (
-  //       <Param
-  //         param={param}
-  //         value={value}
-  //         uiState={uiState}
-  //         onActiveOntologyTermChange={props.onActiveOntologyTermChange}
-  //         onParamValueChange={props.onParamValueChange}
-  //       />
-  //     ) : (
-  //       <NumberParam
-  //         param={param}
-  //         value={JSON.parse(value).min}
-  //         uiState={uiState}
-  //         onActiveOntologyTermChange={props.onActiveOntologyTermChange}
-  //         onParamValueChange={(param, newValue) => props.onParamValueChange(
-  //           param,
-  //           JSON.stringify({ min: Number(newValue), max: param.max })
-  //         )}/>
-  //     )]
-  // }
   return (
     <Param
       param={param}
       value={value}
       uiState={uiState}
-      onActiveOntologyTermChange={props.onActiveOntologyTermChange}
-      onParamValueChange={props.onParamValueChange}
+      onActiveOntologyTermChange={props.setActiveOntologyTerm}
+      onParamValueChange={props.setParamValue}
     />
   );
 }
@@ -162,7 +88,7 @@ function paramRenderer(param, props) {
  */
 export default function ClinEpiActiveGroup(props) {
   const {
-    question,
+    wizardState: { question },
     relatedObservationsLayoutSettings: {
       observationsGroupName,
       useRelativeObservationsParamName,
@@ -174,29 +100,33 @@ export default function ClinEpiActiveGroup(props) {
       Object.assign({}, param, { isVisible: false }))
   });
 
+  const modifiedWizardState = Object.assign({}, props.wizardState, {
+    question: modifiedQuestion
+  });
+
   const useRelativeVisitsParam = question.parameters.find(p =>
     p.name === useRelativeObservationsParamName);
 
-  const useRelativeVisits = props.paramValues[useRelativeObservationsParamName] === 'Yes';
+  const useRelativeVisits = props.wizardState.paramValues[useRelativeObservationsParamName] === 'Yes';
 
   const useRelativeVisitsElement = (
     <input
       type="checkbox"
       checked={useRelativeVisits}
       onChange={e => {
-        props.onParamValueChange(useRelativeVisitsParam, e.target.checked ? 'Yes' : 'No');
+        props.eventHandlers.setParamValue(useRelativeVisitsParam, e.target.checked ? 'Yes' : 'No');
       }}
     />
   );
 
-  const eventsGroup = props.question.groups.find(group => group.name === observationsGroupName);
+  const eventsGroup = props.wizardState.question.groups.find(group => group.name === observationsGroupName);
   const eventsIsDefault = eventsGroup.parameters.every(paramName =>
-    props.question.parameters.find(p => p.name === paramName).defaultValue === props.paramValues[paramName])
+    props.wizardState.question.parameters.find(p => p.name === paramName).defaultValue === props.wizardState.paramValues[paramName])
 
   const warningMessage = eventsIsDefault && (
     <div className="RelativeVisitsMessage RelativeVisitsMessage__warning">
       Before using
-      <FakeStep> {props.activeGroup.displayName}</FakeStep>,
+      <FakeStep> {props.wizardState.activeGroup.displayName}</FakeStep>,
       please first specify observations in the previous
       <FakeStep> {eventsGroup.displayName} </FakeStep>
       filter.
@@ -205,22 +135,22 @@ export default function ClinEpiActiveGroup(props) {
   const message = !eventsIsDefault && (
     <div className="RelativeVisitsMessage">
       <label>
-        {useRelativeVisitsElement} Enable the advanced <FakeStep>{props.activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{props.activeGroup.displayName}</FakeStep>.
+        {useRelativeVisitsElement} Enable the advanced <FakeStep>{props.wizardState.activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{props.wizardState.activeGroup.displayName}</FakeStep>.
       </label>
     </div>
   );
 
   const layout = (
     <RelativeVisitsLayout
-      group={props.activeGroup}
+      group={props.wizardState.activeGroup}
       eventsGroup={eventsGroup}
-      parameters={props.question.parameters}
-      paramValues={props.paramValues}
-      paramUIState={props.paramUIState}
-      onActiveOntologyTermChange={props.onActiveOntologyTermChange}
-      onParamValueChange={props.onParamValueChange}
+      parameters={props.wizardState.question.parameters}
+      paramValues={props.wizardState.paramValues}
+      paramUIState={props.wizardState.paramUIState}
+      setActiveOntologyTerm={props.eventHandlers.setActiveOntologyTerm}
+      setParamValue={props.eventHandlers.setParamValue}
       useRangeForNumRelativeEvents={props.useRangeForNumRelativeEvents}
-      onUseRangeForNumRelativeEventsChange={props.onUseRangeForNumRelativeEventsChange}
+      setUseRangeForNumRelativeEvents={props.eventHandlers.setUseRangeForNumRelativeEvents}
       relatedObservationsLayoutSettings={props.relatedObservationsLayoutSettings}
     />
   );
@@ -233,7 +163,7 @@ export default function ClinEpiActiveGroup(props) {
       <div className={wrapperClassName}>
         {warningMessage}
         <div className="RelativeVisitsContainer">
-          <props.DefaultComponent {...props} question={modifiedQuestion} />
+          <props.DefaultComponent {...props} wizardState={modifiedWizardState} />
           {layout}
           {!useRelativeVisits && overlay}
         </div>
@@ -243,7 +173,7 @@ export default function ClinEpiActiveGroup(props) {
 
   return (
     <div className={wrapperClassName}>
-      <props.DefaultComponent {...props} question={modifiedQuestion} />
+      <props.DefaultComponent {...props} wizardState={modifiedWizardState} />
       {message}
       <div className="RelativeVisitsContainer">
         {layout}
