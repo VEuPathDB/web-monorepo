@@ -53,6 +53,8 @@
  
   <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#use">Data Access Policy</a></li>
 
+  <li><a href="/documents/EuPathDB_Website_Privacy_Policy.shtml">Website Privacy Policy</a></li>
+
 
 
 <br/><span class="smallTitle">------ Who are we?</span>

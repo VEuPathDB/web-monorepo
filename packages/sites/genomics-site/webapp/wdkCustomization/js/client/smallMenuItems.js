@@ -60,6 +60,10 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
           webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#use'
         },
         {
+          text: 'Website Privacy Policy',
+          url: '/documents/EuPathDB_Website_Privacy_Policy.shtml'
+        },
+        {
           liClassName: 'eupathdb-SmallMenuDivider',
           text: '------ Who are we?'
         },
