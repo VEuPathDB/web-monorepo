@@ -13,7 +13,7 @@
 
   <c:set var="ftype" value="Error Page"/>
   <c:if test="${!empty param.ftype}">
-    <c:set var="ftype" value="${param.ftype} Files"/>
+    <c:set var="ftype" value="${param.ftype}"/>
   </c:if>
 
   <jsp:output doctype-root-element="html"
