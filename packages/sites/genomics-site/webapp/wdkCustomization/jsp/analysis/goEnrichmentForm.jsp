@@ -79,6 +79,32 @@
                   </c:forEach>
                 </td>
               </tr>
+	      <tr>
+                <td>
+                  <label>
+                    <span style="font-weight:bold">Limit to GO Slim terms</span>
+                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
+                        title="${fn:escapeXml(viewModel.goSubsetParamHelp)}"/>
+                  </label>
+                </td>
+                <td>
+                  <c:forEach var="item" items="${viewModel.goSubsetOptions}">
+                    <c:choose>
+                      <c:when test="${item.display eq 'Yes'}">
+                        <label>
+                          <input checked="checked" type="radio" name="goSubset" value="${item.term}"/> ${item.display}
+                        </label>
+                      </c:when>
+                      <c:otherwise>
+                        <label>
+                          <input type="radio" name="goSubset" value="${item.term}"/> ${item.display}
+                        </label>
+                      </c:otherwise>
+                    </c:choose>
+                    <br/>
+                  </c:forEach>
+                </td>
+	      </tr>
               <tr>
                 <td>
                   <label>
