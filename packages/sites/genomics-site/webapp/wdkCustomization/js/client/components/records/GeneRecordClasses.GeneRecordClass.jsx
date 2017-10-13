@@ -181,6 +181,9 @@ export function RecordTable(props) {
     case 'SNPsAlignment':
       return <SNPsAlignment {...props} />
 
+    case 'RodMalPhenotype':
+      return <RodMalPhenotypeTable {...props} />
+
     default:
       return <props.DefaultComponent {...props} />
   }
@@ -196,6 +199,29 @@ function SNPsAlignment(props) {
       organism={organism_full} />
   )
 }
+
+function RodMalPhenotypeTable(props) {
+  return (
+    <props.DefaultComponent
+      {...props}
+      childRow={childProps => <RodMalPhenotypeTableChildRow {...childProps} />}
+    />
+  );
+}
+
+const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(props) {
+  let {
+    phenotype
+  } = props.rowData;
+  return (
+    <div>
+    <b>Phenotype</b>:
+    {phenotype == null ? null : phenotype}
+    </div>
+  )
+});
+
+
 
 function DatasetGraphTable(props) {
   let { dataTableName, facetMetadataTableName, contXAxisMetadataTableName, record, recordClass, DefaultComponent } = props;
