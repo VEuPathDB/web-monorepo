@@ -48,7 +48,7 @@ export default function Index({ displayName, webAppUrl }) {
     {
       name: 'Participants',
       icon: 'male',
-      url: webAppUrl + '/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled',
+      url: webAppUrl + '/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByTwoVisitsVisits_gems',
       title: 'Individuals for whom observations are available.  Depending on the nature of the study, this may include patients, caregivers, study subjects, etc'
     },
     {
