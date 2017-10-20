@@ -11,14 +11,9 @@
   </context-param>
 
   <context-param>
-    <param-name>wdkAlwaysGoToSummary_param</param-name>
-    <param-value>yes</param-value>
-  </context-param>
-
-  <!-- For internal WSF support -->
-  <context-param>
-    <param-name>wsfConfigDir_param</param-name>
-    <param-value>/WEB-INF/wdk-model/config/</param-value>
+    <!-- Service endpoint must match url-pattern for WDK service below -->
+    <param-name>wdkServiceEndpoint</param-name>
+    <param-value>/service</param-value>
   </context-param>
 
   <listener>
