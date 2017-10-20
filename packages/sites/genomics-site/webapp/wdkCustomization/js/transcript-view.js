@@ -8,7 +8,7 @@
 function toggleRepresentativeTranscripts(checkboxElem) {
   var stepId = jQuery(checkboxElem).data('stepid');
   var checked = jQuery(checkboxElem).prop('checked');
-  var wdkService = window.Wdk.WdkService.getInstance(wdk.webappUrl() + "service");
+  var wdkService = Wdk.WdkService.getInstance(wdk.webappUrl() + "service");
 
   // swap value of representative transcript filter flag
   jQuery.blockUI();
