@@ -4,10 +4,9 @@ import {pick} from 'lodash';
 import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip, Icon} from 'wdk-client/Components';
 import {getSearchMenuCategoryTree} from 'ebrc-client/util/category';
-import WdkService from 'wdk-client/WdkService';
 
 wdk.namespace('apidb.bubble', ns => {
-  const wdkService = WdkService.getInstance(wdk.webappUrl('/service'));
+  const wdkService = wdk.getWdkService();
 
   ns.initialize = ($el, attrs) => {
     let options = pick(attrs, 'include', 'exclude');

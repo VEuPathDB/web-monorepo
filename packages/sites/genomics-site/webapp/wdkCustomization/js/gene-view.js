@@ -19,23 +19,19 @@ function initializeGeneView(element, attributes) {
 
     // create a new transform step that converts the current transcript step to
     //   a gene step, then visit the download page, passing the new gene step id
-    jQuery.ajax({
-      url: wdk.webappUrl('service/step'),
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({
+    wdk.getWdkService().createStep({
+      answerSpec: {
         "questionName": "GeneRecordQuestions.GenesFromTranscripts",
         "parameters": { "gene_result": oldStepId }
-      }),
-      dataType: 'json',
-      success: function(data, textStatus, jqXHR) {
-        downloadLink.removeChild(image);
-        window.location = oldDownloadUrl.replace(oldStepId, data.id);
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        downloadLink.removeChild(image);
-        alert("Unable to transform transcript result to genes for download.  Check your internet connection.");
       }
+    })
+    .then(step => {
+      downloadLink.removeChild(image);
+      window.location = oldDownloadUrl.replace(oldStepId, data.id);
+    })
+    .catch(error => {
+      downloadLink.removeChild(image);
+      alert("Unable to transform transcript result to genes for download.  Check your internet connection.");
     });
   });
 }
