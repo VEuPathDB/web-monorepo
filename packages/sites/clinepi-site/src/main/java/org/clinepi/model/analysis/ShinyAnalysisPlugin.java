@@ -1,7 +1,7 @@
 package org.clinepi.model.analysis;
 
-import static org.gusdb.fgputil.FormatUtil.TAB;
 import static org.gusdb.fgputil.FormatUtil.NL;
+import static org.gusdb.fgputil.FormatUtil.TAB;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,7 +17,6 @@ import org.eupathdb.common.model.analysis.EuPathExternalAnalyzer;
 import org.gusdb.fgputil.db.pool.DatabaseInstance;
 import org.gusdb.fgputil.db.runner.SQLRunner;
 import org.gusdb.fgputil.db.runner.SQLRunnerException;
-import org.gusdb.fgputil.functional.FunctionalInterfaces.Function;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.model.WdkUserException;
 import org.gusdb.wdk.model.answer.AnswerValue;
@@ -47,12 +46,14 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
 
   private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL);
 
-  private static final Function<Boolean,String> getMetadataSql = useDatasetName ->
+  private static String getMetadataSql(boolean useDatasetName) {
+    return
       "select ontology_term_source_id as " + SOURCE_ID_COL + ", ontology_term_name as " + PROPERTY_COL + ", " + TYPE_COL + ", parent_ontology_term_name as " + PARENT_COL +
       "  from apidbtuning.metadataontology" +
       "  where ontology_term_source_id is not null" +
       "    and type is not null" +
       (useDatasetName ? " and dataset_name = ?" : "");
+  }
 
   @Override
   public ExecutionStatus runAnalysis(AnswerValue answerValue, StatusLogger log)
@@ -74,7 +75,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   private static void dumpOntologyMeta(DatabaseInstance appDb, String datasetName, Path storageDir) {
     boolean useDatasetName = (datasetName != null);
     File outputFile = Paths.get(storageDir.toAbsolutePath().toString(), ONT_ATTR_META_FILENAME).toFile();
-    new SQLRunner(appDb.getDataSource(), getMetadataSql.apply(useDatasetName)).executeQuery(
+    new SQLRunner(appDb.getDataSource(), getMetadataSql(useDatasetName)).executeQuery(
       (useDatasetName ? new Object[]{ datasetName } : new Object[0]),
       (useDatasetName ? new Integer[]{ Types.VARCHAR } : new Integer[0]),
       rs -> {
