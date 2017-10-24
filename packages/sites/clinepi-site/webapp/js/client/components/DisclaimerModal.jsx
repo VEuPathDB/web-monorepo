@@ -6,8 +6,8 @@ const Text = {
   headline: 'Do not distribute beyond GEMS Network investigators!',
   body: (
     <div>
-      <p>As a GEMS collaborating investigator, you have been granted access to this prototype version of the ClinEpiDB database, in order to assess the performance and capabilities of this resource. This release contains a subset of 0-24 month data from the GEMS longitudinal birth cohort study (note that some of the datatypes and variables loaded in this release differ from the final version established by the Data Coordinating Center).</p>
-      <p>You may also grant access to others on your team in a position to appropriately critique the database and provide feedback to the developers. Use the Contact Us link above to submit questions and comments to the development team. <b><i>Please note that this resource is for evaluation and training purposes only; datasets are not available for download, and shouild not be used for analyses leading to presentation or publication.</i></b></p>
+      <p>As a GEMS collaborating investigator, you have been granted access to this prototype version of the ClinEpiDB database, in order to assess the performance and capabilities of this resource. This release contains an initial set of the GEMS1 Case/Control data.</p>
+      <p>You may also grant access to others on your team in a position to appropriately critique the database and provide feedback to the developers. Use the Contact Us link above to submit questions and comments to the development team. <b><i>Please note that this resource is for evaluation and training purposes only; datasets are not available for download, and should not be used for analyses leading to presentation or publication.</i></b></p>
     </div>
   ),
   action: <span>Click here to acknowledge your agreement. <Icon fa="chevron-right" /></span>
