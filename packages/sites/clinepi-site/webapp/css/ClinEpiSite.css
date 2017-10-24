@@ -6,7 +6,7 @@
 body {
   font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
   text-rendering: optimizeLegibility;
-  min-width: 0;
+  min-width: 900px;
   font-size: 12px;
 }
 
