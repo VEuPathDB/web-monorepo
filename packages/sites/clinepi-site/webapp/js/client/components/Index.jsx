@@ -63,7 +63,7 @@ export default function Index ({ displayName, webAppUrl }) {
     {
       name: 'Observations',
       icon: 'stethoscope',
-      url: webAppUrl + '/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled',
+      // url: webAppUrl + '/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled',
       title: 'Depending on the nature of the study, observations may include clinical visits, physical measurements, laboratory diagnostics, disease episodes (spanning multiple days), etc'
     },
     {
