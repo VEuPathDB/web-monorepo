@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.eupathdb.common.model.analysis.EuPathExternalAnalyzer;
+import org.gusdb.fgputil.FormatUtil;
 import org.gusdb.fgputil.db.pool.DatabaseInstance;
 import org.gusdb.fgputil.db.runner.SQLRunner;
 import org.gusdb.fgputil.db.runner.SQLRunnerException;
@@ -44,7 +45,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   private static final String TYPE_COL = "type";
   private static final String PARENT_COL = "parent";
 
-  private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL);
+  private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL, PARENT_COL);
 
   private static String getMetadataSql(boolean useDatasetName) {
     return
@@ -85,7 +86,8 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
             out.write(buildLine(
                 getStringCol(rs, SOURCE_ID_COL),
                 getStringCol(rs, PROPERTY_COL),
-                getStringCol(rs, TYPE_COL)));
+                getStringCol(rs, TYPE_COL),
+                getStringCol(rs, PARENT_COL)));
           }
         }
         catch (IOException e) {
@@ -95,8 +97,8 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
     );
   }
 
-  private static String buildLine(String col1, String col2, String col3) {
-    return new StringBuilder(col1).append(TAB).append(col2).append(TAB).append(col3).append(NL).toString();
+  private static String buildLine(String... columns) {
+    return FormatUtil.join(columns, TAB) + NL;
   }
 
   private static String getStringCol(ResultSet rs, String colName) throws SQLException {
