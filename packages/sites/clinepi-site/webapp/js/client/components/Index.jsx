@@ -77,7 +77,7 @@ export default function Index ({ displayName, webAppUrl }) {
     {
       name: 'Histograms',
       url: webAppUrl + '/images/analysis_slide.svg',
-      image: webAppUrl + '/images/bar-graph.png',
+      image: webAppUrl + '/images/contingency_square.png',
       disabled: true,
       spawn: true
     },
