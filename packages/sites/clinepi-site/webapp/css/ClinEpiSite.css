@@ -526,9 +526,10 @@ a.WelcomeBoxLink {
   content: '\f188';
 }
 
-.ebrc-QuestionWizardHeadingContainer {
-  display: flex;
-  flex-wrap: wrap-reverse;
+.clinepi-StudyLink {
+  position: absolute;
+  right: 3em;
+  top: 2.5em;
 }
 .ebrc-QuestionWizardHeading {
   font-size: 2em;

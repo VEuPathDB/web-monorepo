@@ -1,8 +1,10 @@
 import 'site/css/ClinEpiSite.css';
 import { initialize } from 'ebrc-client/bootstrap';
 import componentWrappers from './component-wrappers';
+import studies from './studies';
 
 initialize({
+  studies,
   isPartOfEuPathDB: true,
   includeQueryGrid: false,
   mainMenuItems: (props, defaultItems) => [
@@ -12,7 +14,7 @@ initialize({
     {
       id: 'studies',
       text: 'Studies',
-      route: 'record/dataset/DS_61ac5d073c'
+      route: studies.find(s => s.active).route
     },
     {
       id: 'help',

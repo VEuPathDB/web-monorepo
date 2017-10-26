@@ -1,4 +1,6 @@
 import { get } from 'lodash';
+import { IconAlt } from 'wdk-client/Components';
+import { withStore } from 'ebrc-client/util/component';
 import Index from '../components/Index';
 import ClinEpiActiveGroup, {
   observationsGroupNameKey,
@@ -10,6 +12,11 @@ import ClinEpiActiveGroup, {
   numRelativeEventsParamNameKey,
   relativeVisitsParamNameKey
 } from '../components/ActiveGroup';
+
+const injectState = withStore(state => ({
+  studies: get(state, 'globalData.siteConfig.studies'),
+  webAppUrl: get(state, 'globalData.siteConfig.webAppUrl')
+}));
 
 const layoutProperyKey = 'relatedObservationsLayoutSettings';
 const requiredLayoutSettingKeys = [
@@ -29,7 +36,8 @@ export default {
     getStateFromStore() {
       const displayName = get(this.store.getState(), 'globalData.siteConfig.displayName');
       const webAppUrl = get(this.store.getState(), 'globalData.siteConfig.webAppUrl');
-      return { displayName, webAppUrl };
+      const studies = get(this.store.getState(), 'globalData.siteConfig.studies');
+      return { displayName, webAppUrl, studies };
     }
 
     getTitle() {
@@ -43,6 +51,20 @@ export default {
     }
 
   },
+
+  QuestionWizard: QuestionWizard => injectState(props => {
+    let { studies, webAppUrl } = props;
+    let activeStudy = studies.find(s => s.active);
+    return (
+      <div>
+        <div className="clinepi-StudyLink">
+          <IconAlt fa="info-circle"/>&nbsp;
+          Learn about the <a href={`${webAppUrl}/app/${activeStudy.route}`} target="_blank">{activeStudy.name} Study</a>
+        </div>
+        <QuestionWizard {...props} />
+      </div>
+    )
+  }),
 
   ActiveGroup: ActiveGroup => props => {
 
