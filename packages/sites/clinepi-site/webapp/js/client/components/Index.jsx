@@ -75,10 +75,10 @@ export default function Index ({ displayName, webAppUrl }) {
 
   const Analyses = [
     {
-      name: 'Histograms',
+      name: 'Contingency Tables',
       url: webAppUrl + '/images/analysis_slide.svg',
       image: webAppUrl + '/images/contingency_square.png',
-      disabled: true,
+      disabled: false,
       spawn: true
     },
     {
