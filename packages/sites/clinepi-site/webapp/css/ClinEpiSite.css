@@ -560,6 +560,17 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   width: 90vw;
 }
 
+.Padded {
+  padding-right: 1ex;
+  padding-left: 1ex;
+}
+.Padded__first {
+  padding-left: 0;
+}
+.Padded__last {
+  padding-right: 0;
+}
+
 .RelativeVisitsLayout,
 .RelativeVisitsLayout > * {
   display: flex;
@@ -577,32 +588,24 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   font-size: 1.1em;
 }
 
-.RelativeVisitsLayoutOverlay {
+.RelativeVisitsLayoutOverlay,
+.CaseControlLayoutOverlay {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   opacity: 0.7;
-  zIndex: 1;
+  z-index: 1;
   background: white;
 }
 
-.Padded {
-  padding-right: 1ex;
-  padding-left: 1ex;
-}
-.Padded__first {
-  padding-left: 0;
-}
-.Padded__last {
-  padding-right: 0;
-}
-
-.RelativeVisitsActiveGroupWrapper__off .ebrc-QuestionWizardActiveGroupCount {
+.RelativeVisitsActiveGroupWrapper__off .ebrc-QuestionWizardActiveGroupCount,
+.CaseControlGroupWrapper__off .ebrc-QuestionWizardActiveGroupCount {
   visibility: hidden;
 }
-.RelativeVisitsMessage {
+.RelativeVisitsMessage,
+.CaseControlMessage {
   font-size: 1.3em;
   padding: 2em 0;
 }
@@ -610,10 +613,12 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   font-size: 1.4em;
   color: darkred;
 }
-.RelativeVisitsContainer {
+.RelativeVisitsContainer,
+.CaseControlContainer {
   z-index: 1;
   position: relative;
 }
-.RelativeVisitsContainer .ebrc-QuestionWizardActiveGroupDescription {
+.RelativeVisitsContainer .ebrc-QuestionWizardActiveGroupDescription,
+.CaseControlContainer .ebrc-QuestionWizardActiveGroupDescription {
   z-index: 2;
 }
