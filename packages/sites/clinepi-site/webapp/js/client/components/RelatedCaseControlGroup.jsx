@@ -28,7 +28,7 @@ export default class RelatedCaseControlGroup extends React.Component {
                 this.props.wizardState.question.parameters.find(p => p.name === TOGGLE_PARAM_NAME),
                 this.isEnabled() ? 'No' : 'Yes'
               );
-            }} /> Enable the advanced <strong>Related Case/Control</strong> filter below. It allows you to restrict Participants by relating them to your choice of case or control Participants.
+            }} /> Enable the advanced <strong>Related Case/Control</strong> filter below. It allows you to restrict Participants using information about their related case or control.
         </label>
       </div>
     )
