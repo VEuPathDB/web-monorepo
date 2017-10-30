@@ -21,8 +21,8 @@ const storageItems = {
 
 /** Api specific RecordViewStore */
 export default class ApiRecordViewStore extends RecordViewStore {
-  reduce(state, action) {
-    state = Object.assign({}, super.reduce(state, action), {
+  handleAction(state, action) {
+    state = Object.assign({}, super.handleAction(state, action), {
       pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
       eupathdb: handleEuPathDBAction(state.eupathdb, action)
     });
