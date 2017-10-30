@@ -17,13 +17,17 @@
           </c:if>
           <c:if test="${not empty viewModel.resultData}">
             <table>
-              <thead>
+              <thead style="white-space:nowrap">
                 <tr>
                   <c:set var="row" value="${viewModel.headerRow}"/>
                   <c:set var="desc" value="${viewModel.headerDescription}"/>
 
-                  <th title="${desc.species}">${row.species}</th>
-                  <th title="${desc.experimentName}">${row.experimentName}</th>
+                  <th>${row.species}
+                    <imp:image class="help-link" style="cursor:pointer" title="${desc.species}" src="wdk/images/question.png" />
+                  </th>
+                  <th title="${desc.experimentName}">${row.experimentName}
+                    <imp:image class="help-link" style="cursor:pointer" title="${desc.description}" src="wdk/images/question.png" />
+                  </th>
                   <th title="${desc.description}">${row.description}</th>
                   <th title="${desc.type}">${row.type}</th>
                   <th title="${desc.significance}">${row.significance}</th>
