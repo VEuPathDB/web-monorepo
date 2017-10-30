@@ -25,12 +25,18 @@
                   <th>${row.species}
                     <imp:image class="help-link" style="cursor:pointer" title="${desc.species}" src="wdk/images/question.png" />
                   </th>
-                  <th title="${desc.experimentName}">${row.experimentName}
+                  <th>${row.experimentName}
+                    <imp:image class="help-link" style="cursor:pointer" title="${desc.experimentName}" src="wdk/images/question.png" />
+                  </th>
+                  <th>${row.description}
                     <imp:image class="help-link" style="cursor:pointer" title="${desc.description}" src="wdk/images/question.png" />
                   </th>
-                  <th title="${desc.description}">${row.description}</th>
-                  <th title="${desc.type}">${row.type}</th>
-                  <th title="${desc.significance}">${row.significance}</th>
+                  <th>${row.type}
+                    <imp:image class="help-link" style="cursor:pointer" title="${desc.type}" src="wdk/images/question.png" />
+                  </th>
+                  <th>${row.significance}
+                    <imp:image class="help-link" style="cursor:pointer" title="${desc.significance}" src="wdk/images/question.png" />
+                  </th>
                 </tr>
               </thead>
               <tbody>
