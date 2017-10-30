@@ -48,7 +48,7 @@ export default function Index ({ displayName, webAppUrl, studies }) {
     {
       name: 'Contingency Tables',
       url: webAppUrl + '/images/analysis_slide.svg',
-      image: webAppUrl + '/images/contingency_square.png',
+      image: webAppUrl + '/images/contingency-square.png',
       disabled: false,
       spawn: true
     },
