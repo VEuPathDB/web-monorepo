@@ -146,6 +146,39 @@ a.eupathdb-MenuItemText__favorites {
   background: #43669e;  /* #26689c; */
 }
 
+#sidebar div {
+        height: auto;
+}
+
+#sidebar div ul{  /* second-level lists */
+/*      width: 179px; */
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+        font-weight: normal;
+        padding: 6px 6px 6px 4px;
+        line-height: 15px;
+        list-style-position: outside;  /* so bullet lists wrap under text */
+        list-style-type: square;
+        margin-left:  1em;
+        padding-left: 0;
+}
+
+#sidebar div ul#news {
+    border: 1px lightgrey solid;
+    max-height: 90px;
+    list-style-position: inside;
+    margin-left: 0;
+    overflow-y: auto;
+}
+
+#sidebar div ul#news {
+                margin-bottom:5px;
+}
+
+
+
+
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *      =ANALYSIS TABs
  *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
