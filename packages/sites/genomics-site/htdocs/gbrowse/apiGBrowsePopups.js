@@ -91,8 +91,8 @@ var loadingBasketTextLink = '<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> 
 
 function applyCorrectBasketLink(sourceId, projectId) {
   window.ebrc.context.wdkService.getBasketStatus(createRecordDescriptor(sourceId, projectId))
-    .then(function(isInBasket) {
-      if (isInBasket) {
+    .then(function(response) {
+      if (response.status) {
         setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
       }
       else {
