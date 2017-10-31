@@ -609,7 +609,8 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   font-size: 1.3em;
   padding: 2em 0;
 }
-.RelativeVisitsMessage__warning {
+.RelativeVisitsMessage__warning,
+.CaseControlMessage__warning {
   font-size: 1.4em;
   color: darkred;
 }

@@ -12,12 +12,16 @@ export default class RelatedCaseControlGroup extends React.Component {
     return props.wizardState.activeGroup.name === CASE_CONTROL_GROUP_NAME;
   }
 
+  isUsable() {
+    return !this.props.wizardState.paramValues.case_control.startsWith('Both');
+  }
+
   isEnabled() {
     return this.props.wizardState.paramValues[TOGGLE_PARAM_NAME] === 'Yes';
   }
 
   renderToggle() {
-    return (
+    return this.isUsable() && (
       <div className="CaseControlMessage">
         <label>
           <input
@@ -32,6 +36,16 @@ export default class RelatedCaseControlGroup extends React.Component {
         </label>
       </div>
     )
+  }
+
+  renderWarning() {
+    return !this.isUsable() && (
+      <div className="CaseControlMessage CaseControlMessage__warning">
+        Before using <strong>Related Case/Control</strong>, please first specify
+        either <strong>Cases</strong> or <strong>Controls</strong> in the
+        previous <strong>Personal Characteristics</strong> filter.
+      </div>
+    );
   }
 
   renderOverlay() {
@@ -68,6 +82,7 @@ export default class RelatedCaseControlGroup extends React.Component {
       <div className={'CaseControlGroupWrapper CaseControlGroupWrapper__' +
           (this.isEnabled() ? 'on' : 'off')}>
         <this.props.DefaultComponent {...this.props} wizardState={modifiedWizardState}/>
+        {this.renderWarning()}
         {this.renderToggle()}
         <div className="CaseControlContainer">
           <div style={{padding: '1em 0'}}>
