@@ -25,7 +25,7 @@ function getGbrowsePopupConfig(showFav, saveRowTitle, addBasketText, removeBaske
  */
 function createRecordDescriptor(sourceId, projectId) {
   return {
-    id: [ { name: 'project_id', value: projectId }, { name: 'source_id', value: sourceId } ],
+    id: [ { name: 'source_id', value: sourceId }, { name: 'project_id', value: projectId } ],
     recordClassName: 'GeneRecordClasses.GeneRecordClass'
   };
 }
