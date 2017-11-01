@@ -51,8 +51,9 @@ var removeFavTextLink = '<img width="16" src="/a/wdk/images/favorite_color.gif"/
 var loadingFavTextLink = '<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> <span class="sr-only">Loading...</span>';
 
 function applyCorrectFavoriteLink(sourceId, projectId) {
-  window.ebrc.context.wdkService.getFavoriteStatus(createRecordDescriptor(sourceId, projectId))
-    .then(function(isInFavorites) {
+  window.ebrc.context.wdkService.getFavoriteId(createRecordDescriptor(sourceId, projectId))
+    .then(function(favoriteId) {
+      var isInFavorites = (favoriteId != null);
       if (isInFavorites) {
         return setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', removeFavTextLink);
       }
@@ -65,7 +66,7 @@ function applyCorrectFavoriteLink(sourceId, projectId) {
 function addGeneAsFavorite(projectId, sourceId) {
   if (checkLogin()) {
     setSavedItemLink(projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', loadingFavTextLink);
-    window.ebrc.context.wdkService.updateFavoriteStatus(createRecordDescriptor(sourceId, projectId), true)
+    window.ebrc.context.wdkService.addFavorite(createRecordDescriptor(sourceId, projectId))
       .then(function() {
         setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', removeFavTextLink);
       }).catch(logAndAlert);
@@ -75,9 +76,15 @@ function addGeneAsFavorite(projectId, sourceId) {
 function removeGeneAsFavorite(projectId, sourceId) {
   if (checkLogin()) {
     setSavedItemLink(projectId, sourceId, 'gbfavorite', 'removeGeneAsFavorite', loadingFavTextLink);
-    window.ebrc.context.wdkService.updateFavoriteStatus(createRecordDescriptor(sourceId, projectId), false)
-      .then(function() {
-        setSavedItemLink(projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', saveFavTextLink);
+    var service = window.ebrc.context.wdkService;
+    service.getFavoriteId(createRecordDescriptor(sourceId, projectId))
+      .then(function(favoriteId) {
+        if (favoriteId != null) {
+          service.deleteFavorite(favoriteId)
+            .then(function() {
+              setSavedItemLink(projectId, sourceId, 'gbfavorite', 'addGeneAsFavorite', saveFavTextLink);
+            });
+        }
       }).catch(logAndAlert);
   }
 }
@@ -90,9 +97,10 @@ var removeBasketTextLink = '<img width="16" src="/a/wdk/images/basket_color.png"
 var loadingBasketTextLink = '<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> <span class="sr-only">Loading...</span>';
 
 function applyCorrectBasketLink(sourceId, projectId) {
-  window.ebrc.context.wdkService.getBasketStatus(createRecordDescriptor(sourceId, projectId))
-    .then(function(response) {
-      if (response.status) {
+  var record = createRecordDescriptor(sourceId, projectId);
+  window.ebrc.context.wdkService.getBasketStatus(record.recordClassName, [record])
+    .then(function(isInBasketArray) {
+      if (isInBasketArray[0]) {
         setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
       }
       else {
@@ -104,7 +112,8 @@ function applyCorrectBasketLink(sourceId, projectId) {
 function addGeneToBasket(projectId, sourceId) {
   if (checkLogin()) {
     setSavedItemLink(projectId, sourceId, 'gbbasket', 'addGeneToBasket', loadingBasketTextLink);
-    window.ebrc.context.wdkService.updateBasketStatus(createRecordDescriptor(sourceId, projectId), true)
+    var record = createRecordDescriptor(sourceId, projectId);
+    window.ebrc.context.wdkService.updateBasketStatus(true, record.recordClassName, [record])
       .then(function() {
         setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', removeBasketTextLink);
       }).catch(logAndAlert);
@@ -114,7 +123,8 @@ function addGeneToBasket(projectId, sourceId) {
 function removeGeneFromBasket(projectId, sourceId) {
   if (checkLogin()) {
     setSavedItemLink(projectId, sourceId, 'gbbasket', 'removeGeneFromBasket', loadingBasketTextLink);
-    window.ebrc.context.wdkService.updateBasketStatus(createRecordDescriptor(sourceId, projectId), false)
+    var record = createRecordDescriptor(sourceId, projectId);
+    window.ebrc.context.wdkService.updateBasketStatus(false, record.recordClassName, [record])
       .then(function() {
         setSavedItemLink(projectId, sourceId, 'gbbasket', 'addGeneToBasket', saveBasketTextLink);
       }).catch(logAndAlert);
