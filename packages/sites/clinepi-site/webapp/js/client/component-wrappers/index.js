@@ -4,6 +4,8 @@ import { withStore } from 'ebrc-client/util/component';
 import Index from '../components/Index';
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
 import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
+import { CategoriesCheckboxTree } from 'wdk-client/Components';
+import * as Category from 'wdk-client/CategoryUtils';
 
 const injectState = withStore(state => ({
   studies: get(state, 'globalData.siteConfig.studies'),
@@ -30,6 +32,14 @@ export default {
       )
     }
 
+  },
+
+  RecordTable: RecordTable => props => {
+    if ('tableIsTree' in props.table.properties) {
+          return <TableAsTree {...props}/>;
+    }
+
+     return <RecordTable {...props}/>;
   },
 
   QuestionWizard: QuestionWizard => injectState(props => {
@@ -78,4 +88,86 @@ export default {
     }
   }
 
+}
+
+
+
+function makeTree(rows){
+    const n = Category.createNode; // helper for below
+
+    let myTree = n('root', 'root', null, []);
+
+    addChildren(myTree, rows, n);
+
+    return myTree;
+}
+
+function addChildren(t, rows, n) {
+    for(let i = 0; i < rows.length; i++){
+        let parent = rows[i].parent_source_id;
+        let id = rows[i].unique_id;
+        let display = rows[i].display_name;
+
+        if(parent == Category.getId(t) ){
+            let node = n(id, display, null, []);
+            t.children.push(node);
+        }
+    }
+
+    for(let j = 0; j < t.children.length; j++) {
+        addChildren(t.children[j], rows, n);
+    }
+}
+
+class TableAsTree extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedLeaves: [],
+      expandedBranches: []
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleUiChange = this.handleUiChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
+  }
+
+  handleChange(selectedLeaves) {
+    this.setState({selectedLeaves});
+  }
+
+  handleUiChange(expandedBranches) {
+    this.setState({expandedBranches});
+  }
+
+  handleSubmit() {
+    this.props.onChange(this.props.isMultiPick ? this.state.selectedLeaves : this.state.selectedLeaves[0]);
+  }
+
+  handleSearchTermChange(searchTerm) {
+    this.setState({searchTerm});
+  }
+
+  render() {
+    return (
+        <div className="form-group">
+          <CategoriesCheckboxTree
+            name="Characteristics"
+            searchBoxPlaceholder={`Search for Characteristics here`}
+            autoFocusSearchBox={false}
+            tree={makeTree(this.props.value)}
+            leafType="string"
+            isMultiPick={true}
+            searchTerm={this.state.searchTerm}
+            onChange={this.handleChange}
+            onUiChange={this.handleUiChange}
+            selectedLeaves={this.state.selectedLeaves}
+            expandedBranches={this.state.expandedBranches}
+            onSearchTermChange={this.handleSearchTermChange}
+            isSelectable={false}
+          />
+        </div>
+    );
+  }
 }
