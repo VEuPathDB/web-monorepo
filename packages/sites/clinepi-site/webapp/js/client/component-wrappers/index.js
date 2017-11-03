@@ -71,6 +71,11 @@ export default {
     setUseRangeForNumRelativeEvents(useRangeForNumRelativeEvents) {
       this.setState({ useRangeForNumRelativeEvents });
     }
+
+    setParamValue(param, paramValue) {
+      super.setParamValue(param, paramValue);
+      RelatedCaseControlGroup.handleParamChange(this, param, paramValue);
+    }
   }
 
 }

@@ -5,6 +5,7 @@ const CASE_CONTROL_GROUP_NAME = 'relative_case_control';
 const TOGGLE_PARAM_NAME = 'use_rel_case_control';
 const KEEP_REMOVE_PARAM_NAME = 'keep_remove';
 const FILTER_PARAM_NAME = 'relative_event_gems';
+const CASE_CONTROL_PARAM_NAME = 'case_control';
 
 export default class RelatedCaseControlGroup extends React.Component {
 
@@ -12,8 +13,15 @@ export default class RelatedCaseControlGroup extends React.Component {
     return props.wizardState.activeGroup.name === CASE_CONTROL_GROUP_NAME;
   }
 
+  static handleParamChange(controller, param, paramValue) {
+    if (param.name === CASE_CONTROL_PARAM_NAME && paramValue.startsWith('Both')) {
+      let toggleParam = controller.parameterMap.get(TOGGLE_PARAM_NAME);
+      controller.setParamValue(toggleParam, toggleParam.defaultValue);
+    }
+  }
+
   isUsable() {
-    return !this.props.wizardState.paramValues.case_control.startsWith('Both');
+    return !this.props.wizardState.paramValues[CASE_CONTROL_PARAM_NAME].startsWith('Both');
   }
 
   isEnabled() {
