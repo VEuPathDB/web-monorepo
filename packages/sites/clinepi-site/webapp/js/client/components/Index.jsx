@@ -79,7 +79,7 @@ export default function Index ({ displayName, webAppUrl, studies }) {
     },
     {
       text: <span>Cases less than 24 months of age at enrollment who were only positive for <em>Giardia</em> & reported diarrhea duration greater than 3 days</span>,
-      url: webAppUrl + '/im.do?s=83c8dd856c503e63'
+      url: webAppUrl + '/im.do?s=e7098b187c6e603a'
     },
     {
       text: <span><em>Giardia</em> positive controls who had an HAZ greater than -2 at enrollment but below -2 at 60 day follow-up</span>,
