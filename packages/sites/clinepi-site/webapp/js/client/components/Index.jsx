@@ -74,16 +74,16 @@ export default function Index ({ displayName, webAppUrl, studies }) {
 
   const ExampleSearches = [
     {
-      text: <span>Diarrheal observations in children from Vellore, India; with <em>Cryptosporidium</em> detected within 14 days</span>,
-      url: webAppUrl + '/im.do?s=5ac633418aa1bb1e'
+      text: <span>Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls.</span>,
+      url: webAppUrl + '/im.do?s=01faf997d02db437'
     },
     {
-      text: <span>Study children with a normal HAZ score (-2 to 2) at 24 months of age who never tested positive for <em>Cryptosporidium</em></span>,
-      url: webAppUrl + '/im.do?s=61fbead6228a3c00'
+      text: <span>Cases less than 24 months of age at enrollment who were only positive for Giardia & reported diarrhea duration greater than 3 days</span>,
+      url: webAppUrl + '/im.do?s=83c8dd856c503e63'
     },
     {
-      text: 'Study children with at least five diarrheal events in their first two years of life who had 10 or more stunted HAZ observations in their second year.',
-      url: webAppUrl + '/im.do?s=4c3e50de511930d9'
+      text: <span><em>Giardia</em> positive controls who had an HAZ greater than -2 at enrollment but below -2 at 60 day follow-up</span>,
+      url: webAppUrl + '/im.do?s=8eb17c1ee72be765'
     }
   ];
 
