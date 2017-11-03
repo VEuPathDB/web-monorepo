@@ -78,7 +78,7 @@ export default function Index ({ displayName, webAppUrl, studies }) {
       url: webAppUrl + '/im.do?s=01faf997d02db437'
     },
     {
-      text: <span>Cases less than 24 months of age at enrollment who were only positive for Giardia & reported diarrhea duration greater than 3 days</span>,
+      text: <span>Cases less than 24 months of age at enrollment who were only positive for <em>Giardia</em> & reported diarrhea duration greater than 3 days</span>,
       url: webAppUrl + '/im.do?s=83c8dd856c503e63'
     },
     {
