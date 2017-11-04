@@ -1,6 +1,6 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = Sidebar
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #menu_lefttop .ui-accordion-header {
   padding: 0;
@@ -15,7 +15,7 @@
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =NEW FOOTER (gene page)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #fixed-footer {
   background-color: #f0f0f0;
 
@@ -26,14 +26,14 @@
       = Results Table: Boolean and Leaf transcript Filters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
- 
+
 /* BOOLEAN, combined?  */
 
   .gene-boolean-filter, .gene-leaf-filter  {
     display: none;
-    margin-bottom: 1em; 
+    margin-bottom: 1em;
   }
-  .gene-boolean-filter a.gene-boolean-filter-controls-toggle, 
+  .gene-boolean-filter a.gene-boolean-filter-controls-toggle,
   .gene-leaf-filter a.gene-leaf-filter-controls-toggle  {
     padding-left:0.5em;
   }
@@ -49,7 +49,7 @@
     display: inline-block;
   }
   .gene-boolean-filter-controls p, .gene-leaf-filter-controls p  {
-    text-align: center; 
+    text-align: center;
   }
   .gene-boolean-filter-controls button:disabled,  .gene-leaf-filter-controls button:disabled   {
  		color:grey;
@@ -73,7 +73,7 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = results table view filter (representative transcript)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
- 
+
   div#oneTr-filter {
     font-family: Verdana;
     font-weight: bold;
@@ -84,5 +84,12 @@
     color: darkred;
     padding-right: 1em;
   }
-  
 
+
+/* ---------------------------------------------------------------
+                    jQuery UI Override
+    -------------------------------------------------------------*/
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-family: inherit;
+}
