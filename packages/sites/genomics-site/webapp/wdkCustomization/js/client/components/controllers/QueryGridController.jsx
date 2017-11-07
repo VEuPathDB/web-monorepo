@@ -1,9 +1,9 @@
 import React from 'react';
 import QueryGrid from '../QueryGrid';
-import { WdkViewController } from 'wdk-client/Controllers';
+import { WdkPageController } from 'wdk-client/Controllers';
 import { getSearchMenuCategoryTree } from 'ebrc-client/util/category.js';
 
-export default class QueryGridController extends WdkViewController {
+export default class QueryGridController extends WdkPageController {
 
   isRenderDataLoaded() {
     return this.state.globalData.ontology && this.state.globalData.recordClasses;
