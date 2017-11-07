@@ -64,7 +64,7 @@ export default {
       : <ActiveGroup {...props}/>
   },
 
-  QuestionWizardController: QuestionWizardController => class extends QuestionWizardController {
+  QuestionWizardController: QuestionWizardController => class ClinEpiQuestionWizard extends QuestionWizardController {
     constructor(props) {
       super(props);
       Object.assign(this.state, {
