@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { AbstractViewController } from 'wdk-client/Controllers';
+import { AbstractPageController } from 'wdk-client/Controllers';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
 import GalaxyTermsStore from '../../stores/GalaxyTermsStore';
 import { updateSecurityAgreementStatus } from '../../actioncreators/GalaxyTermsActionCreators';
@@ -10,7 +10,7 @@ let { updateUserPreference, showLoginForm } = UserActionCreators;
 
 export const SHOW_GALAXY_PAGE_PREFERENCE = 'show-galaxy-orientation-page';
 
-export default class GalaxyTermsController extends AbstractViewController {
+export default class GalaxyTermsController extends AbstractPageController {
 
   constructor(...args) {
     super(...args);
