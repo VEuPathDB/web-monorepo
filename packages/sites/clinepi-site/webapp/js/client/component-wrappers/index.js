@@ -97,18 +97,44 @@ function makeTree(rows){
 
     let myTree = n('root', 'root', null, []);
 
+    for(let i = 0; i < rows.length; i++){
+        let is_leaf = rows[i].is_leaf;
+
+        if(is_leaf == 1) {
+            setKeep(rows[i], rows);
+        }
+    }
+
     addChildren(myTree, rows, n);
 
     return myTree;
 }
+
+
+function setKeep(node, rows) {
+    node.keep = 1;
+
+    let parent = node.parent_source_id;
+
+    for(let i = 0; i < rows.length; i++){
+        let id = rows[i].unique_id;
+
+        if(parent == id) {
+            setKeep(rows[i], rows);
+            break;
+        }
+    }
+}
+
 
 function addChildren(t, rows, n) {
     for(let i = 0; i < rows.length; i++){
         let parent = rows[i].parent_source_id;
         let id = rows[i].unique_id;
         let display = rows[i].display_name;
+        let keep = rows[i].keep;
 
-        if(parent == Category.getId(t) ){
+        if(parent == Category.getId(t) && keep == 1){
             let node = n(id, display, null, []);
             t.children.push(node);
         }
