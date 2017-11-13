@@ -411,7 +411,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E03 Proteomics at EBI's PRIDE</a>-->
+             <td><b><a href="https://www.ebi.ac.uk/pride/archive/projects/PXD007773" target="_blank">E03 + E18 Proteomics Results at PRIDE</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -543,7 +543,9 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a></b></td>    
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a>
+                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS517" target="_blank">E04 Metabolomics Results at Metabolights</a>
+                    </b></td>    
              <td>N/A</td>
            </tr>
            <tr>
@@ -825,7 +827,9 @@
         -->
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E18 + E04 Proteomics Results at PRIDE</a></b></td> 
+             <td><b><a href="https://www.ebi.ac.uk/pride/archive/projects/PXD007773" target="_blank">E18 + E03 Proteomics Results at PRIDE</a>
+                    <a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E18 + E04 Proteomics Results at PRIDE</a>
+                    </b></td> 
              <td>N/A</td>
            </tr>
       <!--   <tr>
@@ -1374,7 +1378,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E25 Metabolomics at UCSD's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E03 Metabolomics at UCSD's Metabolomics Workbench</a> -->    
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS536" target="_blank">E30 Metabolomics Results at MetaboLights</a> </b></td>
              <td>N/A</td>
            </tr>
            <tr>
