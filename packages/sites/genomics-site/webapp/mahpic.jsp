@@ -543,7 +543,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a>
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a><br>
                     <a href="https://www.ebi.ac.uk/metabolights/MTBLS517" target="_blank">E04 Metabolomics Results at Metabolights</a>
                     </b></td>    
              <td>N/A</td>
@@ -827,7 +827,7 @@
         -->
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b><a href="https://www.ebi.ac.uk/pride/archive/projects/PXD007773" target="_blank">E18 + E03 Proteomics Results at PRIDE</a>
+             <td><b><a href="https://www.ebi.ac.uk/pride/archive/projects/PXD007773" target="_blank">E18 + E03 Proteomics Results at PRIDE</a><br>
                     <a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E18 + E04 Proteomics Results at PRIDE</a>
                     </b></td> 
              <td>N/A</td>
