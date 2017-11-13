@@ -37,7 +37,7 @@
     <c:url var="goDownloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.imageDownloadPath}"/>
     <a href="${goDownloadUrl}" class="enrich-result-q">
       <button class="btn">
-        <i class="fa fa-cloud blue-text" style="margin-left:0; padding-left: 0;"> </i>
+        <i class="fa fa-bar-chart red-text" style="margin-left:0; padding-left: 0;"> </i>
         Show <b>Word Cloud</b>
       </button>
     </a>
@@ -48,7 +48,7 @@
     <c:url var="hiddenDownloadUrl" value ="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.hiddenDownloadPath}"/>
     <a href="${hiddenDownloadUrl}">
       <button class="btn">
-        <i class="fa fa-download green-text" style="margin-left:0; padding-left: 0;"> </i>
+        <i class="fa fa-download blue-text" style="margin-left:0; padding-left: 0;"> </i>
         Download
       </button>
     </a>
