@@ -7,12 +7,10 @@ import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
 import org.gusdb.fgputil.accountdb.UserPropertyName;
-import org.gusdb.wdk.model.WdkModel;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.model.user.User;
 import org.gusdb.wdk.model.xml.XmlAnswerValue;
 import org.gusdb.wdk.model.xml.XmlQuestion;
-import org.gusdb.wdk.model.xml.XmlQuestionSet;
 import org.gusdb.wdk.model.xml.XmlRecordInstance;
 import org.gusdb.wdk.service.formatter.Keys;
 import org.gusdb.wdk.service.formatter.UserFormatter;
@@ -28,6 +26,7 @@ public class CustomProfileService extends ProfileService {
   private static final String USER_ID_ATTR = "user_id";
   private static final String STUDY_ATTR = "study";
   
+  @SuppressWarnings("unused")
   private static final Logger LOG = Logger.getLogger(CustomProfileService.class);
 
   public CustomProfileService(@PathParam(USER_ID_PATH_PARAM) String uid) {
