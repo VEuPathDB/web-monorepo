@@ -373,7 +373,7 @@ sub getOntologyCategoryFromTrackName {
   else {
     my $ua = LWP::UserAgent->new;
   
-    my $server_endpoint = "http://$ENV{HTTP_HOST}/$ENV{CONTEXT_PATH}/service/ontology/Categories/path";
+    my $server_endpoint = "http://$ENV{HTTP_HOST}/$ENV{CONTEXT_PATH}/service/ontologies/Categories/path";
 
     # set custom HTTP request header fields
     my $req = HTTP::Request->new(POST => $server_endpoint);
