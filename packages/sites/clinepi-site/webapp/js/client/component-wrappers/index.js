@@ -177,7 +177,7 @@ class TableAsTree extends React.Component {
 
   render() {
     return (
-        <div className="form-group">
+        <div className="TableAsTree">
           <CategoriesCheckboxTree
             name="Characteristics"
             searchBoxPlaceholder={`Search for Characteristics here`}
