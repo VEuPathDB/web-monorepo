@@ -1086,11 +1086,17 @@ sub massSpecTitle {
   if($phospho_site) {
     my @locs = map {$_ - $start + 1} split /;/, $phospho_site; 
     for my $loc (sort { $b <=> $a }  @locs) {
-      substr($seq, $loc, 0) = '*' if $ontology_names =~ /phosphorylation/i; 
-      substr($seq, $loc, 0) = '#' if $ontology_names =~ /methionine/i; 
-      substr($seq, $loc, 0) = '^' if $ontology_names =~ /cysteine/i; 
-    } 
-  } 
+        if ($ontology_names =~ /phosphorylation/i) {
+          substr($seq, $loc, 0) = '*';
+        } elsif ($ontology_names =~ /methionine/i) {
+          substr($seq, $loc, 0) = '#';
+        } elsif ($ontology_names =~ /cysteine/i) {
+          substr($seq, $loc, 0) = '^';
+        } else {
+          substr($seq, $loc, 0) = '+';
+        }
+    }
+  }
 
   my @data;
   push @data, [ 'Experiment:' => $experiment ];
@@ -1099,7 +1105,7 @@ sub massSpecTitle {
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Spectrum Count:' => "$count" ] if($count);
   push @data, [ 'Info:' => "$tb" ] if($phospho_site);
-  push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine<br/>^ stands for modified_L_cysteine" ] if($ontology_names);
+  push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine<br/>^ stands for modified_L_cysteine<br/>+ denotes other modified residues" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
   hover($f, \@data); 
 
