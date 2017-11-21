@@ -31,7 +31,7 @@ foreach my $a (@f) {
   next unless $h && $c;
   $html .= "<tr><td>$h</td><td>$c</td></tr>";
 }
-if($c =~ /yes/i){
+if(defined ($c) && $c =~ /yes/i){
   $html.= "<tr><td colspan=2>$last</td></tr>";
 }else{
   my ($h, $c) = split /\t/, $last;
