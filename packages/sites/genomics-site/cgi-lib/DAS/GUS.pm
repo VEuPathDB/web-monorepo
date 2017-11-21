@@ -139,8 +139,8 @@ sub getQueryLogger {
 
   Title    : parser
   Usage    : $obj->parser($parserObj)
-  Function : get a sql parser object
-  Returns  : a sql parser object
+  Function : get an sql parser object
+  Returns  : an sql parser object
   Args     : 
 
 =cut
