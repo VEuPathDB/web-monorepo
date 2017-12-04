@@ -50,7 +50,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   private static String getMetadataSql(boolean useDatasetName) {
     return
       "select ontology_term_source_id as " + SOURCE_ID_COL + ", ontology_term_name as " + PROPERTY_COL + ", " + TYPE_COL + ", parent_ontology_term_name as " + PARENT_COL +
-      "  from apidbtuning.metadataontology" +
+      "  from apidbtuning.Ontology" +
       "  where ontology_term_source_id is not null" +
       "    and type is not null" +
       (useDatasetName ? " and dataset_name = ?" : "");
