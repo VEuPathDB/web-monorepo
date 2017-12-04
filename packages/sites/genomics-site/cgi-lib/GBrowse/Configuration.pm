@@ -495,22 +495,22 @@ sub subTrackTable {
 
     my $dbh = $self->dbh();
     my $sh = $dbh->prepare("SELECT * FROM (
-                                SELECT DISTINCT term
+                                SELECT DISTINCT property
                                 , value
                                 , value as display
-                                FROM apidbtuning.pancharacteristicmetadata
+                                FROM apidbtuning.InferredChars
                                 WHERE dataset_name = '$experimentName'
                                 UNION
-                                SELECT DISTINCT term
+                                SELECT DISTINCT property
                                 , value
                                 , value as display
-                                FROM apidbtuning.panprotocolmetadata
+                                FROM apidbtuning.InferredParams
                                 WHERE dataset_name = '$experimentName'
                                 UNION
-                                SELECT DISTINCT 'name' as term
+                                SELECT DISTINCT 'name' as property
                                 , pan_name as value
                                 , replace(replace(regexp_replace(pan_name, '\\(.+\\)', ''), '_smoothed', ''), '_', ' ') as display
-                                FROM apidbtuning.fallbackmetadata
+                                FROM apidbtuning.DefaultChars
                                 WHERE dataset_name = '$experimentName'
                                 AND (pan_name like '%$type%' OR '$type' = 'none')
                                 )
