@@ -35,6 +35,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
 
   // add this property to plugin configuration to filter metadata by dataset name
   private static final String DATASET_NAME_PROPERTY = "datasetName";
+  private static final String DATASET_TBL_PREFIX = "datasetTblPrefix";
 
   // name of output file dumped to analysis job directory
   private static final String ONT_ATTR_META_FILENAME = "ontologyMetadata.tab";
@@ -47,10 +48,10 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
 
   private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL, PARENT_COL);
 
-  private static String getMetadataSql(boolean useDatasetName) {
+    private static String getMetadataSql(boolean useDatasetName, String tblPrefix) {
     return
       "select ontology_term_source_id as " + SOURCE_ID_COL + ", ontology_term_name as " + PROPERTY_COL + ", " + TYPE_COL + ", parent_ontology_term_name as " + PARENT_COL +
-      "  from apidbtuning.Ontology" +
+      "  from apidbtuning." + tblPrefix + "Ontology" +
       "  where ontology_term_source_id is not null" +
       "    and type is not null" +
       (useDatasetName ? " and dataset_name = ?" : "");
@@ -67,16 +68,17 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
       dumpOntologyMeta(
           getWdkModel().getAppDb(),
           getProperty(DATASET_NAME_PROPERTY),
+          getProperty(DATASET_TBL_PREFIX),
           getStorageDirectory());
     }
 
     return status;
   }
 
-  private static void dumpOntologyMeta(DatabaseInstance appDb, String datasetName, Path storageDir) {
+    private static void dumpOntologyMeta(DatabaseInstance appDb, String datasetName, String datasetTblPrefix, Path storageDir) {
     boolean useDatasetName = (datasetName != null);
     File outputFile = Paths.get(storageDir.toAbsolutePath().toString(), ONT_ATTR_META_FILENAME).toFile();
-    new SQLRunner(appDb.getDataSource(), getMetadataSql(useDatasetName)).executeQuery(
+    new SQLRunner(appDb.getDataSource(), getMetadataSql(useDatasetName, datasetTblPrefix)).executeQuery(
       (useDatasetName ? new Object[]{ datasetName } : new Object[0]),
       (useDatasetName ? new Integer[]{ Types.VARCHAR } : new Integer[0]),
       rs -> {
