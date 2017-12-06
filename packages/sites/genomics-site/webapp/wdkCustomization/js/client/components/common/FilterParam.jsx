@@ -77,7 +77,7 @@ export class FilterParam extends Component {
           ignoredData={ignoredData}
           columns={columns}
           activeField={selectedField}
-          activeFieldSummary={distributionMap[selectedField]}
+          activeFieldDistribution={distributionMap[selectedField]}
           fieldMetadataMap={fieldMetadataMap}
 
           isLoading={isLoading}
