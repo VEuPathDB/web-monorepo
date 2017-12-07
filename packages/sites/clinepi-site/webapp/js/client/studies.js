@@ -8,7 +8,7 @@ export default [
   {
     category: 'enteric',
     name: 'MAL-ED',
-    route: 'record/dataset/DS_61ac5d073c',
+    route: '/record/dataset/DS_61ac5d073c',
     about: (
       <span>
         The MAL-ED project is a multinational and multidisciplinary study designed to elucidate the relationship between enteric pathogens, malnutrition, gut physiology, physical growth, cognitive development and immune responses, in infants and children up to 2 yr of age, in resource-poor environments. <em>Clin Infect Dis</em> <b>59S4:</b>193-206 (2014) PMID 235305287.
@@ -18,7 +18,7 @@ export default [
   {
     category: 'enteric',
     name: 'GEMS',
-    route: 'record/dataset/DS_841a9f5259',
+    route: '/record/dataset/DS_841a9f5259',
     active: true,
     about: (
       <span>
