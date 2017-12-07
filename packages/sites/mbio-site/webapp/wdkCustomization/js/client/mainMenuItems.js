@@ -12,7 +12,7 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
     { 
       id: 'datasets',
       text: 'Data Sets',
-      route: 'search/dataset/AllDatasets/result'
+      route: '/search/dataset/AllDatasets/result'
     },
    defaultItems.profileOrLogin,
    defaultItems.registerOrLogout,
