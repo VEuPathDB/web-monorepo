@@ -116,7 +116,7 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
         {
           id: 'datasets',
           text: 'Data Sets',
-          route: 'search/dataset/AllDatasets/result'
+          route: '/search/dataset/AllDatasets/result'
         },
         {
           id: 'analysis-methods',
@@ -315,7 +315,7 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
       id: 'analyze',
       text: 'Analyze My Experiment',
       new: true,
-      route: shouldShowGalaxyOrientation(preferences) ? 'galaxy-orientation' : undefined,
+      route: shouldShowGalaxyOrientation(preferences) ? '/galaxy-orientation' : undefined,
       url: !shouldShowGalaxyOrientation(preferences) ? 'https://eupathdb.globusgenomics.org/' : undefined,
       target: !shouldShowGalaxyOrientation(preferences) ? '_blank' : undefined
     },
