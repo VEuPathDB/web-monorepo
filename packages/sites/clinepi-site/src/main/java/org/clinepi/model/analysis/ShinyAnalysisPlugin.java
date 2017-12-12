@@ -37,8 +37,9 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   private static final String DATASET_NAME_PROPERTY = "datasetName";
   private static final String DATASET_TBL_PREFIX = "datasetTblPrefix";
 
-  // name of output file dumped to analysis job directory
+  // name of output files dumped to analysis job directory
   private static final String ONT_ATTR_META_FILENAME = "ontologyMetadata.tab";
+  private static final String ADDITIONAL_PROPS_FILENAME = "customProps.txt";
 
   // query output column names
   private static final String SOURCE_ID_COL = "source_id";
@@ -70,6 +71,8 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
           getProperty(DATASET_NAME_PROPERTY),
           getProperty(DATASET_TBL_PREFIX),
           getStorageDirectory());
+      writeContentToFile(getStorageDirectory().toAbsolutePath().toString(),
+          ADDITIONAL_PROPS_FILENAME, getProperty(DATASET_NAME_PROPERTY) + NL);
     }
 
     return status;
