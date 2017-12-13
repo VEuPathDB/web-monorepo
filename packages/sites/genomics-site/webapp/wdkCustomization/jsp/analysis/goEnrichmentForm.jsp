@@ -90,7 +90,7 @@
                 <td>
                   <c:forEach var="item" items="${viewModel.goSubsetOptions}">
                     <c:choose>
-                      <c:when test="${item.display eq 'Yes'}">
+                      <c:when test="${item.display eq 'No'}">
                         <label>
                           <input checked="checked" type="radio" name="goSubset" value="${item.term}"/> ${item.display}
                         </label>
