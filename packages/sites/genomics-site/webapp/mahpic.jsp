@@ -951,7 +951,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://massive.ucsd.edu/ProteoSAFe/static/massive.jsp" target="_blank">E23 Metabolomics at UCSD's MassIVE</a><br><a href="http://www.metabolomicsworkbench.org/" target="_blank">E03 Metabolomics at UCSD's Metabolomics Workbench</a> -->    
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS542" target="_blank">E23 Metabolomics Results at Metabolights</a>  </b></td>  
              <td>N/A</td>
            </tr>
            <tr>
