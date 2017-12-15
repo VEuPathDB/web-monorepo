@@ -1,0 +1,50 @@
+[
+  {
+    "type": "participant",
+    "study": "gems",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  },
+  {
+    "type": "household",
+    "study": "gems",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  },
+  {
+    "type": "observations",
+    "study": "maled",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  },
+  {
+    "type": "vectors",
+    "study": "icemr-india",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  },
+  {
+    "type": "participant",
+    "study": "gems",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  },
+  {
+    "type": "household",
+    "study": "gems",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  },
+  {
+    "type": "observations",
+    "study": "maled",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  },
+  {
+    "type": "vectors",
+    "study": "icemr-india",
+    "url": "#",
+    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+  }
+]

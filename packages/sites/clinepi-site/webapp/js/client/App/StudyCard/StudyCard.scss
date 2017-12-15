@@ -1,0 +1,86 @@
+.wdk-Showcase {
+  .StudyCard-Heading {
+    font-size: 1.3rem;
+    align-items: flex-start;
+    flex: 0 0 auto;
+    padding: 12px 12px 5px;
+    font-weight: 800;
+    display: flex;
+
+    h2 {
+      flex: 1;
+      font-size: 1.6rem;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .StudyCard-Categories {
+    flex: 0 0 auto;
+    .CategoryIcon {
+      margin-top: -4px;
+    }
+  }
+
+  .StudyCard-Stripe {
+    width: 100%;
+    margin: 0;
+    padding: 7px 12px;
+    flex: 0 0 auto;
+    background-color: #e8e8e8;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .StudyCard-Body {
+    flex: 1;
+    padding: 12px;
+    font-size: 0.8rem;
+    ul {
+      padding-left: 0;
+      li {
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  .StudyCard-PreFooter {
+    flex: 0 0 auto;
+    padding: 5px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.9em;
+
+    .generic {
+      opacity: 0.6;
+    }
+  }
+
+  .StudyCard-Footer {
+    flex: 0 0 auto;
+    font-size: 2rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    background-color: rgb(15, 89, 112);
+    padding: 0;
+    margin: 0;
+
+    box {
+      flex: 0;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.4s;
+      -webkit-transition: all 0.4s;
+      text-align: center;
+
+      a { color: white; }
+
+      &:hover {
+        background-color: rgb(12,71,90);
+      }
+    }
+  }
+}

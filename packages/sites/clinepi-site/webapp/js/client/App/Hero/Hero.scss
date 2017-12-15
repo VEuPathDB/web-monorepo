@@ -1,0 +1,46 @@
+.wdk-Hero {
+  width: 100%;
+  padding: 10px;
+  color: white;
+  background-size: cover;
+  magrin: 0;
+  border-bottom: 10px solid #e62f44;
+  text-align: center;
+  text-shadow: 2px 2px 2px black;
+
+  stack {
+    height: 100%;
+    padding: 1.7em 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    font-weight: 300;
+    color: white;
+    text-align: center;
+    font-size: 2.5rem;
+    margin: 0;
+    width: 100%;
+    padding: 0;
+  }
+
+  h3 {
+    font-style: italic;
+    font-weight: 600;
+    padding: 1.3rem 0;
+    text-align: center;
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  p {
+    font-style: italic;
+    font-size: 0.95rem;
+    max-width: 890px;
+    width: 100%;
+    line-height: 1.5em;
+    margin: 0 auto 1em;
+    font-weight: 300;
+  }
+}

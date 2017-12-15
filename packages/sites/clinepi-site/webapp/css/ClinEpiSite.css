@@ -1,4 +1,6 @@
 @import '~eupathdb/wdkCustomization/css/client.css';
+@import url('https://fonts.googleapis.com/css?family=Exo+2:500');
+@import url('https://fonts.googleapis.com/css?family=Rubik:300,300i,400,400i,500,700,900');
 
 @value hlColor: #9c242d;
 @value bgColor: #85b3c3;
@@ -41,8 +43,7 @@ body {
 }
 
 .eupathdb-Logo {
-  position: relative;
-  padding: 4px 0 5px;
+
 }
 
 /* Alpha Release Badge */
@@ -81,6 +82,11 @@ body {
   border-bottom: 1px solid #868686;
   padding: 0 2.5em;
   min-width: 0;
+}
+
+.eupathdb-SmallMenu {
+  position: relative;
+  top: -7px;
 }
 
 .eupathdb-Menu, .eupathdb-SmallMenu {
@@ -130,44 +136,48 @@ a.eupathdb-MenuItemText,
   color: hlColor;
 }
 
-/* New style */
 .HomePage {
-  margin-bottom: 50px;
-}
-
-.HomePage h2 {
-  color: hlColor;
-  padding-top: .6em;
-  padding-bottom: 1em;
-  font-size: 1.6em;
-  font-weight: 700;
-}
-
-.HomePage h2 .fa {
-  margin-right: 15px;
-  opacity: 0.4;
-  transition: all 0.3s ease;
-}
-
-.HomePage h2:hover .fa {
-  opacity: 1;
+  width: 100vw;
+  overflow-x: hidden;
+  display: block;
+  margin: -10px -2em;
+  font-family: 'Rubik';
 }
 
 .HomePage * {
-  box-sizing: border-box;
+  font-family: 'Rubik', 'FontAwesome', 'Font Awesome';
 }
 
-.HomePage row box {
-  padding: 15px;
-  margin-bottom: -15px;
+row.ribbon {
+  background-color: #e62f44;
+  color: #FFF;
+  padding: 10px;
+  text-align:center;
+  justify-content: center;
+  font-weight: 300;
+  width: 100%;
+  font-size: 1.1rem;
 }
 
-.HomePage row {
-  align-items: flex-start;
+button.ViewAll {
+  border: none;
+  color: white;
+  margin: 10px;
+  font-weight: 700;
+  font-size: 1.1em;
+  line-height: 1.1em;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #e62f44;
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  text-transform: uppercase;
 }
 
-.HomePage stack {
-  justify-content: flex-start;
+button.ViewAll:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
 /* Fix for IE11 weirdness */

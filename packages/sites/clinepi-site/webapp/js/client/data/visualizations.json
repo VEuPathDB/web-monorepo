@@ -1,0 +1,44 @@
+[
+  {
+    "url": "%webapp%/images/contingency-tutorial.jpg",
+    "image": "%webapp%/images/analysis_plugins/contingency_tables.jpg",
+    "title": "Create a <b>Contingency Table</b>",
+    "description": "Make a contingency table to compare data within a selection",
+    "ctaText": "See The Tutorial"
+  },
+  {
+    "url": "%webapp%/images/contingency-tutorial.jpg",
+    "image": "%webapp%/images/analysis_plugins/distributions.jpg",
+    "title": "Create a <b>Distribution Graph</b>",
+    "description": "Make a distribution graph to compare data within a selection",
+    "ctaText": "Go to Visualization"
+  },
+  {
+    "url": "%webapp%/images/contingency-tutorial.jpg",
+    "image": "%webapp%/images/analysis_plugins/data_summaries.jpg",
+    "title": "Create a <b>Data Summary</b>",
+    "description": "Make a contingency table to compare data within a selection",
+    "ctaText": "Go to Visualization"
+  },
+  {
+    "url": "%webapp%/images/contingency-tutorial.jpg",
+    "image": "%webapp%/images/analysis_plugins/contingency_tables.jpg",
+    "title": "Create a <b>Contingency Table</b>",
+    "description": "Make a contingency table to compare data within a selection",
+    "ctaText": "See The Tutorial"
+  },
+  {
+    "url": "%webapp%/images/contingency-tutorial.jpg",
+    "image": "%webapp%/images/analysis_plugins/distributions.jpg",
+    "title": "Create a <b>Distribution Graph</b>",
+    "description": "Make a distribution graph to compare data within a selection",
+    "ctaText": "Go to Visualization"
+  },
+  {
+    "url": "%webapp%/images/contingency-tutorial.jpg",
+    "image": "%webapp%/images/analysis_plugins/data_summaries.jpg",
+    "title": "Create a <b>Data Summary</b>",
+    "description": "Make a contingency table to compare data within a selection",
+    "ctaText": "Go to Visualization"
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "name": "PRISM",
+    "id": "prism",
+    "url": "#prism",
+    "categories": ["malarial"],
+    "headline": "3 Sites In Uganda since 2011",
+    "points": [
+      "Addresses the complexity of interactions between the mosquito vector, malaria parasite, and human host",
+      "Combines standard malaria surveillance techniques and metrics with cutting-edge methods designed to improve surveillance"
+    ],
+    "searchUrls": {
+      "participants": "#",
+      "households": "#",
+      "observations": "#",
+      "vectors": "#"
+    }
+  },
+  {
+    "name": "G.E.M.S.",
+    "id": "gems",
+    "disabled": true,
+    "url": "#gems",
+    "categories": ["enteric"],
+    "headline": "22,568 Participants over 3 years.",
+    "points": [
+      "Conducted in <b>Africa & Asia</b>",
+      "60-day follow-up visits",
+      "9,439 cases, 13,129 controls."
+    ],
+    "searchUrls": {
+      "participants": "#",
+      "households": "#",
+      "observations": "#"
+    }
+  },
+  {
+    "name": "MAL-ED",
+    "id": "maled",
+    "disabled": true,
+    "url": "#maled",
+    "categories": ["enteric"],
+    "headline": "31,628 participants over 5 years.",
+    "points": [
+      "Conducted in <b>South America, Africa, and Asia</b>",
+      "Estimates pathogen-specific burdens of diarrhea"
+    ],
+    "searchUrls": {
+      "participants": "#",
+      "households": "#",
+      "observations": "#"
+    }
+  },
+  {
+    "name": "Ugandan ICEMR",
+    "id": "icemr-uganda",
+    "disabled": true,
+    "url": "#icemr-uganda",
+    "categories": ["malarial"],
+    "headline": "X participants over Y years.",
+    "points": [
+      "Conducted in <b>Uganda</b>",
+      "Insert Another Fun Fact Here",
+      "Ice Is Only Frozen When It's Cold"
+    ],
+    "searchUrls": {
+      "participants": "#",
+      "households": "#",
+      "observations": "#",
+      "vectors": "#"
+    }
+  },
+  {
+    "name": "Indian ICEMR",
+    "id": "icemr-india",
+    "disabled": true,
+    "url": "#icemr-india",
+    "categories": ["malarial"],
+    "headline": "X participants over Y years.",
+    "points": [
+      "Conducted in <b>INDIA!</b>",
+      "Insert Another Fun Fact Here",
+      "Ice Is Only Frozen When It's Cold"
+    ],
+    "searchUrls": {
+      "participants": "#",
+      "households": "#",
+      "observations": "#",
+      "vectors": "#"
+    }
+  }
+]
