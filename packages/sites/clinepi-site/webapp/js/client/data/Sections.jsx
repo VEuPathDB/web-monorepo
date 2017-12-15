@@ -6,10 +6,10 @@ import Visualizations from 'Client/data/visualizations.json';
 
 import { injectWebappUrl, getStudyCategoryFilters } from 'Client/App/StudyCard/StudyUtils';
 
-export default (webappUrl) => {
-  const studies = Studies.map(study => injectWebappUrl(study, webappUrl));
-  const searches = Searches.map(search => injectWebappUrl(search, webappUrl));
-  const visualizations = Visualizations.map(visualization => injectWebappUrl(visualization, webappUrl));
+export default (webappUrl = '') => {
+  const studies = injectWebappUrl(Studies, webappUrl);
+  const searches = injectWebappUrl(Searches, webappUrl);
+  const visualizations = injectWebappUrl(Visualizations, webappUrl);
 
   return [
     {

@@ -10,10 +10,10 @@
       "Combines standard malaria surveillance techniques and metrics with cutting-edge methods designed to improve surveillance"
     ],
     "searchUrls": {
-      "participants": "#",
-      "households": "#",
-      "observations": "#",
-      "vectors": "#"
+      "participants": "%webapp%/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_prism",
+      "households": "%webapp%/showQuestion.do?questionFullName=HouseholdQuestions.HouseholdsByCharacteristics_prism",
+      "observations": "%webapp%/showQuestion.do?questionFullName=LighttrapQuestions.CollectionsByCharacteristics_prism",
+      "vectors": "%webapp%/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_prism"
     }
   },
   {

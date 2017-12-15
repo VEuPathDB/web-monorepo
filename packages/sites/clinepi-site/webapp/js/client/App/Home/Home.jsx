@@ -13,6 +13,7 @@ class HomePage extends React.Component {
 
   render () {
     const { prefix } = this.props;
+    
     const Copy = getCopy(prefix);
     const Sections = getSections(prefix);
 

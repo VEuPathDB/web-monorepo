@@ -7,17 +7,21 @@ export function ucFirst (text) {
     : text;
 };
 
-export function injectWebappUrl (map, webappUrl) {
-  const replace = (t) => typeof t === 'string' ? t.split('%webapp%').join(webappUrl) : t;
+export function injectWebappUrl (map, webappUrl = '') {
+  const replace = (item) => {
+    return typeof item == 'string'
+      ? item.replace('%webapp%', webappUrl)
+      : item;
+  }
   if (typeof map === 'string')
     return replace(map);
   if (typeof map !== 'object')
     return map;
   if (Array.isArray(map))
-    return map.map(replace);
+    return map.map(item => injectWebappUrl(item, webappUrl));
   return Object.entries(map)
     .reduce((output, [ key, value ]) => {
-      return Object.assign({}, output, { [key]: replace(value) });
+      return Object.assign({}, output, { [key]: injectWebappUrl(value, webappUrl) });
     }, {});
 }
 
