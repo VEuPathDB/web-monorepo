@@ -24,7 +24,17 @@ const quickSearches = [
     name: 'GeneQuestions.GenesByTextSearch',
     paramName: 'text_expression',
     displayName: 'Gene Text Search',
-    help: `Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.`,
+    help: `
+      <b>Examples:</b>
+      <ul>
+        <li>chloroplast plastid</li>
+        <li>"Histone H3"</li>
+        <li>kinase</li>
+        <li>kinas\*</li>
+        <li>kin\*as\*</li>
+      </ul>
+    `
+    // help: `Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.`,
   }
 ];
 
