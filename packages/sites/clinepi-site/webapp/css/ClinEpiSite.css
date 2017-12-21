@@ -522,20 +522,6 @@ a.WelcomeBoxLink {
   }
 }
 
-/* Icons for wizard */
-.ebrc-QuestionWizardIcon__ParticipantRecordClasses\.ParticipantRecordClass:after {
-  content: '\f183';
-}
-.ebrc-QuestionWizardIcon__ClinicalVisitRecordClasses\.ClinicalVisitRecordClass:after {
-  content: '\f0f1';
-}
-.ebrc-QuestionWizardIcon__DwellingRecordClasses\.DwellingRecordClass:after {
-  content: '\f015';
-}
-.ebrc-QuestionWizardIcon__LightTrapRecordClasses\.LightTrapRecordClass:after {
-  content: '\f188';
-}
-
 .clinepi-StudyLink {
   position: absolute;
   right: 3em;
