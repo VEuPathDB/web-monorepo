@@ -40,8 +40,6 @@ function loadCytoscapeJs() {
 }
 
 
-
-
 // transform wdk row into Cyto Node
 function makeNode(obj) {
 
@@ -210,7 +208,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
         elements:PathwayNodes.map(makeNode).concat(PathwayEdges.map(makeEdge)),
 
         style: [
-            {                                                                                                                       
+            {
                 selector: 'edge',
                 style: {
                     'line-color':'black',
@@ -219,7 +217,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 },
             },
 
-            {                                                                                                                       
+            {
                 selector: 'edge[is_reversible="1"]',
                 style: {
                     'mid-target-arrow-shape':'triangle-backcurve',
@@ -230,7 +228,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 },
             },
 
-            {                                                                                                                       
+            {
                 selector: 'edge[is_reversible="0"]',
                 style: {
                     'mid-target-arrow-shape':'triangle-backcurve',
@@ -238,7 +236,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 },
             },
 
-            {                                                                                                                          
+            {
                 selector: 'node',
                 style: {
 
@@ -321,7 +319,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 },
             },
 
-            {                                                                                                                       
+            {
               selector: 'node[node_type= "enzyme"][gene_count > 0]',
               style: {
                 'border-color':'red',
