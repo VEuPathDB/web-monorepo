@@ -30,12 +30,12 @@ class UserMenu extends React.Component {
     const items = user.isGuest
       ? [
         { icon: 'power-off', text: 'Login', onClick: () => actions.showLoginForm(window.location.href) },
-        { icon: 'user-plus', text: 'Register', onClick: () => actions.showLoginForm(window.location.href) },
-        { icon: 'envelope-open', text: 'Contact Us', url: webAppUrl + '/contact.do', target: '_blank' }
+        { icon: 'user-plus', text: 'Register', href: webAppUrl + '/app/user/registration', target: '_blank' },
+        { icon: 'envelope-open', text: 'Contact Us', href: webAppUrl + '/contact.do', target: '_blank' }
       ] : [
-        { icon: 'vcard', text: [ firstName, lastName ].join(' '), url: webAppUrl + '/app/user/profile' },
+        { icon: 'vcard', text: [ firstName, lastName ].join(' '), href: webAppUrl + '/app/user/profile' },
         { icon: 'power-off', text: 'Log Out', onClick: () => actions.showLogoutWarning(window.location.href) },
-        { icon: 'envelope-open', text: 'Contact Us', url: webAppUrl + '/contact.do', target: '_blank' }
+        { icon: 'envelope-open', text: 'Contact Us', href: webAppUrl + '/contact.do', target: '_blank' }
       ];
 
     return (

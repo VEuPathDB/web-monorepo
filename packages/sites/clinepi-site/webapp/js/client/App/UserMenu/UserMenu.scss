@@ -56,6 +56,10 @@ $white: #E0E0E0;
     background-color: #E0E0E0;
   }
   .UserMenu-Pane-Item {
+    &, &:link, &:active, &:visited {
+      color: black;
+      text-decoration: none;
+    }
     flex: 1;
     display: flex;
     font-size: 1.2em;
