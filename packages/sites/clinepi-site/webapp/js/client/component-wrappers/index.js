@@ -9,11 +9,9 @@ import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 
 import Header from 'Client/App/Header';
 
-import * as Category from 'wdk-client/CategoryUtils';
-import { CategoriesCheckboxTree } from 'wdk-client/Components';
-
 const injectState = withStore(state => ({
-  webAppUrl: get(state, 'globalData.siteConfig.webAppUrl')
+  webAppUrl: get(state, 'globalData.siteConfig.webAppUrl'),
+  studies: get(state, 'globalData.siteConfig.studies')
 }));
 
 export default {
@@ -33,7 +31,7 @@ export default {
     }
   },
 
-  SiteHeader: SiteHeader => props => {
+  SiteHeader: () => props => {
     console.log('gettin props on siteheader', props);
     const { siteConfig, preferences, user, ...actions } = props;
     const newProps = { siteConfig, preferences, user, actions };
@@ -49,12 +47,13 @@ export default {
   },
 
   QuestionWizard: QuestionWizard => injectState(props => {
-    let { webAppUrl } = props;
+    let { studies, webAppUrl, wizardState } = props;
+    let activeStudy = findStudyFromRecordClass(studies, wizardState.recordClass);
     return (
       <div>
         <div className="clinepi-StudyLink">
           <IconAlt fa="info-circle"/>&nbsp;
-          Learn about this Study
+          Learn about the <a href={`${webAppUrl}/app/record/dataset/${activeStudy.id}`} target="_blank">{activeStudy.name} Study</a>
         </div>
         <QuestionWizard {...props} />
       </div>
@@ -95,4 +94,22 @@ export default {
     }
   }
 
+}
+
+/**
+ * Parse the study id from the recordClass's urlSegment property.
+ * Currently, the urlSegment is of the form `${studyId}_${recordTypeShortName}`,
+ * where studyId is of the form `DS_${hash}`.
+ *
+ * FIXME Replace this something more robust. See trello #883.
+ */
+function findStudyFromRecordClass(studies, recordClass) {
+  try {
+    let [ studyId ] = recordClass.urlSegment.match(/^DS_[^_]+/g);
+    return studies.find(study => study.id === studyId);
+  }
+  catch(error) {
+    console.error("Could not find study from record class.");
+    throw error;
+  }
 }
