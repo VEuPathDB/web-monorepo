@@ -54,7 +54,7 @@ export default {
       <div>
         <div className="clinepi-StudyLink">
           <IconAlt fa="info-circle"/>&nbsp;
-          Learn about the *FIXME* Study
+          Learn about this Study
         </div>
         <QuestionWizard {...props} />
       </div>
