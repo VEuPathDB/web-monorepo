@@ -1,0 +1,74 @@
+$red: #DD314E;
+$white: #E0E0E0;
+
+.UserMenu {
+  color: #fff;
+  flex-grow: 0;
+  font-size: 1.1em;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  padding: 0px 15px 15px;
+
+  .UserMenu-Icon {
+    font-size: 34px;
+    padding-bottom: 5px;
+    opacity: 0.5;
+  }
+  span.UserMenu-Title {
+    opacity: 0.7;
+    font-weight: 300;
+    font-style: italic;
+  }
+}
+
+.UserMenu-Pane {
+  right: 0;
+  top: 100%;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  min-width: 150px;
+  position: absolute;
+  border-radius: 10px;
+  transition: all 0.2s;
+  background-color: $white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  .fa {
+    color: $red;
+  }
+  &.inert {
+    opacity: 0;
+    pointer-events: none;
+  }
+  &::after {
+    top: -3px;
+    width: 10px;
+    right: 25px;
+    z-index: -1;
+    height: 10px;
+    content: ' ';
+    display: block;
+    position: absolute;
+    box-sizing: border-box;
+    transform: rotateZ(45deg);
+    background-color: #E0E0E0;
+  }
+  .UserMenu-Pane-Item {
+    flex: 1;
+    display: flex;
+    font-size: 1.2em;
+    padding: 3px 0;
+    flex-direction: row;
+    cursor: pointer;
+    transition: all 0.4s;
+    &:hover {
+      transform: scale(1.04);
+    }
+    .UserMenu-Pane-Item-Icon {
+      width: 20px;
+      margin-right: 5px;
+    }
+  }
+}

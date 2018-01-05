@@ -1,0 +1,13 @@
+.HomePage {
+  width: 100vw;
+  overflow-x: hidden;
+  display: block;
+  padding: 10px 0;
+  box-sizing: border-box;
+  margin: 0 0 0 -2em;
+  font-family: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
+}
+
+.HomePage * {
+  font-family: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica', 'FontAwesome', 'Font Awesome';
+}

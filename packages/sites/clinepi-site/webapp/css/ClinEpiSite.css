@@ -6,7 +6,8 @@
 @value bgColor: #85b3c3;
 
 body {
-  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-family: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
+  /* font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; */
   text-rendering: optimizeLegibility;
   min-width: 900px;
   font-size: 12px;
@@ -134,50 +135,6 @@ a.eupathdb-MenuItemText,
   font-style: italic;
   font-weight: 400;
   color: hlColor;
-}
-
-.HomePage {
-  width: 100vw;
-  overflow-x: hidden;
-  display: block;
-  margin: -10px -2em;
-  font-family: 'Rubik';
-}
-
-.HomePage * {
-  font-family: 'Rubik', 'FontAwesome', 'Font Awesome';
-}
-
-row.ribbon {
-  background-color: #e62f44;
-  color: #FFF;
-  padding: 10px;
-  text-align:center;
-  justify-content: center;
-  font-weight: 300;
-  width: 100%;
-  font-size: 1.1rem;
-}
-
-button.ViewAll {
-  border: none;
-  color: white;
-  margin: 10px;
-  font-weight: 700;
-  font-size: 1.1em;
-  line-height: 1.1em;
-  padding: 8px 16px;
-  border-radius: 20px;
-  background: #e62f44;
-  transition: all 0.4s;
-  -webkit-transition: all 0.4s;
-  text-transform: uppercase;
-}
-
-button.ViewAll:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
-  text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
 }
 
 /* Fix for IE11 weirdness */

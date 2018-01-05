@@ -1,0 +1,242 @@
+$red: #DD314E;
+$white: #E0E0E0;
+
+
+.HeaderNav {
+  width: 100%;
+  padding: 5px 10px;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1000000;
+
+  &-Primary {
+    flex: 1;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+  }
+  &-Secondary {
+    flex: 0.2;
+    position: relative;
+    justify-content: space-between;
+    z-index: 20;
+  }
+
+  &-Switch {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  @media (max-width: 1444px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    .HeaderNav-Social {
+      margin: -10px 0 0;
+    }
+    &-Switch {
+      margin-top: -110px;
+      margin-left: 360px;
+      &-Primary, &-Secondary {
+        width: 100%;
+      }
+      .HeaderNav-Secondary {
+        margin-top: -10px;
+      }
+      .NavMenu {
+        flex-wrap: nowrap;
+        margin-right: -20px;
+      }
+      .UserMenu {
+        margin-left: 20px;
+      }
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    &-Primary {
+      order: 2;
+    }
+  }
+
+  &, box, row {
+    align-items: center;
+  }
+
+  &-Branding {
+    padding: 5px 5px 20px;
+    align-self: flex-start;
+
+    .HeaderNav-Logo {
+      max-width: 70px;
+      margin: 0 10px 0 0;
+    }
+
+    h1.HeaderNav-Title {
+      margin: 0;
+      font-size: 55px;
+      font-weight: 300;
+      // text-shadow: none;
+      font-family: 'Exo 2';
+
+      a, &:link, &:visited, &:hover {
+        color: $red;
+        text-decoration: none;
+        transition: all 0.5s;
+        &:hover {
+          transform: scale(0.95);
+        }
+        mark {
+          color: white;
+          font-weight: 400;
+          font-family: 'Exo 2';
+          background-color: transparent;
+        }
+      }
+    }
+
+    p {
+      margin: 0;
+      opacity: 0.5;
+      font-size: 16px;
+      font-weight: 200;
+      padding: 0;
+      line-height: 1.3em;
+      letter-spacing: 0.2px;
+      code {
+        font-family: 'Inconsolata', 'Menlo', 'Monaco', 'Courier New', 'Courier';
+        background-color: black;
+        display: inlien-block;
+        margin: 0 2px;
+        padding: 1px 3px;
+      }
+      small {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  &-Social {
+    a.HeaderNav-Social-Link {
+      &, &:link, &:active, &:visited { color: #fff; }
+      opacity: 0.45;
+      transition: all 0.6s;
+      font-size: 25px;
+      padding: 8px;
+      display: block;
+      &:hover {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .NavMenu {
+    min-width: 800px;
+    flex: 0.8;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    padding: 0 0 5px;
+
+    .NavItem {
+      font-size: 20px;
+      font-weight: 400;
+      padding: 10px 15px;
+      position: relative;
+      opacity: 0.85;
+      transition: all 0.5s;
+
+      .fa-caret-down {
+        margin-left: 10px;
+      }
+
+      a, a:link, a:active, a:visited {
+        color: #fff;
+        text-decoration: none;
+      }
+      &:hover {
+        opacity: 1;
+      }
+      &-Submenu {
+        // left: 0;
+        right: 0;
+        top: 100%;
+        display: flex;
+        padding: 5px 0 10px;
+        z-index: 10000;
+        text-align: left;
+        position: absolute;
+        white-space: nowrap;
+        transition: all 0.5s;
+        align-items: flex-start;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+
+
+        a, a:link, a:active, a:visited {
+          color: #222;
+          text-decoration: none;
+        }
+
+        &.NavItem-Submenu--hidden {
+          pointer-events: none;
+          .NavItem {
+            max-height: 0px;
+            opacity: 0;
+          }
+        }
+
+        .NavItem {
+          margin: 0;
+          padding: 0;
+          opacity: 1;
+          width: 100%;
+          display: block;
+          max-height: 200px;
+          border-bottom: 1px solid darken($white, 10%);
+
+          &>.NavItem-Link {
+            margin: 0;
+            width: 100%;
+            display: block;
+            overflow: hidden;
+            font-size: 0.8em;
+            min-width: 250px;
+            color: black;
+            opacity: 1;
+            padding: 7px 10px;
+            transition: all 0.5s;
+            background-color: $white;
+
+          }
+          .NavItem-Link:hover {
+            opacity: 1;
+            color: #288b99;
+            background-color: $white;
+          }
+
+          &>.NavItem-Text {
+            margin: 0;
+            width: 100%;
+            font-weight: 300;
+            display: block;
+            font-size: 0.75em;
+            padding: 10px;
+            background-color: #999;
+            color: #fff;
+            &:hover {
+              background-color: #999;
+              color: #fff;
+            }
+          }
+        }
+      }
+      &:last-of-type {
+        .NavItem-Submenu {
+          left: auto;
+          right: 0;
+        } // .NavItem-Submenu
+      } // &:last-of-type
+    } // .NavItem
+  } // .NavMenu
+} // .HeaderNav

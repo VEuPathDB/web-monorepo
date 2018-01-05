@@ -7,7 +7,7 @@ import Home from 'Client/App/Home';
 /*
  * Home page for clinepidb sites
  */
-export default function Index ({ displayName, webAppUrl, studies }) {
+export default function Index ({ displayName, webAppUrl }) {
   return (
     <div>
       <Home prefix={webAppUrl} />

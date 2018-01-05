@@ -1,0 +1,12 @@
+$red: #DD314E;
+
+.StudyMenuItem-Links {
+  .fa {
+    padding: 5px;
+    transition: all 0.25s;
+    &:hover {
+      transform: scale(1.1);
+      color: $red;
+    }
+  }
+}

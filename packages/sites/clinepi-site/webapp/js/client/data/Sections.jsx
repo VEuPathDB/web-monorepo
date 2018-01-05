@@ -4,7 +4,7 @@ import Studies from 'Client/data/studies.json';
 import Searches from 'Client/data/searches.json';
 import Visualizations from 'Client/data/visualizations.json';
 
-import { injectWebappUrl, getStudyCategoryFilters } from 'Client/App/StudyCard/StudyUtils';
+import { injectWebappUrl, getStudyCategoryFilters } from 'Client/App/Studies/StudyUtils';
 
 export default (webappUrl = '') => {
   const studies = injectWebappUrl(Studies, webappUrl);
@@ -16,8 +16,8 @@ export default (webappUrl = '') => {
       title: 'Explore the Studies',
       viewAllUrl: '#viewAll',
       contentType: 'StudyCardList',
-      items: studies,
-      filters: getStudyCategoryFilters(studies)
+      items: studies
+      // filters: getStudyCategoryFilters(studies)
     },
     {
       title: 'Explore Example Searches',
