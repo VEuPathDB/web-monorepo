@@ -2,7 +2,7 @@ export function getSearchIconByType (type = '') {
   switch (type.toLowerCase()) {
     case 'participant':
     case 'participants':
-      return 'child';
+      return 'male';
     case 'household':
     case 'households':
       return 'home';
@@ -12,6 +12,9 @@ export function getSearchIconByType (type = '') {
     case 'vector':
     case 'vectors':
       return 'bug';
+    case 'lighttraps':
+    case 'lights':
+      return 'lightbulb-o fa-rotate-180';
     default:
       return 'globe';
   }
@@ -31,6 +34,9 @@ export function getSearchNameByType (type) {
     case 'vector':
     case 'vectors':
       return 'Vectors';
+    case 'lighttraps':
+    case 'lights':
+      return 'Light Traps';
     default:
       return type;
   }

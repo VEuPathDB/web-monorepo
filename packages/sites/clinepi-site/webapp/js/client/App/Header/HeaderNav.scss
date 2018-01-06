@@ -206,13 +206,12 @@ $white: #E0E0E0;
             opacity: 1;
             padding: 7px 10px;
             transition: all 0.5s;
-            background-color: $white;
+            background-color: lighten($white, 10%);
 
           }
           .NavItem-Link:hover {
             opacity: 1;
             color: #288b99;
-            background-color: $white;
           }
 
           &>.NavItem-Text {
@@ -222,11 +221,11 @@ $white: #E0E0E0;
             display: block;
             font-size: 0.75em;
             padding: 10px;
-            background-color: #999;
-            color: #fff;
+            background-color: $white;
+            color: #555;
             &:hover {
-              background-color: #999;
-              color: #fff;
+              background-color: $white;
+              color: #555;
             }
           }
         }

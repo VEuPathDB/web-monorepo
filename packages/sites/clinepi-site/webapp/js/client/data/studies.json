@@ -12,8 +12,8 @@
     "searchUrls": {
       "participants": "/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_prism",
       "households": "/showQuestion.do?questionFullName=HouseholdQuestions.HouseholdsByCharacteristics_prism",
-      "observations": "/showQuestion.do?questionFullName=LighttrapQuestions.CollectionsByCharacteristics_prism",
-      "vectors": "/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_prism"
+      "observations": "/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_prism",
+      "lighttraps": "/showQuestion.do?questionFullName=LighttrapQuestions.CollectionsByCharacteristics_prism"
     }
   },
   {
