@@ -10,10 +10,10 @@ import { IconAlt as Icon } from 'wdk-client/Components';
 class HeaderNav extends React.Component {
   constructor (props) {
     super(props);
-    this.getSocialIcon = this.getSocialIcon.bind(this);
+    this.getIconByType = this.getIconByType.bind(this);
     this.renderBranding = this.renderBranding.bind(this);
-    this.renderSocialNav = this.renderSocialNav.bind(this);
-    this.renderSocialIcon = this.renderSocialIcon.bind(this);
+    this.renderIconMenu = this.renderIconMenu.bind(this);
+    this.renderIconMenuItem = this.renderIconMenuItem.bind(this);
   }
 
   renderBranding ({ siteConfig }) {
@@ -40,37 +40,35 @@ class HeaderNav extends React.Component {
     );
   }
 
-  getSocialIcon (type = '') {
+  getIconByType (type = '') {
     if (typeof type !== 'string' || !type.length) return 'globe';
     switch (type.toLowerCase()) {
       case 'facebook': return 'facebook-official';
       case 'twitter': return 'twitter';
       case 'youtube': return 'youtube-play';
-      default: return 'globe';
+      default: return type;
     }
   }
 
-  renderSocialIcon ({ type, url = '' }) {
-    const icon = this.getSocialIcon(type);
+  renderIconMenuItem ({ type, url = '', name, text }) {
+    const icon = this.getIconByType(type);
     return (
       <a
         href={url}
         target="_blank"
-        name={`Visit us on ${type}`}
+        name={name ? name : `Visit us on ${type}`}
         className="HeaderNav-Social-Link">
         <Icon fa={icon} />
+        {!text ? null : text}
       </a>
     );
   }
 
-  renderSocialNav ({ siteConfig }) {
-    const { facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
-    const SocialIcon = this.renderSocialIcon;
+  renderIconMenu ({ items }) {
+    const IconMenuItem = this.renderIconMenuItem;
     return (
       <div className="row HeaderNav-Social nowrap">
-        <SocialIcon type="facebook" url={facebookUrl} />
-        <SocialIcon type="twitter" url={twitterUrl} />
-        <SocialIcon type="youtube" url={youtubeUrl} />
+        {items.map((props, index) => <IconMenuItem {...props} key={index} />)}
       </div>
     );
   }
@@ -79,17 +77,18 @@ class HeaderNav extends React.Component {
     const { siteConfig, user, actions } = this.props;
     const { webAppUrl } = siteConfig;
     const Branding = this.renderBranding;
-    const SocialNav = this.renderSocialNav;
+    const IconMenu = this.renderIconMenu;
+    const { mainMenu, iconMenu } = menuItems(siteConfig);
 
     return (
       <div className="row HeaderNav">
         <Branding siteConfig={siteConfig} />
         <div className="HeaderNav-Switch">
           <row className="HeaderNav-Primary">
-            <NavMenu items={menuItems(webAppUrl)} config={siteConfig} />
+            <NavMenu items={mainMenu} config={siteConfig} />
           </row>
           <row className="HeaderNav-Secondary">
-            <SocialNav siteConfig={siteConfig} />
+            <IconMenu items={iconMenu} />
             <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
           </row>
         </div>

@@ -1,29 +1,6 @@
 import React from 'react';
-import { CategoryIcon } from 'Client/App/Categories';
 
-export function ucFirst (text) {
-  return typeof text === 'string' && text.length > 1
-    ? text[0].toUpperCase() + text.slice(1)
-    : text;
-};
-
-export function injectWebappUrl (map, webappUrl = '') {
-  const replace = (item) => {
-    return typeof item == 'string'
-      ? item.replace('%webapp%', webappUrl)
-      : item;
-  }
-  if (typeof map === 'string')
-    return replace(map);
-  if (typeof map !== 'object')
-    return map;
-  if (Array.isArray(map))
-    return map.map(item => injectWebappUrl(item, webappUrl));
-  return Object.entries(map)
-    .reduce((output, [ key, value ]) => {
-      return Object.assign({}, output, { [key]: injectWebappUrl(value, webappUrl) });
-    }, {});
-}
+/* Filtering, defunct until we need study filtering again (AB, 1/8/18) */
 
 export function createStudyCategoryPredicate (targetCategory) {
   return ({ categories } = {}) => {

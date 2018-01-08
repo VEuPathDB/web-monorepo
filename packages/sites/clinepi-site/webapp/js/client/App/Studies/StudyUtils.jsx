@@ -69,31 +69,24 @@ export function injectWebappUrl (map, webappUrl = '') {
     }, {});
 }
 
-export function createStudyCategoryPredicate (targetCategory) {
-  return ({ categories } = {}) => {
-    return !categories ? false : categories
-      .map(category => category.toLowerCase())
-      .includes(targetCategory.toLowerCase());
-  };
-};
+export function injectStudyWebappUrl (study, webAppUrl) {
+  const { searchUrls } = study;
+  if (!searchUrls || typeof searchUrls !== 'object' || !Object.keys(searchUrls).length) return study;
+  const newSearchUrls = {};
+  for (let key in searchUrls) { newSearchUrls[key] = (webAppUrl ? webAppUrl : '') + searchUrls[key]; };
+  return Object.assign({}, study, { searchUrls: newSearchUrls });
+}
 
-export function createStudyCategoryFilter (id) {
-  const display = (<label><CategoryIcon category={id} /> {ucFirst(id)}</label>);
-  const predicate = createStudyCategoryPredicate(id);
-  return { id, display, predicate };
-};
+export function addWebAppUrlToStudies (list, webAppUrl) {
+  if (!list || !Array.isArray(list)) return list;
+  return list.map(study => injectStudyWebappUrl(study, webAppUrl));
+}
 
-export function getStudyListCategories (studies) {
-  return studies
-    .map(({ categories }) => categories)
-    .filter(categories => categories && categories.length)
-    .reduce((result, set) => {
-      const additions = set.filter(cat => !result.includes(cat));
-      return [ ...result, ...additions];
-    }, []);
-};
-
-export function getStudyCategoryFilters (studies) {
-  const categories = getStudyListCategories(studies);
-  return categories.map(createStudyCategoryFilter);
-};
+export function iconMenuItemsFromSocials (siteConfig = {}) {
+  const { facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
+  const items = [];
+  if (facebookUrl) items.push({ type: 'facebook', url: facebookUrl });
+  if (twitterUrl) items.push({ type: 'twitter', url: twitterUrl });
+  if (youtubeUrl) items.push({ type: 'youtube', url: youtubeUrl });
+  return items;
+}

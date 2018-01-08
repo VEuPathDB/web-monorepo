@@ -30,12 +30,10 @@ class UserMenu extends React.Component {
     const items = user.isGuest
       ? [
         { icon: 'power-off', text: 'Login', onClick: () => actions.showLoginForm(window.location.href) },
-        { icon: 'user-plus', text: 'Register', href: webAppUrl + '/app/user/registration', target: '_blank' },
-        { icon: 'envelope-open', text: 'Contact Us', href: webAppUrl + '/contact.do', target: '_blank' }
+        { icon: 'user-plus', text: 'Register', href: webAppUrl + '/app/user/registration', target: '_blank' }
       ] : [
         { icon: 'vcard', text: [ firstName, lastName ].join(' '), href: webAppUrl + '/app/user/profile' },
-        { icon: 'power-off', text: 'Log Out', onClick: () => actions.showLogoutWarning(window.location.href) },
-        { icon: 'envelope-open', text: 'Contact Us', href: webAppUrl + '/contact.do', target: '_blank' }
+        { icon: 'power-off', text: 'Log Out', onClick: () => actions.showLogoutWarning(window.location.href) }
       ];
 
     return (
@@ -61,10 +59,9 @@ class UserMenu extends React.Component {
     const { user } = this.props;
     if (!user) return null;
 
-    const { isGuest } = user;
+    const { isGuest, properties } = user;
     const iconClass = 'user-circle' + (isGuest ? '-o' : '');
     const Menu = this.renderMenu;
-    console.log('Usermenu be gettin user prop', user);
 
     return (
       <box
@@ -73,7 +70,7 @@ class UserMenu extends React.Component {
         onMouseLeave={onMouseLeave}>
         <Icon className="UserMenu-Icon" fa={iconClass} />
         <span className="UserMenu-Title">
-          {isGuest ? 'Guest' : user.properties.firstName}
+          {isGuest ? 'Guest' : properties.firstName}
         </span>
         <Menu />
       </box>

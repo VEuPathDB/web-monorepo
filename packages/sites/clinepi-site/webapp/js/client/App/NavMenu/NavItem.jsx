@@ -22,7 +22,7 @@ class NavItem extends React.Component {
     const { onMouseEnter, onMouseLeave } = this;
     const { isHovered } = this.state;
     const { item, config } = this.props;
-    const { id, text, url, appUrl } = item;
+    const { id, text, url, appUrl, target } = item;
     const { webAppUrl, projectId } = config;
 
     const children = (typeof item.children === 'function')
@@ -40,7 +40,7 @@ class NavItem extends React.Component {
     return (
       <box className={className} key={id} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       	{destination
-          ? <a className="NavItem-Link" href={destination}>{text}</a>
+          ? <a className="NavItem-Link" href={destination} target={target}>{text}</a>
           : <span className="NavItem-Text">{text}</span>
         }
         {children && children.length

@@ -32,7 +32,7 @@ export default {
   },
 
   SiteHeader: () => props => {
-    console.log('gettin props on siteheader', props);
+    // console.log('gettin props on siteheader', props);
     const { siteConfig, preferences, user, ...actions } = props;
     const newProps = { siteConfig, preferences, user, actions };
     return (

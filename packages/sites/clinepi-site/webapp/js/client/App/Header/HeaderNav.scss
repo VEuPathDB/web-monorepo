@@ -193,20 +193,21 @@ $white: #E0E0E0;
           width: 100%;
           display: block;
           max-height: 200px;
-          border-bottom: 1px solid darken($white, 10%);
+          border-bottom: 1px solid #fff;
 
-          &>.NavItem-Link {
+          &>.NavItem-Link, &>.NavItem-Text {
             margin: 0;
             width: 100%;
             display: block;
             overflow: hidden;
             font-size: 0.8em;
             min-width: 250px;
+            font-weight: 300;
             color: black;
             opacity: 1;
             padding: 7px 10px;
             transition: all 0.5s;
-            background-color: lighten($white, 10%);
+            background-color: lighten($white, 7%);
 
           }
           .NavItem-Link:hover {
@@ -221,10 +222,10 @@ $white: #E0E0E0;
             display: block;
             font-size: 0.75em;
             padding: 10px;
-            background-color: $white;
+            background-color: lighten($white, 5%);
             color: #555;
             &:hover {
-              background-color: $white;
+              background-color: lighten($white, 5%);
               color: #555;
             }
           }
