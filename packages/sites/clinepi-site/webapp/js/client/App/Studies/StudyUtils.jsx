@@ -3,6 +3,7 @@ import React from 'react';
 import './StudyMenu.scss';
 import { IconAlt as Icon } from 'wdk-client/Components';
 import { CategoryIcon } from 'Client/App/Categories';
+import { AnchoredTooltip } from 'mesa';
 
 import { getSearchIconByType, getSearchNameByType } from 'Client/App/Searches/SearchUtils';
 
@@ -16,9 +17,11 @@ export function linkFromSearchUrl (type = '', url = '') {
   const name = getSearchNameByType(type);
   const icon = getSearchIconByType(type);
   return (
-    <a name={`Search for ${name}`} href={url} key={type}>
-      <Icon fa={icon} />
-    </a>
+    <AnchoredTooltip offset={{ top: 15, left: 15 }} content={(<span>Search for <b>{name}</b></span>)}>
+      <a name={`Search for ${name}`} href={url} key={type}>
+        <Icon fa={icon} />
+      </a>
+    </AnchoredTooltip>
   );
 };
 

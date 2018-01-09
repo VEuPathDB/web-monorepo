@@ -11,7 +11,7 @@ export default function menuItems (siteConfig) {
       {
         id: 'search',
         text: 'New Search',
-        children: () => menuItemsFromStudies(localStudies)
+        children: menuItemsFromStudies(localStudies)
       },
       {
         id: 'strategies',

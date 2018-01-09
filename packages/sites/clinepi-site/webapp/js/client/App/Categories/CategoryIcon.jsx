@@ -14,15 +14,15 @@ class CategoryIcon extends React.Component {
     const position = this.anchor ? Tooltip.getOffset(this.anchor) : {};
     const { top, left } = position;
     return (
-      <div>
-        <span ref={(a) => this.anchor = a} />
+      <div style={{ position: 'relative' }}>
         <Tooltip
           content={(<span>A <b>{category}</b> study</span>)}
           style={{ width: 'auto', textTransform: 'capitalize' }}
-          position={{ top: top + 50, left }}>
+          position={{ top, left }}>
           <span className="CategoryIcon" style={categoryStyle}>
             {category[0].toUpperCase()}
           </span>
+          <span ref={(a) => this.anchor = a} />
         </Tooltip>
       </div>
     );
