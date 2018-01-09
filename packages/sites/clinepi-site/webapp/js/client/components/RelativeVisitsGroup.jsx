@@ -23,7 +23,6 @@ const requiredLayoutSettingKeys = [
   dateOperatorParamNameKey,
   daysBetweenParamNameKey,
   dateDirectionParamNameKey,
-  numRelativeEventsParamNameKey,
   relativeVisitsParamNameKey
 ];
 
@@ -52,6 +51,7 @@ function paramRenderer(param, props) {
       uiState={uiState}
       onActiveOntologyTermChange={props.eventHandlers.setActiveOntologyTerm}
       onParamValueChange={props.eventHandlers.setParamValue}
+      onParamStateChange={props.eventHandlers.setParamState}
     />
   );
 }
@@ -140,7 +140,7 @@ export default class RelativeVisitsGroup extends React.Component {
     const { question } = this.props.wizardState;
 
     const relatedObservationsLayoutSettings =
-      JSON.parse(question.parameters[layoutProperyKey]);
+      JSON.parse(question.properties[layoutProperyKey]);
 
     const { observationsGroupName, useRelativeObservationsParamName } =
       relatedObservationsLayoutSettings;
