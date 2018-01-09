@@ -11,7 +11,7 @@ export default function Index ({ displayName, webAppUrl }) {
   return (
     <div>
       <Home prefix={webAppUrl} />
-      <DisclaimerModal />
+      {/* <DisclaimerModal /> */}
     </div>
   );
 }
