@@ -3,6 +3,7 @@
     "name": "PRISM",
     "id": "DS_0ad509829e",
     "categories": ["malarial"],
+    "appUrl": "app/record/dataset/DS_0ad509829e",
     "headline": "3 Sites In Uganda since 2011",
     "points": [
       "Addresses the complexity of interactions between the mosquito vector, malaria parasite, and human host",

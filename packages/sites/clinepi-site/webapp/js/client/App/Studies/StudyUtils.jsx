@@ -33,25 +33,27 @@ export function linksFromSearchUrls (searchUrls = {}, webappUrl = '') {
   );
 };
 
-export function menuItemFromStudy (study = {}, index, webappUrl) {
-  const { name, url, searchUrls } = study;
+export function menuItemFromStudy (study = {}, index, webAppUrl = '') {
+  const { name, url, appUrl, searchUrls } = study;
   const text = (
     <row key={index} className="StudyMenuItem">
       <box className="grow-1">
-        {name}
+        <a href={appUrl ? webAppUrl + '/' + appUrl : url}>
+          {name}
+        </a>
       </box>
       <row className="grow-0 StudyMenuItem-Links">
-        {linksFromSearchUrls(searchUrls, webappUrl)}
+        {linksFromSearchUrls(searchUrls, webAppUrl)}
       </row>
     </row>
   );
   return { text, url };
 }
 
-export function menuItemsFromStudies (studies, webappUrl) {
+export function menuItemsFromStudies (studies, webAppUrl) {
   return studies
     .filter(({ disabled }) => !disabled)
-    .map((item, index) => menuItemFromStudy(item, index, webappUrl));
+    .map((item, index) => menuItemFromStudy(item, index, webAppUrl));
 }
 
 export function injectWebappUrl (map, webappUrl = '') {

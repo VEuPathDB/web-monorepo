@@ -27,7 +27,7 @@ class StudyCard extends React.Component {
   render () {
     const { study, prefix } = this.props;
     const { searchType } = this.state;
-    const { name, categories, url, headline, points, searchUrls, disabled } = study;
+    const { name, categories, url, appUrl, headline, points, searchUrls, disabled } = study;
 
     return (
       <stack className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
@@ -38,7 +38,7 @@ class StudyCard extends React.Component {
               <CategoryIcon category={cat} key={cat} />
             ))}
           </box>
-          <a href={url} target="_blank">
+          <a href={appUrl && prefix ? prefix + '/' + appUrl : url} target="_blank">
             <Icon fa="angle-double-right" />
           </a>
         </box>
