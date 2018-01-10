@@ -2,7 +2,7 @@ import React from 'react';
 
 import { IconAlt as Icon } from 'wdk-client/Components';
 
-class NavItem extends React.Component {
+class SiteMenuItem extends React.Component {
   constructor (props) {
     super(props);
     this.state = { isHovered: false };
@@ -35,13 +35,13 @@ class NavItem extends React.Component {
         ? url
         : null;
 
-    const className = 'NavItem' + (children && children.length ? ' NavItem--HasSubmenu' : '');
+    const className = 'SiteMenuItem' + (children && children.length ? ' SiteMenuItem--HasSubmenu' : '');
 
     return (
       <box className={className} key={id} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       	{destination
-          ? <a className="NavItem-Link" href={destination} target={target}>{text}</a>
-          : <span className="NavItem-Text">{text}</span>
+          ? <a className="SiteMenuItem-Link" href={destination} target={target}>{text}</a>
+          : <span className="SiteMenuItem-Text">{text}</span>
         }
         {children && children.length
           ? <Icon fa="caret-down" />
@@ -49,12 +49,12 @@ class NavItem extends React.Component {
         }
         {children && children.length
           ? (
-            <stack className={'NavItem-Submenu' + (isHovered ? '' : ' NavItem-Submenu--hidden')}>
+            <stack className={'SiteMenuItem-Submenu' + (isHovered ? '' : ' SiteMenuItem-Submenu--hidden')}>
               {children.map((child, idx) => (
-                <NavItem
+                <SiteMenuItem
+                  key={idx}
                   item={child}
                   config={config}
-                  key={idx}
                 />
               ))}
             </stack>
@@ -66,4 +66,4 @@ class NavItem extends React.Component {
   }
 };
 
-export default NavItem;
+export default SiteMenuItem;

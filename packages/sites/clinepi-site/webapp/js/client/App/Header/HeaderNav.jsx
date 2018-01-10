@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './HeaderNav.scss';
-import NavMenu from 'Client/App/NavMenu';
+import SiteMenu from 'Client/App/SiteMenu';
 import UserMenu from 'Client/App/UserMenu';
 import menuItems from 'Client/data/menuItems';
 
@@ -76,21 +76,24 @@ class HeaderNav extends React.Component {
   render () {
     const { siteConfig, user, actions } = this.props;
     const { webAppUrl } = siteConfig;
+    const { mainMenu, iconMenu } = menuItems(siteConfig);
+
     const Branding = this.renderBranding;
     const IconMenu = this.renderIconMenu;
-    const { mainMenu, iconMenu } = menuItems(siteConfig);
 
     return (
       <div className="row HeaderNav">
         <Branding siteConfig={siteConfig} />
         <div className="HeaderNav-Switch">
           <row className="HeaderNav-Primary">
-            <NavMenu items={mainMenu} config={siteConfig} />
+            <SiteMenu items={mainMenu} config={siteConfig} />
           </row>
+
           <row className="HeaderNav-Secondary">
             <IconMenu items={iconMenu} />
             <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
           </row>
+
         </div>
       </div>
     );

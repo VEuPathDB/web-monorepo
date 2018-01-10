@@ -16,9 +16,11 @@ export function ucFirst (text) {
 export function linkFromSearchUrl (type = '', url = '') {
   const name = getSearchNameByType(type);
   const icon = getSearchIconByType(type);
+  // FIXME: refactor this whole sector and get dynamic study name
+  const tooltip = (<span>Search <b>{name}</b> in the PRISM Study</span>);
   return (
-    <AnchoredTooltip offset={{ top: 15, left: 15 }} content={(<span>Search for <b>{name}</b></span>)}>
-      <a name={`Search for ${name}`} href={url} key={type}>
+    <AnchoredTooltip key={type} fadeOut={true} offset={{ top: 20, left: 20 }} content={tooltip}>
+      <a name={`Search ${name}`} href={url} key={type}>
         <Icon fa={icon} />
       </a>
     </AnchoredTooltip>
@@ -35,6 +37,8 @@ export function linksFromSearchUrls (searchUrls = {}, webappUrl = '') {
 
 export function menuItemFromStudy (study = {}, index, webAppUrl = '') {
   const { name, url, appUrl, searchUrls } = study;
+  console.log('Menuing item for study...', { study });
+  console.log('linking study to...', appUrl ? webAppUrl + '/' + appUrl : url);
   const text = (
     <row key={index} className="StudyMenuItem">
       <box className="grow-1">
@@ -47,7 +51,7 @@ export function menuItemFromStudy (study = {}, index, webAppUrl = '') {
       </row>
     </row>
   );
-  return { text, url };
+  return { text, url, appUrl };
 }
 
 export function menuItemsFromStudies (studies, webAppUrl) {

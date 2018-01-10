@@ -3,7 +3,7 @@
     "name": "PRISM",
     "id": "DS_0ad509829e",
     "categories": ["malarial"],
-    "appUrl": "app/record/dataset/DS_0ad509829e",
+    "appUrl": "/app/record/dataset/DS_0ad509829e",
     "headline": "3 Sites In Uganda since 2011",
     "points": [
       "Addresses the complexity of interactions between the mosquito vector, malaria parasite, and human host",
@@ -52,33 +52,14 @@
     }
   },
   {
-    "name": "Ugandan ICEMR",
-    "id": "icemr-uganda",
+    "name": "Other ICEMR Studies",
+    "id": "icemr-other",
     "disabled": true,
-    "url": "#icemr-uganda",
+    "url": "#icemr-other",
     "categories": ["malarial"],
-    "headline": "X participants over Y years.",
+    "headline": "Coming in 2018",
     "points": [
       "Conducted in <b>Uganda</b>",
-      "Insert Another Fun Fact Here",
-      "Ice Is Only Frozen When It's Cold"
-    ],
-    "searchUrls": {
-      "participants": "#",
-      "households": "#",
-      "observations": "#",
-      "vectors": "#"
-    }
-  },
-  {
-    "name": "Indian ICEMR",
-    "id": "icemr-india",
-    "disabled": true,
-    "url": "#icemr-india",
-    "categories": ["malarial"],
-    "headline": "X participants over Y years.",
-    "points": [
-      "Conducted in <b>INDIA!</b>",
       "Insert Another Fun Fact Here",
       "Ice Is Only Frozen When It's Cold"
     ],

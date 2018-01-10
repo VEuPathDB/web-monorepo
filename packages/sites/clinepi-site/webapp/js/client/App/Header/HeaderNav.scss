@@ -43,7 +43,8 @@ $white: #E0E0E0;
       .HeaderNav-Secondary {
         margin-top: -10px;
       }
-      .NavMenu {
+      .SiteMenu {
+        margin-top: 10px;
         flex-wrap: nowrap;
         margin-right: -20px;
       }
@@ -130,7 +131,7 @@ $white: #E0E0E0;
     }
   }
 
-  .NavMenu {
+  .SiteMenu {
     min-width: 800px;
     flex: 0.8;
     box-sizing: border-box;
@@ -138,7 +139,7 @@ $white: #E0E0E0;
     justify-content: space-around;
     padding: 0 0 5px;
 
-    .NavItem {
+    .SiteMenuItem {
       font-size: 20px;
       font-weight: 400;
       padding: 10px 15px;
@@ -178,15 +179,15 @@ $white: #E0E0E0;
           text-decoration: none;
         }
 
-        &.NavItem-Submenu--hidden {
+        &.SiteMenuItem-Submenu--hidden {
           pointer-events: none;
-          .NavItem {
+          .SiteMenuItem {
             max-height: 0px;
             opacity: 0;
           }
         }
 
-        .NavItem {
+        .SiteMenuItem {
           margin: 0;
           padding: 0;
           opacity: 1;
@@ -195,7 +196,7 @@ $white: #E0E0E0;
           max-height: 200px;
           border-bottom: 1px solid #fff;
 
-          &>.NavItem-Link, &>.NavItem-Text {
+          &>.SiteMenuItem-Link, &>.SiteMenuItem-Text {
             margin: 0;
             width: 100%;
             display: block;
@@ -210,12 +211,12 @@ $white: #E0E0E0;
             background-color: lighten($white, 7%);
 
           }
-          .NavItem-Link:hover {
+          .SiteMenuItem-Link:hover {
             opacity: 1;
             color: #288b99;
           }
 
-          &>.NavItem-Text {
+          &>.SiteMenuItem-Text {
             margin: 0;
             width: 100%;
             font-weight: 300;
@@ -232,11 +233,11 @@ $white: #E0E0E0;
         }
       }
       &:last-of-type {
-        .NavItem-Submenu {
+        .SiteMenuItem-Submenu {
           left: auto;
           right: 0;
-        } // .NavItem-Submenu
+        } // .SiteMenuItem-Submenu
       } // &:last-of-type
-    } // .NavItem
-  } // .NavMenu
+    } // .SiteMenuItem
+  } // .SiteMenu
 } // .HeaderNav

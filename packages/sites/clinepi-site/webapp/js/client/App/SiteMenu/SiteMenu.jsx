@@ -1,8 +1,8 @@
 import React from 'react';
 
-import NavItem from './NavItem';
+import SiteMenuItem from './SiteMenuItem';
 
-class NavMenu extends React.Component {
+class SiteMenu extends React.Component {
   constructor (props) {
     super(props);
   }
@@ -10,12 +10,12 @@ class NavMenu extends React.Component {
   render () {
     const { items, config } = this.props;
     return (
-      <row className="NavMenu">
+      <row className="SiteMenu">
         {!items ? null : items.map((item, key) => (
-          <NavItem
+          <SiteMenuItem
+            key={key}
             item={item}
             config={config}
-            key={key}
           />
         ))}
       </row>
@@ -23,4 +23,4 @@ class NavMenu extends React.Component {
   }
 };
 
-export default NavMenu;
+export default SiteMenu;

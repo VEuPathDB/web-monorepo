@@ -1,5 +1,10 @@
 import studies from './studies.json';
-import { menuItemsFromStudies, iconMenuItemsFromSocials, injectStudyWebappUrl, addWebAppUrlToStudies } from 'Client/App/Studies/StudyUtils';
+import {
+  menuItemsFromStudies,
+  iconMenuItemsFromSocials,
+  injectStudyWebappUrl,
+  addWebAppUrlToStudies
+} from 'Client/App/Studies/StudyUtils';
 
 export default function menuItems (siteConfig) {
   const { webAppUrl } = siteConfig;
@@ -11,7 +16,7 @@ export default function menuItems (siteConfig) {
       {
         id: 'search',
         text: 'New Search',
-        children: menuItemsFromStudies(localStudies, webAppUrl)
+        children: menuItemsFromStudies(localStudies)
       },
       {
         id: 'strategies',
@@ -21,7 +26,7 @@ export default function menuItems (siteConfig) {
       {
         id: 'studies',
         text: 'Studies',
-        appUrl: '/app/record/dataset/DS_841a9f5259'
+        appUrl: '/app/record/dataset/DS_0ad509829e'
       },
       {
         id: 'about',
@@ -88,7 +93,7 @@ export default function menuItems (siteConfig) {
         target: '_blank',
         id: 'contactus',
         text: 'Contact Us',
-        url: webAppUrl + '/contact.do'
+        appUrl: '/contact.do'
       }
     ],
     iconMenu: [ ...socialIcons ]
