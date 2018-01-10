@@ -1,0 +1,103 @@
+$white: #E0E0E0;
+
+.SiteMenuItem {
+  font-size: 20px;
+  font-weight: 400;
+  padding: 10px 15px;
+  position: relative;
+  opacity: 0.85;
+  transition: all 0.5s;
+
+  .fa-caret-down {
+    margin-left: 10px;
+  }
+
+  a, a:link, a:active, a:visited {
+    color: #fff;
+    text-decoration: none;
+  }
+  &:hover {
+    opacity: 1;
+  }
+  .SiteMenuItem-Submenu {
+    // left: 0;
+    right: 0;
+    top: 100%;
+    display: flex;
+    padding: 5px 0 10px;
+    z-index: 10000;
+    text-align: left;
+    position: absolute;
+    white-space: nowrap;
+    transition: all 0.5s;
+    align-items: flex-start;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+
+
+    a, a:link, a:active, a:visited {
+      color: #222;
+      text-decoration: none;
+    }
+
+    &.SiteMenuItem-Submenu--hidden {
+      pointer-events: none;
+      .SiteMenuItem {
+        max-height: 0px;
+        opacity: 0;
+      }
+    }
+
+    .SiteMenuItem {
+      margin: 0;
+      padding: 0;
+      opacity: 1;
+      width: 100%;
+      display: block;
+      max-height: 200px;
+      border-bottom: 1px solid #fff;
+
+      &>.SiteMenuItem-Link, &>.SiteMenuItem-Text {
+        margin: 0;
+        width: 100%;
+        display: block;
+        overflow: hidden;
+        font-size: 0.8em;
+        min-width: 250px;
+        font-weight: 300;
+        white-space: nowrap;
+        color: black;
+        opacity: 1;
+        padding: 7px 10px;
+        transition: all 0.5s;
+        background-color: lighten($white, 7%);
+
+      }
+      .SiteMenuItem-Link:hover {
+        opacity: 1;
+        color: #288b99;
+      }
+
+      &>.SiteMenuItem-Text {
+        margin: 0;
+        width: 100%;
+        font-weight: 300;
+        display: block;
+        font-size: 0.75em;
+        padding: 10px;
+        background-color: lighten($white, 5%);
+        color: #555;
+        &:hover {
+          background-color: lighten($white, 5%);
+          color: #555;
+        }
+      }
+    }
+  }
+  &:last-of-type {
+    .SiteMenuItem-Submenu {
+      left: auto;
+      right: 0;
+    }
+  }
+}

@@ -3,12 +3,13 @@ import React from 'react';
 import './CategoryIcon.css';
 
 const { Tooltip } = Mesa;
-import { getCategoryColor } from './CategoryUtils';
+import { getCategoryColor, getCategoryName } from './CategoryUtils';
 
 class CategoryIcon extends React.Component {
   render () {
     const { category } = this.props;
     if (!category) return null;
+    const categoryName = getCategoryName(category);
     const categoryColor = getCategoryColor(category);
     const categoryStyle = { backgroundColor: categoryColor };
     const position = this.anchor ? Tooltip.getOffset(this.anchor) : {};
@@ -16,7 +17,7 @@ class CategoryIcon extends React.Component {
     return (
       <div style={{ position: 'relative' }}>
         <Tooltip
-          content={(<span>A <b>{category}</b> study</span>)}
+          content={categoryName}
           style={{ width: 'auto', textTransform: 'capitalize' }}
           position={{ top, left }}>
           <span className="CategoryIcon" style={categoryStyle}>

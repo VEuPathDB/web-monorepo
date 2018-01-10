@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './SiteMenuItem.scss';
 import { IconAlt as Icon } from 'wdk-client/Components';
 
 class SiteMenuItem extends React.Component {

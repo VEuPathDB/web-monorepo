@@ -1,12 +1,20 @@
 $red: #DD314E;
-
-.StudyMenuItem-Links {
-  .fa {
-    font-size: 1.4em;
-    padding: 5px;
-    transition: all 0.25s;
-    &:hover {
-      color: $red;
+.StudyMenuItem {
+  width: 280px;
+  align-items: center;
+  .StudyMenuItem-Links {
+    .fa {
+      font-size: 1.4em;
+      padding: 5px;
+      transition: all 0.25s;
+      &:hover {
+        color: $red;
+      }
     }
   }
+}
+
+.StudyMenuItem--disabled {
+  pointer-events: none;
+  color: rgba(0, 0, 0, 0.4);
 }

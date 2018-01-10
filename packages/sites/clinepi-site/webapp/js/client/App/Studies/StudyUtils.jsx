@@ -41,12 +41,12 @@ export function linksFromSearchUrls (searchUrls = {}, webappUrl = '') {
 };
 
 export function menuItemFromStudy (study = {}, index, webAppUrl) {
-  const { name, url, appUrl, searchUrls } = study;
+  const { name, url, appUrl, searchUrls, disabled } = study;
   const href = appUrl
     ? (webAppUrl ? webAppUrl : '') + (appUrl.indexOf('/') === 0 ? '' : '/') + appUrl
     : url;
   const text = (
-    <row key={index} className="StudyMenuItem">
+    <row key={index} className={'StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
       <box className="grow-1">
         <a href={href}>
           {name}
@@ -62,7 +62,6 @@ export function menuItemFromStudy (study = {}, index, webAppUrl) {
 
 export function menuItemsFromStudies (studies, webAppUrl) {
   return studies
-    .filter(({ disabled }) => !disabled)
     .map((item, index) => menuItemFromStudy(item, index, webAppUrl));
 }
 

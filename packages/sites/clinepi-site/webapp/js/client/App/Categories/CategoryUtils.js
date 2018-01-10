@@ -1,5 +1,3 @@
-
-
 export function getCategoryColor (category) {
   if (!category) return null;
   switch (category.toLowerCase()) {
@@ -11,3 +9,15 @@ export function getCategoryColor (category) {
       return '#9b9c9c';
   }
 }
+
+export function getCategoryName (category = '') {
+  switch (category.toLowerCase()) {
+    case 'malarial':
+    case 'malaria':
+      return <span>A <b>Malaria</b> Study</span>;
+    case 'enteric':
+      return <span>An <b>Enteric</b> Disease Study</span>;
+    default:
+      return <span>An <b>Epidemiological</b> Study</span>;
+  }
+};

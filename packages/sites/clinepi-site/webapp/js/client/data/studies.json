@@ -4,10 +4,11 @@
     "id": "DS_0ad509829e",
     "categories": ["malarial"],
     "appUrl": "/app/record/dataset/DS_0ad509829e",
-    "headline": "3 Sites In Uganda since 2011",
+    "headline": "3 Sites In Uganda from 2011–2016",
     "points": [
-      "Addresses the complexity of interactions between the mosquito vector, malaria parasite, and human host",
-      "Combines standard malaria surveillance techniques and metrics with cutting-edge methods designed to improve surveillance"
+      "The Program for Resistance, Immunology, Surveillance and Modeling of Malaria in Uganda (PRISM) Study is a part of International Centers of Excellence for Malaria Research Program",
+      "Longitudinal cohort & entomological surveillance study designs",
+      "1,402 Participants from 331 Households with over 44,000 clinic observations"
     ],
     "searchUrls": {
       "participants": "/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_prism",
@@ -17,21 +18,22 @@
     }
   },
   {
-    "name": "G.E.M.S.",
+    "name": "GEMS",
     "id": "gems",
     "disabled": true,
     "url": "#gems",
     "categories": ["enteric"],
-    "headline": "22,568 Participants over 3 years.",
+    "headline": "Coming Soon!",
     "points": [
-      "Conducted in <b>Africa & Asia</b>",
-      "60-day follow-up visits",
-      "9,439 cases, 13,129 controls."
+      "The Global Enteric Multicenter Study (GEMS) investigated the cause, the incidence and the impact of moderate-to-severe diarrhea (MSD).",
+      "Case-Control study with a 60-day follow-up visit",
+      "22,568 Participants from The Gambia, Mali, Kenya, Mozambique, Pakistan, India and Bangladesh"
     ],
     "searchUrls": {
       "participants": "#",
       "households": "#",
-      "observations": "#"
+      "observations": "#",
+      "vectors": "#"
     }
   },
   {
@@ -40,15 +42,17 @@
     "disabled": true,
     "url": "#maled",
     "categories": ["enteric"],
-    "headline": "31,628 participants over 5 years.",
+    "headline": "Coming Soon!",
     "points": [
-      "Conducted in <b>South America, Africa, and Asia</b>",
-      "Estimates pathogen-specific burdens of diarrhea"
+      "Etiology, Risk Factors and Interactions of Enteric Infections and Malnutrition and the Consequences for Child Health and Development Study",
+      "Longitudinal birth cohort of the first 2 years of life",
+      "200 Participants from each of 8 sites (in Bangladesh, Brazil, India, Nepal, Pakistan, Peru, South Africa, Tanzania)"
     ],
     "searchUrls": {
       "participants": "#",
       "households": "#",
-      "observations": "#"
+      "observations": "#",
+      "vectors": "#"
     }
   },
   {
@@ -57,17 +61,15 @@
     "disabled": true,
     "url": "#icemr-other",
     "categories": ["malarial"],
-    "headline": "Coming in 2018",
+    "headline": "Coming Soon!",
     "points": [
-      "Conducted in <b>Uganda</b>",
-      "Insert Another Fun Fact Here",
-      "Ice Is Only Frozen When It's Cold"
+      "A part of International Centers of Excellence for Malaria Research Program"
     ],
     "searchUrls": {
       "participants": "#",
       "households": "#",
       "observations": "#",
-      "vectors": "#"
+      "lighttraps": "#"
     }
   }
 ]

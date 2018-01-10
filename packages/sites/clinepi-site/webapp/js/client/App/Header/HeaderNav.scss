@@ -1,6 +1,4 @@
 $red: #DD314E;
-$white: #E0E0E0;
-
 
 .HeaderNav {
   width: 100%;
@@ -53,7 +51,7 @@ $white: #E0E0E0;
       }
       .SiteMenu {
         margin-top: 10px;
-        flex-wrap: nowrap;
+        min-width: 500px;
         margin-right: -20px;
       }
       .UserMenu {
@@ -83,24 +81,6 @@ $white: #E0E0E0;
     h1.HeaderNav-Title {
       margin: 0;
       font-size: 55px;
-      font-weight: 300;
-      // text-shadow: none;
-      font-family: 'Exo 2';
-
-      a, &:link, &:visited, &:hover {
-        color: $red;
-        text-decoration: none;
-        transition: all 0.5s;
-        &:hover {
-          transform: scale(0.95);
-        }
-        mark {
-          color: white;
-          font-weight: 400;
-          font-family: 'Exo 2';
-          background-color: transparent;
-        }
-      }
     }
 
     p {
@@ -138,114 +118,53 @@ $white: #E0E0E0;
       }
     }
   }
+}
 
-  .SiteMenu {
-    min-width: 500px;
-    flex: 0.8;
-    box-sizing: border-box;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    padding: 0 0 5px;
+.HeaderNav-Title {
+  font-weight: 300;
+  // text-shadow: none;
+  font-family: 'Exo 2';
 
-    .SiteMenuItem {
-      font-size: 20px;
+  a, &:link, &:visited, &:hover {
+    color: $red;
+    text-decoration: none;
+    transition: all 0.5s;
+    &:hover {
+      transform: scale(0.95);
+    }
+    mark {
+      color: white;
       font-weight: 400;
-      padding: 10px 15px;
-      position: relative;
-      opacity: 0.85;
-      transition: all 0.5s;
+      font-family: 'Exo 2';
+      background-color: transparent;
+    }
+  }
+}
 
-      .fa-caret-down {
-        margin-left: 10px;
-      }
+.HeaderNav-Sticky {
+  color: #fff;
+  width: 100%;
+  height: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-size: cover;
+  background-position: center 35%;
+  background-color: rgb(35, 115, 120);
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  padding: 7.5px;
+  pointer-events: all;
+  align-items: center;
+  justify-content: space-between;
 
-      a, a:link, a:active, a:visited {
-        color: #fff;
-        text-decoration: none;
-      }
-      &:hover {
-        opacity: 1;
-      }
-      &-Submenu {
-        // left: 0;
-        right: 0;
-        top: 100%;
-        display: flex;
-        padding: 5px 0 10px;
-        z-index: 10000;
-        text-align: left;
-        position: absolute;
-        white-space: nowrap;
-        transition: all 0.5s;
-        align-items: flex-start;
-        flex-flow: column nowrap;
-        justify-content: flex-start;
+  .HeaderNav-Title {
+    margin: 10px;
+    padding-top: 3px;
+    font-size: 25px;
+  }
 
-
-        a, a:link, a:active, a:visited {
-          color: #222;
-          text-decoration: none;
-        }
-
-        &.SiteMenuItem-Submenu--hidden {
-          pointer-events: none;
-          .SiteMenuItem {
-            max-height: 0px;
-            opacity: 0;
-          }
-        }
-
-        .SiteMenuItem {
-          margin: 0;
-          padding: 0;
-          opacity: 1;
-          width: 100%;
-          display: block;
-          max-height: 200px;
-          border-bottom: 1px solid #fff;
-
-          &>.SiteMenuItem-Link, &>.SiteMenuItem-Text {
-            margin: 0;
-            width: 100%;
-            display: block;
-            overflow: hidden;
-            font-size: 0.8em;
-            min-width: 250px;
-            font-weight: 300;
-            color: black;
-            opacity: 1;
-            padding: 7px 10px;
-            transition: all 0.5s;
-            background-color: lighten($white, 7%);
-
-          }
-          .SiteMenuItem-Link:hover {
-            opacity: 1;
-            color: #288b99;
-          }
-
-          &>.SiteMenuItem-Text {
-            margin: 0;
-            width: 100%;
-            font-weight: 300;
-            display: block;
-            font-size: 0.75em;
-            padding: 10px;
-            background-color: lighten($white, 5%);
-            color: #555;
-            &:hover {
-              background-color: lighten($white, 5%);
-              color: #555;
-            }
-          }
-        }
-      }
-      &:last-of-type {
-        .SiteMenuItem-Submenu {
-          left: auto;
-          right: 0;
-        } // .SiteMenuItem-Submenu
-      } // &:last-of-type
-    } // .SiteMenuItem
-  } // .SiteMenu
-} // .HeaderNav
+  .HeaderNav-Sticky-Logo {
+    max-height: 30px;
+    margin: 0 10px;
+  }
+}

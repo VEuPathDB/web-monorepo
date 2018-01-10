@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './SiteMenu.scss';
 import SiteMenuItem from './SiteMenuItem';
 
 class SiteMenu extends React.Component {
