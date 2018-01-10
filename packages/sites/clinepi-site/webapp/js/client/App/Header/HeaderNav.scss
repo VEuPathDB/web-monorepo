@@ -9,6 +9,14 @@ $white: #E0E0E0;
   position: relative;
   z-index: 1000000;
 
+  #EuPathLogo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: '160px';
+    opacity: 0.5;
+  }
+
   &-Primary {
     flex: 1;
     justify-content: center;

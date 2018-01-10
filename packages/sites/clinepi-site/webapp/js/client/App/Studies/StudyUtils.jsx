@@ -19,7 +19,12 @@ export function linkFromSearchUrl (type = '', url = '') {
   // FIXME: refactor this whole sector and get dynamic study name
   const tooltip = (<span>Search <b>{name}</b> in the PRISM Study</span>);
   return (
-    <AnchoredTooltip key={type} fadeOut={true} offset={{ top: 20, left: 20 }} content={tooltip}>
+    <AnchoredTooltip
+      key={type}
+      fadeOut={true}
+      offset={{ top: 28, left: 25 }}
+      style={{ pointerEvents: 'none' }}
+      content={tooltip}>
       <a name={`Search ${name}`} href={url} key={type}>
         <Icon fa={icon} />
       </a>

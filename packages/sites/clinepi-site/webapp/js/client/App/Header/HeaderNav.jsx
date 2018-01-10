@@ -93,8 +93,8 @@ class HeaderNav extends React.Component {
             <IconMenu items={iconMenu} />
             <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
           </row>
-
         </div>
+        <img src={webAppUrl + '/images/partofeupath.png'} id="EuPathLogo" />
       </div>
     );
   }

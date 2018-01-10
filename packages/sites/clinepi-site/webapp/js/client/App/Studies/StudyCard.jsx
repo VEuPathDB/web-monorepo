@@ -28,7 +28,7 @@ class StudyCard extends React.Component {
     const { study, prefix } = this.props;
     const { searchType } = this.state;
     const { name, categories, url, appUrl, headline, points, searchUrls, disabled } = study;
-    const studyUrl = appUrl && prefix ? prefix + '/' + appUrl : url;
+    const studyUrl = appUrl && prefix ? prefix + appUrl : url;
 
     return (
       <stack className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
