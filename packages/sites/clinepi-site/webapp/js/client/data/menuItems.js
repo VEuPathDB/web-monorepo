@@ -9,7 +9,8 @@ import {
 
 export default function menuItems (siteConfig) {
   const { webAppUrl, facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
-  const localStudies = addWebAppUrlToStudies(studies, webAppUrl);
+  const studyLinks = menuItemsFromStudies(studies, webAppUrl);
+
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = ['facebook', 'twitter', 'youtube']
     .filter(siteName => `${siteName}Url` in siteConfig)
@@ -20,7 +21,7 @@ export default function menuItems (siteConfig) {
       {
         id: 'search',
         text: 'Studies',
-        children: menuItemsFromStudies(localStudies)
+        children: studyLinks
       },
       {
         id: 'workspace',
@@ -80,7 +81,8 @@ export default function menuItems (siteConfig) {
         text: 'Community',
         children: [,
           {
-            text: 'News'
+            text: 'News',
+            appUrl: '/showXmlDataContent.do?name=XmlQuestions.News'
           },
           {
             text: 'Public Strategies',

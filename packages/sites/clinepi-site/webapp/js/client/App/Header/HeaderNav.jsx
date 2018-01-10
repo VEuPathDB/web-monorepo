@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import './HeaderNav.scss';
 import SiteMenu from 'Client/App/SiteMenu';
@@ -98,6 +99,11 @@ class HeaderNav extends React.Component {
       </div>
     );
   }
+};
+
+HeaderNav.contextTypes = {
+  addModal: PropTypes.func,
+  removeModal: PropTypes.func
 };
 
 export default HeaderNav;

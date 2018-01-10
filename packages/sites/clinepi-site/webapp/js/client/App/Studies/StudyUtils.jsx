@@ -40,14 +40,15 @@ export function linksFromSearchUrls (searchUrls = {}, webappUrl = '') {
   );
 };
 
-export function menuItemFromStudy (study = {}, index, webAppUrl = '') {
+export function menuItemFromStudy (study = {}, index, webAppUrl) {
   const { name, url, appUrl, searchUrls } = study;
-  console.log('Menuing item for study...', { study });
-  console.log('linking study to...', appUrl ? webAppUrl + '/' + appUrl : url);
+  const href = appUrl
+    ? (webAppUrl ? webAppUrl : '') + (appUrl.indexOf('/') === 0 ? '' : '/') + appUrl
+    : url;
   const text = (
     <row key={index} className="StudyMenuItem">
       <box className="grow-1">
-        <a href={appUrl ? webAppUrl + '/' + appUrl : url}>
+        <a href={href}>
           {name}
         </a>
       </box>
