@@ -1,5 +1,6 @@
 import studies from './studies.json';
 import {
+  ucFirst,
   menuItemsFromStudies,
   iconMenuItemsFromSocials,
   injectStudyWebappUrl,
@@ -7,36 +8,40 @@ import {
 } from 'Client/App/Studies/StudyUtils';
 
 export default function menuItems (siteConfig) {
-  const { webAppUrl } = siteConfig;
+  const { webAppUrl, facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
   const localStudies = addWebAppUrlToStudies(studies, webAppUrl);
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
+  const socialLinks = ['facebook', 'twitter', 'youtube']
+    .filter(siteName => `${siteName}Url` in siteConfig)
+    .map(siteName => ({ text: `${ucFirst(siteName)}`, url: siteConfig[`${siteName}Url`] }))
 
   return {
     mainMenu: [
       {
         id: 'search',
-        text: 'New Search',
+        text: 'Studies',
         children: menuItemsFromStudies(localStudies)
       },
       {
-        id: 'strategies',
-        text: 'My Strategies',
-        appUrl: '/showApplication.do'
+        id: 'workspace',
+        text: 'Workspace',
+        appUrl: '/showApplication.do',
+        children: [
+          {
+            text: 'My Search Strategies',
+            appUrl: '/showApplication.do?tab=search_history'
+          },
+          {
+            text: 'Public Search Strategies',
+            appUrl: '/showApplication.do?tab=public_strat'
+          }
+        ]
       },
-      {
-        id: 'studies',
-        text: 'Studies',
-        appUrl: '/app/record/dataset/DS_0ad509829e'
-      },
+      /*
       {
         id: 'about',
         text: 'About',
         children: ({ projectId }) => ([
-          {
-            className: 'division',
-            target: '_blank',
-            text: 'Usage and Citation'
-          },
           {
             text: 'Publications that Use our Resources',
             target: '_blank',
@@ -48,11 +53,6 @@ export default function menuItems (siteConfig) {
             url: '/documents/EuPathDB_Website_Privacy_Policy.shtml'
           },
           {
-            className: 'division',
-            target: '_blank',
-            text: 'Who are we?'
-          },
-          {
             text: 'EuPathDB Brochure',
             target: '_blank',
             url: 'http://eupathdb.org/tutorials/eupathdbFlyer.pdf'
@@ -61,11 +61,6 @@ export default function menuItems (siteConfig) {
             text: 'EuPathDB Brochure in Chinese',
             target: '_blank',
             url: 'http://eupathdb.org/tutorials/eupathdbFlyer_Chinese.pdf'
-          },
-          {
-            className: 'division',
-            target: '_blank',
-            text: 'Technical'
           },
           {
             text: 'Accessibility VPAT',
@@ -79,14 +74,19 @@ export default function menuItems (siteConfig) {
           }
         ])
       },
+      */
       {
         id: 'community',
         text: 'Community',
-        children: [
+        children: [,
+          {
+            text: 'News'
+          },
           {
             text: 'Public Strategies',
             appUrl: '/showApplication.do?tab=public_strat'
-          }
+          },
+          ...socialLinks
         ]
       },
       {
