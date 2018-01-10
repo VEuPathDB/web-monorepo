@@ -70,14 +70,15 @@ export class FilterParam extends Component {
         <AttributeFilter
           displayName={this.props.displayName}
           collapsible={false}
+
           fields={fields}
           filters={filters}
           dataCount={data.length}
           filteredData={filteredData}
           ignoredData={ignoredData}
           columns={columns}
-          activeField={selectedField}
-          activeFieldDistribution={distributionMap[selectedField]}
+          activeField={selectedField && fields.get(selectedField)}
+          activeFieldSummary={distributionMap[selectedField]}
           fieldMetadataMap={fieldMetadataMap}
 
           isLoading={isLoading}
