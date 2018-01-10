@@ -56,15 +56,15 @@ $white: #E0E0E0;
       display: block;
       max-height: 200px;
       border-bottom: 1px solid #fff;
+      font-weight: 400;
+      font-size: 0.8em;
 
       &>.SiteMenuItem-Link, &>.SiteMenuItem-Text {
         margin: 0;
         width: 100%;
         display: block;
         overflow: hidden;
-        font-size: 0.8em;
         min-width: 250px;
-        font-weight: 300;
         white-space: nowrap;
         color: black;
         opacity: 1;
@@ -83,7 +83,6 @@ $white: #E0E0E0;
         width: 100%;
         font-weight: 300;
         display: block;
-        font-size: 0.75em;
         padding: 10px;
         background-color: lighten($white, 5%);
         color: #555;

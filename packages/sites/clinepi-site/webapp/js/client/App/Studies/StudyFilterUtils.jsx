@@ -22,7 +22,7 @@ export function getStudyListCategories (studies) {
     .filter(categories => categories && categories.length)
     .reduce((result, set) => {
       const additions = set.filter(cat => !result.includes(cat));
-      return [ ...result, ...additions];
+      return [ ...result, ...additions ];
     }, []);
 };
 

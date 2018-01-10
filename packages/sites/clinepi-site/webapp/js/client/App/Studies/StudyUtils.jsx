@@ -57,7 +57,7 @@ export function menuItemFromStudy (study = {}, index, webAppUrl) {
       </row>
     </row>
   );
-  return { text, url, appUrl };
+  return { text };//disabled ? { text } : { text, url, appUrl };
 }
 
 export function menuItemsFromStudies (studies, webAppUrl) {

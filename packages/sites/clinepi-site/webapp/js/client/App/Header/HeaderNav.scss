@@ -85,16 +85,16 @@ $red: #DD314E;
 
     p {
       margin: 0;
+      padding: 0;
       opacity: 0.5;
       font-size: 16px;
       font-weight: 200;
-      padding: 0;
       line-height: 1.3em;
       letter-spacing: 0.2px;
       code {
         font-family: 'Inconsolata', 'Menlo', 'Monaco', 'Courier New', 'Courier';
         background-color: black;
-        display: inlien-block;
+        display: inline-block;
         margin: 0 2px;
         padding: 1px 3px;
       }
@@ -157,6 +157,18 @@ $red: #DD314E;
   align-items: center;
   justify-content: space-between;
 
+  .UserMenu {
+    flex-direction: row;
+    height: 100%;
+    align-items: center;
+    padding-top: 20px;
+    margin: 0 30px;
+    .UserMenu-Icon {
+      font-size: 25px;
+      margin-right: 10px;
+    }
+  }
+
   .HeaderNav-Title {
     margin: 10px;
     padding-top: 3px;
@@ -165,6 +177,14 @@ $red: #DD314E;
 
   .HeaderNav-Sticky-Logo {
     max-height: 30px;
-    margin: 0 10px;
+    margin: 5px 0 0 10px;
   }
+  .SiteMenu {
+    width: auto;
+    margin-top: 4px;
+    .SiteMenuItem {
+      font-size: 18px;
+    }
+  }
+
 }

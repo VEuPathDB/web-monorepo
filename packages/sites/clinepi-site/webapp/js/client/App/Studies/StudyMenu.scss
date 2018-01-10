@@ -2,6 +2,7 @@ $red: #DD314E;
 .StudyMenuItem {
   width: 280px;
   align-items: center;
+  font-weight: 400;
   .StudyMenuItem-Links {
     .fa {
       font-size: 1.4em;
@@ -15,6 +16,7 @@ $red: #DD314E;
 }
 
 .StudyMenuItem--disabled {
-  pointer-events: none;
-  color: rgba(0, 0, 0, 0.4);
+  cursor: not-allowed;
+  opacity: 0.5;
+  * { pointer-events: none !important; }
 }

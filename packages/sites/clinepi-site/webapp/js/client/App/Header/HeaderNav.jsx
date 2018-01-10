@@ -67,13 +67,13 @@ class HeaderNav extends React.Component {
             </a>
           </h2>
         </box>
-        <box className="grow-3">
+        <box className="grow-1">
           <SiteMenu items={mainMenu} config={siteConfig} />
         </box>
-        <box className="grow-1">
+        <box>
           <IconMenu items={iconMenu} />
         </box>
-        <box className="grow-1">
+        <box>
           <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
         </box>
       </div>
