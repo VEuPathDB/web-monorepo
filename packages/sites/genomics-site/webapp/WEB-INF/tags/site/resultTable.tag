@@ -28,6 +28,8 @@
 <c:set var="INTERSECTION" value="${bOperation == 'INTERSECT'}"/>
 <c:set var="LEFT_MINUS" value="${bOperation == 'MINUS'}"/>
 <c:set var="RIGHT_MINUS" value="${bOperation == 'RMINUS'}"/>
+<c:set var="IGNORE_LEFT" value="${bOperation == 'RONLY'}"/>
+<c:set var="IGNORE_RIGHT" value="${bOperation == 'LONLY'}"/>
 
 <c:set var="warningIcon">
   <i class="fa fa-exclamation-circle fa-2x" aria-hidden="true" style="color:blue" title="Some Genes in your result have Transcripts that did not meet the search criteria."></i>
@@ -90,9 +92,9 @@
           </p>
         </form>
 
-      <%-- DEBUG    ${values } contains a json string, eg: {"values":["Y","N"]}  
+      <%-- DEBUG    ${values } contains a json string, eg: {"values":["Y","N"]} 
         <p id="trSelection">(Your initial selection was ${values})<br>(Your current selection is <span>${values}</span>)</p> 
-       --%>
+      --%>
         <script type="application/json" class="gene-leaf-filter-values">
           ${values}
         </script>
@@ -123,12 +125,16 @@
       case INTERSECT: return getFilterValueArray("YY");
       case LEFT_MINUS: return getFilterValueArray("YN");
       case RIGHT_MINUS: return getFilterValueArray("NY");
+      case IGNORE_LEFT: return getFilterValueArray("YY", "NY"); // RIGHT_ONLY
+      case IGNORE_RIGHT: return getFilterValueArray("YY", "YN"); // LEFT_ONLY
       default: return getFilterValueArray("YY", "YN", "NY");
 -->
           <c:if test="${ (UNION && ( fn:contains(values, 'NN') || !fn:contains(values, 'YY') || !fn:contains(values, 'YN') || !fn:contains(values, 'NY') )) ||
                (INTERSECTION && ( fn:contains(values, 'NN') || !fn:contains(values, 'YY') || fn:contains(values, 'YN') || fn:contains(values, 'NY') )) ||
                (LEFT_MINUS && ( fn:contains(values, 'NN') || fn:contains(values, 'YY') || !fn:contains(values, 'YN') || fn:contains(values, 'NY') )) ||
-               (RIGHT_MINUS && ( fn:contains(values, 'NN') || fn:contains(values, 'YY') || fn:contains(values, 'YN') || !fn:contains(values, 'NY') )) }">
+               (RIGHT_MINUS && ( fn:contains(values, 'NN') || fn:contains(values, 'YY') || fn:contains(values, 'YN') || !fn:contains(values, 'NY') )) || 
+               (IGNORE_LEFT && ( fn:contains(values, 'NN') || !fn:contains(values, 'YY') || fn:contains(values, 'YN') || !fn:contains(values, 'NY') )) || 
+               (IGNORE_RIGHT && ( fn:contains(values, 'NN') || !fn:contains(values, 'YY') || !fn:contains(values, 'YN') || fn:contains(values, 'NY') )) }">
 
             <img height="14px" src="wdk/images/filter-short.png" title="This icon indicates that your transcript selection is different from the boolean ${bOperation} default; you might be adding or excluding genes.">
           </c:if>
@@ -148,7 +154,7 @@
           </p>
         </form>
 
-        <!-- DEBUG
+        <!-- DEBUG 
         <p id="trSelection">(Your initial selection was ${values})<br>(Your current selection is <span>${values}</span>)</p> 
         -->
         <script type="application/json" class="gene-boolean-filter-values">
