@@ -1,50 +1,20 @@
 [
   {
-    "type": "participant",
-    "study": "gems",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+    "type": "households",
+    "studyId": "DS_0ad509829e",
+    "appUrl": "/im.do?s=0e8a6a438aacb3c5",
+    "description": "Households containing two children <= 5 observed for at least 365 days, one who had 0 malaria diagnoses and another who had at least 1 malaria diagnosis / yr during observation."
   },
   {
-    "type": "household",
-    "study": "gems",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+    "type": "participants",
+    "studyId": "DS_0ad509829e",
+    "appUrl": "/im.do?s=c8b23711dca1ca2e",
+    "description": "For calendar years 2012-2013, find all Children aged 2-10 who were observed at least 365 days and live in households where <= 5 mosquitoes were collected on average in 2012-13 and had at least 2 malaria=yes visits / year. Of those, how many had at least one asymptomatic visit in that time frame."
   },
   {
-    "type": "observations",
-    "study": "maled",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
-  },
-  {
-    "type": "vectors",
-    "study": "icemr-india",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
-  },
-  {
-    "type": "participant",
-    "study": "gems",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
-  },
-  {
-    "type": "household",
-    "study": "gems",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
-  },
-  {
-    "type": "observations",
-    "study": "maled",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
-  },
-  {
-    "type": "vectors",
-    "study": "icemr-india",
-    "url": "#",
-    "description": "Female Cases from Bangladesh who reported a duration of diarrheal illness greater than 3 days and their matched Controls."
+    "type": "participants",
+    "studyId": "DS_0ad509829e",
+    "appUrl": "/im.do?s=c801a6398e7f11a3",
+    "description": "For calendar years 2012-2013, find all Children aged 2-10 who were observed at least 180 days in that time period and live in households where >= 10 mosquitoes were collected on average in 2012-13 but who had 0 malaria=yes visits / year. Of those, how many had at least one asymptomatic visit in that time frame."
   }
 ]

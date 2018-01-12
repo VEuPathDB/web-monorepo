@@ -8,10 +8,10 @@ class SearchCardList extends React.Component {
   }
 
   render () {
-    const { list } = this.props;
+    const { list, prefix } = this.props;
     return !list ? null : (
       <div className="CardList SearchCardList">
-        {list.map((search, idx) => <SearchCard search={search} key={idx} />)}
+        {list.map((search, idx) => <SearchCard search={search} prefix={prefix} key={idx} />)}
       </div>
     );
   }
