@@ -153,6 +153,8 @@ $red: #DD314E;
   background-color: rgb(35, 115, 120);
   display: flex;
   flex-wrap: nowrap;
+  position: fixed;
+  top: 0;
   flex-direction: row;
   padding: 7.5px;
   pointer-events: all;
