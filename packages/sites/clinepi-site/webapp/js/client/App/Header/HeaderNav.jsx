@@ -6,7 +6,7 @@ import SiteMenu from 'Client/App/SiteMenu';
 import UserMenu from 'Client/App/UserMenu';
 import menuItems from 'Client/data/menuItems';
 
-import { Events } from 'mesa';
+import { Events, BodyLayer } from 'mesa';
 import { IconAlt as Icon } from 'wdk-client/Components';
 
 class HeaderNav extends React.Component {
@@ -38,14 +38,9 @@ class HeaderNav extends React.Component {
     const { pageYOffset } = window;
     const { stickyHeaderVisible } = this.state;
     if (pageYOffset >= threshold && !stickyHeaderVisible)
-      this.setState({ stickyHeaderVisible: true }, this.showStickyHeader);
+      this.setState({ stickyHeaderVisible: true });
     else if (pageYOffset < threshold && stickyHeaderVisible)
-      this.setState({ stickyHeaderVisible: false }, this.hideStickyHeader);
-  }
-
-  showStickyHeader () {
-    const { addModal } = this.context;
-    this.modalId = addModal({ render: this.renderStickyHeader });
+      this.setState({ stickyHeaderVisible: false });
   }
 
   renderStickyHeader () {
@@ -78,11 +73,6 @@ class HeaderNav extends React.Component {
         </box>
       </div>
     )
-  }
-
-  hideStickyHeader () {
-    const { removeModal } = this.context;
-    removeModal(this.modalId);
   }
 
   renderBranding ({ siteConfig }) {
@@ -143,6 +133,7 @@ class HeaderNav extends React.Component {
   }
 
   render () {
+    const { stickyHeaderVisible } = this.state;
     const { siteConfig, user, actions } = this.props;
     const { webAppUrl } = siteConfig;
     const { mainMenu, iconMenu } = menuItems(siteConfig);
@@ -150,8 +141,17 @@ class HeaderNav extends React.Component {
     const Branding = this.renderBranding;
     const IconMenu = this.renderIconMenu;
 
+    const StickyHeader = this.renderStickyHeader;
+
     return (
       <div className="row HeaderNav">
+        {!stickyHeaderVisible
+          ? null
+          : (
+            <BodyLayer>
+              <StickyHeader />
+            </BodyLayer>
+          )}
         <Branding siteConfig={siteConfig} />
         <div className="HeaderNav-Switch">
           <row className="HeaderNav-Primary">
@@ -167,11 +167,6 @@ class HeaderNav extends React.Component {
       </div>
     );
   }
-};
-
-HeaderNav.contextTypes = {
-  addModal: PropTypes.func,
-  removeModal: PropTypes.func
 };
 
 export default HeaderNav;

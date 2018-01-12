@@ -8,10 +8,10 @@ class ImageCardList extends React.Component {
   }
 
   render () {
-    const { list } = this.props;
+    const { list, prefix } = this.props;
     return !list ? null : (
       <div className="CardList ImageCardList">
-        {list.map((card, idx) => <ImageCard card={card} key={idx} />)}
+        {list.map((card, idx) => <ImageCard card={card} prefix={prefix} key={idx} />)}
       </div>
     );
   }

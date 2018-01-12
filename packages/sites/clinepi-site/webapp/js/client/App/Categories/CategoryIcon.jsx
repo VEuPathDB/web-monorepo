@@ -2,7 +2,7 @@ import React from 'react';
 
 import './CategoryIcon.css';
 
-const { Tooltip } = Mesa;
+const { AnchoredTooltip } = Mesa;
 import { getCategoryColor, getCategoryName } from './CategoryUtils';
 
 class CategoryIcon extends React.Component {
@@ -16,15 +16,14 @@ class CategoryIcon extends React.Component {
     const { top, left } = position;
     return (
       <div style={{ position: 'relative' }}>
-        <Tooltip
+        <AnchoredTooltip
           content={categoryName}
-          style={{ width: 'auto', textTransform: 'capitalize' }}
-          position={{ top, left }}>
+          style={{ width: 'auto', textTransform: 'capitalize' }}>
           <span className="CategoryIcon" style={categoryStyle}>
             {category[0].toUpperCase()}
           </span>
           <span ref={(a) => this.anchor = a} />
-        </Tooltip>
+        </AnchoredTooltip>
       </div>
     );
   }

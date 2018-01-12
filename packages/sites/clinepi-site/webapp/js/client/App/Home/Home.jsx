@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './HomePage.scss';
-import getSections from 'Client/data/Sections';
+import homeSections from 'Client/data/homeSections';
 import { Showcase } from 'Client/App/Showcase';
 
 class HomePage extends React.Component {
@@ -11,11 +11,10 @@ class HomePage extends React.Component {
 
   render () {
     const { prefix } = this.props;
-    const Sections = getSections(prefix);
 
     return (
       <div className="HomePage">
-        {Sections.map((section, idx) => (
+        {homeSections.map((section, idx) => (
           <Showcase content={section} prefix={prefix} key={idx} />
         ))}
       </div>

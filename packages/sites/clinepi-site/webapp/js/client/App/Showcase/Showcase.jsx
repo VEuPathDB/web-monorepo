@@ -29,7 +29,7 @@ class Showcase extends React.Component {
     this.setState({ filteredItems });
   }
 
-  getItemRenderer (contentType, props) {
+  getListRenderer (contentType, props) {
     switch (contentType.toLowerCase()) {
       case 'studycardlist':
         return <StudyCardList {...props} />
@@ -45,8 +45,7 @@ class Showcase extends React.Component {
     const { filteredItems } = this.state;
     const { content, prefix } = this.props;
     const { title, viewAllUrl, filters, contentType, items, description } = content;
-
-    const cards = this.getItemRenderer(contentType, { list: filteredItems, prefix });
+    const cards = this.getListRenderer(contentType, { list: filteredItems, prefix });
 
     return (
       <stack className="wdk-Showcase">

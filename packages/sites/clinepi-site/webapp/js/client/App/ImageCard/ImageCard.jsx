@@ -10,19 +10,31 @@ class ImageCard extends React.Component {
   }
 
   render () {
-    const { card } = this.props;
-    const { image, url, title, description, ctaText } = card;
+    const { card, prefix = '' } = this.props;
+    const { appImage, image, appUrl, url, title, description, linkText } = card;
+
+    const imageUrl = typeof appImage !== 'string'
+      ? image
+      : prefix + appImage;
+
+    const linkUrl = typeof appUrl !== 'string'
+      ? url
+      : prefix + appUrl;
+
     return (
       <stack className="Card ImageCard">
-        <box className="ImageCard-Image" style={{ backgroundImage: `url(${image})`}} />
+        <box
+          className="ImageCard-Image"
+          style={{ backgroundImage: `url(${imageUrl})`}}
+        />
         <box className="ImageCard-Title">
-          <a href={url}>
+          <a href={linkUrl}>
             <h3 dangerouslySetInnerHTML={{ __html: title }} />
           </a>
           <p>{description}</p>
         </box>
-        <a className="ImageCard-Footer" href={url} target="_blank">
-          {ctaText} <Icon fa={'chevron-circle-right'} />
+        <a className="ImageCard-Footer" href={linkUrl} target="_blank">
+          {linkText} <Icon fa={'chevron-circle-right'} />
         </a>
       </stack>
     );

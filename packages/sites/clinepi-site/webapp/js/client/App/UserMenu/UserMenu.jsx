@@ -41,9 +41,11 @@ class UserMenu extends React.Component {
         {items.map((item, key) => {
           const { onClick, href, target } = item;
           const className = 'UserMenu-Pane-Item';
+
           let props = { className, key, onClick: onClick ? onClick: () => null };
           if (href) props = Object.assign({}, props, { href, target });
           const Element = href ? 'a' : 'div';
+
           return (
             <Element {...props}>
               <Icon fa={item.icon + ' UserMenu-Pane-Item-Icon'} />{item.text}

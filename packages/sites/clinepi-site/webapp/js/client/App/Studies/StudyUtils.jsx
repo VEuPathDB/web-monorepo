@@ -22,9 +22,8 @@ export function linkFromSearchUrl (type = '', url = '') {
     <AnchoredTooltip
       key={type}
       fadeOut={true}
-      offset={{ top: 28, left: 25 }}
-      style={{ pointerEvents: 'none' }}
-      content={tooltip}>
+      content={tooltip}
+      style={{ pointerEvents: 'none' }}>
       <a name={`Search ${name}`} href={url} key={type}>
         <Icon fa={icon} />
       </a>
@@ -57,7 +56,7 @@ export function menuItemFromStudy (study = {}, index, webAppUrl) {
       </row>
     </row>
   );
-  return { text };//disabled ? { text } : { text, url, appUrl };
+  return { text };
 }
 
 export function menuItemsFromStudies (studies, webAppUrl) {
@@ -65,42 +64,23 @@ export function menuItemsFromStudies (studies, webAppUrl) {
     .map((item, index) => menuItemFromStudy(item, index, webAppUrl));
 }
 
-export function injectWebappUrl (map, webappUrl = '') {
-  const replace = (item) => {
-    return typeof item == 'string'
-      ? item.replace('%webapp%', webappUrl)
-      : item;
-  }
-  if (typeof map === 'string')
-    return replace(map);
-  if (typeof map !== 'object')
-    return map;
-  if (Array.isArray(map))
-    return map.map(item => injectWebappUrl(item, webappUrl));
-  return Object.entries(map)
-    .reduce((output, [ key, value ]) => {
-      return Object.assign({}, output, { [key]: injectWebappUrl(value, webappUrl) });
-    }, {});
-}
-
-export function injectStudyWebappUrl (study, webAppUrl) {
-  const { searchUrls } = study;
-  if (!searchUrls || typeof searchUrls !== 'object' || !Object.keys(searchUrls).length) return study;
-  const newSearchUrls = {};
-  for (let key in searchUrls) { newSearchUrls[key] = (webAppUrl ? webAppUrl : '') + searchUrls[key]; };
-  return Object.assign({}, study, { searchUrls: newSearchUrls });
-}
-
-export function addWebAppUrlToStudies (list, webAppUrl) {
-  if (!list || !Array.isArray(list)) return list;
-  return list.map(study => injectStudyWebappUrl(study, webAppUrl));
-}
-
 export function iconMenuItemsFromSocials (siteConfig = {}) {
   const { facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
   const items = [];
-  if (facebookUrl) items.push({ type: 'facebook', url: facebookUrl });
-  if (twitterUrl) items.push({ type: 'twitter', url: twitterUrl });
-  if (youtubeUrl) items.push({ type: 'youtube', url: youtubeUrl });
+  if (facebookUrl) items.push({ type: 'facebook', url: facebookUrl, target: '_blank' });
+  if (twitterUrl) items.push({ type: 'twitter', url: twitterUrl, target: '_blank' });
+  if (youtubeUrl) items.push({ type: 'youtube', url: youtubeUrl, target: '_blank' });
   return items;
 }
+
+export function menuItemsFromSocials (siteConfig = {}) {
+  return ['Facebook', 'Twitter', 'YouTube']
+    .filter(siteName => {
+      const key = siteName.toLowerCase() + 'Url';
+      return key in siteConfig && siteConfig[key] && siteConfig[key].length
+    })
+    .map(siteName => ({
+      text: siteName,
+      url: siteConfig[siteName.toLowerCase() + 'Url']
+    }));
+};

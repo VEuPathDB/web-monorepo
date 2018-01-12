@@ -2,9 +2,8 @@ import studies from './studies.json';
 import {
   ucFirst,
   menuItemsFromStudies,
-  iconMenuItemsFromSocials,
-  injectStudyWebappUrl,
-  addWebAppUrlToStudies
+  menuItemsFromSocials,
+  iconMenuItemsFromSocials
 } from 'Client/App/Studies/StudyUtils';
 
 export default function menuItems (siteConfig) {
@@ -12,9 +11,7 @@ export default function menuItems (siteConfig) {
   const studyLinks = menuItemsFromStudies(studies, webAppUrl);
 
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
-  const socialLinks = ['facebook', 'twitter', 'youtube']
-    .filter(siteName => `${siteName}Url` in siteConfig)
-    .map(siteName => ({ text: `${ucFirst(siteName)}`, url: siteConfig[`${siteName}Url`] }))
+  const socialLinks = menuItemsFromSocials(siteConfig);
 
   return {
     mainMenu: [
