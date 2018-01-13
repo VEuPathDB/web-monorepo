@@ -31,6 +31,10 @@
     }
     .SearchCard-Body {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       padding: 5px 8px;
     }
     a.SearchCard-Footer {

@@ -33,12 +33,14 @@ class SearchCard extends React.Component {
 
     return (
       <div className={'Card LinkCard SearchCard ' + bodyClass}>
-        <box className="SearchCard-Icon">
-          <Icon fa={icon} />
-        </box>
-        <box className="SearchCard-Body">
+        <box className="SearchCard-Header">
+          <box className="SearchCard-Icon">
+            <Icon fa={icon} />
+          </box>
           <h2>{studyObj ? studyObj.name : 'Unknown Study'}</h2>
           <h3>{name}</h3>
+        </box>
+        <box className="SearchCard-Body">
           <p>{description}</p>
         </box>
         <a href={href} className="SearchCard-Footer">
