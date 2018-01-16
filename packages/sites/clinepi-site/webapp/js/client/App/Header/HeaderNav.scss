@@ -36,36 +36,10 @@ $red: #DD314E;
     flex-direction: row;
     align-items: center;
   }
-  // @media (max-width: 1444px) {
-  //   flex-direction: column;
-  //   justify-content: flex-start;
-  //   .HeaderNav-Social {
-  //     margin: -10px 0 0;
-  //   }
-  //   &-Switch {
-  //     margin-top: -110px;
-  //     margin-left: 360px;
-  //     &-Primary, &-Secondary {
-  //       width: 100%;
-  //     }
-  //     .HeaderNav-Secondary {
-  //       margin-top: -10px;
-  //     }
-  //     .SiteMenu {
-  //       margin-top: 10px;
-  //       min-width: 500px;
-  //       margin-right: -20px;
-  //     }
-  //     .UserMenu {
-  //       margin-left: 20px;
-  //     }
-  //     flex-direction: column;
-  //     align-items: flex-end;
-  //   }
-  //   &-Primary {
-  //     order: 2;
-  //   }
-  // }
+
+  .UserMenu {
+    padding-right: 10px;
+  }
 
   &, box, row {
     align-items: center;

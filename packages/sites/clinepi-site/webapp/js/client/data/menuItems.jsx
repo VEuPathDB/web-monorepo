@@ -1,12 +1,10 @@
 import studies from './studies.json';
-import { menuItemsFromStudies } from 'Client/App/Studies/StudyUtils';
 
-import { ucFirst, menuItemsFromSocials, iconMenuItemsFromSocials } from 'Client/App/Utils/Utils';
+import { StudyMenuItem } from 'Client/App/Studies';
+import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'Client/App/Utils/Utils';
 
 export default function menuItems (siteConfig) {
   const { webAppUrl, facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
-  const studyLinks = menuItemsFromStudies(studies, webAppUrl);
-
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = menuItemsFromSocials(siteConfig);
 
@@ -15,7 +13,7 @@ export default function menuItems (siteConfig) {
       {
         id: 'search',
         text: 'Studies',
-        children: studyLinks
+        children: studies.map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
       },
       {
         id: 'workspace',
