@@ -12,7 +12,7 @@ export default function menuItems (siteConfig) {
     mainMenu: [
       {
         id: 'search',
-        text: 'Studies',
+        text: 'Search a Study',
         children: studies.map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
       },
       {
