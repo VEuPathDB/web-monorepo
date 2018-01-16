@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { ucFirst } from 'Client/App/Utils/Utils';
 /* Filtering, defunct until we need study filtering again (AB, 1/8/18) */
 
 export function createStudyCategoryPredicate (targetCategory) {

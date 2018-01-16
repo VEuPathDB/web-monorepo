@@ -23,7 +23,6 @@ class SearchCard extends React.Component {
     const href = typeof appUrl === 'string'
       ? prefix + appUrl
       : url;
-    console.log('href', href);
 
     const studyObj = this.getStudyById(studyId);
 
