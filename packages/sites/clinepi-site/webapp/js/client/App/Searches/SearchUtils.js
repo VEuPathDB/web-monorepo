@@ -14,7 +14,6 @@ export function getSearchIconByType (type = '') {
     case 'lighttraps':
     case 'lights':
       return 'bug';
-      // return 'lightbulb-o fa-rotate-180';
     default:
       return 'globe';
   }

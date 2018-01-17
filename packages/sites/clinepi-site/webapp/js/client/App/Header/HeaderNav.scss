@@ -12,7 +12,7 @@ $red: #DD314E;
     top: 0;
     right: 0;
     width: '160px';
-    opacity: 0.5;
+    opacity: 0.75;
   }
 
   &-Primary {
@@ -23,7 +23,7 @@ $red: #DD314E;
   }
 
   .HeaderNav-Secondary {
-    flex: 0.2;
+    flex: 0.3;
     position: relative;
     justify-content: space-between;
     flex-wrap: nowrap;
@@ -98,7 +98,6 @@ $red: #DD314E;
 
 .HeaderNav-Title {
   font-weight: 300;
-  // text-shadow: none;
   font-family: 'Exo 2';
 
   a, &:link, &:visited, &:hover {
@@ -139,7 +138,7 @@ $red: #DD314E;
     flex-direction: row;
     height: 100%;
     align-items: center;
-    padding-top: 20px;
+    padding-top: 16px;
     margin: 0 30px;
     .UserMenu-Icon {
       font-size: 25px;
@@ -157,9 +156,11 @@ $red: #DD314E;
     max-height: 30px;
     margin: 5px 0 0 10px;
   }
+
   .SiteMenu {
     width: auto;
-    margin-top: 4px;
+    margin: 5px 30px 0;
+    font-size: 0.9em;
 
     .SiteMenuItem {
       &:last-of-type {

@@ -48,9 +48,7 @@ class StudyCard extends React.Component {
         </box>
         <box className="StudyCard-Body">
           <ul>
-            {points.map((point, idx) => (
-              <li key={idx} dangerouslySetInnerHTML={{ __html: point }} />
-            ))}
+            {points.map((point, index) => <li key={index} dangerouslySetInnerHTML={{ __html: point }} />)}
           </ul>
         </box>
         <box className="StudyCard-PreFooter">

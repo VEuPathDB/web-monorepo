@@ -51,13 +51,15 @@ class SiteMenuItem extends React.Component {
         {children && children.length
           ? (
             <stack className={'SiteMenuItem-Submenu' + (isHovered ? '' : ' SiteMenuItem-Submenu--hidden')}>
-              {children.map((child, idx) => (
-                <SiteMenuItem
-                  key={idx}
-                  item={child}
-                  config={config}
-                />
-              ))}
+              <div className="SiteMenu-Item-Submenu-Inner">
+                {children.map((child, idx) => (
+                  <SiteMenuItem
+                    key={idx}
+                    item={child}
+                    config={config}
+                  />
+                ))}
+              </div>
             </stack>
           )
           : null

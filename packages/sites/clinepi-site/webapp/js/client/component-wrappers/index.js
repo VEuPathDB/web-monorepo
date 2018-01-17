@@ -108,7 +108,7 @@ function findStudyFromRecordClass(studies, recordClass) {
     let [ studyId ] = recordClass.urlSegment.match(/^DS_[^_]+/g);
     return studies.find(study => study.id === studyId);
   }
-  catch(error) {
+  catch (error) {
     console.error("Could not find study from record class.");
     throw error;
   }

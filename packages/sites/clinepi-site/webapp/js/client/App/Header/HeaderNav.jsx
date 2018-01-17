@@ -145,13 +145,11 @@ class HeaderNav extends React.Component {
 
     return (
       <div className="row HeaderNav">
-        {!stickyHeaderVisible
-          ? null
-          : (
-            <BodyLayer>
-              <StickyHeader />
-            </BodyLayer>
-          )}
+        {!stickyHeaderVisible ? null : (
+          <BodyLayer>
+            <StickyHeader />
+          </BodyLayer>
+        )}
         <Branding siteConfig={siteConfig} />
         <div className="HeaderNav-Switch">
           <row className="HeaderNav-Primary">
