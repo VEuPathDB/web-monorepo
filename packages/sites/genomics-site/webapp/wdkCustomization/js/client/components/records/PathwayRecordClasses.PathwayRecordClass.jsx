@@ -82,7 +82,7 @@ function makeNode(obj) {
 
         obj.image = dataURL;
 
-        var widthPadding = 35;        
+        var widthPadding = 35;
         var defaultScaling = 0.75;
         var maxSize = 100;
 
@@ -174,9 +174,9 @@ function getSideNodeCoords (node, orientation, values, direction) {
         sideNode.renderedPosition({x: sideNode.data('x'), y: sideNode.data('y') });
         sideNode.style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0, 'color':'grey'});
         sideNode.connectedEdges().style({'line-color':'grey', 'mid-target-arrow-color':'grey'});
-    }  
+    }
 }
- 
+
 
 function resetOverlappingNodes(node, offset) {
     if (node.data('placed') === 'true') {
@@ -251,7 +251,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     'padding-bottom':0,
                 },
             },
-            
+
             {
                 selector: 'node[node_type= "enzyme"]',
                 style: {
@@ -299,14 +299,14 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
                     shape: 'ellipse',
                     width:'label',
-                    height:'label', 
+                    height:'label',
                     'background-color':'white',
                     'background-image-opacity':0,
                     'border-width':0,
                     label:'data(name)'
                 },
             },
-            
+
             {
                 selector: 'node[node_type= "metabolic process"]',
                 style: {
@@ -359,7 +359,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
         cy.ready(function () {
 
             cy.changeLayout = function (val) {
-                
+
                 cy.zoom(0.5);
                 if (val === 'preset') {
                     cy.nodes().map(function(node){node.renderedPosition({x:node.data("x"), y:node.data("y")})});
@@ -369,14 +369,14 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 else if (val === 'dagre') {
                     cy.layout({name:val, rankDir:'LR'});
                 }
-        
+
                 else {
                     cy.layout({name:val});
                 }
             };
 
             cy.changeExperiment = function (linkPrefix, xaxis, doAllNodes) {
-            
+
                 var nodes = cy.elements('node[node_type= "enzyme"]');
 
                 for (var i=0; i < nodes.length; i++) {
@@ -471,7 +471,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                         }
                     }
                 }
-                
+
                 //Handle nodes with no preset position
                 cy.elements('node[!x]').layout({ name: 'cose' });
 
@@ -492,7 +492,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 });
 
             }
-            
+
             var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
             for (var i=0; i < nodesOfNodes.length; i++) {
                 var parent = nodesOfNodes[i];
@@ -501,7 +501,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 });
                 parent.data("childenNodes", children.join('<br>'));
             }
-            
+
             cy.boxSelectionEnabled(true);
 
         });
@@ -526,12 +526,17 @@ const enhance = flow(
   })
 );
 
+const SELECTORS = {
+  GENERA: 'genera',
+  GRAPH: 'graph'
+};
+
 const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component {
 
   constructor(props, context) {
     super(props, context);
     this.state = {
-      generaSelectorOpen: false
+      openSelector: null,
     };
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
@@ -583,7 +588,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           maxZoom: 2
         });
         cy.fit();
-        
+
 
         //decorate nodes from node_list
         if(this.props.nodeList) {
@@ -617,7 +622,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let sid = generaSelection.join(",");
     let imageLink = "/cgi-bin/dataPlotter.pl?idType=ec&fmt=png&type=PathwayGenera&project_id=" + projectId + "&sid=" + sid + "&id=";
     this.state.cy.changeExperiment( imageLink, 'genus' , '1');
-    this.setState({ generaSelectorOpen: false });
+    this.setState({ openSelector: null });
   }
 
   renderError() {
@@ -646,8 +651,8 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           webAppUrl={this.props.config.webAppUrl}
           primary_key={primary_key}
           projectId={projectId}
-          onGeneraSelectorClick={() => this.setState({ generaSelectorOpen: true })}
-          onGraphSelectorClick={() => this.setState({graphSelectorOpen: true})}
+          onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
+          onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
           cy={this.state.cy}
         />
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
@@ -660,8 +665,8 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         </div>
         <Dialog
           title="Genera Selector"
-          open={this.state.generaSelectorOpen}
-          onClose={() => this.setState({ generaSelectorOpen: false })}
+          open={this.state.openSelector === SELECTORS.GENERA}
+          onClose={() => this.setState({ openSelector: null })}
           draggable
         >
           <GraphSelector
@@ -670,18 +675,11 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             graphCategoryTree={this.props.generaCategoryTree}
             onChange={this.onGeneraChange}
           />
-          {/*<GeneraSelector generaOptions={generaOptions}
-                          generaSelection={this.props.pathwayRecord.generaSelection}
-                          presets={generaPresets.filter(preset => preset.projectIds.includes(projectId))}
-                          onGeneraChange={this.onGeneraChange}
-                          paintCustomGenera={this.paintCustomGenera}
-                          cy={this.state.cy}
-                          projectId={projectId} />*/}
         </Dialog>
         <Dialog
           title="Experiment Selector"
-          open={this.state.graphSelectorOpen}
-          onClose={() => this.setState({graphSelectorOpen: false})}
+          open={this.state.openSelector === SELECTORS.GRAPH}
+          onClose={() => this.setState({ openSelector: null })}
           draggable
         >
           <GraphSelector
@@ -938,12 +936,12 @@ function EnzymeNodeDetails(props) {
 
   return (
     <div>
-        <p><b>EC Number or Reaction:</b> 
+        <p><b>EC Number or Reaction:</b>
           <a href={'http://enzyme.expasy.org/EC/' + display_label}> {display_label}</a> </p>
 
-      {name && (  
+      {name && (
            <p><b>Enzyme Name:</b> {name}</p>
-      )}  
+      )}
 
 
       {gene_count > 0&& (
