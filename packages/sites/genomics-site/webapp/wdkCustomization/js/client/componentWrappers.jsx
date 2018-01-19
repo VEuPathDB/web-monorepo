@@ -1,3 +1,4 @@
+import QueryString from 'querystring';
 import React from 'react';
 import { projectId } from './config';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
@@ -134,11 +135,11 @@ export function RecordTableSection(DefaultComponent) {
               onClick={stopPropagation}
               to={{
                 pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
-                query: {
+                search: QueryString.stringify({
                   record_class: props.record.recordClassName,
                   reference_name: props.table.name,
                   taxon: props.record.attributes.organism_full
-                }
+                })
               }}
             ><i className="fa fa-database"/> Data sets</Link>
           </span>
