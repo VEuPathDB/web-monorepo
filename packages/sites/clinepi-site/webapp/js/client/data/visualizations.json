@@ -7,38 +7,17 @@
     "linkText": "See The Tutorial"
   },
   {
-    "appUrl": "/images/contingency-tutorial.jpg",
+    "appUrl": "/images/distribution-tutorial.jpg",
     "appImage": "/images/analysis_plugins/distributions.jpg",
     "title": "Create a <b>Distribution Graph</b>",
-    "description": "Make a distribution graph to compare data within a selection",
-    "linkText": "Go to Visualization"
-  },
-  {
-    "appUrl": "/images/contingency-tutorial.jpg",
-    "appImage": "/images/analysis_plugins/data_summaries.jpg",
-    "title": "Create a <b>Data Summary</b>",
-    "description": "Make a contingency table to compare data within a selection",
-    "linkText": "Go to Visualization"
-  },
-  {
-    "appUrl": "/images/contingency-tutorial.jpg",
-    "appImage": "/images/analysis_plugins/contingency_tables.jpg",
-    "title": "Create a <b>Contingency Table</b>",
-    "description": "Make a contingency table to compare data within a selection",
+    "description": "Make a distribution graph and give visual context to youor data.",
     "linkText": "See The Tutorial"
   },
   {
-    "appUrl": "/images/contingency-tutorial.jpg",
-    "appImage": "/images/analysis_plugins/distributions.jpg",
-    "title": "Create a <b>Distribution Graph</b>",
-    "description": "Make a distribution graph to compare data within a selection",
-    "linkText": "Go to Visualization"
-  },
-  {
-    "appUrl": "/images/contingency-tutorial.jpg",
+    "appUrl": "/images/summaries-tutorial.jpg",
     "appImage": "/images/analysis_plugins/data_summaries.jpg",
     "title": "Create a <b>Data Summary</b>",
-    "description": "Make a contingency table to compare data within a selection",
-    "linkText": "Go to Visualization"
+    "description": "Make a Data Summary visualization to easily summarize your findings across metrics.",
+    "linkText": "See The Tutorial"
   }
 ]

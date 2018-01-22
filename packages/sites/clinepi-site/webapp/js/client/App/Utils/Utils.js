@@ -4,6 +4,15 @@ export function ucFirst (text) {
     : text;
 };
 
+export function filterKeysFromObject (object, keys = []) {
+  if (typeof object !== 'object' || !Object.keys(object).length) return object;
+  return Object.entries(object).reduce((output, entry, entries) => {
+    const [ key, value ] = entry;
+    if (!keys.includes(key)) output[key] = value;
+    return output;
+  }, {});
+};
+
 export function iconMenuItemsFromSocials (siteConfig = {}) {
   const { facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
   const items = [];

@@ -8,6 +8,7 @@ import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
 import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 
 import Header from 'Client/App/Header';
+import { DataRestrictionDaemon } from 'Client/App/DataRestriction';
 
 const injectState = withStore(state => ({
   webAppUrl: get(state, 'globalData.siteConfig.webAppUrl'),
@@ -31,12 +32,14 @@ export default {
     }
   },
 
-  SiteHeader: () => props => {
-    // console.log('gettin props on siteheader', props);
-    const { siteConfig, preferences, user, ...actions } = props;
-    const newProps = { siteConfig, preferences, user, actions };
+  SiteHeader: () => rawProps => {
+    const { siteConfig, preferences, user, ...actions } = rawProps;
+    const props = { siteConfig, preferences, user, actions };
     return (
-      <Header {...newProps} />
+      <div>
+        <Header {...props} />
+        <DataRestrictionDaemon {...props} />
+      </div>
     );
   },
 

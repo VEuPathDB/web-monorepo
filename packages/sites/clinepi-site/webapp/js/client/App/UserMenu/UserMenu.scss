@@ -65,6 +65,7 @@ $white: #E0E0E0;
     font-size: 1.3em;
     padding: 3px 0;
     flex-direction: row;
+    white-space: nowrap;
     cursor: pointer;
     transition: all 0.4s;
     &:hover {

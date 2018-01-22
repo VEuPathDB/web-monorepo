@@ -3,6 +3,7 @@ import React from 'react';
 import './HomePage.scss';
 import homeSections from 'Client/data/homeSections';
 import { Showcase } from 'Client/App/Showcase';
+import { RestrictionTrigger } from 'Client/App/DataRestriction';
 
 class HomePage extends React.Component {
   constructor (props) {
@@ -11,7 +12,6 @@ class HomePage extends React.Component {
 
   render () {
     const { prefix } = this.props;
-
     return (
       <div className="HomePage">
         {homeSections.map((section, idx) => (
