@@ -65,8 +65,9 @@ class StudyMenuItem extends React.Component {
     return (
       <row className={'StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
         <box className="grow-1">
-          <a href={href}>
+          <a href={href} className="StudyMenuItem-RecordLink">
             {name}
+            <Icon fa="angle-double-right" />
           </a>
         </box>
         <row className="grow-0 StudyMenuItem-Links">

@@ -1,6 +1,6 @@
 $red: #DD314E;
 .StudyMenuItem {
-  width: 280px;
+  width: 290px;
   align-items: center;
   font-weight: 400;
   .StudyMenuItem-Links {
@@ -11,6 +11,16 @@ $red: #DD314E;
       &:hover {
         color: $red;
       }
+    }
+  }
+  .StudyMenuItem-RecordLink {
+    // font-weight: 500;
+    transition: color 0.5s;
+    .fa {
+      margin-left: 5px;
+    }
+    &:hover {
+      color: $red !important;
     }
   }
 }

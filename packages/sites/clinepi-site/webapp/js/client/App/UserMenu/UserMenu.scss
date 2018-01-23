@@ -4,11 +4,10 @@ $white: #E0E0E0;
 .UserMenu {
   color: #fff;
   flex-grow: 0;
-  font-size: 1.3m;
+  font-size: 1em;
   display: flex;
   position: relative;
   flex-direction: column;
-  padding: 0px 15px 15px;
 
   .UserMenu-Icon {
     font-size: 30px;
@@ -28,11 +27,12 @@ $white: #E0E0E0;
   color: black;
   display: flex;
   flex-direction: column;
-  padding: 15px;
+  padding: 10px;
   min-width: 150px;
   position: absolute;
   border-radius: 10px;
   transition: all 0.2s;
+  line-height: 1em;
   background-color: $white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   .fa {
@@ -63,7 +63,7 @@ $white: #E0E0E0;
     flex: 1;
     display: flex;
     font-size: 1.3em;
-    padding: 3px 0;
+    padding: 5px;
     flex-direction: row;
     white-space: nowrap;
     cursor: pointer;
@@ -73,7 +73,7 @@ $white: #E0E0E0;
     }
     .UserMenu-Pane-Item-Icon {
       width: 20px;
-      margin-right: 5px;
+      margin-right: 10px;
     }
   }
 }

@@ -29,10 +29,11 @@ class UserMenu extends React.Component {
     const { firstName, lastName } = properties;
     const items = user.isGuest
       ? [
-        { icon: 'power-off', text: 'Login', onClick: () => actions.showLoginForm(window.location.href) },
+        { icon: 'sign-in', text: 'Login', onClick: () => actions.showLoginForm(window.location.href) },
         { icon: 'user-plus', text: 'Register', href: webAppUrl + '/app/user/registration', target: '_blank' }
       ] : [
         { icon: 'vcard', text: [ firstName, lastName ].join(' '), href: webAppUrl + '/app/user/profile' },
+        // { icon: 'star', text: 'Favorites', href: webAppUrl + '/app/favorites' },
         { icon: 'power-off', text: 'Log Out', onClick: () => actions.showLogoutWarning(window.location.href) }
       ];
 
