@@ -13,14 +13,14 @@ export default [
   },
   {
     title: 'Explore Example Searches',
-    description: 'ClinEpiDB’s Epidemiological Studies can be explored using various tools and refinements. Use the search types and strategies below to get acquainted with our tools.',
+    description: 'ClinEpiDB can be used to employ a sophisticated search strategy system to explore study data. Use the example searches below to jump to saved strategies, view their results and get acquainted with ClinEpiDB capabilities.',
     viewAllUrl: '#viewAll',
     contentType: 'SearchCardList',
     items: searches
   },
   {
     title: 'Explore Visualization Tools',
-    description: 'Gain clear insights into your data and illustrate powerful connections using our visualization tools. Use the demonstration visualizations below to get acquainted with our tools.',
+    description: 'Gain clear insights into your data and illustrate powerful connections using our visualization and analysis tools. Use the brief tutorials below to get learn how to get started exploring data with these resources.',
     viewAllUrl: '#viewAll',
     contentType: 'ImageCardList',
     items: visualizations
