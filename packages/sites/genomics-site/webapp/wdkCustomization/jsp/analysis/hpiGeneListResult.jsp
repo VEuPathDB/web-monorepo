@@ -23,19 +23,19 @@
                   <c:set var="desc" value="${viewModel.headerDescription}"/>
 
                   <th>${row.species}
-                    <imp:image class="help-link" style="cursor:pointer" title="${desc.species}" src="wdk/images/question.png" />
+                    <imp:helpIcon helpContent="${desc.species}" />
                   </th>
                   <th>${row.experimentName}
-                    <imp:image class="help-link" style="cursor:pointer" title="${desc.experimentName}" src="wdk/images/question.png" />
+                    <imp:helpIcon helpContent="${desc.experimentName}" />
                   </th>
                   <th>${row.description}
-                    <imp:image class="help-link" style="cursor:pointer" title="${desc.description}" src="wdk/images/question.png" />
+                    <imp:helpIcon helpContent="${desc.description}"/>
                   </th>
                   <th>${row.type}
-                    <imp:image class="help-link" style="cursor:pointer" title="${desc.type}" src="wdk/images/question.png" />
+                    <imp:helpIcon helpContent="${desc.type}"/>
                   </th>
                   <th>${row.significance}
-                    <imp:image class="help-link" style="cursor:pointer" title="${desc.significance}" src="wdk/images/question.png" />
+                    <imp:helpIcon helpContent="${desc.significance}"/>
                   </th>
                 </tr>
               </thead>

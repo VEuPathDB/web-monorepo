@@ -42,8 +42,8 @@
     $form.submit(this.validateIds.bind(this));
 
     // fix param label width
-    $form.find("label").css("width", "130px");
-    $form.find(".param-control").css("margin-left", "140px");
+    // $form.find("label").css("width", "130px");
+    // $form.find(".param-control").css("margin-left", "140px");
 
     // move content-pane class to span-location table
     params.find(".content-pane").removeClass("content-pane")
@@ -115,7 +115,7 @@
       alert("Please specify a location on the left and click \"Add Location\" or\n"
             + "  enter locations directly in the box on the right.");
             return false;
-    } 
+    }
 
     var spanIds = strIds.split(/[,;\n]+/);
     for(var i = 0; i < spanIds.length; i++) {
@@ -143,8 +143,8 @@
       }
       var length = end - start + 1;
       if (length <= 0 || length > SPAN_LENGTH_LIMIT) {
-        alert("The start cannot be bigger than end in segment id '" 
-              + spanId + "', and the length of a segment cannot exceed " 
+        alert("The start cannot be bigger than end in segment id '"
+              + spanId + "', and the length of a segment cannot exceed "
               + SPAN_LENGTH_LIMIT + " bps.");
               return false;
       }

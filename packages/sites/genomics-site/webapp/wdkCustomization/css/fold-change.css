@@ -12,7 +12,8 @@
 .formula .division .numerator { border-bottom: 1px solid; }
 
 .group-detail.ui-widget-content {
-  background: whiteSmoke;
+  background: #fafafa;
+  padding: 0 2em;
 }
 
 /*
@@ -212,9 +213,6 @@
 }
 #fold_change {
   width: 2em;
-}
-.fold-change .help-link {
-  padding-right: 4px;
 }
 .formula {
   padding: 1em 0em;

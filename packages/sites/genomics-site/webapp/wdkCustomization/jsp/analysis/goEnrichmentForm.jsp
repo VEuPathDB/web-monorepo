@@ -25,9 +25,8 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Organism</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.organismParamHelp)}"/>
+                    <span style="font-weight:bold; padding-right: .5em;">Organism</span>
+                    <imp:helpIcon helpContent="${viewModel.organismParamHelp}"/>
                   </label>
                 </td>
                 <td>
@@ -41,9 +40,8 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Ontology</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.ontologyParamHelp)}"/>
+                    <span style="font-weight:bold; padding-right: .5em;">Ontology</span>
+                    <imp:helpIcon helpContent="${viewModel.ontologyParamHelp}"/>
                   </label>
                 </td>
                 <td>
@@ -67,9 +65,8 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Evidence</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.evidenceParamHelp)}"/>
+                    <span style="font-weight:bold; padding-right: .5em;">Evidence</span>
+                    <imp:helpIcon helpContent="${viewModel.evidenceParamHelp}"/>
                   </label>
                 </td>
                 <td>
@@ -82,9 +79,8 @@
 	      <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Limit to GO Slim terms</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.goSubsetParamHelp)}"/>
+                    <span style="font-weight:bold; padding-right: .5em;">Limit to GO Slim terms</span>
+                    <imp:helpIcon helpContent="${viewModel.goSubsetParamHelp}"/>
                   </label>
                 </td>
                 <td>
@@ -108,11 +104,10 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">
+                    <span style="font-weight:bold; padding-right: .5em;">
                       P-Value Cutoff <span style="color:blue;font-size:0.95em;font-family:monospace">(0 - 1.0)</span>
                     </span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.pvalueParamHelp)}"/>
+                    <imp:helpIcon helpContent="${viewModel.pvalueParamHelp}"/>
                   </label>
                 </td>
                 <td>

@@ -24,49 +24,34 @@
         <span class="text">For the
           <span class="prompt">Experiment</span></span>
         <imp:enumParamInput qp="${profilesetParam}"/>
-        <imp:image class="help-link"
-          style="cursor:pointer"
-          title="${fn:escapeXml(profilesetParam.help)}"
-          src="wdk/images/question.png" />
+        <imp:helpIcon helpContent="${profilesetParam.help}" />
       </div>
 
       <div id="regulated_diraaa" class="param-line">
         <span class="text">return compounds that are</span>
         <imp:enumParamInput qp="${regulated_dirParam}"/>
-        <imp:image class="help-link"
-          style="cursor:pointer"
-          title="${fn:escapeXml(regulated_dirParam.help)}"
-          src="wdk/images/question.png" />
+        <imp:helpIcon helpContent="${regulated_dirParam.help}" />
       </div>
 
       <div class="param-line">
         <span class="text">with a
           <span class="prompt">Fold change</span> &amp;gt;=</span>
         <imp:stringParamInput qp="${fold_change_compoundParam}"/>
-        <imp:image class="help-link"
-          style="cursor:pointer"
-          title="${fn:escapeXml(fold_change_compoundParam.help)}"
-          src="wdk/images/question.png" />
+        <imp:helpIcon helpContent="${fold_change_compoundParam.help}" />
       </div>
 
       <div class="samples ui-helper-clearfix">
         <div id="min_max_avg_refaaa" class="param-line">
           between each compound's
           <imp:enumParamInput qp="${min_max_avg_refParam}"/>
-          <span class="text prompt">metabolite level</span>
-          <imp:image class="help-link"
-            style="cursor:pointer"
-            title="${fn:escapeXml(min_max_avg_refParam.help)}"
-            src="wdk/images/question.png" />
+          <span class="text prompt"> metabolite level </span>
+          <imp:helpIcon helpContent="${min_max_avg_refParam.help}" />
         </div>
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
             in the following <span class="samples-tab reference">Reference Samples</span>
             <jsp:text> </jsp:text>
-            <imp:image class="help-link"
-              style="cursor:pointer"
-              title="${fn:escapeXml(samples_fc_ref_genericParam.help)}"
-              src="wdk/images/question.png" />
+            <imp:helpIcon helpContent="${samples_fc_ref_genericParam.help}" />
           </span>
         </div>
 
@@ -77,23 +62,17 @@
         </div>
 
         <div id="min_max_avg_compaaa" class="param-line">
-          and its 
+          and its
           <imp:enumParamInput qp="${min_max_avg_compParam}"/>
-          <span class="text prompt">metabolite level</span>
-          <imp:image class="help-link"
-            style="cursor:pointer"
-            title="${fn:escapeXml(min_max_avg_compParam.help)}"
-            src="wdk/images/question.png" />
+          <span class="text prompt"> metabolite level </span>
+          <imp:helpIcon helpContent="${min_max_avg_compParam.help}" />
         </div>
 
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
             in the following <span class="samples-tab comparison">Comparison Samples</span>
             <jsp:text> </jsp:text>
-            <imp:image class="help-link"
-              style="cursor:pointer"
-              title="${fn:escapeXml(samples_fc_comp_genericParam.help)}"
-              src="wdk/images/question.png" />
+            <imp:helpIcon helpContent="${samples_fc_comp_genericParam.help}" />
           </span>
         </div>
 

@@ -148,36 +148,36 @@ display_categories  (fold change, percentile etc) (displayCategorySet in action)
         <c:set var="dataset_description" value="${datasetRecord.attributes['description']}"/>
         <c:set var="build_number_introduced" value="${datasetRecord.attributes['build_number_introduced']}"/>
         <c:set var="publications" value="${datasetRecord.tables['Publications']}" />
+        <c:set var="helpContent">
+          <h4>Summary</h4>
+          <div>
+            <c:choose>
+              <c:when test="${dataset_summary eq ''}">${dataset_description}</c:when>
+              <c:otherwise>${dataset_summary}</c:otherwise>
+            </c:choose>
+          </div>
+          <c:if test="${publications.numRows > 0}">
+            <br/>
+            <h4>Publications</h4>
+            <ul>
+              <c:forEach items="${publications.iterator}" var="publication">
+                <li><a target="_blank" href="${publication['pubmed_link'].url}">${publication['pubmed_link'].displayText}</a></li>
+              </c:forEach>
+            </ul>
+          </c:if>
+        </c:set>
 
         <tr class="dataset" data-dataset-id="${dataset_id}">
           <td class="organism">${organism}</td>
           <td class="description">
             <div>
+              <imp:helpIcon helpContent="${helpContent}"/>
               ${dataset_name}
               (${short_attribution})
               <c:if test="${build_number_introduced eq wdkModel_.buildNumber}">
                 <imp:image alt="New feature icon" title="This is a new data set!"
                   src="wdk/images/new-feature.png"/>
               </c:if>
-              <span class="info wdk-tooltip" data-content="+ .dataset-tooltip-content"><jsp:text/></span>
-              <div class="dataset-tooltip-content">
-                <h4>Summary</h4>
-                <div>
-                  <c:choose>
-                    <c:when test="${dataset_summary eq ''}">${dataset_description}</c:when>
-                    <c:otherwise>${dataset_summary}</c:otherwise>
-                  </c:choose>
-                </div>
-                <c:if test="${publications.numRows > 0}">
-                  <br/>
-                  <h4>Publications</h4>
-                  <ul>
-                    <c:forEach items="${publications.iterator}" var="publication">
-                      <li><a target="_blank" href="${publication['pubmed_link'].url}">${publication['pubmed_link'].displayText}</a></li>
-                    </c:forEach>
-                  </ul>
-                </c:if>
-              </div>
             </div>
           </td>
           <td>

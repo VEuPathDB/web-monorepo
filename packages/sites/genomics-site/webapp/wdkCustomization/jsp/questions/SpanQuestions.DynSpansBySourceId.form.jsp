@@ -3,19 +3,21 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<style TYPE="text/css"> 
-	<!-- 
+<style TYPE="text/css">
+	<!--
 		 #span-location { margin: 0px auto 0px auto; }
 		 #span-location #span-control {
-		 border-left: 3px double black; 
-		 border-right: 3px double black; 
+		 border-left: 3px double black;
+		 border-right: 3px double black;
 		 vertical-align: middle;
 		 text-align: center;
 		 padding: 5px;
 		 }
-		 #span-location #span-params { 
-		 vertical-align: top; 
-		 border-right: 3px double black;
+		 #span-location #span-params {
+		 vertical-align: top;
+     border-right: 3px double black;
+     padding-right: .5em;
+     margin-right: .5em;
 		 }
      #span-location #span-params, #span-location #span-search-list {
        display: inline-block;
@@ -27,7 +29,26 @@
 		 /* #span-location #span-search-list #span_id td { font-weight:bold; } */
 		 #span_id td.disabled,#span_id tr.disabled {
 		 cursor:default;
-		 }
+     }
+
+     /** Overrides to default form layout */
+     #span-location .param-item {
+       display: flex;
+       align-items: center;
+       margin: 0.5em 0;
+     }
+     #span-location .param-item > label {
+       display: flex;
+       flex-direction: row-reverse;
+       font-size: 1em;
+       border-bottom: none;
+       width: 12em;
+       margin: 0;
+     }
+     #span-location .param-item-label-wrapper {
+       display: flex;
+       flex-direction: row-reverse;
+     }
 		-->
 </style>
 <!-- <br> -->
@@ -41,7 +62,7 @@
       <span style="font-size:150%">>>></span>
       <input id="span-compose" type="button" name="compose" value="Add Location" />
       <span style="font-size:150%">>>></span>
-    </div> 
+    </div>
     <br />
     <ul style="text-align:left;list-style-type: square;list-style-position:inside;">
       <li><i>The max length of each segment is 100Kbps

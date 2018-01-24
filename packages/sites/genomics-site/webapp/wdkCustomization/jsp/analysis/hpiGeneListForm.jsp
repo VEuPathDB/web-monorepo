@@ -26,9 +26,8 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Database</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.brcParamHelp)}"/>
+                    <span style="font-weight:bold; padding-right: .5em;">Database</span>
+                    <imp:helpIcon helpContent="${viewModel.brcParamHelp}"/>
                   </label>
                 </td>
                 <td>
@@ -43,9 +42,8 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Cutoff Type</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.thresholdTypeParamHelp)}"/>
+                    <span style="font-weight:bold; padding-right: .5em;">Cutoff Type</span>
+                    <imp:helpIcon helpContent="${viewModel.thresholdTypeParamHelp}"/>
                   </label>
                 </td>
                 <td>
@@ -60,11 +58,10 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">
+                    <span style="font-weight:bold; padding-right: .5em;">
                       Cutoff <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
                     </span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.thresholdParamHelp)}"/>
+                    <imp:helpIcon helpContent="${viewModel.thresholdParamHelp}"/>
                   </label>
                 </td>
                 <td>
@@ -76,9 +73,8 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold">Use Orthology</span>
-                    <imp:image class="help-link" style="cursor:pointer;padding:1px" src="wdk/images/question.png"
-                        title="${fn:escapeXml(viewModel.useOrthologyParamHelp)}"/>
+                    <span style="font-weight:bold; padding-right: .5em;">Use Orthology</span>
+                    <imp:helpIcon helpContent="${viewModel.useOrthologyParamHelp}"/>
                   </label>
                 </td>
                 <td>
