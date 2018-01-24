@@ -510,6 +510,10 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   top: 55px;
 }
 
+.question-content {
+  max-width: 100%;
+}
+
 #query_form {
   max-width: 90vw;
 }
