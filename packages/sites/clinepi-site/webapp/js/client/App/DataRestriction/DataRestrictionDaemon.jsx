@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { isAllowedAccess, getStudyAccessLevel } from './DataRestrictionUtils';
+import { getRestrictionMessage, isAllowedAccess, getStudyAccessLevel } from './DataRestrictionUtils';
 import DataRestrictionModal from './DataRestrictionModal';
 
 class DataRestrictionDaemon extends React.Component {
@@ -9,7 +9,8 @@ class DataRestrictionDaemon extends React.Component {
     this.state = {
       isVisible: false,
       studyId: null,
-      action: null
+      action: null,
+      directive: null
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.showModal = this.showModal.bind(this);
@@ -27,17 +28,21 @@ class DataRestrictionDaemon extends React.Component {
     const { user } = this.props;
     const { studyId, action, event } = detail;
     const study = this.getStudyById(studyId);
-    if (!study || isAllowedAccess({ user, action, study })) return;
+    const permitted = isAllowedAccess({ user, action, study });
+    if (!study || permitted) return;
     if (event) {
       event.preventDefault();
       event.stopPropagation();
+      event.stopImmediatePropagation();
     };
-    this.showModal({ studyId, action });
+    const directive = getDirective({ study, action })
+    const message = getRestrictionMessage({ action, study });
+    this.showModal({ studyId, message, directive });
   }
 
-  showModal ({ studyId = null, action = null }) {
+  showModal ({ studyId = null, message = null, directive = null }) {
     const isVisible = true;
-    this.setState({ isVisible, studyId, action });
+    this.setState({ isVisible, studyId, message, directive });
   }
 
   closeModal () {
@@ -64,11 +69,11 @@ class DataRestrictionDaemon extends React.Component {
 
   render () {
     const study = this.getStudy();
-    const { isVisible, action } = this.state;
+    const { isVisible, message } = this.state;
     return (
       <DataRestrictionModal
         study={study}
-        action={action}
+        children={message}
         when={isVisible}
         onClose={this.closeModal}
       />
