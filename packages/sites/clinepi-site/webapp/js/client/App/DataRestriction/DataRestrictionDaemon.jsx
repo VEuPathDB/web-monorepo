@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getRestrictionMessage, isAllowedAccess, getStudyAccessLevel } from './DataRestrictionUtils';
+import { getRestrictionMessage, isAllowedAccess, getDirective } from './DataRestrictionUtils';
 import DataRestrictionModal from './DataRestrictionModal';
 
 class DataRestrictionDaemon extends React.Component {
@@ -9,6 +9,7 @@ class DataRestrictionDaemon extends React.Component {
     this.state = {
       isVisible: false,
       studyId: null,
+      message: null,
       action: null,
       directive: null
     };
@@ -30,6 +31,7 @@ class DataRestrictionDaemon extends React.Component {
     const study = this.getStudyById(studyId);
     const permitted = isAllowedAccess({ user, action, study });
     if (!study || permitted) return;
+
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -69,13 +71,14 @@ class DataRestrictionDaemon extends React.Component {
 
   render () {
     const study = this.getStudy();
-    const { isVisible, message } = this.state;
+    const { isVisible, message, directive } = this.state;
     return (
       <DataRestrictionModal
-        study={study}
-        children={message}
         when={isVisible}
         onClose={this.closeModal}
+        study={study}
+        message={message}
+        directive={directive}
       />
     );
   }

@@ -57,11 +57,6 @@ export function getStudyAccessLevel (study = {}) {
   return access;
 };
 
-export function getRestrictionMessage ({ action, study }) {
-  const directive = getDirective({ study, action });
-  return getHurdle({ directive, action });
-};
-
 export function getDirective ({ study, action }) {
   const accessLevel = getStudyAccessLevel(study);
   if (!Object.keys(accessLevels).includes(accessLevel)) return;
@@ -69,6 +64,11 @@ export function getDirective ({ study, action }) {
   if (Array.isArray(loginRequired) && loginRequired.includes(action)) return 'login';
   if (Array.isArray(approvalRequired) && approvalRequired.includes(action)) return 'approval';
   return null;
+};
+
+export function getRestrictionMessage ({ action, study }) {
+  const directive = getDirective({ study, action });
+  return getHurdle({ directive, action });
 };
 
 export function isAllowedAccess ({ user, action, study }) {
