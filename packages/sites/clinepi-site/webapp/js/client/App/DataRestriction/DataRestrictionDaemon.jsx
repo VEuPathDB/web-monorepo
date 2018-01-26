@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { getRestrictionMessage, isAllowedAccess, getDirective } from './DataRestrictionUtils';
 import DataRestrictionModal from './DataRestrictionModal';
+import { getRestrictionMessage, isAllowedAccess, getDirective } from './DataRestrictionUtils';
 
 class DataRestrictionDaemon extends React.Component {
   constructor (props) {
@@ -71,7 +71,10 @@ class DataRestrictionDaemon extends React.Component {
 
   render () {
     const study = this.getStudy();
+    const { siteConfig, actions } = this.props;
     const { isVisible, message, directive } = this.state;
+    const { showLoginForm } = actions;
+    const { webAppUrl } = siteConfig;
     return (
       <DataRestrictionModal
         when={isVisible}
@@ -79,6 +82,8 @@ class DataRestrictionDaemon extends React.Component {
         study={study}
         message={message}
         directive={directive}
+        showLoginForm={showLoginForm}
+        webAppUrl={webAppUrl}
       />
     );
   }

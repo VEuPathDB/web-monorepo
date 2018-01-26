@@ -31,7 +31,7 @@ export function getActionVerb (action) {
     case 'analysis':
       return 'create and view analyses';
     case 'paginate':
-      return 'see more results';
+      return 'see more than 25 results';
     case 'download':
       return 'download data';
     default:
@@ -43,7 +43,7 @@ export function getHurdle ({ directive, action } = {}) {
   if (typeof directive !== 'string' || typeof action !== 'string') return 'Data restricted.';
   const doThis = getAccessDirectiveVerb(directive);
   const doThat = getActionVerb(action);
-  return `Please ${doThis} in order to ${doThat}.`;
+  return <span>Please <b>{doThis}</b> in order to {doThat}.</span>;
 }
 
 export function getStudyAccessLevel (study = {}) {
