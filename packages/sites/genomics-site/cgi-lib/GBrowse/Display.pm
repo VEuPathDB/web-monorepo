@@ -725,7 +725,7 @@ sub colorBySpliceSiteUnifiedCount {
   my $count = eval join '+', split /,/, $ctpm;
   my $strand = $f->strand;
 
-  if ($strand eq '+'){
+  if ($strand eq '+' || $strand eq '1'){
     if ($count < 2) {
       return 'lightskyblue';
     } elsif ($count < 10) {
