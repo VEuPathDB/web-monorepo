@@ -24,7 +24,7 @@ class DataRestrictionModal extends React.Component {
         {!policyUrl ? null : (
           <p>
             The data from this study requires approval to download and use in research projects.
-            Please read the <a href={policyUrl} target="_blank">{study.name} Data Use and Approval Policy.</a>
+            Please read the <a href={policyUrl} target="_blank">{study.name} Data Access and Use Policy.</a>
           </p>
         )}
         <div className="DataRestrictionModal-Buttons">
