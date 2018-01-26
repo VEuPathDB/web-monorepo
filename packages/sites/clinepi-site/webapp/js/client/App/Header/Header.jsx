@@ -17,7 +17,7 @@ class Header extends React.Component {
       heroImage: webAppUrl + '/images/global.jpg',
       heroPosition: 'left 33%',
       heading: `Welcome To <span style="font-weight: 400; font-family: 'Exo 2'">ClinEpi<span style="color:#DD314E">DB</span></span>`,
-      tagline: 'Advancing global public health by facilitating the exploration and mining of epidemiological studies'
+      tagline: 'Advancing global public health by facilitating the exploration and analysis of epidemiological studies'
     };
 
     const { pathname, protocol, host } = window.location;

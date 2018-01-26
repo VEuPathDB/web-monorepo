@@ -31,7 +31,7 @@ class ImageCard extends React.Component {
           <a href={linkUrl}>
             <h3 dangerouslySetInnerHTML={{ __html: title }} />
           </a>
-          <p>{description}</p>
+          <p dangerouslySetInnerHTML={{ __html: description }} />
         </box>
         <a className="ImageCard-Footer" href={linkUrl} target="_blank">
           {linkText} <Icon fa={'chevron-circle-right'} />

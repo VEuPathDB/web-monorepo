@@ -1,5 +1,12 @@
 [
   {
+    "appUrl": "/im.do?s=6257ea9ab6fbce14",
+    "appImage": "/images/strategies/6257ea9ab6fbce14.png",
+    "linkText": "Visit The Strategy",
+    "description": "<b>Children who live in houses with thatched roofs who were followed for at least 3 years.</b> This search strategy features a contingency table visualization.",
+    "title": "A <b>Search Strategy</b> Contingency Table"
+  },
+  {
     "appUrl": "/images/contingency-tutorial.jpg",
     "appImage": "/images/analysis_plugins/contingency_tables.jpg",
     "title": "Create a <b>Contingency Table</b>",

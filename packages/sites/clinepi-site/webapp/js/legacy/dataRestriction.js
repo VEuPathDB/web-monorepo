@@ -21,6 +21,8 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
     const { recordClass } = element.data();
     const studyId = getIdFromRecordClass(recordClass);
 
+    emit('results', { studyId, strict: true });
+
     const pagingTables = element.find('.paging-table');
     pagingTables.each((index, table) => ns.pagingController($(table), studyId));
 
