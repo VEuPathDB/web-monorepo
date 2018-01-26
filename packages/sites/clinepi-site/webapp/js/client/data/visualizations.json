@@ -3,27 +3,27 @@
     "appUrl": "/im.do?s=6257ea9ab6fbce14",
     "appImage": "/images/strategies/6257ea9ab6fbce14.png",
     "linkText": "Visit The Strategy",
-    "description": "<b>Children who live in houses with thatched roofs who were followed for at least 3 years.</b> This search strategy features a contingency table visualization.",
+    "description": "A visualization of <b>Children who live in houses with thatched roofs who were followed for at least 3 years.</b> This search strategy features a contingency table visualization.",
     "title": "A <b>Search Strategy</b> Contingency Table"
   },
   {
     "appUrl": "/images/contingency-tutorial.jpg",
     "appImage": "/images/analysis_plugins/contingency_tables.jpg",
-    "title": "Create a <b>Contingency Table</b>",
+    "title": "Create a <br /><b>Contingency Table</b>",
     "description": "Make a contingency table to compare data within a selection",
     "linkText": "See The Tutorial"
   },
   {
     "appUrl": "/images/distribution-tutorial.jpg",
     "appImage": "/images/analysis_plugins/distributions.jpg",
-    "title": "Create a <b>Distribution Graph</b>",
+    "title": "Create a <br /><b>Distribution Graph</b>",
     "description": "Make a distribution graph and give visual context to youor data.",
     "linkText": "See The Tutorial"
   },
   {
     "appUrl": "/images/summaries-tutorial.jpg",
     "appImage": "/images/analysis_plugins/data_summaries.jpg",
-    "title": "Create a <b>Data Summary</b>",
+    "title": "Create a <br /><b>Data Summary</b>",
     "description": "Make a Data Summary visualization to easily summarize your findings across metrics.",
     "linkText": "See The Tutorial"
   }
