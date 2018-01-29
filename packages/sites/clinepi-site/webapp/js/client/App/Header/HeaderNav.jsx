@@ -8,6 +8,7 @@ import menuItems from 'Client/data/menuItems';
 
 import { Events, BodyLayer } from 'mesa';
 import { IconAlt as Icon } from 'wdk-client/Components';
+import { formatReleaseDate } from 'ebrc-client/util/formatters';
 
 class HeaderNav extends React.Component {
   constructor (props) {
@@ -34,7 +35,7 @@ class HeaderNav extends React.Component {
   }
 
   onScroll () {
-    const threshold = 170;
+    const threshold = 98;
     const { pageYOffset } = window;
     const { stickyHeaderVisible } = this.state;
     if (pageYOffset >= threshold && !stickyHeaderVisible)
@@ -92,7 +93,7 @@ class HeaderNav extends React.Component {
           </h1>
           <p>
             Clinical Epidemiology Resources <br />
-            <small><code>Prototype</code> Release {buildNumber} {' :: '} {releaseDate}</small>
+            <small><code>Prototype</code> Release {buildNumber}, {formatReleaseDate(releaseDate)}</small>
           </p>
         </stack>
       </row>

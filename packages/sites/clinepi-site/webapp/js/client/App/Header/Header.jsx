@@ -1,7 +1,6 @@
 import React from 'react';
 
 import './Header.scss';
-
 import HeaderNav from './HeaderNav';
 import { Hero } from 'Client/App/Hero';
 
