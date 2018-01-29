@@ -21,14 +21,23 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
     const { recordClass } = element.data();
     const studyId = getIdFromRecordClass(recordClass);
 
-    emit('results', { studyId, strict: true });
+    const isResultsPage = element.children('.Results_Div').length !== 0;
+    if (isResultsPage) emit('results', { studyId, strict: true });
+
+    const analysisTiles = element.find('.analysis-selector');
+    analysisTiles.each((index, tile) => ns.analysisTileController($(tile), studyId));
 
     const pagingTables = element.find('.paging-table');
     pagingTables.each((index, table) => ns.pagingController($(table), studyId));
 
     const downloadButton = element.find('a.step-download-link');
     ns.downloadLinkController(downloadButton, studyId);
-  }
+  };
+
+  ns.analysisTileController = (element, studyId) => {
+    const handler = (event) => emit('analysis', { studyId, event });
+    element.on('click', handler);
+  };
 
   ns.pagingController = (element, studyId) => {
     const handler = (event) => emit('paginate', { studyId, event });

@@ -30,6 +30,8 @@ export function getActionVerb (action) {
       return 'search the data';
     case 'analysis':
       return 'create and view analyses';
+    case 'results':
+      return 'view search results';
     case 'paginate':
       return 'see more than 25 results';
     case 'download':

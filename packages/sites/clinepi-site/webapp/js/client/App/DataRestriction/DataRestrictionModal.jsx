@@ -28,7 +28,7 @@ class DataRestrictionModal extends React.Component {
           </p>
         )}
         <div className="DataRestrictionModal-Buttons">
-          {directive && directive === 'login'
+          {(directive && directive === 'login') || (directive && directive === 'approval')
             ? (
               <button onClick={showLogin} className="btn">
                 Log In
