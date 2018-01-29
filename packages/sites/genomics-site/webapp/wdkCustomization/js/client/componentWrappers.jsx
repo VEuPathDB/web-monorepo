@@ -1,13 +1,15 @@
-import QueryString from 'querystring';
 import React from 'react';
-import { projectId } from './config';
+import QueryString from 'querystring';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
+import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
+import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
+import { withActions } from 'ebrc-client/util/component';
+import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import RecordTableContainer from './components/common/RecordTableContainer';
-import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
 
 const stopPropagation = event => event.stopPropagation();
 
@@ -112,20 +114,52 @@ export function RecordLink(WdkRecordLink) {
   };
 }
 
+function downloadRecordTable(record, tableName) {
+  return (dispatch, { wdkService }) => {
+    let answerSpec = getSingleRecordAnswerSpec(record);
+    let formatting = {
+      format: 'tableTabular',
+      formatConfig: {
+        tables: [ tableName ],
+        includeHeader: true,
+        attachmentType: "text"
+      }
+    };
+    wdkService.downloadAnswer({ answerSpec, formatting });
+  };
+}
+
 export function RecordTableSection(DefaultComponent) {
-  return function ApiRecordTableSection(props) {
+  return withActions({ downloadRecordTable })(function ApiRecordTableSection(props) {
     if (props.recordClass.name === 'DatasetRecordClasses.DatasetRecordClass') {
       return (
         <DefaultComponent {...props}/>
       );
     }
 
-    let customName = `Data sets used by ${String.fromCharCode(8220)}${props.table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
+    let { table, record, recordClass, downloadRecordTable } = props;
+    let customName = `Data sets used by ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
+    let callDownloadTable = event => {
+      event.stopPropagation();
+      downloadRecordTable(record, table.name);
+    };
     return (
-      <DefaultComponent {...props} table={Object.assign({}, props.table, {
+      <DefaultComponent {...props} table={Object.assign({}, table, {
         displayName: (
           <span>
-            {props.table.displayName}
+            {table.displayName}
+            <span
+              style={{
+                fontSize: '.8em',
+                fontWeight: 'normal',
+                marginLeft: '1em'
+              }}>
+              <button type="button"
+                className="wdk-Link"
+                onClick={callDownloadTable}>
+                <i className="fa fa-download"/> Download
+              </button>
+            </span>
             <Link
               style={{
                 fontSize: '.8em',
@@ -136,9 +170,9 @@ export function RecordTableSection(DefaultComponent) {
               to={{
                 pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
                 search: QueryString.stringify({
-                  record_class: props.record.recordClassName,
-                  reference_name: props.table.name,
-                  taxon: props.record.attributes.organism_full
+                  record_class: record.recordClassName,
+                  reference_name: table.name,
+                  taxon: record.attributes.organism_full
                 })
               }}
             ><i className="fa fa-database"/> Data sets</Link>
@@ -146,7 +180,7 @@ export function RecordTableSection(DefaultComponent) {
         )
       })}/>
     );
-  }
+  });
 }
 
 export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
