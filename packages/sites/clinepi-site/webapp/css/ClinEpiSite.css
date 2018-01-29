@@ -585,3 +585,8 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 .CaseControlContainer .ebrc-QuestionWizardActiveGroupDescription {
   z-index: 2;
 }
+
+/* Hide action links on Dataset page for now */
+.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
+  visibility: hidden;
+}
