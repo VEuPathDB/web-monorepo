@@ -483,6 +483,7 @@ a.WelcomeBoxLink {
   position: absolute;
   right: 3em;
   top: 2.5em;
+  font-size: 1.25em;
 }
 .ebrc-QuestionWizardHeading {
   font-size: 2em;
