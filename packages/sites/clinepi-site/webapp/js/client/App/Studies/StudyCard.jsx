@@ -43,6 +43,9 @@ class StudyCard extends React.Component {
             <Icon fa="angle-double-right" />
           </a>
         </box>
+        <a href={studyUrl} title="Study Details" className="StudyCard-DetailsLink">
+          <small>Study Details <Icon fa="chevron-circle-right"/></small>
+        </a>
         <box className="StudyCard-Stripe">
           {headline}
         </box>
