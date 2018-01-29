@@ -1,6 +1,6 @@
 export const accessLevels = {
   public: {
-    loginRequired: ['download', 'paginate']
+    loginRequired: []
   },
   protected: {
     loginRequired: ['paginate'],
