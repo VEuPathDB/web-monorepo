@@ -160,6 +160,9 @@ export function RecordTable(props) {
     case 'CrisprPhenotypeGraphs':
       return <DatasetGraphTable {...props} dataTableName="CrisprPhenotypeGraphsDataTable"/>
 
+    case 'PhenotypeScoreGraphs':
+      return <DatasetGraphTable {...props} dataTableName="PhenotypeScoreGraphsDataTable"/>
+
     case 'PhenotypeGraphs':
       return <DatasetGraphTable {...props} dataTableName="PhenotypeGraphsDataTable"/>
 
