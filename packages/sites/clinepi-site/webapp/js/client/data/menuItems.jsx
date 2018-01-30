@@ -42,6 +42,10 @@ export default function menuItems (siteConfig) {
             text: 'Public Strategies',
             appUrl: '/showApplication.do?tab=public_strat'
           },
+          {
+            text: 'Data Access & Use Policy',
+            url: '/documents/CE_DataAccessUsePolicy_Rev1.pdf'
+          },
           ...socialLinks
         ]
       },

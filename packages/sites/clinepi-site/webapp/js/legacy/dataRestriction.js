@@ -18,11 +18,20 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
   ns.restrictionController = (element) => {
-    const { recordClass } = element.data();
+    const { recordClass, restrictionType } = element.data();
     const studyId = getIdFromRecordClass(recordClass);
 
     const isResultsPage = element.children('.Results_Div').length !== 0;
-    if (isResultsPage) emit('results', { studyId, strict: true });
+    if (isResultsPage) {
+      emit('results', { studyId });
+      return;
+    }
+
+    const isSearchPage = restrictionType && restrictionType === 'search';
+    if (isSearchPage) {
+      setTimeout(() => emit('search', { studyId }), 0);
+      return;
+    }
 
     const analysisTiles = element.find('.analysis-selector');
     analysisTiles.each((index, tile) => ns.analysisTileController($(tile), studyId));

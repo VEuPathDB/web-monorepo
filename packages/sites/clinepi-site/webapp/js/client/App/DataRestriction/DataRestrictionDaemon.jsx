@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import DataRestrictionModal from './DataRestrictionModal';
-import { getRestrictionMessage, isAllowedAccess, getDirective } from './DataRestrictionUtils';
+import { isAllowedAccess } from './DataRestrictionUtils';
 
 class DataRestrictionDaemon extends React.Component {
   constructor (props) {
@@ -9,42 +10,36 @@ class DataRestrictionDaemon extends React.Component {
     this.state = {
       isVisible: false,
       studyId: null,
-      message: null,
-      action: null,
-      directive: null
+      action: null
     };
-    this.componentDidMount = this.componentDidMount.bind(this);
+    this.getStudy = this.getStudy.bind(this);
     this.showModal = this.showModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.getStudyById = this.getStudyById.bind(this);
-    this.getStudy = this.getStudy.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
     this.handleRestriction = this.handleRestriction.bind(this);
   }
 
   componentDidMount () {
-    document.addEventListener('DataRestricted', this.handleRestriction);
+    document.addEventListener('DataRestricted', ({ detail }) => this.handleRestriction(detail));
   }
 
-  handleRestriction ({ detail }) {
+  handleRestriction ({ studyId, action, event }) {
     const { user } = this.props;
-    const { studyId, action, event } = detail;
     const study = this.getStudyById(studyId);
     const permitted = isAllowedAccess({ user, action, study });
     if (!study || permitted) return;
-
     if (event) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
     };
-    const directive = getDirective({ study, action })
-    const message = getRestrictionMessage({ action, study });
-    this.showModal({ studyId, message, directive });
+    this.showModal({ studyId, action });
   }
 
-  showModal ({ studyId = null, message = null, directive = null }) {
+  showModal ({ studyId = null, action = null }) {
     const isVisible = true;
-    this.setState({ isVisible, studyId, message, directive });
+    this.setState({ isVisible, studyId, action });
   }
 
   closeModal () {
@@ -71,22 +66,29 @@ class DataRestrictionDaemon extends React.Component {
 
   render () {
     const study = this.getStudy();
-    const { siteConfig, actions } = this.props;
-    const { isVisible, message, directive } = this.state;
+    const { isVisible, action } = this.state;
+    const { siteConfig, actions, user } = this.props;
     const { showLoginForm } = actions;
     const { webAppUrl } = siteConfig;
-    return (
+
+    return !study ? null : (
       <DataRestrictionModal
-        when={isVisible}
-        onClose={this.closeModal}
+        user={user}
         study={study}
-        message={message}
-        directive={directive}
-        showLoginForm={showLoginForm}
+        action={action}
+        when={isVisible}
         webAppUrl={webAppUrl}
+        onClose={this.closeModal}
+        showLoginForm={showLoginForm}
       />
     );
   }
+};
+
+DataRestrictionDaemon.propTypes = {
+  user: PropTypes.object.isRequired,
+  siteConfig: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 export default DataRestrictionDaemon;

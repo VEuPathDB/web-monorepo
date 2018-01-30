@@ -15,7 +15,7 @@ class Modal extends React.Component {
     const wrapperClassName = 'Modal-Wrapper'
       + (active ? ' Modal-Wrapper--Active' : '')
       + (wrapperClass ? ' ' + wrapperClass : '');
-    const props = filterKeysFromObject(this.props, [ 'when', 'wrapperClass' ]);
+    const props = filterKeysFromObject(this.props, [ 'when', 'wrapperClassName' ]);
     return (
       <BodyLayer className={wrapperClassName}>
         <div {...props} />

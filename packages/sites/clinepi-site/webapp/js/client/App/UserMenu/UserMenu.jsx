@@ -25,8 +25,8 @@ class UserMenu extends React.Component {
     const { user, actions, webAppUrl } = this.props;
     const { showLoginForm } = actions;
     const { isHovered } = this.state;
-    const { properties } = user;
-    const { firstName, lastName } = properties;
+    const { properties } = user.properties ? user : { properties: null };
+    const { firstName, lastName } = properties ? properties : { firstName: '', lastName: '' };
     const items = user.isGuest
       ? [
         { icon: 'sign-in', text: 'Login', onClick: () => actions.showLoginForm(window.location.href) },
@@ -62,7 +62,7 @@ class UserMenu extends React.Component {
     const { user } = this.props;
     if (!user) return null;
 
-    const { isGuest, properties } = user;
+    const { isGuest, properties = {} } = user;
     const iconClass = 'user-circle' + (isGuest ? '-o' : '');
     const Menu = this.renderMenu;
 
@@ -73,7 +73,7 @@ class UserMenu extends React.Component {
         onMouseLeave={onMouseLeave}>
         <Icon className="UserMenu-Icon" fa={iconClass} />
         <span className="UserMenu-Title">
-          {isGuest ? 'Guest' : properties.firstName}
+          {isGuest !== false ? 'Guest' : properties.firstName}
         </span>
         <Menu />
       </box>

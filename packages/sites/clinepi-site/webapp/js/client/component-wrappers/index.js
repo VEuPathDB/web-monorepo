@@ -33,7 +33,7 @@ export default {
   },
 
   SiteHeader: () => rawProps => {
-    const { siteConfig, preferences, user, ...actions } = rawProps;
+    const { siteConfig, preferences, user = {}, ...actions } = rawProps;
     const props = { siteConfig, preferences, user, actions };
     return (
       <div>
