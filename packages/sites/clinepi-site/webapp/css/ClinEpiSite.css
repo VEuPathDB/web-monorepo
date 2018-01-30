@@ -6,6 +6,7 @@
 @value bgColor: #85b3c3;
 
 body {
+  /* Some rules below are tailored to the current font. See FONT_RELATED section below */
   font-family: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
   /* font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; */
   text-rendering: optimizeLegibility;
@@ -589,4 +590,11 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 /* Hide action links on Dataset page for now */
 .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
   visibility: hidden;
+}
+
+/* FONT_RELATED overrides */
+b, strong, th,
+.filter-param .wdk-AttributeFilterFieldParent,
+.filter-param .wdk-AttributeFilterFieldItem {
+  font-weight: 500;
 }
