@@ -6,6 +6,7 @@ $red: #DD314E;
   justify-content: space-between;
   position: relative;
   z-index: 1000000;
+  flex-wrap:nowrap;
 
   #EuPathLogo {
     position: absolute;
@@ -32,6 +33,7 @@ $red: #DD314E;
 
   &-Switch {
     flex: 1;
+    min-width: 800px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -47,6 +49,7 @@ $red: #DD314E;
 
   &-Branding {
     padding: 5px 5px 20px;
+    min-width: 360px;
     align-self: flex-start;
 
     .HeaderNav-Logo {

@@ -145,24 +145,26 @@ class HeaderNav extends React.Component {
     const StickyHeader = this.renderStickyHeader;
 
     return (
-      <div className="row HeaderNav">
-        {!stickyHeaderVisible ? null : (
-          <BodyLayer>
-            <StickyHeader />
-          </BodyLayer>
-        )}
-        <Branding siteConfig={siteConfig} />
-        <div className="HeaderNav-Switch">
-          <row className="HeaderNav-Primary">
-            <SiteMenu items={mainMenu} config={siteConfig} />
-          </row>
+      <div className="HeaderNav-Wrapper">
+        <div className="row HeaderNav">
+          {!stickyHeaderVisible ? null : (
+            <BodyLayer>
+              <StickyHeader />
+            </BodyLayer>
+          )}
+          <Branding siteConfig={siteConfig} />
+          <div className="HeaderNav-Switch">
+            <row className="HeaderNav-Primary">
+              <SiteMenu items={mainMenu} config={siteConfig} />
+            </row>
 
-          <row className="HeaderNav-Secondary">
-            <IconMenu items={iconMenu} />
-            <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
-          </row>
+            <row className="HeaderNav-Secondary">
+              <IconMenu items={iconMenu} />
+              <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
+            </row>
+          </div>
+          <img src={webAppUrl + '/images/partofeupath.png'} id="EuPathLogo" />
         </div>
-        <img src={webAppUrl + '/images/partofeupath.png'} id="EuPathLogo" />
       </div>
     );
   }
