@@ -433,7 +433,7 @@ class MercatorTable extends React.Component {
     let exceededMaxOrganisms = this.state.selectedLeaves.length > 15;
     return (
       <div className="eupathdb-MercatorTable">
-        <form action="/cgi-bin/pairwiseMercator">
+        <form action="/cgi-bin/pairwiseMercator" target="_blank" method="post">
           <input type="hidden" name="project_id" value={projectId}/>
 
           <div className="form-group">
