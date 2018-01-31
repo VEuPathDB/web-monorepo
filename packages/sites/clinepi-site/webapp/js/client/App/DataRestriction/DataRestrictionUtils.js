@@ -83,6 +83,7 @@ export function actionRequiresApproval ({ study, action }) {
 }
 
 export function isAllowedAccess ({ user, action, study }) {
+  if (sessionStorage.getItem('restriction_override') === 'true') return true;
   const loginRequired = actionRequiresLogin({ action, study });
   const isValidUser = typeof user === 'object' && ['isGuest', 'properties'].every(key => Object.keys(user).includes(key));
   if (loginRequired && (!isValidUser || user.isGuest)) return false;
@@ -91,6 +92,16 @@ export function isAllowedAccess ({ user, action, study }) {
   if (approvalRequired && !isApproved) return false;
   return true;
 };
+
+export function disableRestriction () {
+  sessionStorage.setItem('restriction_override', true);
+}
+window._disableRestriction = disableRestriction;
+
+export function enableRestriction () {
+  sessionStorage.removeItem('restriction_override');
+}
+window._enableRestriction = enableRestriction;
 
 export function isActionStrict (action) {
   return strictActions.includes(action);

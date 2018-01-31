@@ -93,7 +93,11 @@ class HeaderNav extends React.Component {
           </h1>
           <p>
             Clinical Epidemiology Resources <br />
-            <small><code>Prototype</code> Release {buildNumber}, {formatReleaseDate(releaseDate)}</small>
+            <small>
+              {/* <code>Prototype</code>  */}
+              Release {buildNumber} &nbsp; &nbsp;
+              {formatReleaseDate(releaseDate, 'm d y')}
+            </small>
           </p>
         </stack>
       </row>
@@ -163,7 +167,9 @@ class HeaderNav extends React.Component {
               <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
             </row>
           </div>
-          <img src={webAppUrl + '/images/partofeupath.png'} id="EuPathLogo" />
+          <a href="http://eupathdb.org/eupathdb/" target="_blank">
+            <img src={webAppUrl + '/images/partofeupath.png'} id="EuPathLogo" />
+          </a>
         </div>
       </div>
     );
