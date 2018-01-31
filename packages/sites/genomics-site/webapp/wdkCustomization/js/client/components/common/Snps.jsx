@@ -69,7 +69,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
           }}
         />
 
-        <button style={{display: 'block', margin: '1rem auto',}} type="submit" className="btn">View Results</button>
+        <button style={{display: 'block', margin: '2rem auto',}} type="submit" className="btn">View Results</button>
       </form>
     </div>
   )

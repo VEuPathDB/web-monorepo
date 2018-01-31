@@ -497,11 +497,13 @@ class MercatorTable extends React.Component {
           <div className="form-radio"><label><input name="type" type="radio" value="fasta_ungapped"/> Multi-FASTA</label></div>
         </div>
 
-        <input
+        <button
+          style={{ display: 'block', margin: '2rem auto' }}
+          className="btn"
           disabled={exceededMaxOrganisms}
           title={exceededMaxOrganisms ? 'Please fix errors listed above.' : 'Run alignment'}
           type="submit"
-        />
+        >Run alignment</button>
       </form>
     </div>
     );

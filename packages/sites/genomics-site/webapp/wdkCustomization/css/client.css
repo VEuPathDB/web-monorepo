@@ -371,9 +371,12 @@
 }
 */
 
+#MercatorTable .wdk-CollapsibleSectionContent,
 #SNPsAlignment .wdk-CollapsibleSectionContent,
 #snps_alignment_form .wdk-CollapsibleSectionContent {
   border: 1px solid rgba(0, 0, 0, 0.08);
+  display: inline-block;
+  margin: 1rem;
 }
 
 .wdk-RecordAttributeSectionItem.wdk-RecordAttributeSectionItem__fasta_transcript_sequence {
@@ -400,16 +403,8 @@
   white-space: nowrap;
 }
 
-.eupathdb-MercatorTable {
-  padding: 0 1em;
-  border: 1px solid lightgray;
-  border-radius: 6px;
-  margin: left;
-  width:500px;
-}
-
-.eupathdb-MercatorTable .wdk-CheckboxList {
-  padding: .4em;
+.eupathdb-MercatorTable .wdk-CategoriesCheckboxTree {
+  width: 500px;
 }
 
 .eupathdb-MercatorTable input[type="submit"] {
