@@ -1,5 +1,7 @@
-import { RecordViewStore } from 'wdk-client/Stores';
-import { flow, get } from 'lodash';
+import { Observable } from 'rxjs';
+import { RecordViewStore, QuestionStore } from 'wdk-client/Stores';
+import { QuestionActionCreators } from 'wdk-client/ActionCreators';
+import { get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import * as persistence from '../util/persistence';
 import { TABLE_STATE_UPDATED } from '../actioncreators/RecordViewActionCreators';
@@ -21,27 +23,35 @@ const storageItems = {
 
 /** Api specific RecordViewStore */
 export default class ApiRecordViewStore extends RecordViewStore {
+
+  getInitialState() {
+    return Object.assign({}, super.getInitialState(), {
+      questions: {}
+    });
+  }
+
   handleAction(state, action) {
-    state = Object.assign({}, super.handleAction(state, action), {
+    state = super.handleAction(state, action);
+    state = QuestionStore.prototype.handleAction(state, action);
+    state = Object.assign({}, state, {
       pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
       eupathdb: handleEuPathDBAction(state.eupathdb, action)
     });
     switch (action.type) {
       case 'record-view/active-record-received':
-        return handleRecordReceived(state);
-      case 'record-view/section-visibility-changed':
-      case 'record-view/all-field-visibility-changed':
-        setStateInStorage(storageItems.collapsedSections, state);
-        return state;
-      case 'record-view/navigation-visibility-changed':
-        setStateInStorage(storageItems.navigationVisible, state);
-        return state;
-      case TABLE_STATE_UPDATED:
-        setStateInStorage(storageItems.tables, state);
-        return state;
+        return pruneCategories(state);
       default:
         return state;
     }
+  }
+
+  getEpics() {
+    return [
+      ...super.getEpics(),
+      ...QuestionStore.prototype.getEpics(),
+      snpsAlignmentEpic,
+      userSettingsEpic
+    ];
   }
 }
 
@@ -73,42 +83,22 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
 /** Handle eupathdb actions */
 function handleEuPathDBAction(state = { tables: {} }, { type, payload }) {
   switch(type) {
-    case TABLE_STATE_UPDATED: return Object.assign({}, state, {
-      tables: Object.assign({}, state.tables, {
-        [payload.tableName]: payload.tableState
-      })
-    });
-    default: return state;
+    case TABLE_STATE_UPDATED:
+      return Object.assign({}, state, {
+        tables: Object.assign({}, state.tables, {
+          [payload.tableName]: payload.tableState
+        })
+      });
+
+    default:
+      return state;
   }
-}
-
-let handleRecordReceived = flow(updateNavigationVisibility, mergeCollapsedSections, mergeTableState,  pruneCategories);
-
-/** Show navigation for genes, but hide for all other record types */
-function updateNavigationVisibility(state) {
-  let navigationVisible = getStateFromStorage(storageItems.navigationVisible, state, state.recordClass.name === 'GeneRecordClasses.GeneRecordClass');
-  return Object.assign(state, {}, { navigationVisible });
-}
-
-/** merge stored collapsedSections */
-function mergeCollapsedSections(state) {
-  return Object.assign({}, state, {
-    collapsedSections: getStateFromStorage(storageItems.collapsedSections, state)
-  });
-}
-
-/** merge stored table state */
-function mergeTableState(state) {
-  let eupathdb = Object.assign({}, state.eupathdb, {
-    tables: getStateFromStorage(storageItems.tables, state)
-  });
-  return Object.assign({}, state, { eupathdb });
 }
 
 /** prune categoryTree */
 function pruneCategories(nextState) {
   let { record, categoryTree } = nextState;
-  if (record.recordClassName === 'GeneRecordClasses.GeneRecordClass') {
+  if (isGeneRecord(record)) {
     categoryTree = pruneCategoryBasedOnShowStrains(pruneCategoriesByMetaTable(removeProteinCategories(categoryTree, record), record), record);
     nextState = Object.assign({}, nextState, { categoryTree });
   }
@@ -141,7 +131,7 @@ function pruneCategoryBasedOnShowStrains(categoryTree, record) {
    // keep everything that isn't the table we care about
  return (
        cat.getTargetType(individual) !== 'table' ||
-       cat.getRefName(individual) !== 'Strains' 
+       cat.getRefName(individual) !== 'Strains'
      );
 
  //if (cat.getTargetType(individual) !== 'table') return true;
@@ -175,12 +165,104 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 }
 
 
-// TODO Declare type and clear value if it doesn't conform
+// Custom epics
+// ------------
+//
+// An epic allows us to perform side-effects in resonse to actions that are
+// dispatched to the store.
+
+/**
+ * When record is loaded, read state from storage and emit actions to restore state.
+ * When state is changed, write state to storage.
+ */
+function userSettingsEpic(action$, { store }) {
+  return action$
+    .filter(action => action.type === 'record-view/active-record-received')
+    .switchMap(() => {
+      let state = store.getState();
+      /** Show navigation for genes, but hide for all other record types */
+      let navigationVisible = getStateFromStorage(
+        storageItems.navigationVisible,
+        state,
+        isGeneRecord(state.record)
+      );
+
+      /** merge stored collapsedSections */
+      let collapsedSections = getStateFromStorage(
+        storageItems.collapsedSections,
+        state,
+        []
+      );
+
+      let tableStates = getStateFromStorage(
+        storageItems.tables,
+        state,
+        {}
+      );
+
+      return Observable.of(
+        {
+          type: 'record-view/navigation-visibility-changed',
+          payload: { isVisible: navigationVisible }
+        },
+        ...collapsedSections.map(name => ({
+          type: 'record-view/section-visibility-changed',
+          payload: { name, isVisible: false }
+        })),
+        ...Object.entries(tableStates).map(([tableName, tableState]) => ({
+          type: TABLE_STATE_UPDATED,
+          payload: { tableName, tableState }
+        }))
+      )
+      .merge(action$.mergeMap(action => {
+        switch (action.type) {
+          case 'record-view/section-visibility-changed':
+          case 'record-view/all-field-visibility-changed':
+            setStateInStorage(storageItems.collapsedSections, store.getState());
+            break;
+          case 'record-view/navigation-visibility-changed':
+            setStateInStorage(storageItems.navigationVisible, store.getState());
+            break;
+          case TABLE_STATE_UPDATED:
+            setStateInStorage(storageItems.tables, store.getState());
+            break;
+        }
+        return Observable.empty();
+      }))
+    })
+}
+
+/**
+ * Load filterParam data for snp alignment form.
+ */
+function snpsAlignmentEpic(action$) {
+  return action$
+    .filter(action => action.type === 'record-view/active-record-updated')
+    .mergeMap(action =>
+      (isGeneRecord(action.payload.record) &&
+        'SNPsAlignment' in action.payload.record.tables)
+        ? Observable.of(action.payload.record.attributes.organism_full)
+        : isSnpsRecord(action.payload.record) ? Observable.of(action.payload.record.attributes.organism_text)
+          : Observable.empty())
+    .map(organismSinglePick => {
+      return QuestionActionCreators.ActiveQuestionUpdatedAction.create({
+        questionName: 'SnpAlignmentForm',
+        paramValues: {
+          organismSinglePick,
+          ngsSnp_strain_meta: JSON.stringify({ filters: [] })
+        }
+      });
+    });
+}
+
+
+
+// TODO Declare type and clear value if it doesn't conform, e.g., validation
 
 /** Read state property value from storage */
-function getStateFromStorage(descriptor, state, defaultValue = get(state, descriptor.path)) {
+function getStateFromStorage(descriptor, state, defaultValue) {
   try {
-    let key = getStorageKey(descriptor, state);
+    let key = getStorageKey(descriptor, state.record);
     return persistence.get(key, defaultValue);
   }
   catch (error) {
@@ -192,7 +274,7 @@ function getStateFromStorage(descriptor, state, defaultValue = get(state, descri
 /** Write state property value to storage */
 function setStateInStorage(descriptor, state) {
   try {
-    let key = getStorageKey(descriptor, state);
+    let key = getStorageKey(descriptor, state.record);
     persistence.set(key, get(state, descriptor.path));
   }
   catch (error) {
@@ -201,8 +283,16 @@ function setStateInStorage(descriptor, state) {
 }
 
 /** Create storage key for property */
-function getStorageKey(descriptor, state) {
+function getStorageKey(descriptor, record) {
   let { path, isRecordScoped } = descriptor;
-  return path + '/' + state.recordClass.name +
-    (isRecordScoped ? '/' + state.record.id.map(p => p.value).join('/') : '');
+  return path + '/' + record.recordClassName +
+    (isRecordScoped ? '/' + record.id.map(p => p.value).join('/') : '');
+}
+
+function isGeneRecord(record) {
+  return record.recordClassName === 'GeneRecordClasses.GeneRecordClass';
+}
+
+function isSnpsRecord(record) {
+  return record.recordClassName === 'SnpRecordClasses.SnpRecordClass';
 }
