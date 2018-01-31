@@ -371,6 +371,12 @@
 }
 */
 
+#SNPsAlignment .wdk-CollapsibleSectionContent,
+#snps_alignment_form .wdk-CollapsibleSectionContent {
+  border: 1px solid #cacaca;
+  border-radius: 8px;
+}
+
 .wdk-RecordAttributeSectionItem.wdk-RecordAttributeSectionItem__fasta_transcript_sequence {
   width: 100%;
 }
