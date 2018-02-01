@@ -13,4 +13,18 @@
   button {
     margin-top: 10px;
   }
+
+  h1.DisclaimerModal-Product {
+    text-align: center;
+    big {
+      font-family: 'Exo 2';
+      letter-spacing: -2px;
+    }
+    small {
+      display: block;
+      font-size: 0.5em;
+      text-transform: uppercase;
+      font-weight: 200;
+    }
+  }
 }

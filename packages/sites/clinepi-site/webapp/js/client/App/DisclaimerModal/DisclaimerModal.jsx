@@ -4,9 +4,19 @@ import './DisclaimerModal.scss';
 import Modal from 'Client/App/Modal';
 import { IconAlt as Icon } from 'wdk-client/Components'
 
+const logoTextStyle = {
+  fontFamily: '"Exo 2"',
+  fontWeight: 600,
+  letterSpacing: '-2px'
+};
+
 const Text = {
-  product: 'ClinEpiDB',
-  // headline: 'Do not distribute beyond GEMS Network investigators!',
+  product: (
+    <span>
+      <big>ClinEpi<span style={{ color: '#DD314E' }}>DB</span> </big>
+      <small> Release 1</small>
+    </span>
+  ),
   body: (
     <div>
       <p>Clinical Epidemiology Database Resources, ClinEpiDB (http://ClinEpiDB.org) is charged with ensuring that epidemiologic studies are conveniently accessible to the worldwide community of biomedical researchers. ClinEpiDB is committed to high standards for the protection of all submitted study data provided to ClinEpiDB and made available through the ClinEpiDB platform.</p>
@@ -39,10 +49,10 @@ class DisclaimerModal extends React.Component {
     const { action, body, headline, product } = Text;
     return (
       <Modal when={showModal} className="DisclaimerModal">
-        {!product ? null : <h2>{product}</h2>}
-        {!headline ? null : <h2>{headline}</h2>}
-        {!body ? null : <section>{body}</section>}
-        {!action ? null : <button className="btn" onClick={this.acceptDisclaimer}>{action}</button>}
+        {!product ? null : <h1 className="DisclaimerModal-Product">{product}</h1>}
+        {!headline ? null : <h2 className="DisclaimerModal-Headline">{headline}</h2>}
+        {!body ? null : <section className="DisclaimerModal-Body">{body}</section>}
+        {!action ? null : <button className="DisclaimerModal-Button btn" onClick={this.acceptDisclaimer}>{action}</button>}
       </Modal>
     )
   }
