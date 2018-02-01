@@ -5,7 +5,7 @@ import Modal from 'Client/App/Modal';
 import { IconAlt as Icon } from 'wdk-client/Components'
 
 const Text = {
-  product: 'ClinEpiDB Prototype v0.2',
+  product: 'ClinEpiDB',
   // headline: 'Do not distribute beyond GEMS Network investigators!',
   body: (
     <div>
