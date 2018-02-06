@@ -2,6 +2,8 @@ $red: #DD314E;
 $textColor: rgb(56,76,75);
 $paleBlue: rgb(198,223,227);
 
+@import './Cards.scss';
+
 .wdk-Showcase {
   width: 100%;
   margin: 20px 0 50px;
@@ -95,86 +97,4 @@ $paleBlue: rgb(198,223,227);
     justify-content: flex-end;
   }
 
-  .CardList {
-    background-color: $paleBlue;
-    padding: 10px;
-    width: 100vw;
-    overflow-x: auto;
-    display: flex;
-    transition: all 0.4s;
-    flex-direction: row;
-    flex-wrap: nowrap;
-  }
-  .Card {
-    flex: 0 0 300px;
-    margin: 10px;
-    width: 330px;
-    font-size: 0.9rem;
-    min-height: 250px;
-    color: $textColor;
-    border-radius: 20px;
-    overflow: hidden;
-    box-sizing: border-box;
-    display: flex;
-    flex-flow: column;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    background: #dcf1f8;
-    background: -moz-radial-gradient(12% 5%, ellipse cover,  #dcf1f8 0%, #ffffff 40%);
-    background: -webkit-radial-gradient(12% 5%, ellipse cover,  #dcf1f8 0%, #ffffff 40%);
-    background: radial-gradient(ellipse at 12% 5%,  #dcf1f8 0%, #ffffff 40%);
-
-    &.disabled {
-      opacity: 0.3;
-      pointer-events: none;
-      transition: all 0.5s;
-      &:hover {
-        opacity: 0.5;
-        transform: scale(0.95);
-      }
-    }
-
-    row.ribbon {
-      background-color: #e62f44;
-      color: #FFF;
-      padding: 10px;
-      text-align:center;
-      justify-content: center;
-      font-weight: 300;
-      width: 100%;
-      font-size: 1.1rem;
-    }
-
-    a {
-      color: $textColor;
-      text-decoration: none;
-      &:hover, &:link, &:active {
-        text-decoration: none;
-      }
-    }
-
-    &.red-fade-bg {
-      background: #edb2b7;
-      background: -moz-radial-gradient(100% 0%, ellipse cover,  #edb2b7 -20%, #ffffff 100%);
-      background: -webkit-radial-gradient(100% 0%, ellipse cover,  #edb2b7 -20%, #ffffff 100%);
-      background: radial-gradient(ellipse at 100% 0%,  #edb2b7 -20%, #ffffff 100%);
-    }
-    &.blue-fade-bg {
-      background: #c4f0ff;
-      background: -moz-radial-gradient(100% 0%, ellipse cover,  #c4f0ff -20%, #ffffff 100%);
-      background: -webkit-radial-gradient(100% 0%, ellipse cover,  #c4f0ff -20%, #ffffff 100%);
-      background: radial-gradient(ellipse at 100% 0%,  #c4f0ff -20%, #ffffff 100%);
-    }
-    &.yellow-fade-bg {
-      background: #ffedb8;
-      background: -moz-radial-gradient(100% 0%, ellipse cover,  #ffedb8 -20%, #ffffff 100%);
-      background: -webkit-radial-gradient(100% 0%, ellipse cover,  #ffedb8 -20%, #ffffff 100%);
-      background: radial-gradient(ellipse at 100% 0%,  #ffedb8 -20%, #ffffff 100%);
-    }
-    &.green-fade-bg {
-      background: #dbf0cc;
-      background: -moz-radial-gradient(100% 0%, ellipse cover,  #dbf0cc -20%, #ffffff 100%);
-      background: -webkit-radial-gradient(100% 0%, ellipse cover,  #dbf0cc -20%, #ffffff 100%);
-      background: radial-gradient(ellipse at 100% 0%,  #dbf0cc -20%, #ffffff 100%);
-    }
-  }
 }
