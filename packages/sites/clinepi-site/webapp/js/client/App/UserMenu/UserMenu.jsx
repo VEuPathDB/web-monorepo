@@ -73,7 +73,12 @@ class UserMenu extends React.Component {
         onMouseLeave={onMouseLeave}>
         <Icon className="UserMenu-Icon" fa={iconClass} />
         <span className="UserMenu-Title">
-          {isGuest !== false ? 'Guest' : properties.firstName}
+          {typeof isGuest === 'undefined'
+            ? '...'
+            : isGuest !== false
+              ? 'Guest' 
+              : properties.firstName
+	  }
         </span>
         <Menu />
       </box>
