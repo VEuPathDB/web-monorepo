@@ -48,6 +48,10 @@ export default function menuItems (siteConfig) {
             title: 'View the ClinEpiDB Introductory video.'
           },
           {
+            text: 'Tutorials',
+            appUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
+          },
+          {
             text: 'Data Access & Use Policy',
             url: '/documents/CE_DataAccessUsePolicy_Rev2.pdf'
           },
