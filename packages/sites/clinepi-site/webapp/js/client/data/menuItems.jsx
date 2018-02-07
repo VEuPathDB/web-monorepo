@@ -44,8 +44,8 @@ export default function menuItems (siteConfig) {
           },
           {
             text: 'Welcome To ClinEpiDB (video)',
-            url: 'https://www.youtube.com/user/eupathdb/',
-            title: '(Placeholder Link)'
+            url: 'https://www.youtube.com/watch?v=535PcFrBH8M',
+            title: 'View the ClinEpiDB Introductory video.'
           },
           {
             text: 'Data Access & Use Policy',
