@@ -5,13 +5,13 @@ import GalaxyTermsController from './components/controllers/GalaxyTermsControlle
 import SampleForm from './components/samples/SampleForm';
 
 /**
- * Wrap WDK Routes
+ * Wrap Ebrc Routes
  */
-export const wrapRoutes = wdkRoutes => [
+export const wrapRoutes = ebrcRoutes => [
   { path: '/fasta-tool', component: FastaConfigController },
   { path: '/query-grid', component: QueryGridController },
   { path: '/galaxy-orientation', component: GalaxyTermsController },
   { path: '/galaxy-orientation/sign-up', component: GalaxyTermsController },
   { path: '/sample-form', component: SampleForm },
-  ...wdkRoutes
-]
+  ...ebrcRoutes
+];
