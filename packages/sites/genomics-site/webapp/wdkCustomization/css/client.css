@@ -375,7 +375,6 @@
 #SNPsAlignment .wdk-CollapsibleSectionContent,
 #snps_alignment_form .wdk-CollapsibleSectionContent {
   border: 1px solid rgba(0, 0, 0, 0.12);
-  display: inline-block;
   margin: 1rem;
 }
 
