@@ -93,6 +93,8 @@ export function isAllowedAccess ({ user, action, study }) {
   return true;
 };
 
+
+
 export function disableRestriction () {
   sessionStorage.setItem('restriction_override', true);
 }
@@ -106,3 +108,18 @@ window._enableRestriction = enableRestriction;
 export function isActionStrict (action) {
   return strictActions.includes(action);
 }
+
+export function getIdFromRecordClassName (recordClass) {
+  if (typeof recordClass !== 'string') return null;
+  if (recordClass.length > 13) recordClass = recordClass.slice(0, 13);
+  const result = recordClass.match(/^DS_[^_]+/g);
+  return result === null
+    ? null
+    : result[0];
+};
+
+export function emitRestriction (action, details) {
+  const detail = Object.assign({}, details, { action });
+  const event = new CustomEvent('DataRestricted', { detail });
+  document.dispatchEvent(event);
+};

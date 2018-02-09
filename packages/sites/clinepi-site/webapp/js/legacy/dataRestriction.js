@@ -1,25 +1,11 @@
+import { emitRestriction as emit, getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
+
 wdk.namespace('wdk.dataRestriction', (ns, $) => {
-
-  function getIdFromRecordClass (recordClass) {
-    if (typeof recordClass !== 'string') return null;
-    if (recordClass.length > 13) recordClass = recordClass.slice(0, 13);
-    const result = recordClass.match(/^DS_[^_]+/g);
-    return result === null
-      ? null
-      : result[0];
-  };
-
-  function emit (action, details) {
-    const detail = Object.assign({}, details, { action });
-    const event = new CustomEvent('DataRestricted', { detail });
-    document.dispatchEvent(event);
-  };
-
-  // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
   ns.restrictionController = (element) => {
     const { recordClass, restrictionType } = element.data();
-    const studyId = getIdFromRecordClass(recordClass);
+    const studyId = getIdFromRecordClassName(recordClass);
+    console.info('RestrictionController initialized:', element, $(element), { recordClass, restrictionType });
 
     const isResultsPage = element.children('.Results_Div').length !== 0;
     if (isResultsPage) {
