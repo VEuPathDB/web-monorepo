@@ -9,6 +9,7 @@ import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 
 import Header from 'Client/App/Header';
 import { DataRestrictionDaemon } from 'Client/App/DataRestriction';
+import { getIdFromRecordClassName, emitRestriction } from 'Client/App/DataRestriction/DataRestrictionUtils';
 
 const injectState = withStore(state => ({
   webAppUrl: get(state, 'globalData.siteConfig.webAppUrl'),
@@ -30,6 +31,13 @@ export default {
         <Index {...this.state} />
       )
     }
+  },
+
+  DownloadForm: DownloadForm => props => {
+    const { name } = props.recordClass;
+    const studyId = getIdFromRecordClassName(name);
+    emitRestriction('downloadPage', { studyId });
+    return <DownloadForm {...props} />
   },
 
   SiteHeader: () => rawProps => {

@@ -5,14 +5,14 @@ export const accessLevels = {
   },
   protected: {
     loginRequired: ['paginate'],
-    approvalRequired: ['download']
+    approvalRequired: ['download', 'downloadPage']
   },
   private: {
-    approvalRequired: [ 'search', 'results', 'paginate', 'analysis', 'download']
+    approvalRequired: [ 'search', 'results', 'paginate', 'analysis', 'download', 'downloadPage']
   }
 };
 
-export const strictActions = [ 'search', 'results' ];
+export const strictActions = [ 'search', 'results', 'downloadPage' ];
 
 // Getters!   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -37,6 +37,7 @@ export function getActionVerb (action) {
       return 'view search results';
     case 'paginate':
       return 'see more than 25 results';
+    case 'downloadPage':
     case 'download':
       return 'download data';
     default:
@@ -118,7 +119,7 @@ export function getIdFromRecordClassName (recordClass) {
     : result[0];
 };
 
-export function emitRestriction (action, details) {
+export function emitRestriction (action, details = {}) {
   const detail = Object.assign({}, details, { action });
   const event = new CustomEvent('DataRestricted', { detail });
   document.dispatchEvent(event);
