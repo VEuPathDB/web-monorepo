@@ -25,7 +25,7 @@
       <textarea name="inputGoList" rows="10" cols="80" hidden="true">${revigoInputList}</textarea>
       <input name="isPValue" value="yes" hidden="true"/>
       <input name="outputListSize" value="medium" hidden="true"/>
-      <button type="submit" name="startRevigo" class="btn">
+      <button type="submit" name="startRevigo" class="btn" style="font-size: 12px;">
         <i class="fa fa-bar-chart red-text" style="margin-left:0; padding-left: 0;"> </i>
         Open in <b>Revigo</b>
       </button>
@@ -36,7 +36,7 @@
   <div style="display: inline-block; margin: 5px;" class="goCloud-download-link">
     <c:url var="goDownloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.imageDownloadPath}"/>
     <a href="${goDownloadUrl}" class="enrich-result-q">
-      <button class="btn">
+      <button class="btn" style="font-size: 12px;">
         <i class="fa fa-bar-chart red-text" style="margin-left:0; padding-left: 0;"> </i>
         Show <b>Word Cloud</b>
       </button>
@@ -47,7 +47,7 @@
     <c:url var="downloadUrl" value="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.downloadPath}"/>
     <c:url var="hiddenDownloadUrl" value ="/stepAnalysisResource.do?analysisId=${analysisId}&amp;path=${viewModel.hiddenDownloadPath}"/>
     <a href="${hiddenDownloadUrl}">
-      <button class="btn">
+      <button class="btn" style="font-size: 12px;">
         <i class="fa fa-download blue-text" style="margin-left:0; padding-left: 0;"> </i>
         Download
       </button>
