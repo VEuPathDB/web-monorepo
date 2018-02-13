@@ -1051,6 +1051,24 @@ sub gsnapUnifiedIntronJunctionTitle {
   hover($f, \@data,1); 
 }
 
+sub massSpecTitle_new {  
+  my ($f, $replaceString,$replaceString2,$val2, $link) = @_;
+  my @data;
+
+  print STDERR Dumper $f;
+
+  push @data, [ 'Experiment:' => "test" ];
+#  push @data, [ 'Sample:' => $sample ];
+#  push @data, [ 'Sequence:' => "$seq" ];
+#  push @data, [ 'Description:' => "$desc" ] if($desc);
+#  push @data, [ 'Spectrum Count:' => "$count" ] if($count);
+#  push @data, [ 'Info:' => "$tb" ] if($phospho_site);
+#  push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine<br/>^ stands for modified_L_cysteine<br/>+ denotes other modified residues" ] if($ontology_names);
+#  push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
+#  hover($f, \@data); 
+
+}
+
 sub massSpecTitle {  
   my ($f, $replaceString,$replaceString2,$val2, $link) = @_;
   my ($desc) = $f->get_tag_values('Description');
@@ -1065,12 +1083,12 @@ sub massSpecTitle {
 
   $desc =~ s/[\r\n]/<br>/g;
 
-  my ($phospho_site) = $f->get_tag_values('PhosphoSite');
+  my ($phospho_site) = $f->get_tag_values('ModSite');
   my ($ontology_names) = $f->get_tag_values('Ontology');
   my $tb = "<table><tr><th>Location</th><th>Modified Residue</th><th>Modification Type</th></tr>";
 
   my $start = $f->start;
-  if($phospho_site) {
+  if($phospho_site && $phospho_site ne 'NA') {
     my ($residue) = $f->get_tag_values('Residue');
     my @locs =  split /;/, $phospho_site; 
     my @term = split /;/, $ontology_names; 
@@ -1083,9 +1101,14 @@ sub massSpecTitle {
     $tb .= "</table>"; 
   } 
 
-  if($phospho_site) {
+
+  if($phospho_site && $phospho_site ne 'NA') {
     my @locs = map {$_ - $start + 1} split /;/, $phospho_site; 
-    for my $loc (sort { $b <=> $a }  @locs) {
+    my $offset = 0;
+
+    for my $loc (sort @locs) {
+      $loc = $loc + $offset;
+
         if ($ontology_names =~ /phosphorylation/i) {
           substr($seq, $loc, 0) = '*';
         } elsif ($ontology_names =~ /methionine/i) {
@@ -1095,16 +1118,18 @@ sub massSpecTitle {
         } else {
           substr($seq, $loc, 0) = '+';
         }
+      $offset++;
     }
   }
 
   my @data;
+
   push @data, [ 'Experiment:' => $experiment ];
   push @data, [ 'Sample:' => $sample ];
   push @data, [ 'Sequence:' => "$seq" ];
   push @data, [ 'Description:' => "$desc" ] if($desc);
   push @data, [ 'Spectrum Count:' => "$count" ] if($count);
-  push @data, [ 'Info:' => "$tb" ] if($phospho_site);
+  push @data, [ 'Info:' => "$tb" ] if($phospho_site && $phospho_site ne 'NA');
   push @data, [ 'Note:'=> "* stands for phosphorylation<br/># stands for modified_L_methionine<br/>^ stands for modified_L_cysteine<br/>+ denotes other modified residues" ] if($ontology_names);
   push @data, [ "Link to ProtoMap", "$link" ] unless !$link;
   hover($f, \@data); 
@@ -1208,7 +1233,6 @@ sub unifiedPostTranslationalMod {
     my $match;
     foreach(@resLocsArr) {
       $match = 1 if($_ eq $location);
-      print STDERR "RL=$_\tSTART=$location\n";
     }
 
     if($match) {
