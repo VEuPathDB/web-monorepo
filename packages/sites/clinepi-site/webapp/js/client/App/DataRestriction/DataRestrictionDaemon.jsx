@@ -25,7 +25,7 @@ class DataRestrictionDaemon extends React.Component {
   }
 
   handleRestriction ({ studyId, action, event }) {
-    console.info('Data Restriction Encountered:', { studyId, action, event });
+    console.info('DRD: Restriction Encountered:', { studyId, action, event });
     const { user } = this.props;
     const study = this.getStudyById(studyId);
     const permitted = isAllowedAccess({ user, action, study });

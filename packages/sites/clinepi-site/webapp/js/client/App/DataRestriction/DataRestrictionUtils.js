@@ -1,7 +1,8 @@
 // Data stuff =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 export const accessLevels = {
-  public: {
-    loginRequired: []
+  public: {},
+  limited: {
+    loginRequired: ['download', 'downloadPage']
   },
   protected: {
     loginRequired: ['paginate'],
