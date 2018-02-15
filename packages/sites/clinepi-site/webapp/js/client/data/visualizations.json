@@ -1,7 +1,7 @@
 [
   {
     "appUrl": "/im.do?s=df382db0b433d9a7&selectedTab=first_analysis",
-    "appImage": "/images/analysis_plugins/data_summaries.png",
+    "appImage": "/images/data-summary-chart.jpg",
     "linkText": "Open The Strategy",
     "description": "Identifies participants who were observed at least 1 year and provides the counts of non-malaria parasitemia (both microscopic and sub-microscopic) observations / year. Summary analysis tab shows that increasing AP visits / year causes decrease in malaria diagnoses. 2X2 tab shows a significant correlation between living in traditional homes and malaria diagnoses",
     "title": "A <b>Search Strategy</b> Data Summary"
@@ -18,13 +18,6 @@
     "appImage": "/images/analysis_plugins/distributions.jpg",
     "title": "Create a <br /><b>Distribution Graph</b>",
     "description": "Make a distribution graph and give visual context to youor data.",
-    "linkText": "See The Tutorial"
-  },
-  {
-    "appUrl": "/images/summaries-tutorial.jpg",
-    "appImage": "/images/analysis_plugins/data_summaries.jpg",
-    "title": "Create a <br /><b>Data Summary</b>",
-    "description": "Make a Data Summary visualization to easily summarize your findings across metrics.",
     "linkText": "See The Tutorial"
   }
 ]
