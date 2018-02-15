@@ -41,6 +41,12 @@ $red: #DD314E;
     display: flex;
     flex-direction: row;
     align-items: center;
+    @media (max-width: 1200px) {
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+      min-width: 0;
+    }
   }
 
   .UserMenu {
