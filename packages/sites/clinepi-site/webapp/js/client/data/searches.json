@@ -2,25 +2,25 @@
   {
     "type": "households",
     "studyId": "DS_0ad509829e",
-    "appUrl": "/im.do?s=0e8a6a438aacb3c5",
-    "description": "Households containing two children <= 5 observed for at least 365 days, one who had 0 malaria diagnoses and another who had at least 1 malaria diagnosis / yr during observation."
+    "appUrl": "/im.do?s=bc72d05d32ae682b",
+    "description": "Households containing two children <= 5 observed for at least 365 days in 2012-2014, one who had 0 malaria diagnoses and another who had at least 1 malaria diagnosis / yr during observation."
   },
   {
     "type": "participants",
     "studyId": "DS_0ad509829e",
-    "appUrl": "/im.do?s=c8b23711dca1ca2e",
-    "description": "For calendar years 2012-2013, find all Children aged 2-10 who were observed at least 365 days and live in households where <= 5 mosquitoes were collected on average in 2012-13 and had at least 2 malaria=yes visits / year. Of those, how many had at least one asymptomatic visit in that time frame."
+    "appUrl": "/im.do?s=e9163e1bdd4ddb97",
+    "description": "For calendar years 2012-2014, find all Children aged 2-10 who were observed at least 365 days in that time period and live in households where >= 10 mosquitoes were collected on average in 2012-14 but who had 0 malaria=yes visits / year."
   },
   {
     "type": "observations",
     "studyId": "DS_0ad509829e",
-    "appUrl": "/im.do?s=1e3dde358477482a",
+    "appUrl": "/im.do?s=761c198a734848e6",
     "description": "Finds the middle visit of three consecutive asymptomatic visits among children where a pbmc sample is available from the middle visit"
   },
   {
     "type": "participants",
     "studyId": "DS_0ad509829e",
-    "appUrl": "/im.do?s=c801a6398e7f11a3",
-    "description": "For calendar years 2012-2013, find all Children aged 2-10 who were observed at least 180 days in that time period and live in households where >= 10 mosquitoes were collected on average in 2012-13 but who had 0 malaria=yes visits / year. Of those, how many had at least one asymptomatic visit in that time frame."
+    "appUrl": "/im.do?s=2e71f3738244b0ae",
+    "description": "For calendar years 2012-2014, find all Children aged 2-10 who were observed at least 365 days and live in households where <= 5 mosquitoes were collected on average in 2012-14 and had at least 2 malaria=yes visits / year."
   }
 ]

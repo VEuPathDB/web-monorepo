@@ -1,10 +1,10 @@
 [
   {
-    "appUrl": "/im.do?s=6257ea9ab6fbce14&selectedTab=first_analysis",
-    "appImage": "/images/strategies/6257ea9ab6fbce14.png",
+    "appUrl": "/im.do?s=df382db0b433d9a7&selectedTab=first_analysis",
+    "appImage": "/images/strategies/data_summaries.png",
     "linkText": "Open The Strategy",
-    "description": "A visualization of <b>Children who live in houses with thatched roofs who were followed for at least 3 years.</b> This search strategy features a contingency table visualization.",
-    "title": "A <b>Search Strategy</b> Contingency Table"
+    "description": "Identifies participants who were observed at least 1 year and provides the counts of non-malaria parasitemia (both microscopic and sub-microscopic) observations / year. Summary analysis tab shows that increasing AP visits / year causes decrease in malaria diagnoses. 2X2 tab shows a significant correlation between living in traditional homes and malaria diagnoses",
+    "title": "A <b>Search Strategy</b> Data Summary"
   },
   {
     "appUrl": "/images/contingency-tutorial.jpg",

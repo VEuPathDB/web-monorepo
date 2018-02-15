@@ -23,6 +23,7 @@
     "name": "GEMS",
     "id": "gems",
     "disabled": true,
+    "access": "protected",
     "url": "#gems",
     "categories": ["enteric"],
     "headline": "Coming Soon!",
@@ -42,6 +43,7 @@
     "id": "maled",
     "disabled": true,
     "url": "#maled",
+    "access": "private",
     "categories": ["enteric"],
     "headline": "Coming Soon!",
     "points": [
