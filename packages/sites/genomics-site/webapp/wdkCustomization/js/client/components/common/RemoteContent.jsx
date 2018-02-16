@@ -5,9 +5,8 @@
  */
 import $ from 'jquery';
 import React from 'react';
-import { ComponentUtils } from 'wdk-client';
 
-export default class RemoteContent extends ComponentUtils.PureComponent {
+export default class RemoteContent extends React.PureComponent {
 
   componentDidMount() {
     this.loadContent(this.props.url);
