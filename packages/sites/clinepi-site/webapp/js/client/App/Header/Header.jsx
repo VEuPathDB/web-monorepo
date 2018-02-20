@@ -21,7 +21,7 @@ class Header extends React.Component {
 
     const { pathname, protocol, host } = window.location;
     const homepath = webAppUrl + '/app';
-    const actualPath = protocol + '//' + host + pathname;
+    const actualPath = protocol + '//' + host.replace('www.', '') + pathname;
     const showHomeContent = (actualPath === homepath);
 
     return (

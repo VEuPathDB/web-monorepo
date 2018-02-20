@@ -46,6 +46,7 @@ class Showcase extends React.Component {
     const { content, prefix } = this.props;
     const { title, viewAllUrl, viewAllAppUrl, filters, contentType, items, description } = content;
     const cards = this.getListRenderer(contentType, { list: filteredItems, prefix });
+    
 
     return (
       <stack className="wdk-Showcase">
