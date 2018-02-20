@@ -78,7 +78,7 @@ export class OverviewThumbnails extends Component {
     this.setState({
       activeThumbnail: thumbnail,
       activeThumbnailNode: this.thumbnailNodes.get(thumbnail)
-    }, () => this.renderPopover());
+    });
   }
 
   render() {
@@ -103,6 +103,7 @@ export class OverviewThumbnails extends Component {
             <button className="eupathdb-ThumbnailZoomButton" type="button" title="View larger image" onClick={() => this.setActiveThumbnail(thumbnail)}><i className="fa fa-search-plus"/></button>
           </div>
           )) }
+          {this.renderPopover()}
         </div>
     );
   }
@@ -112,13 +113,14 @@ export class OverviewThumbnails extends Component {
       let index = this.props.thumbnails.indexOf(this.state.activeThumbnail);
       let prev = this.props.thumbnails[index - 1];
       let next = this.props.thumbnails[index + 1];
-      ReactDOM.unstable_renderSubtreeIntoContainer(this, (
+      return ReactDOM.createPortal((
         <TabbableContainer>
           <div
             className="eupathdb-ThumbnailPopover"
             onMouseEnter={this.handlePopoverMouseEnter}
             onMouseLeave={this.handlePopoverMouseLeave}>
             <button
+              autoFocus
               style={{
                 position: 'fixed',
                 right: '10px',
@@ -192,10 +194,9 @@ export class OverviewThumbnails extends Component {
           </div>
         </TabbableContainer>
       ), this.popoverNode);
-      this.popoverNode.querySelector('.eupathdb-ThumbnailPopover').focus();
     }
     else {
-      ReactDOM.unmountComponentAtNode(this.popoverNode);
+      return null;
     }
   }
 
