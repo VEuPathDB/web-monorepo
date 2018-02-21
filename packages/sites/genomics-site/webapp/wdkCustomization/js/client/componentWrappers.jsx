@@ -137,29 +137,38 @@ export function RecordTableSection(DefaultComponent) {
       );
     }
 
-    let { table, record, recordClass, downloadRecordTable } = props;
+    let { table, record, downloadRecordTable, ontologyProperties } = props;
     let customName = `Data sets used by ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
     let callDownloadTable = event => {
       event.stopPropagation();
       downloadRecordTable(record, table.name);
     };
+
+    let showDownload = (
+      record.tables[table.name] &&
+      record.tables[table.name].length > 0 &&
+      ontologyProperties.scope.includes('download')
+    );
+
     return (
       <DefaultComponent {...props} table={Object.assign({}, table, {
         displayName: (
           <span>
             {table.displayName}
-            <span
-              style={{
-                fontSize: '.8em',
-                fontWeight: 'normal',
-                marginLeft: '1em'
-              }}>
-              <button type="button"
-                className="wdk-Link"
-                onClick={callDownloadTable}>
-                <i className="fa fa-download"/> Download
-              </button>
-            </span>
+            {showDownload &&
+              <span
+                style={{
+                  fontSize: '.8em',
+                  fontWeight: 'normal',
+                  marginLeft: '1em'
+                }}>
+                <button type="button"
+                  className="wdk-Link"
+                  onClick={callDownloadTable}>
+                  <i className="fa fa-download"/> Download
+                </button>
+              </span>
+            }
             <Link
               style={{
                 fontSize: '.8em',
