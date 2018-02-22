@@ -1,20 +1,24 @@
+import lodash from 'lodash';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import lodash from 'lodash';
-import { projectId, webAppUrl } from '../../config';
+
+import * as Category from 'wdk-client/CategoryUtils';
+import { CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
 import { pure } from 'wdk-client/ComponentUtils';
 import {Seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
-import {findChildren, isNodeOverflowing} from 'ebrc-client/util/domUtils';
+
 import DatasetGraph from 'ebrc-client/components/DatasetGraph';
-import Sequence from '../common/Sequence';
-import {OverviewThumbnails} from '../common/OverviewThumbnails';
-import { addCommentLink } from '../common/UserComments';
+import { withStore } from 'ebrc-client/util/component';
+import {findChildren, isNodeOverflowing} from 'ebrc-client/util/domUtils';
+
+import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
+import {OverviewThumbnails} from '../common/OverviewThumbnails';
+import Sequence from '../common/Sequence';
 import {SnpsAlignmentForm} from '../common/Snps';
-import { CategoriesCheckboxTree } from 'wdk-client/Components';
-import * as Category from 'wdk-client/CategoryUtils';
+import { addCommentLink } from '../common/UserComments';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -146,37 +150,43 @@ RecordHeading.contextTypes = {
   store: PropTypes.object.isRequired
 };
 
+const ExpressionChildRow = makeDatasetGraphChildRow('ExpressionGraphsDataTable');
+const HostResponseChildRow = makeDatasetGraphChildRow('HostResponseGraphsDataTable', 'FacetMetadata', 'ContXAxisMetadata');
+const CrisprPhenotypeChildRow = makeDatasetGraphChildRow('CrisprPhenotypeGraphsDataTable');
+const PhenotypeScoreChildRow = makeDatasetGraphChildRow('PhenotypeScoreGraphsDataTable');
+const PhenotypeChildRow = makeDatasetGraphChildRow('PhenotypeGraphsDataTable');
+
 export function RecordTable(props) {
   switch(props.table.name) {
 
     case 'ExpressionGraphs':
     case 'ProteinExpressionGraphs':
     case 'eQTLPhenotypeGraphs':
-      return <DatasetGraphTable {...props} dataTableName="ExpressionGraphsDataTable"/>
+      return <props.DefaultComponent {...props} childRow={ExpressionChildRow}/>
 
     case 'HostResponseGraphs':
-      return <DatasetGraphTable {...props} dataTableName="HostResponseGraphsDataTable" facetMetadataTableName="FacetMetadata" contXAxisMetadataTableName="ContXAxisMetadata"/>
+      return <props.DefaultComponent {...props} childRow={HostResponseChildRow} />
 
     case 'CrisprPhenotypeGraphs':
-      return <DatasetGraphTable {...props} dataTableName="CrisprPhenotypeGraphsDataTable"/>
+      return <props.DefaultComponent {...props} childRow={CrisprPhenotypeChildRow} />
 
     case 'PhenotypeScoreGraphs':
-      return <DatasetGraphTable {...props} dataTableName="PhenotypeScoreGraphsDataTable"/>
+      return <props.DefaultComponent {...props} childRow={PhenotypeScoreChildRow} />
 
     case 'PhenotypeGraphs':
-      return <DatasetGraphTable {...props} dataTableName="PhenotypeGraphsDataTable"/>
+      return <props.DefaultComponent {...props} childRow={PhenotypeChildRow} />
 
     case 'MercatorTable':
       return <MercatorTable {...props} />
 
     case 'ProteinProperties':
-      return <ProteinPbrowseTable {...props} />
+      return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
 
     case 'ProteinExpressionPBrowse':
-      return <ProteinPbrowseTable {...props} />
+      return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
 
     case 'Sequences':
-      return <SequencesTable {...props} />
+      return <props.DefaultComponent {...props} childRow={SequencesTableChildRow} />
 
     case 'UserComments':
       return <UserCommentsTable {...props} />
@@ -185,7 +195,7 @@ export function RecordTable(props) {
       return <SNPsAlignment {...props} />
 
     case 'RodMalPhenotype':
-      return <RodMalPhenotypeTable {...props} />
+      return <props.DefaultComponent {...props} childRow={RodMalPhenotypeTableChildRow} />
 
     default:
       return <props.DefaultComponent {...props} />
@@ -203,15 +213,6 @@ function SNPsAlignment(props) {
   )
 }
 
-function RodMalPhenotypeTable(props) {
-  return (
-    <props.DefaultComponent
-      {...props}
-      childRow={childProps => <RodMalPhenotypeTableChildRow {...childProps} />}
-    />
-  );
-}
-
 const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(props) {
   let {
     phenotype
@@ -225,51 +226,38 @@ const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
 });
 
 
+function makeDatasetGraphChildRow(dataTableName, facetMetadataTableName, contXAxisMetadataTableName) {
+  let DefaultComponent = WdkRecordTable;
+  return withStore(state => {
+    let { record, recordClass } = state;
 
-function DatasetGraphTable(props) {
-  let { dataTableName, facetMetadataTableName, contXAxisMetadataTableName, record, recordClass, DefaultComponent } = props;
+    let dataTable = dataTableName && dataTableName in record.tables && {
+      value: record.tables[dataTableName],
+      table: recordClass.tablesMap[dataTableName],
+      record: record,
+      recordClass: recordClass,
+      DefaultComponent: DefaultComponent
+    };
 
-  let dataTable = dataTableName && dataTableName in record.tables && {
-    value: record.tables[dataTableName],
-    table: recordClass.tablesMap[dataTableName],
-    record: record,
-    recordClass: recordClass,
-    DefaultComponent: DefaultComponent
-  };
+   let facetMetadataTable = facetMetadataTableName && facetMetadataTableName in record.tables && {
+      value: record.tables[facetMetadataTableName],
+      table: recordClass.tablesMap[facetMetadataTableName],
+      record: record,
+      recordClass: recordClass,
+      DefaultComponent: DefaultComponent
+    };
 
- let facetMetadataTable = facetMetadataTableName && facetMetadataTableName in record.tables && {
-    value: record.tables[facetMetadataTableName],
-    table: recordClass.tablesMap[facetMetadataTableName],
-    record: record,
-    recordClass: recordClass,
-    DefaultComponent: DefaultComponent
-  };
+   let contXAxisMetadataTable = contXAxisMetadataTableName && contXAxisMetadataTableName in record.tables && {
+      value: record.tables[contXAxisMetadataTableName],
+      table: recordClass.tablesMap[contXAxisMetadataTableName],
+      record: record,
+      recordClass: recordClass,
+      DefaultComponent: DefaultComponent
+    };
 
- let contXAxisMetadataTable = contXAxisMetadataTableName && contXAxisMetadataTableName in record.tables && {
-    value: record.tables[contXAxisMetadataTableName],
-    table: recordClass.tablesMap[contXAxisMetadataTableName],
-    record: record,
-    recordClass: recordClass,
-    DefaultComponent: DefaultComponent
-  };
-
-  return (
-    <DefaultComponent
-      {...props}
-      childRow={childProps => <DatasetGraph {...childProps} dataTable={dataTable} facetMetadataTable={facetMetadataTable} contXAxisMetadataTable={contXAxisMetadataTable}/>}
-    />
-  );
+    return { dataTable, facetMetadataTable, contXAxisMetadataTable };
+  })(DatasetGraph);
 }
-
-function ProteinPbrowseTable(props) {
-  return (
-    <props.DefaultComponent
-      {...props}
-      childRow={childProps => <Gbrowse.ProteinContext {...childProps} />}
-    />
-  );
-}
-
 
 // SequenceTable Components
 // ------------------------
@@ -361,15 +349,6 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
       </div>
   );
 });
-
-function SequencesTable(props) {
-  return (
-    <props.DefaultComponent
-      {...props}
-      childRow={childProps => <SequencesTableChildRow {...childProps} />}
-    />
-  );
-}
 
 function makeTree(rows){
     const n = Category.createNode; // helper for below
