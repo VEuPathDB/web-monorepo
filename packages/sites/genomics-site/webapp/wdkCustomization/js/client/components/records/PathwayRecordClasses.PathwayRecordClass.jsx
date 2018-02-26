@@ -138,7 +138,6 @@ function placeSideNodes (node, orientation, values) {
     getSideNodeCoords (node, orientation, values, 'out');
 }
 
-
 function getSideNodeCoords (node, orientation, values, direction) {
     var sideNodes = (direction === 'in') ? node.incomers('node[!x]') : node.outgoers('node[!x]');
     if (node.isChild()) {
@@ -511,14 +510,26 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
     });
 }
 
+function readEcNumbers(dynamicColsOfIncomingStep) {
+  return [
+    ...new Set(dynamicColsOfIncomingStep
+    .filter(row => row.ec_numbers_derived != null)
+    .map(row => row.ec_numbers_derived.split(' ')[0]))
+  ].join(',');
+}
+
+// enhance function supplements a component with additional custom data and AC props
 const enhance = flow(
+  // pulls custom values out of store's state and will pass as props to enhanced component
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
-    nodeList: QueryString.parse(state.globalData.location.search.slice(1)).node_list,
+    nodeList: readEcNumbers(state.dynamicColsOfIncomingStep),
+    dynamicColsOfIncomingStep: state.dynamicColsOfIncomingStep,
     experimentCategoryTree: getExperimentCategoryTree(state),
     generaCategoryTree: getGeneraCategoryTree(state)
   })),
+  // wraps these raw ACs with dispatchAction and will pass as props to enhanced component
   withActions({
     setActiveNodeData,
     setPathwayError,

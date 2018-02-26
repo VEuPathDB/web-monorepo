@@ -4,7 +4,7 @@ import { QuestionActionCreators } from 'wdk-client/ActionCreators';
 import { get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import * as persistence from '../util/persistence';
-import { TABLE_STATE_UPDATED } from '../actioncreators/RecordViewActionCreators';
+import { TABLE_STATE_UPDATED, PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
 
 const storageItems = {
   tables: {
@@ -35,7 +35,8 @@ export default class ApiRecordViewStore extends RecordViewStore {
     state = QuestionStore.prototype.handleAction(state, action);
     state = Object.assign({}, state, {
       pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
-      eupathdb: handleEuPathDBAction(state.eupathdb, action)
+      eupathdb: handleEuPathDBAction(state.eupathdb, action),
+      dynamicColsOfIncomingStep: handleDynColsOfIncomingStepAction(state.dynamicColsOfIncomingStep, action)
     });
     switch (action.type) {
       case 'record-view/active-record-received':
@@ -52,6 +53,15 @@ export default class ApiRecordViewStore extends RecordViewStore {
       snpsAlignmentEpic,
       userSettingsEpic
     ];
+  }
+}
+
+function handleDynColsOfIncomingStepAction(state = [], action) {
+  switch(action.type) {
+    case PATHWAY_DYN_COLS_LOADED:
+      return action.payload;
+    default:
+      return state;
   }
 }
 
