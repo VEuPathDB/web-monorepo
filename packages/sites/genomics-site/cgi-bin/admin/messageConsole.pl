@@ -53,7 +53,7 @@ print <<_END_OF_TEXT_
 	<head>
 	<title>AMS Console</title>
         <link href="/a/css/messageStyles.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
         <script language="javascript">
          function submitWindow()
            {
