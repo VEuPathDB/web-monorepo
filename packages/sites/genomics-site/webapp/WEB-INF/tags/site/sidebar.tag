@@ -107,7 +107,7 @@
       <c:otherwise>
         <c:if test="${project == 'EuPathDB'}">
           <c:set var="rss_Url">
-            http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
+            ${pageContext.request.scheme}://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
           </c:set>
           <c:forEach items="${config}" var="s">
             <c:set var="rss_base_url">

@@ -8,7 +8,7 @@
 
 <c:url var="feedPath" value="/communityEventsRss.jsp?upcoming=1&stopDateSort=ASC" />
 <c:set var="rss_Url">
-http://${pageContext.request.serverName}${feedPath}
+${pageContext.request.scheme}://${pageContext.request.serverName}${feedPath}
 </c:set>
 
 <c:catch var="feedex">

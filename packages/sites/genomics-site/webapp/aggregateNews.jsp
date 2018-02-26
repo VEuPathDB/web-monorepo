@@ -20,7 +20,7 @@ See the Rome API for SyndEntry attributes you can get.
 http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.html
 --%>
 <c:set var="rss_Url">
-  http://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
+  ${pageContext.request.scheme}://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
 </c:set>
 
 <c:forEach items="${config}" var="s">
