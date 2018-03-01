@@ -495,19 +495,19 @@ sub subTrackTable {
 
     my $dbh = $self->dbh();
     my $sh = $dbh->prepare("SELECT * FROM (
-                                SELECT DISTINCT property
+                                SELECT DISTINCT property AS term
                                 , value
                                 , value as display
                                 FROM apidbtuning.InferredChars
                                 WHERE dataset_name = '$experimentName'
                                 UNION
-                                SELECT DISTINCT property
+                                SELECT DISTINCT property AS term
                                 , value
                                 , value as display
                                 FROM apidbtuning.InferredParams
                                 WHERE dataset_name = '$experimentName'
                                 UNION
-                                SELECT DISTINCT 'name' as property
+                                SELECT DISTINCT 'name' AS term
                                 , pan_name as value
                                 , replace(replace(regexp_replace(pan_name, '\\(.+\\)', ''), '_smoothed', ''), '_', ' ') as display
                                 FROM apidbtuning.DefaultChars
