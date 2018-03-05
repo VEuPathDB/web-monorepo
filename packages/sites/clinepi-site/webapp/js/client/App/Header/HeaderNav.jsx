@@ -58,7 +58,7 @@ class HeaderNav extends React.Component {
         </div>
         <div className="box">
           <h2 className="HeaderNav-Title">
-            <a href={webAppUrl}>
+            <a href={webAppUrl} style={{ color: '#DD314E' }}>
               <mark>ClinEpi</mark>DB
             </a>
           </h2>
@@ -87,7 +87,7 @@ class HeaderNav extends React.Component {
         </a>
         <div className="box stack">
           <h1 className="HeaderNav-Title">
-            <a href={webAppUrl}>
+            <a href={webAppUrl} style={{ color: '#DD314E' }}>
               <mark>ClinEpi</mark>DB
             </a>
           </h1>
