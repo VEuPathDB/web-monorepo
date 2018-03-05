@@ -199,7 +199,7 @@ export function RecordTableSection(DefaultComponent) {
                 search: QueryString.stringify({
                   record_class: record.recordClassName,
                   reference_name: table.name,
-                  taxon: record.attributes.organism_full
+                  taxon: record.attributes.organism_text
                 })
               }}
             ><i className="fa fa-database"/> Data sets</Link>
