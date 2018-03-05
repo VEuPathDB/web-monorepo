@@ -53,25 +53,25 @@ class HeaderNav extends React.Component {
     const IconMenu = this.renderIconMenu;
     return (
       <div className="HeaderNav-Sticky" style={{ backgroundImage: `url(${bgUrl})` }}>
-        <box>
+        <div className="box">
           <img src={logoUrl} className="HeaderNav-Sticky-Logo" />
-        </box>
-        <box>
+        </div>
+        <div className="box">
           <h2 className="HeaderNav-Title">
             <a href={webAppUrl}>
               <mark>ClinEpi</mark>DB
             </a>
           </h2>
-        </box>
-        <box className="grow-1">
+        </div>
+        <div className="box grow-1">
           <SiteMenu items={mainMenu} config={siteConfig} />
-        </box>
-        <box>
+        </div>
+        <div className="box">
           <IconMenu items={iconMenu} />
-        </box>
-        <box>
+        </div>
+        <div className="box">
           <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
-        </box>
+        </div>
       </div>
     )
   }
@@ -81,11 +81,11 @@ class HeaderNav extends React.Component {
     const logoUrl = webAppUrl + '/images/symbol-small.png';
 
     return (
-      <row className="box HeaderNav-Branding">
+      <div className="box row HeaderNav-Branding">
         <a className="box" href={webAppUrl}>
           <img src={logoUrl} className="HeaderNav-Logo" />
         </a>
-        <stack className="box">
+        <div className="box stack">
           <h1 className="HeaderNav-Title">
             <a href={webAppUrl}>
               <mark>ClinEpi</mark>DB
@@ -99,8 +99,8 @@ class HeaderNav extends React.Component {
               {formatReleaseDate(releaseDate, 'm d y')}
             </small>
           </p>
-        </stack>
-      </row>
+        </div>
+      </div>
     );
   }
 
@@ -158,14 +158,14 @@ class HeaderNav extends React.Component {
           )}
           <Branding siteConfig={siteConfig} />
           <div className="HeaderNav-Switch">
-            <row className="HeaderNav-Primary">
+            <div className="row HeaderNav-Primary">
               <SiteMenu items={mainMenu} config={siteConfig} />
-            </row>
+            </div>
 
-            <row className="HeaderNav-Secondary">
+            <div className="row HeaderNav-Secondary">
               <IconMenu items={iconMenu} />
               <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
-            </row>
+            </div>
           </div>
           <a href="http://eupathdb.org/eupathdb/" target="_blank">
             <img src={webAppUrl + '/images/partofeupath.png'} id="EuPathLogo" />

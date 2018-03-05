@@ -22,21 +22,21 @@ class ImageCard extends React.Component {
       : prefix + appUrl;
 
     return (
-      <stack className="Card ImageCard">
-        <box
-          className="ImageCard-Image"
+      <div className="stack Card ImageCard">
+        <div
+          className="box ImageCard-Image"
           style={{ backgroundImage: `url(${imageUrl})`}}
         />
-        <box className="ImageCard-Title">
+        <div className="box ImageCard-Title">
           <a href={linkUrl}>
             <h3 dangerouslySetInnerHTML={{ __html: title }} />
           </a>
           <p dangerouslySetInnerHTML={{ __html: description }} />
-        </box>
+        </div>
         <a className="ImageCard-Footer" href={linkUrl} target="_blank">
           {linkText} <Icon fa={'chevron-circle-right'} />
         </a>
-      </stack>
+      </div>
     );
   }
 };

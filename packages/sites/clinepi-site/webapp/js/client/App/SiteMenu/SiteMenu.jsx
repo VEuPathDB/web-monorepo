@@ -11,7 +11,7 @@ class SiteMenu extends React.Component {
   render () {
     const { items, config } = this.props;
     return (
-      <row className="SiteMenu">
+      <div className="row SiteMenu">
         {!items ? null : items.map((item, key) => (
           <SiteMenuItem
             key={key}
@@ -19,7 +19,7 @@ class SiteMenu extends React.Component {
             config={config}
           />
         ))}
-      </row>
+      </div>
     );
   }
 };

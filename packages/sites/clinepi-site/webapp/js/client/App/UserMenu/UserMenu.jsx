@@ -67,21 +67,16 @@ class UserMenu extends React.Component {
     const Menu = this.renderMenu;
 
     return (
-      <box
-        className="UserMenu"
+      <div
+        className="box UserMenu"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}>
         <Icon className="UserMenu-Icon" fa={iconClass} />
         <span className="UserMenu-Title">
-          {typeof isGuest === 'undefined'
-            ? '...'
-            : isGuest !== false
-              ? 'Guest' 
-              : properties.firstName
-	  }
+          {typeof isGuest === 'undefined' ? '...' : (isGuest !== false ? 'Guest' : properties.firstName)}
         </span>
         <Menu />
-      </box>
+      </div>
     );
   }
 };

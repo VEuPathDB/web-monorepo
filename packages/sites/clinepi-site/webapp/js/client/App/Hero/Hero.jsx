@@ -11,9 +11,9 @@ class Hero extends React.Component {
     const { image, position, children } = this.props;
     return (
       <div className="wdk-Hero" style={{  backgroundImage: `url(${image})`, backgroundPosition: position }}>
-        <stack>
+        <div className="stack">
           {children}
-        </stack>
+        </div>
       </div>
     );
   }

@@ -5,6 +5,7 @@ $white: #E0E0E0;
   font-weight: 400;
   padding: 10px 15px;
   position: relative;
+  flex: 1 0 auto;
   opacity: 0.85;
   transition: all 0.5s;
 
@@ -20,7 +21,6 @@ $white: #E0E0E0;
     opacity: 1;
   }
   .SiteMenuItem-Submenu {
-    // left: 0;
     right: 0;
     top: 100%;
     padding: 10px 5px;
@@ -89,7 +89,6 @@ $white: #E0E0E0;
         padding: 7px 10px;
         transition: all 0.5s;
         background-color: lighten($white, 7%);
-
       }
       .SiteMenuItem-Link:hover {
         opacity: 1;

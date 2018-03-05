@@ -29,20 +29,16 @@ $paleBlue: rgb(198,223,227);
     text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
   }
 
-  row {
+  .row {
     align-items: center;
     justify-content: space-between;
     flex: auto;
-
-    box {
-      flex: 1;
-    }
 
     &.wdk-Showcase-HeadingRow {
       margin-top: -20px;
       flex: 0 0 auto;
 
-      box {
+      .box {
         padding: 10px;
       }
       p {

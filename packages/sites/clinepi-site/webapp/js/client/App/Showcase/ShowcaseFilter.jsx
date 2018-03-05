@@ -42,7 +42,7 @@ class ShowcaseFilter extends React.Component {
     const { filters } = this.props;
     const { activeFilters } = this.state;
     return (
-      <row className="wdk-ShowcaseFilter">
+      <div className="row wdk-ShowcaseFilter">
         {filters.map(({ id, display }) => {
           const active = activeFilters.includes(id);
           const toggle = () => this.toggleFilter(id);
@@ -53,7 +53,7 @@ class ShowcaseFilter extends React.Component {
             </div>
           );
         })}
-      </row>
+      </div>
     );
   }
 };

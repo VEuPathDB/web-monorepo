@@ -39,7 +39,7 @@ class SiteMenuItem extends React.Component {
     const className = 'SiteMenuItem' + (children && children.length ? ' SiteMenuItem--HasSubmenu' : '');
 
     return (
-      <box className={className} key={id} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div className={className} key={id} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       	{destination
           ? <a className="SiteMenuItem-Link" href={destination} target={target}>{text}</a>
           : <span className="SiteMenuItem-Text">{text}</span>
@@ -50,7 +50,7 @@ class SiteMenuItem extends React.Component {
         }
         {children && children.length
           ? (
-            <stack className={'SiteMenuItem-Submenu' + (isHovered ? '' : ' SiteMenuItem-Submenu--hidden')}>
+            <div className={'SiteMenuItem-Submenu' + (isHovered ? '' : ' SiteMenuItem-Submenu--hidden')}>
               <div className="SiteMenu-Item-Submenu-Inner">
                 {children.map((child, idx) => (
                   <SiteMenuItem
@@ -60,11 +60,11 @@ class SiteMenuItem extends React.Component {
                   />
                 ))}
               </div>
-            </stack>
+            </div>
           )
           : null
         }
-      </box>
+      </div>
     );
   }
 };

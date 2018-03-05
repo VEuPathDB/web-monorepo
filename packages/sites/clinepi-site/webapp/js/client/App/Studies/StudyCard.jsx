@@ -31,53 +31,54 @@ class StudyCard extends React.Component {
     const studyUrl = appUrl && prefix ? prefix + appUrl : url;
 
     return (
-      <stack className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
-        <box className="StudyCard-Heading">
+      <div className={'stack Card StudyCard ' + (disabled ? 'disabled' : '')}>
+        <div className="box StudyCard-Heading">
           <h2><a href={studyUrl}>{name}</a></h2>
-          <box className="StudyCard-Categories">
+          <div className="box StudyCard-Categories">
             {categories.map(cat => (
               <CategoryIcon category={cat} key={cat} />
             ))}
-          </box>
+          </div>
           <a href={studyUrl} target="_blank">
             <Icon fa="angle-double-right" />
           </a>
-        </box>
+        </div>
         <a href={studyUrl} title="Study Details" className="StudyCard-DetailsLink">
           <small>Study Details <Icon fa="chevron-circle-right"/></small>
         </a>
-        <box className="StudyCard-Stripe">
+        <div className="box StudyCard-Stripe">
           {headline}
-        </box>
-        <box className="StudyCard-Body">
+        </div>
+        <div className="box StudyCard-Body">
           <ul>
             {points.map((point, index) => <li key={index} dangerouslySetInnerHTML={{ __html: point }} />)}
           </ul>
-        </box>
-        <box className="StudyCard-PreFooter">
+        </div>
+        <div className="box StudyCard-PreFooter">
           {searchType
             ? <span>Search <b>{searchType}</b></span>
             : <span className="generic">{disabled ? 'Search Unavailable' : 'Search The Data'}</span>
           }
-        </box>
-        <box className="StudyCard-Footer">
+        </div>
+        <div className="box StudyCard-Footer">
           {Object.entries(searchUrls).map(entry => {
             const [ type, searchUrl ] = entry;
             const icon = getSearchIconByType(type);
             const webappUrl = (prefix ? prefix : '') + searchUrl;
             return (
-              <box
+              <div
                 key={type}
+                className="box"
                 onMouseEnter={() => this.displaySearchType(type)}
                 onMouseLeave={this.clearDisplaySearchType}>
                 <a href={webappUrl}>
                   <Icon fa={icon} />
                 </a>
-              </box>
+              </div>
             );
           })}
-        </box>
-      </stack>
+        </div>
+      </div>
     );
   }
 };
