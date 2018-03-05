@@ -3,6 +3,7 @@
     "name": "PRISM",
     "id": "DS_0ad509829e",
     "categories": ["malarial"],
+    "disabled": true,
     "access": "public",
     "appUrl": "/app/record/dataset/DS_0ad509829e",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
@@ -41,20 +42,20 @@
   {
     "name": "MAL-ED",
     "id": "maled",
-    "disabled": true,
-    "url": "#maled",
-    "access": "private",
+    "disabled": false,
+    "appUrl": "/app/record/dataset/DS_121f2c2f02",
+    "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
+    "access": "protected",
     "categories": ["enteric"],
-    "headline": "Coming Soon!",
+    "headline": "MAL-ED PhaseI DCC",
     "points": [
       "Etiology, Risk Factors and Interactions of Enteric Infections and Malnutrition and the Consequences for Child Health and Development Study",
       "Longitudinal birth cohort of the first 2 years of life",
       "200 Participants from each of 8 sites (in Bangladesh, Brazil, India, Nepal, Pakistan, Peru, South Africa, Tanzania)"
     ],
     "searchUrls": {
-      "participants": "#",
-      "households": "#",
-      "observations": "#"
+      "participants": "/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_maled",
+      "observations": "/showQuestion.do?questionFullName=ClinicalVisitQuestions.ClinicalVisitsByRelativeVisits_maled"
     }
   },
   {
