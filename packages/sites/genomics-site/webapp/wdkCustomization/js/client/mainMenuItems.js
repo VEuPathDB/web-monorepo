@@ -144,6 +144,17 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
       ]
     },
     {
+      id: 'workspace',
+      text: 'Workspace',
+      children: [
+        {
+          id: 'my-datasets',
+          text: 'My Datasets',
+          webaAppUrl: '/app/workspace/datasets'
+        }
+      ]
+    },
+    {
       id: 'downloads',
       text: 'Downloads',
       children: [
