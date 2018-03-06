@@ -70,7 +70,7 @@ export default function mainMenuItems({ siteConfig, preferences }, defaultItems)
         {
           id: 'pubcrawler',
           text: 'PubMed and Entrez',
-          url: '/pubcrawler/PlasmoDB'
+          url: '/pubcrawler/' + siteConfig.projectId.toLowerCase()
         },
         {
           id: 'gbrowse',
