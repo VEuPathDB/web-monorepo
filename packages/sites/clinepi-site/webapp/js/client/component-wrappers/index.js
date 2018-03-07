@@ -62,10 +62,15 @@ export default {
     let activeStudy = findStudyFromRecordClass(studies, wizardState.recordClass);
     return (
       <div>
-        <div className="clinepi-StudyLink">
-          <IconAlt fa="info-circle"/>&nbsp;
-          Learn about the <a href={`${webAppUrl}/app/record/dataset/${activeStudy.id}`} target="_blank">{activeStudy.name} Study</a>
-        </div>
+        { activeStudy == null
+            ? "Could not find study based on the record class. Make sure the study id in studies.json is correct."
+            : (
+              <div className="clinepi-StudyLink">
+                <IconAlt fa="info-circle"/>&nbsp;
+                Learn about the <a href={`${webAppUrl}/app/record/dataset/${activeStudy.id}`} target="_blank">{activeStudy.name} Study</a>
+              </div>
+            )
+        }
         <QuestionWizard {...props} />
       </div>
     )
