@@ -33,7 +33,7 @@ export default class GalaxyTermsController extends AbstractPageController {
     return {
       user: get(this.store.getState(), 'globalData.user'),
       securityAgreementStatus: get(this.store.getState(), 'securityAgreementStatus', false),
-      webAppUrl: get(this.store.getState(), 'globalData.config.webAppUrl')
+      webAppUrl: get(this.store.getState(), 'globalData.siteConfig.webAppUrl')
     };
   }
 

@@ -524,6 +524,7 @@ const enhance = flow(
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
+    siteConfig: state.globalData.siteConfig,
     nodeList: readEcNumbers(state.dynamicColsOfIncomingStep),
     dynamicColsOfIncomingStep: state.dynamicColsOfIncomingStep,
     experimentCategoryTree: getExperimentCategoryTree(state),
@@ -659,7 +660,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         {this.renderError()}
         <VisMenu
           source={source}
-          webAppUrl={this.props.config.webAppUrl}
+          webAppUrl={this.props.siteConfig.webAppUrl}
           primary_key={primary_key}
           projectId={projectId}
           onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
@@ -669,7 +670,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
             <a href="http://js.cytoscape.org/">
 
-              <img src={this.props.config.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
+              <img src={this.props.siteConfig.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
           </a>
         <br/>
           Cytoscape JS
@@ -716,7 +717,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           {this.props.pathwayRecord.activeNodeData && (
             <NodeDetails
               onClose={this.clearActiveNodeData}
-              wdkConfig={this.props.config}
+              wdkConfig={this.props.siteConfig}
               nodeData={this.props.pathwayRecord.activeNodeData}
               pathwaySource={source}
             />
