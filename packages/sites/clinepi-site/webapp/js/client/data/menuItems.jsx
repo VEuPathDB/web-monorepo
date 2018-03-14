@@ -44,7 +44,7 @@ export default function menuItems (siteConfig) {
           },
           {
             text: 'Video Tutorials',
-            appUrl: 'https://www.youtube.com/playlist?list=PLWzQB3i5sYAIp4urzLGB8jxvVZr6jvkZh'
+            url: youtubeUrl
           },
           {
             text: 'Data Access & Use Policy',
