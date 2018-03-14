@@ -44,7 +44,8 @@ export default function menuItems (siteConfig) {
           },
           {
             text: 'Video Tutorials',
-            url: youtubeUrl
+            url: youtubeUrl,
+            target: '_blank'
           },
           {
             text: 'Data Access & Use Policy',

@@ -30,6 +30,7 @@ export function menuItemsFromSocials (siteConfig = {}) {
     })
     .map(siteName => ({
       text: siteName,
-      url: siteConfig[siteName.toLowerCase() + 'Url']
+      url: siteConfig[siteName.toLowerCase() + 'Url'],
+      target: '_blank'
     }));
 };

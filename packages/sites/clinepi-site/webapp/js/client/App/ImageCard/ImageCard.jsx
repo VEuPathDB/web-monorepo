@@ -11,7 +11,7 @@ class ImageCard extends React.Component {
 
   render () {
     const { card, prefix = '' } = this.props;
-    const { appImage, image, appUrl, url, title, description, linkText } = card;
+    const { appImage, image, appUrl, url, title, description, linkText, linkTarget } = card;
 
     const imageUrl = typeof appImage !== 'string'
       ? image
@@ -33,7 +33,7 @@ class ImageCard extends React.Component {
           </a>
           <p dangerouslySetInnerHTML={{ __html: description }} />
         </div>
-        <a className="ImageCard-Footer" href={linkUrl} target="_blank">
+        <a className="ImageCard-Footer" href={linkUrl} target={linkTarget}>
           {linkText} <Icon fa={'chevron-circle-right'} />
         </a>
       </div>
