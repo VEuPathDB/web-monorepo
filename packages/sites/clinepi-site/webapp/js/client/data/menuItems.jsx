@@ -48,6 +48,11 @@ export default function menuItems (siteConfig) {
             target: '_blank'
           },
           {
+            text: 'PDF Tutorial',
+            url: 'https://drive.google.com/open?id=1T5-Bl1d6nQXDpCSIXwDmNcoO8GGyoMEE',
+            target: '_blank'
+          },
+          {
             text: 'Data Access & Use Policy',
             url: '/documents/CE_DataAccessUsePolicy_Rev2.pdf'
           },
