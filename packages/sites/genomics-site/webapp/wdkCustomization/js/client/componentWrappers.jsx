@@ -2,7 +2,7 @@ import React from 'react';
 import QueryString from 'querystring';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
-import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
+// import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
 import { withActions } from 'ebrc-client/util/component';
 import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
@@ -89,14 +89,15 @@ export function RecordController(WdkRecordController) {
     getActionCreators() {
       let wdkActionCreators = super.getActionCreators();
       return Object.assign({}, wdkActionCreators, {
-        updateBasketStatus: (...args) => (dispatch) => {
-          dispatch(wdkActionCreators.updateBasketStatus(...args))
-            .then(() => dispatch(loadBasketCounts()));
-        },
+
+        // FIXME Move to epic
+        // updateBasketStatus: (...args) => (dispatch) => {
+        //   dispatch(wdkActionCreators.updateBasketStatus(...args))
+        //     .then(() => dispatch(loadBasketCounts()));
+        // },
+
         loadPathwayGeneDynamicCols: (geneStepId, pathwaySource, pathwayId) =>
-          (dispatch, { wdkService }) => {
-            dispatch(loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, wdkService));
-          }
+          ({ wdkService }) => loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, wdkService)
       });
     }
     loadData(prevProps) {

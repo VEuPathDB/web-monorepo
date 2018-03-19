@@ -1,5 +1,4 @@
 /* global ChemDoodle */
-import * as QueryString from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { flow, uniqueId } from 'lodash';
@@ -571,8 +570,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
                 //reset nodes that overlap
                 var enzymeNodes = cy.nodes('node[node_type="enzyme"]');
-                for (var i=0; i < enzymeNodes.size(); i++) {
-                    for (var j=0; j < enzymeNodes.size(); j++) {
+                for (let i=0; i < enzymeNodes.size(); i++) {
+                    for (let j=0; j < enzymeNodes.size(); j++) {
                         //find enzyme nodes with identical coords and reset
                         if (enzymeNodes[i].id() != enzymeNodes[j].id() && enzymeNodes[i].data('x') === enzymeNodes[j].data('x') && enzymeNodes[i].data('y') === enzymeNodes[j].data('y')) {
                             resetOverlappingNodes(enzymeNodes[i], -60);
@@ -603,7 +602,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             }
 
             var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
-            for (var i=0; i < nodesOfNodes.length; i++) {
+            for (let i=0; i < nodesOfNodes.length; i++) {
                 var parent = nodesOfNodes[i];
                 var children = parent.children().map(function(child) {
                     return child.data("node_identifier");
