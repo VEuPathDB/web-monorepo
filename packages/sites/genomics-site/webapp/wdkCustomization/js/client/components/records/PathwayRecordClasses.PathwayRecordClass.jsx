@@ -829,7 +829,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         <div>
           <p>
             <strong>NOTE </strong>
-            Click on nodes for more info.  Nodes highlighted in <span style={red}>red</span> are EC numbers that we
+            Click on nodes for more info.  Nodes highlighted in <span style={orange}>orange</span> are EC numbers that we
             have mapped to at least one gene. The nodes, as well as the info box, can be repositioned by dragging.
           </p>
 
