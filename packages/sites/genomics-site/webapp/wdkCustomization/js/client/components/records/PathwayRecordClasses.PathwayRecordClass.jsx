@@ -83,8 +83,8 @@ function makeNode(obj) {
         obj.image = dataURL;
 
         var widthPadding = 35;
-        var defaultScaling = 0.75;
-        var maxSize = 100;
+        var defaultScaling = 1;
+        var maxSize = 65;
 
         obj.width = (xy.x + widthPadding) * defaultScaling;
         obj.height = (xy.y + widthPadding)  * defaultScaling;
@@ -213,6 +213,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     'line-color':'black',
                     'width':1,
                     'curve-style':'bezier',
+                    'arrow-scale':0.5,
                 },
             },
 
@@ -232,6 +233,15 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 style: {
                     'mid-target-arrow-shape':'triangle-backcurve',
                     'mid-target-arrow-color':'black',
+                },
+            },
+
+
+            {
+                selector: 'edge[zoomLevel > 1.4]',
+                style: {
+                    'width':0.1,
+                    'arrow-scale':0.5,
                 },
             },
 
@@ -256,12 +266,58 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 style: {
                     shape: 'rectangle',
                     'background-color': 'white',
-                    label: 'data(display_label)',
-                    width:50,
-                    height:25,
-                    'font-size':10
+                    width:10,
+                    height:10,
                 },
             },
+
+            {
+              selector: 'node[node_type= "enzyme"][gene_count > 0]',
+              style: {
+                'border-color':'orange',
+                  'background-color': 'orange',
+              },
+            },
+
+
+            /* {
+               selector: 'node:child[node_type= "enzyme"][gene_count <1]',
+               style: {
+               visibility:'hidden'
+               },
+               },
+             */
+            {
+              selector: 'node[node_type= "enzyme"][?hasImage]',
+              style: {
+                  width:50,
+                  height:25,
+                  visibility:'visible',
+                  'font-size':12,
+                  'background-image':'data(smallImage)',
+                  'background-fit':'contain',
+                  label:null,
+              },
+            },
+
+            {
+                selector: 'node[node_type= "enzyme"][zoomLevel > 1.4]',
+                style: {
+                    visibility:'visible',
+                    width:25,
+                    height:10, 
+                    }
+            },
+
+
+            {
+                selector: 'node[node_type= "enzyme"][zoomLevel > 1.4][!hasImage]',
+                style: {
+                   'font-size':6,
+                    label: 'data(display_label)',
+                }
+            },
+
 
             {
                 selector: 'node[node_type= "pathway_internal"]',
@@ -270,41 +326,79 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 },
             },
 
-            {
-                selector: 'node[node_type= "molecular entity"][?image]',
-                style: {
-                    shape: 'rectangle',
-                    width:'data(width)',
-                    height:'data(height)',
-                    'border-width':0,
-                    'background-color': 'white',
-                    'background-image':'data(image)',
-                    'background-fit':'contain',
-                    label:'data(name)',
-                    'text-valign': 'bottom',
-                    'text-halign': 'center',
-                    'text-margin-y':-7,
-                    'font-size':9,
-                    'text-wrap':'wrap',
-                    'text-max-width':'data(width)',
 
-                },
+            {
+               selector: 'node[node_type= "molecular entity"][!image]',
+               style: {
+
+               shape: 'ellipse',
+               width:'label',
+               height:'label',
+               'background-color':'white',
+               'background-image-opacity':0,
+               'border-width':0,
+               label:'data(name)',
+               'font-size':12,
+               },
+               },
+
+
+             {
+               selector: 'node[node_type= "molecular entity"][?image]',
+               style: {
+               shape: 'rectangle',
+               width:'data(width)',
+               height:'data(height)',
+               'border-width':0,
+               'background-color': 'white',
+               'background-image':'data(image)',
+               'background-fit':'contain',
+               label:null,
+
+               },
+               },
+
+
+
+            {
+               selector: 'node[node_type= "molecular entity"][zoomLevel > 1.4]',
+               style: {
+                   label:'data(name)',
+                   'text-valign': 'bottom',
+                   'text-halign': 'center',
+                   'text-margin-y':-4,
+                   'font-size':6,
+                   'text-wrap':'wrap',
+                   'text-max-width':'data(width)',
+                   }
             },
 
 
-            {
-                selector: 'node[node_type= "molecular entity"][!image]',
-                style: {
+             {
+               selector: 'node[node_type= "molecular entity"][?paintingEnzymes][zoomLevel <= 1.4]',
+               style: {
+               shape: 'ellipse',
+               width:7,
+               height:7,
+               'background-color':'white',
+               'border-width':1,
+               'background-image-opacity':0,
+               }
+               },
 
-                    shape: 'ellipse',
-                    width:'label',
-                    height:'label',
-                    'background-color':'white',
-                    'background-image-opacity':0,
-                    'border-width':0,
-                    label:'data(name)'
-                },
-            },
+
+             {
+               selector: 'node[node_type= "molecular entity"][zoomLevel <= 1]',
+               style: {
+               shape: 'ellipse',
+               width:7,
+               height:7,
+               'background-color':'white',
+               'border-width':1,
+               'background-image-opacity':0,
+               }
+               },
+
 
             {
                 selector: 'node[node_type= "metabolic process"]',
@@ -315,14 +409,15 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     height:'label',
                     label: 'data(display_label)',
                     'border-width':0,
+                    'font-size':30,
                 },
             },
 
             {
-              selector: 'node[node_type= "enzyme"][gene_count > 0]',
-              style: {
-                'border-color':'red',
-              },
+                selector: 'node[node_type= "metabolic process"]',
+                style: {
+                    'font-size':12,
+                },
             },
 
             {
@@ -351,7 +446,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
         ],
         layout:myLayout,
-        zoom:0.5
+        zoom:1
     });
 
 
@@ -359,24 +454,37 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
             cy.changeLayout = function (val) {
 
-                cy.zoom(0.5);
+                cy.zoom(1);
+                cy.reset();
+
+                // Null out all positions or the compound nodes are not being set correctly
+                cy.nodes().map(function(node){node.position({x:null, y:null});node.renderedPosition({x:null, y:null});});
+
                 if (val === 'preset') {
-                    cy.nodes().map(function(node){node.renderedPosition({x:node.data("x"), y:node.data("y")})});
-                    cy.elements('node[node_type= "nodeOfNodes"]').layout({name: 'cose' });
+                    cy.layout({name:val, 
+                               fit:true,
+                               positions:function(node){return{'x':Number(node.data("x")), 'y':Number(node.data("y"))}}
+                    }).run();
                 }
 
                 else if (val === 'dagre') {
-                    cy.layout({name:val, rankDir:'LR'});
+                    cy.layout({name:val, rankDir:'LR'}).run();
                 }
 
                 else {
-                    cy.layout({name:val});
+                    cy.layout({name:val}).run();
                 }
             };
 
             cy.changeExperiment = function (linkPrefix, xaxis, doAllNodes) {
 
                 var nodes = cy.elements('node[node_type= "enzyme"]');
+
+                var compounds = cy.elements('node[node_type= "molecular entity"]');
+                var hasLinkPrefix = linkPrefix ? true : false;
+                for (var i=0; i < compounds.length; i++) {
+                    compounds[i].data("paintingEnzymes", hasLinkPrefix);
+                }
 
                 for (var i=0; i < nodes.length; i++) {
                     var n = nodes[i];
@@ -388,20 +496,22 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                         var smallLink = link + '&h=20&w=50&compact=1';
 
                         n.data('image', link);
+                        n.data('smallImage', smallLink);
                         n.data('hasImage', true);
-                        n.style({
-                            'background-image':smallLink,
-                            'background-fit':'contain',
-                        });
+                        /* n.style({
+                           'background-image':smallLink,
+                           'background-fit':'contain',
+                           }); */
                     }
                     else {
                         n.data('hasImage', false);
                         n.data('image', null);
+                        n.data('smallImage', null);
                     }
                 }
 
-                cy.style().selector('node[node_type= "enzyme"][!hasImage]').style({'label':'data(display_label)', 'background-image-opacity':0}).update();
-                cy.style().selector('node[node_type= "enzyme"][?hasImage]').style({'label':null}).update();
+//                cy.style().selector('node[node_type= "enzyme"][!hasImage]').style({'label':'data(display_label)', 'background-image-opacity':0}).update();
+//                cy.style().selector('node[node_type= "enzyme"][?hasImage]').style({'label':null}).update();
             };
 
 
@@ -472,7 +582,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 }
 
                 //Handle nodes with no preset position
-                cy.elements('node[!x]').layout({ name: 'cose' });
+                cy.elements('node[!x]').layout({ name: 'cose' }).run();
 
                 //clean up unplaces and orphan nodes
                 enzymeNodes.map(function(node) {
@@ -573,7 +683,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         // the `event.stopPropagation()` method so it is not triggered.
 
         cy.nodes().on('tap', withoutModifier(event => {
-          var node = event.cyTarget;
+          var node = event.target;
           this.props.setActiveNodeData(Object.assign({}, node.data()));
           cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
           node.addClass('eupathdb-CytoscapeActiveNode');
@@ -588,17 +698,33 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         // dispatch action when active node data changes
         cy.on('data', 'node.eupathdb-CytoscapeActiveNode', event => {
           const { activeNodeData } = this.props.pathwayRecord;
-          if (activeNodeData && activeNodeData.id === event.cyTarget.data('id')) {
-            this.props.setActiveNodeData(Object.assign({}, event.cyTarget.data()));
+          if (activeNodeData && activeNodeData.id === event.target.data('id')) {
+            this.props.setActiveNodeData(Object.assign({}, event.target.data()));
           }
         });
 
-        cy.minZoom(0.1);
-        cy.maxZoom(2);
+
+          cy.on('boxselect', function(event){
+              cy.fit(cy.$(':selected'));
+          });
+
+
+          cy.on('zoom', function(event){
+              var elements = cy.elements();
+
+              for (var i=0; i < elements.size(); i++) {
+                  elements[i].data('zoomLevel', cy.zoom());
+              }
+          });
+
+
+        cy.minZoom(0.5);
+        cy.maxZoom(4);
         cy.panzoom({
-          minZoom: 0.1,
-          maxZoom: 2
+          minZoom: .5,
+          maxZoom: 4
         });
+
         cy.fit();
 
 
