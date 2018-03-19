@@ -212,26 +212,17 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     'line-color':'black',
                     'width':1,
                     'curve-style':'bezier',
-                    'arrow-scale':0.5,
+                    'arrow-scale':0.4,
                 },
             },
 
             {
                 selector: 'edge[is_reversible="1"]',
                 style: {
-                    'mid-target-arrow-shape':'triangle-backcurve',
-                    'mid-source-arrow-shape':'triangle-backcurve',
-                    'mid-source-arrow-color':'black',
-                    'mid-target-arrow-color':'black',
-                    'mid-source-arrow-fill':'hollow',
-                },
-            },
-
-            {
-                selector: 'edge[is_reversible="0"]',
-                style: {
-                    'mid-target-arrow-shape':'triangle-backcurve',
-                    'mid-target-arrow-color':'black',
+                    'target-arrow-shape':'triangle-backcurve',
+                    'source-arrow-shape':'triangle-backcurve',
+                    'source-arrow-color':'black',
+                    'target-arrow-color':'black',
                 },
             },
 
@@ -240,7 +231,6 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 selector: 'edge[zoomLevel > 1.4]',
                 style: {
                     'width':0.1,
-                    'arrow-scale':0.5,
                 },
             },
 
@@ -365,7 +355,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                    label:'data(name)',
                    'text-valign': 'bottom',
                    'text-halign': 'center',
-                   'text-margin-y':-4,
+                   'text-margin-y':-6,
                    'font-size':6,
                    'text-wrap':'wrap',
                    'text-max-width':'data(width)',
@@ -710,6 +700,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
           cy.on('zoom', function(event){
               var elements = cy.elements();
+              console.log("Zoom="+cy.zoom());
 
               for (var i=0; i < elements.size(); i++) {
                   elements[i].data('zoomLevel', cy.zoom());
@@ -720,6 +711,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         cy.minZoom(0.5);
         cy.maxZoom(4);
         cy.panzoom({
+            zoomFactor:0.2,
           minZoom: .5,
           maxZoom: 4
         });
