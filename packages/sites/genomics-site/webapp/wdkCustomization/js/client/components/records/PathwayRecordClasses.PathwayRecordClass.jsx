@@ -779,6 +779,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let { attributes } = record;
     let { primary_key, source } = attributes;
     let red = {color: 'red'};
+    let orange = {color: 'orange'};
     let purple = {color: 'purple'};
 
     return (
