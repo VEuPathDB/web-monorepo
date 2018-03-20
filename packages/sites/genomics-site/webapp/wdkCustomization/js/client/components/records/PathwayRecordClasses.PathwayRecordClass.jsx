@@ -173,7 +173,7 @@ function getSideNodeCoords (node, orientation, values, direction) {
         }
         sideNode.renderedPosition({x: sideNode.data('x'), y: sideNode.data('y') });
         sideNode.style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0, 'color':'grey'});
-        sideNode.connectedEdges().style({'line-color':'grey', 'mid-target-arrow-color':'grey'});
+        sideNode.connectedEdges().style({'line-color':'grey', 'target-arrow-color':'grey','source-arrow-color':'grey'});
     }
 }
 
