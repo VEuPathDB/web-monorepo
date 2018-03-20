@@ -134,7 +134,7 @@ export function RecordLink(WdkRecordLink) {
 }
 
 function downloadRecordTable(record, tableName) {
-  return (dispatch, { wdkService }) => {
+  return ({ wdkService }) => {
     let answerSpec = getSingleRecordAnswerSpec(record);
     let formatting = {
       format: 'tableTabular',
