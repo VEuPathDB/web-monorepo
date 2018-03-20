@@ -49,7 +49,7 @@ export default function menuItems (siteConfig) {
           },
           {
             text: 'PDF Tutorial',
-            url: ''/documents/ClinEpiDBTutorial1.pdf'
+            url: '/documents/ClinEpiDBTutorial1.pdf'
           },
           {
             text: 'Data Access & Use Policy',
