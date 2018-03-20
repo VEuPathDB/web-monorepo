@@ -373,7 +373,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                    'text-margin-y':-6,
                    'font-size':6,
                    'text-wrap':'wrap',
-                   'text-max-width':'data(width)',
+//                   'text-max-width':'data(width)',
                    }
             },
 
@@ -713,9 +713,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
           cy.on('zoom', function(event){
               var elements = cy.elements();
-              console.log("Zoom="+cy.zoom());
 
               for (var i=0; i < elements.size(); i++) {
+
                   elements[i].data('zoomLevel', cy.zoom());
               }
           });
