@@ -42,7 +42,7 @@
   {
     "name": "MAL-ED",
     "id": "DS_121f2c2f02",
-    "disabled": true,
+    "disabled": false,
     "appUrl": "/app/record/dataset/DS_121f2c2f02",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
     "access": "protected",
