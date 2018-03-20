@@ -82,11 +82,13 @@ function makeNode(obj) {
         obj.image = dataURL;
 
         var widthPadding = 35;
-        var defaultScaling = 1;
-        var maxSize = 65;
+        var defaultScaling = 0.5;
+        var maxSize = 50;
+
 
         obj.width = (xy.x + widthPadding) * defaultScaling;
         obj.height = (xy.y + widthPadding)  * defaultScaling;
+        
 
         // scale further if width above a max
         if(obj.width > maxSize || obj.height > maxSize) {
@@ -96,10 +98,10 @@ function makeNode(obj) {
             var scalingFactor = Math.min(widthScalingFactor, heightScalingFactor);
             obj.width = obj.width * scalingFactor;
             obj.height = obj.height * scalingFactor;
+
         }
 
     }
-
 
     return { data:obj,  renderedPosition:{x:obj.x, y:obj.y }, position:{x:obj.x, y:obj.y }};
 }
@@ -230,7 +232,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
                 selector: 'edge[zoomLevel > 1.4]',
                 style: {
-                    'width':0.1,
+                    'width':0.5,
                 },
             },
 
@@ -316,15 +318,27 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             },
 
 
+
+             {
+               selector: 'node[node_type= "molecular entity"]',
+               style: {
+               shape: 'ellipse',
+               width:7,
+               height:7,
+               'background-color':'white',
+               'border-width':1,
+               'background-image-opacity':0,
+               label:null,
+               }
+               },
+
             {
-               selector: 'node[node_type= "molecular entity"][!image]',
+               selector: 'node[node_type= "molecular entity"][!image][zoomLevel > 0.8]',
                style: {
 
                shape: 'ellipse',
                width:'label',
                height:'label',
-               'background-color':'white',
-               'background-image-opacity':0,
                'border-width':0,
                label:'data(name)',
                'font-size':12,
@@ -333,12 +347,13 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
              {
-               selector: 'node[node_type= "molecular entity"][?image]',
+               selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 0.8]',
                style: {
                shape: 'rectangle',
                width:'data(width)',
                height:'data(height)',
                'border-width':0,
+               'background-image-opacity':1,
                'background-color': 'white',
                'background-image':'data(image)',
                'background-fit':'contain',
@@ -363,8 +378,17 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             },
 
 
+            {
+               selector: 'node[node_type= "molecular entity"][zoomLevel > 2]',
+               style: {
+                   'font-size':3,
+                   'text-margin-y':-3,
+                   }
+            },
+
+
              {
-               selector: 'node[node_type= "molecular entity"][?paintingEnzymes][zoomLevel <= 1.4]',
+               selector: 'node[node_type= "molecular entity"][?paintingEnzymes][zoomLevel <= 2]',
                style: {
                shape: 'ellipse',
                width:7,
@@ -376,17 +400,6 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                },
 
 
-             {
-               selector: 'node[node_type= "molecular entity"][zoomLevel <= 1]',
-               style: {
-               shape: 'ellipse',
-               width:7,
-               height:7,
-               'background-color':'white',
-               'border-width':1,
-               'background-image-opacity':0,
-               }
-               },
 
 
             {
