@@ -3,7 +3,7 @@
     "name": "PRISM",
     "id": "DS_0ad509829e",
     "categories": ["malarial"],
-    "disabled": true,
+    "disabled": false,
     "access": "public",
     "appUrl": "/app/record/dataset/DS_0ad509829e",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
@@ -42,7 +42,7 @@
   {
     "name": "MAL-ED",
     "id": "DS_121f2c2f02",
-    "disabled": false,
+    "disabled": true,
     "appUrl": "/app/record/dataset/DS_121f2c2f02",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
     "access": "protected",

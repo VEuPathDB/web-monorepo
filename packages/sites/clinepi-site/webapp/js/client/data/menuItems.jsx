@@ -49,8 +49,7 @@ export default function menuItems (siteConfig) {
           },
           {
             text: 'PDF Tutorial',
-            url: 'https://drive.google.com/open?id=1T5-Bl1d6nQXDpCSIXwDmNcoO8GGyoMEE',
-            target: '_blank'
+            url: ''/documents/ClinEpiDBTutorial1.pdf'
           },
           {
             text: 'Data Access & Use Policy',
