@@ -10,7 +10,8 @@ $red: #DD314E;
   justify-content: space-between;
   position: relative;
   z-index: 1000000;
-  flex-wrap:nowrap;
+  // flex-wrap: nowrap;
+  flex-wrap: wrap;
 
   #EuPathLogo {
     position: absolute;
@@ -60,6 +61,7 @@ $red: #DD314E;
   &-Branding {
     padding: 5px 5px 20px;
     min-width: 360px;
+    flex: 0;
     align-self: flex-start;
 
     .HeaderNav-Logo {
@@ -93,7 +95,10 @@ $red: #DD314E;
     }
   }
 
-  &-Social {
+  .HeaderNav-Social {
+    flex: 1;
+    width: auto;
+    flex-basis: auto;
     a.HeaderNav-Social-Link {
       &, &:link, &:active, &:visited { color: #fff; }
       opacity: 0.45;
