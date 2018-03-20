@@ -111,8 +111,8 @@ const DatasetGraphTable = pure(function DatasetGraphTable(props) {
 });
 
 function References(props, context) {
-  let {questions, recordClasses, config} = context.store.getState().globalData || {};
-  if (questions == null || recordClasses == null || config == null) {
+  let {questions, recordClasses, siteConfig} = context.store.getState().globalData || {};
+  if (questions == null || recordClasses == null || siteConfig == null) {
     return <noscript/>;
   }
   let value = props.value
@@ -127,7 +127,7 @@ function References(props, context) {
     let searchName = `Identify ${recordClass.displayNamePlural} by ${question.displayName}`;
     return (
       <li key={name}>
-        <a href={`${config.webAppUrl}/showQuestion.do?questionFullName=${name}`}>{searchName}</a>
+        <a href={`${siteConfig.webAppUrl}/showQuestion.do?questionFullName=${name}`}>{searchName}</a>
       </li>
     );
   });
