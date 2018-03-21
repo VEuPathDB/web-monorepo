@@ -64,13 +64,13 @@ class StudyMenuItem extends React.Component {
 
     return (
       <div className={'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
-        <div className="box grow-1">
+        <div className="box StudyMenuItem-Name">
           <a href={href} className="StudyMenuItem-RecordLink">
             {name}
             <Icon fa="angle-double-right" />
           </a>
         </div>
-        <div className="row grow-0 StudyMenuItem-Links">
+        <div className="row StudyMenuItem-Links">
           {searches.map(({ type, url }) => <SearchLink key={type} type={type} url={url} />)}
         </div>
       </div>

@@ -1,9 +1,19 @@
 $red: #DD314E;
+
 .StudyMenuItem {
-  width: 290px;
+  width: 300px;
+  display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   font-weight: 400;
+  .StudyMenuItem-Name {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
   .StudyMenuItem-Links {
+    justify-content: flex-end;
+    flex: 1 1 auto;
     .fa {
       font-size: 1.4em;
       padding: 5px;

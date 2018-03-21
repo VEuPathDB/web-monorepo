@@ -25,7 +25,7 @@ $red: #DD314E;
     flex: 1;
     justify-content: center;
     position: relative;
-    z-index: 10;
+    z-index: 20;
   }
 
   .HeaderNav-Secondary {
@@ -33,7 +33,7 @@ $red: #DD314E;
     position: relative;
     justify-content: space-between;
     flex-wrap: nowrap;
-    z-index: 20;
+    z-index: 10;
   }
 
   &-Switch {
@@ -94,22 +94,25 @@ $red: #DD314E;
       }
     }
   }
+}
 
-  .HeaderNav-Social {
-    flex: 1;
-    width: auto;
-    flex-basis: auto;
-    a.HeaderNav-Social-Link {
-      &, &:link, &:active, &:visited { color: #fff; }
-      opacity: 0.45;
-      transition: all 0.6s;
-      font-size: 25px;
-      padding: 8px;
-      display: block;
-      &:hover {
-        opacity: 1;
-        transform: scale(1.05);
-      }
+.HeaderNav-Social {
+  flex: 1;
+  width: auto;
+  flex-wrap: nowrap;
+  flex-basis: auto;
+  position: relative;
+  z-index: 1;
+  a.HeaderNav-Social-Link {
+    &, &:link, &:active, &:visited { color: #fff; }
+    opacity: 0.45;
+    transition: all 0.6s;
+    font-size: 25px;
+    padding: 8px;
+    display: block;
+    &:hover {
+      opacity: 1;
+      transform: scale(1.05);
     }
   }
 }

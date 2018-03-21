@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './HeaderNav.scss';
 import SiteMenu from 'Client/App/SiteMenu';
 import UserMenu from 'Client/App/UserMenu';
-import menuItems from 'Client/data/menuItems';
+import headerMenuItems from 'Client/data/headerMenuItems';
 
 import { Events, BodyLayer } from 'mesa';
 import { IconAlt as Icon } from 'wdk-client/Components';
@@ -16,6 +16,7 @@ class HeaderNav extends React.Component {
     this.state = { stickyHeaderVisible: false }
 
     this.onScroll = this.onScroll.bind(this);
+    this.getMenuItems = this.getMenuItems.bind(this);
     this.getIconByType = this.getIconByType.bind(this);
     this.renderBranding = this.renderBranding.bind(this);
     this.renderIconMenu = this.renderIconMenu.bind(this);
@@ -49,7 +50,7 @@ class HeaderNav extends React.Component {
     const { webAppUrl } = siteConfig;
     const logoUrl = webAppUrl + '/images/symbol-small.png';
     const bgUrl = webAppUrl + '/images/global.jpg';
-    const { mainMenu, iconMenu } = menuItems(siteConfig);
+    const { mainMenu, iconMenu } = this.getMenuItems();
     const IconMenu = this.renderIconMenu;
     return (
       <div className="HeaderNav-Sticky" style={{ backgroundImage: `url(${bgUrl})` }}>
@@ -137,11 +138,16 @@ class HeaderNav extends React.Component {
     );
   }
 
+  getMenuItems () {
+    const { siteConfig, siteData } = this.props;
+    return headerMenuItems({ siteConfig, siteData });
+  }
+
   render () {
     const { stickyHeaderVisible } = this.state;
     const { siteConfig, user, actions } = this.props;
     const { webAppUrl } = siteConfig;
-    const { mainMenu, iconMenu } = menuItems(siteConfig);
+    const { mainMenu, iconMenu } = this.getMenuItems();
 
     const Branding = this.renderBranding;
     const IconMenu = this.renderIconMenu;

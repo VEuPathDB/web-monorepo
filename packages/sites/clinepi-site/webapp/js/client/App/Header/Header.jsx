@@ -10,7 +10,7 @@ class Header extends React.Component {
   }
 
   render () {
-    const { siteConfig, user, actions } = this.props;
+    const { siteConfig, siteData, user, actions } = this.props;
     const { webAppUrl } = siteConfig;
     const content = {
       heroImage: webAppUrl + '/images/global.jpg',
@@ -27,7 +27,12 @@ class Header extends React.Component {
     return (
       <header className={'Header' + (showHomeContent ? ' Header--Home' : '')}>
         <Hero image={content.heroImage} position={content.heroPosition}>
-          <HeaderNav actions={actions} siteConfig={siteConfig} user={user} />
+          <HeaderNav
+            actions={actions}
+            siteConfig={siteConfig}
+            siteData={siteData}
+            user={user}
+          />
           {!showHomeContent
             ? null
             : (

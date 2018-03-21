@@ -1,9 +1,8 @@
-import studies from './studies.json';
-
 import { StudyMenuItem } from 'Client/App/Studies';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'Client/App/Utils/Utils';
 
-export default function menuItems (siteConfig) {
+export default function headerMenuItems ({ siteConfig, siteData }) {
+  const { studies } = siteData;
   const { webAppUrl, facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = menuItemsFromSocials(siteConfig);

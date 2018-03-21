@@ -11,19 +11,32 @@ import Header from 'Client/App/Header';
 import { DataRestrictionDaemon } from 'Client/App/DataRestriction';
 import { getIdFromRecordClassName, emitRestriction } from 'Client/App/DataRestriction/DataRestrictionUtils';
 
+import studies from 'Client/data/studies.json';
+import searches from 'Client/data/searches.json';
+import visualizations from 'Client/data/visualizations.json';
+
+import { disableUnavailableStudies } from 'Client/App/Studies/StudyUtils';
+
 const injectState = withStore(state => ({
   webAppUrl: get(state, 'globalData.siteConfig.webAppUrl'),
   studies: get(state, 'globalData.siteConfig.studies')
 }));
 
+export function getStaticSiteData (siteConfig) {
+  const { projectId } = siteConfig ? siteConfig : {};
+  const injectedStudies = disableUnavailableStudies(projectId, studies);
+  return { studies: injectedStudies, searches, visualizations };
+};
+
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
     getStateFromStore () {
       const { globalData } = this.store.getState();
-      const { config, siteConfig } = globalData;
-      const { projectId } = config ? config : {};
+      const { siteConfig } = globalData;
       const { displayName, webAppUrl } = siteConfig;
-      return { displayName, webAppUrl, projectId };
+      const siteData = getStaticSiteData(siteConfig);
+
+      return { displayName, webAppUrl, siteData };
     }
 
     getTitle () {
@@ -46,7 +59,8 @@ export default {
 
   SiteHeader: () => rawProps => {
     const { siteConfig, preferences, user = {}, ...actions } = rawProps;
-    const props = { siteConfig, preferences, user, actions };
+    const siteData = getStaticSiteData(siteConfig);
+    const props = { siteConfig, preferences, user, actions, siteData };
     return (
       <div>
         <Header {...props} />
@@ -129,7 +143,7 @@ function findStudyFromRecordClass(studies, recordClass) {
     return studies.find(study => study.id === studyId);
   }
   catch (error) {
-    console.error("Could not find study from record class.");
+    console.error("Could not find study from record class.", { recordClass });
     throw error;
   }
 }

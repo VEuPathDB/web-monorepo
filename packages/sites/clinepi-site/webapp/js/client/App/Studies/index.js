@@ -1,4 +1,5 @@
 import StudyCard from './StudyCard';
 import StudyCardList from './StudyCardList';
 import StudyMenuItem from './StudyMenuItem';
-export { StudyCard, StudyCardList, StudyMenuItem };
+import * as StudyUtils from './StudyUtils';
+export { StudyCard, StudyCardList, StudyMenuItem, StudyUtils };

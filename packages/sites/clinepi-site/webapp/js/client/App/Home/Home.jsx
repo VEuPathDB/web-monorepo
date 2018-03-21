@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './HomePage.scss';
-import homeSections from 'Client/data/homeSections';
+import homeContent from 'Client/data/homeContent';
 import { Showcase } from 'Client/App/Showcase';
 import { RestrictionTrigger } from 'Client/App/DataRestriction';
 
@@ -12,10 +12,11 @@ class HomePage extends React.Component {
 
   render () {
     console.info('home gettin props', this.props);
-    const { webAppUrl, projectId } = this.props;
+    const { webAppUrl, projectId, siteData } = this.props;
+    const sections = homeContent(siteData);
     return (
       <div className="HomePage">
-        {homeSections.map((section, idx) => (
+        {sections.map((section, idx) => (
           <Showcase
             content={section}
             prefix={webAppUrl}

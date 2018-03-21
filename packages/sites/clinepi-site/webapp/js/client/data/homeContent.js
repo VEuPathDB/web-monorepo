@@ -1,10 +1,6 @@
 import React from 'react';
 
-import studies from 'Client/data/studies.json';
-import searches from 'Client/data/searches.json';
-import visualizations from 'Client/data/visualizations.json';
-
-export default [
+export default ({ studies, searches, visualizations }) => ([
   {
     title: 'Explore the Studies',
     contentType: 'StudyCardList',
@@ -23,4 +19,4 @@ export default [
     contentType: 'ImageCardList',
     items: visualizations
   }
-];
+]);
