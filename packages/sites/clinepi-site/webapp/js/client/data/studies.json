@@ -3,7 +3,7 @@
     "name": "PRISM",
     "id": "DS_0ad509829e",
     "categories": ["malarial"],
-    "disabled": false,
+    "disabled": true,
     "access": "public",
     "appUrl": "/app/record/dataset/DS_0ad509829e",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
