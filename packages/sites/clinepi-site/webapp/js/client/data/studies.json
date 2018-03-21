@@ -3,7 +3,7 @@
     "name": "PRISM",
     "id": "DS_0ad509829e",
     "categories": ["malarial"],
-    "disabled": true,
+    "projectAvailability": ["ClinEpiDB", "ICEMR"],
     "access": "public",
     "appUrl": "/app/record/dataset/DS_0ad509829e",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
@@ -23,7 +23,7 @@
   {
     "name": "GEMS",
     "id": "gems",
-    "disabled": true,
+    "projectAvailability": [],
     "access": "protected",
     "url": "#gems",
     "categories": ["enteric"],
@@ -42,9 +42,9 @@
   {
     "name": "MAL-ED",
     "id": "DS_121f2c2f02",
-    "disabled": false,
     "appUrl": "/app/record/dataset/DS_121f2c2f02",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
+    "projectAvailability": ["Gates"],
     "access": "protected",
     "categories": ["enteric"],
     "headline": "MAL-ED PhaseI DCC",
@@ -61,7 +61,7 @@
   {
     "name": "Other ICEMR Studies",
     "id": "icemr-other",
-    "disabled": true,
+    "projectAvailability": [],
     "url": "#icemr-other",
     "categories": ["malarial"],
     "headline": "Coming Soon!",

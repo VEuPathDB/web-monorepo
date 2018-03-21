@@ -11,11 +11,17 @@ class HomePage extends React.Component {
   }
 
   render () {
-    const { prefix } = this.props;
+    console.info('home gettin props', this.props);
+    const { webAppUrl, projectId } = this.props;
     return (
       <div className="HomePage">
         {homeSections.map((section, idx) => (
-          <Showcase content={section} prefix={prefix} key={idx} />
+          <Showcase
+            content={section}
+            prefix={webAppUrl}
+            projectId={projectId}
+            key={idx}
+          />
         ))}
       </div>
     );

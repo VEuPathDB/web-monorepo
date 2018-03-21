@@ -25,10 +25,15 @@ class StudyCard extends React.Component {
   }
 
   render () {
-    const { study, prefix } = this.props;
+    const { study, prefix, projectId } = this.props;
     const { searchType } = this.state;
-    const { name, categories, url, appUrl, headline, points, searchUrls, disabled } = study;
+    const { name, categories, url, appUrl, headline, points, searchUrls, projectAvailability } = study;
     const studyUrl = appUrl && prefix ? prefix + appUrl : url;
+    const disabled = Array.isArray(projectAvailability) && typeof projectId === 'string'
+      ? !projectAvailability
+          .map(project => project.toLowerCase())
+          .includes(projectId.toLowerCase())
+      : true;
 
     return (
       <div className={'stack Card StudyCard ' + (disabled ? 'disabled' : '')}>

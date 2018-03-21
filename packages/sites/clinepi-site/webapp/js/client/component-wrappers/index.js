@@ -19,13 +19,17 @@ const injectState = withStore(state => ({
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
     getStateFromStore () {
-      const { displayName, webAppUrl } = get(this.store.getState(), 'globalData.siteConfig');
-      return { displayName, webAppUrl };
+      const { globalData } = this.store.getState();
+      const { config, siteConfig } = globalData;
+      const { projectId } = config ? config : {};
+      const { displayName, webAppUrl } = siteConfig;
+      return { displayName, webAppUrl, projectId };
     }
 
     getTitle () {
       return this.state.displayName;
     }
+
     renderView () {
       return (
         <Index {...this.state} />

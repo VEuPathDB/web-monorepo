@@ -8,10 +8,16 @@ class StudyCardList extends React.Component {
   }
 
   render () {
-    const { list, prefix } = this.props;
+    const { list, ...otherProps } = this.props;
     return !list ? null : (
       <div className="CardList StudyCardList">
-        {list.map((study, idx) => <StudyCard key={idx} study={study} prefix={prefix} />)}
+        {list.map((study, idx) => (
+          <StudyCard
+            key={idx}
+            study={study}
+            {...otherProps}
+          />
+        ))}
       </div>
     );
   }
