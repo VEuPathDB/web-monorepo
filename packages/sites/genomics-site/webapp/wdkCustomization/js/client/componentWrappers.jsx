@@ -1,5 +1,6 @@
 import React from 'react';
 import QueryString from 'querystring';
+import { emptyAction } from 'wdk-client/ActionCreatorUtils';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
 // import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
@@ -145,6 +146,7 @@ function downloadRecordTable(record, tableName) {
       }
     };
     wdkService.downloadAnswer({ answerSpec, formatting });
+    return emptyAction;
   };
 }
 
