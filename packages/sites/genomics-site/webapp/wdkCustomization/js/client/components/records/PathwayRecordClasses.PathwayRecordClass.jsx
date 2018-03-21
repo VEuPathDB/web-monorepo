@@ -172,7 +172,7 @@ function getSideNodeCoords (node, orientation, values, direction) {
             sideNode.data('x', coord);
         }
         sideNode.renderedPosition({x: sideNode.data('x'), y: sideNode.data('y') });
-        sideNode.style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0, 'color':'grey'});
+//        sideNode.style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0, 'color':'grey'});
         sideNode.connectedEdges().style({'line-color':'grey', 'target-arrow-color':'grey','source-arrow-color':'grey'});
     }
 }
@@ -332,11 +332,40 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                }
                },
 
-            {
-               selector: 'node[node_type= "molecular entity"][!image][zoomLevel > 0.8]',
-               style: {
 
-               shape: 'ellipse',
+             {
+               selector: 'node[node_type= "molecular entity"][?side]',
+                 style: {
+                     shape: 'diamond',
+                     width:4,
+                     height:4,
+                     'background-image-opacity':0,
+                     'color':'grey'
+               }
+               },
+
+             {
+               selector: 'node[node_type= "molecular entity"][?side][zoomLevel > 1.4]',
+                 style: {
+               width:'label',
+               height:'label',
+               'border-width':0,
+               label:'data(name)',
+               'font-size':6,
+               }
+               },
+
+             {
+               selector: 'node[node_type= "molecular entity"][?side][zoomLevel > 2]',
+                 style: {
+               'font-size':3,
+               }
+               },
+
+
+            {
+               selector: 'node[node_type= "molecular entity"][!image][zoomLevel > 0.8][!side]',
+               style: {
                width:'label',
                height:'label',
                'border-width':0,
@@ -347,7 +376,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
              {
-               selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 0.8]',
+               selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 0.8][!side]',
                style: {
                shape: 'rectangle',
                width:'data(width)',
@@ -365,7 +394,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
             {
-               selector: 'node[node_type= "molecular entity"][zoomLevel > 1.4]',
+               selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 1.4][!side]',
                style: {
                    label:'data(name)',
                    'text-valign': 'bottom',
@@ -373,18 +402,20 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                    'text-margin-y':-6,
                    'font-size':6,
                    'text-wrap':'wrap',
-//                   'text-max-width':'data(width)',
                    }
             },
 
 
             {
-               selector: 'node[node_type= "molecular entity"][zoomLevel > 2]',
+               selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 2][!side]',
                style: {
                    'font-size':3,
                    'text-margin-y':-3,
                    }
             },
+
+
+
 
 
              {
@@ -398,6 +429,10 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                'background-image-opacity':0,
                }
                },
+
+
+
+
 
 
 
@@ -721,11 +756,11 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           });
 
 
-        cy.minZoom(0.5);
+        cy.minZoom(0.1);
         cy.maxZoom(4);
         cy.panzoom({
             zoomFactor:0.2,
-          minZoom: .5,
+          minZoom: .1,
           maxZoom: 4
         });
 
