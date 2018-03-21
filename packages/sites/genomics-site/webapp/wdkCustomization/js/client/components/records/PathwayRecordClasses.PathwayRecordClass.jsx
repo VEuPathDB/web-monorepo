@@ -215,16 +215,16 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     'width':1,
                     'curve-style':'bezier',
                     'arrow-scale':0.4,
+                    'target-arrow-shape':'triangle-backcurve',
+                    'target-arrow-color':'black',
                 },
             },
 
             {
                 selector: 'edge[is_reversible="1"]',
                 style: {
-                    'target-arrow-shape':'triangle-backcurve',
                     'source-arrow-shape':'triangle-backcurve',
                     'source-arrow-color':'black',
-                    'target-arrow-color':'black',
                 },
             },
 
