@@ -171,6 +171,14 @@ export function RecordTableSection(DefaultComponent) {
       ontologyProperties.scope.includes('download')
     );
 
+    var hasTaxonId = 1; 
+    if (record.recordClassName == 'PopsetRecordClasses.PopsetRecordClass' ||
+        record.recordClassName == 'PathwayRecordClasses.PathwayRecordClass' ||
+        record.recordClassName == 'CompoundRecordClasses.CompoundRecordClass')
+    {
+      hasTaxonId = 0;
+    }
+
     return (
       <DefaultComponent {...props} table={Object.assign({}, table, {
         displayName: (
@@ -190,6 +198,23 @@ export function RecordTableSection(DefaultComponent) {
                 </button>
               </span>
             }
+            { hasTaxonId == 0 &&
+            <Link
+              style={{
+                fontSize: '.8em',
+                fontWeight: 'normal',
+                marginLeft: '1em'
+              }}
+              onClick={stopPropagation}
+              to={{
+                pathname: `/search/dataset/DatasetsByReferenceNameNoTaxon:${customName}/result`,
+                search: QueryString.stringify({
+                  record_class: record.recordClassName,
+                  reference_name: table.name,
+                })
+              }}
+            ><i className="fa fa-database"/> Data sets</Link>}
+            { hasTaxonId == 1 &&
             <Link
               style={{
                 fontSize: '.8em',
@@ -205,7 +230,8 @@ export function RecordTableSection(DefaultComponent) {
                   taxon: record.attributes.organism_full
                 })
               }}
-            ><i className="fa fa-database"/> Data sets</Link>
+            ><i className="fa fa-database"/> Data sets</Link>}
+
           </span>
         )
       })}/>
