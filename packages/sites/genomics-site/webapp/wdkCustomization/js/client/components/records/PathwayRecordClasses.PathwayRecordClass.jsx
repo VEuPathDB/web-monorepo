@@ -192,6 +192,88 @@ function nullSides(node) {
     node.outgoers('node[?side]').data({x: null, y: null});
 }
 
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
+}
+
+// infer from either incomers/outgoers OR from children of nodeOfNodes
+function inferCellularLocation (node) {
+
+    var inCellularLocations = node.incomers('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
+    var outCellularLocations = node.outgoers('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
+
+    if(inCellularLocations.length == 1 && outCellularLocations.length == 1 && inCellularLocations[0] == outCellularLocations[0]) {
+        node.data("cellular_location", inCellularLocations[0]);
+    }
+
+
+    var nodeOfNodeCellularLocations = node.children('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
+    if(nodeOfNodeCellularLocations.length == 1) {
+        node.data("cellular_location", nodeOfNodeCellularLocations[0]);
+    }
+}
+
+
+function processCellularLocationNode (initialNode, cy) {
+
+    var nodeSelector = "#" + initialNode.id();
+    var node =  cy.$(nodeSelector);
+
+    if(node.parent().data("node_type")== "cellular_location") {
+        return;
+    }
+
+    var cellularLocation = node.data("cellular_location");
+
+    var cellularLocationNode = cy.add({
+        group: "nodes",
+        data: { cellular_location: cellularLocation, node_type: 'cellular_location', display_label: cellularLocation
+        },
+    });
+
+    addCellularLocation(node, cellularLocationNode);
+}
+
+function addCellularLocation (node, cellularLocationNode) {
+
+    if(node.parent().data("node_type")== "cellular_location") {
+        return;
+    }
+
+    var cellularLocation = node.data("cellular_location");
+    var selectorString = 'node[cellular_location = "' + cellularLocation + '"]';
+
+    var incomerNodes = node.incomers(selectorString);
+    var outgoerNodes = node.outgoers(selectorString);
+    var childrenNodes = node.children(selectorString);
+
+    node.move({parent:cellularLocationNode.id()});
+
+    for (var i=0; i<incomerNodes.size(); i++) {
+        if(incomerNodes[i].data("cellular_location") == cellularLocation) {
+            addCellularLocation(incomerNodes[i], cellularLocationNode);
+        }
+    }
+
+    for (var i=0; i<outgoerNodes.size(); i++) {
+        if(outgoerNodes[i].data("cellular_location") == cellularLocation) {
+            addCellularLocation(outgoerNodes[i], cellularLocationNode);
+        }
+    }
+
+    for (var i=0; i<childrenNodes.size(); i++) {
+        if(childrenNodes[i].data("cellular_location") == cellularLocation) {
+            addCellularLocation(childrenNodes[i], cellularLocationNode);
+        }
+    }
+}
+
+
+
+
+
+
+
 function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges, name) {
 
   return Promise.all([loadCytoscapeJs(), loadChemDoodleWeb()])
@@ -457,6 +539,21 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 },
             },
 
+
+
+
+            {
+                selector: 'node[node_type= "cellular_location"]',
+                style: {
+                    'background-color': 'green',
+                    label: 'data(display_label)',
+                    padding:'50px',
+                    'text-valign': 'top',
+                    'text-halign': 'center'
+                },
+            },
+
+
             {
                 selector: 'node.eupathdb-CytoscapeHighlightNode',
                 style: {
@@ -485,6 +582,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
         layout:myLayout,
         zoom:1
     });
+
+
 
 
         cy.ready(function () {
@@ -551,6 +650,10 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 //                cy.style().selector('node[node_type= "enzyme"][?hasImage]').style({'label':null}).update();
             };
 
+
+
+
+            
 
             if (pathwaySource !== 'KEGG') {
                 cy.nodes('node[node_type="enzyme"]').map(function(node) {
@@ -652,6 +755,18 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
         });
         cy.add([{group: "nodes", data: {id: pathwayId + '_' + pathwaySource, name: name, node_type: 'pathway_internal'}}]);
+
+
+        var nodesWithoutCellularLocation = cy.nodes('node[!cellular_location]');
+        for (let i=0; i < nodesWithoutCellularLocation.length; i++) {
+            inferCellularLocation(nodesWithoutCellularLocation[i]);
+        }
+        
+        var nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
+        for (let i=0; i < nodesWithCellularLocation.length; i++) {
+            processCellularLocationNode(nodesWithCellularLocation[i], cy);
+        }
+        
         return cy;
 
     });
