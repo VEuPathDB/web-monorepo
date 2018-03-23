@@ -547,7 +547,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 style: {
                     'background-color': 'green',
                     label: 'data(display_label)',
-                    padding:'50px',
+//                    padding:'50px',
                     'text-valign': 'top',
                     'text-halign': 'center'
                 },
