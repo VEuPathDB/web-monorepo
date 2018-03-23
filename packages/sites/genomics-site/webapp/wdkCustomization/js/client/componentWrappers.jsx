@@ -171,12 +171,12 @@ export function RecordTableSection(DefaultComponent) {
       ontologyProperties.scope.includes('download')
     );
 
-    var hasTaxonId = 1; 
-    if (record.recordClassName == 'PopsetRecordClasses.PopsetRecordClass' ||
-        record.recordClassName == 'PathwayRecordClasses.PathwayRecordClass' ||
-        record.recordClassName == 'CompoundRecordClasses.CompoundRecordClass')
+    var hasTaxonId = 0; 
+    if (record.recordClassName == 'GeneRecordClasses.GeneRecordClass' ||
+        record.recordClassName == 'SequenceRecordClasses.SequenceRecordClass' ||
+        record.recordClassName == 'OrganismRecordClasses.OrganismRecordClass')
     {
-      hasTaxonId = 0;
+      hasTaxonId = 1;
     }
 
     return (
