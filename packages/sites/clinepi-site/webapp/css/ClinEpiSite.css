@@ -598,3 +598,8 @@ b, strong, th,
 .filter-param .wdk-AttributeFilterFieldItem {
   font-weight: 500;
 }
+
+/* Hide Favorites action link on record pages */
+wdk-RecordActionItem .favorites {
+  display: none;
+}
