@@ -17,7 +17,6 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
       {
         id: 'workspace',
         text: 'Workspace',
-        appUrl: '/showApplication.do',
         children: [
           {
             text: 'My Search Strategies',

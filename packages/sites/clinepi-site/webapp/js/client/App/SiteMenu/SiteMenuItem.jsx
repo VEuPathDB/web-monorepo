@@ -6,22 +6,22 @@ import { IconAlt as Icon } from 'wdk-client/Components';
 class SiteMenuItem extends React.Component {
   constructor (props) {
     super(props);
-    this.state = { isHovered: false };
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.state = { isFocused: false };
+    this.focus = this.focus.bind(this);
+    this.blur = this.blur.bind(this);
   }
 
-  onMouseEnter (event) {
-    this.setState({ isHovered: true });
+  focus (event) {
+    this.setState({ isFocused: true });
   }
 
-  onMouseLeave (event) {
-    this.setState({ isHovered: false });
+  blur (event) {
+    this.setState({ isFocused: false });
   }
 
   render () {
-    const { onMouseEnter, onMouseLeave } = this;
-    const { isHovered } = this.state;
+    const { focus, blur } = this;
+    const { isFocused } = this.state;
     const { item, config } = this.props;
     const { id, text, url, appUrl, target } = item;
     const { webAppUrl, projectId } = config;
@@ -37,20 +37,28 @@ class SiteMenuItem extends React.Component {
         : null;
 
     const className = 'SiteMenuItem' + (children && children.length ? ' SiteMenuItem--HasSubmenu' : '');
-
+    const touchToggle = {
+      onTouchStart: isFocused ? blur : focus,
+      style: { display: 'inline-block '}
+    };
     return (
-      <div className={className} key={id} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div
+        key={id}
+        className={className}
+        onMouseEnter={focus}
+        onMouseLeave={blur}
+      >
       	{destination
           ? <a className="SiteMenuItem-Link" href={destination} target={target}>{text}</a>
-          : <span className="SiteMenuItem-Text">{text}</span>
+          : <span className="SiteMenuItem-Text" {...touchToggle}>{text}</span>
         }
         {children && children.length
-          ? <Icon fa="caret-down" />
+          ? <div {...touchToggle}><Icon fa="caret-down" /></div>
           : null
         }
         {children && children.length
           ? (
-            <div className={'SiteMenuItem-Submenu' + (isHovered ? '' : ' SiteMenuItem-Submenu--hidden')}>
+            <div className={'SiteMenuItem-Submenu' + (isFocused ? '' : ' SiteMenuItem-Submenu--hidden')}>
               <div className="SiteMenu-Item-Submenu-Inner">
                 {children.map((child, idx) => (
                   <SiteMenuItem
