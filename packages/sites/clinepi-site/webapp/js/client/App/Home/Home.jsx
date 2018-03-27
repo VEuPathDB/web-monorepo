@@ -11,7 +11,6 @@ class HomePage extends React.Component {
   }
 
   render () {
-    console.info('home gettin props', this.props);
     const { webAppUrl, projectId, siteData } = this.props;
     const sections = homeContent(siteData);
     return (

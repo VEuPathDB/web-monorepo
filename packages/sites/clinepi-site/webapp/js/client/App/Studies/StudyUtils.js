@@ -15,7 +15,6 @@ export function isStudyObject (candidate) {
 }
 
 export function disableUnavailableStudies (projectId, studyList) {
-  console.info(`disabling studies not for ${projectId}`);
   if (!Array.isArray(studyList) || studyList.some(study => !isStudyObject(study)))
     throw new TypeError('disableUnavailableStudies requires :studyList be an array of studies.');
   return studyList.map(study => {
