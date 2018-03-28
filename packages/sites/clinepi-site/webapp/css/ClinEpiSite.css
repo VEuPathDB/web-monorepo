@@ -600,6 +600,6 @@ b, strong, th,
 }
 
 /* Hide Favorites action link on record pages */
-wdk-RecordActionItem .favorites {
+.wdk-RecordActionItem .favorites {
   display: none;
 }
