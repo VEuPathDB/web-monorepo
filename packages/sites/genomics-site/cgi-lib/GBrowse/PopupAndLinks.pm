@@ -478,7 +478,7 @@ sub geneTitleGB2 {
   $soTerm =~ s/\b(\w)/\U$1/g;
   $soTerm .= " (pseudogene)" if $isPseudo == '1';
 
-  my ($product) = $f->get_tag_values("product");
+  my ($product) = $f->get_tag_values("product") ? $f->get_tag_values("product") : $f->get_tag_values("description");
   my ($taxon) = $f->get_tag_values("taxon");
 
   my @utrs = $f->sub_SeqFeature("UTR");
@@ -498,6 +498,79 @@ sub geneTitleGB2 {
   my $baseRecordUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST} . $ENV{CONTEXT_PATH};
 
   return qq{javascript:escape(gene_title(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseUrl','$baseRecordUrl','$aaSeqId'))};
+}
+
+sub geneTitleGff {
+  my $f = shift;
+
+  my $projectId = $ENV{PROJECT_ID};
+  my $sourceId = $f->name;
+  my $chr = $f->seq_id;
+
+#  my $loc = $f->location->to_FTstring;
+#  $loc =~ s/(\d+\.\.)/<br \/>&nbsp;&nbsp;$1/g;
+
+  my @cdss = $f->sub_SeqFeature("CDS");
+  my $loc = '';
+  foreach (@cdss) {
+    next if $_->type !~ /cds/i;
+    $loc .= $_->location->to_FTstring. "<br />";
+  }
+
+  my ($gene_id) = $f->get_tag_values("geneId");
+  my ($soTerm) = $f->get_tag_values("soTerm");
+  my ($isPseudo) = $f->get_tag_values("isPseudo");
+  my ($aaSeqId) = $f->get_tag_values("aaSeqId");
+
+  ## CRAIG samples and scores
+  my ($samples) = $f->get_tag_values("Sample");
+  $samples =~ s/,/\<br \/\>/g;  
+  my ($scores) = $f->get_tag_values("Score");
+  $scores =~ s/,/\<br \/\>/g;  
+  my ($five_sample) = $f->get_tag_values("FiveUTR_Sample");
+  $five_sample =~ s/,/\<br \/\>/g;  
+  my ($five_utr) = $f->get_tag_values("FiveUTR");
+  $five_utr =~ s/,/\<br \/\>/g;  
+  my ($five_score) = $f->get_tag_values("FiveUTR_Score");
+  $five_score =~ s/,/\<br \/\>/g;  
+  my ($three_sample) = $f->get_tag_values("ThreeUTR_Sample");
+  $three_sample =~ s/,/\<br \/\>/g;  
+  my ($three_utr) = $f->get_tag_values("ThreeUTR");
+  $three_utr =~ s/,/\<br \/\>/g;  
+  my ($three_score) = $f->get_tag_values("ThreeUTR_Score");
+  $three_score =~ s/,/\<br \/\>/g;  
+
+  my ($totScore) = $f->get_tag_values("score");
+
+  # real OrthoMCL group identifiers begin "OG<number>_"
+  my ($orthomclName) = $f->get_tag_values("orthomcl_name");
+  $orthomclName = ""
+    unless $orthomclName =~ /^OG\d*_/;
+
+  $soTerm =~ s/\_/ /g;
+  $soTerm =~ s/\b(\w)/\U$1/g;
+  $soTerm .= " (pseudogene)" if $isPseudo == '1';
+
+  my ($product) = $f->get_tag_values("product") ? $f->get_tag_values("product") : $f->get_tag_values("description");
+  my ($taxon) = $f->get_tag_values("taxon");
+
+  my @utrs = $f->sub_SeqFeature("UTR");
+  my $utr = '';
+  foreach (@utrs) {
+    next if $_->type !~ /utr/i;
+    $utr .= $_->location->to_FTstring. "<br />";
+  }
+
+  my $window = 500; # width on either side of gene
+  my $linkStart = ($f->start) - $window;
+  my $linkStop= ($f->stop) + $window;
+  my ($seqId) = $f->get_tag_values("Contig");
+  my $gbLinkParams = "start=$linkStart;stop=$linkStop;ref=$seqId";
+
+  my $baseUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST};
+  my $baseRecordUrl = $ENV{REQUEST_SCHEME} . '://' . $ENV{HTTP_HOST} . $ENV{CONTEXT_PATH};
+
+  return qq{javascript:escape(gene_title_gff(this,'$projectId','$sourceId','$chr','$loc','$soTerm','$product','$taxon','$utr','$gbLinkParams', '$orthomclName','$gene_id','$baseUrl','$baseRecordUrl','$aaSeqId','$samples','$scores','$totScore','$five_sample','$five_utr','$five_score','$three_sample','$three_utr','$three_score'))};
 }
 
 
