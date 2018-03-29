@@ -621,9 +621,13 @@
 /* Galaxy Orientation page */
 /* ======================= */
 
-#eupathdb-GalaxyTerms {
+#eupathdb-GalaxyTerms p, #eupathdb-GalaxyTerms div {
   font-size: 1.2em;
 }
+#eupathdb-GalaxyTerms h1 {
+  font-weight: 200;
+}
+
 #eupathdb-GalaxyTerms-initial {
  text-align: center;
  margin: 2em 0;

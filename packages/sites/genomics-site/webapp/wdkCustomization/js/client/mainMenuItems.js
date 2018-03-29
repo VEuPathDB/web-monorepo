@@ -318,9 +318,9 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
     userDatasetsEnabled ? {
       id: 'workspace',
       text: 'My Workspace',
-      new: true,
+      beta: true,
       children: [
-        { id: 'userDatasets', text: 'My Datasets', new: true, webAppUrl: '/app/workspace/datasets'},
+        { id: 'userDatasets', text: 'My Datasets', beta: true, webAppUrl: '/app/workspace/datasets'},
         {
           id: 'analyze',
           text: 'Analyze My Experiment',
