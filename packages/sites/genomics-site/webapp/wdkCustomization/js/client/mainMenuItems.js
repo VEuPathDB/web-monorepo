@@ -240,7 +240,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'mahpic-data',
           text: 'MaHPIC Data',
           include: [PlasmoDB],
-          tooltop: 'Access MaHPIC Data',
+          tooltip: 'Access MaHPIC Data',
           webAppUrl: '/mahpic.jsp'
         }
       ]
@@ -310,7 +310,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'mahpic-data',
           text: 'MaHPIC Data',
           include: [PlasmoDB],
-          tooltop: 'Access MaHPIC Data',
+          tooltip: 'Access MaHPIC Data',
           webAppUrl: '/mahpic.jsp'
         }
       ]
@@ -320,7 +320,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
       text: 'My Workspace',
       beta: true,
       children: [
-        { id: 'userDatasets', text: 'My Datasets', beta: true, webAppUrl: '/app/workspace/datasets'},
+        { id: 'userDatasets', text: 'My Datasets', beta: true, route: '/workspace/datasets'},
         {
           id: 'analyze',
           text: 'Analyze My Experiment',
