@@ -26,7 +26,7 @@ export function getStaticSiteData (siteConfig) {
   const { projectId } = siteConfig ? siteConfig : {};
   const injectedStudies = disableUnavailableStudies(projectId, studies);
   return { studies: injectedStudies, searches, visualizations };
-};
+}
 
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
