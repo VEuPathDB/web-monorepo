@@ -145,6 +145,10 @@ export default class RelativeVisitsGroup extends React.Component {
     const { observationsGroupName, useRelativeObservationsParamName } =
       relatedObservationsLayoutSettings;
 
+    const eventsGroup = this.props.wizardState.question.groups.find(group => group.name === observationsGroupName);
+    const eventsIsDefault = eventsGroup.parameters.every(paramName =>
+      this.props.wizardState.question.parameters.find(p => p.name === paramName).defaultValue === this.props.wizardState.paramValues[paramName])
+
     const modifiedQuestion = Object.assign({}, question, {
       parameters: question.parameters.map(param =>
         Object.assign({}, param, { isVisible: false }))
@@ -157,7 +161,7 @@ export default class RelativeVisitsGroup extends React.Component {
     const useRelativeVisitsParam = question.parameters.find(p =>
       p.name === useRelativeObservationsParamName);
 
-    const useRelativeVisits = this.props.wizardState.paramValues[useRelativeObservationsParamName] === 'Yes';
+    const useRelativeVisits = this.props.wizardState.paramValues[useRelativeObservationsParamName] === 'Yes' && !eventsIsDefault;
 
     const useRelativeVisitsElement = (
       <input
@@ -168,10 +172,6 @@ export default class RelativeVisitsGroup extends React.Component {
         }}
       />
     );
-
-    const eventsGroup = this.props.wizardState.question.groups.find(group => group.name === observationsGroupName);
-    const eventsIsDefault = eventsGroup.parameters.every(paramName =>
-      this.props.wizardState.question.parameters.find(p => p.name === paramName).defaultValue === this.props.wizardState.paramValues[paramName])
 
     const warningMessage = eventsIsDefault && (
       <div className="RelativeVisitsMessage RelativeVisitsMessage__warning">
