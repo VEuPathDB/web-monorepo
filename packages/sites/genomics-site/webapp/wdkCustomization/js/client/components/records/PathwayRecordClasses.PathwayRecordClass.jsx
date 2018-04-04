@@ -655,7 +655,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
             
 
-            if (pathwaySource !== 'KEGG') {
+            if (pathwaySource.indexOf('Cyc') > -1) {
                 cy.nodes('node[node_type="enzyme"]').map(function(node) {
                     //if node is a child, get the parent
                     node = (node.isChild()) ? node.parent()[0] : node;
