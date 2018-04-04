@@ -15,7 +15,7 @@ const EuPathDB = 'EuPathDB';
  * @return {boolean}
  */
 function shouldShowGalaxyOrientation(preferences) {
-  return get(preferences, SHOW_GALAXY_PAGE_PREFERENCE, 'true') === 'true';
+  return get(preferences, ['global', SHOW_GALAXY_PAGE_PREFERENCE], 'true') === 'true';
 }
 
 
