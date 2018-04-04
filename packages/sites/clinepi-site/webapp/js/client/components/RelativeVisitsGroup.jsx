@@ -1,31 +1,11 @@
 /* eslint react/prop-types: 0 */
 /* eslint require-jsdoc: 0 */
 
+import { keyBy, memoize } from 'lodash';
 import React from 'react';
 import Param from 'ebrc-client/components/Param';
 
-// Property keys
-export const observationsGroupNameKey = "observationsGroupName";
-export const relatedObservationsGroupNameKey = "relatedObservationsGroupName";
-export const useRelativeObservationsParamNameKey = "useRelativeObservationsParamName";
-export const dateOperatorParamNameKey = "dateOperatorParamName";
-export const daysBetweenParamNameKey = "daysBetweenParamName";
-export const dateDirectionParamNameKey = "dateDirectionParamName";
-export const numRelativeEventsParamNameKey = "numRelativeEventsParamName";
-export const relativeVisitsParamNameKey = "relativeVisitsParamName";
-
-const layoutProperyKey = 'relatedObservationsLayoutSettings';
-
-const requiredLayoutSettingKeys = [
-  observationsGroupNameKey,
-  relatedObservationsGroupNameKey,
-  useRelativeObservationsParamNameKey,
-  dateOperatorParamNameKey,
-  daysBetweenParamNameKey,
-  dateDirectionParamNameKey,
-  relativeVisitsParamNameKey
-];
-
+// FIXME Factor properties parsing into reusable functions
 
 const overlay = (
   <div className="RelativeVisitsLayoutOverlay"/>
@@ -56,6 +36,80 @@ function paramRenderer(param, props) {
   );
 }
 
+// Parse relative visits settings. Return null if not applicable
+const parseSettings = memoize(question => {
+    // Property keys
+  const observationsGroupNameKey = "observationsGroupName";
+  const relatedObservationsGroupNameKey = "relatedObservationsGroupName";
+  const useRelativeObservationsParamNameKey = "useRelativeObservationsParamName";
+  const dateOperatorParamNameKey = "dateOperatorParamName";
+  const daysBetweenParamNameKey = "daysBetweenParamName";
+  const dateDirectionParamNameKey = "dateDirectionParamName";
+  const numRelativeEventsParamNameKey = "numRelativeEventsParamName";
+  const relativeVisitsParamNameKey = "relativeVisitsParamName";
+
+  const layoutProperyKey = 'relatedObservationsLayoutSettings';
+
+  const requiredLayoutSettingKeys = [
+    observationsGroupNameKey,
+    relatedObservationsGroupNameKey,
+    useRelativeObservationsParamNameKey,
+    dateOperatorParamNameKey,
+    daysBetweenParamNameKey,
+    dateDirectionParamNameKey,
+    relativeVisitsParamNameKey
+  ];
+
+  if (!(layoutProperyKey in question.properties)) {
+    return null;
+  }
+
+  try {
+    const properties = JSON.parse(question.properties[layoutProperyKey]);
+    const missingKeys = requiredLayoutSettingKeys.filter(key => !(key in properties));
+
+    if (missingKeys.length > 0) {
+      throw new Error("The following keys are missing from the " +
+        layoutProperyKey + " object: " + missingKeys.join(', '));
+    }
+
+    const groupsByName = keyBy(question.groups, 'name');
+    const paramsByName = keyBy(question.parameters, 'name');
+    const makeGroupGetter = key => () => groupsByName[properties[key]];
+    const makeParamGetter = key => () => paramsByName[properties[key]];
+
+    // return an object with functions to access groups and params
+    const settings = {
+      getObservationGroup: makeGroupGetter(observationsGroupNameKey),
+      getRelatedObservationsGroup: makeGroupGetter(relatedObservationsGroupNameKey),
+      getUseRelativeObservationsParam: makeParamGetter(useRelativeObservationsParamNameKey),
+      getDateOperationParam: makeParamGetter(dateOperatorParamNameKey),
+      getDaysBetweenParam: makeParamGetter(daysBetweenParamNameKey),
+      getDateDirectionParam: makeParamGetter(dateDirectionParamNameKey),
+      getNumRelativeVisitsParam: makeParamGetter(numRelativeEventsParamNameKey),
+      getRelativeVisitsParam: makeParamGetter(relativeVisitsParamNameKey),
+      isRelatedObservationsGroups: group => group === settings.getRelatedObservationsGroup(),
+      isActive: wizardState => {
+        const useRelativeObservationsParam = settings.getUseRelativeObservationsParam();
+        const observationsGroup = settings.getObservationGroup();
+        const observationsIsDefault = observationsGroup.parameters.every(paramName =>
+          wizardState.question.parameters.find(p => p.name === paramName).defaultValue === wizardState.paramValues[paramName])
+        return (
+          wizardState.paramValues[useRelativeObservationsParam.name] === 'Yes' &&
+          !observationsIsDefault
+        );
+
+      }
+    };
+    return settings;
+  }
+
+  catch(error) {
+    console.error('Could not use relative observations layout. Using standard layout', error);
+    return null;
+  }
+})
+
 
 /**
  * If the group is relative events, we want to alter the layout.
@@ -68,84 +122,66 @@ function paramRenderer(param, props) {
 export default class RelativeVisitsGroup extends React.Component {
 
   static shouldUseLayout(props) {
-    if (!(layoutProperyKey in props.wizardState.question.properties)) {
-      return false;
-    }
+    const settings = parseSettings(props.wizardState.question);
+    return (
+      settings != null &&
+      settings.getRelatedObservationsGroup() === props.wizardState.activeGroup
+    );
+  }
 
-    try {
-      const relatedObservationsLayoutSettings =
-        JSON.parse(props.wizardState.question.properties[layoutProperyKey]);
-
-      if (relatedObservationsLayoutSettings[relatedObservationsGroupNameKey] !== props.wizardState.activeGroup.name) {
-        return false;
-      }
-
-      const missingKeys = requiredLayoutSettingKeys.filter(key =>
-        !(key in relatedObservationsLayoutSettings));
-
-      if (missingKeys.length > 0) {
-        throw new Error("The following keys are missing from the " +
-          layoutProperyKey + " object: " + missingKeys.join(', '));
-      }
-
-      return true;
-
-    }
-
-    catch(error) {
-      console.error('Could not use relative observations layout. Using standard layout', error);
-      return false;
-    }
+  /**
+   * Show filter summary if one of the following is true:
+   * - settings is null (a problem with parsing properties)
+   * - props.group is not related observations
+   * - related observations is active
+   */
+  static showFilterSummary(props) {
+    const settings = parseSettings(props.wizardState.question);
+    return (
+      settings == null ||
+      !settings.isRelatedObservationsGroups(props.group) ||
+      settings.isActive(props.wizardState)
+    )
   }
 
   /**
    * Layout for related observations.
    */
-  renderLayout(eventsGroup, relatedObservationsLayoutSettings) {
+  renderLayout(eventsGroup, settings) {
     const group = this.props.wizardState.activeGroup;
-    const parameters = this.props.wizardState.question.parameters;
     // const useRangeForNumRelativeEvents = this.props.useRangeForNumRelativeEvents;
     // const setUseRangeForNumRelativeEvents = this.props.eventHandlers.setUseRangeForNumRelativeEvents;
-
-    const paramElements = new Map(parameters.map(param =>
-      [ param.name, paramRenderer(param, this.props)]))
 
     return (
       <div>
         <div className="RelativeVisitsLayout">
           <div>
-            {paramElements.get(relatedObservationsLayoutSettings[dateOperatorParamNameKey])}
+            {paramRenderer(settings.getDateOperationParam(), this.props)}
             <Padded><FakeStep>{eventsGroup.displayName}</FakeStep> that are</Padded>
-            {paramElements.get(relatedObservationsLayoutSettings[daysBetweenParamNameKey])}
+            {paramRenderer(settings.getDaysBetweenParam(), this.props)}
             <Padded>days</Padded>
-            {paramElements.get(relatedObservationsLayoutSettings[dateDirectionParamNameKey])}
+            {paramRenderer(settings.getDateDirectionParam(), this.props)}
             <Padded>the <FakeStep>{group.displayName}</FakeStep> specified below</Padded>
           </div>
         </div>
-        {paramElements.has(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey]) && (
+        {settings.getNumRelativeVisitsParam() && (
           <div className="RelativeVisitsLayout">
             <div>
               <Padded first>Require</Padded>
-              {paramElements.get(relatedObservationsLayoutSettings[numRelativeEventsParamNameKey])}
+              {paramRenderer(settings.getNumRelativeVisitsParam(), this.props)}
               <Padded><FakeStep>{group.displayName}</FakeStep> for each <FakeStep>Observation</FakeStep></Padded>
             </div>
           </div>
         )}
-        <div>{paramElements.get(relatedObservationsLayoutSettings[relativeVisitsParamNameKey])}</div>
+        <div>{paramRenderer(settings.getRelativeVisitsParam(), this.props)}</div>
       </div>
     );
   }
 
   render() {
     const { question } = this.props.wizardState;
-
-    const relatedObservationsLayoutSettings =
-      JSON.parse(question.properties[layoutProperyKey]);
-
-    const { observationsGroupName, useRelativeObservationsParamName } =
-      relatedObservationsLayoutSettings;
-
-    const eventsGroup = this.props.wizardState.question.groups.find(group => group.name === observationsGroupName);
+    const settings = parseSettings(question);
+    const eventsGroup = this.props.wizardState.question.groups.find(group => group === settings.getObservationGroup());
     const eventsIsDefault = eventsGroup.parameters.every(paramName =>
       this.props.wizardState.question.parameters.find(p => p.name === paramName).defaultValue === this.props.wizardState.paramValues[paramName])
 
@@ -159,9 +195,9 @@ export default class RelativeVisitsGroup extends React.Component {
     });
 
     const useRelativeVisitsParam = question.parameters.find(p =>
-      p.name === useRelativeObservationsParamName);
+      p === settings.getUseRelativeObservationsParam());
 
-    const useRelativeVisits = this.props.wizardState.paramValues[useRelativeObservationsParamName] === 'Yes' && !eventsIsDefault;
+    const useRelativeVisits = settings.isActive(this.props.wizardState);
 
     const useRelativeVisitsElement = (
       <input
@@ -199,7 +235,7 @@ export default class RelativeVisitsGroup extends React.Component {
           {warningMessage}
           <div className="RelativeVisitsContainer">
             <this.props.DefaultComponent {...this.props} wizardState={modifiedWizardState} />
-            {this.renderLayout(eventsGroup, relatedObservationsLayoutSettings)}
+            {this.renderLayout(eventsGroup, settings)}
             {!useRelativeVisits && overlay}
           </div>
         </div>
@@ -211,7 +247,7 @@ export default class RelativeVisitsGroup extends React.Component {
         <this.props.DefaultComponent {...this.props} wizardState={modifiedWizardState} />
         {message}
         <div className="RelativeVisitsContainer">
-          {this.renderLayout(eventsGroup, relatedObservationsLayoutSettings)}
+          {this.renderLayout(eventsGroup, settings)}
           {!useRelativeVisits && overlay}
         </div>
       </div>

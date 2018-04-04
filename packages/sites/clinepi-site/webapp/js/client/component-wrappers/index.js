@@ -104,6 +104,8 @@ export default {
         : <ActiveGroup {...props}/>
   },
 
+  FilterSummaryGroup: guard(RelativeVisitsGroup.showFilterSummary),
+
   QuestionWizardController: QuestionWizardController => class ClinEpiQuestionWizard extends QuestionWizardController {
     constructor(props) {
       super(props);
@@ -145,5 +147,15 @@ function findStudyFromRecordClass(studies, recordClass) {
   catch (error) {
     console.error("Could not find study from record class.", { recordClass });
     throw error;
+  }
+}
+
+function guard(propsPredicate) {
+  return function makeGuardedComponent(Component) {
+    return function GuardedComponent(props) {
+      return propsPredicate(props)
+        ? <Component {...props} />
+        : null;
+    }
   }
 }
