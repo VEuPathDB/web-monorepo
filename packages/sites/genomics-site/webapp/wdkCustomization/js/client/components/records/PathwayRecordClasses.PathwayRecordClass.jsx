@@ -204,13 +204,26 @@ function inferCellularLocation (node) {
 
     if(inCellularLocations.length == 1 && outCellularLocations.length == 1 && inCellularLocations[0] == outCellularLocations[0]) {
         node.data("cellular_location", inCellularLocations[0]);
+        node.data("inferred_cellular_location", true);
     }
 
+    /* 
+       if(inCellularLocations.length > 1 || outCellularLocations.length > 1 || 
+       (inCellularLocations.length == 0 && outCellularLocations.length == 1) ||
+       (outCellularLocations.length == 0 && inCellularLocations.length == 1) ||
+       (inCellularLocations.length == 1 && outCellularLocations.length == 1 && inCellularLocations[0] != outCellularLocations[0])) {
+       node.data("cellular_location", "Undetermined Location");
+       }
+     */
 
     var nodeOfNodeCellularLocations = node.children('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
     if(nodeOfNodeCellularLocations.length == 1) {
         node.data("cellular_location", nodeOfNodeCellularLocations[0]);
+        node.data("inferred_cellular_location", true);
     }
+
+    var allPossibleCellularLocations = inCellularLocations.concat(outCellularLocations).filter(onlyUnique);
+    node.data("possible_cellular_locations", allPossibleCellularLocations);
 }
 
 
@@ -220,14 +233,46 @@ function processCellularLocationNode (initialNode, cy) {
     var node =  cy.$(nodeSelector);
 
     if(node.parent().data("node_type")== "cellular_location") {
+        console.log("return");
+
         return;
     }
 
     var cellularLocation = node.data("cellular_location");
 
+
+    var colorMap = {
+        'undetermined':'red',
+        'apicoplast':'#D55E00',
+        'chloroplast stroma':'#009E73',
+        'chloroplast thylakoid lumen':'#009E73',
+        'chloroplast thylakoid membrane':'#009E73',
+        'cytoplasm':'#56B4E9',
+        'cytosol':'#56B4E9',
+        'extracellular region':'#999999',
+        'extracellular space':'#999999',
+        'from host':'#F0E442',
+        'from host cell':'#F0E442',
+        'to host cell':'#F0E442',
+        'go:0048237':'#E69F00',
+        'golgi lumen':'#E69F00',
+        'mitochondrial inner membrane':'#0072B2',
+        'mitochondrial matrix':'#0072B2',
+        'mitochondrion':'#0072B2',
+        'outer membrane-bounded periplasmic space':'',
+        'plasma membrane':'#CC79A7',
+    };
+
+    var color = colorMap[cellularLocation.toLowerCase()];
+    if(!color) {
+        color = "green";
+    }
+
+    console.log("ADDING NODE");
+
     var cellularLocationNode = cy.add({
         group: "nodes",
-        data: { cellular_location: cellularLocation, node_type: 'cellular_location', display_label: cellularLocation
+        data: { cellular_location: cellularLocation, node_type: 'cellular_location', display_label: cellularLocation, color:color
         },
     });
 
@@ -236,33 +281,44 @@ function processCellularLocationNode (initialNode, cy) {
 
 function addCellularLocation (node, cellularLocationNode) {
 
+
+    console.log(node);
+
     if(node.parent().data("node_type")== "cellular_location") {
+        console.log("return");
         return;
     }
 
-    var cellularLocation = node.data("cellular_location");
-    var selectorString = 'node[cellular_location = "' + cellularLocation + '"]';
+
+    var cellularLocation = cellularLocationNode.data("cellular_location");
+//    var selectorString = 'node[cellular_location = "' + cellularLocation + '"]';
+    var selectorString = 'node[?possible_cellular_locations]';
 
     var incomerNodes = node.incomers(selectorString);
     var outgoerNodes = node.outgoers(selectorString);
     var childrenNodes = node.children(selectorString);
 
-    node.move({parent:cellularLocationNode.id()});
+    if(node.data("possible_cellular_locations").length == 1) {
+        node.move({parent:cellularLocationNode.id()});
+    }
 
     for (var i=0; i<incomerNodes.size(); i++) {
-        if(incomerNodes[i].data("cellular_location") == cellularLocation) {
+        if(incomerNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
+        console.log("addIncommer");
             addCellularLocation(incomerNodes[i], cellularLocationNode);
         }
     }
 
     for (var i=0; i<outgoerNodes.size(); i++) {
-        if(outgoerNodes[i].data("cellular_location") == cellularLocation) {
+        if(outgoerNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
+        console.log("addOutgoer");
             addCellularLocation(outgoerNodes[i], cellularLocationNode);
         }
     }
 
     for (var i=0; i<childrenNodes.size(); i++) {
-        if(childrenNodes[i].data("cellular_location") == cellularLocation) {
+        if(childrenNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
+        console.log("addChild");
             addCellularLocation(childrenNodes[i], cellularLocationNode);
         }
     }
@@ -418,7 +474,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
              {
                selector: 'node[node_type= "molecular entity"][?side]',
                  style: {
-                     shape: 'diamond',
+                     shape: 'ellipse',
                      width:4,
                      height:4,
                      'background-image-opacity':0,
@@ -433,6 +489,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                height:'label',
                'border-width':0,
                label:'data(name)',
+               padding:'2px',
                'font-size':6,
                }
                },
@@ -491,7 +548,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
                selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 2][!side]',
                style: {
-                   'font-size':3,
+                   'font-size':4,
                    'text-margin-y':-3,
                    }
             },
@@ -541,15 +598,20 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
 
-
             {
                 selector: 'node[node_type= "cellular_location"]',
                 style: {
-                    'background-color': 'green',
+                    shape: 'roundrectangle',
+                    'border-color': 'data(color)',
+                    'background-color': 'data(color)',
+                    'color': 'data(color)',
+                    'text-background-color': 'data(color)',
+                    'text-background-opacity': 0.1,
+                    'background-opacity' : 0.1,
                     label: 'data(display_label)',
-//                    padding:'50px',
+                    padding:'5%',
                     'text-valign': 'top',
-                    'text-halign': 'center'
+                    'text-halign': 'center',
                 },
             },
 
@@ -756,6 +818,16 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
         });
         cy.add([{group: "nodes", data: {id: pathwayId + '_' + pathwaySource, name: name, node_type: 'pathway_internal'}}]);
 
+
+        var nodes = cy.nodes();
+        for (let i=0; i < nodes.length; i++) {
+            if(nodes[i].data("cellular_location")) {
+                nodes[i].data("possible_cellular_locations", [nodes[i].data("cellular_location")]);
+            }
+            else {
+                nodes[i].data("possible_cellular_locations", []);
+            }
+        }
 
         var nodesWithoutCellularLocation = cy.nodes('node[!cellular_location]');
         for (let i=0; i < nodesWithoutCellularLocation.length; i++) {
