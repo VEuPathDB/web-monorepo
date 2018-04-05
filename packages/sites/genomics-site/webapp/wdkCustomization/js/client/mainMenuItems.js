@@ -33,6 +33,14 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
     defaultItems.search,
     defaultItems.strategies,
     defaultItems.basket,
+
+    userDatasetsEnabled ? {
+      id: 'userDatasets',
+      text: 'My Datasets',
+      beta: true,
+      route: '/workspace/datasets'
+    } : null,
+
     {
       id: 'tools',
       text: 'Tools',
@@ -315,22 +323,16 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         }
       ]
     },
-    userDatasetsEnabled ? {
-      id: 'workspace',
-      text: 'My Workspace',
-      beta: true,
-      children: [
-        { id: 'userDatasets', text: 'My Datasets', beta: true, route: '/workspace/datasets'},
-        {
-          id: 'analyze',
-          text: 'Analyze My Experiment',
-          route: shouldShowGalaxyOrientation(preferences) ? '/galaxy-orientation' : undefined,
-          url: !shouldShowGalaxyOrientation(preferences) ? 'https://eupathdb.globusgenomics.org/' : undefined,
-          target: !shouldShowGalaxyOrientation(preferences) ? '_blank' : undefined
-        }
-      ]
-    } : null,
-/*    defaultItems.workspace,  was in Ebrc */
+
+    {
+      id: 'analyze',
+      text: 'Analyze My Experiment',
+      new: true,
+      route: shouldShowGalaxyOrientation(preferences) ? '/galaxy-orientation' : undefined,
+      url: !shouldShowGalaxyOrientation(preferences) ? 'https://eupathdb.globusgenomics.org/' : undefined,
+      target: !shouldShowGalaxyOrientation(preferences) ? '_blank' : undefined
+    },
+
     defaultItems.favorites
   ];
 }
