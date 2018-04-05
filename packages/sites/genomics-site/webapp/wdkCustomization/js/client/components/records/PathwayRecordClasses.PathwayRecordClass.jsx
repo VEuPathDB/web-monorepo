@@ -227,14 +227,39 @@ function inferCellularLocation (node) {
 }
 
 
+function initialAnimation(nodes) {
+    const duration = 2000;
+
+    for (let i=0; i < nodes.length; i++) {
+        animateNode(nodes[i], 200, 200, duration);
+    }
+    for (let i=0; i < nodes.length; i++) {
+        animateNode(nodes[i], 200, -200, duration);
+    }
+    for (let i=0; i < nodes.length; i++) {
+        animateNode(nodes[i], -200, -200, duration);
+    }
+    for (let i=0; i < nodes.length; i++) {
+        animateNode(nodes[i], -200, 200, duration);
+    }
+    for (let i=0; i < nodes.length; i++) {
+        animateNode(nodes[i], 0, 0, duration);
+    }
+
+}
+
+function animateNode(node, shiftX, shiftY, duration) {
+    node.animate({position:{'x':Number(node.data("x"))+ shiftX, 'y':Number(node.data("y"))+ shiftY}}, 
+                             {duration: duration});
+}
+
+
 function processCellularLocationNode (initialNode, cy) {
 
     var nodeSelector = "#" + initialNode.id();
     var node =  cy.$(nodeSelector);
 
     if(node.parent().data("node_type")== "cellular_location") {
-        console.log("return");
-
         return;
     }
 
@@ -268,8 +293,6 @@ function processCellularLocationNode (initialNode, cy) {
         color = "green";
     }
 
-    console.log("ADDING NODE");
-
     var cellularLocationNode = cy.add({
         group: "nodes",
         data: { cellular_location: cellularLocation, node_type: 'cellular_location', display_label: cellularLocation, color:color
@@ -281,11 +304,7 @@ function processCellularLocationNode (initialNode, cy) {
 
 function addCellularLocation (node, cellularLocationNode) {
 
-
-    console.log(node);
-
     if(node.parent().data("node_type")== "cellular_location") {
-        console.log("return");
         return;
     }
 
@@ -304,21 +323,18 @@ function addCellularLocation (node, cellularLocationNode) {
 
     for (var i=0; i<incomerNodes.size(); i++) {
         if(incomerNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
-        console.log("addIncommer");
             addCellularLocation(incomerNodes[i], cellularLocationNode);
         }
     }
 
     for (var i=0; i<outgoerNodes.size(); i++) {
         if(outgoerNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
-        console.log("addOutgoer");
             addCellularLocation(outgoerNodes[i], cellularLocationNode);
         }
     }
 
     for (var i=0; i<childrenNodes.size(); i++) {
         if(childrenNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
-        console.log("addChild");
             addCellularLocation(childrenNodes[i], cellularLocationNode);
         }
     }
@@ -829,6 +845,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             }
         }
 
+
         var nodesWithoutCellularLocation = cy.nodes('node[!cellular_location]');
         for (let i=0; i < nodesWithoutCellularLocation.length; i++) {
             inferCellularLocation(nodesWithoutCellularLocation[i]);
@@ -839,6 +856,23 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             processCellularLocationNode(nodesWithCellularLocation[i], cy);
         }
         
+        var nodesWithInferredCellularLocation = cy.nodes('node[?inferred_cellular_location]');
+        for (let i=0; i < nodesWithInferredCellularLocation.length; i++) {
+            nodesWithInferredCellularLocation[i].data("cellular_location", null);
+            nodesWithInferredCellularLocation[i].move({parent:null});
+        }
+
+
+        var parentNodes = cy.nodes('node[node_type="nodeOfNodes"],node[node_type="cellular_location"]');
+        for (let i=0; i < parentNodes.length; i++) {
+            parentNodes[i].data("descendants", parentNodes[i].descendants().map(function(child) {
+                    return "</br>" + child.data("name") + " (" + child.data("display_label") + ")";
+                }));
+        }
+
+//        var nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
+//        initialAnimation(nodesWithCellularLocation);
+
         return cy;
 
     });
@@ -1266,12 +1300,15 @@ class NodeDetails extends React.Component {
   }
 
   render() {
+
     const type = this.props.nodeData.node_type;
-    const details = type === 'enzyme' ? <EnzymeNodeDetails {...this.props}/>
-                : type === 'molecular entity' ? <MolecularEntityNodeDetails {...this.props}/>
-                  : type === 'metabolic process' ? <MetabolicProcessNodeDetails {...this.props}/>
-                  : type === 'nodeOfNodes' ? <NodeOfNodesNodeDetails {...this.props}/>
-                : null;
+
+         const details = type === 'enzyme' ? <EnzymeNodeDetails {...this.props}/>
+         : type === 'molecular entity' ? <MolecularEntityNodeDetails {...this.props}/>
+         : type === 'metabolic process' ? <MetabolicProcessNodeDetails {...this.props}/>
+         : type === 'nodeOfNodes' ? <NodeOfNodesNodeDetails {...this.props}/>
+         : type === 'cellular_location' ? <CellularLocationNodeDetails {...this.props}/>
+         : null;
 
     return (
       <div ref="container" className="eupathdb-PathwayNodeDetailsContainer">
@@ -1297,7 +1334,7 @@ NodeDetails.propTypes = {
 };
 
 function EnzymeNodeDetails(props) {
-  let { display_label, name, gene_count, image } = props.nodeData;
+  let { display_label, name, gene_count, image, cellular_location } = props.nodeData;
 
   return (
     <div>
@@ -1306,6 +1343,10 @@ function EnzymeNodeDetails(props) {
 
       {name && (
            <p><b>Enzyme Name:</b> {name}</p>
+      )}
+
+      {cellular_location && (
+           <p><b>Cellular Location:</b> {safeHtml(cellular_location)}</p>
       )}
 
 
@@ -1330,7 +1371,7 @@ function EnzymeNodeDetails(props) {
 }
 
 function MolecularEntityNodeDetails(props) {
-  let { nodeData: { node_identifier, name, image } } = props;
+  let { nodeData: { node_identifier, name, image, cellular_location } } = props;
 
   return (
     <div>
@@ -1338,6 +1379,10 @@ function MolecularEntityNodeDetails(props) {
 
       {name && (
            <p><b>Name:</b> {safeHtml(name)}</p>
+      )}
+
+      {cellular_location && (
+           <p><b>Cellular Location:</b> {safeHtml(cellular_location)}</p>
       )}
 
       {node_identifier && (
@@ -1374,7 +1419,16 @@ function MetabolicProcessNodeDetails(props) {
 function NodeOfNodesNodeDetails(props) {
   return (
     <div>
-      <div><b>Node Group: </b><p>{safeHtml(props.nodeData.childrenNodes)}</p>
+      <div><b>Node Group: </b><p>{safeHtml(props.nodeData.descendants)}</p>
+      </div>
+    </div>
+  );
+}
+
+function CellularLocationNodeDetails(props) {
+  return (
+    <div>
+      <div><b>{safeHtml(props.nodeData.cellular_location)}: </b><p>{safeHtml(props.nodeData.descendants)}</p>
       </div>
     </div>
   );
