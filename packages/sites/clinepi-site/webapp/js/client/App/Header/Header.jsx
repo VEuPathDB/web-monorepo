@@ -21,8 +21,6 @@ class Header extends React.Component {
     const { pathname } = window.location;
     const showHomeContent = (rootUrl === pathname || (rootUrl + '/') === pathname);
 
-    console.info({ pathname, rootUrl, showHomeContent, siteConfig });
-
     return (
       <header className={'Header' + (showHomeContent ? ' Header--Home' : '')}>
         <Hero image={content.heroImage} position={content.heroPosition}>
