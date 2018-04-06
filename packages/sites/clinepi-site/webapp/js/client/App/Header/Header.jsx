@@ -11,18 +11,15 @@ class Header extends React.Component {
 
   render () {
     const { siteConfig, siteData, user, actions } = this.props;
-    const { webAppUrl } = siteConfig;
+    const { webAppUrl, rootUrl } = siteConfig;
     const content = {
-      heroImage: webAppUrl + '/images/global.jpg',
+      heroImage: `${webAppUrl}/images/global.jpg`,
       heroPosition: 'left 33%',
       heading: `Welcome To <span style="font-weight: 400; font-family: 'Exo 2'">ClinEpi<span style="color:#DD314E">DB</span></span>`,
       tagline: 'Advancing global public health by facilitating the exploration and analysis of epidemiological studies'
     };
-
-    const { pathname, protocol, host } = window.location;
-    const homepath = webAppUrl + '/app';
-    const actualPath = protocol + '//' + host.replace('www.', '') + pathname;
-    const showHomeContent = (actualPath === homepath);
+    const { pathname } = window.location;
+    const showHomeContent = (rootUrl === pathname || rootUrl + '/' === pathname);
 
     return (
       <header className={'Header' + (showHomeContent ? ' Header--Home' : '')}>
