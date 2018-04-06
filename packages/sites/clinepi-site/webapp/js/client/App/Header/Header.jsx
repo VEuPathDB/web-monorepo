@@ -19,7 +19,7 @@ class Header extends React.Component {
       tagline: 'Advancing global public health by facilitating the exploration and analysis of epidemiological studies'
     };
     const { pathname } = window.location;
-    const showHomeContent = (rootUrl === pathname || rootUrl + '/' === pathname);
+    const showHomeContent = (rootUrl === pathname || (rootUrl + '/') === pathname);
 
     return (
       <header className={'Header' + (showHomeContent ? ' Header--Home' : '')}>
