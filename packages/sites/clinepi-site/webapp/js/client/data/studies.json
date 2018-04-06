@@ -21,6 +21,26 @@
     }
   },
   {
+    "name": "India",
+    "id": "DS_f6c59e88c1",
+    "categories": ["malarial"],
+    "projectAvailability": ["ICEMR"],
+    "access": "protected",
+    "appUrl": "/app/record/dataset/DS_f6c59e88c1",
+    "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
+    "headline": "Northern India ICEMR",
+    "points": [
+      "Northern India ICEMR study for .....",
+      "Cross sectional survey and Longitudinal cohort study designs",
+      "4,000 Participants from 2000 Households with over 5,000 observations"
+    ],
+    "searchUrls": {
+      "participants": "/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_india",
+      "households": "/showQuestion.do?questionFullName=HouseholdQuestions.HouseholdsByCharacteristics_india",
+      "observations": "/showQuestion.do?questionFullName=ClinicalVisitQuestions.ObservationsByRelativeVisits_india"
+    }
+  },
+  {
     "name": "GEMS",
     "id": "gems",
     "projectAvailability": [],
