@@ -20,7 +20,11 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
         children: [
           {
             text: 'My Search Strategies',
-            appUrl: '/showApplication.do?tab=search_history'
+            appUrl: '/showApplication.do'
+          },
+          {
+            text: 'My Basket',
+            appUrl: '/showApplication.do?tab=basket'
           },
           {
             text: 'Public Search Strategies',
