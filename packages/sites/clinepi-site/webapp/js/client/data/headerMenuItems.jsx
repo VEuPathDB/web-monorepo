@@ -50,8 +50,8 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
             target: '_blank'
           },
           {
-            text: 'PDF Tutorial',
-            url: '/documents/ClinEpiDBTutorial1.pdf'
+            text: 'PDF Tutorials',
+            url: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
           },
           {
             text: 'Data Access & Use Policy',
