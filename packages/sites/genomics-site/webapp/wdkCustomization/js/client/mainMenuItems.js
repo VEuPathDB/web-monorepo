@@ -36,7 +36,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
 
     userDatasetsEnabled ? {
       id: 'userDatasets',
-      text: 'My Datasets',
+      text: 'My Data Sets',
       beta: true,
       route: '/workspace/datasets'
     } : null,
