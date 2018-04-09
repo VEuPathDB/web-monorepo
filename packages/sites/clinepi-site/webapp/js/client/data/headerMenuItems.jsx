@@ -51,7 +51,7 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
           },
           {
             text: 'PDF Tutorials',
-            url: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
+            appUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
           },
           {
             text: 'Data Access & Use Policy',
