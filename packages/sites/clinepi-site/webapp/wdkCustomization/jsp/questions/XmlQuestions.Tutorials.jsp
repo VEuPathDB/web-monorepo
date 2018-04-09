@@ -72,12 +72,12 @@
           <c:set var="duration" value="${row[5].value}"/>
           <c:set var="size" value="${row[6].value}"/>
 
-          <li id='t-${attrs['uid']}'><h3>${attrs['title']}</h3><br />
-            ${attrs['description']}<br />
+          <li id='t-${attrs['uid']}'><h3>${attrs['title']} <i style="font-size:70%">(March 18, 2018)</i></h3>
+            ${attrs['description']}<br/><br/>
             <c:if test="${urlPdf != 'unavailable'}">
               <a href="${urlPdf}">
                 <imp:image title="Download a PDF" style="vertical-align:middle" alt="PDF icon" src="images/smallPDF.png" border='0'/></a>
-              <i>(March 2, 2018)</i>
+
             </c:if>
           </li>
         </c:if>
