@@ -23,7 +23,7 @@
 
 <style>
 #clinepi-tutorials ul {
-  margin: 4em;
+  margin: 3em;
 }
 #clinepi-tutorials  h2 {
     text-align: left;
