@@ -72,7 +72,7 @@
           <c:set var="duration" value="${row[5].value}"/>
           <c:set var="size" value="${row[6].value}"/>
 
-          <li id='t-${attrs['uid']}'><h3>${attrs['title']} <i style="font-size:70%">(March 18, 2018)</i></h3>
+          <li id='t-${attrs['uid']}'><h3>${attrs['title']} <i style="font-size:70%">${attrs['size']}</i></h3>
             ${attrs['description']}<br/><br/>
             <c:if test="${urlPdf != 'unavailable'}">
               <a href="${urlPdf}">
