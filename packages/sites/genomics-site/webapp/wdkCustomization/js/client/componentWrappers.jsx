@@ -101,6 +101,19 @@ export function RecordController(WdkRecordController) {
           ({ wdkService }) => loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, wdkService)
       });
     }
+    getRecordRequestOptions(recordClass, categoryTree) {
+      // append MetaTable to initial request options
+      const requestOptions = super.getRecordRequestOptions(recordClass, categoryTree);
+      if (recordClass.urlSegment !== 'gene') return requestOptions;
+      // TODO We should be explicit here and not rely on what super returns
+      return [
+        {
+          attributes: requestOptions[0].attributes,
+          tables: requestOptions[0].tables.concat('MetaTable')
+        },
+        ...requestOptions.slice(1)
+      ]
+    }
     loadData(prevProps) {
        super.loadData(prevProps);
        // special loading for Pathways- if gene step ID (i.e. the step passed to
@@ -171,7 +184,7 @@ export function RecordTableSection(DefaultComponent) {
       ontologyProperties.scope.includes('download')
     );
 
-    var hasTaxonId = 0; 
+    var hasTaxonId = 0;
     if (record.recordClassName == 'GeneRecordClasses.GeneRecordClass' ||
         record.recordClassName == 'SequenceRecordClasses.SequenceRecordClass' ||
         record.recordClassName == 'OrganismRecordClasses.OrganismRecordClass')

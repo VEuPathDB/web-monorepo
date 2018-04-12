@@ -5,7 +5,7 @@ import { flow, uniqueId } from 'lodash';
 import $ from 'jquery';
 import { safeHtml } from 'wdk-client/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
-import { CategoriesCheckboxTree, Link, Dialog } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, Link, Loading, Dialog } from 'wdk-client/Components';
 import { withStore, withActions } from 'ebrc-client/util/component';
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
@@ -43,14 +43,14 @@ function loadCytoscapeJs() {
 function makeNode(obj) {
 
     if(obj.node_type == 'molecular entity' && obj.default_structure) {
-        var structure = ChemDoodle.readMOL(obj.default_structure);
+        let structure = ChemDoodle.readMOL(obj.default_structure);
         structure.scaleToAverageBondLength(14.4);
 
-        var xy = structure.getDimension();
+        let xy = structure.getDimension();
 
-        var uniqueChemdoodle = uniqueId('chemdoodle');
+        let uniqueChemdoodle = uniqueId('chemdoodle');
 
-        var canvas = document.createElement("canvas");
+        let canvas = document.createElement("canvas");
         canvas.id =uniqueChemdoodle;
 
         document.body.appendChild(canvas);
@@ -77,25 +77,25 @@ function makeNode(obj) {
 
         vc.loadMolecule(structure);
 
-        var dataURL = canvas.toDataURL();
+        let dataURL = canvas.toDataURL();
 
         obj.image = dataURL;
 
-        var widthPadding = 35;
-        var defaultScaling = 0.5;
-        var maxSize = 50;
+        let widthPadding = 35;
+        let defaultScaling = 0.5;
+        let maxSize = 50;
 
 
         obj.width = (xy.x + widthPadding) * defaultScaling;
         obj.height = (xy.y + widthPadding)  * defaultScaling;
-        
+
 
         // scale further if width above a max
         if(obj.width > maxSize || obj.height > maxSize) {
-            var widthScalingFactor = maxSize / obj.width ;
-            var heightScalingFactor = maxSize / obj.height ;
+            let widthScalingFactor = maxSize / obj.width ;
+            let heightScalingFactor = maxSize / obj.height ;
 
-            var scalingFactor = Math.min(widthScalingFactor, heightScalingFactor);
+            let scalingFactor = Math.min(widthScalingFactor, heightScalingFactor);
             obj.width = obj.width * scalingFactor;
             obj.height = obj.height * scalingFactor;
 
@@ -140,17 +140,17 @@ function placeSideNodes (node, orientation, values) {
 }
 
 function getSideNodeCoords (node, orientation, values, direction) {
-    var sideNodes = (direction === 'in') ? node.incomers('node[!x]') : node.outgoers('node[!x]');
+    let sideNodes = (direction === 'in') ? node.incomers('node[!x]') : node.outgoers('node[!x]');
     if (node.isChild()) {
         sideNodes = (direction === 'in') ? node.parent().children().incomers('node[!x]') : node.parent().children().outgoers('node[!x]');
     }
-    var minVal = min(values);
-    var split = ((max(values) - minVal) / (sideNodes.size() + 1));
-    var count = 0;
-    for (var i=0; i<sideNodes.size(); i++) {
-        var sideNode =  sideNodes[i];
-        var coord;
-        var offset;
+    let minVal = min(values);
+    let split = ((max(values) - minVal) / (sideNodes.size() + 1));
+    let count = 0;
+    for (let i=0; i<sideNodes.size(); i++) {
+        let sideNode =  sideNodes[i];
+        let coord;
+        let offset;
         //handle compound nodes with no coords that aren't leaves
         if (sideNode.connectedEdges().size() > 1) {
             if (orientation === 'vertical') {
@@ -192,23 +192,23 @@ function nullSides(node) {
     node.outgoers('node[?side]').data({x: null, y: null});
 }
 
-function onlyUnique(value, index, self) { 
+function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
 // infer from either incomers/outgoers OR from children of nodeOfNodes
 function inferCellularLocation (node) {
 
-    var inCellularLocations = node.incomers('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
-    var outCellularLocations = node.outgoers('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
+    let inCellularLocations = node.incomers('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
+    let outCellularLocations = node.outgoers('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
 
     if(inCellularLocations.length == 1 && outCellularLocations.length == 1 && inCellularLocations[0] == outCellularLocations[0]) {
         node.data("cellular_location", inCellularLocations[0]);
         node.data("inferred_cellular_location", true);
     }
 
-    /* 
-       if(inCellularLocations.length > 1 || outCellularLocations.length > 1 || 
+    /*
+       if(inCellularLocations.length > 1 || outCellularLocations.length > 1 ||
        (inCellularLocations.length == 0 && outCellularLocations.length == 1) ||
        (outCellularLocations.length == 0 && inCellularLocations.length == 1) ||
        (inCellularLocations.length == 1 && outCellularLocations.length == 1 && inCellularLocations[0] != outCellularLocations[0])) {
@@ -216,13 +216,13 @@ function inferCellularLocation (node) {
        }
      */
 
-    var nodeOfNodeCellularLocations = node.children('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
+    let nodeOfNodeCellularLocations = node.children('node[?cellular_location]').map(x => x.data("cellular_location")).filter(onlyUnique);
     if(nodeOfNodeCellularLocations.length == 1) {
         node.data("cellular_location", nodeOfNodeCellularLocations[0]);
         node.data("inferred_cellular_location", true);
     }
 
-    var allPossibleCellularLocations = inCellularLocations.concat(outCellularLocations).filter(onlyUnique);
+    let allPossibleCellularLocations = inCellularLocations.concat(outCellularLocations).filter(onlyUnique);
     node.data("possible_cellular_locations", allPossibleCellularLocations);
 }
 
@@ -249,24 +249,24 @@ function initialAnimation(nodes) {
 }
 
 function animateNode(node, shiftX, shiftY, duration) {
-    node.animate({position:{'x':Number(node.data("x"))+ shiftX, 'y':Number(node.data("y"))+ shiftY}}, 
+    node.animate({position:{'x':Number(node.data("x"))+ shiftX, 'y':Number(node.data("y"))+ shiftY}},
                              {duration: duration});
 }
 
 
 function processCellularLocationNode (initialNode, cy) {
 
-    var nodeSelector = "#" + initialNode.id();
-    var node =  cy.$(nodeSelector);
+    let nodeSelector = "#" + initialNode.id();
+    let node =  cy.$(nodeSelector);
 
     if(node.parent().data("node_type")== "cellular_location") {
         return;
     }
 
-    var cellularLocation = node.data("cellular_location");
+    let cellularLocation = node.data("cellular_location");
 
 
-    var colorMap = {
+    let colorMap = {
         'undetermined':'red',
         'apicoplast':'#D55E00',
         'chloroplast stroma':'#009E73',
@@ -288,12 +288,12 @@ function processCellularLocationNode (initialNode, cy) {
         'plasma membrane':'#CC79A7',
     };
 
-    var color = colorMap[cellularLocation.toLowerCase()];
+    let color = colorMap[cellularLocation.toLowerCase()];
     if(!color) {
         color = "green";
     }
 
-    var cellularLocationNode = cy.add({
+    let cellularLocationNode = cy.add({
         group: "nodes",
         data: { cellular_location: cellularLocation, node_type: 'cellular_location', display_label: cellularLocation, color:color
         },
@@ -309,31 +309,31 @@ function addCellularLocation (node, cellularLocationNode) {
     }
 
 
-    var cellularLocation = cellularLocationNode.data("cellular_location");
-//    var selectorString = 'node[cellular_location = "' + cellularLocation + '"]';
-    var selectorString = 'node[?possible_cellular_locations]';
+    let cellularLocation = cellularLocationNode.data("cellular_location");
+//    let selectorString = 'node[cellular_location = "' + cellularLocation + '"]';
+    let selectorString = 'node[?possible_cellular_locations]';
 
-    var incomerNodes = node.incomers(selectorString);
-    var outgoerNodes = node.outgoers(selectorString);
-    var childrenNodes = node.children(selectorString);
+    let incomerNodes = node.incomers(selectorString);
+    let outgoerNodes = node.outgoers(selectorString);
+    let childrenNodes = node.children(selectorString);
 
     if(node.data("possible_cellular_locations").length == 1) {
         node.move({parent:cellularLocationNode.id()});
     }
 
-    for (var i=0; i<incomerNodes.size(); i++) {
+    for (let i=0; i<incomerNodes.size(); i++) {
         if(incomerNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
             addCellularLocation(incomerNodes[i], cellularLocationNode);
         }
     }
 
-    for (var i=0; i<outgoerNodes.size(); i++) {
+    for (let i=0; i<outgoerNodes.size(); i++) {
         if(outgoerNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
             addCellularLocation(outgoerNodes[i], cellularLocationNode);
         }
     }
 
-    for (var i=0; i<childrenNodes.size(); i++) {
+    for (let i=0; i<childrenNodes.size(); i++) {
         if(childrenNodes[i].data("possible_cellular_locations").includes(cellularLocation)) {
             addCellularLocation(childrenNodes[i], cellularLocationNode);
         }
@@ -351,13 +351,13 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
   return Promise.all([loadCytoscapeJs(), loadChemDoodleWeb()])
     .then(function([ cytoscape ]) {
 
-    var myLayout = {
+    let myLayout = {
         name: 'preset',
         fit: false,
     };
 
 
-    var cy = cytoscape({
+    let cy = cytoscape({
         container,
         elements:PathwayNodes.map(makeNode).concat(PathwayEdges.map(makeEdge)),
 
@@ -450,7 +450,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 style: {
                     visibility:'visible',
                     width:25,
-                    height:10, 
+                    height:10,
                     }
             },
 
@@ -675,7 +675,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 cy.nodes().map(function(node){node.position({x:null, y:null});node.renderedPosition({x:null, y:null});});
 
                 if (val === 'preset') {
-                    cy.layout({name:val, 
+                    cy.layout({name:val,
                                fit:true,
                                positions:function(node){return{'x':Number(node.data("x")), 'y':Number(node.data("y"))}}
                     }).run();
@@ -692,22 +692,22 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
             cy.changeExperiment = function (linkPrefix, xaxis, doAllNodes) {
 
-                var nodes = cy.elements('node[node_type= "enzyme"]');
+                let nodes = cy.elements('node[node_type= "enzyme"]');
 
-                var compounds = cy.elements('node[node_type= "molecular entity"]');
-                var hasLinkPrefix = linkPrefix ? true : false;
-                for (var i=0; i < compounds.length; i++) {
+                let compounds = cy.elements('node[node_type= "molecular entity"]');
+                let hasLinkPrefix = linkPrefix ? true : false;
+                for (let i=0; i < compounds.length; i++) {
                     compounds[i].data("paintingEnzymes", hasLinkPrefix);
                 }
 
-                for (var i=0; i < nodes.length; i++) {
-                    var n = nodes[i];
+                for (let i=0; i < nodes.length; i++) {
+                    let n = nodes[i];
 
-                    var ecNum = n.data('display_label');
+                    let ecNum = n.data('display_label');
 
                     if (linkPrefix && (doAllNodes || n.data("gene_count") > 0 )) {
-                        var link = linkPrefix + ecNum;
-                        var smallLink = link + '&h=20&w=50&compact=1';
+                        let link = linkPrefix + ecNum;
+                        let smallLink = link + '&h=20&w=50&compact=1';
 
                         n.data('image', link);
                         n.data('smallImage', smallLink);
@@ -731,7 +731,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
 
-            
+
 
             if (pathwaySource.indexOf('Cyc') > -1) {
                 cy.nodes('node[node_type="enzyme"]').map(function(node) {
@@ -743,20 +743,20 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     tagSides(node.outgoers('node[!x]'));
 
                     //for each enzyme, get all incoming and outgoing nodes with coordinates
-                    var incomingNodes = node.incomers('node[?x][!side]');
-                    var outgoingNodes = node.outgoers('node[?x][!side]');
+                    let incomingNodes = node.incomers('node[?x][!side]');
+                    let outgoingNodes = node.outgoers('node[?x][!side]');
 
                     //extract coordinates
-                    var xValuesIn = getCoords(incomingNodes, 'x');
-                    var xValuesOut = getCoords(outgoingNodes, 'x');
-                    var yValuesIn = getCoords(incomingNodes, 'y');
-                    var yValuesOut = getCoords(outgoingNodes, 'y');
+                    let xValuesIn = getCoords(incomingNodes, 'x');
+                    let xValuesOut = getCoords(outgoingNodes, 'x');
+                    let yValuesIn = getCoords(incomingNodes, 'y');
+                    let yValuesOut = getCoords(outgoingNodes, 'y');
 
                     //only reposition if enzyme has an incomer and and outgoer with coords
                     if (incomingNodes.size() >= 1 && outgoingNodes.size() >= 1) {
-                        var meanX = mean(xValuesIn.concat(xValuesOut));
-                        var meanY = mean(yValuesIn.concat(yValuesOut));
-                        var orientation = (Math.abs(mean(xValuesIn) - mean(xValuesOut)) >= Math.abs(mean(yValuesIn) - mean(yValuesOut))) ? 'horizontal' : 'vertical';
+                        let meanX = mean(xValuesIn.concat(xValuesOut));
+                        let meanY = mean(yValuesIn.concat(yValuesOut));
+                        let orientation = (Math.abs(mean(xValuesIn) - mean(xValuesOut)) >= Math.abs(mean(yValuesIn) - mean(yValuesOut))) ? 'horizontal' : 'vertical';
 
                         if (node.data('placed') != 'true') {
                             node.data('x', meanX);
@@ -768,7 +768,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                             if (node.isParent()) {
                                 //use i to ensure child nodes aren't placed on top of each other
                                 //TODO right now stacked vertically - may need to do something else if many children
-                                for (var i=0; i<node.children().size(); i++) {
+                                for (let i=0; i<node.children().size(); i++) {
                                     node.children()[i].data('x', meanX);
                                     node.children()[i].data('y', ((i*15) + meanY));
                                     node.children()[i].renderedPosition({ x:meanX, y:((i*15) + meanY)});
@@ -788,7 +788,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 });
 
                 //reset nodes that overlap
-                var enzymeNodes = cy.nodes('node[node_type="enzyme"]');
+                let enzymeNodes = cy.nodes('node[node_type="enzyme"]');
                 for (let i=0; i < enzymeNodes.size(); i++) {
                     for (let j=0; j < enzymeNodes.size(); j++) {
                         //find enzyme nodes with identical coords and reset
@@ -820,10 +820,10 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
             }
 
-            var nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
+            let nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
             for (let i=0; i < nodesOfNodes.length; i++) {
-                var parent = nodesOfNodes[i];
-                var children = parent.children().map(function(child) {
+                let parent = nodesOfNodes[i];
+                let children = parent.children().map(function(child) {
                     return child.data("node_identifier");
                 });
                 parent.data("childenNodes", children.join('<br>'));
@@ -835,7 +835,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
         cy.add([{group: "nodes", data: {id: pathwayId + '_' + pathwaySource, name: name, node_type: 'pathway_internal'}}]);
 
 
-        var nodes = cy.nodes();
+        let nodes = cy.nodes();
         for (let i=0; i < nodes.length; i++) {
             if(nodes[i].data("cellular_location")) {
                 nodes[i].data("possible_cellular_locations", [nodes[i].data("cellular_location")]);
@@ -846,31 +846,31 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
         }
 
 
-        var nodesWithoutCellularLocation = cy.nodes('node[!cellular_location]');
+        let nodesWithoutCellularLocation = cy.nodes('node[!cellular_location]');
         for (let i=0; i < nodesWithoutCellularLocation.length; i++) {
             inferCellularLocation(nodesWithoutCellularLocation[i]);
         }
-        
-        var nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
+
+        let nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
         for (let i=0; i < nodesWithCellularLocation.length; i++) {
             processCellularLocationNode(nodesWithCellularLocation[i], cy);
         }
-        
-        var nodesWithInferredCellularLocation = cy.nodes('node[?inferred_cellular_location]');
+
+        let nodesWithInferredCellularLocation = cy.nodes('node[?inferred_cellular_location]');
         for (let i=0; i < nodesWithInferredCellularLocation.length; i++) {
             nodesWithInferredCellularLocation[i].data("cellular_location", null);
             nodesWithInferredCellularLocation[i].move({parent:null});
         }
 
 
-        var parentNodes = cy.nodes('node[node_type="nodeOfNodes"],node[node_type="cellular_location"]');
+        let parentNodes = cy.nodes('node[node_type="nodeOfNodes"],node[node_type="cellular_location"]');
         for (let i=0; i < parentNodes.length; i++) {
             parentNodes[i].data("descendants", parentNodes[i].descendants().map(function(child) {
                     return "</br>" + child.data("name") + " (" + child.data("display_label") + ")";
                 }));
         }
 
-//        var nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
+//        let nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
 //        initialAnimation(nodesWithCellularLocation);
 
         return cy;
@@ -941,7 +941,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         // the `event.stopPropagation()` method so it is not triggered.
 
         cy.nodes().on('tap', withoutModifier(event => {
-          var node = event.target;
+          let node = event.target;
           this.props.setActiveNodeData(Object.assign({}, node.data()));
           cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
           node.addClass('eupathdb-CytoscapeActiveNode');
@@ -968,9 +968,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
 
           cy.on('zoom', function(event){
-              var elements = cy.elements();
+              let elements = cy.elements();
 
-              for (var i=0; i < elements.size(); i++) {
+              for (let i=0; i < elements.size(); i++) {
 
                   elements[i].data('zoomLevel', cy.zoom());
               }
@@ -990,7 +990,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         //decorate nodes from node_list
         if(this.props.nodeList) {
-          var nodesToHighlight = this.props.nodeList.split(/,\s*/g);
+          let nodesToHighlight = this.props.nodeList.split(/,\s*/g);
           cy.nodes().removeClass('eupathdb-CytoscapeHighlightNode');
           nodesToHighlight.forEach(function(n){
             cy.elements("node[node_identifier = '" + n + "']")
@@ -1117,7 +1117,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
 function VisMenu(props) {
   let { cy, source, primary_key, onGeneraSelectorClick, onGraphSelectorClick } = props;
-  var jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
+  let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
   return(
     <Menu
       webAppUrl={props.webAppUrl}
@@ -1445,10 +1445,15 @@ function CellularLocationNodeDetails(props) {
  */
 export function RecordAttributeSection(props) {
   if (props.attribute.name === 'drawing') {
+    const { PathwayEdges, PathwayNodes } = props.record.tables;
+    const content = PathwayEdges && PathwayNodes
+      ? <CytoscapeDrawing {...props}/>
+      : <Loading/>;
+
     return (
       <div>
         <h4>{props.attribute.displayName}</h4>
-        <CytoscapeDrawing {...props}/>
+        {content}
       </div>
     )
   }
