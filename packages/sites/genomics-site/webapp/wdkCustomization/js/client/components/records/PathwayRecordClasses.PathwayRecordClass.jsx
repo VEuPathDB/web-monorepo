@@ -14,6 +14,8 @@ import Menu from 'ebrc-client/components/Menu';
 // include menu bar files
 import 'site/wdkCustomization/css/pathway.css';
 
+import * as QueryString from 'querystring';
+
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
 const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
@@ -192,9 +194,17 @@ function nullSides(node) {
     node.outgoers('node[?side]').data({x: null, y: null});
 }
 
-function onlyUnique(value, index, self) {
+function onlyUnique (value, index, self) { 
     return self.indexOf(value) === index;
 }
+
+function excludeIncompleteECs (value, index, self) { 
+    if(value.match(/\.-/)) {
+        return false;
+    }
+    return true;
+}
+
 
 // infer from either incomers/outgoers OR from children of nodeOfNodes
 function inferCellularLocation (node) {
@@ -878,22 +888,56 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
     });
 }
 
-function readEcNumbers(dynamicColsOfIncomingStep) {
+function readDynamicCols(dynamicColsOfIncomingStep, globalData) {
+
+    // Need this in here for metabolite transforms
+
+    var nodeList = QueryString.parse(globalData.location.search.slice(1)).node_list;
+    if(nodeList) {
+        return(nodeList);
+    }
+
+    var excludeIncompleteEC = Number(QueryString.parse(globalData.location.search.slice(1)).exclude_incomplete_ec);
+
+    //TODO:  need to make this work for metabolite records not just genes!
+    var ecsForGenes = dynamicColsOfIncomingStep
+    .filter(row => row.ec_numbers_derived != null || row.ec_numbers != null)
+    .map(row => { 
+        var a = [];
+        if(row.ec_numbers) {
+            a.push(row.ec_numbers);
+        }
+        if(row.ec_numbers_derived) {
+            a.push(row.ec_numbers_derived);
+        }
+
+        var combined = a.join("; ");
+        var namedEcs = combined.split(';\s');
+        var ecs = namedEcs.map(full => full.split(" ")[0]);
+
+        if(excludeIncompleteEC) {
+            ecs = ecs.filter(excludeIncompleteECs);
+        }
+
+        return(ecs);
+    });
+
   return [
-    ...new Set(dynamicColsOfIncomingStep
-    .filter(row => row.ec_numbers_derived != null)
-    .map(row => row.ec_numbers_derived.split(' ')[0]))
+    ...new Set([].concat.apply([], ecsForGenes).filter(onlyUnique))
   ].join(',');
 }
 
 // enhance function supplements a component with additional custom data and AC props
 const enhance = flow(
   // pulls custom values out of store's state and will pass as props to enhanced component
+
   withStore(state => ({
     pathwayRecord: state.pathwayRecord,
     config: state.globalData.config,
     siteConfig: state.globalData.siteConfig,
-    nodeList: readEcNumbers(state.dynamicColsOfIncomingStep),
+    nodeList: readDynamicCols(state.dynamicColsOfIncomingStep, state.globalData),
+    exactMatchEC: QueryString.parse(state.globalData.location.search.slice(1)).exact_match_only,
+    excludeIncompleteEC: QueryString.parse(state.globalData.location.search.slice(1)).exclude_incomplete_ec,
     dynamicColsOfIncomingStep: state.dynamicColsOfIncomingStep,
     experimentCategoryTree: getExperimentCategoryTree(state),
     generaCategoryTree: getGeneraCategoryTree(state)
@@ -902,7 +946,8 @@ const enhance = flow(
   withActions({
     setActiveNodeData,
     setPathwayError,
-    setGeneraSelection
+    setGeneraSelection,
+    setFilteredNodeList
   })
 );
 
@@ -987,15 +1032,58 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         cy.fit();
 
-
         //decorate nodes from node_list
         if(this.props.nodeList) {
           let nodesToHighlight = this.props.nodeList.split(/,\s*/g);
+            var updatedNodesToHighlight = [];
+
           cy.nodes().removeClass('eupathdb-CytoscapeHighlightNode');
+
+          var useFuzzyECMatch = !Number(this.props.exactMatchEC);
+          var useIncompleteEC = !Number(this.props.excludeIncompleteEC);
+
           nodesToHighlight.forEach(function(n){
-            cy.elements("node[node_identifier = '" + n + "']")
-            .addClass('eupathdb-CytoscapeHighlightNode');
+              var expandedNodes = [n];
+              var operator = "=";
+              if(useFuzzyECMatch) {
+                  operator = "*=";
+                  var firstWildCardPos = n.indexOf(".-");
+                  if(firstWildCardPos > 0) {
+                      n = n.substring(0, firstWildCardPos);
+                  }
+              }
+
+
+              var nodeListNodes = cy.nodes("node[node_type = 'enzyme'][node_identifier " + operator + " '" + n + "'], node[node_type= 'molecular_entity'][node_identifier = '" + n + "']");
+              nodeListNodes.addClass('eupathdb-CytoscapeHighlightNode');
+
+              if(nodeListNodes.length > 0) {
+                  updatedNodesToHighlight.push(n);
+              }
+              
+              // Fuzzy matches for EC Numbers
+              if(useFuzzyECMatch && useIncompleteEC) {
+                  while(1) {
+                      var res = n.replace(/\.(\d+)($|(\.-))/, "$3.-");
+                      
+                      if(res == n) {
+                          break;
+                      }
+                      
+                      n = res;
+
+                      var nodeListNodes = cy.nodes("node[node_type = 'enzyme'][node_identifier ='" + n + "']");
+                      nodeListNodes.addClass('eupathdb-CytoscapeHighlightNode');
+
+                      if(nodeListNodes.length > 0) {
+                          updatedNodesToHighlight.push(n);
+                      }
+                  }
+              }
+
           });
+
+            this.props.setFilteredNodeList({filteredNodeList:updatedNodesToHighlight.filter(onlyUnique).join(",")});
         }
 
         this.setState({ cy });
@@ -1094,9 +1182,11 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             have mapped to at least one gene. The nodes, as well as the info box, can be repositioned by dragging.
           </p>
 
-            {this.props.nodeList && (
-                 <p>The following Nodes are being highlighted in <span style={purple}>purple:  {this.props.nodeList}</span>.</p>
+
+            {this.props.pathwayRecord.filteredNodeList && (
+                 <p>Identifiers from result which map to this pathway are highlighted in <span style={purple}>purple:  {this.props.pathwayRecord.filteredNodeList}</span>.</p>
             )}
+
             <br />
         </div>
         <div style={{ position: 'relative', zIndex: 1 }}>
@@ -1476,6 +1566,16 @@ function setPathwayError(error) {
     payload: { error }
   };
 }
+
+
+function setFilteredNodeList(filteredNodeList) {
+  return {
+    type: 'pathway-record/set-filtered-nodeList',
+    payload: filteredNodeList
+  };
+}
+
+
 
 function setGeneraSelection(generaSelection) {
   return {

@@ -6,7 +6,8 @@ export const updateTableState = (tableName, tableState) => ({
   payload: { tableName, tableState }
 });
 
-export const loadPathwayGeneDynamicCols = (geneStepId, pathwaySource, pathwayId, wdkService) => {
+export const loadPathwayGeneDynamicCols = (geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc, wdkService) => {
+
   if (geneStepId == null) {
     // no gene step ID provided; must still dispatch action to clear any existing data
     return {
@@ -28,14 +29,17 @@ export const loadPathwayGeneDynamicCols = (geneStepId, pathwaySource, pathwayId,
         name: "genesByPathway",
         value: {
             pathway_source: pathwaySource,
-            pathway_source_id: pathwayId
+            pathway_source_id: pathwayId,
+            exclude_incomplete_ec: excludeIncompleteEc,
+            exact_match_only: exactMatchOnly
         }
       }].concat(baseAnswerSpec.filters)
     });
+
     return wdkService.getAnswer(filteredAnswerSpec, {
       format: 'wdk-service-json',
       formatConfig: {
-        attributes: [ 'primary_key', 'ec_numbers_derived' ].concat(dynamicAttrNames)
+        attributes: [ 'primary_key', 'ec_numbers_derived', 'ec_numbers' ].concat(dynamicAttrNames)
       }
     });
   })

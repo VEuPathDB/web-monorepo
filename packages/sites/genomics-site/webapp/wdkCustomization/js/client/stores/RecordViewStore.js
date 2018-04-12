@@ -72,6 +72,7 @@ let initialPathwayRecordState = {
 
 /** Handle pathway actions */
 function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
+
   switch(action.type) {
     case 'pathway-record/set-active-node':
       return Object.assign({}, state, {
@@ -85,6 +86,13 @@ function handlePathwayRecordAction(state = initialPathwayRecordState, action) {
       return Object.assign({}, state, {
         generaSelection: action.payload.generaSelection
       });
+    case 'pathway-record/set-filtered-nodeList':
+      return Object.assign({}, state, {
+        filteredNodeList: action.payload.filteredNodeList
+      });
+
+
+
     default:
       return state;
   }

@@ -97,8 +97,8 @@ export function RecordController(WdkRecordController) {
         //     .then(() => dispatch(loadBasketCounts()));
         // },
 
-        loadPathwayGeneDynamicCols: (geneStepId, pathwaySource, pathwayId) =>
-          ({ wdkService }) => loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, wdkService)
+        loadPathwayGeneDynamicCols: (geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc) =>
+          ({ wdkService }) => loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc, wdkService)
       });
     }
     getRecordRequestOptions(recordClass, categoryTree) {
@@ -124,7 +124,9 @@ export function RecordController(WdkRecordController) {
        if (recordClass == 'pathway') {
          let [ pathwaySource, pathwayId ] = primaryKey.split('/');
          let geneStepId = QueryString.parse(this.state.globalData.location.search.slice(1)).geneStepId;
-         this.eventHandlers.loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId);
+         let exactMatchOnly = QueryString.parse(this.state.globalData.location.search.slice(1)).exact_match_only;
+         let excludeIncompleteEc = QueryString.parse(this.state.globalData.location.search.slice(1)).exclude_incomplete_ec;
+         this.eventHandlers.loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc);
        }
     }
   }
