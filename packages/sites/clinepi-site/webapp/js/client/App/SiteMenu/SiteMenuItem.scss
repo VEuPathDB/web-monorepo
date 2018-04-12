@@ -75,6 +75,7 @@ $white: #E0E0E0;
       border-bottom: 1px solid #fff;
       font-weight: 400;
       font-size: 0.8em;
+      background-color: #ededed;
       transition: all 0.5s;
 
       &>.SiteMenuItem-Link, &>.SiteMenuItem-Text {
@@ -100,6 +101,7 @@ $white: #E0E0E0;
         width: 100%;
         font-weight: 300;
         display: block;
+        margin-bottom: -5px;
         padding: 10px;
         background-color: lighten($white, 5%);
         color: #555;
