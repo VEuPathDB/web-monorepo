@@ -179,6 +179,9 @@ export function RecordTable(props) {
     case 'MercatorTable':
       return <MercatorTable {...props} />
 
+    case 'Orthologs':
+      return <OrthologsTable {...props}/>
+
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
 
@@ -486,6 +489,21 @@ class MercatorTable extends React.Component {
       </form>
     </div>
     );
+  }
+}
+
+class OrthologsTable extends React.Component {
+
+  constructor(props) {
+    super(props);
+    // Memoize the sorting. Without this, the DataTable widget will think is
+    // is a new table and reset the sorting. This is bad if a user has already
+    // sorted the table.
+    this.sortValue = lodash.memoize(value => lodash.sortBy(value, 'sort_key'));
+  }
+
+  render() {
+    return <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
   }
 }
 
