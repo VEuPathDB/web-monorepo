@@ -24,7 +24,7 @@
 
     <body>
     <imp:errors/>
-    <div id='error'/>
+    <div id='error'><jsp:text/></div>
     <html:form method="post" action="/communityUpload.do" enctype="multipart/form-data">
 
     <div class="h2center" style="font-size: 18px;">Upload Files</div>
