@@ -1,7 +1,3 @@
-// include css files
-import 'eupathdb/css/AllSites.css';
-import 'site/css/AllApiSites.css';
-
 // Include javascript files
 // Those starting with '!!script!' are loaded with script semantics
 // rather than ES module semantics (i.e., code is executed in the global scope).
