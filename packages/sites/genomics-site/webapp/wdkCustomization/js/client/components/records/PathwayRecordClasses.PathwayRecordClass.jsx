@@ -744,92 +744,112 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
             if (pathwaySource.indexOf('Cyc') > -1) {
-                cy.nodes('node[node_type="enzyme"]').map(function(node) {
-                    //if node is a child, get the parent
-                    node = (node.isChild()) ? node.parent()[0] : node;
+                if (cy.nodes().is('node[?x]')) {
+                    cy.nodes('node[node_type="enzyme"]').map(function(node) {
+                        //if node is a child, get the parent
+                        node = (node.isChild()) ? node.parent()[0] : node;
 
-                    //tag sides so non-leaf sides are only positioned once
-                    tagSides(node.incomers('node[!x]'));
-                    tagSides(node.outgoers('node[!x]'));
+                        //tag sides so non-leaf sides are only positioned once
+                        tagSides(node.incomers('node[!x]'));
+                        tagSides(node.outgoers('node[!x]'));
 
-                    //for each enzyme, get all incoming and outgoing nodes with coordinates
-                    let incomingNodes = node.incomers('node[?x][!side]');
-                    let outgoingNodes = node.outgoers('node[?x][!side]');
+                        //for each enzyme, get all incoming and outgoing nodes with coordinates
+                        let incomingNodes = node.incomers('node[?x][!side]');
+                        let outgoingNodes = node.outgoers('node[?x][!side]');
 
-                    //extract coordinates
-                    let xValuesIn = getCoords(incomingNodes, 'x');
-                    let xValuesOut = getCoords(outgoingNodes, 'x');
-                    let yValuesIn = getCoords(incomingNodes, 'y');
-                    let yValuesOut = getCoords(outgoingNodes, 'y');
+                        //extract coordinates
+                        let xValuesIn = getCoords(incomingNodes, 'x');
+                        let xValuesOut = getCoords(outgoingNodes, 'x');
+                        let yValuesIn = getCoords(incomingNodes, 'y');
+                        let yValuesOut = getCoords(outgoingNodes, 'y');
 
-                    //only reposition if enzyme has an incomer and and outgoer with coords
-                    if (incomingNodes.size() >= 1 && outgoingNodes.size() >= 1) {
-                        let meanX = mean(xValuesIn.concat(xValuesOut));
-                        let meanY = mean(yValuesIn.concat(yValuesOut));
-                        let orientation = (Math.abs(mean(xValuesIn) - mean(xValuesOut)) >= Math.abs(mean(yValuesIn) - mean(yValuesOut))) ? 'horizontal' : 'vertical';
+                        //only reposition if enzyme has an incomer and and outgoer with coords
+                        if (incomingNodes.size() >= 1 && outgoingNodes.size() >= 1) {
+                            let meanX = mean(xValuesIn.concat(xValuesOut));
+                            let meanY = mean(yValuesIn.concat(yValuesOut));
+                            let orientation = (Math.abs(mean(xValuesIn) - mean(xValuesOut)) >= Math.abs(mean(yValuesIn) - mean(yValuesOut))) ? 'horizontal' : 'vertical';
 
-                        if (node.data('placed') != 'true') {
-                            node.data('x', meanX);
-                            node.data('y', meanY);
-                            node.renderedPosition({ x:meanX, y:meanY});
-                            //flag node as places to avoid repeatedly placing parent nodes
-                            node.data('placed', 'true'); //change to use boolean instead of text
-                            //if node is a parent, place the children
-                            if (node.isParent()) {
-                                //use i to ensure child nodes aren't placed on top of each other
-                                //TODO right now stacked vertically - may need to do something else if many children
-                                for (let i=0; i<node.children().size(); i++) {
-                                    node.children()[i].data('x', meanX);
-                                    node.children()[i].data('y', ((i*15) + meanY));
-                                    node.children()[i].renderedPosition({ x:meanX, y:((i*15) + meanY)});
-                                    node.data('placed', 'true'); //use boolean
-                                    node.children()[i].data('placed', 'true'); //use boolean
-                                    (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
+                            if (node.data('placed') != 'true') {
+                                node.data('x', meanX);
+                                node.data('y', meanY);
+                                node.renderedPosition({ x:meanX, y:meanY});
+                                //flag node as places to avoid repeatedly placing parent nodes
+                                node.data('placed', 'true'); //change to use boolean instead of text
+                                //if node is a parent, place the children
+                                if (node.isParent()) {
+                                    //use i to ensure child nodes aren't placed on top of each other
+                                    //TODO right now stacked vertically - may need to do something else if many children
+                                    for (let i=0; i<node.children().size(); i++) {
+                                        node.children()[i].data('x', meanX);
+                                        node.children()[i].data('y', ((i*15) + meanY));
+                                        node.children()[i].renderedPosition({ x:meanX, y:((i*15) + meanY)});
+                                        node.data('placed', 'true'); //use boolean
+                                        node.children()[i].data('placed', 'true'); //use boolean
+                                        (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
+                                    }
                                 }
                             }
-                        }
 
-                        //place side nodes
-                        (orientation === 'vertical') ? placeSideNodes(node, orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node, orientation, xValuesIn.concat(xValuesOut));
-                        node.data('orientation', orientation);
-                        node.data('xVals', xValuesIn.concat(xValuesOut));
-                        node.data('yVals', yValuesIn.concat(yValuesOut));
-                    }
-                });
+                            //place side nodes
+                            (orientation === 'vertical') ? placeSideNodes(node, orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node, orientation, xValuesIn.concat(xValuesOut));
+                            node.data('orientation', orientation);
+                            node.data('xVals', xValuesIn.concat(xValuesOut));
+                            node.data('yVals', yValuesIn.concat(yValuesOut));
+                        }
+                    });
 
-                //reset nodes that overlap
-                let enzymeNodes = cy.nodes('node[node_type="enzyme"]');
-                for (let i=0; i < enzymeNodes.size(); i++) {
-                    for (let j=0; j < enzymeNodes.size(); j++) {
-                        //find enzyme nodes with identical coords and reset
-                        if (enzymeNodes[i].id() != enzymeNodes[j].id() && enzymeNodes[i].data('x') === enzymeNodes[j].data('x') && enzymeNodes[i].data('y') === enzymeNodes[j].data('y')) {
-                            resetOverlappingNodes(enzymeNodes[i], -60);
-                            resetOverlappingNodes(enzymeNodes[j], 60);
+                    //reset nodes that overlap
+                    let enzymeNodes = cy.nodes('node[node_type="enzyme"]');
+                    for (let i=0; i < enzymeNodes.size(); i++) {
+                        for (let j=0; j < enzymeNodes.size(); j++) {
+                            //find enzyme nodes with identical coords and reset
+                            if (enzymeNodes[i].id() != enzymeNodes[j].id() && enzymeNodes[i].data('x') === enzymeNodes[j].data('x') && enzymeNodes[i].data('y') === enzymeNodes[j].data('y')) {
+                                resetOverlappingNodes(enzymeNodes[i], -60);
+                                resetOverlappingNodes(enzymeNodes[j], 60);
+                            }
                         }
                     }
+
+                    //Handle nodes with no preset position
+                    cy.elements('node[!x]').layout({ name: 'cose' }).run();
+
+                    //clean up unplaces and orphan nodes
+                    enzymeNodes.map(function(node) {
+                        if (node.data('placed') != 'true') {
+                            cy.remove(node);
+                            if (node.isChild()) {
+                                cy.remove(node.parent());
+                            }
+                        }
+                    });
+
+                    cy.nodes('node[node_type= "molecular_entity"]').map(function(node) {
+                        if (node.incomers().size() === 0 && node.outgoers().size() === 0) {
+                            cy.remove(node);
+                        }
+                    });
+
+                    //Remove duplicate nodes
+                    var allNodes = cy.nodes();
+                    for (let i=0; i < allNodes.size() -1; i++) {
+                        for (let j= i+1; j < allNodes.size(); j++) {
+                            //Find node with identical coordinates
+                            if ( allNodes[i].id() != allNodes[j].id() && allNodes[i].data('name') === allNodes[j].data('name') && allNodes[i].data('x') === allNodes[j].data('x') && allNodes[i].data('y') === allNodes[j].data('y')) {
+                                allNodes[j].connectedEdges().map(function(edge) {
+                                    if (edge.data('source') === allNodes[j].data('id')) {
+                                        edge.move({'source': allNodes[i].data('id')});
+                                    }
+                                    else if (edge.data('target') === allNodes[j].data('id')) {
+                                        edge.move({'target': allNodes[i].data('id')});
+                                    }
+                                    cy.remove(allNodes[j]);
+                                });
+                            }
+                        }
+                    }
+
                 }
-
-                //Handle nodes with no preset position
-                cy.elements('node[!x]').layout({ name: 'cose' }).run();
-
-                //clean up unplaces and orphan nodes
-                enzymeNodes.map(function(node) {
-                    if (node.data('placed') != 'true') {
-                        cy.remove(node);
-                        if (node.isChild()) {
-                            cy.remove(node.parent());
-                        }
-                    }
-                });
-
-                cy.nodes('node[node_type= "molecular_entity"]').map(function(node) {
-                    if (node.incomers().size() === 0 && node.outgoers().size() === 0) {
-                        cy.remove(node);
-                    }
-                });
-
             }
-
             let nodesOfNodes = cy.nodes('node[node_type= "nodeOfNodes"]');
             for (let i=0; i < nodesOfNodes.length; i++) {
                 let parent = nodesOfNodes[i];
@@ -883,6 +903,9 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 //        let nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
 //        initialAnimation(nodesWithCellularLocation);
 
+        if (nodes.allAre('[!x]')) {
+            cy.layout({name: 'cose'}).run();
+        }
         return cy;
 
     });
