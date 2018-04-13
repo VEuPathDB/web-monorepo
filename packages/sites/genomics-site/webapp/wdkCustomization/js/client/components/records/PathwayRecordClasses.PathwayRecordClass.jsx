@@ -1057,6 +1057,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         //decorate nodes from node_list
         if(this.props.nodeList) {
+
           let nodesToHighlight = this.props.nodeList.split(/,\s*/g);
             var updatedNodesToHighlight = [];
 
@@ -1207,8 +1208,13 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
 
             {this.props.pathwayRecord.filteredNodeList && (
-                 <p>Identifiers from result which map to this pathway are highlighted in <span style={purple}>purple:  {this.props.pathwayRecord.filteredNodeList}</span>.</p>
+                 <p>Identifiers which were used to map your results to this pathway are highlighted in <span style={purple}>purple:  {this.props.pathwayRecord.filteredNodeList}</span>.</p>
             )}
+            {this.props.nodeList && (
+                 <p>Here is the list of all Identifiers returned by your search result:  <span>{this.props.nodeList}</span>.</p>
+            )}
+
+
 
             <br />
         </div>
