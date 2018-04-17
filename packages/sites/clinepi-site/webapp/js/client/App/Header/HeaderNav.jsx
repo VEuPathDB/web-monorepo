@@ -6,8 +6,7 @@ import SiteMenu from 'Client/App/SiteMenu';
 import UserMenu from 'Client/App/UserMenu';
 import headerMenuItems from 'Client/data/headerMenuItems';
 
-import { Events, BodyLayer } from 'mesa';
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { IconAlt as Icon, Mesa } from 'wdk-client/Components';
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
 
 class HeaderNav extends React.Component {
@@ -28,11 +27,11 @@ class HeaderNav extends React.Component {
   }
 
   componentDidMount () {
-    this.scrollListener = Events.add('scroll', this.onScroll);
+    this.scrollListener = Mesa.Events.add('scroll', this.onScroll);
   }
 
   componentWillUnmount () {
-    Events.remove(this.scrollListener);
+    Mesa.Events.remove(this.scrollListener);
   }
 
   onScroll () {
@@ -158,9 +157,9 @@ class HeaderNav extends React.Component {
       <div className="HeaderNav-Wrapper">
         <div className="row HeaderNav">
           {!stickyHeaderVisible ? null : (
-            <BodyLayer>
+            <Mesa.BodyLayer>
               <StickyHeader />
-            </BodyLayer>
+            </Mesa.BodyLayer>
           )}
           <Branding siteConfig={siteConfig} />
           <div className="HeaderNav-Switch">

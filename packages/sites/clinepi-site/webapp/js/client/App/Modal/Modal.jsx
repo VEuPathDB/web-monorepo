@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './Modal.scss';
-import { BodyLayer } from 'mesa';
+import { Mesa } from 'wdk-client/Components';
 import { filterKeysFromObject } from 'Client/App/Utils/Utils';
 
 class Modal extends React.Component {
@@ -17,9 +17,9 @@ class Modal extends React.Component {
       + (wrapperClass ? ' ' + wrapperClass : '');
     const props = filterKeysFromObject(this.props, [ 'when', 'wrapperClassName' ]);
     return (
-      <BodyLayer className={wrapperClassName}>
+      <Mesa.BodyLayer className={wrapperClassName}>
         <div {...props} />
-      </BodyLayer>
+      </Mesa.BodyLayer>
     );
   }
 };

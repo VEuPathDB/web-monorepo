@@ -1,9 +1,8 @@
 import React from 'react';
 
 import './StudyMenu.scss';
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { IconAlt as Icon, Mesa } from 'wdk-client/Components';
 import { CategoryIcon } from 'Client/App/Categories';
-import { AnchoredTooltip } from 'mesa';
 import { getSearchIconByType, getSearchNameByType } from 'Client/App/Searches/SearchUtils';
 
 class StudyMenuItem extends React.Component {
@@ -44,14 +43,14 @@ class StudyMenuItem extends React.Component {
 
     const tooltip = (<span>Search <b>{name}</b> in the {study.name} Study</span>);
     return (
-      <AnchoredTooltip
+      <Mesa.AnchoredTooltip
         fadeOut={true}
         content={tooltip}
         style={{ pointerEvents: 'none' }}>
         <a name={`Search ${name}`} href={url} key={type}>
           <Icon fa={icon} />
         </a>
-      </AnchoredTooltip>
+      </Mesa.AnchoredTooltip>
     );
   }
 

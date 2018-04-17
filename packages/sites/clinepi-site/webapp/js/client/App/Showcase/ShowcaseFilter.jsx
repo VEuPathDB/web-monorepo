@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Checkbox } from 'mesa';
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { IconAlt as Icon, Mesa } from 'wdk-client/Components';
 
 class ShowcaseFilter extends React.Component {
   constructor (props) {
@@ -48,7 +47,7 @@ class ShowcaseFilter extends React.Component {
           const toggle = () => this.toggleFilter(id);
           return (
             <div className={'wdk-ShowcaseFilter-Item ' + (active ? 'active' : 'inactive')} key={id} onClick={toggle}>
-              <Checkbox checked={active} onChange={toggle} />
+              <Mesa.Checkbox checked={active} onChange={toggle} />
               {display}
             </div>
           );
