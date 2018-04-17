@@ -111,7 +111,14 @@ export function RecordController(WdkRecordController) {
           attributes: requestOptions[0].attributes,
           tables: requestOptions[0].tables.concat('MetaTable')
         },
-        ...requestOptions.slice(1)
+        {
+          attributes: [],
+          tables: requestOptions[1].tables.slice(0, requestOptions[1].tables.length / 2)
+        },
+        {
+          attributes: [],
+          tables: requestOptions[1].tables.slice(requestOptions[1].tables.length / 2)
+        }
       ]
     }
     loadData(prevProps) {
