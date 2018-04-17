@@ -1,6 +1,8 @@
-import React from 'react';
-
 import './CategoryIcon.css';
+
+import React from 'react';
+import { Mesa } from 'wdk-client/Components';
+
 const { AnchoredTooltip } = Mesa;
 import { getCategoryColor, getCategoryName } from './CategoryUtils';
 
