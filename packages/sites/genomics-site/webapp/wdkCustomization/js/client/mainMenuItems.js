@@ -8,6 +8,7 @@ const PlasmoDB = 'PlasmoDB';
 const CryptoDB = 'CryptoDB';
 const ToxoDB = 'ToxoDB';
 const EuPathDB = 'EuPathDB';
+const UD_DISABLED = 'UD_DISABLED';
 
 /**
  * Determine if galaxy orientation page should be shown.
@@ -25,9 +26,7 @@ function shouldShowGalaxyOrientation(preferences) {
  * @return {Array<Item>}
  */
 export default function mainMenuItems({ siteConfig, config, preferences }, defaultItems) {
-  const userDatasetsEnabled = config && 'userDatasetsEnabled' in config
-    ? config.userDatasetsEnabled
-    : false;
+  const userDatasetsEnabled = get(config, ['userDatasetStoreStatus'], UD_DISABLED) !== UD_DISABLED;
   return [
     defaultItems.home,
     defaultItems.search,
