@@ -22,32 +22,29 @@
   <c:otherwise>
 
 <style>
-#clinepi-tutorials ul {
-  margin: 3em;
-}
-#clinepi-tutorials  h2 {
-    text-align: left;
-    font-size: 2.8em;
-    font-weight: 400;
-    color: #222;
-}
-#clinepi-tutorials  li {
-    font-size: 1em;
-}
+  #clinepi-tutorials  li {
+    font-size: 1.4em;
+    list-style: none;
+    margin: 1em 0;
+  }
+  #clinepi-tutorials li .fa {
+    color: #333;
+    margin-right: .5em;
+  }
 </style>
 
 <div id="clinepi-tutorials">
-  <h2 style="color:maroon">ClinEpiDB Tutorials</h2>
+  <h1>ClinEpiDB Tutorials</h1>
   <ul>
   <c:forEach items="${tutAnswer.recordInstances}" var="record">
     <c:set var="attrs" value="${record.attributesMap}"/>
 
     <c:forEach items="${record.tables}" var="table">
-              
+
       <c:forEach items="${table.rows}" var="row">
         <c:set var="projects" value="${row[0].value}"/>
 
-        <c:if test="${fn:containsIgnoreCase(projects, project)}"> 
+        <c:if test="${fn:containsIgnoreCase(projects, project)}">
           <c:set var="urlMov" value="${row[1].value}"/>
           <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
             <c:set var="urlMov">http://www.youtube.com/${urlMov}</c:set>
@@ -62,7 +59,7 @@
               <c:set var="urlFlv">http://eupathdb.org/tutorials/${urlFlv}</c:set>
             </c:when>
             <c:when test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
-              <c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&autostart=true</c:set>
+              <c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&amp;autostart=true</c:set>
             </c:when>
           </c:choose>
           <c:set var="urlPdf" value="${row[4].value}"/>
@@ -72,18 +69,12 @@
           <c:set var="duration" value="${row[5].value}"/>
           <c:set var="size" value="${row[6].value}"/>
 
-          <li id='t-${attrs['uid']}'><h3>${attrs['title']} <i style="font-size:70%">${attrs['size']}</i></h3>
-            ${attrs['description']}<br/><br/>
-            <c:if test="${urlPdf != 'unavailable'}">
-              <a href="${urlPdf}">
-                <imp:image title="Download a PDF" style="vertical-align:middle" alt="PDF icon" src="images/smallPDF.png" border='0'/></a>
-
-            </c:if>
+          <li id='t-${attrs['uid']}'>
+            <a href="${urlPdf}" title="${size} - ${attrs['description']}"><i class="fa fa-file-pdf-o"><jsp:text/></i>${attrs['title']}</a>
           </li>
         </c:if>
-      </c:forEach> 
+      </c:forEach>
     </c:forEach>
-  <br />
   </c:forEach>
   </ul>
 </div>
