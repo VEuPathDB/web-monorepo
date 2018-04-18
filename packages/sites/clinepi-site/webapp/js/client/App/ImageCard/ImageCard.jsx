@@ -22,7 +22,7 @@ class ImageCard extends React.Component {
       : prefix + appUrl;
 
     return (
-      <div className="stack Card ImageCard">
+      <div className="Card ImageCard">
         <div
           className="box ImageCard-Image"
           style={{ backgroundImage: `url(${imageUrl})`}}

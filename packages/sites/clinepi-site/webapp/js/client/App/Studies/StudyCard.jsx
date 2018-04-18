@@ -31,7 +31,7 @@ class StudyCard extends React.Component {
     const studyUrl = appUrl && prefix ? prefix + appUrl : url;
 
     return (
-      <div className={'stack Card StudyCard ' + (disabled ? 'disabled' : '')}>
+      <div className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
         <div className="box StudyCard-Heading">
           <h2><a href={studyUrl}>{name}</a></h2>
           <div className="box StudyCard-Categories">
