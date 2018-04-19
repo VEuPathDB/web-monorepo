@@ -21,18 +21,18 @@
     }
   },
   {
-    "name": "India",
+    "name": "India ICEMR",
     "id": "DS_f6c59e88c1",
     "categories": ["malarial"],
     "projectAvailability": ["ICEMR"],
     "access": "protected",
     "appUrl": "/app/record/dataset/DS_f6c59e88c1",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
-    "headline": "Northern India ICEMR",
+    "headline": "3 sites across India from 2013-2015",
     "points": [
-      "Northern India ICEMR study for .....",
-      "Cross sectional survey and Longitudinal cohort study designs",
-      "4,000 Participants from 2000 Households with over 5,000 observations"
+      "Part of the International Centers of Excellence for Malaria Research (ICEMR) Program",
+      "Cross-sectional and longitudinal cohort study designs",
+      "3664 participants from 1394 households with over 4000 observations"
     ],
     "searchUrls": {
       "participants": "/showQuestion.do?questionFullName=ParticipantQuestions.ParticipantsByRelativeVisits_india",
