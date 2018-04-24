@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { IconAlt } from 'wdk-client/Components';
+import { IconAlt, Link } from 'wdk-client/Components';
 import { withStore } from 'ebrc-client/util/component';
 
 import Index from '../components/Index';
@@ -14,9 +14,10 @@ import { getIdFromRecordClassName, emitRestriction } from 'Client/App/DataRestri
 import searches from 'Client/data/searches.json';
 import visualizations from 'Client/data/visualizations.json';
 
-const injectState = withStore(state => ({
-  webAppUrl: get(state, 'globalData.siteConfig.webAppUrl'),
-  studies: get(state, 'globalData.siteConfig.studies')
+const injectSearchStudy = withStore((state, props) => ({
+  activeStudy: get(state, 'globalData.studies.entities', [])
+    .find(study =>
+      Object.values(study.searches).includes(props.wizardState.question.name))
 }));
 
 export function getStaticSiteData (studies) {
@@ -74,9 +75,8 @@ export default {
       : <RecordTable {...props}/>;
   },
 
-  QuestionWizard: QuestionWizard => injectState(props => {
-    let { studies, webAppUrl, wizardState } = props;
-    let activeStudy = findStudyFromRecordClass(studies, wizardState.recordClass);
+  QuestionWizard: QuestionWizard => injectSearchStudy(props => {
+    let { activeStudy } = props;
     return (
       <div>
         { activeStudy == null
@@ -84,7 +84,7 @@ export default {
             : (
               <div className="clinepi-StudyLink">
                 <IconAlt fa="info-circle"/>&nbsp;
-                Learn about the <a href={`${webAppUrl}/app/record/dataset/${activeStudy.id}`} target="_blank">{activeStudy.name} Study</a>
+                Learn about the <Link to={activeStudy.route} _target="blank" >{activeStudy.name} Study</Link>
               </div>
             )
         }
@@ -129,24 +129,6 @@ export default {
     }
   }
 
-}
-
-/**
- * Parse the study id from the recordClass's urlSegment property.
- * Currently, the urlSegment is of the form `${studyId}_${recordTypeShortName}`,
- * where studyId is of the form `DS_${hash}`.
- *
- * FIXME Replace this something more robust. See trello #883.
- */
-function findStudyFromRecordClass(studies, recordClass) {
-  try {
-    let [ studyId ] = recordClass.urlSegment.match(/^DS_[^_]+/g);
-    return studies.find(study => study.id === studyId);
-  }
-  catch (error) {
-    console.error("Could not find study from record class.", { recordClass });
-    throw error;
-  }
 }
 
 function guard(propsPredicate) {

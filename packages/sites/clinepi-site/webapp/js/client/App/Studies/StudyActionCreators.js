@@ -89,9 +89,12 @@ function formatStudies(projectId, answer) {
       projectAvailability: [ 'attributes.project_availability', JSON.parse ],
       headline: [ 'attributes.card_headline' ],
       points: [ 'attributes.card_points', JSON.parse ],
-      searchUrls: [ 'attributes.card_questions', raw => mapValues(JSON.parse(raw), search => `/showQuestion.do?questionFullName=${search}`) ]
+      searches: [ 'attributes.card_questions', JSON.parse ]
     }))
-    .map(study => Object.assign(study, { disabled: !study.projectAvailability.includes(projectId) }))
+    .map(study => Object.assign(study, {
+      disabled: !study.projectAvailability.includes(projectId),
+      searchUrls: mapValues(study.searches, search => `/showQuestion.do?questionFullName=${search}`)
+    }))
     .sort((studyA, studyB) =>
       studyA.disabled == studyB.disabled ? 0
       : studyA.disabled ? 1 : -1
