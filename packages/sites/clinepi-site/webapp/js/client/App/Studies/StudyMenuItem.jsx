@@ -1,24 +1,15 @@
 import React from 'react';
 
 import './StudyMenu.scss';
-import { IconAlt as Icon, Mesa } from 'wdk-client/Components';
-import { CategoryIcon } from 'Client/App/Categories';
+import { IconAlt as Icon, Link, Mesa } from 'wdk-client/Components';
 import { getSearchIconByType, getSearchNameByType } from 'Client/App/Searches/SearchUtils';
 
 class StudyMenuItem extends React.Component {
   constructor (props) {
     super(props);
-    this.getStudyUrl = this.getStudyUrl.bind(this);
     this.makeAppUrl = this.makeAppUrl.bind(this);
     this.getStudySearches = this.getStudySearches.bind(this);
     this.renderSearchLink = this.renderSearchLink.bind(this);
-  }
-
-  getStudyUrl () {
-    const { study, config } = this.props;
-    const { webAppUrl } = config;
-    const { appUrl, url } = study;
-    return !appUrl ? url : this.makeAppUrl(appUrl);
   }
 
   makeAppUrl (url) {
@@ -56,18 +47,17 @@ class StudyMenuItem extends React.Component {
 
   render () {
     const { study } = this.props;
-    const { name, disabled } = study;
-    const href = this.getStudyUrl();
+    const { name, disabled, route } = study;
     const searches = this.getStudySearches();
     const SearchLink = this.renderSearchLink;
 
     return (
       <div className={'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
         <div className="box StudyMenuItem-Name">
-          <a href={href} className="StudyMenuItem-RecordLink">
+          <Link to={route} className="StudyMenuItem-RecordLink">
             {name}
             <Icon fa="angle-double-right" />
-          </a>
+          </Link>
         </div>
         <div className="row StudyMenuItem-Links">
           {searches.map(({ type, url }) => <SearchLink key={type} type={type} url={url} />)}

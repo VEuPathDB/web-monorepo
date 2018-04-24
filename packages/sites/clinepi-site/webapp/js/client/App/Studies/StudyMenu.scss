@@ -1,7 +1,7 @@
 $red: #DD314E;
 
 .StudyMenuItem {
-  width: 300px;
+  min-width: 300px;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
@@ -14,6 +14,7 @@ $red: #DD314E;
   .StudyMenuItem-Links {
     justify-content: flex-end;
     flex: 1 1 auto;
+    flex-wrap: nowrap;
     .fa {
       font-size: 1.4em;
       padding: 5px;

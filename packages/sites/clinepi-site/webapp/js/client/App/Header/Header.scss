@@ -18,6 +18,7 @@ $font: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helve
 
   * {
     font-family: $font;
+    box-sizing: border-box;
   }
 
   h1 {

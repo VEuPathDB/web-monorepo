@@ -3,7 +3,7 @@ import React from 'react';
 import './StudyCard.scss';
 
 import { CategoryIcon } from 'Client/App/Categories';
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { IconAlt as Icon, Link } from 'wdk-client/Components';
 import { getSearchIconByType, getSearchNameByType } from 'Client/App/Searches/SearchUtils';
 
 class StudyCard extends React.Component {
@@ -27,25 +27,24 @@ class StudyCard extends React.Component {
   render () {
     const { study, prefix, projectId } = this.props;
     const { searchType } = this.state;
-    const { name, categories, url, appUrl, headline, points, searchUrls, disabled } = study;
-    const studyUrl = appUrl && prefix ? prefix + appUrl : url;
+    const { name, categories, route, headline, points, searchUrls, disabled } = study;
 
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
         <div className="box StudyCard-Heading">
-          <h2><a href={studyUrl}>{name}</a></h2>
+          <h2><Link to={route}>{name}</Link></h2>
           <div className="box StudyCard-Categories">
             {categories.map(cat => (
               <CategoryIcon category={cat} key={cat} />
             ))}
           </div>
-          <a href={studyUrl} target="_blank">
+          <Link to={route} target="_blank">
             <Icon fa="angle-double-right" />
-          </a>
+          </Link>
         </div>
-        <a href={studyUrl} title="Study Details" className="StudyCard-DetailsLink">
+        <Link to={route} title="Study Details" className="StudyCard-DetailsLink">
           <small>Study Details <Icon fa="chevron-circle-right"/></small>
-        </a>
+        </Link>
         <div className="box StudyCard-Stripe">
           {headline}
         </div>

@@ -11,32 +11,31 @@ import Header from 'Client/App/Header';
 import { DataRestrictionDaemon } from 'Client/App/DataRestriction';
 import { getIdFromRecordClassName, emitRestriction } from 'Client/App/DataRestriction/DataRestrictionUtils';
 
-import studies from 'Client/data/studies.json';
 import searches from 'Client/data/searches.json';
 import visualizations from 'Client/data/visualizations.json';
-
-import { disableUnavailableStudies } from 'Client/App/Studies/StudyUtils';
 
 const injectState = withStore(state => ({
   webAppUrl: get(state, 'globalData.siteConfig.webAppUrl'),
   studies: get(state, 'globalData.siteConfig.studies')
 }));
 
-export function getStaticSiteData (siteConfig) {
-  const { projectId } = siteConfig ? siteConfig : {};
-  const injectedStudies = disableUnavailableStudies(projectId, studies);
-  return { studies: injectedStudies, searches, visualizations };
+export function getStaticSiteData (studies) {
+  return { studies, searches, visualizations };
 }
 
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
     getStateFromStore () {
       const { globalData } = this.store.getState();
-      const { siteConfig } = globalData;
+      const { siteConfig, studies } = globalData;
       const { displayName, webAppUrl } = siteConfig;
-      const siteData = getStaticSiteData(siteConfig);
+      const siteData = getStaticSiteData(studies.entities);
 
-      return { displayName, webAppUrl, siteData };
+      return { displayName, webAppUrl, siteData, isLoading: studies.loading };
+    }
+
+    isRenderDataLoaded() {
+      return this.state.isLoading === false;
     }
 
     getTitle () {
@@ -58,8 +57,8 @@ export default {
   },
 
   SiteHeader: () => rawProps => {
-    const { siteConfig, preferences, user = {}, ...actions } = rawProps;
-    const siteData = getStaticSiteData(siteConfig);
+    const { siteConfig, studies, preferences, user = {}, ...actions } = rawProps;
+    const siteData = getStaticSiteData(studies.entities);
     const props = { siteConfig, preferences, user, actions, siteData };
     return (
       <div>

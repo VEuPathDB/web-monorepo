@@ -35,7 +35,7 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
       {
         id: 'community',
         text: 'Community',
-        children: [,
+        children: [
           {
             text: 'News',
             appUrl: '/showXmlDataContent.do?name=XmlQuestions.News'
