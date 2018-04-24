@@ -326,7 +326,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
     {
       id: 'analyze',
       text: 'Analyze My Experiment',
-      new: true,
+/*      new: true, */
       route: shouldShowGalaxyOrientation(preferences) ? '/galaxy-orientation' : undefined,
       url: !shouldShowGalaxyOrientation(preferences) ? 'https://eupathdb.globusgenomics.org/' : undefined,
       target: !shouldShowGalaxyOrientation(preferences) ? '_blank' : undefined
