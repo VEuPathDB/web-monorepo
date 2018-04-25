@@ -14,7 +14,6 @@ const Text = {
   product: (
     <span>
       <big>ClinEpi<span style={{ color: '#DD314E' }}>DB</span> </big>
-      <small> Release 1</small>
     </span>
   ),
   body: (
