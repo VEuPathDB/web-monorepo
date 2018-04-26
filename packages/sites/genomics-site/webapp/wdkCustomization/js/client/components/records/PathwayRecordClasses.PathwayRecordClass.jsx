@@ -883,7 +883,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
         let nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
         for (let i=0; i < nodesWithCellularLocation.length; i++) {
-            processCellularLocationNode(nodesWithCellularLocation[i], cy);
+//            processCellularLocationNode(nodesWithCellularLocation[i], cy);
         }
 
         let nodesWithInferredCellularLocation = cy.nodes('node[?inferred_cellular_location]');
