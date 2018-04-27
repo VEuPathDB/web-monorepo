@@ -64,7 +64,7 @@ class HeaderNav extends React.Component {
           </h2>
         </div>
         <div className="box grow-1">
-          <SiteMenu items={mainMenu} config={siteConfig} />
+          <SiteMenu items={mainMenu} config={siteConfig}  actions={actions} user={user}/>
         </div>
         <div className="box">
           <IconMenu items={iconMenu} />
@@ -164,7 +164,7 @@ class HeaderNav extends React.Component {
           <Branding siteConfig={siteConfig} />
           <div className="HeaderNav-Switch">
             <div className="row HeaderNav-Primary">
-              <SiteMenu items={mainMenu} config={siteConfig} />
+              <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
             </div>
 
             <div className="row HeaderNav-Secondary">

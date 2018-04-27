@@ -24,7 +24,8 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
           },
           {
             text: 'My Basket',
-            appUrl: '/showApplication.do?tab=basket'
+            appUrl: '/showApplication.do?tab=basket',
+            loginRequired: true
           },
           {
             text: 'Public Search Strategies',

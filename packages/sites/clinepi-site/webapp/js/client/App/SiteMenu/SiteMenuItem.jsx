@@ -22,20 +22,33 @@ class SiteMenuItem extends React.Component {
   render () {
     const { focus, blur } = this;
     const { isFocused } = this.state;
-    const { item, config } = this.props;
-    const { id, text, url, appUrl, target } = item;
+    const { item, config, actions, user } = this.props;
+    const { id, text, url, appUrl, target, loginRequired } = item;
     const { webAppUrl, projectId } = config;
+
+    const { showLoginWarning } = actions;
+    const isGuest = user.isGuest;
+    let handleClick = (e) => {
+      if (item.onClick) {
+        item.onClick(e);
+      }
+      if (item.loginRequired && isGuest) {
+        e.preventDefault();
+        e.stopPropagation();
+        showLoginWarning('use this feature', e.currentTarget.href);
+      }
+    }
 
     const children = (typeof item.children === 'function')
       ? item.children({ webAppUrl, projectId })
       : item.children;
 
     const destination = appUrl && appUrl.length
-      ? webAppUrl + appUrl
-      : url && url.length
-        ? url
-        : null;
-
+        ? webAppUrl + appUrl
+        : url && url.length
+          ? url
+          : null;
+ 
     const className = 'SiteMenuItem' + (children && children.length ? ' SiteMenuItem--HasSubmenu' : '');
     const touchToggle = {
       onTouchStart: isFocused ? blur : focus,
@@ -48,8 +61,9 @@ class SiteMenuItem extends React.Component {
         onMouseEnter={focus}
         onMouseLeave={blur}
       >
+
       	{destination
-          ? <a className="SiteMenuItem-Link" href={destination} target={target}>{text}</a>
+          ? <a onClick={handleClick} className="SiteMenuItem-Link" href={destination} target={target}>{text}</a>
           : <span className="SiteMenuItem-Text" {...touchToggle}>{text}</span>
         }
         {children && children.length
@@ -65,6 +79,8 @@ class SiteMenuItem extends React.Component {
                     key={idx}
                     item={child}
                     config={config}
+                    actions={actions}
+                    user={user}
                   />
                 ))}
               </div>
