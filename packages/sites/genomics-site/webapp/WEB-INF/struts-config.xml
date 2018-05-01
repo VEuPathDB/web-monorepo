@@ -8,10 +8,7 @@
 
   <form-beans>
     <form-bean name="questionForm" type="org.gusdb.wdk.controller.form.QuestionForm"/>
-    <form-bean name="downloadConfigForm" type="org.gusdb.wdk.controller.form.DownloadConfigForm"/>
     <form-bean name="booleanExpressionForm" type="org.gusdb.wdk.controller.form.BooleanExpressionForm"/>
-    <form-bean name="loginForm" type="org.gusdb.wdk.controller.form.LoginForm"/>
-    <form-bean name="logoutForm" type="org.gusdb.wdk.controller.form.LogoutForm"/>
     <form-bean name="phenotypeForm" type="org.apidb.apicommon.controller.PhenotypeForm"/>
     <form-bean name="commentForm" type="org.apidb.apicommon.controller.NewCommentForm"/> 
     <form-bean name="editCommentForm" type="org.apidb.apicommon.controller.EditCommentForm"/> 
@@ -45,7 +42,6 @@
 
   <global-forwards type="org.apache.struts.action.ActionForward">
     <forward name="home" path="/home.jsp"/>
-    <forward name="needs_login" path="/showLogin.do"/>
     <forward name="application_error" path="/wdkCustomization/jsp/Error.jsp"/>
   </global-forwards>
 
@@ -74,26 +70,6 @@
         scope="request">
     </action>
 
-    <!-- User Account Maintenance Actions -->
-    
-    <action path="/showLogin"
-        parameter="org.gusdb.wdk.controller.action.user.ShowLoginAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/wdkCustomization/jsp/Login.jsp"/>
-      <forward name="show_profile" path="/app/user/profile" redirect="true"/>
-    </action>
-    <action path="/processLogin"
-        parameter="org.apidb.apicommon.controller.action.CustomProcessLoginAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <!-- In most success cases, action will forward directly to original referring page -->
-      <forward name="success" path="/showApplication.do" redirect="true"/>
-      <forward name="input" path="/wdkCustomization/jsp/Login.jsp"/>
-    </action>
-    <action path="/processLogout"
-        parameter="org.gusdb.wdk.controller.action.user.ProcessLogoutAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/home.do" redirect="true"/>
-    </action>
     <action path="/validateLoginCookie"
         parameter="org.gusdb.wdk.controller.action.services.LoginCookieValidationService"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
@@ -363,7 +339,6 @@
       <forward name="show_strategy" path="/showStrategy.do"/>
       <forward name="show_application" path="/showApplication.do"/>
       <forward name="skip_to_record" path="/showRecord.do"/>
-      <forward name="skip_to_download" path="/downloadStep.do"/>
     </action>
     <action
       path="/showApplication"
@@ -388,26 +363,8 @@
       <forward name="run-question" path="/processQuestion.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&amp;value(single_gene_id)=${SOURCE_ID}&amp;questionSubmit=Get+Answer"/>
     </action>
     <action
-      path="/configDownload"
-      type="org.gusdb.wdk.controller.action.ConfigDownloadAction"
-      name="downloadConfigForm"
-      scope="request">
-      <forward name="config_download" path="/getDownloadResult.do"/>
-    </action>
-    <action
-      path="/getDownloadResult"
-      type="org.gusdb.wdk.controller.action.GetDownloadResultAction"
-      name="downloadConfigForm"
-      scope="request">
-    </action>
-    <action
       path="/showQueryHistory"
       type="org.gusdb.wdk.controller.action.ShowQueryHistoryAction"
-      scope="request">
-    </action>
-    <action
-      path="/downloadStep"
-      type="org.gusdb.wdk.controller.action.DownloadStepRedirectAction"
       scope="request">
     </action>
     <action path="/showPublicStrats"
