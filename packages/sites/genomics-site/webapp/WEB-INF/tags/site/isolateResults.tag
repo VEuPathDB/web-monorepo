@@ -98,12 +98,7 @@
         <th style="text-align: right; white-space: nowrap; width: 33px;">
           <c:if test="${wdkViewAnswer.resultSize > 0}">
 
-                        <%-- Galaxy URL --%>
-                        <c:if test="${!empty sessionScope.GALAXY_URL}">
-                          <a href="downloadStep.do?step_id=${step.stepId}&wdkReportFormat=tabular">
-                            <b class="galaxy">SEND TO GALAXY</b>
-                          </a>
-                        </c:if>
+                        <imp:additionalResultTableLinks step="${step}"/>
 
                         <c:choose>
                           <c:when test="${wdkUser.guest}">
@@ -114,13 +109,8 @@
                           </c:otherwise>
                         </c:choose>
 
-                        <c:url var="downloadLink" value="downloadStep.do?step_id=${step.stepId}&signature=${wdkUser.signature}"/>
-
-                        <c:if test="${true}"> <!-- true = use React download page; false = use JSP download page-->
-                          <c:set var="summaryViewName" value="${empty requestScope.wdkView.name ? '_default' : requestScope.wdkView.name}"/>
-                          <c:url var="downloadLink" value="app/step/${step.stepId}/download?summaryView=${summaryViewName}"/>
-                        </c:if>
-
+                        <c:set var="summaryViewName" value="${empty requestScope.wdkView.name ? '_default' : requestScope.wdkView.name}"/>
+                        <c:url var="downloadLink" value="app/step/${step.stepId}/download?summaryView=${summaryViewName}"/>
                         <a class="step-download-link" style="padding-right: 1em;" href="${downloadLink}"><b>Download</b></a>
 
                         <c:if test="${recHasBasket}">

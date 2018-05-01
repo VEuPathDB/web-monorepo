@@ -1,10 +1,12 @@
 import React from 'react';
+import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/ActionCreatorUtils';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
+import { submitAsForm } from 'wdk-client/FormSubmitter';
 // import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
-import { withActions } from 'ebrc-client/util/component';
+import { withActions, withStore } from 'ebrc-client/util/component';
 import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -307,7 +309,7 @@ export function RecordAttributeSection(DefaultComponent) {
 /**
  * Overrides the Preferences fieldset on the User Profile/Account form from the WDK.  The WDK
  * has no application specific properties although it provides for that possibility.  The empty
- * React component placeholder is overriden with an ApiDB specific component.
+ * React component placeholder is overridden with an ApiDB specific component.
  * @returns {*} - Application specific properties component
  * @constructor
  */
@@ -327,4 +329,44 @@ export function PrimaryKeySpan() {
     }
     return ( <span>{newPkString}</span> );
   };
+}
+
+/**
+ * Action creator to create temporary result, then send result URL to galaxy
+ */
+function sendToGalaxy(props) {
+  return ({ wdkService }) => {
+    let { galaxyUrl, step, selectedReporter, formState, globalData } = props;
+    Cookies.remove('GALAXY_URL', { path: globalData.siteConfig.webAppUrl });
+    let formatting = {
+      format: selectedReporter,
+      formatConfig: formState
+    };
+    wdkService.getTemporaryResultUrl(step.answerSpec, formatting)
+      .then(url => {
+        submitAsForm({
+          action: galaxyUrl,
+          inputs: { URL: url }
+        });
+      });
+    return emptyAction;
+  };
+}
+
+function SendToGalaxyButton(props) {
+  let galaxyUrl = Cookies.get('GALAXY_URL');
+  return (!galaxyUrl ? null :
+    <button className="btn" type="button" onClick={() => { props.sendToGalaxy({...props, galaxyUrl}); }}>
+      Send {props.recordClass.displayNamePlural} to Galaxy
+    </button>
+  );
+}
+
+export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitButtons) {
+  return withActions({ sendToGalaxy })(withStore()(props => (
+    <div>
+      <ApiTabularReporterFormSubmitButtons {...props}/>
+      <SendToGalaxyButton {...props}/>
+   </div>
+  )));
 }

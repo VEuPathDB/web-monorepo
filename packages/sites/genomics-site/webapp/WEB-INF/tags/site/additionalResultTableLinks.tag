@@ -7,10 +7,10 @@
 %>
 
 <%-- Galaxy URL --%>
-<c:if test="${!empty sessionScope.GALAXY_URL}">
+<c:if test="${!empty cookie['GALAXY_URL']}">
   <c:set var="summaryViewName" value="${empty requestScope.wdkView.name ? '_default' : requestScope.wdkView.name}"/>
-  <c:url var="downloadLink" value="app/step/${step.stepId}/download?summaryView=${summaryViewName}&format=tabular"/>
-  <a class="step-download-link" style="padding-right: 1em;" href="${downloadLink}">
+  <c:url var="downloadLink" value="app/step/${step.stepId}/download?summaryView=${summaryViewName}&format=attributesTabular"/>
+  <a class="step-download-link" style="margin-right: 1em;" href="${downloadLink}">
     <b class="galaxy">SEND TO GALAXY</b>
   </a>
 </c:if>
