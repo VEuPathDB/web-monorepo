@@ -403,11 +403,6 @@
       scope="request">
     </action>
     <action
-      path="/goRemote"
-      type="org.gusdb.wdk.controller.action.services.RemoteLoginAction"
-      scope="request">
-    </action>
-    <action
       path="/showResultSize"
       type="org.gusdb.wdk.controller.action.ShowResultSizeAction"
       scope="request">
