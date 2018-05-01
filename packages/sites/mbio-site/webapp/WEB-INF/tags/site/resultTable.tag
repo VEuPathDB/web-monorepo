@@ -5,4 +5,4 @@
               required="true"
               description="Step bean we are looking at" %>
 
-<wdk:resultTable step="${step}" feature__newDownloadPage="${true}"/>
+<wdk:resultTable step="${step}"/>
