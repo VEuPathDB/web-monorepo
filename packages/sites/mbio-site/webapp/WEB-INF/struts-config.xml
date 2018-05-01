@@ -63,19 +63,12 @@
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
         scope="request">
     </action>
-
-    <action path="/validateLoginCookie"
-        parameter="org.gusdb.wdk.controller.action.services.LoginCookieValidationService"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-    </action>
-   
     <action
         path="/uploadSample"
         parameter="org.gusdb.wdk.controller.action.UploadSampleAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="input" path="/uploadSample.jsp"/>
     </action>
-    
     <action
       path="/showFavorite"
       type="org.gusdb.wdk.controller.action.ShowFavoriteAction"
