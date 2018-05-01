@@ -9,16 +9,8 @@
               type="java.lang.String"
               required="false"
               description="if true, the basket column will not be included" %>
-<%@ attribute name="feature__newDownloadPage"
-              type="java.lang.Boolean"
-              required="false"
-              description="if true, use the new download page" %>
 
 <c:set var="wdkAnswer" value="${step.answerValue}"/>
 <div data-controller="wdk.dataRestriction.restrictionController" data-record-class="${wdkAnswer.question.recordClass.fullName}">
-  <wdk:resultTable
-    step="${step}"
-    excludeBasketColumn="${excludeBasketColumn}"
-    feature__newDownloadPage="${feature__newDownloadPage}"
-  />
+  <wdk:resultTable step="${step}" excludeBasketColumn="${excludeBasketColumn}"/>
 </div>
