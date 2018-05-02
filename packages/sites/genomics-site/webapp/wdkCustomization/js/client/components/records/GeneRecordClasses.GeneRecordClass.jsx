@@ -164,6 +164,9 @@ export function RecordTable(props) {
     case 'eQTLPhenotypeGraphs':
       return <props.DefaultComponent {...props} childRow={ExpressionChildRow}/>
 
+    case 'GOTerms':
+      return <SortKeyTable {...props}/>
+
     case 'HostResponseGraphs':
       return <props.DefaultComponent {...props} childRow={HostResponseChildRow} />
 
@@ -180,7 +183,7 @@ export function RecordTable(props) {
       return <MercatorTable {...props} />
 
     case 'Orthologs':
-      return <OrthologsTable {...props}/>
+      return <SortKeyTable {...props}/>
 
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
@@ -492,7 +495,7 @@ class MercatorTable extends React.Component {
   }
 }
 
-class OrthologsTable extends React.Component {
+class SortKeyTable extends React.Component {
 
   constructor(props) {
     super(props);
