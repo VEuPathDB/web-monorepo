@@ -162,7 +162,9 @@ function pruneCategoryBasedOnShowStrains(categoryTree, record) {
 /** Use MetaTable to determine if a leaf is appropriate for record instance */
 function pruneCategoriesByMetaTable(categoryTree, record) {
   let metaTableIndex = record.tables.MetaTable.reduce((index, row) => {
-    index[row.target_name + '-' + row.target_type] = row;
+    if (row.organisms == null || row.organisms.indexOf(record.attributes.organism_full) > -1) {
+      index[row.target_name + '-' + row.target_type] = row;
+      }
     return index;
   }, {});
   return tree.pruneDescendantNodes(
@@ -173,7 +175,8 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
       let metaTableRow = metaTableIndex[key];
       if (metaTableRow == null) return true;
       if (metaTableRow.organisms == null) return true;
-      let organisms = metaTableRow.organisms.split(/,\s*/);
+      //let organisms = metaTableRow.organisms.split(/,\s*/);
+      let organisms = metaTableRow.organisms;
       let keep =  organisms.indexOf(record.attributes.organism_full) > -1;
       if (!keep) console.info('Removing individual based on MetaTable: %o', cat.getLabel(individual));
       return keep;
