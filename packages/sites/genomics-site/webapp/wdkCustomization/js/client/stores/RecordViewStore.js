@@ -162,24 +162,25 @@ function pruneCategoryBasedOnShowStrains(categoryTree, record) {
 /** Use MetaTable to determine if a leaf is appropriate for record instance */
 function pruneCategoriesByMetaTable(categoryTree, record) {
   let metaTableIndex = record.tables.MetaTable.reduce((index, row) => {
-    if (row.organisms == null || row.organisms.indexOf(record.attributes.organism_full) > -1) {
-      index[row.target_name + '-' + row.target_type] = row;
+    if (index[row.target_name + '-' + row.target_type] === undefined) {
+      index[row.target_name + '-' + row.target_type] = {keep: false}; 
       }
+    if (index[row.target_name + '-' + row.target_type].keep) return index;
+    if (row.organisms == null || row.organisms === record.attributes.organism_full) {
+       index[row.target_name + '-' + row.target_type].keep = true
+       }
     return index;
   }, {});
+  // show tables in individual (ontology) that in metatable apply to this organim, 
+  //  and tables in individual that are not in metatable 
+  //  (so exclude tables in metatable that do not apply to this organim)
   return tree.pruneDescendantNodes(
     individual => {
       if (individual.children.length > 0) return true;
       if (individual.wdkReference == null) return false;
       let key = cat.getRefName(individual) + '-' + cat.getTargetType(individual);
-      let metaTableRow = metaTableIndex[key];
-      if (metaTableRow == null) return true;
-      if (metaTableRow.organisms == null) return true;
-      //let organisms = metaTableRow.organisms.split(/,\s*/);
-      let organisms = metaTableRow.organisms;
-      let keep =  organisms.indexOf(record.attributes.organism_full) > -1;
-      if (!keep) console.info('Removing individual based on MetaTable: %o', cat.getLabel(individual));
-      return keep;
+      if (metaTableIndex[key] === undefined) return true;
+      return metaTableIndex[key].keep;
     },
     categoryTree
   )
@@ -189,7 +190,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 // Custom epics
 // ------------
 //
-// An epic allows us to perform side-effects in resonse to actions that are
+// An epic allows us to perform side-effects in response to actions that are
 // dispatched to the store.
 
 /**
