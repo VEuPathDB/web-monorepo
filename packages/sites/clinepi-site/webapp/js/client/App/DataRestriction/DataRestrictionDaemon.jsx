@@ -50,8 +50,8 @@ class DataRestrictionDaemon extends React.Component {
 
   getStudyById (studyId) {
     if (typeof studyId !== 'string') return;
-    const { siteConfig } = this.props;
-    const { studies } = siteConfig;
+    const { siteData } = this.props;
+    const { studies } = siteData;
     const study = studies.find(({ id }) => studyId === id)
     return study
       ? study

@@ -65,7 +65,7 @@
     "appUrl": "/app/record/dataset/DS_121f2c2f02",
     "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
     "projectAvailability": ["Gates"],
-    "access": "protected",
+    "access": "private",
     "categories": ["enteric"],
     "headline": "MAL-ED PhaseI DCC",
     "points": [
