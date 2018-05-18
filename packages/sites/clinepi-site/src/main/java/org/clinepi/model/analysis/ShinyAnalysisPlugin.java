@@ -46,16 +46,22 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   private static final String PROPERTY_COL = "property";
   private static final String TYPE_COL = "type";
   private static final String PARENT_COL = "parent";
+  private static final String CAT_COL = "category";
 
-  private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL, PARENT_COL);
+  private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL, PARENT_COL, CAT_COL);
 
+    // keep working on the sql. i dont think its returning everything i need yet.
     private static String getMetadataSql(boolean useDatasetName, String tblPrefix) {
     return
-      "select ontology_term_source_id as " + SOURCE_ID_COL + ", ontology_term_name as " + PROPERTY_COL + ", " + TYPE_COL + ", parent_ontology_term_name as " + PARENT_COL +
-      "  from apidbtuning." + tblPrefix + "Ontology" +
-      "  where ontology_term_source_id is not null" +
-      "    and type is not null" +
-      (useDatasetName ? " and dataset_name = ?" : "");
+      "select distinct o.ontology_term_source_id as " + SOURCE_ID_COL + 
+      ", o.ontology_term_name as " + PROPERTY_COL + 
+      ", o.type as " + TYPE_COL + 
+      ", o.parent_ontology_term_name as " + PARENT_COL +
+      ", m.category as " + CAT_COL +
+      "  from apidbtuning." + tblPrefix + "Ontology o " +
+      "  left join apidbtuning." + tblPrefix + "Metadata m on o.ontology_term_source_id = m.property_source_id " + 
+      "  where o.ontology_term_source_id is not null" +
+      (useDatasetName ? " and o.dataset_name = ?" : "");
   }
 
   @Override
@@ -92,7 +98,8 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
                 getStringCol(rs, SOURCE_ID_COL),
                 getStringCol(rs, PROPERTY_COL),
                 getStringCol(rs, TYPE_COL),
-                getStringCol(rs, PARENT_COL)));
+                getStringCol(rs, PARENT_COL),
+                getStringCol(rs, CAT_COL)));
           }
         }
         catch (IOException e) {
