@@ -1,6 +1,5 @@
 import { get } from 'lodash';
 import { IconAlt, Link } from 'wdk-client/Components';
-import CookieBanner from 'ebrc-client/components/CookieBanner';
 import { withStore } from 'ebrc-client/util/component';
 
 import Index from '../components/Index';
@@ -66,7 +65,6 @@ export default {
       <div>
         <Header {...props} />
         <DataRestrictionDaemon {...props} />
-        <CookieBanner/>
       </div>
     );
   },
