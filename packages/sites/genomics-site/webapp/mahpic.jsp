@@ -236,10 +236,10 @@
              <td><b><a href="https://www.ncbi.nlm.nih.gov/pubmed/27587810">PMID:27587810</a></b></td>
            </tr>
            <tr>
-             <td><b><i>Plasmodium knowlesi</i> strain PK1(A+)</b></td>
+             <td><b><i>Plasmodium knowlesi</i> strain Malayan Strain Pk1 A</b></td>
              <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/PRJNA377737">GenBank</b></a></td> 
-             <td>Coming Soon</td>
-             <td>Coming Soon</td>
+             <td><b><a href="http://plasmodb.org/plasmo/app/record/dataset/DS_3f2eadf75b">1 Dec 2017</b></a></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/pubmed/28720171">PMID:28720171</a></b></td>
            </tr>
 
            </table>
@@ -525,7 +525,7 @@
              <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
                     <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE94273" target="_blank">E04 Bone Marrow Expression Results at NCBI's GEO</a><br>
                     <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99486" target="_blank">E04 Whole Blood Expression Results at NCBI's GEO </a></b></td>
-             <td><b><a href="http://plasmodb.org/plasmo/app/record/gene/PCYB_005200#ExpressionGraphs" target="_blank">PlasmoDB example gene page</a><br>
+             <td><b><a href="http://plasmodb.org/plasmo/app/record/gene/PCYB_103890#ExpressionGraphs" target="_blank">PlasmoDB example gene page</a><br>
                     <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRC" target="_blank">PlasmoDB Pcyn differential expression</a><br>
                     <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRCPercentile" target="_blank">PlasmoDB Pcyn relative expression (percentile)</a><br>
                     <a href="http://hostdb.org/hostdb/app/record/gene/MACM_249#ExpressionGraphs" target="_blank">HostDB example gene page</a><br>
