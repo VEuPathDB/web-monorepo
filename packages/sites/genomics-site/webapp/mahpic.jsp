@@ -397,7 +397,8 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">E03 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">E03 Clinical Data in PlasmoDB Downloads</a>
+                    <a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">E03 Bone Marrow Cytology Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
            <tr>
