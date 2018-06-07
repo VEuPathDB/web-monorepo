@@ -529,10 +529,8 @@
                     <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRC" target="_blank">PlasmoDB Pcyn differential expression</a><br>
                     <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRCPercentile" target="_blank">PlasmoDB Pcyn relative expression (percentile)</a><br>
                     <a href="http://hostdb.org/hostdb/app/record/gene/MACM_249#ExpressionGraphs" target="_blank">HostDB example gene page</a><br>
-                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRC" target="_blank">HostDB Mmul differential expression</a>
+                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRC" target="_blank">HostDB Mmul differential expression</a><br>
                     <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRCPercentile" target="_blank">HostDB Mmul relative expression (percentile)</a></b></td>
-                    
-                    http://plasmodb.org/plasmo/app/record/gene/PCYB_005200#ExpressionGraphs
                     
            </tr>
            <tr>
