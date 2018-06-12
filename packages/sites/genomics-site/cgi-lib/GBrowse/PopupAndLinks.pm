@@ -1179,7 +1179,7 @@ sub massSpecTitle {
     my @locs = map {$_ - $start + 1} split /;/, $phospho_site; 
     my $offset = 0;
 
-    for my $loc (sort @locs) {
+    for my $loc (sort  { $b <=> $a } @locs) {
       $loc = $loc + $offset;
 
         if ($ontology_names =~ /phosphorylation/i) {
@@ -1191,8 +1191,9 @@ sub massSpecTitle {
         } else {
           substr($seq, $loc, 0) = '+';
         }
-      $offset++;
+#      $offset++;
     }
+    $seq =~ s/(.[\*|\#|\^|\+])/<B>$1<\/B>/g;
   }
 
   my @data;
