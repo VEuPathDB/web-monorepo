@@ -442,4 +442,7 @@
 .fold-change #profileset_generic {
   max-width: 100%;
 }
+
+.fold-change .wdk-TreeBoxParam { 
+  padding: 1em 2em;
 }

@@ -126,8 +126,8 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
   var setParams = function($form) {
     var refOp = $form.find("select[name*='min_max_avg_ref']"),
         compOp = $form.find("select[name*='min_max_avg_comp']"),
-        refCount = $form.find("input[name*='samples_fc_ref_generic']:checked").length,
-        compCount = $form.find("input[name*='samples_fc_comp_generic']:checked").length;
+        refCount = getParamValues($form, 'samples_fc_ref_generic').length,
+        compCount = getParamValues($form, 'samples_fc_comp_generic').length;
 
 
     // if refCount <= 1, make ops disabled
@@ -159,14 +159,25 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
     // }
   };
 
+  function getParamValue($form, paramName) {
+    return $form.find('[name="value(' + paramName + ')"], [name="array(' + paramName + ')"]').val();
+  }
+
+  function getParamValues($form, paramName) {
+    var value = $form.find('[name="value(' + paramName + ')"]').val();
+    return (value ? value.split(',') : [])
+      .concat($form.find('[name="array(' + paramName + ')"]:checked').toArray()
+        .map(function(input) { return input.value }));
+  }
+
   // set the properies of $scope
   var setScope = function($scope, $form) {
 
     $scope.foldChange = $form.find("#fold_change").val();
     $scope.foldChangeCompound = $form.find("#fold_change_compound").val();
-    $scope.direction = $form.find("select[name*='regulated_dir']").val();
-    $scope.refCount = $form.find("input[name*='samples_fc_ref_generic']:checked").length;
-    $scope.compCount = $form.find("input[name*='samples_fc_comp_generic']:checked").length;
+    $scope.direction = getParamValue($form, 'regulated_dir');
+    $scope.refCount = getParamValues($form, 'samples_fc_ref_generic').length;
+    $scope.compCount = getParamValues($form, 'samples_fc_comp_generic').length;
     $scope.refOperation = $form.find("select[name*='min_max_avg_ref']").find(":selected").text();
     $scope.compOperation = $form.find("select[name*='min_max_avg_comp']").find(":selected").text();
 
