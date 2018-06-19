@@ -68,8 +68,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
             }))
           }}
         />
-
-        <button style={{display: 'block', margin: '2rem auto',}} type="submit" className="btn">View Results</button>
+        <button style={{display: 'block', margin: '2rem auto',}} type="submit" className="btn" disabled={props.questionState.paramUIState.ngsSnp_strain_meta.filteredCount > 15} title={'Select up to 15 samples to continue'}>View Results</button>
       </form>
     </div>
   )
