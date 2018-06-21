@@ -101,6 +101,22 @@ sub gffTssChabbert {
   hover($f, \@data);
 }
 
+
+sub gffKirkland {
+  my $f = shift;
+
+  my @data;
+  my $score = $f->score;
+  my ($target) = $f->get_tag_values('Target');
+  $target =~s/Motif:(.*),\d*,\d*/$1/;
+
+  push @data, [ 'Motif'=> $target];
+  push @data, [ 'Score'=> $score];
+
+  hover($f,\@data);
+}
+
+
 sub syntenyTitle {
   my $f = shift;
   my ($syntype) = $f->get_tag_values('SynType');
