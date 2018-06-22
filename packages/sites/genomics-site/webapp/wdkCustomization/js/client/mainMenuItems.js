@@ -98,7 +98,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'pats',
           text: 'PATS',
           include: [PlasmoDB],
-          url: 'http://gecco.org.chemie.uni-frankfurt.de/pats/pats-index.php'
+          url: 'http://modlabcadd.ethz.ch/software/pats/'
         },
         {
           id: 'plasmit',

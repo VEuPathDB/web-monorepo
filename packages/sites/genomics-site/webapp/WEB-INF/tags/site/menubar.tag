@@ -91,7 +91,7 @@
         <c:if test="${project == 'PlasmoDB'}" >
           <li><a href="http://v4-4.plasmodb.org/restricted/PlasmoAPcgi.shtml">PlasmoAP</a>
           </li>
-          <li><a href="http://gecco.org.chemie.uni-frankfurt.de/pats/pats-index.php">PATS</a>
+          <li><a href="http://modlabcadd.ethz.ch/software/pats/">PATS</a>
           </li>
           <li><a href="http://gecco.org.chemie.uni-frankfurt.de/plasmit">PlasMit</a>
           </li>
