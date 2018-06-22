@@ -1,4 +1,5 @@
-import { get, identity, mapValues, spread } from 'lodash';
+import { get, identity, mapValues, partition, spread } from 'lodash';
+import { emptyAction } from 'wdk-client/ActionCreatorUtils';
 import { ok } from 'wdk-client/Json';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
@@ -23,13 +24,31 @@ function studiesRequested() {
   return { type: STUDIES_REQUESTED };
 }
 
-function studiesReceived(studies) {
-  return { type: STUDIES_RECEIVED, payload: { studies }};
+function studiesReceived([ studies, invalidRecords ]) {
+  return [
+    { type: STUDIES_RECEIVED, payload: { studies }},
+    ({ wdkService }) =>
+      wdkService.submitError(new Error(`The following studies do not have complete data: ${invalidRecords.map(r => JSON.stringify(r.id))}`))
+        .then(() => emptyAction)
+  ];
 }
 
 function studiesError(error) {
   return { type: STUDIES_ERROR, payload: { error: error.message }};
 }
+
+
+const attributes = [
+  'card_headline',
+  'card_points',
+  'card_questions',
+  'dataset_id',
+  'display_name',
+  'policy_url',
+  'project_availability',
+  'study_access',
+  'study_categories',
+];
 
 
 // Action thunks
@@ -51,19 +70,7 @@ function fetchStudies(projectId) {
         },
         formatting: {
           format: 'wdk-service-json',
-          formatConfig: {
-            attributes: [
-              'card_headline',
-              'card_points',
-              'card_questions',
-              'dataset_id',
-              'display_name',
-              'policy_url',
-              'project_availability',
-              'study_access',
-              'study_categories',
-            ]
-          }
+          formatConfig: { attributes }
         }
       })
     })
@@ -77,8 +84,10 @@ function fetchStudies(projectId) {
 // -------
 
 function formatStudies(projectId, answer) {
-  return answer.records
-  // .filter(record => JSON.parse(record.attributes.project_availability).includes(projectId))
+  const [ validRecords, invalidRecords ] = partition(answer.records,
+    record => attributes.every(attribute => record.attributes[attribute] != null));
+
+  return [ validRecords
     .map(mapProps({
       name: [ 'attributes.display_name' ],
       id: [ 'attributes.dataset_id' ],
@@ -98,7 +107,8 @@ function formatStudies(projectId, answer) {
     .sort((studyA, studyB) =>
       studyA.disabled == studyB.disabled ? 0
       : studyA.disabled ? 1 : -1
-    );
+    ),
+    invalidRecords ];
 }
 
 /**
