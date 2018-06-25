@@ -35,10 +35,6 @@ export default {
       return { displayName, webAppUrl, siteData, isLoading: studies.loading };
     }
 
-    isRenderDataLoaded() {
-      return this.state.isLoading === false;
-    }
-
     getTitle () {
       return this.state.displayName;
     }
