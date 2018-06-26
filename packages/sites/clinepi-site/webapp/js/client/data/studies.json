@@ -42,8 +42,10 @@
   },
   {
     "name": "GEMS",
-    "id": "gems",
-    "projectAvailability": [],
+    "id": "DS_841a9f5259",
+    "appUrl": "/app/record/dataset/DS_841a9f5259",
+    "policyUrl": "/documents/CE_DataAccessUsePolicy_Rev2.pdf",
+    "projectAvailability": ["Gates"],
     "access": "protected",
     "url": "#gems",
     "categories": ["enteric"],
