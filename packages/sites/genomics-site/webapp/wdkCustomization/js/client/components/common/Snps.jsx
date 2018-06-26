@@ -35,7 +35,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
 
   return (
     <div>
-      <form action="/cgi-bin/isolateClustalw" method="post" target="_blank">
+      <form action="/cgi-bin/isolateClustalw" method="post" target="_blank" autoComplete="off" noValidate >
         <input name="project_id" value={projectId} type="hidden"/>
         <input name="sid" value={sequenceId} type="hidden"/>
         <input name="end" value={end} type="hidden"/>
