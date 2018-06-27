@@ -35,11 +35,16 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
 
   return (
     <div>
-      <form action="/cgi-bin/isolateClustalw" method="post" target="_blank" autoComplete="off" noValidate >
+      <form action="/cgi-bin/isolateClustalw" method="post" target="_blank" autoComplete="off" >
         <input name="project_id" value={projectId} type="hidden"/>
         <input name="sid" value={sequenceId} type="hidden"/>
-        <input name="end" value={end} type="hidden"/>
-        <input name="start" value={start} type="hidden"/>
+
+	<div style={headingStyle}>Genomic region:</div>
+	<label>Default positions are the start and end of the gene. These can be changed +/- 10,000.</label><br/>
+        <label>Start position: <input name="start" defaultValue={start} type="number" min={start-10000} max={parseFloat(start)+10000}/>&nbsp;&nbsp;
+        End position: <input name="end" defaultValue={end} type="number" min={end-10000} max={parseFloat(end)+10000}/></label>
+
+
         <input name="organism" value={organism} type="hidden"/>
         <input name="filter_param_value" type="hidden" value={value}/>
 
@@ -68,7 +73,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
             }))
           }}
         />
-        <button style={{display: 'block', margin: '2rem auto',}} type="submit" className="btn" disabled={props.questionState.paramUIState.ngsSnp_strain_meta.filteredCount > 15} title={'Select up to 15 samples to continue'}>View Results</button>
+        <button style={{display: 'block', margin: '2rem auto',}} type="submit" className="btn">View Results</button>
       </form>
     </div>
   )
