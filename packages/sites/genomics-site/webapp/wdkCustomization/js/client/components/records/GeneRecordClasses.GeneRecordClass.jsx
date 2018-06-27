@@ -209,11 +209,11 @@ export function RecordTable(props) {
 }
 
 function SNPsAlignment(props) {
-  let { context_start, context_end, sequence_id, organism_full } = props.record.attributes;
+  let { start_min, end_max, sequence_id, organism_full } = props.record.attributes;
   return (
     <SnpsAlignmentForm
-      start={context_start}
-      end={context_end}
+      start={start_min}
+      end={end_max}
       sequenceId={sequence_id}
       organism={organism_full} />
   )
