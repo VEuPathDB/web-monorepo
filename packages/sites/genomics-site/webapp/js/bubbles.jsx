@@ -1,27 +1,32 @@
-/* global wdk */
+/* global ebrc, wdk, Wdk */
+import {negate} from 'lodash';
 import {render} from 'react-dom';
-import {pick} from 'lodash';
 import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip, Icon} from 'wdk-client/Components';
-import {getSearchMenuCategoryTree} from 'ebrc-client/util/category';
 
 wdk.namespace('apidb.bubble', ns => {
-  const wdkService = wdk.getWdkService();
+  const wdkStore = ebrc.context.stores.get(Wdk.Stores.WdkStore);
 
   ns.initialize = ($el, attrs) => {
-    let options = pick(attrs, 'include', 'exclude');
-    Promise.all([
-      wdkService.getOntology(),
-      wdkService.getRecordClasses()
-    ]).then(([ ontology, recordClasses ]) => getSearchMenuCategoryTree(ontology, recordClasses, options)).then(tree => {
-      if (tree.children.length === 1) {
-        renderBubble({ tree: tree.children[0] }, $el[0]);
-      } else {
+    const sub = wdkStore.addListener(() => {
+      const { searchTree } = wdkStore.state.globalData;
+      if (searchTree) {
+        sub.remove();
+        const tree = attrs.isTranscript
+          ? searchTree.children.find(isTranscriptNode)
+          : {
+            ...searchTree,
+            children: searchTree.children.filter(negate(isTranscriptNode))
+          };
         renderBubble({ tree }, $el[0]);
       }
-    }).catch(console.error.bind(console));
+    });
   };
 });
+
+function isTranscriptNode(node) {
+  return node.properties.label[0] === 'TranscriptRecordClasses.TranscriptRecordClass';
+}
 
 function renderBubble(props, el) {
   render((

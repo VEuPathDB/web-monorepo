@@ -43,5 +43,5 @@ initialize({
   storeWrappers,
   wrapRoutes,
   mainMenuItems,
-  smallMenuItems
+  smallMenuItems,
 })
