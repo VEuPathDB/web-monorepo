@@ -93,8 +93,8 @@
           </li>
           <li><a href="http://modlabcadd.ethz.ch/software/pats/">PATS</a>
           </li>
-          <li><a href="http://gecco.org.chemie.uni-frankfurt.de/plasmit">PlasMit</a>
-          </li>
+          <!-- li><a href="http://gecco.org.chemie.uni-frankfurt.de/plasmit">PlasMit</a>
+          </li -->
         </c:if>
         <c:if test="${project == 'ToxoDB'}" >
           <li><a href="http://ancillary.toxodb.org">Ancillary Genome Browser</a></li>

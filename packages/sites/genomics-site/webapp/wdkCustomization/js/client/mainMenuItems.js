@@ -100,12 +100,12 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           include: [PlasmoDB],
           url: 'http://modlabcadd.ethz.ch/software/pats/'
         },
-        {
+	/*        {
           id: 'plasmit',
           text: 'PlasMit',
           include: [PlasmoDB],
           url: 'http://gecco.org.chemie.uni-frankfurt.de/plasmit'
-        },
+	  },*/
         {
           id: 'ancillary-genome-browser',
           text: 'Ancillary Genome Browser',
