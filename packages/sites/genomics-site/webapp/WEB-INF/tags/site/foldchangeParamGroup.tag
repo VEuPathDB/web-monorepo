@@ -11,6 +11,7 @@
   <c:set var="profileset_genericParam" value="${paramGroup['profileset_generic']}"/>
   <c:set var="regulated_dirParam" value="${paramGroup['regulated_dir']}"/>
   <c:set var="fold_changeParam" value="${paramGroup['fold_change']}"/>
+  <c:set var="soft_floorParam" value="${paramGroup['soft_floor']}"/>
 
   <c:set var="samples_fc_ref_genericParam" value="${paramGroup['samples_fc_ref_generic']}"/>
   <c:set var="min_max_avg_refParam" value="${paramGroup['min_max_avg_ref']}"/>
@@ -116,6 +117,15 @@
           -->
         </div>
       </div>
+
+      <div class="param-line">
+        <span class="text">using a
+          <span class="prompt">Soft Floor</span> of</span>
+        <imp:stringParamInput qp="${soft_floorParam}"/>
+        <imp:helpIcon helpContent="${soft_floorParam.help}" />
+      </div>
+
+
     </div> <!-- .fold-change-params -->
 
     <div class="fold-change-graphic">
