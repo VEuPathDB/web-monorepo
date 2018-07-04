@@ -304,11 +304,6 @@
              <th>Data Available from</th>
              <th>Data Integrated into PlasmoDB Searches</th>
            </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming Soon</b><!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">HuA Clinical Data in PlasmoDB Downloads</a>--></td>  
-             <td>N/A</td>
-           </tr>
           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="http://www.metabolomicsworkbench.org//data/DRCCMetadata.php?Mode=Study&StudyID=ST000578&StudyType=MS&ResultType=5" target="_blank">HuA Metabolomics Results at Metabolomics Workbench</a></b></td>    
@@ -335,7 +330,85 @@
   </div>	
   </div>  
 
- 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment HuC: Metabolomics of plasma samples from human volunteers infected with <i>P. vivax</i> </a> </h3> 
+   <div class="wdk-toggle-content">
+
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoHuC table, #ExpInfoHuC td, #ExpInfoHuC th, #ExpInfoHuC tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoHuC {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoHuC"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Metabolomics of plasma samples from human volunteers infected with <i>P. vivax</i></td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Sixteen healthy volunteers, 7 malaria na&iuml;ve and 9 semi-immune, aged 18-45 years, were enrolled in this study during October 2012 to November 2013. Malaria-na&iuml;ve volunteers were recruited in Cali, Colombia, a non-endemic city; those with previous malaria experience were recruited in Buenaventura, a malaria-endemic area on the Colombian Pacific Coast. The study was approved by Institutional Review Boards (IRB) of the Malaria Vaccine and Drug Development Center–MVDC (CECIV, Cali) and Centro Médico Imbanaco (Cali).  All protocols and documentation were reviewed and samples shipments approved by the Emory IRB.  Male and female patients were eligible for inclusion, which included two steps: 1) age between 15-60 years, hemoglobin levels > 9g/dL, presence of current <i>P. vivax</i> infection, absence of other <i>Plasmodium</i> species determined by thick blood smear and PCR, blood parasite count of 0.1&#37; or more, absence of other acute or chronic diseases, being able to sign an informed consent form; 2) healthy 18 to 45 years old man or non-pregnant women,  capacity to sign an informed consent in a free and voluntary way, acceptable understanding of the clinical trial through the approval of a questionnaire regarding the information given in the consent process, obligatory use of adequate contraceptive method from beginning of recruitment and screening time up to three months after last immunization, do not have chronic or acute diseases, accept not traveling to malaria endemic areas during the clinical trial, have telephone at home or mobile phone that permit permanent contact for follow up, being willing to participated during both steps of the clinical trial. Exclusion criteria included pregnancy, abnormal laboratory test values, hemoglobin pathology, glucose-6-phosphate dehydrogenase (G6PDH) deficiency, positive for blood bank infectious diseases (syphilis, HIV, Chagas disease, HTLV 1–2, and hepatitis B and hepatitis C), or have any condition that would increase the risk of an adverse outcome.  Volunteers were infected with <i>P. vivax</i> via sporozoite challenge by exposing volunteers to bites of 2–4 mosquitoes (<i>Anopheles albimanus</i>) of the same infected batch. Plasma samples were collected at 4 time points: Baseline, 1 month pre-inoculation; Diagnosis; 3 weeks post-treatment; 4 months post-treatment. As soon as parasites were detected by thick blood smears, participants were treated orally with curative doses of chloroquine (1500 mg chloroquine provided in three doses: 600 mg initially then 450 mg doses at 24 and 48 hours) and primaquine (30 mg dose given once per day for 14 days). Clinical trial registration: NCT01585077. Samples were analyzed with liquid chromatography coupled to high resolution mass spectrometry (LC-HRMS), evaluated in a time course and between na&iuml;ve and semi-immune volunteers.  Within the MaHPIC, this project is known as 'Experiment HuC'.  Samples were obtained in collaboration with Socrates Herrera from the Malaria Vaccine and Drug Development Center, Colombia.  Metabolomics results were produced by Dean Jones at Emory University.</td>
+           </tr>
+         </table>
+      </div>   
+     <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksHuC table, #DataLinksHuC td, #DataLinksHuC th, #DataLinksHuC tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksHuC {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksHuC td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksHuC"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+          <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS665" target="_blank">HuC Metabolomics Results at MetaboLights</a></b></td>    
+             <td>N/A</td>
+           </tr>
+           </tr>
+           </table>
+           </div>
+	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">  <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
+	     Integrative metabolomics and transcriptomics signatures of clinical tolerance to Plasmodium vivax reveal activation of innate cell immunity and T cell signaling. <a href="https://www.ncbi.nlm.nih.gov/pubmed/29698924" target="_blank">Gardinassi et al. Redox Biol. 2018 Jul;17:158-170</a>
+        </div>
+        <br><br>
+<!--
+     <br><br> 
+     <img align="middle" src="images/MaHPIC_E03_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E03_Timeline.png" target="_blank">View Larger Image</a><br>
+  -->    
+        
+  </div>	
+  </div>   
  
  
    <div class="wdk-toggle" data-show="false">
@@ -398,7 +471,8 @@
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
              <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">E03 Clinical Data in PlasmoDB Downloads</a><br>
-                    <a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">E03 Bone Marrow Cytology Data in PlasmoDB Downloads</b></a></td>
+                    <a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_03/">E03 Bone Marrow Cytology Data in PlasmoDB Downloads</b></a>
+                    </td>  
              <td>N/A</td>
            </tr>
            <tr>
