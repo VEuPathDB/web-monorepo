@@ -27,9 +27,11 @@ function studiesRequested() {
 function studiesReceived([ studies, invalidRecords ]) {
   return [
     { type: STUDIES_RECEIVED, payload: { studies }},
-    ({ wdkService }) =>
-      wdkService.submitError(new Error(`The following studies do not have complete data: ${invalidRecords.map(r => JSON.stringify(r.id))}`))
-        .then(() => emptyAction)
+    invalidRecords.length === 0
+      ? emptyAction
+      : ({ wdkService }) =>
+        wdkService.submitError(new Error(`The following studies do not have complete data: ${invalidRecords.map(r => JSON.stringify(r.id))}`))
+          .then(() => emptyAction)
   ];
 }
 
