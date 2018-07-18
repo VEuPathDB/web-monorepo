@@ -40,7 +40,7 @@ public abstract class ParticipantViewHandler implements SummaryViewHandler {
             String sql = prepareSql(answerValue.getIdSql());
             DataSource dataSource = wdkModel.getAppDb().getDataSource();
             resultSet = SqlUtils.executeQuery(dataSource, sql,
-                    step.getQuestion().getQuery().getFullName() + "__isolate-view", 2000);
+                    step.getAnswerSpec().getQuestion().getQuery().getFullName() + "__isolate-view", 2000);
 
             int maxLength = 0;
             Map<String, Isolate> isolates = new HashMap<String, Isolate>();
