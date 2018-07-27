@@ -120,8 +120,8 @@
 
       <div class="param-line">
         <span class="text">using a
-          <span class="prompt">Soft Floor</span> of</span>
-        <imp:stringParamInput qp="${soft_floorParam}"/>
+          <span class="prompt">Floor</span> of</span>
+        <imp:enumParamInput qp="${soft_floorParam}"/>
         <imp:helpIcon helpContent="${soft_floorParam.help}" />
       </div>
 
