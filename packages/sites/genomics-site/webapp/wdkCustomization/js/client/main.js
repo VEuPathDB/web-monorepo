@@ -8,6 +8,7 @@ import smallMenuItems from './smallMenuItems';
 // import apicomm wrappers and additional routes
 import * as componentWrappers from './componentWrappers';
 import * as storeWrappers from './storeWrappers';
+import pluginConfig from './pluginConfig';
 import { wrapRoutes } from './routes';
 
 const quickSearches = [
@@ -44,4 +45,5 @@ initialize({
   wrapRoutes,
   mainMenuItems,
   smallMenuItems,
+  pluginConfig,
 })

@@ -231,6 +231,7 @@
         <!-- NEW as in wdk:resultsTable -->
                     <td>
                       <imp:attributePlugin attribute="${sumAttrib}" />
+                      <imp:attributeReporter attribute="${sumAttrib}" />
                     </td>
 
                  </tr>
