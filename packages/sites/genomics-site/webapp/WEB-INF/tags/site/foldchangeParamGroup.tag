@@ -118,7 +118,7 @@
         </div>
       </div>
 
-      <div class="param-line">
+      <div id="soft_flooraaa" class="param-line">
         <span class="text">using a
           <span class="prompt">Floor</span> of</span>
         <imp:enumParamInput qp="${soft_floorParam}"/>
