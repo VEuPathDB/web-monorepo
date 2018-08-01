@@ -4,6 +4,7 @@
   xmlns:jsp="http://java.sun.com/JSP/Page"
   xmlns:c="http://java.sun.com/jsp/jstl/core"
   xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+  xmlns:html="http://struts.apache.org/tags-html"
   xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
 
   <jsp:directive.attribute name="paramGroup" type="java.util.Map" required="true"/>
@@ -118,13 +119,19 @@
         </div>
       </div>
 
-      <div id="soft_flooraaa" class="param-line">
-        <span class="text">using a
-          <span class="prompt">Floor</span> of</span>
-        <imp:enumParamInput qp="${soft_floorParam}"/>
-        <imp:helpIcon helpContent="${soft_floorParam.help}" />
-      </div>
-
+      <c:choose>                                                                     
+	<c:when test="${soft_floorParam.isVisible}">                                    
+	  <div id="soft_flooraaa" class="param-line">                                
+	    <span class="text">using a                                               
+            <span class="prompt">Floor</span> of</span>                            
+	    <imp:enumParamInput qp="${soft_floorParam}"/>                            
+	    <imp:helpIcon helpContent="${soft_floorParam.help}" />                   
+	  </div>                                                                     
+	</c:when>                                                                     
+	<c:otherwise>                                                                 
+	  <html:hidden property="value(${soft_floorParam.name})" />                     
+	</c:otherwise>
+      </c:choose> 
 
     </div> <!-- .fold-change-params -->
 
