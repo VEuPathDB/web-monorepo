@@ -12,7 +12,7 @@
   <c:set var="profileset_genericParam" value="${paramGroup['profileset_generic']}"/>
   <c:set var="regulated_dirParam" value="${paramGroup['regulated_dir']}"/>
   <c:set var="fold_changeParam" value="${paramGroup['fold_change']}"/>
-  <c:set var="soft_floorParam" value="${paramGroup['soft_floor']}"/>
+  <c:set var="hard_floorParam" value="${paramGroup['hard_floor']}"/>
 
   <c:set var="samples_fc_ref_genericParam" value="${paramGroup['samples_fc_ref_generic']}"/>
   <c:set var="min_max_avg_refParam" value="${paramGroup['min_max_avg_ref']}"/>
@@ -120,16 +120,16 @@
       </div>
 
       <c:choose>                                                                     
-	<c:when test="${soft_floorParam.isVisible}">                                    
-	  <div id="soft_flooraaa" class="param-line">                                
+	<c:when test="${hard_floorParam.isVisible}">                                    
+	  <div id="hard_flooraaa" class="param-line">                                
 	    <span class="text">using a                                               
-            <span class="prompt">Floor</span> of</span>                            
-	    <imp:enumParamInput qp="${soft_floorParam}"/>                            
-	    <imp:helpIcon helpContent="${soft_floorParam.help}" />                   
+            <span class="prompt">RPKM Floor</span> of</span>                            
+	    <imp:enumParamInput qp="${hard_floorParam}"/>                            
+	    <imp:helpIcon helpContent="${hard_floorParam.help}" />                   
 	  </div>                                                                     
 	</c:when>                                                                     
 	<c:otherwise>                                                                 
-	  <html:hidden property="value(${soft_floorParam.name})" />                     
+	  <html:hidden property="value(${hard_floorParam.name})" />                     
 	</c:otherwise>
       </c:choose> 
 
