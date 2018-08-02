@@ -17,7 +17,9 @@ export const accessLevels = {
   }
 };
 
-export const strictActions = [ 'search', 'analysis', 'results', 'paginate', 'record', 'download', 'downloadPage', 'downloadFile' ];
+// strictActions will popup: go home (forbidden page) 
+//    vs not strict actions (clicked link to do something) will popup: dismiss
+export const strictActions = [ 'search', 'analysis', 'results', 'record', 'downloadPage', 'downloadFile' ];
 
 // Getters!   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
