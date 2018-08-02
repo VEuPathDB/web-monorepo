@@ -1,19 +1,23 @@
 // Data stuff =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// per https://docs.google.com/presentation/d/1Cmf2GcmGuKbSTcH4wdeTEvRHTi9DDoh5-MnPm1MkcEA/edit?pli=1#slide=id.g3d955ef9d5_3_2
 export const accessLevels = {
   public: {},
+  controlled: {
+    approvalRequired: ['download', 'downloadPage', 'downloadFile']
+  },
   limited: {
-    loginRequired: ['download', 'downloadPage']
+    loginRequired: ['paginate', 'record'],
+    approvalRequired: ['download', 'downloadPage', 'downloadFile']
   },
   protected: {
-    loginRequired: ['paginate'],
-    approvalRequired: ['download', 'downloadPage']
+    approvalRequired: ['paginate', 'record', 'download', 'downloadPage', 'downloadFile']
   },
   private: {
-    approvalRequired: [ 'search', 'results', 'paginate', 'analysis', 'download', 'downloadPage']
+    approvalRequired: [ 'search', 'analysis', 'results', 'paginate', 'download', 'downloadPage', 'downloadFile']
   }
 };
 
-export const strictActions = [ 'search', 'results', 'downloadPage' ];
+export const strictActions = [ 'search', 'analysis', 'results', 'paginate', 'record', 'download', 'downloadPage', 'downloadFile' ];
 
 // Getters!   =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -38,10 +42,15 @@ export function getActionVerb (action) {
       return 'view search results';
     case 'paginate':
       return 'see more than 25 results';
+    case 'record':
+      return 'access a record page';
     case 'downloadPage':
+      return 'download a search result';
     case 'download':
       return 'download data';
-    default:
+    case 'downloadFile':
+      return 'download files';
+    default: 
       return action;
   }
 };
