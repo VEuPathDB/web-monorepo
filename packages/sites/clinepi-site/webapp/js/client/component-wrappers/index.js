@@ -45,14 +45,14 @@ export default {
       )
     }
   },
-
+/*
   DownloadForm: DownloadForm => props => {
     const { name } = props.recordClass;
     const studyId = getIdFromRecordClassName(name);
     emitRestriction('downloadPage', { studyId });
     return <DownloadForm {...props} />
   },
-
+*/
   SiteHeader: () => rawProps => {
     const { siteConfig, studies, preferences, user = {}, ...actions } = rawProps;
     const siteData = getStaticSiteData(studies.entities);
