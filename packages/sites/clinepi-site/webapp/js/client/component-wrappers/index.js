@@ -54,9 +54,9 @@ export default {
   },
 */
   SiteHeader: () => rawProps => {
-    const { siteConfig, studies, preferences, user = {}, ...actions } = rawProps;
+    const {  user = {}, siteConfig, studies, preferences, ...actions } = rawProps;
     const siteData = getStaticSiteData(studies.entities);
-    const props = { siteConfig, preferences, user, actions, siteData };
+    const props = { user, siteConfig, preferences, actions, siteData };
     return (
       <div>
         <Header {...props} />
