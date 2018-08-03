@@ -125,8 +125,9 @@
 	    <span class="text">using a                                               
             <span class="prompt">RPKM Floor</span> of</span>                            
 	    <imp:enumParamInput qp="${hard_floorParam}"/>                            
-	    <imp:helpIcon helpContent="${hard_floorParam.help}" />                   
-	  </div>                                                                     
+	    <imp:helpIcon helpContent="${hard_floorParam.help}" />
+	    <p>All FPKM values less than the floor are raised to the floor, because such low values are considered unreliable. Also, flooring avoids both division by 0 and division by very low expression values. For more help, hover over the ? icon or see the "detailed help for this search" on the right of this page.</p>
+	  </div>                           
 	</c:when>                                                                     
 	<c:otherwise>                                                                 
 	  <html:hidden property="value(${hard_floorParam.name})" />                     
@@ -149,7 +150,7 @@
       </div>
       <div class="fold-change-help dynamic-help"><jsp:text/></div>
       <div class="fold-change-help detailed-help">
-        <p>See the <a href='/assets/Fold%20Change%20Help.pdf'
+        <p>See the <a href='/assets/Fold_Change_Help.pdf'
          target='_blank'>detailed help for this search</a>.</p>
       </div>
     </div>
