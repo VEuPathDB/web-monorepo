@@ -50,6 +50,7 @@ const attributes = [
   'project_availability',
   'study_access',
   'study_categories',
+  'bulk_download_url',
 ];
 
 
