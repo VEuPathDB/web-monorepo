@@ -98,6 +98,7 @@ function formatStudies(projectId, answer) {
       categories: [ 'attributes.study_categories', JSON.parse ],
       access: [ 'attributes.study_access' ],
       policyUrl: [ 'attributes.policy_url' ],
+      downloadUrl: [ 'attributes.bulk_download_url' ],
       projectAvailability: [ 'attributes.project_availability', JSON.parse ],
       headline: [ 'attributes.card_headline' ],
       points: [ 'attributes.card_points', JSON.parse ],

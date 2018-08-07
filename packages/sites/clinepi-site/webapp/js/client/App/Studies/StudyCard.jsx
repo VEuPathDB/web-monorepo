@@ -27,7 +27,7 @@ class StudyCard extends React.Component {
   render () {
     const { study, prefix, projectId } = this.props;
     const { searchType } = this.state;
-    const { name, categories, route, headline, points, searchUrls, disabled } = study;
+    const { name, categories, route, headline, points, searchUrls, disabled, downloadUrl } = study;
 
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
@@ -52,6 +52,9 @@ class StudyCard extends React.Component {
           <ul>
             {points.map((point, index) => <li key={index} dangerouslySetInnerHTML={{ __html: point }} />)}
           </ul>
+        </div>
+        <div className="box StudyCard-Download">
+          <a href={downloadUrl.url} target="_blank">Access Study Download Files</a><hr />
         </div>
         <div className="box StudyCard-PreFooter">
           {searchType
