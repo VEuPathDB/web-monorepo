@@ -124,8 +124,10 @@
 	  <div id="hard_flooraaa" class="param-line">                                
 	    <span class="text">using a                                               
             <span class="prompt">FPKM Floor</span> of</span>                            
-	    <imp:enumParamInput qp="${hard_floorParam}"/>                            
+	    <imp:enumParamInput qp="${hard_floorParam}"/>
 	    <imp:helpIcon helpContent="${hard_floorParam.help}" />
+	    <span class="text">  </span>
+	    <imp:image alt="New feature icon" title="This is a new parameter!" src="wdk/images/new-feature.png" />
 	    <p>NEW PARAMETER FOR RELEASE 39: All FPKM values less than the floor are raised to the floor because such low values are considered unreliable. The default floor is preferred and is calculated based on (a) the amount of sequencing for each dataset and (b) the average transcript size in the organism. In release 38 and earlier (before August 20, 2018), 1 FPKM was the floor for all RNA-seq datasets. If you want to achieve results that are consistent with your previous work at our website, choose a floor of 1. For more help, hover over the ? icon or see the <a href='/assets/Fold_Change_Help.pdf' target='_blank'>detailed help for this search</a>.</p>
 	  </div>                           
 	</c:when>                                                                     
