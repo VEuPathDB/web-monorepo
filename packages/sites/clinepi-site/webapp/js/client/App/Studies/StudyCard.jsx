@@ -5,6 +5,7 @@ import './StudyCard.scss';
 import { CategoryIcon } from 'Client/App/Categories';
 import { IconAlt as Icon, Link } from 'wdk-client/Components';
 import { getSearchIconByType, getSearchNameByType } from 'Client/App/Searches/SearchUtils';
+import { emitRestriction as emit, getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
 
 class StudyCard extends React.Component {
   constructor (props) {
@@ -28,8 +29,9 @@ class StudyCard extends React.Component {
     const { study, prefix, projectId } = this.props;
     const { searchType } = this.state;
     const { name, categories, route, headline, points, searchUrls, disabled, downloadUrl } = study;
-    const myStudyTitle = "Go to the Study Details page.";
-    const myDownloadTitle = "The files folder will open in a new browser tab.";
+    const myStudyTitle = "Go to the Study Details page";
+    const myDownloadTitle = "Download data files";
+    const myStudy = { studyId: study.id };
 
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
@@ -57,8 +59,9 @@ class StudyCard extends React.Component {
             </ul>
           </Link>
         </div>
-        <div className="box StudyCard-Download">
-          <a href={downloadUrl.url} target="_blank" title={myDownloadTitle}>
+        <div className="box StudyCard-Download" onClick={() => emit('download', myStudy)}> 
+   {/*     <div className="box StudyCard-Download"> */}
+          <a href={downloadUrl.url} title={myDownloadTitle}>
             Download Data <Icon fa="download"/></a>
         </div>
         <div className="box StudyCard-PreFooter">

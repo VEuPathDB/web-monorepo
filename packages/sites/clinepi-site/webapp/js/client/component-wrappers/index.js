@@ -76,7 +76,7 @@ export default {
     return (
       <div>
         { activeStudy == null
-            ? "Could not find study based on the record class. Make sure the study id in studies.json is correct."
+            ? "Could not find study based on the record class."
             : (
               <div className="clinepi-StudyLink">
                 <IconAlt fa="info-circle"/>&nbsp;
