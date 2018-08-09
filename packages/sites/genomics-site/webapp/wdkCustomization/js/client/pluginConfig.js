@@ -1,4 +1,6 @@
-import { Observable } from 'rxjs';
+import { negate } from 'lodash';
+import { from, merge } from 'rxjs';
+import { filter, mergeMap, takeUntil } from 'rxjs/operators';
 import { HistogramAnalysisPlugin, WordCloudAnalysisPlugin } from 'wdk-client/Plugins';
 
 export default [
@@ -23,22 +25,31 @@ function decorateTranscriptAttributeAnalysisPlugin(plugin) {
   }
 }
 
+function isRequestedAction(action) {
+  return action.type === 'attribute-reporter/requested';
+}
+
 function decorateTranscriptAttributeAnalysisObserve(observe) {
   return function observeTranscript(action$, services) {
-    const [ request$, rest$ ] = action$.partition(action => action.type === 'attribute-reporter/requested');
-    return request$.mergeMap(({ payload: { reporterName, stepId }}) =>
-      Observable.from(
-        services.wdkService.getCurrentUserPreferences().then(
-          preferences => preferences.project.representativeTranscriptOnly === 'true'
+    const request$ = action$.pipe(filter(isRequestedAction));
+    const rest$ = action$.pipe(filter(negate(isRequestedAction)));
+    return merge(
+      request$.pipe(
+        mergeMap(({ payload: { reporterName, stepId }}) =>
+          from(
+            services.wdkService.getCurrentUserPreferences().then(
+              preferences => preferences.project.representativeTranscriptOnly === 'true'
+            )
+            .then(
+              representativeTranscriptOnly =>
+              services.wdkService.getStepAnswer(stepId, { format: reporterName, formatConfig: { representativeTranscriptOnly } }).then(
+                report => ({ type: 'attribute-reporter/received', payload: { report }}),
+                error => ({ type: 'attribute-reporter/failed', payload: { error }})
+              ))
+          ).pipe(takeUntil(action$.pipe(filter(action => action.type === 'attribute-reporter/cancelled'))))
         )
-        .then(
-          representativeTranscriptOnly =>
-            services.wdkService.getStepAnswer(stepId, { format: reporterName, formatConfig: { representativeTranscriptOnly } }).then(
-              report => ({ type: 'attribute-reporter/received', payload: { report }}),
-              error => ({ type: 'attribute-reporter/failed', payload: { error }})
-            ))
-        )
-        .takeUntil(action$.filter(action => action.type === 'attribute-reporter/cancelled'))
-    ).merge(observe(rest$, services))
+      ),
+      observe(rest$, services)
+    )
   }
 }

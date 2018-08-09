@@ -93,7 +93,7 @@ export function RecordController(WdkRecordController) {
       let wdkActionCreators = super.getActionCreators();
       return Object.assign({}, wdkActionCreators, {
 
-        // FIXME Move to epic
+        // FIXME Move to observe
         // updateBasketStatus: (...args) => (dispatch) => {
         //   dispatch(wdkActionCreators.updateBasketStatus(...args))
         //     .then(() => dispatch(loadBasketCounts()));

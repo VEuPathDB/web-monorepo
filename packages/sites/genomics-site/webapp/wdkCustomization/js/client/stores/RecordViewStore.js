@@ -1,4 +1,5 @@
-import { Observable } from 'rxjs';
+import { empty, of, merge } from 'rxjs';
+import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
 import { RecordViewStore, QuestionStore } from 'wdk-client/Stores';
 import { QuestionActionCreators } from 'wdk-client/ActionCreators';
 import { get } from 'lodash';
@@ -46,14 +47,15 @@ export default class ApiRecordViewStore extends RecordViewStore {
     }
   }
 
-  getEpics() {
-    return [
-      ...super.getEpics(),
-      ...QuestionStore.prototype.getEpics(),
-      snpsAlignmentEpic,
-      userSettingsEpic
-    ];
+  observeActions(action$, services) {
+    return merge(
+      super.observeActions(action$, services),
+      QuestionStore.prototype.observeActions(action$, services),
+      observeSnpsAlignment(action$, services),
+      observeUserSettings(action$, services)
+    )
   }
+
 }
 
 function handleDynColsOfIncomingStepAction(state = [], action) {
@@ -187,21 +189,21 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 }
 
 
-// Custom epics
-// ------------
+// Custom observers
+// ----------------
 //
-// An epic allows us to perform side-effects in response to actions that are
+// An observer allows us to perform side-effects in response to actions that are
 // dispatched to the store.
 
 /**
  * When record is loaded, read state from storage and emit actions to restore state.
  * When state is changed, write state to storage.
  */
-function userSettingsEpic(action$, { store }) {
-  return action$
-    .filter(action => action.type === 'record-view/active-record-received')
-    .switchMap(() => {
-      let state = store.getState();
+function observeUserSettings(action$, { getState }) {
+  return action$.pipe(
+    filter(action => action.type === 'record-view/active-record-received'),
+    switchMap(() => {
+      let state = getState();
       /** Show navigation for genes, but hide for all other record types */
       let navigationVisible = getStateFromStorage(
         storageItems.navigationVisible,
@@ -222,51 +224,56 @@ function userSettingsEpic(action$, { store }) {
         {}
       );
 
-      return Observable.of(
-        {
-          type: 'record-view/navigation-visibility-changed',
-          payload: { isVisible: navigationVisible }
-        },
-        ...collapsedSections.map(name => ({
-          type: 'record-view/section-visibility-changed',
-          payload: { name, isVisible: false }
-        })),
-        ...Object.entries(tableStates).map(([tableName, tableState]) => ({
-          type: TABLE_STATE_UPDATED,
-          payload: { tableName, tableState }
-        }))
+      return merge(
+        of(
+          {
+            type: 'record-view/navigation-visibility-changed',
+            payload: { isVisible: navigationVisible }
+          },
+          ...collapsedSections.map(name => ({
+            type: 'record-view/section-visibility-changed',
+            payload: { name, isVisible: false }
+          })),
+          ...Object.entries(tableStates).map(([tableName, tableState]) => ({
+            type: TABLE_STATE_UPDATED,
+            payload: { tableName, tableState }
+          }))
+        ),
+        action$.pipe(
+          mergeMap(action => {
+            switch (action.type) {
+              case 'record-view/section-visibility-changed':
+              case 'record-view/all-field-visibility-changed':
+                setStateInStorage(storageItems.collapsedSections, getState());
+                break;
+              case 'record-view/navigation-visibility-changed':
+                setStateInStorage(storageItems.navigationVisible, getState());
+                break;
+              case TABLE_STATE_UPDATED:
+                setStateInStorage(storageItems.tables, getState());
+                break;
+            }
+            return empty();
+          })
+        )
       )
-      .merge(action$.mergeMap(action => {
-        switch (action.type) {
-          case 'record-view/section-visibility-changed':
-          case 'record-view/all-field-visibility-changed':
-            setStateInStorage(storageItems.collapsedSections, store.getState());
-            break;
-          case 'record-view/navigation-visibility-changed':
-            setStateInStorage(storageItems.navigationVisible, store.getState());
-            break;
-          case TABLE_STATE_UPDATED:
-            setStateInStorage(storageItems.tables, store.getState());
-            break;
-        }
-        return Observable.empty();
-      }))
     })
+  );
 }
 
 /**
  * Load filterParam data for snp alignment form.
  */
-function snpsAlignmentEpic(action$) {
-  return action$
-    .filter(action => action.type === 'record-view/active-record-updated')
-    .mergeMap(action =>
+function observeSnpsAlignment(action$) {
+  return action$.pipe(
+    filter(action => action.type === 'record-view/active-record-updated'),
+    mergeMap(action =>
       (isGeneRecord(action.payload.record) &&
         'SNPsAlignment' in action.payload.record.tables)
-        ? Observable.of(action.payload.record.attributes.organism_full)
-        : isSnpsRecord(action.payload.record) ? Observable.of(action.payload.record.attributes.organism_text)
-          : Observable.empty())
-    .map(organismSinglePick => {
+        ? of(action.payload.record.attributes.organism_full)
+        : isSnpsRecord(action.payload.record) ? of(action.payload.record.attributes.organism_text)
+          : empty()),
+    map(organismSinglePick => {
       return QuestionActionCreators.ActiveQuestionUpdatedAction.create({
         questionName: 'SnpAlignmentForm',
         paramValues: {
@@ -274,7 +281,8 @@ function snpsAlignmentEpic(action$) {
           ngsSnp_strain_meta: JSON.stringify({ filters: [] })
         }
       });
-    });
+    })
+  );
 }
 
 
