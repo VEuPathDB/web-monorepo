@@ -9,7 +9,15 @@ import { Loading } from 'wdk-client/Components';
 export default function Index (props) {
   return (
     <Fragment>
-      {props.isLoading ? <Loading>Loading...</Loading> : <Home {...props} />}
+      {
+        props.isLoading
+          ? (
+            <Loading>
+              <h2 style={{ textAlign: 'center', margin: '2em' }}>Loading data...</h2>
+            </Loading>
+          )
+          : <Home {...props} />
+      }
       <DisclaimerModal />
     </Fragment>
   );
