@@ -28,8 +28,9 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
       ns.pagingController($(table), studyId)
     });
 
-    const downloadButton = element.find('a.step-download-link');
-    if (downloadButton) ns.downloadLinkController(downloadButton, studyId);
+    const downloadResultLink = element.find('a.step-download-link');
+    if (downloadResultLink) ns.downloadLinkController(downloadResultLink, studyId);
+
   };
 
   ns.analysisTileController = (element, studyId) => {

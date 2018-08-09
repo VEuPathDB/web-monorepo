@@ -54,9 +54,9 @@ export default {
   },
 */
   SiteHeader: () => rawProps => {
-    const { siteConfig, studies, preferences, user = {}, ...actions } = rawProps;
+    const {  user = {}, siteConfig, studies, preferences, ...actions } = rawProps;
     const siteData = getStaticSiteData(studies.entities);
-    const props = { siteConfig, preferences, user, actions, siteData };
+    const props = { user, siteConfig, preferences, actions, siteData };
     return (
       <div>
         <Header {...props} />
@@ -76,7 +76,7 @@ export default {
     return (
       <div>
         { activeStudy == null
-            ? "Could not find study based on the record class. Make sure the study id in studies.json is correct."
+            ? "Could not find study based on the record class."
             : (
               <div className="clinepi-StudyLink">
                 <IconAlt fa="info-circle"/>&nbsp;

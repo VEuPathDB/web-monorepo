@@ -18,24 +18,38 @@ class DataRestrictionDaemon extends React.Component {
     this.getStudyById = this.getStudyById.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleRestriction = this.handleRestriction.bind(this);
+    this.isEmpty = this.isEmpty.bind(this);
   }
 
   componentDidMount () {
     document.addEventListener('DataRestricted', ({ detail }) => this.handleRestriction(detail));
   }
 
+  isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+   }
+
   handleRestriction ({ studyId, action, event }) {
     console.info('DRD: Restriction Encountered:', { studyId, action, event });
     const { user } = this.props;
     const study = this.getStudyById(studyId);
-    const permitted = isAllowedAccess({ user, action, study });
-    if (!study || permitted) return;
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    };
-    this.showModal({ studyId, action });
+    if (this.isEmpty(study) || typeof study === 'undefined')  console.log("RACE CONDITION: study empty or undefined");
+    else if (this.isEmpty(user)) console.log("RACE CONDITION: user object empty");
+    else {
+      if (isAllowedAccess({ user, action, study })) return;
+
+      // SHOW POPUP
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+      };
+      this.showModal({ studyId, action });
+    }
   }
 
   showModal ({ studyId = null, action = null }) {
