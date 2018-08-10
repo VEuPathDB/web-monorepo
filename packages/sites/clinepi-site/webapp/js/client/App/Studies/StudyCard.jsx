@@ -31,7 +31,6 @@ class StudyCard extends React.Component {
     const { name, categories, route, headline, points, searchUrls, disabled, downloadUrl } = study;
     const myStudyTitle = "Go to the Study Details page";
     const myDownloadTitle = "Download data files";
-    const myStudy = { studyId: study.id };
 
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '')}>
@@ -59,9 +58,8 @@ class StudyCard extends React.Component {
             </ul>
           </Link>
         </div>
-        <div className="box StudyCard-Download" onClick={() => emit('download', myStudy)}> 
-   {/*     <div className="box StudyCard-Download"> */}
-          <a href={downloadUrl.url} title={myDownloadTitle}>
+        <div className="box StudyCard-Download"> 
+          <a  onClick={(event) => emit('download', {studyId: study.id, event: event.nativeEvent})} href={downloadUrl.url} title={myDownloadTitle}>
             Download Data <Icon fa="download"/></a>
         </div>
         <div className="box StudyCard-PreFooter">
