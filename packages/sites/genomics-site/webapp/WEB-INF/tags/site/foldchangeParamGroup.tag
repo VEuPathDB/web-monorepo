@@ -57,6 +57,7 @@
         <imp:helpIcon helpContent="${fold_changeParam.help}" />
       </div>
 
+
       <div class="samples ui-helper-clearfix">
         <div id="min_max_avg_refaaa" class="param-line">
           between each gene's
@@ -64,6 +65,23 @@
           <span class="text prompt"> expression value </span>
           <imp:helpIcon helpContent="${min_max_avg_refParam.help}" />
         </div>
+
+      <c:choose>
+        <c:when test="${hard_floorParam.isVisible}">
+          <div id="hard_flooraaa" class="param-line">
+            <span class="text">   (or an
+            <span class="prompt">FPKM Floor</span> of</span>
+            <imp:enumParamInput qp="${hard_floorParam}"/>
+            <span class="text">)</span>
+            <imp:helpIcon helpContent="${hard_floorParam.help}" />
+            <imp:image alt="New feature icon" title="This is a new parameter!" src="wdk/images/new-feature.png" />
+          </div>
+        </c:when>
+        <c:otherwise>
+          <html:hidden property="value(${hard_floorParam.name})" />
+        </c:otherwise>
+      </c:choose>
+
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
             in the following <span class="samples-tab reference">Reference Samples</span>
@@ -94,6 +112,16 @@
           <span class="text prompt"> expression value </span>
           <imp:helpIcon helpContent="${min_max_avg_compParam.help}" />
         </div>
+
+      <c:choose>
+        <c:when test="${hard_floorParam.isVisible}">
+          <div id="hard_flooraaa" class="param-line">
+            <span class="text">   (or the
+            <span class="prompt">FPKM Floor</span> selected above)</span>
+          </div>
+        </c:when>
+      </c:choose>
+
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
             in the following <span class="samples-tab comparison">Comparison Samples</span>
@@ -119,22 +147,6 @@
         </div>
       </div>
 
-      <c:choose>                                                                     
-	<c:when test="${hard_floorParam.isVisible}">                                    
-	  <div id="hard_flooraaa" class="param-line">                                
-	    <span class="text">where all expression values less than the
-            <span class="prompt">"FPKM Floor"</span> of</span>                            
-	    <imp:enumParamInput qp="${hard_floorParam}"/>
-	    <imp:helpIcon helpContent="${hard_floorParam.help}" />
-	    <span class="text"> are raised to this FPKM floor in order to calculate the fold change.</span>
-	    <imp:image alt="New feature icon" title="This is a new parameter!" src="wdk/images/new-feature.png" />
-	  </div>                           
-	</c:when>                                                                     
-	<c:otherwise>                                                                 
-	  <html:hidden property="value(${hard_floorParam.name})" />                     
-	</c:otherwise>
-      </c:choose> 
-
     </div> <!-- .fold-change-params -->
 
     <div class="fold-change-graphic">
@@ -148,12 +160,12 @@
         choices you make at the left.
         It will begin to display when you choose a <b>Reference Sample</b> or a
          <b>Comparison Sample</b>.</p>
+	<div class="fold-change-help detailed-help">
+             <p>See the <a href='/assets/Fold_Change_Help.pdf'
+             target='_blank'>detailed help for this search</a>.</p>
+	</div>
       </div>
       <div class="fold-change-help dynamic-help"><jsp:text/></div>
-      <div class="fold-change-help detailed-help">
-        <p>See the <a href='/assets/Fold_Change_Help.pdf'
-         target='_blank'>detailed help for this search</a>.</p>
-      </div>
     </div>
 
     <script id="formula-partial" type="text/x-jst">
@@ -189,7 +201,6 @@
       <p>For each gene, the search calculates:</p>
       <%= _.map(formulas, formulaPartial).join('') %>
       <p>and returns genes when <%= criteria %>.</p>
-      <p>(* or FPKM floor, whichever is higher.)</p>
       <p>
         <% if (narrowest) { %>
           This calculation creates the <b>narrowest</b> window of expression values in
@@ -209,6 +220,17 @@
           To broaden the window, use the <%= toBroaden %>.
         <% } %>
       </p>
+      <div class="fold-change-help detailed-help">
+             <p>See the <a href='/assets/Fold_Change_Help.pdf'
+             target='_blank'>detailed help for this search</a>.</p>
+      </div>
+      <c:choose>
+        <c:when test="${hard_floorParam.isVisible}">
+          <div id="hard_flooraaa" class="param-line">
+            <span class="text"><font color="red"><b>*</b></font> or <b>FPKM Floor</b>, whichever is greater</span>
+          </div>
+        </c:when>
+      </c:choose>       
     ]]>
     </script>
 
