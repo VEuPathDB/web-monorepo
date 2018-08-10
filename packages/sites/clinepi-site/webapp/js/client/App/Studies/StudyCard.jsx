@@ -59,13 +59,13 @@ class StudyCard extends React.Component {
           </Link>
         </div>
         <div className="box StudyCard-Download"> 
-          <a  onClick={(event) => emit('download', {studyId: study.id, event: event.nativeEvent})} href={downloadUrl.url} title={myDownloadTitle}>
+          <a onClick={(event) => emit('download', {studyId: study.id, event: event.nativeEvent})} href={downloadUrl.url} title={myDownloadTitle}>
             Download Data <Icon fa="download"/></a>
         </div>
         <div className="box StudyCard-PreFooter">
           {searchType
             ? <span>Search <b>{searchType}</b></span>
-            : <span className="generic">{disabled ? 'Search Unavailable' : 'Search The Data'}</span>
+            : <span title="Click on an Icon">{disabled ? 'Search Unavailable' : 'Search The Data'}</span>
           }
         </div>
         <div className="box StudyCard-Footer">
