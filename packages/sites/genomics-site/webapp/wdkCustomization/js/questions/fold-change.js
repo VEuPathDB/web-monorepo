@@ -217,14 +217,14 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
     }
 
     if ($scope.direction === "up-regulated") {
-      $scope.formulas.push(new Formula("fold change", compFormula, refFormula));
+      $scope.formulas.push(new Formula("fold change", compFormula, refFormula+"*"));
       $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
     } else if ($scope.direction === "down-regulated") {
-      $scope.formulas.push(new Formula("fold change", refFormula, compFormula));
+      $scope.formulas.push(new Formula("fold change", refFormula, compFormula+"*"));
       $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
     } else if ($scope.direction === "up or down regulated") {
-      $scope.formulas.push(new Formula('fold change<sub>up</sub>', compFormula, refFormula));
-      $scope.formulas.push(new Formula('fold change<sub>down</sub>', refFormula, compFormula));
+      $scope.formulas.push(new Formula('fold change<sub>up</sub>', compFormula, refFormula+"*"));
+      $scope.formulas.push(new Formula('fold change<sub>down</sub>', refFormula, compFormula+"*"));
       $scope.criteria = "<b>fold change<sub>up</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
       $scope.criteria += " or <b>fold change<sub>down</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
     }

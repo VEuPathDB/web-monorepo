@@ -122,13 +122,12 @@
       <c:choose>                                                                     
 	<c:when test="${hard_floorParam.isVisible}">                                    
 	  <div id="hard_flooraaa" class="param-line">                                
-	    <span class="text">using a                                               
-            <span class="prompt">FPKM Floor</span> of</span>                            
+	    <span class="text">where all expression values less than the
+            <span class="prompt">"FPKM Floor"</span> of</span>                            
 	    <imp:enumParamInput qp="${hard_floorParam}"/>
 	    <imp:helpIcon helpContent="${hard_floorParam.help}" />
-	    <span class="text">  </span>
+	    <span class="text"> are raised to this FPKM floor in order to calculate the fold change.</span>
 	    <imp:image alt="New feature icon" title="This is a new parameter!" src="wdk/images/new-feature.png" />
-	    <p>NEW PARAMETER FOR RELEASE 39: All FPKM values less than the floor are raised to the floor because such low values are considered unreliable. The default floor is preferred and is calculated based on (a) the amount of sequencing for each dataset and (b) the average transcript size in the organism. In release 38 and earlier (before August 20, 2018), 1 FPKM was the floor for all RNA-seq datasets. If you want to achieve results that are consistent with your previous work at our website, choose a floor of 1. For more help, hover over the ? icon or see the <a href='/assets/Fold_Change_Help.pdf' target='_blank'>detailed help for this search</a>.</p>
 	  </div>                           
 	</c:when>                                                                     
 	<c:otherwise>                                                                 
@@ -189,8 +188,9 @@
       <br/>
       <p>For each gene, the search calculates:</p>
       <%= _.map(formulas, formulaPartial).join('') %>
-      <p>and returns genes when <%= criteria %>.
-
+      <p>and returns genes when <%= criteria %>.</p>
+      <p>(* or FPKM floor, whichever is higher.)</p>
+      <p>
         <% if (narrowest) { %>
           This calculation creates the <b>narrowest</b> window of expression values in
           which to look for genes that meet your fold change cutoff.
