@@ -173,6 +173,7 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
   // set the properies of $scope
   var setScope = function($scope, $form) {
 
+    $scope.hasHardFloor = $form.has("#hard_floor").length > 0;
     $scope.foldChange = $form.find("#fold_change").val();
     $scope.foldChangeCompound = $form.find("#fold_change_compound").val();
     $scope.direction = getParamValue($form, 'regulated_dir');
@@ -185,7 +186,7 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
         $scope.valueType = "metabolite level";
         $scope.foldChange = $scope.foldChangeType;
     } else {
-        $scope.valueType = "expression value";
+        $scope.valueType = "expression level";
     }
 
     $scope.className = [
@@ -198,12 +199,12 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
     $scope.multipleComp = $scope.compCount > 1;
 
     $scope.formulas = [];
-    var compFormula, refFormula;
-
+    var compFormula, refFormula, asterisk;
+    
     if ($scope.multipleRef) {
       refFormula = '<span class="reference-label">' +
         $scope.refOperation + '</span> ' + $scope.valueType + ' in ' +
-        '<span class="reference-label">reference</span> samples';
+        '<span class="reference-label">reference</span>';
     } else {
       refFormula = '<span class="reference-label">reference</span> ' + $scope.valueType;
     }
@@ -211,20 +212,22 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
     if ($scope.multipleComp) {
       compFormula = '<span class="comparison-label">' +
         $scope.compOperation + '</span> ' + $scope.valueType + ' in ' +
-        '<span class="comparison-label">comparison</span> samples';
+        '<span class="comparison-label">comparison</span>';
     } else {
       compFormula = '<span class="comparison-label">comparison</span> ' + $scope.valueType;
     }
-
+    if ($scope.hasHardFloor) {
+	asterisk = '<font color="red"><b>*</b></font>';
+    } else { asterisk='';}
     if ($scope.direction === "up-regulated") {
-      $scope.formulas.push(new Formula("fold change", compFormula, refFormula+"*"));
+      $scope.formulas.push(new Formula("fold change", compFormula, refFormula+asterisk));
       $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
     } else if ($scope.direction === "down-regulated") {
-      $scope.formulas.push(new Formula("fold change", refFormula, compFormula+"*"));
+      $scope.formulas.push(new Formula("fold change", refFormula, compFormula+asterisk));
       $scope.criteria = "<b>fold change</b> &gt;= <b>" + $scope.foldChange + "</b>";
     } else if ($scope.direction === "up or down regulated") {
-      $scope.formulas.push(new Formula('fold change<sub>up</sub>', compFormula, refFormula+"*"));
-      $scope.formulas.push(new Formula('fold change<sub>down</sub>', refFormula, compFormula+"*"));
+      $scope.formulas.push(new Formula('fold change<sub>up</sub>', compFormula, refFormula+asterisk));
+      $scope.formulas.push(new Formula('fold change<sub>down</sub>', refFormula, compFormula+asterisk));
       $scope.criteria = "<b>fold change<sub>up</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
       $scope.criteria += " or <b>fold change<sub>down</sub></b> &gt;= <b>" + $scope.foldChange + "</b>";
     }

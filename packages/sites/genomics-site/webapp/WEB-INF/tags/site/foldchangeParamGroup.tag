@@ -224,13 +224,13 @@
              <p>See the <a href='/assets/Fold_Change_Help.pdf'
              target='_blank'>detailed help for this search</a>.</p>
       </div>
-      <c:choose>
-        <c:when test="${hard_floorParam.isVisible}">
+      <% if (hasHardFloor) { %>
           <div id="hard_flooraaa" class="param-line">
             <span class="text"><font color="red"><b>*</b></font> or <b>FPKM Floor</b>, whichever is greater</span>
           </div>
-        </c:when>
-      </c:choose>       
+      <% } %>
+
+
     ]]>
     </script>
 
