@@ -106,7 +106,7 @@ function formatStudies(projectId, answer) {
   const records = answer.records.reduce((records, record) => {
 
     try {
-      const missingAttributes = requiredAttributes.filter(attr => record.attributes[attr] === null);
+      const missingAttributes = requiredAttributes.filter(attr => record.attributes[attr] == null);
       if (missingAttributes.length > 0) {
         throw new Error(`Missing data for attributes: ${missingAttributes.join(", ")}.`)
       }
