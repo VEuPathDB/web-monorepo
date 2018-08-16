@@ -74,7 +74,7 @@ function fetchStudies(projectId) {
         },
         formatting: {
           format: 'wdk-service-json',
-          formatConfig: { requiredAttributes }
+          formatConfig: { attributes: requiredAttributes }
         }
       })
     })
