@@ -1,3 +1,5 @@
+import { createEvent } from 'wdk-client/Platform';
+
 // Data stuff =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // per https://docs.google.com/presentation/d/1Cmf2GcmGuKbSTcH4wdeTEvRHTi9DDoh5-MnPm1MkcEA/edit?pli=1#slide=id.g3d955ef9d5_3_2
 
@@ -110,6 +112,6 @@ export function getIdFromRecordClassName (recordClass) {
 
 export function emitRestriction (action, details = {}) {
   const detail = Object.assign({}, details, { action });
-  const event = new CustomEvent('DataRestricted', { detail });
+  const event = createEvent('DataRestricted', { detail });
   document.dispatchEvent(event);
 }
