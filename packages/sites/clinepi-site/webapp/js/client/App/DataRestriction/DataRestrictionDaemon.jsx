@@ -47,7 +47,7 @@ class DataRestrictionDaemon extends React.Component {
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
-      };
+      }
       this.showModal({ studyId, action });
     }
   }
@@ -98,7 +98,7 @@ class DataRestrictionDaemon extends React.Component {
       />
     );
   }
-};
+}
 
 DataRestrictionDaemon.propTypes = {
   user: PropTypes.object.isRequired,
