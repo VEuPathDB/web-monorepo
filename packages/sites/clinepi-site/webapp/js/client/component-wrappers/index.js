@@ -84,7 +84,7 @@ export default {
             : (
               <div className="clinepi-StudyLink">
                 <IconAlt fa="info-circle"/>&nbsp;
-                Learn about the <Link to={activeStudy.route} _target="blank" >{activeStudy.name} Study</Link>
+                Learn about the <Link to={activeStudy.route} _target="blank" >{activeStudy.name}</Link>
               </div>
             )
         }
