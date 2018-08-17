@@ -80,7 +80,7 @@ function fetchStudies(projectId) {
     })
   ])
     .then(spread(formatStudies))
-    .then(studiesReceived);
+    .then(studiesReceived, studiesError);
 }
 
 

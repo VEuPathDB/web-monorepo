@@ -32,11 +32,15 @@ export default {
       const { displayName, webAppUrl } = siteConfig;
       const siteData = getStaticSiteData(studies.entities);
 
-      return { displayName, webAppUrl, siteData, isLoading: studies.loading };
+      return { displayName, webAppUrl, siteData, isLoading: studies.loading, hasError: !!studies.error };
     }
 
     getTitle () {
       return this.state.displayName;
+    }
+
+    isRenderDataLoadError() {
+      return this.state.hasError;
     }
 
     renderView () {
