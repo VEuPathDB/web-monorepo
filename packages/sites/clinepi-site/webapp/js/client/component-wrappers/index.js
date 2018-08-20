@@ -59,15 +59,8 @@ export default {
       )
     }
   },
-  DownloadFormController: WdkDownloadFormController => class ClinEpiDownloadFormController extends WdkDownloadFormController {
-    componentDidUpdate(prevProps, prevState, snapshot) {
-      super.componentDidUpdate(prevProps, prevState, snapshot);
-      if (this.state.recordClass !== prevState.recordClass) {
-        const studyId = getIdFromRecordClassName(this.state.recordClass.name);
-        this.dispatchAction(attemptAction('downloadPage', { studyId }));
-      }
-    }
-  },
+  DownloadFormController: withRestrictionHandler('downloadPage'),
+  RecordController: withRestrictionHandler('recordPage'),
   SiteHeader: () => rawProps => {
     const {  user = {}, siteConfig, studies, preferences, dataRestriction, ...actions } = rawProps;
     const siteData = getStaticSiteData(studies.entities);
@@ -150,4 +143,16 @@ function guard(propsPredicate) {
         : null;
     }
   }
+}
+
+function withRestrictionHandler(action) {
+  return baseClass => class RestrictionHandler extends baseClass {
+    componentDidUpdate(prevProps, prevState, snapshot) {
+      super.componentDidUpdate(prevProps, prevState, snapshot);
+      if (this.state.recordClass !== prevState.recordClass) {
+        const studyId = getIdFromRecordClassName(this.state.recordClass.name);
+        this.dispatchAction(attemptAction(action, { studyId }));
+      }
+    }
+  };
 }
