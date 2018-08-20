@@ -5,7 +5,6 @@ import './StudyCard.scss';
 import { CategoryIcon } from 'Client/App/Categories';
 import { IconAlt as Icon, Link } from 'wdk-client/Components';
 import { getSearchIconByType, getSearchNameByType } from 'Client/App/Searches/SearchUtils';
-import { emitRestriction as emit, getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
 
 class StudyCard extends React.Component {
   constructor (props) {
@@ -26,7 +25,7 @@ class StudyCard extends React.Component {
   }
 
   render () {
-    const { study, prefix, projectId } = this.props;
+    const { study, prefix, attemptAction } = this.props;
     const { searchType } = this.state;
     const { name, categories, route, headline, points, searchUrls, disabled, downloadUrl } = study;
     const myStudyTitle = "Go to the Study Details page";
@@ -59,8 +58,14 @@ class StudyCard extends React.Component {
           </Link>
         </div>
         <div className="box StudyCard-Download"> 
-          <a onClick={(event) => emit('download', {studyId: study.id, event: event.nativeEvent})} href={downloadUrl.url} title={myDownloadTitle}>
-            Download Data <Icon fa="download"/></a>
+          <a onClick={(event) => {
+            event.preventDefault();
+            attemptAction('download', {studyId: study.id, onSuccess: () => window.location.assign(downloadUrl.url) })
+          }}
+            href={downloadUrl.url}
+            title={myDownloadTitle}>
+            Download Data <Icon fa="download" />
+          </a>
         </div>
         <div className="box StudyCard-PreFooter">
           {searchType

@@ -1,4 +1,5 @@
-import { emitRestriction as emit, getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
+import { getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
+import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
 
 wdk.namespace('wdk.dataRestriction', (ns, $) => {
 
@@ -10,12 +11,12 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
 
     const isSearchPage = restrictionType && restrictionType === 'search';
     if (isSearchPage) {
-      setTimeout(() => emit('search', { studyId }), 0);
+      attemptAction('search', { studyId });
     }
 
     const isResultsPage = element.children('.Results_Div').length !== 0;
     if (isResultsPage) {
-      emit('results', { studyId });
+      attemptAction('results', { studyId });
     }
 
     const analysisTiles = element.find('.analysis-selector');
@@ -34,23 +35,36 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
   };
 
   ns.analysisTileController = (element, studyId) => {
-    const handler = (event) => emit('analysis', { studyId, event });
-    element.on('click', handler);
+    element.on('click', makeHandler('analysis', studyId));
   };
 
   ns.pagingController = (element, studyId) => {
-    const handler = (event) => emit('paginate', { studyId, event });
-    element.on('click', 'a', handler);
+    element.on('click', makeHandler('paginate', studyId));
+    // Remove inline onclick handler and replace with jquery handler.
+    // Rely on ordering and event.stopImmediatePropagation.
     element.find('input.paging-button')
       .attr('onclick', null)
-      .on('click', handler)
-      .on('click', function () { wdk.resultsPage.openAdvancedPaging(this); });
+      .on('click', makeHandler('paginate', studyId))
+      .on('click', event => wdk.resultsPage.openAdvancedPaging(event.currentTarget))
   };
 
   ns.downloadLinkController = (element, studyId) => {
-    element.on('click', (event) => {
-      emit('download', { studyId, event });
-    });
+    element.on('click', makeHandler('download', studyId));
   };
+
+  function makeHandler(action, studyId) {
+    // Create a jquery event handler. The param `isHandled` is an extra param
+    // that jquery allows. This allows this function to determine if the click
+    // event was already handled.
+    return function handle(event, isHandled) {
+      if (isHandled) return;
+
+      const onSuccess = () => $(event.currentTarget).trigger(event.type, [ true ]);
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      ebrc.context.dispatchAction(attemptAction(action, { studyId, onSuccess }));
+    }
+  }
 
 });

@@ -1,65 +1,27 @@
+import { flow, pick } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { withActions, withStore } from 'ebrc-client/util/component';
+
+import { clearRestrictions } from './DataRestrictionActionCreators';
 import DataRestrictionModal from './DataRestrictionModal';
-import { isAllowedAccess } from './DataRestrictionUtils';
+
+const enhance = flow(
+  withStore(state => pick(state.globalData, 'dateRestriction')),
+  withActions({ clearRestrictions })
+)
 
 class DataRestrictionDaemon extends React.Component {
   constructor (props) {
     super(props);
-    this.state = {
-      isVisible: false,
-      studyId: null,
-      action: null
-    };
     this.getStudy = this.getStudy.bind(this);
-    this.showModal = this.showModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.getStudyById = this.getStudyById.bind(this);
-    this.componentDidMount = this.componentDidMount.bind(this);
-    this.handleRestriction = this.handleRestriction.bind(this);
-    this.isEmpty = this.isEmpty.bind(this);
-  }
-
-  componentDidMount () {
-    document.addEventListener('DataRestricted', ({ detail }) => this.handleRestriction(detail));
-  }
-
-  isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
-    }
-    return true;
-   }
-
-  handleRestriction ({ studyId, action, event }) {
-    console.info('DRD: Restriction Encountered:', { studyId, action, event });
-    const { user } = this.props;
-    const study = this.getStudyById(studyId);
-    if (this.isEmpty(study) || typeof study === 'undefined')  console.log("RACE CONDITION: study empty or undefined");
-    else if (this.isEmpty(user)) console.log("RACE CONDITION: user object empty");
-    else {
-      if (isAllowedAccess({ user, action, study })) return;
-
-      // SHOW POPUP
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-      }
-      this.showModal({ studyId, action });
-    }
-  }
-
-  showModal ({ studyId = null, action = null }) {
-    const isVisible = true;
-    this.setState({ isVisible, studyId, action });
   }
 
   closeModal () {
-    const isVisible = false;
-    this.setState({ isVisible });
+    this.props.clearRestrictions();
   }
 
   getStudyById (studyId) {
@@ -72,26 +34,28 @@ class DataRestrictionDaemon extends React.Component {
       : console.error(`[getStudyById] Invalid reference: couldn't find study with id "${studyId}"`);
   }
 
-  getStudy () {
-    const { studyId } = this.state;
+  getStudy(studyId) {
     return typeof studyId === 'string'
       ? this.getStudyById(studyId)
       : null;
   }
 
   render () {
-    const study = this.getStudy();
-    const { isVisible, action } = this.state;
-    const { siteConfig, actions, user } = this.props;
+    const { siteConfig, actions, user, dataRestriction } = this.props;
+
+    if (dataRestriction == null) return null;
+
+    const { studyId, action } = dataRestriction;
+    const study = this.getStudy(studyId);
     const { showLoginForm } = actions;
     const { webAppUrl } = siteConfig;
 
-    return !study ? null : (
+    return !study || !user || !dataRestriction ? null : (
       <DataRestrictionModal
         user={user}
         study={study}
         action={action}
-        when={isVisible}
+        when={true}
         webAppUrl={webAppUrl}
         onClose={this.closeModal}
         showLoginForm={showLoginForm}
@@ -103,7 +67,8 @@ class DataRestrictionDaemon extends React.Component {
 DataRestrictionDaemon.propTypes = {
   user: PropTypes.object.isRequired,
   siteConfig: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  dataRestriction: PropTypes.object
 };
 
-export default DataRestrictionDaemon;
+export default enhance(DataRestrictionDaemon);

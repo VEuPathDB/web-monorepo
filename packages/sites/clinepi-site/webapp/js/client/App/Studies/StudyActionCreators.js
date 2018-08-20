@@ -9,10 +9,10 @@ export const STUDIES_ERROR = 'studies/studies-error'
 /**
  * Load studies
  */
-export function loadStudies(projectId) {
+export function requestStudies() {
   return [
     studiesRequested(),
-    fetchStudies(projectId)
+    loadStudies()
   ]
 }
 
@@ -58,9 +58,17 @@ const requiredAttributes = [
 // Action thunks
 // -------------
 
-function fetchStudies(projectId) {
-  return ({ wdkService }) => Promise.all([
-    projectId,
+function loadStudies() {
+  return function run({ wdkService }) {
+    return fetchStudies(wdkService)
+      .then(studiesReceived, studiesError);
+  }
+}
+
+
+export function fetchStudies(wdkService) {
+  return Promise.all([
+    wdkService.getConfig().then(config => config.projectId),
     wdkService.sendRequest(ok, {
       useCache: 'true',
       cacheId: 'studies',
@@ -78,9 +86,7 @@ function fetchStudies(projectId) {
         }
       })
     })
-  ])
-    .then(spread(formatStudies))
-    .then(studiesReceived, studiesError);
+  ]).then(spread(formatStudies))
 }
 
 

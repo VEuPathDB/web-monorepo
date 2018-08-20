@@ -43,9 +43,10 @@ class Showcase extends React.Component {
   render () {
     const { handleFilter } = this;
     const { filteredItems } = this.state;
-    const { content, prefix, projectId } = this.props;
+    const { content, prefix, projectId, attemptAction } = this.props;
     const { title, viewAllUrl, viewAllAppUrl, filters, contentType, items, description } = content;
     const cards = this.getListRenderer(contentType, {
+      attemptAction,
       prefix,
       projectId,
       list: filteredItems

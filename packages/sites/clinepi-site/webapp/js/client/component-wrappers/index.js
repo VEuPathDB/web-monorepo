@@ -9,7 +9,8 @@ import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 
 import Header from 'Client/App/Header';
 import { DataRestrictionDaemon } from 'Client/App/DataRestriction';
-import { getIdFromRecordClassName, emitRestriction } from 'Client/App/DataRestriction/DataRestrictionUtils';
+import { getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
+import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
 
 import searches from 'Client/data/searches.json';
 import visualizations from 'Client/data/visualizations.json';
@@ -26,6 +27,14 @@ export function getStaticSiteData (studies) {
 
 export default {
   IndexController: WdkIndexController => class IndexController extends WdkIndexController {
+
+    getActionCreators() {
+      return {
+        ...super.getActionCreators(),
+        attemptAction
+      }
+    }
+
     getStateFromStore () {
       const { globalData } = this.store.getState();
       const { siteConfig, studies } = globalData;
@@ -44,23 +53,25 @@ export default {
     }
 
     renderView () {
+      const { attemptAction } = this.eventHandlers;
       return (
-        <Index {...this.state} />
+        <Index {...this.state} attemptAction={attemptAction} />
       )
     }
   },
-/*
-  DownloadForm: DownloadForm => props => {
-    const { name } = props.recordClass;
-    const studyId = getIdFromRecordClassName(name);
-    emitRestriction('downloadPage', { studyId });
-    return <DownloadForm {...props} />
+  DownloadFormController: WdkDownloadFormController => class ClinEpiDownloadFormController extends WdkDownloadFormController {
+    componentDidUpdate(prevProps, prevState, snapshot) {
+      super.componentDidUpdate(prevProps, prevState, snapshot);
+      if (this.state.recordClass !== prevState.recordClass) {
+        const studyId = getIdFromRecordClassName(this.state.recordClass.name);
+        this.dispatchAction(attemptAction('downloadPage', { studyId }));
+      }
+    }
   },
-*/
   SiteHeader: () => rawProps => {
-    const {  user = {}, siteConfig, studies, preferences, ...actions } = rawProps;
+    const {  user = {}, siteConfig, studies, preferences, dataRestriction, ...actions } = rawProps;
     const siteData = getStaticSiteData(studies.entities);
-    const props = { user, siteConfig, preferences, actions, siteData };
+    const props = { user, siteConfig, preferences, actions, siteData, dataRestriction };
     return (
       <div>
         <Header {...props} />

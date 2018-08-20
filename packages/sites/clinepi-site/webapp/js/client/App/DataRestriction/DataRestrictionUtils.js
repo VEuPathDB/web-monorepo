@@ -107,9 +107,3 @@ export function getIdFromRecordClassName (recordClass) {
     ? null
     : result[0];
 }
-
-export function emitRestriction (action, details = {}) {
-  const detail = Object.assign({}, details, { action });
-  const event = new CustomEvent('DataRestricted', { detail });
-  document.dispatchEvent(event);
-}
