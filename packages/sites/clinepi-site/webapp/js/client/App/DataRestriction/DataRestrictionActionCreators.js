@@ -17,17 +17,17 @@ export function attemptAction(action, details = {}) {
   }
 }
 
-export function restricted(studyId, action) {
+export function restricted(study, action) {
   return {
     type: RESTRICTED_ACTION,
-    payload: { studyId, action }
+    payload: { study, action }
   }
 }
 
-export function unrestricted(studyId, action) {
+export function unrestricted(study, action) {
   return {
     type: UNRESTRICTED_ACTION,
-    payload: { studyId, action }
+    payload: { study, action }
   }
 }
 
@@ -37,21 +37,21 @@ export function clearRestrictions() {
 
 // Create restriction action
 function handleAction(user, studies, action, { studyId, onSuccess }) {
-  console.info('DRD: Restriction Encountered:', { action, studyId });
-  const study = getStudyById(studyId, studies);
+  console.info(label('Restriction Encountered:'), { action, studyId });
+  const study = studies.find(study => studyId === study.id);
 
-  if (isAllowedAccess({ user, action, study })) {
-    onSuccess();
-    return unrestricted(studyId, action);
+  if (study == null) {
+    throw new Error(label(`Invalid reference: couldn't find study with id "${studyId}"`));
   }
 
-  return restricted(studyId, action);
+  if (isAllowedAccess({ user, action, study })) {
+    if (typeof onSuccess === 'function') onSuccess();
+    return unrestricted(study, action);
+  }
+
+  return restricted(study, action);
 }
 
-function getStudyById(studyId, studies) {
-  if (typeof studyId !== 'string') return;
-  const study = studies.find(({ id }) => studyId === id)
-  return study
-    ? study
-    : console.error(`[getStudyById] Invalid reference: couldn't find study with id "${studyId}"`);
+function label(str) {
+  return `[DataRestriction] ${str}`;
 }
