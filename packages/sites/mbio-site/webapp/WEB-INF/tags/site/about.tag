@@ -63,8 +63,8 @@
     <div style="padding: 1em 0">
       <div style="text-decoration: underline;">The EuPathDB Team</div>
       <div>
-        Shon Cade <sup>3</sup>,
         John Brestelli <sup>3</sup>,
+        Shon Cade <sup>3</sup>,
         Steve Fischer <sup>4</sup>,
         Cristina Aurrecoechea <sup>1</sup>,
         Ryan Doherty <sup>3</sup>,
