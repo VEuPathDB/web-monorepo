@@ -1,4 +1,4 @@
-import { get, identity, mapValues, partition, spread } from 'lodash';
+import { get, identity, mapValues, spread } from 'lodash';
 import { emptyAction } from 'wdk-client/ActionCreatorUtils';
 import { ok } from 'wdk-client/Json';
 
@@ -9,10 +9,10 @@ export const STUDIES_ERROR = 'studies/studies-error'
 /**
  * Load studies
  */
-export function loadStudies(projectId) {
+export function requestStudies() {
   return [
     studiesRequested(),
-    fetchStudies(projectId)
+    loadStudies()
   ]
 }
 
@@ -30,7 +30,8 @@ function studiesReceived([ studies, invalidRecords ]) {
     invalidRecords.length === 0
       ? emptyAction
       : ({ wdkService }) =>
-        wdkService.submitError(new Error(`The following studies do not have complete data: ${invalidRecords.map(r => JSON.stringify(r.id))}`))
+        wdkService.submitError(new Error('The following studies could not be parsed:\n    '
+          + invalidRecords.map(r => JSON.stringify(r.record.id) + ' => ' + r.error).join('\n')))
           .then(() => emptyAction)
   ];
 }
@@ -40,7 +41,7 @@ function studiesError(error) {
 }
 
 
-const attributes = [
+const requiredAttributes = [
   'card_headline',
   'card_points',
   'card_questions',
@@ -57,9 +58,17 @@ const attributes = [
 // Action thunks
 // -------------
 
-function fetchStudies(projectId) {
-  return ({ wdkService }) => Promise.all([
-    projectId,
+function loadStudies() {
+  return function run({ wdkService }) {
+    return fetchStudies(wdkService)
+      .then(studiesReceived, studiesError);
+  }
+}
+
+
+export function fetchStudies(wdkService) {
+  return Promise.all([
+    wdkService.getConfig().then(config => config.projectId),
     wdkService.sendRequest(ok, {
       useCache: 'true',
       cacheId: 'studies',
@@ -73,37 +82,50 @@ function fetchStudies(projectId) {
         },
         formatting: {
           format: 'wdk-service-json',
-          formatConfig: { attributes }
+          formatConfig: { attributes: requiredAttributes }
         }
       })
     })
-  ])
-    .then(spread(formatStudies))
-    .then(studiesReceived);
+  ]).then(spread(formatStudies))
 }
 
 
 // Helpers
 // -------
 
-function formatStudies(projectId, answer) {
-  const [ validRecords, invalidRecords ] = partition(answer.records,
-    record => attributes.every(attribute => record.attributes[attribute] != null));
+const parseStudy = mapProps({
+  name: ['attributes.display_name'],
+  id: ['attributes.dataset_id'],
+  route: ['attributes.dataset_id', id => `/record/dataset/${id}`],
+  categories: ['attributes.study_categories', JSON.parse],
+  access: ['attributes.study_access'],
+  policyUrl: ['attributes.policy_url'],
+  downloadUrl: ['attributes.bulk_download_url'],
+  projectAvailability: ['attributes.project_availability', JSON.parse],
+  headline: ['attributes.card_headline'],
+  points: ['attributes.card_points', JSON.parse],
+  searches: ['attributes.card_questions', JSON.parse]
+})
+  
 
-  return [ validRecords
-    .map(mapProps({
-      name: [ 'attributes.display_name' ],
-      id: [ 'attributes.dataset_id' ],
-      route: [ 'attributes.dataset_id', id => `/record/dataset/${id}` ],
-      categories: [ 'attributes.study_categories', JSON.parse ],
-      access: [ 'attributes.study_access' ],
-      policyUrl: [ 'attributes.policy_url' ],
-      downloadUrl: [ 'attributes.bulk_download_url' ],
-      projectAvailability: [ 'attributes.project_availability', JSON.parse ],
-      headline: [ 'attributes.card_headline' ],
-      points: [ 'attributes.card_points', JSON.parse ],
-      searches: [ 'attributes.card_questions', JSON.parse ]
-    }))
+function formatStudies(projectId, answer) {
+  const records = answer.records.reduce((records, record) => {
+
+    try {
+      const missingAttributes = requiredAttributes.filter(attr => record.attributes[attr] == null);
+      if (missingAttributes.length > 0) {
+        throw new Error(`Missing data for attributes: ${missingAttributes.join(", ")}.`)
+      }
+      records.valid.push(parseStudy(record));
+      return records;
+    }
+    catch(error) {
+      records.invalid.push({ record, error });
+      return records;
+    }
+  }, { valid: [], invalid: [] });
+
+  return [ records.valid
     .map(study => Object.assign(study, {
       disabled: !study.projectAvailability.includes(projectId),
       searchUrls: mapValues(study.searches, search => `/showQuestion.do?questionFullName=${search}`)
@@ -112,7 +134,7 @@ function formatStudies(projectId, answer) {
       studyA.disabled == studyB.disabled ? 0
       : studyA.disabled ? 1 : -1
     ),
-    invalidRecords ];
+    records.invalid ];
 }
 
 /**
@@ -125,7 +147,13 @@ function formatStudies(projectId, answer) {
  */
 function mapProps(propMap) {
   return function mapper(source) {
-    return mapValues(propMap, ([ sourcePath, valueMapper = identity ]) =>
-      valueMapper(get(source, sourcePath)));
+    return mapValues(propMap, ([ sourcePath, valueMapper = identity ]) => {
+      try {
+        return valueMapper(get(source, sourcePath))
+      }
+      catch(error) {
+        throw new Error(`Parsing error at ${sourcePath}: ${error.message}`);
+      }
+    });
   }
 }

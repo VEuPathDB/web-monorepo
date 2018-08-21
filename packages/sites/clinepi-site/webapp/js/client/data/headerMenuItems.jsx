@@ -56,7 +56,7 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
           },
           {
             text: 'Data Access & Use Policy',
-            url: '/documents/CE_DataAccessUsePolicy_Rev2.pdf'
+            url: '/documents/DataAccessUsePolicyClinEpiDB.latest.pdf'
           },
           ...socialLinks
         ]

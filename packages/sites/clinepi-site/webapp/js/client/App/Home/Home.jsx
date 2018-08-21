@@ -11,7 +11,7 @@ class HomePage extends React.Component {
   }
 
   render () {
-    const { webAppUrl, projectId, siteData } = this.props;
+    const { webAppUrl, projectId, siteData, attemptAction } = this.props;
     const sections = homeContent(siteData);
     return (
       <div className="HomePage">
@@ -20,6 +20,7 @@ class HomePage extends React.Component {
             content={section}
             prefix={webAppUrl}
             projectId={projectId}
+            attemptAction={attemptAction}
             key={idx}
           />
         ))}
