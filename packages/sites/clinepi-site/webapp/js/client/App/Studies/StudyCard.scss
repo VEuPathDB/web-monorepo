@@ -74,7 +74,8 @@ $myStripeBgColor: #e8e8e8;
     text-align: center;
     text-transform: uppercase;
     /*font-weight: 500;*/
-    background-color: $myStripeBgColor;
+    background-color: $myLinkFooterColor;
+    color: white;
   }
 
   .StudyCard-Footer {
