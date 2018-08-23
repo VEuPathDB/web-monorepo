@@ -398,7 +398,7 @@
 	 <h4>Publication(s)</h4>
 	    <div style="margin-left: 2.5em;">
         <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">  <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
-	     Integrative metabolomics and transcriptomics signatures of clinical tolerance to Plasmodium vivax reveal activation of innate cell immunity and T cell signaling. <a href="https://www.ncbi.nlm.nih.gov/pubmed/29698924" target="_blank">Gardinassi et al. Redox Biol. 2018 Jul;17:158-170</a>
+	     Integrative metabolomics and transcriptomics signatures of clinical tolerance to <i>Plasmodium vivax</i> reveal activation of innate cell immunity and T cell signaling. <a href="https://www.ncbi.nlm.nih.gov/pubmed/29698924" target="_blank">Gardinassi et al. Redox Biol. 2018 Jul;17:158-170</a>
         </div>
         <br><br>
 <!--
