@@ -188,4 +188,11 @@ div.analysis-menu-tab-pane li.wdk-tooltip {
   width: 109px;
   height: 153px;
 }
+
+/* in AllSites.css is none so it does not affect other sites */
+div.step-analysis-usernotes {
+  display:block;
+}
+
+
 /*THE END */

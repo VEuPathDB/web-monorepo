@@ -260,6 +260,10 @@
         parameter="org.gusdb.wdk.controller.action.analysis.RenameStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
     </action>
+    <action path="/userNotesStepAnalysis"
+        parameter="org.gusdb.wdk.controller.action.analysis.UserNotesStepAnalysisAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+    </action>
     <action path="/deleteStepAnalysis"
         parameter="org.gusdb.wdk.controller.action.analysis.DeleteStepAnalysisAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
