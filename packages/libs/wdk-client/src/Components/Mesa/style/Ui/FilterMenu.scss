@@ -1,0 +1,58 @@
+.MesaComponent {
+  .FilterMenu {
+    display: block;
+    border: 1px solid $borderColor;
+    position: absolute;
+    top: 90%;
+    min-width: 220px;
+    width: 250px;
+    text-align: left;
+    font-weight: 400;
+    z-index: 3000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    left: calc(50% - 110px);
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+
+    big {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    &:before {
+      content: ' ';
+      display: block;
+      position: absolute;
+      top: -20px;
+      left: calc(50% - 12.5px);
+      border: 10px solid #bbb;
+      border-top-color: transparent;
+      border-left-color: transparent;
+      border-right-color: transparent;
+    }
+  }
+
+  .FilterMenu-CheckList {
+    width: 100%;
+    display: block;
+    text-align: left;
+    margin: 10px 0 0;
+    div {
+      display: block;
+      transition: all 0.4s;
+      cursor: pointer;
+      margin: 10px 0 0;
+      &:hover {
+        color: $accentColor;
+      }
+    }
+    .icon {
+      margin-right: 5px;
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+    }
+  }
+}

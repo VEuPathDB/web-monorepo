@@ -1,0 +1,38 @@
+.MesaComponent {
+  .Modal-Wrapper {
+    position: relative;
+
+    .Modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 101010;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      width: 100vw;
+      height: 100vh;
+
+      background-color: rgba(0, 0, 0, 0.15);
+      transition: all 0.5s;
+
+      opacity: 0;
+      pointer-events: none;
+
+      &.Modal-Open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .Modal-Body {
+        flex: 0 0 auto;
+        padding: 2rem;
+        background: white;
+        box-shadow: 0px 0px 10% black;
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+.wdk-TreeBoxParam {
+  .wdk-CheckboxTree {
+    margin-left: -1rem;
+  }
+}
+
+div.wdk-TreeBoxParam div.treeCount {
+  font-style: italic; 
+  font-size: 1.3em;
+  text-align: center;
+}
+
+div.wdk-TreeBoxParam div.treeCount span.red {
+  color: #cc0000;
+}
+div.wdk-TreeBoxParam div.treeCount span.black {
+  color: black;
+}

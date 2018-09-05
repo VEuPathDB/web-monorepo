@@ -1,0 +1,28 @@
+.MesaComponent {
+  .TableSearch {
+    flex: 1;
+    display: flex;
+    padding: 5px;
+    align-items: center;
+
+    .icon {
+      margin-right: 10px;
+      margin-bottom: 2px;
+    }
+    input {
+      flex: 1;
+      border: 1px solid $borderColor;
+      padding: 7px;
+      border-radius: 3px;
+      height: 30px;
+      background: transparent;
+      transition: all 0.4s ease;
+
+      &:not([value=""]) {
+        font-size: 25px;
+        border: 1px solid transparent;
+        border-bottom-color: $borderColor;
+      }
+    }
+  }
+}

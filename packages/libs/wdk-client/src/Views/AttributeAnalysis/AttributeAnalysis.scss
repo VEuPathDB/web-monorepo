@@ -1,0 +1,20 @@
+.AttributeAnalysis {
+
+  $popup-width: 825px;
+
+  width: $popup-width;
+
+  &Button {
+    background-image: url('plugin.png') !important;
+    background-size: cover;
+    border-color: #bbb;
+    width: 22px;
+    height: 22px;
+    transition: border-color 250ms;
+
+    &:hover, &:active {
+      border-color: #999;
+    }
+  }
+
+}

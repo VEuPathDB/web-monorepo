@@ -1,0 +1,10 @@
+.MesaComponent {
+  .ResizeBar {
+    position: absolute;
+    top: 0;
+    right: -4px;
+    height: 100%;
+    width: 6px;
+    cursor: col-resize;
+  }
+}

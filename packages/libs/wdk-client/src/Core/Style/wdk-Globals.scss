@@ -1,0 +1,17 @@
+@import './palette.scss';
+
+.HelpTrigger {
+	display: inline-block;
+	.fa {
+		cursor: default;
+		color: $blue;
+		font-size: 1rem;
+	}
+}
+
+
+.wdk-LoadingData {
+  text-align: center;
+  margin-top: 2em;
+  font-size: 2em;
+}

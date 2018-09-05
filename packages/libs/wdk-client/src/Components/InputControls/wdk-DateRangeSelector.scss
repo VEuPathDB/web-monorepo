@@ -1,0 +1,82 @@
+@import '~../../Core/Style/palette';
+
+.wdk-DateRangeSelector {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding: 10px 0;
+  border-radius: 5px;
+
+  label {
+    padding: 5px;
+    display: inline-block;
+    font-size: 0.9em;
+    line-height: 0.9em;
+    font-weight: bold;
+    opacity: 0.5;
+  }
+  .label-column {
+    margin: 5px 0 12px;
+    .label-cell:first-of-type {
+      margin-bottom: 6px;
+    }
+  }
+  display: inline-flex;
+
+  .label-column, .control-column {
+    display: inline-flex;
+    flex-direction: column;
+  }
+
+  .label-column {
+    flex: auto;
+    justify-content: flex-start;
+    align-items: flex-end;
+
+    .label-cell {
+      flex: none;
+      label {
+        padding: 5px 0;
+        display: block;
+        font-size: 0.9em;
+        line-height: 0.9em;
+        font-weight: bold;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  .control-column {
+    flex: content;
+
+    .control-cell {
+      .wdk-DateSelector {
+        flex: 0 0 auto;
+        padding: 3px;
+        align-self: center;
+      }
+
+      a {
+        color: $blue;
+        font-size: 0.9em;
+        font-weight: 400;
+        padding: 10px 5px;
+        &:hover, &:active, &:focus {
+          text-decoration: none;
+          color: $darkblue;
+        }
+        &.disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  div.control-row {
+    display: inline-flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+  }
+}
