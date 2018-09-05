@@ -49,14 +49,13 @@ function doCustomLogin(form, contextPath) {
     '  <body style="background-color:white">' +
     '    <div style="margin-top:45px;text-align:center;font-family:sans-serif;font-size:1.2em">' +
     '      <strong>Checking Credentials...</strong>' +
-    '      <form name="loginForm" method="post" action="' + contextPath + '/processLogin.do">' +
+    '      <form id="loginForm" method="post" action="' + contextPath + '/processLogin.do">' +
     '        <input type="hidden" name="email" value="' + email + '"/>' +
     '        <input type="hidden" name="password" value="' + password + '"/>' +
     '        <input type="hidden" name="remember" value="' + remember + '"/>' +
     '        <input type="hidden" name="redirectUrl" value="' + redirectUrl + '"/>' +
     '      </form>' +
-    '      <scr' + 'ipt type="text/javascript" src="' + wdk.assetsUrl('/wdk/lib/jquery.js') + '"></scr' + 'ipt>' +
-    '      <scr' + 'ipt type="text/javascript"> jQuery(function() { jQuery("form").submit(); }); </scr' + 'ipt>' +
+    '      <scr' + 'ipt type="text/javascript"> document.getElementById("loginForm").submit(); </scr' + 'ipt>' +
     '    </div>' +
     '  </body>' +
     '</html>';
