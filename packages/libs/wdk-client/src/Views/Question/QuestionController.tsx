@@ -1,15 +1,16 @@
 import { get } from 'lodash';
 import * as React from 'react';
 
+import { wrappable } from '../../Utils/ComponentUtils';
+import AbstractPageController from '../../Core/Controllers/AbstractPageController';
+
+import DefaultQuestionForm from './DefaultQuestionForm';
 import {
   ActiveQuestionUpdatedAction,
   GroupVisibilityChangedAction,
   ParamValueUpdatedAction,
-} from '../../Core/ActionCreators/QuestionActionCreators';
-import DefaultQuestionForm from './DefaultQuestionForm';
+} from './QuestionActionCreators';
 import QuestionStore, { QuestionState } from './QuestionStore';
-import { wrappable } from '../../Utils/ComponentUtils';
-import AbstractPageController from '../../Core/Controllers/AbstractPageController';
 
 const ActionCreators = {
   updateParamValue: ParamValueUpdatedAction.create,

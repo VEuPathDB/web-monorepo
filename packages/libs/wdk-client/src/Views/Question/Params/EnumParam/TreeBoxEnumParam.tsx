@@ -5,13 +5,13 @@ import React from 'react';
 
 import CheckboxTree from '../../../../Components/CheckboxTree/CheckboxTree';
 import Icon from '../../../../Components/Icon/IconAlt';
-import { ParamInitAction } from '../../../../Core/ActionCreators/QuestionActionCreators';
 import { makeActionCreator } from '../../../../Utils/ActionCreatorUtils';
 import { safeHtml } from '../../../../Utils/ComponentUtils';
 import { Seq } from '../../../../Utils/IterableUtils';
 import { matchAction } from '../../../../Utils/ReducerUtils';
 import { filterNodes, getLeaves, isBranch } from '../../../../Utils/TreeUtils';
 import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../../Utils/WdkModel';
+import { ParamInitAction } from '../../QuestionActionCreators';
 
 import enumParamModule from '../EnumParam';
 import SelectionInfo from '../EnumParam/SelectionInfo';

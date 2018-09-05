@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { ParamInitAction } from '../../../Core/ActionCreators/QuestionActionCreators';
 import { Action, isOneOf } from '../../../Utils/ActionCreatorUtils';
 import { EnumParam, Parameter } from '../../../Utils/WdkModel';
+import { ParamInitAction } from '../QuestionActionCreators';
 
 import * as List from './EnumParam/ListEnumParam';
 import * as TreeBox from './EnumParam/TreeBoxEnumParam';

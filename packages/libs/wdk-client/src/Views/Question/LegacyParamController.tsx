@@ -6,7 +6,7 @@ import {
   ActiveQuestionUpdatedAction,
   ParamValueUpdatedAction,
   UnloadQuestionAction,
-} from '../../Core/ActionCreators/QuestionActionCreators';
+} from './QuestionActionCreators';
 import AbstractViewController from '../../Core/Controllers/AbstractViewController';
 import { Seq } from '../../Utils/IterableUtils';
 import { preorder } from '../../Utils/TreeUtils';

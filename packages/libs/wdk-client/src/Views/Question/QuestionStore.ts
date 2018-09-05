@@ -15,7 +15,7 @@ import {
   QuestionLoadedAction,
   QuestionNotFoundAction,
   UnloadQuestionAction,
-} from '../../Core/ActionCreators/QuestionActionCreators';
+} from './QuestionActionCreators';
 import WdkStore, { BaseState } from '../../Core/State/Stores/WdkStore';
 import { Action, combineObserve, isOneOf, ObserveServices } from '../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterGroup, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
