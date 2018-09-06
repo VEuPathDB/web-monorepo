@@ -331,6 +331,94 @@
   </div>  
 
    <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment HuB: Metabolomics of plasma samples from humans infected with <i>P. falciparum</i> and <i>P. vivax</i> </a> </h3> 
+   <div class="wdk-toggle-content">
+
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoHuB table, #ExpInfoHuB td, #ExpInfoHuB th, #ExpInfoHuB tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoHuB {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoHuB"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Metabolomics of plasma samples from humans infected with <i>P. falciparum</i> and <i>P. vivax</i></td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>This study is based on archived plasma from samples collected between 2011 and 2014. Patients in Thailand who were infected with <i>P. falciparum</i> (30 subjects), <i>P. vivax</i> (30 subjects), co-infected with <i>P. falciparum</i> and <i>P. vivax</i> (22 subjects) were included, alongside two sets of non-malaria cases: non-malarial febrile illnesses (30 subjects) and healthy controls (30 subjects).  Malaria subjects were enrolled under ethics research protocol TMEC 11-033, and non-malaria cases were enrolled under TMEC 14-025, both approved by the Ethical Review Committee of the Faculty of Tropical Medicine, Mahidol University, Thailand.  All protocols and documentation were reviewed and sample shipments approved by the Emory IRB. Subjects were enrolled at the Ministry of Public Health (MOPH) Malaria Clinics in the Kanchanaburi and Tak provinces clinic between August 2011 and August 2014.  Patients were all adults, at least 18 years old, and not pregnant.  Individuals were not treated prior to sample collection.  Individuals with uncomplicated malaria cases were recruited for the study. Patients were parasitemic and symptomatic at admission, including some being febrile, but all lacked complications of severe malaria, according to WHO guidelines. Cases of non-malaria febrile illness (NMFI) were recruited as controls from the Fever Clinic of the Hospital for Tropical Diseases at Mahidol University.  These individuals were febrile and were malaria-negative by thick smear microscopy and PCR, and had no history of taking antimalarial or antibiotic medications during the two weeks prior to their hospital visit.  The NFMI cases were diagnosed as dengue, influenza, co-infection of the two pathogens, or unidentified febrile illness.  Healthy individuals were also recruited at the Hospital for Tropical Diseases as a control group.  They were afebrile, had no reported history of malaria infection or treatment, were malaria-negative as determined by thick smear and PCR, and were not on any medications. For healthy and NFMI samples, one mL of venous blood was collected in a heparin tube and plasma was aliquoted and frozen at -80C. For malaria patients, one mL of venous blood was collected in either a heparin or ACD tube, frozen, thawed for aliquoting, and refrozen again. A frozen aliquot was shipped on dry ice to Emory University for high-resolution mass spectrometry and metabolomics analyses. Within the MaHPIC, this project is known as 'Experiment HuB'.  Samples were obtained in collaborations  with Jetsumon Prachumsri, Rapathborn Patrapuvich, Viravarn Luvira, Siriwan Rungin, Teerawat Saeseu, and Nattawan Rachaphaew at the Mahidol Vivax Research Unit and the Hospital for Tropical Diseases at Mahidol University. </td>
+           </tr>
+         </table>
+      </div>   
+     <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksHuB table, #DataLinksHuB td, #DataLinksHuB th, #DataLinksHuB tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksHuB {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksHuB td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksHuB"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+          <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS664" target="_blank">HuB Metabolomics Results at MetaboLights</a></b></td>    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Quantitative Metabolomics</b></td>
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS664" target="_blank">HuB Quantitative Metabolomics Results at MetaboLights</a></b></td>    
+             <td>N/A</td>
+           </tr>
+           </table>
+           </div>
+<!--	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">  <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
+	     Integrative metabolomics and transcriptomics signatures of clinical tolerance to <i>Plasmodium vivax</i> reveal activation of innate cell immunity and T cell signaling. <a href="https://www.ncbi.nlm.nih.gov/pubmed/29698924" target="_blank">Gardinassi et al. Redox Biol. 2018 Jul;17:158-170</a>
+        </div>
+        <br><br>
+
+     <br><br> 
+     <img align="middle" src="images/MaHPIC_E03_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E03_Timeline.png" target="_blank">View Larger Image</a><br>
+  -->    
+        
+  </div>	
+  </div>   
+ 
+
+
+
+
+   <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment HuC: Metabolomics of plasma samples from human volunteers infected with <i>P. vivax</i> </a> </h3> 
    <div class="wdk-toggle-content">
 
