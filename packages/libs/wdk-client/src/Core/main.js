@@ -19,6 +19,9 @@ import Dispatcher from './State/Dispatcher';
 import * as Stores from './State/Stores';
 import WdkStore from './State/Stores/WdkStore';
 
+import storeModules from './State/StoreModules';
+import { createWdkStore } from './Store';
+
 
 /**
  * Initialize the application.
@@ -32,8 +35,10 @@ import WdkStore from './State/Stores/WdkStore';
  *   not resolve to an element after the DOMContentLoaded event is fired, the
  *   application will not render automatically.
  * @param {string} options.endpoint Base URL for WdkService.
- * @param {Function} options.wrapRoutes A function that takes a WDK Routes React
- *   Element and returns a React Element.
+ * @param {Function} options.wrapRoutes A function that takes a WDK Routes array
+ *   and returns a modified copy.
+ * @param {Function} options.wrapStoreModules A function that takes WDK StoreModules
+ *   and returns a modified copy.
  * @param {object} options.storeWrappers Mapping from store name to replacement
  *   class
  * @param {Function} options.onLocationChange Callback function called whenever
@@ -42,7 +47,7 @@ import WdkStore from './State/Stores/WdkStore';
  * @param {ClientPluginRegistryEntry[]} options.pluginConfig
  */
 export function initialize(options) {
-  let { rootUrl, rootElement, endpoint, wrapRoutes = identity, storeWrappers, onLocationChange, pluginConfig = [] } = options;
+  let { rootUrl, rootElement, endpoint, wrapRoutes = identity, wrapStoreModules = identity, storeWrappers, onLocationChange, pluginConfig = [] } = options;
 
   if (!isString(rootUrl)) throw new Error(`Expected rootUrl to be a string, but got ${typeof rootUrl}.`);
   if (!isString(endpoint)) throw new Error(`Expected endpoint to be a string, but got ${typeof endpoint}.`);
@@ -60,10 +65,12 @@ export function initialize(options) {
   let makeDispatchAction = getDispatchActionMaker(dispatcher, services);
   let locatePlugin = makeLocatePlugin(pluginConfig);
   let stores = configureStores(dispatcher, storeWrappers, services, locatePlugin);
+  let store = createWdkStore(wrapStoreModules(storeModules), locatePlugin, wdkService, transitioner);
 
   // load static WDK data into service cache and view stores that need it
   let dispatchAction = makeDispatchAction('global');
   dispatchAction(loadAllStaticData());
+  store.dispatch(loadAllStaticData());
 
   // log all actions in dev environments
   if (__DEV__) logActions(dispatcher, stores);
@@ -83,6 +90,7 @@ export function initialize(options) {
           Root, {
             rootUrl,
             makeDispatchAction,
+            store,
             stores,
             history,
             routes: wrapRoutes(wdkRoutes),
@@ -101,7 +109,7 @@ export function initialize(options) {
   }
 
   // return WDK application components
-  return { wdkService, dispatchAction, stores, makeDispatchAction, history, locatePlugin };
+  return { wdkService, dispatchAction, store, stores, makeDispatchAction, history, locatePlugin };
 }
 
 /**

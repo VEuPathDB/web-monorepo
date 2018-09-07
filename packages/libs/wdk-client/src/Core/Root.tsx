@@ -9,6 +9,9 @@ import WdkStore from './State/Stores/WdkStore';
 import LoginFormController from '../Views/User/LoginForm/LoginFormController';
 
 import { PageControllerProps } from './CommonTypes';
+import { Store } from 'redux';
+import { Provider } from 'react-redux';
+import { Action } from '../Utils/ActionCreatorUtils';
 
 type Props = {
   rootUrl: string,
@@ -18,6 +21,7 @@ type Props = {
   onLocationChange: (location: Location) => void;
   history: History;
   locatePlugin: LocatePlugin;
+  store: Store<any, Action>;
 };
 
 
@@ -94,18 +98,20 @@ export default class Root extends React.Component<Props> {
     return (
       <ErrorBoundary dispatchAction={this.dispatchAction}>
         <Router history={this.props.history}>
-          <React.Fragment>
-            <Switch>
-              {this.props.routes.map(route => (
-                <Route key={route.path} exact path={route.path} render={this.renderRoute(route.component)}/>
-              ))}
-            </Switch>
-            <LoginFormController
-              locatePlugin={this.props.locatePlugin}
-              makeDispatchAction={this.props.makeDispatchAction}
-              stores={this.props.stores}
-            />
-          </React.Fragment>
+          <Provider store={this.props.store}>
+            <React.Fragment>
+              <Switch>
+                {this.props.routes.map(route => (
+                  <Route key={route.path} exact path={route.path} render={this.renderRoute(route.component)}/>
+                ))}
+              </Switch>
+              <LoginFormController
+                locatePlugin={this.props.locatePlugin}
+                makeDispatchAction={this.props.makeDispatchAction}
+                stores={this.props.stores}
+              />
+            </React.Fragment>
+          </Provider>
         </Router>
       </ErrorBoundary>
     );
