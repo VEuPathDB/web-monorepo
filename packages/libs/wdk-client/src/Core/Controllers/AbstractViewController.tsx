@@ -45,14 +45,14 @@ export default abstract class AbstractViewController<
 
   // TODO Remove makeDispatchAction and eventHandlers from context.
   static childContextTypes = {
-    store: PropTypes.object,
+    viewStore: PropTypes.object,
     makeDispatchAction: PropTypes.func,
     dispatchAction: PropTypes.func,
     eventHandlers: PropTypes.object
   };
 
   childContext: {
-    store: WdkStore;
+    viewStore: WdkStore;
     makeDispatchAction: MakeDispatchAction;
     dispatchAction: DispatchAction;
     eventHandlers: ActionCreators
@@ -196,7 +196,7 @@ export default abstract class AbstractViewController<
     this.dispatchAction = this.props.makeDispatchAction(this.getChannelName());
     this.eventHandlers = wrapActions(this.dispatchAction, this.getActionCreators()) as ActionCreators;
     this.childContext = {
-      store: this.store,
+      viewStore: this.store,
       makeDispatchAction: this.props.makeDispatchAction,
       dispatchAction: this.dispatchAction,
       eventHandlers: this.eventHandlers
