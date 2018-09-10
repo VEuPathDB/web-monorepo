@@ -1,7 +1,7 @@
-import AbstractPageController from '../../Core/Controllers/AbstractPageController';
 import WdkStore, { BaseState } from '../../Core/State/Stores/WdkStore';
 import { Action, ActionCreatorRecord } from '../../Utils/ActionCreatorUtils';
 import { StoreConstructor } from '../CommonTypes';
+import AbstractPageController from './AbstractPageController';
 
 /**
  * Simple implementation of 'AbstractPageController' that uses 'WdkStore' and

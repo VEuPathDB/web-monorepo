@@ -57,16 +57,16 @@ export default class Root extends React.Component<Props> {
     this.props.onLocationChange(this.props.history.location);
   }
 
-  renderRoute(RouteComponent: React.ComponentType<PageControllerProps<WdkStore>>) {
+  renderRoute(RouteComponent: React.ComponentType<any>) {
     // Used to inject wdk content as props of Route Component
     return (routerProps: RouteComponentProps<any>) => {
-      let { locatePlugin, makeDispatchAction, stores } = this.props;
+      let { locatePlugin } = this.props;
       return (
         <RouteComponent
           {...routerProps}
+          stores={this.props.stores}
+          makeDispatchAction={this.props.makeDispatchAction}
           locatePlugin={locatePlugin}
-          makeDispatchAction={makeDispatchAction}
-          stores={stores}
         />
       );
     };
@@ -107,8 +107,6 @@ export default class Root extends React.Component<Props> {
               </Switch>
               <LoginFormController
                 locatePlugin={this.props.locatePlugin}
-                makeDispatchAction={this.props.makeDispatchAction}
-                stores={this.props.stores}
               />
             </React.Fragment>
           </Provider>

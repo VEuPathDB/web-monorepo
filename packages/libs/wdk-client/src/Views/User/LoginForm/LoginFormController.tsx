@@ -1,26 +1,44 @@
-import { get } from 'lodash';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { hideLoginForm, submitLoginForm } from '../../../Core/ActionCreators/UserActionCreators';
-import WdkViewController from '../../../Core/Controllers/WdkViewController';
 import LoginForm from './LoginForm';
+import { RootState } from '../../../Core/State/Types';
+import ViewController from '../../../Core/Controllers/ViewController';
 
-export default class LoginFormController extends WdkViewController {
+const enhance = connect(
+  ({ globalData: { loginForm }}: RootState) => ({
+    destination: loginForm ? loginForm.destination || window.location.href : window.location.href,
+    isOpen: loginForm ? loginForm.isOpen : false,
+    message: loginForm ? loginForm.message || '' : ''
+  }),
+  { hideLoginForm, submitLoginForm }
+)
+
+type Props = {
+  destination: string;
+  isOpen: boolean;
+  message: string;
+  hideLoginForm: typeof hideLoginForm;
+  submitLoginForm: typeof submitLoginForm;
+}
+
+export default enhance(class LoginFormController extends ViewController<Props> {
 
   cancel = () => {
-    this.dispatchAction(hideLoginForm());
+    this.props.hideLoginForm();
   }
 
   submit = (email: string, password: string) => {
-    const destination = get(this.state.globalData, 'loginForm.destination', window.location.href);
-    this.dispatchAction(submitLoginForm( email, password, destination));
+    const { destination } = this.props;
+    this.props.submitLoginForm( email, password, destination);
   }
 
-  renderView() {
-    const { loginForm = { isOpen: false, message: undefined } } = this.state.globalData;
+  render() {
+    const { isOpen, message } = this.props;
     return (
       <LoginForm
-        open={loginForm.isOpen}
-        message={loginForm.message}
+        open={isOpen}
+        message={message}
         passwordResetPath="/user/forgot-password"
         registerPath="/user/registration"
         onCancel={this.cancel}
@@ -28,4 +46,4 @@ export default class LoginFormController extends WdkViewController {
       />
     );
   }
-}
+});
