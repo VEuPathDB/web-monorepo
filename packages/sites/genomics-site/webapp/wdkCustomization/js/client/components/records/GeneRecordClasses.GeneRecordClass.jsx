@@ -69,14 +69,14 @@ export class RecordHeading extends Component {
   }
 
   renderThumbnails() {
-    let { store } = this.context;
+    let { viewStore } = this.context;
     let { recordClass } = this.props;
     let { attributes, tables } = this.props.record;
     // Get field present in record instance. This is leveraging the fact that
     // we filter the category tree in the store based on the contents of
     // MetaTable.
     let instanceFields = new Set(
-      preorderSeq(store.getState().categoryTree)
+      preorderSeq(viewStore.getState().categoryTree)
       .filter(node => !node.children.length)
       .map(node => node.properties.name[0]));
 
@@ -147,7 +147,7 @@ export class RecordHeading extends Component {
 
 RecordHeading.contextTypes = {
   eventHandlers: PropTypes.object.isRequired,
-  store: PropTypes.object.isRequired
+  viewStore: PropTypes.object.isRequired
 };
 
 const ExpressionChildRow = makeDatasetGraphChildRow('ExpressionGraphsDataTable');
