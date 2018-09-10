@@ -10,6 +10,7 @@ import * as componentWrappers from './componentWrappers';
 import * as storeWrappers from './storeWrappers';
 import pluginConfig from './pluginConfig';
 import { wrapRoutes } from './routes';
+import wrapStoreModules from './wrapStoreModules';
 
 const quickSearches = [
   {
@@ -43,6 +44,7 @@ initialize({
   quickSearches,
   storeWrappers,
   wrapRoutes,
+  wrapStoreModules,
   mainMenuItems,
   smallMenuItems,
   pluginConfig,
