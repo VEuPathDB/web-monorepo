@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/ActionCreatorUtils';
@@ -6,7 +7,7 @@ import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
 import { submitAsForm } from 'wdk-client/FormSubmitter';
 // import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
-import { withActions, withStore } from 'ebrc-client/util/component';
+import { withActions } from 'ebrc-client/util/component';
 import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -363,10 +364,12 @@ function SendToGalaxyButton(props) {
 }
 
 export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitButtons) {
-  return withActions({ sendToGalaxy })(withStore()(props => (
-    <div>
-      <ApiTabularReporterFormSubmitButtons {...props}/>
-      <SendToGalaxyButton {...props}/>
-   </div>
-  )));
+  return connect(state => state.downloadForm, { sendToGalaxy })(
+    props => (
+      <div>
+        <ApiTabularReporterFormSubmitButtons {...props} />
+        <SendToGalaxyButton {...props} />
+      </div>
+    )
+  );
 }
