@@ -1,61 +1,51 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { wrappable } from '../../Utils/ComponentUtils';
-import AbstractPageController from '../../Core/Controllers/AbstractPageController';
+import PageController from '../../Core/Controllers/PageController';
 import * as DownloadFormActionCreators from './DownloadFormActionCreators';
 import DownloadFormContainer from './DownloadFormContainer';
-import { State, default as DownloadFormStore } from "./DownloadFormStore";
+import { RootState } from '../../Core/State/Types';
 
-class DownloadFormController extends AbstractPageController<State, DownloadFormStore, typeof DownloadFormActionCreators> {
-
-  getStoreClass() {
-    return DownloadFormStore;
-  }
-
-  getStateFromStore() {
-    return this.store.getState();
-  }
-
-  getActionCreators() {
-    return DownloadFormActionCreators;
-  }
+class DownloadFormController extends PageController<RootState['downloadForm'] & typeof DownloadFormActionCreators> {
 
   isRenderDataLoaded() {
-    return (this.state.step != null && !this.state.isLoading);
+    return (this.props.step != null && !this.props.isLoading);
   }
 
   isRenderDataLoadError() {
     return (
-      this.state.error != null &&
-      this.state.error.status !== 403 &&
-      this.state.error.status !== 404
+      this.props.error != null &&
+      this.props.error.status !== 403 &&
+      this.props.error.status !== 404
     );
   }
 
   isRenderDataNotFound() {
     return (
-      this.state.error != null &&
-      this.state.error.status === 404
+      this.props.error != null &&
+      this.props.error.status === 404
     );
   }
 
   isRenderDataPermissionDenied() {
     return (
-      this.state.error != null &&
-      this.state.error.status === 403
+      this.props.error != null &&
+      this.props.error.status === 403
     );
   }
 
   getTitle() {
     return (!this.isRenderDataLoaded() ? "Loading..." :
-      "Download: " + this.state.step.displayName);
+      "Download: " + this.props.step!.displayName);
   }
 
   renderView() {
     // build props object to pass to form component
-    let formProps = Object.assign({}, this.state, this.state.globalData, this.eventHandlers, {
+    let formProps = {
+      ...this.props,
       // passing summary view in case reporters handle view links differently
       summaryView: this.getQueryParams().summaryView
-    });
+    };
     return ( <DownloadFormContainer {...formProps}/> );
   }
 
@@ -63,10 +53,10 @@ class DownloadFormController extends AbstractPageController<State, DownloadFormS
     // must reinitialize with every new props
     let { params } = this.props.match;
     if ('stepId' in params) {
-      this.eventHandlers.loadPageDataFromStepId(params.stepId, this.getQueryParams().format);
+      this.props.loadPageDataFromStepId(params.stepId, this.getQueryParams().format);
     }
     else if ('recordClass' in params) {
-      this.eventHandlers.loadPageDataFromRecord(
+      this.props.loadPageDataFromRecord(
           params.recordClass, params.primaryKey.split('/').join(','), this.getQueryParams().format);
     }
     else {
@@ -76,4 +66,9 @@ class DownloadFormController extends AbstractPageController<State, DownloadFormS
   }
 }
 
-export default wrappable(DownloadFormController);
+const enhance = connect(
+  (state: RootState) => state.downloadForm,
+  DownloadFormActionCreators
+);
+
+export default wrappable(enhance(DownloadFormController));

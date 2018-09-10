@@ -1,8 +1,9 @@
 import { getStepBundlePromise, getSingleRecordStepBundlePromise } from '../../Utils/stepUtils';
 import { ActionThunk, EmptyAction, emptyAction } from '../../Utils/ActionCreatorUtils';
-import { Step } from '../../Utils/WdkUser';
+import { Step, UserPreferences } from '../../Utils/WdkUser';
 import { Question, RecordClass } from '../../Utils/WdkModel';
 import { AnswerRequest } from '../../Utils/WdkService';
+import { CategoryOntology } from '../../Utils/CategoryUtils';
 
 export type LoadingAction = {
   type: 'downloadForm/loading'
@@ -14,7 +15,9 @@ export type InitializeAction = {
     step: Step,
     question: Question,
     recordClass: RecordClass,
-    scope: string
+    scope: string,
+    preferences: UserPreferences,
+    ontology: CategoryOntology
   }
 }
 
@@ -71,13 +74,15 @@ export function loadPageDataFromStepId(
   stepId: number, requestedFormat: string
 ): ActionThunk<LoadingAction | ErrorAction | InitializeAction | SelectReporterAction> {
   return function run({ wdkService }) {
+    let preferencesPromise = wdkService.getCurrentUserPreferences();
+    let ontologyPromise = wdkService.getOntology();
     let bundlePromise = getStepBundlePromise(stepId, wdkService);
     return [
       <LoadingAction>{ type: 'downloadForm/loading' },
-      bundlePromise.then(
-        stepBundle => (<InitializeAction>{
+      Promise.all([bundlePromise, preferencesPromise, ontologyPromise]).then(
+        ([stepBundle, preferences, ontology]) => (<InitializeAction>{
           type: 'downloadForm/initialize',
-          payload: Object.assign(stepBundle, { scope: 'results' })
+          payload: { ...stepBundle, preferences, ontology, scope: 'results' }
         }),
         (error: Error) => (<ErrorAction>{
           type: 'downloadForm/error',
@@ -95,6 +100,8 @@ export function loadPageDataFromRecord(
   requestedFormat: string
 ): ActionThunk<LoadingAction | ErrorAction | InitializeAction | SelectReporterAction> {
   return function run({ wdkService }) {
+    let preferencesPromise = wdkService.getCurrentUserPreferences();
+    let ontologyPromise = wdkService.getOntology();
     // create promise for recordClass
     let recordClassPromise = wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment);
 
@@ -116,10 +123,10 @@ export function loadPageDataFromRecord(
     return [
       <LoadingAction>{ type: 'downloadForm/loading' },
       // dispatch appropriate actions
-      bundlePromise.then(
-        stepBundle => (<InitializeAction>{
+      Promise.all([ bundlePromise, preferencesPromise, ontologyPromise ]).then(
+        ([ stepBundle, preferences, ontology ]) => (<InitializeAction>{
           type: 'downloadForm/initialize',
-          payload: Object.assign(stepBundle, { scope: 'record' })
+          payload: { ...stepBundle, preferences, ontology, scope: 'record' }
         }),
         error => (<ErrorAction>{
           type: 'downloadForm/error',
