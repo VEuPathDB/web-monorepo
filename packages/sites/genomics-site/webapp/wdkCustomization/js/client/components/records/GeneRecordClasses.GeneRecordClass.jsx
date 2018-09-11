@@ -183,7 +183,7 @@ export function RecordTable(props) {
       return <MercatorTable {...props} />
 
     case 'Orthologs':
-      return <SortKeyTable {...props}/>
+      return <OrthologsForm {...props}/>
 
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
@@ -509,5 +509,28 @@ class SortKeyTable extends React.Component {
     return <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
   }
 }
+
+
+class OrthologsForm extends SortKeyTable {
+
+
+// TODO:  add these submit buttons to check and uncheck all.  These are copied from the isolate clustallW form and checkbox name was changed
+//<input type="button" name="CheckAll" value="Check All" onclick="wdk.api.checkboxAll(jQuery('input:checkbox[name=gene_ids]'))">
+//<input type="button" name="UnCheckAll" value="Uncheck All" onclick="wdk.api.checkboxNone(jQuery('input:checkbox[name=gene_ids]'))">
+  render() {
+    return (
+        <form action="/cgi-bin/isolateClustalw" target="_blank" method="post">
+            <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
+            <input type="hidden" name="type" value="geneOrthologs"/>
+            <input type="hidden" name="project_id" value={projectId}/>
+            <input type="submit" value="Submit"/>
+        </form>
+    );
+  }
+
+
+}
+
+
 
 const UserCommentsTable = addCommentLink(props => props.record.attributes.user_comment_link_url);
