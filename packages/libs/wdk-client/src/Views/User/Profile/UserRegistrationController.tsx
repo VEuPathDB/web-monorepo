@@ -2,7 +2,7 @@ import * as React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
 import UserRegistration from '../../../Views/User/Profile/UserRegistration';
-import { updateProfileForm, submitRegistrationForm, conditionallyTransition } from '../../../Core/ActionCreators/UserActionCreators';
+import { updateProfileForm, submitRegistrationForm, conditionallyTransition } from '../UserActionCreators';
 import UserRegistrationStore, { State } from "../../../Views/User/Profile/UserRegistrationStore";
 
 const ActionCreators = { updateProfileForm, submitRegistrationForm, conditionallyTransition };

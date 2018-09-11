@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { conditionallyTransition } from '../../Core/ActionCreators/UserActionCreators';
+import { conditionallyTransition } from './UserActionCreators';
 import WdkPageController from '../../Core/Controllers/WdkPageController';
 import { wrappable } from '../../Utils/ComponentUtils';
 import NotFound from '../../Views/NotFound/NotFound';

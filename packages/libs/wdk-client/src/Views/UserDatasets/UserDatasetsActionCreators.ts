@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 
 import { transitionToInternalPage } from '../../Core/ActionCreators/RouterActionCreators';
-import { PreferenceUpdateAction, updateUserPreference } from '../../Core/ActionCreators/UserActionCreators';
+import { PreferenceUpdateAction, updateUserPreference } from '../User/UserActionCreators';
 import { ActionThunk, EmptyAction, emptyAction } from '../../Utils/ActionCreatorUtils';
 import { UserDataset, UserDatasetMeta } from '../../Utils/WdkModel';
 import { ServiceError, UserDatasetShareResponse } from '../../Utils/WdkService';

@@ -6,7 +6,7 @@ import {
   updatePasswordResetEmail,
   submitPasswordReset,
   conditionallyTransition
-} from '../../../Core/ActionCreators/UserActionCreators';
+} from '../UserActionCreators';
 import UserPasswordResetStore, { State } from "./UserPasswordResetStore";
 
 const ActionCreators = {

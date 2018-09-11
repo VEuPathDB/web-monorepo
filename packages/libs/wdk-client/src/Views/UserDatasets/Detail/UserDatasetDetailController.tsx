@@ -1,7 +1,7 @@
 import { keyBy } from 'lodash';
 import * as React from 'react';
 
-import { showLoginForm } from '../../../Core/ActionCreators/UserActionCreators';
+import { showLoginForm } from '../../User/UserActionCreators';
 import { PageControllerProps } from '../../../Core/CommonTypes';
 import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
 import { wrappable } from '../../../Utils/ComponentUtils';

@@ -1,7 +1,7 @@
 import { isEqual, omit } from 'lodash';
 import * as React from 'react';
 
-import * as UserActionCreators from '../../Core/ActionCreators/UserActionCreators';
+import * as UserActionCreators from '../../Views/User/UserActionCreators';
 import { PageControllerProps } from '../../Core/CommonTypes';
 import AbstractPageController from '../../Core/Controllers/AbstractPageController';
 import { wrappable } from '../../Utils/ComponentUtils';

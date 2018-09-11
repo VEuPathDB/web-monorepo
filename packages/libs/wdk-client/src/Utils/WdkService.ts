@@ -828,6 +828,7 @@ export default class WdkService {
   updateCurrentUserPreferences(entries: UserPreferences) : Promise<UserPreferences> {
     let url = '/users/current/preferences';
     let data = JSON.stringify(entries);
+    // FIXME Should this be a PATCH?
     return this._fetchJson<void>('put', url, data).then(() => {
       // merge with cached preferences only if patch succeeds
       return this._preferences = Promise.resolve(entries);

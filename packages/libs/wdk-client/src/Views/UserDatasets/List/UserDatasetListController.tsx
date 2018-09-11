@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import '../UserDatasets.scss';
-import { showLoginForm } from '../../../Core/ActionCreators/UserActionCreators';
+import { showLoginForm } from '../../User/UserActionCreators';
 import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import { UserDataset } from '../../../Utils/WdkModel';

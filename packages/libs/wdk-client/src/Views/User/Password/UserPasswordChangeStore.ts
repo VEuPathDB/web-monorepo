@@ -1,5 +1,5 @@
 import WdkStore, { BaseState } from '../../../Core/State/Stores/WdkStore';
-import { PasswordFormUpdateAction, PasswordFormSubmissionStatusAction } from '../../../Core/ActionCreators/UserActionCreators';
+import { PasswordFormUpdateAction, PasswordFormSubmissionStatusAction } from '../UserActionCreators';
 
 type Action = PasswordFormUpdateAction | PasswordFormSubmissionStatusAction;
 

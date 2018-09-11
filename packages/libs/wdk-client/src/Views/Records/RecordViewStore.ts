@@ -7,7 +7,7 @@ import {
   FavoritesStatusErrorAction,
   FavoritesStatusLoadingAction,
   FavoritesStatusReceivedAction,
-} from '../../Core/ActionCreators/UserActionCreators';
+} from '../../Views/User/UserActionCreators';
 import WdkStore, { BaseState } from '../../Core/State/Stores/WdkStore';
 import { CategoryTreeNode, getId, getTargetType } from '../../Utils/CategoryUtils';
 import { filterNodes } from '../../Utils/TreeUtils';

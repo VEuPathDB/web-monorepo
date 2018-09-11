@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { hideLoginForm, submitLoginForm } from '../../../Core/ActionCreators/UserActionCreators';
+import { hideLoginForm, submitLoginForm } from '../UserActionCreators';
 import LoginForm from './LoginForm';
 import { RootState } from '../../../Core/State/Types';
 import ViewController from '../../../Core/Controllers/ViewController';

@@ -3,7 +3,7 @@ import { get, omit } from 'lodash';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
 import ChangePasswordForm from './ChangePasswordForm';
-import { updateChangePasswordForm, savePassword } from '../../../Core/ActionCreators/UserActionCreators';
+import { updateChangePasswordForm, savePassword } from '../UserActionCreators';
 import UserPasswordChangeStore, { State as StoreState } from "./UserPasswordChangeStore";
 
 const ActionCreators = { updateChangePasswordForm, savePassword };

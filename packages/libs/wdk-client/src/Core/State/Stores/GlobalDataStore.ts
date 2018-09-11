@@ -5,9 +5,8 @@
 import { Location } from 'history';
 import { ReduceStore } from 'flux/utils';
 import {StaticDataAction, AllDataAction, StaticData} from '../../../Core/ActionCreators/StaticDataActionCreators';
-import { UserUpdateAction, PreferenceUpdateAction, PreferencesUpdateAction, ShowLoginModalAction, LoginDismissedAction, LoginErrorAction } from '../../../Core/ActionCreators/UserActionCreators';
+import { UserUpdateAction, PreferenceUpdateAction, PreferencesUpdateAction, ShowLoginModalAction, LoginDismissedAction, LoginErrorAction } from '../../../Views/User/UserActionCreators';
 import { LocationAction } from '../../../Core/ActionCreators/RouterActionCreators';
-import { UserPreferences } from '../../../Utils/WdkUser';
 
 type UserAction = UserUpdateAction | PreferenceUpdateAction | PreferencesUpdateAction;
 type LoginAction = ShowLoginModalAction | LoginDismissedAction | LoginErrorAction;

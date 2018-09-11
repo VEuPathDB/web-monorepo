@@ -2,7 +2,7 @@ import WdkStore, { BaseState } from '../../../Core/State/Stores/WdkStore';
 import {
   ResetPasswordUpdateEmailAction,
   ResetPasswordSubmissionStatusAction
-} from '../../../Core/ActionCreators/UserActionCreators';
+} from '../UserActionCreators';
 
 // defines the structure of this store's data
 export type State = BaseState & {

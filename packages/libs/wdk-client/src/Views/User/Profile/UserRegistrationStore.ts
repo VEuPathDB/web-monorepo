@@ -1,9 +1,10 @@
-import UserProfileStore, { State, Action, UserProfileFormData } from './UserProfileStore';
-import { ClearRegistrationFormAction } from '../../../Core/ActionCreators/UserActionCreators';
+import { reduce, State as UserProfileState, Action, UserProfileFormData } from './UserProfileReducer';
+import { ClearRegistrationFormAction } from '../UserActionCreators';
 import { UserPreferences } from '../../../Utils/WdkUser';
+import WdkStore, { BaseState } from '../../../Core/State/Stores/WdkStore';
 
 // Re-export state to follow convention
-export { State };
+export type State = BaseState & UserProfileState;
 
 type RegistrationAction = Action | ClearRegistrationFormAction;
 
@@ -19,7 +20,7 @@ const emptyUserFormData: UserProfileFormData = {
   } as UserPreferences
 };
 
-export default class UserRegistrationStore extends UserProfileStore {
+export default class UserRegistrationStore extends WdkStore<State> {
 
   // defines the structure of this store's data
   getInitialState(): State {
@@ -37,7 +38,7 @@ export default class UserRegistrationStore extends UserProfileStore {
           let newState = Object.assign({}, state, { userFormData: emptyUserFormData });
           return newState;
       default:
-          return super.handleFormUpdate(state, action);
+          return state; //super.handleFormUpdate(state, action);
     }
   }
 }

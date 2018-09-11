@@ -6,7 +6,6 @@ import SiteMapStore from '../../../Views/SiteMap/SiteMapStore';
 import QuestionStore from '../../../Views/Question/QuestionStore';
 import AnswerViewStore from '../../../Views/Answer/AnswerViewStore';
 import RecordViewStore from '../../../Views/Records/RecordViewStore';
-import UserProfileStore from '../../../Views/User/Profile/UserProfileStore';
 import FavoritesListStore from '../../../Views/Favorites/FavoritesListStore';
 
 import UserRegistrationStore from '../../../Views/User/Profile/UserRegistrationStore';
@@ -23,7 +22,6 @@ export {
   QuestionStore,
   AnswerViewStore,
   RecordViewStore,
-  UserProfileStore,
   FavoritesListStore,
   UserRegistrationStore,
   UserPasswordChangeStore,

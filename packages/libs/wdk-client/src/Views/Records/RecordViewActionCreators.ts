@@ -9,7 +9,7 @@ import {
   FavoritesStatusReceivedAction,
   loadBasketStatus,
   loadFavoritesStatus,
-} from '../../Core/ActionCreators/UserActionCreators';
+} from '../../Views/User/UserActionCreators';
 import { Action, ActionThunk, EmptyAction, emptyAction } from '../../Utils/ActionCreatorUtils';
 import { CategoryTreeNode } from '../../Utils/CategoryUtils';
 import { getTree } from '../../Utils/OntologyUtils';
