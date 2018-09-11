@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
-import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
+import PageController from '../../../Core/Controllers/PageController';
 import UserPasswordReset from './UserPasswordReset';
 import {
   updatePasswordResetEmail,
   submitPasswordReset,
   conditionallyTransition
 } from '../UserActionCreators';
-import UserPasswordResetStore, { State } from "./UserPasswordResetStore";
+import { RootState } from '../../../Core/State/Types';
+import { connect } from 'react-redux';
 
 const ActionCreators = {
   updatePasswordResetEmail,
@@ -15,15 +16,9 @@ const ActionCreators = {
   conditionallyTransition
 }
 
-class UserPasswordResetController extends AbstractPageController<State, UserPasswordResetStore, typeof ActionCreators> {
+type Props = typeof ActionCreators & RootState['passwordReset'] & Pick<RootState['globalData'], 'user'>;
 
-  getStoreClass() {
-    return UserPasswordResetStore;
-  }
-
-  getStateFromStore() {
-    return this.store.getState();
-  }
+class UserPasswordResetController extends PageController<Props> {
 
   getActionCreators() {
     return ActionCreators;
@@ -36,16 +31,21 @@ class UserPasswordResetController extends AbstractPageController<State, UserPass
   isRenderDataLoaded() {
     // show Loading if no user loaded yet, or if user is guest
     //   (will transition to Profile page in loadData() if non-guest)
-    return (this.state.globalData.user != null && this.state.globalData.user.isGuest);
+    return (this.props.user != null && this.props.user.isGuest);
   }
 
   renderView() {
-    return ( <UserPasswordReset {...this.state} {...this.eventHandlers} /> );
+    return ( <UserPasswordReset {...this.props} /> );
   }
 
   loadData() {
-    this.eventHandlers.conditionallyTransition(user => !user.isGuest, '/user/profile');
+    this.props.conditionallyTransition(user => !user.isGuest, '/user/profile');
   }
 }
 
-export default wrappable(UserPasswordResetController);
+const enhance = connect(
+  (state: RootState) => ({ ...state.passwordReset, user: state.globalData.user }),
+  ActionCreators
+)
+
+export default wrappable(enhance(UserPasswordResetController));

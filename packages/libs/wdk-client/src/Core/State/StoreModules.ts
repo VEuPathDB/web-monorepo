@@ -3,6 +3,7 @@ import * as downloadForm from '../../Views/ReporterForm/DownloadFormStoreModule'
 import * as userProfile from '../../Views/User/Profile/UserProfileReducer';
 import * as userRegistration from '../../Views/User/Profile/UserRegistrationModule';
 import * as passwordChange from '../../Views/User/Password/UserPasswordChangeStoreModule';
+import * as passwordReset from '../../Views/User/Password/UserPasswordResetStoreModule';
 
 export default {
   globalData,
@@ -10,4 +11,5 @@ export default {
   userProfile,
   userRegistration,
   passwordChange,
+  passwordReset,
 };
