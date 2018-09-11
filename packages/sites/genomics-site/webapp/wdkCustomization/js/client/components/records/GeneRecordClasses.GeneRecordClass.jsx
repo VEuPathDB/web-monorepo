@@ -514,16 +514,25 @@ class SortKeyTable extends React.Component {
 class OrthologsForm extends SortKeyTable {
 
 
-// TODO:  add these submit buttons to check and uncheck all.  These are copied from the isolate clustallW form and checkbox name was changed
-//<input type="button" name="CheckAll" value="Check All" onclick="wdk.api.checkboxAll(jQuery('input:checkbox[name=gene_ids]'))">
-//<input type="button" name="UnCheckAll" value="Uncheck All" onclick="wdk.api.checkboxNone(jQuery('input:checkbox[name=gene_ids]'))">
+    toggleAll(checked) {
+        const node = ReactDOM.findDOMNode(this);
+        for (const input of node.querySelectorAll('input[name="gene_ids"]')) {
+            input.checked = checked;
+        }
+    }
+
+
   render() {
+      let { source_id } = this.props.record.attributes;
     return (
         <form action="/cgi-bin/isolateClustalw" target="_blank" method="post">
             <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
             <input type="hidden" name="type" value="geneOrthologs"/>
             <input type="hidden" name="project_id" value={projectId}/>
+            <input type="hidden" name="gene_ids" value={source_id}/>
             <input type="submit" value="Submit"/>
+            <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
+            <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
         </form>
     );
   }
