@@ -1,34 +1,32 @@
 import * as React from 'react';
 import { wrappable } from '../../../Utils/ComponentUtils';
-import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
-import UserRegistration from '../../../Views/User/Profile/UserRegistration';
+import PageController from '../../../Core/Controllers/PageController';
+import UserRegistration from './UserRegistration';
 import { updateProfileForm, submitRegistrationForm, conditionallyTransition } from '../UserActionCreators';
-import UserRegistrationStore, { State } from "../../../Views/User/Profile/UserRegistrationStore";
+import { RootState } from '../../../Core/State/Types';
+import { connect } from 'react-redux';
 
 const ActionCreators = { updateProfileForm, submitRegistrationForm, conditionallyTransition };
 
-class UserRegistrationController extends AbstractPageController<State, UserRegistrationStore, typeof ActionCreators> {
+type Props = {
+  globalData: RootState['globalData'];
+  userProfile: RootState['userProfile'];
+  userEvents: typeof ActionCreators;
+}
 
-  getStoreClass() {
-    return UserRegistrationStore;
-  }
-
-  getStateFromStore() {
-    return this.store.getState();
-  }
+class UserRegistrationController extends PageController<Props> {
 
   getActionCreators() {
     return { updateProfileForm, submitRegistrationForm, conditionallyTransition };
   }
 
   isRenderDataLoaded() {
-    return (this.state.userFormData != null &&
-            this.state.userFormData.preferences != null &&
-            this.state.globalData.config != null &&
+    return (this.props.globalData.preferences != null &&
+            this.props.globalData.config != null &&
             // show Loading if user is guest
             //   (will transition to Profile page in loadData() if non-guest)
-            this.state.globalData.user != null &&
-            this.state.globalData.user.isGuest);
+            this.props.globalData.user != null &&
+            this.props.globalData.user.isGuest);
   }
 
   getTitle() {
@@ -36,12 +34,19 @@ class UserRegistrationController extends AbstractPageController<State, UserRegis
   }
 
   renderView() {
-    return ( <UserRegistration {...this.state} userEvents={this.eventHandlers}/> );
+    return ( <UserRegistration {...this.props}/> );
   }
 
   loadData() {
-    this.eventHandlers.conditionallyTransition(user => !user.isGuest, '/user/profile');
+    this.props.userEvents.conditionallyTransition(user => !user.isGuest, '/user/profile');
   }
 }
 
-export default wrappable(UserRegistrationController);
+const enhance = connect((state: RootState) => ({
+  globalData: state.globalData,
+  ...state.userRegistration,
+}),
+ActionCreators,
+(stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps }))
+
+export default wrappable(enhance(UserRegistrationController));

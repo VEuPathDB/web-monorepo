@@ -5,7 +5,6 @@ import PageController from '../../../Core/Controllers/PageController';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import UserProfile from './UserProfile';
 import { RootState } from '../../../Core/State/Types';
-import { User, UserPreferences } from '../../../Utils/WdkUser';
 
 const ActionCreators = { updateProfileForm, submitProfileForm };
 

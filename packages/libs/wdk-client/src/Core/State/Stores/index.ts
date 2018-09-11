@@ -8,7 +8,6 @@ import AnswerViewStore from '../../../Views/Answer/AnswerViewStore';
 import RecordViewStore from '../../../Views/Records/RecordViewStore';
 import FavoritesListStore from '../../../Views/Favorites/FavoritesListStore';
 
-import UserRegistrationStore from '../../../Views/User/Profile/UserRegistrationStore';
 import UserPasswordChangeStore from '../../../Views/User/Password/UserPasswordChangeStore';
 import UserPasswordResetStore from '../../../Views/User/Password/UserPasswordResetStore';
 import UserDatasetDetailStore from '../../../Views/UserDatasets/Detail/UserDatasetDetailStore';
@@ -23,7 +22,6 @@ export {
   AnswerViewStore,
   RecordViewStore,
   FavoritesListStore,
-  UserRegistrationStore,
   UserPasswordChangeStore,
   UserPasswordResetStore,
   UserDatasetDetailStore,

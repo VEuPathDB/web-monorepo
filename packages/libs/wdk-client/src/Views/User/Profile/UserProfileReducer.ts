@@ -20,7 +20,7 @@ export type State = {
 const defaultState: State = {
   errorMessage: undefined,
   formStatus: 'new',
-  userFormData: {}
+  userFormData: undefined
 };
 
 export function reduce(state: State = defaultState, action: Action): State {
