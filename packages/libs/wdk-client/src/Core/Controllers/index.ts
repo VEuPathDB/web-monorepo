@@ -1,5 +1,7 @@
 import AbstractPageController from './AbstractPageController';
 import AbstractViewController from './AbstractViewController';
+import PageController from './PageController';
+import ViewController from './ViewController';
 import ErrorBoundary from './ErrorBoundary';
 import LegacyParamController from '../../Views/Question/LegacyParamController';
 import WdkPageController from './WdkPageController';
@@ -24,6 +26,8 @@ import UserDatasetListController from '../../Views/UserDatasets/List/UserDataset
 import AttributeAnalysisButtonController from '../../Views/AttributeAnalysis/AttributeAnalysisButtonController';
 
 export {
+  PageController,
+  ViewController,
   AttributeAnalysisButtonController,
   AbstractPageController,
   AbstractViewController,
