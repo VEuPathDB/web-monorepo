@@ -6,7 +6,7 @@ import { broadcast } from '../../Utils/StaticDataUtils';
 import { RecordInstance } from '../../Utils/WdkModel';
 import WdkService from '../../Utils/WdkService';
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from '../../Utils/WdkUser';
-import { State as PasswordStoreState } from '../../Views/User/Password/UserPasswordChangeStore';
+import { State as PasswordStoreState } from '../../Views/User/Password/UserPasswordChangeStoreModule';
 import { State as ProfileStoreState, UserProfileFormData } from './Profile/UserProfileReducer';
 
 // actions to update true user and preferences

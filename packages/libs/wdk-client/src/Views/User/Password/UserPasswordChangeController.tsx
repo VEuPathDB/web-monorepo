@@ -1,35 +1,23 @@
 import * as React from 'react';
-import { get, omit } from 'lodash';
 import { wrappable } from '../../../Utils/ComponentUtils';
-import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
+import PageController from '../../../Core/Controllers/PageController';
 import ChangePasswordForm from './ChangePasswordForm';
 import { updateChangePasswordForm, savePassword } from '../UserActionCreators';
-import UserPasswordChangeStore, { State as StoreState } from "./UserPasswordChangeStore";
+import { RootState } from '../../../Core/State/Types';
+import { connect } from 'react-redux';
 
 const ActionCreators = { updateChangePasswordForm, savePassword };
 
-type State = Pick<StoreState, 'formStatus' | 'errorMessage' | 'passwordForm'>
-           & Pick<StoreState['globalData'], 'user'>;
+type Props = RootState['passwordChange'] & Pick<RootState['globalData'], 'user'> & typeof ActionCreators;
 
-class UserPasswordChangeController extends AbstractPageController<State, UserPasswordChangeStore, typeof ActionCreators> {
-
-  getStoreClass() {
-    return UserPasswordChangeStore;
-  }
-
-  getStateFromStore() {
-    return {
-      ...omit(this.store.getState(), 'globalData'),
-      user: get(this.store.getState(), 'globalData.user')
-    } as State;
-  }
+class UserPasswordChangeController extends PageController<Props> {
 
   getActionCreators() {
     return ActionCreators;
   }
 
   isRenderDataLoaded() {
-    return (this.state.user != null);
+    return (this.props.user != null);
   }
 
   getTitle() {
@@ -37,8 +25,17 @@ class UserPasswordChangeController extends AbstractPageController<State, UserPas
   }
 
   renderView() {
-    return ( <ChangePasswordForm {...this.state} userEvents={this.eventHandlers}/> );
+    return ( <ChangePasswordForm {...this.props}/> );
   }
 }
 
-export default wrappable(UserPasswordChangeController);
+const enhance = connect(
+  (state: RootState) => ({
+    ...state.passwordChange,
+    user: state.globalData.user
+  }),
+  ActionCreators,
+  (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps })
+)
+
+export default wrappable(enhance(UserPasswordChangeController));
