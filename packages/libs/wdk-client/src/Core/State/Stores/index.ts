@@ -8,8 +8,6 @@ import AnswerViewStore from '../../../Views/Answer/AnswerViewStore';
 import RecordViewStore from '../../../Views/Records/RecordViewStore';
 import FavoritesListStore from '../../../Views/Favorites/FavoritesListStore';
 
-import UserDatasetDetailStore from '../../../Views/UserDatasets/Detail/UserDatasetDetailStore';
-
 export {
   AttributeAnalysisStore,
   WdkStore,
@@ -19,5 +17,4 @@ export {
   AnswerViewStore,
   RecordViewStore,
   FavoritesListStore,
-  UserDatasetDetailStore,
 };
