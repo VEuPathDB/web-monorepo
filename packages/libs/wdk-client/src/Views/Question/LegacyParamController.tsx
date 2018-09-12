@@ -7,35 +7,42 @@ import {
   ParamValueUpdatedAction,
   UnloadQuestionAction,
 } from './QuestionActionCreators';
-import AbstractViewController from '../../Core/Controllers/AbstractViewController';
+import ViewController from '../../Core/Controllers/ViewController';
 import { Seq } from '../../Utils/IterableUtils';
 import { preorder } from '../../Utils/TreeUtils';
 import { EnumParam, Parameter } from '../../Utils/WdkModel';
-import QuestionStore, { QuestionState } from './QuestionStore';
+import { QuestionState } from './QuestionStoreModule';
 
 import * as ParamModules from './Params';
 import enumParamModule from './Params/EnumParam';
 import { isType as isTreeBoxParam } from './Params/EnumParam/TreeBoxEnumParam';
 import { Context } from './Params/Utils';
+import { Dispatch, bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { RootState } from '../../Core/State/Types';
 
 const ActionCreators = {
   setActiveQuestion: ActiveQuestionUpdatedAction.create,
   updateParamValue: ParamValueUpdatedAction.create
 }
 
-type Props = {
+type OwnProps = {
   questionName: string;
   paramName: string;
   paramValues: Record<string, string>;
   stepId: number | undefined;
 }
 
-export default class LegacyParamController extends AbstractViewController<
-  QuestionState,
-  QuestionStore,
-  typeof ActionCreators,
-  Props
-> {
+type StateProps = QuestionState;
+
+type DispatchProps = {
+  eventHandlers: typeof ActionCreators;
+  dispatch: Dispatch;
+}
+
+type Props = { own: OwnProps, mapped: StateProps & DispatchProps };
+
+class LegacyParamController extends ViewController<Props> {
 
   static readonly UNRECOVERABLE_PARAM_ERROR_EVENT = 'unrecoverable-param-error';
   static readonly PARAM_VALID_EVENT = 'param-valid';
@@ -44,59 +51,46 @@ export default class LegacyParamController extends AbstractViewController<
 
   paramModules = ParamModules;
 
-  getStoreClass() {
-    return QuestionStore;
-  }
-
-  getStateFromStore() {
-    return get(this.store.getState(), ['questions', this.props.questionName], {}) as QuestionState;
-  }
-
-  getActionCreators() {
-    return ActionCreators;
-  }
-
   getDependentParams(parameter: Parameter): Seq<Parameter> {
     return Seq.from(parameter.dependentParams)
-      .map(name => this.state.question.parametersByName[name])
+      .map(name => this.props.mapped.question.parametersByName[name])
       .flatMap(dependentParam =>
         Seq.of(dependentParam).concat(this.getDependentParams(dependentParam)));
   }
 
   componentWillUnmount() {
-    super.componentWillUnmount();
-    const { questionName } = this.props;
-    this.dispatchAction(UnloadQuestionAction.create({ questionName }));
+    const { questionName } = this.props.own;
+    this.props.mapped.dispatch(UnloadQuestionAction.create({ questionName }));
   }
 
   loadData(prevProps?: Props, prevState?: QuestionState) {
     if (
-      this.state.questionStatus == null ||
-      this.state.stepId !== this.props.stepId
+      this.props.mapped.questionStatus == null ||
+      this.props.mapped.stepId !== this.props.own.stepId
     ) {
-      this.eventHandlers.setActiveQuestion({
-        questionName: this.props.questionName,
-        paramValues: this.props.paramValues,
-        stepId: this.props.stepId
+      this.props.mapped.eventHandlers.setActiveQuestion({
+        questionName: this.props.own.questionName,
+        paramValues: this.props.own.paramValues,
+        stepId: this.props.own.stepId
       });
     }
 
     else if (prevProps != null) {
-      let prevParamValues = prevProps.paramValues || {};
-      let paramValues = this.props.paramValues || {};
+      let prevParamValues = prevProps.own.paramValues || {};
+      let paramValues = this.props.own.paramValues || {};
       let changedParams = Object.entries(paramValues)
         .filter(([name, value]) => (
           prevParamValues[name] !== value &&
-          this.state.paramValues[name] !== value
+          this.props.mapped.paramValues[name] !== value
         ));
       if (changedParams.length > 1) {
         console.warn('Received multiple changed param values: %o', changedParams);
       }
       changedParams.forEach(([name, paramValue]) => {
-        let parameter = this.state.question.parameters.find(p => p.name === name);
+        let parameter = this.props.mapped.question.parameters.find(p => p.name === name);
         if (parameter) {
           const dependentParameters = this.getDependentParams(parameter).toArray();
-          this.eventHandlers.updateParamValue({
+          this.props.mapped.eventHandlers.updateParamValue({
             ...this.getContext(parameter),
             paramValue,
             dependentParameters
@@ -110,8 +104,8 @@ export default class LegacyParamController extends AbstractViewController<
     // Trigger event in case of question error
     if (
       get(prevState, 'questionStatus') !== get(this.state, 'questionStatus') &&
-      this.state.questionStatus === 'error' &&
-      this.props.paramValues != null
+      this.props.mapped.questionStatus === 'error' &&
+      this.props.own.paramValues != null
     ) {
       if (node) {
         const event = new CustomEvent(LegacyParamController.UNRECOVERABLE_PARAM_ERROR_EVENT, { bubbles: true, cancelable: false });
@@ -123,7 +117,7 @@ export default class LegacyParamController extends AbstractViewController<
     const parameter = this.getParameter();
 
     if (parameter != null && node != null) {
-      const eventType = ParamModules.isParamValueValid(this.getContext(parameter), this.state.paramUIState[parameter.name])
+      const eventType = ParamModules.isParamValueValid(this.getContext(parameter), this.props.mapped.paramUIState[parameter.name])
         ? LegacyParamController.PARAM_VALID_EVENT
         : LegacyParamController.PARAM_INVALID_EVENT;
         const event = new CustomEvent(eventType, { bubbles: true, cancelable: false });
@@ -132,33 +126,33 @@ export default class LegacyParamController extends AbstractViewController<
   }
 
   isRenderDataLoadError() {
-    return this.state.questionStatus === 'error';
+    return this.props.mapped.questionStatus === 'error';
   }
 
   isRenderDataLoaded() {
-    return this.state.questionStatus === 'complete';
+    return this.props.mapped.questionStatus === 'complete';
   }
 
   isRenderDataNotFound() {
-    return this.state.questionStatus === 'not-found';
+    return this.props.mapped.questionStatus === 'not-found';
   }
 
   getParameter() {
     return this.isRenderDataLoaded()
-      ? this.state.question.parameters.find(p => p.name === this.props.paramName)
+      ? this.props.mapped.question.parameters.find(p => p.name === this.props.own.paramName)
       : undefined;
   }
 
   getContext<T extends Parameter>(parameter: T): Context<T> {
     return {
-      questionName: this.state.question.urlSegment,
+      questionName: this.props.mapped.question.urlSegment,
       parameter: parameter,
-      paramValues: this.state.paramValues
+      paramValues: this.props.mapped.paramValues
     }
   }
 
   renderDataLoadError() {
-    const isProbablyRevise = this.props.paramValues != null;
+    const isProbablyRevise = this.props.own.paramValues != null;
     const errorMessage = 'Data for this parameter could not be loaded.' +
       (isProbablyRevise ? ' The strategy this search belongs to will have to recreated.' : '');
 
@@ -171,7 +165,7 @@ export default class LegacyParamController extends AbstractViewController<
         {isProbablyRevise && [
           <div style={{ fontWeight: 'bold', padding: '1em 0' }}>Current value:</div>,
           <div style={{ maxHeight: 300, overflow: 'auto', background: '#f3f3f3' }}>
-            <pre>{prettyPrintRawValue(this.props.paramValues[this.props.paramName])}</pre>
+            <pre>{prettyPrintRawValue(this.props.own.paramValues[this.props.own.paramName])}</pre>
           </div>
         ]}
       </div>
@@ -185,7 +179,7 @@ export default class LegacyParamController extends AbstractViewController<
 
     const ctx = this.getContext(parameter);
 
-    if (this.state.paramErrors[parameter.name]) {
+    if (this.props.mapped.paramErrors[parameter.name]) {
       return (
         <div>
           <div style={{ color: 'red', fontSize: '2em', fontStyle: 'italic', margin: '1em 0' }}>
@@ -203,12 +197,12 @@ export default class LegacyParamController extends AbstractViewController<
         <this.paramModules.ParamComponent
           ctx={ctx}
           parameter={parameter}
-          dispatch={this.dispatchAction}
-          value={this.state.paramValues[parameter.name]}
-          uiState={this.state.paramUIState[parameter.name]}
+          dispatch={this.props.mapped.dispatch}
+          value={this.props.mapped.paramValues[parameter.name]}
+          uiState={this.props.mapped.paramUIState[parameter.name]}
           onParamValueChange={(paramValue: string) => {
             const dependentParameters = this.getDependentParams(parameter).toArray();
-            this.eventHandlers.updateParamValue({
+            this.props.mapped.eventHandlers.updateParamValue({
               ...ctx,
               paramValue,
               dependentParameters
@@ -216,8 +210,8 @@ export default class LegacyParamController extends AbstractViewController<
           }}
         />
         <ParameterInput
-          name={this.props.paramName}
-          value={this.state.paramValues[this.props.paramName]}
+          name={this.props.own.paramName}
+          value={this.props.mapped.paramValues[this.props.own.paramName]}
           parameter={parameter}
         />
       </div>
@@ -335,6 +329,15 @@ class EnumCheckbox extends React.Component<EnumCheckboxProps> {
   }
 
 }
+
+const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
+  (state, props) => state.question.questions[props.questionName] || {} as QuestionState,
+  dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) }),
+  (stateProps, dispatchProps, ownProps) => ({ mapped: { ...stateProps, ...dispatchProps }, own: ownProps})
+)
+
+export default enhance(LegacyParamController);
+
 
 function prettyPrintRawValue(value: string) {
   try {

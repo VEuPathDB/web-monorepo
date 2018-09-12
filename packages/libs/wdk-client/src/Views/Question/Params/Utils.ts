@@ -1,9 +1,10 @@
 import { DispatchAction } from '../../../Core/CommonTypes';
-import { QuestionStore } from '../../../Core/State/Stores';
 import React from 'react';
 import { EMPTY, Observable } from 'rxjs';
 import { Action, ActionObserver, ObserveServices } from '../../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterValues } from '../../../Utils/WdkModel';
+import { Epic } from 'redux-observable';
+import { State } from '../QuestionStoreModule';
 
 
 // Types
@@ -31,7 +32,7 @@ type ParamModuleSpec<T extends Parameter, S> = {
   isParamValueValid: (context: Context<T>, state: S) => boolean;
   reduce?: (state: S, action: any) => S;
   Component: React.ComponentType<Props<T, S>>;
-  observeParam?: ActionObserver<QuestionStore>;
+  observeParam?: Epic<Action, Action, State>;
 }
 
 export type ParamModule<T extends Parameter, S> = {
@@ -44,7 +45,7 @@ export type ParamModule<T extends Parameter, S> = {
   isParamValueValid: (context: Context<T>, state: S) => boolean;
   reduce: (state: S, action: Action) => S;
   Component: React.ComponentType<Props<T, S>>;
-  observeParam: ActionObserver<QuestionStore>;
+  observeParam: Epic<Action, Action, State>;
 }
 
 export function createParamModule<T extends Parameter, S>(spec: ParamModuleSpec<T, S>): ParamModule<T, S> {
@@ -59,7 +60,7 @@ function defaultReduce<S>(state: S, action: Action): S {
   return state;
 }
 
-function defaultObserve(action$: Observable<Action>, services: ObserveServices) {
+function defaultObserve() {
   return EMPTY;
 }
 

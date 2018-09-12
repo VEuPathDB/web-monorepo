@@ -2,6 +2,7 @@ import * as downloadForm from '../../Views/ReporterForm/DownloadFormStoreModule'
 import * as globalData from './StoreModules/GlobalData';
 import * as passwordChange from '../../Views/User/Password/UserPasswordChangeStoreModule';
 import * as passwordReset from '../../Views/User/Password/UserPasswordResetStoreModule';
+import * as question from '../../Views/Question/QuestionStoreModule';
 import * as userDatasetDetail from '../../Views/UserDatasets/Detail/UserDatasetDetailStoreModule';
 import * as userDatasetList from '../../Views/UserDatasets/List/UserDatasetListStoreModule';
 import * as userProfile from '../../Views/User/Profile/UserProfileReducer';
@@ -12,6 +13,7 @@ export default {
   globalData,
   passwordChange,
   passwordReset,
+  question,
   userDatasetDetail,
   userDatasetList,
   userProfile,

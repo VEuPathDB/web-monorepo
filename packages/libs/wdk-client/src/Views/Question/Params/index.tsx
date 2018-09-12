@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ActionObserver, combineObserve } from '../../../Utils/ActionCreatorUtils';
+import { ActionObserver, combineObserve, Action } from '../../../Utils/ActionCreatorUtils';
 import { Parameter } from '../../../Utils/WdkModel';
 
 import EnumParamModule from './EnumParam';
@@ -8,6 +8,9 @@ import FilterParamNewModule from './FilterParamNew';
 import NumberParamModule from './NumberParam';
 import NumberRangeParamModule from './NumberRangeParam';
 import { Context, isPropsType, ParamModule, Props } from './Utils';
+import { empty } from 'rxjs';
+import { combineEpics, Epic } from 'redux-observable';
+import { State } from '../QuestionStoreModule';
 
 // Param modules
 // -------------
@@ -51,10 +54,7 @@ export function reduce<T extends Parameter>(parameter: T, state: any, action: an
   return state;
 }
 
-export const observeParam = combineObserve(
-  ...(paramModules
-    .map(m => m.observeParam)
-    .filter(e => e != null) as ActionObserver[]))
+export const observeParam = combineEpics<Epic<Action, Action, State>>(...(paramModules.map(m => m.observeParam || empty)))
 
 export function isParamValueValid(context: Context<Parameter>, state: any) {
   for (let paramModule of paramModules) {

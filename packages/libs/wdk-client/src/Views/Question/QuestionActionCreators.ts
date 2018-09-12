@@ -4,18 +4,21 @@ import { from, Observable } from 'rxjs';
 import { Action, combineObserve, ObserveServices, makeActionCreator, ActionObserver } from '../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterValue, ParameterValues, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
 import WdkService from '../../Utils/WdkService';
-import QuestionStore from '../../Views/Question/QuestionStore';
+import { State } from '../../Views/Question/QuestionStoreModule';
+import { Epic, combineEpics } from 'redux-observable';
+import { EpicDependencies } from '../../Core/Store';
 
 type BasePayload = {
   questionName: string;
 }
 
-export const ActiveQuestionUpdatedAction = makeActionCreator<BasePayload & {
-  paramValues?: ParameterValues;
-  stepId: number | undefined;
-},
+export const ActiveQuestionUpdatedAction = makeActionCreator<
+  BasePayload & {
+    paramValues?: ParameterValues;
+    stepId: number | undefined;
+  },
   'quesiton/active-question-updated'
-  >('quesiton/active-question-updated');
+>('quesiton/active-question-updated');
 
 export const QuestionLoadedAction = makeActionCreator<
   BasePayload & {
@@ -24,7 +27,7 @@ export const QuestionLoadedAction = makeActionCreator<
     paramValues: ParameterValues;
   },
   'question/question-loaded'
-  >('question/question-loaded');
+>('question/question-loaded');
 
 export const UnloadQuestionAction = makeActionCreator<BasePayload, 'question/unload-question'>('question/unload-question');
 
@@ -74,9 +77,9 @@ export const GroupStateUpdatedAction = makeActionCreator<BasePayload & {
 // Observers
 // ---------
 
-export const observeQuestion: ActionObserver<QuestionStore> = combineObserve(observeLoadQuestion, observeUpdateDependentParams);
+export const observeQuestion: Epic<Action, Action, State> = combineEpics(observeLoadQuestion, observeUpdateDependentParams);
 
-function observeLoadQuestion(action$: Observable<Action>, { wdkService }: ObserveServices<QuestionStore>): Observable<Action> {
+function observeLoadQuestion(action$: Observable<Action>, state$: Observable<State>, { wdkService }: EpicDependencies): Observable<Action> {
   return action$.pipe(
     filter(ActiveQuestionUpdatedAction.test),
     mergeMap(action =>
@@ -89,7 +92,7 @@ function observeLoadQuestion(action$: Observable<Action>, { wdkService }: Observ
   )
 }
 
-function observeUpdateDependentParams(action$: Observable<Action>, {wdkService}: ObserveServices<QuestionStore>): Observable<Action> {
+function observeUpdateDependentParams(action$: Observable<Action>, state$: Observable<State>, { wdkService }: EpicDependencies): Observable<Action> {
   return action$.pipe(
     filter(ParamValueUpdatedAction.test),
     filter(action => action.payload.parameter.dependentParams.length > 0),

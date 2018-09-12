@@ -4,9 +4,13 @@ import { DispatchAction } from '../../Core/CommonTypes';
 import { Seq } from '../../Utils/IterableUtils';
 import { Parameter, ParameterGroup } from '../../Utils/WdkModel';
 import ParameterControl from './ParameterControl';
-import { EventHandlers } from './QuestionController';
-import { QuestionState } from './QuestionStore';
+import { QuestionState } from './QuestionStoreModule';
+import { GroupVisibilityChangedAction, ParamValueUpdatedAction } from './QuestionActionCreators';
 
+type EventHandlers = {
+  setGroupVisibility: typeof GroupVisibilityChangedAction.create,
+  updateParamValue: typeof ParamValueUpdatedAction.create
+}
 
 type Props = {
   state: QuestionState;

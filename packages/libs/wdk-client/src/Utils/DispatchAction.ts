@@ -1,13 +1,18 @@
 import Dispatcher from '../Core/State/Dispatcher';
 import { Action, ActionCreatorResult, ActionCreatorServices, emptyType } from './ActionCreatorUtils';
 import { isPromise } from './PromiseUtils';
-import { alert } from './Platform';
 
 /**
  * The DispatchAction type describes the type of function that is used to
  * dispatch actions.
  */
 export type DispatchAction<T extends Action> = (action: ActionCreatorResult<T>) => ActionCreatorResult<T>;
+
+declare module 'redux' {
+  export interface Dispatch<A extends Action = AnyAction> {
+    <T extends A>(action: ActionCreatorResult<T>): ActionCreatorResult<T>;
+  }
+}
 
 /**
  * Create a function that takes a channel and creates a dispatch function

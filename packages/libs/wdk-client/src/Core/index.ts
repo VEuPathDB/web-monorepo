@@ -15,6 +15,7 @@ import * as OntologyUtils from '../Utils/OntologyUtils';
 import * as Platform from '../Utils/Platform';
 import * as PromiseUtils from '../Utils/PromiseUtils';
 import * as StaticDataUtils from '../Utils/StaticDataUtils';
+import StoreModules from './State/StoreModules';
 import * as TreeUtils from '../Utils/TreeUtils';
 import * as WdkModel from '../Utils/WdkModel';
 import WdkService from '../Utils/WdkService';
@@ -46,6 +47,7 @@ export {
   ReporterUtils,
   StaticDataUtils,
   Stores,
+  StoreModules,
   TreeUtils,
   WdkModel,
   WdkService,

@@ -16,7 +16,6 @@ import {
   QuestionNotFoundAction,
   UnloadQuestionAction,
 } from './QuestionActionCreators';
-import WdkStore, { BaseState } from '../../Core/State/Stores/WdkStore';
 import { Action, combineObserve, isOneOf, ObserveServices } from '../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterGroup, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
 
@@ -29,6 +28,7 @@ import {
   OntologyTermsInvalidated,
   SummaryCountsLoadedAction,
 } from './Params/FilterParamNew/ActionCreators';
+import { combineEpics, Epic } from 'redux-observable';
 
 interface GroupState {
   isVisible: boolean;
@@ -70,38 +70,29 @@ export type QuestionState = {
   stepId: number | undefined;
 }
 
-export type State = BaseState & {
+export type State = {
   questions: Record<string, QuestionState | undefined>;
 }
 
-export default class QuestionStore extends WdkStore<State> {
-
-  getInitialState() {
-    return {
-      ...super.getInitialState(),
-      questions: {}
-    }
-  }
-
-  handleAction(state: State, action: Action): State {
-    if (isQuestionType(action)) {
-      const { questionName } = action.payload;
-      return {
-        ...state,
-        questions: {
-          ...state.questions,
-          [questionName]: reduceQuestionState(state.questions[questionName], action)
-        }
-      };
-    }
-    return state;
-  }
-
-  observeActions(action$: Observable<Action>, services: ObserveServices<this>): Observable<Action> {
-    return combineObserve(observeQuestion, observeParam)(action$, services);
-  }
-
+const initialState: State = {
+  questions: {}
 }
+
+export function reduce(state: State = initialState, action: Action): State {
+  if (isQuestionType(action)) {
+    const { questionName } = action.payload;
+    return {
+      ...state,
+      questions: {
+        ...state.questions,
+        [questionName]: reduceQuestionState(state.questions[questionName], action)
+      }
+    };
+  }
+  return state;
+}
+
+export const observe = combineEpics<Epic<Action, Action, State>>(observeQuestion, observeParam);
 
 function reduceQuestionState(state = {} as QuestionState, action: Action): QuestionState | undefined {
 

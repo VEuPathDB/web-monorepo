@@ -15,7 +15,7 @@ declare global{
   }
 }
 
-type EpicDependencies = {
+export type EpicDependencies = {
   locatePlugin: LocatePlugin;
   wdkService: WdkService;
 }
