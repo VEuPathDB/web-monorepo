@@ -9,7 +9,6 @@ import RecordViewStore from '../../../Views/Records/RecordViewStore';
 import FavoritesListStore from '../../../Views/Favorites/FavoritesListStore';
 
 import UserDatasetDetailStore from '../../../Views/UserDatasets/Detail/UserDatasetDetailStore';
-import UserDatasetListStore from '../../../Views/UserDatasets/List/UserDatasetListStore';
 
 export {
   AttributeAnalysisStore,
@@ -21,5 +20,4 @@ export {
   RecordViewStore,
   FavoritesListStore,
   UserDatasetDetailStore,
-  UserDatasetListStore
 };
