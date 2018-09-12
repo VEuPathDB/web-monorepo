@@ -1,12 +1,16 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 
-import WdkPageController from '../../Core/Controllers/WdkPageController';
+import PageController from '../../Core/Controllers/PageController';
 import { safeHtml, wrappable } from '../../Utils/ComponentUtils';
+import { Question } from '../../Utils/WdkModel';
+import { Loading } from '../../Components';
+import { RootState } from '../../Core/State/Types';
 
-class QuestionListController extends WdkPageController {
+class QuestionListController extends PageController<{ questions?: Question[] }> {
 
   isRenderDataLoaded() {
-    return this.state.globalData.questions != null;
+    return this.props.questions != null;
   }
 
   getTitle() {
@@ -14,13 +18,13 @@ class QuestionListController extends WdkPageController {
   }
 
   renderView() {
-    if (this.state.globalData.questions == null) return null;
+    if (this.props.questions == null) return <Loading/>;
 
     return (
       <div>
         <h2>Available Questions</h2>
         <ol>
-          {this.state.globalData.questions.map(question => (
+          {this.props.questions.map(question => (
             <li key={question.name} style={{margin:'10px 0'}}>
               <span style={{fontSize:'1.3em'}}>{question.displayName}</span> ({question.urlSegment})
               { /* <Link to={`/answer/${question.name}`}>answer page</Link> */ }
@@ -40,4 +44,8 @@ class QuestionListController extends WdkPageController {
   }
 }
 
-export default wrappable(QuestionListController);
+const enhance = connect(
+  (state: RootState) => ({ questions: state.globalData.questions }),
+  () => ({})
+)
+export default wrappable(enhance(QuestionListController));
