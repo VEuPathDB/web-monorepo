@@ -6,7 +6,7 @@ export const updateTableState = (tableName, tableState) => ({
   payload: { tableName, tableState }
 });
 
-export const loadPathwayGeneDynamicCols = (geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc, wdkService) => {
+export const loadPathwayGeneDynamicCols = (geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc) => ({ wdkService }) => {
 
   if (geneStepId == null) {
     // no gene step ID provided; must still dispatch action to clear any existing data

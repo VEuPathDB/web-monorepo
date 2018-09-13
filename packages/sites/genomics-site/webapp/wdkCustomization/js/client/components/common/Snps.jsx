@@ -1,8 +1,8 @@
 import React from 'react';
-import { flow, get, identity, pick } from 'lodash';
+import { connect } from 'react-redux';
+import { get, pick } from 'lodash';
 import { FilterParamNew } from 'wdk-client/Components';
 import { QuestionActionCreators } from 'wdk-client/ActionCreators';
-import { withStore, withActions } from 'ebrc-client/util/component';
 
 const headingStyle = {
   fontSize: '1.2em',
@@ -10,15 +10,11 @@ const headingStyle = {
   margin: '2rem 0 1rem'
 }
 
-const enhance = flow(
-  withStore(state =>
+const enhance = connect(
+  ({ record: state, globalData }) =>
     Object.assign({
       questionState: get(state, ['questions', 'SnpAlignmentForm'], {})
-    }, pick(state.globalData.config, 'projectId'))
-  ),
-  withActions({
-    dispatch: identity
-  })
+    }, pick(globalData.config, 'projectId'))
 );
 
 export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
