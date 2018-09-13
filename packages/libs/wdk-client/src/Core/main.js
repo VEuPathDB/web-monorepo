@@ -84,6 +84,7 @@ export function initialize(options) {
       let handleLocationChange = location => {
         onLocationChange(location);
         dispatchAction(updateLocation(location));
+        store.dispatch(updateLocation(location));
       };
       if (container != null) {
         let applicationElement = createElement(

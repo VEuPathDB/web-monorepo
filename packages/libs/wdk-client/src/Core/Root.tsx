@@ -96,22 +96,22 @@ export default class Root extends React.Component<Props> {
 
   render() {
     return (
-      <ErrorBoundary dispatchAction={this.dispatchAction}>
-        <Router history={this.props.history}>
-          <Provider store={this.props.store}>
+      <Provider store={this.props.store}>
+        <ErrorBoundary>
+          <Router history={this.props.history}>
             <React.Fragment>
               <Switch>
                 {this.props.routes.map(route => (
-                  <Route key={route.path} exact path={route.path} render={this.renderRoute(route.component)}/>
+                  <Route key={route.path} exact path={route.path} render={this.renderRoute(route.component)} />
                 ))}
               </Switch>
               <LoginFormController
                 locatePlugin={this.props.locatePlugin}
               />
             </React.Fragment>
-          </Provider>
-        </Router>
-      </ErrorBoundary>
+          </Router>
+        </ErrorBoundary>
+      </Provider>
     );
   }
 }

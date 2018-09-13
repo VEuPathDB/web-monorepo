@@ -1,30 +1,21 @@
-import PropTypes from 'prop-types';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
 import Error from '../../Components/PageStatus/Error';
-import { DispatchAction } from '../../Core/CommonTypes';
 import { emptyAction } from '../../Utils/ActionCreatorUtils';
 
 type Props = {
   renderError?: () => React.ReactNode;
   children?: React.ReactNode;
-  dispatchAction?: DispatchAction;
+  dispatch?: Dispatch;
 }
 
 type State = {
   hasError: boolean;
 }
 
-export default class ErrorBoundary extends React.Component<Props, State> {
-
-  static contextTypes = {
-    dispatchAction: PropTypes.func
-  }
-
-  // FIXME Use new context API https://reactjs.org/docs/context.html
-  // context: {
-  //   dispatchAction?: DispatchAction
-  // }
+export default connect()(class ErrorBoundary extends React.Component<Props, State> {
 
   state = {
     hasError: false
@@ -33,7 +24,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     this.setState({ hasError: true });
 
-    const dispatch: DispatchAction | undefined = this.props.dispatchAction || this.context.dispatchAction;
+    const { dispatch } = this.props;
     if (dispatch == null) {
       console.warn('`dispatchAction` function not found. Unable to log render error to server.');
     }
@@ -50,4 +41,4 @@ export default class ErrorBoundary extends React.Component<Props, State> {
       : this.props.children;
   }
 
-}
+})
