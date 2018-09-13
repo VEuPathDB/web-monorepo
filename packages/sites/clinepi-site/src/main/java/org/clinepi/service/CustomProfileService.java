@@ -69,7 +69,7 @@ public class CustomProfileService extends ProfileService {
 				.stream()
 				.map(name -> question.getAttributeFieldMap().get(name))
 				.collect(Collectors.toList());
-			try (RecordStream records = new FileBasedRecordStream(answer,fields,Collections.EMPTY_LIST)) {
+			try (RecordStream records = new FileBasedRecordStream(answer,fields,Collections.emptyList())) {
 					for( RecordInstance record : records ) {
 						if ( record.getAttributeValue(RESTR_LEVEL_ATTR).getValue().toString().equals("public") ) 
 							approvedStudies.add(record.getAttributeValue(STUDY_ATTR).getValue().toString());
