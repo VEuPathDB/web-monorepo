@@ -14,6 +14,7 @@ import * as Json from '../Utils/Json';
 import * as OntologyUtils from '../Utils/OntologyUtils';
 import * as Platform from '../Utils/Platform';
 import * as PromiseUtils from '../Utils/PromiseUtils';
+import * as ReducerUtils from '../Utils/ReducerUtils';
 import * as StaticDataUtils from '../Utils/StaticDataUtils';
 import StoreModules from './State/StoreModules';
 import * as TreeUtils from '../Utils/TreeUtils';
@@ -44,6 +45,7 @@ export {
   Platform,
   Plugins,
   PromiseUtils,
+  ReducerUtils,
   ReporterUtils,
   StaticDataUtils,
   Stores,
