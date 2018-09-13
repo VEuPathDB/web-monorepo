@@ -71,4 +71,4 @@ const enhance = connect(
   DownloadFormActionCreators
 );
 
-export default wrappable(enhance(DownloadFormController));
+export default enhance(wrappable(DownloadFormController));

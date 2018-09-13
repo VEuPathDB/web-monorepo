@@ -33,7 +33,7 @@ export default enhance(class LoginFormController extends ViewController<Props> {
     this.props.submitLoginForm( email, password, destination);
   }
 
-  render() {
+  renderView() {
     const { isOpen, message } = this.props;
     return (
       <LoginForm

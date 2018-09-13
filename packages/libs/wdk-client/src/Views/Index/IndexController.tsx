@@ -25,7 +25,7 @@ import PageController from '../../Core/Controllers/PageController';
  * for more details.
  */
 class IndexController extends PageController<{ displayName: string }> {
-  render() {
+  renderView() {
     return (
       <Page>
         <div>
@@ -47,4 +47,4 @@ const mapStateToProps = ({ globalData: { config }}: RootState) => ({
   displayName: config ? config.displayName : ''
 })
 
-export default wrappable(connect(mapStateToProps)(IndexController));
+export default connect(mapStateToProps)(wrappable(IndexController));

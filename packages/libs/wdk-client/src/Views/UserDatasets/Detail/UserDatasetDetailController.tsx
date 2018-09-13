@@ -152,4 +152,4 @@ const enhance = connect(
   ActionCreators
 )
 
-export default wrappable(enhance(UserDatasetDetailController));
+export default enhance(wrappable(UserDatasetDetailController));

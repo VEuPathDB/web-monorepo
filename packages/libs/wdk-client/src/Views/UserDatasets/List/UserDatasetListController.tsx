@@ -133,4 +133,4 @@ const enhance = connect(
   ActionCreators
 )
 
-export default wrappable(enhance(UserDatasetListController));
+export default enhance(wrappable(UserDatasetListController));

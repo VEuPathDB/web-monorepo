@@ -92,4 +92,4 @@ const enhance = connect(
   ActionCreators
 );
 
-export default wrappable(enhance(UserMessageController));
+export default enhance(wrappable(UserMessageController));

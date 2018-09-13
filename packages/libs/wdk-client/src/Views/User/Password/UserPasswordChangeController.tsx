@@ -38,4 +38,4 @@ const enhance = connect(
   (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps })
 )
 
-export default wrappable(enhance(UserPasswordChangeController));
+export default enhance(wrappable(UserPasswordChangeController));

@@ -49,4 +49,4 @@ const enhance = connect((state: RootState) => ({
 ActionCreators,
 (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps }))
 
-export default wrappable(enhance(UserRegistrationController));
+export default enhance(wrappable(UserRegistrationController));

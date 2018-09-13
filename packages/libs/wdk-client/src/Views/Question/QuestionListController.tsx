@@ -48,4 +48,4 @@ const enhance = connect(
   (state: RootState) => ({ questions: state.globalData.questions }),
   () => ({})
 )
-export default wrappable(enhance(QuestionListController));
+export default enhance(wrappable(QuestionListController));

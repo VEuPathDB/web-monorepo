@@ -48,4 +48,4 @@ const enhance = connect(
   ActionCreators
 )
 
-export default wrappable(enhance(UserPasswordResetController));
+export default enhance(wrappable(UserPasswordResetController));

@@ -70,4 +70,4 @@ const enhance = connect<StateProps, DispatchProps, RouteComponentProps<{ questio
   dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) })
 )
 
-export default wrappable(enhance(QuestionController));
+export default enhance(wrappable(QuestionController));
