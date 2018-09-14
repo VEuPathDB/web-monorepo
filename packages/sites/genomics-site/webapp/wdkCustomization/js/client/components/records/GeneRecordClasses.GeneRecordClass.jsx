@@ -575,7 +575,7 @@ class BlastpForm extends React.Component {
 
 	       	     <input type="hidden" name="source_ID" value={protein_source_id}/>
 
- 	       	     <input type="hidden" id="ID_Type" name="ID_Type" value="protein"/>                       
+ 	       	     <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
 
   	       	     <input type="submit"/>
 
