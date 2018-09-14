@@ -81,8 +81,8 @@ type HistogramProps = {
 const cx = makeClassNameHelper('HistogramAnalysis');
 
 const Histogram = lazy<HistogramProps>(async () => {
+  await import('lib/jquery-flot');
   await Promise.all([
-    import('lib/jquery-flot'),
     import('lib/jquery-flot-categories'),
     import('lib/jquery-flot-selection'),
     import('lib/jquery-flot-time')
