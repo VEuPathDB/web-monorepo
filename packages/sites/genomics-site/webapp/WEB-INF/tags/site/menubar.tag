@@ -171,8 +171,6 @@
                href="${baseUrl}/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads">Download Community Files</a></li>
         </c:if>
 
-        <li><a href="${baseUrl}/communityEvents.jsp">Upcoming Events</a></li>
-
         <c:choose>
           <c:when test="${extlAnswer_exception != null}">
             <li><a href="#"><font color="#CC0033"><i>Error. related sites temporarily unavailable</i></font></a></li>
