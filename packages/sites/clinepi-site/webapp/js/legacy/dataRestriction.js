@@ -1,6 +1,6 @@
 /* global ebrc, wdk */
 
-import { flow } from 'lodash';
+import { compose } from 'lodash/fp';
 
 import { getIdFromRecordClassName, Action } from 'Client/App/DataRestriction/DataRestrictionUtils';
 import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
@@ -10,7 +10,7 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
   ns.restrictionController = ($element) => {
     const { recordClass, restrictionType } = $element.data();
     const studyId = getIdFromRecordClassName(recordClass);
-    const attempt = flow(attemptAction, ebrc.context.dispatchAction);
+    const attempt = compose(ebrc.context.store.dispatch, attemptAction);
     console.info('RestrictionController initialized:', { recordClass, restrictionType, $element });
 
     const isSearchPage = restrictionType && restrictionType === Action.search;

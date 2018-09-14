@@ -1,8 +1,7 @@
-import { flow, pick } from 'lodash';
+import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import { withActions, withStore } from 'ebrc-client/util/component';
+import { connect } from 'react-redux';
 
 import { clearRestrictions } from './DataRestrictionActionCreators';
 import DataRestrictionModal from './DataRestrictionModal';
@@ -35,9 +34,9 @@ DataRestrictionDaemon.propTypes = {
   dataRestriction: PropTypes.object,
 };
 
-const enhance = flow(
-  withStore(state => pick(state.globalData, 'dateRestriction')),
-  withActions({ clearRestrictions })
+const enhance = connect(
+  state => pick(state, 'dateRestriction'),
+  { clearRestrictions }
 )
 
 export default enhance(DataRestrictionDaemon);
