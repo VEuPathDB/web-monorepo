@@ -6,7 +6,6 @@ import { emptyAction } from 'wdk-client/ActionCreatorUtils';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
 import { submitAsForm } from 'wdk-client/FormSubmitter';
-// import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
 import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';

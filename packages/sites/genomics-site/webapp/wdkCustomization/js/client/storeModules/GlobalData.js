@@ -16,3 +16,7 @@ export function reduce(state, action) {
     default: return state;
   }
 }
+
+// FIXME Update basket count in header when wdk basket actions are moved to epic middleware
+// export function observe(action$, state$, services) {
+// }
