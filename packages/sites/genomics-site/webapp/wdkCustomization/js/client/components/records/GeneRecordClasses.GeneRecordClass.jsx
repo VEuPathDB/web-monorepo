@@ -518,25 +518,49 @@ class SortKeyTable extends React.Component {
 
 
 class WolfPsortForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>
+                        {p.protein_source_id} <br/> </label>
+                );
+            })
+        );
+    }
+
+
     render() {
-    	  let { project_id } = this.props.record.attributes;  
+    	let { project_id } = this.props.record.attributes;  
+        
+        let t = this.props.value;
 
            return (
             <form action="/cgi-bin/wolfPSORT.pl" target="_blank" method="post">
-
-	    	  <this.props.DefaultComponent {...this.props} />
             	  <input type="hidden" name="project_id" value={projectId}/>
+  	    	  <input type="hidden" id="input_type" name="input_type" value="fasta"/>
+ 	    	  <input type="hidden" id="ID_Type" name="ID_Type" value="protein"/>                       
 	    
-		  <p>Please select the organism type:</p>
+
+                  {this.inputHeader(t)}
+                  {this.printInputs(t)}
+
+		  <p>Select an organism type:</p>
 	    	  <input type="radio" name="organism_type" value="animal"/> Animal<br/>
             	  <input type="radio" name="organism_type" value="plant"/> Plant<br/>
             	  <input type="radio" name="organism_type" value="fungi"/> Fungi<br/><br/>
-
-
-
-  	    	  <input type="hidden" id="input_type" name="input_type" value="fasta"/>
-
- 	    	  <input type="hidden" id="ID_Type" name="ID_Type" value="protein"/>                       
 
   	    	  <input type="submit"/>
 
@@ -549,18 +573,44 @@ class WolfPsortForm extends React.Component {
 
 
 class BlastpForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>
+                        {p.protein_source_id} <br/> </label>
+                );
+            })
+        );
+    }
+
     render() {
     	let { project_id } = this.props.record.attributes;
 
+        let t = this.props.value;
+
 	return (
 	       <form action="/cgi-bin/ncbiBLAST.pl" target="_blank" method="post">
-
-	       	     <this.props.DefaultComponent {...this.props} />
                	     <input type="hidden" name="project_id" value={projectId}/>
-
   	       	     <input type="hidden" id="program" name="program" value="blastp"/>
-	       
-		     <p>Please select the Database:</p>
+ 	       	     <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
+
+                     {this.inputHeader(t)}
+                     {this.printInputs(t)}
+
+		     <p>Select the Database:</p>
   	       	     <input type="radio" name="database" value="nr"/> Non-redundant protein sequences (nr)<br/> 
 	       	     <input type="radio" name="database" value="refseq_protein"/> Reference proteins (refseq_protein)<br/> 
   	       	     <input type="radio" name="database" value="swissprot"/> UniProtKB/Swiss-Prot(swissprot)<br/>
@@ -570,14 +620,8 @@ class BlastpForm extends React.Component {
 	       	     <input type="radio" name="database" value="env_nr"/> Metagenomic proteins(env_nr)<br/>
 	       	     <input type="radio" name="database" value="tsa_nr"/> Transcriptome Shotgun Assembly proteins (tsa_nr)<br/><br/>
 
-
- 	       	     <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
-
   	       	     <input type="submit"/>
-
-
                </form>
-
         );
     }
 }
