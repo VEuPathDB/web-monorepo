@@ -520,7 +520,7 @@ class SortKeyTable extends React.Component {
 class WolfPsortForm extends React.Component {
     render() {
     	  let { project_id } = this.props.record.attributes;  
-	  let { protein_source_id } = this.props.record.attributes;
+
            return (
             <form action="/cgi-bin/wolfPSORT.pl" target="_blank" method="post">
 
@@ -535,8 +535,6 @@ class WolfPsortForm extends React.Component {
 
 
   	    	  <input type="hidden" id="input_type" name="input_type" value="fasta"/>
-
-	    	  <input type="hidden" name="source_ID" value={protein_source_id}/>
 
  	    	  <input type="hidden" id="ID_Type" name="ID_Type" value="protein"/>                       
 
@@ -553,7 +551,7 @@ class WolfPsortForm extends React.Component {
 class BlastpForm extends React.Component {
     render() {
     	let { project_id } = this.props.record.attributes;
-        let { protein_source_id } = this.props.record.attributes;
+
 	return (
 	       <form action="/cgi-bin/ncbiBLAST.pl" target="_blank" method="post">
 
@@ -572,8 +570,6 @@ class BlastpForm extends React.Component {
 	       	     <input type="radio" name="database" value="env_nr"/> Metagenomic proteins(env_nr)<br/>
 	       	     <input type="radio" name="database" value="tsa_nr"/> Transcriptome Shotgun Assembly proteins (tsa_nr)<br/><br/>
 
-
-	       	     <input type="hidden" name="source_ID" value={protein_source_id}/>
 
  	       	     <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
 
