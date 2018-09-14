@@ -441,8 +441,8 @@ var Histogram = (function() {
   };
 
   return lazy(async () => {
+    await import('lib/jquery-flot');
     await Promise.all([
-      import('lib/jquery-flot'),
       import('lib/jquery-flot-categories'),
       import('lib/jquery-flot-selection'),
       import('lib/jquery-flot-time')
