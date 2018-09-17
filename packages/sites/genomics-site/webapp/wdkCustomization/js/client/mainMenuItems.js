@@ -114,7 +114,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         },
         {
           id: 'webservices',
-          text: 'Searched via Web Services',
+          text: 'Searches via Web Services',
           webAppUrl: '/serviceList.jsp'
         }
       ]
@@ -298,11 +298,11 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           exclude: [EuPathDB],
           webAppUrl: '/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads'
         },
-        {
-          id: 'events',
-          text: 'Upcoming Events',
-          webAppUrl: '/communityEvents.jsp'
-        },
+//        {
+//          id: 'events',
+//          text: 'Upcoming Events',
+//          webAppUrl: '/communityEvents.jsp'
+//        },
         {
           id: 'related-sites',
           text: 'Related Sites',

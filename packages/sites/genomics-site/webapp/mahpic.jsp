@@ -590,7 +590,8 @@
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000599" target="_blank">E03 Metabolomics Results at Metabolomics Workbench </a><br>
-                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS518" target="_blank">E03 Metabolomics Results at MetaboLights</a></b></td>    
+                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS518" target="_blank">E03 Metabolomics Results at MetaboLights</a><br>
+                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS691" target="_blank">E03 Quantitative Metabolomics Results at MetaboLights</a></b></td>    
              <td>N/A</td>
            </tr>
            <tr>

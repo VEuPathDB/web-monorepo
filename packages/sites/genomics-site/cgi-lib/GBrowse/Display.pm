@@ -835,10 +835,10 @@ sub haploHeight {
 
 sub chipColor { 
   my $f   = shift;
-  my ($a) = $f->get_tag_values('antibody');
+  my ($a) = $f->get_tag_values('Antibody');
   ($a) = (defined $a) ? $a : $f->get_tag_values('immunoglobulin complex, circulating');
-  my ($t) = $f->get_tag_values('compound based treatment');
-  my ($r) = $f->get_tag_values('replicate');
+  my ($t) = $f->get_tag_values('Compound');
+  my ($r) = $f->get_tag_values('Replicate');
   my ($g) = $f->get_tag_values('genotype information');
   my ($l) = $f->get_tag_values('life cycle stage');
   my ($anls) = $f->get_tag_values('name');
@@ -848,22 +848,23 @@ sub chipColor {
   return '#27408B' if($anls eq 'H4_ring_smoothed (ChIP-chip)');
   return '#524818' if($anls eq 'H3K9ac_troph_smoothed (ChIP-chip)');
 
-  return '#000080' if($a eq 'CenH3_H3K9me2');
-  return '#B0E0E6' if($a eq 'CenH3');
+  return '#000080' if($a =~ /CenH3_H3K9me2/i);
+  return '#B0E0E6' if($a =~ /CenH3/i);
 
   return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
-  return '#00FF00' if($a =~ /H3K4me3/ && $r == 1);
-  return '#00C896' if($a =~ /H3K4me3/ && $r == 2);
-  return '#0033FF' if($a =~ /H3K4me1/ && $r == 1);
-  return '#0066FF' if($a =~ /H3K4me1/ && $r == 2);
+  return '#00FF00' if($a =~ /H3K4me3/i && $r eq 'Replicate 1');
+  return '#00C896' if($a =~ /H3K4me3/i && $r eq 'Replicate 2');
+  return '#0033FF' if($a =~ /H3k4me1/i && $r eq 'Replicate 1');
+  return '#0066FF' if($a =~ /H3k4me1/i && $r eq 'Replicate 2');
 
-  return '#C86400' if($a =~ /H3K9/ && $r == 1);
-  return '#FA9600' if($a =~ /H3K9/ && $r == 2);
 
-  return '#4B0082' if($t =~ /DMSO/ );
-  return '#F08080' if($t =~ /FR235222/ );
+  return '#C86400' if($a =~ /H3K9/i && $r eq 'Replicate 1');
+  return '#FA9600' if($a =~ /H3K9/i && $r eq 'Replicate 2');
+
+  return '#4B0082' if($t =~ /DMSO/i );
+  return '#F08080' if($t =~ /FR235222/i );
 
   return '#00C800' if($r eq 'replicate1');
   return '#FA9600' if($r eq 'replicate2');
@@ -878,15 +879,15 @@ sub chipColor {
   return '#E6E600' if($a =~ /H3/i );
   return '#F00000' if($a =~ /H4K20me3/i);
 
-  return '#600000' if($a =~ /SET8/i && $r == 1 );
-  return '#600000' if($a =~ /TBP1/i && $r == 1 );
-  return '#600000' if($a =~ /TBP2/i && $r == 1 );
-  return '#600000' if($a =~ /RPB9_RNA_pol_II/i && $r == 1 );
+  return '#600000' if($a =~ /SET8/i && $r eq 'Replicate 1' );
+  return '#600000' if($a =~ /TBP1/i && $r eq 'Replicate 1' );
+  return '#600000' if($a =~ /TBP2/i && $r eq 'Replicate 1' );
+  return '#600000' if($a =~ /RPB9_RNA_pol_II/i && $r eq 'Replicate 1' );
 
-  return '#C00000' if($a =~ /SET8/i && $r == 2 );
-  return '#C00000' if($a =~ /TBP1/i && $r == 2 );
-  return '#C00000' if($a =~ /TBP2/i && $r == 2 );
-  return '#C00000' if($a =~ /RPB9_RNA_pol_II/i && $r == 2 );
+  return '#C00000' if($a =~ /SET8/i && $r eq 'Replicate 2' );
+  return '#C00000' if($a =~ /TBP1/i && $r eq 'Replicate 2' );
+  return '#C00000' if($a =~ /TBP2/i && $r eq 'Replicate 2' );
+  return '#C00000' if($a =~ /RPB9_RNA_pol_II/i && $r eq 'Replicate 2' );
 
 
   return '#B84C00';
