@@ -560,8 +560,8 @@ export default class WdkService {
    * Get all RecordClasses defined in WDK Model.
    */
   getRecordClasses() {
-    let url = '/records?expandRecordClasses=true&expandAttributes=true&expandTables=true&expandTableAttributes=true';
-    return this._getFromCache('recordClasses', () => this._fetchJson<RecordClass[]>('get', url)
+    let url = '/records?format=expanded';
+    return this._getFromCache(url, () => this._fetchJson<RecordClass[]>('get', url)
       .then(recordClasses => {
         // create indexes by name property for attributes and tables
         // this is done after recordClasses have been retrieved from the store
