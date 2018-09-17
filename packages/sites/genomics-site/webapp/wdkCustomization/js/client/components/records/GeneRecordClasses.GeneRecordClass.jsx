@@ -551,7 +551,7 @@ class WolfPsortForm extends React.Component {
             <form action="/cgi-bin/wolfPSORT.pl" target="_blank" method="post">
             	  <input type="hidden" name="project_id" value={projectId}/>
   	    	  <input type="hidden" id="input_type" name="input_type" value="fasta"/>
- 	    	  <input type="hidden" id="ID_Type" name="ID_Type" value="protein"/>                       
+ 	    	  <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
 	    
 
                   {this.inputHeader(t)}
