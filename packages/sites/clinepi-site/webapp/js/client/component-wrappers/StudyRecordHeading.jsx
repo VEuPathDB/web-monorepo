@@ -17,7 +17,7 @@ const enhance = withStore((state) => {
     .map(part => part.value)[0];
 
   const activeStudy = get(studies, 'entities', [])
-    .find(study => Object.values(study.id === studyId));
+    .find(study => study.id === studyId);
 
   // Find record class and searches from study id.
   // If none found, render nothing.
