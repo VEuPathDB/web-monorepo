@@ -6,10 +6,11 @@ import Index from '../components/Index';
 import TableAsTree from '../components/TableAsTree';
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
 import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
+import StudyRecordHeading from './StudyRecordHeading';
 
 import Header from 'Client/App/Header';
 import { DataRestrictionDaemon } from 'Client/App/DataRestriction';
-import { getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
+import { getIdFromRecordClassName, Action } from 'Client/App/DataRestriction/DataRestrictionUtils';
 import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
 
 import searches from 'Client/data/searches.json';
@@ -59,8 +60,8 @@ export default {
       )
     }
   },
-  DownloadFormController: withRestrictionHandler('downloadPage'),
-  RecordController: withRestrictionHandler('recordPage'),
+  DownloadFormController: withRestrictionHandler(Action.downloadPage),
+  RecordController: withRestrictionHandler(Action.recordPage),
   SiteHeader: () => rawProps => {
     const {  user = {}, siteConfig, studies, preferences, dataRestriction, ...actions } = rawProps;
     const siteData = getStaticSiteData(studies.entities);
@@ -72,6 +73,12 @@ export default {
       </div>
     );
   },
+
+  RecordHeading: RecordHeading => props => (
+    props.recordClass.urlSegment === 'dataset'
+      ? <StudyRecordHeading {...props} DefaultComponent={RecordHeading} />
+      : <RecordHeading {...props} />
+  ),
 
   RecordTable: RecordTable => props => {
     return 'tableIsTree' in props.table.properties
