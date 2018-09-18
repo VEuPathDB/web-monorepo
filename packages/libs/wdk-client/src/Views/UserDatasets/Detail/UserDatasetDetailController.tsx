@@ -7,6 +7,7 @@ import AbstractPageController from '../../../Core/Controllers/AbstractPageContro
 import { wrappable } from '../../../Utils/ComponentUtils';
 import { Question } from '../../../Utils/WdkModel';
 import BigwigDatasetDetail from './BigwigDatasetDetail';
+import RnaSeqDatasetDetail from './RnaSeqDatasetDetail';
 import UserDatasetDetail from './UserDatasetDetail';
 import UserDatasetDetailStore, { State as StoreState } from './UserDatasetDetailStore';
 import EmptyState from '../EmptyState';
@@ -117,6 +118,8 @@ class UserDatasetDetailController extends AbstractPageController <State, UserDat
       case 'Bigwigs':
       case 'BigwigFiles':
         return BigwigDatasetDetail;
+      case 'RnaSeq':
+        return RnaSeqDatasetDetail;
       default:
         return UserDatasetDetail;
     }
