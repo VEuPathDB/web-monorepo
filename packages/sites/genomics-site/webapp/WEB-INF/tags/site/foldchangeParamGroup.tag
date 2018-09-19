@@ -69,8 +69,8 @@
       <c:choose>
         <c:when test="${hard_floorParam.isVisible}">
           <div id="hard_flooraaa" class="param-line">
-            <span class="text">   (or an
-            <span class="prompt">FPKM Floor</span> of</span>
+            <span class="text">   (or a
+            <span class="prompt">Floor</span> of</span>
             <imp:enumParamInput qp="${hard_floorParam}"/>
             <span class="text">)</span>
             <imp:helpIcon helpContent="${hard_floorParam.help}" />
@@ -117,7 +117,7 @@
         <c:when test="${hard_floorParam.isVisible}">
           <div id="hard_flooraaa" class="param-line">
             <span class="text">   (or the
-            <span class="prompt">FPKM Floor</span> selected above)</span>
+            <span class="prompt">Floor</span> selected above)</span>
           </div>
         </c:when>
       </c:choose>
