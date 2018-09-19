@@ -8,6 +8,7 @@ $red: #DD314E;
 
     a {
       color: black;
+      transition: 250ms color;
 
       &:hover {
         color: $red;
