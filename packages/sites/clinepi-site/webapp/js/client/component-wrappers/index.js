@@ -2,7 +2,11 @@ import { compose, constant } from 'lodash/fp';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { getIdFromRecordClassName, Action } from 'Client/App/DataRestriction/DataRestrictionUtils';
+import {
+  getIdFromRecordClassName,
+  isStudyRecordClass,
+  Action
+} from 'Client/App/DataRestriction/DataRestrictionUtils';
 import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
@@ -51,6 +55,8 @@ function withRestrictionHandler(action, getRecordClassSelector) {
   )
   return Child => enhance(class RestrictionHandler extends React.Component {
     componentDidUpdate(prevProps) {
+      if (!isStudyRecordClass(this.props.stateProps.recordClass)) return;
+
       if (this.props.stateProps.recordClass !== prevProps.stateProps.recordClass) {
         const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.name);
         this.props.dispatchProps.attemptAction(action, { studyId });

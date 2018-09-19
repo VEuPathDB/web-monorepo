@@ -167,11 +167,15 @@ export function isActionStrict (action) {
   return strictActions.includes(action);
 }
 
-export function getIdFromRecordClassName (recordClass) {
-  if (typeof recordClass !== 'string') return null;
-  if (recordClass.length > 13) recordClass = recordClass.slice(0, 13);
-  const result = recordClass.match(/^DS_[^_]+/g);
+export function getIdFromRecordClassName (recordClassName) {
+  if (typeof recordClassName !== 'string') return null;
+  if (recordClassName.length > 13) recordClassName = recordClassName.slice(0, 13);
+  const result = recordClassName.match(/^DS_[^_]+/g);
   return result === null
     ? null
     : result[0];
+}
+
+export function isStudyRecordClass(recordClass) {
+  return recordClass == null || recordClass.name.startsWith('DS_');
 }
