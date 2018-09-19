@@ -1,0 +1,18 @@
+$red: #DD314E;
+
+.ce-StudySearchIconLinks {
+  display: flex;
+
+  &Item {
+    margin: 0 .5em;
+
+    a {
+      color: black;
+
+      &:hover {
+        color: $red;
+      }
+    }
+
+  }
+}

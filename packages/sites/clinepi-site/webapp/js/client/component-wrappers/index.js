@@ -2,7 +2,7 @@ import { compose, constant } from 'lodash/fp';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { getIdFromRecordClassName } from 'Client/App/DataRestriction/DataRestrictionUtils';
+import { getIdFromRecordClassName, Action } from 'Client/App/DataRestriction/DataRestrictionUtils';
 import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
@@ -12,13 +12,14 @@ import IndexController from '../controllers/IndexController';
 import QuestionWizardController from '../controllers/QuestionWizardController';
 
 import ActiveGroup from './ActiveGroup';
+import RecordHeading from './RecordHeading';
 import RecordTable from './RecordTable';
 import QuestionWizard from './QuestionWizard';
 import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 
 export default {
   ActiveGroup,
-  DownloadFormController: withRestrictionHandler('downloadPage', state => state.downloadForm.recordClass),
+  DownloadFormController: withRestrictionHandler(Action.downloadPage, state => state.downloadForm.recordClass),
   FilterSummaryGroup: compose(
     guard(RelativeVisitsGroup.showFilterSummary),
     guard(RelatedCaseControlGroup.showFilterSummary)
@@ -26,7 +27,8 @@ export default {
   IndexController,
   QuestionWizard,
   QuestionWizardController,
-  RecordController: withRestrictionHandler('recordPage', state => state.record.recordClass),
+  RecordController: withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
+  RecordHeading,
   RecordTable,
   SiteHeader: constant(SiteHeader),
 }
