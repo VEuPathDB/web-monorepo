@@ -23,7 +23,7 @@ import org.gusdb.wdk.model.question.Question;
 import org.gusdb.wdk.model.record.RecordInstance;
 import org.gusdb.wdk.model.record.attribute.AttributeField;
 import org.gusdb.wdk.model.user.User;
-import org.gusdb.wdk.service.formatter.Keys;
+import org.gusdb.wdk.service.formatter.JsonKeys;
 import org.gusdb.wdk.service.formatter.UserFormatter;
 import org.gusdb.wdk.service.service.user.ProfileService;
 import org.json.JSONArray;
@@ -50,7 +50,7 @@ public class CustomProfileService extends ProfileService {
     if (isSessionUser) {
       // append property telling which studies this user has special access to
       basicUser
-        .getJSONObject(Keys.PROPERTIES)
+        .getJSONObject(JsonKeys.PROPERTIES)
         .put(APPROVED_STUDIES_KEY, new JSONArray(getApprovedStudies(user)));
     }
     return basicUser;
@@ -69,7 +69,7 @@ public class CustomProfileService extends ProfileService {
 				.stream()
 				.map(name -> question.getAttributeFieldMap().get(name))
 				.collect(Collectors.toList());
-			try (RecordStream records = new FileBasedRecordStream(answer,fields,Collections.EMPTY_LIST)) {
+			try (RecordStream records = new FileBasedRecordStream(answer,fields,Collections.emptyList())) {
 					for( RecordInstance record : records ) {
 						if ( record.getAttributeValue(RESTR_LEVEL_ATTR).getValue().toString().equals("public") ) 
 							approvedStudies.add(record.getAttributeValue(STUDY_ATTR).getValue().toString());
