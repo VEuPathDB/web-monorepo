@@ -7,6 +7,7 @@ import PageController from '../../../Core/Controllers/PageController';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import { Question } from '../../../Utils/WdkModel';
 import BigwigDatasetDetail from './BigwigDatasetDetail';
+import RnaSeqDatasetDetail from './RnaSeqDatasetDetail';
 import UserDatasetDetail from './UserDatasetDetail';
 import EmptyState from '../EmptyState';
 import {
@@ -93,6 +94,8 @@ class UserDatasetDetailController extends PageController<Props> {
       case 'Bigwigs':
       case 'BigwigFiles':
         return BigwigDatasetDetail;
+      case 'RnaSeq':
+        return RnaSeqDatasetDetail;
       default:
         return UserDatasetDetail;
     }
