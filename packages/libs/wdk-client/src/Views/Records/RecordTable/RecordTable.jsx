@@ -1,5 +1,6 @@
-import { chunk } from 'lodash';
+import { chunk, memoize, property, orderBy, toLower } from 'lodash';
 import { Component } from 'react';
+import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
 import DataTable from '../../../Components/DataTable/DataTable';
 import { renderAttributeValue, pure, wrappable } from '../../../Utils/ComponentUtils';
@@ -9,8 +10,28 @@ const maxColumns = 4;
 
 const defaultSortId = '@@defaultSortIndex@@';
 const defaultSortColumn = [{ name: defaultSortId, isDisplayable: false }];
-const getSortIndex = (rowData) => rowData[defaultSortId];
-const addDefaultSortId = (row, index) => Object.assign({}, row, { [defaultSortId]: index });
+
+const getSortIndex = (rowData) =>
+  rowData[defaultSortId];
+
+const addDefaultSortId = (row, index) =>
+  Object.assign({}, row, { [defaultSortId]: index });
+
+const sortSpecToOrder = (sortSpec) =>
+  [ sortSpec.itemName, sortSpec.direction.toLowerCase() ];
+
+const getColumns = (tableField) =>
+  defaultSortColumn.concat(tableField.attributes);
+
+const getDisplayableAttributes = (tableField) =>
+  tableField.attributes.filter(attr => attr.isDisplayable);
+
+const getOrderedData = (tableValue, tableField) =>
+  orderBy(
+    tableValue,
+    tableField.clientSortSpec.map(property('itemName')),
+    tableField.clientSortSpec.map(property('direction')).map(toLower)
+  ).map(addDefaultSortId);
 
 /**
  * Renders a record table
@@ -18,41 +39,36 @@ const addDefaultSortId = (row, index) => Object.assign({}, row, { [defaultSortId
 class RecordTable extends Component {
   constructor(props) {
     super(props);
-    this.setColumns(props);
-    this.setData(props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Only update columns and data if props change -- to prevent unneeded render
-
-    if (nextProps.table.attributes !== this.props.table.attributes)
-      this.setColumns(nextProps);
-
-    if (nextProps.value !== this.props.value)
-      this.setData(nextProps);
-  }
-
-  setColumns(props) {
-    this.displayableAttributes = props.table.attributes.filter(attr => attr.isDisplayable);
-    this.columns = defaultSortColumn.concat(this.displayableAttributes);
-  }
-
-  setData(props) {
-    this.data = props.value.map(addDefaultSortId);
+    this.getColumns = createSelector(
+      props => props.table,
+      getColumns
+    );
+    this.getDisplayableAttributes = createSelector(
+      props => props.table,
+      getDisplayableAttributes
+    );
+    this.getOrderedData = createSelector(
+      props => props.value,
+      props => props.table,
+      getOrderedData
+    );
   }
 
   render() {
-    let { value, childRow, expandedRows, onExpandedRowsChange, className } = this.props;
+    const { value, table, childRow, expandedRows, onExpandedRowsChange, className } = this.props;
+    const displayableAttributes = this.getDisplayableAttributes(this.props);
+    const columns = this.getColumns(this.props);
+    const data = this.getOrderedData(this.props);
 
-    if (value.length === 0 || this.columns.length === 0) {
+    if (value.length === 0 || columns.length === 0) {
       return (
         <p><em>No data available</em></p>
       );
     }
 
-    if (this.displayableAttributes.length === 1) {
+    if (displayableAttributes.length === 1) {
       let listColumnSize = Math.max(10, value.length / maxColumns);
-      let attributeName = this.displayableAttributes[0].name;
+      let attributeName = displayableAttributes[0].name;
       return (
         <div className={className}>
           {chunk(value, listColumnSize).map((tableChunk, index) =>
@@ -72,8 +88,8 @@ class RecordTable extends Component {
           getRowId={getSortIndex}
           expandedRows={expandedRows}
           onExpandedRowsChange={onExpandedRowsChange}
-          columns={this.columns}
-          data={this.data}
+          columns={columns}
+          data={data}
           childRow={childRow}
           searchable={value.length > 1}
         />
