@@ -191,6 +191,10 @@ export function RecordTable(props) {
     case 'BlastpForm':
       return <BlastpForm {...props}/>
 
+
+    case 'MitoprotForm':
+      return <MitoprotForm {...props}/>
+
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
 
@@ -627,6 +631,57 @@ class BlastpForm extends React.Component {
 }
 
 
+
+
+
+
+class MitoprotForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>
+                        {p.protein_source_id} <br/> </label>
+                );
+            })
+        );
+    }
+
+
+    render() {
+    	let { project_id } = this.props.record.attributes;  
+        
+        let t = this.props.value;
+
+           return (
+            <form action="/cgi-bin/mitoprot.pl" target="_blank" method="post">
+            	  <input type="hidden" name="project_id" value={projectId}/>
+  	    	  <input type="hidden" id="id_type" name="id_type" value="protein"/>                   	    	  
+
+                  {this.inputHeader(t)}
+                  {this.printInputs(t)}
+
+
+  	    	  <input type="submit"/>
+
+
+            </form>
+
+        );
+    }
+}
 
 
 
