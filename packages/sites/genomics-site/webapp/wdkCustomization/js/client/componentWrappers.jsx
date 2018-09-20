@@ -175,91 +175,93 @@ function downloadRecordTable(record, tableName) {
 }
 
 export function RecordTableSection(DefaultComponent) {
-  return withActions({ downloadRecordTable })(function ApiRecordTableSection(props) {
-    if (props.recordClass.name === 'DatasetRecordClasses.DatasetRecordClass') {
-      return (
-        <DefaultComponent {...props}/>
+  return withActions({ downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent {
+    render () {
+      if (this.props.recordClass.name === 'DatasetRecordClasses.DatasetRecordClass') {
+        return (
+          <DefaultComponent {...this.props}/>
+        );
+      }
+
+      let { table, record, downloadRecordTable, ontologyProperties } = this.props;
+      let customName = `Data sets used by ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
+      let callDownloadTable = event => {
+        event.stopPropagation();
+        downloadRecordTable(record, table.name);
+      };
+
+      let showDownload = (
+        record.tables[table.name] &&
+        record.tables[table.name].length > 0 &&
+        ontologyProperties.scope.includes('download')
       );
-    }
 
-    let { table, record, downloadRecordTable, ontologyProperties } = props;
-    let customName = `Data sets used by ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
-    let callDownloadTable = event => {
-      event.stopPropagation();
-      downloadRecordTable(record, table.name);
-    };
+      var hasTaxonId = 0;
+      if (record.recordClassName == 'GeneRecordClasses.GeneRecordClass' ||
+          record.recordClassName == 'SequenceRecordClasses.SequenceRecordClass' ||
+          record.recordClassName == 'OrganismRecordClasses.OrganismRecordClass')
+      {
+        hasTaxonId = 1;
+      }
 
-    let showDownload = (
-      record.tables[table.name] &&
-      record.tables[table.name].length > 0 &&
-      ontologyProperties.scope.includes('download')
-    );
-
-    var hasTaxonId = 0;
-    if (record.recordClassName == 'GeneRecordClasses.GeneRecordClass' ||
-        record.recordClassName == 'SequenceRecordClasses.SequenceRecordClass' ||
-        record.recordClassName == 'OrganismRecordClasses.OrganismRecordClass')
-    {
-      hasTaxonId = 1;
-    }
-
-    return (
-      <DefaultComponent {...props} table={Object.assign({}, table, {
-        displayName: (
-          <span>
-            {table.displayName}
-            {showDownload &&
-              <span
+      return (
+        <DefaultComponent {...this.props} table={Object.assign({}, table, {
+          displayName: (
+            <span>
+              {table.displayName}
+              {showDownload &&
+                <span
+                  style={{
+                    fontSize: '.8em',
+                    fontWeight: 'normal',
+                    marginLeft: '1em'
+                  }}>
+                  <button type="button"
+                    className="wdk-Link"
+                    onClick={callDownloadTable}>
+                    <i className="fa fa-download"/> Download
+                  </button>
+                </span>
+              }
+              { hasTaxonId == 0 &&
+              <Link
                 style={{
                   fontSize: '.8em',
                   fontWeight: 'normal',
                   marginLeft: '1em'
-                }}>
-                <button type="button"
-                  className="wdk-Link"
-                  onClick={callDownloadTable}>
-                  <i className="fa fa-download"/> Download
-                </button>
-              </span>
-            }
-            { hasTaxonId == 0 &&
-            <Link
-              style={{
-                fontSize: '.8em',
-                fontWeight: 'normal',
-                marginLeft: '1em'
-              }}
-              onClick={stopPropagation}
-              to={{
-                pathname: `/search/dataset/DatasetsByReferenceNameNoTaxon:${customName}/result`,
-                search: QueryString.stringify({
-                  record_class: record.recordClassName,
-                  reference_name: table.name,
-                })
-              }}
-            ><i className="fa fa-database"/> Data sets</Link>}
-            { hasTaxonId == 1 &&
-            <Link
-              style={{
-                fontSize: '.8em',
-                fontWeight: 'normal',
-                marginLeft: '1em'
-              }}
-              onClick={stopPropagation}
-              to={{
-                pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
-                search: QueryString.stringify({
-                  record_class: record.recordClassName,
-                  reference_name: table.name,
-                  taxon: record.attributes.organism_full
-                })
-              }}
-            ><i className="fa fa-database"/> Data sets</Link>}
+                }}
+                onClick={stopPropagation}
+                to={{
+                  pathname: `/search/dataset/DatasetsByReferenceNameNoTaxon:${customName}/result`,
+                  search: QueryString.stringify({
+                    record_class: record.recordClassName,
+                    reference_name: table.name,
+                  })
+                }}
+              ><i className="fa fa-database"/> Data sets</Link>}
+              { hasTaxonId == 1 &&
+              <Link
+                style={{
+                  fontSize: '.8em',
+                  fontWeight: 'normal',
+                  marginLeft: '1em'
+                }}
+                onClick={stopPropagation}
+                to={{
+                  pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
+                  search: QueryString.stringify({
+                    record_class: record.recordClassName,
+                    reference_name: table.name,
+                    taxon: record.attributes.organism_full
+                  })
+                }}
+              ><i className="fa fa-database"/> Data sets</Link>}
 
-          </span>
-        )
-      })}/>
-    );
+            </span>
+          )
+        })}/>
+      );
+    }
   });
 }
 
