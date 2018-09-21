@@ -1,14 +1,12 @@
 import { DispatchAction } from '../../../Core/CommonTypes';
-import { memoize, range } from 'lodash';
+import { memoize, range, round } from 'lodash';
 import React from 'react';
 import { lazy, makeClassNameHelper } from '../../../Utils/ComponentUtils';
 import { AttributeAnalysis } from '../BaseAttributeAnalysis/BaseAttributeAnalysis';
-import { DisplayType, SetBinSize, SetDisplayType } from './HistogramActions';
+import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from './HistogramActions';
 import './HistogramAnalysis.scss';
 import { State } from './HistogramState';
-
-
-
+import { getReportSummary, getDefaultBinSize, isTypeInt, isTypeCategory } from './HistogramAnalysisUtils';
 
 export type ModuleState = State;
 
@@ -17,9 +15,11 @@ type ModuleProps = {
   dispatch: DispatchAction;
 }
 
+const numberFormat = new Intl.NumberFormat('en-us');
+
 export default class HistogramAnalysis extends React.PureComponent<ModuleProps> {
 
-  getData = memoize((data: Record<string,number>, type: string) =>
+  getTableData = memoize((data: Record<string,number>, type: string) =>
     Object.entries(data).map(([ attrValue, recordCount]) => ({
       attrValue: type === 'category' ? String(attrValue) : Number(attrValue),
       recordCount: recordCount
@@ -28,8 +28,11 @@ export default class HistogramAnalysis extends React.PureComponent<ModuleProps> 
   setBinSize = (binSize: number) =>
     this.props.dispatch(SetBinSize.create(binSize));
 
-  setDisplayType = (displayType: DisplayType) =>
-    this.props.dispatch(SetDisplayType.create(displayType));
+  setLogScaleXAxis = (scale: boolean) =>
+    this.props.dispatch(SetLogScaleXAxis.create(scale));
+
+  setLogScaleYAxis = (scale: boolean) =>
+    this.props.dispatch(SetLogScaleYAxis.create(scale));
 
   render() {
     if (this.props.state.data.status !== 'success') return null;
@@ -41,20 +44,28 @@ export default class HistogramAnalysis extends React.PureComponent<ModuleProps> 
       { key: 'recordCount', display: report.recordCountLabel }
     ];
 
+    const summary = getReportSummary(report, visualization.logXAxis);
+    const {
+      binSize = getDefaultBinSize(report, visualization.logXAxis)
+    } = visualization;
+
     return (
       <AttributeAnalysis
         {...this.props}
         tableConfig={{
           columns,
-          data: this.getData(report.data, report.type)
+          data: this.getTableData(report.data, report.type)
         }}
         visualizationConfig={{
           display: 'Histogram',
           content: <Histogram
             {...report}
             {...visualization}
+            {...summary}
+            binSize={binSize}
             onBinSizeChange={this.setBinSize}
-            onDisplayTypeChange={this.setDisplayType}
+            onLogScaleXAxisChange={this.setLogScaleXAxis}
+            onLogScaleYAxisChange={this.setLogScaleYAxis}
           />
         }}
       />
@@ -65,17 +76,17 @@ export default class HistogramAnalysis extends React.PureComponent<ModuleProps> 
 type HistogramProps = {
   attrLabel: string;
   recordCountLabel: string;
-  avg: number;
-  binCount: number;
-  binSize: number;
   data: Record<string, number>;
+  binSize: number;
+  avg: number;
   max: number;
-  maxBinCount: number;
   min: number;
   type: 'int' | 'float' | 'category';
-  displayType: DisplayType;
+  logXAxis: boolean;
+  logYAxis: boolean;
   onBinSizeChange: (binSize: number) => void;
-  onDisplayTypeChange: (displayType: DisplayType) => void;
+  onLogScaleXAxisChange: (scale: boolean) => void;
+  onLogScaleYAxisChange: (scale: boolean) => void;
 }
 
 const cx = makeClassNameHelper('HistogramAnalysis');
@@ -102,14 +113,14 @@ const Histogram = lazy<HistogramProps>(async () => {
   drawPlot() {
     if (this.plotNode == null) return;
 
-    const { binSize, displayType, attrLabel, recordCountLabel } = this.props;
-    const logarithm = displayType === 'logarithm';
+    const { logXAxis, logYAxis, attrLabel, recordCountLabel } = this.props;
 
     // get data and labels
     const [ data, labels ] = convertData(this.props);
-    // apply log10 to data for plotting
-    const plotData = logarithm ? data.map(entry => [ entry[0], Math.log10(entry[1]) ]) : data;
-
+    const plotData = logYAxis
+      ? data.map(([ x, y ]) => [ x, Math.log10(y)])
+      : data;
+    const dagger = '<sup><b>&dagger;</b></sup>';
     const binLabel = attrLabel;
     const sizeLabel = recordCountLabel;
     const options: any = getOptions(binLabel, sizeLabel, labels);
@@ -125,10 +136,11 @@ const Histogram = lazy<HistogramProps>(async () => {
           if (previousPoint != item.dataIndex) {
             previousPoint = item.dataIndex;
             $("#flot-tooltip").remove();
-            const entry = data[item.dataIndex];
+            const entry = plotData[item.dataIndex];
             const typeValue = entry[1];
-            const content = sizeLabel + " = " + typeValue + ", in " + binLabel + " = " + labels[item.dataIndex][1];
-            const logNote = logarithm ? `<br/><br/><em>log10(${typeValue}) = ${plotData[item.dataIndex][1].toFixed(2)}</em>` : '';
+            const content = `${sizeLabel} = ${typeValue} ${logYAxis ? dagger : ''} <br/>` +
+              `${binLabel} = ${labels[item.dataIndex][1]} ${logXAxis ? dagger : ''} `;
+            const logNote = logXAxis || logYAxis ? `<br/><br/>${dagger} <em>log<sub>10</sub> applied to data</em>` : '';
             showTooltip(item.pageX, item.pageY, content + logNote);
           }
         } else {
@@ -140,38 +152,52 @@ const Histogram = lazy<HistogramProps>(async () => {
     plotCanvas.find(".flot-x-axis .flot-tick-label").addClass("rotate45");
   }
 
+  getStep() {
+    const { min, max, type, logXAxis } = this.props;
+    const isInt = isTypeInt(type) && !logXAxis;
+    return isInt ? 1 : round((max - min) / 100, 3);
+  }
+
   render() {
-    const { avg, min, max, binSize, type, displayType, attrLabel, recordCountLabel, onBinSizeChange, onDisplayTypeChange } = this.props;
+    const { avg, min, max, binSize, type, logXAxis, logYAxis, attrLabel, recordCountLabel, onBinSizeChange, onLogScaleXAxisChange, onLogScaleYAxisChange } = this.props;
 
     return (
       <div className={cx()}>
         <div className={cx('Graph')} ref={node => this.plotNode = node}></div>
         <div className={cx('RecordCountLabel')}>
-          {displayType === 'logarithm' ? `log10(${recordCountLabel})` : recordCountLabel}
+          {logYAxis
+            ? <>{recordCountLabel} (log<sub>10</sub>)</>
+            : recordCountLabel
+          }
         </div>
-        <div className={cx('AttrLabel')}>{attrLabel}</div>
-        {type === 'category' ? null : (
+        <div className={cx('AttrLabel')}>
+          {logXAxis
+            ? <>{attrLabel} (log<sub>10</sub>)</>
+            : attrLabel
+          }
+        </div>
+        {isTypeCategory(type) ? null : (
           <>
             <div className={cx('Summary')}>
               <dl>
                 <dt>Mean</dt>
-                <dd>{avg}</dd>
+                <dd>{numberFormat.format(avg)}</dd>
                 <dt>Min</dt>
-                <dd>{min}</dd>
+                <dd>{numberFormat.format(min)}</dd>
                 <dt>Max</dt>
-                <dd>{max}</dd>
+                <dd>{numberFormat.format(max)}</dd>
               </dl>
             </div>
             <div className={cx('Controls')}>
-              <label>Size of bins: <input type="number" min={min} max={max} value={binSize} onChange={e => onBinSizeChange(Number(e.target.value))} /></label>
-              <input className={cx('Slider')} type="range" min={min} max={max} onChange={e => onBinSizeChange(Number(e.target.value))} value={binSize}/>
+              <label>Size of bins: <input type="number" min={min} max={max} step={this.getStep()} value={binSize} onChange={e => onBinSizeChange(Number(e.target.value))} /></label>
+              <input className={cx('Slider')} type="range" min={min} max={max}  step={this.getStep()}onChange={e => onBinSizeChange(Number(e.target.value))} value={binSize}/>
             </div>
           </>
         )}
         <div className={cx('Controls')}>
-          <div>Choose column display:</div>
-          <label><input type="radio" name="logarithm" value="normal" checked={displayType === 'normal'} onChange={() => onDisplayTypeChange('normal')} /> Normal </label>
-          <label><input type="radio" name="logarithm" value="logarithm" checked={displayType === 'logarithm'} onChange={() => onDisplayTypeChange('logarithm')} /> Logarithm </label>
+          <div>Apply log<sub>10</sub> scale:</div>
+          <label><input type="checkbox" name="logXAxis" checked={logXAxis} onChange={e => onLogScaleXAxisChange(e.target.checked)} />  {attrLabel} </label>
+          <label><input type="checkbox" name="logYAxis" checked={logYAxis} onChange={e => onLogScaleYAxisChange(e.target.checked)} />  {recordCountLabel} </label>
         </div>
       </div>
     )
@@ -181,7 +207,7 @@ const Histogram = lazy<HistogramProps>(async () => {
 function convertData(props: HistogramProps) {
   const { type } = props;
   // convert data into bins and/or logarithm display
-  return type === 'category' ? convertCategoryData(props)
+  return isTypeCategory(type) ? convertCategoryData(props)
     : convertNumericData(props);
 }
 
@@ -191,8 +217,7 @@ type Label = [ number, string ];
 type SeriesData = [ Bin[], Label[] ];
 
 function convertCategoryData(props: HistogramProps): SeriesData {
-  //if (binSize == 1 && !logarithm) return data; // no need to convert
-  const { data : dataObject, binSize, displayType } = props;
+  const { data : dataObject, binSize } = props;
 
   const data: [string, number][] = Object.entries(dataObject);
 
@@ -224,7 +249,6 @@ function convertCategoryData(props: HistogramProps): SeriesData {
     }
 
     // add data into bins
-    // if (displayType === 'logarithm') count = Math.log10(count);
     bins.push([ i, count ]);
     labels.push([ i, label ]);
   }
@@ -233,13 +257,17 @@ function convertCategoryData(props: HistogramProps): SeriesData {
 
 
 function convertNumericData(props: HistogramProps): SeriesData {
-  const numberFormat = new Intl.NumberFormat('en-us');
-  const { data: dataObject, binSize, type, displayType, min, max } = props;
-  const data: [number, number][] = Object.entries(dataObject).map(([k, v]) => [ Number(k), v ] as [number, number]);
+  const { data: dataObject, binSize, type, min, max, logXAxis } = props;
+  const data: [number, number][] = Object.entries(dataObject)
+    .map(([x, y]) => [
+      logXAxis ? Math.log10(Number(x)) : Number(x),
+      y
+    ] as [number, number]);
+  const isInt = isTypeInt(type) && !logXAxis;
 
 
   // create bins
-  const tempBins = range(min, max + 1, binSize)
+  const tempBins = range(min, isInt ? max + 1 : max, binSize)
     .map(i => [[i, i + binSize], 0] as [ [number,number], number])
 
   // assign rows into each bin
@@ -260,16 +288,15 @@ function convertNumericData(props: HistogramProps): SeriesData {
   for (let [ tmpBin, count ] of tempBins) {
     let label: string;
     let bin: [ string, string ] = tmpBin.map(String) as [string, string];;
-    if (binSize == 1 && type == "int") label = numberFormat.format(tmpBin[0]);
+    if (binSize == 1 && isInt) label = numberFormat.format(tmpBin[0]);
     else {
-      if (type == "float") {
+      if (!isInt) {
         bin[0] = numberFormat.format(tmpBin[0]);
         bin[1] = numberFormat.format(tmpBin[1]);
       }
-      const upper = (type == "int") ? numberFormat.format((tmpBin[1] - 1)) + "]" : bin[1] + ")";
+      const upper = (isInt) ? numberFormat.format((tmpBin[1] - 1)) + "]" : bin[1] + ")";
       label = "[" + bin[0] + ", " + upper;
     }
-    // if (displayType === 'logarithm') count = Math.log10(count);
     let j = counter++;
     bins.push([ j, count ]);
     labels.push([ j, label ]);

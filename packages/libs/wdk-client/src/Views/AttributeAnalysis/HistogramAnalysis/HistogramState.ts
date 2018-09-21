@@ -1,25 +1,25 @@
 import { matchAction } from '../../../Utils/ReducerUtils';
 
 import { makeReduce, observe, State as BaseState } from '../BaseAttributeAnalysis';
-import { AttributeReportReceived } from '../BaseAttributeAnalysis/BaseAttributeAnalysisActions';
-import { DisplayType, SetBinSize, SetDisplayType } from './HistogramActions';
-
+import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from './HistogramActions';
 
 type HistogramState = {
-  binSize: number;
-  displayType: DisplayType;
+  binSize?: number;
+  logXAxis: boolean;
+  logYAxis: boolean;
 }
 
 export type State = BaseState<'attrValue' | 'recordCount', HistogramState>;
 
-const reduceHistogram = matchAction({} as HistogramState,
-  [AttributeReportReceived, (state, { report }): HistogramState => ({
-    ...state,
-    binSize: report.binSize,
-    displayType: 'normal'
-  })],
+const defaultState: HistogramState = {
+  logXAxis: false,
+  logYAxis: false
+}
+
+const reduceHistogram = matchAction(defaultState,
   [SetBinSize, (state, binSize): HistogramState => ({ ...state, binSize })],
-  [SetDisplayType, (state, displayType): HistogramState => ({ ...state, displayType })],
+  [SetLogScaleXAxis, (state, logXAxis): HistogramState => ({ ...state, logXAxis, binSize: undefined })],
+  [SetLogScaleYAxis, (state, logYAxis): HistogramState => ({ ...state, logYAxis })],
 )
 
 export const reduce =

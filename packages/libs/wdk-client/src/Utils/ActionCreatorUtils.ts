@@ -6,7 +6,7 @@ import WdkService from './WdkService';
 
 export interface Action {
   type: string | symbol;
-  payload?: string | number | object;
+  payload?: string | number | object | boolean;
   channel?: string;
   isBroadcast?: boolean;
 };
@@ -95,7 +95,7 @@ export function makeActionCreator(type: Type) {
   return { type, create, test };
 
   function create(payload?: any) {
-    return payload ? { type, payload } : { type }
+    return payload !== undefined ? { type, payload } : { type }
   }
 
   function test(action: Action) {
