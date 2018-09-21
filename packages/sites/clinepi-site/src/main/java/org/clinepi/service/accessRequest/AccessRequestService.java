@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.gusdb.fgputil.json.JsonUtil;
 import org.gusdb.wdk.model.Utilities;
-import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.service.service.AbstractWdkService;
 import org.json.JSONObject;
 
@@ -30,7 +29,7 @@ public class AccessRequestService extends AbstractWdkService {
   public Response buildResult(
       String body,
       @PathParam("user-id") long userId,
-      @PathParam("dataset-presenter-id") String datasetPresenterId) throws WdkModelException {
+      @PathParam("dataset-presenter-id") String datasetPresenterId) {
     
     if (userId != this.getSessionUserId()) {
       return Response.status(Status.UNAUTHORIZED).build();
