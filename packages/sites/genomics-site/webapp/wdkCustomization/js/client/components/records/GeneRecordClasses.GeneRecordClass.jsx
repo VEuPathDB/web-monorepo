@@ -152,6 +152,7 @@ const HostResponseChildRow = makeDatasetGraphChildRow('HostResponseGraphsDataTab
 const CrisprPhenotypeChildRow = makeDatasetGraphChildRow('CrisprPhenotypeGraphsDataTable');
 const PhenotypeScoreChildRow = makeDatasetGraphChildRow('PhenotypeScoreGraphsDataTable');
 const PhenotypeChildRow = makeDatasetGraphChildRow('PhenotypeGraphsDataTable');
+const UDTranscriptomicsChildRow = makeDatasetGraphChildRow('UserDatasetsTranscriptomicsGraphsDataTable');
 
 export function RecordTable(props) {
   switch(props.table.name) {
@@ -175,6 +176,9 @@ export function RecordTable(props) {
 
     case 'PhenotypeGraphs':
       return <props.DefaultComponent {...props} childRow={PhenotypeChildRow} />
+
+    case 'UserDatasetsTranscriptomicsGraphs':
+      return <props.DefaultComponent {...props} childRow={UDTranscriptomicsChildRow} />
 
     case 'MercatorTable':
       return <MercatorTable {...props} />

@@ -185,6 +185,12 @@ export function RecordTableSection(DefaultComponent) {
         ontologyProperties.scope.includes('download')
       );
 
+
+      let showDatasetsLink = (
+        record.tables[table.name] &&
+        !table.name.startsWith("UserDatasets")
+      );
+
       var hasTaxonId = 0;
       if (record.recordClassName == 'GeneRecordClasses.GeneRecordClass' ||
           record.recordClassName == 'SequenceRecordClasses.SequenceRecordClass' ||
@@ -212,7 +218,7 @@ export function RecordTableSection(DefaultComponent) {
                   </button>
                 </span>
               }
-              { hasTaxonId == 0 &&
+              { hasTaxonId == 0 && showDatasetsLink &&
               <Link
                 style={{
                   fontSize: '.8em',
@@ -228,7 +234,7 @@ export function RecordTableSection(DefaultComponent) {
                   })
                 }}
               ><i className="fa fa-database"/> Data sets</Link>}
-              { hasTaxonId == 1 &&
+              { hasTaxonId == 1 && showDatasetsLink &&
               <Link
                 style={{
                   fontSize: '.8em',
