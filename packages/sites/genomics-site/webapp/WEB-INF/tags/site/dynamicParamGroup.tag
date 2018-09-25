@@ -13,6 +13,9 @@
     <c:when test="${wdkQuestion.queryName eq 'GenesByGenericFoldChange'}">
       <imp:foldchangeParamGroup paramGroup="${paramGroup}"/>
     </c:when>
+    <c:when test="${wdkQuestion.queryName eq 'GenesByUserDatasetRnaSeq'}">
+      <imp:foldchangeParamGroup paramGroup="${paramGroup}"/>
+    </c:when>
     <c:when test="${wdkQuestion.queryName eq 'CompoundsByFoldChange'}">
       <imp:metabolitefoldchangeParamGroup paramGroup="${paramGroup}"/>
     </c:when>
