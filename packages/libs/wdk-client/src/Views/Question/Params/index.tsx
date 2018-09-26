@@ -3,21 +3,26 @@ import * as React from 'react';
 import { ActionObserver, combineObserve } from '../../../Utils/ActionCreatorUtils';
 import { Parameter } from '../../../Utils/WdkModel';
 
+import { Context, isPropsType, ParamModule, Props } from './Utils';
+
+import DateParamModule from './DateParam';
+import DateRangeParamModule from './DateRangeParam';
 import EnumParamModule from './EnumParam';
 import FilterParamNewModule from './FilterParamNew';
 import NumberParamModule from './NumberParam';
 import NumberRangeParamModule from './NumberRangeParam';
 import StringParamModule from './StringParam';
-import { Context, isPropsType, ParamModule, Props } from './Utils';
 
 // Param modules
 // -------------
 const paramModules = [
-  StringParamModule,
+  DateParamModule,
+  DateRangeParamModule,
   EnumParamModule,
   FilterParamNewModule,
   NumberParamModule,
-  NumberRangeParamModule
+  NumberRangeParamModule,
+  StringParamModule,
 ] as ParamModule<Parameter, any>[];
 
 
