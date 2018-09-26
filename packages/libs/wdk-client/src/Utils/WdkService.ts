@@ -190,7 +190,10 @@ const parameterDecoder: Decode.Decoder<Parameter> =
       /* TimestampParam */
       Decode.field('type', Decode.constant('TimestampParam')),
       /* StringParam  */
-      Decode.field('type', Decode.constant('StringParam')),
+      Decode.combine(
+        Decode.field('type', Decode.constant('StringParam')),
+        Decode.field('length', Decode.number)
+      ),
       /* FilterParamNew */
       Decode.combine(
         Decode.field('type', Decode.constant('FilterParamNew')),

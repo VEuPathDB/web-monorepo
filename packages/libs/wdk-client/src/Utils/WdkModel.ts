@@ -44,6 +44,7 @@ export interface ParameterBase extends ModelEntity {
 
 export interface StringParam extends ParameterBase {
   type: 'StringParam';
+  length: number;
 }
 
 export interface AnswerParam extends ParameterBase {
