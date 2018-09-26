@@ -7,11 +7,13 @@ import EnumParamModule from './EnumParam';
 import FilterParamNewModule from './FilterParamNew';
 import NumberParamModule from './NumberParam';
 import NumberRangeParamModule from './NumberRangeParam';
+import StringParamModule from './StringParam';
 import { Context, isPropsType, ParamModule, Props } from './Utils';
 
 // Param modules
 // -------------
 const paramModules = [
+  StringParamModule,
   EnumParamModule,
   FilterParamNewModule,
   NumberParamModule,
