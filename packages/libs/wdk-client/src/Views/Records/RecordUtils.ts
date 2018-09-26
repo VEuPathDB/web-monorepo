@@ -60,7 +60,7 @@ function getSearchableString(filterAttributes: string[], filterTables: string[],
       : typeof value === 'object' ? [value.displayText || value.url]
       : [value] )
     .map(stripHTML)
-    .reduce((compositeStr, nextStr) => `${compositeStr}\0${nextStr}`);
+    .join('\0');
 }
 
 
