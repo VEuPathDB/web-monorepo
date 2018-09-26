@@ -51,7 +51,7 @@ const requiredAttributes = [
   'project_availability',
   'study_access',
   'study_categories',
-  'bulk_download_url',
+  'bulk_download_url'
 ];
 
 
@@ -105,7 +105,7 @@ const parseStudy = mapProps({
   headline: ['attributes.card_headline'],
   points: ['attributes.card_points', JSON.parse],
   searches: ['attributes.card_questions', JSON.parse]
-})
+});
   
 
 function formatStudies(projectId, answer) {

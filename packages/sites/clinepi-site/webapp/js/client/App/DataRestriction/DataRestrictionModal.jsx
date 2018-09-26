@@ -38,21 +38,22 @@ class DataRestrictionModal extends React.Component {
   }
 
   renderButtons () {
-    const { action, study, user, showLoginForm, onClose, webAppUrl } = this.props;
+    const { action, study, user, showLoginForm, onClose } = this.props;
+
     const strict = isActionStrict(action);
     const approvalRequired = actionRequiresApproval({ action, study });
     return (
       <div className="DataRestrictionModal-Buttons">
-        {!user.isGuest ? null : (
+        {!user.isGuest || approvalRequired ? null : (
           <button onClick={() => showLoginForm(window.location.href)} className="btn">
             Log In
             <Icon fa="sign-in right-side" />
           </button>
         )}
         {!approvalRequired ? null : (
-          <a href={webAppUrl + '/contact.do'}>
+          <a href={`app/request-access/${study.id}`} target="_blank">
             <button className="btn">
-              Contact Us for Approval
+              Submit Data Access Request
               <Icon fa="envelope-open-o right-side" />
             </button>
           </a>
