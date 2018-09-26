@@ -137,7 +137,7 @@ const Histogram = lazy<HistogramProps>(async () => {
             previousPoint = item.dataIndex;
             $("#flot-tooltip").remove();
             const entry = plotData[item.dataIndex];
-            const typeValue = entry[1];
+            const typeValue = numberFormat.format(entry[1]);
             const content = `${sizeLabel} = ${typeValue} ${logYAxis ? dagger : ''} <br/>` +
               `${binLabel} = ${labels[item.dataIndex][1]} ${logXAxis ? dagger : ''} `;
             const logNote = logXAxis || logYAxis ? `<br/><br/>${dagger} <em>log<sub>10</sub> applied to data</em>` : '';
@@ -196,7 +196,8 @@ const Histogram = lazy<HistogramProps>(async () => {
         )}
         <div className={cx('Controls')}>
           <div>Apply log<sub>10</sub> scale:</div>
-          <label><input type="checkbox" name="logXAxis" checked={logXAxis} onChange={e => onLogScaleXAxisChange(e.target.checked)} />  {attrLabel} </label>
+          {/* Need to handle N <= 0 before enabling scaling of x-axis. See https://redmine.apidb.org/issues/30632 */}
+          {/*<label><input type="checkbox" name="logXAxis" checked={logXAxis} onChange={e => onLogScaleXAxisChange(e.target.checked)} />  {attrLabel} </label>*/}
           <label><input type="checkbox" name="logYAxis" checked={logYAxis} onChange={e => onLogScaleYAxisChange(e.target.checked)} />  {recordCountLabel} </label>
         </div>
       </div>
