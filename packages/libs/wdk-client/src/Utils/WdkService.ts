@@ -225,14 +225,20 @@ const parameterDecoder: Decode.Decoder<Parameter> =
         Decode.field('multiPick', Decode.boolean),
         Decode.field('depthExpanded', Decode.number),
         Decode.oneOf(
-          /* ListEnumParam */
+          /* Checkbox */
           Decode.combine(
-            Decode.field('displayType', Decode.oneOf(
-              Decode.constant('select'), Decode.constant('checkBox'), Decode.constant('typeAhead')
-            )),
-            Decode.field('vocabulary', Decode.arrayOf(
-              Decode.tuple(Decode.string, Decode.string, Decode.oneOf(Decode.string, Decode.nullValue))
-            ))
+            Decode.field('displayType', Decode.constant('checkBox')),
+            Decode.field('vocabulary', Decode.arrayOf(Decode.tuple(Decode.string, Decode.string, Decode.nullValue)))
+          ),
+          /* Select */
+          Decode.combine(
+            Decode.field('displayType', Decode.constant('select')),
+            Decode.field('vocabulary', Decode.arrayOf(Decode.tuple(Decode.string, Decode.string, Decode.nullValue)))
+          ),
+          /* TypeAhead */
+          Decode.combine(
+            Decode.field('displayType', Decode.constant('typeAhead')),
+            Decode.field('vocabulary', Decode.arrayOf(Decode.tuple(Decode.string, Decode.string, Decode.nullValue)))
           ),
           /* Treebox */
           Decode.combine(

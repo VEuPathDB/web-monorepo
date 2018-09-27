@@ -16,7 +16,7 @@ export type Context<T extends Parameter> = {
   paramValues: ParameterValues;
 }
 
-export type Props<T extends Parameter, S> = {
+export type Props<T extends Parameter, S = void> = {
   ctx: Context<T>;
   parameter: T;
   value: string;

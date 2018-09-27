@@ -13,9 +13,17 @@ import { filterNodes, getLeaves, isBranch } from '../../../../Utils/TreeUtils';
 import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../../Utils/WdkModel';
 import { ParamInitAction } from '../../QuestionActionCreators';
 
-import enumParamModule from '../EnumParam';
 import SelectionInfo from '../EnumParam/SelectionInfo';
-import { Context, Props } from '../Utils';
+import { Context, Props, createParamModule } from '../Utils';
+import { isEnumParam } from './Utils';
+
+function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
+  return isEnumParam(parameter) && parameter.displayType === 'treeBox';
+}
+
+function isParamValueValid() {
+  return true;
+}
 
 // Types
 // -----
@@ -45,13 +53,6 @@ export const SearchTermSet = makeActionCreator<
 
 // Utils
 // -----
-
-export function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
-  return (
-    enumParamModule.isType(parameter) &&
-    parameter.displayType === 'treeBox'
-  );
-}
 
 function searchPredicate(node: TreeBoxVocabNode, searchTerms: string[]) {
   return searchTerms
@@ -125,7 +126,7 @@ export const reduce = matchAction({} as State,
 // ----
 
 
-export function TreeBoxEnumParam(props: TreeBoxProps) {
+export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   const tree = props.parameter.vocabulary;
   const selectedNodes = props.value.split(/\s*,\s*/);
   const selectedLeaves = removeBranches(tree, selectedNodes);
@@ -184,3 +185,10 @@ function NoResults(props: NoResultsProps) {
     </div>
   )
 }
+
+export default createParamModule({
+  isType,
+  isParamValueValid,
+  reduce,
+  Component: TreeBoxEnumParamComponent
+});

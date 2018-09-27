@@ -5,24 +5,30 @@ import { Parameter } from '../../../Utils/WdkModel';
 
 import { Context, isPropsType, ParamModule, Props } from './Utils';
 
+import CheckboxEnumParamModule from './EnumParam/CheckboxEnumParam';
 import DateParamModule from './DateParam';
 import DateRangeParamModule from './DateRangeParam';
-import EnumParamModule from './EnumParam';
 import FilterParamNewModule from './FilterParamNew';
 import NumberParamModule from './NumberParam';
 import NumberRangeParamModule from './NumberRangeParam';
+import SelectEnumParamModule from './EnumParam/SelectEnumParam';
 import StringParamModule from './StringParam';
+import TreeBoxEnumParamModule from './EnumParam/TreeBoxEnumParam';
+import TypeAheadEnumParamModule from './EnumParam/TypeAheadEnumParam';
 
 // Param modules
 // -------------
 const paramModules = [
+  CheckboxEnumParamModule,
   DateParamModule,
   DateRangeParamModule,
-  EnumParamModule,
   FilterParamNewModule,
   NumberParamModule,
   NumberRangeParamModule,
+  SelectEnumParamModule,
   StringParamModule,
+  TreeBoxEnumParamModule,
+  TypeAheadEnumParamModule,
 ] as ParamModule<Parameter, any>[];
 
 
