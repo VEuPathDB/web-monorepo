@@ -51,12 +51,10 @@ class DataRestrictionModal extends React.Component {
           </button>
         )}
         {!approvalRequired ? null : (
-          <a href={`app/request-access/${study.id}`} target="_blank">
-            <button className="btn">
-              Submit Data Access Request
-              <Icon fa="envelope-open-o right-side" />
-            </button>
-          </a>
+          <button onClick={() => showLoginForm(`app/request-access/${study.id}`)} className="btn">
+            Submit Data Access Request
+            <Icon fa="envelope-open-o right-side" />
+          </button>
         )}
         {!strict
           ? (

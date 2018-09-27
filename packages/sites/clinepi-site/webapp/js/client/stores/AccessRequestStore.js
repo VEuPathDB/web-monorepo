@@ -109,15 +109,10 @@ export default class AccessRequestStore extends WdkStore {
 
         const datasetId = window.location.pathname.replace(/.*\/request-access\//, '');
 
-        if (payload.user.isGuest && onRequestAccessRoute) {
-          return [
-            { 
-              type: 'user/show-login-modal', 
-              payload: { 
-                destination: window.location.href 
-              } 
-            }
-          ];
+        if (onRequestAccessRoute &&
+          (payload.user.isGuest || payload.user.properties.approvedStudies.includes(datasetId))
+        ) {
+          window.history.go(-1);
         } else {
           try {
             const study = await fetchStudy(
