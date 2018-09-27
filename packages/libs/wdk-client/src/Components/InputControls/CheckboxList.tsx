@@ -8,8 +8,7 @@ type Item = {
 }
 
 type Props = {
-  name: string
-  title: string
+  name?: string
   items: Item[]
   value: any
   onChange: (value: string[]) => void
@@ -42,7 +41,7 @@ class CheckboxList extends Component<Props> {
   }
 
   render() {
-    let { name, title, items, value } = this.props;
+    let { name, items, value } = this.props;
     return (
       <NativeCheckboxList name={name}
          onChange={this.onChange}

@@ -1,6 +1,8 @@
 import { stubTrue as isParamValueValid } from 'lodash';
 import React from 'react';
 
+import TextArea from '../../../Components/InputControls/TextArea';
+import TextBox from '../../../Components/InputControls/TextBox';
 import { StringParam, Parameter } from '../../../Utils/WdkModel';
 
 import { createParamModule, Props } from './Utils';
@@ -18,18 +20,19 @@ function isType(param: Parameter): param is StringParam {
 function Component(props: Props<StringParam, undefined>) {
   const { parameter, value, onParamValueChange } = props;
   return parameter.length <= 50 ? (
-    <input
+    <TextBox
       type="text"
       value={value}
       readOnly={parameter.isReadOnly}
-      onChange={e=> onParamValueChange(e.target.value)}
+      onChange={onParamValueChange}
     />
   ) : (
-    <textarea
+    <TextArea
       cols={45}
       rows={Math.ceil(parameter.length / 45)}
       readOnly={parameter.isReadOnly}
-      onChange={e => onParamValueChange(e.target.value)}
-    >{value}</textarea>
+      value={value}
+      onChange={onParamValueChange}
+    />
   );
 }

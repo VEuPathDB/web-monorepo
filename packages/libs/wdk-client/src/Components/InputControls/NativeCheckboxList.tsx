@@ -10,7 +10,7 @@ type Item = {
 type Props = {
 
   /** Value to use for "name" attribute of checkbox form input element **/
-  name: string
+  name?: string
 
   /** Array of items to display in the list **/
   items: Item[]
@@ -48,13 +48,13 @@ type Props = {
    * Called when the "select all" link is clicked.
    * If state is managed locally, all items will be checked.
    */
-  onSelectAll?: (event: MouseEvent<HTMLAnchorElement>) => void
+  onSelectAll?: (event: MouseEvent<HTMLButtonElement>) => void
 
   /**
    * Called when the "clear all" link is clicked.
    * If state is managed locall, all items will be unchecked.
    */
-  onClearAll?: (event: MouseEvent<HTMLAnchorElement>) => void
+  onClearAll?: (event: MouseEvent<HTMLButtonElement>) => void
 }
 
 type State = {
@@ -75,8 +75,8 @@ class NativeCheckboxList extends Component<Props, State> {
   static defaultProps = {
     defaultSelectedItems: [] as Item[],
     onChange: (event: FormEvent<HTMLInputElement>, item: Item) => {},
-    onSelectAll: (event: MouseEvent<HTMLAnchorElement>) => {},
-    onClearAll: (event: MouseEvent<HTMLAnchorElement>) => {}
+    onSelectAll: (event: MouseEvent<HTMLButtonElement>) => {},
+    onClearAll: (event: MouseEvent<HTMLButtonElement>) => {}
   } as Props
 
   constructor(props: Props) {
@@ -101,7 +101,7 @@ class NativeCheckboxList extends Component<Props, State> {
     }
   }
 
-  selectAll(event: React.MouseEvent<HTMLAnchorElement>) {
+  selectAll(event: React.MouseEvent<HTMLButtonElement>) {
     this.props.onSelectAll!(event);
 
     if (!this.controlled && !event.defaultPrevented) {
@@ -114,7 +114,7 @@ class NativeCheckboxList extends Component<Props, State> {
     event.preventDefault();
   }
 
-  clearAll(event: React.MouseEvent<HTMLAnchorElement>) {
+  clearAll(event: React.MouseEvent<HTMLButtonElement>) {
     this.props.onClearAll!(event);
 
     if (!this.controlled && !event.defaultPrevented) {
@@ -151,10 +151,10 @@ class NativeCheckboxList extends Component<Props, State> {
             );
           })}
         </div>
-        <div>
-          <a href="#" onClick={e => this.selectAll(e)}>select all</a>
+        <div style={{ marginTop: '.5em' }}>
+          <button type="button" className="wdk-Link" onClick={e => this.selectAll(e)}>select all</button>
           {' | '}
-          <a href="#" onClick={e => this.clearAll(e)}>clear all</a>
+          <button type="button" className="wdk-Link" onClick={e => this.clearAll(e)}>clear all</button>
         </div>
       </div>
     );
