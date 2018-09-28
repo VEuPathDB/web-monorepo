@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ActionObserver, combineObserve } from '../../../Utils/ActionCreatorUtils';
+import { combineObserve } from '../../../Utils/ActionCreatorUtils';
 import { Parameter } from '../../../Utils/WdkModel';
 
 import { Context, isPropsType, ParamModule, Props } from './Utils';
