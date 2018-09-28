@@ -5,32 +5,31 @@ import { Parameter } from '../../../Utils/WdkModel';
 
 import { Context, isPropsType, ParamModule, Props } from './Utils';
 
-import CheckboxEnumParamModule from './EnumParam/CheckboxEnumParam';
+import CheckboxEnumParamModule from './CheckboxEnumParam';
 import DateParamModule from './DateParam';
 import DateRangeParamModule from './DateRangeParam';
 import FilterParamNewModule from './FilterParamNew';
 import NumberParamModule from './NumberParam';
 import NumberRangeParamModule from './NumberRangeParam';
-import SelectEnumParamModule from './EnumParam/SelectEnumParam';
+import SelectEnumParamModule from './SelectEnumParam';
 import StringParamModule from './StringParam';
-import TreeBoxEnumParamModule from './EnumParam/TreeBoxEnumParam';
-import TypeAheadEnumParamModule from './EnumParam/TypeAheadEnumParam';
+import TreeBoxEnumParamModule from './TreeBoxEnumParam';
+import TypeAheadEnumParamModule from './TypeAheadEnumParam';
 
 // Param modules
 // -------------
-const paramModules = [
-  CheckboxEnumParamModule,
-  DateParamModule,
-  DateRangeParamModule,
-  FilterParamNewModule,
-  NumberParamModule,
-  NumberRangeParamModule,
-  SelectEnumParamModule,
-  StringParamModule,
-  TreeBoxEnumParamModule,
-  TypeAheadEnumParamModule,
-] as ParamModule<Parameter, any>[];
-
+const paramModules: ParamModule[] = [
+  CheckboxEnumParamModule as ParamModule,
+  DateParamModule as ParamModule,
+  DateRangeParamModule as ParamModule,
+  FilterParamNewModule as ParamModule,
+  NumberParamModule as ParamModule,
+  NumberRangeParamModule as ParamModule,
+  SelectEnumParamModule as ParamModule,
+  StringParamModule as ParamModule,
+  TreeBoxEnumParamModule as ParamModule,
+  TypeAheadEnumParamModule as ParamModule,
+];
 
 // API used by Question{ActionCreators,Controller,Store}
 // -----------------------------------------------------
@@ -64,10 +63,9 @@ export function reduce<T extends Parameter>(parameter: T, state: any, action: an
   return state;
 }
 
-export const observeParam = combineObserve(
-  ...(paramModules
-    .map(m => m.observeParam)
-    .filter(e => e != null) as ActionObserver[]))
+export const observeParam =
+  combineObserve(...(paramModules.map(m => m.observeParam)))
+    
 
 export function isParamValueValid(context: Context<Parameter>, state: any) {
   for (let paramModule of paramModules) {

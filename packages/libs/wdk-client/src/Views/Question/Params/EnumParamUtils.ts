@@ -1,4 +1,4 @@
-import { EnumParam, Parameter } from '../../../../Utils/WdkModel';
+import { EnumParam, Parameter } from '../../../Utils/WdkModel';
 
 export function countInBounds(count: number, lower: number, upper: number) {
   // Number of selected values should be within range of {min,max}SelectedCount.

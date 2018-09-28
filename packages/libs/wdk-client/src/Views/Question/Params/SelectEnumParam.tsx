@@ -1,10 +1,10 @@
 import React from 'react';
-import MultiSelect from '../../../../Components/InputControls/MultiSelect';
-import SingleSelect from '../../../../Components/InputControls/SingleSelect';
-import { Seq } from '../../../../Utils/IterableUtils';
-import { SelectEnumParam, Parameter } from '../../../../Utils/WdkModel';
-import { Context, Props, createParamModule } from '../Utils';
-import { valueToArray, isEnumParam } from './Utils';
+import MultiSelect from '../../../Components/InputControls/MultiSelect';
+import SingleSelect from '../../../Components/InputControls/SingleSelect';
+import { Seq } from '../../../Utils/IterableUtils';
+import { SelectEnumParam, Parameter } from '../../../Utils/WdkModel';
+import { Context, Props, createParamModule } from './Utils';
+import { valueToArray, isEnumParam } from './EnumParamUtils';
 
 export default createParamModule({
   isType,

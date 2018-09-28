@@ -1,7 +1,7 @@
 import React from 'react';
-import { EnumParam } from '../../../../Utils/WdkModel';
+import { EnumParam } from '../../../Utils/WdkModel';
 
-import { countInBounds } from './Utils';
+import { countInBounds } from './EnumParamUtils';
 
 type Props = {
   parameter: EnumParam;

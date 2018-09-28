@@ -6,10 +6,10 @@ import {
   filter,
   concat,
   map
-} from '../../../../Utils/IterableUtils';
-import { TypeAheadEnumParam, Parameter } from '../../../../Utils/WdkModel';
-import { Props, createParamModule } from '../Utils';
-import { isEnumParam, valueToArray } from './Utils';
+} from '../../../Utils/IterableUtils';
+import { TypeAheadEnumParam, Parameter } from '../../../Utils/WdkModel';
+import { Props, createParamModule } from './Utils';
+import { isEnumParam, valueToArray } from './EnumParamUtils';
 
 function isType(parameter: Parameter): parameter is TypeAheadEnumParam {
   return isEnumParam(parameter) && parameter.displayType === 'typeAhead';

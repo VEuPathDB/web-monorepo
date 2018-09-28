@@ -14,8 +14,8 @@ import { EnumParam, Parameter } from '../../Utils/WdkModel';
 import QuestionStore, { QuestionState } from './QuestionStore';
 
 import * as ParamModules from './Params';
-import { isEnumParam } from './Params/EnumParam/Utils';
-import TreeBoxEnumParam from './Params/EnumParam/TreeBoxEnumParam';
+import { isEnumParam } from './Params/EnumParamUtils';
+import TreeBoxEnumParam from './Params/TreeBoxEnumParam';
 import { Context } from './Params/Utils';
 
 const ActionCreators = {

@@ -3,19 +3,19 @@ import './TreeBoxParam.scss';
 import { escapeRegExp, intersection } from 'lodash';
 import React from 'react';
 
-import CheckboxTree from '../../../../Components/CheckboxTree/CheckboxTree';
-import Icon from '../../../../Components/Icon/IconAlt';
-import { makeActionCreator } from '../../../../Utils/ActionCreatorUtils';
-import { safeHtml } from '../../../../Utils/ComponentUtils';
-import { Seq } from '../../../../Utils/IterableUtils';
-import { matchAction } from '../../../../Utils/ReducerUtils';
-import { filterNodes, getLeaves, isBranch } from '../../../../Utils/TreeUtils';
-import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../../Utils/WdkModel';
-import { ParamInitAction } from '../../QuestionActionCreators';
+import CheckboxTree from '../../../Components/CheckboxTree/CheckboxTree';
+import Icon from '../../../Components/Icon/IconAlt';
+import { makeActionCreator } from '../../../Utils/ActionCreatorUtils';
+import { safeHtml } from '../../../Utils/ComponentUtils';
+import { Seq } from '../../../Utils/IterableUtils';
+import { matchAction } from '../../../Utils/ReducerUtils';
+import { filterNodes, getLeaves, isBranch } from '../../../Utils/TreeUtils';
+import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../Utils/WdkModel';
+import { ParamInitAction } from '../QuestionActionCreators';
 
-import SelectionInfo from '../EnumParam/SelectionInfo';
-import { Context, Props, createParamModule } from '../Utils';
-import { isEnumParam } from './Utils';
+import SelectionInfo from './SelectionInfo';
+import { Context, Props, createParamModule } from './Utils';
+import { isEnumParam } from './EnumParamUtils';
 
 function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
   return isEnumParam(parameter) && parameter.displayType === 'treeBox';

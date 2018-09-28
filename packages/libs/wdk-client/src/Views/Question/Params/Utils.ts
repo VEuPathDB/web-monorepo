@@ -34,7 +34,7 @@ type ParamModuleSpec<T extends Parameter, S> = {
   observeParam?: ActionObserver<QuestionStore>;
 }
 
-export type ParamModule<T extends Parameter, S> = {
+export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isType: (parameter: Parameter) => parameter is T;
   /**
    * Determine if the param value is valid. This can be used by form container
