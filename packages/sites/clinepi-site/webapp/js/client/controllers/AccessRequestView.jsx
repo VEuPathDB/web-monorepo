@@ -42,16 +42,25 @@ export default class AccessRequestView extends Component {
 
     if (successfullySubmitted) {
       return (
-        <p>
-          We have submitted your request to the data provider. Somebody will follow up with you if any clarification is needed.
-        </p>
+        <Fragment>
+          <p>
+            We have submitted your request to the data provider.
+          </p>
+          <p>
+          Somebody will follow up with you if any clarification is needed.
+          </p>
+        </Fragment>
       );
     } else if (alreadyRequested) {
       return (
-        <p>
-          Our records indicate that you have already submitted a request for this dataset. 
-          If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/contact.do`} target="_blank">contact us</a>. 
-        </p>
+        <Fragment>
+          <p>
+            Our records indicate that you have already submitted a request for this dataset. 
+          </p>
+          <p>
+            If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/contact.do`} target="_blank">contact us</a>. 
+          </p>
+        </Fragment>
       );
     } else {
       return <AccessRequestForm />;
@@ -60,6 +69,7 @@ export default class AccessRequestView extends Component {
 
   renderAccessRequestForm() {
     const {
+      disableSubmit,
       fieldElements,
       formValues,
       submitForm,
@@ -97,7 +107,7 @@ export default class AccessRequestView extends Component {
               </tr>
               <tr>
                 <td colSpan={4}>
-                  <input type="submit" value="Submit" />
+                  <input type="submit" disabled={disableSubmit} value="Submit" />
                 </td>
               </tr>
               {

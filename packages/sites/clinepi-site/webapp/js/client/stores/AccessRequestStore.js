@@ -20,6 +20,7 @@ import { datasetId, formValues, userId } from '../selectors/AccessRequestSelecto
 const stateShape = {
   study: null,
   loadingError: null,
+  submitting: false,
   successfullySubmitted: false,
   alreadyRequested: false,
   submissionError: null,
@@ -75,9 +76,16 @@ export default class AccessRequestStore extends WdkStore {
           }
         }
 
+      case SUBMIT_FORM:
+        return {
+          ...state,
+          submitting: true
+        };
+
       case FINISH_SUBMISSION:
         return {
           ...state,
+          submitting: false,
           successfullySubmitted: payload.successfullySubmitted,
           alreadyRequested: payload.alreadyRequested,
           submissionError: payload.submissionError

@@ -13,6 +13,7 @@ import {
 import { 
   webAppUrl,
   alreadyRequested,
+  disableSubmit,
   submissionError,
   successfullySubmitted,
   loaded,
@@ -49,6 +50,7 @@ export default class AccessRequestController extends WdkPageController {
       webAppUrl: webAppUrl(this.store.getState()),
       successfullySubmitted: successfullySubmitted(this.store.getState()),
       alreadyRequested: alreadyRequested(this.store.getState()),
+      disableSubmit: disableSubmit(this.store.getState()),
       submissionError: submissionError(this.store.getState()),
       fieldElements: fieldElements(this.store.getState()),
       formTitle: title(this.store.getState()),

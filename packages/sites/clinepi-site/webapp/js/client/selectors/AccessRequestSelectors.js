@@ -52,6 +52,8 @@ export const labels = ({ study }) => {
 
 export const notFound = ({ loadingError }) => !!loadingError;
 
+export const disableSubmit = ({ submitting }) => submitting;
+
 export const successfullySubmitted = ({ successfullySubmitted }) => successfullySubmitted;
 
 export const submissionError = ({ submissionError }) => submissionError;
