@@ -197,10 +197,19 @@ export function RecordTableSection(DefaultComponent) {
       );
 
 
+        let hideDatasetLinkFromProperty = (
+            record.tables[table.name] &&
+            table.properties.hideDatasetLink &&
+            table.properties.hideDatasetLink[0].toLowerCase() == 'true'
+        );
+
+
       let showDatasetsLink = (
         record.tables[table.name] &&
-        !table.name.startsWith("UserDatasets")
+        !table.name.startsWith("UserDatasets") &&  
+        !hideDatasetLinkFromProperty
       );
+
 
       var hasTaxonId = 0;
       if (record.recordClassName == 'GeneRecordClasses.GeneRecordClass' ||
