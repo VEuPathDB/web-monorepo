@@ -25,7 +25,7 @@ const stateShape = {
   alreadyRequested: false,
   submissionError: null,
   formValues: {
-    'request_data': '',
+    'request_date': '',
     'requester_name': '',
     'requester_email': '',
     'organization': '',
