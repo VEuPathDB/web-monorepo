@@ -223,10 +223,11 @@
       <hr>
     </c:if>
 
-    <!--  EVENTS -->
-    <b>Upcoming Events with EuPathDB presence</b>
-    <imp:communityEventListing/>
-    <br><br>
+    <!--  EVENTS 
+         <b>Upcoming Events with EuPathDB presence</b>
+         <imp:communityEventListing/>  
+    -->
+    <a class="small" href='http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068'>Global view of EuPathDB training >>></a>
     <hr>
 
     <!--  LINKS to interesting sites -->
