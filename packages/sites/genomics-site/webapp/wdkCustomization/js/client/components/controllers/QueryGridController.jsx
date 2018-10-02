@@ -1,11 +1,15 @@
 import React from 'react';
-import QueryGrid from '../QueryGrid';
-import { WdkPageController } from 'wdk-client/Controllers';
+import { connect } from 'react-redux';
 
-export default class QueryGridController extends WdkPageController {
+import { searchTree } from '../../selectors/QueryGridSelectors';
+
+import QueryGrid from '../QueryGrid';
+import { PageController } from 'wdk-client/Controllers';
+
+class QueryGridController extends PageController {
 
   isRenderDataLoaded() {
-    return this.state.globalData.searchTree;
+    return this.props.searchTree;
   }
 
   getTitle() {
@@ -13,7 +17,13 @@ export default class QueryGridController extends WdkPageController {
   }
 
   renderView() {
-    return ( <QueryGrid grid={this.state.globalData.searchTree} /> );
+    return ( <QueryGrid grid={this.props.searchTree} /> );
   }
 
 }
+
+export default connect(
+  state => ({
+    searchTree: searchTree(state)
+  })
+)(QueryGridController);
