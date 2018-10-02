@@ -1,12 +1,5 @@
 import { getLeaves } from 'wdk-client/TreeUtils';
 
-import ApiGalaxyTermsStore from './stores/GalaxyTermsStore';
-
-/** Provide GalaxyTermsStore */
-export function GalaxyTermsStore() {
-  return ApiGalaxyTermsStore;
-}
-
 export const GlobalDataStore = GlobalDataStore => class ApiGlobalDataStore extends GlobalDataStore {
   handleAction(state, action) {
     state = super.handleAction(state, action);

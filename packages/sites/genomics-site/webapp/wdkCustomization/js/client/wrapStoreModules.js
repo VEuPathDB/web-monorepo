@@ -1,4 +1,5 @@
 import { compose, curryN, set, update } from 'lodash/fp';
+import * as galaxyTerms from './storeModules/GalaxyTerms';
 import * as globalData from './storeModules/GlobalData';
 import * as record from './storeModules/Record';
 
@@ -16,8 +17,7 @@ const composeReducers = (...reducers) => (state, action) =>
 const composeReducerWith = curryN(2, composeReducers);
 
 export default compose(
+  set('galaxyTerms', galaxyTerms),
   update('globalData.reduce', composeReducerWith(globalData.reduce)),
   set('record', record)
-)
-
-
+);
