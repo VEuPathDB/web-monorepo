@@ -38,11 +38,11 @@ export default {
 
     getStateFromStore () {
       const { globalData } = this.store.getState();
-      const { siteConfig, studies } = globalData;
+      const { siteConfig, studies, news } = globalData;
       const { displayName, webAppUrl } = siteConfig;
       const siteData = getStaticSiteData(studies.entities);
 
-      return { displayName, webAppUrl, siteData, isLoading: studies.loading, hasError: !!studies.error };
+      return { displayName, news, webAppUrl, siteData, isLoading: studies.loading, hasError: !!studies.error };
     }
 
     getTitle () {
