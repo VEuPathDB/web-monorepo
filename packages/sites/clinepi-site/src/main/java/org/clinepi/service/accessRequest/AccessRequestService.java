@@ -73,8 +73,7 @@ public class AccessRequestService extends UserService {
       SubmissionResult result = AccessRequestSubmitter.submitAccessRequest(
         params, 
         this.getWdkModel(),
-        (a, b, c, d, e, f, g) -> LOG.warn(String.join(",", a, b, c, d, e, f))
-        // Utilities::sendEmail
+        Utilities::sendEmail
       );
       
       if (result == SubmissionResult.ALREADY_REQUESTED) {
