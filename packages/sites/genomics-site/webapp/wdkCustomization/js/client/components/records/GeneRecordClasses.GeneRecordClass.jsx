@@ -578,9 +578,9 @@ class WolfPsortForm extends React.Component {
 
             </form>
 
-	    <p>For more information about this tool <a href="https://wolfpsort.hgc.jp/aboutWoLF_PSORT.html.en">click here</a></p>
+ 	    <p>For more information about this tool <a target="_blank" rel="noopener noreferrer"  href="https://wolfpsort.hgc.jp/aboutWoLF_PSORT.html.en">click here</a></p>
 	</div>
-
+ 
 
         );
     }
@@ -642,7 +642,7 @@ class BlastpForm extends React.Component {
   	       	     <input type="submit"/>
                </form>
 	       
-	      <p>For more information about BLAST programs <a href="https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi">click here</a></p>
+	      <p>For more information about BLAST programs <a target="_blank" rel="noopener noreferrer" href="https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi">click here</a></p>
        
         </div>
 
@@ -702,7 +702,7 @@ class MitoprotForm extends React.Component {
 
             </form>
 	    
-	     <p>For more information about this tool <a href="https://ihg.gsf.de/ihg/mitoprot.html">click here</a></p>
+	     <p>For more information about this tool <a target="_blank" rel="noopener noreferrer" href="https://ihg.gsf.de/ihg/mitoprot.html">click here</a></p>
 
         </div>
 
