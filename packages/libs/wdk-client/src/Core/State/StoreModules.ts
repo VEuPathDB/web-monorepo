@@ -3,7 +3,8 @@ import * as globalData from './StoreModules/GlobalData';
 import * as passwordChange from '../../Views/User/Password/UserPasswordChangeStoreModule';
 import * as passwordReset from '../../Views/User/Password/UserPasswordResetStoreModule';
 import * as question from '../../Views/Question/QuestionStoreModule';
-import * as record from '../../Views/Records/RecordStoreModule'
+import * as record from '../../Views/Records/RecordStoreModule';
+import * as siteMap from '../../Views/SiteMap/SiteMapStoreModule';
 import * as userDatasetDetail from '../../Views/UserDatasets/Detail/UserDatasetDetailStoreModule';
 import * as userDatasetList from '../../Views/UserDatasets/List/UserDatasetListStoreModule';
 import * as userProfile from '../../Views/User/Profile/UserProfileReducer';
@@ -16,6 +17,7 @@ export default {
   passwordReset,
   question,
   record,
+  siteMap,
   userDatasetDetail,
   userDatasetList,
   userProfile,

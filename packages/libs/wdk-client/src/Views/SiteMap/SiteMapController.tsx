@@ -1,28 +1,27 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { wrappable } from '../../Utils/ComponentUtils';
-import AbstractPageController from '../../Core/Controllers/AbstractPageController';
 import * as SiteMapActionCreators from './SiteMapActionCreators';
-import SiteMapStore, { State } from './SiteMapStore';
 import SiteMap from './SiteMap';
+import { RootState } from '../../Core/State/Types';
+import PageController from '../../Core/Controllers/PageController';
 
-type EventHandlers = typeof SiteMapActionCreators;
+type StateProps = RootState['siteMap'];
+type DispatchProps = typeof SiteMapActionCreators;
 
-class SiteMapController extends AbstractPageController<State, SiteMapStore, EventHandlers> {
+type Props = {
+  stateProps: StateProps,
+  dispatchProps: DispatchProps
+};
 
-  getStoreClass() {
-    return SiteMapStore;
-  }
-
-  getStateFromStore() {
-    return this.store.getState();
-  }
-
-  getActionCreators() {
-    return SiteMapActionCreators;
-  }
+class SiteMapController extends PageController<Props> {
 
   isRenderDataLoaded() {
-    return (this.state.tree != null && !this.state.isLoading);
+    const { 
+      stateProps: { tree, isLoading } 
+    } = this.props;
+
+    return (tree != null && !isLoading);
   }
 
   getTitle() {
@@ -30,15 +29,29 @@ class SiteMapController extends AbstractPageController<State, SiteMapStore, Even
   }
 
   renderView() {
-    return ( <SiteMap {...this.state} siteMapActions={this.eventHandlers}/> );
+    const { stateProps, dispatchProps } = this.props;
+
+    return ( <SiteMap {...stateProps} siteMapActions={dispatchProps}/> );
   }
 
   loadData() {
-    if (this.state.tree == null) {
-      this.eventHandlers.loadCurrentSiteMap();
+    const { 
+      stateProps: { tree }, 
+      dispatchProps: { loadCurrentSiteMap } 
+    } = this.props;
+
+    if (tree == null) {
+      loadCurrentSiteMap();
     }
   }
 
 }
 
-export default wrappable(SiteMapController);
+export default connect(
+  (state: RootState) => state.siteMap,
+  SiteMapActionCreators,
+  (stateProps, dispatchProps) => ({
+    stateProps,
+    dispatchProps
+  })
+)(wrappable(SiteMapController));
