@@ -52,12 +52,12 @@ class DataRestrictionModal extends React.Component {
         )}
         {!approvalRequired ? null : (
           <button onClick={() => {
-            const redirectUrl = `${webAppUrl}/app/request-access/${study.id}`;
+            const loggedInUrl = `${webAppUrl}/app/request-access/${study.id}?redirectUrl=${encodeURIComponent(window.location.href)}`;
 
             if (user.isGuest) {
-              showLoginForm(redirectUrl);
+              showLoginForm(loggedInUrl);
             } else {
-              window.location = redirectUrl;
+              window.location.assign(loggedInUrl);
             }
           }} className="btn">
             Submit Data Access Request

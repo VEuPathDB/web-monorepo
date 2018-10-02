@@ -16,6 +16,7 @@ import {
   updateStudy
 } from '../action-creators/AccessRequestActionCreators';
 import { datasetId, formValues, userId } from '../selectors/AccessRequestSelectors';
+import { parse } from 'querystring';
 
 const stateShape = {
   study: null,
@@ -117,10 +118,12 @@ export default class AccessRequestStore extends WdkStore {
 
         const datasetId = window.location.pathname.replace(/.*\/request-access\//, '');
 
-        if (onRequestAccessRoute &&
-          (payload.user.isGuest || payload.user.properties.approvedStudies.includes(datasetId))
+        if (
+          payload.user.isGuest || payload.user.properties.approvedStudies.includes(datasetId)
         ) {
-          window.history.go(-1);
+          const { redirectUrl = '/' } = parse(window.location.search.slice(1));
+
+          window.location.assign(decodeURIComponent(redirectUrl));
         } else {
           try {
             const study = await fetchStudy(
