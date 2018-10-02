@@ -556,7 +556,10 @@ class WolfPsortForm extends React.Component {
         let t = this.props.value;
 
            return (
-            <form action="/cgi-bin/wolfPSORT.pl" target="_blank" method="post">
+
+	   <div> 
+           
+	    <form action="/cgi-bin/wolfPSORT.pl" target="_blank" method="post">
             	  <input type="hidden" name="project_id" value={projectId}/>
   	    	  <input type="hidden" id="input_type" name="input_type" value="fasta"/>
  	    	  <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
@@ -575,8 +578,13 @@ class WolfPsortForm extends React.Component {
 
             </form>
 
+	    <p>For more information about this tool <a href="https://wolfpsort.hgc.jp/aboutWoLF_PSORT.html.en">click here</a></p>
+	</div>
+
+
         );
     }
+
 }
 
 
@@ -610,6 +618,9 @@ class BlastpForm extends React.Component {
         let t = this.props.value;
 
 	return (
+	       
+	    <div>	
+
 	       <form action="/cgi-bin/ncbiBLAST.pl" target="_blank" method="post">
                	     <input type="hidden" name="project_id" value={projectId}/>
   	       	     <input type="hidden" id="program" name="program" value="blastp"/>
@@ -630,6 +641,11 @@ class BlastpForm extends React.Component {
 
   	       	     <input type="submit"/>
                </form>
+	       
+	      <p>For more information about BLAST programs <a href="https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi">click here</a></p>
+       
+        </div>
+
         );
     }
 }
@@ -670,6 +686,9 @@ class MitoprotForm extends React.Component {
         let t = this.props.value;
 
            return (
+	   
+	   <div>
+
             <form action="/cgi-bin/mitoprot.pl" target="_blank" method="post">
             	  <input type="hidden" name="project_id" value={projectId}/>
   	    	  <input type="hidden" id="id_type" name="id_type" value="protein"/>                   	    	  
@@ -682,6 +701,10 @@ class MitoprotForm extends React.Component {
 
 
             </form>
+	    
+	     <p>For more information about this tool <a href="https://ihg.gsf.de/ihg/mitoprot.html">click here</a></p>
+
+        </div>
 
         );
     }
