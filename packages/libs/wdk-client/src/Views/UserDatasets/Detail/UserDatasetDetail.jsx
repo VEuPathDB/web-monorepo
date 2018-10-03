@@ -97,7 +97,7 @@ class UserDatasetDetail extends React.Component {
   getAttributes () {
     const { userDataset, quotaSize, questionMap } = this.props;
     const { onMetaSave } = this;
-    const { id, type, meta, projects, size, percentQuotaUsed, owner, created, sharedWith, questions } = userDataset;
+    const { id, type, meta, projects, size, percentQuotaUsed, owner, created, sharedWith, questions, isInstalled } = userDataset;
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
 
@@ -184,7 +184,7 @@ class UserDatasetDetail extends React.Component {
           }
       ),
       (
-        !questions || !questions.length
+        !questions || !questions.length || !isInstalled
           ? null
           : {
             attribute: 'Available Searches',
