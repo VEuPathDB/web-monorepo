@@ -30,7 +30,7 @@ function isRequestedAction(action) {
 }
 
 function decorateTranscriptAttributeAnalysisObserve(observe) {
-  return function observeTranscript(action$, services) {
+  return function observeTranscript(action$, state$, services) {
     const request$ = action$.pipe(filter(isRequestedAction));
     const rest$ = action$.pipe(filter(negate(isRequestedAction)));
     return merge(
@@ -49,7 +49,7 @@ function decorateTranscriptAttributeAnalysisObserve(observe) {
           ).pipe(takeUntil(action$.pipe(filter(action => action.type === 'attribute-reporter/cancelled'))))
         )
       ),
-      observe(rest$, services)
+      observe(rest$, state$, services)
     )
   }
 }
