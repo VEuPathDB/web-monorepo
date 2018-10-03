@@ -25,7 +25,7 @@ class SiteMapController extends PageController<Props> {
   }
 
   getTitle() {
-    return "Data Finder";
+    return 'Data Finder';
   }
 
   renderView() {

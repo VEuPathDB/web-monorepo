@@ -1,4 +1,3 @@
-import { BaseState } from '../../Core/State/Stores/WdkStore';
 import {
   LoadingAction,
   InitializeAction,
@@ -15,12 +14,12 @@ type Action = LoadingAction
             | ExpansionAction
             | SearchAction;
 
-export type State = Partial<BaseState & {
+export type State = {
   tree?: SiteMapOntology,
   isLoading: boolean,
   expandedList: string[],
   searchText: string
-}>;
+};
 
 const initialState = {
   tree: undefined,
@@ -29,7 +28,7 @@ const initialState = {
   searchText: ''
 };
 
-export function reduce(state: State | undefined = initialState, action: Action): State {
+export function reduce(state: State = initialState, action: Action): State {
   switch(action.type) {
     case 'sitemap/loading':
       return setSiteMapLoading(state, true);

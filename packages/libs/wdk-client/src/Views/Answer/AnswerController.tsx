@@ -1,5 +1,6 @@
 import * as React from 'react';
-import AbstractPageController from '../../Core/Controllers/AbstractPageController';
+import PageController from '../../Core/Controllers/PageController';
+import { RootState } from '../../Core/State/Types';
 import { wrappable } from '../../Utils/ComponentUtils';
 import {isEqual} from 'lodash';
 import {
@@ -12,8 +13,11 @@ import {
 } from './AnswerViewActionCreators';
 import Answer from './Answer';
 import Loading from '../../Components/Loading/Loading';
-import { State, default as AnswerViewStore } from "./AnswerViewStore";
+import { State } from './AnswerViewStoreModule';
 import NotFound from '../NotFound/NotFound';
+import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
+import { AttributeField, TableField } from '../../Utils/WdkModel';
 
 const ActionCreators = {
   loadAnswer,
@@ -26,20 +30,16 @@ const ActionCreators = {
 // FIXME Remove this when Answer is converted to Typescript
 const CastAnswer: any = Answer;
 
-class AnswerController extends AbstractPageController<State, AnswerViewStore, typeof ActionCreators> {
+type StateProps = State;
+type DispatchProps = typeof ActionCreators;
+type OwnProps = RouteComponentProps<any>;
 
-  getStateFromStore() {
-    return this.store.getState();
-  }
+type Props = {
+  stateProps: StateProps,
+  dispatchProps: DispatchProps
+};
 
-  getStoreClass() {
-    return AnswerViewStore;
-  }
-
-  getActionCreators() {
-    return ActionCreators
-  }
-
+class AnswerController extends PageController<Props> {
   loadData() {
     // incoming values from the router
     let { question, recordClass: recordClassName } = this.props.match.params;
@@ -48,10 +48,15 @@ class AnswerController extends AbstractPageController<State, AnswerViewStore, ty
 
     // decide whether new answer needs to be loaded (may not need to be loaded
     //   if user goes someplace else and hits 'back' to here- store already correct)
+    const {
+      stateProps,
+      dispatchProps
+    } = this.props;
+
     if (
-      this.state.question == null ||
-      this.state.question.urlSegment !== questionName ||
-      !isEqual(this.state.parameters, parameters)
+      stateProps.question == null ||
+      stateProps.question.urlSegment !== questionName ||
+      !isEqual(stateProps.parameters, parameters)
     ) {
 
       // (re)initialize the page
@@ -59,39 +64,64 @@ class AnswerController extends AbstractPageController<State, AnswerViewStore, ty
       let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
       let displayInfo = { pagination, sorting, customName };
       let opts = { displayInfo, parameters };
-      this.eventHandlers.loadAnswer(questionName, recordClassName, opts);
+      dispatchProps.loadAnswer(questionName, recordClassName, opts);
     }
   }
 
   isRenderDataLoaded() {
-    return this.state.records != null;
+    const {
+      stateProps: { records }
+    } = this.props;
+
+    return records != null;
   }
 
   isRenderDataLoadError() {
+    const {
+      stateProps: { error }
+    } = this.props;
+
     return (
-      this.state.error != null &&
-      ( 'status' in this.state.error
-        ? this.state.error.status !== 404
+      error != null &&
+      ( 'status' in error
+        ? error.status !== 404
         : true )
     )
   }
 
   isRenderDataNotFound() {
+    const {
+      stateProps: { error }
+    } = this.props;
+
     return (
-      this.state.error != null &&
-      'status' in this.state.error &&
-      this.state.error.status === 404
+      error != null &&
+      'status' in error &&
+      error.status === 404
     )
   }
 
   getTitle() {
-    return this.state.error ? 'Error loading results'
-         : this.state.records ? this.state.displayInfo.customName || this.state.question.displayName
+    const {
+      stateProps: { 
+        displayInfo = { customName: '' }, 
+        error, 
+        question = { displayName: '' }, 
+        records 
+      }
+    } = this.props;
+
+    return error ? 'Error loading results'
+         : records ? displayInfo.customName || question.displayName
          : 'Loading...';
   }
 
   renderLoading() {
-    return this.state.isLoading && <Loading/>;
+    const {
+      isLoading
+    } = this.props.stateProps;
+
+    return isLoading && <Loading/>;
   }
 
   renderDataNotFound() {
@@ -113,8 +143,18 @@ class AnswerController extends AbstractPageController<State, AnswerViewStore, ty
       filterAttributes = [],
       filterTables = [],
       question,
-      recordClass
-    } = this.state;
+      recordClass = { 
+        attributes: [] as AttributeField[],
+        tables: [] as TableField[]
+      }
+    } = this.props.stateProps;
+
+    const {
+      sort,
+      moveColumn,
+      changeAttributes,
+      updateFilter
+    } = this.props.dispatchProps;
 
     if (filterAttributes.length === 0 && filterTables.length === 0) {
       filterAttributes = recordClass.attributes.map(a => a.name);
@@ -133,10 +173,10 @@ class AnswerController extends AbstractPageController<State, AnswerViewStore, ty
         filterAttributes={filterAttributes}
         filterTables={filterTables}
         format="table"
-        onSort={this.eventHandlers.sort}
-        onMoveColumn={this.eventHandlers.moveColumn}
-        onChangeColumns={this.eventHandlers.changeAttributes}
-        onFilter={this.eventHandlers.updateFilter}
+        onSort={sort}
+        onMoveColumn={moveColumn}
+        onChangeColumns={changeAttributes}
+        onFilter={updateFilter}
       />
     );
   }
@@ -152,4 +192,18 @@ class AnswerController extends AbstractPageController<State, AnswerViewStore, ty
 
 }
 
-export default wrappable(AnswerController);
+const mapStateToProps = (state: RootState) => state.answerView;
+
+const mapDispatchToProps = ActionCreators;
+
+const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
+  stateProps,
+  dispatchProps,
+  ...ownProps
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(wrappable(AnswerController));
