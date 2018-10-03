@@ -3,8 +3,8 @@ package org.clinepi.service.accessRequest;
 import java.util.Map;
 
 public class AccessRequestParams {
-  private final long userId;
-  private final String datasetPresenterId;
+  private final int userId;
+  private final String datasetId;
 
   private final String datasetName;
   private final String restrictionLevel;
@@ -15,8 +15,8 @@ public class AccessRequestParams {
   private final Map<String, String> formFields;
   
   public AccessRequestParams(
-      long userId,
-      String datasetPresenterId,
+      int userId,
+      String datasetId,
       String datasetName,
       String restrictionLevel,
       String providerEmail,
@@ -24,7 +24,7 @@ public class AccessRequestParams {
       int approvalType,
       Map<String, String> formFields) {
     this.userId = userId;
-    this.datasetPresenterId = datasetPresenterId;
+    this.datasetId = datasetId;
 
     this.datasetName = datasetName;
     this.restrictionLevel = restrictionLevel;
@@ -35,12 +35,12 @@ public class AccessRequestParams {
     this.formFields = formFields;
   }
 
-  public long getUserId() {
+  public int getUserId() {
     return userId;
   }
 
-  public String getDatasetPresenterId() {
-    return datasetPresenterId;
+  public String getDatasetId() {
+    return datasetId;
   }
 
   public String getDatasetName() {
@@ -61,6 +61,10 @@ public class AccessRequestParams {
 
   public int getApprovalType() {
     return approvalType;
+  }
+  
+  public boolean approvalNeeded() {
+    return approvalType != 0;
   }
 
   public Map<String, String> getFormFields() {
