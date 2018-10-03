@@ -20,7 +20,7 @@ import { Action, combineObserve, isOneOf, ObserveServices } from '../../Utils/Ac
 import { Parameter, ParameterGroup, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
 
 import { observeParam, reduce as paramReducer } from './Params';
-import { ExpandedListSet, SearchTermSet } from './Params/EnumParam/TreeBoxEnumParam';
+import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
 import {
   ActiveFieldSetAction,
   FieldStateUpdatedAction,

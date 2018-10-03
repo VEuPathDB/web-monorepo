@@ -3,19 +3,27 @@ import './TreeBoxParam.scss';
 import { escapeRegExp, intersection } from 'lodash';
 import React from 'react';
 
-import CheckboxTree from '../../../../Components/CheckboxTree/CheckboxTree';
-import Icon from '../../../../Components/Icon/IconAlt';
-import { makeActionCreator } from '../../../../Utils/ActionCreatorUtils';
-import { safeHtml } from '../../../../Utils/ComponentUtils';
-import { Seq } from '../../../../Utils/IterableUtils';
-import { matchAction } from '../../../../Utils/ReducerUtils';
-import { filterNodes, getLeaves, isBranch } from '../../../../Utils/TreeUtils';
-import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../../Utils/WdkModel';
-import { ParamInitAction } from '../../QuestionActionCreators';
+import CheckboxTree from '../../../Components/CheckboxTree/CheckboxTree';
+import Icon from '../../../Components/Icon/IconAlt';
+import { makeActionCreator } from '../../../Utils/ActionCreatorUtils';
+import { safeHtml } from '../../../Utils/ComponentUtils';
+import { Seq } from '../../../Utils/IterableUtils';
+import { matchAction } from '../../../Utils/ReducerUtils';
+import { filterNodes, getLeaves, isBranch } from '../../../Utils/TreeUtils';
+import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../Utils/WdkModel';
+import { ParamInitAction } from '../QuestionActionCreators';
 
-import enumParamModule from '../EnumParam';
-import SelectionInfo from '../EnumParam/SelectionInfo';
-import { Context, Props } from '../Utils';
+import SelectionInfo from './SelectionInfo';
+import { Context, Props, createParamModule } from './Utils';
+import { isEnumParam } from './EnumParamUtils';
+
+function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
+  return isEnumParam(parameter) && parameter.displayType === 'treeBox';
+}
+
+function isParamValueValid() {
+  return true;
+}
 
 // Types
 // -----
@@ -45,13 +53,6 @@ export const SearchTermSet = makeActionCreator<
 
 // Utils
 // -----
-
-export function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
-  return (
-    enumParamModule.isType(parameter) &&
-    parameter.displayType === 'treeBox'
-  );
-}
 
 function searchPredicate(node: TreeBoxVocabNode, searchTerms: string[]) {
   return searchTerms
@@ -125,7 +126,7 @@ export const reduce = matchAction({} as State,
 // ----
 
 
-export function TreeBoxEnumParam(props: TreeBoxProps) {
+export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   const tree = props.parameter.vocabulary;
   const selectedNodes = props.value.split(/\s*,\s*/);
   const selectedLeaves = removeBranches(tree, selectedNodes);
@@ -184,3 +185,10 @@ function NoResults(props: NoResultsProps) {
     </div>
   )
 }
+
+export default createParamModule({
+  isType,
+  isParamValueValid,
+  reduce,
+  Component: TreeBoxEnumParamComponent
+});

@@ -17,7 +17,7 @@ export type Context<T extends Parameter> = {
   paramValues: ParameterValues;
 }
 
-export type Props<T extends Parameter, S> = {
+export type Props<T extends Parameter, S = void> = {
   ctx: Context<T>;
   parameter: T;
   value: string;
@@ -35,7 +35,7 @@ type ParamModuleSpec<T extends Parameter, S> = {
   observeParam?: Epic<Action, Action, State>;
 }
 
-export type ParamModule<T extends Parameter, S> = {
+export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isType: (parameter: Parameter) => parameter is T;
   /**
    * Determine if the param value is valid. This can be used by form container

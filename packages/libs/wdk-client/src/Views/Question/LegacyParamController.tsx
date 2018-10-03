@@ -14,8 +14,8 @@ import { EnumParam, Parameter } from '../../Utils/WdkModel';
 import { QuestionState } from './QuestionStoreModule';
 
 import * as ParamModules from './Params';
-import enumParamModule from './Params/EnumParam';
-import { isType as isTreeBoxParam } from './Params/EnumParam/TreeBoxEnumParam';
+import { isEnumParam } from './Params/EnumParamUtils';
+import TreeBoxEnumParam from './Params/TreeBoxEnumParam';
 import { Context } from './Params/Utils';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -190,7 +190,7 @@ class LegacyParamController extends ViewController<Props> {
       )
     }
 
-    const ParameterInput = enumParamModule.isType(parameter) ? EnumParameterInput : SimpleParamterInput;
+    const ParameterInput = isEnumParam(parameter) ? EnumParameterInput : SimpleParamterInput;
 
     return (
       <div>
@@ -272,7 +272,7 @@ type EnumParameterInputProps = {
 
 class EnumParameterInput extends React.Component<EnumParameterInputProps> {
   render() {
-    const options = isTreeBoxParam(this.props.parameter)
+    const options = TreeBoxEnumParam.isType(this.props.parameter)
       ? Seq.from(preorder(this.props.parameter.vocabulary, node => node.children))
         .filter(node => node.children.length == 0)
         .map(node => node.data.term)

@@ -8,7 +8,9 @@
 import React from 'react';
 import { wrappable } from '../../Utils/ComponentUtils';
 
-type Props = React.InputHTMLAttributes<HTMLInputElement> & {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type InputWithoutOnChange = Pick<InputProps, Exclude<keyof InputProps, 'onChange'>>;
+type Props = InputWithoutOnChange & {
   onChange: (value: string) => void;
 }
 

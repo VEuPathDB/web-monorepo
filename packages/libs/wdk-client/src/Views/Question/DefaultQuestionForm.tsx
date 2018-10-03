@@ -1,16 +1,21 @@
 import * as React from 'react';
 
 import { DispatchAction } from '../../Core/CommonTypes';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import { Parameter, ParameterGroup } from '../../Utils/WdkModel';
-import ParameterControl from './ParameterControl';
+import ParameterComponent from './ParameterComponent';
 import { QuestionState } from './QuestionStoreModule';
 import { GroupVisibilityChangedAction, ParamValueUpdatedAction } from './QuestionActionCreators';
+import { HelpIcon, IconAlt } from '../../Components';
 
 type EventHandlers = {
   setGroupVisibility: typeof GroupVisibilityChangedAction.create,
   updateParamValue: typeof ParamValueUpdatedAction.create
 }
+import './DefaultQuestionForm.scss';
+
+const cx = makeClassNameHelper('wdk-QuestionForm');
 
 type Props = {
   state: QuestionState;
@@ -21,7 +26,7 @@ type Props = {
 export default function DefaultQuestionForm(props: Props) {
   const { state, eventHandlers } = props
   return (
-    <div className="wdk-QuestionForm">
+    <div className={cx()}>
     <h1>{state.question.displayName}</h1>
     {state.question.groups
       .filter(group => group.displayType !== 'hidden')
@@ -70,26 +75,10 @@ function Group(props: GroupProps) {
 function ShowHideGroup(props: GroupProps) {
   const { questionName, group, uiState: { isVisible }, onVisibilityChange } = props;
   return (
-    <div
-      style={{
-        border: '1px solid #eaeaea',
-        backgroundColor: '#f0f0f0',
-        marginTop: '.5em'
-      }}
-    >
+    <div className={cx('ShowHideGroup')} >
       <button
         type="button"
-        style={{
-          padding: '.5rem 1.5rem',
-          cursor: 'pointer',
-          fontSize: '1.2em',
-          fontWeight: 'bold',
-          display: 'block',
-          textAlign: 'left',
-          background: 'transparent',
-          borderColor: 'transparent',
-          width: '100%'
-        }}
+        className={cx('ShowHideGroupToggle')}
         onClick={() => {
           onVisibilityChange({
             questionName,
@@ -98,13 +87,9 @@ function ShowHideGroup(props: GroupProps) {
           })
         }}
       >
-        <i className={'fa fa-caret-' + (isVisible ? 'down' : 'right')}/> {group.displayName}
+        <IconAlt fa={`caret-${isVisible ? 'down' : 'right'}`}/> {group.displayName}
       </button>
-      <div
-        style={{
-          padding: '0 1.5rem'
-        }}
-      >
+      <div className={cx('ShowHideGroupContent')} >
         {isVisible ? props.children : null}
       </div>
     </div>
@@ -124,32 +109,47 @@ type ParameterListProps = {
 function ParameterList(props: ParameterListProps) {
   const { dispatch, parameters, parameterMap, paramValues, paramUIState, questionName, onParamValueChange } = props;
   return (
-    <div style={{ paddingBottom: '.5rem' }}>
+    <div className={cx('ParameterList')}>
       {Seq.from(parameters)
         .map(paramName => parameterMap[paramName])
         .map(parameter => (
-          <ParameterControl
-            key={parameter.name}
-            ctx={{
-              questionName,
-              parameter,
-              paramValues
-            }}
-            parameter={parameter}
-            value={paramValues[parameter.name]}
-            uiState={paramUIState[parameter.name]}
-            onParamValueChange={paramValue => {
-              onParamValueChange({
-                questionName,
-                parameter,
-                dependentParameters: getDependentParameters(parameterMap, parameter).toArray(),
-                paramValues,
-                paramValue
-              })
-            }}
-            dispatch={dispatch}
-          />
+          <React.Fragment key={parameter.name}>
+            <ParameterHeading parameter={parameter}/>
+            <div className={cx('ParameterControl')}>
+              <ParameterComponent
+                ctx={{
+                  questionName,
+                  parameter,
+                  paramValues
+                }}
+                parameter={parameter}
+                value={paramValues[parameter.name]}
+                uiState={paramUIState[parameter.name]}
+                onParamValueChange={paramValue => {
+                  onParamValueChange({
+                    questionName,
+                    parameter,
+                    dependentParameters: getDependentParameters(parameterMap, parameter).toArray(),
+                    paramValues,
+                    paramValue
+                  })
+                }}
+                dispatch={dispatch}
+              />
+            </div>
+          </React.Fragment>
         ))}
+    </div>
+  )
+}
+
+function ParameterHeading(props: { parameter: Parameter}) {
+  const { parameter } = props;
+  return (
+    <div className={cx('ParameterHeading')} >
+      <h2>
+        <HelpIcon>{parameter.help}</HelpIcon> {parameter.displayName}
+      </h2>
     </div>
   )
 }

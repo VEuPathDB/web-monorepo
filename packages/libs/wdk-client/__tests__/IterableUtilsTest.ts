@@ -19,7 +19,7 @@ test('Seq', () => {
   let result = i.Seq.from(nat())
     .map(n => (mapCallCount++, n * n))
     .takeWhile(n => n < 30)
-    .reduce((sum, n) => sum + n)
+    .reduce((sum, n) => sum + n, 0)
 
   expect(mapCallCount).toBe(6);
   expect(result).toBe(55);
@@ -143,8 +143,9 @@ test('every', function() {
 
 test('reduce', function() {
   expect(i.reduce((acc, n) => acc + n, 5, [1,2,3,4,5,6,7,8,9,10])).toBe(60);
+});
 
-  expect(i.reduce((acc: number, n: number) => acc + n, [1,2,3,4,5,6,7,8,9,10])).toBe(55);
-
-
+test('join', function() {
+  expect(i.join(',', [])).toBe('');
+  expect(i.join(',', [1,2,3])).toBe('1,2,3');
 });

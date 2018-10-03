@@ -187,11 +187,8 @@ export class Seq<T> {
     return includes(item, this);
   }
 
-  reduce(fn: Reducer<T, T>): T;
-  reduce<U>(fn: Reducer<T, U>, value: U): U;
-  reduce(fn: any, value?: any) {
-    return value === undefined ? reduce(fn, this)
-    : reduce(fn, value, this);
+  reduce<U>(fn: Reducer<T, U>, value: U): U {
+    return reduce(fn, value, this);
   }
 
   join(separator: string) {
@@ -427,20 +424,8 @@ export function some<T>(test: Predicate<T>, iterable: Iterable<T>): boolean {
 /**
  * Reduce collection to a single value.
  */
-export function reduce<T, U>(fn: Reducer<T, U>, iterable: Iterable<T>): U;
-export function reduce<T, U>(fn: Reducer<T, U>, value: U, iterable: Iterable<T>): U;
-export function reduce<T, U>(fn: any, value: any, iterable?: any) {
-  let result: U|T;
-  if (arguments.length === 2) {
-    // No seed value, so we get the first value from iterable as the initial
-    // value and get the rest of the iterable for the rest of the reduce
-    // operation.
-    iterable = (<Iterable<T>>value)[Symbol.iterator]();
-    result = iterable.next().value;
-  }
-  else {
-    result = <U>value;
-  }
+export function reduce<T, U>(fn: Reducer<T, U>, seedValue: U, iterable: Iterable<T>): U {
+  let result = seedValue
   for (let iter = iterable[Symbol.iterator]();;) {
     let { done, value } = iter.next();
     if (done) break;
@@ -450,6 +435,6 @@ export function reduce<T, U>(fn: any, value: any, iterable?: any) {
 }
 
 export function join<T>(separator: string, iterable: Iterable<T>): string {
-  return reduce((a, b) => String(a) + separator + String(b), iterable);
+  return Array.from(iterable).join(separator);
 }
 

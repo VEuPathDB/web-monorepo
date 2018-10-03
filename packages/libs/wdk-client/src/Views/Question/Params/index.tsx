@@ -1,26 +1,38 @@
 import * as React from 'react';
+import { combineEpics, Epic } from 'redux-observable';
+import { empty } from 'rxjs';
 
-import { ActionObserver, combineObserve, Action } from '../../../Utils/ActionCreatorUtils';
+import { Action } from '../../../Utils/ActionCreatorUtils';
 import { Parameter } from '../../../Utils/WdkModel';
 
-import EnumParamModule from './EnumParam';
+import { Context, isPropsType, ParamModule, Props } from './Utils';
+
+import CheckboxEnumParamModule from './CheckboxEnumParam';
+import DateParamModule from './DateParam';
+import DateRangeParamModule from './DateRangeParam';
 import FilterParamNewModule from './FilterParamNew';
 import NumberParamModule from './NumberParam';
 import NumberRangeParamModule from './NumberRangeParam';
-import { Context, isPropsType, ParamModule, Props } from './Utils';
-import { empty } from 'rxjs';
-import { combineEpics, Epic } from 'redux-observable';
+import SelectEnumParamModule from './SelectEnumParam';
+import StringParamModule from './StringParam';
+import TreeBoxEnumParamModule from './TreeBoxEnumParam';
+import TypeAheadEnumParamModule from './TypeAheadEnumParam';
 import { State } from '../QuestionStoreModule';
 
 // Param modules
 // -------------
-const paramModules = [
-  EnumParamModule,
-  FilterParamNewModule,
-  NumberParamModule,
-  NumberRangeParamModule
-] as ParamModule<Parameter, any>[];
-
+const paramModules: ParamModule[] = [
+  CheckboxEnumParamModule as ParamModule,
+  DateParamModule as ParamModule,
+  DateRangeParamModule as ParamModule,
+  FilterParamNewModule as ParamModule,
+  NumberParamModule as ParamModule,
+  NumberRangeParamModule as ParamModule,
+  SelectEnumParamModule as ParamModule,
+  StringParamModule as ParamModule,
+  TreeBoxEnumParamModule as ParamModule,
+  TypeAheadEnumParamModule as ParamModule,
+];
 
 // API used by Question{ActionCreators,Controller,Store}
 // -----------------------------------------------------

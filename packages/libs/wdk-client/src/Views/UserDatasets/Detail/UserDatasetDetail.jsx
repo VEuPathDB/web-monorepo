@@ -95,9 +95,9 @@ class UserDatasetDetail extends React.Component {
   }
 
   getAttributes () {
-    const { userDataset, quotaSize } = this.props;
+    const { userDataset, quotaSize, questionMap } = this.props;
     const { onMetaSave } = this;
-    const { id, type, meta, projects, size, percentQuotaUsed, owner, created, sharedWith } = userDataset;
+    const { id, type, meta, projects, size, percentQuotaUsed, owner, created, sharedWith, questions, isInstalled } = userDataset;
     const { display, name, version } = type;
     const isOwner = this.isMyDataset();
 
@@ -179,6 +179,22 @@ class UserDatasetDetail extends React.Component {
                 {sharedWith.map(share => (
                   <li key={share.email}>{share.userDisplayName} <span className="faded">&lt;{share.email}&gt;</span> {moment(share.time).fromNow()}</li>
                 ))}
+              </ul>
+            )
+          }
+      ),
+      (
+        !questions || !questions.length || !isInstalled
+          ? null
+          : {
+            attribute: 'Available Searches',
+            value: (
+              <ul>
+                {questions.map(question => { 
+                     var questionFullName = "/a/showQuestion.do?questionFullName="+ question;
+                     var questionDisplayName = questionMap[question].displayName;
+                     return (<li key={question}><a href={questionFullName}>{questionDisplayName}</a></li>);
+                })}
               </ul>
             )
           }
@@ -441,7 +457,7 @@ class UserDatasetDetail extends React.Component {
     );
     const isOwner = this.isMyDataset();
     const { sharingModalOpen } = this.state;
-    console.info('UDDC gettin props', this.props);
+//    console.info('UDDC gettin props', this.props);
     return (
       <div className={classify()}>
         {this.getPageSections().map((Section, key) => <Section key={key}/>)}

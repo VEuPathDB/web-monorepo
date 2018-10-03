@@ -44,6 +44,7 @@ export interface ParameterBase extends ModelEntity {
 
 export interface StringParam extends ParameterBase {
   type: 'StringParam';
+  length: number;
 }
 
 export interface AnswerParam extends ParameterBase {
@@ -85,6 +86,22 @@ type VocabTerm = string;
 type VocabDisplay = string;
 type VocabParent = string;
 
+export interface SelectEnumParam extends EnumParamBase {
+  displayType: 'select';
+  vocabulary: [ VocabTerm, VocabDisplay, null ][];
+}
+
+export interface CheckboxEnumParam extends EnumParamBase {
+  displayType: 'checkBox';
+  vocabulary: [ VocabTerm, VocabDisplay, null ][];
+}
+
+export interface TypeAheadEnumParam extends EnumParamBase {
+  displayType: 'typeAhead';
+  vocabulary: [ VocabTerm, VocabDisplay, null ][];
+}
+
+// FIXME Remove
 export interface ListEnumParam extends EnumParamBase {
   displayType: 'select' | 'checkBox' | 'typeAhead';
   vocabulary: [ VocabTerm, VocabDisplay, VocabParent | null ][];
@@ -103,7 +120,7 @@ export interface TreeBoxEnumParam extends EnumParamBase {
   vocabulary: TreeBoxVocabNode;
 }
 
-export type EnumParam = ListEnumParam | TreeBoxEnumParam;
+export type EnumParam = SelectEnumParam | CheckboxEnumParam | TypeAheadEnumParam | TreeBoxEnumParam;
 
 export interface NumberParam extends ParameterBase {
   type: 'NumberParam';

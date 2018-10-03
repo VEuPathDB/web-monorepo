@@ -7,10 +7,9 @@ const baseClassName = "wdk-RadioList";
 
 type Props = {
   /** Value to use for "name" attribute of radio form input elements **/
-  name: string;
+  name?: string;
   /** Array of items to display in the list **/
   items: Array<{
-    name: string;
     display: string;
     value: string;
     description?: string;
