@@ -6,6 +6,7 @@
 <c:set var="wdkStep" value="${requestScope.wdkStep}" />
 <c:set var="sequences" value="${requestScope.isolates}" />
 <c:set var="recordClass" value="${wdkStep.question.recordClass}" />
+<c:set var="googleMapsApiKey" value="${applicationScope.wdkModel.model.properties.GOOGLE_MAPS_API_KEY}" />
 
 
 <div id="map_canvas" style="width: 1024px; height: 380px"></div>
@@ -57,4 +58,4 @@
 </table>
 
 <imp:script src="js/google_map.js"/>
-<script async defer src="http://maps.googleapis.com/maps/api/js?callback=initialize"></script>
+<script async defer src="http://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&callback=initialize"></script>
