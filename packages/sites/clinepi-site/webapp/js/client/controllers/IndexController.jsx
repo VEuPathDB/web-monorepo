@@ -6,12 +6,12 @@ import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionC
 export default IndexController => {
   const enhance = connect(
     state => {
-      const { globalData, studies } = state;
+      const { globalData, studies, newsSidebar } = state;
       const { siteConfig } = globalData;
       const { displayName, webAppUrl } = siteConfig;
       const siteData = getStaticSiteData(state);
 
-      return { displayName, webAppUrl, siteData, isLoading: studies.loading, hasError: !!studies.error };
+      return { displayName, webAppUrl, siteData, isLoading: studies.loading, hasError: !!studies.error, newsSidebar };
     },
     { attemptAction }
   );

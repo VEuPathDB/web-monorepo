@@ -5,7 +5,7 @@ import homeContent from 'Client/data/homeContent';
 import { Showcase } from 'Client/App/Showcase';
 import { News } from 'Client/App/NewsSidebar';
 
-const HomePage = ({ news, webAppUrl, projectId, siteData, attemptAction }) =>
+const HomePage = ({ newsSidebar, webAppUrl, projectId, siteData, attemptAction }) =>
   <div className="HomePage">
     <div className="Showcase-Section">
       {homeContent(siteData).map((section, idx) => (
@@ -19,7 +19,7 @@ const HomePage = ({ news, webAppUrl, projectId, siteData, attemptAction }) =>
       ))}
     </div>
     <div className="News-Section">
-      <News webAppUrl={webAppUrl} news={news} />
+      <News webAppUrl={webAppUrl} {...newsSidebar} />
     </div>
   </div>
 
