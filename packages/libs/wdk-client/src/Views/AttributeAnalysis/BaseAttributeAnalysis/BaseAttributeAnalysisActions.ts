@@ -1,7 +1,10 @@
 import { from, Observable } from 'rxjs';
 import { filter, mergeMap, takeUntil } from 'rxjs/operators';
 
-import { Action, ObserveServices, makeActionCreator } from '../../../Utils/ActionCreatorUtils';
+import { State } from './BaseAttributeAnalysisState';
+
+import { EpicDependencies } from '../../../Core/Store';
+import { Action, makeActionCreator } from '../../../Utils/ActionCreatorUtils';
 import { PluginContext } from '../../../Utils/ClientPlugin';
 import { Reporter } from '../../../Utils/WdkModel';
 import { ServiceError } from '../../../Utils/WdkService';
@@ -46,7 +49,7 @@ export const TableSearched =
 export const TabSelected =
   makeActionCreator<string, 'attribute-reporter/tab-selected'>('attribute-reporter/tab-selected');
 
-export function observeReportRequests(action$: Observable<Action>, { wdkService }: ObserveServices): Observable<Action> {
+export function observeReportRequests<T extends string>(action$: Observable<Action>, state$: Observable<State<T>>, { wdkService }: EpicDependencies): Observable<Action> {
   return action$.pipe(
     filter(AttributeReportRequested.test),
     mergeMap(({ payload: { reporterName, stepId }}) =>

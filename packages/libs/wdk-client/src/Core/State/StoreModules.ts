@@ -1,4 +1,5 @@
 import * as answerView from '../../Views/Answer/AnswerViewStoreModule';
+import * as attributeAnalysis from '../../Views/AttributeAnalysis/AttributeAnalysisStoreModule';
 import * as downloadForm from '../../Views/ReporterForm/DownloadFormStoreModule';
 import * as favorites from '../../Views/Favorites/FavoritesListStoreModule';
 import * as globalData from './StoreModules/GlobalData';
@@ -14,6 +15,7 @@ import * as userRegistration from '../../Views/User/Profile/UserRegistrationModu
 
 export default {
   answerView,
+  attributeAnalysis,
   downloadForm,
   favorites,
   globalData,

@@ -1,48 +1,56 @@
 import React from 'react';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
-import AbstractViewController from '../../Core/Controllers/AbstractViewController';
+import { LocatePlugin } from '../../Core/CommonTypes';
+import ViewController from '../../Core/Controllers/ViewController';
+import { GlobalData } from '../../Core/State/StoreModules/GlobalData';
+import { RootState } from '../../Core/State/Types';
 import { Action } from '../../Utils/ActionCreatorUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 
 import AttributeAnalysisButton from './AttributeAnalysisButton';
-import { AttributeAnalysisStore, State } from './AttributeAnalysisStore';
+import { State as AttributeAnalysis } from './AttributeAnalysisStoreModule';
 import { ScopedAnalysisAction } from './BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { Question, RecordClass } from '../../Utils/WdkModel';
 
-type ViewProps = {
+type StateProps = {
+  globalData: GlobalData,
+} & AttributeAnalysis;
+
+type DispatchProps = {
+  dispatch: Dispatch
+};
+
+type OwnProps = {
+  locatePlugin: LocatePlugin;
   attributeName: string;
   questionName: string;
   recordClassName: string;
   reporterName: string;
   stepId: number;
-}
+};
 
-class AttributeAnalysisButtonController extends AbstractViewController<
-  State,
-  AttributeAnalysisStore,
-  {},
-  ViewProps
-> {
+type Props = {
+  stateProps: StateProps;
+  dispatchProps: DispatchProps;
+} & OwnProps;
 
-  getStoreClass() {
-    return AttributeAnalysisStore;
-  }
 
-  getStateFromStore() {
-    return this.store.getState();
-  }
+class AttributeAnalysisButtonController extends ViewController<Props> {
 
   plugin = this.props.locatePlugin('attributeAnalysis');
 
   renderView() {
     const { questionName, recordClassName, reporterName, stepId } = this.props;
-    const { globalData, analyses } = this.state;
+    const { globalData, analyses } = this.props.stateProps;
 
-    const questionAttributes = Seq.from(globalData.questions)
+    const questionAttributes = Seq.from(globalData.questions as Question[])
       .filter(question => question.name === questionName)
       .flatMap(question => question.dynamicAttributes)
 
-    const recordClassAttributes = Seq.from(globalData.recordClasses)
+    const recordClassAttributes = Seq.from(globalData.recordClasses as RecordClass[])
       .filter(recordClass => recordClass.name === recordClassName)
       .flatMap(recordClass => recordClass.attributes);
 
@@ -62,7 +70,9 @@ class AttributeAnalysisButtonController extends AbstractViewController<
     }
 
     const dispatch = (action: Action): any => {
-      this.dispatchAction(ScopedAnalysisAction.create({ action, context, reporter, stepId }));
+      this.props.dispatchProps.dispatch(
+        ScopedAnalysisAction.create({ action, context, reporter, stepId })
+      );
     }
 
     return (
@@ -79,4 +89,21 @@ class AttributeAnalysisButtonController extends AbstractViewController<
 
 }
 
-export default wrappable(AttributeAnalysisButtonController);
+const mapStateToProps = (state: RootState) => ({
+  analyses: state.attributeAnalysis.analyses,
+  globalData: state.globalData
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({ dispatch });
+
+const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
+  stateProps,
+  dispatchProps,
+  ...ownProps
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(wrappable(AttributeAnalysisButtonController));
