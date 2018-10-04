@@ -51,13 +51,6 @@ class LegacyParamController extends ViewController<Props> {
 
   paramModules = ParamModules;
 
-  getDependentParams(parameter: Parameter): Seq<Parameter> {
-    return Seq.from(parameter.dependentParams)
-      .map(name => this.props.mapped.question.parametersByName[name])
-      .flatMap(dependentParam =>
-        Seq.of(dependentParam).concat(this.getDependentParams(dependentParam)));
-  }
-
   componentWillUnmount() {
     const { questionName } = this.props.own;
     this.props.mapped.dispatch(UnloadQuestionAction.create({ questionName }));
@@ -89,11 +82,9 @@ class LegacyParamController extends ViewController<Props> {
       changedParams.forEach(([name, paramValue]) => {
         let parameter = this.props.mapped.question.parameters.find(p => p.name === name);
         if (parameter) {
-          const dependentParameters = this.getDependentParams(parameter).toArray();
           this.props.mapped.eventHandlers.updateParamValue({
             ...this.getContext(parameter),
             paramValue,
-            dependentParameters
           });
         }
       });
@@ -201,11 +192,9 @@ class LegacyParamController extends ViewController<Props> {
           value={this.props.mapped.paramValues[parameter.name]}
           uiState={this.props.mapped.paramUIState[parameter.name]}
           onParamValueChange={(paramValue: string) => {
-            const dependentParameters = this.getDependentParams(parameter).toArray();
             this.props.mapped.eventHandlers.updateParamValue({
               ...ctx,
               paramValue,
-              dependentParameters
             });
           }}
         />

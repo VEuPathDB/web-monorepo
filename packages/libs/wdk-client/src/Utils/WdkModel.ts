@@ -150,6 +150,8 @@ export interface DateRangeParam extends ParameterBase {
 
 export interface DatasetParam extends ParameterBase {
   type: 'DatasetParam';
+  defaultIdList?: string;
+  parsers: { name: string; displayName: string; description: string; }[]
 }
 
 export type Parameter = AnswerParam

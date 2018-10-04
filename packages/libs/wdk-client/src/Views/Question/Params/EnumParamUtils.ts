@@ -8,7 +8,7 @@ export function countInBounds(count: number, lower: number, upper: number) {
        : true;
 }
 
-export function valueToArray(value: string) {
+export function valueToArray(value = '') {
   if (value.trim().length === 0) return [];
   return value.split(/\s*,\s*/g);
 }

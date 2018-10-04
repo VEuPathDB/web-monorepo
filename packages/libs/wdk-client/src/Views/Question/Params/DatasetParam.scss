@@ -1,0 +1,37 @@
+.wdk-DatasetParam {
+
+  @mixin disabled($modifer: 'disabled') {
+    &__#{$modifer} {
+      opacity: .3;
+      pointer-events: none;
+    }
+  }
+
+  &Section {
+    @include disabled;
+    display: flex;
+    margin: 1em 0;
+    max-width: 950px;
+  }
+
+  &SectionList {
+    list-style: none;
+  }
+
+  &FileParserList {
+    list-style: none;
+    display: flex;
+    margin: .4rem 0;
+  }
+
+  &Label {
+    flex: 1;
+    margin-right: .1rem;
+  }
+
+  &Control {
+    @include disabled;
+    flex: 5;
+  }
+
+}

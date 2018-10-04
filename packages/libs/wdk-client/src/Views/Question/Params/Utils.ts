@@ -1,10 +1,11 @@
 import { DispatchAction } from '../../../Core/CommonTypes';
 import React from 'react';
-import { EMPTY, Observable } from 'rxjs';
-import { Action, ActionObserver, ObserveServices } from '../../../Utils/ActionCreatorUtils';
+import { EMPTY } from 'rxjs';
+import { Action } from '../../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterValues } from '../../../Utils/WdkModel';
 import { Epic } from 'redux-observable';
 import { State } from '../QuestionStoreModule';
+import { EpicDependencies } from '../../../Core/Store';
 
 
 // Types
@@ -27,14 +28,6 @@ export type Props<T extends Parameter, S = void> = {
 
 }
 
-type ParamModuleSpec<T extends Parameter, S> = {
-  isType: (parameter: Parameter) => parameter is T;
-  isParamValueValid: (context: Context<T>, state: S) => boolean;
-  reduce?: (state: S, action: any) => S;
-  Component: React.ComponentType<Props<T, S>>;
-  observeParam?: Epic<Action, Action, State>;
-}
-
 export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isType: (parameter: Parameter) => parameter is T;
   /**
@@ -45,14 +38,22 @@ export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isParamValueValid: (context: Context<T>, state: S) => boolean;
   reduce: (state: S, action: Action) => S;
   Component: React.ComponentType<Props<T, S>>;
-  observeParam: Epic<Action, Action, State>;
+  observeParam: Epic<Action, Action, State, EpicDependencies>;
+  /**
+   * React to submit events. The Question will not be submitted until this is complete.
+   */
+  observeSubmit: Epic<Action, Action, State, EpicDependencies>;
 }
+
+type ParamModuleSpec<T extends Parameter, S> =
+  Partial<ParamModule<T, S>> & Pick<ParamModule<T, S>, 'isParamValueValid' | 'Component' | 'isType'>
 
 export function createParamModule<T extends Parameter, S>(spec: ParamModuleSpec<T, S>): ParamModule<T, S> {
   return {
     ...spec,
     reduce: spec.reduce || defaultReduce,
-    observeParam: spec.observeParam || defaultObserve
+    observeParam: spec.observeParam || defaultObserve,
+    observeSubmit: spec.observeSubmit || defaultObserve
   }
 }
 

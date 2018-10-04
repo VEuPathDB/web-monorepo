@@ -1,3 +1,4 @@
+import { Decoder, combine, field, string, number, boolean } from './Json';
 import {AnswerSpec} from './WdkModel';
 
 export interface User {
@@ -31,3 +32,39 @@ export interface Step {
   shortDisplayName: string;
   strategyId: number;
 }
+
+export interface Strategy {
+  author: string;
+  estimatedSize: number;
+  isDeleted: boolean;
+  isPublic: boolean;
+  isSaved: boolean;
+  isValid: boolean;
+  lastModified: string;
+  latestStepId:	number;
+  name: string;
+  organization: string;
+  recordClassName: string;
+  signature: string;
+  strategyId: number;
+}
+
+export const strategyDecoder: Decoder<Strategy> = combine(
+  combine(
+    field('author', string),
+    field('estimatedSize', number),
+    field('lastModified', string),
+    field('latestStepId',	number),
+    field('name', string),
+    field('organization', string),
+    field('recordClassName', string),
+    field('signature', string),
+    field('strategyId', number),
+  ),
+  combine(
+    field('isDeleted', boolean),
+    field('isPublic', boolean),
+    field('isSaved', boolean),
+    field('isValid', boolean),
+  )
+)

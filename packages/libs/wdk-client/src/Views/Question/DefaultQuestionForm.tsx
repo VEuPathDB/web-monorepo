@@ -129,7 +129,6 @@ function ParameterList(props: ParameterListProps) {
                   onParamValueChange({
                     questionName,
                     parameter,
-                    dependentParameters: getDependentParameters(parameterMap, parameter).toArray(),
                     paramValues,
                     paramValue
                   })
@@ -154,9 +153,3 @@ function ParameterHeading(props: { parameter: Parameter}) {
   )
 }
 
-function getDependentParameters(parameterMap: Record<string, Parameter>, parameter: Parameter): Seq<Parameter> {
-  return Seq.from(parameter.dependentParams)
-    .map(name => parameterMap[name])
-    .flatMap(dependentParameter =>
-      Seq.of(dependentParameter).concat(getDependentParameters(parameterMap, dependentParameter)))
-}

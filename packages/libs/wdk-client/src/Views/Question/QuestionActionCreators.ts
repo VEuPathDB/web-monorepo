@@ -1,16 +1,15 @@
+import { Epic, combineEpics, ActionsObservable } from 'redux-observable';
 import { debounceTime, filter, mergeMap, takeUntil } from 'rxjs/operators';
-import { from, Observable } from 'rxjs';
+import { from, concat, of, EMPTY } from 'rxjs';
 
-import { Action, combineObserve, ObserveServices, makeActionCreator, ActionObserver } from '../../Utils/ActionCreatorUtils';
+import { Action, makeActionCreator } from '../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterValue, ParameterValues, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
 import WdkService from '../../Utils/WdkService';
 import { State } from '../../Views/Question/QuestionStoreModule';
-import { Epic, combineEpics } from 'redux-observable';
 import { EpicDependencies } from '../../Core/Store';
+// import { observeSubmit } from './Params';
 
-type BasePayload = {
-  questionName: string;
-}
+type BasePayload = { questionName: string; }
 
 export const ActiveQuestionUpdatedAction = makeActionCreator<
   BasePayload & {
@@ -35,65 +34,57 @@ export const QuestionErrorAction = makeActionCreator<BasePayload, 'question/ques
 
 export const QuestionNotFoundAction = makeActionCreator<BasePayload, 'question/question-not-found'>('question/question-not-found');
 
-export const ParamValueUpdatedAction = makeActionCreator<BasePayload & {
-  parameter: Parameter,
-  dependentParameters: Parameter[],
-  paramValues: ParameterValues,
-  paramValue: ParameterValue
-}, 'question/param-value-update'>('question/param-value-update');
+export const QuestionSubmitRequested = makeActionCreator<BasePayload, 'question/question-submit-requested'>('question/question-submit-requested');
 
-export const ParamErrorAction = makeActionCreator<BasePayload & {
-  error: string,
-  paramName: string
-}, 'question/param-error'>('question/param-error');
+export const QuestionSubmitted =
+  makeActionCreator<BasePayload, 'question/question-submitted'>('question/question-submitted');
 
-export const ParamsUpdatedAction = makeActionCreator<BasePayload & {
-  parameters: Parameter[]
-},
-  'question/params-updated'
-  >('question/params-updated');
+export const ParamValueUpdatedAction =
+  makeActionCreator<BasePayload & { parameter: Parameter, paramValues: ParameterValues, paramValue: ParameterValue }, 'question/param-value-update'>('question/param-value-update');
 
-export const ParamInitAction = makeActionCreator<BasePayload & {
-  parameter: Parameter;
-  paramValues: ParameterValues
-}, 'question/param-init'>('question/param-init');
+export const ParamErrorAction =
+  makeActionCreator<BasePayload & { error: string, paramName: string }, 'question/param-error'>('question/param-error');
 
-export const ParamStateUpdatedAction = makeActionCreator<BasePayload & {
-  paramName: string;
-  paramState: any
-}, 'question/param-state-updated'>('question/param-state-updated');
+export const ParamsUpdatedAction =
+  makeActionCreator<BasePayload & { parameters: Parameter[] }, 'question/params-updated' >('question/params-updated');
 
-export const GroupVisibilityChangedAction = makeActionCreator<BasePayload & {
-  groupName: string;
-  isVisible: boolean;
-}, 'question/group-visibility-change'>('question/group-visibility-change');
+export const ParamInitAction =
+  makeActionCreator<BasePayload & { parameter: Parameter; paramValues: ParameterValues }, 'question/param-init'>('question/param-init');
 
-export const GroupStateUpdatedAction = makeActionCreator<BasePayload & {
-  groupName: string;
-  groupState: any;
-}, 'question/group-state-update'>('question/group-state-update');
+export const ParamStateUpdatedAction =
+  makeActionCreator<BasePayload & { paramName: string; paramState: any }, 'question/param-state-updated'>('question/param-state-updated');
+
+export const GroupVisibilityChangedAction =
+  makeActionCreator<BasePayload & { groupName: string; isVisible: boolean; }, 'question/group-visibility-change'>('question/group-visibility-change');
+
+export const GroupStateUpdatedAction =
+  makeActionCreator<BasePayload & { groupName: string; groupState: any; }, 'question/group-state-update'>('question/group-state-update');
 
 
 // Observers
 // ---------
 
-export const observeQuestion: Epic<Action, Action, State> = combineEpics(observeLoadQuestion, observeUpdateDependentParams);
+type QuestionEpic = Epic<Action, Action, State, EpicDependencies>;
 
-function observeLoadQuestion(action$: Observable<Action>, state$: Observable<State>, { wdkService }: EpicDependencies): Observable<Action> {
-  return action$.pipe(
-    filter(ActiveQuestionUpdatedAction.test),
-    mergeMap(action =>
-      from(loadQuestion(wdkService, action.payload.questionName, action.payload.paramValues)).pipe(
-      takeUntil(action$.pipe(filter(killAction => (
-        UnloadQuestionAction.test(killAction) &&
-        killAction.payload.questionName === action.payload.questionName
-      )))))
-    )
+const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
+  filter(ActiveQuestionUpdatedAction.test),
+  mergeMap(action =>
+    from(loadQuestion(wdkService, action.payload.questionName, action.payload.paramValues)).pipe(
+    takeUntil(action$.pipe(filter(killAction => (
+      UnloadQuestionAction.test(killAction) &&
+      killAction.payload.questionName === action.payload.questionName
+    )))))
   )
-}
+);
 
-function observeUpdateDependentParams(action$: Observable<Action>, state$: Observable<State>, { wdkService }: EpicDependencies): Observable<Action> {
-  return action$.pipe(
+const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
+  filter(QuestionLoadedAction.test),
+  mergeMap(({ payload: { question, questionName, paramValues }}) =>
+    from(question.parameters.map(parameter =>
+      ParamInitAction.create({ parameter, paramValues, questionName }))))
+);
+
+const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
     filter(ParamValueUpdatedAction.test),
     filter(action => action.payload.parameter.dependentParams.length > 0),
     debounceTime(1000),
@@ -116,8 +107,32 @@ function observeUpdateDependentParams(action$: Observable<Action>, state$: Obser
       )
     })
   );
-}
 
+// FIXME This is not a workable solution!
+// const observeQuestionSubmitRequest: QuestionEpic = (action$, state$, services) => action$.pipe(
+//   filter(QuestionSubmitRequested.test),
+//   mergeMap(action => concat(
+//     observeSubmit(of(action) as ActionsObservable<Action>, state$, services),
+//     of(QuestionSubmitted.create({ questionName: action.payload.questionName }))
+//   ))
+// );
+
+const observeQuestionSubmit: QuestionEpic = (action$, state$) => action$.pipe(
+  filter(QuestionSubmitted.test),
+  mergeMap(() => {
+    console.log('TODO: Submit question', state$.value);
+    return EMPTY;
+  })
+)
+
+
+export const observeQuestion: QuestionEpic = combineEpics(
+  observeLoadQuestion,
+  observeLoadQuestionSuccess,
+  observeUpdateDependentParams,
+  // observeQuestionSubmitRequest,
+  observeQuestionSubmit
+);
 
 // Helpers
 // -------

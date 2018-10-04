@@ -20,6 +20,7 @@ import { Action, combineObserve, isOneOf, ObserveServices } from '../../Utils/Ac
 import { Parameter, ParameterGroup, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
 
 import { observeParam, reduce as paramReducer } from './Params';
+import { SetFile, SetIdList, SetSourceType, SetStrategyId, SetBasketCount, SetStrategyList, SetFileParser } from './Params/DatasetParam';
 import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
 import {
   ActiveFieldSetAction,
@@ -53,7 +54,14 @@ const isQuestionType = isOneOf(
   FiltersUpdatedAction,
   OntologyTermsInvalidated,
   ExpandedListSet,
-  SearchTermSet
+  SearchTermSet,
+  SetBasketCount,
+  SetStrategyList,
+  SetFile,
+  SetIdList,
+  SetSourceType,
+  SetStrategyId,
+  SetFileParser
 );
 
 export type QuestionState = {
@@ -114,17 +122,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     paramErrors: action.payload.question.parameters.reduce((paramValues, param) =>
       Object.assign(paramValues, { [param.name]: undefined }), {}),
     paramUIState: action.payload.question.parameters.reduce((paramUIState, parameter) =>
-      Object.assign(paramUIState, {
-        [parameter.name]: paramReducer(
-          parameter,
-          undefined,
-          ParamInitAction.create({
-            parameter,
-            questionName: action.payload.questionName,
-            paramValues: action.payload.paramValues
-          })
-        )
-      }), {}),
+      Object.assign(paramUIState, { [parameter.name]: paramReducer(parameter, undefined, { type: '@@parm-stub@@' }) }), {}),
     groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
       Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {})
   }

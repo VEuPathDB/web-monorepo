@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { combineEpics, Epic } from 'redux-observable';
-import { empty } from 'rxjs';
+import { merge } from 'rxjs';
 
-import { Action } from '../../../Utils/ActionCreatorUtils';
+import { combineObserve } from '../../../Utils/ActionCreatorUtils';
 import { Parameter } from '../../../Utils/WdkModel';
 
 import { Context, isPropsType, ParamModule, Props } from './Utils';
 
 import CheckboxEnumParamModule from './CheckboxEnumParam';
+import DatasetParamModule from './DatasetParam';
 import DateParamModule from './DateParam';
 import DateRangeParamModule from './DateRangeParam';
 import FilterParamNewModule from './FilterParamNew';
@@ -17,12 +17,14 @@ import SelectEnumParamModule from './SelectEnumParam';
 import StringParamModule from './StringParam';
 import TreeBoxEnumParamModule from './TreeBoxEnumParam';
 import TypeAheadEnumParamModule from './TypeAheadEnumParam';
-import { State } from '../QuestionStoreModule';
+import { mergePluginsByType } from '../../../Utils/ClientPlugin';
+import { combineEpics } from 'redux-observable';
 
 // Param modules
 // -------------
 const paramModules: ParamModule[] = [
   CheckboxEnumParamModule as ParamModule,
+  DatasetParamModule as ParamModule,
   DateParamModule as ParamModule,
   DateRangeParamModule as ParamModule,
   FilterParamNewModule as ParamModule,
@@ -66,7 +68,12 @@ export function reduce<T extends Parameter>(parameter: T, state: any, action: an
   return state;
 }
 
-export const observeParam = combineEpics<Epic<Action, Action, State>>(...(paramModules.map(m => m.observeParam || empty)))
+export const observeParam =
+  combineEpics(...(paramModules.map(m => m.observeParam)));
+
+export const observeSubmit: ParamModule['observeSubmit'] = (...args) =>
+  merge(...paramModules.map(m => m.observeSubmit(...args)));
+    
 
 export function isParamValueValid(context: Context<Parameter>, state: any) {
   for (let paramModule of paramModules) {
