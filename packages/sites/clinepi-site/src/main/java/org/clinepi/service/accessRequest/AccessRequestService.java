@@ -91,7 +91,7 @@ public class AccessRequestService extends UserService {
     }
   }
 
-  public DatasetAccessRequestAttributes retrieveDatasetRecordInstance(String datasetId) throws DataValidationException, WdkModelException, WdkUserException {
+  public DatasetAccessRequestAttributes retrieveDatasetRecordInstance(String datasetId) throws DataValidationException, WdkModelException {
     RecordClass datasetRecordClass = RecordService.getRecordClassOrNotFound(
       DATASET_RECORD_CLASS, 
       getWdkModel()
