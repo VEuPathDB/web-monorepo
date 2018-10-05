@@ -1,6 +1,6 @@
 import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
-import { question as QuestionStoreModule, record as RecordStoreModule } from 'wdk-client/StoreModules';
+import { /*question as QuestionStoreModule,*/ record as RecordStoreModule } from 'wdk-client/StoreModules';
 import { QuestionActionCreators } from 'wdk-client/ActionCreators';
 import { get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
@@ -25,7 +25,7 @@ const storageItems = {
 export function reduce(state, action) {
   state = RecordStoreModule.reduce(state, action);
   if (state.questions == null) state = { ...state, questions: {} };
-  state = QuestionStoreModule.reduce(state, action);
+  // state = QuestionStoreModule.reduce(state, action);
   state = Object.assign({}, state, {
     pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
     eupathdb: handleEuPathDBAction(state.eupathdb, action),
@@ -42,7 +42,7 @@ export function reduce(state, action) {
 export function observe(action$, state$, services) {
   return merge(
     // RecordStoreModule.observe(action$, state$, services),
-    QuestionStoreModule.observe(action$, state$, services),
+    // QuestionStoreModule.observe(action$, state$, services),
     observeSnpsAlignment(action$, state$, services),
     observeUserSettings(action$, state$, services),
   )

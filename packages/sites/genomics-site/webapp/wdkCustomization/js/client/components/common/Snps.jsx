@@ -11,9 +11,9 @@ const headingStyle = {
 }
 
 const enhance = connect(
-  ({ record: state, globalData }) =>
+  ({ question, globalData }) =>
     Object.assign({
-      questionState: get(state, ['questions', 'SnpAlignmentForm'], {})
+      questionState: get(question, ['questions', 'SnpAlignmentForm'], {})
     }, pick(globalData.config, 'projectId'))
 );
 
