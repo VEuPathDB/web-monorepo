@@ -1,5 +1,7 @@
 .CardList {
   background-color: $paleBlue;
+  border-right: 4px solid $paleBlue;
+  border-left: 4px solid $paleBlue;
   padding: 10px;
   width: 100vw;
   overflow-x: auto;

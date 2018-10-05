@@ -18,10 +18,6 @@ body {
   min-height: calc(100vh - 168px);
 }
 
-.wdk-PageContent__question {
-  padding: 0;
-}
-
 #header {
   height: auto;
   background: bgColor;
