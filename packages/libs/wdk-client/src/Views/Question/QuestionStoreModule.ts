@@ -1,27 +1,38 @@
 import { keyBy, mapValues } from 'lodash';
-import { Observable } from 'rxjs';
+import { combineEpics, Epic } from 'redux-observable';
 
 import {
   ActiveQuestionUpdatedAction,
-  GroupStateUpdatedAction,
-  GroupVisibilityChangedAction,
-  observeQuestion,
+  QuestionErrorAction,
+  QuestionLoadedAction,
+  QuestionNotFoundAction,
+  UnloadQuestionAction,
   ParamErrorAction,
   ParamInitAction,
   ParamStateUpdatedAction,
   ParamsUpdatedAction,
   ParamValueUpdatedAction,
-  QuestionErrorAction,
-  QuestionLoadedAction,
-  QuestionNotFoundAction,
-  UnloadQuestionAction,
+  GroupStateUpdatedAction,
+  GroupVisibilityChangedAction,
 } from './QuestionActionCreators';
-import { Action, combineObserve, isOneOf, ObserveServices } from '../../Utils/ActionCreatorUtils';
-import { Parameter, ParameterGroup, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
+import { Action, isOneOf } from '../../Utils/ActionCreatorUtils';
+import {
+  Parameter,
+  ParameterGroup,
+  QuestionWithParameters,
+  RecordClass
+} from "../../Utils/WdkModel";
 
-import { observeParam, reduce as paramReducer } from './Params';
-import { SetFile, SetIdList, SetSourceType, SetStrategyId, SetBasketCount, SetStrategyList, SetFileParser } from './Params/DatasetParam';
-import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
+import { observeParam, reduce as paramReducer } from "./Params";
+import {
+  SetFile,
+  SetIdList,
+  SetSourceType,
+  SetStrategyId,
+  SetBasketCount,
+  SetStrategyList,
+  SetFileParser
+} from "./Params/DatasetParam";
 import {
   ActiveFieldSetAction,
   FieldStateUpdatedAction,
@@ -29,7 +40,8 @@ import {
   OntologyTermsInvalidated,
   SummaryCountsLoadedAction,
 } from './Params/FilterParamNew/ActionCreators';
-import { combineEpics, Epic } from 'redux-observable';
+import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
+import { observeQuestion } from './QuestionActionObservers';
 
 interface GroupState {
   isVisible: boolean;

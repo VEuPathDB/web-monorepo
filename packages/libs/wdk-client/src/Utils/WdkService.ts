@@ -984,8 +984,12 @@ export default class WdkService {
     })
   }
 
-  createDataset(config: DatasetConfig): string {
-    throw new Error('Method not implemented.');
+  createDataset(config: DatasetConfig): Promise<Number> {
+    return this.sendRequest(Decode.field('id', Decode.number), {
+      path: '/users/current/datasets',
+      method: 'POST',
+      body: JSON.stringify(config)
+    }).then(response => response.id)
   }
 
   private _fetchJson<T>(method: string, url: string, body?: string) {

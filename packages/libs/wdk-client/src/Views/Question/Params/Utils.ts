@@ -2,9 +2,9 @@ import { DispatchAction } from '../../../Core/CommonTypes';
 import React from 'react';
 import { EMPTY } from 'rxjs';
 import { Action } from '../../../Utils/ActionCreatorUtils';
-import { Parameter, ParameterValues } from '../../../Utils/WdkModel';
+import { Parameter, ParameterValues, Question, RecordClass, QuestionWithParameters } from '../../../Utils/WdkModel';
 import { Epic } from 'redux-observable';
-import { State } from '../QuestionStoreModule';
+import { State, QuestionState } from '../QuestionStoreModule';
 import { EpicDependencies } from '../../../Core/Store';
 
 
@@ -42,7 +42,7 @@ export type ParamModule<T extends Parameter = Parameter, S = any> = {
   /**
    * React to submit events. The Question will not be submitted until this is complete.
    */
-  observeSubmit: Epic<Action, Action, State, EpicDependencies>;
+  getValueFromState: (context: Context<T>, state: QuestionState, services: EpicDependencies) => string | Promise<string>;
 }
 
 type ParamModuleSpec<T extends Parameter, S> =
@@ -53,7 +53,7 @@ export function createParamModule<T extends Parameter, S>(spec: ParamModuleSpec<
     ...spec,
     reduce: spec.reduce || defaultReduce,
     observeParam: spec.observeParam || defaultObserve,
-    observeSubmit: spec.observeSubmit || defaultObserve
+    getValueFromState: spec.getValueFromState || defaultGetValueFromState
   }
 }
 
@@ -63,6 +63,10 @@ function defaultReduce<S>(state: S, action: Action): S {
 
 function defaultObserve() {
   return EMPTY;
+}
+
+function defaultGetValueFromState(context: Context<Parameter>) {
+  return context.paramValues[context.parameter.name];
 }
 
 

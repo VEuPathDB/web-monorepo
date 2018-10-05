@@ -3,16 +3,16 @@ import { concat, empty, from, merge, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
 import { Filter } from '../../../../Components/AttributeFilter/Types';
-import { Action, combineObserve, makeActionCreator, ObserveServices } from '../../../../Utils/ActionCreatorUtils';
+import { Action, makeActionCreator } from '../../../../Utils/ActionCreatorUtils';
 import { FilterParamNew } from '../../../../Utils/WdkModel';
 import WdkService from '../../../../Utils/WdkService';
 import {
-  GroupVisibilityChangedAction,
-  ParamErrorAction,
-  ParamsUpdatedAction,
   QuestionLoadedAction,
   UnloadQuestionAction,
-} from '../../QuestionActionCreators';
+  GroupVisibilityChangedAction,
+  ParamsUpdatedAction,
+  ParamErrorAction
+} from "../../QuestionActionCreators";
 import { State, QuestionState } from '../../QuestionStoreModule';
 
 import { Context } from '../Utils';
@@ -168,21 +168,6 @@ function observeInit(action$: Observable<Action>, state$: StateObservable<State>
             })
           );
 
-          const forceSummaryUpdateParameter$ = action$.pipe(
-            filter(FieldCountUpdateRequestAction.test),
-            filter(action => action.payload.questionName === questionName && action.payload.parameter.name === paramName),
-            mergeMap(action => {
-              const questionState = getQuestionState(state$.value, questionName);
-              if (questionState == null) return empty() as Observable<LoadDeps>;
-
-              return of({
-                paramName,
-                loadCounts: false,
-                loadSummaryFor: action.payload.field,
-                questionState
-              })
-            })
-          );
 
           const groupVisibilityChangeParameter$ = action$.pipe(
             filter(GroupVisibilityChangedAction.test),
@@ -299,7 +284,7 @@ function getOntologyTermSummary(
   state: QuestionState,
   ontologyTerm: string
 ): Observable<Action> {
-  const { question, paramValues, paramUIState } = state;
+  const { question, paramValues } = state;
   const questionName = question.urlSegment;
   const parameter = getFilterParamNewFromState(state, paramName);
 
@@ -388,13 +373,7 @@ function getSummaryCounts(
   ));
 }
 
-function getFiltersFromContext(ctx: Ctx) {
-  return getFilters(ctx.paramValues[ctx.parameter.name]);
-}
 
-function getOntologyFromContext(ctx: Ctx) {
-  return ctx.parameter.ontology;
-}
 
 function getQuestionState(state: State, questionName: string) {
   const questionState = state.questions[questionName];

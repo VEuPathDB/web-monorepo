@@ -7,11 +7,11 @@ import { Props, Context, createParamModule, ParamModule } from './Utils';
 import { makeActionCreator } from '../../../Utils/ActionCreatorUtils';
 import { makeClassNameHelper } from '../../../Utils/ComponentUtils';
 import { matchAction } from '../../../Utils/ReducerUtils';
-import { ParamInitAction, ParamValueUpdatedAction, QuestionSubmitRequested } from '../QuestionActionCreators';
 
 import './DatasetParam.scss';
 import { valueToArray } from './EnumParamUtils';
 import { DatasetConfig } from '../../../Utils/WdkService';
+import { ParamInitAction } from '../QuestionActionCreators';
 
 const cx = makeClassNameHelper('wdk-DatasetParam');
 
@@ -56,11 +56,6 @@ const getInitialParser = (parameter: DatasetParam) =>
   parameter.parsers.length > 0 ? parameter.parsers[0].name : undefined
 
 const reduce = matchAction(defaultState,
-  [ParamInitAction, (state, { parameter: parameter}) => ({
-    ...state,
-    idList: (parameter as DatasetParam).defaultIdList,
-    fileParser: getInitialParser(parameter as DatasetParam)
-  })],
   [SetSourceType, (state, { sourceType }) => ({ ...state, sourceType })],
   [SetIdList, (state, { idList }) => ({ ...state, idList })],
   [SetFile, (state, { file }) => ({ ...state, file })],
@@ -70,6 +65,15 @@ const reduce = matchAction(defaultState,
   [SetFileParser, (state, { fileParser }) => (console.log(fileParser), ({ ...state, fileParser }))],
 )
 
+const getIdList = (uiState: State, parameter: DatasetParam) =>
+    uiState.idList == null
+      ? parameter.defaultIdList
+      : uiState.idList
+
+const getParser = (uiState: State, parameter: DatasetParam) =>
+  uiState.fileParser == null
+    ? getInitialParser(parameter)
+    : uiState.fileParser;
 
 type Section = {
   sourceType: State['sourceType'];
@@ -77,22 +81,23 @@ type Section = {
   render: React.StatelessComponent<Props<DatasetParam, State>>;
   isAvailable?: (props: Props<DatasetParam, State>) => boolean;
 }
+
 const sections: Section[] = [
   {
     sourceType: 'idList',
     label: 'Enter a list of IDs or text',
-    render: ({ uiState, dispatch, ctx }) =>
+    render: ({ ctx, dispatch, parameter, uiState }) =>
       <textarea
         rows={5}
         cols={30}
-        value={uiState.idList}
+        value={getIdList(uiState, parameter)}
         onChange={e => dispatch(SetIdList.create({ ...ctx, idList: e.target.value }))}
       />
   },
   {
     sourceType: 'file',
     label: 'Upload a text file',
-    render: ({ uiState, dispatch, ctx }) =>
+    render: ({ uiState, dispatch, ctx, parameter }) =>
       <>
         <input
           type="file"
@@ -101,11 +106,11 @@ const sections: Section[] = [
         />
         <small>
           <div>Maximum size 10MB. The file should contain the list of IDs.</div>
-          {ctx.parameter.parsers.length > 1 && (
+          {parameter.parsers.length > 1 && (
             <>
               <div>Alternatively, please use other file formats:</div>
               <ul className={cx('FileParserList')}>
-                {ctx.parameter.parsers.map(parser =>
+                {parameter.parsers.map(parser =>
                   <li key={parser.name} className={cx('FileParser')}>
                     <label
                       style={{marginRight: '1em'}}
@@ -115,7 +120,7 @@ const sections: Section[] = [
                       <input
                         type="radio"
                         value={parser.name}
-                        checked={uiState.fileParser === parser.name}
+                        checked={getParser(uiState, parameter) === parser.name}
                         onChange={e => e.target.checked && dispatch(SetFileParser.create({...ctx, fileParser: parser.name}))}
                       /> {parser.displayName}
                     </label>
@@ -216,58 +221,25 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
 );
 
 // Create dataset from user selection and set id as param value
-const observeSubmit: ParamModule['observeSubmit'] = (action$, state$, { wdkService }) => action$.pipe(
-  filter(QuestionSubmitRequested.test),
-  mergeMap(action => {
-    const { questionName } = action.payload;
-    const questionState = state$.value.questions[action.payload.questionName];
-    if (questionState == null) return EMPTY;
-    return merge(...questionState.question.parameters
-      .filter(isType)
-      .map(parameter => {
-        const { idList, file, strategyId, sourceType } : State = questionState.paramUIState[parameter.name];
-        const datasetConfigPromise: Promise<DatasetConfig | void> =
-          sourceType === 'file' && file
-            ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({ sourceType, sourceContent: { temporaryFileId }}))
-          : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.recordClassName } })
-          : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
-          : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: valueToArray(idList) } })
-          : Promise.resolve();
+const getValueFromState: ParamModule['getValueFromState'] = (context, questionState, { wdkService }) => {
+  const { parameter } = context;
+  const { idList, file, strategyId, sourceType } : State = questionState.paramUIState[parameter.name];
+  const datasetConfigPromise: Promise<DatasetConfig | void> =
+    sourceType === 'file' && file
+      ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({ sourceType, sourceContent: { temporaryFileId }}))
+    : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.recordClassName } })
+    : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
+    : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: valueToArray(idList) } })
+    : Promise.resolve();
 
-        return datasetConfigPromise.then(config => {
-          if (config == null) throw new Error('Dataset param is not properly defined.')
-          return wdkService.createDataset(config);
-        }).then(
-          datasetId => ParamValueUpdatedAction.create({
-            questionName,
-            parameter,
-            paramValues: questionState.paramValues,
-            paramValue: datasetId
-          })
-        );
-      })
-    )
-  })
-)
+  return datasetConfigPromise.then(config => config == null ? '' : wdkService.createDataset(config).then(String));
+}
 
 export default createParamModule({
   isType,
   isParamValueValid,
   Component: DatasetParamComponent,
   reduce,
-  observeParam
-})
-
-function readFileAsText(input: HTMLInputElement): Promise<string> {
-  const file = input.files && input.files[0];
-  if (file == null) return Promise.resolve('');
-  const reader = new FileReader();
-  reader.readAsText(file, 'utf-8');
-  return new Promise(function(resolve, reject) {
-    reader.addEventListener('loadend', function(event: any) {
-      const { result, error } = event.target;
-      if (error) reject(error);
-      else resolve(result);
-    });
-  })
-}
+  observeParam,
+  getValueFromState
+});

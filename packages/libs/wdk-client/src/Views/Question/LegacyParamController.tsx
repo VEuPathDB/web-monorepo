@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom';
 
 import {
   ActiveQuestionUpdatedAction,
-  ParamValueUpdatedAction,
   UnloadQuestionAction,
 } from './QuestionActionCreators';
 import ViewController from '../../Core/Controllers/ViewController';
 import { Seq } from '../../Utils/IterableUtils';
 import { preorder } from '../../Utils/TreeUtils';
 import { EnumParam, Parameter } from '../../Utils/WdkModel';
+import { ParamValueUpdatedAction } from './QuestionActionCreators';
 import { QuestionState } from './QuestionStoreModule';
 
 import * as ParamModules from './Params';

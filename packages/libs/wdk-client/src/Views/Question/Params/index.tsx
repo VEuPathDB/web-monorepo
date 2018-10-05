@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { merge } from 'rxjs';
 
-import { combineObserve } from '../../../Utils/ActionCreatorUtils';
 import { Parameter } from '../../../Utils/WdkModel';
 
 import { Context, isPropsType, ParamModule, Props } from './Utils';
@@ -17,7 +15,6 @@ import SelectEnumParamModule from './SelectEnumParam';
 import StringParamModule from './StringParam';
 import TreeBoxEnumParamModule from './TreeBoxEnumParam';
 import TypeAheadEnumParamModule from './TypeAheadEnumParam';
-import { mergePluginsByType } from '../../../Utils/ClientPlugin';
 import { combineEpics } from 'redux-observable';
 
 // Param modules
@@ -71,9 +68,16 @@ export function reduce<T extends Parameter>(parameter: T, state: any, action: an
 export const observeParam =
   combineEpics(...(paramModules.map(m => m.observeParam)));
 
-export const observeSubmit: ParamModule['observeSubmit'] = (...args) =>
-  merge(...paramModules.map(m => m.observeSubmit(...args)));
-    
+export const getValueFromState: ParamModule['getValueFromState'] = (context, state, services) => {
+  for (let paramModule of paramModules) {
+    if (paramModule.isType(context.parameter)) {
+      return paramModule.getValueFromState(context, state, services);
+    }
+  }
+  return state.paramValues[context.parameter.name];
+}
+
+
 
 export function isParamValueValid(context: Context<Parameter>, state: any) {
   for (let paramModule of paramModules) {

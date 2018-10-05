@@ -1,19 +1,19 @@
 import * as React from 'react';
 
+import { HelpIcon, IconAlt } from '../../Components';
 import { DispatchAction } from '../../Core/CommonTypes';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import { Parameter, ParameterGroup } from '../../Utils/WdkModel';
 import ParameterComponent from './ParameterComponent';
 import { QuestionState } from './QuestionStoreModule';
-import { GroupVisibilityChangedAction, ParamValueUpdatedAction } from './QuestionActionCreators';
-import { HelpIcon, IconAlt } from '../../Components';
+import { GroupVisibilityChangedAction, ParamValueUpdatedAction, QuestionSubmitted } from './QuestionActionCreators';
+import './DefaultQuestionForm.scss';
 
 type EventHandlers = {
   setGroupVisibility: typeof GroupVisibilityChangedAction.create,
   updateParamValue: typeof ParamValueUpdatedAction.create
 }
-import './DefaultQuestionForm.scss';
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -24,32 +24,35 @@ type Props = {
 }
 
 export default function DefaultQuestionForm(props: Props) {
-  const { state, eventHandlers } = props
+  const { state, eventHandlers, dispatchAction } = props
   return (
     <div className={cx()}>
-    <h1>{state.question.displayName}</h1>
-    {state.question.groups
-      .filter(group => group.displayType !== 'hidden')
-      .map(group =>
-        <Group
-          key={group.name}
-          questionName={state.question.urlSegment}
-          group={group}
-          uiState={state.groupUIState[group.name]}
-          onVisibilityChange={eventHandlers.setGroupVisibility}
-        >
-          <ParameterList
+      <h1>{state.question.displayName}</h1>
+      {state.question.groups
+        .filter(group => group.displayType !== 'hidden')
+        .map(group =>
+          <Group
+            key={group.name}
             questionName={state.question.urlSegment}
-            dispatch={props.dispatchAction}
-            parameterMap={state.question.parametersByName}
-            parameters={group.parameters}
-            paramValues={state.paramValues}
-            paramUIState={state.paramUIState}
-            onParamValueChange={eventHandlers.updateParamValue}
-          />
-        </Group>
-      )
-    }
+            group={group}
+            uiState={state.groupUIState[group.name]}
+            onVisibilityChange={eventHandlers.setGroupVisibility}
+          >
+            <ParameterList
+              questionName={state.question.urlSegment}
+              dispatch={props.dispatchAction}
+              parameterMap={state.question.parametersByName}
+              parameters={group.parameters}
+              paramValues={state.paramValues}
+              paramUIState={state.paramUIState}
+              onParamValueChange={eventHandlers.updateParamValue}
+            />
+          </Group>
+        )
+      }
+      <button type="button" className="btn" onClick={() => dispatchAction(QuestionSubmitted.create({ questionName: state.question.urlSegment }))}>
+        Get Answer
+      </button>
     </div>
   )
 }
