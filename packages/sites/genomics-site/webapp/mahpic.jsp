@@ -818,7 +818,7 @@
 
    
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04: Measures of infection and relapse in <i>M. mulatta</i> infected with <i>P. cynomolgi</i> B strain</a></h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 06: Measures of acute primary infection in <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> </a></h3> 
    <div class="wdk-toggle-content">
      
      
@@ -930,17 +930,17 @@
            </div>
             -->
      <br><br>
-	   
+	<!--   
 	 <h4>Publication(s)</h4>
 	    <div style="margin-left: 2.5em;">
         <img src="images/MaHPIC_Malaria_Core.jpg" height="15px" width="15px">&nbsp; &nbsp; 
 	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
         </div>
         <p>
-     <img align="middle" src="images/MaHPIC_Ex04_Timeline_1.png" height="300px" width="500px"><br>
-     <a href="images/MaHPIC_Ex04_Timeline_1.png" target="_blank">View Larger Image</a><br>
-    
-        
+      --> 
+     <img align="middle" src="images/MaHPIC_Ex06_Timeline_1.pdf" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_Ex06_Timeline_1.pdf" target="_blank">View Larger Image</a><br>
+       
   </div>	
   </div>
 
