@@ -741,7 +741,7 @@
 
 
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04R: Resequencing of Experiment 04 Functional Genomics</a></h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 04R: Resequencing of Experiment 04 functional genomics</a></h3> 
    <div class="wdk-toggle-content">
      
      <h4>Experiment Information</h4>
@@ -812,6 +812,264 @@
 <br><br>
 	 
      
+  </div>	
+  </div>
+
+
+   
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 06: Measures of acute primary infection in <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> </a></h3> 
+   <div class="wdk-toggle-content">
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE06 table, #ExpInfoE06 td, #ExpInfoE06 th, #ExpInfoE06 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE06 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE06"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 06: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> to produce and integrate clinical, hematological, parasitological, omics, telemetric, and histopathological measures of acute primary infection</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Telemetry devices (DSI, model L11) with blood pressure sensors and ECG leads were surgically implanted in four malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately five years of age.  After a resting period of two weeks, physiological data that include activity, temperature, ECG, and blood pressure were continuously collected. Two weeks after activation of the telemetry implant, the macaques were inoculated intravenously with cryopreserved salivary gland sporozoites. The cryopreserved batch of <i>P. knowlesi</i> sporozoites were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention from <i>Anopheles dirus</i>.  After experimental infection, the infected macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, proteomic, and metabolomic measurements. The experiment was designed for terminal necropsies scheduled at the log phase of the infection or at the peak of parasitemias. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at five time points for functional genomic, targeted proteomic, targeted metabolomics, and immunological analyses. Physiological data were continuously captured via telemetry.  Within the MaHPIC, this project is known as 'Experiment 06'.   The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
+           </tr>
+         </table>
+      </div>   
+      
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE06 table, #DataLinksE06 td, #DataLinksE06 th, #DataLinksE06 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE06 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksE06 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE06"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB and HostDB</th>
+           </tr>
+           <tr>
+             <td>Coming Soon</td>
+             <td> </td>  
+             <td> </td>
+           </tr>
+           <!-- 
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_04/">E04 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE94273" target="_blank">E04 Bone Marrow Expression Results at NCBI's GEO</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99486" target="_blank">E04 Whole Blood Expression Results at NCBI's GEO </a></b></td>
+             <td><b><a href="http://plasmodb.org/plasmo/app/record/gene/PCYB_103890#ExpressionGraphs">PlasmoDB example gene page</a><br>
+                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRC">PlasmoDB Pcyn differential expression</a><br>
+                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRCPercentile">PlasmoDB Pcyn relative expression (percentile)</a><br>
+                    <a href="http://hostdb.org/hostdb/app/record/gene/MACM_249#ExpressionGraphs" target="_blank">HostDB example gene page</a><br>
+                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRC">HostDB Mmul differential expression</a><br>
+                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRCPercentile">HostDB Mmul relative expression (percentile)</a></b></td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E04 + E18 Proteomics Results at PRIDE</a></b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=68c2e59511d04428bfecf9ce231c7ad0" target="_blank">E04 Lipidomics Results at MassIVE</a></b></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
+             <td><b><a href=" http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1015" target="_blank">E04 Immunology (Adaptive, Innate, Cytokine) Results at ImmPort </a></b></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a><br>
+                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS517" target="_blank">E04 Metabolomics Results at Metabolights</a>
+                    </b></td>    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
+             <td><b>Coming soon</b></td>
+             <td>N/A</td>
+           </tr>
+           </div>
+            -->
+        </table>
+     <br><br>
+	<!--   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="15px" width="15px">&nbsp; &nbsp; 
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+      --> 
+     <img align="middle" src="images/MaHPIC_Ex06_Timeline_1.pdf" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_Ex06_Timeline_1.pdf" target="_blank">View Larger Image</a><br>
+       
+  </div>	
+  </div>
+
+
+   
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 07: Measures of acute primary infection in <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i>  </a></h3> 
+   <div class="wdk-toggle-content">
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE07 table, #ExpInfoE07 td, #ExpInfoE07 th, #ExpInfoE07 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE07 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE07"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 07: <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> A strain to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>E07 was originally planned to use 'fresh' non-cryo preserved <i>P. knowlesi</i> sporozoites for inoculation. Inoculation with fresh sporozoites took place on 11/01/16 and did not result in a successful infection. Consequently, there was a second inoculation using cryopreserved sporozoites performed on 1/20/17.  Hence there was a decision to divide E07 into 'E07A' (containing samples and results from the failed inoculation) and 'E07B' (containing samples and results from the successful inoculation with cryopreserved sporozoites on 1/20/17). Telemetry devices (DSI, model L11) with blood pressure sensors and ECG leads were surgically implanted in seven malaria-naive male long-tailed macaques (<i>Macaca fascicularis</i>), approximately five years of age.  After a resting period, the telemetry implants were turned on and physiological data that include activity, temperature, ECG, and blood pressure were continuously collected.  After failed inoculation with a fresh preparation of salivary gland sporozoites in E07A, implants were deactivated to preserve battery life. Between E07A and E07B, a single Rhesus macaque (<i>M. mulatta</i>) was added to the cohort as an infection control with no telemetry implant.  At the start of E07B, telemetry implants were reactivated.  Ten days after reactivation all animals were inoculated intravenously with cryopreserved salivary gland sporozoites. The cryopreserved batch of <i>P. knowlesi</i> sporozoites was produced, isolated and cryopreserved at the Centers for Disease Control and Prevention from <i>Anopheles dirus</i>.  After experimental infection, the infected macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, proteomic, and metabolomic measurements.  The experiment was designed for terminal necropsies scheduled at the log phase of the infection, at the peak of parasitemias, at the middle of the chronic phase, or at the end of the follow-up period 45 days after experimental infection.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias.  Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at six time points for functional genomic, targeted proteomic, targeted metabolomics, and immunological analyses.  Physiological data were continuously captured via telemetry. Within the MaHPIC, this project is known as 'Experiment 07'.   The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO). </td>
+           </tr>
+         </table>
+      </div>   
+      
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE07 table, #DataLinksE07 td, #DataLinksE07 th, #DataLinksE07 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE07 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE07"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB and HostDB</th>
+           </tr>
+           <tr>
+             <td>Coming Soon</td>
+             <td> </td>  
+             <td> </td>
+           </tr>
+           <!-- 
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_04/">E04 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE94273" target="_blank">E04 Bone Marrow Expression Results at NCBI's GEO</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99486" target="_blank">E04 Whole Blood Expression Results at NCBI's GEO </a></b></td>
+             <td><b><a href="http://plasmodb.org/plasmo/app/record/gene/PCYB_103890#ExpressionGraphs">PlasmoDB example gene page</a><br>
+                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRC">PlasmoDB Pcyn differential expression</a><br>
+                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRCPercentile">PlasmoDB Pcyn relative expression (percentile)</a><br>
+                    <a href="http://hostdb.org/hostdb/app/record/gene/MACM_249#ExpressionGraphs" target="_blank">HostDB example gene page</a><br>
+                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRC">HostDB Mmul differential expression</a><br>
+                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRCPercentile">HostDB Mmul relative expression (percentile)</a></b></td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E04 + E18 Proteomics Results at PRIDE</a></b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=68c2e59511d04428bfecf9ce231c7ad0" target="_blank">E04 Lipidomics Results at MassIVE</a></b></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
+             <td><b><a href=" http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1015" target="_blank">E04 Immunology (Adaptive, Innate, Cytokine) Results at ImmPort </a></b></td>
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a><br>
+                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS517" target="_blank">E04 Metabolomics Results at Metabolights</a>
+                    </b></td>    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
+             <td><b>Coming soon</b></td>
+             <td>N/A</td>
+           </tr>
+           </div>
+            -->
+           </table>
+     <br><br>
+	<!--   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="15px" width="15px">&nbsp; &nbsp; 
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+      --> 
+     <img align="middle" src="images/MaHPIC_Ex07_Timeline_1.pdf" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_Ex07_Timeline_1.pdf" target="_blank">View Larger Image</a><br>
+       
   </div>	
   </div>
 
