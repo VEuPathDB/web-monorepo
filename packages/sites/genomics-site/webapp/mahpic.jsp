@@ -926,8 +926,9 @@
              <td><b>Coming soon</b></td>
              <td>N/A</td>
            </tr>
-           </div>
+           
             -->
+        </div>
         </table>
      <br><br>
 	<!--   
@@ -1057,6 +1058,7 @@
            </tr>
            </div>
             -->
+           </div>
            </table>
      <br><br>
 	<!--   
