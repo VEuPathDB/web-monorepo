@@ -71,7 +71,7 @@ export type DatasetConfig = {
   sourceContent: { basketName: string }
 } | {
   sourceType: 'file',
-  sourceContent: { temporaryFileId: string }
+  sourceContent: { temporaryFileId: string, parser: string }
 } | {
   sourceType: 'strategy',
   sourceContent: { strategyId: number }

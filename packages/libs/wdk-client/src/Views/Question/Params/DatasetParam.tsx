@@ -53,7 +53,7 @@ const defaultState: State = {
 }
 
 const getInitialParser = (parameter: DatasetParam) =>
-  parameter.parsers.length > 0 ? parameter.parsers[0].name : undefined
+  parameter.parsers[0].name
 
 const reduce = matchAction(defaultState,
   [SetSourceType, (state, { sourceType }) => ({ ...state, sourceType })],
@@ -62,7 +62,7 @@ const reduce = matchAction(defaultState,
   [SetStrategyList, (state, { strategyList }) => ({ ...state, strategyList })],
   [SetStrategyId, (state, { strategyId }) => ({ ...state, strategyId })],
   [SetBasketCount, (state, { basketCount }) => ({ ...state, basketCount })],
-  [SetFileParser, (state, { fileParser }) => (console.log(fileParser), ({ ...state, fileParser }))],
+  [SetFileParser, (state, { fileParser }) => ({ ...state, fileParser })],
 )
 
 const getIdList = (uiState: State, parameter: DatasetParam) =>
@@ -74,6 +74,11 @@ const getParser = (uiState: State, parameter: DatasetParam) =>
   uiState.fileParser == null
     ? getInitialParser(parameter)
     : uiState.fileParser;
+
+const getStrategyId = (uiState: State, parameter: DatasetParam) =>
+  uiState.strategyId == null
+    ? uiState.strategyList && uiState.strategyList[0].strategyId
+    : uiState.strategyId;
 
 type Section = {
   sourceType: State['sourceType'];
@@ -145,10 +150,10 @@ const sections: Section[] = [
     sourceType: 'strategy',
     label: 'Copy from My Strategy',
     isAvailable: ({ uiState }) => uiState.strategyList != null && uiState.strategyList.length > 0,
-    render: ({ ctx, uiState }) =>
+    render: ({ ctx, uiState, parameter }) =>
       <div>
         {uiState.strategyList
-          ? <select value={uiState.strategyId} onChange={e => SetStrategyId.create({ ...ctx, strategyId: Number(e.target.value) })}>
+          ? <select value={getStrategyId(uiState, parameter)} onChange={e => SetStrategyId.create({ ...ctx, strategyId: Number(e.target.value) })}>
               {uiState.strategyList.map(strategy =>
                 <option key={strategy.strategyId} title="Can you see me?" value={strategy.strategyId}>{strategy.name}</option>
               )}
@@ -221,12 +226,16 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
 );
 
 // Create dataset from user selection and set id as param value
-const getValueFromState: ParamModule['getValueFromState'] = (context, questionState, { wdkService }) => {
+const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (context, questionState, { wdkService }) => {
   const { parameter } = context;
-  const { idList, file, strategyId, sourceType } : State = questionState.paramUIState[parameter.name];
+  const state : State = questionState.paramUIState[parameter.name];
+  const { file, sourceType } : State = questionState.paramUIState[parameter.name];
+  const idList = getIdList(state, parameter);
+  const strategyId = getStrategyId(state, parameter);
+  const parser = getParser(state, parameter);
   const datasetConfigPromise: Promise<DatasetConfig | void> =
     sourceType === 'file' && file
-      ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({ sourceType, sourceContent: { temporaryFileId }}))
+      ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({ sourceType, sourceContent: { temporaryFileId, parser }}))
     : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.recordClassName } })
     : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
     : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: valueToArray(idList) } })
