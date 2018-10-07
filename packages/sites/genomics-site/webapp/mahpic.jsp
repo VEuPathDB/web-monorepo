@@ -926,9 +926,9 @@
              <td><b>Coming soon</b></td>
              <td>N/A</td>
            </tr>
-           </table>
            </div>
             -->
+        </table>
      <br><br>
 	<!--   
 	 <h4>Publication(s)</h4>
@@ -1055,9 +1055,9 @@
              <td><b>Coming soon</b></td>
              <td>N/A</td>
            </tr>
-           </table>
            </div>
             -->
+           </table>
      <br><br>
 	<!--   
 	 <h4>Publication(s)</h4>
