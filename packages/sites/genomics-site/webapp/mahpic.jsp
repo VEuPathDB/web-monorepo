@@ -825,7 +825,7 @@
      <h4>Experiment Information</h4>
 	 <div style="margin-left: 2.5em;">
 	 <style>
-           #ExpInfo table, #ExpInfo td, #ExpInfo th, #ExpInfo tr {
+           #ExpInfoE06 table, #ExpInfoE06 td, #ExpInfoE06 th, #ExpInfoE06 tr {
            text-align : left;
            padding-left: 7px;
            padding-right: 7px;
@@ -833,12 +833,12 @@
            padding-bottom: 5px;
            border: 0px solid black;
            }
-           #ExpInfo {
+           #ExpInfoE06 {
            margin-left : 5 em;
            }
            
          </style> 
-         <table id="ExpInfo"> 
+         <table id="ExpInfoE06"> 
            <tr>
              <td><b>Title:</b></td>
              <td>Experiment 06: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> to produce and integrate clinical, hematological, parasitological, omics, telemetric, and histopathological measures of acute primary infection</td>
@@ -855,7 +855,7 @@
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
-           #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
+           #DataLinksE06 table, #DataLinksE06 td, #DataLinksE06 th, #DataLinksE06 tr {
            text-align : left;
            padding-left: 7px;
            padding-right: 7px;
@@ -863,13 +863,13 @@
            padding-bottom: 5px;
            border: 1px solid black;
            }
-           #DataLinks {
+           #DataLinksE06 {
            margin-left : 5 em;
            }
            
-           #DataLinks td {vertical-align: middle;}
+           #DataLinksE06 td {vertical-align: middle;}
          </style> 
-         <table id="DataLinks"> 
+         <table id="DataLinksE06"> 
            <tr>
              <th>Data from MaHPIC Team</th>
              <th>Data Available from</th>
@@ -954,7 +954,7 @@
      <h4>Experiment Information</h4>
 	 <div style="margin-left: 2.5em;">
 	 <style>
-           #ExpInfo table, #ExpInfo td, #ExpInfo th, #ExpInfo tr {
+           #ExpInfoE07 table, #ExpInfoE07 td, #ExpInfoE07 th, #ExpInfoE07 tr {
            text-align : left;
            padding-left: 7px;
            padding-right: 7px;
@@ -962,12 +962,12 @@
            padding-bottom: 5px;
            border: 0px solid black;
            }
-           #ExpInfo {
+           #ExpInfoE07 {
            margin-left : 5 em;
            }
            
          </style> 
-         <table id="ExpInfo"> 
+         <table id="ExpInfoE07"> 
            <tr>
              <td><b>Title:</b></td>
              <td>Experiment 07: <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> A strain to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection.</td>
@@ -984,7 +984,7 @@
 	 <h4>Data Links</h4> 
        <div style="margin-left: 2.5em;">
 	   <style>
-           #DataLinks table, #DataLinks td, #DataLinks th, #DataLinks tr {
+           #DataLinksE07 table, #DataLinksE07 td, #DataLinksE07 th, #DataLinksE07 tr {
            text-align : left;
            padding-left: 7px;
            padding-right: 7px;
@@ -992,13 +992,13 @@
            padding-bottom: 5px;
            border: 1px solid black;
            }
-           #DataLinks {
+           #DataLinksE07 {
            margin-left : 5 em;
            }
            
            #DataLinks td {vertical-align: middle;}
          </style> 
-         <table id="DataLinks"> 
+         <table id="DataLinksE07"> 
            <tr>
              <th>Data from MaHPIC Team</th>
              <th>Data Available from</th>
