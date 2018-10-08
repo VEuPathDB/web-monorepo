@@ -928,8 +928,8 @@
            </tr>
            
             -->
-        </div>
-        </table>
+           </table>
+           </div>
      <br><br>
 	<!--   
 	 <h4>Publication(s)</h4>
@@ -1056,10 +1056,11 @@
              <td><b>Coming soon</b></td>
              <td>N/A</td>
            </tr>
-           </div>
+
             -->
-           </div>
+ 
            </table>
+           </div>
      <br><br>
 	<!--   
 	 <h4>Publication(s)</h4>
