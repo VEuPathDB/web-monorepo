@@ -880,56 +880,9 @@
              <td> </td>  
              <td> </td>
            </tr>
-           <!-- 
-           <tr>
-             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_04/">E04 Clinical Data in PlasmoDB Downloads</b></a></td>  
-             <td>N/A</td>
-           </tr>
-           
-           <tr>
-             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
-                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE94273" target="_blank">E04 Bone Marrow Expression Results at NCBI's GEO</a><br>
-                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99486" target="_blank">E04 Whole Blood Expression Results at NCBI's GEO </a></b></td>
-             <td><b><a href="http://plasmodb.org/plasmo/app/record/gene/PCYB_103890#ExpressionGraphs">PlasmoDB example gene page</a><br>
-                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRC">PlasmoDB Pcyn differential expression</a><br>
-                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRCPercentile">PlasmoDB Pcyn relative expression (percentile)</a><br>
-                    <a href="http://hostdb.org/hostdb/app/record/gene/MACM_249#ExpressionGraphs" target="_blank">HostDB example gene page</a><br>
-                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRC">HostDB Mmul differential expression</a><br>
-                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRCPercentile">HostDB Mmul relative expression (percentile)</a></b></td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E04 + E18 Proteomics Results at PRIDE</a></b></td> 
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=68c2e59511d04428bfecf9ce231c7ad0" target="_blank">E04 Lipidomics Results at MassIVE</a></b></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b><a href=" http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1015" target="_blank">E04 Immunology (Adaptive, Innate, Cytokine) Results at ImmPort </a></b></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a><br>
-                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS517" target="_blank">E04 Metabolomics Results at Metabolights</a>
-                    </b></td>    
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
-             <td><b>Coming soon</b></td>
-             <td>N/A</td>
-           </tr>
-           
-            -->
            </table>
            </div>
+           
      <br><br>
 	<!--   
 	 <h4>Publication(s)</h4>
@@ -1010,57 +963,9 @@
              <td> </td>  
              <td> </td>
            </tr>
-           <!-- 
-           <tr>
-             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_04/">E04 Clinical Data in PlasmoDB Downloads</b></a></td>  
-             <td>N/A</td>
-           </tr>
-           
-           <tr>
-             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
-                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE94273" target="_blank">E04 Bone Marrow Expression Results at NCBI's GEO</a><br>
-                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE99486" target="_blank">E04 Whole Blood Expression Results at NCBI's GEO </a></b></td>
-             <td><b><a href="http://plasmodb.org/plasmo/app/record/gene/PCYB_103890#ExpressionGraphs">PlasmoDB example gene page</a><br>
-                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRC">PlasmoDB Pcyn differential expression</a><br>
-                    <a href="http://plasmodb.org/plasmo/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqpcynB_Galinski_infected_Mmulatta_rnaSeq_RSRCPercentile">PlasmoDB Pcyn relative expression (percentile)</a><br>
-                    <a href="http://hostdb.org/hostdb/app/record/gene/MACM_249#ExpressionGraphs" target="_blank">HostDB example gene page</a><br>
-                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRC">HostDB Mmul differential expression</a><br>
-                    <a href="http://hostdb.org/hostdb/showQuestion.do?questionFullName=InternalGeneDatasetQuestions.GenesByRNASeqEvidence#GeneQuestions.GenesByRNASeqmmul17573_Galinski_Mmulatta_Infected_with_Pcynomolgi_rnaSeq_RSRCPercentile">HostDB Mmul relative expression (percentile)</a></b></td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">E04 + E18 Proteomics Results at PRIDE</a></b></td> 
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
-             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=68c2e59511d04428bfecf9ce231c7ad0" target="_blank">E04 Lipidomics Results at MassIVE</a></b></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b><a href=" http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1015" target="_blank">E04 Immunology (Adaptive, Innate, Cytokine) Results at ImmPort </a></b></td>
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000515" target="_blank">E04 Metabolomics Results at Metabolomics Workbench</a><br>
-                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS517" target="_blank">E04 Metabolomics Results at Metabolights</a>
-                    </b></td>    
-             <td>N/A</td>
-           </tr>
-           <tr>
-             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
-             <td><b>Coming soon</b></td>
-             <td>N/A</td>
-           </tr>
-
-            -->
- 
-           </table>
-           </div>
+          </table>
+          </div>
+          
      <br><br>
 	<!--   
 	 <h4>Publication(s)</h4>
