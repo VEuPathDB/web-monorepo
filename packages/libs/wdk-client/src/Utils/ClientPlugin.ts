@@ -6,7 +6,7 @@ import { filter, map } from 'rxjs/operators';
 import { DispatchAction } from '../Core/CommonTypes';
 import WdkService from './WdkService';
 
-import { Action, ObserveServices } from './ActionCreatorUtils';
+import { Action } from './ActionCreatorUtils';
 import { EpicDependencies } from '../Core/Store';
 
 export interface ClientPlugin<T = object> {

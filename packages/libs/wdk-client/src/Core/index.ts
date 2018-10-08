@@ -4,7 +4,6 @@ import * as ActionCreators from './ActionCreators';
 import * as Controllers from './Controllers';
 import { initialize, wrapComponents } from './main';
 import * as Plugins from './Plugins';
-import * as Stores from './State/Stores';
 import * as ActionCreatorUtils from '../Utils/ActionCreatorUtils';
 import * as CategoryUtils from '../Utils/CategoryUtils';
 import * as ComponentUtils from '../Utils/ComponentUtils';
@@ -48,7 +47,6 @@ export {
   ReducerUtils,
   ReporterUtils,
   StaticDataUtils,
-  Stores,
   StoreModules,
   TreeUtils,
   WdkModel,

@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import Error from '../../Components/PageStatus/Error';
-import { emptyAction } from '../../Utils/ActionCreatorUtils';
-
+import { emptyAction, Action } from '../../Utils/ActionCreatorUtils';
 type Props = {
   renderError?: () => React.ReactNode;
   children?: React.ReactNode;
@@ -26,7 +25,7 @@ export default connect()(class ErrorBoundary extends React.Component<Props, Stat
 
     const { dispatch } = this.props;
     if (dispatch == null) {
-      console.warn('`dispatchAction` function not found. Unable to log render error to server.');
+      console.warn('`dispatch` function not found. Unable to log render error to server.');
     }
     else {
       dispatch(({ wdkService }) => {

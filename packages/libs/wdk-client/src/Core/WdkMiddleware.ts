@@ -8,6 +8,13 @@ import { isPromise } from '../Utils/PromiseUtils';
  */
 export type DispatchAction<T extends Action> = (action: ActionCreatorResult<T>) => ActionCreatorResult<T>;
 
+declare module 'redux' {
+  export interface Dispatch<A extends Action = AnyAction> {
+    <T extends A>(action: ActionCreatorResult<T>): ActionCreatorResult<T>;
+  }
+}
+
+
 
 /**
  * Create a function that takes a channel and creates a dispatch function

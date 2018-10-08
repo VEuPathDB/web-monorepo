@@ -14,17 +14,9 @@ export type ViewControllerProps = {
 }
 
 /**
- * Abstract base class for all ViewContoller classes in WDK. This base class is
+ * Base class for all ViewContoller classes in WDK. This base class is
  * responsible for:
- *  - managing store subscription
- *  - binding action creators to dispatcher
- *  - exposing store, dispatcher, and bound action creators on context
- *
- * It is also a type-safe abstraction over some constraints of WDK ViewControllers:
- *  - All ViewControllers must provide a `Store`.
- *  - The `Store` must be a subclass of `WdkStore`.
- *  - The state of the ViewController must be a transformation of the `Store`'s state.
- *
+ * - providing render hooks based on state predicates
  */
 export default class ViewController<Props = {}, State = {}> extends React.PureComponent<ViewControllerProps & Props, State> {
 

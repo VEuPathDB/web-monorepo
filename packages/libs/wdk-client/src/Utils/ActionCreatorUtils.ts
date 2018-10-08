@@ -1,4 +1,3 @@
-import WdkStore from '../Core/State/Stores/WdkStore';
 import { merge, Observable } from 'rxjs';
 import { PageTransitioner } from './PageTransitioner';
 import WdkService from './WdkService';
@@ -111,42 +110,3 @@ export function isOneOf<T extends Type, S extends Payload>(...actionCreators: Ty
 
 export type ActionType<T extends TypedActionCreator<any, any>> =
   T extends TypedActionCreator<infer S, infer U> ? TypedAction<S, U> : never;
-
-export interface ObserveServices<T extends WdkStore = WdkStore> extends ActionCreatorServices {
-  getState: T['getState'];
-}
-
-/**
- * An ActionObserver can be thought of as a listener that reacts to specific
- * Actions that get dispatched, by creating more actions. This is useful for
- * creating actions that require asynchronous work (such as loading data from a
- * server).
- *
- * The basic shape of an ActionObserver is that it is a function that consumes a
- * stream of Actions, and it returns a stream of new Actions. The Actions it
- * consumes are those that have already been handled by the store. The Actions
- * it produces are handled by the Store as they are emitted (more on that
- * later). Note that it can return an empty stream, which might happen if an
- * Action it expects is never emitted.
- *
- * For convenience, ActionObservers in WDK will also have configured services
- * passed to them.
- *
- * ActionObservers are also scoped to a store. This means that an ActionObserver
- * will only receive Actions for which WdkStore#storeShouldReceiveAction(channel)
- * returns true, and all Actions produced by the ActionObserver will contain the
- * Store's channel (unless the `broadcast()` action decorator is used).
- */
-export interface ActionObserver<T extends WdkStore = WdkStore>{
-  (action$: Observable<Action>, services: ObserveServices<T>): Observable<Action>;
-}
-
-/**
- * Creates an ActionObserver that emits the Actions of all input ActionObservers.
- * Actions are emitted in the order that the input ActionObservers emit actions
- * (e.g., they are interleaved).
- */
-export function combineObserve<T extends WdkStore>(...observer: ActionObserver<T>[]): ActionObserver<T> {
-  return <ActionObserver<T>>((action$, services) =>
-    merge(...observer.map(observe => observe(action$, services))))
-}
