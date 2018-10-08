@@ -965,7 +965,7 @@ const enhance = connect(
     experimentCategoryTree: getExperimentCategoryTree(state),
     generaCategoryTree: getGeneraCategoryTree(state)
   }),
-  // wraps these raw ACs with dispatchAction and will pass as props to enhanced component
+  // wraps these raw ACs with Redux store's dispatch and will pass as props to enhanced component
   {
     setActiveNodeData,
     setPathwayError,

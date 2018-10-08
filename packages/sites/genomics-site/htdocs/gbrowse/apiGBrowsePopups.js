@@ -140,8 +140,7 @@ function logAndAlert(error) {
 }
 
 function isGuestUser() {
-  var store = window.ebrc.context.stores.get(Wdk.Stores.WdkStore);
-  var user = store && store.getState().globalData.user;
+  var user = window.ebrc.context.store.getState().globalData.user;
   if (user == null) {
     console.warn('Cannot find current user. Assuming user is guest.');
     return false;
@@ -154,7 +153,7 @@ function checkLogin() {
   if (isGuest) {
     // Balloon is not used on gene pages
     if ('Balloon' in window) Balloon.prototype.hideTooltip(1);
-    window.ebrc.context.dispatchAction(Wdk.ActionCreators.UserActionCreators.showLoginForm())
+    window.ebrc.context.store.dispatch(Wdk.ActionCreators.UserActionCreators.showLoginForm())
   }
   return !isGuest;
 }
