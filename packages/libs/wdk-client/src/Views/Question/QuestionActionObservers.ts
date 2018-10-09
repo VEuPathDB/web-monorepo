@@ -1,7 +1,7 @@
 import { Epic, combineEpics } from 'redux-observable';
 import { from, EMPTY } from 'rxjs';
 import { mergeMap, takeUntil, debounceTime, filter } from 'rxjs/operators';
-import { EpicDependencies } from '../../Core/Store';
+import { ModuleEpic } from '../../Core/Store';
 import { Action } from '../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterValues } from '../../Utils/WdkModel';
 import WdkService from '../../Utils/WdkService';
@@ -23,7 +23,7 @@ import { State } from './QuestionStoreModule';
 // Observers
 // ---------
 
-type QuestionEpic = Epic<Action, Action, State, EpicDependencies>;
+type QuestionEpic = ModuleEpic<State>;
 
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   filter(ActiveQuestionUpdatedAction.test),
@@ -44,28 +44,28 @@ const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
 );
 
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
-    filter(ParamValueUpdatedAction.test),
-    filter(action => action.payload.parameter.dependentParams.length > 0),
-    debounceTime(1000),
-    mergeMap(action => {
-      const { questionName, parameter, paramValues, paramValue } = action.payload;
-      return from(wdkService.getQuestionParamValues(
-        questionName,
-        parameter.name,
-        paramValue,
-        paramValues
-      ).then(
-        parameters => ParamsUpdatedAction.create({questionName, parameters}),
-        error => ParamErrorAction.create({ questionName, error: error.message, paramName: parameter.name })
-      )).pipe(
-        takeUntil(action$.pipe(filter(ParamValueUpdatedAction.test))),
-        takeUntil(action$.pipe(filter(killAction => (
-          UnloadQuestionAction.test(killAction) &&
-          killAction.payload.questionName === action.payload.questionName
-        ))))
-      )
-    })
-  );
+  filter(ParamValueUpdatedAction.test),
+  filter(action => action.payload.parameter.dependentParams.length > 0),
+  debounceTime(1000),
+  mergeMap(action => {
+    const { questionName, parameter, paramValues, paramValue } = action.payload;
+    return from(wdkService.getQuestionParamValues(
+      questionName,
+      parameter.name,
+      paramValue,
+      paramValues
+    ).then(
+      parameters => ParamsUpdatedAction.create({questionName, parameters}),
+      error => ParamErrorAction.create({ questionName, error: error.message, paramName: parameter.name })
+    )).pipe(
+      takeUntil(action$.pipe(filter(ParamValueUpdatedAction.test))),
+      takeUntil(action$.pipe(filter(killAction => (
+        UnloadQuestionAction.test(killAction) &&
+        killAction.payload.questionName === action.payload.questionName
+      ))))
+    )
+  })
+);
 
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
   filter(QuestionSubmitted.test),
@@ -90,7 +90,6 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
   observeLoadQuestionSuccess,
   observeUpdateDependentParams,
-  // observeQuestionSubmitRequest,
   observeQuestionSubmit
 );
 

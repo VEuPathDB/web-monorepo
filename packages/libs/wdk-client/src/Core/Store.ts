@@ -19,8 +19,8 @@ export type EpicDependencies = {
   locatePlugin: LocatePlugin;
   wdkService: WdkService;
 }
-type ModuleReducer<T> = (state: T | undefined, action: Action, locatePlugin: LocatePlugin) => T;
-type ModuleEpic<T> = Epic<Action, Action, T, EpicDependencies>;
+export type ModuleReducer<T> = (state: T | undefined, action: Action, locatePlugin: LocatePlugin) => T;
+export type ModuleEpic<T> = Epic<Action, Action, T, EpicDependencies>;
 
 export type StoreModule<T> = {
   reduce: ModuleReducer<T>;
