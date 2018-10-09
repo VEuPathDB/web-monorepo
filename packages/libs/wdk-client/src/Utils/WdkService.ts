@@ -333,10 +333,13 @@ const attributeFieldDecoder: Decode.Decoder<AttributeField> =
     Decode.field('properties', Decode.optional(Decode.objectOf(Decode.arrayOf(Decode.string)))),
     Decode.field('help', Decode.optional(Decode.string)),
     Decode.field('align', Decode.optional(Decode.string)),
-    Decode.field('isSortable', Decode.boolean),
-    Decode.field('isRemovable', Decode.boolean),
     Decode.field('type', Decode.optional(Decode.string)),
-    Decode.field('truncateTo', Decode.number)
+    Decode.field('truncateTo', Decode.number),
+    Decode.combine(
+      Decode.field('isSortable', Decode.boolean),
+      Decode.field('isRemovable', Decode.boolean),
+      Decode.field('isDisplayable', Decode.boolean),
+    )
   )
 
 const questionSharedDecoder =

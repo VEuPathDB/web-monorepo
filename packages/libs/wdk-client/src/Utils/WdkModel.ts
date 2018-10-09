@@ -232,6 +232,7 @@ export interface AttributeField extends ModelEntity {
   align?: string;
   isSortable: boolean;
   isRemovable: boolean;
+  isDisplayable: boolean;
   type?: string;
   truncateTo: number;
   formats: Reporter[];
