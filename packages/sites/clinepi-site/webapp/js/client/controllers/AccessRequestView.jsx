@@ -81,6 +81,7 @@ export default class AccessRequestView extends Component {
       <Fragment>
         <h4 className="access-request-form-header">
           To process your request, the data provider for this study needs a little more information.
+          <br/>Be aware that your NAME,ORGANIZATION,DATE,PURPOSE will appear publicly on the study page after a request has been approved.
         </h4>
         <form 
           onSubmit={e => {
