@@ -141,9 +141,11 @@ export function createNode(id: string, displayName: string, description?: string
  */
 export function addSearchSpecificSubtree(question: Question, categoryTree: CategoryTreeNode): CategoryTreeNode {
   if (question.dynamicAttributes.length > 0) {
-    let questionNodes = question.dynamicAttributes.map(attribute => {
-      return createNode(attribute.name, attribute.displayName, attribute.help, []);
-    });
+    let questionNodes = question.dynamicAttributes
+      .filter(attribute => attribute.isDisplayable)
+      .map(attribute => {
+        return createNode(attribute.name, attribute.displayName, attribute.help, []);
+      });
     let subtree = createNode(
       "search_specific_subtree",
       "Search Specific",
