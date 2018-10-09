@@ -1,5 +1,5 @@
 import { History, Location } from 'history';
-import { isString, noop } from 'lodash';
+import { isString } from 'lodash';
 
 export function createMockHistory(options: { basename: string }): History {
   const createHref = getCreateHref(options.basename);

@@ -1,4 +1,4 @@
-import {flowRight as compose, get, kebabCase, memoize} from 'lodash';
+import { get, kebabCase } from 'lodash';
 import * as React from 'react';
 import {preorderSeq, getBranches} from './TreeUtils';
 import {

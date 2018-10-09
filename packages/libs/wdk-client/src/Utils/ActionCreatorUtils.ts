@@ -1,4 +1,3 @@
-import { merge, Observable } from 'rxjs';
 import { PageTransitioner } from './PageTransitioner';
 import WdkService from './WdkService';
 
