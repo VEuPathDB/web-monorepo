@@ -15,7 +15,7 @@ export default function GalaxySignUp(props) {
       </p>
 
       <p>
-        <a href={`${webAppUrl}/contact.do`}>Contact us</a> if you experience any difficulties.
+        <a href={`${webAppUrl}/app/contact-us`}>Contact us</a> if you experience any difficulties.
       </p>
 
       <div className="eupathdb-GalaxySignUpScreens">

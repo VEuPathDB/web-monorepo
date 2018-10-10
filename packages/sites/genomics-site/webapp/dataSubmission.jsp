@@ -43,14 +43,14 @@ and are open to suggestions. Use the
 
 <!-- 
 <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#2E74B5;
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us"><span style='color:#2E74B5;
 mso-themecolor:accent1;mso-themeshade:191'>Contact Us</span></a> -->
 
 <!--  <span style='color:#2E74B5;mso-themecolor:accent1;mso-themeshade:191'> </span> -->
 
 
 <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a>
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a>
 link to 
 make suggestions. We look forward to working with you!</p>
 
@@ -85,7 +85,7 @@ style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp
 EuPathDB Outreach for an initial review of your data.</b> </p>
 
 <p class=MsoNoSpacing style='margin-left:.25in;text-align:justify'>Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> link to send a
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> link to send a
 brief description (two or three sentences) of your data. We will make every
 effort to reply quickly. During the data submission process, data sets are scheduled
 for an upcoming release and given a release date so that we can allocate our
@@ -162,7 +162,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -170,7 +170,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -252,7 +252,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -260,7 +260,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -268,7 +268,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#0563C1'>Contact
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us"><span style='color:#0563C1'>Contact
 Us</span></a><span style='color:#0563C1'> </span>form to send us an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt'><span style='color:#C00000'><o:p>&nbsp;</o:p></span></p>
@@ -335,7 +335,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request access
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request access
 to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -343,7 +343,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -351,7 +351,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:windowtext'>Contact
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us"><span style='color:windowtext'>Contact
 Us</span></a> form to send us an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -414,7 +414,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -422,7 +422,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site and use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -430,7 +430,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. . Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -492,7 +492,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -500,7 +500,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -508,7 +508,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us"><span style='color:#0563C1'>Contact
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us"><span style='color:#0563C1'>Contact
 Us</span></a> form to send us an email.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -574,7 +574,7 @@ style='color:#C00000'>Susanne needs to finish) </span>
 and we will use the
 information to generate a Genbank submission for your isolates. The new isolate records will be
 downloaded to EuPathDB with the release. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p>
@@ -626,7 +626,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -634,7 +634,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site where we can retrieve the data. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -694,7 +694,7 @@ mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
 normal'>IS NOT</b> uploaded to a repository, use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
 data and work out the best way to transfer the data.</p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -710,7 +710,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -718,7 +718,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site where we can retrieve the data. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -726,7 +726,7 @@ l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Send
 your data as an attachment to an email. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 an email.</p>
 
 </div>
@@ -747,7 +747,7 @@ use for data that does not fit any of the above categories </p>
 -->
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to tell us about your 
 data and work out the best way to transfer the data.</p>
 
 <!-- 
@@ -770,7 +770,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Upload
 your data to our ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to request
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to request
 access to our ftp site. </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -778,7 +778,7 @@ l0 level2 lfo3'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New"'><span style='mso-list:Ignore'>o<span
 style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Post
 your data to your ftp site. Use the <a
-href="${baseUrl}/contact.do" class="new-window" data-name="contact_us">Contact Us</a> form to send us
+href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
