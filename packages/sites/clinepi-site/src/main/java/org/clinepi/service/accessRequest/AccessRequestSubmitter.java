@@ -38,6 +38,8 @@ public class AccessRequestSubmitter {
       try (
           PreparedStatement ps = insertRequestPreparedStatement(conn, sql, params);
       ) {
+        SqlUtils.executeUpdate(conn, "DELETE FROM userlogins5.ValidDatasetUser WHERE user_id = 305710393", "clean-up");
+
         SqlUtils.executePreparedStatement(ps, sql, "write-access-request");
         boolean insertionPerformed = ps.getUpdateCount() == 1;
 

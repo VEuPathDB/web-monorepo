@@ -65,7 +65,7 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
         target: '_blank',
         id: 'contactus',
         text: 'Contact Us',
-        appUrl: '/contact.do'
+        url: '/a/app/contact-us'
       }
     ],
     iconMenu: [ ...socialIcons ]
