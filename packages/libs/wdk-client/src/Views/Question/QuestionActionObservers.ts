@@ -78,7 +78,15 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
     }).then(paramValues => {
-      console.log('TODO: Submit question', paramValues);
+      services.wdkService.createStep({
+        answerSpec: {
+          questionName: questionState.question.name,
+          parameters: paramValues
+        }
+      }).then(step => {
+        console.log('Created step', step);
+        console.log('TODO: Submit question');
+      })
     })
 
     return EMPTY;
