@@ -235,7 +235,15 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
   const parser = getParser(state, parameter);
   const datasetConfigPromise: Promise<DatasetConfig | void> =
     sourceType === 'file' && file
-      ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({ sourceType, sourceContent: { temporaryFileId, parser }}))
+      ? wdkService.createTemporaryFile(file).then(temporaryFileId => ({
+        sourceType,
+        sourceContent: {
+          temporaryFileId,
+          parser,
+          questionName: questionState.question.name,
+          parameterName: parameter.name
+        }
+      }))
     : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.recordClassName } })
     : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
     : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: valueToArray(idList) } })
