@@ -14,6 +14,8 @@ import {
   ParamValueUpdatedAction,
   GroupStateUpdatedAction,
   GroupVisibilityChangedAction,
+  QuestionCustomNameUpdated,
+  QuestionWeightUpdated,
 } from './QuestionActionCreators';
 import { Action, isOneOf } from '../../Utils/ActionCreatorUtils';
 import {
@@ -88,6 +90,8 @@ export type QuestionState = {
   groupUIState: Record<string, GroupState>;
   paramErrors: Record<string, string | undefined>;
   stepId: number | undefined;
+  weight?: string;
+  customName?: string;
 }
 
 export type State = {
@@ -148,6 +152,16 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     ...state,
     questionStatus: 'not-found'
   };
+
+  if (QuestionCustomNameUpdated.test(action)) return {
+    ...state,
+    customName: action.payload.customName
+  }
+
+  if (QuestionWeightUpdated.test(action)) return {
+    ...state,
+    weight: action.payload.weight
+  }
 
   if (ParamValueUpdatedAction.test(action)) return {
     ...state,

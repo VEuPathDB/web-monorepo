@@ -26,6 +26,12 @@ export const QuestionErrorAction = makeActionCreator<BasePayload, 'question/ques
 
 export const QuestionNotFoundAction = makeActionCreator<BasePayload, 'question/question-not-found'>('question/question-not-found');
 
+export const QuestionCustomNameUpdated =
+  makeActionCreator<BasePayload & { customName?: string }, 'question/custom-name-updated'>('question/custom-name-updated');
+
+export const QuestionWeightUpdated =
+  makeActionCreator<BasePayload & { weight?: string }, 'question/weight-updated'>('question/weight-updated');
+
 export const QuestionSubmitted =
   makeActionCreator<BasePayload, 'question/question-submitted'>('question/question-submitted');
 

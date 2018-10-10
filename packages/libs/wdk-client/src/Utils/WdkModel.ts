@@ -295,7 +295,7 @@ export interface AnswerFormatting {
 
 export interface NewStepSpec {
   answerSpec: AnswerSpec,
-  custonName?: string,
+  customName?: string,
   isCollapsible?: boolean,
   collapsedName?: string
 }

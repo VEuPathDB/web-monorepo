@@ -78,11 +78,14 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
     }).then(paramValues => {
+      const weight = Number.parseInt(questionState.weight || '');
       services.wdkService.createStep({
         answerSpec: {
           questionName: questionState.question.name,
-          parameters: paramValues
-        }
+          parameters: paramValues,
+          wdk_weight: Number.isNaN(weight) ? undefined : weight
+        },
+        customName: questionState.customName
       }).then(step => {
         console.log('Created step', step);
         console.log('TODO: Submit question');

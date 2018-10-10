@@ -34,6 +34,24 @@
     padding: 1.3rem;
   }
 
+  &SubmitSection {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    button {
+      font-size: 1.4em;
+      margin: 1em;
+    }
+
+    input {
+      width: 16em;
+      margin: 0 .2em;
+    }
+  }
+
   /* Parameter-specific rules */
 
   .wdk-TreeBoxParam {
