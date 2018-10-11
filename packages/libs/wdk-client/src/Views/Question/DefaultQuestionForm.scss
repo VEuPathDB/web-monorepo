@@ -41,7 +41,7 @@
     align-items: center;
     flex-direction: column;
 
-    button {
+    button[type=submit] {
       font-size: 1.4em;
       margin: 1em;
     }
