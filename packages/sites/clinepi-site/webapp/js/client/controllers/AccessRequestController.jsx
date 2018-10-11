@@ -1,4 +1,7 @@
-import { WdkPageController } from 'wdk-client/Controllers';
+import { get } from 'lodash';
+import { connect } from 'react-redux';
+
+import { PageController } from 'wdk-client/Controllers';
 
 import { 
   SupportFormBase, 
@@ -11,7 +14,6 @@ import {
 } from '../action-creators/AccessRequestActionCreators';
 
 import { 
-  webAppUrl,
   alreadyRequested,
   disableSubmit,
   submissionError,
@@ -24,60 +26,57 @@ import {
   title
 } from '../selectors/AccessRequestSelectors';
 
-import AccessRequestStore from '../stores/AccessRequestStore';
-
 import AccessRequestView from './AccessRequestView';
 
 import './AccessRequestController.scss';
 
-export default class AccessRequestController extends WdkPageController {
-  getStoreClass() {
-    return AccessRequestStore;
-  }
-
-  getActionCreators() {
-    return {
-      onChangePurpose: onChangeFieldFactory('purpose'),
-      onChangeResearchQuestion: onChangeFieldFactory('research_question'),
-      onChangeAnalysisPlan: onChangeFieldFactory('analysis_plan'),
-      onChangeDisseminationPlan: onChangeFieldFactory('dissemination_plan'),
-      submitForm
-    };
-  }
-
-  getStateFromStore() {
-    return {
-      webAppUrl: webAppUrl(this.store.getState()),
-      successfullySubmitted: successfullySubmitted(this.store.getState()),
-      alreadyRequested: alreadyRequested(this.store.getState()),
-      disableSubmit: disableSubmit(this.store.getState()),
-      submissionError: submissionError(this.store.getState()),
-      fieldElements: fieldElements(this.store.getState()),
-      formTitle: title(this.store.getState()),
-      formValues: formValues(this.store.getState()),
-      studyName: studyName(this.store.getState())
-    };
-  }
-
+class AccessRequestController extends PageController {
   getTitle() {
-    return title(this.store.getState());
+    return this.props.title;
   }
 
   isRenderDataLoaded() {
-    return loaded(this.store.getState());
+    return this.props.loaded;
   }
 
   isRenderDataNotFound() {
-    return notFound(this.store.getState());
+    return this.props.notFound;
   }
 
   renderView() {
     return (
-      <AccessRequestView
-        {...this.props}
-        {...this.state}
-        {...this.eventHandlers}
-      />
+      <AccessRequestView {...this.props} />
     );
   }
 }
+
+const mapStateToProps = ({ 
+  accessRequest: accessRequestState, 
+  globalData: globalDataState
+}) => ({
+  webAppUrl: get(globalDataState, 'siteConfig.webAppUrl', ''),
+  title: title(accessRequestState),
+  loaded: loaded(accessRequestState),
+  notFound: notFound(accessRequestState),
+  successfullySubmitted: successfullySubmitted(accessRequestState),
+  alreadyRequested: alreadyRequested(accessRequestState),
+  disableSubmit: disableSubmit(accessRequestState),
+  submissionError: submissionError(accessRequestState),
+  fieldElements: fieldElements(accessRequestState),
+  formTitle: title(accessRequestState),
+  formValues: formValues(accessRequestState),
+  studyName: studyName(accessRequestState)
+});
+
+const mapDispatchToProps = {
+  onChangePurpose: onChangeFieldFactory('purpose'),
+  onChangeResearchQuestion: onChangeFieldFactory('research_question'),
+  onChangeAnalysisPlan: onChangeFieldFactory('analysis_plan'),
+  onChangeDisseminationPlan: onChangeFieldFactory('dissemination_plan'),
+  submitForm
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccessRequestController);

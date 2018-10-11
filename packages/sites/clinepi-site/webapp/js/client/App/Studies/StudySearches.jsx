@@ -21,7 +21,7 @@ export default function StudySearchIconLinks(props) {
   return (
     <div className={cx()}>
       {entries.map(({ question, recordClass }) => (
-        <div className={cx('Item')}>
+        <div key={question.name} className={cx('Item')}>
           <Mesa.AnchoredTooltip
             fadeOut
             content={<span>Search <strong>{recordClass.displayNamePlural}</strong></span>}

@@ -11,7 +11,7 @@ const transformNewItem = compose(
   replace(/(<([^>]+)>)/ig, '') // strip html chars
 );
 
-const News = ({ webAppUrl, news, newsUrl = `${webAppUrl}/showXmlDataContent.do?name=XmlQuestions.News` }) =>
+const News = ({ webAppUrl, news, error, newsUrl = `${webAppUrl}/showXmlDataContent.do?name=XmlQuestions.News` }) =>
   <React.Fragment>
     <div className="stack wdk-Showcase">
       <div className="row wdk-Showcase-HeadingRow">
@@ -21,8 +21,8 @@ const News = ({ webAppUrl, news, newsUrl = `${webAppUrl}/showXmlDataContent.do?n
       </div>
       <div className="row wdk-Showcase-ContentRow">
         <div className="News">
-          {news.error && <div className="NewsLoadError"><em>Error loading news items.</em></div>}
-          {Seq.from(news.news ? news.news.records : Seq.empty())
+          {error && <div className="NewsLoadError"><em>Error loading news items.</em></div>}
+          {Seq.from(news ? news.records : Seq.empty())
               .map(({ attributes }) => (
                 <div className="NewsEntry" key={attributes.tag}>
                   <h4 className="NewsHeadline">

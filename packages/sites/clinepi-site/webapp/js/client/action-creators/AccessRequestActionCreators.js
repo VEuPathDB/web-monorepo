@@ -1,9 +1,17 @@
+export const UPDATE_USER_ID = 'request-access/update-user-id';
 export const UPDATE_STUDY = 'request-access/update-study';
 export const UPDATE_LOADING_ERROR = 'request-access/update-loading-error';
 export const UPDATE_SUBMISSION_ERROR = 'request-access/update-submission-error';
 export const UPDATE_FIELD = 'request-access/update-field';
 export const SUBMIT_FORM = 'request-access/submit-form';
 export const FINISH_SUBMISSION = 'request-access/finish-submission';
+
+export const updateUserId = userId => ({
+  type: UPDATE_USER_ID,
+  payload: {
+    userId
+  }
+});
 
 export const updateStudy = study => ({
   type: UPDATE_STUDY,

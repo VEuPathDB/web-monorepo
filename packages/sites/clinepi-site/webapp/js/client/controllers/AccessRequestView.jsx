@@ -58,7 +58,7 @@ export default class AccessRequestView extends Component {
             Our records indicate that you have already submitted a request for this dataset. 
           </p>
           <p>
-            If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/contact.do`} target="_blank">contact us</a>. 
+            If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a>. 
           </p>
         </Fragment>
       );
@@ -116,7 +116,7 @@ export default class AccessRequestView extends Component {
                 <tr>
                   <td colSpan={4}>
                     The following error was reported when we tried to submit your request. 
-                    If it persists, please don't hesitate to <a href={`${webAppUrl}/contact.do`} target="_blank">contact us</a> for help:
+                    If it persists, please don't hesitate to <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a> for help:
 
                     <p>
                       {submissionError}

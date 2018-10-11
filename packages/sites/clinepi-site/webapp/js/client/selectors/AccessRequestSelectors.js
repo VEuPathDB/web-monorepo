@@ -3,19 +3,9 @@ import { get } from 'lodash';
 import AccessRequestTextArea from '../controllers/AccessRequestTextArea';
 import AccessRequestTextField from '../controllers/AccessRequestTextField';
 
-export const webAppUrl = state => get(
-  state,
-  'globalData.siteConfig.webAppUrl',
-  ''
-);
-
-export const userId = state => get(
-  state,
-  'globalData.user.id',
-  ''
-);
-
 export const formValues = ({ formValues }) => formValues;
+
+export const userId = ({ userId }) => userId;
 
 export const loaded = ({ study }) => !!study; 
 export const datasetId = ({ study }) => get(
