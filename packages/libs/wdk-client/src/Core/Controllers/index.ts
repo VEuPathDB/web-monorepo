@@ -1,9 +1,7 @@
-import AbstractPageController from './AbstractPageController';
-import AbstractViewController from './AbstractViewController';
+import PageController from './PageController';
+import ViewController from './ViewController';
 import ErrorBoundary from './ErrorBoundary';
 import LegacyParamController from '../../Views/Question/LegacyParamController';
-import WdkPageController from './WdkPageController';
-import WdkViewController from './WdkViewController';
 import AnswerController from '../../Views/Answer/AnswerController';
 import FavoritesController from '../../Views/Favorites/FavoritesController';
 import IndexController from '../../Views/Index/IndexController';
@@ -24,9 +22,9 @@ import UserDatasetListController from '../../Views/UserDatasets/List/UserDataset
 import AttributeAnalysisButtonController from '../../Views/AttributeAnalysis/AttributeAnalysisButtonController';
 
 export {
+  PageController,
+  ViewController,
   AttributeAnalysisButtonController,
-  AbstractPageController,
-  AbstractViewController,
   AnswerController,
   DownloadFormController,
   ErrorBoundary,
@@ -46,6 +44,4 @@ export {
   UserPasswordResetController,
   UserProfileController,
   UserRegistrationController,
-  WdkPageController,
-  WdkViewController,
 };

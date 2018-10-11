@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { conditionallyTransition } from '../../Core/ActionCreators/UserActionCreators';
-import WdkPageController from '../../Core/Controllers/WdkPageController';
+import { conditionallyTransition } from './UserActionCreators';
+import PageController from '../../Core/Controllers/PageController';
 import { wrappable } from '../../Utils/ComponentUtils';
 import NotFound from '../../Views/NotFound/NotFound';
+import { RootState } from '../../Core/State/Types';
+import { connect } from 'react-redux';
 
 type PageContent = {
   tabTitle: string,
@@ -12,7 +14,9 @@ type PageContent = {
 
 const ActionCreators = { conditionallyTransition };
 
-class UserMessageController extends WdkPageController<typeof ActionCreators> {
+type Props = typeof ActionCreators & Pick<RootState['globalData'], 'config'>;
+
+class UserMessageController extends PageController<Props> {
 
   getContactUrl() {
     return 'mailto:help@eupathdb.org';
@@ -56,12 +60,12 @@ class UserMessageController extends WdkPageController<typeof ActionCreators> {
   loadData() {
     // if registered user is logged in, show profile instead of password reset message
     if (this.props.match.params.messageKey == 'password-reset-successful') {
-      this.eventHandlers.conditionallyTransition(user => !user.isGuest, '/user/profile');
+      this.props.conditionallyTransition(user => !user.isGuest, '/user/profile');
     }
   }
 
   isRenderDataLoaded(): boolean {
-    return this.state.globalData.config != null;
+    return this.props.config != null;
   }
 
   getActionCreators() {
@@ -83,4 +87,9 @@ class UserMessageController extends WdkPageController<typeof ActionCreators> {
   }
 }
 
-export default wrappable(UserMessageController);
+const enhance = connect(
+  (state: RootState) => ({ config: state.globalData.config }),
+  ActionCreators
+);
+
+export default enhance(wrappable(UserMessageController));

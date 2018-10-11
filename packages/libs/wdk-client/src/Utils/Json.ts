@@ -20,6 +20,8 @@ import { Seq } from './IterableUtils';
  */
 export type Decoder<T> = (t: any) => Result<T>;
 
+// Get underlying type of Decoder (e.g, T of Decoder<T>)
+export type Unpack<T> = T extends Decoder<infer R> ? R : never;
 
 // Decoder return types
 // --------------------
@@ -127,6 +129,17 @@ export function field<T, S extends string>(fieldName: S, decoder: Decoder<T>) {
     return r.status === 'ok'
       ? ok(t)
       : err(r.value, r.expected, `.${fieldName}${r.context}`);
+  }
+}
+
+export function record<T>(decoderRecord: { [K in keyof T]: Decoder<T[K]> } ): Decoder<T> {
+  return function decodeRecord(t: any): Result<T> {
+    if (!isPlainObject(t)) return err(t, `object`);
+    for (const key in decoderRecord) {
+      const r = decoderRecord[key](t[key]);
+      if (r.status === 'err') return err(r.value, r.expected, `.${key}${r.context}`);
+    }
+    return ok(t);
   }
 }
 

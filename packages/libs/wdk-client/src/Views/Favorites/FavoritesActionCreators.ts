@@ -1,5 +1,5 @@
 import { ActionThunk } from "../../Utils/ActionCreatorUtils";
-import { Favorite } from "../../Utils/WdkModel";
+import { Favorite, RecordClass } from "../../Utils/WdkModel";
 import { ServiceError } from "../../Utils/WdkService";
 import { MesaState, MesaSelection } from '../../Components/Mesa';
 
@@ -19,6 +19,13 @@ export type TableSelectionUpdatedAction = {
 };
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+export type CreateTypeGetterAction = {
+  type: 'favorites/create-type-getter',
+  payload: {
+    recordClasses: RecordClass[]
+  }
+};
 
 export type ListLoadingAction = {
   type: 'favorites/list-loading'
@@ -123,6 +130,15 @@ type ListAction = ListLoadingAction|ListErrorReceivedAction|ListReceivedAction|T
 type SaveAction = SaveCellDataAction|SaveReceivedAction|SaveErrorReceivedAction|TableStateUpdatedAction;
 type DeleteAction = DeleteFavoritesAction|DeleteErrorReceivedAction|TableStateUpdatedAction;
 type AddAction = AddErrorAction|UndeleteFavoritesAction|TableStateUpdatedAction;
+
+export function createTypeGetter(recordClasses: RecordClass[]): CreateTypeGetterAction {
+  return {
+    type: 'favorites/create-type-getter',
+    payload: {
+      recordClasses
+    }
+  }
+}
 
 export function loadFavoritesList (): ActionThunk<ListAction>{
   return function run ({ wdkService }) {

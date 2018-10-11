@@ -1,9 +1,11 @@
 import { DispatchAction } from '../../../Core/CommonTypes';
-import { QuestionStore } from '../../../Core/State/Stores';
 import React from 'react';
-import { EMPTY, Observable } from 'rxjs';
-import { Action, ActionObserver, ObserveServices } from '../../../Utils/ActionCreatorUtils';
-import { Parameter, ParameterValues } from '../../../Utils/WdkModel';
+import { EMPTY } from 'rxjs';
+import { Action } from '../../../Utils/ActionCreatorUtils';
+import { Parameter, ParameterValues, Question, RecordClass, QuestionWithParameters } from '../../../Utils/WdkModel';
+import { Epic } from 'redux-observable';
+import { State, QuestionState } from '../QuestionStoreModule';
+import { EpicDependencies } from '../../../Core/Store';
 
 
 // Types
@@ -26,14 +28,6 @@ export type Props<T extends Parameter, S = void> = {
 
 }
 
-type ParamModuleSpec<T extends Parameter, S> = {
-  isType: (parameter: Parameter) => parameter is T;
-  isParamValueValid: (context: Context<T>, state: S) => boolean;
-  reduce?: (state: S, action: any) => S;
-  Component: React.ComponentType<Props<T, S>>;
-  observeParam?: ActionObserver<QuestionStore>;
-}
-
 export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isType: (parameter: Parameter) => parameter is T;
   /**
@@ -44,14 +38,22 @@ export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isParamValueValid: (context: Context<T>, state: S) => boolean;
   reduce: (state: S, action: Action) => S;
   Component: React.ComponentType<Props<T, S>>;
-  observeParam: ActionObserver<QuestionStore>;
+  observeParam: Epic<Action, Action, State, EpicDependencies>;
+  /**
+   * React to submit events. The Question will not be submitted until this is complete.
+   */
+  getValueFromState: (context: Context<T>, state: QuestionState, services: EpicDependencies) => string | Promise<string>;
 }
+
+type ParamModuleSpec<T extends Parameter, S> =
+  Partial<ParamModule<T, S>> & Pick<ParamModule<T, S>, 'isParamValueValid' | 'Component' | 'isType'>
 
 export function createParamModule<T extends Parameter, S>(spec: ParamModuleSpec<T, S>): ParamModule<T, S> {
   return {
     ...spec,
     reduce: spec.reduce || defaultReduce,
-    observeParam: spec.observeParam || defaultObserve
+    observeParam: spec.observeParam || defaultObserve,
+    getValueFromState: spec.getValueFromState || defaultGetValueFromState
   }
 }
 
@@ -59,8 +61,12 @@ function defaultReduce<S>(state: S, action: Action): S {
   return state;
 }
 
-function defaultObserve(action$: Observable<Action>, services: ObserveServices) {
+function defaultObserve() {
   return EMPTY;
+}
+
+function defaultGetValueFromState(context: Context<Parameter>) {
+  return context.paramValues[context.parameter.name];
 }
 
 

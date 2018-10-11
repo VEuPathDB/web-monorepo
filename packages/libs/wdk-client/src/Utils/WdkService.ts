@@ -7,7 +7,7 @@ import * as Decode from './Json';
 import { Ontology } from './OntologyUtils';
 import { alert } from './Platform';
 import { pendingPromise, synchronized } from './PromiseUtils';
-import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs } from './WdkUser';
+import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder } from './WdkUser';
 
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from './CategoryUtils';
 import {
@@ -61,6 +61,25 @@ export interface AnswerRequest {
 
 interface TempResultResponse {
   id: string;
+}
+
+export type DatasetConfig = {
+  sourceType: 'idList',
+  sourceContent: { ids: string[] }
+} | {
+  sourceType: 'basket',
+  sourceContent: { basketName: string }
+} | {
+  sourceType: 'file',
+  sourceContent: {
+    temporaryFileId: string,
+    parser: string,
+    questionName: string,
+    parameterName: string
+  }
+} | {
+  sourceType: 'strategy',
+  sourceContent: { strategyId: number }
 }
 
 export type UserDatasetShareResponse = {
@@ -186,7 +205,17 @@ const parameterDecoder: Decode.Decoder<Parameter> =
       /* AnswerParam */
       Decode.field('type', Decode.constant('AnswerParam')),
       /* DatasetParam */
-      Decode.field('type', Decode.constant('DatasetParam')),
+      Decode.combine(
+        Decode.field('type', Decode.constant('DatasetParam')),
+        Decode.field('defaultIdList', Decode.optional(Decode.string)),
+        Decode.field('parsers', Decode.arrayOf(
+          Decode.combine(
+            Decode.field('name', Decode.string),
+            Decode.field('displayName', Decode.string),
+            Decode.field('description', Decode.string),
+          )
+        ))
+      ),
       /* TimestampParam */
       Decode.field('type', Decode.constant('TimestampParam')),
       /* StringParam  */
@@ -363,7 +392,6 @@ const questionWithParametersDecoder: Decode.Decoder<QuestionWithParameters> =
  * @class WdkService
  */
 export default class WdkService {
-
   private static _instances: Map<string, WdkService> = new Map;
 
   static getInstance(serviceUrl: string): WdkService {
@@ -904,6 +932,13 @@ export default class WdkService {
     });
   }
 
+  getStrategies() {
+    return this.sendRequest(Decode.arrayOf(strategyDecoder), {
+      method: 'GET',
+      path: '/users/current/strategies'
+    })
+  }
+
   getOntology(name = '__wdk_categories__') {
     let recordClasses$ = this.getRecordClasses().then(rs => keyBy(rs, 'name'));
     let questions$ = this.getQuestions().then(qs => keyBy(qs, 'name'));
@@ -931,6 +966,38 @@ export default class WdkService {
         data: JSON.stringify(answerRequest)
       }
     });
+  }
+
+  createTemporaryFile(file: File): Promise<string> {
+    const formData = new FormData();
+    const path = '/temporary-file';
+    formData.append('file', file, file.name);
+    return fetch(this.serviceUrl + path, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    }).then(response => {
+      if (response.ok) {
+        const id = response.headers.get('ID');
+        if (id == null) throw new Error("Expected response headers to include `ID`, but it was not.");
+        return Promise.resolve(id);
+      }
+      return response.text().then(text => {
+        throw new ServiceError(
+          `Cannot POST ${path} (${response.status})`,
+          text,
+          response.status
+        );
+      })
+    })
+  }
+
+  createDataset(config: DatasetConfig): Promise<Number> {
+    return this.sendRequest(Decode.field('id', Decode.number), {
+      path: '/users/current/datasets',
+      method: 'POST',
+      body: JSON.stringify(config)
+    }).then(response => response.id)
   }
 
   private _fetchJson<T>(method: string, url: string, body?: string) {

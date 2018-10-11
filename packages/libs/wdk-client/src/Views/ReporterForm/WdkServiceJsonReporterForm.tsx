@@ -4,7 +4,7 @@ import { CategoryTreeNode, getAllLeafIds } from '../../Utils/CategoryUtils';
 import { getChangeHandler } from '../../Utils/ComponentUtils';
 import { Ontology } from "../../Utils/OntologyUtils";
 import { Question, RecordClass } from "../../Utils/WdkModel";
-import { State } from "./DownloadFormStore";
+import { State } from "./DownloadFormReducer";
 import ReporterSortMessage from './ReporterSortMessage';
 import { addPk, getAttributesChangeHandler, getAttributeSelections, getAttributeTree, getTableTree } from './reporterUtils';
 
@@ -66,13 +66,13 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
 }
 
 namespace WdkServiceJsonReporterForm {
-  export function getInitialState(downloadFormStoreState: State) {
+  export function getInitialState(downloadFormState: State) {
     let attribs: string[], tables: string[];
 
-    let { scope, question, recordClass, globalData: { ontology, preferences } } = downloadFormStoreState;
+    let { scope, question, recordClass, ontology, preferences } = downloadFormState;
 
-    if (preferences == null || ontology == null) {
-      console.warn('DownloadFormStore.State.globalData.{ontology, preference} is null. Using empty attribute and tables.');
+    if (preferences == null || ontology == null || question == null || recordClass == null) {
+      console.warn('DownloadForm state is missing data. Using empty attribute and tables.', downloadFormState);
       attribs = tables = [];
     }
 

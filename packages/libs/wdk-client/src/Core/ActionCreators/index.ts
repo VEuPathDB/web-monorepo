@@ -1,4 +1,4 @@
-import * as UserActionCreators from './UserActionCreators';
+import * as UserActionCreators from '../../Views/User/UserActionCreators';
 import * as RouterActionCreators from './RouterActionCreators';
 import * as StaticDataActionCreators from './StaticDataActionCreators';
 

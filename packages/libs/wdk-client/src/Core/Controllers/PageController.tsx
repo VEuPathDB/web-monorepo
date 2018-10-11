@@ -3,19 +3,13 @@ import { parse } from 'querystring';
 import React from 'react';
 
 import Page from '../../Components/Layout/Page';
-import { PageControllerProps } from '../../Core/CommonTypes';
-import WdkStore, { BaseState } from '../../Core/State/Stores/WdkStore';
-import { Action, ActionCreatorRecord } from '../../Utils/ActionCreatorUtils';
-import AbstractViewController from './AbstractViewController';
+import ViewController, { ViewControllerProps } from './ViewController';
+import { RouteComponentProps } from 'react-router';
 
 /**
  * A ViewController that is intended to render a UI on an entire screen.
  */
-export default abstract class AbstractPageController <
-  State extends {} = BaseState,
-  Store extends WdkStore = WdkStore,
-  ActionCreators extends ActionCreatorRecord<Action> = {}
-> extends AbstractViewController<State, Store, ActionCreators, PageControllerProps<Store>> {
+export default class PageController<Props = {}, State = {}> extends ViewController<Props & RouteComponentProps<any>, State> {
 
   /*--------------- Methods to override to display content ---------------*/
 
@@ -53,9 +47,11 @@ export default abstract class AbstractPageController <
     this.setDocumentTitle();
   }
 
-  componentDidUpdate(prevProps: PageControllerProps<Store>, state: State): void {
+  componentDidUpdate(prevProps: Props & ViewControllerProps & RouteComponentProps<any>): void {
     // only call loadData if router props have changed
-    if (!isEqual(prevProps.location, this.props.location)) this.loadData(prevProps);
+    if (!isEqual(prevProps.location, this.props.location)) {
+      this.loadData(prevProps);
+    }
     this.setDocumentTitle();
   }
 

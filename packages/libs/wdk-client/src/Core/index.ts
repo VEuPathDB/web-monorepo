@@ -4,7 +4,6 @@ import * as ActionCreators from './ActionCreators';
 import * as Controllers from './Controllers';
 import { initialize, wrapComponents } from './main';
 import * as Plugins from './Plugins';
-import * as Stores from './State/Stores';
 import * as ActionCreatorUtils from '../Utils/ActionCreatorUtils';
 import * as CategoryUtils from '../Utils/CategoryUtils';
 import * as ComponentUtils from '../Utils/ComponentUtils';
@@ -14,7 +13,9 @@ import * as Json from '../Utils/Json';
 import * as OntologyUtils from '../Utils/OntologyUtils';
 import * as Platform from '../Utils/Platform';
 import * as PromiseUtils from '../Utils/PromiseUtils';
+import * as ReducerUtils from '../Utils/ReducerUtils';
 import * as StaticDataUtils from '../Utils/StaticDataUtils';
+import StoreModules from './State/StoreModules';
 import * as TreeUtils from '../Utils/TreeUtils';
 import * as WdkModel from '../Utils/WdkModel';
 import WdkService from '../Utils/WdkService';
@@ -43,9 +44,10 @@ export {
   Platform,
   Plugins,
   PromiseUtils,
+  ReducerUtils,
   ReporterUtils,
   StaticDataUtils,
-  Stores,
+  StoreModules,
   TreeUtils,
   WdkModel,
   WdkService,

@@ -1,30 +1,25 @@
 import * as React from 'react';
-import { submitProfileForm, updateProfileForm } from '../../../Core/ActionCreators/UserActionCreators';
-import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
+import { connect } from 'react-redux';
+import { submitProfileForm, updateProfileForm } from '../UserActionCreators';
+import PageController from '../../../Core/Controllers/PageController';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import UserProfile from './UserProfile';
-import UserProfileStore, { State } from './UserProfileStore';
+import { RootState } from '../../../Core/State/Types';
 
 const ActionCreators = { updateProfileForm, submitProfileForm };
 
-class UserProfileController extends AbstractPageController<State, UserProfileStore, typeof ActionCreators> {
+type Props = {
+  globalData: RootState['globalData'];
+  userProfile: RootState['userProfile'];
+  userEvents: typeof ActionCreators;
+}
 
-  getStoreClass() {
-    return UserProfileStore;
-  }
-
-  getStateFromStore() {
-    return this.store.getState();
-  }
-
-  getActionCreators() {
-    return { updateProfileForm, submitProfileForm };
-  }
+class UserProfileController extends PageController<Props> {
 
   isRenderDataLoaded() {
-    return (this.state.userFormData != null &&
-            this.state.userFormData.preferences != null &&
-            this.state.globalData.config != null);
+    return ( this.props.globalData.user != null &&
+            this.props.globalData.preferences != null &&
+            this.props.globalData.config != null);
   }
 
   getTitle() {
@@ -32,8 +27,21 @@ class UserProfileController extends AbstractPageController<State, UserProfileSto
   }
 
   renderView() {
-    return ( <UserProfile {...this.state} userEvents={this.eventHandlers}/> );
+    return ( <UserProfile {...this.props} /> );
   }
 }
 
-export default wrappable(UserProfileController);
+const enhance = connect((state: RootState) => ({
+  globalData: state.globalData,
+  ...state.userProfile,
+  userFormData: {
+    ...state.globalData.user,
+    confirmEmail: state.globalData.user && state.globalData.user.email,
+    preferences: state.globalData.preferences,
+    ...state.userProfile.userFormData
+  }
+}),
+ActionCreators,
+(stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps }))
+
+export default enhance(wrappable(UserProfileController));

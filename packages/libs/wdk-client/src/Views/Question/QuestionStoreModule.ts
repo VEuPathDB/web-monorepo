@@ -1,27 +1,40 @@
 import { keyBy, mapValues } from 'lodash';
-import { Observable } from 'rxjs';
+import { combineEpics, Epic } from 'redux-observable';
 
 import {
   ActiveQuestionUpdatedAction,
-  GroupStateUpdatedAction,
-  GroupVisibilityChangedAction,
-  observeQuestion,
+  QuestionErrorAction,
+  QuestionLoadedAction,
+  QuestionNotFoundAction,
+  UnloadQuestionAction,
   ParamErrorAction,
   ParamInitAction,
   ParamStateUpdatedAction,
   ParamsUpdatedAction,
   ParamValueUpdatedAction,
-  QuestionErrorAction,
-  QuestionLoadedAction,
-  QuestionNotFoundAction,
-  UnloadQuestionAction,
+  GroupStateUpdatedAction,
+  GroupVisibilityChangedAction,
+  QuestionCustomNameUpdated,
+  QuestionWeightUpdated,
 } from './QuestionActionCreators';
-import WdkStore, { BaseState } from '../../Core/State/Stores/WdkStore';
-import { Action, combineObserve, isOneOf, ObserveServices } from '../../Utils/ActionCreatorUtils';
-import { Parameter, ParameterGroup, QuestionWithParameters, RecordClass } from '../../Utils/WdkModel';
+import { Action, isOneOf } from '../../Utils/ActionCreatorUtils';
+import {
+  Parameter,
+  ParameterGroup,
+  QuestionWithParameters,
+  RecordClass
+} from "../../Utils/WdkModel";
 
-import { observeParam, reduce as paramReducer } from './Params';
-import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
+import { observeParam, reduce as paramReducer } from "./Params";
+import {
+  SetFile,
+  SetIdList,
+  SetSourceType,
+  SetStrategyId,
+  SetBasketCount,
+  SetStrategyList,
+  SetFileParser
+} from "./Params/DatasetParam";
 import {
   ActiveFieldSetAction,
   FieldStateUpdatedAction,
@@ -29,6 +42,8 @@ import {
   OntologyTermsInvalidated,
   SummaryCountsLoadedAction,
 } from './Params/FilterParamNew/ActionCreators';
+import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
+import { observeQuestion } from './QuestionActionObservers';
 
 interface GroupState {
   isVisible: boolean;
@@ -53,7 +68,14 @@ const isQuestionType = isOneOf(
   FiltersUpdatedAction,
   OntologyTermsInvalidated,
   ExpandedListSet,
-  SearchTermSet
+  SearchTermSet,
+  SetBasketCount,
+  SetStrategyList,
+  SetFile,
+  SetIdList,
+  SetSourceType,
+  SetStrategyId,
+  SetFileParser
 );
 
 export type QuestionState = {
@@ -68,40 +90,33 @@ export type QuestionState = {
   groupUIState: Record<string, GroupState>;
   paramErrors: Record<string, string | undefined>;
   stepId: number | undefined;
+  weight?: string;
+  customName?: string;
 }
 
-export type State = BaseState & {
+export type State = {
   questions: Record<string, QuestionState | undefined>;
 }
 
-export default class QuestionStore extends WdkStore<State> {
-
-  getInitialState() {
-    return {
-      ...super.getInitialState(),
-      questions: {}
-    }
-  }
-
-  handleAction(state: State, action: Action): State {
-    if (isQuestionType(action)) {
-      const { questionName } = action.payload;
-      return {
-        ...state,
-        questions: {
-          ...state.questions,
-          [questionName]: reduceQuestionState(state.questions[questionName], action)
-        }
-      };
-    }
-    return state;
-  }
-
-  observeActions(action$: Observable<Action>, services: ObserveServices<this>): Observable<Action> {
-    return combineObserve(observeQuestion, observeParam)(action$, services);
-  }
-
+const initialState: State = {
+  questions: {}
 }
+
+export function reduce(state: State = initialState, action: Action): State {
+  if (isQuestionType(action)) {
+    const { questionName } = action.payload;
+    return {
+      ...state,
+      questions: {
+        ...state.questions,
+        [questionName]: reduceQuestionState(state.questions[questionName], action)
+      }
+    };
+  }
+  return state;
+}
+
+export const observe = combineEpics<Epic<Action, Action, State>>(observeQuestion, observeParam);
 
 function reduceQuestionState(state = {} as QuestionState, action: Action): QuestionState | undefined {
 
@@ -123,17 +138,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     paramErrors: action.payload.question.parameters.reduce((paramValues, param) =>
       Object.assign(paramValues, { [param.name]: undefined }), {}),
     paramUIState: action.payload.question.parameters.reduce((paramUIState, parameter) =>
-      Object.assign(paramUIState, {
-        [parameter.name]: paramReducer(
-          parameter,
-          undefined,
-          ParamInitAction.create({
-            parameter,
-            questionName: action.payload.questionName,
-            paramValues: action.payload.paramValues
-          })
-        )
-      }), {}),
+      Object.assign(paramUIState, { [parameter.name]: paramReducer(parameter, undefined, { type: '@@parm-stub@@' }) }), {}),
     groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
       Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {})
   }
@@ -147,6 +152,16 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     ...state,
     questionStatus: 'not-found'
   };
+
+  if (QuestionCustomNameUpdated.test(action)) return {
+    ...state,
+    customName: action.payload.customName
+  }
+
+  if (QuestionWeightUpdated.test(action)) return {
+    ...state,
+    weight: action.payload.weight
+  }
 
   if (ParamValueUpdatedAction.test(action)) return {
     ...state,

@@ -1,13 +1,12 @@
 import * as React from 'react';
 
 import '../UserDatasets.scss';
-import { showLoginForm } from '../../../Core/ActionCreators/UserActionCreators';
-import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
+import { showLoginForm } from '../../User/UserActionCreators';
+import PageController from '../../../Core/Controllers/PageController';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import { UserDataset } from '../../../Utils/WdkModel';
 import UserDatasetEmptyState from '../EmptyState';
 import UserDatasetList from './UserDatasetList';
-import UserDatasetListStore, { State as StoreState } from './UserDatasetListStore';
 import {
   loadUserDatasetList,
   removeUserDataset,
@@ -17,8 +16,12 @@ import {
   updateUserDatasetDetail,
 } from '../UserDatasetsActionCreators';
 import { quotaSize } from '../UserDatasetUtils';
+import { RootState } from '../../../Core/State/Types';
+import { connect } from 'react-redux';
 
 const ActionCreators = {
+  showLoginForm,
+  loadUserDatasetList,
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
@@ -26,15 +29,9 @@ const ActionCreators = {
   updateProjectFilter
 };
 
-class UserDatasetListController extends AbstractPageController <StoreState, UserDatasetListStore, typeof ActionCreators> {
+type Props = typeof ActionCreators & Pick<RootState, 'globalData' | 'userDatasetList'>;
 
-  getStoreClass () {
-    return UserDatasetListStore;
-  }
-
-  getStateFromStore () {
-    return this.store.getState();
-  }
+class UserDatasetListController extends PageController <Props> {
 
   getTitle () {
     return 'My Data Sets';
@@ -45,22 +42,22 @@ class UserDatasetListController extends AbstractPageController <StoreState, User
   }
 
   loadData () {
-    if (this.state.status === 'not-requested') {
-      this.dispatchAction(loadUserDatasetList());
+    if (this.props.userDatasetList.status === 'not-requested') {
+      this.props.loadUserDatasetList();
     }
   }
 
   isRenderDataLoaded () {
     return (
-      this.state.status !== 'not-requested' &&
-      this.state.status !== 'loading' &&
-      this.state.globalData.config != null &&
-      this.state.globalData.user != null
+      this.props.userDatasetList.status !== 'not-requested' &&
+      this.props.userDatasetList.status !== 'loading' &&
+      this.props.globalData.config != null &&
+      this.props.globalData.user != null
     );
   }
 
   isRenderDataLoadError() {
-    return this.state.status === 'error';
+    return this.props.userDatasetList.status === 'error';
   }
 
   renderGuestView() {
@@ -73,7 +70,7 @@ class UserDatasetListController extends AbstractPageController <StoreState, User
             <button
               type="button"
               className="btn"
-              onClick={() => this.dispatchAction(showLoginForm())}
+              onClick={() => this.props.showLoginForm()}
             >Please log in to access My Data Sets.</button>
           } />
         </div>
@@ -82,15 +79,26 @@ class UserDatasetListController extends AbstractPageController <StoreState, User
   }
 
   renderView () {
-    const { user } = this.state.globalData;
+    const { config, user } = this.props.globalData;
+
+    if (user == null || config == null) return this.renderDataLoading();
 
     if (user.isGuest) return this.renderGuestView();
 
-    if (this.state.status !== 'complete') return null;
+    if (this.props.userDatasetList.status !== 'complete') return null;
 
-    const { userDatasets, userDatasetsById, filterByProject, globalData: { config } } = this.state;
     const { projectId, displayName: projectName } = config;
-    const { history, location } = this.props;
+
+    const {
+      userDatasetList: { userDatasets, userDatasetsById, filterByProject },
+      shareUserDatasets,
+      unshareUserDatasets,
+      removeUserDataset,
+      updateUserDatasetDetail,
+      updateProjectFilter,
+      history,
+      location
+    } = this.props;
 
     const listProps = {
       user,
@@ -101,7 +109,11 @@ class UserDatasetListController extends AbstractPageController <StoreState, User
       quotaSize,
       userDatasets: userDatasets.map(id => userDatasetsById[id].resource) as UserDataset[],
       filterByProject,
-      ...this.eventHandlers
+      shareUserDatasets,
+      unshareUserDatasets,
+      removeUserDataset,
+      updateUserDatasetDetail,
+      updateProjectFilter,
     };
     return (
       <div className="UserDatasetList-Controller">
@@ -113,4 +125,12 @@ class UserDatasetListController extends AbstractPageController <StoreState, User
   }
 }
 
-export default wrappable(UserDatasetListController);
+const enhance = connect(
+  (state: RootState) => ({
+    globalData: state.globalData,
+    userDatasetList: state.userDatasetList
+  }),
+  ActionCreators
+)
+
+export default enhance(wrappable(UserDatasetListController));

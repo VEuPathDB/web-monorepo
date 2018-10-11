@@ -1,17 +1,19 @@
 import * as React from 'react';
 
+import { HelpIcon, IconAlt } from '../../Components';
 import { DispatchAction } from '../../Core/CommonTypes';
-import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { makeClassNameHelper, safeHtml } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import { Parameter, ParameterGroup } from '../../Utils/WdkModel';
 import ParameterComponent from './ParameterComponent';
-import { EventHandlers } from './QuestionController';
-import { QuestionState } from './QuestionStore';
-import { HelpIcon, IconAlt } from '../../Components';
-
+import { QuestionState } from './QuestionStoreModule';
+import { GroupVisibilityChangedAction, ParamValueUpdatedAction, QuestionSubmitted, QuestionCustomNameUpdated, QuestionWeightUpdated } from './QuestionActionCreators';
 import './DefaultQuestionForm.scss';
 
-const cx = makeClassNameHelper('wdk-QuestionForm');
+type EventHandlers = {
+  setGroupVisibility: typeof GroupVisibilityChangedAction.create,
+  updateParamValue: typeof ParamValueUpdatedAction.create
+}
 
 type Props = {
   state: QuestionState;
@@ -19,33 +21,70 @@ type Props = {
   eventHandlers: EventHandlers;
 }
 
+const cx = makeClassNameHelper('wdk-QuestionForm');
+const tooltipPosition = { my: 'right center', at: 'left center' };
+
 export default function DefaultQuestionForm(props: Props) {
-  const { state, eventHandlers } = props
+  const { state, eventHandlers, dispatchAction } = props
+  const { customName, groupUIState, paramValues, paramUIState, question, weight } = state;
   return (
     <div className={cx()}>
-    <h1>{state.question.displayName}</h1>
-    {state.question.groups
-      .filter(group => group.displayType !== 'hidden')
-      .map(group =>
-        <Group
-          key={group.name}
-          questionName={state.question.urlSegment}
-          group={group}
-          uiState={state.groupUIState[group.name]}
-          onVisibilityChange={eventHandlers.setGroupVisibility}
-        >
-          <ParameterList
-            questionName={state.question.urlSegment}
-            dispatch={props.dispatchAction}
-            parameterMap={state.question.parametersByName}
-            parameters={group.parameters}
-            paramValues={state.paramValues}
-            paramUIState={state.paramUIState}
-            onParamValueChange={eventHandlers.updateParamValue}
-          />
-        </Group>
-      )
-    }
+      <h1>{question.displayName}</h1>
+      <form onSubmit={e => e.preventDefault() && dispatchAction(QuestionSubmitted.create({ questionName: question.urlSegment })) }>
+        {question.groups
+          .filter(group => group.displayType !== 'hidden')
+          .map(group =>
+            <Group
+              key={group.name}
+              questionName={question.urlSegment}
+              group={group}
+              uiState={groupUIState[group.name]}
+              onVisibilityChange={eventHandlers.setGroupVisibility}
+            >
+              <ParameterList
+                questionName={question.urlSegment}
+                dispatch={props.dispatchAction}
+                parameterMap={question.parametersByName}
+                parameters={group.parameters}
+                paramValues={paramValues}
+                paramUIState={paramUIState}
+                onParamValueChange={eventHandlers.updateParamValue}
+              />
+            </Group>
+          )
+        }
+        <div className={cx('SubmitSection')}>
+          <button type="submit" className="btn">
+            Get Answer
+          </button>
+          <div>
+            <HelpIcon tooltipPosition={tooltipPosition}>Give this search strategy a custom name. The name will appear in the first step box (truncated to 15 characters).</HelpIcon>
+            <input
+              type="text"
+              placeholder="Give this search a name (optional)"
+              value={customName}
+              onChange={e => dispatchAction(QuestionCustomNameUpdated.create({ questionName: question.urlSegment, customName: e.target.value }))}
+            />
+          </div>
+          <div>
+            <HelpIcon tooltipPosition={tooltipPosition}>Give this search a weight (for example 10, 200, -50, integer only). It will show in a column in your result. In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. Default weight is 10.</HelpIcon>
+            <input
+              type="text"
+              pattern="[+-]?\d*"
+              placeholder="Give this search a weight (optional)"
+              value={weight}
+              onChange={e => dispatchAction(QuestionWeightUpdated.create({ questionName: question.urlSegment, weight: e.target.value }))}
+            />
+          </div>
+        </div>
+        {question.description && (
+          <div>
+            <hr/>
+            <h2>Description</h2>
+            {safeHtml(question.description)}
+          </div>
+        )}
+      </form>
     </div>
   )
 }
@@ -125,7 +164,6 @@ function ParameterList(props: ParameterListProps) {
                   onParamValueChange({
                     questionName,
                     parameter,
-                    dependentParameters: getDependentParameters(parameterMap, parameter).toArray(),
                     paramValues,
                     paramValue
                   })
@@ -150,9 +188,3 @@ function ParameterHeading(props: { parameter: Parameter}) {
   )
 }
 
-function getDependentParameters(parameterMap: Record<string, Parameter>, parameter: Parameter): Seq<Parameter> {
-  return Seq.from(parameter.dependentParams)
-    .map(name => parameterMap[name])
-    .flatMap(dependentParameter =>
-      Seq.of(dependentParameter).concat(getDependentParameters(parameterMap, dependentParameter)))
-}

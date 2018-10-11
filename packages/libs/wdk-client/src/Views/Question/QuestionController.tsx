@@ -1,41 +1,31 @@
-import { get } from 'lodash';
 import * as React from 'react';
-
+import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
+import { Dispatch, bindActionCreators } from "redux";
+import PageController from '../../Core/Controllers/PageController';
+import { RootState } from '../../Core/State/Types';
 import { wrappable } from '../../Utils/ComponentUtils';
-import AbstractPageController from '../../Core/Controllers/AbstractPageController';
-
 import DefaultQuestionForm from './DefaultQuestionForm';
 import {
   ActiveQuestionUpdatedAction,
-  GroupVisibilityChangedAction,
   ParamValueUpdatedAction,
-} from './QuestionActionCreators';
-import QuestionStore, { QuestionState } from './QuestionStore';
+  GroupVisibilityChangedAction
+} from "./QuestionActionCreators";
+import { QuestionState } from './QuestionStoreModule';
 
 const ActionCreators = {
   updateParamValue: ParamValueUpdatedAction.create,
   setGroupVisibility: GroupVisibilityChangedAction.create
 }
 
-export type EventHandlers = typeof ActionCreators;
+type StateProps = QuestionState;
+type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 
-class QuestionController extends AbstractPageController<QuestionState, QuestionStore, typeof ActionCreators> {
-
-  getActionCreators() {
-    return ActionCreators;
-  }
-
-  getStoreClass() {
-    return QuestionStore;
-  }
-
-  getStateFromStore() {
-    return get(this.store.getState(), ['questions', this.props.match.params.question], {}) as QuestionState;
-  }
+class QuestionController extends PageController<StateProps & DispatchProps> {
 
   loadData() {
-    if (this.state.questionStatus == null) {
-      this.dispatchAction(ActiveQuestionUpdatedAction.create({
+    if (this.props.questionStatus == null) {
+      this.props.dispatch(ActiveQuestionUpdatedAction.create({
         stepId: undefined,
         questionName: this.props.match.params.question
       }));
@@ -43,33 +33,38 @@ class QuestionController extends AbstractPageController<QuestionState, QuestionS
   }
 
   isRenderDataLoaded() {
-    return this.state.questionStatus === 'complete';
+    return this.props.questionStatus === 'complete';
   }
 
   isRenderDataLoadError() {
-    return this.state.questionStatus === 'error';
+    return this.props.questionStatus === 'error';
   }
 
   isRenderDataNotFound() {
-    return this.state.questionStatus === 'not-found';
+    return this.props.questionStatus === 'not-found';
   }
 
   getTitle() {
-    return !this.state.question || !this.state.recordClass ? 'Loading' :
-      `Search for ${this.state.recordClass.displayNamePlural}
-      by ${this.state.question.displayName}`;
+    return !this.props.question || !this.props.recordClass ? 'Loading' :
+      `Search for ${this.props.recordClass.displayNamePlural}
+      by ${this.props.question.displayName}`;
   }
 
   renderView() {
     return (
       <DefaultQuestionForm
-        state={this.state}
-        eventHandlers={this.eventHandlers}
-        dispatchAction={this.dispatchAction}
+        state={this.props}
+        eventHandlers={this.props.eventHandlers}
+        dispatchAction={this.props.dispatch}
       />
     );
   }
 
 }
 
-export default wrappable(QuestionController);
+const enhance = connect<StateProps, DispatchProps, RouteComponentProps<{ question: string}>, RootState>(
+  (state, props) => state.question.questions[props.match.params.question] || {} as QuestionState,
+  dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) })
+)
+
+export default enhance(wrappable(QuestionController));

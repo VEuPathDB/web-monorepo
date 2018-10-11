@@ -8,6 +8,7 @@ import {
   objectOf,
   arrayOf,
   field,
+  record,
   combine,
   oneOf,
   lazy,
@@ -61,6 +62,13 @@ test('decode field', () => {
   const raw = js(expected);
   expect(decode(field("name", string), raw)).toEqual(expected);
   expect(() => decode(field('name', number), raw)).toThrow();
+});
+
+test('decode record', () => {
+  const expected = { name: 'Dave', age: 30 };
+  const raw = js(expected);
+  expect(decode(record({ name: string }), raw)).toEqual(expected);
+  expect(() => decode(record({ name: number }), raw)).toThrow();
 });
 
 test('decode combine', () => {

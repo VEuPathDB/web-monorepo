@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import { combineObserve } from '../../../Utils/ActionCreatorUtils';
 import { Parameter } from '../../../Utils/WdkModel';
 
 import { Context, isPropsType, ParamModule, Props } from './Utils';
 
 import CheckboxEnumParamModule from './CheckboxEnumParam';
+import DatasetParamModule from './DatasetParam';
 import DateParamModule from './DateParam';
 import DateRangeParamModule from './DateRangeParam';
 import FilterParamNewModule from './FilterParamNew';
@@ -15,11 +15,13 @@ import SelectEnumParamModule from './SelectEnumParam';
 import StringParamModule from './StringParam';
 import TreeBoxEnumParamModule from './TreeBoxEnumParam';
 import TypeAheadEnumParamModule from './TypeAheadEnumParam';
+import { combineEpics } from 'redux-observable';
 
 // Param modules
 // -------------
 const paramModules: ParamModule[] = [
   CheckboxEnumParamModule as ParamModule,
+  DatasetParamModule as ParamModule,
   DateParamModule as ParamModule,
   DateRangeParamModule as ParamModule,
   FilterParamNewModule as ParamModule,
@@ -64,8 +66,18 @@ export function reduce<T extends Parameter>(parameter: T, state: any, action: an
 }
 
 export const observeParam =
-  combineObserve(...(paramModules.map(m => m.observeParam)))
-    
+  combineEpics(...(paramModules.map(m => m.observeParam)));
+
+export const getValueFromState: ParamModule['getValueFromState'] = (context, state, services) => {
+  for (let paramModule of paramModules) {
+    if (paramModule.isType(context.parameter)) {
+      return paramModule.getValueFromState(context, state, services);
+    }
+  }
+  return state.paramValues[context.parameter.name];
+}
+
+
 
 export function isParamValueValid(context: Context<Parameter>, state: any) {
   for (let paramModule of paramModules) {

@@ -6,19 +6,19 @@ import { filter, map } from 'rxjs/operators';
 import { DispatchAction } from '../Core/CommonTypes';
 import WdkService from './WdkService';
 
-import { Action, ObserveServices } from './ActionCreatorUtils';
+import { Action } from './ActionCreatorUtils';
+import { EpicDependencies } from '../Core/Store';
 
 export interface ClientPlugin<T = object> {
   reduce(state: T | undefined, action: Action): T;
   render(state: T, dispatch: DispatchAction): React.ReactNode;
-  // FIXME Replace ObserveServices with ObserverServices
-  observe(action$: Observable<Action>, services: ObserveServices): Observable<Action>;
+  observe(action$: Observable<Action>, state$: Observable<T>, dependencies: EpicDependencies): Observable<Action>;
 }
 
 export interface CompositeClientPlugin {
   reduce: <T>(context: PluginContext, state: T, action: Action) => T;
   render: <T>(context: PluginContext, state: T, dispatch: (action: Action) => void) => React.ReactNode;
-  observe: (contextActionPair$: Observable<[PluginContext, Action]>, service: ObserveServices) => Observable<Action>;
+  observe: <T>(contextActionPair$: Observable<[PluginContext, Action]>, state$: Observable<T>, dependencies: EpicDependencies) => Observable<Action>;
 }
 
 export interface PluginContext {
@@ -116,7 +116,7 @@ function mergeRender(locate: LocatePlugin) {
 }
 
 function mergeObserve(entries: ClientPluginRegistryEntry[]) {
-  return function observe(actionContextPair$: Observable<[PluginContext, Action]>, services: ObserveServices): Observable<Action> {
+  return function observe<T extends object>(actionContextPair$: Observable<[PluginContext, Action]>, state$: Observable<T>, dependencies: EpicDependencies): Observable<Action> {
     // Fold entries into in$ and out$ Observables by incrementally filtering out
     // actions that match a plugin entry.
     //
@@ -138,7 +138,7 @@ function mergeObserve(entries: ClientPluginRegistryEntry[]) {
       const action$ = entryIn$.pipe(map(entryIn => entryIn[1]));
       return {
         in$: restIn$,
-        out$: merge(out$, entry.plugin.observe(action$, services))
+        out$: merge(out$, entry.plugin.observe(action$, state$, dependencies))
       };
     }, { in$: actionContextPair$, out$: empty() as Observable<Action>});
     return reduced.out$;

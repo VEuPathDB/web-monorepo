@@ -11,11 +11,11 @@ import { Seq } from '../../../Utils/IterableUtils';
 import { matchAction } from '../../../Utils/ReducerUtils';
 import { filterNodes, getLeaves, isBranch } from '../../../Utils/TreeUtils';
 import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../Utils/WdkModel';
-import { ParamInitAction } from '../QuestionActionCreators';
 
 import SelectionInfo from './SelectionInfo';
 import { Context, Props, createParamModule } from './Utils';
 import { isEnumParam } from './EnumParamUtils';
+import { ParamInitAction } from '../QuestionActionCreators';
 
 function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
   return isEnumParam(parameter) && parameter.displayType === 'treeBox';

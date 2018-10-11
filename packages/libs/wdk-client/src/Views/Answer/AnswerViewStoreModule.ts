@@ -1,4 +1,3 @@
-import WdkStore, { BaseState } from '../../Core/State/Stores/WdkStore';
 import { Answer, AttributeField, Question, RecordClass, RecordInstance } from '../../Utils/WdkModel';
 import { ServiceError } from '../../Utils/WdkService';
 import {
@@ -25,9 +24,9 @@ export type FilterState = {
   filterTerm: string;
   filterAttributes: string[];
   filterTables: string[];
-}
+};
 
-export type State = BaseState & Answer & AnswerOptions & FilterState & {
+export type State = Partial<Answer & AnswerOptions & FilterState & {
   question: Question;
   recordClass: RecordClass;
   allAttributes: AttributeField[];
@@ -35,21 +34,20 @@ export type State = BaseState & Answer & AnswerOptions & FilterState & {
   unfilteredRecords: RecordInstance[];
   isLoading: boolean;
   error?: Error | ServiceError;
-}
+}>;
 
-export default class AnswerViewStore extends WdkStore<State> {
+const initialState = {};
 
-  handleAction(state: State, action: Action) {
-    switch(action.type) {
-      case 'answer/loading': return { ...state, isLoading: true, error: undefined };
-      case 'answer/error': return { ...this.getInitialState(), ...action.payload };
-      case 'answer/added': return addAnswer(state, action.payload);
-      case 'answer/attributes-changed': return updateVisibleAttributes(state, action.payload);
-      case 'answer/sorting-updated': return updateSorting(state, action.payload);
-      case 'answer/column-moved': return moveTableColumn(state, action.payload);
-      case 'answer/filtered': return updateFilter(state, action.payload);
-      default: return state;
-    }
+export function reduce(state: State = initialState, action: Action) {
+  switch(action.type) {
+    case 'answer/loading': return { ...state, isLoading: true, error: undefined };
+    case 'answer/error': return { ...action.payload };
+    case 'answer/added': return addAnswer(state, action.payload);
+    case 'answer/attributes-changed': return updateVisibleAttributes(state, action.payload);
+    case 'answer/sorting-updated': return updateSorting(state, action.payload);
+    case 'answer/column-moved': return moveTableColumn(state, action.payload);
+    case 'answer/filtered': return updateFilter(state, action.payload);
+    default: return state;
   }
 }
 
@@ -68,7 +66,7 @@ function addAnswer( state: State, payload: AddedAction["payload"] ) {
 
   // use previously selected visible attributes unless they don't exist
   let visibleAttributes = state.visibleAttributes;
-  if (!visibleAttributes || state.meta.recordClassName !== answer.meta.recordClassName) {
+  if (!visibleAttributes || state.meta && state.meta.recordClassName !== answer.meta.recordClassName) {
     // need to populate attribute details for visible attributes
     visibleAttributes = allAttributes
       .filter(attr => isNotWeight(attr) && question.defaultAttributes.includes(attr.name));
@@ -88,7 +86,11 @@ function addAnswer( state: State, payload: AddedAction["payload"] ) {
     allAttributes,
     visibleAttributes,
     unfilteredRecords: answer.records,
-    records: filterRecords(answer.records, state),
+    records: filterRecords(answer.records, { 
+      filterTerm: state.filterTerm || '', 
+      filterAttributes: state.filterAttributes || [], 
+      filterTables:state.filterTables || [] 
+    }),
     isLoading: false,
     displayInfo
   });
@@ -102,7 +104,7 @@ function addAnswer( state: State, payload: AddedAction["payload"] ) {
  */
 function moveTableColumn(state: State, { columnName, newPosition }: ColumnMovedAction["payload"]) {
   /* make a copy of list of attributes we will be altering */
-  let attributes = [ ...state.visibleAttributes ];
+  let attributes = [ ...(state.visibleAttributes || []) ];
 
   /* The current position of the attribute being moved */
   let currentPosition = attributes.findIndex(function(attribute) {
@@ -142,6 +144,6 @@ function updateFilter(state: State, payload: TableFilteredAction["payload"]) {
     filterTables: payload.tables || []
   };
   return Object.assign({}, state, filterSpec, {
-    records: filterRecords(state.unfilteredRecords, filterSpec)
+    records: filterRecords(state.unfilteredRecords || [], filterSpec)
   });
 }

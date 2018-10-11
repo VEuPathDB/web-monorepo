@@ -1,4 +1,4 @@
-import { transitionToExternalPage, transitionToInternalPage } from './RouterActionCreators';
+import { transitionToExternalPage, transitionToInternalPage } from './../../Core/ActionCreators/RouterActionCreators';
 import { Action, ActionThunk, EmptyAction, emptyAction } from '../../Utils/ActionCreatorUtils';
 import { filterOutProps } from '../../Utils/ComponentUtils';
 import { alert, confirm } from '../../Utils/Platform';
@@ -6,8 +6,8 @@ import { broadcast } from '../../Utils/StaticDataUtils';
 import { RecordInstance } from '../../Utils/WdkModel';
 import WdkService from '../../Utils/WdkService';
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from '../../Utils/WdkUser';
-import { State as PasswordStoreState } from '../../Views/User/Password/UserPasswordChangeStore';
-import { State as ProfileStoreState, UserProfileFormData } from '../../Views/User/Profile/UserProfileStore';
+import { State as PasswordStoreState } from '../../Views/User/Password/UserPasswordChangeStoreModule';
+import { State as ProfileStoreState, UserProfileFormData } from './Profile/UserProfileReducer';
 
 // actions to update true user and preferences
 export type UserUpdateAction = {
@@ -212,25 +212,25 @@ function createFormStatusAction(actionType: string, status: string, errorMessage
 
 /** Save user profile to DB */
 type SubmitProfileFormType = ActionThunk<UserUpdateAction|PreferencesUpdateAction|ProfileFormSubmissionStatusAction>;
-export function submitProfileForm(user: UserProfileFormData): SubmitProfileFormType {
+export function submitProfileForm(userProfileFormData: UserProfileFormData): SubmitProfileFormType {
   return function run({ wdkService }) {
-    let trimmedUser = <UserProfileFormData>filterOutProps(user, ["isGuest", "id", "confirmEmail", "preferences"]);
-    let userPromise = wdkService.updateCurrentUser(trimmedUser);
-    let prefPromise = wdkService.updateCurrentUserPreferences(user.preferences as UserPreferences); // should never be null by this point
+    let partialUser: Partial<User> = <UserProfileFormData>filterOutProps(userProfileFormData, ["isGuest", "id", "confirmEmail", "preferences"]);
+    let userPromise = wdkService.getCurrentUser().then(user => wdkService.updateCurrentUser({ ...user, ...partialUser }));
+    let prefPromise = wdkService.updateCurrentUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
     return [
       createProfileFormStatusAction('pending'),
-      Promise.all([userPromise, prefPromise]).then(() => [
+      Promise.all([userPromise, prefPromise]).then(([user]) => [
         // success; update user first, then prefs, then status in ProfileViewStore
-        broadcast({
+        broadcast<UserUpdateAction>({
           type: 'user/user-update',
           // NOTE: this prop name should be the same as that used in StaticDataActionCreator for 'user'
           // NOTE2: not all user props were sent to update but all should remain EXCEPT 'confirmEmail' and 'preferences'
-          payload: { user: filterOutProps(user, ["confirmEmail", "preferences"]) as User }
-        }) as UserUpdateAction,
-        broadcast({
+          payload: { user }
+        }),
+        broadcast<PreferencesUpdateAction>({
           type: 'user/preferences-update',
-          payload: user.preferences as UserPreferences
-        }) as PreferencesUpdateAction,
+          payload: userProfileFormData.preferences as UserPreferences
+        }),
         createProfileFormStatusAction('success')
       ])
       .catch((error) => {

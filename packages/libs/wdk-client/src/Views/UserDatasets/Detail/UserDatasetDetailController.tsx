@@ -1,15 +1,14 @@
 import { keyBy } from 'lodash';
 import * as React from 'react';
+import { connect } from 'react-redux';
 
-import { showLoginForm } from '../../../Core/ActionCreators/UserActionCreators';
-import { PageControllerProps } from '../../../Core/CommonTypes';
-import AbstractPageController from '../../../Core/Controllers/AbstractPageController';
+import { showLoginForm } from '../../User/UserActionCreators';
+import PageController from '../../../Core/Controllers/PageController';
 import { wrappable } from '../../../Utils/ComponentUtils';
 import { Question } from '../../../Utils/WdkModel';
 import BigwigDatasetDetail from './BigwigDatasetDetail';
 import RnaSeqDatasetDetail from './RnaSeqDatasetDetail';
 import UserDatasetDetail from './UserDatasetDetail';
-import UserDatasetDetailStore, { State as StoreState } from './UserDatasetDetailStore';
 import EmptyState from '../EmptyState';
 import {
   loadUserDatasetDetail,
@@ -19,13 +18,11 @@ import {
   updateUserDatasetDetail,
 } from '../UserDatasetsActionCreators';
 import { quotaSize } from '../UserDatasetUtils';
+import { RootState } from '../../../Core/State/Types';
 
 // import { removeUserDataset } from 'Views/UserDatasets/UserDatasetsActionCreators';
-
-type State = Pick<StoreState, 'userDatasetsById' | 'loadError' | 'userDatasetUpdating' | 'updateError'>
-           & Pick<StoreState["globalData"], 'user' | 'questions' | 'config'>;
-
 const ActionCreators = {
+  showLoginForm,
   loadUserDatasetDetail,
   updateUserDatasetDetail,
   removeUserDataset,
@@ -34,7 +31,10 @@ const ActionCreators = {
 };
 
 
-type EventHandlers = typeof ActionCreators;
+type Props = Pick<RootState['userDatasetDetail'], 'userDatasetsById' | 'loadError' | 'userDatasetUpdating' | 'updateError'>
+           & Pick<RootState["globalData"], 'user' | 'questions' | 'config'>
+           & typeof ActionCreators;
+
 
 /**
  * View Controller for a userDataset record.
@@ -43,39 +43,15 @@ type EventHandlers = typeof ActionCreators;
  * userDataset's id. This avoids race conditions that arise when ajax requests
  * complete in a different order than they were invoked.
  */
-class UserDatasetDetailController extends AbstractPageController <State, UserDatasetDetailStore, EventHandlers> {
-  props: any;
+class UserDatasetDetailController extends PageController<Props> {
 
   getQuestionUrl = (question: Question): string => {
     return `#${question.name}`;
   }
 
-  getStoreClass(): typeof UserDatasetDetailStore {
-    return UserDatasetDetailStore;
-  }
-
-  getStateFromStore(): State {
-    let {
-      userDatasetsById,
-      loadError,
-      userDatasetUpdating,
-      updateError,
-      globalData: { user, questions, config }
-    } = this.store.getState();
-
-    return {
-      userDatasetsById,
-      loadError,
-      userDatasetUpdating,
-      updateError,
-      user,
-      questions,
-      config
-    }
-  }
 
   getTitle () {
-    const entry = this.state.userDatasetsById[this.props.match.params.id];
+    const entry = this.props.userDatasetsById[this.props.match.params.id];
     if (entry && entry.resource) {
       return `My Data Set ${entry.resource.meta.name}`;
     }
@@ -89,22 +65,22 @@ class UserDatasetDetailController extends AbstractPageController <State, UserDat
     return ActionCreators;
   }
 
-  loadData (prevProps?: PageControllerProps<UserDatasetDetailStore>) {
+  loadData (prevProps?: this['props']) {
     const { match } = this.props;
-    const { userDatasetsById } = this.state;
+    const { userDatasetsById } = this.props;
     const idChanged = prevProps && prevProps.match.params.id !== match.params.id;
     if (idChanged || !userDatasetsById[match.params.id]) {
-      this.eventHandlers.loadUserDatasetDetail(Number(match.params.id));
+      this.props.loadUserDatasetDetail(Number(match.params.id));
     }
   }
 
   isRenderDataLoadError () {
-    return this.state.loadError != null && this.state.loadError.status >= 500;
+    return this.props.loadError != null && this.props.loadError.status >= 500;
   }
 
   isRenderDataLoaded () {
     const { match } = this.props;
-    const { userDatasetsById, user, questions, config } = this.state;
+    const { userDatasetsById, user, questions, config } = this.props;
     const entry = userDatasetsById[match.params.id];
     if (user && user.isGuest) return true;
     return (entry && !entry.isLoading && user && questions && config)
@@ -131,7 +107,7 @@ class UserDatasetDetailController extends AbstractPageController <State, UserDat
         <button
           type="button"
           className="btn"
-          onClick={() => this.dispatchAction(showLoginForm())}
+          onClick={() => this.props.showLoginForm()}
         >Please log in to access My Data Sets.</button>
       }/>
     );
@@ -139,8 +115,8 @@ class UserDatasetDetailController extends AbstractPageController <State, UserDat
 
   renderView () {
     const { match, location, history } = this.props;
-    const { updateUserDatasetDetail, shareUserDatasets, removeUserDataset, unshareUserDatasets } = this.eventHandlers;
-    const { userDatasetsById, user, updateError, questions, config, userDatasetUpdating } = this.state;
+    const { updateUserDatasetDetail, shareUserDatasets, removeUserDataset, unshareUserDatasets } = this.props;
+    const { userDatasetsById, user, updateError, questions, config, userDatasetUpdating } = this.props;
     const entry = userDatasetsById[match.params.id];
     const isOwner = !!(user && entry.resource && entry.resource.ownerUserId === user.id);
     const rootUrl = window.location.href.substring(0, window.location.href.indexOf(`/app${location.pathname}`));
@@ -171,4 +147,12 @@ class UserDatasetDetailController extends AbstractPageController <State, UserDat
   }
 }
 
-export default wrappable(UserDatasetDetailController);
+const enhance = connect(
+  (state: RootState) => ({
+    ...state.globalData,
+    ...state.userDatasetDetail
+  }),
+  ActionCreators
+)
+
+export default enhance(wrappable(UserDatasetDetailController));

@@ -373,6 +373,7 @@ type ReducerRecord<T> = {
   [K in keyof T]: Reducer<T[K], Action>
 }
 
+/** @deprecated Use `combineReducers` from redux module */
 export function combineReducers<T>(reducers: ReducerRecord<T>): Reducer<T, Action> {
   return function reduce(state: T = {} as T, action: Action): T {
     for (const key in reducers) {
