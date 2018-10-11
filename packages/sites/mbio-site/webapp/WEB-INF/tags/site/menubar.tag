@@ -28,7 +28,7 @@
       <imp:login/>
 
       <!-- CONTACT US -->
-      <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="new-window" data-name="contact_us">Contact Us</a></li>
+      <li class="empty-divider"><a href="${pageContext.request.contextPath}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a></li>
 
    <!--     <imp:socialMedia small="true" /> -->
 
