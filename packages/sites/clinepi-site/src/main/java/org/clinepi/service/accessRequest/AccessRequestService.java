@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.clinepi.service.accessRequest.AccessRequestSubmitter.SubmissionResult;
 import org.gusdb.fgputil.json.JsonUtil;
-import org.gusdb.wdk.model.Utilities;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.model.WdkUserException;
 import org.gusdb.wdk.model.record.PrimaryKeyValue;
