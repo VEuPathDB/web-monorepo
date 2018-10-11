@@ -809,6 +809,11 @@
            </tr>
            </table>
            </div>
+           
+                <img align="middle" src="images/MaHPIC_E04_Timeline.jpg" height="300px" width="500px"><br>
+                <a href="images/MaHPIC_E04_Timeline.jpg" target="_blank">View Larger Image</a><br>
+    
+           
 <br><br>
 	 
      
