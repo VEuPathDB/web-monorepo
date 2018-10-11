@@ -5,13 +5,13 @@ import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-
 import {CategoriesCheckboxTree, Tooltip, Icon} from 'wdk-client/Components';
 
 wdk.namespace('apidb.bubble', ns => {
-  const wdkStore = ebrc.context.stores.get(Wdk.Stores.WdkStore);
+  const { store } = ebrc.context;
 
   ns.initialize = ($el, attrs) => {
-    const sub = wdkStore.addListener(() => {
-      const { searchTree } = wdkStore.state.globalData;
+    const unsubscribe = store.subscribe(() => {
+      const { searchTree } = store.getState().globalData;
       if (searchTree) {
-        sub.remove();
+        unsubscribe();
         const tree = attrs.isTranscript
           ? searchTree.children.find(isTranscriptNode)
           : {

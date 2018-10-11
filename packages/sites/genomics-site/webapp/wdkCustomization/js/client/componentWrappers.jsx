@@ -1,12 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/ActionCreatorUtils';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
 import { submitAsForm } from 'wdk-client/FormSubmitter';
-// import { loadBasketCounts } from 'ebrc-client/actioncreators/GlobalActionCreators';
-import { withActions, withStore } from 'ebrc-client/util/component';
 import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
@@ -88,21 +87,11 @@ function addProjectIdPkValueWrapper(InnerComponent) {
  * values separated by a '/'.
  */
 export function RecordController(WdkRecordController) {
+  const enhance = connect(
+    state => ({ globalData: state.globalData }),
+    { loadPathwayGeneDynamicCols }
+  );
   class ApiRecordController extends WdkRecordController {
-    getActionCreators() {
-      let wdkActionCreators = super.getActionCreators();
-      return Object.assign({}, wdkActionCreators, {
-
-        // FIXME Move to observe
-        // updateBasketStatus: (...args) => (dispatch) => {
-        //   dispatch(wdkActionCreators.updateBasketStatus(...args))
-        //     .then(() => dispatch(loadBasketCounts()));
-        // },
-
-        loadPathwayGeneDynamicCols: (geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc) =>
-          ({ wdkService }) => loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc, wdkService)
-      });
-    }
     getRecordRequestOptions(recordClass, categoryTree) {
       // append MetaTable to initial request options
       const requestOptions = super.getRecordRequestOptions(recordClass, categoryTree);
@@ -132,14 +121,14 @@ export function RecordController(WdkRecordController) {
        let { recordClass, primaryKey } = this.props.match.params;
        if (recordClass == 'pathway') {
          let [ pathwaySource, pathwayId ] = primaryKey.split('/');
-         let geneStepId = QueryString.parse(this.state.globalData.location.search.slice(1)).geneStepId;
-         let exactMatchOnly = QueryString.parse(this.state.globalData.location.search.slice(1)).exact_match_only;
-         let excludeIncompleteEc = QueryString.parse(this.state.globalData.location.search.slice(1)).exclude_incomplete_ec;
-         this.eventHandlers.loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc);
+         let geneStepId = QueryString.parse(this.props.globalData.location.search.slice(1)).geneStepId;
+         let exactMatchOnly = QueryString.parse(this.props.globalData.location.search.slice(1)).exact_match_only;
+         let excludeIncompleteEc = QueryString.parse(this.props.globalData.location.search.slice(1)).exclude_incomplete_ec;
+         this.props.loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc);
        }
     }
   }
-  return addProjectIdPkValueWrapper(ApiRecordController);
+  return addProjectIdPkValueWrapper(enhance(ApiRecordController));
 }
 
 export const DownloadFormController = addProjectIdPkValueWrapper;
@@ -175,7 +164,7 @@ function downloadRecordTable(record, tableName) {
 }
 
 export function RecordTableSection(DefaultComponent) {
-  return withActions({ downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent {
+  return connect(null, { downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent {
     render () {
       if (this.props.recordClass.name === 'DatasetRecordClasses.DatasetRecordClass') {
         return (
@@ -380,10 +369,12 @@ function SendToGalaxyButton(props) {
 }
 
 export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitButtons) {
-  return withActions({ sendToGalaxy })(withStore()(props => (
-    <div>
-      <ApiTabularReporterFormSubmitButtons {...props}/>
-      <SendToGalaxyButton {...props}/>
-   </div>
-  )));
+  return connect(state => state.downloadForm, { sendToGalaxy })(
+    props => (
+      <div>
+        <ApiTabularReporterFormSubmitButtons {...props} />
+        <SendToGalaxyButton {...props} />
+      </div>
+    )
+  );
 }

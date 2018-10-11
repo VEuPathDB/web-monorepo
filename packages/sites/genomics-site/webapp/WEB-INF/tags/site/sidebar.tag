@@ -261,7 +261,7 @@
       </c:otherwise>
     </c:choose>
     <br><span style="font-size:8pt;font-style:italic">(If you have a link that you think would be useful for the community,
-    please <a href="<c:url value="/contact.do"/>" class="new-window" data-name="contact_us">send us a note.)</a></span>
+    please <a href="<c:url value="/app/contact-us"/>" class="new-window" data-name="contact_us">send us a note.)</a></span>
   </div>
 
   <%--------------  TUTORIALS ---------------------------------------------%>
@@ -284,7 +284,7 @@
       <li id='edu-3-2'><a href="http://workshop.eupathdb.org/athens/2011/index.php?page=schedule">Exercises in Spanish from 2011 UGA Workshop</a></li>
       <li id='edu-4'><a href="http://www.genome.gov/Glossary/">NCBI's Glossary of Terms</a></li>
       <li id='edu-5'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Our Glossary</a></li>
-      <li id='edu-6'><a href="${pageContext.request.contextPath}/contact.do" class="new-window" data-name="contact_us">Contact Us</a></li>
+      <li id='edu-6'><a href="${pageContext.request.contextPath}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a></li>
     </ul>
   </div>
 

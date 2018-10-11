@@ -1,10 +1,9 @@
-import { flowRight } from 'lodash';
+import { connect } from 'react-redux';
 import { UserActionCreators } from 'wdk-client/ActionCreators';
-import { withActions, withStore } from 'ebrc-client/util/component';
 
-const withUserAndAction = flowRight(
-  withStore(state => ({ user: state.globalData.user, location: state.globalData.location })),
-  withActions(UserActionCreators)
+const withUserAndAction = connect(
+  state => ({ user: state.globalData.user, location: state.globalData.location }),
+  UserActionCreators
 );
 
 export function addCommentLink(getLink) {

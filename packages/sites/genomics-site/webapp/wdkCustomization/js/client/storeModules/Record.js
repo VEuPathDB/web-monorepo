@@ -1,6 +1,6 @@
 import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
-import { RecordViewStore, QuestionStore } from 'wdk-client/Stores';
+import { /*question as QuestionStoreModule,*/ record as RecordStoreModule } from 'wdk-client/StoreModules';
 import { QuestionActionCreators } from 'wdk-client/ActionCreators';
 import { get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
@@ -22,40 +22,30 @@ const storageItems = {
   }
 };
 
-/** Api specific RecordViewStore */
-export default class ApiRecordViewStore extends RecordViewStore {
-
-  getInitialState() {
-    return Object.assign({}, super.getInitialState(), {
-      questions: {}
-    });
+export function reduce(state, action) {
+  state = RecordStoreModule.reduce(state, action);
+  if (state.questions == null) state = { ...state, questions: {} };
+  // state = QuestionStoreModule.reduce(state, action);
+  state = Object.assign({}, state, {
+    pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
+    eupathdb: handleEuPathDBAction(state.eupathdb, action),
+    dynamicColsOfIncomingStep: handleDynColsOfIncomingStepAction(state.dynamicColsOfIncomingStep, action)
+  });
+  switch (action.type) {
+    case 'record-view/active-record-received':
+      return pruneCategories(state);
+    default:
+      return state;
   }
+}
 
-  handleAction(state, action) {
-    state = super.handleAction(state, action);
-    state = QuestionStore.prototype.handleAction(state, action);
-    state = Object.assign({}, state, {
-      pathwayRecord: handlePathwayRecordAction(state.pathwayRecord, action),
-      eupathdb: handleEuPathDBAction(state.eupathdb, action),
-      dynamicColsOfIncomingStep: handleDynColsOfIncomingStepAction(state.dynamicColsOfIncomingStep, action)
-    });
-    switch (action.type) {
-      case 'record-view/active-record-received':
-        return pruneCategories(state);
-      default:
-        return state;
-    }
-  }
-
-  observeActions(action$, services) {
-    return merge(
-      super.observeActions(action$, services),
-      QuestionStore.prototype.observeActions(action$, services),
-      observeSnpsAlignment(action$, services),
-      observeUserSettings(action$, services)
-    )
-  }
-
+export function observe(action$, state$, services) {
+  return merge(
+    // RecordStoreModule.observe(action$, state$, services),
+    // QuestionStoreModule.observe(action$, state$, services),
+    observeSnpsAlignment(action$, state$, services),
+    observeUserSettings(action$, state$, services),
+  )
 }
 
 function handleDynColsOfIncomingStepAction(state = [], action) {
@@ -199,11 +189,11 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
  * When record is loaded, read state from storage and emit actions to restore state.
  * When state is changed, write state to storage.
  */
-function observeUserSettings(action$, { getState }) {
+function observeUserSettings(action$, state$) {
   return action$.pipe(
     filter(action => action.type === 'record-view/active-record-received'),
     switchMap(() => {
-      let state = getState();
+      let state = state$.value;
       /** Show navigation for genes, but hide for all other record types */
       let navigationVisible = getStateFromStorage(
         storageItems.navigationVisible,
@@ -244,13 +234,13 @@ function observeUserSettings(action$, { getState }) {
             switch (action.type) {
               case 'record-view/section-visibility-changed':
               case 'record-view/all-field-visibility-changed':
-                setStateInStorage(storageItems.collapsedSections, getState());
+                setStateInStorage(storageItems.collapsedSections, state$.value);
                 break;
               case 'record-view/navigation-visibility-changed':
-                setStateInStorage(storageItems.navigationVisible, getState());
+                setStateInStorage(storageItems.navigationVisible, state$.value);
                 break;
               case TABLE_STATE_UPDATED:
-                setStateInStorage(storageItems.tables, getState());
+                setStateInStorage(storageItems.tables, state$.value);
                 break;
             }
             return empty();

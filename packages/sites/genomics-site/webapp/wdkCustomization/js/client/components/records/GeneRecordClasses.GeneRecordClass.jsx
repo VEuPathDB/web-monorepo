@@ -1,8 +1,9 @@
 import lodash from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 
+import { RecordViewActionCreators } from 'wdk-client/ActionCreators';
 import * as Category from 'wdk-client/CategoryUtils';
 import { CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
 import { pure } from 'wdk-client/ComponentUtils';
@@ -10,7 +11,6 @@ import {Seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
 
 import DatasetGraph from 'ebrc-client/components/DatasetGraph';
-import { withStore } from 'ebrc-client/util/component';
 import {findChildren, isNodeOverflowing} from 'ebrc-client/util/domUtils';
 
 import { projectId, webAppUrl } from '../../config';
@@ -23,7 +23,10 @@ import { addCommentLink } from '../common/UserComments';
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
  */
-export class RecordHeading extends Component {
+export const RecordHeading = connect(
+  state => ({ categoryTree: state.record.categoryTree }),
+  RecordViewActionCreators
+)(class RecordHeading extends Component {
 
   constructor(...args) {
     super(...args);
@@ -40,7 +43,7 @@ export class RecordHeading extends Component {
   }
 
   handleThumbnailClick({ anchor }) {
-    this.context.eventHandlers.updateSectionVisibility(anchor, true);
+    this.props.updateSectionVisibility(anchor, true);
   }
 
   componentDidUpdate() {
@@ -69,14 +72,13 @@ export class RecordHeading extends Component {
   }
 
   renderThumbnails() {
-    let { viewStore } = this.context;
-    let { recordClass } = this.props;
+    let { categoryTree, recordClass } = this.props;
     let { attributes, tables } = this.props.record;
     // Get field present in record instance. This is leveraging the fact that
     // we filter the category tree in the store based on the contents of
     // MetaTable.
     let instanceFields = new Set(
-      preorderSeq(viewStore.getState().categoryTree)
+      preorderSeq(categoryTree)
       .filter(node => !node.children.length)
       .map(node => node.properties.name[0]));
 
@@ -143,12 +145,7 @@ export class RecordHeading extends Component {
     );
   }
 
-}
-
-RecordHeading.contextTypes = {
-  eventHandlers: PropTypes.object.isRequired,
-  viewStore: PropTypes.object.isRequired
-};
+});
 
 const ExpressionChildRow = makeDatasetGraphChildRow('ExpressionGraphsDataTable');
 const HostResponseChildRow = makeDatasetGraphChildRow('HostResponseGraphsDataTable', 'FacetMetadata', 'ContXAxisMetadata');
@@ -248,8 +245,8 @@ const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
 
 function makeDatasetGraphChildRow(dataTableName, facetMetadataTableName, contXAxisMetadataTableName) {
   let DefaultComponent = WdkRecordTable;
-  return withStore(state => {
-    let { record, recordClass } = state;
+  return connect(state => {
+    let { record, recordClass } = state.record;
 
     let dataTable = dataTableName && dataTableName in record.tables && {
       value: record.tables[dataTableName],

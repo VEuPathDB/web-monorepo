@@ -1,7 +1,7 @@
 import { cloneElement, Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { flowRight, get } from 'lodash';
-import { withStore, withActions } from 'ebrc-client/util/component';
+import { get } from 'lodash';
 import { updateTableState } from '../../actioncreators/RecordViewActionCreators';
 
 // always open the first row
@@ -38,11 +38,11 @@ RecordTableContainer.propTypes = {
   updateTableState: PropTypes.func.isRequired
 };
 
-const enhance = flowRight(
-  withActions({ updateTableState }),
-  withStore((state, props) => ({
+const enhance = connect(
+  ({ record: state }, props) => ({
     tableState: get(state, 'eupathdb.tables.' + props.table.name)
-  }))
+  }),
+  { updateTableState }
 );
 
 export default enhance(RecordTableContainer);

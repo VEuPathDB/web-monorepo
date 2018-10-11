@@ -1,4 +1,4 @@
-import { WdkPageController } from 'wdk-client/Controllers';
+import { PageController } from 'wdk-client/Controllers';
 
 /**
  * This will eventually be the view controller for the SRT page (srt.jsp).  It
@@ -6,7 +6,7 @@ import { WdkPageController } from 'wdk-client/Controllers';
  * step download page.  However, since this is working ok for now, we will
  * have duplicate functionality for a "limited" time. :)
  */
-export default class FastaConfigController extends WdkPageController {
+export default class FastaConfigController extends PageController {
   renderView() {
     return ( <h1>FASTA!</h1> );
   }

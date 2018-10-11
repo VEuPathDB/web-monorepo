@@ -1,12 +1,12 @@
 /* global ChemDoodle */
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { flow, uniqueId } from 'lodash';
+import { uniqueId } from 'lodash';
 import $ from 'jquery';
 import { safeHtml } from 'wdk-client/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
 import { CategoriesCheckboxTree, Link, Loading, Dialog } from 'wdk-client/Components';
-import { withStore, withActions } from 'ebrc-client/util/component';
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
@@ -951,27 +951,27 @@ function readDynamicCols(dynamicColsOfIncomingStep, globalData) {
 }
 
 // enhance function supplements a component with additional custom data and AC props
-const enhance = flow(
+const enhance = connect(
   // pulls custom values out of store's state and will pass as props to enhanced component
 
-  withStore(state => ({
-    pathwayRecord: state.pathwayRecord,
+  (state) => ({
+    pathwayRecord: state.record.pathwayRecord,
     config: state.globalData.config,
     siteConfig: state.globalData.siteConfig,
-    nodeList: readDynamicCols(state.dynamicColsOfIncomingStep, state.globalData),
+    nodeList: readDynamicCols(state.record.dynamicColsOfIncomingStep, state.globalData),
     exactMatchEC: QueryString.parse(state.globalData.location.search.slice(1)).exact_match_only,
     excludeIncompleteEC: QueryString.parse(state.globalData.location.search.slice(1)).exclude_incomplete_ec,
-    dynamicColsOfIncomingStep: state.dynamicColsOfIncomingStep,
+    dynamicColsOfIncomingStep: state.record.dynamicColsOfIncomingStep,
     experimentCategoryTree: getExperimentCategoryTree(state),
     generaCategoryTree: getGeneraCategoryTree(state)
-  })),
-  // wraps these raw ACs with dispatchAction and will pass as props to enhanced component
-  withActions({
+  }),
+  // wraps these raw ACs with Redux store's dispatch and will pass as props to enhanced component
+  {
     setActiveNodeData,
     setPathwayError,
     setGeneraSelection,
     setFilteredNodeList
-  })
+  }
 );
 
 const SELECTORS = {
@@ -1615,7 +1615,7 @@ function setGeneraSelection(generaSelection) {
 
 function getExperimentCategoryTree(state) {
   return Ontology.getTree(state.globalData.ontology, Category.isQualifying({
-    recordClassName: state.recordClass.name,
+    recordClassName: state.record.recordClass.name,
     targetType: 'attribute',
     scope: 'graph-internal'
   }))
