@@ -24,69 +24,88 @@ type Props = {
 const cx = makeClassNameHelper('wdk-QuestionForm');
 const tooltipPosition = { my: 'right center', at: 'left center' };
 
-export default function DefaultQuestionForm(props: Props) {
-  const { state, eventHandlers, dispatchAction } = props
-  const { customName, groupUIState, paramValues, paramUIState, question, weight } = state;
-  return (
-    <div className={cx()}>
-      <h1>{question.displayName}</h1>
-      <form onSubmit={e => e.preventDefault() && dispatchAction(QuestionSubmitted.create({ questionName: question.urlSegment })) }>
-        {question.groups
-          .filter(group => group.displayType !== 'hidden')
-          .map(group =>
-            <Group
-              key={group.name}
-              questionName={question.urlSegment}
-              group={group}
-              uiState={groupUIState[group.name]}
-              onVisibilityChange={eventHandlers.setGroupVisibility}
-            >
-              <ParameterList
+export default class DefaultQuestionForm extends React.Component<Props> {
+
+  handleSubmit = (e: React.FormEvent) => {
+    const { dispatchAction, state: { question } } = this.props;
+    e.preventDefault();
+    dispatchAction(QuestionSubmitted.create({ questionName: question.urlSegment }));
+  }
+
+  handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { dispatchAction, state: { question } } = this.props;
+    dispatchAction(QuestionCustomNameUpdated.create({ questionName: question.urlSegment, customName: event.target.value }));
+  }
+
+  handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { dispatchAction, state: { question } } = this.props;
+    dispatchAction(QuestionWeightUpdated.create({ questionName: question.urlSegment, weight: event.target.value }));
+  }
+
+  render() {
+    const { state, eventHandlers, dispatchAction } = this.props
+    const { customName, groupUIState, paramValues, paramUIState, question, weight } = state;
+    return (
+      <div className={cx()}>
+        <h1>{question.displayName}</h1>
+        <form onSubmit={this.handleSubmit}>
+          {question.groups
+            .filter(group => group.displayType !== 'hidden')
+            .map(group =>
+              <Group
+                key={group.name}
                 questionName={question.urlSegment}
-                dispatch={props.dispatchAction}
-                parameterMap={question.parametersByName}
-                parameters={group.parameters}
-                paramValues={paramValues}
-                paramUIState={paramUIState}
-                onParamValueChange={eventHandlers.updateParamValue}
+                group={group}
+                uiState={groupUIState[group.name]}
+                onVisibilityChange={eventHandlers.setGroupVisibility}
+              >
+                <ParameterList
+                  questionName={question.urlSegment}
+                  dispatch={dispatchAction}
+                  parameterMap={question.parametersByName}
+                  parameters={group.parameters}
+                  paramValues={paramValues}
+                  paramUIState={paramUIState}
+                  onParamValueChange={eventHandlers.updateParamValue}
+                />
+              </Group>
+            )
+          }
+          <div className={cx('SubmitSection')}>
+            <button type="submit" className="btn">
+              Get Answer
+            </button>
+            <div>
+              <HelpIcon tooltipPosition={tooltipPosition}>Give this search strategy a custom name. The name will appear in the first step box (truncated to 15 characters).</HelpIcon>
+              <input
+                type="text"
+                placeholder="Give this search a name (optional)"
+                value={customName}
+                onChange={this.handleCustomNameChange}
               />
-            </Group>
-          )
-        }
-        <div className={cx('SubmitSection')}>
-          <button type="submit" className="btn">
-            Get Answer
-          </button>
-          <div>
-            <HelpIcon tooltipPosition={tooltipPosition}>Give this search strategy a custom name. The name will appear in the first step box (truncated to 15 characters).</HelpIcon>
-            <input
-              type="text"
-              placeholder="Give this search a name (optional)"
-              value={customName}
-              onChange={e => dispatchAction(QuestionCustomNameUpdated.create({ questionName: question.urlSegment, customName: e.target.value }))}
-            />
+            </div>
+            <div>
+              <HelpIcon tooltipPosition={tooltipPosition}>Give this search a weight (for example 10, 200, -50, integer only). It will show in a column in your result. In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. Default weight is 10.</HelpIcon>
+              <input
+                type="text"
+                pattern="[+-]?\d*"
+                placeholder="Give this search a weight (optional)"
+                value={weight}
+                onChange={this.handleWeightChange}
+              />
+            </div>
           </div>
-          <div>
-            <HelpIcon tooltipPosition={tooltipPosition}>Give this search a weight (for example 10, 200, -50, integer only). It will show in a column in your result. In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. Default weight is 10.</HelpIcon>
-            <input
-              type="text"
-              pattern="[+-]?\d*"
-              placeholder="Give this search a weight (optional)"
-              value={weight}
-              onChange={e => dispatchAction(QuestionWeightUpdated.create({ questionName: question.urlSegment, weight: e.target.value }))}
-            />
-          </div>
-        </div>
-        {question.description && (
-          <div>
-            <hr/>
-            <h2>Description</h2>
-            {safeHtml(question.description)}
-          </div>
-        )}
-      </form>
-    </div>
-  )
+          {question.description && (
+            <div>
+              <hr/>
+              <h2>Description</h2>
+              {safeHtml(question.description)}
+            </div>
+          )}
+        </form>
+      </div>
+    )
+  }
 }
 
 type GroupProps = {
