@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { HelpIcon, IconAlt } from '../../Components';
 import { DispatchAction } from '../../Core/CommonTypes';
-import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { makeClassNameHelper, safeHtml } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import { Parameter, ParameterGroup } from '../../Utils/WdkModel';
 import ParameterComponent from './ParameterComponent';
@@ -26,27 +26,28 @@ const tooltipPosition = { my: 'right center', at: 'left center' };
 
 export default function DefaultQuestionForm(props: Props) {
   const { state, eventHandlers, dispatchAction } = props
+  const { customName, groupUIState, paramValues, paramUIState, question, weight } = state;
   return (
     <div className={cx()}>
-      <h1>{state.question.displayName}</h1>
-      <form onSubmit={e => e.preventDefault() && dispatchAction(QuestionSubmitted.create({ questionName: state.question.urlSegment })) }>
-        {state.question.groups
+      <h1>{question.displayName}</h1>
+      <form onSubmit={e => e.preventDefault() && dispatchAction(QuestionSubmitted.create({ questionName: question.urlSegment })) }>
+        {question.groups
           .filter(group => group.displayType !== 'hidden')
           .map(group =>
             <Group
               key={group.name}
-              questionName={state.question.urlSegment}
+              questionName={question.urlSegment}
               group={group}
-              uiState={state.groupUIState[group.name]}
+              uiState={groupUIState[group.name]}
               onVisibilityChange={eventHandlers.setGroupVisibility}
             >
               <ParameterList
-                questionName={state.question.urlSegment}
+                questionName={question.urlSegment}
                 dispatch={props.dispatchAction}
-                parameterMap={state.question.parametersByName}
+                parameterMap={question.parametersByName}
                 parameters={group.parameters}
-                paramValues={state.paramValues}
-                paramUIState={state.paramUIState}
+                paramValues={paramValues}
+                paramUIState={paramUIState}
                 onParamValueChange={eventHandlers.updateParamValue}
               />
             </Group>
@@ -61,8 +62,8 @@ export default function DefaultQuestionForm(props: Props) {
             <input
               type="text"
               placeholder="Give this search a name (optional)"
-              value={state.customName}
-              onChange={e => dispatchAction(QuestionCustomNameUpdated.create({ questionName: state.question.urlSegment, customName: e.target.value }))}
+              value={customName}
+              onChange={e => dispatchAction(QuestionCustomNameUpdated.create({ questionName: question.urlSegment, customName: e.target.value }))}
             />
           </div>
           <div>
@@ -71,11 +72,18 @@ export default function DefaultQuestionForm(props: Props) {
               type="text"
               pattern="[+-]?\d*"
               placeholder="Give this search a weight (optional)"
-              value={state.weight}
-              onChange={e => dispatchAction(QuestionWeightUpdated.create({ questionName: state.question.urlSegment, weight: e.target.value }))}
+              value={weight}
+              onChange={e => dispatchAction(QuestionWeightUpdated.create({ questionName: question.urlSegment, weight: e.target.value }))}
             />
           </div>
         </div>
+        {question.description && (
+          <div>
+            <hr/>
+            <h2>Description</h2>
+            {safeHtml(question.description)}
+          </div>
+        )}
       </form>
     </div>
   )
