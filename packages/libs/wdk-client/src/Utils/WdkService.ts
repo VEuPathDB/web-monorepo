@@ -483,7 +483,7 @@ export default class WdkService {
   }
 
   getAnswerServiceEndpoint() {
-    return this.serviceUrl + '/answer';
+    return this.serviceUrl + '/answer/report';
   }
 
   tryLogin(email: string, password: string, redirectUrl: string) {
