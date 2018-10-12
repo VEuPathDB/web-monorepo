@@ -705,7 +705,7 @@ export default class WdkService {
    */
   getAnswer(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<Answer> {
     let method = 'post';
-    let url = '/answer';
+    let url = this.getAnswerServicePath();
     let body: AnswerRequest = { answerSpec, formatting };
     return this._fetchJson<Answer>(method, url, stringify(body));
   }
