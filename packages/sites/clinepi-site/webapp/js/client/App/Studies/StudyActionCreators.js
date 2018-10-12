@@ -73,7 +73,7 @@ export function fetchStudies(wdkService) {
       useCache: 'true',
       cacheId: 'studies',
       method: 'post',
-      path: '/answer',
+      path: wdkService.getAnswerServiceEndpoint(),
       body: JSON.stringify({
         answerSpec: {
           filters: [],
