@@ -482,8 +482,12 @@ export default class WdkService {
     });
   }
 
+  getAnswerServicePath() {
+    return '/answer/report';
+  }
+
   getAnswerServiceEndpoint() {
-    return this.serviceUrl + '/answer/report';
+    return this.serviceUrl + this.getAnswerServicePath();
   }
 
   tryLogin(email: string, password: string, redirectUrl: string) {
