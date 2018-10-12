@@ -293,6 +293,15 @@ export interface AnswerFormatting {
   formatConfig?: object
 }
 
+export interface AnswerJsonFormatConfig {
+  pagination?: { offset: number, numRecords: number };
+  attributes?: string[] | '__ALL_ATTRIBUTES__';
+  tables?: string[] | '__ALL_TABLES__';
+  sorting?: { attributeName: string, direction: 'ASC' | 'DESC' }[];
+  attachmentType?: string;
+  includeEmptyTables?: boolean;
+}
+
 export interface NewStepSpec {
   answerSpec: AnswerSpec,
   customName?: string,

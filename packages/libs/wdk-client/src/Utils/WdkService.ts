@@ -30,6 +30,7 @@ import {
   TreeBoxVocabNode,
   UserDataset,
   UserDatasetMeta,
+  AnswerJsonFormatConfig,
 } from './WdkModel';
 import { OntologyTermSummary } from '../Components/AttributeFilter/Types';
 
@@ -57,6 +58,11 @@ export interface AnswerRequest {
     format?: string;
     formatConfig?: any;
   }
+}
+
+export interface AnswerJsonRequest {
+  answerSpec: AnswerSpec;
+  formatConfig: AnswerJsonFormatConfig;
 }
 
 interface TempResultResponse {
@@ -490,6 +496,14 @@ export default class WdkService {
     return this.serviceUrl + this.getAnswerServicePath();
   }
 
+  getAnswerJsonServicePath() {
+    return '/answer';
+  }
+
+  getAnswerJsonServiceEndpoint() {
+    return this.serviceUrl + this.getAnswerJsonServicePath();
+  }
+
   tryLogin(email: string, password: string, redirectUrl: string) {
     return this.sendRequest(tryLoginDecoder, {
       method: 'post',
@@ -707,6 +721,16 @@ export default class WdkService {
     let method = 'post';
     let url = this.getAnswerServicePath();
     let body: AnswerRequest = { answerSpec, formatting };
+    return this._fetchJson<Answer>(method, url, stringify(body));
+  }
+
+  /**
+   * Get the default answer json from the answer service.
+   */
+  getAnswerJson(answerSpec: AnswerSpec, formatConfig: AnswerJsonFormatConfig): Promise<Answer> {
+    let method = 'post';
+    let url = this.getAnswerJsonServicePath();
+    let body: AnswerJsonRequest = { answerSpec, formatConfig };
     return this._fetchJson<Answer>(method, url, stringify(body));
   }
 

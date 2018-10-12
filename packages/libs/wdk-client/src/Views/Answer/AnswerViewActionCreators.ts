@@ -143,11 +143,8 @@ export function loadAnswer(
         parameters,
         filters
       };
-      let formatting = {
-        format: 'wdk-service-json',
-        formatConfig: pick(displayInfo, ['attributes', 'pagination', 'sorting'])
-      };
-      return wdkService.getAnswer(answerSpec, formatting);
+      let formatConfig = pick(displayInfo, ['attributes', 'pagination', 'sorting']);
+      return wdkService.getAnswerJson(answerSpec, formatConfig);
     });
 
     return [
