@@ -36,11 +36,8 @@ export const loadPathwayGeneDynamicCols = (geneStepId, pathwaySource, pathwayId,
       }].concat(baseAnswerSpec.filters)
     });
 
-    return wdkService.getAnswer(filteredAnswerSpec, {
-      format: 'wdk-service-json',
-      formatConfig: {
-        attributes: [ 'primary_key', 'ec_numbers_derived', 'ec_numbers' ].concat(dynamicAttrNames)
-      }
+    return wdkService.getAnswerJson(filteredAnswerSpec, {
+      attributes: [ 'primary_key', 'ec_numbers_derived', 'ec_numbers' ].concat(dynamicAttrNames)
     });
   })
   .then(answer => {
