@@ -955,7 +955,7 @@ export default class WdkService {
   getStepAnswer(stepId: number, formatting: AnswerFormatting, userId: string = 'current') {
     return this.sendRequest(Decode.ok, {
       method: 'post',
-      path: `/users/${userId}/steps/${stepId}/answer`,
+      path: `/users/${userId}/steps/${stepId}/answer/report`,
       body: JSON.stringify(formatting)
     });
   }
