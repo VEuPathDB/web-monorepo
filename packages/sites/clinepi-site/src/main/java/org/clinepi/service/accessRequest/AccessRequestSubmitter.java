@@ -23,7 +23,6 @@ public class AccessRequestSubmitter {
   }
 
   public static SubmissionResult submitAccessRequest(AccessRequestParams params, WdkModel wdkModel, EmailSender emailSender) throws SQLException, WdkModelException {
-    
     boolean requestInitiated = false;
 
     // In one transaction... 
@@ -38,20 +37,20 @@ public class AccessRequestSubmitter {
       try (
           PreparedStatement ps = insertRequestPreparedStatement(conn, sql, params);
       ) {
-        SqlUtils.executeUpdate(conn, "DELETE FROM userlogins5.ValidDatasetUser WHERE user_id = 305710393", "clean-up");
-
         SqlUtils.executePreparedStatement(ps, sql, "write-access-request");
         boolean insertionPerformed = ps.getUpdateCount() == 1;
 
         if (insertionPerformed) {
-          if (params.approvalNeeded()) {
+          if (params.approvalNeeded() && !params.inTestMode()) {
             emailAccessRequest(emailSender, params, wdkModel);
           }
 
           requestInitiated = true;
         }
-        
-        conn.commit();        
+
+        if (!params.inTestMode()) {
+          conn.commit();
+        }     
       }
       // Either the DB update (SQLException) or email submission (WdkModelException) 
       // has failed, and so we roll back the record insertion
@@ -64,7 +63,7 @@ public class AccessRequestSubmitter {
       }
     }
 
-    return requestInitiated ? SubmissionResult.SUCCESSFUL : SubmissionResult.ALREADY_REQUESTED;
+    return requestInitiated || params.inTestMode() ? SubmissionResult.SUCCESSFUL : SubmissionResult.ALREADY_REQUESTED;
   }
 
   private static String insertRequestPreparedStatementBody(AccessRequestParams params) {    
