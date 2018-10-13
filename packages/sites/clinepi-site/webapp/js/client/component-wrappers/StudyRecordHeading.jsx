@@ -1,18 +1,18 @@
 import { get } from 'lodash';
 import React from 'react';
-import { withStore } from 'ebrc-client/util/component';
+import { connect } from 'react-redux';
 import { Seq } from 'wdk-client/IterableUtils';
 import { makeClassNameHelper } from 'wdk-client/ComponentUtils';
 import StudySearches from 'Client/App/Studies/StudySearches';
 
 const cx = makeClassNameHelper('ce-StudyRecordHeadingSearchLinks');
 
-const enhance = withStore((state) => {
-  const { record, globalData } = state;
-  const { questions, recordClasses, studies, siteConfig } = globalData;
+const enhance = connect((state) => {
+  const { globalData, record, studies } = state;
+  const { questions, recordClasses, siteConfig } = globalData;
   const { webAppUrl } = siteConfig;
 
-  const studyId = record.id
+  const studyId = record.record.id
     .filter(part => part.name === 'dataset_id')
     .map(part => part.value)[0];
 
@@ -35,7 +35,7 @@ const enhance = withStore((state) => {
     .toArray();
 
   return { entries, webAppUrl };
-});
+}, null);
 
 
 const ConnectedStudySearches = enhance(StudySearches);

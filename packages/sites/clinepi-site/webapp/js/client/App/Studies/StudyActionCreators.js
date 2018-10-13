@@ -73,17 +73,14 @@ export function fetchStudies(wdkService) {
       useCache: 'true',
       cacheId: 'studies',
       method: 'post',
-      path: '/answer',
+      path: wdkService.getAnswerJsonServicePath(),
       body: JSON.stringify({
         answerSpec: {
           filters: [],
           parameters: {},
           questionName: 'DatasetQuestions.AllDatasets'
         },
-        formatting: {
-          format: 'wdk-service-json',
-          formatConfig: { attributes: requiredAttributes }
-        }
+        formatConfig: { attributes: requiredAttributes }
       })
     })
   ]).then(spread(formatStudies))

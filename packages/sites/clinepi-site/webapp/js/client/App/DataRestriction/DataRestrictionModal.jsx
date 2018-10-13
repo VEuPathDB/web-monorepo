@@ -44,7 +44,7 @@ class DataRestrictionModal extends React.Component {
     const approvalRequired = actionRequiresApproval({ action, study });
     return (
       <div className="DataRestrictionModal-Buttons">
-        {!user.isGuest || approvalRequired ? null : (
+        {!user.isGuest ? null : (
           <button onClick={() => showLoginForm(window.location.href)} className="btn">
             Log In
             <Icon fa="sign-in right-side" />

@@ -20,25 +20,40 @@ export default class RelatedCaseControlGroup extends React.Component {
     }
   }
 
-  isUsable() {
-    return !this.props.wizardState.paramValues[CASE_CONTROL_PARAM_NAME].startsWith('Both');
+  /**
+   * Show filter summary if one of the following is true:
+   * - settings is null (a problem with parsing properties)
+   * - props.group is not related case/control
+   * - related observations is active
+   */
+  static showFilterSummary(props) {
+    if (props.group.name !== CASE_CONTROL_GROUP_NAME) return true;
+
+    return (
+      RelatedCaseControlGroup.isUsable(props) &&
+      RelatedCaseControlGroup.isEnabled(props)
+    );
   }
 
-  isEnabled() {
-    return this.props.wizardState.paramValues[TOGGLE_PARAM_NAME] === 'Yes';
+  static isUsable(props) {
+    return !props.wizardState.paramValues[CASE_CONTROL_PARAM_NAME].startsWith('Both');
+  }
+
+  static isEnabled(props) {
+    return props.wizardState.paramValues[TOGGLE_PARAM_NAME] === 'Yes';
   }
 
   renderToggle() {
-    return this.isUsable() && (
+    return RelatedCaseControlGroup.isUsable(this.props) && (
       <div className="CaseControlMessage">
         <label>
           <input
             type="checkbox"
-            checked={this.isEnabled()}
+            checked={RelatedCaseControlGroup.isEnabled(this.props)}
             onClick={() => {
               this.props.eventHandlers.setParamValue(
                 this.props.wizardState.question.parameters.find(p => p.name === TOGGLE_PARAM_NAME),
-                this.isEnabled() ? 'No' : 'Yes'
+                RelatedCaseControlGroup.isEnabled(this.props) ? 'No' : 'Yes'
               );
             }} /> Enable the advanced <strong>Related Case/Control</strong> filter below. It allows you to restrict Participants using information about their related case or control.
         </label>
@@ -47,7 +62,7 @@ export default class RelatedCaseControlGroup extends React.Component {
   }
 
   renderWarning() {
-    return !this.isUsable() && (
+    return !RelatedCaseControlGroup.isUsable(this.props) && (
       <div className="CaseControlMessage CaseControlMessage__warning">
         Before using <strong>Related Case/Control</strong>, please first specify
         either <strong>Cases</strong> or <strong>Controls</strong> in the
@@ -57,7 +72,7 @@ export default class RelatedCaseControlGroup extends React.Component {
   }
 
   renderOverlay() {
-    return this.isEnabled() ? null : (
+    return RelatedCaseControlGroup.isEnabled(this.props) ? null : (
       <div className="CaseControlLayoutOverlay"/>
     );
   }
@@ -88,7 +103,7 @@ export default class RelatedCaseControlGroup extends React.Component {
 
     return (
       <div className={'CaseControlGroupWrapper CaseControlGroupWrapper__' +
-          (this.isEnabled() ? 'on' : 'off')}>
+          (RelatedCaseControlGroup.isEnabled(this.props) ? 'on' : 'off')}>
         <this.props.DefaultComponent {...this.props} wizardState={modifiedWizardState}/>
         {this.renderWarning()}
         {this.renderToggle()}

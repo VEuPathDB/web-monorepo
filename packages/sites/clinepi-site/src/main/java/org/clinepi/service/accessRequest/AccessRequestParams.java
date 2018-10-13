@@ -3,6 +3,8 @@ package org.clinepi.service.accessRequest;
 import java.util.Map;
 
 public class AccessRequestParams {
+  private final boolean testing;
+
   private final int userId;
   private final String datasetId;
 
@@ -15,6 +17,7 @@ public class AccessRequestParams {
   private final Map<String, String> formFields;
   
   public AccessRequestParams(
+      boolean testing,
       int userId,
       String datasetId,
       String datasetName,
@@ -23,6 +26,8 @@ public class AccessRequestParams {
       String bodyTemplate,
       int approvalType,
       Map<String, String> formFields) {
+    this.testing = testing;
+
     this.userId = userId;
     this.datasetId = datasetId;
 
@@ -33,6 +38,10 @@ public class AccessRequestParams {
     this.approvalType = approvalType;
 
     this.formFields = formFields;
+  }
+
+  public boolean inTestMode() {
+    return testing;
   }
 
   public int getUserId() {

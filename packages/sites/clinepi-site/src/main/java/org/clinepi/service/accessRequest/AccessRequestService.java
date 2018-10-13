@@ -114,7 +114,9 @@ public class AccessRequestService extends UserService {
       }
 
       public String getStudyAccess() throws WdkModelException, WdkUserException {
-        return getAttributeValueString("display_name");
+      // return getAttributeValueString("restriction_level");
+      // the form does not currently include the user request for a specific study access, we always grant public access
+        return "public";
       }
 
       public String getDisplayName() throws WdkModelException, WdkUserException {
@@ -152,6 +154,7 @@ public class AccessRequestService extends UserService {
       JSONObject requestJson, 
       DatasetAccessRequestAttributes datasetAttributes) throws WdkModelException, WdkUserException {
     return new AccessRequestParams(
+      JsonUtil.getBooleanOrDefault(requestJson, "testing", false),
       userId, 
       datasetId,
       datasetAttributes.getDisplayName(),

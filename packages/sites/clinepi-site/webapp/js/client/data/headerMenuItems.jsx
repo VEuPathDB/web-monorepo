@@ -51,7 +51,7 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
             target: '_blank'
           },
           {
-            text: 'PDF Tutorials',
+            text: 'Tutorials and Resources',
             appUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
           },
           {
@@ -65,7 +65,7 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
         target: '_blank',
         id: 'contactus',
         text: 'Contact Us',
-        appUrl: '/contact.do'
+        url: '/a/app/contact-us'
       }
     ],
     iconMenu: [ ...socialIcons ]

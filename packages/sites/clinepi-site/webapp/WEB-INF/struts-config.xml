@@ -48,16 +48,6 @@
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
       <forward name="success" path="/index.jsp"/>
     </action>
-    <action path="/contact"
-        parameter="org.gusdb.wdk.controller.action.standard.GenericPageAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/WEB-INF/jsp/contact.jsp"/>
-    </action>
-    <action path="/contactUs"
-        parameter="org.eupathdb.common.controller.action.ContactUsAction"
-        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
-      <forward name="success" path="/WEB-INF/jsp/contactBack.jsp"/>
-    </action>
     <action path="/showErrorPage"
         parameter="org.gusdb.wdk.controller.action.standard.ShowErrorPageAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
