@@ -39,7 +39,7 @@
             <li><a href="javascript:void(0)" onclick="wdk.dyk.dykOpen()">Did You Know...</a></li>
           </c:if>
           <li><a title="Login first to keep your work." href="${baseUrl}/resetSession.jsp">Reset ${project} Session</a></li>
-          <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="new-window" data-name="contact_us">Contact Us</a></li>
+          <li class="empty-divider"><a href="${pageContext.request.contextPath}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a></li>
         </ul>
       </li>
 
@@ -47,7 +47,7 @@
       <imp:login/>
 
       <!-- CONTACT US -->
-      <li class="empty-divider"><a href="${pageContext.request.contextPath}/contact.do" class="new-window" data-name="contact_us">Contact Us</a></li>
+      <li class="empty-divider"><a href="${pageContext.request.contextPath}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a></li>
 
       <imp:socialMedia small="true" />
 
