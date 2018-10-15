@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default ({ studies, searches, visualizations }) => ([
   {
     title: 'Explore the Studies',

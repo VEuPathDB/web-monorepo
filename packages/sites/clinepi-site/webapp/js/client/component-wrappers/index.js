@@ -22,19 +22,25 @@ import QuestionWizard from './QuestionWizard';
 import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 
 export default {
+  // card-based home page
+  IndexController,
+
+  // study-based header
+  SiteHeader: constant(SiteHeader),
+
+  // Related visits/case-control wizard steps
   ActiveGroup,
-  DownloadFormController: withRestrictionHandler(Action.downloadPage, state => state.downloadForm.recordClass),
   FilterSummaryGroup: compose(
     guard(RelativeVisitsGroup.showFilterSummary),
     guard(RelatedCaseControlGroup.showFilterSummary)
   ),
-  IndexController,
+
   QuestionWizard,
   QuestionWizardController,
+  DownloadFormController: withRestrictionHandler(Action.downloadPage, state => state.downloadForm.recordClass),
   RecordController: withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
   RecordHeading,
   RecordTable,
-  SiteHeader: constant(SiteHeader),
 }
 
 function guard(propsPredicate) {

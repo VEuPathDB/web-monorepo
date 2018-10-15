@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import Index from '../components/Index';
 import { getStaticSiteData } from '../selectors/siteData';
 import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
+import homeContent from '../data/homeContent';
 
 export default IndexController => {
   const enhance = connect(
@@ -11,7 +12,7 @@ export default IndexController => {
       const { displayName, webAppUrl } = siteConfig;
       const siteData = getStaticSiteData(state);
 
-      return { displayName, webAppUrl, siteData, isLoading: studies.loading, hasError: !!studies.error, newsSidebar };
+      return { displayName, webAppUrl, siteData, isLoading: studies.loading, hasError: !!studies.error, newsSidebar, homeContent };
     },
     { attemptAction }
   );
