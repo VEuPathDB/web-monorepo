@@ -445,8 +445,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
               selector: 'node[node_type= "enzyme"][?hasImage]',
               style: {
-                  width:70,
-                  height:50,
+                  width:35,
+                  height:25,
                   visibility:'visible',
                   'font-size':12,
                   'background-image':'data(smallImage)',
@@ -459,8 +459,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 selector: 'node[node_type= "enzyme"][zoomLevel > 1.4][?hasImage]',
                 style: {
                     visibility:'visible',
-                    width:50,
-                    height:35,
+                    width:35,
+                    height:25,
                     }
             },
 
