@@ -445,8 +445,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
               selector: 'node[node_type= "enzyme"][?hasImage]',
               style: {
-                  width:50,
-                  height:25,
+                  width:70,
+                  height:50,
                   visibility:'visible',
                   'font-size':12,
                   'background-image':'data(smallImage)',
@@ -456,11 +456,11 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             },
 
             {
-                selector: 'node[node_type= "enzyme"][zoomLevel > 1.4]',
+                selector: 'node[node_type= "enzyme"][zoomLevel > 1.4][?hasImage]',
                 style: {
                     visibility:'visible',
-                    width:25,
-                    height:10,
+                    width:50,
+                    height:35,
                     }
             },
 
@@ -468,8 +468,12 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
                 selector: 'node[node_type= "enzyme"][zoomLevel > 1.4][!hasImage]',
                 style: {
+                    visibility:'visible',
                    'font-size':6,
                     label: 'data(display_label)',
+                    width:'label',
+                    height:'label',
+
                 }
             },
 
@@ -562,6 +566,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 1.4][!side]',
                style: {
                    label:'data(name)',
+                   'border-width':0,
                    'text-valign': 'bottom',
                    'text-halign': 'center',
                    'text-margin-y':-6,
@@ -584,7 +589,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
              {
-               selector: 'node[node_type= "molecular entity"][?paintingEnzymes][zoomLevel <= 2]',
+               selector: 'node[node_type= "molecular entity"][?paintingEnzymes][zoomLevel <= 1.4]',
                style: {
                shape: 'ellipse',
                width:7,
@@ -653,7 +658,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
                 selector: 'node.eupathdb-CytoscapeActiveNode',
                 style: {
-                    'border-width': '6px',
+                    'border-width': '3px',
                 },
             },
 
@@ -717,7 +722,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
                     if (linkPrefix && (doAllNodes || n.data("gene_count") > 0 )) {
                         let link = linkPrefix + ecNum;
-                        let smallLink = link + '&h=20&w=50&compact=1';
+                        let smallLink = link + '&h=70&w=100&compact=1';
 
                         n.data('image', link);
                         n.data('smallImage', smallLink);
