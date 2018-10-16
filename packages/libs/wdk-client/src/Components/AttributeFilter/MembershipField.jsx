@@ -504,7 +504,7 @@ class MembershipTable extends React.PureComponent {
           {
             key: 'filteredCount',
             sortable: useSort,
-            width: '11em',
+            width: '12em',
             helpText: (
               <div>
                 The number of <em>{this.props.displayName}</em> that match the criteria chosen for other qualities, <br />
@@ -520,7 +520,7 @@ class MembershipTable extends React.PureComponent {
           {
             key: 'count',
             sortable: useSort,
-            width: '11em',
+            width: '12em',
             helpText: (
               <div>
                 The number of <em>{this.props.displayName}</em> with the

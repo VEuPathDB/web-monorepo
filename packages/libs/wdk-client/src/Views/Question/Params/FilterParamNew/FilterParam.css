@@ -269,8 +269,9 @@
 .filter-param .membership-filter .MesaComponent td:nth-child(3),
 .filter-param .membership-filter .MesaComponent td:nth-child(4) {
   text-align: right;
-  padding-right: 1rem;
-  padding-left: 1rem;
+  /* padding-right: 1rem;
+  padding-left: 1rem; */
+  white-space: nowrap;
 }
 .filter-param .membership-filter .MesaComponent tr:hover td {
   background: #fafafa;
