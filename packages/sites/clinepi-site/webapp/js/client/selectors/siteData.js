@@ -1,5 +1,5 @@
-import searches from 'Client/data/searches.json';
-import visualizations from 'Client/data/visualizations.json';
+import searches from '../data/searches.json';
+import visualizations from '../data/visualizations.json';
 
 export const getStudies = state =>
   state.studies ? state.studies.entities : [];
