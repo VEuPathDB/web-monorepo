@@ -1,23 +1,24 @@
-import { Epic, combineEpics } from 'redux-observable';
+import { combineEpics } from 'redux-observable';
 import { from, EMPTY } from 'rxjs';
-import { mergeMap, takeUntil, debounceTime, filter } from 'rxjs/operators';
+import { debounceTime, filter, mergeMap, takeUntil } from 'rxjs/operators';
+
 import { ModuleEpic } from '../../Core/Store';
-import { Action } from '../../Utils/ActionCreatorUtils';
 import { Parameter, ParameterValues } from '../../Utils/WdkModel';
 import WdkService from '../../Utils/WdkService';
+
 import { getValueFromState } from './Params';
 import {
   ActiveQuestionUpdatedAction,
-  UnloadQuestionAction,
-  QuestionLoadedAction,
-  QuestionSubmitted,
-  QuestionNotFoundAction,
-  QuestionErrorAction,
+  ParamsUpdatedAction,
+  ParamErrorAction,
   ParamInitAction,
   ParamValueUpdatedAction,
-  ParamsUpdatedAction,
-  ParamErrorAction
-} from "./QuestionActionCreators";
+  QuestionErrorAction,
+  QuestionLoadedAction,
+  QuestionNotFoundAction,
+  QuestionSubmitted,
+  UnloadQuestionAction
+} from './QuestionActionCreators';
 import { State } from './QuestionStoreModule';
 
 // Observers
