@@ -1,4 +1,4 @@
-import * as i from 'Utils/IterableUtils';
+import * as i from '../IterableUtils';
 
 /**
  * generate list of natural numbers

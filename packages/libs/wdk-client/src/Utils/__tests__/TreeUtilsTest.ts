@@ -1,4 +1,4 @@
-import * as TreeUtils from 'Utils/TreeUtils';
+import * as TreeUtils from '../TreeUtils';
 
 test('preorderSeq', function() {
   let tree = {

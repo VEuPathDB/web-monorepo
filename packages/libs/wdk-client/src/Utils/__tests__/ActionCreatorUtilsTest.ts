@@ -1,7 +1,7 @@
 import {
   makeActionCreator,
   isOneOf
-} from 'Utils/ActionCreatorUtils';
+} from '../ActionCreatorUtils';
 
 test('makeActionCreator with empty action', () => {
   const AC = makeActionCreator('empty');

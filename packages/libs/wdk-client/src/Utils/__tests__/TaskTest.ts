@@ -1,7 +1,7 @@
 /**
  * Created by dfalke on 9/28/16.
  */
-import { Task } from 'Utils/Task';
+import { Task } from '../Task';
 const noop = () => {};
 
 test('Task.of', () => {

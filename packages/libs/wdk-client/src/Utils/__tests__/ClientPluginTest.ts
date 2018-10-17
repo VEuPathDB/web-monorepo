@@ -1,10 +1,10 @@
-import { Action } from "Utils/ActionCreatorUtils";
+import { Action } from '../ActionCreatorUtils';
 import {
   createPlugin,
   mergePluginsByType,
   ClientPluginRegistryEntry,
   PluginContext
-} from 'Utils/ClientPlugin';
+} from '../ClientPlugin';
 import { Subject } from "rxjs";
 import { mapTo } from 'rxjs/operators';
 

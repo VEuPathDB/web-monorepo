@@ -14,7 +14,7 @@ import {
   lazy,
   decode,
   Decoder,
-} from 'Utils/Json';
+} from '../Json';
 
 const js = JSON.stringify;
 

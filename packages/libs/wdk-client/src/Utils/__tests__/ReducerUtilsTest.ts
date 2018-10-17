@@ -1,14 +1,14 @@
 import {
   Action,
   makeActionCreator
-} from 'Utils/ActionCreatorUtils';
+} from '../ActionCreatorUtils';
 
 import {
   matchAction,
   combineReducers,
   composeReducers,
   Reducer
-} from 'Utils/ReducerUtils';
+} from '../ReducerUtils';
 
 describe('matchAction', () => {
   type State = {

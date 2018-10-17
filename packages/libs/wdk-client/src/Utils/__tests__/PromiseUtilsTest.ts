@@ -2,7 +2,7 @@ import {
   latest,
   synchronized,
   Mutex
-} from 'Utils/PromiseUtils';
+} from '../PromiseUtils';
 
 // helpers
 
