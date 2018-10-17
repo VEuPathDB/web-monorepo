@@ -1,6 +1,6 @@
 import _ServerSideAttributeFilter from '../../../../Components/AttributeFilter/ServerSideAttributeFilter';
 import { Field, Filter, MemberFilter } from '../../../../Components/AttributeFilter/Types';
-import { isRange } from '../../../../Components/AttributeFilter/Utils';
+import { isRange } from '../../../../Components/AttributeFilter/AttributeFilterUtils';
 import Loading from '../../../../Components/Loading/Loading';
 import { memoize } from 'lodash';
 import React from 'react';
@@ -9,7 +9,7 @@ import { Props as ParamProps } from '../Utils';
 import { ActiveFieldSetAction, FieldCountUpdateRequestAction, FieldStateUpdatedAction, FiltersUpdatedAction } from './ActionCreators';
 import './FilterParam.css';
 import { MemberFieldState, RangeFieldState, State } from './State';
-import { getLeaves, sortDistribution } from './Utils';
+import { getFilterFields, sortDistribution, getOntologyTree } from './FilterParamUtils';
 
 const ServerSideAttributeFilter: any = _ServerSideAttributeFilter;
 type FieldState = State['fieldStates'][string];
@@ -34,16 +34,13 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     this._handleRangeScaleChange = this._handleRangeScaleChange.bind(this);
   }
 
+  _getFieldTree = memoize(getOntologyTree);
+
   _getFieldMap = memoize((parameter: Props['parameter']) =>
-    new Map(parameter.ontology.map(o => [
-      o.term,
-      parameter.values == null || parameter.values[o.term] == null
-        ? o
-        : { ...o, values: parameter.values[o.term].join(' ') }
-    ] as [string, Field])))
+    new Map(parameter.ontology.map(o => [ o.term, o ] as [ string, Field ])))
 
   _countLeaves = memoize((parameter: Props['parameter']) =>
-    getLeaves(parameter.ontology).toArray().length);
+    getFilterFields(parameter).toArray().length);
 
   _getFiltersFromValue(value: Props['value']) {
     let { filters = [] } = JSON.parse(value);
@@ -138,8 +135,9 @@ export default class FilterParamNew extends React.PureComponent<Props> {
 
           activeField={uiState.activeOntologyTerm && fields.get(uiState.activeOntologyTerm)}
           activeFieldState={activeFieldState}
-          fields={fields}
+          fieldTree={getOntologyTree(parameter)}
           filters={filters}
+          valuesMap={parameter.values}
           dataCount={uiState.unfilteredCount}
           filteredDataCount={uiState.filteredCount}
           loadingFilteredCount={uiState.loadingFilteredCount}

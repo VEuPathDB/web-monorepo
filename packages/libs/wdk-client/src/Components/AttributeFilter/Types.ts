@@ -10,7 +10,6 @@ interface BaseField {
   display: string;
   parent?: string;
   isRange?: boolean;
-  values?: string;
 }
 
 export interface StringMemberField extends BaseField {

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Seq } from '../../Utils/IterableUtils';
 import IconAlt from '../Icon/IconAlt';
-import { getFilterValueDisplay, getOperationDisplay, shouldAddFilter } from './Utils';
+import { getFilterValueDisplay, getOperationDisplay, shouldAddFilter } from './AttributeFilterUtils';
+import { postorderSeq } from '../../Utils/TreeUtils';
 
 
 
@@ -57,10 +58,12 @@ export default class FilterList extends React.Component {
   }
 
   renderFilterItem(filter, containerFilter) {
-    var { fields } = this.props;
+    var { fieldTree } = this.props;
     var handleSelectClick = partial(this.handleFilterSelectClick, filter, containerFilter);
     var handleRemoveClick = partial(this.handleFilterRemoveClick, filter, containerFilter);
-    var field = fields.get(filter.field);
+    var field = postorderSeq(fieldTree)
+      .map(node => node.field)
+      .find(field => field.term === filter.field)
     var filterDisplay = getFilterValueDisplay(filter);
 
     return (
@@ -84,7 +87,7 @@ export default class FilterList extends React.Component {
   render() {
     const {
       activeField,
-      fields,
+      fieldTree,
       filters,
       filteredDataCount,
       dataCount,
@@ -139,7 +142,9 @@ export default class FilterList extends React.Component {
                   const className = activeField && activeField.term === filter.field
                     ? `selected ${filter.type}`
                     : filter.type;
-                  const field = fields.get(filter.field);
+                  const field = postorderSeq(fieldTree)
+                    .map(node => node.field)
+                    .find(field => field.term === filter.field)
                   return (
                     <li key={filter.field} className={className}>
                       { filter.type !== 'multiFilter'
@@ -167,7 +172,7 @@ export default class FilterList extends React.Component {
 FilterList.propTypes = {
   onActiveFieldChange: PropTypes.func.isRequired,
   onFiltersChange: PropTypes.func.isRequired,
-  fields: PropTypes.instanceOf(Map).isRequired,
+  fieldTree: PropTypes.object.isRequired,
   filters: PropTypes.array.isRequired,
   displayName: PropTypes.string.isRequired,
   dataCount: PropTypes.number,

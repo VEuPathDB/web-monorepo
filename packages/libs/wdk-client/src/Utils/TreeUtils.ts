@@ -99,15 +99,19 @@ export function postorderSeq<T>(root: Node<T>) {
  * @param {Function} getChildren A function that returns an iterable object over a node's children.
  * @param {any} root The root node of the tree whose structure is being mapped.
  */
-export function mapStructure<T, U>(mapFn: (root: T, children: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
+export function mapStructure<T, U>(mapFn: (node: T, children: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
   let mappedChildren = Seq.from(getChildren(root))
   .map(child => mapStructure(mapFn, getChildren, child))
   .toArray();
   return mapFn(root, mappedChildren);
 }
 
-export const foldStructure = <T, U>(fn: (value: U, node: Node<T>) => U, seed: U, root: Node<T>): U =>
-  fn(root.children.reduce((acc: U, next: Node<T>) => foldStructure(fn, acc, next), seed) as U, root)
+/**
+ * Convert a tree into a new structure, much like array.reduce. The tree is
+ * traversed bottom-up.
+ */
+export const foldStructure = <T, U>(reducer: (value: U, node: Node<T>) => U, seed: U, root: Node<T>): U =>
+  reducer(root.children.reduce((acc: U, next: Node<T>) => foldStructure(reducer, acc, next), seed) as U, root)
 
 /**
  * For any node in a tree that does not pass `nodePredicate`, replace it with

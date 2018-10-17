@@ -59,6 +59,7 @@ export interface FilterParamNew extends ParameterBase {
   type: 'FilterParamNew';
   filterDataTypeDisplayName?: string;
   minSelectedCount: number;
+  hideEmptyOntologyNodes?: boolean;
   ontology: Array<{
     term: string;
     parent?: string;

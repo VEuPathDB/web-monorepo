@@ -9,9 +9,9 @@ import FieldFilter from './FieldFilter';
  * Filtering UI for server-side filtering.
  */
 export default function ServerSideAttributeFilter (props) {
-  var { displayName, fields, hideFilterPanel, hideFieldPanel } = props;
+  var { displayName, fieldTree, hideFilterPanel, hideFieldPanel } = props;
 
-  if (fields.size === 0) {
+  if (fieldTree == null) {
     return (
       <h3>Data is not available for {displayName}.</h3>
     );
@@ -26,9 +26,10 @@ export default function ServerSideAttributeFilter (props) {
         { hideFieldPanel || (
           <FieldList
             autoFocus={props.autoFocus}
-            fields={props.fields}
+            fieldTree={props.fieldTree}
             onActiveFieldChange={props.onActiveFieldChange}
             activeField={props.activeField}
+            valuesMap={props.valuesMap}
           />
         )}
         <FieldFilter {...props } />
@@ -36,6 +37,12 @@ export default function ServerSideAttributeFilter (props) {
     </div>
   );
 }
+
+const fieldTreePropType = PropTypes.shape({
+  field: FieldFilter.propTypes.activeField.isRequired,
+  // use a function below to allow for recursive prop type
+  children: PropTypes.arrayOf((...args) => fieldTreePropType(...args)).isRequired
+})
 
 ServerSideAttributeFilter.propTypes = {
 
@@ -49,8 +56,9 @@ ServerSideAttributeFilter.propTypes = {
   minSelectedCount: PropTypes.number,
 
   // state
-  fields: PropTypes.instanceOf(Map).isRequired,
+  fieldTree: fieldTreePropType,
   filters: PropTypes.array.isRequired,
+  valuesMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string).isRequired).isRequired,
   dataCount: PropTypes.number,
   filteredDataCount: PropTypes.number,
   loadingFilteredCount: PropTypes.bool,

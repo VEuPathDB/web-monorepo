@@ -7,14 +7,14 @@ import { preorderSeq } from '../../Utils/TreeUtils';
 import CheckboxTree from '../CheckboxTree/CheckboxTree';
 import Icon from '../Icon/IconAlt';
 import Tooltip from '../Overlays/Tooltip';
-import { getTree, isFilterField, isMulti, isRange } from './Utils';
+import { isFilterField, isMulti, isRange, findAncestorFields } from './AttributeFilterUtils';
 
 
 
 /**
  * Tree of Fields, used to set the active field.
  */
-export default class FieldList extends React.PureComponent {
+export default class FieldList extends React.Component { // eslint-disable-line react/no-deprecated
 
   constructor(props) {
     super(props);
@@ -22,8 +22,8 @@ export default class FieldList extends React.PureComponent {
     this.getNodeId = this.getNodeId.bind(this);
     this.getNodeChildren = this.getNodeChildren.bind(this);
     this.handleExpansionChange = this.handleExpansionChange.bind(this);
+    this.handleFieldSelect = this.handleFieldSelect.bind(this);
     this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
-    this.renderNode = this.renderNode.bind(this);
     this.searchPredicate = this.searchPredicate.bind(this);
     this.getFieldSearchString = memoize(this.getFieldSearchString);
 
@@ -63,7 +63,7 @@ export default class FieldList extends React.PureComponent {
     this.setState({ expandedNodes });
   }
 
-  handleFieldSelect(node) {
+  handleFieldSelect(node, domNode) {
     this.props.onActiveFieldChange(node.field.term);
     const expandedNodes = Seq.from(this.state.expandedNodes)
       .concat(this._getPathToField(node.field))
@@ -71,6 +71,7 @@ export default class FieldList extends React.PureComponent {
       .uniq()
       .toArray();
     this.setState({ expandedNodes });
+    this.selectedFieldDOMNode = domNode;
   }
 
   handleSearchTermChange(searchTerm) {
@@ -103,35 +104,10 @@ export default class FieldList extends React.PureComponent {
     return isMulti(node.field) ? [] : node.children;
   }
 
-  renderNode({node}) {
-    let isActive = this.props.activeField === node.field;
-    return (
-      <Tooltip content={node.field.description} hideDelay={0}>
-        {isFilterField(node.field)
-        ? (
-          <a
-            className={'wdk-AttributeFilterFieldItem' +
-              (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')}
-            href={'#' + node.field.term}
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              this.handleFieldSelect(node);
-              this.selectedFieldDOMNode = e.target;
-            }}>
-            <Icon fa={isRange(node.field) ? 'bar-chart-o' : 'list'}/> {node.field.display}
-          </a>
-        ) : (
-          <div className="wdk-Link wdk-AttributeFilterFieldParent">{node.field.display}</div>
-        )}
-      </Tooltip>
-    );
-  }
-
   getFieldSearchString(node) {
     return isMulti(node.field)
-      ? preorderSeq(node).map(getNodeSearchString).join(' ')
-      : getNodeSearchString(node);
+      ? preorderSeq(node).map(getNodeSearchString(this.props.valuesMap)).join(' ')
+      : getNodeSearchString(this.props.valuesMap)(node);
   }
 
   searchPredicate(node, searchTerms) {
@@ -140,33 +116,37 @@ export default class FieldList extends React.PureComponent {
     )
   }
 
-  _getPathToField(field, path = []) {
-    if (field == null || field.parent == null) return path;
-    return this._getPathToField(this.props.fields.get(field.parent),
-      path.concat(field.parent))
+  _getPathToField(field) {
+    if (field == null) return [];
+
+    return findAncestorFields(this.props.fieldTree, field.term)
+      .map(field => field.term)
+      .toArray();
   }
 
   render() {
-    var { autoFocus, fields } = this.props;
+    var { activeField, autoFocus, fieldTree } = this.props;
 
     return (
       <div className="field-list">
         <CheckboxTree
           ref={this.handleCheckboxTreeRef}
           autoFocusSearchBox={autoFocus}
-          tree={getTree(fields.values())}
+          tree={fieldTree}
           expandedList={this.state.expandedNodes}
           getNodeId={this.getNodeId}
           getNodeChildren={this.getNodeChildren}
           onExpansionChange={this.handleExpansionChange}
           isSelectable={false}
-          nodeComponent={this.renderNode}
           isSearchable={true}
           searchBoxPlaceholder="Find a filter"
           searchBoxHelp="Find a filter by searching names and descriptions"
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}
+          nodeComponent={({ node }) => (
+            <FieldNode node={node} isActive={node.field === activeField} handleFieldSelect={this.handleFieldSelect} />
+          )}
         />
       </div>
     );
@@ -175,11 +155,38 @@ export default class FieldList extends React.PureComponent {
 
 FieldList.propTypes = {
   autoFocus: PropTypes.bool,
-  fields: PropTypes.instanceOf(Map).isRequired,
+  fieldTree: PropTypes.object.isRequired,
   onActiveFieldChange: PropTypes.func.isRequired,
-  activeField: PropTypes.object
+  activeField: PropTypes.object,
+  valuesMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string).isRequired).isRequired
 };
 
-function getNodeSearchString({ field: { display = '', description = '', values = '' }}) {
-  return `${display} ${description} ${values}`.toLowerCase();
+function getNodeSearchString(valuesMap) {
+  return function ({ field: { term, display = '', description = '' }}) {
+    return `${display} ${description} ${valuesMap[term] || ''}`.toLowerCase();
+  }
+}
+
+
+function FieldNode({node, isActive, handleFieldSelect }) {
+  return (
+    <Tooltip content={node.field.description} hideDelay={0}>
+      {isFilterField(node.field)
+      ? (
+        <a
+          className={'wdk-AttributeFilterFieldItem' +
+            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')}
+          href={'#' + node.field.term}
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleFieldSelect(node, e.target);
+          }}>
+          <Icon fa={isRange(node.field) ? 'bar-chart-o' : 'list'}/> {node.field.display}
+        </a>
+      ) : (
+        <div className="wdk-Link wdk-AttributeFilterFieldParent">{node.field.display}</div>
+      )}
+    </Tooltip>
+  );
 }

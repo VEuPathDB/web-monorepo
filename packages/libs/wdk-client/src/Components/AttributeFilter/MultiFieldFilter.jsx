@@ -6,9 +6,8 @@ import Icon from '../Icon/IconAlt';
 import { MesaController as Mesa } from '../Mesa';
 import RealTimeSearchBox from '../SearchBox/RealTimeSearchBox';
 import StackedBar from './StackedBar';
-import { getOperationDisplay, isRange, shouldAddFilter } from './Utils';
-
-
+import { getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from './AttributeFilterUtils';
+import { preorderSeq } from '../../Utils/TreeUtils';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 
@@ -33,6 +32,12 @@ export default class MultiFieldFilter extends React.Component {
       'renderPercentCell'
     ]);
     this.state = { operation: 'intersect' };
+  }
+
+  getFieldByTerm(term) {
+    return preorderSeq(this.props.fieldTree)
+      .map(node => node.field)
+      .find(field => field.term === term);
   }
 
   // Update counts for subfilters if the filter operation changes
@@ -136,7 +141,7 @@ export default class MultiFieldFilter extends React.Component {
     return (
       <div className={cx('ValueContainer')}>
         <div>
-          {row.value == null && this.props.fields.get(row.summary.term).display}
+          {row.value == null && this.getFieldByTerm(row.summary.term).display}
         </div>
         <div>
           {this.renderRowValue(row)}
@@ -195,7 +200,7 @@ export default class MultiFieldFilter extends React.Component {
     const filterValue = get(filter, 'value', []);
     const handleChange = event =>
       this.handleLeafFilterChange(
-        this.props.fields.get(summary.term),
+        this.getFieldByTerm(summary.term),
         ( event.target.checked
           ? [value].concat(filterValue)
           : filterValue.filter(item => item !== value)
@@ -243,8 +248,10 @@ export default class MultiFieldFilter extends React.Component {
 
     const filteredRows = rows
       .filter(({ summary }) =>
-        pathToTerm(summary.term, this.props.activeField.term, this.props.fields)
-          .some(item => searchRe.test(item.display)))
+        findAncestorFields(this.props.fieldTree, summary.term)
+          .dropWhile(field => field.term !== this.props.activeField.term)
+          .drop(1)
+          .some(field => searchRe.test(field.display)))
 
     return (
       <div className={cx()}>
@@ -331,12 +338,4 @@ export default class MultiFieldFilter extends React.Component {
     );
   }
 
-}
-
-function pathToTerm(leafTerm, rootTerm, fields) {
-  const item = fields.get(leafTerm);
-  const root = fields.get(rootTerm);
-  return item == null || item === root
-    ? Seq.empty()
-    : pathToTerm(item.parent, rootTerm, fields).concat(Seq.of(item));
 }

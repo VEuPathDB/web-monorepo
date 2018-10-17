@@ -12,7 +12,7 @@ import {
   RangeField,
   ValueCounts
 } from './Types';
-import { preorder, preorderSeq } from '../../Utils/TreeUtils';
+import { preorderSeq, pruneDescendantNodes, postorderSeq, mapStructure } from '../../Utils/TreeUtils';
 
 /**
  * Determine if a field should use a range filter display
@@ -117,7 +117,7 @@ export function getFilterFieldsFromOntology(ontologyEntries: Iterable<Field>): F
 
 type ParentTerm = string | undefined;
 
-export const getTree = memoize((ontologyEntries: Iterable<Field>): FieldTreeNode => {
+export function getTree(ontologyEntries: Iterable<Field>): FieldTreeNode {
   const entriesByParentTerm = mapBy(ontologyEntries, term => term.parent);
   const rootChildren = (entriesByParentTerm.has(undefined) ? entriesByParentTerm.get(undefined)! : [])
     .map(entry => makeOntologyNode(entry, entriesByParentTerm));
@@ -135,7 +135,7 @@ export const getTree = memoize((ontologyEntries: Iterable<Field>): FieldTreeNode
     },
     children: sortBy(rootChildren, entry => isFilterField(entry.field) ? -1 : 1)
   }
-});
+}
 
 function makeOntologyNode(entry: Field, ontologyEntriesByParent: Map<ParentTerm, Field[]>): FieldTreeNode {
   const children = (ontologyEntriesByParent.has(entry.term) ? ontologyEntriesByParent.get(entry.term)! : [])
@@ -144,6 +144,20 @@ function makeOntologyNode(entry: Field, ontologyEntriesByParent: Map<ParentTerm,
     field: entry,
     children: sortBy(children, entry => isFilterField(entry.field) ? -1 : 1)
   };
+}
+
+export function removeIntermediateNodesWithSingleChild(tree: FieldTreeNode): FieldTreeNode {
+  return pruneDescendantNodes(node => node.children.length !== 1, tree);
+}
+
+export function sortLeavesBeforeBranches(root: FieldTreeNode): FieldTreeNode {
+  return mapStructure((node, children) => ({
+    ...node,
+    children: sortBy(children, entry => isFilterField(entry.field) ? -1 : 1)
+  }),
+  node => node.children,
+  root
+  );
 }
 
 function mapBy<T, S>(iter: Iterable<T>, keyAccessor: (item: T) => S) {
@@ -155,6 +169,18 @@ function mapBy<T, S>(iter: Iterable<T>, keyAccessor: (item: T) => S) {
       map.set(key, itemArray);
       return map;
     }, new Map<S, T[]>());
+}
+
+/**
+ * Create an array of ancestor nodes for a given node predicate.
+ */
+export function findAncestorFields<T>(tree: FieldTreeNode, term: string): Seq<Field> {
+  return postorderSeq(tree)
+    .reduce((ancestors: Seq<Field>, node: FieldTreeNode) =>
+      node.field.term === term ? Seq.of(node.field)
+      : !ancestors.isEmpty() && node.field.term === ancestors.first().parent ? Seq.of(node.field, ...ancestors)
+      : ancestors,
+      Seq.empty())
 }
 
 

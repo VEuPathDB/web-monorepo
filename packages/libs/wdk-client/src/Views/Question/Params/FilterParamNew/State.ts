@@ -10,7 +10,7 @@ import {
   OntologyTermsInvalidated,
   SummaryCountsLoadedAction,
 } from './ActionCreators';
-import { sortDistribution } from './Utils';
+import { sortDistribution } from './FilterParamUtils';
 
 
 export type SortSpec = {

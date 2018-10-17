@@ -60,8 +60,8 @@ export class Seq<T> {
     return Seq.EMPTY as Seq<T>;
   }
 
-  static of<T>(value?: T) {
-    return (arguments.length === 0 ? Seq.empty() : new Seq([value])) as Seq<T>;
+  static of<T>(...values: T[]) {
+    return (values.length === 0 ? Seq.empty() : new Seq(values)) as Seq<T>;
   }
 
   static from<T>(iterable: Iterable<T>) {

@@ -5,7 +5,7 @@ import Icon from '../Icon/IconAlt';
 import EmptyField from './EmptyField';
 import MultiFieldFilter from './MultiFieldFilter';
 import SingleFieldFilter from './SingleFieldFilter';
-import { isMulti } from './Utils';
+import { isMulti } from './AttributeFilterUtils';
 
 const cx = makeClassNameHelper('field-detail');
 /**

@@ -234,6 +234,7 @@ const parameterDecoder: Decode.Decoder<Parameter> =
         Decode.field('type', Decode.constant('FilterParamNew')),
         Decode.field('filterDataTypeDisplayName', Decode.optional(Decode.string)),
         Decode.field('minSelectedCount', Decode.number),
+        Decode.field('hideEmptyOntologyNodes', Decode.optional(Decode.boolean)),
         Decode.field('values', Decode.objectOf(Decode.arrayOf(Decode.string))),
         Decode.field('ontology', Decode.arrayOf(
           Decode.combine(

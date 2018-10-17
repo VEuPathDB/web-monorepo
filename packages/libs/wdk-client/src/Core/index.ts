@@ -1,5 +1,5 @@
 import * as Components from '../Components';
-import * as AttributeFilterUtils from '../Components/AttributeFilter/Utils';
+import * as AttributeFilterUtils from '../Components/AttributeFilter/AttributeFilterUtils';
 import * as ActionCreators from './ActionCreators';
 import * as Controllers from './Controllers';
 import { initialize, wrapComponents } from './main';
@@ -20,6 +20,7 @@ import * as TreeUtils from '../Utils/TreeUtils';
 import * as WdkModel from '../Utils/WdkModel';
 import WdkService from '../Utils/WdkService';
 import * as ReporterUtils from '../Views/ReporterForm/reporterUtils';
+import * as FilterParamUtils from '../Views/Question/Params/FilterParamNew/FilterParamUtils';
 
 declare global {
   interface Window {
@@ -37,6 +38,7 @@ export {
   ComponentUtils,
   Components,
   Controllers,
+  FilterParamUtils,
   FormSubmitter,
   IterableUtils,
   Json,

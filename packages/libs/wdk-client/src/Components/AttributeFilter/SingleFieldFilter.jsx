@@ -5,7 +5,7 @@ import DateField from './DateField';
 import EmptyValues from './EmptyValues';
 import MembershipField from './MembershipField';
 import NumberField from './NumberField';
-import { isRange, shouldAddFilter } from './Utils';
+import { isRange, shouldAddFilter } from './AttributeFilterUtils';
 
 export default class SingleFieldFilter extends React.Component {
   constructor(props) {

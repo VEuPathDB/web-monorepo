@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 import { lazy } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import DateSelector from '../InputControls/DateSelector';
-import { formatDate } from './Utils';
+import { formatDate } from './AttributeFilterUtils';
 
 
 var distributionEntryPropType = PropTypes.shape({

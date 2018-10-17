@@ -1,14 +1,14 @@
-import { memoize, sortBy, stubTrue as T } from 'lodash';
+import { memoize, sortBy, stubTrue as T, flowRight as compose } from 'lodash';
 import natsort from 'natural-sort';
 
-import { Filter, MemberFilter, ValueCounts } from '../../../../Components/AttributeFilter/Types';
-import { getTree, isRange } from '../../../../Components/AttributeFilter/Utils';
-import { Seq } from '../../../../Utils/IterableUtils';
+import { Filter, MemberFilter, ValueCounts, FieldTreeNode } from '../../../../Components/AttributeFilter/Types';
+import { getTree, isRange, removeIntermediateNodesWithSingleChild, isFilterField, sortLeavesBeforeBranches } from '../../../../Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from '../../../../Utils/TreeUtils';
 import { FilterParamNew, Parameter } from '../../../../Utils/WdkModel';
 
 import { SortSpec, State } from './State';
 import { Context } from '../Utils';
+import { getRecordClassName } from '../../../../Utils/CategoryUtils';
 
 const natSortComparator = (natsort as any)();
 
@@ -23,13 +23,27 @@ export function isParamValueValid(context: Context<FilterParamNew>, state: State
   );
 }
 
-export function getLeaves(ontology: FilterParamNew['ontology']) {
-  return Seq.from(preorderSeq(getTree(ontology)))
-    .filter(n => n.children.length === 0);
+const getOntologyTreeWithAllNodes = compose(
+  sortLeavesBeforeBranches,
+  getTree
+);
+
+const getOntologyWithoutEmptyOntologyNodes = compose(
+  sortLeavesBeforeBranches,
+  removeIntermediateNodesWithSingleChild,
+  getTree
+);
+
+export function getOntologyTree(param: FilterParamNew): FieldTreeNode {
+  return param.hideEmptyOntologyNodes
+    ? getOntologyWithoutEmptyOntologyNodes(param.ontology)
+    : getOntologyTreeWithAllNodes(param.ontology);
 }
 
-export function findFirstLeaf(ontology: FilterParamNew['ontology']): string {
-  return getLeaves(ontology).map(n => n.field.term).first();
+export function getFilterFields(param: FilterParamNew) {
+  return preorderSeq(getOntologyTree(param))
+    .map(n => n.field)
+    .filter(isFilterField)
 }
 
 export const getFilters = memoize(function(paramValue: string) {

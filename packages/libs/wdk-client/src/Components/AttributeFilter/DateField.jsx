@@ -2,7 +2,7 @@ import React from 'react';
 import { partition, sortBy } from 'lodash';
 
 import HistogramField from './HistogramField';
-import { getFormatFromDateString, formatDate } from './Utils';
+import { getFormatFromDateString, formatDate } from './AttributeFilterUtils';
 
 /**
  * Date field component

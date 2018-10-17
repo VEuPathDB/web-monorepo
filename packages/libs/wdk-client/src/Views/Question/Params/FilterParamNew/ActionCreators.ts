@@ -17,8 +17,8 @@ import { State, QuestionState } from '../../QuestionStoreModule';
 
 import { Context } from '../Utils';
 import { FieldState, MemberFieldState, State as FilterParamState } from './State';
-import { findFirstLeaf, getFilters, isMemberField, isType, sortDistribution } from './Utils';
-import { combineEpics, Epic, StateObservable } from 'redux-observable';
+import { getFilterFields, getFilters, isMemberField, isType, sortDistribution } from './FilterParamUtils';
+import { combineEpics, Epic } from 'redux-observable';
 import { ModuleEpic } from '../../../../Core/Store';
 
 
@@ -208,7 +208,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
         const filters = getFilters(paramValues[paramName]);
         const activeField = filters.length === 0
-          ? findFirstLeaf(getFilterParamNewFromState(getQuestionState(state$.value, questionName), paramName).ontology)
+          ? getFilterFields(getFilterParamNewFromState(getQuestionState(state$.value, questionName), paramName)).first().term
           : filters[0].field;
 
         // The order here is important. We want to first merge the child
@@ -246,7 +246,7 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
 
         const activeField = ontology.findIndex(item => item.term === activeOntologyTerm) > -1
           ? activeOntologyTerm
-          : filters.length === 0 ? findFirstLeaf(ontology) : filters[0].field;
+          : filters.length === 0 ? getFilterFields(parameter).first().term : filters[0].field;
 
         return merge(
           of(OntologyTermsInvalidated.create({
