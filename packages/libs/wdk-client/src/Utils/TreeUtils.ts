@@ -99,7 +99,7 @@ export function postorderSeq<T>(root: Node<T>) {
  * @param {Function} getChildren A function that returns an iterable object over a node's children.
  * @param {any} root The root node of the tree whose structure is being mapped.
  */
-export function mapStructure<T, U>(mapFn: (node: T, children: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
+export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
   let mappedChildren = Seq.from(getChildren(root))
   .map(child => mapStructure(mapFn, getChildren, child))
   .toArray();

@@ -117,47 +117,50 @@ export function getFilterFieldsFromOntology(ontologyEntries: Iterable<Field>): F
 
 type ParentTerm = string | undefined;
 
+const makeOntologyNode = (ontologyEntriesByParent: Map<ParentTerm, Field[]>) =>(field: Field): FieldTreeNode =>  {
+  const childFields = ontologyEntriesByParent.get(field.term) || [];
+  const children = childFields.map(makeOntologyNode(ontologyEntriesByParent));
+  return { field, children };
+}
+
+const GENERATED_ROOT: Field = {
+  term: '@@root@@',
+  display: '@@root@@'
+}
+
 export function getTree(ontologyEntries: Iterable<Field>): FieldTreeNode {
   const entriesByParentTerm = mapBy(ontologyEntries, term => term.parent);
-  const rootChildren = (entriesByParentTerm.has(undefined) ? entriesByParentTerm.get(undefined)! : [])
-    .map(entry => makeOntologyNode(entry, entriesByParentTerm));
+  const rootFields = entriesByParentTerm.get(undefined) || [];
+  const rootChildren = rootFields.map(makeOntologyNode(entriesByParentTerm));
 
   // Return single root child, but only if it has children. Otherwise, we need
   // to place the single root beneath a generated root (below).
-  if (rootChildren.length == 1 && rootChildren[0].children.length > 0) {
-    return rootChildren[0];
-  }
-
-  return {
-    field: {
-      term: 'root',
-      display: 'Root'
-    },
-    children: sortBy(rootChildren, entry => isFilterField(entry.field) ? -1 : 1)
-  }
+  return rootChildren.length == 1 && rootChildren[0].children.length > 0
+    ? rootChildren[0]
+    : { field: GENERATED_ROOT, children: rootChildren };
 }
 
-function makeOntologyNode(entry: Field, ontologyEntriesByParent: Map<ParentTerm, Field[]>): FieldTreeNode {
-  const children = (ontologyEntriesByParent.has(entry.term) ? ontologyEntriesByParent.get(entry.term)! : [])
-    .map(e => makeOntologyNode(e, ontologyEntriesByParent));
-  return {
-    field: entry,
-    children: sortBy(children, entry => isFilterField(entry.field) ? -1 : 1)
-  };
-}
-
-export function removeIntermediateNodesWithSingleChild(tree: FieldTreeNode): FieldTreeNode {
-  return pruneDescendantNodes(node => node.children.length !== 1, tree);
+export function removeIntermediateNodesWithSingleChild(node: FieldTreeNode): FieldTreeNode {
+  // We want to keep the subtree of any filter field (e.g., multifilter)
+  if (isFilterField(node.field)) return node;
+  if (node.children.length === 1) return removeIntermediateNodesWithSingleChild(node.children[0]);
+  const children = node.children.map(removeIntermediateNodesWithSingleChild);
+  return { ...node, children }
 }
 
 export function sortLeavesBeforeBranches(root: FieldTreeNode): FieldTreeNode {
-  return mapStructure((node, children) => ({
-    ...node,
-    children: sortBy(children, entry => isFilterField(entry.field) ? -1 : 1)
-  }),
-  node => node.children,
-  root
+  return mapStructure(
+    sortNodeChildren,
+    node => node.children,
+    root
   );
+}
+
+function sortNodeChildren(node: FieldTreeNode, mappedChildren: FieldTreeNode[]): FieldTreeNode {
+  return {
+    ...node,
+    children: sortBy(mappedChildren, entry => isFilterField(entry.field) ? -1 : 1)
+  }
 }
 
 function mapBy<T, S>(iter: Iterable<T>, keyAccessor: (item: T) => S) {

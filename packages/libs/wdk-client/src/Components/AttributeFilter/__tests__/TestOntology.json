@@ -1,0 +1,500 @@
+[
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Abdominal pain",
+    "precision": 1,
+    "term": "HP_0002027",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Abdominal pain duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000154",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000308",
+    "display": "Admitting hospital",
+    "precision": 1,
+    "term": "EUPATH_0000318",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000310",
+    "display": "Age at visit (years)",
+    "precision": 1,
+    "term": "EUPATH_0000113",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Anorexia",
+    "precision": 1,
+    "term": "SYMP_0000523",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Anorexia duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000155",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "OGMS_0000056",
+    "display": "Asexual parasite density",
+    "precision": 1,
+    "description": "Number of asexual parasites in the blood (counts per microliter)",
+    "term": "EUPATH_0000092",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "OGMS_0000056",
+    "display": "Asexual parasites present, microscopy",
+    "precision": 1,
+    "description": "Asexual parasites in the blood, as determined by microscopy",
+    "term": "EUPATH_0000048",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000040",
+    "display": "Basis of complicated diagnosis",
+    "precision": 1,
+    "description": "Diagnosis of malaria with danger signs including inability to sit up or stand, vomiting, unable to breastfeed or drink and lethargy, or criteria for severe malaria.",
+    "term": "EUPATH_0000036",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000090",
+    "display": "Complicated malaria",
+    "precision": 1,
+    "term": "EUPATH_0000040",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Cough",
+    "precision": 1,
+    "term": "SYMP_0000614",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Cough duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000156",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000308",
+    "display": "Date of hospital admission",
+    "precision": 1,
+    "term": "EUPATH_0000319",
+    "type": "date",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000308",
+    "display": "Date of hospital discharge",
+    "precision": 1,
+    "term": "EUPATH_0000320",
+    "type": "date",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000310",
+    "display": "Date of visit",
+    "precision": 1,
+    "description": "Month and year",
+    "term": "EUPATH_0000091",
+    "type": "date",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000310",
+    "display": "Days since enrollment",
+    "precision": 1,
+    "description": "Number of days from time of participant enrollment in study until current visit",
+    "term": "EUPATH_0000191",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Diagnosis",
+    "precision": 1,
+    "term": "OGMS_0000073",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000308",
+    "display": "Diagnosis at hospitalization",
+    "precision": 1,
+    "term": "EUPATH_0000638",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Diarrhea",
+    "precision": 1,
+    "term": "DOID_13250",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Diarrhea duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000157",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Fatigue",
+    "precision": 1,
+    "description": "Fatigue or malaise",
+    "term": "SYMP_0019177",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Fatigue duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000158",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Febrile",
+    "precision": 1,
+    "description": "Elevated temperature or subjective fever",
+    "term": "EUPATH_0000097",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Fever",
+    "precision": 1,
+    "term": "EUPATH_0000100",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Fever, subjective duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000164",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "OGMS_0000056",
+    "display": "Gametocytes present, microscopy",
+    "precision": 1,
+    "term": "EUPATH_0000207",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Headache",
+    "precision": 1,
+    "term": "HP_0002315",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Headache duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000159",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "OGMS_0000083",
+    "display": "Height (cm)",
+    "precision": 1,
+    "term": "IAO_0000408",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "OGMS_0000056",
+    "display": "Hemoglobin (g/dL)",
+    "precision": 1,
+    "description": "Blood hemoglobin (g/dl)",
+    "term": "EUPATH_0000047",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Hospitalization",
+    "precision": 1,
+    "term": "EUPATH_0000308",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0021097",
+    "display": "ITN last night",
+    "precision": 1,
+    "description": "Slept in an insectside treated net last night?",
+    "term": "EUPATH_0000216",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Jaundice",
+    "precision": 1,
+    "description": "Yellow pigmentation of the skin or sclera due to bilirubin, the result of increased bilirubin in the bloodstream",
+    "term": "HP_0000952",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Jaundice duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000160",
+    "type": "number",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Joint pains",
+    "precision": 1,
+    "term": "SYMP_0000064",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Joint pains duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000161",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000609",
+    "display": "Laboratory test",
+    "precision": 1,
+    "term": "OGMS_0000056",
+    "isRange": false
+  },
+  {
+    "parent": "OGMS_0000073",
+    "display": "Malaria diagnosis",
+    "precision": 1,
+    "description": "a positive blood smear with subjective fever or elevated temperature resulting in antimalarial treatment",
+    "term": "EUPATH_0000090",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Malaria diagnosis and parasite status",
+    "precision": 1,
+    "term": "EUPATH_0000338",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "OGMS_0000090",
+    "display": "Malaria treatment",
+    "precision": 1,
+    "term": "EUPATH_0000740",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Muscle aches",
+    "precision": 1,
+    "term": "EUPATH_0000252",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Muscle aches duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000162",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "OGMS_0000090",
+    "display": "Non-malaria medication",
+    "precision": 1,
+    "description": "Non-malaria medication only",
+    "term": "EUPATH_0000059",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "display": "Observation",
+    "precision": 1,
+    "term": "EUPATH_0000738",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Observation details",
+    "precision": 1,
+    "term": "EUPATH_0000310",
+    "isRange": false
+  },
+  {
+    "parent": "OGMS_0000073",
+    "display": "Other diagnosis",
+    "precision": 1,
+    "term": "EUPATH_0000317",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Other medical complaint",
+    "precision": 1,
+    "term": "EUPATH_0020002",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Personal vector intervention",
+    "precision": 1,
+    "term": "EUPATH_0021097",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Physical examination",
+    "precision": 1,
+    "term": "OGMS_0000083",
+    "isRange": false
+  },
+  {
+    "display": "Sample",
+    "precision": 1,
+    "term": "EUPATH_0000609",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000609",
+    "display": "Sample type",
+    "precision": 1,
+    "description": "Type of sample/specimen collected during a clinical visit",
+    "term": "OBI_0100051",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Seizures",
+    "precision": 1,
+    "description": "Intermittent abnormality of the central nervous system (FMA:HP:0002011) due to sudden, excessive, disorderly discharge of cerebral neurons; characterized by some combination of disturbance of sensation, loss of consciousness, impairment of psychic function, or convulsive movements (epilepsy is used to describe chronic, recurrent seizures)",
+    "term": "SYMP_0000124",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Seizures duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000163",
+    "type": "number",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000036",
+    "display": "Severe malaria criteria",
+    "precision": 1,
+    "term": "EUPATH_0000046",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Signs and symptoms",
+    "precision": 1,
+    "term": "EUPATH_0000309",
+    "isRange": false
+  },
+  {
+    "parent": "OGMS_0000056",
+    "display": "Submicroscopic parasites present, LAMP",
+    "precision": 1,
+    "term": "EUPATH_0000487",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "OGMS_0000083",
+    "display": "Temperature (C)",
+    "precision": 1,
+    "term": "EUPATH_0000110",
+    "type": "number",
+    "isRange": true
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Treatment",
+    "precision": 1,
+    "term": "OGMS_0000090",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000738",
+    "display": "Visit type",
+    "precision": 1,
+    "term": "EUPATH_0000311",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Vomiting",
+    "precision": 1,
+    "term": "HP_0002013",
+    "type": "string",
+    "isRange": false
+  },
+  {
+    "parent": "EUPATH_0000309",
+    "display": "Vomiting duration (days)",
+    "precision": 1,
+    "term": "EUPATH_0000165",
+    "type": "number",
+    "isRange": false
+  },
+  {
+    "parent": "OGMS_0000083",
+    "display": "Weight (kg)",
+    "precision": 1,
+    "term": "IAO_0000414",
+    "type": "number",
+    "isRange": true
+  }
+]
