@@ -24,6 +24,8 @@ import {
   SectionVisibilityAction,
 } from './RecordViewActionCreators';
 
+export const key = 'record';
+
 export type Action = NavigationQueryAction
             | NavigationVisibilityAction
             | RecordErrorAction

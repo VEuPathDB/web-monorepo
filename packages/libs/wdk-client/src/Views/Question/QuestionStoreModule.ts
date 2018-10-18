@@ -1,5 +1,5 @@
 import { keyBy, mapValues } from 'lodash';
-import { combineEpics, Epic } from 'redux-observable';
+import { StateObservable, ActionsObservable } from 'redux-observable';
 
 import {
   ActiveQuestionUpdatedAction,
@@ -44,6 +44,11 @@ import {
 } from './Params/FilterParamNew/ActionCreators';
 import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
 import { observeQuestion } from './QuestionActionObservers';
+import { EpicDependencies } from '../../Core/Store';
+import { Observable, merge, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export const key = 'question';
 
 interface GroupState {
   isVisible: boolean;
@@ -116,7 +121,19 @@ export function reduce(state: State = initialState, action: Action): State {
   return state;
 }
 
-export const observe = combineEpics<Epic<Action, Action, State>>(observeQuestion, observeParam);
+export const observe = (action$: ActionsObservable<Action>, state$: StateObservable<any>, dependencies: EpicDependencies) => {
+  const questionState$ = new StateObservable(
+    state$.pipe(
+      map(state => state[key])
+    ) as Subject<State>,
+    state$.value[key]
+  );
+
+  return merge(
+    observeQuestion(action$, questionState$, dependencies),
+    observeParam(action$, questionState$, dependencies)
+  );
+};
 
 function reduceQuestionState(state = {} as QuestionState, action: Action): QuestionState | undefined {
 

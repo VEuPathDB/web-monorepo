@@ -7,6 +7,8 @@ import {
   SiteMapOntology
 } from './SiteMapActionCreators';
 
+export const key = 'siteMap';
+
 // define action type to be any our supported actions
 type Action = LoadingAction
             | InitializeAction

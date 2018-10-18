@@ -14,6 +14,8 @@ import sharingReducer from '../Sharing/UserDatasetSharingReducer';
 import { UserDataset } from '../../../Utils/WdkModel';
 import { ServiceError } from '../../../Utils/WdkService';
 
+export const key = 'userDatasetDetail';
+
 type Action = DetailLoading
             | DetailUpdatingAction
             | DetailErrorAction

@@ -12,6 +12,8 @@ import {
 } from '../UserDatasetsActionCreators';
 import { difference } from 'lodash';
 
+export const key = 'userDatasetList';
+
 type Action = ListLoadingAction
   | ListReceivedAction
   | ListErrorReceivedAction

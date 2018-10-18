@@ -4,6 +4,8 @@ import {
 } from '../UserActionCreators';
 import { User, UserPreferences } from "../../../Utils/WdkUser";
 
+export const key = 'userProfile';
+
 export type Action = ProfileFormUpdateAction | ProfileFormSubmissionStatusAction;
 
 export type UserProfileFormData = Partial<User & {

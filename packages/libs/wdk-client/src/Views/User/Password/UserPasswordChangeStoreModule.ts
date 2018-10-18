@@ -1,5 +1,7 @@
 import { PasswordFormUpdateAction, PasswordFormSubmissionStatusAction } from '../UserActionCreators';
 
+export const key = 'passwordChange';
+
 type Action = PasswordFormUpdateAction | PasswordFormSubmissionStatusAction;
 
 export type State = {

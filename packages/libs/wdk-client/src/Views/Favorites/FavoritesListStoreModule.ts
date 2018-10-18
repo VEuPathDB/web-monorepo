@@ -24,6 +24,8 @@ import {
 import { EpicDependencies } from '../../Core/Store';
 import { Observable } from 'rxjs';
 
+export const key = 'favorites';
+
 type Action =
   TableStateUpdatedAction
   | TableSelectionUpdatedAction

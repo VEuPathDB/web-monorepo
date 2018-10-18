@@ -1,8 +1,7 @@
-import { compose, entries, mapValues, partialRight } from 'lodash/fp';
+import { compose, mapKeys, mapValues, partialRight, values } from 'lodash/fp';
 import { applyMiddleware, combineReducers, createStore, Reducer } from 'redux';
-import { combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
-import { EMPTY, Subject } from 'rxjs';
-import { map as mapObs } from 'rxjs/operators';
+import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
+import { EMPTY } from 'rxjs';
 import { Action } from '../Utils/ActionCreatorUtils';
 import { PageTransitioner } from '../Utils/PageTransitioner';
 import WdkService from '../Utils/WdkService';
@@ -23,6 +22,7 @@ export type ModuleReducer<T> = (state: T | undefined, action: Action, locatePlug
 export type ModuleEpic<T> = Epic<Action, Action, T, EpicDependencies>;
 
 export type StoreModule<T> = {
+  key: string;
   reduce: ModuleReducer<T>;
   observe?: ModuleEpic<T>;
 }
@@ -59,26 +59,18 @@ export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, locatePlug
   return store;
 }
 
-function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>, locatePlugin: LocatePlugin): RootReducer<T> {
+function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>, locatePlugin: LocatePlugin): RootReducer<T[keyof T]> {
   const reducers = mapValues<StoreModuleRecord<T>, SubReducer<T>>(m => partialRight(m.reduce, [locatePlugin]), storeModules);
-  return combineReducers(reducers);
+  const keyedReducers = mapKeys(moduleKey => storeModules[moduleKey].key, reducers);
+
+  return combineReducers(keyedReducers);
 }
 
-type StoreModuleRecordPair<T> = [ T, StoreModule<T> ];
-
 function makeRootEpic<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>): ModuleEpic<T> {
-  const epics = entries(storeModules)
-    .map(([key, { observe }]: StoreModuleRecordPair<keyof T>): ModuleEpic<T[keyof T]> => (action$, state$, deps) => {
-      const childState$ = new StateObservable(
-        // StateObservable only needs an Observable, so cast to Subject.
-        // See https://github.com/redux-observable/redux-observable/issues/570
-        state$.pipe(
-          mapObs(state => state[key])
-        ) as Subject<T[keyof T]>,
-        state$.value[key]
-      );
+  const epics = values(storeModules)
+    .map(({ observe }: StoreModule<T>): ModuleEpic<T> => (action$, state$, deps) => {
       return observe
-        ? observe(action$, childState$, deps)
+        ? observe(action$, state$, deps)
         : EMPTY;
     });
   return combineEpics(...epics);

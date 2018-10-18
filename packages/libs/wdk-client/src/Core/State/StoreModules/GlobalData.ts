@@ -4,6 +4,8 @@ import { UserUpdateAction, PreferenceUpdateAction, PreferencesUpdateAction, Show
 import { LocationAction } from '../../../Core/ActionCreators/RouterActionCreators';
 import { UserPreferences } from '../../../Utils/WdkUser';
 
+export const key = 'globalData';
+
 type UserAction = UserUpdateAction | PreferenceUpdateAction | PreferencesUpdateAction;
 type LoginAction = ShowLoginModalAction | LoginDismissedAction | LoginErrorAction;
 type RouterAction = LocationAction;

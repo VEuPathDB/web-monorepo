@@ -2,6 +2,8 @@ import { reduce as reduceProfile, State as UserProfileState, Action, UserProfile
 import { ClearRegistrationFormAction } from '../UserActionCreators';
 import { UserPreferences } from '../../../Utils/WdkUser';
 
+export const key = 'userRegistration';
+
 // Re-export state to follow convention
 export type State = UserProfileState;
 

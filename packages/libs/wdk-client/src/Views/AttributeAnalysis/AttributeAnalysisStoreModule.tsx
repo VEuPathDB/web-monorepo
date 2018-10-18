@@ -17,6 +17,8 @@ const initialState = {
   analyses: {}
 };
 
+export const key = 'attributeAnalysis';
+
 export function reduce(state: State = initialState, action: Action, locatePlugin: LocatePlugin) {
   if (!ScopedAnalysisAction.test(action)) {
     return state;
@@ -33,8 +35,12 @@ export function reduce(state: State = initialState, action: Action, locatePlugin
   };
 }
 
-export function observe(action$: Observable<Action>, state$: Observable<State>, dependencies: EpicDependencies) {
-  return scopePluginObserve(dependencies.locatePlugin('attributeAnalysis').observe)(action$, state$, dependencies);
+export function observe(action$: Observable<Action>, state$: Observable<any>, dependencies: EpicDependencies) {
+  const attributeAnalysisState$ = state$.pipe(
+    map(state => state[key])
+  );
+
+  return scopePluginObserve(dependencies.locatePlugin('attributeAnalysis').observe)(action$, attributeAnalysisState$, dependencies);
 }
 
 function scopePluginObserve(observe: CompositeClientPlugin['observe']) {

@@ -3,6 +3,8 @@ import {
   ResetPasswordSubmissionStatusAction
 } from '../UserActionCreators';
 
+export const key = 'passwordReset';
+
 // defines the structure of this store's data
 export type State = {
   emailText: string, // current value typed in box

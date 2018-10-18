@@ -12,6 +12,8 @@ import {
 } from './AnswerViewActionCreators';
 import { filterRecords } from '../Records/RecordUtils';
 
+export const key = 'answerView';
+
 type Action = LoadingAction
             | AddedAction
             | ErrorAction
