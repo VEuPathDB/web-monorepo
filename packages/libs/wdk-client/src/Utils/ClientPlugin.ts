@@ -3,22 +3,20 @@ import React from 'react';
 import { empty, merge, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { DispatchAction } from '../Core/CommonTypes';
-import WdkService from './WdkService';
-
 import { Action } from './ActionCreatorUtils';
 import { EpicDependencies } from '../Core/Store';
+import { SimpleDispatch } from '../Core/CommonTypes';
 
-export interface ClientPlugin<T = object> {
+export interface ClientPlugin<T> {
   reduce(state: T | undefined, action: Action): T;
-  render(state: T, dispatch: DispatchAction): React.ReactNode;
+  render(state: T, dispatch: SimpleDispatch): React.ReactNode;
   observe(action$: Observable<Action>, state$: Observable<T>, dependencies: EpicDependencies): Observable<Action>;
 }
 
-export interface CompositeClientPlugin {
-  reduce: <T>(context: PluginContext, state: T, action: Action) => T;
-  render: <T>(context: PluginContext, state: T, dispatch: (action: Action) => void) => React.ReactNode;
-  observe: <T>(contextActionPair$: Observable<[PluginContext, Action]>, state$: Observable<T>, dependencies: EpicDependencies) => Observable<Action>;
+export interface CompositeClientPlugin<T> {
+  reduce: (context: PluginContext, state: T | undefined, action: Action) => T;
+  render: (context: PluginContext, state: T, dispatch: SimpleDispatch) => React.ReactNode;
+  observe: (contextActionPair$: Observable<[PluginContext, Action]>, state$: Observable<T>, dependencies: EpicDependencies) => Observable<Action>;
 }
 
 export interface PluginContext {
@@ -63,20 +61,15 @@ export interface PluginContext {
  * }
  * 
  */
-export interface ClientPluginRegistryEntry {
+export interface ClientPluginRegistryEntry<T> {
   type: string;
   name?: string;
   recordClassName?: string;
   questionName?: string;
-  plugin: ClientPlugin;
+  plugin: ClientPlugin<T>;
 }
 
-interface ObserverServices<T> {
-  wdkService: WdkService;
-  getState(): T;
-}
-
-export function createPlugin<T extends object>(pluginSpec: Partial<ClientPlugin<T>>): Readonly<ClientPlugin> {
+export function createPlugin<T>(pluginSpec: Partial<ClientPlugin<T>>): Readonly<ClientPlugin<T>> {
   const {
     render = defaultRender,
     reduce = defaultReduce,
@@ -85,7 +78,7 @@ export function createPlugin<T extends object>(pluginSpec: Partial<ClientPlugin<
   return { render, reduce, observe };
 }
 
-export function mergePluginsByType(registry: ClientPluginRegistryEntry[], type: string) {
+export function mergePluginsByType<T>(registry: ClientPluginRegistryEntry<T>[], type: string): CompositeClientPlugin<T> {
   const entries = registry.filter(entry => entry.type === type);
   const locate = findPlugin(entries);
   const reduce = mergeReduce(locate);
@@ -94,29 +87,29 @@ export function mergePluginsByType(registry: ClientPluginRegistryEntry[], type: 
   return { reduce, render, observe };
 }
 
-type LocatePlugin = (context: PluginContext) => ClientPlugin | void;
+type LocatePlugin<T> = (context: PluginContext) => ClientPlugin<T> | void;
 
-const findPlugin = (registry: ClientPluginRegistryEntry[]) => memoize((context: PluginContext): ClientPlugin | void => {
+const findPlugin = <T>(registry: ClientPluginRegistryEntry<T>[]): LocatePlugin<T> => memoize((context: PluginContext): ClientPlugin<T> | void => {
   const entry = registry.find(entry => isMatchingEntry(entry, context));
   return entry && entry.plugin;
 }, JSON.stringify)
 
-function mergeReduce(locate: LocatePlugin) {
-  return function reduce<T extends object | undefined>(context: PluginContext, state: T, action: Action) {
+function mergeReduce<T>(locate: LocatePlugin<T>): CompositeClientPlugin<T>['reduce'] {
+  return function reduce(context: PluginContext, state: T | undefined, action: Action) {
     const plugin = locate(context);
     return plugin ? plugin.reduce(state, action) : defaultReduce(state, action);
   }
 }
 
-function mergeRender(locate: LocatePlugin) {
-  return function render<T extends object>(context: PluginContext, state: T, dispatch: DispatchAction) {
+function mergeRender<T>(locate: LocatePlugin<T>): CompositeClientPlugin<T>['render'] {
+  return function render(context: PluginContext, state: T, dispatch: SimpleDispatch) {
     const plugin = locate(context);
     return plugin ? plugin.render(state, dispatch) : defaultRender(state, dispatch);
   }
 }
 
-function mergeObserve(entries: ClientPluginRegistryEntry[]) {
-  return function observe<T extends object>(actionContextPair$: Observable<[PluginContext, Action]>, state$: Observable<T>, dependencies: EpicDependencies): Observable<Action> {
+function mergeObserve<T>(entries: ClientPluginRegistryEntry<T>[]): CompositeClientPlugin<T>['observe'] {
+  return function observe(actionContextPair$: Observable<[PluginContext, Action]>, state$: Observable<T>, dependencies: EpicDependencies): Observable<Action> {
     // Fold entries into in$ and out$ Observables by incrementally filtering out
     // actions that match a plugin entry.
     //
@@ -145,7 +138,7 @@ function mergeObserve(entries: ClientPluginRegistryEntry[]) {
   }
 }
 
-function isMatchingEntry(entry: ClientPluginRegistryEntry, context: PluginContext): boolean {
+function isMatchingEntry<T>(entry: ClientPluginRegistryEntry<T>, context: PluginContext): boolean {
   if (entry.type !== context.type) return false;
   if (entry.name && entry.name !== context.name) return false;
   if (entry.recordClassName && context.recordClassName && entry.recordClassName !== context.recordClassName) return false;
@@ -155,7 +148,7 @@ function isMatchingEntry(entry: ClientPluginRegistryEntry, context: PluginContex
 
 
 // Default implementations
-function defaultRender(state: any, dispatch: DispatchAction) {
+function defaultRender(state: any, dispatch: SimpleDispatch) {
   return null;
 }
 

@@ -40,7 +40,7 @@ type Props = {
 
 class AttributeAnalysisButtonController extends ViewController<Props> {
 
-  plugin = this.props.locatePlugin('attributeAnalysis');
+  plugin = this.props.locatePlugin<AttributeAnalysis['analyses'][string]>('attributeAnalysis');
 
   renderView() {
     const { questionName, recordClassName, reporterName, stepId } = this.props;
@@ -89,14 +89,14 @@ class AttributeAnalysisButtonController extends ViewController<Props> {
 
 }
 
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
   analyses: state.attributeAnalysis.analyses,
   globalData: state.globalData
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({ dispatch });
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({ dispatch });
 
-const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
+const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps): Props => ({
   stateProps,
   dispatchProps,
   ...ownProps

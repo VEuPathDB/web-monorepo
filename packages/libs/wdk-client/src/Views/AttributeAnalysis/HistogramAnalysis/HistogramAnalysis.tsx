@@ -1,4 +1,4 @@
-import { DispatchAction } from '../../../Core/CommonTypes';
+import { SimpleDispatch } from '../../../Core/CommonTypes';
 import { memoize, range, round } from 'lodash';
 import React from 'react';
 import { lazy, makeClassNameHelper } from '../../../Utils/ComponentUtils';
@@ -12,7 +12,7 @@ export type ModuleState = State;
 
 type ModuleProps = {
   state: ModuleState;
-  dispatch: DispatchAction;
+  dispatch: SimpleDispatch;
 }
 
 const numberFormat = new Intl.NumberFormat('en-us');

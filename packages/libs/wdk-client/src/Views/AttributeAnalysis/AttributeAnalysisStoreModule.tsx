@@ -6,8 +6,8 @@ import { CompositeClientPlugin, PluginContext } from '../../Utils/ClientPlugin';
 
 import * as Data from './BaseAttributeAnalysis';
 import { ScopedAnalysisAction } from './BaseAttributeAnalysis/BaseAttributeAnalysisActions';
-import { LocatePlugin } from '../../Core/CommonTypes';
 import { EpicDependencies } from '../../Core/Store';
+import { LocatePlugin } from '../../Core/CommonTypes';
 
 export type State = {
   analyses: Record<string, Data.State<string> | undefined>
@@ -30,7 +30,7 @@ export function reduce(state: State = initialState, action: Action, locatePlugin
     ...state,
     analyses: {
       ...state.analyses,
-      [key]: locatePlugin('attributeAnalysis').reduce(context, state.analyses[key], action.payload.action)
+      [key]: locatePlugin<State['analyses'][string]>('attributeAnalysis').reduce(context, state.analyses[key], action.payload.action)
     }
   };
 }
@@ -43,7 +43,7 @@ export function observe(action$: Observable<Action>, state$: Observable<any>, de
   return scopePluginObserve(dependencies.locatePlugin('attributeAnalysis').observe)(action$, attributeAnalysisState$, dependencies);
 }
 
-function scopePluginObserve(observe: CompositeClientPlugin['observe']) {
+function scopePluginObserve(observe: CompositeClientPlugin<State>['observe']) {
   return function scopedObserve(action$: Observable<Action>, state$: Observable<State>, dependencies: EpicDependencies) {
     const scopedParentAction$ = action$.pipe(filter(ScopedAnalysisAction.test));
     const contextActionPair$ = scopedParentAction$.pipe(map(action => [ action.payload.context, action.payload.action ] as [PluginContext, Action]));

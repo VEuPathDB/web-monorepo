@@ -5,7 +5,7 @@ import React from 'react';
 
 import NumberRangeSelector from '../../../Components/InputControls/NumberRangeSelector';
 import RadioList from '../../../Components/InputControls/RadioList';
-import { DispatchAction } from '../../../Core/CommonTypes';
+import { DispatchAction, SimpleDispatch } from '../../../Core/CommonTypes';
 import { makeClassNameHelper, pure } from '../../../Utils/ComponentUtils';
 import { Seq } from '../../../Utils/IterableUtils';
 
@@ -17,7 +17,7 @@ type Tag = { word: string; count: number };
 type Column = { key: keyof Tag; display: string; }
 type ModuleProps = {
   state: State;
-  dispatch: DispatchAction;
+  dispatch: SimpleDispatch;
 }
 
 const cx = makeClassNameHelper('WordCloudAnalysis');

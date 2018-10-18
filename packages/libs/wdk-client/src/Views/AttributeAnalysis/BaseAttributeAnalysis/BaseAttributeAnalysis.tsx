@@ -6,7 +6,7 @@ import React from 'react';
 import Mesa from '../../../Components/Mesa';
 import RealTimeSearchBox from '../../../Components/SearchBox/RealTimeSearchBox';
 import Tabs from '../../../Components/Tabs/Tabs';
-import { DispatchAction } from '../../../Core/CommonTypes';
+import { SimpleDispatch } from '../../../Core/CommonTypes';
 import { Seq } from '../../../Utils/IterableUtils';
 
 import { TableSearched, TableSorted, TabSelected, TablePaged, TableRowsPerPageChanged } from './BaseAttributeAnalysisActions';
@@ -24,7 +24,7 @@ type TableConfig<T extends string> = {
 
 type Props<T extends string> = {
   state: State<T>
-  dispatch: DispatchAction;
+  dispatch: SimpleDispatch;
   visualizationConfig: VisualizationConfig;
   tableConfig: TableConfig<T>;
 }

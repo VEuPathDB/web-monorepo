@@ -6,6 +6,10 @@ import { UserDataset } from '../Utils/WdkModel';
 import { CompositeClientPlugin } from '../Utils/ClientPlugin';
 
 
+export interface SimpleDispatch {
+  (action: Action): void;
+}
+
 export interface DispatchAction {
   (action: ActionCreatorResult<Action>): any;
 }
@@ -51,5 +55,5 @@ export interface MesaSortObject {
 };
 
 export interface LocatePlugin {
-  (type: string): CompositeClientPlugin;
+  <T>(type: string): CompositeClientPlugin<T>;
 }
