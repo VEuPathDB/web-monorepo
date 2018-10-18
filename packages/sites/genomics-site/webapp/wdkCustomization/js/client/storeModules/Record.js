@@ -7,6 +7,8 @@ import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import * as persistence from '../util/persistence';
 import { TABLE_STATE_UPDATED, PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
 
+export const key = 'record';
+
 const storageItems = {
   tables: {
     path: 'eupathdb.tables',
@@ -193,7 +195,8 @@ function observeUserSettings(action$, state$) {
   return action$.pipe(
     filter(action => action.type === 'record-view/active-record-received'),
     switchMap(() => {
-      let state = state$.value;
+      let state = state$.value[key];
+      
       /** Show navigation for genes, but hide for all other record types */
       let navigationVisible = getStateFromStorage(
         storageItems.navigationVisible,
@@ -234,13 +237,13 @@ function observeUserSettings(action$, state$) {
             switch (action.type) {
               case 'record-view/section-visibility-changed':
               case 'record-view/all-field-visibility-changed':
-                setStateInStorage(storageItems.collapsedSections, state$.value);
+                setStateInStorage(storageItems.collapsedSections, state$.value[key]);
                 break;
               case 'record-view/navigation-visibility-changed':
-                setStateInStorage(storageItems.navigationVisible, state$.value);
+                setStateInStorage(storageItems.navigationVisible, state$.value[key]);
                 break;
               case TABLE_STATE_UPDATED:
-                setStateInStorage(storageItems.tables, state$.value);
+                setStateInStorage(storageItems.tables, state$.value[key]);
                 break;
             }
             return empty();
