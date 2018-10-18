@@ -7,7 +7,7 @@ import * as accessRequest from './store-modules/AccessRequestStoreModule';
 
 export default compose(
   set('accessRequest', accessRequest),
-  set('studies', { reduce: studies }),
-  set('dataRestriction', { reduce: dataRestriction }),
-  set('newsSidebar', { reduce: newsReducer }),
+  set('studies', { key: 'studies', reduce: studies }),
+  set('dataRestriction', { key: 'dataRestriction', reduce: dataRestriction }),
+  set('newsSidebar', { key: 'newsSidebar', reduce: newsReducer }),
 );
