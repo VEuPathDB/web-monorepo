@@ -27,18 +27,16 @@ import PageController from '../../Core/Controllers/PageController';
 class IndexController extends PageController<{ displayName: string }> {
   renderView() {
     return (
-      <Page>
-        <div>
-          <p>Welcome to {this.props.displayName}</p>
-          <p>This is the future home of WDK 3.0</p>
-          <h2>Resources under development</h2>
-          <ul>
-            <li><Link to="/question-list">Question list</Link></li>
-            <li><Link to="/user/profile">User Profile</Link></li>
-            <li><Link to="/data-finder">Data Finder</Link></li>
-          </ul>
-        </div>
-      </Page>
+      <div>
+        <p>Welcome to {this.props.displayName}</p>
+        <p>This is the future home of WDK 3.0</p>
+        <h2>Resources under development</h2>
+        <ul>
+          <li><Link to="/question-list">Question list</Link></li>
+          <li><Link to="/user/profile">User Profile</Link></li>
+          <li><Link to="/data-finder">Data Finder</Link></li>
+        </ul>
+      </div>
     );
   }
 }
