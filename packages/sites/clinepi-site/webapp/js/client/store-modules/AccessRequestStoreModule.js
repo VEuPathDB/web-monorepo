@@ -18,6 +18,8 @@ import {
 import { datasetId, formValues, userId } from '../selectors/AccessRequestSelectors';
 import { parse } from 'querystring';
 
+export const key = 'accessRequest';
+
 const initialState = {
   userId: null,
   study: null,
@@ -158,11 +160,11 @@ function observeSubmitForm(action$, state$, dependencies) {
   return action$.pipe(
     filter(({ type }) => type === SUBMIT_FORM),
     withLatestFrom(state$),
-    mergeMap(async ([, state]) => {
+    mergeMap(async ([, { [key]: accessRequestState }]) => {
       const response = await jsonPutRequest(
         dependencies.wdkService.serviceUrl,
-        `/users/${userId(state)}/access-request/${datasetId(state)}`,
-        formValues(state)
+        `/users/${userId(accessRequestState)}/access-request/${datasetId(accessRequestState)}`,
+        formValues(accessRequestState)
       );
 
       if (response.ok) {
