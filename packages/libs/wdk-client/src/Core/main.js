@@ -31,17 +31,28 @@ import { createWdkStore } from './Store';
  *   not resolve to an element after the DOMContentLoaded event is fired, the
  *   application will not render automatically.
  * @param {string} options.endpoint Base URL for WdkService.
- * @param {Function} options.wrapRoutes A function that takes a WDK Routes array
+ * @param {Function} [options.wrapRoutes] A function that takes a WDK Routes array
  *   and returns a modified copy.
- * @param {Function} options.wrapStoreModules A function that takes WDK StoreModules
+ * @param {Function} [options.wrapStoreModules] A function that takes WDK StoreModules
  *   and returns a modified copy.
- * @param {Function} options.onLocationChange Callback function called whenever
+ * @param {Function} [options.wrapWdkService] A functino that takes WdkService
+ *   class and returns a sub class.
+ * @param {Function} [options.onLocationChange] Callback function called whenever
  *   the location of the page changes. The function is called with a Location
  *   object.
- * @param {ClientPluginRegistryEntry[]} options.pluginConfig
+ * @param {ClientPluginRegistryEntry[]} [options.pluginConfig]
  */
 export function initialize(options) {
-  let { rootUrl, rootElement, endpoint, wrapRoutes = identity, wrapStoreModules = identity, onLocationChange, pluginConfig = [] } = options;
+  let {
+    rootUrl,
+    rootElement,
+    endpoint,
+    wrapRoutes = identity,
+    wrapStoreModules = identity,
+    wrapWdkService = identity,
+    onLocationChange,
+    pluginConfig = []
+  } = options;
 
   if (!isString(rootUrl)) throw new Error(`Expected rootUrl to be a string, but got ${typeof rootUrl}.`);
   if (!isString(endpoint)) throw new Error(`Expected endpoint to be a string, but got ${typeof endpoint}.`);
@@ -52,7 +63,7 @@ export function initialize(options) {
   let history = canUseRouter
     ? createBrowserHistory({ basename: rootUrl })
     : createMockHistory({ basename: rootUrl });
-  let wdkService = WdkService.getInstance(endpoint);
+  let wdkService = wrapWdkService(WdkService).getInstance(endpoint);
   let transitioner = getTransitioner(history);
   let locatePlugin = makeLocatePlugin(pluginConfig);
   let store = createWdkStore(wrapStoreModules(storeModules), locatePlugin, wdkService, transitioner);
@@ -67,7 +78,7 @@ export function initialize(options) {
         ? rootElement
         : document.querySelector(rootElement);
       let handleLocationChange = location => {
-        onLocationChange(location);
+        if (onLocationChange) onLocationChange(location);
         store.dispatch(updateLocation(location));
       };
       if (container != null) {

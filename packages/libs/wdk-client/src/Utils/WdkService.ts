@@ -1,6 +1,7 @@
 import stringify from 'json-stable-stringify';
 import localforage from 'localforage';
 import { difference, keyBy, memoize } from 'lodash';
+import * as QueryString from 'querystring';
 
 import { submitAsForm } from './FormSubmitter';
 import * as Decode from './Json';
@@ -402,10 +403,10 @@ export default class WdkService {
   private static _instances: Map<string, WdkService> = new Map;
 
   static getInstance(serviceUrl: string): WdkService {
-    if (!WdkService._instances.has(serviceUrl)) {
-      WdkService._instances.set(serviceUrl, new WdkService(serviceUrl));
+    if (!this._instances.has(serviceUrl)) {
+      this._instances.set(serviceUrl, new this(serviceUrl));
     }
-    return WdkService._instances.get(serviceUrl) as WdkService;
+    return this._instances.get(serviceUrl) as WdkService;
   }
 
   private _store: LocalForage = localforage.createInstance({
@@ -735,6 +736,14 @@ export default class WdkService {
     return this._fetchJson<Answer>(method, url, stringify(body));
   }
 
+  getXmlAnswerJson(xmlQuestionName: string) {
+    return this.sendRequest(Decode.ok, {
+      method: 'GET',
+      path: `/xml-answer/${xmlQuestionName}`,
+      useCache: true
+    });
+  }
+
   /**
    * Get a temporary result
    */
@@ -965,6 +974,14 @@ export default class WdkService {
     return this.sendRequest(Decode.arrayOf(strategyDecoder), {
       method: 'GET',
       path: '/users/current/strategies'
+    })
+  }
+
+  getPublicStrategies(queryParams?: { userEmail: QueryString.ParsedUrlQuery[string] }) {
+    const queryString = queryParams == null ? '' : '?' + QueryString.stringify(queryParams);
+    return this.sendRequest(Decode.arrayOf(strategyDecoder), {
+      method: 'GET',
+      path: `/strategy-lists/public${queryString}`
     })
   }
 
