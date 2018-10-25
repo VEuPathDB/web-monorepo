@@ -1,4 +1,4 @@
-import { compose, constant } from 'lodash/fp';
+import { compose } from 'lodash/fp';
 import { connect } from 'react-redux';
 import React from 'react';
 
@@ -6,13 +6,11 @@ import {
   getIdFromRecordClassName,
   isStudyRecordClass,
   Action
-} from 'Client/App/DataRestriction/DataRestrictionUtils';
-import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
+} from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
-import SiteHeader from '../components/SiteHeader';
 
-import IndexController from '../controllers/IndexController';
 import QuestionWizardController from '../controllers/QuestionWizardController';
 
 import ActiveGroup from './ActiveGroup';
@@ -20,13 +18,13 @@ import RecordHeading from './RecordHeading';
 import RecordTable from './RecordTable';
 import QuestionWizard from './QuestionWizard';
 import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
+import SiteHeader from './SiteHeader';
+import IndexController from './IndexController';
 
 export default {
-  // card-based home page
-  IndexController,
 
-  // study-based header
-  SiteHeader: constant(SiteHeader),
+  IndexController,
+  SiteHeader,
 
   // Related visits/case-control wizard steps
   ActiveGroup,

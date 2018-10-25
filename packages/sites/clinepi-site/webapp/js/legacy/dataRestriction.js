@@ -2,8 +2,8 @@
 
 import { compose } from 'lodash/fp';
 
-import { getIdFromRecordClassName, Action } from 'Client/App/DataRestriction/DataRestrictionUtils';
-import { attemptAction } from 'Client/App/DataRestriction/DataRestrictionActionCreators';
+import { getIdFromRecordClassName, Action } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
 
 wdk.namespace('wdk.dataRestriction', (ns, $) => {
 

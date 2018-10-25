@@ -1,16 +1,20 @@
-import searches from '../data/searches.json';
+import { get } from 'lodash';
+
 import visualizations from '../data/visualizations.json';
 
-export const getStudies = state =>
-  state.studies ? state.studies.entities : [];
+export const getEntities = name => state =>
+  get(state, name);
+
+export const getSearches = getEntities('searchCards');
+export const getStudies = getEntities('studies')
 
 export const getStaticSiteData = state => ({
   studies: getStudies(state),
-  searches,
-  visualizations
+  searches: getSearches(state),
+  visualizations: { isLoading: false, entities: visualizations }
 });
 
 export const getStudyByQuestionName = questionName => state =>
-  getStudies(state).find(study =>
+  get(getStudies(state), 'entities', []).find(study =>
     Object.values(study.searches).includes(questionName)
   );
