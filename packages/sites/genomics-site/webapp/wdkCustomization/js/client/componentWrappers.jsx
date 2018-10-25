@@ -13,6 +13,9 @@ import Sequence from './components/common/Sequence';
 import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
+import ApiSiteHeader from './components/SiteHeader';
+
+export const SiteHeader = () => ApiSiteHeader;
 
 const stopPropagation = event => event.stopPropagation();
 
