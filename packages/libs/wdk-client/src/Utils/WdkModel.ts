@@ -2,7 +2,7 @@
  * Type definitions for WDK Model entities
  */
 
-import { Field, OntologyTermSummary } from '../Components/AttributeFilter/Types';
+import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 
 interface ModelEntity {
   name: string;

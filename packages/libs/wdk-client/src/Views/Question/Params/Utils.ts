@@ -1,11 +1,11 @@
-import { DispatchAction } from '../../../Core/CommonTypes';
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import React from 'react';
 import { EMPTY } from 'rxjs';
-import { Action } from '../../../Utils/ActionCreatorUtils';
-import { Parameter, ParameterValues, Question, RecordClass, QuestionWithParameters } from '../../../Utils/WdkModel';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { Parameter, ParameterValues, Question, RecordClass, QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
 import { Epic } from 'redux-observable';
-import { State, QuestionState } from '../QuestionStoreModule';
-import { EpicDependencies } from '../../../Core/Store';
+import { State, QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
+import { EpicDependencies } from 'wdk-client/Core/Store';
 
 
 // Types

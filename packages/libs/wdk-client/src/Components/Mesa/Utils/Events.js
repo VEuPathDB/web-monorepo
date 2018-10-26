@@ -1,4 +1,4 @@
-import KeyCodes from './KeyCodes';
+import KeyCodes from 'wdk-client/Components/Mesa/Utils/KeyCodes';
 const idPrefix = 'listener_';
 
 export const EventsFactory = (node) => {

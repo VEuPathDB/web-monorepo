@@ -1,13 +1,13 @@
 import React, { ComponentClass, StatelessComponent } from 'react';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {
   getNodeId,
   getChildren as getNodeChildren,
   nodeSearchPredicate,
   BasicNodeComponent,
   CategoryTreeNode
-} from '../../Utils/CategoryUtils';
-import CheckboxTree from "./CheckboxTree";
+} from 'wdk-client/Utils/CategoryUtils';
+import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
 type NodeComponentProps = {
   node: CategoryTreeNode

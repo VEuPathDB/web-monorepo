@@ -2,18 +2,18 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import { LocatePlugin } from '../../Core/CommonTypes';
-import ViewController from '../../Core/Controllers/ViewController';
-import { GlobalData } from '../../Core/State/StoreModules/GlobalData';
-import { RootState } from '../../Core/State/Types';
-import { Action } from '../../Utils/ActionCreatorUtils';
-import { wrappable } from '../../Utils/ComponentUtils';
-import { Seq } from '../../Utils/IterableUtils';
+import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
+import { GlobalData } from 'wdk-client/Core/State/StoreModules/GlobalData';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
-import AttributeAnalysisButton from './AttributeAnalysisButton';
-import { State as AttributeAnalysis } from './AttributeAnalysisStoreModule';
-import { ScopedAnalysisAction } from './BaseAttributeAnalysis/BaseAttributeAnalysisActions';
-import { Question, RecordClass } from '../../Utils/WdkModel';
+import AttributeAnalysisButton from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton';
+import { State as AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisStoreModule';
+import { ScopedAnalysisAction } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 
 type StateProps = {
   globalData: GlobalData,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Icon from '../Components/Icon';
+import Icon from 'wdk-client/Components/Mesa/Components/Icon';
 
 class Toggle extends React.Component {
   constructor (props) {

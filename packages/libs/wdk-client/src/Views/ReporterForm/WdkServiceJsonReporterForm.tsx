@@ -1,12 +1,12 @@
 import React from 'react';
-import CategoriesCheckboxTree from '../../Components/CheckboxTree/CategoriesCheckboxTree';
-import { CategoryTreeNode, getAllLeafIds } from '../../Utils/CategoryUtils';
-import { getChangeHandler } from '../../Utils/ComponentUtils';
-import { Ontology } from "../../Utils/OntologyUtils";
-import { Question, RecordClass } from "../../Utils/WdkModel";
-import { State } from "./DownloadFormReducer";
-import ReporterSortMessage from './ReporterSortMessage';
-import { addPk, getAttributesChangeHandler, getAttributeSelections, getAttributeTree, getTableTree } from './reporterUtils';
+import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
+import { CategoryTreeNode, getAllLeafIds } from 'wdk-client/Utils/CategoryUtils';
+import { getChangeHandler } from 'wdk-client/Utils/ComponentUtils';
+import { Ontology } from 'wdk-client/Utils/OntologyUtils';
+import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
+import { State } from 'wdk-client/Views/ReporterForm/DownloadFormReducer';
+import ReporterSortMessage from 'wdk-client/Views/ReporterForm/ReporterSortMessage';
+import { addPk, getAttributesChangeHandler, getAttributeSelections, getAttributeTree, getTableTree } from 'wdk-client/Views/ReporterForm/reporterUtils';
 
 type Props<T, U> = {
   scope: string;

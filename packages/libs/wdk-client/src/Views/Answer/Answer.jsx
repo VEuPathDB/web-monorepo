@@ -1,12 +1,12 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import Icon from '../../Components/Icon/IconAlt';
-import { Mesa, MesaState, Utils as MesaUtils } from '../../Components/Mesa';
-import Dialog from '../../Components/Overlays/Dialog';
-import { wrappable } from '../../Utils/ComponentUtils';
-import AttributeSelector from './AnswerAttributeSelector';
-import AnswerFilter from './AnswerFilter';
-import './wdk-Answer.scss';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import { Mesa, MesaState, Utils as MesaUtils } from 'wdk-client/Components/Mesa';
+import Dialog from 'wdk-client/Components/Overlays/Dialog';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import AttributeSelector from 'wdk-client/Views/Answer/AnswerAttributeSelector';
+import AnswerFilter from 'wdk-client/Views/Answer/AnswerFilter';
+import 'wdk-client/Views/Answer/wdk-Answer.scss';
 
 class Answer extends React.Component {
   constructor(props) {

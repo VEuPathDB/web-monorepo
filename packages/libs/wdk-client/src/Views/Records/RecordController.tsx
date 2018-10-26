@@ -2,10 +2,10 @@ import { isEqual } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import * as UserActionCreators from '../../Views/User/UserActionCreators';
-import PageController from '../../Core/Controllers/PageController';
-import { wrappable } from '../../Utils/ComponentUtils';
-import RecordUI from './RecordUI';
+import * as UserActionCreators from 'wdk-client/Views/User/UserActionCreators';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import RecordUI from 'wdk-client/Views/Records/RecordUI';
 import {
   loadRecordData,
   RecordRequestOptions,
@@ -14,12 +14,12 @@ import {
   updateNavigationQuery,
   updateNavigationVisibility,
   updateSectionVisibility,
-} from './RecordViewActionCreators';
+} from 'wdk-client/Views/Records/RecordViewActionCreators';
 
-import { CategoryTreeNode } from '../../Utils/CategoryUtils';
-import { RecordClass } from '../../Utils/WdkModel';
-import { getAttributeNames, getTableNames } from './RecordUtils';
-import { RootState } from '../../Core/State/Types';
+import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { getAttributeNames, getTableNames } from 'wdk-client/Views/Records/RecordUtils';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = {
   ...UserActionCreators,

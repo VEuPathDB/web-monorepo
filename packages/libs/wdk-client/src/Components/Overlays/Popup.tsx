@@ -3,7 +3,7 @@
 import $ from 'jquery';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import TabbableContainer from '../../Components/Display/TabbableContainer';
+import TabbableContainer from 'wdk-client/Components/Display/TabbableContainer';
 
 
 type Props = {

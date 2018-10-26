@@ -1,5 +1,5 @@
 import React from 'react';
-import { AttributeValue } from './WdkModel';
+import { AttributeValue } from 'wdk-client/Utils/WdkModel';
 
 /**
  * React Component utils

@@ -1,4 +1,4 @@
-import { Action, ActionType, TypedActionCreator } from './ActionCreatorUtils';
+import { Action, ActionType, TypedActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
 
 type AnonTA = TypedActionCreator<string, any>;
 

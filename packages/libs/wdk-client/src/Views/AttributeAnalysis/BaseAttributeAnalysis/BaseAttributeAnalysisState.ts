@@ -1,5 +1,5 @@
-import { matchAction, Reducer, combineReducers } from '../../../Utils/ReducerUtils';
-import { ServiceError } from '../../../Utils/WdkService';
+import { matchAction, Reducer, combineReducers } from 'wdk-client/Utils/ReducerUtils';
+import { ServiceError } from 'wdk-client/Utils/WdkService';
 
 import {
   AttributeReportCancelled,
@@ -11,7 +11,7 @@ import {
   TableSearched,
   TabSelected,
   TableRowsPerPageChanged
-} from './BaseAttributeAnalysisActions';
+} from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
 
 
 // Report state

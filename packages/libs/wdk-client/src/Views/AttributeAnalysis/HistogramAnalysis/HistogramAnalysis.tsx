@@ -1,12 +1,12 @@
-import { SimpleDispatch } from '../../../Core/CommonTypes';
+import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
 import { memoize, range, round } from 'lodash';
 import React from 'react';
-import { lazy, makeClassNameHelper } from '../../../Utils/ComponentUtils';
-import { AttributeAnalysis } from '../BaseAttributeAnalysis/BaseAttributeAnalysis';
-import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from './HistogramActions';
-import './HistogramAnalysis.scss';
-import { State } from './HistogramState';
-import { getReportSummary, getDefaultBinSize, isTypeInt, isTypeCategory } from './HistogramAnalysisUtils';
+import { lazy, makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis';
+import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramActions';
+import 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysis.scss';
+import { State } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramState';
+import { getReportSummary, getDefaultBinSize, isTypeInt, isTypeCategory } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysisUtils';
 
 export type ModuleState = State;
 

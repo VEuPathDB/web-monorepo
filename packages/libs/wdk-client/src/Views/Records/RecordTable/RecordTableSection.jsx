@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { includes } from 'lodash';
-import { safeHtml, wrappable } from '../../../Utils/ComponentUtils';
-import RecordTable from './RecordTable';
-import CollapsibleSection from '../../../Components/Display/CollapsibleSection';
-import ErrorBoundary from '../../../Core/Controllers/ErrorBoundary';
+import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import RecordTable from 'wdk-client/Views/Records/RecordTable/RecordTable';
+import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
+import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
 /** Record table section on record page */
 function RecordTableSection(props) {

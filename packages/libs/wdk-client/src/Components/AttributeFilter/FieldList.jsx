@@ -2,12 +2,12 @@ import { memoize, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Seq } from '../../Utils/IterableUtils';
-import { preorderSeq } from '../../Utils/TreeUtils';
-import CheckboxTree from '../CheckboxTree/CheckboxTree';
-import Icon from '../Icon/IconAlt';
-import Tooltip from '../Overlays/Tooltip';
-import { isFilterField, isMulti, isRange, findAncestorFields } from './AttributeFilterUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
+import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
+import { isFilterField, isMulti, isRange, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 
 

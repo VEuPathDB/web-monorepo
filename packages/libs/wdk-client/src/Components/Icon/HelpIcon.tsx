@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Icon from './IconAlt';
-import Tooltip from '../../Components/Overlays/Tooltip';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 
 type Props = {
   children: string | React.ReactElement<any>;

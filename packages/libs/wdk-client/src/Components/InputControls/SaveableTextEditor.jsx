@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './wdk-SaveableTextEditor.scss';
-import Icon from '../../Components/Icon/IconAlt';
-import TextBox from './TextBox';
-import TextArea from './TextArea';
+import 'wdk-client/Components/InputControls/wdk-SaveableTextEditor.scss';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import TextArea from 'wdk-client/Components/InputControls/TextArea';
 
 function sanitaryTextReformat (text) {
   if (typeof text !== 'string') return text;

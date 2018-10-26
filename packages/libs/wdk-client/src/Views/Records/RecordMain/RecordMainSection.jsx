@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { flowRight } from 'lodash';
-import RecordMainCategorySection from './RecordMainCategorySection';
-import { pure, wrappable } from '../../../Utils/ComponentUtils';
-import { getId, getLabel } from '../../../Utils/CategoryUtils';
+import RecordMainCategorySection from 'wdk-client/Views/Records/RecordMain/RecordMainCategorySection';
+import { pure, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { getId, getLabel } from 'wdk-client/Utils/CategoryUtils';
 
 /** @type {React.StatelessComponent} */
 let RecordMainSection$;

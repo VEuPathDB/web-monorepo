@@ -1,13 +1,13 @@
 import { bindAll, curry, escapeRegExp, get, keyBy } from 'lodash';
 import React from 'react';
-import { makeClassNameHelper } from '../../Utils/ComponentUtils';
-import { Seq } from '../../Utils/IterableUtils';
-import Icon from '../Icon/IconAlt';
-import { MesaController as Mesa } from '../Mesa';
-import RealTimeSearchBox from '../SearchBox/RealTimeSearchBox';
-import StackedBar from './StackedBar';
-import { getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from './AttributeFilterUtils';
-import { preorderSeq } from '../../Utils/TreeUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
+import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
+import { getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 

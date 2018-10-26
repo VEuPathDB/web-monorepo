@@ -1,7 +1,7 @@
 import * as React from 'react';
-import PageController from '../../Core/Controllers/PageController';
-import { RootState } from '../../Core/State/Types';
-import { wrappable } from '../../Utils/ComponentUtils';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {isEqual} from 'lodash';
 import {
   loadAnswer,
@@ -10,14 +10,14 @@ import {
   changeAttributes,
   sort,
   Sorting
-} from './AnswerViewActionCreators';
-import Answer from './Answer';
-import Loading from '../../Components/Loading/Loading';
-import { State } from './AnswerViewStoreModule';
-import NotFound from '../NotFound/NotFound';
+} from 'wdk-client/Views/Answer/AnswerViewActionCreators';
+import Answer from 'wdk-client/Views/Answer/Answer';
+import Loading from 'wdk-client/Components/Loading/Loading';
+import { State } from 'wdk-client/Views/Answer/AnswerViewStoreModule';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
-import { AttributeField, TableField } from '../../Utils/WdkModel';
+import { AttributeField, TableField } from 'wdk-client/Utils/WdkModel';
 
 const ActionCreators = {
   loadAnswer,

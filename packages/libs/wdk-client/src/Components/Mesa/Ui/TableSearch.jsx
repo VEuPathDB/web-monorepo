@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Icon from '../Components/Icon';
+import Icon from 'wdk-client/Components/Mesa/Components/Icon';
 
 class TableSearch extends React.PureComponent {
   constructor (props) {

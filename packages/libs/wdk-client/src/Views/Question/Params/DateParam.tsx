@@ -1,10 +1,10 @@
 import { stubTrue as isParamValueValid } from 'lodash';
 import React from 'react';
 
-import DateSelector from '../../../Components/InputControls/DateSelector';
-import { DateParam, Parameter } from '../../../Utils/WdkModel';
+import DateSelector from 'wdk-client/Components/InputControls/DateSelector';
+import { DateParam, Parameter } from 'wdk-client/Utils/WdkModel';
 
-import { createParamModule, Props } from './Utils';
+import { createParamModule, Props } from 'wdk-client/Views/Question/Params/Utils';
 
 export default createParamModule({
   isType,

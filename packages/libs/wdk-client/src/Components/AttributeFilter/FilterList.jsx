@@ -1,10 +1,10 @@
 import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Seq } from '../../Utils/IterableUtils';
-import IconAlt from '../Icon/IconAlt';
-import { getFilterValueDisplay, getOperationDisplay, shouldAddFilter } from './AttributeFilterUtils';
-import { postorderSeq } from '../../Utils/TreeUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import IconAlt from 'wdk-client/Components/Icon/IconAlt';
+import { getFilterValueDisplay, getOperationDisplay, shouldAddFilter } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { postorderSeq } from 'wdk-client/Utils/TreeUtils';
 
 
 

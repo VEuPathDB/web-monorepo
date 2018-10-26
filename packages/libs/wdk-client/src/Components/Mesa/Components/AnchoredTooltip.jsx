@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Tooltip from './Tooltip';
-import Events from '../Utils/Events';
+import Tooltip from 'wdk-client/Components/Mesa/Components/Tooltip';
+import Events from 'wdk-client/Components/Mesa/Utils/Events';
 
 class AnchoredTooltip extends React.Component {
   constructor (props) {

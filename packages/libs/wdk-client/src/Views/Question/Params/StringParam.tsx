@@ -1,11 +1,11 @@
 import { stubTrue as isParamValueValid } from 'lodash';
 import React from 'react';
 
-import TextArea from '../../../Components/InputControls/TextArea';
-import TextBox from '../../../Components/InputControls/TextBox';
-import { StringParam, Parameter } from '../../../Utils/WdkModel';
+import TextArea from 'wdk-client/Components/InputControls/TextArea';
+import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import { StringParam, Parameter } from 'wdk-client/Utils/WdkModel';
 
-import { createParamModule, Props } from './Utils';
+import { createParamModule, Props } from 'wdk-client/Views/Question/Params/Utils';
 
 export default createParamModule({
   isType,

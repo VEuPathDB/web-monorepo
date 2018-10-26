@@ -1,10 +1,10 @@
 import { stubTrue as isParamValueValid } from 'lodash';
 import React from 'react';
 
-import NumberRangeSelector from '../../../Components/InputControls/NumberRangeSelector';
-import { NumberRangeParam, Parameter } from '../../../Utils/WdkModel';
+import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
+import { NumberRangeParam, Parameter } from 'wdk-client/Utils/WdkModel';
 
-import { createParamModule, Props } from './Utils';
+import { createParamModule, Props } from 'wdk-client/Views/Question/Params/Utils';
 
 
 export default createParamModule({

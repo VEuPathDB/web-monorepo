@@ -9,10 +9,10 @@ import {
   DetailRemoveSuccessAction,
   DetailRemoveErrorAction,
   SharingSuccessAction
-} from '../UserDatasetsActionCreators';
-import sharingReducer from '../Sharing/UserDatasetSharingReducer';
-import { UserDataset } from '../../../Utils/WdkModel';
-import { ServiceError } from '../../../Utils/WdkService';
+} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
+import sharingReducer from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
+import { UserDataset } from 'wdk-client/Utils/WdkModel';
+import { ServiceError } from 'wdk-client/Utils/WdkService';
 
 export const key = 'userDatasetDetail';
 

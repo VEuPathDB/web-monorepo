@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Link from '../../Components/Link/Link';
-import {wrappable} from '../../Utils/ComponentUtils';
+import Link from 'wdk-client/Components/Link/Link';
+import {wrappable} from 'wdk-client/Utils/ComponentUtils';
 
 let RecordActionLink = props => {
   let className = 'wdk-RecordActionLink ' + props.className;

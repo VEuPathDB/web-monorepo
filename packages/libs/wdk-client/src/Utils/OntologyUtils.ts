@@ -1,4 +1,4 @@
-import {pruneDescendantNodes, Node} from './TreeUtils';
+import {pruneDescendantNodes, Node} from 'wdk-client/Utils/TreeUtils';
 
 export type OntologyNode<T> = Node<T & {
   properties: {[key: string]: Array<string>}

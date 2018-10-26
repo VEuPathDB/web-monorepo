@@ -2,10 +2,10 @@
  * Page wrapper used by view controllers.
  */
 import React from 'react';
-import {wrappable} from '../../Utils/ComponentUtils';
-import Header from './Header';
-import Footer from './Footer';
-import ErrorBoundary from '../../Core/Controllers/ErrorBoundary';
+import {wrappable} from 'wdk-client/Utils/ComponentUtils';
+import Header from 'wdk-client/Components/Layout/Header';
+import Footer from 'wdk-client/Components/Layout/Footer';
+import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
 type Props = {
   children: React.ReactChild | null;

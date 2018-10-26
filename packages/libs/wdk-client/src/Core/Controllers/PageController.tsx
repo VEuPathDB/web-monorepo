@@ -2,8 +2,8 @@ import { mapValues, isEqual } from 'lodash';
 import { parse } from 'querystring';
 import React from 'react';
 
-import Page from '../../Components/Layout/Page';
-import ViewController, { ViewControllerProps } from './ViewController';
+import Page from 'wdk-client/Components/Layout/Page';
+import ViewController, { ViewControllerProps } from 'wdk-client/Core/Controllers/ViewController';
 import { RouteComponentProps } from 'react-router';
 
 /**

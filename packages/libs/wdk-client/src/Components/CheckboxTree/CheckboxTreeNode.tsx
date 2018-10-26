@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { isLeaf } from '../../Utils/TreeUtils';
-import IndeterminateCheckbox from '../../Components/InputControls/IndeterminateCheckbox';
+import { isLeaf } from 'wdk-client/Utils/TreeUtils';
+import IndeterminateCheckbox from 'wdk-client/Components/InputControls/IndeterminateCheckbox';
 
 const visibleElement = {display: ""};
 const hiddenElement = {display: "none"};

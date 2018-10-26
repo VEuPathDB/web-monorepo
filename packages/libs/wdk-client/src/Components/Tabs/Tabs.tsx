@@ -1,7 +1,7 @@
-import './Tabs.scss';
+import 'wdk-client/Components/Tabs/Tabs.scss';
 
 import React from 'react';
-import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 const cx = makeClassNameHelper('wdk-Tab');
 

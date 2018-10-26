@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { Route, RouteComponentProps, Router, Switch } from 'react-router';
 
-import { LocatePlugin, RouteSpec } from './CommonTypes';
-import ErrorBoundary from './Controllers/ErrorBoundary';
-import LoginFormController from '../Views/User/LoginForm/LoginFormController';
+import { LocatePlugin, RouteSpec } from 'wdk-client/Core/CommonTypes';
+import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
+import LoginFormController from 'wdk-client/Views/User/LoginForm/LoginFormController';
 
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
-import { Action } from '../Utils/ActionCreatorUtils';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
 
 type Props = {
   rootUrl: string,

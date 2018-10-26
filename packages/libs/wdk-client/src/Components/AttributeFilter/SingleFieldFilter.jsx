@@ -1,11 +1,11 @@
 import { omit } from 'lodash';
 import React from 'react';
 
-import DateField from './DateField';
-import EmptyValues from './EmptyValues';
-import MembershipField from './MembershipField';
-import NumberField from './NumberField';
-import { isRange, shouldAddFilter } from './AttributeFilterUtils';
+import DateField from 'wdk-client/Components/AttributeFilter/DateField';
+import EmptyValues from 'wdk-client/Components/AttributeFilter/EmptyValues';
+import MembershipField from 'wdk-client/Components/AttributeFilter/MembershipField';
+import NumberField from 'wdk-client/Components/AttributeFilter/NumberField';
+import { isRange, shouldAddFilter } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 export default class SingleFieldFilter extends React.Component {
   constructor(props) {

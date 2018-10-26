@@ -1,20 +1,20 @@
-import { RouteSpec } from './CommonTypes';
-import IndexController from '../Views/Index/IndexController';
-import RecordController from '../Views/Records/RecordController';
-import NotFoundController from '../Views/NotFound/NotFoundController';
-import AnswerController from '../Views/Answer/AnswerController';
-import QuestionListController from '../Views/Question/QuestionListController';
-import DownloadFormController from '../Views/ReporterForm/DownloadFormController';
-import UserRegistrationController from '../Views/User/Profile/UserRegistrationController';
-import UserProfileController from '../Views/User/Profile/UserProfileController';
-import UserPasswordChangeController from '../Views/User/Password/UserPasswordChangeController';
-import UserPasswordResetController from '../Views/User/Password/UserPasswordResetController';
-import UserMessageController from '../Views/User/UserMessageController';
-import SiteMapController from '../Views/SiteMap/SiteMapController';
-import UserDatasetListController from '../Views/UserDatasets/List/UserDatasetListController';
-import UserDatasetDetailController from '../Views/UserDatasets/Detail/UserDatasetDetailController';
-import FavoritesController from '../Views/Favorites/FavoritesController';
-import QuestionController from '../Views/Question/QuestionController';
+import { RouteSpec } from 'wdk-client/Core/CommonTypes';
+import IndexController from 'wdk-client/Views/Index/IndexController';
+import RecordController from 'wdk-client/Views/Records/RecordController';
+import NotFoundController from 'wdk-client/Views/NotFound/NotFoundController';
+import AnswerController from 'wdk-client/Views/Answer/AnswerController';
+import QuestionListController from 'wdk-client/Views/Question/QuestionListController';
+import DownloadFormController from 'wdk-client/Views/ReporterForm/DownloadFormController';
+import UserRegistrationController from 'wdk-client/Views/User/Profile/UserRegistrationController';
+import UserProfileController from 'wdk-client/Views/User/Profile/UserProfileController';
+import UserPasswordChangeController from 'wdk-client/Views/User/Password/UserPasswordChangeController';
+import UserPasswordResetController from 'wdk-client/Views/User/Password/UserPasswordResetController';
+import UserMessageController from 'wdk-client/Views/User/UserMessageController';
+import SiteMapController from 'wdk-client/Views/SiteMap/SiteMapController';
+import UserDatasetListController from 'wdk-client/Views/UserDatasets/List/UserDatasetListController';
+import UserDatasetDetailController from 'wdk-client/Views/UserDatasets/Detail/UserDatasetDetailController';
+import FavoritesController from 'wdk-client/Views/Favorites/FavoritesController';
+import QuestionController from 'wdk-client/Views/Question/QuestionController';
 
 export default <RouteSpec[]> [
   { path: '/', component: IndexController },

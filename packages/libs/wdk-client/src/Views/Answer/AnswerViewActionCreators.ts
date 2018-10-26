@@ -1,6 +1,6 @@
-import { ActionThunk } from '../../Utils/ActionCreatorUtils';
+import { ActionThunk } from 'wdk-client/Utils/ActionCreatorUtils';
 import {pick} from 'lodash';
-import {AttributeField, RecordClass, Question, Answer, TableField} from '../../Utils/WdkModel'
+import {AttributeField, RecordClass, Question, Answer, TableField} from 'wdk-client/Utils/WdkModel'
 
 export type DisplayInfo = {
   customName: string;
@@ -79,8 +79,7 @@ let hasUrlSegment = (urlSegment: string) => (e: RecordClass | Question) =>
 
 /**
  * Retrieve's an Answer resource from the WDK REST Service and dispatches an
- * action with the resource. This uses the restAction helper function
- * (see ../filters/restFilter).
+ * action with the resource.
  *
  * Request data format, POSTed to service:
  *

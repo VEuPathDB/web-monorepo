@@ -1,7 +1,7 @@
 import React from 'react';
 import { partition } from 'lodash';
 
-import HistogramField from './HistogramField';
+import HistogramField from 'wdk-client/Components/AttributeFilter/HistogramField';
 
 /**
  * Number field component

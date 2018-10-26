@@ -16,16 +16,16 @@ import {
   GroupVisibilityChangedAction,
   QuestionCustomNameUpdated,
   QuestionWeightUpdated,
-} from './QuestionActionCreators';
-import { Action, isOneOf } from '../../Utils/ActionCreatorUtils';
+} from 'wdk-client/Views/Question/QuestionActionCreators';
+import { Action, isOneOf } from 'wdk-client/Utils/ActionCreatorUtils';
 import {
   Parameter,
   ParameterGroup,
   QuestionWithParameters,
   RecordClass
-} from "../../Utils/WdkModel";
+} from 'wdk-client/Utils/WdkModel';
 
-import { observeParam, reduce as paramReducer } from "./Params";
+import { observeParam, reduce as paramReducer } from 'wdk-client/Views/Question/Params';
 import {
   SetFile,
   SetIdList,
@@ -34,17 +34,17 @@ import {
   SetBasketCount,
   SetStrategyList,
   SetFileParser
-} from "./Params/DatasetParam";
+} from 'wdk-client/Views/Question/Params/DatasetParam';
 import {
   ActiveFieldSetAction,
   FieldStateUpdatedAction,
   FiltersUpdatedAction,
   OntologyTermsInvalidated,
   SummaryCountsLoadedAction,
-} from './Params/FilterParamNew/ActionCreators';
-import { ExpandedListSet, SearchTermSet } from './Params/TreeBoxEnumParam';
-import { observeQuestion } from './QuestionActionObservers';
-import { EpicDependencies } from '../../Core/Store';
+} from 'wdk-client/Views/Question/Params/FilterParamNew/ActionCreators';
+import { ExpandedListSet, SearchTermSet } from 'wdk-client/Views/Question/Params/TreeBoxEnumParam';
+import { observeQuestion } from 'wdk-client/Views/Question/QuestionActionObservers';
+import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable, merge, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 

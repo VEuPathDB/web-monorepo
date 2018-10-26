@@ -14,7 +14,7 @@ import {
   lazy,
   decode,
   Decoder,
-} from '../Json';
+} from 'wdk-client/Utils/Json';
 
 const js = JSON.stringify;
 

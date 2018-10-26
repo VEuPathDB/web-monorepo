@@ -1,5 +1,5 @@
 import React from 'react';
-import { bytesToHuman } from '../../Utils/Converters';
+import { bytesToHuman } from 'wdk-client/Utils/Converters';
 
 function UserDatasetTutorial ({ projectName, rootUrl, quotaSize }) {
   const galaxyUrl = 'https://eupathdb.globusgenomics.org/';

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { OptionsDefaults } from './Defaults';
-import OverScroll from './Components/OverScroll';
-import TruncatedText from './Components/TruncatedText';
-import { stringValue } from './Utils/Utils';
+import { OptionsDefaults } from 'wdk-client/Components/Mesa/Defaults';
+import OverScroll from 'wdk-client/Components/Mesa/Components/OverScroll';
+import TruncatedText from 'wdk-client/Components/Mesa/Components/TruncatedText';
+import { stringValue } from 'wdk-client/Components/Mesa/Utils/Utils';
 
 const Templates = {
   textCell ({ key, value, row, rowIndex, column }) {

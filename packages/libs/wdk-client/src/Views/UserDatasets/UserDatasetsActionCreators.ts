@@ -1,10 +1,10 @@
 import { get } from 'lodash';
 
-import { transitionToInternalPage } from '../../Core/ActionCreators/RouterActionCreators';
-import { PreferenceUpdateAction, updateUserPreference } from '../User/UserActionCreators';
-import { ActionThunk, EmptyAction, emptyAction } from '../../Utils/ActionCreatorUtils';
-import { UserDataset, UserDatasetMeta } from '../../Utils/WdkModel';
-import { ServiceError, UserDatasetShareResponse } from '../../Utils/WdkService';
+import { transitionToInternalPage } from 'wdk-client/Core/ActionCreators/RouterActionCreators';
+import { PreferenceUpdateAction, updateUserPreference } from 'wdk-client/Views/User/UserActionCreators';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { UserDataset, UserDatasetMeta } from 'wdk-client/Utils/WdkModel';
+import { ServiceError, UserDatasetShareResponse } from 'wdk-client/Utils/WdkService';
 
 export type ListLoadingAction = {
   type: 'user-datasets/list-loading'

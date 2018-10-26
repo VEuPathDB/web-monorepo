@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {safeHtml, wrappable} from '../../Utils/ComponentUtils';
-import RecordActionLink from './RecordActionLink';
+import {safeHtml, wrappable} from 'wdk-client/Utils/ComponentUtils';
+import RecordActionLink from 'wdk-client/Views/Records/RecordActionLink';
 
 let RecordHeading = props => {
   let { record, recordClass, headerActions } = props;

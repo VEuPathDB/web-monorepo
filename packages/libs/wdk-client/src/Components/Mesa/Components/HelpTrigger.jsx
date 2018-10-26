@@ -1,6 +1,6 @@
 import React from 'react';
-import Icon from './Icon';
-import AnchoredTooltip from './AnchoredTooltip';
+import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import AnchoredTooltip from 'wdk-client/Components/Mesa/Components/AnchoredTooltip';
 
 class HelpTrigger extends React.Component {
   constructor (props) {

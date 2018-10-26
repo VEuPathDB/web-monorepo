@@ -1,4 +1,4 @@
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 let PrimaryKeySpan = props => {
   return ( <span>{props.primaryKeyString}</span> );

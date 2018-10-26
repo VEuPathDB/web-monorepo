@@ -1,16 +1,16 @@
-import './BaseAttributeAnalysis.scss';
+import 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis.scss';
 
 import { escapeRegExp } from 'lodash';
 import React from 'react';
 
-import Mesa from '../../../Components/Mesa';
-import RealTimeSearchBox from '../../../Components/SearchBox/RealTimeSearchBox';
-import Tabs from '../../../Components/Tabs/Tabs';
-import { SimpleDispatch } from '../../../Core/CommonTypes';
-import { Seq } from '../../../Utils/IterableUtils';
+import Mesa from 'wdk-client/Components/Mesa';
+import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import Tabs from 'wdk-client/Components/Tabs/Tabs';
+import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
-import { TableSearched, TableSorted, TabSelected, TablePaged, TableRowsPerPageChanged } from './BaseAttributeAnalysisActions';
-import { State } from './BaseAttributeAnalysisState';
+import { TableSearched, TableSorted, TabSelected, TablePaged, TableRowsPerPageChanged } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
 
 type VisualizationConfig = {
   display: string;

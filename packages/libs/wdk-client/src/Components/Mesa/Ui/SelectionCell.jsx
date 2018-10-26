@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Checkbox from '../Components/Checkbox';
+import Checkbox from 'wdk-client/Components/Mesa/Components/Checkbox';
 
 class SelectionCell extends React.PureComponent {
   constructor (props) {

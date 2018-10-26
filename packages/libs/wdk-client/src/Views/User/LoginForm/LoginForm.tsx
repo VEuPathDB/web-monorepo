@@ -1,8 +1,8 @@
 import React, { Component, FormEvent } from 'react';
-import { wrappable, getChangeHandler } from '../../../Utils/ComponentUtils';
-import Link from '../../../Components/Link/Link';
-import Dialog from '../../../Components/Overlays/Dialog';
-import TextBox from '../../../Components/InputControls/TextBox';
+import { wrappable, getChangeHandler } from 'wdk-client/Utils/ComponentUtils';
+import Link from 'wdk-client/Components/Link/Link';
+import Dialog from 'wdk-client/Components/Overlays/Dialog';
+import TextBox from 'wdk-client/Components/InputControls/TextBox';
 
 type Props = {
   onCancel: () => void;

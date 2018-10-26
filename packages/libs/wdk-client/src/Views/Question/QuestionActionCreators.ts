@@ -1,5 +1,5 @@
-import { makeActionCreator } from '../../Utils/ActionCreatorUtils';
-import { Parameter, ParameterValues, QuestionWithParameters, RecordClass, ParameterValue } from '../../Utils/WdkModel';
+import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { Parameter, ParameterValues, QuestionWithParameters, RecordClass, ParameterValue } from 'wdk-client/Utils/WdkModel';
 
 type BasePayload = { questionName: string; }
 

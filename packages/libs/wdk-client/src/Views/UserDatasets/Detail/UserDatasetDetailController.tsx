@@ -2,23 +2,23 @@ import { keyBy } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { showLoginForm } from '../../User/UserActionCreators';
-import PageController from '../../../Core/Controllers/PageController';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import { Question } from '../../../Utils/WdkModel';
-import BigwigDatasetDetail from './BigwigDatasetDetail';
-import RnaSeqDatasetDetail from './RnaSeqDatasetDetail';
-import UserDatasetDetail from './UserDatasetDetail';
-import EmptyState from '../EmptyState';
+import { showLoginForm } from 'wdk-client/Views/User/UserActionCreators';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Question } from 'wdk-client/Utils/WdkModel';
+import BigwigDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/BigwigDatasetDetail';
+import RnaSeqDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/RnaSeqDatasetDetail';
+import UserDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/UserDatasetDetail';
+import EmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
 import {
   loadUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
   updateUserDatasetDetail,
-} from '../UserDatasetsActionCreators';
-import { quotaSize } from '../UserDatasetUtils';
-import { RootState } from '../../../Core/State/Types';
+} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
+import { quotaSize } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 // import { removeUserDataset } from 'Views/UserDatasets/UserDatasetsActionCreators';
 const ActionCreators = {

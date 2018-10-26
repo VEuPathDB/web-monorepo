@@ -3,9 +3,9 @@ import React from 'react';
 import { empty, merge, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { Action } from './ActionCreatorUtils';
-import { EpicDependencies } from '../Core/Store';
-import { SimpleDispatch } from '../Core/CommonTypes';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { EpicDependencies } from 'wdk-client/Core/Store';
+import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
 
 export interface ClientPlugin<T> {
   reduce(state: T | undefined, action: Action): T;

@@ -1,13 +1,13 @@
-import { transitionToExternalPage, transitionToInternalPage } from './../../Core/ActionCreators/RouterActionCreators';
-import { Action, ActionThunk, EmptyAction, emptyAction } from '../../Utils/ActionCreatorUtils';
-import { filterOutProps } from '../../Utils/ComponentUtils';
-import { alert, confirm } from '../../Utils/Platform';
-import { broadcast } from '../../Utils/StaticDataUtils';
-import { RecordInstance } from '../../Utils/WdkModel';
-import WdkService from '../../Utils/WdkService';
-import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from '../../Utils/WdkUser';
-import { State as PasswordStoreState } from '../../Views/User/Password/UserPasswordChangeStoreModule';
-import { State as ProfileStoreState, UserProfileFormData } from './Profile/UserProfileReducer';
+import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/Core/ActionCreators/RouterActionCreators';
+import { Action, ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
+import { alert, confirm } from 'wdk-client/Utils/Platform';
+import { broadcast } from 'wdk-client/Utils/StaticDataUtils';
+import { RecordInstance } from 'wdk-client/Utils/WdkModel';
+import WdkService from 'wdk-client/Utils/WdkService';
+import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
+import { State as PasswordStoreState } from 'wdk-client/Views/User/Password/UserPasswordChangeStoreModule';
+import { State as ProfileStoreState, UserProfileFormData } from 'wdk-client/Views/User/Profile/UserProfileReducer';
 
 // actions to update true user and preferences
 export type UserUpdateAction = {

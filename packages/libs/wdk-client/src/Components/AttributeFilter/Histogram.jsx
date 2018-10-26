@@ -3,10 +3,10 @@ import { debounce, isEqual, memoize, noop, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { lazy } from '../../Utils/ComponentUtils';
-import { Seq } from '../../Utils/IterableUtils';
-import DateSelector from '../InputControls/DateSelector';
-import { formatDate } from './AttributeFilterUtils';
+import { lazy } from 'wdk-client/Utils/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import DateSelector from 'wdk-client/Components/InputControls/DateSelector';
+import { formatDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 
 var distributionEntryPropType = PropTypes.shape({

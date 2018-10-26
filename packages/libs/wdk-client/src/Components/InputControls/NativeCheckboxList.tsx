@@ -1,6 +1,6 @@
 import React, { Component, FormEvent, MouseEvent } from 'react';
 import {uniqueId, noop} from 'lodash';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type Item = {
   value: any

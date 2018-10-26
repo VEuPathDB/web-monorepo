@@ -1,9 +1,9 @@
-import { ActionThunk } from '../../Utils/ActionCreatorUtils';
-import { CategoryOntology } from '../../Utils/CategoryUtils';
-import { broadcast } from '../../Utils/StaticDataUtils';
-import { Question, RecordClass } from '../../Utils/WdkModel';
-import WdkService, { ServiceConfig } from '../../Utils/WdkService';
-import { User, UserPreferences } from '../../Utils/WdkUser';
+import { ActionThunk } from 'wdk-client/Utils/ActionCreatorUtils';
+import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
+import { broadcast } from 'wdk-client/Utils/StaticDataUtils';
+import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
+import WdkService, { ServiceConfig } from 'wdk-client/Utils/WdkService';
+import { User, UserPreferences } from 'wdk-client/Utils/WdkUser';
 
 const CONFIG = "config";
 const ONTOLOGY = "ontology";

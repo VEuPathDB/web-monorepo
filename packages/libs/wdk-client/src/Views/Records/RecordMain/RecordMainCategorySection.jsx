@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import RecordAttributeSection from '../RecordAttributes/RecordAttributeSection';
-import RecordTableSection from '../RecordTable/RecordTableSection';
-import CollapsibleSection from '../../../Components/Display/CollapsibleSection';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import { getId, getTargetType, getDisplayName } from '../../../Utils/CategoryUtils';
+import RecordAttributeSection from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
+import RecordTableSection from 'wdk-client/Views/Records/RecordTable/RecordTableSection';
+import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { getId, getTargetType, getDisplayName } from 'wdk-client/Utils/CategoryUtils';
 
 /**
  * Content for a node of a record category tree, or a record field.

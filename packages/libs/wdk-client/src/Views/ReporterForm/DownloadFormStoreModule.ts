@@ -1,2 +1,2 @@
 export const key = 'downloadForm';
-export * from './DownloadFormReducer';
+export * from 'wdk-client/Views/ReporterForm/DownloadFormReducer';

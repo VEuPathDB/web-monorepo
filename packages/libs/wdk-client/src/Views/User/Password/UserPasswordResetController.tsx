@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import PageController from '../../../Core/Controllers/PageController';
-import UserPasswordReset from './UserPasswordReset';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import UserPasswordReset from 'wdk-client/Views/User/Password/UserPasswordReset';
 import {
   updatePasswordResetEmail,
   submitPasswordReset,
   conditionallyTransition
-} from '../UserActionCreators';
-import { RootState } from '../../../Core/State/Types';
+} from 'wdk-client/Views/User/UserActionCreators';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
 
 const ActionCreators = {

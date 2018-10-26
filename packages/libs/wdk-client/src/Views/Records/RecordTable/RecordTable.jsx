@@ -2,8 +2,8 @@ import { chunk, memoize, property, orderBy, toLower } from 'lodash';
 import { Component } from 'react';
 import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
-import DataTable from '../../../Components/DataTable/DataTable';
-import { renderAttributeValue, pure, wrappable } from '../../../Utils/ComponentUtils';
+import DataTable from 'wdk-client/Components/DataTable/DataTable';
+import { renderAttributeValue, pure, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 // max columns for list mode
 const maxColumns = 4;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type Props = {
   children?: React.ReactChildren

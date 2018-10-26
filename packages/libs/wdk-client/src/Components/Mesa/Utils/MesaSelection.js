@@ -1,4 +1,4 @@
-import { fail, badType, missingFromState } from '../Utils/Errors';
+import { fail, badType, missingFromState } from 'wdk-client/Components/Mesa/Utils/Errors';
 
 export const createSelection = (_selection = []) => {
   if (!Array.isArray(_selection))

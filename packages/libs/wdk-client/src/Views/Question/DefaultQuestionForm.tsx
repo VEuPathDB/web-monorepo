@@ -1,14 +1,14 @@
 import * as React from 'react';
 
-import { HelpIcon, IconAlt } from '../../Components';
-import { DispatchAction } from '../../Core/CommonTypes';
-import { makeClassNameHelper, safeHtml } from '../../Utils/ComponentUtils';
-import { Seq } from '../../Utils/IterableUtils';
-import { Parameter, ParameterGroup } from '../../Utils/WdkModel';
-import ParameterComponent from './ParameterComponent';
-import { QuestionState } from './QuestionStoreModule';
-import { GroupVisibilityChangedAction, ParamValueUpdatedAction, QuestionSubmitted, QuestionCustomNameUpdated, QuestionWeightUpdated } from './QuestionActionCreators';
-import './DefaultQuestionForm.scss';
+import { HelpIcon, IconAlt } from 'wdk-client/Components';
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
+import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import ParameterComponent from 'wdk-client/Views/Question/ParameterComponent';
+import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
+import { GroupVisibilityChangedAction, ParamValueUpdatedAction, QuestionSubmitted, QuestionCustomNameUpdated, QuestionWeightUpdated } from 'wdk-client/Views/Question/QuestionActionCreators';
+import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 
 type EventHandlers = {
   setGroupVisibility: typeof GroupVisibilityChangedAction.create,

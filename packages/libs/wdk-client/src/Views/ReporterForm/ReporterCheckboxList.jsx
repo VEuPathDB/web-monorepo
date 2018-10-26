@@ -1,5 +1,5 @@
-import { wrappable } from '../../Utils/ComponentUtils';
-import CheckboxList from '../../Components/InputControls/CheckboxList';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import CheckboxList from 'wdk-client/Components/InputControls/CheckboxList';
 
 let ReporterCheckboxList = props => {
   let { title, onChange, fields, selectedFields } = props;

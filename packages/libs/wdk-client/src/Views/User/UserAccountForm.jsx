@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { wrappable } from '../../Utils/ComponentUtils';
-import ApplicationSpecificProperties from './ApplicationSpecificProperties';
-import UserPassword from './Password/UserPassword';
-import UserIdentity from './UserIdentity';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import ApplicationSpecificProperties from 'wdk-client/Views/User/ApplicationSpecificProperties';
+import UserPassword from 'wdk-client/Views/User/Password/UserPassword';
+import UserIdentity from 'wdk-client/Views/User/UserIdentity';
 
 /**
  * This React component provides the form wrapper and enclosed fieldsets for the user profile/account form.

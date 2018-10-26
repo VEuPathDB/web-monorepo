@@ -1,8 +1,8 @@
 import { Location } from 'history';
-import {StaticDataAction, AllDataAction, StaticData} from '../../../Core/ActionCreators/StaticDataActionCreators';
-import { UserUpdateAction, PreferenceUpdateAction, PreferencesUpdateAction, ShowLoginModalAction, LoginDismissedAction, LoginErrorAction } from '../../../Views/User/UserActionCreators';
-import { LocationAction } from '../../../Core/ActionCreators/RouterActionCreators';
-import { UserPreferences } from '../../../Utils/WdkUser';
+import {StaticDataAction, AllDataAction, StaticData} from 'wdk-client/Core/ActionCreators/StaticDataActionCreators';
+import { UserUpdateAction, PreferenceUpdateAction, PreferencesUpdateAction, ShowLoginModalAction, LoginDismissedAction, LoginErrorAction } from 'wdk-client/Views/User/UserActionCreators';
+import { LocationAction } from 'wdk-client/Core/ActionCreators/RouterActionCreators';
+import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 
 export const key = 'globalData';
 

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { wrappable } from '../../Utils/ComponentUtils';
-import * as SiteMapActionCreators from './SiteMapActionCreators';
-import SiteMap from './SiteMap';
-import { RootState } from '../../Core/State/Types';
-import PageController from '../../Core/Controllers/PageController';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import * as SiteMapActionCreators from 'wdk-client/Views/SiteMap/SiteMapActionCreators';
+import SiteMap from 'wdk-client/Views/SiteMap/SiteMap';
+import { RootState } from 'wdk-client/Core/State/Types';
+import PageController from 'wdk-client/Core/Controllers/PageController';
 
 type StateProps = RootState['siteMap'];
 type DispatchProps = typeof SiteMapActionCreators;

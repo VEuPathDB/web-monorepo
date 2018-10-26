@@ -1,5 +1,5 @@
-import { Answer, AttributeField, Question, RecordClass, RecordInstance } from '../../Utils/WdkModel';
-import { ServiceError } from '../../Utils/WdkService';
+import { Answer, AttributeField, Question, RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import { ServiceError } from 'wdk-client/Utils/WdkService';
 import {
   AddedAction,
   AnswerOptions,
@@ -9,8 +9,8 @@ import {
   LoadingAction,
   TableFilteredAction,
   TableSortedAction,
-} from './AnswerViewActionCreators';
-import { filterRecords } from '../Records/RecordUtils';
+} from 'wdk-client/Views/Answer/AnswerViewActionCreators';
+import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
 
 export const key = 'answerView';
 

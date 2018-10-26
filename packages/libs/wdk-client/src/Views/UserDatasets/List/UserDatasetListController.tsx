@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import '../UserDatasets.scss';
-import { showLoginForm } from '../../User/UserActionCreators';
-import PageController from '../../../Core/Controllers/PageController';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import { UserDataset } from '../../../Utils/WdkModel';
-import UserDatasetEmptyState from '../EmptyState';
-import UserDatasetList from './UserDatasetList';
+import 'wdk-client/Views/UserDatasets/UserDatasets.scss';
+import { showLoginForm } from 'wdk-client/Views/User/UserActionCreators';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { UserDataset } from 'wdk-client/Utils/WdkModel';
+import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
+import UserDatasetList from 'wdk-client/Views/UserDatasets/List/UserDatasetList';
 import {
   loadUserDatasetList,
   removeUserDataset,
@@ -14,9 +14,9 @@ import {
   unshareUserDatasets,
   updateProjectFilter,
   updateUserDatasetDetail,
-} from '../UserDatasetsActionCreators';
-import { quotaSize } from '../UserDatasetUtils';
-import { RootState } from '../../../Core/State/Types';
+} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
+import { quotaSize } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
 
 const ActionCreators = {

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import './Modal.scss';
-import { BodyLayer } from '../../Mesa';
+import 'wdk-client/Components/Overlays/Modal/Modal.scss';
+import { BodyLayer } from 'wdk-client/Components/Mesa';
 
 class Modal extends React.Component {
   constructor (props) {

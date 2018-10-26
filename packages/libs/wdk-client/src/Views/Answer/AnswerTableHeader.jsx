@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 function AnswerTableHeader(props) {
   let { descriptor: { help, displayName } } = props;

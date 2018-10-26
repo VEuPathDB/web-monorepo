@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Icon from '../Components/Icon';
-import RowsPerPageMenu from '../Ui/RowsPerPageMenu';
+import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import RowsPerPageMenu from 'wdk-client/Components/Mesa/Ui/RowsPerPageMenu';
 
 const settings = {
   overflowPoint: 8,

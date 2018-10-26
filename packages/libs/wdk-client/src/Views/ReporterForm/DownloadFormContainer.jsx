@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import RadioList from '../../Components/InputControls/RadioList';
-import { filterOutProps, wrappable } from '../../Utils/ComponentUtils';
-import DownloadForm from './DownloadForm';
-import PrimaryKeySpan from './PrimaryKeySpan';
+import RadioList from 'wdk-client/Components/InputControls/RadioList';
+import { filterOutProps, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import DownloadForm from 'wdk-client/Views/ReporterForm/DownloadForm';
+import PrimaryKeySpan from 'wdk-client/Views/ReporterForm/PrimaryKeySpan';
 
 let NO_REPORTER_SELECTED = "_none_";
 

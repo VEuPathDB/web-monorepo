@@ -3,14 +3,14 @@ import localforage from 'localforage';
 import { difference, keyBy, memoize } from 'lodash';
 import * as QueryString from 'querystring';
 
-import { submitAsForm } from './FormSubmitter';
-import * as Decode from './Json';
-import { Ontology } from './OntologyUtils';
-import { alert } from './Platform';
-import { pendingPromise, synchronized } from './PromiseUtils';
-import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder } from './WdkUser';
+import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
+import * as Decode from 'wdk-client/Utils/Json';
+import { Ontology } from 'wdk-client/Utils/OntologyUtils';
+import { alert } from 'wdk-client/Utils/Platform';
+import { pendingPromise, synchronized } from 'wdk-client/Utils/PromiseUtils';
+import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder } from 'wdk-client/Utils/WdkUser';
 
-import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from './CategoryUtils';
+import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
   Answer,
   AnswerFormatting,
@@ -32,8 +32,8 @@ import {
   UserDataset,
   UserDatasetMeta,
   AnswerJsonFormatConfig,
-} from './WdkModel';
-import { OntologyTermSummary } from '../Components/AttributeFilter/Types';
+} from 'wdk-client/Utils/WdkModel';
+import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 
 /**
  * Header added to service requests to indicate the version of the model

@@ -1,17 +1,17 @@
-import './WordCloudAnalysis.scss';
+import 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis.scss';
 
 import { memoize } from 'lodash';
 import React from 'react';
 
-import NumberRangeSelector from '../../../Components/InputControls/NumberRangeSelector';
-import RadioList from '../../../Components/InputControls/RadioList';
-import { DispatchAction, SimpleDispatch } from '../../../Core/CommonTypes';
-import { makeClassNameHelper, pure } from '../../../Utils/ComponentUtils';
-import { Seq } from '../../../Utils/IterableUtils';
+import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
+import RadioList from 'wdk-client/Components/InputControls/RadioList';
+import { DispatchAction, SimpleDispatch } from 'wdk-client/Core/CommonTypes';
+import { makeClassNameHelper, pure } from 'wdk-client/Utils/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
-import { AttributeAnalysis } from '../BaseAttributeAnalysis/BaseAttributeAnalysis';
-import { RankRange, RankRangeChanged, Sort, WordCloudSorted } from './WordCloudActions';
-import { State } from './WordCloudState';
+import { AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis';
+import { RankRange, RankRangeChanged, Sort, WordCloudSorted } from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudActions';
+import { State } from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudState';
 
 type Tag = { word: string; count: number };
 type Column = { key: keyof Tag; display: string; }

@@ -1,11 +1,11 @@
-import { Reducer } from '../../../Utils/ReducerUtils';
+import { Reducer } from 'wdk-client/Utils/ReducerUtils';
 import { differenceWith, unionWith } from 'lodash';
 
-import { Action, makeActionCreator } from '../../../Utils/ActionCreatorUtils';
-import { composeReducers, matchAction } from '../../../Utils/ReducerUtils';
-import { UserDataset, UserDatasetShare } from '../../../Utils/WdkModel';
+import { Action, makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { composeReducers, matchAction } from 'wdk-client/Utils/ReducerUtils';
+import { UserDataset, UserDatasetShare } from 'wdk-client/Utils/WdkModel';
 
-import { SharingSuccessAction } from '../UserDatasetsActionCreators';
+import { SharingSuccessAction } from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
 
 type Response = SharingSuccessAction['payload']['response'];
 type ShareOperation = keyof Response;

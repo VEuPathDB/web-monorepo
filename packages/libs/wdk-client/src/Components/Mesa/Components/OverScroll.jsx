@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Defaults from '../Defaults';
+import Defaults from 'wdk-client/Components/Mesa/Defaults';
 
 class OverScroll extends React.Component {
   constructor (props) {

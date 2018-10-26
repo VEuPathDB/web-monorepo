@@ -1,15 +1,15 @@
-import _ServerSideAttributeFilter from '../../../../Components/AttributeFilter/ServerSideAttributeFilter';
-import { Field, Filter, MemberFilter } from '../../../../Components/AttributeFilter/Types';
-import { isRange } from '../../../../Components/AttributeFilter/AttributeFilterUtils';
-import Loading from '../../../../Components/Loading/Loading';
+import _ServerSideAttributeFilter from 'wdk-client/Components/AttributeFilter/ServerSideAttributeFilter';
+import { Field, Filter, MemberFilter } from 'wdk-client/Components/AttributeFilter/Types';
+import { isRange } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import Loading from 'wdk-client/Components/Loading/Loading';
 import { memoize } from 'lodash';
 import React from 'react';
-import { FilterParamNew as TFilterParamNew } from '../../../../Utils/WdkModel';
-import { Props as ParamProps } from '../Utils';
-import { ActiveFieldSetAction, FieldCountUpdateRequestAction, FieldStateUpdatedAction, FiltersUpdatedAction } from './ActionCreators';
-import './FilterParam.css';
-import { MemberFieldState, RangeFieldState, State } from './State';
-import { getFilterFields, sortDistribution, getOntologyTree } from './FilterParamUtils';
+import { FilterParamNew as TFilterParamNew } from 'wdk-client/Utils/WdkModel';
+import { Props as ParamProps } from 'wdk-client/Views/Question/Params/Utils';
+import { ActiveFieldSetAction, FieldCountUpdateRequestAction, FieldStateUpdatedAction, FiltersUpdatedAction } from 'wdk-client/Views/Question/Params/FilterParamNew/ActionCreators';
+import 'wdk-client/Views/Question/Params/FilterParamNew/FilterParam.css';
+import { MemberFieldState, RangeFieldState, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { getFilterFields, sortDistribution, getOntologyTree } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 
 const ServerSideAttributeFilter: any = _ServerSideAttributeFilter;
 type FieldState = State['fieldStates'][string];

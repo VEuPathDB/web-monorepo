@@ -1,7 +1,7 @@
 import {
   ResetPasswordUpdateEmailAction,
   ResetPasswordSubmissionStatusAction
-} from '../UserActionCreators';
+} from 'wdk-client/Views/User/UserActionCreators';
 
 export const key = 'passwordReset';
 

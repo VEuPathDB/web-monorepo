@@ -1,7 +1,7 @@
 /**
  * Created by dfalke on 9/28/16.
  */
-import { Task } from '../Task';
+import { Task } from 'wdk-client/Utils/Task';
 const noop = () => {};
 
 test('Task.of', () => {

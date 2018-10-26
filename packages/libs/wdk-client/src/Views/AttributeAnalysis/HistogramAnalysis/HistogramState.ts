@@ -1,7 +1,7 @@
-import { matchAction } from '../../../Utils/ReducerUtils';
+import { matchAction } from 'wdk-client/Utils/ReducerUtils';
 
-import { makeReduce, observe, State as BaseState } from '../BaseAttributeAnalysis';
-import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from './HistogramActions';
+import { makeReduce, observe, State as BaseState } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
+import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramActions';
 
 type HistogramState = {
   binSize?: number;

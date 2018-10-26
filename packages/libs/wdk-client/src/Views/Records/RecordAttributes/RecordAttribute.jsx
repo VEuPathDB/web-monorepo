@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { renderAttributeValue, wrappable } from '../../../Utils/ComponentUtils';
+import { renderAttributeValue, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 /** Attribute value */
 function RecordAttribute(props) {

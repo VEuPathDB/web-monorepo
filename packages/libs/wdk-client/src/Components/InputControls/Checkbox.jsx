@@ -6,7 +6,7 @@
  * checkbox (typically !previousValue), rather than a click event.
  */
 
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 const Checkbox = (props) => {
   let { onChange, value } = props;

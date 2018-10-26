@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Icon from '../Icon/IconAlt';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
 
-import { isRange } from './AttributeFilterUtils';
+import { isRange } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 export default function EmptyValue(props) {
   return (

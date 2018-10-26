@@ -9,14 +9,14 @@ import {
   FavoritesStatusReceivedAction,
   loadBasketStatus,
   loadFavoritesStatus,
-} from '../../Views/User/UserActionCreators';
-import { Action, ActionThunk, EmptyAction, emptyAction } from '../../Utils/ActionCreatorUtils';
-import { CategoryTreeNode } from '../../Utils/CategoryUtils';
-import { getTree } from '../../Utils/OntologyUtils';
-import { RecordClass, RecordInstance } from '../../Utils/WdkModel';
-import WdkService, { ServiceError } from '../../Utils/WdkService';
+} from 'wdk-client/Views/User/UserActionCreators';
+import { Action, ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { getTree } from 'wdk-client/Utils/OntologyUtils';
+import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import WdkService, { ServiceError } from 'wdk-client/Utils/WdkService';
 
-import { isLeafFor, isNotInternalNode } from './RecordUtils';
+import { isLeafFor, isNotInternalNode } from 'wdk-client/Views/Records/RecordUtils';
 
 type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | BasketStatusReceivedAction;
 type FavoriteAction = FavoritesStatusLoadingAction | FavoritesStatusReceivedAction | FavoritesStatusErrorAction;

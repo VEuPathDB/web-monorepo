@@ -1,6 +1,6 @@
 import { flow } from 'lodash';
-import { preorder } from './TreeUtils';
-import { find } from './IterableUtils';
+import { preorder } from 'wdk-client/Utils/TreeUtils';
+import { find } from 'wdk-client/Utils/IterableUtils';
 
 export function findAncestorNode(
   targetNode: Node | null,

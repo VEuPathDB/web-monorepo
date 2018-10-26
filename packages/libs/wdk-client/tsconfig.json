@@ -1,4 +1,10 @@
 {
   "extends": "../Build/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "wdk-client/*": [ "src/*" ]
+    }
+  },
   "include": [ "src/**/*" ]
 }

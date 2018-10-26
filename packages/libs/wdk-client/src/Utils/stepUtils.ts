@@ -1,6 +1,6 @@
-import { getSingleRecordQuestionName, Question, RecordClass, RecordInstance } from './WdkModel';
-import WdkService from './WdkService';
-import { Step } from './WdkUser';
+import { getSingleRecordQuestionName, Question, RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import WdkService from 'wdk-client/Utils/WdkService';
+import { Step } from 'wdk-client/Utils/WdkUser';
 
 /**
  * Fetches the step for the given ID and also finds the question and recordClass

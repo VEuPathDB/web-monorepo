@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Templates from '../Templates';
-import Icon from '../Components/Icon';
-import Tooltip from '../Components/Tooltip';
-import { makeClassifier } from '../Utils/Utils';
-import Events, { EventsFactory } from '../Utils/Events';
+import Templates from 'wdk-client/Components/Mesa/Templates';
+import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import Tooltip from 'wdk-client/Components/Mesa/Components/Tooltip';
+import { makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
+import Events, { EventsFactory } from 'wdk-client/Components/Mesa/Utils/Events';
 
 const headingCellClass = makeClassifier('HeadingCell');
 

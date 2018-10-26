@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import TextBox from '../../Components/InputControls/TextBox';
-import { wrappable } from '../../Utils/ComponentUtils';
+import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 /**
  * This React stateless function displays the user identification fieldset of the form.

@@ -1,15 +1,15 @@
 import { escape } from 'lodash';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import BannerList from '../../Components/Banners/BannerList';
-import Icon from '../../Components/Icon/IconAlt';
-import TextArea from '../../Components/InputControls/TextArea';
-import TextBox from '../../Components/InputControls/TextBox';
-import { Mesa, MesaState, Utils as MesaUtils } from '../../Components/Mesa';
-import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
-import { wrappable } from '../../Utils/ComponentUtils';
-import RecordLink from '../Records/RecordLink';
-import './wdk-Favorites.scss';
+import BannerList from 'wdk-client/Components/Banners/BannerList';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import TextArea from 'wdk-client/Components/InputControls/TextArea';
+import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import { Mesa, MesaState, Utils as MesaUtils } from 'wdk-client/Components/Mesa';
+import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import RecordLink from 'wdk-client/Views/Records/RecordLink';
+import 'wdk-client/Views/Favorites/wdk-Favorites.scss';
 
 
 /**

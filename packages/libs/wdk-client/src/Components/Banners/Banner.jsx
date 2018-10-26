@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Icon from '../Icon/IconAlt';
-import './wdk-Banner.scss';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import 'wdk-client/Components/Banners/wdk-Banner.scss';
 
 class Banner extends React.Component {
   constructor (props) {

@@ -1,16 +1,16 @@
-import './AttributeAnalysis.scss';
+import 'wdk-client/Views/AttributeAnalysis/AttributeAnalysis.scss';
 
 import React from 'react';
 
-import Loading from '../../Components/Loading/Loading';
-import Dialog from '../../Components/Overlays/Dialog';
-import Error from '../../Components/PageStatus/Error';
-import { Action } from '../../Utils/ActionCreatorUtils';
-import { makeClassNameHelper } from '../../Utils/ComponentUtils';
-import { Reporter } from '../../Utils/WdkModel';
+import Loading from 'wdk-client/Components/Loading/Loading';
+import Dialog from 'wdk-client/Components/Overlays/Dialog';
+import Error from 'wdk-client/Components/PageStatus/Error';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Reporter } from 'wdk-client/Utils/WdkModel';
 
-import { AttributeReportCancelled, AttributeReportRequested } from './BaseAttributeAnalysis/BaseAttributeAnalysisActions';
-import { State } from './BaseAttributeAnalysis/BaseAttributeAnalysisState';
+import { AttributeReportCancelled, AttributeReportRequested } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
 
 const cx = makeClassNameHelper('AttributeAnalysis');
 

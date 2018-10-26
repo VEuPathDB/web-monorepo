@@ -1,17 +1,17 @@
 import React from 'react';
 import { EMPTY, from, merge } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
-import { DatasetParam, Parameter } from '../../../Utils/WdkModel';
-import { Strategy } from '../../../Utils/WdkUser';
-import { Props, Context, createParamModule, ParamModule } from './Utils';
-import { makeActionCreator } from '../../../Utils/ActionCreatorUtils';
-import { makeClassNameHelper } from '../../../Utils/ComponentUtils';
-import { matchAction } from '../../../Utils/ReducerUtils';
+import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
+import { Strategy } from 'wdk-client/Utils/WdkUser';
+import { Props, Context, createParamModule, ParamModule } from 'wdk-client/Views/Question/Params/Utils';
+import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { matchAction } from 'wdk-client/Utils/ReducerUtils';
 
-import './DatasetParam.scss';
-import { valueToArray } from './EnumParamUtils';
-import { DatasetConfig } from '../../../Utils/WdkService';
-import { ParamInitAction } from '../QuestionActionCreators';
+import 'wdk-client/Views/Question/Params/DatasetParam.scss';
+import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { DatasetConfig } from 'wdk-client/Utils/WdkService';
+import { ParamInitAction } from 'wdk-client/Views/Question/QuestionActionCreators';
 
 const cx = makeClassNameHelper('wdk-DatasetParam');
 

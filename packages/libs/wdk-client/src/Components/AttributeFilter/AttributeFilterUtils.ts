@@ -1,6 +1,6 @@
 import { max, memoize, min, padStart, sortBy } from 'lodash';
 
-import { Seq } from '../../Utils/IterableUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 import {
   Field,
@@ -11,8 +11,8 @@ import {
   MultiFilter,
   RangeField,
   ValueCounts
-} from './Types';
-import { preorderSeq, pruneDescendantNodes, postorderSeq, mapStructure } from '../../Utils/TreeUtils';
+} from 'wdk-client/Components/AttributeFilter/Types';
+import { preorderSeq, pruneDescendantNodes, postorderSeq, mapStructure } from 'wdk-client/Utils/TreeUtils';
 
 /**
  * Determine if a field should use a range filter display

@@ -1,4 +1,4 @@
-import { Seq } from './IterableUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 export type Node<T> = T & {
   children: Array<Node<T>>;

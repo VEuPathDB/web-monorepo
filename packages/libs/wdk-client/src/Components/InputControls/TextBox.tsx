@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 type InputWithoutOnChange = Pick<InputProps, Exclude<keyof InputProps, 'onChange'>>;

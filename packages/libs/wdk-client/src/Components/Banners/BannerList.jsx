@@ -1,7 +1,7 @@
 import React from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
-import Banner from './Banner';
+import Banner from 'wdk-client/Components/Banners/Banner';
 
 class BannerList extends React.Component {
   constructor (props) {

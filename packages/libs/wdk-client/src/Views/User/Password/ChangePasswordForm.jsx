@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { wrappable, getChangeHandler } from '../../../Utils/ComponentUtils';
-import { interpretFormStatus, FormMessage } from '../UserFormContainer';
-import TextBox from '../../../Components/InputControls/TextBox';
-import { alert } from '../../../Utils/Platform';
+import { wrappable, getChangeHandler } from 'wdk-client/Utils/ComponentUtils';
+import { interpretFormStatus, FormMessage } from 'wdk-client/Views/User/UserFormContainer';
+import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import { alert } from 'wdk-client/Utils/Platform';
 
 let PasswordField = props => {
   let { name, display, passwordForm, userEvents } = props;

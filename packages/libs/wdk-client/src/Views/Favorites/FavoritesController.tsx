@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { wrappable } from '../../Utils/ComponentUtils';
-import PageController from '../../Core/Controllers/PageController';
-import * as ActionCreators from '../../Views/Favorites/FavoritesActionCreators';
-import _FavoritesList from '../../Views/Favorites/FavoritesList';
-import { State } from '../../Views/Favorites/FavoritesListStoreModule';
-import { GlobalData } from '../../Core/State/StoreModules/GlobalData';
-import { RootState } from '../../Core/State/Types';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import * as ActionCreators from 'wdk-client/Views/Favorites/FavoritesActionCreators';
+import _FavoritesList from 'wdk-client/Views/Favorites/FavoritesList';
+import { State } from 'wdk-client/Views/Favorites/FavoritesListStoreModule';
+import { GlobalData } from 'wdk-client/Core/State/StoreModules/GlobalData';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 // FIXME Convert FavoritesList to TypeScript
 const FavoritesList: any = _FavoritesList;

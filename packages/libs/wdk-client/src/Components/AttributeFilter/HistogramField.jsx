@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { clamp, debounce, get } from 'lodash';
 
-import Histogram from './Histogram';
-import FilterLegend from './FilterLegend';
-import UnknownCount from './UnknownCount';
+import Histogram from 'wdk-client/Components/AttributeFilter/Histogram';
+import FilterLegend from 'wdk-client/Components/AttributeFilter/FilterLegend';
+import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
 
 /**
  * Generic Histogram field component

@@ -53,12 +53,12 @@
  * }
  */
 
-import { wrappable } from '../../Utils/ComponentUtils';
-import Link from '../../Components/Link/Link';
-import CheckboxTree from '../../Components/CheckboxTree/CheckboxTree';
-import { getNodeChildren, getPropertyValue } from '../../Utils/OntologyUtils';
-import { getTargetType, getRefName, getDisplayName, getDescription, getNodeId, getId } from '../../Utils/CategoryUtils';
-import { areTermsInString } from '../../Utils/SearchUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import Link from 'wdk-client/Components/Link/Link';
+import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { getNodeChildren, getPropertyValue } from 'wdk-client/Utils/OntologyUtils';
+import { getTargetType, getRefName, getDisplayName, getDescription, getNodeId, getId } from 'wdk-client/Utils/CategoryUtils';
+import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 
 /**
  * Displays site map page, basically just a custom expandable tree
@@ -142,7 +142,7 @@ let SiteMapNodeElement = ({ node }) => {
 
   if (data.targetType === 'search') {
     return (
-      <a href={"../showQuestion.do?questionFullName=" + data.name}>
+      <a href={'wdk-client/Views/showQuestion.do?questionFullName=' + data.name}>
         <span title={data.description}><em>{data.recordClassDisplayName} by {data.displayName}</em></span>
       </a>
     );

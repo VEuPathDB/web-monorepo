@@ -1,13 +1,13 @@
 import { Subject, empty } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 
-import { Action } from '../ActionCreatorUtils';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
 import {
   createPlugin,
   mergePluginsByType,
   ClientPluginRegistryEntry,
   PluginContext,
-} from '../ClientPlugin';
+} from 'wdk-client/Utils/ClientPlugin';
 
 describe('createPlugin', () => {
   it('should provide default implementations', () => {

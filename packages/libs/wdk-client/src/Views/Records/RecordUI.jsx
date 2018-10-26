@@ -2,15 +2,15 @@ import classnames from 'classnames';
 import { debounce, get } from 'lodash';
 import { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import Sticky from '../../Components/Display/Sticky';
-import { getId } from '../../Utils/CategoryUtils';
-import { wrappable } from '../../Utils/ComponentUtils';
-import { addScrollAnchor } from '../../Utils/DomUtils';
-import { postorderSeq } from '../../Utils/TreeUtils';
-import './Record.css';
-import RecordHeading from './RecordHeading';
-import RecordMainSection from './RecordMain/RecordMainSection';
-import RecordNavigationSection from './RecordNavigation/RecordNavigationSection';
+import Sticky from 'wdk-client/Components/Display/Sticky';
+import { getId } from 'wdk-client/Utils/CategoryUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { addScrollAnchor } from 'wdk-client/Utils/DomUtils';
+import { postorderSeq } from 'wdk-client/Utils/TreeUtils';
+import 'wdk-client/Views/Records/Record.css';
+import RecordHeading from 'wdk-client/Views/Records/RecordHeading';
+import RecordMainSection from 'wdk-client/Views/Records/RecordMain/RecordMainSection';
+import RecordNavigationSection from 'wdk-client/Views/Records/RecordNavigation/RecordNavigationSection';
 
 /**
  * Renders the main UI for the WDK Record page.

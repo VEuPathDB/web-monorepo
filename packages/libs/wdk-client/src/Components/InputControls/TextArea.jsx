@@ -4,7 +4,7 @@
  * textbox, not the event causing the change.
  */
 
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 let TextArea = function(props) {
   let onChange = function(event) {

@@ -1,9 +1,9 @@
 import React from 'react';
-import CheckboxList from '../../../Components/InputControls/CheckboxList';
-import RadioList from '../../../Components/InputControls/RadioList';
-import { CheckboxEnumParam, Parameter } from '../../../Utils/WdkModel';
-import { Props, createParamModule } from './Utils';
-import { isEnumParam, valueToArray } from './EnumParamUtils';
+import CheckboxList from 'wdk-client/Components/InputControls/CheckboxList';
+import RadioList from 'wdk-client/Components/InputControls/RadioList';
+import { CheckboxEnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
+import { Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
+import { isEnumParam, valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 export default createParamModule({
   isType,

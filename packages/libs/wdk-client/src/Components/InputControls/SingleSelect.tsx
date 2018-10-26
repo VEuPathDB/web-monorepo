@@ -1,5 +1,5 @@
 import React from 'react';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type Props = {
   /** Value to use for "name" attribute of the select form input **/

@@ -2,9 +2,9 @@ import { pick, property } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router';
-import DataTable from '../../Components/DataTable/DataTable';
-import Dialog from '../../Components/Overlays/Dialog';
-import { wrappable } from '../../Utils/ComponentUtils';
+import DataTable from 'wdk-client/Components/DataTable/DataTable';
+import Dialog from 'wdk-client/Components/Overlays/Dialog';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 /**
  * Generic table with UI features:

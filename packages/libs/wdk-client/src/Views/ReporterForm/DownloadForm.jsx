@@ -1,5 +1,5 @@
-import { wrappable } from '../../Utils/ComponentUtils';
-import WdkServiceJsonReporterForm from './WdkServiceJsonReporterForm';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
 
 let DownloadForm = props => ( <WdkServiceJsonReporterForm {...props}/> );
 

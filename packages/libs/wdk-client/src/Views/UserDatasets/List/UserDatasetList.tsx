@@ -8,20 +8,20 @@ import {
   Link,
   RealTimeSearchBox as SearchBox,
   SaveableTextEditor
-} from '../../../Components';
-import { Mesa, MesaState, Utils as MesaUtils } from '../../../Components/Mesa';
-import { MesaColumn, MesaDataCellProps, MesaSortObject } from '../../../Core/CommonTypes';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import { bytesToHuman } from '../../../Utils/Converters';
-import moment from '../../../Utils/MomentUtils';
-import { UserDataset, UserDatasetMeta, UserDatasetShare } from '../../../Utils/WdkModel';
-import { User } from '../../../Utils/WdkUser';
-import UserDatasetEmptyState from '../EmptyState';
-import SharingModal from '../Sharing/UserDatasetSharingModal';
-import UserDatasetStatus from '../UserDatasetStatus';
-import UserDatasetTutorial from '../UserDatasetTutorial';
-import { normalizePercentage, textCell } from '../UserDatasetUtils';
-import './UserDatasetList.scss';
+} from 'wdk-client/Components';
+import { Mesa, MesaState, Utils as MesaUtils } from 'wdk-client/Components/Mesa';
+import { MesaColumn, MesaDataCellProps, MesaSortObject } from 'wdk-client/Core/CommonTypes';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { bytesToHuman } from 'wdk-client/Utils/Converters';
+import moment from 'wdk-client/Utils/MomentUtils';
+import { UserDataset, UserDatasetMeta, UserDatasetShare } from 'wdk-client/Utils/WdkModel';
+import { User } from 'wdk-client/Utils/WdkUser';
+import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
+import SharingModal from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingModal';
+import UserDatasetStatus from 'wdk-client/Views/UserDatasets/UserDatasetStatus';
+import UserDatasetTutorial from 'wdk-client/Views/UserDatasets/UserDatasetTutorial';
+import { normalizePercentage, textCell } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
+import 'wdk-client/Views/UserDatasets/List/UserDatasetList.scss';
 
 
 
@@ -375,7 +375,7 @@ class UserDatasetList extends React.Component <Props, State> {
             <ul>
             <li>To learn how to add a data set check this  <a href='http://www.youtube.com/watch?v=igQZHjRBqV0'>Tutorial on User Data Sets</a>.</li>
             <li>To add a data set, go to <a href='https:eupathdb.globusgenomics.org'>EuPathDB Galaxy</a>.</li>
-            <li><a href='../galaxy-orientation'>About EuPathDB Galaxy</a> </li>
+            <li><a href='wdk-client/Views/UserDatasets/galaxy-orientation'>About EuPathDB Galaxy</a> </li>
             </ul>
           </div>
         </p>

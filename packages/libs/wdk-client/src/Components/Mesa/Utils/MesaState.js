@@ -1,5 +1,5 @@
-import { fail, badType, missingFromState } from '../Utils/Errors';
-import { repositionItemInList } from '../Utils/Utils';
+import { fail, badType, missingFromState } from 'wdk-client/Components/Mesa/Utils/Errors';
+import { repositionItemInList } from 'wdk-client/Components/Mesa/Utils/Utils';
 
 /*    Basic Setters   */
 export const setRows = (state, rows, resetFilteredRows = true) => {

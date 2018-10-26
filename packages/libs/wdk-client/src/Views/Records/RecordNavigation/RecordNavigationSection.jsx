@@ -1,12 +1,12 @@
 import { includes, memoize, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import CategoriesCheckboxTree from '../../../Components/CheckboxTree/CategoriesCheckboxTree';
-import { getId, isIndividual } from '../../../Utils/CategoryUtils';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import { Seq } from '../../../Utils/IterableUtils';
-import { preorderSeq, pruneDescendantNodes } from '../../../Utils/TreeUtils';
-import RecordNavigationItem from './RecordNavigationItem';
+import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
+import { getId, isIndividual } from 'wdk-client/Utils/CategoryUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { preorderSeq, pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
+import RecordNavigationItem from 'wdk-client/Views/Records/RecordNavigation/RecordNavigationItem';
 
 /** Navigation panel for record page */
 class RecordNavigationSection extends React.PureComponent {

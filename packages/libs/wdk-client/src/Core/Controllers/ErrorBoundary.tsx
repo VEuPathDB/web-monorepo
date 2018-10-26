@@ -2,8 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import Error from '../../Components/PageStatus/Error';
-import { emptyAction, Action } from '../../Utils/ActionCreatorUtils';
+import Error from 'wdk-client/Components/PageStatus/Error';
+import { emptyAction, Action } from 'wdk-client/Utils/ActionCreatorUtils';
 type Props = {
   renderError?: () => React.ReactNode;
   children?: React.ReactNode;

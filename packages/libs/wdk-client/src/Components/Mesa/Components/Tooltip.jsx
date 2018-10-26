@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import BodyLayer from './BodyLayer';
-import { EventsFactory } from '../Utils/Events';
+import BodyLayer from 'wdk-client/Components/Mesa/Components/BodyLayer';
+import { EventsFactory } from 'wdk-client/Components/Mesa/Utils/Events';
 
 class Tooltip extends React.Component {
   constructor (props) {

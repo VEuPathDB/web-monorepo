@@ -1,8 +1,8 @@
 import {
   ProfileFormUpdateAction,
   ProfileFormSubmissionStatusAction
-} from '../UserActionCreators';
-import { User, UserPreferences } from "../../../Utils/WdkUser";
+} from 'wdk-client/Views/User/UserActionCreators';
+import { User, UserPreferences } from 'wdk-client/Utils/WdkUser';
 
 export const key = 'userProfile';
 

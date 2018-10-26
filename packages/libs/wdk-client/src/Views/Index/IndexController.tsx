@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link, Page } from '../../Components';
-import { RootState } from '../../Core/State/Types';
-import { wrappable } from '../../Utils/ComponentUtils';
-import PageController from '../../Core/Controllers/PageController';
+import { Link, Page } from 'wdk-client/Components';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import PageController from 'wdk-client/Core/Controllers/PageController';
 
 // Link is a component used to create links to other routes.
 // See https://github.com/rackt/react-router/blob/master/docs/api/components/Link.md

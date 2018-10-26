@@ -1,5 +1,5 @@
-import { UserDataset } from '../../../Utils/WdkModel';
-import sharingReducer from '../Sharing/UserDatasetSharingReducer';
+import { UserDataset } from 'wdk-client/Utils/WdkModel';
+import sharingReducer from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
 import {
   DetailRemoveSuccessAction,
   DetailUpdateErrorAction,
@@ -9,7 +9,7 @@ import {
   ListReceivedAction,
   ProjectFilterAction,
   SharingSuccessAction,
-} from '../UserDatasetsActionCreators';
+} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
 import { difference } from 'lodash';
 
 export const key = 'userDatasetList';

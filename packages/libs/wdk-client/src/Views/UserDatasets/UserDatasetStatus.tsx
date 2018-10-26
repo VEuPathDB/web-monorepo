@@ -3,8 +3,8 @@ import {
   IconAlt as Icon,
   Link,
   Tooltip,
-} from '../../Components';
-import { UserDataset } from '../../Utils/WdkModel';
+} from 'wdk-client/Components';
+import { UserDataset } from 'wdk-client/Utils/WdkModel';
 
 type Props = {
   userDataset: UserDataset;

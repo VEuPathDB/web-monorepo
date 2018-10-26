@@ -1,20 +1,20 @@
 import * as React from 'react';
 
-import { Parameter } from '../../../Utils/WdkModel';
+import { Parameter } from 'wdk-client/Utils/WdkModel';
 
-import { Context, isPropsType, ParamModule, Props } from './Utils';
+import { Context, isPropsType, ParamModule, Props } from 'wdk-client/Views/Question/Params/Utils';
 
-import CheckboxEnumParamModule from './CheckboxEnumParam';
-import DatasetParamModule from './DatasetParam';
-import DateParamModule from './DateParam';
-import DateRangeParamModule from './DateRangeParam';
-import FilterParamNewModule from './FilterParamNew';
-import NumberParamModule from './NumberParam';
-import NumberRangeParamModule from './NumberRangeParam';
-import SelectEnumParamModule from './SelectEnumParam';
-import StringParamModule from './StringParam';
-import TreeBoxEnumParamModule from './TreeBoxEnumParam';
-import TypeAheadEnumParamModule from './TypeAheadEnumParam';
+import CheckboxEnumParamModule from 'wdk-client/Views/Question/Params/CheckboxEnumParam';
+import DatasetParamModule from 'wdk-client/Views/Question/Params/DatasetParam';
+import DateParamModule from 'wdk-client/Views/Question/Params/DateParam';
+import DateRangeParamModule from 'wdk-client/Views/Question/Params/DateRangeParam';
+import FilterParamNewModule from 'wdk-client/Views/Question/Params/FilterParamNew';
+import NumberParamModule from 'wdk-client/Views/Question/Params/NumberParam';
+import NumberRangeParamModule from 'wdk-client/Views/Question/Params/NumberRangeParam';
+import SelectEnumParamModule from 'wdk-client/Views/Question/Params/SelectEnumParam';
+import StringParamModule from 'wdk-client/Views/Question/Params/StringParam';
+import TreeBoxEnumParamModule from 'wdk-client/Views/Question/Params/TreeBoxEnumParam';
+import TypeAheadEnumParamModule from 'wdk-client/Views/Question/Params/TypeAheadEnumParam';
 import { combineEpics } from 'redux-observable';
 
 // Param modules

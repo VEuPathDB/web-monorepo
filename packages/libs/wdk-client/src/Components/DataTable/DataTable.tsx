@@ -1,11 +1,11 @@
 import $ from 'jquery';
-import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
+import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import { eq, once, uniqueId } from 'lodash';
 import React, { Component, PureComponent, ReactElement } from 'react';
 import { unmountComponentAtNode, unstable_renderSubtreeIntoContainer } from 'react-dom';
-import { formatAttributeValue, lazy, wrappable } from '../../Utils/ComponentUtils';
-import { containsAncestorNode } from '../../Utils/DomUtils';
-import './DataTable.css';
+import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { containsAncestorNode } from 'wdk-client/Utils/DomUtils';
+import 'wdk-client/Components/DataTable/DataTable.css';
 
 
 const expandColumn = {

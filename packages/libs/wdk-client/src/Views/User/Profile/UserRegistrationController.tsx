@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import PageController from '../../../Core/Controllers/PageController';
-import UserRegistration from './UserRegistration';
-import { updateProfileForm, submitRegistrationForm, conditionallyTransition } from '../UserActionCreators';
-import { RootState } from '../../../Core/State/Types';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import UserRegistration from 'wdk-client/Views/User/Profile/UserRegistration';
+import { updateProfileForm, submitRegistrationForm, conditionallyTransition } from 'wdk-client/Views/User/UserActionCreators';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
 
 const ActionCreators = { updateProfileForm, submitRegistrationForm, conditionallyTransition };

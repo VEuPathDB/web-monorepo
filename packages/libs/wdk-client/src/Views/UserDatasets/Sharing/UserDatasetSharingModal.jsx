@@ -1,8 +1,8 @@
 import React from 'react';
-import { IconAlt as Icon, Loading, Modal, TextBox } from '../../../Components';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import moment from '../../../Utils/MomentUtils';
-import './UserDatasetSharingModal.scss';
+import { IconAlt as Icon, Loading, Modal, TextBox } from 'wdk-client/Components';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import moment from 'wdk-client/Utils/MomentUtils';
+import 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingModal.scss';
 
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

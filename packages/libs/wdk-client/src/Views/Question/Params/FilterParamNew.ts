@@ -1,8 +1,8 @@
-import observeParam from './FilterParamNew/ActionCreators';
-import Component from './FilterParamNew/FilterParamNew';
-import { reduce } from './FilterParamNew/State';
-import { isParamValueValid, isType } from './FilterParamNew/FilterParamUtils';
-import { createParamModule } from './Utils';
+import observeParam from 'wdk-client/Views/Question/Params/FilterParamNew/ActionCreators';
+import Component from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamNew';
+import { reduce } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { isParamValueValid, isType } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { createParamModule } from 'wdk-client/Views/Question/Params/Utils';
 
 export default createParamModule({
   isType,

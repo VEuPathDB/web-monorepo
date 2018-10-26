@@ -1,6 +1,6 @@
 import { isArray, isBoolean, isNumber, isPlainObject, isString, values } from 'lodash';
 
-import { Seq } from './IterableUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 /**
  * Validate and parse JSON strings into TypeScript/JavaScript objects.

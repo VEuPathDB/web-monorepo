@@ -1,4 +1,4 @@
-import * as TreeUtils from '../TreeUtils';
+import * as TreeUtils from 'wdk-client/Utils/TreeUtils';
 
 test('preorderSeq', function() {
   let tree = {

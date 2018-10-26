@@ -2,11 +2,11 @@ import {
   getTree,
   nodeHasProperty,
   OntologyNode
-} from '../../Utils/OntologyUtils';
+} from 'wdk-client/Utils/OntologyUtils';
 
 export type SiteMapOntology = OntologyNode<{}>;
 
-import { ActionThunk } from '../../Utils/ActionCreatorUtils';
+import { ActionThunk } from 'wdk-client/Utils/ActionCreatorUtils';
 
 export type LoadingAction = {
   type: 'sitemap/loading'

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import Link from '../../../Components/Link/Link';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import Link from 'wdk-client/Components/Link/Link';
 
 /**
  * Provides a link to the password change form- either one configured in the

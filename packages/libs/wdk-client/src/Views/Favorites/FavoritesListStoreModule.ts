@@ -1,6 +1,6 @@
 import { map, filter } from 'rxjs/operators';
-import { Favorite, RecordClass } from '../../Utils/WdkModel';
-import { MesaState } from '../../Components/Mesa';
+import { Favorite, RecordClass } from 'wdk-client/Utils/WdkModel';
+import { MesaState } from 'wdk-client/Components/Mesa';
 import {
   TableStateUpdatedAction,
   TableSelectionUpdatedAction,
@@ -20,8 +20,8 @@ import {
   FilterByTypeAction,
   CreateTypeGetterAction,
   createTypeGetter
-} from './FavoritesActionCreators';
-import { EpicDependencies } from '../../Core/Store';
+} from 'wdk-client/Views/Favorites/FavoritesActionCreators';
+import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable } from 'rxjs';
 
 export const key = 'favorites';

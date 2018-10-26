@@ -2,24 +2,24 @@ import { isEqual } from 'lodash';
 import { concat, empty, from, merge, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
-import { Filter } from '../../../../Components/AttributeFilter/Types';
-import { Action, makeActionCreator } from '../../../../Utils/ActionCreatorUtils';
-import { FilterParamNew } from '../../../../Utils/WdkModel';
-import WdkService from '../../../../Utils/WdkService';
+import { Filter } from 'wdk-client/Components/AttributeFilter/Types';
+import { Action, makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { FilterParamNew } from 'wdk-client/Utils/WdkModel';
+import WdkService from 'wdk-client/Utils/WdkService';
 import {
   QuestionLoadedAction,
   UnloadQuestionAction,
   GroupVisibilityChangedAction,
   ParamsUpdatedAction,
   ParamErrorAction
-} from "../../QuestionActionCreators";
-import { State, QuestionState } from '../../QuestionStoreModule';
+} from 'wdk-client/Views/Question/QuestionActionCreators';
+import { State, QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
 
-import { Context } from '../Utils';
-import { FieldState, MemberFieldState, State as FilterParamState } from './State';
-import { getFilterFields, getFilters, isMemberField, isType, sortDistribution } from './FilterParamUtils';
+import { Context } from 'wdk-client/Views/Question/Params/Utils';
+import { FieldState, MemberFieldState, State as FilterParamState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { getFilterFields, getFilters, isMemberField, isType, sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 import { combineEpics, Epic } from 'redux-observable';
-import { ModuleEpic } from '../../../../Core/Store';
+import { ModuleEpic } from 'wdk-client/Core/Store';
 
 
 type Ctx = Context<FilterParamNew>

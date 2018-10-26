@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { makeClassNameHelper } from '../../Utils/ComponentUtils';
-import Icon from '../Icon/IconAlt';
-import EmptyField from './EmptyField';
-import MultiFieldFilter from './MultiFieldFilter';
-import SingleFieldFilter from './SingleFieldFilter';
-import { isMulti } from './AttributeFilterUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import EmptyField from 'wdk-client/Components/AttributeFilter/EmptyField';
+import MultiFieldFilter from 'wdk-client/Components/AttributeFilter/MultiFieldFilter';
+import SingleFieldFilter from 'wdk-client/Components/AttributeFilter/SingleFieldFilter';
+import { isMulti } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 const cx = makeClassNameHelper('field-detail');
 /**

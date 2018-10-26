@@ -1,21 +1,21 @@
-import './TreeBoxParam.scss';
+import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 
 import { escapeRegExp, intersection } from 'lodash';
 import React from 'react';
 
-import CheckboxTree from '../../../Components/CheckboxTree/CheckboxTree';
-import Icon from '../../../Components/Icon/IconAlt';
-import { makeActionCreator } from '../../../Utils/ActionCreatorUtils';
-import { safeHtml } from '../../../Utils/ComponentUtils';
-import { Seq } from '../../../Utils/IterableUtils';
-import { matchAction } from '../../../Utils/ReducerUtils';
-import { filterNodes, getLeaves, isBranch } from '../../../Utils/TreeUtils';
-import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '../../../Utils/WdkModel';
+import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { matchAction } from 'wdk-client/Utils/ReducerUtils';
+import { filterNodes, getLeaves, isBranch } from 'wdk-client/Utils/TreeUtils';
+import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
 
-import SelectionInfo from './SelectionInfo';
-import { Context, Props, createParamModule } from './Utils';
-import { isEnumParam } from './EnumParamUtils';
-import { ParamInitAction } from '../QuestionActionCreators';
+import SelectionInfo from 'wdk-client/Views/Question/Params/SelectionInfo';
+import { Context, Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
+import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { ParamInitAction } from 'wdk-client/Views/Question/QuestionActionCreators';
 
 function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
   return isEnumParam(parameter) && parameter.displayType === 'treeBox';

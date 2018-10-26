@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Icon from '../../../Components/Icon/IconAlt';
-import { Mesa, MesaState } from '../../../Components/Mesa';
-import { makeClassifier } from '../UserDatasetUtils';
-import BigwigDatasetDetail from './BigwigDatasetDetail';
-import BigwigGBrowseUploader from './BigwigGBrowseUploader';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
+import { makeClassifier } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
+import BigwigDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/BigwigDatasetDetail';
+import BigwigGBrowseUploader from 'wdk-client/Views/UserDatasets/Detail/BigwigGBrowseUploader';
 
 const classify = makeClassifier('BigwigDatasetDetail', 'RnaSeqDatasetDetail');
 

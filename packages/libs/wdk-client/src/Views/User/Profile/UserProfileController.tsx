@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { submitProfileForm, updateProfileForm } from '../UserActionCreators';
-import PageController from '../../../Core/Controllers/PageController';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import UserProfile from './UserProfile';
-import { RootState } from '../../../Core/State/Types';
+import { submitProfileForm, updateProfileForm } from 'wdk-client/Views/User/UserActionCreators';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import UserProfile from 'wdk-client/Views/User/Profile/UserProfile';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = { updateProfileForm, submitProfileForm };
 

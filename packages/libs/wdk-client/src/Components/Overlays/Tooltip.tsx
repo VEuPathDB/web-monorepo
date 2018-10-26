@@ -6,7 +6,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { lazy, wrappable } from '../../Utils/ComponentUtils';
+import { lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 let defaultOptions = {
   position: {

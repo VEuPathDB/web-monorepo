@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import Loading from '../../Components/Loading/Loading';
-import Error from '../../Components/PageStatus/Error';
-import LoadError from '../../Components/PageStatus/LoadError';
-import PermissionDenied from '../../Components/PageStatus/PermissionDenied';
-import { LocatePlugin } from '../../Core/CommonTypes';
-import NotFound from '../../Views/NotFound/NotFound';
+import Loading from 'wdk-client/Components/Loading/Loading';
+import Error from 'wdk-client/Components/PageStatus/Error';
+import LoadError from 'wdk-client/Components/PageStatus/LoadError';
+import PermissionDenied from 'wdk-client/Components/PageStatus/PermissionDenied';
+import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
-import ErrorBoundary from './ErrorBoundary';
+import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
 export type ViewControllerProps = {
   locatePlugin: LocatePlugin;

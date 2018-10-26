@@ -5,21 +5,21 @@ import ReactDOM from 'react-dom';
 import {
   ActiveQuestionUpdatedAction,
   UnloadQuestionAction,
-} from './QuestionActionCreators';
-import ViewController from '../../Core/Controllers/ViewController';
-import { Seq } from '../../Utils/IterableUtils';
-import { preorder } from '../../Utils/TreeUtils';
-import { EnumParam, Parameter } from '../../Utils/WdkModel';
-import { ParamValueUpdatedAction } from './QuestionActionCreators';
-import { QuestionState } from './QuestionStoreModule';
+} from 'wdk-client/Views/Question/QuestionActionCreators';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { preorder } from 'wdk-client/Utils/TreeUtils';
+import { EnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
+import { ParamValueUpdatedAction } from 'wdk-client/Views/Question/QuestionActionCreators';
+import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
 
-import * as ParamModules from './Params';
-import { isEnumParam } from './Params/EnumParamUtils';
-import TreeBoxEnumParam from './Params/TreeBoxEnumParam';
-import { Context } from './Params/Utils';
+import * as ParamModules from 'wdk-client/Views/Question/Params';
+import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import TreeBoxEnumParam from 'wdk-client/Views/Question/Params/TreeBoxEnumParam';
+import { Context } from 'wdk-client/Views/Question/Params/Utils';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { RootState } from '../../Core/State/Types';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = {
   setActiveQuestion: ActiveQuestionUpdatedAction.create,

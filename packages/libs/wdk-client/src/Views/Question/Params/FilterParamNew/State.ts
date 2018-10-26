@@ -1,7 +1,7 @@
 import { groupBy, isEqual, mapValues } from 'lodash';
 
-import { Filter, MemberFilter, OntologyTermSummary } from '../../../../Components/AttributeFilter/Types';
-import { matchAction, Reducer } from '../../../../Utils/ReducerUtils';
+import { Filter, MemberFilter, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
+import { matchAction, Reducer } from 'wdk-client/Utils/ReducerUtils';
 
 import {
   ActiveFieldSetAction,
@@ -9,8 +9,8 @@ import {
   FiltersUpdatedAction,
   OntologyTermsInvalidated,
   SummaryCountsLoadedAction,
-} from './ActionCreators';
-import { sortDistribution } from './FilterParamUtils';
+} from 'wdk-client/Views/Question/Params/FilterParamNew/ActionCreators';
+import { sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 
 
 export type SortSpec = {

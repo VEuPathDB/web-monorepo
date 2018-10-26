@@ -7,11 +7,11 @@ import {
   FavoritesStatusErrorAction,
   FavoritesStatusLoadingAction,
   FavoritesStatusReceivedAction,
-} from '../../Views/User/UserActionCreators';
-import { CategoryTreeNode, getId, getTargetType } from '../../Utils/CategoryUtils';
-import { filterNodes } from '../../Utils/TreeUtils';
-import { RecordClass, RecordInstance } from '../../Utils/WdkModel';
-import { ServiceError } from '../../Utils/WdkService';
+} from 'wdk-client/Views/User/UserActionCreators';
+import { CategoryTreeNode, getId, getTargetType } from 'wdk-client/Utils/CategoryUtils';
+import { filterNodes } from 'wdk-client/Utils/TreeUtils';
+import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import { ServiceError } from 'wdk-client/Utils/WdkService';
 import {
   AllFieldVisibilityAction,
   CategoryExpansionAction,
@@ -22,7 +22,7 @@ import {
   RecordReceivedAction,
   RecordUpdatedAction,
   SectionVisibilityAction,
-} from './RecordViewActionCreators';
+} from 'wdk-client/Views/Records/RecordViewActionCreators';
 
 export const key = 'record';
 

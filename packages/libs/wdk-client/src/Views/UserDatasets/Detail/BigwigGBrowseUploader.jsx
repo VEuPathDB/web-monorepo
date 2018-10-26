@@ -1,9 +1,9 @@
 import React from 'react';
-import Icon from '../../../Components/Icon/IconAlt';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
 // TODO Lazy load moment
-import moment from '../../../Utils/MomentUtils';
-import { getBigwigStatusUrl, getBigwigUploadUrl } from '../UserDatasetUtils';
-import './BigwigGBrowseUploader.scss';
+import moment from 'wdk-client/Utils/MomentUtils';
+import { getBigwigStatusUrl, getBigwigUploadUrl } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
+import 'wdk-client/Views/UserDatasets/Detail/BigwigGBrowseUploader.scss';
 
 
 class BigwigGBrowseUploader extends React.Component {

@@ -1,4 +1,4 @@
-import * as i from '../IterableUtils';
+import * as i from 'wdk-client/Utils/IterableUtils';
 
 /**
  * generate list of natural numbers

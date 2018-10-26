@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 const NotFound: React.StatelessComponent = (props) =>
   <div className="wdk-NotFound">

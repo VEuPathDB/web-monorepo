@@ -5,12 +5,12 @@ import {
   SelectReporterAction,
   UiUpdateAction,
   UpdateAction
-} from './DownloadFormActionCreators';
-import WdkServiceJsonReporterForm from './WdkServiceJsonReporterForm';
-import {UserPreferences, Step} from "../../Utils/WdkUser";
-import {RecordClass, Question, Reporter} from "../../Utils/WdkModel";
-import { ServiceError } from "../../Utils/WdkService";
-import { CategoryOntology } from '../../Utils/CategoryUtils';
+} from 'wdk-client/Views/ReporterForm/DownloadFormActionCreators';
+import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
+import {UserPreferences, Step} from 'wdk-client/Utils/WdkUser';
+import {RecordClass, Question, Reporter} from 'wdk-client/Utils/WdkModel';
+import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 
 export type State = {
   preferences: UserPreferences | null,

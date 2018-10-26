@@ -8,8 +8,8 @@
 import { zipWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { wrappable } from '../../Utils/ComponentUtils';
-import './CollapsibleSection.css';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import 'wdk-client/Components/Display/CollapsibleSection.css';
 
 
 let defaultClassName = 'wdk-CollapsibleSection';

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Icon from '../Components/Icon';
-import TableSearch from '../Ui/TableSearch';
-import RowCounter from '../Ui/RowCounter';
+import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import TableSearch from 'wdk-client/Components/Mesa/Ui/TableSearch';
+import RowCounter from 'wdk-client/Components/Mesa/Ui/RowCounter';
 
 class TableToolbar extends React.PureComponent {
   constructor (props) {

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 /**
  * This React component is a placeholder for any application specific properties that may have added by the overriding application.

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { conditionallyTransition } from './UserActionCreators';
-import PageController from '../../Core/Controllers/PageController';
-import { wrappable } from '../../Utils/ComponentUtils';
-import NotFound from '../../Views/NotFound/NotFound';
-import { RootState } from '../../Core/State/Types';
+import { conditionallyTransition } from 'wdk-client/Views/User/UserActionCreators';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
 
 type PageContent = {

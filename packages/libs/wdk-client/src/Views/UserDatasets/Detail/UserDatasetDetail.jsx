@@ -1,15 +1,15 @@
 import React from 'react';
-import Icon from '../../../Components/Icon/IconAlt';
-import SaveableTextEditor from '../../../Components/InputControls/SaveableTextEditor';
-import Link from '../../../Components/Link';
-import { AnchoredTooltip, Mesa, MesaState } from '../../../Components/Mesa';
-import { bytesToHuman } from '../../../Utils/Converters';
-import moment from '../../../Utils/MomentUtils';
-import NotFound from '../../../Views/NotFound/NotFound';
-import SharingModal from '../Sharing/UserDatasetSharingModal';
-import UserDatasetStatus from '../UserDatasetStatus';
-import { getDownloadUrl, makeClassifier, normalizePercentage } from '../UserDatasetUtils';
-import './UserDatasetDetail.scss';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
+import SaveableTextEditor from 'wdk-client/Components/InputControls/SaveableTextEditor';
+import Link from 'wdk-client/Components/Link';
+import { AnchoredTooltip, Mesa, MesaState } from 'wdk-client/Components/Mesa';
+import { bytesToHuman } from 'wdk-client/Utils/Converters';
+import moment from 'wdk-client/Utils/MomentUtils';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import SharingModal from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingModal';
+import UserDatasetStatus from 'wdk-client/Views/UserDatasets/UserDatasetStatus';
+import { getDownloadUrl, makeClassifier, normalizePercentage } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
+import 'wdk-client/Views/UserDatasets/Detail/UserDatasetDetail.scss';
 
 
 const classify = makeClassifier('UserDatasetDetail');

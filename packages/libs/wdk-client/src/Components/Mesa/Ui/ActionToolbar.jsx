@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SelectionCounter from '../Ui/SelectionCounter';
-import { makeClassifier } from '../Utils/Utils';
+import SelectionCounter from 'wdk-client/Components/Mesa/Ui/SelectionCounter';
+import { makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
 
 const actionToolbarClass = makeClassifier('ActionToolbar');
 

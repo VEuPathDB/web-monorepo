@@ -1,6 +1,6 @@
 import React from 'react';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import { getId, getDisplayName } from '../../../Utils/CategoryUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { getId, getDisplayName } from 'wdk-client/Utils/CategoryUtils';
 
 let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSectionToggle}) => {
   let id = getId(category);

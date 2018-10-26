@@ -1,5 +1,5 @@
-import { PageTransitioner } from './PageTransitioner';
-import WdkService from './WdkService';
+import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
+import WdkService from 'wdk-client/Utils/WdkService';
 
 
 export interface Action {

@@ -1,8 +1,8 @@
-import { matchAction, Reducer } from '../../../Utils/ReducerUtils';
+import { matchAction, Reducer } from 'wdk-client/Utils/ReducerUtils';
 
-import { makeReduce, State as BaseState, observe } from '../BaseAttributeAnalysis';
-import { AttributeReportReceived } from '../BaseAttributeAnalysis/BaseAttributeAnalysisActions';
-import { RankRange, RankRangeChanged, Sort, WordCloudSorted } from './WordCloudActions';
+import { makeReduce, State as BaseState, observe } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
+import { AttributeReportReceived } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { RankRange, RankRangeChanged, Sort, WordCloudSorted } from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudActions';
 
 type VisualizationState = {
   rankRange: RankRange;

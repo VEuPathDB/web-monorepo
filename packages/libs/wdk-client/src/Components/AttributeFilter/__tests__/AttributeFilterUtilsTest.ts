@@ -1,7 +1,7 @@
-import { getTree, removeIntermediateNodesWithSingleChild, findAncestorFields } from '../AttributeFilterUtils';
-import { Field, FieldTreeNode } from '../Types';
+import { getTree, removeIntermediateNodesWithSingleChild, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { Field, FieldTreeNode } from 'wdk-client/Components/AttributeFilter/Types';
 
-const ontology = require('./TestOntology.json');
+const ontology = require('wdk-client/Components/AttributeFilter/__tests__/TestOntology.json');
 
 describe('getTree', () => {
 

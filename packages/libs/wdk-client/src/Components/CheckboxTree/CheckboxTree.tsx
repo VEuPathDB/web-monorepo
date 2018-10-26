@@ -1,15 +1,15 @@
 import React, { Component, StatelessComponent, MouseEventHandler } from 'react';
 
-import Icon from '../../Components/Icon/Icon';
-import CheckboxTreeNode from './CheckboxTreeNode';
-import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
+import Icon from 'wdk-client/Components/Icon/Icon';
+import CheckboxTreeNode from 'wdk-client/Components/CheckboxTree/CheckboxTreeNode';
+import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 
-import { addOrRemove, propsDiffer } from '../../Utils/ComponentUtils';
-import { isLeaf, getLeaves, getBranches, mapStructure } from '../../Utils/TreeUtils';
-import { parseSearchQueryString } from '../../Utils/SearchUtils';
-import { Seq } from '../../Utils/IterableUtils';
+import { addOrRemove, propsDiffer } from 'wdk-client/Utils/ComponentUtils';
+import { isLeaf, getLeaves, getBranches, mapStructure } from 'wdk-client/Utils/TreeUtils';
+import { parseSearchQueryString } from 'wdk-client/Utils/SearchUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
-import './wdk-CheckboxTree.scss';
+import 'wdk-client/Components/CheckboxTree/wdk-CheckboxTree.scss';
 
 const NODE_STATE_PROPERTY = '__expandableTreeState';
 const NODE_CHILDREN_PROPERTY = '__expandableTreeChildren';

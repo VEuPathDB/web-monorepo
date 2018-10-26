@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { wrappable } from '../../Utils/ComponentUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 class Main extends Component {
   render() {

@@ -1,9 +1,9 @@
 import { ComponentType } from 'react';
 import { RouteComponentProps } from 'react-router';
 
-import { Action, ActionCreatorResult } from '../Utils/ActionCreatorUtils';
-import { UserDataset } from '../Utils/WdkModel';
-import { CompositeClientPlugin } from '../Utils/ClientPlugin';
+import { Action, ActionCreatorResult } from 'wdk-client/Utils/ActionCreatorUtils';
+import { UserDataset } from 'wdk-client/Utils/WdkModel';
+import { CompositeClientPlugin } from 'wdk-client/Utils/ClientPlugin';
 
 
 export interface SimpleDispatch {

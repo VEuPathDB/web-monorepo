@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DataCell from '../Ui/DataCell';
-import SelectionCell from '../Ui/SelectionCell';
-import { makeClassifier } from '../Utils/Utils';
+import DataCell from 'wdk-client/Components/Mesa/Ui/DataCell';
+import SelectionCell from 'wdk-client/Components/Mesa/Ui/SelectionCell';
+import { makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
 
 const dataRowClass = makeClassifier('DataRow');
 

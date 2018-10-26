@@ -1,10 +1,10 @@
 import { debounce } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HelpTrigger } from '../../Components/Mesa';
-import Tooltip from '../../Components/Overlays/Tooltip';
-import { wrappable } from '../../Utils/ComponentUtils';
-import AnswerFilterSelector from './AnswerFilterSelector';
+import { HelpTrigger } from 'wdk-client/Components/Mesa';
+import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import AnswerFilterSelector from 'wdk-client/Views/Answer/AnswerFilterSelector';
 
 // concatenate each item in items with arr
 function addToArray(arr, item) {

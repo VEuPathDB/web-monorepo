@@ -1,4 +1,4 @@
-import { PasswordFormUpdateAction, PasswordFormSubmissionStatusAction } from '../UserActionCreators';
+import { PasswordFormUpdateAction, PasswordFormSubmissionStatusAction } from 'wdk-client/Views/User/UserActionCreators';
 
 export const key = 'passwordChange';
 

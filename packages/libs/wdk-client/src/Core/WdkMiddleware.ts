@@ -1,6 +1,6 @@
 import { Middleware } from 'redux';
-import { Action, ActionCreatorResult, ActionCreatorServices, emptyType } from '../Utils/ActionCreatorUtils';
-import { isPromise } from '../Utils/PromiseUtils';
+import { Action, ActionCreatorResult, ActionCreatorServices, emptyType } from 'wdk-client/Utils/ActionCreatorUtils';
+import { isPromise } from 'wdk-client/Utils/PromiseUtils';
 
 /**
  * The DispatchAction type describes the type of function that is used to

@@ -1,6 +1,6 @@
 import { get, kebabCase } from 'lodash';
 import * as React from 'react';
-import {preorderSeq, getBranches} from './TreeUtils';
+import {preorderSeq, getBranches} from 'wdk-client/Utils/TreeUtils';
 import {
   getTree,
   nodeHasChildren,
@@ -10,10 +10,10 @@ import {
   getPropertyValues,
   OntologyNode,
   Ontology
-} from './OntologyUtils';
-import {areTermsInString} from './SearchUtils';
-import { Seq } from './IterableUtils';
-import {Question, RecordClass} from './WdkModel';
+} from 'wdk-client/Utils/OntologyUtils';
+import {areTermsInString} from 'wdk-client/Utils/SearchUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import {Question, RecordClass} from 'wdk-client/Utils/WdkModel';
 
 type Dict<T> = {
   [key: string]: T;

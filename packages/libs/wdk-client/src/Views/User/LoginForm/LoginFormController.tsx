@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { hideLoginForm, submitLoginForm } from '../UserActionCreators';
-import LoginForm from './LoginForm';
-import { RootState } from '../../../Core/State/Types';
-import ViewController from '../../../Core/Controllers/ViewController';
+import { hideLoginForm, submitLoginForm } from 'wdk-client/Views/User/UserActionCreators';
+import LoginForm from 'wdk-client/Views/User/LoginForm/LoginForm';
+import { RootState } from 'wdk-client/Core/State/Types';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 
 const enhance = connect(
   ({ globalData: { loginForm }}: RootState) => ({

@@ -1,7 +1,7 @@
-import { getTree } from '../../Utils/OntologyUtils';
-import { isQualifying, addSearchSpecificSubtree, CategoryOntology } from '../../Utils/CategoryUtils';
-import { AttributeField, Question, RecordClass, TableField } from '../../Utils/WdkModel';
-import { UserPreferences } from '../../Utils/WdkUser';
+import { getTree } from 'wdk-client/Utils/OntologyUtils';
+import { isQualifying, addSearchSpecificSubtree, CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
+import { AttributeField, Question, RecordClass, TableField } from 'wdk-client/Utils/WdkModel';
+import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 
 /**
  * Typical attachment type vocabulary for reporter forms

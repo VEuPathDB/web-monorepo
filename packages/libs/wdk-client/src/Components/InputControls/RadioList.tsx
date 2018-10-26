@@ -1,7 +1,7 @@
-import HelpIcon from '../../Components/Icon/HelpIcon';
+import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
 import React from 'react';
-import { getValueOrDefault, wrappable } from '../../Utils/ComponentUtils';
-import './RadioList.css';
+import { getValueOrDefault, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import 'wdk-client/Components/InputControls/RadioList.css';
 
 const baseClassName = "wdk-RadioList";
 

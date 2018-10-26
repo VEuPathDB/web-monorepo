@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconAlt as Icon } from '../../Components';
+import { IconAlt as Icon } from 'wdk-client/Components';
 
 class UserDatasetEmptyState extends React.Component {
   constructor (props) {

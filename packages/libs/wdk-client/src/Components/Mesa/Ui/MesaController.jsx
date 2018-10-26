@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DataTable from '../Ui/DataTable';
-import TableToolbar from '../Ui/TableToolbar';
-import ActionToolbar from '../Ui/ActionToolbar';
-import PaginationMenu from '../Ui/PaginationMenu';
-import EmptyState from '../Ui/EmptyState';
+import DataTable from 'wdk-client/Components/Mesa/Ui/DataTable';
+import TableToolbar from 'wdk-client/Components/Mesa/Ui/TableToolbar';
+import ActionToolbar from 'wdk-client/Components/Mesa/Ui/ActionToolbar';
+import PaginationMenu from 'wdk-client/Components/Mesa/Ui/PaginationMenu';
+import EmptyState from 'wdk-client/Components/Mesa/Ui/EmptyState';
 
 class MesaController extends React.Component {
   constructor (props) {

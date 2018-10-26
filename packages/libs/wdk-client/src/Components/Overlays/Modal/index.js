@@ -1,2 +1,2 @@
-import Modal from './Modal';
+import Modal from 'wdk-client/Components/Overlays/Modal/Modal';
 export default Modal;

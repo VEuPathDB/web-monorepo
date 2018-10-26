@@ -1,7 +1,7 @@
 import React from 'react';
 
-import MesaController from '../Ui/MesaController';
-import MesaState from '../Utils/MesaState';
+import MesaController from 'wdk-client/Components/Mesa/Ui/MesaController';
+import MesaState from 'wdk-client/Components/Mesa/Utils/MesaState';
 
 class Mesa extends React.Component {
   constructor (props) {

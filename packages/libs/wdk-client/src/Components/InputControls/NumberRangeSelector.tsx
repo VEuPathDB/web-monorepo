@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './wdk-NumberRangeSelector.scss';
-import NumberSelector from './NumberSelector';
+import 'wdk-client/Components/InputControls/wdk-NumberRangeSelector.scss';
+import NumberSelector from 'wdk-client/Components/InputControls/NumberSelector';
 
 type Value = {
   min: number;

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Icon from '../Components/Icon';
-import { makeClassifier } from '../Utils/Utils';
+import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import { makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
 
 class EmptyState extends React.PureComponent {
   constructor (props) {

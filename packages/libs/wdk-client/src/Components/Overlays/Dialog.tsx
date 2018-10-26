@@ -1,8 +1,8 @@
-import Icon from '../../Components/Icon/Icon';
-import Popup from './Popup';
+import Icon from 'wdk-client/Components/Icon/Icon';
+import Popup from 'wdk-client/Components/Overlays/Popup';
 import React, { Component, ReactNode } from 'react';
-import { makeClassNameHelper, wrappable } from '../../Utils/ComponentUtils';
-import './Dialog.css';
+import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import 'wdk-client/Components/Overlays/Dialog.css';
 
 
 

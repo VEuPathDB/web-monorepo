@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import HeadingRow from '../Ui/HeadingRow';
-import DataRowList from '../Ui/DataRowList';
-import { makeClassifier, combineWidths } from '../Utils/Utils';
+import HeadingRow from 'wdk-client/Components/Mesa/Ui/HeadingRow';
+import DataRowList from 'wdk-client/Components/Mesa/Ui/DataRowList';
+import { makeClassifier, combineWidths } from 'wdk-client/Components/Mesa/Utils/Utils';
 
 const dataTableClass = makeClassifier('DataTable');
 

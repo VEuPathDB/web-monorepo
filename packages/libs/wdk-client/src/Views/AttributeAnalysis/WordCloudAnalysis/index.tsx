@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { createPlugin } from '../../../Utils/ClientPlugin';
+import { createPlugin } from 'wdk-client/Utils/ClientPlugin';
 
-import WordCloudAnalysis from './WordCloudAnalysis';
-import { observe, reduce, State } from './WordCloudState';
+import WordCloudAnalysis from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis';
+import { observe, reduce, State } from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudState';
 
 export default createPlugin<State>({
   reduce,

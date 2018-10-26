@@ -1,6 +1,6 @@
-import { wrappable } from '../../../Utils/ComponentUtils';
-import UserFormContainer, { UserFormContainerPropTypes } from '../UserFormContainer';
-import './UserProfile.css';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import UserFormContainer, { UserFormContainerPropTypes } from 'wdk-client/Views/User/UserFormContainer';
+import 'wdk-client/Views/User/Profile/UserProfile.css';
 
 /**
  * React component for the user profile/account form

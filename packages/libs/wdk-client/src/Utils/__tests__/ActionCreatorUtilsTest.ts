@@ -1,7 +1,7 @@
 import {
   makeActionCreator,
   isOneOf
-} from '../ActionCreatorUtils';
+} from 'wdk-client/Utils/ActionCreatorUtils';
 
 test('makeActionCreator with empty action', () => {
   const AC = makeActionCreator('empty');

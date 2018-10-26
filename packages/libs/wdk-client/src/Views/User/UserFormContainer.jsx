@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { getChangeHandler, wrappable } from '../../Utils/ComponentUtils';
-import UserAccountForm from './UserAccountForm';
+import { getChangeHandler, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import UserAccountForm from 'wdk-client/Views/User/UserAccountForm';
 
 export function interpretFormStatus(formStatus, errorMessage) {
   // configure properties for banner and submit button enabling based on status

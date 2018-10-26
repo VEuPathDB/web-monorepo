@@ -1,6 +1,6 @@
 import { isPlainObject } from 'lodash';
 
-import { Action } from './ActionCreatorUtils';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
 
 /**
  * Adds an isBroadcast property to the passed action with value true.  Only

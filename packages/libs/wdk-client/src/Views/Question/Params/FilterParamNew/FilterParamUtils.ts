@@ -1,14 +1,14 @@
 import { memoize, sortBy, stubTrue as T, flowRight as compose } from 'lodash';
 import natsort from 'natural-sort';
 
-import { Filter, MemberFilter, ValueCounts, FieldTreeNode } from '../../../../Components/AttributeFilter/Types';
-import { getTree, isRange, removeIntermediateNodesWithSingleChild, isFilterField, sortLeavesBeforeBranches } from '../../../../Components/AttributeFilter/AttributeFilterUtils';
-import { preorderSeq } from '../../../../Utils/TreeUtils';
-import { FilterParamNew, Parameter } from '../../../../Utils/WdkModel';
+import { Filter, MemberFilter, ValueCounts, FieldTreeNode } from 'wdk-client/Components/AttributeFilter/Types';
+import { getTree, isRange, removeIntermediateNodesWithSingleChild, isFilterField, sortLeavesBeforeBranches } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
+import { FilterParamNew, Parameter } from 'wdk-client/Utils/WdkModel';
 
-import { SortSpec, State } from './State';
-import { Context } from '../Utils';
-import { getRecordClassName } from '../../../../Utils/CategoryUtils';
+import { SortSpec, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { Context } from 'wdk-client/Views/Question/Params/Utils';
+import { getRecordClassName } from 'wdk-client/Utils/CategoryUtils';
 
 const natSortComparator = (natsort as any)();
 

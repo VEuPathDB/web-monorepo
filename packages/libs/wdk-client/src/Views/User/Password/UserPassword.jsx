@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import ChangePasswordLink from './ChangePasswordLink';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import ChangePasswordLink from 'wdk-client/Views/User/Password/ChangePasswordLink';
 
 /**
  * This React stateless function provides a link to the password change form inside a password change fieldset

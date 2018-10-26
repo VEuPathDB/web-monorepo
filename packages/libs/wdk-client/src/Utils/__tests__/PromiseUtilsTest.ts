@@ -2,7 +2,7 @@ import {
   latest,
   synchronized,
   Mutex
-} from '../PromiseUtils';
+} from 'wdk-client/Utils/PromiseUtils';
 
 // helpers
 

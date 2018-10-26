@@ -1,8 +1,8 @@
 import React from 'react';
 
-import HeadingCell from '../Ui/HeadingCell';
-import SelectionCell from '../Ui/SelectionCell';
-import { ColumnDefaults } from '../Defaults';
+import HeadingCell from 'wdk-client/Components/Mesa/Ui/HeadingCell';
+import SelectionCell from 'wdk-client/Components/Mesa/Ui/SelectionCell';
+import { ColumnDefaults } from 'wdk-client/Components/Mesa/Defaults';
 
 class HeadingRow extends React.PureComponent {
   constructor (props) {

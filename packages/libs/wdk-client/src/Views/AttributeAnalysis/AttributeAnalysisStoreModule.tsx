@@ -1,13 +1,13 @@
 import { filter, map, withLatestFrom } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { Action } from '../../Utils/ActionCreatorUtils';
-import { CompositeClientPlugin, PluginContext } from '../../Utils/ClientPlugin';
+import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { CompositeClientPlugin, PluginContext } from 'wdk-client/Utils/ClientPlugin';
 
-import * as Data from './BaseAttributeAnalysis';
-import { ScopedAnalysisAction } from './BaseAttributeAnalysis/BaseAttributeAnalysisActions';
-import { EpicDependencies } from '../../Core/Store';
-import { LocatePlugin } from '../../Core/CommonTypes';
+import * as Data from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
+import { ScopedAnalysisAction } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { EpicDependencies } from 'wdk-client/Core/Store';
+import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
 
 export type State = {
   analyses: Record<string, Data.State<string> | undefined>

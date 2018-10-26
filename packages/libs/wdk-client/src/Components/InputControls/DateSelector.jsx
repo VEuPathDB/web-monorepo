@@ -1,8 +1,8 @@
 import React from 'react';
-import * as DateUtils from '../../Utils/DateUtils';
+import * as DateUtils from 'wdk-client/Utils/DateUtils';
 
-import './wdk-DateSelector.scss';
-import Select from './SingleSelect';
+import 'wdk-client/Components/InputControls/wdk-DateSelector.scss';
+import Select from 'wdk-client/Components/InputControls/SingleSelect';
 
 class DateSelector extends React.Component {
   constructor (props) {

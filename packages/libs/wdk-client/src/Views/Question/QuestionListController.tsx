@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import PageController from '../../Core/Controllers/PageController';
-import { safeHtml, wrappable } from '../../Utils/ComponentUtils';
-import { Question } from '../../Utils/WdkModel';
-import { Loading } from '../../Components';
-import { RootState } from '../../Core/State/Types';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Question } from 'wdk-client/Utils/WdkModel';
+import { Loading } from 'wdk-client/Components';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 class QuestionListController extends PageController<{ questions?: Question[] }> {
 

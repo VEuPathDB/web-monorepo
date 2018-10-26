@@ -1,13 +1,13 @@
 import { from, Observable } from 'rxjs';
 import { filter, mergeMap, takeUntil } from 'rxjs/operators';
 
-import { State } from './BaseAttributeAnalysisState';
+import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
 
-import { EpicDependencies } from '../../../Core/Store';
-import { Action, makeActionCreator } from '../../../Utils/ActionCreatorUtils';
-import { PluginContext } from '../../../Utils/ClientPlugin';
-import { Reporter } from '../../../Utils/WdkModel';
-import { ServiceError } from '../../../Utils/WdkService';
+import { EpicDependencies } from 'wdk-client/Core/Store';
+import { Action, makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { PluginContext } from 'wdk-client/Utils/ClientPlugin';
+import { Reporter } from 'wdk-client/Utils/WdkModel';
+import { ServiceError } from 'wdk-client/Utils/WdkService';
 
 // Actions
 // -------

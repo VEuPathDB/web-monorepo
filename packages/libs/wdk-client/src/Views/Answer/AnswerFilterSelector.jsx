@@ -2,8 +2,8 @@ import $ from 'jquery';
 import { includes } from 'lodash';
 import { Component } from 'react';
 import ReactDOM from 'react-dom';
-import TabbableContainer from '../../Components/Display/TabbableContainer';
-import { wrappable, lazy } from '../../Utils/ComponentUtils';
+import TabbableContainer from 'wdk-client/Components/Display/TabbableContainer';
+import { wrappable, lazy } from 'wdk-client/Utils/ComponentUtils';
 
 /** Filter text input */
 function renderFilterField(field, isChecked, handleChange) {

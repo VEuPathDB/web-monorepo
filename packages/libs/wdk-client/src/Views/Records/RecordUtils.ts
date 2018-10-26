@@ -1,11 +1,11 @@
 import { partial, pick, values } from 'lodash';
 
-import { CategoryTreeNode } from '../../Utils/CategoryUtils';
-import { Seq } from '../../Utils/IterableUtils';
-import { getPropertyValue, nodeHasProperty } from '../../Utils/OntologyUtils';
-import { filterItems } from '../../Utils/SearchUtils';
-import { filterNodes } from '../../Utils/TreeUtils';
-import { AttributeValue, RecordInstance, TableValue } from '../../Utils/WdkModel';
+import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { getPropertyValue, nodeHasProperty } from 'wdk-client/Utils/OntologyUtils';
+import { filterItems } from 'wdk-client/Utils/SearchUtils';
+import { filterNodes } from 'wdk-client/Utils/TreeUtils';
+import { AttributeValue, RecordInstance, TableValue } from 'wdk-client/Utils/WdkModel';
 
 type AttributeValueDict = Record<string, AttributeValue>;
 type TableValueDict = Record<string, TableValue>;

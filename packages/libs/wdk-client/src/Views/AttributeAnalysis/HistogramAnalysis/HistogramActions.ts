@@ -1,4 +1,4 @@
-import { makeActionCreator } from "../../../Utils/ActionCreatorUtils";
+import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
 
 export type DisplayType = 'normal' | 'logarithm';
 

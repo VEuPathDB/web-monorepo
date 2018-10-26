@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { wrappable } from '../../../Utils/ComponentUtils';
-import CollapsibleSection from '../../../Components/Display/CollapsibleSection';
-import RecordAttribute from './RecordAttribute';
-import ErrorBoundary from '../../../Core/Controllers/ErrorBoundary';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
+import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';
+import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
 /** Record attribute section container for record page */
 function RecordAttributeSection(props) {

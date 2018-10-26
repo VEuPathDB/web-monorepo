@@ -5,7 +5,7 @@ import {
   ExpansionAction,
   SearchAction,
   SiteMapOntology
-} from './SiteMapActionCreators';
+} from 'wdk-client/Views/SiteMap/SiteMapActionCreators';
 
 export const key = 'siteMap';
 

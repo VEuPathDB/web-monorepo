@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FieldList from './FieldList';
-import FilterList from './FilterList';
-import FieldFilter from './FieldFilter';
+import FieldList from 'wdk-client/Components/AttributeFilter/FieldList';
+import FilterList from 'wdk-client/Components/AttributeFilter/FilterList';
+import FieldFilter from 'wdk-client/Components/AttributeFilter/FieldFilter';
 
 /**
  * Filtering UI for server-side filtering.

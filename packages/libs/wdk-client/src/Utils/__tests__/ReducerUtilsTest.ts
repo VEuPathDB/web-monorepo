@@ -1,14 +1,14 @@
 import {
   Action,
   makeActionCreator
-} from '../ActionCreatorUtils';
+} from 'wdk-client/Utils/ActionCreatorUtils';
 
 import {
   matchAction,
   combineReducers,
   composeReducers,
   Reducer
-} from '../ReducerUtils';
+} from 'wdk-client/Utils/ReducerUtils';
 
 describe('matchAction', () => {
   type State = {

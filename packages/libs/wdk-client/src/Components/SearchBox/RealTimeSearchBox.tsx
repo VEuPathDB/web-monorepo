@@ -1,7 +1,7 @@
-import HelpIcon from '../../Components/Icon/HelpIcon';
+import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
 import { debounce } from 'lodash';
 import React, { Component } from 'react';
-import './RealTimeSearchBox.css';
+import 'wdk-client/Components/SearchBox/RealTimeSearchBox.css';
 
 /** classNames used by component */
 const baseClassName = 'wdk-RealTimeSearchBox';

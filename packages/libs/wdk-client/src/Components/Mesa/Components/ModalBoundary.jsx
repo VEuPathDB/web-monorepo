@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { uid, makeClassifier } from '../Utils/Utils';
+import { uid, makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
 
 const modalBoundaryClass = makeClassifier('ModalBoundary');
 

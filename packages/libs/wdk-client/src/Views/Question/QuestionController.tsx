@@ -2,16 +2,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { Dispatch, bindActionCreators } from "redux";
-import PageController from '../../Core/Controllers/PageController';
-import { RootState } from '../../Core/State/Types';
-import { wrappable } from '../../Utils/ComponentUtils';
-import DefaultQuestionForm from './DefaultQuestionForm';
+import PageController from 'wdk-client/Core/Controllers/PageController';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import DefaultQuestionForm from 'wdk-client/Views/Question/DefaultQuestionForm';
 import {
   ActiveQuestionUpdatedAction,
   ParamValueUpdatedAction,
   GroupVisibilityChangedAction
-} from "./QuestionActionCreators";
-import { QuestionState } from './QuestionStoreModule';
+} from 'wdk-client/Views/Question/QuestionActionCreators';
+import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
 
 const ActionCreators = {
   updateParamValue: ParamValueUpdatedAction.create,

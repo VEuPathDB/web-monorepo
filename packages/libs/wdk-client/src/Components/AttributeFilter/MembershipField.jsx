@@ -1,14 +1,14 @@
 import { bindAll, debounce, difference, escapeRegExp, get, has, isFunction, memoize } from 'lodash';
 import React from 'react';
-import Toggle from '../../Components/Icon/Toggle';
-import { MesaController as Mesa } from '../../Components/Mesa';
-import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
-import ErrorBoundary from '../../Core/Controllers/ErrorBoundary';
-import { safeHtml } from '../../Utils/ComponentUtils';
-import { findAncestorNode } from '../../Utils/DomUtils';
-import FilterLegend from './FilterLegend';
-import StackedBar from './StackedBar';
-import UnknownCount from './UnknownCount';
+import Toggle from 'wdk-client/Components/Icon/Toggle';
+import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
+import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { findAncestorNode } from 'wdk-client/Utils/DomUtils';
+import FilterLegend from 'wdk-client/Components/AttributeFilter/FilterLegend';
+import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
+import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
 
 
 const UNKNOWN_ELEMENT = <em>Not specified</em>;

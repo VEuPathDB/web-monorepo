@@ -4,19 +4,19 @@ import stringify from 'json-stable-stringify';
 import { identity, isString, memoize } from 'lodash';
 import { createElement } from 'react';
 import * as ReactDOM from 'react-dom';
-import * as Components from '../Components';
-import { ClientPluginRegistryEntry, mergePluginsByType } from '../Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
-import { createMockHistory } from '../Utils/MockHistory';
-import { getTransitioner } from '../Utils/PageTransitioner';
-import WdkService from '../Utils/WdkService';
-import { updateLocation } from './ActionCreators/RouterActionCreators';
-import { loadAllStaticData } from './ActionCreators/StaticDataActionCreators';
-import * as Controllers from './Controllers';
-import Root from './Root';
-import wdkRoutes from './routes';
+import * as Components from 'wdk-client/Components';
+import { ClientPluginRegistryEntry, mergePluginsByType } from 'wdk-client/Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
+import { createMockHistory } from 'wdk-client/Utils/MockHistory';
+import { getTransitioner } from 'wdk-client/Utils/PageTransitioner';
+import WdkService from 'wdk-client/Utils/WdkService';
+import { updateLocation } from 'wdk-client/Core/ActionCreators/RouterActionCreators';
+import { loadAllStaticData } from 'wdk-client/Core/ActionCreators/StaticDataActionCreators';
+import * as Controllers from 'wdk-client/Core/Controllers';
+import Root from 'wdk-client/Core/Root';
+import wdkRoutes from 'wdk-client/Core/routes';
 
-import storeModules from './State/StoreModules';
-import { createWdkStore } from './Store';
+import storeModules from 'wdk-client/Core/State/StoreModules';
+import { createWdkStore } from 'wdk-client/Core/Store';
 
 
 /**

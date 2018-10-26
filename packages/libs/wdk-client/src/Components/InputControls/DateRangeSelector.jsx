@@ -1,8 +1,8 @@
 import React from 'react';
 
-import './wdk-DateRangeSelector.scss';
-import * as DateUtils from '../../Utils/DateUtils';
-import DateSelector from './DateSelector';
+import 'wdk-client/Components/InputControls/wdk-DateRangeSelector.scss';
+import * as DateUtils from 'wdk-client/Utils/DateUtils';
+import DateSelector from 'wdk-client/Components/InputControls/DateSelector';
 
 class DateRangeSelector extends React.Component {
   constructor (props) {

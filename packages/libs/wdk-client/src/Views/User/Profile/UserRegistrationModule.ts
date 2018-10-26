@@ -1,6 +1,6 @@
-import { reduce as reduceProfile, State as UserProfileState, Action, UserProfileFormData } from './UserProfileReducer';
-import { ClearRegistrationFormAction } from '../UserActionCreators';
-import { UserPreferences } from '../../../Utils/WdkUser';
+import { reduce as reduceProfile, State as UserProfileState, Action, UserProfileFormData } from 'wdk-client/Views/User/Profile/UserProfileReducer';
+import { ClearRegistrationFormAction } from 'wdk-client/Views/User/UserActionCreators';
+import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 
 export const key = 'userRegistration';
 
