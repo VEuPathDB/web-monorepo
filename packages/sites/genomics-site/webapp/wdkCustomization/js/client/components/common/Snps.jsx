@@ -36,7 +36,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
         <input name="sid" value={sequenceId} type="hidden"/>
 
 	<div style={headingStyle}>Genomic region:</div>
-	<label>Default positions are the start and end of the gene. These can be changed +/- 10,000.</label><br/>
+	<label>Default positions are the start and end of the gene (or 29bp upstream and 30bp downstream of a SNP). These can be changed +/- 10,000.</label><br/>
         <label>Start position: <input name="start" defaultValue={start} type="number" min={start-10000} max={parseFloat(start)+10000}/>&nbsp;&nbsp;
         End position: <input name="end" defaultValue={end} type="number" min={end-10000} max={parseFloat(end)+10000}/></label>
 
