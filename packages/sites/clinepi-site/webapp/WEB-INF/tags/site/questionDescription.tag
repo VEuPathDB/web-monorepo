@@ -1,1 +1,1 @@
-<p align="center">(Please wait ...)</p>
+<div style="height: 1rem"><!-- this space left intentionally blank --></div>

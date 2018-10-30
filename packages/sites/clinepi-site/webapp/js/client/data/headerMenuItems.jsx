@@ -1,7 +1,10 @@
-import { StudyMenuItem } from 'Client/App/Studies';
-import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'Client/App/Utils/Utils';
+import { StudyMenuItem } from 'ebrc-client/App/Studies';
+import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
+import { getStaticSiteData } from '../selectors/siteData';
 
-export default function headerMenuItems ({ siteConfig, siteData }) {
+export default function headerMenuItems (state) {
+  const { siteConfig } = state.globalData;
+  const siteData = getStaticSiteData(state);
   const { studies } = siteData;
   const { webAppUrl, facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
@@ -12,7 +15,9 @@ export default function headerMenuItems ({ siteConfig, siteData }) {
       {
         id: 'search',
         text: 'Search a Study',
-        children: studies.map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
+        children: studies.entities != null
+          ? studies.entities.map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
+          : [{ text: <i style={{ fontSize: '13em' }} className="fa fa-align-justify"/> }]
       },
       {
         id: 'workspace',

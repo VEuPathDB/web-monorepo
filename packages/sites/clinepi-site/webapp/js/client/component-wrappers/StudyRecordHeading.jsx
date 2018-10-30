@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Seq } from 'wdk-client/IterableUtils';
 import { makeClassNameHelper } from 'wdk-client/ComponentUtils';
-import StudySearches from 'Client/App/Studies/StudySearches';
+import StudySearches from 'ebrc-client/App/Studies/StudySearches';
 
 const cx = makeClassNameHelper('ce-StudyRecordHeadingSearchLinks');
 
