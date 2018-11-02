@@ -12,10 +12,12 @@ import * as userDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/UserDat
 import * as userDatasetList from 'wdk-client/Views/UserDatasets/List/UserDatasetListStoreModule';
 import * as userProfile from 'wdk-client/Views/User/Profile/UserProfileReducer';
 import * as userRegistration from 'wdk-client/Views/User/Profile/UserRegistrationModule';
+import * as blastSummaryView from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewStoreModule';
 
 export default {
   answerView,
   attributeAnalysis,
+  blastSummaryView,
   downloadForm,
   favorites,
   globalData,

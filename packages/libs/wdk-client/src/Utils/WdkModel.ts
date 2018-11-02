@@ -364,6 +364,14 @@ export type Favorite = {
   group: string;
 }
 
+export interface BlastSummaryViewReport extends Answer {
+  blastMeta: {
+    blastHeader: string;
+    blastMiddle: string;
+    blastFooter: string;
+  }
+}
+
 export function getSingleRecordQuestionName(recordClassName: string): string {
   return `__${recordClassName}__singleRecordQuestion__`;
 }
