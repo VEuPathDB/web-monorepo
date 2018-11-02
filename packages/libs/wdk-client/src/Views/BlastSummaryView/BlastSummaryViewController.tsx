@@ -46,11 +46,11 @@ class BlastSummaryViewController extends PageController< Props > {
       <div>
       <pre>{safeHtml(this.props.blastSummaryData.blastMeta.blastHeader)}</pre>
 
-      {this.props.blastSummaryData.records.map((record => <pre>{renderAttributeValue(record.attributes.summary)}</pre>))};
+      {this.props.blastSummaryData.records.map((record => <pre>{renderAttributeValue(record.attributes.summary)}</pre>))}
 
       <pre>{safeHtml(this.props.blastSummaryData.blastMeta.blastMiddle)}</pre>
 
-      {this.props.blastSummaryData.records.map((record => <pre>{renderAttributeValue(record.attributes.alignment)}</pre>))};
+      {this.props.blastSummaryData.records.map((record => <pre>{renderAttributeValue(record.attributes.alignment)}</pre>))}
 
       <pre>{safeHtml(this.props.blastSummaryData.blastMeta.blastFooter)}</pre>
       </div>
