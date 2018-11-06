@@ -3,7 +3,7 @@ import { CompletedAction, completedType, createCompletedAction } from 'wdk-clien
 import { ErrorAction, errorType, createErrorAction } from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
 
 import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
-import { getStepBundlePromise } from 'wdk-client/Utils/StepUtils';
+import { getStepBundlePromise } from 'wdk-client/Utils/stepUtils';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { GenomeSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
