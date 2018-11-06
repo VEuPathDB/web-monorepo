@@ -1,4 +1,4 @@
-export const loadingType = 'blastSummaryView/loading';
+export const loadingType = 'isolatesSummaryView/loading';
 
 export type LoadingAction = {
     type: typeof loadingType,
@@ -16,29 +16,29 @@ export function createLoadingAction(stepId: number): LoadingAction {
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-import { BlastSummaryViewReport } from "wdk-client/Utils/WdkModel";
+import { IsolatesSummaryViewReport } from "wdk-client/Utils/WdkModel";
 
-export const completedType = 'blastSummaryView/completed';
+export const completedType = 'isolatesSummaryView/completed';
 
 export type CompletedAction = {
     type: typeof completedType,
     payload: {
-        blastInfo: BlastSummaryViewReport
+        isolatesSummaryViewReport: IsolatesSummaryViewReport
     }
 };
 
-export function createCompletedAction(blastInfo: BlastSummaryViewReport): CompletedAction {
+export function createCompletedAction(isolatesSummaryViewReport: IsolatesSummaryViewReport): CompletedAction {
     return {
         type: completedType,
         payload: {
-            blastInfo
+            isolatesSummaryViewReport
         }
     }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export const errorType = 'blastSummaryView/error';
+export const errorType = 'isolatesSummaryView/error';
 
 export type ErrorAction = {
     type: typeof errorType,

@@ -372,6 +372,55 @@ export interface BlastSummaryViewReport extends Answer {
   }
 }
 
+export interface IsolatesSummaryViewReport {
+  maxLength: number;
+  isolates: IsolateForSummaryView[];
+}
+
+export interface IsolateForSummaryView {
+  country: string;
+  gaz: string;
+  type: string;
+  total: number;
+  lat: number;
+  lng: number;
+}
+
+export interface GenomeSummaryViewReport {
+  isDetail: boolean;
+  maxLength: number;
+  sequences: GenomeViewSequence[];
+}
+
+export interface GenomeViewSequence {
+  sourceId: string;
+  regions: GenomeViewRegion[];
+  features: GenomeViewFeature[];
+  length: number;
+  percentLength: number;
+  chromosome: string;
+  organism: string;
+}
+
+export interface GenomeViewRegion {
+  forward: boolean,
+  percentStart: number,
+  percentLength: number,
+  features: GenomeViewFeature[];
+}
+
+export interface GenomeViewFeature {
+  sourceId: string;
+  forward: boolean;
+  sequenceId: string;
+  start: number;
+  end: number;
+  percentStart: number;
+  percentLength: number;
+  context: string;
+  description: string;
+}
+
 export function getSingleRecordQuestionName(recordClassName: string): string {
   return `__${recordClassName}__singleRecordQuestion__`;
 }

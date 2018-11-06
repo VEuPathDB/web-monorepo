@@ -5,10 +5,9 @@ import PageController from 'wdk-client/Core/Controllers/PageController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
-import {State} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewStoreModule';
+import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
+import {State} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
-
 
 const actionCreators = {
   createLoadingAction,
@@ -21,10 +20,10 @@ type DispatchProps = typeof actionCreators;
 
 type Props = StateProps & DispatchProps;
 
-class BlastSummaryViewController extends PageController< Props > {
+class IsolatesSummaryViewController extends PageController< Props > {
 
   isRenderDataLoaded() {
-    return this.props.blastSummaryData != null;
+    return this.props.isolatesSummaryData != null;
   }
 
   getTitle() {
@@ -32,7 +31,7 @@ class BlastSummaryViewController extends PageController< Props > {
   }
 
   loadData () {
-    if (this.props.blastSummaryData == null) {
+    if (this.props.isolatesSummaryData == null) {
       this.props.createLoadingAction(this.props.match.params.stepId);
     }
   }
@@ -46,22 +45,11 @@ class BlastSummaryViewController extends PageController< Props > {
   }
 
 
-
   renderView() {
-    if (this.props.blastSummaryData == null) return <Loading/>;
+    if (this.props.isolatesSummaryData == null) return <Loading/>;
 
     return (
-      <div>
-      <pre>{safeHtml(this.props.blastSummaryData.blastMeta.blastHeader)}</pre>
-
-      {this.props.blastSummaryData.records.map((record => <pre>{renderAttributeValue(record.attributes.summary)}</pre>))}
-
-      <pre>{safeHtml(this.props.blastSummaryData.blastMeta.blastMiddle)}</pre>
-
-      {this.props.blastSummaryData.records.map((record => <pre>{renderAttributeValue(record.attributes.alignment)}</pre>))}
-
-      <pre>{safeHtml(this.props.blastSummaryData.blastMeta.blastFooter)}</pre>
-      </div>
+      <div>FIX ME</div>   
        
     );
   }
@@ -72,5 +60,5 @@ const mapStateToProps = (state: RootState) => state.blastSummaryView;
 export default connect(
   mapStateToProps,
   actionCreators
-) (wrappable(BlastSummaryViewController));
+) (wrappable(IsolatesSummaryViewController));
 
