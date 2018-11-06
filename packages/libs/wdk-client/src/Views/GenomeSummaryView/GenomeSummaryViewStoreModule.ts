@@ -45,10 +45,10 @@ function isLoadingAction(action: Action): action is LoadingAction {
 
 function getFormatFromRecordClassName(recordClassName: string) : string {
     switch (recordClassName) {
-    case "GeneRecordClass":
+    case "TranscriptRecordClass":
         return "geneGenomeSummaryView";
-    case "GenomicSegmentRecordClass":
-        return "spanGenomeSummaryView";
+    case "DynSpanRecordClass":
+        return "dynamicSpanSummaryView";
     default:
         throw "This step cannot use this summary view, it is the wrong record class";
     }
