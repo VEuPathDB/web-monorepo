@@ -15,7 +15,7 @@ import * as Controllers from 'wdk-client/Core/Controllers';
 import Root from 'wdk-client/Core/Root';
 import wdkRoutes from 'wdk-client/Core/routes';
 
-import storeModules from 'wdk-client/Core/State/StoreModules';
+import storeModules from 'wdk-client/StoreModules';
 import { createWdkStore } from 'wdk-client/Core/Store';
 
 
