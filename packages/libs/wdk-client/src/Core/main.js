@@ -9,8 +9,8 @@ import { ClientPluginRegistryEntry, mergePluginsByType } from 'wdk-client/Utils/
 import { createMockHistory } from 'wdk-client/Utils/MockHistory';
 import { getTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Utils/WdkService';
-import { updateLocation } from 'wdk-client/Core/ActionCreators/RouterActionCreators';
-import { loadAllStaticData } from 'wdk-client/Core/ActionCreators/StaticDataActionCreators';
+import { updateLocation } from 'wdk-client/Actions/RouterActions';
+import { loadAllStaticData } from 'wdk-client/Actions/StaticDataActions';
 import * as Controllers from 'wdk-client/Core/Controllers';
 import Root from 'wdk-client/Core/Root';
 import wdkRoutes from 'wdk-client/Core/routes';

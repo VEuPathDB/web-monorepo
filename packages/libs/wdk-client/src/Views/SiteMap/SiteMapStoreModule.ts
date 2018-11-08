@@ -1,20 +1,15 @@
+import { Action } from 'wdk-client/Actions';
 import {
-  LoadingAction,
-  InitializeAction,
-  ErrorAction,
-  ExpansionAction,
-  SearchAction,
-  SiteMapOntology
-} from 'wdk-client/Views/SiteMap/SiteMapActionCreators';
+  SiteMapOntology,
+  LOADING,
+  INITIALIZE,
+  UPDATE_EXPANSION,
+  SET_SEARCH_TEXT,
+  SITEMAP_ERROR
+} from 'wdk-client/Actions/SiteMapActions';
 
 export const key = 'siteMap';
 
-// define action type to be any our supported actions
-type Action = LoadingAction
-            | InitializeAction
-            | ErrorAction
-            | ExpansionAction
-            | SearchAction;
 
 export type State = {
   tree?: SiteMapOntology,
@@ -32,19 +27,19 @@ const initialState = {
 
 export function reduce(state: State = initialState, action: Action): State {
   switch(action.type) {
-    case 'sitemap/loading':
+    case LOADING:
       return setSiteMapLoading(state, true);
 
-    case 'sitemap/initialize':
+    case INITIALIZE:
       return initializeSiteMap(state, action.payload.tree);
 
-    case 'sitemap/updateExpanded':
+    case UPDATE_EXPANSION:
       return updateExpanded(state, action.payload.expandedList);
 
-    case 'sitemap/setSearchText':
+    case SET_SEARCH_TEXT:
       return setSearchText(state, action.payload.searchText);
 
-    case 'sitemap/error':
+    case SITEMAP_ERROR:
       return setSiteMapLoading(state, false);
 
     default:
@@ -56,14 +51,14 @@ function setSiteMapLoading(state: State, isLoading: boolean) {
   return { ...state, isLoading };
 }
 
-function initializeSiteMap(state: State, tree: InitializeAction['payload']['tree']) {
+function initializeSiteMap(state: State, tree: SiteMapOntology) {
   return { ...state, tree, isLoading: false };
 }
 
-function setSearchText(state: State, searchText: SearchAction['payload']['searchText']) {
+function setSearchText(state: State, searchText: string) {
   return { ...state, searchText };
 }
 
-function updateExpanded(state: State, expandedList: ExpansionAction['payload']['expandedList']) {
+function updateExpanded(state: State, expandedList: string[]) {
   return { ...state, expandedList };
 }

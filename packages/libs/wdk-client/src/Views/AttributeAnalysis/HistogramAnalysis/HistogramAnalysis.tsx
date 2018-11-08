@@ -3,7 +3,7 @@ import { memoize, range, round } from 'lodash';
 import React from 'react';
 import { lazy, makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis';
-import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramActions';
+import { setBinSize, enableLogScaleXAxis, enableLogScaleYAxis } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramActions';
 import 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysis.scss';
 import { State } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramState';
 import { getReportSummary, getDefaultBinSize, isTypeInt, isTypeCategory } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysisUtils';
@@ -26,13 +26,13 @@ export default class HistogramAnalysis extends React.PureComponent<ModuleProps> 
     })))
 
   setBinSize = (binSize: number) =>
-    this.props.dispatch(SetBinSize.create(binSize));
+    this.props.dispatch(setBinSize(binSize));
 
   setLogScaleXAxis = (scale: boolean) =>
-    this.props.dispatch(SetLogScaleXAxis.create(scale));
+    this.props.dispatch(enableLogScaleXAxis(scale));
 
   setLogScaleYAxis = (scale: boolean) =>
-    this.props.dispatch(SetLogScaleYAxis.create(scale));
+    this.props.dispatch(enableLogScaleYAxis(scale));
 
   render() {
     if (this.props.state.data.status !== 'success') return null;

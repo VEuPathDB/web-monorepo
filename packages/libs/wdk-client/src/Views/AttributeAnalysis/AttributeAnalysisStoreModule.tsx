@@ -1,11 +1,11 @@
 import { filter, map, withLatestFrom } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { Action } from 'wdk-client/Actions';
 import { CompositeClientPlugin, PluginContext } from 'wdk-client/Utils/ClientPlugin';
 
 import * as Data from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
-import { ScopedAnalysisAction } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { ScopedAction, SCOPED_ACTION } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
 
@@ -19,8 +19,12 @@ const initialState = {
 
 export const key = 'attributeAnalysis';
 
-export function reduce(state: State = initialState, action: Action, locatePlugin: LocatePlugin) {
-  if (!ScopedAnalysisAction.test(action)) {
+function isScopedAction(action: { type: string }): action is ScopedAction {
+  return action.type === SCOPED_ACTION;
+}
+
+export function reduce(state: State = initialState, action: Action, locatePlugin: LocatePlugin): State {
+  if (!isScopedAction(action)) {
     return state;
   }
 
@@ -45,7 +49,7 @@ export function observe(action$: Observable<Action>, state$: Observable<any>, de
 
 function scopePluginObserve(observe: CompositeClientPlugin<State>['observe']) {
   return function scopedObserve(action$: Observable<Action>, state$: Observable<State>, dependencies: EpicDependencies) {
-    const scopedParentAction$ = action$.pipe(filter(ScopedAnalysisAction.test));
+    const scopedParentAction$ = action$.pipe(filter(isScopedAction));
     const contextActionPair$ = scopedParentAction$.pipe(map(action => [ action.payload.context, action.payload.action ] as [PluginContext, Action]));
     const scopedChildAction$ = observe(contextActionPair$, state$, dependencies);
     

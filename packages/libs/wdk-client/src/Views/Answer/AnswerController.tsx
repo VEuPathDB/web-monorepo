@@ -5,12 +5,12 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {isEqual} from 'lodash';
 import {
   loadAnswer,
-  updateFilter,
-  moveColumn,
-  changeAttributes,
-  sort,
+  changeFilter,
+  changeColumnPosition,
+  changeVisibleColumns,
+  changeSorting,
   Sorting
-} from 'wdk-client/Views/Answer/AnswerViewActionCreators';
+} from 'wdk-client/Actions/AnswerActions';
 import Answer from 'wdk-client/Views/Answer/Answer';
 import Loading from 'wdk-client/Components/Loading/Loading';
 import { State } from 'wdk-client/Views/Answer/AnswerViewStoreModule';
@@ -21,10 +21,10 @@ import { AttributeField, TableField } from 'wdk-client/Utils/WdkModel';
 
 const ActionCreators = {
   loadAnswer,
-  updateFilter,
-  moveColumn,
-  changeAttributes,
-  sort
+  changeFilter,
+  changeColumnPosition,
+  changeVisibleColumns,
+  changeSorting,
 };
 
 // FIXME Remove this when Answer is converted to Typescript
@@ -150,10 +150,10 @@ class AnswerController extends PageController<Props> {
     } = this.props.stateProps;
 
     const {
-      sort,
-      moveColumn,
-      changeAttributes,
-      updateFilter
+      changeSorting,
+      changeColumnPosition,
+      changeVisibleColumns,
+      changeFilter
     } = this.props.dispatchProps;
 
     if (filterAttributes.length === 0 && filterTables.length === 0) {
@@ -173,10 +173,10 @@ class AnswerController extends PageController<Props> {
         filterAttributes={filterAttributes}
         filterTables={filterTables}
         format="table"
-        onSort={sort}
-        onMoveColumn={moveColumn}
-        onChangeColumns={changeAttributes}
-        onFilter={updateFilter}
+        onSort={changeSorting}
+        onMoveColumn={changeColumnPosition}
+        onChangeColumns={changeVisibleColumns}
+        onFilter={changeFilter}
       />
     );
   }

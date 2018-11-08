@@ -7,15 +7,15 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import DefaultQuestionForm from 'wdk-client/Views/Question/DefaultQuestionForm';
 import {
-  ActiveQuestionUpdatedAction,
-  ParamValueUpdatedAction,
-  GroupVisibilityChangedAction
-} from 'wdk-client/Views/Question/QuestionActionCreators';
+  updateActiveQuestion,
+  updateParamValue,
+  changeGroupVisibility
+} from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
 
 const ActionCreators = {
-  updateParamValue: ParamValueUpdatedAction.create,
-  setGroupVisibility: GroupVisibilityChangedAction.create
+  updateParamValue,
+  setGroupVisibility: changeGroupVisibility
 }
 
 type StateProps = QuestionState;
@@ -25,7 +25,7 @@ class QuestionController extends PageController<StateProps & DispatchProps> {
 
   loadData() {
     if (this.props.questionStatus == null) {
-      this.props.dispatch(ActiveQuestionUpdatedAction.create({
+      this.props.dispatch(updateActiveQuestion({
         stepId: undefined,
         questionName: this.props.match.params.question
       }));

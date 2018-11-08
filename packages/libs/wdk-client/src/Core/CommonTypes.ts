@@ -1,7 +1,8 @@
 import { ComponentType } from 'react';
 import { RouteComponentProps } from 'react-router';
+import { Action } from 'redux';
 
-import { Action, ActionCreatorResult } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionCreatorResult } from 'wdk-client/Utils/ActionCreatorUtils';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import { CompositeClientPlugin } from 'wdk-client/Utils/ClientPlugin';
 

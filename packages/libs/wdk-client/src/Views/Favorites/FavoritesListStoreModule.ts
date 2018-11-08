@@ -1,51 +1,32 @@
+import { difference, union } from 'lodash';
 import { map, filter } from 'rxjs/operators';
 import { Favorite, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { MesaState } from 'wdk-client/Components/Mesa';
 import {
-  TableStateUpdatedAction,
-  TableSelectionUpdatedAction,
-  ListLoadingAction,
-  ListReceivedAction,
-  ListErrorReceivedAction,
-  EditCellAction,
-  ChangeCellAction,
-  CancelCellEditAction,
-  SaveCellDataAction,
-  SaveReceivedAction,
-  SaveErrorReceivedAction,
-  DeleteFavoritesAction,
-  DeleteErrorReceivedAction,
-  SearchTermAction,
-  AddErrorAction,
-  FilterByTypeAction,
-  CreateTypeGetterAction,
+  TYPE_GETTER,
+  SORT_TABLE,
+  START_FAVORITES_REQUEST,
+  END_FAVORITES_REQUEST_WITH_SUCCESS,
+  END_FAVORITES_REQUEST_WITH_ERROR,
+  UPDATE_TABLE_STATE,
+  UPDATE_TABLE_SELECTION,
+  EDIT_CELL,
+  CHANGE_CELL_VALUE,
+  CANCEL_CELL_EDIT,
+  END_SAVE_CELL_WITH_SUCCESS,
+  END_SAVE_CELL_WITH_ERROR,
+  END_DELETE_WITH_ERROR,
+  UPDATE_SEARCH_TERM,
+  FILTER_BY_TYPE,
   createTypeGetter
-} from 'wdk-client/Views/Favorites/FavoritesActionCreators';
+} from 'wdk-client/Actions/FavoritesActions';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable } from 'rxjs';
+import { Action } from 'wdk-client/Actions';
 
 export const key = 'favorites';
 
-type Action =
-  TableStateUpdatedAction
-  | TableSelectionUpdatedAction
-  | ListLoadingAction
-  | ListReceivedAction
-  | ListErrorReceivedAction
-  | EditCellAction
-  | ChangeCellAction
-  | CancelCellEditAction
-  | AddErrorAction
-  | SaveReceivedAction
-  | SaveCellDataAction
-  | SaveErrorReceivedAction
-  | DeleteFavoritesAction
-  | DeleteErrorReceivedAction
-  | SearchTermAction
-  | FilterByTypeAction
-  | CreateTypeGetterAction;
-
-export type State = Partial<{
+export interface State {
   tableState: {};
   tableSelection: number[];
   favoritesLoading: boolean;
@@ -60,7 +41,7 @@ export type State = Partial<{
   key: string;
   filterByType: string | null;
   typeGetter: (favorite: Favorite, state: State) => string;
-}>;
+};
 
 const initialState = {
   tableState: {},
@@ -79,19 +60,26 @@ const initialState = {
   typeGetter: () => 'Unknown'
 };
 
-export function reduce(state: State = initialState, action: Action) {
+export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
-    case 'favorites/create-type-getter': {
+    case TYPE_GETTER: {
       const { recordClasses } = action.payload;
       return { ...state, typeGetter: typeGetterFactory(recordClasses) };
     }
 
-    case 'favorites/list-loading': {
+    case SORT_TABLE: {
+      const { setSortDirection, setSortColumnKey } = MesaState;
+      const { sortDirection, sortKey } = action.payload;
+      const tableState = setSortDirection(setSortColumnKey(state.tableState, sortKey), sortDirection);
+      return { ...state, tableState };
+    }
+
+    case START_FAVORITES_REQUEST: {
       const favoritesLoading = true;
       return { ...state, favoritesLoading };
     }
 
-    case 'favorites/list-received': {
+    case END_FAVORITES_REQUEST_WITH_SUCCESS: {
       const favoritesLoading = false;
       const { tableState } = action.payload;
       const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, state);
@@ -99,21 +87,22 @@ export function reduce(state: State = initialState, action: Action) {
       return { ...state, tableState: updatedTableState, favoritesLoading };
     }
 
-    case 'favorites/table-state-updated': {
+    case UPDATE_TABLE_STATE: {
       const { tableState } = action.payload;
       const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, state);
       const updatedTableState = MesaState.filterRows(tableState, predicate);
       return { ...state, tableState: updatedTableState };
     }
 
-    case 'favorites/table-selection-updated': {
-      const { tableSelection } = action.payload;
+    case UPDATE_TABLE_SELECTION: {
+      const { selectIds = [], deselectIds = [] } = action.payload;
+      const tableSelection = difference(union(state.tableSelection, selectIds), deselectIds);
       return { ...state, tableSelection };
     }
 
     // If the user visits this page without being logged in, the 403 status code is returned.  The user needs
     // something more meaningful than a generic error message in that case.
-    case 'favorites/list-error': {
+    case END_FAVORITES_REQUEST_WITH_ERROR: {
       const { error } = action.payload;
       if (error.status === 403) {
         return { ...state, favoritesLoading: false };
@@ -126,7 +115,7 @@ export function reduce(state: State = initialState, action: Action) {
     // if a user clicks edit links consecutively, only the cell for which the last edit link was clicked gains focus.
     // The coordinates of that cell are saved to the editCoordinates variable.  The variable, editValue holds the edited
     // value.  The existingFavorite variable holds the information for the favorite being edited.
-    case 'favorites/edit-cell': {
+    case EDIT_CELL: {
       const { key, value, rowData, coordinates } = action.payload;
       const editValue = value;
       const editCoordinates = coordinates;
@@ -135,18 +124,18 @@ export function reduce(state: State = initialState, action: Action) {
     }
 
     // The variable holding the edited value is updated upon changes.
-    case 'favorites/change-cell': {
+    case CHANGE_CELL_VALUE: {
       const editValue = action.payload;
       return { ...state, editValue };
     }
 
     // When the edit is cancelled the variable identifying the cell to be edited
-    case 'favorites/cancel-cell-edit': {
+    case CANCEL_CELL_EDIT: {
       const editCoordinates = {};
       return { ...state, editCoordinates };
     }
 
-    case 'favorites/save-received': {
+    case END_SAVE_CELL_WITH_SUCCESS: {
       const editCoordinates = {};
       const { tableState } = action.payload;
       const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, state);
@@ -154,17 +143,17 @@ export function reduce(state: State = initialState, action: Action) {
       return { ...state, tableState: updatedTableState, editCoordinates };
     }
 
-    case 'favorites/save-error': {
+    case END_SAVE_CELL_WITH_ERROR: {
       const saveError = action.payload.error;
       return { ...state, saveError };
     }
 
-    case 'favorites/delete-error': {
+    case END_DELETE_WITH_ERROR: {
       const deleteError = action.payload.error;
       return { ...state, deleteError };
     }
 
-    case 'favorites/search-term': {
+    case UPDATE_SEARCH_TERM: {
       const editCoordinates = {};
       const { tableState } = state;
       const searchText = action.payload;
@@ -174,7 +163,7 @@ export function reduce(state: State = initialState, action: Action) {
       return { ...stateWithTerm, editCoordinates, tableState: updatedTableState };
     }
 
-    case 'favorites/filter-by-type': {
+    case FILTER_BY_TYPE: {
       const editCoordinates = {};
       const { tableState } = state;
       const filterByType = action.payload;
@@ -190,7 +179,7 @@ export function reduce(state: State = initialState, action: Action) {
 }
 
 export function observe(action$: Observable<any>, state$: Observable<any>, dependencies: EpicDependencies) {
-  return action$.pipe(    
+  return action$.pipe(
     filter(({ type }) => type === 'static/recordClasses-loaded'),
     map(({ payload: { recordClasses } }) => createTypeGetter(recordClasses))
   );

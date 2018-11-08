@@ -1,7 +1,19 @@
-import { matchAction } from 'wdk-client/Utils/ReducerUtils';
-
 import { makeReduce, observe, State as BaseState } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
-import { SetBinSize, SetLogScaleXAxis, SetLogScaleYAxis } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramActions';
+import {
+  SetBinSizeAction,
+  EnableLogScaleXAxisAction,
+  EnableLogScaleYAxisAction,
+  SET_BIN_SIZE,
+  ENABLE_LOG_SCALE_X_AXIS,
+  ENABLE_LOG_SCALE_Y_AXIS
+} from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramActions';
+import { EndAttributeReportRequestSuccessAction } from 'wdk-client/Actions/AttributeAnalysisActions';
+
+type HistogramAction =
+  | EndAttributeReportRequestSuccessAction
+  | EnableLogScaleXAxisAction
+  | EnableLogScaleYAxisAction
+  | SetBinSizeAction
 
 type HistogramState = {
   binSize?: number;
@@ -16,13 +28,23 @@ const defaultState: HistogramState = {
   logYAxis: false
 }
 
-const reduceHistogram = matchAction(defaultState,
-  [SetBinSize, (state, binSize): HistogramState => ({ ...state, binSize })],
-  [SetLogScaleXAxis, (state, logXAxis): HistogramState => ({ ...state, logXAxis, binSize: undefined })],
-  [SetLogScaleYAxis, (state, logYAxis): HistogramState => ({ ...state, logYAxis })],
-)
+function reduceHistogram(state: HistogramState = defaultState, action: HistogramAction): HistogramState {
+  switch (action.type) {
+    case SET_BIN_SIZE:
+      return { ...state, binSize: action.payload.size };
+    case ENABLE_LOG_SCALE_X_AXIS:
+      return { ...state, logXAxis: action.payload.enable, binSize: undefined };
+    case ENABLE_LOG_SCALE_Y_AXIS:
+      return { ...state, logYAxis: action.payload.enable };
+    default:
+      return state;
+  }
+}
 
-export const reduce =
-  makeReduce<'attrValue' | 'recordCount', HistogramState>('attrValue', reduceHistogram);
+export const reduce = makeReduce<
+  'attrValue' | 'recordCount',
+  HistogramState,
+  HistogramAction
+>('attrValue', reduceHistogram);
 
 export { observe }

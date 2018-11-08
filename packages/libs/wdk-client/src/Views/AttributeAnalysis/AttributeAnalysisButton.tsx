@@ -1,15 +1,15 @@
 import 'wdk-client/Views/AttributeAnalysis/AttributeAnalysis.scss';
 
 import React from 'react';
+import { Action } from 'redux';
 
 import Loading from 'wdk-client/Components/Loading/Loading';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import Error from 'wdk-client/Components/PageStatus/Error';
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Reporter } from 'wdk-client/Utils/WdkModel';
 
-import { AttributeReportCancelled, AttributeReportRequested } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import { startAttributeReportRequest, cancelAttributeReportRequest } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
 
 const cx = makeClassNameHelper('AttributeAnalysis');
@@ -25,14 +25,14 @@ type Props = {
 export default class AttributeAnalysisButton extends React.Component<Props> {
 
   loadReport = () => {
-    this.props.dispatch(AttributeReportRequested.create({
-      reporterName: this.props.reporter.name,
-      stepId: this.props.stepId,
-    }));
+    this.props.dispatch(startAttributeReportRequest(
+      this.props.stepId,
+      this.props.reporter.name,
+    ));
   }
 
   unloadReport = () => {
-    this.props.dispatch(AttributeReportCancelled.create());
+    this.props.dispatch(cancelAttributeReportRequest());
   }
 
   render() {

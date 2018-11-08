@@ -1,46 +1,31 @@
 import { difference, union } from 'lodash';
 
-import {
-  BasketStatusErrorAction,
-  BasketStatusLoadingAction,
-  BasketStatusReceivedAction,
-  FavoritesStatusErrorAction,
-  FavoritesStatusLoadingAction,
-  FavoritesStatusReceivedAction,
-} from 'wdk-client/Views/User/UserActionCreators';
 import { CategoryTreeNode, getId, getTargetType } from 'wdk-client/Utils/CategoryUtils';
 import { filterNodes } from 'wdk-client/Utils/TreeUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { Action } from 'wdk-client/Actions';
 import {
-  AllFieldVisibilityAction,
-  CategoryExpansionAction,
-  NavigationQueryAction,
-  NavigationVisibilityAction,
-  RecordErrorAction,
-  RecordLoadingAction,
-  RecordReceivedAction,
-  RecordUpdatedAction,
-  SectionVisibilityAction,
-} from 'wdk-client/Views/Records/RecordViewActionCreators';
+  RECORD_LOADING,
+  RECORD_RECEIVED,
+  RECORD_UPDATE,
+  RECORD_ERROR,
+  SECTION_VISIBILITY,
+  ALL_FIELD_VISIBILITY,
+  NAVIGATION_QUERY,
+  NAVIGATION_VISIBILITY,
+  CATEGORY_EXPANSION
+} from 'wdk-client/Actions/RecordActions';
+import {
+  BASKET_STATUS_LOADING,
+  BASKET_STATUS_RECEIVED,
+  BASKET_STATUS_ERROR,
+  FAVORITES_STATUS_LOADING,
+  FAVORITES_STATUS_RECEIVED,
+  FAVORITES_STATUS_ERROR
+} from 'wdk-client/Actions/UserActions';
 
 export const key = 'record';
-
-export type Action = NavigationQueryAction
-            | NavigationVisibilityAction
-            | RecordErrorAction
-            | RecordLoadingAction
-            | RecordUpdatedAction
-            | RecordReceivedAction
-            | SectionVisibilityAction
-            | CategoryExpansionAction
-            | AllFieldVisibilityAction
-            | BasketStatusLoadingAction
-            | BasketStatusReceivedAction
-            | BasketStatusErrorAction
-            | FavoritesStatusLoadingAction
-            | FavoritesStatusReceivedAction
-            | FavoritesStatusErrorAction
 
 export type State = {
   isLoading: boolean;
@@ -69,7 +54,7 @@ export type State = {
 export function reduce(state: State = {} as State, action: Action): State {
   switch (action.type) {
 
-    case 'record-view/active-record-loading':
+    case RECORD_LOADING:
       return {
         ...state,
         isLoading: true,
@@ -77,7 +62,7 @@ export function reduce(state: State = {} as State, action: Action): State {
         requestId: action.id
       };
 
-    case 'record-view/active-record-received': {
+    case RECORD_RECEIVED: {
       if (action.id !== state.requestId) return state;
       let { record, recordClass, categoryTree } = action.payload;
       return {
@@ -91,13 +76,13 @@ export function reduce(state: State = {} as State, action: Action): State {
       };
     }
 
-    case 'record-view/active-record-updated': {
+    case RECORD_UPDATE: {
       if (action.id !== state.requestId) return state;
       let { record } = action.payload;
       return { ...state, record };
     }
 
-    case 'record-view/error-received':
+    case RECORD_ERROR:
       if (action.id !== state.requestId) return state;
       return {
         ...state,
@@ -105,7 +90,7 @@ export function reduce(state: State = {} as State, action: Action): State {
         error: action.payload.error
       };
 
-    case 'record-view/section-visibility-changed': {
+    case SECTION_VISIBILITY: {
       let collapsedSections = updateList(
         action.payload.name,
         !action.payload.isVisible,
@@ -118,7 +103,7 @@ export function reduce(state: State = {} as State, action: Action): State {
      * Update visibility of all record fields (tables and attributes).
      * Category section collapsed state will be preserved.
      */
-    case 'record-view/all-field-visibility-changed': {
+    case ALL_FIELD_VISIBILITY: {
       return {
         ...state,
         collapsedSections: action.payload.isVisible
@@ -127,27 +112,27 @@ export function reduce(state: State = {} as State, action: Action): State {
       };
     }
 
-    case 'record-view/navigation-query-changed': {
+    case NAVIGATION_QUERY: {
       return {
         ...state,
         navigationQuery: action.payload.query
       }
     }
 
-    case 'record-view/navigation-visibility-changed': {
+    case NAVIGATION_VISIBILITY: {
       return {
         ...state,
         navigationVisible: action.payload.isVisible
       }
     }
 
-    case 'record-view/navigation-category-expansion-changed':
+    case CATEGORY_EXPANSION:
       return {
         ...state,
         navigationCategoriesExpanded: action.payload.expandedCategories
       }
 
-    case 'user/basket-status-loading':
+    case BASKET_STATUS_LOADING:
       return action.payload.record.id === state.record.id
         ? {
           ...state,
@@ -155,7 +140,7 @@ export function reduce(state: State = {} as State, action: Action): State {
         }
         : state;
 
-    case 'user/basket-status-received':
+    case BASKET_STATUS_RECEIVED:
       return action.payload.record.id === state.record.id
         ? {
           ...state,
@@ -164,7 +149,7 @@ export function reduce(state: State = {} as State, action: Action): State {
         }
         : state;
 
-    case 'user/basket-status-error':
+    case BASKET_STATUS_ERROR:
       return action.payload.record.id === state.record.id
         ? {
           ...state,
@@ -173,7 +158,7 @@ export function reduce(state: State = {} as State, action: Action): State {
         }
         : state;
 
-    case 'user/favorites-status-loading':
+    case FAVORITES_STATUS_LOADING:
       return action.payload.record.id === state.record.id
         ? {
           ...state,
@@ -181,7 +166,7 @@ export function reduce(state: State = {} as State, action: Action): State {
         }
         : state;
 
-    case 'user/favorites-status-received':
+    case FAVORITES_STATUS_RECEIVED:
       return action.payload.record.id === state.record.id
         ? {
           ...state,
@@ -190,7 +175,7 @@ export function reduce(state: State = {} as State, action: Action): State {
         }
         : state;
 
-    case 'user/favorites-status-error':
+    case FAVORITES_STATUS_ERROR:
       return action.payload.record.id === state.record.id
         ? {
           ...state,

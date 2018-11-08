@@ -9,7 +9,6 @@ import LoginFormController from 'wdk-client/Views/User/LoginForm/LoginFormContro
 
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
 
 type Props = {
   rootUrl: string,
@@ -17,7 +16,7 @@ type Props = {
   onLocationChange: (location: Location) => void;
   history: History;
   locatePlugin: LocatePlugin;
-  store: Store<any, Action>;
+  store: Store;
 };
 
 

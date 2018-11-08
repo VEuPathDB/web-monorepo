@@ -7,12 +7,18 @@ import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import ParameterComponent from 'wdk-client/Views/Question/ParameterComponent';
 import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
-import { GroupVisibilityChangedAction, ParamValueUpdatedAction, QuestionSubmitted, QuestionCustomNameUpdated, QuestionWeightUpdated } from 'wdk-client/Views/Question/QuestionActionCreators';
+import {
+  changeGroupVisibility,
+  updateParamValue,
+  submitQuestion,
+  updateCustomQuestionName,
+  updateQuestionWeight
+} from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 
 type EventHandlers = {
-  setGroupVisibility: typeof GroupVisibilityChangedAction.create,
-  updateParamValue: typeof ParamValueUpdatedAction.create
+  setGroupVisibility: typeof changeGroupVisibility,
+  updateParamValue: typeof updateParamValue
 }
 
 type Props = {
@@ -29,17 +35,17 @@ export default class DefaultQuestionForm extends React.Component<Props> {
   handleSubmit = (e: React.FormEvent) => {
     const { dispatchAction, state: { question } } = this.props;
     e.preventDefault();
-    dispatchAction(QuestionSubmitted.create({ questionName: question.urlSegment }));
+    dispatchAction(submitQuestion({ questionName: question.urlSegment }));
   }
 
   handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { dispatchAction, state: { question } } = this.props;
-    dispatchAction(QuestionCustomNameUpdated.create({ questionName: question.urlSegment, customName: event.target.value }));
+    dispatchAction(updateCustomQuestionName({ questionName: question.urlSegment, customName: event.target.value }));
   }
 
   handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { dispatchAction, state: { question } } = this.props;
-    dispatchAction(QuestionWeightUpdated.create({ questionName: question.urlSegment, weight: event.target.value }));
+    dispatchAction(updateQuestionWeight({ questionName: question.urlSegment, weight: event.target.value }));
   }
 
   render() {

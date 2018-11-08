@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import 'wdk-client/Views/UserDatasets/UserDatasets.scss';
-import { showLoginForm } from 'wdk-client/Views/User/UserActionCreators';
+import { showLoginForm } from 'wdk-client/Actions/UserActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
@@ -14,7 +14,7 @@ import {
   unshareUserDatasets,
   updateProjectFilter,
   updateUserDatasetDetail,
-} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
+} from 'wdk-client/Actions/UserDatasetsActions';
 import { quotaSize } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';

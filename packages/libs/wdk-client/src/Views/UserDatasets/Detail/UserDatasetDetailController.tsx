@@ -2,7 +2,7 @@ import { keyBy } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { showLoginForm } from 'wdk-client/Views/User/UserActionCreators';
+import { showLoginForm } from 'wdk-client/Actions/UserActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Question } from 'wdk-client/Utils/WdkModel';
@@ -16,11 +16,10 @@ import {
   shareUserDatasets,
   unshareUserDatasets,
   updateUserDatasetDetail,
-} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
+} from 'wdk-client/Actions/UserDatasetsActions';
 import { quotaSize } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 
-// import { removeUserDataset } from 'Views/UserDatasets/UserDatasetsActionCreators';
 const ActionCreators = {
   showLoginForm,
   loadUserDatasetDetail,

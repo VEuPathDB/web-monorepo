@@ -1,135 +1,458 @@
-import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/Core/ActionCreators/RouterActionCreators';
-import { Action, ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { Action } from 'redux';
+import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
 import { alert, confirm } from 'wdk-client/Utils/Platform';
-import { broadcast } from 'wdk-client/Utils/StaticDataUtils';
 import { RecordInstance } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
-import { State as PasswordStoreState } from 'wdk-client/Views/User/Password/UserPasswordChangeStoreModule';
-import { State as ProfileStoreState, UserProfileFormData } from 'wdk-client/Views/User/Profile/UserProfileReducer';
+import { UserProfileFormData } from 'wdk-client/Views/User/Profile/UserProfileReducer';
+
+export type Action =
+  | UserUpdateAction
+  | PreferenceUpdateAction
+  | PreferencesUpdateAction
+  | ProfileFormUpdateAction
+  | ProfileFormSubmissionStatusAction
+  | ClearRegistrationFormAction
+  | PasswordFormUpdateAction
+  | PasswordFormSubmissionStatusAction
+  | ResetPasswordUpdateEmailAction
+  | ResetPasswordSubmissionStatusAction
+  | ShowLoginModalAction
+  | LoginDismissedAction
+  | LoginErrorAction
+  | LoginRedirectAction
+  | LogoutRedirectAction
+  | BasketStatusLoadingAction
+  | BasketStatusReceivedAction
+  | BasketStatusErrorAction
+  | FavoritesStatusErrorAction
+  | FavoritesStatusReceivedAction
+  | FavoritesStatusLoadingAction
+
 
 // actions to update true user and preferences
+// -------------------------------------------
+
+//==============================================================================
+
+export const USER_UPDATE = 'user/user-update';
+
 export type UserUpdateAction = {
-  type: "user/user-update",
+  type: typeof USER_UPDATE;
   payload: {
     user: User;
   }
 }
+
+export function userUpdate(user: User): UserUpdateAction {
+  return {
+    type: USER_UPDATE,
+    payload: {
+      user
+    }
+  }
+}
+
+//==============================================================================
+
+export const PREFERENCE_UPDATE = 'user/preference-update';
+
 export type PreferenceUpdateAction = {
-  type: 'user/preference-update',
+  type: typeof PREFERENCE_UPDATE,
   payload: UserPreferences
 }
+
+export function preferenceUpdate(preferences: UserPreferences): PreferenceUpdateAction {
+  return {
+    type: PREFERENCE_UPDATE,
+    payload: preferences
+  }
+}
+
+//==============================================================================
+
+export const PREFERENCES_UPDATE = 'user/preferences-update';
+
 export type PreferencesUpdateAction = {
-  type: 'user/preferences-update',
+  type: typeof PREFERENCES_UPDATE,
   payload: UserPreferences
 }
-type PrefAction = PreferenceUpdateAction|PreferencesUpdateAction;
+
+export function preferencesUpdate(preferences: UserPreferences): PreferencesUpdateAction {
+  return {
+    type: PREFERENCES_UPDATE,
+    payload: preferences
+  }
+}
+
 
 // actions to manage the user profile/registration forms
+// -----------------------------------------------------
+
+//==============================================================================
+
+export const PROFILE_FORM_UPDATE = 'user/profile-form-update';
+
 export type ProfileFormUpdateAction = {
-  type: 'user/profile-form-update',
+  type: typeof PROFILE_FORM_UPDATE,
   payload: {
     user: User
   }
 }
+
+export function profileFormUpdate(user: User): ProfileFormUpdateAction {
+  return {
+    type: PROFILE_FORM_UPDATE,
+    payload: {
+      user
+    }
+  }
+}
+
+//==============================================================================
+
+export const PROFILE_FORM_SUBMISSION_STATUS = 'user/profile-form-submission-status';
+
+export type FormStatus = 'new' | 'modified' | 'pending' | 'success' | 'error';
+
 export type ProfileFormSubmissionStatusAction = {
-  type: 'user/profile-form-submission-status',
+  type: typeof PROFILE_FORM_SUBMISSION_STATUS,
   payload: {
-    formStatus: ProfileStoreState['formStatus'];
+    formStatus: FormStatus;
     errorMessage: string | undefined;
   }
 }
+
+export function profileFormSubmissionStatus(formStatus: FormStatus, errorMessage?: string): ProfileFormSubmissionStatusAction {
+  return {
+    type: PROFILE_FORM_SUBMISSION_STATUS,
+    payload: {
+      formStatus,
+      errorMessage
+    }
+  }
+}
+
+//==============================================================================
+
+export const CLEAR_REGISTRATION_FORM = 'user/clear-registration-form';
 
 export type ClearRegistrationFormAction = {
-  type: 'user/clear-registration-form'
+  type: typeof CLEAR_REGISTRATION_FORM;
 }
 
-// actions to manage user password form
-export type PasswordFormUpdateAction = {
-  type: 'user/password-form-update',
-  payload: PasswordStoreState['passwordForm'];
+export function clearRegistrationForm(): ClearRegistrationFormAction {
+  return {
+    type: CLEAR_REGISTRATION_FORM
+  }
 }
-export type PasswordFormSubmissionStatusAction = {
-  type: 'user/password-form-submission-status',
+
+
+// actions to manage user password form
+// ------------------------------------
+
+//==============================================================================
+
+export const PASSWORD_FORM_UPDATE = 'user/password-form-update';
+
+export type PasswordFormUpdateAction = {
+  type: typeof PASSWORD_FORM_UPDATE,
   payload: {
-    formStatus: PasswordStoreState['formStatus'];
+    oldPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  };
+}
+
+export function passwordFormUpdate(payload: { oldPassword: string, newPassword: string, confirmPassword: string }): PasswordFormUpdateAction {
+  return {
+    type: PASSWORD_FORM_UPDATE,
+    payload
+  };
+}
+
+//==============================================================================
+
+export const PASSWORD_FORM_SUBMISSION_STATUS = 'user/password-form-submission-status';
+
+export type PasswordFormSubmissionStatusAction = {
+  type: typeof PASSWORD_FORM_SUBMISSION_STATUS,
+  payload: {
+    formStatus: FormStatus;
     errorMessage: string | undefined;
   }
 }
 
+export function passwordFormSubmissionStatus(formStatus: FormStatus, errorMessage?: string): PasswordFormSubmissionStatusAction {
+  return {
+    type: PASSWORD_FORM_SUBMISSION_STATUS,
+    payload: {
+      formStatus,
+      errorMessage
+    }
+  }
+}
+
+
 // actions to manage user password reset form
+// ------------------------------------------
+
+//==============================================================================
+
+export const RESET_PASSWORD_UPDATE_EMAIL = 'user/reset-password-email-update';
+
 export type ResetPasswordUpdateEmailAction = {
-  type: 'user/reset-password-email-update',
+  type: typeof RESET_PASSWORD_UPDATE_EMAIL,
   payload: string
 }
+
+export function resetPasswordUpdateEmail(email: string): ResetPasswordUpdateEmailAction {
+  return {
+    type: RESET_PASSWORD_UPDATE_EMAIL,
+    payload: email
+  }
+}
+
+//==============================================================================
+
+export const RESET_PASSWORD_SUBMISSION_STATUS = 'user/reset-password-submission-status';
+
 export type ResetPasswordSubmissionStatusAction = {
-  type: 'user/reset-password-submission-status',
+  type: typeof RESET_PASSWORD_SUBMISSION_STATUS,
   payload : {
     success: boolean,
     message?: string
   }
 }
 
+export function resetPasswordSubmissionStatus(message?: string): ResetPasswordSubmissionStatusAction {
+  return {
+    type: RESET_PASSWORD_SUBMISSION_STATUS,
+    payload: {
+      success: message == null,
+      message
+    }
+  }
+}
+
+
 // actions related to login
+// ------------------------
+
+//==============================================================================
+
+export const SHOW_LOGIN_MODAL = 'user/show-login-modal';
+
 export type ShowLoginModalAction = {
-  type: 'user/show-login-modal',
+  type: typeof SHOW_LOGIN_MODAL,
   payload: {
     destination: string;
   }
 }
-export type LoginDismissedAction = {
-  type: 'user/login-dismissed'
+
+export function showLoginModal(destination: string): ShowLoginModalAction {
+  return {
+    type: SHOW_LOGIN_MODAL,
+    payload: {
+      destination
+    }
+  }
 }
+
+//==============================================================================
+
+export const LOGIN_DISMISSED = 'user/login-dismissed';
+
+export type LoginDismissedAction = {
+  type: typeof LOGIN_DISMISSED;
+}
+
+export function loginDismissed(): LoginDismissedAction {
+  return {
+    type: LOGIN_DISMISSED
+  }
+}
+
+//==============================================================================
+
+export const LOGIN_ERROR = 'user/login-error';
+
 export type LoginErrorAction = {
-  type: 'user/login-error',
+  type: typeof LOGIN_ERROR,
   payload: {
     message: string;
   }
 }
 
-export type LoginRedirectAction = {
-  type: 'user/login-redirect',
-}
-export type LogoutRedirectAction = {
-  type: 'user/logout-redirect',
+export function loginError(message: string): LoginErrorAction {
+  return {
+    type: LOGIN_ERROR,
+    payload: {
+      message
+    }
+  }
 }
 
+//==============================================================================
+
+export const LOGIN_REDIRECT = 'user/login-redirect';
+
+export type LoginRedirectAction = {
+  type: typeof LOGIN_REDIRECT;
+}
+
+export function loginRedirect(): LoginRedirectAction {
+  return {
+    type: LOGIN_REDIRECT
+  }
+}
+
+//==============================================================================
+
+export const LOGOUT_REDIRECT = 'user/logout-redirect';
+
+export type LogoutRedirectAction = {
+  type: typeof LOGOUT_REDIRECT;
+}
+
+export function logoutRedirect(): LogoutRedirectAction {
+  return {
+    type: LOGOUT_REDIRECT
+  }
+}
+
+
 // basket actions
+// --------------
+
+//==============================================================================
+
+export const BASKET_STATUS_LOADING = 'user/basket-status-loading';
+
 export type BasketStatusLoadingAction = {
-  type: 'user/basket-status-loading',
+  type: typeof BASKET_STATUS_LOADING,
   payload: {
     record: RecordInstance
   }
 }
+
+export function basketStatusLoading(record: RecordInstance): BasketStatusLoadingAction {
+  return {
+    type: BASKET_STATUS_LOADING,
+    payload: {
+      record
+    }
+  }
+}
+
+//==============================================================================
+
+export const BASKET_STATUS_RECEIVED = 'user/basket-status/received';
+
 export type BasketStatusReceivedAction = {
-  type: 'user/basket-status-received',
+  type: typeof BASKET_STATUS_RECEIVED,
   payload: {
     record: RecordInstance;
     status: boolean;
   }
 }
+
+export function basketStatusReceived(record: RecordInstance, status: boolean): BasketStatusReceivedAction {
+  return {
+    type: BASKET_STATUS_RECEIVED,
+    payload: {
+      record,
+      status
+    }
+  }
+}
+
+//==============================================================================
+
+export const BASKET_STATUS_ERROR = 'user/basket-status-error';
+
 export type BasketStatusErrorAction = {
-  type: 'user/basket-status-error',
+  type: typeof BASKET_STATUS_ERROR,
   payload: {
     record: RecordInstance,
     error: Error
   }
 }
 
+export function basketStatusError(record: RecordInstance, error: Error): BasketStatusErrorAction {
+  return {
+    type: BASKET_STATUS_ERROR,
+    payload: {
+      record,
+      error
+    }
+  }
+}
+
+
 // favorites actions
+// -----------------
+
+//==============================================================================
+
+export const FAVORITES_STATUS_LOADING = 'user/favorites-status-loading';
+
 export type FavoritesStatusLoadingAction = {
-  type: 'user/favorites-status-loading',
+  type: typeof FAVORITES_STATUS_LOADING,
   payload: { record: RecordInstance }
 }
+
+export function favoritesStatusLoading(record: RecordInstance): FavoritesStatusLoadingAction {
+  return {
+    type: FAVORITES_STATUS_LOADING,
+    payload: {
+      record
+    }
+  }
+}
+
+//==============================================================================
+
+export const FAVORITES_STATUS_RECEIVED = 'user/favorites-status-received';
+
 export type FavoritesStatusReceivedAction = {
-  type: 'user/favorites-status-received',
+  type: typeof FAVORITES_STATUS_RECEIVED,
   payload: { record: RecordInstance, id?: number }
 }
+
+export function favoritesStatusReceived(record: RecordInstance, id?: number): FavoritesStatusReceivedAction {
+  return {
+    type: FAVORITES_STATUS_RECEIVED,
+    payload: {
+      record,
+      id
+    }
+  }
+}
+
+//==============================================================================
+
+export const FAVORITES_STATUS_ERROR = 'user/favorites-status-error';
+
 export type FavoritesStatusErrorAction = {
-  type: 'user/favorites-status-error',
+  type: typeof FAVORITES_STATUS_ERROR;
   payload: { record: RecordInstance, error: Error }
 }
+
+export function favoritesStatusError(record: RecordInstance, error: Error): FavoritesStatusErrorAction {
+  return {
+    type: FAVORITES_STATUS_ERROR,
+    payload: {
+      record,
+      error
+    }
+  }
+}
+
+//==============================================================================
+
 
 /**
  * Fetches the current user.  If the user passes the predicate, transitions to
@@ -156,29 +479,23 @@ export function conditionallyTransition(test: UserPredicate, path: string, exter
 export function updateUserPreference(scope: PreferenceScope, key: string, value: string): ActionThunk<PreferenceUpdateAction> {
   return function run({ wdkService }) {
     let updatePromise = wdkService.updateCurrentUserPreference(scope, key, value);
-    return sendPrefUpdateOnCompletion(updatePromise,
-        'user/preference-update', { [scope]: { [key]: value } } as UserPreferences) as Promise<PreferenceUpdateAction>;
+    return sendPrefUpdateOnCompletion(updatePromise, preferenceUpdate({ [scope]: { [key]: value }} as UserPreferences))
   };
 };
 
 export function updateUserPreferences(newPreferences: UserPreferences): ActionThunk<PreferencesUpdateAction> {
   return function run({ wdkService }) {
     let updatePromise = wdkService.updateCurrentUserPreferences(newPreferences);
-    return sendPrefUpdateOnCompletion(updatePromise,
-        'user/preferences-update', newPreferences) as Promise<PreferencesUpdateAction>;
+    return sendPrefUpdateOnCompletion(updatePromise, preferencesUpdate(newPreferences));
   };
 };
 
-function sendPrefUpdateOnCompletion(
+function sendPrefUpdateOnCompletion<PrefAction extends PreferenceUpdateAction | PreferencesUpdateAction> (
   promise: Promise<UserPreferences>,
-  actionName: PreferenceUpdateAction['type']|PreferencesUpdateAction['type'],
-  payload: UserPreferences
-): Promise<PreferenceUpdateAction|PreferencesUpdateAction> {
+  action: PrefAction
+): Promise<PrefAction> {
     let prefUpdater = function() {
-      return broadcast({
-        type: actionName,
-        payload: payload
-      }) as PreferenceUpdateAction|PreferencesUpdateAction;
+      return action;
     };
     return promise.then(
       () => {
@@ -192,24 +509,6 @@ function sendPrefUpdateOnCompletion(
     );
 };
 
-function createProfileFormStatusAction(status: string, errorMessage?: string) {
-  return createFormStatusAction('user/profile-form-submission-status', status, errorMessage) as ProfileFormSubmissionStatusAction;
-}
-
-function createPasswordFormStatusAction(status: string, errorMessage?: string) {
-  return createFormStatusAction('user/password-form-submission-status', status, errorMessage) as PasswordFormSubmissionStatusAction;
-}
-
-function createFormStatusAction(actionType: string, status: string, errorMessage?: string) {
-  return {
-    type: actionType,
-    payload: {
-      formStatus: status,
-      errorMessage: errorMessage
-    }
-  }
-}
-
 /** Save user profile to DB */
 type SubmitProfileFormType = ActionThunk<UserUpdateAction|PreferencesUpdateAction|ProfileFormSubmissionStatusAction>;
 export function submitProfileForm(userProfileFormData: UserProfileFormData): SubmitProfileFormType {
@@ -218,24 +517,18 @@ export function submitProfileForm(userProfileFormData: UserProfileFormData): Sub
     let userPromise = wdkService.getCurrentUser().then(user => wdkService.updateCurrentUser({ ...user, ...partialUser }));
     let prefPromise = wdkService.updateCurrentUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
     return [
-      createProfileFormStatusAction('pending'),
+      profileFormSubmissionStatus('pending'),
       Promise.all([userPromise, prefPromise]).then(([user]) => [
         // success; update user first, then prefs, then status in ProfileViewStore
-        broadcast<UserUpdateAction>({
-          type: 'user/user-update',
-          // NOTE: this prop name should be the same as that used in StaticDataActionCreator for 'user'
-          // NOTE2: not all user props were sent to update but all should remain EXCEPT 'confirmEmail' and 'preferences'
-          payload: { user }
-        }),
-        broadcast<PreferencesUpdateAction>({
-          type: 'user/preferences-update',
-          payload: userProfileFormData.preferences as UserPreferences
-        }),
-        createProfileFormStatusAction('success')
+        // NOTE: this prop name should be the same as that used in StaticDataActionCreator for 'user'
+        // NOTE2: not all user props were sent to update but all should remain EXCEPT 'confirmEmail' and 'preferences'
+        userUpdate(user),
+        preferencesUpdate(userProfileFormData.preferences as UserPreferences),
+        profileFormSubmissionStatus('success')
       ])
       .catch((error) => {
         console.error(error.response);
-        return createProfileFormStatusAction('error', error.response);
+        return profileFormSubmissionStatus('error', error.response);
       })
     ];
   };
@@ -251,82 +544,49 @@ export function submitRegistrationForm (formData: UserProfileFormData): SubmitRe
       preferences: formData.preferences as UserPreferences
     }
     return [
-      createProfileFormStatusAction('pending'),
+      profileFormSubmissionStatus('pending'),
       wdkService.createNewUser(registrationData).then(responseData => [
         // success; clear the form in case user wants to register another user
-        broadcast({ type: 'user/clear-registration-form' }) as ClearRegistrationFormAction,
+        clearRegistrationForm(),
         // add success message to top of page
-        createProfileFormStatusAction('success')
+        profileFormSubmissionStatus('success')
       ])
       .catch((error) => {
         console.error(error.response);
-        return createProfileFormStatusAction('error', error.response);
+        return profileFormSubmissionStatus('error', error.response);
       })
     ];
   };
-};
-
-/** Update user profile present in the form (unsaved changes) */
-export function updateProfileForm(user: User): ProfileFormUpdateAction {
-  return {
-    type: 'user/profile-form-update',
-    payload: {user}
-  }
 };
 
 /** Save new password to DB */
 export function savePassword(oldPassword: string, newPassword: string): ActionThunk<PasswordFormSubmissionStatusAction> {
   return function run({ wdkService }) {
     return [
-      createPasswordFormStatusAction('pending'),
+      passwordFormSubmissionStatus('pending'),
       wdkService.updateCurrentUserPassword(oldPassword, newPassword)
-        .then(() => createPasswordFormStatusAction('success'))
+        .then(() => passwordFormSubmissionStatus('success'))
         .catch((error) => {
           console.error(error.response);
-          return createPasswordFormStatusAction('error', error.response);
+          return passwordFormSubmissionStatus('error', error.response);
         })
       ];
   };
 };
 
-/** Update change password form data (unsaved changes) */
-export function updateChangePasswordForm(formData: PasswordStoreState['passwordForm']): PasswordFormUpdateAction {
-  return {
-    type: 'user/password-form-update',
-    payload: formData
-  }
-};
-
-export function updatePasswordResetEmail(emailText: string): ResetPasswordUpdateEmailAction {
-  return {
-    type: 'user/reset-password-email-update',
-    payload: emailText
-  };
-};
-
-function createResetPasswordStatusAction(message?: string): ResetPasswordSubmissionStatusAction {
-  return {
-    type: 'user/reset-password-submission-status',
-    payload: {
-      success: (message ? false : true),
-      message: message
-    }
-  }
-};
-
 export function submitPasswordReset(email: string): ActionThunk<ResetPasswordSubmissionStatusAction> {
   return function run({ wdkService, transitioner }) {
     return [
-      createResetPasswordStatusAction("Submitting..."),
+      resetPasswordSubmissionStatus("Submitting..."),
       wdkService.resetUserPassword(email).then(
           () => {
             // transition to user message page
             transitioner.transitionToInternalPage('/user/message/password-reset-successful');
             // clear form for next visitor to this page
-            return createResetPasswordStatusAction(undefined);
+            return resetPasswordSubmissionStatus(undefined);
           },
           error => {
-            return createResetPasswordStatusAction(error.response || error.message);
+            return resetPasswordSubmissionStatus(error.response || error.message);
           }
       )
     ];
@@ -361,20 +621,11 @@ export function showLoginForm(destination = window.location.href): ActionThunk<E
         return emptyAction;
       }
       else { // USER_DB
-        return {
-          type: 'user/show-login-modal',
-          payload: { destination }
-        } as ShowLoginModalAction;
+        return showLoginModal(destination)
       }
     });
   };
 };
-
-export function hideLoginForm(): LoginDismissedAction {
-  return {
-    type: 'user/login-dismissed'
-  }
-}
 
 export function submitLoginForm(email: string, password: string, destination: string): ActionThunk<EmptyAction|LoginErrorAction> {
   return ({ wdkService }) => {
@@ -385,20 +636,13 @@ export function submitLoginForm(email: string, password: string, destination: st
           return emptyAction;
         }
         else {
-          return loginErrorReceived(response.message);
+          return loginError(response.message);
         }
       })
       .catch(error => {
-        return loginErrorReceived("There was an error submitting your credentials.  Please try again later.");
+        return loginError("There was an error submitting your credentials.  Please try again later.");
       });
   };
-}
-
-export function loginErrorReceived(message: string): LoginErrorAction {
-  return {
-    type: 'user/login-error',
-    payload: { message }
-  }
 }
 
 function performOAuthLogin(destination: string, wdkService: WdkService,
@@ -510,19 +754,10 @@ export function updateBasketStatus(record: RecordInstance, status: boolean): Act
 let setBasketStatus = (record: RecordInstance, basketStatusPromise: Promise<boolean>): ActionThunk<BasketAction> => {
   return function run() {
     return [
-      {
-        type: 'user/basket-status-loading',
-        payload: { record }
-      } as BasketAction,
+      basketStatusLoading(record),
       basketStatusPromise.then(
-        status => ({
-          type: 'user/basket-status-received',
-          payload: { record, status }
-        } as BasketAction),
-        error => ({
-          type: 'user/basket-status-error',
-          payload: { record, error }
-        } as BasketAction)
+        status => basketStatusReceived(record, status),
+        error => basketStatusError(record, error)
       )
     ];
   };
@@ -565,19 +800,10 @@ export function addFavorite(record: RecordInstance): ActionThunk<FavoriteAction|
 function setFavoritesStatus(record: RecordInstance, statusPromise: Promise<number|undefined>): ActionThunk<FavoriteAction> {
   return function run() {
     return [
-      {
-        type: 'user/favorites-status-loading',
-        payload: { record }
-      } as FavoriteAction,
+      favoritesStatusLoading(record),
       statusPromise.then(
-        id => ({
-          type: 'user/favorites-status-received',
-          payload: { record, id }
-        } as FavoriteAction),
-        error => ({
-          type: 'user/favorites-status-error',
-          payload: { record, error }
-        } as FavoriteAction)
+        id => favoritesStatusReceived(record, id),
+        error => favoritesStatusError(record, error)
       )
     ];
   };

@@ -1,26 +1,36 @@
-import { Answer, AttributeField, Question, RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
 import {
-  AddedAction,
-  AnswerOptions,
-  AttributesChangedAction,
-  ColumnMovedAction,
-  ErrorAction,
-  LoadingAction,
-  TableFilteredAction,
-  TableSortedAction,
-} from 'wdk-client/Views/Answer/AnswerViewActionCreators';
+  Answer,
+  AttributeField,
+  Question,
+  RecordClass,
+  RecordInstance
+} from 'wdk-client/Utils/WdkModel';
+import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { Action } from 'wdk-client/Actions';
+import {
+  START_LOADING,
+  END_LOADING_WITH_ANSWER,
+  END_LOADING_WITH_ERROR,
+  CHANGE_COLUMN_POSITION,
+  CHANGE_FILTER,
+  CHANGE_SORTING,
+  CHANGE_VISIBLE_COLUMNS,
+  EndLoadingWithAnswerAction,
+  ChangeColumnPositionAction,
+  ChangeVisibleColumnsAction,
+  ChangeFilterAction,
+  ChangeSortingAction,
+  AnswerOptions
+} from 'wdk-client/Actions/AnswerActions';
 import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
 
-export const key = 'answerView';
+type EndLoadingWithAnswerPayload = EndLoadingWithAnswerAction['payload']
+type ChangeColumnPositionPayload = ChangeColumnPositionAction['payload']
+type ChangeVisibleColumnsPayload = ChangeVisibleColumnsAction['payload']
+type ChangeSortingPayload = ChangeSortingAction['payload']
+type ChangeFilterPayload = ChangeFilterAction['payload']
 
-type Action = LoadingAction
-            | AddedAction
-            | ErrorAction
-            | TableSortedAction
-            | AttributesChangedAction
-            | ColumnMovedAction
-            | TableFilteredAction;
+export const key = 'answerView';
 
 export type FilterState = {
   filterTerm: string;
@@ -40,20 +50,28 @@ export type State = Partial<Answer & AnswerOptions & FilterState & {
 
 const initialState = {};
 
-export function reduce(state: State = initialState, action: Action) {
-  switch(action.type) {
-    case 'answer/loading': return { ...state, isLoading: true, error: undefined };
-    case 'answer/error': return { ...action.payload };
-    case 'answer/added': return addAnswer(state, action.payload);
-    case 'answer/attributes-changed': return updateVisibleAttributes(state, action.payload);
-    case 'answer/sorting-updated': return updateSorting(state, action.payload);
-    case 'answer/column-moved': return moveTableColumn(state, action.payload);
-    case 'answer/filtered': return updateFilter(state, action.payload);
-    default: return state;
+export function reduce(state: State = initialState, action: Action): State {
+  switch (action.type) {
+    case START_LOADING:
+      return { ...state, isLoading: true, error: undefined };
+    case END_LOADING_WITH_ERROR:
+      return { ...action.payload };
+    case END_LOADING_WITH_ANSWER:
+      return addAnswer(state, action.payload);
+    case CHANGE_VISIBLE_COLUMNS:
+      return updateVisibleAttributes(state, action.payload);
+    case CHANGE_SORTING:
+      return updateSorting(state, action.payload);
+    case CHANGE_COLUMN_POSITION:
+      return moveTableColumn(state, action.payload);
+    case CHANGE_FILTER:
+      return updateFilter(state, action.payload);
+    default:
+      return state;
   }
 }
 
-function addAnswer( state: State, payload: AddedAction["payload"] ) {
+function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
   let { answer, displayInfo, question, recordClass, parameters } = payload;
 
   // in case we used a magic string to get attributes, reset fetched attributes in displayInfo
@@ -104,7 +122,7 @@ function addAnswer( state: State, payload: AddedAction["payload"] ) {
  * @param {string} columnName The name of the attribute being moved.
  * @param {number} newPosition The 0-based index to move the attribute to.
  */
-function moveTableColumn(state: State, { columnName, newPosition }: ColumnMovedAction["payload"]) {
+function moveTableColumn(state: State, { columnName, newPosition }: ChangeColumnPositionPayload) {
   /* make a copy of list of attributes we will be altering */
   let attributes = [ ...(state.visibleAttributes || []) ];
 
@@ -125,7 +143,7 @@ function moveTableColumn(state: State, { columnName, newPosition }: ColumnMovedA
   return Object.assign({}, state, { visibleAttributes: attributes });
 }
 
-function updateVisibleAttributes(state: State, { attributes }: AttributesChangedAction["payload"]) {
+function updateVisibleAttributes(state: State, { attributes }: ChangeVisibleColumnsPayload) {
   // Create a new copy of visibleAttributes
   let visibleAttributes = attributes.slice(0);
 
@@ -133,13 +151,13 @@ function updateVisibleAttributes(state: State, { attributes }: AttributesChanged
   return Object.assign({}, state, { visibleAttributes });
 }
 
-function updateSorting(state: State, { sorting }: TableSortedAction["payload"]) {
+function updateSorting(state: State, { sorting }: ChangeSortingPayload) {
   return Object.assign({}, state, {
     displayInfo: Object.assign({}, state.displayInfo, { sorting })
   });
 }
 
-function updateFilter(state: State, payload: TableFilteredAction["payload"]) {
+function updateFilter(state: State, payload: ChangeFilterPayload) {
   let filterSpec = {
     filterTerm: payload.terms,
     filterAttributes: payload.attributes || [],

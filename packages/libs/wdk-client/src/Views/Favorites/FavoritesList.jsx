@@ -289,35 +289,35 @@ class FavoritesList extends Component {
   // Table event handlers =====================================================
 
   onRowSelect ({ id }) {
-    const { tableSelection, favoritesEvents } = this.props;
-    const { selectFavorite } = favoritesEvents;
-    selectFavorite(tableSelection, id);
+    const { favoritesEvents } = this.props;
+    const { updateSelection } = favoritesEvents;
+    updateSelection({ selectIds: [id] });
   }
 
   onRowDeselect ({ id }) {
-    const { tableSelection, favoritesEvents } = this.props;
-    const { deselectFavorite } = favoritesEvents;
-    deselectFavorite(tableSelection, id);
+    const { favoritesEvents } = this.props;
+    const { updateSelection } = favoritesEvents;
+    updateSelection({ deselectIds: [id] })
   }
 
   onMultipleRowSelect (rows) {
-    const { tableSelection, favoritesEvents } = this.props;
+    const { favoritesEvents } = this.props;
     const ids = rows.map(row => row.id);
-    const { selectMultipleFavorites } = favoritesEvents;
-    selectMultipleFavorites(tableSelection, ids);
+    const { updateSelection } = favoritesEvents;
+    updateSelection({ selectIds: ids });
   }
 
   onMultipleRowDeselect (rows) {
-    const { tableSelection, favoritesEvents } = this.props;
+    const { favoritesEvents } = this.props;
     const ids = rows.map(row => row.id);
-    const { deselectMultipleFavorites } = favoritesEvents;
-    deselectMultipleFavorites(tableSelection, ids);
+    const { updateSelection } = favoritesEvents;
+    updateSelection({ deselectIds: ids })
   }
 
   onSort ({ key }, direction) {
-    const { tableState, favoritesEvents } = this.props;
+    const { favoritesEvents } = this.props;
     const { sortColumn } = favoritesEvents;
-    sortColumn(tableState, key, direction);
+    sortColumn(key, direction);
   }
 
   // Table config generators =================================================

@@ -9,7 +9,13 @@ import Tabs from 'wdk-client/Components/Tabs/Tabs';
 import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
-import { TableSearched, TableSorted, TabSelected, TablePaged, TableRowsPerPageChanged } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisActions';
+import {
+  searchTable,
+  sortTable,
+  selectTab,
+  changeTablePage,
+  changeTableRowsPerPage
+} from 'wdk-client/Actions/AttributeAnalysisActions';
 import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
 
 type VisualizationConfig = {
@@ -34,19 +40,19 @@ type Column = { key: 'value' | 'count'; display: string; }
 export class AttributeAnalysis<T extends string> extends React.PureComponent<Props<T>> {
 
   onPageChange = (currentPage: number) =>
-    this.props.dispatch(TablePaged.create(currentPage))
+    this.props.dispatch(changeTablePage(currentPage))
 
   onRowsPerPageChange = (rowsPerPage: number) =>
-    this.props.dispatch(TableRowsPerPageChanged.create(rowsPerPage))
+    this.props.dispatch(changeTableRowsPerPage(rowsPerPage))
 
   onSort = (column: Column, direction: 'asc' | 'desc') =>
-    this.props.dispatch(TableSorted.create({ key: column.key, direction }))
+    this.props.dispatch(sortTable({ key: column.key, direction }))
 
   onSearch = (search: string) =>
-    this.props.dispatch(TableSearched.create(search));
+    this.props.dispatch(searchTable(search));
 
-  onTabSelected = (tab: string) =>
-    this.props.dispatch(TabSelected.create(tab))
+  onTabSelected = (tab: 'table' | 'visualization') =>
+    this.props.dispatch(selectTab(tab))
 
   render() {
     const { state, visualizationConfig, tableConfig } = this.props;

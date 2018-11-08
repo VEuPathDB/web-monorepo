@@ -2,22 +2,26 @@ import * as React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import UserRegistration from 'wdk-client/Views/User/Profile/UserRegistration';
-import { updateProfileForm, submitRegistrationForm, conditionallyTransition } from 'wdk-client/Views/User/UserActionCreators';
+import { profileFormUpdate, submitRegistrationForm, conditionallyTransition } from 'wdk-client/Actions/UserActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
 
-const ActionCreators = { updateProfileForm, submitRegistrationForm, conditionallyTransition };
+const actionCreators = {
+  updateProfileForm: profileFormUpdate,
+  submitRegistrationForm,
+  conditionallyTransition
+};
 
 type Props = {
   globalData: RootState['globalData'];
   userProfile: RootState['userProfile'];
-  userEvents: typeof ActionCreators;
+  userEvents: typeof actionCreators;
 }
 
 class UserRegistrationController extends PageController<Props> {
 
   getActionCreators() {
-    return { updateProfileForm, submitRegistrationForm, conditionallyTransition };
+    return actionCreators;
   }
 
   isRenderDataLoaded() {
@@ -46,7 +50,7 @@ const enhance = connect((state: RootState) => ({
   globalData: state.globalData,
   ...state.userRegistration,
 }),
-ActionCreators,
+actionCreators,
 (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps }))
 
 export default enhance(wrappable(UserRegistrationController));

@@ -3,14 +3,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import {
-  ActiveQuestionUpdatedAction,
-  UnloadQuestionAction,
-} from 'wdk-client/Views/Question/QuestionActionCreators';
+  updateActiveQuestion,
+  unloadQuestion,
+  updateParamValue
+} from 'wdk-client/Actions/QuestionActions';
 import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { preorder } from 'wdk-client/Utils/TreeUtils';
 import { EnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import { ParamValueUpdatedAction } from 'wdk-client/Views/Question/QuestionActionCreators';
 import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
 
 import * as ParamModules from 'wdk-client/Views/Question/Params';
@@ -22,8 +22,8 @@ import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = {
-  setActiveQuestion: ActiveQuestionUpdatedAction.create,
-  updateParamValue: ParamValueUpdatedAction.create
+  setActiveQuestion: updateActiveQuestion,
+  updateParamValue
 }
 
 type OwnProps = {
@@ -53,7 +53,7 @@ class LegacyParamController extends ViewController<Props> {
 
   componentWillUnmount() {
     const { questionName } = this.props.own;
-    this.props.mapped.dispatch(UnloadQuestionAction.create({ questionName }));
+    this.props.mapped.dispatch(unloadQuestion({ questionName }));
   }
 
   loadData(prevProps?: Props, prevState?: QuestionState) {

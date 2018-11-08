@@ -2,7 +2,7 @@ import { isEqual } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import * as UserActionCreators from 'wdk-client/Views/User/UserActionCreators';
+import * as UserActionCreators from 'wdk-client/Actions/UserActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import RecordUI from 'wdk-client/Views/Records/RecordUI';
@@ -14,7 +14,7 @@ import {
   updateNavigationQuery,
   updateNavigationVisibility,
   updateSectionVisibility,
-} from 'wdk-client/Views/Records/RecordViewActionCreators';
+} from 'wdk-client/Actions/RecordActions';
 
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';

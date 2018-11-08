@@ -1,7 +1,4 @@
-import {
-  ResetPasswordUpdateEmailAction,
-  ResetPasswordSubmissionStatusAction
-} from 'wdk-client/Views/User/UserActionCreators';
+import { Action } from 'wdk-client/Actions';
 
 export const key = 'passwordReset';
 
@@ -10,9 +7,6 @@ export type State = {
   emailText: string, // current value typed in box
   message?: string   // message to user if submission fails
 };
-
-// defines actions this store can receive
-type Action = ResetPasswordUpdateEmailAction|ResetPasswordSubmissionStatusAction;
 
 const initialValues: State = {
   emailText: '',

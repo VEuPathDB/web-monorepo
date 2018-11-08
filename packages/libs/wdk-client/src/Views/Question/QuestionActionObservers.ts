@@ -1,4 +1,4 @@
-import { combineEpics } from 'redux-observable';
+import { combineEpics, ofType } from 'redux-observable';
 import { from, EMPTY } from 'rxjs';
 import { debounceTime, filter, mergeMap, takeUntil } from 'rxjs/operators';
 
@@ -8,17 +8,22 @@ import WdkService from 'wdk-client/Utils/WdkService';
 
 import { getValueFromState } from 'wdk-client/Views/Question/Params';
 import {
-  ActiveQuestionUpdatedAction,
-  ParamsUpdatedAction,
-  ParamErrorAction,
-  ParamInitAction,
-  ParamValueUpdatedAction,
-  QuestionErrorAction,
+  QUESTION_LOADED,
   QuestionLoadedAction,
-  QuestionNotFoundAction,
-  QuestionSubmitted,
-  UnloadQuestionAction
-} from 'wdk-client/Views/Question/QuestionActionCreators';
+  SUBMIT_QUESTION,
+  SubmitQuestionAction,
+  UNLOAD_QUESTION,
+  UPDATE_ACTIVE_QUESTION,
+  UPDATE_PARAM_VALUE,
+  UpdateActiveQuestionAction,
+  UpdateParamValueAction,
+  initParam,
+  paramError,
+  questionError,
+  questionLoaded,
+  questionNotFound,
+  updateParams,
+} from 'wdk-client/Actions/QuestionActions';
 import { State } from 'wdk-client/Views/Question/QuestionStoreModule';
 
 // Observers
@@ -27,25 +32,25 @@ import { State } from 'wdk-client/Views/Question/QuestionStoreModule';
 type QuestionEpic = ModuleEpic<State>;
 
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
-  filter(ActiveQuestionUpdatedAction.test),
+  ofType<UpdateActiveQuestionAction>(UPDATE_ACTIVE_QUESTION),
   mergeMap(action =>
     from(loadQuestion(wdkService, action.payload.questionName, action.payload.paramValues)).pipe(
     takeUntil(action$.pipe(filter(killAction => (
-      UnloadQuestionAction.test(killAction) &&
+      killAction.type === UNLOAD_QUESTION &&
       killAction.payload.questionName === action.payload.questionName
     )))))
   )
 );
 
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
-  filter(QuestionLoadedAction.test),
+  ofType<QuestionLoadedAction>(QUESTION_LOADED),
   mergeMap(({ payload: { question, questionName, paramValues }}) =>
     from(question.parameters.map(parameter =>
-      ParamInitAction.create({ parameter, paramValues, questionName }))))
+      initParam({ parameter, paramValues, questionName }))))
 );
 
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
-  filter(ParamValueUpdatedAction.test),
+  ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   filter(action => action.payload.parameter.dependentParams.length > 0),
   debounceTime(1000),
   mergeMap(action => {
@@ -56,12 +61,12 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
       paramValue,
       paramValues
     ).then(
-      parameters => ParamsUpdatedAction.create({questionName, parameters}),
-      error => ParamErrorAction.create({ questionName, error: error.message, paramName: parameter.name })
+      parameters => updateParams({questionName, parameters}),
+      error => paramError({ questionName, error: error.message, paramName: parameter.name })
     )).pipe(
-      takeUntil(action$.pipe(filter(ParamValueUpdatedAction.test))),
+      takeUntil(action$.pipe(ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE))),
       takeUntil(action$.pipe(filter(killAction => (
-        UnloadQuestionAction.test(killAction) &&
+        killAction.type === UNLOAD_QUESTION &&
         killAction.payload.questionName === action.payload.questionName
       ))))
     )
@@ -69,7 +74,7 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
 );
 
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
-  filter(QuestionSubmitted.test),
+  ofType<SubmitQuestionAction>(SUBMIT_QUESTION),
   mergeMap(action => {
     const questionState = state$.value.questions[action.payload.questionName];
     if (questionState == null) return EMPTY;
@@ -121,11 +126,11 @@ function loadQuestion(wdkService: WdkService, questionName: string, paramValues?
       if (paramValues == null) {
         paramValues = makeDefaultParamValues(question.parameters);
       }
-      return QuestionLoadedAction.create({ questionName, question, recordClass, paramValues })
+      return questionLoaded({ questionName, question, recordClass, paramValues })
     },
     error => error.status === 404
-      ? QuestionNotFoundAction.create({ questionName })
-      : QuestionErrorAction.create({ questionName })
+      ? questionNotFound({ questionName })
+      : questionError({ questionName })
   );
 }
 

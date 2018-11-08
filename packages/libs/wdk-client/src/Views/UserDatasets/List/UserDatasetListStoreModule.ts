@@ -1,27 +1,10 @@
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import sharingReducer from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
-import {
-  DetailRemoveSuccessAction,
-  DetailUpdateErrorAction,
-  DetailUpdateSuccessAction,
-  ListErrorReceivedAction,
-  ListLoadingAction,
-  ListReceivedAction,
-  ProjectFilterAction,
-  SharingSuccessAction,
-} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
 import { difference } from 'lodash';
+import { Action } from 'wdk-client/Actions';
+import { LIST_LOADING, LIST_RECEIVED, LIST_ERROR_RECEIVED, DETAIL_UPDATE_SUCCESS, DETAIL_REMOVE_SUCCESS, SHARING_SUCCESS, PROJECT_FILTER } from 'wdk-client/Actions/UserDatasetsActions';
 
 export const key = 'userDatasetList';
-
-type Action = ListLoadingAction
-  | ListReceivedAction
-  | ListErrorReceivedAction
-  | DetailUpdateErrorAction
-  | DetailUpdateSuccessAction
-  | DetailRemoveSuccessAction
-  | SharingSuccessAction
-  | ProjectFilterAction;
 
 type InitialState = {
   status: 'not-requested';
@@ -56,11 +39,11 @@ const initialState: State = {
 
 export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
-    case 'user-datasets/list-loading': return <LoadingState> {
+    case LIST_LOADING: return {
       status: 'loading'
     };
 
-    case 'user-datasets/list-received': return <CompleteState> {
+    case LIST_RECEIVED: return {
       status: 'complete',
       filterByProject: action.payload.filterByProject,
       userDatasets: action.payload.userDatasets.map(ud => ud.id),
@@ -68,13 +51,18 @@ export function reduce(state: State = initialState, action: Action): State {
         Object.assign(uds, { [ud.id]: { loading: false, resource: ud }}), {} as CompleteState['userDatasetsById'])
     };
 
-    case 'user-datasets/list-error': return <ErrorState|ForbiddenState>{
-      status: action.payload.error.status === 403 ? 'forbidden' : 'error',
-      loadError: action.payload.error
-    };
+    case LIST_ERROR_RECEIVED: return action.payload.error.status === 403
+      ? {
+        status: 'forbidden',
+        loadError: action.payload.error
+      }
+      : {
+        status: 'error',
+        loadError: action.payload.error
+      }
 
-    case 'user-datasets/detail-update-success': return state.status === 'complete'
-        ? <CompleteState> {
+    case DETAIL_UPDATE_SUCCESS: return state.status === 'complete'
+        ? {
           ...state,
           userDatasetsById: {
             ...state.userDatasetsById,
@@ -83,8 +71,8 @@ export function reduce(state: State = initialState, action: Action): State {
         }
         : state;
 
-    case 'user-datasets/detail-remove-success': return state.status === 'complete'
-        ? <CompleteState> {
+    case DETAIL_REMOVE_SUCCESS: return state.status === 'complete'
+        ? {
           ...state,
           userDatasets: difference(state.userDatasets, [action.payload.userDataset.id]),
           userDatasetsById: {
@@ -94,10 +82,10 @@ export function reduce(state: State = initialState, action: Action): State {
         }
         : state
 
-    case 'user-datasets/sharing-success': {
+    case SHARING_SUCCESS: {
       if (state.status === 'complete') {
-        const userDatasetsById = sharingReducer(state.userDatasetsById, action);
-        return <CompleteState> {
+        const userDatasetsById = sharingReducer(state.userDatasetsById, action) as CompleteState['userDatasetsById']
+        return {
           ...state,
           userDatasetsById
         }
@@ -105,7 +93,7 @@ export function reduce(state: State = initialState, action: Action): State {
       return state;
     }
 
-    case 'user-datasets/project-filter-preference-received': {
+    case PROJECT_FILTER: {
       if (state.status === 'complete') {
         return <CompleteState> {
           ...state,

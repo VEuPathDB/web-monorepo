@@ -1,84 +1,32 @@
 import { isEqual } from 'lodash';
+import { combineEpics, ofType, Epic } from 'redux-observable';
 import { concat, empty, from, merge, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
-
-import { Filter } from 'wdk-client/Components/AttributeFilter/Types';
-import { Action, makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
-import { FilterParamNew } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
 import {
+  CHANGE_GROUP_VISIBILITY,
+  QUESTION_LOADED,
+  UNLOAD_QUESTION,
+  UPDATE_PARAMS,
+  ChangeGroupVisibilityAction,
   QuestionLoadedAction,
   UnloadQuestionAction,
-  GroupVisibilityChangedAction,
-  ParamsUpdatedAction,
-  ParamErrorAction
-} from 'wdk-client/Views/Question/QuestionActionCreators';
+  UpdateParamsAction,
+  paramError,
+} from 'wdk-client/Actions/QuestionActions';
 import { State, QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
-
-import { Context } from 'wdk-client/Views/Question/Params/Utils';
 import { FieldState, MemberFieldState, State as FilterParamState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
-import { getFilterFields, getFilters, isMemberField, isType, sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
-import { combineEpics, Epic } from 'redux-observable';
-import { ModuleEpic } from 'wdk-client/Core/Store';
-
-
-type Ctx = Context<FilterParamNew>
+import { ModuleEpic, EpicDependencies } from 'wdk-client/Core/Store';
+import { isType, getFilters, getFilterFields, isMemberField, sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { UpdateFiltersAction, UPDATE_FILTERS, SetActiveFieldAction, SET_ACTIVE_FIELD, setActiveField, invalidateOntologyTerms, updateFieldState, summaryCountsLoaded } from 'wdk-client/Actions/FilterParamActions';
+import { Filter } from 'wdk-client/Components/AttributeFilter/Types';
+import { Action } from 'wdk-client/Actions';
 
 const defaultMemberFieldSort: MemberFieldState['sort'] = {
   columnKey: 'value',
   direction: 'asc',
   groupBySelected: false
 }
-
-// Action Creators
-// ---------------
-
-function makeFpnActionCreator<S, T extends string>(type: T) {
-  return makeActionCreator<Context<FilterParamNew> & S, T>(type);
-}
-
-export const ActiveFieldSetAction =
-  makeFpnActionCreator<{ activeField: string }, 'filter-param-new/active-field-set'>('filter-param-new/active-field-set')
-
-export const FieldCountUpdateRequestAction =
-  makeFpnActionCreator<{ field: string }, 'filter-param-new/field-count-update-request'>('filter-param-new/field-count-update-request')
-
-export const SummaryCountsLoadedAction =
-  makeFpnActionCreator<
-    {
-      filtered: number;
-      unfiltered: number;
-      nativeFiltered: number;
-      nativeUnfiltered: number;
-    },
-    'filter-param-new/summary-counts-loaded'
-    >('filter-param-new/summary-counts-loaded')
-
-export const FieldStateUpdatedAction =
-  makeFpnActionCreator<
-    {
-      field: string;
-      fieldState: FieldState;
-    },
-    'filter-param-new/field-state-updated'
-    >('filter-param-new/field-state-updated')
-
-export const FiltersUpdatedAction =
-  makeFpnActionCreator<
-    {
-      prevFilters: Filter[];
-      filters: Filter[];
-    },
-    'filter-param-new/filters-updated'
-    >('filter-param-new/filters-updated')
-
-export const OntologyTermsInvalidated =
-  makeFpnActionCreator<
-    {
-      retainedFields: string[]
-    },
-    'filter-param-new/ontology-terms-invalidated'
-    >('filter-param-new/ontology-terms-invalidated')
 
 // Observers
 // ---------
@@ -96,7 +44,8 @@ type LoadDeps = {
  * When a Question is loaded, listen for parameter-specific actions and load data as needed.
  */
 const observeInit: Observer = (action$, state$, services) => action$.pipe(
-  filter(QuestionLoadedAction.test),
+  ofType<QuestionLoadedAction>(QUESTION_LOADED),
+  // filter((action): action is QuestionLoadedAction => action.type === QUESTION_LOADED),
   mergeMap(action => {
     const { questionName } = action.payload;
     const questionState = getQuestionState(state$.value, questionName);
@@ -118,8 +67,8 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
       map(parameter => ({ paramName: parameter.name, groupName: parameter.group })),
       mergeMap(({paramName, groupName}) => {
         // Create an Observable<FilterParamNew> based on actions
-        const valueChangedParameter$ = action$.pipe(
-          filter(FiltersUpdatedAction.test),
+        const valueChangedParameter$: Observable<LoadDeps> = action$.pipe(
+          ofType<UpdateFiltersAction>(UPDATE_FILTERS),
           filter(
             action => action.payload.questionName === questionName &&
             action.payload.parameter.name === paramName
@@ -147,8 +96,8 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
           debounceTime(1000)
         );
 
-        const activeOntologyTermChangedParameter$ = action$.pipe(
-          filter(ActiveFieldSetAction.test),
+        const activeOntologyTermChangedParameter$: Observable<LoadDeps> = action$.pipe(
+          ofType<SetActiveFieldAction>(SET_ACTIVE_FIELD),
           filter(action => action.payload.questionName === questionName && action.payload.parameter.name === paramName),
           mergeMap(() => {
             const questionState = getQuestionState(state$.value, questionName);
@@ -168,8 +117,8 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
         );
 
 
-        const groupVisibilityChangeParameter$ = action$.pipe(
-          filter(GroupVisibilityChangedAction.test),
+        const groupVisibilityChangeParameter$: Observable<LoadDeps> = action$.pipe(
+          ofType<ChangeGroupVisibilityAction>(CHANGE_GROUP_VISIBILITY),
           filter(action => action.payload.questionName === questionName && action.payload.groupName === groupName),
           mergeMap(() => {
             const questionState = getQuestionState(state$.value, questionName);
@@ -217,7 +166,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
         // receives that action.
         return merge(
           parameter$,
-          of(ActiveFieldSetAction.create({
+          of(setActiveField({
             questionName,
             parameter: getFilterParamNewFromState(questionState, paramName),
             paramValues,
@@ -231,7 +180,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 );
 
 const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wdkService }) => action$.pipe(
-  filter(ParamsUpdatedAction.test),
+  ofType<UpdateParamsAction>(UPDATE_PARAMS),
   switchMap(action => {
     const { questionName, parameters } = action.payload;
     return from(parameters).pipe(
@@ -249,7 +198,7 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
           : filters.length === 0 ? getFilterFields(parameter).first().term : filters[0].field;
 
         return merge(
-          of(OntologyTermsInvalidated.create({
+          of(invalidateOntologyTerms({
             questionName,
             parameter,
             paramValues,
@@ -265,14 +214,19 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
   })
 );
 
-export default combineEpics<Epic<Action, Action, State>>(observeInit, observeUpdateDependentParamsActiveField);
+const observeParam: Epic<Action, Action, State, EpicDependencies> =
+  combineEpics<Epic<Action, Action, State>>(observeInit, observeUpdateDependentParamsActiveField);
+
+export default observeParam;
 
 // Helpers
 // -------
 
 function getUnloadQuestionStream(action$: Observable<Action>, questionName: string): Observable<Action> {
-  const isUnloadAction = (action: Action) => UnloadQuestionAction.test(action) && action.payload.questionName === questionName;
-  return action$.pipe(filter(isUnloadAction));
+  return action$.pipe(
+    ofType<UnloadQuestionAction>(UNLOAD_QUESTION),
+    filter(action => action.payload.questionName === questionName)
+  );
 }
 
 function getOntologyTermSummary(
@@ -291,7 +245,7 @@ function getOntologyTermSummary(
   const filters = (JSON.parse(paramValues[parameter.name]).filters as Filter[])
     .filter(filter => filter.field !== ontologyTerm);
   return concat(
-    of(FieldStateUpdatedAction.create({
+    of(updateFieldState({
       questionName,
       parameter,
       paramValues,
@@ -319,7 +273,7 @@ function getOntologyTermSummary(
             summary: summary
           };
 
-        return FieldStateUpdatedAction.create({
+        return updateFieldState({
           questionName,
           parameter,
           paramValues,
@@ -329,7 +283,7 @@ function getOntologyTermSummary(
       },
       error => {
         console.error(error);
-        return FieldStateUpdatedAction.create({
+        return updateFieldState({
           questionName,
           parameter,
           paramValues,
@@ -356,13 +310,13 @@ function getSummaryCounts(
   const filters = JSON.parse(paramValues[paramName]).filters;
 
   return from(wdkService.getFilterParamSummaryCounts(questionName, paramName, filters, paramValues).then(
-    counts => SummaryCountsLoadedAction.create({
+    counts => summaryCountsLoaded({
       questionName,
       parameter,
       paramValues,
       ...counts
     }),
-    error => ParamErrorAction.create({
+    error => paramError({
       questionName,
       error,
       paramName

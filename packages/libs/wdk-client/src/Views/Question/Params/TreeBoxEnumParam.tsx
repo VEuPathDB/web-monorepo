@@ -5,17 +5,22 @@ import React from 'react';
 
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { matchAction } from 'wdk-client/Utils/ReducerUtils';
 import { filterNodes, getLeaves, isBranch } from 'wdk-client/Utils/TreeUtils';
 import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
 
 import SelectionInfo from 'wdk-client/Views/Question/Params/SelectionInfo';
-import { Context, Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
+import { Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
 import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { ParamInitAction } from 'wdk-client/Views/Question/QuestionActionCreators';
+import { INIT_PARAM } from 'wdk-client/Actions/QuestionActions';
+import {
+  setExpandedList,
+  setSearchTerm,
+  SET_EXPANDED_LIST,
+  SET_SEARCH_TERM
+} from 'wdk-client/Actions/TreeBoxEnumParamActions';
+import { Action } from 'wdk-client/Actions';
 
 function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
   return isEnumParam(parameter) && parameter.displayType === 'treeBox';
@@ -28,7 +33,6 @@ function isParamValueValid() {
 // Types
 // -----
 
-type Ctx = Context<TreeBoxEnumParam>;
 
 type TreeBoxProps = Props<TreeBoxEnumParam, State>;
 
@@ -36,19 +40,6 @@ export type State = {
   expandedList: string[];
   searchTerm: string;
 }
-
-
-// ActionCreators
-// --------------
-
-export const ExpandedListSet = makeActionCreator<Ctx & {
-    expandedList: string[]
-  }, 'enum-param-treebox/expanded-list-set'>('enum-param-treebox/expanded-list-set')
-
-export const SearchTermSet = makeActionCreator<
-  Ctx & { searchTerm: string },
-  'enum-param-treebox/search-term-set'
->('enum-param-treebox/search-term-set');
 
 
 // Utils
@@ -103,24 +94,33 @@ function deriveIndeterminateBranches(tree: TreeBoxVocabNode, items: string[]) {
 // Reducer
 // -------
 
-export const reduce = matchAction({} as State,
-  [ParamInitAction, (state, { parameter }) => ({
-    expandedList: findBranchTermsUpToDepth(
-      (parameter as TreeBoxEnumParam).vocabulary,
-      (parameter as TreeBoxEnumParam).depthExpanded
-    ),
-    searchTerm: ''
-  })],
-  [ExpandedListSet, (state, { expandedList }) => ({
-    ...state,
-    expandedList: expandedList
-  })],
-  [SearchTermSet, (state, { searchTerm }) => ({
-    ...state,
-    searchTerm: searchTerm
-  })]
-);
+export function reduce(state: State = {} as State, action: Action): State {
+  switch(action.type) {
+    case INIT_PARAM:
+      return {
+        expandedList: findBranchTermsUpToDepth(
+          (action.payload.parameter as TreeBoxEnumParam).vocabulary,
+          (action.payload.parameter as TreeBoxEnumParam).depthExpanded
+        ),
+        searchTerm: ''
+      };
 
+    case SET_EXPANDED_LIST:
+      return {
+        ...state,
+        expandedList: action.payload.expandedList
+      };
+
+    case SET_SEARCH_TERM:
+      return {
+        ...state,
+        searchTerm: action.payload.searchTerm
+      };
+
+    default:
+      return state;
+  }
+}
 
 // View
 // ----
@@ -147,7 +147,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
         nodeComponent={VocabNodeRenderer}
-        onExpansionChange={expandedList => props.dispatch(ExpandedListSet.create({ ...props.ctx, expandedList}))}
+        onExpansionChange={expandedList => props.dispatch(setExpandedList({ ...props.ctx, expandedList}))}
         expandedList={props.uiState.expandedList}
         selectedList={selectedLeaves}
         onSelectionChange={(ids: string[]) => {
@@ -160,7 +160,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         noResultsComponent={NoResults}
         searchTerm={props.uiState.searchTerm}
         searchPredicate={searchPredicate}
-        onSearchTermChange={searchTerm => props.dispatch(SearchTermSet.create({ ...props.ctx, searchTerm }))}
+        onSearchTermChange={searchTerm => props.dispatch(setSearchTerm({ ...props.ctx, searchTerm }))}
       />
     </div>
   );

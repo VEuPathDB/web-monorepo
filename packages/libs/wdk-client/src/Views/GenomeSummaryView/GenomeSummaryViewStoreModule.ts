@@ -2,7 +2,8 @@ import { LoadingAction, loadingType } from 'wdk-client/Views/GenomeSummaryView/G
 import { CompletedAction, completedType, createCompletedAction } from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
 import { ErrorAction, errorType, createErrorAction } from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
 
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+// FIXME Replace with `import { Action } from 'wdk-client/Actions'`. Requires adding GenomeSummaryViewActions to that file.
+import { Action } from 'redux';
 import { getStepBundlePromise } from 'wdk-client/Utils/stepUtils';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { GenomeSummaryViewReport } from 'wdk-client/Utils/WdkModel';

@@ -19,7 +19,7 @@ import { combineEpics } from 'redux-observable';
 
 // Param modules
 // -------------
-const paramModules: ParamModule[] = [
+export const paramModules: ParamModule[] = [
   CheckboxEnumParamModule as ParamModule,
   DatasetParamModule as ParamModule,
   DateParamModule as ParamModule,

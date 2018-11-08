@@ -1,5 +1,5 @@
 import { reduce as reduceProfile, State as UserProfileState, Action, UserProfileFormData } from 'wdk-client/Views/User/Profile/UserProfileReducer';
-import { ClearRegistrationFormAction } from 'wdk-client/Views/User/UserActionCreators';
+import { ClearRegistrationFormAction, CLEAR_REGISTRATION_FORM } from 'wdk-client/Actions/UserActions';
 import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 
 export const key = 'userRegistration';
@@ -31,7 +31,7 @@ export function reduce(state: State, action: Action): State {
 
 function reduceFormData(state: UserProfileFormData = emptyUserFormData, action: RegistrationAction): UserProfileFormData {
   switch(action.type) {
-    case 'user/clear-registration-form':
+    case CLEAR_REGISTRATION_FORM:
         return emptyUserFormData;
     default:
         return state;

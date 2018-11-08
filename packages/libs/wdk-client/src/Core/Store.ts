@@ -2,7 +2,7 @@ import { compose, mapKeys, mapValues, partialRight, values } from 'lodash/fp';
 import { applyMiddleware, combineReducers, createStore, Reducer } from 'redux';
 import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
 import { EMPTY } from 'rxjs';
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { Action } from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { LocatePlugin } from 'wdk-client/Core/CommonTypes';

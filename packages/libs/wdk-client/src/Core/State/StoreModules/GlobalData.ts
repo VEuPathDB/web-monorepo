@@ -1,17 +1,37 @@
 import { Location } from 'history';
-import {StaticDataAction, AllDataAction, StaticData} from 'wdk-client/Core/ActionCreators/StaticDataActionCreators';
-import { UserUpdateAction, PreferenceUpdateAction, PreferencesUpdateAction, ShowLoginModalAction, LoginDismissedAction, LoginErrorAction } from 'wdk-client/Views/User/UserActionCreators';
-import { LocationAction } from 'wdk-client/Core/ActionCreators/RouterActionCreators';
-import { UserPreferences } from 'wdk-client/Utils/WdkUser';
+import { Action } from 'wdk-client/Actions';
+import { UPDATE_LOCATION } from 'wdk-client/Actions/RouterActions';
+import {
+  QUESTIONS_LOADED,
+  CONFIG_LOADED,
+  ONTOLOGY_LOADED,
+  RECORDCLASSES_LOADED,
+  USER_LOADED,
+  PREFERENCES_LOADED,
+  ALL_DATA_LOADED
+} from 'wdk-client/Actions/StaticDataActions';
+import {
+  USER_UPDATE,
+  PREFERENCE_UPDATE,
+  PREFERENCES_UPDATE,
+  SHOW_LOGIN_MODAL,
+  LOGIN_DISMISSED,
+  LOGIN_ERROR
+} from 'wdk-client/Actions/UserActions';
+import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
+import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
+import { UserPreferences, User } from 'wdk-client/Utils/WdkUser';
+import { ServiceConfig } from 'wdk-client/Utils/WdkService';
 
 export const key = 'globalData';
 
-type UserAction = UserUpdateAction | PreferenceUpdateAction | PreferencesUpdateAction;
-type LoginAction = ShowLoginModalAction | LoginDismissedAction | LoginErrorAction;
-type RouterAction = LocationAction;
-type Action = AllDataAction | StaticDataAction | UserAction | RouterAction | LoginAction;
-
-export type GlobalData = Partial<StaticData & {
+export type GlobalData = Partial<{
+  config: ServiceConfig;
+  ontology: CategoryOntology;
+  questions: Question[];
+  recordClasses: RecordClass[];
+  user: User;
+  preferences: UserPreferences;
   siteConfig?: any;
   location: Location;
   loginForm: {
@@ -33,23 +53,23 @@ const initialState: GlobalData = {
 export function reduce(state: GlobalData | undefined = initialState, action: Action): GlobalData {
   switch(action.type) {
     // static data actions
-    case 'static/config-loaded':
-    case 'static/categories-loaded':
-    case 'static/questions-loaded':
-    case 'static/recordClasses-loaded':
-    case 'static/user-loaded':
-    case 'static/preferences-loaded':
-    case 'static/all-data-loaded':
-    case 'user/user-update':
+    case CONFIG_LOADED:
+    case ONTOLOGY_LOADED:
+    case QUESTIONS_LOADED:
+    case RECORDCLASSES_LOADED:
+    case USER_LOADED:
+    case PREFERENCES_LOADED:
+    case ALL_DATA_LOADED:
+    case USER_UPDATE:
 
 
     // router actions
-    case 'router/location-updated':
+    case UPDATE_LOCATION:
       return { ...state, ...action.payload, loginForm: { isOpen: false } };
 
 
     // user actions
-    case 'user/preference-update':
+    case PREFERENCE_UPDATE:
       // incorporate new preference values into existing preference object
       let { global: oldGlobal, project: oldProject } = state.preferences || {} as UserPreferences;
       let { global: newGlobal, project: newProject } = action.payload;
@@ -59,7 +79,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
       // treat preference object as if it has just been loaded (with new values present)
       return { ...state, preferences: combinedPrefs };
 
-    case 'user/preferences-update':
+    case PREFERENCES_UPDATE:
       // replace existing preference object with new preference values
       let replacementPrefs = { ...action.payload };
       // treat preference object as if it has just been loaded (with new values present)
@@ -67,7 +87,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
 
 
     // loginForm actions
-    case 'user/show-login-modal':
+    case SHOW_LOGIN_MODAL:
       return {
         ...state,
         loginForm: {
@@ -77,7 +97,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
         }
       };
 
-    case 'user/login-dismissed':
+    case LOGIN_DISMISSED:
       return {
         ...state,
         loginForm: {
@@ -85,7 +105,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
         }
       };
 
-    case 'user/login-error':
+    case LOGIN_ERROR:
       return {
         ...state,
         loginForm: {

@@ -9,8 +9,8 @@ import {
   FavoritesStatusReceivedAction,
   loadBasketStatus,
   loadFavoritesStatus,
-} from 'wdk-client/Views/User/UserActionCreators';
-import { Action, ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+} from 'wdk-client/Actions/UserActions';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
@@ -18,11 +18,24 @@ import WdkService, { ServiceError } from 'wdk-client/Utils/WdkService';
 
 import { isLeafFor, isNotInternalNode } from 'wdk-client/Views/Records/RecordUtils';
 
-type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | BasketStatusReceivedAction;
-type FavoriteAction = FavoritesStatusLoadingAction | FavoritesStatusReceivedAction | FavoritesStatusErrorAction;
+export type Action =
+  | RecordReceivedAction
+  | RecordUpdatedAction
+  | RecordLoadingAction
+  | RecordErrorAction
+  | SectionVisibilityAction
+  | AllFieldVisibilityAction
+  | NavigationVisibilityAction
+  | CategoryExpansionAction
+  | NavigationQueryAction
+
+
+//==============================================================================
+
+export const RECORD_RECEIVED = 'record-view/record-received';
 
 export type RecordReceivedAction = {
-  type: 'record-view/active-record-received',
+  type: typeof RECORD_RECEIVED;
   id: string,
   payload: {
     record: RecordInstance,
@@ -31,16 +44,42 @@ export type RecordReceivedAction = {
   },
 }
 
+export function recordReceived(id: string, payload: RecordReceivedAction['payload']): RecordReceivedAction {
+  return {
+    type: RECORD_RECEIVED,
+    id,
+    payload
+  };
+}
+
+//==============================================================================
+
+export const RECORD_UPDATE = 'record-view/record-update';
+
 export type RecordUpdatedAction = {
-  type: 'record-view/active-record-updated',
+  type: typeof RECORD_UPDATE,
   id: string,
   payload: {
     record: RecordInstance
   },
 }
 
+export function recordUpdate(id: string, record: RecordInstance): RecordUpdatedAction {
+  return {
+    type: RECORD_UPDATE,
+    id,
+    payload: { 
+      record
+    }
+  }
+}
+
+//==============================================================================
+
+export const RECORD_LOADING = 'record-view/record-loading';
+
 export type RecordLoadingAction = {
-  type: 'record-view/active-record-loading',
+  type: typeof RECORD_LOADING,
   id: string,
   payload: {
     recordClassName: string,
@@ -48,47 +87,138 @@ export type RecordLoadingAction = {
   },
 }
 
+export function recordLoading(id: string, payload: RecordLoadingAction['payload']): RecordLoadingAction {
+  return {
+    type: RECORD_LOADING,
+    id,
+    payload
+  }
+}
+
+//==============================================================================
+
+export const RECORD_ERROR = 'record-view/record-error';
+
 export type RecordErrorAction = {
-  type: 'record-view/error-received',
+  type: typeof RECORD_ERROR;
   id: string
   payload: { error: ServiceError },
 }
 
+export function recordError(id: string, error: ServiceError): RecordErrorAction {
+  return {
+    type: RECORD_ERROR,
+    id,
+    payload: {
+      error
+    }
+  };
+}
+
+//==============================================================================
+
+export const SECTION_VISIBILITY = 'record-view/section-visibility-changed';
+
 export type SectionVisibilityAction = {
-  type: 'record-view/section-visibility-changed',
+  type: typeof SECTION_VISIBILITY;
   payload: {
     name: string,
     isVisible: boolean
   }
 }
 
+/** Update a section's collapsed status */
+export function updateSectionVisibility(sectionName: string, isVisible: boolean): SectionVisibilityAction {
+  return {
+    type: SECTION_VISIBILITY,
+    payload: { name: sectionName, isVisible }
+  };
+}
+
+//==============================================================================
+
+export const ALL_FIELD_VISIBILITY = 'record-view/all-field-visibility-changed';
+
 export type AllFieldVisibilityAction = {
-  type: 'record-view/all-field-visibility-changed',
+  type: typeof ALL_FIELD_VISIBILITY,
   payload: {
     isVisible: boolean
   }
 }
+
+/** Change the visibility for all record fields (attributes and tables) */
+export function updateAllFieldVisibility(isVisible: boolean): AllFieldVisibilityAction {
+  return {
+    type: ALL_FIELD_VISIBILITY,
+    payload: { isVisible }
+  }
+}
+
+//==============================================================================
+
+export const NAVIGATION_VISIBILITY = 'record-view/navigation-visibility-changed';
 
 export type NavigationVisibilityAction = {
-  type: 'record-view/navigation-visibility-changed',
+  type: typeof NAVIGATION_VISIBILITY,
   payload: {
     isVisible: boolean
   }
 }
 
+/** Change the visibility of the navigation panel */
+export function updateNavigationVisibility(isVisible: boolean): NavigationVisibilityAction {
+  return {
+    type: NAVIGATION_VISIBILITY,
+    payload: { isVisible }
+  }
+}
+
+//==============================================================================
+
+export const CATEGORY_EXPANSION = 'record-view/navigation-category-expansion-changed';
+
 export type CategoryExpansionAction = {
-  type: 'record-view/navigation-category-expansion-changed',
+  type: typeof CATEGORY_EXPANSION,
   payload: {
     expandedCategories: string[]
   }
 }
 
+/** Change the visibility of subcategories in the navigation section */
+export function updateNavigationCategoryExpansion(expandedCategories: string[]): CategoryExpansionAction {
+  return {
+    type: CATEGORY_EXPANSION,
+    payload: { expandedCategories }
+  }
+}
+
+//==============================================================================
+
+export const NAVIGATION_QUERY = 'record-view/navigation-query-changed';
+
 export type NavigationQueryAction = {
-  type: 'record-view/navigation-query-changed',
+  type: typeof NAVIGATION_QUERY,
   payload: {
     query: string
   }
 }
+
+/** Update navigation section search term */
+export function updateNavigationQuery(query: string): NavigationQueryAction {
+  return {
+    type: NAVIGATION_QUERY,
+    payload: { query }
+  };
+}
+
+//==============================================================================
+
+
+// thunks
+// ------
+
+type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | BasketStatusReceivedAction;
+type FavoriteAction = FavoritesStatusLoadingAction | FavoritesStatusReceivedAction | FavoritesStatusErrorAction;
 
 type LoadRecordAction = RecordLoadingAction
   | RecordErrorAction
@@ -118,12 +248,6 @@ export function loadRecordData(
   };
 }
 
-const makeWithId = <T extends Action & { id: string }>(
-  id = uniqueId('groupid')
-) => (action: Action) => {
-  return Object.assign(action, { id }) as T;
-}
-
 /**
  * Fetches the new record from the service and dispatches related
  * actions so that the store can update.
@@ -137,18 +261,10 @@ function setActiveRecord(
   getRecordRequestOptions: RequestRequestOptionsGetter
 ): ActionThunk<LoadRecordAction|UserAction|EmptyAction> {
   return ({ wdkService }) => {
-    const withId = makeWithId<LoadRecordAction>();
-    // Helper to handle errors
-    const makeErrorAction = (error: Error) => withId({
-      type: 'record-view/error-received',
-      payload: { error }
-    });
+    const id = uniqueId('recordViewId');
 
     return [
-      withId({
-        type: 'record-view/active-record-loading',
-        payload: { recordClassName, primaryKeyValues }
-      }),
+      recordLoading(id, { recordClassName, primaryKeyValues }),
       // Fetch the record base and tables in parallel.
       Promise.all([
         wdkService.findRecordClass(r => r.urlSegment === recordClassName),
@@ -160,73 +276,32 @@ function setActiveRecord(
             getRecordRequestOptions(recordClass, fullCategoryTree);
           const categoryTree = getTree({ name: '__', tree: fullCategoryTree }, isNotInternalNode);
           const initialAction$ = wdkService.getRecord(recordClass.name, primaryKey, initialOptions).then(
-            record => ({
-              type: 'record-view/active-record-received',
-              payload: { record, recordClass, categoryTree }
-            } as RecordReceivedAction)
+            record => recordReceived(id, {
+              record,
+              recordClass,
+              categoryTree
+            })
           );
           const additionalActions = additionalOptions.map(options =>
             wdkService.getRecord(recordClass.name, primaryKey, options).then(
-              record => ({
-                type: 'record-view/active-record-updated',
-                payload: { record }
-              } as RecordUpdatedAction)
+              record => recordUpdate(id, record),
+              error => recordError(id, error)
             )
           );
 
           return initialAction$.then(
             action => [
-              withId(action),
-              additionalActions.map(action$ => action$.then(withId, makeErrorAction)),
+              action,
+              additionalActions,
               recordClass.useBasket ? loadBasketStatus(action.payload.record) : emptyAction,
               loadFavoritesStatus(action.payload.record)
             ],
-            makeErrorAction
+            error => recordError(id, error)
           );
         },
-        makeErrorAction
+        error => recordError(id, error)
       )
     ];
-  }
-}
-
-/** Update a section's collapsed status */
-export function updateSectionVisibility(sectionName: string, isVisible: boolean): SectionVisibilityAction {
-  return {
-    type: 'record-view/section-visibility-changed',
-    payload: { name: sectionName, isVisible }
-  };
-}
-
-/** Change the visibility for all record fields (attributes and tables) */
-export function updateAllFieldVisibility(isVisible: boolean): AllFieldVisibilityAction {
-  return {
-    type: 'record-view/all-field-visibility-changed',
-    payload: { isVisible }
-  }
-}
-
-/** Update navigation section search term */
-export function updateNavigationQuery(query: string): NavigationQueryAction {
-  return {
-    type: 'record-view/navigation-query-changed',
-    payload: { query }
-  };
-}
-
-/** Change the visibility of the navigation panel */
-export function updateNavigationVisibility(isVisible: boolean): NavigationVisibilityAction {
-  return {
-    type: 'record-view/navigation-visibility-changed',
-    payload: { isVisible }
-  }
-}
-
-/** Change the visibility of subcategories in the navigation section */
-export function updateNavigationCategoryExpansion(expandedCategories: string[]): CategoryExpansionAction {
-  return {
-    type: 'record-view/navigation-category-expansion-changed',
-    payload: { expandedCategories }
   }
 }
 

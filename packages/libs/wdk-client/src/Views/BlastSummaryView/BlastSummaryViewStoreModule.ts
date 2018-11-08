@@ -2,7 +2,8 @@ import { LoadingAction, loadingType } from 'wdk-client/Views/BlastSummaryView/Bl
 import { CompletedAction, completedType, createCompletedAction } from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
 import { ErrorAction, errorType, createErrorAction } from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
 
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+// FIXME Replace with `import { Action } from 'wdk-client/Actions'`. Requires adding BlastSummaryViewActions to that file.
+import { Action } from 'redux';
 import { BlastSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 

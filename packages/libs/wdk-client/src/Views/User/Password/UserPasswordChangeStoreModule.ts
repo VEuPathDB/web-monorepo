@@ -1,8 +1,7 @@
-import { PasswordFormUpdateAction, PasswordFormSubmissionStatusAction } from 'wdk-client/Views/User/UserActionCreators';
+import { Action } from 'wdk-client/Actions';
+import { PASSWORD_FORM_UPDATE, PASSWORD_FORM_SUBMISSION_STATUS } from 'wdk-client/Actions/UserActions';
 
 export const key = 'passwordChange';
-
-type Action = PasswordFormUpdateAction | PasswordFormSubmissionStatusAction;
 
 export type State = {
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
@@ -22,13 +21,13 @@ const defaultState: State = {
 
 export function reduce(state: State = defaultState, action: Action): State {
   switch (action.type) {
-    case 'user/password-form-update':
+    case PASSWORD_FORM_UPDATE:
       return {
         ...state,
         passwordForm: action.payload,
         formStatus: 'modified'
       };
-    case 'user/password-form-submission-status':
+    case PASSWORD_FORM_SUBMISSION_STATUS:
       return {
         ...state,
         // in all status update cases, we should clear passwords

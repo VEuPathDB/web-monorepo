@@ -1,12 +1,57 @@
-import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
-
 export type DisplayType = 'normal' | 'logarithm';
 
-export const SetBinSize =
-  makeActionCreator<number, 'histogram-analysis/set-bin-size'>('histogram-analysis/set-bin-size');
+//==============================================================================
 
-export const SetLogScaleXAxis =
-  makeActionCreator<boolean, 'histogram-analysis/set-log-scale-x-axis'>('histogram-analysis/set-log-scale-x-axis');
+export const SET_BIN_SIZE = 'histogram-analysis/set-bin-size';
 
-export const SetLogScaleYAxis =
-  makeActionCreator<boolean, 'histogram-analysis/set-log-scale-y-axis'>('histogram-analysis/set-log-scale-y-axis');
+export interface SetBinSizeAction {
+  type: typeof SET_BIN_SIZE;
+  payload: {
+    size: number;
+  };
+}
+
+export function setBinSize(size: number): SetBinSizeAction {
+  return {
+    type: SET_BIN_SIZE,
+    payload: { size }
+  }
+}
+
+//==============================================================================
+
+export const ENABLE_LOG_SCALE_X_AXIS = 'histogram-analysis/enable-log-scale-x-axis';
+
+export interface EnableLogScaleXAxisAction {
+  type: typeof ENABLE_LOG_SCALE_X_AXIS;
+  payload: {
+    enable: boolean;
+  };
+}
+
+export function enableLogScaleXAxis(enable: boolean): EnableLogScaleXAxisAction {
+  return {
+    type: ENABLE_LOG_SCALE_X_AXIS,
+    payload: { enable }
+  }
+}
+
+//==============================================================================
+
+export const ENABLE_LOG_SCALE_Y_AXIS = 'histogram-analysis/enable-log-scale-y-axis';
+
+export interface EnableLogScaleYAxisAction {
+  type: typeof ENABLE_LOG_SCALE_Y_AXIS;
+  payload: {
+    enable: boolean;
+  };
+}
+
+export function enableLogScaleYAxis(enable: boolean): EnableLogScaleYAxisAction {
+  return {
+    type: ENABLE_LOG_SCALE_Y_AXIS,
+    payload: { enable }
+  }
+}
+
+//==============================================================================

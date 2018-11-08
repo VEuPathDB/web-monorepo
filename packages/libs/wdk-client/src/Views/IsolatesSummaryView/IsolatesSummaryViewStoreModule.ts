@@ -2,10 +2,11 @@ import { LoadingAction, loadingType } from 'wdk-client/Views/IsolatesSummaryView
 import { CompletedAction, completedType, createCompletedAction } from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
 import { ErrorAction, errorType, createErrorAction } from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
 
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
 import { IsolatesSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
+// FIXME Replace with `import { Action } from 'wdk-client/Actions'`. Requires adding IsolateSummaryViewActions to that file.
+import { Action } from 'redux';
 import { from, Observable } from 'rxjs';
 import { filter, mergeMap } from 'rxjs/operators';
 

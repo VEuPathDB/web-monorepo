@@ -2,18 +2,21 @@ import * as React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import ChangePasswordForm from 'wdk-client/Views/User/Password/ChangePasswordForm';
-import { updateChangePasswordForm, savePassword } from 'wdk-client/Views/User/UserActionCreators';
+import { passwordFormUpdate, savePassword } from 'wdk-client/Actions/UserActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
 
-const ActionCreators = { updateChangePasswordForm, savePassword };
+const actionCreators = {
+  updateChangePasswordForm: passwordFormUpdate,
+  savePassword
+};
 
-type Props = RootState['passwordChange'] & Pick<RootState['globalData'], 'user'> & typeof ActionCreators;
+type Props = RootState['passwordChange'] & Pick<RootState['globalData'], 'user'> & typeof actionCreators;
 
 class UserPasswordChangeController extends PageController<Props> {
 
   getActionCreators() {
-    return ActionCreators;
+    return actionCreators;
   }
 
   isRenderDataLoaded() {
@@ -34,7 +37,7 @@ const enhance = connect(
     ...state.passwordChange,
     user: state.globalData.user
   }),
-  ActionCreators,
+  actionCreators,
   (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps })
 )
 

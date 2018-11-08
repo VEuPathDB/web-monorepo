@@ -1,7 +1,6 @@
 import React from 'react';
 import MultiSelect from 'wdk-client/Components/InputControls/MultiSelect';
 import SingleSelect from 'wdk-client/Components/InputControls/SingleSelect';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { SelectEnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
 import { Context, Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
 import { valueToArray, isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';

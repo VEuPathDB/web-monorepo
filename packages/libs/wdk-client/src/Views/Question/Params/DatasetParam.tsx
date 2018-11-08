@@ -1,17 +1,38 @@
 import React from 'react';
+import { ofType } from 'redux-observable';
 import { EMPTY, from, merge } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
 import { Strategy } from 'wdk-client/Utils/WdkUser';
-import { Props, Context, createParamModule, ParamModule } from 'wdk-client/Views/Question/Params/Utils';
-import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import {
+  Props,
+  Context,
+  createParamModule,
+  ParamModule
+} from 'wdk-client/Views/Question/Params/Utils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { matchAction } from 'wdk-client/Utils/ReducerUtils';
 
 import 'wdk-client/Views/Question/Params/DatasetParam.scss';
 import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { DatasetConfig } from 'wdk-client/Utils/WdkService';
-import { ParamInitAction } from 'wdk-client/Views/Question/QuestionActionCreators';
+import { INIT_PARAM, InitParamAction } from 'wdk-client/Actions/QuestionActions';
+import {
+  SET_BASKET_COUNT,
+  SET_FILE,
+  SET_FILE_PARSER,
+  SET_ID_LIST,
+  SET_SOURCE_TYPE,
+  SET_STRATEGY_ID,
+  SET_STRATEGY_LIST,
+  setBasketCount,
+  setFile,
+  setFileParser,
+  setIdList,
+  setSourceType,
+  setStrategyId,
+  setStrategyList,
+} from 'wdk-client/Actions/DatasetParamActions';
+import { Action } from 'wdk-client/Actions';
 
 const cx = makeClassNameHelper('wdk-DatasetParam');
 
@@ -29,15 +50,6 @@ type State = {
   fileParser?: DatasetParam['parsers'][number]['name'];
 }
 
-type Payload<T extends keyof State> = Context<DatasetParam> & Pick<State, T>;
-
-export const SetSourceType = makeActionCreator<Payload<'sourceType'>, 'dataset-param/source-type-set'>('dataset-param/source-type-set');
-export const SetIdList = makeActionCreator<Payload<'idList'>, 'dataset-param/id-list-set'>('dataset-param/id-list-set');
-export const SetFile = makeActionCreator<Payload<'file'>, 'dataset-param/file-id-list-set'>('dataset-param/file-id-list-set');
-export const SetStrategyList = makeActionCreator<Payload<'strategyList'>, 'dataset-param/strategy-list-set'>('dataset-param/strategy-list-set');
-export const SetStrategyId = makeActionCreator<Payload<'strategyId'>, 'dataset-param/strategy-id-set'>('dataset-param/strategy-id-set');
-export const SetBasketCount = makeActionCreator<Payload<'basketCount'>, 'dataset-param/basket-count-set'>('dataset-param/basket-count-set');
-export const SetFileParser = makeActionCreator<Payload<'fileParser'>, 'dataset-param/file-parser-set'>('dataset-param/file-parser-set');
 
 function isType(parameter: Parameter): parameter is DatasetParam {
   return parameter.type === 'DatasetParam';
@@ -55,15 +67,26 @@ const defaultState: State = {
 const getInitialParser = (parameter: DatasetParam) =>
   parameter.parsers[0].name
 
-const reduce = matchAction(defaultState,
-  [SetSourceType, (state, { sourceType }) => ({ ...state, sourceType })],
-  [SetIdList, (state, { idList }) => ({ ...state, idList })],
-  [SetFile, (state, { file }) => ({ ...state, file })],
-  [SetStrategyList, (state, { strategyList }) => ({ ...state, strategyList })],
-  [SetStrategyId, (state, { strategyId }) => ({ ...state, strategyId })],
-  [SetBasketCount, (state, { basketCount }) => ({ ...state, basketCount })],
-  [SetFileParser, (state, { fileParser }) => ({ ...state, fileParser })],
-)
+function reduce(state: State = defaultState, action: Action): State {
+  switch(action.type) {
+    case SET_SOURCE_TYPE:
+      return { ...state, sourceType: action.payload.sourceType };
+    case SET_ID_LIST:
+      return { ...state, idList: action.payload.idList };
+    case SET_FILE:
+      return { ...state, file: action.payload.file };
+    case SET_STRATEGY_LIST:
+      return { ...state, strategyList: action.payload.strategyList };
+    case SET_STRATEGY_ID:
+      return { ...state, strategyId: action.payload.strategyId };
+    case SET_BASKET_COUNT:
+      return { ...state, basketCount: action.payload.basketCount };
+    case SET_FILE_PARSER:
+      return { ...state, fileParser: action.payload.fileParser };
+    default:
+      return state;
+  }
+}
 
 const getIdList = (uiState: State, parameter: DatasetParam) =>
     uiState.idList == null
@@ -96,7 +119,7 @@ const sections: Section[] = [
         rows={5}
         cols={30}
         value={getIdList(uiState, parameter)}
-        onChange={e => dispatch(SetIdList.create({ ...ctx, idList: e.target.value }))}
+        onChange={e => dispatch(setIdList({ ...ctx, idList: e.target.value }))}
       />
   },
   {
@@ -107,7 +130,7 @@ const sections: Section[] = [
         <input
           type="file"
           accept="text/*"
-          onChange={e => dispatch(SetFile.create({ ...ctx, file: e.target.files && e.target.files[0] }))}
+          onChange={e => dispatch(setFile({ ...ctx, file: e.target.files && e.target.files[0] }))}
         />
         <small>
           <div>Maximum size 10MB. The file should contain the list of IDs.</div>
@@ -126,7 +149,7 @@ const sections: Section[] = [
                         type="radio"
                         value={parser.name}
                         checked={getParser(uiState, parameter) === parser.name}
-                        onChange={e => e.target.checked && dispatch(SetFileParser.create({...ctx, fileParser: parser.name}))}
+                        onChange={e => e.target.checked && dispatch(setFileParser({...ctx, fileParser: parser.name}))}
                       /> {parser.displayName}
                     </label>
                   </li>
@@ -153,7 +176,7 @@ const sections: Section[] = [
     render: ({ ctx, uiState, parameter }) =>
       <div>
         {uiState.strategyList
-          ? <select value={getStrategyId(uiState, parameter)} onChange={e => SetStrategyId.create({ ...ctx, strategyId: Number(e.target.value) })}>
+          ? <select value={getStrategyId(uiState, parameter)} onChange={e => setStrategyId({ ...ctx, strategyId: Number(e.target.value) })}>
               {uiState.strategyList.map(strategy =>
                 <option key={strategy.strategyId} title="Can you see me?" value={strategy.strategyId}>{strategy.name}</option>
               )}
@@ -177,7 +200,7 @@ function DatasetParamComponent(props: Props<DatasetParam, State>) {
                 <input
                   type="radio"
                   checked={active}
-                  onChange={e => e.target.checked && dispatch(SetSourceType.create({ ...ctx, sourceType }))}
+                  onChange={e => e.target.checked && dispatch(setSourceType({ ...ctx, sourceType }))}
                 /> {label}:
               </label>
               <div className={cx('Control', active || 'disabled')} >{render(props)}</div>
@@ -190,7 +213,7 @@ function DatasetParamComponent(props: Props<DatasetParam, State>) {
 }
 
 const observeParam: ParamModule['observeParam'] = (action$, state$, services) => action$.pipe(
-  filter(ParamInitAction.test),
+  ofType<InitParamAction>(INIT_PARAM),
   mergeMap(action =>
     from(services.wdkService.getCurrentUser()).pipe(
       mergeMap(user => {
@@ -204,7 +227,7 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
 
         return merge(
           services.wdkService.getBasketCounts().then(
-            counts => SetBasketCount.create({
+            counts => setBasketCount({
               questionName,
               paramValues,
               parameter: (parameter as DatasetParam),
@@ -212,7 +235,7 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
             })
           ),
           services.wdkService.getStrategies().then(
-            strategies => SetStrategyList.create({
+            strategies => setStrategyList({
               questionName,
               paramValues,
               parameter: (parameter as DatasetParam),

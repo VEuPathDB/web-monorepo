@@ -1,17 +1,20 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { submitProfileForm, updateProfileForm } from 'wdk-client/Views/User/UserActionCreators';
+import { submitProfileForm, profileFormUpdate } from 'wdk-client/Actions/UserActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import UserProfile from 'wdk-client/Views/User/Profile/UserProfile';
 import { RootState } from 'wdk-client/Core/State/Types';
 
-const ActionCreators = { updateProfileForm, submitProfileForm };
+const actionCreators = {
+  updateProfileForm: profileFormUpdate,
+  submitProfileForm
+};
 
 type Props = {
   globalData: RootState['globalData'];
   userProfile: RootState['userProfile'];
-  userEvents: typeof ActionCreators;
+  userEvents: typeof actionCreators;
 }
 
 class UserProfileController extends PageController<Props> {
@@ -41,7 +44,7 @@ const enhance = connect((state: RootState) => ({
     ...state.userProfile.userFormData
   }
 }),
-ActionCreators,
+actionCreators,
 (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps }))
 
 export default enhance(wrappable(UserProfileController));

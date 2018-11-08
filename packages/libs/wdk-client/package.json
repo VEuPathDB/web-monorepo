@@ -5,7 +5,7 @@
     "test": "jest",
     "build": "webpack --hide-modules",
     "check-ts": "tsc --version && tsc --noEmit",
-    "watch-ts": "tsc --noEmit --watch",
+    "watch-ts": "tsc --noEmit --watch -p .",
     "examples": "cd client-examples && webpack-dev-server --content-base public/"
   },
   "private": true,

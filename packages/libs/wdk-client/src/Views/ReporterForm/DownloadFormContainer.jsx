@@ -56,7 +56,7 @@ class DownloadFormContainer extends Component {
   render() {
 
     // get the props needed in this component's render
-    let { scope, step, availableReporters, selectedReporter, recordClass, onSubmit, selectReporter } = this.props;
+    let { scope, step, availableReporters, selectedReporter, recordClass, selectReporter } = this.props;
 
     // create page title element
     let title = getTitle(scope, step, recordClass);

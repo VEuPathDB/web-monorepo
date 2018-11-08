@@ -1,7 +1,7 @@
 import { Subject, empty } from 'rxjs';
 import { mapTo } from 'rxjs/operators';
 
-import { Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { Action } from 'redux';
 import {
   createPlugin,
   mergePluginsByType,

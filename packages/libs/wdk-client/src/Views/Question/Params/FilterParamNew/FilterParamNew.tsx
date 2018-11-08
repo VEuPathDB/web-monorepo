@@ -6,7 +6,12 @@ import { memoize } from 'lodash';
 import React from 'react';
 import { FilterParamNew as TFilterParamNew } from 'wdk-client/Utils/WdkModel';
 import { Props as ParamProps } from 'wdk-client/Views/Question/Params/Utils';
-import { ActiveFieldSetAction, FieldCountUpdateRequestAction, FieldStateUpdatedAction, FiltersUpdatedAction } from 'wdk-client/Views/Question/Params/FilterParamNew/ActionCreators';
+import {
+  setActiveField,
+  startFieldCountRequest,
+  updateFieldState,
+  updateFilters,
+} from 'wdk-client/Actions/FilterParamActions';
 import 'wdk-client/Views/Question/Params/FilterParamNew/FilterParam.css';
 import { MemberFieldState, RangeFieldState, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { getFilterFields, sortDistribution, getOntologyTree } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
@@ -48,11 +53,11 @@ export default class FilterParamNew extends React.PureComponent<Props> {
   }
 
   _handleActiveFieldChange(term: string) {
-    this.props.dispatch(ActiveFieldSetAction.create({ ...this.props.ctx, activeField: term }));
+    this.props.dispatch(setActiveField({ ...this.props.ctx, activeField: term }));
   }
 
   _handleFieldCountUpdateRequest(term: string) {
-    this.props.dispatch(FieldCountUpdateRequestAction.create({ ...this.props.ctx, field: term }));
+    this.props.dispatch(startFieldCountRequest({ ...this.props.ctx, field: term }));
   }
 
   _handleFilterChange(filters: Filter[]) {
@@ -74,7 +79,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     });
 
     onParamValueChange(JSON.stringify({ filters: filtersWithDisplay }));
-    dispatch(FiltersUpdatedAction.create({...ctx, prevFilters, filters}));
+    dispatch(updateFilters({...ctx, prevFilters, filters}));
   }
 
   _handleMemberSort(field: Field, sort: MemberFieldState['sort']) {
@@ -86,7 +91,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     const filter = filters.find(filter => filter.field === field.term) as MemberFilter;
     const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState;
 
-    this.props.dispatch(FieldStateUpdatedAction.create({
+    this.props.dispatch(updateFieldState({
       ...this.props.ctx,
       field: field.term,
       fieldState: {
@@ -102,7 +107,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
 
   _handleMemberSearch(field: Field, searchTerm: string) {
     const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState
-    this.props.dispatch(FieldStateUpdatedAction.create({
+    this.props.dispatch(updateFieldState({
       ...this.props.ctx,
       field: field.term,
       fieldState: { ...fieldState, searchTerm }
@@ -110,7 +115,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
   }
 
   _handleRangeScaleChange(field: Field, fieldState: RangeFieldState) {
-    this.props.dispatch(FieldStateUpdatedAction.create({
+    this.props.dispatch(updateFieldState({
       ...this.props.ctx,
       field: field.term,
       fieldState: fieldState

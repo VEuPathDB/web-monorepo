@@ -3,25 +3,25 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import UserPasswordReset from 'wdk-client/Views/User/Password/UserPasswordReset';
 import {
-  updatePasswordResetEmail,
+  resetPasswordUpdateEmail,
   submitPasswordReset,
   conditionallyTransition
-} from 'wdk-client/Views/User/UserActionCreators';
+} from 'wdk-client/Actions/UserActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
 
-const ActionCreators = {
-  updatePasswordResetEmail,
+const actionCreators = {
+  updatePasswordResetEmail: resetPasswordUpdateEmail,
   submitPasswordReset,
   conditionallyTransition
 }
 
-type Props = typeof ActionCreators & RootState['passwordReset'] & Pick<RootState['globalData'], 'user'>;
+type Props = typeof actionCreators & RootState['passwordReset'] & Pick<RootState['globalData'], 'user'>;
 
 class UserPasswordResetController extends PageController<Props> {
 
   getActionCreators() {
-    return ActionCreators;
+    return actionCreators;
   }
 
   getTitle() {
@@ -45,7 +45,7 @@ class UserPasswordResetController extends PageController<Props> {
 
 const enhance = connect(
   (state: RootState) => ({ ...state.passwordReset, user: state.globalData.user }),
-  ActionCreators
+  actionCreators
 )
 
 export default enhance(wrappable(UserPasswordResetController));

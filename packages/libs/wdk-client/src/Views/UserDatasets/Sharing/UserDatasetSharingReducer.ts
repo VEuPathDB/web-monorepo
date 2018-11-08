@@ -1,30 +1,32 @@
-import { Reducer } from 'wdk-client/Utils/ReducerUtils';
 import { differenceWith, unionWith } from 'lodash';
-
-import { Action, makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
-import { composeReducers, matchAction } from 'wdk-client/Utils/ReducerUtils';
 import { UserDataset, UserDatasetShare } from 'wdk-client/Utils/WdkModel';
-
-import { SharingSuccessAction } from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
+import {
+  SharingSuccessAction,
+  SHARING_SUCCESS
+} from 'wdk-client/Actions/UserDatasetsActions';
+import { Action } from 'wdk-client/Actions';
 
 type Response = SharingSuccessAction['payload']['response'];
 type ShareOperation = keyof Response;
-type Shares = Response[ShareOperation];
 
 type State = Record<string, {
   isLoading: boolean;
   resource?: UserDataset
 }>;
 
-const SharingAction =
-  makeActionCreator<SharingSuccessAction['payload'], SharingSuccessAction['type']>('user-datasets/sharing-success')
+const initialState: State = { }
 
 const handleAdd = handleOperation('add');
 const handleDelete = handleOperation('delete');
 
-export default <Reducer<State>>matchAction({} as State,
-  [ SharingAction, (state, payload) => handleAdd(handleDelete(state, payload), payload) ]
-)
+export default function reduce(state: State = initialState, action: Action): State {
+  switch(action.type) {
+    case SHARING_SUCCESS:
+      return handleAdd(handleDelete(state, action.payload), action.payload)
+    default:
+      return state;
+  }
+}
 
 function handleOperation(operation: ShareOperation) {
   return function (state: State, payload: SharingSuccessAction['payload']): State {

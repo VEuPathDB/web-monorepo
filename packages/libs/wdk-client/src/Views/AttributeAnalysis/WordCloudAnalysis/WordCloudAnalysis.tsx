@@ -5,12 +5,17 @@ import React from 'react';
 
 import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
 import RadioList from 'wdk-client/Components/InputControls/RadioList';
-import { DispatchAction, SimpleDispatch } from 'wdk-client/Core/CommonTypes';
+import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, pure } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 import { AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis';
-import { RankRange, RankRangeChanged, Sort, WordCloudSorted } from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudActions';
+import {
+  changeRankRange,
+  changeSort,
+  RankRange,
+  Sort,
+} from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudActions';
 import { State } from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudState';
 
 type Tag = { word: string; count: number };
@@ -30,10 +35,10 @@ const columns : Column[] = [
 export default class WordCloudAnalysis extends React.Component<ModuleProps> {
 
   onRankChange = (range: RankRange) =>
-    this.props.dispatch(RankRangeChanged.create(range));
+    this.props.dispatch(changeRankRange(range));
 
   onSortChange = (sort: string) =>
-    this.props.dispatch(WordCloudSorted.create(sort as Sort));
+    this.props.dispatch(changeSort(sort as Sort));
 
   render() {
     if (this.props.state.data.status !== 'success') return null;

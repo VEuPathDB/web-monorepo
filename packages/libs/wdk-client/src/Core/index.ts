@@ -1,6 +1,6 @@
 import * as Components from 'wdk-client/Components';
 import * as AttributeFilterUtils from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
-import * as ActionCreators from 'wdk-client/Core/ActionCreators';
+import * as Actions from 'wdk-client/Actions';
 import * as Controllers from 'wdk-client/Core/Controllers';
 import { initialize, wrapComponents } from 'wdk-client/Core/main';
 import * as Plugins from 'wdk-client/Core/Plugins';
@@ -13,8 +13,6 @@ import * as Json from 'wdk-client/Utils/Json';
 import * as OntologyUtils from 'wdk-client/Utils/OntologyUtils';
 import * as Platform from 'wdk-client/Utils/Platform';
 import * as PromiseUtils from 'wdk-client/Utils/PromiseUtils';
-import * as ReducerUtils from 'wdk-client/Utils/ReducerUtils';
-import * as StaticDataUtils from 'wdk-client/Utils/StaticDataUtils';
 import StoreModules from 'wdk-client/Core/State/StoreModules';
 import * as TreeUtils from 'wdk-client/Utils/TreeUtils';
 import * as WdkModel from 'wdk-client/Utils/WdkModel';
@@ -31,8 +29,8 @@ declare var __webpack_public_path__: string;
 __webpack_public_path__ = window.__asset_path_remove_me_please__;
 
 export {
+  Actions,
   ActionCreatorUtils,
-  ActionCreators,
   AttributeFilterUtils,
   CategoryUtils,
   ComponentUtils,
@@ -46,9 +44,7 @@ export {
   Platform,
   Plugins,
   PromiseUtils,
-  ReducerUtils,
   ReporterUtils,
-  StaticDataUtils,
   StoreModules,
   TreeUtils,
   WdkModel,

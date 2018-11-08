@@ -8,15 +8,30 @@ import { Location } from 'history';
 
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
+export type Action =
+  | UpdateLocationAction
 
-export type LocationAction = {
-  type: 'router/location-updated',
-  payload: { location: Location }
+//==============================================================================
+
+export const UPDATE_LOCATION = 'router-update-location';
+
+export interface UpdateLocationAction {
+  type: typeof UPDATE_LOCATION;
+  payload: {
+    location: Location;
+  };
 }
 
-export function updateLocation(location: Location): LocationAction {
-  return { type: 'router/location-updated', payload: { location } }
+export function updateLocation(location: Location): UpdateLocationAction {
+  return {
+    type: UPDATE_LOCATION,
+    payload: {
+      location
+    }
+  };
 }
+
+//==============================================================================
 
 export function transitionToInternalPage(path: string): ActionThunk<EmptyAction> {
   return function run({ transitioner }) {

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import Error from 'wdk-client/Components/PageStatus/Error';
-import { emptyAction, Action } from 'wdk-client/Utils/ActionCreatorUtils';
+import { emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
 type Props = {
   renderError?: () => React.ReactNode;
   children?: React.ReactNode;

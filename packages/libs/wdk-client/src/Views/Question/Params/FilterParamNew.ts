@@ -1,4 +1,4 @@
-import observeParam from 'wdk-client/Views/Question/Params/FilterParamNew/ActionCreators';
+import observeParam from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamObserver';
 import Component from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamNew';
 import { reduce } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { isParamValueValid, isType } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';

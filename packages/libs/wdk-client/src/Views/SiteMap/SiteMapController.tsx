@@ -1,13 +1,22 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import * as SiteMapActionCreators from 'wdk-client/Views/SiteMap/SiteMapActionCreators';
+import {
+  updateExpansion,
+  setSearchText,
+  loadCurrentSiteMap
+} from 'wdk-client/Actions/SiteMapActions';
 import SiteMap from 'wdk-client/Views/SiteMap/SiteMap';
 import { RootState } from 'wdk-client/Core/State/Types';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 
+const siteMapActionCreators = {
+  loadCurrentSiteMap,
+  updateExpanded: updateExpansion,
+  setSearchText
+}
 type StateProps = RootState['siteMap'];
-type DispatchProps = typeof SiteMapActionCreators;
+type DispatchProps = typeof siteMapActionCreators;
 
 type Props = {
   stateProps: StateProps,
@@ -49,7 +58,7 @@ class SiteMapController extends PageController<Props> {
 
 export default connect(
   (state: RootState) => state.siteMap,
-  SiteMapActionCreators,
+  siteMapActionCreators,
   (stateProps, dispatchProps) => ({
     stateProps,
     dispatchProps

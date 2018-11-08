@@ -63,9 +63,8 @@ class Answer extends React.Component {
   }
 
   createRecordUrl ({ id }) {
-    const { recordClass, history, displayInfo } = this.props;
+    const { recordClass, history } = this.props;
     const { urlSegment } = recordClass;
-    const { pagination } = displayInfo;
     const pathname = `/record/${urlSegment}/${id.map(_id => _id.value).join('/')}`;
     return history.createHref({ pathname });
   }
@@ -161,7 +160,6 @@ class Answer extends React.Component {
 
   render () {
     const { question, recordClass, displayInfo } = this.props;
-    const { attributeSelectorOpen, pendingVisibleAttributes } = this.state;
 
     const TableState = this.getTableState();
     const AnswerCount = this.renderAnswerCount;

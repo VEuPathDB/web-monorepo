@@ -2,9 +2,25 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
-import * as DownloadFormActionCreators from 'wdk-client/Views/ReporterForm/DownloadFormActionCreators';
+import {
+  loadPageDataFromRecord,
+  loadPageDataFromStepId,
+  selectReporter,
+  updateForm,
+  updateFormUi,
+  submitForm
+} from 'wdk-client/Actions/DownloadFormActions';
 import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
 import { RootState } from 'wdk-client/Core/State/Types';
+
+const DownloadFormActionCreators = {
+  loadPageDataFromRecord,
+  loadPageDataFromStepId,
+  selectReporter,
+  submitForm,
+  updateFormState: updateForm,
+  updateFormUiState: updateFormUi
+};
 
 class DownloadFormController extends PageController<RootState['downloadForm'] & typeof DownloadFormActionCreators> {
 

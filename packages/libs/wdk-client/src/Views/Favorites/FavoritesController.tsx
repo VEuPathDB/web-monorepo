@@ -2,7 +2,19 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
-import * as ActionCreators from 'wdk-client/Views/Favorites/FavoritesActionCreators';
+import {
+  updateSearchTerm,
+  updateTableSelection,
+  sortTable,
+  deleteFavorites,
+  filterByType,
+  editCell,
+  changeCellValue,
+  saveCellData,
+  cancelCellEdit,
+  undeleteFavorites,
+  loadFavoritesList
+} from 'wdk-client/Actions/FavoritesActions';
 import _FavoritesList from 'wdk-client/Views/Favorites/FavoritesList';
 import { State } from 'wdk-client/Views/Favorites/FavoritesListStoreModule';
 import { GlobalData } from 'wdk-client/Core/State/StoreModules/GlobalData';
@@ -11,15 +23,33 @@ import { RootState } from 'wdk-client/Core/State/Types';
 // FIXME Convert FavoritesList to TypeScript
 const FavoritesList: any = _FavoritesList;
 
+// Named map of ActionCreator functions that will be passed
+// as dispatchProps via `connect` below
+const ActionCreators = {
+  loadFavoritesList,
+  deleteFavorites,
+  undeleteFavorites,
+  saveCellData,
+  filterByType,
+  cancelCellEdit,
+  editCell,
+  searchTerm: updateSearchTerm,
+  updateSelection: updateTableSelection,
+  sortColumn: sortTable,
+  changeCell: changeCellValue,
+}
+
 type StateProps = Pick<State,
-  'tableState' |
-  'tableSelection' |
-  'favoritesLoading' |
-  'loadError' |
-  'existingFavorite' |
-  'editCoordinates' |
-  'editValue' |
-  'searchText'
+  | 'tableState'
+  | 'tableSelection'
+  | 'favoritesLoading'
+  | 'loadError'
+  | 'existingFavorite'
+  | 'editCoordinates'
+  | 'editValue'
+  | 'searchText'
+  | 'filterByType'
+  | 'deletedFavorite'
 > & Pick<GlobalData, 'user' | 'recordClasses'>;
 
 type DispatchProps = typeof ActionCreators;
@@ -76,7 +106,7 @@ class FavoritesListController extends PageController<Props> {
   }
 }
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = (state: RootState): StateProps => {
   const {
     tableState,
     tableSelection,
@@ -86,8 +116,8 @@ const mapStateToProps = (state: RootState) => {
     editCoordinates,
     editValue,
     searchText,
-    deletedFavorite,
-    filterByType
+    filterByType,
+    deletedFavorite
   } = state.favorites;
 
   const {
@@ -106,8 +136,8 @@ const mapStateToProps = (state: RootState) => {
     editCoordinates,
     editValue,
     searchText,
-    deletedFavorite,
-    filterByType
+    filterByType,
+    deletedFavorite
   };
 };
 

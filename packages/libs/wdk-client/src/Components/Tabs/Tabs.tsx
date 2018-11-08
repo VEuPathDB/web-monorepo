@@ -5,20 +5,20 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 const cx = makeClassNameHelper('wdk-Tab');
 
-type TabConfig = {
-  key: string;
+type TabConfig<TabKey extends string> = {
+  key: TabKey;
   display: string;
   content: React.ReactNode;
 }
 
-type Props = {
-  tabs: TabConfig[];
+type Props<TabKey extends string> = {
+  tabs: TabConfig<TabKey>[];
   activeTab: string;
-  onTabSelected: (tab: string) => void;
+  onTabSelected: (tab: TabKey) => void;
   className?: string;
 }
 
-export default function Tabs(props: Props) {
+export default function Tabs<T extends string>(props: Props<T>) {
   const activeTab = props.tabs.find(tab => tab.key === props.activeTab);
   return (
     <div className={cx('sContainer')}>

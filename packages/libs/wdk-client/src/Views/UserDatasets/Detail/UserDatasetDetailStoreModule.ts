@@ -1,31 +1,10 @@
-import {
-  DetailLoading,
-  DetailUpdatingAction,
-  DetailErrorAction,
-  DetailReceivedAction,
-  DetailUpdateErrorAction,
-  DetailUpdateSuccessAction,
-  DetailRemovingAction,
-  DetailRemoveSuccessAction,
-  DetailRemoveErrorAction,
-  SharingSuccessAction
-} from 'wdk-client/Views/UserDatasets/UserDatasetsActionCreators';
 import sharingReducer from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { Action } from 'wdk-client/Actions';
+import { DETAIL_LOADING, DETAIL_RECEIVED, DETAIL_ERROR, DETAIL_UPDATING, DETAIL_UPDATE_SUCCESS, DETAIL_UPDATE_ERROR, DETAIL_REMOVING, DETAIL_REMOVE_SUCCESS, DETAIL_REMOVE_ERROR, SHARING_SUCCESS } from 'wdk-client/Actions/UserDatasetsActions';
 
 export const key = 'userDatasetDetail';
-
-type Action = DetailLoading
-            | DetailUpdatingAction
-            | DetailErrorAction
-            | DetailReceivedAction
-            | DetailUpdateErrorAction
-            | DetailUpdateSuccessAction
-            | DetailRemovingAction
-            | DetailRemoveSuccessAction
-            | DetailRemoveErrorAction
-            | SharingSuccessAction;
 
 /**
  * If isLoading is false, and resource is undefined,
@@ -61,7 +40,7 @@ const initialState: State = {
  */
 export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
-    case 'user-datasets/detail-loading': return {
+    case DETAIL_LOADING: return {
       ...state,
       userDatasetsById: {
         ...state.userDatasetsById,
@@ -71,7 +50,7 @@ export function reduce(state: State = initialState, action: Action): State {
       }
     };
 
-    case 'user-datasets/detail-received': return {
+    case DETAIL_RECEIVED: return {
       ...state,
       userDatasetLoading: false,
       userDatasetsById: {
@@ -83,19 +62,19 @@ export function reduce(state: State = initialState, action: Action): State {
       }
     };
 
-    case 'user-datasets/detail-error': return {
+    case DETAIL_ERROR: return {
       ...state,
       userDatasetLoading: false,
       loadError: action.payload.error
     };
 
-    case 'user-datasets/detail-updating': return {
+    case DETAIL_UPDATING: return {
       ...state,
       userDatasetUpdating: true,
       updateError: undefined
     };
 
-    case 'user-datasets/detail-update-success': return {
+    case DETAIL_UPDATE_SUCCESS: return {
       ...state,
       userDatasetUpdating: false,
       userDatasetsById: {
@@ -107,30 +86,30 @@ export function reduce(state: State = initialState, action: Action): State {
       }
     };
 
-    case 'user-datasets/detail-update-error': return {
+    case DETAIL_UPDATE_ERROR: return {
       ...state,
       userDatasetUpdating: false,
       updateError: action.payload.error
     };
 
-    case 'user-datasets/detail-removing': return {
+    case DETAIL_REMOVING: return {
       ...state,
       userDatasetRemoving: true
     };
 
-    case 'user-datasets/detail-remove-success': return {
+    case DETAIL_REMOVE_SUCCESS: return {
       ...state,
       userDatasetRemoving: false,
       removalError: undefined
     };
 
-    case 'user-datasets/detail-remove-error': return {
+    case DETAIL_REMOVE_ERROR: return {
       ...state,
       userDatasetRemoving: false,
       removalError: action.payload.error
     };
 
-    case 'user-datasets/sharing-success': {
+    case SHARING_SUCCESS: {
       return {
         ...state,
         userDatasetsById: sharingReducer(state.userDatasetsById, action)
