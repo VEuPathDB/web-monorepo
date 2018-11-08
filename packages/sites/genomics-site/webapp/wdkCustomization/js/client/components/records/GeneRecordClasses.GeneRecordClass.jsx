@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
-import { RecordViewActionCreators } from 'wdk-client/ActionCreators';
+import { RecordActions } from 'wdk-client/Actions';
 import * as Category from 'wdk-client/CategoryUtils';
 import { CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
 import { pure } from 'wdk-client/ComponentUtils';
@@ -25,7 +25,7 @@ import { addCommentLink } from '../common/UserComments';
  */
 export const RecordHeading = connect(
   state => ({ categoryTree: state.record.categoryTree }),
-  RecordViewActionCreators
+  RecordActions
 )(class RecordHeading extends Component {
 
   constructor(...args) {

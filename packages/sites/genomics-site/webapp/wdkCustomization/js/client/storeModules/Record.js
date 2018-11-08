@@ -1,7 +1,7 @@
 import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
-import { /*question as QuestionStoreModule,*/ record as RecordStoreModule } from 'wdk-client/StoreModules';
-import { QuestionActionCreators } from 'wdk-client/ActionCreators';
+import { record as RecordStoreModule } from 'wdk-client/StoreModules';
+import { QuestionActions, RecordActions } from 'wdk-client/Actions';
 import { get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
 import * as persistence from '../util/persistence';
@@ -34,7 +34,7 @@ export function reduce(state, action) {
     dynamicColsOfIncomingStep: handleDynColsOfIncomingStepAction(state.dynamicColsOfIncomingStep, action)
   });
   switch (action.type) {
-    case 'record-view/active-record-received':
+    case RecordActions.RECORD_RECEIVED:
       return pruneCategories(state);
     default:
       return state;
@@ -193,7 +193,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
  */
 function observeUserSettings(action$, state$) {
   return action$.pipe(
-    filter(action => action.type === 'record-view/active-record-received'),
+    filter(action => action.type === RecordActions.RECORD_RECEIVED),
     switchMap(() => {
       let state = state$.value[key];
       
@@ -220,11 +220,11 @@ function observeUserSettings(action$, state$) {
       return merge(
         of(
           {
-            type: 'record-view/navigation-visibility-changed',
+            type: RecordActions.NAVIGATION_VISIBILITY,
             payload: { isVisible: navigationVisible }
           },
           ...collapsedSections.map(name => ({
-            type: 'record-view/section-visibility-changed',
+            type: RecordActions.SECTION_VISIBILITY,
             payload: { name, isVisible: false }
           })),
           ...Object.entries(tableStates).map(([tableName, tableState]) => ({
@@ -235,11 +235,11 @@ function observeUserSettings(action$, state$) {
         action$.pipe(
           mergeMap(action => {
             switch (action.type) {
-              case 'record-view/section-visibility-changed':
-              case 'record-view/all-field-visibility-changed':
+              case RecordActions.SECTION_VISIBILITY:
+              case RecordActions.ALL_FIELD_VISIBILITY:
                 setStateInStorage(storageItems.collapsedSections, state$.value[key]);
                 break;
-              case 'record-view/navigation-visibility-changed':
+              case RecordActions.NAVIGATION_VISIBILITY:
                 setStateInStorage(storageItems.navigationVisible, state$.value[key]);
                 break;
               case TABLE_STATE_UPDATED:
@@ -259,7 +259,7 @@ function observeUserSettings(action$, state$) {
  */
 function observeSnpsAlignment(action$) {
   return action$.pipe(
-    filter(action => action.type === 'record-view/active-record-updated'),
+    filter(action => action.type === RecordActions.RECORD_UPDATE),
     mergeMap(action =>
       (isGeneRecord(action.payload.record) &&
         'SNPsAlignment' in action.payload.record.tables)
@@ -267,7 +267,7 @@ function observeSnpsAlignment(action$) {
         : isSnpsRecord(action.payload.record) ? of(action.payload.record.attributes.organism_text)
           : empty()),
     map(organismSinglePick => {
-      return QuestionActionCreators.ActiveQuestionUpdatedAction.create({
+      return QuestionActions.updateActiveQuestion({
         questionName: 'SnpAlignmentForm',
         paramValues: {
           organismSinglePick,
