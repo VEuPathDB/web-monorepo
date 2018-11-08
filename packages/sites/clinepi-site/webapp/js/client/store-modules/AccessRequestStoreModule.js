@@ -1,5 +1,6 @@
 import { merge } from 'rxjs';
 import { filter, mergeAll, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { StaticDataActions } from 'wdk-client/Actions';
 
 import { 
   FINISH_SUBMISSION,
@@ -106,7 +107,7 @@ export function observe(action$, state$, dependencies) {
 
 function observeStaticDataLoaded(action$, state$, dependencies) {
   return action$.pipe(
-    filter(({ type }) => type === 'static/all-data-loaded'),
+    filter(({ type }) => type === StaticDataActions.USER_LOADED),
     mergeMap(async ({ payload }) => {
       const onRequestAccessRoute = window.location.pathname.includes('/request-access/');
 
