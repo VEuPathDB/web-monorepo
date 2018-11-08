@@ -1,5 +1,8 @@
 import { Action } from 'wdk-client/Actions';
-import { PASSWORD_FORM_UPDATE, PASSWORD_FORM_SUBMISSION_STATUS } from 'wdk-client/Actions/UserActions';
+import {
+  PASSWORD_FORM_UPDATE,
+  PASSWORD_FORM_SUBMISSION_STATUS
+} from 'wdk-client/Actions/UserActions';
 
 export const key = 'passwordChange';
 

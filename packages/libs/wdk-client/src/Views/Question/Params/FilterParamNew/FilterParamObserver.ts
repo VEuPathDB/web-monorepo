@@ -14,7 +14,7 @@ import {
   UpdateParamsAction,
   paramError,
 } from 'wdk-client/Actions/QuestionActions';
-import { State, QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
+import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { FieldState, MemberFieldState, State as FilterParamState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { ModuleEpic, EpicDependencies } from 'wdk-client/Core/Store';
 import { isType, getFilters, getFilterFields, isMemberField, sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';

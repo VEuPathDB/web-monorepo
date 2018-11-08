@@ -22,6 +22,7 @@ import {
   ChangeSortingAction,
   AnswerOptions
 } from 'wdk-client/Actions/AnswerActions';
+// FIXME RecordUtils should be moved to Utils
 import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
 
 type EndLoadingWithAnswerPayload = EndLoadingWithAnswerAction['payload']

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Action } from 'wdk-client/Actions';
 import { CompositeClientPlugin, PluginContext } from 'wdk-client/Utils/ClientPlugin';
 
-import * as Data from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
+import * as Data from 'wdk-client/StoreModules/AttributeAnalysisStoreModule/BaseAttributeAnalysis';
 import { ScopedAction, SCOPED_ACTION } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { LocatePlugin } from 'wdk-client/Core/CommonTypes';

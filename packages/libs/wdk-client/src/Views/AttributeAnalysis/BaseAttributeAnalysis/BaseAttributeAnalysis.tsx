@@ -16,7 +16,7 @@ import {
   changeTablePage,
   changeTableRowsPerPage
 } from 'wdk-client/Actions/AttributeAnalysisActions';
-import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
+import { State } from 'wdk-client/StoreModules/AttributeAnalysisStoreModule/BaseAttributeAnalysis';
 
 type VisualizationConfig = {
   display: string;

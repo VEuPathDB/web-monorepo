@@ -11,7 +11,7 @@ import {
   updateParamValue,
   changeGroupVisibility
 } from 'wdk-client/Actions/QuestionActions';
-import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
+import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 
 const ActionCreators = {
   updateParamValue,

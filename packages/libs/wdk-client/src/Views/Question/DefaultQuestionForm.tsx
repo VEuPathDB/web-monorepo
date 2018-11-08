@@ -6,7 +6,7 @@ import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import ParameterComponent from 'wdk-client/Views/Question/ParameterComponent';
-import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
+import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   changeGroupVisibility,
   updateParamValue,

@@ -1,4 +1,4 @@
-import { makeReduce, observe, State as BaseState } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
+import { makeReduce, State as BaseState, observe } from 'wdk-client/StoreModules/AttributeAnalysisStoreModule/BaseAttributeAnalysis';
 import {
   SetBinSizeAction,
   EnableLogScaleXAxisAction,

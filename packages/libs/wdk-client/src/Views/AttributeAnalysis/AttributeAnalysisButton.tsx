@@ -10,7 +10,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Reporter } from 'wdk-client/Utils/WdkModel';
 
 import { startAttributeReportRequest, cancelAttributeReportRequest } from 'wdk-client/Actions/AttributeAnalysisActions';
-import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
+import { State } from 'wdk-client/StoreModules/AttributeAnalysisStoreModule/BaseAttributeAnalysis';
 
 const cx = makeClassNameHelper('AttributeAnalysis');
 

@@ -1,5 +1,7 @@
 import { Action as ReduxAction, Reducer, combineReducers } from 'redux';
 import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { from, Observable } from 'rxjs';
+import { filter, mergeMap, takeUntil } from 'rxjs/operators';
 
 import { Action } from 'wdk-client/Actions';
 import {
@@ -12,8 +14,13 @@ import {
   SEARCH_TABLE,
   SELECT_TAB,
   CHANGE_TABLE_ROWS_PER_PAGE,
-  EndAttributeReportRequestSuccessAction
+  EndAttributeReportRequestSuccessAction,
+  StartAttributeReportRequestAction,
+  CancelAttributeReportRequest,
+  endAttributeReportRequestSuccess,
+  endAttributeReportRequestError
 } from 'wdk-client/Actions/AttributeAnalysisActions';
+import { EpicDependencies } from 'wdk-client/Core/Store';
 
 
 // Report state
@@ -128,3 +135,25 @@ export const makeReduce = <
     tabs: reduceTabs,
     visualization: reduceVisualization
   });
+
+function isStartRequestAction(action: ReduxAction): action is StartAttributeReportRequestAction {
+  return action.type === START_ATTRIBUTE_REPORT_REQUEST;
+}
+
+function isCancelRequestaction(action: ReduxAction): action is CancelAttributeReportRequest {
+  return action.type === CANCEL_ATTRIBUTE_REPORT_REQUEST;
+}
+
+export function observe<T extends string>(action$: Observable<ReduxAction>, state$: Observable<State<T>>, { wdkService }: EpicDependencies): Observable<ReduxAction> {
+  return action$.pipe(
+    filter(isStartRequestAction),
+    mergeMap(({ payload: { reporterName, stepId }}) =>
+      from(
+        wdkService.getStepAnswer(stepId, { format: reporterName }).then(
+          endAttributeReportRequestSuccess,
+          endAttributeReportRequestError
+        )).pipe(
+          takeUntil(action$.pipe(filter(isCancelRequestaction))))
+        )
+      )
+}

@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 
 import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
 import ViewController from 'wdk-client/Core/Controllers/ViewController';
-import { GlobalData } from 'wdk-client/Core/State/StoreModules/GlobalData';
+import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 import AttributeAnalysisButton from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton';
-import { State as AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisStoreModule';
+import { State as AttributeAnalysis } from 'wdk-client/StoreModules/AttributeAnalysisStoreModule';
 import { scopeAction } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Action } from 'wdk-client/Actions';

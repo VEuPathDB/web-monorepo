@@ -6,7 +6,7 @@ import { alert, confirm } from 'wdk-client/Utils/Platform';
 import { RecordInstance } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
-import { UserProfileFormData } from 'wdk-client/Views/User/Profile/UserProfileReducer';
+import { UserProfileFormData } from 'wdk-client/StoreModules/UserProfileStoreModule';
 
 export type Action =
   | UserUpdateAction

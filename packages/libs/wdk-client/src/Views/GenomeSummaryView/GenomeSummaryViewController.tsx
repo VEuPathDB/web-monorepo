@@ -7,7 +7,7 @@ import { Loading } from 'wdk-client/Components';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
-import {State} from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewStoreModule';
+import {State} from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 
 const actionCreators = {
   createLoadingAction,

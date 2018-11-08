@@ -2,7 +2,18 @@ import sharingReducer from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSha
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Utils/WdkService';
 import { Action } from 'wdk-client/Actions';
-import { DETAIL_LOADING, DETAIL_RECEIVED, DETAIL_ERROR, DETAIL_UPDATING, DETAIL_UPDATE_SUCCESS, DETAIL_UPDATE_ERROR, DETAIL_REMOVING, DETAIL_REMOVE_SUCCESS, DETAIL_REMOVE_ERROR, SHARING_SUCCESS } from 'wdk-client/Actions/UserDatasetsActions';
+import {
+  DETAIL_LOADING,
+  DETAIL_RECEIVED,
+  DETAIL_ERROR,
+  DETAIL_UPDATING,
+  DETAIL_UPDATE_SUCCESS,
+  DETAIL_UPDATE_ERROR,
+  DETAIL_REMOVING,
+  DETAIL_REMOVE_SUCCESS,
+  DETAIL_REMOVE_ERROR,
+  SHARING_SUCCESS
+} from 'wdk-client/Actions/UserDatasetsActions';
 
 export const key = 'userDatasetDetail';
 

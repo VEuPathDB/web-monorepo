@@ -4,7 +4,7 @@ import { EMPTY } from 'rxjs';
 import { Action } from 'wdk-client/Actions';
 import { Parameter, ParameterValues } from 'wdk-client/Utils/WdkModel';
 import { Epic } from 'redux-observable';
-import { State, QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
+import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 

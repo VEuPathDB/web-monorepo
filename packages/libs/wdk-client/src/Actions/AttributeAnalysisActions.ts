@@ -1,10 +1,5 @@
 import { Action as ReduxAction } from 'redux';
-import { from, Observable } from 'rxjs';
-import { filter, mergeMap, takeUntil } from 'rxjs/operators';
 
-import { State } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysisState';
-
-import { EpicDependencies } from 'wdk-client/Core/Store';
 import { PluginContext } from 'wdk-client/Utils/ClientPlugin';
 import { Reporter } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Utils/WdkService';
@@ -214,25 +209,3 @@ export function selectTab(tab: Tab): SelectTabAction {
 }
 
 //==============================================================================
-
-function isStartRequestAction(action: ReduxAction): action is StartAttributeReportRequestAction {
-  return action.type === START_ATTRIBUTE_REPORT_REQUEST;
-}
-
-function isCancelRequestaction(action: ReduxAction): action is CancelAttributeReportRequest {
-  return action.type === CANCEL_ATTRIBUTE_REPORT_REQUEST;
-}
-
-export function observeReportRequests<T extends string>(action$: Observable<ReduxAction>, state$: Observable<State<T>>, { wdkService }: EpicDependencies): Observable<ReduxAction> {
-  return action$.pipe(
-    filter(isStartRequestAction),
-    mergeMap(({ payload: { reporterName, stepId }}) =>
-      from(
-        wdkService.getStepAnswer(stepId, { format: reporterName }).then(
-          endAttributeReportRequestSuccess,
-          endAttributeReportRequestError
-        )).pipe(
-          takeUntil(action$.pipe(filter(isCancelRequestaction))))
-        )
-      )
-}

@@ -4,7 +4,7 @@ import { CategoryTreeNode, getAllLeafIds } from 'wdk-client/Utils/CategoryUtils'
 import { getChangeHandler } from 'wdk-client/Utils/ComponentUtils';
 import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { State } from 'wdk-client/Views/ReporterForm/DownloadFormReducer';
+import { State } from 'wdk-client/StoreModules/DownloadFormStoreModule';
 import ReporterSortMessage from 'wdk-client/Views/ReporterForm/ReporterSortMessage';
 import { addPk, getAttributesChangeHandler, getAttributeSelections, getAttributeTree, getTableTree } from 'wdk-client/Views/ReporterForm/reporterUtils';
 

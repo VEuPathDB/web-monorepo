@@ -11,7 +11,7 @@ import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { preorder } from 'wdk-client/Utils/TreeUtils';
 import { EnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import { QuestionState } from 'wdk-client/Views/Question/QuestionStoreModule';
+import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 
 import * as ParamModules from 'wdk-client/Views/Question/Params';
 import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';

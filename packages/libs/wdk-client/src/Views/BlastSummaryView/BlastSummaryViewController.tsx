@@ -6,7 +6,7 @@ import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/Comp
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
-import {State} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewStoreModule';
+import {State} from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 
 

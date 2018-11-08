@@ -16,8 +16,8 @@ import {
   loadFavoritesList
 } from 'wdk-client/Actions/FavoritesActions';
 import _FavoritesList from 'wdk-client/Views/Favorites/FavoritesList';
-import { State } from 'wdk-client/Views/Favorites/FavoritesListStoreModule';
-import { GlobalData } from 'wdk-client/Core/State/StoreModules/GlobalData';
+import { State } from 'wdk-client/StoreModules/FavoritesListStoreModule';
+import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { RootState } from 'wdk-client/Core/State/Types';
 
 // FIXME Convert FavoritesList to TypeScript

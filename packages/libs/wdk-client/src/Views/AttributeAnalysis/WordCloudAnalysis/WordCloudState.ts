@@ -1,4 +1,4 @@
-import { makeReduce, State as BaseState, observe } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis';
+import { makeReduce, State as BaseState, observe } from 'wdk-client/StoreModules/AttributeAnalysisStoreModule/BaseAttributeAnalysis';
 import { EndAttributeReportRequestSuccessAction, END_ATTRIBUTE_REPORT_REQUEST_SUCCESS } from 'wdk-client/Actions/AttributeAnalysisActions';
 import {
   RankRange,

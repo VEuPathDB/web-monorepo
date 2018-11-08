@@ -6,7 +6,7 @@ import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/Comp
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
-import {State} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewStoreModule';
+import {State} from 'wdk-client/StoreModules/IsolatesSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 
 const actionCreators = {

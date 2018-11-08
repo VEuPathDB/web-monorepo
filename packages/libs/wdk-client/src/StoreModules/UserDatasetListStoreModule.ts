@@ -2,7 +2,15 @@ import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import sharingReducer from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
 import { difference } from 'lodash';
 import { Action } from 'wdk-client/Actions';
-import { LIST_LOADING, LIST_RECEIVED, LIST_ERROR_RECEIVED, DETAIL_UPDATE_SUCCESS, DETAIL_REMOVE_SUCCESS, SHARING_SUCCESS, PROJECT_FILTER } from 'wdk-client/Actions/UserDatasetsActions';
+import {
+  LIST_LOADING,
+  LIST_RECEIVED,
+  LIST_ERROR_RECEIVED,
+  DETAIL_UPDATE_SUCCESS,
+  DETAIL_REMOVE_SUCCESS,
+  SHARING_SUCCESS,
+  PROJECT_FILTER
+} from 'wdk-client/Actions/UserDatasetsActions';
 
 export const key = 'userDatasetList';
 

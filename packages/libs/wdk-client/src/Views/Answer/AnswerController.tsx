@@ -13,7 +13,7 @@ import {
 } from 'wdk-client/Actions/AnswerActions';
 import Answer from 'wdk-client/Views/Answer/Answer';
 import Loading from 'wdk-client/Components/Loading/Loading';
-import { State } from 'wdk-client/Views/Answer/AnswerViewStoreModule';
+import { State } from 'wdk-client/StoreModules/AnswerViewStoreModule';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';

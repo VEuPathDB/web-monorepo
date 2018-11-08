@@ -1,4 +1,4 @@
-import storeModules from 'wdk-client/Core/State/StoreModules';
+import storeModules from 'wdk-client/StoreModules';
 
 type StoreModules = typeof storeModules;
 

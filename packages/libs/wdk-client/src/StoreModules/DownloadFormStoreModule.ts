@@ -13,6 +13,8 @@ import { ServiceError } from 'wdk-client/Utils/WdkService';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { Action } from 'wdk-client/Actions';
 
+export const key = 'downloadForm';
+
 export type State = {
   preferences: UserPreferences | null,
   ontology: CategoryOntology | null,

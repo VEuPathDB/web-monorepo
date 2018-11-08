@@ -13,7 +13,7 @@ import * as Json from 'wdk-client/Utils/Json';
 import * as OntologyUtils from 'wdk-client/Utils/OntologyUtils';
 import * as Platform from 'wdk-client/Utils/Platform';
 import * as PromiseUtils from 'wdk-client/Utils/PromiseUtils';
-import StoreModules from 'wdk-client/Core/State/StoreModules';
+import StoreModules from 'wdk-client/StoreModules';
 import * as TreeUtils from 'wdk-client/Utils/TreeUtils';
 import * as WdkModel from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
