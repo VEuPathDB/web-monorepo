@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
-import { emptyAction } from 'wdk-client/ActionCreatorUtils';
+import { emptyAction } from 'wdk-client/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
 import { submitAsForm } from 'wdk-client/FormSubmitter';
