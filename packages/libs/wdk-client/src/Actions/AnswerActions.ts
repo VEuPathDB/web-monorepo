@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import { ActionThunk } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
 import {
   AttributeField,
   RecordClass,

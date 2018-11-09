@@ -1,5 +1,5 @@
 import { getStepBundlePromise, getSingleRecordStepBundlePromise } from 'wdk-client/Utils/stepUtils';
-import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { Step, UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AnswerRequest } from 'wdk-client/Utils/WdkService';

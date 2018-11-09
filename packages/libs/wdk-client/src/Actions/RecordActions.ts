@@ -10,7 +10,7 @@ import {
   loadBasketStatus,
   loadFavoritesStatus,
 } from 'wdk-client/Actions/UserActions';
-import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';

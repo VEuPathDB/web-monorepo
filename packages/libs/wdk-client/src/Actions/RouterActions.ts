@@ -6,7 +6,7 @@
  */
 import { Location } from 'history';
 
-import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 
 export type Action =
   | UpdateLocationAction

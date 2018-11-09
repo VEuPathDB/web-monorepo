@@ -2,7 +2,7 @@ import { get } from 'lodash';
 
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { updateUserPreference, PreferenceUpdateAction } from 'wdk-client/Actions/UserActions';
-import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { UserDataset, UserDatasetMeta } from 'wdk-client/Utils/WdkModel';
 import { ServiceError, UserDatasetShareResponse } from 'wdk-client/Utils/WdkService';
 

@@ -1,7 +1,41 @@
 import { Middleware } from 'redux';
-import { ActionCreatorResult, ActionCreatorServices, emptyType } from 'wdk-client/Utils/ActionCreatorUtils';
 import { isPromise } from 'wdk-client/Utils/PromiseUtils';
 import { Action } from 'wdk-client/Actions';
+import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
+import WdkService from 'wdk-client/Utils/WdkService';
+
+export interface ActionCreatorServices {
+  wdkService: WdkService;
+  transitioner: PageTransitioner;
+}
+
+export type ActionCreatorResult<T> =
+  | T
+  | ActionThunk<T>
+  | ActionCreatorResultArray<T>
+  | ActionCreatorResultPromise<T>;
+
+interface ActionCreatorResultArray<T> extends Array<ActionCreatorResult<T>> {}
+
+interface ActionCreatorResultPromise<T> extends Promise<ActionCreatorResult<T>> {}
+
+export interface ActionThunk<T> {
+  (services: ActionCreatorServices): ActionCreatorResult<T>;
+}
+
+// The following is used by thunks. When WdkMiddleware encounters this action,
+// it will not be dispatched to the store. This allows a thunk to perform a
+// side-effect without dispatching a specific action, for better or worse.
+export const emptyType = Symbol('empty');
+
+export type EmptyAction = {
+  type: typeof emptyType
+}
+
+export const emptyAction: EmptyAction = {
+  type: emptyType
+}
+
 
 /**
  * The DispatchAction type describes the type of function that is used to

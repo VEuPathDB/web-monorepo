@@ -6,7 +6,7 @@ import {
 
 export type SiteMapOntology = OntologyNode<{}>;
 
-import { ActionThunk } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
 
 export type Action =
   | LoadingAction

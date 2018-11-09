@@ -1,4 +1,4 @@
-import { ActionThunk } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ServiceConfig } from 'wdk-client/Utils/WdkService';

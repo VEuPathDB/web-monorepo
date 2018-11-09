@@ -60,9 +60,9 @@
     "typescript": "^3.0.1"
   },
   "jest": {
-    "modulePaths": [
-      "./src"
-    ],
+    "moduleNameMapper": {
+      "^wdk-client(.*)$": "<rootDir>/src$1"
+    },
     "testURL": "http://localhost/",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"

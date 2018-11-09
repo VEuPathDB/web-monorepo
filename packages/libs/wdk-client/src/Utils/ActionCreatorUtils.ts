@@ -1,37 +1,43 @@
-import { Action } from 'redux';
-import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
-import WdkService from 'wdk-client/Utils/WdkService';
-
-
-export interface ActionCreatorServices {
-  wdkService: WdkService;
-  transitioner: PageTransitioner;
+interface Action<Type extends string, Payload> {
+  readonly type: Type;
+  readonly payload: Payload;
 }
 
-export type ActionCreatorResult<T extends Action> =
-  | T
-  | ActionThunk<T>
-  | ActionCreatorResultArray<T>
-  | ActionCreatorResultPromise<T>;
-
-interface ActionCreatorResultArray<T extends Action> extends Array<ActionCreatorResult<T>> {}
-
-interface ActionCreatorResultPromise<T extends Action> extends Promise<ActionCreatorResult<T>> {}
-
-export interface ActionThunk<T extends Action> {
-  (services: ActionCreatorServices): ActionCreatorResult<T>;
+interface ActionCreator<Type extends string, Args extends any[], Payload> {
+  readonly type: Type;
+  (...args: Args): Action<Type, Payload>;
+  isOfType: (action: { type: string }) => action is Action<Type, Payload>;
 }
 
-// The following is used by thunks. When WdkMiddleware encounters this action,
-// it will not be dispatched to the store. This allows a thunk to perform a
-// side-effect without dispatching a specific action, for better or worse.
-export const emptyType = Symbol('empty');
+// Utility type to infer the Action type from the ActionCreator
+export type InferAction<T extends ActionCreator<string, [], any>> =
+  T extends ActionCreator<infer Type, any, infer Payload>
+    ? Action<Type, Payload>
+    : never;
 
-export type EmptyAction = {
-  type: typeof emptyType
+// This is the main utility function
+export function makeActionCreator<Type extends string>(
+  type: Type
+) : ActionCreator<Type, [], undefined>;
+export function makeActionCreator<Type extends string, Args extends any[], Payload>(
+  type: Type,
+  createPayload: (...args: Args) => Payload
+) : ActionCreator<Type, Args, Payload>
+export function makeActionCreator<Type extends string, Args extends any[], Payload>(
+  type: Type,
+  createPayload?: (...args: Args) => Payload
+) {
+
+  function createAction(...args: Args) {
+    return {
+      type,
+      payload: createPayload && createPayload(...args)
+    };
+  }
+
+  function isOfType(otherAction: { type: string }): otherAction is Action<Type, Payload> {
+    return otherAction.type === type;
+  }
+
+  return Object.assign(createAction, { type, isOfType });
 }
-
-export const emptyAction: EmptyAction = {
-  type: emptyType
-}
-

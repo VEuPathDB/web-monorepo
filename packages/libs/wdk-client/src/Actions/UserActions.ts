@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
-import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
 import { alert, confirm } from 'wdk-client/Utils/Platform';
 import { RecordInstance } from 'wdk-client/Utils/WdkModel';
