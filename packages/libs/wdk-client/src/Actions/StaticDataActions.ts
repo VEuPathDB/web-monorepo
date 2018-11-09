@@ -3,174 +3,57 @@ import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ServiceConfig } from 'wdk-client/Utils/WdkService';
 import { User, UserPreferences } from 'wdk-client/Utils/WdkUser';
+import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
-//==============================================================================
+export const configLoaded = makeActionCreator(
+  'static/config-loaded',
+  (config: ServiceConfig) => ({ config })
+);
 
-export const CONFIG_LOADED = "static/config-loaded";
+export const ontologyLoaded = makeActionCreator(
+  'static/ontology-loaded',
+  (ontology: CategoryOntology) => ({ ontology })
+)
 
-export interface ConfigLoadedAction {
-  type: typeof CONFIG_LOADED;
-  payload: {
-    config: ServiceConfig;
-  }
-}
+export const questionsLoaded = makeActionCreator(
+  'static/questions-loaded',
+  (questions: Question[]) => ({ questions })
+);
 
-export function configLoaded(config: ServiceConfig): ConfigLoadedAction {
-  return {
-    type: CONFIG_LOADED,
-    payload: {
-      config
-    }
-  }
-}
+export const recordClassesLoaded = makeActionCreator(
+  'static/recordClasses-loaded',
+  (recordClasses: RecordClass[]) => ({ recordClasses })
+);
 
-//==============================================================================
+export const userLoaded = makeActionCreator(
+  'static/user-loaded',
+  (user: User) => ({ user })
+);
 
-export const ONTOLOGY_LOADED = "static/ontology-loaded";
+export const preferencesLoaded = makeActionCreator(
+  'static/preferences-loaded',
+  (preferences: UserPreferences) => ({ preferences })
+);
 
-export interface OntologyLoadedAction {
-  type: typeof ONTOLOGY_LOADED;
-  payload: {
-    ontology: CategoryOntology;
-  };
-}
+export const allDataLoaded = makeActionCreator(
+  'static/all-data-loaded'
+);
 
-export function ontologyLoaded(ontology: CategoryOntology): OntologyLoadedAction {
-  return {
-    type: ONTOLOGY_LOADED,
-    payload: {
-      ontology
-    }
-  }
-}
+export const loadError = makeActionCreator(
+  'static/load-error',
+  (error: Error) => ({ error })
+);
 
-//==============================================================================
-
-export const QUESTIONS_LOADED = "satic/questions-loaded";
-
-export interface QuestionsLoadedAction {
-  type: typeof QUESTIONS_LOADED;
-  payload: {
-    questions: Question[];
-  };
-}
-
-export function questionsLoaded(questions: Question[]): QuestionsLoadedAction {
-  return {
-    type: QUESTIONS_LOADED,
-    payload: {
-      questions
-    }
-  };
-}
-
-//==============================================================================
-
-export const RECORDCLASSES_LOADED = "static/recordClasses-loaded";
-
-export interface RecordClassesLoadedAction {
-  type: typeof RECORDCLASSES_LOADED;
-  payload: {
-    recordClasses: RecordClass[];
-  };
-}
-
-export function recordClassesLoaded(recordClasses: RecordClass[]): RecordClassesLoadedAction {
-  return {
-    type: RECORDCLASSES_LOADED,
-    payload: {
-      recordClasses
-    }
-  };
-}
-
-//==============================================================================
-
-export const USER_LOADED = "static/user-loaded";
-
-export interface UserLoadedAction {
-  type: typeof USER_LOADED;
-  payload: {
-    user: User;
-  };
-}
-
-export function userLoaded(user: User): UserLoadedAction {
-  return {
-    type: USER_LOADED,
-    payload: {
-      user
-    }
-  }
-}
-
-//==============================================================================
-
-export const PREFERENCES_LOADED = "static/preferences-loaded";
-
-export interface PreferencesLoadedAction {
-  type: typeof PREFERENCES_LOADED;
-  payload: {
-    preferences: UserPreferences;
-  };
-}
-
-export function preferencesLoaded(preferences: UserPreferences): PreferencesLoadedAction {
-  return {
-    type: PREFERENCES_LOADED,
-    payload: {
-      preferences
-    }
-  };
-}
-
-//==============================================================================
-
-export const ALL_DATA_LOADED = 'static/all-data-loaded';
-
-// action triggered when all static data loaded
-export type AllDataLoadedAction = {
-  type: typeof ALL_DATA_LOADED;
-  payload: undefined;
-}
-
-export function allDataLoaded(): AllDataLoadedAction {
-  return {
-    type: ALL_DATA_LOADED,
-    payload: undefined
-  };
-}
-
-//==============================================================================
-
-export const LOAD_ERROR = 'static/load-error';
-
-// action triggered if static data could not be loaded
-export type LoadErrorAction = {
-  type: typeof LOAD_ERROR;
-  payload: { error: Error }
-}
-
-export function loadError(error: Error): LoadErrorAction {
-  return {
-    type: LOAD_ERROR,
-    payload: {
-      error
-    }
-  };
-}
-
-//==============================================================================
 
 export type Action =
-  | ConfigLoadedAction
-  | OntologyLoadedAction
-  | QuestionsLoadedAction
-  | RecordClassesLoadedAction
-  | UserLoadedAction
-  | PreferencesLoadedAction
-  | AllDataLoadedAction
-  | LoadErrorAction
+  | InferAction<typeof configLoaded>
+  | InferAction<typeof ontologyLoaded>
+  | InferAction<typeof questionsLoaded>
+  | InferAction<typeof recordClassesLoaded>
+  | InferAction<typeof userLoaded>
+  | InferAction<typeof preferencesLoaded>
+  | InferAction<typeof allDataLoaded>
+  | InferAction<typeof loadError>
 
 
 export function loadAllStaticData(): ActionThunk<Action> {

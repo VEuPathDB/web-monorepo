@@ -2,13 +2,13 @@ import { Location } from 'history';
 import { Action } from 'wdk-client/Actions';
 import { UPDATE_LOCATION } from 'wdk-client/Actions/RouterActions';
 import {
-  QUESTIONS_LOADED,
-  CONFIG_LOADED,
-  ONTOLOGY_LOADED,
-  RECORDCLASSES_LOADED,
-  USER_LOADED,
-  PREFERENCES_LOADED,
-  ALL_DATA_LOADED
+  questionsLoaded,
+  configLoaded,
+  ontologyLoaded,
+  recordClassesLoaded,
+  userLoaded,
+  preferencesLoaded,
+  allDataLoaded
 } from 'wdk-client/Actions/StaticDataActions';
 import {
   USER_UPDATE,
@@ -53,20 +53,17 @@ const initialState: GlobalData = {
 export function reduce(state: GlobalData | undefined = initialState, action: Action): GlobalData {
   switch(action.type) {
     // static data actions
-    case CONFIG_LOADED:
-    case ONTOLOGY_LOADED:
-    case QUESTIONS_LOADED:
-    case RECORDCLASSES_LOADED:
-    case USER_LOADED:
-    case PREFERENCES_LOADED:
-    case ALL_DATA_LOADED:
+    case configLoaded.type:
+    case ontologyLoaded.type:
+    case questionsLoaded.type:
+    case recordClassesLoaded.type:
+    case userLoaded.type:
+    case preferencesLoaded.type:
+    case allDataLoaded.type:
     case USER_UPDATE:
-
-
     // router actions
     case UPDATE_LOCATION:
       return { ...state, ...action.payload, loginForm: { isOpen: false } };
-
 
     // user actions
     case PREFERENCE_UPDATE:

@@ -10,7 +10,7 @@ interface ActionCreator<Type extends string, Args extends any[], Payload> {
 }
 
 // Utility type to infer the Action type from the ActionCreator
-export type InferAction<T extends ActionCreator<string, [], any>> =
+export type InferAction<T extends ActionCreator<string, any, any>> =
   T extends ActionCreator<infer Type, any, infer Payload>
     ? Action<Type, Payload>
     : never;
