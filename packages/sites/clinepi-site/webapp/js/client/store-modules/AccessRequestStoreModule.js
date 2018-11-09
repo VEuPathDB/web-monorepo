@@ -107,7 +107,7 @@ export function observe(action$, state$, dependencies) {
 
 function observeStaticDataLoaded(action$, state$, dependencies) {
   return action$.pipe(
-    filter(({ type }) => type === StaticDataActions.USER_LOADED),
+    filter(StaticDataActions.userLoaded.isOfType),
     mergeMap(async ({ payload }) => {
       const onRequestAccessRoute = window.location.pathname.includes('/request-access/');
 
