@@ -19,6 +19,7 @@ import * as WdkModel from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
 import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
 import * as FilterParamUtils from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import * as WdkMiddleware from 'wdk-client/Core/WdkMiddleware';
 
 declare global {
   interface Window {
@@ -49,6 +50,7 @@ export {
   TreeUtils,
   WdkModel,
   WdkService,
+  WdkMiddleware,
   initialize,
   wrapComponents,
 };
