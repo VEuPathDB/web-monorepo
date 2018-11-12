@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from 'ebrc-client/App/Header';
+import { DataRestrictionDaemon } from 'ebrc-client/App/DataRestriction';
 import DisclaimerModal from '../components/DisclaimerModal';
 
 import makeHeaderMenuItems from '../data/headerMenuItems';
@@ -14,6 +15,7 @@ export default function SiteHeaderWrapper() {
           makeHeaderMenuItems={makeHeaderMenuItems}
         />
         <DisclaimerModal />
+        <DataRestrictionDaemon />
       </React.Fragment>
     )
   }
