@@ -80,7 +80,18 @@ class Tooltip extends React.Component {
   /* -=-=-=-=-=-=-=-=-=-=-=-= Show/Hide -=-=-=-=-=-=-=-=-=-=-=-= */
 
   showTooltip () {
-    this.setState({ isShown: true });
+    // compute position, or get from props
+    if (this.props.position && this.props.getPosition) {
+      console.error('Warning: Tooltip expected either `props.position` or `props.getPosition`, but both were provided. '
+        + 'Please update your render method to use one or the other. Using `props.position`.');
+    }
+
+    const position = this.props.position ? this.props.position
+                   : this.props.getPosition ? this.props.getPosition()
+                   : undefined;
+
+    this.setState({ isShown: true, position });
+
     if (this.hideTimeout) clearTimeout(this.hideTimeout);
   }
 
@@ -108,8 +119,8 @@ class Tooltip extends React.Component {
   /* -=-=-=-=-=-=-=-=-=-=-=-= Renderers -=-=-=-=-=-=-=-=-=-=-=-= */
 
   renderTooltipContent () {
-    const { isDisengaged } = this.state;
-    const { content, position, style, renderHtml } = this.props;
+    const { isDisengaged, position } = this.state;
+    const { content, style, renderHtml } = this.props;
 
     const opacity = isDisengaged ? 0.01 : 1;
     const { top, left } = Object.assign({ top: 0, left: 0 }, position);
@@ -150,7 +161,7 @@ class Tooltip extends React.Component {
       </div>
     )
   }
-};
+}
 
 Tooltip.propTypes = {
   hideDelay: PropTypes.number,
@@ -159,7 +170,8 @@ Tooltip.propTypes = {
   content: PropTypes.node,
   corner: PropTypes.string,
   fadeOut: PropTypes.bool,
-  position: PropTypes.object
+  position: PropTypes.object,
+  getPosition: PropTypes.func
 };
 
 export default Tooltip;

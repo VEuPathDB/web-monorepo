@@ -6,51 +6,49 @@ import Events from 'wdk-client/Components/Mesa/Utils/Events';
 class AnchoredTooltip extends React.Component {
   constructor (props) {
     super(props);
-    this.state = { position: {} };
-    this.updateOffset = this.updateOffset.bind(this);
+    this.forceUpdate = this.forceUpdate.bind(this);
+    this.getPosition = this.getPosition.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.componentWillUnmount = this.componentWillUnmount.bind(this);
+    this.childWrapperRef = React.createRef();
   }
 
   componentDidMount () {
-    this.updateOffset();
     this.listeners = {
-      scroll: Events.add('scroll', this.updateOffset),
-      resize: Events.add('resize', this.updateOffset),
-      MesaScroll: Events.add('MesaScroll', this.updateOffset),
-      MesaReflow: Events.add('MesaReflow', this.updateOffset)
+      scroll: Events.add('scroll', this.forceUpdate),
+      resize: Events.add('resize', this.forceUpdate),
+      MesaScroll: Events.add('MesaScroll', this.forceUpdate),
+      MesaReflow: Events.add('MesaReflow', this.forceUpdate)
     };
-    setTimeout(() => this.updateOffset(), 300);
   }
 
   componentWillUnmount () {
     Object.values(this.listeners).forEach(listenerId => Events.remove(listenerId));
   }
 
-  updateOffset () {
-    const { element } = this;
-    if (!element) return;
+  getPosition () {
+    const element = this.childWrapperRef.current;
+    if (!element) return undefined;
+
     const offset = element.getBoundingClientRect();
     const { top, left } = offset;
-    const position = { left, top: Math.ceil(top) + Math.ceil(element.offsetHeight) };
-    this.setState({ position });
+    return { left, top: Math.ceil(top) + Math.ceil(element.offsetHeight) };
   }
 
   render () {
     const { props } = this;
-    const { position } = this.state;
-    const ref = (el) => this.element = el;
-    const children = (<div ref={ref} style={{ display: 'inline-block' }} children={props.children} />);
-    const extractedProps = { ...props, position, children };
+    const children = (<div ref={this.childWrapperRef} style={{ display: 'inline-block' }} children={props.children} />);
+    const extractedProps = { ...props, children };
 
     return (
       <Tooltip
         corner="top-left"
         className="AnchoredTooltip"
+        getPosition={this.getPosition}
         {...extractedProps}
       />
     );
   }
-};
+}
 
 export default AnchoredTooltip;
