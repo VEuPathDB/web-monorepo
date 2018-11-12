@@ -62,6 +62,12 @@ export let contexts = [
     isPbrowse: false
   },
   {
+    gbrowse_url: 'specialGbrowseUrl',
+    displayName: 'Insertion Sites',
+    anchor: 'specialGbrowseUrl',
+    isPbrowse: false
+  },
+  {
     gbrowse_url: 'FeaturesPbrowseUrl',
     displayName: 'Protein Properties',
     anchor: 'ProteinProperties',
