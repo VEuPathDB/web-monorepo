@@ -1,4 +1,6 @@
+import React from 'react';
 import Header from 'ebrc-client/App/Header';
+import DisclaimerModal from '../components/DisclaimerModal';
 
 import makeHeaderMenuItems from '../data/headerMenuItems';
 import { getStaticSiteData } from '../selectors/siteData';
@@ -6,10 +8,13 @@ import { getStaticSiteData } from '../selectors/siteData';
 export default function SiteHeaderWrapper() {
   return function SiteHeader() {
     return (
-      <Header
-        getSiteData={getStaticSiteData}
-        makeHeaderMenuItems={makeHeaderMenuItems}
-      />
+      <React.Fragment>
+        <Header
+          getSiteData={getStaticSiteData}
+          makeHeaderMenuItems={makeHeaderMenuItems}
+        />
+        <DisclaimerModal />
+      </React.Fragment>
     )
   }
 }
