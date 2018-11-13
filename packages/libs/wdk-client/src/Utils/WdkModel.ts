@@ -294,11 +294,19 @@ export interface AnswerFormatting {
   formatConfig?: object
 }
 
-export interface AnswerJsonFormatConfig {
-  pagination?: { offset: number, numRecords: number };
+export interface AttributeSortingSpec {
+  attributeName: string;
+  direction: 'ASC' | 'DESC';
+}
+
+export interface AttributesConfig {
   attributes?: string[] | '__ALL_ATTRIBUTES__';
+  sorting?: AttributeSortingSpec[];
+}
+
+export interface AnswerJsonFormatConfig extends AttributesConfig {
+  pagination?: { offset: number, numRecords: number };
   tables?: string[] | '__ALL_TABLES__';
-  sorting?: { attributeName: string, direction: 'ASC' | 'DESC' }[];
   attachmentType?: string;
   includeEmptyTables?: boolean;
 }

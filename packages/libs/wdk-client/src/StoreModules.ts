@@ -13,6 +13,9 @@ import * as userDatasetList from 'wdk-client/StoreModules/UserDatasetListStoreMo
 import * as userProfile from 'wdk-client/StoreModules/UserProfileStoreModule';
 import * as userRegistration from 'wdk-client/StoreModules/UserRegistrationStoreModule';
 import * as blastSummaryView from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
+import * as isolatesSummaryView from 'wdk-client/StoreModules/IsolatesSummaryViewStoreModule';
+import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
+import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
 
 export default {
   answerView,
@@ -20,11 +23,14 @@ export default {
   blastSummaryView,
   downloadForm,
   favorites,
+  genomeSummaryView,
   globalData,
+  isolatesSummaryView,
   passwordChange,
   passwordReset,
   question,
   record,
+  resultTableSummaryView,
   siteMap,
   userDatasetDetail,
   userDatasetList,

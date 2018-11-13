@@ -1,60 +1,40 @@
-import { LoadingAction, loadingType } from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
-import { CompletedAction, completedType, createCompletedAction } from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
-import { ErrorAction, errorType, createErrorAction } from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
+import { requestIsolatesSummaryReport, fulfillIsolatesSummaryReport} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
 
 import { IsolatesSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
-
-// FIXME Replace with `import { Action } from 'wdk-client/Actions'`. Requires adding IsolateSummaryViewActions to that file.
-import { Action } from 'redux';
-import { from, Observable } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { Action } from 'wdk-client/Actions';
+import { Observable } from 'rxjs';
+import { mapRequestActionToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { combineEpics} from 'redux-observable';
 
 export const key = 'isolatesSummaryView';
 
 export type State = {
     isolatesSummaryData?: IsolatesSummaryViewReport,
-    isLoading: boolean,
-    error?: Error
 };
 
 const initialState: State = {
-    isolatesSummaryData: undefined,
-    isLoading: false,
-    error: undefined
+    isolatesSummaryData: undefined
 };
 
-export function reduce(state: State = initialState, action: LoadingAction | CompletedAction | ErrorAction): State {
+export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
-        case loadingType: {
-            return { ...state, isLoading: true };
-        } case completedType: {
-            return { ...state, isolatesSummaryData: action.payload.isolatesSummaryViewReport, isLoading: false }
-        } case errorType: {
-            return { ...state, error: action.payload.error };
+        case fulfillIsolatesSummaryReport.type: {
+            return { ...state, isolatesSummaryData: action.payload.isolatesSummaryViewReport }
         } default: {
             return state;
         }
     }
 }
 
-function isLoadingAction(action: Action): action is LoadingAction {
-    return action.type === loadingType;
+async function getIsolatesSummaryViewReport(requestAction:  InferAction<typeof requestIsolatesSummaryReport>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillIsolatesSummaryReport>> {
+
+    let report = await wdkService.getStepAnswer(requestAction.payload.stepId, { format: 'geoIsolateSummaryView'})
+    return fulfillIsolatesSummaryReport(report);
 }
 
-export function observe(action$: Observable<Action>, state$: Observable<State>, { wdkService }: EpicDependencies): Observable<Action> {
-    return action$.pipe(
-        filter(isLoadingAction),
-            mergeMap(({ payload: { stepId } }) =>
-                from(
-                    wdkService.getStepAnswer(stepId, { format: 'geoIsolateSummaryView'}).then(
-                        report => createCompletedAction((<IsolatesSummaryViewReport>report)),
-                        error => createErrorAction(error)
-                    )
-                )
-                // .pipe(
-                //   takeUntil(action$.pipe(filter(AttributeReportCancelled.test))))
-            )
-        )
-}
-
+export const observe =
+     combineEpics(
+         mapRequestActionToEpic(requestIsolatesSummaryReport, getIsolatesSummaryViewReport)
+     );

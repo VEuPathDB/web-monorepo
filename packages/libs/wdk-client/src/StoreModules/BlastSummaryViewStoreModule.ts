@@ -1,60 +1,41 @@
-import { LoadingAction, loadingType } from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
-import { CompletedAction, completedType, createCompletedAction } from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
-import { ErrorAction, errorType, createErrorAction } from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
+import { requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
+import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
-// FIXME Replace with `import { Action } from 'wdk-client/Actions'`. Requires adding BlastSummaryViewActions to that file.
-import { Action } from 'redux';
+import { Action } from 'wdk-client/Actions';
 import { BlastSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
-import { from, Observable } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import {mapRequestActionToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
+import { combineEpics} from 'redux-observable';
 
 export const key = 'blastSummaryView';
 
 export type State = {
     blastSummaryData?: BlastSummaryViewReport,
-    isLoading: boolean,
-    error?: Error
 };
 
 const initialState: State = {
     blastSummaryData: undefined,
-    isLoading: false,
-    error: undefined
 };
 
-export function reduce(state: State = initialState, action: LoadingAction | CompletedAction | ErrorAction): State {
+export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
-        case loadingType: {
-            return { ...state, isLoading: true };
-        } case completedType: {
-            return { ...state, blastSummaryData: action.payload.blastInfo, isLoading: false }
-        } case errorType: {
-            return { ...state, error: action.payload.error };
+        case fulfillBlastSummaryReport.type: {
+            return { ...state, blastSummaryData: action.payload.blastInfo }
         } default: {
             return state;
         }
     }
 }
 
-function isLoadingAction(action: Action): action is LoadingAction {
-    return action.type === loadingType;
+async function getBlastSummaryViewReport(requestAction:  InferAction<typeof requestBlastSummaryReport>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillBlastSummaryReport>> {
+    let formatting = { format: 'blastSummaryView', formatConfig: { attributes: ['summary', 'alignment']} };
+    let report = await wdkService.getStepAnswer(requestAction.payload.stepId, formatting)
+    return fulfillBlastSummaryReport(report);
 }
 
-export function observe(action$: Observable<Action>, state$: Observable<State>, { wdkService }: EpicDependencies): Observable<Action> {
-    return action$.pipe(
-        filter(isLoadingAction),
-            mergeMap(({ payload: { stepId } }) =>
-                from(
-                    wdkService.getStepAnswer(stepId, { format: 'blastSummaryView', formatConfig: { attributes: ['summary', 'alignment']} }).then(
-                        report => createCompletedAction((<BlastSummaryViewReport>report)),
-                        error => createErrorAction(error)
-                    )
-                )
-                // .pipe(
-                //   takeUntil(action$.pipe(filter(AttributeReportCancelled.test))))
-            )
-        )
-}
-
+export const observe =
+     combineEpics(
+         mapRequestActionToEpic(requestBlastSummaryReport, getBlastSummaryViewReport)
+     );

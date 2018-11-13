@@ -5,15 +5,14 @@ import PageController from 'wdk-client/Core/Controllers/PageController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
+import {requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 
 
 const actionCreators = {
-  createLoadingAction,
-  createCompletedAction,
-  createErrorAction
+  requestBlastSummaryReport,
+  fulfillBlastSummaryReport
 };
 
 type StateProps = State;
@@ -33,12 +32,12 @@ class BlastSummaryViewController extends PageController< Props > {
 
   loadData () {
     if (this.props.blastSummaryData == null) {
-      this.props.createLoadingAction(this.props.match.params.stepId);
+      this.props.requestBlastSummaryReport(this.props.match.params.stepId);
     }
   }
 
   isRenderDataLoadError() {
-    return this.props.error != null;
+    return false; // TODO fix this
   }
 
   renderDataLoadError() {

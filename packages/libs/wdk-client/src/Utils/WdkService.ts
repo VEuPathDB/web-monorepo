@@ -768,6 +768,12 @@ export default class WdkService {
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
+  getBasketStatusPk(recordClassName: string, records: Array<PrimaryKey>): Promise<BasketStatusResponse> {
+    let data = JSON.stringify(records);
+    let url = `/users/current/baskets/${recordClassName}/query`;
+    return this._fetchJson<BasketStatusResponse>('post', url, data);
+  }
+
   updateBasketStatus(status: boolean, recordClassName: string, records: Array<RecordInstance>): Promise<never> {
     let action = status ? 'add' : 'remove';
     let data = JSON.stringify({ [action]: records.map(record => record.id) });
@@ -967,6 +973,15 @@ export default class WdkService {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/answer/report`,
       body: JSON.stringify(formatting)
+    });
+  }
+
+  // get step's answer in wdk default json output format
+  getStepAnswerJson(stepId: number, formatConfig: AnswerJsonFormatConfig, userId: string = 'current') {
+    return this.sendRequest(Decode.ok, {
+      method: 'post',
+      path: `/users/${userId}/steps/${stepId}/answer`,
+      body: JSON.stringify(formatConfig)
     });
   }
 

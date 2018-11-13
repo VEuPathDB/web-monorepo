@@ -1,47 +1,34 @@
-import { LoadingAction, loadingType } from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
-import { CompletedAction, completedType, createCompletedAction } from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
-import { ErrorAction, errorType, createErrorAction } from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
+import { requestGenomeSummaryReport, fulfillGenomeSummaryReport} from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
 
-// FIXME Replace with `import { Action } from 'wdk-client/Actions'`. Requires adding GenomeSummaryViewActions to that file.
-import { Action } from 'redux';
+import { Action } from 'wdk-client/Actions';
 import { getStepBundlePromise } from 'wdk-client/Utils/stepUtils';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { GenomeSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
+import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mapRequestActionToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { combineEpics} from 'redux-observable';
 
-import { from, Observable } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 export const key = 'genomeSummaryView';
 
 export type State = {
     genomeSummaryData?: GenomeSummaryViewReport,
-    isLoading: boolean,
-    error?: Error
 };
 
 const initialState: State = {
     genomeSummaryData: undefined,
-    isLoading: false,
-    error: undefined
 };
 
-export function reduce(state: State = initialState, action: LoadingAction | CompletedAction | ErrorAction): State {
+export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
-        case loadingType: {
-            return { ...state, isLoading: true };
-        } case completedType: {
-            return { ...state, genomeSummaryData: action.payload.genomeSummaryViewReport, isLoading: false }
-        } case errorType: {
-            return { ...state, error: action.payload.error };
+        case fulfillGenomeSummaryReport.type: {
+                return { ...state, genomeSummaryData: action.payload.genomeSummaryViewReport }        
         } default: {
             return state;
         }
     }
-}
-
-function isLoadingAction(action: Action): action is LoadingAction {
-    return action.type === loadingType;
 }
 
 function getFormatFromRecordClassName(recordClassName: string) : string {
@@ -61,24 +48,13 @@ async function getFormat(stepId: number, wdkService: WdkService) : Promise<strin
     return getFormatFromRecordClassName(bundle.recordClass.name);
 }
 
-async function getGenomeSummaryViewReport(stepId: number, wdkService: WdkService ) : Promise<CompletedAction | ErrorAction> {
-    try {
-        let format = await getFormat(stepId, wdkService);
-        let report = await wdkService.getStepAnswer(stepId, { format: format});
-        return createCompletedAction((<GenomeSummaryViewReport>report))
-    } catch (error) {
-        return createErrorAction(error);
-    }
+async function getGenomeSummaryViewReport(requestAction:  InferAction<typeof requestGenomeSummaryReport>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillGenomeSummaryReport>> {
+    let format = await getFormat(requestAction.payload.stepId, wdkService);
+    let report = await wdkService.getStepAnswer(requestAction.payload.stepId, { format: format});
+    return fulfillGenomeSummaryReport((<GenomeSummaryViewReport>report))
 }
 
-export function observe(action$: Observable<Action>, state$: Observable<State>, { wdkService }: EpicDependencies): Observable<Action> {
-    return action$.pipe(
-        filter(isLoadingAction),
-            mergeMap(({ payload: { stepId } }) =>
-                from(
-                    getGenomeSummaryViewReport(stepId, wdkService)
-                )
-            )
-        )
-}
-
+export const observe =
+     combineEpics(
+         mapRequestActionToEpic(requestGenomeSummaryReport, getGenomeSummaryViewReport)
+     );

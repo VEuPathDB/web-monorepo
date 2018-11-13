@@ -5,14 +5,13 @@ import PageController from 'wdk-client/Core/Controllers/PageController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
+import {requestIsolatesSummaryReport, fulfillIsolatesSummaryReport} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/IsolatesSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 
 const actionCreators = {
-  createLoadingAction,
-  createCompletedAction,
-  createErrorAction
+  requestIsolatesSummaryReport,
+  fulfillIsolatesSummaryReport
 };
 
 type StateProps = State;
@@ -32,12 +31,12 @@ class IsolatesSummaryViewController extends PageController< Props > {
 
   loadData () {
     if (this.props.isolatesSummaryData == null) {
-      this.props.createLoadingAction(this.props.match.params.stepId);
+      this.props.requestIsolatesSummaryReport(this.props.match.params.stepId);
     }
   }
 
   isRenderDataLoadError() {
-    return this.props.error != null;
+    return false; // TODO fix this
   }
 
   renderDataLoadError() {
@@ -55,7 +54,7 @@ class IsolatesSummaryViewController extends PageController< Props > {
   }
 }
 
-const mapStateToProps = (state: RootState) => state.blastSummaryView;
+const mapStateToProps = (state: RootState) => state.isolatesSummaryView;
 
 export default connect(
   mapStateToProps,

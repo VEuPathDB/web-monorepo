@@ -6,13 +6,12 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {createLoadingAction, createCompletedAction, createErrorAction} from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
+import {requestGenomeSummaryReport, fulfillGenomeSummaryReport} from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 
 const actionCreators = {
-  createLoadingAction,
-  createCompletedAction,
-  createErrorAction
+  requestGenomeSummaryReport,
+  fulfillGenomeSummaryReport
 };
 
 type StateProps = State;
@@ -32,12 +31,12 @@ class GenomeSummaryViewController extends PageController< Props > {
 
   loadData () {
     if (this.props.genomeSummaryData == null) {
-      this.props.createLoadingAction(this.props.match.params.stepId);
+      this.props.requestGenomeSummaryReport(this.props.match.params.stepId);
     }
   }
 
   isRenderDataLoadError() {
-    return this.props.error != null;
+    return false; // TODO: fix this
   }
 
   renderDataLoadError() {
@@ -52,7 +51,7 @@ class GenomeSummaryViewController extends PageController< Props > {
   }
 }
 
-const mapStateToProps = (state: RootState) => state.blastSummaryView;
+const mapStateToProps = (state: RootState) => state.genomeSummaryView;
 
 export default connect(
   mapStateToProps,

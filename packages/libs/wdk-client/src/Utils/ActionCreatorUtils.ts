@@ -41,3 +41,18 @@ export function makeActionCreator<Type extends string, Args extends any[], Paylo
 
   return Object.assign(createAction, { type, isOfType });
 }
+import { EpicDependencies } from 'wdk-client/Core/Store';
+
+import { from, Observable } from 'rxjs';
+import { Action as WdkAction } from 'wdk-client/Actions';
+import { filter, mergeMap } from 'rxjs/operators';
+import {StateObservable} from 'redux-observable';
+
+
+export function mapRequestActionToEpic<RequestActionType extends string, Args extends any[], Payload, State>(actionCreator: ActionCreator<RequestActionType, Args, Payload>, request2Fulfill: (requestAction: InferAction<typeof actionCreator>, state$: StateObservable<State>, dependencies: EpicDependencies) => Promise<WdkAction>  )  {
+  return (action$: Observable<WdkAction>, state$: StateObservable<State>, dependencies: EpicDependencies  ): Observable<WdkAction> => action$.pipe(
+    filter(actionCreator.isOfType),
+    mergeMap((action) => from(request2Fulfill(action, state$, dependencies)))
+)  
+}
+
