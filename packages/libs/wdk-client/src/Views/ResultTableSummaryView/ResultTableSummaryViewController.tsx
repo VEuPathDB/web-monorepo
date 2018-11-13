@@ -5,7 +5,7 @@ import PageController from 'wdk-client/Core/Controllers/PageController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {  requestColumnsConfig, fulfillColumnsConfig, requestPageSize, fulfillPageSize, requestAnswer, fulfillAnswer,  requestRecordsBasketStatus, fulfillRecordsBasketStatus,} from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryViewActions';
+import {  requestColumnsConfig, fulfillColumnsConfig, requestPageSize, fulfillPageSize, requestAnswer, fulfillAnswer,  requestRecordsBasketStatus, fulfillRecordsBasketStatus,} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 

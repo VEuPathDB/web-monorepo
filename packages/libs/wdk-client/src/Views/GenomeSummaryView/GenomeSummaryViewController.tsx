@@ -6,7 +6,7 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {requestGenomeSummaryReport, fulfillGenomeSummaryReport} from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
+import {requestGenomeSummaryReport, fulfillGenomeSummaryReport} from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 
 const actionCreators = {

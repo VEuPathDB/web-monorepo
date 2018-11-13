@@ -1,4 +1,4 @@
-import { requestColumnsConfig, fulfillColumnsConfig, requestPageSize,  fulfillPageSize,  requestAnswer, fulfillAnswer, requestRecordsBasketStatus, fulfillRecordsBasketStatus} from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryViewActions';
+import { requestColumnsConfig, fulfillColumnsConfig, requestPageSize,  fulfillPageSize,  requestAnswer, fulfillAnswer, requestRecordsBasketStatus, fulfillRecordsBasketStatus} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Answer, AnswerJsonFormatConfig } from 'wdk-client/Utils/WdkModel';

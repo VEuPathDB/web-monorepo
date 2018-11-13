@@ -1,4 +1,4 @@
-import { requestGenomeSummaryReport, fulfillGenomeSummaryReport} from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
+import { requestGenomeSummaryReport, fulfillGenomeSummaryReport} from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 
 import { Action } from 'wdk-client/Actions';
 import { getStepBundlePromise } from 'wdk-client/Utils/stepUtils';

@@ -12,10 +12,10 @@ import * as RecordActions from 'wdk-client/Actions/RecordActions';
 import * as StaticDataActions from 'wdk-client/Actions/StaticDataActions';
 import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
 import * as UserDatasetsActions from 'wdk-client/Actions/UserDatasetsActions';
-import * as ResultTableSummaryViewActions from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryViewActions';
-import * as BlastSummaryViewActions from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
-import * as IsolatesSummaryViewActions from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
-import * as GenomeSummaryViewActions from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewActions';
+import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
+import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
+import * as IsolatesSummaryViewActions from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
+import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 
 export {
   AnswerActions,

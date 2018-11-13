@@ -5,7 +5,7 @@ import PageController from 'wdk-client/Core/Controllers/PageController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
+import {requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 

@@ -1,4 +1,4 @@
-import { requestIsolatesSummaryReport, fulfillIsolatesSummaryReport} from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewActions';
+import { requestIsolatesSummaryReport, fulfillIsolatesSummaryReport} from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
 
 import { IsolatesSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';

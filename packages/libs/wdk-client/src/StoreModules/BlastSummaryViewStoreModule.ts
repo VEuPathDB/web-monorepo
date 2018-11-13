@@ -1,4 +1,4 @@
-import { requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewActions';
+import { requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
 import { Action } from 'wdk-client/Actions';
