@@ -86,12 +86,13 @@ class RecordNavigationSection extends React.PureComponent {
           onUiChange={onNavigationCategoryExpansionChange}
           searchTerm={navigationQuery}
           onSearchTermChange={this.handleSearchTermChange}
-          nodeComponent={props =>
+          renderNode={(node, path) =>
             <RecordNavigationItem
-              {...props}
+              node={node}
+              path={path}
               onSectionToggle={onSectionToggle}
               activeCategory={this.state.activeCategory}
-              checked={!includes(collapsedSections, getId(props.node))}
+              checked={!includes(collapsedSections, getId(node))}
             />
           }
         />

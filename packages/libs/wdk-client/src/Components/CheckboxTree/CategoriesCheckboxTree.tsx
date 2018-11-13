@@ -9,9 +9,8 @@ import {
 } from 'wdk-client/Utils/CategoryUtils';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
-type NodeComponentProps = {
-  node: CategoryTreeNode
-}
+// This allows us to specify the generic type in CheckboxTree
+class RefinedCheckboxTree extends CheckboxTree<CategoryTreeNode> {}
 
 type ChangeHandler = (ids: string[]) => void;
 
@@ -26,13 +25,12 @@ type Props = {
   selectedLeaves: string[];
   expandedBranches: string[];
   searchTerm: string;
-  nodeComponent?: ComponentClass<NodeComponentProps> | StatelessComponent<NodeComponentProps>;
+  renderNode?: (node: CategoryTreeNode, path?: number[]) => React.ReactNode;
   isMultiPick?: boolean;
   onChange: ChangeHandler;
   onUiChange: ChangeHandler;
   onSearchTermChange: (term: string) => void;
-  noResultsComponent?: ComponentClass<{ tree: CategoryTreeNode, searchTerm: string }>
-                    | StatelessComponent<{ tree: CategoryTreeNode, searchTerm: string }>
+  renderNoResults?: (searchTerm: string, tree: CategoryTreeNode) => React.ReactNode;
   isSelectable?: boolean;
   disableHelp?: boolean;
 };
@@ -41,46 +39,53 @@ let CategoriesCheckboxTree: StatelessComponent<Props> = props => {
 
   let {
     title, name, autoFocusSearchBox, searchBoxPlaceholder, tree,
-    selectedLeaves, expandedBranches, nodeComponent, isMultiPick, searchTerm,
+    selectedLeaves, expandedBranches, renderNode, isMultiPick, searchTerm,
     onChange, onUiChange, onSearchTermChange, isSelectable, leafType,
-    disableHelp, noResultsComponent
+    disableHelp, renderNoResults
   } = props;
 
   if (tree.children.length == 0) {
     return ( <noscript/> );
   }
 
-  let treeProps = {
-
-    // set help
-    searchBoxHelp: disableHelp ? '' : `Each ${leafType} name will be searched. The ${leafType} names will contain all your terms. Your terms are partially matched; for example, the term typ will match typically, type, atypical.`,
-
-    // set hard-coded values for searchable, selectable, expandable tree
-    isSearchable: true, isSelectable, autoFocusSearchBox, name, noResultsComponent,
-    searchIconName: 'filter', linkPlacement: CheckboxTree.LinkPlacement.Top,
-
-    // set values from category utils since we know tree is a category tree
-    getNodeId, getNodeChildren, searchPredicate: nodeSearchPredicate, nodeComponent,
-
-    // set current data in the tree
-    tree, isMultiPick, selectedList: selectedLeaves, expandedList: expandedBranches, searchBoxPlaceholder, searchTerm,
-
-    // set event handlers
-    onSelectionChange: onChange, onExpansionChange: onUiChange, onSearchTermChange
-  };
+  // set help
+  let searchBoxHelp = disableHelp ? '' : 
+    `Each ${leafType} name will be searched. The ${leafType} names will contain all your terms. Your terms are partially matched; for example, the term typ will match typically, type, atypical.`;
 
   return (
     <div className="wdk-CategoriesCheckboxTree">
       {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
       <div className="wdk-CategoriesCheckboxTreeWrapper">
-        <CheckboxTree {...treeProps} />
+        <RefinedCheckboxTree
+          searchBoxHelp={searchBoxHelp}
+          isSearchable={true}
+          isSelectable={isSelectable}
+          autoFocusSearchBox={autoFocusSearchBox}
+          name={name}
+          renderNoResults={renderNoResults}
+          searchIconName="filter"
+          linkPlacement={CheckboxTree.LinkPlacement.Top}
+          getNodeId={getNodeId}
+          getNodeChildren={getNodeChildren}
+          searchPredicate={nodeSearchPredicate}
+          renderNode={renderNode}
+          tree={tree}
+          isMultiPick={isMultiPick}
+          selectedList={selectedLeaves}
+          expandedList={expandedBranches}
+          searchBoxPlaceholder={searchBoxPlaceholder}
+          searchTerm={searchTerm}
+          onSelectionChange={onChange}
+          onExpansionChange={onUiChange}
+          onSearchTermChange={onSearchTermChange}
+        /> 
       </div>
     </div>
   );
 };
 
 CategoriesCheckboxTree.defaultProps = {
-  nodeComponent: BasicNodeComponent,
+  renderNode: (node: CategoryTreeNode) => <BasicNodeComponent node={node} />,
   isMultiPick: true,
   isSelectable: true,
   leafType: 'column', // TODO remove once all consumers are passing in a value for this

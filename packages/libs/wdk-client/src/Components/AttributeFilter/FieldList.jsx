@@ -144,7 +144,7 @@ export default class FieldList extends React.Component { // eslint-disable-line 
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}
-          nodeComponent={({ node }) => (
+          renderNode={node => (
             <FieldNode node={node} isActive={node.field === activeField} handleFieldSelect={this.handleFieldSelect} />
           )}
         />

@@ -69,7 +69,7 @@ let SiteMap = props => {
     getNodeId: getNodeId,
     getNodeChildren: getNodeChildren,
     showRoot: false,
-    nodeComponent: SiteMapNodeElement,
+    renderNode: renderSiteMapNode,
     expandedList: props.expandedList,
     onExpansionChange: props.siteMapActions.updateExpanded,
     isSelectable: false,
@@ -137,7 +137,7 @@ let siteMapSearchPredicate = (node, searchQueryTerms) => {
 /**
  * Defines how to display site-map nodes
  */
-let SiteMapNodeElement = ({ node }) => {
+let renderSiteMapNode = node => {
   let data = getNodeData(node);
 
   if (data.targetType === 'search') {

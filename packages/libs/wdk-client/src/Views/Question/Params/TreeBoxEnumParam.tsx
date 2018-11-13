@@ -146,7 +146,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         tree={tree}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
-        nodeComponent={VocabNodeRenderer}
+        renderNode={renderNode}
         onExpansionChange={expandedList => props.dispatch(setExpandedList({ ...props.ctx, expandedList}))}
         expandedList={props.uiState.expandedList}
         selectedList={selectedLeaves}
@@ -157,7 +157,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         isSearchable={true}
         searchBoxPlaceholder="Filter list below..."
         searchIconName="filter"
-        noResultsComponent={NoResults}
+        renderNoResults={renderNoResults}
         searchTerm={props.uiState.searchTerm}
         searchPredicate={searchPredicate}
         onSearchTermChange={searchTerm => props.dispatch(setSearchTerm({ ...props.ctx, searchTerm }))}
@@ -166,22 +166,18 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   );
 }
 
-type VocabNodeRendererProps = {
-  node: TreeBoxVocabNode;
-}
-
-function VocabNodeRenderer(props: VocabNodeRendererProps) {
-  return safeHtml(props.node.data.display);
+function renderNode(node: TreeBoxVocabNode) {
+  return safeHtml(node.data.display);
 }
 
 type NoResultsProps = {
   searchTerm: string;
 }
 
-function NoResults(props: NoResultsProps) {
+function renderNoResults(searchTerm: string) {
   return (
     <div style={{ padding: '1em' }}>
-      <Icon fa="warning"/> The string <strong>{props.searchTerm}</strong> did not match anything for this parameter.
+      <Icon fa="warning"/> The string <strong>{searchTerm}</strong> did not match anything for this parameter.
     </div>
   )
 }

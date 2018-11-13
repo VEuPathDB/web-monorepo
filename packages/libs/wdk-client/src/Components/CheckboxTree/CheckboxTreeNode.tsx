@@ -52,7 +52,7 @@ type Props<T> = {
   toggleSelection: (node: T, checked: boolean) => void;
   getNodeId: (node: T) => string;
   getNodeChildren: (node: T) => T[];
-  nodeComponent: React.ComponentClass<{ node: T, path?: number[] }> | React.StatelessComponent<{ node: T, path?: number[] }>;
+  renderNode: (node: T, path?: number[]) => React.ReactNode;
 }
 
 class CheckboxTreeNode<T> extends Component<Props<T>> {
@@ -79,7 +79,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
       toggleExpansion,
       getNodeId,
       getNodeChildren,
-      nodeComponent
+      renderNode
     } = this.props;
 
 
@@ -95,10 +95,10 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
     let nodeType = isLeafNode ? "leaf"
                  : isExpanded ? "expanded"
                  : "collapsed";
-    let NodeComponent = nodeComponent;
     let classNames = 'wdk-CheckboxTreeItem wdk-CheckboxTreeItem__' + nodeType +
       (isSelectable ? ' wdk-CheckboxTreeItem__selectable' : '');
     let inputName = isLeafNode ? name : '';
+    const nodeElement = renderNode(node, path);
 
     return (
       <li className={classNames} style={nodeVisibilityCss}>
@@ -114,7 +114,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div className="wdk-CheckboxTreeNodeContent" onClick={this.toggleExpansion}>
-              <NodeComponent node={node} path={path} />
+              {nodeElement}
             </div>
           ) : (
             <label className="wdk-CheckboxTreeNodeContent">
@@ -134,7 +134,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
                   value={getNodeId(node)}
                   node={node}
                   onChange={toggleSelection} />
-              } <NodeComponent node={node} />
+              } {nodeElement}
             </label>
           )}
         </div>
@@ -155,7 +155,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
                 toggleExpansion={toggleExpansion}
                 getNodeId={getNodeId}
                 getNodeChildren={getNodeChildren}
-                nodeComponent={nodeComponent} />
+                renderNode={renderNode} />
             )}
           </ul>
         }
