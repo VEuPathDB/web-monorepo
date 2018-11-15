@@ -304,8 +304,10 @@ export interface AttributesConfig {
   sorting?: AttributeSortingSpec[];
 }
 
+export interface Pagination { offset: number, numRecords: number };
+
 export interface AnswerJsonFormatConfig extends AttributesConfig {
-  pagination?: { offset: number, numRecords: number };
+  pagination?: Pagination;
   tables?: string[] | '__ALL_TABLES__';
   attachmentType?: string;
   includeEmptyTables?: boolean;

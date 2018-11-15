@@ -1,11 +1,22 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { AttributesConfig } from "wdk-client/Utils/WdkModel"
+import { AttributesConfig, Pagination } from "wdk-client/Utils/WdkModel"
 import { Answer } from "wdk-client/Utils/WdkModel";
+import { Step } from "wdk-client/Utils/WdkUser";
 import { PrimaryKey } from "wdk-client/Utils/WdkModel";
+
+export const requestStep = makeActionCreator(
+    'resultTableSummaryView/requestStep',
+    (stepId: number) => ({ stepId })
+    );
+
+export const fulfillStep = makeActionCreator(
+    'resultTableSummaryView/fulfillStep',
+    (step: Step) => ({ step })
+    );
 
 export const requestColumnsConfig = makeActionCreator(
     'resultTableSummaryView/requestColumnConfig',
-    (stepId: number) => ({ stepId })
+    (questionName: string) => ({ questionName })
     );
 
 export const fulfillColumnsConfig = makeActionCreator(
@@ -23,10 +34,15 @@ export const fulfillPageSize = makeActionCreator(
     (pageSize: number) => ({pageSize })
     );
 
+export const viewPage = makeActionCreator(
+    'resultTableSummaryView/viewPage',
+    (page: number) => ({ page })
+);
+
 export const requestAnswer = makeActionCreator(
     'resultTableSummaryView/requestAnswer',
-    (stepId: number, columnsConfig: AttributesConfig) => ({stepId, columnsConfig })
-    );
+    (stepId: number, columnsConfig: AttributesConfig, pagination: Pagination) => ({ stepId, columnsConfig, pagination })
+);
 
 export const fulfillAnswer = makeActionCreator(
     'resultTableSummaryView/fulfillAnswer',
@@ -44,12 +60,15 @@ export const fulfillRecordsBasketStatus = makeActionCreator(
     );
 
 export type Action =
-  | InferAction<typeof requestColumnsConfig>
-  | InferAction<typeof fulfillColumnsConfig>
-  | InferAction<typeof requestPageSize>
-  | InferAction<typeof fulfillPageSize>
-  | InferAction<typeof requestAnswer>
-  | InferAction<typeof fulfillAnswer>
-  | InferAction<typeof requestRecordsBasketStatus>
-  | InferAction<typeof fulfillRecordsBasketStatus>
+    | InferAction<typeof requestStep>
+    | InferAction<typeof fulfillStep>
+    | InferAction<typeof requestColumnsConfig>
+    | InferAction<typeof fulfillColumnsConfig>
+    | InferAction<typeof requestPageSize>
+    | InferAction<typeof fulfillPageSize>
+    | InferAction<typeof viewPage>
+    | InferAction<typeof requestAnswer>
+    | InferAction<typeof fulfillAnswer>
+    | InferAction<typeof requestRecordsBasketStatus>
+    | InferAction<typeof fulfillRecordsBasketStatus>
 
