@@ -6,7 +6,7 @@ import { BlastSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import { Observable } from 'rxjs';
-import {mapRequestActionToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
+import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 export const key = 'blastSummaryView';
@@ -29,7 +29,7 @@ export function reduce(state: State = initialState, action: Action): State {
     }
 }
 
-async function getBlastSummaryViewReport(requestAction:  InferAction<typeof requestBlastSummaryReport>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillBlastSummaryReport>> {
+async function getBlastSummaryViewReport([requestAction]:  [InferAction<typeof requestBlastSummaryReport>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillBlastSummaryReport>> {
     let formatting = { format: 'blastSummaryView', formatConfig: { attributes: ['summary', 'alignment']} };
     let report = await wdkService.getStepAnswer(requestAction.payload.stepId, formatting)
     return fulfillBlastSummaryReport(report);
@@ -37,5 +37,5 @@ async function getBlastSummaryViewReport(requestAction:  InferAction<typeof requ
 
 export const observe =
      combineEpics(
-         mapRequestActionToEpic(requestBlastSummaryReport, getBlastSummaryViewReport)
+         mapRequestActionsToEpic([requestBlastSummaryReport], getBlastSummaryViewReport)
      );

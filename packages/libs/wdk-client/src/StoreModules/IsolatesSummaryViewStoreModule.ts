@@ -5,7 +5,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Observable } from 'rxjs';
-import { mapRequestActionToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 export const key = 'isolatesSummaryView';
@@ -28,7 +28,7 @@ export function reduce(state: State = initialState, action: Action): State {
     }
 }
 
-async function getIsolatesSummaryViewReport(requestAction:  InferAction<typeof requestIsolatesSummaryReport>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillIsolatesSummaryReport>> {
+async function getIsolatesSummaryViewReport([requestAction]:  [InferAction<typeof requestIsolatesSummaryReport>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillIsolatesSummaryReport>> {
 
     let report = await wdkService.getStepAnswer(requestAction.payload.stepId, { format: 'geoIsolateSummaryView'})
     return fulfillIsolatesSummaryReport(report);
@@ -36,5 +36,5 @@ async function getIsolatesSummaryViewReport(requestAction:  InferAction<typeof r
 
 export const observe =
      combineEpics(
-         mapRequestActionToEpic(requestIsolatesSummaryReport, getIsolatesSummaryViewReport)
+         mapRequestActionsToEpic([requestIsolatesSummaryReport], getIsolatesSummaryViewReport)
      );

@@ -7,7 +7,7 @@ import { getQuestionAttributesTableConfig } from 'wdk-client/Utils/UserPreferenc
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable } from 'rxjs';
 import { combineEpics} from 'redux-observable';
-import {mapRequestActionToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
+import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
 
 export const key = 'resultTableSummaryView';
 
@@ -38,28 +38,28 @@ export function reduce(state: State = initialState, action: Action): State {
     }
 }
 
-async function getFulfillStep(requestAction: InferAction<typeof requestStep>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillStep>> {
+async function getFulfillStep([requestAction]: [InferAction<typeof requestStep>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillStep>> {
 
     let step = await wdkService.findStep(requestAction.payload.stepId);
     return fulfillStep(step);
 }
 
-async function getRequestColumnsConfig(requestAction: InferAction<typeof fulfillStep>, state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestColumnsConfig>> {
+async function getRequestColumnsConfig([requestAction]: [InferAction<typeof fulfillStep>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestColumnsConfig>> {
     return requestColumnsConfig(requestAction.payload.step.answerSpec.questionName);
 }
 
-async function getFulfillColumnsConfig(requestAction: InferAction<typeof requestColumnsConfig>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsConfig>> {
+async function getFulfillColumnsConfig([requestAction]: [InferAction<typeof requestColumnsConfig>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsConfig>> {
 
     let columnsConfig = await getQuestionAttributesTableConfig(requestAction.payload.questionName, wdkService);
     return fulfillColumnsConfig(columnsConfig);
 }
 
-async function getFulfillPageSize(requestAction: InferAction<typeof requestPageSize>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillPageSize>> {
+async function getFulfillPageSize([requestAction]: [InferAction<typeof requestPageSize>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillPageSize>> {
     let userPrefs = await wdkService.getCurrentUserPreferences();
     return fulfillPageSize(+userPrefs.global.preference_global_items_per_page);
 }
 
-async function getFulfillAnswer(requestAction:  InferAction<typeof requestAnswer>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillAnswer>> {
+async function getFulfillAnswer([requestAction]: [InferAction<typeof requestAnswer>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillAnswer>> {
     let answerJsonFormatConfig = [
         requestAction.payload.columnsConfig.sorting,
         requestAction.payload.columnsConfig.attributes,
@@ -69,25 +69,25 @@ async function getFulfillAnswer(requestAction:  InferAction<typeof requestAnswer
     return fulfillAnswer(answer);
 }
 
-async function getRequestRecordsBasketStatus(requestAction: InferAction<typeof fulfillAnswer>, state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestRecordsBasketStatus>> {
+async function getRequestRecordsBasketStatus([requestAction]: [InferAction<typeof fulfillAnswer>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestRecordsBasketStatus>> {
     let primaryKeys = requestAction.payload.answer.records.map((recordInstance) => recordInstance.id);
     return requestRecordsBasketStatus(requestAction.payload.answer.meta.recordClassName, primaryKeys);
 }
 
-async function getFulfillRecordsBasketStatus(requestAction: InferAction<typeof requestRecordsBasketStatus>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillRecordsBasketStatus>> {
+async function getFulfillRecordsBasketStatus([requestAction]: [InferAction<typeof requestRecordsBasketStatus>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillRecordsBasketStatus>> {
     let recordsStatus = await wdkService.getBasketStatusPk(requestAction.payload.recordClassName, requestAction.payload.basketQuery);
     return fulfillRecordsBasketStatus(recordsStatus);
 }
 
 export const observe =
      combineEpics(
-         mapRequestActionToEpic(requestStep, getFulfillStep),
-         mapRequestActionToEpic(fulfillStep, getRequestColumnsConfig),
-         mapRequestActionToEpic(requestColumnsConfig, getFulfillColumnsConfig),
-         mapRequestActionToEpic(requestPageSize, getFulfillPageSize),
-         mapRequestActionToEpic(requestAnswer, getFulfillAnswer),
-         mapRequestActionToEpic(fulfillAnswer, getRequestRecordsBasketStatus),
-         mapRequestActionToEpic(requestRecordsBasketStatus, getFulfillRecordsBasketStatus)
+         mapRequestActionsToEpic([requestStep], getFulfillStep),
+         mapRequestActionsToEpic([fulfillStep], getRequestColumnsConfig),
+         mapRequestActionsToEpic([requestColumnsConfig], getFulfillColumnsConfig),
+         mapRequestActionsToEpic([requestPageSize], getFulfillPageSize),
+         mapRequestActionsToEpic([requestAnswer], getFulfillAnswer),
+         mapRequestActionsToEpic([fulfillAnswer], getRequestRecordsBasketStatus),
+         mapRequestActionsToEpic([requestRecordsBasketStatus], getFulfillRecordsBasketStatus)
          );
 
 

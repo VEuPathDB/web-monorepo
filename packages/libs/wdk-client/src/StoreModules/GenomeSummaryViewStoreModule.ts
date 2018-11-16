@@ -6,7 +6,7 @@ import WdkService from 'wdk-client/Utils/WdkService';
 import { GenomeSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { mapRequestActionToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 import { Observable } from 'rxjs';
@@ -48,7 +48,7 @@ async function getFormat(stepId: number, wdkService: WdkService) : Promise<strin
     return getFormatFromRecordClassName(bundle.recordClass.name);
 }
 
-async function getGenomeSummaryViewReport(requestAction:  InferAction<typeof requestGenomeSummaryReport>, state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillGenomeSummaryReport>> {
+async function getGenomeSummaryViewReport([requestAction]:  [InferAction<typeof requestGenomeSummaryReport>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillGenomeSummaryReport>> {
     let format = await getFormat(requestAction.payload.stepId, wdkService);
     let report = await wdkService.getStepAnswer(requestAction.payload.stepId, { format: format});
     return fulfillGenomeSummaryReport((<GenomeSummaryViewReport>report))
@@ -56,5 +56,5 @@ async function getGenomeSummaryViewReport(requestAction:  InferAction<typeof req
 
 export const observe =
      combineEpics(
-         mapRequestActionToEpic(requestGenomeSummaryReport, getGenomeSummaryViewReport)
+         mapRequestActionsToEpic([requestGenomeSummaryReport], getGenomeSummaryViewReport)
      );
