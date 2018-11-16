@@ -9,7 +9,7 @@ const cx = makeClassNameHelper('ce-StudyRecordHeadingSearchLinks');
 
 const enhance = connect((state) => {
   const { globalData, record, studies } = state;
-  const { questions, recordClasses, siteConfig } = globalData;
+  const { questions = [], recordClasses = [], siteConfig } = globalData;
   const { webAppUrl } = siteConfig;
 
   const studyId = record.record.id
@@ -46,7 +46,13 @@ export default function StudyRecordHeading(props) {
       <props.DefaultComponent {...props}/>
       <div className={cx()}>
         <div className={cx('Label')}>Search the data</div>
-        <ConnectedStudySearches/>
+        <ConnectedStudySearches
+          renderNotFound={() => (
+            <div>
+              <em>No searches were found for this study.</em>
+            </div>
+          )}
+        />
       </div>
     </React.Fragment>
   );
