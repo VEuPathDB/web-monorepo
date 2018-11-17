@@ -26,7 +26,7 @@ class GenomeSummaryViewController extends PageController< Props > {
   }
 
   getTitle() {
-    return "BLAST Results";
+    return "Genome Summary";
   }
 
   loadData () {
@@ -46,7 +46,7 @@ class GenomeSummaryViewController extends PageController< Props > {
   renderView() {
     if (this.props.genomeSummaryData == null) return <Loading/>;
 
-    return (     <div>FIX ME</div>   
+    return (     <div>{JSON.stringify(this.props.genomeSummaryData, null, 2)}</div>   
     );
   }
 }

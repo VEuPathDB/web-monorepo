@@ -16,6 +16,8 @@ import UserDatasetDetailController from 'wdk-client/Views/UserDatasets/Detail/Us
 import FavoritesController from 'wdk-client/Views/Favorites/FavoritesController';
 import QuestionController from 'wdk-client/Views/Question/QuestionController';
 import BlastSummaryViewController from 'wdk-client/Views/BlastSummaryView/BlastSummaryViewController';
+import IsolatesSummaryViewController from 'wdk-client/Views/IsolatesSummaryView/IsolatesSummaryViewController';
+import GenomeSummaryViewController from 'wdk-client/Views/GenomeSummaryView/GenomeSummaryViewController';
 
 export default <RouteSpec[]> [
   { path: '/', component: IndexController },
@@ -35,5 +37,7 @@ export default <RouteSpec[]> [
   { path: '/data-finder', component: SiteMapController },
   { path: '/question-list', component: QuestionListController },
   { path: '/step/:stepId/blastSummaryView', component: BlastSummaryViewController },
+  { path: '/step/:stepId/isolatesSummaryView', component: IsolatesSummaryViewController },
+  { path: '/step/:stepId/genomeSummaryView', component: GenomeSummaryViewController },
   { path: '*', component: NotFoundController },
 ];

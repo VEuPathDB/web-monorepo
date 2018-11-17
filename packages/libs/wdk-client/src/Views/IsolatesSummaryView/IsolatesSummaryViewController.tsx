@@ -26,7 +26,7 @@ class IsolatesSummaryViewController extends PageController< Props > {
   }
 
   getTitle() {
-    return "BLAST Results";
+    return "Isolates Geographic Summary";
   }
 
   loadData () {
@@ -48,7 +48,7 @@ class IsolatesSummaryViewController extends PageController< Props > {
     if (this.props.isolatesSummaryData == null) return <Loading/>;
 
     return (
-      <div>FIX ME</div>   
+      <div>{JSON.stringify(this.props.isolatesSummaryData, null, 2)}</div>     
        
     );
   }

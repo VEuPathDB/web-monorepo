@@ -33,12 +33,12 @@ export function reduce(state: State = initialState, action: Action): State {
 
 function getFormatFromRecordClassName(recordClassName: string) : string {
     switch (recordClassName) {
-    case "TranscriptRecordClass":
+    case "TranscriptRecordClasses.TranscriptRecordClass":
         return "geneGenomeSummaryView";
-    case "DynSpanRecordClass":
+    case "DynSpanRecordClasses.DynSpanRecordClass":
         return "dynamicSpanSummaryView";
     default:
-        throw "This step cannot use this summary view, it is the wrong record class";
+        throw "This step cannot use this summary view, it is the wrong record class: " + recordClassName;
     }
 }
 

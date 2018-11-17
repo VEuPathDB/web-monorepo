@@ -2,7 +2,6 @@ import { requestStep, fulfillStep, requestColumnsConfig, fulfillColumnsConfig, r
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Answer, AnswerJsonFormatConfig } from 'wdk-client/Utils/WdkModel';
-import { Step } from 'wdk-client/Utils/WdkUser';
 import { getQuestionAttributesTableConfig } from 'wdk-client/Utils/UserPreferencesUtils';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable } from 'rxjs';
