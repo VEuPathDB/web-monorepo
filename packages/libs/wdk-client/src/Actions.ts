@@ -16,6 +16,7 @@ import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/R
 import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
 import * as IsolatesSummaryViewActions from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
+import * as StepActions from 'wdk-client/Actions/StepActions';
 
 export {
   AnswerActions,
@@ -29,8 +30,9 @@ export {
   TreeBoxEnumParamActions,
   UserActions,
   RecordActions,
-  StaticDataActions,
   SiteMapActions,
+  StaticDataActions,
+  StepActions,
   UserDatasetsActions,
   ResultTableSummaryViewActions,
   BlastSummaryViewActions,
@@ -50,8 +52,9 @@ export type Action =
   | TreeBoxEnumParamActions.Action
   | UserActions.Action
   | RecordActions.Action
-  | StaticDataActions.Action
   | SiteMapActions.Action
+  | StaticDataActions.Action
+  | StepActions.Action
   | UserDatasetsActions.Action
   | ResultTableSummaryViewActions.Action
   | BlastSummaryViewActions.Action

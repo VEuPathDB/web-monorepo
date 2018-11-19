@@ -2,9 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import PageController from 'wdk-client/Core/Controllers/PageController';
+import { ViewControllerProps } from 'wdk-client/Core/Controllers/ViewController';
+import { RouteComponentProps } from 'react-router';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
-import { Answer } from 'wdk-client/Utils/WdkModel';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {  requestColumnsConfig, fulfillColumnsConfig, requestPageSize, fulfillPageSize, requestAnswer, fulfillAnswer,  requestRecordsBasketStatus, fulfillRecordsBasketStatus,} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
@@ -54,20 +55,21 @@ class ResultTableSummaryViewController extends PageController< Props > {
   }
 }
 
-function columnsTreeSelector(state: RootState) : CategoryTreeNode | undefined {
-  if (state.globalData.ontology === undefined || state.resultTableSummaryView.recordClassName === undefined) {
+function columnsTreeSelector(state: RootState, props: Props & ViewControllerProps & RouteComponentProps<any>) : CategoryTreeNode | undefined {
+  if (state.globalData.ontology === undefined || state.steps.steps [props.match.params.stepId] === undefined) {
     return undefined;
   } else {
+    let recordClassName = state.steps.steps [props.match.params.stepId].recordClassName
     return getTree(state.globalData.ontology, isQualifying({
       targetType: 'attribute',
-      recordClassName: state.resultTableSummaryView.recordClassName,
+      recordClassName,
       scope: 'results'
     }));
   }
 }
 
-const mapStateToProps = (state: RootState) => ({resultTableSummaryView: state.resultTableSummaryView, 
- columnsTree: columnsTreeSelector(state)}
+const mapStateToProps = (state: RootState, props: Props & ViewControllerProps & RouteComponentProps<any>) => ({resultTableSummaryView: state.resultTableSummaryView, 
+ columnsTree: columnsTreeSelector(state, props)}
   );
 
 export default connect(

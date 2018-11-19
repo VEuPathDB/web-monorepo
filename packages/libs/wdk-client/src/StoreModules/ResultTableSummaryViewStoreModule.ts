@@ -1,4 +1,5 @@
-import { requestStep, fulfillStep, requestColumnsConfig, fulfillColumnsConfig, requestPageSize,  fulfillPageSize,  requestAnswer, fulfillAnswer, requestRecordsBasketStatus, fulfillRecordsBasketStatus, viewPage} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
+import { openResultTableSummaryView, requestColumnsConfig, fulfillColumnsConfig, requestPageSize,  fulfillPageSize,  requestAnswer, fulfillAnswer, requestRecordsBasketStatus, fulfillRecordsBasketStatus, viewPageNumber} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
+import { requestStep, fulfillStep } from 'wdk-client/Actions/StepActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Answer, AnswerJsonFormatConfig } from 'wdk-client/Utils/WdkModel';
@@ -11,7 +12,6 @@ import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
 export const key = 'resultTableSummaryView';
 
 export type State = {
-    recordClassName?: string;
     currentPage?: number;
     answer?: Answer;
     basketStatus?: Array<boolean>; // cardinality == pageSize
@@ -22,13 +22,11 @@ const initialState: State = {
 
 export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
-        case fulfillStep.type: {
-            return { ...state, recordClassName: action.payload.step.recordClassName };
-        } case fulfillAnswer.type: {
+        case fulfillAnswer.type: {
             return { ...state, answer: action.payload.answer };
         } case fulfillRecordsBasketStatus.type: {
             return { ...state, basketStatus: action.payload.basketStatus };
-        } case viewPage.type: {
+        } case viewPageNumber.type: {
             return {...state, currentPage: action.payload.page}
         }
         default: {
@@ -37,10 +35,14 @@ export function reduce(state: State = initialState, action: Action): State {
     }
 }
 
-async function getFulfillStep([requestAction]: [InferAction<typeof requestStep>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillStep>> {
+async function getFirstPageNumber([openResultTableSummaryViewAction]: [InferAction<typeof openResultTableSummaryView>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof viewPageNumber>> {
+    return viewPageNumber(1);
+}
 
-    let step = await wdkService.findStep(requestAction.payload.stepId);
-    return fulfillStep(step);
+async function getRequestStep([openResultTableSummaryViewAction]: [InferAction<typeof openResultTableSummaryView>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof requestStep>> {
+
+    let stepId = openResultTableSummaryViewAction.payload.stepId;
+    return requestStep(stepId);
 }
 
 async function getRequestColumnsConfig([requestAction]: [InferAction<typeof fulfillStep>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestColumnsConfig>> {
@@ -50,12 +52,24 @@ async function getRequestColumnsConfig([requestAction]: [InferAction<typeof fulf
 async function getFulfillColumnsConfig([requestAction]: [InferAction<typeof requestColumnsConfig>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsConfig>> {
 
     let columnsConfig = await getQuestionAttributesTableConfig(requestAction.payload.questionName, wdkService);
-    return fulfillColumnsConfig(columnsConfig);
+    return fulfillColumnsConfig(columnsConfig, requestAction.payload.questionName);
 }
 
 async function getFulfillPageSize([requestAction]: [InferAction<typeof requestPageSize>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillPageSize>> {
     let userPrefs = await wdkService.getCurrentUserPreferences();
     return fulfillPageSize(+userPrefs.global.preference_global_items_per_page);
+}
+
+async function getRequestAnswer([openResultTableSummaryViewAction, fulfillStepAction, viewPageNumberAction, fulfillPageSizeAction, fulfillColumnsConfigAction]: [InferAction<typeof openResultTableSummaryView>, InferAction<typeof fulfillStep>, InferAction<typeof viewPageNumber>, InferAction<typeof fulfillPageSize>, InferAction<typeof fulfillColumnsConfig>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof requestAnswer> | undefined> {
+    if (fulfillStepAction.payload.step.answerSpec.questionName !== fulfillColumnsConfigAction.payload.questionName) return undefined;
+    
+    let numRecords = fulfillPageSizeAction.payload.pageSize;
+    let offset = numRecords * (viewPageNumberAction.payload.page - 1);
+    let stepId = openResultTableSummaryViewAction.payload.stepId
+    let pagination = {numRecords, offset}; 
+    let columnsConfig = fulfillColumnsConfigAction.payload.columnsConfig;
+
+    return requestAnswer(stepId, columnsConfig, pagination);
 }
 
 async function getFulfillAnswer([requestAction]: [InferAction<typeof requestAnswer>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillAnswer>> {
@@ -77,16 +91,19 @@ async function getFulfillRecordsBasketStatus([requestAction]: [InferAction<typeo
     let recordsStatus = await wdkService.getBasketStatusPk(requestAction.payload.recordClassName, requestAction.payload.basketQuery);
     return fulfillRecordsBasketStatus(recordsStatus);
 }
+const mrate = mapRequestActionsToEpic;
 
 export const observe =
      combineEpics(
-         mapRequestActionsToEpic([requestStep], getFulfillStep),
-         mapRequestActionsToEpic([fulfillStep], getRequestColumnsConfig),
-         mapRequestActionsToEpic([requestColumnsConfig], getFulfillColumnsConfig),
-         mapRequestActionsToEpic([requestPageSize], getFulfillPageSize),
-         mapRequestActionsToEpic([requestAnswer], getFulfillAnswer),
-         mapRequestActionsToEpic([fulfillAnswer], getRequestRecordsBasketStatus),
-         mapRequestActionsToEpic([requestRecordsBasketStatus], getFulfillRecordsBasketStatus)
+         mrate([openResultTableSummaryView], getRequestStep),
+         mrate([openResultTableSummaryView], getFirstPageNumber),
+         mrate([fulfillStep], getRequestColumnsConfig),
+         mrate([requestColumnsConfig], getFulfillColumnsConfig),
+         mrate([requestPageSize], getFulfillPageSize),
+         mrate([openResultTableSummaryView, fulfillStep, viewPageNumber, fulfillPageSize, fulfillColumnsConfig], getRequestAnswer),
+         mrate([requestAnswer], getFulfillAnswer),
+         mrate([fulfillAnswer], getRequestRecordsBasketStatus),
+         mrate([requestRecordsBasketStatus], getFulfillRecordsBasketStatus)
          );
 
 
