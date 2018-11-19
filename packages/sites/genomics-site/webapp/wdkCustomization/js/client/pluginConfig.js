@@ -26,7 +26,7 @@ function decorateTranscriptAttributeAnalysisPlugin(plugin) {
 }
 
 function isRequestedAction(action) {
-  return action.type === 'attribute-reporter/requested';
+  return action.type === 'attribute-report/start-request';
 }
 
 function decorateTranscriptAttributeAnalysisObserve(observe) {
@@ -43,8 +43,8 @@ function decorateTranscriptAttributeAnalysisObserve(observe) {
             .then(
               representativeTranscriptOnly =>
               services.wdkService.getStepAnswer(stepId, { format: reporterName, formatConfig: { representativeTranscriptOnly } }).then(
-                report => ({ type: 'attribute-reporter/received', payload: { report }}),
-                error => ({ type: 'attribute-reporter/failed', payload: { error }})
+                report => ({ type: 'attribute-report/end-request-success', payload: { report }}),
+                error => ({ type: 'attribute-report/end-request-error', payload: { error }})
               ))
           ).pipe(takeUntil(action$.pipe(filter(action => action.type === 'attribute-reporter/cancelled'))))
         )

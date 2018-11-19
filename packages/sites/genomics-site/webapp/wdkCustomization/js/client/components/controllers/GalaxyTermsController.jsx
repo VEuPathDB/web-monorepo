@@ -1,12 +1,12 @@
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { PageController } from 'wdk-client/Controllers';
-import { UserActionCreators } from 'wdk-client/ActionCreators';
+import { UserActions } from 'wdk-client/Actions';
 import { updateSecurityAgreementStatus } from '../../actioncreators/GalaxyTermsActionCreators';
 import GalaxyTerms from '../GalaxyTerms';
 import GalaxySignUp from '../GalaxySignUp';
 
-let { updateUserPreference, showLoginForm } = UserActionCreators;
+let { updateUserPreference, showLoginForm } = UserActions;
 
 export const SHOW_GALAXY_PAGE_PREFERENCE = 'show-galaxy-orientation-page';
 

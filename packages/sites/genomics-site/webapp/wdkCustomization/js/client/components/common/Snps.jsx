@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, pick } from 'lodash';
 import { FilterParamNew } from 'wdk-client/Components';
-import { QuestionActionCreators } from 'wdk-client/ActionCreators';
+import { QuestionActions } from 'wdk-client/Actions';
 
 const headingStyle = {
   fontSize: '1.2em',
@@ -60,7 +60,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
           uiState={uiState}
           dispatch={dispatch}
           onParamValueChange={value => {
-            dispatch(QuestionActionCreators.ParamValueUpdatedAction.create({
+            dispatch(QuestionActions.updateParamValue({
               questionName,
               parameter,
               dependentParameters: [],

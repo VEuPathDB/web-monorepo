@@ -153,7 +153,7 @@ function checkLogin() {
   if (isGuest) {
     // Balloon is not used on gene pages
     if ('Balloon' in window) Balloon.prototype.hideTooltip(1);
-    window.ebrc.context.store.dispatch(Wdk.ActionCreators.UserActionCreators.showLoginForm())
+    window.ebrc.context.store.dispatch(Wdk.Actions.UserActions.showLoginForm())
   }
   return !isGuest;
 }

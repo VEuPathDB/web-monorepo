@@ -1,4 +1,4 @@
-/* global ebrc, wdk, Wdk */
+/* global ebrc, wdk */
 import {negate} from 'lodash';
 import {render} from 'react-dom';
 import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
@@ -35,10 +35,10 @@ function renderBubble(props, el) {
       isSelectable={false}
       searchBoxPlaceholder="Find a search..."
       leafType="search"
-      nodeComponent={BubbleNode}
+      renderNode={renderBubbleNode}
+      renderNoResults={renderNoResults}
       onUiChange={expandedBranches => renderBubble(merge(props, {expandedBranches}), el)}
       onSearchTermChange={searchTerm => renderBubble(merge(props, {searchTerm}), el)}
-      noResultsComponent={NoResults}
     />
   ), el);
 }
@@ -47,8 +47,7 @@ function merge(source, props) {
   return Object.assign({}, source, props);
 }
 
-function BubbleNode(props) {
-  let { node } = props;
+function renderBubbleNode(node) {
   let displayElement = getTargetType(node) === 'search'
     ? <a href={'showQuestion.do?questionFullName=' + getRefName(node)}>
         {getDisplayName(node)}
@@ -61,7 +60,7 @@ function BubbleNode(props) {
   );
 }
 
-function NoResults({ searchTerm }) {
+function renderNoResults(searchTerm) {
   return (
     <div>
       <p>
