@@ -12,6 +12,10 @@ const enhance = connect((state) => {
   const { questions, recordClasses, siteConfig } = globalData;
   const { webAppUrl } = siteConfig;
 
+  if (questions == null || recordClasses == null || studies.loading) {
+    return { loading: true };
+  }
+
   const studyId = record.record.id
     .filter(part => part.name === 'dataset_id')
     .map(part => part.value)[0];
@@ -22,32 +26,42 @@ const enhance = connect((state) => {
   // Find record class and searches from study id.
   // If none found, render nothing.
   // FIXME Start with questions!!
-  const entries = Seq.from(Object.values(activeStudy.searches))
-    .flatMap(questionName =>
-      Seq.from(questions)
-        .filter(question => question.name === questionName)
-        .take(1)
-        .flatMap(question =>
-          Seq.from(recordClasses)
-            .filter(recordClass => question.recordClassName === recordClass.name)
-            .map(recordClass => ({ question, recordClass }))
-            .take(1)))
-    .toArray();
+  const entries = activeStudy && Seq.from(Object.values(activeStudy.searches))
+      .flatMap(questionName =>
+        Seq.from(questions)
+          .filter(question => question.name === questionName)
+          .take(1)
+          .flatMap(question =>
+            Seq.from(recordClasses)
+              .filter(recordClass => question.recordClassName === recordClass.name)
+              .map(recordClass => ({ question, recordClass }))
+              .take(1)))
+      .toArray();
 
   return { entries, webAppUrl };
 }, null);
 
 
-const ConnectedStudySearches = enhance(StudySearches);
-
-export default function StudyRecordHeading(props) {
+function StudyRecordHeading({ entries, loading, webAppUrl, ...props }) {
   return (
     <React.Fragment>
       <props.DefaultComponent {...props}/>
       <div className={cx()}>
         <div className={cx('Label')}>Search the data</div>
-        <ConnectedStudySearches/>
+        {loading ? null :
+          <StudySearches
+            entries={entries}
+            webAppUrl={webAppUrl}
+            renderNotFound={() => (
+              <div>
+                <em>No searches were found for this study.</em>
+              </div>
+            )}
+          />
+        }
       </div>
     </React.Fragment>
   );
 }
+
+export default enhance(StudyRecordHeading);
