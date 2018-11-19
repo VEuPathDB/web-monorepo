@@ -166,6 +166,192 @@ export function mapRequestActionsToEpic<
   ) => Promise<WdkAction | undefined> | undefined
 ): ModuleEpic<State>;
 
+// 5 request action
+export function mapRequestActionsToEpic<
+  T1 extends string,
+  A1 extends any[],
+  P1,
+  T2 extends string,
+  A2 extends any[],
+  P2,
+  T3 extends string,
+  A3 extends any[],
+  P3,
+  T4 extends string,
+  A4 extends any[],
+  P4,
+  T5 extends string,
+  A5 extends any[],
+  P5,
+  State
+>(
+  actionCreators: [
+    ActionCreator<T1, A1, P1>,
+    ActionCreator<T2, A2, P2>,
+    ActionCreator<T3, A3, P3>,
+    ActionCreator<T4, A4, P4>,
+    ActionCreator<T5, A5, P5>
+  ],
+  request2Fulfill: (
+    requestActions: [
+      Action<T1, P1>,
+      Action<T2, P2>,
+      Action<T3, P3>,
+      Action<T4, P4>,
+      Action<T5, P5>
+    ],
+    state$: StateObservable<State>,
+    dependencies: EpicDependencies
+  ) => Promise<WdkAction | undefined> | undefined
+): ModuleEpic<State>;
+
+// 6 request action
+export function mapRequestActionsToEpic<
+  T1 extends string,
+  A1 extends any[],
+  P1,
+  T2 extends string,
+  A2 extends any[],
+  P2,
+  T3 extends string,
+  A3 extends any[],
+  P3,
+  T4 extends string,
+  A4 extends any[],
+  P4,
+  T5 extends string,
+  A5 extends any[],
+  P5,
+  T6 extends string,
+  A6 extends any[],
+  P6,
+  State
+>(
+  actionCreators: [
+    ActionCreator<T1, A1, P1>,
+    ActionCreator<T2, A2, P2>,
+    ActionCreator<T3, A3, P3>,
+    ActionCreator<T4, A4, P4>,
+    ActionCreator<T5, A5, P5>,
+    ActionCreator<T6, A6, P6>
+  ],
+  request2Fulfill: (
+    requestActions: [
+      Action<T1, P1>,
+      Action<T2, P2>,
+      Action<T3, P3>,
+      Action<T4, P4>,
+      Action<T5, P5>,
+      Action<T6, P6>
+    ],
+    state$: StateObservable<State>,
+    dependencies: EpicDependencies
+  ) => Promise<WdkAction | undefined> | undefined
+): ModuleEpic<State>;
+
+// 7 request action
+export function mapRequestActionsToEpic<
+  T1 extends string,
+  A1 extends any[],
+  P1,
+  T2 extends string,
+  A2 extends any[],
+  P2,
+  T3 extends string,
+  A3 extends any[],
+  P3,
+  T4 extends string,
+  A4 extends any[],
+  P4,
+  T5 extends string,
+  A5 extends any[],
+  P5,
+  T6 extends string,
+  A6 extends any[],
+  P6,
+  T7 extends string,
+  A7 extends any[],
+  P7,
+  State
+>(
+  actionCreators: [
+    ActionCreator<T1, A1, P1>,
+    ActionCreator<T2, A2, P2>,
+    ActionCreator<T3, A3, P3>,
+    ActionCreator<T4, A4, P4>,
+    ActionCreator<T5, A5, P5>,
+    ActionCreator<T6, A6, P6>,
+    ActionCreator<T7, A7, P7>
+  ],
+  request2Fulfill: (
+    requestActions: [
+      Action<T1, P1>,
+      Action<T2, P2>,
+      Action<T3, P3>,
+      Action<T4, P4>,
+      Action<T5, P5>,
+      Action<T6, P6>,
+      Action<T7, P7>
+    ],
+    state$: StateObservable<State>,
+    dependencies: EpicDependencies
+  ) => Promise<WdkAction | undefined> | undefined
+): ModuleEpic<State>;
+
+// 8 request action
+export function mapRequestActionsToEpic<
+  T1 extends string,
+  A1 extends any[],
+  P1,
+  T2 extends string,
+  A2 extends any[],
+  P2,
+  T3 extends string,
+  A3 extends any[],
+  P3,
+  T4 extends string,
+  A4 extends any[],
+  P4,
+  T5 extends string,
+  A5 extends any[],
+  P5,
+  T6 extends string,
+  A6 extends any[],
+  P6,
+  T7 extends string,
+  A7 extends any[],
+  P7,
+  T8 extends string,
+  A8 extends any[],
+  P8,
+  State
+>(
+  actionCreators: [
+    ActionCreator<T1, A1, P1>,
+    ActionCreator<T2, A2, P2>,
+    ActionCreator<T3, A3, P3>,
+    ActionCreator<T4, A4, P4>,
+    ActionCreator<T5, A5, P5>,
+    ActionCreator<T6, A6, P6>,
+    ActionCreator<T7, A7, P7>,
+    ActionCreator<T8, A8, P8>
+  ],
+  request2Fulfill: (
+    requestActions: [
+      Action<T1, P1>,
+      Action<T2, P2>,
+      Action<T3, P3>,
+      Action<T4, P4>,
+      Action<T5, P5>,
+      Action<T6, P6>,
+      Action<T7, P7>,
+      Action<T8, P8>
+    ],
+    state$: StateObservable<State>,
+    dependencies: EpicDependencies
+  ) => Promise<WdkAction | undefined> | undefined
+): ModuleEpic<State>;
+
 /**
  * Creates an Epic that calls `request2Fulfill` when actions matching the
  * supplied set of ActionCreators have been dispatched. `request2Fulfill` is
