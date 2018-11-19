@@ -43,7 +43,7 @@ export function makeActionCreator<Type extends string, Args extends any[], Paylo
 }
 import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 
-import { from, Observable, combineLatest } from 'rxjs';
+import { empty, Observable, combineLatest } from 'rxjs';
 import { Action as WdkAction } from 'wdk-client/Actions';
 import { filter, mergeMap } from 'rxjs/operators';
 import {StateObservable} from 'redux-observable';
@@ -76,7 +76,7 @@ export function mapRequestActionsToEpic<
     ],
     state$: StateObservable<State>,
     dependencies: EpicDependencies
-  ) => Promise<WdkAction>
+  ) => Promise<WdkAction | undefined> | undefined
 ): ModuleEpic<State>;
 
 // 2 request action
@@ -100,7 +100,7 @@ export function mapRequestActionsToEpic<
     ],
     state$: StateObservable<State>,
     dependencies: EpicDependencies
-  ) => Promise<WdkAction>
+  ) => Promise<WdkAction | undefined> | undefined
 ): ModuleEpic<State>;
 
 // 3 request action
@@ -129,7 +129,7 @@ export function mapRequestActionsToEpic<
     ],
     state$: StateObservable<State>,
     dependencies: EpicDependencies
-  ) => Promise<WdkAction>
+  ) => Promise<WdkAction | undefined> | undefined
 ): ModuleEpic<State>;
 
 // 4 request action
@@ -163,7 +163,7 @@ export function mapRequestActionsToEpic<
     ],
     state$: StateObservable<State>,
     dependencies: EpicDependencies
-  ) => Promise<WdkAction>
+  ) => Promise<WdkAction | undefined> | undefined
 ): ModuleEpic<State>;
 
 /**
@@ -174,7 +174,7 @@ export function mapRequestActionsToEpic<
  */
 export function mapRequestActionsToEpic<State>(
   actionCreators: GenericActionCreator[],
-  request2Fulfill: (...args: any[]) => Promise<WdkAction>,
+  request2Fulfill: (...args: any[]) => Promise<WdkAction | undefined> | undefined,
 ): ModuleEpic<State> {
   return function mapRequestActionsEpic(
     action$: Observable<WdkAction>,
@@ -185,7 +185,8 @@ export function mapRequestActionsToEpic<State>(
       action$.pipe(filter(ac.isOfType)),
     );
     return combineLatest(actionStreams).pipe(
-      mergeMap(actions => request2Fulfill(actions, state$, dependencies)),
+      mergeMap(actions => request2Fulfill(actions, state$, dependencies) || empty()),
+      filter((action): action is WdkAction => action != null)
     );
   };
 }

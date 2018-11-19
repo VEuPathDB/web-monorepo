@@ -26,19 +26,19 @@ export type Unpack<T> = T extends Decoder<infer R> ? R : never;
 // Decoder return types
 // --------------------
 
-type Ok<T> = {
+export type Ok<T> = {
   status: 'ok';
   value: T;
 }
 
-type Err = {
+export type Err = {
   status: 'err';
   value: any;
   expected: string;
   context?: string;
 }
 
-type Result<T> = Ok<T> | Err;
+export type Result<T> = Ok<T> | Err;
 
 export function ok<T>(value: T): Ok<T> {
   return { status: 'ok', value };

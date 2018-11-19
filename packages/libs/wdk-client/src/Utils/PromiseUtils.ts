@@ -5,7 +5,7 @@ interface PromiseFactory<T> {
 }
 
 // A Promise that never leaves the pending state.
-export const pendingPromise = { then() { } };
+export const pendingPromise = { then() { } } as Promise<any>;
 
 export function delay(ms: number): Promise<undefined> {
   return new Promise(function(resolve) {
