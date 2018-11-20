@@ -55,10 +55,7 @@ public class AccessRequestSubmitter {
       // Either the DB update (SQLException) or email submission (WdkModelException) 
       // has failed, and so we roll back the record insertion
       catch (SQLException | WdkModelException ex) {
-        if (conn != null) {
-          conn.rollback();
-        }
-        
+        conn.rollback();
         throw new WdkModelException(ex);        
       }
     }
