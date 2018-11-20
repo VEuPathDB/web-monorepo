@@ -113,24 +113,29 @@ public class AccessRequestService extends UserService {
         return record.getAttributeValue(key).getDisplay();
       }
 
+      @Override
       public String getStudyAccess() throws WdkModelException, WdkUserException {
       // return getAttributeValueString("restriction_level");
       // the form does not currently include the user request for a specific study access, we always grant public access
         return "public";
       }
 
+      @Override
       public String getDisplayName() throws WdkModelException, WdkUserException {
         return getAttributeValueString("display_name");
       }
       
+      @Override
       public String getRequestEmail() throws WdkModelException, WdkUserException {
         return getAttributeValueString("request_email");
       }
 
+      @Override
       public String getRequestEmailBody() throws WdkModelException, WdkUserException {
         return getAttributeValueString("request_email_body");
       }
 
+      @Override
       public Integer getRequestNeedsApproval() throws NumberFormatException, WdkModelException, WdkUserException {
         return Integer.parseInt(getAttributeValueString("request_needs_approval"));
       }
