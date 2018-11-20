@@ -23,12 +23,11 @@
   </c:choose>
 
   <c:if test="${fn:length(missing_inModel_questions_by_dataset_map) gt 0 }">
-
-  <div class="ui-widget ui-state-error">
-    <h1 style="color:darkred">ALERT MISSING QUESTIONS IN MODEL (probably mispelled)</h1>
-    <table align="center">
+  <div class="ui-widget ui-state-error" style="margin:0 auto;width:80%">
+    <p style="padding-left:20px;font-size:120%;color:darkred">Please <a target="_blank" href="/a/app/contact-us">Contact Us</a> with a snapshot or the url of this page. The following Data Sets/Searches are missing in the table below (probaby mispelled in the model). </p>
+    <table align="center" style="color:grey">
         <thead>
-          <tr><th>Dataset</th><th>Questions</th></tr>
+          <tr><th>Data Set</th><th>Searches</th></tr>
         </thead>
         <tbody>
           <c:forEach items="${missing_inModel_questions_by_dataset_map}" var="questionsByDataset">
@@ -47,16 +46,15 @@
           </c:forEach>
         </tbody>
       </table>
-      <br/><br/>
+      <br/>
   	</div>
 	</c:if>
   <c:if test="${fn:length(uncategorized_questions_by_dataset_map) gt 0}">
-    <div class="ui-widget ui-state-error">
-      <p><strong>The following questions are not categorized, or are in multiple categories.
-      Any related categories are shown in parentheses next to the question name.</strong></p>
-      <table>
+    <div class="ui-widget ui-state-error" style="margin-bottom:20px">
+      <p><strong>Please <a href="/a/app/contact-us">Contact Us</a> and let us know the following searches are not categorized, or are in multiple categories. Any related categories are shown in parentheses next to the search name.</strong></p>
+      <table style="color:black">
         <thead>
-          <tr><th>Dataset</th><th>Questions</th></tr>
+          <tr><th>Data Set</th><th>Searches</th></tr>
         </thead>
         <tbody>
           <c:forEach items="${uncategorized_questions_by_dataset_map}" var="questionsByDataset">
@@ -96,7 +94,7 @@ display_categories  (fold change, percentile etc) (displayCategorySet in action)
 -->
 
   <imp:stylesheet rel="stylesheet" href="wdkCustomization/css/dataset-searches.css"/>
-  <div class="dataset-searches"
+  <div class="dataset-searches" style="margin-top:30px" 
     data-controller="eupathdb.datasetSearches.init"
     data-table="#dataset-records"
     data-table-toggle=".table-toggle"
