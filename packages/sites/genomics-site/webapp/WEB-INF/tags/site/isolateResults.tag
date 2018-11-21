@@ -27,7 +27,7 @@
 <c:set var="wdkView" value="${requestScope.wdkView}" />
 <c:set var="isBasket" value="${fn:contains(step.questionName, 'ByRealtimeBasket')}"/>
 
-<c:set var="clustalwIsolatesCount" value="0" />
+<c:set var="clustalIsolatesCount" value="0" />
 <c:set var="eupathIsolatesQuestion">${fn:containsIgnoreCase(recordName, 'PopsetRecordClasses.PopsetRecordClass') }</c:set> 
 <c:set var="type" value="${wdkStep.recordClass.displayNamePlural}"/>
 
@@ -315,7 +315,7 @@
                   <c:choose>
                     <c:when test = "${eupathIsolatesQuestion}">
                       <a href="showRecord.do?name=${recNam}&source_id=${id}&project_id=${projectId}">${fieldVal}</a><input type="checkbox" name="selectedFields" style="margin-top: 0px; margin-bottom: 0px;" value="${record.idAttributeValue.value}">
-                      <c:set var="clustalwIsolatesCount" value="${clustalwIsolatesCount + 1}"/>
+                      <c:set var="clustalIsolatesCount" value="${clustalIsolatesCount + 1}"/>
                     </c:when>
                     <c:otherwise>
                       <a class="primaryKey_||_${id}" href="showRecord.do?name=${recNam}&project_id=${projectId}&source_id=${id}">${fieldVal}</a>
@@ -365,11 +365,11 @@
 
     <%--------- END OF RESULTS  ----------%>
 
-    <c:if test = "${eupathIsolatesQuestion && clustalwIsolatesCount > 1}">
+    <c:if test = "${eupathIsolatesQuestion && clustalIsolatesCount > 1}">
       <table width="100%">
         <tr align=center>
           <td> <b><br/> 
-            Please select at least two isolates to run Clustalw. Note: only isolates from a single page will be aligned. <br/>
+            Please select at least two isolates to run Clustal Omega. Note: only isolates from a single page will be aligned. <br/>
             The result is an alignment of the locus that was used to type the isolates.<br/>
             (Increase the page size in 'Advanced Paging' to increase the number that can be aligned).  </b>
           </td>
@@ -377,7 +377,7 @@
 
         <tr>
           <td align=center> 
-              <input type="button" value="Run Clustalw on Checked Strains" 
+              <input type="button" value="Run Clustal Omega on Checked Strains" 
                 onClick="goToIsolate(this)" />
               <input type="button" name="CheckAll" value="Check All" 
                 onClick="wdk.api.checkboxAll(jQuery('input:checkbox[name=selectedFields]'))">
