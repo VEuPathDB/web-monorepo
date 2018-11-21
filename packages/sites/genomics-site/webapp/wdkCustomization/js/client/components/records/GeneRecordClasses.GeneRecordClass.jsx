@@ -725,12 +725,12 @@ class OrthologsForm extends SortKeyTable {
 
       if(gene_type === "protein coding") {
           return (
-              <form action="/cgi-bin/isolateClustalw" target="_blank" method="post">
+              <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
                   <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
                   <input type="hidden" name="type" value="geneOrthologs"/>
                   <input type="hidden" name="project_id" value={projectId}/>
                   <input type="hidden" name="gene_ids" value={source_id}/>
-                  <input type="submit" value="Run clustalW for selected genes"/>
+                  <input type="submit" value="Run clustal Omega for selected genes"/>
                   <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
                   <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
               </form>
