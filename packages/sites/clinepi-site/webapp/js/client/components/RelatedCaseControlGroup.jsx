@@ -14,8 +14,12 @@ export default class RelatedCaseControlGroup extends React.Component {
   }
 
   static handleParamChange(controller, param, paramValue) {
-    if (param.name === CASE_CONTROL_PARAM_NAME && paramValue.startsWith('Both')) {
-      let toggleParam = controller.parameterMap.get(TOGGLE_PARAM_NAME);
+    let toggleParam = controller.parameterMap.get(TOGGLE_PARAM_NAME);
+    if (
+      param.name === CASE_CONTROL_PARAM_NAME &&
+      paramValue.startsWith('Both') &&
+      controller.state.paramValues[TOGGLE_PARAM_NAME] !== toggleParam.defaultValue
+    ) {
       controller.setParamValue(toggleParam, toggleParam.defaultValue);
     }
   }
