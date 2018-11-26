@@ -5,8 +5,9 @@ import { Action } from 'wdk-client/Actions';
 import { Answer, AnswerJsonFormatConfig } from 'wdk-client/Utils/WdkModel';
 import { getQuestionAttributesTableConfig } from 'wdk-client/Utils/UserPreferencesUtils';
 import { EpicDependencies } from 'wdk-client/Core/Store';
-import { Observable } from 'rxjs';
-import { combineEpics} from 'redux-observable';
+import { Observable, combineLatest, merge, of, empty } from 'rxjs';
+import { filter, map, mapTo, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { combineEpics, StateObservable } from 'redux-observable';
 import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
 
 export const key = 'resultTableSummaryView';
@@ -114,4 +115,90 @@ export const observe =
          mrate([requestRecordsBasketStatus], getFulfillRecordsBasketStatus)
          );
 
+// The following "epic" is a reference for how to coordinate concurrent
+// asynchronous code that creates actions. The gist of this epic is that it
+// "listens" for an `openResultTableSummaryView` action and then begins to
+// create an output Observable of actions. (The `merge` combiner is used to
+// combine multiple Observables into one Observable). This output Observable
+// includes asynchronous activity that will "return" an action that is added to
+// the output Observable. The final piece of the output Observable is that it is
+// "piped" into a `takeUntil(openViewAction$)` operator, which means that the
+// next time `openResultTableSummaryView` action is seen in the `action$`
+// Observable, the `merge`d Observable will not longer emit actions, even if
+// there are asynchronous operations in progress.
+function vanillaObserve(action$: Observable<Action>, state$: StateObservable<State>, { wdkService }: EpicDependencies): Observable<Action> {
+    // Create input streams we care about.
+    const openViewAction$ = action$.pipe(filter(openResultTableSummaryView.isOfType));
+    const fulfillStepAction$ = action$.pipe(filter(fulfillStep.isOfType));
+    const requestColmunsConfigAction$ = action$.pipe(filter(requestColumnsConfig.isOfType));
+    const fulfillColumnsConfigAction$ = action$.pipe(filter(fulfillColumnsConfig.isOfType));
+    const requestPageSizeAction$ = action$.pipe(filter(requestPageSize.isOfType));
+    const fulfillPageSizeAction$ = action$.pipe(filter(fulfillPageSize.isOfType));
+    const viewPageNumberAction$ = action$.pipe(filter(viewPageNumber.isOfType));
+    const requestAnswerAction$ = action$.pipe(filter(requestAnswer.isOfType));
+    const fulfillAnswerAction$ = action$.pipe(filter(fulfillAnswer.isOfType));
+    const requestBasketStatusAction$ = action$.pipe(filter(requestRecordsBasketStatus.isOfType));
 
+    // Create output stream of actions.
+    const output$ = openViewAction$.pipe(
+        mergeMap(openViewAction => {
+
+            const { stepId } = openViewAction.payload;
+
+            // * The following items passed to `merge` are Observable<Action>.
+            // * They are emitted only when openViewAction is dispatched.
+            // * The next time openViewAction is dispatched, they will no longer
+            //   be emitted, due to the takeUntil. 
+            // * Async functions may continue and complete after the next time
+            //   openViewAction is dispatched, however their associated
+            //   Observables will not emit. In other words, all async functions
+            //   are effectively cancelled.
+            return merge(
+                of(requestStep(stepId)),
+                of(viewPageNumber(1)),
+                fulfillStepAction$.pipe(map(stepAction =>
+                    requestColumnsConfig(stepAction.payload.step.answerSpec.questionName))),
+                requestColmunsConfigAction$.pipe(mergeMap(async action => {
+                    let columnsConfig = await getQuestionAttributesTableConfig(action.payload.questionName, wdkService);
+                    return fulfillColumnsConfig(columnsConfig, action.payload.questionName);
+                })),
+                requestPageSizeAction$.pipe(mergeMap(async () =>
+                    fulfillPageSize(+(await wdkService.getCurrentUserPreferences()).global.preference_global_items_per_page))),
+                combineLatest(fulfillStepAction$, viewPageNumberAction$, fulfillPageSizeAction$, fulfillColumnsConfigAction$).pipe(
+                    map(([stepAction, pageNumberAction, pageSizeAction, colConfAction]) => {
+                        if (stepAction.payload.step.id !== stepId || colConfAction.payload.questionName !== stepAction.payload.step.answerSpec.questionName) {
+                            return empty();
+                        }
+                        let numRecords = pageSizeAction.payload.pageSize;
+                        let offset = numRecords * (pageNumberAction.payload.page - 1);
+                        let pagination = {numRecords, offset}; 
+                        let columnsConfig = colConfAction.payload.columnsConfig;
+                        return requestAnswer(stepId, columnsConfig, pagination);
+                    })
+                ),
+                requestAnswerAction$.pipe(mergeMap(action => wdkService.getStepAnswerJson(
+                    stepId,
+                    {
+                        pagination: action.payload.pagination,
+                        attributes: action.payload.columnsConfig.attributes,
+                        sorting: action.payload.columnsConfig.sorting
+                    }
+                ))),
+                fulfillAnswerAction$.pipe(map(action => {
+                    let primaryKeys = action.payload.answer.records.map((recordInstance) => recordInstance.id);
+                    return requestRecordsBasketStatus(action.payload.answer.meta.recordClassName, primaryKeys);
+                })),
+                requestBasketStatusAction$.pipe(mergeMap(async action => {
+                    let recordsStatus = await wdkService.getBasketStatusPk(action.payload.recordClassName, action.payload.basketQuery);
+                    return fulfillRecordsBasketStatus(recordsStatus);
+                }))
+            ).pipe(
+                // TODO Replace wtih closeViewAction$ when applicable
+                takeUntil(openViewAction$)
+            )
+
+        }),
+    );
+
+    return output$;
+}
