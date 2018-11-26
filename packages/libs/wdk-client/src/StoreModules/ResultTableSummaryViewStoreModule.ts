@@ -45,24 +45,29 @@ async function getRequestStep([openResultTableSummaryViewAction]: [InferAction<t
     return requestStep(stepId);
 }
 
+// these guys probably belong in user preference land
 async function getRequestColumnsConfig([requestAction]: [InferAction<typeof fulfillStep>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestColumnsConfig>> {
     return requestColumnsConfig(requestAction.payload.step.answerSpec.questionName);
 }
 
 async function getFulfillColumnsConfig([requestAction]: [InferAction<typeof requestColumnsConfig>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsConfig>> {
 
+    // TODO: if no user preference, get the default from the question!
     let columnsConfig = await getQuestionAttributesTableConfig(requestAction.payload.questionName, wdkService);
     return fulfillColumnsConfig(columnsConfig, requestAction.payload.questionName);
 }
 
 async function getFulfillPageSize([requestAction]: [InferAction<typeof requestPageSize>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillPageSize>> {
+    // TODO: need to provide a default if no pref available
+    // might want to have an object manage this
     let userPrefs = await wdkService.getCurrentUserPreferences();
     return fulfillPageSize(+userPrefs.global.preference_global_items_per_page);
 }
 
 async function getRequestAnswer([openResultTableSummaryViewAction, fulfillStepAction, viewPageNumberAction, fulfillPageSizeAction, fulfillColumnsConfigAction]: [InferAction<typeof openResultTableSummaryView>, InferAction<typeof fulfillStep>, InferAction<typeof viewPageNumber>, InferAction<typeof fulfillPageSize>, InferAction<typeof fulfillColumnsConfig>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof requestAnswer> | undefined> {
-    if (fulfillStepAction.payload.step.answerSpec.questionName !== fulfillColumnsConfigAction.payload.questionName) return undefined;
-    
+    if (fulfillStepAction.payload.step.answerSpec.questionName !== fulfillColumnsConfigAction.payload.questionName
+        || openResultTableSummaryViewAction.payload.stepId != fulfillStepAction.payload.step.id) return undefined;
+
     let numRecords = fulfillPageSizeAction.payload.pageSize;
     let offset = numRecords * (viewPageNumberAction.payload.page - 1);
     let stepId = openResultTableSummaryViewAction.payload.stepId
@@ -93,10 +98,13 @@ async function getFulfillRecordsBasketStatus([requestAction]: [InferAction<typeo
 }
 const mrate = mapRequestActionsToEpic;
 
+// the mrate function is looking for a generic openRoute action, and when it sees it, 
+// it uses takeUntil somehow
 export const observe =
      combineEpics(
          mrate([openResultTableSummaryView], getRequestStep),
          mrate([openResultTableSummaryView], getFirstPageNumber),
+     //    mrate([openResultTableSummaryView], getRequestPageSize),
          mrate([fulfillStep], getRequestColumnsConfig),
          mrate([requestColumnsConfig], getFulfillColumnsConfig),
          mrate([requestPageSize], getFulfillPageSize),
