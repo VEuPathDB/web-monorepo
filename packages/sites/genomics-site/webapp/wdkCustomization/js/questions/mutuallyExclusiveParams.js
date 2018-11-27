@@ -217,10 +217,13 @@
         var $chromosomeOptional = getChromosomeParam();
 
         if (!sequenceR.test(element.find('#sequenceId').val()) ||
-            // AmoebaDB only allows SequenceID
-            (questionName === "HtsSnpsByLocation" && wdk.modelName() === "AmoebaDB")) {
-          // select this
+            // AmoebaDB and MicrosporidiaDB only allows SequenceID
+            (questionName === "NgsSnpsByLocation" && 
+             ( wdk.modelName() === "AmoebaDB" || wdk.modelName() === "MicrosporidiaDB") )) {
+          // select sequenceId
           $("input[name='xor-group']")[1].checked = true;
+          // disable xor-select
+          $("div.xor-select").hide();
         }
         // change default chromosome
         chromosomeFakeNull = $chromosomeOptional.find(":first").remove();
