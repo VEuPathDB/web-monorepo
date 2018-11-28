@@ -70,7 +70,7 @@ export default class RelatedCaseControlGroup extends React.Component {
       <div className="CaseControlMessage CaseControlMessage__warning">
         Before using <strong>Related Case/Control</strong>, please first specify
         either <strong>Cases</strong> or <strong>Controls</strong> in the
-        previous <strong>Personal Characteristics</strong> filter.
+        previous <strong>Choose Case/Control</strong> filter.
       </div>
     );
   }
