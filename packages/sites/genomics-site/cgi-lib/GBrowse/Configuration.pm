@@ -140,6 +140,12 @@ sub bigwig_file_path {
   return "/var/www/Common/apiSiteFilesMirror/webServices/$ENV{PROJECT_ID}/build-". $self->getBuildNumber. '/bigwig';
 }
 
+sub auxiliaryFilePath {
+    my ($self) = @_;
+
+    return "/var/www/Common/apiSiteFilesMirror/auxiliary/$ENV{PROJECT_ID}";
+}
+
 sub userDB {
   my $projectId = $ENV{PROJECT_ID};
   my $c = new WDK::Model::ModelConfig($projectId);
