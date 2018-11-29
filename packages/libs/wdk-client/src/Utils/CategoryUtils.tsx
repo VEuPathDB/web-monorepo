@@ -306,14 +306,20 @@ interface NodeComparator {
   (nodeA: CategoryTreeNode, nodeB: CategoryTreeNode): number;
 }
 
+/** SORTING CATEGORY TREE
+ * within each section (subsection,etc,  recursively):
+ *  - first we sort alhabetically children by name
+ *  - then we take those with "display order" to the top
+ *  - finally we move any leaf child (table or attribute) before any subsection
+ * So the end result is:
+ *  - at the top, the tables and attributes sorted alphabetically (with the exception of "display order"-tagged children, that move to the top)
+ *  - followed by subsections, again sorted alphabetically (with display order ones at the top)
+ */
+
 /**
  * Compare nodes based on the "sort order" property. If it is undefined,
  * compare based on displayName.
  *
- * if a category contains a mix of leaves (tables and attributes) and subsections,
- *   the subsectionse will be sorted after the leaves, no further ordering is done within each group
- * if  all children are leaves or subsections, and some children have "display order", these will be on top
- *   the rest is sorted alphabetically
  */
 function makeComparator(recordClasses: Dict<RecordClass>, questions: Dict<Question>) {
   return composeComparators(
