@@ -205,11 +205,12 @@
 }
 
 .wdk-RecordSubsectionHeader {
-  margin: 12px 0 8px 0;
+  margin: 1px 0 8px 0;
   position: relative;
   border-bottom: 1px dotted;
   cursor: pointer;
 }
+
 
 .wdk-RecordSectionHeaderTopLink {
   position: absolute;
@@ -226,7 +227,7 @@
   display: inline-block;
 }
 
-.wdk-RecordAttributeSectionItem, .wdk-RecordTableContainer {
+.wdk-RecordAttributeSectionItem, .wdk-RecordTableContainer, .wdk-RecordSubsection {
   margin: 1.5rem 1rem;
 }
 
@@ -247,6 +248,10 @@
 .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
   font-size: 1.2em;
   font-weight: 500;
+}
+
+.wdk-RecordMain .wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
+  font-size: 1.5em;
 }
 
 .wdk-RecordTableContainerContent {

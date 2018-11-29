@@ -309,6 +309,11 @@ interface NodeComparator {
 /**
  * Compare nodes based on the "sort order" property. If it is undefined,
  * compare based on displayName.
+ *
+ * if a category contains a mix of leaves (tables and attributes) and subsections,
+ *   the subsectionse will be sorted after the leaves, no further ordering is done within each group
+ * if  all children are leaves or subsections, and some children have "display order", these will be on top
+ *   the rest is sorted alphabetically
  */
 function makeComparator(recordClasses: Dict<RecordClass>, questions: Dict<Question>) {
   return composeComparators(
@@ -348,7 +353,7 @@ function makeCompareBySortName(recordClasses: Dict<RecordClass>, questions: Dict
     let entityB = getModelEntity(recordClasses, questions, nodeB);
     let nameA = get(entityA, 'displayName') || getPropertyValue('EuPathDB alternative term', nodeA) || '';
     let nameB = get(entityB, 'displayName') || getPropertyValue('EuPathDB alternative term', nodeA) || '';
-    return nameA < nameB ? -1 : 1;
+    return nameA.toLowerCase() < nameB.toLowerCase() ? -1 : 1;
   }
 }
 
