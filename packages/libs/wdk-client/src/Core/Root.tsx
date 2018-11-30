@@ -62,12 +62,22 @@ export default class Root extends React.Component<Props> {
     const target = event.target;
     if (!target || !(target instanceof HTMLAnchorElement)) return;
 
+    let isDefaultPrevented = event.defaultPrevented;
     let hasModifiers = event.metaKey || event.altKey || event.shiftKey || event.ctrlKey || event.button !== 0;
+    let hasTarget = target.getAttribute('target') != null;
     let href = (target.getAttribute('href') || '').replace(RELATIVE_LINK_REGEXP, '');
-    if (!hasModifiers && href.startsWith(this.props.rootUrl)) {
-      this.props.history.push(href.slice(this.props.rootUrl.length));
-      event.preventDefault();
-    }
+    let isRouterLink = target.classList.contains(REACT_ROUTER_LINK_CLASSNAME);
+
+    if (
+      isDefaultPrevented ||
+      hasModifiers ||
+      hasTarget ||
+      !href.startsWith(this.props.rootUrl) ||
+      isRouterLink
+    ) return;
+
+    this.props.history.push(href.slice(this.props.rootUrl.length));
+    event.preventDefault();
   }
 
   componentDidMount() {

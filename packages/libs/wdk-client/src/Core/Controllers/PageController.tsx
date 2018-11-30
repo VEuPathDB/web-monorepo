@@ -45,12 +45,14 @@ export default class PageController<Props = {}, State = {}> extends ViewControll
   componentDidMount(): void {
     super.componentDidMount()
     this.setDocumentTitle();
+    window.scroll(0, 0);
   }
 
   componentDidUpdate(prevProps: Props & ViewControllerProps & RouteComponentProps<any>): void {
     // only call loadData if router props have changed
     if (!isEqual(prevProps.location, this.props.location)) {
       this.loadData(prevProps);
+      window.scroll(0, 0);
     }
     this.setDocumentTitle();
   }
