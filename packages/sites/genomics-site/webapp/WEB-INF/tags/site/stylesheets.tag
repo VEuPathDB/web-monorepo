@@ -8,7 +8,10 @@
 	      description="Page calling this tag"
 %>
 
+<c:set var="project" value="${applicationScope.wdkModel.projectId}"/>
+
 <common:stylesheets refer="${refer}"/>
+<imp:stylesheet rel="stylesheet" type="text/css" href="css/${project}.css"/>
 
 <c:set var="base" value="${pageContext.request.contextPath}"/>
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
