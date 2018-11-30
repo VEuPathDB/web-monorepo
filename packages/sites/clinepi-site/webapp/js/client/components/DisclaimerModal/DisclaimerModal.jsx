@@ -4,12 +4,6 @@ import './DisclaimerModal.scss';
 import Modal from 'ebrc-client/App/Modal';
 import { IconAlt as Icon } from 'wdk-client/Components'
 
-const logoTextStyle = {
-  fontFamily: '"Exo 2"',
-  fontWeight: 600,
-  letterSpacing: '-2px'
-};
-
 const Text = {
   product: (
     <span>
@@ -55,7 +49,7 @@ class DisclaimerModal extends React.Component {
       </Modal>
     )
   }
-};
+}
 
 
 export default DisclaimerModal;
