@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "icon-font-generator": "^2.1.8"
+  },
+  "scripts": {
+    "install": "icon-font-generator icons/* -o dist -n mbio-icons -p mbio --normalize --center --csstp ./templates/icons-css.hbs"
+  }
+}
