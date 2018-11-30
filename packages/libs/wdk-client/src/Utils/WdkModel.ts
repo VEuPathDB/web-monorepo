@@ -12,6 +12,7 @@ interface ModelEntity {
 
 export interface RecordClass extends ModelEntity {
   displayNamePlural: string;
+  iconName?: string;
   recordIdAttributeName: string;
   primaryKeyColumnRefs: string[];
   description: string;
@@ -178,6 +179,7 @@ export interface ParameterGroup {
 interface QuestionShared extends ModelEntity {
   summary?: string;
   description?: string;
+  iconName?: string;
   shortDisplayName: string;
   recordClassName: string;
   help?: string;
