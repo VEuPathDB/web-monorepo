@@ -312,7 +312,7 @@ interface NodeComparator {
  *  - then we take those with "display order" to the top
  *  - finally we move any leaf child (table or attribute) before any subsection
  * So the end result is:
- *  - at the top, the tables and attributes sorted alphabetically (with the exception of "display order"-tagged children, that move to the top)
+ *  - at the top, the tables and attributes sorted alphabetically (with the exception of "display order"-tagged children at the top)
  *  - followed by subsections, again sorted alphabetically (with display order ones at the top)
  */
 
@@ -337,9 +337,13 @@ function composeComparators(...comparators: NodeComparator[]): NodeComparator {
   }
 }
 
+/**
+ * Set subsections before leaves (tables,attributes or searches)
+ * This makes the current record page section numbering system work
+ */
 function compareByChildren(nodeA: CategoryTreeNode, nodeB: CategoryTreeNode) {
-    return nodeA.children.length === 0 && nodeB.children.length !== 0 ? -1
-         : nodeB.children.length === 0 && nodeA.children.length !== 0 ? 1
+    return nodeA.children.length === 0 && nodeB.children.length !== 0 ? 1
+         : nodeB.children.length === 0 && nodeA.children.length !== 0 ? -1
          : 0;
 }
 
