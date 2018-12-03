@@ -97,7 +97,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'plasmoap',
           text: 'PlasmoAP',
           include: [PlasmoDB],
-          url: '/PlasmoAP.html'
+          webAppUrl: '/plasmoap.jsp'
         },
         {
           id: 'pats',
