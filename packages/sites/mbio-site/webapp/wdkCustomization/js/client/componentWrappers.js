@@ -5,6 +5,7 @@ import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/
 import { StudyMenuItem } from 'ebrc-client/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
+import vizData from './visualizations.json';
 
 export default {
   SiteHeader: () => SiteHeader,
@@ -43,7 +44,7 @@ function getSiteData(state) {
   return {
     studies: state.studies,
     searches: state.searchCards,
-    visualizations: { isLoading: false, entities: [] }
+    visualizations: { isLoading: false, entities: vizData }
   };
 }
 

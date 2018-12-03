@@ -1,0 +1,42 @@
+[
+  {
+    "appUrl": "/im.do?s=748822297ca649fd&selectedTab=first_analysis",
+    "appImage": "/wdkCustomization/images/beta_diversity_120.png",
+    "linkText": "Open The Strategy",
+    "description": "TODO",
+    "title": "A <b>Beta Diversity</b> Analysis",
+    "linkTarget": "_self"
+  },
+  {
+    "appUrl": "/im.do?s=fb513d615e313e4c&selectedTab=first_analysis",
+    "appImage": "/wdkCustomization/images/OTU_abundance_120.png",
+    "linkText": "Open The Strategy",
+    "description": "TODO",
+    "title": "A <b>Relative Abundance</b> Analysis",
+    "linkTarget": "_self"
+  },
+  {
+    "appUrl": "/im.do?s=6041c0cc6ffe6647&selectedTab=first_analysis",
+    "appImage": "/wdkCustomization/images/alpha_diversity_120.png",
+    "linkText": "Open The Strategy",
+    "description": "TODO",
+    "title": "A <b>Alpha Diversity</b> Analysis",
+    "linkTarget": "_self"
+  },
+  {
+    "appUrl": "/im.do?s=07411d3db8d58193&selectedTab=first_analysis",
+    "appImage": "/wdkCustomization/images/differential_abundance_120.png",
+    "linkText": "Open The Strategy",
+    "description": "TODO",
+    "title": "A <b>Differential Abundance</b> Analysis",
+    "linkTarget": "_self"
+  },
+  {
+    "appUrl": "/im.do?s=09c793da3e9f809a&selectedTab=first_analysis",
+    "appImage": "/wdkCustomization/images/correlation_120.png",
+    "linkText": "Open The Strategy",
+    "description": "TODO",
+    "title": "A <b>Correlation</b> Analysis",
+    "linkTarget": "_self"
+  }
+]
