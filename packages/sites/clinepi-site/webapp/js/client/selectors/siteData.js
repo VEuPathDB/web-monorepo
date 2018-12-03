@@ -16,5 +16,5 @@ export const getStaticSiteData = state => ({
 
 export const getStudyByQuestionName = questionName => state =>
   get(getStudies(state), 'entities', []).find(study =>
-    Object.values(study.searches).includes(questionName)
+    study.searches.some(search => search.name === questionName)
   );
