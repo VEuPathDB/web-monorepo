@@ -4,7 +4,7 @@ import { record as RecordStoreModule } from 'wdk-client/StoreModules';
 import { QuestionActions, RecordActions } from 'wdk-client/Actions';
 import { get } from 'lodash';
 import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
-import * as persistence from '../util/persistence';
+import * as persistence from 'ebrc-client/util/persistence';
 import { TABLE_STATE_UPDATED, PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
 
 export const key = 'record';
