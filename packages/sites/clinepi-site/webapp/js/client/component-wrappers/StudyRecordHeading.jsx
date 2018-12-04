@@ -26,7 +26,8 @@ const enhance = connect((state) => {
   // Find record class and searches from study id.
   // If none found, render nothing.
   // FIXME Start with questions!!
-  const entries = activeStudy && Seq.from(Object.values(activeStudy.searches))
+  const entries = activeStudy && Seq.from(activeStudy.searches)
+      .map(search => search.name)
       .flatMap(questionName =>
         Seq.from(questions)
           .filter(question => question.name === questionName)
