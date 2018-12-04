@@ -42,9 +42,22 @@ function IndexController() {
 
 function getSiteData(state) {
   return {
-    studies: state.studies,
+    studies: applyCustomDisplayNameToStudySearches(state.studies),
     searches: applyCustomIconToSearchCards(state.searchCards),
     visualizations: { isLoading: false, entities: vizData }
+  };
+}
+
+function applyCustomDisplayNameToStudySearches(studies) {
+  return {
+    ...studies,
+    entities: studies.entities && studies.entities.map(study => ({
+      ...study,
+      searches: study.searches.map(search => ({
+        ...search,
+        displayName: search.icon.toLowerCase().includes('details') ? 'Sample Details' : 'Taxon Abundance'
+      }))
+    }))
   };
 }
 
