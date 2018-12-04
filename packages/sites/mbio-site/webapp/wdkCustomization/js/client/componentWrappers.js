@@ -1,4 +1,4 @@
-import { keyBy, memoize } from 'lodash';
+import { keyBy, memoize, partition } from 'lodash';
 import Header from 'ebrc-client/App/Header';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
@@ -43,9 +43,41 @@ function IndexController() {
 function getSiteData(state) {
   return {
     studies: state.studies,
-    searches: state.searchCards,
+    searches: applyCustomIconToSearchCards(state.searchCards),
     visualizations: { isLoading: false, entities: vizData }
   };
+}
+
+const iconDirectiveRe = /^\s*#\s*iconType=(\w+)\s*$/;
+
+function applyCustomIconToSearchCards(searchCards) {
+  return {
+    ...searchCards,
+    entities: searchCards.entities && searchCards.entities.map(search => {
+      const [ directives, descriptionLines ] = partition(search.description.split('\n'), line => iconDirectiveRe.test(line));
+      const description = descriptionLines.join('\n').trim();
+      const icon = directives.length === 0
+        ? search.icon
+        : getIconByType(directives[0].match(iconDirectiveRe)[1]);
+
+      return {
+        ...search,
+        description,
+        icon
+      };
+    })
+  };
+}
+
+function getIconByType(type = '') {
+  switch(type) {
+    case 'taxon':
+    case 'taxa':
+      return 'mbio-taxaQuery_light';
+    default:
+      return 'mbio-sampleDetails_light';
+
+  }
 }
 
 function getHomeContent({ studies, searches, visualizations }) {
