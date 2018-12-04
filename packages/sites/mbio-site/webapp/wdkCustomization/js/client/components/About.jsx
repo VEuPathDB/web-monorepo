@@ -22,22 +22,27 @@ export default function About() {
 
         <p>In addition to loading taxonomic data, MicrobiomeDB loads all 'metadata' terms used by the experimenter to describe each sample.  These terms are mapped to the MIxS ontology and unmapped terms are manually curated and used to expand a custom, MIxS-compliant, ontology tree.  This rich, structured sample description generates an <a href="http://isa-tools.org/">ISA.tab</a> file that is then loaded into microbiomeDB.  When combined with the extensive web toolkit and infrastructure developed by <a href="http://eupathdb.org">EuPathDB</a>, the user is provided with an web interface to interrogate complex, even massive-scale, microbiome studies using metadata queries.  The resulting queries are then visualized using a suite of <a href="http://shiny.rstudio.com/">Shiny apps</a> available directly in the browser.</p>
 
-        <p>Although the datasets currently loaded in the site are from 16S rDNA marker gene sequencing, we are working to load, taxa abundance data from shotgun metagenomic studies, and future functionality could allow loading tables of bacterial gene expression data derived from these studies.  Taken together, we hope to develop a full-featured, open-source platform for a systems biology view of microbial communities.</p>
+        <p>Although the datasets currently loaded in the site are from 16S rDNA marker gene sequencing, we are working on adding functionality for handling 'shotgun' metagenomic sequence data, potentially allowing interrogation of community composition at the species or strain level, looking at other organisms in complex communities (e.g. fungi and prokaryotes), as well as identification of samples based on the relative abundance of bacterial genes (e.g. antibiotic resistance, virulence factors, etc.).  Taken together, we hope to develop a full-featured, open-source platform for a systems biology view of microbial communities.</p>
       </div>
 
-      <h2 id="How-do-i-cite-microbiomedb">How do cite microbiomeDB?</h2>
+      <h2 id="How-do-i-cite-microbiomedb">How do I cite microbiomeDB?</h2>
       <div>
-        <p>Please cite <a href="https://docs.google.com/document/u/1/d/1a_9lPf5lV0fTW1VcA48pGsnFAcwhMOWqCTQlyHEVoAQ/pub">our recent publication in Nucleic Acids Research</a></p>
+        <p>Please cite <a href="https://doi.org/10.1093/nar/gkx1027">our recent publication in Nucleic Acids Research</a></p>
       </div>
 
-      <h2 id="how-do-i-use-it">How do I use it?</h2>
+      <h2 id="Where-did-you-get-the-images-on-your-landing-page">Where did you get the images on your landing page?</h2>
+      <div>
+        <p>Our <a href="https://phil.cdc.gov/Details.aspx?pid=18128">banner image</a> shows methicillin-resistant, Staphylococcus aureus (MRSA) bacteria in the process of being ingested by a neutrophil, and our <a href="https://phil.cdc.gov/Details.aspx?pid=18170">icon</a> shows Klebsiella pneumoniae interacting with a human neutrophil.  Both images came from the National Institute for Allergy and Infectious Disease</p>
+      </div>
+
+      <h2 id="how-do-i-use-microbiomeDB">How do I use microbiomeDB?</h2>
       <div>
         <p>
           See the <a href="https://docs.google.com/document/u/1/d/1a_9lPf5lV0fTW1VcA48pGsnFAcwhMOWqCTQlyHEVoAQ/pub">Learn How</a> guide.
         </p>
       </div>
 
-      <h2 id="who-is-behind-this">Who is behind this?</h2>
+      <h2 id="who-is-behind-this-project">Who is behind this project?</h2>
       <div>
         <div>Daniel Beiting<sup>5</sup> &mdash; Project PI</div>
         <div>David Roos<sup>4</sup> &mdash; Project co-PI</div>
