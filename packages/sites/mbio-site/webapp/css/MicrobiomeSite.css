@@ -11,6 +11,38 @@ body {
   font-size: 12px;
 }
 
+
+/******************************************************************************/
+
+
+/* MicrobiomeDB specific breakpoints */
+
+.HeaderNav-Branding h1.HeaderNav-Title {
+  font-size: 3.3em !important;
+}
+
+@media (min-width: 1100px) {
+  .HeaderNav-Branding h1.HeaderNav-Title {
+    font-size: 4em !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .HeaderNav-Sticky .SiteMenu {
+    margin: 5px auto !important;
+  }
+  .HeaderNav-Sticky .SiteMenuItem {
+    font-size: 16px !important;
+  }
+  .HeaderNav-Sticky .UserMenu {
+    margin: auto !important;
+  }
+}
+
+
+/******************************************************************************/
+
+
 div.analysis-menu-tab-pane li.wdk-tooltip {
   width: 109px;
   height: 153px;
