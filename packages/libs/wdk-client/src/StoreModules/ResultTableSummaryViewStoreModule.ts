@@ -1,14 +1,25 @@
-import { openResultTableSummaryView, requestColumnsConfig, fulfillColumnsConfig, requestPageSize,  fulfillPageSize,  requestAnswer, fulfillAnswer, requestRecordsBasketStatus, fulfillRecordsBasketStatus, viewPageNumber} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
+import {
+  openResultTableSummaryView,
+  requestColumnsConfig,
+  fulfillColumnsConfig,
+  requestPageSize,
+  fulfillPageSize,
+  requestAnswer,
+  fulfillAnswer,
+  requestRecordsBasketStatus,
+  fulfillRecordsBasketStatus,
+  viewPageNumber,
+} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { requestStep, fulfillStep } from 'wdk-client/Actions/StepActions';
-import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { InferAction, makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
-import { Answer, AnswerJsonFormatConfig } from 'wdk-client/Utils/WdkModel';
+import { Answer, AnswerJsonFormatConfig, PrimaryKey } from 'wdk-client/Utils/WdkModel';
 import { getQuestionAttributesTableConfig } from 'wdk-client/Utils/UserPreferencesUtils';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable, combineLatest, merge, of, empty } from 'rxjs';
-import { filter, map, mapTo, mergeMap, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { filter, map, mergeMap, takeUntil } from 'rxjs/operators';
 import { combineEpics, StateObservable } from 'redux-observable';
-import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
+import {mapRequestActionsToEpic, takeEpicInWindow} from 'wdk-client/Utils/ActionCreatorUtils';
 
 export const key = 'resultTableSummaryView';
 
@@ -202,3 +213,37 @@ function vanillaObserve(action$: Observable<Action>, state$: StateObservable<Sta
 
     return output$;
 }
+
+// This is very similar to the original `observe` function (above), expect for
+// that it includes the outter `takeEpicInWindow` function call. This employs
+// the behavior that the epic will only be active when the first action is
+// emitted, and become inactive when the second action is emitted. If both
+// actions are the same, as is the case here, then the resulting behavior is
+// that when the action is emitted, the in-progress epic is "cancelled", and
+// a new epic is started.
+export const windowedObserve =
+  takeEpicInWindow<State>(
+    openResultTableSummaryView,
+    // TODO Replace wtih closeResultTableSummaryView when applicable
+    openResultTableSummaryView,
+    combineEpics(
+      mrate([openResultTableSummaryView], getRequestStep),
+      mrate([openResultTableSummaryView], getFirstPageNumber),
+      mrate([fulfillStep], getRequestColumnsConfig),
+      mrate([requestColumnsConfig], getFulfillColumnsConfig),
+      mrate([requestPageSize], getFulfillPageSize),
+      mrate(
+        [
+          openResultTableSummaryView,
+          fulfillStep,
+          viewPageNumber,
+          fulfillPageSize,
+          fulfillColumnsConfig,
+        ],
+        getRequestAnswer,
+      ),
+      mrate([requestAnswer], getFulfillAnswer),
+      mrate([fulfillAnswer], getRequestRecordsBasketStatus),
+      mrate([requestRecordsBasketStatus], getFulfillRecordsBasketStatus),
+    ),
+  );

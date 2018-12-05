@@ -1,9 +1,16 @@
+import {concat, empty, of, Observable, combineLatest} from 'rxjs';
+import {filter, mergeMap, startWith, takeUntil} from 'rxjs/operators';
+import {Epic, StateObservable, ActionsObservable} from 'redux-observable';
+
+import {Action as WdkAction} from 'wdk-client/Actions';
+import {EpicDependencies, ModuleEpic} from 'wdk-client/Core/Store';
+
 interface Action<Type extends string, Payload> {
   readonly type: Type;
   readonly payload: Payload;
 }
 
-interface ActionCreator<Type extends string, Args extends any[], Payload> {
+export interface ActionCreator<Type extends string, Args extends any[], Payload> {
   readonly type: Type;
   (...args: Args): Action<Type, Payload>;
   isOfType: (action: { type: string }) => action is Action<Type, Payload>;
@@ -41,12 +48,6 @@ export function makeActionCreator<Type extends string, Args extends any[], Paylo
 
   return Object.assign(createAction, { type, isOfType });
 }
-import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
-
-import { empty, Observable, combineLatest } from 'rxjs';
-import { Action as WdkAction } from 'wdk-client/Actions';
-import { filter, mergeMap } from 'rxjs/operators';
-import {StateObservable} from 'redux-observable';
 
 
 type GenericActionCreator = ActionCreator<string, any[], any>;
@@ -373,6 +374,26 @@ export function mapRequestActionsToEpic<State>(
     return combineLatest(actionStreams).pipe(
       mergeMap(actions => request2Fulfill(actions, state$, dependencies) || empty()),
       filter((action): action is WdkAction => action != null)
+    );
+  };
+}
+
+/**
+ * Starts the target epic when `startAction` is emitted, until `endAction` is
+ * emitted.
+ */
+export function takeEpicInWindow<State>(
+  startAction: ActionCreator<string, any, any>,
+  endAction: ActionCreator<string, any, any>,
+  epic: ModuleEpic<State>,
+): ModuleEpic<State> {
+  return function takeUntilEpic(action$, state$, deps) {
+    const end$ = action$.pipe(filter(endAction.isOfType));
+    return action$.pipe(
+      filter(startAction.isOfType),
+      mergeMap((action: WdkAction) =>
+        epic(ActionsObservable.from(concat(of(action), action$)), state$, deps).pipe(takeUntil(end$)),
+      ),
     );
   };
 }
