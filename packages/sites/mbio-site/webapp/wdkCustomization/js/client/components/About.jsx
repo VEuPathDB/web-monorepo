@@ -32,13 +32,20 @@ export default function About() {
 
       <h2 id="Where-did-you-get-the-images-on-your-landing-page">Where did you get the images on your landing page?</h2>
       <div>
-        <p>Our <a href="https://phil.cdc.gov/Details.aspx?pid=18128">banner image</a> shows methicillin-resistant, Staphylococcus aureus (MRSA) bacteria in the process of being ingested by a neutrophil, and our <a href="https://phil.cdc.gov/Details.aspx?pid=18170">icon</a> shows Klebsiella pneumoniae interacting with a human neutrophil.  Both images came from the National Institute for Allergy and Infectious Disease</p>
+        <p>Our <a href="https://phil.cdc.gov/Details.aspx?pid=18128">banner image</a> shows methicillin-resistant, Staphylococcus aureus (MRSA) bacteria in the process of being ingested by a neutrophil, and our <a href="https://phil.cdc.gov/Details.aspx?pid=18170">icon</a> shows Klebsiella pneumoniae interacting with a human neutrophil.  Both images are courtesy of the National Institute for Allergy and Infectious Disease and are free of any copyright restrictions</p>
       </div>
 
       <h2 id="how-do-i-use-microbiomeDB">How do I use microbiomeDB?</h2>
       <div>
         <p>
           See the <a href="https://docs.google.com/document/u/1/d/1a_9lPf5lV0fTW1VcA48pGsnFAcwhMOWqCTQlyHEVoAQ/pub">Learn How</a> guide.
+        </p>
+      </div>
+
+      <h2 id="Can-i-access-code-used-for-microbiomeDB">Can I access code used for microbiomeDB?</h2>
+      <div>
+        <p>
+          Yes! Our code is maintained using Subversion, and we welcome input from the community.  Checkout the scripts for our <a href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/MicrobiomeWebsite/trunk/View/lib/R/shiny/apps/">Shiny apps</a>
         </p>
       </div>
 
