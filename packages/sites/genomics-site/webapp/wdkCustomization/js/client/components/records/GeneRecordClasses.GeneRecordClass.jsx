@@ -192,9 +192,12 @@ export function RecordTable(props) {
     case 'BlastpForm':
       return <BlastpForm {...props}/>
 
-
     case 'MitoprotForm':
       return <MitoprotForm {...props}/>
+
+    case 'InterProForm':
+      return <InterProForm {...props}/>
+
 
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
@@ -706,6 +709,68 @@ class MitoprotForm extends React.Component {
         );
     }
 }
+
+
+
+class InterProForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>
+                        {p.protein_source_id} <br/> </label>
+                );
+            })
+        );
+    }
+
+
+    render() {
+    	let { project_id } = this.props.record.attributes;  
+        
+        let t = this.props.value;
+
+           return (
+
+	   <div> 
+           
+	    <form action="/cgi-bin/interPro.pl" target="_blank" method="post">
+            	  <input type="hidden" name="project_id" value={projectId}/>
+ 	    	  <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
+	    	  <input type="hidden" name="leaveIt" value=""/>
+
+
+                  {this.inputHeader(t)}
+                  {this.printInputs(t)}
+
+
+  	    	  <input type="submit"/>
+
+
+            </form>
+
+ 	    <p>For more information about this tool <a target="_blank" rel="noopener noreferrer"  href="https://www.ebi.ac.uk/interpro/">click here</a></p>
+	</div>
+ 
+
+        );
+    }
+
+}
+
+
 
 
 
