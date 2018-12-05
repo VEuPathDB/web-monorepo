@@ -42,10 +42,22 @@ export default function About() {
         </p>
       </div>
 
+      <h2 id="Can-i-use-microbiomeDB-to-analyze-my-own-unpublished-data">Can I use microbiomeDB to analyze my own unpublished data?</h2>
+      <div>
+        <p>
+          Not yet.  However, you can reach out to the microbiomeDB team at the 'Contact Us' link on the homepage to inquire about getting your own published data loaded into the site.  We are working on developing private workspaces that would allow users upload their own data, access our tools for filtering, analyzing and visualizing, all while keeping their data private.  Look for this feature in future releases.
+        </p>
+      </div>
+
       <h2 id="Can-i-access-code-used-for-microbiomeDB">Can I access code used for microbiomeDB?</h2>
       <div>
         <p>
-          Yes! Our code is maintained using Subversion, and we welcome input from the community.  Checkout the scripts for our <a href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/MicrobiomeWebsite/trunk/View/lib/R/shiny/apps/">Shiny apps</a>
+          Yes! Our code is maintained using Subversion, and we welcome input from the community.  Checkout our scripts for each of the <a href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/MicrobiomeWebsite/trunk/View/lib/R/shiny/apps/">Shiny apps</a>.  
+          In addition, you can access the code used for running DADA2 on all samples prior to loading into the sites, which consists of the following four scripts:
+          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/demuxAndBuildErrorModels.R">demuxAndBuildErrorModels.R</a>
+          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/merge.R">merge.R</a>
+          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/runDada.R">runDada.R</a>
+          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/lib/perl/ASVTableTask.pm">ASVTableTask.pm</a>
         </p>
       </div>
 
