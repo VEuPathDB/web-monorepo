@@ -11,7 +11,7 @@ import { getTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { updateLocation } from 'wdk-client/Actions/RouterActions';
 import { loadAllStaticData } from 'wdk-client/Actions/StaticDataActions';
-import * as Controllers from 'wdk-client/Core/Controllers';
+import * as Controllers from 'wdk-client/Controllers';
 import Root from 'wdk-client/Core/Root';
 import wdkRoutes from 'wdk-client/Core/routes';
 

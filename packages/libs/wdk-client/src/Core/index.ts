@@ -1,7 +1,7 @@
 import * as Components from 'wdk-client/Components';
 import * as AttributeFilterUtils from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import * as Actions from 'wdk-client/Actions';
-import * as Controllers from 'wdk-client/Core/Controllers';
+import * as Controllers from 'wdk-client/Controllers';
 import { initialize, wrapComponents } from 'wdk-client/Core/main';
 import * as Plugins from 'wdk-client/Core/Plugins';
 import * as ActionCreatorUtils from 'wdk-client/Utils/ActionCreatorUtils';

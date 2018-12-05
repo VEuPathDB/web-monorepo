@@ -5,7 +5,7 @@ import { Route, RouteComponentProps, Router, Switch } from 'react-router';
 
 import { LocatePlugin, RouteSpec } from 'wdk-client/Core/CommonTypes';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
-import LoginFormController from 'wdk-client/Views/User/LoginForm/LoginFormController';
+import LoginFormController from 'wdk-client/Controllers/LoginFormController';
 
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
