@@ -1,8 +1,10 @@
+import { negate } from 'lodash';
 import React, { ComponentClass, StatelessComponent } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {
   getNodeId,
   getChildren as getNodeChildren,
+  isIndividual,
   nodeSearchPredicate,
   BasicNodeComponent,
   CategoryTreeNode
@@ -17,6 +19,8 @@ type ChangeHandler = (ids: string[]) => void;
 type Props = {
   title: string;
   name?: string;
+  /** Hide individuals from the rendered tree. They will still affect searches. */
+  hideIndividuals?: boolean;
   autoFocusSearchBox?: boolean;
   searchBoxPlaceholder: string;
   tree: CategoryTreeNode;
@@ -37,12 +41,26 @@ type Props = {
 
 let CategoriesCheckboxTree: StatelessComponent<Props> = props => {
 
-  let {
-    title, name, autoFocusSearchBox, searchBoxPlaceholder, tree,
-    selectedLeaves, expandedBranches, renderNode, isMultiPick, searchTerm,
-    onChange, onUiChange, onSearchTermChange, isSelectable, leafType,
-    disableHelp, renderNoResults
-  } = props;
+let {
+  autoFocusSearchBox,
+  disableHelp,
+  expandedBranches,
+  hideIndividuals,
+  isMultiPick,
+  isSelectable,
+  leafType,
+  name,
+  onChange,
+  onSearchTermChange,
+  onUiChange,
+  renderNoResults,
+  renderNode,
+  searchBoxPlaceholder,
+  searchTerm,
+  selectedLeaves,
+  title,
+  tree,
+} = props;
 
   if (tree.children.length == 0) {
     return ( <noscript/> );
@@ -66,8 +84,8 @@ let CategoriesCheckboxTree: StatelessComponent<Props> = props => {
           searchIconName="filter"
           linkPlacement={CheckboxTree.LinkPlacement.Top}
           getNodeId={getNodeId}
-          getNodeChildren={getNodeChildren}
-          searchPredicate={nodeSearchPredicate}
+          getNodeChildren={hideIndividuals ? getNodeChildrenWithHiddenIndividuals : getNodeChildren}
+          searchPredicate={hideIndividuals ? nodeSearchPredicateWithHiddenIndividuals : nodeSearchPredicate}
           renderNode={renderNode}
           tree={tree}
           isMultiPick={isMultiPick}
@@ -86,6 +104,7 @@ let CategoriesCheckboxTree: StatelessComponent<Props> = props => {
 
 CategoriesCheckboxTree.defaultProps = {
   renderNode: (node: CategoryTreeNode) => <BasicNodeComponent node={node} />,
+  hideIndividuals: false,
   isMultiPick: true,
   isSelectable: true,
   leafType: 'column', // TODO remove once all consumers are passing in a value for this
@@ -93,3 +112,16 @@ CategoriesCheckboxTree.defaultProps = {
 } as Props
 
 export default wrappable(CategoriesCheckboxTree);
+
+function getNodeChildrenWithHiddenIndividuals(node: CategoryTreeNode) {
+  return getNodeChildren(node).filter(negate(isIndividual));
+}
+
+function nodeSearchPredicateWithHiddenIndividuals(node: CategoryTreeNode, searchQueryTerms: string[]) {
+  return (
+    nodeSearchPredicate(node, searchQueryTerms) ||
+    getNodeChildren(node)
+      .filter(isIndividual)
+      .some(node => nodeSearchPredicate(node, searchQueryTerms))
+  );
+}
