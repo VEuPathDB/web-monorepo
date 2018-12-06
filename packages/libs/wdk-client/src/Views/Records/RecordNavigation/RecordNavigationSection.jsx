@@ -78,8 +78,9 @@ class RecordNavigationSection extends React.PureComponent {
         </h2>
         <CategoriesCheckboxTree
           disableHelp
+          hideIndividuals
           searchBoxPlaceholder="Search section names..."
-          tree={removeFields(categoryTree)}
+          tree={categoryTree}
           leafType="section"
           isSelectable={false}
           expandedBranches={navigationCategoriesExpanded}
