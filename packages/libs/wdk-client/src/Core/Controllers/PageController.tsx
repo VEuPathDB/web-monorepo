@@ -50,8 +50,8 @@ export default class PageController<Props = {}, State = {}> extends ViewControll
 
   componentDidUpdate(prevProps: Props & ViewControllerProps & RouteComponentProps<any>): void {
     // only call loadData if router props have changed
-    const prevLocation = prevProps.location;
-    const nextLocation = this.props.location;
+    const prevLocation = prevProps.location || {};
+    const nextLocation = this.props.location || {};
     if (
       (prevLocation.pathname !== nextLocation.pathname) ||
       (prevLocation.search !== nextLocation.search)
