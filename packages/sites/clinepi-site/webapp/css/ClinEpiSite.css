@@ -5,13 +5,30 @@
 @value hlColor: #9c242d;
 @value bgColor: #85b3c3;
 
-body {
+body, h1, h2, h3, h4, h5, h6 {
   /* Some rules below are tailored to the current font. See FONT_RELATED section below */
   font-family: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
   /* font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; */
   text-rendering: optimizeLegibility;
+}
+
+body {
   min-width: 900px;
   font-size: 12px;
+}
+
+.HeaderNav-Title {
+  font-weight: 300;
+}
+
+.HeaderNav-Title > a > mark {
+  font-family: 'Exo 2';
+  font-weight: 400;
+}
+
+.Hero-Title {
+  font-weight: 400;
+  font-family: 'Exo 2';
 }
 
 .wdk-PageContent {

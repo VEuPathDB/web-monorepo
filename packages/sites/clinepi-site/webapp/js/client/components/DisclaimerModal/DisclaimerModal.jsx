@@ -1,14 +1,11 @@
 import React from 'react';
-
-import './DisclaimerModal.scss';
+import * as persistence from 'ebrc-client/util/persistence';
 import Modal from 'ebrc-client/App/Modal';
 import { IconAlt as Icon } from 'wdk-client/Components'
 
-const logoTextStyle = {
-  fontFamily: '"Exo 2"',
-  fontWeight: 600,
-  letterSpacing: '-2px'
-};
+import './DisclaimerModal.scss';
+
+const itemName = 'acceptedClinEpiDisclaimer';
 
 const Text = {
   product: (
@@ -25,20 +22,18 @@ const Text = {
   action: <span>Click here to acknowledge your agreement. <Icon fa="chevron-right right-side" /></span>
 };
 
-const flag = 'acceptedClinEpiDisclaimer=true';
-
 class DisclaimerModal extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      showModal: document.cookie.indexOf(flag) < 0
+      showModal: !persistence.get(itemName, false)
     };
 
     this.acceptDisclaimer = this.acceptDisclaimer.bind(this);
   }
 
   acceptDisclaimer () {
-    document.cookie = flag;
+    persistence.set(itemName, true);
     const showModal = false;
     this.setState({ showModal });
   }
@@ -55,7 +50,7 @@ class DisclaimerModal extends React.Component {
       </Modal>
     )
   }
-};
+}
 
 
 export default DisclaimerModal;
