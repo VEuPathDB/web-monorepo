@@ -1,0 +1,54 @@
+@import '~eupathdb/wdkCustomization/css/client.css';
+@import url('https://fonts.googleapis.com/css?family=Rubik:300,300i,400,400i,500,500i,700');
+@import url('../../dist/mbio-icons.css');
+
+body, h1, h2, h3, h4, h5, h6 {
+  font-family: 'Rubik', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica', sans-serif;
+  text-rendering: optimizeLegibility;
+}
+body {
+  min-width: 900px;
+  font-size: 12px;
+}
+
+
+/******************************************************************************/
+
+
+/* MicrobiomeDB specific breakpoints */
+
+.HeaderNav-Branding h1.HeaderNav-Title {
+  font-size: 3.3em !important;
+}
+
+@media (min-width: 1100px) {
+  .HeaderNav-Branding h1.HeaderNav-Title {
+    font-size: 4em !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .HeaderNav-Sticky .SiteMenu {
+    margin: 5px auto !important;
+  }
+  .HeaderNav-Sticky .SiteMenuItem {
+    font-size: 16px !important;
+  }
+  .HeaderNav-Sticky .UserMenu {
+    margin: auto !important;
+  }
+}
+
+
+/******************************************************************************/
+
+
+div.analysis-menu-tab-pane li.wdk-tooltip {
+  width: 109px;
+  height: 153px;
+}
+
+/* in AllSites.css is none so it does not affect other sites */
+div.step-analysis-usernotes {
+  display:block;
+}

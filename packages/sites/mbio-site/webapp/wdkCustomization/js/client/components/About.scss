@@ -1,0 +1,13 @@
+  #about {
+    padding: 0 2em;
+
+    h2 + div {
+      font-size: 130%;
+      margin-bottom: 1em;
+      padding-bottom: 2em;
+      border-bottom: 1px solid #eee;
+    }
+    h2:last-of-type + div {
+      border-bottom: 0;
+    }
+  }
