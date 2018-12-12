@@ -821,7 +821,7 @@ class MendelGPIForm extends React.Component {
                   {this.printInputs(t)}
 
 
-		   <p>Learning Set (Please, tick one radiobutton and select the parametrization/taxonomic range):</p>
+		   <p>Select Taxonomic Set:</p>
                   <input type="radio" name="LSet" value="metazoa"/> Metazoa<br/>
                   <input type="radio" name="LSet" value="protozoa"/> Protozoa<br/><br/>
 
