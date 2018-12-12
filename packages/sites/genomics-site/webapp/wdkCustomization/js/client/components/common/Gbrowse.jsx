@@ -106,12 +106,12 @@ export let contexts = [
 ];
 
 const GbrowseLink = ({ url }) =>
-    <div style={{ textAlign: 'center', margin: 6 }}>
+    <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in genome browser</a>
 </div>
 
 const PbrowseLink = ({ url }) =>
-    <div style={{ textAlign: 'center', margin: 6 }}>
+    <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in protein browser</a>
 </div>
 
