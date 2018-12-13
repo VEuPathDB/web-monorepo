@@ -1,4 +1,4 @@
-import 'site/css/ClinEpiSite.css';
+import 'site/css/ClinEpiSite.scss';
 import { initialize } from 'ebrc-client/bootstrap';
 import componentWrappers from './component-wrappers';
 import wrapStoreModules from './wrapStoreModules';
