@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { AttributesConfig, Pagination } from "wdk-client/Utils/WdkModel"
+import { AttributesConfig, Pagination, AttributeSortingSpec } from "wdk-client/Utils/WdkModel"
 import { Answer } from "wdk-client/Utils/WdkModel";
 import { PrimaryKey } from "wdk-client/Utils/WdkModel";
 
@@ -7,21 +7,63 @@ export const openResultTableSummaryView = makeActionCreator(
     'resultTableSummaryView/open',
     (stepId: number) => ({ stepId })
     );
+ 
+export const showHideAddColumnsDialog = makeActionCreator(
+    'resultTableSummaryView/showHideAddColumnsPopup',
+       (show: boolean) => ({ show })
+    );
+    
+// the selection in the columns dialog, before user has hit OK    
+export const updateColumnsDialogSelection = makeActionCreator(
+    'resultTableSummaryView/updateTransitoryColumnsSelection',
+    (selection: Array<string>) => ({ selection })
+);
 
-export const requestColumnsConfig = makeActionCreator(
-    'resultTableSummaryView/requestColumnConfig',
+// the actual selection, in the results table
+export const updateColumnsSelection = makeActionCreator(
+    'resultTableSummaryView/updateColumnsSelection',
+    (selection: Array<string>) => ({ selection })
+);
+
+export const updateColumnsDialogExpandedNodes = makeActionCreator(
+    'resultTableSummaryView/updateColumnsExpandedNodes',
+    (expanded: Array<string>) => ({ expanded })
+);
+
+export const requestSortingPreference = makeActionCreator(
+    'resultTableSummaryView/requestSortingPreference',
     (questionName: string) => ({ questionName })
+);
+
+export const requestSortingUpdate = makeActionCreator(
+    'resultTableSummaryView/requestSortingUpdate',
+    (sorting: AttributeSortingSpec[], questionName: string) => ({ sorting, questionName })
+);
+
+export const fulfillSorting = makeActionCreator(
+    'resultTableSummaryView/fulfillSorting',
+    (sorting: AttributeSortingSpec[], questionName: string) => ({ sorting, questionName })
     );
 
-export const fulfillColumnsConfig = makeActionCreator(
-    'resultTableSummaryView/fulfillColumnConfig',
-    (columnsConfig: AttributesConfig, questionName: string) => ({ columnsConfig, questionName })
-    );
+export const requestColumnsPreference = makeActionCreator(
+    'resultTableSummaryView/requestColumnsPreference',
+    (questionName: string) => ({ questionName })
+);
+    
+export const requestColumnsUpdate = makeActionCreator(
+    'resultTableSummaryView/requestColumnsUpdate',
+    (columns: string[], questionName: string) => ({ columns, questionName })
+);
+    
+export const fulfillColumnsChoice = makeActionCreator(
+    'resultTableSummaryView/fulfillColumnsChoice',
+    (columns: string[], questionName: string) => ({ columns, questionName })
+);
 
 export const requestPageSize = makeActionCreator(
     'resultTableSummaryView/requestPageSize',
-    () => ({ })
-    );
+    () => ({})
+);
 
 export const fulfillPageSize = makeActionCreator(
     'resultTableSummaryView/fulfillPageSize',
@@ -54,8 +96,12 @@ export const fulfillRecordsBasketStatus = makeActionCreator(
     );
 
 export type Action =
-    | InferAction<typeof requestColumnsConfig>
-    | InferAction<typeof fulfillColumnsConfig>
+    | InferAction<typeof requestSortingPreference>
+    | InferAction<typeof requestSortingUpdate>
+    | InferAction<typeof fulfillSorting>
+    | InferAction<typeof requestColumnsPreference>
+    | InferAction<typeof requestColumnsUpdate>
+    | InferAction<typeof fulfillColumnsChoice>
     | InferAction<typeof requestPageSize>
     | InferAction<typeof fulfillPageSize>
     | InferAction<typeof viewPageNumber>
@@ -63,4 +109,8 @@ export type Action =
     | InferAction<typeof fulfillAnswer>
     | InferAction<typeof requestRecordsBasketStatus>
     | InferAction<typeof fulfillRecordsBasketStatus>
+    | InferAction<typeof showHideAddColumnsDialog>
+    | InferAction<typeof updateColumnsDialogSelection>
+    | InferAction<typeof updateColumnsSelection>
+    | InferAction<typeof updateColumnsDialogExpandedNodes>
 

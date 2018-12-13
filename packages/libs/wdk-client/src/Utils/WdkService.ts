@@ -425,7 +425,7 @@ export default class WdkService {
    */
   private constructor(private serviceUrl: string) {
     this.getOntology = memoize(this.getOntology.bind(this));
-    this.updateCurrentUserPreference = synchronized(this.updateCurrentUserPreference);
+    this.patchUserPreference = synchronized(this.patchUserPreference);
   }
 
   /**
@@ -774,9 +774,9 @@ export default class WdkService {
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  updateBasketStatus(status: boolean, recordClassName: string, records: Array<RecordInstance>): Promise<never> {
+  updateBasketStatus(status: boolean, recordClassName: string, primaryKeys: Set<PrimaryKey>): Promise<never> {
     let action = status ? 'add' : 'remove';
-    let data = JSON.stringify({ [action]: records.map(record => record.id) });
+    let data = JSON.stringify({ [action]: primaryKeys });
     let url = `/users/current/baskets/${recordClassName}`;
     return this._fetchJson<never>('patch', url, data);
   }
@@ -897,7 +897,8 @@ export default class WdkService {
     return this._preferences;
   }
 
-  updateCurrentUserPreference(scope: PreferenceScope, key: string, value: string) : Promise<UserPreferences> {
+  // update or add a single user preference
+  patchUserPreference(scope: PreferenceScope, key: string, value: string) : Promise<UserPreferences> {
     let entries = { [scope]: { [key]: value }};
     let url = '/users/current/preferences';
     let data = JSON.stringify(entries);
@@ -909,7 +910,8 @@ export default class WdkService {
       });
   }
 
-  updateCurrentUserPreferences(entries: UserPreferences) : Promise<UserPreferences> {
+  // replace all user preferences
+  putUserPreferences(entries: UserPreferences) : Promise<UserPreferences> {
     let url = '/users/current/preferences';
     let data = JSON.stringify(entries);
     return this._fetchJson<void>('put', url, data).then(() => {

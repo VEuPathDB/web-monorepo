@@ -7,15 +7,14 @@ import { RouteComponentProps } from 'react-router';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {  requestColumnsConfig, fulfillColumnsConfig, requestPageSize, fulfillPageSize, requestAnswer, fulfillAnswer,  requestRecordsBasketStatus, fulfillRecordsBasketStatus,} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
+import {  requestPageSize, fulfillPageSize, requestAnswer, fulfillAnswer,  requestRecordsBasketStatus, fulfillRecordsBasketStatus,} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import { CategoryTreeNode, isQualifying } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
 
 const actionCreators = {
-  requestColumnsConfig,
-  fulfillColumnsConfig,
+
   requestPageSize,
   fulfillPageSize,
   requestAnswer,

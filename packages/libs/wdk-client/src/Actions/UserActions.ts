@@ -3,7 +3,7 @@ import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/A
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
 import { alert, confirm } from 'wdk-client/Utils/Platform';
-import { RecordInstance } from 'wdk-client/Utils/WdkModel';
+import { RecordInstance, PrimaryKey } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
 import { UserProfileFormData } from 'wdk-client/StoreModules/UserProfileStoreModule';
@@ -478,14 +478,14 @@ export function conditionallyTransition(test: UserPredicate, path: string, exter
  */
 export function updateUserPreference(scope: PreferenceScope, key: string, value: string): ActionThunk<PreferenceUpdateAction> {
   return function run({ wdkService }) {
-    let updatePromise = wdkService.updateCurrentUserPreference(scope, key, value);
+    let updatePromise = wdkService.patchUserPreference(scope, key, value);
     return sendPrefUpdateOnCompletion(updatePromise, preferenceUpdate({ [scope]: { [key]: value }} as UserPreferences))
   };
 };
 
 export function updateUserPreferences(newPreferences: UserPreferences): ActionThunk<PreferencesUpdateAction> {
   return function run({ wdkService }) {
-    let updatePromise = wdkService.updateCurrentUserPreferences(newPreferences);
+    let updatePromise = wdkService.putUserPreferences(newPreferences);
     return sendPrefUpdateOnCompletion(updatePromise, preferencesUpdate(newPreferences));
   };
 };
@@ -515,7 +515,7 @@ export function submitProfileForm(userProfileFormData: UserProfileFormData): Sub
   return function run({ wdkService }) {
     let partialUser: Partial<User> = <UserProfileFormData>filterOutProps(userProfileFormData, ["isGuest", "id", "confirmEmail", "preferences"]);
     let userPromise = wdkService.getCurrentUser().then(user => wdkService.updateCurrentUser({ ...user, ...partialUser }));
-    let prefPromise = wdkService.updateCurrentUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
+    let prefPromise = wdkService.putUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
     return [
       profileFormSubmissionStatus('pending'),
       Promise.all([userPromise, prefPromise]).then(([user]) => [
@@ -739,10 +739,12 @@ export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketActi
  * @param {Boolean} status
  */
 export function updateBasketStatus(record: RecordInstance, status: boolean): ActionThunk<BasketAction|ShowLoginModalAction|EmptyAction> {
+  let setOfOneRecord = new Set();
+  setOfOneRecord.add(record.id);
   return maybeLoggedIn<BasketAction, ShowLoginModalAction|EmptyAction>(
     ({ wdkService }) =>
       setBasketStatus(record,
-        wdkService.updateBasketStatus(status, record.recordClassName, [record]).then(response => status)),
+        wdkService.updateBasketStatus(status, record.recordClassName, setOfOneRecord).then(response => status)),
     showLoginWarning('use baskets')
   );
 };

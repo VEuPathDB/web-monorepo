@@ -1,6 +1,7 @@
 import * as AnswerActions from 'wdk-client/Actions/AnswerActions';
 import * as AttributeAnalysisActions from 'wdk-client/Actions/AttributeAnalysisActions';
 import * as DownloadFormActions from 'wdk-client/Actions/DownloadFormActions';
+import * as BasketActions from 'wdk-client/Actions/BasketActions';
 import * as FavoritesActions from 'wdk-client/Actions/FavoritesActions';
 import * as RouterActions from 'wdk-client/Actions/RouterActions';
 import * as QuestionActions from 'wdk-client/Actions/QuestionActions';
@@ -21,6 +22,7 @@ import * as StepActions from 'wdk-client/Actions/StepActions';
 export {
   AnswerActions,
   AttributeAnalysisActions,
+  BasketActions,
   DownloadFormActions,
   FavoritesActions,
   RouterActions,
@@ -43,6 +45,7 @@ export {
 export type Action =
   | AnswerActions.Action
   | AttributeAnalysisActions.Action
+  | BasketActions.Action
   | DownloadFormActions.Action
   | FavoritesActions.Action
   | RouterActions.Action
