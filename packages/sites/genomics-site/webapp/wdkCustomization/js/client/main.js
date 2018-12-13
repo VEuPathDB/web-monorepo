@@ -1,5 +1,5 @@
 // import CSS files
-import 'site/wdkCustomization/css/client.css';
+import 'site/wdkCustomization/css/client.scss';
 
 import { initialize } from 'ebrc-client/bootstrap';
 // import apicomm wrappers and additional routes
