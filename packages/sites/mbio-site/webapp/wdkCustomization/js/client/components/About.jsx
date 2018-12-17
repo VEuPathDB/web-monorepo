@@ -51,14 +51,16 @@ export default function About() {
 
       <h2 id="Can-i-access-code-used-for-microbiomeDB">Can I access code used for microbiomeDB?</h2>
       <div>
-        <p>
-          Yes!  Our code is maintained using Subversion, and we welcome input from the community.  Checkout our scripts for each of the <a href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/MicrobiomeWebsite/trunk/View/lib/R/shiny/apps/">Shiny apps</a>.  
-          In addition, you can access the code we use for running DADA2 on our cluster on all samples prior to loading into the site, which consists of the following four scripts:
-          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/demuxAndBuildErrorModels.R">demuxAndBuildErrorModels.R</a>, 
-          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/merge.R">merge.R</a>,  
-          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/runDada.R">runDada.R</a>,  
-          <a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/lib/perl/ASVTableTask.pm">ASVTableTask.pm</a>.
-        </p>
+        <p>Yes!  Our code is maintained using Subversion, and we welcome input from the community.  Checkout our scripts for each of the <a href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/MicrobiomeWebsite/trunk/View/lib/R/shiny/apps/">Shiny apps</a>.  In addition, you can access the code we use for running DADA2 on our cluster on all samples prior to loading into the site, which consists of the following four scripts:</p>
+
+          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/demuxAndBuildErrorModels.R">demuxAndBuildErrorModels.R</a></p> 
+
+          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/merge.R">merge.R</a></p>  
+
+          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/runDada.R">runDada.R</a></p> 
+
+          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/lib/perl/ASVTableTask.pm">ASVTableTask.pm</a></p>
+
       </div>
 
       <h2 id="who-is-behind-this-project">Who is behind this project?</h2>
@@ -70,6 +72,9 @@ export default function About() {
           <div style={{ textDecoration: 'underline' }}>The EuPathDB Team</div>
           <div>
             John Brestelli <sup>3</sup>,
+            Danielle Callan <sup>3</sup>,
+            Brianna Lindsey <sup>3</sup>,
+            Jie Zheng <sup>2,3</sup>,
             Shon Cade <sup>3</sup>,
             Steve Fischer <sup>4</sup>,
             Cristina Aurrecoechea <sup>1</sup>,
@@ -77,7 +82,6 @@ export default function About() {
             Dave Falke <sup>1</sup>,
             Mark Heiges <sup>1</sup>,
             Christian J. Stoeckert Jr. <sup>3</sup>,
-            Jie Zheng <sup>2,3</sup>,
             Jessica Kissinger <sup>1</sup>,
             Brian Brunk <sup>4</sup>
           </div>
