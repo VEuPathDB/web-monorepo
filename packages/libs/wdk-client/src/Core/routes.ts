@@ -18,6 +18,7 @@ import QuestionController from 'wdk-client/Controllers/QuestionController';
 import BlastSummaryViewController from 'wdk-client/Controllers/BlastSummaryViewController';
 import IsolatesSummaryViewController from 'wdk-client/Controllers/IsolatesSummaryViewController';
 import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryViewController';
+import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers/StepAnalysis/StepAnalysisContainer';
 
 export default <RouteSpec[]> [
   { path: '/', component: IndexController },
@@ -39,5 +40,6 @@ export default <RouteSpec[]> [
   { path: '/step/:stepId/blastSummaryView', component: BlastSummaryViewController },
   { path: '/step/:stepId/isolatesSummaryView', component: IsolatesSummaryViewController },
   { path: '/step/:stepId/genomeSummaryView', component: GenomeSummaryViewController },
+  { path: '/step-analysis/:stepId', component: StepAnalysisController },
   { path: '*', component: NotFoundController },
 ];

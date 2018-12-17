@@ -1,3 +1,5 @@
+import { compose } from "redux";
+
 export function stringValue (value) {
   switch (typeof value) {
     case 'string':
@@ -48,10 +50,20 @@ export function sortFactory (accessor) {
   };
 };
 
-export function numberSort (list, key, ascending = true) {
-  const accessor = (val) => val[key]
-    ? parseFloat(val[key])
-    : 0;
+export const numericValue = val => val
+  ? parseFloat(val.replace('inf', 'Infinity'))
+  : 0;
+
+export function numberSort (_list, key, ascending = true) {
+  const list = [..._list];
+  const accessor = val => numericValue(val[key]);
+  const result = list.sort(sortFactory(accessor));
+  return ascending ? result.reverse() : result;
+};
+
+export const customSortFactory = sortBy => (_list, key, ascending = true) => {
+  const list = [..._list];
+  const accessor = val => sortBy(val[key]);
   const result = list.sort(sortFactory(accessor));
   return ascending ? result.reverse() : result;
 };

@@ -6,8 +6,8 @@ class RowCounter extends React.PureComponent {
   }
 
   render () {
-    let { count, noun, filtered, start, end } = this.props;
-    let filterString = !filtered ? null : <span className="faded"> ({filtered} filtered)</span>;
+    let { count, noun, filteredRowCount, start, end } = this.props;
+    let filterString = !filteredRowCount ? null : <span className="faded"> ({filteredRowCount} filtered)</span>;
     let countString = (<span><b>{count}</b> {noun}</span>);
     let allResultsShown = (!start || !end || (start === 1 && end === count));
 

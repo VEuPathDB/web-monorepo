@@ -30,7 +30,7 @@ class TableToolbar extends React.PureComponent {
     const { onSearch } = eventHandlers;
     const { searchQuery } = uiState;
 
-    if (!onSearch) return;
+    if (!onSearch) return null;
     return (
       <TableSearch
         query={searchQuery}
@@ -40,11 +40,13 @@ class TableToolbar extends React.PureComponent {
   }
 
   renderCounter () {
-    const { rows, options, uiState, eventHandlers } = this.props;
-    const { pagination, filteredRowCount } = uiState;
-    const { totalRows, rowsPerPage } = pagination;
+    const { rows = {}, options = {}, uiState = {}, eventHandlers } = this.props;
     const { showCount } = options;
     if (!showCount) return null;
+
+    const { pagination = {}, filteredRowCount = 0 } = uiState;
+    const { totalRows, rowsPerPage } = pagination;
+
 
     const isPaginated = ('onPageChange' in eventHandlers);
     const isSearching = uiState.searchQuery && uiState.searchQuery.length;
@@ -72,6 +74,10 @@ class TableToolbar extends React.PureComponent {
         {children}
       </div>
     );
+  }
+
+  renderAddRemoveColumns() {
+    return null;
   }
 
   render () {
