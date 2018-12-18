@@ -1,26 +1,26 @@
 [
   {
-    "appUrl": "/im.do?s=df382db0b433d9a7&selectedTab=first_analysis",
-    "appImage": "/images/data-summary-chart.jpg",
-    "linkText": "Open The Strategy",
-    "description": "Identifies participants who were observed at least 1 year and provides the counts of asymptomatic parasitemia (both microscopic and sub-microscopic) observations / year. Summary analysis tab shows that increasing AP visits / year causes decrease in malaria diagnoses. 2X2 tab shows a significant correlation between living in traditional homes and malaria diagnoses",
-    "title": "A <b>Search Strategy</b> Data Summary",
+    "appUrl": "/im.do?s=7412023d29fba952&selectedTab=first_analysis",
+    "appImage": "/images/analysis_plugins/contingency_tables.jpg",
+    "linkText": "Open The Analysis",
+    "description": "Selects children who were followed for at least a year and had an upper respiratory tract infection (URTI). The contingency table looks at the association between ever having an URTI and ever having malaria. The results page histogram 'Matching Observations/Year' gives the overall incidence of URTI.",
+    "title": "<b>PRISM: Association between URTI and malaria in children</b>",
     "linkTarget": "_self"
   },
   {
-    "appUrl": "/images/contingency-tutorial.jpg",
-    "appImage": "/images/analysis_plugins/contingency_tables.jpg",
-    "title": "Create a <br /><b>Contingency Table</b>",
-    "description": "Make a contingency table to compare data within a selection",
-    "linkText": "See The Tutorial",
-    "linkTarget": "_blank"
+    "appUrl": "/im.do?s=3bb29848445ca389&selectedTab=first_analysis",
+    "appImage": "/images/data-summary-chart.jpg",
+    "linkText": "Open The Analysis",
+    "description": "This data summaries visualization produces boxplots of the Shigella/EIEC TAC results stratified by age age and location. Shigella/EIEC appears more common in children older than 8 months of age and Bangladesh in particular appears to have lower Ct values overall perhaps indicating a higher burden of Shigella.",
+    "title": "<b>GEMS: Shigella/EIEC TAC Results Stratified by Age and Country</b>",
+    "linkTarget": "_self"
   },
   {
-    "appUrl": "/images/distribution-tutorial.jpg",
+    "appUrl": "/im.do?s=ea06cf5f198037aa&selectedTab=first_analysis",
     "appImage": "/images/analysis_plugins/distributions.jpg",
-    "title": "Create a <br /><b>Distribution Graph</b>",
-    "description": "Make a distribution graph and give visual context to your data.",
-    "linkText": "See The Tutorial",
-    "linkTarget": "_blank"
+    "linkText": "Open The Analysis",
+    "description": "Plots the age distribution of children at their first asymptomatic parasitemia (smear or LAMP+) in the study, stratified by subcounty.",
+    "title": "<b>PRISM: Age at first asymptomatic parasitemia</b>",
+    "linkTarget": "_self"
   }
 ]
