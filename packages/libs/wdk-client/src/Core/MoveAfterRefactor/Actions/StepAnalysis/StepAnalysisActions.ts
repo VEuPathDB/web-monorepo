@@ -27,8 +27,12 @@ import {
   UnsavedAnalysisState, 
   AnalysisPanelState
 } from '../../StoreModules/StepAnalysis/StepAnalysisState';
-import { TypedAction } from '../../../../Utils/ActionCreatorUtils';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
+
+interface TypedAction<T extends string, P> {
+  type: T,
+  payload: P
+}
 
 export type StartLoadingTabListingAction = TypedAction<typeof START_LOADING_TAB_LISTING, { stepId: number }>
 export type FinishLoadingTabListingAction = TypedAction<typeof FINISH_LOADING_TAB_LISTING, { tabListing: UninitializedAnalysisPanelState[], analysisChoices: StepAnalysisType[] }>

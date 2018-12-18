@@ -1,9 +1,9 @@
 import React from 'react';
-import { PageController } from "../../../Controllers";
+import { PageController } from 'wdk-client/Controllers';
 import { StepAnalysisView, StepAnalysisEventHandlers } from '../../Components/StepAnalysis/StepAnalysisView';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { memoize } from 'lodash/fp';
-import Tabs, { TabConfig } from '../../../../Components/Tabs/Tabs';
+import Tabs, { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
 import { connect } from 'react-redux';
 import { RootState } from '../../../State/Types';
 import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
@@ -35,7 +35,7 @@ type PanelEventHandlers = {
 interface StepAnalysisContainerProps {
   loadingTabs: boolean;
   activeTab: string;
-  tabs: TabConfig[];
+  tabs: TabConfig<string>[];
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
   loadTabs: (stepId: number) => void;

@@ -10,7 +10,7 @@ import { TabConfig } from '../../../../Components/Tabs/Tabs';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 
-type BaseTabConfig = Pick<TabConfig, 'key' | 'display' | 'removable' | 'tooltip'>;
+type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);

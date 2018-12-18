@@ -16,6 +16,7 @@ import * as blastSummaryView from 'wdk-client/StoreModules/BlastSummaryViewStore
 import * as isolatesSummaryView from 'wdk-client/StoreModules/IsolatesSummaryViewStoreModule';
 import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
+import * as stepAnalysis from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysisStoreModule';
 import * as steps from 'wdk-client/StoreModules/StepsStoreModule';
 
 export default {
@@ -34,6 +35,7 @@ export default {
   resultTableSummaryView,
   siteMap,
   steps,
+  stepAnalysis,
   userDatasetDetail,
   userDatasetList,
   userProfile,

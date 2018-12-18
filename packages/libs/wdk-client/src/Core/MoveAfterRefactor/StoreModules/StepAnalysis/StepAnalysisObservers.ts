@@ -35,7 +35,7 @@ import {
   DuplicateAnalysisAction 
 } from '../../Actions/StepAnalysis/StepAnalysisActions';
 import { ActionsObservable, StateObservable } from 'redux-observable';
-import { Action } from '../../../../Utils/ActionCreatorUtils';
+import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
 import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
