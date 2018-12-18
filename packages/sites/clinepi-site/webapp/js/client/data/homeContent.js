@@ -15,7 +15,7 @@ export default ({ studies, searches, visualizations }) => ([
   },
   {
     title: 'Explore Visualization Tools',
-    description: 'Gain clear insights into your data and illustrate powerful connections using our visualization and analysis tools. Use the brief tutorials below to get learn how to get started exploring data with these resources.',
+    description: 'Gain clear insights into your data and illustrate powerful connections using our visualization and analysis tools. Use the brief examples below to get learn how to get started exploring data with these resources.',
     contentType: 'ImageCardList',
     items: visualizations.entities,
     isLoading: visualizations.loading
