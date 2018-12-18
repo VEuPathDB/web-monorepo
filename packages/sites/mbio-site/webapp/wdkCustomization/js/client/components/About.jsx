@@ -38,7 +38,7 @@ export default function About() {
       <h2 id="how-do-i-use-microbiomeDB">How do I use microbiomeDB?</h2>
       <div>
         <p>
-          The best way to learn about the site is by watching our tutorial on our <a href="https://vimeo.com/album/5598563">Vimeo page</a>.
+          The best way to learn about the site is by watching the tutorials on our <a href="https://vimeo.com/album/5598563">Vimeo page</a>.
         </p>
       </div>
 
