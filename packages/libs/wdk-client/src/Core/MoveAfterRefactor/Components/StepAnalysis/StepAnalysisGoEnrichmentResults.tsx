@@ -5,6 +5,8 @@ import React, { Fragment } from 'react';
 import { StepAnalysisButtonArray } from './StepAnalysisButtonArray';
 import { WordCloudModal } from './StepAnalysisWordCloudModal';
 
+import './StepAnalysisEnrichmentResult.scss';
+
 const goEnrichmentResultColumns = [
   {
     key: 'goId',
@@ -94,8 +96,10 @@ const goIdRenderFactory = (goTermBaseUrl: string) => ({ row }: Record<string, an
 
 const goButtonsConfigFactory = (
     analysisId: number, 
-    { imageDownloadPath, hiddenDownloadPath, revidoInputList }: any
-  ) => [
+    { imageDownloadPath, hiddenDownloadPath, revidoInputList }: any,
+    webAppUrl: string,
+    updateResultsUiState: (newUiState: any) => void
+) => [
   {
     key: 'revigo',
     customButton: (
@@ -112,13 +116,17 @@ const goButtonsConfigFactory = (
   },
   {
     key: 'wordCloud',
-    href: `/stepAnalysisResource.do?analysisId=${analysisId}&path=${imageDownloadPath}`,
+    onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      updateResultsUiState({ wordCloudOpen: true });
+    },
+    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${imageDownloadPath}`,
     iconClassName: 'fa fa-bar-chart red-text',
     contents: <Fragment>Show <b>Word Cloud</b></Fragment>
   },
   {
     key: 'download',
-    href: `/stepAnalysisResource.do?analysisId=${analysisId}&path=${hiddenDownloadPath}`,
+    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${hiddenDownloadPath}`,
     iconClassName: 'fa fa-download blue-text',
     contents: 'Download'
   }
@@ -127,10 +135,14 @@ const goButtonsConfigFactory = (
 export const StepAnalysisGoEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> = ({
   analysisResult,
   analysisConfig,
+  resultUiState: {
+    wordCloudOpen
+  },
+  updateResultsUiState,
   webAppUrl
 }) => (
   <Fragment>
-    <StepAnalysisButtonArray configs={goButtonsConfigFactory(analysisConfig.analysisId, analysisResult)} />
+    <StepAnalysisButtonArray configs={goButtonsConfigFactory(analysisConfig.analysisId, analysisResult, webAppUrl, updateResultsUiState)} />
     <h3>Analysis Results:   </h3>
     <StepAnalysisEnrichmentResultTable
       emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}
@@ -146,8 +158,8 @@ export const StepAnalysisGoEnrichmentResults: React.SFC<StepAnalysisResultPlugin
       imgUrl={
         `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisConfig.analysisId}&path=${analysisResult.imageDownloadPath}`
       }
-      open
-      onClose={() => {}}
+      open={wordCloudOpen}
+      onClose={() => updateResultsUiState({ wordCloudOpen: false })}
     />
   </Fragment>
 );

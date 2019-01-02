@@ -20,7 +20,8 @@ import {
   CHECK_RESULT_STATUS, 
   COUNT_DOWN, 
   RENAME_ANALYSIS,
-  DUPLICATE_ANALYSIS
+  DUPLICATE_ANALYSIS,
+  REMOVE_TAB
 } from '../../Actions/StepAnalysis/StepAnalysisActionConstants';
 import { 
   StartLoadingTabListingAction, 
@@ -32,16 +33,19 @@ import {
   CheckResultStatusAction, 
   CountDownAction, 
   RenameAnalysisAction, 
-  DuplicateAnalysisAction 
+  DuplicateAnalysisAction, 
+  RemoveTabAction
 } from '../../Actions/StepAnalysis/StepAnalysisActions';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
 import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
-import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, duplicateAnalysis } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, duplicateAnalysis, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
+import { denormalizeParamValue } from '../../Components/StepAnalysis/StepAnalysisDefaultForm';
+import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(
@@ -58,7 +62,7 @@ export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>
           ...analysis
         }));
 
-        return [ 
+        return [
           finishLoadingTabListing(tabListing, choices)
         ];
       }
@@ -89,29 +93,42 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
 
       try {
         const analysisConfig = await wdkService.getStepAnalysis(stepId, analysisId);
-        const resultContents = await wdkService.getStepAnalysisResult(stepId, analysisId);
-        const paramSpecs = await wdkService.getStepAnalysisTypeMetadata(stepId, analysisConfig.analysisName);
+        const paramSpecs = await wdkService.getStepAnalysisTypeParamSpecs(stepId, analysisConfig.analysisName);
+        const resultContents = analysisConfig.status === 'COMPLETE' 
+          ? await wdkService.getStepAnalysisResult(stepId, analysisId)
+          : {};
 
-        return finishLoadingSavedTab(
+        const finishLoading = finishLoadingSavedTab(
           panelId,
           {
             type: SAVED_ANALYSIS_STATE,
             analysisConfig,
             analysisConfigStatus: 'COMPLETE',
-            pollCountdown: 0,
+            pollCountdown: 3,
             paramSpecs,
             paramValues: analysisConfig.formParams,
-            descriptionUiState: {
-              descriptionExpanded: false
+            panelUiState: {
+              descriptionExpanded: false,
+              formExpanded: true
             },
             formUiState: locateFormPlugin(analysisConfig.analysisName).initialFormUiState,
             resultUiState: locateResultPlugin(analysisConfig.analysisName).initialResultUiState,
             formStatus: 'AWAITING_USER_SUBMISSION',
             formErrorMessage: null,
+            formValidationErrors: [],
             resultContents,
             resultErrorMessage: null
           }
         );
+
+        return analysisConfig.status === 'PENDING' || analysisConfig.status === 'RUNNING'
+          ? [
+            finishLoading,
+            checkResultStatus(panelId)
+          ]
+          : [
+            finishLoading
+          ];
       }
       catch (ex) {
         return finishLoadingSavedTab(
@@ -134,9 +151,9 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
     filter(onTabInAnalysisMenuState),
     mergeMap(async ({ action: { payload: { choice } }, panelId, stepId, panelState }) => {
       try {
-        const paramSpecs = await wdkService.getStepAnalysisTypeMetadata(stepId, choice.name);
+        const paramSpecs = await wdkService.getStepAnalysisTypeParamSpecs(stepId, choice.name);
 
-        return finishLoadingChosenAnalysisTab(
+        const finishLoading = finishLoadingChosenAnalysisTab(
           panelId,
           {
             type: UNSAVED_ANALYSIS_STATE,
@@ -148,30 +165,44 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
             paramValues: paramSpecs.reduce(
               (memo, { name, defaultValue }) => ({
                 ...memo,
-                [name]: [ defaultValue || [] ].flat()
+                [name]: denormalizeParamValue(defaultValue || '')
               }),
               {}
             ),
-            descriptionUiState: {
-              descriptionExpanded: false
+            panelUiState: {
+              descriptionExpanded: false,
+              formExpanded: true
             },
             formUiState: locateFormPlugin(choice.name).initialFormUiState,
             formErrorMessage: null,
+            formValidationErrors: [],
             formStatus: 'AWAITING_USER_SUBMISSION'
           }
         );
+
+        return choice.hasParameters
+          ? [
+            finishLoading,
+          ]
+          : [
+            finishLoading,
+            startFormSubmission(panelId)
+          ];
       }
       catch (ex) {
-        return finishLoadingChosenAnalysisTab(
-          panelId,
-          {
-            ...panelState,
-            status: 'ERROR',
-            errorMessage: `An error occurred while loading your chosen analysis: ${ex}`
-          }
-        )
+        return [
+          finishLoadingChosenAnalysisTab(
+            panelId,
+            {
+              ...panelState,
+              status: 'ERROR',
+              errorMessage: `An error occurred while loading your chosen analysis: ${ex}`
+            }
+          )
+        ];
       }
-    })
+    }),
+    mergeAll()
   );
 };
 
@@ -199,7 +230,7 @@ export const observeDeleteAnalysis = (action$: ActionsObservable<Action>, state$
           await wdkService.deleteStepAnalysis(stepId, analysisId);
         }
         catch (ex) {
-          alert(`Cannot delete analysis '${displayName}' at this time`);
+          alert(`Cannot delete analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`);
         }
       }
 
@@ -208,6 +239,14 @@ export const observeDeleteAnalysis = (action$: ActionsObservable<Action>, state$
       ];
     }),
     mergeAll()
+  );
+};
+
+export const observeRemoveTab = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, dependencies: EpicDependencies) => {
+  return action$.pipe(
+    filter(isRemoveTab),
+    withLatestFrom(state$, focusOnPanelById),
+    map(({ panelId, stepId, panelState }) => selectTab(state$.value.activeTab))
   );
 };
 
@@ -228,49 +267,59 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
             analysisName: panelState.analysisType.name
           });
 
-          await wdkService.updateStepAnalysisForm(
-            stepId, 
-            analysisConfig.analysisId, 
-            panelState.paramValues
-          );
-          await wdkService.runStepAnalysis(stepId, analysisConfig.analysisId);
-
           return [
             finishLoadingSavedTab(panelId, {
               type: SAVED_ANALYSIS_STATE,
-              analysisConfig,
-              analysisConfigStatus: 'LOADING',
-              pollCountdown: 3,
-              descriptionUiState: {
-                descriptionExpanded: false
-              },
               paramSpecs: panelState.paramSpecs,
               paramValues: panelState.paramValues,
               formStatus: panelState.formStatus,
               formErrorMessage: panelState.formErrorMessage,
-              formUiState: locateFormPlugin(panelState.analysisName).initialFormUiState,
+              formValidationErrors: panelState.formValidationErrors,
+              formUiState: panelState.formUiState,
+              panelUiState: panelState.panelUiState,
+              analysisConfig,
+              analysisConfigStatus: 'COMPLETE',
+              pollCountdown: 3,
               resultContents: {},
               resultErrorMessage: null,
               resultUiState: locateResultPlugin(panelState.analysisName).initialResultUiState
             }),
-            checkResultStatus(panelId)
+            startFormSubmission(panelId)
           ];
-
         } else {
-          await wdkService.updateStepAnalysisForm(
+          const validationErrors = await wdkService.updateStepAnalysisForm(
             stepId, 
             panelState.analysisConfig.analysisId, 
             panelState.paramValues
           );
-          await wdkService.runStepAnalysis(stepId, panelState.analysisConfig.analysisId);
+
+          if (validationErrors.length > 0) {
+            return [
+              finishFormSubmission(panelId, {
+                ...panelState,
+                formValidationErrors: validationErrors
+              })
+            ];
+          }
+
+          const { status } = await wdkService.runStepAnalysis(stepId, panelState.analysisConfig.analysisId);
 
           return [
+            finishFormSubmission(panelId, {
+              ...panelState,
+              analysisConfig: {
+                ...panelState.analysisConfig,
+                status
+              },
+              analysisConfigStatus: 'LOADING',
+              formValidationErrors: []
+            }),
             checkResultStatus(panelId)
           ];
         }
       }
       catch (ex) {
-        alert(`Cannot run analysis '${displayName}' at this time.`)
+        alert(`Cannot run analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`)
         return EMPTY;
       }
     }),
@@ -292,17 +341,22 @@ export const observeCheckResultStatus = (action$: ActionsObservable<Action>, sta
           return countDown(panelId);
         }
 
-        const analysisConfig = await wdkService.getStepAnalysis(stepId, analysisId);
-        const resultContents = await wdkService.getStepAnalysisResult(stepId, analysisId);
+        const resultContents = status === 'COMPLETE'
+          ? await wdkService.getStepAnalysisResult(stepId, analysisId)
+          : {};
 
         return finishFormSubmission(
           panelId,
           {
             ...panelState,
-            analysisConfig,
+            analysisConfig: {
+              ...panelState.analysisConfig,
+              status
+            },
             analysisConfigStatus: 'COMPLETE',
             formStatus: 'AWAITING_USER_SUBMISSION',
             formErrorMessage: null,
+            formValidationErrors: [],
             resultContents,
             resultErrorMessage: null
           }
@@ -342,22 +396,17 @@ export const observeRenameAnalysis = (action$: ActionsObservable<Action>, state$
     withLatestFrom(state$, focusOnPanelById),
     filter(onTabInRunnableState),
     mergeMap(async ({ action: { payload: { panelId, newDisplayName } }, stepId, panelState }) => {
-      if (panelState.type === UNSAVED_ANALYSIS_STATE) {
-        return [
-          renameTab(panelId, newDisplayName)
-        ];
+      if (panelState.type === SAVED_ANALYSIS_STATE) {
+        try {
+          await wdkService.renameStepAnalysis(stepId, panelState.analysisConfig.analysisId, newDisplayName);
+        }
+        catch (ex) {
+          alert(`Cannot rename analysis '${panelState.analysisConfig.displayName}' at this time. Please try again later, or contact us if the problem persists.`);
+        }
       }
 
-      try {
-        await wdkService.renameStepAnalysis(stepId, panelState.analysisConfig.analysisId, newDisplayName);
-      }
-      catch (ex) {
-        alert(`Cannot rename analysis '${panelState.analysisConfig.displayName}' at this time`);
-      }
-
-      return EMPTY;
-    }),
-    mergeAll()
+      return renameTab(panelId, newDisplayName);
+    })
   );
 };
 
@@ -366,31 +415,29 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
     filter(isDuplicateAnalysis),
     withLatestFrom(state$, focusOnPanelById),
     filter(onTabInRunnableState),
-    mergeMap(async ({ stepId, panelState }) => {
+    mergeMap(async ({ choices, stepId, panelState }) => {
       if (panelState.type === UNSAVED_ANALYSIS_STATE) {
         return createNewTab(panelState);
       } 
-      
-      try {
-        const analysisConfig = await wdkService.duplicateStepAnalysis(stepId, panelState.analysisConfig);
-        const resultContents = await wdkService.getStepAnalysisResult(stepId, analysisConfig.analysisId);
 
-        return [
-          createNewTab({
-            ...panelState,
-            analysisConfig,
-            analysisConfigStatus: 'COMPLETE',
-            resultContents,
-            resultErrorMessage: null
-          })
-        ];
-      }
-      catch (ex) {
-        alert(`Cannot duplicate analysis '${panelState.analysisConfig.displayName}' at this time`);
-        return EMPTY;
-      }
-    }),
-    mergeAll()
+      return createNewTab({
+        type: UNSAVED_ANALYSIS_STATE,
+        pollCountdown: 3,
+        paramSpecs: panelState.paramSpecs,
+        paramValues: panelState.paramValues,
+        formStatus: panelState.formStatus,
+        formErrorMessage: panelState.formErrorMessage,
+        formValidationErrors: panelState.formValidationErrors,
+        analysisType: choices.find(({ name }) => name === panelState.analysisConfig.analysisName) as StepAnalysisType,
+        analysisName: panelState.analysisConfig.displayName,
+        displayName: panelState.analysisConfig.displayName,
+        panelUiState: {
+          descriptionExpanded: false,
+          formExpanded: true
+        },
+        formUiState: locateFormPlugin(panelState.analysisConfig.analysisName).initialFormUiState
+      });
+    })
   );
 };
 
@@ -403,10 +450,12 @@ const isStartFormSubmission = (action: Action): action is StartFormSubmissionAct
 const isCheckResultStatus = (action: Action): action is CheckResultStatusAction => action.type === CHECK_RESULT_STATUS;
 const isCountDown = (action: Action): action is CountDownAction => action.type === COUNT_DOWN;
 const isRenameAnalysis = (action: Action): action is RenameAnalysisAction => action.type === RENAME_ANALYSIS;
+const isRemoveTab = (action: Action): action is RemoveTabAction => action.type === REMOVE_TAB;
 const isDuplicateAnalysis = (action: Action): action is DuplicateAnalysisAction => action.type === DUPLICATE_ANALYSIS;
 
 interface FocusedUninitializedAnalysisPanelState<ActionType> {
   action: ActionType;
+  choices: StepAnalysisType[];
   stepId: number;  
   panelState: UninitializedAnalysisPanelState;
   panelId: number;
@@ -415,6 +464,7 @@ interface FocusedUninitializedAnalysisPanelState<ActionType> {
 
 interface FocusedAnalysisMenuState<ActionType> {
   action: ActionType;
+  choices: StepAnalysisType[];
   stepId: number;
   panelState: AnalysisMenuState;
   panelId: number;
@@ -423,6 +473,7 @@ interface FocusedAnalysisMenuState<ActionType> {
 
 interface FocusedUnsavedAnalysisState<ActionType> {
   action: ActionType;
+  choices: StepAnalysisType[];
   stepId: number;
   panelState: UnsavedAnalysisState;
   panelId: number;
@@ -431,6 +482,7 @@ interface FocusedUnsavedAnalysisState<ActionType> {
 
 interface FocusedSavedAnalysisState<ActionType> {
   action: ActionType;
+  choices: StepAnalysisType[];
   stepId: number;
   panelState: SavedAnalysisState;
   panelId: number;
@@ -439,6 +491,7 @@ interface FocusedSavedAnalysisState<ActionType> {
 
 interface FocusedState<ActionType> {
   action: ActionType;
+  choices: StepAnalysisType[];
   stepId: number;
   panelState: AnalysisPanelState;
   panelId: number;
@@ -447,6 +500,7 @@ interface FocusedState<ActionType> {
 
 const focusOnPanelById = <ActionType>(action: ActionType & { payload: { panelId: number } }, state: StepAnalysesState): FocusedState<ActionType> => ({
   action,
+  choices: state.analysisChoices,
   stepId: state.stepId,
   panelId: action.payload.panelId,
   panelState: state.analysisPanelStates[action.payload.panelId],

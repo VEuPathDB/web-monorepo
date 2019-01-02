@@ -18,7 +18,7 @@ export const StepAnalysisDescription: React.SFC<StepAnalysisDescriptionProps> = 
       <span>{shortDescription}</span>
       {
         description && (
-          <span className="toggle-description-new" title="Toggle full description" onClick={toggleDescription}>
+          <span className="toggle-description" title="Toggle full description" onClick={toggleDescription}>
             {descriptionExpanded ? 'Read Less' : 'Read More'}
           </span>
         )

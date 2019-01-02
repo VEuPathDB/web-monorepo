@@ -13,10 +13,15 @@ export const WordCloudModal: React.SFC<WordCloudModalProps> = ({
   open,
   onClose
 }) => (
-  <Dialog open={open} draggable onClose={onClose}>
-    <div style={{ width: 700, height: 400 }}>
-      <img src={imgUrl} />
-    </div>
+  <Dialog 
+    open={open} 
+    resizable 
+    draggable 
+    onClose={onClose} 
+    title="Word Cloud of Go Enrichment Analysis Results"
+    className="word-cloud-modal"
+  >
+    <img src={imgUrl} />
     <p>
       This word cloud was created using the P-values and the full terms from the Enrichment analysis via a program called GOSummaries
     </p>

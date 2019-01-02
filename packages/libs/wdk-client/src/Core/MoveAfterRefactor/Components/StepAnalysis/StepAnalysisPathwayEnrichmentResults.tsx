@@ -5,6 +5,8 @@ import React, { Fragment } from 'react';
 import { StepAnalysisButtonArray } from './StepAnalysisButtonArray';
 import { WordCloudModal } from './StepAnalysisWordCloudModal';
 
+import './StepAnalysisEnrichmentResult.scss';
+
 const pathwayEnrichmentResultColumns = [
   {
     key: 'pathwayId',
@@ -97,9 +99,18 @@ const pathwayEnrichmentResultColumns = [
 const pathwayIdRenderFactory = (pathwayBaseUrl: string) => ({ row }: Record<string, any>) =>
   <a href={`${pathwayBaseUrl}${row.pathwaySource}/${row.pathwayId}`} target="_blank">{row.pathwayId}</a>
 
-const pathwayButtonsConfigFactory = (analysisId: number, { imageDownloadPath, hiddenDownloadPath }: any, webAppUrl: string) => [
+const pathwayButtonsConfigFactory = (
+  analysisId: number, 
+  { imageDownloadPath, hiddenDownloadPath }: any, 
+  webAppUrl: string, 
+  updateResultsUiState: (newResultsState: any) => void
+) => [
   {
     key: 'wordCloud',
+    onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault(); 
+      updateResultsUiState({ wordCloudOpen: true });
+    },
     href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${imageDownloadPath}`,
     iconClassName: 'fa fa-bar-chart red-text',
     contents: <Fragment>Show <b>Word Cloud</b></Fragment>
@@ -115,11 +126,15 @@ const pathwayButtonsConfigFactory = (analysisId: number, { imageDownloadPath, hi
 export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> = ({
   analysisResult,
   analysisConfig,
+  resultUiState: {
+    wordCloudOpen
+  },
+  updateResultsUiState,
   webAppUrl
 }) => (
   <Fragment>
     <StepAnalysisButtonArray 
-      configs={pathwayButtonsConfigFactory(analysisConfig.analysisId, analysisResult, webAppUrl)} 
+      configs={pathwayButtonsConfigFactory(analysisConfig.analysisId, analysisResult, webAppUrl, updateResultsUiState)} 
     />
     <h3>Analysis Results:   </h3>
     <StepAnalysisEnrichmentResultTable
@@ -136,8 +151,8 @@ export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultP
       imgUrl={
         `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisConfig.analysisId}&path=${analysisResult.imageDownloadPath}`
       }
-      open
-      onClose={() => {}}
+      open={wordCloudOpen}
+      onClose={() => updateResultsUiState({ wordCloudOpen: false })}
     />
   </Fragment>
 );

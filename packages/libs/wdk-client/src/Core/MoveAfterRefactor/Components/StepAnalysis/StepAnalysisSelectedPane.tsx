@@ -25,6 +25,7 @@ interface DescriptionState {
 
 interface StepAnalysisFormMetadata {
   hasParameters: boolean;
+  formExpanded: boolean;
   errors: string[];
 }
 
@@ -39,6 +40,7 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
   formState,
   resultState,
   toggleDescription,
+  toggleParameters,
   updateParamValues,
   updateFormUiState,
   updateResultsUiState,
@@ -51,7 +53,7 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
   }
 }) => (
   <div className="step-analysis-pane">
-    <div className="ui-helper-clearfix">
+    <div>
       <StepAnalysisLinks 
         renameAnalysis={renameAnalysis} 
         duplicateAnalysis={duplicateAnalysis} 
@@ -65,6 +67,7 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
     <div className="step-analysis-subpane">
       <StepAnalysisFormPane
         {...formState}
+        toggleParameters={toggleParameters}
         formRenderer={formRenderer}
         updateParamValues={updateParamValues}
         updateFormUiState={updateFormUiState}
@@ -72,7 +75,7 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
       />
       {
         resultState &&
-          <StepAnalysisResultsPane
+        <StepAnalysisResultsPane
           {...resultState}
           resultRenderer={resultRenderer}
           updateResultsUiState={updateResultsUiState}

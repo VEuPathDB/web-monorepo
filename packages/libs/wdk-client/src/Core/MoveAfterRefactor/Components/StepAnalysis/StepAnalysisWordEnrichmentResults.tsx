@@ -3,6 +3,9 @@ import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 import { integerCell, decimalCellFactory, scientificCellFactory } from './Utils/StepAnalysisResults';
 import { StepAnalysisEnrichmentResultTable, ColumnSettings } from './StepAnalysisEnrichmentResultTable';
 
+import './StepAnalysisEnrichmentResult.scss';
+import { StepAnalysisButtonArray } from './StepAnalysisButtonArray';
+
 const wordEnrichmentResultColumns = [
   { key: 'word', name: 'Word', helpText: 'Word', sortable: true },
   {
@@ -79,18 +82,26 @@ const wordEnrichmentResultColumns = [
   }
 ] as ColumnSettings[];
 
+const wordEnrichmentButtonsConfigFactory = (
+  analysisId: number, 
+  { downloadPath }: any,
+  webAppUrl: string
+) => [
+  {
+    key: 'download',
+    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${downloadPath}`,
+    iconClassName: 'fa fa-download blue-text',
+    contents: 'Download'
+  }
+];
+
 export const StepAnalysisWordEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> = ({
   analysisResult,
   analysisConfig,
   webAppUrl
 }) => (
   <Fragment>
-    <div className="enrich-download-link">
-      <a href={`${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisConfig.analysisId}&path=${analysisResult.downloadPath}`}>Download Analysis Results</a>
-      <p className="enrich-result-p">
-        This analysis result may be lost if you change your gene result. To save this analysis result, please download.
-      </p>
-    </div>
+    <StepAnalysisButtonArray configs={wordEnrichmentButtonsConfigFactory(analysisConfig.analysisId, analysisResult, webAppUrl)} />
     <h3>Analysis Results:   </h3>
     <StepAnalysisEnrichmentResultTable
       emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}

@@ -90,8 +90,8 @@ class TableToolbar extends React.PureComponent {
       <div className="Toolbar TableToolbar">
         <Title />
         <Search />
-        <Counter />
         <Children />
+        <Counter />
       </div>
     );
   }

@@ -30,6 +30,7 @@ import {
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
+  TOGGLE_PARAMETERS,
   UPDATE_UI_STATE
 } from '../../Actions/StepAnalysis/StepAnalysisActionConstants';
 import { StepAnalysisAction } from '../../Actions/StepAnalysis/StepAnalysisActions';
@@ -94,7 +95,7 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
         {
           UninitializedPanelState: _ => action.payload.loadedState,
           AnalysisMenuState: identity,
-          UnsavedAnalysisState: identity,
+          UnsavedAnalysisState: _ => action.payload.loadedState,
           SavedAnalysisState: identity
         }
       )
@@ -154,7 +155,7 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
       
       const removedTabState = removePanelState(state, action.payload.panelId);
       const newActiveTab = removedTabState.activeTab === action.payload.panelId
-        ? (removedTabState.analysisPanelOrder[tabIndex] || 0)
+        ? (removedTabState.analysisPanelOrder[tabIndex] || removedTabState.analysisPanelOrder[tabIndex - 1] || -1)
         : removedTabState.activeTab;
 
       return {
@@ -178,8 +179,7 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
           SavedAnalysisState: panelState => ({
             ...panelState,
             pollCountdown: 3,
-            formStatus: 'SAVING_ANALYSIS',
-            analysisConfigStatus: 'LOADING' 
+            formStatus: 'SAVING_ANALYSIS'
           })
         }
       );
@@ -240,7 +240,13 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
             ...panelState,
             displayName: action.payload.newDisplayName
           }),
-          SavedAnalysisState: identity
+          SavedAnalysisState: panelState => ({
+            ...panelState,
+            analysisConfig: {
+              ...panelState.analysisConfig,
+              displayName: action.payload.newDisplayName
+            }
+          })
         }
       )
     }
@@ -277,16 +283,41 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
           AnalysisMenuState: identity,
           UnsavedAnalysisState: panelState => ({
             ...panelState,
-            descriptionUiState: {
-              ...panelState.descriptionUiState,
-              descriptionExpanded: !panelState.descriptionUiState.descriptionExpanded
+            panelUiState: {
+              ...panelState.panelUiState,
+              descriptionExpanded: !panelState.panelUiState.descriptionExpanded
             }
           }),
           SavedAnalysisState: panelState => ({
             ...panelState,
-            descriptionUiState: {
-              ...panelState.descriptionUiState,
-              descriptionExpanded: !panelState.descriptionUiState.descriptionExpanded
+            panelUiState: {
+              ...panelState.panelUiState,
+              descriptionExpanded: !panelState.panelUiState.descriptionExpanded
+            }
+          })
+        }
+      );
+    }
+
+    case TOGGLE_PARAMETERS: {
+      return updatePanelState(
+        state,
+        action.payload.panelId,
+        {
+          UninitializedPanelState: identity,
+          AnalysisMenuState: identity,
+          UnsavedAnalysisState: panelState => ({
+            ...panelState,
+            panelUiState: {
+              ...panelState.panelUiState,
+              formExpanded: !panelState.panelUiState.formExpanded
+            }
+          }),
+          SavedAnalysisState: panelState => ({
+            ...panelState,
+            panelUiState: {
+              ...panelState.panelUiState,
+              formExpanded: !panelState.panelUiState.formExpanded
             }
           })
         }
@@ -307,14 +338,14 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
                 ...panelState,
                 [action.payload.uiType]: {
                   ...panelState[action.payload.uiType],
-                  ...action.payload.newState
+                  ...action.payload.newUiState
                 }
               }),
           SavedAnalysisState: panelState => ({
             ...panelState,
             [action.payload.uiType]: {
               ...panelState[action.payload.uiType],
-              ...action.payload.newState
+              ...action.payload.newUiState
             }
           })
         }

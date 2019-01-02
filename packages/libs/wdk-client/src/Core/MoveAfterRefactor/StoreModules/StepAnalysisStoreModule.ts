@@ -9,7 +9,8 @@ import {
   observeCheckResultStatus, 
   observeCountDown, 
   observeRenameAnalysis, 
-  observeDuplicateAnalysis 
+  observeDuplicateAnalysis, 
+  observeRemoveTab
 } from './StepAnalysis/StepAnalysisObservers';
 import { StepAnalysesState } from './StepAnalysis/StepAnalysisState';
 import { RootState } from '../../State/Types';
@@ -35,6 +36,7 @@ const observe = (action$: ActionsObservable<Action>, state$: StateObservable<Roo
     observeStartLoadingSavedTab(action$, stepAnalysisState$, dependencies),
     observeStartLoadingChosenAnalysisTab(action$, stepAnalysisState$, dependencies),
     observeDeleteAnalysis(action$, stepAnalysisState$, dependencies),
+    observeRemoveTab(action$, stepAnalysisState$, dependencies),
     observeStartFormSubmission(action$, stepAnalysisState$, dependencies),
     observeCheckResultStatus(action$, stepAnalysisState$, dependencies),
     observeCountDown(action$, stepAnalysisState$, dependencies),

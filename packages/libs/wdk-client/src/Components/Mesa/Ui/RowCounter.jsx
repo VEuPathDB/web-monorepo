@@ -7,14 +7,16 @@ class RowCounter extends React.PureComponent {
 
   render () {
     let { count, noun, filteredRowCount, start, end } = this.props;
-    let filterString = !filteredRowCount ? null : <span className="faded"> ({filteredRowCount} filtered)</span>;
-    let countString = (<span><b>{count}</b> {noun}</span>);
-    let allResultsShown = (!start || !end || (start === 1 && end === count));
+    let filterString = !filteredRowCount ? null : <span className="faded"> (filtered from a total of {count})</span>;
+    const remainingRowCount = !filteredRowCount ? count : count - filteredRowCount;
+
+    let countString = (<span><b>{remainingRowCount}</b> {noun}</span>);
+    let allResultsShown = (!start || !end || (start === 1 && end === remainingRowCount));
 
     if (!allResultsShown) {
       countString = (
         <span>
-          {noun} <b>{start}</b> - <b>{end}</b> of <b>{count}</b>
+          {noun} <b>{start}</b> - <b>{end}</b> of <b>{remainingRowCount}</b>
         </span>
       );
     }

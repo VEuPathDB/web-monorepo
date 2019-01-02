@@ -1074,14 +1074,16 @@ export default class WdkService {
     );
   }
 
-  getStepAnalysisTypeMetadata(stepId: number, analysisTypeName: string) {
-    return this.sendRequest(
+  async getStepAnalysisTypeParamSpecs(stepId: number, analysisTypeName: string) {
+    const paramRefs = await this.sendRequest(
       parametersDecoder,
       {
         path: `/users/current/steps/${stepId}/analysis-types/${analysisTypeName}`,
         method: 'GET'
       }
     );
+
+    return paramRefs.filter(({ isVisible }) => isVisible);
   }
 
   getAppliedStepAnalyses(stepId: number) {
@@ -1123,13 +1125,22 @@ export default class WdkService {
   }
 
   updateStepAnalysisForm(stepId: number, analysisId: number, formParams: FormParams) {
-    return this._fetchJson<void>(
-      'PATCH',
-      `/users/current/steps/${stepId}/analyses/${analysisId}`,
-      JSON.stringify({
+    return fetch(`${this.serviceUrl}/users/current/steps/${stepId}/analyses/${analysisId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
         formParams
-      })
-    )
+      }),
+      credentials: 'include',
+      headers: new Headers(Object.assign({
+        'Content-Type': 'application/json'
+      }, this._version && {
+        [CLIENT_WDK_VERSION_HEADER]: this._version
+      }))
+    })
+      .then(response => response.ok ? '[]' : response.text())
+      .then(validationErrors => {
+        return JSON.parse(validationErrors);
+      }) as Promise<string[]>;
   }
 
   renameStepAnalysis(stepId: number, analysisId: number, displayName: string) {
@@ -1170,10 +1181,6 @@ export default class WdkService {
         method: 'GET'
       }
     );
-  }
-
-  duplicateStepAnalysis(stepId: number, analysisConfig: StepAnalysisConfig) {
-    return this.createStepAnalysis(stepId, analysisConfig);
   }
 
   private _fetchJson<T>(method: string, url: string, body?: string) {

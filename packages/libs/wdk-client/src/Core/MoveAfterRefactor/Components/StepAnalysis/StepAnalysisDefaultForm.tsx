@@ -21,7 +21,6 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
     <tbody>
       {
         paramSpecs
-          .filter(({ isVisible }) => isVisible)
           .map(paramSpec => 
             <StepAnalysisParamRow 
               key={paramSpec.name} 
@@ -106,7 +105,7 @@ const uiState = {};
 const NOOP = () => {};
 
 const normalizeParamValues = (paramValues: Record<string, string[]>) => mapValues(join(','), paramValues);
-const denormalizeParamValue = split(/\s*,\s*/g);
+export const denormalizeParamValue = split(/\s*,\s*/g);
 
 const tooltipPosition = { 
   my: 'top center', 
@@ -136,5 +135,6 @@ const submitTdStyle: React.CSSProperties = {
 const numberParamRangeSpanStyle: React.CSSProperties = {
   color: 'blue',
   fontSize: '0.95em',
-  fontFamily: 'monospace'
+  fontFamily: 'monospace',
+  marginLeft: '0.5em'
 };

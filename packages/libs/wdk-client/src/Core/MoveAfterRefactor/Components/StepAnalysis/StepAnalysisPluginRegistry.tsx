@@ -6,7 +6,7 @@ import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 import { StepAnalysisWordEnrichmentResults } from './StepAnalysisWordEnrichmentResults';
 import { StepAnalysisPathwayEnrichmentResults } from './StepAnalysisPathwayEnrichmentResults';
 import { StepAnalysisGoEnrichmentResults } from './StepAnalysisGoEnrichmentResults';
-import { StepAnalysisExternalResult } from './StepAnalysisExternalResult';
+import { StepAnalysisEupathExternalResult } from './StepAnalysisEupathExternalResult';
 
 interface FormPluginEntry {
   formRenderer: (props: StepAnalysisFormPluginProps) => ReactNode;
@@ -48,42 +48,58 @@ const resultPlugins: Record<string, ResultPluginEntry> = {
   },
   'pathway-enrichment': {
     resultRenderer: StepAnalysisPathwayEnrichmentResults,
-    initialResultUiState: {}
+    initialResultUiState: {
+      wordCloudOpen: false
+    }
   },
   'go-enrichment': {
     resultRenderer: StepAnalysisGoEnrichmentResults,
-    initialResultUiState: {}
+    initialResultUiState: {
+      wordCloudOpen: false
+    }
   },
   'otu_abundance': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   },
   'alpha_diversity': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   },
   'beta_diversity': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
+    initialResultUiState: {}
+  },
+  'transcript-length-dist': {
+    resultRenderer: StepAnalysisEupathExternalResult,
+    initialResultUiState: {}
+  },
+  'differential_abundance': {
+    resultRenderer: StepAnalysisEupathExternalResult,
+    initialResultUiState: {}
+  },
+  'correlation_app': {
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   },
   'person-graph-analysis': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   },
   'light-trap-plots': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   },
   'clinepi-cont-table': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   },
   'clinepi-event-dist': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   },
   'clinepi-summaries': {
-    resultRenderer: StepAnalysisExternalResult,
+    resultRenderer: StepAnalysisEupathExternalResult,
     initialResultUiState: {}
   }
 };

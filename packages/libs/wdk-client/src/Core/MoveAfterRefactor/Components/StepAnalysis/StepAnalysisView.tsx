@@ -1,8 +1,11 @@
 import React, { Fragment } from 'react';
 import { StepAnalysisMenuPaneProps, StepAnalysisMenuPane } from './StepAnalysisMenuPane';
-import { StepAnalysisSelectedPaneProps, StepAnalysisSelectedPane, StepAnalysisSelectedPaneStateProps } from './StepAnalysisSelectedPane';
+import { StepAnalysisSelectedPane, StepAnalysisSelectedPaneStateProps } from './StepAnalysisSelectedPane';
 import { Loading } from '../../../../Components';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
+
+import 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView.scss';
+import { string } from 'wdk-client/Utils/Json';
 
 export type StepAnalysisStateProps = StepAnalysisUnopenedPaneTypedProps | StepAnalysisLoadingMenuPaneTypedProps | StepAnalysisMenuPaneTypedProps | StepAnalysisSelectedPaneTypedProps;
 
@@ -25,9 +28,10 @@ export type StepAnalysisSelectedPaneTypedProps = {
 export interface StepAnalysisEventHandlers {
   loadChoice: (choice: StepAnalysisType) => void;
   toggleDescription: () => void;
+  toggleParameters: () => void;
   updateParamValues: (newParamValues: Record<string, string[]>) => void;
-  updateFormUiState: (newFormState: any) => void;
-  updateResultsUiState: (newResultsState: any) => void;
+  updateFormUiState: (newFormState: Record<string, any>) => void;
+  updateResultsUiState: (newResultsState: Record<string, any>) => void;
   onFormSubmit: () => void;
   renameAnalysis: (newDisplayName: string) => void;
   duplicateAnalysis: () => void;
@@ -44,8 +48,8 @@ export const StepAnalysisView: React.SFC<StepAnalysisStateProps & StepAnalysisEv
       (
         <div className="analysis-menu-tab-pane">
           <Loading>
-            <div>
-              Loading analysis...
+            <div className="wdk-LoadingSavedAnalysis">
+              Loading saved analysis...
             </div>
           </Loading>
         </div>

@@ -18,6 +18,7 @@ import {
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
+  TOGGLE_PARAMETERS,
   UPDATE_UI_STATE
 } from './StepAnalysisActionConstants';
 import { 
@@ -53,7 +54,8 @@ export type RenameTabAction = TypedAction<typeof RENAME_TAB, { panelId: number, 
 export type DuplicateAnalysisAction = TypedAction<typeof DUPLICATE_ANALYSIS, { panelId: number }>
 export type UpdateParamValues = TypedAction<typeof UPDATE_PARAM_VALUES, { panelId: number, newParamValues: Record<string, string[]> }>;
 export type ToggleDescription = TypedAction<typeof TOGGLE_DESCRIPTION, { panelId: number }>;
-export type UpdateUiState = TypedAction<typeof UPDATE_UI_STATE, { panelId: number, uiType: 'formUiState' | 'resultUiState', newState: Record<string, any> }>;
+export type ToggleParameters = TypedAction<typeof TOGGLE_PARAMETERS, { panelId: number }>;
+export type UpdateUiState = TypedAction<typeof UPDATE_UI_STATE, { panelId: number, uiType: 'formUiState' | 'resultUiState', newUiState: Record<string, any> }>;
 
 export type StepAnalysisAction = StartLoadingTabListingAction 
   | FinishLoadingTabListingAction 
@@ -74,4 +76,5 @@ export type StepAnalysisAction = StartLoadingTabListingAction
   | DuplicateAnalysisAction
   | UpdateParamValues
   | ToggleDescription
+  | ToggleParameters
   | UpdateUiState;

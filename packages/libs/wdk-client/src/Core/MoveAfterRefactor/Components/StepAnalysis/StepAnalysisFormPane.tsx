@@ -1,10 +1,13 @@
 import React, { Fragment } from 'react';
 import { StepAnalysisParameter } from '../../../../Utils/StepAnalysisUtils';
 import { StepAnalysisErrorsPane } from './StepAnalysisErrorsPane';
+import { CollapsibleSection } from 'wdk-client/Components';
 
 type StepAnalysisFormPaneProps = StepAnalysisFormPluginProps & {
   hasParameters: boolean;
+  formExpanded: boolean;
   errors: string[];
+  toggleParameters: () => void;
   formRenderer: (props: StepAnalysisFormPluginProps) => React.ReactNode;
 };
 
@@ -23,6 +26,7 @@ export interface StepAnalysisFormPluginEventHandlers {
 }
 
 export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
+  formExpanded,
   formRenderer,
   hasParameters,
   errors,
@@ -31,25 +35,40 @@ export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
   formUiState,
   updateParamValues,
   updateFormUiState,
-  onFormSubmit
+  onFormSubmit,
+  toggleParameters
 }) => (
   <Fragment>
     <StepAnalysisErrorsPane errors={errors} />
     {hasParameters 
-      ? formRenderer(
-          { 
-            paramSpecs, 
-            paramValues, 
-            formUiState, 
-            updateParamValues, 
-            updateFormUiState, 
-            onFormSubmit 
+      ? (
+        <CollapsibleSection
+          headerContent="Parameters"
+          className="step-analysis-parameters"
+          isCollapsed={!formExpanded}
+          onCollapsedChange={toggleParameters}
+        >
+          {
+            formRenderer(
+              { 
+                paramSpecs, 
+                paramValues, 
+                formUiState, 
+                updateParamValues, 
+                updateFormUiState, 
+                onFormSubmit 
+              }
+            )
           }
-        )
+        </CollapsibleSection>
+      )
       : (
         <Fragment>
-          <div style={{ textAlign: "center", fontStyle: "italic" }}>
-            The analysis results will be shown below.
+          <div style={{ textAlign: "center" }}>
+              <input type="submit" onClick={onFormSubmit} value="Reload Analysis"/>
+            <div style={{ fontStyle: "italic" }}>
+              The analysis results will be shown below.
+            </div>
           </div>
           <hr/>
         </Fragment>

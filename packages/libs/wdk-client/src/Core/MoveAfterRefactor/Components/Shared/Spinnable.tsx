@@ -1,4 +1,3 @@
-// TODO: Redefine Loading in terms of this more general component
 import 'spin.js/spin.css';
 import './Spinnable.scss';
 import { flow } from 'lodash';
@@ -15,8 +14,10 @@ type Props = {
 
   /** spin.js options to use for container element */
   spinnerOptions?: SpinnerOptions;
-}
 
+  /** Whether or not the element is spinning */
+  spinning: boolean;
+}
 
 /**
  * See http://fgnass.github.io/spin.js/
@@ -32,14 +33,31 @@ class Spinnable extends React.Component<Props> {
   private spinner?: Spinner;
   private containerRef: React.RefObject<HTMLDivElement> = React.createRef();
 
-  componentDidMount() {
-    const { spinnerOptions } = this.props;
+  private updateSpinner(spinning: boolean, newSpinnerOptions?: SpinnerOptions) {
+    if (!this.spinner || this.props.spinnerOptions !== newSpinnerOptions) {
+      this.spinner = new Spinner(newSpinnerOptions);
+    }
 
-    this.spinner = new Spinner(spinnerOptions).spin(this.containerRef.current || undefined);
+    if (spinning) {
+      this.spinner.spin(this.containerRef.current || undefined);
+    } else {
+      this.spinner.stop();
+    }
+  }
+
+  componentDidMount() {
+    const { spinning, spinnerOptions } = this.props;
+    this.updateSpinner(spinning, spinnerOptions);
+  }
+
+  componentWillReceiveProps({ spinning, spinnerOptions }: Props) {
+    this.updateSpinner(spinning, spinnerOptions);
   }
 
   componentWillUnmount() {
-    if (this.spinner) this.spinner.stop();
+    if (this.spinner) {
+      this.spinner.stop();
+    }
   }
 
   render() {

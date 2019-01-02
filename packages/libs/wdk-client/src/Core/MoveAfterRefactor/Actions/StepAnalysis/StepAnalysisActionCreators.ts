@@ -18,6 +18,7 @@ import {
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
+  TOGGLE_PARAMETERS,
   UPDATE_UI_STATE
 } from './StepAnalysisActionConstants';
 import { 
@@ -44,7 +45,11 @@ import {
   FinishFormSubmissionAction, 
   RenameAnalysisAction, 
   RenameTabAction, 
-  DuplicateAnalysisAction
+  DuplicateAnalysisAction,
+  UpdateParamValues,
+  UpdateUiState,
+  ToggleDescription,
+  ToggleParameters
 } from './StepAnalysisActions';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 
@@ -133,17 +138,22 @@ export const duplicateAnalysis = (panelId: number): DuplicateAnalysisAction => (
   payload: { panelId }
 });
 
-export const updateParamValues = (panelId: number, newParamValues: Record<string, string[]>) => ({
+export const updateParamValues = (panelId: number, newParamValues: Record<string, string[]>): UpdateParamValues => ({
   type: UPDATE_PARAM_VALUES,
   payload: { panelId, newParamValues }
 });
 
-export const toggleDescription = (panelId: number) => ({
+export const toggleDescription = (panelId: number): ToggleDescription => ({
   type: TOGGLE_DESCRIPTION,
   payload: { panelId }
 });
 
-const updateUiStateFactory = (uiType: 'formUiState' | 'resultUiState') => (panelId: number, newUiState: Record<string, any>) => ({
+export const toggleParameters = (panelId: number): ToggleParameters => ({
+  type: TOGGLE_PARAMETERS,
+  payload: { panelId }
+});
+
+const updateUiStateFactory = (uiType: 'formUiState' | 'resultUiState') => (panelId: number, newUiState: Record<string, any>): UpdateUiState => ({
   type: UPDATE_UI_STATE,
   payload: { panelId, uiType, newUiState }
 });

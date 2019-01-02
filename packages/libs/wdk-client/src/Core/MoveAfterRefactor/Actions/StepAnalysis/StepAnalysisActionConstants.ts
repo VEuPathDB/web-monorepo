@@ -17,4 +17,5 @@ export const RENAME_TAB = 'step-analysis/rename-tab';
 export const DUPLICATE_ANALYSIS = 'step-analysis/duplicate-analysis';
 export const UPDATE_PARAM_VALUES = 'step-analysis/update-param-values';
 export const TOGGLE_DESCRIPTION = 'step-analysis/toggle-description';
+export const TOGGLE_PARAMETERS = 'step-analysis/toggle-parameters';
 export const UPDATE_UI_STATE = 'step-analysis/update-ui-state';

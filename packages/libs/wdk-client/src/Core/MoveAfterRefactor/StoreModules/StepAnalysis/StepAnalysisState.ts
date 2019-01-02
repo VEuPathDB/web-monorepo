@@ -39,7 +39,7 @@ export interface UnsavedAnalysisState extends AnalysisFormState {
   analysisName: string;
   analysisType: StepAnalysisType;
   pollCountdown: number;
-  descriptionUiState: { descriptionExpanded: boolean };
+  panelUiState: { descriptionExpanded: boolean, formExpanded: boolean };
 }
 
 export interface SavedAnalysisState extends AnalysisFormState, AnalysisResultState {
@@ -47,7 +47,7 @@ export interface SavedAnalysisState extends AnalysisFormState, AnalysisResultSta
   analysisConfig: StepAnalysisConfig;
   analysisConfigStatus: 'LOADING' | 'COMPLETE' | 'ERROR';
   pollCountdown: number;
-  descriptionUiState: { descriptionExpanded: boolean };
+  panelUiState: { descriptionExpanded: boolean, formExpanded: boolean };
 }
 
 interface AnalysisFormState {
@@ -55,6 +55,7 @@ interface AnalysisFormState {
   paramValues: Record<string, string[]>;
   formStatus: 'AWAITING_USER_SUBMISSION' | 'SAVING_ANALYSIS' | 'ERROR';
   formErrorMessage: string | null;
+  formValidationErrors: string[];
   formUiState: Record<string, any>;
 }
 

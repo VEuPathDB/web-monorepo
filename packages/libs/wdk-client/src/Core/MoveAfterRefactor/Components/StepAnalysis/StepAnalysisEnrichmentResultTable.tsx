@@ -37,7 +37,9 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
       columns: this.props.columns,
       options: {
         showCount: true,
-        toolbar: true
+        toolbar: true,
+        useStickyHeader: true,
+        tableBodyMaxHeight: '80vh'
       },
       uiState: {
         searchQuery: this.props.initialSearchQuery || '',

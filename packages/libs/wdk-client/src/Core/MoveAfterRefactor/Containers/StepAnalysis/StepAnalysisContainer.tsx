@@ -3,12 +3,12 @@ import { PageController } from 'wdk-client/Controllers';
 import { StepAnalysisView, StepAnalysisEventHandlers } from '../../Components/StepAnalysis/StepAnalysisView';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { memoize } from 'lodash/fp';
-import Tabs, { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
+import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
 import { RootState } from '../../../State/Types';
-import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
+import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
-import { startLoadingChosenAnalysisTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import { startLoadingChosenAnalysisTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 import { PageControllerProps } from '../../../CommonTypes';
 
 type StateProps = {
@@ -20,10 +20,12 @@ type StateProps = {
   analysisPanelOrder: ReturnType<typeof analysisPanelOrder>, 
   analysisPanelStates: ReturnType<typeof analysisPanelStates>, 
   activeTab: ReturnType<typeof activeTab>;
+  newAnalysisButtonVisible: boolean;
 };
 
 interface TabEventHandlers {
   loadTabs: (stepId: number) => void;
+  openAnalysisMenu: () => void;
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
 }
@@ -39,6 +41,7 @@ interface StepAnalysisContainerProps {
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
   loadTabs: (stepId: number) => void;
+  newAnalysisButton: React.ReactNode;
 }
 
 class StepAnalysisController extends PageController<StepAnalysisContainerProps> {
@@ -54,11 +57,12 @@ class StepAnalysisController extends PageController<StepAnalysisContainerProps> 
 
   renderView() {
     return (
-      <Tabs
+      <ResultTabs
         activeTab={`${this.props.activeTab}`}
         onTabSelected={this.props.onTabSelected}
         onTabRemoved={this.props.onTabRemoved}
         tabs={this.props.tabs}
+        headerContent={this.props.newAnalysisButton}
       />
     );
   }
@@ -72,25 +76,26 @@ const mapStateToProps = (state: RootState): StateProps => ({
   analysisPanelOrder: analysisPanelOrder(state), 
   analysisPanelStates: analysisPanelStates(state),
   analysisBaseTabConfigs: analysisBaseTabConfigs(state),
-  activeTab: activeTab(state)
+  activeTab: activeTab(state),
+  newAnalysisButtonVisible: newAnalysisButtonVisible(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHandlers => ({
   loadTabs: (stepId: number) => dispatch(startLoadingTabListing(stepId)),
-  onTabSelected: (tabKey: string) => tabKey !== 'new-analysis'
-    ? dispatch(selectTab(+tabKey))
-    : dispatch(
-        createNewTab(
-          {
-            type: 'ANALYSIS_MENU_STATE',
-            displayName: 'New Analysis',
-            status: 'AWAITING_USER_CHOICE',
-            errorMessage: null
-          }
-        )
-      ),
+  openAnalysisMenu: () => dispatch(
+    createNewTab(
+      {
+        type: 'ANALYSIS_MENU_STATE',
+        displayName: 'New Analysis',
+        status: 'AWAITING_USER_CHOICE',
+        errorMessage: null 
+      }
+    )
+  ),
+  onTabSelected: (tabKey: string) => dispatch(selectTab(+tabKey)),
   onTabRemoved: (tabKey: string) => dispatch(deleteAnalysis(+tabKey)),
   toggleDescription: memoize((panelId: number) => () => dispatch(toggleDescription(panelId))),
+  toggleParameters: memoize((panelId: number) => () => dispatch(toggleParameters(panelId))),
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
   updateParamValues: memoize((panelId: number) => (newParamValues: Record<string, string[]>) => dispatch(updateParamValues(panelId, newParamValues))),
   updateFormUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateFormUiState(panelId, newUiState))),
@@ -104,36 +109,47 @@ const mergeProps = (
   stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: PageControllerProps 
 ): StepAnalysisContainerProps & PageControllerProps => ({
   ...ownProps,
-  loadingTabs: stateProps.analysisPanelOrder.length === 0,
+  loadingTabs: stateProps.analysisChoices.length === 0,
   activeTab: `${stateProps.activeTab}`,
+  newAnalysisButton: stateProps.newAnalysisButtonVisible && (
+    <button 
+      id="add-analysis" 
+      title="Choose an analysis tool to apply to the results of your current step." 
+      onClick={eventHandlers.openAnalysisMenu}
+    >
+      Analyze Results
+    </button>
+  ),
   onTabSelected: eventHandlers.onTabSelected,
   onTabRemoved: eventHandlers.onTabRemoved,
   loadTabs: eventHandlers.loadTabs,
   tabs: stateProps.analysisBaseTabConfigs.map(
     baseTabConfig => ({ 
       ...baseTabConfig, 
-      content: stateProps.activeTab === +baseTabConfig.key
-        ? <StepAnalysisView 
-            {
-              ...mapAnalysisPanelStateToProps(
-                stateProps.analysisPanelStates[+baseTabConfig.key],
-                stateProps.analysisChoices,
-                stateProps.webAppUrl,
-                stateProps.wdkModelBuildNumber,
-                stateProps.recordClassDisplayName
-              )
-            } 
-            loadChoice={eventHandlers.loadChoice(+baseTabConfig.key)}
-            toggleDescription={eventHandlers.toggleDescription(+baseTabConfig.key)}
-            updateParamValues={eventHandlers.updateParamValues(+baseTabConfig.key)}
-            updateFormUiState={eventHandlers.updateFormUiState(+baseTabConfig.key)}
-            onFormSubmit={eventHandlers.onFormSubmit(+baseTabConfig.key)}
-            updateResultsUiState={eventHandlers.updateResultsUiState(+baseTabConfig.key)}
-            renameAnalysis={eventHandlers.renameAnalysis(+baseTabConfig.key)}
-            duplicateAnalysis={eventHandlers.duplicateAnalysis(+baseTabConfig.key)}
-          />
-        : <div></div>
-     })
+      content: (
+        <StepAnalysisView
+          key={baseTabConfig.key}
+          {
+            ...mapAnalysisPanelStateToProps(
+              stateProps.analysisPanelStates[+baseTabConfig.key],
+              stateProps.analysisChoices,
+              stateProps.webAppUrl,
+              stateProps.wdkModelBuildNumber,
+              stateProps.recordClassDisplayName
+            )
+          } 
+          loadChoice={eventHandlers.loadChoice(+baseTabConfig.key)}
+          toggleDescription={eventHandlers.toggleDescription(+baseTabConfig.key)}
+          toggleParameters={eventHandlers.toggleParameters(+baseTabConfig.key)}
+          updateParamValues={eventHandlers.updateParamValues(+baseTabConfig.key)}
+          updateFormUiState={eventHandlers.updateFormUiState(+baseTabConfig.key)}
+          onFormSubmit={eventHandlers.onFormSubmit(+baseTabConfig.key)}
+          updateResultsUiState={eventHandlers.updateResultsUiState(+baseTabConfig.key)}
+          renameAnalysis={eventHandlers.renameAnalysis(+baseTabConfig.key)}
+          duplicateAnalysis={eventHandlers.duplicateAnalysis(+baseTabConfig.key)}
+        />
+      )
+    })
   )
 })
 

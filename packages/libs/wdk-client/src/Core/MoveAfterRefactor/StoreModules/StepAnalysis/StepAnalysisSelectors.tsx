@@ -6,7 +6,7 @@ import { get } from 'lodash';
 import { StepAnalysesState, AnalysisPanelState, AnalysisMenuState, UnsavedAnalysisState, UninitializedAnalysisPanelState, SavedAnalysisState } from './StepAnalysisState';
 import { transformPanelState } from './StepAnalysisReducer';
 import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalysisView';
-import { TabConfig } from '../../../../Components/Tabs/Tabs';
+import { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 
@@ -14,7 +14,17 @@ type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | '
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
-export const recordClassDisplayName = (state: RootState) => 'Gene';
+export const recordClassDisplayName = (
+  { 
+    globalData: { recordClasses = [] }, 
+    steps: { steps }, 
+    stepAnalysis: { stepId } 
+  }: RootState
+) => {
+  const recordClassName = get(steps[stepId], 'recordClassName', '');
+  const recordClass = recordClasses.find(({ name }) => name === recordClassName);
+  return get(recordClass, 'displayName', '');
+};
 
 export const stepAnalyses = ({ stepAnalysis }: RootState) => stepAnalysis;
 
@@ -35,6 +45,12 @@ export const analysisChoices = createSelector<RootState, StepAnalysesState, Step
   stepAnalyses => stepAnalyses.analysisChoices
 );
 
+export const newAnalysisButtonVisible = createSelector<RootState, number[], Record<number, AnalysisPanelState>, boolean>(
+  analysisPanelOrder,
+  analysisPanelStates,
+  (analysisPanelOrder, analysisPanelStates) => analysisPanelOrder.every(panelId => analysisPanelStates[panelId].type !== 'ANALYSIS_MENU_STATE')
+);
+
 export const analysisBaseTabConfigs = createSelector<RootState, number[], Record<number, AnalysisPanelState>, StepAnalysisType[], BaseTabConfig[]>(
   analysisPanelOrder,
   analysisPanelStates,
@@ -44,7 +60,7 @@ export const analysisBaseTabConfigs = createSelector<RootState, number[], Record
       return [];
     }
 
-    const analysisPanelTabs = analysisPanelOrder.map(panelId => transformPanelState(
+    return analysisPanelOrder.map(panelId => transformPanelState(
       analysisPanelStates[panelId],
       {
         UninitializedPanelState: ({ displayName }) => ({
@@ -69,22 +85,6 @@ export const analysisBaseTabConfigs = createSelector<RootState, number[], Record
         })
       }
     ));
-    
-    return analysisPanelOrder.some(panelId => analysisPanelStates[panelId].type === 'ANALYSIS_MENU_STATE')
-      ? analysisPanelTabs
-      : [
-          ...analysisPanelTabs,
-          {
-            key: 'new-analysis',
-            display: (
-              <Fragment>
-                Create New Analysis <i className="fa fa-plus"></i>
-              </Fragment>
-            ),
-            removable: false,
-            tooltip: 'Choose an analysis tool to apply to the results of your current step'
-          }
-      ];
   }
 );
 
@@ -140,12 +140,14 @@ const mapUnsavedAnalysisStateToProps = (
       description,
       hasParameters
     },
-    descriptionUiState: {
-      descriptionExpanded
+    panelUiState: {
+      descriptionExpanded,
+      formExpanded
     },
     paramSpecs,
     paramValues,
-    formUiState
+    formUiState,
+    formValidationErrors
   }: UnsavedAnalysisState,
   choices: StepAnalysisType[]
 ): StepAnalysisStateProps => ({
@@ -158,7 +160,8 @@ const mapUnsavedAnalysisStateToProps = (
   },
   formState: { 
     hasParameters,
-    errors: [],
+    formExpanded,
+    errors: formValidationErrors,
     paramSpecs,
     paramValues,
     formUiState
@@ -173,14 +176,17 @@ const mapSavedAnalysisStateToProps = (
   { 
     analysisConfig,
     analysisConfigStatus,
-    descriptionUiState: {
-      descriptionExpanded
+    panelUiState: {
+      descriptionExpanded,
+      formExpanded
     },
     resultContents,
     resultUiState,
+    resultErrorMessage,
     paramSpecs,
     paramValues,
     formUiState,
+    formValidationErrors,
     pollCountdown
   }: SavedAnalysisState,
   choices: StepAnalysisType[],
@@ -194,13 +200,14 @@ const mapSavedAnalysisStateToProps = (
     descriptionExpanded
   },
   formState: { 
-    hasParameters: analysisConfig.hasParams,
-    errors: [],
+    hasParameters: typeHasParameters(analysisConfig.analysisName, choices),
+    formExpanded,
+    errors: formValidationErrors,
     paramSpecs,
     paramValues,
     formUiState
   },
-  resultState: analysisConfigStatus === 'COMPLETE'
+  resultState: analysisConfigStatus === 'COMPLETE' && analysisConfig.status === 'COMPLETE'
     ? {
       type: 'complete-result',
       analysisConfig,
@@ -208,7 +215,8 @@ const mapSavedAnalysisStateToProps = (
       resultUiState,
       webAppUrl
     }
-    : {
+    : analysisConfigStatus !== 'ERROR' && (analysisConfig.status === 'PENDING' || analysisConfig.status === 'RUNNING')
+    ? {
       type: 'incomplete-result',
       className: 'analysis-pending-pane',
       header: 'Results Pending...',
@@ -218,6 +226,28 @@ const mapSavedAnalysisStateToProps = (
           We will check again in {pollCountdown} seconds.
         </Fragment>
       )
+    }
+    : analysisConfigStatus !== 'ERROR' && (analysisConfig.status === 'CREATED' || analysisConfig.status === 'INVALID' || analysisConfig.status === 'COMPLETE')
+    ? {
+      type: 'incomplete-result',
+      className: 'analysis-pending-pane',
+      header: '',
+      reason: (
+        <Fragment></Fragment>
+      )
+    }
+    : analysisConfigStatus !== 'ERROR'
+    ? {
+      type: 'incomplete-result',
+      className: 'analysis-incomplete-pane',
+      header: 'Results Unavailable:',
+      reason: <Fragment>{reasonTextMap[analysisConfig.status]} </Fragment>
+    }
+    : {
+      type: 'incomplete-result',
+      className: 'analysis-incomplete-pane',
+      header: 'Results Unavailable:',
+      reason: <Fragment>{resultErrorMessage}</Fragment>
     },
   pluginRenderers: {
     formRenderer: locateFormPlugin(analysisConfig.analysisName).formRenderer,
@@ -231,8 +261,38 @@ const displayToType = (display: string, choices: StepAnalysisType[]) => get(
   ''
 );
 
+const typeHasParameters = (display: string, choices: StepAnalysisType[]) => get(
+  choices.find(({ name }) => display === name),
+  'hasParameters',
+  false
+);
+
 const typeToDisplay = (type: string, choices: StepAnalysisType[]) => get(
   choices.find(({ name }) => type === name),
   'displayName',
   ''
 );
+
+const reasonTextMap = {
+  'CREATED': '',
+  'INVALID': '',
+  'COMPLETE': '',
+  'PENDING': '',
+  'RUNNING': '',
+  'ERROR': 'A run of this analysis encountered an error before it could complete.',
+  'INTERRUPTED': 'A run of this analysis was interrupted before it could complete',
+  'OUT_OF_DATE': (
+    'Your previous run\'s results are unavailable and must be ' +
+    'regenerated.  Please confirm your parameters above and re-run.'
+  ),
+  'EXPIRED': (
+    'The last run of this analysis took too long to complete and was ' +
+    'cancelled.  If this problem persists, please contact us.'
+  ),
+  'STEP_REVISED': (
+    'Your previous analysis results are not available because the result ' +
+    'changed when you used the filter table above or revised a search ' +
+    'strategy step. Please confirm your analysis parameters and re-run.'
+  ),
+  'UNKNOWN': ''
+};
