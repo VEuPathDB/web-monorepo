@@ -21,6 +21,10 @@
   </listener>
 
   <listener>
+    <listener-class>org.gusdb.wdk.controller.InitListenerForBeans</listener-class>
+  </listener>
+
+  <listener>
     <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
 

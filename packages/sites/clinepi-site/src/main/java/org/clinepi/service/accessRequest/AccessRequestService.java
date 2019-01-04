@@ -61,7 +61,7 @@ public class AccessRequestService extends UserService {
       @PathParam("dataset-id") String datasetId) throws WdkModelException, ConflictException, DataValidationException {
     LOG.info("Handling an access request for user id " + userId + " and dataset id " + datasetId + "...");
 
-    if (userId != this.getSessionUserId() || this.getSessionUser().isGuest()) {
+    if (userId != this.getSessionUser().getUserId() || this.getSessionUser().isGuest()) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
 

@@ -56,7 +56,7 @@ public class AccessRequestSubmitter {
       // has failed, and so we roll back the record insertion
       catch (SQLException | WdkModelException ex) {
         conn.rollback();
-        throw new WdkModelException(ex);        
+        throw new WdkModelException(ex);
       }
     }
 
