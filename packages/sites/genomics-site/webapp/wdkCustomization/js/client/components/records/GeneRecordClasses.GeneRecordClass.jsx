@@ -636,11 +636,11 @@ class BlastpForm extends React.Component {
   	       	     <input type="radio" name="database" value="nr"/> Non-redundant protein sequences (nr)<br/> 
 	       	     <input type="radio" name="database" value="refseq_protein"/> Reference proteins (refseq_protein)<br/> 
   	       	     <input type="radio" name="database" value="swissprot"/> UniProtKB/Swiss-Prot(swissprot)<br/>
-	       	     <input type="radio" name="database" value="landmark"/> Model Organisms (landmark)<br/>
+	       	     <input type="radio" name="database" value="SMARTBLAST/landmark"/> Model Organisms (landmark)<br/>
 	       	     <input type="radio" name="database" value="pat"/> Patented protein sequences(pat)<br/>
 	       	     <input type="radio" name="database" value="pdb"/> Protein Data Bank proteins(pdb)<br/>
-	       	     <input type="radio" name="database" value="env_nr"/> Metagenomic proteins(env_nr)<br/>
-	       	     <input type="radio" name="database" value="tsa_nr"/> Transcriptome Shotgun Assembly proteins (tsa_nr)<br/><br/>
+	       	     <input type="radio" name="database" value="env_nr_v5"/> Metagenomic proteins(env_nr)<br/>
+	       	     <input type="radio" name="database" value="tsa_nr_v5"/> Transcriptome Shotgun Assembly proteins (tsa_nr)<br/><br/>
 
   	       	     <input type="submit"/>
                </form>
