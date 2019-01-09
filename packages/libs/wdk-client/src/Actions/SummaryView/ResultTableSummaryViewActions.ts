@@ -19,12 +19,6 @@ export const updateColumnsDialogSelection = makeActionCreator(
     (selection: Array<string>) => ({ selection })
 );
 
-// the actual selection, in the results table
-export const updateColumnsSelection = makeActionCreator(
-    'resultTableSummaryView/updateColumnsSelection',
-    (selection: Array<string>) => ({ selection })
-);
-
 export const updateColumnsDialogExpandedNodes = makeActionCreator(
     'resultTableSummaryView/updateColumnsExpandedNodes',
     (expanded: Array<string>) => ({ expanded })
@@ -111,6 +105,5 @@ export type Action =
     | InferAction<typeof fulfillRecordsBasketStatus>
     | InferAction<typeof showHideAddColumnsDialog>
     | InferAction<typeof updateColumnsDialogSelection>
-    | InferAction<typeof updateColumnsSelection>
     | InferAction<typeof updateColumnsDialogExpandedNodes>
 
