@@ -45,13 +45,13 @@ export const fulfillSorting = makeActionCreator(
     (sorting: AttributeSortingSpec[], questionName: string) => ({ sorting, questionName })
     );
 
-export const requestColumnsPreference = makeActionCreator(
-    'resultTableSummaryView/requestColumnsPreference',
+export const requestColumnsChoicePreference = makeActionCreator(
+    'resultTableSummaryView/requestColumnsChoicePreference',
     (questionName: string) => ({ questionName })
 );
     
-export const requestColumnsUpdate = makeActionCreator(
-    'resultTableSummaryView/requestColumnsUpdate',
+export const requestColumnsChoiceUpdate = makeActionCreator(
+    'resultTableSummaryView/requestColumnsChoiceUpdate',
     (columns: string[], questionName: string) => ({ columns, questionName })
 );
     
@@ -99,8 +99,8 @@ export type Action =
     | InferAction<typeof requestSortingPreference>
     | InferAction<typeof requestSortingUpdate>
     | InferAction<typeof fulfillSorting>
-    | InferAction<typeof requestColumnsPreference>
-    | InferAction<typeof requestColumnsUpdate>
+    | InferAction<typeof requestColumnsChoicePreference>
+    | InferAction<typeof requestColumnsChoiceUpdate>
     | InferAction<typeof fulfillColumnsChoice>
     | InferAction<typeof requestPageSize>
     | InferAction<typeof fulfillPageSize>

@@ -70,6 +70,8 @@ interface TempResultResponse {
   id: string;
 }
 
+export type BasketOperation = 'add' | 'remove' ;
+
 export type DatasetConfig = {
   sourceType: 'idList',
   sourceContent: { ids: string[] }
@@ -774,9 +776,8 @@ export default class WdkService {
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  updateBasketStatus(status: boolean, recordClassName: string, primaryKeys: Set<PrimaryKey>): Promise<never> {
-    let action = status ? 'add' : 'remove';
-    let data = JSON.stringify({ [action]: primaryKeys });
+  updateBasketStatus(operation: BasketOperation, recordClassName: string, primaryKeys: Set<PrimaryKey>): Promise<never> {
+    let data = JSON.stringify({ [operation]: primaryKeys });
     let url = `/users/current/baskets/${recordClassName}`;
     return this._fetchJson<never>('patch', url, data);
   }
@@ -987,10 +988,29 @@ export default class WdkService {
     });
   }
 
+  updateStep(stepId: number, stepSpec : NewStepSpec, userId: string = 'current') : Promise<never> {
+    let data = JSON.stringify(stepSpec);
+    let url = `/users/${userId}/steps/${stepId}`;
+    return this._fetchJson<never>('patch', url, data);
+  }
+
   getStrategies() {
     return this.sendRequest(Decode.arrayOf(strategyDecoder), {
       method: 'GET',
       path: '/users/current/strategies'
+    })
+  }
+
+  // step filters are dynamically typed, so have to pass in the expected type
+  getStepFilterSummary<T>(
+    decoder: Decode.Decoder<T>,
+    stepId: number,
+    filterName: string,
+    userId: string = 'current'
+  ) {
+    return this.sendRequest(decoder, {
+      method: 'get',
+      path: `/users/${userId}/steps/${stepId}/answer/filter-summary/${filterName}`
     })
   }
 

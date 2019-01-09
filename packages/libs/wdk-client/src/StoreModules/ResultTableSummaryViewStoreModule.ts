@@ -4,8 +4,8 @@ import {
   requestSortingPreference,
   requestSortingUpdate,
   fulfillSorting,
-  requestColumnsPreference,
-  requestColumnsUpdate,
+  requestColumnsChoicePreference,
+  requestColumnsChoiceUpdate,
   fulfillColumnsChoice,
   requestPageSize,
   fulfillPageSize,
@@ -39,7 +39,7 @@ export type State = {
     currentPage?: number;
     answer?: Answer;
     questionFullName?: string;  // remember question so can validate sorting and columns fulfill actions
-    basketStatus?: Array<BasketStatus>; // cardinality == pageSize
+    basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
     columnsDialogIsOpen: boolean;
     columnsDialogSelection?:Array<string> //
     columnsDialogExpandedNodes?:Array<string>
@@ -61,21 +61,20 @@ function getUpdatedBasketStatus(newStatus : BasketStatus, answer : Answer, baske
 function reduceBasketUpdateAction (state: State, action: Action ) : State {
     let  status : BasketStatus;
     if (action.type == requestUpdateBasket.type) status = 'loading'
-    else if (action.type == fulfillUpdateBasket.type) status = action.payload.status? 'yes' : 'no';
+    else if (action.type == fulfillUpdateBasket.type) status = action.payload.operation === 'add'? 'yes' : 'no';
     else return state;
  
-    if (state.basketStatus == undefined || state.answer == undefined || 
+    if (state.basketStatusArray == undefined || state.answer == undefined || 
         action.payload.recordClassName != state.answer.meta.recordClassName) 
         return { ...state};
-    let newBasketStatus = getUpdatedBasketStatus(status, state.answer, state.basketStatus, action.payload.primaryKeys)
-    return {...state, basketStatus: newBasketStatus};
+    let newBasketStatusArray = getUpdatedBasketStatus(status, state.answer, state.basketStatusArray, action.payload.primaryKeys)
+    return {...state, basketStatusArray: newBasketStatusArray};
 }
 
 function reduceColumnsFulfillAction(state: State, action: Action ) : State {
     if (action.type != fulfillColumnsChoice.type
         || action.payload.questionName != state.questionFullName) return state;
 
-    
     return { ...state, columnsDialogSelection: action.payload.columns};
 }
 
@@ -84,8 +83,8 @@ export function reduce(state: State = initialState, action: Action): State {
         case fulfillAnswer.type: {
             return { ...state, answer: action.payload.answer };
         } case fulfillRecordsBasketStatus.type: {
-            return { ...state, basketStatus: action.payload.basketStatus.map(status => status? 'yes' : 'no') };
-        } case requestColumnsPreference.type: {
+            return { ...state, basketStatusArray: action.payload.basketStatus.map(status => status? 'yes' : 'no') };
+        } case requestColumnsChoicePreference.type: {
             return {...state, questionFullName: action.payload.questionName}
         } case requestSortingPreference.type: {
             return {...state, questionFullName: action.payload.questionName}
@@ -101,7 +100,10 @@ export function reduce(state: State = initialState, action: Action): State {
             return { ...state, columnsDialogExpandedNodes: action.payload.expanded}
         } case updateColumnsDialogSelection.type: {
             return { ...state, columnsDialogSelection: action.payload.selection}
-        }
+        } case fulfillColumnsChoice.type: {
+            return reduceColumnsFulfillAction(state, action);
+    }
+
 
     default: {
             return state;
@@ -119,19 +121,18 @@ async function getRequestStep([openResultTableSummaryViewAction]: [InferAction<t
     return requestStep(stepId);
 }
 
-// these guys probably belong in user preference land
-async function getRequestColumnsPreference([requestAction]: [InferAction<typeof fulfillStep>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestColumnsPreference>> {
-    return requestColumnsPreference(requestAction.payload.step.answerSpec.questionName);
+async function getRequestColumnsPreference([requestAction]: [InferAction<typeof fulfillStep>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestColumnsChoicePreference>> {
+    return requestColumnsChoicePreference(requestAction.payload.step.answerSpec.questionName);
 }
 
-async function getFulfillColumnsPreference([requestAction]: [InferAction<typeof requestColumnsPreference>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsChoice>> {
+// this probably belongs in user preference land
+async function getFulfillColumnsPreference([requestAction]: [InferAction<typeof requestColumnsChoicePreference>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsChoice>> {
 
-    // TODO: if no user preference, get the default from the question!
     let summaryTableConfigPref = await getSummaryTableConfigUserPref(requestAction.payload.questionName, wdkService);
     return fulfillColumnsChoice(summaryTableConfigPref.columns, requestAction.payload.questionName);
 }
 
-async function getFulfillColumnsUpdate([requestAction]: [InferAction<typeof requestColumnsUpdate>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsChoice>> {
+async function getFulfillColumnsUpdate([requestAction]: [InferAction<typeof requestColumnsChoiceUpdate>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillColumnsChoice>> {
 
     await setResultTableColumnsPref(requestAction.payload.questionName, wdkService, requestAction.payload.columns);
     return fulfillColumnsChoice(requestAction.payload.columns, requestAction.payload.questionName);
@@ -212,17 +213,23 @@ export const windowedObserve =
     combineEpics(
       mrate([openResultTableSummaryView], getRequestStep),
       mrate([openResultTableSummaryView], getFirstPageNumber),
-           //    mrate([openResultTableSummaryView], getRequestPageSize),
- //     mrate([fulfillStep], getRequestColumnsConfig),
- //     mrate([requestColumnsConfig], getFulfillColumnsConfig),
+      /*
+      mrate([openResultTableSummaryView], getRequestPageSize),
+      mrate([fulfillStep], getRequestColumnsChoicePreference),  // need question from step
+      mrate([requestColumnsChoicePreference], getFulfillColumnsChoice),
+      mrate([requestColumnsChoiceUpdate], getFulfillColumnsChoice),
+      mrate([fulfillStep], getRequestSortingPreference),  // need question from step
+      mrate([requestSortingPreference], getFulfillSorting),
+      mrate([requestSortingUpdate], getFulfillSorting),
       mrate([requestPageSize], getFulfillPageSize),
- /*     mrate(
+      mrate(
         [
           openResultTableSummaryView,
           fulfillStep,
           viewPageNumber,
           fulfillPageSize,
-          fulfillColumnsConfig,
+          fulfillColumnsChoice,
+          fulfillSorting,
         ],
        getRequestAnswer,
       ),

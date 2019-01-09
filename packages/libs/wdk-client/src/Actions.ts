@@ -18,6 +18,7 @@ import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSu
 import * as IsolatesSummaryViewActions from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StepActions from 'wdk-client/Actions/StepActions';
+import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
 
 export {
   AnswerActions,
@@ -40,6 +41,7 @@ export {
   BlastSummaryViewActions,
   IsolatesSummaryViewActions,
   GenomeSummaryViewActions,
+  MatchedTranscriptsFilterActions,
 };
 
 export type Action =
@@ -63,4 +65,5 @@ export type Action =
   | BlastSummaryViewActions.Action
   | IsolatesSummaryViewActions.Action
   | GenomeSummaryViewActions.Action
+  | MatchedTranscriptsFilterActions.Action
 
