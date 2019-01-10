@@ -7,7 +7,12 @@ export const openResultTableSummaryView = makeActionCreator(
     'resultTableSummaryView/open',
     (stepId: number) => ({ stepId })
     );
- 
+
+export const closeResultTableSummaryView = makeActionCreator(
+    'resultTableSummaryView/close',
+    (stepId: number) => ({ stepId })
+);
+
 export const showHideAddColumnsDialog = makeActionCreator(
     'resultTableSummaryView/showHideAddColumnsPopup',
        (show: boolean) => ({ show })
@@ -76,21 +81,23 @@ export const requestAnswer = makeActionCreator(
 
 export const fulfillAnswer = makeActionCreator(
     'resultTableSummaryView/fulfillAnswer',
-    (answer: Answer) => ({answer })
+    (stepId: number, columnsConfig: AttributesConfig, pagination: Pagination, answer: Answer) => ({stepId, columnsConfig, pagination, answer })
     );
 
 export const requestRecordsBasketStatus = makeActionCreator(
     'resultTableSummaryView/requestRecordsBasketStatus',
-    (recordClassName: string, basketQuery: PrimaryKey[]) => ({recordClassName, basketQuery })
+    (stepId: number, pageNumber: number, pageSize: number, recordClassName: string, basketQuery: PrimaryKey[]) => ({stepId, pageNumber, pageSize, recordClassName, basketQuery })
     );
 
 export const fulfillRecordsBasketStatus = makeActionCreator(
     'resultTableSummaryView/fulfillRecordsBasketStatus',
-    (basketStatus: boolean[]) => ({basketStatus })
+    (stepId: number, pageNumber: number, pageSize: number, basketStatus: boolean[]) => ({stepId, pageNumber, pageSize, basketStatus })
     );
 
 export type Action =
     | InferAction<typeof requestSortingPreference>
+    | InferAction<typeof openResultTableSummaryView>
+    | InferAction<typeof closeResultTableSummaryView>
     | InferAction<typeof requestSortingUpdate>
     | InferAction<typeof fulfillSorting>
     | InferAction<typeof requestColumnsChoicePreference>
