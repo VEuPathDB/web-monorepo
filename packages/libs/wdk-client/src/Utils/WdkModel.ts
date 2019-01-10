@@ -315,7 +315,7 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
   includeEmptyTables?: boolean;
 }
 
-export interface NewStepSpec {
+export interface StepSpec {
   answerSpec: AnswerSpec,
   customName?: string,
   isCollapsible?: boolean,

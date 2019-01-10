@@ -17,7 +17,7 @@ import {
   AnswerSpec,
   AttributeField,
   Favorite,
-  NewStepSpec,
+  StepSpec,
   Parameter,
   ParameterGroup,
   ParameterValue,
@@ -967,7 +967,7 @@ export default class WdkService {
     return this._fetchJson<Step>('get', `/users/${userId}/steps/${stepId}`);
   }
 
-  createStep(newStepSpec: NewStepSpec, userId: string = "current") {
+  createStep(newStepSpec: StepSpec, userId: string = "current") {
     return this._fetchJson<Step>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
   }
 
@@ -988,7 +988,7 @@ export default class WdkService {
     });
   }
 
-  updateStep(stepId: number, stepSpec : NewStepSpec, userId: string = 'current') : Promise<never> {
+  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<never> {
     let data = JSON.stringify(stepSpec);
     let url = `/users/${userId}/steps/${stepId}`;
     return this._fetchJson<never>('patch', url, data);
