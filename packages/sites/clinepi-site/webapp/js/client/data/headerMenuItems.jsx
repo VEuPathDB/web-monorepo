@@ -60,6 +60,10 @@ export default function headerMenuItems (state) {
             appUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
           },
           {
+            text: 'About ClinEpiDB',
+            route: '/about'
+          },
+          {
             text: 'Data Access & Use Policy',
             url: '/documents/DataAccessUsePolicyClinEpiDB.latest.pdf'
           },
