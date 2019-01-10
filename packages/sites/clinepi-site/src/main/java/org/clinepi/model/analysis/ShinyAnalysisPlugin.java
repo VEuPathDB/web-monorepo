@@ -101,6 +101,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
                 getStringCol(rs, PARENT_COL),
                 getStringCol(rs, CAT_COL)));
           }
+          return null;
         }
         catch (IOException e) {
           throw new SQLRunnerException(e);
