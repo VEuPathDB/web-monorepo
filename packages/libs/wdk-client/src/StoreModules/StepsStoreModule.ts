@@ -47,10 +47,8 @@ async function getFulfillStepUpdate([requestAction]: [InferAction<typeof request
     return fulfillStep(step);
 }
 
-
 export const observe =
      combineEpics(
         mapRequestActionsToEpic([requestStep], getFulfillStep),
         mapRequestActionsToEpic([requestStepUpdate], getFulfillStepUpdate),
-
      );
