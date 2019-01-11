@@ -43,6 +43,10 @@ export default function headerMenuItems (state) {
         text: 'Community',
         children: [
           {
+            text: 'About ClinEpiDB',
+            route: '/about'
+          },
+          {
             text: 'News',
             appUrl: '/showXmlDataContent.do?name=XmlQuestions.News'
           },
@@ -58,10 +62,6 @@ export default function headerMenuItems (state) {
           {
             text: 'Tutorials and Resources',
             appUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
-          },
-          {
-            text: 'About ClinEpiDB',
-            route: '/about'
           },
           {
             text: 'Data Access & Use Policy',
