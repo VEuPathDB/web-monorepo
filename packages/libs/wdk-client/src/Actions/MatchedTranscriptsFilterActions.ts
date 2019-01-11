@@ -1,7 +1,12 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
-export const openMatchedTranscriptsFilterAction = makeActionCreator(
+export const openMatchedTranscriptsFilter = makeActionCreator(
     'matchedTranscriptsFilter/open',
+    (stepId: number) => ({ stepId })
+);
+
+export const closeMatchedTranscriptsFilter = makeActionCreator(
+    'matchedTranscriptsFilter/close',
     (stepId: number) => ({ stepId })
 );
 
@@ -36,7 +41,8 @@ export const fulfillMatchedTransFilterSummary = makeActionCreator(
 );
 
 export type Action =
-    | InferAction<typeof openMatchedTranscriptsFilterAction>
+    | InferAction<typeof openMatchedTranscriptsFilter>
+    | InferAction<typeof closeMatchedTranscriptsFilter>
     | InferAction<typeof requestMatchedTransFilterExpandedPref>
     | InferAction<typeof requestMatchedTransFilterExpandedUpdate>
     | InferAction<typeof fulfillMatchedTransFilterExpanded>

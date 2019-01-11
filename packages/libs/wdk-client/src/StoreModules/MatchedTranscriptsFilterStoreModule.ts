@@ -1,4 +1,4 @@
-import { openMatchedTranscriptsFilterAction, requestMatchedTransFilterExpandedPref, requestMatchedTransFilterExpandedUpdate, fulfillMatchedTransFilterExpanded, setDisplayedSelection, requestMatchedTransFilterSummary, fulfillMatchedTransFilterSummary} from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
+import { openMatchedTranscriptsFilter, closeMatchedTranscriptsFilter, requestMatchedTransFilterExpandedPref, requestMatchedTransFilterExpandedUpdate, fulfillMatchedTransFilterExpanded, setDisplayedSelection, requestMatchedTransFilterSummary, fulfillMatchedTransFilterSummary} from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
 
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
@@ -8,8 +8,9 @@ import { getMatchedTranscriptFilterPref, setMatchedTranscriptFilterPref } from '
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import { Observable } from 'rxjs';
-import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
-import { combineEpics} from 'redux-observable';
+import {mapRequestActionsToEpic, takeEpicInWindow} from 'wdk-client/Utils/ActionCreatorUtils';
+import { combineEpics, StateObservable} from 'redux-observable';
+import { fulfillStep } from 'wdk-client/Actions/StepActions';
 
 export const key = 'matchedTranscriptsFilter';
 
@@ -29,7 +30,7 @@ const initialState: State = {
 
 export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
-        case openMatchedTranscriptsFilterAction.type: {
+        case openMatchedTranscriptsFilter.type: {
             return { ...state, stepId: action.payload.stepId }
         } 
         case fulfillMatchedTransFilterExpanded.type: {
@@ -49,12 +50,13 @@ export function reduce(state: State = initialState, action: Action): State {
     }
 }
 
-// these guys probably belong in user preference land
-async function getRequestMatchedTransFilterExpandedPref([requestAction]: [InferAction<typeof openMatchedTranscriptsFilterAction>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterExpandedPref>> {
+const openMTF = openMatchedTranscriptsFilter;
+
+async function getRequestMatchedTransFilterExpandedPref([openAction]: [InferAction<typeof openMTF>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterExpandedPref>> {
     return requestMatchedTransFilterExpandedPref();
 }
 
-async function getFulfillMatchedTransFilterExpandedPref([requestAction]: [InferAction<typeof requestMatchedTransFilterExpandedPref>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
+async function getFulfillMatchedTransFilterExpandedPref([requestAction]: [ InferAction<typeof requestMatchedTransFilterExpandedPref>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
 
     let matchedTransFiltPref = await getMatchedTranscriptFilterPref(wdkService);
     return fulfillMatchedTransFilterExpanded(matchedTransFiltPref.expanded);
@@ -66,8 +68,16 @@ async function getFulfillMatchedTransFilterExpandedUpdate([requestAction]: [Infe
     return fulfillMatchedTransFilterExpanded(requestAction.payload.expanded);
 }
 
-async function getRequestMatchedTransFilterSummary([requestAction]: [InferAction<typeof openMatchedTranscriptsFilterAction>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary>> {
-    return requestMatchedTransFilterSummary(requestAction.payload.stepId);
+async function getRequestMatchedTransFilterSummary([openAction]: [InferAction<typeof openMTF>], state$: StateObservable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary> | undefined> {
+    
+    if (!state$.value.expanded) return undefined;
+    return requestMatchedTransFilterSummary(openAction.payload.stepId);
+}
+
+async function getRequestMatchedTransFilterSummaryStepChg([openAction, stepAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>], state$: StateObservable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary> | undefined> {
+    if (!state$.value.expanded) return undefined;
+    if (openAction.payload.stepId != stepAction.payload.step.id) return undefined;
+    return requestMatchedTransFilterSummary(openAction.payload.stepId);
 }
 
 const MATCHED_TRANS_FILTER_NAME = "transcriptFilters.matchedTranscriptFilter";
@@ -90,8 +100,6 @@ async function getFulfillUpdatedMatchedTransFilterSummary([requestAction]: [Infe
     return fulfillMatchedTransFilterExpanded(matchedTransFiltPref.expanded);
 }
 
-
-
 /*
   open -> reqExpandedPref
   reqExpandedPref ->  fulfillExpanded
@@ -99,3 +107,18 @@ async function getFulfillUpdatedMatchedTransFilterSummary([requestAction]: [Infe
   fulfillExpandedPref -> reqFilterSummary   // only if expanded
   fulfillStep -> reqFilterSummary  // only if expanded.  this is not required, but if it happens need to update
 */
+
+const mrate = mapRequestActionsToEpic;
+
+export const observe =
+    takeEpicInWindow<State>(
+        openMTF,
+        closeMatchedTranscriptsFilter,
+        combineEpics(
+            mrate([openMTF], getRequestMatchedTransFilterExpandedPref),
+            mrate([requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
+            mrate([requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
+            mrate([openMTF], getRequestMatchedTransFilterSummary),
+            mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg),
+        ),
+    );
