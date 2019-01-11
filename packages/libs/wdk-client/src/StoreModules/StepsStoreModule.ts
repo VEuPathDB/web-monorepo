@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { mapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 import { Step } from 'wdk-client/Utils/WdkUser';
-import { requestStep, fulfillStep} from 'wdk-client/Actions/StepActions';
+import { requestStep, requestStepUpdate, fulfillStep} from 'wdk-client/Actions/StepActions';
 
 export const key = 'steps';
 
@@ -42,7 +42,13 @@ async function getFulfillStep([requestAction]: [InferAction<typeof requestStep>]
     return fulfillStep(step);
 }
 
+async function getFulfillStepUpdate([requestAction]: [InferAction<typeof requestStepUpdate>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillStep>> {
+     let step = await wdkService.updateStep(requestAction.payload.stepId, requestAction.payload.stepSpec);
+    return fulfillStep(step);
+}
+
 export const observe =
      combineEpics(
         mapRequestActionsToEpic([requestStep], getFulfillStep),
+        mapRequestActionsToEpic([requestStepUpdate], getFulfillStepUpdate),
      );

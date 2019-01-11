@@ -1,14 +1,16 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { PrimaryKey } from "wdk-client/Utils/WdkModel";
+import { BasketOperation } from "wdk-client/Utils/WdkService";
+export type BasketScope = "global" | "project";
 
 export const requestUpdateBasket = makeActionCreator(
     'requestUpdateBasket',
-    (status: boolean, recordClassName: string, primaryKeys: Set<PrimaryKey>) => ({ status, recordClassName,  primaryKeys})
+    (operation: BasketOperation, recordClassName: string, primaryKeys: Set<PrimaryKey>) => ({ operation: operation, recordClassName,  primaryKeys})
     );
     
 export const fulfillUpdateBasket = makeActionCreator(
         'fulfillUpdateBasket',
-        (status: boolean, recordClassName: string, primaryKeys: Set<PrimaryKey>) => ({ status, recordClassName,  primaryKeys})
+        (operation: BasketOperation, recordClassName: string, primaryKeys: Set<PrimaryKey>) => ({ operation, recordClassName,  primaryKeys})
         );
         
 export type Action =

@@ -5,6 +5,7 @@ import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
 import { alert, confirm } from 'wdk-client/Utils/Platform';
 import { RecordInstance, PrimaryKey } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
+import { BasketOperation } from "wdk-client/Utils/WdkService";
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
 import { UserProfileFormData } from 'wdk-client/StoreModules/UserProfileStoreModule';
 
@@ -744,7 +745,7 @@ export function updateBasketStatus(record: RecordInstance, status: boolean): Act
   return maybeLoggedIn<BasketAction, ShowLoginModalAction|EmptyAction>(
     ({ wdkService }) =>
       setBasketStatus(record,
-        wdkService.updateBasketStatus(status, record.recordClassName, setOfOneRecord).then(response => status)),
+        wdkService.updateBasketStatus(status? 'add' : 'remove', record.recordClassName, setOfOneRecord).then(response => status)),
     showLoginWarning('use baskets')
   );
 };

@@ -7,7 +7,12 @@ export const openResultTableSummaryView = makeActionCreator(
     'resultTableSummaryView/open',
     (stepId: number) => ({ stepId })
     );
- 
+
+export const closeResultTableSummaryView = makeActionCreator(
+    'resultTableSummaryView/close',
+    (stepId: number) => ({ stepId })
+);
+
 export const showHideAddColumnsDialog = makeActionCreator(
     'resultTableSummaryView/showHideAddColumnsPopup',
        (show: boolean) => ({ show })
@@ -16,12 +21,6 @@ export const showHideAddColumnsDialog = makeActionCreator(
 // the selection in the columns dialog, before user has hit OK    
 export const updateColumnsDialogSelection = makeActionCreator(
     'resultTableSummaryView/updateTransitoryColumnsSelection',
-    (selection: Array<string>) => ({ selection })
-);
-
-// the actual selection, in the results table
-export const updateColumnsSelection = makeActionCreator(
-    'resultTableSummaryView/updateColumnsSelection',
     (selection: Array<string>) => ({ selection })
 );
 
@@ -45,13 +44,13 @@ export const fulfillSorting = makeActionCreator(
     (sorting: AttributeSortingSpec[], questionName: string) => ({ sorting, questionName })
     );
 
-export const requestColumnsPreference = makeActionCreator(
-    'resultTableSummaryView/requestColumnsPreference',
+export const requestColumnsChoicePreference = makeActionCreator(
+    'resultTableSummaryView/requestColumnsChoicePreference',
     (questionName: string) => ({ questionName })
 );
     
-export const requestColumnsUpdate = makeActionCreator(
-    'resultTableSummaryView/requestColumnsUpdate',
+export const requestColumnsChoiceUpdate = makeActionCreator(
+    'resultTableSummaryView/requestColumnsChoiceUpdate',
     (columns: string[], questionName: string) => ({ columns, questionName })
 );
     
@@ -82,25 +81,27 @@ export const requestAnswer = makeActionCreator(
 
 export const fulfillAnswer = makeActionCreator(
     'resultTableSummaryView/fulfillAnswer',
-    (answer: Answer) => ({answer })
+    (stepId: number, columnsConfig: AttributesConfig, pagination: Pagination, answer: Answer) => ({stepId, columnsConfig, pagination, answer })
     );
 
 export const requestRecordsBasketStatus = makeActionCreator(
     'resultTableSummaryView/requestRecordsBasketStatus',
-    (recordClassName: string, basketQuery: PrimaryKey[]) => ({recordClassName, basketQuery })
+    (stepId: number, pageNumber: number, pageSize: number, recordClassName: string, basketQuery: PrimaryKey[]) => ({stepId, pageNumber, pageSize, recordClassName, basketQuery })
     );
 
 export const fulfillRecordsBasketStatus = makeActionCreator(
     'resultTableSummaryView/fulfillRecordsBasketStatus',
-    (basketStatus: boolean[]) => ({basketStatus })
+    (stepId: number, pageNumber: number, pageSize: number, basketStatus: boolean[]) => ({stepId, pageNumber, pageSize, basketStatus })
     );
 
 export type Action =
     | InferAction<typeof requestSortingPreference>
+    | InferAction<typeof openResultTableSummaryView>
+    | InferAction<typeof closeResultTableSummaryView>
     | InferAction<typeof requestSortingUpdate>
     | InferAction<typeof fulfillSorting>
-    | InferAction<typeof requestColumnsPreference>
-    | InferAction<typeof requestColumnsUpdate>
+    | InferAction<typeof requestColumnsChoicePreference>
+    | InferAction<typeof requestColumnsChoiceUpdate>
     | InferAction<typeof fulfillColumnsChoice>
     | InferAction<typeof requestPageSize>
     | InferAction<typeof fulfillPageSize>
@@ -111,6 +112,5 @@ export type Action =
     | InferAction<typeof fulfillRecordsBasketStatus>
     | InferAction<typeof showHideAddColumnsDialog>
     | InferAction<typeof updateColumnsDialogSelection>
-    | InferAction<typeof updateColumnsSelection>
     | InferAction<typeof updateColumnsDialogExpandedNodes>
 

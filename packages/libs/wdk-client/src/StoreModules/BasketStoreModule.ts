@@ -22,8 +22,8 @@ export function reduce(state: State = initialState, action: Action): State {
 
 async function getFulfillUpdateBasket([requestAction]:  [InferAction<typeof requestUpdateBasket>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillUpdateBasket>> {
     let payload = requestAction.payload;
-    await wdkService.updateBasketStatus(payload.status, payload.recordClassName, payload.primaryKeys)
-    return fulfillUpdateBasket(payload.status, payload.recordClassName, payload.primaryKeys);
+    await wdkService.updateBasketStatus(payload.operation, payload.recordClassName, payload.primaryKeys);
+    return fulfillUpdateBasket(payload.operation, payload.recordClassName, payload.primaryKeys);
 }
 
 export const observe =
