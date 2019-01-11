@@ -4,14 +4,14 @@ import 'site/wdkCustomization/css/client.scss';
 import { initialize } from 'ebrc-client/bootstrap';
 // import apicomm wrappers and additional routes
 import * as componentWrappers from './componentWrappers';
-import pluginConfig from './pluginConfig';
 import { wrapRoutes } from './routes';
 import wrapStoreModules from './wrapStoreModules';
+import wrapWdkService from './wrapWdkService';
 
 // Initialize the application.
 initialize({
   componentWrappers,
   wrapRoutes,
   wrapStoreModules,
-  pluginConfig,
+  wrapWdkService
 })
