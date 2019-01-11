@@ -142,14 +142,16 @@ class PaginationMenu extends React.PureComponent {
   }
 
   render () {
-    const { currentPage } = this.props;
+    const { currentPage, rowsPerPage, totalRows } = this.props;
     const totalPages = this.getTotalPages();
 
     const PageList = this.renderPageList;
     const PerPageMenu = this.renderPerPageMenu;
     const RelativeLink = this.renderRelativeLink;
 
-    return !totalPages || !currentPage ? null : (
+    if (!totalPages || !currentPage || totalRows <= rowsPerPage) return null;
+
+    return (
       <div className="PaginationMenu">
         <span className="Pagination-Spacer" />
         <RelativeLink relative="previous" />
