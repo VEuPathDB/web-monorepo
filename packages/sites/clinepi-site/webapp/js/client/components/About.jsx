@@ -15,7 +15,7 @@ export default function About() {
       <h2 id="how-was-it-made">How was it made?</h2>
       <div>
         <div>
-          <img src="/a/images/ClinEpiDB/ClinEpi_About_page_data_processing.png" />
+          <img alt="ClinEpiDB How we process the data from different studies" src="/a/images/ClinEpiDB/ClinEpi_About_page_data_processing.png" />
         </div>
         <p>ClinEpiDB was developed using the existing infrastructure of <a target="_blank" href="https://eupathdb.org">EuPathDB</a>, a collection of databases covering 170+ eukaryotic pathogens, along with relevant free-living and non-pathogenic species and select pathogen hosts, which provides a sophisticated search strategy system enabling complex interrogations of underlying data. Currently, data integration for ClinEpiDB has occurred or is in process for NIH-supported International Centers for Excellence in Malaria Research (ICEMR), the Gates Foundation-supported Malnutrition and Enteric Diseases Network (MAL-ED), and the Global Enteric Multicenter Study (GEMS) projects. Greyed-out cards on the homepage indicate studies that have been loaded into a QA site, but are not yet publicly available. In the process of data integration, a unified semantic web framework has been used to describe data generated from these studies. Over 1500 different data variables about participants, their disease episodes, households, and other potential exposure factors were collected in these clinical epidemiology studies and mapped for web display.
         </p>
