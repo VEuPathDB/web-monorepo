@@ -2,7 +2,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Observable } from 'rxjs';
-import { mapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mergeMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 import { Step } from 'wdk-client/Utils/WdkUser';
 import { requestStep, requestStepUpdate, fulfillStep} from 'wdk-client/Actions/StepActions';
@@ -49,6 +49,6 @@ async function getFulfillStepUpdate([requestAction]: [InferAction<typeof request
 
 export const observe =
      combineEpics(
-        mapRequestActionsToEpic([requestStep], getFulfillStep),
-        mapRequestActionsToEpic([requestStepUpdate], getFulfillStepUpdate),
+        mergeMapRequestActionsToEpic([requestStep], getFulfillStep),
+        mergeMapRequestActionsToEpic([requestStepUpdate], getFulfillStepUpdate),
      );

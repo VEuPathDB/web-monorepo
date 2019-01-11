@@ -95,6 +95,7 @@ export const fulfillRecordsBasketStatus = makeActionCreator(
     );
 
 export type Action =
+    | InferAction<typeof openResultTableSummaryView>
     | InferAction<typeof requestSortingPreference>
     | InferAction<typeof openResultTableSummaryView>
     | InferAction<typeof closeResultTableSummaryView>

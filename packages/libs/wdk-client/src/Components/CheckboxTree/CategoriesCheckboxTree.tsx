@@ -11,9 +11,6 @@ import {
 } from 'wdk-client/Utils/CategoryUtils';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
-// This allows us to specify the generic type in CheckboxTree
-class RefinedCheckboxTree extends CheckboxTree<CategoryTreeNode> {}
-
 type ChangeHandler = (ids: string[]) => void;
 
 type Props = {
@@ -74,7 +71,7 @@ let {
     <div className="wdk-CategoriesCheckboxTree">
       {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
       <div className="wdk-CategoriesCheckboxTreeWrapper">
-        <RefinedCheckboxTree
+        <CheckboxTree<CategoryTreeNode>
           searchBoxHelp={searchBoxHelp}
           isSearchable={true}
           isSelectable={isSelectable}

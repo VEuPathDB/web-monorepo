@@ -18,6 +18,8 @@ import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewSto
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
 import * as stepAnalysis from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysisStoreModule';
 import * as steps from 'wdk-client/StoreModules/StepsStoreModule';
+import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisStoreModule';
+import * as histogramAnalysis from 'wdk-client/StoreModules/HistogramAnalysisStoreModule';
 
 export default {
   answerView,
@@ -40,4 +42,6 @@ export default {
   userDatasetList,
   userProfile,
   userRegistration,
+  wordCloudAnalysis,
+  histogramAnalysis,
 };

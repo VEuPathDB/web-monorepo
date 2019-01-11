@@ -1,109 +1,138 @@
-import React from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
 
-import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
-import ViewController from 'wdk-client/Core/Controllers/ViewController';
-import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { requestStep } from "wdk-client/Actions/StepActions";
+import {
+  closeAttributeAnalysis,
+  openAttributeAnalysis
+} from "wdk-client/Actions/AttributeAnalysisActions";
+import ViewController from "wdk-client/Core/Controllers/ViewController";
+import { RootState } from "wdk-client/Core/State/Types";
+import { wrappable } from "wdk-client/Utils/ComponentUtils";
+import { Seq } from "wdk-client/Utils/IterableUtils";
 
-import AttributeAnalysisButton from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton';
-import { State as AttributeAnalysis } from 'wdk-client/StoreModules/AttributeAnalysisStoreModule';
-import { scopeAction } from 'wdk-client/Actions/AttributeAnalysisActions';
-import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { Action } from 'wdk-client/Actions';
+import AttributeAnalysisButton from "wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton";
+import { Plugin } from "wdk-client/Utils/ClientPlugin";
+import { Step } from "wdk-client/Utils/WdkUser";
+import { Reporter } from "wdk-client/Utils/WdkModel";
 
 type StateProps = {
-  globalData: GlobalData,
-} & AttributeAnalysis;
+  step?: Step;
+  reporter?: Reporter;
+  isOpen: boolean;
+};
 
 type DispatchProps = {
-  dispatch: Dispatch
+  requestStep: typeof requestStep,
+  openAttributeAnalysis: typeof openAttributeAnalysis,
+  closeAttributeAnalysis: typeof closeAttributeAnalysis,
 };
 
 type OwnProps = {
-  locatePlugin: LocatePlugin;
   attributeName: string;
-  questionName: string;
-  recordClassName: string;
-  reporterName: string;
+  reporterType: string;
   stepId: number;
 };
 
-type Props = {
-  stateProps: StateProps;
-  dispatchProps: DispatchProps;
-} & OwnProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 
 class AttributeAnalysisButtonController extends ViewController<Props> {
 
-  plugin = this.props.locatePlugin<AttributeAnalysis['analyses'][string]>('attributeAnalysis');
+  loadData() {
+    // FIXME Add loading, etc, status to step store and check here
+    if (this.props.step == null)
+      this.props.requestStep(+this.props.stepId);
+  }
 
   renderView() {
-    const { questionName, recordClassName, reporterName, stepId } = this.props;
-    const { globalData, analyses } = this.props.stateProps;
+    const {
+      stepId,
+      attributeName,
+      reporterType,
+      step,
+      reporter,
+      isOpen,
+      openAttributeAnalysis,
+      closeAttributeAnalysis
+    } = this.props;
 
-    const questionAttributes = Seq.from(globalData.questions as Question[])
-      .filter(question => question.name === questionName)
-      .flatMap(question => question.dynamicAttributes)
-
-    const recordClassAttributes = Seq.from(globalData.recordClasses as RecordClass[])
-      .filter(recordClass => recordClass.name === recordClassName)
-      .flatMap(recordClass => recordClass.attributes);
-
-    const reporter = questionAttributes.concat(recordClassAttributes)
-      .flatMap(attribute => attribute.formats)
-      .find(format => format.name === reporterName);
-
-    const key = `${stepId}__${reporterName}`;
-    const analysis = analyses && analyses[key];
-
-    if (reporter == null) return null;
+    if ( reporter == null || step == null) return null;
 
     const context = {
       type: 'attributeAnalysis',
       name: reporter.type,
-      recordClassName: recordClassName
+      recordClassName: step.recordClassName,
+      questionName: step.answerSpec.questionName
     }
 
-    const dispatch = (action: Action): any => {
-      this.props.dispatchProps.dispatch(
-        scopeAction({ action, context, reporter, stepId })
-      );
-    }
+    const pluginProps = {
+      stepId,
+      attributeName,
+      reporterType
+    };
 
     return (
       <AttributeAnalysisButton
-        recordClassName={recordClassName}
         stepId={stepId}
         reporter={reporter}
-        analysis={analysis}
-        dispatch={dispatch}>
-        {this.plugin.render(context, analysis, dispatch)}
+        isOpen={isOpen}
+        onOpen={openAttributeAnalysis}
+        onClose={closeAttributeAnalysis}
+      >
+        <Plugin
+          context={context}
+          pluginProps={pluginProps}
+        />
       </AttributeAnalysisButton>
     );
   }
 
 }
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  analyses: state.attributeAnalysis.analyses,
-  globalData: state.globalData
-});
+function mapStateToProps(state: RootState, props: OwnProps): StateProps {
+  const { attributeName, reporterType, stepId } = props;
+  const step = state.steps.steps[stepId];
+  const { questions, recordClasses } = state.globalData;
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({ dispatch });
+  if (
+    step == null ||
+    questions == null ||
+    recordClasses == null
+  ) return { isOpen: false };
 
-const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps): Props => ({
-  stateProps,
-  dispatchProps,
-  ...ownProps
-});
+  const reporterName = `${attributeName}-${reporterType}`;
+
+  const questionAttributes = Seq.from(questions)
+    .filter(question => question.name === step.answerSpec.questionName)
+    .flatMap(question => question.dynamicAttributes)
+
+  const recordClassAttributes = Seq.from(recordClasses)
+    .filter(recordClass => recordClass.name === step.recordClassName)
+    .flatMap(recordClass => recordClass.attributes);
+
+  const reporter = questionAttributes.concat(recordClassAttributes)
+    .flatMap(attribute => attribute.formats)
+    .find(format => format.name === reporterName);
+
+  const {
+    activeAnalysis,
+  } = state.attributeAnalysis.report;
+
+  const isOpen = (
+    activeAnalysis != null &&
+    activeAnalysis.stepId == +props.stepId &&
+    activeAnalysis.reporterName === reporterName
+  );
+
+  return {
+    step,
+    reporter,
+    isOpen
+  };
+}
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
-  mergeProps
+  { openAttributeAnalysis, closeAttributeAnalysis, requestStep }
 )(wrappable(AttributeAnalysisButtonController));

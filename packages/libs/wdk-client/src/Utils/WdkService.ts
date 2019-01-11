@@ -417,6 +417,7 @@ export default class WdkService {
   });
   private _cache: Map<string, Promise<any>> = new Map;
   private _recordCache: Map<string, {request: RecordRequest; response: Promise<RecordInstance>}> = new Map;
+  private _stepMap = new Map<number, Promise<Step>>();
   private _preferences: Promise<UserPreferences> | undefined;
   private _currentUserPromise: Promise<User> | undefined;
   private _initialCheck: Promise<void> | undefined;
@@ -964,8 +965,16 @@ export default class WdkService {
     return this._fetchJson<{oauthStateToken: string}>('get', '/oauth/state-token');
   }
 
-  findStep(stepId: number, userId: string = "current") {
-    return this._fetchJson<Step>('get', `/users/${userId}/steps/${stepId}`);
+  findStep(stepId: number, userId: string = "current"): Promise<Step> {
+    // cache step resonse
+    if (!this._stepMap.has(stepId)) {
+      this._stepMap.set(stepId, this._fetchJson<Step>('get', `/users/${userId}/steps/${stepId}`).catch(error => {
+        // if the request fails, remove the response since a later request might succeed
+        this._stepMap.delete(stepId);
+        throw error;
+      }))
+    }
+    return this._stepMap.get(stepId)!;
   }
 
   createStep(newStepSpec: StepSpec, userId: string = "current") {

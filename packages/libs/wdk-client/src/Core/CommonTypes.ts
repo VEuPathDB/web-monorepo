@@ -4,7 +4,6 @@ import { Action } from 'redux';
 
 import { ActionCreatorResult } from 'wdk-client/Core/WdkMiddleware';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
-import { CompositeClientPlugin } from 'wdk-client/Utils/ClientPlugin';
 
 
 export interface SimpleDispatch {
@@ -15,15 +14,18 @@ export interface DispatchAction {
   (action: ActionCreatorResult<Action>): any;
 }
 
-export interface ViewControllerProps {
-  locatePlugin: LocatePlugin;
-}
-
-export type PageControllerProps = ViewControllerProps & RouteComponentProps<any>;
+export type PageControllerProps = RouteComponentProps<any>;
 
 export interface RouteSpec {
   path: string;
   component: ComponentType<PageControllerProps | RouteComponentProps<any>>
+}
+
+// TODO
+export interface NewRouteSpec<RouteParams extends {}, MappedProps extends {}> {
+  path: string;
+  mapRouteProps: (routeProps: RouteComponentProps<RouteParams>) => MappedProps;
+  component: ComponentType<MappedProps>;
 }
 
 export interface MesaColumn {
@@ -54,7 +56,3 @@ export interface MesaSortObject {
   columnKey: string;
   direction: string;
 };
-
-export interface LocatePlugin {
-  <T>(type: string): CompositeClientPlugin<T>;
-}

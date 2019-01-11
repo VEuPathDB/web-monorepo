@@ -18,6 +18,8 @@ import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSu
 import * as IsolatesSummaryViewActions from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StepActions from 'wdk-client/Actions/StepActions';
+import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
+import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
 
 export {
@@ -41,6 +43,8 @@ export {
   BlastSummaryViewActions,
   IsolatesSummaryViewActions,
   GenomeSummaryViewActions,
+  WordCloudAnalysisActions,
+  HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
 };
 
@@ -65,5 +69,6 @@ export type Action =
   | BlastSummaryViewActions.Action
   | IsolatesSummaryViewActions.Action
   | GenomeSummaryViewActions.Action
+  | WordCloudAnalysisActions.Action
+  | HistogramAnalysisActions.Action
   | MatchedTranscriptsFilterActions.Action
-

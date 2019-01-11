@@ -8,8 +8,8 @@ import { getMatchedTranscriptFilterPref, setMatchedTranscriptFilterPref } from '
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import { Observable } from 'rxjs';
-import {mapRequestActionsToEpic, takeEpicInWindow} from 'wdk-client/Utils/ActionCreatorUtils';
-import { combineEpics, StateObservable} from 'redux-observable';
+import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
+import { combineEpics, StateObservable } from 'redux-observable';
 import { fulfillStep } from 'wdk-client/Actions/StepActions';
 
 export const key = 'matchedTranscriptsFilter';
@@ -68,16 +68,20 @@ async function getFulfillMatchedTransFilterExpandedUpdate([requestAction]: [Infe
     return fulfillMatchedTransFilterExpanded(requestAction.payload.expanded);
 }
 
-async function getRequestMatchedTransFilterSummary([openAction]: [InferAction<typeof openMTF>], state$: StateObservable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary> | undefined> {
-    
-    if (!state$.value.expanded) return undefined;
+async function getRequestMatchedTransFilterSummary([openAction]: [InferAction<typeof openMTF>], state$: StateObservable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary>> {
     return requestMatchedTransFilterSummary(openAction.payload.stepId);
 }
 
-async function getRequestMatchedTransFilterSummaryStepChg([openAction, stepAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>], state$: StateObservable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary> | undefined> {
-    if (!state$.value.expanded) return undefined;
-    if (openAction.payload.stepId != stepAction.payload.step.id) return undefined;
+function filterRequestMatchedTransFilterSummary([openAction]: [InferAction<typeof openMTF>], state: State) {
+    return !!state.expanded;
+}
+
+async function getRequestMatchedTransFilterSummaryStepChg([openAction, stepAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>], state$: StateObservable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary>> {
     return requestMatchedTransFilterSummary(openAction.payload.stepId);
+}
+
+function filterRequestMatchedTransFilterSummaryStepChgActions([openAction, stepAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>], state: State) {
+    return !!state.expanded;
 }
 
 const MATCHED_TRANS_FILTER_NAME = "transcriptFilters.matchedTranscriptFilter";
@@ -108,17 +112,15 @@ async function getFulfillUpdatedMatchedTransFilterSummary([requestAction]: [Infe
   fulfillStep -> reqFilterSummary  // only if expanded.  this is not required, but if it happens need to update
 */
 
-const mrate = mapRequestActionsToEpic;
-
 export const observe =
-    takeEpicInWindow<State>(
+    takeEpicInWindow(
         openMTF,
         closeMatchedTranscriptsFilter,
         combineEpics(
             mrate([openMTF], getRequestMatchedTransFilterExpandedPref),
             mrate([requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
             mrate([requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
-            mrate([openMTF], getRequestMatchedTransFilterSummary),
-            mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg),
+            mrate([openMTF], getRequestMatchedTransFilterSummary, filterRequestMatchedTransFilterSummary),
+            mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg, filterRequestMatchedTransFilterSummaryStepChgActions),
         ),
     );

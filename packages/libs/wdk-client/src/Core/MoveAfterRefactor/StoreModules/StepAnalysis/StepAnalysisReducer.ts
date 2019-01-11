@@ -34,7 +34,6 @@ import {
   UPDATE_UI_STATE
 } from '../../Actions/StepAnalysis/StepAnalysisActionConstants';
 import { StepAnalysisAction } from '../../Actions/StepAnalysis/StepAnalysisActions';
-import { LocatePlugin } from '../../../CommonTypes';
 import { equals } from 'lodash/fp';
 
 const initialState: StepAnalysesState = {
@@ -46,7 +45,7 @@ const initialState: StepAnalysesState = {
   analysisPanelOrder: []
 };
 
-export function reduce(state: StepAnalysesState = initialState, action: StepAnalysisAction, locatePlugin: LocatePlugin): StepAnalysesState {
+export function reduce(state: StepAnalysesState = initialState, action: StepAnalysisAction): StepAnalysesState {
   switch (action.type) {
     case START_LOADING_TAB_LISTING: {
       return {

@@ -6,7 +6,7 @@ import WdkService from 'wdk-client/Utils/WdkService';
 import { GenomeSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { mapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mergeMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 import { Observable } from 'rxjs';
@@ -56,5 +56,5 @@ async function getGenomeSummaryViewReport([requestAction]:  [InferAction<typeof 
 
 export const observe =
      combineEpics(
-         mapRequestActionsToEpic([requestGenomeSummaryReport], getGenomeSummaryViewReport)
+         mergeMapRequestActionsToEpic([requestGenomeSummaryReport], getGenomeSummaryViewReport)
      );

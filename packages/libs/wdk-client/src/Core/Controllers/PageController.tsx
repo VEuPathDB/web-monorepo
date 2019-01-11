@@ -1,9 +1,7 @@
-import { mapValues, isEqual } from 'lodash';
+import { mapValues } from 'lodash';
 import { parse } from 'querystring';
-import React from 'react';
 
-import Page from 'wdk-client/Components/Layout/Page';
-import ViewController, { ViewControllerProps } from 'wdk-client/Core/Controllers/ViewController';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { RouteComponentProps } from 'react-router';
 
 /**
@@ -48,7 +46,7 @@ export default class PageController<Props = {}, State = {}> extends ViewControll
     window.scroll(0, 0);
   }
 
-  componentDidUpdate(prevProps: Props & ViewControllerProps & RouteComponentProps<any>): void {
+  componentDidUpdate(prevProps: Props & RouteComponentProps<any>): void {
     // only call loadData if router props have changed
     const prevLocation = prevProps.location || {};
     const nextLocation = this.props.location || {};
@@ -60,12 +58,6 @@ export default class PageController<Props = {}, State = {}> extends ViewControll
       window.scroll(0, 0);
     }
     this.setDocumentTitle();
-  }
-
-  render() {
-    return (
-      <Page>{super.render()}</Page>
-    );
   }
 
 }

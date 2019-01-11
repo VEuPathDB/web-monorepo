@@ -5,7 +5,7 @@ import { Action } from 'wdk-client/Actions';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import { Observable } from 'rxjs';
-import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
+import {mergeMapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 export const key = 'basket';
@@ -28,5 +28,5 @@ async function getFulfillUpdateBasket([requestAction]:  [InferAction<typeof requ
 
 export const observe =
      combineEpics(
-         mapRequestActionsToEpic([requestUpdateBasket], getFulfillUpdateBasket)
+         mergeMapRequestActionsToEpic([requestUpdateBasket], getFulfillUpdateBasket)
      );

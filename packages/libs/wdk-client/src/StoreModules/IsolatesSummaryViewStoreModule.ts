@@ -5,7 +5,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Observable } from 'rxjs';
-import { mapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mergeMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 export const key = 'isolatesSummaryView';
@@ -36,5 +36,5 @@ async function getIsolatesSummaryViewReport([requestAction]:  [InferAction<typeo
 
 export const observe =
      combineEpics(
-         mapRequestActionsToEpic([requestIsolatesSummaryReport], getIsolatesSummaryViewReport)
+         mergeMapRequestActionsToEpic([requestIsolatesSummaryReport], getIsolatesSummaryViewReport)
      );

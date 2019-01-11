@@ -1,12 +1,10 @@
-import 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis.scss';
-
 import { escapeRegExp } from 'lodash';
 import React from 'react';
+import { Dispatch } from 'redux';
 
 import Mesa from 'wdk-client/Components/Mesa';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import Tabs from 'wdk-client/Components/Tabs/Tabs';
-import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 import {
@@ -16,65 +14,87 @@ import {
   changeTablePage,
   changeTableRowsPerPage
 } from 'wdk-client/Actions/AttributeAnalysisActions';
-import { State } from 'wdk-client/StoreModules/AttributeAnalysisStoreModule/BaseAttributeAnalysis';
+
+import 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisTabs.scss';
+
+export interface TableState {
+  currentPage: number;
+  rowsPerPage: number;
+  sort: { key: string; direction: 'asc' | 'desc' };
+  search: string;
+}
 
 type VisualizationConfig = {
   display: string;
   content: React.ReactNode;
-}
+};
 
 type TableConfig<T extends string> = {
-  columns: { key: T; display: string; }[];
-  data: { [P in T]: string | number }[]
-}
+  columns: { key: T; display: string }[];
+  data: Record<T, string | number>[];
+};
 
 type Props<T extends string> = {
-  state: State<T>
-  dispatch: SimpleDispatch;
+  dispatch: Dispatch;
+  activeTab: string;
+  tableState: TableState;
   visualizationConfig: VisualizationConfig;
   tableConfig: TableConfig<T>;
-}
+};
 
-type Column = { key: 'value' | 'count'; display: string; }
+type Column = { key: 'value' | 'count'; display: string };
 
-export class AttributeAnalysis<T extends string> extends React.PureComponent<Props<T>> {
-
+export default class AttributeAnalysisTabs<T extends string> extends React.PureComponent<
+  Props<T>
+> {
   onPageChange = (currentPage: number) =>
-    this.props.dispatch(changeTablePage(currentPage))
+    this.props.dispatch(changeTablePage(currentPage));
 
   onRowsPerPageChange = (rowsPerPage: number) =>
-    this.props.dispatch(changeTableRowsPerPage(rowsPerPage))
+    this.props.dispatch(changeTableRowsPerPage(rowsPerPage));
 
   onSort = (column: Column, direction: 'asc' | 'desc') =>
-    this.props.dispatch(sortTable({ key: column.key, direction }))
+    this.props.dispatch(sortTable(column.key, direction));
 
-  onSearch = (search: string) =>
-    this.props.dispatch(searchTable(search));
+  onSearch = (search: string) => this.props.dispatch(searchTable(search));
 
   onTabSelected = (tab: 'table' | 'visualization') =>
-    this.props.dispatch(selectTab(tab))
+    this.props.dispatch(selectTab(tab));
 
   render() {
-    const { state, visualizationConfig, tableConfig } = this.props;
-    const { currentPage, rowsPerPage, sort, search } = state.table;
+    const {
+      activeTab,
+      tableState,
+      visualizationConfig,
+      tableConfig
+    } = this.props;
+    const { currentPage, rowsPerPage, sort, search } = tableState;
 
-
-    const { data } = this.props.tableConfig;
+    const { data } = tableConfig;
 
     const searchRe = new RegExp(escapeRegExp(search), 'i');
 
     const filteredData = Seq.from(tableConfig.data)
-      .filter(row => search ? tableConfig.columns.some(column => searchRe.test(String(row[column.key] || ''.toLowerCase()))) : true)
-      .orderBy(row => row[sort.key], sort.direction === 'desc')
+      .filter(row =>
+        search
+          ? tableConfig.columns.some(column =>
+              searchRe.test(String(row[column.key] || ''.toLowerCase()))
+            )
+          : true
+      )
+      .orderBy(row => (row as any)[sort.key], sort.direction === 'desc')
       .toArray();
 
     const firstRowIndex = (currentPage - 1) * rowsPerPage;
-    const pagedData = filteredData.slice(firstRowIndex, firstRowIndex + rowsPerPage);
+    const pagedData = filteredData.slice(
+      firstRowIndex,
+      firstRowIndex + rowsPerPage
+    );
 
     return (
       <Tabs
-        className="TabularAttributeAnalysis"
-        activeTab={state.tabs.activeTab}
+        className="AttributeAnalysisTabs"
+        activeTab={activeTab}
         onTabSelected={this.onTabSelected}
         tabs={[
           {
@@ -90,7 +110,7 @@ export class AttributeAnalysis<T extends string> extends React.PureComponent<Pro
                 <RealTimeSearchBox
                   className="TabularAttributeAnalysisSearchBox"
                   placeholderText="Search table"
-                  searchTerm={state.table.search}
+                  searchTerm={tableState.search}
                   onSearchTermChange={this.onSearch}
                 />
                 <Mesa
@@ -107,22 +127,24 @@ export class AttributeAnalysis<T extends string> extends React.PureComponent<Pro
                     },
                     uiState: {
                       sort: {
-                        columnKey: state.table.sort.key,
-                        direction: state.table.sort.direction
+                        columnKey: tableState.sort.key,
+                        direction: tableState.sort.direction
                       },
                       pagination: {
                         currentPage,
                         rowsPerPage,
-                        totalRows: filteredData.length,
+                        totalRows: filteredData.length
                       }
                     },
                     rows: data,
                     filteredRows: pagedData,
-                    columns: tableConfig.columns.map(({ key, display: name }) => ({
-                      key,
-                      name,
-                      sortable: true,
-                    }))
+                    columns: tableConfig.columns.map(
+                      ({ key, display: name }) => ({
+                        key,
+                        name,
+                        sortable: true
+                      })
+                    )
                   }}
                 />
               </React.Fragment>

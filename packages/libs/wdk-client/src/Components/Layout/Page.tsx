@@ -8,7 +8,7 @@ import Footer from 'wdk-client/Components/Layout/Footer';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
 type Props = {
-  children: React.ReactChild | null;
+  children: React.ReactChild;
 };
 
 function Page(props: Props) {

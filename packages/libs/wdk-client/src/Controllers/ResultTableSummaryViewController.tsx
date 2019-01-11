@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import PageController from 'wdk-client/Core/Controllers/PageController';
-import { ViewControllerProps } from 'wdk-client/Core/Controllers/ViewController';
 import { RouteComponentProps } from 'react-router';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
@@ -54,7 +53,7 @@ class ResultTableSummaryViewController extends PageController< Props > {
   }
 }
 
-function columnsTreeSelector(state: RootState, props: Props & ViewControllerProps & RouteComponentProps<any>) : CategoryTreeNode | undefined {
+function columnsTreeSelector(state: RootState, props: Props & RouteComponentProps<any>) : CategoryTreeNode | undefined {
   if (state.globalData.ontology === undefined || state.steps.steps [props.match.params.stepId] === undefined) {
     return undefined;
   } else {
@@ -67,7 +66,7 @@ function columnsTreeSelector(state: RootState, props: Props & ViewControllerProp
   }
 }
 
-const mapStateToProps = (state: RootState, props: Props & ViewControllerProps & RouteComponentProps<any>) => ({resultTableSummaryView: state.resultTableSummaryView, 
+const mapStateToProps = (state: RootState, props: Props & RouteComponentProps<any>) => ({resultTableSummaryView: state.resultTableSummaryView, 
  columnsTree: columnsTreeSelector(state, props)}
   );
 
