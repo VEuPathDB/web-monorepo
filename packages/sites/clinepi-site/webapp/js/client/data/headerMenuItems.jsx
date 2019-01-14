@@ -43,6 +43,10 @@ export default function headerMenuItems (state) {
         text: 'Community',
         children: [
           {
+            text: 'About ClinEpiDB',
+            route: '/about'
+          },
+          {
             text: 'News',
             appUrl: '/showXmlDataContent.do?name=XmlQuestions.News'
           },
