@@ -181,7 +181,7 @@
                               </td>
                             </c:if>
                             <td>
-                              <imp:attributePlugin attribute="${sumAttrib}" />
+                              <imp:attributeReporter attribute="${sumAttrib}" />
                             </td>
                           </tr>
                         </table>
