@@ -11,12 +11,13 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.eupathdb.common.model.view.Isolate;
 import org.gusdb.fgputil.db.SqlUtils;
-import org.gusdb.wdk.model.WdkModel;
+import org.gusdb.fgputil.validation.ValidObjectFactory.RunnableObj;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.model.WdkUserException;
 import org.gusdb.wdk.model.answer.AnswerValue;
 import org.gusdb.wdk.model.answer.SummaryViewHandler;
-import org.gusdb.wdk.model.user.Step;
+import org.gusdb.wdk.model.answer.factory.AnswerValueFactory;
+import org.gusdb.wdk.model.answer.spec.AnswerSpec;
 import org.gusdb.wdk.model.user.User;
 
 public abstract class DwellingViewHandler implements SummaryViewHandler {
@@ -30,17 +31,17 @@ public abstract class DwellingViewHandler implements SummaryViewHandler {
             WdkUserException;
 
     @Override
-    public Map<String, Object> process(Step step, Map<String, String[]> parameters, User user, WdkModel wdkModel) throws WdkModelException,
-            WdkUserException {
+    public Map<String, Object> process(RunnableObj<AnswerSpec> answerSpec, Map<String, String[]> parameters,
+        User user) throws WdkModelException, WdkUserException {
         logger.debug("Entering DwellingViewHandler...");
 
         ResultSet resultSet = null;
         try {
-            AnswerValue answerValue = step.getAnswerValue();
+            AnswerValue answerValue = AnswerValueFactory.makeAnswer(user, answerSpec);
             String sql = prepareSql(answerValue.getIdSql());
-            DataSource dataSource = wdkModel.getAppDb().getDataSource();
+            DataSource dataSource = answerValue.getWdkModel().getAppDb().getDataSource();
             resultSet = SqlUtils.executeQuery(dataSource, sql,
-                    step.getAnswerSpec().getQuestion().getQuery().getFullName() + "__isolate-view", 2000);
+                    answerSpec.getObject().getQuestion().getQuery().getFullName() + "__isolate-view", 2000);
 
             int maxLength = 0;
             Map<String, Isolate> isolates = new HashMap<String, Isolate>();
