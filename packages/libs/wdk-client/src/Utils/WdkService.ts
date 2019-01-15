@@ -998,10 +998,16 @@ export default class WdkService {
     });
   }
 
-  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<never> {
+  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<Step> {
     let data = JSON.stringify(stepSpec);
     let url = `/users/${userId}/steps/${stepId}`;
-    return this._fetchJson<never>('patch', url, data);
+   
+    this._stepMap.set(stepId, this._fetchJson<never>('patch', url, data).catch(error => {
+      // if the request fails, remove the response since a later request might succeed
+      this._stepMap.delete(stepId);
+      throw error;
+    }));
+    return this._stepMap.get(stepId)!;
   }
 
   getStrategies() {

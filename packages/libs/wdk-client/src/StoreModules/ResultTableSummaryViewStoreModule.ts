@@ -176,7 +176,7 @@ async function getFulfillSortingPreference([openAction, stepAction, requestActio
 function filterFullfillSortingPreferenceActions([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestSortingPreference>]) {
     return (
         openAction.payload.stepId === stepAction.payload.step.id &&
-        stepAction.payload.step.answerSpec.questionName != requestAction.payload.questionName
+        stepAction.payload.step.answerSpec.questionName === requestAction.payload.questionName
     );
 }
 
@@ -224,11 +224,11 @@ function filterRequestAnswerActions([openAction, fulfillStepAction, viewPageNumb
 }
 
 async function getFulfillAnswer([openAction, requestAction]: [InferAction<typeof openRTS>,InferAction<typeof requestAnswer>], state$: Observable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillAnswer>> {
-    let answerJsonFormatConfig = [
-        requestAction.payload.columnsConfig.sorting,
-        requestAction.payload.columnsConfig.attributes,
-        requestAction.payload.pagination
-    ];
+    let answerJsonFormatConfig = {
+        sorting: requestAction.payload.columnsConfig.sorting,
+        attributes: requestAction.payload.columnsConfig.attributes,
+        pagination: requestAction.payload.pagination
+    };
     let r = requestAction.payload;
     let answer = await wdkService.getStepAnswerJson(requestAction.payload.stepId, <AnswerJsonFormatConfig>answerJsonFormatConfig);
     return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, answer);
