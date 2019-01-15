@@ -74,7 +74,8 @@ interface Request2Fulfill<T, State> {
 interface FilterActions<T, State> {
   (
     requestActions: T,
-    state: State
+    state: State,
+    prevRequestActions?: T
   ): boolean;
 }
 
@@ -445,9 +446,16 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
     const actionStreams = actionCreators.map(ac =>
       action$.pipe(filter(ac.isOfType)),
     );
+    // track previous filtered actions to be passed to `filterActions`
+    let prevFilteredActions: Action<string, any>[] | undefined = undefined;
     const combined$ = filterActions == null
       ? combineLatest(actionStreams)
-      : combineLatestIf(actionStreams, actions => filterActions(actions, state$.value));
+      : combineLatestIf(actionStreams, actions => {
+        const ret = filterActions(actions, state$.value, prevFilteredActions);
+        // only update `prevFilteredActions` if `filterActions` returns `true`
+        if (ret) prevFilteredActions = actions;
+        return ret;
+      });
     return combined$.pipe(
       mapOperatorFactory((actions: any) => {
         return from(request2Fulfill(actions, state$, dependencies))
