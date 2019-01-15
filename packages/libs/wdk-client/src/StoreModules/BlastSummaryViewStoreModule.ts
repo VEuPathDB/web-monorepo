@@ -6,7 +6,7 @@ import { BlastSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import { Observable } from 'rxjs';
-import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
+import {mergeMapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 export const key = 'blastSummaryView';
@@ -37,5 +37,5 @@ async function getBlastSummaryViewReport([requestAction]:  [InferAction<typeof r
 
 export const observe =
      combineEpics(
-         mapRequestActionsToEpic([requestBlastSummaryReport], getBlastSummaryViewReport)
+         mergeMapRequestActionsToEpic([requestBlastSummaryReport], getBlastSummaryViewReport)
      );

@@ -28,7 +28,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable, combineLatest, merge, of, empty } from 'rxjs';
 import { filter, map, mergeMap, takeUntil } from 'rxjs/operators';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { mapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mergeMapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 
 export const key = 'resultTableSummaryView';
 
@@ -228,8 +228,9 @@ async function getFulfillRecordsBasketStatus([openAction, answerAction, requestA
     let recordsStatus = await wdkService.getBasketStatusPk(requestAction.payload.recordClassName, requestAction.payload.basketQuery);
     return fulfillRecordsBasketStatus(openAction.payload.stepId, answerAction.payload.pagination.offset, answerAction.payload.pagination.numRecords,recordsStatus);
 }
-const mrate = mapRequestActionsToEpic;
+const mrate = mergeMapRequestActionsToEpic;
 
+/* Reject this when merging from trunk to reactResultPanel branch
 export const observe =
     takeEpicInWindow<State>(
         openResultTableSummaryView,
@@ -261,3 +262,4 @@ export const observe =
             mrate([openRTS, fulfillAnswer, requestRecordsBasketStatus], getFulfillRecordsBasketStatus),
         ),
     );
+ */

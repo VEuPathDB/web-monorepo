@@ -8,7 +8,7 @@ import { getMatchedTranscriptFilterPref, setMatchedTranscriptFilterPref } from '
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import { Observable } from 'rxjs';
-import {mapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
+import {mergeMapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics} from 'redux-observable';
 
 export const key = 'matchedTranscriptsFilter';
