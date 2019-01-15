@@ -32,7 +32,7 @@ public class AccessRequestSubmitter {
         Connection conn = wdkModel.getUserDb().getDataSource().getConnection();
     ) {
       conn.setAutoCommit(false);
-      String sql = insertRequestPreparedStatementBody(params);
+      String sql = insertRequestPreparedStatementBody();
       
       try (
           PreparedStatement ps = insertRequestPreparedStatement(conn, sql, params);
@@ -63,7 +63,7 @@ public class AccessRequestSubmitter {
     return requestInitiated || params.inTestMode() ? SubmissionResult.SUCCESSFUL : SubmissionResult.ALREADY_REQUESTED;
   }
 
-  private static String insertRequestPreparedStatementBody(AccessRequestParams params) {    
+  private static String insertRequestPreparedStatementBody() {
     List<String> insertStatementColumns = Arrays.asList(
       "user_id",
       "dataset_presenter_id",
