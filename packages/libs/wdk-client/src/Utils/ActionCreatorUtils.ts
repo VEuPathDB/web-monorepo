@@ -1,3 +1,4 @@
+import { isEqual, stubTrue } from 'lodash';
 import {concat, empty, of, Observable, combineLatest, from, Observer, OperatorFunction} from 'rxjs';
 import {catchError, filter, mergeMap, takeUntil, switchMap, concatMap, tap} from 'rxjs/operators';
 import { StateObservable, ActionsObservable } from 'redux-observable';
@@ -71,12 +72,9 @@ interface Request2Fulfill<T, State> {
   ): Promise<WdkAction>
 }
 
-interface FilterActions<T, State> {
-  (
-    requestActions: T,
-    state: State,
-    prevRequestActions?: T
-  ): boolean;
+interface MapRequestActionsToEpicOptions<T, State> {
+  areActionsNew?: (actions: T, prevActions?: T) => boolean;
+  areActionsCoherent?: (actions: T, state: State) => boolean;
 }
 
 interface Pred<T> {
@@ -120,7 +118,7 @@ interface MapRequestActionsToEpic {
     request2Fulfill: Request2Fulfill<[
       Action<T1, P1>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>
     ], State>
 
@@ -144,7 +142,7 @@ interface MapRequestActionsToEpic {
       Action<T1, P1>,
       Action<T2, P2>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>,
       Action<T2, P2>
     ], State>
@@ -174,7 +172,7 @@ interface MapRequestActionsToEpic {
       Action<T2, P2>,
       Action<T3, P3>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>,
       Action<T2, P2>,
       Action<T3, P3>
@@ -210,7 +208,7 @@ interface MapRequestActionsToEpic {
       Action<T3, P3>,
       Action<T4, P4>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>,
       Action<T2, P2>,
       Action<T3, P3>,
@@ -252,7 +250,7 @@ interface MapRequestActionsToEpic {
       Action<T4, P4>,
       Action<T5, P5>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>,
       Action<T2, P2>,
       Action<T3, P3>,
@@ -300,7 +298,7 @@ interface MapRequestActionsToEpic {
       Action<T5, P5>,
       Action<T6, P6>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>,
       Action<T2, P2>,
       Action<T3, P3>,
@@ -354,7 +352,7 @@ interface MapRequestActionsToEpic {
       Action<T6, P6>,
       Action<T7, P7>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>,
       Action<T2, P2>,
       Action<T3, P3>,
@@ -414,7 +412,7 @@ interface MapRequestActionsToEpic {
       Action<T7, P7>,
       Action<T8, P8>
     ], State>,
-    filterActions?: FilterActions<[
+    options?: MapRequestActionsToEpicOptions<[
       Action<T1, P1>,
       Action<T2, P2>,
       Action<T3, P3>,
@@ -436,26 +434,23 @@ interface MapRequestActionsToEpic {
 export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFactory): MapRequestActionsToEpic => <State>(
   actionCreators: GenericActionCreator[],
   request2Fulfill: Request2Fulfill<any, State>,
-  filterActions?: FilterActions<any, State>
+  options: MapRequestActionsToEpicOptions<any, State> = {}
 ): ModuleEpic<State> => {
   return function mapRequestActionsEpic(
     action$: Observable<WdkAction>,
     state$: StateObservable<State>,
     dependencies: EpicDependencies,
   ) {
-    const actionStreams = actionCreators.map(ac =>
-      action$.pipe(filter(ac.isOfType)),
-    );
+    const actionStreams = actionCreators.map(ac => action$.pipe(filter(ac.isOfType)));
+    const filterActions = makeFilterActions(options);
     // track previous filtered actions to be passed to `filterActions`
     let prevFilteredActions: Action<string, any>[] | undefined = undefined;
-    const combined$ = filterActions == null
-      ? combineLatest(actionStreams)
-      : combineLatestIf(actionStreams, actions => {
-        const ret = filterActions(actions, state$.value, prevFilteredActions);
-        // only update `prevFilteredActions` if `filterActions` returns `true`
-        if (ret) prevFilteredActions = actions;
-        return ret;
-      });
+    const combined$ = combineLatestIf(actionStreams, actions => {
+      const ret = filterActions(actions, prevFilteredActions, state$.value);
+      // only update `prevFilteredActions` if `filterActions` returns `true`
+      if (ret) prevFilteredActions = actions;
+      return ret;
+    });
     return combined$.pipe(
       mapOperatorFactory((actions: any) => {
         return from(request2Fulfill(actions, state$, dependencies))
@@ -467,6 +462,13 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
       })
     );
   };
+}
+
+function makeFilterActions<T extends [], S>(options: MapRequestActionsToEpicOptions<T, S>) {
+  const { areActionsCoherent = stubTrue, areActionsNew = isEqual } = options;
+  return function filterActions(actions: T, prevActions: T | undefined, state: S): boolean {
+    return areActionsCoherent(actions, state) && areActionsNew(actions, prevActions);
+  }
 }
 
 /**
