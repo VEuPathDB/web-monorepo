@@ -1,4 +1,4 @@
-import { isEqual, stubTrue } from 'lodash';
+import { isEqual, stubTrue, negate } from 'lodash';
 import {concat, empty, of, Observable, combineLatest, from, Observer, OperatorFunction} from 'rxjs';
 import {catchError, filter, mergeMap, takeUntil, switchMap, concatMap, tap} from 'rxjs/operators';
 import { StateObservable, ActionsObservable } from 'redux-observable';
@@ -465,11 +465,11 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
 }
 
 function makeFilterActions<T extends [], S>(options: MapRequestActionsToEpicOptions<T, S>) {
-  const { areActionsCoherent = stubTrue, areActionsNew = isEqual } = options;
+  const { areActionsCoherent = stubTrue, areActionsNew = negate(isEqual) } = options;
   return function filterActions(actions: T, prevActions: T | undefined, state: S): boolean {
     return (
       areActionsCoherent(actions, state) &&
-      ( prevActions == null || !areActionsNew(actions, prevActions) )
+      ( prevActions == null || areActionsNew(actions, prevActions) )
     );
   }
 }
