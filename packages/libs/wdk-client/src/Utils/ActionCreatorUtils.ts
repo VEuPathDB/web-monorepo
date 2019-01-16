@@ -469,7 +469,7 @@ function makeFilterActions<T extends [], S>(options: MapRequestActionsToEpicOpti
   return function filterActions(actions: T, prevActions: T | undefined, state: S): boolean {
     return (
       areActionsCoherent(actions, state) &&
-      ( prevActions == null || areActionsNew(actions, prevActions) )
+      ( prevActions == null || !areActionsNew(actions, prevActions) )
     );
   }
 }
