@@ -53,12 +53,17 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'analysis',
           text: 'Results Analysis',
           webAppUrl: '/analysisTools.jsp',
-          beta: true
+          //beta: true
         },
         {
           id: 'srt',
           text: 'Sequence Retrieval',
           webAppUrl: '/srt.jsp'
+        },
+        {
+          id: 'galaxy',
+          text: 'Analyze My Experiment',
+          webAppUrl: '/app/galaxy-orientation'
         },
         // {
         //   id: 'pathogen-portal',
@@ -92,7 +97,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'plasmoap',
           text: 'PlasmoAP',
           include: [PlasmoDB],
-          url: 'http://v4-4.plasmodb.org/restricted/PlasmoAPcgi.shtml'
+          webAppUrl: '/plasmoap.jsp'
         },
         {
           id: 'pats',

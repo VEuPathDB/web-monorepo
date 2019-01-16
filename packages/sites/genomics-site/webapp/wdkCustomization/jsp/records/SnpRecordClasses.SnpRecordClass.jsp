@@ -88,12 +88,12 @@
 
 <table width="100%">
   <tr align=center>        
-    <td><b>Please select at least two isolates strains to run ClustalW.</b></td>
+    <td><b>Please select at least two isolates strains to run Clustal Omega.</b></td>
   </tr>   
   <tr>
     <td align=center>
 
-      <input type="button" value="Run Clustalw on Checked Strains" 
+      <input type="button" value="Run Clustal Omega on Checked Strains" 
            onClick="goToIsolate(this,'htsSNP','${sequence_id}','${alignment_start}', '${alignment_end}')" />
 
       <input type="button" name="CheckAll" value="Check All" 

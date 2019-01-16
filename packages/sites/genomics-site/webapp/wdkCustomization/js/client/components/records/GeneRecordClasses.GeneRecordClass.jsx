@@ -192,9 +192,15 @@ export function RecordTable(props) {
     case 'BlastpForm':
       return <BlastpForm {...props}/>
 
-
     case 'MitoprotForm':
       return <MitoprotForm {...props}/>
+
+    case 'InterProForm':
+      return <InterProForm {...props}/>
+
+    case 'MendelGPIForm':
+      return <MendelGPIForm {...props}/>
+
 
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
@@ -630,11 +636,11 @@ class BlastpForm extends React.Component {
   	       	     <input type="radio" name="database" value="nr"/> Non-redundant protein sequences (nr)<br/> 
 	       	     <input type="radio" name="database" value="refseq_protein"/> Reference proteins (refseq_protein)<br/> 
   	       	     <input type="radio" name="database" value="swissprot"/> UniProtKB/Swiss-Prot(swissprot)<br/>
-	       	     <input type="radio" name="database" value="landmark"/> Model Organisms (landmark)<br/>
+	       	     <input type="radio" name="database" value="SMARTBLAST/landmark"/> Model Organisms (landmark)<br/>
 	       	     <input type="radio" name="database" value="pat"/> Patented protein sequences(pat)<br/>
 	       	     <input type="radio" name="database" value="pdb"/> Protein Data Bank proteins(pdb)<br/>
-	       	     <input type="radio" name="database" value="env_nr"/> Metagenomic proteins(env_nr)<br/>
-	       	     <input type="radio" name="database" value="tsa_nr"/> Transcriptome Shotgun Assembly proteins (tsa_nr)<br/><br/>
+	       	     <input type="radio" name="database" value="env_nr_v5"/> Metagenomic proteins(env_nr)<br/>
+	       	     <input type="radio" name="database" value="tsa_nr_v5"/> Transcriptome Shotgun Assembly proteins (tsa_nr)<br/><br/>
 
   	       	     <input type="submit"/>
                </form>
@@ -709,6 +715,136 @@ class MitoprotForm extends React.Component {
 
 
 
+class InterProForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>
+                        {p.protein_source_id} <br/> </label>
+                );
+            })
+        );
+    }
+
+
+    render() {
+    	let { project_id } = this.props.record.attributes;  
+        
+        let t = this.props.value;
+
+           return (
+
+	   <div> 
+           
+	    <form action="/cgi-bin/interPro.pl" target="_blank" method="post">
+            	  <input type="hidden" name="project_id" value={projectId}/>
+ 	    	  <input type="hidden" id="id_type" name="id_type" value="protein"/>                       
+	    	  <input type="hidden" name="leaveIt" value=""/>
+
+
+                  {this.inputHeader(t)}
+                  {this.printInputs(t)}
+
+
+  	    	  <input type="submit"/>
+
+
+            </form>
+
+ 	    <p>For more information about this tool <a target="_blank" rel="noopener noreferrer"  href="https://www.ebi.ac.uk/interpro/">click here</a></p>
+	</div>
+ 
+
+        );
+    }
+
+}
+
+
+
+
+
+class MendelGPIForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>
+                        {p.protein_source_id} <br/> </label>
+                );
+            })
+        );
+    }
+
+
+    render() {
+    	let { project_id } = this.props.record.attributes;  
+        
+        let t = this.props.value;
+
+           return (
+
+	   <div> 
+           
+	   
+            <form action="/cgi-bin/mendelGPI.pl" target="_blank" method="post">
+                  <input type="hidden" name="project_id" value={projectId}/>
+                  <input type="hidden" id="id_type" name="id_type" value="protein"/>
+
+
+                  {this.inputHeader(t)}
+                  {this.printInputs(t)}
+
+
+		   <p>Select Taxonomic Set:</p>
+                  <input type="radio" name="LSet" value="metazoa"/> Metazoa<br/>
+                  <input type="radio" name="LSet" value="protozoa"/> Protozoa<br/><br/>
+
+                  <input type="submit"/>
+
+
+            </form>
+
+ 	    <p>For more information about this tool <a target="_blank" rel="noopener noreferrer"  href="http://mendel.imp.ac.at/sat/gpi/gpi_server.html">click here</a></p>
+
+
+	</div>
+ 
+
+        );
+    }
+
+}
+
+
+
+
+
 class OrthologsForm extends SortKeyTable {
 
 
@@ -725,12 +861,12 @@ class OrthologsForm extends SortKeyTable {
 
       if(gene_type === "protein coding") {
           return (
-              <form action="/cgi-bin/isolateClustalw" target="_blank" method="post">
+              <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
                   <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
                   <input type="hidden" name="type" value="geneOrthologs"/>
                   <input type="hidden" name="project_id" value={projectId}/>
                   <input type="hidden" name="gene_ids" value={source_id}/>
-                  <input type="submit" value="Run clustalW for selected genes"/>
+                  <input type="submit" value="Run clustal Omega for selected genes"/>
                   <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
                   <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
               </form>

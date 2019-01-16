@@ -524,6 +524,17 @@ sub rnaseqColorFromBigWig {
   return 'black';
 } 
 
+sub tssColorFromBigWig {
+    my $f = shift;
+
+    my ($track) = $f->get_tag_values('display_name');
+    print STDERR Dumper $track;
+
+    if ($track =~ m/fwd/) { return 'blue'; }
+    if ($track =~ m/rev/) { return 'red'; }
+    return 'black';
+}
+
 sub colorByRnaSeq {
   my $f = shift;
   my ($isReversed) = $f->get_tag_values('is_reversed');
