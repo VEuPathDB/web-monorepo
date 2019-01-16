@@ -467,7 +467,10 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
 function makeFilterActions<T extends [], S>(options: MapRequestActionsToEpicOptions<T, S>) {
   const { areActionsCoherent = stubTrue, areActionsNew = isEqual } = options;
   return function filterActions(actions: T, prevActions: T | undefined, state: S): boolean {
-    return areActionsCoherent(actions, state) && areActionsNew(actions, prevActions);
+    return (
+      areActionsCoherent(actions, state) &&
+      ( prevActions == null || areActionsNew(actions, prevActions) )
+    );
   }
 }
 
