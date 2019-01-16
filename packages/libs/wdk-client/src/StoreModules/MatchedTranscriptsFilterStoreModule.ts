@@ -120,7 +120,7 @@ export const observe =
             mrate([openMTF], getRequestMatchedTransFilterExpandedPref),
             mrate([requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
             mrate([requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
-            mrate([openMTF], getRequestMatchedTransFilterSummary, filterRequestMatchedTransFilterSummary),
-            mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg, filterRequestMatchedTransFilterSummaryStepChgActions),
+            mrate([openMTF], getRequestMatchedTransFilterSummary, { areActionsCoherent: filterRequestMatchedTransFilterSummary }),
+            mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg, { areActionsCoherent: filterRequestMatchedTransFilterSummaryStepChgActions }),
         ),
     );

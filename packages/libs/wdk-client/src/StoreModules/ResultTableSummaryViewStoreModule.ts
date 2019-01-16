@@ -273,12 +273,12 @@ export const observe =
             mrate([openRTS], getRequestStep),
             mrate([openRTS], getFirstPageNumber),
             mrate([openRTS], getRequestPageSize),
-            mrate([openRTS, fulfillStep], getRequestColumnsChoicePreference, filterRequestColumnsChoicePreferenceActions),
-            mrate([openRTS, fulfillStep, requestColumnsChoicePreference], getFulfillColumnsChoicePreference, filterFulfillColumnsChoicePreferenceActions),
-            mrate([openRTS, fulfillStep, requestColumnsChoiceUpdate], getFulfillColumnsChoiceUpdate, filterFulfillColumnColumnsChoiceUpdateActions),
-            mrate([openRTS, fulfillStep], getRequestSortingPreference, filterRequestSortingPreferenceActions),  // need question from step
-            mrate([openRTS, fulfillStep, requestSortingPreference], getFulfillSortingPreference, filterFullfillSortingPreferenceActions),
-            mrate([openRTS, fulfillStep, requestSortingUpdate], getFulfillSortingUpdate, filterFulfillSortingUpdateActions),
+            mrate([openRTS, fulfillStep], getRequestColumnsChoicePreference, { areActionsCoherent: filterRequestColumnsChoicePreferenceActions }),
+            mrate([openRTS, fulfillStep, requestColumnsChoicePreference], getFulfillColumnsChoicePreference, { areActionsCoherent: filterFulfillColumnsChoicePreferenceActions }),
+            mrate([openRTS, fulfillStep, requestColumnsChoiceUpdate], getFulfillColumnsChoiceUpdate, { areActionsCoherent: filterFulfillColumnColumnsChoiceUpdateActions }),
+            mrate([openRTS, fulfillStep], getRequestSortingPreference, { areActionsCoherent: filterRequestSortingPreferenceActions }),  // need question from step
+            mrate([openRTS, fulfillStep, requestSortingPreference], getFulfillSortingPreference, { areActionsCoherent: filterFullfillSortingPreferenceActions }),
+            mrate([openRTS, fulfillStep, requestSortingUpdate], getFulfillSortingUpdate, { areActionsCoherent: filterFulfillSortingUpdateActions }),
             mrate([requestPageSize], getFulfillPageSize),
             mrate(
                 [
@@ -290,10 +290,10 @@ export const observe =
                     fulfillSorting,
                 ],
                 getRequestAnswer,
-                filterRequestAnswerActions
+                { areActionsCoherent: filterRequestAnswerActions }
             ),
-            mrate([openRTS, requestAnswer], getFulfillAnswer, filterFulfillAnswerActions),
-            mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus, filterRequestRecordsBasketStatusActions),
-            mrate([openRTS, fulfillAnswer, requestRecordsBasketStatus], getFulfillRecordsBasketStatus, filterFulfillRecordBasketStatusActions),
+            mrate([openRTS, requestAnswer], getFulfillAnswer, { areActionsCoherent: filterFulfillAnswerActions }),
+            mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus, { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
+            mrate([openRTS, fulfillAnswer, requestRecordsBasketStatus], getFulfillRecordsBasketStatus, { areActionsCoherent: filterFulfillRecordBasketStatusActions }),
         ),
     );
