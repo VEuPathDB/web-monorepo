@@ -64,6 +64,11 @@ export const requestPageSize = makeActionCreator(
     () => ({})
 );
 
+export const requestPageSizeUpdate = makeActionCreator(
+    'resultTableSummaryView/requestPageSize',
+    (pageSize: number) => ({pageSize})
+);
+
 export const fulfillPageSize = makeActionCreator(
     'resultTableSummaryView/fulfillPageSize',
     (pageSize: number) => ({pageSize })

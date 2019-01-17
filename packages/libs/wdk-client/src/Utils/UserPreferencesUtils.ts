@@ -47,6 +47,11 @@ export async function setResultTableSortingPref(questionName: string, wdkService
     return wdkService.patchUserPreference('global', questionName + SORT_SUFFIX, sortingSpecString);
 }
 
+export async function setResultTablePageSizePref(wdkService: WdkService, pageSize : number) : Promise<UserPreferences> {
+
+    return wdkService.patchUserPreference('global', 'preference_global_items_per_page', pageSize.toString());
+}
+
 export type MatchedTranscriptFilterPref = {
     expanded: boolean;
 }
