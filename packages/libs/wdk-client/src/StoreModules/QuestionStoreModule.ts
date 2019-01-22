@@ -345,7 +345,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
         answerSpec: {
           questionName: questionState.question.name,
           parameters: paramValues,
-          wdk_weight: Number.isNaN(weight) ? undefined : weight
+          wdkWeight: Number.isNaN(weight) ? undefined : weight
         },
         customName: questionState.customName
       }).then(step => {

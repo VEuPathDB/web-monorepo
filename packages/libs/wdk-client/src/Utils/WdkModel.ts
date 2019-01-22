@@ -288,7 +288,7 @@ export interface AnswerSpec {
   legacyFilterName?: string;
   filters?: { name: string; value: string; }[];
   viewFilters?: { name: string; value: string; }[];
-  wdk_weight?: number;
+  wdkWeight?: number;
 }
 
 export interface AnswerFormatting {
