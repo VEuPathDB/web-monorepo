@@ -964,6 +964,7 @@ const enhance = connect(
     config: state.globalData.config,
     siteConfig: state.globalData.siteConfig,
     nodeList: readDynamicCols(state.record.dynamicColsOfIncomingStep, state.globalData),
+    geneStepId: QueryString.parse(state.globalData.location.search.slice(1)).geneStepId,
     exactMatchEC: QueryString.parse(state.globalData.location.search.slice(1)).exact_match_only,
     excludeIncompleteEC: QueryString.parse(state.globalData.location.search.slice(1)).exclude_incomplete_ec,
     dynamicColsOfIncomingStep: state.record.dynamicColsOfIncomingStep,
@@ -997,7 +998,16 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
   }
 
   componentDidMount() {
-    this.initVis();
+    // if geneStepId is defined, only initVis once nodeList is available
+    if (!this.props.geneStepId) this.initVis();
+    if (this.props.nodeList) this.initVis();
+  }
+
+  componentDidUpdate(prevProps) {
+    // if geneStepId is defined, and nodeList changes from not defined to defined, call initVis
+    if (this.props.geneStepId && this.props.nodeList && !prevProps.nodeList) {
+      this.initVis();
+    }
   }
 
   initVis() {

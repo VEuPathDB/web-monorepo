@@ -72,9 +72,13 @@ let ParamBox = props => {
 // would, instead, call and action creator with the updated state.
 class SampleForm extends React.Component {
 
-  // set the form state to the initial state defined above
-  componentWillMount() {
-    this.setState(initialState);
+  constructor(props) {
+    super(props);
+    // bind method to instance so that it can be called without a receiver (i.e., as a function).
+    this.getParamChangeHandler = this.getParamChangeHandler.bind(this);
+    this.onFormChange = this.onFormChange.bind(this);
+    // set the form state to the initial state defined above
+    this.state = initialState;
   }
 
   // child components (the input fields) will call this function with the
