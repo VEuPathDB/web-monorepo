@@ -68,9 +68,9 @@ export default class RelatedCaseControlGroup extends React.Component {
   renderWarning() {
     return !RelatedCaseControlGroup.isUsable(this.props) && (
       <div className="CaseControlMessage CaseControlMessage__warning">
-        Before using <strong>Related Case/Control</strong>, please first specify
+        Before using <strong>Related Case/Control</strong>, please specify
         either <strong>Cases</strong> or <strong>Controls</strong> in the
-        previous <strong>Choose Case/Control</strong> filter.
+        <strong> First </strong> step.
       </div>
     );
   }
