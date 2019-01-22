@@ -1,5 +1,3 @@
-import { ComponentType } from 'react';
-import { RouteComponentProps } from 'react-router';
 import { Action } from 'redux';
 
 import { ActionCreatorResult } from 'wdk-client/Core/WdkMiddleware';
@@ -12,20 +10,6 @@ export interface SimpleDispatch {
 
 export interface DispatchAction {
   (action: ActionCreatorResult<Action>): any;
-}
-
-export type PageControllerProps = RouteComponentProps<any>;
-
-export interface RouteSpec {
-  path: string;
-  component: ComponentType<PageControllerProps | RouteComponentProps<any>>
-}
-
-// TODO
-export interface NewRouteSpec<RouteParams extends {}, MappedProps extends {}> {
-  path: string;
-  mapRouteProps: (routeProps: RouteComponentProps<RouteParams>) => MappedProps;
-  component: ComponentType<MappedProps>;
 }
 
 export interface MesaColumn {

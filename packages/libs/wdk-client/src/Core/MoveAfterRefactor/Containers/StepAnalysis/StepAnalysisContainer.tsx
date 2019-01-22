@@ -9,7 +9,6 @@ import { RootState } from '../../../State/Types';
 import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import { startLoadingChosenAnalysisTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
-import { PageControllerProps } from '../../../CommonTypes';
 
 type StateProps = {
   webAppUrl: ReturnType<typeof webAppUrl>;
@@ -23,6 +22,10 @@ type StateProps = {
   newAnalysisButtonVisible: boolean;
 };
 
+type OwnProps = {
+  stepId: number;
+}
+
 interface TabEventHandlers {
   loadTabs: (stepId: number) => void;
   openAnalysisMenu: () => void;
@@ -35,6 +38,7 @@ type PanelEventHandlers = {
 };
 
 interface StepAnalysisContainerProps {
+  stepId: number;
   loadingTabs: boolean;
   activeTab: string;
   tabs: TabConfig<string>[];
@@ -45,9 +49,10 @@ interface StepAnalysisContainerProps {
 }
 
 class StepAnalysisController extends PageController<StepAnalysisContainerProps> {
-  loadData() {
+  componentDidMount() {
+    super.componentDidMount();
     this.props.loadTabs(
-      this.props.match.params.stepId
+      this.props.stepId
     );
   }
 
@@ -106,8 +111,8 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
 });
 
 const mergeProps = (
-  stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: PageControllerProps 
-): StepAnalysisContainerProps & PageControllerProps => ({
+  stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps 
+): StepAnalysisContainerProps & OwnProps => ({
   ...ownProps,
   loadingTabs: stateProps.analysisChoices.length === 0,
   activeTab: `${stateProps.activeTab}`,

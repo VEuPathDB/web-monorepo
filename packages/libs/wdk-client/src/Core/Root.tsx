@@ -1,9 +1,8 @@
 import { History, Location } from 'history';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { Route, RouteComponentProps, Router, Switch } from 'react-router';
+import { Route, Router, Switch } from 'react-router';
 
-import { RouteSpec } from 'wdk-client/Core/CommonTypes';
 import { ClientPluginRegistryEntry, PluginContext, makeCompositePluginComponent } from 'wdk-client/Utils/ClientPlugin';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 import LoginFormController from 'wdk-client/Controllers/LoginFormController';
@@ -11,10 +10,11 @@ import Page from 'wdk-client/Components/Layout/Page';
 
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
+import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 
 type Props = {
   rootUrl: string,
-  routes: RouteSpec[],
+  routes: RouteEntry[],
   pluginConfig: ClientPluginRegistryEntry<any>[],
   onLocationChange: (location: Location) => void;
   history: History;
@@ -44,19 +44,9 @@ export default class Root extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    this.renderRoute = this.renderRoute.bind(this);
     this.handleGlobalClick = this.handleGlobalClick.bind(this);
     this.removeHistoryListener = this.props.history.listen(location => this.props.onLocationChange(location));
     this.props.onLocationChange(this.props.history.location);
-  }
-
-  renderRoute(RouteComponent: React.ComponentType<any>) {
-    // Used to inject wdk content as props of Route Component
-    return (routerProps: RouteComponentProps<any>) => {
-      return (
-        <RouteComponent {...routerProps} />
-      );
-    };
   }
 
   handleGlobalClick(event: MouseEvent) {
@@ -101,7 +91,7 @@ export default class Root extends React.Component<Props> {
                 <React.Fragment>
                   <Switch>
                     {this.props.routes.map(route => (
-                      <Route key={route.path} exact path={route.path} render={this.renderRoute(route.component)} />
+                      <Route key={route.path} exact path={route.path} component={route.component} />
                     ))}
                   </Switch>
                   <LoginFormController />

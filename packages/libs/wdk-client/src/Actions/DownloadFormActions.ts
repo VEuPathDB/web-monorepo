@@ -57,11 +57,11 @@ export const SELECT_REPORTER = 'downloadForm/select-reporter';
 export interface SelectReporterAction {
   type: typeof SELECT_REPORTER;
   payload: {
-    selectedReporter: string;
+    selectedReporter?: string;
   };
 }
 
-export function selectReporter(selectedReporter: string): SelectReporterAction {
+export function selectReporter(selectedReporter?: string): SelectReporterAction {
   return {
     type: SELECT_REPORTER,
     payload: {
@@ -140,7 +140,7 @@ type LoadPageDataAction =
   | SelectReporterAction
 
 export function loadPageDataFromStepId(
-  stepId: number, requestedFormat: string
+  stepId: number, requestedFormat?: string
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
     let preferencesPromise = wdkService.getCurrentUserPreferences();
@@ -165,7 +165,7 @@ export function loadPageDataFromStepId(
 export function loadPageDataFromRecord(
   recordClassUrlSegment: string,
   primaryKeyString: string,
-  requestedFormat: string
+  requestedFormat?: string
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
     let preferencesPromise = wdkService.getCurrentUserPreferences();

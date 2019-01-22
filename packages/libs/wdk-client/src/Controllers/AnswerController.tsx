@@ -32,19 +32,23 @@ const CastAnswer: any = Answer;
 
 type StateProps = State;
 type DispatchProps = typeof ActionCreators;
-type OwnProps = RouteComponentProps<any>;
+type OwnProps = {
+  recordClass: string;
+  question: string;
+  parameters: Record<string, string>;
+}
 
 type Props = {
   stateProps: StateProps,
   dispatchProps: DispatchProps
+  ownProps: OwnProps;
 };
 
 class AnswerController extends PageController<Props> {
   loadData() {
     // incoming values from the router
-    let { question, recordClass: recordClassName } = this.props.match.params;
-    let [ , questionName, customName ] = question.match(/([^:]+):?(.*)/);
-    let parameters = this.getQueryParams();
+    let { question, recordClass: recordClassName, parameters } = this.props.ownProps;
+    let [ , questionName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
 
     // decide whether new answer needs to be loaded (may not need to be loaded
     //   if user goes someplace else and hits 'back' to here- store already correct)
@@ -199,7 +203,7 @@ const mapDispatchToProps = ActionCreators;
 const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
   stateProps,
   dispatchProps,
-  ...ownProps
+  ownProps
 });
 
 export default connect(

@@ -1,13 +1,10 @@
-import { mapValues } from 'lodash';
-import { parse } from 'querystring';
-
 import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { RouteComponentProps } from 'react-router';
 
 /**
  * A ViewController that is intended to render a UI on an entire screen.
  */
-export default class PageController<Props = {}, State = {}> extends ViewController<Props & RouteComponentProps<any>, State> {
+export default class PageController<Props = {}, State = {}> extends ViewController<Props, State> {
 
   /*--------------- Methods to override to display content ---------------*/
 
@@ -16,10 +13,6 @@ export default class PageController<Props = {}, State = {}> extends ViewControll
    */
   getTitle(): string {
     return "WDK";
-  }
-
-  getQueryParams() {
-    return mapValues(parse(this.props.location.search.slice(1)), String);
   }
 
   setDocumentTitle(): void {
@@ -43,20 +36,10 @@ export default class PageController<Props = {}, State = {}> extends ViewControll
   componentDidMount(): void {
     super.componentDidMount()
     this.setDocumentTitle();
-    window.scroll(0, 0);
   }
 
   componentDidUpdate(prevProps: Props & RouteComponentProps<any>): void {
-    // only call loadData if router props have changed
-    const prevLocation = prevProps.location || {};
-    const nextLocation = this.props.location || {};
-    if (
-      (prevLocation.pathname !== nextLocation.pathname) ||
-      (prevLocation.search !== nextLocation.search)
-    ) {
-      this.loadData(prevProps);
-      window.scroll(0, 0);
-    }
+    this.loadData(prevProps);
     this.setDocumentTitle();
   }
 

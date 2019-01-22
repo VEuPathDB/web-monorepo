@@ -16,8 +16,9 @@ const actionCreators = {
 
 type StateProps = State;
 type DispatchProps = typeof actionCreators;
+type OwnProps = { stepId: number };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 class IsolatesSummaryViewController extends PageController< Props > {
 
@@ -31,7 +32,7 @@ class IsolatesSummaryViewController extends PageController< Props > {
 
   loadData () {
     if (this.props.isolatesSummaryData == null) {
-      this.props.requestIsolatesSummaryReport(this.props.match.params.stepId);
+      this.props.requestIsolatesSummaryReport(this.props.stepId);
     }
   }
 
@@ -56,7 +57,7 @@ class IsolatesSummaryViewController extends PageController< Props > {
 
 const mapStateToProps = (state: RootState) => state.isolatesSummaryView;
 
-export default connect(
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   mapStateToProps,
   actionCreators
 ) (wrappable(IsolatesSummaryViewController));

@@ -11,11 +11,13 @@ const actionCreators = {
   submitProfileForm
 };
 
-type Props = {
-  globalData: RootState['globalData'];
-  userProfile: RootState['userProfile'];
-  userEvents: typeof actionCreators;
-}
+type StateProps =
+  & Pick<RootState, 'globalData'>
+  & RootState['userProfile'];
+
+type DispatchProps = { userEvents: typeof actionCreators; };
+
+type Props = DispatchProps & StateProps;
 
 class UserProfileController extends PageController<Props> {
 
@@ -34,17 +36,19 @@ class UserProfileController extends PageController<Props> {
   }
 }
 
-const enhance = connect((state: RootState) => ({
-  globalData: state.globalData,
-  ...state.userProfile,
-  userFormData: {
-    ...state.globalData.user,
-    confirmEmail: state.globalData.user && state.globalData.user.email,
-    preferences: state.globalData.preferences,
-    ...state.userProfile.userFormData
-  }
-}),
-actionCreators,
-(stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps }))
+const enhance = connect<StateProps, typeof actionCreators, {}, Props, RootState>(
+  (state: RootState) => ({
+    globalData: state.globalData,
+    ...state.userProfile,
+    userFormData: {
+      ...state.globalData.user,
+      confirmEmail: state.globalData.user && state.globalData.user.email,
+      preferences: state.globalData.preferences,
+      ...state.userProfile.userFormData
+    }
+  }),
+  actionCreators,
+  (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps })
+)
 
 export default enhance(wrappable(UserProfileController));

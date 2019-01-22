@@ -16,8 +16,8 @@ const actionCreators = {
 
 type StateProps = State;
 type DispatchProps = typeof actionCreators;
-
-type Props = StateProps & DispatchProps;
+type OwnProps = { stepId: number };
+type Props = OwnProps & DispatchProps & StateProps;
 
 class GenomeSummaryViewController extends PageController< Props > {
 
@@ -31,7 +31,7 @@ class GenomeSummaryViewController extends PageController< Props > {
 
   loadData () {
     if (this.props.genomeSummaryData == null) {
-      this.props.requestGenomeSummaryReport(this.props.match.params.stepId);
+      this.props.requestGenomeSummaryReport(this.props.stepId);
     }
   }
 
@@ -53,7 +53,7 @@ class GenomeSummaryViewController extends PageController< Props > {
 
 const mapStateToProps = (state: RootState) => state.genomeSummaryView;
 
-export default connect(
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   mapStateToProps,
   actionCreators
 ) (wrappable(GenomeSummaryViewController));

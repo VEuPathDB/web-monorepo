@@ -17,8 +17,9 @@ const actionCreators = {
 
 type StateProps = State;
 type DispatchProps = typeof actionCreators;
+type OwnProps = { stepId: number };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 class BlastSummaryViewController extends PageController< Props > {
 
@@ -32,7 +33,7 @@ class BlastSummaryViewController extends PageController< Props > {
 
   loadData () {
     if (this.props.blastSummaryData == null) {
-      this.props.requestBlastSummaryReport(this.props.match.params.stepId);
+      this.props.requestBlastSummaryReport(this.props.stepId);
     }
   }
 
@@ -68,7 +69,7 @@ class BlastSummaryViewController extends PageController< Props > {
 
 const mapStateToProps = (state: RootState) => state.blastSummaryView;
 
-export default connect(
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   mapStateToProps,
   actionCreators
 ) (wrappable(BlastSummaryViewController));
