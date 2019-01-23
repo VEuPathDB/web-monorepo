@@ -453,12 +453,13 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
     });
     return combined$.pipe(
       mapOperatorFactory((actions: any) => {
-        return from(request2Fulfill(actions, state$, dependencies))
+        return from(request2Fulfill(actions, state$, dependencies));
       }),
-      catchError((err: Error) => {
+      catchError((err: Error, caughtObservable) => {
         // TODO submit error to wdkService
         console.error(err);
-        return empty();
+        // continue mapping actions - hopefully this won't results in an infinite loop
+        return caughtObservable;
       })
     );
   };
