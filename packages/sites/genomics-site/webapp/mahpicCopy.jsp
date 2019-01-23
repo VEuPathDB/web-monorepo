@@ -584,7 +584,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td> <!--<a href="XXXXXXX" target="_blank">E03 Immune Profiles at NIAID's ImmPort</b></a></td>-->
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1411" target="_blank">E03 Immune Results at ImmPort</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -881,9 +881,10 @@
              <th>Data Integrated into PlasmoDB and HostDB</th>
            </tr>
            <tr>
-             <td>Coming Soon</td>
-             <td> </td>  
-             <td> </td>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS824" target="_blank">E06 Quantitative Metabolomics Results at Metabolights</a><br>
+                    </b></td>    
+             <td>N/A</td>
            </tr>
            </table>
            </div>
@@ -964,9 +965,10 @@
              <th>Data Integrated into PlasmoDB and HostDB</th>
            </tr>
            <tr>
-             <td>Coming Soon</td>
-             <td> </td>  
-             <td> </td>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS822" target="_blank">E07 Quantitative Metabolomics Results at MetaboLights</a>
+                    </b></td>    
+             <td>N/A</td>
            </tr>
           </table>
           </div>
@@ -1091,6 +1093,125 @@
         
   </div>	
   </div>
+
+  
+     <div class="wdk-toggle" data-show="false">
+     <h3 class="wdk-toggle-name"> <a href="#">Experiment 15: Measures of primary infection and relapse in <i>Aotus nancymaae</i> infected with <i>Plasmodium vivax</i></a></h3>
+     <div class="wdk-toggle-content">
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE15 table, #ExpInfoE15 td, #ExpInfoE15 th, #ExpInfoE15 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE15 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE15"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 15: <i>Aotus nancymaae</i> infected with <i>P. vivax</i> Brazil VII to produce clinical and omics measures of primary infections and relapses.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive <i>Aotus nancymaae</i> were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. gambiae</i>, <i>An. stephensi</i>, and <i>An. freeborni</i>) then profiled for clinical, hematological, parasitological, immunological, functional genomic, and metabolomic measurements. The experiment was performed for 121 days. The first inoculation attempt was virtually unsuccessful as only one of seven animals developed blood-stage infection. This animal was treated for the blood-stage infection.  All animals were re-challenged approximately one month later. Upon re-challenge all animals developed blood-stage infections with similar parasitological kinetics. After infections became chronic, the anti-malarial drug artemether was administered to curatively treat blood-stage infections. No sub-curative treatments were administered during this study because none of the animals developed severe disease. At the end of the study, the anti-malarial drugs primaquine and chloroquine were administered to all animals for curative treatment of the liver and blood-stage infections, respectively. Venous blood samples were collected only on clinically determined ‘timepoint’ days for the measurement of CBCs, reticulocytes, parasitemias, and downstream omics and immunological analyses. Small sample volumes were collected daily or every other day for the measurement of parasitemia. Within the MaHPIC, this project is known as 'Experiment 15'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>  
+      
+      <br><br>
+     
+       <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE15 table, #DataLinksE15 td, #DataLinksE15 th, #DataLinksE15 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE15 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksE15 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE15"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b>Coming Soon!</b></td> <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_13/"><b>E13 Clinical Data in PlasmoDB Downloads</b></a></td> -->
+             <td>N/A</td>
+           </tr>
+         
+     <!--  <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b><a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a><br>
+                    <a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=SRP043059" target="_blank">E13 Sequence data at NCBI's SRA</a><br>
+                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE58340" target="_blank">E13 Expression Results at NCBI's GEO</a></b></td>   
+             <td>N/A</td>
+           </tr>
+       
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
+             <td><b><a href="https://www.ebi.ac.uk/pride/archive/projects/PXD007773" target="_blank">XXXE</a><br>
+                    <a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007774" target="_blank">XXX</a>
+                    </b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
+             <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=c7e41c86aa6e4b15bc89b27a72fc9158" target="_blank">XXX</a></b></td>
+             <td>N/A</td>
+             </tr>
+           -->
+           <tr>
+             <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1424" target="_blank">E15 Immune Results at ImmPort</a></b></tr>
+             <td>N/A</td>
+           </tr>
+      <!--     <tr>
+             <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
+             <td><b><a href="http://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=ST000592" target="_blank">XXX</a></b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Math_Modeling_Core.jpg" height="13px" width="13px"> <b>Computational Modeling</b></td>
+             <td><b>Coming soon</b></td>
+             <td>N/A</td>
+           </tr>
+         -->  
+           </table>
+           </div>
+     <br><br>
+	<!--  
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px">  <img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px">
+	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
+        </div>
+        <br><br>
+     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="270px" width="550px"><br>
+     <a href="images/MaHPIC_E13_Timeline.png" target="_blank">View Larger Image</a><br>
+    -->
+        
+  </div>	
+  </div> 
   
   
      <div class="wdk-toggle" data-show="false">
@@ -1286,7 +1407,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E23 Immune Profiles at NIAID's ImmPort</a>-->
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1409" target="_blank">E23 Immune Results at ImmPort</a></b></tr>
              <td>N/A</td>
            </tr>
            <tr>
@@ -1485,7 +1606,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E24 Immune Profiles at NIAID's ImmPort</a>-->
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1409" target="_blank">E24 Immune Results at ImmPort</a></b></tr>
              <td>N/A</td>
            </tr>
            <tr>
@@ -1601,7 +1722,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br><a href="https://immport.niaid.nih.gov/immportWeb/home/home.do?loginType=full" target="_blank">E25 Immune Profiles at NIAID's ImmPort</a>-->
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1409" target="_blank">E25 Immune Results at ImmPort</a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -1718,7 +1839,8 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
-             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS536" target="_blank">E30 Metabolomics Results at MetaboLights</a> </b></td>
+             <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS536" target="_blank">E30 Metabolomics Results at MetaboLights</a><br>
+                    <a href="https://www.ebi.ac.uk/metabolights/MTBLS821" target="_blank">E30 Quantitative Metabolomics Results at MetaboLights</a>  </b></td>
              <td>N/A</td>
            </tr>
            <tr>
