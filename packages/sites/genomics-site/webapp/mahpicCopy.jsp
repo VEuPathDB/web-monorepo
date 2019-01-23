@@ -1123,7 +1123,7 @@
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td>Malaria-naive <i>Aotus nancymaae</i> were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. gambiae</i>, <i>An. stephensi</i>, and <i>An. freeborni</i>) then profiled for clinical, hematological, parasitological, immunological, functional genomic, and metabolomic measurements. The experiment was performed for 121 days. The first inoculation attempt was virtually unsuccessful as only one of seven animals developed blood-stage infection. This animal was treated for the blood-stage infection.  All animals were re-challenged approximately one month later. Upon re-challenge all animals developed blood-stage infections with similar parasitological kinetics. After infections became chronic, the anti-malarial drug artemether was administered to curatively treat blood-stage infections. No sub-curative treatments were administered during this study because none of the animals developed severe disease. At the end of the study, the anti-malarial drugs primaquine and chloroquine were administered to all animals for curative treatment of the liver and blood-stage infections, respectively. Venous blood samples were collected only on clinically determined ‘timepoint’ days for the measurement of CBCs, reticulocytes, parasitemias, and downstream omics and immunological analyses. Small sample volumes were collected daily or every other day for the measurement of parasitemia. Within the MaHPIC, this project is known as 'Experiment 15'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+             <td>Malaria-naive <i>Aotus nancymaae</i> were inoculated intravenously with salivary gland sporozoites produced and isolated at the Centers for Disease Control and Prevention from multiple <i>Anopheles</i> species (<i>An. gambiae</i>, <i>An. stephensi</i>, and <i>An. freeborni</i>) then profiled for clinical, hematological, parasitological, immunological, functional genomic, and metabolomic measurements. The experiment was performed for 121 days. The first inoculation attempt was virtually unsuccessful as only one of seven animals developed blood-stage infection. This animal was treated for the blood-stage infection.  All animals were re-challenged approximately one month later. Upon re-challenge all animals developed blood-stage infections with similar parasitological kinetics. After infections became chronic, the anti-malarial drug artemether was administered to curatively treat blood-stage infections. No sub-curative treatments were administered during this study because none of the animals developed severe disease. At the end of the study, the anti-malarial drugs primaquine and chloroquine were administered to all animals for curative treatment of the liver and blood-stage infections, respectively. Venous blood samples were collected only on clinically determined 'timepoint' days for the measurement of CBCs, reticulocytes, parasitemias, and downstream omics and immunological analyses. Small sample volumes were collected daily or every other day for the measurement of parasitemia. Within the MaHPIC, this project is known as 'Experiment 15'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
            </tr>
          </table>
       </div>  
@@ -1182,7 +1182,7 @@
            -->
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1424" target="_blank">E15 Immune Results at ImmPort</a></b></tr>
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1424" target="_blank">E15 Immune Results at ImmPort</a></b></td>
              <td>N/A</td>
            </tr>
       <!--     <tr>
@@ -1407,7 +1407,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1409" target="_blank">E23 Immune Results at ImmPort</a></b></tr>
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1409" target="_blank">E23 Immune Results at ImmPort</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -1606,7 +1606,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Immune_Profiling_Core.jpg" height="13px" width="13px"> <b>Immune Profiling</b></td>
-             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1409" target="_blank">E24 Immune Results at ImmPort</a></b></tr>
+             <td><b><a href="http://www.immport.org/immport-open/public/study/study/displayStudyDetail/SDY1409" target="_blank">E24 Immune Results at ImmPort</a></b></td>
              <td>N/A</td>
            </tr>
            <tr>
