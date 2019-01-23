@@ -196,7 +196,7 @@ async function getRequestPageSize([openResultTableSummaryViewAction]: [InferActi
     return requestPageSize();
 }
 
-async function getFulfillPageSizeUpdate([requestPageSizeUpdateAction]: [InferAction<typeof fulfillPageSize>], state$: Observable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPageSize>> {
+async function getFulfillPageSizeUpdate([requestPageSizeUpdateAction]: [InferAction<typeof requestPageSizeUpdate>], state$: Observable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPageSize>> {
     await setResultTablePageSizePref(wdkService, requestPageSizeUpdateAction.payload.pageSize);
     return fulfillPageSize(requestPageSizeUpdateAction.payload.pageSize);
 }
@@ -291,7 +291,7 @@ export const observe =
             mrate([openRTS, fulfillStep, requestSortingUpdate], getFulfillSortingUpdate, 
                 { areActionsCoherent: filterFulfillSortingUpdateActions }),
             mrate([requestPageSize], getFulfillPageSize),
-            mrate([requestPageSizeUpdate], getFulfillPageSize),
+            mrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
             mrate(
                 [
                     openRTS,
