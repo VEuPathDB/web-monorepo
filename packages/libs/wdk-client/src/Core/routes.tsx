@@ -22,6 +22,7 @@ import QuestionController from 'wdk-client/Controllers/QuestionController';
 import BlastSummaryViewController from 'wdk-client/Controllers/BlastSummaryViewController';
 import IsolatesSummaryViewController from 'wdk-client/Controllers/IsolatesSummaryViewController';
 import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryViewController';
+import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
 import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers/StepAnalysis/StepAnalysisContainer';
 
 const routes: RouteEntry[] = [
@@ -173,9 +174,17 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/step-analysis/:stepId',
+    path: '/step-analysis(\\d+)/:stepId',
     component: (props: RouteComponentProps<{ stepId: string }>) =>
       <StepAnalysisController
+        stepId={Number(props.match.params.stepId)}
+      />
+  },
+
+  {
+    path: '/step/:stepId(\\d+)/defaultSummaryView',
+    component: (props: RouteComponentProps<{ stepId: string }>) =>
+      <ResultTableSummaryViewController
         stepId={Number(props.match.params.stepId)}
       />
   },

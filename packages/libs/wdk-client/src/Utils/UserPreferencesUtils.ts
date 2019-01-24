@@ -22,23 +22,32 @@ export const SORT_SUFFIX = "_sort";
 export const SORT_ASC = "ASC";
 export const SORT_DESC = "DESC";
 
-// TODO: if no user preference, get the default from the question!
-export async function getSummaryTableConfigUserPref(questionName: string, wdkService: WdkService) : Promise<SummaryTableConfigUserPref> {
-    var userPrefs = await wdkService.getCurrentUserPreferences();
-    var prefName = questionName + SORT_SUFFIX;
-    var sortingSpecStrings : string[] = [];
-    if (userPrefs.global[prefName])
-        sortingSpecStrings = userPrefs.global[prefName].split(/,\s+/);
-    var sorting = sortingSpecStrings.map(value => constructSortingSpec(value));
-    var prefName = questionName + SUMMARY_SUFFIX;
-    var columns : string[] = [];
-     if (userPrefs.global[prefName])
-      columns = userPrefs.global[prefName].split(/,\s+/);
-    return {sorting,  columns};
+export async function getResultTableColumnsPref(questionName: string, wdkService: WdkService): Promise<string[]> {
+    const prefs = await wdkService.getCurrentUserPreferences();
+    const prefName =  questionName + SUMMARY_SUFFIX;
+    const columnsPref = prefs.global[prefName];
+    if (columnsPref) return columnsPref.split(/,\s+/);
+    
+    const questions = await wdkService.getQuestions();
+    const question = questions.find(question => question.name === questionName);
+    if (question == null) throw new Error(`Unknown question "${questionName}".`);
+    return question.defaultAttributes;
 }
 
 export async function setResultTableColumnsPref(questionName: string, wdkService: WdkService, columns : Array<string>) : Promise<UserPreferences> {
     return wdkService.patchUserPreference('global', questionName + SUMMARY_SUFFIX, columns.join(','));
+}
+
+export async function getResultTableSortingPref(questionName: string, wdkService: WdkService): Promise<AttributeSortingSpec[]> {
+    const prefs = await wdkService.getCurrentUserPreferences();
+    const prefName = questionName + SORT_SUFFIX;
+    const sortingPref = prefs.global[prefName];
+    if (sortingPref) return sortingPref.split(/,\s+/).map(constructSortingSpec);
+
+    const questions = await wdkService.getQuestions();
+    const question = questions.find(question => question.name === questionName);
+    if (question == null) throw new Error(`Unknown question "${questionName}".`);
+    return question.defaultSorting;
 }
 
 export async function setResultTableSortingPref(questionName: string, wdkService: WdkService, sorting : Array<AttributeSortingSpec>) : Promise<UserPreferences> {

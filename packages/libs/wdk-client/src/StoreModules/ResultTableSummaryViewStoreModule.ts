@@ -24,7 +24,7 @@ import { requestUpdateBasket, fulfillUpdateBasket } from 'wdk-client/Actions/Bas
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Answer, AnswerJsonFormatConfig, PrimaryKey, AttributesConfig } from 'wdk-client/Utils/WdkModel';
-import { getSummaryTableConfigUserPref, setResultTableColumnsPref, setResultTableSortingPref, setResultTablePageSizePref } from 'wdk-client/Utils/UserPreferencesUtils';
+import { getResultTableColumnsPref, getResultTableSortingPref, setResultTableColumnsPref, setResultTableSortingPref, setResultTablePageSizePref } from 'wdk-client/Utils/UserPreferencesUtils';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { Observable,  } from 'rxjs';
 import { combineEpics } from 'redux-observable';
@@ -134,8 +134,8 @@ function filterRequestColumnsChoicePreferenceActions([openAction, requestAction]
 
 // this probably belongs in user preference land
 async function getFulfillColumnsChoicePreference([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestColumnsChoicePreference>], state$: Observable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillColumnsChoice>> {
-    let summaryTableConfigPref = await getSummaryTableConfigUserPref(requestAction.payload.questionName, wdkService);
-    return fulfillColumnsChoice(summaryTableConfigPref.columns, requestAction.payload.questionName);
+    let columns = await getResultTableColumnsPref(requestAction.payload.questionName, wdkService);
+    return fulfillColumnsChoice(columns, requestAction.payload.questionName);
 }
 
 function filterFulfillColumnsChoicePreferenceActions([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestColumnsChoicePreference>]) {
@@ -169,8 +169,8 @@ function filterRequestSortingPreferenceActions([openAction, requestAction]: [Inf
 
 async function getFulfillSortingPreference([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestSortingPreference>], state$: Observable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSorting>> {
 
-    let summaryTableConfigPref = await getSummaryTableConfigUserPref(requestAction.payload.questionName, wdkService);
-    return fulfillSorting(summaryTableConfigPref.sorting, requestAction.payload.questionName);
+    let sorting = await getResultTableSortingPref(requestAction.payload.questionName, wdkService);
+    return fulfillSorting(sorting, requestAction.payload.questionName);
 }
 
 function filterFullfillSortingPreferenceActions([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestSortingPreference>]) {
