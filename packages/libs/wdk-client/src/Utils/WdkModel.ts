@@ -188,6 +188,7 @@ interface QuestionShared extends ModelEntity {
   urlSegment: string;
   groups: ParameterGroup[];
   defaultAttributes: string[];
+  defaultSorting: AttributeSortingSpec[];
   dynamicAttributes: AttributeField[];
   defaultSummaryView: string;
   summaryViewPlugins: string[];

@@ -375,6 +375,12 @@ const questionSharedDecoder =
     Decode.field('urlSegment', Decode.string),
     Decode.field('groups', Decode.arrayOf(paramGroupDecoder)),
     Decode.field('defaultAttributes', Decode.arrayOf(Decode.string)),
+    Decode.field('defaultSorting', Decode.arrayOf(
+      Decode.combine(
+        Decode.field('attributeName', Decode.string),
+        Decode.field('direction', Decode.oneOf(Decode.constant('ASC'), Decode.constant('DESC')))
+      )
+    )),
     Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
     Decode.field('defaultSummaryView', Decode.string),
     Decode.field('summaryViewPlugins', Decode.arrayOf(Decode.string)),
