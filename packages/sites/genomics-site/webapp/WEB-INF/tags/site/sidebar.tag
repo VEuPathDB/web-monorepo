@@ -61,17 +61,8 @@
     <a class="heading" id='stats'  href="#">Data Summary</a>
   </h3>
 
-  <c:choose>
-    <c:when test="${project == 'TrichDB'}">
-      <c:set var="linkToDataSummary" value="/eupathGenomeTable.jsp" />
-      <c:set var="linkToGeneMetrics" value="/showXmlDataContent.do?name=XmlQuestions.GeneMetrics" />
-    </c:when>
-    <c:otherwise>
-      <c:set var="linkToDataSummary" value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes" />
-      <c:set var="linkToGeneMetrics" value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics" />
-    </c:otherwise>
-  </c:choose>
-
+  <c:set var="linkToDataSummary" value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes" />
+  <c:set var="linkToGeneMetrics" value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics" />
   <div class="menu_lefttop_drop" style="text-align:center;">
     <table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
       <tr>
