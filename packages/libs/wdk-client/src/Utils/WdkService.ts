@@ -8,7 +8,7 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise, synchronized } from 'wdk-client/Utils/PromiseUtils';
-import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder } from 'wdk-client/Utils/WdkUser';
+import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder, UserComment, UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec } from 'wdk-client/Utils/WdkUser';
 
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
@@ -46,6 +46,8 @@ const CLIENT_WDK_VERSION_HEADER = 'x-client-wdk-timestamp';
  * model is stale, based on CLIENT_WDK_VERSION_HEADER.
  */
 const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
+
+export interface StandardWdkPostResponse  {id: number};
 
 interface RecordRequest {
   attributes: string[];
@@ -935,6 +937,32 @@ export default class WdkService {
 
   removeUserDataset(id: number) {
     return this._fetchJson<void>('delete', `/users/current/user-datasets/${id}`);
+  }
+
+  getUserComment(id: number) {
+    return this._fetchJson<UserComment>('get', `/user-comments/${id}`)
+  }
+
+  getPubmedPreview(pubmedIds: number[]) : Promise<PubmedPreview> {
+    let ids = pubmedIds.join(',');
+    return this._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`)
+  }
+
+  // return the new comment id
+  postUserComment(userCommentPostRequest: UserCommentPostRequest) : Promise<StandardWdkPostResponse> {
+    let data = JSON.stringify({ userCommentPostRequest });
+    return this._fetchJson<StandardWdkPostResponse>('post', '/user-comments', data);
+  }
+
+  // TODO: fix this
+  // return the new attachment id
+  postUserCommentAttachedFile(commentId: number, attachment: UserCommentAttachedFileSpec) : Promise<StandardWdkPostResponse> {
+    let data = JSON.stringify({ attachment });
+    return this._fetchJson<StandardWdkPostResponse>('post', `/user-comments/${commentId}/attachments`, data);
+  }
+
+  deleteUserCommentAttachedFile(commentId: number, attachmentId: number) :Promise<void> {
+    return this._fetchJson<void>('delete', `/user-comments/${commentId}/attachments/${attachmentId}`);
   }
 
   checkIfUserEmailExists (emailAddress: string) {

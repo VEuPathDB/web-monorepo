@@ -68,3 +68,59 @@ export const strategyDecoder: Decoder<Strategy> = combine(
     field('isValid', boolean),
   )
 )
+
+// TODO: should be factored to Ebrc something
+export interface PubmedPreview {
+
+}
+ 
+export interface UserCommentAttachedFileSpec {
+  file: File,
+  description: string
+}
+
+export interface UserCommentAttachedFile {
+  id: number,
+  description: string
+}
+
+export type ReviewStatus =
+  "accepted" |
+  "adopted" |
+  "community" |
+  "not_spam" |
+  "rejected" |
+  "spam" |
+  "task" |
+  "unknown";
+
+  // fields the user supplies
+  export interface UserCommentFormFields {
+    content?: string,
+    headline?: string,
+    genbankAccessions?: string[],
+    categoryIds?: string[],
+    digitalObjectIds?: string[],
+    pubmedIds?: string[],
+    relatedStableIds?: string[],
+    additionalAuthors?: string[],
+  }
+  
+  // fields expected by the post to create a user comment
+  export interface UserCommentPostRequest extends UserCommentFormFields {
+  previousId?: number,
+  target?: string,
+  organism?: string,
+  author?: string,
+  reviewStatus?: ReviewStatus,
+  modifiedDate?: Date,
+  externalDb?: string
+}
+
+export interface UserComment extends UserCommentPostRequest {
+  attachedFiles?: UserCommentAttachedFile[];
+}
+
+export interface UserCommentPostResponse  {id: number};
+
+export interface UserCommentAttachedFilePostResponse  {id: number};
