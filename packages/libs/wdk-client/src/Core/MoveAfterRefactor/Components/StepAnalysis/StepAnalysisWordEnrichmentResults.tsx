@@ -83,13 +83,14 @@ const wordEnrichmentResultColumns = [
 ] as ColumnSettings[];
 
 const wordEnrichmentButtonsConfigFactory = (
+  stepId: number,
   analysisId: number, 
   { downloadPath }: any,
   webAppUrl: string
 ) => [
   {
     key: 'download',
-    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${downloadPath}`,
+    href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${downloadPath}`,
     iconClassName: 'fa fa-download blue-text',
     contents: 'Download'
   }
@@ -101,7 +102,14 @@ export const StepAnalysisWordEnrichmentResults: React.SFC<StepAnalysisResultPlug
   webAppUrl
 }) => (
   <Fragment>
-    <StepAnalysisButtonArray configs={wordEnrichmentButtonsConfigFactory(analysisConfig.analysisId, analysisResult, webAppUrl)} />
+    <StepAnalysisButtonArray configs={
+      wordEnrichmentButtonsConfigFactory(
+        analysisConfig.stepId,
+        analysisConfig.analysisId, 
+        analysisResult, 
+        webAppUrl
+      )
+    } />
     <h3>Analysis Results:   </h3>
     <StepAnalysisEnrichmentResultTable
       emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}

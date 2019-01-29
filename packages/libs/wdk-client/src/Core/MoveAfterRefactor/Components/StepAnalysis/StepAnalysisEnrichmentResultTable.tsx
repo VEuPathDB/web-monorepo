@@ -7,11 +7,11 @@ import { htmlStringValue, numericValue } from '../../../../Components/Mesa/Utils
 import { compose } from 'lodash/fp';
 
 const simpleFilterPredicateFactory = (searchQuery: string) => (row: Record<string, string>) =>
-  Object.values(row).some(entry => entry.toLowerCase().includes(searchQuery.toLowerCase()));
+  Object.values(row).some(entry => `${entry}`.toLowerCase().includes(searchQuery.toLowerCase()));
 
 interface StepAnalysisEnrichmentResultTableProps {
   emptyResultMessage: string;
-  rows: Record<string, string | object>[];
+  rows: Record<string, any>[];
   columns: ColumnSettings[];
   initialSearchQuery?: string;
   initialSortColumnKey?: string;

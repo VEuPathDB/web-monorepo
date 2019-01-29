@@ -95,10 +95,11 @@ const goIdRenderFactory = (goTermBaseUrl: string) => ({ row }: Record<string, an
   </a>;
 
 const goButtonsConfigFactory = (
-    analysisId: number, 
-    { imageDownloadPath, hiddenDownloadPath, revidoInputList }: any,
-    webAppUrl: string,
-    updateResultsUiState: (newUiState: any) => void
+  stepId: number,  
+  analysisId: number, 
+  { imageDownloadPath, hiddenDownloadPath, revidoInputList }: any,
+  webAppUrl: string,
+  updateResultsUiState: (newUiState: any) => void
 ) => [
   {
     key: 'revigo',
@@ -120,13 +121,13 @@ const goButtonsConfigFactory = (
       event.preventDefault();
       updateResultsUiState({ wordCloudOpen: true });
     },
-    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${imageDownloadPath}`,
+    href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${imageDownloadPath}`,
     iconClassName: 'fa fa-bar-chart red-text',
     contents: <Fragment>Show <b>Word Cloud</b></Fragment>
   },
   {
     key: 'download',
-    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${hiddenDownloadPath}`,
+    href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${hiddenDownloadPath}`,
     iconClassName: 'fa fa-download blue-text',
     contents: 'Download'
   }
@@ -142,7 +143,13 @@ export const StepAnalysisGoEnrichmentResults: React.SFC<StepAnalysisResultPlugin
   webAppUrl
 }) => (
   <Fragment>
-    <StepAnalysisButtonArray configs={goButtonsConfigFactory(analysisConfig.analysisId, analysisResult, webAppUrl, updateResultsUiState)} />
+    <StepAnalysisButtonArray configs={goButtonsConfigFactory(
+      analysisConfig.stepId,
+      analysisConfig.analysisId, 
+      analysisResult, 
+      webAppUrl, 
+      updateResultsUiState
+    )} />
     <h3>Analysis Results:   </h3>
     <StepAnalysisEnrichmentResultTable
       emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}
@@ -156,7 +163,7 @@ export const StepAnalysisGoEnrichmentResults: React.SFC<StepAnalysisResultPlugin
     />
     <WordCloudModal
       imgUrl={
-        `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisConfig.analysisId}&path=${analysisResult.imageDownloadPath}`
+        `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}`
       }
       open={wordCloudOpen}
       onClose={() => updateResultsUiState({ wordCloudOpen: false })}

@@ -100,6 +100,7 @@ const pathwayIdRenderFactory = (pathwayBaseUrl: string) => ({ row }: Record<stri
   <a href={`${pathwayBaseUrl}${row.pathwaySource}/${row.pathwayId}`} target="_blank">{row.pathwayId}</a>
 
 const pathwayButtonsConfigFactory = (
+  stepId: number,
   analysisId: number, 
   { imageDownloadPath, hiddenDownloadPath }: any, 
   webAppUrl: string, 
@@ -111,13 +112,13 @@ const pathwayButtonsConfigFactory = (
       event.preventDefault(); 
       updateResultsUiState({ wordCloudOpen: true });
     },
-    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${imageDownloadPath}`,
+    href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${imageDownloadPath}`,
     iconClassName: 'fa fa-bar-chart red-text',
     contents: <Fragment>Show <b>Word Cloud</b></Fragment>
   },
   {
     key: 'download',
-    href: `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisId}&path=${hiddenDownloadPath}`,
+    href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${hiddenDownloadPath}`,
     iconClassName: 'fa fa-download blue-text',
     contents: 'Download'
   }
@@ -134,7 +135,12 @@ export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultP
 }) => (
   <Fragment>
     <StepAnalysisButtonArray 
-      configs={pathwayButtonsConfigFactory(analysisConfig.analysisId, analysisResult, webAppUrl, updateResultsUiState)} 
+      configs={pathwayButtonsConfigFactory(
+        analysisConfig.stepId,
+        analysisConfig.analysisId, 
+        analysisResult, 
+        webAppUrl, updateResultsUiState
+      )} 
     />
     <h3>Analysis Results:   </h3>
     <StepAnalysisEnrichmentResultTable
@@ -149,7 +155,7 @@ export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultP
     />
     <WordCloudModal
       imgUrl={
-        `${webAppUrl}/stepAnalysisResource.do?analysisId=${analysisConfig.analysisId}&path=${analysisResult.imageDownloadPath}`
+        `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}`
       }
       open={wordCloudOpen}
       onClose={() => updateResultsUiState({ wordCloudOpen: false })}

@@ -75,7 +75,7 @@ export const analysisBaseTabConfigs = createSelector<RootState, number[], Record
         }),
         UnsavedAnalysisState: ({ displayName }) => ({
           key: `${panelId}`,
-          display: displayName,
+          display: `${displayName}*`,
           removable: true
         }),
         SavedAnalysisState: ({ analysisConfig: { displayName } }) => ({

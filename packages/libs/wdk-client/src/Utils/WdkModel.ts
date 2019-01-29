@@ -400,6 +400,7 @@ export interface IsolateForSummaryView {
 }
 
 export interface GenomeSummaryViewReport {
+  isTruncated?: boolean;
   isDetail: boolean;
   maxLength: number;
   sequences: GenomeViewSequence[];
@@ -416,7 +417,7 @@ export interface GenomeViewSequence {
 }
 
 export interface GenomeViewRegion {
-  forward: boolean,
+  isForward: boolean,
   percentStart: number,
   percentLength: number,
   features: GenomeViewFeature[];
@@ -424,7 +425,7 @@ export interface GenomeViewRegion {
 
 export interface GenomeViewFeature {
   sourceId: string;
-  forward: boolean;
+  isForward: boolean;
   sequenceId: string;
   start: number;
   end: number;

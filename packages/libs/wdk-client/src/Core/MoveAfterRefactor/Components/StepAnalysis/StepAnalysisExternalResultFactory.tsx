@@ -16,10 +16,10 @@ const generateIframeUrl = (queryParamFactories: [string, QueryParamFactory][], p
 }
 
 export const downloadUrlQueryParamFactory = ({ 
-  analysisConfig: { analysisId },
+  analysisConfig: { analysisId, stepId },
   analysisResult: { downloadUrlBase, downloadPath }
 }: StepAnalysisResultPluginProps) =>
-  `${downloadUrlBase}/stepAnalysisResource.do?analysisId=${analysisId}&path=${downloadPath}`;
+  `${downloadUrlBase}/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${downloadPath}`;
 
 export const propertiesUrlQueryParamFactory = ({
   analysisConfig: { analysisId, stepId },

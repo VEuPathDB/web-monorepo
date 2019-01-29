@@ -41,7 +41,7 @@ import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
 import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
-import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, duplicateAnalysis, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 import { denormalizeParamValue } from '../../Components/StepAnalysis/StepAnalysisDefaultForm';
@@ -459,7 +459,6 @@ interface FocusedUninitializedAnalysisPanelState<ActionType> {
   stepId: number;  
   panelState: UninitializedAnalysisPanelState;
   panelId: number;
-  tabIndex: number;
 }
 
 interface FocusedAnalysisMenuState<ActionType> {
@@ -468,7 +467,6 @@ interface FocusedAnalysisMenuState<ActionType> {
   stepId: number;
   panelState: AnalysisMenuState;
   panelId: number;
-  tabIndex: number;
 }
 
 interface FocusedUnsavedAnalysisState<ActionType> {
@@ -477,7 +475,6 @@ interface FocusedUnsavedAnalysisState<ActionType> {
   stepId: number;
   panelState: UnsavedAnalysisState;
   panelId: number;
-  tabIndex: number;
 }
 
 interface FocusedSavedAnalysisState<ActionType> {
@@ -486,7 +483,6 @@ interface FocusedSavedAnalysisState<ActionType> {
   stepId: number;
   panelState: SavedAnalysisState;
   panelId: number;
-  tabIndex: number;
 }
 
 interface FocusedState<ActionType> {
@@ -495,7 +491,6 @@ interface FocusedState<ActionType> {
   stepId: number;
   panelState: AnalysisPanelState;
   panelId: number;
-  tabIndex: number;
 }
 
 const focusOnPanelById = <ActionType>(action: ActionType & { payload: { panelId: number } }, state: StepAnalysesState): FocusedState<ActionType> => ({
@@ -503,8 +498,7 @@ const focusOnPanelById = <ActionType>(action: ActionType & { payload: { panelId:
   choices: state.analysisChoices,
   stepId: state.stepId,
   panelId: action.payload.panelId,
-  panelState: state.analysisPanelStates[action.payload.panelId],
-  tabIndex: state.analysisPanelOrder.indexOf(action.payload.panelId)
+  panelState: state.analysisPanelStates[action.payload.panelId]
 });
 
 const onTabInUnitializedAnalysisPanelState = <ActionType>(state: FocusedState<ActionType>): state is FocusedUninitializedAnalysisPanelState<ActionType> =>

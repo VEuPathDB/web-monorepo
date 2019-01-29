@@ -116,7 +116,7 @@ const mergeProps = (
   ...ownProps,
   loadingTabs: stateProps.analysisChoices.length === 0,
   activeTab: `${stateProps.activeTab}`,
-  newAnalysisButton: stateProps.newAnalysisButtonVisible && (
+  newAnalysisButton: (
     <button 
       id="add-analysis" 
       title="Choose an analysis tool to apply to the results of your current step." 

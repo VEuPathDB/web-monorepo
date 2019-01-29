@@ -51,7 +51,7 @@ export function sortFactory (accessor) {
 };
 
 export const numericValue = val => val
-  ? parseFloat(val.replace('inf', 'Infinity'))
+  ? parseFloat(`${val}`.replace('inf', 'Infinity'))
   : 0;
 
 export function numberSort (_list, key, ascending = true) {
