@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { includes } from 'lodash';
 import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import RecordTable from 'wdk-client/Views/Records/RecordTable/RecordTable';
+import RecordTableDescription from 'wdk-client/Views/Records/RecordTable/RecordTableDescription';
 import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
@@ -23,7 +24,7 @@ function RecordTableSection(props) {
       onCollapsedChange={onCollapsedChange}
     >
       <ErrorBoundary>
-        {description && <p>{safeHtml(description)}</p>}
+        <RecordTableDescription table={table} record={record} recordClass={recordClass}/>
         { isError ? <p style={{ color: 'darkred', fontStyle: 'italic' }}>Unable to load data due to a server error.</p>
         : isLoading ? <p>Loading...</p>
         : <RecordTable className={className} value={value} table={table} record={record} recordClass={recordClass}/> }
