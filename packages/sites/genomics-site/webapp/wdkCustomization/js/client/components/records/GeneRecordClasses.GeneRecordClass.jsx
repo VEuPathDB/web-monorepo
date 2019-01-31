@@ -234,11 +234,11 @@ export function RecordTableDescription(props) {
       return renderAttributeValue(props.record.attributes.orthomcl_link, null, 'p');
     */
 
-    default:
-      return <props.DefaultComponent {...props}/>
-
     case 'ECNumbers':
       return renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
+
+    default:
+      return <props.DefaultComponent {...props}/>
   }
 }
 
