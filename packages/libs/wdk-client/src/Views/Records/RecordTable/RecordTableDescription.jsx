@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 function RecordTableDescription(props) {
-  return props.description ? <p>{safeHtml(props.description)}</p> : null;
+  const { description } = props.table;
+  return description ? <p>{safeHtml(description)}</p> : null;
 }
 
 RecordTableDescription.propTypes = {
