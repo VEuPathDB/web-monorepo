@@ -236,6 +236,9 @@ export function RecordTableDescription(props) {
 
     default:
       return <props.DefaultComponent {...props}/>
+
+    case 'ECNumbers':
+      return renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
   }
 }
 
