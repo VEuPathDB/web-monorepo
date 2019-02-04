@@ -79,12 +79,15 @@ export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 export const RecordTable = makeDynamicWrapper('RecordTable', RecordTableContainer);
 
+const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
+
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
+  const ResolvedRecordLink = RecordClassSpecificRecordlink(WdkRecordLink);
   return function ApiRecordLink(props) {
     let recordId = props.recordId.filter(p => p.name !== 'project_id');
     return (
-      <WdkRecordLink {...props} recordId={recordId}/>
+      <ResolvedRecordLink {...props} recordId={recordId}/>
     );
   };
 }
