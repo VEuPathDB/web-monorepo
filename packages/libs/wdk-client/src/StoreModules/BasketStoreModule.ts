@@ -8,7 +8,10 @@ import { Action } from 'wdk-client/Actions';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import { Observable } from 'rxjs';
-import { mergeMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import {
+  mergeMapRequestActionsToEpic as mrate,
+  switchMapRequestActionsToEpic as srate
+} from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics } from 'redux-observable';
 
 export const key = 'basket';
@@ -40,5 +43,7 @@ async function getFulfillUpdateBasket(
 }
 
 export const observe = combineEpics(
-  mergeMapRequestActionsToEpic([requestUpdateBasket], getFulfillUpdateBasket)
+  srate([requestUpdateBasket], getFulfillUpdateBasket,
+    // Always request basket update requests
+    { areActionsNew: () => true })
 );

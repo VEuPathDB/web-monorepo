@@ -65,7 +65,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
     return (nextProps.node !== this.props.node);
   }
 
-  render(): React.ReactElement<Props<T>> {
+  render() {
     let {
       name,
       node,
@@ -81,7 +81,6 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
       getNodeChildren,
       renderNode
     } = this.props;
-
 
     // We have to apply the generic type `T` to these child components. This is
     // a known TypeScript issue and will likely be solved in the future.

@@ -11,7 +11,7 @@ export const requestUpdateBasket = makeActionCreator(
   (
     operation: BasketOperation,
     recordClassName: string,
-    primaryKeys: Set<PrimaryKey>
+    primaryKeys: Array<PrimaryKey>
   ) => ({ operation: operation, recordClassName, primaryKeys })
 );
 
@@ -20,7 +20,7 @@ export const fulfillUpdateBasket = makeActionCreator(
   (
     operation: BasketOperation,
     recordClassName: string,
-    primaryKeys: Set<PrimaryKey>
+    primaryKeys: Array<PrimaryKey>
   ) => ({ operation, recordClassName, primaryKeys })
 );
 

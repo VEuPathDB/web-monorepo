@@ -280,6 +280,7 @@ export interface Answer {
     recordClassName: string;
     responseCount: number;
     totalCount: number;
+    sorting: AttributeSortingSpec[];
   }
 }
 

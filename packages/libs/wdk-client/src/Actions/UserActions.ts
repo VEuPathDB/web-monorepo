@@ -740,12 +740,10 @@ export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketActi
  * @param {Boolean} status
  */
 export function updateBasketStatus(record: RecordInstance, status: boolean): ActionThunk<BasketAction|ShowLoginModalAction|EmptyAction> {
-  let setOfOneRecord = new Set();
-  setOfOneRecord.add(record.id);
   return maybeLoggedIn<BasketAction, ShowLoginModalAction|EmptyAction>(
     ({ wdkService }) =>
       setBasketStatus(record,
-        wdkService.updateBasketStatus(status? 'add' : 'remove', record.recordClassName, setOfOneRecord).then(response => status)),
+        wdkService.updateBasketStatus(status? 'add' : 'remove', record.recordClassName, [record.id]).then(response => status)),
     showLoginWarning('use baskets')
   );
 };

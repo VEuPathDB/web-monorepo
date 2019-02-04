@@ -1,0 +1,39 @@
+.ResultTableSummaryView {
+
+  > .MesaComponent {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    // Force PagniationMenu to come before Toolbar
+    .Toolbar + .PaginationMenu {
+      order: -1;
+    }
+
+    .TableToolbar-Children {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .ResultTableButton + .ResultTableButton {
+    margin-left: 1em;
+  }
+
+  td.DataCell:empty:after {
+    content: 'N/A';
+    opacity: .4;
+  }
+
+
+}
+
+.AddColumnsDialogContent {
+  flex-direction: column;
+  justify-content: space-between;
+
+  .btn.ResultTable-AddColumnsButton {
+    margin: 1em auto;
+  }
+
+}

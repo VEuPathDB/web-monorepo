@@ -14,7 +14,7 @@ import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 type ChangeHandler = (ids: string[]) => void;
 
 type Props = {
-  title: string;
+  title?: string;
   name?: string;
   /** Hide individuals from the rendered tree. They will still affect searches. */
   hideIndividuals?: boolean;
@@ -24,6 +24,8 @@ type Props = {
   /** String name representing what is being searched */
   leafType: string, // do not make optional- add this prop to your calling code!
   selectedLeaves: string[];
+  currentSelection?: string[];
+  defaultSelection?: string[];
   expandedBranches: string[];
   searchTerm: string;
   renderNode?: (node: CategoryTreeNode, path?: number[]) => React.ReactNode;
@@ -55,6 +57,8 @@ let {
   searchBoxPlaceholder,
   searchTerm,
   selectedLeaves,
+  currentSelection,
+  defaultSelection,
   title,
   tree,
 } = props;
@@ -87,6 +91,8 @@ let {
           tree={tree}
           isMultiPick={isMultiPick}
           selectedList={selectedLeaves}
+          currentList={currentSelection}
+          defaultList={defaultSelection}
           expandedList={expandedBranches}
           searchBoxPlaceholder={searchBoxPlaceholder}
           searchTerm={searchTerm}

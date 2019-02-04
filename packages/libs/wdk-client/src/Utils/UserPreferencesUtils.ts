@@ -1,3 +1,14 @@
+import {
+    compose,
+    cond,
+    constant,
+    identity,
+    parseInt,
+    isInteger,
+    stubTrue,
+    getOr,
+    get
+ } from 'lodash/fp';
 import WdkService from 'wdk-client/Utils/WdkService';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
 import { AttributeSortingSpec } from "wdk-client/Utils/WdkModel"
@@ -26,7 +37,7 @@ export async function getResultTableColumnsPref(questionName: string, wdkService
     const prefs = await wdkService.getCurrentUserPreferences();
     const prefName =  questionName + SUMMARY_SUFFIX;
     const columnsPref = prefs.global[prefName];
-    if (columnsPref) return columnsPref.split(/,\s+/);
+    if (columnsPref) return columnsPref.split(/,\s*/);
     
     const questions = await wdkService.getQuestions();
     const question = questions.find(question => question.name === questionName);
@@ -42,7 +53,7 @@ export async function getResultTableSortingPref(questionName: string, wdkService
     const prefs = await wdkService.getCurrentUserPreferences();
     const prefName = questionName + SORT_SUFFIX;
     const sortingPref = prefs.global[prefName];
-    if (sortingPref) return sortingPref.split(/,\s+/).map(constructSortingSpec);
+    if (sortingPref) return sortingPref.split(/,\s*/).map(constructSortingSpec);
 
     const questions = await wdkService.getQuestions();
     const question = questions.find(question => question.name === questionName);
@@ -79,3 +90,19 @@ export async function getMatchedTranscriptFilterPref(wdkService: WdkService) : P
 export async function setMatchedTranscriptFilterPref(expanded: boolean, wdkService: WdkService) : Promise<UserPreferences> {
     return wdkService.patchUserPreference('global', MATCHED_TRANSCRIPT_FILTER_EXPANDED, expanded? 'yes' : 'no');
 }
+
+const getGlobalPrefs = (prefs: UserPreferences) => prefs.global;
+
+const getItemsPerPage = compose(
+    globalPrefs => globalPrefs.preference_global_items_per_page,
+    getGlobalPrefs
+)
+
+export const getPageSizeFromPreferences = compose(
+    cond<number, number>([
+        [isInteger, identity],
+        [stubTrue, constant(20)]
+    ]),
+    parseInt(10),
+    getItemsPerPage
+)

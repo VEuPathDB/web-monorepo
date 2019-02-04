@@ -20,6 +20,7 @@ import * as stepAnalysis from 'wdk-client/Core/MoveAfterRefactor/StoreModules/St
 import * as steps from 'wdk-client/StoreModules/StepsStoreModule';
 import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisStoreModule';
 import * as histogramAnalysis from 'wdk-client/StoreModules/HistogramAnalysisStoreModule';
+import * as basket from 'wdk-client/StoreModules/BasketStoreModule';
 
 export default {
   answerView,
@@ -44,4 +45,5 @@ export default {
   userRegistration,
   wordCloudAnalysis,
   histogramAnalysis,
+  basket
 };

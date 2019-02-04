@@ -784,7 +784,7 @@ export default class WdkService {
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  updateBasketStatus(operation: BasketOperation, recordClassName: string, primaryKeys: Set<PrimaryKey>): Promise<never> {
+  updateBasketStatus(operation: BasketOperation, recordClassName: string, primaryKeys: Array<PrimaryKey>): Promise<never> {
     let data = JSON.stringify({ [operation]: primaryKeys });
     let url = `/users/current/baskets/${recordClassName}`;
     return this._fetchJson<never>('patch', url, data);
