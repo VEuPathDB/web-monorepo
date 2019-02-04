@@ -956,7 +956,7 @@ export default class WdkService {
           return output;
         }, {})
     });
-    return this._fetchJson<UserDatasetShareResponse>('patch', '/users/current/user-datasets/sharing', delta);
+    return this._fetchJson<UserDatasetShareResponse>('patch', '/users/current/user-dataset-sharing', delta);
   }
 
   getOauthStateToken() {
