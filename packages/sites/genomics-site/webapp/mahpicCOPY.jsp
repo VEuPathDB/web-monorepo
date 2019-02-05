@@ -881,6 +881,11 @@
              <th>Data Integrated into PlasmoDB and HostDB</th>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_06/">E06 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS824" target="_blank">E06 Quantitative Metabolomics Results at Metabolights</a><br>
                     </b></td>    
@@ -963,6 +968,16 @@
              <th>Data from MaHPIC Team</th>
              <th>Data Available from</th>
              <th>Data Integrated into PlasmoDB and HostDB</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_07A/">E07A Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_07B/">E07B Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
@@ -1155,7 +1170,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming Soon!</b></td> <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_13/"><b>E13 Clinical Data in PlasmoDB Downloads</b></a></td> -->
+             </td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_15/"><b>E15 Clinical Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
          
