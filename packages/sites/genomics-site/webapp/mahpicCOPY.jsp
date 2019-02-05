@@ -1222,7 +1222,7 @@
         </div>
         <br><br>
     -->
-     <img align="middle" src="images/MaHPIC_E15_Timeline.pdf" height="270px" width="550px"><br>
+     <img align="middle" src="images/MaHPIC_E15_Timeline.jpg" height="270px" width="550px"><br>
      <a href="images/MaHPIC_E15_Timeline.jpg" target="_blank">View Larger Image</a><br>
 
         
@@ -1950,7 +1950,7 @@
            
            </table>
            </div>
-	 
+	   <br><br>
 <!--	   
 	 <h4>Publication(s)</h4>
 	    <div style="margin-left: 2.5em;">
