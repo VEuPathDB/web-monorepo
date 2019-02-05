@@ -1223,7 +1223,7 @@
         <br><br>
     -->
      <img align="middle" src="images/MaHPIC_E15_Timeline.pdf" height="270px" width="550px"><br>
-     <a href="images/MaHPIC_E15_Timeline.pdf" target="_blank">View Larger Image</a><br>
+     <a href="images/MaHPIC_E15_Timeline.jpg" target="_blank">View Larger Image</a><br>
 
         
   </div>	
