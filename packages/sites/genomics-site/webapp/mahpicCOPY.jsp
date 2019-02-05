@@ -1170,7 +1170,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             </td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_15/"><b>E15 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_15/"><b>E15 Clinical Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
          
@@ -1221,9 +1221,10 @@
 	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
         </div>
         <br><br>
-     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="270px" width="550px"><br>
-     <a href="images/MaHPIC_E13_Timeline.png" target="_blank">View Larger Image</a><br>
     -->
+     <img align="middle" src="images/MaHPIC_E15_Timeline.pdf" height="270px" width="550px"><br>
+     <a href="images/MaHPIC_E15_Timeline.pdf" target="_blank">View Larger Image</a><br>
+
         
   </div>	
   </div> 
