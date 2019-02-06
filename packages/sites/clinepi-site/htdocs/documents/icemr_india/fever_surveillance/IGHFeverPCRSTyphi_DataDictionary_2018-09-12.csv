@@ -1,0 +1,9 @@
+"Variable / Field Name","Form Name","Section Header","Field Type","Field Label","Choices, Calculations, OR Slider Labels","Field Note","Text Validation Type OR Show Slider Number","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?","Custom Alignment","Question Number (surveys only)","Matrix Group Name","Matrix Ranking?","Field Annotation"
+pcr_sid1,igh_surveillance_typhi_pcr,,text,"Subject ID",,,,,,,,,RH,,,,
+pcr_scd,igh_surveillance_typhi_pcr,"SAMPLE DATA",text,"Sample date",,,date_dmy,,,,,,RH,,,,
+pcr_dna_source,igh_surveillance_typhi_pcr,,radio,"DNA Source","1, SV | 2, Vac",,,,,,,,RH,,,,
+pcr_result,igh_surveillance_typhi_pcr,,radio,"S. typhi result","1, Neg | 2, Pos",,,,,,,,RH,,,,
+form_date,igh_surveillance_typhi_pcr,"FORM INFORMATION",text,Date,,,date_dmy,,,,,,RH,,,,
+pcr_page_number,igh_surveillance_typhi_pcr,,text,"Page number (for this date)",,,,,,,,,RH,,,,
+pcr_filled_by,igh_surveillance_typhi_pcr,,text,"Filled by",,,,,,,,,RH,,,,
+pcr_deo_notes,igh_surveillance_typhi_pcr,"DEO NOTES",notes,"Data Entry notes",,"DEOs: Use this box to add comments or to describe problems encountered during this data entry. Also use for FORM ID if entering old data",,,,,,,RH,,,,
