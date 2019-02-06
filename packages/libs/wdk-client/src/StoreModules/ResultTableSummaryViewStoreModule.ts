@@ -1,4 +1,5 @@
 import stringify from 'json-stable-stringify';
+import { difference, isEqual } from 'lodash';
 import {
     openResultTableSummaryView,
     closeResultTableSummaryView,
@@ -20,7 +21,6 @@ import {
     updateColumnsDialogExpandedNodes,
     updateColumnsDialogSelection,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
-import { isEqual } from 'lodash';
 import { requestStep, fulfillStep } from 'wdk-client/Actions/StepActions';
 import { requestUpdateBasket, fulfillUpdateBasket } from 'wdk-client/Actions/BasketActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
@@ -30,6 +30,7 @@ import { getResultTableColumnsPref, getResultTableSortingPref, setResultTableCol
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 export const key = 'resultTableSummaryView';
 
@@ -38,9 +39,8 @@ export type BasketScope = "global" | "project";
 type BasketStatus = 'yes' | 'no' | 'loading';
 
 export type State = {
-    currentPage?: number;
-    pageSize?: number;
     answer?: Answer;
+    answerLoading: boolean;
     questionFullName?: string;  // remember question so can validate sorting and columns fulfill actions
     basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
     columnsDialogIsOpen: boolean;
@@ -49,6 +49,7 @@ export type State = {
 };
 
 const initialState: State = {
+    answerLoading: false,
     columnsDialogIsOpen: false
 };
 
@@ -83,16 +84,16 @@ function reduceColumnsFulfillAction(state: State, action: Action): State {
 
 export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
-        case fulfillAnswer.type: {
-            return { ...state, answer: action.payload.answer };
+        case requestAnswer.type: {
+            return { ...state, answerLoading: true };
+        } case fulfillAnswer.type: {
+            return { ...state, answer: action.payload.answer, answerLoading: false };
         } case fulfillRecordsBasketStatus.type: {
             return { ...state, basketStatusArray: action.payload.basketStatus.map(status => status ? 'yes' : 'no') };
         } case requestColumnsChoicePreference.type: {
             return { ...state, questionFullName: action.payload.questionName }
         } case requestSortingPreference.type: {
             return { ...state, questionFullName: action.payload.questionName }
-        } case viewPageNumber.type: {
-            return { ...state, currentPage: action.payload.page }
         } case requestUpdateBasket.type: {
             return reduceBasketUpdateAction(state, action);
         } case fulfillUpdateBasket.type: {
@@ -105,8 +106,6 @@ export function reduce(state: State = initialState, action: Action): State {
             return { ...state, columnsDialogSelection: action.payload.selection }
         } case fulfillColumnsChoice.type: {
             return reduceColumnsFulfillAction(state, action);
-        } case fulfillPageSize.type: {
-            return { ...state, pageSize: action.payload.pageSize };
         }
 
 
@@ -118,17 +117,17 @@ export function reduce(state: State = initialState, action: Action): State {
 
 const openRTS = openResultTableSummaryView;
 
-async function getFirstPageNumber([openAction]: [InferAction<typeof openRTS>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof viewPageNumber>> {
+async function getFirstPageNumber([openAction]: [InferAction<typeof openRTS>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof viewPageNumber>> {
     return viewPageNumber(1);
 }
 
-async function getRequestStep([openRTSAction]: [InferAction<typeof openRTS>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestStep>> {
+async function getRequestStep([openRTSAction]: [InferAction<typeof openRTS>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestStep>> {
 
     let stepId = openRTSAction.payload.stepId;
     return requestStep(stepId);
 }
 
-async function getRequestColumnsChoicePreference([openAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>], state$: StateObservable<State>, { }: EpicDependencies): Promise<InferAction<typeof requestColumnsChoicePreference>> {
+async function getRequestColumnsChoicePreference([openAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>], state$: StateObservable<RootState>, { }: EpicDependencies): Promise<InferAction<typeof requestColumnsChoicePreference>> {
     return requestColumnsChoicePreference(requestAction.payload.step.answerSpec.questionName);
 }
 
@@ -137,7 +136,7 @@ function filterRequestColumnsChoicePreferenceActions([openAction, requestAction]
 }
 
 // this probably belongs in user preference land
-async function getFulfillColumnsChoicePreference([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestColumnsChoicePreference>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillColumnsChoice>> {
+async function getFulfillColumnsChoicePreference([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestColumnsChoicePreference>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillColumnsChoice>> {
     let columns = await getResultTableColumnsPref(requestAction.payload.questionName, wdkService);
     return fulfillColumnsChoice(columns, requestAction.payload.questionName);
 }
@@ -149,10 +148,10 @@ function filterFulfillColumnsChoicePreferenceActions([openAction, stepAction, re
 
 async function getFulfillColumnsChoiceUpdate(
     [openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestColumnsChoiceUpdate>],
-    state$: StateObservable<State>, { wdkService }: EpicDependencies)
+    state$: StateObservable<RootState>, { wdkService }: EpicDependencies)
     : Promise<InferAction<typeof fulfillColumnsChoice>> {
 
-    await setResultTableColumnsPref(requestAction.payload.questionName, wdkService, requestAction.payload.columns);
+    setResultTableColumnsPref(requestAction.payload.questionName, wdkService, requestAction.payload.columns);
     return fulfillColumnsChoice(requestAction.payload.columns, requestAction.payload.questionName);
 }
 
@@ -163,7 +162,7 @@ function filterFulfillColumnColumnsChoiceUpdateActions([openAction, stepAction, 
     );
 }
 
-async function getRequestSortingPreference([openAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>], state$: StateObservable<State>, { }: EpicDependencies): Promise<InferAction<typeof requestSortingPreference>> {
+async function getRequestSortingPreference([openAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>], state$: StateObservable<RootState>, { }: EpicDependencies): Promise<InferAction<typeof requestSortingPreference>> {
     return requestSortingPreference(requestAction.payload.step.answerSpec.questionName);
 }
 
@@ -171,7 +170,7 @@ function filterRequestSortingPreferenceActions([openAction, requestAction]: [Inf
     return openAction.payload.stepId === requestAction.payload.step.id;
 }
 
-async function getFulfillSortingPreference([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestSortingPreference>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSorting>> {
+async function getFulfillSortingPreference([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestSortingPreference>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSorting>> {
 
     let sorting = await getResultTableSortingPref(requestAction.payload.questionName, wdkService);
     return fulfillSorting(sorting, requestAction.payload.questionName);
@@ -184,8 +183,8 @@ function filterFullfillSortingPreferenceActions([openAction, stepAction, request
     );
 }
 
-async function getFulfillSortingUpdate([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestSortingUpdate>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSorting>> {
-    await setResultTableSortingPref(requestAction.payload.questionName, wdkService, requestAction.payload.sorting);
+async function getFulfillSortingUpdate([openAction, stepAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof requestSortingUpdate>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSorting>> {
+    setResultTableSortingPref(requestAction.payload.questionName, wdkService, requestAction.payload.sorting);
     return fulfillSorting(requestAction.payload.sorting, requestAction.payload.questionName);
 }
 
@@ -196,24 +195,24 @@ function filterFulfillSortingUpdateActions([openAction, stepAction, requestActio
     );
 }
 
-async function getRequestPageSize([openResultTableSummaryViewAction]: [InferAction<typeof openResultTableSummaryView>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestPageSize>> {
+async function getRequestPageSize([openResultTableSummaryViewAction]: [InferAction<typeof openResultTableSummaryView>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestPageSize>> {
     return requestPageSize();
 }
 
-async function getFulfillPageSizeUpdate([requestPageSizeUpdateAction]: [InferAction<typeof requestPageSizeUpdate>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPageSize>> {
-    await setResultTablePageSizePref(wdkService, requestPageSizeUpdateAction.payload.pageSize);
+async function getFulfillPageSizeUpdate([requestPageSizeUpdateAction]: [InferAction<typeof requestPageSizeUpdate>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPageSize>> {
+    setResultTablePageSizePref(wdkService, requestPageSizeUpdateAction.payload.pageSize);
     return fulfillPageSize(requestPageSizeUpdateAction.payload.pageSize);
 }
 
 
-async function getFulfillPageSize([requestAction]: [InferAction<typeof requestPageSize>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPageSize>> {
+async function getFulfillPageSize([requestAction]: [InferAction<typeof requestPageSize>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPageSize>> {
     // TODO: need to provide a default if no pref available
     // might want to have an object manage this
     let pageSize = getPageSizeFromPreferences(await wdkService.getCurrentUserPreferences());
     return fulfillPageSize(pageSize);
 }
 
-async function getRequestAnswer([openAction, fulfillStepAction, viewPageNumberAction, fulfillPageSizeAction, fulfillColumnsChoiceAction, fulfillSortingAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof viewPageNumber>, InferAction<typeof fulfillPageSize>, InferAction<typeof fulfillColumnsChoice>, InferAction<typeof fulfillSorting>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestAnswer>> {
+async function getRequestAnswer([openAction, fulfillStepAction, viewPageNumberAction, fulfillPageSizeAction, fulfillColumnsChoiceAction, fulfillSortingAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>, InferAction<typeof viewPageNumber>, InferAction<typeof fulfillPageSize>, InferAction<typeof fulfillColumnsChoice>, InferAction<typeof fulfillSorting>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestAnswer>> {
     let numRecords = fulfillPageSizeAction.payload.pageSize;
     let offset = numRecords * (viewPageNumberAction.payload.page - 1);
     let stepId = openAction.payload.stepId
@@ -233,13 +232,34 @@ function filterRequestAnswerActions([openAction, fulfillStepAction, viewPageNumb
     );
 }
 
-async function getFulfillAnswer([openAction, requestAction]: [InferAction<typeof openRTS>,InferAction<typeof requestAnswer>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillAnswer>> {
+async function getFulfillAnswer([openAction, requestAction]: [InferAction<typeof openRTS>,InferAction<typeof requestAnswer>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillAnswer>> {
+    const r = requestAction.payload;
+    const currentAnswer = state$.value[key].answer;
+
+    // if only columns have changed, and the new columns are a subset of
+    // current, we can avoid making a service call
+    // if new columns are a subset of old columns
+    if (
+        currentAnswer &&
+        isEqual(r.pagination, currentAnswer.meta.pagination) &&
+        isEqual(r.columnsConfig.sorting, currentAnswer.meta.sorting) &&
+        !isEqual(r.columnsConfig.attributes, currentAnswer.meta.attributes) &&
+        difference(r.columnsConfig.attributes, currentAnswer.meta.attributes).length === 0
+    ) {
+        const answer: Answer = {
+            ...currentAnswer,
+            meta: {
+                ...currentAnswer.meta,
+                attributes: r.columnsConfig.attributes as Answer['meta']['attributes']
+            }
+        };
+        return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, answer);
+    }
     let answerJsonFormatConfig = {
-        sorting: requestAction.payload.columnsConfig.sorting,
-        attributes: requestAction.payload.columnsConfig.attributes,
-        pagination: requestAction.payload.pagination
+        sorting: r.columnsConfig.sorting,
+        attributes: r.columnsConfig.attributes,
+        pagination: r.pagination
     };
-    let r = requestAction.payload;
     let answer = await wdkService.getStepAnswerJson(requestAction.payload.stepId, <AnswerJsonFormatConfig>answerJsonFormatConfig);
     return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, answer);
 }
@@ -248,7 +268,7 @@ function filterFulfillAnswerActions([openAction, requestAction]: [InferAction<ty
     return openAction.payload.stepId === requestAction.payload.stepId;
 }
 
-async function getRequestRecordsBasketStatus([openAction, answerAction]: [InferAction<typeof openRTS>,  InferAction<typeof fulfillAnswer>], state$: StateObservable<State>, { }: EpicDependencies): Promise<InferAction<typeof requestRecordsBasketStatus>> {
+async function getRequestRecordsBasketStatus([openAction, answerAction]: [InferAction<typeof openRTS>,  InferAction<typeof fulfillAnswer>], state$: StateObservable<RootState>, { }: EpicDependencies): Promise<InferAction<typeof requestRecordsBasketStatus>> {
     let answer = answerAction.payload.answer;
     let primaryKeys = answerAction.payload.answer.records.map((recordInstance) => recordInstance.id);
     return requestRecordsBasketStatus(openAction.payload.stepId, answerAction.payload.pagination.offset, answerAction.payload.pagination.numRecords, answer.meta.recordClassName, primaryKeys);
@@ -258,7 +278,7 @@ function filterRequestRecordsBasketStatusActions([openAction, answerAction]: [In
     return openAction.payload.stepId === answerAction.payload.stepId;
 }
 
-async function getFulfillRecordsBasketStatus([openAction, answerAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillAnswer>, InferAction<typeof requestRecordsBasketStatus>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillRecordsBasketStatus>> {
+async function getFulfillRecordsBasketStatus([openAction, answerAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof fulfillAnswer>, InferAction<typeof requestRecordsBasketStatus>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillRecordsBasketStatus>> {
     let user = await wdkService.getCurrentUser();
     let recordsStatus = user.isGuest
         ? new Array(answerAction.payload.pagination.numRecords).fill(false)
@@ -278,6 +298,7 @@ function filterFulfillRecordBasketStatusActions([openAction, answerAction, reque
     );
 }
 
+// TODO Need to handle "Add to basket" for all rows of answer!
 export const observe =
     takeEpicInWindow(
         openResultTableSummaryView,

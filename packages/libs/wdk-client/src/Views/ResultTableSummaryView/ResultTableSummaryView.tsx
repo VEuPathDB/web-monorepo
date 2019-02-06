@@ -7,19 +7,20 @@ import {
   PrimaryKey
 } from 'wdk-client/Utils/WdkModel';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
 import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
+import Loading from 'wdk-client/Components/Loading/Loading';
 
 import './ResultTableSummaryView.scss';
 
 interface Props {
   answer?: Answer;
+  answerLoading: boolean;
   activeAttributeAnalysisName: string | undefined;
   stepId: number;
   recordClass?: RecordClass;
   question?: Question;
-  currentPage?: number;
-  pageSize?: number;
   basketStatusArray?: Array<'yes' | 'no' | 'loading'>;
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: string[];
@@ -44,14 +45,15 @@ interface Props {
   closeAttributeAnalysis: (reporterName: string, stepId: number) => void;
 }
 
+const cx = makeClassNameHelper('ResultTableSummaryView');
+
 export default function ResultTableSummaryView({
   answer,
+  answerLoading,
   activeAttributeAnalysisName,
   stepId,
   recordClass,
   question,
-  currentPage,
-  pageSize,
   basketStatusArray,
   requestColumnsChoiceUpdate,
   requestSortingUpdate,
@@ -69,7 +71,14 @@ export default function ResultTableSummaryView({
   closeAttributeAnalysis,
 }: Props) {
   return (
-    <div className="ResultTableSummaryView">
+    <div className={cx()}>
+      {answerLoading &&
+        <div className={cx('LoadingOverlay')}>
+          <Loading className={cx('Loading')}>
+            Loading data...
+          </Loading>
+        </div>
+      }
       {answer && question && columnsTree &&
         <ResultTableAddColumnsDialog
           answer={answer}
@@ -84,7 +93,7 @@ export default function ResultTableSummaryView({
           requestColumnsChoiceUpdate={requestColumnsChoiceUpdate}
         />
       }
-      {answer && recordClass && question && currentPage && pageSize ? (
+      {answer && recordClass && question ? (
         <ResultTable
           answer={answer}
           activeAttributeAnalysisName={activeAttributeAnalysisName}
@@ -95,8 +104,6 @@ export default function ResultTableSummaryView({
           requestColumnsChoiceUpdate={requestColumnsChoiceUpdate}
           requestSortingUpdate={requestSortingUpdate}
           requestUpdateBasket={requestUpdateBasket}
-          pageSize={pageSize}
-          currentPage={currentPage}
           requestPageSizeUpdate={requestPageSizeUpdate}
           viewPageNumber={viewPageNumber}
           showHideAddColumnsDialog={showHideAddColumnsDialog}

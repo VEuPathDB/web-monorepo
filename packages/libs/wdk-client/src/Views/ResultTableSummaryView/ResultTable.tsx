@@ -21,8 +21,6 @@ interface Props {
   stepId: number;
   activeAttributeAnalysisName: string | undefined;
   answer: Answer;
-  currentPage: number;
-  pageSize: number;
   recordClass: RecordClass;
   question: Question;
   basketStatusArray?: Array<'yes' | 'no' | 'loading'>;
@@ -47,8 +45,6 @@ function ResultTable(props: Props) {
   const {
     answer,
     stepId,
-    currentPage,
-    pageSize,
     showHideAddColumnsDialog
   } = props;
   const columns = getColumns(props);
@@ -60,8 +56,8 @@ function ResultTable(props: Props) {
       direction: answer.meta.sorting[0].direction.toLowerCase()
     },
     pagination: {
-      currentPage,
-      rowsPerPage: pageSize,
+      currentPage: Math.ceil(answer.meta.pagination.offset / answer.meta.pagination.numRecords),
+      rowsPerPage: answer.meta.pagination.numRecords,
       totalRows: answer.meta.totalCount
     }
   };
@@ -81,7 +77,7 @@ function ResultTable(props: Props) {
         <Link to={`/step/${stepId}/download`}>Download</Link>
       </div>
       <div className="ResultTableButton">
-        <button type="button" className="wdk-Link">
+        <button type="button" className="wdk-Link" onClick={() => alert('TODO')}>
           Add to Basket
         </button>
       </div>

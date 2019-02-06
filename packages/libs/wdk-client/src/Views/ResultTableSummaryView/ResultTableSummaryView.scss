@@ -1,5 +1,4 @@
 .ResultTableSummaryView {
-
   > .MesaComponent {
     display: flex;
     flex-wrap: wrap;
@@ -22,10 +21,38 @@
 
   td.DataCell:empty:after {
     content: 'N/A';
-    opacity: .4;
+    opacity: 0.4;
   }
 
+  .ResultTableSummaryViewLoadingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #e6e6e6b3;
+    height: 100%;
+    z-index: 1;
+    width: 100%;
+    margin: 0 -2em;
+    padding: 0 2em;
+    display: flex;
+    justify-content: center;
+  }
 
+  .ResultTableSummaryViewLoading {
+    position: fixed;
+    top: 300px;
+    top: 45vh;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    height: 5em;
+    font-size: 1.5em;
+    background: #9c9c9cb3;
+    border-radius: 12px;
+    text-shadow: 1px 1px 5px #bfbfbf;
+  }
 }
 
 .AddColumnsDialogContent {
@@ -35,5 +62,4 @@
   .btn.ResultTable-AddColumnsButton {
     margin: 1em auto;
   }
-
 }

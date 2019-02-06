@@ -1,6 +1,6 @@
-import React from "react";
-import { RecordInstance, AttributeField } from "wdk-client/Utils/WdkModel";
-import { formatAttributeValue } from "wdk-client/Utils/ComponentUtils";
+import React from 'react';
+import { RecordInstance, AttributeField } from 'wdk-client/Utils/WdkModel';
+import { renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 
 interface AttributeCellProps {
   attribute: AttributeField;
@@ -20,11 +20,9 @@ export default function AttributeCell({
       textOverflow: 'ellipsis'
     })
   } as React.CSSProperties;
-  return (
-    <div style={style}>
-      {formatAttributeValue(
-        recordInstance.attributes[attribute.name]
-      )}
-    </div>
+  return renderAttributeValue(
+    recordInstance.attributes[attribute.name],
+    { style },
+    'div'
   );
 }

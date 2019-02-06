@@ -281,6 +281,7 @@ export interface Answer {
     responseCount: number;
     totalCount: number;
     sorting: AttributeSortingSpec[];
+    pagination: Pagination;
   }
 }
 
