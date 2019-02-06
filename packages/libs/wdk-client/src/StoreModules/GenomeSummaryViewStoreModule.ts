@@ -7,9 +7,9 @@ import { GenomeSummaryViewReport, RecordClass } from 'wdk-client/Utils/WdkModel'
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { mergeMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
-import { combineEpics} from 'redux-observable';
+import { combineEpics, StateObservable} from 'redux-observable';
 
-import { Observable } from 'rxjs';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 export const key = 'genomeSummaryView';
 
@@ -79,7 +79,7 @@ async function getRecordClassAndFormat(stepId: number, wdkService: WdkService) :
     return [ getFormatFromRecordClassName(bundle.recordClass.name), bundle.recordClass ];
 }
 
-async function getGenomeSummaryViewReport([requestAction]:  [InferAction<typeof requestGenomeSummaryReport>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillGenomeSummaryReport>> {
+async function getGenomeSummaryViewReport([requestAction]:  [InferAction<typeof requestGenomeSummaryReport>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillGenomeSummaryReport>> {
     let [ format, recordClass ] = await getRecordClassAndFormat(requestAction.payload.stepId, wdkService);
     let report: GenomeSummaryViewReport = await wdkService.getStepAnswer(requestAction.payload.stepId, { format: format});
     return fulfillGenomeSummaryReport(report, recordClass);

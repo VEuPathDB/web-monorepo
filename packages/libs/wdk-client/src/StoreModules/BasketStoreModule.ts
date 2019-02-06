@@ -13,6 +13,7 @@ import {
   switchMapRequestActionsToEpic as srate
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics } from 'redux-observable';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 export const key = 'basket';
 
@@ -26,7 +27,7 @@ export function reduce(state: State = initialState, action: Action): State {
 
 async function getFulfillUpdateBasket(
   [requestAction]: [InferAction<typeof requestUpdateBasket>],
-  state$: Observable<State>,
+  state$: Observable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillUpdateBasket>> {
   let payload = requestAction.payload;

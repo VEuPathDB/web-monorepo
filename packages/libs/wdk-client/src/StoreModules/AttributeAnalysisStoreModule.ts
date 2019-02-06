@@ -18,6 +18,7 @@ import {
   switchMapRequestActionsToEpic,
   takeEpicInWindow,
 } from 'wdk-client/Utils/ActionCreatorUtils';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 export const key = 'attributeAnalysis';
 
@@ -134,7 +135,7 @@ export const reduce = combineReducers<State, Action>({
 
 async function getAttributeReport(
   [requestReportAction]: [InferAction<typeof requestAttributeReport>],
-  state$: StateObservable<State>,
+  state$: StateObservable<RootState>,
   {wdkService}: EpicDependencies,
 ) {
   const {reporterName, stepId, config} = requestReportAction.payload;
