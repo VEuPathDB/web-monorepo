@@ -21,6 +21,8 @@ import * as steps from 'wdk-client/StoreModules/StepsStoreModule';
 import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisStoreModule';
 import * as histogramAnalysis from 'wdk-client/StoreModules/HistogramAnalysisStoreModule';
 import * as basket from 'wdk-client/StoreModules/BasketStoreModule';
+import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
+import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
 
 export default {
   answerView,
@@ -45,5 +47,7 @@ export default {
   userRegistration,
   wordCloudAnalysis,
   histogramAnalysis,
-  basket
+  basket,
+  unhandledErrors,
+  matchedTranscriptsFilter
 };

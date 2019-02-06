@@ -4,6 +4,7 @@ import {catchError, filter, mergeMap, takeUntil, switchMap, concatMap, tap} from
 import { StateObservable, ActionsObservable } from 'redux-observable';
 
 import {Action as WdkAction} from 'wdk-client/Actions';
+import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 
 interface Action<Type extends string, Payload> {
@@ -455,11 +456,14 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
       mapOperatorFactory((actions: any) => {
         return from(request2Fulfill(actions, state$, dependencies));
       }),
-      catchError((err: Error, caughtObservable) => {
+      catchError((err: Error, caughtObservable: Observable<WdkAction>) => {
         // TODO submit error to wdkService
         console.error(err);
         // continue mapping actions - hopefully this won't results in an infinite loop
-        return caughtObservable;
+        return concat(
+          of(notifyUnhandledError(err)),
+          caughtObservable
+        );
       })
     );
   };
