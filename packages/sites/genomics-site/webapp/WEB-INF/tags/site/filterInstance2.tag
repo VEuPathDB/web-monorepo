@@ -178,6 +178,8 @@ ${species}  <!--  Aspergillus      knowlesi     -->
       <!-- reading strain name from filter instance displayName (popup title) -->
       <c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
       <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
+
+      <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
       <c:choose>
         <c:when test="${phylum eq 'Fungi'}">
           <c:set var="strain" value="${fn:substringAfter(dispNameOrg, realspecies )}" />
@@ -187,7 +189,7 @@ ${species}  <!--  Aspergillus      knowlesi     -->
         </c:otherwise>
       </c:choose>
       <c:set var="strain" value="${fn:trim(strain)}" /> 
-      ${strain}
+      <a  class="link-url2" href="javascript:void(0)" strId="${strategyId}" stpId="${stepId}" linkUrl2="${linkUrl}">${strain}</a>
 
   </c:when>
 
