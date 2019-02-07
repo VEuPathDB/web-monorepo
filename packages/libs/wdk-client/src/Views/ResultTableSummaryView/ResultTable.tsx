@@ -56,7 +56,7 @@ function ResultTable(props: Props) {
       direction: answer.meta.sorting[0].direction.toLowerCase()
     },
     pagination: {
-      currentPage: Math.ceil(answer.meta.pagination.offset / answer.meta.pagination.numRecords),
+      currentPage: Math.ceil((answer.meta.pagination.offset + 1) / answer.meta.pagination.numRecords),
       rowsPerPage: answer.meta.pagination.numRecords,
       totalRows: answer.meta.totalCount
     }
