@@ -177,7 +177,7 @@ export function RecordTableSection(DefaultComponent) {
       }
 
       let { table, record, downloadRecordTable, ontologyProperties } = this.props;
-      let customName = `Data sets used by ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
+      let customName = `Data Sets used to generate ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
       let callDownloadTable = event => {
         event.stopPropagation();
         downloadRecordTable(record, table.name);
