@@ -881,6 +881,11 @@
              <th>Data Integrated into PlasmoDB and HostDB</th>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_06/">E06 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS824" target="_blank">E06 Quantitative Metabolomics Results at Metabolights</a><br>
                     </b></td>    
@@ -963,6 +968,16 @@
              <th>Data from MaHPIC Team</th>
              <th>Data Available from</th>
              <th>Data Integrated into PlasmoDB and HostDB</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_07A/">E07A Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_07B/">E07B Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
@@ -1155,7 +1170,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming Soon!</b></td> <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_13/"><b>E13 Clinical Data in PlasmoDB Downloads</b></a></td> -->
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_15/"><b>E15 Clinical Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
          
@@ -1206,9 +1221,10 @@
 	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
         </div>
         <br><br>
-     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="270px" width="550px"><br>
-     <a href="images/MaHPIC_E13_Timeline.png" target="_blank">View Larger Image</a><br>
     -->
+     <img align="middle" src="images/MaHPIC_E15_Timeline.jpg" height="270px" width="550px"><br>
+     <a href="images/MaHPIC_E15_Timeline.jpg" target="_blank">View Larger Image</a><br>
+
         
   </div>	
   </div> 
@@ -1869,6 +1885,83 @@
   </div>  
 
 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 34: Control necropsy of a mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i></a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE34 table, #ExpInfoE34 td, #ExpInfoE34 th, #ExpInfoE34 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE34 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE34"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 34: Control necropsy of a mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> to produce a set of normal clinical, hematological, immunological and omics measures, and normal tissue samples for histological comparison</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>A mixed cohort of six malaria-naive male <i>Macaca mulatta</i> (n=3) and <i>Macaca fascicularis</i> (n=3) were necropsied to provide normal tissue samples as controls for the analysis of MaHPIC infection experiments involving these macaque species. Venous whole blood and bone marrow aspirate samples were collected at necropsy to profile clinical, hematological, immune response and functional genomics measurements. Plasma samples were also banked for proteomics and metabolomics measurements, rectal swabs for microbiome studies, and a panel of tissue samples for histological comparisons. Within the MaHPIC, this project is known as 'Experiment 34'. This dataset was produced by Monica Cabrera-Mora at Emory University. To access other publicly available results from E34 and other MaHPIC experiments, including clinical results (specifics on drugs administered, diet, and veterinary interventions), and other omics, visit <a href="http://plasmodb.org/plasmo/mahpic.jsp" target="_blank">http://plasmodb.org/plasmo/mahpic.jsp</a>.  This page will be updated as datasets are released to the public.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
+           </tr>
+         </table>
+      </div>   
+	 <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE34 table, #DataLinksE34 td, #DataLinksE34 th, #DataLinksE34 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE34 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksE34 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE30"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_34/"><b>E34 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </table>
+           </div>
+	   <br><br>
+<!--	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+
+  -->
+  </div>	
+  </div>  
 
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</a> </h3> 

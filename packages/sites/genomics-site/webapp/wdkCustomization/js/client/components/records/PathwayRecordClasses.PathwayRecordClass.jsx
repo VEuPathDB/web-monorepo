@@ -6,7 +6,7 @@ import { uniqueId } from 'lodash';
 import $ from 'jquery';
 import { safeHtml } from 'wdk-client/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
-import { CategoriesCheckboxTree, Link, Loading, Dialog } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, CollapsibleSection, Link, Loading, Dialog } from 'wdk-client/Components';
 import * as Ontology from 'wdk-client/OntologyUtils';
 import * as Category from 'wdk-client/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
@@ -1172,23 +1172,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     return (
       <div id="eupathdb-PathwayRecord-cytoscape">
         {this.renderError()}
-        <VisMenu
-          source={source}
-          webAppUrl={this.props.siteConfig.webAppUrl}
-          primary_key={primary_key}
-          projectId={projectId}
-          onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
-          onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
-          cy={this.state.cy}
-        />
-        <div className="eupathdb-PathwayRecord-cytoscapeIcon">
-            <a href="http://js.cytoscape.org/">
-
-              <img src={this.props.siteConfig.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="42" height="42"/>
-          </a>
-        <br/>
-          Cytoscape JS
-        </div>
         <Dialog
           title="Genera Selector"
           open={this.state.openSelector === SELECTORS.GENERA}
@@ -1232,6 +1215,22 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
 
             <br />
+        </div>
+        <VisMenu
+          source={source}
+          webAppUrl={this.props.siteConfig.webAppUrl}
+          primary_key={primary_key}
+          projectId={projectId}
+          onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
+          onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
+          cy={this.state.cy}
+        />
+        <div className="eupathdb-PathwayRecord-cytoscapeIcon">
+            <a href="http://js.cytoscape.org/">
+
+              <img src={this.props.siteConfig.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="28" height="28"/>
+          </a>
+          Cytoscape JS
         </div>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div ref="cytoContainer" className="eupathdb-PathwayRecord-CytoscapeContainer" />
@@ -1585,11 +1584,16 @@ export function RecordAttributeSection(props) {
       : <Loading/>;
 
     return (
-      <div>
-        <h4>{props.attribute.displayName}</h4>
+      <CollapsibleSection
+        id={props.attribute.name}
+        className={`wdk-RecordAttributeSectionItem`}
+        headerContent={props.attribute.displayName}
+        isCollapsed={props.isCollapsed}
+        onCollapsedChange={props.onCollapsedChange}
+      >
         {content}
-      </div>
-    )
+      </CollapsibleSection>
+    );
   }
   else {
     return <props.DefaultComponent {...props}/>;

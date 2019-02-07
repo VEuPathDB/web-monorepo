@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { RecordActions } from 'wdk-client/Actions';
 import * as Category from 'wdk-client/CategoryUtils';
 import { CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
-import { pure } from 'wdk-client/ComponentUtils';
+import { renderAttributeValue, pure } from 'wdk-client/ComponentUtils';
 import {Seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
 
@@ -222,6 +222,29 @@ export function RecordTable(props) {
 
     default:
       return <props.DefaultComponent {...props} />
+  }
+}
+
+/** Customize how a record table's description is rendered **/
+export function RecordTableDescription(props) {
+  switch(props.table.name) {
+
+    /* Example: Render the content of the attribute `orthomdl_link` in a `p` tag.
+    case 'GeneTranscripts':
+      return renderAttributeValue(props.record.attributes.orthomcl_link, null, 'p');
+    */
+
+    case 'ECNumbers':
+      return renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
+
+    case 'MetabolicPathways':
+      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+
+    case 'CompoundsMetabolicPathways':
+      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+
+    default:
+      return <props.DefaultComponent {...props}/>
   }
 }
 

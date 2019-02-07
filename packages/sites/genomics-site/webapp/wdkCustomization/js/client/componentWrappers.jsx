@@ -78,6 +78,7 @@ export const RecordHeading = makeDynamicWrapper('RecordHeading');
 export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 export const RecordTable = makeDynamicWrapper('RecordTable', RecordTableContainer);
+export const RecordTableDescription = makeDynamicWrapper('RecordTableDescription');
 
 const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
 

@@ -198,6 +198,7 @@
   background: white;
   overflow-y: scroll;
   border: 1px solid #AAA;
+  padding-right: 20px;
 }
 .fold-change .checkbox-tree {
   margin-left: 3px;
