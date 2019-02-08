@@ -24,6 +24,7 @@ import IsolatesSummaryViewController from 'wdk-client/Controllers/IsolatesSummar
 import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryViewController';
 import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
 import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers/StepAnalysis/StepAnalysisContainer';
+import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 
 const routes: RouteEntry[] = [
   {
@@ -174,9 +175,17 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/step-analysis(\\d+)/:stepId',
+    path: '/step-analysis/:stepId(\\d+)',
     component: (props: RouteComponentProps<{ stepId: string }>) =>
       <StepAnalysisController
+        stepId={Number(props.match.params.stepId)}
+      />
+  },
+
+  {
+    path: '/step/:stepId(\\d+)/resultPanel',
+    component: (props: RouteComponentProps<{ stepId: string }>) =>
+      <ResultPanelController
         stepId={Number(props.match.params.stepId)}
       />
   },

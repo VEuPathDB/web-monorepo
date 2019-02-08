@@ -9,6 +9,8 @@ import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalys
 import { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
+import { Question, SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
+import { ResultPanelState } from 'wdk-client/StoreModules/ResultPanelStoreModule';
 
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
@@ -25,12 +27,50 @@ export const recordClassDisplayName = (
   const recordClass = recordClasses.find(({ name }) => name === recordClassName);
   return get(recordClass, 'displayName', '');
 };
+export const question = (
+  { 
+    globalData: { questions = [] }, 
+    steps: { steps }, 
+    stepAnalysis: { stepId } 
+  }: RootState
+) => {
+  const questionName = get(steps[stepId], 'answerSpec.questionName', '');
+  const question = questions.find(({ name }) => name === questionName);
+  return question;
+};
+export const summaryViewPlugins = createSelector<RootState, Question | undefined, SummaryViewPluginField[]>(
+  question,
+  question => question 
+    ? question.summaryViewPlugins
+    : []
+);
+export const defaultSummaryView = createSelector<RootState, Question | undefined, string>(
+  question,
+  question => question 
+    ? question.defaultSummaryView
+    : ''
+);
+
+export const resultPanel = ({ resultPanel }: RootState) => resultPanel;
+
+export const loadingSummaryViewListing = createSelector<RootState, ResultPanelState, boolean>(
+  resultPanel,
+  ({ questionsLoaded, stepLoaded }) => !questionsLoaded || !stepLoaded
+);
 
 export const stepAnalyses = ({ stepAnalysis }: RootState) => stepAnalysis;
 
-export const activeTab = createSelector<RootState, StepAnalysesState, number>(
+export const activeTab = createSelector<RootState, StepAnalysesState, ResultPanelState, string, string | number>(
   stepAnalyses,
-  stepAnalyses => stepAnalyses.activeTab
+  resultPanel,
+  defaultSummaryView,
+  (stepAnalyses, resultPanel, defaultSummaryView) => {
+    if (stepAnalyses.activeTab === -1) {
+      return resultPanel.activeSummaryView || defaultSummaryView;
+    }
+
+    return resultPanel.activeSummaryView || stepAnalyses.activeTab;
+  }
 );
 export const analysisPanelOrder = createSelector<RootState, StepAnalysesState, number[]>(
   stepAnalyses,

@@ -33,6 +33,7 @@ import {
   UserDataset,
   UserDatasetMeta,
   AnswerJsonFormatConfig,
+  SummaryViewPluginField,
 } from 'wdk-client/Utils/WdkModel';
 import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 
@@ -358,6 +359,13 @@ const attributeFieldDecoder: Decode.Decoder<AttributeField> =
     )
   )
 
+const summaryViewPluginFieldDecoder: Decode.Decoder<SummaryViewPluginField> =
+  Decode.combine(
+    Decode.field('name', Decode.string),
+    Decode.field('displayName', Decode.string),
+    Decode.field('description', Decode.string)
+  );
+
 const questionSharedDecoder =
   Decode.combine(
     Decode.combine(
@@ -383,7 +391,7 @@ const questionSharedDecoder =
     )),
     Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
     Decode.field('defaultSummaryView', Decode.string),
-    Decode.field('summaryViewPlugins', Decode.arrayOf(Decode.string)),
+    Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder)),
     Decode.field('stepAnalysisPlugins', Decode.arrayOf(Decode.string)),
   )
 

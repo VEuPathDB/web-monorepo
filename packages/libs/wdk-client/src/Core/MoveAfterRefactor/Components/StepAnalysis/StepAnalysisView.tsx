@@ -5,7 +5,6 @@ import { Loading } from '../../../../Components';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 
 import 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView.scss';
-import { string } from 'wdk-client/Utils/Json';
 
 export type StepAnalysisStateProps = StepAnalysisUnopenedPaneTypedProps | StepAnalysisLoadingMenuPaneTypedProps | StepAnalysisMenuPaneTypedProps | StepAnalysisSelectedPaneTypedProps;
 

@@ -21,6 +21,7 @@ import * as StepActions from 'wdk-client/Actions/StepActions';
 import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
 import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
+import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
 import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
 
 export {
@@ -47,6 +48,7 @@ export {
   WordCloudAnalysisActions,
   HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
+  ResultPanelActions
 };
 
 export type Action =
@@ -73,4 +75,5 @@ export type Action =
   | WordCloudAnalysisActions.Action
   | HistogramAnalysisActions.Action
   | MatchedTranscriptsFilterActions.Action
-  | UnhandledErrorActions.Action
+  | ResultPanelActions.Action
+  | UnhandledErrorActions.Action;

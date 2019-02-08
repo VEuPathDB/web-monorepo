@@ -191,7 +191,7 @@ interface QuestionShared extends ModelEntity {
   defaultSorting: AttributeSortingSpec[];
   dynamicAttributes: AttributeField[];
   defaultSummaryView: string;
-  summaryViewPlugins: string[];
+  summaryViewPlugins: SummaryViewPluginField[];
   stepAnalysisPlugins: string[];
 }
 
@@ -240,6 +240,10 @@ export interface AttributeField extends ModelEntity {
   type?: string;
   truncateTo: number;
   formats: Reporter[];
+}
+
+export interface SummaryViewPluginField extends ModelEntity {
+  description: string;
 }
 
 export interface TableField extends ModelEntity {
