@@ -246,7 +246,7 @@ export function RecordTableSection(DefaultComponent) {
                     reference_name: table.name,
                   })
                 }}
-              ><i className="fa fa-database"/> Data sets</Link>}
+              ><i className="fa fa-database"/> Data Sets</Link>}
               { hasTaxonId == 1 && showDatasetsLink &&
               <Link
                 style={{
