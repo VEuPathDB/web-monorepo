@@ -238,7 +238,7 @@ export function RecordTableDescription(props) {
     */
 
     case 'ECNumbers':
-      return renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
+      return props.table.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
 
     case 'MetabolicPathways':
       return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
