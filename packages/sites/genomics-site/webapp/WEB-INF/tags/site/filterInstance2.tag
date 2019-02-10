@@ -117,11 +117,11 @@ ${species}  <!--  Aspergillus      knowlesi     -->
           (eg: "sp. 1" becomes "sp.=1") in the injector AnnotatedGenome.java    
 -->
 
-<c:set var="species" value="${fn:replace(species, '=-', '-')}" />
-<c:set var="species" value="${fn:replace(species, '=_', '_')}" />
+<c:set var="species" value="${fn:replace(species, '===', '_')}" />
+<c:set var="species" value="${fn:replace(species, '==', '-')}" />
 <c:set var="species" value="${fn:replace(species, '=', ' ')}" />
-<c:set var="realspecies" value="${fn:replace(realspecies, '=-', '-')}" />
-<c:set var="realspecies" value="${fn:replace(realspecies, '=_', '_')}" />
+<c:set var="realspecies" value="${fn:replace(realspecies, '===', '_')}" />
+<c:set var="realspecies" value="${fn:replace(realspecies, '==', '-')}" />
 <c:set var="realspecies" value="${fn:replace(realspecies, '=', ' ')}" />
 
 <c:choose>

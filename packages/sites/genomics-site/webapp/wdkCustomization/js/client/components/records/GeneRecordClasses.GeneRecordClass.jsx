@@ -201,6 +201,9 @@ export function RecordTable(props) {
     case 'MendelGPIForm':
       return <MendelGPIForm {...props}/>
 
+    case 'StringDBForm':
+      return <StringDBForm {...props}/>
+
 
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
@@ -235,7 +238,7 @@ export function RecordTableDescription(props) {
     */
 
     case 'ECNumbers':
-      return renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
+      return props.table.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
 
     case 'MetabolicPathways':
       return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
@@ -864,6 +867,86 @@ class MendelGPIForm extends React.Component {
 
 }
 
+
+
+class StringDBForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+		    
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>{p.protein_source_id}<br/></label>
+                );
+            })
+        );
+    }
+
+
+    
+     printOrganismInputs(s)  {
+
+        return (
+            s.map(p => {
+                return (
+                    <label key={p[0]}>
+                        <input type="radio" name="organism" value={p[0]}/><span class="tab"> </span>{p[1]}<br/></label>
+                );
+            })
+        );
+    }
+
+
+
+    render() {
+    	let { project_id } = this.props.record.attributes;  
+        
+        let t = this.props.value;
+	let s = JSON.parse(t[0].jsonString);
+
+           return (
+
+	   <div> 
+           
+	   
+            <form action="/cgi-bin/string.pl" target="_blank" method="post">
+                  <input type="hidden" name="project_id" value={projectId}/>
+                  <input type="hidden" id="id_type" name="id_type" value="protein"/>
+
+
+                  {this.inputHeader(t)}
+                  {this.printInputs(t)}
+		  
+		  <p>Please select the organism:</p>
+
+		  {this.printOrganismInputs(s)}
+
+                 <br/><input type="submit"/>
+
+
+            </form>
+
+ 	    <p>For more information about this tool <a target="_blank" rel="noopener noreferrer"  href="https://string-db.org/cgi/input.pl?sessionId=0qgoqINUZajx&input_page_active_form=single_sequence">click here</a></p>
+
+
+	</div>
+ 
+
+        );
+    }
+
+}
 
 
 
