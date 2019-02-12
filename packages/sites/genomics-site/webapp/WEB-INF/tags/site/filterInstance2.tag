@@ -152,7 +152,7 @@ ${species}  <!--  Aspergillus      knowlesi     -->
         <c:otherwise> <i>${fn:substring(family,0,1)}.${species}</i></c:otherwise>
       </c:choose>
 
-      &nbsp;&nbsp; ( nr Genes:
+      &nbsp;&nbsp; (
 
       <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
       <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
