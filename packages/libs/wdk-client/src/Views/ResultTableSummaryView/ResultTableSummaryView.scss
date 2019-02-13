@@ -62,6 +62,8 @@
   // Remove padding from basket table cells
   .MesaComponent tr > th:first-of-type, .MesaComponent tr > td:first-of-type {
     padding: 0;
+    text-align: center;
+    width: 3em;
   }
 
   // Add padding to basket button (increase clickable area)
