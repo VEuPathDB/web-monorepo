@@ -284,6 +284,7 @@ export interface Answer {
     recordClassName: string;
     responseCount: number;
     totalCount: number;
+    totalDisplayCount: number;
     sorting: AttributeSortingSpec[];
     pagination: Pagination;
   }
