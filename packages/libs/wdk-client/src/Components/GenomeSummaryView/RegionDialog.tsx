@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Dialog, Tooltip } from 'wdk-client/Components';
+import { Dialog } from 'wdk-client/Components';
+import { EagerlyLoadedTooltip } from 'wdk-client/Components/Overlays/Tooltip';
 import { GenomeViewSequenceModel, GenomeViewRegionModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { FeatureTable } from 'wdk-client/Components/GenomeSummaryView/FeatureTable';
 import { FeatureTooltip } from 'wdk-client/Components/GenomeSummaryView/FeatureTooltip';
@@ -41,7 +42,8 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
         <div className="ruler">
           {
             region.features.map(feature =>
-              <Tooltip
+              <EagerlyLoadedTooltip
+                key={feature.sourceId}
                 content={
                   <FeatureTooltip
                     feature={feature}
@@ -61,7 +63,7 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
                   }}
                 >
                 </div>      
-              </Tooltip>        
+              </EagerlyLoadedTooltip>        
             )
           }
         </div>

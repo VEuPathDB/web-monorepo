@@ -81,7 +81,7 @@ const urlSegmentToRecordType = (urlSegment: string) => urlSegment === 'transcrip
   : urlSegment;
 
 const reportModel = createSelector<GenomeSummaryViewReport, GenomeSummaryViewReport, GenomeSummaryViewReportModel>(
-  identity, 
+  identity,
   toReportModel
 );
 

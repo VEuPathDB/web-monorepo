@@ -69,7 +69,7 @@ export const activeTab = createSelector<RootState, StepAnalysesState, ResultPane
       return resultPanel.activeSummaryView || defaultSummaryView;
     }
 
-    return resultPanel.activeSummaryView || stepAnalyses.activeTab;
+    return stepAnalyses.activeTab;
   }
 );
 export const analysisPanelOrder = createSelector<RootState, StepAnalysesState, number[]>(

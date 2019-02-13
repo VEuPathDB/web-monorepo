@@ -20,6 +20,7 @@ import UserMessageController from 'wdk-client/Controllers/UserMessageController'
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import AttributeAnalysisButtonController from 'wdk-client/Controllers/AttributeAnalysisButtonController';
+import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
 
 export {
@@ -37,6 +38,7 @@ export {
   QuestionController,
   QuestionListController,
   RecordController,
+  ResultPanelController,
   SiteMapController,
   UserDatasetDetailController,
   UserDatasetListController,

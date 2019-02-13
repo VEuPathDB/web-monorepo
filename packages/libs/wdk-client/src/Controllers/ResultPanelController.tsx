@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageController } from 'wdk-client/Controllers';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { StepAnalysisEventHandlers } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 import { memoize } from 'lodash/fp';
@@ -12,6 +12,7 @@ import { startLoadingChosenAnalysisTab, deleteAnalysis, selectTab, createNewTab,
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
 import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type StateProps = {
   loadingSummaryViewListing: ReturnType<typeof loadingSummaryViewListing>;
@@ -25,7 +26,7 @@ type StateProps = {
   analysisPanelOrder: ReturnType<typeof analysisPanelOrder>, 
   analysisPanelStates: ReturnType<typeof analysisPanelStates>, 
   activeTab: ReturnType<typeof activeTab>;
-  newAnalysisButtonVisible: boolean;
+  newAnalysisButtonVisible: ReturnType<typeof newAnalysisButtonVisible>;
 };
 
 type OwnProps = {
@@ -56,7 +57,7 @@ interface ResultPanelControllerProps {
   newAnalysisButton: React.ReactNode;
 }
 
-class ResultPanelController extends PageController<ResultPanelControllerProps> {
+class ResultPanelController extends ViewController<ResultPanelControllerProps> {
   componentDidMount() {
     super.componentDidMount();
     this.props.loadTabs(
@@ -110,6 +111,7 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
   ),
   onTabSelected: (tabKey: string) => { 
     if (+tabKey !== +tabKey) {
+      dispatch(selectTab(-1));
       dispatch(selectSummaryView(tabKey));
     } else {
       dispatch(selectSummaryView(null));
@@ -136,15 +138,17 @@ const mergeProps = (
   defaultSummaryView: stateProps.defaultSummaryView,
   loadingTabs: stateProps.loadingSummaryViewListing || stateProps.analysisChoices.length === 0,
   activeTab: `${stateProps.activeTab}`,
-  newAnalysisButton: (
-    <button 
-      id="add-analysis" 
-      title="Choose an analysis tool to apply to the results of your current step." 
-      onClick={eventHandlers.openAnalysisMenu}
-    >
-      Analyze Results
-    </button>
-  ),
+  newAnalysisButton: stateProps.newAnalysisButtonVisible
+    ? (
+      <button 
+        id="add-analysis" 
+        title="Choose an analysis tool to apply to the results of your current step." 
+        onClick={eventHandlers.openAnalysisMenu}
+      >
+        Analyze Results
+      </button>
+    )
+    : null,
   onTabSelected: eventHandlers.onTabSelected,
   onTabRemoved: eventHandlers.onTabRemoved,
   loadTabs: eventHandlers.loadTabs,
@@ -207,4 +211,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(ResultPanelController);
+)(wrappable(ResultPanelController));

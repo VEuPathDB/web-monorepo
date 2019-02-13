@@ -50,8 +50,8 @@ export const GenomeSummaryView: React.SFC<GenomeSummaryViewProps> = ({
       genomeSummaryData.type === 'untruncated'
         ? (
           <Fragment>
-            {genomeSummaryData.sequences.flatMap(sequence =>
-              sequence.regions.map(region =>
+            {genomeSummaryData.sequences.flatMap((sequence, i) =>
+              sequence.regions.map((region, j) =>
                 <RegionDialog 
                   key={region.sourceId}
                   sequence={sequence}
@@ -67,6 +67,7 @@ export const GenomeSummaryView: React.SFC<GenomeSummaryViewProps> = ({
               )
             )}
             <ResultsTable
+              emptyChromosomeFilterApplied
               webAppUrl={webAppUrl}
               displayName={displayName}
               displayNamePlural={displayNamePlural}

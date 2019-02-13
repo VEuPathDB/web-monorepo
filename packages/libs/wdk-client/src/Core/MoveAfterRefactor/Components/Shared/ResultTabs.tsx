@@ -61,7 +61,20 @@ export default function ResultTabs<T extends string>(props: Props<T>) {
         }
       </div>
       <div className={cx('Content')}>
-        {activeTab && activeTab.content}
+        {
+          props.tabs.map(tab =>
+            <div 
+              key={tab.key}
+              style={
+                tab === activeTab
+                  ? { }
+                  : { display: 'none' }
+              }
+            >
+              {tab.content}
+            </div>
+          )
+        }
       </div>
     </div>
   );

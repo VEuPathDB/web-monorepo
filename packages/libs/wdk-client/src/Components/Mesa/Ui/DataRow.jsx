@@ -80,7 +80,7 @@ class DataRow extends React.PureComponent {
             column = Object.assign({}, columnDefaults, column);
           return (
             <DataCell
-              key={column.key}
+              key={`${column.key}-${columnIndex}`}
               column={column}
               columnIndex={columnIndex}
               {...sharedProps}

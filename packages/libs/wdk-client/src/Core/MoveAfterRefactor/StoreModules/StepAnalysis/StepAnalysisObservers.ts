@@ -225,13 +225,12 @@ export const observeDeleteAnalysis = (action$: ActionsObservable<Action>, state$
         const { displayName, analysisId } = panelState.type === UNINITIALIZED_PANEL_STATE
           ? panelState
           : panelState.analysisConfig;
-
-        try {
-          await wdkService.deleteStepAnalysis(stepId, analysisId);
-        }
-        catch (ex) {
-          alert(`Cannot delete analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`);
-        }
+        
+        wdkService.deleteStepAnalysis(stepId, analysisId).catch(
+          () => {
+            alert(`Cannot delete analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`);
+          }
+        );
       }
 
       return [

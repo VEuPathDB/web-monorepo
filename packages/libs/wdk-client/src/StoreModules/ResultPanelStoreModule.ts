@@ -70,7 +70,7 @@ export const observe = combineEpics(
 function observeOpenTabListing(action$: ActionsObservable<ResultPanelActions>, state$: StateObservable<RootState>, dependencies: EpicDependencies) {
   return action$.pipe(
     mergeMap(
-      // TODO: Figure out why the payload type isn't being inferred from filter(openTabList.isOfType)
+      // TODO: Figure out why the payload type isn't being inferred from filter(openTabListing.isOfType)
       action => action.type === openTabListing.type
         ? ([
           startLoadingTabListing(action.payload.stepId),

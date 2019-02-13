@@ -1,6 +1,10 @@
 .genome-view {
 	width: 100%;
 
+	* {
+		box-sizing: content-box;
+	}
+
 	.ui-tooltip, .qtip {
 		max-width:600px;
 	}
@@ -12,6 +16,7 @@
 	td {
 		vertical-align: top;
 		border: 1px solid #AAAAAA;
+		padding: 4px;
 	}
 
 	td.length, td.span-count {

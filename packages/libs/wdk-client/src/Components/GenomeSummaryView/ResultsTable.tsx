@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Tooltip } from 'wdk-client/Components';
+import { EagerlyLoadedTooltip } from 'wdk-client/Components/Overlays/Tooltip';
 import { ColumnSettings, StepAnalysisEnrichmentResultTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { GenomeSummaryViewReportModel, GenomeViewRegionModel, GenomeViewFeatureModel, GenomeViewSequenceModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
-import { FeatureTooltip } from './FeatureTooltip';
+import { FeatureTooltip } from 'wdk-client/Components/GenomeSummaryView/FeatureTooltip';
+import { memoize } from 'lodash/fp';
 
-const resultColumnsFactory = (
+const resultColumnsFactory = memoize((
     webAppUrl: string, 
     displayName: string, 
     displayNamePlural: string, 
@@ -16,6 +17,7 @@ const resultColumnsFactory = (
   {
     key: 'sourceId',
     name: 'Sequence',
+    width: '10%',
     renderCell: ({ value: sourceId }: { value: string }) =>
       <a href={`${webAppUrl}/app/record/genomic-sequence/${sourceId}`} target="_blank">{sourceId}</a>,
     sortable: true,
@@ -24,6 +26,7 @@ const resultColumnsFactory = (
   {
     key: 'organism',
     name: 'Organism',
+    width: '10%',
     renderCell: ({ value: organism }: { value: string }) =>
       <em>{organism}</em>,
     sortable: true,
@@ -32,18 +35,21 @@ const resultColumnsFactory = (
   {
     key: 'chromosome',
     name: 'Chromosome',
+    width: '5%',
     sortable: true,
     sortType: 'text'
   },
   {
     key: 'featureCount',
     name: `#${displayNamePlural}`,
+    width: '5%',
     sortType: 'number',
     sortable: true,
   },
   {
     key: 'length',
     name: 'Length',
+    width: '10%',
     helpText: 'Length of the genomic sequence in #bases',
     sortType: 'number',
     sortable: true,
@@ -51,10 +57,11 @@ const resultColumnsFactory = (
   {
     key: 'sourceId',
     name: `${displayName} Locations`,
+    width: '60%',
     renderCell: locationCellRenderFactory(displayNamePlural, webAppUrl, siteName, recordType, showRegionDialog),
     sortable: false
   }
-] as ColumnSettings[];
+] as ColumnSettings[]);
 
 const locationCellRenderFactory = (
   displayNamePlural: string, 
@@ -115,10 +122,10 @@ const Region: React.SFC<RegionProps> = ({
       sequence={sequence}
     />;
 
-type MultiFeatureRegionProps = {
+interface MultiFeatureRegionProps {
   displayNamePlural: string;
   region: GenomeViewRegionModel;
-  showDialog: () => void
+  showDialog: () => void;
 }
 
 const MultiFeatureRegion: React.SFC<MultiFeatureRegionProps> = ({
@@ -154,7 +161,7 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
   webAppUrl,
   siteName
 }) =>
-  <Tooltip
+  <EagerlyLoadedTooltip
     content={
       <FeatureTooltip
         feature={feature}
@@ -165,18 +172,19 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
       />
     }
   >
-  <div
-    className={`feature ${feature.strand}`}
-    style={{ 
-      left: `${region.percentStart}%`,
-      width: `${region.percentLength}%` 
-    }}
-  >
-  </div>
-  </Tooltip>
+    <div
+      className={`feature ${feature.strand}`}
+      style={{ 
+        left: `${region.percentStart}%`,
+        width: `${region.percentLength}%` 
+      }}
+    >
+    </div> 
+  </EagerlyLoadedTooltip>;
 
 interface ResultsTableProps {
   webAppUrl: string;
+  emptyChromosomeFilterApplied: boolean;
   report: GenomeSummaryViewReportModel;
   displayName: string;
   displayNamePlural: string;
@@ -185,8 +193,20 @@ interface ResultsTableProps {
   showRegionDialog: (regionId: string) => void;
 }
 
+const rowsFactory = memoize(
+  (report: GenomeSummaryViewReportModel, emptyChromosomeFilterApplied: boolean) =>
+    report.type === 'truncated'
+      ? []
+      : (
+        emptyChromosomeFilterApplied
+          ? report.sequences.filter(({ featureCount }) => featureCount)
+          : report.sequences
+      )
+);
+
 export const ResultsTable: React.SFC<ResultsTableProps> = ({ 
   webAppUrl, 
+  emptyChromosomeFilterApplied,
   report, 
   displayName, 
   displayNamePlural,
@@ -195,7 +215,8 @@ export const ResultsTable: React.SFC<ResultsTableProps> = ({
   showRegionDialog
 }) =>
   <StepAnalysisEnrichmentResultTable
-    rows={report.type === 'truncated' ? [] : report.sequences}
+    rows={rowsFactory(report, emptyChromosomeFilterApplied)}
     columns={resultColumnsFactory(webAppUrl, displayName, displayNamePlural, siteName, recordType, showRegionDialog)}
     emptyResultMessage="No Genomes present in result"
+    fixedTableHeader
   />;

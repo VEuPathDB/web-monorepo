@@ -4,7 +4,7 @@ import Mesa, { MesaState, Utils as MesaUtils } from '../../../../Components/Mesa
 import { RealTimeSearchBox } from '../../../../Components';
 import React from 'react';
 import { htmlStringValue, numericValue } from '../../../../Components/Mesa/Utils/Utils';
-import { compose } from 'lodash/fp';
+import { compose, debounce } from 'lodash/fp';
 
 const simpleFilterPredicateFactory = (searchQuery: string) => (row: Record<string, string>) =>
   Object.values(row).some(entry => `${entry}`.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -15,6 +15,7 @@ interface StepAnalysisEnrichmentResultTableProps {
   columns: ColumnSettings[];
   initialSearchQuery?: string;
   initialSortColumnKey?: string;
+  fixedTableHeader?: boolean;
 }
 
 export interface ColumnSettings {
@@ -22,6 +23,7 @@ export interface ColumnSettings {
   name: string;
   helpText: string;
   sortable: boolean;
+  width?: string;
   renderCell?: React.SFC;
   sortType?: 'text' | 'number' | 'htmlText' | 'htmlNumber';
 }
@@ -29,18 +31,28 @@ export interface ColumnSettings {
 export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnrichmentResultTableProps, any> {
   constructor(props: StepAnalysisEnrichmentResultTableProps) {
     super(props);
-    this.handleSearch = this.handleSearch.bind(this);
+    this.handleSearch = debounce(200, this.handleSearch.bind(this));
     this.handleSort = this.handleSort.bind(this);
 
     this.state = MesaState.create({
       rows: this.props.rows,
       columns: this.props.columns,
-      options: {
-        showCount: true,
-        toolbar: true,
-        useStickyHeader: true,
-        tableBodyMaxHeight: '80vh'
-      },
+      options: 
+        this.props.fixedTableHeader 
+          ? (
+            {
+              showCount: true,
+              toolbar: true
+            }
+          )
+          : (
+            {
+              showCount: true,
+              toolbar: true,
+              useStickyHeader: true,
+              tableBodyMaxHeight: '80vh'
+            }
+          ),
       uiState: {
         searchQuery: this.props.initialSearchQuery || '',
         sort: {
@@ -57,7 +69,7 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
   handleSearch(searchQuery: string) {
     const updatedTableState = MesaState.setSearchQuery(this.state, searchQuery);
 
-    this.setState(updatedTableState)
+    this.setState(updatedTableState);
   }
 
   handleSort(sortByKey: string, sortDirection: 'asc' | 'desc') {
