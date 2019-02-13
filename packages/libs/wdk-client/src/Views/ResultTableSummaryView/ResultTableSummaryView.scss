@@ -58,6 +58,18 @@
     border-radius: 12px;
     text-shadow: 1px 1px 5px #bfbfbf;
   }
+
+  // Remove padding from basket table cells
+  .MesaComponent tr > th:first-of-type, .MesaComponent tr > td:first-of-type {
+    padding: 0;
+  }
+
+  // Add padding to basket button (increase clickable area)
+  .ResultTableBasketIconButton {
+    padding: 1em;
+    background: none;
+    border: none;
+  }
 }
 
 .AddColumnsDialogContent {

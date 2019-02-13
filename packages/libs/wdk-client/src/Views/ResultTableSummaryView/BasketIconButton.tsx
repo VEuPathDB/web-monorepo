@@ -20,19 +20,22 @@ export default function BasketIconButton({
 }: BasketIconButtonProps) {
   const iconWidth = '1em';
 
-  if (status === 'loading') {
-    return (
+  const icon = status === 'loading'
+    ?  (
       <i
         className="fa fa-circle-o-notch fa-spin fa-fw"
         style={{ width: iconWidth }}
       />
+    ) : (
+      <i
+        className="fa fa-shopping-basket"
+        style={{ color: status === 'yes' ? 'green' : 'gray', width: iconWidth }}
+      />
     );
-  }
-
   return (
     <button
       type="button"
-      className="wdk-Link"
+      className="ResultTableBasketIconButton"
       onClick={() => {
         if (status === 'yes')
           requestUpdateBasket('remove', recordClassName, idsToToggle);
@@ -40,10 +43,7 @@ export default function BasketIconButton({
           requestUpdateBasket('add', recordClassName, idsToToggle);
       }}
     >
-      <i
-        className="fa fa-shopping-basket"
-        style={{ color: status === 'yes' ? 'green' : 'gray', width: iconWidth }}
-      />
+      {icon}
     </button>
   );
 }
