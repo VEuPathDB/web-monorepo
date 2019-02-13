@@ -53,6 +53,7 @@ import Modal from 'wdk-client/Components/Overlays/Modal';
 import Popup from 'wdk-client/Components/Overlays/Popup';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
 
 export {
   AccordionButton,
@@ -110,4 +111,5 @@ export {
   TextArea,
   TextBox,
   Tooltip,
+  ResultTable,
 };

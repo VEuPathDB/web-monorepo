@@ -20,6 +20,7 @@ import UserMessageController from 'wdk-client/Controllers/UserMessageController'
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import AttributeAnalysisButtonController from 'wdk-client/Controllers/AttributeAnalysisButtonController';
+import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
 
 export {
   PageController,
@@ -44,4 +45,5 @@ export {
   UserPasswordResetController,
   UserProfileController,
   UserRegistrationController,
+  ResultTableSummaryViewController,
 };

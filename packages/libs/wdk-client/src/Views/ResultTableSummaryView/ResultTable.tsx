@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   RecordInstance
 } from 'wdk-client/Utils/WdkModel';
-import { pure } from 'wdk-client/Utils/ComponentUtils';
+import { pure, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
 import Link from 'wdk-client/Components/Link';
 import BasketCell from 'wdk-client/Views/ResultTableSummaryView/BasketCell';
@@ -90,7 +90,7 @@ function ResultTable(props: Props) {
   );
 }
 
-export default pure(ResultTable)
+export default wrappable(pure(ResultTable));
 
 function getEventHandlers(props: Props) {
   const {
