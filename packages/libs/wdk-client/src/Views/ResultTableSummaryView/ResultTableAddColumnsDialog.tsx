@@ -34,18 +34,20 @@ function ResultTableAddColumnsDialog({
   if (!columnsDialogIsOpen) return null;
 
   const button = (
-    <button
-      type="button"
-      className="btn ResultTable-AddColumnsButton"
-      onClick={() => {
-        if (columnsDialogSelection) {
-          requestColumnsChoiceUpdate(columnsDialogSelection, question.name)
-        }
-        showHideAddColumnsDialog(false);
-      }}
-    >
-      Update Columns
-    </button>
+    <div style={{ textAlign: 'center' }}>
+      <button
+        type="button"
+        className="btn"
+        onClick={() => {
+          if (columnsDialogSelection) {
+            requestColumnsChoiceUpdate(columnsDialogSelection, question.name)
+          }
+          showHideAddColumnsDialog(false);
+        }}
+      >
+        Update Columns
+      </button>
+    </div>
   );
 
   return (
