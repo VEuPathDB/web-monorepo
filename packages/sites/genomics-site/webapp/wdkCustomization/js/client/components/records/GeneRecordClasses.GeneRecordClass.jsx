@@ -238,7 +238,7 @@ export function RecordTableDescription(props) {
     */
 
     case 'ECNumbers':
-      return props.table.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
+      return typeof props.record.tables.ECNumbers != "undefined" && props.record.tables.ECNumbers.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
 
     case 'MetabolicPathways':
       return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
@@ -901,7 +901,7 @@ class StringDBForm extends React.Component {
             s.map(p => {
                 return (
                     <label key={p[0]}>
-                        <input type="radio" name="organism" value={p[0]}/><span class="tab"> </span>{p[1]}<br/></label>
+                        <input type="radio" name="organism" value={p[0]}/><span className="tab"> </span>{p[1]}<br/></label>
                 );
             })
         );
