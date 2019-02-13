@@ -116,10 +116,11 @@ function getEventHandlers(props: Props) {
   }
   function onColumnReorder(attributeName: string, newIndex: number) {
     const tmpColumns = answer.meta.attributes.filter(attrName => attrName !== attributeName);
+    // Subtract 1 from newIndex to compensate for basket column
     const newColumns = [
-      ...tmpColumns.slice(0, newIndex),
+      ...tmpColumns.slice(0, newIndex - 1),
       attributeName,
-      ...tmpColumns.slice(newIndex)
+      ...tmpColumns.slice(newIndex - 1)
     ];
     requestColumnsChoiceUpdate(newColumns, question.name);
   }
