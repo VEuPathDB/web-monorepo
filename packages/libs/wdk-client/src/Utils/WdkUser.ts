@@ -1,5 +1,5 @@
 import { Decoder, combine, field, string, number, boolean } from 'wdk-client/Utils/Json';
-import {AnswerSpec} from 'wdk-client/Utils/WdkModel';
+import {AnswerSpec} from 'wdk-client/Utils/WdkService';
 
 export interface User {
   id: number;

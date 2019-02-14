@@ -317,6 +317,7 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
 }
 
 export interface StepSpec {
+  searchUrlSegment: string,
   searchConfig: SearchConfig,
   customName?: string,
   isCollapsible?: boolean,

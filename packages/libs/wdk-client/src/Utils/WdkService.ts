@@ -1273,3 +1273,17 @@ function queryParams(object: { [key:string]: any}): string {
     .map(key => key + '=' + object[key])
     .join('&');
 }
+
+export function getSingleRecordQuestionName(recordClassName: string): string {
+  return `__${recordClassName}__singleRecordQuestion__`;
+}
+
+// return a legacy AnswerSpec for back compat with existing client code
+export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
+  return {
+    questionName: getSingleRecordQuestionName(record.recordClassName),
+    parameters: {
+      "primaryKeys": record.id.map(pkCol => pkCol.value).join(",")
+    }
+  };
+}

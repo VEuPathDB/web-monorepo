@@ -342,8 +342,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
     }).then(paramValues => {
       const weight = Number.parseInt(questionState.weight || '');
       services.wdkService.createStep({
-        answerSpec: {
-          questionName: questionState.question.name,
+        searchUrlSegment: questionState.question.urlSegment,
+        searchConfig: {
           parameters: paramValues,
           wdkWeight: Number.isNaN(weight) ? undefined : weight
         },
