@@ -1,6 +1,6 @@
 import stringify from 'json-stable-stringify';
 import localforage from 'localforage';
-import { difference, keyBy, memoize } from 'lodash';
+import { difference, keyBy, memoize, omit } from 'lodash';
 import * as QueryString from 'querystring';
 
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
@@ -13,8 +13,6 @@ import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDe
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
   Answer,
-  AnswerFormatting,
-  AnswerSpec,
   AttributeField,
   Favorite,
   StepSpec,
@@ -28,10 +26,11 @@ import {
   RecordClass,
   RecordInstance,
   Reporter,
+  SearchConfig,
   TreeBoxVocabNode,
   UserDataset,
   UserDatasetMeta,
-  AnswerJsonFormatConfig,
+  StandardReportConfig,
 } from 'wdk-client/Utils/WdkModel';
 import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 
@@ -53,21 +52,53 @@ interface RecordRequest {
   primaryKey: PrimaryKey;
 }
 
-export interface AnswerRequest {
-  answerSpec: AnswerSpec;
-  formatting?: {
-    format?: string;
-    formatConfig?: any;
-  }
+// Legacy, for backward compatitibility of client code with older service API
+export interface AnswerSpec {
+  questionName: string;
+  parameters?: Record<string, string>;
+  legacyFilterName?: string;
+  filters?: { name: string; value: string; }[];
+  viewFilters?: { name: string; value: string; }[];
+  wdkWeight?: number;
 }
 
-export interface AnswerJsonRequest {
-  answerSpec: AnswerSpec;
-  formatConfig: AnswerJsonFormatConfig;
+// Legacy, for backward compatitibility of client code with older service API
+export interface AnswerFormatting {
+  format: string
+  formatConfig?: object
 }
+
+// Legacy, for backward compatitibility of client code with older service API
+export interface AnswerRequest {
+  answerSpec: AnswerSpec,
+  formatting: AnswerFormatting
+}
+
+export interface StandardSearchReportRequest {
+  searchConfig: SearchConfig;
+  reportConfig?: StandardReportConfig;
+}
+
+export interface CustomSearchReportRequest {
+  searchConfig: SearchConfig;
+  reportConfig?: object;
+}
+
+export interface TempResultRequest {
+  searchName: string,
+  reportName: string,
+  searchConfig: SearchConfig;
+  reportConfig?: object;
+}
+
 
 interface TempResultResponse {
   id: string;
+}
+
+interface CustomSearchReportRequestInfo {
+  url: string,
+  request: CustomSearchReportRequest
 }
 
 export type BasketOperation = 'add' | 'remove' ;
@@ -492,21 +523,38 @@ export default class WdkService {
     });
   }
 
-  getAnswerServicePath() {
-    return '/answer/report';
+  getRecordTypesPath() {
+    return '/record-types';
   }
 
-  getAnswerServiceEndpoint() {
-    return this.serviceUrl + this.getAnswerServicePath();
+  getRecordTypePath(recordClassUrlSegment: string) {
+    return this.getRecordTypesPath() + '/' + recordClassUrlSegment;
   }
 
-  getAnswerJsonServicePath() {
-    return '/answer';
+  getSearchesPath(recordClassUrlSegment: string) {
+    return this.getRecordTypePath(recordClassUrlSegment) + '/searches';
   }
 
-  getAnswerJsonServiceEndpoint() {
-    return this.serviceUrl + this.getAnswerJsonServicePath();
+  getSearchPath(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.getSearchesPath(recordClassUrlSegment) + "/" + questionUrlSegment;
   }
+
+  getReportsPath(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.getSearchesPath(recordClassUrlSegment) + '/' + questionUrlSegment;
+  }
+
+  getReportsEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.serviceUrl + this.getReportsPath(recordClassUrlSegment, questionUrlSegment);
+  }
+
+  getStandardSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/standard";
+  }
+
+  getCustomSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string, reportName: string) {
+    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/" + reportName;
+  }
+
 
   tryLogin(email: string, password: string, redirectUrl: string) {
     return this.sendRequest(tryLoginDecoder, {
@@ -562,10 +610,11 @@ export default class WdkService {
   /**
    * Fetch question with default param values/vocabularies (may get from cache if already present)
    */
-  getQuestionAndParameters(identifier: string) {
+  async getQuestionAndParameters(questionUrlSegment: string) {
+    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
     return this.sendRequest(questionWithParametersDecoder, {
       method: 'get',
-      path: `/questions/${identifier}`,
+      path: searchPath,
       params: {
         expandParams: 'true',
       },
@@ -576,18 +625,20 @@ export default class WdkService {
   /**
    * Fetch question information (e.g. vocabularies) given the passed param values; never cached
    */
-  getQuestionGivenParameters(identifier: string, paramValues: ParameterValues) {
+  async getQuestionGivenParameters(questionUrlSegment: string, paramValues: ParameterValues) {
+    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
     return this.sendRequest(questionWithParametersDecoder, {
       method: 'post',
-      path: `/questions/${identifier}`,
+      path: searchPath,
       body: JSON.stringify({ contextParamValues: paramValues })
     });
   }
 
-  getQuestionParamValues(identifier: string, paramName: string, paramValue: ParameterValue, paramValues: ParameterValues) {
+  async getQuestionParamValues(questionUrlSegment: string, paramName: string, paramValue: ParameterValue, paramValues: ParameterValues) {
+    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
     return this.sendRequest(parametersDecoder, {
       method: 'post',
-      path: `/questions/${identifier}/refreshed-dependent-params`,
+      path: `${searchPath}/refreshed-dependent-params`,
       body: JSON.stringify({
         changedParam: { name: paramName, value: paramValue },
         contextParamValues: paramValues
@@ -595,10 +646,17 @@ export default class WdkService {
     })
   }
 
-  getOntologyTermSummary(identifier: string, paramName: string, filters: any, ontologyId: string, paramValues: ParameterValues) {
+  private async getSearchPathFromUrlSegment(questionUrlSegment: string) : Promise<string> {
+    const question = await this.findQuestion(question => question.urlSegment === questionUrlSegment );
+    const recordClass = await this.findRecordClass(recordClass => recordClass.name === question.recordClassName);
+    return this.getSearchPath(recordClass.urlSegment, questionUrlSegment);
+  }
+
+  async getOntologyTermSummary(questionUrlSegment: string, paramName: string, filters: any, ontologyId: string, paramValues: ParameterValues) {
+    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
     return this._fetchJson<OntologyTermSummary>(
       'post',
-      `/questions/${identifier}/${paramName}/ontology-term-summary`,
+      `${searchPath}/${paramName}/ontology-term-summary`,
       JSON.stringify({
         ontologyId,
         filters,
@@ -607,10 +665,11 @@ export default class WdkService {
     );
   }
 
-  getFilterParamSummaryCounts(identifier: string, paramName: string, filters: any, paramValues: ParameterValues) {
+  async getFilterParamSummaryCounts(questionUrlSegment: string, paramName: string, filters: any, paramValues: ParameterValues) {
+    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
     return this._fetchJson<{filtered: number, unfiltered: number, nativeFiltered: number, nativeUnfiltered: number}>(
       'post',
-      `/questions/${identifier}/${paramName}/summary-counts`,
+      `${searchPath}/${paramName}/summary-counts`,
       JSON.stringify({
         filters,
         contextParamValues: paramValues
@@ -622,7 +681,7 @@ export default class WdkService {
    * Get all RecordClasses defined in WDK Model.
    */
   getRecordClasses() {
-    let url = '/records?format=expanded';
+    let url = '/record-types?format=expanded';
     return this._getFromCache(url, () => this._fetchJson<RecordClass[]>('get', url)
       .then(recordClasses => {
         // create indexes by name property for attributes and tables
@@ -661,10 +720,10 @@ export default class WdkService {
    *
    * XXX Use _getFromCache with key of "recordInstance" so the most recent record is saved??
    */
-  getRecord(recordClassName: string, primaryKey: PrimaryKey, options: {attributes?: string[]; tables?: string[];} = {}) {
-    let cacheKey = recordClassName + ':' + stringify(primaryKey);
+  getRecord(recordClassUrlSegment: string, primaryKey: PrimaryKey, options: {attributes?: string[]; tables?: string[];} = {}) {
+    let cacheKey = recordClassUrlSegment + ':' + stringify(primaryKey);
     let method = 'post';
-    let url = '/records/' + recordClassName + '/instance';
+    let url = '/record-types/' + recordClassUrlSegment + '/records';
 
     let { attributes = [], tables = [] } = options;
     let cacheEntry = this._recordCache.get(cacheKey);
@@ -718,25 +777,53 @@ export default class WdkService {
     return cacheEntry.response;
   }
 
-  /**
-   * Get an answer from the answer service.
-   */
-  getAnswer(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<Answer> {
-    let method = 'post';
-    let url = this.getAnswerServicePath();
-    let body: AnswerRequest = { answerSpec, formatting };
-    return this._fetchJson<Answer>(method, url, stringify(body));
+  private  async getCustomSearchReportRequestInfo (answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<CustomSearchReportRequestInfo>{
+    const question = await this.findQuestion(question => question.name === answerSpec.questionName );
+    const recordClass = await this.findRecordClass(recordClass => recordClass.name === question.recordClassName);
+    let url = this.getCustomSearchReportEndpoint(recordClass.urlSegment, question.urlSegment, formatting.format);
+    let searchConfig: SearchConfig = omit(answerSpec, ['questionName']);
+    let reportConfig = formatting.formatConfig;
+    let request: CustomSearchReportRequest = { searchConfig, reportConfig };
+    return {url, request};
   }
 
   /**
-   * Get the default answer json from the answer service.
+   * Get an answer from the searches/{name}/reports/{name} service
+   * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
    */
-  getAnswerJson(answerSpec: AnswerSpec, formatConfig: AnswerJsonFormatConfig): Promise<Answer> {
-    let method = 'post';
-    let url = this.getAnswerJsonServicePath();
-    let body: AnswerJsonRequest = { answerSpec, formatConfig };
-    return this._fetchJson<Answer>(method, url, stringify(body));
+  async getAnswer(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<Answer> {
+    let info = await this.getCustomSearchReportRequestInfo(answerSpec, formatting);
+    return this._fetchJson<Answer>('post', info.url, stringify(info.request));
   }
+
+  /**
+   * Get an answer from the searches/{name}/reports/standard service
+   * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
+   */
+  async getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig): Promise<Answer> {
+    const question = await this.findQuestion(question => question.name === answerSpec.questionName );
+    const recordClass = await this.findRecordClass(recordClass => recordClass.name === question.recordClassName);
+    let url = this.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
+    let searchConfig: SearchConfig = omit(answerSpec, ['questionName']);
+    let body: StandardSearchReportRequest = { searchConfig, reportConfig };
+    return this._fetchJson<Answer>('post', url, stringify(body));
+  }
+
+  async downloadAnswer(answerRequest: AnswerRequest, target = '_blank') {
+
+    let info = await this.getCustomSearchReportRequestInfo(answerRequest.answerSpec, answerRequest.formatting);
+
+    // a submission must trigger a form download, meaning we must POST the form
+    submitAsForm({
+      method: 'post',
+      action: info.url,
+      target: target,
+      inputs: {
+        data: JSON.stringify(info.request)
+      }
+    });
+  }
+
 
   getXmlAnswerJson(xmlQuestionName: string) {
     return this.sendRequest(Decode.ok, {
@@ -752,7 +839,11 @@ export default class WdkService {
   getTemporaryResultUrl(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<string> {
     let method = 'post';
     let url = '/temporary-results';
-    let body: AnswerRequest = { answerSpec, formatting };
+    let reportName = formatting.format;
+    let reportConfig = formatting.formatConfig;
+    let searchName = answerSpec.questionName;
+    let searchConfig: SearchConfig = omit(answerSpec, ['questionName']);
+    let body: TempResultRequest = { reportName, searchName,  reportConfig, searchConfig};
     return this._fetchJson<TempResultResponse>(method, url, stringify(body))
       .then(result => window.location.origin + this.serviceUrl + url + '/' + result.id);
   }
@@ -980,11 +1071,11 @@ export default class WdkService {
   }
 
   // get step's answer in wdk default json output format
-  getStepAnswerJson(stepId: number, formatConfig: AnswerJsonFormatConfig, userId: string = 'current') {
+  getStepAnswerJson(stepId: number, reportConfig: StandardReportConfig, userId: string = 'current') {
     return this.sendRequest(Decode.ok, {
       method: 'post',
-      path: `/users/${userId}/steps/${stepId}/answer`,
-      body: JSON.stringify(formatConfig)
+      path: `/users/${userId}/steps/${stepId}/reports/standard`,
+      body: JSON.stringify(reportConfig)
     });
   }
 
@@ -1037,18 +1128,6 @@ export default class WdkService {
       .then(([ recordClasses, questions, ontology ]) => {
         return resolveWdkReferences(recordClasses, questions, ontology);
       });
-  }
-
-  downloadAnswer(answerRequest: AnswerRequest, target = '_blank') {
-    // a submission must trigger a form download, meaning we must POST the form
-    submitAsForm({
-      method: 'post',
-      action: this.getAnswerServiceEndpoint(),
-      target: target,
-      inputs: {
-        data: JSON.stringify(answerRequest)
-      }
-    });
   }
 
   createTemporaryFile(file: File): Promise<string> {
@@ -1194,3 +1273,17 @@ function queryParams(object: { [key:string]: any}): string {
     .map(key => key + '=' + object[key])
     .join('&');
 }
+
+export function getSingleRecordQuestionName(recordClassName: string): string {
+  return `__${recordClassName}__singleRecordQuestion__`;
+}
+
+export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
+  return {
+    questionName: getSingleRecordQuestionName(record.recordClassName),
+    parameters: {
+      "primaryKeys": record.id.map(pkCol => pkCol.value).join(",")
+    }
+  };
+}
+
