@@ -895,17 +895,13 @@ class StringDBForm extends React.Component {
     }
 
 
-    
-     printOrganismInputs(s)  {
-
-        return (
-            s.map(p => {
-                return (
-                    <label key={p[0]}>
-                        <input type="radio" name="organism" value={p[0]}/><span className="tab"> </span>{p[1]}<br/></label>
-                );
-            })
-        );
+    printOrganismInputs(s)  {
+       return (
+         <select name="organism">
+           {s.map(p => <option value={p[0]}>{p[1]}</option>)
+	   }
+         </select>
+       )
     }
 
 
