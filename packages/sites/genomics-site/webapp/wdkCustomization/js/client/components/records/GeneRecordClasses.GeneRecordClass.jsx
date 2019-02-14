@@ -538,6 +538,7 @@ class MercatorTable extends React.Component {
   }
 }
 
+
 class SortKeyTable extends React.Component {
 
   constructor(props) {
@@ -976,14 +977,13 @@ class OrthologsForm extends SortKeyTable {
 				    <tr><td><input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein<br/></td>
 				        <td><input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)</td>
 					    <td><input type="radio" name="sequence_Type" value="genomic" /> Genomic :</td>
-					    <td> + <input type="number" id="oneOffset" name="oneOffset" size="4" pattern='[0-9]+' max="2500"/> nt upstream (max 2500)</td>
-			        <td>Please note, selecting 2500nt at each flank will take a few minutes to align.</td>
+					    <td> + <input type="number" id="oneOffset" name="oneOffset" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)</td>
 					</tr>
 					<tr>
 					  <td></td>
 					  <td></td>
 					  <td></td>
-					  <td> + <input type="number" id="twoOffset" name="twoOffset" size="4" pattern='[0-9]+' max="2500"/> nt downstream (max 2500)</td>
+					  <td> + <input type="number" id="twoOffset" name="twoOffset" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)</td>
 					</tr>  
 				  </table>	
 				  
@@ -991,7 +991,7 @@ class OrthologsForm extends SortKeyTable {
                   <br/>
 				  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
                   <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
-                  <p>    </p>
+			      <p>Please note, selecting 2500nt at each flank or many sequences will take a few minutes to align.</p>
                   <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
 				  <input type="submit" value="Run Clustal Omega for selected genes"/>
                   <br/>
