@@ -15,6 +15,7 @@ interface StepAnalysisEnrichmentResultTableProps {
   columns: ColumnSettings[];
   initialSearchQuery?: string;
   initialSortColumnKey?: string;
+  initialSortDirection?: 'asc' | 'desc';
   fixedTableHeader?: boolean;
 }
 
@@ -57,7 +58,7 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
         searchQuery: this.props.initialSearchQuery || '',
         sort: {
           columnKey: this.props.initialSortColumnKey || null,
-          direction: 'asc'
+          direction: this.props.initialSortDirection || 'asc'
         }
       },
       eventHandlers: {

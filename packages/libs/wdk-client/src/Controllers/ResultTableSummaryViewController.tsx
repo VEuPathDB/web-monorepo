@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {
@@ -64,7 +64,7 @@ type OwnProps = {
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-class ResultTableSummaryViewController extends PageController< Props > {
+class ResultTableSummaryViewController extends ViewController< Props > {
 
   loadData(prevProps?: Props) {
     if (prevProps == null || prevProps.stepId !== this.props.stepId) {
@@ -74,10 +74,6 @@ class ResultTableSummaryViewController extends PageController< Props > {
 
   isRenderDataLoaded() {
     return this.props.answer != null;
-  }
-
-  getTitle() {
-    return "Step results";
   }
 
   renderDataLoadError() {

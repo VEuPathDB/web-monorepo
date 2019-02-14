@@ -57,7 +57,7 @@ interface ResultPanelControllerProps {
   newAnalysisButton: React.ReactNode;
 }
 
-class ResultPanelController extends ViewController<ResultPanelControllerProps> {
+class ResultPanelController extends ViewController< ResultPanelControllerProps > {
   componentDidMount() {
     super.componentDidMount();
     this.props.loadTabs(

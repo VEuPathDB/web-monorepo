@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -20,14 +20,10 @@ type OwnProps = { stepId: number };
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-class IsolatesSummaryViewController extends PageController< Props > {
+class IsolatesSummaryViewController extends ViewController< Props > {
 
   isRenderDataLoaded() {
     return this.props.isolatesSummaryData != null;
-  }
-
-  getTitle() {
-    return "Isolates Geographic Summary";
   }
 
   loadData () {

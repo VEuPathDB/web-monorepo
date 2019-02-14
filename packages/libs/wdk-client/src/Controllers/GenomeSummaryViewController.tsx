@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
@@ -29,14 +29,10 @@ type DispatchProps = typeof actionCreators;
 type OwnProps = { stepId: number };
 type Props = OwnProps & StateProps & DispatchProps;
 
-class GenomeSummaryViewController extends PageController< Props > {
+class GenomeSummaryViewController extends ViewController< Props > {
 
   isRenderDataLoaded() {
     return this.props.genomeSummaryData != null;
-  }
-
-  getTitle() {
-    return "Genome Summary";
   }
 
   loadData () {

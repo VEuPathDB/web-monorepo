@@ -1,5 +1,6 @@
 import React from 'react';
-import { PageController } from 'wdk-client/Controllers';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { StepAnalysisView, StepAnalysisEventHandlers } from '../../Components/StepAnalysis/StepAnalysisView';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { memoize } from 'lodash/fp';
@@ -48,7 +49,7 @@ interface StepAnalysisContainerProps {
   newAnalysisButton: React.ReactNode;
 }
 
-class StepAnalysisController extends PageController<StepAnalysisContainerProps> {
+class StepAnalysisController extends ViewController< StepAnalysisContainerProps > {
   componentDidMount() {
     super.componentDidMount();
     this.props.loadTabs(
@@ -162,4 +163,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps
-)(StepAnalysisController);
+) (wrappable(StepAnalysisController));

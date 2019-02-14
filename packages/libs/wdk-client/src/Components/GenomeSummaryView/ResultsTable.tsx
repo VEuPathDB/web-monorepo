@@ -217,6 +217,8 @@ export const ResultsTable: React.SFC<ResultsTableProps> = ({
   <StepAnalysisEnrichmentResultTable
     rows={rowsFactory(report, emptyChromosomeFilterApplied)}
     columns={resultColumnsFactory(webAppUrl, displayName, displayNamePlural, siteName, recordType, showRegionDialog)}
+    initialSortColumnKey="featureCount"
+    initialSortDirection="desc"
     emptyResultMessage="No Genomes present in result"
     fixedTableHeader
   />;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -21,14 +21,10 @@ type OwnProps = { stepId: number };
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-class BlastSummaryViewController extends PageController< Props > {
+class BlastSummaryViewController extends ViewController< Props > {
 
   isRenderDataLoaded() {
     return this.props.blastSummaryData != null;
-  }
-
-  getTitle() {
-    return "BLAST Results";
   }
 
   loadData () {
@@ -44,8 +40,6 @@ class BlastSummaryViewController extends PageController< Props > {
   renderDataLoadError() {
     return <LoadError/>;  // TODO: make this better
   }
-
-
 
   renderView() {
     if (this.props.blastSummaryData == null) return <Loading/>;

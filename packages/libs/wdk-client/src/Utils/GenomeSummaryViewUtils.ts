@@ -113,6 +113,7 @@ const findBoundingLocation = (features: GenomeViewFeature[]): RegionLocation =>
 
 const toFeatureModel = (feature: GenomeViewFeature): GenomeViewFeatureModel => ({
   ...feature,
+  context: `${feature.sequenceId}:${feature.context}`,
   strand: feature.isForward ? 'forward' : 'reversed',
   startFormatted: feature.start.toLocaleString(),
   endFormatted: feature.end.toLocaleString(),
