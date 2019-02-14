@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
-import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
+import { getSingleRecordAnswerSpec } from 'wdk-client/wdkService';
 import { submitAsForm } from 'wdk-client/FormSubmitter';
 import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
