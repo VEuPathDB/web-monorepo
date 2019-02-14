@@ -19,7 +19,6 @@
 
 <c:if test="${refer == 'summary'}">
     <imp:stylesheet rel="stylesheet" href="wdkCustomization/css/spanlogic.css" type="text/css" />
-    <imp:stylesheet rel="StyleSheet" type="text/css" href="wdkCustomization/css/genome-view.css"/>
 </c:if>
 
 <c:if test="${refer == 'question' || refer == 'summary'}">
