@@ -282,7 +282,8 @@ export interface Answer {
   }
 }
 
-export interface SearchConfig {
+export interface AnswerSpec {
+  questionName: string;
   parameters?: Record<string, string>;
   legacyFilterName?: string;
   filters?: { name: string; value: string; }[];
@@ -290,11 +291,9 @@ export interface SearchConfig {
   wdkWeight?: number;
 }
 
-export interface StandardReportConfig extends AttributesConfig {
-  pagination?: Pagination;
-  tables?: string[] | '__ALL_TABLES__';
-  attachmentType?: string;
-  includeEmptyTables?: boolean;
+export interface AnswerFormatting {
+  format: string
+  formatConfig?: object
 }
 
 export interface AttributeSortingSpec {
@@ -309,8 +308,15 @@ export interface AttributesConfig {
 
 export interface Pagination { offset: number, numRecords: number };
 
+export interface AnswerJsonFormatConfig extends AttributesConfig {
+  pagination?: Pagination;
+  tables?: string[] | '__ALL_TABLES__';
+  attachmentType?: string;
+  includeEmptyTables?: boolean;
+}
+
 export interface StepSpec {
-  searchConfig: SearchConfig,
+  answerSpec: AnswerSpec,
   customName?: string,
   isCollapsible?: boolean,
   collapsedName?: string
@@ -425,4 +431,17 @@ export interface GenomeViewFeature {
   percentLength: number;
   context: string;
   description: string;
+}
+
+export function getSingleRecordQuestionName(recordClassName: string): string {
+  return `__${recordClassName}__singleRecordQuestion__`;
+}
+
+export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
+  return {
+    questionName: getSingleRecordQuestionName(record.recordClassName),
+    parameters: {
+      "primaryKeys": record.id.map(pkCol => pkCol.value).join(",")
+    }
+  };
 }

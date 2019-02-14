@@ -180,7 +180,7 @@ export function loadPageDataFromRecord(
 
       let pkValues = primaryKeyString.split(',');
       let pkArray = recordClass.primaryKeyColumnRefs.map((ref, index) => ({ name: ref, value: pkValues[index] }));
-      return wdkService.getRecord(recordClass.urlSegment, pkArray, { attributes: [recordClass.recordIdAttributeName ] })
+      return wdkService.getRecord(recordClass.name, pkArray, { attributes: [recordClass.recordIdAttributeName ] })
     });
 
     // create promise for bundle, dependent on previous two promises and primaryKeyString

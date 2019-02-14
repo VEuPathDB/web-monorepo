@@ -275,7 +275,7 @@ function setActiveRecord(
           const [ initialOptions, ...additionalOptions ] =
             getRecordRequestOptions(recordClass, fullCategoryTree);
           const categoryTree = getTree({ name: '__', tree: fullCategoryTree }, isNotInternalNode);
-          const initialAction$ = wdkService.getRecord(recordClass.urlSegment, primaryKey, initialOptions).then(
+          const initialAction$ = wdkService.getRecord(recordClass.name, primaryKey, initialOptions).then(
             record => recordReceived(id, {
               record,
               recordClass,
@@ -283,7 +283,7 @@ function setActiveRecord(
             })
           );
           const additionalActions = additionalOptions.map(options =>
-            wdkService.getRecord(recordClass.urlSegment, primaryKey, options).then(
+            wdkService.getRecord(recordClass.name, primaryKey, options).then(
               record => recordUpdate(id, record),
               error => recordError(id, error)
             )
