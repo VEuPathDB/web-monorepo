@@ -898,8 +898,7 @@ class StringDBForm extends React.Component {
     printOrganismInputs(s)  {
        return (
          <select name="organism">
-           {s.map(p => <option value={p[0]}>{p[1]}</option>)
-	   }
+           {s.map(p => <option value={p[0]}>{p[1]}</option>)}
          </select>
        )
     }
@@ -925,11 +924,13 @@ class StringDBForm extends React.Component {
                   {this.inputHeader(t)}
                   {this.printInputs(t)}
 		  
-		  <p>Please select the organism:</p>
+		  <p>Please select the organism:<br/><br/>
 
 		  {this.printOrganismInputs(s)}
+		  
+		  <br/></p>
 
-                 <br/><input type="submit"/>
+                  <input type="submit"/>
 
 
             </form>
