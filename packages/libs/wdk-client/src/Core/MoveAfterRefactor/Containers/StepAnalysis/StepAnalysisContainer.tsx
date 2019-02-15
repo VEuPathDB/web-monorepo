@@ -69,6 +69,7 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
         onTabRemoved={this.props.onTabRemoved}
         tabs={this.props.tabs}
         headerContent={this.props.newAnalysisButton}
+        containerClassName={'resultTabs'}
       />
     );
   }

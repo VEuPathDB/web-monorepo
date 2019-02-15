@@ -1,13 +1,14 @@
 import 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs.scss';
 
-import React, { Fragment } from 'react';
+import React from 'react';
+import { Tabs } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
-const cx = makeClassNameHelper('wdk-ResultTab');
+const cx = makeClassNameHelper('wdk-Tab');
 
 export type TabConfig<TabKey extends string> = {
   key: TabKey;
-  display: string;
+  display: React.ReactNode;
   removable?: boolean;
   tooltip?: string;
   content: React.ReactNode;
@@ -17,65 +18,19 @@ type Props<TabKey extends string> = {
   tabs: TabConfig<TabKey>[];
   activeTab: string;
   onTabSelected: (tab: TabKey) => void;
-  onTabRemoved?: (tab: string) => void;
+  onTabRemoved?: (tab: TabKey) => void;
   headerContent?: React.ReactNode;
-  className?: string;
+  containerClassName?: string;
 };
 
-export default function ResultTabs<T extends string>(props: Props<T>) {
-  const activeTab = props.tabs.find(tab => tab.key === props.activeTab);
-  return (
-    <div className={cx('sContainer')}>
-      <div className={cx('s')}>
-        {props.tabs.map(tab => (
-          <button
-            title={tab.tooltip}
-            type="button"
-            key={tab.key}
-            onClick={() => props.onTabSelected(tab.key)}
-            className={cx('', activeTab === tab ? 'active' : '')}
-          >
-            {tab.display}
-            {
-              tab.removable &&
-              <Fragment>
-                {' '}
-                <a 
-                  href="#"
-                  title={`Delete ${tab.display}`}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    if (props.onTabRemoved) {
-                      props.onTabRemoved(tab.key);
-                    }
-                  }}>
-                  <i className="fa fa-times" />
-                </a>
-              </Fragment>
-            }
-          </button>
-        ))}
-        {
-          props.headerContent
-        }
-      </div>
-      <div className={cx('Content')}>
-        {
-          props.tabs.map(tab =>
-            <div 
-              key={tab.key}
-              style={
-                tab === activeTab
-                  ? { }
-                  : { display: 'none' }
-              }
-            >
-              {tab.content}
-            </div>
-          )
-        }
-      </div>
-    </div>
-  );
+export default function ResultTabs<T extends string>({ tabs, ...rest }: Props<T>) {
+  return <Tabs 
+    tabs={tabs.map(
+      ({ tooltip, display, ...otherOptions }) => ({
+        ...otherOptions,
+        display: <span title={tooltip}>{display}</span>
+      })
+    )}
+      {...rest} 
+  />;
 }

@@ -77,6 +77,7 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
         onTabRemoved={this.props.onTabRemoved}
         tabs={this.props.tabs}
         headerContent={this.props.newAnalysisButton}
+        containerClassName={`result-tabs`}
       />
     );
   }

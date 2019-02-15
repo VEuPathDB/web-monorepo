@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 
 import Mesa from 'wdk-client/Components/Mesa';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
-import Tabs from 'wdk-client/Components/Tabs/Tabs';
+import { Tabs } from 'wdk-client/Components';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 import {
@@ -93,7 +93,7 @@ export default class AttributeAnalysisTabs<T extends string> extends React.PureC
 
     return (
       <Tabs
-        className="AttributeAnalysisTabs"
+        containerClassName="AttributeAnalysisTabs"
         activeTab={activeTab}
         onTabSelected={this.onTabSelected}
         tabs={[
