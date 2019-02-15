@@ -241,10 +241,10 @@ export function RecordTableDescription(props) {
       return typeof props.record.tables.ECNumbers != "undefined" && props.record.tables.ECNumbers.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
 
     case 'MetabolicPathways':
-      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+      return typeof props.record.tables.MetabolicPathways != "undefined" && props.record.tables.MetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
     case 'CompoundsMetabolicPathways':
-      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+      return typeof props.record.tables.CompoundsMetabolicPathways != "undefined" && props.record.tables.CompoundsMetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
     default:
       return <props.DefaultComponent {...props}/>
