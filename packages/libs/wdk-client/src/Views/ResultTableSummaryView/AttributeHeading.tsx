@@ -47,8 +47,7 @@ export default function AttributeHeading(props: Props) {
           <button
             type="button"
             title={`Remove ${attribute.displayName} from the table.`}
-            className="wdk-Link"
-            style={{ color: 'maroon' }}
+            className="wdk-Link RemoveColumnButton"
             onClick={(event) => {
               event.stopPropagation();
               removeAttribute();

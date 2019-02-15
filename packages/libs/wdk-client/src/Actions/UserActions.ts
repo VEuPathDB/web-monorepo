@@ -3,9 +3,8 @@ import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/A
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
 import { alert, confirm } from 'wdk-client/Utils/Platform';
-import { RecordInstance, PrimaryKey } from 'wdk-client/Utils/WdkModel';
+import { RecordInstance } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
-import { BasketOperation } from "wdk-client/Utils/WdkService";
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
 import { UserProfileFormData } from 'wdk-client/StoreModules/UserProfileStoreModule';
 
@@ -721,6 +720,8 @@ function maybeLoggedIn<T extends Action, S extends Action>(
 //----------------------------------
 // Basket action creators and helpers
 // ----------------------------------
+
+// TODO Remove these actions and use ./BasketActions.ts
 
 type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | BasketStatusReceivedAction
 

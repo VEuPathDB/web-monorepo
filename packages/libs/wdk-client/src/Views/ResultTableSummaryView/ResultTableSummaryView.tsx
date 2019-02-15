@@ -3,8 +3,8 @@ import {
   Answer,
   RecordClass,
   Question,
-  AttributeSortingSpec,
-  PrimaryKey
+  PrimaryKey,
+  AttributeSortingSpec
 } from 'wdk-client/Utils/WdkModel';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -17,6 +17,7 @@ import './ResultTableSummaryView.scss';
 interface Props {
   answer?: Answer;
   answerLoading: boolean;
+  addingStepToBasket: boolean;
   activeAttributeAnalysisName: string | undefined;
   stepId: number;
   recordClass?: RecordClass;
@@ -36,6 +37,9 @@ interface Props {
     recordClass: string,
     primaryKeys: PrimaryKey[]
   ) => void;
+  requestAddStepToBasket: (
+    stepId: number
+  ) => void;
   requestPageSizeUpdate: (pageSize: number) => void;
   viewPageNumber: (pageNumber: number) => void;
   showHideAddColumnsDialog: (show: boolean) => void;
@@ -50,6 +54,7 @@ const cx = makeClassNameHelper('ResultTableSummaryView');
 export default function ResultTableSummaryView({
   answer,
   answerLoading,
+  addingStepToBasket,
   activeAttributeAnalysisName,
   stepId,
   recordClass,
@@ -58,6 +63,7 @@ export default function ResultTableSummaryView({
   requestColumnsChoiceUpdate,
   requestSortingUpdate,
   requestUpdateBasket,
+  requestAddStepToBasket,
   requestPageSizeUpdate,
   viewPageNumber,
   showHideAddColumnsDialog,
@@ -72,10 +78,10 @@ export default function ResultTableSummaryView({
 }: Props) {
   return (
     <div className={cx()}>
-      {answerLoading &&
+      {(answerLoading || addingStepToBasket) &&
         <div className={cx('LoadingOverlay')}>
           <Loading className={cx('Loading')}>
-            Loading data...
+            {answerLoading ? 'Loading results...' : 'Updating basket...'}
           </Loading>
         </div>
       }
@@ -104,6 +110,7 @@ export default function ResultTableSummaryView({
           requestColumnsChoiceUpdate={requestColumnsChoiceUpdate}
           requestSortingUpdate={requestSortingUpdate}
           requestUpdateBasket={requestUpdateBasket}
+          requestAddStepToBasket={requestAddStepToBasket}
           requestPageSizeUpdate={requestPageSizeUpdate}
           viewPageNumber={viewPageNumber}
           showHideAddColumnsDialog={showHideAddColumnsDialog}

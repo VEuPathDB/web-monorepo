@@ -3,13 +3,13 @@ import {
   InferAction
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { PrimaryKey } from 'wdk-client/Utils/WdkModel';
-import { BasketOperation } from 'wdk-client/Utils/WdkService';
+import { BasketRecordOperation } from 'wdk-client/Utils/WdkService';
 export type BasketScope = 'global' | 'project';
 
 export const requestUpdateBasket = makeActionCreator(
   'requestUpdateBasket',
   (
-    operation: BasketOperation,
+    operation: BasketRecordOperation,
     recordClassName: string,
     primaryKeys: Array<PrimaryKey>
   ) => ({ operation: operation, recordClassName, primaryKeys })
@@ -18,12 +18,24 @@ export const requestUpdateBasket = makeActionCreator(
 export const fulfillUpdateBasket = makeActionCreator(
   'fulfillUpdateBasket',
   (
-    operation: BasketOperation,
+    operation: BasketRecordOperation,
     recordClassName: string,
     primaryKeys: Array<PrimaryKey>
   ) => ({ operation, recordClassName, primaryKeys })
 );
 
+export const requestAddStepToBasket = makeActionCreator(
+  'requestAddStepToBasket',
+  (stepId: number) => ({ stepId })
+);
+
+export const fulfillAddStepToBasket = makeActionCreator(
+  'fulfillAddStepToBasket',
+  (stepId: number) => ({ stepId })
+)
+
 export type Action =
   | InferAction<typeof requestUpdateBasket>
-  | InferAction<typeof fulfillUpdateBasket>;
+  | InferAction<typeof fulfillUpdateBasket>
+  | InferAction<typeof requestAddStepToBasket>
+  | InferAction<typeof fulfillAddStepToBasket>

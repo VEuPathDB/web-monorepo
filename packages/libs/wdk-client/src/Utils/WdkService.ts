@@ -72,7 +72,8 @@ interface TempResultResponse {
   id: string;
 }
 
-export type BasketOperation = 'add' | 'remove' ;
+export type BasketRecordOperation = 'add' | 'remove' ;
+export type BasketStepOperation = 'addFromStepId';
 
 export type DatasetConfig = {
   sourceType: 'idList',
@@ -792,10 +793,12 @@ export default class WdkService {
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  updateBasketStatus(operation: BasketOperation, recordClassName: string, primaryKeys: Array<PrimaryKey>): Promise<never> {
-    let data = JSON.stringify({ [operation]: primaryKeys });
+  updateBasketStatus(operation: BasketRecordOperation, recordClassName: string, primaryKey: PrimaryKey[]): Promise<void>;
+  updateBasketStatus(operation: BasketStepOperation, recordClassName: string, stepId: number): Promise<void>;
+  updateBasketStatus(operation: BasketRecordOperation | BasketStepOperation, recordClassName: string, pksOrStepId: PrimaryKey[] | number): Promise<void> {
+    let data = JSON.stringify({ [operation]: pksOrStepId });
     let url = `/users/current/baskets/${recordClassName}`;
-    return this._fetchJson<never>('patch', url, data);
+    return this._fetchJson<void>('patch', url, data);
   }
 
   /**

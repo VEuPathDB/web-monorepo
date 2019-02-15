@@ -34,6 +34,7 @@ interface Props {
     recordClass: string,
     primaryKeys: PrimaryKey[]
   ) => void;
+  requestAddStepToBasket: (stepId: number) => void;
   viewPageNumber: (pageNumber: number) => void;
   requestPageSizeUpdate: (pageSize: number) => void;
   showHideAddColumnsDialog: (show: boolean) => void;
@@ -45,7 +46,8 @@ function ResultTable(props: Props) {
   const {
     answer,
     stepId,
-    showHideAddColumnsDialog
+    showHideAddColumnsDialog,
+    requestAddStepToBasket
   } = props;
   const columns = getColumns(props);
   const rows = answer.records;
@@ -77,7 +79,7 @@ function ResultTable(props: Props) {
         <Link to={`/step/${stepId}/download`}>Download</Link>
       </div>
       <div className="ResultTableButton">
-        <button type="button" className="wdk-Link" onClick={() => alert('TODO')}>
+        <button type="button" className="wdk-Link" onClick={() => requestAddStepToBasket(stepId)}>
           Add to Basket
         </button>
       </div>

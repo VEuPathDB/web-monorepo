@@ -119,4 +119,3 @@ export type Action =
     | InferAction<typeof showHideAddColumnsDialog>
     | InferAction<typeof updateColumnsDialogSelection>
     | InferAction<typeof updateColumnsDialogExpandedNodes>
-

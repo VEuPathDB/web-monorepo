@@ -22,7 +22,8 @@ import {
   updateColumnsDialogExpandedNodes,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { 
-  requestUpdateBasket
+  requestUpdateBasket,
+  requestAddStepToBasket,
 } from 'wdk-client/Actions/BasketActions';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import { CategoryTreeNode, isQualifying, addSearchSpecificSubtree } from 'wdk-client/Utils/CategoryUtils';
@@ -42,6 +43,7 @@ const actionCreators = {
   requestSortingUpdate,
   requestColumnsChoiceUpdate,
   requestUpdateBasket,
+  requestAddStepToBasket,
   requestPageSizeUpdate,
   viewPageNumber,
   showHideAddColumnsDialog,

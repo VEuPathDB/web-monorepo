@@ -1,4 +1,6 @@
 .ResultTableSummaryView {
+  position: relative;
+
   > .MesaComponent {
     display: flex;
     flex-wrap: wrap;
@@ -35,42 +37,53 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: #e6e6e6b3;
+    background: #3333337d;
     height: 100%;
     z-index: 1;
     width: 100%;
-    margin: 0 -2em;
-    padding: 0 2em;
+    margin: -1em;
+    padding: 1em;
     display: flex;
     justify-content: center;
   }
 
   .ResultTableSummaryViewLoading {
-    position: fixed;
-    top: 300px;
-    top: 45vh;
+    position: absolute;
+    top: 45%;
     display: flex;
     flex-direction: column-reverse;
     justify-content: space-between;
     height: 5em;
     font-size: 1.5em;
-    background: #9c9c9cb3;
+    background: #f3f3f3e0;
     border-radius: 12px;
-    text-shadow: 1px 1px 5px #bfbfbf;
+    box-shadow: 0 0 4px 1px #00000036;
   }
 
-  // Remove padding from basket table cells
-  .MesaComponent tr > th:first-of-type, .MesaComponent tr > td:first-of-type {
-    padding: 0;
-    text-align: center;
-    width: 3em;
+  .MesaComponent {
+
+    th, td {
+      padding: 5px;
+    }
+
+    // Remove padding from basket table cells
+    tr > th:first-of-type, tr > td:first-of-type {
+      padding: 0;
+      text-align: center;
+    }
+
   }
 
   // Add padding to basket button (increase clickable area)
   .ResultTableBasketIconButton {
-    padding: 1em;
+    padding: 5px;
     background: none;
     border: none;
+  }
+
+  .RemoveColumnButton {
+    font-size: 1rem;
+    color: maroon;
   }
 }
 

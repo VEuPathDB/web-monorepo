@@ -22,7 +22,7 @@ import {
     updateColumnsDialogSelection,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { requestStep, fulfillStep } from 'wdk-client/Actions/StepActions';
-import { requestUpdateBasket, fulfillUpdateBasket } from 'wdk-client/Actions/BasketActions';
+import { requestUpdateBasket, fulfillUpdateBasket, requestAddStepToBasket, fulfillAddStepToBasket } from 'wdk-client/Actions/BasketActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { Answer, AnswerJsonFormatConfig, PrimaryKey, AttributesConfig } from 'wdk-client/Utils/WdkModel';
@@ -39,8 +39,10 @@ export type BasketScope = "global" | "project";
 type BasketStatus = 'yes' | 'no' | 'loading';
 
 export type State = {
+    stepId?: number;
     answer?: Answer;
     answerLoading: boolean;
+    addingStepToBasket: boolean;
     questionFullName?: string;  // remember question so can validate sorting and columns fulfill actions
     basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
     columnsDialogIsOpen: boolean;
@@ -50,6 +52,7 @@ export type State = {
 
 const initialState: State = {
     answerLoading: false,
+    addingStepToBasket: false,
     columnsDialogIsOpen: false
 };
 
@@ -84,7 +87,9 @@ function reduceColumnsFulfillAction(state: State, action: Action): State {
 
 export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
-        case requestAnswer.type: {
+        case openResultTableSummaryView.type: {
+            return { ...state, stepId: action.payload.stepId };
+        } case requestAnswer.type: {
             return { ...state, answerLoading: true };
         } case fulfillAnswer.type: {
             return { ...state, answer: action.payload.answer, answerLoading: false };
@@ -98,6 +103,14 @@ export function reduce(state: State = initialState, action: Action): State {
             return reduceBasketUpdateAction(state, action);
         } case fulfillUpdateBasket.type: {
             return reduceBasketUpdateAction(state, action);
+        } case requestAddStepToBasket.type: {
+            return action.payload.stepId === state.stepId && state.basketStatusArray
+                ? { ...state, basketStatusArray: state.basketStatusArray.map(_ => 'loading' as BasketStatus ), addingStepToBasket: true }
+                : state;
+        } case fulfillAddStepToBasket.type: {
+            return action.payload.stepId === state.stepId && state.basketStatusArray
+                ? { ...state, basketStatusArray: state.basketStatusArray.map(_ => 'yes' as BasketStatus ), addingStepToBasket: false }
+                : state;
         } case showHideAddColumnsDialog.type: {
             return { ...state, columnsDialogIsOpen: action.payload.show }
         } case updateColumnsDialogExpandedNodes.type: {
