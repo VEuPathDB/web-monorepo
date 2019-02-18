@@ -38,8 +38,8 @@ class PaginationMenu extends React.PureComponent {
   }
 
   getTotalPages() {
-    const { rowsPerPage, totalRows } = this.props;
-    return Math.ceil(totalRows / rowsPerPage);
+    const { rowsPerPage, totalPages, totalRows } = this.props;
+    return totalPages || Math.ceil(totalRows / rowsPerPage);
   }
 
   getRelativePageNumber (relative) {
@@ -167,6 +167,7 @@ class PaginationMenu extends React.PureComponent {
 
 PaginationMenu.propTypes = {
   totalRows: PropTypes.number,
+  totalPages: PropTypes.number,
   currentPage: PropTypes.number,
   rowsPerPage: PropTypes.number,
   onPageChange: PropTypes.func,

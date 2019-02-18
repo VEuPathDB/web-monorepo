@@ -54,7 +54,7 @@ class TableToolbar extends React.PureComponent {
     const count = totalRows ? totalRows : rows.length;
     const noun = (isSearching ? 'result' : 'row') + (count % rowsPerPage === 1 ? '' : 's');
     const start = !isPaginated ? null : ((pagination.currentPage - 1) * rowsPerPage) + 1;
-    const end = !isPaginated ? null : (start + rowsPerPage > count ? count : (start - 1) + rowsPerPage);
+    const end = !isPaginated ? null : (start + rowsPerPage > (count - filteredRowCount) ? (count - filteredRowCount) : (start - 1) + rowsPerPage);
 
     const props = { count, noun, start, end, filteredRowCount };
 

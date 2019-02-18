@@ -221,4 +221,5 @@ export const ResultsTable: React.SFC<ResultsTableProps> = ({
     initialSortDirection="desc"
     emptyResultMessage="No Genomes present in result"
     fixedTableHeader
+    pagination
   />;

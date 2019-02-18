@@ -17,6 +17,7 @@ interface StepAnalysisEnrichmentResultTableProps {
   initialSortColumnKey?: string;
   initialSortDirection?: 'asc' | 'desc';
   fixedTableHeader?: boolean;
+  pagination?: boolean;
 }
 
 export interface ColumnSettings {
@@ -34,6 +35,8 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
     super(props);
     this.handleSearch = debounce(200, this.handleSearch.bind(this));
     this.handleSort = this.handleSort.bind(this);
+    this.handlePageChange = this.handlePageChange.bind(this);
+    this.handleRowsPerPageChange = this.handleRowsPerPageChange.bind(this);
 
     this.state = MesaState.create({
       rows: this.props.rows,
@@ -59,10 +62,19 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
         sort: {
           columnKey: this.props.initialSortColumnKey || null,
           direction: this.props.initialSortDirection || 'asc'
-        }
+        },
+        pagination: this.props.pagination 
+          ? {
+            currentPage: 1,
+            totalRows: this.props.rows.length,
+            rowsPerPage: 20
+          }
+          : undefined
       },
       eventHandlers: {
-        onSort: ({ key }: any, direction: any) => this.handleSort(key, direction)
+        onSort: ({ key }: any, direction: any) => this.handleSort(key, direction),
+        onPageChange: this.handlePageChange,
+        onRowsPerPageChange: this.handleRowsPerPageChange
       }
     });
   }
@@ -80,6 +92,36 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
     this.setState(updatedTableState);
   }
 
+  handlePageChange(pageNumber: number) {
+    const updatedTableState = MesaState.setUiState(
+      this.state,
+      {
+        ...MesaState.getUiState(this.state),
+        pagination: {
+          ...MesaState.getUiState(this.state).pagination,
+          currentPage: pageNumber
+        }
+      }
+    );
+
+    this.setState(updatedTableState);
+  }
+
+  handleRowsPerPageChange(rowsPerPage: number) {
+    const updatedTableState = MesaState.setUiState(
+      this.state,
+      {
+        ...MesaState.getUiState(this.state),
+        pagination: {
+          ...MesaState.getUiState(this.state).pagination,
+          rowsPerPage
+        }
+      }
+    );
+
+    this.setState(updatedTableState);
+  }
+
   render() {
     const { getColumns, getFilteredRows, getUiState, setFilteredRows, setUiState } = MesaState;
     const { searchQuery, sort: { columnKey: sortColumnKey, direction: sortDirection } } = getUiState(this.state);
@@ -88,24 +130,47 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
       ? MesaState.filterRows(this.state, simpleFilterPredicateFactory(searchQuery))
       : this.state;
 
+    const allRows = MesaState.getRows(filteredState);
+    const filteredRows = MesaState.getFilteredRows(filteredState);
+
     const filterCountedState = setUiState(
       filteredState,
       {
         ...MesaState.getUiState(filteredState),
-        filteredRowCount: MesaState.getRows(filteredState).length - MesaState.getFilteredRows(filteredState).length
+        filteredRowCount: allRows.length - filteredRows.length,
       }
     );
 
-    const { sortType = 'text' } = getColumns(filterCountedState).find(({ key }) => key === sortColumnKey) || {};
+    const { currentPage = 1, rowsPerPage = 20 } = MesaState.getUiState(filteredState).pagination || { };
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+    const newCurrentPage = Math.min(currentPage, totalPages);
+
+    const pagedRows = filteredRows.slice((newCurrentPage - 1) * rowsPerPage, newCurrentPage * rowsPerPage);
+    const pagedState = MesaState.getUiState(filteredState).pagination 
+      ? setUiState(
+          setFilteredRows(filterCountedState, pagedRows),
+          {
+            ...MesaState.getUiState(filterCountedState),
+            pagination: {
+              ...MesaState.getUiState(filterCountedState).pagination,
+              currentPage: newCurrentPage,
+              totalPages,
+              totalRows: allRows.length
+            }
+          }
+      )
+      : filterCountedState;
+  
+    const { sortType = 'text' } = getColumns(pagedState).find(({ key }) => key === sortColumnKey) || {};
     const sortMethod = sortTypes[sortType] || sortTypes['text'];
     
-    const unsortedRows = getFilteredRows(filterCountedState);
+    const unsortedRows = getFilteredRows(pagedState);
     const sortedRows = sortColumnKey === null
       ? unsortedRows
       : sortMethod(unsortedRows, sortColumnKey, sortDirection === 'asc');
 
     const sortedState = setFilteredRows(
-      filterCountedState,
+      pagedState,
       sortedRows
     );
 
