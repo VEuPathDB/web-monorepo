@@ -7,6 +7,7 @@ import org.eupathdb.common.service.contact.ContactUsService;
 import org.gusdb.fgputil.SetBuilder;
 import org.gusdb.wdk.service.WdkServiceApplication;
 import org.gusdb.wdk.service.service.user.ProfileService;
+import org.clinepi.service.services.ShinyDataService;
 
 public class ClinEpiServiceApplication extends WdkServiceApplication {
 
@@ -25,6 +26,9 @@ public class ClinEpiServiceApplication extends WdkServiceApplication {
 
       // add ClinEpi services
       .add(AccessRequestService.class)
+
+      // add web service to find shiny input files
+      .add(ShinyDataService.class)
 
       .toSet();
   }
