@@ -11,6 +11,7 @@ public class AccessRequestParams {
   private final String datasetName;
   private final String restrictionLevel;
   private final String providerEmail;
+  private final String bccEmail;
   private final String bodyTemplate;
   private final int approvalType;
 
@@ -23,6 +24,7 @@ public class AccessRequestParams {
       String datasetName,
       String restrictionLevel,
       String providerEmail,
+      String bccEmail,
       String bodyTemplate,
       int approvalType,
       Map<String, String> formFields) {
@@ -34,6 +36,7 @@ public class AccessRequestParams {
     this.datasetName = datasetName;
     this.restrictionLevel = restrictionLevel;
     this.providerEmail = providerEmail;
+    this.bccEmail = bccEmail;
     this.bodyTemplate = bodyTemplate;
     this.approvalType = approvalType;
 
@@ -62,6 +65,10 @@ public class AccessRequestParams {
 
   public String getProviderEmail() {
     return providerEmail;
+  }
+
+  public String getBccEmail() {
+    return bccEmail;
   }
 
   public String getBodyTemplate() {
