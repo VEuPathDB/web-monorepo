@@ -238,13 +238,13 @@ export function RecordTableDescription(props) {
     */
 
     case 'ECNumbers':
-      return props.table.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
+      return typeof props.record.tables.ECNumbers != "undefined" && props.record.tables.ECNumbers.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
 
     case 'MetabolicPathways':
-      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+      return typeof props.record.tables.MetabolicPathways != "undefined" && props.record.tables.MetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
     case 'CompoundsMetabolicPathways':
-      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+      return typeof props.record.tables.CompoundsMetabolicPathways != "undefined" && props.record.tables.CompoundsMetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
     default:
       return <props.DefaultComponent {...props}/>
@@ -537,6 +537,7 @@ class MercatorTable extends React.Component {
     );
   }
 }
+
 
 class SortKeyTable extends React.Component {
 
@@ -894,17 +895,12 @@ class StringDBForm extends React.Component {
     }
 
 
-    
-     printOrganismInputs(s)  {
-
-        return (
-            s.map(p => {
-                return (
-                    <label key={p[0]}>
-                        <input type="radio" name="organism" value={p[0]}/><span class="tab"> </span>{p[1]}<br/></label>
-                );
-            })
-        );
+    printOrganismInputs(s)  {
+       return (
+         <select name="organism">
+           {s.map(p => <option value={p[0]}>{p[1]}</option>)}
+         </select>
+       )
     }
 
 
@@ -928,11 +924,13 @@ class StringDBForm extends React.Component {
                   {this.inputHeader(t)}
                   {this.printInputs(t)}
 		  
-		  <p>Please select the organism:</p>
+		  <p>Please select the organism:<br/><br/>
 
 		  {this.printOrganismInputs(s)}
+		  
+		  <br/></p>
 
-                 <br/><input type="submit"/>
+                  <input type="submit"/>
 
 
             </form>
@@ -968,16 +966,38 @@ class OrthologsForm extends SortKeyTable {
       if(gene_type === "protein coding") {
           return (
               <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
-                  <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
                   <input type="hidden" name="type" value="geneOrthologs"/>
                   <input type="hidden" name="project_id" value={projectId}/>
                   <input type="hidden" name="gene_ids" value={source_id}/>
-                  <input type="submit" value="Run clustal Omega for selected genes"/>
-                  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
+				  <p><b>Select sequence type for Clustal Omega multiple sequence alignment:</b></p>
+				  <table id="userOptions" >
+				    <tr><td><input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein<br/></td>
+				        <td><input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)</td>
+					    <td><input type="radio" name="sequence_Type" value="genomic" /> Genomic :</td>
+					    <td> + <input type="number" id="oneOffset" name="oneOffset" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)</td>
+					</tr>
+					<tr>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td> + <input type="number" id="twoOffset" name="twoOffset" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)</td>
+					</tr>  
+				  </table>	
+				  
+				  <input type="submit" value="Run Clustal Omega for selected genes"/>
+                  <br/>
+				  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
+                  <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
+			      <p>Please note, selecting 2500nt at each flank or many sequences will take a few minutes to align.</p>
+                  <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
+				  <input type="submit" value="Run Clustal Omega for selected genes"/>
+                  <br/>
+				  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
                   <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
               </form>
           );
       }
+
 
       return (
           <div>
@@ -986,7 +1006,6 @@ class OrthologsForm extends SortKeyTable {
           </div>
       );
   }
-
 
 }
 
