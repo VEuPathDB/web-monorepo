@@ -39,6 +39,7 @@ public class AccessRequestService extends UserService {
     public String getStudyAccess() throws WdkModelException, WdkUserException;
     public String getDisplayName() throws WdkModelException, WdkUserException;
     public String getRequestEmail() throws WdkModelException, WdkUserException;
+    public String getRequestEmailBcc() throws WdkModelException, WdkUserException;
     public String getRequestEmailBody() throws WdkModelException, WdkUserException;
     public Integer getRequestNeedsApproval() throws WdkModelException, WdkUserException;
   }
@@ -127,6 +128,11 @@ public class AccessRequestService extends UserService {
       }
 
       @Override
+      public String getRequestEmailBcc() throws WdkModelException, WdkUserException {
+        return getAttributeValueString("request_email_bcc");
+      }
+
+      @Override
       public String getRequestEmailBody() throws WdkModelException, WdkUserException {
         return getAttributeValueString("request_email_body");
       }
@@ -161,6 +167,7 @@ public class AccessRequestService extends UserService {
       datasetAttributes.getDisplayName(),
       datasetAttributes.getStudyAccess(),
       datasetAttributes.getRequestEmail(),
+      datasetAttributes.getRequestEmailBcc(),
       datasetAttributes.getRequestEmailBody(),
       datasetAttributes.getRequestNeedsApproval(),
       JsonUtil.parseProperties(requestJson)
