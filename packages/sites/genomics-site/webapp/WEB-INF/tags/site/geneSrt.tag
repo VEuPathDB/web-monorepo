@@ -128,7 +128,7 @@
 
         <input type="radio" name="onlyIdDefLine" value="1">Only Gene ID</input>
 
-        <input type="radio" name="onlyIdDefLine" value="0" checked>Full defline</input>
+        <input type="radio" name="onlyIdDefLine" value="0" checked>Full Fasta Header</input>
       </td>
     </tr>
 
