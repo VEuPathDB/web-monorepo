@@ -895,21 +895,25 @@ class StringDBForm extends React.Component {
     }
 
 
-    printOrganismInputs(s)  {
-       return (
-         <select name="organism">
-           {s.map(p => <option value={p[0]}>{p[1]}</option>)}
-         </select>
-       )
-    }
+
+printOrganismInputs(s,genus_species)  {
+  const defaultOrganismEntry = s.find(p => p[1] === genus_species) || s[0];
+  return (
+    <select name="organism" defaultValue={defaultOrganismEntry[0]}>
+      {s.map(p => <option value={p[0]}>{p[1]}</option>)}
+    </select>
+  );
+}
 
 
 
     render() {
-    	let { project_id } = this.props.record.attributes;  
+    	let {project_id, genus_species } = this.props.record.attributes;  
         
-        let t = this.props.value;
+	let t = this.props.value;
+
 	let s = JSON.parse(t[0].jsonString);
+
 
            return (
 
@@ -926,7 +930,8 @@ class StringDBForm extends React.Component {
 		  
 		  <p>Please select the organism:<br/><br/>
 
-		  {this.printOrganismInputs(s)}
+		  {this.printOrganismInputs(s,genus_species)}
+
 		  
 		  <br/></p>
 
