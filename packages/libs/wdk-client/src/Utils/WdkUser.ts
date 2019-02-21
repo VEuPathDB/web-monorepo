@@ -70,13 +70,23 @@ export const strategyDecoder: Decoder<Strategy> = combine(
 )
 
 // TODO: should be factored to Ebrc something
-export interface PubmedPreview {
+export type PubmedPreview = PubmedPreviewEntry[];
 
+export interface PubmedPreviewEntry {
+  id: string,
+  title: string,
+  journal: string,
+  author: string,
+  url: string
 }
  
 export interface UserCommentAttachedFileSpec {
   file: File,
   description: string
+}
+
+export interface KeyedUserCommentAttachedFileSpec extends UserCommentAttachedFileSpec {
+  id: number
 }
 
 export interface UserCommentAttachedFile {

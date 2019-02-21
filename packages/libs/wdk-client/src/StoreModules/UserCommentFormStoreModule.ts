@@ -16,7 +16,7 @@ import {
     fulfillUpdateAttachedFiles,
     closeUserCommentForm
 } from 'wdk-client/Actions/UserCommentFormActions';
-import { UserCommentPostRequest, UserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview } from "wdk-client/Utils/WdkUser";
+import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview } from "wdk-client/Utils/WdkUser";
 import {StandardWdkPostResponse} from "wdk-client/Utils/WdkService";
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
@@ -36,13 +36,15 @@ export type State = {
     showPubmedPreview: boolean;
     [ATTACHED_FILES_KEY]?: UserCommentAttachedFile[];
     attachedFilesToRemove: number[];  // attachment IDs
-    attachedFileSpecsToAdd: UserCommentAttachedFileSpec[];
+    attachedFileSpecsToAdd: KeyedUserCommentAttachedFileSpec[];
+    nextFileSpecId: number;
 };
 
 const initialState: State = {
     showPubmedPreview: false,
     attachedFilesToRemove: [],
-    attachedFileSpecsToAdd: []
+    attachedFileSpecsToAdd: [],
+    nextFileSpecId: 0
 };
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -60,11 +62,26 @@ export function reduce(state: State = initialState, action: Action): State {
         } case removeAttachedFile.type: {
             return { ...state, attachedFilesToRemove: [...state.attachedFilesToRemove, action.payload.attachmentId] };
         } case addFileToAttach.type: {
-            return { ...state, attachedFileSpecsToAdd: [...state.attachedFileSpecsToAdd, action.payload.fileToAttach] };
+            return { 
+                ...state, 
+                nextFileSpecId: state.nextFileSpecId + 1,
+                attachedFileSpecsToAdd: [
+                    ...state.attachedFileSpecsToAdd, 
+                    {
+                        ...action.payload.fileToAttach,
+                        id: state.nextFileSpecId
+                    }
+                ] 
+            };
         }
         case removeFileToAttach.type: {
-            let a = state.attachedFileSpecsToAdd.splice(action.payload.index, 1);
-            return { ...state, attachedFileSpecsToAdd: a };
+            return { 
+                ...state, 
+                attachedFileSpecsToAdd: [
+                    ...state.attachedFileSpecsToAdd.slice(0, action.payload.index),
+                    ...state.attachedFileSpecsToAdd.slice(action.payload.index + 1),
+                ]
+            };
         }
         default: {
             return state;
@@ -106,13 +123,19 @@ async function getRequestUpdateAttachedFiles([fulfillSubmitCommentAction]: [ Inf
     return requestUpdateAttachedFiles(fulfillSubmitCommentAction.payload.userCommentId, state$.value.attachedFileSpecsToAdd, state$.value.attachedFilesToRemove);
 }
 
-// TODO: fix this
 async function getFulfillUpdateAttachedFiles([fulfillSubmitCommentAction, requestUpdateAttachedFilesAction]: [ InferAction<typeof fulfillSubmitComment>, InferAction<typeof requestUpdateAttachedFiles>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillUpdateAttachedFiles>> {
     let commentId = requestUpdateAttachedFilesAction.payload.userCommentId;
     let fileIdsToRemove: number[] = requestUpdateAttachedFilesAction.payload.fileIdsToRemove;
     let filesToAttach: UserCommentAttachedFileSpec[] = requestUpdateAttachedFilesAction.payload.filesToAttach;
-    fileIdsToRemove.forEach(attachmentId => (wdkService.deleteUserCommentAttachedFile(commentId, attachmentId)));
-    // filesToAttach.forEach();
+
+    await Promise.all(
+        fileIdsToRemove.map(attachmentId => wdkService.deleteUserCommentAttachedFile(commentId, attachmentId))
+    );
+
+    await Promise.all(
+        filesToAttach.map(attachment => wdkService.postUserCommentAttachedFile(commentId, attachment))
+    );
+
     return fulfillUpdateAttachedFiles(requestUpdateAttachedFilesAction.payload.userCommentId, requestUpdateAttachedFilesAction.payload.filesToAttach, requestUpdateAttachedFilesAction.payload.fileIdsToRemove);
 }
 

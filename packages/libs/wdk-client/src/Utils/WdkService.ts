@@ -954,11 +954,20 @@ export default class WdkService {
     return this._fetchJson<StandardWdkPostResponse>('post', '/user-comments', data);
   }
 
-  // TODO: fix this
   // return the new attachment id
-  postUserCommentAttachedFile(commentId: number, attachment: UserCommentAttachedFileSpec) : Promise<StandardWdkPostResponse> {
-    let data = JSON.stringify({ attachment });
-    return this._fetchJson<StandardWdkPostResponse>('post', `/user-comments/${commentId}/attachments`, data);
+  postUserCommentAttachedFile(commentId: number, { file, description }: UserCommentAttachedFileSpec) : Promise<StandardWdkPostResponse> {    
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('file', file, file.name);
+
+    return fetch(
+      `${this.serviceUrl}/user-comments/${commentId}/attachments`, 
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      }
+    ).then(response => response.json());
   }
 
   deleteUserCommentAttachedFile(commentId: number, attachmentId: number) :Promise<void> {
