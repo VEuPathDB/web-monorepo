@@ -1,29 +1,14 @@
 package org.clinepi.service.services;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
 import org.gusdb.wdk.service.service.AbstractWdkService;
-import org.json.JSONObject;
 
 @Path("/shiny")
 public class ShinyDataService extends AbstractWdkService {

@@ -35,6 +35,8 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
 
   // add this property to plugin configuration to filter metadata by dataset name
   private static final String DATASET_NAME_PROPERTY = "datasetName";
+
+  private static final boolean DUMP_ONTOLOGY_META = false;
   private static final String DATASET_TBL_PREFIX = "datasetTblPrefix";
 
   // name of output files dumped to analysis job directory
@@ -87,11 +89,13 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
     // perform custom dump of ontology item metadata on a per-dataset basis
     //   (only if other operations were successful)
     if (status.equals(ExecutionStatus.COMPLETE)) {
-      //dumpOntologyMeta(
-      //    getWdkModel().getAppDb(),
-      //    getProperty(DATASET_NAME_PROPERTY),
-      //    getProperty(DATASET_TBL_PREFIX),
-      //    getStorageDirectory());
+      if (DUMP_ONTOLOGY_META) {
+        dumpOntologyMeta(
+            getWdkModel().getAppDb(),
+            getProperty(DATASET_NAME_PROPERTY),
+            getProperty(DATASET_TBL_PREFIX),
+            getStorageDirectory());
+      }
       writeContentToFile(getStorageDirectory().toAbsolutePath().toString(),
           ADDITIONAL_PROPS_FILENAME, getProperty(DATASET_NAME_PROPERTY) + NL);
     }
@@ -99,7 +103,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
     return status;
   }
 
-    private static void dumpOntologyMeta(DatabaseInstance appDb, String datasetName, String datasetTblPrefix, Path storageDir) {
+  private static void dumpOntologyMeta(DatabaseInstance appDb, String datasetName, String datasetTblPrefix, Path storageDir) {
     boolean useDatasetName = (datasetName != null);
     File outputFile = Paths.get(storageDir.toAbsolutePath().toString(), ONT_ATTR_META_FILENAME).toFile();
     new SQLRunner(appDb.getDataSource(), getMetadataSql(useDatasetName, datasetTblPrefix)).executeQuery(
