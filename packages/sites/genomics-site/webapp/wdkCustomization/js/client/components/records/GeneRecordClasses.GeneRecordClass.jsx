@@ -974,42 +974,34 @@ class OrthologsForm extends SortKeyTable {
                   <input type="hidden" name="type" value="geneOrthologs"/>
                   <input type="hidden" name="project_id" value={projectId}/>
                   <input type="hidden" name="gene_ids" value={source_id}/>
+                  <p>To run Clustal Omega select sequences in the table below then press the button at the foot of the table.</p>
+				  <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
+				  <p>  </p>
 				  <p><b>Select sequence type for Clustal Omega multiple sequence alignment:</b></p>
+			      <p>Please note: selecting a large flanking region or a large number of sequences will take several minutes to align.</p>
 				  <table id="userOptions" >
 				    <tr><td><input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein<br/></td>
 				        <td><input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)</td>
 					    <td><input type="radio" name="sequence_Type" value="genomic" /> Genomic :</td>
-					    <td> + <input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)</td>
+					    <td> <input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)</td>
 					</tr>
 					<tr>
 					  <td></td>
 					  <td></td>
 					  <td></td>
-					  <td> + <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)</td>
+					  <td> <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)</td>
 					</tr>  
 				  </table>	
 				  
-				  <input type="submit" value="Run Clustal Omega for selected genes"/>
-                  <br/>
 				  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
                   <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
-			      <p>Please note, selecting 2500nt at each flank or many sequences will take a few minutes to align.</p>
-                  <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
-				  <input type="submit" value="Run Clustal Omega for selected genes"/>
                   <br/>
-				  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
-                  <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
+				  <input type="submit" value="Run Clustal Omega for selected genes"/>
               </form>
           );
       }
 
 
-      return (
-          <div>
-              <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
-              <p>NOTE: clusalW alignment is only available for protein coding genes</p>
-          </div>
-      );
   }
 
 }
