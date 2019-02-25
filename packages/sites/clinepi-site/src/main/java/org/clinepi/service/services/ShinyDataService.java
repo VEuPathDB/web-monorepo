@@ -16,15 +16,6 @@ public class ShinyDataService extends AbstractWdkService {
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(ShinyDataService.class);
 
-    //remove after testing
-    @GET
-    @Path("test")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response test() {
-	String testString = "testing teststring 123";
-        return Response.ok(testString).build();
-    }
-
     @GET
     @Path("data/{datasetName}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -32,7 +23,7 @@ public class ShinyDataService extends AbstractWdkService {
 	String projectId = getWdkModel().getProjectId();
 	String buildNumber = getWdkModel().getBuildNumber();
 	String webservicesDir = getWdkModel().getProperties().get("WEBSERVICEMIRROR");
-	String dataPath = webservicesDir + "/" + projectId + "/" + "build-" + buildNumber + "/" + datasetName + "/shiny/shiny_masterDataTable.txt";
+	String dataPath = webservicesDir + "/ClinEpiDB/build-" + buildNumber + "/" + datasetName + "/shiny/shiny_masterDataTable.txt";
 
 	//String content = "";
 	//try {
@@ -52,7 +43,7 @@ public class ShinyDataService extends AbstractWdkService {
 	String projectId = getWdkModel().getProjectId();
 	String buildNumber = getWdkModel().getBuildNumber();
 	String webservicesDir = getWdkModel().getProperties().get("WEBSERVICEMIRROR");
-	String ontologyPath = webservicesDir + "/" + projectId + "/" + "build-" + buildNumber + "/" + datasetName + "/shiny/ontologyMetadata.tab";
+	String ontologyPath = webservicesDir + "/ClinEpiDB/build-" + buildNumber + "/" + datasetName + "/shiny/ontologyMetadata.tab";
 
 	//String content = "";
         //try {
