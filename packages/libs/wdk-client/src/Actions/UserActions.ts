@@ -479,14 +479,14 @@ export function conditionallyTransition(test: UserPredicate, path: string, exter
  */
 export function updateUserPreference(scope: PreferenceScope, key: string, value: string): ActionThunk<PreferenceUpdateAction> {
   return function run({ wdkService }) {
-    let updatePromise = wdkService.patchUserPreference(scope, key, value);
+    let updatePromise = wdkService.patchSingleUserPreference(scope, key, value);
     return sendPrefUpdateOnCompletion(updatePromise, preferenceUpdate({ [scope]: { [key]: value }} as UserPreferences))
   };
 };
 
 export function updateUserPreferences(newPreferences: UserPreferences): ActionThunk<PreferencesUpdateAction> {
   return function run({ wdkService }) {
-    let updatePromise = wdkService.putUserPreferences(newPreferences);
+    let updatePromise = wdkService.patchUserPreferences(newPreferences);
     return sendPrefUpdateOnCompletion(updatePromise, preferencesUpdate(newPreferences));
   };
 };
@@ -516,7 +516,7 @@ export function submitProfileForm(userProfileFormData: UserProfileFormData): Sub
   return function run({ wdkService }) {
     let partialUser: Partial<User> = <UserProfileFormData>filterOutProps(userProfileFormData, ["isGuest", "id", "confirmEmail", "preferences"]);
     let userPromise = wdkService.getCurrentUser().then(user => wdkService.updateCurrentUser({ ...user, ...partialUser }));
-    let prefPromise = wdkService.putUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
+    let prefPromise = wdkService.patchUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
     return [
       profileFormSubmissionStatus('pending'),
       Promise.all([userPromise, prefPromise]).then(([user]) => [

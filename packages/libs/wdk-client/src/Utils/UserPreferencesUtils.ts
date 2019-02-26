@@ -38,13 +38,13 @@ export async function getSummaryTableConfigUserPref(questionName: string, wdkSer
 }
 
 export async function setResultTableColumnsPref(questionName: string, wdkService: WdkService, columns : Array<string>) : Promise<UserPreferences> {
-    return wdkService.patchUserPreference('global', questionName + SUMMARY_SUFFIX, columns.join(','));
+    return wdkService.patchSingleUserPreference('global', questionName + SUMMARY_SUFFIX, columns.join(','));
 }
 
 export async function setResultTableSortingPref(questionName: string, wdkService: WdkService, sorting : Array<AttributeSortingSpec>) : Promise<UserPreferences> {
     let sortingSpecString = sorting.map(spec => spec.attributeName + " " + spec.direction).join(",");
 
-    return wdkService.patchUserPreference('global', questionName + SORT_SUFFIX, sortingSpecString);
+    return wdkService.patchSingleUserPreference('global', questionName + SORT_SUFFIX, sortingSpecString);
 }
 
 export type MatchedTranscriptFilterPref = {
@@ -63,5 +63,5 @@ export async function getMatchedTranscriptFilterPref(wdkService: WdkService) : P
 }
 
 export async function setMatchedTranscriptFilterPref(expanded: boolean, wdkService: WdkService) : Promise<UserPreferences> {
-    return wdkService.patchUserPreference('global', MATCHED_TRANSCRIPT_FILTER_EXPANDED, expanded? 'yes' : 'no');
+    return wdkService.patchSingleUserPreference('global', MATCHED_TRANSCRIPT_FILTER_EXPANDED, expanded? 'yes' : 'no');
 }

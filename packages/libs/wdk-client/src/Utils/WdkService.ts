@@ -449,6 +449,7 @@ export default class WdkService {
   private _cache: Map<string, Promise<any>> = new Map;
   private _recordCache: Map<string, {request: RecordRequest; response: Promise<RecordInstance>}> = new Map;
   private _preferences: Promise<UserPreferences> | undefined;
+  
   private _currentUserPromise: Promise<User> | undefined;
   private _initialCheck: Promise<void> | undefined;
   private _version: number | undefined;
@@ -459,7 +460,7 @@ export default class WdkService {
    */
   private constructor(private serviceUrl: string) {
     this.getOntology = memoize(this.getOntology.bind(this));
-    this.patchUserPreference = synchronized(this.patchUserPreference);
+    this.patchSingleUserPreference = synchronized(this.patchSingleUserPreference);
   }
 
   /**
@@ -986,27 +987,48 @@ export default class WdkService {
     return this._preferences;
   }
 
-  // update or add a single user preference
-  patchUserPreference(scope: PreferenceScope, key: string, value: string) : Promise<UserPreferences> {
-    let entries = { [scope]: { [key]: value }};
-    let url = '/users/current/preferences';
-    let data = JSON.stringify(entries);
+  // update or add a single user preference.  (Set a pref to NULL to clear it).
+  patchSingleUserPreference(scope: PreferenceScope, key: string, value: string): Promise<UserPreferences> {
+    let update = { action: 'update', updates: { [key]: value } };
+    let url = `/users/current/preferences/${scope}`;
+    let data = JSON.stringify(update);
     return this._fetchJson<void>('patch', url, data)
       .then(() => this.getCurrentUserPreferences())
       .then(preferences => {
         // merge with cached preferences only if patch succeeds
-        return this._preferences = Promise.resolve({ ...preferences, ...entries });
+        return this._preferences = Promise.resolve({
+          ...preferences,
+          [scope]: {
+            ...preferences[scope],
+            [key]: value
+          }
+        });
+      });
+  }
+  
+  // update multiple user preferences, for a single scope.  (Set a pref to NULL to clear it).
+  patchScopedUserPreferences(scope: PreferenceScope, updates: Record<string,string>): Promise<UserPreferences> {
+    let update = { action: 'update', updates};
+    let url = `/users/current/preferences/${scope}`;
+    let data = JSON.stringify(update);
+    return this._fetchJson<void>('patch', url, data)
+      .then(() => this.getCurrentUserPreferences())
+      .then(preferences => {
+        // merge with cached preferences only if patch succeeds
+        return this._preferences = Promise.resolve({
+          ...preferences,
+          [scope]: {
+            ...preferences[scope],
+            ...updates
+          }
+        });
       });
   }
 
-  // replace all user preferences
-  putUserPreferences(entries: UserPreferences) : Promise<UserPreferences> {
-    let url = '/users/current/preferences';
-    let data = JSON.stringify(entries);
-    return this._fetchJson<void>('put', url, data).then(() => {
-      // merge with cached preferences only if patch succeeds
-      return this._preferences = Promise.resolve(entries);
-    });
+  // patch user both global and project user preferences.  (Set a pref to NULL to clear it)
+  async patchUserPreferences(updates: UserPreferences) : Promise<UserPreferences> {
+    await this.patchScopedUserPreferences('global', updates.global);
+    return await this.patchScopedUserPreferences('project', updates.project);
   }
 
   getCurrentUserDatasets() {
