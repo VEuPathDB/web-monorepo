@@ -891,6 +891,11 @@
                     </b></td>    
              <td>N/A</td>
            </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_06/" target="_blank">E06 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
+             <td>N/A</td>
+           </tr>
            </table>
            </div>
            
@@ -984,6 +989,11 @@
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS822" target="_blank">E07 Quantitative Metabolomics Results at MetaboLights</a>
                     </b></td>    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_07/" target="_blank">E07 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
           </table>
@@ -1418,6 +1428,11 @@
              <td>N/A</td>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_23/" target="_blank">E23 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Lipidoimics_Core.jpg" height="13px" width="13px"> <b>Lipidomics</b></td>
              <td><b><a href="http://massive.ucsd.edu/ProteoSAFe/dataset.jsp?task=9dce6369a6c14b23b77b55825e5dd61d" target="_blank">E23 Lipidomics Results at MassIVE</a></b></td>
              <td>N/A</td>
@@ -1841,8 +1856,8 @@
              <td>N/A</td>
            </tr>
            <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E30 Proteomics at EBI's PRIDE</a>-->
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_30/" target="_blank">E30 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
