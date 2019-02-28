@@ -13,55 +13,47 @@ import org.gusdb.wdk.service.service.AbstractWdkService;
 @Path("/shiny")
 public class ShinyDataService extends AbstractWdkService {
 
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(ShinyDataService.class);
+  @SuppressWarnings("unused")
+  private static final Logger LOG = Logger.getLogger(ShinyDataService.class);
 
-    //remove after testing
-    @GET
-    @Path("test")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response test() {
-	String testString = "testing teststring 123";
-        return Response.ok(testString).build();
-    }
+  @GET
+  @Path("data/{datasetName}")
+  @Produces(MediaType.TEXT_PLAIN)
+  public Response getShinyDataset(@PathParam("datasetName") String datasetName) {
+    //String projectId = getWdkModel().getProjectId();
+    String buildNumber = getWdkModel().getBuildNumber();
+    String webservicesDir = getWdkModel().getProperties().get("WEBSERVICEMIRROR");
+    String dataPath = webservicesDir + "/ClinEpiDB/build-" + buildNumber + "/" + datasetName +
+        "/shiny/shiny_masterDataTable.txt";
 
-    @GET
-    @Path("data/{datasetName}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response getShinyDataset(@PathParam("datasetName") String datasetName) {
-	String projectId = getWdkModel().getProjectId();
-	String buildNumber = getWdkModel().getBuildNumber();
-	String webservicesDir = getWdkModel().getProperties().get("WEBSERVICEMIRROR");
-	String dataPath = webservicesDir + "/" + projectId + "/" + "build-" + buildNumber + "/" + datasetName + "/shiny/shiny_masterDataTable.txt";
+    // String content = "";
+    // try {
+    //   content = new String ( Files.readAllBytes( Paths.get(dataPath) ) );
+    // }
+    // catch (IOException e) {
+    //   e.printStackTrace();
+    // }
+    return Response.ok(dataPath).build();
+  }
 
-	//String content = "";
-	//try {
-        //    content = new String ( Files.readAllBytes( Paths.get(dataPath) ) );
-        //}
-        //catch (IOException e) {
-        //    e.printStackTrace();
-        //}
+  @GET
+  @Path("ontology/{datasetName}")
+  @Produces(MediaType.TEXT_PLAIN)
+  public Response getShinyOntology(@PathParam("datasetName") String datasetName) {
+    //String projectId = getWdkModel().getProjectId();
+    String buildNumber = getWdkModel().getBuildNumber();
+    String webservicesDir = getWdkModel().getProperties().get("WEBSERVICEMIRROR");
+    String ontologyPath = webservicesDir + "/ClinEpiDB/build-" + buildNumber + "/" + datasetName +
+        "/shiny/ontologyMetadata.tab";
 
-	return Response.ok(dataPath).build();
-    }
-
-    @GET
-    @Path("ontology/{datasetName}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response getShinyOntology(@PathParam("datasetName") String datasetName) {
-	String projectId = getWdkModel().getProjectId();
-	String buildNumber = getWdkModel().getBuildNumber();
-	String webservicesDir = getWdkModel().getProperties().get("WEBSERVICEMIRROR");
-	String ontologyPath = webservicesDir + "/" + projectId + "/" + "build-" + buildNumber + "/" + datasetName + "/shiny/ontologyMetadata.tab";
-
-	//String content = "";
-        //try {
-        //    content = new String ( Files.readAllBytes( Paths.get(ontologyPath) ) );
-        //}
-        //catch (IOException e) {
-        //    e.printStackTrace();
-        //}
-	return Response.ok(ontologyPath).build();
-    }
+    // String content = "";
+    // try {
+    //   content = new String ( Files.readAllBytes( Paths.get(ontologyPath) ) );
+    // }
+    // catch (IOException e) {
+    //   e.printStackTrace();
+    // }
+    return Response.ok(ontologyPath).build();
+  }
 
 }
