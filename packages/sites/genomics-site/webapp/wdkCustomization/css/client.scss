@@ -88,6 +88,7 @@
   flex-wrap: wrap;
 }
 
+
 /* gene page overview */
 @media all and (min-width: 1000px) {
   .eupathdb-RecordOverviewLeft {
@@ -530,6 +531,22 @@
   color: #333;;
   text-transform: lowercase;
 }
+
+/* gene page orthologs table MSA */
+
+div#userOptions {
+  margin-bottom: 5px;
+}
+div#userOptions input {
+  margin-left: 10px;
+}
+div#userOptions span.genomic {
+  visibility:hidden;
+}
+div#userOptions input[value=genomic]:checked ~ span.genomic {
+  visibility:visible;
+}
+
 
 .eupathdb-CompoundStructureWrapper {
   display: inline-block;
