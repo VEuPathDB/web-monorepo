@@ -974,28 +974,22 @@ class OrthologsForm extends SortKeyTable {
                   <input type="hidden" name="type" value="geneOrthologs"/>
                   <input type="hidden" name="project_id" value={projectId}/>
                   <input type="hidden" name="gene_ids" value={source_id}/>
-                  <p>To run Clustal Omega select sequences in the table below then press the button at the foot of the table.</p>
+                  <p>To run Clustal Omega, select genes from the table below. Then choose the sequence type and initiate the alignment with the ‘Run Clustal Omega for selected genes’ button.</p>
+
 				  <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
-				  <p>  </p>
+          <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
+          <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
+          <br/>
 				  <p><b>Select sequence type for Clustal Omega multiple sequence alignment:</b></p>
-			      <p>Please note: selecting a large flanking region or a large number of sequences will take several minutes to align.</p>
-				  <table id="userOptions" >
-				    <tr><td><input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein<br/></td>
-				        <td><input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)</td>
-					    <td><input type="radio" name="sequence_Type" value="genomic" /> Genomic :</td>
-					    <td> <input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)</td>
-					</tr>
-					<tr>
-					  <td></td>
-					  <td></td>
-					  <td></td>
-					  <td> <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)</td>
-					</tr>  
-				  </table>	
+			    <p>Please note: selecting a large flanking region or a large number of sequences will take several minutes to align.</p>
+				  <div id="userOptions" >
+				    <input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein
+				    <input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)
+					  <input type="radio" name="sequence_Type" value="genomic" /> Genomic
+            <span class="genomic"><input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)
+            <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)</span>
+				  </div>	
 				  
-				  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
-                  <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
-                  <br/>
 				  <input type="submit" value="Run Clustal Omega for selected genes"/>
               </form>
           );

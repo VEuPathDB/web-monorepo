@@ -276,6 +276,13 @@ export function RecordTableSection(DefaultComponent) {
 export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
   function MaybeDyamicWrapper(props) {
     let { attribute, record, DefaultComponent } = props;
+
+    // Render attribute as a Sequence if attribute name ends with "sequence".
+    let sequenceRE = /sequence$/;
+    if (sequenceRE.test(attribute.name)) {
+      return ( <Sequence sequence={record.attributes[attribute.name]}/> );
+    }
+
     return record.attributes[attribute.name] == null
       ? <DefaultComponent {...props} />
       : props.children;
@@ -301,12 +308,6 @@ export function RecordAttributeSection(DefaultComponent) {
           <Gbrowse.GbrowseContext {...props} context={context} />
         </CollapsibleSection>
       );
-    }
-
-    // Render attribute as a Sequence if attribute name ends with "sequence".
-    let sequenceRE = /sequence$/;
-    if (sequenceRE.test(attribute.name)) {
-      return ( <Sequence sequence={record.attributes[attribute.name]}/> );
     }
 
     // use standard record class overriding
