@@ -1,6 +1,7 @@
 import stringify from 'json-stable-stringify';
 import localforage from 'localforage';
 import { difference, keyBy, memoize, omit } from 'lodash';
+import { set } from 'lodash/fp';
 import * as QueryString from 'querystring';
 
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
