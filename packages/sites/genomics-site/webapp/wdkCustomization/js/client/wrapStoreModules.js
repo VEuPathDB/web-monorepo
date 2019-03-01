@@ -2,6 +2,7 @@ import { compose, curryN, set, update } from 'lodash/fp';
 import * as galaxyTerms from './storeModules/GalaxyTerms';
 import * as globalData from './storeModules/GlobalData';
 import * as record from './storeModules/Record';
+import * as transcriptFilters from './storeModules/TranscriptFilter';
 
 /**
  * Compose reducer functions from right to left. In other words, the
@@ -19,5 +20,6 @@ const composeReducerWith = curryN(2, composeReducers);
 export default compose(
   set('galaxyTerms', galaxyTerms),
   update('globalData.reduce', composeReducerWith(globalData.reduce)),
-  set('record', record)
+  set('record', record),
+  set('transcriptFilters', transcriptFilters)
 );
