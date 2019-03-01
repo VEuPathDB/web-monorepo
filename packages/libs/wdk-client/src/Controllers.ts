@@ -22,6 +22,8 @@ import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListCon
 import AttributeAnalysisButtonController from 'wdk-client/Controllers/AttributeAnalysisButtonController';
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
+import StepFiltersController from 'wdk-client/Controllers/StepFiltersController';
+import MatchedTranscriptsFilterController from 'wdk-client/Controllers/MatchedTranscriptsFilterController';
 
 export {
   PageController,
@@ -48,4 +50,6 @@ export {
   UserProfileController,
   UserRegistrationController,
   ResultTableSummaryViewController,
+  StepFiltersController,
+  MatchedTranscriptsFilterController,
 };

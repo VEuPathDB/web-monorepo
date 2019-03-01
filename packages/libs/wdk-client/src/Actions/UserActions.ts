@@ -7,6 +7,7 @@ import { RecordInstance } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
 import { UserProfileFormData } from 'wdk-client/StoreModules/UserProfileStoreModule';
+import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
 
 export type Action =
   | UserUpdateAction

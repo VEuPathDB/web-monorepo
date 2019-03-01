@@ -76,7 +76,8 @@ export function getSingleRecordStepBundlePromise([ recordClass, recordInstance, 
     dynamicAttributes: [ ],
     defaultSummaryView: '_default',
     summaryViewPlugins: [ ],
-    stepAnalysisPlugins: [ ]
+    stepAnalysisPlugins: [ ],
+    filters: [ ]
   };
 
   // return a promise containing our generated bundle

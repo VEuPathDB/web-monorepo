@@ -74,7 +74,7 @@ interface Request2Fulfill<T, State> {
 }
 
 interface MapRequestActionsToEpicOptions<T, State> {
-  areActionsNew?: (actions: T, prevActions?: T) => boolean;
+  areActionsNew?: (actions: T, prevActions: T) => boolean;
   areActionsCoherent?: (actions: T, state: State) => boolean;
 }
 

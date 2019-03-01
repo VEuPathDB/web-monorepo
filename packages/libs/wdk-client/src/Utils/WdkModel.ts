@@ -176,6 +176,13 @@ export interface ParameterGroup {
   parameters: string[];
 }
 
+interface QuestionFilter {
+  name: string;
+  displayName?: string;
+  description?: string;
+  isViewOnly: boolean;
+}
+
 interface QuestionShared extends ModelEntity {
   summary?: string;
   description?: string;
@@ -193,6 +200,7 @@ interface QuestionShared extends ModelEntity {
   defaultSummaryView: string;
   summaryViewPlugins: SummaryViewPluginField[];
   stepAnalysisPlugins: string[];
+  filters: QuestionFilter[];
 }
 
 export interface Question extends QuestionShared {
@@ -284,7 +292,9 @@ export interface Answer {
     recordClassName: string;
     responseCount: number;
     totalCount: number;
-    totalDisplayCount: number;
+    viewTotalCount: number;
+    displayTotalCount: number;
+    displayViewTotalCount: number;
     sorting: AttributeSortingSpec[];
     pagination: Pagination;
   }
@@ -294,7 +304,7 @@ export interface AnswerSpec {
   questionName: string;
   parameters?: Record<string, string>;
   legacyFilterName?: string;
-  filters?: { name: string; value: string; }[];
+  filters?: { name: string; value: any; }[];
   viewFilters?: { name: string; value: string; }[];
   wdkWeight?: number;
 }

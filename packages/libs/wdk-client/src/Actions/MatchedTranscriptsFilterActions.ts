@@ -11,8 +11,7 @@ export const closeMatchedTranscriptsFilter = makeActionCreator(
 );
 
 export const requestMatchedTransFilterExpandedPref = makeActionCreator(
-    'matchedTranscriptsFilter/requestExpandedPreference',
-    () => ({})
+    'matchedTranscriptsFilter/requestExpandedPreference'
 );
 
 export const requestMatchedTransFilterExpandedUpdate = makeActionCreator(
@@ -40,6 +39,12 @@ export const fulfillMatchedTransFilterSummary = makeActionCreator(
     (stepId: number, didMeetCount: number, didNotMeetCount: number) => ({ stepId, didMeetCount, didNotMeetCount })
 );
 
+export const requestMatchedTransFilterUpdate = makeActionCreator(
+  'matchedTranscriptsFilter/requestMatchedTransFilterUpdate',
+  (didMeetCriteria: boolean, didNotMeetCriteria: boolean) =>
+    ({ didMeetCriteria, didNotMeetCriteria })
+);
+
 export type Action =
     | InferAction<typeof openMatchedTranscriptsFilter>
     | InferAction<typeof closeMatchedTranscriptsFilter>
@@ -49,10 +54,4 @@ export type Action =
     | InferAction<typeof setDisplayedSelection>
     | InferAction<typeof requestMatchedTransFilterSummary>
     | InferAction<typeof fulfillMatchedTransFilterSummary>
-
-
-
-
-
-
-
+    | InferAction<typeof requestMatchedTransFilterUpdate>

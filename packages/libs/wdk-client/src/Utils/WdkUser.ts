@@ -19,6 +19,8 @@ export interface UserWithPrefs {
 
 export type UserPredicate = (user: User) => boolean;
 
+export interface FilterValue { }
+
 export interface Step {
   answerSpec: AnswerSpec;
   customName: string;

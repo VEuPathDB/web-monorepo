@@ -7,6 +7,7 @@ import {
   errorAttributeReport,
   changeTablePage,
   changeTableRowsPerPage,
+  searchTable,
   sortTable,
   selectTab,
 } from 'wdk-client/Actions/AttributeAnalysisActions';
@@ -91,8 +92,14 @@ function tableReducer(
     case changeTableRowsPerPage.type:
       return {...state, rowsPerPage: action.payload.rowsPerPage};
 
+    case searchTable.type:
+      return {...state, search: action.payload.searchString };
+
     case sortTable.type:
       return {...state, sort: action.payload};
+
+    case closeAttributeAnalysis.type:
+      return initialTableState;
 
     default:
       return state;
@@ -110,6 +117,9 @@ function tabsReducer(
   switch (action.type) {
     case selectTab.type:
       return action.payload.tab;
+
+    case closeAttributeAnalysis.type:
+      return initialTabsState;
 
     default:
       return state;

@@ -44,8 +44,8 @@ async function getFulfillStep([requestAction]: [InferAction<typeof requestStep>]
 }
 
 async function getFulfillStepUpdate([requestAction]: [InferAction<typeof requestStepUpdate>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillStep>> {
-     let step = await wdkService.updateStep(requestAction.payload.stepId, requestAction.payload.stepSpec);
-    return fulfillStep(step);
+  let step = await wdkService.updateStep(requestAction.payload.stepId, requestAction.payload.stepSpec);
+  return fulfillStep(step);
 }
 
 export const observe =

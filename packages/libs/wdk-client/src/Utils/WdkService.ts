@@ -367,6 +367,13 @@ const summaryViewPluginFieldDecoder: Decode.Decoder<SummaryViewPluginField> =
     Decode.field('description', Decode.string)
   );
 
+const questionFilterDecoder =
+  Decode.combine(
+    Decode.field('name', Decode.string),
+    Decode.field('displayName', Decode.optional(Decode.string)),
+    Decode.field('description', Decode.optional(Decode.string)),
+    Decode.field('isViewOnly', Decode.boolean),
+  )
 const questionSharedDecoder =
   Decode.combine(
     Decode.combine(
@@ -394,6 +401,7 @@ const questionSharedDecoder =
     Decode.field('defaultSummaryView', Decode.string),
     Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder)),
     Decode.field('stepAnalysisPlugins', Decode.arrayOf(Decode.string)),
+    Decode.field('filters', Decode.arrayOf(questionFilterDecoder))
   )
 
 const questionDecoder: Decode.Decoder<Question> =
@@ -1019,7 +1027,7 @@ export default class WdkService {
     let data = JSON.stringify(stepSpec);
     let url = `/users/${userId}/steps/${stepId}`;
    
-    this._stepMap.set(stepId, this._fetchJson<never>('patch', url, data).catch(error => {
+    this._stepMap.set(stepId, this._fetchJson<Step>('patch', url, data).catch(error => {
       // if the request fails, remove the response since a later request might succeed
       this._stepMap.delete(stepId);
       throw error;

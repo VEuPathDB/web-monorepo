@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {
@@ -13,6 +12,7 @@ import {
   requestRecordsBasketStatus,
   fulfillRecordsBasketStatus,
   openResultTableSummaryView,
+  closeResultTableSummaryView,
   requestSortingUpdate,
   requestColumnsChoiceUpdate,
   requestPageSizeUpdate,
@@ -25,7 +25,6 @@ import {
   requestUpdateBasket,
   requestAddStepToBasket,
 } from 'wdk-client/Actions/BasketActions';
-import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import { CategoryTreeNode, isQualifying, addSearchSpecificSubtree } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
 import ResultTableSummaryView from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryView';
@@ -34,6 +33,7 @@ import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Action
 
 const actionCreators = {
   openResultTableSummaryView,
+  closeResultTableSummaryView,  
   requestPageSize,
   fulfillPageSize,
   requestAnswer,
@@ -53,38 +53,47 @@ const actionCreators = {
   closeAttributeAnalysis,
 };
 
-type StateProps = RootState['resultTableSummaryView'] & {
-  activeAttributeAnalysisName: string | undefined;
-  columnsTree?: CategoryTreeNode;
-  recordClass?: RecordClass;
-  question?: Question;
-};
-type DispatchProps = typeof actionCreators;
+interface StateProps {
+  viewData: RootState['resultTableSummaryView'] & {
+    activeAttributeAnalysisName: string | undefined;
+    columnsTree?: CategoryTreeNode;
+    recordClass?: RecordClass;
+    question?: Question;
+  }
+}
+interface DispatchProps {
+  actionCreators: typeof actionCreators;
+}
 type OwnProps = {
   stepId: number;
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-class ResultTableSummaryViewController extends ViewController< Props > {
+class ResultTableSummaryViewController extends React.Component< Props > {
 
-  loadData(prevProps?: Props) {
-    if (prevProps == null || prevProps.stepId !== this.props.stepId) {
-      this.props.openResultTableSummaryView(this.props.stepId);
+  componentDidMount() {
+    this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.stepId !== this.props.stepId) {
+      this.props.actionCreators.closeResultTableSummaryView(prevProps.stepId);
+      this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
     }
   }
 
-  isRenderDataLoaded() {
-    return this.props.answer != null;
+  componentWillUnmount() {
+    this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
   }
 
-  renderDataLoadError() {
-    return <LoadError/>;  // TODO: make this better
-  }
-
-  renderView() {
+  render() {
     return (
-      <ResultTableSummaryView {...this.props} />
+      <ResultTableSummaryView
+        stepId={this.props.stepId}
+        {...this.props.viewData}
+        {...this.props.actionCreators}
+      />
     );
   }
 }
@@ -109,16 +118,17 @@ const columnsTreeSelector = createSelector(
   }
 )
 
-const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
+const mapStateToProps = (state: RootState, props: OwnProps): StateProps['viewData'] => ({
   ...state.resultTableSummaryView,
   ...getQuestionAndRecordClass(state),
   columnsTree: columnsTreeSelector(state, props),
   activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+export default connect<StateProps['viewData'], DispatchProps['actionCreators'], OwnProps, Props, RootState>(
   mapStateToProps,
-  actionCreators
+  actionCreators,
+  (viewData, actionCreators, ownProps) => ({ viewData, actionCreators, ...ownProps })
 ) (wrappable(ResultTableSummaryViewController));
 
 

@@ -1,5 +1,5 @@
 import stringify from 'json-stable-stringify';
-import { difference, isEqual } from 'lodash';
+import { stubTrue } from 'lodash';
 import {
     openResultTableSummaryView,
     closeResultTableSummaryView,
@@ -252,6 +252,8 @@ async function getFulfillAnswer([openAction, requestAction]: [InferAction<typeof
     // if only columns have changed, and the new columns are a subset of
     // current, we can avoid making a service call
     // if new columns are a subset of old columns
+    // TODO Move this logic into WdkService as an answer value cache
+    /*
     if (
         currentAnswer &&
         isEqual(r.pagination, currentAnswer.meta.pagination) &&
@@ -268,6 +270,7 @@ async function getFulfillAnswer([openAction, requestAction]: [InferAction<typeof
         };
         return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, answer);
     }
+   */
     let answerJsonFormatConfig = {
         sorting: r.columnsConfig.sorting,
         attributes: r.columnsConfig.attributes,
@@ -347,7 +350,7 @@ export const observe =
                 { areActionsCoherent: filterRequestAnswerActions }
             ),
             mrate([openRTS, requestAnswer], getFulfillAnswer, 
-                { areActionsCoherent: filterFulfillAnswerActions }),
+                { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),
             mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus, 
                 { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
             mrate([openRTS, fulfillAnswer, requestRecordsBasketStatus], getFulfillRecordsBasketStatus, 
