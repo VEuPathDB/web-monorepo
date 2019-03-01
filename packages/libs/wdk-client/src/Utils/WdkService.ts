@@ -1,6 +1,7 @@
 import stringify from 'json-stable-stringify';
 import localforage from 'localforage';
 import { difference, keyBy, memoize } from 'lodash';
+import { set } from 'lodash/fp';
 import * as QueryString from 'querystring';
 
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
@@ -934,7 +935,8 @@ export default class WdkService {
       .then(() => this.getCurrentUserPreferences())
       .then(preferences => {
         // merge with cached preferences only if patch succeeds
-        return this._preferences = Promise.resolve({ ...preferences, ...entries });
+        const newPreferences = set([scope, key], value, preferences);
+        return this._preferences = Promise.resolve(newPreferences);
       });
   }
 

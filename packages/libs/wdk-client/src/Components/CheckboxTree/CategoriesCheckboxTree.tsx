@@ -13,11 +13,13 @@ import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
 type ChangeHandler = (ids: string[]) => void;
 
+type NodePredicate = (node: CategoryTreeNode) => boolean;
+
 type Props = {
   title?: string;
   name?: string;
-  /** Hide individuals from the rendered tree. They will still affect searches. */
-  hideIndividuals?: boolean;
+  /** Hide nodes for which predicate function returns false */
+  visibilityFilter?: NodePredicate;
   autoFocusSearchBox?: boolean;
   searchBoxPlaceholder: string;
   tree: CategoryTreeNode;
@@ -44,7 +46,7 @@ let {
   autoFocusSearchBox,
   disableHelp,
   expandedBranches,
-  hideIndividuals,
+  visibilityFilter,
   isMultiPick,
   isSelectable,
   leafType,
@@ -85,8 +87,8 @@ let {
           searchIconName="filter"
           linkPlacement={CheckboxTree.LinkPlacement.Top}
           getNodeId={getNodeId}
-          getNodeChildren={hideIndividuals ? getNodeChildrenWithHiddenIndividuals : getNodeChildren}
-          searchPredicate={hideIndividuals ? nodeSearchPredicateWithHiddenIndividuals : nodeSearchPredicate}
+          getNodeChildren={visibilityFilter ? getFilteredNodeChildren(visibilityFilter) : getNodeChildren}
+          searchPredicate={visibilityFilter ? nodeSearchPredicateWithHiddenNodes(visibilityFilter) : nodeSearchPredicate}
           renderNode={renderNode}
           tree={tree}
           isMultiPick={isMultiPick}
@@ -107,7 +109,6 @@ let {
 
 CategoriesCheckboxTree.defaultProps = {
   renderNode: (node: CategoryTreeNode) => <BasicNodeComponent node={node} />,
-  hideIndividuals: false,
   isMultiPick: true,
   isSelectable: true,
   leafType: 'column', // TODO remove once all consumers are passing in a value for this
@@ -127,4 +128,21 @@ function nodeSearchPredicateWithHiddenIndividuals(node: CategoryTreeNode, search
       .filter(isIndividual)
       .some(node => nodeSearchPredicate(node, searchQueryTerms))
   );
+}
+
+function getFilteredNodeChildren(visibilityFilter: NodePredicate) {
+  return function (node: CategoryTreeNode) {
+    return getNodeChildren(node).filter(visibilityFilter);
+  }
+}
+
+function nodeSearchPredicateWithHiddenNodes(visibilityFilter: NodePredicate) {
+  return function (node: CategoryTreeNode, searchQueryTerms: string[]) {
+    return (
+      nodeSearchPredicate(node, searchQueryTerms) ||
+      getNodeChildren(node)
+        .filter(negate(visibilityFilter))
+        .some(node => nodeSearchPredicate(node, searchQueryTerms))
+    );
+  }
 }
