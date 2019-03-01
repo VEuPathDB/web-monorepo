@@ -49,6 +49,7 @@ declare module 'redux' {
   }
 }
 
+type WdkMiddleWare = Middleware<DispatchAction<Action>>;
 
 
 /**
@@ -74,7 +75,7 @@ declare module 'redux' {
  * rejections to go unhandled, which made comprehensive error handling more
  * difficult.
  */
-export const wdkMiddleware = (services: ActionCreatorServices): Middleware<DispatchAction<Action>> => ({ dispatch }) => next => action => {
+export const wdkMiddleware = (services: ActionCreatorServices): WdkMiddleWare => ({ dispatch }) => next => action => {
   try {
     if (typeof action === 'function') {
       return dispatch(action(services));
@@ -108,4 +109,11 @@ export const wdkMiddleware = (services: ActionCreatorServices): Middleware<Dispa
     });
   }
 
+}
+
+export const logger: WdkMiddleWare = store => next => action => {
+  console.log('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  return result
 }
