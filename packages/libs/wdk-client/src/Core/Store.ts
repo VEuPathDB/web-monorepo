@@ -1,9 +1,8 @@
-import { compose, mapKeys, mapValues, values, flatMap } from 'lodash/fp';
+import { compose, mapKeys, mapValues, values } from 'lodash/fp';
 import { applyMiddleware, combineReducers, createStore, Reducer } from 'redux';
 import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
 import { EMPTY } from 'rxjs';
 import { Action } from 'wdk-client/Actions';
-import * as Actions from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { wdkMiddleware } from 'wdk-client/Core/WdkMiddleware';
@@ -49,7 +48,7 @@ export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, wdkService
   const enhancer = composeEnhancers(
     applyMiddleware(
       wdkMiddleware({ wdkService, transitioner }),
-      epicMiddleware
+      epicMiddleware,
     )
   );
 
