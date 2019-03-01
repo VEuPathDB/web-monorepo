@@ -134,6 +134,7 @@ public class AccessRequestSubmitter {
       subject,
       body,
       wdkModel.getProperties().get("CLINEPI_ACCESS_REQUEST_EMAIL"),
+      params.getBccEmail(),
       null
     );
   }
