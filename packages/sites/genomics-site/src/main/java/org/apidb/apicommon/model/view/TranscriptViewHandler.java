@@ -63,12 +63,12 @@ public class TranscriptViewHandler implements SummaryViewHandler {
     TreeNode<SelectableItem> root = tree.getRoot();
 
     // override summary attributes: 
-    //   get the summary attrbs to be included in the results page for this *specific* step result,
+    //   get the summary attribs to be included in the results page for this *specific* step result,
     //   and trim off those NOT in root (which contains all model attributes, available to this view)
     //   this trimming will cleanup old attr in preferences
     AttributeField[] leftmostFields = getLeftmostFields(stepBean);
     Map<String, AttributeField> summaryFields = AnswerValueAttributes.buildSummaryAttributeFieldMap(
-        user, step.getQuestion(), UserPreferences.DEFAULT_SUMMARY_VIEW_PREF_SUFFIX, leftmostFields);
+        user, step.getQuestion(), UserPreferences.DEFAULT_SUMMARY_VIEW_PREF_SUFFIX, leftmostFields, step);
     trimAttribsNotInTree(summaryFields, root, leftmostFields);
     attributes.overrideSummaryAttributeFieldMap(summaryFields);
 

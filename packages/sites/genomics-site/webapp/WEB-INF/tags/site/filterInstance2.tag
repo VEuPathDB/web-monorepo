@@ -117,11 +117,11 @@ ${species}  <!--  Aspergillus      knowlesi     -->
           (eg: "sp. 1" becomes "sp.=1") in the injector AnnotatedGenome.java    
 -->
 
-<c:set var="species" value="${fn:replace(species, '=-', '-')}" />
-<c:set var="species" value="${fn:replace(species, '=_', '_')}" />
+<c:set var="species" value="${fn:replace(species, '===', '_')}" />
+<c:set var="species" value="${fn:replace(species, '==', '-')}" />
 <c:set var="species" value="${fn:replace(species, '=', ' ')}" />
-<c:set var="realspecies" value="${fn:replace(realspecies, '=-', '-')}" />
-<c:set var="realspecies" value="${fn:replace(realspecies, '=_', '_')}" />
+<c:set var="realspecies" value="${fn:replace(realspecies, '===', '_')}" />
+<c:set var="realspecies" value="${fn:replace(realspecies, '==', '-')}" />
 <c:set var="realspecies" value="${fn:replace(realspecies, '=', ' ')}" />
 
 <c:choose>
@@ -152,7 +152,7 @@ ${species}  <!--  Aspergillus      knowlesi     -->
         <c:otherwise> <i>${fn:substring(family,0,1)}.${species}</i></c:otherwise>
       </c:choose>
 
-      &nbsp;&nbsp; ( nr Genes:
+      &nbsp;&nbsp; (
 
       <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
       <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />

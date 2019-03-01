@@ -201,6 +201,9 @@ export function RecordTable(props) {
     case 'MendelGPIForm':
       return <MendelGPIForm {...props}/>
 
+    case 'StringDBForm':
+      return <StringDBForm {...props}/>
+
 
     case 'ProteinProperties':
       return <props.DefaultComponent {...props} childRow={Gbrowse.ProteinContext} />
@@ -235,13 +238,13 @@ export function RecordTableDescription(props) {
     */
 
     case 'ECNumbers':
-      return renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
+      return typeof props.record.tables.ECNumbers != "undefined" && props.record.tables.ECNumbers.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
 
     case 'MetabolicPathways':
-      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+      return typeof props.record.tables.MetabolicPathways != "undefined" && props.record.tables.MetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
     case 'CompoundsMetabolicPathways':
-      return renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
+      return typeof props.record.tables.CompoundsMetabolicPathways != "undefined" && props.record.tables.CompoundsMetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
     default:
       return <props.DefaultComponent {...props}/>
@@ -534,6 +537,7 @@ class MercatorTable extends React.Component {
     );
   }
 }
+
 
 class SortKeyTable extends React.Component {
 
@@ -866,6 +870,88 @@ class MendelGPIForm extends React.Component {
 
 
 
+class StringDBForm extends React.Component {
+
+    inputHeader(t)  {
+        if(t.length > 1) {
+            return <p>Select the Protein:</p>
+        }
+    }
+
+    printInputs(t)  {
+        if(t.length == 1) {
+            return (<input type="hidden" name="source_ID" value={t[0].protein_source_id}/>);
+        }
+
+        return (
+            t.map(p => {
+                return (
+                    <label key={p.protein_source_id}>
+		    
+                        <input type="radio" name="source_ID" value={p.protein_source_id}/>{p.protein_source_id}<br/></label>
+                );
+            })
+        );
+    }
+
+
+
+printOrganismInputs(s,genus_species)  {
+  const defaultOrganismEntry = s.find(p => p[1] === genus_species) || s[0];
+  return (
+    <select name="organism" defaultValue={defaultOrganismEntry[0]}>
+      {s.map(p => <option value={p[0]}>{p[1]}</option>)}
+    </select>
+  );
+}
+
+
+
+    render() {
+    	let {project_id, genus_species } = this.props.record.attributes;  
+        
+	let t = this.props.value;
+
+	let s = JSON.parse(t[0].jsonString);
+
+
+           return (
+
+	   <div> 
+           
+	   
+            <form action="/cgi-bin/string.pl" target="_blank" method="post">
+                  <input type="hidden" name="project_id" value={projectId}/>
+                  <input type="hidden" id="id_type" name="id_type" value="protein"/>
+
+
+                  {this.inputHeader(t)}
+                  {this.printInputs(t)}
+		  
+		  <p>Please select the organism:<br/><br/>
+
+		  {this.printOrganismInputs(s,genus_species)}
+
+		  
+		  <br/></p>
+
+                  <input type="submit"/>
+
+
+            </form>
+
+ 	    <p>For more information about this tool <a target="_blank" rel="noopener noreferrer"  href="https://string-db.org/cgi/input.pl?sessionId=0qgoqINUZajx&input_page_active_form=single_sequence">click here</a></p>
+
+
+	</div>
+ 
+
+        );
+    }
+
+}
+
+
 
 
 class OrthologsForm extends SortKeyTable {
@@ -885,25 +971,42 @@ class OrthologsForm extends SortKeyTable {
       if(gene_type === "protein coding") {
           return (
               <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
-                  <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
                   <input type="hidden" name="type" value="geneOrthologs"/>
                   <input type="hidden" name="project_id" value={projectId}/>
                   <input type="hidden" name="gene_ids" value={source_id}/>
-                  <input type="submit" value="Run clustal Omega for selected genes"/>
-                  <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
-                  <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
+                  <p>To run Clustal Omega, select genes from the table below. Then choose the sequence type and initiate the alignment with the ‘Run Clustal Omega for selected genes’ button.</p>
+
+				  <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
+          <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
+          <input type="button" name="UnCheckAll" value="Uncheck All" onClick={() => this.toggleAll(false)}/> 
+          <br/>
+				  <p><b>Select sequence type for Clustal Omega multiple sequence alignment:</b></p>
+			    <p>Please note: selecting a large flanking region or a large number of sequences will take several minutes to align.</p>
+				  <div id="userOptions" >
+				    <input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein
+				    <input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)
+					<input type="radio" name="sequence_Type" value="genomic" /> Genomic
+                    <span class="genomic">
+					  <input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)
+                      <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)
+					</span>
+				  <p>Output format: &nbsp; 
+				  <select name='clustalOutFormat'>
+				    <option value="clu">Mismatches highlighted</option>
+				    <option value="fasta">FASTA</option>
+				    <option value="msf">MSF</option>
+				    <option value="selex">SELEX</option>
+				    <option value="st">STOCKHOLM</option>
+				    <option value="vie">VIENNA</option>
+				  </select></p>
+				  <input type="submit" value="Run Clustal Omega for selected genes"/>
+				</div>  
               </form>
           );
       }
 
-      return (
-          <div>
-              <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
-              <p>NOTE: clusalW alignment is only available for protein coding genes</p>
-          </div>
-      );
-  }
 
+  }
 
 }
 

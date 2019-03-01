@@ -65,7 +65,7 @@
                   </label>
                 </td>
                 <td>
-                  <input type="text" name="thresholdParam" size="10" value="0.05"/>
+                  <input type="text" name="thresholdParam" size="10" value="5"/>
                 </td>
               </tr>
 

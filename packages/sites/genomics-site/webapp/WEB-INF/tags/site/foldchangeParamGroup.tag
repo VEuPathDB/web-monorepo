@@ -21,7 +21,7 @@
 
   <c:set var="protein_coding_onlyParam" value="${paramGroup['protein_coding_only']}"/>
 
-  <div class="fold-change ui-helper-clearfix" data-controller="eupathdb.foldChange.init">
+  <div class="fold-change" data-controller="eupathdb.foldChange.init">
 
     <div class="fold-change-params">
       <div id="profileset_genericaaa" class="param-line">
@@ -58,7 +58,7 @@
       </div>
 
 
-      <div class="samples ui-helper-clearfix">
+      <div class="samples">
         <div id="min_max_avg_refaaa" class="param-line">
           between each gene's
           <imp:enumParamInput qp="${min_max_avg_refParam}"/>
