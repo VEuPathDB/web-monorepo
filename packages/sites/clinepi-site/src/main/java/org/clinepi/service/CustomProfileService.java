@@ -62,7 +62,7 @@ public class CustomProfileService extends ProfileService {
       answer.setPageToEntireResult();
       List<AttributeField> fields = Arrays
           .stream(new String[]{ RESTR_LEVEL_ATTR, STUDY_ATTR })
-          .map(name -> answerSpec.getObject().getQuestion().getAttributeFieldMap().get(name))
+          .map(name -> answerSpec.get().getQuestion().getAttributeFieldMap().get(name))
           .collect(Collectors.toList());
       try (RecordStream records = new FileBasedRecordStream(answer, fields, Collections.emptyList())) {
         for (RecordInstance record : records) {
