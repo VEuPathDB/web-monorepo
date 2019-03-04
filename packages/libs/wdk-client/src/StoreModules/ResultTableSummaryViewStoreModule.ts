@@ -337,18 +337,8 @@ export const observe =
                 { areActionsCoherent: filterFulfillSortingUpdateActions }),
             mrate([requestPageSize], getFulfillPageSize),
             mrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
-            mrate(
-                [
-                    openRTS,
-                    fulfillStep,
-                    viewPageNumber,
-                    fulfillPageSize,
-                    fulfillColumnsChoice,
-                    fulfillSorting,
-                ],
-                getRequestAnswer,
-                { areActionsCoherent: filterRequestAnswerActions }
-            ),
+            mrate([openRTS, fulfillStep, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting,], getRequestAnswer,
+                { areActionsCoherent: filterRequestAnswerActions }),
             mrate([openRTS, requestAnswer], getFulfillAnswer, 
                 { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),
             mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus, 
