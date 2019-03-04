@@ -985,12 +985,21 @@ class OrthologsForm extends SortKeyTable {
 				  <div id="userOptions" >
 				    <input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein
 				    <input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)
-					  <input type="radio" name="sequence_Type" value="genomic" /> Genomic
-            <span class="genomic"><input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)
-            <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)</span>
-				  </div>	
-				  
+					<input type="radio" name="sequence_Type" value="genomic" /> Genomic
+                    <span class="genomic">
+					  <input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)
+                      <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)
+					</span>
+				  <p>Output format: &nbsp; 
+				  <select name='clustalOutFormat'>
+				    <option value="clu">Mismatches highlighted</option>
+				    <option value="fasta">FASTA</option>
+				    <option value="phy">PHYLIP</option>
+				    <option value="st">STOCKHOLM</option>
+				    <option value="vie">VIENNA</option>
+				  </select></p>
 				  <input type="submit" value="Run Clustal Omega for selected genes"/>
+				</div>  
               </form>
           );
       }
