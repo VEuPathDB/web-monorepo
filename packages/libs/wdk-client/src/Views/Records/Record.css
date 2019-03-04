@@ -99,6 +99,7 @@
 
 .wdk-RecordNavigationSection .wdk-RealTimeSearchBox {
   width: 100%;
+  width: calc(100% - 1rem);
 }
 
 .wdk-RecordNavigationExpand {
@@ -111,6 +112,7 @@
   position: absolute;
   left: 0;
   padding-top: 1px;
+  line-height: 1rem;
 }
 
 .wdk-RecordNavigationIndicator:hover {
@@ -124,7 +126,7 @@
 }
 
 .wdk-RecordNavigationSection .wdk-CheckboxTreeNodeWrapper {
-  padding: 4px 0;
+  padding: 4px 0 4px 1.2em;
 }
 
 .wdk-RecordNavigationSectionHeader {
