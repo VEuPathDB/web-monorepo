@@ -994,8 +994,7 @@ class OrthologsForm extends SortKeyTable {
 				  <select name='clustalOutFormat'>
 				    <option value="clu">Mismatches highlighted</option>
 				    <option value="fasta">FASTA</option>
-				    <option value="msf">MSF</option>
-				    <option value="selex">SELEX</option>
+				    <option value="phy">PHYLIP</option>
 				    <option value="st">STOCKHOLM</option>
 				    <option value="vie">VIENNA</option>
 				  </select></p>
