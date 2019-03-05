@@ -54,7 +54,8 @@ export function getSingleRecordStepBundlePromise([ recordClass, recordInstance, 
       parameters: {
         "primaryKeys": primaryKeyString
       }
-    }
+    },
+    displayPrefs: { } as Step['displayPrefs']
   };
   // TODO: if this is used in places other than step download form, may need
   //   to fill in more fields and think about what their values should be

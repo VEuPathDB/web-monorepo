@@ -33,6 +33,10 @@ export interface Step {
   recordClassName: string;
   shortDisplayName: string;
   strategyId: number;
+  displayPrefs: {
+    columnSelection?: string[];
+    sortColumns?: { name: string; direction: 'ASC' | 'DESC' }[];
+  }
 }
 
 export interface Strategy {

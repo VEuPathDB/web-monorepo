@@ -3,6 +3,7 @@
  */
 
 import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
+import { Step } from 'wdk-client/Utils/WdkUser';
 
 interface ModelEntity {
   name: string;
@@ -334,10 +335,11 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
 }
 
 export interface StepSpec {
-  answerSpec: AnswerSpec,
+  answerSpec?: AnswerSpec,
   customName?: string,
   isCollapsible?: boolean,
-  collapsedName?: string
+  collapsedName?: string;
+  displayPrefs?: Step['displayPrefs'];
 }
 
 export type UserDatasetMeta = {
