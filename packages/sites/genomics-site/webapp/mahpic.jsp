@@ -882,7 +882,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_06/">E06 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_06/">E06 Clinical Data in PlasmoDB Downloads</b></a></td>  
              <td>N/A</td>
            </tr>
            <tr>
@@ -893,7 +893,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_06/" target="_blank">E06 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_06/E06TargetedProteomics-Feb2019/" target="_blank">E06 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
            </table>
@@ -977,12 +977,12 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="https://plasmodb.org/common/downloads/MaHPIC/Experiment_07/E07AMalariaCore/">E07A Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_07/E07AMalariaCore/">E07A Clinical Data in PlasmoDB Downloads</b></a></td>  
              <td>N/A</td>
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="https://qa.plasmodb.org/common/downloads/MaHPIC/Experiment_07/E07BMalariaCore/">E07B Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_07/E07BMalariaCore/">E07B Clinical Data in PlasmoDB Downloads</b></a></td>  
              <td>N/A</td>
            </tr>
            <tr>
@@ -993,7 +993,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
-             <td><b><a href="https://qa.plasmodb.org/common/downloads/MaHPIC/Experiment_07/E07TargetedProteomics-Feb2019/" target="_blank">E07 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_07/E07TargetedProteomics-Feb2019/" target="_blank">E07 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
           </table>
@@ -1414,7 +1414,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_23/">E23 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_23/">E23 Clinical Data in PlasmoDB Downloads</b></a></td>  
              <td>N/A</td>
            </tr>
            <tr>
@@ -1429,7 +1429,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
-             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_23/" target="_blank">E23 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_23/" target="_blank">E23 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -1847,7 +1847,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_30/"><b>E30 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td><a href="/common/downloads/MaHPIC/Experiment_30/"><b>E30 Clinical Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
            <tr>
@@ -1856,8 +1856,8 @@
              <td>N/A</td>
            </tr>
            <tr>
-             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
-             <td><b>Coming Soon</b></td> <!--<br><a href="https://www.ebi.ac.uk/pride/archive/" target="_blank">E30 Proteomics at EBI's PRIDE</a>-->
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_30/" target="_blank">E30 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
