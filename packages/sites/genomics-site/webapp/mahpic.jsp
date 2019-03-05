@@ -846,11 +846,11 @@
          <table id="ExpInfoE06"> 
            <tr>
              <td><b>Title:</b></td>
-             <td>Experiment 06: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> to produce and integrate clinical, hematological, parasitological, omics, telemetric, and histopathological measures of acute primary infection</td>
+             <td>Experiment 06: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> sporozoites to produce and integrate clinical, hematological, parasitological, omics, telemetric, and histopathological measures of acute primary infection.</td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td>Telemetry devices (DSI, model L11) with blood pressure sensors and ECG leads were surgically implanted in four malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately five years of age.  After a resting period of two weeks, physiological data that include activity, temperature, ECG, and blood pressure were continuously collected. Two weeks after activation of the telemetry implant, the macaques were inoculated intravenously with cryopreserved salivary gland sporozoites. The cryopreserved batch of <i>P. knowlesi</i> sporozoites were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention from <i>Anopheles dirus</i>.  After experimental infection, the infected macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, proteomic, and metabolomic measurements. The experiment was designed for terminal necropsies scheduled at the log phase of the infection or at the peak of parasitemias. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at five time points for functional genomic, targeted proteomic, targeted metabolomics, and immunological analyses. Physiological data were continuously captured via telemetry.  Within the MaHPIC, this project is known as 'Experiment 06'.   The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
+             <td>Telemetry devices (DSI, model L11) with blood pressure sensors and electrocardiogram (ECG) leads were surgically implanted in four malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately five years of age.  After a resting period of two weeks, physiological data that include activity, temperature, ECG, and blood pressure were continuously collected. Two weeks after activation of the telemetry implant, the macaques were inoculated intravenously with cryopreserved <i>P. knowlesi</i> Malayan strain salivary gland sporozoites, obtained from <i>Anopheles dirus</i> infected with parasites from the Pk1A+ clone and previously tested in E30 for their infectivity of macaques. The sporozoite stocks used were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention, and then stored at Yerkes. After inoculation, the macaques were profiled longitudinally for clinical, hematological, parasitological, immunological, functional genomic, proteomic, and metabolomic measurements. The experiment was designed with pathology studies and thus terminal necropsies, which were scheduled at the log phase of the infections or at the peak of parasitemias. Capillary blood samples were collected daily for the measurement of complete blood counts, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomics analyses. Venous blood and bone marrow samples were collected at five timepoints for functional genomic, targeted proteomic, targeted metabolomics, and immunological analyses. Physiological data noted above were continuously captured via the implanted telemetry devices.  Within the MaHPIC, this project is known as 'Experiment 06'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
            </tr>
          </table>
       </div>   
@@ -881,9 +881,19 @@
              <th>Data Integrated into PlasmoDB and HostDB</th>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_06/">E06 Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS824" target="_blank">E06 Quantitative Metabolomics Results at Metabolights</a><br>
                     </b></td>    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_06/" target="_blank">E06 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
            </table>
@@ -930,11 +940,12 @@
          <table id="ExpInfoE07"> 
            <tr>
              <td><b>Title:</b></td>
-             <td>Experiment 07: <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> A strain to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection.</td>
+             <td>Experiment 07A and 07B:  <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> sporozoites to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection.</td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td>E07 was originally planned to use 'fresh' non-cryo preserved <i>P. knowlesi</i> sporozoites for inoculation. Inoculation with fresh sporozoites took place on 11/01/16 and did not result in a successful infection. Consequently, there was a second inoculation using cryopreserved sporozoites performed on 1/20/17.  Hence there was a decision to divide E07 into 'E07A' (containing samples and results from the failed inoculation) and 'E07B' (containing samples and results from the successful inoculation with cryopreserved sporozoites on 1/20/17). Telemetry devices (DSI, model L11) with blood pressure sensors and ECG leads were surgically implanted in seven malaria-naive male long-tailed macaques (<i>Macaca fascicularis</i>), approximately five years of age.  After a resting period, the telemetry implants were turned on and physiological data that include activity, temperature, ECG, and blood pressure were continuously collected.  After failed inoculation with a fresh preparation of salivary gland sporozoites in E07A, implants were deactivated to preserve battery life. Between E07A and E07B, a single Rhesus macaque (<i>M. mulatta</i>) was added to the cohort as an infection control with no telemetry implant.  At the start of E07B, telemetry implants were reactivated.  Ten days after reactivation all animals were inoculated intravenously with cryopreserved salivary gland sporozoites. The cryopreserved batch of <i>P. knowlesi</i> sporozoites was produced, isolated and cryopreserved at the Centers for Disease Control and Prevention from <i>Anopheles dirus</i>.  After experimental infection, the infected macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, proteomic, and metabolomic measurements.  The experiment was designed for terminal necropsies scheduled at the log phase of the infection, at the peak of parasitemias, at the middle of the chronic phase, or at the end of the follow-up period 45 days after experimental infection.  Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias.  Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at six time points for functional genomic, targeted proteomic, targeted metabolomics, and immunological analyses.  Physiological data were continuously captured via telemetry. Within the MaHPIC, this project is known as 'Experiment 07'.   The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO). </td>
+             <td>The E07 cohort was inoculated with freshly dissected <i>P. knowlesi</i> sporozoites on 11/01/16. However, for unexplained reasons blood-stage parasitemias did not occur. Consequently, the E07 cohort was reinoculated with cryopreserved <i>P. knowlesi</i> sporozoites. This inoculation was performed on 1/20/17.  Hence 'E07A' refers to samples and results from the failed inoculation from 11/01/16 and 'E07B' refers to samples and results from the successful inoculation on 1/20/17).<br>
+                 Telemetry devices (DSI, model L11) with blood pressure sensors and electrocardiogram (ECG) leads were surgically implanted in seven malaria-naive male long-tailed macaques (<i>Macaca fascicularis</i>), approximately five years of age.  After a resting period of three weeks, the telemetry implants were turned on and physiological data that include activity, temperature, ECG, and blood pressure were continuously collected.  After the E07A failed infection using a fresh preparation of salivary gland sporozoites, the implants were deactivated to preserve battery life. Between E07A and E07B, a single rhesus macaque (<i>M. mulatta</i>) was added to the cohort as an infection control with no telemetry implant.  At the start of E07B, telemetry implants were reactivated.  Ten days after reactivation all animals were inoculated intravenously with cryopreserved <i>P. knowlesi</i> Malayan strain salivary gland sporozoites, obtained from <i>Anopheles dirus</i> infected with parasites from the Pk1A+ clone and previously tested in E30 for their infectivity of macaques. The sporozoite stocks used were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention, and then stored at Yerkes.  After inoculation, the macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, proteomic, and metabolomic measurements.  The experiment was designed with pathology studies and thus terminal necropsies, which were scheduled at the log phase of the infection, at the peak of parasitemias, at the middle of the chronic phase, or at the end of the follow-up period of 45 days after the inoculation of the sporozoites.  Capillary blood samples were collected daily for the measurement of complete blood counts (CBCs), reticulocytes, and parasitemias.  Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis.  Venous blood and bone marrow samples were collected at six time points for functional genomic, targeted proteomic, targeted metabolomics, and immunological analyses.  Physiological data noted above were continuously captured via telemetry. Within the MaHPIC, this project is known as 'Experiment 07 (E07A and 07B)'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
            </tr>
          </table>
       </div>   
@@ -965,9 +976,24 @@
              <th>Data Integrated into PlasmoDB and HostDB</th>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="https://plasmodb.org/common/downloads/MaHPIC/Experiment_07/E07AMalariaCore/">E07A Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><b><a href="https://qa.plasmodb.org/common/downloads/MaHPIC/Experiment_07/E07BMalariaCore/">E07B Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS822" target="_blank">E07 Quantitative Metabolomics Results at MetaboLights</a>
                     </b></td>    
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="https://qa.plasmodb.org/common/downloads/MaHPIC/Experiment_07/E07TargetedProteomics-Feb2019/" target="_blank">E07 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
           </table>
@@ -1155,7 +1181,7 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
-             <td><b>Coming Soon!</b></td> <!--<a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_13/"><b>E13 Clinical Data in PlasmoDB Downloads</b></a></td> -->
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_15/"><b>E15 Clinical Data in PlasmoDB Downloads</b></a></td>
              <td>N/A</td>
            </tr>
          
@@ -1206,9 +1232,10 @@
 	     Comparative transcriptomics and metabolomics in a rhesus macaque drug administration study. <a href="https://www.ncbi.nlm.nih.gov/pubmed/25453034" target="_blank">Lee et al. Front Cell Dev Biol. 2014 Oct 8;2:54</a>
         </div>
         <br><br>
-     <img align="middle" src="images/MaHPIC_E13_Timeline.png" height="270px" width="550px"><br>
-     <a href="images/MaHPIC_E13_Timeline.png" target="_blank">View Larger Image</a><br>
     -->
+     <img align="middle" src="images/MaHPIC_E15_Timeline.jpg" height="270px" width="550px"><br>
+     <a href="images/MaHPIC_E15_Timeline.jpg" target="_blank">View Larger Image</a><br>
+
         
   </div>	
   </div> 
@@ -1398,6 +1425,11 @@
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Proteomics</b></td>
              <td><b><a href="http://www.ebi.ac.uk/pride/archive/projects/PXD007775" target="_blank">E23 Proteomics Results at PRIDE</a></b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
+             <td><b><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_23/" target="_blank">E23 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -1779,11 +1811,12 @@
          <table id="ExpInfoE30"> 
            <tr>
              <td><b>Title:</b></td>
-             <td>Experiment 30: Pilot experiment for <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> strain PK1 (A+) to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection.</td>
+             <td>Experiment 30: Pilot experiment for <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> Malayan strain sporozoites to produce and integrate clinical, hematological, parasitological, omics, telemetric and histopathological measures of acute primary infection. </td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
-             <td>Telemetry devices (DSI, model L11) with blood pressure sensors and ECG leads were surgically implanted in two malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age.  After a resting period of two weeks, physiological data that include activity, temperature, ECG, and blood pressure were continuously collected.  Two weeks after activation of the telemetry implant, the macaques were inoculated intravenously with cryopreserved salivary gland sporozoites. The cryopreserved batch of <i>P. knowlesi</i> sporozoites were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention from <i>Anopheles dirus</i>.  After experimental infection, the macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, metabolomic, telemetric and histopathological measurements. The experiment was designed for terminal necropsies on days 11 (RKy15) or 19 (Red16).  The anti-malarial drug artemether was subcuratively administered selectively to one subject (REd16) during the primary parasitemia to suppress clinical complications. Capillary blood samples were collected daily for the measurement of CBCs, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at five timepoints for functional genomic, proteomic, lipidomic, and immunological analyses. Physiological data were continuously captured via telemetry.  Within the MaHPIC, this project is known as 'Experiment 30'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
+             <td>Telemetry devices (DSI, model L11) with blood pressure sensors and electrocardiogram (ECG) leads were surgically implanted in two malaria-naive male rhesus macaques (<i>Macaca mulatta</i>), approximately three years of age.  After a resting period of two weeks, physiological data that include activity, temperature, ECG, and blood pressure were continuously collected.  Two weeks after activation of the telemetry implant, the macaques were inoculated intravenously with cryopreserved <i>P. knowlesi</i> Malayan strain salivary gland sporozoites, obtained from <i>Anopheles dirus</i> infected with parasites from the Pk1A+ clone. The <i>P. knowlesi</i> sporozoites were produced, isolated and cryopreserved at the Centers for Disease Control and Prevention.  After inoculation, the macaques were profiled for clinical, hematological, parasitological, immunological, functional genomic, lipidomic, proteomic, metabolomic, telemetric and histopathological measurements. The experiment was designed for pathology studies, with terminal necropsies on days 11 (RKy15) or 19 (Red16).  The anti-malarial drug artemether was subcuratively administered selectively to one subject (REd16) during the primary parasitemia to suppress clinical complications. Capillary blood samples were collected daily for the measurement of complete blood counts, reticulocytes, and parasitemias. Capillary blood samples were collected every other day to obtain plasma for metabolomic analysis. Venous blood and bone marrow samples were collected at five timepoints for functional genomic, proteomic, lipidomic, and immunological analyses. Physiological data were continuously captured via telemetry.  Within the MaHPIC, this project is known as 'Experiment 30'.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).
+                  </td>
            </tr>
          </table>
       </div>   
@@ -1869,6 +1902,83 @@
   </div>  
 
 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 34: Control necropsy of a mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i></a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoE34 table, #ExpInfoE34 td, #ExpInfoE34 th, #ExpInfoE34 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoE34 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoE34"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 34: Control necropsy of a mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> to produce a set of normal clinical, hematological, immunological and omics measures, and normal tissue samples for histological comparison</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>A mixed cohort of six malaria-naive male <i>Macaca mulatta</i> (n=3) and <i>Macaca fascicularis</i> (n=3) were necropsied to provide normal tissue samples as controls for the analysis of MaHPIC infection experiments involving these macaque species. Venous whole blood and bone marrow aspirate samples were collected at necropsy to profile clinical, hematological, immune response and functional genomics measurements. Plasma samples were also banked for proteomics and metabolomics measurements, rectal swabs for microbiome studies, and a panel of tissue samples for histological comparisons. Within the MaHPIC, this project is known as 'Experiment 34'. This dataset was produced by Monica Cabrera-Mora at Emory University. To access other publicly available results from E34 and other MaHPIC experiments, including clinical results (specifics on drugs administered, diet, and veterinary interventions), and other omics, visit <a href="http://plasmodb.org/plasmo/mahpic.jsp" target="_blank">http://plasmodb.org/plasmo/mahpic.jsp</a>.  This page will be updated as datasets are released to the public.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
+           </tr>
+         </table>
+      </div>   
+	 <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksE34 table, #DataLinksE34 td, #DataLinksE34 th, #DataLinksE34 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksE34 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksE34 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksE30"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_34/"><b>E34 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </table>
+           </div>
+	   <br><br>
+<!--	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px">
+	     <i>Plasmodium cynomolgi</i> infections in rhesus macaques display clinical and parasitological features pertinent to modelling vivax malaria pathology and relapse infections.  <a href="https://www.ncbi.nlm.nih.gov/pubmed/27590312" target="_blank">Joyner et al. Malar J. 2016 Sep 2;15(1):451.</a>
+        </div>
+        <p>
+
+  -->
+  </div>	
+  </div>  
 
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</a> </h3> 
