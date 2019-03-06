@@ -7,11 +7,13 @@ import * as componentWrappers from './componentWrappers';
 import { wrapRoutes } from './routes';
 import wrapStoreModules from './wrapStoreModules';
 import wrapWdkService from './wrapWdkService';
+import pluginConfig from './pluginConfig';
 
 // Initialize the application.
 initialize({
   componentWrappers,
   wrapRoutes,
   wrapStoreModules,
-  wrapWdkService
+  wrapWdkService,
+  pluginConfig
 })
