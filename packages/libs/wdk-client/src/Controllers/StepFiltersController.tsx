@@ -33,7 +33,8 @@ function StepFiltersController(props: Props) {
             recordClassName: question.recordClassName
           }}
           pluginProps={{
-            stepId: step.id
+            stepId: step.id,
+            filterName: filter.name
           }}
         />
       )}

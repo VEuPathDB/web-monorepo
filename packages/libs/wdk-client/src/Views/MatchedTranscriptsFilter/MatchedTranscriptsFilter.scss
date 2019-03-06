@@ -12,7 +12,7 @@
 
   &-FilterPanel {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
     justify-content: center;
     flex-flow: row wrap;
     margin: 1em;
@@ -41,7 +41,28 @@
     > * > * {
       display: table-cell;
       padding: 0 .2em .5em .2em;
-      vertical-align: middle;
+      vertical-align: baseline;
+    }
+  }
+
+  &-FilterOption {
+    &__YY, &__YN, &__NY, &__NN {
+      img {
+        height: 3em;
+        vertical-align: bottom;
+      }
+    }
+    &__Y, &__N {
+      img {
+        height: 1.5em;
+        vertical-align: bottom;
+      }
+    }
+  }
+
+  &-FilterOption__disabled {
+    > *:nth-child(2), > *:nth-child(4), > *:nth-child(5) {
+      opacity: .4;
     }
   }
 

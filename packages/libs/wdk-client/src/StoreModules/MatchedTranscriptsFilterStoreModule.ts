@@ -8,13 +8,15 @@ import {
   requestMatchedTransFilterSummary,
   fulfillMatchedTransFilterSummary,
   requestMatchedTransFilterUpdate,
-  setDisplayedSelection
+  setDisplayedSelection,
+  FilterSummary,
+  FilterSelection
 } from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
 
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
 import { Action } from 'wdk-client/Actions';
-import { Decoder, combine, field, number, optional } from 'wdk-client/Utils/Json';
+import { Decoder, number, objectOf, optional } from 'wdk-client/Utils/Json';
 import {
   getMatchedTranscriptFilterPref,
   setMatchedTranscriptFilterPref
@@ -39,10 +41,8 @@ export const key = 'matchedTranscriptsFilter';
 export type State = {
   stepId?: number;
   expanded?: boolean;
-  didMeetCount?: number;
-  didNotMeetCount?: number;
-  didMeetCriteria?: boolean;
-  didNotMeetCriteria?: boolean;
+  summary?: FilterSummary;
+  selection?: FilterSelection;
 };
 
 const initialState: State = { };
@@ -58,14 +58,13 @@ export function reduce(state: State = initialState, action: Action): State {
     case fulfillMatchedTransFilterSummary.type: {
       return {
         ...state,
-        didMeetCount: action.payload.didMeetCount,
-        didNotMeetCount: action.payload.didNotMeetCount
+        summary: action.payload.summary
       };
     }
     case setDisplayedSelection.type: {
       return {
         ...state,
-        ...action.payload
+        selection: action.payload.selection
       };
     }
     default: {
@@ -151,32 +150,19 @@ function filterRequestMatchedTransFilterSummaryStepChgActions(
   return !!state[key].expanded;
 }
 
-export const MATCHED_TRANS_FILTER_NAME = 'matched_transcript_filter_array';
-type MatchedFilterSummary = {
-  Y?: number;
-  N?: number;
-};
-
 async function getFulfillMatchedTransFilterSummary(
-  [requestAction]: [InferAction<typeof requestMatchedTransFilterSummary>],
+  [openAction, requestAction]: [InferAction<typeof openMatchedTranscriptsFilter>, InferAction<typeof requestMatchedTransFilterSummary>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillMatchedTransFilterSummary>> {
-  let summaryDecoder: Decoder<MatchedFilterSummary> = combine(
-    field('Y', optional(number)),
-    field('N', optional(number))
-  );
+  let summaryDecoder: Decoder<FilterSummary> = objectOf(number);
   let summary = await wdkService.getStepFilterSummary(
     summaryDecoder,
     requestAction.payload.stepId,
-    MATCHED_TRANS_FILTER_NAME
+    openAction.payload.filterKey
   );
 
-  return fulfillMatchedTransFilterSummary(
-    requestAction.payload.stepId,
-    summary.Y || 0,
-    summary.N || 0
-  );
+  return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary);
 }
 
 async function getFulfillUpdatedMatchedTransFilterSummary(
@@ -201,7 +187,7 @@ async function getRequestStepUpdate(
       answerSpec: {
         ...answerSpec,
         filters: (answerSpec.filters || [])
-          .map(filter => filter.name === MATCHED_TRANS_FILTER_NAME
+          .map(filter => filter.name === openAction.payload.filterKey
             ? { ...filter, value: filterValue }
             : filter
           )
@@ -225,16 +211,13 @@ function areStepUpdateActionsNew(
 }
 
 function updateFilterActionToFilterValue(updateFilterAction: InferAction<typeof requestMatchedTransFilterUpdate>) {
-  const { didMeetCriteria, didNotMeetCriteria } = updateFilterAction.payload;
-  const values: Array<'Y'|'N'> = [];
-  if (didMeetCriteria) values.push('Y');
-  if (didNotMeetCriteria) values.push('N');
+  const { selection: values } = updateFilterAction.payload;
   return { values };
 }
 
-export function getFilterValue(step?: Step): FilterValue | undefined {
+export function getFilterValue(step: Step | undefined, key: string): FilterValue | undefined {
   if (step == null || step.answerSpec.filters == null) return;
-  const filter = step.answerSpec.filters.find(filter => filter.name === MATCHED_TRANS_FILTER_NAME);
+  const filter = step.answerSpec.filters.find(filter => filter.name === key);
   return filter && filter.value;
 }
 
@@ -248,7 +231,7 @@ export const observe = takeEpicInWindow(
     mrate( [requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
     mrate([openMTF], getRequestMatchedTransFilterSummary,
     /*{ areActionsCoherent: filterRequestMatchedTransFilterSummary }*/),
-    mrate([requestMatchedTransFilterSummary], getFulfillMatchedTransFilterSummary),
+    mrate([openMTF, requestMatchedTransFilterSummary], getFulfillMatchedTransFilterSummary),
     mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg,
       { areActionsCoherent: filterRequestMatchedTransFilterSummaryStepChgActions }),
     mrate([requestMatchedTransFilterExpandedPref], getFulfillUpdatedMatchedTransFilterSummary),

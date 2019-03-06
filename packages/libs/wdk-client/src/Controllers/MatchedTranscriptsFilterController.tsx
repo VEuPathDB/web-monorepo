@@ -23,31 +23,52 @@ const actionCreators = {
 }
 interface OwnProps {
   stepId: number;
+  filterName: string;
 }
 
 type DispatchProps = typeof actionCreators;
 
-type StateProps = (
-  Required<RootState['matchedTranscriptsFilter']> & {
-    filterValue: FilterValue;
-  }
-) | undefined;
+type StateProps = Required<RootState['matchedTranscriptsFilter']> & {
+  filterValue: FilterValue;
+}
+
 
 type Props = OwnProps & {
-  stateProps: StateProps;
+  stateProps?: Required<StateProps>;
   actionCreators: DispatchProps;
+}
+
+const Label: Record<string, string> = {
+  Y: 'did meet the search criteria',
+  N: 'did not meet the search criteria',
+  YY: 'both searches',
+  YN: 'just your previous search',
+  NY: 'just your latest search',
+  NN: 'neither search'
+}
+
+const Description: Record<string, string> = {
+  matched_transcript_filter_array: 'Some Genes in your result have Transcripts that did not meet the search criteria.',
+  gene_boolean_filter_array: ' Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.'
+}
+
+const Leadin: Record<string, string> = {
+  matched_transcript_filter_array: 'Include Transcripts that',
+  gene_boolean_filter_array: 'Include Transcripts returned by'
 }
 
 class MatchedTranscriptsFilterController extends React.Component<Props> {
 
   componentDidMount() {
-    this.props.actionCreators.openMatchedTranscriptsFilter(this.props.stepId);
+    const { stepId, filterName } = this.props;
+    this.props.actionCreators.openMatchedTranscriptsFilter(stepId, filterName);
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.stepId !== this.props.stepId) {
+      const { stepId, filterName } = this.props;
       this.props.actionCreators.closeMatchedTranscriptsFilter(prevProps.stepId);
-      this.props.actionCreators.openMatchedTranscriptsFilter(this.props.stepId);
+      this.props.actionCreators.openMatchedTranscriptsFilter(stepId, filterName);
     }
   }
 
@@ -59,6 +80,9 @@ class MatchedTranscriptsFilterController extends React.Component<Props> {
     if (this.props.stateProps == null) return null;
     return <MatchedTranscriptsFilter
       {...this.props.stateProps}
+      description={Description[this.props.filterName]}
+      optionLeadin={Leadin[this.props.filterName]}
+      optionLabel={Label}
       toggleExpansion={this.props.actionCreators.requestMatchedTransFilterExpandedUpdate}
       updateFilter={this.props.actionCreators.requestMatchedTransFilterUpdate}
       updateSelection={this.props.actionCreators.setDisplayedSelection}
@@ -67,22 +91,29 @@ class MatchedTranscriptsFilterController extends React.Component<Props> {
 
 }
 
+const statePropsIsComplete = hasAllProps<StateProps>(
+  'stepId',
+  'filterValue',
+  'summary',
+  'expanded'
+);
+
 export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state: RootState, ownProps: OwnProps) => {
     const step = state.steps.steps[ownProps.stepId];
-    const stateProps = {
-      filterValue: getFilterValue(step),
+    return {
+      filterValue: getFilterValue(step, ownProps.filterName),
       ...state.matchedTranscriptsFilter
-    };
-    return allPropsAreDefined(stateProps) ? stateProps as StateProps : undefined;
+    } as StateProps;
   },
   actionCreators,
-  (stateProps, actionCreators, ownProps) => ({ stateProps, actionCreators, ...ownProps })
+  (stateProps, actionCreators, ownProps) => ({
+    ...ownProps,
+    stateProps: statePropsIsComplete(stateProps) ? stateProps : undefined,
+    actionCreators
+  })
 )(MatchedTranscriptsFilterController);
 
-function allPropsAreDefined<T>(t: T): t is Required<T> {
-  for (const key in t) {
-    if (t[key] === undefined) return false;
-  }
-  return true;
+function hasAllProps<T>(...props: Array<keyof T>) {
+  return (t: T) => props.every(prop => t[prop] != null)
 }
