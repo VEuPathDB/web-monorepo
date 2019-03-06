@@ -53,7 +53,7 @@ export const wdkServiceMixin = WdkService => class TranscriptMixin extends WdkSe
 
   async _ensureTranscriptLinkAttribute(answerSpec, formatConfig) {
     if (
-      !this._isTranscriptQuestion(answerSpec) ||
+      !(await this._isTranscriptQuestion(answerSpec)) ||
       formatConfig.attributes == null ||
       formatConfig.attributes[1] === TRANSCRIPT_LINK_ATTRIBUTE_NAME
     ) return formatConfig;
