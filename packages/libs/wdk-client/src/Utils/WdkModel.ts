@@ -419,7 +419,7 @@ export interface IsolateForSummaryView {
 }
 
 export interface GenomeSummaryViewReport {
-  isTruncated?: boolean;
+  isTruncate?: boolean;
   isDetail: boolean;
   maxLength: number;
   sequences: GenomeViewSequence[];

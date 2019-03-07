@@ -60,7 +60,7 @@ export interface GenomeViewFeatureModel {
   description: string;
 }
 
-export const toReportModel = (report: GenomeSummaryViewReport): GenomeSummaryViewReportModel => report.isTruncated
+export const toReportModel = (report: GenomeSummaryViewReport): GenomeSummaryViewReportModel => report.isTruncate
   ? {
     type: 'truncated'
   }
