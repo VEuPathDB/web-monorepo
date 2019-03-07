@@ -21,18 +21,6 @@
   </c:when>
   <c:otherwise>
 
-<style>
-  #clinepi-tutorials  li {
-    font-size: 1.4em;
-    list-style: none;
-    margin: 1em 0;
-  }
-  #clinepi-tutorials li .fa {
-    color: #333;
-    margin-right: .5em;
-  }
-</style>
-
 <div id="clinepi-tutorials">
   <h1>ClinEpiDB Tutorials</h1>
   <ul>

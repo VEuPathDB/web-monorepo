@@ -74,12 +74,14 @@
 
 <!-- main body start -->
 
+<div id="clinepi-news">
+  <h1>ClinEpiDB News</h1>
+
 <c:set var="i" value="1"/>
 <c:forEach items="${xmlAnswer.recordInstances}" var="record">
 
   <fmt:parseDate pattern="${dateStringPattern}" var="pdate" value="${record.attributesMap['date']}"/> 
   <fmt:formatDate var="fdate" value="${pdate}" pattern="d MMMM yyyy"/>
-
   <c:set var="headline" value="${record.attributesMap['headline']}"/>
   <c:set var="tag" value="${record.attributesMap['tag']}"/>
   <c:set var="item" value="${record.attributesMap['item']}"/>
@@ -126,6 +128,7 @@
 </table>
 
 <!-- main body end -->
+</div>
 
   </c:otherwise>
 </c:choose>
