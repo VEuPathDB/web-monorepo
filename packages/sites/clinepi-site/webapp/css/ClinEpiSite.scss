@@ -640,3 +640,30 @@ b, strong, th,
 .ce-StudyRecordHeadingSearchLinks .ce-StudySearchIconLinks {
   font-size: 1.5em;
 }
+
+/* ========================================================================= */
+/* News page                                                                */
+/* ========================================================================= */
+#clinepi-news li {
+  font-size: 1.4em;
+  margin: 1em 1em;
+}
+#clinepi-news li .fa {
+  color: #333;
+  margin-right: .5em;
+}
+div#clinepi-news {
+  margin: 0 4em;
+}
+/* ========================================================================= */
+/* Tutorials page                                                                */
+/* ========================================================================= */
+#clinepi-tutorials  li {
+  font-size: 1.4em;
+  list-style: none;
+  margin: 1em 0;
+}
+#clinepi-tutorials li .fa {
+  color: #333;
+  margin-right: .5em;
+}
