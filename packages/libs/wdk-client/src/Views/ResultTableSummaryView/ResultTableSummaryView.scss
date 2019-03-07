@@ -6,6 +6,11 @@
     flex-wrap: wrap;
     justify-content: space-between;
 
+    // Make selection count appear after action buttons
+    .ActionToolbar {
+      flex-direction: row-reverse;
+    }
+
     // Force PagniationMenu to come before Toolbar
     .Toolbar + .PaginationMenu {
       order: -1;
