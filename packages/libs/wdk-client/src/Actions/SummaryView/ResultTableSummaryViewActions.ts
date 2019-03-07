@@ -99,6 +99,11 @@ export const fulfillRecordsBasketStatus = makeActionCreator(
     (stepId: number, pageNumber: number, pageSize: number, basketStatus: boolean[]) => ({stepId, pageNumber, pageSize, basketStatus })
     );
 
+export const updateSelectedIds = makeActionCreator(
+    'resultTableSummaryView/updateSelectedIds',
+    (ids: string[]) => ({ ids })
+);
+
 export type Action =
     | InferAction<typeof openResultTableSummaryView>
     | InferAction<typeof requestSortingPreference>
@@ -119,3 +124,4 @@ export type Action =
     | InferAction<typeof showHideAddColumnsDialog>
     | InferAction<typeof updateColumnsDialogSelection>
     | InferAction<typeof updateColumnsDialogExpandedNodes>
+    | InferAction<typeof updateSelectedIds>

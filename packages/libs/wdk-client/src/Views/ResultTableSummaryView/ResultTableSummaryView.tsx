@@ -4,20 +4,25 @@ import {
   RecordClass,
   Question,
   PrimaryKey,
-  AttributeSortingSpec
+  AttributeSortingSpec,
 } from 'wdk-client/Utils/WdkModel';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
+import ResultTable, { Action } from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
 import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
 import Loading from 'wdk-client/Components/Loading/Loading';
 
 import './ResultTableSummaryView.scss';
 
+// Export this for convenience
+export { Action };
+
 interface Props {
   answer?: Answer;
   answerLoading: boolean;
   addingStepToBasket: boolean;
+  actions?: Action[];
+  selectedIds?: string[];
   activeAttributeAnalysisName: string | undefined;
   stepId: number;
   recordClass?: RecordClass;
@@ -47,6 +52,7 @@ interface Props {
   updateColumnsDialogExpandedNodes: (nodes: string[]) => void;
   openAttributeAnalysis: (reporterName: string, stepId: number) => void;
   closeAttributeAnalysis: (reporterName: string, stepId: number) => void;
+  updateSelectedIds: (ids: string[]) => void;
 }
 
 const cx = makeClassNameHelper('ResultTableSummaryView');
@@ -55,6 +61,8 @@ export default function ResultTableSummaryView({
   answer,
   answerLoading,
   addingStepToBasket,
+  actions,
+  selectedIds,
   activeAttributeAnalysisName,
   stepId,
   recordClass,
@@ -75,6 +83,7 @@ export default function ResultTableSummaryView({
   updateColumnsDialogExpandedNodes,
   openAttributeAnalysis,
   closeAttributeAnalysis,
+  updateSelectedIds,
 }: Props) {
   return (
     <div className={cx()}>
@@ -102,6 +111,8 @@ export default function ResultTableSummaryView({
       {answer && recordClass && question ? (
         <ResultTable
           answer={answer}
+          actions={actions}
+          selectedIds={selectedIds}
           activeAttributeAnalysisName={activeAttributeAnalysisName}
           stepId={stepId}
           question={question}
@@ -116,6 +127,7 @@ export default function ResultTableSummaryView({
           showHideAddColumnsDialog={showHideAddColumnsDialog}
           openAttributeAnalysis={openAttributeAnalysis}
           closeAttributeAnalysis={closeAttributeAnalysis}
+          updateSelectedIds={updateSelectedIds}
         />
       ) : null}
     </div>

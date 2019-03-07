@@ -22,6 +22,7 @@ import {
     viewPageNumber,
     updateColumnsDialogExpandedNodes,
     updateColumnsDialogSelection,
+  updateSelectedIds,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { requestStep, fulfillStep } from 'wdk-client/Actions/StepActions';
 import { requestUpdateBasket, fulfillUpdateBasket, requestAddStepToBasket, fulfillAddStepToBasket } from 'wdk-client/Actions/BasketActions';
@@ -50,6 +51,7 @@ export type State = {
     columnsDialogIsOpen: boolean;
     columnsDialogSelection?: Array<string> //
     columnsDialogExpandedNodes?: Array<string>
+    selectedIds?: string[];
 };
 
 const initialState: State = {
@@ -121,6 +123,8 @@ export function reduce(state: State = initialState, action: Action): State {
             return { ...state, columnsDialogSelection: action.payload.selection }
         } case fulfillColumnsChoice.type: {
             return reduceColumnsFulfillAction(state, action);
+        } case updateSelectedIds.type: {
+            return { ...state, selectedIds: action.payload.ids };
         }
 
 

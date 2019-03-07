@@ -1,4 +1,4 @@
-import { keyBy } from 'lodash';
+import { keyBy, union, difference } from 'lodash';
 import React from 'react';
 import {
   Answer,
@@ -17,8 +17,14 @@ import PrimaryKeyCell from 'wdk-client/Views/ResultTableSummaryView/PrimaryKeyCe
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from 'wdk-client/Views/ResultTableSummaryView/AttributeHeading';
 
+export interface Action {
+  element: React.ReactType | ((selection: string[]) => React.ReactType);
+}
+
 interface Props {
   stepId: number;
+  actions?: Action[];
+  selectedIds?: string[];
   activeAttributeAnalysisName: string | undefined;
   answer: Answer;
   recordClass: RecordClass;
@@ -40,14 +46,18 @@ interface Props {
   showHideAddColumnsDialog: (show: boolean) => void;
   openAttributeAnalysis: (reporterName: string, stepId: number) => void;
   closeAttributeAnalysis: (reporterName: string, stepId: number) => void;
+  updateSelectedIds: (ids: string[]) => void;
 }
 
 function ResultTable(props: Props) {
   const {
     answer,
+    recordClass,
     stepId,
     showHideAddColumnsDialog,
-    requestAddStepToBasket
+    requestAddStepToBasket,
+    actions,
+    selectedIds,
   } = props;
   const columns = getColumns(props);
   const rows = answer.records;
@@ -63,11 +73,19 @@ function ResultTable(props: Props) {
       totalRows: answer.meta.totalCount
     }
   };
+  const selectedIdsSet = new Set(selectedIds);
   const options = {
-    toolbar: true
+    toolbar: true,
+    isRowSelected: (recordInstance: RecordInstance) => {
+      return selectedIdsSet.has(recordInstance.attributes[recordClass.recordIdAttributeName] as string);
+    }
   };
   const tableState = MesaState.create({
     options,
+    actions: actions && actions.map(action => ({
+      selectionRequired: false,
+      element: action.element,
+    })),
     columns,
     rows,
     eventHandlers,
@@ -97,6 +115,10 @@ export default wrappable(pure(ResultTable));
 function getEventHandlers(props: Props) {
   const {
     answer,
+    recordClass,
+    actions,
+    selectedIds,
+    updateSelectedIds,
     question,
     requestSortingUpdate,
     requestColumnsChoiceUpdate,
@@ -132,13 +154,34 @@ function getEventHandlers(props: Props) {
   function onRowsPerPageChange(newRowsPerPage: number) {
     requestPageSizeUpdate(newRowsPerPage);
   }
-  const eventHandlers = {
+  function onRowSelect(row: RecordInstance) {
+    onMultipleRowSelect([row]);
+  }
+  function onRowDeselect(row: RecordInstance) {
+    onMultipleRowDeselect([row]);
+  }
+  function onMultipleRowSelect(rows: RecordInstance[]) {
+    const ids = rows.map(row => row.attributes[recordClass.recordIdAttributeName] as string);
+    updateSelectedIds(union(selectedIds, ids));
+  }
+  function onMultipleRowDeselect(rows: RecordInstance[]) {
+    const ids = rows.map(row => row.attributes[recordClass.recordIdAttributeName] as string);
+    updateSelectedIds(difference(selectedIds, ids));
+  }
+
+  const basicEventHandlers = {
     onSort,
     onColumnReorder,
     onPageChange,
-    onRowsPerPageChange
+    onRowsPerPageChange,
   };
-  return eventHandlers;
+  const selectionEventHandlers = {
+    onRowSelect,
+    onRowDeselect,
+    onMultipleRowSelect,
+    onMultipleRowDeselect,
+  }
+  return actions ? { ...basicEventHandlers, ...selectionEventHandlers } : basicEventHandlers;
 }
 
 function getColumns({
@@ -159,6 +202,7 @@ function getColumns({
   };
   const basketColumn = {
     key: 'basket',
+    className: 'BasketCell',
     sortable: false,
     moveable: false,
     renderCell: ({

@@ -9,6 +9,7 @@
     // Force PagniationMenu to come before Toolbar
     .Toolbar + .PaginationMenu {
       order: -1;
+      margin-right: auto;
     }
 
     .TableToolbar-Children {
@@ -27,7 +28,8 @@
     margin-left: 1em;
   }
 
-  td.DataCell:empty:after {
+  td.DataCell:empty:after,
+  td.DataCell > div:empty:after {
     content: 'N/A';
     opacity: 0.4;
   }
@@ -65,10 +67,11 @@
 
     th, td {
       padding: 5px;
+      vertical-align: middle;
     }
 
     // Remove padding from basket table cells
-    tr > th:first-of-type, tr > td:first-of-type {
+    .BasketCell {
       padding: 0;
       text-align: center;
     }

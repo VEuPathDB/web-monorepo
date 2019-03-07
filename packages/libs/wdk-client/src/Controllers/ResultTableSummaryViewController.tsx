@@ -20,6 +20,7 @@ import {
   showHideAddColumnsDialog,
   updateColumnsDialogSelection,
   updateColumnsDialogExpandedNodes,
+  updateSelectedIds,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { 
   requestUpdateBasket,
@@ -27,7 +28,7 @@ import {
 } from 'wdk-client/Actions/BasketActions';
 import { CategoryTreeNode, isQualifying, addSearchSpecificSubtree } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
-import ResultTableSummaryView from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryView';
+import ResultTableSummaryView, { Action as TableAction } from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryView';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Actions/AttributeAnalysisActions';
 
@@ -51,6 +52,7 @@ const actionCreators = {
   updateColumnsDialogExpandedNodes,
   openAttributeAnalysis,
   closeAttributeAnalysis,
+  updateSelectedIds,
 };
 
 interface StateProps {
@@ -66,6 +68,7 @@ interface DispatchProps {
 }
 type OwnProps = {
   stepId: number;
+  tableAction?: TableAction[];
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -91,6 +94,7 @@ class ResultTableSummaryViewController extends React.Component< Props > {
     return (
       <ResultTableSummaryView
         stepId={this.props.stepId}
+        actions={this.props.tableAction}
         {...this.props.viewData}
         {...this.props.actionCreators}
       />
@@ -125,12 +129,19 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps['viewDat
   activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName
 });
 
-export default connect<StateProps['viewData'], DispatchProps['actionCreators'], OwnProps, Props, RootState>(
+const ConnectedController = connect<StateProps['viewData'], DispatchProps['actionCreators'], OwnProps, Props, RootState>(
   mapStateToProps,
   actionCreators,
   (viewData, actionCreators, ownProps) => ({ viewData, actionCreators, ...ownProps })
 ) (wrappable(ResultTableSummaryViewController));
 
+export function withTableActions(tableActions: TableAction[]) {
+  return function TableActionProvider(props: Exclude<OwnProps, 'tableActions'>) {
+    return <ConnectedController {...props} tableAction={tableActions}/>
+  }
+}
+
+export default Object.assign(ConnectedController, { withTableActions });
 
 function getQuestionAndRecordClass(rootState: RootState): { question: Question, recordClass: RecordClass } | undefined {
   if (
