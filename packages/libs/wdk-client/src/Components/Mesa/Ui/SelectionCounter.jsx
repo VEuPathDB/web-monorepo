@@ -44,7 +44,7 @@ class SelectionCounter extends React.Component {
         <b>{selection.length} </b>
         {this.noun(selection)} selected.
         <br />
-        {!onRowDeselect && !onMultipleRowDeselect ? null : (<a onClick={this.deselectAllRows}>Clear selection.</a>)}
+        {!onRowDeselect && !onMultipleRowDeselect ? null : (<button className="link" type="button" onClick={this.deselectAllRows}>Clear selection.</button>)}
       </div>
     );
   }
