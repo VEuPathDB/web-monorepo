@@ -37,6 +37,7 @@ import { StepAnalysisAction } from '../../Actions/StepAnalysis/StepAnalysisActio
 import { equals } from 'lodash/fp';
 
 const initialState: StepAnalysesState = {
+  loadingAnalysisChoices: false,
   activeTab: -1,
   analysisChoices: [],
   stepId: -1,
@@ -50,7 +51,8 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
     case START_LOADING_TAB_LISTING: {
       return {
         ...state,
-        stepId: action.payload.stepId
+        stepId: action.payload.stepId,
+        loadingAnalysisChoices: true,
       };
     }
 
@@ -59,7 +61,8 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
         insertPanelState,
         {
           ...state,
-          analysisChoices: action.payload.analysisChoices
+          analysisChoices: action.payload.analysisChoices,
+          loadingAnalysisChoices: false
         }
       );
     }

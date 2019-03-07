@@ -6,16 +6,19 @@ import { memoize } from 'lodash/fp';
 import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible, summaryViewPlugins, defaultSummaryView, loadingSummaryViewListing } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
+import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, loadingAnalysisChoices, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible, summaryViewPlugins, defaultSummaryView, loadingSummaryViewListing } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import { startLoadingChosenAnalysisTab, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
 import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Step } from 'wdk-client/Utils/WdkUser';
 
 type StateProps = {
+  step: Step;
   loadingSummaryViewListing: ReturnType<typeof loadingSummaryViewListing>;
+  loadingAnalysisChoices: ReturnType<typeof loadingAnalysisChoices>,
   summaryViewPlugins: ReturnType<typeof summaryViewPlugins>;
   defaultSummaryView: ReturnType<typeof defaultSummaryView>;
   webAppUrl: ReturnType<typeof webAppUrl>;
@@ -83,8 +86,10 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
   }
 }
 
-const mapStateToProps = (state: RootState): StateProps => ({
+const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
+  step: state.steps.steps[props.stepId],
   loadingSummaryViewListing: loadingSummaryViewListing(state),
+  loadingAnalysisChoices: loadingAnalysisChoices(state),
   summaryViewPlugins: summaryViewPlugins(state),
   defaultSummaryView: defaultSummaryView(state),
   webAppUrl: webAppUrl(state),
@@ -137,9 +142,9 @@ const mergeProps = (
   ...ownProps,
   summaryViewPlugins: stateProps.summaryViewPlugins,
   defaultSummaryView: stateProps.defaultSummaryView,
-  loadingTabs: stateProps.loadingSummaryViewListing || stateProps.analysisChoices.length === 0,
+  loadingTabs: stateProps.loadingSummaryViewListing || stateProps.loadingAnalysisChoices,
   activeTab: `${stateProps.activeTab}`,
-  newAnalysisButton: stateProps.newAnalysisButtonVisible
+  newAnalysisButton: stateProps.analysisChoices.length > 0 && stateProps.newAnalysisButtonVisible
     ? (
       <button 
         id="add-analysis" 
@@ -160,17 +165,19 @@ const mergeProps = (
         display: plugin.displayName,
         removable: false,
         tooltip: plugin.description,
-        content: (
+        content: stateProps.step ? (
           <Plugin 
             context={{
               type: 'summaryView',
-              name: plugin.name
+              name: plugin.name,
+              recordClassName: stateProps.step.recordClassName,
+              questionName: stateProps.step.answerSpec.questionName
             }}
             pluginProps={{
               stepId: ownProps.stepId
             }}
           />
-        )
+        ) : null
       })
     ),
     ...stateProps.analysisBaseTabConfigs.map(

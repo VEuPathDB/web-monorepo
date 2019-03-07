@@ -60,6 +60,11 @@ export const loadingSummaryViewListing = createSelector<RootState, ResultPanelSt
 
 export const stepAnalyses = ({ stepAnalysis }: RootState) => stepAnalysis;
 
+export const loadingAnalysisChoices = createSelector<RootState, StepAnalysesState, boolean>(
+  stepAnalyses,
+  stepAnalyses => stepAnalyses.loadingAnalysisChoices
+);
+
 export const activeTab = createSelector<RootState, StepAnalysesState, ResultPanelState, string, string | number>(
   stepAnalyses,
   resultPanel,

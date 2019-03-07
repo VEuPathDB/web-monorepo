@@ -6,6 +6,7 @@ export const UNSAVED_ANALYSIS_STATE = 'UNSAVED_ANALYSIS_STATE';
 export const SAVED_ANALYSIS_STATE = 'SAVED_ANALYSIS_STATE';
 
 export interface StepAnalysesState {
+  loadingAnalysisChoices: boolean;
   activeTab: number;
   analysisChoices: StepAnalysisType[];
   stepId: number;
