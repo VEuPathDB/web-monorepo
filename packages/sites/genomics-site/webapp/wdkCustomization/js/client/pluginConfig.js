@@ -4,7 +4,15 @@ import {
   MatchedTranscriptsFilterPlugin,
 } from 'wdk-client/Plugins';
 
+import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
+
 export default [
+  {
+    type: 'summaryView',
+    name: '_default',
+    recordClassName: 'PopsetRecordClasses.PopsetRecordClass',
+    component: PopsetResultSummaryViewTableController
+  },
   {
     type: 'summaryView',
     name: 'genomic-view',
