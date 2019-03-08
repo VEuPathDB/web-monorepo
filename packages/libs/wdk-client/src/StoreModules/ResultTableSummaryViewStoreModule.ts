@@ -524,13 +524,13 @@ async function getFulfillAnswer(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillAnswer>> {
   const r = requestAction.payload;
-  const currentAnswer = state$.value[key].answer;
 
   // if only columns have changed, and the new columns are a subset of
   // current, we can avoid making a service call
   // if new columns are a subset of old columns
   // TODO Move this logic into WdkService as an answer value cache
   /*
+    const currentAnswer = state$.value[key].answer;
     if (
         currentAnswer &&
         isEqual(r.pagination, currentAnswer.meta.pagination) &&
@@ -639,7 +639,6 @@ function filterFulfillRecordBasketStatusActions([
   );
 }
 
-// TODO Need to handle "Add to basket" for all rows of answer!
 export const observe = takeEpicInWindow(
   openResultTableSummaryView,
   closeResultTableSummaryView,
@@ -647,57 +646,28 @@ export const observe = takeEpicInWindow(
     mrate([openRTS], getRequestStep),
     mrate([openRTS], getFirstPageNumber),
     mrate([openRTS], getRequestPageSize),
-    mrate([openRTS, fulfillStep], getRequestColumnsChoicePreference, {
-      areActionsCoherent: filterRequestColumnsChoicePreferenceActions
-    }),
-    mrate(
-      [openRTS, fulfillStep, requestColumnsChoicePreference],
-      getFulfillColumnsChoicePreference,
-      { areActionsCoherent: filterFulfillColumnsChoicePreferenceActions }
-    ),
-    mrate(
-      [openRTS, fulfillStep, requestColumnsChoiceUpdate],
-      getFulfillColumnsChoiceUpdate,
-      { areActionsCoherent: filterFulfillColumnColumnsChoiceUpdateActions }
-    ),
-    mrate([openRTS, fulfillStep], getRequestSortingPreference, {
-      areActionsCoherent: filterRequestSortingPreferenceActions
-    }), // need question from step
-    mrate(
-      [openRTS, fulfillStep, requestSortingPreference],
-      getFulfillSortingPreference,
-      { areActionsCoherent: filterFullfillSortingPreferenceActions }
-    ),
-    mrate(
-      [openRTS, fulfillStep, requestSortingUpdate],
-      getFulfillSortingUpdate,
-      { areActionsCoherent: filterFulfillSortingUpdateActions }
-    ),
+    mrate([openRTS, fulfillStep], getRequestColumnsChoicePreference,
+      { areActionsCoherent: filterRequestColumnsChoicePreferenceActions }),
+    mrate([openRTS, fulfillStep, requestColumnsChoicePreference], getFulfillColumnsChoicePreference,
+      { areActionsCoherent: filterFulfillColumnsChoicePreferenceActions }),
+    mrate([openRTS, fulfillStep, requestColumnsChoiceUpdate], getFulfillColumnsChoiceUpdate,
+      { areActionsCoherent: filterFulfillColumnColumnsChoiceUpdateActions }),
+    mrate([openRTS, fulfillStep], getRequestSortingPreference,
+      { areActionsCoherent: filterRequestSortingPreferenceActions }),
+    // need question from step
+    mrate([openRTS, fulfillStep, requestSortingPreference], getFulfillSortingPreference,
+      { areActionsCoherent: filterFullfillSortingPreferenceActions }),
+    mrate([openRTS, fulfillStep, requestSortingUpdate], getFulfillSortingUpdate,
+      { areActionsCoherent: filterFulfillSortingUpdateActions }),
     mrate([requestPageSize], getFulfillPageSize),
     mrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
-    mrate(
-      [
-        openRTS,
-        fulfillStep,
-        viewPageNumber,
-        fulfillPageSize,
-        fulfillColumnsChoice,
-        fulfillSorting
-      ],
-      getRequestAnswer,
-      { areActionsCoherent: filterRequestAnswerActions }
-    ),
-    mrate([openRTS, requestAnswer], getFulfillAnswer, {
-      areActionsCoherent: filterFulfillAnswerActions,
-      areActionsNew: stubTrue
-    }),
-    mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus, {
-      areActionsCoherent: filterRequestRecordsBasketStatusActions
-    }),
-    mrate(
-      [openRTS, fulfillAnswer, requestRecordsBasketStatus],
-      getFulfillRecordsBasketStatus,
-      { areActionsCoherent: filterFulfillRecordBasketStatusActions }
-    )
+    mrate([openRTS, fulfillStep, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting], getRequestAnswer,
+      { areActionsCoherent: filterRequestAnswerActions }),
+    mrate([openRTS, requestAnswer], getFulfillAnswer,
+      { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),
+    mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus,
+      { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
+    mrate([openRTS, fulfillAnswer, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
+      { areActionsCoherent: filterFulfillRecordBasketStatusActions })
   )
 );
