@@ -24,13 +24,14 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { omit } from 'lodash';
+import { allDataLoaded } from 'wdk-client/Actions/StaticDataActions';
 
 export const key = 'userCommentForm';
 
 const openUCF = openUserCommentForm;
 const ATTACHED_FILES_KEY = 'attachedFiles';
 
-export type State = {
+export type UserCommentFormState = {
     userCommentPostRequest?: UserCommentPostRequest; // will include previous comment id if editing
     pubmedPreview?: PubmedPreview;
     showPubmedPreview: boolean;
@@ -38,23 +39,39 @@ export type State = {
     attachedFilesToRemove: number[];  // attachment IDs
     attachedFileSpecsToAdd: KeyedUserCommentAttachedFileSpec[];
     nextFileSpecId: number;
+    projectIdLoaded: boolean;
+    userCommentLoaded: boolean;
+    submitting: boolean;
 };
+
+type State = UserCommentFormState;
 
 const initialState: State = {
     showPubmedPreview: false,
     attachedFilesToRemove: [],
     attachedFileSpecsToAdd: [],
-    nextFileSpecId: 0
+    nextFileSpecId: 0,
+    projectIdLoaded: false,
+    userCommentLoaded: false,
+    submitting: false
 };
 
 export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
+        case allDataLoaded.type: {
+            return { ...state, projectIdLoaded: true };
+        }
         case fulfillUserComment.type: {
-            return { ...state, attachedFiles: action.payload.userComment.attachedFiles, userCommentPostRequest: omit(action.payload.userComment, [ATTACHED_FILES_KEY]) };
+            return { 
+                ...state, 
+                attachedFiles: action.payload.userComment.attachedFiles, 
+                userCommentPostRequest: omit(action.payload.userComment, [ATTACHED_FILES_KEY]),
+                userCommentLoaded: true
+            };
         } case updateFormFields.type: {
             return { ...state, userCommentPostRequest: { ...state.userCommentPostRequest, ...action.payload.newFormFields } };
         } case requestPubmedPreview.type: {
-            return { ...state, showPubmedPreview: true };
+            return { ...state, showPubmedPreview: true, pubmedPreview: undefined };
          } case fulfillPubmedPreview.type: {
             return { ...state, pubmedPreview: action.payload.pubmedPreview };
         } case closePubmedPreview.type: {
@@ -82,6 +99,18 @@ export function reduce(state: State = initialState, action: Action): State {
                     ...state.attachedFileSpecsToAdd.slice(action.payload.index + 1),
                 ]
             };
+        }
+        case requestSubmitComment.type: {
+            return {
+                ...state,
+                submitting: true
+            }
+        }
+        case fulfillSubmitComment.type: {
+            return {
+                ...state,
+                submitting: false
+            }
         }
         default: {
             return state;
@@ -114,8 +143,8 @@ async function getFulfillSubmitComment([requestAction]: [ InferAction<typeof req
 function isFulfillSubmitCommentCoherent([requestAction]: [InferAction<typeof requestSubmitComment>], state: State ) {
     return (
         state.userCommentPostRequest === undefined ||
-        state.userCommentPostRequest.previousId === undefined ||
-        state.userCommentPostRequest.previousId  === requestAction.payload.userCommentPostRequest.previousId
+        state.userCommentPostRequest.id === undefined ||
+        state.userCommentPostRequest.id === requestAction.payload.userCommentPostRequest.id
     );
 }
 

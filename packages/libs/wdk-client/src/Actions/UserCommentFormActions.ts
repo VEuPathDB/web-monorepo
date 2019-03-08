@@ -66,7 +66,7 @@ export const fulfillPubmedPreview = makeActionCreator (
 
 export const closePubmedPreview = makeActionCreator (
     'userCommentForm/closePubmedIdPreview',
-    (userCommentId: number) => ({ userCommentId})
+    () => ({ })
 );
 
 // the user has clicked the Browse Files button

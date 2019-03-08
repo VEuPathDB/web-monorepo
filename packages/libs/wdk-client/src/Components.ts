@@ -39,6 +39,8 @@ import SaveableTextEditor from 'wdk-client/Components/InputControls/SaveableText
 import SingleSelect from 'wdk-client/Components/InputControls/SingleSelect';
 import TextArea from 'wdk-client/Components/InputControls/TextArea';
 import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import TextBoxMultivalued from 'wdk-client/Components/InputControls/TextBoxMultivalued';
+import FileInput from 'wdk-client/Components/InputControls/FileInput';
 import Footer from 'wdk-client/Components/Layout/Footer';
 import Header from 'wdk-client/Components/Layout/Header';
 import Main from 'wdk-client/Components/Layout/Main';
@@ -68,6 +70,7 @@ export {
   DateSelector,
   Dialog,
   DownloadForm,
+  FileInput,
   FilterParamNew,
   Footer,
   Header,
@@ -105,5 +108,6 @@ export {
   TabbableContainer,
   TextArea,
   TextBox,
+  TextBoxMultivalued,
   Tooltip,
 };

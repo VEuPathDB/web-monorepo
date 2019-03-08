@@ -948,9 +948,16 @@ export default class WdkService {
     return this._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`)
   }
 
+  getUserComments(targetType: string, targetId: string) : Promise<UserComment> {
+    return this._fetchJson<UserComment>(
+      'get',
+      `/user-comments?target-type=${targetType}&target-id=${targetId}`
+    );
+  }
+
   // return the new comment id
   postUserComment(userCommentPostRequest: UserCommentPostRequest) : Promise<StandardWdkPostResponse> {
-    let data = JSON.stringify({ userCommentPostRequest });
+    let data = JSON.stringify(userCommentPostRequest);
     return this._fetchJson<StandardWdkPostResponse>('post', '/user-comments', data);
   }
 

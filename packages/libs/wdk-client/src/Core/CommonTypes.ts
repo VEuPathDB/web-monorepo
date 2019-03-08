@@ -6,6 +6,8 @@ import { ActionCreatorResult } from 'wdk-client/Core/WdkMiddleware';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import { CompositeClientPlugin } from 'wdk-client/Utils/ClientPlugin';
 
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
+export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
 export interface SimpleDispatch {
   (action: Action): void;

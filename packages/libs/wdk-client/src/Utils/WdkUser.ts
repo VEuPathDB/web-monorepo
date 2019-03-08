@@ -108,7 +108,7 @@ export type ReviewStatus =
   export interface UserCommentFormFields {
     content?: string,
     headline?: string,
-    genbankAccessions?: string[],
+    genBankAccessions?: string[],
     categoryIds?: string[],
     digitalObjectIds?: string[],
     pubmedIds?: string[],
@@ -118,13 +118,13 @@ export type ReviewStatus =
   
   // fields expected by the post to create a user comment
   export interface UserCommentPostRequest extends UserCommentFormFields {
-  previousId?: number,
-  target?: string,
+  id?: number,
+  target?: { type: string, id: string },
   organism?: string,
-  author?: string,
+  author?: { organization: string, userId: number, firstName: string, lastName: string },
   reviewStatus?: ReviewStatus,
   modifiedDate?: Date,
-  externalDb?: string
+  externalDb?: { name: string, version: string }
 }
 
 export interface UserComment extends UserCommentPostRequest {
