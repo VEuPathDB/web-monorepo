@@ -2049,6 +2049,77 @@
 </div>
 </div>
 
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 35: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo35 table, #ExpInfo35 td, #ExpInfo35 th, #ExpInfo35 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo35 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo35"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 33: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain sporozoites to produce and integrate clinical, hematological, parasitological, omics, and histopathological measures of acute primary infection.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>A mixed cohort of seven malaria-naive male <i>Macaca mulatta</i> (n=3) and <i>Macaca fascicularis</i> (n=4) were inoculated intravenously with <i>P. knowlesi</i> Malayan strain cryo-preserved salivary gland sporozoites, obtained from Anopheles dirus infected with parasites from the Pk1A+ clone and previously confirmed in E30, E06, E07, and E34 for their infectivity of macaques. The P. knowlesi sporozoites stocks had been generated, isolated and cryopreserved at the Centers for Disease Control and Prevention, and then stored at Yerkes. The experiment was designed to contain two baseline time points at days -13 and -42 prior to sporozoite inoculation, four (<i>M. mulatta</i>) or six (<i>M. fascicularis</i>) time points after inoculation, plus terminal necropsies (for pathology studies) scheduled between days 48-50 at a time when all animals had chronic infections. Venous whole blood and bone marrow aspirate samples were collected at all time points for clinical, hematological, parasitological, immunological, functional genomics, proteomics, and metabolomics measurements, or sample storage for future testing. Sub-curative doses of artemether were administered via I.M. to the <i>M. mulatta</i> animals at the initial high parasitemia and subsequent lower rises of parasitemias when necessary to dampen the parasitemias and allow a chronic infection to develop. No subcurative doses of artemether were needed for the <i>M. fascicularis</i>, which naturally controlled their parasitemias from the time of the first rise of parasites in the blood. Daily collection of capillary samples was performed for the clinical measurement of complete blood counts, reticulocytes, and parasitemias, and for sample banking.  Within the MaHPIC, this project is known as 'Experiment 35'. This dataset was produced by Monica Cabrera-Mora at Emory University. To access other publicly available results from E35 and other MaHPIC experiments, including clinical results (specifics on drugs administered, diet, and veterinary interventions), and other omics, visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>.  This page will be updated as datasets are released to the public.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).
+</td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks35 table, #DataLinks35 td, #DataLinks35 th, #DataLinks35 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks35 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks35 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks35"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_35/"><b>E35 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
+</div>
+</div>
+
+
 
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</a> </h3> 
