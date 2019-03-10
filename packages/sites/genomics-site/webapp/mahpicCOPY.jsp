@@ -2271,6 +2271,75 @@
 </div>
 </div>
 
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 21: Uninfected <i>Macaca mulatta</i> that serve as a control for in vivo biotinylation studies ten months after the first infusion (E02)</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo21 table, #ExpInfo21 td, #ExpInfo21 th, #ExpInfo21 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo21 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo21"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 21: Uninfected <i>Macaca mulatta</i> that serve as a control for in vivo biotinylation studies ten months after the first infusion (E02)</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Be aware that though this dataset is included in the body of MaHPIC results, it was produced before the MaHPIC project started. As of this writing, only the clinical results are planned for public release. Also, different from most MaHPIC datasets, there are no clinical timepoints included in the results. The macaques received a second intravenous infusion of a water-soluble biotin derivative ten months after the first infusion (E02) to determine the erythrocyte lifespan via daily quantification of the biotinylated cells using flow cytometry. Clinical, hematological, and metabolomics measures were collected in the course of the follow-up. Within the MaHPIC, this project is known as 'Experiment 21'. This dataset was produced by Dr. Alberto Moreno at Emory University. To access other publicly available data from MaHPIC Experiments visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks21 table, #DataLinks21 td, #DataLinks21 th, #DataLinks21 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks21 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks21 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks21"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_21/"><b>E21 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
+</div>
+</div>
+
   </div>
   </div>
   </div>
