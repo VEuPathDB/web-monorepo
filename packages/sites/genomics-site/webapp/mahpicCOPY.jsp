@@ -2064,7 +2064,75 @@
   </div>	
   </div>  
 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain infected red blood cells</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo01 table, #ExpInfo01 td, #ExpInfo01 th, #ExpInfo01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo01 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo01"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain infected red blood cells</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Be aware that though this dataset is included in the body of MaHPIC results, it was produced before the MaHPIC project started. As of this writing, only the clinical results are planned for public release. Also, different from most MaHPIC datasets, there are no clinical timepoints included in the results. Before the experimental infection, the macaques received an intravenous infusion of a water-soluble biotin derivative to determine the erythrocyte lifespan via daily quantification of the biotinylated cells using flow cytometry. Clinical, hematological, parasitological, and metabolomics measures were collected in the course of the infection. Within the MaHPIC, this project is known as 'Experiment 01'. This dataset was produced by Dr. Alberto Moreno and Monica Cabrera-Mora at Emory University. To access other publicly available data from MaHPIC Experiments visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks01 table, #DataLinks01 td, #DataLinks01 th, #DataLinks01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks01 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks01 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks01"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_01/"><b>E01 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
 
+  </div>	
+  </div>  
 
   </div>
   </div>
