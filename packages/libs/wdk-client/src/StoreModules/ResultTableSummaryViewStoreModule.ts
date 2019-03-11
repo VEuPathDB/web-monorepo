@@ -31,7 +31,10 @@ import {
   updateColumnsDialogExpandedNodes,
   updateColumnsDialogSelection,
   updateSelectedIds,
-  viewPageNumber
+  viewPageNumber,
+  requestGlobalViewFilters,
+  updateGlobalViewFilters,
+  fulfillGlobalViewFilters,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -46,13 +49,16 @@ import {
   getResultTableSortingPref,
   setResultTableColumnsPref,
   setResultTablePageSizePref,
-  setResultTableSortingPref
+  setResultTableSortingPref,
+  getGlobalViewFilters,
+  setGlobalViewFilters
 } from 'wdk-client/Utils/UserPreferencesUtils';
 import {
   Answer,
   AnswerJsonFormatConfig,
   AttributesConfig,
-  PrimaryKey
+  PrimaryKey,
+  AnswerSpec
 } from 'wdk-client/Utils/WdkModel';
 
 export const key = 'resultTableSummaryView';
@@ -60,6 +66,10 @@ export const key = 'resultTableSummaryView';
 export type BasketScope = 'global' | 'project';
 
 type BasketStatus = 'yes' | 'no' | 'loading';
+
+// View filters that are applied to all answer requests for this summary view.
+// Keys are recordClass names.
+type GlobalViewFilters = Record<string, AnswerSpec['viewFilters']>;
 
 export type State = {
   stepId?: number;
@@ -72,12 +82,14 @@ export type State = {
   columnsDialogSelection?: Array<string>; //
   columnsDialogExpandedNodes?: Array<string>;
   selectedIds?: string[];
+  globalViewFilters: GlobalViewFilters;
 };
 
 const initialState: State = {
   answerLoading: false,
   addingStepToBasket: false,
-  columnsDialogIsOpen: false
+  columnsDialogIsOpen: false,
+  globalViewFilters: {}
 };
 
 // return complete basket status array, setting some elements to 'loading'
@@ -193,6 +205,16 @@ export function reduce(state: State = initialState, action: Action): State {
     }
     case updateSelectedIds.type: {
       return { ...state, selectedIds: action.payload.ids };
+    }
+
+    case fulfillGlobalViewFilters.type: {
+      return {
+        ...state,
+        globalViewFilters: {
+          ...state.globalViewFilters,
+          [action.payload.recordClassName]: action.payload.viewFilters
+        }
+      };
     }
 
     default: {
@@ -467,14 +489,16 @@ async function getRequestAnswer(
     viewPageNumberAction,
     fulfillPageSizeAction,
     fulfillColumnsChoiceAction,
-    fulfillSortingAction
+    fulfillSortingAction,
+    fulfillGlobalViewFiltersAction
   ]: [
     InferAction<typeof openRTS>,
     InferAction<typeof fulfillStep>,
     InferAction<typeof viewPageNumber>,
     InferAction<typeof fulfillPageSize>,
     InferAction<typeof fulfillColumnsChoice>,
-    InferAction<typeof fulfillSorting>
+    InferAction<typeof fulfillSorting>,
+    InferAction<typeof fulfillGlobalViewFilters>
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
@@ -486,7 +510,8 @@ async function getRequestAnswer(
   let attributes = fulfillColumnsChoiceAction.payload.columns;
   let sorting = fulfillSortingAction.payload.sorting;
   let columnsConfig: AttributesConfig = { attributes, sorting };
-  return requestAnswer(stepId, columnsConfig, pagination);
+  let { viewFilters } = fulfillGlobalViewFiltersAction.payload;
+  return requestAnswer(stepId, columnsConfig, pagination, viewFilters);
 }
 
 function filterRequestAnswerActions([
@@ -495,14 +520,16 @@ function filterRequestAnswerActions([
   viewPageNumberAction,
   fulfillPageSizeAction,
   fulfillColumnsChoiceAction,
-  fulfillSortingAction
+  fulfillSortingAction,
+  fulfillGlobalViewFiltersAction
 ]: [
   InferAction<typeof openRTS>,
   InferAction<typeof fulfillStep>,
   InferAction<typeof viewPageNumber>,
   InferAction<typeof fulfillPageSize>,
   InferAction<typeof fulfillColumnsChoice>,
-  InferAction<typeof fulfillSorting>
+  InferAction<typeof fulfillSorting>,
+  InferAction<typeof fulfillGlobalViewFilters>
 ]) {
   return (
     fulfillStepAction.payload.step.answerSpec.questionName ===
@@ -511,7 +538,9 @@ function filterRequestAnswerActions([
     fulfillStepAction.payload.step.answerSpec.questionName ===
       fulfillColumnsChoiceAction.payload.questionName &&
     fulfillStepAction.payload.step.answerSpec.questionName ===
-      fulfillSortingAction.payload.questionName
+      fulfillSortingAction.payload.questionName &&
+    fulfillGlobalViewFiltersAction.payload.recordClassName ===
+      fulfillStepAction.payload.step.recordClassName
   );
 }
 
@@ -548,16 +577,14 @@ async function getFulfillAnswer(
         return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, answer);
     }
    */
-  let answerJsonFormatConfig = {
+  // FIXME Need to figure out how to handle client errors, given that some of these inputs are stored as user preferences. We might need to clear these prefs on errors?
+  let formatConfig: AnswerJsonFormatConfig= {
     sorting: r.columnsConfig.sorting,
     attributes: r.columnsConfig.attributes,
     pagination: r.pagination
   };
-  let answer = await wdkService.getStepAnswerJson(
-    requestAction.payload.stepId,
-    <AnswerJsonFormatConfig>answerJsonFormatConfig
-  );
-  return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, answer);
+  let answer = await wdkService.getStepAnswerJson(r.stepId, formatConfig, r.viewFilters);
+  return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
 }
 
 function filterFulfillAnswerActions([openAction, requestAction]: [
@@ -639,6 +666,102 @@ function filterFulfillRecordBasketStatusActions([
   );
 }
 
+// Global view filters
+
+async function getRequestGlobalViewFiltersPref(
+  [
+    openAction,
+    stepAction,
+  ]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillStep>
+  ],
+): Promise<InferAction<typeof requestGlobalViewFilters>> {
+  return requestGlobalViewFilters(stepAction.payload.step.recordClassName);
+}
+
+function filterRequestGlobalViewFiltersActionsPref(
+  [
+    openAction,
+    stepAction,
+  ]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillStep>
+  ]
+) {
+  return openAction.payload.stepId === stepAction.payload.step.id;
+}
+
+async function getFulfillGlobalViewFiltersPref(
+  [
+    openAction,
+    stepAction,
+    requestAction
+  ]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillStep>,
+    InferAction<typeof requestGlobalViewFilters>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillGlobalViewFilters>> {
+  const { recordClassName } = stepAction.payload.step;
+  const viewFilters = await getGlobalViewFilters(wdkService, recordClassName);
+  return fulfillGlobalViewFilters(recordClassName, viewFilters);
+}
+
+function filterFulfillGlobalViewFiltersActionsPref(
+  [
+    openAction,
+    stepAction,
+    requestAction
+  ]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillStep>,
+    InferAction<typeof requestGlobalViewFilters>
+  ]
+) {
+  return (
+    openAction.payload.stepId === stepAction.payload.step.id &&
+    stepAction.payload.step.recordClassName === requestAction.payload.recordClassName
+  )
+}
+
+async function getFulfillGlobalViewFiltersUpdate(
+  [
+    openAction,
+    stepAction,
+    updateAction
+  ]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillStep>,
+    InferAction<typeof updateGlobalViewFilters>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillGlobalViewFilters>> {
+  const { recordClassName, viewFilters } = updateAction.payload;
+  setGlobalViewFilters(wdkService, recordClassName, viewFilters);
+  return fulfillGlobalViewFilters(recordClassName, viewFilters);
+}
+
+function filterFulfillGlobalViewFiltersActionsUpdate(
+  [
+    openAction,
+    stepAction,
+    updateAction
+  ]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillStep>,
+    InferAction<typeof updateGlobalViewFilters>
+  ]
+) {
+  return (
+    openAction.payload.stepId === stepAction.payload.step.id &&
+    stepAction.payload.step.recordClassName === updateAction.payload.recordClassName
+  )
+}
+
 export const observe = takeEpicInWindow(
   openResultTableSummaryView,
   closeResultTableSummaryView,
@@ -659,9 +782,15 @@ export const observe = takeEpicInWindow(
       { areActionsCoherent: filterFullfillSortingPreferenceActions }),
     mrate([openRTS, fulfillStep, requestSortingUpdate], getFulfillSortingUpdate,
       { areActionsCoherent: filterFulfillSortingUpdateActions }),
+    mrate([openRTS, fulfillStep], getRequestGlobalViewFiltersPref,
+      { areActionsCoherent: filterRequestGlobalViewFiltersActionsPref }),
+    mrate([openRTS, fulfillStep, requestGlobalViewFilters], getFulfillGlobalViewFiltersPref,
+      { areActionsCoherent: filterFulfillGlobalViewFiltersActionsPref }),
+    mrate([openRTS, fulfillStep, updateGlobalViewFilters], getFulfillGlobalViewFiltersUpdate,
+      { areActionsCoherent: filterFulfillGlobalViewFiltersActionsUpdate }),
     mrate([requestPageSize], getFulfillPageSize),
     mrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
-    mrate([openRTS, fulfillStep, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting], getRequestAnswer,
+    mrate([openRTS, fulfillStep, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting, fulfillGlobalViewFilters], getRequestAnswer,
       { areActionsCoherent: filterRequestAnswerActions }),
     mrate([openRTS, requestAnswer], getFulfillAnswer,
       { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),

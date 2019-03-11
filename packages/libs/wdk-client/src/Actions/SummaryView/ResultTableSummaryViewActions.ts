@@ -7,7 +7,8 @@ import {
   AttributesConfig,
   AttributeSortingSpec,
   Pagination,
-  PrimaryKey
+  PrimaryKey,
+  AnswerSpec
 } from 'wdk-client/Utils/WdkModel';
 
 export const openResultTableSummaryView = makeActionCreator(
@@ -97,8 +98,9 @@ export const requestAnswer = makeActionCreator(
   (
     stepId: number,
     columnsConfig: AttributesConfig,
-    pagination: Pagination
-  ) => ({ stepId, columnsConfig, pagination })
+    pagination: Pagination,
+    viewFilters?: AnswerSpec['viewFilters'],
+  ) => ({ stepId, columnsConfig, pagination, viewFilters })
 );
 
 export const fulfillAnswer = makeActionCreator(
@@ -107,8 +109,9 @@ export const fulfillAnswer = makeActionCreator(
     stepId: number,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
+    viewFilters: AnswerSpec['viewFilters'] | undefined,
     answer: Answer
-  ) => ({ stepId, columnsConfig, pagination, answer })
+  ) => ({ stepId, columnsConfig, pagination, viewFilters, answer })
 );
 
 export const requestRecordsBasketStatus = makeActionCreator(
@@ -137,6 +140,27 @@ export const updateSelectedIds = makeActionCreator(
   (ids: string[]) => ({ ids })
 );
 
+export const requestGlobalViewFilters = makeActionCreator(
+  'resultTableSummaryView/requestGlobalViewFilters',
+  (recordClassName: string) => ({ recordClassName })
+);
+
+export const updateGlobalViewFilters = makeActionCreator(
+  'resultTableSummaryView/updateGlobalViewFilters',
+  (recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
+    recordClassName,
+    viewFilters
+  })
+);
+
+export const fulfillGlobalViewFilters = makeActionCreator(
+  'resultTableSummaryView/fulfillGlobalViewFilters',
+  (recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
+    recordClassName,
+    viewFilters
+  })
+);
+
 export type Action =
   | InferAction<typeof openResultTableSummaryView>
   | InferAction<typeof requestSortingPreference>
@@ -157,4 +181,7 @@ export type Action =
   | InferAction<typeof showHideAddColumnsDialog>
   | InferAction<typeof updateColumnsDialogSelection>
   | InferAction<typeof updateColumnsDialogExpandedNodes>
-  | InferAction<typeof updateSelectedIds>;
+  | InferAction<typeof updateSelectedIds>
+  | InferAction<typeof requestGlobalViewFilters>
+  | InferAction<typeof updateGlobalViewFilters>
+  | InferAction<typeof fulfillGlobalViewFilters>;

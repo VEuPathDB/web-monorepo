@@ -68,7 +68,7 @@ interface DispatchProps {
 }
 type OwnProps = {
   stepId: number;
-  tableAction?: TableAction[];
+  tableActions?: TableAction[];
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -94,7 +94,7 @@ class ResultTableSummaryViewController extends React.Component< Props > {
     return (
       <ResultTableSummaryView
         stepId={this.props.stepId}
-        actions={this.props.tableAction}
+        actions={this.props.tableActions}
         {...this.props.viewData}
         {...this.props.actionCreators}
       />
@@ -122,27 +122,6 @@ const columnsTreeSelector = createSelector(
   }
 )
 
-const mapStateToProps = (state: RootState, props: OwnProps): StateProps['viewData'] => ({
-  ...state.resultTableSummaryView,
-  ...getQuestionAndRecordClass(state),
-  columnsTree: columnsTreeSelector(state, props),
-  activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName
-});
-
-const ConnectedController = connect<StateProps['viewData'], DispatchProps['actionCreators'], OwnProps, Props, RootState>(
-  mapStateToProps,
-  actionCreators,
-  (viewData, actionCreators, ownProps) => ({ viewData, actionCreators, ...ownProps })
-) (wrappable(ResultTableSummaryViewController));
-
-export function withTableActions(tableActions: TableAction[]) {
-  return function TableActionProvider(props: Exclude<OwnProps, 'tableActions'>) {
-    return <ConnectedController {...props} tableAction={tableActions}/>
-  }
-}
-
-export default Object.assign(ConnectedController, { withTableActions });
-
 function getQuestionAndRecordClass(rootState: RootState): { question: Question, recordClass: RecordClass } | undefined {
   if (
     rootState.resultTableSummaryView.questionFullName == null ||
@@ -155,3 +134,21 @@ function getQuestionAndRecordClass(rootState: RootState): { question: Question, 
   const recordClass = question && rootState.globalData.recordClasses.find(r => r.name === question.recordClassName);
   return question && recordClass && { question, recordClass };
 }
+
+const mapStateToProps = (state: RootState, props: OwnProps): StateProps['viewData'] => ({
+  ...state.resultTableSummaryView,
+  ...getQuestionAndRecordClass(state),
+  columnsTree: columnsTreeSelector(state, props),
+  activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName
+});
+
+const ConnectedController = connect<StateProps['viewData'], DispatchProps['actionCreators'], OwnProps, Props, RootState>(
+  mapStateToProps,
+  actionCreators,
+  (viewData, actionCreators, ownProps) => ({ viewData, actionCreators, ...ownProps })
+)(wrappable(ResultTableSummaryViewController));
+
+export default Object.assign(ConnectedController, {
+  withTableActions: (tableActions: TableAction[]) => (props: Exclude<OwnProps, 'tableActions'>) =>
+    <ConnectedController {...props} tableActions={tableActions}/>
+});

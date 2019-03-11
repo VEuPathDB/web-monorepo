@@ -927,7 +927,7 @@ export default class WdkService {
   }
 
   // update or add a single user preference
-  patchUserPreference(scope: PreferenceScope, key: string, value: string) : Promise<UserPreferences> {
+  patchUserPreference(scope: PreferenceScope, key: string, value: string | null) : Promise<UserPreferences> {
     let entries = { [scope]: { [key]: value }};
     let url = '/users/current/preferences';
     let data = JSON.stringify(entries);
@@ -1017,7 +1017,21 @@ export default class WdkService {
   }
 
   // get step's answer in wdk default json output format
-  getStepAnswerJson(stepId: number, formatConfig: AnswerJsonFormatConfig, userId: string = 'current') {
+  async getStepAnswerJson(stepId: number, formatConfig: AnswerJsonFormatConfig, viewFilters?: AnswerSpec['viewFilters'], userId: string = 'current') {
+
+    // FIXME Remove this when the steps/{id}/answer endpoint accepts viewFilters
+    if (viewFilters) {
+      const step = await this.findStep(stepId);
+      const answerSpec = {
+        ...step.answerSpec,
+        viewFilters: [
+          ...(step.answerSpec.viewFilters || []),
+          ...viewFilters
+        ]
+      };
+      return this.getAnswerJson(answerSpec, formatConfig);
+    }
+
     return this.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/answer`,

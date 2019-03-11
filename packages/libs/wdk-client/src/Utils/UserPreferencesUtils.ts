@@ -1,7 +1,10 @@
 import { parseInt, isInteger } from 'lodash/fp';
 import WdkService from 'wdk-client/Utils/WdkService';
+import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
-import { AttributeSortingSpec } from "wdk-client/Utils/WdkModel"
+import { AttributeSortingSpec, AnswerSpec } from "wdk-client/Utils/WdkModel"
+
+type ViewFilters = AnswerSpec['viewFilters'];
 
 function isValidDirection(direction: string): direction is 'ASC' | 'DESC' {
     return direction === 'ASC' || direction === 'DESC' 
@@ -27,7 +30,7 @@ type PrefSpec = [keyof UserPreferences, string];
 const getPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec) => 
   (await wdkService.getCurrentUserPreferences())[scope][key];
 
-const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, value: string) =>
+const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, value: string | null) =>
   await wdkService.patchUserPreference(scope, key, value);
 
 export const prefSpecs = {
@@ -35,6 +38,7 @@ export const prefSpecs = {
   summary: (questionName: string): PrefSpec => [ 'project', questionName + '_summary' ],
   itemsPerPage: (): PrefSpec => [ 'global', 'preference_global_items_per_page' ],
   matchedTranscriptsExpanded: (): PrefSpec => [ 'global', 'matchted_transcripts_filter_expanded' ],
+  globalViewFilters: (recordClassName: string): PrefSpec => ['project', recordClassName + '_globalViewFilters'],
 }
 
 export async function getResultTableColumnsPref(questionName: string, wdkService: WdkService): Promise<string[]> {
@@ -86,4 +90,26 @@ export async function getMatchedTranscriptFilterPref(wdkService: WdkService) : P
 
 export async function setMatchedTranscriptFilterPref(expanded: boolean, wdkService: WdkService) : Promise<UserPreferences> {
     return setPrefWith(wdkService, prefSpecs.matchedTranscriptsExpanded(), expanded ? 'yes' : 'no');
+}
+
+
+// Global view filters
+// -------------------
+
+// FIXME Need to figure out a way to validate view filter values
+
+const viewFiltersDecoder: Decoder<ViewFilters> = optional(arrayOf(combine(
+  field('name', string),
+  field('value', ok)
+)));
+
+export async function getGlobalViewFilters(wdkService: WdkService, recordClassName: string): Promise<ViewFilters> {
+  const prefValue = await getPrefWith(wdkService, prefSpecs.globalViewFilters(recordClassName));
+  if (prefValue == null || prefValue == '') return undefined;
+  return decode(viewFiltersDecoder, await getPrefWith(wdkService, prefSpecs.globalViewFilters(recordClassName)));
+}
+
+export async function setGlobalViewFilters(wdkService: WdkService, recordClassName: string, viewFilters?: ViewFilters): Promise<UserPreferences> {
+  const prefValue = viewFilters ? JSON.stringify(viewFilters) : null;
+  return setPrefWith(wdkService, prefSpecs.globalViewFilters(recordClassName), prefValue);
 }

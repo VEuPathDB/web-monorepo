@@ -48,7 +48,7 @@ export {
   WordCloudAnalysisActions,
   HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
-  ResultPanelActions
+  ResultPanelActions,
 };
 
 export type Action =
@@ -76,4 +76,4 @@ export type Action =
   | HistogramAnalysisActions.Action
   | MatchedTranscriptsFilterActions.Action
   | ResultPanelActions.Action
-  | UnhandledErrorActions.Action;
+  | UnhandledErrorActions.Action
