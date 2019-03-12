@@ -1902,7 +1902,7 @@
   </div>  
 
 <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 33: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain</a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 33: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain to study actute infection.</a> </h3> 
    <div class="wdk-toggle-content">
      
      <h4>Experiment Information</h4>
@@ -2051,7 +2051,7 @@
 
 
 <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Experiment 35: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain</a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 35: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain to study chronic infection.</a> </h3> 
    <div class="wdk-toggle-content">
      
      <h4>Experiment Information</h4>
