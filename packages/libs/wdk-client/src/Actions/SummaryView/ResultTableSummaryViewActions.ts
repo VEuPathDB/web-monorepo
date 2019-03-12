@@ -16,11 +16,6 @@ export const openResultTableSummaryView = makeActionCreator(
   (stepId: number) => ({ stepId })
 );
 
-export const closeResultTableSummaryView = makeActionCreator(
-  'resultTableSummaryView/close',
-  (stepId: number) => ({ stepId })
-);
-
 export const showHideAddColumnsDialog = makeActionCreator(
   'resultTableSummaryView/showHideAddColumnsPopup',
   (show: boolean) => ({ show })
@@ -165,7 +160,6 @@ export type Action =
   | InferAction<typeof openResultTableSummaryView>
   | InferAction<typeof requestSortingPreference>
   | InferAction<typeof openResultTableSummaryView>
-  | InferAction<typeof closeResultTableSummaryView>
   | InferAction<typeof requestSortingUpdate>
   | InferAction<typeof fulfillSorting>
   | InferAction<typeof requestColumnsChoicePreference>

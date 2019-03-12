@@ -12,7 +12,6 @@ import {
   requestRecordsBasketStatus,
   fulfillRecordsBasketStatus,
   openResultTableSummaryView,
-  closeResultTableSummaryView,
   requestSortingUpdate,
   requestColumnsChoiceUpdate,
   requestPageSizeUpdate,
@@ -34,7 +33,6 @@ import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Action
 
 const actionCreators = {
   openResultTableSummaryView,
-  closeResultTableSummaryView,  
   requestPageSize,
   fulfillPageSize,
   requestAnswer,
@@ -81,13 +79,8 @@ class ResultTableSummaryViewController extends React.Component< Props > {
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.stepId !== this.props.stepId) {
-      this.props.actionCreators.closeResultTableSummaryView(prevProps.stepId);
       this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
     }
-  }
-
-  componentWillUnmount() {
-    this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
   }
 
   render() {

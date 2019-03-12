@@ -12,7 +12,6 @@ import {
 } from 'wdk-client/Actions/BasketActions';
 import { fulfillStep, requestStep } from 'wdk-client/Actions/StepActions';
 import {
-  closeResultTableSummaryView,
   fulfillAnswer,
   fulfillColumnsChoice,
   fulfillPageSize,
@@ -141,7 +140,7 @@ function reduceColumnsFulfillAction(state: State, action: Action): State {
 export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
     case openResultTableSummaryView.type: {
-      return { ...state, stepId: action.payload.stepId };
+      return { ...initialState, stepId: action.payload.stepId };
     }
     case requestAnswer.type: {
       return { ...state, answerLoading: true };
@@ -764,7 +763,7 @@ function filterFulfillGlobalViewFiltersActionsUpdate(
 
 export const observe = takeEpicInWindow(
   openResultTableSummaryView,
-  closeResultTableSummaryView,
+  openResultTableSummaryView,
   combineEpics(
     mrate([openRTS], getRequestStep),
     mrate([openRTS], getFirstPageNumber),
