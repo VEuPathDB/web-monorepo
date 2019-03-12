@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { UserComment, UserCommentPostRequest, UserCommentFormFields, UserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview } from "wdk-client/Utils/WdkUser";
+import { UserComment, UserCommentPostRequest, UserCommentFormFields, UserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse } from "wdk-client/Utils/WdkUser";
 
 // we open the form in one of two modes:
 //  new comment:  we receive some initial comment values from the URL used to call the route
@@ -42,28 +42,28 @@ export const closeUserCommentForm = makeActionCreator (
 // values from the route.  in edit mode, from the previous comment
 export const fulfillUserComment = makeActionCreator (
     'userCommentForm/fulfillPreviousUserComment',
-    (userComment: UserComment ) => ({ userComment })
+    (userComment: { editMode: false, formValues: UserCommentPostRequest } | { editMode: true, formValues: UserCommentGetResponse }) => ({ userComment })
 );
 
 // the user has updated one or more fields in the form.  the state in this action will replace
 // the existing form state
 export const updateFormFields  = makeActionCreator (
     'userCommentForm/updateFields',
-    (newFormFields: UserCommentFormFields ) => ({ newFormFields })
+    (newFormFields: UserCommentFormFields) => ({ newFormFields })
 );
 
 // the user wants to open the pubmed preview.   the pubmed IDs to preview will be in the state 
 export const requestPubmedPreview = makeActionCreator (
     'userCommentForm/openPubmedIdPreview',
-    (pubmedIds: number[]) => ({pubmedIds })
+    (pubMedIds: number[]) => ({ pubMedIds })
+);
+
+export const fulfillPubmedPreview = makeActionCreator (
+    'userCommentForm/fulfillPubmedIdPreview',
+    (pubMedIds: number[], pubmedPreview: PubmedPreview) => ({pubMedIds, pubmedPreview })
 );
 
 // the user wants to close the pubmed preview
-export const fulfillPubmedPreview = makeActionCreator (
-    'userCommentForm/fulfillPubmedIdPreview',
-    (pubmedIds: number[], pubmedPreview: PubmedPreview) => ({pubmedIds, pubmedPreview })
-);
-
 export const closePubmedPreview = makeActionCreator (
     'userCommentForm/closePubmedIdPreview',
     () => ({ })

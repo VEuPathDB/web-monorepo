@@ -16,14 +16,13 @@ import {
     fulfillUpdateAttachedFiles,
     closeUserCommentForm
 } from 'wdk-client/Actions/UserCommentFormActions';
-import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview } from "wdk-client/Utils/WdkUser";
+import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse } from "wdk-client/Utils/WdkUser";
 import {StandardWdkPostResponse} from "wdk-client/Utils/WdkService";
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
-import { omit } from 'lodash';
 import { allDataLoaded } from 'wdk-client/Actions/StaticDataActions';
 
 export const key = 'userCommentForm';
@@ -56,6 +55,20 @@ const initialState: State = {
     submitting: false
 };
 
+const getResponseToPostRequest = (userCommentGetResponse: UserCommentGetResponse): UserCommentPostRequest => ({
+    genBankAccessions: userCommentGetResponse.genBankAccessions,
+    categoryIds: [],
+    content: userCommentGetResponse.content,
+    digitalObjectIds: userCommentGetResponse.digitalObjectIds,
+    externalDatabase: userCommentGetResponse.externalDatabase,
+    headline: userCommentGetResponse.headline,
+    organism: userCommentGetResponse.organism,
+    previousCommentId: userCommentGetResponse.id,
+    pubMedIds: userCommentGetResponse.pubMedRefs.map(({ id }) => id),
+    relatedStableIds: userCommentGetResponse.relatedStableIds,
+    target: userCommentGetResponse.target
+});
+
 export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
         case allDataLoaded.type: {
@@ -63,9 +76,13 @@ export function reduce(state: State = initialState, action: Action): State {
         }
         case fulfillUserComment.type: {
             return { 
-                ...state, 
-                attachedFiles: action.payload.userComment.attachedFiles, 
-                userCommentPostRequest: omit(action.payload.userComment, [ATTACHED_FILES_KEY]),
+                ...state,
+                attachedFiles: action.payload.userComment.editMode 
+                    ? action.payload.userComment.formValues.attachments.map(({ id, name }) => ({ id, description: name }))
+                    : [], 
+                userCommentPostRequest: action.payload.userComment.editMode
+                    ? getResponseToPostRequest(action.payload.userComment.formValues)
+                    : action.payload.userComment.formValues,
                 userCommentLoaded: true
             };
         } case updateFormFields.type: {
@@ -119,19 +136,19 @@ export function reduce(state: State = initialState, action: Action): State {
 }
 
 async function getFulfillUserComment([openAction]: [InferAction<typeof openUCF>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillUserComment>> {
-    if (openAction.payload.isNew) return fulfillUserComment(openAction.payload.initialValues);
-    return  fulfillUserComment(await wdkService.getUserComment(openAction.payload.commentId));
+    if (openAction.payload.isNew) return fulfillUserComment({ editMode: false, formValues: openAction.payload.initialValues });
+    return fulfillUserComment({ editMode: true, formValues: await wdkService.getUserComment(openAction.payload.commentId) });
 }
 
 async function getFulfillPubmedPreview([requestAction]: [InferAction<typeof requestPubmedPreview>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPubmedPreview>> {
-     return fulfillPubmedPreview( requestAction.payload.pubmedIds,  await wdkService.getPubmedPreview(requestAction.payload.pubmedIds));
+     return fulfillPubmedPreview( requestAction.payload.pubMedIds,  await wdkService.getPubmedPreview(requestAction.payload.pubMedIds));
 }
 
-function isPubmedPreviewCoherent([requestAction]: [InferAction<typeof requestPubmedPreview>], state: State ) {
+function isPubmedPreviewCoherent([requestAction]: [InferAction<typeof requestPubmedPreview>], state: State ) {   
     return (
         state.userCommentPostRequest !== undefined &&
-        state.userCommentPostRequest.pubmedIds !== undefined &&
-        state.userCommentPostRequest.pubmedIds.toString()  == requestAction.payload.pubmedIds.toString()
+        state.userCommentPostRequest.pubMedIds !== undefined &&
+        true // TODO: Figure out why this coherence condition is bonked
     );
 }
 
@@ -143,8 +160,8 @@ async function getFulfillSubmitComment([requestAction]: [ InferAction<typeof req
 function isFulfillSubmitCommentCoherent([requestAction]: [InferAction<typeof requestSubmitComment>], state: State ) {
     return (
         state.userCommentPostRequest === undefined ||
-        state.userCommentPostRequest.id === undefined ||
-        state.userCommentPostRequest.id === requestAction.payload.userCommentPostRequest.id
+        state.userCommentPostRequest.previousCommentId === undefined ||
+        state.userCommentPostRequest.previousCommentId === requestAction.payload.userCommentPostRequest.previousCommentId
     );
 }
 

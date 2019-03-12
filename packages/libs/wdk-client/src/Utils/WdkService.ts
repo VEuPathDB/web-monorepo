@@ -8,7 +8,7 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise, synchronized } from 'wdk-client/Utils/PromiseUtils';
-import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder, UserComment, UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec } from 'wdk-client/Utils/WdkUser';
+import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder, UserComment, UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentGetResponse } from 'wdk-client/Utils/WdkUser';
 
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
@@ -940,16 +940,16 @@ export default class WdkService {
   }
 
   getUserComment(id: number) {
-    return this._fetchJson<UserComment>('get', `/user-comments/${id}`)
+    return this._fetchJson<UserCommentGetResponse>('get', `/user-comments/${id}`)
   }
 
-  getPubmedPreview(pubmedIds: number[]) : Promise<PubmedPreview> {
-    let ids = pubmedIds.join(',');
-    return this._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`)
+  getPubmedPreview(pubMedIds: number[]) : Promise<PubmedPreview> {
+    let ids = pubMedIds.join(',');
+    return this._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`, undefined, true);
   }
 
-  getUserComments(targetType: string, targetId: string) : Promise<UserComment> {
-    return this._fetchJson<UserComment>(
+  getUserComments(targetType: string, targetId: string) : Promise<UserCommentGetResponse> {
+    return this._fetchJson<UserCommentGetResponse>(
       'get',
       `/user-comments?target-type=${targetType}&target-id=${targetId}`
     );
@@ -1127,17 +1127,19 @@ export default class WdkService {
     }).then(response => response.id)
   }
 
-  private _fetchJson<T>(method: string, url: string, body?: string) {
-    return fetch(this.serviceUrl + url, {
-      method: method.toUpperCase(),
-      body: body,
-      credentials: 'include',
-      headers: new Headers(Object.assign({
-        'Content-Type': 'application/json'
-      }, this._version && {
-        [CLIENT_WDK_VERSION_HEADER]: this._version
-      }))
-    }).then(response => {
+  private _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
+    return fetch(
+      isBaseUrl ? url : this.serviceUrl + url, 
+      {
+        method: method.toUpperCase(),
+        body: body,
+        credentials: 'include',
+        headers: new Headers(Object.assign({
+          'Content-Type': 'application/json'
+        }, this._version && {
+          [CLIENT_WDK_VERSION_HEADER]: this._version
+        }))
+      }).then(response => {
       if (this._isInvalidating) {
         return pendingPromise as Promise<T>;
       }

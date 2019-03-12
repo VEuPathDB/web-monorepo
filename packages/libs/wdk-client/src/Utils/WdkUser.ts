@@ -75,7 +75,7 @@ export type PubmedPreview = PubmedPreviewEntry[];
 export interface PubmedPreviewEntry {
   id: string,
   title: string,
-  journal: string,
+  journal?: string,
   author: string,
   url: string
 }
@@ -111,24 +111,70 @@ export type ReviewStatus =
     genBankAccessions?: string[],
     categoryIds?: string[],
     digitalObjectIds?: string[],
-    pubmedIds?: string[],
+    pubMedIds?: string[],
     relatedStableIds?: string[],
     additionalAuthors?: string[],
   }
   
   // fields expected by the post to create a user comment
   export interface UserCommentPostRequest extends UserCommentFormFields {
-  id?: number,
+  previousCommentId?: number,
   target?: { type: string, id: string },
   organism?: string,
   author?: { organization: string, userId: number, firstName: string, lastName: string },
-  reviewStatus?: ReviewStatus,
-  modifiedDate?: Date,
-  externalDb?: { name: string, version: string }
+  externalDatabase?: { name: string, version: string }
+}
+
+export interface UserCommentQueryStringParams {
+  commentId?: string;
+  stableId?: string;
+  commentTargetId?: string;
+  externalDbName?: string;
+  externalDbVersion?: string;
+  organism?: string;
+  locations?: string;
+  contig?: string;
+  strand?: string;
+}
+
+export interface UserCommentQueryParams {
+  commentId?: number;
+  target?: { id: string, type: string };
+  externalDb?: { name: string, version: string };
+  organism?: string;
+  locations?: string;
+  contig?: string;
+  strand?: string;
 }
 
 export interface UserComment extends UserCommentPostRequest {
   attachedFiles?: UserCommentAttachedFile[];
+}
+
+export interface UserCommentGetResponse {
+  additionalAuthors: string[];
+  attachments: { id: number, name: string, description: string, preview?: string }[];
+  author: { userId: number, firstName: string, lastName: string, organization: string };
+  categories: string[];
+  commentDate: number;
+  conceptual: boolean;
+  content: string;
+  digitalObjectIds: string[];
+  externalDatabase: { name: string, version: string };
+  genBankAccessions: string[];
+  headline: string;
+  id: number;
+  location: { 
+    coordinateType: string, 
+    ranges: { start: number, end: number },
+    reverse?: boolean
+  };
+  organism: string;
+  pubMedRefs: PubmedPreview;
+  relatedStableIds: string[];
+  reviewStatus: 'accepted' | 'adopted' | 'community' | 'not_spam' | 'rejected' | 'spam' | 'task' | 'unknown';
+  sequence: string;
+  target: { type: string, id: string };
 }
 
 export interface UserCommentPostResponse  {id: number};
