@@ -56,7 +56,7 @@ public class CustomProfileService extends ProfileService {
     try {
       RunnableObj<AnswerSpec> answerSpec = AnswerSpec
           .builder(getWdkModel())
-          .setQuestionName(APPROVED_STUDIES_QUESTION)
+          .setQuestionFullName(APPROVED_STUDIES_QUESTION)
           .buildRunnable(user, StepContainer.emptyContainer());
       AnswerValue answer = AnswerValueFactory.makeAnswer(user, answerSpec);
       answer.setPageToEntireResult();
