@@ -5,8 +5,6 @@ import {
     requestPubmedPreview,
     fulfillPubmedPreview,
     closePubmedPreview,
-    requestLocalFile,
-    fulfillLocalFile,
     removeAttachedFile,
     addFileToAttach,
     removeFileToAttach,
@@ -14,7 +12,9 @@ import {
     fulfillSubmitComment,
     requestUpdateAttachedFiles,
     fulfillUpdateAttachedFiles,
-    closeUserCommentForm
+    closeUserCommentForm,
+    modifyFileToAttach,
+    changePubmedIdSearchQuery
 } from 'wdk-client/Actions/UserCommentFormActions';
 import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse } from "wdk-client/Utils/WdkUser";
 import {StandardWdkPostResponse} from "wdk-client/Utils/WdkService";
@@ -24,6 +24,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { allDataLoaded } from 'wdk-client/Actions/StaticDataActions';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 export const key = 'userCommentForm';
 
@@ -34,25 +35,32 @@ export type UserCommentFormState = {
     userCommentPostRequest?: UserCommentPostRequest; // will include previous comment id if editing
     pubmedPreview?: PubmedPreview;
     showPubmedPreview: boolean;
-    [ATTACHED_FILES_KEY]?: UserCommentAttachedFile[];
+    [ATTACHED_FILES_KEY]: UserCommentAttachedFile[];
     attachedFilesToRemove: number[];  // attachment IDs
     attachedFileSpecsToAdd: KeyedUserCommentAttachedFileSpec[];
     nextFileSpecId: number;
     projectIdLoaded: boolean;
     userCommentLoaded: boolean;
     submitting: boolean;
+    completed: boolean;
+    backendErrors: string[];
+    pubmedIdSearchQuery: string;
 };
 
 type State = UserCommentFormState;
 
 const initialState: State = {
     showPubmedPreview: false,
+    attachedFiles: [],
     attachedFilesToRemove: [],
     attachedFileSpecsToAdd: [],
     nextFileSpecId: 0,
     projectIdLoaded: false,
     userCommentLoaded: false,
-    submitting: false
+    submitting: false,
+    completed: false,
+    backendErrors: [],
+    pubmedIdSearchQuery: ''
 };
 
 const getResponseToPostRequest = (userCommentGetResponse: UserCommentGetResponse): UserCommentPostRequest => ({
@@ -78,7 +86,7 @@ export function reduce(state: State = initialState, action: Action): State {
             return { 
                 ...state,
                 attachedFiles: action.payload.userComment.editMode 
-                    ? action.payload.userComment.formValues.attachments.map(({ id, name }) => ({ id, description: name }))
+                    ? action.payload.userComment.formValues.attachments.map(({ id, name, description }) => ({ id, name, description }))
                     : [], 
                 userCommentPostRequest: action.payload.userComment.editMode
                     ? getResponseToPostRequest(action.payload.userComment.formValues)
@@ -93,8 +101,14 @@ export function reduce(state: State = initialState, action: Action): State {
             return { ...state, pubmedPreview: action.payload.pubmedPreview };
         } case closePubmedPreview.type: {
             return { ...state, showPubmedPreview: false, pubmedPreview: undefined };
+        } case changePubmedIdSearchQuery.type: { 
+            return { ...state, pubmedIdSearchQuery: action.payload.newQuery }
         } case removeAttachedFile.type: {
-            return { ...state, attachedFilesToRemove: [...state.attachedFilesToRemove, action.payload.attachmentId] };
+            return { 
+                ...state, 
+                attachedFilesToRemove: [...state.attachedFilesToRemove, action.payload.attachmentId],
+                attachedFiles: state.attachedFiles.filter(attachedFile => attachedFile.id !== action.payload.attachmentId)
+            };
         } case addFileToAttach.type: {
             return { 
                 ...state, 
@@ -102,11 +116,24 @@ export function reduce(state: State = initialState, action: Action): State {
                 attachedFileSpecsToAdd: [
                     ...state.attachedFileSpecsToAdd, 
                     {
-                        ...action.payload.fileToAttach,
+                        ...action.payload.fileSpecToAttach,
                         id: state.nextFileSpecId
                     }
                 ] 
             };
+        }
+        case modifyFileToAttach.type: {
+            return {
+                ...state,
+                attachedFileSpecsToAdd: [
+                    ...state.attachedFileSpecsToAdd.slice(0, action.payload.index),
+                    {
+                        ...state.attachedFileSpecsToAdd[action.payload.index],
+                        ...action.payload.newFileSpec
+                    },
+                    ...state.attachedFileSpecsToAdd.slice(action.payload.index + 1)
+                ]
+            }
         }
         case removeFileToAttach.type: {
             return { 
@@ -126,7 +153,8 @@ export function reduce(state: State = initialState, action: Action): State {
         case fulfillSubmitComment.type: {
             return {
                 ...state,
-                submitting: false
+                submitting: false,
+                completed: true
             }
         }
         default: {
@@ -165,8 +193,8 @@ function isFulfillSubmitCommentCoherent([requestAction]: [InferAction<typeof req
     );
 }
 
-async function getRequestUpdateAttachedFiles([fulfillSubmitCommentAction]: [ InferAction<typeof fulfillSubmitComment>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestUpdateAttachedFiles>> {
-    return requestUpdateAttachedFiles(fulfillSubmitCommentAction.payload.userCommentId, state$.value.attachedFileSpecsToAdd, state$.value.attachedFilesToRemove);
+async function getRequestUpdateAttachedFiles([fulfillSubmitCommentAction]: [ InferAction<typeof fulfillSubmitComment>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Promise<InferAction<typeof requestUpdateAttachedFiles>> {
+    return requestUpdateAttachedFiles(fulfillSubmitCommentAction.payload.userCommentId, state$.value.userCommentForm.attachedFileSpecsToAdd, state$.value.userCommentForm.attachedFilesToRemove);
 }
 
 async function getFulfillUpdateAttachedFiles([fulfillSubmitCommentAction, requestUpdateAttachedFilesAction]: [ InferAction<typeof fulfillSubmitComment>, InferAction<typeof requestUpdateAttachedFiles>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillUpdateAttachedFiles>> {

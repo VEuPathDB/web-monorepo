@@ -69,22 +69,16 @@ export const closePubmedPreview = makeActionCreator (
     () => ({ })
 );
 
-// the user has clicked the Browse Files button
-export const requestLocalFile = makeActionCreator (
-    'userCommentForm/requestLocalFile',
-    () => ({ })
-);
-
-// the user has selected a local file
-export const fulfillLocalFile = makeActionCreator (
-    'userCommentForm/fulfillLocalFile',
-    (filePath: string) => ({ filePath})
+// the user edits their pubmed id search query
+export const changePubmedIdSearchQuery = makeActionCreator (
+    'userCommentForm/changePubmedIdSearchQuery',
+    (newQuery: string) => ({ newQuery })
 );
 
 // (edit only) user wants to remove a file already attached (on the server) to the comment they are editing.  this just updates state in store, not the backend.
 export const removeAttachedFile = makeActionCreator (
     'userCommentForm/removeAttachedFile',
-    (userCommentId: number, attachmentId: number) => ({userCommentId, attachmentId })
+    (attachmentId: number) => ({ attachmentId })
 );
 
 // (edit and create) remove a file from the list of those to be attached (backend) after the comment
@@ -92,13 +86,21 @@ export const removeAttachedFile = makeActionCreator (
 // index is a 0-based index into the list maintained in state
 export const removeFileToAttach  = makeActionCreator (
     'userCommentForm/removeFileToAttach',
-    (userCommentId: number, index: number) => ({userCommentId, index })
+    (index: number) => ({ index })
+);
+
+// (edit and create) modify a file from the list of those to be attached (backend) after the comment
+// is submitted.  this only updates state in store, not the backend.
+// index is a 0-based index into the list maintained in state
+export const modifyFileToAttach  = makeActionCreator (
+    'userCommentForm/modifyFileToAttach',
+    (newFileSpec: Partial<UserCommentAttachedFileSpec>, index: number) => ({ newFileSpec, index })
 );
 
 // (edit and create) add a file to the list of those to be attached (backend) after the comment is submitted.  this only updates state in store, not the backend
 export const addFileToAttach  = makeActionCreator (
     'userCommentForm/addFileToAttach',
-    (userCommentId: number, fileToAttach: UserCommentAttachedFileSpec) => ({userCommentId, fileToAttach })
+    (fileSpecToAttach: UserCommentAttachedFileSpec) => ({ fileSpecToAttach })
 );
 
 
@@ -132,14 +134,12 @@ export type Action =
     | InferAction<typeof requestPubmedPreview>
     | InferAction<typeof fulfillPubmedPreview>
     | InferAction<typeof closePubmedPreview>
-    | InferAction<typeof requestLocalFile>
-    | InferAction<typeof fulfillLocalFile>
+    | InferAction<typeof changePubmedIdSearchQuery>
     | InferAction<typeof removeAttachedFile>
     | InferAction<typeof addFileToAttach>
+    | InferAction<typeof modifyFileToAttach>
     | InferAction<typeof removeFileToAttach>
     | InferAction<typeof requestSubmitComment>
     | InferAction<typeof fulfillSubmitComment>
     | InferAction<typeof requestUpdateAttachedFiles>
-    | InferAction<typeof fulfillUpdateAttachedFiles>
-
-
+    | InferAction<typeof fulfillUpdateAttachedFiles>;

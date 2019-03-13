@@ -20,7 +20,7 @@ const FileInput = function (originalProps: Props) {
   const changeHandler = function(event: React.ChangeEvent<HTMLInputElement>): void {
     onChange(event.target.files && event.target.files[0]);
   };
-  return ( <input type="text" {...props} onChange={changeHandler}/> );
+  return ( <input type="file" {...props} onChange={changeHandler}/> );
 }
 
 export default wrappable(FileInput);

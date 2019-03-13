@@ -962,7 +962,11 @@ export default class WdkService {
   }
 
   // return the new attachment id
-  postUserCommentAttachedFile(commentId: number, { file, description }: UserCommentAttachedFileSpec) : Promise<StandardWdkPostResponse> {    
+  postUserCommentAttachedFile(commentId: number, { file, description }: UserCommentAttachedFileSpec) : Promise<StandardWdkPostResponse> {
+    if (file === null) {
+      return Promise.reject(`Tried to post an empty attachment to comment with id ${commentId}`);
+    }
+
     const formData = new FormData();
     formData.append('description', description);
     formData.append('file', file, file.name);

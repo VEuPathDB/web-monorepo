@@ -81,7 +81,7 @@ export interface PubmedPreviewEntry {
 }
  
 export interface UserCommentAttachedFileSpec {
-  file: File,
+  file: File | null,
   description: string
 }
 
@@ -91,7 +91,8 @@ export interface KeyedUserCommentAttachedFileSpec extends UserCommentAttachedFil
 
 export interface UserCommentAttachedFile {
   id: number,
-  description: string
+  description: string,
+  name: string
 }
 
 export type ReviewStatus =
@@ -109,7 +110,7 @@ export type ReviewStatus =
     content?: string,
     headline?: string,
     genBankAccessions?: string[],
-    categoryIds?: string[],
+    categoryIds?: number[],
     digitalObjectIds?: string[],
     pubMedIds?: string[],
     relatedStableIds?: string[],
@@ -140,7 +141,7 @@ export interface UserCommentQueryStringParams {
 export interface UserCommentQueryParams {
   commentId?: number;
   target?: { id: string, type: string };
-  externalDb?: { name: string, version: string };
+  externalDatabase?: { name: string, version: string };
   organism?: string;
   locations?: string;
   contig?: string;

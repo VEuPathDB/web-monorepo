@@ -43,6 +43,7 @@ export default [
   { path: '/step/:stepId/isolatesSummaryView', component: IsolatesSummaryViewController },
   { path: '/step/:stepId/genomeSummaryView', component: GenomeSummaryViewController },
   { path: '/user-comments/add', component: UserCommentFormController },
+  { path: '/user-comments/edit', component: UserCommentFormController },
   { path: '/user-comments/show', component: UserCommentShowController },
   { path: '*', component: NotFoundController },
 ];
