@@ -23,7 +23,7 @@ function Component(props: Props<NumberParam, undefined>) {
     <NumberSelector
       start={parameter.min}
       end={parameter.max}
-      step={parameter.step}
+      step={parameter.increment}
       value={Number(value)}
       onChange={value => onParamValueChange(String(value))}
     />

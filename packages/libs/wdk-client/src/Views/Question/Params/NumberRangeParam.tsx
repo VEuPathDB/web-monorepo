@@ -23,7 +23,7 @@ function Component(props: Props<NumberRangeParam, void>) {
     <NumberRangeSelector
       start={parameter.min}
       end={parameter.max}
-      step={parameter.step}
+      step={parameter.increment}
       value={JSON.parse(value)}
       onChange={value => onParamValueChange(JSON.stringify(value))}
     />
