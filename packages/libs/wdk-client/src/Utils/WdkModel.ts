@@ -128,14 +128,14 @@ export interface NumberParam extends ParameterBase {
   type: 'NumberParam';
   min: number;
   max: number;
-  step: number;
+  increment: number;
 }
 
 export interface NumberRangeParam extends ParameterBase {
   type: 'NumberRangeParam';
   min: number;
   max: number;
-  step: number;
+  increment: number;
 }
 
 export interface DateParam extends ParameterBase {
