@@ -11,7 +11,7 @@
     "appUrl": "/im.do?s=3bb29848445ca389&selectedTab=first_analysis",
     "appImage": "/images/data-summary-chart.jpg",
     "linkText": "Open The Analysis",
-    "description": "This data summaries visualization produces boxplots of the Shigella/EIEC TAC results stratified by age age and location. Shigella/EIEC appears more common in children older than 8 months of age and Bangladesh in particular appears to have lower Ct values overall perhaps indicating a higher burden of Shigella.",
+    "description": "This data summaries visualization produces boxplots of the Shigella/EIEC TAC results stratified by age and location. Shigella/EIEC appears more common in children older than 8 months of age and Bangladesh in particular appears to have lower Ct values overall perhaps indicating a higher burden of Shigella.",
     "title": "<b>GEMS: Shigella/EIEC TAC Results Stratified by Age and Country</b>",
     "linkTarget": "_self"
   },
