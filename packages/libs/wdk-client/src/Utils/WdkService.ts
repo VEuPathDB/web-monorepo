@@ -324,14 +324,14 @@ const parameterDecoder: Decode.Decoder<Parameter> =
         Decode.field('type', Decode.constant('NumberParam')),
         Decode.field('min', Decode.number),
         Decode.field('max', Decode.number),
-        Decode.field('step', Decode.number),
+        Decode.field('increment', Decode.number),
       ),
       /* NumberRangeParam */
       Decode.combine(
         Decode.field('type', Decode.constant('NumberRangeParam')),
         Decode.field('min', Decode.number),
         Decode.field('max', Decode.number),
-        Decode.field('step', Decode.number),
+        Decode.field('increment', Decode.number),
       ),
       /* DateParam */
       Decode.combine(
