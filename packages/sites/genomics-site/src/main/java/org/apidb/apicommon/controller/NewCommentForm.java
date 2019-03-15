@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -28,7 +29,10 @@ import org.gusdb.wdk.model.jspwrap.WdkModelBean;
 
 public class NewCommentForm extends ActionForm {
 
+    private static final Logger LOG = Logger.getLogger(NewCommentForm.class);
+
     private static final long serialVersionUID = -4386250615887166981L;
+
     private String headline;
     private String content;
     private String commentTarget;
@@ -86,7 +90,7 @@ public class NewCommentForm extends ActionForm {
             //ArrayList<MultiBox> list = CommentActionUtility.getCommentFactory(context).getMultiBoxData("category", "target_category_id", "TargetCategory", "comment_target_id='" + targetId + "'" ); 
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            LOG.error(e.getMessage());
         } 
     } 
 
