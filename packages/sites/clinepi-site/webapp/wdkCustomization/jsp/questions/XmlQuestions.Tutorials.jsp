@@ -39,20 +39,20 @@
           </c:if>
           <c:set var="urlAvi" value="${row[2].value}"/>
           <c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
-            <c:set var="urlAvi">http://eupathdb.org/tutorials/${urlAvi}</c:set>
+            <c:set var="urlAvi">https://eupathdb.org/tutorials/${urlAvi}</c:set>
           </c:if>
           <c:set var="urlFlv" value="${row[3].value}"/>
           <c:choose>
             <c:when test="${ ! fn:endsWith(urlFlv, 'flv')}">
-              <c:set var="urlFlv">http://eupathdb.org/tutorials/${urlFlv}</c:set>
+              <c:set var="urlFlv">https://eupathdb.org/tutorials/${urlFlv}</c:set>
             </c:when>
             <c:when test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
-              <c:set var="urlFlv">http://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&amp;autostart=true</c:set>
+              <c:set var="urlFlv">https://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&amp;autostart=true</c:set>
             </c:when>
           </c:choose>
           <c:set var="urlPdf" value="${row[4].value}"/>
           <c:if test="${urlPdf != 'unavailable' &&  ! fn:startsWith(urlPdf, 'http://')}">
-            <c:set var="urlPdf">http://eupathdb.org/tutorials/${urlPdf}</c:set>
+            <c:set var="urlPdf">https://eupathdb.org/tutorials/${urlPdf}</c:set>
           </c:if>
           <c:set var="duration" value="${row[5].value}"/>
           <c:set var="size" value="${row[6].value}"/>
