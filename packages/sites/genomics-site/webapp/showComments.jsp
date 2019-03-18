@@ -14,6 +14,7 @@ attributes:
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var="wdkUser" value="${sessionScope.wdkUser}"/>
+<c:set var="scheme" value="${pageContext.request.scheme}" />
 
 <imp:pageFrame title="${wdkModel.displayName} : User Comments on ${stable_id}" >
 
@@ -270,7 +271,7 @@ $(document).ready(function() {
             <tr>
                <td>PMID(s):</td>
                 <td> <c:forEach items="${comment.pmIds}" var="row">
-                        <c:import url="http://${pageContext.request.serverName}/cgi-bin/pmid2title">
+                        <c:import url="${scheme}://${pageContext.request.serverName}/cgi-bin/pmid2title">
                           <c:param name="pmids" value="${row}"/>
                         </c:import>
                       </c:forEach>
