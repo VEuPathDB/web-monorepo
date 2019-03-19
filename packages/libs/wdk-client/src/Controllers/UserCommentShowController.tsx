@@ -16,7 +16,7 @@ import { UserCommentShowViewProps, UserCommentShowView } from 'wdk-client/Views/
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { get } from 'lodash';
 import { PubmedIdEntry } from 'wdk-client/Views/UserCommentForm/PubmedIdEntry';
-import { UserCommentUploadedFile } from 'wdk-client/Views/UserCommentShow/UserCommentUploadedFile';
+import { UserCommentUploadedFiles } from 'wdk-client/Views/UserCommentShow/UserCommentUploadedFiles';
 
 type StateProps = {
   userId: number;
@@ -353,19 +353,7 @@ const mergeProps = (
           key: 'attachments',
           label: 'Uploaded Files:',
           field: (
-            <>
-              {
-                comment.attachments.map(
-                  (attachment, index) => (
-                    <UserCommentUploadedFile 
-                      key={attachment.id}
-                      index={index}
-                      {...attachment}
-                    />
-                  )
-                )
-              }
-            </>
+            <UserCommentUploadedFiles uploadedFiles={comment.attachments} />
           )
         },
         {
