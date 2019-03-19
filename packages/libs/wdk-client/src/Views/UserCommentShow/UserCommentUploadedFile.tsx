@@ -1,34 +1,41 @@
 import React from 'react';
 
-interface UserCommentUploadedFileProps {
-  index: number;
+interface UserCommentUploadedFileEntry {
+  id: number;
   name: string;
-  description: string
-  preview?: string,
+  description: string;
+  preview?: string;
+}
+
+interface UserCommentUploadedFileProps {
+  uploadedFiles: UserCommentUploadedFileEntry[];
   headerClassName?: string;
-  dataClassName?: string;
+  entryClassName?: string;
 }
 
 export const UserCommentUploadedFile: React.SFC<UserCommentUploadedFileProps> = ({
-  index,
-  name,
-  description,
-  preview,
+  uploadedFiles,
   headerClassName,
-  dataClassName
+  entryClassName
 }) => (
-  <>
-    <div className={headerClassName}>
-      <div>#</div>
-      <div>Name/Link</div>
-      <div>Description</div>
-      <div>Preview<br /><span>(only if image)</span></div>
-    </div>
-    <div className={dataClassName}>
-      <div>{index}</div>
-      <div>{name}</div>
-      <div>{description}</div>
-      <div>{preview ? <a href={preview}><img src={preview} /></a> : null}</div>
-    </div>
-  </>
+  <table>
+    <tr className={headerClassName}>
+      <th>#</th>
+      <th>Name/Link</th>
+      <th>Description</th>
+      <th>Preview<br /><span>(only if image)</span></th>
+    </tr>
+    {
+      uploadedFiles.map(
+        ({ id, name, description, preview }, index) => (
+          <tr key={id} className={entryClassName}>
+            <td>{index + 1}</td>
+            <td>{name}</td>
+            <td>{description}</td>
+            <td>{preview ? <a href={preview}><img src={preview} /></a> : null}</td>
+          </tr>
+        )
+      )
+    }
+  </table>
 );
