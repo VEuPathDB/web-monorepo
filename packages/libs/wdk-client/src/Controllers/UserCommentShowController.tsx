@@ -15,12 +15,13 @@ import { openUserCommentShow, requestDeleteUserComment } from 'wdk-client/Action
 import { UserCommentShowViewProps, UserCommentShowView } from 'wdk-client/Views/UserCommentShow/UserCommentShowView';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { get } from 'lodash';
+import { PubmedIdEntry } from 'wdk-client/Views/UserCommentForm/PubmedIdEntry';
+import { UserCommentUploadedFile } from 'wdk-client/Views/UserCommentShow/UserCommentUploadedFile';
 
 type StateProps = {
   userId: number;
   webAppUrl: string;
   projectId: string;
-  wdkModelBuildNumber: number;
   userComments: UserCommentGetResponse[];
   loading: boolean;
   title: ReactNode;
@@ -72,11 +73,6 @@ const userId = createSelector<RootState, GlobalData, number>(
 const projectId = createSelector<RootState, GlobalData, string>(
   globalData,
   (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.projectId', '')
-);
-
-const wdkModelBuildNumber = createSelector<RootState, GlobalData, number>(
-  globalData,
-  (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.buildNumber', 0)
 );
 
 const webAppUrl = createSelector<RootState, GlobalData, string>(
@@ -151,7 +147,6 @@ const mapStateToProps = (state: RootState, props: OwnProps) => ({
   userId: userId(state),
   webAppUrl: webAppUrl(state),
   projectId: projectId(state),
-  wdkModelBuildNumber: wdkModelBuildNumber(state),
   userComments: userComments(state),
   loading: loading(state),
   title: title(state, props)
@@ -210,11 +205,193 @@ const mergeProps = (
           }
         ];
 
+      const remainingFields = [
+        {
+          key: 'project',
+          label: 'Project:',
+          field: `${comment.project.name}, version ${comment.project.version}`
+        },
+        {
+          key: 'organism',
+          label: 'Organism:',
+          field: comment.organism,
+        },
+        {
+          key: 'date',
+          label: 'Date:',
+          field: new Date(comment.commentDate).toString()
+        },
+        {
+          key: 'comment',
+          label: 'Content:',
+          field: comment.content
+        },
+        {
+          key: 'genBankAccessions',
+          label: 'GenBank Accessions:',
+          field: (
+            <>
+              {
+                comment.genBankAccessions.map(
+                  accession => (
+                    <a
+                      key={accession} 
+                      href={`http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=&term=${accession}`}>
+                    >
+                      {accession}
+                    </a>
+                  )
+                )
+              }
+            </>
+          )
+        },
+        {
+          key: 'relatedStableIds',
+          label: 'Other Related Genes:',
+          field: (
+            <>
+              {
+                comment.relatedStableIds.map(
+                  stableId => (
+                    comment.target.type === 'gene'
+                      ? (
+                        <a 
+                          key={stableId}
+                          href={`${webAppUrl}/app/record/gene/${stableId}`}
+                        >
+                          {stableId}
+                        </a>
+                      )
+                      : comment.target.type === 'isolate'
+                      ? (
+                        <a 
+                          key={stableId}
+                          href={`showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&source_id=${stableId}`}
+                        >
+                          {stableId}
+                        </a>
+                      )
+                      : null
+                  )
+                )
+              }
+            </>
+          )
+        },
+        {
+          key: 'categories',
+          label: 'Category:',
+          field: (
+            <>
+              {
+                comment.categories.map(
+                  (category, i) => (
+                    <div key={category}>{category}
+                      {i + 1}) {category}
+                    </div>
+                  )
+                )
+              }
+            </>
+          )
+        },
+        {
+          key: 'location',
+          label: 'Location:',
+          field: (
+            <>
+              {
+                comment.location && comment.location.ranges.length > 0
+                  ? (
+                    <>
+                      {comment.location.coordinateType}:{' '}
+                      {
+                        comment.location.ranges.map(
+                          ({ start, end }) => `${start}-${end}`
+                        ).join(', ')
+                      }
+                      {comment.location.reverse && ` (reversed)`}
+                    </>
+                  )
+                  : null
+              }
+            </>
+          )
+        },
+        {
+          key: 'digitalObjectIds',
+          label: 'Digital Object Identifier(DOI) Name(s):',
+          field: (
+            <>
+              {
+                comment.digitalObjectIds.map(
+                  digitalObjectId => (
+                    <a key={digitalObjectId} href={`http://dx.doi.org/${digitalObjectId}`}>{digitalObjectId}</a>
+                  )
+                )
+              }
+            </>
+          )
+        },
+        {
+          key: 'pubMedRefs',
+          label: 'PMID(s):',
+          field: (
+            <>
+              {
+                comment.pubMedRefs.map(
+                  pubMedRef => (
+                    <PubmedIdEntry key={pubMedRef.id} {...pubMedRef} />
+                  )
+                )
+              }
+            </>
+          )
+        },
+        {
+          key: 'attachments',
+          label: 'Uploaded Files:',
+          field: (
+            <>
+              {
+                comment.attachments.map(
+                  (attachment, index) => (
+                    <UserCommentUploadedFile 
+                      key={attachment.id}
+                      index={index}
+                      {...attachment}
+                    />
+                  )
+                )
+              }
+            </>
+          )
+        },
+        {
+          key: 'externalDb',
+          label: 'External Database:',
+          field: `${comment.externalDatabase.name} ${comment.externalDatabase.version}`
+        },
+        {
+          key: 'reviewStatus',
+          label: 'Status:',
+          field: comment.reviewStatus === 'accepted'
+            ? (
+              <>
+                Status: <em>included in the Annotation Center's official annotation</em>
+              </>
+            )
+            : null
+        }
+      ];
+
       return { 
         ...memo, 
         [comment.id]: [
           ...topFields,
-          ...additionalAuthorsField
+          ...additionalAuthorsField,
+          ...remainingFields
         ]
       };
     }, 

@@ -167,13 +167,17 @@ export interface UserCommentGetResponse {
   id: number;
   location: { 
     coordinateType: string, 
-    ranges: { start: number, end: number },
+    ranges: { start: number, end: number }[],
     reverse?: boolean
+  };
+  project: {
+    name: string;
+    version: string;
   };
   organism: string;
   pubMedRefs: PubmedPreview;
   relatedStableIds: string[];
-  reviewStatus: 'accepted' | 'adopted' | 'community' | 'not_spam' | 'rejected' | 'spam' | 'task' | 'unknown';
+  reviewStatus: ReviewStatus;
   sequence: string;
   target: { type: string, id: string };
 }

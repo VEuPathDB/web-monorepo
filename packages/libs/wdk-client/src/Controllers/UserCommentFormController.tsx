@@ -432,7 +432,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
       },
       {
         key: 'genBankAccessions',
-        label: 'Genbank Accession(s)',
+        label: 'GenBank Accession(s)',
         field: null
       }
     ],
