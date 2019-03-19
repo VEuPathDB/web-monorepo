@@ -14,7 +14,7 @@ export const FormGroup: React.SFC<FormGroupProps> = ({
   headerClassName,
   formRows
 }) => (
-  <Fragment>
+  <>
     <FormRow
       key={`${groupKey}/header`}
       label={headerContent}
@@ -31,5 +31,5 @@ export const FormGroup: React.SFC<FormGroupProps> = ({
         )
       )
     }
-  </Fragment>
+  </>
 );

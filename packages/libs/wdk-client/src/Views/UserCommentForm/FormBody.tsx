@@ -1,31 +1,31 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, ReactNode } from 'react';
 
 import { FormGroup } from 'wdk-client/Views/UserCommentForm/FormGroup';
 import { FormRowProps } from 'wdk-client/Views/UserCommentForm/FormRow';
 
 interface FormBodyProps {
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
-  formGroupDisplayNames: Record<string, string>
+  formGroupHeaders: Record<string, ReactNode>
   formGroupOrder: string[];
 }
 
 export const FormBody: React.SFC<FormBodyProps> = ({
   formGroupFields,
-  formGroupDisplayNames,
+  formGroupHeaders,
   formGroupOrder
 }) => (
-  <Fragment>
+  <>
     {
       formGroupOrder.map(
         formGroupKey => (
           <FormGroup 
             key={formGroupKey}
             groupKey={formGroupKey}
-            headerContent={formGroupDisplayNames[formGroupKey]}
+            headerContent={formGroupHeaders[formGroupKey]}
             formRows={formGroupFields[formGroupKey]}
           />
         )
       )
     }
-  </Fragment>
+  </>
 );

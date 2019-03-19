@@ -18,6 +18,7 @@ import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewSto
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
 import * as steps from 'wdk-client/StoreModules/StepsStoreModule';
 import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
+import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
 
 export default {
   answerView,
@@ -36,6 +37,7 @@ export default {
   siteMap,
   steps,
   userCommentForm,
+  userCommentShow,
   userDatasetDetail,
   userDatasetList,
   userProfile,

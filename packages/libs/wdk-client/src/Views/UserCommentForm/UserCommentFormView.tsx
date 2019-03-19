@@ -12,7 +12,7 @@ export interface UserCommentFormViewProps {
   className?: string;
   onSubmit: (event: FormEvent) => void;
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
-  formGroupDisplayNames: Record<string, string>;
+  formGroupHeaders: Record<string, ReactNode>;
   formGroupOrder: string[];
 }
 

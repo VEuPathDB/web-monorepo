@@ -948,8 +948,8 @@ export default class WdkService {
     return this._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`, undefined, true);
   }
 
-  getUserComments(targetType: string, targetId: string) : Promise<UserCommentGetResponse> {
-    return this._fetchJson<UserCommentGetResponse>(
+  getUserComments(targetType: string, targetId: string) : Promise<UserCommentGetResponse[]> {
+    return this._fetchJson<UserCommentGetResponse[]>(
       'get',
       `/user-comments?target-type=${targetType}&target-id=${targetId}`
     );
@@ -959,6 +959,10 @@ export default class WdkService {
   postUserComment(userCommentPostRequest: UserCommentPostRequest) : Promise<StandardWdkPostResponse> {
     let data = JSON.stringify(userCommentPostRequest);
     return this._fetchJson<StandardWdkPostResponse>('post', '/user-comments', data);
+  }
+
+  deleteUserComment(commentId: number) :Promise<void> {
+    return this._fetchJson<void>('delete', `/user-comments/${commentId}`);
   }
 
   // return the new attachment id

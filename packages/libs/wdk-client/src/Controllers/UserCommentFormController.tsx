@@ -7,7 +7,7 @@ import PageController from 'wdk-client/Core/Controllers/PageController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
-import { CheckboxList, RadioList, TextArea, TextBox, Link, TextBoxMultivalued } from 'wdk-client/Components';
+import { CheckboxList, TextArea, TextBox, Link } from 'wdk-client/Components';
 import { UserCommentFormView, UserCommentFormViewProps } from 'wdk-client/Views/UserCommentForm/UserCommentFormView';
 import { get } from 'lodash';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
@@ -15,7 +15,6 @@ import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPub
 import { UserCommentPostRequest, PubmedPreview, UserCommentQueryParams, UserCommentQueryStringParams, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec } from 'wdk-client/Utils/WdkUser';
 import { createSelector } from 'reselect';
 import { UserCommentFormState } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
-import { UserCommentFormActions } from 'wdk-client/Actions';
 
 import * as QueryString from 'querystring';
 import { PubMedIdsField } from 'wdk-client/Views/UserCommentForm/PubmedIdField';
@@ -162,18 +161,19 @@ const title = createSelector(
     editing: boolean, 
     projectId: string, 
     { contig }: UserCommentQueryParams, 
-    { externalDatabase: { name, version } = { name: '', version: '' } 
-  }: UserCommentPostRequest
-) => {
+    { 
+      externalDatabase: { name, version } = { name: '', version: '' } 
+    }: UserCommentPostRequest
+  ) => {
     return (
       <Fragment>
-        <h3>
+        <h1>
           {
             editing
               ? `Edit comment ${commentId} ${targetId}`
               : `Add a comment to ${targetType} ${targetId}`
           }
-        </h3>
+        </h1>
         Please add only scientific comments to be displayed on the {targetType} page for {targetId}. 
         If you want to report a problem, use the <Link to={'/contact-us'} target="_blank">support page</Link>.
 
@@ -323,7 +323,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
   submitting: stateProps.submitting,
   completed: stateProps.completed,
   className: "wdk-UserCommentsForm",
-  formGroupDisplayNames: {
+  formGroupHeaders: {
     part1: 'Part I: Comment',
     part2: 'Part II: Evidence for This Comment (Optional)',
     part3: 'Part III: Other Genes to which you want to apply this comment (Optional)'
@@ -332,12 +332,12 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
     part1: [
       {
         key: 'headline',
-        label: <span>Headline <span style={{ color: 'red' }}>*</span></span>,
+        label: <span>Headline<span style={{ color: 'red' }}>*</span></span>,
         field: (
           <TextBox
             required
             onChange={dispatchProps.updateFormField('headline')}
-            value={stateProps.submission.headline}
+            value={stateProps.submission.headline || ''}
           />
         )
       },
@@ -349,7 +349,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
             onChange={(newStringValues: string[]) => {
               dispatchProps.updateFormField('categoryIds')(newStringValues.map(x => parseInt(x)))
             }}
-            value={stateProps.submission.categoryIds}
+            value={stateProps.submission.categoryIds || []}
             items={[
               {
                 display: 'Phenotype',
@@ -381,12 +381,12 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
       },
       {
         key: 'content',
-        label: <span>Comment <span style={{ color: 'red' }}>*</span></span>,
+        label: <span>Comment<span style={{ color: 'red' }}>*</span></span>,
         field: (
           <TextArea
             required
             onChange={dispatchProps.updateFormField('content')}
-            value={stateProps.submission.content}
+            value={stateProps.submission.content || ''}
           />
         ),
       },
@@ -454,8 +454,8 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
     'part3'
   ],
   onSubmit: (event: FormEvent) => {
-    dispatchProps.requestSubmitComment(stateProps.submission);
     event.preventDefault();
+    dispatchProps.requestSubmitComment(stateProps.submission);
   },
   formLoaded: stateProps.formLoaded,
   openAddComment: dispatchProps.openAddComment,
