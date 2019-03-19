@@ -4,6 +4,16 @@
   var preventEvent = wdk.fn.preventEvent;
 
   // Subscribe to events published by the analysis framework.
+   dfalke       // order by significance descending
+ 81752     dfalke       order: [ 4, 'desc' ],
+ 81752     dfalke       // positions total (i) and filter (f) before he table
+ 81752     dfalke       dom: 'lipft',
+ 81752     dfalke       // instead of defaults: "Showing x to y of z entries", "Search"
+ 81752     dfalke       // overrides values defined in WDK datatables.js
+ 81752     dfalke       oLanguage: {
+ 81752     dfalke         sInfo: 'Got a total of _TOTAL_ results',
+ 81752     dfalke         sSearch: 'Filter : '
+ 81752     dfalke       },
   //
   // Each callback function is called with an analysis object.
   //
@@ -43,7 +53,7 @@
 
     $table.wdkDataTable({
       // order by significance descending
-      order: [ 4, 'desc' ],
+        //order: [ 4, 'desc' ],
       // positions total (i) and filter (f) before he table
       dom: 'lipft',
       // instead of defaults: "Showing x to y of z entries", "Search"
