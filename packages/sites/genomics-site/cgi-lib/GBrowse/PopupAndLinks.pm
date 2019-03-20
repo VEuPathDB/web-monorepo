@@ -1536,15 +1536,15 @@ sub bindingSiteTitle {
   my $strand  = $f->strand;
   my ($score) = $f->get_tag_values("Score");
   my ($sequence) = $f->get_tag_values("Sequence");
-  my $revComp = reverse $sequence;
-  $revComp =~ tr/ACGTacgt/TGCAtgca/;
+  #my $revComp = reverse $sequence;
+  #$revComp =~ tr/ACGTacgt/TGCAtgca/;
 
   if($strand eq '+1') {
     $strand = 'FORWARD';
   }
   else {
     $strand = 'REVERSE';
-    $sequence = $revComp;
+    #$sequence = $revComp;
   }
 
   my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="140" width="224" align=left/></a>);
