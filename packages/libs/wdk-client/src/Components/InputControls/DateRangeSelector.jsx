@@ -90,7 +90,7 @@ class DateRangeSelector extends React.Component {
             <DateSelector start={start} end={end} value={max} onChange={this.handleMaxValueChange} />
           </div>
           <div className="control-cell">
-            <a className={alreadyDefault ? 'disabled' : ''} onClick={this.handleReset}>Reset to Defaults</a>
+            <button type="button" className={alreadyDefault ? 'disabled link' : 'link'} onClick={this.handleReset}>Reset to Defaults</button>
           </div>
         </div>
       </div>
