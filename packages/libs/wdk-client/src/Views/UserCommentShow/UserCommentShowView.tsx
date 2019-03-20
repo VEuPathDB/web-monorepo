@@ -8,6 +8,9 @@ export interface UserCommentShowViewProps {
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
   formGroupHeaders: Record<string, ReactNode>;
   formGroupOrder: string[];
+  formGroupClassName?: string;
+  formGroupHeaderClassName?: string;
+  formGroupBodyClassName?: string;
 }
 
 export const UserCommentShowView: React.SFC<UserCommentShowViewProps> = ({

@@ -3,18 +3,18 @@ import React, { ReactNode } from 'react';
 export interface FormRowProps {
   label: ReactNode;
   field: ReactNode;
-  rowClassName?: string;
   labelClassName?: string;
+  fieldClassName?: string;
 }
 
 export const FormRow: React.SFC<FormRowProps> = ({ 
   label, 
   field, 
-  rowClassName,
-  labelClassName
+  labelClassName,
+  fieldClassName
 }) => (
-  <div className={rowClassName}>
+  <>
     <label className={labelClassName}>{label}</label>
-    {field}
-  </div>
+    <div className={fieldClassName}>{field}</div>
+  </>
 );

@@ -5,14 +5,18 @@ import { FormRowProps } from 'wdk-client/Views/UserCommentForm/FormRow';
 
 interface FormBodyProps {
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
-  formGroupHeaders: Record<string, ReactNode>
+  formGroupHeaders: Record<string, ReactNode>;
   formGroupOrder: string[];
+  formGroupClassName?: string;
+  formGroupBodyClassName?: string;
 }
 
 export const FormBody: React.SFC<FormBodyProps> = ({
   formGroupFields,
   formGroupHeaders,
-  formGroupOrder
+  formGroupOrder,
+  formGroupClassName,
+  formGroupBodyClassName
 }) => (
   <>
     {
@@ -23,6 +27,8 @@ export const FormBody: React.SFC<FormBodyProps> = ({
             groupKey={formGroupKey}
             headerContent={formGroupHeaders[formGroupKey]}
             formRows={formGroupFields[formGroupKey]}
+            className={formGroupClassName}
+            bodyClassName={formGroupBodyClassName}
           />
         )
       )

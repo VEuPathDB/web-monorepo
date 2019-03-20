@@ -453,6 +453,9 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
     'part2',
     'part3'
   ],
+  formGroupClassName: 'wdk-UserCommentsForm',
+  formGroupHeaderClassName: 'wdk-UserCommentsFormHeader',
+  formGroupBodyClassName: 'wdk-UserCommentsFormBody',   
   onSubmit: (event: FormEvent) => {
     event.preventDefault();
     dispatchProps.requestSubmitComment(stateProps.submission);
