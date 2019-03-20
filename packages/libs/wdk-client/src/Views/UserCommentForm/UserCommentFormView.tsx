@@ -10,6 +10,8 @@ export interface UserCommentFormViewProps {
   returnUrl: string;
   returnLinkText: string;
   className?: string;
+  headerClassName?: string;
+  bodyClassName?: string;
   onSubmit: (event: FormEvent) => void;
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
   formGroupHeaders: Record<string, ReactNode>;
@@ -24,6 +26,8 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
   buttonText,
   submitting,
   className,
+  headerClassName,
+  bodyClassName,
   onSubmit,
   completed,
   returnUrl,
@@ -42,13 +46,17 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
         )
         : (
           <>
-            {title}
-            <form onSubmit={onSubmit}>
-              <FormBody {...formBodyProps} />  
-              <button type="submit" disabled={submitting}>
-                {buttonText}
-              </button>
-            </form>
+            <div className={headerClassName}>
+              {title}
+            </div>
+            <div className={bodyClassName}>
+              <form onSubmit={onSubmit}>
+                <FormBody {...formBodyProps} />  
+                <button type="submit" disabled={submitting}>
+                  {buttonText}
+                </button>
+              </form>
+            </div>
           </>
         )
     }

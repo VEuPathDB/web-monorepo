@@ -413,13 +413,16 @@ const mergeProps = (
   const formGroupOrder = userComments.map(({ id }) => `${id}`);
 
   return {
+    className: 'wdk-UserComments wdk-UserComments-Show',
+    headerClassName: 'wdk-UserComments-Show-Header',
+    bodyClassName: 'wdk-UserComments-Show-Body',
     title,
     formGroupFields,
     formGroupHeaders,
     formGroupOrder,
-    formGroupClassName: 'wdk-UserCommentsShow',
-    formGroupHeaderClassName: 'wdk-UserCommentsShowHeader',
-    formGroupBodyClassName: 'wdk-UserCommentsShowBody',   
+    formGroupClassName: 'wdk-UserComments-Show-Group',
+    formGroupHeaderClassName: 'wdk-UserComments-Show-Group-Header',
+    formGroupBodyClassName: 'wdk-UserComments-Show-Group-Body',   
     loading,
     loadUserComments,
     deleteUserComment,

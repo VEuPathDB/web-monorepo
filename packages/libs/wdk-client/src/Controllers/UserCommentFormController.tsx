@@ -322,7 +322,9 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
   buttonText: stateProps.buttonText,
   submitting: stateProps.submitting,
   completed: stateProps.completed,
-  className: "wdk-UserCommentsForm",
+  className: 'wdk-UserComments wdk-UserComments-Form',
+  headerClassName: 'wdk-UserComments-Form-Header',
+  bodyClassName: 'wdk-UserComments-Form-Body',
   formGroupHeaders: {
     part1: 'Part I: Comment',
     part2: 'Part II: Evidence for This Comment (Optional)',
@@ -453,9 +455,9 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
     'part2',
     'part3'
   ],
-  formGroupClassName: 'wdk-UserCommentsForm',
-  formGroupHeaderClassName: 'wdk-UserCommentsFormHeader',
-  formGroupBodyClassName: 'wdk-UserCommentsFormBody',   
+  formGroupClassName: 'wdk-UserComments-Form-Group',
+  formGroupHeaderClassName: 'wdk-UserComments-Form-Group-Header',
+  formGroupBodyClassName: 'wdk-UserComments-Form-Group-Body',   
   onSubmit: (event: FormEvent) => {
     event.preventDefault();
     dispatchProps.requestSubmitComment(stateProps.submission);
