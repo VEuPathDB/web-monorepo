@@ -8,6 +8,7 @@ interface FormBodyProps {
   formGroupHeaders: Record<string, ReactNode>;
   formGroupOrder: string[];
   formGroupClassName?: string;
+  formGroupHeaderClassName?: string;
   formGroupBodyClassName?: string;
 }
 
@@ -16,9 +17,10 @@ export const FormBody: React.SFC<FormBodyProps> = ({
   formGroupHeaders,
   formGroupOrder,
   formGroupClassName,
+  formGroupHeaderClassName,
   formGroupBodyClassName
 }) => (
-  <>
+  <div>
     {
       formGroupOrder.map(
         formGroupKey => (
@@ -28,10 +30,11 @@ export const FormBody: React.SFC<FormBodyProps> = ({
             headerContent={formGroupHeaders[formGroupKey]}
             formRows={formGroupFields[formGroupKey]}
             className={formGroupClassName}
+            headerClassName={formGroupHeaderClassName}
             bodyClassName={formGroupBodyClassName}
           />
         )
       )
     }
-  </>
+  </div>
 );

@@ -1,0 +1,33 @@
+.wdk-UserComments-Form {
+  .wdk-UserComments-Form-Body {
+    form {
+      > div {
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 1em;
+        margin-top: 1em;
+      }
+    }
+
+    .wdk-UserComments-Form-Group {
+      .wdk-UserComments-Form-Group-Header {
+        background-color: #88AACA;
+        color: #FFFFFF;
+        font-weight: bold;
+        padding: 3px;
+        border: 2px;
+      }
+  
+      .wdk-UserComments-Form-Group-Body {
+        display: grid;
+        grid-template-columns: 17em 1fr;
+        row-gap: 0.5em;
+        margin-top: 0.5em;
+
+        > label {
+          margin-left: 1em;
+        }
+      }
+    }
+  }
+}

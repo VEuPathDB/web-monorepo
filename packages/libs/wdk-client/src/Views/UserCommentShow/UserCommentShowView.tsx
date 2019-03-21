@@ -2,6 +2,8 @@ import React, { ReactNode } from 'react';
 import { FormRowProps } from 'wdk-client/Views/UserCommentForm/FormRow';
 import { FormBody } from 'wdk-client/Views/UserCommentForm/FormBody';
 
+import 'wdk-client/Views/UserCommentShow/UserCommentShowView.scss';
+
 export interface UserCommentShowViewProps {
   title: ReactNode;
   className?: string;

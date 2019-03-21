@@ -19,12 +19,9 @@ export const FormGroup: React.SFC<FormGroupProps> = ({
   formRows
 }) => (
   <div className={className}>
-    <FormRow
-      key={`${groupKey}/header`}
-      label={headerContent}
-      labelClassName={headerClassName}
-      field={null}
-    />
+    <div className={headerClassName}>
+      {headerContent}
+    </div>
     <div className={bodyClassName}>
       {
         formRows.map(
