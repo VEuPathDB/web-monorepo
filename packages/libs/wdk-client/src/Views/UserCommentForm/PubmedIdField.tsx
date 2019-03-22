@@ -26,19 +26,23 @@ export const PubMedIdsField: React.SFC<PubMedIdsFieldProps> = ({
   previewData
 }) => (
   <div className="wdk-PubMedIdsField">
-    <TextBox
-      className="wdk-PubMedIdInputField"
-      value={idsField}
-      onChange={onIdsChange}
-    />
-    <HelpIcon>
-      <ul>
-        <li> First, find the publcation in <a href="http://www.ncbi.nlm.nih.gov/pubmed">PubMed</a> based on author or title.</li>
-        <li>Enter one or more IDs in the box above separated by ','s (Example: 18172196,10558988).</li>
-        <li>Click 'Preview' to see information about these publications.</li>
-      </ul>
-    </HelpIcon>
-    <button className="wdk-PubMedIdOpenPreviewButton" type="button" onClick={openPreview}>Preview</button> the article details of the PubMed ID(s) above
+    <div className="wdk-PubMedIdInputField">
+      <TextBox
+        value={idsField}
+        onChange={onIdsChange}
+      />
+      
+      <HelpIcon>
+        <ul>
+          <li> First, find the publcation in <a href="http://www.ncbi.nlm.nih.gov/pubmed">PubMed</a> based on author or title.</li>
+          <li>Enter one or more IDs in the box above separated by ','s (Example: 18172196,10558988).</li>
+          <li>Click 'Preview' to see information about these publications.</li>
+        </ul>
+      </HelpIcon>
+      <div>
+        <button className="wdk-PubMedIdOpenPreviewButton" type="button" onClick={openPreview}>Preview</button> the article details of the PubMed ID(s) above
+      </div>
+    </div>
     <PubmedIdSearchField className="wdk-PubMedIdSearchField" query={searchField} onChange={onSearchFieldChange} />
     {
       previewOpen && (

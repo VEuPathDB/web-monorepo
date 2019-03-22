@@ -104,6 +104,18 @@
           border: 1px solid black;
           padding: 0.5em;
 
+          .wdk-PubMedIdInputField > * {
+            margin-bottom: 0.5em;
+          }
+
+          .wdk-PubMedIdSearchField {
+            margin: 1em 0;
+
+            > button {
+              margin-right: 0.5em;
+            }
+          }
+
           .wdk-PubMedIdPreview {
             border: 1px lightgray solid;
             display: grid;
@@ -121,6 +133,10 @@
               display: grid;
               grid-template-columns: 10ch 1fr;    
               
+              > * {
+                padding: 0.5em;
+              }
+
               > *:nth-child(1), > *:nth-child(2) {
                 background-color: lightgrey;
               }
