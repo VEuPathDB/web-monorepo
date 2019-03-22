@@ -1,4 +1,5 @@
-import { RouteSpec } from 'wdk-client/Core/CommonTypes';
+import React from 'react';
+
 import IndexController from 'wdk-client/Controllers/IndexController';
 import RecordController from 'wdk-client/Controllers/RecordController';
 import NotFoundController from 'wdk-client/Controllers/NotFoundController';
@@ -18,8 +19,10 @@ import QuestionController from 'wdk-client/Controllers/QuestionController';
 import BlastSummaryViewController from 'wdk-client/Controllers/BlastSummaryViewController';
 import IsolatesSummaryViewController from 'wdk-client/Controllers/IsolatesSummaryViewController';
 import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryViewController';
+import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
+import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 
-export default <RouteSpec[]> [
+export default [
   { path: '/', component: IndexController },
   { path: '/search/:recordClass/:question/result', component: AnswerController },
   { path: '/search/:recordClass/:question', component: QuestionController },
@@ -39,5 +42,8 @@ export default <RouteSpec[]> [
   { path: '/step/:stepId/blastSummaryView', component: BlastSummaryViewController },
   { path: '/step/:stepId/isolatesSummaryView', component: IsolatesSummaryViewController },
   { path: '/step/:stepId/genomeSummaryView', component: GenomeSummaryViewController },
+  { path: '/user-comments/add', component: UserCommentFormController },
+  { path: '/user-comments/edit', component: UserCommentFormController },
+  { path: '/user-comments/show', component: UserCommentShowController },
   { path: '*', component: NotFoundController },
 ];

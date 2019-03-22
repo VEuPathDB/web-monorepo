@@ -9,6 +9,8 @@ import * as FilterParamActions from 'wdk-client/Actions/FilterParamActions';
 import * as DatasetParamActions from 'wdk-client/Actions/DatasetParamActions';
 import * as TreeBoxEnumParamActions from 'wdk-client/Actions/TreeBoxEnumParamActions';
 import * as UserActions from 'wdk-client/Actions/UserActions';
+import * as UserCommentFormActions from 'wdk-client/Actions/UserCommentFormActions';
+import * as UserCommentShowActions from 'wdk-client/Actions/UserCommentShowActions';
 import * as RecordActions from 'wdk-client/Actions/RecordActions';
 import * as StaticDataActions from 'wdk-client/Actions/StaticDataActions';
 import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
@@ -42,6 +44,8 @@ export {
   IsolatesSummaryViewActions,
   GenomeSummaryViewActions,
   MatchedTranscriptsFilterActions,
+  UserCommentFormActions,
+  UserCommentShowActions
 };
 
 export type Action =
@@ -61,9 +65,10 @@ export type Action =
   | StaticDataActions.Action
   | StepActions.Action
   | UserDatasetsActions.Action
+  | UserCommentFormActions.Action
+  | UserCommentShowActions.Action
   | ResultTableSummaryViewActions.Action
   | BlastSummaryViewActions.Action
   | IsolatesSummaryViewActions.Action
   | GenomeSummaryViewActions.Action
-  | MatchedTranscriptsFilterActions.Action
-
+  | MatchedTranscriptsFilterActions.Action;
