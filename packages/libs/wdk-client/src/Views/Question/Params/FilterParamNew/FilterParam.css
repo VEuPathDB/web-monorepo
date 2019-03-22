@@ -87,6 +87,9 @@
 .filter-param .range-filter .include-unknown {
   margin-left: 1.5em;
 }
+.filter-param .range-filter .wdk-NumberRangeSelector {
+  display: inline-block;
+}
 .filter-param .chart-container {
   position: relative;
 }
@@ -105,18 +108,18 @@
 .filter-param .chart-title.y-axis {
   width: 200px;
   position: absolute;
-  left: 0;
-  bottom: 4em;
+  left: -220px;
+  top: 0;
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
   -ms-transform: rotate(-90deg);
   -o-transform: rotate(-90deg);
   transform: rotate(-90deg);
-  -webkit-transform-origin: 0;
-  -moz-transform-origin: 0;
-  -ms-transform-origin: 0;
-  -o-transform-origin: 0;
-  transform-origin: 0;
+  -webkit-transform-origin: top right;
+  -moz-transform-origin: top right;
+  -ms-transform-origin: top right;
+  -o-transform-origin: top right;
+  transform-origin: top right;
 }
 .filter-param .filters, .filter-param .filters-server-side {
   position: relative;
