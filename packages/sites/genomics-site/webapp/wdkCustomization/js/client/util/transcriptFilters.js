@@ -1,4 +1,4 @@
-import { compose, get, negate, some } from "lodash/fp";
+import { get, negate, some } from "lodash/fp";
 import { ResultTableSummaryViewActions } from "wdk-client/Actions";
 
 const REPRESENTATIVE_TRANSCRIPT_FILTER_NAME =
@@ -11,18 +11,15 @@ const isFilter = filter =>
 const isNotFilter = negate(isFilter);
 
 // selector to determine if filter is enabled
-export const isTranscripFilterEnabled = compose(
-  some(isFilter),
-  get([
-    "resultTableSummaryView",
-    "globalViewFilters",
-    TRANSCRIPT_RECORD_CLASS_NAME
-  ])
-);
+export function isTranscripFilterEnabled(state, props) {
+  const viewFilters = get(['resultTableSummaryView', props.viewId, 'globalViewFilters', TRANSCRIPT_RECORD_CLASS_NAME], state);
+  return some(isFilter, viewFilters);
+}
 
 // Add/remove representativeTranscriptOnly from global filters for record class
-export function requestTranscriptFilterUpdate(currentViewFilters, enable) {
+export function requestTranscriptFilterUpdate(viewId, currentViewFilters, enable) {
   return ResultTableSummaryViewActions.updateGlobalViewFilters(
+    viewId,
     TRANSCRIPT_RECORD_CLASS_NAME,
     updateTranscriptFilterValue(currentViewFilters, enable)
   );

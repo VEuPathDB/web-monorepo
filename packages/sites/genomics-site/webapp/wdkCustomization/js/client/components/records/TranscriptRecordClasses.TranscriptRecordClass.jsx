@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -70,14 +71,16 @@ function TranscriptViewFilter({
   )
 }
 
+// FIXME Need to access viewId from Controller...
+const viewId = 'strategy';
 const ConnectedTranscriptViewFilter = connect(
-  state => ({
-    isEnabled: isTranscripFilterEnabled(state),
-    globalViewFilters: state.resultTableSummaryView.globalViewFilters
+  (state, props) => ({
+    isEnabled: isTranscripFilterEnabled(state, { viewId }),
+    globalViewFilters: get(state, ['resultTableSummaryView', viewId, 'globalViewFilters'], {})
   }),
-  {
-    requestTranscriptFilterUpdate
-  }
+  (dispatch, props) => ({
+    requestTranscriptFilterUpdate: (...args) => dispatch(requestTranscriptFilterUpdate(viewId, ...args))
+  })
 )(TranscriptViewFilter);
 
 export function ResultTable(props) {
