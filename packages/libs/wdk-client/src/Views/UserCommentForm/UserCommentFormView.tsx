@@ -54,9 +54,9 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
             <div className={bodyClassName}>
               <form onSubmit={onSubmit}>
                 <FormBody {...formBodyProps} />  
-                <button type="submit" disabled={submitting}>
-                  {buttonText}
-                </button>
+                <div>
+                  <input type="submit" disabled={submitting} value={buttonText} />
+                </div>
               </form>
             </div>
           </>

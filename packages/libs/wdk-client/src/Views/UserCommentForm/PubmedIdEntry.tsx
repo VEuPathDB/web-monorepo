@@ -6,6 +6,7 @@ interface PubmedIdEntryProps {
   author: string;
   journal?: string;
   url: string;
+  className?: string;
   headerClassName?: string;
   entryrowClassName?: string;
 }
@@ -15,34 +16,19 @@ export const PubmedIdEntry: React.SFC<PubmedIdEntryProps> = ({
   title,
   author,
   journal,
-  url,
-  headerClassName,
-  entryrowClassName
+  url
 }) => (
-  <>
-    <div className={headerClassName}>
-      <label>
-        PMID
-      </label>
-      <a href={url} target="_blank">{id}</a>
-    </div>
-    <div className={entryrowClassName}>
-      <label>
-        Title:
-      </label>
-      {title}
-    </div>
-    <div className={entryrowClassName}>
-      <label>
-        Author:
-      </label>
-      {author}
-    </div>
-    <div className={entryrowClassName}>
-      <label>
-        Title:
-      </label>
-      {journal}
-    </div>
-  </>
+  <div className="wdk-PubmedIdEntry">
+    <label>PMID</label>
+    <div><a href={url} target="_blank">{id}</a></div>
+
+    <label>Title:</label>
+    <div>{title}</div>
+
+    <label>Author:</label>
+    <div>{author}</div>
+
+    <label>Title:</label>
+    <div>{journal}</div>
+  </div>
 );

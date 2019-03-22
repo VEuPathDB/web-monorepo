@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { UserComment, UserCommentPostRequest, UserCommentFormFields, UserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse } from "wdk-client/Utils/WdkUser";
+import { UserComment, UserCommentPostRequest, UserCommentFormFields, UserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse, UserCommentRawFormFields } from "wdk-client/Utils/WdkUser";
 
 // we open the form in one of two modes:
 //  new comment:  we receive some initial comment values from the URL used to call the route
@@ -50,6 +50,13 @@ export const fulfillUserComment = makeActionCreator (
 export const updateFormFields  = makeActionCreator (
     'userCommentForm/updateFields',
     (newFormFields: UserCommentFormFields) => ({ newFormFields })
+);
+
+// the user has updated one or more multivalued textbox fields in the form.  the state in this action will replace
+// the existing form state
+export const updateRawFormFields  = makeActionCreator (
+    'userCommentForm/updateRawFields',
+    (newRawFormFields: Partial<UserCommentRawFormFields>) => ({ newRawFormFields })
 );
 
 // the user wants to open the pubmed preview.   the pubmed IDs to preview will be in the state 
@@ -131,6 +138,7 @@ export type Action =
     | InferAction<typeof closeUserCommentForm>
     | InferAction<typeof fulfillUserComment>
     | InferAction<typeof updateFormFields>
+    | InferAction<typeof updateRawFormFields>
     | InferAction<typeof requestPubmedPreview>
     | InferAction<typeof fulfillPubmedPreview>
     | InferAction<typeof closePubmedPreview>

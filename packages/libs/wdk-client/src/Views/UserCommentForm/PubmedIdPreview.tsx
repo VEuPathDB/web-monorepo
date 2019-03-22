@@ -8,15 +8,17 @@ import { Loading } from 'wdk-client/Components';
 interface PubmedIdPreviewProps {
   onClose: () => void;
   previewData?: PubmedPreview;
+  className?: string;
 }
 
 export const PubmedIdPreview: React.SFC<PubmedIdPreviewProps> = ({
   onClose,
-  previewData
+  previewData,
+  className
 }) => (
   previewData
     ? (
-      <>
+      <div className={className}>
         <a href="#" onClick={event => {
           event.preventDefault();
           onClose();
@@ -31,7 +33,7 @@ export const PubmedIdPreview: React.SFC<PubmedIdPreviewProps> = ({
             />
           ))
         }
-      </>
+      </div>
     )
     : <Loading />
 );

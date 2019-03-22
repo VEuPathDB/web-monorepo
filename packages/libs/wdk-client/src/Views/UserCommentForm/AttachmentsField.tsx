@@ -21,11 +21,12 @@ export const AttachmentsField: React.SFC<AttachmentsFieldProps> = ({
   addFileSpec,
   removeAttachedFile
 }) => (
-  <>
+  <div className="wdk-AttachmentsField">
     {
       attachedFiles.map(attachedFile =>
         <FileInputSubfield
           key={attachedFile.id}
+          className="wdk-FileInputSubfield"
           disabled
           filename={attachedFile.name}
           description={attachedFile.description}
@@ -39,6 +40,7 @@ export const AttachmentsField: React.SFC<AttachmentsFieldProps> = ({
       fileSpecsToAttach.map((fileSpec, index) =>
         <FileInputSubfield
           key={`new-file-${fileSpec.id}`}
+          className="wdk-FileInputSubfield"
           disabled={false}
           onFileChange={file => file && modifyFileSpec({ file }, index)
           }
@@ -53,6 +55,6 @@ export const AttachmentsField: React.SFC<AttachmentsFieldProps> = ({
     <button type="button" onClick={() => addFileSpec({ file: null, description: '' })}>
       {fileSpecsToAttach.length === 0 ? 'Add a file' : 'Add another file'}
     </button>
-  </>
+  </div>
 );
 

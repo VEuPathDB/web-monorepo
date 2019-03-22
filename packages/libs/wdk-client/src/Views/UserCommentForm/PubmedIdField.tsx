@@ -1,12 +1,14 @@
 import React from 'react';
 import { PubmedPreview } from 'wdk-client/Utils/WdkUser';
-import { TextBox } from 'wdk-client/Components';
+import { TextBox, HelpIcon } from 'wdk-client/Components';
 import { PubmedIdPreview } from 'wdk-client/Views/UserCommentForm/PubmedIdPreview';
 import { PubmedIdSearchField } from 'wdk-client/Views/UserCommentForm/PubmedIdSearchField';
 
 interface PubMedIdsFieldProps {
-  idsFieldContents: string;
+  idsField: string;
+  searchField: string;
   onIdsChange: (value: string) => void;
+  onSearchFieldChange: (value: string) => void;
   openPreview: () => void;
   previewOpen: boolean;
   onClosePreview: () => void;
@@ -14,29 +16,40 @@ interface PubMedIdsFieldProps {
 }
 
 export const PubMedIdsField: React.SFC<PubMedIdsFieldProps> = ({
-  idsFieldContents,
+  idsField,
+  searchField,
   onIdsChange,
+  onSearchFieldChange,
   openPreview,
   previewOpen,
   onClosePreview,
   previewData
 }) => (
-  <>
+  <div className="wdk-PubMedIdsField">
     <TextBox
-      value={idsFieldContents}
+      className="wdk-PubMedIdInputField"
+      value={idsField}
       onChange={onIdsChange}
     />
-    <button type="button" onClick={openPreview}>Preview</button> the article details of the PubMed ID(s) above
-    <PubmedIdSearchField query={"2"} onChange={console.log} />
+    <HelpIcon>
+      <ul>
+        <li> First, find the publcation in <a href="http://www.ncbi.nlm.nih.gov/pubmed">PubMed</a> based on author or title.</li>
+        <li>Enter one or more IDs in the box above separated by ','s (Example: 18172196,10558988).</li>
+        <li>Click 'Preview' to see information about these publications.</li>
+      </ul>
+    </HelpIcon>
+    <button className="wdk-PubMedIdOpenPreviewButton" type="button" onClick={openPreview}>Preview</button> the article details of the PubMed ID(s) above
+    <PubmedIdSearchField className="wdk-PubMedIdSearchField" query={searchField} onChange={onSearchFieldChange} />
     {
       previewOpen && (
         <PubmedIdPreview
+          className="wdk-PubMedIdPreview"
           onClose={onClosePreview}
           previewData={previewData}
         />
       )
     }
-  </>
+  </div>
 );
 
 

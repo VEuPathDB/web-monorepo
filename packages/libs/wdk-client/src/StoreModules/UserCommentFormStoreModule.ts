@@ -14,9 +14,10 @@ import {
     fulfillUpdateAttachedFiles,
     closeUserCommentForm,
     modifyFileToAttach,
-    changePubmedIdSearchQuery
+    changePubmedIdSearchQuery,
+    updateRawFormFields
 } from 'wdk-client/Actions/UserCommentFormActions';
-import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse } from "wdk-client/Utils/WdkUser";
+import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse, UserCommentRawFormFields } from "wdk-client/Utils/WdkUser";
 import {StandardWdkPostResponse} from "wdk-client/Utils/WdkService";
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
@@ -33,6 +34,7 @@ const ATTACHED_FILES_KEY = 'attachedFiles';
 
 export type UserCommentFormState = {
     userCommentPostRequest?: UserCommentPostRequest; // will include previous comment id if editing
+    userCommentRawFields: UserCommentRawFormFields;
     pubmedPreview?: PubmedPreview;
     showPubmedPreview: boolean;
     [ATTACHED_FILES_KEY]: UserCommentAttachedFile[];
@@ -60,7 +62,15 @@ const initialState: State = {
     submitting: false,
     completed: false,
     backendErrors: [],
-    pubmedIdSearchQuery: ''
+    pubmedIdSearchQuery: '',
+    userCommentRawFields: {
+        coordinateType: 'genomef',
+        ranges: '',
+        pubMedIds: '',
+        digitalObjectIds: '',
+        genBankAccessions: '',
+        relatedStableIds: ''
+    }
 };
 
 const getResponseToPostRequest = (userCommentGetResponse: UserCommentGetResponse): UserCommentPostRequest => ({
@@ -95,9 +105,11 @@ export function reduce(state: State = initialState, action: Action): State {
             };
         } case updateFormFields.type: {
             return { ...state, userCommentPostRequest: { ...state.userCommentPostRequest, ...action.payload.newFormFields } };
+        } case updateRawFormFields.type: {
+            return { ...state, userCommentRawFields: { ...state.userCommentRawFields, ...action.payload.newRawFormFields } };
         } case requestPubmedPreview.type: {
             return { ...state, showPubmedPreview: true, pubmedPreview: undefined };
-         } case fulfillPubmedPreview.type: {
+        } case fulfillPubmedPreview.type: {
             return { ...state, pubmedPreview: action.payload.pubmedPreview };
         } case closePubmedPreview.type: {
             return { ...state, showPubmedPreview: false, pubmedPreview: undefined };
@@ -172,14 +184,6 @@ async function getFulfillPubmedPreview([requestAction]: [InferAction<typeof requ
      return fulfillPubmedPreview( requestAction.payload.pubMedIds,  await wdkService.getPubmedPreview(requestAction.payload.pubMedIds));
 }
 
-function isPubmedPreviewCoherent([requestAction]: [InferAction<typeof requestPubmedPreview>], state: State ) {   
-    return (
-        state.userCommentPostRequest !== undefined &&
-        state.userCommentPostRequest.pubMedIds !== undefined &&
-        true // TODO: Figure out why this coherence condition is bonked
-    );
-}
-
 async function getFulfillSubmitComment([requestAction]: [ InferAction<typeof requestSubmitComment>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSubmitComment>> {
     let response: StandardWdkPostResponse =  await wdkService.postUserComment(requestAction.payload.userCommentPostRequest);
     return fulfillSubmitComment(requestAction.payload.userCommentPostRequest, response.id);
@@ -225,8 +229,7 @@ export const observe =
         closeUserCommentForm,
         combineEpics(
             mrate([openUCF], getFulfillUserComment),
-            mrate([requestPubmedPreview ], getFulfillPubmedPreview,
-                { areActionsCoherent: isPubmedPreviewCoherent }),
+            mrate([requestPubmedPreview ], getFulfillPubmedPreview),
             mrate([requestSubmitComment], getFulfillSubmitComment, 
                 { areActionsCoherent: isFulfillSubmitCommentCoherent }),
             mrate([fulfillSubmitComment], getRequestUpdateAttachedFiles),

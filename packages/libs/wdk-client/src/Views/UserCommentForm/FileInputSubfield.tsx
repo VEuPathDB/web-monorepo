@@ -24,15 +24,6 @@ export const FileInputSubfield: React.SFC<FileInputSubfieldProps> = ({
 }) => (
   <div className={className}>
     {
-      <a href="#" onClick={(event) => {
-          event.preventDefault();
-          onRemove();
-        }}
-      >
-        <i className="fa fa-times" />
-      </a>
-    }
-    {
       disabled
       ? (
         <FormRow
@@ -51,6 +42,15 @@ export const FileInputSubfield: React.SFC<FileInputSubfieldProps> = ({
           )}
         />
       )
+    }
+    {
+      <a href="#" onClick={(event) => {
+          event.preventDefault();
+          onRemove();
+        }}
+      >
+        <i className="fa fa-times" />
+      </a>
     }
     <FormRow
       label={(

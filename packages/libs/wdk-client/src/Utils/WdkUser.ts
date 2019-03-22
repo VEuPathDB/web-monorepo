@@ -105,20 +105,30 @@ export type ReviewStatus =
   "task" |
   "unknown";
 
-  // fields the user supplies
-  export interface UserCommentFormFields {
-    content?: string,
-    headline?: string,
-    genBankAccessions?: string[],
-    categoryIds?: number[],
-    digitalObjectIds?: string[],
-    pubMedIds?: string[],
-    relatedStableIds?: string[],
-    additionalAuthors?: string[],
-  }
-  
-  // fields expected by the post to create a user comment
-  export interface UserCommentPostRequest extends UserCommentFormFields {
+// fields the user supplies
+export interface UserCommentFormFields {
+  content?: string,
+  headline?: string,
+  genBankAccessions?: string[],
+  categoryIds?: number[],
+  digitalObjectIds?: string[],
+  pubMedIds?: string[],
+  relatedStableIds?: string[],
+  additionalAuthors?: string[],
+}
+
+// raw field content for multivalued textboxes
+export interface UserCommentRawFormFields {
+  coordinateType: string;
+  ranges: string;
+  pubMedIds: string;
+  digitalObjectIds: string;
+  genBankAccessions: string,
+  relatedStableIds: string;
+}
+
+// fields expected by the post to create a user comment
+export interface UserCommentPostRequest extends UserCommentFormFields {
   previousCommentId?: number,
   target?: { type: string, id: string },
   organism?: string,
