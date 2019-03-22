@@ -25,6 +25,7 @@ type StateProps = {
 
 type OwnProps = {
   stepId: number;
+  viewId: string;
 }
 
 interface TabEventHandlers {
@@ -75,15 +76,15 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
   }
 }
 
-const mapStateToProps = (state: RootState): StateProps => ({ 
+const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({ 
   webAppUrl: webAppUrl(state),
-  recordClassDisplayName: recordClassDisplayName(state),
+  recordClassDisplayName: recordClassDisplayName(state, props),
   wdkModelBuildNumber: wdkModelBuildNumber(state),
   analysisChoices: analysisChoices(state),
   analysisPanelOrder: analysisPanelOrder(state), 
   analysisPanelStates: analysisPanelStates(state),
   analysisBaseTabConfigs: analysisBaseTabConfigs(state),
-  activeTab: activeTab(state),
+  activeTab: activeTab(state, { viewId: 'strategy', ...props }),
   newAnalysisButtonVisible: newAnalysisButtonVisible(state)
 });
 

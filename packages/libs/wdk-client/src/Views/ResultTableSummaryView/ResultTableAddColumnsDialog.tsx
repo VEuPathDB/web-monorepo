@@ -5,18 +5,24 @@ import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
 import { Answer, Question } from 'wdk-client/Utils/WdkModel';
 import { flatMap, concat } from 'wdk-client/Utils/IterableUtils';
+import {
+  ShowHideAddColumnsDialog,
+  UpdateColumnsDialogSelection,
+  UpdateColumnsDialogExpandedNodes,
+  RequestColumnsChoiceUpdate
+} from 'wdk-client/Views/ResultTableSummaryView/Types';
 
-interface Props {
+export interface Props {
   answer: Answer;
   question: Question;
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: string[];
   columnsDialogExpandedNodes?: string[];
   columnsTree: CategoryTreeNode;
-  showHideAddColumnsDialog: (show: boolean) => void;
-  updateColumnsDialogSelection: (attributes: string[]) => void;
-  updateColumnsDialogExpandedNodes: (nodes: string[]) => void;
-  requestColumnsChoiceUpdate: (columns: string[], questionName: string) => void;
+  showHideAddColumnsDialog: ShowHideAddColumnsDialog;
+  updateColumnsDialogSelection: UpdateColumnsDialogSelection;
+  updateColumnsDialogExpandedNodes: UpdateColumnsDialogExpandedNodes;
+  requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
 }
 
 function ResultTableAddColumnsDialog({

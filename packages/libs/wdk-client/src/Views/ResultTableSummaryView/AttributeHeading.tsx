@@ -6,6 +6,7 @@ import {
 } from 'wdk-client/Utils/WdkModel';
 import AttributeAnalysisButton from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { OpenAttributeAnalysis, CloseAttributeAnalysis } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
 interface Props {
   activeAttributeAnalysisName: string | undefined;
@@ -19,8 +20,8 @@ interface Props {
     ClickBoundary: React.ComponentType<any>;
   };
   removeAttribute: () => void;
-  openAttributeAnalysis: (reporterName: string, stepId: number) => void;
-  closeAttributeAnalysis: (reporterName: string, stepId: number) => void;
+  openAttributeAnalysis: OpenAttributeAnalysis;
+  closeAttributeAnalysis: CloseAttributeAnalysis;
 }
 
 export default function AttributeHeading(props: Props) {

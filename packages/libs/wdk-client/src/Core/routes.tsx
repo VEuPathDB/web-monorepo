@@ -176,25 +176,28 @@ const routes: RouteEntry[] = [
 
   {
     path: '/step-analysis/:stepId(\\d+)',
-    component: (props: RouteComponentProps<{ stepId: string }>) =>
+    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
       <StepAnalysisController
         stepId={Number(props.match.params.stepId)}
+        viewId={props.match.params.viewId}
       />
   },
 
   {
     path: '/step/:stepId(\\d+)/resultPanel',
-    component: (props: RouteComponentProps<{ stepId: string }>) =>
+    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
       <ResultPanelController
         stepId={Number(props.match.params.stepId)}
+        viewId={props.match.params.stepId}
       />
   },
 
   {
     path: '/step/:stepId(\\d+)/defaultSummaryView',
-    component: (props: RouteComponentProps<{ stepId: string }>) =>
+    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
       <ResultTableSummaryViewController
         stepId={Number(props.match.params.stepId)}
+        viewId={props.match.params.viewId}
       />
   },
 

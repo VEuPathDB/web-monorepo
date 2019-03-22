@@ -34,6 +34,7 @@ type StateProps = {
 
 type OwnProps = {
   stepId: number;
+  viewId: string;
 };
 
 interface TabEventHandlers {
@@ -51,6 +52,7 @@ interface ResultPanelControllerProps {
   summaryViewPlugins: SummaryViewPluginField[];
   defaultSummaryView: string;
   stepId: number;
+  viewId: string;
   loadingTabs: boolean;
   activeTab: string;
   tabs: TabConfig<string>[];
@@ -88,23 +90,23 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   step: state.steps.steps[props.stepId],
-  loadingSummaryViewListing: loadingSummaryViewListing(state),
+  loadingSummaryViewListing: loadingSummaryViewListing(state, props),
   loadingAnalysisChoices: loadingAnalysisChoices(state),
-  summaryViewPlugins: summaryViewPlugins(state),
-  defaultSummaryView: defaultSummaryView(state),
+  summaryViewPlugins: summaryViewPlugins(state, props),
+  defaultSummaryView: defaultSummaryView(state, props),
   webAppUrl: webAppUrl(state),
-  recordClassDisplayName: recordClassDisplayName(state),
+  recordClassDisplayName: recordClassDisplayName(state, props),
   wdkModelBuildNumber: wdkModelBuildNumber(state),
   analysisChoices: analysisChoices(state),
   analysisPanelOrder: analysisPanelOrder(state), 
   analysisPanelStates: analysisPanelStates(state),
   analysisBaseTabConfigs: analysisBaseTabConfigs(state),
-  activeTab: activeTab(state),
+  activeTab: activeTab(state, props),
   newAnalysisButtonVisible: newAnalysisButtonVisible(state)
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHandlers => ({
-  loadTabs: (stepId: number) => dispatch(openTabListing(stepId)),
+const mapDispatchToProps = (dispatch: Dispatch, props: OwnProps): TabEventHandlers & PanelEventHandlers => ({
+  loadTabs: (stepId: number) => dispatch(openTabListing(props.viewId, stepId)),
   openAnalysisMenu: () => dispatch(
     createNewTab(
       {
@@ -118,9 +120,9 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
   onTabSelected: (tabKey: string) => { 
     if (+tabKey !== +tabKey) {
       dispatch(selectTab(-1));
-      dispatch(selectSummaryView(tabKey));
+      dispatch(selectSummaryView(props.viewId, tabKey));
     } else {
-      dispatch(selectSummaryView(null));
+      dispatch(selectSummaryView(props.viewId, null));
       dispatch(selectTab(+tabKey));
     }
   },
@@ -142,9 +144,9 @@ const mergeProps = (
   ...ownProps,
   summaryViewPlugins: stateProps.summaryViewPlugins,
   defaultSummaryView: stateProps.defaultSummaryView,
-  loadingTabs: stateProps.loadingSummaryViewListing || stateProps.loadingAnalysisChoices,
+  loadingTabs: stateProps.loadingSummaryViewListing || (ownProps.viewId === 'strategy' && stateProps.loadingAnalysisChoices),
   activeTab: `${stateProps.activeTab}`,
-  newAnalysisButton: stateProps.analysisChoices.length > 0 && stateProps.newAnalysisButtonVisible
+  newAnalysisButton: ownProps.viewId === 'strategy' && stateProps.analysisChoices.length > 0 && stateProps.newAnalysisButtonVisible
     ? (
       <button 
         id="add-analysis" 
@@ -174,13 +176,14 @@ const mergeProps = (
               questionName: stateProps.step.answerSpec.questionName
             }}
             pluginProps={{
-              stepId: ownProps.stepId
+              stepId: ownProps.stepId,
+              viewId: ownProps.viewId
             }}
           />
         ) : null
       })
     ),
-    ...stateProps.analysisBaseTabConfigs.map(
+    ...(ownProps.viewId !== 'strategy' ? [] : stateProps.analysisBaseTabConfigs.map(
       baseTabConfig => ({ 
         ...baseTabConfig, 
         content: (
@@ -211,7 +214,7 @@ const mergeProps = (
           />
         )
       })
-    )
+    ))
   ]
 });
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import { PrimaryKey, RecordInstance } from 'wdk-client/Utils/WdkModel';
 import BasketIconButton from 'wdk-client/Views/ResultTableSummaryView/BasketIconButton';
+import { BasketStatus } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
 interface BasketCellProps {
-  value: 'yes' | 'no' | 'loading';
+  value: BasketStatus;
   requestUpdateBasket: (
     operation: 'add' | 'remove',
     recordClass: string,

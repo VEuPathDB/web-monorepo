@@ -1,5 +1,7 @@
 import { Action } from 'wdk-client/Actions';
 
+import { get } from 'lodash';
+
 import { 
   Action as ResultPanelActions,
   openTabListing,
@@ -21,37 +23,22 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { combineEpics, ActionsObservable, StateObservable } from 'redux-observable';
 import { filter, mergeMap } from 'rxjs/operators';
 import { startLoadingTabListing } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
+import { indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
 
 export type ResultPanelState = {
   stepId: number;
-  questionsLoaded: boolean;
-  stepLoaded: boolean;
   activeSummaryView: string | null;
 };
 
 const initialState = {
   stepId: -1,
-  questionsLoaded: false,
-  stepLoaded: false,
   activeSummaryView: null
 };
 
 export const key = 'resultPanel';
 
-export const reduce = (state: ResultPanelState = initialState, action: Action): ResultPanelState => {
+const reduceResultPanel = (state: ResultPanelState = initialState, action: Action): ResultPanelState => {
   switch (action.type) {
-    case questionsLoaded.type:
-      return {
-        ...state,
-        questionsLoaded: true
-      };
-
-    case fulfillStep.type:
-      return {
-        ...state,
-        stepLoaded: true
-      };
-
     case selectSummaryView.type:
       return {
         ...state,
@@ -63,20 +50,21 @@ export const reduce = (state: ResultPanelState = initialState, action: Action): 
   }
 };
 
+export const reduce = indexByActionProperty(
+  reduceResultPanel,
+  action => get(action, ['payload', 'viewId'])
+)
+
 export const observe = combineEpics(
   observeOpenTabListing
 );
 
-function observeOpenTabListing(action$: ActionsObservable<ResultPanelActions>, state$: StateObservable<RootState>, dependencies: EpicDependencies) {
+function observeOpenTabListing(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, dependencies: EpicDependencies) {
   return action$.pipe(
     mergeMap(
       // TODO: Figure out why the payload type isn't being inferred from filter(openTabListing.isOfType)
-      action => action.type === openTabListing.type
-        ? ([
-          startLoadingTabListing(action.payload.stepId),
-          requestStep(action.payload.stepId)
-        ])
-        : []
-    )
+      action => action.type !== openTabListing.type
+        ? []
+        : [ startLoadingTabListing(action.payload.stepId), requestStep(action.payload.stepId) ])
   );
 }

@@ -1,15 +1,12 @@
 import React from 'react';
 import { PrimaryKey } from 'wdk-client/Utils/WdkModel';
+import { BasketStatus, RequestUpdateBasket } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
 interface BasketIconButtonProps {
-  status: 'yes' | 'no' | 'loading';
+  status: BasketStatus;
   idsToToggle: PrimaryKey[];
   recordClassName: string;
-  requestUpdateBasket: (
-    operation: 'add' | 'remove',
-    recordClass: string,
-    primaryKeys: PrimaryKey[]
-  ) => void;
+  requestUpdateBasket: RequestUpdateBasket;
 }
 
 export default function BasketIconButton({

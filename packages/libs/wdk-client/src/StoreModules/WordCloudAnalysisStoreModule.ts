@@ -51,7 +51,6 @@ async function getReport([{ payload: { reporterName, stepId }}]: [InferAction<ty
 }
 
 export const observe = takeEpicInWindow(
-  openView,
-  closeView,
+  { startActionCreator: openView, endActionCreator: closeView },
   switchMapRequestActionsToEpic([openView], getReport)
 )

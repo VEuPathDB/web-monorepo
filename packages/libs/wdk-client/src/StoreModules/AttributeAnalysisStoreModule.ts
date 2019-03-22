@@ -159,7 +159,6 @@ async function getAttributeReport(
 }
 
 export const observe = takeEpicInWindow(
-  openAttributeAnalysis,
-  closeAttributeAnalysis,
+  { startActionCreator: openAttributeAnalysis, endActionCreator: closeAttributeAnalysis },
   switchMapRequestActionsToEpic([requestAttributeReport], getAttributeReport)
 );

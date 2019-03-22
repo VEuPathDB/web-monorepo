@@ -1,15 +1,12 @@
 import React from 'react';
 import { Answer, PrimaryKey } from 'wdk-client/Utils/WdkModel';
 import BasketIconButton from 'wdk-client/Views/ResultTableSummaryView/BasketIconButton';
+import { BasketStatusArray, RequestUpdateBasket } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
 interface BasketHeadingProps {
   answer: Answer;
-  basketStatusArray?: Array<'yes' | 'no' | 'loading'>;
-  requestUpdateBasket: (
-    operation: 'add' | 'remove',
-    recordClass: string,
-    primaryKeys: PrimaryKey[]
-  ) => void;
+  basketStatusArray?: BasketStatusArray;
+  requestUpdateBasket: RequestUpdateBasket;
 }
 
 export default function BasketHeading({

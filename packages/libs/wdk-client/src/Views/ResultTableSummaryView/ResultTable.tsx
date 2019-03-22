@@ -5,7 +5,6 @@ import {
   RecordClass,
   Question,
   AttributeSortingSpec,
-  PrimaryKey,
   RecordInstance
 } from 'wdk-client/Utils/WdkModel';
 import { pure, wrappable } from 'wdk-client/Utils/ComponentUtils';
@@ -16,12 +15,10 @@ import BasketHeading from 'wdk-client/Views/ResultTableSummaryView/BasketHeading
 import PrimaryKeyCell from 'wdk-client/Views/ResultTableSummaryView/PrimaryKeyCell';
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from 'wdk-client/Views/ResultTableSummaryView/AttributeHeading';
+import { Action, BasketStatusArray, RequestSortingUpdate, RequestColumnsChoiceUpdate, RequestUpdateBasket, RequestAddStepToBasket, ViewPageNumber, RequestPageSizeUpdate, ShowHideAddColumnsDialog, OpenAttributeAnalysis, CloseAttributeAnalysis, UpdateSelectedIds } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
-export interface Action {
-  element: React.ReactType | ((selection: string[]) => React.ReactType);
-}
 
-interface Props {
+export interface Props {
   stepId: number;
   actions?: Action[];
   selectedIds?: string[];
@@ -29,24 +26,17 @@ interface Props {
   answer: Answer;
   recordClass: RecordClass;
   question: Question;
-  basketStatusArray?: Array<'yes' | 'no' | 'loading'>;
-  requestSortingUpdate: (
-    sorting: AttributeSortingSpec[],
-    questionName: string
-  ) => void;
-  requestColumnsChoiceUpdate: (columns: string[], questionName: string) => void;
-  requestUpdateBasket: (
-    operation: 'add' | 'remove',
-    recordClass: string,
-    primaryKeys: PrimaryKey[]
-  ) => void;
-  requestAddStepToBasket: (stepId: number) => void;
-  viewPageNumber: (pageNumber: number) => void;
-  requestPageSizeUpdate: (pageSize: number) => void;
-  showHideAddColumnsDialog: (show: boolean) => void;
-  openAttributeAnalysis: (reporterName: string, stepId: number) => void;
-  closeAttributeAnalysis: (reporterName: string, stepId: number) => void;
-  updateSelectedIds: (ids: string[]) => void;
+  basketStatusArray?: BasketStatusArray;
+  requestSortingUpdate: RequestSortingUpdate;
+  requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
+  requestUpdateBasket: RequestUpdateBasket;
+  requestAddStepToBasket: RequestAddStepToBasket;
+  viewPageNumber: ViewPageNumber;
+  requestPageSizeUpdate: RequestPageSizeUpdate;
+  showHideAddColumnsDialog: ShowHideAddColumnsDialog;
+  openAttributeAnalysis: OpenAttributeAnalysis;
+  closeAttributeAnalysis: CloseAttributeAnalysis;
+  updateSelectedIds: UpdateSelectedIds;
 }
 
 function ResultTable(props: Props) {

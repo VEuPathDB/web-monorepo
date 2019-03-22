@@ -13,146 +13,154 @@ import {
 
 export const openResultTableSummaryView = makeActionCreator(
   'resultTableSummaryView/open',
-  (stepId: number) => ({ stepId })
+  (viewId: string, stepId: number) => ({ stepId, viewId })
 );
 
 export const showHideAddColumnsDialog = makeActionCreator(
   'resultTableSummaryView/showHideAddColumnsPopup',
-  (show: boolean) => ({ show })
+  (viewId: string, show: boolean) => ({ show, viewId })
 );
 
 // the selection in the columns dialog, before user has hit OK
 export const updateColumnsDialogSelection = makeActionCreator(
   'resultTableSummaryView/updateTransitoryColumnsSelection',
-  (selection: Array<string>) => ({ selection })
+  (viewId: string, selection: Array<string>) => ({ selection, viewId })
 );
 
 export const updateColumnsDialogExpandedNodes = makeActionCreator(
   'resultTableSummaryView/updateColumnsExpandedNodes',
-  (expanded: Array<string>) => ({ expanded })
+  (viewId: string, expanded: Array<string>) => ({ expanded, viewId })
 );
 
 export const requestSortingPreference = makeActionCreator(
   'resultTableSummaryView/requestSortingPreference',
-  (questionName: string) => ({ questionName })
+  (viewId: string, questionName: string) => ({ questionName, viewId })
 );
 
 export const requestSortingUpdate = makeActionCreator(
   'resultTableSummaryView/requestSortingUpdate',
-  (sorting: AttributeSortingSpec[], questionName: string) => ({
+  (viewId: string, sorting: AttributeSortingSpec[], questionName: string) => ({
     sorting,
-    questionName
+    questionName,
+    viewId
   })
 );
 
 export const fulfillSorting = makeActionCreator(
   'resultTableSummaryView/fulfillSorting',
-  (sorting: AttributeSortingSpec[], questionName: string) => ({
+  (viewId: string, sorting: AttributeSortingSpec[], questionName: string) => ({
     sorting,
-    questionName
+    questionName,
+    viewId
   })
 );
 
 export const requestColumnsChoicePreference = makeActionCreator(
   'resultTableSummaryView/requestColumnsChoicePreference',
-  (questionName: string) => ({ questionName })
+  (viewId: string, questionName: string) => ({ questionName, viewId })
 );
 
 export const requestColumnsChoiceUpdate = makeActionCreator(
   'resultTableSummaryView/requestColumnsChoiceUpdate',
-  (columns: string[], questionName: string) => ({ columns, questionName })
+  (viewId: string, columns: string[], questionName: string) => ({ columns, questionName, viewId })
 );
 
 export const fulfillColumnsChoice = makeActionCreator(
   'resultTableSummaryView/fulfillColumnsChoice',
-  (columns: string[], questionName: string) => ({ columns, questionName })
+  (viewId: string, columns: string[], questionName: string) => ({ columns, questionName, viewId })
 );
 
 export const requestPageSize = makeActionCreator(
   'resultTableSummaryView/requestPageSize',
-  () => ({})
+  (viewId: string) => ({ viewId })
 );
 
 export const requestPageSizeUpdate = makeActionCreator(
   'resultTableSummaryView/requestPageSizeUpdate',
-  (pageSize: number) => ({ pageSize })
+  (viewId: string, pageSize: number) => ({ pageSize, viewId })
 );
 
 export const fulfillPageSize = makeActionCreator(
   'resultTableSummaryView/fulfillPageSize',
-  (pageSize: number) => ({ pageSize })
+  (viewId: string, pageSize: number) => ({ pageSize, viewId })
 );
 
 export const viewPageNumber = makeActionCreator(
   'resultTableSummaryView/viewPageNumber',
-  (page: number) => ({ page })
+  (viewId: string, page: number) => ({ page, viewId })
 );
 
 export const requestAnswer = makeActionCreator(
   'resultTableSummaryView/requestAnswer',
   (
+    viewId: string,
     stepId: number,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
     viewFilters?: AnswerSpec['viewFilters'],
-  ) => ({ stepId, columnsConfig, pagination, viewFilters })
+  ) => ({ stepId, columnsConfig, pagination, viewFilters, viewId })
 );
 
 export const fulfillAnswer = makeActionCreator(
   'resultTableSummaryView/fulfillAnswer',
   (
+    viewId: string,
     stepId: number,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
     viewFilters: AnswerSpec['viewFilters'] | undefined,
     answer: Answer
-  ) => ({ stepId, columnsConfig, pagination, viewFilters, answer })
+  ) => ({ stepId, columnsConfig, pagination, viewFilters, answer, viewId })
 );
 
 export const requestRecordsBasketStatus = makeActionCreator(
   'resultTableSummaryView/requestRecordsBasketStatus',
   (
+    viewId: string,
     stepId: number,
     pageNumber: number,
     pageSize: number,
     recordClassName: string,
     basketQuery: PrimaryKey[]
-  ) => ({ stepId, pageNumber, pageSize, recordClassName, basketQuery })
+  ) => ({ stepId, pageNumber, pageSize, recordClassName, basketQuery, viewId })
 );
 
 export const fulfillRecordsBasketStatus = makeActionCreator(
   'resultTableSummaryView/fulfillRecordsBasketStatus',
   (
+    viewId: string,
     stepId: number,
     pageNumber: number,
     pageSize: number,
     basketStatus: boolean[]
-  ) => ({ stepId, pageNumber, pageSize, basketStatus })
+  ) => ({ stepId, pageNumber, pageSize, basketStatus, viewId })
 );
 
 export const updateSelectedIds = makeActionCreator(
   'resultTableSummaryView/updateSelectedIds',
-  (ids: string[]) => ({ ids })
+  (viewId: string, ids: string[]) => ({ ids, viewId })
 );
 
 export const requestGlobalViewFilters = makeActionCreator(
   'resultTableSummaryView/requestGlobalViewFilters',
-  (recordClassName: string) => ({ recordClassName })
+  (viewId: string, recordClassName: string) => ({ recordClassName, viewId })
 );
 
 export const updateGlobalViewFilters = makeActionCreator(
   'resultTableSummaryView/updateGlobalViewFilters',
-  (recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
+  (viewId: string, recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
     recordClassName,
-    viewFilters
+    viewFilters,
+    viewId
   })
 );
 
 export const fulfillGlobalViewFilters = makeActionCreator(
   'resultTableSummaryView/fulfillGlobalViewFilters',
-  (recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
+  (viewId: string, recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
     recordClassName,
-    viewFilters
+    viewFilters,
+    viewId
   })
 );
 

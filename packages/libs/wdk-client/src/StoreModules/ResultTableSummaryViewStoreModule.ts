@@ -1,7 +1,7 @@
 // TODO Make this Store Module more generic so that it can be used with an Answer (and no Step).
 
 import stringify from 'json-stable-stringify';
-import { stubTrue } from 'lodash';
+import { get, stubTrue } from 'lodash';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { Action } from 'wdk-client/Actions';
 import {
@@ -59,6 +59,7 @@ import {
   PrimaryKey,
   AnswerSpec
 } from 'wdk-client/Utils/WdkModel';
+import { IndexedState, indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
 
 export const key = 'resultTableSummaryView';
 
@@ -70,7 +71,7 @@ type BasketStatus = 'yes' | 'no' | 'loading';
 // Keys are recordClass names.
 type GlobalViewFilters = Record<string, AnswerSpec['viewFilters']>;
 
-export type State = {
+type ViewState = {
   stepId?: number;
   answer?: Answer;
   answerLoading: boolean;
@@ -84,7 +85,9 @@ export type State = {
   globalViewFilters: GlobalViewFilters;
 };
 
-const initialState: State = {
+export type State = IndexedState<ViewState>;
+
+const initialViewState: ViewState = {
   answerLoading: false,
   addingStepToBasket: false,
   columnsDialogIsOpen: false,
@@ -105,7 +108,7 @@ function getUpdatedBasketStatus(
   });
 }
 
-function reduceBasketUpdateAction(state: State, action: Action): State {
+function reduceBasketUpdateAction(state: ViewState, action: Action): ViewState {
   let status: BasketStatus;
   if (action.type == requestUpdateBasket.type) status = 'loading';
   else if (action.type == fulfillUpdateBasket.type)
@@ -127,7 +130,7 @@ function reduceBasketUpdateAction(state: State, action: Action): State {
   return { ...state, basketStatusArray: newBasketStatusArray };
 }
 
-function reduceColumnsFulfillAction(state: State, action: Action): State {
+function reduceColumnsFulfillAction(state: ViewState, action: Action): ViewState {
   if (
     action.type != fulfillColumnsChoice.type ||
     action.payload.questionName != state.questionFullName
@@ -137,10 +140,15 @@ function reduceColumnsFulfillAction(state: State, action: Action): State {
   return { ...state, columnsDialogSelection: action.payload.columns };
 }
 
-export function reduce(state: State = initialState, action: Action): State {
+export const reduce = indexByActionProperty(
+  reduceView,
+  (action: Action) => get(action, [ 'payload', 'viewId'])
+);
+
+function reduceView(state: ViewState = initialViewState, action: Action): ViewState {
   switch (action.type) {
     case openResultTableSummaryView.type: {
-      return { ...initialState, stepId: action.payload.stepId };
+      return { ...initialViewState, stepId: action.payload.stepId };
     }
     case requestAnswer.type: {
       return { ...state, answerLoading: true };
@@ -229,7 +237,7 @@ async function getFirstPageNumber(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof viewPageNumber>> {
-  return viewPageNumber(1);
+  return viewPageNumber(openAction.payload.viewId, 1);
 }
 
 async function getRequestStep(
@@ -250,6 +258,7 @@ async function getRequestColumnsChoicePreference(
   {  }: EpicDependencies
 ): Promise<InferAction<typeof requestColumnsChoicePreference>> {
   return requestColumnsChoicePreference(
+    openAction.payload.viewId,
     requestAction.payload.step.answerSpec.questionName
   );
 }
@@ -277,7 +286,11 @@ async function getFulfillColumnsChoicePreference(
         requestAction.payload.questionName,
         wdkService
       );
-  return fulfillColumnsChoice(columns, requestAction.payload.questionName);
+  return fulfillColumnsChoice(
+    openAction.payload.viewId,
+    columns,
+    requestAction.payload.questionName
+  );
 }
 
 function filterFulfillColumnsChoicePreferenceActions([
@@ -290,6 +303,7 @@ function filterFulfillColumnsChoicePreferenceActions([
   InferAction<typeof requestColumnsChoicePreference>
 ]) {
   return (
+    openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
     stepAction.payload.step.answerSpec.questionName ===
       requestAction.payload.questionName
@@ -322,6 +336,7 @@ async function getFulfillColumnsChoiceUpdate(
   );
   wdkService.updateStep(id, { displayPrefs: { sortColumns, columnSelection } });
   return fulfillColumnsChoice(
+    openAction.payload.viewId,
     requestAction.payload.columns,
     requestAction.payload.questionName
   );
@@ -337,6 +352,7 @@ function filterFulfillColumnColumnsChoiceUpdateActions([
   InferAction<typeof requestColumnsChoiceUpdate>
 ]) {
   return (
+    openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
     stepAction.payload.step.answerSpec.questionName ===
       requestAction.payload.questionName
@@ -352,6 +368,7 @@ async function getRequestSortingPreference(
   {  }: EpicDependencies
 ): Promise<InferAction<typeof requestSortingPreference>> {
   return requestSortingPreference(
+    openAction.payload.viewId,
     requestAction.payload.step.answerSpec.questionName
   );
 }
@@ -380,7 +397,11 @@ async function getFulfillSortingPreference(
         requestAction.payload.questionName,
         wdkService
       );
-  return fulfillSorting(sorting, requestAction.payload.questionName);
+  return fulfillSorting(
+    openAction.payload.viewId,
+    sorting,
+    requestAction.payload.questionName
+  );
 }
 
 function filterFullfillSortingPreferenceActions([
@@ -393,6 +414,7 @@ function filterFullfillSortingPreferenceActions([
   InferAction<typeof requestSortingPreference>
 ]) {
   return (
+    openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
     stepAction.payload.step.answerSpec.questionName ===
       requestAction.payload.questionName
@@ -429,6 +451,7 @@ async function getFulfillSortingUpdate(
   );
   wdkService.updateStep(id, { displayPrefs: { columnSelection, sortColumns } });
   return fulfillSorting(
+    openAction.payload.viewId,
     requestAction.payload.sorting,
     requestAction.payload.questionName
   );
@@ -444,6 +467,7 @@ function filterFulfillSortingUpdateActions([
   InferAction<typeof requestSortingUpdate>
 ]) {
   return (
+    openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
     stepAction.payload.step.answerSpec.questionName ===
       requestAction.payload.questionName
@@ -457,7 +481,7 @@ async function getRequestPageSize(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof requestPageSize>> {
-  return requestPageSize();
+  return requestPageSize(openResultTableSummaryViewAction.payload.viewId);
 }
 
 async function getFulfillPageSizeUpdate(
@@ -469,7 +493,10 @@ async function getFulfillPageSizeUpdate(
     wdkService,
     requestPageSizeUpdateAction.payload.pageSize
   );
-  return fulfillPageSize(requestPageSizeUpdateAction.payload.pageSize);
+  return fulfillPageSize(
+    requestPageSizeUpdateAction.payload.viewId,
+    requestPageSizeUpdateAction.payload.pageSize
+  );
 }
 
 async function getFulfillPageSize(
@@ -478,7 +505,7 @@ async function getFulfillPageSize(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillPageSize>> {
   let pageSize = await getResultTablePageSizePref(wdkService);
-  return fulfillPageSize(pageSize);
+  return fulfillPageSize(requestAction.payload.viewId, pageSize);
 }
 
 async function getRequestAnswer(
@@ -510,7 +537,7 @@ async function getRequestAnswer(
   let sorting = fulfillSortingAction.payload.sorting;
   let columnsConfig: AttributesConfig = { attributes, sorting };
   let { viewFilters } = fulfillGlobalViewFiltersAction.payload;
-  return requestAnswer(stepId, columnsConfig, pagination, viewFilters);
+  return requestAnswer(openAction.payload.viewId, stepId, columnsConfig, pagination, viewFilters);
 }
 
 function filterRequestAnswerActions([
@@ -530,16 +557,18 @@ function filterRequestAnswerActions([
   InferAction<typeof fulfillSorting>,
   InferAction<typeof fulfillGlobalViewFilters>
 ]) {
+  const { stepId, viewId } = openAction.payload;
   return (
-    fulfillStepAction.payload.step.answerSpec.questionName ===
-      fulfillColumnsChoiceAction.payload.questionName &&
-    openAction.payload.stepId === fulfillStepAction.payload.step.id &&
-    fulfillStepAction.payload.step.answerSpec.questionName ===
-      fulfillColumnsChoiceAction.payload.questionName &&
-    fulfillStepAction.payload.step.answerSpec.questionName ===
-      fulfillSortingAction.payload.questionName &&
-    fulfillGlobalViewFiltersAction.payload.recordClassName ===
-      fulfillStepAction.payload.step.recordClassName
+    fulfillStepAction.payload.step.id === stepId &&
+    viewPageNumberAction.payload.viewId === viewId &&
+    fulfillPageSizeAction.payload.viewId === viewId &&
+    fulfillColumnsChoiceAction.payload.viewId === viewId &&
+    fulfillSortingAction.payload.viewId === viewId &&
+    fulfillGlobalViewFiltersAction.payload.viewId === viewId &&
+    fulfillStepAction.payload.step.answerSpec.questionName === fulfillColumnsChoiceAction.payload.questionName &&
+    fulfillStepAction.payload.step.answerSpec.questionName === fulfillColumnsChoiceAction.payload.questionName &&
+    fulfillStepAction.payload.step.answerSpec.questionName === fulfillSortingAction.payload.questionName &&
+    fulfillGlobalViewFiltersAction.payload.recordClassName === fulfillStepAction.payload.step.recordClassName
   );
 }
 
@@ -583,14 +612,17 @@ async function getFulfillAnswer(
     pagination: r.pagination
   };
   let answer = await wdkService.getStepAnswerJson(r.stepId, formatConfig, r.viewFilters);
-  return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
+  return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
 }
 
 function filterFulfillAnswerActions([openAction, requestAction]: [
   InferAction<typeof openRTS>,
   InferAction<typeof requestAnswer>
 ]) {
-  return openAction.payload.stepId === requestAction.payload.stepId;
+  return (
+    openAction.payload.viewId === requestAction.payload.viewId &&
+    openAction.payload.stepId === requestAction.payload.stepId
+  );
 }
 
 async function getRequestRecordsBasketStatus(
@@ -606,6 +638,7 @@ async function getRequestRecordsBasketStatus(
     recordInstance => recordInstance.id
   );
   return requestRecordsBasketStatus(
+    openAction.payload.viewId,
     openAction.payload.stepId,
     answerAction.payload.pagination.offset,
     answerAction.payload.pagination.numRecords,
@@ -618,7 +651,10 @@ function filterRequestRecordsBasketStatusActions([openAction, answerAction]: [
   InferAction<typeof openRTS>,
   InferAction<typeof fulfillAnswer>
 ]) {
-  return openAction.payload.stepId === answerAction.payload.stepId;
+  return (
+    openAction.payload.viewId === answerAction.payload.viewId &&
+    openAction.payload.stepId === answerAction.payload.stepId
+  );
 }
 
 async function getFulfillRecordsBasketStatus(
@@ -638,6 +674,7 @@ async function getFulfillRecordsBasketStatus(
         requestAction.payload.basketQuery
       );
   return fulfillRecordsBasketStatus(
+    openAction.payload.viewId,
     openAction.payload.stepId,
     answerAction.payload.pagination.offset,
     answerAction.payload.pagination.numRecords,
@@ -658,6 +695,8 @@ function filterFulfillRecordBasketStatusActions([
   let ap = answerAction.payload;
   let op = openAction.payload;
   return (
+    op.viewId === rp.viewId &&
+    op.viewId === ap.viewId &&
     op.stepId === rp.stepId &&
     op.stepId === ap.stepId &&
     ap.pagination.offset === rp.pageNumber &&
@@ -676,7 +715,10 @@ async function getRequestGlobalViewFiltersPref(
     InferAction<typeof fulfillStep>
   ],
 ): Promise<InferAction<typeof requestGlobalViewFilters>> {
-  return requestGlobalViewFilters(stepAction.payload.step.recordClassName);
+  return requestGlobalViewFilters(
+    openAction.payload.viewId,
+    stepAction.payload.step.recordClassName
+  );
 }
 
 function filterRequestGlobalViewFiltersActionsPref(
@@ -706,7 +748,10 @@ async function getFulfillGlobalViewFiltersPref(
 ): Promise<InferAction<typeof fulfillGlobalViewFilters>> {
   const { recordClassName } = stepAction.payload.step;
   const viewFilters = await getGlobalViewFilters(wdkService, recordClassName);
-  return fulfillGlobalViewFilters(recordClassName, viewFilters);
+  return fulfillGlobalViewFilters(
+    openAction.payload.viewId,
+    recordClassName, viewFilters
+  );
 }
 
 function filterFulfillGlobalViewFiltersActionsPref(
@@ -721,6 +766,7 @@ function filterFulfillGlobalViewFiltersActionsPref(
   ]
 ) {
   return (
+    openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
     stepAction.payload.step.recordClassName === requestAction.payload.recordClassName
   )
@@ -739,9 +785,9 @@ async function getFulfillGlobalViewFiltersUpdate(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillGlobalViewFilters>> {
-  const { recordClassName, viewFilters } = updateAction.payload;
+  const { recordClassName, viewFilters, viewId } = updateAction.payload;
   setGlobalViewFilters(wdkService, recordClassName, viewFilters);
-  return fulfillGlobalViewFilters(recordClassName, viewFilters);
+  return fulfillGlobalViewFilters(viewId, recordClassName, viewFilters);
 }
 
 function filterFulfillGlobalViewFiltersActionsUpdate(
@@ -756,14 +802,21 @@ function filterFulfillGlobalViewFiltersActionsUpdate(
   ]
 ) {
   return (
+    openAction.payload.viewId === updateAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
     stepAction.payload.step.recordClassName === updateAction.payload.recordClassName
   )
 }
 
 export const observe = takeEpicInWindow(
-  openResultTableSummaryView,
-  openResultTableSummaryView,
+  {
+    startActionCreator: openResultTableSummaryView,
+    endActionCreator: openResultTableSummaryView,
+    compareStartAndEndActions: (
+      start: InferAction<typeof openResultTableSummaryView>,
+      end: InferAction<typeof openResultTableSummaryView>
+    ) => start.payload.viewId === end.payload.viewId
+  },
   combineEpics(
     mrate([openRTS], getRequestStep),
     mrate([openRTS], getFirstPageNumber),

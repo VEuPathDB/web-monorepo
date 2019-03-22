@@ -14,48 +14,58 @@ import { ResultPanelState } from 'wdk-client/StoreModules/ResultPanelStoreModule
 
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
+// Props used by selectors... is there a better way to do this?
+type Props = { viewId: string, stepId: number };
+
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
 export const recordClassDisplayName = (
   { 
     globalData: { recordClasses = [] }, 
     steps: { steps }, 
-    stepAnalysis: { stepId } 
-  }: RootState
+  }: RootState,
+  { stepId }: Props
 ) => {
   const recordClassName = get(steps[stepId], 'recordClassName', '');
   const recordClass = recordClasses.find(({ name }) => name === recordClassName);
   return get(recordClass, 'displayName', '');
 };
+// FIXME This look suspect
 export const question = (
   { 
     globalData: { questions = [] }, 
     steps: { steps }, 
-    stepAnalysis: { stepId } 
-  }: RootState
+  }: RootState,
+  { stepId }: Props
 ) => {
   const questionName = get(steps[stepId], 'answerSpec.questionName', '');
   const question = questions.find(({ name }) => name === questionName);
   return question;
 };
-export const summaryViewPlugins = createSelector<RootState, Question | undefined, SummaryViewPluginField[]>(
+export const summaryViewPlugins = createSelector<RootState, Props, Question | undefined, SummaryViewPluginField[]>(
   question,
   question => question 
     ? question.summaryViewPlugins
     : []
 );
-export const defaultSummaryView = createSelector<RootState, Question | undefined, string>(
+export const defaultSummaryView = createSelector<RootState, Props, Question | undefined, string>(
   question,
   question => question 
     ? question.defaultSummaryView
     : ''
 );
 
-export const resultPanel = ({ resultPanel }: RootState) => resultPanel;
+export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): ResultPanelState | undefined => resultPanel[viewId];
 
-export const loadingSummaryViewListing = createSelector<RootState, ResultPanelState, boolean>(
+export const questionsLoaded = ({ globalData: { questions }}: RootState) => questions != null;
+
+export const stepLoaded = ({ steps: { steps }}: RootState, { stepId }: Props) => steps[stepId] != null;
+
+export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean, boolean>(
   resultPanel,
-  ({ questionsLoaded, stepLoaded }) => !questionsLoaded || !stepLoaded
+  questionsLoaded,
+  stepLoaded,
+  (resultPanel, questionsLoaded, stepLoaded) => resultPanel != null && (!questionsLoaded || !stepLoaded)
 );
 
 export const stepAnalyses = ({ stepAnalysis }: RootState) => stepAnalysis;
@@ -65,13 +75,13 @@ export const loadingAnalysisChoices = createSelector<RootState, StepAnalysesStat
   stepAnalyses => stepAnalyses.loadingAnalysisChoices
 );
 
-export const activeTab = createSelector<RootState, StepAnalysesState, ResultPanelState, string, string | number>(
+export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | number>(
   stepAnalyses,
   resultPanel,
   defaultSummaryView,
   (stepAnalyses, resultPanel, defaultSummaryView) => {
     if (stepAnalyses.activeTab === -1) {
-      return resultPanel.activeSummaryView || defaultSummaryView;
+      return (resultPanel && resultPanel.activeSummaryView) || defaultSummaryView;
     }
 
     return stepAnalyses.activeTab;

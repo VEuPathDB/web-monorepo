@@ -1,14 +1,24 @@
 import * as React from 'react';
-import {
-  Answer,
-  RecordClass,
-  Question,
-  PrimaryKey,
-  AttributeSortingSpec,
-} from 'wdk-client/Utils/WdkModel';
+import { Answer, RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import ResultTable, { Action } from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
+import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
+import {
+  Action,
+  BasketStatusArray,
+  RequestSortingUpdate,
+  RequestColumnsChoiceUpdate,
+  RequestUpdateBasket,
+  RequestAddStepToBasket,
+  RequestPageSizeUpdate,
+  ViewPageNumber,
+  ShowHideAddColumnsDialog,
+  UpdateColumnsDialogExpandedNodes,
+  UpdateColumnsDialogSelection,
+  OpenAttributeAnalysis,
+  CloseAttributeAnalysis,
+  UpdateSelectedIds
+} from 'wdk-client/Views/ResultTableSummaryView/Types';
 import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
 import Loading from 'wdk-client/Components/Loading/Loading';
 
@@ -27,32 +37,23 @@ interface Props {
   stepId: number;
   recordClass?: RecordClass;
   question?: Question;
-  basketStatusArray?: Array<'yes' | 'no' | 'loading'>;
+  basketStatusArray?: BasketStatusArray;
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: string[];
   columnsDialogExpandedNodes?: string[];
   columnsTree?: CategoryTreeNode;
-  requestSortingUpdate: (
-    sorting: AttributeSortingSpec[],
-    questionName: string
-  ) => void;
-  requestColumnsChoiceUpdate: (columns: string[], questionName: string) => void;
-  requestUpdateBasket: (
-    operation: 'add' | 'remove',
-    recordClass: string,
-    primaryKeys: PrimaryKey[]
-  ) => void;
-  requestAddStepToBasket: (
-    stepId: number
-  ) => void;
-  requestPageSizeUpdate: (pageSize: number) => void;
-  viewPageNumber: (pageNumber: number) => void;
-  showHideAddColumnsDialog: (show: boolean) => void;
-  updateColumnsDialogSelection: (attributes: string[]) => void;
-  updateColumnsDialogExpandedNodes: (nodes: string[]) => void;
-  openAttributeAnalysis: (reporterName: string, stepId: number) => void;
-  closeAttributeAnalysis: (reporterName: string, stepId: number) => void;
-  updateSelectedIds: (ids: string[]) => void;
+  requestSortingUpdate: RequestSortingUpdate;
+  requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
+  requestUpdateBasket: RequestUpdateBasket;
+  requestAddStepToBasket: RequestAddStepToBasket;
+  requestPageSizeUpdate: RequestPageSizeUpdate;
+  viewPageNumber: ViewPageNumber;
+  showHideAddColumnsDialog: ShowHideAddColumnsDialog;
+  updateColumnsDialogSelection: UpdateColumnsDialogSelection;
+  updateColumnsDialogExpandedNodes: UpdateColumnsDialogExpandedNodes;
+  openAttributeAnalysis: OpenAttributeAnalysis;
+  closeAttributeAnalysis: CloseAttributeAnalysis;
+  updateSelectedIds: UpdateSelectedIds;
 }
 
 const cx = makeClassNameHelper('ResultTableSummaryView');
@@ -83,18 +84,18 @@ export default function ResultTableSummaryView({
   updateColumnsDialogExpandedNodes,
   openAttributeAnalysis,
   closeAttributeAnalysis,
-  updateSelectedIds,
+  updateSelectedIds
 }: Props) {
   return (
     <div className={cx()}>
-      {(answerLoading || addingStepToBasket) &&
+      {(answerLoading || addingStepToBasket) && (
         <div className={cx('LoadingOverlay')}>
           <Loading className={cx('Loading')}>
             {answerLoading ? 'Loading results...' : 'Updating basket...'}
           </Loading>
         </div>
-      }
-      {answer && question && columnsTree &&
+      )}
+      {answer && question && columnsTree && (
         <ResultTableAddColumnsDialog
           answer={answer}
           question={question}
@@ -107,7 +108,7 @@ export default function ResultTableSummaryView({
           updateColumnsDialogSelection={updateColumnsDialogSelection}
           requestColumnsChoiceUpdate={requestColumnsChoiceUpdate}
         />
-      }
+      )}
       {answer && recordClass && question ? (
         <ResultTable
           answer={answer}
