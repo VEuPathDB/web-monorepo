@@ -249,6 +249,7 @@ sub snpTitleQuick {
   my ($link_type) = $f->get_tag_values("type");
 
   my $start = $f->start();
+  my $end = $f->end();
   my %revArray = ( 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' );
 
   my $link = "<a href='/a/app/record/$link_type/$source_id'>$source_id</a>";
@@ -272,7 +273,7 @@ sub snpTitleQuick {
 
   my @data;
   push(@data, ['SNP' => $link]);
-  push(@data, ['Location' => $start]);
+  push(@data, ['Location' => $end]);
   push(@data, ['Gene' => $gene]) if $gene;
 
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
