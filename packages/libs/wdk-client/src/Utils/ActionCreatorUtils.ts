@@ -1,6 +1,6 @@
 import { isEqual, stubTrue, negate } from 'lodash';
 import {concat, empty, of, Observable, combineLatest, from, Observer, OperatorFunction} from 'rxjs';
-import {catchError, filter, mergeMap, takeUntil, switchMap, concatMap, tap} from 'rxjs/operators';
+import {catchError, filter, mergeMap, takeUntil, takeWhile, switchMap, concatMap, tap} from 'rxjs/operators';
 import { StateObservable, ActionsObservable } from 'redux-observable';
 
 import {Action as WdkAction} from 'wdk-client/Actions';
@@ -494,37 +494,57 @@ export const concatMapRequestActionsToEpic: MapRequestActionsToEpic = mapRequest
  */
 export const switchMapRequestActionsToEpic: MapRequestActionsToEpic = mapRequestActionsToEpicWith(switchMap);
 
+interface TakeEpicInWindowOptions<StartAction extends WdkAction, EndAction extends WdkAction> {
+  startActionCreator: ActionCreator<ExtractWdkActionType<StartAction>, any, ExtractWdkActionPayload<StartAction>>;
+  endActionCreator: ActionCreator<ExtractWdkActionType<EndAction>, any, ExtractWdkActionPayload<EndAction>>,
+  compareStartAndEndActions?: (startAction: StartAction, endAction: EndAction) => boolean;
+}
+
 /**
  * Starts the target epic when `startAction` is emitted, until `endAction` is
  * emitted.
  */
 export function takeEpicInWindow<State, StartAction extends WdkAction, EndAction extends WdkAction>(
-  startActionCreator: ActionCreator<ExtractWdkActionType<StartAction>, any, ExtractWdkActionPayload<StartAction>>,
-  endActionCreator: ActionCreator<ExtractWdkActionType<EndAction>, any, ExtractWdkActionPayload<EndAction>>,
+  options: TakeEpicInWindowOptions<StartAction, EndAction>,
   epic: ModuleEpic<State>,
 ): ModuleEpic<State> {
+  const {
+    startActionCreator,
+    endActionCreator,
+    compareStartAndEndActions = stubTrue
+  } = options;
   return function takeUntilEpic(action$, state$, deps) {
     // TODO Add logging diagnostics
     const logTag = `[${startActionCreator.type} - ${endActionCreator.type}]`;
-    const end$ = action$.pipe(
-      filter(endActionCreator.isOfType),
-      tap(action => {
-        console.log(logTag, 'ending epic');
-      })
-    );
     return action$.pipe(
       filter(startActionCreator.isOfType),
-      tap(action => {
-        console.log(logTag, 'starting epic');
+      mergeMap((startAction: StartAction) => {
+        // FIXME New epics are starting before previous are ending
+        const window$ = concat(
+          of(startAction),
+          action$.pipe(
+            takeWhile((action: WdkAction) => !(
+              endActionCreator.isOfType(action) &&
+              compareStartAndEndActions(startAction, action as EndAction)
+            ))
+          )
+        );
+
+        console.log(logTag, ' -- starting epic', startAction);
+        return epic(ActionsObservable.from(window$), state$, deps).pipe(
+          tap(
+            action => {
+              console.log(logTag, 'action produced by epic in window', action);
+            },
+            error => {
+              console.log(logTag, 'error produced by epic in window', error);
+            },
+            () => {
+              console.log(logTag, ' -- ending epic', startAction);
+            }
+          )
+        );
       }),
-      mergeMap((action: WdkAction) =>
-        epic(ActionsObservable.from(concat(of(action), action$)), state$, deps).pipe(
-          tap(action => {
-            console.log(logTag, 'action produced by epic in window', action);
-          }),
-          takeUntil(end$)
-        ),
-      ),
     );
   };
 }
@@ -583,4 +603,17 @@ export function combineLatestIf<T>(...args: Array<Observable<T> | Array<Observab
       subscriptions.forEach(s => s.unsubscribe());
     };
   });
+}
+
+// Utility to partially apply a function. This type definiton works with how we
+// define ActionCreator. Eventually, we want to curry ActionCreator.
+export type Partial1<T> = T extends (first: infer first, ...rest: infer Rest) => infer Return
+  ? (...rest: Rest) => Return
+  : never;
+
+export function partial<T, F extends Function>(fn: F, t: T): Partial1<F>;
+export function partial(fn: Function, t: any) {
+  return function (...args: any[]) {
+    return fn(t, ...args);
+  }
 }
