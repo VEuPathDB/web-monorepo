@@ -139,6 +139,7 @@ export const RecordHeading = makeDynamicWrapper('RecordHeading');
 export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 export const RecordTable = makeDynamicWrapper('RecordTable', RecordTableContainer);
+export const RecordTableDescription = makeDynamicWrapper('RecordTableDescription');
 
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
@@ -176,7 +177,7 @@ export function RecordTableSection(DefaultComponent) {
       }
 
       let { table, record, downloadRecordTable, ontologyProperties } = this.props;
-      let customName = `Data sets used by ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
+      let customName = `Data Sets used to generate ${String.fromCharCode(8220)}${table.displayName.replace('/','-')}${String.fromCharCode(8221)}`
       let callDownloadTable = event => {
         event.stopPropagation();
         downloadRecordTable(record, table.name);
@@ -245,7 +246,7 @@ export function RecordTableSection(DefaultComponent) {
                     reference_name: table.name,
                   })
                 }}
-              ><i className="fa fa-database"/> Data sets</Link>}
+              ><i className="fa fa-database"/> Data Sets</Link>}
               { hasTaxonId == 1 && showDatasetsLink &&
               <Link
                 style={{
@@ -275,6 +276,13 @@ export function RecordTableSection(DefaultComponent) {
 export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
   function MaybeDyamicWrapper(props) {
     let { attribute, record, DefaultComponent } = props;
+
+    // Render attribute as a Sequence if attribute name ends with "sequence".
+    let sequenceRE = /sequence$/;
+    if (sequenceRE.test(attribute.name)) {
+      return ( <Sequence sequence={record.attributes[attribute.name]}/> );
+    }
+
     return record.attributes[attribute.name] == null
       ? <DefaultComponent {...props} />
       : props.children;
@@ -300,12 +308,6 @@ export function RecordAttributeSection(DefaultComponent) {
           <Gbrowse.GbrowseContext {...props} context={context} />
         </CollapsibleSection>
       );
-    }
-
-    // Render attribute as a Sequence if attribute name ends with "sequence".
-    let sequenceRE = /sequence$/;
-    if (sequenceRE.test(attribute.name)) {
-      return ( <Sequence sequence={record.attributes[attribute.name]}/> );
     }
 
     // use standard record class overriding

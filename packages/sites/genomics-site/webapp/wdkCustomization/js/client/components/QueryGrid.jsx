@@ -24,7 +24,7 @@ class QueryGrid extends React.Component {
           }).map(item => {
             return(
               <li className="threeTierList">
-                <div>{getPropertyValue("EuPathDB alternative term", item).replace("s","")} Searches</div>
+                <div>{getPropertyValue("EuPathDB alternative term", item).replace(/s$/,"")} Searches</div>
                 {this.setUpCategories(getNodeChildren(item))}
               </li>
             )
@@ -36,7 +36,7 @@ class QueryGrid extends React.Component {
           }).map(item => {
             return(
               <li className="twoTierList">
-                <div>{getPropertyValue("EuPathDB alternative term", item).replace("s","")} Searches</div>
+                <div>{getPropertyValue("EuPathDB alternative term", item).replace(/s$/,"")} Searches</div>
                 {this.setUpSearches(getNodeChildren(item))}
               </li>
             )

@@ -6,13 +6,24 @@
 <%@ taglib prefix="api" uri="http://eupathdb.org/taglib"%>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome"%>
 
+
+<imp:pageFrame title="${wdkModel.displayName} : News"
+                 banner="${banner}"
+                 parentDivision="${wdkModel.displayName}"
+                 parentUrl="/home.jsp"
+                 divisionName="News"
+                 division="news">
+
+
 <c:catch var="error">
+
 <%--  setLocale req. for date parsing when client browser (e.g. curl) doesn't send locale --%>
 <fmt:setLocale value="en-US"/>
 
 <api:configurations 
     var="config" configfile="/WEB-INF/wdk-model/config/projects.xml"
 />
+
 <%--
  wir:feed returns a SyndFeed object which has a Bean interface for
 iteration and getting SyndEntry objects and their attributes.
@@ -23,6 +34,12 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   ${pageContext.request.scheme}://${pageContext.request.serverName}/a/showXmlDataContent.do?name=XmlQuestions.NewsRss
 </c:set>
 
+  <c:set 
+      var="rss_Url">
+      ${rss_Url} 
+      https://hostdb.org/hostdb/showXmlDataContent.do?name=XmlQuestions.NewsRss
+   </c:set>
+
 <c:forEach items="${config}" var="s">
   <c:if test="${!fn:contains(s, 'EuPathDB')}"> <%-- projects.xml contains an empty value for eupathdb, let's skip it --%>
     <c:set 
@@ -32,10 +49,11 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
     </c:set>
   </c:if>
 </c:forEach>
+
+ 
+
 <%-- Thu May 13 15:00:00 EDT 2010 --%>
-<c:set
-    var="dateStringPattern" value="EEE MMMM d HH:mm:ss z yyyy"
-/>
+<c:set var="dateStringPattern" value="EEE MMMM d HH:mm:ss z yyyy"/>
 
 <wir:feed 
     feed="allFeeds" timeout="7000" 
@@ -50,12 +68,14 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
 </c:catch> 
 
-<imp:pageFrame title="${wdkModel.displayName} : News"
-                 banner="${banner}"
-                 parentDivision="${wdkModel.displayName}"
-                 parentUrl="/home.jsp"
-                 divisionName="News"
-                 division="news">
+
+<!--
+${config}
+<br>
+${rss_Url}
+<br>
+-->
+
 
 <c:choose>
 <c:when test="${error != null}">
@@ -75,16 +95,13 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
   <c:if test="${param.tag == null or param.tag eq tag or param.tag == ''}">
     <a name="${tag}"/>
     <table id="news">
-  
-    <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
-    <tr class="rowLight"><td>
- <!--   <a style="text-decoration:none" href="aggregateNews.jsp?tag=${tag}">  -->
-	<font color='black'><b>${headline}</b></font>
-	<!-- </a>  -->
-	(${fdate})<br><br>
-	${item}</td></tr>
+      <c:if test="${i > 1}"><tr><td colspan="2"><hr></td></tr></c:if>
+      <tr class="rowLight"><td>
+      <font color='black'><b>${headline}</b></font>
+	    (${fdate})<br><br>
+	    ${item}</td></tr>
     </table>
-  <c:set var="i" value="${i+1}"/>
+    <c:set var="i" value="${i+1}"/>
   </c:if>
 
 </c:forEach>
@@ -104,4 +121,6 @@ http://www.jarvana.com/jarvana/view/rome/rome/0.9/rome-0.9-javadoc.jar!/index.ht
 
 </c:otherwise>
 </c:choose>
+
+
 </imp:pageFrame>

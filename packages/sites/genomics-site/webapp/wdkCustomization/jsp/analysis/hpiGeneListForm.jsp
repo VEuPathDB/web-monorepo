@@ -42,7 +42,7 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold; padding-right: .5em;">Cutoff Type</span>
+                    <span style="font-weight:bold; padding-right: .5em;">(Fold Change) Cutoff Type</span>
                     <imp:helpIcon helpContent="${viewModel.thresholdTypeParamHelp}"/>
                   </label>
                 </td>
@@ -59,13 +59,13 @@
                 <td>
                   <label>
                     <span style="font-weight:bold; padding-right: .5em;">
-                      Cutoff <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
+                      (Fold Change) Cutoff Value <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
                     </span>
                     <imp:helpIcon helpContent="${viewModel.thresholdParamHelp}"/>
                   </label>
                 </td>
                 <td>
-                  <input type="text" name="thresholdParam" size="10" value="0.05"/>
+                  <input type="text" name="thresholdParam" size="10" value="5"/>
                 </td>
               </tr>
 

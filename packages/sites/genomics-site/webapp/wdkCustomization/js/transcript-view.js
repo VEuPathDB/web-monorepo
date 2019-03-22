@@ -11,7 +11,7 @@ function toggleRepresentativeTranscripts(checkboxElem) {
 
   // swap value of representative transcript filter flag
   jQuery.blockUI();
-  wdk.getWdkService().updateCurrentUserPreference("project","representativeTranscriptOnly",(checked ? "true" : "false"))
+  wdk.getWdkService().patchUserPreference("project","representativeTranscriptOnly",(checked ? "true" : "false"))
     .then(function(data) {
 
       // no actual data should be returned in success case

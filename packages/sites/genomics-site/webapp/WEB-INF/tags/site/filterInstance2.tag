@@ -117,11 +117,11 @@ ${species}  <!--  Aspergillus      knowlesi     -->
           (eg: "sp. 1" becomes "sp.=1") in the injector AnnotatedGenome.java    
 -->
 
-<c:set var="species" value="${fn:replace(species, '=-', '-')}" />
-<c:set var="species" value="${fn:replace(species, '=_', '_')}" />
+<c:set var="species" value="${fn:replace(species, '===', '_')}" />
+<c:set var="species" value="${fn:replace(species, '==', '-')}" />
 <c:set var="species" value="${fn:replace(species, '=', ' ')}" />
-<c:set var="realspecies" value="${fn:replace(realspecies, '=-', '-')}" />
-<c:set var="realspecies" value="${fn:replace(realspecies, '=_', '_')}" />
+<c:set var="realspecies" value="${fn:replace(realspecies, '===', '_')}" />
+<c:set var="realspecies" value="${fn:replace(realspecies, '==', '-')}" />
 <c:set var="realspecies" value="${fn:replace(realspecies, '=', ' ')}" />
 
 <c:choose>
@@ -152,7 +152,7 @@ ${species}  <!--  Aspergillus      knowlesi     -->
         <c:otherwise> <i>${fn:substring(family,0,1)}.${species}</i></c:otherwise>
       </c:choose>
 
-      &nbsp;&nbsp; ( nr Genes:
+      &nbsp;&nbsp; (
 
       <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
       <c:url var="countUrl" value="/showResultSize.do?step=${stepId}&answer=${answerValue.checksum}&filter=${instance.name}" />
@@ -178,6 +178,8 @@ ${species}  <!--  Aspergillus      knowlesi     -->
       <!-- reading strain name from filter instance displayName (popup title) -->
       <c:set var="dispNameOrg1" value="${fn:substringBefore(instance.displayName, 'Results')}" />
       <c:set var="dispNameOrg" value="${fn:trim(dispNameOrg1)}" /> 
+
+      <c:url var="linkUrl" value="/processFilter.do?strategy=${strategyId}&step=${stepId}&filter=${instance.name}" />
       <c:choose>
         <c:when test="${phylum eq 'Fungi'}">
           <c:set var="strain" value="${fn:substringAfter(dispNameOrg, realspecies )}" />
@@ -187,7 +189,7 @@ ${species}  <!--  Aspergillus      knowlesi     -->
         </c:otherwise>
       </c:choose>
       <c:set var="strain" value="${fn:trim(strain)}" /> 
-      ${strain}
+      <a  class="link-url2" href="javascript:void(0)" strId="${strategyId}" stpId="${stepId}" linkUrl2="${linkUrl}">${strain}</a>
 
   </c:when>
 

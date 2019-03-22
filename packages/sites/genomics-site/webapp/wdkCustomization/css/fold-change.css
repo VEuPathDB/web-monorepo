@@ -29,22 +29,31 @@
 */
 
 .fold-change {
-  width: 100%;
-  max-width: 980px;
-  margin: auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
 }
 
 .fold-change .param-item {
   padding-left: 1em;
 }
 
+.fold-change-params,
 .fold-change-graphic {
-  display: inline-block;
-  vertical-align: top;
-  width: 48%;
   padding-left: 1em;
   padding-right: 1em;
+}
+
+.fold-change-params {
+  margin-left: auto;
+}
+
+.fold-change-graphic {
   border-left: 1px inset #aaaaaa;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .fold-change-graphic > div {
@@ -77,7 +86,6 @@
 
 .fold-change .param {
   display: inline-block;
-  max-width: 94%;
 }
 .fold-change .param-control .param {
   width: 93%; /* force wrap */
@@ -86,17 +94,8 @@
   left: 2em;
 }
 
-.fold-change-params {
-  display: inline-block;
-  width: 49%;
-}
-
 .fold-change-params > div {
   padding-left: 1em;
-}
-
-.fold-change .param-item {
-  /* padding-left: 15%; was 2em */
 }
 
 .fold-change .param-item label {
@@ -143,7 +142,6 @@
   font-weight: bold;
 }
 .reference, .comparison {
-  width: 43%;
   padding: 0.5em;
   margin-bottom: 1em;
   border: 1px solid #EEE;
@@ -182,9 +180,6 @@
   padding: 0.4em;
   margin-top: 1em;
 }
-.fold-change .param-multiPick.dependentParam table {
-  width: 100%;
-}
 .fold-change #samples_fc_comp_genericaaa,
 .fold-change #samples_fc_ref_genericaaa {
   background: white;
@@ -192,19 +187,27 @@
   border-radius: 4px;
 }
 
-.fold-change .param-multiPick.dependentParam ul,
-.fold-change .checkbox-tree {
+.fold-change .comparison .param,
+.fold-change .comparison .param table,
+.fold-change .reference .param,
+.fold-change .reference .param table {
+  width: 100%;
+}
+.fold-change .comparison .param ul,
+.fold-change .comparison .checkbox-tree,
+.fold-change .reference .param ul,
+.fold-change .reference .checkbox-tree {
   height: 100px;
   background: white;
   overflow-y: scroll;
   border: 1px solid #AAA;
+  padding: 0 .3em;
 }
 .fold-change .checkbox-tree {
   margin-left: 3px;
   margin-right: 3px;
 }
 .fold-change-params .samples {
-  width: 900px;
   margin: 1em auto;
 }
 #min_max_avg_ref, #min_max_avg_comp {
@@ -220,10 +223,8 @@
 
 .fold-change-graphic .title, .fold-change-graphic .subtitle {
   text-align: center;
-  /*width: 400px;*/
 }
 .fold-change-graphic .title {
-  padding-top: 1em;
   font-size: 16px;
   font-weight: bold;
 }
@@ -446,3 +447,4 @@
 .fold-change .wdk-TreeBoxParam { 
   padding: 1em 2em;
 }
+

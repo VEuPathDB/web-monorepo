@@ -122,6 +122,25 @@
         <input type="radio" name="downloadType" value="plain" checked>Show in Browser</input>
       </td>
     </tr>
+    <tr>
+      <td valign="top" nowrap>
+        <b>Fasta defline</b>:
+
+        <input type="radio" name="onlyIdDefLine" value="1">Only Gene ID</input>
+
+        <input type="radio" name="onlyIdDefLine" value="0" checked>Full Fasta Header</input>
+      </td>
+    </tr>
+
+
+      <td valign="top" nowrap>
+        <b>Sequence format</b>:
+
+        <input type="radio" name="noLineBreaks" value="0" checked>Default (60 chars on a line)</input>
+        <input type="radio" name="noLineBreaks" value="1">Single line</input>
+      </td>
+    </tr>
+
     <tr><td align="center"><input name="go" value="Get Sequences" type="submit"/></td></tr>
   </table>
 

@@ -1,6 +1,10 @@
 wdk.namespace("eupathdb.foldChange", function(ns, $) {
   "use strict";
 
+  var isLoading = function($form) {
+    return /loading/i.test($form.find('[type=submit]').val());
+  }
+
   var SampleCollection = function(type, valueType) {
     this.type = type;
     this.samplesLabel = type[0].toUpperCase() + type.slice(1);
@@ -90,6 +94,8 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
     // connect to form change event
     $form
     .on("change", function() {
+      // don't call update if depended params are loading
+      if (isLoading($form)) return;
       update($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl);
     })
     .on("submit", function() {
@@ -97,6 +103,8 @@ wdk.namespace("eupathdb.foldChange", function(ns, $) {
     });
 
     $form.find("#fold_change").on("keyup", function(e) {
+      // don't call update if depended params are loading
+      if (isLoading($form)) return;
       update($scope, $form, $img, oneDirectionTmpl, twoDirectionTmpl, helpTmpl);
     });
 
