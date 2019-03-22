@@ -5,8 +5,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { lazy } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import DateSelector from 'wdk-client/Components/InputControls/DateSelector';
-import { formatDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import DateRangeSelector from 'wdk-client/Components/InputControls/DateRangeSelector';
+import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
+import { formatDate, parseDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 
 var distributionEntryPropType = PropTypes.shape({
@@ -342,64 +343,49 @@ var Histogram = (function() {
       var valuesMin = Math.min(...values);
       var valuesMax = Math.max(...values) + barWidth;
 
-      var xaxisMinSelector = chartType === 'date' ? (
-        <DateSelector
-          value={formatDate(timeformat, xaxisMin)}
+      var scaleSelector = chartType === 'date' ? (
+        <DateRangeSelector
+          value={{ min: formatDate(timeformat, xaxisMin), max: formatDate(timeformat, xaxisMax) }}
           start={formatDate(timeformat, valuesMin)}
-          end={formatDate(timeformat, xaxisMax)}
-          onChange={value => this.setXAxisScale(new Date(value).getTime(), xaxisMax)}
-        />
-      ) : (
-        <input
-          type="number"
-          value={xaxisMin.toFixed(numFixedDigits)}
-          min={valuesMin.toFixed(numFixedDigits)}
-          max={xaxisMax.toFixed(numFixedDigits)}
-          step={step}
-          onChange={e => this.setXAxisScale(Number(e.target.value), xaxisMax)}
-        />
-      );
-
-      var xaxisMaxSelector = chartType === 'date' ? (
-        <DateSelector
-          value={formatDate(timeformat, xaxisMax)}
-          start={formatDate(timeformat, xaxisMin)}
           end={formatDate(timeformat, valuesMax)}
-          onChange={value => this.setXAxisScale(xaxisMin, new Date(value).getTime())}
+          onChange={value => this.setXAxisScale(parseDate(value.min).getTime(), parseDate(value.max).getTime())}
         />
       ) : (
-        <input
-          type="number"
-          value={xaxisMax.toFixed(numFixedDigits)}
-          min={xaxisMin.toFixed(numFixedDigits)}
-          max={valuesMax.toFixed(numFixedDigits)}
-          step={step}
-          onChange={e => this.setXAxisScale(xaxisMin, Number(e.target.value))}
-        />
-      );
+        <React.Fragment>
+          <NumberRangeSelector
+            value={{ min: Number(xaxisMin.toFixed(numFixedDigits)), max: Number(xaxisMax.toFixed(numFixedDigits)) }}
+            start={Number(valuesMin.toFixed(numFixedDigits))}
+            end={Number(valuesMax.toFixed(numFixedDigits))}
+            step={step}
+            onChange={value => this.setXAxisScale(Number(value.min), Number(value.max))}
+          /> &nbsp;
+          <button
+            type="button"
+            onClick={() => this.setXAxisScale(valuesMin, valuesMax)}
+          >reset</button>
+        </React.Fragment>
+      )
 
       return (
         <div className="chart-container">
-          <div className="chart"></div>
+          <div className="chart">
+            <div className="chart-title y-axis">
+              <div>{yaxisLabel}</div>
+              <div>
+                <input
+                  style={{width: '90%'}}
+                  type="range"
+                  min={Math.max(countsMin, 1)}
+                  max={countsMax + countsMax * 0.1}
+                  title={yaxisMax}
+                  value={yaxisMax}
+                  onChange={e => this.setYAxisMax(Number(e.target.value))}/>
+              </div>
+            </div>
+          </div>
           <div className="chart-title x-axis">{xaxisLabel}</div>
           <div>
-            Zoom: {xaxisMinSelector} to {xaxisMaxSelector} &nbsp; <button
-              type="button"
-              onClick={() => this.setXAxisScale(valuesMin, valuesMax)}
-            >reset</button>
-          </div>
-          <div className="chart-title y-axis">
-            <div>{yaxisLabel}</div>
-            <div>
-              <input
-                style={{width: '90%'}}
-                type="range"
-                min={Math.max(countsMin, 1)}
-                max={countsMax + countsMax * 0.1}
-                title={yaxisMax}
-                value={yaxisMax}
-                onChange={e => this.setYAxisMax(Number(e.target.value))}/>
-            </div>
+            Zoom: {scaleSelector}
           </div>
         </div>
       );

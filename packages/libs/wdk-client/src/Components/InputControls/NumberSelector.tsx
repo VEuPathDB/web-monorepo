@@ -1,3 +1,4 @@
+import{ debounce } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -28,6 +29,7 @@ class NumberSelector extends React.Component<Props, State> {
     size: PropTypes.number
   };
 
+  debouncedNotifyChange = debounce(this.notifyChange, 750);
 
   constructor (props:Props) {
     super(props);
@@ -41,16 +43,21 @@ class NumberSelector extends React.Component<Props, State> {
   }
 
   handleChangeEvent (e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ internalValue: e.target.value });
+    this.setState({ internalValue: e.target.value }, () => this.debouncedNotifyChange());
   }
 
   handleBlurEvent (e: React.FocusEvent<HTMLInputElement>) {
-    let { onChange, start, end } = this.props;
+    let { start, end } = this.props;
     let value = Number(e.currentTarget.value);
     if (value < start) value = start;
     if (value > end) value = end;
-    this.setState({ internalValue: value });
-    if (onChange) onChange(value);
+    this.setState({ internalValue: value }, () => this.notifyChange());
+  }
+
+  notifyChange() {
+    const { onChange } = this.props;
+    if (onChange == null) return;
+    onChange(Number(this.state.internalValue));
   }
 
   render () {

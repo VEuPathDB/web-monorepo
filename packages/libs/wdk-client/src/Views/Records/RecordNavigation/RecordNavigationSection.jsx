@@ -2,7 +2,7 @@ import { includes, memoize, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
-import { getId, isIndividual } from 'wdk-client/Utils/CategoryUtils';
+import { getId, getTargetType, isIndividual } from 'wdk-client/Utils/CategoryUtils';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { preorderSeq, pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
@@ -78,7 +78,7 @@ class RecordNavigationSection extends React.PureComponent {
         </h2>
         <CategoriesCheckboxTree
           disableHelp
-          hideIndividuals
+          visibilityFilter={isNotAttribute}
           searchBoxPlaceholder="Search section names..."
           tree={categoryTree}
           leafType="section"
@@ -117,3 +117,7 @@ export default wrappable(RecordNavigationSection);
 
 const removeFields = memoize(root =>
   pruneDescendantNodes(node => !isIndividual(node), root));
+
+function isNotAttribute(node: CategoryTreeNode) {
+  return getTargetType(node) !== 'attribute';
+}

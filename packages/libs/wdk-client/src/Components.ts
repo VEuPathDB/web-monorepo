@@ -2,9 +2,11 @@ import FilterParamNew from 'wdk-client/Views/Question/Params/FilterParamNew/Filt
 import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';
 import RecordAttributeSection from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
 import RecordHeading from 'wdk-client/Views/Records/RecordHeading';
+import RecordActionLink from 'wdk-client/Views/Records/RecordActionLink';
 import RecordLink from 'wdk-client/Views/Records/RecordLink';
 import RecordMainSection from 'wdk-client/Views/Records/RecordMain/RecordMainSection';
 import RecordTable from 'wdk-client/Views/Records/RecordTable/RecordTable';
+import RecordTableDescription from 'wdk-client/Views/Records/RecordTable/RecordTableDescription';
 import RecordTableSection from 'wdk-client/Views/Records/RecordTable/RecordTableSection';
 import RecordUI from 'wdk-client/Views/Records/RecordUI';
 import DownloadForm from 'wdk-client/Views/ReporterForm/DownloadForm';
@@ -92,12 +94,14 @@ export {
   PrimaryKeySpan,
   RadioList,
   RealTimeSearchBox,
+  RecordActionLink,
   RecordAttribute,
   RecordAttributeSection,
   RecordHeading,
   RecordLink,
   RecordMainSection,
   RecordTable,
+  RecordTableDescription,
   RecordTableSection,
   RecordUI,
   ReporterSortMessage,

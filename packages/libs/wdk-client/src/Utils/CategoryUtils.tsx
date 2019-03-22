@@ -53,7 +53,9 @@ export type CategoryTreeNode = CategoryNode | IndividualNode;
 export type CategoryOntology = Ontology<CategoryTreeNode>
 
 export function getId(node: CategoryTreeNode) {
-  return isIndividual(node) ? node.wdkReference.name : kebabCase(getLabel(node));
+  return isIndividual(node)
+    ? node.wdkReference.name
+    : `category:${kebabCase(getLabel(node))}`;
 }
 
 export function getLabel(node: CategoryTreeNode) {

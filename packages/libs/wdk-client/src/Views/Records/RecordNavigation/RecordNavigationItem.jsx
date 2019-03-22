@@ -1,13 +1,15 @@
 import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { getId, getDisplayName } from 'wdk-client/Utils/CategoryUtils';
+import { getId, getDisplayName, isIndividual } from 'wdk-client/Utils/CategoryUtils';
 
 let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSectionToggle}) => {
   let id = getId(category);
   let activeId = activeCategory && getId(activeCategory);
   let displayName = getDisplayName(category)
 
-  let enumeration = path.map(n => n + 1).join('.');
+  let enumeration = isIndividual(category)
+    ? null
+    : path.map(n => n + 1).join('.');
 
   return (
     <div className="wdk-RecordNavigationItem">
