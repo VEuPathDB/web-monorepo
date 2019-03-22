@@ -249,6 +249,7 @@ sub snpTitleQuick {
   my ($link_type) = $f->get_tag_values("type");
 
   my $start = $f->start();
+  my $end = $f->end();
   my %revArray = ( 'A' => 'T', 'C' => 'G', 'T' => 'A', 'G' => 'C' );
 
   my $link = "<a href='/a/app/record/$link_type/$source_id'>$source_id</a>";
@@ -272,7 +273,7 @@ sub snpTitleQuick {
 
   my @data;
   push(@data, ['SNP' => $link]);
-  push(@data, ['Location' => $start]);
+  push(@data, ['Location' => $end]);
   push(@data, ['Gene' => $gene]) if $gene;
 
   if ($isCoding == 1 || $isCoding =~ /yes/i) {
@@ -1536,15 +1537,15 @@ sub bindingSiteTitle {
   my $strand  = $f->strand;
   my ($score) = $f->get_tag_values("Score");
   my ($sequence) = $f->get_tag_values("Sequence");
-  my $revComp = reverse $sequence;
-  $revComp =~ tr/ACGTacgt/TGCAtgca/;
+  #my $revComp = reverse $sequence;
+  #$revComp =~ tr/ACGTacgt/TGCAtgca/;
 
   if($strand eq '+1') {
     $strand = 'FORWARD';
   }
   else {
     $strand = 'REVERSE';
-    $sequence = $revComp;
+    #$sequence = $revComp;
   }
 
   my $link = qq(<a href="/a/images/pf_tfbs/$name.png"><img src="/a/images/pf_tfbs/$name.png"  height="140" width="224" align=left/></a>);
