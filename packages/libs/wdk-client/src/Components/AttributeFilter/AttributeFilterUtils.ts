@@ -98,14 +98,26 @@ export function getFormatFromDateString(dateString: string) {
  * @param {string} format strftime style format string
  * @param {Date} date
  */
-export function formatDate(format: string, date: string | Date) {
-  if (!(date instanceof Date)) {
-    date = new Date(date);
-  }
+export function formatDate(format: string, date: string | Date | number): string {
+  date = typeof date === 'string' ? parseDate(date)
+    : typeof date === 'number' ? new Date(date)
+    : date;
   return format
   .replace(/%Y/, String(date.getFullYear()))
   .replace(/%m/, padStart(String(date.getMonth() + 1), 2, '0'))
   .replace(/%d/, padStart(String(date.getDate()), 2, '0'));
+}
+
+/**
+ * @param {string} dataString An ISO 8601 compatible date string.
+ *   See https://en.wikipedia.org/wiki/ISO_8601.
+ */
+export function parseDate(dateString: string | Date | number): Date {
+  if (dateString instanceof Date) return dateString;
+  if (typeof dateString === 'number') return new Date(dateString);
+
+  const [ year, month = '1', day = '1' ] = dateString.split(/\D/);
+  return new Date(Number(year), Number(month) - 1, Number(day));
 }
 
 export function getFilterFieldsFromOntology(ontologyEntries: Iterable<Field>): FilterField[] {

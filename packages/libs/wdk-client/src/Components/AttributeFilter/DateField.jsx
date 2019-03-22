@@ -2,7 +2,7 @@ import React from 'react';
 import { partition, sortBy } from 'lodash';
 
 import HistogramField from 'wdk-client/Components/AttributeFilter/HistogramField';
-import { getFormatFromDateString, formatDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { getFormatFromDateString, formatDate, parseDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 /**
  * Date field component
@@ -38,12 +38,13 @@ export default class DateField extends React.Component {
   }
 
   toHistogramValue(value) {
-    return new Date(value).getTime();
+    const date = typeof value === 'string' ? parseDate(value) : new Date(value);
+    return date.getTime();
   }
 
   toFilterValue(value) {
     switch (typeof value) {
-      case 'number': return formatDate(this.timeformat, value);
+      case 'number': return formatDate(this.timeformat, new Date(value));
       default: return value;
     }
   }
@@ -56,14 +57,14 @@ export default class DateField extends React.Component {
 
     var values = sortBy(knownDist
       .filter(entry => entry.filteredCount > 0)
-      .map(entry => entry.value), value => new Date(value).getTime());
+      .map(entry => entry.value), value => parseDate(value).getTime());
     var distMin = values[0];
     var distMax = values[values.length - 1];
 
     var dateDist = knownDist.map(function(entry) {
       // convert value to time in ms
       return Object.assign({}, entry, {
-        value: new Date(entry.value).getTime()
+        value: parseDate(entry.value).getTime()
       });
     });
 
