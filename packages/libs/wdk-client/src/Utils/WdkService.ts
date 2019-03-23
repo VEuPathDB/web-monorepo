@@ -10,7 +10,7 @@ import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise, synchronized } from 'wdk-client/Utils/PromiseUtils';
 import { StepAnalysisConfig, stepAnalysisDecoder, stepAnalysisConfigDecoder, stepAnalysisTypeDecoder, stepAnalysisStatusDecoder, FormParams } from 'wdk-client/Utils/StepAnalysisUtils';
-import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder } from 'wdk-client/Utils/WdkUser';
+import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder, UserComment, UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentGetResponse } from 'wdk-client/Utils/WdkUser';
 
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
@@ -49,6 +49,8 @@ const CLIENT_WDK_VERSION_HEADER = 'x-client-wdk-timestamp';
  * model is stale, based on CLIENT_WDK_VERSION_HEADER.
  */
 const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
+
+export interface StandardWdkPostResponse  {id: number};
 
 interface RecordRequest {
   attributes: string[];
@@ -966,6 +968,56 @@ export default class WdkService {
     return this._fetchJson<void>('delete', `/users/current/user-datasets/${id}`);
   }
 
+  getUserComment(id: number) {
+    return this._fetchJson<UserCommentGetResponse>('get', `/user-comments/${id}`)
+  }
+
+  getPubmedPreview(pubMedIds: number[]) : Promise<PubmedPreview> {
+    let ids = pubMedIds.join(',');
+    return this._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`, undefined, true);
+  }
+
+  getUserComments(targetType: string, targetId: string) : Promise<UserCommentGetResponse[]> {
+    return this._fetchJson<UserCommentGetResponse[]>(
+      'get',
+      `/user-comments?target-type=${targetType}&target-id=${targetId}`
+    );
+  }
+
+  // return the new comment id
+  postUserComment(userCommentPostRequest: UserCommentPostRequest) : Promise<StandardWdkPostResponse> {
+    let data = JSON.stringify(userCommentPostRequest);
+    return this._fetchJson<StandardWdkPostResponse>('post', '/user-comments', data);
+  }
+
+  deleteUserComment(commentId: number) :Promise<void> {
+    return this._fetchJson<void>('delete', `/user-comments/${commentId}`);
+  }
+
+  // return the new attachment id
+  postUserCommentAttachedFile(commentId: number, { file, description }: UserCommentAttachedFileSpec) : Promise<StandardWdkPostResponse> {
+    if (file === null) {
+      return Promise.reject(`Tried to post an empty attachment to comment with id ${commentId}`);
+    }
+
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('file', file, file.name);
+
+    return fetch(
+      `${this.serviceUrl}/user-comments/${commentId}/attachments`, 
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      }
+    ).then(response => response.json());
+  }
+
+  deleteUserCommentAttachedFile(commentId: number, attachmentId: number) :Promise<void> {
+    return this._fetchJson<void>('delete', `/user-comments/${commentId}/attachments/${attachmentId}`);
+  }
+
   checkIfUserEmailExists (emailAddress: string) {
     return this._fetchJson<void>('post', '/user-id-query', JSON.stringify({ emails: [ emailAddress ]}));
   }
@@ -1259,17 +1311,19 @@ export default class WdkService {
     );
   }
 
-  private _fetchJson<T>(method: string, url: string, body?: string) {
-    return fetch(this.serviceUrl + url, {
-      method: method.toUpperCase(),
-      body: body,
-      credentials: 'include',
-      headers: new Headers(Object.assign({
-        'Content-Type': 'application/json'
-      }, this._version && {
-        [CLIENT_WDK_VERSION_HEADER]: this._version
-      }))
-    }).then(response => {
+  private _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
+    return fetch(
+      isBaseUrl ? url : this.serviceUrl + url, 
+      {
+        method: method.toUpperCase(),
+        body: body,
+        credentials: 'include',
+        headers: new Headers(Object.assign({
+          'Content-Type': 'application/json'
+        }, this._version && {
+          [CLIENT_WDK_VERSION_HEADER]: this._version
+        }))
+      }).then(response => {
       if (this._isInvalidating) {
         return pendingPromise as Promise<T>;
       }

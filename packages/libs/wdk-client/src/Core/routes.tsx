@@ -25,6 +25,8 @@ import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryVie
 import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
 import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers/StepAnalysis/StepAnalysisContainer';
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
+import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
+import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 
 const routes: RouteEntry[] = [
   {
@@ -202,9 +204,74 @@ const routes: RouteEntry[] = [
   },
 
   {
+    path: '/user-comments/add',
+    component: (props: RouteComponentProps<{}>) => {
+      const parsedProps = parseUserCommentQueryString(props);
+      return (
+        <UserCommentFormController {...parsedProps} />
+      );
+    }
+  },
+
+  {
+    path: '/user-comments/edit',
+    component: (props: RouteComponentProps<{}>) => {
+      const parsedProps = parseUserCommentQueryString(props);
+      return (
+        <UserCommentFormController {...parsedProps} />
+      );
+    }
+  },
+
+  {
+    path: '/user-comments/show',
+    component: (props: RouteComponentProps<{}>) => {
+      const { stableId = '', commentTargetId = '' } = parseQueryString(props);
+      return (
+        <UserCommentShowController
+          targetId={stableId}
+          targetType={commentTargetId}
+        />
+      );
+    }
+  },
+
+  {
     path: '*',
     component: () => <NotFoundController />
   }
 ];
 
 export default routes;
+
+function parseUserCommentQueryString(props: RouteComponentProps<{}>) {
+  const { 
+    commentId: stringCommentId,
+    commentTargetId: targetType,
+    stableId: targetId,
+    externalDbName,
+    externalDbVersion,
+    organism,
+    locations,
+    contig,
+    strand
+  } = parseQueryString(props);
+
+  const commentId = parseInt(stringCommentId || '') || undefined;
+  const target = targetId && targetType
+    ? { id: targetId, type: targetType }
+    : undefined;
+  const externalDatabase = externalDbName && externalDbVersion
+    ? { name: externalDbName, version: externalDbVersion }
+    : undefined;
+
+  return {
+    commentId,
+    target,
+    externalDatabase,
+    organism,
+    locations,
+    contig,
+    strand
+  };
+}

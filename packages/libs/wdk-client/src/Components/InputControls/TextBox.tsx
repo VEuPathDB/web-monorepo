@@ -6,10 +6,12 @@
  */
 
 import React from 'react';
+
+import { Omit } from 'wdk-client/Core/CommonTypes';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
-type InputWithoutOnChange = Pick<InputProps, Exclude<keyof InputProps, 'onChange'>>;
+type InputWithoutOnChange = Omit<InputProps, 'onChange'>;
 type Props = InputWithoutOnChange & {
   onChange: (value: string) => void;
 }

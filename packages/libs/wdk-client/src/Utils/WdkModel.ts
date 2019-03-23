@@ -466,3 +466,4 @@ export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
     }
   };
 }
+

@@ -24,6 +24,8 @@ import * as basket from 'wdk-client/StoreModules/BasketStoreModule';
 import * as resultPanel from 'wdk-client/StoreModules/ResultPanelStoreModule';
 import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
+import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
+import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
 
 export default {
   answerView,
@@ -42,6 +44,8 @@ export default {
   siteMap,
   steps,
   stepAnalysis,
+  userCommentForm,
+  userCommentShow,
   userDatasetDetail,
   userDatasetList,
   userProfile,
