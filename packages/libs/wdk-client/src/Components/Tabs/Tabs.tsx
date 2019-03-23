@@ -2,6 +2,7 @@ import 'wdk-client/Components/Tabs/Tabs.scss';
 
 import React, { Fragment } from 'react';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
 
 const cx = makeClassNameHelper('wdk-Tab');
 
@@ -40,7 +41,6 @@ export type TabConfig<TabKey extends string> = {
 };
 
 export default function Tabs<T extends string>(props: Props<T>) {
-  const activeTab = props.tabs.find(tab => tab.key === props.activeTab);
   return (
     <div className={cx('sContainer') + (props.containerClassName ? ` ${props.containerClassName}` : '')}>
       <div className={cx('s')}>
@@ -49,7 +49,7 @@ export default function Tabs<T extends string>(props: Props<T>) {
             type="button"
             key={tab.key}
             onClick={() => props.onTabSelected(tab.key)}
-            className={cx('', activeTab === tab ? 'active' : '')}
+            className={cx('', tab.key === props.activeTab ? 'active' : '')}
           >
             {tab.display}
             {
@@ -73,9 +73,11 @@ export default function Tabs<T extends string>(props: Props<T>) {
         ))}
         {props.headerContent}
       </div>
-      <div className={cx('Content')} key={props.activeTab}>
-        {activeTab && activeTab.content}
-      </div>
+      {props.tabs.map(tab => (
+        <DeferredDiv visible={tab.key === props.activeTab} className={cx('Content')} key={tab.key}>
+          {tab.content}
+        </DeferredDiv>
+      ))}
     </div>
   );
 }
