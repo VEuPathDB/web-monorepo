@@ -9,11 +9,6 @@
   <form-beans>
     <form-bean name="questionForm" type="org.gusdb.wdk.controller.form.QuestionForm"/>
     <form-bean name="booleanExpressionForm" type="org.gusdb.wdk.controller.form.BooleanExpressionForm"/>
-    <form-bean name="phenotypeForm" type="org.apidb.apicommon.controller.PhenotypeForm"/>
-    <form-bean name="commentForm" type="org.apidb.apicommon.controller.NewCommentForm"/> 
-    <form-bean name="editCommentForm" type="org.apidb.apicommon.controller.EditCommentForm"/> 
-    <form-bean name="showCommentForm" type="org.apidb.apicommon.controller.ShowCommentForm"/>
-    <form-bean name="deleteCommentForm" type="org.apidb.apicommon.controller.DeleteCommentForm"/>
     <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.form.RenameStepForm"/>
     <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.form.RenameStrategyForm"/>
     <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
@@ -21,7 +16,7 @@
   </form-beans>
 
   <global-exceptions>
-    
+
     <exception key="global.error.user" path="/showErrorPage.do?type=user" scope="request"
                type="org.gusdb.wdk.model.WdkUserException"/>
     <exception key="global.error.model" path="/showErrorPage.do?type=model" scope="request"
@@ -46,9 +41,9 @@
   </global-forwards>
 
   <action-mappings>
-  
+
     <!-- Front-page and Standard Actions -->
-    
+
     <action path="/home"
         parameter="org.gusdb.wdk.controller.action.standard.GenericPageAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
@@ -167,7 +162,7 @@
       path="/getFilterSummary"
       type="org.gusdb.wdk.controller.action.GetFilterSummaryAction"
       scope="request">
-    </action>    
+    </action>
     <action
       path="/applyFilter"
       type="org.gusdb.wdk.controller.action.ApplyFilterAction"
@@ -179,14 +174,14 @@
       type="org.gusdb.wdk.controller.action.RemoveFilterAction"
       scope="request">
       <forward name="show_application" path="/showApplication.do"/>
-    </action>    
+    </action>
     <action
       path="/toggleFilter"
       type="org.gusdb.wdk.controller.action.ToggleFilterAction"
       scope="request">
       <forward name="show_application" path="/showApplication.do"/>
     </action>
-    
+
     <action
       path="/showQuestion"
       type="org.apidb.apicommon.controller.action.CustomShowQuestionAction"
@@ -298,7 +293,7 @@
         path="/*.wadl"
         type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
         scope="request"
-        validate="false" 
+        validate="false"
         parameter="{1}.all::wadl"/>
 
     <!--
@@ -392,42 +387,6 @@
       path="/showXmlDataContent"
       type="org.gusdb.wdk.controller.action.ShowXmlDataContentAction"
       scope="request">
-    </action>
-   <action
-      path="/addComment"
-      type="org.apidb.apicommon.controller.NewCommentAction"
-      scope="session"
-      input="/addCommentsNew.jsp"
-      name="commentForm">
-   </action> 
-   <action
-      path="/editComment"
-      type="org.apidb.apicommon.controller.EditCommentAction"
-      scope="request"
-      input="/showComments.jsp"
-      name="editCommentForm">
-      <forward name="add_comment" path="/addComment.do"/>
-   </action> 
-   <action
-      path="/addPhenotype"
-      type="org.apidb.apicommon.controller.PhenotypeAction"
-      scope="request"
-      input="/addPhenotype.jsp"
-      name="phenotypeForm">
-      <forward name="add_phenotype" path="/addPhenotype.do"/>
-   </action> 
-   <action
-      path="/showComment"
-      type="org.apidb.apicommon.controller.ShowCommentAction"
-      scope="session"
-      name="showCommentForm">
-      <forward name="show_comment" path="/showComment.jsp"/>
-    </action>
-   <action
-      path="/deleteComment"
-      type="org.apidb.apicommon.controller.DeleteCommentAction"
-      scope="session"
-      name="deleteCommentForm">
     </action>
     <action
       path="/communityUpload"
