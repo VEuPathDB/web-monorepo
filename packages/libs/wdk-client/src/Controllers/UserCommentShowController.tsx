@@ -17,12 +17,11 @@ import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { get } from 'lodash';
 import { PubmedIdEntry } from 'wdk-client/Views/UserCommentForm/PubmedIdEntry';
 import { UserCommentUploadedFiles } from 'wdk-client/Views/UserCommentShow/UserCommentUploadedFiles';
+import { Link } from 'wdk-client/Components';
 
 type StateProps = {
   userId: number;
   documentTitle: string;
-  webAppUrl: string;
-  projectId: string;
   userComments: UserCommentGetResponse[];
   loading: boolean;
   title: ReactNode;
@@ -72,11 +71,6 @@ const userId = createSelector<RootState, GlobalData, number>(
   (globalData: GlobalData) => get(globalData, 'user.id', 0)
 );
 
-const projectId = createSelector<RootState, GlobalData, string>(
-  globalData,
-  (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.projectId', '')
-);
-
 const documentTitle = createSelector(
   globalData,
   targetId,
@@ -85,11 +79,6 @@ const documentTitle = createSelector(
     
     return displayName ? `${displayName}.org :: User Comments on ${targetId}` : displayName;
   }
-);
-
-const webAppUrl = createSelector<RootState, GlobalData, string>(
-  globalData,
-  (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.webAppUrl', '')
 );
 
 const userComments = createSelector<RootState, UserCommentShowState, UserCommentGetResponse[]>(
@@ -116,18 +105,14 @@ const loading = createSelector<RootState, boolean, boolean, boolean>(
 const returnUrl = createSelector(
   targetType,
   targetId,
-  projectId,
-  webAppUrl,
-  (targetType: string, targetId: string, projectId: string, webAppUrl: string) => {
+  (targetType: string, targetId: string) => {
     if (targetType === 'gene') {
-      return `/app/record/gene/${targetId}`;
+      return `/record/gene/${targetId}`;
+    } else if (targetType === 'isolate') {
+      return `/record/popsetSequence/${targetId}`;
+    } else {
+      return `/record/genomic-sequence/${targetId}`;
     }
-
-    if (targetType === 'isolate') {
-      return `${webAppUrl}/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${projectId}&primary_key=${targetId}`;
-    }
-
-    return `${webAppUrl}/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${projectId}&primary_key=${targetId}`;
   }
 );
 
@@ -157,9 +142,7 @@ const title = createSelector(
 
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
   userId: userId(state),
-  webAppUrl: webAppUrl(state),
   documentTitle: documentTitle(state, props),
-  projectId: projectId(state),
   userComments: userComments(state),
   loading: loading(state),
   title: title(state, props)
@@ -171,7 +154,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 const mergeProps = (
-  { documentTitle, userId, webAppUrl, userComments, loading, title }: StateProps, 
+  { documentTitle, userId, userComments, loading, title }: StateProps, 
   { loadUserComments, deleteUserComment }: DispatchProps,
   { location }: OwnProps
 ) => {
@@ -269,21 +252,21 @@ const mergeProps = (
                   stableId => (
                     comment.target.type === 'gene'
                       ? (
-                        <a 
+                        <Link
                           key={stableId}
-                          href={`${webAppUrl}/app/record/gene/${stableId}`}
+                          to={`/record/gene/${stableId}`}
                         >
                           {stableId}
-                        </a>
+                        </Link>
                       )
                       : comment.target.type === 'isolate'
                       ? (
-                        <a 
+                        <Link
                           key={stableId}
-                          href={`showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&source_id=${stableId}`}
+                          href={`/record/popsetSequence/${stableId}`}
                         >
                           {stableId}
-                        </a>
+                        </Link>
                       )
                       : null
                   )
@@ -409,11 +392,11 @@ const mergeProps = (
           {
             userId === comment.author.userId && (
               <>
-                <a href={`${webAppUrl}/app/user-comments/edit?commentId=${comment.id}`} target="_blank">[edit comment]</a>
-                <a href={`${webAppUrl}/app/user-comments/delete?commentId=${comment.id}`} onClick={event => {
+                <Link href={`/user-comments/edit?commentId=${comment.id}`} target="_blank">[edit comment]</Link>
+                <Link href={`user-comments/delete?commentId=${comment.id}`} onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
                   event.preventDefault();
                   deleteUserComment(comment.id);
-                }}>[delete comment]</a>
+                }}>[delete comment]</Link>
               </>
             )
           }

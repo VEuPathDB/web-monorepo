@@ -161,11 +161,6 @@ const isGuest = createSelector<RootState, GlobalData, boolean>(
   (globalDataState: GlobalData) => get(globalDataState, 'user.isGuest', true)
 );
 
-const webAppUrl = createSelector<RootState, GlobalData, string>(
-  globalData,
-  (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.webAppUrl', '')
-);
-
 const permissionDenied = createSelector<RootState, UserCommentFormState, boolean, boolean>(
   userCommentForm,
   isGuest,
@@ -235,21 +230,17 @@ const title = createSelector(
   }
 );
 
-const returnUrl = createSelector<RootState, string, string, string, string, string>(
+const returnUrl = createSelector<RootState, string, string, string>(
   targetType,
   targetId,
-  projectId,
-  webAppUrl,
-  (targetType: string, targetId: string, projectId: string, webAppUrl: string) => {
+  (targetType: string, targetId: string) => {
     if (targetType === 'gene') {
-      return `/app/record/gene/${targetId}`;
+      return `/record/gene/${targetId}`;
+    } else if (targetType === 'isolate') {
+      return `/record/popsetSequence/${targetId}`;
+    } else {
+      return `/record/genomic-sequence/${targetId}`;
     }
-
-    if (targetType === 'isolate') {
-      return `${webAppUrl}/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${projectId}&primary_key=${targetId}`;
-    }
-
-    return `${webAppUrl}/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${projectId}&primary_key=${targetId}`;
   }
 );
 

@@ -1,4 +1,5 @@
 import React, { ReactNode, FormEvent } from 'react';
+import { Link } from 'wdk-client/Components';
 import { FormRowProps } from 'wdk-client/Views/UserCommentForm/FormRow';
 import { FormBody } from 'wdk-client/Views/UserCommentForm/FormBody';
 
@@ -43,7 +44,7 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
           <>
             Thank you for the comment.
             <br /><br />
-            <a href={returnUrl}>{returnLinkText}</a>
+            <Link to={returnUrl}>{returnLinkText}</Link>
           </>
         )
         : (
