@@ -24,6 +24,7 @@ import { LocationField } from 'wdk-client/Views/UserCommentForm/LocationField';
 type StateProps = {
   submitting: boolean;
   completed: boolean;
+  documentTitle: string;
   title: ReactNode;
   buttonText: string;
   submission: UserCommentPostRequest;
@@ -64,6 +65,7 @@ type OwnProps = {
 };
 
 type MergedProps = UserCommentFormViewProps & {
+  documentTitle: string;
   permissionDenied: boolean;
   formLoaded: boolean;
   openAddComment: (request: UserCommentPostRequest) => void;
@@ -143,6 +145,15 @@ const editing = createSelector<RootState, number | null, boolean>(
 const projectId = createSelector<RootState, GlobalData, string>(
   globalData,
   (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.projectId', '')
+);
+
+const documentTitle = createSelector<RootState, GlobalData, string>(
+  globalData,
+  (globalDataState: GlobalData) => {
+    const displayName = get(globalDataState, 'siteConfig.displayName', '');
+    
+    return displayName ? `${displayName}.org :: Add A Comment` : displayName;
+  }
 );
 
 const isGuest = createSelector<RootState, GlobalData, boolean>(
@@ -268,6 +279,7 @@ const attachedFileSpecsToAdd = createSelector<RootState, UserCommentFormState, K
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
   submitting: submitting(state),
   completed: completed(state),
+  documentTitle: documentTitle(state),
   title: title(state, props),
   buttonText: buttonText(state),
   submission: userCommentPostRequest(state),
@@ -339,6 +351,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
   permissionDenied: stateProps.permissionDenied,
   returnUrl: stateProps.returnUrl,
   returnLinkText: stateProps.returnLinkText,
+  documentTitle: stateProps.documentTitle,
   title: stateProps.title,
   buttonText: stateProps.buttonText,
   submitting: stateProps.submitting,
@@ -549,6 +562,10 @@ class UserCommentShowController extends PageController<Props> {
     }    
   }
 
+  getTitle() {
+    return this.props.documentTitle;
+  }
+
   isRenderDataPermissionDenied() {
     return this.props.permissionDenied;
   }
@@ -563,6 +580,7 @@ class UserCommentShowController extends PageController<Props> {
       openAddComment,
       openEditComment,
       queryParams,
+      documentTitle,
       ...viewProps
     } = this.props;
 

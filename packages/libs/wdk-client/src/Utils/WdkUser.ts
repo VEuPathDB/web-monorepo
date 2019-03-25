@@ -171,11 +171,11 @@ export interface UserCommentGetResponse {
   conceptual: boolean;
   content: string;
   digitalObjectIds: string[];
-  externalDatabase: { name: string, version: string };
+  externalDatabase?: { name: string, version: string };
   genBankAccessions: string[];
   headline: string;
   id: number;
-  location: { 
+  location?: { 
     coordinateType: string, 
     ranges: { start: number, end: number }[],
     reverse?: boolean
@@ -184,11 +184,11 @@ export interface UserCommentGetResponse {
     name: string;
     version: string;
   };
-  organism: string;
+  organism?: string;
   pubMedRefs: PubmedPreview;
   relatedStableIds: string[];
   reviewStatus: ReviewStatus;
-  sequence: string;
+  sequence?: string;
   target: { type: string, id: string };
 }
 

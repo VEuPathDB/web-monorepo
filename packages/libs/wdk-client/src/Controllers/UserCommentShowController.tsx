@@ -20,6 +20,7 @@ import { UserCommentUploadedFiles } from 'wdk-client/Views/UserCommentShow/UserC
 
 type StateProps = {
   userId: number;
+  documentTitle: string;
   webAppUrl: string;
   projectId: string;
   userComments: UserCommentGetResponse[];
@@ -41,6 +42,7 @@ type OwnProps = {
 };
 
 type MergedProps = UserCommentShowViewProps & {
+  documentTitle: string;
   loading: boolean;
   loadUserComments: (targetType: string, targetId: string) => void; 
   deleteUserComment: (commentId: number) => void;
@@ -73,6 +75,16 @@ const userId = createSelector<RootState, GlobalData, number>(
 const projectId = createSelector<RootState, GlobalData, string>(
   globalData,
   (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.projectId', '')
+);
+
+const documentTitle = createSelector(
+  globalData,
+  targetId,
+  (globalDataState: GlobalData, targetId: string) => {
+    const displayName = get(globalDataState, 'siteConfig.displayName', '');
+    
+    return displayName ? `${displayName}.org :: User Comments on ${targetId}` : displayName;
+  }
 );
 
 const webAppUrl = createSelector<RootState, GlobalData, string>(
@@ -146,6 +158,7 @@ const title = createSelector(
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
   userId: userId(state),
   webAppUrl: webAppUrl(state),
+  documentTitle: documentTitle(state, props),
   projectId: projectId(state),
   userComments: userComments(state),
   loading: loading(state),
@@ -158,7 +171,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 const mergeProps = (
-  { userId, webAppUrl, userComments, loading, title }: StateProps, 
+  { documentTitle, userId, webAppUrl, userComments, loading, title }: StateProps, 
   { loadUserComments, deleteUserComment }: DispatchProps,
   { location }: OwnProps
 ) => {
@@ -359,7 +372,7 @@ const mergeProps = (
         {
           key: 'externalDb',
           label: 'External Database:',
-          field: `${comment.externalDatabase.name} ${comment.externalDatabase.version}`
+          field: comment.externalDatabase ? `${comment.externalDatabase.name} ${comment.externalDatabase.version}` : ''
         },
         {
           key: 'reviewStatus',
@@ -416,6 +429,7 @@ const mergeProps = (
     className: 'wdk-UserComments wdk-UserComments-Show',
     headerClassName: 'wdk-UserComments-Show-Header',
     bodyClassName: 'wdk-UserComments-Show-Body',
+    documentTitle,
     title,
     formGroupFields,
     formGroupHeaders,
@@ -439,12 +453,17 @@ class UserCommentShowController extends PageController<Props> {
     );
   }
 
+  getTitle() {
+    return this.props.documentTitle;
+  }
+
   isRenderDataLoaded() {
     return !this.props.loading;
   }
 
   renderView() {
     const {
+      documentTitle,
       loading,
       loadUserComments,
       deleteUserComment,
