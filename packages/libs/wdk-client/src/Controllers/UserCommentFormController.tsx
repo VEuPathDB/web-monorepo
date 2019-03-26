@@ -10,7 +10,7 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 import { CheckboxList, TextArea, TextBox, Link, HelpIcon } from 'wdk-client/Components';
 import { UserCommentFormView, UserCommentFormViewProps } from 'wdk-client/Views/UserCommentForm/UserCommentFormView';
-import { get } from 'lodash';
+import { get, omit } from 'lodash';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery } from 'wdk-client/Actions/UserCommentFormActions';
 import { UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields } from 'wdk-client/Utils/WdkUser';
@@ -534,7 +534,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
   queryParams: stateProps.queryParams
 });
 
-class UserCommentShowController extends PageController<Props> {
+class UserCommentFormController extends PageController<Props> {
   loadData(prevProps?: Props) {
     if (
       prevProps == null ||
@@ -543,7 +543,9 @@ class UserCommentShowController extends PageController<Props> {
       if (this.props.queryParams.commentId) {
         this.props.openEditComment(this.props.queryParams.commentId);
       } else {
-        this.props.openAddComment(this.props.queryParams);
+        this.props.openAddComment(
+          omit(this.props.queryParams, ['locations', 'contig', 'strand'])
+        );
       }    
     }
   }
@@ -581,5 +583,5 @@ export default connect<StateProps, DispatchProps, OwnProps, MergedProps, RootSta
   mapDispatchToProps,
   mergeProps
 )(
-  wrappable(UserCommentShowController)
+  wrappable(UserCommentFormController)
 );
