@@ -1056,6 +1056,17 @@ export default class WdkService {
     return this._stepMap.get(stepId)!;
   }
 
+  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<Step> {
+    let data = JSON.stringify(stepSpec);
+    let url = `/users/${userId}/steps/${stepId}`;
+    this._stepMap.set(stepId, this._fetchJson<Step>('patch', url, data).catch(error => {
+      // if the request fails, remove the response since a later request might succeed
+      this._stepMap.delete(stepId);
+      throw error;
+    }));
+    return this._stepMap.get(stepId)!;
+  }
+
   createStep(newStepSpec: StepSpec, userId: string = "current") {
     return this._fetchJson<Step>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
   }
@@ -1089,18 +1100,6 @@ export default class WdkService {
       path: `/users/${userId}/steps/${stepId}/answer`,
       body: JSON.stringify(formatConfig)
     });
-  }
-
-  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<Step> {
-    let data = JSON.stringify(stepSpec);
-    let url = `/users/${userId}/steps/${stepId}`;
-   
-    this._stepMap.set(stepId, this._fetchJson<Step>('patch', url, data).catch(error => {
-      // if the request fails, remove the response since a later request might succeed
-      this._stepMap.delete(stepId);
-      throw error;
-    }));
-    return this._stepMap.get(stepId)!;
   }
 
   getStrategies() {
