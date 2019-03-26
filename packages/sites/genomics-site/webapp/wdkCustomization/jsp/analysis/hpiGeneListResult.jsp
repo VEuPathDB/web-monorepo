@@ -40,6 +40,9 @@
                   <th>${row.t12}
                     <imp:helpIcon helpContent="${desc.t12}"/>
                   </th>
+                  <th>${row.t33}
+                    <imp:helpIcon helpContent="${desc.t33}"/>
+                  </th>
                   <th>${row.t21}
                     <imp:helpIcon helpContent="${desc.t21}"/>
                   </th>
@@ -61,6 +64,7 @@
                   <!-- td><a href="${row.serverEndPoint}" target="_blank">${row.significance}</a></td -->
                   <td>${row.t11}</td>
                   <td>${row.t12}</td>
+                  <td>${row.t33}</td>
                   <td>${row.t21}</td>
                   <td>${row.t22}</td>
                   <td>${row.significance}</td>
