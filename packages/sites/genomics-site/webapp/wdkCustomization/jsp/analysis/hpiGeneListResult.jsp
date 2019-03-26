@@ -34,20 +34,20 @@
                   <th>${row.type}
                     <imp:helpIcon helpContent="${desc.type}"/>
                   </th>
-                  <th>${row.t11}
-                    <imp:helpIcon helpContent="${desc.t11}"/>
+                  <th>${row.c11}
+                    <imp:helpIcon helpContent="${desc.c11}"/>
                   </th>
-                  <th>${row.t12}
-                    <imp:helpIcon helpContent="${desc.t12}"/>
+                  <th>${row.c22}
+                    <imp:helpIcon helpContent="${desc.c22}"/>
                   </th>
-                  <th>${row.t33}
-                    <imp:helpIcon helpContent="${desc.t33}"/>
+                  <th>${row.c33}
+                    <imp:helpIcon helpContent="${desc.c33}"/>
                   </th>
-                  <th>${row.t21}
-                    <imp:helpIcon helpContent="${desc.t21}"/>
+                  <th>${row.c44}
+                    <imp:helpIcon helpContent="${desc.c44}"/>
                   </th>
-                  <th>${row.t22}
-                    <imp:helpIcon helpContent="${desc.t22}"/>
+                  <th>${row.c55}
+                    <imp:helpIcon helpContent="${desc.c55}"/>
                   </th>
                   <th>${row.significance}
                     <imp:helpIcon helpContent="${desc.significance}"/>
@@ -62,11 +62,11 @@
                   <td>${row.description}</td>
                   <td>${row.type}</td>
                   <!-- td><a href="${row.serverEndPoint}" target="_blank">${row.significance}</a></td -->
-                  <td>${row.t11}</td>
-                  <td>${row.t12}</td>
-                  <td>${row.t33}</td>
-                  <td>${row.t21}</td>
-                  <td>${row.t22}</td>
+                  <td>${row.c11}</td>
+                  <td>${row.c22}</td>
+                  <td>${row.c33}</td>
+                  <td>${row.c44}</td>
+                  <td>${row.c55}</td>
                   <td>${row.significance}</td>
                   </tr>
                 </c:forEach>
