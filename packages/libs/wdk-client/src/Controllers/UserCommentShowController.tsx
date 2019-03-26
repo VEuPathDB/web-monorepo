@@ -15,11 +15,11 @@ import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { get } from 'lodash';
 import { PubmedIdEntry } from 'wdk-client/Views/UserCommentForm/PubmedIdEntry';
 import { UserCommentUploadedFiles } from 'wdk-client/Views/UserCommentShow/UserCommentUploadedFiles';
+import { Link } from 'wdk-client/Components';
 
 type StateProps = {
   userId: number;
-  webAppUrl: string;
-  projectId: string;
+  documentTitle: string;
   userComments: UserCommentGetResponse[];
   loading: boolean;
   title: ReactNode;
@@ -36,6 +36,7 @@ type OwnProps = {
 };
 
 type MergedProps = UserCommentShowViewProps & {
+  documentTitle: string;
   loading: boolean;
   loadUserComments: (targetType: string, targetId: string) => void; 
   deleteUserComment: (commentId: number) => void;
@@ -61,14 +62,14 @@ const userId = createSelector<RootState, GlobalData, number>(
   (globalData: GlobalData) => get(globalData, 'user.id', 0)
 );
 
-const projectId = createSelector<RootState, GlobalData, string>(
+const documentTitle = createSelector(
   globalData,
-  (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.projectId', '')
-);
-
-const webAppUrl = createSelector<RootState, GlobalData, string>(
-  globalData,
-  (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.webAppUrl', '')
+  targetId,
+  (globalDataState: GlobalData, targetId: string) => {
+    const displayName = get(globalDataState, 'siteConfig.displayName', '');
+    
+    return displayName ? `${displayName}.org :: User Comments on ${targetId}` : displayName;
+  }
 );
 
 const userComments = createSelector<RootState, UserCommentShowState, UserCommentGetResponse[]>(
@@ -95,18 +96,14 @@ const loading = createSelector<RootState, boolean, boolean, boolean>(
 const returnUrl = createSelector(
   targetType,
   targetId,
-  projectId,
-  webAppUrl,
-  (targetType: string, targetId: string, projectId: string, webAppUrl: string) => {
+  (targetType: string, targetId: string) => {
     if (targetType === 'gene') {
-      return `/app/record/gene/${targetId}`;
+      return `/record/gene/${targetId}`;
+    } else if (targetType === 'isolate') {
+      return `/record/popsetSequence/${targetId}`;
+    } else {
+      return `/record/genomic-sequence/${targetId}`;
     }
-
-    if (targetType === 'isolate') {
-      return `${webAppUrl}/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${projectId}&primary_key=${targetId}`;
-    }
-
-    return `${webAppUrl}/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${projectId}&primary_key=${targetId}`;
   }
 );
 
@@ -136,8 +133,7 @@ const title = createSelector(
 
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
   userId: userId(state),
-  webAppUrl: webAppUrl(state),
-  projectId: projectId(state),
+  documentTitle: documentTitle(state, props),
   userComments: userComments(state),
   loading: loading(state),
   title: title(state, props)
@@ -149,7 +145,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 const mergeProps = (
-  { userId, webAppUrl, userComments, loading, title }: StateProps, 
+  { documentTitle, userId, userComments, loading, title }: StateProps, 
   { loadUserComments, deleteUserComment }: DispatchProps,
   { targetId, targetType }: OwnProps
 ) => {
@@ -242,21 +238,21 @@ const mergeProps = (
                   stableId => (
                     comment.target.type === 'gene'
                       ? (
-                        <a 
+                        <Link
                           key={stableId}
-                          href={`${webAppUrl}/app/record/gene/${stableId}`}
+                          to={`/record/gene/${stableId}`}
                         >
                           {stableId}
-                        </a>
+                        </Link>
                       )
                       : comment.target.type === 'isolate'
                       ? (
-                        <a 
+                        <Link
                           key={stableId}
-                          href={`showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&source_id=${stableId}`}
+                          href={`/record/popsetSequence/${stableId}`}
                         >
                           {stableId}
-                        </a>
+                        </Link>
                       )
                       : null
                   )
@@ -345,7 +341,7 @@ const mergeProps = (
         {
           key: 'externalDb',
           label: 'External Database:',
-          field: `${comment.externalDatabase.name} ${comment.externalDatabase.version}`
+          field: comment.externalDatabase ? `${comment.externalDatabase.name} ${comment.externalDatabase.version}` : ''
         },
         {
           key: 'reviewStatus',
@@ -382,11 +378,11 @@ const mergeProps = (
           {
             userId === comment.author.userId && (
               <>
-                <a href={`${webAppUrl}/app/user-comments/edit?commentId=${comment.id}`} target="_blank">[edit comment]</a>
-                <a href={`${webAppUrl}/app/user-comments/delete?commentId=${comment.id}`} onClick={event => {
+                <Link href={`/user-comments/edit?commentId=${comment.id}`} target="_blank">[edit comment]</Link>
+                <Link href={`user-comments/delete?commentId=${comment.id}`} onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
                   event.preventDefault();
                   deleteUserComment(comment.id);
-                }}>[delete comment]</a>
+                }}>[delete comment]</Link>
               </>
             )
           }
@@ -402,6 +398,7 @@ const mergeProps = (
     className: 'wdk-UserComments wdk-UserComments-Show',
     headerClassName: 'wdk-UserComments-Show-Header',
     bodyClassName: 'wdk-UserComments-Show-Body',
+    documentTitle,
     title,
     formGroupFields,
     formGroupHeaders,
@@ -431,12 +428,17 @@ class UserCommentShowController extends PageController<Props> {
     }
   }
 
+  getTitle() {
+    return this.props.documentTitle;
+  }
+
   isRenderDataLoaded() {
     return !this.props.loading;
   }
 
   renderView() {
     const {
+      documentTitle,
       loading,
       loadUserComments,
       deleteUserComment,

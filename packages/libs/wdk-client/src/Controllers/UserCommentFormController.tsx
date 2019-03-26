@@ -24,6 +24,7 @@ import { LocationField } from 'wdk-client/Views/UserCommentForm/LocationField';
 type StateProps = {
   submitting: boolean;
   completed: boolean;
+  documentTitle: string;
   title: ReactNode;
   buttonText: string;
   submission: UserCommentPostRequest;
@@ -80,6 +81,7 @@ interface OwnProps {
 }
 
 type MergedProps = UserCommentFormViewProps & {
+  documentTitle: string;
   permissionDenied: boolean;
   formLoaded: boolean;
   openAddComment: (request: UserCommentPostRequest) => void;
@@ -161,14 +163,18 @@ const projectId = createSelector<RootState, GlobalData, string>(
   (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.projectId', '')
 );
 
+const documentTitle = createSelector<RootState, GlobalData, string>(
+  globalData,
+  (globalDataState: GlobalData) => {
+    const displayName = get(globalDataState, 'siteConfig.displayName', '');
+    
+    return displayName ? `${displayName}.org :: Add A Comment` : displayName;
+  }
+);
+
 const isGuest = createSelector<RootState, GlobalData, boolean>(
   globalData,
   (globalDataState: GlobalData) => get(globalDataState, 'user.isGuest', true)
-);
-
-const webAppUrl = createSelector<RootState, GlobalData, string>(
-  globalData,
-  (globalDataState: GlobalData) => get(globalDataState, 'siteConfig.webAppUrl', '')
 );
 
 const permissionDenied = createSelector<RootState, UserCommentFormState, boolean, boolean>(
@@ -240,21 +246,17 @@ const title = createSelector(
   }
 );
 
-const returnUrl = createSelector<RootState, string, string, string, string, string>(
+const returnUrl = createSelector<RootState, string, string, string>(
   targetType,
   targetId,
-  projectId,
-  webAppUrl,
-  (targetType: string, targetId: string, projectId: string, webAppUrl: string) => {
+  (targetType: string, targetId: string) => {
     if (targetType === 'gene') {
-      return `/app/record/gene/${targetId}`;
+      return `/record/gene/${targetId}`;
+    } else if (targetType === 'isolate') {
+      return `/record/popsetSequence/${targetId}`;
+    } else {
+      return `/record/genomic-sequence/${targetId}`;
     }
-
-    if (targetType === 'isolate') {
-      return `${webAppUrl}/showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=${projectId}&primary_key=${targetId}`;
-    }
-
-    return `${webAppUrl}/showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=${projectId}&primary_key=${targetId}`;
   }
 );
 
@@ -284,6 +286,7 @@ const attachedFileSpecsToAdd = createSelector<RootState, UserCommentFormState, K
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
   submitting: submitting(state),
   completed: completed(state),
+  documentTitle: documentTitle(state),
   title: title(state, props),
   buttonText: buttonText(state),
   submission: userCommentPostRequest(state),
@@ -329,6 +332,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
   permissionDenied: stateProps.permissionDenied,
   returnUrl: stateProps.returnUrl,
   returnLinkText: stateProps.returnLinkText,
+  documentTitle: stateProps.documentTitle,
   title: stateProps.title,
   buttonText: stateProps.buttonText,
   submitting: stateProps.submitting,
@@ -544,6 +548,10 @@ class UserCommentShowController extends PageController<Props> {
     }
   }
 
+  getTitle() {
+    return this.props.documentTitle;
+  }
+
   isRenderDataPermissionDenied() {
     return this.props.permissionDenied;
   }
@@ -558,6 +566,7 @@ class UserCommentShowController extends PageController<Props> {
       openAddComment,
       openEditComment,
       queryParams,
+      documentTitle,
       ...viewProps
     } = this.props;
 
