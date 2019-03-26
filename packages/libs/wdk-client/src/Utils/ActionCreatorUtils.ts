@@ -1,6 +1,6 @@
 import { isEqual, stubTrue, negate } from 'lodash';
-import {concat, empty, of, Observable, combineLatest, from, Observer, OperatorFunction} from 'rxjs';
-import {catchError, filter, mergeMap, takeUntil, takeWhile, switchMap, concatMap, tap} from 'rxjs/operators';
+import {concat, of, Observable, from, Observer, OperatorFunction} from 'rxjs';
+import {catchError, filter, mergeMap, takeWhile, switchMap, concatMap, tap} from 'rxjs/operators';
 import { StateObservable, ActionsObservable } from 'redux-observable';
 
 import {Action as WdkAction} from 'wdk-client/Actions';
@@ -12,37 +12,34 @@ interface Action<Type extends string, Payload> {
   readonly payload: Payload;
 }
 
-type ExtractWdkActionType<T extends WdkAction> = T['type'];
-
-type ExtractWdkActionPayload<T extends WdkAction> = T extends Action<string, any> ? T['payload'] : undefined;
-
-interface ActionTypeGuard<Type extends string, Payload> {
-  (action: { type: string }): action is Action<Type, Payload>;
+interface ActionTypeGuard<T extends Action<string, any>> {
+  (action: { type: string }): action is T;
 }
 
-interface ActionTypeGuardContainer<Type extends string, Payload> {
-  isOfType: ActionTypeGuard<Type, Payload>;
+interface ActionTypeGuardContainer<T extends Action<string, any>> {
+  isOfType: ActionTypeGuard<T>;
 }
 
-export interface ActionCreator<Type extends string, Args extends any[], Payload> extends ActionTypeGuardContainer<Type, String> {
-  readonly type: Type;
-  (...args: Args): Action<Type, Payload>;
-}
+
+type ActionCreator<T, Args> =
+  T extends Action<infer Type, infer Payload>
+    ? Args extends any[] ? { readonly type: Type; (...args: Args): T } & ActionTypeGuardContainer<T>
+    : { readonly type: Type; (): T } & ActionTypeGuardContainer<T>
+  : never
 
 // Utility type to infer the Action type from the ActionCreator
-export type InferAction<T extends ActionCreator<string, any, any>> =
-  T extends ActionCreator<infer Type, any, infer Payload>
-    ? Action<Type, Payload>
+export type InferAction<T> = T extends ActionCreator<infer A, any> ? A
+  : T extends ActionCreator<infer A, []> ? A
     : never;
 
 // This is the main utility function
 export function makeActionCreator<Type extends string>(
   type: Type
-) : ActionCreator<Type, [], undefined>;
+) : ActionCreator<Action<Type, undefined>, []>;
 export function makeActionCreator<Type extends string, Args extends any[], Payload>(
   type: Type,
   createPayload: (...args: Args) => Payload
-) : ActionCreator<Type, Args, Payload>
+) : ActionCreator<Action<Type, Payload>, Args>
 export function makeActionCreator<Type extends string, Args extends any[], Payload>(
   type: Type,
   createPayload?: (...args: Args) => Payload
@@ -63,7 +60,7 @@ export function makeActionCreator<Type extends string, Args extends any[], Paylo
 }
 
 
-type GenericActionCreator = ActionCreator<string, any[], any>;
+type GenericActionCreator = ActionCreator<Action<string, any>, any>;
 
 interface Request2Fulfill<T, State> {
   (
@@ -108,320 +105,245 @@ interface MapRequestActionsToEpic {
 
   // 1 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
+    A1 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>
+      ActionCreator<A1, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>
+      A1
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>
+      A1
     ], State>
-
   ): ModuleEpic<State>;
 
   // 2 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
-    T2 extends string,
-    A2 extends any[],
-    P2,
+    A1 extends Action<string, any>,
+    A2 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>,
-      ActionCreator<T2, A2, P2>
+      ActionCreator<A1, any>,
+      ActionCreator<A2, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>,
-      Action<T2, P2>
+      A1, A2
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>,
-      Action<T2, P2>
+      A1, A2
     ], State>
 
   ): ModuleEpic<State>;
 
   // 3 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
-    T2 extends string,
-    A2 extends any[],
-    P2,
-    T3 extends string,
-    A3 extends any[],
-    P3,
+    A1 extends Action<string, any>,
+    A2 extends Action<string, any>,
+    A3 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>,
-      ActionCreator<T2, A2, P2>,
-      ActionCreator<T3, A3, P3>
+      ActionCreator<A1, any>,
+      ActionCreator<A2, any>,
+      ActionCreator<A3, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>
+      A1,
+      A2,
+      A3
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>
+      A1,
+      A2,
+      A3
     ], State>
 
   ): ModuleEpic<State>;
 
   // 4 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
-    T2 extends string,
-    A2 extends any[],
-    P2,
-    T3 extends string,
-    A3 extends any[],
-    P3,
-    T4 extends string,
-    A4 extends any[],
-    P4,
+    A1 extends Action<string, any>,
+    A2 extends Action<string, any>,
+    A3 extends Action<string, any>,
+    A4 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>,
-      ActionCreator<T2, A2, P2>,
-      ActionCreator<T3, A3, P3>,
-      ActionCreator<T4, A4, P4>
+      ActionCreator<A1, any>,
+      ActionCreator<A2, any>,
+      ActionCreator<A3, any>,
+      ActionCreator<A4, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>
+      A1,
+      A2,
+      A3,
+      A4
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>
+      A1,
+      A2,
+      A3,
+      A4
     ], State>
 
   ): ModuleEpic<State>;
 
   // 5 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
-    T2 extends string,
-    A2 extends any[],
-    P2,
-    T3 extends string,
-    A3 extends any[],
-    P3,
-    T4 extends string,
-    A4 extends any[],
-    P4,
-    T5 extends string,
-    A5 extends any[],
-    P5,
+    A1 extends Action<string, any>,
+    A2 extends Action<string, any>,
+    A3 extends Action<string, any>,
+    A4 extends Action<string, any>,
+    A5 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>,
-      ActionCreator<T2, A2, P2>,
-      ActionCreator<T3, A3, P3>,
-      ActionCreator<T4, A4, P4>,
-      ActionCreator<T5, A5, P5>
+      ActionCreator<A1, any>,
+      ActionCreator<A2, any>,
+      ActionCreator<A3, any>,
+      ActionCreator<A4, any>,
+      ActionCreator<A5, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5
     ], State>
 
   ): ModuleEpic<State>;
 
   // 6 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
-    T2 extends string,
-    A2 extends any[],
-    P2,
-    T3 extends string,
-    A3 extends any[],
-    P3,
-    T4 extends string,
-    A4 extends any[],
-    P4,
-    T5 extends string,
-    A5 extends any[],
-    P5,
-    T6 extends string,
-    A6 extends any[],
-    P6,
+    A1 extends Action<string, any>,
+    A2 extends Action<string, any>,
+    A3 extends Action<string, any>,
+    A4 extends Action<string, any>,
+    A5 extends Action<string, any>,
+    A6 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>,
-      ActionCreator<T2, A2, P2>,
-      ActionCreator<T3, A3, P3>,
-      ActionCreator<T4, A4, P4>,
-      ActionCreator<T5, A5, P5>,
-      ActionCreator<T6, A6, P6>
+      ActionCreator<A1, any>,
+      ActionCreator<A2, any>,
+      ActionCreator<A3, any>,
+      ActionCreator<A4, any>,
+      ActionCreator<A5, any>,
+      ActionCreator<A6, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>,
-      Action<T6, P6>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5,
+      A6
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>,
-      Action<T6, P6>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5,
+      A6
     ], State>
 
   ): ModuleEpic<State>;
 
   // 7 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
-    T2 extends string,
-    A2 extends any[],
-    P2,
-    T3 extends string,
-    A3 extends any[],
-    P3,
-    T4 extends string,
-    A4 extends any[],
-    P4,
-    T5 extends string,
-    A5 extends any[],
-    P5,
-    T6 extends string,
-    A6 extends any[],
-    P6,
-    T7 extends string,
-    A7 extends any[],
-    P7,
+    A1 extends Action<string, any>,
+    A2 extends Action<string, any>,
+    A3 extends Action<string, any>,
+    A4 extends Action<string, any>,
+    A5 extends Action<string, any>,
+    A6 extends Action<string, any>,
+    A7 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>,
-      ActionCreator<T2, A2, P2>,
-      ActionCreator<T3, A3, P3>,
-      ActionCreator<T4, A4, P4>,
-      ActionCreator<T5, A5, P5>,
-      ActionCreator<T6, A6, P6>,
-      ActionCreator<T7, A7, P7>
+      ActionCreator<A1, any>,
+      ActionCreator<A2, any>,
+      ActionCreator<A3, any>,
+      ActionCreator<A4, any>,
+      ActionCreator<A5, any>,
+      ActionCreator<A6, any>,
+      ActionCreator<A7, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>,
-      Action<T6, P6>,
-      Action<T7, P7>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5,
+      A6,
+      A7
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>,
-      Action<T6, P6>,
-      Action<T7, P7>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5,
+      A6,
+      A7
     ], State>
 
   ): ModuleEpic<State>;
 
   // 8 request action
   <
-    T1 extends string,
-    A1 extends any[],
-    P1,
-    T2 extends string,
-    A2 extends any[],
-    P2,
-    T3 extends string,
-    A3 extends any[],
-    P3,
-    T4 extends string,
-    A4 extends any[],
-    P4,
-    T5 extends string,
-    A5 extends any[],
-    P5,
-    T6 extends string,
-    A6 extends any[],
-    P6,
-    T7 extends string,
-    A7 extends any[],
-    P7,
-    T8 extends string,
-    A8 extends any[],
-    P8,
+    A1 extends Action<string, any>,
+    A2 extends Action<string, any>,
+    A3 extends Action<string, any>,
+    A4 extends Action<string, any>,
+    A5 extends Action<string, any>,
+    A6 extends Action<string, any>,
+    A7 extends Action<string, any>,
+    A8 extends Action<string, any>,
     State
   >(
     actionCreators: [
-      ActionCreator<T1, A1, P1>,
-      ActionCreator<T2, A2, P2>,
-      ActionCreator<T3, A3, P3>,
-      ActionCreator<T4, A4, P4>,
-      ActionCreator<T5, A5, P5>,
-      ActionCreator<T6, A6, P6>,
-      ActionCreator<T7, A7, P7>,
-      ActionCreator<T8, A8, P8>
+      ActionCreator<A1, any>,
+      ActionCreator<A2, any>,
+      ActionCreator<A3, any>,
+      ActionCreator<A4, any>,
+      ActionCreator<A5, any>,
+      ActionCreator<A6, any>,
+      ActionCreator<A7, any>,
+      ActionCreator<A8, any>
     ],
     request2Fulfill: Request2Fulfill<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>,
-      Action<T6, P6>,
-      Action<T7, P7>,
-      Action<T8, P8>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5,
+      A6,
+      A7,
+      A8
     ], State>,
     options?: MapRequestActionsToEpicOptions<[
-      Action<T1, P1>,
-      Action<T2, P2>,
-      Action<T3, P3>,
-      Action<T4, P4>,
-      Action<T5, P5>,
-      Action<T6, P6>,
-      Action<T7, P7>,
-      Action<T8, P8>
+      A1,
+      A2,
+      A3,
+      A4,
+      A5,
+      A6,
+      A7,
+      A8
     ], State>
 
   ): ModuleEpic<State>;
@@ -495,8 +417,8 @@ export const concatMapRequestActionsToEpic: MapRequestActionsToEpic = mapRequest
 export const switchMapRequestActionsToEpic: MapRequestActionsToEpic = mapRequestActionsToEpicWith(switchMap);
 
 interface TakeEpicInWindowOptions<StartAction extends WdkAction, EndAction extends WdkAction> {
-  startActionCreator: ActionCreator<ExtractWdkActionType<StartAction>, any, ExtractWdkActionPayload<StartAction>>;
-  endActionCreator: ActionCreator<ExtractWdkActionType<EndAction>, any, ExtractWdkActionPayload<EndAction>>,
+  startActionCreator: ActionCreator<StartAction, any>;
+  endActionCreator: ActionCreator<EndAction, any>;
   compareStartAndEndActions?: (startAction: StartAction, endAction: EndAction) => boolean;
 }
 
@@ -523,7 +445,7 @@ export function takeEpicInWindow<State, StartAction extends WdkAction, EndAction
         const window$ = concat(
           of(startAction),
           action$.pipe(
-            takeWhile((action: WdkAction) => !(
+            takeWhile(action => !(
               endActionCreator.isOfType(action) &&
               compareStartAndEndActions(startAction, action as EndAction)
             ))
