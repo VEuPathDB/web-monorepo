@@ -226,8 +226,8 @@ export const observe = takeEpicInWindow(
   combineEpics(
     mrate([openMTF], getRequestStep),
     mrate([openMTF], getRequestMatchedTransFilterExpandedPref),
-    mrate( [requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
-    mrate( [requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
+    mrate([requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
+    mrate([requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
     mrate([openMTF], getRequestMatchedTransFilterSummary,
     /*{ areActionsCoherent: filterRequestMatchedTransFilterSummary }*/),
     mrate([openMTF, requestMatchedTransFilterSummary], getFulfillMatchedTransFilterSummary),

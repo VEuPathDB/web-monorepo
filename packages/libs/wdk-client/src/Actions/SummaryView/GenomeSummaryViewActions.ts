@@ -22,13 +22,11 @@ export const hideRegionDialog = makeActionCreator(
 );
 
 export const applyEmptyChromosomesFilter = makeActionCreator(
-    'genomeSummaryView/applyEmptyChromosomesFilter',
-    () => ({})
+    'genomeSummaryView/applyEmptyChromosomesFilter'
 );
 
 export const unapplyEmptyChromosomesFilter = makeActionCreator(
-    'genomeSummaryView/unapplyEmptyChromosomesFilter',
-    () => ({})
+    'genomeSummaryView/unapplyEmptyChromosomesFilter'
 );
 
 export type Action =
