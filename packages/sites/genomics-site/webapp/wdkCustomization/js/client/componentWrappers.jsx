@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
@@ -6,7 +7,6 @@ import { emptyAction } from 'wdk-client/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
 import { submitAsForm } from 'wdk-client/FormSubmitter';
-import { projectId } from './config';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
@@ -18,66 +18,6 @@ import ApiSiteHeader from './components/SiteHeader';
 export const SiteHeader = () => ApiSiteHeader;
 
 const stopPropagation = event => event.stopPropagation();
-
-// Project id is not needed for these record classes.
-// Matches urlSegment.
-const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'sample' ];
-
-const projectRegExp = new RegExp('/' + projectId + '$');
-
-/**
- * Adds projectId primary key record to primaryKey of props for pages referencing
- * a single record.  If recordclass of that record does not include the
- * projectId as a PK value, props are returned unchanged.
- */
-function addProjectIdPkValue(props) {
-  let { primaryKey, recordClass } = props.match.params;
-
-  // These record classes do not need the project id as a part of the primary key
-  // so we just render with the url params as-is.
-  if (RECORD_CLASSES_WITHOUT_PROJECT_ID.includes(recordClass)) {
-    return props;
-  }
-
-  // Append project id to request
-  let params = Object.assign({}, props.match.params, {
-    primaryKey: `${primaryKey}/${projectId}`
-  });
-
-  // Create new match object with updated primaryKey segment
-  let match = Object.assign({}, props.match, { params });
-
-  // reassign props to modified props object
-  return Object.assign({}, props, { match });
-}
-
-/**
- * ViewController mixin that adds the primary key to the url if omitted.
- */
-function addProjectIdPkValueWrapper(InnerComponent) {
-  return class ProjectIdFixer extends React.Component {
-    componentDidMount() {
-      this.removeProjectId(this.props);
-    }
-    componentWillReceiveProps(nextProps) {
-      this.removeProjectId(nextProps);
-    }
-    removeProjectId(props) {
-      if (projectRegExp.test(props.location.pathname)) {
-        // Remove projectId from the url. This is like a redirect.
-        props.history.replace(props.location.pathname.replace(projectRegExp, ''));
-      }
-    }
-    render() {
-      // Add projectId back to props and call super's loadData
-      const props = projectRegExp.test(this.props.location.pathname) ?
-        this.props : addProjectIdPkValue(this.props);
-      return (
-        <InnerComponent {...props} />
-      )
-    }
-  }
-}
 
 /**
  * In ./routes.js, we redirect urls to the record page that have the project ID
@@ -116,37 +56,40 @@ export function RecordController(WdkRecordController) {
       ]
     }
     loadData(prevProps) {
-       super.loadData(prevProps);
-       // special loading for Pathways- if gene step ID (i.e. the step passed to
-       // a genes->pathways transform that produced a result that contained this
-       // record) is present, load dynamic attributes of that step for all genes
-       // relevant to this pathway that were also in that result
-       let { recordClass, primaryKey } = this.props.match.params;
-       if (recordClass == 'pathway') {
-         let [ pathwaySource, pathwayId ] = primaryKey.split('/');
-         let geneStepId = QueryString.parse(this.props.globalData.location.search.slice(1)).geneStepId;
-         let exactMatchOnly = QueryString.parse(this.props.globalData.location.search.slice(1)).exact_match_only;
-         let excludeIncompleteEc = QueryString.parse(this.props.globalData.location.search.slice(1)).exclude_incomplete_ec;
-         this.props.loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc);
-       }
+      super.loadData(prevProps);
+      // special loading for Pathways- if gene step ID (i.e. the step passed to
+      // a genes->pathways transform that produced a result that contained this
+      // record) is present, load dynamic attributes of that step for all genes
+      // relevant to this pathway that were also in that result
+      let { recordClass, primaryKey } = this.props.ownProps;
+      if (recordClass == 'pathway' && !isEqual(this.props.ownProps, prevProps && prevProps.ownProps)) {
+        let [ pathwaySource, pathwayId ] = primaryKey.split('/');
+        let geneStepId = QueryString.parse(this.props.globalData.location.search.slice(1)).geneStepId;
+        let exactMatchOnly = QueryString.parse(this.props.globalData.location.search.slice(1)).exact_match_only;
+        let excludeIncompleteEc = QueryString.parse(this.props.globalData.location.search.slice(1)).exclude_incomplete_ec;
+        this.props.loadPathwayGeneDynamicCols(geneStepId, pathwaySource, pathwayId, exactMatchOnly, excludeIncompleteEc);
+      }
     }
   }
-  return addProjectIdPkValueWrapper(enhance(ApiRecordController));
+  return enhance(ApiRecordController);
 }
 
-export const DownloadFormController = addProjectIdPkValueWrapper;
 export const RecordHeading = makeDynamicWrapper('RecordHeading');
 export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 export const RecordTable = makeDynamicWrapper('RecordTable', RecordTableContainer);
 export const RecordTableDescription = makeDynamicWrapper('RecordTableDescription');
+export const ResultTable = makeDynamicWrapper('ResultTable');
+
+const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
 
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
+  const ResolvedRecordLink = RecordClassSpecificRecordlink(WdkRecordLink);
   return function ApiRecordLink(props) {
     let recordId = props.recordId.filter(p => p.name !== 'project_id');
     return (
-      <WdkRecordLink {...props} recordId={recordId}/>
+      <ResolvedRecordLink {...props} recordId={recordId}/>
     );
   };
 }

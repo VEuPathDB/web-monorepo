@@ -19,5 +19,5 @@ const composeReducerWith = curryN(2, composeReducers);
 export default compose(
   set('galaxyTerms', galaxyTerms),
   update('globalData.reduce', composeReducerWith(globalData.reduce)),
-  set('record', record)
+  set('record', record),
 );

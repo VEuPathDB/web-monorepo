@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.apidb.apicommon.model.TranscriptUtil;
@@ -57,7 +58,8 @@ public class CustomShowResultSizeAction extends ShowResultSizeAction {
     public FilterSizeGroup getUpdatedValue(Long stepId, FilterSizeGroup previousVersion)
         throws ValueProductionException {
       try {
-        Step step = _wdkModel.getStepFactory().getStepById(stepId);
+        Optional<Step> stepOpt = _wdkModel.getStepFactory().getStepById(stepId);
+        Step step = stepOpt.orElseThrow(() -> new ValueProductionException("Step ID not found: " + stepId));
         AnswerValue answerValue = step.getAnswerValue(false);
         if (!TranscriptUtil.isTranscriptQuestion(answerValue.getQuestion())) {
           return super.getUpdatedValue(stepId, previousVersion);
