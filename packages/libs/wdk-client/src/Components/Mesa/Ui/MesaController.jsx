@@ -19,12 +19,12 @@ class MesaController extends React.Component {
   renderPaginationMenu () {
     const { uiState, eventHandlers } = this.props;
     const { pagination } = uiState ? uiState : {};
-    const { currentPage, totalRows, rowsPerPage } = pagination ? pagination : {};
+    const { currentPage, totalPages, totalRows, rowsPerPage } = pagination ? pagination : {};
     const { onPageChange, onRowsPerPageChange } = eventHandlers ? eventHandlers : {};
 
     if (!onPageChange) return null;
 
-    const props = { currentPage, totalRows, rowsPerPage, onPageChange, onRowsPerPageChange };
+    const props = { currentPage, totalPages, totalRows, rowsPerPage, onPageChange, onRowsPerPageChange };
     return <PaginationMenu {...props} />
   }
 
@@ -37,8 +37,8 @@ class MesaController extends React.Component {
   }
 
   renderActionBar () {
-    const { rows, options, actions, eventHandlers, children } = this.props;
-    let props = { rows, options, actions, eventHandlers };
+    const { rows, columns, options, actions, eventHandlers, children } = this.props;
+    let props = { rows, columns, options, actions, eventHandlers };
     if (!actions || !actions.length) return null;
     if (!this.renderToolbar() && children) props = Object.assign({}, props, { children });
 

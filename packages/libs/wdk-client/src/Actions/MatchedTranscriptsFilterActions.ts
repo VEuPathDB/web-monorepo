@@ -1,13 +1,21 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
-export const openMatchedTranscriptsFilterAction = makeActionCreator(
+export type FilterSummary = Record<string, number>;
+
+export type FilterSelection = Array<keyof FilterSummary>;
+
+export const openMatchedTranscriptsFilter = makeActionCreator(
     'matchedTranscriptsFilter/open',
+    (stepId: number, filterKey: string) => ({ stepId, filterKey })
+);
+
+export const closeMatchedTranscriptsFilter = makeActionCreator(
+    'matchedTranscriptsFilter/close',
     (stepId: number) => ({ stepId })
 );
 
 export const requestMatchedTransFilterExpandedPref = makeActionCreator(
-    'matchedTranscriptsFilter/requestExpandedPreference',
-    () => ({})
+    'matchedTranscriptsFilter/requestExpandedPreference'
 );
 
 export const requestMatchedTransFilterExpandedUpdate = makeActionCreator(
@@ -22,7 +30,7 @@ export const fulfillMatchedTransFilterExpanded = makeActionCreator(
 
 export const setDisplayedSelection = makeActionCreator(
     'matchedTranscriptsFilter/setDisplayedSelection',
-    (didMeetCriteria: boolean, didNotMeetCriteria: boolean) => ({ didMeetCriteria, didNotMeetCriteria })
+    (selection: FilterSelection) => ({ selection })
 );
 
 export const requestMatchedTransFilterSummary = makeActionCreator(
@@ -32,21 +40,21 @@ export const requestMatchedTransFilterSummary = makeActionCreator(
 
 export const fulfillMatchedTransFilterSummary = makeActionCreator(
     'matchedTranscriptsFilter/fulfillSummary',
-    (stepId: number, didMeetCount: number, didNotMeetCount: number) => ({ stepId, didMeetCount, didNotMeetCount })
+  (stepId: number, summary: FilterSummary) => ({ stepId, summary })
+);
+
+export const requestMatchedTransFilterUpdate = makeActionCreator(
+  'matchedTranscriptsFilter/requestMatchedTransFilterUpdate',
+  (selection: FilterSelection) => ({ selection })
 );
 
 export type Action =
-    | InferAction<typeof openMatchedTranscriptsFilterAction>
+    | InferAction<typeof openMatchedTranscriptsFilter>
+    | InferAction<typeof closeMatchedTranscriptsFilter>
     | InferAction<typeof requestMatchedTransFilterExpandedPref>
     | InferAction<typeof requestMatchedTransFilterExpandedUpdate>
     | InferAction<typeof fulfillMatchedTransFilterExpanded>
     | InferAction<typeof setDisplayedSelection>
     | InferAction<typeof requestMatchedTransFilterSummary>
     | InferAction<typeof fulfillMatchedTransFilterSummary>
-
-
-
-
-
-
-
+    | InferAction<typeof requestMatchedTransFilterUpdate>

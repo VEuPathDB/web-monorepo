@@ -6,7 +6,7 @@ const numericDataMean: NumericDataMean = compose(
   flatMap(([ value, times ]: [ number, number ]) => Array(times).fill(value)),
 )
 
-export interface Report {
+export interface HistogramReport {
   type: 'category' | 'int' | 'float';
   data: Record<string, number>;
   attrLabel: string;
@@ -14,11 +14,11 @@ export interface Report {
 }
 
 export const MAX_DEFUALT_NUM_BINS = 10;
-export const isTypeCategory = (type: Report['type']) => type === 'category';
-export const isTypeInt = (type: Report['type']) => type === 'int';
-export const isTypeFloat = (type: Report['type']) => type === 'float';
+export const isTypeCategory = (type: HistogramReport['type']) => type === 'category';
+export const isTypeInt = (type: HistogramReport['type']) => type === 'int';
+export const isTypeFloat = (type: HistogramReport['type']) => type === 'float';
 
-export function getReportSummary(report: Report, applyLog: boolean) {
+export function getReportSummary(report: HistogramReport, applyLog: boolean) {
   const dataEntries = Object.entries(report.data);
 
   // empty data
@@ -43,7 +43,7 @@ export function getReportSummary(report: Report, applyLog: boolean) {
   );
 }
 
-export function getDefaultBinSize(report: Report, applyLog: boolean) {
+export function getDefaultBinSize(report: HistogramReport, applyLog: boolean) {
   if (isTypeCategory(report.type)) return 1;
 
   const { min, max } = getReportSummary(report, applyLog);

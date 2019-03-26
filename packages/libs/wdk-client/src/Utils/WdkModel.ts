@@ -3,6 +3,7 @@
  */
 
 import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
+import { Step } from 'wdk-client/Utils/WdkUser';
 
 interface ModelEntity {
   name: string;
@@ -176,6 +177,13 @@ export interface ParameterGroup {
   parameters: string[];
 }
 
+interface QuestionFilter {
+  name: string;
+  displayName?: string;
+  description?: string;
+  isViewOnly: boolean;
+}
+
 interface QuestionShared extends ModelEntity {
   summary?: string;
   description?: string;
@@ -188,10 +196,12 @@ interface QuestionShared extends ModelEntity {
   urlSegment: string;
   groups: ParameterGroup[];
   defaultAttributes: string[];
+  defaultSorting: AttributeSortingSpec[];
   dynamicAttributes: AttributeField[];
   defaultSummaryView: string;
-  summaryViewPlugins: string[];
+  summaryViewPlugins: SummaryViewPluginField[];
   stepAnalysisPlugins: string[];
+  filters: QuestionFilter[];
 }
 
 export interface Question extends QuestionShared {
@@ -241,6 +251,10 @@ export interface AttributeField extends ModelEntity {
   formats: Reporter[];
 }
 
+export interface SummaryViewPluginField extends ModelEntity {
+  description: string;
+}
+
 export interface TableField extends ModelEntity {
   help: string;
   type: string;
@@ -279,6 +293,11 @@ export interface Answer {
     recordClassName: string;
     responseCount: number;
     totalCount: number;
+    viewTotalCount: number;
+    displayTotalCount: number;
+    displayViewTotalCount: number;
+    sorting: AttributeSortingSpec[];
+    pagination: Pagination;
   }
 }
 
@@ -286,7 +305,7 @@ export interface AnswerSpec {
   questionName: string;
   parameters?: Record<string, string>;
   legacyFilterName?: string;
-  filters?: { name: string; value: string; }[];
+  filters?: { name: string; value: any; }[];
   viewFilters?: { name: string; value: string; }[];
   wdkWeight?: number;
 }
@@ -316,10 +335,11 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
 }
 
 export interface StepSpec {
-  answerSpec: AnswerSpec,
+  answerSpec?: AnswerSpec,
   customName?: string,
   isCollapsible?: boolean,
-  collapsedName?: string
+  collapsedName?: string;
+  displayPrefs?: Step['displayPrefs'];
 }
 
 export type UserDatasetMeta = {
@@ -399,6 +419,7 @@ export interface IsolateForSummaryView {
 }
 
 export interface GenomeSummaryViewReport {
+  isTruncate?: boolean;
   isDetail: boolean;
   maxLength: number;
   sequences: GenomeViewSequence[];
@@ -415,7 +436,7 @@ export interface GenomeViewSequence {
 }
 
 export interface GenomeViewRegion {
-  forward: boolean,
+  isForward: boolean,
   percentStart: number,
   percentLength: number,
   features: GenomeViewFeature[];
@@ -423,7 +444,7 @@ export interface GenomeViewRegion {
 
 export interface GenomeViewFeature {
   sourceId: string;
-  forward: boolean;
+  isForward: boolean;
   sequenceId: string;
   start: number;
   end: number;

@@ -20,6 +20,10 @@ import UserMessageController from 'wdk-client/Controllers/UserMessageController'
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import AttributeAnalysisButtonController from 'wdk-client/Controllers/AttributeAnalysisButtonController';
+import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
+import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
+import StepFiltersController from 'wdk-client/Controllers/StepFiltersController';
+import MatchedTranscriptsFilterController from 'wdk-client/Controllers/MatchedTranscriptsFilterController';
 
 export {
   PageController,
@@ -36,6 +40,7 @@ export {
   QuestionController,
   QuestionListController,
   RecordController,
+  ResultPanelController,
   SiteMapController,
   UserDatasetDetailController,
   UserDatasetListController,
@@ -44,4 +49,7 @@ export {
   UserPasswordResetController,
   UserProfileController,
   UserRegistrationController,
+  ResultTableSummaryViewController,
+  StepFiltersController,
+  MatchedTranscriptsFilterController,
 };

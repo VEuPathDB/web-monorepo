@@ -31,7 +31,7 @@ export type State = {
 }
 
 
-type GetSelectedReporter = (selectedReporterName: string|null, recordClassName: string) => SelectedReporter;
+type GetSelectedReporter = (selectedReporterName: string | undefined, recordClassName: string) => SelectedReporter;
 
 export type SelectedReporter = {
   getInitialState(state: State): any
@@ -124,7 +124,7 @@ function tryFormInit(getSelectedReporter: GetSelectedReporter, state: State) {
     // step, preferences, and ontology have been loaded;
     //    calculate state and set isLoading to false
     let selectedReporterName = (state.availableReporters.length == 1 ?
-        state.availableReporters[0].name : null);
+        state.availableReporters[0].name : undefined);
     return Object.assign({}, state, {
       isLoading: false,
       selectedReporter: selectedReporterName
@@ -136,7 +136,7 @@ function tryFormInit(getSelectedReporter: GetSelectedReporter, state: State) {
   return state;
 }
 
-function updateReporter(getSelectedReporter: GetSelectedReporter, state: State, selectedReporter: string) {
+function updateReporter(getSelectedReporter: GetSelectedReporter, state: State, selectedReporter?: string) {
   // selectedReporter may be undefined or invalid since we are now respecting a query param "preference"
   let reporterFound = state.availableReporters.findIndex(r => r.name === selectedReporter) != -1;
   return !reporterFound || state.recordClass == null ? state :

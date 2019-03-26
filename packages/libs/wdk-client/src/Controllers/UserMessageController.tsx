@@ -14,16 +14,19 @@ type PageContent = {
 
 const ActionCreators = { conditionallyTransition };
 
-type Props = typeof ActionCreators & Pick<RootState['globalData'], 'config'>;
+type StateProps = Pick<RootState['globalData'], 'config'>;
+type DispatchProps = typeof ActionCreators;
+type OwnProps = { messageKey: string; requestUrl?: string; };
+type MergeProps = OwnProps & DispatchProps & StateProps;
 
-class UserMessageController extends PageController<Props> {
+class UserMessageController extends PageController<MergeProps> {
 
   getContactUrl() {
     return 'mailto:help@eupathdb.org';
   }
 
   getMessagePageContent() : PageContent {
-    switch (this.props.match.params.messageKey) {
+    switch (this.props.messageKey) {
       case 'password-reset-successful':
         return {
           tabTitle: "Password Reset",
@@ -33,7 +36,7 @@ class UserMessageController extends PageController<Props> {
           )
         };
       case 'login-error':
-        let prevPageUrl = this.getQueryParams().requestUrl;
+        let prevPageUrl = this.props.requestUrl;
         return {
           tabTitle: "Login Problem",
           pageTitle: "Unable to log in",
@@ -59,7 +62,7 @@ class UserMessageController extends PageController<Props> {
 
   loadData() {
     // if registered user is logged in, show profile instead of password reset message
-    if (this.props.match.params.messageKey == 'password-reset-successful') {
+    if (this.props.messageKey == 'password-reset-successful') {
       this.props.conditionallyTransition(user => !user.isGuest, '/user/profile');
     }
   }
@@ -87,7 +90,7 @@ class UserMessageController extends PageController<Props> {
   }
 }
 
-const enhance = connect(
+const enhance = connect<StateProps, DispatchProps, OwnProps, RootState>(
   (state: RootState) => ({ config: state.globalData.config }),
   ActionCreators
 );

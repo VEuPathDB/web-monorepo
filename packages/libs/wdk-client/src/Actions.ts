@@ -20,7 +20,11 @@ import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSu
 import * as IsolatesSummaryViewActions from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StepActions from 'wdk-client/Actions/StepActions';
+import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
+import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
+import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
+import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
 
 export {
   AnswerActions,
@@ -43,7 +47,10 @@ export {
   BlastSummaryViewActions,
   IsolatesSummaryViewActions,
   GenomeSummaryViewActions,
+  WordCloudAnalysisActions,
+  HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
+  ResultPanelActions,
   UserCommentFormActions,
   UserCommentShowActions
 };
@@ -71,4 +78,9 @@ export type Action =
   | BlastSummaryViewActions.Action
   | IsolatesSummaryViewActions.Action
   | GenomeSummaryViewActions.Action
-  | MatchedTranscriptsFilterActions.Action;
+  | WordCloudAnalysisActions.Action
+  | HistogramAnalysisActions.Action
+  | MatchedTranscriptsFilterActions.Action
+  | ResultPanelActions.Action
+  | UnhandledErrorActions.Action
+  | MatchedTranscriptsFilterActions.Action

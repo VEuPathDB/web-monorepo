@@ -16,7 +16,6 @@ class HeadingCell extends React.PureComponent {
       offset: null,
       isDragging: false,
       isDragTarget: false,
-      clickStart: null
     };
 
     this.getClassName = this.getClassName.bind(this);
@@ -35,8 +34,6 @@ class HeadingCell extends React.PureComponent {
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragEnter = this.onDragEnter.bind(this);
     this.onDragLeave = this.onDragLeave.bind(this);
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
   }
 
   componentDidMount () {
@@ -53,10 +50,11 @@ class HeadingCell extends React.PureComponent {
     Object.values(this.listeners).forEach(listenerId => Events.remove(listenerId));
   }
 
-  componentWillReceiveProps (newProps) {
-    if (newProps
-      && newProps.column !== this.props.column
-      || newProps.column.width !== this.props.column.width) {
+  componentdidUpdate (prevProps) {
+    if (
+      prevProps.column !== this.props.column ||
+      prevProps.column.width !== this.props.column.width
+    ) {
       this.updateOffset();
     }
   }
@@ -75,21 +73,6 @@ class HeadingCell extends React.PureComponent {
     const currentlySorting = sort && sort.columnKey === column.key;
     const direction = currentlySorting && sort.direction === 'asc' ? 'desc' : 'asc';
     return onSort(column, direction);
-  }
-
-  onMouseDown (e) {
-    const clickStart = (new Date).getTime();
-    this.setState({ clickStart });
-  }
-
-  onMouseUp (e) {
-    const { clickStart } = this.state;
-    if (!clickStart) return;
-    const clickEnd = (new Date).getTime();
-    const totalTime = (clickEnd - clickStart);
-    this.setState({ clickStart: null, isDragTarget: false })
-    if (totalTime <= 500) this.sortColumn();
-    if (this.element) this.element.blur();
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -123,7 +106,7 @@ class HeadingCell extends React.PureComponent {
 
     if ('renderHeading' in column && column.renderHeading === false)
       return null;
-    if (!'renderHeading' in column || typeof column.renderHeading !== 'function')
+    if (!('renderHeading' in column) || typeof column.renderHeading !== 'function')
       return this.wrapContent(Templates.heading(column, columnIndex));
 
     const content = column.renderHeading(column, columnIndex, { SortTrigger, HelpTrigger, ClickBoundary });
@@ -160,7 +143,19 @@ class HeadingCell extends React.PureComponent {
       ? 'sort inactive'
       : 'sort-amount-' + direction + ' active';
 
-    return (<Icon fa={sortIcon + ' Trigger SortTrigger'} />);
+    const sortHelpText = `Activate to sort the table by ${column.name} in ` +
+      `${direction === 'asc' ? 'descending' : 'ascending'} order.`;
+
+    return (
+      <button
+        title={sortHelpText}
+        style={{ background: 'transparent', border: 'none', padding: 'none', margin: 'none' }}
+        type="button"
+        onClick={this.sortColumn}
+      >
+        <Icon fa={sortIcon + ' Trigger SortTrigger'} />
+      </button>
+    );
   }
 
   renderHelpTrigger () {
@@ -227,14 +222,12 @@ class HeadingCell extends React.PureComponent {
 
   getDomEvents () {
     const {
-      onMouseDown, onMouseUp,
       onDragStart, onDragEnd,
       onDragEnter, onDragExit,
       onDragOver, onDragLeave,
       onDrop
     } = this;
     return {
-      onMouseDown, onMouseUp,
       onDragStart, onDragEnd,
       onDragEnter, onDragExit,
       onDragOver, onDragLeave,

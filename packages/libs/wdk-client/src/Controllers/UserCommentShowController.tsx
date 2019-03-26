@@ -1,5 +1,3 @@
-import * as QueryString from 'querystring';
-
 import React, { ReactNode } from 'react';
 
 import { Dispatch } from 'redux';
@@ -33,11 +31,8 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  location: any
-  // TODO: Inject these props in routes.tsx once the new client plugin architecture has been merged
-  // into this branch
-  // targetType: string,
-  // targetId: string
+  targetType: string,
+  targetId: string
 };
 
 type MergedProps = UserCommentShowViewProps & {
@@ -55,15 +50,11 @@ const globalData = ({ globalData }: RootState) => globalData;
 const userCommentShow = ({ userCommentShow }: RootState) => userCommentShow;
 
 const targetType = (state: RootState, props: OwnProps) => {
-  const { commentTargetId } = QueryString.parse(props.location.search.slice(1));
-  const targetType = typeof commentTargetId === 'string' ? commentTargetId : '';
-  return targetType;
+  return props.targetType;
 };
 
 const targetId = (state: RootState, props: OwnProps) => {
-  const { stableId } = QueryString.parse(props.location.search.slice(1));
-  const targetType = typeof stableId === 'string' ? stableId : '';
-  return targetType;
+  return props.targetId;
 };
 
 const userId = createSelector<RootState, GlobalData, number>(
@@ -156,13 +147,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 const mergeProps = (
   { documentTitle, userId, userComments, loading, title }: StateProps, 
   { loadUserComments, deleteUserComment }: DispatchProps,
-  { location }: OwnProps
+  { targetId, targetType }: OwnProps
 ) => {
-  const { stableId, commentTargetId } = QueryString.parse(location.search.slice(1));
-  
-  const targetId = typeof stableId === 'string' ? stableId : '';
-  const targetType = typeof commentTargetId === 'string' ? commentTargetId : '';
-
   const formGroupFields = userComments.reduce(
     (memo, comment) => {
       const topFields = [
@@ -429,11 +415,17 @@ const mergeProps = (
 };
 
 class UserCommentShowController extends PageController<Props> {
-  loadData() {
-    this.props.loadUserComments(
-      this.props.targetType, 
-      this.props.targetId
-    );
+  loadData(prevProps?: Props) {
+    if (
+      prevProps == null ||
+      this.props.targetType !== prevProps.targetType ||
+      this.props.targetId !== prevProps.targetId
+    ) {
+      this.props.loadUserComments(
+        this.props.targetType, 
+        this.props.targetId
+      );
+    }
   }
 
   getTitle() {

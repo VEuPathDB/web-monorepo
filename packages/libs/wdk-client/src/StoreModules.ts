@@ -16,7 +16,14 @@ import * as blastSummaryView from 'wdk-client/StoreModules/BlastSummaryViewStore
 import * as isolatesSummaryView from 'wdk-client/StoreModules/IsolatesSummaryViewStoreModule';
 import * as genomeSummaryView from 'wdk-client/StoreModules/GenomeSummaryViewStoreModule';
 import * as resultTableSummaryView from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
+import * as stepAnalysis from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysisStoreModule';
 import * as steps from 'wdk-client/StoreModules/StepsStoreModule';
+import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisStoreModule';
+import * as histogramAnalysis from 'wdk-client/StoreModules/HistogramAnalysisStoreModule';
+import * as basket from 'wdk-client/StoreModules/BasketStoreModule';
+import * as resultPanel from 'wdk-client/StoreModules/ResultPanelStoreModule';
+import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
+import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
 import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
 
@@ -36,10 +43,17 @@ export default {
   resultTableSummaryView,
   siteMap,
   steps,
+  stepAnalysis,
   userCommentForm,
   userCommentShow,
   userDatasetDetail,
   userDatasetList,
   userProfile,
   userRegistration,
+  wordCloudAnalysis,
+  histogramAnalysis,
+  basket,
+  resultPanel,
+  unhandledErrors,
+  matchedTranscriptsFilter
 };

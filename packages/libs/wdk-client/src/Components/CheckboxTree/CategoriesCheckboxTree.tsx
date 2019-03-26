@@ -11,15 +11,12 @@ import {
 } from 'wdk-client/Utils/CategoryUtils';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
-// This allows us to specify the generic type in CheckboxTree
-class RefinedCheckboxTree extends CheckboxTree<CategoryTreeNode> {}
-
 type ChangeHandler = (ids: string[]) => void;
 
 type NodePredicate = (node: CategoryTreeNode) => boolean;
 
 type Props = {
-  title: string;
+  title?: string;
   name?: string;
   /** Hide nodes for which predicate function returns false */
   visibilityFilter?: NodePredicate;
@@ -29,6 +26,8 @@ type Props = {
   /** String name representing what is being searched */
   leafType: string, // do not make optional- add this prop to your calling code!
   selectedLeaves: string[];
+  currentSelection?: string[];
+  defaultSelection?: string[];
   expandedBranches: string[];
   searchTerm: string;
   renderNode?: (node: CategoryTreeNode, path?: number[]) => React.ReactNode;
@@ -60,6 +59,8 @@ let {
   searchBoxPlaceholder,
   searchTerm,
   selectedLeaves,
+  currentSelection,
+  defaultSelection,
   title,
   tree,
 } = props;
@@ -76,7 +77,7 @@ let {
     <div className="wdk-CategoriesCheckboxTree">
       {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
       <div className="wdk-CategoriesCheckboxTreeWrapper">
-        <RefinedCheckboxTree
+        <CheckboxTree<CategoryTreeNode>
           searchBoxHelp={searchBoxHelp}
           isSearchable={true}
           isSelectable={isSelectable}
@@ -92,6 +93,8 @@ let {
           tree={tree}
           isMultiPick={isMultiPick}
           selectedList={selectedLeaves}
+          currentList={currentSelection}
+          defaultList={defaultSelection}
           expandedList={expandedBranches}
           searchBoxPlaceholder={searchBoxPlaceholder}
           searchTerm={searchTerm}

@@ -61,7 +61,7 @@ class HeadingRow extends React.PureComponent {
                 return (
                   <HeadingCell
                     sort={sort}
-                    key={column.key}
+                    key={`${column.key}-${columnIndex}`}
                     primary={isFirstRow}
                     column={column}
                     headingRowIndex={index}

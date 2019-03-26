@@ -1,78 +1,170 @@
+import { createSelector } from 'reselect';
 import * as React from 'react';
+import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import PageController from 'wdk-client/Core/Controllers/PageController';
-import { ViewControllerProps } from 'wdk-client/Core/Controllers/ViewController';
-import { RouteComponentProps } from 'react-router';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {  requestPageSize, fulfillPageSize, requestAnswer, fulfillAnswer,  requestRecordsBasketStatus, fulfillRecordsBasketStatus,} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
-import {State} from 'wdk-client/StoreModules/ResultTableSummaryViewStoreModule';
-import LoadError from 'wdk-client/Components/PageStatus/LoadError';
-import { CategoryTreeNode, isQualifying } from 'wdk-client/Utils/CategoryUtils';
+import {
+  openResultTableSummaryView,
+  requestSortingUpdate,
+  requestColumnsChoiceUpdate,
+  requestPageSizeUpdate,
+  viewPageNumber,
+  showHideAddColumnsDialog,
+  updateColumnsDialogSelection,
+  updateColumnsDialogExpandedNodes,
+  updateSelectedIds,
+} from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
+import { 
+  requestUpdateBasket,
+  requestAddStepToBasket,
+} from 'wdk-client/Actions/BasketActions';
+import { CategoryTreeNode, isQualifying, addSearchSpecificSubtree } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
+import ResultTableSummaryView, { Action as TableAction } from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryView';
+import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
+import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Actions/AttributeAnalysisActions';
+import { partial, Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
 
-const actionCreators = {
+interface StateProps {
+  viewData: RootState['resultTableSummaryView'][string];
+  derivedData: {
+    activeAttributeAnalysisName: string | undefined;
+    columnsTree?: CategoryTreeNode;
+    recordClass?: RecordClass;
+    question?: Question;
+  };
+}
+type DispatchProps = {
+  closeAttributeAnalysis: typeof closeAttributeAnalysis;
+  openAttributeAnalysis: typeof openAttributeAnalysis;
+  openResultTableSummaryView: Partial1<typeof openResultTableSummaryView>;
+  requestAddStepToBasket: typeof requestAddStepToBasket;
+  requestColumnsChoiceUpdate: Partial1<typeof requestColumnsChoiceUpdate>;
+  requestPageSizeUpdate: Partial1<typeof requestPageSizeUpdate>;
+  requestSortingUpdate: Partial1<typeof requestSortingUpdate>;
+  requestUpdateBasket: typeof requestUpdateBasket;
+  showHideAddColumnsDialog: Partial1<typeof showHideAddColumnsDialog>;
+  updateColumnsDialogExpandedNodes: Partial1<typeof updateColumnsDialogExpandedNodes>;
+  updateColumnsDialogSelection: Partial1<typeof updateColumnsDialogSelection>;
+  updateSelectedIds: Partial1<typeof updateSelectedIds>;
+  viewPageNumber: Partial1<typeof viewPageNumber>;
+}
 
-  requestPageSize,
-  fulfillPageSize,
-  requestAnswer,
-  fulfillAnswer,
-  requestRecordsBasketStatus,
-  fulfillRecordsBasketStatus,
-};
+type OwnProps = {
+  viewId: string;
+  stepId: number;
+  tableActions?: TableAction[];
+}
 
-type StateProps = State;
-type DispatchProps = typeof actionCreators;
+type Props = OwnProps & StateProps & {
+  actionCreators: DispatchProps;
+}
 
-type Props = StateProps & DispatchProps;
+class ResultTableSummaryViewController extends React.Component< Props > {
 
-class ResultTableSummaryViewController extends PageController< Props > {
-
-  isRenderDataLoaded() {
-    return this.props.fulfillRecordsBasketStatus != null;
+  componentDidMount() {
+    this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
+    console.log('mounting ResultTableSummaryViewController', this);
   }
 
-  getTitle() {
-    return "BLAST Results";
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.stepId !== this.props.stepId) {
+      this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
+      console.log('updating ResultTableSummaryViewController', this);
+    }
   }
 
-  renderDataLoadError() {
-    return <LoadError/>;  // TODO: make this better
+  componentWillUnmount() {
+    console.log('unmounting ResultTableSummaryViewController', this);
   }
 
-  renderView() {
-    if (this.props.answer == null) return <Loading/>;
-
+  render() {
+    if (this.props.viewData == null) return null;
     return (
-      <div>
-      // TO DO
-      </div>
-       
+      <ResultTableSummaryView
+        stepId={this.props.stepId}
+        actions={this.props.tableActions}
+        {...this.props.viewData}
+        {...this.props.derivedData}
+        {...this.props.actionCreators}
+      />
     );
   }
 }
 
-function columnsTreeSelector(state: RootState, props: Props & ViewControllerProps & RouteComponentProps<any>) : CategoryTreeNode | undefined {
-  if (state.globalData.ontology === undefined || state.steps.steps [props.match.params.stepId] === undefined) {
-    return undefined;
-  } else {
-    let recordClassName = state.steps.steps [props.match.params.stepId].recordClassName
-    return getTree(state.globalData.ontology, isQualifying({
+const columnsTreeSelector = createSelector(
+  (state: RootState) => state.globalData.ontology,
+  (state: RootState) => state.globalData.questions,
+  (state: RootState, props: OwnProps) => state.steps.steps[props.stepId],
+  (ontology, questions, step) => {
+    if (ontology == null || questions == null || step == null) return;
+    const question = questions.find(q => q.name === step.answerSpec.questionName);
+    const { recordClassName } = step;
+
+    if (question == null) return undefined;
+
+    const tree = getTree(ontology, isQualifying({
       targetType: 'attribute',
       recordClassName,
       scope: 'results'
     }));
+    return addSearchSpecificSubtree(question, tree);
   }
+)
+
+function getQuestionAndRecordClass(rootState: RootState, props: OwnProps): { question: Question, recordClass: RecordClass } | undefined {
+  const viewState = rootState.resultTableSummaryView[props.viewId];
+  if (
+    viewState == null ||
+    viewState.questionFullName == null ||
+    rootState.globalData.questions == null ||
+    rootState.globalData.recordClasses == null
+  ) return;
+
+  const questionName = viewState.questionFullName;
+  const question = rootState.globalData.questions.find(q => q.name === questionName);
+  const recordClass = question && rootState.globalData.recordClasses.find(r => r.name === question.recordClassName);
+  return question && recordClass && { question, recordClass };
 }
 
-const mapStateToProps = (state: RootState, props: Props & ViewControllerProps & RouteComponentProps<any>) => ({resultTableSummaryView: state.resultTableSummaryView, 
- columnsTree: columnsTreeSelector(state, props)}
-  );
+function mapStateToProps(state: RootState, props: OwnProps): StateProps {
+  return {
+    viewData: state.resultTableSummaryView[props.viewId],
+    derivedData: {
+      ...getQuestionAndRecordClass(state, props),
+      columnsTree: columnsTreeSelector(state, props),
+      activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName
+    }
+  };
+}
 
-export default connect(
+function mapDispatchToProps(dispatch: Dispatch, { stepId, viewId }: OwnProps): DispatchProps {
+  return bindActionCreators({
+    closeAttributeAnalysis,
+    openAttributeAnalysis,
+    openResultTableSummaryView: partial(openResultTableSummaryView, viewId),
+    requestAddStepToBasket,
+    requestColumnsChoiceUpdate: partial(requestColumnsChoiceUpdate, viewId),
+    requestPageSizeUpdate: partial(requestPageSizeUpdate, viewId),
+    requestSortingUpdate: partial(requestSortingUpdate, viewId),
+    requestUpdateBasket,
+    showHideAddColumnsDialog: partial(showHideAddColumnsDialog, viewId),
+    updateColumnsDialogExpandedNodes: partial(updateColumnsDialogExpandedNodes, viewId),
+    updateColumnsDialogSelection: partial(updateColumnsDialogSelection, viewId),
+    updateSelectedIds: partial(updateSelectedIds, viewId),
+    viewPageNumber: partial(viewPageNumber, viewId),
+  }, dispatch)
+}
+
+const ConnectedController = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   mapStateToProps,
-  actionCreators
-) (wrappable(ResultTableSummaryViewController));
+  mapDispatchToProps,
+  (mappedState, actionCreators, ownProps) => ({ ...mappedState, actionCreators, ...ownProps })
+)(wrappable(ResultTableSummaryViewController));
 
+export default Object.assign(ConnectedController, {
+  withTableActions: (tableActions: TableAction[]) => (props: Exclude<OwnProps, 'tableActions'>) =>
+    <ConnectedController {...props} tableActions={tableActions}/>
+});

@@ -11,9 +11,11 @@ const actionCreators = {
   savePassword
 };
 
-type Props = RootState['passwordChange'] & Pick<RootState['globalData'], 'user'> & typeof actionCreators;
+type StateProps = RootState['passwordChange'] & Pick<RootState['globalData'], 'user'>;
+type DispatchProps = typeof actionCreators;
+type MergedProps = StateProps & { userEvents: DispatchProps };
 
-class UserPasswordChangeController extends PageController<Props> {
+class UserPasswordChangeController extends PageController<MergedProps> {
 
   getActionCreators() {
     return actionCreators;
@@ -32,7 +34,7 @@ class UserPasswordChangeController extends PageController<Props> {
   }
 }
 
-const enhance = connect(
+const enhance = connect<StateProps, DispatchProps, {}, MergedProps, RootState>(
   (state: RootState) => ({
     ...state.passwordChange,
     user: state.globalData.user

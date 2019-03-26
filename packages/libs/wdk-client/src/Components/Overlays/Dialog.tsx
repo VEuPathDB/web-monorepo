@@ -10,23 +10,25 @@ let c = makeClassNameHelper('wdk-Dialog');
 let c2 = makeClassNameHelper(' ');
 
 class BodyScrollManager {
-  private refs = new Map<object, boolean>();
+  private refs = new Set<object>();
 
   blockScroll(instance: object) {
-    this.refs.set(instance, true);
+    this.refs.add(instance);
     this.updateBodyClass();
   }
 
   unblockScroll(instance: object) {
-    this.refs.set(instance, false);
+    this.refs.delete(instance);
     this.updateBodyClass();
   }
 
   private updateBodyClass() {
+    const className = 'wdk-ModalOpen';
     const classes = document.body.classList;
-    const add = [...this.refs.values()].some(n => n);
-    if (add) classes.add('wdk-ModalOpen');
-    else classes.remove('wdk-ModalOpen');
+    const needs = this.refs.size > 0;
+    const has = classes.contains(className);
+    if (needs && !has) classes.add(className);
+    else if (has) classes.remove(className);
   }
 }
 
@@ -95,7 +97,7 @@ class Dialog extends Component<Props> {
   }
 
   componentWillUnmount() {
-    document.body.classList.remove('wdk-ModalOpen');
+    Dialog.bodyScrollManager.unblockScroll(this);
     if (this.prevFocusNode instanceof HTMLElement) {
       this.prevFocusNode.focus();
     }

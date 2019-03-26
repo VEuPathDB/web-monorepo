@@ -225,8 +225,10 @@ function isFulfillUpdateAttachedCoherent([fulfillSubmitCommentAction, requestUpd
 
 export const observe =
     takeEpicInWindow(
-        openUCF,
-        closeUserCommentForm,
+      {
+        startActionCreator: openUCF,
+        endActionCreator: closeUserCommentForm
+      },
         combineEpics(
             mrate([openUCF], getFulfillUserComment),
             mrate([requestPubmedPreview ], getFulfillPubmedPreview),

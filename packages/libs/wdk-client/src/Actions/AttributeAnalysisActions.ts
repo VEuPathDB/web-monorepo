@@ -1,211 +1,91 @@
-import { Action as ReduxAction } from 'redux';
-
-import { PluginContext } from 'wdk-client/Utils/ClientPlugin';
-import { Reporter } from 'wdk-client/Utils/WdkModel';
+import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { ServiceError } from 'wdk-client/Utils/WdkService';
 
 // Actions
 // -------
 
 export type Action =
-  | ChangeTablePageAction
-  | ChangeTableRowsPerPageAction
-  | CancelAttributeReportRequest
-  | EndAttributeReportRequestErrorAction
-  | EndAttributeReportRequestSuccessAction
-  | ScopedAction
-  | SearchTableAction
-  | SelectTabAction
-  | SortTableAction
-  | StartAttributeReportRequestAction
+  | InferAction<typeof openAttributeAnalysis>
+  | InferAction<typeof closeAttributeAnalysis>
+  | InferAction<typeof requestAttributeReport>
+  | InferAction<typeof fulfillAttributeReport>
+  | InferAction<typeof errorAttributeReport>
+  | InferAction<typeof changeTablePage>
+  | InferAction<typeof changeTableRowsPerPage>
+  | InferAction<typeof sortTable>
+  | InferAction<typeof searchTable>
+  | InferAction<typeof selectTab>
 
-//==============================================================================
+// Open view
+export const openAttributeAnalysis = makeActionCreator(
+  'attribute-analysis/open',
+  (reporterName: string, stepId: number) => ({
+    reporterName,
+    stepId
+  })
+)
 
-// Scoped analysis action
-export const SCOPED_ACTION = 'attribute-report/scoped-action';
 
-export interface ScopedAction {
-  type: typeof SCOPED_ACTION;
-  payload: {
-    action: ReduxAction,
-    reporter: Reporter,
-    stepId: number,
-    context: PluginContext
-  }
-}
+// Close view
+export const closeAttributeAnalysis = makeActionCreator(
+  'attribute-analysis/close',
+  (reporterName: string, stepId: number) => ({
+    reporterName,
+    stepId
+  })
+)
 
-export function scopeAction(payload: ScopedAction['payload']): ScopedAction {
-  return {
-    type: SCOPED_ACTION,
-    payload
-  }
-}
+// Request report
+export const requestAttributeReport = makeActionCreator(
+  'attribute-analysis/request-report',
+  (reporterName: string, stepId: number, config?: any) => ({
+    reporterName,
+    stepId,
+    config
+  })
+)
 
-//==============================================================================
+// Fulfill report
+export const fulfillAttributeReport = makeActionCreator(
+  'attribute-analysis/fulfill-attribute-report',
+  (reporterName: string, stepId: number, report: any) => ({
+    reporterName,
+    stepId,
+    report
+  })
+)
 
-// Report requested
+// Fail report
+export const errorAttributeReport = makeActionCreator(
+  'attribute-analysis/error-attribute-report',
+  (reporterName: string, stepId: number, error: ServiceError) => ({
+    reporterName,
+    stepId,
+    error
+  })
+)
 
-export const START_ATTRIBUTE_REPORT_REQUEST = 'attribute-report/start-request'
+export const changeTablePage = makeActionCreator(
+  'attribute-analysis/change-table-page',
+  (page: number) => ({ page })
+)
 
-export interface StartAttributeReportRequestAction {
-  type: typeof START_ATTRIBUTE_REPORT_REQUEST;
-  payload: {
-    stepId: number;
-    reporterName: string;
-  }
-}
+export const changeTableRowsPerPage = makeActionCreator(
+  'attribute-analysis-change-tables-rows-per-page',
+  (rowsPerPage: number) => ({ rowsPerPage })
+)
 
-export function startAttributeReportRequest(stepId: number, reporterName: string): StartAttributeReportRequestAction {
-  return {
-    type: START_ATTRIBUTE_REPORT_REQUEST,
-    payload: {
-      reporterName,
-      stepId
-    }
-  }
-}
+export const sortTable = makeActionCreator(
+  'attribute-analysis/sort-table',
+  (key: string, direction: 'asc' | 'desc') => ({ key, direction })
+)
 
-//==============================================================================
+export const searchTable = makeActionCreator(
+  'attribute-analysis/search-table',
+  (searchString: string) => ({ searchString })
+)
 
-// Report success reposonse
-
-export const END_ATTRIBUTE_REPORT_REQUEST_SUCCESS = 'attribute-report/end-request-success';
-
-export interface EndAttributeReportRequestSuccessAction {
-  type: typeof END_ATTRIBUTE_REPORT_REQUEST_SUCCESS;
-  payload: {
-    report: any;
-  }
-}
-
-export function endAttributeReportRequestSuccess(report: any): EndAttributeReportRequestSuccessAction {
-  return {
-    type: END_ATTRIBUTE_REPORT_REQUEST_SUCCESS,
-    payload: { report }
-  }
-}
-
-//==============================================================================
-
-// Report failed response
-
-export const END_ATTRIBUTE_REPORT_REQUEST_ERROR = 'attribute-report/end-request-error';
-
-export interface EndAttributeReportRequestErrorAction {
-  type: typeof END_ATTRIBUTE_REPORT_REQUEST_ERROR;
-  payload: {
-    error: ServiceError;
-  };
-}
-
-export function endAttributeReportRequestError(error: ServiceError): EndAttributeReportRequestErrorAction {
-  return {
-    type: END_ATTRIBUTE_REPORT_REQUEST_ERROR,
-    payload: {
-      error
-    }
-  }
-}
-
-//==============================================================================
-
-// Report cancelled
-
-export const CANCEL_ATTRIBUTE_REPORT_REQUEST = 'attribute-report/cancel-request';
-
-export interface CancelAttributeReportRequest {
-  type: typeof CANCEL_ATTRIBUTE_REPORT_REQUEST;
-}
-
-export function cancelAttributeReportRequest() {
-  return { type: CANCEL_ATTRIBUTE_REPORT_REQUEST }
-}
-
-//==============================================================================
-
-export const CHANGE_TABLE_PAGE = 'attribute-report/change-table-page';
-
-export interface ChangeTablePageAction {
-  type: typeof CHANGE_TABLE_PAGE;
-  payload: number;
-}
-
-export function changeTablePage(page: number): ChangeTablePageAction {
-  return {
-    type: CHANGE_TABLE_PAGE,
-    payload: page
-  }
-}
-
-//==============================================================================
-
-export const CHANGE_TABLE_ROWS_PER_PAGE = 'attribute-report/change-table-rows-per-page';
-
-export interface ChangeTableRowsPerPageAction {
-  type: typeof CHANGE_TABLE_ROWS_PER_PAGE;
-  payload: number;
-}
-
-export function changeTableRowsPerPage(rowsPerPage: number): ChangeTableRowsPerPageAction {
-  return {
-    type: CHANGE_TABLE_ROWS_PER_PAGE,
-    payload: rowsPerPage
-  }
-}
-
-//==============================================================================
-
-export const SORT_TABLE = 'attribute-report/sort-table';
-
-interface Sorting {
-  key: string;
-  direction: 'asc' | 'desc';
-}
-
-export interface SortTableAction {
-  type: typeof SORT_TABLE;
-  payload: Sorting;
-}
-
-export function sortTable(sorting: Sorting): SortTableAction {
-  return {
-    type: SORT_TABLE,
-    payload: sorting
-  }
-}
-
-//==============================================================================
-
-export const SEARCH_TABLE = 'attribute-report/search-table'
-
-export interface SearchTableAction {
-  type: typeof SEARCH_TABLE;
-  payload: string;
-}
-
-export function searchTable(search: string): SearchTableAction {
-  return {
-    type: SEARCH_TABLE,
-    payload: search
-  }
-}
-
-//==============================================================================
-
-export const SELECT_TAB = 'attribute-report/select-tab';
-
-type Tab = 'table' | 'visualization';
-
-export interface SelectTabAction {
-  type: typeof SELECT_TAB;
-  payload: Tab;
-}
-
-export function selectTab(tab: Tab): SelectTabAction {
-  return {
-    type: SELECT_TAB,
-    payload: tab
-  }
-}
-
-//==============================================================================
+export const selectTab = makeActionCreator(
+  'attribute-analysis/select-tab',
+  (tab: 'table' | 'visualization') => ({ tab })
+)

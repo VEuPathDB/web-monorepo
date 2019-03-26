@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
 import { Dispatch, bindActionCreators } from "redux";
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -18,16 +17,18 @@ const ActionCreators = {
   setGroupVisibility: changeGroupVisibility
 }
 
+type OwnProps = { question: string; }
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
+type Props = OwnProps & DispatchProps & StateProps;
 
-class QuestionController extends PageController<StateProps & DispatchProps> {
+class QuestionController extends PageController<Props> {
 
   loadData() {
     if (this.props.questionStatus == null) {
       this.props.dispatch(updateActiveQuestion({
         stepId: undefined,
-        questionName: this.props.match.params.question
+        questionName: this.props.question
       }));
     }
   }
@@ -62,8 +63,8 @@ class QuestionController extends PageController<StateProps & DispatchProps> {
 
 }
 
-const enhance = connect<StateProps, DispatchProps, RouteComponentProps<{ question: string}>, RootState>(
-  (state, props) => state.question.questions[props.match.params.question] || {} as QuestionState,
+const enhance = connect<StateProps, DispatchProps, OwnProps, RootState>(
+  (state, props) => state.question.questions[props.question] || {} as QuestionState,
   dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) })
 )
 

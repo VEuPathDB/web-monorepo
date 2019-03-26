@@ -19,6 +19,8 @@ export interface UserWithPrefs {
 
 export type UserPredicate = (user: User) => boolean;
 
+export interface FilterValue { }
+
 export interface Step {
   answerSpec: AnswerSpec;
   customName: string;
@@ -31,6 +33,10 @@ export interface Step {
   recordClassName: string;
   shortDisplayName: string;
   strategyId: number;
+  displayPrefs: {
+    columnSelection?: string[];
+    sortColumns?: { name: string; direction: 'ASC' | 'DESC' }[];
+  }
 }
 
 export interface Strategy {
@@ -134,28 +140,6 @@ export interface UserCommentPostRequest extends UserCommentFormFields {
   organism?: string,
   author?: { organization: string, userId: number, firstName: string, lastName: string },
   externalDatabase?: { name: string, version: string }
-}
-
-export interface UserCommentQueryStringParams {
-  commentId?: string;
-  stableId?: string;
-  commentTargetId?: string;
-  externalDbName?: string;
-  externalDbVersion?: string;
-  organism?: string;
-  locations?: string;
-  contig?: string;
-  strand?: string;
-}
-
-export interface UserCommentQueryParams {
-  commentId?: number;
-  target?: { id: string, type: string };
-  externalDatabase?: { name: string, version: string };
-  organism?: string;
-  locations?: string;
-  contig?: string;
-  strand?: string;
 }
 
 export interface UserComment extends UserCommentPostRequest {

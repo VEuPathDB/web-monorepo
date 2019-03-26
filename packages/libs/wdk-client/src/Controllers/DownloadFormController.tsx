@@ -22,7 +22,22 @@ const DownloadFormActionCreators = {
   updateFormUiState: updateFormUi
 };
 
-class DownloadFormController extends PageController<RootState['downloadForm'] & typeof DownloadFormActionCreators> {
+type Options = Partial<{
+  format: string;
+  summaryView: string;
+}>;
+
+type OwnProps =
+  | ({ recordClass: string; primaryKey: string; } & Options)
+  | ({ stepId: number; } & Options)
+
+type StateProps = RootState['downloadForm'];
+
+type DispatchProps = typeof DownloadFormActionCreators;
+
+type Props = { ownProps: OwnProps } & DispatchProps & StateProps;
+
+class DownloadFormController extends PageController<Props> {
 
   isRenderDataLoaded() {
     return (this.props.step != null && !this.props.isLoading);
@@ -59,21 +74,22 @@ class DownloadFormController extends PageController<RootState['downloadForm'] & 
     // build props object to pass to form component
     let formProps = {
       ...this.props,
-      // passing summary view in case reporters handle view links differently
-      summaryView: this.getQueryParams().summaryView
     };
     return ( <DownloadFormContainer {...formProps}/> );
   }
 
   loadData() {
+    const { ownProps, isLoading, step, loadPageDataFromRecord, loadPageDataFromStepId } = this.props;
+
+    if (step || isLoading) return;
+
     // must reinitialize with every new props
-    let { params } = this.props.match;
-    if ('stepId' in params) {
-      this.props.loadPageDataFromStepId(params.stepId, this.getQueryParams().format);
+    if ('stepId' in ownProps) {
+      loadPageDataFromStepId(ownProps.stepId, ownProps.format);
     }
-    else if ('recordClass' in params) {
-      this.props.loadPageDataFromRecord(
-          params.recordClass, params.primaryKey.split('/').join(','), this.getQueryParams().format);
+    else if ('recordClass' in ownProps) {
+      loadPageDataFromRecord(
+          ownProps.recordClass, ownProps.primaryKey.split('/').join(','), ownProps.format);
     }
     else {
       console.error("Neither stepId nor recordClass param was passed " +
@@ -82,9 +98,12 @@ class DownloadFormController extends PageController<RootState['downloadForm'] & 
   }
 }
 
-const enhance = connect(
-  (state: RootState) => state.downloadForm,
-  DownloadFormActionCreators
+const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
+  state => state.downloadForm,
+  DownloadFormActionCreators,
+  (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
+    ...stateProps, ...dispatchProps, ownProps
+  })
 );
 
 export default enhance(wrappable(DownloadFormController));

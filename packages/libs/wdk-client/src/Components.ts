@@ -54,7 +54,9 @@ import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 import Popup from 'wdk-client/Components/Overlays/Popup';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
+import Tabs from 'wdk-client/Components/Tabs/Tabs';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
 
 export {
   AccordionButton,
@@ -109,9 +111,11 @@ export {
   ServerSideAttributeFilter,
   SingleSelect,
   Sticky,
+  Tabs,
   TabbableContainer,
   TextArea,
   TextBox,
   TextBoxMultivalued,
   Tooltip,
+  ResultTable,
 };

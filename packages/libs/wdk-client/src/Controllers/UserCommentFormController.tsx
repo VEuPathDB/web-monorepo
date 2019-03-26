@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import React, { FormEvent, ReactNode, Fragment } from 'react';
 
 import { Dispatch } from 'redux';
@@ -12,11 +13,10 @@ import { UserCommentFormView, UserCommentFormViewProps } from 'wdk-client/Views/
 import { get } from 'lodash';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery } from 'wdk-client/Actions/UserCommentFormActions';
-import { UserCommentPostRequest, PubmedPreview, UserCommentQueryParams, UserCommentQueryStringParams, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields } from 'wdk-client/Utils/WdkUser';
+import { UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields } from 'wdk-client/Utils/WdkUser';
 import { createSelector } from 'reselect';
 import { UserCommentFormState } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 
-import * as QueryString from 'querystring';
 import { PubMedIdsField } from 'wdk-client/Views/UserCommentForm/PubmedIdField';
 import { AttachmentsField } from 'wdk-client/Views/UserCommentForm/AttachmentsField';
 import { LocationField } from 'wdk-client/Views/UserCommentForm/LocationField';
@@ -38,7 +38,7 @@ type StateProps = {
   permissionDenied: boolean;
   returnUrl: string;
   returnLinkText: string;
-  queryParams: UserCommentQueryParams;
+  queryParams: OwnProps;
 };
 
 type DispatchProps = {
@@ -58,11 +58,27 @@ type DispatchProps = {
   hidePubmedPreview: () => void;
 };
 
-// TODO: Move to routes.tsx once the new client plugin architecture has been merged
-// into this branch
-type OwnProps = {
-  location: any
-};
+export interface UserCommentQueryStringParams {
+  commentId?: string;
+  stableId?: string;
+  commentTargetId?: string;
+  externalDbName?: string;
+  externalDbVersion?: string;
+  organism?: string;
+  locations?: string;
+  contig?: string;
+  strand?: string;
+}
+
+interface OwnProps {
+  commentId?: number;
+  target?: { id: string, type: string };
+  externalDatabase?: { name: string, version: string };
+  organism?: string;
+  locations?: string;
+  contig?: string;
+  strand?: string;
+}
 
 type MergedProps = UserCommentFormViewProps & {
   documentTitle: string;
@@ -70,7 +86,7 @@ type MergedProps = UserCommentFormViewProps & {
   formLoaded: boolean;
   openAddComment: (request: UserCommentPostRequest) => void;
   openEditComment: (commentId: number) => void;
-  queryParams: UserCommentQueryParams;
+  queryParams: OwnProps;
 };
 
 type Props = MergedProps;
@@ -78,7 +94,7 @@ type Props = MergedProps;
 const userCommentForm = ({ userCommentForm }: RootState) => userCommentForm;
 const globalData = ({ globalData }: RootState) => globalData;
 
-const queryParams = (state: RootState, props: OwnProps) => parseQueryString(props.location.search.slice(1));
+const queryParams = (state: RootState, props: OwnProps) => props;
 
 const userCommentPostRequest = createSelector<RootState, UserCommentFormState, UserCommentPostRequest>(
   userCommentForm,
@@ -181,7 +197,7 @@ const title = createSelector(
     targetId: string, 
     editing: boolean, 
     projectId: string, 
-    { contig }: UserCommentQueryParams, 
+    { contig }: OwnProps, 
     { 
       externalDatabase: { name, version } = { name: '', version: '' } 
     }: UserCommentPostRequest
@@ -311,32 +327,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   removeFileToAttach: (index: number) => dispatch(removeFileToAttach(index)),
   modifyFileToAttach: (newFileSpec: Partial<UserCommentAttachedFileSpec>, index: number) => dispatch(modifyFileToAttach(newFileSpec, index))
 });
-
-const parseQueryString = (query: string): UserCommentQueryParams => {
-  const { 
-    commentId: stringCommentId,
-    commentTargetId: targetType,
-    stableId: targetId,
-    externalDbName,
-    externalDbVersion,
-    ...stringParams
-  }: UserCommentQueryStringParams = QueryString.parse(query);
-
-  const commentId = parseInt(stringCommentId || '') || undefined;
-  const target = targetId && targetType
-    ? { id: targetId, type: targetType }
-    : undefined;
-  const externalDatabase = externalDbName && externalDbVersion
-    ? { name: externalDbName, version: externalDbVersion }
-    : undefined;
-
-  return {
-    commentId,
-    target,
-    externalDatabase,
-    ...stringParams,
-  };
-};
 
 const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
   permissionDenied: stateProps.permissionDenied,
@@ -545,12 +535,17 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
 });
 
 class UserCommentShowController extends PageController<Props> {
-  loadData() {
-    if (this.props.queryParams.commentId) {
-      this.props.openEditComment(this.props.queryParams.commentId);
-    } else {
-      this.props.openAddComment(this.props.queryParams);
-    }    
+  loadData(prevProps?: Props) {
+    if (
+      prevProps == null ||
+      !isEqual(prevProps.queryParams, this.props.queryParams)
+    ) {
+      if (this.props.queryParams.commentId) {
+        this.props.openEditComment(this.props.queryParams.commentId);
+      } else {
+        this.props.openAddComment(this.props.queryParams);
+      }    
+    }
   }
 
   getTitle() {

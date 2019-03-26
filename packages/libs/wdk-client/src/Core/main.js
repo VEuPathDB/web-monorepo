@@ -1,11 +1,10 @@
 /* global __DEV__ */
 import { createBrowserHistory } from 'history';
-import stringify from 'json-stable-stringify';
-import { identity, isString, memoize } from 'lodash';
+import { identity, isString } from 'lodash';
 import { createElement } from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Components from 'wdk-client/Components';
-import { ClientPluginRegistryEntry, mergePluginsByType } from 'wdk-client/Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
+import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
 import { createMockHistory } from 'wdk-client/Utils/MockHistory';
 import { getTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Utils/WdkService';
@@ -65,8 +64,7 @@ export function initialize(options) {
     : createMockHistory({ basename: rootUrl });
   let wdkService = wrapWdkService(WdkService).getInstance(endpoint);
   let transitioner = getTransitioner(history);
-  let locatePlugin = makeLocatePlugin(pluginConfig);
-  let store = createWdkStore(wrapStoreModules(storeModules), locatePlugin, wdkService, transitioner);
+  let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner);
 
   // load static WDK data into service cache and view stores that need it
   store.dispatch(loadAllStaticData());
@@ -87,9 +85,9 @@ export function initialize(options) {
             rootUrl,
             store,
             history,
+            pluginConfig,
             routes: wrapRoutes(wdkRoutes),
             onLocationChange: handleLocationChange,
-            locatePlugin
           });
         ReactDOM.render(applicationElement, container);
       }
@@ -103,23 +101,7 @@ export function initialize(options) {
   }
 
   // return WDK application components
-  return { wdkService, store, history, locatePlugin };
-}
-
-/**
- * 
- * @param {ClientPluginRegistryEntry[]} pluginConfig
- */
-function makeLocatePlugin(pluginConfig) {
-  return memoize(locatePlugin, stringify);
-
-  /**
-   * 
-   * @param {string} type 
-   */
-  function locatePlugin(type) {
-    return mergePluginsByType(pluginConfig, type);
-  }
+  return { wdkService, store, history, pluginConfig };
 }
 
 /**

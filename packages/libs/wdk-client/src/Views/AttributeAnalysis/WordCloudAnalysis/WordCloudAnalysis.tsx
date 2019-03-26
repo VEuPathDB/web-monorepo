@@ -1,116 +1,71 @@
-import 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis.scss';
-
 import { memoize } from 'lodash';
 import React from 'react';
 
 import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
 import RadioList from 'wdk-client/Components/InputControls/RadioList';
-import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, pure } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
-import { AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis';
 import {
-  changeRankRange,
-  changeSort,
   RankRange,
   Sort,
-} from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudActions';
-import { State } from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudState';
+} from 'wdk-client/Actions/WordCloudAnalysisActions';
 
-type Tag = { word: string; count: number };
-type Column = { key: keyof Tag; display: string; }
-type ModuleProps = {
-  state: State;
-  dispatch: SimpleDispatch;
+import 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis.scss';
+
+export interface Sort {
+  key: string;
+  direction: 'asc' | 'desc';
 }
+
+export interface Tag {
+  word: string;
+  count: number;
+};
+
+export interface RankRange {
+  min: number;
+  max: number;
+}
+
 
 const cx = makeClassNameHelper('WordCloudAnalysis');
-
-const columns : Column[] = [
-  { key: 'word', display: 'Word' },
-  { key: 'count', display: 'Occurrence' }
-];
-
-export default class WordCloudAnalysis extends React.Component<ModuleProps> {
-
-  onRankChange = (range: RankRange) =>
-    this.props.dispatch(changeRankRange(range));
-
-  onSortChange = (sort: string) =>
-    this.props.dispatch(changeSort(sort as Sort));
-
-  render() {
-    if (this.props.state.data.status !== 'success') return null;
-
-    return (
-      <AttributeAnalysis
-        {...this.props}
-        visualizationConfig={{
-          display: 'Word Cloud',
-          content: (
-            <WordCloud
-              {...this.props.state.visualization}
-              tags={this.props.state.data.report.tags}
-              onRankRangeChange={this.onRankChange}
-              onSortChange={this.onSortChange}
-            />
-          )
-        }}
-        tableConfig={{
-          columns,
-          data: this.props.state.data.report.tags,
-        }}
-      />
-    );
-  }
-
-}
-
 
 const sortItems = [
   { name: 'sort', value: 'rank', display: 'Rank' },
   { name: 'sort', value: 'alpha', display: 'A-Z' }
 ];
 
-type Props = {
+type WordCloudProps = {
   tags: Tag[];
   rankRange: RankRange;
-  wordCloudSort: Sort;
+  sort: Sort;
   onRankRangeChange: (range: RankRange) => void;
   onSortChange: (sort: string) => void;
 }
 
-const getRange = memoize((tags: Props['tags']) =>
-  tags.reduce(
-    ( [ min, max ], { count } ) => [ Math.min(min, count), Math.max(max, count) ],
-    [ Infinity, -Infinity ]
-  ))
-
-const WordCloud = pure(({ tags, rankRange, wordCloudSort, onRankRangeChange, onSortChange }: Props) => {
-  const [ min, max ] = getRange(tags);
-
+export const WordCloud = pure(({ tags, rankRange, sort, onRankRangeChange, onSortChange }: WordCloudProps) => {
   const tagSubset = Seq.from(tags)
     .take(rankRange.max)
     .drop(rankRange.min - 1)
-    .orderBy(tag => wordCloudSort === 'alpha' ? tag.word : tag.count, wordCloudSort !== 'alpha');
+    .orderBy(tag => sort === 'alpha' ? tag.word : tag.count, sort !== 'alpha');
 
-  const [ subsetMin, subsetMax ] = getRange(tagSubset.toArray());
+  const subsetMax = Math.max(...tagSubset.map(tag => tag.count));
 
   return (
     <div className={cx()}>
       <div className={cx('Filter')}>
         <strong>Filter words by rank:</strong>
-        <NumberRangeSelector value={rankRange} step={1} start={min} end={max} onChange={onRankRangeChange} />
+        <NumberRangeSelector value={rankRange} step={1} start={1} end={tags.length} onChange={onRankRangeChange} />
       </div>
       <div className={cx('Sort')}>
         <strong>Sort by:</strong>
-        <RadioList name="sort" items={sortItems} value={wordCloudSort} onChange={onSortChange} />
+        <RadioList name="sort" items={sortItems} value={sort} onChange={onSortChange} />
       </div>
       <div><em>Mouse over a word to see its occurrence in the data</em></div>
       <div className={cx('Cloud')}>
         {tagSubset.map(tag => (
-          <div key={tag.word} title={tag.count.toLocaleString()} style={{ fontSize: Math.max(6, 50 * (tag.count / subsetMax)) + 'pt', marginRight: '.5rem' }}>
+          <div key={tag.word} title={`${tag.count.toLocaleString()} occurrences`} style={{ fontSize: Math.max(6, 50 * (tag.count / subsetMax)) + 'pt', marginRight: '.5rem' }}>
             {tag.word}
           </div>
         ))}

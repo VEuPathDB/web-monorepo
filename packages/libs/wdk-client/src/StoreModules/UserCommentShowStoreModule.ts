@@ -77,8 +77,10 @@ async function getFulfillDeleteUserComment([ requestAction ]: [ InferAction<type
 
 export const observe = 
   takeEpicInWindow(
-    openUserCommentShow,
-    closeUserCommentShow,
+    {
+      startActionCreator: openUserCommentShow,
+      endActionCreator: closeUserCommentShow
+    },
     combineEpics(
       mrate([ openUserCommentShow ], getFulfillUserComments),
       mrate([ requestDeleteUserComment ], getFulfillDeleteUserComment)

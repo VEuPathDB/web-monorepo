@@ -47,6 +47,7 @@ import {
 import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
 import WdkService from 'wdk-client/Utils/WdkService';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 export const key = 'question';
 
@@ -285,7 +286,7 @@ function normalizeQuestion(question: QuestionWithParameters) {
 // Observers
 // ---------
 
-type QuestionEpic = ModuleEpic<State>;
+type QuestionEpic = ModuleEpic<RootState>;
 
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateActiveQuestionAction>(UPDATE_ACTIVE_QUESTION),
@@ -332,7 +333,7 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
   ofType<SubmitQuestionAction>(SUBMIT_QUESTION),
   mergeMap(action => {
-    const questionState = state$.value.questions[action.payload.questionName];
+    const questionState = state$.value[key].questions[action.payload.questionName];
     if (questionState == null) return EMPTY;
     Promise.all(questionState.question.parameters.map(parameter => {
       const ctx = { parameter, questionName: questionState.question.urlSegment, paramValues: questionState.paramValues };
