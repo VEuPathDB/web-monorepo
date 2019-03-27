@@ -222,7 +222,7 @@ export function getFilterValue(step: Step | undefined, key: string): FilterValue
 }
 
 export const observe = takeEpicInWindow(
-  { startActionCreator: openMTF, endActionCreator: openMTF },
+  { startActionCreator: openMTF, endActionCreator: closeMatchedTranscriptsFilter },
   combineEpics(
     mrate([openMTF], getRequestStep),
     mrate([openMTF], getRequestMatchedTransFilterExpandedPref),

@@ -72,10 +72,12 @@ export default function MatchedTranscriptsFilter(props: Props) {
                 </div>
               );
               function handleChange() {
-                const newSelection = new Set(selection);
-                if (isSelected) newSelection.delete(criteria);
-                else newSelection.add(criteria);
-                updateSelection(Array.from(newSelection).sort());
+                const newSelection = sortedKeys.filter(key =>
+                  key === criteria
+                    ? !isSelected
+                    : selection.includes(key)
+                );
+                updateSelection(newSelection);
               }
             })}
           </div>
