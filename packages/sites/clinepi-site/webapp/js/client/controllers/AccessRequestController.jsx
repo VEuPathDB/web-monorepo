@@ -55,6 +55,7 @@ const mapStateToProps = ({
   globalData: globalDataState
 }) => ({
   webAppUrl: get(globalDataState, 'siteConfig.webAppUrl', ''),
+  location: get(globalDataState, 'location', ''),
   title: title(accessRequestState),
   loaded: loaded(accessRequestState),
   notFound: notFound(accessRequestState),
