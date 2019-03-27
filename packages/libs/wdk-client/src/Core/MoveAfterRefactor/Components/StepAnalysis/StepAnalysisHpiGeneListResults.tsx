@@ -18,13 +18,27 @@ const columnKeys = [
   'significance'
 ];
 
-const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): ColumnSettings[] => columnKeys.map(key => ({
-  key,
-  name: headerRow[key],
-  helpText: headerDescription[key],
-  type: key === 'species' ? 'html' : undefined,
-  sortable: false
-}));
+const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): ColumnSettings[] => columnKeys.map(key => (
+  key === 'species'
+    ? {
+      key,
+      name: headerRow[key],
+      helpText: headerDescription[key],
+      type: 'html',
+      sortable: false
+    }
+    : {
+      key,
+      name: headerRow[key],
+      helpText: headerDescription[key],
+      renderCell: key === 'experimentName'
+        ? ({ row }: any) => (
+            <a href={`${row.uri}`} target="_blank">{row.experimentName}</a>
+          )
+        : ({ row }: any) => row[key],
+      sortable: false
+    }
+));
 
 export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginProps> = ({
   analysisResult: {
