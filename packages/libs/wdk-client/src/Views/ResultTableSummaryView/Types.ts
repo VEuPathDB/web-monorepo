@@ -14,6 +14,8 @@ export type BasketStatusArray = BasketStatus[];
 // Callback functions
 // ==================
 
+export type ShowLoginWarning = (featureDescription: string) => void;
+
 export type RequestSortingUpdate = (
   sorting: AttributeSortingSpec[],
   questionName: string

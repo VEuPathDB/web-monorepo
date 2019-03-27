@@ -26,6 +26,7 @@ import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreMod
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
 import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
+import * as userSession from 'wdk-client/StoreModules/UserSessionStoreModule';
 
 export default {
   answerView,
@@ -55,5 +56,6 @@ export default {
   basket,
   resultPanel,
   unhandledErrors,
-  matchedTranscriptsFilter
+  matchedTranscriptsFilter,
+  userSession
 };

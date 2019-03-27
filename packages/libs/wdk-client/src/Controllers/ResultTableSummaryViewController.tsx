@@ -20,6 +20,9 @@ import {
   requestUpdateBasket,
   requestAddStepToBasket,
 } from 'wdk-client/Actions/BasketActions';
+import {
+  showLoginWarning
+} from 'wdk-client/Actions/UserSessionActions';
 import { CategoryTreeNode, isQualifying, addSearchSpecificSubtree } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
 import ResultTableSummaryView, { Action as TableAction } from 'wdk-client/Views/ResultTableSummaryView/ResultTableSummaryView';
@@ -34,9 +37,11 @@ interface StateProps {
     columnsTree?: CategoryTreeNode;
     recordClass?: RecordClass;
     question?: Question;
+    userIsGuest: boolean;
   };
 }
 type DispatchProps = {
+  showLoginWarning: typeof showLoginWarning;
   closeAttributeAnalysis: typeof closeAttributeAnalysis;
   openAttributeAnalysis: typeof openAttributeAnalysis;
   openResultTableSummaryView: Partial1<typeof openResultTableSummaryView>;
@@ -135,13 +140,15 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
     derivedData: {
       ...getQuestionAndRecordClass(state, props),
       columnsTree: columnsTreeSelector(state, props),
-      activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName
+      activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName,
+      userIsGuest: state.globalData.user ? state.globalData.user.isGuest : false
     }
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, { stepId, viewId }: OwnProps): DispatchProps {
   return bindActionCreators({
+    showLoginWarning,
     closeAttributeAnalysis,
     openAttributeAnalysis,
     openResultTableSummaryView: partial(openResultTableSummaryView, viewId),

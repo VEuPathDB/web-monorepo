@@ -25,6 +25,7 @@ import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisA
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
 import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
 import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
+import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
 
 export {
   AnswerActions,
@@ -52,7 +53,8 @@ export {
   MatchedTranscriptsFilterActions,
   ResultPanelActions,
   UserCommentFormActions,
-  UserCommentShowActions
+  UserCommentShowActions,
+  UserSessionActions,
 };
 
 export type Action =
@@ -84,3 +86,4 @@ export type Action =
   | ResultPanelActions.Action
   | UnhandledErrorActions.Action
   | MatchedTranscriptsFilterActions.Action
+  | UserSessionActions.Action

@@ -13,11 +13,13 @@ import {
 import {
   USER_UPDATE,
   PREFERENCE_UPDATE,
-  PREFERENCES_UPDATE,
-  SHOW_LOGIN_MODAL,
-  LOGIN_DISMISSED,
-  LOGIN_ERROR
+  PREFERENCES_UPDATE
 } from 'wdk-client/Actions/UserActions';
+import { 
+  showLoginModal,
+  hideLoginModal,
+  loginError
+} from 'wdk-client/Actions/UserSessionActions';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { UserPreferences, User } from 'wdk-client/Utils/WdkUser';
@@ -84,7 +86,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
 
 
     // loginForm actions
-    case SHOW_LOGIN_MODAL:
+    case showLoginModal.type:
       return {
         ...state,
         loginForm: {
@@ -94,7 +96,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
         }
       };
 
-    case LOGIN_DISMISSED:
+    case hideLoginModal.type:
       return {
         ...state,
         loginForm: {
@@ -102,7 +104,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
         }
       };
 
-    case LOGIN_ERROR:
+    case loginError.type:
       return {
         ...state,
         loginForm: {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { loginDismissed, submitLoginForm } from 'wdk-client/Actions/UserActions';
+import { hideLoginModal, submitLoginForm } from 'wdk-client/Actions/UserSessionActions';
 import LoginForm from 'wdk-client/Views/User/LoginForm/LoginForm';
 import { RootState } from 'wdk-client/Core/State/Types';
 import ViewController from 'wdk-client/Core/Controllers/ViewController';
@@ -11,21 +11,21 @@ const enhance = connect(
     isOpen: loginForm ? loginForm.isOpen : false,
     message: loginForm ? loginForm.message || '' : ''
   }),
-  { loginDismissed, submitLoginForm }
+  { hideLoginModal, submitLoginForm }
 )
 
 type Props = {
   destination: string;
   isOpen: boolean;
   message: string;
-  loginDismissed: typeof loginDismissed;
+  hideLoginModal: typeof hideLoginModal;
   submitLoginForm: typeof submitLoginForm;
 }
 
 export default enhance(class LoginFormController extends ViewController<Props> {
 
   cancel = () => {
-    this.props.loginDismissed();
+    this.props.hideLoginModal();
   }
 
   submit = (email: string, password: string) => {

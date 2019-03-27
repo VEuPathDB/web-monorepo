@@ -15,7 +15,7 @@ import BasketHeading from 'wdk-client/Views/ResultTableSummaryView/BasketHeading
 import PrimaryKeyCell from 'wdk-client/Views/ResultTableSummaryView/PrimaryKeyCell';
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from 'wdk-client/Views/ResultTableSummaryView/AttributeHeading';
-import { Action, BasketStatusArray, RequestSortingUpdate, RequestColumnsChoiceUpdate, RequestUpdateBasket, RequestAddStepToBasket, ViewPageNumber, RequestPageSizeUpdate, ShowHideAddColumnsDialog, OpenAttributeAnalysis, CloseAttributeAnalysis, UpdateSelectedIds } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import { Action, BasketStatusArray, RequestSortingUpdate, RequestColumnsChoiceUpdate, RequestUpdateBasket, RequestAddStepToBasket, ViewPageNumber, RequestPageSizeUpdate, ShowHideAddColumnsDialog, OpenAttributeAnalysis, CloseAttributeAnalysis, UpdateSelectedIds, ShowLoginWarning } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
 
 export interface Props {
@@ -26,6 +26,7 @@ export interface Props {
   answer: Answer;
   recordClass: RecordClass;
   question: Question;
+  userIsGuest: boolean;
   basketStatusArray?: BasketStatusArray;
   requestSortingUpdate: RequestSortingUpdate;
   requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
@@ -37,6 +38,7 @@ export interface Props {
   openAttributeAnalysis: OpenAttributeAnalysis;
   closeAttributeAnalysis: CloseAttributeAnalysis;
   updateSelectedIds: UpdateSelectedIds;
+  showLoginWarning: ShowLoginWarning;
 }
 
 function ResultTable(props: Props) {
@@ -48,6 +50,8 @@ function ResultTable(props: Props) {
     requestAddStepToBasket,
     actions,
     selectedIds,
+    userIsGuest,
+    showLoginWarning
   } = props;
   const columns = getColumns(props);
   const rows = answer.records;
@@ -87,7 +91,13 @@ function ResultTable(props: Props) {
         <Link to={`/step/${stepId}/download`}>Download</Link>
       </div>
       <div className="ResultTableButton">
-        <button type="button" className="wdk-Link" onClick={() => requestAddStepToBasket(stepId)}>
+        <button type="button"
+          className="wdk-Link"
+          title={userIsGuest ? 'You must login to use baskets' : 'Add all records returned by this search to your basket'}
+          onClick={() => {
+            if (userIsGuest) showLoginWarning('use baskets');
+            else requestAddStepToBasket(stepId)
+          }}>
           Add to Basket
         </button>
       </div>
@@ -180,11 +190,13 @@ function getColumns({
   answer,
   question,
   recordClass,
+  userIsGuest,
   basketStatusArray,
   requestUpdateBasket,
   requestColumnsChoiceUpdate,
   openAttributeAnalysis,
   closeAttributeAnalysis,
+  showLoginWarning,
 }: Props) {
   const attrsByName = {
     ...recordClass.attributesMap,
@@ -206,6 +218,8 @@ function getColumns({
         value={basketStatusArray ? basketStatusArray[rowIndex] : 'loading'}
         row={row}
         requestUpdateBasket={requestUpdateBasket}
+        userIsGuest={userIsGuest}
+        showLoginWarning={showLoginWarning}
       />
     ),
     renderHeading: () => (
@@ -213,6 +227,8 @@ function getColumns({
         answer={answer}
         basketStatusArray={basketStatusArray}
         requestUpdateBasket={requestUpdateBasket}
+        userIsGuest={userIsGuest}
+        showLoginWarning={showLoginWarning}
       />
     )
   };
