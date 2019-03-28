@@ -1893,7 +1893,7 @@
            </tr>
            <tr>
              <td>&nbsp;&nbsp;&nbsp;&nbsp; <b>Telemetry</b></td>
-             <td><<b><a href="/common/downloads/MaHPIC/Experiment_30/" target="_blank">E30 Telemetry Data in PlasmoDB Downloads</a></td>
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_30/" target="_blank">E30 Telemetry Data in PlasmoDB Downloads</a></td>
              <td>N/A</td>
            </tr>
            </table>
