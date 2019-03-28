@@ -39,7 +39,7 @@ export const paramModules: ParamModule[] = [
 /**
  * Parameter renderer.
  */
-export function ParamComponent<T extends Parameter>(props: Props<T, any>) {
+export function ParamComponent<T extends Parameter, S>(props: Props<T, S>) {
   for (let paramModule of paramModules) {
     if (isPropsType(props, paramModule.isType)) {
       return <paramModule.Component {...props} />

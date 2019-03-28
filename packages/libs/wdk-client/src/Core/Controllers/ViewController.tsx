@@ -4,21 +4,16 @@ import Loading from 'wdk-client/Components/Loading/Loading';
 import Error from 'wdk-client/Components/PageStatus/Error';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import PermissionDenied from 'wdk-client/Components/PageStatus/PermissionDenied';
-import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
-
-export type ViewControllerProps = {
-  locatePlugin: LocatePlugin;
-}
 
 /**
  * Base class for all ViewContoller classes in WDK. This base class is
  * responsible for:
  * - providing render hooks based on state predicates
  */
-export default class ViewController<Props = {}, State = {}> extends React.PureComponent<ViewControllerProps & Props, State> {
+export default class ViewController<Props = {}, State = {}> extends React.PureComponent<Props, State> {
 
 
   /*--------------- Methods to override to display content ---------------*/
@@ -78,7 +73,7 @@ export default class ViewController<Props = {}, State = {}> extends React.PureCo
    * state of the store, the new props, and the old props. On the first call
    * when the component is first mounted, the old props will be undefined.
    */
-  loadData(prevProps?: ViewControllerProps & Props): void {
+  loadData(prevProps?: Props): void {
     return undefined;
   }
 
@@ -121,7 +116,7 @@ export default class ViewController<Props = {}, State = {}> extends React.PureCo
     this.loadData();
   }
 
-  componentDidUpdate(prevProps: ViewControllerProps & Props): void {
+  componentDidUpdate(prevProps: Props): void {
     this.loadData(prevProps);
   }
 

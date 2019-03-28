@@ -1,0 +1,149 @@
+.wdk-UserComments-Form {
+  .wdk-UserComments-Form-Body {
+    form {
+      > div:first-child {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin-top: 1em;
+
+        // TODO: Once (if?) we drop IE11 support, we can use 
+        // "row-gap" instead of applying "margin-bottom"
+        // to the direct descendants
+        > * {
+          margin-bottom: 1em;
+        }
+      }
+
+      > div:nth-child(2) {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    .wdk-UserComments-Form-Group {
+      .wdk-UserComments-Form-Group-Header {
+        background-color: #88AACA;
+        color: #FFFFFF;
+        font-weight: bold;
+        padding: 3px;
+        border: 2px;
+      }
+  
+      .wdk-UserComments-Form-Group-Body {
+        display: grid;
+        grid-template-columns: 17em 1fr;
+        margin-top: 0.5em;
+
+        // TODO: Once (if?) we drop IE11 support, we can use 
+        // "row-gap" instead of applying "margin-bottom"
+        // to the direct descendants
+        > * {
+          margin-bottom: 0.5em;
+        }
+
+        > label {
+          margin-left: 1em;
+        }
+
+        input[type="text"] {
+          width: 70ch;
+        }
+
+        textarea {
+          height: 5em;
+          width: 70ch;
+        }
+
+        .HelpTrigger {
+          margin-left: 0.5em;
+          cursor: pointer;
+        }
+
+        .wdk-LocationField {
+          border: 1px solid black;
+          width: calc(90ch + 2.5em);
+          display: grid;
+          grid-template-columns: 20ch 1fr;
+          padding: 0.5em 0.5em 0 0.5em;
+
+          // TODO: Once (if?) we drop IE11 support, we can use 
+          // "row-gap" instead of applying "margin-bottom"
+          // to the direct descendants
+          > * {
+            margin-bottom: 0.5em;
+          }
+        }
+
+        .wdk-AttachmentsField {
+          // TODO: Once (if?) we drop IE11 support, we can use 
+          // "row-gap" instead of applying "margin-bottom"
+          // to the direct descendants
+          .wdk-FileInputSubfield {
+            border: 1px black solid;
+            width: 96ch;
+            padding: 0.5em 0.5em 0 0.5em;
+            margin-bottom: 0.5em;
+            display: grid;
+            grid-template-columns: 20ch 1fr 1em;
+            
+            // TODO: Once (if?) we drop IE11 support, we can use 
+            // "row-gap" instead of applying "margin-bottom"
+            // to the direct descendants
+            > * {
+              margin-bottom: 0.5em;
+            }
+
+            &:nth-child(even) {
+              background-color: rgb(204, 204, 204);
+            }
+          }
+        }
+
+        .wdk-PubMedIdsField {
+          width: 96ch;
+          border: 1px solid black;
+          padding: 0.5em;
+
+          .wdk-PubMedIdInputField > * {
+            margin-bottom: 0.5em;
+          }
+
+          .wdk-PubMedIdSearchField {
+            margin: 1em 0;
+
+            > button {
+              margin-right: 0.5em;
+            }
+          }
+
+          .wdk-PubMedIdPreview {
+            border: 1px lightgray solid;
+            display: grid;
+            grid-template-columns: 1fr;
+            padding: 0.5em;
+
+            > a {
+              justify-self: right;
+            }
+
+            .wdk-PubmedIdEntry {
+              padding-bottom: 0.5em;
+              border-bottom: 1px rgb(128, 128, 128) solid;
+              margin-bottom: 1em;
+              display: grid;
+              grid-template-columns: 10ch 1fr;    
+              
+              > * {
+                padding: 0.5em;
+              }
+
+              > *:nth-child(1), > *:nth-child(2) {
+                background-color: lightgrey;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

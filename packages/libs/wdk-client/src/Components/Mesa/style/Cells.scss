@@ -7,13 +7,13 @@
     text-align: left;
 
     &[draggable="true"] {
-      cursor: grab;
       cursor: -moz-grab;
       cursor: -webkit-grab;
+      cursor: grab;
       &:active {
-        // cursor: grabbing;
         // cursor: -moz-grabbing;
         // cursor: -webkit-grabbing;
+        // cursor: grabbing;
       }
     }
 

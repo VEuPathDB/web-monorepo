@@ -9,6 +9,8 @@ import * as FilterParamActions from 'wdk-client/Actions/FilterParamActions';
 import * as DatasetParamActions from 'wdk-client/Actions/DatasetParamActions';
 import * as TreeBoxEnumParamActions from 'wdk-client/Actions/TreeBoxEnumParamActions';
 import * as UserActions from 'wdk-client/Actions/UserActions';
+import * as UserCommentFormActions from 'wdk-client/Actions/UserCommentFormActions';
+import * as UserCommentShowActions from 'wdk-client/Actions/UserCommentShowActions';
 import * as RecordActions from 'wdk-client/Actions/RecordActions';
 import * as StaticDataActions from 'wdk-client/Actions/StaticDataActions';
 import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
@@ -18,7 +20,11 @@ import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSu
 import * as IsolatesSummaryViewActions from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StepActions from 'wdk-client/Actions/StepActions';
+import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
+import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
+import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
+import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
 
 export {
   AnswerActions,
@@ -41,7 +47,12 @@ export {
   BlastSummaryViewActions,
   IsolatesSummaryViewActions,
   GenomeSummaryViewActions,
+  WordCloudAnalysisActions,
+  HistogramAnalysisActions,
   MatchedTranscriptsFilterActions,
+  ResultPanelActions,
+  UserCommentFormActions,
+  UserCommentShowActions
 };
 
 export type Action =
@@ -61,9 +72,15 @@ export type Action =
   | StaticDataActions.Action
   | StepActions.Action
   | UserDatasetsActions.Action
+  | UserCommentFormActions.Action
+  | UserCommentShowActions.Action
   | ResultTableSummaryViewActions.Action
   | BlastSummaryViewActions.Action
   | IsolatesSummaryViewActions.Action
   | GenomeSummaryViewActions.Action
+  | WordCloudAnalysisActions.Action
+  | HistogramAnalysisActions.Action
   | MatchedTranscriptsFilterActions.Action
-
+  | ResultPanelActions.Action
+  | UnhandledErrorActions.Action
+  | MatchedTranscriptsFilterActions.Action

@@ -9,7 +9,8 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise, synchronized } from 'wdk-client/Utils/PromiseUtils';
-import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder } from 'wdk-client/Utils/WdkUser';
+import { StepAnalysisConfig, stepAnalysisDecoder, stepAnalysisConfigDecoder, stepAnalysisTypeDecoder, stepAnalysisStatusDecoder, FormParams } from 'wdk-client/Utils/StepAnalysisUtils';
+import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder, UserComment, UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentGetResponse } from 'wdk-client/Utils/WdkUser';
 
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
@@ -33,6 +34,7 @@ import {
   UserDataset,
   UserDatasetMeta,
   AnswerJsonFormatConfig,
+  SummaryViewPluginField,
 } from 'wdk-client/Utils/WdkModel';
 import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 
@@ -47,6 +49,8 @@ const CLIENT_WDK_VERSION_HEADER = 'x-client-wdk-timestamp';
  * model is stale, based on CLIENT_WDK_VERSION_HEADER.
  */
 const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
+
+export interface StandardWdkPostResponse  {id: number};
 
 interface RecordRequest {
   attributes: string[];
@@ -102,8 +106,8 @@ interface CustomSearchReportRequestInfo {
   request: CustomSearchReportRequest
 }
 
-
-export type BasketOperation = 'add' | 'remove' ;
+export type BasketRecordOperation = 'add' | 'remove' ;
+export type BasketStepOperation = 'addFromStepId';
 
 export type DatasetConfig = {
   sourceType: 'idList',
@@ -390,6 +394,20 @@ const attributeFieldDecoder: Decode.Decoder<AttributeField> =
     )
   )
 
+const summaryViewPluginFieldDecoder: Decode.Decoder<SummaryViewPluginField> =
+  Decode.combine(
+    Decode.field('name', Decode.string),
+    Decode.field('displayName', Decode.string),
+    Decode.field('description', Decode.string)
+  );
+
+const questionFilterDecoder =
+  Decode.combine(
+    Decode.field('name', Decode.string),
+    Decode.field('displayName', Decode.optional(Decode.string)),
+    Decode.field('description', Decode.optional(Decode.string)),
+    Decode.field('isViewOnly', Decode.boolean),
+  )
 const questionSharedDecoder =
   Decode.combine(
     Decode.combine(
@@ -407,10 +425,17 @@ const questionSharedDecoder =
     Decode.field('urlSegment', Decode.string),
     Decode.field('groups', Decode.arrayOf(paramGroupDecoder)),
     Decode.field('defaultAttributes', Decode.arrayOf(Decode.string)),
+    Decode.field('defaultSorting', Decode.arrayOf(
+      Decode.combine(
+        Decode.field('attributeName', Decode.string),
+        Decode.field('direction', Decode.oneOf(Decode.constant('ASC'), Decode.constant('DESC')))
+      )
+    )),
     Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
     Decode.field('defaultSummaryView', Decode.string),
-    Decode.field('summaryViewPlugins', Decode.arrayOf(Decode.string)),
+    Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder)),
     Decode.field('stepAnalysisPlugins', Decode.arrayOf(Decode.string)),
+    Decode.field('filters', Decode.arrayOf(questionFilterDecoder))
   )
 
 const questionDecoder: Decode.Decoder<Question> =
@@ -427,7 +452,6 @@ const questionWithParametersDecoder: Decode.Decoder<QuestionWithParameters> =
     questionSharedDecoder,
     Decode.field('parameters', parametersDecoder)
   )
-
 
 /**
  * A helper to request resources from a Wdk REST Service.
@@ -449,6 +473,7 @@ export default class WdkService {
   });
   private _cache: Map<string, Promise<any>> = new Map;
   private _recordCache: Map<string, {request: RecordRequest; response: Promise<RecordInstance>}> = new Map;
+  private _stepMap = new Map<number, Promise<Step>>();
   private _preferences: Promise<UserPreferences> | undefined;
   
   private _currentUserPromise: Promise<User> | undefined;
@@ -866,10 +891,12 @@ export default class WdkService {
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  updateBasketStatus(operation: BasketOperation, recordClassName: string, primaryKeys: Set<PrimaryKey>): Promise<never> {
-    let data = JSON.stringify({ [operation]: primaryKeys });
+  updateBasketStatus(operation: BasketRecordOperation, recordClassName: string, primaryKey: PrimaryKey[]): Promise<void>;
+  updateBasketStatus(operation: BasketStepOperation, recordClassName: string, stepId: number): Promise<void>;
+  updateBasketStatus(operation: BasketRecordOperation | BasketStepOperation, recordClassName: string, pksOrStepId: PrimaryKey[] | number): Promise<void> {
+    let data = JSON.stringify({ [operation]: pksOrStepId });
     let url = `/users/current/baskets/${recordClassName}`;
-    return this._fetchJson<never>('patch', url, data);
+    return this._fetchJson<void>('patch', url, data);
   }
 
   /**
@@ -989,7 +1016,7 @@ export default class WdkService {
   }
 
   // update or add a single user preference.  (Set a pref to NULL to clear it).
-  patchSingleUserPreference(scope: PreferenceScope, key: string, value: string): Promise<UserPreferences> {
+  patchSingleUserPreference(scope: PreferenceScope, key: string, value: string | null): Promise<UserPreferences> {
     let update = { action: 'update', updates: { [key]: value } };
     let url = `/users/current/preferences/${scope}`;
     let data = JSON.stringify(update);
@@ -1048,6 +1075,56 @@ export default class WdkService {
     return this._fetchJson<void>('delete', `/users/current/user-datasets/${id}`);
   }
 
+  getUserComment(id: number) {
+    return this._fetchJson<UserCommentGetResponse>('get', `/user-comments/${id}`)
+  }
+
+  getPubmedPreview(pubMedIds: number[]) : Promise<PubmedPreview> {
+    let ids = pubMedIds.join(',');
+    return this._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`, undefined, true);
+  }
+
+  getUserComments(targetType: string, targetId: string) : Promise<UserCommentGetResponse[]> {
+    return this._fetchJson<UserCommentGetResponse[]>(
+      'get',
+      `/user-comments?target-type=${targetType}&target-id=${targetId}`
+    );
+  }
+
+  // return the new comment id
+  postUserComment(userCommentPostRequest: UserCommentPostRequest) : Promise<StandardWdkPostResponse> {
+    let data = JSON.stringify(userCommentPostRequest);
+    return this._fetchJson<StandardWdkPostResponse>('post', '/user-comments', data);
+  }
+
+  deleteUserComment(commentId: number) :Promise<void> {
+    return this._fetchJson<void>('delete', `/user-comments/${commentId}`);
+  }
+
+  // return the new attachment id
+  postUserCommentAttachedFile(commentId: number, { file, description }: UserCommentAttachedFileSpec) : Promise<StandardWdkPostResponse> {
+    if (file === null) {
+      return Promise.reject(`Tried to post an empty attachment to comment with id ${commentId}`);
+    }
+
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('file', file, file.name);
+
+    return fetch(
+      `${this.serviceUrl}/user-comments/${commentId}/attachments`, 
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      }
+    ).then(response => response.json());
+  }
+
+  deleteUserCommentAttachedFile(commentId: number, attachmentId: number) :Promise<void> {
+    return this._fetchJson<void>('delete', `/user-comments/${commentId}/attachments/${attachmentId}`);
+  }
+
   checkIfUserEmailExists (emailAddress: string) {
     return this._fetchJson<void>('post', '/user-id-query', JSON.stringify({ emails: [ emailAddress ]}));
   }
@@ -1074,8 +1151,27 @@ export default class WdkService {
     return this._fetchJson<{oauthStateToken: string}>('get', '/oauth/state-token');
   }
 
-  findStep(stepId: number, userId: string = "current") {
-    return this._fetchJson<Step>('get', `/users/${userId}/steps/${stepId}`);
+  findStep(stepId: number, userId: string = "current"): Promise<Step> {
+    // cache step resonse
+    if (!this._stepMap.has(stepId)) {
+      this._stepMap.set(stepId, this._fetchJson<Step>('get', `/users/${userId}/steps/${stepId}`).catch(error => {
+        // if the request fails, remove the response since a later request might succeed
+        this._stepMap.delete(stepId);
+        throw error;
+      }))
+    }
+    return this._stepMap.get(stepId)!;
+  }
+
+  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<Step> {
+    let data = JSON.stringify(stepSpec);
+    let url = `/users/${userId}/steps/${stepId}`;
+    this._stepMap.set(stepId, this._fetchJson<Step>('patch', url, data).catch(error => {
+      // if the request fails, remove the response since a later request might succeed
+      this._stepMap.delete(stepId);
+      throw error;
+    }));
+    return this._stepMap.get(stepId)!;
   }
 
   createStep(newStepSpec: StepSpec, userId: string = "current") {
@@ -1100,12 +1196,6 @@ export default class WdkService {
       path: `/users/${userId}/steps/${stepId}/reports/standard`,
       body: JSON.stringify(reportConfig)
     });
-  }
-
-  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<never> {
-    let data = JSON.stringify(stepSpec);
-    let url = `/users/${userId}/steps/${stepId}`;
-    return this._fetchJson<never>('patch', url, data);
   }
 
   getStrategies() {
@@ -1185,17 +1275,138 @@ export default class WdkService {
     }).then(response => response.id)
   }
 
-  private _fetchJson<T>(method: string, url: string, body?: string) {
-    return fetch(this.serviceUrl + url, {
-      method: method.toUpperCase(),
-      body: body,
+  getStepAnalysisTypes(stepId: number) {
+    return this.sendRequest(
+      Decode.arrayOf(stepAnalysisTypeDecoder),
+      {
+        path: `/users/current/steps/${stepId}/analysis-types`,
+        method: 'GET'
+      }
+    );
+  }
+
+  async getStepAnalysisTypeParamSpecs(stepId: number, analysisTypeName: string) {
+    const paramRefs = await this.sendRequest(
+      parametersDecoder,
+      {
+        path: `/users/current/steps/${stepId}/analysis-types/${analysisTypeName}`,
+        method: 'GET'
+      }
+    );
+
+    return paramRefs.filter(({ isVisible }) => isVisible);
+  }
+
+  getAppliedStepAnalyses(stepId: number) {
+    return this.sendRequest(
+      Decode.arrayOf(stepAnalysisDecoder),
+      {
+        path: `/users/current/steps/${stepId}/analyses`,
+        method: 'GET'
+      }
+    );
+  }
+
+  createStepAnalysis(stepId: number, analysisConfig: { displayName?: string, analysisName: string }) {
+    return this.sendRequest(
+      stepAnalysisConfigDecoder,
+      {
+        path: `/users/current/steps/${stepId}/analyses`,
+        method: 'POST',
+        body: JSON.stringify(analysisConfig)
+      }
+    );
+  }
+
+  deleteStepAnalysis(stepId: number, analysisId: number) {
+    return this._fetchJson<void>(
+      'DELETE',
+      `/users/current/steps/${stepId}/analyses/${analysisId}`
+    );
+  }
+
+  getStepAnalysis(stepId: number, analysisId: number) {
+    return this.sendRequest(
+      stepAnalysisConfigDecoder,
+      {
+        path: `/users/current/steps/${stepId}/analyses/${analysisId}`,
+        method: 'GET'
+      }
+    )
+  }
+
+  updateStepAnalysisForm(stepId: number, analysisId: number, formParams: FormParams) {
+    return fetch(`${this.serviceUrl}/users/current/steps/${stepId}/analyses/${analysisId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        formParams
+      }),
       credentials: 'include',
       headers: new Headers(Object.assign({
         'Content-Type': 'application/json'
       }, this._version && {
         [CLIENT_WDK_VERSION_HEADER]: this._version
       }))
-    }).then(response => {
+    })
+      .then(response => response.ok ? '[]' : response.text())
+      .then(validationErrors => {
+        return JSON.parse(validationErrors);
+      }) as Promise<string[]>;
+  }
+
+  renameStepAnalysis(stepId: number, analysisId: number, displayName: string) {
+    return this._fetchJson<void>(
+      'PATCH',
+      `/users/current/steps/${stepId}/analyses/${analysisId}`,
+      JSON.stringify({
+        displayName
+      })
+    );
+  }
+
+  runStepAnalysis(stepId: number, analysisId: number) {
+    return this.sendRequest(
+      Decode.field('status', stepAnalysisStatusDecoder),
+      {
+        path: `/users/current/steps/${stepId}/analyses/${analysisId}/result`,
+        method: 'POST'
+      }
+    );
+  }
+
+  getStepAnalysisResult(stepId: number, analysisId: number) {
+    return this.sendRequest(
+      Decode.ok,
+      {
+        path: `/users/current/steps/${stepId}/analyses/${analysisId}/result`,
+        method: 'GET'
+      }
+    );
+  }
+
+  getStepAnalysisStatus(stepId: number, analysisId: number) {
+    return this.sendRequest(
+      Decode.field('status', stepAnalysisStatusDecoder),
+      {
+        path: `/users/current/steps/${stepId}/analyses/${analysisId}/result/status`,
+        method: 'GET'
+      }
+    );
+  }
+
+  private _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
+    return fetch(
+      isBaseUrl ? url : this.serviceUrl + url, 
+      {
+        method: method.toUpperCase(),
+        body: body,
+        credentials: 'include',
+        headers: new Headers(Object.assign({
+          'Content-Type': 'application/json'
+        }, this._version && {
+          [CLIENT_WDK_VERSION_HEADER]: this._version
+        }))
+      }).then(response => {
       if (this._isInvalidating) {
         return pendingPromise as Promise<T>;
       }

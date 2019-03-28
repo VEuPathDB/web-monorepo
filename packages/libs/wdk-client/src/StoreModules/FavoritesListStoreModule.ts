@@ -27,7 +27,7 @@ import { Action } from 'wdk-client/Actions';
 export const key = 'favorites';
 
 export interface State {
-  tableState: {};
+  tableState?: {};
   tableSelection: number[];
   favoritesLoading: boolean;
   loadError: Error | null;
@@ -44,7 +44,6 @@ export interface State {
 };
 
 const initialState = {
-  tableState: {},
   tableSelection: [],
   key: '',
   editValue: '',

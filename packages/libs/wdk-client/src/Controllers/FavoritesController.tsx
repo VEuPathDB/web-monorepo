@@ -64,21 +64,19 @@ class FavoritesListController extends PageController<Props> {
     return 'Favorites';
   }
 
-  loadData () {
-    const {
-      loadFavoritesList
-    } = this.props.dispatchProps;
-
-    loadFavoritesList();
+  loadData() {
+    // only load favorites on initial mount
+    if (this.props.stateProps.tableState) return;
+    this.props.dispatchProps.loadFavoritesList();
   }
 
   isRenderDataLoaded() {
     const {
       user,
-      favoritesLoading
+      tableState
     } = this.props.stateProps;
 
-    return user != null && favoritesLoading === false;
+    return user != null && tableState != null;
   }
 
   isRenderDataLoadError() {

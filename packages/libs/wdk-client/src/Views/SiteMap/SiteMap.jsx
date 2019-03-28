@@ -142,7 +142,7 @@ let renderSiteMapNode = node => {
 
   if (data.targetType === 'search') {
     return (
-      <a href={'wdk-client/Views/showQuestion.do?questionFullName=' + data.name}>
+      <a href={'../showQuestion.do?questionFullName=' + data.name}>
         <span title={data.description}><em>{data.recordClassDisplayName} by {data.displayName}</em></span>
       </a>
     );

@@ -30,7 +30,7 @@ class TableToolbar extends React.PureComponent {
     const { onSearch } = eventHandlers;
     const { searchQuery } = uiState;
 
-    if (!onSearch) return;
+    if (!onSearch) return null;
     return (
       <TableSearch
         query={searchQuery}
@@ -40,11 +40,13 @@ class TableToolbar extends React.PureComponent {
   }
 
   renderCounter () {
-    const { rows, options, uiState, eventHandlers } = this.props;
-    const { pagination, filteredRowCount } = uiState;
-    const { totalRows, rowsPerPage } = pagination;
+    const { rows = {}, options = {}, uiState = {}, eventHandlers } = this.props;
     const { showCount } = options;
     if (!showCount) return null;
+
+    const { pagination = {}, filteredRowCount = 0 } = uiState;
+    const { totalRows, rowsPerPage } = pagination;
+
 
     const isPaginated = ('onPageChange' in eventHandlers);
     const isSearching = uiState.searchQuery && uiState.searchQuery.length;
@@ -52,7 +54,7 @@ class TableToolbar extends React.PureComponent {
     const count = totalRows ? totalRows : rows.length;
     const noun = (isSearching ? 'result' : 'row') + (count % rowsPerPage === 1 ? '' : 's');
     const start = !isPaginated ? null : ((pagination.currentPage - 1) * rowsPerPage) + 1;
-    const end = !isPaginated ? null : (start + rowsPerPage > count ? count : (start - 1) + rowsPerPage);
+    const end = !isPaginated ? null : (start + rowsPerPage > (count - filteredRowCount) ? (count - filteredRowCount) : (start - 1) + rowsPerPage);
 
     const props = { count, noun, start, end, filteredRowCount };
 
@@ -74,6 +76,10 @@ class TableToolbar extends React.PureComponent {
     );
   }
 
+  renderAddRemoveColumns() {
+    return null;
+  }
+
   render () {
     const Title = this.renderTitle;
     const Search = this.renderSearch;
@@ -84,8 +90,8 @@ class TableToolbar extends React.PureComponent {
       <div className="Toolbar TableToolbar">
         <Title />
         <Search />
-        <Counter />
         <Children />
+        <Counter />
       </div>
     );
   }

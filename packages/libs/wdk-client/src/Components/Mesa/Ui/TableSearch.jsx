@@ -22,7 +22,7 @@ class TableSearch extends React.PureComponent {
   }
 
   render () {
-    const { options, query } = this.props;
+    const { options = {}, searchQuery = '' } = this.props;
     const { searchPlaceholder } = options;
     const { handleQueryChange, clearSearchQuery } = this;
 

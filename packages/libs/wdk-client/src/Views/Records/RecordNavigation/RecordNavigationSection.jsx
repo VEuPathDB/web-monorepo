@@ -118,6 +118,6 @@ export default wrappable(RecordNavigationSection);
 const removeFields = memoize(root =>
   pruneDescendantNodes(node => !isIndividual(node), root));
 
-function isNotAttribute(node: CategoryTreeNode) {
+function isNotAttribute(node) {
   return getTargetType(node) !== 'attribute';
 }

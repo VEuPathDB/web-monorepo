@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -17,22 +17,19 @@ const actionCreators = {
 
 type StateProps = State;
 type DispatchProps = typeof actionCreators;
+type OwnProps = { stepId: number };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
-class BlastSummaryViewController extends PageController< Props > {
+class BlastSummaryViewController extends ViewController< Props > {
 
   isRenderDataLoaded() {
     return this.props.blastSummaryData != null;
   }
 
-  getTitle() {
-    return "BLAST Results";
-  }
-
   loadData () {
     if (this.props.blastSummaryData == null) {
-      this.props.requestBlastSummaryReport(this.props.match.params.stepId);
+      this.props.requestBlastSummaryReport(this.props.stepId);
     }
   }
 
@@ -43,8 +40,6 @@ class BlastSummaryViewController extends PageController< Props > {
   renderDataLoadError() {
     return <LoadError/>;  // TODO: make this better
   }
-
-
 
   renderView() {
     if (this.props.blastSummaryData == null) return <Loading/>;
@@ -68,7 +63,7 @@ class BlastSummaryViewController extends PageController< Props > {
 
 const mapStateToProps = (state: RootState) => state.blastSummaryView;
 
-export default connect(
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   mapStateToProps,
   actionCreators
 ) (wrappable(BlastSummaryViewController));

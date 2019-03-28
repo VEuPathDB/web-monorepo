@@ -1,11 +1,10 @@
-import { compose, mapKeys, mapValues, partialRight, values } from 'lodash/fp';
+import { compose, mapKeys, mapValues, values } from 'lodash/fp';
 import { applyMiddleware, combineReducers, createStore, Reducer } from 'redux';
 import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
 import { EMPTY } from 'rxjs';
 import { Action } from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Utils/WdkService';
-import { LocatePlugin } from 'wdk-client/Core/CommonTypes';
 import { wdkMiddleware } from 'wdk-client/Core/WdkMiddleware';
 
 declare global{
@@ -15,10 +14,9 @@ declare global{
 }
 
 export type EpicDependencies = {
-  locatePlugin: LocatePlugin;
   wdkService: WdkService;
 }
-export type ModuleReducer<T> = (state: T | undefined, action: Action, locatePlugin: LocatePlugin) => T;
+export type ModuleReducer<T> = (state: T | undefined, action: Action) => T;
 export type ModuleEpic<T> = Epic<Action, Action, T, EpicDependencies>;
 
 export type StoreModule<T> = {
@@ -34,11 +32,11 @@ type StoreModuleRecord<T extends Record<string, any>> = {
 type RootReducer<T> = Reducer<T, Action>;
 type SubReducer<T> = Reducer<T[keyof T], Action>;
 
-export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, locatePlugin: LocatePlugin, wdkService: WdkService, transitioner: PageTransitioner) {
-  const rootReducer = makeRootReducer(storeModules, locatePlugin);
+export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, wdkService: WdkService, transitioner: PageTransitioner) {
+  const rootReducer = makeRootReducer(storeModules);
   const rootEpic = makeRootEpic(storeModules);
   const epicMiddleware = createEpicMiddleware<Action, Action, T, EpicDependencies>({
-    dependencies: { locatePlugin, wdkService }
+    dependencies: { wdkService }
   });
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -50,7 +48,7 @@ export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, locatePlug
   const enhancer = composeEnhancers(
     applyMiddleware(
       wdkMiddleware({ wdkService, transitioner }),
-      epicMiddleware
+      epicMiddleware,
     )
   );
 
@@ -59,8 +57,8 @@ export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, locatePlug
   return store;
 }
 
-function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>, locatePlugin: LocatePlugin): RootReducer<T[keyof T]> {
-  const reducers = mapValues<StoreModuleRecord<T>, SubReducer<T>>(m => partialRight(m.reduce, [locatePlugin]), storeModules);
+function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>): RootReducer<T[keyof T]> {
+  const reducers = mapValues<StoreModuleRecord<T>, SubReducer<T>>(m => m.reduce, storeModules);
   const keyedReducers = mapKeys(moduleKey => storeModules[moduleKey].key, reducers);
 
   return combineReducers(keyedReducers);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { safeHtml, wrappable, renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -16,22 +16,19 @@ const actionCreators = {
 
 type StateProps = State;
 type DispatchProps = typeof actionCreators;
+type OwnProps = { stepId: number };
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
-class IsolatesSummaryViewController extends PageController< Props > {
+class IsolatesSummaryViewController extends ViewController< Props > {
 
   isRenderDataLoaded() {
     return this.props.isolatesSummaryData != null;
   }
 
-  getTitle() {
-    return "Isolates Geographic Summary";
-  }
-
   loadData () {
     if (this.props.isolatesSummaryData == null) {
-      this.props.requestIsolatesSummaryReport(this.props.match.params.stepId);
+      this.props.requestIsolatesSummaryReport(this.props.stepId);
     }
   }
 
@@ -56,7 +53,7 @@ class IsolatesSummaryViewController extends PageController< Props > {
 
 const mapStateToProps = (state: RootState) => state.isolatesSummaryView;
 
-export default connect(
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   mapStateToProps,
   actionCreators
 ) (wrappable(IsolatesSummaryViewController));

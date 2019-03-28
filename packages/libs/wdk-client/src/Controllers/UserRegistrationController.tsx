@@ -14,9 +14,8 @@ const actionCreators = {
 
 type Props = {
   globalData: RootState['globalData'];
-  userProfile: RootState['userProfile'];
   userEvents: typeof actionCreators;
-}
+} & RootState['userProfile']
 
 class UserRegistrationController extends PageController<Props> {
 

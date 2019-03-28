@@ -29,10 +29,11 @@ const ActionCreators = {
   unshareUserDatasets
 };
 
-
-type Props = Pick<RootState['userDatasetDetail'], 'userDatasetsById' | 'loadError' | 'userDatasetUpdating' | 'updateError'>
-           & Pick<RootState["globalData"], 'user' | 'questions' | 'config'>
-           & typeof ActionCreators;
+type StateProps = Pick<RootState['userDatasetDetail'], 'userDatasetsById' | 'loadError' | 'userDatasetUpdating' | 'updateError'>
+           & Pick<RootState["globalData"], 'user' | 'questions' | 'config'>;
+type DispatchProps =  typeof ActionCreators;
+type OwnProps = { id: string; rootUrl: string; };
+type MergedProps = OwnProps & DispatchProps & StateProps;
 
 
 /**
@@ -42,7 +43,7 @@ type Props = Pick<RootState['userDatasetDetail'], 'userDatasetsById' | 'loadErro
  * userDataset's id. This avoids race conditions that arise when ajax requests
  * complete in a different order than they were invoked.
  */
-class UserDatasetDetailController extends PageController<Props> {
+class UserDatasetDetailController extends PageController<MergedProps> {
 
   getQuestionUrl = (question: Question): string => {
     return `#${question.name}`;
@@ -50,7 +51,7 @@ class UserDatasetDetailController extends PageController<Props> {
 
 
   getTitle () {
-    const entry = this.props.userDatasetsById[this.props.match.params.id];
+    const entry = this.props.userDatasetsById[this.props.id];
     if (entry && entry.resource) {
       return `My Data Set ${entry.resource.meta.name}`;
     }
@@ -65,11 +66,10 @@ class UserDatasetDetailController extends PageController<Props> {
   }
 
   loadData (prevProps?: this['props']) {
-    const { match } = this.props;
     const { userDatasetsById } = this.props;
-    const idChanged = prevProps && prevProps.match.params.id !== match.params.id;
-    if (idChanged || !userDatasetsById[match.params.id]) {
-      this.props.loadUserDatasetDetail(Number(match.params.id));
+    const idChanged = prevProps && prevProps.id !== this.props.id;
+    if (idChanged || !userDatasetsById[this.props.id]) {
+      this.props.loadUserDatasetDetail(Number(this.props.id));
     }
   }
 
@@ -78,9 +78,8 @@ class UserDatasetDetailController extends PageController<Props> {
   }
 
   isRenderDataLoaded () {
-    const { match } = this.props;
-    const { userDatasetsById, user, questions, config } = this.props;
-    const entry = userDatasetsById[match.params.id];
+    const { userDatasetsById, user, questions, config, id } = this.props;
+    const entry = userDatasetsById[id];
     if (user && user.isGuest) return true;
     return (entry && !entry.isLoading && user && questions && config)
       ? true
@@ -113,19 +112,17 @@ class UserDatasetDetailController extends PageController<Props> {
   }
 
   renderView () {
-    const { match, location, history } = this.props;
+    const { id, rootUrl } = this.props;
     const { updateUserDatasetDetail, shareUserDatasets, removeUserDataset, unshareUserDatasets } = this.props;
     const { userDatasetsById, user, updateError, questions, config, userDatasetUpdating } = this.props;
-    const entry = userDatasetsById[match.params.id];
+    const entry = userDatasetsById[id];
     const isOwner = !!(user && entry.resource && entry.resource.ownerUserId === user.id);
-    const rootUrl = window.location.href.substring(0, window.location.href.indexOf(`/app${location.pathname}`));
 
     const props = {
       user,
       config,
       isOwner,
       rootUrl,
-      history,
       location,
       updateError,
       removeUserDataset,

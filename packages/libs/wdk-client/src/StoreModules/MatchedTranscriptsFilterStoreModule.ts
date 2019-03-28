@@ -1,101 +1,240 @@
-import { openMatchedTranscriptsFilterAction, requestMatchedTransFilterExpandedPref, requestMatchedTransFilterExpandedUpdate, fulfillMatchedTransFilterExpanded, setDisplayedSelection, requestMatchedTransFilterSummary, fulfillMatchedTransFilterSummary} from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
+import { isEqual } from 'lodash';
+import {
+  openMatchedTranscriptsFilter,
+  closeMatchedTranscriptsFilter,
+  requestMatchedTransFilterExpandedPref,
+  requestMatchedTransFilterExpandedUpdate,
+  fulfillMatchedTransFilterExpanded,
+  requestMatchedTransFilterSummary,
+  fulfillMatchedTransFilterSummary,
+  requestMatchedTransFilterUpdate,
+  setDisplayedSelection,
+  FilterSummary,
+  FilterSelection
+} from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
 
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
 import { Action } from 'wdk-client/Actions';
-import { Decoder, combine, field, number } from 'wdk-client/Utils/Json';
-import { getMatchedTranscriptFilterPref, setMatchedTranscriptFilterPref } from 'wdk-client/Utils/UserPreferencesUtils';
+import { Decoder, number, objectOf, optional } from 'wdk-client/Utils/Json';
+import {
+  getMatchedTranscriptFilterPref,
+  setMatchedTranscriptFilterPref
+} from 'wdk-client/Utils/UserPreferencesUtils';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 
-import { Observable } from 'rxjs';
-import {mergeMapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
-import { combineEpics} from 'redux-observable';
+import {
+  mergeMapRequestActionsToEpic as mrate,
+  takeEpicInWindow
+} from 'wdk-client/Utils/ActionCreatorUtils';
+import { combineEpics, StateObservable } from 'redux-observable';
+import { fulfillStep, requestStep, requestStepUpdate } from 'wdk-client/Actions/StepActions';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { Step } from 'wdk-client/Utils/WdkUser';
+
+export interface FilterValue {
+  values: Array<'Y'|'N'>;
+}
 
 export const key = 'matchedTranscriptsFilter';
 
 export type State = {
-    stepId?: number,
-    expanded?: boolean;
-    didMeetCriteriaIsSelected: boolean;
-    didNotMeetCriteriaIsSelected: boolean;
-    didMeetCount?: number,
-    didNotMeetCount?: number
+  stepId?: number;
+  expanded?: boolean;
+  summary?: FilterSummary;
+  selection?: FilterSelection;
 };
 
-const initialState: State = {
-    didMeetCriteriaIsSelected: true,
-    didNotMeetCriteriaIsSelected: false
-};
+const initialState: State = { };
 
 export function reduce(state: State = initialState, action: Action): State {
-    switch (action.type) {
-        case openMatchedTranscriptsFilterAction.type: {
-            return { ...state, stepId: action.payload.stepId }
-        } 
-        case fulfillMatchedTransFilterExpanded.type: {
-            return { ...state, expanded: action.payload.expanded }
-        } 
-        case setDisplayedSelection.type: {
-            return { ...state, didMeetCriteriaIsSelected: action.payload.didMeetCriteria,
-                didNotMeetCriteriaIsSelected: action.payload.didNotMeetCriteria }
-        } 
-        case fulfillMatchedTransFilterSummary.type: {
-            return { ...state, didMeetCount: action.payload.didMeetCount,  
-                didNotMeetCount: action.payload.didNotMeetCount }
-        } 
-        default: {
-            return state;
-        }
+  switch (action.type) {
+    case openMatchedTranscriptsFilter.type: {
+      return { ...state, stepId: action.payload.stepId };
     }
+    case fulfillMatchedTransFilterExpanded.type: {
+      return { ...state, expanded: action.payload.expanded };
+    }
+    case fulfillMatchedTransFilterSummary.type: {
+      return {
+        ...state,
+        summary: action.payload.summary
+      };
+    }
+    case setDisplayedSelection.type: {
+      return {
+        ...state,
+        selection: action.payload.selection
+      };
+    }
+    default: {
+      return state;
+    }
+  }
 }
 
-// these guys probably belong in user preference land
-async function getRequestMatchedTransFilterExpandedPref([requestAction]: [InferAction<typeof openMatchedTranscriptsFilterAction>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterExpandedPref>> {
-    return requestMatchedTransFilterExpandedPref();
+const openMTF = openMatchedTranscriptsFilter;
+
+async function getRequestStep(
+  [openAction]: [InferAction<typeof openMTF>],
+  state$: StateObservable<RootState>,
+  { }: EpicDependencies
+) {
+  return requestStep(openAction.payload.stepId);
 }
 
-async function getFulfillMatchedTransFilterExpandedPref([requestAction]: [InferAction<typeof requestMatchedTransFilterExpandedPref>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
-
-    let matchedTransFiltPref = await getMatchedTranscriptFilterPref(wdkService);
-    return fulfillMatchedTransFilterExpanded(matchedTransFiltPref.expanded);
+async function getRequestMatchedTransFilterExpandedPref(
+  [openAction]: [InferAction<typeof openMTF>],
+  state$: StateObservable<RootState>,
+  {  }: EpicDependencies
+): Promise<InferAction<typeof requestMatchedTransFilterExpandedPref>> {
+  return requestMatchedTransFilterExpandedPref();
 }
 
-async function getFulfillMatchedTransFilterExpandedUpdate([requestAction]: [InferAction<typeof requestMatchedTransFilterExpandedUpdate>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
-
-    await setMatchedTranscriptFilterPref(requestAction.payload.expanded, wdkService);
-    return fulfillMatchedTransFilterExpanded(requestAction.payload.expanded);
+async function getFulfillMatchedTransFilterExpandedPref(
+  [requestAction]: [InferAction<typeof requestMatchedTransFilterExpandedPref>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
+  let matchedTransFiltPref = await getMatchedTranscriptFilterPref(wdkService);
+  return fulfillMatchedTransFilterExpanded(matchedTransFiltPref.expanded);
 }
 
-async function getRequestMatchedTransFilterSummary([requestAction]: [InferAction<typeof openMatchedTranscriptsFilterAction>], state$: Observable<State>, { }: EpicDependencies) : Promise<InferAction<typeof requestMatchedTransFilterSummary>> {
-    return requestMatchedTransFilterSummary(requestAction.payload.stepId);
+async function getFulfillMatchedTransFilterExpandedUpdate(
+  [requestAction]: [
+    InferAction<typeof requestMatchedTransFilterExpandedUpdate>
+  ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
+  setMatchedTranscriptFilterPref(
+    requestAction.payload.expanded,
+    wdkService
+  );
+  return fulfillMatchedTransFilterExpanded(requestAction.payload.expanded);
 }
 
-const MATCHED_TRANS_FILTER_NAME = "transcriptFilters.matchedTranscriptFilter";
-type MatchedFilterSummary = {
-    didMeetCount: number,
-    didNotMeetCount: number
+async function getRequestMatchedTransFilterSummary(
+  [openAction]: [InferAction<typeof openMTF>],
+  state$: StateObservable<RootState>,
+  {  }: EpicDependencies
+): Promise<InferAction<typeof requestMatchedTransFilterSummary>> {
+  return requestMatchedTransFilterSummary(openAction.payload.stepId);
 }
 
-async function getFulfillMatchedTransFilterSummary([requestAction]: [InferAction<typeof requestMatchedTransFilterSummary>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillMatchedTransFilterSummary>> {
-    let summaryDecoder : Decoder<MatchedFilterSummary> = 
-    combine(field('didMeetCount', number), field('didNotMeetCount', number));
-    let summary = await wdkService.getStepFilterSummary(summaryDecoder, requestAction.payload.stepId, MATCHED_TRANS_FILTER_NAME);
-
-    return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary.didMeetCount, summary.didNotMeetCount);
+function filterRequestMatchedTransFilterSummary(
+  [openAction]: [InferAction<typeof openMTF>],
+  state: RootState
+) {
+  return !!state[key].expanded;
 }
 
-async function getFulfillUpdatedMatchedTransFilterSummary([requestAction]: [InferAction<typeof requestMatchedTransFilterExpandedPref>], state$: Observable<State>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
-
-    let matchedTransFiltPref = await getMatchedTranscriptFilterPref(wdkService);
-    return fulfillMatchedTransFilterExpanded(matchedTransFiltPref.expanded);
+async function getRequestMatchedTransFilterSummaryStepChg(
+  [openAction, stepAction]: [
+    InferAction<typeof openMTF>,
+    InferAction<typeof fulfillStep>
+  ],
+  state$: StateObservable<RootState>,
+  {  }: EpicDependencies
+): Promise<InferAction<typeof requestMatchedTransFilterSummary>> {
+  return requestMatchedTransFilterSummary(openAction.payload.stepId);
 }
 
+function filterRequestMatchedTransFilterSummaryStepChgActions(
+  [openAction, stepAction]: [
+    InferAction<typeof openMTF>,
+    InferAction<typeof fulfillStep>
+  ],
+  state: RootState
+) {
+  return !!state[key].expanded;
+}
 
+async function getFulfillMatchedTransFilterSummary(
+  [openAction, requestAction]: [InferAction<typeof openMatchedTranscriptsFilter>, InferAction<typeof requestMatchedTransFilterSummary>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillMatchedTransFilterSummary>> {
+  let summaryDecoder: Decoder<FilterSummary> = objectOf(number);
+  let summary = await wdkService.getStepFilterSummary(
+    summaryDecoder,
+    requestAction.payload.stepId,
+    openAction.payload.filterKey
+  );
 
-/*
-  open -> reqExpandedPref
-  reqExpandedPref ->  fulfillExpanded
-  reqExpandedUpdate -> fulfillExpanded
-  fulfillExpandedPref -> reqFilterSummary   // only if expanded
-  fulfillStep -> reqFilterSummary  // only if expanded.  this is not required, but if it happens need to update
-*/
+  return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary);
+}
+
+async function getFulfillUpdatedMatchedTransFilterSummary(
+  [requestAction]: [InferAction<typeof requestMatchedTransFilterExpandedPref>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillMatchedTransFilterExpanded>> {
+  let matchedTransFiltPref = await getMatchedTranscriptFilterPref(wdkService);
+  return fulfillMatchedTransFilterExpanded(matchedTransFiltPref.expanded);
+}
+
+async function getRequestStepUpdate(
+  [openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof requestStepUpdate>> {
+  const { answerSpec } = stepAction.payload.step;
+  const filterValue = updateFilterActionToFilterValue(updateFilterAction);
+  return requestStepUpdate(
+    openAction.payload.stepId,
+    {
+      answerSpec: {
+        ...answerSpec,
+        filters: (answerSpec.filters || [])
+          .map(filter => filter.name === openAction.payload.filterKey
+            ? { ...filter, value: filterValue }
+            : filter
+          )
+      }
+    }
+  );
+}
+
+function filterStepUpdateActions([openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>]) {
+  return openAction.payload.stepId === stepAction.payload.step.id;
+}
+
+function areStepUpdateActionsNew(
+  [openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>],
+  [prevOpenAction, prevStepAction, prevUpdateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>]
+) {
+  return !isEqual(
+    updateFilterAction.payload,
+    prevUpdateFilterAction.payload
+  );
+}
+
+function updateFilterActionToFilterValue(updateFilterAction: InferAction<typeof requestMatchedTransFilterUpdate>) {
+  const { selection: values } = updateFilterAction.payload;
+  return { values };
+}
+
+export function getFilterValue(step: Step | undefined, key: string): FilterValue | undefined {
+  if (step == null || step.answerSpec.filters == null) return;
+  const filter = step.answerSpec.filters.find(filter => filter.name === key);
+  return filter && filter.value;
+}
+
+export const observe = takeEpicInWindow(
+  { startActionCreator: openMTF, endActionCreator: closeMatchedTranscriptsFilter },
+  combineEpics(
+    mrate([openMTF], getRequestStep),
+    mrate([openMTF], getRequestMatchedTransFilterExpandedPref),
+    mrate([requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
+    mrate([requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
+    mrate([openMTF], getRequestMatchedTransFilterSummary,
+    /*{ areActionsCoherent: filterRequestMatchedTransFilterSummary }*/),
+    mrate([openMTF, requestMatchedTransFilterSummary], getFulfillMatchedTransFilterSummary),
+    mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg,
+      { areActionsCoherent: filterRequestMatchedTransFilterSummaryStepChgActions }),
+    mrate([requestMatchedTransFilterExpandedPref], getFulfillUpdatedMatchedTransFilterSummary),
+    mrate([openMTF, fulfillStep, requestMatchedTransFilterUpdate], getRequestStepUpdate,
+      { areActionsCoherent: filterStepUpdateActions, areActionsNew: areStepUpdateActionsNew })
+  )
+);

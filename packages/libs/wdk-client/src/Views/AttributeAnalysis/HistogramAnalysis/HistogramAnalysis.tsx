@@ -1,77 +1,12 @@
-import { SimpleDispatch } from 'wdk-client/Core/CommonTypes';
-import { memoize, range, round } from 'lodash';
+import { range, round } from 'lodash';
 import React from 'react';
 import { lazy, makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { AttributeAnalysis } from 'wdk-client/Views/AttributeAnalysis/BaseAttributeAnalysis/BaseAttributeAnalysis';
-import { setBinSize, enableLogScaleXAxis, enableLogScaleYAxis } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramActions';
 import 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysis.scss';
-import { State } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramState';
-import { getReportSummary, getDefaultBinSize, isTypeInt, isTypeCategory } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysisUtils';
+import { isTypeInt, isTypeCategory } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysisUtils';
 
-export type ModuleState = State;
-
-type ModuleProps = {
-  state: ModuleState;
-  dispatch: SimpleDispatch;
-}
+export type ModuleState = any;
 
 const numberFormat = new Intl.NumberFormat('en-us');
-
-export default class HistogramAnalysis extends React.PureComponent<ModuleProps> {
-
-  getTableData = memoize((data: Record<string,number>, type: string) =>
-    Object.entries(data).map(([ attrValue, recordCount]) => ({
-      attrValue: type === 'category' ? String(attrValue) : Number(attrValue),
-      recordCount: recordCount
-    })))
-
-  setBinSize = (binSize: number) =>
-    this.props.dispatch(setBinSize(binSize));
-
-  setLogScaleXAxis = (scale: boolean) =>
-    this.props.dispatch(enableLogScaleXAxis(scale));
-
-  setLogScaleYAxis = (scale: boolean) =>
-    this.props.dispatch(enableLogScaleYAxis(scale));
-
-  render() {
-    if (this.props.state.data.status !== 'success') return null;
-
-    const { data: { report }, visualization } = this.props.state;
-    
-    const columns = [
-      { key: 'attrValue', display: report.attrLabel },
-      { key: 'recordCount', display: report.recordCountLabel }
-    ];
-
-    const summary = getReportSummary(report, visualization.logXAxis);
-    const {
-      binSize = getDefaultBinSize(report, visualization.logXAxis)
-    } = visualization;
-
-    return (
-      <AttributeAnalysis
-        {...this.props}
-        tableConfig={{
-          columns,
-          data: this.getTableData(report.data, report.type)
-        }}
-        visualizationConfig={{
-          display: 'Histogram',
-          content: <Histogram
-            {...report}
-            {...visualization}
-            {...summary}
-            binSize={binSize}
-            onBinSizeChange={this.setBinSize}
-            onLogScaleXAxisChange={this.setLogScaleXAxis}
-            onLogScaleYAxisChange={this.setLogScaleYAxis}
-          />
-        }}
-      />
-    )
-  }
-}
 
 type HistogramProps = {
   attrLabel: string;
@@ -91,7 +26,7 @@ type HistogramProps = {
 
 const cx = makeClassNameHelper('HistogramAnalysis');
 
-const Histogram = lazy<HistogramProps>(async () => {
+export const Histogram = lazy<HistogramProps>(async () => {
   await import('lib/jquery-flot');
   await Promise.all([
     import('lib/jquery-flot-categories'),
@@ -159,7 +94,7 @@ const Histogram = lazy<HistogramProps>(async () => {
   }
 
   render() {
-    const { avg, min, max, binSize, type, logXAxis, logYAxis, attrLabel, recordCountLabel, onBinSizeChange, onLogScaleXAxisChange, onLogScaleYAxisChange } = this.props;
+    const { avg, min, max, binSize, type, logXAxis, logYAxis, attrLabel, recordCountLabel, onBinSizeChange, onLogScaleYAxisChange } = this.props;
 
     return (
       <div className={cx()}>
