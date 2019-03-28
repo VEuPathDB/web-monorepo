@@ -897,7 +897,7 @@
              <td>N/A</td>
            </tr>
            <tr>
-             <td>&nbsp;&nbsp;&nbsp; <b>Telemetry</b></td>
+             <td>&nbsp;&nbsp;&nbsp;&nbsp; <b>Telemetry</b></td>
              <td><b><a href="/common/downloads/MaHPIC/Experiment_06/" target="_blank">E06 Telemetry Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
@@ -1002,7 +1002,7 @@
              <td>N/A</td>
            </tr>
            <tr>
-             <td>&nbsp;&nbsp;&nbsp; <b>Telemetry</b></td>
+             <td>&nbsp;&nbsp;&nbsp;&nbsp; <b>Telemetry</b></td>
              <td><b><a href="/common/downloads/MaHPIC/Experiment_07/" target="_blank">E07 Telemetry Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
@@ -1892,7 +1892,7 @@
              <td>N/A</td>
            </tr>
            <tr>
-             <td>&nbsp;&nbsp;&nbsp; <b>Telemetry</b></td>
+             <td>&nbsp;&nbsp;&nbsp;&nbsp; <b>Telemetry</b></td>
              <td><<b><a href="/common/downloads/MaHPIC/Experiment_30/" target="_blank">E30 Telemetry Data in PlasmoDB Downloads</a></td>
              <td>N/A</td>
            </tr>
