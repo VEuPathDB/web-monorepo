@@ -633,7 +633,7 @@ class BlastpForm extends React.Component {
 
             <input type="submit"/>
           </form>
-          <p><a target="_blank" rel="noopener noreferrer" href="https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi">Read about this tool</a>.</p>
+{/* <p><a target="_blank" rel="noopener noreferrer" href="https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi">Read about this tool</a>.</p> */}
         </div>
         );
     }
