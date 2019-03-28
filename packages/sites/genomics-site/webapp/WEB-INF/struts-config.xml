@@ -6,8 +6,35 @@
 
 <struts-config>
 
+<<<<<<< .working
+||||||| .merge-left.r96464
+  <form-beans>
+    <form-bean name="questionForm" type="org.gusdb.wdk.controller.form.QuestionForm"/>
+    <form-bean name="booleanExpressionForm" type="org.gusdb.wdk.controller.form.BooleanExpressionForm"/>
+    <form-bean name="phenotypeForm" type="org.apidb.apicommon.controller.PhenotypeForm"/>
+    <form-bean name="commentForm" type="org.apidb.apicommon.controller.NewCommentForm"/> 
+    <form-bean name="editCommentForm" type="org.apidb.apicommon.controller.EditCommentForm"/> 
+    <form-bean name="showCommentForm" type="org.apidb.apicommon.controller.ShowCommentForm"/>
+    <form-bean name="deleteCommentForm" type="org.apidb.apicommon.controller.DeleteCommentForm"/>
+    <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.form.RenameStepForm"/>
+    <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.form.RenameStrategyForm"/>
+    <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
+    <form-bean name="wizardForm" type="org.gusdb.wdk.controller.form.WizardForm"/>
+  </form-beans>
+
+=======
+  <form-beans>
+    <form-bean name="questionForm" type="org.gusdb.wdk.controller.form.QuestionForm"/>
+    <form-bean name="booleanExpressionForm" type="org.gusdb.wdk.controller.form.BooleanExpressionForm"/>
+    <form-bean name="renameStepForm" type="org.gusdb.wdk.controller.form.RenameStepForm"/>
+    <form-bean name="renameStrategyForm" type="org.gusdb.wdk.controller.form.RenameStrategyForm"/>
+    <form-bean name="userFileUploadForm" type="org.apidb.apicommon.controller.UserFileUploadForm"/>
+    <form-bean name="wizardForm" type="org.gusdb.wdk.controller.form.WizardForm"/>
+  </form-beans>
+
+>>>>>>> .merge-right.r96749
   <global-exceptions>
-    
+
     <exception key="global.error.user" path="/showErrorPage.do?type=user" scope="request"
                type="org.gusdb.wdk.model.WdkUserException"/>
     <exception key="global.error.model" path="/showErrorPage.do?type=model" scope="request"
@@ -32,9 +59,9 @@
   </global-forwards>
 
   <action-mappings>
-  
+
     <!-- Front-page and Standard Actions -->
-    
+
     <action path="/home"
         parameter="org.gusdb.wdk.controller.action.standard.GenericPageAction"
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
@@ -45,13 +72,357 @@
         type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper"
         scope="request">
     </action>
+<<<<<<< .working
+||||||| .merge-left.r96464
+    <action
+        path="/uploadSample"
+        parameter="org.gusdb.wdk.controller.action.UploadSampleAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="input" path="/uploadSample.jsp"/>
+    </action>
+    <action
+      path="/showFavorite"
+      type="org.gusdb.wdk.controller.action.ShowFavoriteAction"
+      scope="request"
+      validate="false">
+      <forward name="showFavorite" path="/wdkCustomization/jsp/Favorite.jsp"/>
+    </action>
+    <action
+      path="/processFavorite"
+      type="org.gusdb.wdk.controller.action.ProcessFavoriteAction"
+      scope="request"
+      validate="false">
+    </action>
+    <action
+      path="/showBasket"
+      type="org.gusdb.wdk.controller.action.ShowBasketAction"
+      scope="request"
+      validate="false">
+      <forward name="showBasket" path="/showSummary.do"/>
+    </action>
+    <action
+      path="/processBasket"
+      type="org.apidb.apicommon.controller.action.CustomProcessBasketAction"
+      scope="request"
+      validate="false">
+    </action>
+    <action
+      path="/expandStep"
+      type="org.gusdb.wdk.controller.action.ExpandStepAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/importStrategy"
+      type="org.gusdb.wdk.controller.action.ImportStrategyAction"
+      scope="request"
+      validate="false">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/im"
+      type="org.gusdb.wdk.controller.action.ImportStrategyAction"
+      scope="request"
+      validate="false">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/closeStrategy"
+      type="org.gusdb.wdk.controller.action.CloseStrategyAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/deleteStep"
+      type="org.gusdb.wdk.controller.action.DeleteStepAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+      <forward name="delete_strategy" path="/deleteStrategy.do"/>
+    </action>
+    <action
+      path="/moveStep"
+      type="org.gusdb.wdk.controller.action.MoveStepAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/processFilter"
+      type="org.gusdb.wdk.controller.action.ProcessFilterAction"
+      scope="request"
+      validate="false"
+      name="questionForm">
+      <forward name="show_error" path="/wdkCustomization/jsp/SummaryError.jsp"/>
+      <forward name="process_boolean_expression" path="/processBooleanExpression.do"/>
+      <forward name="show_summary" path="/showSummary.do"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/deleteStrategy"
+      type="org.gusdb.wdk.controller.action.DeleteStrategyAction"
+      scope="request">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/showStrategy"
+      type="org.gusdb.wdk.controller.action.ShowStrategyAction"
+      scope="request">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/getFilterLink"
+      type="org.gusdb.wdk.controller.action.GetFilterLinkAction"
+      scope="request">
+      <forward name="show_summary" path="showSummary.do"/>
+    </action>
+    <action
+      path="/getFilterSummary"
+      type="org.gusdb.wdk.controller.action.GetFilterSummaryAction"
+      scope="request">
+    </action>    
+    <action
+      path="/applyFilter"
+      type="org.gusdb.wdk.controller.action.ApplyFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/removeFilter"
+      type="org.gusdb.wdk.controller.action.RemoveFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>    
+    <action
+      path="/toggleFilter"
+      type="org.gusdb.wdk.controller.action.ToggleFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    
+    <action
+      path="/showQuestion"
+      type="org.apidb.apicommon.controller.action.CustomShowQuestionAction"
+      scope="request"
+      validate="false"
+      name="questionForm">
+      <forward name="skip_to_summary" path="/showSummary.do"/>
+    </action>
+    <action
+      path="/showQuestionSets"
+      type="org.gusdb.wdk.controller.action.ShowQuestionSetsAction"
+      scope="request"
+      name="questionForm">
+      <forward name="show_questionsets" path="/questionSets.jsp"/>
+    </action>
+    <action
+      path="/showQuestionSetsFlat"
+      type="org.gusdb.wdk.controller.action.ShowQuestionSetsFlatAction"
+      scope="request"
+      name="questionForm"
+      input="/showQuestion.do">
+      <forward name="show_questionsetsflat" path="/questionSetsFlat.jsp"/>
+    </action>
+    <action
+      path="/processQuestionSetsFlat"
+      type="org.gusdb.wdk.controller.action.ProcessQuestionSetsFlatAction"
+      scope="request"
+      name="questionForm"
+      input="/showQuestion.do">
+      <forward name="process_questionsetsflat" path="/processQuestion.do?fromQuestionSet=1"/>
+    </action>
+    <action
+       path="/processQuestion"
+       type="org.gusdb.wdk.controller.action.ProcessQuestionAction"
+       scope="request"
+       name="questionForm"
+       input="/showQuestion.do">
+       <forward name="error" path="/showQuestion.do"/>
+       <forward name="pq_show_summary" path="/showSummary.do"/>
+       <forward name="pq_start_boolean" path="/startBoolean.do"/>
+       <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+=======
+    <action
+        path="/uploadSample"
+        parameter="org.gusdb.wdk.controller.action.UploadSampleAction"
+        type="org.gusdb.wdk.controller.actionutil.WdkActionWrapper">
+      <forward name="input" path="/uploadSample.jsp"/>
+    </action>
+    <action
+      path="/showFavorite"
+      type="org.gusdb.wdk.controller.action.ShowFavoriteAction"
+      scope="request"
+      validate="false">
+      <forward name="showFavorite" path="/wdkCustomization/jsp/Favorite.jsp"/>
+    </action>
+    <action
+      path="/processFavorite"
+      type="org.gusdb.wdk.controller.action.ProcessFavoriteAction"
+      scope="request"
+      validate="false">
+    </action>
+    <action
+      path="/showBasket"
+      type="org.gusdb.wdk.controller.action.ShowBasketAction"
+      scope="request"
+      validate="false">
+      <forward name="showBasket" path="/showSummary.do"/>
+    </action>
+    <action
+      path="/processBasket"
+      type="org.apidb.apicommon.controller.action.CustomProcessBasketAction"
+      scope="request"
+      validate="false">
+    </action>
+    <action
+      path="/expandStep"
+      type="org.gusdb.wdk.controller.action.ExpandStepAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/importStrategy"
+      type="org.gusdb.wdk.controller.action.ImportStrategyAction"
+      scope="request"
+      validate="false">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/im"
+      type="org.gusdb.wdk.controller.action.ImportStrategyAction"
+      scope="request"
+      validate="false">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/closeStrategy"
+      type="org.gusdb.wdk.controller.action.CloseStrategyAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/deleteStep"
+      type="org.gusdb.wdk.controller.action.DeleteStepAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+      <forward name="delete_strategy" path="/deleteStrategy.do"/>
+    </action>
+    <action
+      path="/moveStep"
+      type="org.gusdb.wdk.controller.action.MoveStepAction"
+      scope="request"
+      validate="false">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/processFilter"
+      type="org.gusdb.wdk.controller.action.ProcessFilterAction"
+      scope="request"
+      validate="false"
+      name="questionForm">
+      <forward name="show_error" path="/wdkCustomization/jsp/SummaryError.jsp"/>
+      <forward name="process_boolean_expression" path="/processBooleanExpression.do"/>
+      <forward name="show_summary" path="/showSummary.do"/>
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/deleteStrategy"
+      type="org.gusdb.wdk.controller.action.DeleteStrategyAction"
+      scope="request">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/showStrategy"
+      type="org.gusdb.wdk.controller.action.ShowStrategyAction"
+      scope="request">
+      <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+    <action
+      path="/getFilterLink"
+      type="org.gusdb.wdk.controller.action.GetFilterLinkAction"
+      scope="request">
+      <forward name="show_summary" path="showSummary.do"/>
+    </action>
+    <action
+      path="/getFilterSummary"
+      type="org.gusdb.wdk.controller.action.GetFilterSummaryAction"
+      scope="request">
+    </action>
+    <action
+      path="/applyFilter"
+      type="org.gusdb.wdk.controller.action.ApplyFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/removeFilter"
+      type="org.gusdb.wdk.controller.action.RemoveFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+    <action
+      path="/toggleFilter"
+      type="org.gusdb.wdk.controller.action.ToggleFilterAction"
+      scope="request">
+      <forward name="show_application" path="/showApplication.do"/>
+    </action>
+
+    <action
+      path="/showQuestion"
+      type="org.apidb.apicommon.controller.action.CustomShowQuestionAction"
+      scope="request"
+      validate="false"
+      name="questionForm">
+      <forward name="skip_to_summary" path="/showSummary.do"/>
+    </action>
+    <action
+      path="/showQuestionSets"
+      type="org.gusdb.wdk.controller.action.ShowQuestionSetsAction"
+      scope="request"
+      name="questionForm">
+      <forward name="show_questionsets" path="/questionSets.jsp"/>
+    </action>
+    <action
+      path="/showQuestionSetsFlat"
+      type="org.gusdb.wdk.controller.action.ShowQuestionSetsFlatAction"
+      scope="request"
+      name="questionForm"
+      input="/showQuestion.do">
+      <forward name="show_questionsetsflat" path="/questionSetsFlat.jsp"/>
+    </action>
+    <action
+      path="/processQuestionSetsFlat"
+      type="org.gusdb.wdk.controller.action.ProcessQuestionSetsFlatAction"
+      scope="request"
+      name="questionForm"
+      input="/showQuestion.do">
+      <forward name="process_questionsetsflat" path="/processQuestion.do?fromQuestionSet=1"/>
+    </action>
+    <action
+       path="/processQuestion"
+       type="org.gusdb.wdk.controller.action.ProcessQuestionAction"
+       scope="request"
+       name="questionForm"
+       input="/showQuestion.do">
+       <forward name="error" path="/showQuestion.do"/>
+       <forward name="pq_show_summary" path="/showSummary.do"/>
+       <forward name="pq_start_boolean" path="/startBoolean.do"/>
+       <forward name="show_strategy" path="/showStrategy.do"/>
+    </action>
+>>>>>>> .merge-right.r96749
 
     <!-- * is question set name -->
     <action
         path="/*.wadl"
         type="org.gusdb.wdk.controller.action.services.ProcessRESTAction"
         scope="request"
-        validate="false" 
+        validate="false"
         parameter="{1}.all::wadl"/>
 
     <!--

@@ -254,7 +254,7 @@ function openPubmedWindow(searchBoxId) {
     </c:if>
       
     <c:if test="${commentForm.commentTargetId eq 'gene'}">
-      If this is a <b>new gene</b>, please also add a comment in the corresponding <a href="addComment.do?stableId=${commentForm.contig}&commentTargetId=genome&externaDbName=${commentForm.externalDbName}&externalDbVersion=${commentForm.externalDbVersion}&flag=0">Genome Sequence</a>.
+      If this is a <b>new gene</b>, please also add a comment in the corresponding <a href="addComment.do?stableId=${commentForm.contig}&commentTargetId=genome&externaDbName=${commentForm.externalDbName}&externalDbVersion=${commentForm.externalDbVersion}">Genome Sequence</a>.
     </c:if>
 
     <c:if test="${commentForm.commentTargetId eq 'genome'}">

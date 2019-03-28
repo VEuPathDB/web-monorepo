@@ -42,10 +42,10 @@ class GalaxyTermsController extends PageController {
     const {
       stateProps,
       dispatchProps,
-      location
+      signUp
     } = this.props;
 
-    const ViewComponent = location.pathname.includes('/sign-up')
+    const ViewComponent = signUp
       ? GalaxySignUp
       : GalaxyTerms;
     return (
@@ -70,9 +70,9 @@ export default connect(
     updateUserPreference,
     updateSecurityAgreementStatus
   },
-  (stateProps, dispatchProps, { location }) => ({
+  (stateProps, dispatchProps, { signUp }) => ({
     stateProps,
     dispatchProps,
-    location
+    signUp
   })
 )(GalaxyTermsController);
