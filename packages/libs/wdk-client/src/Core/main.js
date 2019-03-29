@@ -40,6 +40,7 @@ import { createWdkStore } from 'wdk-client/Core/Store';
  *   the location of the page changes. The function is called with a Location
  *   object.
  * @param {ClientPluginRegistryEntry[]} [options.pluginConfig]
+ * @param {ReduxMiddleware[]} [options.additionalMiddleware]
  */
 export function initialize(options) {
   let {
@@ -50,7 +51,8 @@ export function initialize(options) {
     wrapStoreModules = identity,
     wrapWdkService = identity,
     onLocationChange,
-    pluginConfig = []
+    pluginConfig = [],
+    additionalMiddleware
   } = options;
 
   if (!isString(rootUrl)) throw new Error(`Expected rootUrl to be a string, but got ${typeof rootUrl}.`);
@@ -64,7 +66,7 @@ export function initialize(options) {
     : createMockHistory({ basename: rootUrl });
   let wdkService = wrapWdkService(WdkService).getInstance(endpoint);
   let transitioner = getTransitioner(history);
-  let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner);
+  let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner, additionalMiddleware);
 
   // load static WDK data into service cache and view stores that need it
   store.dispatch(loadAllStaticData());
