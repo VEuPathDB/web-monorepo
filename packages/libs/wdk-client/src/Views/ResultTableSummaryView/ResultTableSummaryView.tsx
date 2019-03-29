@@ -17,7 +17,8 @@ import {
   UpdateColumnsDialogSelection,
   OpenAttributeAnalysis,
   CloseAttributeAnalysis,
-  UpdateSelectedIds
+  UpdateSelectedIds,
+  ShowLoginWarning
 } from 'wdk-client/Views/ResultTableSummaryView/Types';
 import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
 import Loading from 'wdk-client/Components/Loading/Loading';
@@ -33,6 +34,7 @@ interface Props {
   addingStepToBasket: boolean;
   actions?: Action[];
   selectedIds?: string[];
+  userIsGuest: boolean;
   activeAttributeAnalysisName: string | undefined;
   stepId: number;
   recordClass?: RecordClass;
@@ -54,6 +56,7 @@ interface Props {
   openAttributeAnalysis: OpenAttributeAnalysis;
   closeAttributeAnalysis: CloseAttributeAnalysis;
   updateSelectedIds: UpdateSelectedIds;
+  showLoginWarning: ShowLoginWarning;
 }
 
 const cx = makeClassNameHelper('ResultTableSummaryView');
@@ -68,6 +71,7 @@ export default function ResultTableSummaryView({
   stepId,
   recordClass,
   question,
+  userIsGuest,
   basketStatusArray,
   requestColumnsChoiceUpdate,
   requestSortingUpdate,
@@ -84,7 +88,8 @@ export default function ResultTableSummaryView({
   updateColumnsDialogExpandedNodes,
   openAttributeAnalysis,
   closeAttributeAnalysis,
-  updateSelectedIds
+  updateSelectedIds,
+  showLoginWarning,
 }: Props) {
   return (
     <div className={cx()}>
@@ -118,6 +123,7 @@ export default function ResultTableSummaryView({
           stepId={stepId}
           question={question}
           recordClass={recordClass}
+          userIsGuest={userIsGuest}
           basketStatusArray={basketStatusArray}
           requestColumnsChoiceUpdate={requestColumnsChoiceUpdate}
           requestSortingUpdate={requestSortingUpdate}
@@ -129,6 +135,7 @@ export default function ResultTableSummaryView({
           openAttributeAnalysis={openAttributeAnalysis}
           closeAttributeAnalysis={closeAttributeAnalysis}
           updateSelectedIds={updateSelectedIds}
+          showLoginWarning={showLoginWarning}
         />
       ) : null}
     </div>

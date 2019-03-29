@@ -1,13 +1,12 @@
 import { Action } from 'redux';
 import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { showLoginWarning } from 'wdk-client/Actions/UserSessionActions';
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
-import { alert, confirm } from 'wdk-client/Utils/Platform';
 import { RecordInstance } from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Utils/WdkService';
 import { PreferenceScope, User, UserPredicate, UserPreferences, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
 import { UserProfileFormData } from 'wdk-client/StoreModules/UserProfileStoreModule';
-import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { InferType } from 'prop-types';
 
 export type Action =
   | UserUpdateAction
@@ -20,11 +19,6 @@ export type Action =
   | PasswordFormSubmissionStatusAction
   | ResetPasswordUpdateEmailAction
   | ResetPasswordSubmissionStatusAction
-  | ShowLoginModalAction
-  | LoginDismissedAction
-  | LoginErrorAction
-  | LoginRedirectAction
-  | LogoutRedirectAction
   | BasketStatusLoadingAction
   | BasketStatusReceivedAction
   | BasketStatusErrorAction
@@ -32,6 +26,7 @@ export type Action =
   | FavoritesStatusReceivedAction
   | FavoritesStatusLoadingAction
 
+type ShowLoginModalAction = InferType<typeof showLoginWarning>;
 
 // actions to update true user and preferences
 // -------------------------------------------
@@ -235,92 +230,6 @@ export function resetPasswordSubmissionStatus(message?: string): ResetPasswordSu
       success: message == null,
       message
     }
-  }
-}
-
-
-// actions related to login
-// ------------------------
-
-//==============================================================================
-
-export const SHOW_LOGIN_MODAL = 'user/show-login-modal';
-
-export type ShowLoginModalAction = {
-  type: typeof SHOW_LOGIN_MODAL,
-  payload: {
-    destination: string;
-  }
-}
-
-export function showLoginModal(destination: string): ShowLoginModalAction {
-  return {
-    type: SHOW_LOGIN_MODAL,
-    payload: {
-      destination
-    }
-  }
-}
-
-//==============================================================================
-
-export const LOGIN_DISMISSED = 'user/login-dismissed';
-
-export type LoginDismissedAction = {
-  type: typeof LOGIN_DISMISSED;
-}
-
-export function loginDismissed(): LoginDismissedAction {
-  return {
-    type: LOGIN_DISMISSED
-  }
-}
-
-//==============================================================================
-
-export const LOGIN_ERROR = 'user/login-error';
-
-export type LoginErrorAction = {
-  type: typeof LOGIN_ERROR,
-  payload: {
-    message: string;
-  }
-}
-
-export function loginError(message: string): LoginErrorAction {
-  return {
-    type: LOGIN_ERROR,
-    payload: {
-      message
-    }
-  }
-}
-
-//==============================================================================
-
-export const LOGIN_REDIRECT = 'user/login-redirect';
-
-export type LoginRedirectAction = {
-  type: typeof LOGIN_REDIRECT;
-}
-
-export function loginRedirect(): LoginRedirectAction {
-  return {
-    type: LOGIN_REDIRECT
-  }
-}
-
-//==============================================================================
-
-export const LOGOUT_REDIRECT = 'user/logout-redirect';
-
-export type LogoutRedirectAction = {
-  type: typeof LOGOUT_REDIRECT;
-}
-
-export function logoutRedirect(): LogoutRedirectAction {
-  return {
-    type: LOGOUT_REDIRECT
   }
 }
 
@@ -594,111 +503,6 @@ export function submitPasswordReset(email: string): ActionThunk<ResetPasswordSub
   };
 };
 
-// Session management action creators and helpers
-// ----------------------------------------------
-
-/**
- * Show a warning that user must be logged in for feature
- */
-export function showLoginWarning(attemptedAction: string, destination?: string): ActionThunk<EmptyAction|ShowLoginModalAction> {
-  return function() {
-    return confirm(
-      'Login Required',
-      'To ' + attemptedAction + ', you must be logged in. Would you like to login now?'
-    ).then(confirmed => confirmed ? showLoginForm(destination) : emptyAction);
-  }
-};
-
-/**
- * Show the login form based on config
- */
-export function showLoginForm(destination = window.location.href): ActionThunk<EmptyAction|ShowLoginModalAction> {
-  return function({wdkService}) {
-    return wdkService.getConfig().then(config => {
-      config.authentication.method
-      let { oauthClientId, oauthClientUrl, oauthUrl, method } = config.authentication;
-      if (method === 'OAUTH2') {
-        performOAuthLogin(destination, wdkService, oauthClientId, oauthClientUrl, oauthUrl);
-        return emptyAction;
-      }
-      else { // USER_DB
-        return showLoginModal(destination)
-      }
-    });
-  };
-};
-
-export function submitLoginForm(email: string, password: string, destination: string): ActionThunk<EmptyAction|LoginErrorAction> {
-  return ({ wdkService }) => {
-    return wdkService.tryLogin(email, password, destination)
-      .then(response => {
-        if (response.success) {
-          window.location.assign(response.redirectUrl);
-          return emptyAction;
-        }
-        else {
-          return loginError(response.message);
-        }
-      })
-      .catch(error => {
-        return loginError("There was an error submitting your credentials.  Please try again later.");
-      });
-  };
-}
-
-function performOAuthLogin(destination: string, wdkService: WdkService,
-  oauthClientId: string, oauthClientUrl: string, oauthUrl: string) {
-  wdkService.getOauthStateToken()
-    .then((response) => {
-      let googleSpecific = (oauthUrl.indexOf("google") != -1);
-      let [ redirectUrl, authEndpoint ] = googleSpecific ?
-        [ oauthClientUrl + '/login', "auth" ] : // hacks to conform to google OAuth2 API
-        [ oauthClientUrl + '/login?redirectUrl=' + encodeURIComponent(destination), "authorize" ];
-
-      let finalOauthUrl = oauthUrl + "/" + authEndpoint + "?" +
-        "response_type=code&" +
-        "scope=" + encodeURIComponent("openid email") + "&" +
-        "state=" + encodeURIComponent(response.oauthStateToken) + "&" +
-        "client_id=" + oauthClientId + "&" +
-        "redirect_uri=" + encodeURIComponent(redirectUrl);
-
-      window.location.assign(finalOauthUrl);
-    })
-    .catch(error => {
-      alert("Unable to fetch your WDK state token.", "Please check your internet connection.");
-      throw error;
-    });
-}
-
-function logout(): ActionThunk<EmptyAction> {
-  return function run({ wdkService }) {
-    return wdkService.getConfig().then(config => {
-      let { oauthClientId, oauthClientUrl, oauthUrl, method } = config.authentication;
-      let logoutUrl = oauthClientUrl + '/logout';
-      if (method === 'OAUTH2') {
-        let googleSpecific = (oauthUrl.indexOf("google") != -1);
-        // don't log user out of google, only the eupath oauth server
-        let nextPage = (googleSpecific ? logoutUrl :
-          oauthUrl + "/logout?redirect_uri=" + encodeURIComponent(logoutUrl));
-        window.location.assign(nextPage);
-      }
-      else {
-        window.location.assign(logoutUrl);
-      }
-      return emptyAction;
-    });
-  };
-};
-
-export function showLogoutWarning(): ActionThunk<EmptyAction> {
-  return function() {
-    return confirm(
-      'Are you sure you want to logout?',
-      'Note: You must log out of other EuPathDB sites separately'
-    ).then(confirmed => confirmed ? logout() : emptyAction);
-  }
-};
-
 const emptyThunk: ActionThunk<EmptyAction> = () => emptyAction;
 
 /**
@@ -746,7 +550,7 @@ export function updateBasketStatus(record: RecordInstance, status: boolean): Act
     ({ wdkService }) =>
       setBasketStatus(record,
         wdkService.updateBasketStatus(status? 'add' : 'remove', record.recordClassName, [record.id]).then(response => status)),
-    showLoginWarning('use baskets')
+    () => showLoginWarning('use baskets')
   );
 };
 
@@ -785,14 +589,14 @@ export function loadFavoritesStatus(record: RecordInstance): ActionThunk<Favorit
 export function removeFavorite(record: RecordInstance, favoriteId: number): ActionThunk<FavoriteAction|ShowLoginModalAction|EmptyAction> {
   return maybeLoggedIn<FavoriteAction, ShowLoginModalAction|EmptyAction>(
     ({ wdkService }) => setFavoritesStatus(record, wdkService.deleteFavorite(favoriteId)),
-    showLoginWarning('use favorites')
+    () => showLoginWarning('use favorites')
   );
 };
 
 export function addFavorite(record: RecordInstance): ActionThunk<FavoriteAction|ShowLoginModalAction|EmptyAction> {
   return maybeLoggedIn<FavoriteAction, ShowLoginModalAction|EmptyAction>(
     ({ wdkService }) => setFavoritesStatus(record, wdkService.addFavorite(record)),
-    showLoginWarning('use favorites')
+    () => showLoginWarning('use favorites')
   );
 };
 

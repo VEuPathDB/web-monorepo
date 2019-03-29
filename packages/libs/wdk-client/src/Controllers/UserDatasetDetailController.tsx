@@ -2,7 +2,7 @@ import { keyBy } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { showLoginForm } from 'wdk-client/Actions/UserActions';
+import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Question } from 'wdk-client/Utils/WdkModel';

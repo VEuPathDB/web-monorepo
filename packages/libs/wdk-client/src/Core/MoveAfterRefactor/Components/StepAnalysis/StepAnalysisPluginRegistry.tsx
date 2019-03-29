@@ -7,6 +7,7 @@ import { StepAnalysisWordEnrichmentResults } from './StepAnalysisWordEnrichmentR
 import { StepAnalysisPathwayEnrichmentResults } from './StepAnalysisPathwayEnrichmentResults';
 import { StepAnalysisGoEnrichmentResults } from './StepAnalysisGoEnrichmentResults';
 import { StepAnalysisEupathExternalResult } from './StepAnalysisEupathExternalResult';
+import { StepAnalysisHpiGeneListResults } from './StepAnalysisHpiGeneListResults';
 
 interface FormPluginEntry {
   formRenderer: (props: StepAnalysisFormPluginProps) => ReactNode;
@@ -32,6 +33,10 @@ const formPlugins: Record<string, FormPluginEntry> = {
     initialFormUiState: {}
   },
   'go-enrichment': {
+    formRenderer: StepAnalysisDefaultForm,
+    initialFormUiState: {}
+  },
+  'datasetGeneList': {
     formRenderer: StepAnalysisDefaultForm,
     initialFormUiState: {}
   }
@@ -100,6 +105,10 @@ const resultPlugins: Record<string, ResultPluginEntry> = {
   },
   'clinepi-summaries': {
     resultRenderer: StepAnalysisEupathExternalResult,
+    initialResultUiState: {}
+  },
+  'datasetGeneList': {
+    resultRenderer: StepAnalysisHpiGeneListResults,
     initialResultUiState: {}
   }
 };

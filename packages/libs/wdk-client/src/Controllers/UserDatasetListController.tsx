@@ -2,7 +2,7 @@ import * as React from 'react';
 import { History, Location } from 'history';
 
 import 'wdk-client/Views/UserDatasets/UserDatasets.scss';
-import { showLoginForm } from 'wdk-client/Actions/UserActions';
+import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';

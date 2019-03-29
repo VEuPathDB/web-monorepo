@@ -444,7 +444,9 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
             searchField={stateProps.pubmedIdSearchQuery}
             onIdsChange={(newValue: string) => {
               dispatchProps.updateRawFormField('pubMedIds')(newValue);
-              dispatchProps.updateFormField('pubMedIds')(newValue.split(/[^0-9]/g));
+              dispatchProps.updateFormField('pubMedIds')(
+                newValue.split(/\s*,\s*/g).map(x => parseInt(x)).filter(x => x > 0)
+              );
             }}
             onSearchFieldChange={dispatchProps.updatePubmedIdSearchQuery}
             openPreview={() => dispatchProps.showPubmedPreview(stateProps.submission.pubMedIds || [])}

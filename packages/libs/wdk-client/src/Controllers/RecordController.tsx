@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import * as UserActionCreators from 'wdk-client/Actions/UserActions';
+import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import RecordUI from 'wdk-client/Views/Records/RecordUI';
@@ -23,6 +24,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = {
   ...UserActionCreators,
+  ...UserSessionActions,
   loadRecordData,
   updateSectionVisibility,
   updateNavigationQuery,

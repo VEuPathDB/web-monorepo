@@ -1,19 +1,23 @@
 import React from 'react';
 import { PrimaryKey } from 'wdk-client/Utils/WdkModel';
-import { BasketStatus, RequestUpdateBasket } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import { BasketStatus, RequestUpdateBasket, ShowLoginWarning } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
 interface BasketIconButtonProps {
   status: BasketStatus;
   idsToToggle: PrimaryKey[];
   recordClassName: string;
+  userIsGuest: boolean;
   requestUpdateBasket: RequestUpdateBasket;
+  showLoginWarning: ShowLoginWarning;
 }
 
 export default function BasketIconButton({
   status,
   idsToToggle,
   recordClassName,
-  requestUpdateBasket
+  userIsGuest,
+  requestUpdateBasket,
+  showLoginWarning,
 }: BasketIconButtonProps) {
   const iconWidth = '1em';
 
@@ -33,8 +37,11 @@ export default function BasketIconButton({
     <button
       type="button"
       className="ResultTableBasketIconButton"
+      title={makeTitle(status, userIsGuest)}
       onClick={() => {
-        if (status === 'yes')
+        if (userIsGuest)
+          showLoginWarning('use baskets')
+        else if (status === 'yes')
           requestUpdateBasket('remove', recordClassName, idsToToggle);
         else if (status === 'no')
           requestUpdateBasket('add', recordClassName, idsToToggle);
@@ -43,4 +50,13 @@ export default function BasketIconButton({
       {icon}
     </button>
   );
+}
+
+function makeTitle(status: BasketStatus, userIsGuest: boolean) {
+  if (userIsGuest) return 'You must log in to use baskets';
+  switch(status) {
+    case 'loading': return 'Your basket is being updated';
+    case 'no': return 'Click to add to your basket';
+    case 'yes': return 'Click to remove from your basket';
+  }
 }

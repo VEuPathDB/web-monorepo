@@ -17,9 +17,7 @@ class RowsPerPageMenu extends React.PureComponent {
   render () {
     let { rowsPerPage, rowsPerPageOptions } = this.props;
     if (!rowsPerPageOptions) rowsPerPageOptions = [
-      5, 10, 20, 50, 100,
-      { value: 500, name: '500 (slow)'},
-      { value: 1000, name: '1000 (very slow)' }
+      5, 10, 20, 50, 100, 500, 1000
     ];
 
     return (

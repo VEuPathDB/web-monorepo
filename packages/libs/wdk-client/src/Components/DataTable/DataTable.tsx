@@ -309,9 +309,9 @@ class DataTable extends PureComponent<Props> {
     .on('click', 'th .wdk-DataTableCellExpand', event => {
       // if all are shown, then hide all, otherwise show any that are hidden
       let allShown = areAllChildRowsShown(dataTable);
-      let update = allShown ? this._hideChildRow : this._renderChildRow;
       for (let tr of dataTable.rows().nodes().toArray()) {
-        update.call(this, tr);
+        if (allShown) this._hideChildRow(dataTable, tr);
+        else this._renderChildRow(dataTable, tr);
       }
       this._updateChildRowClassNames(dataTable);
       this._callExpandedRowsCallback(dataTable);
