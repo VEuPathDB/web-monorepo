@@ -58,7 +58,7 @@ interface RecordRequest {
   primaryKey: PrimaryKey;
 }
 
-// Legacy, for backward compatitibility of client code with older service API
+// Legacy, for backward compatibility of client code with older service API
 export interface AnswerSpec {
   questionName: string;
   parameters?: Record<string, string>;
@@ -68,13 +68,13 @@ export interface AnswerSpec {
   wdkWeight?: number;
 }
 
-// Legacy, for backward compatitibility of client code with older service API
+// Legacy, for backward compatibility of client code with older service API
 export interface AnswerFormatting {
   format: string
   formatConfig?: object
 }
 
-// Legacy, for backward compatitibility of client code with older service API
+// Legacy, for backward compatibility of client code with older service API
 export interface AnswerRequest {
   answerSpec: AnswerSpec,
   formatting: AnswerFormatting
