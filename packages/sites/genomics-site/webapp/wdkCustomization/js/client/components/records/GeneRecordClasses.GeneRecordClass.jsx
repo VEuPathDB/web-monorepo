@@ -575,7 +575,6 @@ class WolfPsortForm extends React.Component {
          <input type="radio" name="organism_type" value="fungi"/> Fungi<br/><br/>
          <input type="submit"/>
        </form>
-       <p><a target="_blank" rel="noopener noreferrer"  href="https://wolfpsort.hgc.jp/aboutWoLF_PSORT.html.en">Read about this tool</a>.</p>
      </div>
 
         );
@@ -633,7 +632,6 @@ class BlastpForm extends React.Component {
 
             <input type="submit"/>
           </form>
-          <p><a target="_blank" rel="noopener noreferrer" href="https://blast.ncbi.nlm.nih.gov/blast/Blast.cgi">Read about this tool</a>.</p>
         </div>
         );
     }
@@ -678,7 +676,6 @@ class MitoprotForm extends React.Component {
 
               <input type="submit"/>
             </form>
-            <p><a target="_blank" rel="noopener noreferrer" href="https://ihg.gsf.de/ihg/mitoprot.html">Read about this tool</a>.</p>
           </div>
         );
     }
@@ -725,7 +722,6 @@ class InterProForm extends React.Component {
 
           <input type="submit"/>
         </form>
-        <p><a target="_blank" rel="noopener noreferrer"  href="https://www.ebi.ac.uk/interpro/">Read about this tool</a>.</p>
       </div>
         );
     }
@@ -774,7 +770,7 @@ class MendelGPIForm extends React.Component {
             <input type="radio" name="LSet" value="protozoa"/> Protozoa<br/><br/>
             <input type="submit"/>
           </form>
-          <p><a target="_blank" rel="noopener noreferrer"  href="http://mendel.imp.ac.at/sat/gpi/gpi_server.html">Read about this tool</a>.</p>
+        
         </div>
       );
     }
@@ -832,7 +828,6 @@ class StringDBForm extends React.Component {
             <br/></p>
             <input type="submit"/>
           </form>
-          <p><a target="_blank" rel="noopener noreferrer"  href="https://string-db.org/cgi/input.pl?sessionId=0qgoqINUZajx&input_page_active_form=single_sequence">Read about this tool</a>.</p>
         </div>
         );
     }

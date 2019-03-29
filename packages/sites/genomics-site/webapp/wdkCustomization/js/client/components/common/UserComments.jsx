@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
-import { UserActions } from 'wdk-client/Actions';
+import { UserSessionActions } from 'wdk-client/Actions';
 
 const withUserAndAction = connect(
   state => ({ user: state.globalData.user, location: state.globalData.location }),
-  UserActions
+  UserSessionActions
 );
 
 export function addCommentLink(getLink) {
