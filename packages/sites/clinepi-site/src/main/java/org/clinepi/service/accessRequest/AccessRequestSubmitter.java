@@ -9,14 +9,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.gusdb.fgputil.FormatUtil.escapeHtml;
+import static org.gusdb.fgputil.FormatUtil.join;
 
+import org.apache.log4j.Logger;
 import org.eupathdb.common.model.contact.EmailSender;
 import org.gusdb.fgputil.db.SqlUtils;
 import org.gusdb.wdk.model.WdkModel;
 import org.gusdb.wdk.model.WdkModelException;
+import org.gusdb.wdk.model.config.ModelConfig;
 
 public class AccessRequestSubmitter {
-  
+  private static final Logger LOG = Logger.getLogger(AccessRequestSubmitter.class);
+
   public enum SubmissionResult {
     SUCCESSFUL,
     ALREADY_REQUESTED
@@ -113,12 +117,18 @@ public class AccessRequestSubmitter {
   }
 
   public static void emailAccessRequest(EmailSender emailSender, AccessRequestParams params, WdkModel wdkModel) throws WdkModelException {
+    ModelConfig modelConfig = wdkModel.getModelConfig();
+    String version = wdkModel.getBuildNumber();
+    String website = wdkModel.getDisplayName();
+    String supportEmail = wdkModel.getProperties().get("CLINEPI_ACCESS_REQUEST_EMAIL");
     String requesterEmail = params.getRequesterEmail();
     String datasetName = params.getDatasetName();
 
+		LOG.debug("emailAccessRequest() -- requesterEmail: " + requesterEmail);
+		LOG.debug("emailAccessRequest() -- providerEmail: not needed" + params.getProviderEmail());
+
     String bodyTemplate = params.getBodyTemplate();
     Map<String, String> formFields = params.getFormFields();
-
     String subject = String.format(
       "%s (%s) Requests Access to ClinEpiDB Dataset %s",
       params.getRequesterName(),
@@ -127,16 +137,56 @@ public class AccessRequestSubmitter {
     );
     String body = createAccessRequestEmailBody(bodyTemplate, formFields, datasetName);
 
+    String replyEmail = requesterEmail;
+    String metaInfo =
+        "ReplyTo: " + replyEmail + "\n" +
+        "WDK Model version: " + version;
+
+    String redmineContent = "****THIS IS NOT A REPLY**** \nThis is an automatic" +
+        " response, that includes your message for your records, to let you" +
+        " know that we have received your email and will get back to you as" +
+        " soon as possible. Thanks so much for contacting us!\n\nThis was" +
+        " your message:\n\n---------------------\n" + body + 
+        "\n---------------------";
+
+    String redmineMetaInfo = "Project: clinepidb\n" + "Category: " + 
+        website + "\n" + "\n" +
+        metaInfo + "\n";
+    String smtpServer = modelConfig.getSmtpServer();
+    
+    // Send auto-reply
     emailSender.sendEmail(
-      wdkModel.getModelConfig().getSmtpServer(),
-      params.getProviderEmail(),
-      requesterEmail,
+			smtpServer,
+      replyEmail,    //to
+      supportEmail,  //reply (from)       
       subject,
-      body,
-      wdkModel.getProperties().get("CLINEPI_ACCESS_REQUEST_EMAIL"),
-      params.getBccEmail(),
+      escapeHtml(metaInfo) + "\n\n" + redmineContent + "\n\n", 
+      null,null,
       null
     );
+
+    // Send support email (help@)
+    emailSender.sendEmail(
+      smtpServer,
+      supportEmail, //or params.getProviderEmail(),
+      requesterEmail,          
+      subject,
+			body,
+      null, //not needed, already sent to support
+      params.getBccEmail(),                                    
+      null
+    );
+
+    // Send Redmine email
+    emailSender.sendEmail(
+      smtpServer,
+      wdkModel.getProperties().get("REDMINE_TO_EMAIL"),   //sendTos
+      wdkModel.getProperties().get("REDMINE_FROM_EMAIL"), //reply
+      subject,
+      escapeHtml(redmineMetaInfo) + "\n\n" + body + "\n\n",
+      null,null,null
+    );
+
   }
 
   private static String createAccessRequestEmailBody(String bodyTemplate, Map<String, String> formFields, String datasetName) {
