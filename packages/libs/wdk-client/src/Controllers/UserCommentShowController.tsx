@@ -293,7 +293,7 @@ const mergeProps = (
                           ({ start, end }) => `${start}-${end}`
                         ).join(', ')
                       }
-                      {comment.location.reverse && ` (reversed)`}
+                      {comment.location.reversed && ` (reversed)`}
                     </>
                   )
                   : null

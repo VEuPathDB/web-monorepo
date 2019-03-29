@@ -13,9 +13,9 @@ import { UserCommentFormView, UserCommentFormViewProps } from 'wdk-client/Views/
 import { get, omit } from 'lodash';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
 import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery } from 'wdk-client/Actions/UserCommentFormActions';
-import { UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields } from 'wdk-client/Utils/WdkUser';
+import { UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields, UserCommentLocation } from 'wdk-client/Utils/WdkUser';
 import { createSelector } from 'reselect';
-import { UserCommentFormState } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
+import { UserCommentFormState, CategoryChoice } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 
 import { PubMedIdsField } from 'wdk-client/Views/UserCommentForm/PubmedIdField';
 import { AttachmentsField } from 'wdk-client/Views/UserCommentForm/AttachmentsField';
@@ -39,15 +39,19 @@ type StateProps = {
   returnUrl: string;
   returnLinkText: string;
   queryParams: OwnProps;
+  backendValidationErrors: string[];
+  internalError: string;
+  targetType: string;
+  categoryChoices: CategoryChoice[];
 };
 
 type DispatchProps = {
   updateFormField: (key: string) => (
-    newValue: string | string[] | number[]
+    newValue: string | string[] | number[] | UserCommentLocation
   ) => void;
   updateRawFormField: (key: string) => (newValue: string) => void;
   updatePubmedIdSearchQuery: (newBalue: string) => void;
-  openAddComment: (request: UserCommentPostRequest) => void;
+  openAddComment: (request: UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>) => void;
   openEditComment: (commentId: number) => void;
   removeAttachedFile: (attachmentId: number) => void;
   removeFileToAttach: (index: number) => void;
@@ -84,7 +88,7 @@ type MergedProps = UserCommentFormViewProps & {
   documentTitle: string;
   permissionDenied: boolean;
   formLoaded: boolean;
-  openAddComment: (request: UserCommentPostRequest) => void;
+  openAddComment: (request: UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>) => void;
   openEditComment: (commentId: number) => void;
   queryParams: OwnProps;
 };
@@ -283,6 +287,21 @@ const attachedFileSpecsToAdd = createSelector<RootState, UserCommentFormState, K
   ({ attachedFileSpecsToAdd }: UserCommentFormState) => attachedFileSpecsToAdd
 );
 
+const backendValidationErrors = createSelector<RootState, UserCommentFormState, string[]>(
+  userCommentForm,
+  ({ backendValidationErrors }: UserCommentFormState) => backendValidationErrors
+);
+
+const internalError = createSelector<RootState, UserCommentFormState, string>(
+  userCommentForm,
+  ({ internalError }: UserCommentFormState) => internalError
+);
+
+const categoryChoices = createSelector<RootState, UserCommentFormState, CategoryChoice[]>(
+  userCommentForm,
+  ({ categoryChoices }: UserCommentFormState) => categoryChoices
+);
+
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
   submitting: submitting(state),
   completed: completed(state),
@@ -300,12 +319,16 @@ const mapStateToProps = (state: RootState, props: OwnProps) => ({
   permissionDenied: permissionDenied(state),
   returnUrl: returnUrl(state),
   returnLinkText: returnLinkText(state),
-  queryParams: queryParams(state, props)
+  queryParams: queryParams(state, props),
+  backendValidationErrors: backendValidationErrors(state),
+  internalError: internalError(state),
+  targetType: targetType(state),
+  categoryChoices: categoryChoices(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   updateFormField: (key: string) => (
-    newValue: string | string[] | number[]
+    newValue: string | string[] | number[] | UserCommentLocation
   ) => dispatch(updateFormFields({
     [key]: newValue
   })),
@@ -319,8 +342,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     )
   ),
   hidePubmedPreview: () => dispatch(closePubmedPreview()),
-  openAddComment: (request: UserCommentPostRequest) => dispatch(openUserCommentForm(request)),
-  openEditComment: (commentId: number) => dispatch(openUserCommentForm(commentId)),
+  openAddComment: (request: UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>) => dispatch(openUserCommentForm(request, initialRawFields)),
+  openEditComment: (commentId: number) => dispatch(openUserCommentForm(commentId, {})),
   requestSubmitComment: (request: UserCommentPostRequest) => dispatch(requestSubmitComment(request)),
   removeAttachedFile: (attachmentId: number) => dispatch(removeAttachedFile(attachmentId)),
   addFileToAttach: (newFileSpec: UserCommentAttachedFileSpec) => dispatch(addFileToAttach(newFileSpec)),
@@ -328,85 +351,48 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   modifyFileToAttach: (newFileSpec: Partial<UserCommentAttachedFileSpec>, index: number) => dispatch(modifyFileToAttach(newFileSpec, index))
 });
 
-const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
-  permissionDenied: stateProps.permissionDenied,
-  returnUrl: stateProps.returnUrl,
-  returnLinkText: stateProps.returnLinkText,
-  documentTitle: stateProps.documentTitle,
-  title: stateProps.title,
-  buttonText: stateProps.buttonText,
-  submitting: stateProps.submitting,
-  completed: stateProps.completed,
-  className: 'wdk-UserComments wdk-UserComments-Form',
-  headerClassName: 'wdk-UserComments-Form-Header',
-  bodyClassName: 'wdk-UserComments-Form-Body',
-  formGroupHeaders: {
-    part1: 'Part I: Comment',
-    part2: 'Part II: Evidence for This Comment (Optional)',
-    part3: 'Part III: Other Genes to which you want to apply this comment (Optional)'
-  },
-  formGroupFields: {
-    part1: [
-      {
-        key: 'headline',
-        label: <span>Headline<span style={{ color: 'red' }}>*</span></span>,
-        field: (
-          <TextBox
-            required
-            onChange={dispatchProps.updateFormField('headline')}
-            value={stateProps.submission.headline || ''}
-          />
-        )
-      },
-      {
-        key: 'categoryIds',
-        label: 'Category (check all that apply)',
-        field: (
-          <CheckboxList
-            onChange={(newStringValues: string[]) => {
-              dispatchProps.updateFormField('categoryIds')(newStringValues.map(x => parseInt(x)))
-            }}
-            value={(stateProps.submission.categoryIds || []).map(x => `${x}`)}
-            items={[
-              {
-                display: 'Phenotype',
-                value: '0'
-              },
-              {
-                display: 'New Gene',
-                value: '1'
-              },
-              {
-                display: 'New Feature',
-                value: '2'
-              },
-              {
-                display: 'Centromere',
-                value: '3'
-              },
-              {
-                display: 'Genomic Assembly',
-                value: '4'
-              },
-              {
-                display: 'Sequence',
-                value: '5'
-              }
-            ]}
-          />
-        )
-      },
-      {
-        key: 'content',
-        label: <span>Comment<span style={{ color: 'red' }}>*</span></span>,
-        field: (
-          <TextArea
-            required
-            onChange={dispatchProps.updateFormField('content')}
-            value={stateProps.submission.content || ''}
-          />
-        ),
-      },
+const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => {
+  const part1UpperFields = [
+    {
+      key: 'headline',
+      label: <span>Headline<span style={{ color: 'red' }}>*</span></span>,
+      field: (
+        <TextBox
+          required
+          onChange={dispatchProps.updateFormField('headline')}
+          value={stateProps.submission.headline || ''}
+        />
+      )
+    },
+    {
+      key: 'categoryIds',
+      label: 'Category (check all that apply)',
+      field: (
+        <CheckboxList
+          onChange={(newStringValues: string[]) => {
+            dispatchProps.updateFormField('categoryIds')(newStringValues.map(x => parseInt(x)))
+          }}
+          value={(stateProps.submission.categoryIds || []).map(x => `${x}`)}
+          items={stateProps.categoryChoices}
+        />
+      )
+    },
+    {
+      key: 'content',
+      label: <span>Comment<span style={{ color: 'red' }}>*</span></span>,
+      field: (
+        <TextArea
+          required
+          onChange={dispatchProps.updateFormField('content')}
+          value={stateProps.submission.content || ''}
+        />
+      ),
+    }
+  ];
+
+  const part1LowerFields = stateProps.targetType === 'isolate'
+    ? []
+    : [
       {
         key: 'locations',
         label: 'Location',
@@ -414,127 +400,170 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
           <LocationField
             coordinateTypeField={stateProps.rawFields.coordinateType}
             rangesField={stateProps.rawFields.ranges}
-            onCoordinateTypeChange={dispatchProps.updateRawFormField('coordinateType')}
-            onRangesChange={dispatchProps.updateRawFormField('ranges')}
-          />
-        )
-      }
-    ],
-    part2: [
-      {
-        key: 'attachments',
-        label: 'Upload File',
-        field: (
-          <AttachmentsField
-            attachedFiles={stateProps.attachedFiles}
-            fileSpecsToAttach={stateProps.attachedFileSpecsToAdd}
-            removeFileSpec={dispatchProps.removeFileToAttach}
-            addFileSpec={dispatchProps.addFileToAttach}
-            modifyFileSpec={dispatchProps.modifyFileToAttach}
-            removeAttachedFile={dispatchProps.removeAttachedFile}
-          />
-        )
-      },
-      {
-        key: 'pubMedIds',
-        label: 'PubMed ID(s)',
-        field: (
-          <PubMedIdsField
-            idsField={stateProps.rawFields.pubMedIds}
-            searchField={stateProps.pubmedIdSearchQuery}
-            onIdsChange={(newValue: string) => {
-              dispatchProps.updateRawFormField('pubMedIds')(newValue);
-              dispatchProps.updateFormField('pubMedIds')(
-                newValue.split(/\s*,\s*/g).map(x => parseInt(x)).filter(x => x > 0)
-              );
+            onCoordinateTypeChange={(value: string) => {
+              dispatchProps.updateFormField('location')({
+                ...parseCoordinateType(value),
+                ranges: get(stateProps.submission, 'location.ranges', [])
+              });
+              dispatchProps.updateRawFormField('coordinateType')(value);
             }}
-            onSearchFieldChange={dispatchProps.updatePubmedIdSearchQuery}
-            openPreview={() => dispatchProps.showPubmedPreview(stateProps.submission.pubMedIds || [])}
-            onClosePreview={dispatchProps.hidePubmedPreview}
-            previewOpen={stateProps.previewOpen}
-            previewData={stateProps.previewData}
-          />
-        )
-      },
-      {
-        key: 'digitalObjectIds',
-        label: 'Digital Object Identifier (DOI) Name(s)',
-        field: (
-          <>
-            <TextBox
-              onChange={(newValue: string) => {
-                dispatchProps.updateRawFormField('digitalObjectIds')(newValue);
-                dispatchProps.updateFormField('digitalObjectIds')(newValue.split(/\s*,\s*/g));
-              }}
-              value={stateProps.rawFields.digitalObjectIds}
-            />
-            <HelpIcon>
-              <ul>
-                <li>Enter one or more DOIs, site URLs (at dx.doi.org), or DOI URLs (with doi: prefix) in the box above, separated by ','</li>
-                <li><a href="http://www.doi.org/index.html" target="_blank">DOI homepage</a></li>
-              </ul>
-            </HelpIcon>
-          </>
-        )
-      },
-      {
-        key: 'genBankAccessions',
-        label: 'GenBank Accession(s)',
-        field: (
-          <>
-            <TextBox
-              onChange={(newValue: string) => {
-                dispatchProps.updateRawFormField('genBankAccessions')(newValue);
-                dispatchProps.updateFormField('genBankAccessions')(newValue.split(/\s*,\s*/g));
-              }}
-              value={stateProps.rawFields.genBankAccessions}
-            />
-            <HelpIcon>
-              <ul>
-                <li>Enter one or more Acccession(s) in the box above separated by ','</li>
-              </ul>
-            </HelpIcon>
-          </>
-        )
-      }
-    ],
-    part3: [
-      {
-        key: 'relatedStableIds',
-        label: get(stateProps, 'submission.target.type', '') === 'gene'
-          ? 'Gene Identifiers'
-          : get(stateProps, 'submission.target.type', '') === 'isolate'
-          ? 'Isolate Identifiers'
-          : `Gene Identifiers (please do not include ${get(stateProps, 'submission.target.id', '')})`,
-        field: (
-          <TextArea
-            onChange={(newValue: string) => {
-              dispatchProps.updateRawFormField('relatedStableIds')(newValue);
-              dispatchProps.updateFormField('relatedStableIds')(newValue.split(/\s*,\s*/g));
+            onRangesChange={(value: string) => {
+              dispatchProps.updateFormField('location')({
+                ...parseCoordinateType(stateProps.rawFields.coordinateType),
+                ranges: parseRangesStr(value)
+              });
+              dispatchProps.updateRawFormField('ranges')(value);
             }}
-            value={stateProps.rawFields.relatedStableIds}
           />
         )
       }
-    ]
-  },
-  formGroupOrder: [
-    'part1',
-    'part2',
-    'part3'
-  ],
-  formGroupClassName: 'wdk-UserComments-Form-Group',
-  formGroupHeaderClassName: 'wdk-UserComments-Form-Group-Header',
-  formGroupBodyClassName: 'wdk-UserComments-Form-Group-Body',   
-  onSubmit: (event: FormEvent) => {
-    event.preventDefault();
-    dispatchProps.requestSubmitComment(stateProps.submission);
-  },
-  formLoaded: stateProps.formLoaded,
-  openAddComment: dispatchProps.openAddComment,
-  openEditComment: dispatchProps.openEditComment,
-  queryParams: stateProps.queryParams
-});
+    ];  
+
+  return {
+    permissionDenied: stateProps.permissionDenied,
+    returnUrl: stateProps.returnUrl,
+    returnLinkText: stateProps.returnLinkText,
+    documentTitle: stateProps.documentTitle,
+    title: stateProps.title,
+    buttonText: stateProps.buttonText,
+    submitting: stateProps.submitting,
+    completed: stateProps.completed,
+    className: 'wdk-UserComments wdk-UserComments-Form',
+    headerClassName: 'wdk-UserComments-Form-Header',
+    bodyClassName: 'wdk-UserComments-Form-Body',
+    footerClassName: 'wdk-UserComments-Form-Footer',
+    formGroupHeaders: {
+      part1: 'Part I: Comment',
+      part2: 'Part II: Evidence for This Comment (Optional)',
+      part3: 'Part III: Other Genes to which you want to apply this comment (Optional)'
+    },
+    formGroupFields: {
+      part1: [
+        ...part1UpperFields,
+        ...part1LowerFields
+      ],
+      part2: [
+        {
+          key: 'attachments',
+          label: 'Upload File',
+          field: (
+            <AttachmentsField
+              attachedFiles={stateProps.attachedFiles}
+              fileSpecsToAttach={stateProps.attachedFileSpecsToAdd}
+              removeFileSpec={dispatchProps.removeFileToAttach}
+              addFileSpec={dispatchProps.addFileToAttach}
+              modifyFileSpec={dispatchProps.modifyFileToAttach}
+              removeAttachedFile={dispatchProps.removeAttachedFile}
+            />
+          )
+        },
+        {
+          key: 'pubMedIds',
+          label: 'PubMed ID(s)',
+          field: (
+            <PubMedIdsField
+              idsField={stateProps.rawFields.pubMedIds}
+              searchField={stateProps.pubmedIdSearchQuery}
+              onIdsChange={(newValue: string) => {
+                dispatchProps.updateRawFormField('pubMedIds')(newValue);
+                dispatchProps.updateFormField('pubMedIds')(
+                  newValue
+                    .split(/\s*,\s*/g)
+                    .map(x => parseInt(x))
+                    .filter(x => x > 0)
+                    .map(x => `${x}`)
+                );
+              }}
+              onSearchFieldChange={dispatchProps.updatePubmedIdSearchQuery}
+              openPreview={() => dispatchProps.showPubmedPreview(stateProps.submission.pubMedIds || [])}
+              onClosePreview={dispatchProps.hidePubmedPreview}
+              previewOpen={stateProps.previewOpen}
+              previewData={stateProps.previewData}
+            />
+          )
+        },
+        {
+          key: 'digitalObjectIds',
+          label: 'Digital Object Identifier (DOI) Name(s)',
+          field: (
+            <>
+              <TextBox
+                onChange={(newValue: string) => {
+                  dispatchProps.updateRawFormField('digitalObjectIds')(newValue);
+                  dispatchProps.updateFormField('digitalObjectIds')(newValue.split(/\s*,\s*/g));
+                }}
+                value={stateProps.rawFields.digitalObjectIds}
+              />
+              <HelpIcon>
+                <ul>
+                  <li>Enter one or more DOIs, site URLs (at dx.doi.org), or DOI URLs (with doi: prefix) in the box above, separated by ','</li>
+                  <li><a href="http://www.doi.org/index.html" target="_blank">DOI homepage</a></li>
+                </ul>
+              </HelpIcon>
+            </>
+          )
+        },
+        {
+          key: 'genBankAccessions',
+          label: 'GenBank Accession(s)',
+          field: (
+            <>
+              <TextBox
+                onChange={(newValue: string) => {
+                  dispatchProps.updateRawFormField('genBankAccessions')(newValue);
+                  dispatchProps.updateFormField('genBankAccessions')(newValue.split(/\s*,\s*/g));
+                }}
+                value={stateProps.rawFields.genBankAccessions}
+              />
+              <HelpIcon>
+                <ul>
+                  <li>Enter one or more Acccession(s) in the box above separated by ','</li>
+                </ul>
+              </HelpIcon>
+            </>
+          )
+        }
+      ],
+      part3: [
+        {
+          key: 'relatedStableIds',
+          label: get(stateProps, 'submission.target.type', '') === 'gene'
+            ? 'Gene Identifiers'
+            : get(stateProps, 'submission.target.type', '') === 'isolate'
+            ? 'Isolate Identifiers'
+            : `Gene Identifiers (please do not include ${get(stateProps, 'submission.target.id', '')})`,
+          field: (
+            <TextArea
+              onChange={(newValue: string) => {
+                dispatchProps.updateRawFormField('relatedStableIds')(newValue);
+                dispatchProps.updateFormField('relatedStableIds')(newValue.split(/\s*,\s*/g));
+              }}
+              value={stateProps.rawFields.relatedStableIds}
+            />
+          )
+        }
+      ]
+    },
+    formGroupOrder: [
+      'part1',
+      'part2',
+      'part3'
+    ],
+    formGroupClassName: 'wdk-UserComments-Form-Group',
+    formGroupHeaderClassName: 'wdk-UserComments-Form-Group-Header',
+    formGroupBodyClassName: 'wdk-UserComments-Form-Group-Body',   
+    onSubmit: (event: FormEvent) => {
+      event.preventDefault();
+      dispatchProps.requestSubmitComment(stateProps.submission);
+    },
+    formLoaded: stateProps.formLoaded,
+    openAddComment: dispatchProps.openAddComment,
+    openEditComment: dispatchProps.openEditComment,
+    queryParams: stateProps.queryParams,
+    backendValidationErrors: stateProps.backendValidationErrors,
+    internalError: stateProps.internalError
+  };
+};
 
 class UserCommentFormController extends PageController<Props> {
   loadData(prevProps?: Props) {
@@ -546,7 +575,22 @@ class UserCommentFormController extends PageController<Props> {
         this.props.openEditComment(this.props.queryParams.commentId);
       } else {
         this.props.openAddComment(
-          omit(this.props.queryParams, ['locations', 'contig', 'strand'])
+          {
+            ...omit(this.props.queryParams, ['locations', 'contig', 'strand', 'commentId']),
+            location: this.props.queryParams.locations 
+              ? {
+                coordinateType: 'genome',
+                ranges: parseRangesStr(this.props.queryParams.locations),
+                reversed: this.props.queryParams.strand === '-'
+              }
+              : undefined
+          },
+          {
+            coordinateType: this.props.queryParams.strand === '-'
+              ? 'genomer'
+              : 'genomef',
+            ranges: this.props.queryParams.locations
+          }
         );
       }    
     }
@@ -587,3 +631,17 @@ export default connect<StateProps, DispatchProps, OwnProps, MergedProps, RootSta
 )(
   wrappable(UserCommentFormController)
 );
+
+const parseCoordinateType = (coordinateType: string) => ({
+  coordinateType: 'genome',
+  reverse: coordinateType.endsWith('r')
+});
+
+const parseRangesStr = (rangesStr: string) => (rangesStr.match(/\d+-\d+/g) || [])
+  .map(rangeStr => {
+    const [start, end] = rangeStr.split('-').map(x => parseInt(x));
+    return {
+      start,
+      end
+    }
+  });

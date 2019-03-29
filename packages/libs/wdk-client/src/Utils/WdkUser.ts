@@ -111,6 +111,12 @@ export type ReviewStatus =
   "task" |
   "unknown";
 
+export interface UserCommentLocation {
+  coordinateType: string, 
+  ranges: { start: number, end: number }[],
+  reversed?: boolean
+}
+
 // fields the user supplies
 export interface UserCommentFormFields {
   content?: string,
@@ -121,6 +127,7 @@ export interface UserCommentFormFields {
   pubMedIds?: string[],
   relatedStableIds?: string[],
   additionalAuthors?: string[],
+  location?: UserCommentLocation
 }
 
 // raw field content for multivalued textboxes
@@ -159,11 +166,7 @@ export interface UserCommentGetResponse {
   genBankAccessions: string[];
   headline: string;
   id: number;
-  location?: { 
-    coordinateType: string, 
-    ranges: { start: number, end: number }[],
-    reverse?: boolean
-  };
+  location?: UserCommentLocation;
   project: {
     name: string;
     version: string;

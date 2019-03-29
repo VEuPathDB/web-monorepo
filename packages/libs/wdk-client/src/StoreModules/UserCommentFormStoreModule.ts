@@ -15,10 +15,11 @@ import {
     closeUserCommentForm,
     modifyFileToAttach,
     changePubmedIdSearchQuery,
-    updateRawFormFields
+    updateRawFormFields,
+    reportBackendValidationErrors,
+    reportInternalError
 } from 'wdk-client/Actions/UserCommentFormActions';
 import { UserCommentPostRequest, UserCommentAttachedFileSpec, KeyedUserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse, UserCommentRawFormFields } from "wdk-client/Utils/WdkUser";
-import {StandardWdkPostResponse} from "wdk-client/Utils/WdkService";
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -26,6 +27,7 @@ import { combineEpics, StateObservable } from 'redux-observable';
 import { mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { allDataLoaded } from 'wdk-client/Actions/StaticDataActions';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { get } from 'lodash';
 
 export const key = 'userCommentForm';
 
@@ -45,11 +47,27 @@ export type UserCommentFormState = {
     userCommentLoaded: boolean;
     submitting: boolean;
     completed: boolean;
-    backendErrors: string[];
+    backendValidationErrors: string[];
+    internalError: string;
     pubmedIdSearchQuery: string;
+    categoryChoices: CategoryChoice[];
+};
+
+export type CategoryChoice = {
+    display: string;
+    value: string;
 };
 
 type State = UserCommentFormState;
+
+const initialRawFields = {
+    coordinateType: 'genomef',
+    ranges: '',
+    pubMedIds: '',
+    digitalObjectIds: '',
+    genBankAccessions: '',
+    relatedStableIds: ''
+};
 
 const initialState: State = {
     showPubmedPreview: false,
@@ -61,30 +79,37 @@ const initialState: State = {
     userCommentLoaded: false,
     submitting: false,
     completed: false,
-    backendErrors: [],
+    backendValidationErrors: [],
+    internalError: '',
     pubmedIdSearchQuery: '',
-    userCommentRawFields: {
-        coordinateType: 'genomef',
-        ranges: '',
-        pubMedIds: '',
-        digitalObjectIds: '',
-        genBankAccessions: '',
-        relatedStableIds: ''
-    }
+    categoryChoices: [],
+    userCommentRawFields: initialRawFields
 };
 
-const getResponseToPostRequest = (userCommentGetResponse: UserCommentGetResponse): UserCommentPostRequest => ({
+const getResponseToPostRequest = (userCommentGetResponse: UserCommentGetResponse, categoryChoices: CategoryChoice[]): UserCommentPostRequest => ({
     genBankAccessions: userCommentGetResponse.genBankAccessions,
-    categoryIds: [],
+    categoryIds: categoryChoices
+        .filter(({ display }) => userCommentGetResponse.categories.includes(display))
+        .map(({ value }) => parseInt(value)),
     content: userCommentGetResponse.content,
     digitalObjectIds: userCommentGetResponse.digitalObjectIds,
     externalDatabase: userCommentGetResponse.externalDatabase,
     headline: userCommentGetResponse.headline,
+    location: userCommentGetResponse.location,
     organism: userCommentGetResponse.organism,
     previousCommentId: userCommentGetResponse.id,
     pubMedIds: userCommentGetResponse.pubMedRefs.map(({ id }) => id),
     relatedStableIds: userCommentGetResponse.relatedStableIds,
     target: userCommentGetResponse.target
+});
+
+const getResponseToRawFormFields = (userCommentGetResponse: UserCommentGetResponse): UserCommentRawFormFields => ({
+    coordinateType: get(userCommentGetResponse, 'location.coordinateType', 'genomef'),
+    ranges: get(userCommentGetResponse, 'location.ranges', ''),
+    pubMedIds: userCommentGetResponse.pubMedRefs.map(({ id }) => id).join(', '),
+    digitalObjectIds: userCommentGetResponse.digitalObjectIds.join(', '),
+    genBankAccessions: userCommentGetResponse.genBankAccessions.join(', '),
+    relatedStableIds: userCommentGetResponse.relatedStableIds.join(', ')
 });
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -99,8 +124,18 @@ export function reduce(state: State = initialState, action: Action): State {
                     ? action.payload.userComment.formValues.attachments.map(({ id, name, description }) => ({ id, name, description }))
                     : [], 
                 userCommentPostRequest: action.payload.userComment.editMode
-                    ? getResponseToPostRequest(action.payload.userComment.formValues)
+                    ? getResponseToPostRequest(
+                        action.payload.userComment.formValues,
+                        action.payload.userComment.categoryIdOptions
+                    )
                     : action.payload.userComment.formValues,
+                userCommentRawFields: action.payload.userComment.editMode
+                    ? getResponseToRawFormFields(action.payload.userComment.formValues)
+                    : {
+                        ...initialRawFields,
+                        ...action.payload.userComment.initialRawFields
+                    },
+                categoryChoices: action.payload.userComment.categoryIdOptions,
                 userCommentLoaded: true
             };
         } case updateFormFields.type: {
@@ -166,8 +201,28 @@ export function reduce(state: State = initialState, action: Action): State {
             return {
                 ...state,
                 submitting: false,
-                completed: true
-            }
+                completed: true,
+                backendValidationErrors: [],
+                internalError: ''
+            };
+        }
+        case reportBackendValidationErrors.type: {
+            return {
+                ...state,
+                submitting: false,
+                completed: false,
+                backendValidationErrors: action.payload.backendValidationErrors,
+                internalError: ''
+            };
+        }
+        case reportInternalError.type: {
+            return {
+                ...state,
+                submitting: false,
+                completed: false,
+                backendValidationErrors: [],
+                internalError: action.payload.internalError
+            };
         }
         default: {
             return state;
@@ -176,17 +231,62 @@ export function reduce(state: State = initialState, action: Action): State {
 }
 
 async function getFulfillUserComment([openAction]: [InferAction<typeof openUCF>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillUserComment>> {
-    if (openAction.payload.isNew) return fulfillUserComment({ editMode: false, formValues: openAction.payload.initialValues });
-    return fulfillUserComment({ editMode: true, formValues: await wdkService.getUserComment(openAction.payload.commentId) });
+    // TODO: Replace the RHS with an invocation to a WDK service
+    const categoryIdOptions = await [
+        {
+            display: 'Phenotype',
+            value: '0'
+        },
+        {
+            display: 'New Gene',
+            value: '1'
+        },
+        {
+            display: 'New Feature',
+            value: '2'
+        },
+        {
+            display: 'Centromere',
+            value: '3'
+        },
+        {
+            display: 'Genomic Assembly',
+            value: '4'
+        },
+        {
+            display: 'Sequence',
+            value: '5'
+        }
+    ];
+
+    return openAction.payload.isNew
+        ? fulfillUserComment({ 
+            editMode: false, 
+            formValues: openAction.payload.initialValues, 
+            initialRawFields: openAction.payload.initialRawFields,
+            categoryIdOptions
+        })
+        : fulfillUserComment({ 
+            editMode: true, 
+            formValues: await wdkService.getUserComment(openAction.payload.commentId),
+            categoryIdOptions
+        });
 }
 
 async function getFulfillPubmedPreview([requestAction]: [InferAction<typeof requestPubmedPreview>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPubmedPreview>> {
      return fulfillPubmedPreview( requestAction.payload.pubMedIds,  await wdkService.getPubmedPreview(requestAction.payload.pubMedIds));
 }
 
-async function getFulfillSubmitComment([requestAction]: [ InferAction<typeof requestSubmitComment>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSubmitComment>> {
-    let response: StandardWdkPostResponse =  await wdkService.postUserComment(requestAction.payload.userCommentPostRequest);
-    return fulfillSubmitComment(requestAction.payload.userCommentPostRequest, response.id);
+async function getFulfillSubmitComment([requestAction]: [ InferAction<typeof requestSubmitComment>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillSubmitComment | typeof reportBackendValidationErrors | typeof reportInternalError>> {
+    const responseData = await wdkService.postUserComment(requestAction.payload.userCommentPostRequest);
+
+    if (responseData.type === 'success') {
+        return fulfillSubmitComment(requestAction.payload.userCommentPostRequest, responseData.id);    
+    } else if (responseData.type === 'validation-error') {
+        return reportBackendValidationErrors(responseData.errors);
+    } else {
+        return reportInternalError(responseData.error);
+    }
 }
 
 function isFulfillSubmitCommentCoherent([requestAction]: [InferAction<typeof requestSubmitComment>], state: State ) {

@@ -140,6 +140,20 @@ export type TryLoginResponse = {
 
 type BasketStatusResponse = Array<boolean>;
 
+export type UserCommentPostResponseData = 
+  | {
+    type: 'success',
+    id: number
+  } 
+  | {
+    type: 'validation-error',
+    errors: string[]
+  }
+  | {
+    type: 'internal-error',
+    error: string
+  };
+
 type RequestOptions = {
   /** Request method */
   method: string;
@@ -984,10 +998,44 @@ export default class WdkService {
     );
   }
 
-  // return the new comment id
-  postUserComment(userCommentPostRequest: UserCommentPostRequest) : Promise<StandardWdkPostResponse> {
-    let data = JSON.stringify(userCommentPostRequest);
-    return this._fetchJson<StandardWdkPostResponse>('post', '/user-comments', data);
+  postUserComment(userCommentPostRequest: UserCommentPostRequest) : Promise<UserCommentPostResponseData> {
+    const data = JSON.stringify(userCommentPostRequest);
+    const result = fetch(`${this.serviceUrl}/user-comments`, {
+      method: 'POST',
+      body: data,
+      credentials: 'include',
+      headers: new Headers(Object.assign({
+        'Content-Type': 'application/json'
+      }, this._version && {
+        [CLIENT_WDK_VERSION_HEADER]: this._version
+      }))
+    })
+      .then(response => 
+        response.text().then(
+          text => {
+            if (response.ok) {
+              return {
+                type: 'success',
+                id: +JSON.parse(text).id
+              };
+            } else if (response.status < 500) {
+              return {
+                type: 'validation-error',
+                errors: JSON.parse(text)
+              };
+            } else {
+              return {
+                type: 'internal-error',
+                error: text
+              }
+            }
+          }
+        )
+      ) as Promise<UserCommentPostResponseData>;
+
+    result.then(console.log);
+
+    return result;
   }
 
   deleteUserComment(commentId: number) :Promise<void> {
