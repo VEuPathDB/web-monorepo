@@ -189,10 +189,10 @@
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
 
-  <!-- Error Page Mappings -->
+  <!-- Error Page Mappings 
   <error-page>
     <exception-type>java.lang.Exception</exception-type>
     <location>/wdkCustomization/jsp/Error.jsp</location>
-  </error-page>
+  </error-page>-->
 
 </web-app>

@@ -2,9 +2,7 @@
 <jsp:root version="2.0"
   xmlns:jsp="http://java.sun.com/JSP/Page"
   xmlns:c="http://java.sun.com/jsp/jstl/core"
-  xmlns:apifn="http://eupathdb.org/common/functions"
-  xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp"
-  xmlns:common="urn:jsptagdir:/WEB-INF/tags/site-common">
+  xmlns:imp="urn:jsptagdir:/WEB-INF/tags/imp">
 
   <jsp:directive.attribute name="refer" required="false" 
     description="Page calling this tag"/>
@@ -19,7 +17,6 @@
               description="Set viewport initial scale to 1 (for mobile devices). Defaults to false"/>
 
   <c:set var="project" value="${applicationScope.wdkModel.properties['PROJECT_ID']}" />
-  <c:set var="banner" value="${apifn:defaultBanner(banner,project)}"/>
 
   <!--~~~~~~~ links to news and events ~~~~~~~-->
   <c:choose>
