@@ -120,9 +120,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: OwnProps): TabEventHandle
   onTabSelected: (tabKey: string) => { 
     if (+tabKey !== +tabKey) {
       dispatch(selectTab(-1));
-      dispatch(selectSummaryView(props.viewId, tabKey));
+      dispatch(selectSummaryView(props.viewId, props.stepId, tabKey));
     } else {
-      dispatch(selectSummaryView(props.viewId, null));
+      dispatch(selectSummaryView(props.viewId, props.stepId, null));
       dispatch(selectTab(+tabKey));
     }
   },
