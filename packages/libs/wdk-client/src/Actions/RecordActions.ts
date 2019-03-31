@@ -332,6 +332,6 @@ function getCategoryTree(wdkService: WdkService, recordClassUrlSegment: string) 
     wdkService.getOntology(),
     wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment)
   ]).then(([ontology, recordClass]) => {
-    return getTree(ontology, isLeafFor(recordClass.name));
+    return getTree(ontology, isLeafFor(recordClass.fullName));
   });
 }

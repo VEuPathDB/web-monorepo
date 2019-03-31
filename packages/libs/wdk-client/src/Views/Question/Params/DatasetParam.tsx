@@ -219,16 +219,16 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
       mergeMap(user => {
         if (user.isGuest) return EMPTY;
         // load basket count and strategy list
-        const { questionName, parameter, paramValues } = action.payload;
-        const questionState = state$.value.questions[questionName]
-        const recordClassName = questionState && questionState.recordClass.name;
+        const { searchName, parameter, paramValues } = action.payload;
+        const questionState = state$.value.questions[searchName]
+        const recordClassName = questionState && questionState.recordClass.fullName;
 
         if (recordClassName == null) return EMPTY;
 
         return merge(
           services.wdkService.getBasketCounts().then(
             counts => setBasketCount({
-              questionName,
+              searchName,
               paramValues,
               parameter: (parameter as DatasetParam),
               basketCount: counts[recordClassName]
@@ -236,7 +236,7 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
           ),
           services.wdkService.getStrategies().then(
             strategies => setStrategyList({
-              questionName,
+              searchName,
               paramValues,
               parameter: (parameter as DatasetParam),
               strategyList: strategies.filter(strategy => strategy.recordClassName === recordClassName)
@@ -263,7 +263,7 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
         sourceContent: {
           temporaryFileId,
           parser,
-          questionName: questionState.question.name,
+          searchName: questionState.question.urlSegment,
           parameterName: parameter.name
         }
       }))

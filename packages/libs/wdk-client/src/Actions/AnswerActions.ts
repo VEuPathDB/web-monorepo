@@ -195,8 +195,7 @@ type LoadAction =
  * Request data format, POSTed to service:
  *
  *     {
- *       "answerSpec": {
- *         "questionName": String,
+ *       "searchConfig": {
  *         "parameters": Object (map of paramName -> paramValue),
  *         "filters": [ {
  *           “name": String, value: Any
@@ -205,12 +204,10 @@ type LoadAction =
  *           “name": String, value: Any
  *         } ]
  *       },
- *       formatting: {
- *         formatConfig: {
- *           pagination: { offset: Number, numRecords: Number },
- *           attributes: [ attributeName: String ],
- *           sorting: [ { attributeName: String, direction: Enum[ASC,DESC] } ]
- *         }
+ *       reporterConfig: {
+ *         pagination: { offset: Number, numRecords: Number },
+ *         attributes: [ attributeName: String ],
+ *         sorting: [ { attributeName: String, direction: Enum[ASC,DESC] } ]
  *       }
  *     }
  *
@@ -249,9 +246,11 @@ export function loadAnswer(
 
       // Build XHR request data for '/answer'
       let answerSpec = {
-        questionName: question.name,
-        parameters,
-        filters
+        searchName: question.urlSegment,
+        searchConfig: {
+          parameters,
+          filters
+        }
       };
       let formatConfig = pick(displayInfo, ['attributes', 'pagination', 'sorting']);
       return wdkService.getAnswerJson(answerSpec, formatConfig);

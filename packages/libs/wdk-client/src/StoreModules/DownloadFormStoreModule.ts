@@ -129,7 +129,7 @@ function tryFormInit(getSelectedReporter: GetSelectedReporter, state: State) {
       isLoading: false,
       selectedReporter: selectedReporterName
     },
-    getSelectedReporter(selectedReporterName, state.recordClass.name).getInitialState(state));
+    getSelectedReporter(selectedReporterName, state.recordClass.fullName).getInitialState(state));
   }
 
   // one of the initialize actions has not yet been sent
@@ -141,7 +141,7 @@ function updateReporter(getSelectedReporter: GetSelectedReporter, state: State, 
   let reporterFound = state.availableReporters.findIndex(r => r.name === selectedReporter) != -1;
   return !reporterFound || state.recordClass == null ? state :
     Object.assign({}, state, { selectedReporter },
-      getSelectedReporter(selectedReporter, state.recordClass.name).getInitialState(state));
+      getSelectedReporter(selectedReporter, state.recordClass.fullName).getInitialState(state));
 }
 
 function updateFormState(state: State, formState: any) {

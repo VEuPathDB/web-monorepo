@@ -63,7 +63,7 @@ class AttributeAnalysisButtonController extends ViewController<Props> {
       type: 'attributeAnalysis',
       name: reporter.type,
       recordClassName: step.recordClassName,
-      questionName: step.answerSpec.questionName
+      searchName: step.searchName
     }
 
     const pluginProps = {
@@ -104,11 +104,11 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
   const reporterName = `${attributeName}-${reporterType}`;
 
   const questionAttributes = Seq.from(questions)
-    .filter(question => question.name === step.answerSpec.questionName)
+    .filter(question => question.urlSegment === step.searchName)
     .flatMap(question => question.dynamicAttributes)
 
   const recordClassAttributes = Seq.from(recordClasses)
-    .filter(recordClass => recordClass.name === step.recordClassName)
+    .filter(recordClass => recordClass.fullName === step.recordClassName)
     .flatMap(recordClass => recordClass.attributes);
 
   const reporter = questionAttributes.concat(recordClassAttributes)

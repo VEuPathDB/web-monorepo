@@ -26,7 +26,7 @@ export type Action =
 
 
 type QuestionPayload<T>  = T & {
-  questionName: string;
+  searchName: string;
 }
 
 //==============================================================================
@@ -42,7 +42,7 @@ export interface UpdateActiveQuestionAction {
 }
 
 export function updateActiveQuestion(payload: {
-  questionName: string;
+  searchName: string;
   paramValues?: ParameterValues,
   stepId: number | undefined
 }): UpdateActiveQuestionAction {

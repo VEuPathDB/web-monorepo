@@ -27,7 +27,7 @@ const ActionCreators = {
 }
 
 type OwnProps = {
-  questionName: string;
+  searchName: string;
   paramName: string;
   paramValues: Record<string, string>;
   stepId: number | undefined;
@@ -52,8 +52,8 @@ class LegacyParamController extends ViewController<Props> {
   paramModules = ParamModules;
 
   componentWillUnmount() {
-    const { questionName } = this.props.own;
-    this.props.mapped.dispatch(unloadQuestion({ questionName }));
+    const { searchName } = this.props.own;
+    this.props.mapped.dispatch(unloadQuestion({ searchName }));
   }
 
   loadData(prevProps?: Props, prevState?: QuestionState) {
@@ -62,7 +62,7 @@ class LegacyParamController extends ViewController<Props> {
       this.props.mapped.stepId !== this.props.own.stepId
     ) {
       this.props.mapped.eventHandlers.setActiveQuestion({
-        questionName: this.props.own.questionName,
+        searchName: this.props.own.searchName,
         paramValues: this.props.own.paramValues,
         stepId: this.props.own.stepId
       });
@@ -136,7 +136,7 @@ class LegacyParamController extends ViewController<Props> {
 
   getContext<T extends Parameter>(parameter: T): Context<T> {
     return {
-      questionName: this.props.mapped.question.urlSegment,
+      searchName: this.props.mapped.question.urlSegment,
       parameter: parameter,
       paramValues: this.props.mapped.paramValues
     }
@@ -320,7 +320,7 @@ class EnumCheckbox extends React.Component<EnumCheckboxProps> {
 }
 
 const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
-  (state, props) => state.question.questions[props.questionName] || {} as QuestionState,
+  (state, props) => state.question.questions[props.searchName] || {} as QuestionState,
   dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) }),
   (stateProps, dispatchProps, ownProps) => ({ mapped: { ...stateProps, ...dispatchProps }, own: ownProps})
 )

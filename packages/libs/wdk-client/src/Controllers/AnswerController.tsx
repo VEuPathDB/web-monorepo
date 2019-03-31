@@ -48,7 +48,7 @@ class AnswerController extends PageController<Props> {
   loadData() {
     // incoming values from the router
     let { question, recordClass: recordClassName, parameters } = this.props.ownProps;
-    let [ , questionName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
+    let [ , searchName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
 
     // decide whether new answer needs to be loaded (may not need to be loaded
     //   if user goes someplace else and hits 'back' to here- store already correct)
@@ -59,7 +59,7 @@ class AnswerController extends PageController<Props> {
 
     if (
       stateProps.question == null ||
-      stateProps.question.urlSegment !== questionName ||
+      stateProps.question.urlSegment !== searchName ||
       !isEqual(stateProps.parameters, parameters)
     ) {
 
@@ -68,7 +68,7 @@ class AnswerController extends PageController<Props> {
       let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
       let displayInfo = { pagination, sorting, customName };
       let opts = { displayInfo, parameters };
-      dispatchProps.loadAnswer(questionName, recordClassName, opts);
+      dispatchProps.loadAnswer(searchName, recordClassName, opts);
     }
   }
 

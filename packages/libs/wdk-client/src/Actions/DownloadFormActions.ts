@@ -214,7 +214,10 @@ export function submitForm(
 ): ActionThunk<EmptyAction> {
   return ({ wdkService }) => {
     let answerRequest: AnswerRequest = {
-      answerSpec: step.answerSpec,
+      answerSpec: {
+        searchName: step.searchName,
+        searchConfig: step.searchConfig
+      },
       formatting: {
         format: selectedReporter ? selectedReporter : 'wdk-service-json',
         formatConfig: formState != null ? formState :

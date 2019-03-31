@@ -1,6 +1,6 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Step } from "wdk-client/Utils/WdkUser";
-import { StepSpec } from "wdk-client/Utils/WdkModel";
+import { SearchConfig, PatchStepSpec } from "wdk-client/Utils/WdkModel";
 
 export const requestStep = makeActionCreator(
     'requestStep',
@@ -9,7 +9,12 @@ export const requestStep = makeActionCreator(
 
 export const requestStepUpdate = makeActionCreator(
     'requestStepUpdate',
-    (stepId: number, stepSpec: StepSpec) => ({ stepId, stepSpec })
+    (stepId: number, stepSpec: PatchStepSpec) => ({ stepId, stepSpec })
+);
+
+export const requestSearchConfigUpdate = makeActionCreator(
+    'requestSearchConfigUpdate',
+    (stepId: number, searchConfig: SearchConfig) => ({ stepId, searchConfig })
 );
 
 export const fulfillStep = makeActionCreator(
@@ -20,5 +25,6 @@ export const fulfillStep = makeActionCreator(
 export type Action =
     | InferAction<typeof requestStep>
     | InferAction<typeof requestStepUpdate>
+    | InferAction<typeof requestSearchConfigUpdate>
     | InferAction<typeof fulfillStep>
 

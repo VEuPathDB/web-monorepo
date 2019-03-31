@@ -18,10 +18,10 @@ export type ShowLoginWarning = (featureDescription: string) => void;
 
 export type RequestSortingUpdate = (
   sorting: AttributeSortingSpec[],
-  questionName: string
+  searchName: string
 ) => void;
 
-export type RequestColumnsChoiceUpdate = (columns: string[], questionName: string) => void;
+export type RequestColumnsChoiceUpdate = (columns: string[], searchName: string) => void;
 
 export type RequestUpdateBasket = (
   operation: 'add' | 'remove',

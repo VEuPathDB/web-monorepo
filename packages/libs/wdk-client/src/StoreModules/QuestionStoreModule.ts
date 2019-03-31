@@ -81,15 +81,15 @@ const initialState: State = {
 
 export function reduce(state: State = initialState, action: Action): State {
   if ('payload' in action && action.payload != null && typeof action.payload === 'object') {
-    if ('questionName' in action.payload) {
-      const { questionName } = action.payload;
-      const questionState = reduceQuestionState(state.questions[questionName], action);
-      if (questionState !== state.questions[questionName]) {
+    if ('searchName' in action.payload) {
+      const { searchName } = action.payload;
+      const questionState = reduceQuestionState(state.questions[searchName], action);
+      if (questionState !== state.questions[searchName]) {
         return {
           ...state,
           questions: {
             ...state.questions,
-            [questionName]: questionState
+            [searchName]: questionState
           }
         };
       }
@@ -291,19 +291,19 @@ type QuestionEpic = ModuleEpic<RootState>;
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateActiveQuestionAction>(UPDATE_ACTIVE_QUESTION),
   mergeMap(action =>
-    from(loadQuestion(wdkService, action.payload.questionName, action.payload.paramValues)).pipe(
+    from(loadQuestion(wdkService, action.payload.searchName, action.payload.paramValues)).pipe(
     takeUntil(action$.pipe(filter(killAction => (
       killAction.type === UNLOAD_QUESTION &&
-      killAction.payload.questionName === action.payload.questionName
+      killAction.payload.searchName === action.payload.searchName
     )))))
   )
 );
 
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
   ofType<QuestionLoadedAction>(QUESTION_LOADED),
-  mergeMap(({ payload: { question, questionName, paramValues }}) =>
+  mergeMap(({ payload: { question, searchName, paramValues }}) =>
     from(question.parameters.map(parameter =>
-      initParam({ parameter, paramValues, questionName }))))
+      initParam({ parameter, paramValues, searchName }))))
 );
 
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
@@ -311,20 +311,20 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
   filter(action => action.payload.parameter.dependentParams.length > 0),
   debounceTime(1000),
   mergeMap(action => {
-    const { questionName, parameter, paramValues, paramValue } = action.payload;
+    const { searchName, parameter, paramValues, paramValue } = action.payload;
     return from(wdkService.getQuestionParamValues(
-      questionName,
+      searchName,
       parameter.name,
       paramValue,
       paramValues
     ).then(
-      parameters => updateParams({questionName, parameters}),
-      error => paramError({ questionName, error: error.message, paramName: parameter.name })
+      parameters => updateParams({searchName, parameters}),
+      error => paramError({ searchName, error: error.message, paramName: parameter.name })
     )).pipe(
       takeUntil(action$.pipe(ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE))),
       takeUntil(action$.pipe(filter(killAction => (
         killAction.type === UNLOAD_QUESTION &&
-        killAction.payload.questionName === action.payload.questionName
+        killAction.payload.searchName === action.payload.searchName
       ))))
     )
   })
@@ -333,17 +333,17 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
   ofType<SubmitQuestionAction>(SUBMIT_QUESTION),
   mergeMap(action => {
-    const questionState = state$.value[key].questions[action.payload.questionName];
+    const questionState = state$.value[key].questions[action.payload.searchName];
     if (questionState == null) return EMPTY;
     Promise.all(questionState.question.parameters.map(parameter => {
-      const ctx = { parameter, questionName: questionState.question.urlSegment, paramValues: questionState.paramValues };
+      const ctx = { parameter, searchName: questionState.question.urlSegment, paramValues: questionState.paramValues };
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
     }).then(paramValues => {
       const weight = Number.parseInt(questionState.weight || '');
       services.wdkService.createStep({
-        searchUrlSegment: questionState.question.urlSegment,
+        searchName: questionState.question.urlSegment,
         searchConfig: {
           parameters: paramValues,
           wdkWeight: Number.isNaN(weight) ? undefined : weight
@@ -370,24 +370,24 @@ export const observeQuestion: QuestionEpic = combineEpics(
 // Helpers
 // -------
 
-function loadQuestion(wdkService: WdkService, questionName: string, paramValues?: ParameterValues) {
+function loadQuestion(wdkService: WdkService, searchName: string, paramValues?: ParameterValues) {
   const question$ = paramValues == null
-    ? wdkService.getQuestionAndParameters(questionName)
-    : wdkService.getQuestionGivenParameters(questionName, paramValues);
+    ? wdkService.getQuestionAndParameters(searchName)
+    : wdkService.getQuestionGivenParameters(searchName, paramValues);
 
   const recordClass$ = question$.then(question =>
-    wdkService.findRecordClass(rc => rc.name == question.recordClassName));
+    wdkService.findRecordClass(rc => rc.fullName == question.recordClassName));
 
   return Promise.all([question$, recordClass$]).then(
     ([question, recordClass]) => {
       if (paramValues == null) {
         paramValues = makeDefaultParamValues(question.parameters);
       }
-      return questionLoaded({ questionName, question, recordClass, paramValues })
+      return questionLoaded({ searchName, question, recordClass, paramValues })
     },
     error => error.status === 404
-      ? questionNotFound({ questionName })
-      : questionError({ questionName })
+      ? questionNotFound({ searchName })
+      : questionError({ searchName })
   );
 }
 

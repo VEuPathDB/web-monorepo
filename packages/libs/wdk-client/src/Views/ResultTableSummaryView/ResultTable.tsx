@@ -136,7 +136,7 @@ function getEventHandlers(props: Props) {
       },
       ...answer.meta.sorting.filter(entry => entry.attributeName !== key)
     ].slice(0, 3);
-    requestSortingUpdate(newSort, question.name);
+    requestSortingUpdate(newSort, question.urlSegment);
   }
   function onColumnReorder(attributeName: string, newIndex: number) {
     const tmpColumns = answer.meta.attributes.filter(attrName => attrName !== attributeName);
@@ -146,7 +146,7 @@ function getEventHandlers(props: Props) {
       attributeName,
       ...tmpColumns.slice(newIndex - 1)
     ];
-    requestColumnsChoiceUpdate(newColumns, question.name);
+    requestColumnsChoiceUpdate(newColumns, question.urlSegment);
   }
   function onPageChange(newPage: number) {
     viewPageNumber(newPage);
@@ -261,7 +261,7 @@ function getColumns({
           openAttributeAnalysis={openAttributeAnalysis}
           closeAttributeAnalysis={closeAttributeAnalysis}
           removeAttribute={() => {
-            requestColumnsChoiceUpdate(answer.meta.attributes.filter(a => a !== attribute.name), question.name)
+            requestColumnsChoiceUpdate(answer.meta.attributes.filter(a => a !== attribute.name), question.urlSegment)
           }}
         />
       )

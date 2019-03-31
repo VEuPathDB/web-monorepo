@@ -1,5 +1,5 @@
 import { Decoder, combine, field, string, number, boolean } from 'wdk-client/Utils/Json';
-import {AnswerSpec} from 'wdk-client/Utils/WdkService';
+import { AnswerSpec } from 'wdk-client/Utils/WdkModel';
 
 export interface User {
   id: number;
@@ -21,8 +21,7 @@ export type UserPredicate = (user: User) => boolean;
 
 export interface FilterValue { }
 
-export interface Step {
-  answerSpec: AnswerSpec;
+export interface Step extends AnswerSpec {
   customName: string;
   description: string;
   displayName: string;

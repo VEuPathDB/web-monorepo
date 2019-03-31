@@ -46,7 +46,7 @@ function ResultTableAddColumnsDialog({
         className="btn"
         onClick={() => {
           if (columnsDialogSelection) {
-            requestColumnsChoiceUpdate(columnsDialogSelection, question.name)
+            requestColumnsChoiceUpdate(columnsDialogSelection, question.urlSegment)
           }
           showHideAddColumnsDialog(false);
         }}

@@ -2,7 +2,7 @@ import { parseInt, isInteger } from 'lodash/fp';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
-import { AttributeSortingSpec, SearchConfig } from "wdk-client/Utils/WdkModel"
+import { Question, AttributeSortingSpec, SearchConfig } from "wdk-client/Utils/WdkModel"
 
 type ViewFilters = SearchConfig['viewFilters'];
 
@@ -34,39 +34,42 @@ const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, val
   await wdkService.patchSingleUserPreference(scope, key, value);
 
 export const prefSpecs = {
-  sort: (questionName: string): PrefSpec => [ 'project', questionName + '_sort' ],
-  summary: (questionName: string): PrefSpec => [ 'project', questionName + '_summary' ],
+  sort: (questionFullName: string): PrefSpec => [ 'project', questionFullName + '_sort' ],
+  summary: (questionFullName: string): PrefSpec => [ 'project', questionFullName + '_summary' ],
   itemsPerPage: (): PrefSpec => [ 'global', 'preference_global_items_per_page' ],
   matchedTranscriptsExpanded: (): PrefSpec => [ 'global', 'matchted_transcripts_filter_expanded' ],
   globalViewFilters: (recordClassName: string): PrefSpec => ['project', recordClassName + '_globalViewFilters'],
 }
 
-export async function getResultTableColumnsPref(questionName: string, wdkService: WdkService): Promise<string[]> {
-    const columnsPref = await getPrefWith(wdkService, prefSpecs.summary(questionName));
-    if (columnsPref) return columnsPref.split(/,\s*/);
+async function getQuestionFromSearchName(searchName: string, wdkService: WdkService) : Promise<Question> {
+  const questions = await wdkService.getQuestions();
+  const question = questions.find(question => question.urlSegment === searchName);
+  if (question == null) throw new Error(`Unknown question "${searchName}".`);
+  return question;
+}
 
-    const questions = await wdkService.getQuestions();
-    const question = questions.find(question => question.name === questionName);
-    if (question == null) throw new Error(`Unknown question "${questionName}".`);
+export async function getResultTableColumnsPref(searchName: string, wdkService: WdkService): Promise<string[]> {
+    const question = await getQuestionFromSearchName(searchName, wdkService);
+    const columnsPref = await getPrefWith(wdkService, prefSpecs.summary(question.fullName));
+    if (columnsPref) return columnsPref.split(/,\s*/);
     return question.defaultAttributes;
 }
 
-export async function setResultTableColumnsPref(questionName: string, wdkService: WdkService, columns : Array<string>) : Promise<UserPreferences> {
-    return setPrefWith(wdkService, prefSpecs.summary(questionName), columns.join(','));
+export async function setResultTableColumnsPref(searchName: string, wdkService: WdkService, columns : Array<string>) : Promise<UserPreferences> {
+    const question = await getQuestionFromSearchName(searchName, wdkService);
+    return setPrefWith(wdkService, prefSpecs.summary(question.fullName), columns.join(','));
 }
 
-export async function getResultTableSortingPref(questionName: string, wdkService: WdkService): Promise<AttributeSortingSpec[]> {
-    const sortingPref = await getPrefWith(wdkService, prefSpecs.sort(questionName));
+export async function getResultTableSortingPref(searchName: string, wdkService: WdkService): Promise<AttributeSortingSpec[]> {
+    const question = await getQuestionFromSearchName(searchName, wdkService);
+    const sortingPref = await getPrefWith(wdkService, prefSpecs.sort(question.fullName));
     if (sortingPref) return sortingPref.split(/,\s*/).map(constructSortingSpec);
-
-    const questions = await wdkService.getQuestions();
-    const question = questions.find(question => question.name === questionName);
-    if (question == null) throw new Error(`Unknown question "${questionName}".`);
     return question.defaultSorting;
 }
 
-export async function setResultTableSortingPref(questionName: string, wdkService: WdkService, sorting : Array<AttributeSortingSpec>) : Promise<UserPreferences> {
-    return setPrefWith(wdkService, prefSpecs.sort(questionName), sorting.map(spec => spec.attributeName + ' ' + spec.direction).join(','));
+export async function setResultTableSortingPref(searchName: string, wdkService: WdkService, sorting : Array<AttributeSortingSpec>) : Promise<UserPreferences> {
+    const question = await getQuestionFromSearchName(searchName, wdkService);
+    return setPrefWith(wdkService, prefSpecs.sort(question.fullName), sorting.map(spec => spec.attributeName + ' ' + spec.direction).join(','));
 }
 
 export async function getResultTablePageSizePref(wdkService: WdkService): Promise<number> {

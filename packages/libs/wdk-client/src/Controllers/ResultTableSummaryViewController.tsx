@@ -105,7 +105,7 @@ const columnsTreeSelector = createSelector(
   (state: RootState, props: OwnProps) => state.steps.steps[props.stepId],
   (ontology, questions, step) => {
     if (ontology == null || questions == null || step == null) return;
-    const question = questions.find(q => q.name === step.answerSpec.questionName);
+    const question = questions.find(q => q.urlSegment === step.searchName);
     const { recordClassName } = step;
 
     if (question == null) return undefined;
@@ -123,14 +123,14 @@ function getQuestionAndRecordClass(rootState: RootState, props: OwnProps): { que
   const viewState = rootState.resultTableSummaryView[props.viewId];
   if (
     viewState == null ||
-    viewState.questionFullName == null ||
+    viewState.searchName == null ||
     rootState.globalData.questions == null ||
     rootState.globalData.recordClasses == null
   ) return;
 
-  const questionName = viewState.questionFullName;
-  const question = rootState.globalData.questions.find(q => q.name === questionName);
-  const recordClass = question && rootState.globalData.recordClasses.find(r => r.name === question.recordClassName);
+  const searchName = viewState.searchName;
+  const question = rootState.globalData.questions.find(q => q.urlSegment === searchName);
+  const recordClass = question && rootState.globalData.recordClasses.find(r => r.fullName === question.recordClassName);
   return question && recordClass && { question, recordClass };
 }
 

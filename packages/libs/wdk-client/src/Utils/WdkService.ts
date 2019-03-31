@@ -15,9 +15,11 @@ import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDe
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
   Answer,
+  AnswerSpec,
   AttributeField,
   Favorite,
-  StepSpec,
+  NewStepSpec,
+  PatchStepSpec,
   Parameter,
   ParameterGroup,
   ParameterValue,
@@ -56,16 +58,6 @@ interface RecordRequest {
   attributes: string[];
   tables: string[];
   primaryKey: PrimaryKey;
-}
-
-// Legacy, for backward compatibility of client code with older service API
-export interface AnswerSpec {
-  questionName: string;
-  parameters?: Record<string, string>;
-  legacyFilterName?: string;
-  filters?: { name: string; value: string; }[];
-  viewFilters?: { name: string; value: string; }[];
-  wdkWeight?: number;
 }
 
 // Legacy, for backward compatibility of client code with older service API
@@ -120,7 +112,7 @@ export type DatasetConfig = {
   sourceContent: {
     temporaryFileId: string,
     parser: string,
-    questionName: string,
+    searchName: string,
     parameterName: string
   }
 } | {
@@ -411,7 +403,7 @@ const questionFilterDecoder =
 const questionSharedDecoder =
   Decode.combine(
     Decode.combine(
-      Decode.field('name', Decode.string),
+      Decode.field('fullName', Decode.string),
       Decode.field('displayName', Decode.string),
       Decode.field('properties', Decode.optional(Decode.objectOf(Decode.arrayOf(Decode.string)))),
       Decode.field('summary', Decode.optional(Decode.string)),
@@ -671,7 +663,7 @@ export default class WdkService {
 
   private async getSearchPathFromUrlSegment(questionUrlSegment: string) : Promise<string> {
     const question = await this.findQuestion(question => question.urlSegment === questionUrlSegment );
-    const recordClass = await this.findRecordClass(recordClass => recordClass.name === question.recordClassName);
+    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.recordClassName);
     return this.getSearchPath(recordClass.urlSegment, questionUrlSegment);
   }
 
@@ -802,10 +794,10 @@ export default class WdkService {
   }
 
   private  async getCustomSearchReportRequestInfo (answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<CustomSearchReportRequestInfo>{
-    const question = await this.findQuestion(question => question.name === answerSpec.questionName );
-    const recordClass = await this.findRecordClass(recordClass => recordClass.name === question.recordClassName);
+    const question = await this.findQuestion(question => question.urlSegment === answerSpec.searchName );
+    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.recordClassName);
     let url = this.getCustomSearchReportEndpoint(recordClass.urlSegment, question.urlSegment, formatting.format);
-    let searchConfig: SearchConfig = omit(answerSpec, ['questionName']);
+    let searchConfig: SearchConfig = answerSpec.searchConfig;
     let reportConfig = formatting.formatConfig;
     let request: CustomSearchReportRequest = { searchConfig, reportConfig };
     return {url, request};
@@ -825,10 +817,10 @@ export default class WdkService {
    * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
    */
   async getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig): Promise<Answer> {
-    const question = await this.findQuestion(question => question.name === answerSpec.questionName );
-    const recordClass = await this.findRecordClass(recordClass => recordClass.name === question.recordClassName);
+    const question = await this.findQuestion(question => question.urlSegment === answerSpec.searchName );
+    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.recordClassName);
     let url = this.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
-    let searchConfig: SearchConfig = omit(answerSpec, ['questionName']);
+    let searchConfig: SearchConfig = answerSpec.searchConfig
     let body: StandardSearchReportRequest = { searchConfig, reportConfig };
     return this._fetchJson<Answer>('post', url, stringify(body));
   }
@@ -865,8 +857,7 @@ export default class WdkService {
     let url = '/temporary-results';
     let reportName = formatting.format;
     let reportConfig = formatting.formatConfig;
-    let searchName = answerSpec.questionName;
-    let searchConfig: SearchConfig = omit(answerSpec, ['questionName']);
+    let { searchName, searchConfig } = answerSpec;
     let body: TempResultRequest = { reportName, searchName,  reportConfig, searchConfig};
     return this._fetchJson<TempResultResponse>(method, url, stringify(body))
       .then(result => window.location.origin + this.serviceUrl + url + '/' + result.id);
@@ -1163,7 +1154,7 @@ export default class WdkService {
     return this._stepMap.get(stepId)!;
   }
 
-  updateStep(stepId: number, stepSpec : StepSpec, userId: string = 'current') : Promise<Step> {
+  updateStep(stepId: number, stepSpec : PatchStepSpec, userId: string = 'current') : Promise<Step> {
     let data = JSON.stringify(stepSpec);
     let url = `/users/${userId}/steps/${stepId}`;
     this._stepMap.set(stepId, this._fetchJson<Step>('patch', url, data).catch(error => {
@@ -1174,7 +1165,7 @@ export default class WdkService {
     return this._stepMap.get(stepId)!;
   }
 
-  createStep(newStepSpec: StepSpec, userId: string = "current") {
+  createStep(newStepSpec: NewStepSpec, userId: string = "current") {
     return this._fetchJson<Step>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
   }
 
@@ -1506,18 +1497,4 @@ function queryParams(object: { [key:string]: any}): string {
   return Object.keys(object)
     .map(key => key + '=' + object[key])
     .join('&');
-}
-
-export function getSingleRecordQuestionName(recordClassName: string): string {
-  return `__${recordClassName}__singleRecordQuestion__`;
-}
-
-// return a legacy AnswerSpec for back compat with existing client code
-export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
-  return {
-    questionName: getSingleRecordQuestionName(record.recordClassName),
-    parameters: {
-      "primaryKeys": record.id.map(pkCol => pkCol.value).join(",")
-    }
-  };
 }

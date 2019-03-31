@@ -28,7 +28,7 @@ import {
   takeEpicInWindow
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { fulfillStep, requestStep, requestStepUpdate } from 'wdk-client/Actions/StepActions';
+import { fulfillStep, requestStep, requestSearchConfigUpdate } from 'wdk-client/Actions/StepActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { Step } from 'wdk-client/Utils/WdkUser';
 
@@ -174,24 +174,22 @@ async function getFulfillUpdatedMatchedTransFilterSummary(
   return fulfillMatchedTransFilterExpanded(matchedTransFiltPref.expanded);
 }
 
-async function getRequestStepUpdate(
+async function getRequestSearchConfigUpdate(
   [openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof requestStepUpdate>> {
-  const { answerSpec } = stepAction.payload.step;
+): Promise<InferAction<typeof requestSearchConfigUpdate>> {
+  const { searchConfig, searchName } = stepAction.payload.step;
   const filterValue = updateFilterActionToFilterValue(updateFilterAction);
-  return requestStepUpdate(
+  return requestSearchConfigUpdate(
     openAction.payload.stepId,
     {
-      answerSpec: {
-        ...answerSpec,
-        filters: (answerSpec.filters || [])
-          .map(filter => filter.name === openAction.payload.filterKey
-            ? { ...filter, value: filterValue }
-            : filter
-          )
-      }
+      ...searchConfig,
+      filters: (searchConfig.filters || [])
+        .map(filter => filter.name === openAction.payload.filterKey
+          ? { ...filter, value: filterValue }
+          : filter
+        )
     }
   );
 }
@@ -216,8 +214,8 @@ function updateFilterActionToFilterValue(updateFilterAction: InferAction<typeof 
 }
 
 export function getFilterValue(step: Step | undefined, key: string): FilterValue | undefined {
-  if (step == null || step.answerSpec.filters == null) return;
-  const filter = step.answerSpec.filters.find(filter => filter.name === key);
+  if (step == null || step.searchConfig.filters == null) return;
+  const filter = step.searchConfig.filters.find(filter => filter.name === key);
   return filter && filter.value;
 }
 
@@ -234,7 +232,7 @@ export const observe = takeEpicInWindow(
     mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg,
       { areActionsCoherent: filterRequestMatchedTransFilterSummaryStepChgActions }),
     mrate([requestMatchedTransFilterExpandedPref], getFulfillUpdatedMatchedTransFilterSummary),
-    mrate([openMTF, fulfillStep, requestMatchedTransFilterUpdate], getRequestStepUpdate,
+    mrate([openMTF, fulfillStep, requestMatchedTransFilterUpdate], getRequestSearchConfigUpdate,
       { areActionsCoherent: filterStepUpdateActions, areActionsNew: areStepUpdateActionsNew })
   )
 );

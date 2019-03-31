@@ -27,7 +27,7 @@ export const recordClassDisplayName = (
   { stepId }: Props
 ) => {
   const recordClassName = get(steps[stepId], 'recordClassName', '');
-  const recordClass = recordClasses.find(({ name }) => name === recordClassName);
+  const recordClass = recordClasses.find(({ urlSegment }) => urlSegment === recordClassName);
   return get(recordClass, 'displayName', '');
 };
 // FIXME This look suspect
@@ -38,8 +38,8 @@ export const question = (
   }: RootState,
   { stepId }: Props
 ) => {
-  const questionName = get(steps[stepId], 'answerSpec.questionName', '');
-  const question = questions.find(({ name }) => name === questionName);
+  const searchName = get(steps[stepId], 'searchName', '');
+  const question = questions.find(({ urlSegment }) => urlSegment === searchName);
   return question;
 };
 export const summaryViewPlugins = createSelector<RootState, Props, Question | undefined, SummaryViewPluginField[]>(

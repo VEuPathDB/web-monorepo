@@ -76,7 +76,7 @@ function getFormatFromRecordClassName(recordClassName: string) : string {
 async function getRecordClassAndFormat(stepId: number, wdkService: WdkService) : Promise<[string, RecordClass]> {
     let stepBundlePromise = getStepBundlePromise(stepId, wdkService);
     let bundle = await stepBundlePromise;
-    return [ getFormatFromRecordClassName(bundle.recordClass.name), bundle.recordClass ];
+    return [ getFormatFromRecordClassName(bundle.recordClass.fullName), bundle.recordClass ];
 }
 
 async function getGenomeSummaryViewReport([requestAction]:  [InferAction<typeof requestGenomeSummaryReport>], state$: StateObservable<RootState>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillGenomeSummaryReport>> {

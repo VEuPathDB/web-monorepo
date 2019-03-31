@@ -202,7 +202,7 @@ const typeGetterFactory = (recordClasses: RecordClass[]) => (favorite: Favorite,
     return 'Unknown';
   }
 
-  const recordClass = recordClasses.find((recordClass) => recordClass.name === favorite.recordClassName);
+  const recordClass = recordClasses.find((recordClass) => recordClass.fullName === favorite.recordClassName);
   
   return recordClass == null ? 'Unknown' : recordClass.displayName;
 }

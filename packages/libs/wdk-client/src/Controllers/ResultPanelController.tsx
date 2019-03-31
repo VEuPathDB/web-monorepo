@@ -173,7 +173,7 @@ const mergeProps = (
               type: 'summaryView',
               name: plugin.name,
               recordClassName: stateProps.step.recordClassName,
-              questionName: stateProps.step.answerSpec.questionName
+              searchName: stateProps.step.searchName
             }}
             pluginProps={{
               stepId: ownProps.stepId,

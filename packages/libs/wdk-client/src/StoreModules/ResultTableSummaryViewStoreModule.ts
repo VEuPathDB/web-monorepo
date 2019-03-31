@@ -57,7 +57,7 @@ import {
   AnswerJsonFormatConfig,
   AttributesConfig,
   PrimaryKey,
-  AnswerSpec
+  SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { IndexedState, indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
 
@@ -69,14 +69,14 @@ type BasketStatus = 'yes' | 'no' | 'loading';
 
 // View filters that are applied to all answer requests for this summary view.
 // Keys are recordClass names.
-type GlobalViewFilters = Record<string, AnswerSpec['viewFilters']>;
+type GlobalViewFilters = Record<string, SearchConfig['viewFilters']>;
 
 type ViewState = {
   stepId?: number;
   answer?: Answer;
   answerLoading: boolean;
   addingStepToBasket: boolean;
-  questionFullName?: string; // remember question so can validate sorting and columns fulfill actions
+  searchName?: string; // remember question so can validate sorting and columns fulfill actions
   basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: Array<string>; //
@@ -133,7 +133,7 @@ function reduceBasketUpdateAction(state: ViewState, action: Action): ViewState {
 function reduceColumnsFulfillAction(state: ViewState, action: Action): ViewState {
   if (
     action.type != fulfillColumnsChoice.type ||
-    action.payload.questionName != state.questionFullName
+    action.payload.searchName != state.searchName
   )
     return state;
 
@@ -165,10 +165,10 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
       };
     }
     case requestColumnsChoicePreference.type: {
-      return { ...state, questionFullName: action.payload.questionName };
+      return { ...state, searchName: action.payload.searchName };
     }
     case requestSortingPreference.type: {
-      return { ...state, questionFullName: action.payload.questionName };
+      return { ...state, searchName: action.payload.searchName };
     }
     case requestUpdateBasket.type: {
       return reduceBasketUpdateAction(state, action);
@@ -259,7 +259,7 @@ async function getRequestColumnsChoicePreference(
 ): Promise<InferAction<typeof requestColumnsChoicePreference>> {
   return requestColumnsChoicePreference(
     openAction.payload.viewId,
-    requestAction.payload.step.answerSpec.questionName
+    requestAction.payload.step.searchName
   );
 }
 
@@ -283,13 +283,13 @@ async function getFulfillColumnsChoicePreference(
   const columns = stepAction.payload.step.displayPrefs.columnSelection
     ? stepAction.payload.step.displayPrefs.columnSelection
     : await getResultTableColumnsPref(
-        requestAction.payload.questionName,
+        requestAction.payload.searchName,
         wdkService
       );
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     columns,
-    requestAction.payload.questionName
+    requestAction.payload.searchName
   );
 }
 
@@ -305,8 +305,8 @@ function filterFulfillColumnsChoicePreferenceActions([
   return (
     openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
+    stepAction.payload.step.searchName ===
+      requestAction.payload.searchName
   );
 }
 
@@ -324,13 +324,13 @@ async function getFulfillColumnsChoiceUpdate(
   const sortColumns = displayPrefs.sortColumns
     ? displayPrefs.sortColumns
     : (await getResultTableSortingPref(
-        requestAction.payload.questionName,
+        requestAction.payload.searchName,
         wdkService
       )).map(({ attributeName: name, direction }) => ({ name, direction }));
   // Save user preference and update step.
   // FIXME Update step with redux
   setResultTableColumnsPref(
-    requestAction.payload.questionName,
+    requestAction.payload.searchName,
     wdkService,
     requestAction.payload.columns
   );
@@ -338,7 +338,7 @@ async function getFulfillColumnsChoiceUpdate(
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     requestAction.payload.columns,
-    requestAction.payload.questionName
+    requestAction.payload.searchName
   );
 }
 
@@ -354,8 +354,8 @@ function filterFulfillColumnColumnsChoiceUpdateActions([
   return (
     openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
+    stepAction.payload.step.searchName ===
+      requestAction.payload.searchName
   );
 }
 
@@ -369,7 +369,7 @@ async function getRequestSortingPreference(
 ): Promise<InferAction<typeof requestSortingPreference>> {
   return requestSortingPreference(
     openAction.payload.viewId,
-    requestAction.payload.step.answerSpec.questionName
+    requestAction.payload.step.searchName
   );
 }
 
@@ -394,13 +394,13 @@ async function getFulfillSortingPreference(
         ({ name: attributeName, direction }) => ({ attributeName, direction })
       )
     : await getResultTableSortingPref(
-        requestAction.payload.questionName,
+        requestAction.payload.searchName,
         wdkService
       );
   return fulfillSorting(
     openAction.payload.viewId,
     sorting,
-    requestAction.payload.questionName
+    requestAction.payload.searchName
   );
 }
 
@@ -416,8 +416,8 @@ function filterFullfillSortingPreferenceActions([
   return (
     openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
+    stepAction.payload.step.searchName ===
+      requestAction.payload.searchName
   );
 }
 
@@ -439,13 +439,13 @@ async function getFulfillSortingUpdate(
   const columnSelection = displayPrefs.columnSelection
     ? displayPrefs.columnSelection
     : await getResultTableColumnsPref(
-        requestAction.payload.questionName,
+        requestAction.payload.searchName,
         wdkService
       );
   // save user preference and update step
   // FIXME Update step with redux
   setResultTableSortingPref(
-    requestAction.payload.questionName,
+    requestAction.payload.searchName,
     wdkService,
     requestAction.payload.sorting
   );
@@ -453,7 +453,7 @@ async function getFulfillSortingUpdate(
   return fulfillSorting(
     openAction.payload.viewId,
     requestAction.payload.sorting,
-    requestAction.payload.questionName
+    requestAction.payload.searchName
   );
 }
 
@@ -469,8 +469,8 @@ function filterFulfillSortingUpdateActions([
   return (
     openAction.payload.viewId === requestAction.payload.viewId &&
     openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
+    stepAction.payload.step.searchName ===
+      requestAction.payload.searchName
   );
 }
 
@@ -565,9 +565,9 @@ function filterRequestAnswerActions([
     fulfillColumnsChoiceAction.payload.viewId === viewId &&
     fulfillSortingAction.payload.viewId === viewId &&
     fulfillGlobalViewFiltersAction.payload.viewId === viewId &&
-    fulfillStepAction.payload.step.answerSpec.questionName === fulfillColumnsChoiceAction.payload.questionName &&
-    fulfillStepAction.payload.step.answerSpec.questionName === fulfillColumnsChoiceAction.payload.questionName &&
-    fulfillStepAction.payload.step.answerSpec.questionName === fulfillSortingAction.payload.questionName &&
+    fulfillStepAction.payload.step.searchName === fulfillColumnsChoiceAction.payload.searchName &&
+    fulfillStepAction.payload.step.searchName === fulfillColumnsChoiceAction.payload.searchName &&
+    fulfillStepAction.payload.step.searchName === fulfillSortingAction.payload.searchName &&
     fulfillGlobalViewFiltersAction.payload.recordClassName === fulfillStepAction.payload.step.recordClassName
   );
 }
@@ -611,7 +611,7 @@ async function getFulfillAnswer(
     attributes: r.columnsConfig.attributes,
     pagination: r.pagination
   };
-  let answer = await wdkService.getStepAnswerJson(r.stepId, formatConfig, r.viewFilters);
+  let answer = await wdkService.getStepAnswerJson(r.stepId, formatConfig);
   return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
 }
 

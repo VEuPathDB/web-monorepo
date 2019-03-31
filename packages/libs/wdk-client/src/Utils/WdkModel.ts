@@ -6,12 +6,20 @@ import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilte
 import { Step } from 'wdk-client/Utils/WdkUser';
 
 interface ModelEntity {
-  name: string;
   displayName: string;
   properties?: Record<string, string[]>;
 }
 
-export interface RecordClass extends ModelEntity {
+interface NamedModelEntity extends ModelEntity {
+  name: string
+}
+
+interface UrlModelEntity extends ModelEntity {
+  fullName: string,
+  urlSegment: string
+}
+
+export interface RecordClass extends UrlModelEntity {
   displayNamePlural: string;
   iconName?: string;
   recordIdAttributeName: string;
@@ -35,7 +43,7 @@ export interface Reporter {
   scopes: string[];
 }
 
-export interface ParameterBase extends ModelEntity {
+export interface ParameterBase extends NamedModelEntity {
   help: string;
   isVisible: boolean;
   group: string;
@@ -184,7 +192,7 @@ interface QuestionFilter {
   isViewOnly: boolean;
 }
 
-interface QuestionShared extends ModelEntity {
+interface QuestionShared extends UrlModelEntity {
   summary?: string;
   description?: string;
   iconName?: string;
@@ -240,7 +248,7 @@ export type ParamUIState = { } | {
   unfilteredCount?: number;
 }
 
-export interface AttributeField extends ModelEntity {
+export interface AttributeField extends NamedModelEntity {
   help?: string;
   align?: string;
   isSortable: boolean;
@@ -251,11 +259,11 @@ export interface AttributeField extends ModelEntity {
   formats: Reporter[];
 }
 
-export interface SummaryViewPluginField extends ModelEntity {
+export interface SummaryViewPluginField extends NamedModelEntity {
   description: string;
 }
 
-export interface TableField extends ModelEntity {
+export interface TableField extends NamedModelEntity {
   help: string;
   type: string;
   description: string;
@@ -302,14 +310,14 @@ export interface Answer {
 }
 
 export interface SearchConfig {
-  parameters?: Record<string, string>;
+  parameters: Record<string, string>;
   legacyFilterName?: string;
   filters?: { name: string; value: any; }[];
   viewFilters?: { name: string; value: string; }[];
   wdkWeight?: number;
 }
 
-export interface SearchConfigPlusQuestion {
+export interface AnswerSpec {
   searchName: string;
   searchConfig: SearchConfig;
 }
@@ -340,13 +348,14 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
   includeEmptyTables?: boolean;
 }
 
-export interface StepSpec {
-  searchUrlSegment: string,
-  searchConfig: SearchConfig,
+export interface PatchStepSpec {
   customName?: string,
   isCollapsible?: boolean,
   collapsedName?: string;
   displayPrefs?: Step['displayPrefs'];
+}
+
+export interface NewStepSpec extends PatchStepSpec, AnswerSpec {
 }
 
 export type UserDatasetMeta = {
@@ -465,7 +474,7 @@ export function getSingleRecordQuestionName(recordClassName: string): string {
   return `__${recordClassName}__singleRecordQuestion__`;
 }
 
-export function getSingleRecordAnswerSpec(record: RecordInstance): SearchConfigPlusQuestion {
+export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
   return {
     searchName: getSingleRecordQuestionName(record.recordClassName),
     searchConfig: {

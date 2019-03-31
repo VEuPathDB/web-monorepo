@@ -4,7 +4,7 @@ export interface PluginEntryContext {
   type: string;
   name: string;
   recordClassName?: string;
-  questionName?: string;
+  searchName?: string;
 }
 
 type CompositePluginComponentProps<PluginProps> = {
@@ -55,7 +55,7 @@ export interface ClientPluginRegistryEntry<PluginProps> {
   type: string;
   name?: string;
   recordClassName?: string;
-  questionName?: string;
+  searchName?: string;
   component: PluginComponent<PluginProps>;
 }
 
@@ -72,7 +72,7 @@ function isMatchingEntry<T>(entry: ClientPluginRegistryEntry<T>, context: Plugin
   if (entry.type !== context.type) return false;
   if (entry.name && entry.name !== context.name) return false;
   if (entry.recordClassName && context.recordClassName && entry.recordClassName !== context.recordClassName) return false;
-  if (entry.questionName && context.questionName && entry.questionName !== context.questionName) return false;
+  if (entry.searchName && context.searchName && entry.searchName !== context.searchName) return false;
   return true;
 }
 

@@ -28,7 +28,7 @@ class QuestionController extends PageController<Props> {
     if (this.props.questionStatus == null) {
       this.props.dispatch(updateActiveQuestion({
         stepId: undefined,
-        questionName: this.props.question
+        searchName: this.props.question
       }));
     }
   }

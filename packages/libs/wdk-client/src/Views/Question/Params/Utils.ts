@@ -13,7 +13,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 
 // FIXME Add full question, paramUIState and groupUIState
 export type Context<T extends Parameter> = {
-  questionName: string;
+  searchName: string;
   parameter: T;
   paramValues: ParameterValues;
 }
@@ -32,7 +32,7 @@ export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isType: (parameter: Parameter) => parameter is T;
   /**
    * Determine if the param value is valid. This can be used by form container
-   * to determine if submit should be disabled. The Component is repsonsible
+   * to determine if submit should be disabled. The Component is responsible
    * for providing details about the invalid state.
    */
   isParamValueValid: (context: Context<T>, state: S) => boolean;

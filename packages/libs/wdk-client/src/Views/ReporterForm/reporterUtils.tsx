@@ -53,7 +53,7 @@ export function getAllTables(recordClass: RecordClass, predicate: (table: TableF
  */
 export function getAttributeSelections(userPrefs: UserPreferences, question: Question, allReportScopedAttrs: string[] = []) {
   // try initializing based on user prefs
-  let userPrefKey = question.name + "_summary";
+  let userPrefKey = question.fullName + "_summary";
   let initialAttrs = (userPrefKey in userPrefs ?
       // preference key found; use user preference
       userPrefs.project[userPrefKey].split(',') :

@@ -29,7 +29,7 @@ function StepFiltersController(props: Props) {
           context={{
             type: "questionFilter",
             name: filter.name,
-            questionName: question.name,
+            searchName: question.urlSegment,
             recordClassName: question.recordClassName
           }}
           pluginProps={{
@@ -44,7 +44,7 @@ function StepFiltersController(props: Props) {
 
 function mapPropsToState(state: RootState, props: OwnProps): StateProps {
   const step = state.steps.steps[props.stepId];
-  const question = step && state.globalData.questions && state.globalData.questions.find(({ name }) => name === step.answerSpec.questionName)
+  const question = step && state.globalData.questions && state.globalData.questions.find(({ urlSegment }) => urlSegment === step.searchName)
   return { step, question };
 }
 

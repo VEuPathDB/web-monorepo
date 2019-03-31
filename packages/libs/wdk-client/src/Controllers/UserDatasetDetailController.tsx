@@ -46,7 +46,7 @@ type MergedProps = OwnProps & DispatchProps & StateProps;
 class UserDatasetDetailController extends PageController<MergedProps> {
 
   getQuestionUrl = (question: Question): string => {
-    return `#${question.name}`;
+    return `#${question.urlSegment}`;
   }
 
 

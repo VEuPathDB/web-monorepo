@@ -72,7 +72,7 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
       <ParamComponent
         key={paramSpec.name}  
         ctx={{
-          questionName: '',
+          searchName: '',
           parameter: paramSpec,
           paramValues: normalizeParamValues(paramValues)
         }}

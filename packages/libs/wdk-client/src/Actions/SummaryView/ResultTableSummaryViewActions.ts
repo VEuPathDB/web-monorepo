@@ -8,7 +8,7 @@ import {
   AttributeSortingSpec,
   Pagination,
   PrimaryKey,
-  AnswerSpec
+  SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 
 export const openResultTableSummaryView = makeActionCreator(
@@ -34,40 +34,40 @@ export const updateColumnsDialogExpandedNodes = makeActionCreator(
 
 export const requestSortingPreference = makeActionCreator(
   'resultTableSummaryView/requestSortingPreference',
-  (viewId: string, questionName: string) => ({ questionName, viewId })
+  (viewId: string, searchName: string) => ({ searchName, viewId })
 );
 
 export const requestSortingUpdate = makeActionCreator(
   'resultTableSummaryView/requestSortingUpdate',
-  (viewId: string, sorting: AttributeSortingSpec[], questionName: string) => ({
+  (viewId: string, sorting: AttributeSortingSpec[], searchName: string) => ({
     sorting,
-    questionName,
+    searchName,
     viewId
   })
 );
 
 export const fulfillSorting = makeActionCreator(
   'resultTableSummaryView/fulfillSorting',
-  (viewId: string, sorting: AttributeSortingSpec[], questionName: string) => ({
+  (viewId: string, sorting: AttributeSortingSpec[], searchName: string) => ({
     sorting,
-    questionName,
+    searchName,
     viewId
   })
 );
 
 export const requestColumnsChoicePreference = makeActionCreator(
   'resultTableSummaryView/requestColumnsChoicePreference',
-  (viewId: string, questionName: string) => ({ questionName, viewId })
+  (viewId: string, searchName: string) => ({ searchName, viewId })
 );
 
 export const requestColumnsChoiceUpdate = makeActionCreator(
   'resultTableSummaryView/requestColumnsChoiceUpdate',
-  (viewId: string, columns: string[], questionName: string) => ({ columns, questionName, viewId })
+  (viewId: string, columns: string[], searchName: string) => ({ columns, searchName, viewId })
 );
 
 export const fulfillColumnsChoice = makeActionCreator(
   'resultTableSummaryView/fulfillColumnsChoice',
-  (viewId: string, columns: string[], questionName: string) => ({ columns, questionName, viewId })
+  (viewId: string, columns: string[], searchName: string) => ({ columns, searchName, viewId })
 );
 
 export const requestPageSize = makeActionCreator(
@@ -97,7 +97,7 @@ export const requestAnswer = makeActionCreator(
     stepId: number,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
-    viewFilters?: AnswerSpec['viewFilters'],
+    viewFilters?: SearchConfig['viewFilters'],
   ) => ({ stepId, columnsConfig, pagination, viewFilters, viewId })
 );
 
@@ -108,7 +108,7 @@ export const fulfillAnswer = makeActionCreator(
     stepId: number,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
-    viewFilters: AnswerSpec['viewFilters'] | undefined,
+    viewFilters: SearchConfig['viewFilters'] | undefined,
     answer: Answer
   ) => ({ stepId, columnsConfig, pagination, viewFilters, answer, viewId })
 );
@@ -148,7 +148,7 @@ export const requestGlobalViewFilters = makeActionCreator(
 
 export const updateGlobalViewFilters = makeActionCreator(
   'resultTableSummaryView/updateGlobalViewFilters',
-  (viewId: string, recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
+  (viewId: string, recordClassName: string, viewFilters: SearchConfig['viewFilters']) => ({
     recordClassName,
     viewFilters,
     viewId
@@ -157,7 +157,7 @@ export const updateGlobalViewFilters = makeActionCreator(
 
 export const fulfillGlobalViewFilters = makeActionCreator(
   'resultTableSummaryView/fulfillGlobalViewFilters',
-  (viewId: string, recordClassName: string, viewFilters: AnswerSpec['viewFilters']) => ({
+  (viewId: string, recordClassName: string, viewFilters: SearchConfig['viewFilters']) => ({
     recordClassName,
     viewFilters,
     viewId
