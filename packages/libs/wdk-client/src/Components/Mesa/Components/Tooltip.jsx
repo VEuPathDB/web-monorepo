@@ -36,7 +36,7 @@ class Tooltip extends React.Component {
         Element ref could not be found; was render interrupted?
       `);
     } else {
-      this.events = new EventsFactory(this.el);
+      this.events = EventsFactory(this.el);
       this.events.use({
         focusIn: this.engageTooltip,
         keypress: this.engageTooltip,

@@ -122,7 +122,7 @@ class HeadingCell extends React.PureComponent {
     const style = { display: 'inline-block' };
     const stopPropagation = (node) => {
       if (!node) return null;
-      const instance = new EventsFactory(node);
+      const instance = EventsFactory(node);
       instance.add('click', (e) => {
         e.stopPropagation();
       });
