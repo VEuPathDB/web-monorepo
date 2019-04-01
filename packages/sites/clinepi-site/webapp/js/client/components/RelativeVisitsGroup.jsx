@@ -29,9 +29,7 @@ function paramRenderer(param, props) {
       param={param}
       value={value}
       uiState={uiState}
-      onActiveOntologyTermChange={props.eventHandlers.setActiveOntologyTerm}
-      onParamValueChange={props.eventHandlers.setParamValue}
-      onParamStateChange={props.eventHandlers.setParamState}
+      {...props.parameterEventHandlers}
     />
   );
 }
@@ -149,9 +147,6 @@ export default class RelativeVisitsGroup extends React.Component {
    */
   renderLayout(eventsGroup, settings) {
     const group = this.props.wizardState.activeGroup;
-    // const useRangeForNumRelativeEvents = this.props.useRangeForNumRelativeEvents;
-    // const setUseRangeForNumRelativeEvents = this.props.eventHandlers.setUseRangeForNumRelativeEvents;
-
     return (
       <div>
         <div className="RelativeVisitsLayout">
@@ -204,7 +199,7 @@ export default class RelativeVisitsGroup extends React.Component {
         type="checkbox"
         checked={useRelativeVisits}
         onChange={e => {
-          this.props.eventHandlers.setParamValue(useRelativeVisitsParam, e.target.checked ? 'Yes' : 'No');
+          this.props.parameterEventHandlers.onParamValueChange(useRelativeVisitsParam, e.target.checked ? 'Yes' : 'No');
         }}
       />
     );
