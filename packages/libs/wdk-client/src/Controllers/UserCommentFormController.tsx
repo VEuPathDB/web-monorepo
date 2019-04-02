@@ -214,7 +214,7 @@ const title = createSelector(
         <h1>
           {
             editing
-              ? `Edit comment ${commentId} ${targetId}`
+              ? `Edit comment ${commentId} for ${targetId}`
               : `Add a comment to ${targetType} ${targetId}`
           }
         </h1>
