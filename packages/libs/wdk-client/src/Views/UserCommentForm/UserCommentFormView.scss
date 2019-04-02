@@ -25,8 +25,7 @@
         background-color: #88AACA;
         color: #FFFFFF;
         font-weight: bold;
-        padding: 3px;
-        border: 2px;
+        padding: 0.25em;
       }
   
       .wdk-UserComments-Form-Group-Body {
@@ -45,23 +44,25 @@
           margin-left: 1em;
         }
 
-        input[type="text"] {
-          width: 70ch;
+        > div > input[type=text] {
+          box-sizing: content-box;
+          width: calc(100ch + 4px);
         }
 
-        textarea {
+        > div > textarea {
           height: 5em;
-          width: 70ch;
+          box-sizing: content-box;
+          width: calc(100ch + 4px);
         }
 
         .HelpTrigger {
           margin-left: 0.5em;
-          cursor: pointer;
         }
 
         .wdk-LocationField {
           border: 1px solid black;
-          width: calc(90ch + 2.5em);
+          box-sizing: content-box;
+          width: 100ch;
           display: grid;
           grid-template-columns: 20ch 1fr;
           padding: 0.5em 0.5em 0 0.5em;
@@ -72,15 +73,17 @@
           > * {
             margin-bottom: 0.5em;
           }
+
+          input[type=text] {
+            width: calc(100% - 2.5em);
+          }
         }
 
         .wdk-AttachmentsField {
-          // TODO: Once (if?) we drop IE11 support, we can use 
-          // "row-gap" instead of applying "margin-bottom"
-          // to the direct descendants
           .wdk-FileInputSubfield {
             border: 1px black solid;
-            width: 96ch;
+            box-sizing: content-box;
+            width: 100ch;
             padding: 0.5em 0.5em 0 0.5em;
             margin-bottom: 0.5em;
             display: grid;
@@ -93,6 +96,11 @@
               margin-bottom: 0.5em;
             }
 
+            textarea {
+              height: 5em;
+              width: 100%;
+            }
+
             &:nth-child(even) {
               background-color: rgb(204, 204, 204);
             }
@@ -100,19 +108,32 @@
         }
 
         .wdk-PubMedIdsField {
-          width: 96ch;
           border: 1px solid black;
+          box-sizing: content-box;
+          width: 100ch;
           padding: 0.5em;
 
-          .wdk-PubMedIdInputField > * {
-            margin-bottom: 0.5em;
-          }
+          .wdk-PubMedIdInputField {
+            > * {
+              margin-bottom: 0.5em;
+            }
+
+            > input {
+              width: calc(100% - 2.5em);
+            }
+          } 
 
           .wdk-PubMedIdSearchField {
             margin: 1em 0;
+            display: flex;
 
             > button {
               margin-right: 0.5em;
+              width: 29ch;
+            }
+
+            > input {
+              width: 100%;
             }
           }
 

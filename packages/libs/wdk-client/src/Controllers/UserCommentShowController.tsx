@@ -12,7 +12,7 @@ import { UserCommentShowState } from 'wdk-client/StoreModules/UserCommentShowSto
 import { openUserCommentShow, requestDeleteUserComment } from 'wdk-client/Actions/UserCommentShowActions';
 import { UserCommentShowViewProps, UserCommentShowView } from 'wdk-client/Views/UserCommentShow/UserCommentShowView';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
-import { get } from 'lodash';
+import { get, capitalize } from 'lodash';
 import { PubmedIdEntry } from 'wdk-client/Views/UserCommentForm/PubmedIdEntry';
 import { UserCommentUploadedFiles } from 'wdk-client/Views/UserCommentShow/UserCommentUploadedFiles';
 import { Link } from 'wdk-client/Components';
@@ -112,23 +112,19 @@ const title = createSelector(
   targetType,
   targetId,
   returnUrl,
-  (userComments, targetType, targetId, returnUrl) => {
-    if (userComments.length === 0) {
-      return (
-        <p>
-          There's currently no comment for <a href={returnUrl} target="_blank">{targetId}</a>.
-        </p>
-      );
-    }
-
-    return (
-      <>
-        <p className="user-comments-list-header">
-          {targetType} comments on <a href={returnUrl} target="_blank">{targetId}</a>
-        </p>
-      </>
-    )
-  }
+  (userComments, targetType, targetId, returnUrl) =>
+    <>
+      <h1>
+        {capitalize(targetType)} comments on <Link to={returnUrl} target="_blank">{targetId}</Link>
+      </h1>
+      {
+        (userComments.length === 0) && (
+          <p>
+            There's currently no comments for {targetId}.
+          </p>
+        )
+      }
+    </>
 );
 
 const mapStateToProps = (state: RootState, props: OwnProps) => ({
@@ -201,7 +197,7 @@ const mergeProps = (
         {
           key: 'date',
           label: 'Date:',
-          field: new Date(comment.commentDate).toString()
+          field: new Date(comment.commentDate).toISOString()
         },
         {
           key: 'comment',
@@ -218,9 +214,10 @@ const mergeProps = (
                   accession => (
                     <a
                       key={accession} 
-                      href={`http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=&term=${accession}`}>
+                      href={`http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=&term=${accession}`}
+                      target="_blank"
                     >
-                      {accession}
+                      {accession}{' '}
                     </a>
                   )
                 )
@@ -242,16 +239,16 @@ const mergeProps = (
                           key={stableId}
                           to={`/record/gene/${stableId}`}
                         >
-                          {stableId}
+                          {stableId}{' '}
                         </Link>
                       )
                       : comment.target.type === 'isolate'
                       ? (
                         <Link
                           key={stableId}
-                          href={`/record/popsetSequence/${stableId}`}
+                          to={`/record/popsetSequence/${stableId}`}
                         >
-                          {stableId}
+                          {stableId}{' '}
                         </Link>
                       )
                       : null
@@ -309,7 +306,9 @@ const mergeProps = (
               {
                 comment.digitalObjectIds.map(
                   digitalObjectId => (
-                    <a key={digitalObjectId} href={`http://dx.doi.org/${digitalObjectId}`}>{digitalObjectId}</a>
+                    <a key={digitalObjectId} href={`http://dx.doi.org/${digitalObjectId}`} target="_blank">
+                      {digitalObjectId}{' '}
+                    </a>
                   )
                 )
               }
@@ -373,19 +372,28 @@ const mergeProps = (
       ...memo, 
       [comment.id]: (
         <>
-          Headline:
+          <div>
+            Headline:
+          </div>
           <a id={`${comment.id}`}>{comment.headline}</a>
-          {
-            userId === comment.author.userId && (
-              <>
-                <Link href={`/user-comments/edit?commentId=${comment.id}`} target="_blank">[edit comment]</Link>
-                <Link href={`user-comments/delete?commentId=${comment.id}`} onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
-                  event.preventDefault();
-                  deleteUserComment(comment.id);
-                }}>[delete comment]</Link>
-              </>
-            )
-          }
+          <div className="wdk-UserComments-Show-EditControls">
+            {
+              userId === comment.author.userId && (
+                <div>
+                  <Link to={`/user-comments/edit?commentId=${comment.id}`} target="_blank">
+                    [edit comment]
+                  </Link>
+                  {' '}
+                  <Link to={`/user-comments/delete?commentId=${comment.id}`} onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
+                    event.preventDefault();
+                    deleteUserComment(comment.id);
+                  }}>
+                    [delete comment]
+                  </Link>
+                </div>
+              )
+            }
+          </div>
         </>
       )
     }), 
