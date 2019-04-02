@@ -62,8 +62,8 @@ function observeSelectSummaryView(action$: ActionsObservable<Action>, state$: St
       const question = selectQuestion(state$.value, { stepId: action.payload.stepId, viewId: action.payload.viewId });
       if (question == null) return;
 
-      const [ scope, key ] = prefSpecs.resultPanelTab(question.name);
-      wdkService.patchUserPreference(scope, key, action.payload.summaryView);
+      const [ scope, key ] = prefSpecs.resultPanelTab(question.fullName);
+      wdkService.patchSingleUserPreference(scope, key, action.payload.summaryView);
     }),
     mergeMapTo(empty())
   )

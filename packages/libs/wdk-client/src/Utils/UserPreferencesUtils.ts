@@ -43,8 +43,8 @@ export const prefSpecs = {
   summary: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_summary' ],
   itemsPerPage: (): PrefSpec => [ Scope.global, 'preference_global_items_per_page' ],
   matchedTranscriptsExpanded: (): PrefSpec => [ Scope.global, 'matchted_transcripts_filter_expanded' ],
-  globalViewFilters: (recordClassName: string): PrefSpec => [Scope.project, recordClassName + '_globalViewFilters'],
-  resultPanelTab: (questionFullName: string): PrefSpec => [Scope.project, questionFullName + '_resultPanelTab']
+  globalViewFilters: (recordClassName: string): PrefSpec => [ Scope.project, recordClassName + '_globalViewFilters' ],
+  resultPanelTab: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_resultPanelTab' ]
 }
 
 async function getQuestionFromSearchName(searchName: string, wdkService: WdkService) : Promise<Question> {

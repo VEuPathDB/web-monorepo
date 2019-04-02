@@ -61,7 +61,7 @@ export const defaultSummaryView = createSelector<RootState, Props, UserPreferenc
   (userPreferences, question) =>
     userPreferences == null || question == null
       ? ''
-      : get(userPreferences, prefSpecs.resultPanelTab(question.name), question.defaultSummaryView));
+      : get(userPreferences, prefSpecs.resultPanelTab(question.fullName), question.defaultSummaryView));
 
 export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): ResultPanelState | undefined => resultPanel[viewId];
 
