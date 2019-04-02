@@ -35,17 +35,17 @@ export default class DefaultQuestionForm extends React.Component<Props> {
   handleSubmit = (e: React.FormEvent) => {
     const { dispatchAction, state: { question } } = this.props;
     e.preventDefault();
-    dispatchAction(submitQuestion({ questionName: question.urlSegment }));
+    dispatchAction(submitQuestion({ searchName: question.urlSegment }));
   }
 
   handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { dispatchAction, state: { question } } = this.props;
-    dispatchAction(updateCustomQuestionName({ questionName: question.urlSegment, customName: event.target.value }));
+    dispatchAction(updateCustomQuestionName({ searchName: question.urlSegment, customName: event.target.value }));
   }
 
   handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { dispatchAction, state: { question } } = this.props;
-    dispatchAction(updateQuestionWeight({ questionName: question.urlSegment, weight: event.target.value }));
+    dispatchAction(updateQuestionWeight({ searchName: question.urlSegment, weight: event.target.value }));
   }
 
   render() {
@@ -60,7 +60,7 @@ export default class DefaultQuestionForm extends React.Component<Props> {
             .map(group =>
               <Group
                 key={group.name}
-                questionName={question.urlSegment}
+                searchName={question.urlSegment}
                 group={group}
                 uiState={groupUIState[group.name]}
                 onVisibilityChange={eventHandlers.setGroupVisibility}
@@ -111,7 +111,7 @@ export default class DefaultQuestionForm extends React.Component<Props> {
 }
 
 type GroupProps = {
-  questionName: string;
+  searchName: string;
   group: ParameterGroup;
   uiState: any;
   onVisibilityChange: EventHandlers['setGroupVisibility'];
@@ -129,7 +129,7 @@ function Group(props: GroupProps) {
 }
 
 function ShowHideGroup(props: GroupProps) {
-  const { questionName, group, uiState: { isVisible }, onVisibilityChange } = props;
+  const { searchName, group, uiState: { isVisible }, onVisibilityChange } = props;
   return (
     <div className={cx('ShowHideGroup')} >
       <button
@@ -137,7 +137,7 @@ function ShowHideGroup(props: GroupProps) {
         className={cx('ShowHideGroupToggle')}
         onClick={() => {
           onVisibilityChange({
-            questionName,
+            searchName,
             groupName: group.name,
             isVisible: !isVisible
           })

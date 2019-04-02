@@ -23,19 +23,19 @@ type OwnProps = { question: string; recordClass: string; }
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 type Props = DispatchProps & StateProps & {
-  questionName: string,
+  searchName: string,
   recordClassName: string
 };
 
 function QuestionController(props: Props) {
-  const { dispatch, eventHandlers, questionName, recordClassName, ...state } = props;
+  const { dispatch, eventHandlers, searchName, recordClassName, ...state } = props;
   
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
-      questionName,
+      searchName,
       stepId: undefined
     }))
-  }, [questionName]);
+  }, [searchName]);
 
   // TODO Add document.title logic
 
@@ -50,12 +50,12 @@ function QuestionController(props: Props) {
         context={{
           type: 'questionFormParameter',
           name: parameter.name,
-          questionName,
+          searchName,
           recordClassName
         }}
         pluginProps={{
           ctx: {
-            questionName,
+            searchName,
             parameter,
             paramValues: state.paramValues
           },
@@ -64,7 +64,7 @@ function QuestionController(props: Props) {
           uiState: state.paramUIState[parameter.name],
           onParamValueChange: (paramValue: string) => {
             eventHandlers.updateParamValue({
-              questionName,
+              searchName,
               parameter,
               paramValues: state.paramValues,
               paramValue
@@ -80,8 +80,8 @@ function QuestionController(props: Props) {
     <Plugin
       context={{
         type: 'questionForm',
-        name: questionName,
-        questionName,
+        name: searchName,
+        searchName,
         recordClassName
       }}
       pluginProps={{
@@ -100,7 +100,7 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
-    questionName: ownProps.question,
+    searchName: ownProps.question,
     recordClassName: ownProps.recordClass
   })
 )
