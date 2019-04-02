@@ -8,13 +8,13 @@ export default QuestionWizardController => class ClinEpiQuestionWizard extends Q
     });
   }
 
-  getEventHandlers() {
-    return Object.assign(super.getEventHandlers(), {
-      setUseRangeForNumRelativeEvents: this.setUseRangeForNumRelativeEvents
+  getWizardEventHandlers() {
+    return Object.assign(super.getWizardEventHandlers(), {
+      onUseRangeForNumRelativeEventsChange: this.onUseRangeForNumRelativeEventsChange
     });
   }
 
-  setUseRangeForNumRelativeEvents(useRangeForNumRelativeEvents) {
+  onUseRangeForNumRelativeEventsChange(useRangeForNumRelativeEvents) {
     this.setState({ useRangeForNumRelativeEvents });
   }
 

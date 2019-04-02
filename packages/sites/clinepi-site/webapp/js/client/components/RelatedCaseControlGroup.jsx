@@ -55,7 +55,7 @@ export default class RelatedCaseControlGroup extends React.Component {
             type="checkbox"
             checked={RelatedCaseControlGroup.isEnabled(this.props)}
             onClick={() => {
-              this.props.eventHandlers.setParamValue(
+              this.props.parameterEventHandlers.onParamValueChange(
                 this.props.wizardState.question.parameters.find(p => p.name === TOGGLE_PARAM_NAME),
                 RelatedCaseControlGroup.isEnabled(this.props) ? 'No' : 'Yes'
               );
@@ -87,9 +87,7 @@ export default class RelatedCaseControlGroup extends React.Component {
         param={param}
         value={this.props.wizardState.paramValues[param.name]}
         uiState={this.props.wizardState.paramUIState[param.name]}
-        onActiveOntologyTermChange={this.props.eventHandlers.setActiveOntologyTerm}
-        onParamValueChange={this.props.eventHandlers.setParamValue}
-        onParamStateChange={this.props.eventHandlers.setParamState}
+        {...this.props.parameterEventHandlers}
       />
     );
   }

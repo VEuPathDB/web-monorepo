@@ -16,13 +16,6 @@ wdk.namespace('wdk.dataRestriction', (ns, $) => {
     const isSearchPage = restrictionType && restrictionType === Action.search;
     if (isSearchPage) attempt(Action.search, { studyId });
 
-    const isResultsPage = $element.children('.Results_Div').length !== 0;
-    if (isResultsPage) attempt(Action.results, { studyId });
-
-    addHandler('.analysis-selector', 'click', Action.analysis);
-    addHandler('.paging-table table:first a, .paging-table table:first .paging-button', 'click', Action.paginate);
-    addHandler('a[id^=basket]', 'click', Action.basket);
-    addHandler('a.step-download-link', 'click', Action.download);
     // approximate selector for record links
     addHandler(`a[href*="\\/record\\/${studyId}_"]`, 'click', Action.record);
 
