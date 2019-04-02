@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import React, { FormEvent, ReactNode, Fragment } from 'react';
+import React, { FormEvent, ReactNode } from 'react';
 
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -210,7 +210,7 @@ const title = createSelector(
     }: UserCommentPostRequest
   ) => {
     return (
-      <Fragment>
+      <>
         <h1>
           {
             editing
@@ -237,9 +237,9 @@ const title = createSelector(
 
         {
           targetType === 'gene' && (
-            <Fragment>
-              If this is a <b>new gene</b>, please also add a comment in the corresponding <a href={`/app/user-comments/add?stableId=${contig}&commentTargetId=genome&externaDbName=${name}&externalDbVersion=${version}`}>Genome Sequence</a> 
-            </Fragment>
+            <>
+              If this is a <b>new gene</b>, please also add a comment in the corresponding <Link to={`/user-comments/add?stableId=${contig}&commentTargetId=genome&externaDbName=${name}&externalDbVersion=${version}`}>Genome Sequence</Link> 
+            </>
           )
         }
 
@@ -248,7 +248,7 @@ const title = createSelector(
             'This form can be used for adding comments for a new gene. '
           )
         }
-      </Fragment>
+      </>
     )
   }
 );

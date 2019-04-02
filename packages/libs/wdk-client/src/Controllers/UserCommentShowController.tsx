@@ -115,7 +115,7 @@ const title = createSelector(
   (userComments, targetType, targetId, returnUrl) =>
     <>
       <h1>
-        {capitalize(targetType)} comments on <a href={returnUrl} target="_blank">{targetId}</a>
+        {capitalize(targetType)} comments on <Link to={returnUrl} target="_blank">{targetId}</Link>
       </h1>
       {
         (userComments.length === 0) && (
