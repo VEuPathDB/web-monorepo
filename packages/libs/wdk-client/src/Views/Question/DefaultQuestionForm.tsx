@@ -5,7 +5,6 @@ import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import ParameterComponent from 'wdk-client/Views/Question/ParameterComponent';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   changeGroupVisibility,
@@ -25,6 +24,7 @@ type Props = {
   state: QuestionState;
   dispatchAction: DispatchAction;
   eventHandlers: EventHandlers;
+  parameterElements: Record<string, React.ReactNode>;
 }
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
@@ -35,22 +35,22 @@ export default class DefaultQuestionForm extends React.Component<Props> {
   handleSubmit = (e: React.FormEvent) => {
     const { dispatchAction, state: { question } } = this.props;
     e.preventDefault();
-    dispatchAction(submitQuestion({ searchName: question.urlSegment }));
+    dispatchAction(submitQuestion({ questionName: question.urlSegment }));
   }
 
   handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { dispatchAction, state: { question } } = this.props;
-    dispatchAction(updateCustomQuestionName({ searchName: question.urlSegment, customName: event.target.value }));
+    dispatchAction(updateCustomQuestionName({ questionName: question.urlSegment, customName: event.target.value }));
   }
 
   handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { dispatchAction, state: { question } } = this.props;
-    dispatchAction(updateQuestionWeight({ searchName: question.urlSegment, weight: event.target.value }));
+    dispatchAction(updateQuestionWeight({ questionName: question.urlSegment, weight: event.target.value }));
   }
 
   render() {
-    const { state, eventHandlers, dispatchAction } = this.props
-    const { customName, groupUIState, paramValues, paramUIState, question, weight } = state;
+    const { state, eventHandlers, parameterElements } = this.props
+    const { customName, groupUIState, question, weight } = state;
     return (
       <div className={cx()}>
         <h1>{question.displayName}</h1>
@@ -60,19 +60,15 @@ export default class DefaultQuestionForm extends React.Component<Props> {
             .map(group =>
               <Group
                 key={group.name}
-                searchName={question.urlSegment}
+                questionName={question.urlSegment}
                 group={group}
                 uiState={groupUIState[group.name]}
                 onVisibilityChange={eventHandlers.setGroupVisibility}
               >
                 <ParameterList
-                  searchName={question.urlSegment}
-                  dispatch={dispatchAction}
                   parameterMap={question.parametersByName}
+                  parameterElements={parameterElements}
                   parameters={group.parameters}
-                  paramValues={paramValues}
-                  paramUIState={paramUIState}
-                  onParamValueChange={eventHandlers.updateParamValue}
                 />
               </Group>
             )
@@ -115,7 +111,7 @@ export default class DefaultQuestionForm extends React.Component<Props> {
 }
 
 type GroupProps = {
-  searchName: string;
+  questionName: string;
   group: ParameterGroup;
   uiState: any;
   onVisibilityChange: EventHandlers['setGroupVisibility'];
@@ -133,7 +129,7 @@ function Group(props: GroupProps) {
 }
 
 function ShowHideGroup(props: GroupProps) {
-  const { searchName, group, uiState: { isVisible }, onVisibilityChange } = props;
+  const { questionName, group, uiState: { isVisible }, onVisibilityChange } = props;
   return (
     <div className={cx('ShowHideGroup')} >
       <button
@@ -141,7 +137,7 @@ function ShowHideGroup(props: GroupProps) {
         className={cx('ShowHideGroupToggle')}
         onClick={() => {
           onVisibilityChange({
-            searchName,
+            questionName,
             groupName: group.name,
             isVisible: !isVisible
           })
@@ -158,16 +154,12 @@ function ShowHideGroup(props: GroupProps) {
 
 
 type ParameterListProps = {
-  searchName: string;
   parameters: string[];
   parameterMap: Record<string, Parameter>;
-  paramValues: Record<string, string>;
-  paramUIState: Record<string, any>;
-  onParamValueChange: EventHandlers['updateParamValue'];
-  dispatch: DispatchAction;
+  parameterElements: Record<string, React.ReactNode>;
 }
 function ParameterList(props: ParameterListProps) {
-  const { dispatch, parameters, parameterMap, paramValues, paramUIState, searchName, onParamValueChange } = props;
+  const { parameters, parameterMap, parameterElements } = props;
   return (
     <div className={cx('ParameterList')}>
       {Seq.from(parameters)
@@ -176,25 +168,7 @@ function ParameterList(props: ParameterListProps) {
           <React.Fragment key={parameter.name}>
             <ParameterHeading parameter={parameter}/>
             <div className={cx('ParameterControl')}>
-              <ParameterComponent
-                ctx={{
-                  searchName,
-                  parameter,
-                  paramValues
-                }}
-                parameter={parameter}
-                value={paramValues[parameter.name]}
-                uiState={paramUIState[parameter.name]}
-                onParamValueChange={paramValue => {
-                  onParamValueChange({
-                    searchName,
-                    parameter,
-                    paramValues,
-                    paramValue
-                  })
-                }}
-                dispatch={dispatch}
-              />
+              {parameterElements[parameter.name]}
             </div>
           </React.Fragment>
         ))}

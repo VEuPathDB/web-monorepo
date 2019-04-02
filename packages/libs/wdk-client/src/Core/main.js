@@ -13,6 +13,7 @@ import { loadAllStaticData } from 'wdk-client/Actions/StaticDataActions';
 import * as Controllers from 'wdk-client/Controllers';
 import Root from 'wdk-client/Core/Root';
 import wdkRoutes from 'wdk-client/Core/routes';
+import defaultPluginConfig from 'wdk-client/Core/pluginConfig';
 
 import storeModules from 'wdk-client/StoreModules';
 import { createWdkStore } from 'wdk-client/Core/Store';
@@ -87,7 +88,7 @@ export function initialize(options) {
             rootUrl,
             store,
             history,
-            pluginConfig,
+            pluginConfig: pluginConfig.concat(defaultPluginConfig),
             routes: wrapRoutes(wdkRoutes),
             onLocationChange: handleLocationChange,
           });

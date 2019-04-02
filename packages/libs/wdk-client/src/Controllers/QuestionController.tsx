@@ -1,71 +1,108 @@
-import * as React from 'react';
+import { mapValues } from 'lodash';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from "redux";
-import PageController from 'wdk-client/Core/Controllers/PageController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import DefaultQuestionForm from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import {
   updateActiveQuestion,
   updateParamValue,
   changeGroupVisibility
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import Error from 'wdk-client/Components/PageStatus/Error';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 const ActionCreators = {
   updateParamValue,
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { question: string; }
+type OwnProps = { question: string; recordClass: string; }
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
-type Props = OwnProps & DispatchProps & StateProps;
+type Props = DispatchProps & StateProps & {
+  questionName: string,
+  recordClassName: string
+};
 
-class QuestionController extends PageController<Props> {
+function QuestionController(props: Props) {
+  const { dispatch, eventHandlers, questionName, recordClassName, ...state } = props;
+  
+  useEffect(() => {
+    props.dispatch(updateActiveQuestion({
+      questionName,
+      stepId: undefined
+    }))
+  }, [questionName]);
 
-  loadData() {
-    if (this.props.questionStatus == null) {
-      this.props.dispatch(updateActiveQuestion({
-        stepId: undefined,
-        searchName: this.props.question
-      }));
-    }
-  }
+  // TODO Add document.title logic
 
-  isRenderDataLoaded() {
-    return this.props.questionStatus === 'complete';
-  }
+  if (state.questionStatus === 'error') return <Error/>;
+  if (state.questionStatus === 'not-found') return <NotFound/>;
+  if (state.questionStatus !== 'complete') return null;
 
-  isRenderDataLoadError() {
-    return this.props.questionStatus === 'error';
-  }
-
-  isRenderDataNotFound() {
-    return this.props.questionStatus === 'not-found';
-  }
-
-  getTitle() {
-    return !this.props.question || !this.props.recordClass ? 'Loading' :
-      `Search for ${this.props.recordClass.displayNamePlural}
-      by ${this.props.question.displayName}`;
-  }
-
-  renderView() {
-    return (
-      <DefaultQuestionForm
-        state={this.props}
-        eventHandlers={this.props.eventHandlers}
-        dispatchAction={this.props.dispatch}
+  const parameterElements = mapValues(
+    state.question.parametersByName,
+    parameter => (
+      <Plugin
+        context={{
+          type: 'questionFormParameter',
+          name: parameter.name,
+          questionName,
+          recordClassName
+        }}
+        pluginProps={{
+          ctx: {
+            questionName,
+            parameter,
+            paramValues: state.paramValues
+          },
+          parameter: parameter,
+          value: state.paramValues[parameter.name],
+          uiState: state.paramUIState[parameter.name],
+          onParamValueChange: (paramValue: string) => {
+            eventHandlers.updateParamValue({
+              questionName,
+              parameter,
+              paramValues: state.paramValues,
+              paramValue
+            })
+          },
+          dispatch: dispatch
+        }}
       />
-    );
-  }
+    )
+  );
 
+  return (
+    <Plugin
+      context={{
+        type: 'questionForm',
+        name: questionName,
+        questionName,
+        recordClassName
+      }}
+      pluginProps={{
+        parameterElements,
+        state: state,
+        eventHandlers: eventHandlers,
+        dispatchAction: dispatch
+      }}
+    />
+  );
 }
 
-const enhance = connect<StateProps, DispatchProps, OwnProps, RootState>(
+const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state, props) => state.question.questions[props.question] || {} as QuestionState,
-  dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) })
+  (dispatch) => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) }),
+  (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    ...dispatchProps,
+    questionName: ownProps.question,
+    recordClassName: ownProps.recordClass
+  })
 )
 
 export default enhance(wrappable(QuestionController));
