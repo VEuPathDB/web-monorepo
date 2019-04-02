@@ -26,7 +26,10 @@ export default [
   {
     type: 'summaryView',
     name: 'popset-view',
-    component: () => <div>TODO</div>
+    component: () => <div style={{margin: "2em", fontSize: "120%", fontWeight: "bold"}}>
+                          The Popset Isolate Sequences geographical map is down at the moment.<br/> 
+                          Google is changing its Maps API products business model.<br/>
+                          We are working on a new an improved map for a future release.</div>
   },
   {
     type: 'questionFilter',
