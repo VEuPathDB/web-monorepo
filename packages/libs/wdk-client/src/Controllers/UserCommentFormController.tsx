@@ -20,6 +20,7 @@ import { UserCommentFormState, CategoryChoice } from 'wdk-client/StoreModules/Us
 import { PubMedIdsField } from 'wdk-client/Views/UserCommentForm/PubmedIdField';
 import { AttachmentsField } from 'wdk-client/Views/UserCommentForm/AttachmentsField';
 import { LocationField } from 'wdk-client/Views/UserCommentForm/LocationField';
+import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
 
 type StateProps = {
   submitting: boolean;
@@ -60,6 +61,7 @@ type DispatchProps = {
   requestSubmitComment: (request: UserCommentPostRequest) => void;
   showPubmedPreview: (pubMedIds: string[]) => void;
   hidePubmedPreview: () => void;
+  showLoginForm: (url?: string) => void;
 };
 
 export interface UserCommentQueryStringParams {
@@ -87,6 +89,7 @@ interface OwnProps {
 type MergedProps = UserCommentFormViewProps & {
   documentTitle: string;
   permissionDenied: boolean;
+  showLoginForm: (url: string) => void;
   formLoaded: boolean;
   openAddComment: (request: UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>) => void;
   openEditComment: (commentId: number) => void;
@@ -348,7 +351,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   removeAttachedFile: (attachmentId: number) => dispatch(removeAttachedFile(attachmentId)),
   addFileToAttach: (newFileSpec: UserCommentAttachedFileSpec) => dispatch(addFileToAttach(newFileSpec)),
   removeFileToAttach: (index: number) => dispatch(removeFileToAttach(index)),
-  modifyFileToAttach: (newFileSpec: Partial<UserCommentAttachedFileSpec>, index: number) => dispatch(modifyFileToAttach(newFileSpec, index))
+  modifyFileToAttach: (newFileSpec: Partial<UserCommentAttachedFileSpec>, index: number) => dispatch(modifyFileToAttach(newFileSpec, index)),
+  showLoginForm: (url?: string) => dispatch(showLoginForm(url))
 });
 
 const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => {
@@ -561,7 +565,8 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
     openEditComment: dispatchProps.openEditComment,
     queryParams: stateProps.queryParams,
     backendValidationErrors: stateProps.backendValidationErrors,
-    internalError: stateProps.internalError
+    internalError: stateProps.internalError,
+    showLoginForm: dispatchProps.showLoginForm
   };
 };
 
@@ -600,10 +605,6 @@ class UserCommentFormController extends PageController<Props> {
     return this.props.documentTitle;
   }
 
-  isRenderDataPermissionDenied() {
-    return this.props.permissionDenied;
-  }
-
   isRenderDataLoaded() {
     return this.props.formLoaded;
   }
@@ -615,11 +616,27 @@ class UserCommentFormController extends PageController<Props> {
       openEditComment,
       queryParams,
       documentTitle,
+      permissionDenied,
+      showLoginForm,
       ...viewProps
     } = this.props;
 
     return (
-      <UserCommentFormView {...viewProps} />
+      permissionDenied
+        ? (
+          <>
+            <h1>
+              Login Required
+            </h1>
+            <p>
+              Please <a href="#" onClick={event => {
+                event.preventDefault();
+                showLoginForm(window.location.href);
+              }}>login</a> to continue.
+            </p>
+          </>
+        )
+        : <UserCommentFormView {...viewProps} />
     );
   }
 }
