@@ -27,9 +27,11 @@ export default [
     type: 'summaryView',
     name: 'popset-view',
     component: () => <div style={{margin: "2em", fontSize: "120%", fontWeight: "bold"}}>
-                          The Popset Isolate Sequences geographical map is down at the moment.<br/> 
-                          Google is changing its Maps API products business model.<br/>
-                          We are working on a new an improved map for a future release.</div>
+                       The Popset Isolate Sequences geographical map is not available since Google 
+                         has changed its Maps API products business model.<br/>
+                       We are working on a new and improved map for a future release.<br/>
+                       Feel free to <a href='/a/app/contact-us'>contact us</a> with any comments and suggestions.
+                     </div>
   },
   {
     type: 'questionFilter',
