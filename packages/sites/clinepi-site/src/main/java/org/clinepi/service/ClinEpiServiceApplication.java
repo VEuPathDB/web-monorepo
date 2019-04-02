@@ -8,6 +8,7 @@ import org.gusdb.fgputil.SetBuilder;
 import org.gusdb.wdk.service.WdkServiceApplication;
 import org.gusdb.wdk.service.service.user.ProfileService;
 import org.clinepi.service.services.ShinyDataService;
+import org.clinepi.service.services.ShinyQueryService;
 
 public class ClinEpiServiceApplication extends WdkServiceApplication {
 
@@ -29,6 +30,9 @@ public class ClinEpiServiceApplication extends WdkServiceApplication {
 
       // add web service to find shiny input files
       .add(ShinyDataService.class)
+
+      // add service to let shiny apps query db
+      .add(ShinyQueryService.class) 
 
       .toSet();
   }
