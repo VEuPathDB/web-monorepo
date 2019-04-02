@@ -11,6 +11,8 @@ import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 import { Question, SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
 import { ResultPanelState } from 'wdk-client/StoreModules/ResultPanelStoreModule';
+import { UserPreferences } from 'wdk-client/Utils/WdkUser';
+import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
 
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
@@ -42,18 +44,24 @@ export const question = (
   const question = questions.find(({ urlSegment }) => urlSegment === searchName);
   return question;
 };
+
+export const userPreferences = (
+  state: RootState
+) => state.globalData.preferences;
+
 export const summaryViewPlugins = createSelector<RootState, Props, Question | undefined, SummaryViewPluginField[]>(
   question,
   question => question 
     ? question.summaryViewPlugins
     : []
 );
-export const defaultSummaryView = createSelector<RootState, Props, Question | undefined, string>(
+export const defaultSummaryView = createSelector<RootState, Props, UserPreferences | undefined, Question | undefined, string>(
+  userPreferences,
   question,
-  question => question 
-    ? question.defaultSummaryView
-    : ''
-);
+  (userPreferences, question) =>
+    userPreferences == null || question == null
+      ? ''
+      : get(userPreferences, prefSpecs.resultPanelTab(question.name), question.defaultSummaryView));
 
 export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): ResultPanelState | undefined => resultPanel[viewId];
 

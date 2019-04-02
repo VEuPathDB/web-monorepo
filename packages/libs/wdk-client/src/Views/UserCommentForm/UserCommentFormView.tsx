@@ -15,6 +15,7 @@ export interface UserCommentFormViewProps {
   className?: string;
   headerClassName?: string;
   bodyClassName?: string;
+  footerClassName?: string;
   onSubmit: (event: FormEvent) => void;
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
   formGroupHeaders: Record<string, ReactNode>;
@@ -22,6 +23,8 @@ export interface UserCommentFormViewProps {
   formGroupClassName?: string;
   formGroupHeaderClassName?: string;
   formGroupBodyClassName?: string;
+  backendValidationErrors: string[];
+  internalError: string;
 }
 
 export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
@@ -31,10 +34,13 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
   className,
   headerClassName,
   bodyClassName,
+  footerClassName,
   onSubmit,
   completed,
   returnUrl,
   returnLinkText,
+  backendValidationErrors,
+  internalError,
   ...formBodyProps
 }) => (
   <div className={className}>
@@ -59,6 +65,33 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
                   <input type="submit" disabled={submitting} value={buttonText} />
                 </div>
               </form>
+            </div>
+            <div className={footerClassName}>
+              {
+                (backendValidationErrors.length > 0) && (
+                  <div>
+                    Please correct the following and resubmit your comment:
+                    <ul>
+                      {
+                        backendValidationErrors.map(
+                          error => <li key={error}>{error}</li>
+                        )
+                      }
+                    </ul>
+                  </div>
+                )
+              }
+              {
+                internalError && (
+                  <div>
+                    The following error occurred while trying to submit your comment. Please try to resubmit and <Link to="/contact-us" target="_blank">contact us</Link> if this problem persists.
+                    
+                    <pre>
+                      {internalError}
+                    </pre>
+                  </div>
+                )
+              }
             </div>
           </>
         )

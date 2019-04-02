@@ -19,7 +19,7 @@ const columnKeys = [
 ];
 
 const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): ColumnSettings[] => columnKeys.map(key => (
-  key === 'species'
+  key === 'species' || key === 'description'
     ? {
       key,
       name: headerRow[key],
@@ -53,7 +53,6 @@ export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginP
       emptyResultMessage={'No enrichment was found for the threshold you specified.'}
       rows={resultData}
       columns={hpiGeneListResultColumns(headerRow, headerDescription)}
-      initialSortColumnKey={'pValue'}
     />
   </>
 );

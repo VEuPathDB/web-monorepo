@@ -1,37 +1,23 @@
-import { Action } from 'wdk-client/Actions';
-
 import { get } from 'lodash';
+import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
+import { empty, Observable } from 'rxjs';
+import { filter, mergeMap, mergeMapTo, tap } from 'rxjs/operators';
 
-import { 
-  Action as ResultPanelActions,
-  openTabListing,
-  selectSummaryView
-} from 'wdk-client/Actions/ResultPanelActions';
-
-import {
-  questionsLoaded
-} from 'wdk-client/Actions/StaticDataActions';
-
-import {
-  requestStep, fulfillStep
-} from 'wdk-client/Actions/StepActions';
-
-import { EpicDependencies } from 'wdk-client/Core/Store';
-
-import { RootState } from 'wdk-client/Core/State/Types';
-
-import { combineEpics, ActionsObservable, StateObservable } from 'redux-observable';
-import { filter, mergeMap } from 'rxjs/operators';
+import { Action } from 'wdk-client/Actions';
+import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
+import { requestStep } from 'wdk-client/Actions/StepActions';
 import { startLoadingTabListing } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
+import { question as selectQuestion } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { EpicDependencies } from 'wdk-client/Core/Store';
 import { indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
+import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
 
 export type ResultPanelState = {
-  stepId: number;
   activeSummaryView: string | null;
 };
 
 const initialState = {
-  stepId: -1,
   activeSummaryView: null
 };
 
@@ -56,15 +42,29 @@ export const reduce = indexByActionProperty(
 )
 
 export const observe = combineEpics(
-  observeOpenTabListing
+  observeOpenTabListing,
+  observeSelectSummaryView
 );
 
-function observeOpenTabListing(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, dependencies: EpicDependencies) {
+function observeOpenTabListing(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, dependencies: EpicDependencies): Observable<Action> {
   return action$.pipe(
-    mergeMap(
-      // TODO: Figure out why the payload type isn't being inferred from filter(openTabListing.isOfType)
-      action => action.type !== openTabListing.type
-        ? []
-        : [ startLoadingTabListing(action.payload.stepId), requestStep(action.payload.stepId) ])
-  );
+    filter(openTabListing.isOfType),
+    mergeMap(action => [
+      startLoadingTabListing(action.payload.stepId) as Action,
+      requestStep(action.payload.stepId) as Action
+    ]));
+}
+
+function observeSelectSummaryView(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
+  return action$.pipe(
+    filter(selectSummaryView.isOfType),
+    tap(action => {
+      const question = selectQuestion(state$.value, { stepId: action.payload.stepId, viewId: action.payload.viewId });
+      if (question == null) return;
+
+      const [ scope, key ] = prefSpecs.resultPanelTab(question.name);
+      wdkService.patchUserPreference(scope, key, action.payload.summaryView);
+    }),
+    mergeMapTo(empty())
+  )
 }

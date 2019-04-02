@@ -7,7 +7,7 @@ export const openTabListing = makeActionCreator(
 
 export const selectSummaryView = makeActionCreator(
   'result-panel/select-summary-view',
-  (viewId: string, summaryView: string | null) => ({ viewId, summaryView })
+  (viewId: string, stepId: number, summaryView: string | null) => ({ viewId, stepId, summaryView })
 );
 
 export type Action = InferAction<typeof openTabListing> | InferAction<typeof selectSummaryView>;

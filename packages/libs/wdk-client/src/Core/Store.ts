@@ -1,5 +1,5 @@
 import { compose, mapKeys, mapValues, values } from 'lodash/fp';
-import { applyMiddleware, combineReducers, createStore, Reducer } from 'redux';
+import { applyMiddleware, combineReducers, createStore, Reducer, Middleware } from 'redux';
 import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
 import { EMPTY } from 'rxjs';
 import { Action } from 'wdk-client/Actions';
@@ -32,7 +32,13 @@ type StoreModuleRecord<T extends Record<string, any>> = {
 type RootReducer<T> = Reducer<T, Action>;
 type SubReducer<T> = Reducer<T[keyof T], Action>;
 
-export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, wdkService: WdkService, transitioner: PageTransitioner) {
+export function createWdkStore<T>(
+  storeModules: StoreModuleRecord<T>,
+  wdkService: WdkService,
+  transitioner: PageTransitioner,
+  // FIXME Figure out how to allow the order of middleware to be configured
+  additionalMiddleware: Middleware[] = []
+) {
   const rootReducer = makeRootReducer(storeModules);
   const rootEpic = makeRootEpic(storeModules);
   const epicMiddleware = createEpicMiddleware<Action, Action, T, EpicDependencies>({
@@ -47,6 +53,7 @@ export function createWdkStore<T>(storeModules: StoreModuleRecord<T>, wdkService
 
   const enhancer = composeEnhancers(
     applyMiddleware(
+      ...additionalMiddleware,
       wdkMiddleware({ wdkService, transitioner }),
       epicMiddleware,
     )

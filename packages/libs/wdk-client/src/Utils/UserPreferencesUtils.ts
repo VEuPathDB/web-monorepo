@@ -21,6 +21,11 @@ export type SummaryTableConfigUserPref = {
     sorting: AttributeSortingSpec[];
 }
 
+export enum Scope {
+  global = 'global',
+  project = 'project',
+}
+
 export const SORT_ASC = "ASC";
 export const SORT_DESC = "DESC";
 
@@ -34,11 +39,12 @@ const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, val
   await wdkService.patchSingleUserPreference(scope, key, value);
 
 export const prefSpecs = {
-  sort: (questionFullName: string): PrefSpec => [ 'project', questionFullName + '_sort' ],
-  summary: (questionFullName: string): PrefSpec => [ 'project', questionFullName + '_summary' ],
-  itemsPerPage: (): PrefSpec => [ 'global', 'preference_global_items_per_page' ],
-  matchedTranscriptsExpanded: (): PrefSpec => [ 'global', 'matchted_transcripts_filter_expanded' ],
-  globalViewFilters: (recordClassName: string): PrefSpec => ['project', recordClassName + '_globalViewFilters'],
+  sort: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_sort' ],
+  summary: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_summary' ],
+  itemsPerPage: (): PrefSpec => [ Scope.global, 'preference_global_items_per_page' ],
+  matchedTranscriptsExpanded: (): PrefSpec => [ Scope.global, 'matchted_transcripts_filter_expanded' ],
+  globalViewFilters: (recordClassName: string): PrefSpec => [Scope.project, recordClassName + '_globalViewFilters'],
+  resultPanelTab: (questionFullName: string): PrefSpec => [Scope.project, questionFullName + '_resultPanelTab']
 }
 
 async function getQuestionFromSearchName(searchName: string, wdkService: WdkService) : Promise<Question> {

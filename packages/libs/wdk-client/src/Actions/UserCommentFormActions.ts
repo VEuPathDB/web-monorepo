@@ -1,5 +1,6 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { UserComment, UserCommentPostRequest, UserCommentFormFields, UserCommentAttachedFileSpec, UserCommentAttachedFile, PubmedPreview, UserCommentGetResponse, UserCommentRawFormFields } from "wdk-client/Utils/WdkUser";
+import { CategoryChoice } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 
 // we open the form in one of two modes:
 //  new comment:  we receive some initial comment values from the URL used to call the route
@@ -7,6 +8,7 @@ import { UserComment, UserCommentPostRequest, UserCommentFormFields, UserComment
 interface OpenNewCommentPayload {
     isNew: true;
     initialValues: UserCommentPostRequest;
+    initialRawFields: Partial<UserCommentRawFormFields>;
   }
   
   interface OpenExistingCommentPayload {
@@ -27,10 +29,10 @@ become the previousCommentId in the new comment we submit holding the edits)
     */
 export const openUserCommentForm = makeActionCreator(
     'user-comment/open',
-    (idOrInitValues: number | UserCommentPostRequest): OpenCommentPayload =>
+    (idOrInitValues: number | UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>): OpenCommentPayload =>
         typeof idOrInitValues === 'number'
             ? { isNew: false, commentId: idOrInitValues }
-            : { isNew: true, initialValues: idOrInitValues },
+            : { isNew: true, initialValues: idOrInitValues, initialRawFields },
 );
 
 export const closeUserCommentForm = makeActionCreator (
@@ -42,7 +44,20 @@ export const closeUserCommentForm = makeActionCreator (
 // values from the route.  in edit mode, from the previous comment
 export const fulfillUserComment = makeActionCreator (
     'userCommentForm/fulfillPreviousUserComment',
-    (userComment: { editMode: false, formValues: UserCommentPostRequest } | { editMode: true, formValues: UserCommentGetResponse }) => ({ userComment })
+    (userComment: 
+        | { 
+            editMode: false, 
+            formValues: UserCommentPostRequest, 
+            initialRawFields: Partial<UserCommentRawFormFields>,
+            categoryIdOptions: CategoryChoice[]
+        } 
+        | { 
+            editMode: true, 
+            formValues: UserCommentGetResponse,
+            categoryIdOptions: CategoryChoice[]
+        }
+    ) => 
+        ({ userComment })
 );
 
 // the user has updated one or more fields in the form.  the state in this action will replace
@@ -133,6 +148,16 @@ export const fulfillUpdateAttachedFiles = makeActionCreator (
     (userCommentId: number, filesToAttach: UserCommentAttachedFileSpec[], fileIdsToRemove: number[]) => ({ userCommentId, filesToAttach, fileIdsToRemove })
 );
 
+export const reportBackendValidationErrors = makeActionCreator (
+    'userCommentForm/reportBackendValidationErrors',
+    (backendValidationErrors: string[]) => ({ backendValidationErrors })
+);
+
+export const reportInternalError = makeActionCreator (
+    'userCommentForm/reportInternalError',
+    (internalError: string) => ({ internalError })
+)
+
 export type Action =
     | InferAction<typeof openUserCommentForm>
     | InferAction<typeof closeUserCommentForm>
@@ -150,4 +175,6 @@ export type Action =
     | InferAction<typeof requestSubmitComment>
     | InferAction<typeof fulfillSubmitComment>
     | InferAction<typeof requestUpdateAttachedFiles>
-    | InferAction<typeof fulfillUpdateAttachedFiles>;
+    | InferAction<typeof fulfillUpdateAttachedFiles>
+    | InferAction<typeof reportBackendValidationErrors>
+    | InferAction<typeof reportInternalError>;
