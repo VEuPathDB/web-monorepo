@@ -1,14 +1,14 @@
 import React, { Fragment } from 'react';
-import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
-import { integerCell, decimalCellFactory, scientificCellFactory } from './Utils/StepAnalysisResults';
+import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane'
 import { StepAnalysisEnrichmentResultTable, ColumnSettings } from './StepAnalysisEnrichmentResultTable';
+import Templates from 'wdk-client/Components/Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
+import { Tooltip } from 'wdk-client/Components';
 
 const columnKeys = [
   'species',
   'experimentName',
-  'description',
   'type',
   'c11',
   'c22',
@@ -19,7 +19,7 @@ const columnKeys = [
 ];
 
 const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): ColumnSettings[] => columnKeys.map(key => (
-  key === 'species' || key === 'description'
+  key === 'species'
     ? {
       key,
       name: headerRow[key],
@@ -32,8 +32,20 @@ const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): Colum
       name: headerRow[key],
       helpText: headerDescription[key],
       renderCell: key === 'experimentName'
-        ? ({ row }: any) => (
-            <a href={`${row.uri}`} target="_blank">{row.experimentName}</a>
+        ? (cellProps: any) => (
+            <Tooltip
+              content={Templates.htmlCell({
+                ...cellProps,
+                key: 'description',
+                value: cellProps.row.description
+              })}
+            >
+              <a 
+                title={cellProps.row.description} 
+                href={`${cellProps.row.uri}`} 
+                target="_blank">{cellProps.row.experimentName}
+              </a>
+            </Tooltip>
           )
         : ({ row }: any) => row[key],
       sortable: false
@@ -53,6 +65,7 @@ export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginP
       emptyResultMessage={'No enrichment was found for the threshold you specified.'}
       rows={resultData}
       columns={hpiGeneListResultColumns(headerRow, headerDescription)}
+      fixedTableHeader
     />
   </>
 );
