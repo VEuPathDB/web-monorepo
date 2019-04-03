@@ -280,12 +280,11 @@ async function getFulfillColumnsChoicePreference(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillColumnsChoice>> {
-  const columns = stepAction.payload.step.displayPrefs.columnSelection
-    ? stepAction.payload.step.displayPrefs.columnSelection
-    : await getResultTableColumnsPref(
-        requestAction.payload.questionName,
-        wdkService
-      );
+  const columns = await getResultTableColumnsPref(
+    wdkService,
+    requestAction.payload.questionName,
+    openAction.payload.stepId
+  );
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     columns,
@@ -431,17 +430,16 @@ async function getFulfillSortingUpdate(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillSorting>> {
   const {
-    step: { id, displayPrefs }
+    step: { id }
   } = stepAction.payload;
   const sortColumns = requestAction.payload.sorting.map(
     ({ attributeName: name, direction }) => ({ name, direction })
   );
-  const columnSelection = displayPrefs.columnSelection
-    ? displayPrefs.columnSelection
-    : await getResultTableColumnsPref(
-        requestAction.payload.questionName,
-        wdkService
-      );
+  const columnSelection = await getResultTableColumnsPref(
+    wdkService,
+    requestAction.payload.questionName,
+    openAction.payload.stepId
+  );
   // save user preference and update step
   // FIXME Update step with redux
   setResultTableSortingPref(

@@ -237,7 +237,7 @@ function getColumns({
     .map(attribute => ({
       key: attribute.name,
       sortable: attribute.isSortable,
-      moveable: attribute.name !== recordClass.recordIdAttributeName,
+      moveable: attribute.name !== recordClass.recordIdAttributeName && attribute.isRemovable,
       helpText: attribute.help,
       name: attribute.displayName,
       renderCell: ({ row, key }: { row: RecordInstance; key: string }) =>

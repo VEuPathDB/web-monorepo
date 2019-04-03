@@ -1,4 +1,4 @@
-import { parseInt, isInteger } from 'lodash/fp';
+import { parseInt, isInteger, uniq } from 'lodash/fp';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
@@ -47,14 +47,21 @@ export const prefSpecs = {
   resultPanelTab: (questionName: string): PrefSpec => [Scope.project, questionName + '_resultPanelTab']
 }
 
-export async function getResultTableColumnsPref(questionName: string, wdkService: WdkService): Promise<string[]> {
-    const columnsPref = await getPrefWith(wdkService, prefSpecs.summary(questionName));
-    if (columnsPref) return columnsPref.split(/,\s*/);
-
-    const questions = await wdkService.getQuestions();
-    const question = questions.find(question => question.name === questionName);
-    if (question == null) throw new Error(`Unknown question "${questionName}".`);
-    return question.defaultAttributes;
+export async function getResultTableColumnsPref(wdkService: WdkService, questionName: string, stepId?: number): Promise<string[]> {
+  const question = await wdkService.findQuestion(({ name }) => name === questionName);
+  const recordClass = await wdkService.findRecordClass(({ name }) => name === question.recordClassName);
+  const fixedColumns = [
+    recordClass.recordIdAttributeName,
+    ...recordClass.attributes
+      .filter(({ isRemovable}) => !isRemovable)
+      .map(({ name }) => name)
+  ];
+  const displayPrefsColumns = stepId && (await wdkService.findStep(stepId)).displayPrefs.columnSelection;
+  const columnsPref = await getPrefWith(wdkService, prefSpecs.summary(questionName));
+  const columns = displayPrefsColumns ? displayPrefsColumns
+    : columnsPref ? columnsPref.trim().split(/,\s*/)
+    : question.defaultAttributes;
+  return uniq(fixedColumns.concat(columns));
 }
 
 export async function setResultTableColumnsPref(questionName: string, wdkService: WdkService, columns : Array<string>) : Promise<UserPreferences> {
