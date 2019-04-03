@@ -446,6 +446,8 @@ export function takeEpicInWindow<State, StartAction extends WdkAction, EndAction
         const window$ = concat(
           of(startAction),
           action$.pipe(
+            // Filter out other start actions. We might want to do some sort of comparison with startAction...?
+            filter(action => !startActionCreator.isOfType(action)),
             takeWhile(action => {
               return (
                 !endActionCreator.isOfType(action) ||
