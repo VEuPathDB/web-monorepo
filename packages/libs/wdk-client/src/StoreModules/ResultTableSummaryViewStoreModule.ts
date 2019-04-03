@@ -18,6 +18,7 @@ import {
   fulfillRecordsBasketStatus,
   fulfillSorting,
   openResultTableSummaryView,
+  closeResultTableSummaryView,
   requestAnswer,
   requestColumnsChoicePreference,
   requestColumnsChoiceUpdate,
@@ -809,10 +810,10 @@ function filterFulfillGlobalViewFiltersActionsUpdate(
 export const observe = takeEpicInWindow(
   {
     startActionCreator: openResultTableSummaryView,
-    endActionCreator: openResultTableSummaryView,
+    endActionCreator: closeResultTableSummaryView,
     compareStartAndEndActions: (
       start: InferAction<typeof openResultTableSummaryView>,
-      end: InferAction<typeof openResultTableSummaryView>
+      end: InferAction<typeof closeResultTableSummaryView>
     ) => start.payload.viewId === end.payload.viewId
   },
   combineEpics(
