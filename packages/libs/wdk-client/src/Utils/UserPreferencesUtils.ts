@@ -1,4 +1,4 @@
-import { parseInt, isInteger, uniq } from 'lodash/fp';
+import { parseInt, uniq } from 'lodash/fp';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
@@ -84,7 +84,7 @@ export async function setResultTableSortingPref(questionName: string, wdkService
 
 export async function getResultTablePageSizePref(wdkService: WdkService): Promise<number> {
   const sizeString = await getPrefWith(wdkService, prefSpecs.itemsPerPage());
-  return isInteger(sizeString) ? parseInt(10, sizeString) : 20;
+  return parseInt(10, sizeString) || 20;
 }
 
 export async function setResultTablePageSizePref(wdkService: WdkService, pageSize : number) : Promise<UserPreferences> {
