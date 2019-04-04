@@ -42,7 +42,7 @@
               <tr>
                 <td>
                   <label>
-                    <span style="font-weight:bold; padding-right: .5em;">(Fold Change) Cutoff Type</span>
+                    <span style="font-weight:bold; padding-right: .5em;">Cutoff Statistic</span>
                     <imp:helpIcon helpContent="${viewModel.thresholdTypeParamHelp}"/>
                   </label>
                 </td>
@@ -59,15 +59,50 @@
                 <td>
                   <label>
                     <span style="font-weight:bold; padding-right: .5em;">
-                      (Fold Change) Cutoff Value <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
+                      Cutoff Value <span style="color:blue;font-size:0.95em;font-family:monospace">(number 0-1)</span>
                     </span>
                     <imp:helpIcon helpContent="${viewModel.thresholdParamHelp}"/>
                   </label>
                 </td>
                 <td>
-                  <input type="text" name="thresholdParam" size="10" value="5"/>
+                  <input type="text" name="thresholdParam" size="10" value="0.05"/>
                 </td>
               </tr>
+
+
+
+
+              <tr>
+                <td>
+                  <label>
+                    <span style="font-weight:bold; padding-right: .5em;">Target Gene List Cutoff Metric</span>
+                    <imp:helpIcon helpContent="${viewModel.datasetCutoffTypeParamHelp}"/>
+                  </label>
+                </td>
+                <td>
+                  <select name="datasetCutoffTypeParam">
+                    <c:forEach var="item" items="${viewModel.datasetCutoffTypeOptions}">
+                      <option value="${item.term}">${item.display}</option>
+                    </c:forEach>
+                  </select>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <label>
+                    <span style="font-weight:bold; padding-right: .5em;">
+                      (Fold Change) Cutoff Value <span style="color:blue;font-size:0.95em;font-family:monospace">(number > 0)</span>
+                    </span>
+                    <imp:helpIcon helpContent="${viewModel.datasetCutoffParamHelp}"/>
+                  </label>
+                </td>
+                <td>
+                  <input type="text" name="datasetCutoffParam" size="10" value="5"/>
+                </td>
+              </tr>
+
+
 
 
               <tr>
