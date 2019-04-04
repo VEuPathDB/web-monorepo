@@ -9,33 +9,36 @@ import {
 
 export const requestGenomeSummaryReport = makeActionCreator(
   'genomeSummaryView/requestGenomeSummaryReport',
-  (stepId: number) => ({ stepId })
+  (viewId: string, stepId: number) => ({ viewId, stepId })
 );
 
 export const fulfillGenomeSummaryReport = makeActionCreator(
   'genomeSummaryView/fulfillGenomeSummaryReport',
   (
+    viewId: string,
     genomeSummaryViewReport: GenomeSummaryViewReport,
     recordClass: RecordClass
-  ) => ({ genomeSummaryViewReport, recordClass })
+  ) => ({ viewId, genomeSummaryViewReport, recordClass })
 );
 
 export const showRegionDialog = makeActionCreator(
   'genomeSummaryView/showRegionDialog',
-  (regionId: string) => ({ regionId })
+  (viewId: string, regionId: string) => ({ viewId, regionId })
 );
 
 export const hideRegionDialog = makeActionCreator(
   'genomeSummaryView/hideRegionDialog',
-  (regionId: string) => ({ regionId })
+  (viewId: string, regionId: string) => ({ viewId, regionId })
 );
 
 export const applyEmptyChromosomesFilter = makeActionCreator(
-  'genomeSummaryView/applyEmptyChromosomesFilter'
+  'genomeSummaryView/applyEmptyChromosomesFilter',
+  (viewId: string) => ({ viewId })
 );
 
 export const unapplyEmptyChromosomesFilter = makeActionCreator(
-  'genomeSummaryView/unapplyEmptyChromosomesFilter'
+  'genomeSummaryView/unapplyEmptyChromosomesFilter',
+  (viewId: string) => ({ viewId })
 );
 
 export type Action =

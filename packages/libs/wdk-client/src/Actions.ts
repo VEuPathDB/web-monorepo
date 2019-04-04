@@ -17,7 +17,6 @@ import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
 import * as UserDatasetsActions from 'wdk-client/Actions/UserDatasetsActions';
 import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
-import * as IsolatesSummaryViewActions from 'wdk-client/Actions/SummaryView/IsolatesSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StepActions from 'wdk-client/Actions/StepActions';
 import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
@@ -48,7 +47,6 @@ export {
   UserDatasetsActions,
   ResultTableSummaryViewActions,
   BlastSummaryViewActions,
-  IsolatesSummaryViewActions,
   GenomeSummaryViewActions,
   WordCloudAnalysisActions,
   HistogramAnalysisActions,
@@ -80,7 +78,6 @@ export type Action =
   | UserCommentShowActions.Action
   | ResultTableSummaryViewActions.Action
   | BlastSummaryViewActions.Action
-  | IsolatesSummaryViewActions.Action
   | GenomeSummaryViewActions.Action
   | WordCloudAnalysisActions.Action
   | HistogramAnalysisActions.Action

@@ -1,3 +1,4 @@
+import { get } from 'lodash/fp';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { Action } from 'wdk-client/Actions';
 import {
@@ -14,6 +15,7 @@ import {
   InferAction,
   mergeMapRequestActionsToEpic
 } from 'wdk-client/Utils/ActionCreatorUtils';
+import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 import { getStepBundlePromise } from 'wdk-client/Utils/stepUtils';
 import {
   GenomeSummaryViewReport,
@@ -22,23 +24,28 @@ import {
 import WdkService from 'wdk-client/Utils/WdkService';
 
 export const key = 'genomeSummaryView';
+export type State = IndexedState<ViewState>;
+export const reduce = indexByActionProperty(reduceView, get(['payload', 'viewId']));
 
-export type State = {
+type ViewState = {
   genomeSummaryData?: GenomeSummaryViewReport;
   recordClass?: RecordClass;
   regionDialogVisibilities: Record<string, boolean>;
   emptyChromosomeFilterApplied: boolean;
 };
 
-const initialState: State = {
+const initialState: ViewState = {
   genomeSummaryData: undefined,
   recordClass: undefined,
   regionDialogVisibilities: {},
   emptyChromosomeFilterApplied: false
 };
 
-export function reduce(state: State = initialState, action: Action): State {
+function reduceView(state: ViewState = initialState, action: Action): ViewState {
   switch (action.type) {
+    case requestGenomeSummaryReport.type: {
+      return initialState;
+    }
     case fulfillGenomeSummaryReport.type: {
       return {
         ...state,
@@ -113,7 +120,7 @@ async function getGenomeSummaryViewReport(
     requestAction.payload.stepId,
     { format: format }
   );
-  return fulfillGenomeSummaryReport(report, recordClass);
+  return fulfillGenomeSummaryReport(requestAction.payload.viewId, report, recordClass);
 }
 
 export const observe = combineEpics(

@@ -9,7 +9,7 @@ export const requestBlastSummaryReport = makeActionCreator(
 
 export const fulfillBlastSummaryReport = makeActionCreator(
   'blastSummaryView/fulfillBlastSummaryReport',
-  (blastInfo: BlastSummaryViewReport) => ({ blastInfo })
+  (stepId: number, blastInfo: BlastSummaryViewReport) => ({ blastInfo, stepId })
 );
 
 export type Action =

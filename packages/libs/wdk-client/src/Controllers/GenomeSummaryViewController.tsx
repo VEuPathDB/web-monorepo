@@ -1,20 +1,30 @@
+import { partial } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch, bindActionCreators } from 'redux';
 
 import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Loading } from 'wdk-client/Components';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import { RootState } from 'wdk-client/Core/State/Types';
-import * as actionCreators from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
+import {
+  requestGenomeSummaryReport,
+  showRegionDialog,
+  hideRegionDialog,
+  applyEmptyChromosomesFilter,
+  unapplyEmptyChromosomesFilter
+} from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import { GenomeSummaryView } from 'wdk-client/Components/GenomeSummaryView/GenomeSummaryView';
 import { get, toLower } from 'lodash';
 import { GenomeSummaryViewReport } from 'wdk-client/Utils/WdkModel';
 import { createSelector } from 'reselect';
 import { GenomeSummaryViewReportModel, toReportModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { identity } from 'rxjs';
+import { Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
 
-type StateProps = {
+type StateProps = { status: 'loading' } | {
+  status: 'complete'
   genomeSummaryData?: GenomeSummaryViewReportModel;
   displayName: string;
   displayNamePlural: string;
@@ -25,19 +35,31 @@ type StateProps = {
   emptyChromosomeFilterApplied: boolean;
 };
 
-type DispatchProps = typeof actionCreators;
-type OwnProps = { stepId: number };
-type Props = OwnProps & StateProps & DispatchProps;
+type DispatchProps = {
+  requestGenomeSummaryReport: Partial1<typeof requestGenomeSummaryReport>;
+  showRegionDialog: Partial1<typeof showRegionDialog>;
+  hideRegionDialog: Partial1<typeof hideRegionDialog>;
+  applyEmptyChromosomesFilter: Partial1<typeof applyEmptyChromosomesFilter>;
+  unapplyEmptyChromosomesFilter: Partial1<typeof unapplyEmptyChromosomesFilter>;
+};
+
+type OwnProps = { viewId: string, stepId: number };
+
+type Props = {
+  state: StateProps,
+  actionCreators: DispatchProps,
+  ownProps: OwnProps
+};
 
 class GenomeSummaryViewController extends ViewController< Props > {
 
   isRenderDataLoaded() {
-    return this.props.genomeSummaryData != null;
+    return this.props.state.status !== 'loading';
   }
 
-  loadData () {
-    if (this.props.genomeSummaryData == null) {
-      this.props.requestGenomeSummaryReport(this.props.stepId);
+  loadData (prevProps?: Props) {
+    if (prevProps == null || prevProps.ownProps.stepId !== this.props.ownProps.stepId) {
+      this.props.actionCreators.requestGenomeSummaryReport(this.props.ownProps.stepId);
     }
   }
 
@@ -50,22 +72,22 @@ class GenomeSummaryViewController extends ViewController< Props > {
   }
 
   renderView() {
-    if (this.props.genomeSummaryData == null) return <Loading/>;
+    if (this.props.state.status == 'loading' || this.props.state.genomeSummaryData == null) return <Loading/>;
 
     return (
       <GenomeSummaryView  
-        genomeSummaryData={this.props.genomeSummaryData}
-        displayName={this.props.displayName}
-        displayNamePlural={this.props.displayNamePlural}
-        regionDialogVisibilities={this.props.regionDialogVisibilities}
-        emptyChromosomeFilterApplied={this.props.emptyChromosomeFilterApplied}
-        webAppUrl={this.props.webAppUrl}
-        siteName={this.props.siteName}
-        recordType={this.props.recordType}
-        showRegionDialog={this.props.showRegionDialog}
-        hideRegionDialog={this.props.hideRegionDialog}
-        applyEmptyChromosomeFilter={this.props.applyEmptyChromosomesFilter}
-        unapplyEmptyChromosomeFilter={this.props.unapplyEmptyChromosomesFilter}
+        genomeSummaryData={this.props.state.genomeSummaryData}
+        displayName={this.props.state.displayName}
+        displayNamePlural={this.props.state.displayNamePlural}
+        regionDialogVisibilities={this.props.state.regionDialogVisibilities}
+        emptyChromosomeFilterApplied={this.props.state.emptyChromosomeFilterApplied}
+        webAppUrl={this.props.state.webAppUrl}
+        siteName={this.props.state.siteName}
+        recordType={this.props.state.recordType}
+        showRegionDialog={this.props.actionCreators.showRegionDialog}
+        hideRegionDialog={this.props.actionCreators.hideRegionDialog}
+        applyEmptyChromosomeFilter={this.props.actionCreators.applyEmptyChromosomesFilter}
+        unapplyEmptyChromosomeFilter={this.props.actionCreators.unapplyEmptyChromosomesFilter}
       />
     );
   }
@@ -81,24 +103,40 @@ const reportModel = createSelector<GenomeSummaryViewReport, GenomeSummaryViewRep
   toReportModel
 );
 
-const mapStateToProps = ({
-  genomeSummaryView: genomeSummaryViewState,
-  globalData: globalDataState
-}: RootState): StateProps => ({
-  genomeSummaryData: genomeSummaryViewState.genomeSummaryData
-    ? reportModel(genomeSummaryViewState.genomeSummaryData)
-    : undefined,
-  displayName: get(genomeSummaryViewState, 'recordClass.displayName', ''),
-  displayNamePlural: get(genomeSummaryViewState, 'recordClass.displayNamePlural', ''),
-  recordType: urlSegmentToRecordType(get(genomeSummaryViewState, 'recordClass.urlSegment', '')),
-  siteName: toLower(get(globalDataState, 'siteConfig.projectId', '')),
-  webAppUrl: get(globalDataState, 'siteConfig.webAppUrl', ''),
-  regionDialogVisibilities: genomeSummaryViewState.regionDialogVisibilities,
-  emptyChromosomeFilterApplied: genomeSummaryViewState.emptyChromosomeFilterApplied
-});
+function mapStateToProps(state: RootState, props: OwnProps): StateProps {
+  const genomeSummaryViewState = state.genomeSummaryView[props.viewId];
+  const globalDataState = state.globalData;
 
-export default connect(
+  if (genomeSummaryViewState == null) return { status: 'loading' };
+
+  return {
+    status: 'complete',
+    genomeSummaryData: genomeSummaryViewState.genomeSummaryData
+      ? reportModel(genomeSummaryViewState.genomeSummaryData)
+      : undefined,
+    displayName: get(genomeSummaryViewState, 'recordClass.displayName', ''),
+    displayNamePlural: get(genomeSummaryViewState, 'recordClass.displayNamePlural', ''),
+    recordType: urlSegmentToRecordType(get(genomeSummaryViewState, 'recordClass.urlSegment', '')),
+    siteName: toLower(get(globalDataState, 'siteConfig.projectId', '')),
+    webAppUrl: get(globalDataState, 'siteConfig.webAppUrl', ''),
+    regionDialogVisibilities: genomeSummaryViewState.regionDialogVisibilities,
+    emptyChromosomeFilterApplied: genomeSummaryViewState.emptyChromosomeFilterApplied
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): DispatchProps {
+  return bindActionCreators({
+    requestGenomeSummaryReport: partial(requestGenomeSummaryReport, props.viewId),
+    showRegionDialog: partial(showRegionDialog, props.viewId),
+    hideRegionDialog: partial(hideRegionDialog, props.viewId),
+    applyEmptyChromosomesFilter: partial(applyEmptyChromosomesFilter, props.viewId),
+    unapplyEmptyChromosomesFilter: partial(unapplyEmptyChromosomesFilter, props.viewId)
+  }, dispatch);
+}
+
+export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   mapStateToProps,
-  actionCreators
+  mapDispatchToProps,
+  (state, actionCreators, ownProps) => ({ state, actionCreators, ownProps })
 ) (wrappable(GenomeSummaryViewController));
 
