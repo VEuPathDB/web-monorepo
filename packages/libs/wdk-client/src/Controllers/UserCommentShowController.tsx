@@ -23,6 +23,7 @@ type StateProps = {
   userComments: UserCommentGetResponse[];
   loading: boolean;
   title: ReactNode;
+  webAppUrl: string;
 };
 
 type DispatchProps = {
@@ -60,6 +61,11 @@ const targetId = (state: RootState, props: OwnProps) => {
 const userId = createSelector<RootState, GlobalData, number>(
   globalData,
   (globalData: GlobalData) => get(globalData, 'user.id', 0)
+);
+
+const webAppUrl = createSelector<RootState, GlobalData, string>(
+  globalData,
+  (globalData: GlobalData) => get(globalData, 'siteConfig.webAppUrl', '')
 );
 
 const documentTitle = createSelector(
@@ -132,7 +138,8 @@ const mapStateToProps = (state: RootState, props: OwnProps) => ({
   documentTitle: documentTitle(state, props),
   userComments: userComments(state),
   loading: loading(state),
-  title: title(state, props)
+  title: title(state, props),
+  webAppUrl: webAppUrl(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -141,7 +148,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 });
 
 const mergeProps = (
-  { documentTitle, userId, userComments, loading, title }: StateProps, 
+  { documentTitle, userId, userComments, loading, title, webAppUrl }: StateProps, 
   { loadUserComments, deleteUserComment }: DispatchProps,
   { targetId, targetType }: OwnProps
 ) => {
@@ -334,7 +341,29 @@ const mergeProps = (
           key: 'attachments',
           label: 'Uploaded Files:',
           field: (
-            <UserCommentUploadedFiles uploadedFiles={comment.attachments} />
+            <UserCommentUploadedFiles 
+              uploadedFiles={
+                comment.attachments.map(
+                  ({
+                    id,
+                    name,
+                    description
+                  }) => ({
+                    id,
+                    name,
+                    description,
+                    preview: 
+                      (
+                        name.toLowerCase().includes('.png') || 
+                        name.toLowerCase().includes('.jpg') || 
+                        name.toLowerCase().includes('.jpeg')
+                      ) 
+                      ? `${webAppUrl}/service/user-comments/${comment.id}/attachments/${id}`
+                      : undefined
+                  })
+                )
+              } 
+            />
           )
         },
         {

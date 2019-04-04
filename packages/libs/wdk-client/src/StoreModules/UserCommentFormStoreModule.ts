@@ -104,8 +104,12 @@ const getResponseToPostRequest = (userCommentGetResponse: UserCommentGetResponse
 });
 
 const getResponseToRawFormFields = (userCommentGetResponse: UserCommentGetResponse): UserCommentRawFormFields => ({
-    coordinateType: get(userCommentGetResponse, 'location.coordinateType', 'genomef'),
-    ranges: get(userCommentGetResponse, 'location.ranges', ''),
+    coordinateType: get(userCommentGetResponse, 'location.reverse', false)
+        ? 'genomer'
+        : 'genomef',
+    ranges: get(userCommentGetResponse, 'location.ranges', [])
+        .map(({ start, end }: { start: number, end: number }) => `${start}-${end}`)
+        .join(', '),
     pubMedIds: userCommentGetResponse.pubMedRefs.map(({ id }) => id).join(', '),
     digitalObjectIds: userCommentGetResponse.digitalObjectIds.join(', '),
     genBankAccessions: userCommentGetResponse.genBankAccessions.join(', '),

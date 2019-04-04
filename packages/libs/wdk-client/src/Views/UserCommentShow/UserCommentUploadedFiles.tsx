@@ -35,7 +35,19 @@ export const UserCommentUploadedFiles: React.SFC<UserCommentUploadedFileProps> =
                   <td>{index + 1}</td>
                   <td>{name}</td>
                   <td>{description}</td>
-                  <td>{preview ? <a href={preview}><img src={preview} /></a> : null}</td>
+                  <td>{
+                    preview 
+                      ? <a 
+                          href={preview}
+                        >
+                          <img 
+                            src={preview}
+                            width={80}
+                            height={80} 
+                          />
+                        </a> 
+                      : null
+                  }</td>
                 </tr>
               )
             )
