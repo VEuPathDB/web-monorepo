@@ -297,7 +297,7 @@ const mergeProps = (
                           ({ start, end }) => `${start}-${end}`
                         ).join(', ')
                       }
-                      {comment.location.reversed && ` (reversed)`}
+                      {comment.location.reverse && ` (reversed)`}
                     </>
                   )
                   : null
@@ -415,7 +415,9 @@ const mergeProps = (
                   {' '}
                   <Link to={`/user-comments/delete?commentId=${comment.id}`} onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
                     event.preventDefault();
-                    deleteUserComment(comment.id);
+                    if (confirm(`Are you sure you wish to delete comment ${comment.id}?`)) {
+                      deleteUserComment(comment.id);
+                    }
                   }}>
                     [delete comment]
                   </Link>

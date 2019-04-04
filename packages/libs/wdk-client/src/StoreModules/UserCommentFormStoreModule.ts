@@ -118,6 +118,15 @@ const getResponseToRawFormFields = (userCommentGetResponse: UserCommentGetRespon
 
 export function reduce(state: State = initialState, action: Action): State {
     switch (action.type) {
+        case openUCF.type: {
+            return {
+                ...state,
+                submitting: false,
+                completed: false,
+                backendValidationErrors: [],
+                internalError: ''
+            };
+        }
         case allDataLoaded.type: {
             return { ...state, projectIdLoaded: true };
         }
@@ -235,46 +244,25 @@ export function reduce(state: State = initialState, action: Action): State {
 }
 
 async function getFulfillUserComment([openAction]: [InferAction<typeof openUCF>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillUserComment>> {
-    // TODO: Replace the RHS with an invocation to a WDK service
-    const categoryIdOptions = await [
-        {
-            display: 'Phenotype',
-            value: '0'
-        },
-        {
-            display: 'New Gene',
-            value: '1'
-        },
-        {
-            display: 'New Feature',
-            value: '2'
-        },
-        {
-            display: 'Centromere',
-            value: '3'
-        },
-        {
-            display: 'Genomic Assembly',
-            value: '4'
-        },
-        {
-            display: 'Sequence',
-            value: '5'
-        }
-    ];
-
-    return openAction.payload.isNew
-        ? fulfillUserComment({ 
+    if (openAction.payload.isNew) {
+        return fulfillUserComment({ 
             editMode: false, 
             formValues: openAction.payload.initialValues, 
             initialRawFields: openAction.payload.initialRawFields,
-            categoryIdOptions
-        })
-        : fulfillUserComment({ 
+            categoryIdOptions: await wdkService.getUserCommentCategories(
+                get(openAction.payload.initialValues, 'target.type', '')
+            )
+        });
+    } else {
+        const formValues = await wdkService.getUserComment(openAction.payload.commentId);
+        const categoryIdOptions = await wdkService.getUserCommentCategories(formValues.target.type);
+
+        return fulfillUserComment({ 
             editMode: true, 
-            formValues: await wdkService.getUserComment(openAction.payload.commentId),
+            formValues,
             categoryIdOptions
         });
+    }
 }
 
 async function getFulfillPubmedPreview([requestAction]: [InferAction<typeof requestPubmedPreview>], state$: StateObservable<State>, { wdkService }: EpicDependencies): Promise<InferAction<typeof fulfillPubmedPreview>> {

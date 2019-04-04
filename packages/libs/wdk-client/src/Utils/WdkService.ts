@@ -37,6 +37,7 @@ import {
   SummaryViewPluginField,
 } from 'wdk-client/Utils/WdkModel';
 import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
+import { CategoryChoice } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 
 /**
  * Header added to service requests to indicate the version of the model
@@ -995,6 +996,19 @@ export default class WdkService {
     return this._fetchJson<UserCommentGetResponse[]>(
       'get',
       `/user-comments?target-type=${targetType}&target-id=${targetId}`
+    );
+  }
+
+  getUserCommentCategories(targetType: string): Promise<CategoryChoice[]> {
+    return this._fetchJson<{ name: string, value: number }[]>(
+      'get',
+      `/user-comments/category-list?target-type=${targetType}`
+    ).then(categories => categories.map(
+        ({ name, value }) => ({
+          display: name,
+          value: `${value}`
+        })
+      )
     );
   }
 

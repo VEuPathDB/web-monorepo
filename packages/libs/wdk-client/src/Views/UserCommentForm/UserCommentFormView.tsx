@@ -1,9 +1,10 @@
 import React, { ReactNode, FormEvent } from 'react';
-import { Link } from 'wdk-client/Components';
+import { Link, Loading } from 'wdk-client/Components';
 import { FormRowProps } from 'wdk-client/Views/UserCommentForm/FormRow';
 import { FormBody } from 'wdk-client/Views/UserCommentForm/FormBody';
 
 import 'wdk-client/Views/UserCommentForm/UserCommentFormView.scss'
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 export interface UserCommentFormViewProps {
   title: ReactNode;
@@ -15,7 +16,7 @@ export interface UserCommentFormViewProps {
   className?: string;
   headerClassName?: string;
   bodyClassName?: string;
-  footerClassName?: string;
+  errorsClassName?: string;
   onSubmit: (event: FormEvent) => void;
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
   formGroupHeaders: Record<string, ReactNode>;
@@ -27,6 +28,8 @@ export interface UserCommentFormViewProps {
   internalError: string;
 }
 
+const cx = makeClassNameHelper('wdk-UserComments-Form');
+
 export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
   title,
   buttonText,
@@ -34,7 +37,7 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
   className,
   headerClassName,
   bodyClassName,
-  footerClassName,
+  errorsClassName,
   onSubmit,
   completed,
   returnUrl,
@@ -48,50 +51,57 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
       completed
         ? (
           <>
-            Thank you for the comment.
-            <br /><br />
+            <h1>Thank You For The Comment</h1>
             <Link to={returnUrl}>{returnLinkText}</Link>
           </>
         )
         : (
           <>
+            {
+              submitting &&
+              <div className={cx('-LoadingOverlay')}>
+                <Loading className={cx('-Loading')}>
+                  Submitting Your Comment...
+                </Loading>
+              </div>
+            }
             <div className={headerClassName}>
               {title}
             </div>
             <div className={bodyClassName}>
               <form onSubmit={onSubmit}>
                 <FormBody {...formBodyProps} />  
+                <div className={errorsClassName}>
+                  {
+                    (backendValidationErrors.length > 0) && (
+                      <div>
+                        Please correct the following and resubmit your comment:
+                        <ul>
+                          {
+                            backendValidationErrors.map(
+                              error => <li key={error}>{error}</li>
+                            )
+                          }
+                        </ul>
+                      </div>
+                    )
+                  }
+                  {
+                    internalError && (
+                      <div>
+                        An internal error occurred while trying to submit your comment. Please try to resubmit and <Link to="/contact-us" target="_blank">contact us</Link> if this problem persists.
+                        
+                        <pre>
+                          {internalError}
+                        </pre>
+                      </div>
+                    )
+                  }
+                </div>
                 <div>
                   <input type="submit" disabled={submitting} value={buttonText} />
                 </div>
               </form>
-            </div>
-            <div className={footerClassName}>
-              {
-                (backendValidationErrors.length > 0) && (
-                  <div>
-                    Please correct the following and resubmit your comment:
-                    <ul>
-                      {
-                        backendValidationErrors.map(
-                          error => <li key={error}>{error}</li>
-                        )
-                      }
-                    </ul>
-                  </div>
-                )
-              }
-              {
-                internalError && (
-                  <div>
-                    The following error occurred while trying to submit your comment. Please try to resubmit and <Link to="/contact-us" target="_blank">contact us</Link> if this problem persists.
-                    
-                    <pre>
-                      {internalError}
-                    </pre>
-                  </div>
-                )
-              }
             </div>
           </>
         )

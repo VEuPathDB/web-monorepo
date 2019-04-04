@@ -114,7 +114,7 @@ export type ReviewStatus =
 export interface UserCommentLocation {
   coordinateType: string, 
   ranges: { start: number, end: number }[],
-  reversed?: boolean
+  reverse?: boolean
 }
 
 // fields the user supplies
@@ -164,7 +164,7 @@ export interface UserCommentGetResponse {
   digitalObjectIds: string[];
   externalDatabase?: { name: string, version: string };
   genBankAccessions: string[];
-  headline: string;
+  headline?: string;
   id: number;
   location?: UserCommentLocation;
   project: {
