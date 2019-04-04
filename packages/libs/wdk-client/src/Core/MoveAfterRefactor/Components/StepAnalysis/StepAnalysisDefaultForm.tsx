@@ -94,10 +94,6 @@ const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
 }) => (
   <Fragment>
     {paramSpec.displayName}
-    {
-      paramSpec.type === 'NumberParam' &&
-      <span style={numberParamRangeSpanStyle}>({paramSpec.min} - {paramSpec.max})</span>
-    }
   </Fragment>
 );
 
@@ -130,11 +126,4 @@ const labelSpanStyle: React.CSSProperties = {
 
 const submitTdStyle: React.CSSProperties = {
   textAlign: 'center'
-};
-
-const numberParamRangeSpanStyle: React.CSSProperties = {
-  color: 'blue',
-  fontSize: '0.95em',
-  fontFamily: 'monospace',
-  marginLeft: '0.5em'
 };

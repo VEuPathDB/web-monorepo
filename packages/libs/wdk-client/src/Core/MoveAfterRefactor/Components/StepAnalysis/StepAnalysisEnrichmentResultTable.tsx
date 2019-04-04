@@ -25,6 +25,7 @@ export interface ColumnSettings {
   name: string;
   helpText: string;
   sortable: boolean;
+  type?: 'text' | 'html';
   width?: string;
   renderCell?: React.SFC;
   sortType?: 'text' | 'number' | 'htmlText' | 'htmlNumber';

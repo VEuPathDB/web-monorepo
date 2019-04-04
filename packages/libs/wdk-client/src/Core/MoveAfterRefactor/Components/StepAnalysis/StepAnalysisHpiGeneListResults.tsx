@@ -6,51 +6,73 @@ import Templates from 'wdk-client/Components/Mesa/Templates';
 import './StepAnalysisEnrichmentResult.scss';
 import { Tooltip } from 'wdk-client/Components';
 
-const columnKeys = [
-  'species',
-  'experimentName',
-  'type',
-  'c11',
-  'c22',
-  'c33',
-  'c44',
-  'c55',
-  'significance'
+const baseColumnSettings: Pick<ColumnSettings, 'key' | 'renderCell' | 'sortable' | 'sortType' | 'type'>[] = [
+  {
+    key: 'species',
+    type: 'html',
+    sortable: true,
+    sortType: 'htmlText'
+  },
+  {
+    key: 'experimentName',
+    renderCell: (cellProps: any) => (
+      <Tooltip
+        content={Templates.htmlCell({
+          ...cellProps,
+          key: 'description',
+          value: cellProps.row.description
+        })}
+      >
+        <a 
+          title={cellProps.row.description} 
+          href={`${cellProps.row.uri}`} 
+          target="_blank">{cellProps.row.experimentName}
+        </a>
+      </Tooltip>
+    ),
+    sortable: true
+  },
+  {
+    key: 'type',
+    sortable: true
+  },
+  {
+    key: 'c11',
+    sortable: true,
+    sortType: 'number'
+  },
+  {
+    key: 'c22',
+    sortable: true,
+    sortType: 'number'
+  },
+  {
+    key: 'c33',
+    sortable: true,
+    sortType: 'number'
+  },
+  {
+    key: 'c44',
+    sortable: true,
+    sortType: 'number'
+  },
+  {
+    key: 'c55',
+    sortable: true,
+    sortType: 'number'
+  },
+  {
+    key: 'significance',
+    sortable: true,
+    sortType: 'number'
+  }
 ];
 
-const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): ColumnSettings[] => columnKeys.map(key => (
-  key === 'species'
-    ? {
-      key,
-      name: headerRow[key],
-      helpText: headerDescription[key],
-      type: 'html',
-      sortable: false
-    }
-    : {
-      key,
-      name: headerRow[key],
-      helpText: headerDescription[key],
-      renderCell: key === 'experimentName'
-        ? (cellProps: any) => (
-            <Tooltip
-              content={Templates.htmlCell({
-                ...cellProps,
-                key: 'description',
-                value: cellProps.row.description
-              })}
-            >
-              <a 
-                title={cellProps.row.description} 
-                href={`${cellProps.row.uri}`} 
-                target="_blank">{cellProps.row.experimentName}
-              </a>
-            </Tooltip>
-          )
-        : ({ row }: any) => row[key],
-      sortable: false
-    }
-));
+const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): ColumnSettings[] => baseColumnSettings.map(column => ({
+  ...column,
+  name: headerRow[column.key],
+  helpText: headerDescription[column.key]
+}));
 
 export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginProps> = ({
   analysisResult: {
