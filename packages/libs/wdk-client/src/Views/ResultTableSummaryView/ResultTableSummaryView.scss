@@ -11,6 +11,14 @@
       flex-direction: row-reverse;
     }
 
+    // reduce padding/margin around heading elements
+    .HeadingCell {
+      button, .SortTrigger {
+        padding: 0;
+        margin-left: 0;
+      }
+    }
+
     // Force PagniationMenu to come before Toolbar
     .Toolbar + .PaginationMenu {
       order: -1;

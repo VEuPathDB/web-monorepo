@@ -7,6 +7,7 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {
   openResultTableSummaryView,
+  closeResultTableSummaryView,
   requestSortingUpdate,
   requestColumnsChoiceUpdate,
   requestPageSizeUpdate,
@@ -45,6 +46,7 @@ type DispatchProps = {
   closeAttributeAnalysis: typeof closeAttributeAnalysis;
   openAttributeAnalysis: typeof openAttributeAnalysis;
   openResultTableSummaryView: Partial1<typeof openResultTableSummaryView>;
+  closeResultTableSummaryView: Partial1<typeof closeResultTableSummaryView>;
   requestAddStepToBasket: typeof requestAddStepToBasket;
   requestColumnsChoiceUpdate: Partial1<typeof requestColumnsChoiceUpdate>;
   requestPageSizeUpdate: Partial1<typeof requestPageSizeUpdate>;
@@ -76,12 +78,14 @@ class ResultTableSummaryViewController extends React.Component< Props > {
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.stepId !== this.props.stepId) {
+      this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
       this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
       console.log('updating ResultTableSummaryViewController', this);
     }
   }
 
   componentWillUnmount() {
+    this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
     console.log('unmounting ResultTableSummaryViewController', this);
   }
 
@@ -152,6 +156,7 @@ function mapDispatchToProps(dispatch: Dispatch, { stepId, viewId }: OwnProps): D
     closeAttributeAnalysis,
     openAttributeAnalysis,
     openResultTableSummaryView: partial(openResultTableSummaryView, viewId),
+    closeResultTableSummaryView: partial(closeResultTableSummaryView, viewId),
     requestAddStepToBasket,
     requestColumnsChoiceUpdate: partial(requestColumnsChoiceUpdate, viewId),
     requestPageSizeUpdate: partial(requestPageSizeUpdate, viewId),

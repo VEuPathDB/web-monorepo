@@ -28,7 +28,13 @@ class TabbableContainer extends React.Component<Props> {
   }
 
   componentDidMount() {
-    if (this.props.autoFocus && this.node) {
+    if (
+      this.props.autoFocus &&
+      this.node &&
+      // only do this if the current active node is
+      // not a descendent of container
+      !this.node.contains(document.activeElement)
+    ) {
       $(this.node).find(':tabbable:first').focus();
     }
   }

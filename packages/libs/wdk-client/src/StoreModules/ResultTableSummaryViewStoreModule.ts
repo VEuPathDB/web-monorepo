@@ -18,6 +18,7 @@ import {
   fulfillRecordsBasketStatus,
   fulfillSorting,
   openResultTableSummaryView,
+  closeResultTableSummaryView,
   requestAnswer,
   requestColumnsChoicePreference,
   requestColumnsChoiceUpdate,
@@ -280,12 +281,13 @@ async function getFulfillColumnsChoicePreference(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillColumnsChoice>> {
-  const columns = stepAction.payload.step.displayPrefs.columnSelection
-    ? stepAction.payload.step.displayPrefs.columnSelection
-    : await getResultTableColumnsPref(
-        requestAction.payload.searchName,
-        wdkService
-      );
+
+  const columns = await getResultTableColumnsPref(
+    wdkService,
+    requestAction.payload.searchName,
+    openAction.payload.stepId
+  );
+
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     columns,
@@ -431,17 +433,18 @@ async function getFulfillSortingUpdate(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillSorting>> {
   const {
-    step: { id, displayPrefs }
+    step: { id }
   } = stepAction.payload;
   const sortColumns = requestAction.payload.sorting.map(
     ({ attributeName: name, direction }) => ({ name, direction })
   );
-  const columnSelection = displayPrefs.columnSelection
-    ? displayPrefs.columnSelection
-    : await getResultTableColumnsPref(
-        requestAction.payload.searchName,
-        wdkService
-      );
+
+  const columnSelection = await getResultTableColumnsPref(
+    wdkService,
+    requestAction.payload.searchName,
+    openAction.payload.stepId
+  );
+
   // save user preference and update step
   // FIXME Update step with redux
   setResultTableSortingPref(
@@ -811,10 +814,10 @@ function filterFulfillGlobalViewFiltersActionsUpdate(
 export const observe = takeEpicInWindow(
   {
     startActionCreator: openResultTableSummaryView,
-    endActionCreator: openResultTableSummaryView,
+    endActionCreator: closeResultTableSummaryView,
     compareStartAndEndActions: (
       start: InferAction<typeof openResultTableSummaryView>,
-      end: InferAction<typeof openResultTableSummaryView>
+      end: InferAction<typeof closeResultTableSummaryView>
     ) => start.payload.viewId === end.payload.viewId
   },
   combineEpics(

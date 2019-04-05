@@ -50,7 +50,7 @@ const initialState: State = { };
 export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
     case openMatchedTranscriptsFilter.type: {
-      return { ...state, stepId: action.payload.stepId };
+      return { stepId: action.payload.stepId };
     }
     case fulfillMatchedTransFilterExpanded.type: {
       return { ...state, expanded: action.payload.expanded };

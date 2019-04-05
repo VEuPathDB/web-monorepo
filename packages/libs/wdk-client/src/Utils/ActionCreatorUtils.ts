@@ -437,32 +437,36 @@ export function takeEpicInWindow<State, StartAction extends WdkAction, EndAction
   } = options;
   return function takeUntilEpic(action$, state$, deps) {
     // TODO Add logging diagnostics
-    const logTag = `[${startActionCreator.type} - ${endActionCreator.type}]`;
     return action$.pipe(
       filter(startActionCreator.isOfType),
       mergeMap((startAction: StartAction) => {
         // FIXME New epics are starting before previous are ending
+        const logTag = `[${startActionCreator.type} - ${endActionCreator.type} -- ${JSON.stringify(startAction)}]`;
+        const log = (...args: any[]) => console.log(logTag, '--', ...args);
         const window$ = concat(
           of(startAction),
           action$.pipe(
-            takeWhile(action => !(
-              endActionCreator.isOfType(action) &&
-              compareStartAndEndActions(startAction, action as EndAction)
-            ))
+            // Filter out other start actions. We might want to do some sort of comparison with startAction...?
+            filter(action => !startActionCreator.isOfType(action)),
+            takeWhile(action => {
+              return (
+                !endActionCreator.isOfType(action) ||
+                !compareStartAndEndActions(startAction, action as EndAction)
+              );
+            })
           )
         );
-
-        console.log(logTag, ' -- starting epic', startAction);
+        log('starting epic', startAction);
         return epic(ActionsObservable.from(window$), state$, deps).pipe(
           tap(
             action => {
-              console.log(logTag, 'action produced by epic in window', action);
+              log('action produced by epic in window', action.type, 'payload' in action ? action.payload : undefined);
             },
             error => {
-              console.log(logTag, 'error produced by epic in window', error);
+              log('error produced by epic in window', error);
             },
             () => {
-              console.log(logTag, ' -- ending epic', startAction);
+              log('ending epic', startAction);
             }
           )
         );

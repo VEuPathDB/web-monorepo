@@ -1,4 +1,4 @@
-import { parseInt, isInteger } from 'lodash/fp';
+import { parseInt, uniq } from 'lodash/fp';
 import WdkService from 'wdk-client/Utils/WdkService';
 import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
@@ -54,11 +54,21 @@ async function getQuestionFromSearchName(searchName: string, wdkService: WdkServ
   return question;
 }
 
-export async function getResultTableColumnsPref(searchName: string, wdkService: WdkService): Promise<string[]> {
-    const question = await getQuestionFromSearchName(searchName, wdkService);
-    const columnsPref = await getPrefWith(wdkService, prefSpecs.summary(question.fullName));
-    if (columnsPref) return columnsPref.split(/,\s*/);
-    return question.defaultAttributes;
+export async function getResultTableColumnsPref(wdkService: WdkService, searchName: string, stepId?: number): Promise<string[]> {
+  const question = await getQuestionFromSearchName(searchName, wdkService);
+  const recordClass = await wdkService.findRecordClass(({ fullName }) => fullName === question.recordClassName);
+  const fixedColumns = [
+    recordClass.recordIdAttributeName,
+    ...recordClass.attributes
+      .filter(({ isRemovable}) => !isRemovable)
+      .map(({ name }) => name)
+  ];
+  const displayPrefsColumns = stepId && (await wdkService.findStep(stepId)).displayPrefs.columnSelection;
+  const columnsPref = await getPrefWith(wdkService, prefSpecs.summary(question.fullName));
+  const columns = displayPrefsColumns ? displayPrefsColumns
+    : columnsPref ? columnsPref.trim().split(/,\s*/)
+    : question.defaultAttributes;
+  return uniq(fixedColumns.concat(columns));
 }
 
 export async function setResultTableColumnsPref(searchName: string, wdkService: WdkService, columns : Array<string>) : Promise<UserPreferences> {
@@ -80,7 +90,7 @@ export async function setResultTableSortingPref(searchName: string, wdkService: 
 
 export async function getResultTablePageSizePref(wdkService: WdkService): Promise<number> {
   const sizeString = await getPrefWith(wdkService, prefSpecs.itemsPerPage());
-  return isInteger(sizeString) ? parseInt(10, sizeString) : 20;
+  return parseInt(10, sizeString) || 20;
 }
 
 export async function setResultTablePageSizePref(wdkService: WdkService, pageSize : number) : Promise<UserPreferences> {

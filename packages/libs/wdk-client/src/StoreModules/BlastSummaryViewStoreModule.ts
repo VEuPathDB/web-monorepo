@@ -1,42 +1,46 @@
-import { requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
-import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-
-import { Action } from 'wdk-client/Actions';
-import { BlastSummaryViewReport } from 'wdk-client/Utils/WdkModel';
-import { EpicDependencies } from 'wdk-client/Core/Store';
-
+import { get } from 'lodash/fp';
+import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
-import {mergeMapRequestActionsToEpic} from 'wdk-client/Utils/ActionCreatorUtils';
-import { combineEpics} from 'redux-observable';
+import { Action } from 'wdk-client/Actions';
+import { fulfillBlastSummaryReport, requestBlastSummaryReport } from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { EpicDependencies } from 'wdk-client/Core/Store';
+import { InferAction, mergeMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { BlastSummaryViewReport } from 'wdk-client/Utils/WdkModel';
+import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
+
+
 
 export const key = 'blastSummaryView';
+export type State = IndexedState<ViewState>;
+export const reduce = indexByActionProperty(reduceView, get(['payload', 'stepId']));
 
-export type State = {
-    blastSummaryData?: BlastSummaryViewReport,
+type ViewState = {
+  blastSummaryData?: BlastSummaryViewReport,
 };
 
-const initialState: State = {
-    blastSummaryData: undefined,
+const initialState: ViewState = {
+  blastSummaryData: undefined,
 };
 
-export function reduce(state: State = initialState, action: Action): State {
-    switch (action.type) {
-        case fulfillBlastSummaryReport.type: {
-            return { ...state, blastSummaryData: action.payload.blastInfo }
-        } default: {
-            return state;
-        }
+function reduceView(state: ViewState = initialState, action: Action): ViewState {
+  switch (action.type) {
+    case fulfillBlastSummaryReport.type: {
+      return { ...state, blastSummaryData: action.payload.blastInfo }
     }
+    default: {
+      return state;
+    }
+  }
 }
 
 async function getBlastSummaryViewReport([requestAction]:  [InferAction<typeof requestBlastSummaryReport>], state$: Observable<RootState>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillBlastSummaryReport>> {
-    let formatting = { format: 'blastSummaryView', formatConfig: { attributes: ['summary', 'alignment']} };
-    let report = await wdkService.getStepAnswer(requestAction.payload.stepId, formatting)
-    return fulfillBlastSummaryReport(report);
+  let formatting = { format: 'blastSummaryView', formatConfig: { attributes: ['summary', 'alignment']} };
+  let report = await wdkService.getStepAnswer(requestAction.payload.stepId, formatting)
+  return fulfillBlastSummaryReport(requestAction.payload.stepId, report);
 }
 
 export const observe =
-     combineEpics(
-         mergeMapRequestActionsToEpic([requestBlastSummaryReport], getBlastSummaryViewReport)
-     );
+  combineEpics(
+    mergeMapRequestActionsToEpic([requestBlastSummaryReport], getBlastSummaryViewReport)
+  );

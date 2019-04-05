@@ -82,6 +82,12 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
         dispatch={NOOP}
         onParamValueChange={onChange}
       />
+      {
+        paramSpec.type === 'NumberParam' &&
+        <span style={numberParamRangeSpanStyle}>
+          ({paramSpec.min} - {paramSpec.max})
+        </span>
+      }
     </td>
   </tr>
 
@@ -92,13 +98,9 @@ interface ParamDisplayNameProps {
 const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
   paramSpec
 }) => (
-  <Fragment>
+  <>
     {paramSpec.displayName}
-    {
-      paramSpec.type === 'NumberParam' &&
-      <span style={numberParamRangeSpanStyle}>({paramSpec.min} - {paramSpec.max})</span>
-    }
-  </Fragment>
+  </>
 );
 
 const uiState = {};
@@ -133,8 +135,6 @@ const submitTdStyle: React.CSSProperties = {
 };
 
 const numberParamRangeSpanStyle: React.CSSProperties = {
-  color: 'blue',
-  fontSize: '0.95em',
-  fontFamily: 'monospace',
+  color: 'gray',
   marginLeft: '0.5em'
 };

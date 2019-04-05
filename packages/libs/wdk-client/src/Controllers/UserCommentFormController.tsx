@@ -435,7 +435,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
     className: 'wdk-UserComments wdk-UserComments-Form',
     headerClassName: 'wdk-UserComments-Form-Header',
     bodyClassName: 'wdk-UserComments-Form-Body',
-    footerClassName: 'wdk-UserComments-Form-Footer',
+    errorsClassName: 'wdk-UserComments-Form-Errors',
     formGroupHeaders: {
       part1: 'Part I: Comment',
       part2: 'Part II: Evidence for This Comment (Optional)',
@@ -494,7 +494,9 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
               <TextBox
                 onChange={(newValue: string) => {
                   dispatchProps.updateRawFormField('digitalObjectIds')(newValue);
-                  dispatchProps.updateFormField('digitalObjectIds')(newValue.split(/\s*,\s*/g));
+                  dispatchProps.updateFormField('digitalObjectIds')(
+                    newValue.split(/\s*,\s*/g).map(x => x.trim()).filter(x => x.length > 0)
+                  );
                 }}
                 value={stateProps.rawFields.digitalObjectIds}
               />
@@ -515,7 +517,9 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
               <TextBox
                 onChange={(newValue: string) => {
                   dispatchProps.updateRawFormField('genBankAccessions')(newValue);
-                  dispatchProps.updateFormField('genBankAccessions')(newValue.split(/\s*,\s*/g));
+                  dispatchProps.updateFormField('genBankAccessions')(
+                    newValue.split(/\s*,\s*/g).map(x => x.trim()).filter(x => x.length > 0)
+                  );
                 }}
                 value={stateProps.rawFields.genBankAccessions}
               />
@@ -540,7 +544,9 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
             <TextArea
               onChange={(newValue: string) => {
                 dispatchProps.updateRawFormField('relatedStableIds')(newValue);
-                dispatchProps.updateFormField('relatedStableIds')(newValue.split(/\s*,\s*/g));
+                dispatchProps.updateFormField('relatedStableIds')(
+                  newValue.split(/\s*,\s*/g).map(x => x.trim()).filter(x => x.length > 0)
+                );
               }}
               value={stateProps.rawFields.relatedStableIds}
             />
@@ -586,7 +592,7 @@ class UserCommentFormController extends PageController<Props> {
               ? {
                 coordinateType: 'genome',
                 ranges: parseRangesStr(this.props.queryParams.locations),
-                reversed: this.props.queryParams.strand === '-'
+                reverse: this.props.queryParams.strand === '-'
               }
               : undefined
           },

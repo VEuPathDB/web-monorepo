@@ -50,7 +50,8 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
   switch (action.type) {
     case START_LOADING_TAB_LISTING: {
       return {
-        ...state,
+        // reset state since we are creating a new set of tabs
+        ...initialState,
         stepId: action.payload.stepId,
         loadingAnalysisChoices: true,
       };

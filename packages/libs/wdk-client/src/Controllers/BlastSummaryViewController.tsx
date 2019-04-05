@@ -15,7 +15,7 @@ const actionCreators = {
   fulfillBlastSummaryReport
 };
 
-type StateProps = State;
+type StateProps = State[number];
 type DispatchProps = typeof actionCreators;
 type OwnProps = { stepId: number };
 
@@ -61,7 +61,7 @@ class BlastSummaryViewController extends ViewController< Props > {
   }
 }
 
-const mapStateToProps = (state: RootState) => state.blastSummaryView;
+const mapStateToProps = (state: RootState, props: OwnProps) => state.blastSummaryView[props.stepId];
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   mapStateToProps,

@@ -49,10 +49,15 @@ export const observe = combineEpics(
 function observeOpenTabListing(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, dependencies: EpicDependencies): Observable<Action> {
   return action$.pipe(
     filter(openTabListing.isOfType),
-    mergeMap(action => [
-      startLoadingTabListing(action.payload.stepId) as Action,
-      requestStep(action.payload.stepId) as Action
-    ]));
+    mergeMap(action => action.payload.viewId === 'strategy'
+      ? [
+        startLoadingTabListing(action.payload.stepId) as Action,
+        requestStep(action.payload.stepId) as Action
+      ]
+      : [
+        requestStep(action.payload.stepId) as Action
+      ]
+    ));
 }
 
 function observeSelectSummaryView(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {

@@ -1,7 +1,7 @@
 import React from "react";
 import { RecordInstance, RecordClass } from "wdk-client/Utils/WdkModel";
 import { RecordLink } from "wdk-client/Components";
-import { formatAttributeValue } from "wdk-client/Utils/ComponentUtils";
+import { renderAttributeValue } from "wdk-client/Utils/ComponentUtils";
 
 interface PrimaryKeyCellProps {
   recordInstance: RecordInstance;
@@ -14,7 +14,7 @@ export default function PrimaryKeyCell(props: PrimaryKeyCellProps) {
       recordClass={props.recordClass}
       recordId={props.recordInstance.id}
     >
-      {formatAttributeValue(
+      {renderAttributeValue(
         props.recordInstance.attributes[props.recordClass.recordIdAttributeName]
       )}
     </RecordLink>
