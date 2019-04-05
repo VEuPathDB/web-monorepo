@@ -1,25 +1,25 @@
 package org.clinepi.service.services;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
+import javax.sql.DataSource;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
 import org.gusdb.fgputil.db.SqlUtils;
-import org.gusdb.wdk.service.service.AbstractWdkService;
 import org.gusdb.wdk.model.WdkModelException;
+import org.gusdb.wdk.service.service.AbstractWdkService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Path("/shiny")
 public class ShinyQueryService extends AbstractWdkService {
