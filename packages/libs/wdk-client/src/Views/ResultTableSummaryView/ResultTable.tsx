@@ -90,17 +90,19 @@ function ResultTable(props: Props) {
       <div className="ResultTableButton">
         <Link to={`/step/${stepId}/download`}>Download</Link>
       </div>
-      <div className="ResultTableButton">
-        <button type="button"
-          className="wdk-Link"
-          title={userIsGuest ? 'You must login to use baskets' : 'Add all records returned by this search to your basket'}
-          onClick={() => {
-            if (userIsGuest) showLoginWarning('use baskets');
-            else requestAddStepToBasket(stepId)
-          }}>
-          Add to Basket
-        </button>
-      </div>
+      {!recordClass.useBasket ? null :
+        <div className="ResultTableButton">
+          <button type="button"
+            className="wdk-Link"
+            title={userIsGuest ? 'You must login to use baskets' : 'Add all records returned by this search to your basket'}
+            onClick={() => {
+              if (userIsGuest) showLoginWarning('use baskets');
+              else requestAddStepToBasket(stepId)
+            }}>
+            Add to Basket
+          </button>
+        </div>
+      }
       <div className="ResultTableButton">
         <button className="btn" type="button" onClick={() => showHideAddColumnsDialog(true)}>
           Add Columns
@@ -141,10 +143,11 @@ function getEventHandlers(props: Props) {
   function onColumnReorder(attributeName: string, newIndex: number) {
     const tmpColumns = answer.meta.attributes.filter(attrName => attrName !== attributeName);
     // Subtract 1 from newIndex to compensate for basket column
+    const targetIndex = recordClass.useBasket ? newIndex - 1 : newIndex;
     const newColumns = [
-      ...tmpColumns.slice(0, newIndex - 1),
+      ...tmpColumns.slice(0, targetIndex),
       attributeName,
-      ...tmpColumns.slice(newIndex - 1)
+      ...tmpColumns.slice(targetIndex)
     ];
     requestColumnsChoiceUpdate(newColumns, question.name);
   }
@@ -267,5 +270,5 @@ function getColumns({
       )
     }));
 
-  return [basketColumn, ...answerColumns];
+  return recordClass.useBasket ? [basketColumn, ...answerColumns] : answerColumns;
 }
