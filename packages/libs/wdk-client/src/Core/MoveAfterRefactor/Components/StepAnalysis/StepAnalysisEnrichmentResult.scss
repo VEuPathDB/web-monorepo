@@ -1,3 +1,13 @@
+.step-analysis-pane {
+  .MesaComponent {
+    // nested .MesaComponent
+    > .MesaComponent {
+      width: 100%;
+      overflow: auto;
+    }
+  }
+}
+
 .enrich-result-p {
   font-size: 90%;
   font-weight: normal;

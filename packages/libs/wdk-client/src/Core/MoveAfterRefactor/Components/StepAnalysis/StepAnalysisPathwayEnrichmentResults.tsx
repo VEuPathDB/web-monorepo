@@ -152,6 +152,7 @@ export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultP
           : column
       )}
       initialSortColumnKey={'oddsRatio'}
+      fixedTableHeader
     />
     <WordCloudModal
       imgUrl={

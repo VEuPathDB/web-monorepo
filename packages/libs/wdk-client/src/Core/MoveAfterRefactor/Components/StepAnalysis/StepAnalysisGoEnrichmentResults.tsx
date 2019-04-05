@@ -160,6 +160,7 @@ export const StepAnalysisGoEnrichmentResults: React.SFC<StepAnalysisResultPlugin
           : column
       )}
       initialSortColumnKey={'pValue'}
+      fixedTableHeader
     />
     <WordCloudModal
       imgUrl={

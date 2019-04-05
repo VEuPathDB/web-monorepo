@@ -116,6 +116,7 @@ export const StepAnalysisWordEnrichmentResults: React.SFC<StepAnalysisResultPlug
       rows={analysisResult.resultData}
       columns={wordEnrichmentResultColumns}
       initialSortColumnKey={'pValue'}
+      fixedTableHeader
     />
   </Fragment>
 );

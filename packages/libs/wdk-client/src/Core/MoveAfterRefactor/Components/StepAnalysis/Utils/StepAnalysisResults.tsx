@@ -3,7 +3,7 @@ import { numericValue } from '../../../../../Components/Mesa/Utils/Utils';
 import { Tooltip } from '../../../../../Components';
 
 export const numberRenderFactory = (exponential: boolean) => (precision: number) => (key: string) => ({ row }: { row: Record<string, string> }) => 
-  <div style={{ textAlign: 'right' }}>
+  <div>
     {
       exponential
         ? <Tooltip content={row[key]}>
