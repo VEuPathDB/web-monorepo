@@ -27,18 +27,7 @@
   <c:if test="${refer == 'summary'}">
     <imp:script src="wdkCustomization/js/customStrategy.js"/>
     <imp:script src="wdkCustomization/js/ortholog.js"/>
-    <imp:script src="wdkCustomization/js/transcripts.js"/>
-    <imp:script src="wdkCustomization/js/export-basket.js"/>
     <imp:script src="wdkCustomization/js/spanlogic.js"/>
-    <imp:script src="wdkCustomization/js/genome-view.js"/>
-    <imp:script src="wdkCustomization/js/gene-view.js"/>
-    <imp:script src="wdkCustomization/js/transcript-view.js"/>
-    <imp:script src="wdkCustomization/js/isolateResults.js"/>
-  </c:if>
-
-  <c:if test="${refer == 'recordPage'}">
-    <!-- TODO Move to webapp -->
-    <imp:script src="wdkCustomization/js/isolateResults.js"/>
   </c:if>
 
   <c:if test="${refer == 'question' || refer == 'summary'}">
@@ -52,7 +41,6 @@
     <imp:script src="wdkCustomization/js/questions/uniq-value-params.js"/>
     <imp:script src="wdkCustomization/js/questions/isolatesByTaxon.js"/>
     <imp:script src="wdkCustomization/js/questions/snp.js"/>
-    <imp:script src="wdkCustomization/js/analysis/enrichment.js"/>
   </c:if>
 
   <!-- SRT page -->
