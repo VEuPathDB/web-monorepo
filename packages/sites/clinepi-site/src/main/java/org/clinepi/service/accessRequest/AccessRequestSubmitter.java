@@ -1,5 +1,7 @@
 package org.clinepi.service.accessRequest;
 
+import static org.gusdb.fgputil.FormatUtil.escapeHtml;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -7,9 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.gusdb.fgputil.FormatUtil.escapeHtml;
-import static org.gusdb.fgputil.FormatUtil.join;
 
 import org.apache.log4j.Logger;
 import org.eupathdb.common.model.contact.EmailSender;
