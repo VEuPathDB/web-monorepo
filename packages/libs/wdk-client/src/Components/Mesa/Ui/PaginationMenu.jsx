@@ -22,18 +22,18 @@ class PaginationMenu extends React.PureComponent {
 
   renderEllipsis (key = '') {
     return (
-      <a key={'ellipsis-' + key} className="ellipsis">
+      <div key={'ellipsis-' + key} className="ellipsis">
         ...
-      </a>
+      </div>
     );
   }
 
   renderPageLink (page, current) {
     let handler = () => this.goToPage(page);
     return (
-      <a onClick={handler} key={page} className={current === page ? 'active' : 'inactive'}>
-        {page}
-      </a>
+      <button type="button" onClick={handler} key={page} className={current === page ? 'active' : 'inactive'}>
+        {page.toLocaleString()}
+      </button>
     );
   }
 
@@ -91,9 +91,9 @@ class PaginationMenu extends React.PureComponent {
 
     return (!page || !icon) ? null : (
       <span className="Pagination-Nav">
-        <a onClick={() => this.goToPage(page)} title={'Jump to the ' + relative + ' page'}>
+        <button type="button" onClick={() => this.goToPage(page)} title={'Jump to the ' + relative + ' page'}>
           <Icon fa={icon} />
-        </a>
+        </button>
       </span>
     )
   }
