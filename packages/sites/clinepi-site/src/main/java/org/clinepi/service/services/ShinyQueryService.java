@@ -12,8 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.gusdb.fgputil.FormatUtil;
-import org.gusdb.fgputil.db.stream.ResultSetToJsonConverter;
+import org.gusdb.fgputil.db.stream.ResultSetToNdJsonConverter;
 import org.gusdb.fgputil.functional.Functions;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.service.service.AbstractWdkService;
@@ -24,18 +23,10 @@ public class ShinyQueryService extends AbstractWdkService {
   @SuppressWarnings("unused")
   private static final Logger LOG = Logger.getLogger(ShinyQueryService.class);
 
-  private static class CustomJsonConverter extends ResultSetToJsonConverter {
-    private static final byte[] EMPTY_BYTES = new byte[0];
-    private static final byte[] NEWLINE_BYTES = FormatUtil.NL.getBytes();
-    @Override public byte[] getHeader() { return EMPTY_BYTES; }
-    @Override public byte[] getRowDelimiter() { return NEWLINE_BYTES; }
-    @Override public byte[] getFooter() { return EMPTY_BYTES; }
-  }
-
   private Response getStreamingResponse(String sql, String queryName, String errorMsgOnFail) throws WdkModelException {
     return Response.ok(
       Functions.mapException(
-        () -> getResultSetStream(sql, queryName, getWdkModel().getAppDb().getDataSource(), new CustomJsonConverter()),
+        () -> getResultSetStream(sql, queryName, getWdkModel().getAppDb().getDataSource(), new ResultSetToNdJsonConverter()),
         e -> new WdkModelException(errorMsgOnFail + " SQL: " + sql, e)
       )
     ).build();
