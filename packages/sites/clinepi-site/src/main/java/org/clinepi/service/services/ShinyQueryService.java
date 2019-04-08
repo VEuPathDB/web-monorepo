@@ -68,9 +68,8 @@ public class ShinyQueryService extends AbstractWdkService {
 
     // have to remember when calling this that obsId representing time is different for households
     // so ask for a different sourceId, the houseObs equivalent of obsId (ex: gems BFO_0000015->EUPATH_0015467)
-    String query = "";
-    if (obsId.equals("none")) {
-      query = " with household as (" +
+    String query = obsId.equals("none")
+            ? " with household as (" +
                 " select distinct pa.name as Participant_Id," + 
                                 " ha." + sourceId + ", 0 as isHouseOb" +
                 " from apidbtuning." + tblPrefix + "Participants pa" +
@@ -100,10 +99,10 @@ public class ShinyQueryService extends AbstractWdkService {
               " union all" + 
               " select h.Participant_Id, h." + sourceId + 
               " from houseob h, indicator i" +
-              " where i.isHouseOb = h.isHouseOb";
-    } else {
-      query = " with household as (" +
-                " select distinct pa.name as Participant_Id" +     
+              " where i.isHouseOb = h.isHouseOb"
+
+            : " with household as (" +
+                " select distinct pa.name as Participant_Id" +
                                ", ha." + sourceId + 
                                ", ha." + obsId +
                                ", 0 as isHouseOb" +
@@ -139,7 +138,6 @@ public class ShinyQueryService extends AbstractWdkService {
                     ", h." + obsId +
               " from houseob h, indicator i" +
               " where i.isHouseOb = h.isHouseOb";
-    }
 
     return getStreamingResponse(query, "getShinyHouseholdData",
         "Failed running SQL to fetch household data.");
@@ -154,9 +152,8 @@ public class ShinyQueryService extends AbstractWdkService {
       @DefaultValue("none") @QueryParam("obsId") String obsId) 
           throws WdkModelException {
 
-    String query = "";
-    if (obsId.equals("none")) {
-      query = " with obs as (" +
+    String query = obsId.equals("none")
+            ? " with obs as (" +
                 " select distinct pa.name as Participant_Id," + 
                                 " oa." + sourceId +
                 " from apidbtuning." + tblPrefix + "Participants pa" +
@@ -176,9 +173,8 @@ public class ShinyQueryService extends AbstractWdkService {
                 " and io2.sub_observation_id = oa.pan_id)" +
               " select * from obs o" +
               " union" + 
-              " select * from subob o";
-    } else {
-      query = " with obs as (" +
+              " select * from subob o"
+            : " with obs as (" +
                 " select distinct pa.name as Participant_Id" +     
                                 ", oa." + sourceId + 
                                 ", oa." + obsId +
@@ -201,7 +197,6 @@ public class ShinyQueryService extends AbstractWdkService {
               " select * from obs" +
               " union" +     
               " select * from subob";
-    }
 
     return getStreamingResponse(query, "getShinyObservationData",
         "Failed running SQL to fetch observation data.");
@@ -216,18 +211,16 @@ public class ShinyQueryService extends AbstractWdkService {
       @DefaultValue("none") @QueryParam("obsId") String obsId)
           throws WdkModelException {
 
-    String query = "";
-    if (obsId.equals("none")) {
-      query = " select pa.name as Participant_Id, sa." + sourceId +
+    String query = obsId.equals("none")
+            ? " select pa.name as Participant_Id, sa." + sourceId +
               " from apidbtuning." + tblPrefix + "Participants pa" +
                   ", apidbtuning." + tblPrefix + "Samples sa "+
                   ", apidbtuning." + tblPrefix + "PartObsIO io" +
                   ", apidbtuning." + tblPrefix + "ObsSampleIO io2" +
               " where pa.pan_id = io.participant_id" +
               " and io.observation_id = io2.observation_id" +
-              " and io2.sample_id = sa.pan_id"; 
-    } else {
-      query = " select pa.name as Participant_Id" +
+              " and io2.sample_id = sa.pan_id"
+            : " select pa.name as Participant_Id" +
                     ", sa." + sourceId +
                     ", oa." + obsId +
               " from apidbtuning." + tblPrefix + "Participants pa" +
@@ -239,10 +232,8 @@ public class ShinyQueryService extends AbstractWdkService {
               " and io.observation_id = oa.pan_id" +
               " and io.observation_id = io2.observation_id" +
               " and io2.sample_id = sa.pan_id";
-    }
 
     return getStreamingResponse(query, "getShinySampleData",
         "Failed running SQL to fetch sample data.");
   }
-
 }
