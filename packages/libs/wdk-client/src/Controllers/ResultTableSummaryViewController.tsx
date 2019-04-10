@@ -63,6 +63,7 @@ type OwnProps = {
   viewId: string;
   stepId: number;
   tableActions?: TableAction[];
+  showIdAttributeColumn?: boolean;
 }
 
 type Props = OwnProps & StateProps & {
@@ -95,6 +96,7 @@ class ResultTableSummaryViewController extends React.Component< Props > {
       <ResultTableSummaryView
         stepId={this.props.stepId}
         actions={this.props.tableActions}
+        showIdAttributeColumn={this.props.showIdAttributeColumn}
         {...this.props.viewData}
         {...this.props.derivedData}
         {...this.props.actionCreators}
@@ -177,6 +179,7 @@ const ConnectedController = connect<StateProps, DispatchProps, OwnProps, Props, 
 )(wrappable(ResultTableSummaryViewController));
 
 export default Object.assign(ConnectedController, {
-  withTableActions: (tableActions: TableAction[]) => (props: Exclude<OwnProps, 'tableActions'>) =>
-    <ConnectedController {...props} tableActions={tableActions}/>
+  withOptions: (options: Pick<OwnProps, 'tableActions'|'showIdAttributeColumn'>) => (props: Exclude<OwnProps, 'tableActions'|'showIdAttributeColumn'>) =>
+    <ConnectedController {...props} {...options} />,
+
 });

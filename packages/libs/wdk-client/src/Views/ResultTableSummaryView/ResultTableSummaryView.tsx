@@ -34,6 +34,7 @@ interface Props {
   addingStepToBasket: boolean;
   actions?: Action[];
   selectedIds?: string[];
+  showIdAttributeColumn?: boolean;
   userIsGuest: boolean;
   activeAttributeAnalysisName: string | undefined;
   stepId: number;
@@ -67,6 +68,7 @@ export default function ResultTableSummaryView({
   addingStepToBasket,
   actions,
   selectedIds,
+  showIdAttributeColumn = true,
   activeAttributeAnalysisName,
   stepId,
   recordClass,
@@ -119,6 +121,7 @@ export default function ResultTableSummaryView({
           answer={answer}
           actions={actions}
           selectedIds={selectedIds}
+          showIdAttributeColumn={showIdAttributeColumn}
           activeAttributeAnalysisName={activeAttributeAnalysisName}
           stepId={stepId}
           question={question}
