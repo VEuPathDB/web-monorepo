@@ -41,6 +41,8 @@ export type ShowHideAddColumnsDialog = (show: boolean) => void;
 
 export type UpdateColumnsDialogSelection = (attributes: string[]) => void;
 
+export type UpdateColumnsDialogSearchString = (searchString: string) => void;
+
 export type UpdateColumnsDialogExpandedNodes = (nodes: string[]) => void;
 
 export type OpenAttributeAnalysis = (reporterName: string, stepId: number) => void;

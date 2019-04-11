@@ -14,6 +14,7 @@ import {
   viewPageNumber,
   showHideAddColumnsDialog,
   updateColumnsDialogSelection,
+  updateColumnsDialogSearchString,
   updateColumnsDialogExpandedNodes,
   updateSelectedIds,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
@@ -55,6 +56,7 @@ type DispatchProps = {
   showHideAddColumnsDialog: Partial1<typeof showHideAddColumnsDialog>;
   updateColumnsDialogExpandedNodes: Partial1<typeof updateColumnsDialogExpandedNodes>;
   updateColumnsDialogSelection: Partial1<typeof updateColumnsDialogSelection>;
+  updateColumnsDialogSearchString: Partial1<typeof updateColumnsDialogSearchString>;
   updateSelectedIds: Partial1<typeof updateSelectedIds>;
   viewPageNumber: Partial1<typeof viewPageNumber>;
 }
@@ -167,6 +169,7 @@ function mapDispatchToProps(dispatch: Dispatch, { stepId, viewId }: OwnProps): D
     showHideAddColumnsDialog: partial(showHideAddColumnsDialog, viewId),
     updateColumnsDialogExpandedNodes: partial(updateColumnsDialogExpandedNodes, viewId),
     updateColumnsDialogSelection: partial(updateColumnsDialogSelection, viewId),
+    updateColumnsDialogSearchString: partial(updateColumnsDialogSearchString, viewId),
     updateSelectedIds: partial(updateSelectedIds, viewId),
     viewPageNumber: partial(viewPageNumber, viewId),
   }, dispatch)

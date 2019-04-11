@@ -30,6 +30,7 @@ import {
   showHideAddColumnsDialog,
   updateColumnsDialogExpandedNodes,
   updateColumnsDialogSelection,
+  updateColumnsDialogSearchString,
   updateSelectedIds,
   viewPageNumber,
   requestGlobalViewFilters,
@@ -81,6 +82,7 @@ type ViewState = {
   basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: Array<string>; //
+  columnsDialogSearchString?: string;
   columnsDialogExpandedNodes?: Array<string>;
   selectedIds?: string[];
   globalViewFilters: GlobalViewFilters;
@@ -207,6 +209,9 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
     }
     case updateColumnsDialogSelection.type: {
       return { ...state, columnsDialogSelection: action.payload.selection };
+    }
+    case updateColumnsDialogSearchString.type: {
+      return { ...state, columnsDialogSearchString: action.payload.searchString };
     }
     case fulfillColumnsChoice.type: {
       return reduceColumnsFulfillAction(state, action);

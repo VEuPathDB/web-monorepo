@@ -15,6 +15,7 @@ import {
   ShowHideAddColumnsDialog,
   UpdateColumnsDialogExpandedNodes,
   UpdateColumnsDialogSelection,
+  UpdateColumnsDialogSearchString,
   OpenAttributeAnalysis,
   CloseAttributeAnalysis,
   UpdateSelectedIds,
@@ -43,6 +44,7 @@ interface Props {
   basketStatusArray?: BasketStatusArray;
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: string[];
+  columnsDialogSearchString?: string;
   columnsDialogExpandedNodes?: string[];
   columnsTree?: CategoryTreeNode;
   requestSortingUpdate: RequestSortingUpdate;
@@ -53,6 +55,7 @@ interface Props {
   viewPageNumber: ViewPageNumber;
   showHideAddColumnsDialog: ShowHideAddColumnsDialog;
   updateColumnsDialogSelection: UpdateColumnsDialogSelection;
+  updateColumnsDialogSearchString: UpdateColumnsDialogSearchString;
   updateColumnsDialogExpandedNodes: UpdateColumnsDialogExpandedNodes;
   openAttributeAnalysis: OpenAttributeAnalysis;
   closeAttributeAnalysis: CloseAttributeAnalysis;
@@ -85,8 +88,10 @@ export default function ResultTableSummaryView({
   columnsDialogExpandedNodes,
   columnsDialogIsOpen,
   columnsDialogSelection,
+  columnsDialogSearchString,
   columnsTree,
   updateColumnsDialogSelection,
+  updateColumnsDialogSearchString,
   updateColumnsDialogExpandedNodes,
   openAttributeAnalysis,
   closeAttributeAnalysis,
@@ -109,10 +114,12 @@ export default function ResultTableSummaryView({
           columnsDialogExpandedNodes={columnsDialogExpandedNodes}
           columnsDialogIsOpen={columnsDialogIsOpen}
           columnsDialogSelection={columnsDialogSelection}
+          columnsDialogSearchString={columnsDialogSearchString}
           columnsTree={columnsTree}
           showHideAddColumnsDialog={showHideAddColumnsDialog}
           updateColumnsDialogExpandedNodes={updateColumnsDialogExpandedNodes}
           updateColumnsDialogSelection={updateColumnsDialogSelection}
+          updateColumnsDialogSearchString={updateColumnsDialogSearchString}
           requestColumnsChoiceUpdate={requestColumnsChoiceUpdate}
         />
       )}
