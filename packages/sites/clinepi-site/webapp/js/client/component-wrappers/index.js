@@ -1,6 +1,7 @@
 import { compose } from 'lodash/fp';
 import { connect } from 'react-redux';
 import React from 'react';
+import { Seq } from 'wdk-client/IterableUtils';
 
 import {
   getIdFromRecordClassName,
@@ -34,9 +35,20 @@ export default {
   ),
 
   QuestionWizard,
-  QuestionWizardController,
+  QuestionWizardController: compose(
+    withRestrictionHandler(Action.search, (state, props) => {
+      const { questions = [], recordClasses = [] } = state.globalData;
+      return Seq.from(questions)
+        .filter(question => question.name === props.questionName)
+        .flatMap(question => Seq.from(recordClasses)
+          .filter(recordClass => recordClass.name === question.recordClassName))
+        .first();
+    }),
+    QuestionWizardController
+  ),
   DownloadFormController: withRestrictionHandler(Action.downloadPage, state => state.downloadForm.recordClass),
   RecordController: withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
+  // FIXME Add restricted results panel
   RecordHeading,
   RecordTable,
 }
@@ -53,21 +65,71 @@ function guard(propsPredicate) {
 
 function withRestrictionHandler(action, getRecordClassSelector) {
   const enhance = connect(
-    state => ({ recordClass: getRecordClassSelector(state) }),
+    (state, props) => ({ recordClass: getRecordClassSelector(state, props), dataRestriction: state.dataRestriction }),
     { attemptAction },
     (stateProps, dispatchProps, childProps) => ({ stateProps, dispatchProps, childProps })
   )
   return Child => enhance(class RestrictionHandler extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { allowed: null };
+    }
     componentDidUpdate(prevProps) {
+      if (this.props.stateProps.recordClass == null) return;
       if (!isStudyRecordClass(this.props.stateProps.recordClass)) return;
 
       if (this.props.stateProps.recordClass !== prevProps.stateProps.recordClass) {
         const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.name);
-        this.props.dispatchProps.attemptAction(action, { studyId });
+        this.props.dispatchProps.attemptAction(action, {
+          studyId,
+          onDeny: () => {
+            document.body.style.overflow = 'hidden';
+            this.setState({ allowed: false })
+          },
+          onAllow: () => {
+            this.setState({ allowed: true })
+          }
+        });
       }
     }
     render() {
-      return <Child {...this.props.childProps}/>
+      const { allowed } = this.state
+      const child = <Child {...this.props.childProps}/>;
+
+      // always wrap child with a div to prevent child from being unmounted
+
+      if (allowed == null) return (
+        <div style={{visibility: 'hidden'}}>{child}</div>
+      )
+
+      if (allowed) return (
+        <div>{child}</div>
+      )
+
+      return (
+        <div
+          style={{
+            pointerEvents: 'none',
+            filter: 'blur(6px)'
+          }}
+          onSubmit={stopEvent}
+          onSelect={stopEvent}
+          onClickCapture={stopEvent}
+          onChangeCapture={stopEvent}
+          onInputCapture={stopEvent}
+          onFocusCapture={stopEvent}
+          onKeyDownCapture={stopEvent}
+          onKeyUpCapture={stopEvent}
+          onKeyPressCapture={stopEvent}
+        >
+          {child}
+        </div>
+      );
     }
   });
+}
+
+function stopEvent(event) {
+  event.stopPropagation();
+  event.preventDefault();
 }
