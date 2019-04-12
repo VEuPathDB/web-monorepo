@@ -57,12 +57,16 @@ export default class RelatedCaseControlGroup extends React.Component {
 
   static isUsable(props) {
     const settings = parseSettings(props.wizardState.question);
+    if (settings == null) return true;
+
     const caseControlParam = settings.getCaseControlParam();
     return !props.wizardState.paramValues[caseControlParam.name].startsWith('Both');
   }
 
   static isEnabled(props) {
     const settings = parseSettings(props.wizardState.question);
+    if (settings == null) return true;
+
     const toggleParam = settings.getToggleParam()
     return props.wizardState.paramValues[toggleParam.name] === 'Yes';
   }
