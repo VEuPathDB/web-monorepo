@@ -25,9 +25,11 @@ public class ShinyQueryService extends AbstractWdkService {
 
   private Response getStreamingResponse(String sql, String queryName, String errorMsgOnFail) throws WdkModelException {
     return Response.ok(
-      Functions.mapException(
-        () -> getResultSetStream(sql, queryName, getWdkModel().getAppDb().getDataSource(), new ResultSetToNdJsonConverter()),
-        e -> new WdkModelException(errorMsgOnFail + " SQL: " + sql, e)
+      getStreamingOutput(
+        Functions.mapException(
+          () -> getResultSetStream(sql, queryName, getWdkModel().getAppDb().getDataSource(), new ResultSetToNdJsonConverter()),
+          e -> new WdkModelException(errorMsgOnFail + " SQL: " + sql, e)
+        )
       )
     ).build();
   }
