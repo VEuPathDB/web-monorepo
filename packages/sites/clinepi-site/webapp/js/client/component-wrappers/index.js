@@ -76,9 +76,12 @@ function withRestrictionHandler(action, getRecordClassSelector) {
     }
     componentDidUpdate(prevProps) {
       if (this.props.stateProps.recordClass == null) return;
-      if (!isStudyRecordClass(this.props.stateProps.recordClass)) return;
 
-      if (this.props.stateProps.recordClass !== prevProps.stateProps.recordClass) {
+      if (!isStudyRecordClass(this.props.stateProps.recordClass) && this.state.allowed == null) {
+        this.setState({ allowed: true });
+      }
+
+      else if (this.props.stateProps.recordClass !== prevProps.stateProps.recordClass) {
         const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.name);
         this.props.dispatchProps.attemptAction(action, {
           studyId,
