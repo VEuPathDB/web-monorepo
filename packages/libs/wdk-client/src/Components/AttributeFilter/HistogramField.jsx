@@ -57,7 +57,7 @@ export default class HistogramField extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     let distributionChanged = this.props.distribution !== nextProps.distribution;
     let filterChanged = this.props.filter !== nextProps.filter;
 
@@ -126,6 +126,7 @@ export default class HistogramField extends React.Component {
   updateFilterValueFromSelection(range) {
     const min = this.formatRangeValue(range.min);
     const max = this.formatRangeValue(range.max);
+    // FIXME Snap to actual values
     this.updateFilterValue({ min, max });
   }
 
