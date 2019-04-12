@@ -18,14 +18,15 @@ const goEnrichmentResultColumns = [
     key: 'goTerm',
     name: 'GO Term',
     helpText: 'Gene Ontology Term',
-    sortable: true,
+    sortable: true
   },
   {
     key: 'bgdGenes',
     name: 'Genes in the bkgd with this term',
     helpText: 'Number of genes with this term in the background',
     renderCell: integerCell('bgdGenes'),
-    sortable: true
+    sortable: true,
+    sortType: 'number'
   },
   {
     key: 'resultGenes',
@@ -33,7 +34,7 @@ const goEnrichmentResultColumns = [
     helpText: 'Number of genes with this term in your result',
     type: 'html',
     sortable: true,
-    sortType: 'number'
+    sortType: 'htmlNumber'
   },
   {
     key: 'percentInResult',
