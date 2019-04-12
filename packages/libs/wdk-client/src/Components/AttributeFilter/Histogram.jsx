@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { debounce, isEqual, memoize, noop, throttle } from 'lodash';
+import { debounce, isEqual, memoize, noop, orderBy, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -29,7 +29,6 @@ var Histogram = (function() {
         uiState: this.getStateFromProps(props)
       };
       this.getRange = memoize(this.getRange);
-      this.getSeriesData = memoize(this.getSeriesData);
       this.getNumFixedDigits = memoize(this.getNumFixedDigits);
     }
 
@@ -46,7 +45,7 @@ var Histogram = (function() {
       this.drawPlotSelection();
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (
         nextProps.uiState.yaxisMax !== this.state.uiState.yaxisMax ||
         nextProps.uiState.xaxisMin !== this.state.uiState.xaxisMin ||
@@ -89,19 +88,17 @@ var Histogram = (function() {
     }
 
     getRange(distribution) {
-      const values = distribution.map(entry => entry.value);
-      const min = Math.min(...values);
-      const max = Math.max(...values);
-      return { min, max };
+      return distribution.reduce(({ min, max }, entry) => ({
+        min: Math.min(min, entry.value),
+        max: Math.max(max, entry.value)
+      }), { min: Infinity, max: -Infinity });
     }
 
     getXAxisMinMax(props) {
       const { min, max } = this.getRange(props.distribution);
-      const barWidth = this.getBarWidth(props.distribution);
-
       var { xaxisMin, xaxisMax } = props.uiState;
       if (xaxisMin == null) xaxisMin = min;
-      if (xaxisMax == null) xaxisMax = max + barWidth;
+      if (xaxisMax == null) xaxisMax = max;
       return { xaxisMin, xaxisMax };
     }
 
@@ -117,9 +114,27 @@ var Histogram = (function() {
       return yaxisMax + yaxisMax * 0.1;
     }
 
+    getClampedDistribution(distribution, uiState) {
+      const { xaxisMin, xaxisMax } = uiState;
+      return xaxisMin == null && xaxisMax == null ? distribution
+        : xaxisMax == null ? distribution.filter(entry => entry.value >= xaxisMin)
+        : xaxisMin == null ? distribution.filter(entry => entry.value <= xaxisMax)
+        : distribution.filter(entry => entry.value >= xaxisMin && entry.value <= xaxisMax);
+    }
+
     getBarWidth(distribution) {
-      const { min, max } = this.getRange(distribution);
-      return (max - min) * 0.005;
+      // padding factor
+      const padding = 0.75;
+      // For dates, use one day as width
+      if (this.props.chartType === 'date') return (1000 * 60 * 60 * 24) * padding;
+
+      // Find min distance between two points
+      const sortedDistribution = orderBy(distribution, d => d.value, 'asc');
+      const { minDistance } = sortedDistribution.reduce(({ prevValue, minDistance }, entry) => ({
+        prevValue: entry.value,
+        minDistance: prevValue == null ? minDistance : Math.min(entry.value - prevValue, minDistance)
+      }), { prev: null, minDistance: Infinity });
+      return minDistance * padding;
     }
 
     getSeriesData(distribution) {
@@ -164,9 +179,12 @@ var Histogram = (function() {
     }
 
     drawPlotSelection() {
-      var currentSelection = unwrapXaxisRange(this.plot.getSelection());
-      var { selectedMin, selectedMax } = this.props;
-      var { min, max } = this.getRange(this.props.distribution);
+      const currentSelection = unwrapXaxisRange(this.plot.getSelection());
+      const { selectedMin, selectedMax } = this.props;
+      const { min, max } = this.getRange(this.props.distribution);
+      const plotOptions = this.plot.getOptions();
+
+      const { series: { bars: { barWidth } } } = plotOptions;
 
       // Selection already matches current state
       if (selectedMin === currentSelection.min && selectedMax === currentSelection.max) {
@@ -178,8 +196,8 @@ var Histogram = (function() {
       } else {
         this.plot.setSelection({
           xaxis: {
-            from: selectedMin === null ? min : selectedMin,
-            to: selectedMax === null ? max : selectedMax
+            from: (selectedMin === null ? min : selectedMin) - (barWidth / 2),
+            to: (selectedMax === null ? max : selectedMax) + (barWidth / 2)
           }
         }, true);
       }
@@ -188,15 +206,16 @@ var Histogram = (function() {
     createPlot() {
       var { distribution, chartType, timeformat } = this.props;
       var { uiState } = this.state;
+      const clampedDistribution = this.getClampedDistribution(distribution, uiState);
 
-      var barWidth = this.getBarWidth(distribution);
+      var barWidth = this.getBarWidth(clampedDistribution);
 
       var xaxisBaseOptions = chartType === 'date'
         ? { mode: 'time', timeformat: timeformat }
         : {};
 
 
-      var seriesData = this.getSeriesData(distribution);
+      var seriesData = this.getSeriesData(clampedDistribution);
 
       var plotOptions = {
         series: {
@@ -205,13 +224,13 @@ var Histogram = (function() {
             fillColor: { colors: [{ opacity: 1 }, { opacity: 1 }] },
             barWidth: barWidth,
             lineWidth: 0,
-            align: 'left'
+            align: 'center'
           }
         },
         xaxis: Object.assign({
           tickLength: 0,
-          min: uiState.xaxisMin,
-          max: uiState.xaxisMax
+          min: uiState.xaxisMin - barWidth,
+          max: uiState.xaxisMax + barWidth
         }, xaxisBaseOptions),
         yaxis: {
           min: 0,
@@ -269,16 +288,20 @@ var Histogram = (function() {
 
       if (previousPoint !== item.dataIndex) {
         qtipApi.cache.point = item.dataIndex;
-        var entry = this.props.distribution[item.dataIndex];
+        const [
+          { data: unfilteredData },
+          { data: filteredData }
+        ] = this.plot.getData();
+        const [ value, unfilteredCount ] = unfilteredData[item.dataIndex];
+        const [ , filteredCount ] = filteredData[item.dataIndex];
         var formattedValue = this.props.chartType === 'date'
-          ? formatDate(this.props.timeformat, entry.value)
-          : entry.value;
+          ? formatDate(this.props.timeformat, value)
+          : value;
 
-        // FIXME Format date
         qtipApi.set('content.text',
           this.props.xaxisLabel + ': ' + formattedValue +
-          '<br/>All ' + this.props.yaxisLabel + ': ' + entry.count +
-          '<br/>Matching ' + this.props.yaxisLabel + ': ' + entry.filteredCount);
+          '<br/>All ' + this.props.yaxisLabel + ': ' + unfilteredCount +
+          '<br/>Matching ' + this.props.yaxisLabel + ': ' + filteredCount);
         qtipApi.elements.tooltip.stop(1, 1);
         qtipApi.show(item);
       }
@@ -286,12 +309,15 @@ var Histogram = (function() {
 
     updatePlotScale(partialUiState) {
       const { yaxisMax, xaxisMin, xaxisMax } = partialUiState;
+      const clampedDistribution = this.getClampedDistribution(this.props.distribution, partialUiState);
+      const seriesData = this.getSeriesData(clampedDistribution);
 
       if (yaxisMax == null && xaxisMin == null && xaxisMax == null) return;
 
       const plotOptions = this.plot.getOptions();
 
       const {
+        series: { bars: { barWidth } },
         yaxes: { 0: { max: currYaxisMax } },
         xaxes: { 0: { min: currXaxisMin, max: currXaxisMax } }
       } = plotOptions;
@@ -302,8 +328,9 @@ var Histogram = (function() {
         (xaxisMax != null && xaxisMax !== currXaxisMax)
       ) {
         if (yaxisMax != null) plotOptions.yaxes[0].max = yaxisMax;
-        if (xaxisMin != null) plotOptions.xaxes[0].min = xaxisMin;
-        if (xaxisMax != null) plotOptions.xaxes[0].max = xaxisMax;
+        if (xaxisMin != null) plotOptions.xaxes[0].min = xaxisMin - barWidth;
+        if (xaxisMax != null) plotOptions.xaxes[0].max = xaxisMax + barWidth;
+        this.plot.setData(seriesData);
         this.plot.setupGrid();
         this.drawPlotSelection();
         this.plot.draw();
@@ -332,7 +359,6 @@ var Histogram = (function() {
       var { yaxisMax, xaxisMin, xaxisMax } = this.state.uiState;
 
       var numFixedDigits = this.getNumFixedDigits(distribution);
-      var barWidth = this.getBarWidth(distribution);
       var step = 1 * Math.pow(10, numFixedDigits * -1);
 
       var counts = distribution.map(entry => entry.count);
@@ -341,7 +367,7 @@ var Histogram = (function() {
 
       var values = distribution.map(entry => entry.value);
       var valuesMin = Math.min(...values);
-      var valuesMax = Math.max(...values) + barWidth;
+      var valuesMax = Math.max(...values);
 
       var scaleSelector = chartType === 'date' ? (
         <DateRangeSelector
@@ -368,7 +394,7 @@ var Histogram = (function() {
 
       return (
         <div className="chart-container">
-          <div className="chart">
+          <div className="chart"></div>
             <div className="chart-title y-axis">
               <div>{yaxisLabel}</div>
               <div>
@@ -382,7 +408,6 @@ var Histogram = (function() {
                   onChange={e => this.setYAxisMax(Number(e.target.value))}/>
               </div>
             </div>
-          </div>
           <div className="chart-title x-axis">{xaxisLabel}</div>
           <div>
             Zoom: {scaleSelector}
