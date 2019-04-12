@@ -126,7 +126,7 @@ export default class HistogramField extends React.Component {
   updateFilterValueFromSelection(range) {
     const min = this.formatRangeValue(range.min);
     const max = this.formatRangeValue(range.max);
-    // FIXME Snap to actual values
+    // XXX Snap to actual values?
     this.updateFilterValue({ min, max });
   }
 
