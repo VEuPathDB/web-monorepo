@@ -23,6 +23,8 @@ export default class RelatedCaseControlGroup extends React.Component {
 
   static handleParamChange(controller, param, paramValue) {
     const settings = parseSettings(controller.state.question);
+    if (settings == null) return;
+
     const toggleParam = settings.getToggleParam();
     const caseControlParam = settings.getCaseControlParam();
     if (
@@ -42,6 +44,8 @@ export default class RelatedCaseControlGroup extends React.Component {
    */
   static showFilterSummary(props) {
     const settings = parseSettings(props.wizardState.question);
+    if (settings == null) return true;
+
     const caseControlGroup = settings.getCaseControlGroup();
     if (props.group !== caseControlGroup) return true;
 
