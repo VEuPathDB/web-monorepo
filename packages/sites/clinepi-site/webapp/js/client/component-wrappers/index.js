@@ -74,6 +74,9 @@ function withRestrictionHandler(action, getRecordClassSelector) {
       super(props);
       this.state = { allowed: null };
     }
+    componentDidMount() {
+      this.doAttemptAction();
+    }
     componentDidUpdate(prevProps) {
       if (this.props.stateProps.recordClass == null) return;
 
@@ -82,18 +85,23 @@ function withRestrictionHandler(action, getRecordClassSelector) {
       }
 
       else if (this.props.stateProps.recordClass !== prevProps.stateProps.recordClass) {
-        const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.name);
-        this.props.dispatchProps.attemptAction(action, {
-          studyId,
-          onDeny: () => {
-            document.body.style.overflow = 'hidden';
-            this.setState({ allowed: false })
-          },
-          onAllow: () => {
-            this.setState({ allowed: true })
-          }
-        });
+        this.doAttemptAction();
       }
+    }
+    doAttemptAction() {
+      if (this.props.stateProps.recordClass == null) return;
+
+      const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.name);
+      this.props.dispatchProps.attemptAction(action, {
+        studyId,
+        onDeny: () => {
+          document.body.style.overflow = 'hidden';
+          this.setState({ allowed: false })
+        },
+        onAllow: () => {
+          this.setState({ allowed: true })
+        }
+      });
     }
     render() {
       const { allowed } = this.state
