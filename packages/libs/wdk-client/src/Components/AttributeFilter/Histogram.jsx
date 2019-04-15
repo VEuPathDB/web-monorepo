@@ -58,8 +58,11 @@ var Histogram = (function() {
     /**
      * Conditionally update plot and selection based on props and state.
      */
-    componentDidUpdate(prevProps, prevState) {
-      if (!isEqual(this.props.distribution, prevProps.distribution)) {
+    componentDidUpdate(prevProps) {
+      if (
+        !isEqual(this.props.distribution, prevProps.distribution) ||
+        this.props.uiState !== prevProps.uiState
+      ) {
         this.createPlot();
         this.drawPlotSelection();
       }
@@ -69,10 +72,6 @@ var Histogram = (function() {
         prevProps.selectedMax !== this.props.selectedMax
       ) {
         this.drawPlotSelection();
-      }
-
-      if (this.state.uiState !== prevState.uiState) {
-        this.updatePlotScale(this.state.uiState);
       }
     }
 
@@ -125,8 +124,10 @@ var Histogram = (function() {
     getBarWidth(distribution) {
       // padding factor
       const padding = 0.75;
+      const { min, max } = this.getRange(distribution);
+      const minWidth = (max - min) * 0.00075
       // For dates, use one day as width
-      if (this.props.chartType === 'date') return (1000 * 60 * 60 * 24) * padding;
+      if (this.props.chartType === 'date') return Math.min((1000 * 60 * 60 * 24) * padding, minWidth);
 
       // Find min distance between two points
       const sortedDistribution = orderBy(distribution, d => d.value, 'asc');
@@ -134,7 +135,7 @@ var Histogram = (function() {
         prevValue: entry.value,
         minDistance: prevValue == null ? minDistance : Math.min(entry.value - prevValue, minDistance)
       }), { prev: null, minDistance: Infinity });
-      return minDistance * padding;
+      return Math.max(minDistance * padding, minWidth);
     }
 
     getSeriesData(distribution) {
