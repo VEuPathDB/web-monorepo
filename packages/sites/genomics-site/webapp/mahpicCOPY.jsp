@@ -2153,7 +2153,7 @@
 
 
    <div class="wdk-toggle" data-show="false">
-   <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi ex vivo</i>i> time course.</a> </h3> 
+   <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi ex vivo</i> time course.</a> </h3> 
    <div class="wdk-toggle-content">
      
      <h4>Experiment Information</h4>
