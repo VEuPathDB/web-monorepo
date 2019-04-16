@@ -57,6 +57,7 @@ import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import Tabs from 'wdk-client/Components/Tabs/Tabs';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
+import { ResizableContainer } from 'wdk-client/Components/Display/ResizableContainer';
 
 export {
   AccordionButton,
@@ -106,6 +107,7 @@ export {
   RecordTableDescription,
   RecordTableSection,
   RecordUI,
+  ResizableContainer,
   ReporterSortMessage,
   SaveableTextEditor,
   ServerSideAttributeFilter,

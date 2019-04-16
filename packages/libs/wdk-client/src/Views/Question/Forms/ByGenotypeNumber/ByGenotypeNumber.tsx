@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import { Link } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
@@ -15,14 +15,14 @@ import { memoize } from 'lodash';
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,
   updateParamValue: typeof updateParamValue
-}
+};
 
 type Props = {
   state: QuestionState;
   dispatchAction: DispatchAction;
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
-}
+};
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -31,19 +31,19 @@ const onSubmit = memoize((dispatchAction: DispatchAction, urlSegment: string) =>
   dispatchAction(submitQuestion({ searchName: urlSegment }));
 });
 
-export const ByGenotypeNumber: React.SFC<Props> = ({
+export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
   dispatchAction,
   state: {
     question: {
-      parametersByName,
       urlSegment
     }
-  }
+  },
+  parameterElements
 }) =>
   <div className={`${cx()} ${cx('ByGenotypeNumber')}`}>
     <h1>Identify RFLP Genotype Isolates based on RFLP Genotype Number</h1>
     <form onSubmit={onSubmit(dispatchAction, urlSegment)}>
-      {parametersByName.genotype}
+      {parameterElements.genotype}
       <div className={cx('SubmitSection')}>
         <button type="submit" className="btn">
           Get Answer

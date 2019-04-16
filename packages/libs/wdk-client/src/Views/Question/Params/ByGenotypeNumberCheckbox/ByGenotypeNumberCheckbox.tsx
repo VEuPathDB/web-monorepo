@@ -263,7 +263,7 @@ interface ByGenotypeNumberCheckboxProps {
   paramValue: string;
 }
 
-export const ByGenotypeNumberCheckbox: React.SFC<ByGenotypeNumberCheckboxProps> = ({ 
+export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberCheckboxProps> = ({ 
   onParamValueChange, 
   paramValue 
 }) => {
