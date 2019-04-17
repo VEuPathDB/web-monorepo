@@ -2,7 +2,6 @@ import React, { CSSProperties } from 'react';
 import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 
 const divStyle: CSSProperties = { textAlign: 'center' };
-const iframeStyle: CSSProperties = { border: 0 };
 
 interface QueryParamFactory {
   (props: StepAnalysisResultPluginProps): string;
@@ -34,9 +33,11 @@ export const contextHashQueryParamFactory = ({
 export const stepAnalysisExternalResultFactory = (queryParamFactories: [string, QueryParamFactory][]): React.SFC<StepAnalysisResultPluginProps> => (props) =>
   <div style={divStyle}>
     <iframe 
-      style={iframeStyle} 
+      style={{
+        border: 0,
+        width: props.analysisResult.iframeWidth || '100%',
+        height: props.analysisResult.iframeHeight || 'calc(100vh - 250px)'
+      }} 
       src={generateIframeUrl(queryParamFactories, props)}
-      width={props.analysisResult.iframeWidth}
-      height={props.analysisResult.iframeHeight}
     />
   </div>
