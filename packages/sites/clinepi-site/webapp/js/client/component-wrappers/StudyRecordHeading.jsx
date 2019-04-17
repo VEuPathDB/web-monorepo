@@ -4,10 +4,38 @@ import { connect } from 'react-redux';
 import { Seq } from 'wdk-client/IterableUtils';
 import { makeClassNameHelper } from 'wdk-client/ComponentUtils';
 import StudySearches from 'ebrc-client/App/Studies/StudySearches';
+import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
+import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
 
 const cx = makeClassNameHelper('ce-StudyRecordHeadingSearchLinks');
 
-const enhance = connect((state) => {
+function StudyRecordHeading({ entries, loading, webAppUrl, study, attemptAction, ...props }) {
+  return (
+    <React.Fragment>
+      <props.DefaultComponent {...props}/>
+      <div className={cx()}>
+        <div className={cx('Label')}>Search the data</div>
+        {loading ? null :
+          <StudySearches
+            entries={entries}
+            webAppUrl={webAppUrl}
+            renderNotFound={() => (
+              <div>
+                <em>No searches were found for this study.</em>
+              </div>
+            )}
+          />
+        }
+      </div>
+      <div className={cx()}>
+        <div className={cx('Label')}>Download the data</div>
+        <DownloadLink className="ce-StudySearchIconLinksItem" study={study} attemptAction={attemptAction}/>
+      </div>
+    </React.Fragment>
+  );
+}
+
+function mapStateToProps(state) {
   const { globalData, record, studies } = state;
   const { questions, recordClasses, siteConfig } = globalData;
   const { webAppUrl } = siteConfig;
@@ -39,30 +67,11 @@ const enhance = connect((state) => {
               .take(1)))
       .toArray();
 
-  return { entries, webAppUrl };
-}, null);
-
-
-function StudyRecordHeading({ entries, loading, webAppUrl, ...props }) {
-  return (
-    <React.Fragment>
-      <props.DefaultComponent {...props}/>
-      <div className={cx()}>
-        <div className={cx('Label')}>Search the data</div>
-        {loading ? null :
-          <StudySearches
-            entries={entries}
-            webAppUrl={webAppUrl}
-            renderNotFound={() => (
-              <div>
-                <em>No searches were found for this study.</em>
-              </div>
-            )}
-          />
-        }
-      </div>
-    </React.Fragment>
-  );
+  return { entries, webAppUrl, study: activeStudy };
 }
 
-export default enhance(StudyRecordHeading);
+const mapDispatchToProps = {
+  attemptAction
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StudyRecordHeading);

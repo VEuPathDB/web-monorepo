@@ -1,24 +1,36 @@
 import React from 'react';
 import Param from 'ebrc-client/components/Param';
 
-const CASE_CONTROL_GROUP_NAME = 'relative_case_control';
-const TOGGLE_PARAM_NAME = 'use_rel_case_control';
-const KEEP_REMOVE_PARAM_NAME = 'keep_remove';
-const FILTER_PARAM_NAME = 'relative_event_gems';
-const CASE_CONTROL_PARAM_NAME = 'case_control';
+import { createSettingsParser, groupGetter, parameterGetter } from '../util/questionSettings';
+
+const parseSettings = createSettingsParser('relatedCaseControlLayoutSettings', {
+  getCaseControlGroup: groupGetter('relatedCaseControlGroupName'),
+  getToggleParam: parameterGetter('toggleParamName'),
+  getKeepRemoveParam: parameterGetter('keepRemoveParamName'),
+  getFilterParam: parameterGetter('filterParamName'),
+  getCaseControlParam: parameterGetter('caseControlParamName')
+});
 
 export default class RelatedCaseControlGroup extends React.Component {
 
   static shouldUseLayout(props) {
-    return props.wizardState.activeGroup.name === CASE_CONTROL_GROUP_NAME;
+    const settings = parseSettings(props.wizardState.question);
+    return (
+      settings != null &&
+      settings.getCaseControlGroup() === props.wizardState.activeGroup
+    );
   }
 
   static handleParamChange(controller, param, paramValue) {
-    let toggleParam = controller.parameterMap.get(TOGGLE_PARAM_NAME);
+    const settings = parseSettings(controller.state.question);
+    if (settings == null) return;
+
+    const toggleParam = settings.getToggleParam();
+    const caseControlParam = settings.getCaseControlParam();
     if (
-      param.name === CASE_CONTROL_PARAM_NAME &&
+      param === caseControlParam &&
       paramValue.startsWith('Both') &&
-      controller.state.paramValues[TOGGLE_PARAM_NAME] !== toggleParam.defaultValue
+      controller.state.paramValues[toggleParam.name] !== toggleParam.defaultValue
     ) {
       controller.setParamValue(toggleParam, toggleParam.defaultValue);
     }
@@ -31,7 +43,11 @@ export default class RelatedCaseControlGroup extends React.Component {
    * - related observations is active
    */
   static showFilterSummary(props) {
-    if (props.group.name !== CASE_CONTROL_GROUP_NAME) return true;
+    const settings = parseSettings(props.wizardState.question);
+    if (settings == null) return true;
+
+    const caseControlGroup = settings.getCaseControlGroup();
+    if (props.group !== caseControlGroup) return true;
 
     return (
       RelatedCaseControlGroup.isUsable(props) &&
@@ -40,11 +56,19 @@ export default class RelatedCaseControlGroup extends React.Component {
   }
 
   static isUsable(props) {
-    return !props.wizardState.paramValues[CASE_CONTROL_PARAM_NAME].startsWith('Both');
+    const settings = parseSettings(props.wizardState.question);
+    if (settings == null) return true;
+
+    const caseControlParam = settings.getCaseControlParam();
+    return !props.wizardState.paramValues[caseControlParam.name].startsWith('Both');
   }
 
   static isEnabled(props) {
-    return props.wizardState.paramValues[TOGGLE_PARAM_NAME] === 'Yes';
+    const settings = parseSettings(props.wizardState.question);
+    if (settings == null) return true;
+
+    const toggleParam = settings.getToggleParam()
+    return props.wizardState.paramValues[toggleParam.name] === 'Yes';
   }
 
   renderToggle() {
@@ -54,9 +78,10 @@ export default class RelatedCaseControlGroup extends React.Component {
           <input
             type="checkbox"
             checked={RelatedCaseControlGroup.isEnabled(this.props)}
-            onClick={() => {
+            onChange={() => {
+              const settings = parseSettings(this.props.wizardState.question);
               this.props.parameterEventHandlers.onParamValueChange(
-                this.props.wizardState.question.parameters.find(p => p.name === TOGGLE_PARAM_NAME),
+                settings.getToggleParam(),
                 RelatedCaseControlGroup.isEnabled(this.props) ? 'No' : 'Yes'
               );
             }} /> Enable the advanced <strong>Related Case/Control</strong> filter below. It allows you to restrict Participants using information about their related case or control.
@@ -93,15 +118,15 @@ export default class RelatedCaseControlGroup extends React.Component {
   }
 
   render() {
+    const settings = parseSettings(this.props.wizardState.question);
     const modifiedWizardState = Object.assign({}, this.props.wizardState, {
       activeGroup: Object.assign({}, this.props.wizardState.activeGroup, {
         parameters: []
       })
     });
 
-    const paramMap = new Map(this.props.wizardState.question.parameters.map(p => [p.name, p]));
-    const keepRemoveParam = paramMap.get(KEEP_REMOVE_PARAM_NAME);
-    const filterParam = paramMap.get(FILTER_PARAM_NAME);
+    const keepRemoveParam = settings.getKeepRemoveParam();
+    const filterParam = settings.getFilterParam();
 
     return (
       <div className={'CaseControlGroupWrapper CaseControlGroupWrapper__' +

@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.gusdb.fgputil.db.stream.ResultSetToJsonConverter;
+import org.gusdb.fgputil.db.stream.ResultSetToNdJsonConverter;
 import org.gusdb.fgputil.functional.Functions;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.service.service.AbstractWdkService;
@@ -25,9 +25,11 @@ public class ShinyQueryService extends AbstractWdkService {
 
   private Response getStreamingResponse(String sql, String queryName, String errorMsgOnFail) throws WdkModelException {
     return Response.ok(
-      Functions.mapException(
-        () -> getResultSetStream(sql, queryName, getWdkModel().getAppDb().getDataSource(), new ResultSetToJsonConverter()),
-        e -> new WdkModelException(errorMsgOnFail + " SQL: " + sql, e)
+      getStreamingOutput(
+        Functions.mapException(
+          () -> getResultSetStream(sql, queryName, getWdkModel().getAppDb().getDataSource(), new ResultSetToNdJsonConverter()),
+          e -> new WdkModelException(errorMsgOnFail + " SQL: " + sql, e)
+        )
       )
     ).build();
   }
