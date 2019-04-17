@@ -886,6 +886,13 @@
              <td>N/A</td>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE127079" target="_blank">E06 Results at NCBI's GEO</a>
+                     </b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS824" target="_blank">E06 Quantitative Metabolomics Results at Metabolights</a><br>
                     </b></td>    
@@ -988,6 +995,13 @@
            <tr>
              <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
              <td><b><a href="/common/downloads/MaHPIC/Experiment_07/E07BMalariaCore/">E07B Clinical Data in PlasmoDB Downloads</b></a></td>  
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE128115" target="_blank">E07 Results at NCBI's GEO</a>
+                     </b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -1862,7 +1876,9 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E30 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E25 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E25 BioProject record at NCBI</a>-->
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE123495" target="_blank">E30 Results at NCBI's GEO</a>
+                     </b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -2134,6 +2150,91 @@
 <br><br>
 </div>
 </div>
+
+
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi ex vivo</i> time course.</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoS01 table, #ExpInfoS01 td, #ExpInfoS01 th, #ExpInfoS01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoS01 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoS01"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Supporting Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> Pk1(A+), Pk1(B+)1+, Pk1(C+) <i>ex vivo</i> time course</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive rhesus macaques (<i>Macaca mulatta</i>), were inoculated with a particular parasite clone and allowed to reach a targeted peak parasitemia of 5% - 10% proportion of infected RBCs. Whole blood was collected at the early ring stage while subjects were under anesthesia, and an ex vivo culture was established using standard protocols, which include but are not limited to the processing of the whole blood by removing platelets and white blood cells. Samples were collected starting at 1.5-2 hours after establishing cultures, followed by collections every 4 hours for a 24-hour period. Blood-stage curative doses of the anti-malarial drug chloroquine were administered to all subjects after whole blood extraction from each subject. Parasitemias were monitored daily by ear sticks. Within the MaHPIC, this project is known as 'Supporting Project 01'. To access other publicly available results from 'S01' including proteomics and other MaHPIC Experiments, visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksS01 table, #DataLinksS01 td, #DataLinksS01 th, #DataLinksS01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksS01 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksS01 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksS01"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank"><b>MaHPIC Umbrella BioProject</b></a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE110970" target="_blank"><b>S01 Results at NCBI's GEO</a></b></td> 
+             <td>N/A</td>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 
+<!-- 	 
+	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Proteomics_Core.jpg" height="15px" width="15px">&nbsp; &nbsp;
+	     A large scale <i>Plasmodium vivax</i>- <i>Saimiri boliviensis</i> trophozoite-schizont transition proteome.  <a href="http://europepmc.org/abstract/MED/28829774" target="_blank">Anderson et al. PLoS One. 2017 12(8):e0182561</a>
+        </div>
+        <p>
+
+
+     <br><br> 
+     <img align="middle" src="images/MaHPIC_E30_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E30_Timeline.png" target="_blank">View Larger Image</a><br>
+  -->
+        
+  </div>	
+  </div>  
 
 
 

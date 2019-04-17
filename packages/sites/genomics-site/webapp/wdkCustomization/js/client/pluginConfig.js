@@ -2,6 +2,7 @@ import {
   GenomeSummaryViewPlugin,
   BlastSummaryViewPlugin,
   MatchedTranscriptsFilterPlugin,
+  ResultTableSummaryViewPlugin
 } from 'wdk-client/Plugins';
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
@@ -12,6 +13,14 @@ export default [
     name: '_default',
     recordClassName: 'PopsetRecordClasses.PopsetRecordClass',
     component: PopsetResultSummaryViewTableController
+  },
+  {
+    type: 'summaryView',
+    name: '_default',
+    recordClassName: 'UserFileRecords.UserFile',
+    component: ResultTableSummaryViewPlugin.withOptions({
+      showIdAttributeColumn: false
+    })
   },
   {
     type: 'summaryView',
