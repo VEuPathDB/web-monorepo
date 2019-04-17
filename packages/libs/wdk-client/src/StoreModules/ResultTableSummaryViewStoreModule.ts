@@ -1,7 +1,7 @@
 // TODO Make this Store Module more generic so that it can be used with an Answer (and no Step).
 
 import stringify from 'json-stable-stringify';
-import { get, stubTrue } from 'lodash';
+import { get, stubTrue, isEqual, difference } from 'lodash';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { Action } from 'wdk-client/Actions';
 import {
@@ -30,6 +30,7 @@ import {
   showHideAddColumnsDialog,
   updateColumnsDialogExpandedNodes,
   updateColumnsDialogSelection,
+  updateColumnsDialogSearchString,
   updateSelectedIds,
   viewPageNumber,
   requestGlobalViewFilters,
@@ -81,6 +82,7 @@ type ViewState = {
   basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: Array<string>; //
+  columnsDialogSearchString?: string;
   columnsDialogExpandedNodes?: Array<string>;
   selectedIds?: string[];
   globalViewFilters: GlobalViewFilters;
@@ -207,6 +209,9 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
     }
     case updateColumnsDialogSelection.type: {
       return { ...state, columnsDialogSelection: action.payload.selection };
+    }
+    case updateColumnsDialogSearchString.type: {
+      return { ...state, columnsDialogSearchString: action.payload.searchString };
     }
     case fulfillColumnsChoice.type: {
       return reduceColumnsFulfillAction(state, action);
@@ -584,30 +589,26 @@ async function getFulfillAnswer(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillAnswer>> {
   const r = requestAction.payload;
-
   // if only columns have changed, and the new columns are a subset of
   // current, we can avoid making a service call
-  // if new columns are a subset of old columns
-  // TODO Move this logic into WdkService as an answer value cache
-  /*
-    const currentAnswer = state$.value[key].answer;
-    if (
-        currentAnswer &&
-        isEqual(r.pagination, currentAnswer.meta.pagination) &&
-        isEqual(r.columnsConfig.sorting, currentAnswer.meta.sorting) &&
-        !isEqual(r.columnsConfig.attributes, currentAnswer.meta.attributes) &&
-        difference(r.columnsConfig.attributes, currentAnswer.meta.attributes).length === 0
-    ) {
-        const answer: Answer = {
-            ...currentAnswer,
-            meta: {
-                ...currentAnswer.meta,
-                attributes: r.columnsConfig.attributes as Answer['meta']['attributes']
-            }
-        };
-        return fulfillAnswer(r.stepId, r.columnsConfig, r.pagination, answer);
-    }
-   */
+  const currentViewState = state$.value[key][openAction.payload.viewId];
+  const currentAnswer = currentViewState && currentViewState.answer;
+  if (
+      currentAnswer &&
+      isEqual(r.pagination, currentAnswer.meta.pagination) &&
+      isEqual(r.columnsConfig.sorting, currentAnswer.meta.sorting) &&
+      !isEqual(r.columnsConfig.attributes, currentAnswer.meta.attributes) &&
+      difference(r.columnsConfig.attributes, currentAnswer.meta.attributes).length === 0
+  ) {
+      const answer: Answer = {
+          ...currentAnswer,
+          meta: {
+              ...currentAnswer.meta,
+              attributes: r.columnsConfig.attributes as Answer['meta']['attributes']
+          }
+      };
+      return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
+  }
   // FIXME Need to figure out how to handle client errors, given that some of these inputs are stored as user preferences. We might need to clear these prefs on errors?
   let formatConfig: AnswerJsonFormatConfig= {
     sorting: r.columnsConfig.sorting,

@@ -8,6 +8,7 @@ import { flatMap, concat } from 'wdk-client/Utils/IterableUtils';
 import {
   ShowHideAddColumnsDialog,
   UpdateColumnsDialogSelection,
+  UpdateColumnsDialogSearchString,
   UpdateColumnsDialogExpandedNodes,
   RequestColumnsChoiceUpdate
 } from 'wdk-client/Views/ResultTableSummaryView/Types';
@@ -18,9 +19,11 @@ export interface Props {
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: string[];
   columnsDialogExpandedNodes?: string[];
+  columnsDialogSearchString?: string;
   columnsTree: CategoryTreeNode;
   showHideAddColumnsDialog: ShowHideAddColumnsDialog;
   updateColumnsDialogSelection: UpdateColumnsDialogSelection;
+  updateColumnsDialogSearchString: UpdateColumnsDialogSearchString;
   updateColumnsDialogExpandedNodes: UpdateColumnsDialogExpandedNodes;
   requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
 }
@@ -31,9 +34,11 @@ function ResultTableAddColumnsDialog({
   columnsDialogExpandedNodes,
   columnsDialogIsOpen,
   columnsDialogSelection,
+  columnsDialogSearchString = '',
   columnsTree,
   showHideAddColumnsDialog,
   updateColumnsDialogSelection,
+  updateColumnsDialogSearchString,
   updateColumnsDialogExpandedNodes,
   requestColumnsChoiceUpdate,
 }: Props) {
@@ -82,10 +87,10 @@ function ResultTableAddColumnsDialog({
           currentSelection={answer.meta.attributes}
           defaultSelection={question.defaultAttributes}
           expandedBranches={getExpandedBranches(answer, columnsTree, columnsDialogExpandedNodes)}
-          searchTerm=""
+          searchTerm={columnsDialogSearchString}
           onChange={updateColumnsDialogSelection}
           onUiChange={updateColumnsDialogExpandedNodes}
-          onSearchTermChange={console.log}
+          onSearchTermChange={updateColumnsDialogSearchString}
         />
         {button}
       </>

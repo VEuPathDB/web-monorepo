@@ -22,6 +22,7 @@ export interface Props {
   stepId: number;
   actions?: Action[];
   selectedIds?: string[];
+  showIdAttributeColumn: boolean;
   activeAttributeAnalysisName: string | undefined;
   answer: Answer;
   recordClass: RecordClass;
@@ -121,6 +122,7 @@ function getEventHandlers(props: Props) {
     actions,
     selectedIds,
     updateSelectedIds,
+    showIdAttributeColumn,
     question,
     requestSortingUpdate,
     requestColumnsChoiceUpdate,
@@ -143,7 +145,8 @@ function getEventHandlers(props: Props) {
   function onColumnReorder(attributeName: string, newIndex: number) {
     const tmpColumns = answer.meta.attributes.filter(attrName => attrName !== attributeName);
     // Subtract 1 from newIndex to compensate for basket column
-    const targetIndex = recordClass.useBasket ? newIndex - 1 : newIndex;
+    const shift = (recordClass.useBasket ? -1 : 0) + (showIdAttributeColumn ? 0 : 1);
+    const targetIndex = newIndex + shift;
     const newColumns = [
       ...tmpColumns.slice(0, targetIndex),
       attributeName,
@@ -190,6 +193,7 @@ function getEventHandlers(props: Props) {
 function getColumns({
   stepId,
   activeAttributeAnalysisName,
+  showIdAttributeColumn,
   answer,
   question,
   recordClass,
@@ -236,6 +240,8 @@ function getColumns({
     )
   };
   const answerColumns = answer.meta.attributes
+    .filter(attrName => attrName === recordClass.recordIdAttributeName
+      ? showIdAttributeColumn : true)
     .map(attrName => attrsByName[attrName])
     .map(attribute => ({
       key: attribute.name,

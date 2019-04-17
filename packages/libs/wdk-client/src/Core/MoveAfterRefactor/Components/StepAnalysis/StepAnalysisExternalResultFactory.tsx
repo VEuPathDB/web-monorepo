@@ -3,7 +3,6 @@ import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 
 const divStyle: CSSProperties = { textAlign: 'center' };
 const iframeStyle: CSSProperties = { border: 0 };
-const linkContainerStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-end' };
 
 interface QueryParamFactory {
   (props: StepAnalysisResultPluginProps): string;
@@ -33,18 +32,11 @@ export const contextHashQueryParamFactory = ({
 }: StepAnalysisResultPluginProps) => encodeURIComponent(contextHash);
 
 export const stepAnalysisExternalResultFactory = (queryParamFactories: [string, QueryParamFactory][]): React.SFC<StepAnalysisResultPluginProps> => (props) =>
-  <>
-    <div style={linkContainerStyle}>
-      <a href={generateIframeUrl(queryParamFactories, props)} target="_new">
-        Open in new window <i className="fa fa-external-link"></i>
-      </a>
-    </div>
-    <div style={divStyle}>
-      <iframe 
-        style={iframeStyle} 
-        src={generateIframeUrl(queryParamFactories, props)}
-        width={props.analysisResult.iframeWidth}
-        height={props.analysisResult.iframeHeight}
-      />
-    </div>
-  </>;
+  <div style={divStyle}>
+    <iframe 
+      style={iframeStyle} 
+      src={generateIframeUrl(queryParamFactories, props)}
+      width={props.analysisResult.iframeWidth}
+      height={props.analysisResult.iframeHeight}
+    />
+  </div>

@@ -20,8 +20,8 @@ class Checkbox extends React.Component {
     className += disabled ? ' Checkbox-Disabled' : '';
 
     return (
-      <div className={className} onClick={disabled ? null : this.handleClick}>
-        <input type="checkbox" checked={checked} />
+      <div className={className}>
+        <input type="checkbox" checked={checked} onChange={this.handleClick} />
       </div>
     );
   }

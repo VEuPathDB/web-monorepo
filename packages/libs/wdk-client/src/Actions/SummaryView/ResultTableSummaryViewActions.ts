@@ -32,6 +32,11 @@ export const updateColumnsDialogSelection = makeActionCreator(
   (viewId: string, selection: Array<string>) => ({ selection, viewId })
 );
 
+export const updateColumnsDialogSearchString = makeActionCreator(
+  'resultTableSummaryView/updateColumnsDialogSearchString',
+  (viewId: string, searchString: string) => ({ viewId, searchString })
+);
+
 export const updateColumnsDialogExpandedNodes = makeActionCreator(
   'resultTableSummaryView/updateColumnsExpandedNodes',
   (viewId: string, expanded: Array<string>) => ({ expanded, viewId })
@@ -187,6 +192,7 @@ export type Action =
   | InferAction<typeof requestRecordsBasketStatus>
   | InferAction<typeof fulfillRecordsBasketStatus>
   | InferAction<typeof showHideAddColumnsDialog>
+  | InferAction<typeof updateColumnsDialogSearchString>
   | InferAction<typeof updateColumnsDialogSelection>
   | InferAction<typeof updateColumnsDialogExpandedNodes>
   | InferAction<typeof updateSelectedIds>

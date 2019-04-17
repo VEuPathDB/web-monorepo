@@ -14,6 +14,7 @@ import {
   viewPageNumber,
   showHideAddColumnsDialog,
   updateColumnsDialogSelection,
+  updateColumnsDialogSearchString,
   updateColumnsDialogExpandedNodes,
   updateSelectedIds,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
@@ -55,6 +56,7 @@ type DispatchProps = {
   showHideAddColumnsDialog: Partial1<typeof showHideAddColumnsDialog>;
   updateColumnsDialogExpandedNodes: Partial1<typeof updateColumnsDialogExpandedNodes>;
   updateColumnsDialogSelection: Partial1<typeof updateColumnsDialogSelection>;
+  updateColumnsDialogSearchString: Partial1<typeof updateColumnsDialogSearchString>;
   updateSelectedIds: Partial1<typeof updateSelectedIds>;
   viewPageNumber: Partial1<typeof viewPageNumber>;
 }
@@ -63,6 +65,7 @@ type OwnProps = {
   viewId: string;
   stepId: number;
   tableActions?: TableAction[];
+  showIdAttributeColumn?: boolean;
 }
 
 type Props = OwnProps & StateProps & {
@@ -95,6 +98,7 @@ class ResultTableSummaryViewController extends React.Component< Props > {
       <ResultTableSummaryView
         stepId={this.props.stepId}
         actions={this.props.tableActions}
+        showIdAttributeColumn={this.props.showIdAttributeColumn}
         {...this.props.viewData}
         {...this.props.derivedData}
         {...this.props.actionCreators}
@@ -165,6 +169,7 @@ function mapDispatchToProps(dispatch: Dispatch, { stepId, viewId }: OwnProps): D
     showHideAddColumnsDialog: partial(showHideAddColumnsDialog, viewId),
     updateColumnsDialogExpandedNodes: partial(updateColumnsDialogExpandedNodes, viewId),
     updateColumnsDialogSelection: partial(updateColumnsDialogSelection, viewId),
+    updateColumnsDialogSearchString: partial(updateColumnsDialogSearchString, viewId),
     updateSelectedIds: partial(updateSelectedIds, viewId),
     viewPageNumber: partial(viewPageNumber, viewId),
   }, dispatch)
@@ -177,6 +182,7 @@ const ConnectedController = connect<StateProps, DispatchProps, OwnProps, Props, 
 )(wrappable(ResultTableSummaryViewController));
 
 export default Object.assign(ConnectedController, {
-  withTableActions: (tableActions: TableAction[]) => (props: Exclude<OwnProps, 'tableActions'>) =>
-    <ConnectedController {...props} tableActions={tableActions}/>
+  withOptions: (options: Pick<OwnProps, 'tableActions'|'showIdAttributeColumn'>) => (props: Exclude<OwnProps, 'tableActions'|'showIdAttributeColumn'>) =>
+    <ConnectedController {...props} {...options} />,
+
 });

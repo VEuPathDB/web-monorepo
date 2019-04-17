@@ -182,7 +182,7 @@ const routes: RouteEntry[] = [
     component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
       <ResultPanelController
         stepId={Number(props.match.params.stepId)}
-        viewId={props.match.params.stepId}
+        viewId="strategy"
       />
   },
 
