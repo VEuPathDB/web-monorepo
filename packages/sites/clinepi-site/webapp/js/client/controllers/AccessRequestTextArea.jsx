@@ -1,4 +1,5 @@
 const AccessRequestTextArea = ({
+  key,
   label,
   rows,
   cols,
@@ -8,14 +9,14 @@ const AccessRequestTextArea = ({
   <tr>
     <td colSpan={4}>
       <strong>
-        <label htmlFor={label}>
+        <label htmlFor={key}>
           {label}
         </label>
       </strong>
       <br />
       <br />
       <textarea
-        id={label}
+        id={key}
         rows={8}
         cols={150}
         required
