@@ -6,6 +6,7 @@
 
 <struts-config>
 
+  <!--
   <global-exceptions>
 
     <exception key="global.error.user" path="/showErrorPage.do?type=user" scope="request"
@@ -16,20 +17,20 @@
                type="java.lang.RuntimeException"/>
     <exception key="global.error.other" path="/showErrorPage.do?type=other" scope="request"
                type="java.lang.Exception"/>
-    <!--
+
     <exception type="java.lang.Exception"
                path="/WEB-INF/jsp/error.jsp"
                key="error.global.message"/>
     <exception type="java.lang.RuntimeException"
                path="/WEB-INF/jsp/error.jsp"
                key="error.global.message"/>
-    -->
   </global-exceptions>
 
   <global-forwards type="org.apache.struts.action.ActionForward">
     <forward name="home" path="/home.jsp"/>
     <forward name="application_error" path="/wdkCustomization/jsp/Error.jsp"/>
   </global-forwards>
+  -->
 
   <action-mappings>
 
