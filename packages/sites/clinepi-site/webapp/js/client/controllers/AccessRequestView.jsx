@@ -101,6 +101,7 @@ export default class AccessRequestView extends Component {
               {fieldElements.map(({ key, FieldComponent, label, onChangeKey }) => 
                 <FieldComponent
                   key={key}
+                  mykey={key}
                   label={label}
                   value={formValues[key]}
                   onChange={this.props[onChangeKey]} />
