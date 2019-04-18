@@ -4,6 +4,7 @@ import { PureComponent } from 'react';
 import { httpGet } from 'ebrc-client/util/http';
 import $ from 'jquery';
 import { Loading } from 'wdk-client/Components';
+import { webAppUrl } from '../../config';
 
 /**
  * Each entry below is used in two scenarios:
@@ -113,7 +114,7 @@ const GbrowseLink = ({ url }) =>
 const GbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser</a>
-<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton">View in JBrowse genome browser</a>
+<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser &nbsp;<img src={webAppUrl + '/wdk/images/beta2-30.png'}/></a>
 </div>
 
 const PbrowseLink = ({ url }) =>
