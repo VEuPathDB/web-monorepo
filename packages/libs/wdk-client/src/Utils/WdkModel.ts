@@ -32,6 +32,7 @@ export interface RecordClass extends UrlModelEntity {
   tablesMap: Record<string, TableField>;
   formats: Reporter[];
   useBasket: boolean;
+  searches: Array<Question>
 }
 
 export interface Reporter {

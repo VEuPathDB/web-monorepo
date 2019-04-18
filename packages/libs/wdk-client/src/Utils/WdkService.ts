@@ -415,6 +415,7 @@ const questionFilterDecoder =
     Decode.field('description', Decode.optional(Decode.string)),
     Decode.field('isViewOnly', Decode.boolean),
   )
+
 const questionSharedDecoder =
   Decode.combine(
     Decode.combine(
@@ -613,15 +614,10 @@ export default class WdkService {
    *
    * @return {Promise<Array<Object>>}
    */
-  getQuestions() {
-    return this.sendRequest(questionsDecoder, {
-      method: 'get',
-      path: '/questions',
-      params: {
-        expandQuestions: 'true'
-      },
-      useCache: true
-    })
+  getQuestions() : Promise<Array<Question>> {
+    return this.getRecordClasses().then(result => {
+      return result.reduce((arr, rc) => arr.concat(rc.searches), [] as Array<Question>);
+    });
   }
 
   /**
@@ -885,23 +881,30 @@ export default class WdkService {
     return this._fetchJson<{ [recordClassName: string]: number }>('get', '/users/current/baskets');
   }
 
-  getBasketStatus(recordClassName: string, records: Array<RecordInstance>): Promise<BasketStatusResponse> {
+  async getRecordClassUrlSegmentFromFullName(recordClassFullName: string) : Promise<string> {
+    return await this.findRecordClass(rc => rc.fullName === recordClassFullName).then(rc => rc.urlSegment);
+  }
+
+  async getBasketStatus(recordClassFullName: string, records: Array<RecordInstance>): Promise<BasketStatusResponse> {
     let data = JSON.stringify(records.map(record => record.id));
-    let url = `/users/current/baskets/${recordClassName}/query`;
+    let rcUrlSegment = await this.getRecordClassUrlSegmentFromFullName(recordClassFullName);
+    let url = `/users/current/baskets/${rcUrlSegment}/query`;
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  getBasketStatusPk(recordClassName: string, records: Array<PrimaryKey>): Promise<BasketStatusResponse> {
+  async getBasketStatusPk(recordClassFullName: string, records: Array<PrimaryKey>): Promise<BasketStatusResponse> {
     let data = JSON.stringify(records);
-    let url = `/users/current/baskets/${recordClassName}/query`;
+    let rcUrlSegment = await this.getRecordClassUrlSegmentFromFullName(recordClassFullName);
+    let url = `/users/current/baskets/${rcUrlSegment}/query`;
     return this._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  updateBasketStatus(operation: BasketRecordOperation, recordClassName: string, primaryKey: PrimaryKey[]): Promise<void>;
-  updateBasketStatus(operation: BasketStepOperation, recordClassName: string, stepId: number): Promise<void>;
-  updateBasketStatus(operation: BasketRecordOperation | BasketStepOperation, recordClassName: string, pksOrStepId: PrimaryKey[] | number): Promise<void> {
+  async updateBasketStatus(operation: BasketRecordOperation, recordClassFullName: string, primaryKey: PrimaryKey[]): Promise<void>;
+  async updateBasketStatus(operation: BasketStepOperation, recordClassFullName: string, stepId: number): Promise<void>;
+  async updateBasketStatus(operation: BasketRecordOperation | BasketStepOperation, recordClassFullName: string, pksOrStepId: PrimaryKey[] | number): Promise<void> {
     let data = JSON.stringify({ [operation]: pksOrStepId });
-    let url = `/users/current/baskets/${recordClassName}`;
+    let rcUrlSegment = await this.getRecordClassUrlSegmentFromFullName(recordClassFullName);
+    let url = `/users/current/baskets/${rcUrlSegment}`;
     return this._fetchJson<void>('patch', url, data);
   }
 
