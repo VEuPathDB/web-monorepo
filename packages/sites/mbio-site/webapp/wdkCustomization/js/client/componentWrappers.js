@@ -6,6 +6,7 @@ import { StudyMenuItem } from 'ebrc-client/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
 import vizData from './visualizations.json';
+import './StudyCardOverrides.scss';
 
 export default {
   SiteHeader: () => SiteHeader,
