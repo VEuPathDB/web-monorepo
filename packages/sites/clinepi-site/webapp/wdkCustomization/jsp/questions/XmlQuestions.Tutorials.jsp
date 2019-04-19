@@ -24,49 +24,56 @@
 <div id="clinepi-tutorials">
   <h1>ClinEpiDB Tutorials</h1>
   <ul>
-  <c:forEach items="${tutAnswer.recordInstances}" var="record">
+  <c:forEach items="${tutAnswer.recordInstances}" var="record" varStatus="loopCount">
+   <c:if test="${loopCount.count < 4}">
     <c:set var="attrs" value="${record.attributesMap}"/>
-
     <c:forEach items="${record.tables}" var="table">
-
       <c:forEach items="${table.rows}" var="row">
         <c:set var="projects" value="${row[0].value}"/>
-
         <c:if test="${fn:containsIgnoreCase(projects, project)}">
-          <c:set var="urlMov" value="${row[1].value}"/>
-          <c:if test="${urlMov != 'unavailable' && ! fn:startsWith(urlMov, 'http://')}">
-            <c:set var="urlMov">http://www.youtube.com/${urlMov}</c:set>
-          </c:if>
-          <c:set var="urlAvi" value="${row[2].value}"/>
-          <c:if test="${urlAvi != 'unavailable' &&  ! fn:startsWith(urlAvi, 'http://')}">
-            <c:set var="urlAvi">https://eupathdb.org/tutorials/${urlAvi}</c:set>
-          </c:if>
-          <c:set var="urlFlv" value="${row[3].value}"/>
-          <c:choose>
-            <c:when test="${ ! fn:endsWith(urlFlv, 'flv')}">
-              <c:set var="urlFlv">https://eupathdb.org/tutorials/${urlFlv}</c:set>
-            </c:when>
-            <c:when test="${urlFlv != 'unavailable' &&  ! fn:startsWith(urlFlv, 'http://')}">
-              <c:set var="urlFlv">https://eupathdb.org/flv_player/flvplayer.swf?file=/tutorials/${urlFlv}&amp;autostart=true</c:set>
-            </c:when>
-          </c:choose>
-          <c:set var="urlPdf" value="${row[4].value}"/>
+          <c:set var="urlPdf" value="${row[1].value}"/>
           <c:if test="${urlPdf != 'unavailable' &&  ! fn:startsWith(urlPdf, 'http://')}">
             <c:set var="urlPdf">https://eupathdb.org/tutorials/${urlPdf}</c:set>
           </c:if>
-          <c:set var="duration" value="${row[5].value}"/>
-          <c:set var="size" value="${row[6].value}"/>
-
+          <c:set var="size" value="${row[2].value}"/>
           <li id='t-${attrs['uid']}'>
             <a href="${urlPdf}" title="${size} - ${attrs['description']}"><i class="fa fa-file-pdf-o"><jsp:text/></i>${attrs['title']}</a>
           </li>
         </c:if>
       </c:forEach>
     </c:forEach>
+   </c:if>
   </c:forEach>
   </ul>
 </div>
 
+<br><br>
+<div id="clinepi-resources">
+  <h1>ClinEpiDB Resources</h1>
+  <ul>
+  <c:forEach items="${tutAnswer.recordInstances}" var="record" varStatus="loopCount">
+    <c:if test="${loopCount.count > 3}">
+    <c:set var="attrs" value="${record.attributesMap}"/>
+    <c:forEach items="${record.tables}" var="table">
+      <c:forEach items="${table.rows}" var="row">
+        <c:set var="projects" value="${row[0].value}"/>
+        <c:if test="${fn:containsIgnoreCase(projects, project)}">
+          <c:set var="urlPdf" value="${row[1].value}"/>
+          <c:if test="${urlPdf != 'unavailable' &&  ! fn:startsWith(urlPdf, 'http://')}">
+            <c:set var="urlPdf">https://eupathdb.org/tutorials/${urlPdf}</c:set>
+          </c:if>
+          <c:set var="size" value="${row[2].value}"/>
+          <li id='t-${attrs['uid']}'>
+            <a href="${urlPdf}" title="${size} - ${attrs['description']}"><i class="fa fa-file-pdf-o"><jsp:text/></i>${attrs['title']}</a>
+          </li>
+        </c:if>
+      </c:forEach>
+    </c:forEach>
+   </c:if>
+  </c:forEach>
+  </ul>
+</div>
+<br><br><br>
   </c:otherwise>
   </c:choose>
 

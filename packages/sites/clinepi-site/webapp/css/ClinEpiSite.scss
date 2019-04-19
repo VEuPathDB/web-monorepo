@@ -31,10 +31,6 @@ body {
   font-family: 'Exo 2';
 }
 
-.wdk-PageContent {
-  min-height: calc(100vh - 168px);
-}
-
 #header {
   height: auto;
   background: bgColor;
@@ -658,12 +654,12 @@ div#clinepi-news {
 /* ========================================================================= */
 /* Tutorials page                                                                */
 /* ========================================================================= */
-#clinepi-tutorials  li {
+#clinepi-tutorials  li, #clinepi-resources li {
   font-size: 1.4em;
   list-style: none;
   margin: 1em 0;
 }
-#clinepi-tutorials li .fa {
+#clinepi-tutorials li .fa, #clinepi-resources li .fa {
   color: #333;
   margin-right: .5em;
 }

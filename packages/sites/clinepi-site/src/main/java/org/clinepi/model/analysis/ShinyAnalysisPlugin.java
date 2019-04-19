@@ -35,7 +35,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   // add this property to plugin configuration to filter metadata by dataset name
   private static final String DATASET_NAME_PROPERTY = "datasetName";
 
-  private static final boolean DUMP_ONTOLOGY_META = false;
+  private static final boolean DUMP_ONTOLOGY_META = true;
   private static final String DATASET_TBL_PREFIX = "datasetTblPrefix";
 
   // name of output files dumped to analysis job directory
@@ -43,22 +43,21 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
   private static final String ADDITIONAL_PROPS_FILENAME = "customProps.txt";
 
   // query output column names
-  private static final String SOURCE_ID_COL = "source_id";
-  private static final String PROPERTY_COL = "property";
-  private static final String TYPE_COL = "type";
-  private static final String PARENT_COL = "parent";
-  private static final String CAT_COL = "category";
-  private static final String MIN_COL = "min";
-  private static final String MAX_COL = "max";
-  private static final String AVG_COL = "average";
-  private static final String UQ_COL = "upper_quartile";
-  private static final String LQ_COL = "lower_quartile";
-  private static final String DISTINCT_COL = "distinct_values";
-  private static final String NUM_DISTINCT_COL = "number_distinct_values";
+  private static final String SOURCE_ID_COL = "SOURCE_ID";
+  private static final String PROPERTY_COL = "PROPERTY";
+  private static final String TYPE_COL = "TYPE";
+  private static final String PARENT_COL = "PARENTLABEL";
+  private static final String CAT_COL = "CATEGORY";
+  private static final String MIN_COL = "MIN";
+  private static final String MAX_COL = "MAX";
+  private static final String AVG_COL = "AVERAGE";
+  private static final String UQ_COL = "UPPER_QUARTILE";
+  private static final String LQ_COL = "LOWER_QUARTILE";
+  private static final String DISTINCT_COL = "DISTINCT_VALUES";
+  private static final String NUM_DISTINCT_COL = "NUMBER_DISTINCT_VALUES";
 
-  private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL, PARENT_COL, CAT_COL);
+  private static final String HEADER = buildLine(SOURCE_ID_COL, PROPERTY_COL, TYPE_COL, PARENT_COL, CAT_COL, MIN_COL, MAX_COL, AVG_COL, UQ_COL, LQ_COL, NUM_DISTINCT_COL, DISTINCT_COL);
 
-    // keep working on the sql. i dont think its returning everything i need yet.
     private static String getMetadataSql(boolean useDatasetName, String tblPrefix) {
     return
       "select distinct o.ontology_term_source_id as " + SOURCE_ID_COL + 
@@ -71,8 +70,8 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
       ", ms.average as " + AVG_COL +
       ", ms.upper_quartile as " + UQ_COL +
       ", ms.lower_quartile as " + LQ_COL +
-      ", ms.number_distinct_values as" + NUM_DISTINCT_COL +
-      ", ms.distinct_values as" + DISTINCT_COL +
+      ", ms.number_distinct_values as " + NUM_DISTINCT_COL +
+      ", ms.distinct_values as " + DISTINCT_COL +
       " from apidbtuning." + tblPrefix + "Ontology o " +
       " left join apidbtuning." + tblPrefix + "Metadata m on o.ontology_term_source_id = m.property_source_id" + 
       " left join apidbtuning." + tblPrefix + "MetadataSummary ms on o.ontology_term_source_id = ms.property_source_id" +
@@ -117,7 +116,14 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
                 getStringCol(rs, PROPERTY_COL),
                 getStringCol(rs, TYPE_COL),
                 getStringCol(rs, PARENT_COL),
-                getStringCol(rs, CAT_COL)));
+                getStringCol(rs, CAT_COL),
+                getStringCol(rs, MIN_COL),
+                getStringCol(rs, MAX_COL),
+                getStringCol(rs, AVG_COL),
+                getStringCol(rs, UQ_COL),
+                getStringCol(rs, LQ_COL),
+                getStringCol(rs, NUM_DISTINCT_COL),
+                getStringCol(rs, DISTINCT_COL)));
           }
           return null;
         }
