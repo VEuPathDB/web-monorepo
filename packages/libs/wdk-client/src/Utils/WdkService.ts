@@ -1281,8 +1281,8 @@ export default class WdkService {
   }
 
   getOntology(name = '__wdk_categories__') {
-    let recordClasses$ = this.getRecordClasses().then(rs => keyBy(rs, 'name'));
-    let questions$ = this.getQuestions().then(qs => keyBy(qs, 'name'));
+    let recordClasses$ = this.getRecordClasses().then(rs => keyBy(rs, 'fullName'));
+    let questions$ = this.getQuestions().then(qs => keyBy(qs, 'fullName'));
     let ontology$ = this._getFromCache('ontologies/' + name, () => {
       let rawOntology$ = this._fetchJson<Ontology<CategoryTreeNode>>('get', `/ontologies/${name}`);
       return Promise.all([ recordClasses$, questions$, rawOntology$ ])

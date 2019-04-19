@@ -82,7 +82,7 @@ export type RecordLoadingAction = {
   type: typeof RECORD_LOADING,
   id: string,
   payload: {
-    recordClassName: string,
+    recordClassUrlSegment: string,
     primaryKeyValues: string[]
   },
 }
@@ -256,7 +256,7 @@ export function loadRecordData(
  * @param {Array<string>} primaryKeyValues
  */
 function setActiveRecord(
-  recordClassName: string,
+  recordClassUrlSegment: string,
   primaryKeyValues: string[],
   getRecordRequestOptions: RequestRequestOptionsGetter
 ): ActionThunk<LoadRecordAction|UserAction|EmptyAction> {
@@ -264,12 +264,12 @@ function setActiveRecord(
     const id = uniqueId('recordViewId');
 
     return [
-      recordLoading(id, { recordClassName, primaryKeyValues }),
+      recordLoading(id, { recordClassUrlSegment, primaryKeyValues }),
       // Fetch the record base and tables in parallel.
       Promise.all([
-        wdkService.findRecordClass(r => r.urlSegment === recordClassName),
-        getPrimaryKey(wdkService, recordClassName, primaryKeyValues),
-        getCategoryTree(wdkService, recordClassName)
+        wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment),
+        getPrimaryKey(wdkService, recordClassUrlSegment, primaryKeyValues),
+        getCategoryTree(wdkService, recordClassUrlSegment)
       ]).then(
         ([recordClass, primaryKey, fullCategoryTree]) => {
           const [ initialOptions, ...additionalOptions ] =
