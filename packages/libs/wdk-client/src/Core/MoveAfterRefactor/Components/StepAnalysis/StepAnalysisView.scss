@@ -89,8 +89,18 @@
   }
 
   .step-analysis-subpane {
-    margin: 3px;
-    padding: 4px;
+    margin-top: 1em;
+  }
+
+  .external-result-container {
+    display: flex;
+    justify-content: center;
+
+    iframe {
+      border: 0;
+      width: 100%;
+      height: calc(100vh - 100px);
+    }
   }
 
   .toggle-description {

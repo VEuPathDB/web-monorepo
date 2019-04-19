@@ -127,7 +127,7 @@ var Histogram = (function() {
       const { min, max } = this.getRange(distribution);
       const minWidth = (max - min) * 0.00075
       // For dates, use one day as width
-      if (this.props.chartType === 'date') return Math.min((1000 * 60 * 60 * 24) * padding, minWidth);
+      if (this.props.chartType === 'date') return Math.max((1000 * 60 * 60 * 24) * padding, minWidth);
 
       // Find min distance between two points
       const sortedDistribution = orderBy(distribution, d => d.value, 'asc');
