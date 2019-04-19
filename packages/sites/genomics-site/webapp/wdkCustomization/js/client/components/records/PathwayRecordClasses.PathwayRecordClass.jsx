@@ -1634,7 +1634,7 @@ function setGeneraSelection(generaSelection) {
 
 function getExperimentCategoryTree(state) {
   return Ontology.getTree(state.globalData.ontology, Category.isQualifying({
-    recordClassName: state.record.recordClass.name,
+    recordClassName: state.record.recordClass.fullName,
     targetType: 'attribute',
     scope: 'graph-internal'
   }))
