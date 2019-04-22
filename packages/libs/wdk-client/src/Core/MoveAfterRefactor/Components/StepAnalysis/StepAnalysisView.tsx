@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { StepAnalysisMenuPaneProps, StepAnalysisMenuPane } from './StepAnalysisMenuPane';
 import { StepAnalysisSelectedPane, StepAnalysisSelectedPaneStateProps } from './StepAnalysisSelectedPane';
 import { Loading } from '../../../../Components';
@@ -26,6 +26,7 @@ export type StepAnalysisSelectedPaneTypedProps = {
 
 export interface StepAnalysisEventHandlers {
   loadChoice: (choice: StepAnalysisType) => void;
+  loadSavedAnalysis: () => void;
   toggleDescription: () => void;
   toggleParameters: () => void;
   updateParamValues: (newParamValues: Record<string, string[]>) => void;
@@ -36,31 +37,37 @@ export interface StepAnalysisEventHandlers {
   duplicateAnalysis: () => void;
 }
 
-export const StepAnalysisView: React.SFC<StepAnalysisStateProps & StepAnalysisEventHandlers> = props => (
-  <Fragment>
-    {
-      props.type === 'unopened-pane' &&
-      <div className="step-analysis-pane"></div>
-    }
-    {
-      props.type === 'loading-menu-pane' &&
-      (
-        <div className="analysis-menu-tab-pane">
-          <Loading>
-            <div className="wdk-LoadingSavedAnalysis">
-              Loading saved analysis...
-            </div>
-          </Loading>
-        </div>
-      )
-    }
-    {
-      props.type === 'analysis-menu' &&
-      <StepAnalysisMenuPane { ...props } />
-    }
-    {
-      props.type === 'selected-analysis' &&
-      <StepAnalysisSelectedPane { ...props } />
-    }
-  </Fragment>
-);
+export const StepAnalysisView: React.SFC<StepAnalysisStateProps & StepAnalysisEventHandlers> = props => {
+  // only call this once
+  useEffect(() => {
+    props.loadSavedAnalysis()
+  }, []);
+  return (
+    <Fragment>
+      {
+        props.type === 'unopened-pane' &&
+        <div className="step-analysis-pane"></div>
+      }
+      {
+        props.type === 'loading-menu-pane' &&
+        (
+          <div className="analysis-menu-tab-pane">
+            <Loading>
+              <div className="wdk-LoadingSavedAnalysis">
+                Loading saved analysis...
+              </div>
+            </Loading>
+          </div>
+        )
+      }
+      {
+        props.type === 'analysis-menu' &&
+        <StepAnalysisMenuPane { ...props } />
+      }
+      {
+        props.type === 'selected-analysis' &&
+        <StepAnalysisSelectedPane { ...props } />
+      }
+    </Fragment>
+  )
+}

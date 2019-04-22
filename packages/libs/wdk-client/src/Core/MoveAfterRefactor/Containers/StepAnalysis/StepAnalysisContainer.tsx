@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../../../State/Types';
 import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
-import { startLoadingChosenAnalysisTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import { startLoadingChosenAnalysisTab, startLoadingSavedTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
 type StateProps = {
   webAppUrl: ReturnType<typeof webAppUrl>;
@@ -105,6 +105,7 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
   toggleDescription: memoize((panelId: number) => () => dispatch(toggleDescription(panelId))),
   toggleParameters: memoize((panelId: number) => () => dispatch(toggleParameters(panelId))),
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
+  loadSavedAnalysis: memoize((panelId: number) => () => dispatch(startLoadingSavedTab(panelId))),
   updateParamValues: memoize((panelId: number) => (newParamValues: Record<string, string[]>) => dispatch(updateParamValues(panelId, newParamValues))),
   updateFormUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateFormUiState(panelId, newUiState))),
   onFormSubmit: memoize((panelId: number) => () => dispatch(startFormSubmission(panelId))),
@@ -147,6 +148,7 @@ const mergeProps = (
             )
           } 
           loadChoice={eventHandlers.loadChoice(+baseTabConfig.key)}
+          loadSavedAnalysis={eventHandlers.loadSavedAnalysis(+baseTabConfig.key)}
           toggleDescription={eventHandlers.toggleDescription(+baseTabConfig.key)}
           toggleParameters={eventHandlers.toggleParameters(+baseTabConfig.key)}
           updateParamValues={eventHandlers.updateParamValues(+baseTabConfig.key)}

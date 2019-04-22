@@ -17,7 +17,7 @@ import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
 // Props used by selectors... is there a better way to do this?
-type Props = { viewId: string, stepId: number };
+type Props = { viewId: string, stepId: number, initialTab?: string };
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
@@ -83,11 +83,31 @@ export const loadingAnalysisChoices = createSelector<RootState, StepAnalysesStat
   stepAnalyses => stepAnalyses.loadingAnalysisChoices
 );
 
-export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | number>(
+export const initialTab = (state: RootState, props: Props) => props.initialTab;
+
+export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | undefined, string | number>(
   stepAnalyses,
   resultPanel,
   defaultSummaryView,
-  (stepAnalyses, resultPanel, defaultSummaryView) => {
+  initialTab,
+  (stepAnalyses, resultPanel, defaultSummaryView, initialTab) => {
+    if (initialTab && stepAnalyses.activeTab === -1 && (resultPanel == null || resultPanel.activeSummaryView == null)) {
+      const tabDetail = parseTabSelector(initialTab);
+      if (tabDetail == null) return -1;
+      if (tabDetail.type === 'summaryView') return tabDetail.id;
+      if (tabDetail.type === 'analysis') {
+        // handle analysis tab selector
+        for (const id in stepAnalyses.analysisPanelStates) {
+          const state = stepAnalyses.analysisPanelStates[id];
+          if (
+            state.type === 'ANALYSIS_MENU_STATE' && tabDetail.id === 'menu' ||
+            state.type === 'SAVED_ANALYSIS_STATE' && state.analysisConfig.analysisId === Number(tabDetail.id) ||
+            state.type === 'UNINITIALIZED_PANEL_STATE' && state.analysisId === Number(tabDetail.id)
+          ) return id;
+        }
+      }
+      return -1;
+    }
     if (stepAnalyses.activeTab === -1) {
       return (resultPanel && resultPanel.activeSummaryView) || defaultSummaryView;
     }
@@ -359,3 +379,17 @@ const reasonTextMap = {
   ),
   'UNKNOWN': ''
 };
+
+interface TabDetail {
+  type: 'summaryView' | 'analysis';
+  id: string;
+}
+
+const tabSelectorRegexp = /([^-]*)-(.*)/;
+function parseTabSelector(selector: string): TabDetail | undefined {
+  const matches = selector.match(tabSelectorRegexp);
+  if (matches == null) return;
+  const [ _, type, id ] = matches;
+  if (type !== 'analysis' && type !== 'summaryView') return;
+  return { type, id };
+}

@@ -179,11 +179,16 @@ const routes: RouteEntry[] = [
 
   {
     path: '/step/:stepId(\\d+)/resultPanel',
-    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
-      <ResultPanelController
-        stepId={Number(props.match.params.stepId)}
-        viewId="strategy"
-      />
+    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) => {
+      const { initialTab } = parseQueryString(props);
+      return (
+        <ResultPanelController
+          stepId={Number(props.match.params.stepId)}
+          viewId="strategy"
+          initialTab={initialTab}
+        />
+      );
+    }
   },
 
   {

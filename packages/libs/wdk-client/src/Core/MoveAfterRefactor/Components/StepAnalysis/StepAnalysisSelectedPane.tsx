@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { StepAnalysisErrorsPane } from './StepAnalysisErrorsPane';
 import { StepAnalysisLinks } from './StepAnalysisLinks';
 import { StepAnalysisDescription } from './StepAnalysisDescription';
@@ -51,42 +51,44 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
     formRenderer,
     resultRenderer
   }
-}) => (
-  <div className="step-analysis-pane">
-    <div>
-      <StepAnalysisLinks 
-        renameAnalysis={renameAnalysis} 
-        duplicateAnalysis={duplicateAnalysis} 
-      />
-      {/* FIXME Make this configurable */ formState.hasParameters &&
-        <>
-          <h2 id="step-analysis-title">{analysisName}</h2>
-          <StepAnalysisDescription 
-            {...descriptionState} 
-            toggleDescription={toggleDescription} 
+}) => {
+  return (
+    <div className="step-analysis-pane">
+      <div>
+        <StepAnalysisLinks 
+          renameAnalysis={renameAnalysis} 
+          duplicateAnalysis={duplicateAnalysis} 
+        />
+        {/* FIXME Make this configurable */ formState.hasParameters &&
+          <>
+            <h2 id="step-analysis-title">{analysisName}</h2>
+            <StepAnalysisDescription 
+              {...descriptionState} 
+              toggleDescription={toggleDescription} 
+            />
+          </>
+        }
+      </div>
+      <div className="step-analysis-subpane">
+        {formState.hasParameters &&
+          <StepAnalysisFormPane
+            {...formState}
+            toggleParameters={toggleParameters}
+            formRenderer={formRenderer}
+            updateParamValues={updateParamValues}
+            updateFormUiState={updateFormUiState}
+            onFormSubmit={onFormSubmit}
           />
-        </>
-      }
+        }
+        {
+          resultState &&
+          <StepAnalysisResultsPane
+            {...resultState}
+            resultRenderer={resultRenderer}
+            updateResultsUiState={updateResultsUiState}
+          />
+        }
+      </div>
     </div>
-    <div className="step-analysis-subpane">
-      {formState.hasParameters &&
-        <StepAnalysisFormPane
-          {...formState}
-          toggleParameters={toggleParameters}
-          formRenderer={formRenderer}
-          updateParamValues={updateParamValues}
-          updateFormUiState={updateFormUiState}
-          onFormSubmit={onFormSubmit}
-        />
-      }
-      {
-        resultState &&
-        <StepAnalysisResultsPane
-          {...resultState}
-          resultRenderer={resultRenderer}
-          updateResultsUiState={updateResultsUiState}
-        />
-      }
-    </div>
-  </div>
-);
+  );
+}

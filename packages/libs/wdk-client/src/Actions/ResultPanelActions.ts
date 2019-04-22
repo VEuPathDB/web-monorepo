@@ -2,7 +2,8 @@ import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUt
 
 export const openTabListing = makeActionCreator(
   'result-panel/open-tab-listing',
-  (viewId: string, stepId: number) => ({ viewId, stepId })
+  (viewId: string, stepId: number, initialTab?: string) =>
+    ({ viewId, stepId, initialTab })
 );
 
 export const selectSummaryView = makeActionCreator(

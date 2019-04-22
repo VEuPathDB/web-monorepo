@@ -8,7 +8,21 @@ import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, loadingAnalysisChoices, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible, summaryViewPlugins, defaultSummaryView, loadingSummaryViewListing } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
-import { startLoadingChosenAnalysisTab, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
+import {
+  startLoadingChosenAnalysisTab,
+  startLoadingSavedTab,
+  deleteAnalysis,
+  selectTab,
+  createNewTab,
+  startFormSubmission,
+  updateParamValues,
+  renameAnalysis,
+  duplicateAnalysis,
+  toggleDescription,
+  updateFormUiState,
+  updateResultUiState,
+  toggleParameters
+} from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
 import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
@@ -35,6 +49,7 @@ type StateProps = {
 type OwnProps = {
   stepId: number;
   viewId: string;
+  initialTab?: string;
 };
 
 interface TabEventHandlers {
@@ -105,8 +120,8 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   newAnalysisButtonVisible: newAnalysisButtonVisible(state)
 });
 
-const mapDispatchToProps = (dispatch: Dispatch, props: OwnProps): TabEventHandlers & PanelEventHandlers => ({
-  loadTabs: (stepId: number) => dispatch(openTabListing(props.viewId, stepId)),
+const mapDispatchToProps = (dispatch: Dispatch, { stepId, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
+  loadTabs: (stepId: number) => dispatch(openTabListing(viewId, stepId, initialTab)),
   openAnalysisMenu: () => dispatch(
     createNewTab(
       {
@@ -120,9 +135,9 @@ const mapDispatchToProps = (dispatch: Dispatch, props: OwnProps): TabEventHandle
   onTabSelected: (tabKey: string) => { 
     if (+tabKey !== +tabKey) {
       dispatch(selectTab(-1));
-      dispatch(selectSummaryView(props.viewId, props.stepId, tabKey));
+      dispatch(selectSummaryView(viewId, stepId, tabKey));
     } else {
-      dispatch(selectSummaryView(props.viewId, props.stepId, null));
+      dispatch(selectSummaryView(viewId, stepId, null));
       dispatch(selectTab(+tabKey));
     }
   },
@@ -130,6 +145,7 @@ const mapDispatchToProps = (dispatch: Dispatch, props: OwnProps): TabEventHandle
   toggleDescription: memoize((panelId: number) => () => dispatch(toggleDescription(panelId))),
   toggleParameters: memoize((panelId: number) => () => dispatch(toggleParameters(panelId))),
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
+  loadSavedAnalysis: memoize((panelId: number) => () => dispatch(startLoadingSavedTab(panelId))),
   updateParamValues: memoize((panelId: number) => (newParamValues: Record<string, string[]>) => dispatch(updateParamValues(panelId, newParamValues))),
   updateFormUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateFormUiState(panelId, newUiState))),
   onFormSubmit: memoize((panelId: number) => () => dispatch(startFormSubmission(panelId))),
@@ -158,7 +174,10 @@ const mergeProps = (
     )
     : null,
   onTabSelected: eventHandlers.onTabSelected,
-  onTabRemoved: eventHandlers.onTabRemoved,
+  onTabRemoved: (key: string) => {
+    eventHandlers.onTabRemoved(key);
+    eventHandlers.onTabSelected(stateProps.defaultSummaryView);
+  },
   loadTabs: eventHandlers.loadTabs,
   tabs: [
     ...stateProps.summaryViewPlugins.map(
@@ -202,6 +221,7 @@ const mergeProps = (
                 stateProps.recordClassDisplayName
               ),
               loadChoice: eventHandlers.loadChoice(+baseTabConfig.key),
+              loadSavedAnalysis: eventHandlers.loadSavedAnalysis(+baseTabConfig.key),
               toggleDescription: eventHandlers.toggleDescription(+baseTabConfig.key),
               toggleParameters: eventHandlers.toggleParameters(+baseTabConfig.key),
               updateParamValues: eventHandlers.updateParamValues(+baseTabConfig.key),
