@@ -6,7 +6,22 @@ import { memoize } from 'lodash/fp';
 import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, loadingAnalysisChoices, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible, summaryViewPlugins, defaultSummaryView, loadingSummaryViewListing } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
+import {
+  analysisPanelOrder,
+  analysisPanelStates,
+  activeTab,
+  analysisBaseTabConfigs,
+  loadingAnalysisChoices,
+  mapAnalysisPanelStateToProps,
+  webAppUrl,
+  recordClassDisplayName,
+  wdkModelBuildNumber,
+  analysisChoices,
+  newAnalysisButtonVisible,
+  summaryViewPlugins,
+  defaultSummaryView,
+  loadingSummaryViewListing
+} from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import {
   startLoadingChosenAnalysisTab,
@@ -27,10 +42,10 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
 import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { Step } from 'wdk-client/Utils/WdkUser';
+import { StepEntry } from 'wdk-client/StoreModules/StepsStoreModule';
 
 type StateProps = {
-  step: Step;
+  stepEntry?: StepEntry;
   loadingSummaryViewListing: ReturnType<typeof loadingSummaryViewListing>;
   loadingAnalysisChoices: ReturnType<typeof loadingAnalysisChoices>,
   summaryViewPlugins: ReturnType<typeof summaryViewPlugins>;
@@ -69,6 +84,8 @@ interface ResultPanelControllerProps {
   stepId: number;
   viewId: string;
   loadingTabs: boolean;
+  stepErrorMessage?: string;
+  isUnauthorized: boolean;
   activeTab: string;
   tabs: TabConfig<string>[];
   onTabSelected: (tabKey: string) => void;
@@ -78,15 +95,23 @@ interface ResultPanelControllerProps {
 }
 
 class ResultPanelController extends ViewController< ResultPanelControllerProps > {
-  componentDidMount() {
-    super.componentDidMount();
-    this.props.loadTabs(
-      this.props.stepId
-    );
+
+  loadData(prevProps?: ResultPanelControllerProps) {
+    if (prevProps == null || prevProps.stepId !== this.props.stepId) {
+      this.props.loadTabs(this.props.stepId);
+    }
+  }
+
+  isRenderDataLoadError() {
+    return this.props.stepErrorMessage != null;
+  }
+
+  isRenderDataPermissionDenied() {
+    return this.props.isUnauthorized;
   }
 
   isRenderDataLoaded() {
-    return !this.props.loadingTabs;
+    return !this.props.loadingTabs || this.props.stepErrorMessage != null;
   }
 
   renderView() {
@@ -104,7 +129,7 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
 }
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
-  step: state.steps.steps[props.stepId],
+  stepEntry: state.steps.steps[props.stepId],
   loadingSummaryViewListing: loadingSummaryViewListing(state, props),
   loadingAnalysisChoices: loadingAnalysisChoices(state),
   summaryViewPlugins: summaryViewPlugins(state, props),
@@ -158,9 +183,17 @@ const mergeProps = (
   stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps 
 ): ResultPanelControllerProps & OwnProps => ({
   ...ownProps,
+  stepErrorMessage: stateProps.stepEntry && stateProps.stepEntry.status === 'error'
+    ? stateProps.stepEntry.message
+    : undefined,
+  isUnauthorized: !!stateProps.stepEntry && stateProps.stepEntry.status === 'unauthorized',
   summaryViewPlugins: stateProps.summaryViewPlugins,
   defaultSummaryView: stateProps.defaultSummaryView,
-  loadingTabs: stateProps.loadingSummaryViewListing || (ownProps.viewId === 'strategy' && stateProps.loadingAnalysisChoices),
+  loadingTabs: (
+    (stateProps.stepEntry == null || stateProps.stepEntry.status === 'pending') ||
+    stateProps.loadingSummaryViewListing ||
+    (ownProps.viewId === 'strategy' && stateProps.loadingAnalysisChoices)
+  ),
   activeTab: `${stateProps.activeTab}`,
   newAnalysisButton: ownProps.viewId === 'strategy' && stateProps.analysisChoices.length > 0 && stateProps.newAnalysisButtonVisible
     ? (
@@ -186,13 +219,13 @@ const mergeProps = (
         display: plugin.displayName,
         removable: false,
         tooltip: plugin.description,
-        content: stateProps.step ? (
+        content: stateProps.stepEntry && stateProps.stepEntry.status === 'success' ? (
           <Plugin 
             context={{
               type: 'summaryView',
               name: plugin.name,
-              recordClassName: stateProps.step.recordClassName,
-              questionName: stateProps.step.answerSpec.questionName
+              recordClassName: stateProps.stepEntry.step.recordClassName,
+              questionName: stateProps.stepEntry.step.answerSpec.questionName
             }}
             pluginProps={{
               stepId: ownProps.stepId,

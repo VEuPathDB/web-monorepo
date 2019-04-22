@@ -43,7 +43,8 @@ function StepFiltersController(props: Props) {
 }
 
 function mapPropsToState(state: RootState, props: OwnProps): StateProps {
-  const step = state.steps.steps[props.stepId];
+  const stepEntry = state.steps.steps[props.stepId];
+  const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
   const question = step && state.globalData.questions && state.globalData.questions.find(({ name }) => name === step.answerSpec.questionName)
   return { step, question };
 }

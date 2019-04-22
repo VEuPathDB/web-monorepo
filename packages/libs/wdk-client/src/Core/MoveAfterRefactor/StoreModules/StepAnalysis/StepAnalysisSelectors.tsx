@@ -28,7 +28,7 @@ export const recordClassDisplayName = (
   }: RootState,
   { stepId }: Props
 ) => {
-  const recordClassName = get(steps[stepId], 'recordClassName', '');
+  const recordClassName = get(steps[stepId], 'step.recordClassName', '');
   const recordClass = recordClasses.find(({ name }) => name === recordClassName);
   return get(recordClass, 'displayName', '');
 };
@@ -40,7 +40,8 @@ export const question = (
   }: RootState,
   { stepId }: Props
 ) => {
-  const questionName = get(steps[stepId], 'answerSpec.questionName', '');
+  // FIXME this is a bit dirty and not type safe
+  const questionName = get(steps[stepId], 'step.answerSpec.questionName', '');
   const question = questions.find(({ name }) => name === questionName);
   return question;
 };
@@ -67,7 +68,10 @@ export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): Resu
 
 export const questionsLoaded = ({ globalData: { questions }}: RootState) => questions != null;
 
-export const stepLoaded = ({ steps: { steps }}: RootState, { stepId }: Props) => steps[stepId] != null;
+export const stepLoaded = ({ steps: { steps }}: RootState, { stepId }: Props) => {
+  const stepEntry = steps[stepId];
+  return stepEntry != null && !stepEntry.isLoading;
+}
 
 export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean, boolean>(
   resultPanel,
@@ -83,7 +87,7 @@ export const loadingAnalysisChoices = createSelector<RootState, StepAnalysesStat
   stepAnalyses => stepAnalyses.loadingAnalysisChoices
 );
 
-export const initialTab = (state: RootState, props: Props) => props.initialTab;
+export const initialTab = (_: RootState, { initialTab }: Props) => initialTab;
 
 export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | undefined, string | number>(
   stepAnalyses,
@@ -93,7 +97,7 @@ export const activeTab = createSelector<RootState, Props, StepAnalysesState, Res
   (stepAnalyses, resultPanel, defaultSummaryView, initialTab) => {
     if (initialTab && stepAnalyses.activeTab === -1 && (resultPanel == null || resultPanel.activeSummaryView == null)) {
       const tabDetail = parseTabSelector(initialTab);
-      if (tabDetail == null) return -1;
+      if (tabDetail == null) return '';
       if (tabDetail.type === 'summaryView') return tabDetail.id;
       if (tabDetail.type === 'analysis') {
         // handle analysis tab selector
@@ -106,7 +110,7 @@ export const activeTab = createSelector<RootState, Props, StepAnalysesState, Res
           ) return id;
         }
       }
-      return -1;
+      return '';
     }
     if (stepAnalyses.activeTab === -1) {
       return (resultPanel && resultPanel.activeSummaryView) || defaultSummaryView;
@@ -389,7 +393,7 @@ const tabSelectorRegexp = /([^-]*)-(.*)/;
 function parseTabSelector(selector: string): TabDetail | undefined {
   const matches = selector.match(tabSelectorRegexp);
   if (matches == null) return;
-  const [ _, type, id ] = matches;
+  const [ , type, id ] = matches;
   if (type !== 'analysis' && type !== 'summaryView') return;
   return { type, id };
 }

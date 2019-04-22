@@ -48,6 +48,9 @@ import Header from 'wdk-client/Components/Layout/Header';
 import Main from 'wdk-client/Components/Layout/Main';
 import Page from 'wdk-client/Components/Layout/Page';
 import Link from 'wdk-client/Components/Link/Link';
+import Error from 'wdk-client/Components/PageStatus/Error';
+import LoadError from 'wdk-client/Components/PageStatus/LoadError';
+import PermissionDenied from 'wdk-client/Components/PageStatus/PermissionDenied';
 import Loading from 'wdk-client/Components/Loading/Loading';
 import * as Mesa from 'wdk-client/Components/Mesa';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
@@ -74,6 +77,9 @@ export {
   DateSelector,
   Dialog,
   DownloadForm,
+  Error,
+  LoadError,
+  PermissionDenied,
   FileInput,
   FilterParamNew,
   Footer,

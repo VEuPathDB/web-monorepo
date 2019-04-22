@@ -100,7 +100,8 @@ const statePropsIsComplete = hasAllProps<StateProps>(
 
 export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state: RootState, ownProps: OwnProps) => {
-    const step = state.steps.steps[ownProps.stepId];
+    const stepEntry = state.steps.steps[ownProps.stepId];
+    const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
     return {
       filterValue: getFilterValue(step, ownProps.filterName),
       ...state.matchedTranscriptsFilter
