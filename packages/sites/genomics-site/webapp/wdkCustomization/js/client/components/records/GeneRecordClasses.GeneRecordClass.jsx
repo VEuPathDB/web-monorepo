@@ -887,7 +887,7 @@ class OrthologsForm extends SortKeyTable {
               <input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein
               <input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)
               <input type="radio" name="sequence_Type" value="genomic" /> Genomic
-              <span class="genomic">
+              <span className="genomic">
                 <input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)
                 <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)
               </span>
