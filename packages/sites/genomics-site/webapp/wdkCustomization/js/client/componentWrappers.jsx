@@ -113,7 +113,7 @@ function downloadRecordTable(record, tableName) {
 export function RecordTableSection(DefaultComponent) {
   return connect(null, { downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent {
     render () {
-      if (this.props.recordClass.name === 'DatasetRecordClasses.DatasetRecordClass') {
+      if (this.props.recordClass.fullName === 'DatasetRecordClasses.DatasetRecordClass') {
         return (
           <DefaultComponent {...this.props}/>
         );
@@ -255,7 +255,7 @@ export function RecordAttributeSection(DefaultComponent) {
 
     // use standard record class overriding
     let ResolvedComponent =
-      findComponent('RecordAttributeSection', props.recordClass.name) || DefaultComponent;
+      findComponent('RecordAttributeSection', props.recordClass.fullName) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }

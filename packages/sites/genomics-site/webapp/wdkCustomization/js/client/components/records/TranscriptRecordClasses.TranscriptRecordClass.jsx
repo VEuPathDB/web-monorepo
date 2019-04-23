@@ -24,7 +24,7 @@ function GeneRecordLink(props) {
 
 const mapStateToGeneRecordLinkProps = state => ({
   geneRecordClass: state.globalData.recordClasses
-    .find(recordClass => recordClass.name === 'GeneRecordClasses.GeneRecordClass')
+    .find(recordClass => recordClass.fullName === 'GeneRecordClasses.GeneRecordClass')
 });
 
 export const RecordLink = connect(mapStateToGeneRecordLinkProps)(GeneRecordLink);
