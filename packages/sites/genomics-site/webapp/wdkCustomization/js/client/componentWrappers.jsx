@@ -43,7 +43,9 @@ export function RecordController(WdkRecordController) {
       return [
         {
           attributes: requestOptions[0].attributes,
-          tables: requestOptions[0].tables.concat('MetaTable')
+          tables: requestOptions[0].tables
+            .concat(['MetaTable'])
+            .concat('FungiOrgLinkoutsTable' in recordClass.attributesMap ? ['FungiOrgLinkoutsTable'] : [])
         },
         {
           attributes: [],
