@@ -41,6 +41,7 @@ export type TabConfig<TabKey extends string> = {
 };
 
 export default function Tabs<T extends string>(props: Props<T>) {
+  const showEmptyPanel = props.tabs.every(tab => tab.key !== props.activeTab);
   return (
     <div className={cx('sContainer') + (props.containerClassName ? ` ${props.containerClassName}` : '')}>
       <div className={cx('s')}>
@@ -78,6 +79,11 @@ export default function Tabs<T extends string>(props: Props<T>) {
           {tab.content}
         </DeferredDiv>
       ))}
+      {showEmptyPanel && (
+        <div className={cx('Content')}>
+          <div style={{fontSize: '2em'}}>Select a tab to see content</div>
+        </div>
+      )}
     </div>
   );
 }
