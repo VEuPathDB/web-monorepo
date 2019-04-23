@@ -2,6 +2,7 @@ import * as React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 interface Props {
+  message?: string;
   children?: React.ReactChildren
 }
 
@@ -12,6 +13,7 @@ function Error(props: Props) {
       {props.children || (
         <p>
           Something went wrong. Please try again later.
+          {props.message}
         </p>
       )}
     </div>

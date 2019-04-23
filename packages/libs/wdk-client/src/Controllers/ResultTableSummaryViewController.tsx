@@ -111,10 +111,10 @@ const columnsTreeSelector = createSelector(
   (state: RootState) => state.globalData.ontology,
   (state: RootState) => state.globalData.questions,
   (state: RootState, props: OwnProps) => state.steps.steps[props.stepId],
-  (ontology, questions, step) => {
-    if (ontology == null || questions == null || step == null) return;
-    const question = questions.find(q => q.urlSegment === step.searchName);
-    const { recordClassName } = step;
+  (ontology, questions, stepEntry) => {
+    if (ontology == null || questions == null || stepEntry == null || stepEntry.status !== 'success') return;
+    const question = questions.find(q => q.fullName === stepEntry.step.answerSpec.questionName);
+    const { recordClassName } = stepEntry.step;
 
     if (question == null) return undefined;
 

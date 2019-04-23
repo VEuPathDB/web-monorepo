@@ -22,9 +22,21 @@ export const fulfillStep = makeActionCreator(
     (step: Step) => ({ step })
 );
 
+export const fulfillStepError = makeActionCreator(
+  'fulfillStepError',
+  (stepId: number, errorMessage: string) => ({ stepId, errorMessage })
+);
+
+export const fulfillStepUnauthorized = makeActionCreator(
+  'fulfillStepUnauthorized',
+  (stepId: number) => ({ stepId })
+);
+
 export type Action =
     | InferAction<typeof requestStep>
     | InferAction<typeof requestStepUpdate>
     | InferAction<typeof requestSearchConfigUpdate>
     | InferAction<typeof fulfillStep>
+    | InferAction<typeof fulfillStepError>
+    | InferAction<typeof fulfillStepUnauthorized>
 

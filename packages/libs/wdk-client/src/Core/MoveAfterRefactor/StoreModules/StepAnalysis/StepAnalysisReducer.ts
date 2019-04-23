@@ -156,9 +156,11 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
         return state;
       }
       
+      const removedPanelState = state.analysisPanelStates[action.payload.panelId];
       const removedTabState = removePanelState(state, action.payload.panelId);
-      const newActiveTab = removedTabState.activeTab === action.payload.panelId
-        ? (removedTabState.analysisPanelOrder[tabIndex] || removedTabState.analysisPanelOrder[tabIndex - 1] || -1)
+      const newActiveTab = removedPanelState.type === ANALYSIS_MENU_STATE ? -1
+        : removedTabState.activeTab === action.payload.panelId ?
+          (removedTabState.analysisPanelOrder[tabIndex] || removedTabState.analysisPanelOrder[tabIndex - 1] || -1)
         : removedTabState.activeTab;
 
       return {
@@ -381,18 +383,25 @@ export const transformPanelState = <R, S, T, U>(panelState: AnalysisPanelState, 
   }
 };
 
-const insertPanelState = (state: StepAnalysesState, newPanelState: AnalysisPanelState): StepAnalysesState => ({
-  ...state,
-  nextPanelId: state.nextPanelId + 1,
-  analysisPanelStates: {
-    ...state.analysisPanelStates,
-    [state.nextPanelId]: newPanelState
-  },
-  analysisPanelOrder: [
-    ...state.analysisPanelOrder,
-    state.nextPanelId
-  ]
-});
+const insertPanelState = (state: StepAnalysesState, newPanelState: AnalysisPanelState): StepAnalysesState => {
+  // make sure that menu is always last
+  const menuPanelId = Object.keys(state.analysisPanelStates).find(id =>
+    state.analysisPanelStates[+id].type === ANALYSIS_MENU_STATE);
+
+  const nextOrder = menuPanelId == null
+    ? [ ...state.analysisPanelOrder, state.nextPanelId ]
+    : [ ...state.analysisPanelOrder.filter(id => id !== +menuPanelId), state.nextPanelId, +menuPanelId ]
+
+  return ({
+    ...state,
+    nextPanelId: state.nextPanelId + 1,
+    analysisPanelStates: {
+      ...state.analysisPanelStates,
+      [state.nextPanelId]: newPanelState
+    },
+    analysisPanelOrder: nextOrder
+  })
+}
 
 const updatePanelState = (state: StepAnalysesState, panelId: number, pattern: AnalysisPanelStatePattern): StepAnalysesState => {
   const oldPanelState = state.analysisPanelStates[panelId];

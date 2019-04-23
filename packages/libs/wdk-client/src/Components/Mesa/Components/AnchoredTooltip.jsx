@@ -25,6 +25,7 @@ class AnchoredTooltip extends React.Component {
 
   componentWillUnmount () {
     Object.values(this.listeners).forEach(listenerId => Events.remove(listenerId));
+    this.updatePosition.cancel();
   }
 
   updatePosition() {

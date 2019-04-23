@@ -92,7 +92,8 @@ class AttributeAnalysisButtonController extends ViewController<Props> {
 
 function mapStateToProps(state: RootState, props: OwnProps): StateProps {
   const { attributeName, reporterType, stepId } = props;
-  const step = state.steps.steps[stepId];
+  const stepEntry = state.steps.steps[stepId];
+  const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
   const { questions, recordClasses } = state.globalData;
 
   if (

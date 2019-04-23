@@ -32,7 +32,7 @@ const observe = (action$: ActionsObservable<Action>, state$: StateObservable<Roo
 
   return merge(
     observeStartLoadingTabListing(action$, stepAnalysisState$, dependencies),
-    observeSelectTab(action$, stepAnalysisState$, dependencies),
+    // observeSelectTab(action$, stepAnalysisState$, dependencies),
     observeStartLoadingSavedTab(action$, stepAnalysisState$, dependencies),
     observeStartLoadingChosenAnalysisTab(action$, stepAnalysisState$, dependencies),
     observeDeleteAnalysis(action$, stepAnalysisState$, dependencies),
