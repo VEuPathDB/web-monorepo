@@ -39,9 +39,9 @@ export default {
     withRestrictionHandler(Action.search, (state, props) => {
       const { questions = [], recordClasses = [] } = state.globalData;
       return Seq.from(questions)
-        .filter(question => question.name === props.questionName)
+        .filter(question => question.fullName === props.questionName)
         .flatMap(question => Seq.from(recordClasses)
-          .filter(recordClass => recordClass.name === question.recordClassName))
+          .filter(recordClass => recordClass.fullName === question.recordClassName))
         .first();
     }),
     QuestionWizardController
@@ -91,7 +91,7 @@ function withRestrictionHandler(action, getRecordClassSelector) {
     doAttemptAction() {
       if (this.props.stateProps.recordClass == null) return;
 
-      const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.name);
+      const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.fullName);
       this.props.dispatchProps.attemptAction(action, {
         studyId,
         onDeny: () => {

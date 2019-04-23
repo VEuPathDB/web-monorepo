@@ -58,11 +58,11 @@ function mapStateToProps(state) {
       .map(search => search.name)
       .flatMap(questionName =>
         Seq.from(questions)
-          .filter(question => question.name === questionName)
+          .filter(question => question.fullName === questionName)
           .take(1)
           .flatMap(question =>
             Seq.from(recordClasses)
-              .filter(recordClass => question.recordClassName === recordClass.name)
+              .filter(recordClass => question.recordClassName === recordClass.fullName)
               .map(recordClass => ({ question, recordClass }))
               .take(1)))
       .toArray();
