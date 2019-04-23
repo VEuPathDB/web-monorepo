@@ -139,13 +139,36 @@ export const RecordHeading = connect(
 
   render() {
     return (
-      <div ref={node => this.node = node}>
-        <this.props.DefaultComponent {...this.props} />
-      </div>
+      <React.Fragment>
+        <div ref={node => this.node = node}>
+          <this.props.DefaultComponent {...this.props} />
+        </div>
+        <FungiOrgLinkoutsTable value={this.props.record.tables.FungiOrgLinkoutsTable}/>
+      </React.Fragment>
     );
   }
 
 });
+
+function FungiOrgLinkoutsTable(props) {
+  if (props.value == null || props.value.length === 0) return null;
+  const groupedLinks = lodash.groupBy(props.value, 'dataset');
+  return (
+    <div style={{marginTop: '2em', overflow: 'auto'}}>
+      <div className="eupathdb-RecordOverviewItem"><strong>Model Organism Orthologs</strong></div>
+      {Object.entries(groupedLinks).map(([dataset, rows]) =>
+        <div key={dataset} className="eupathdb-RecordOverviewItem" style={{overflow: 'visible'}}>
+          <strong>{dataset}:</strong> {rows.map((row, index) => 
+            <React.Fragment key={index}>
+              {renderAttributeValue(row.link)}
+              {index === rows.length - 1 ? null : ','}
+            </React.Fragment>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const ExpressionChildRow = makeDatasetGraphChildRow('ExpressionGraphsDataTable');
 const HostResponseChildRow = makeDatasetGraphChildRow('HostResponseGraphsDataTable', 'FacetMetadata', 'ContXAxisMetadata');
