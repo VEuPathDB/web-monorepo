@@ -133,7 +133,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateUserDatasetDetail,
       userDataset: entry.resource,
       getQuestionUrl: this.getQuestionUrl,
-      questionMap: keyBy(questions, 'name')
+      questionMap: keyBy(questions, 'fullName')
     };
 
     const DetailView = this.getDetailView(typeof entry.resource === 'object' ? entry.resource.type : null);
