@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 
 import { createSelector } from 'reselect';
 import { RootState } from '../../../State/Types';
-import { get } from 'lodash';
+import { get, escapeRegExp } from 'lodash';
 import { StepAnalysesState, AnalysisPanelState, AnalysisMenuState, UnsavedAnalysisState, UninitializedAnalysisPanelState, SavedAnalysisState } from './StepAnalysisState';
 import { transformPanelState } from './StepAnalysisReducer';
 import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalysisView';
@@ -98,8 +98,8 @@ export const activeTab = createSelector<RootState, Props, StepAnalysesState, Res
     if (initialTab && stepAnalyses.activeTab === -1 && (resultPanel == null || resultPanel.activeSummaryView == null)) {
       const tabDetail = parseTabSelector(initialTab);
       if (tabDetail == null) return '';
-      if (tabDetail.type === 'summaryView') return tabDetail.id;
-      if (tabDetail.type === 'analysis') {
+      if (tabDetail.type === SUMMARY_VIEW_TAB_PREFIX) return tabDetail.id;
+      if (tabDetail.type === ANALYSIS_TAB_PREFIX) {
         // handle analysis tab selector
         for (const id in stepAnalyses.analysisPanelStates) {
           const state = stepAnalyses.analysisPanelStates[id];
@@ -384,16 +384,18 @@ const reasonTextMap = {
   'UNKNOWN': ''
 };
 
+const SUMMARY_VIEW_TAB_PREFIX = 'summaryView';
+const ANALYSIS_TAB_PREFIX = 'stepAnalysis';
+
 interface TabDetail {
-  type: 'summaryView' | 'analysis';
+  type: typeof SUMMARY_VIEW_TAB_PREFIX | typeof ANALYSIS_TAB_PREFIX;
   id: string;
 }
 
-const tabSelectorRegexp = /([^-]*)-(.*)/;
+const tabSelectorRegexp = new RegExp(`^(${escapeRegExp(SUMMARY_VIEW_TAB_PREFIX)}|${escapeRegExp(ANALYSIS_TAB_PREFIX)}):(.*)`);
 function parseTabSelector(selector: string): TabDetail | undefined {
   const matches = selector.match(tabSelectorRegexp);
   if (matches == null) return;
   const [ , type, id ] = matches;
-  if (type !== 'analysis' && type !== 'summaryView') return;
-  return { type, id };
+  return { type, id } as TabDetail;
 }

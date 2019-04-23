@@ -24,7 +24,7 @@ const initialState = {
 
 export const key = 'resultPanel';
 
-export const ANALYSIS_MENU_ID = 'analysis-menu';
+export const ANALYSIS_MENU_ID = 'stepAnalysis:menu';
 
 const reduceResultPanel = (state: ResultPanelState = initialState, action: Action): ResultPanelState => {
   switch (action.type) {
