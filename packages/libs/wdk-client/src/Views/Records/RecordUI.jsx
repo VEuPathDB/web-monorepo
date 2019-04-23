@@ -83,9 +83,10 @@ class RecordUI extends Component {
   render() {
     let classNames = classnames(
       'wdk-RecordContainer',
-      'wdk-RecordContainer__' + this.props.recordClass.name,
+      'wdk-RecordContainer__' + this.props.recordClass.fullName,
       {
-        'wdk-RecordContainer__withSidebar': this.props.navigationVisible      }
+        'wdk-RecordContainer__withSidebar': this.props.navigationVisible
+      }
     );
 
     let sidebarIconClass = classnames({
