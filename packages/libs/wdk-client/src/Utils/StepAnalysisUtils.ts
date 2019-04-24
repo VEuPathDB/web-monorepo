@@ -35,8 +35,18 @@ export interface FormParams {
   [key: string]: string[]
 }
 
-export type StepAnalysisStatus = 
-  'CREATED' | 'STEP_REVISED' | 'INVALID' | 'PENDING' | 'RUNNING' | 'COMPLETE' | 'INTERRUPTED' | 'ERROR' | 'EXPIRED' | 'OUT_OF_DATE' | 'UNKNOWN';
+export type StepAnalysisStatus =
+  | 'CREATED'
+  | 'STEP_REVISED'
+  | 'INVALID'
+  | 'PENDING'
+  | 'RUNNING'
+  | 'COMPLETE'
+  | 'INTERRUPTED'
+  | 'ERROR'
+  | 'EXPIRED'
+  | 'OUT_OF_DATE'
+  | 'UNKNOWN';
 
 export type InvalidStepReason = string | null;
 
