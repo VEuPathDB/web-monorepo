@@ -36,6 +36,7 @@ import {
   DuplicateAnalysisAction, 
   RemoveTabAction
 } from '../../Actions/StepAnalysis/StepAnalysisActions';
+import { isEmpty } from 'lodash';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
@@ -45,7 +46,7 @@ import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, f
 
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 import { denormalizeParamValue } from '../../Components/StepAnalysis/StepAnalysisDefaultForm';
-import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
+import { StepAnalysisType, StepAnalysisConfig } from 'wdk-client/Utils/StepAnalysisUtils';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(
@@ -121,14 +122,26 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
           }
         );
 
-        return analysisConfig.status === 'PENDING' || analysisConfig.status === 'RUNNING'
-          ? [
-            finishLoading,
-            checkResultStatus(panelId)
-          ]
-          : [
-            finishLoading
-          ];
+        switch(analysisConfig.status) {
+          // continue to monitor status
+          case 'RUNNING':
+          case 'PENDING':
+            return [ finishLoading, checkResultStatus(panelId) ];
+
+          // resubmit form for auto-runnable analyses when in state non-error like state
+          case 'CREATED':
+          case 'STEP_REVISED':
+          case 'INTERRUPTED':
+          case 'EXPIRED':
+          case 'OUT_OF_DATE':
+            if (!analysisConfig.hasParams || isEmpty(analysisConfig.formParams))
+              return [ finishLoading, startFormSubmission(panelId) ];
+
+          // just finish for everything else
+          default:
+            return [ finishLoading ];
+        }
+
       }
       catch (ex) {
         return finishLoadingSavedTab(
@@ -143,6 +156,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
     })
   );
 };
+
 
 export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(
