@@ -18,7 +18,12 @@ export default function AttributeCell({
   if (typeof value === 'string') {
     const truncatedValue = truncateValue(value, attribute.truncateTo);
     return (
-      <div title={truncatedValue !== value ? value : undefined}>{truncatedValue}</div>
+      <div
+        title={truncatedValue !== value ? value : undefined}
+        dangerouslySetInnerHTML={{
+          __html: truncatedValue
+        }}
+      />
     );
   }
 
@@ -27,7 +32,12 @@ export default function AttributeCell({
   const truncatedDisplay = truncateValue(display, attribute.truncateTo);
   return (
     <div title={truncatedDisplay !== display ? display : undefined}>
-      <a href={url}>{truncatedDisplay}</a>
+      <a
+        href={url}
+        dangerouslySetInnerHTML={{
+          __html: truncatedDisplay
+        }}
+      />
     </div>
   );
 }
