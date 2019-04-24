@@ -132,6 +132,7 @@ const makeCrossStudyStudy = memoize(questions => {
 
   return {
     name: 'Cross Study Analysis',
+    id: 'DS_all',
     route: '/search/dataset/AllDatasets/result',
     searches: [
       {
