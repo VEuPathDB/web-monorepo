@@ -52,6 +52,7 @@ import Error from 'wdk-client/Components/PageStatus/Error';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import PermissionDenied from 'wdk-client/Components/PageStatus/PermissionDenied';
 import Loading from 'wdk-client/Components/Loading/Loading';
+import LoadingOverlay from 'wdk-client/Components/Loading/LoadingOverlay';
 import * as Mesa from 'wdk-client/Components/Mesa';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import Modal from 'wdk-client/Components/Overlays/Modal';
@@ -90,6 +91,7 @@ export {
   IndeterminateCheckbox,
   Link,
   Loading,
+  LoadingOverlay,
   Main,
   Mesa,
   Modal,

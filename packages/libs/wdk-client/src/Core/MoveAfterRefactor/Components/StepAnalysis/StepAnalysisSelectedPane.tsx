@@ -1,17 +1,17 @@
 import React from 'react';
-import { StepAnalysisErrorsPane } from './StepAnalysisErrorsPane';
 import { StepAnalysisLinks } from './StepAnalysisLinks';
 import { StepAnalysisDescription } from './StepAnalysisDescription';
 import { StepAnalysisFormPane, StepAnalysisFormPluginState, StepAnalysisFormPluginProps } from './StepAnalysisFormPane';
 import { StepAnalysisResultsPane, StepAnalysisResultState, StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
-import { StepAnalysisParameter, StepAnalysisConfig } from '../../../../Utils/StepAnalysisUtils';
 import { StepAnalysisEventHandlers } from './StepAnalysisView';
+import { LoadingOverlay } from 'wdk-client/Components';
 
 export type StepAnalysisSelectedPaneProps = StepAnalysisSelectedPaneStateProps & StepAnalysisEventHandlers;
 
 export interface StepAnalysisSelectedPaneStateProps {
   analysisName: string;
   descriptionState: DescriptionState;
+  formSaving: boolean;
   formState: StepAnalysisFormMetadata & StepAnalysisFormPluginState;
   resultState?: StepAnalysisResultState;
   pluginRenderers: PluginRenderers;
@@ -37,6 +37,7 @@ interface PluginRenderers {
 export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> = ({
   analysisName,
   descriptionState,
+  formSaving,
   formState,
   resultState,
   toggleDescription,
@@ -54,6 +55,9 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
 }) => {
   return (
     <div className="step-analysis-pane">
+      {formSaving && (
+        <LoadingOverlay>Updating analysis...</LoadingOverlay>
+      )}
       <div>
         <StepAnalysisLinks 
           renameAnalysis={renameAnalysis} 

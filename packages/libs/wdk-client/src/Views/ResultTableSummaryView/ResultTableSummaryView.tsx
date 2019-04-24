@@ -22,7 +22,7 @@ import {
   ShowLoginWarning
 } from 'wdk-client/Views/ResultTableSummaryView/Types';
 import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
-import Loading from 'wdk-client/Components/Loading/Loading';
+import { LoadingOverlay } from 'wdk-client/Components';
 
 import './ResultTableSummaryView.scss';
 
@@ -101,11 +101,9 @@ export default function ResultTableSummaryView({
   return (
     <div className={cx()}>
       {(answerLoading || addingStepToBasket) && (
-        <div className={cx('LoadingOverlay')}>
-          <Loading className={cx('Loading')}>
-            {answerLoading ? 'Loading results...' : 'Updating basket...'}
-          </Loading>
-        </div>
+        <LoadingOverlay>
+          {answerLoading ? 'Loading results...' : 'Updating basket...'}
+        </LoadingOverlay>
       )}
       {answer && question && columnsTree && (
         <ResultTableAddColumnsDialog

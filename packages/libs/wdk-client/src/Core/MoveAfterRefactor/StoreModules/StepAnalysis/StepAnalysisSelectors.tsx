@@ -233,6 +233,7 @@ const mapUnsavedAnalysisStateToProps = (
     },
     paramSpecs,
     paramValues,
+    formStatus,
     formUiState,
     formValidationErrors
   }: UnsavedAnalysisState,
@@ -245,13 +246,14 @@ const mapUnsavedAnalysisStateToProps = (
     description,
     descriptionExpanded
   },
+  formSaving: formStatus === 'SAVING_ANALYSIS',
   formState: { 
     hasParameters,
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
     paramValues,
-    formUiState
+    formUiState,
   },
   pluginRenderers: {
     formRenderer: locateFormPlugin(displayToType(analysisName, choices)).formRenderer,
@@ -273,6 +275,7 @@ const mapSavedAnalysisStateToProps = (
     paramSpecs,
     paramValues,
     formUiState,
+    formStatus,
     formValidationErrors,
     pollCountdown
   }: SavedAnalysisState,
@@ -286,13 +289,14 @@ const mapSavedAnalysisStateToProps = (
     description: analysisConfig.description,
     descriptionExpanded
   },
+  formSaving: formStatus === 'SAVING_ANALYSIS',
   formState: { 
     hasParameters: typeHasParameters(analysisConfig.analysisName, choices),
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
     paramValues,
-    formUiState
+    formUiState,
   },
   resultState: analysisConfigStatus === 'COMPLETE' && analysisConfig.status === 'COMPLETE'
     ? {
