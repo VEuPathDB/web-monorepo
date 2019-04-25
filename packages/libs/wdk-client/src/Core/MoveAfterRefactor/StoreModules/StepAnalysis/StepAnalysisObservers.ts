@@ -36,7 +36,6 @@ import {
   DuplicateAnalysisAction, 
   RemoveTabAction
 } from '../../Actions/StepAnalysis/StepAnalysisActions';
-import { isEmpty } from 'lodash';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
@@ -46,7 +45,7 @@ import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, f
 
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 import { denormalizeParamValue } from '../../Components/StepAnalysis/StepAnalysisDefaultForm';
-import { StepAnalysisType, StepAnalysisConfig } from 'wdk-client/Utils/StepAnalysisUtils';
+import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(
@@ -89,16 +88,16 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
     filter(isStartLoadingSavedTab),
     withLatestFrom(state$, focusOnPanelById),
     filter(onTabInUnitializedAnalysisPanelState),
-    mergeMap(async ({ stepId, panelId, panelState }) => {
+    mergeMap(async ({ choices, stepId, panelId, panelState }) => {
       const analysisId = panelState.analysisId;
-
       try {
         const analysisConfig = await wdkService.getStepAnalysis(stepId, analysisId);
         const paramSpecs = await wdkService.getStepAnalysisTypeParamSpecs(stepId, analysisConfig.analysisName);
         const resultContents = analysisConfig.status === 'COMPLETE' 
           ? await wdkService.getStepAnalysisResult(stepId, analysisId)
           : {};
-
+        const myChoice = choices.find(analysis => analysis.name === analysisConfig.analysisName);
+        const isAutorun = myChoice && !myChoice.hasParameters;
         const finishLoading = finishLoadingSavedTab(
           panelId,
           {
@@ -134,7 +133,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
           case 'INTERRUPTED':
           case 'EXPIRED':
           case 'OUT_OF_DATE':
-            if (!analysisConfig.hasParams || isEmpty(analysisConfig.formParams))
+            if (isAutorun)
               return [ finishLoading, startFormSubmission(panelId) ];
 
           // just finish for everything else
