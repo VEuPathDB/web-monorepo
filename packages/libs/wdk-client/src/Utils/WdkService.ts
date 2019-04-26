@@ -732,7 +732,7 @@ export default class WdkService {
     return this.getRecordClasses().then(rs => {
       let record = rs.find(test);
       if (record == null) {
-        throw new ServiceError("Could not find record.", "Not found", 404);
+        throw new ServiceError("Could not find record class.", "Not found", 404);
       }
       return record;
     });
