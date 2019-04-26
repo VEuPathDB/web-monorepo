@@ -182,9 +182,14 @@ export function oneOf<T, S, R, Q, P, O, N, M, L, K, J>(decoder1: Decoder<T>, dec
 export function oneOf(...decoders: any[]) {
   return function oneOfDecoder(t: any) {
     const results = Seq.from(decoders).map(d => d(t));
-    return results.find(r => r.status === 'ok')
-      ? ok(t)
-      : err(t, `${results.map(e => e.expected).join(' | ')}`)
+    const okResult = results.find(r => r.status === 'ok')
+    if (okResult) return ok(t);
+    // build error message
+    return err(
+      results.map(e => e.value).first(),
+      `${results.map(e => e.expected).join(' | ')}`,
+      results.map(e => e.context).first()
+    );
   }
 }
 

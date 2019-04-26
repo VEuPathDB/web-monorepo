@@ -14,7 +14,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is NumberRangeParam {
-  return param.type === 'NumberRangeParam';
+  return param.type === 'number-range';
 }
 
 function Component(props: Props<NumberRangeParam, void>) {

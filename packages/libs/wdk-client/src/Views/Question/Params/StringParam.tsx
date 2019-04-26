@@ -14,7 +14,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is StringParam {
-  return param.type === 'StringParam';
+  return param.type === 'string';
 }
 
 function Component(props: Props<StringParam, undefined>) {

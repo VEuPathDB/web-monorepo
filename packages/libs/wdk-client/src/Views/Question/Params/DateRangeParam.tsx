@@ -14,7 +14,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is DateRangeParam {
-  return param.type === 'DateRangeParam';
+  return param.type === 'date-range';
 }
 
 function Component(props: Props<DateRangeParam, void>) {

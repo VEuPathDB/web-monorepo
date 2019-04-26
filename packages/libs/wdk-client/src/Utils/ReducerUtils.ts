@@ -7,10 +7,15 @@ export type IndexedState<State> = {
 type IndexedReducer<State> = Reducer<IndexedState<State>>;
 
 /**
- * Enhances a reducer by return a parent state object that is keyed by an index
- * value. Actions are delegated to the provided reducer, using the return value
- * of `getIndexValue(action)` as the index value. If `getIndexValue(action)`
- * returns `undefined`, the reducer will be called with it and all substates.
+ * A utility to make a reducer collection-oriented. I.e., the resulting state
+ * is indexed by some identifier derived from an `Action`. This utility reduces
+ * boilerplate and manages immutable updates to the state.
+ * 
+ * Enhances a reducer by returning a parent state object that is keyed by an
+ * index value. Actions are delegated to the provided reducer, using the return
+ * value of `getIndexValue(action)` as the index value. If
+ * `getIndexValue(action)` returns `undefined`, the reducer will be called with
+ * it and all substates.
  */
 export function indexByActionProperty<State>(
   reducer: Reducer<State>,

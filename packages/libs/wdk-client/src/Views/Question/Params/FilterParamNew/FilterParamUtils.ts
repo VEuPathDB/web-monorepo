@@ -8,12 +8,11 @@ import { FilterParamNew, Parameter } from 'wdk-client/Utils/WdkModel';
 
 import { SortSpec, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { Context } from 'wdk-client/Views/Question/Params/Utils';
-import { getRecordClassName } from 'wdk-client/Utils/CategoryUtils';
 
 const natSortComparator = (natsort as any)();
 
 export function isType(parameter: Parameter): parameter is FilterParamNew {
-  return parameter.type === 'FilterParamNew';
+  return parameter.type === 'filter';
 }
 
 export function isParamValueValid(context: Context<FilterParamNew>, state: State) {

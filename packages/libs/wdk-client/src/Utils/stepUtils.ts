@@ -20,7 +20,7 @@ export function getStepBundlePromise(stepId: number, service: WdkService) {
     })
   });
   let recordClassPromise = questionPromise.then(question =>
-    service.findRecordClass( rc => rc.fullName === question.recordClassName )
+    service.findRecordClass( rc => rc.fullName === question.outputRecordClassName )
   );
 
   return Promise.all([ stepPromise, questionPromise, recordClassPromise ])
@@ -62,7 +62,7 @@ export function getSingleRecordStepBundlePromise([ recordClass, recordInstance, 
   let question: Question = {
     fullName: searchName,
     urlSegment: searchName,
-    recordClassName: recordClass.fullName,
+    outputRecordClassName: recordClass.fullName,
     displayName: 'Single Record',
     shortDisplayName: 'Single Record',
     description: 'Retrieves a single record by ID',

@@ -376,7 +376,7 @@ function loadQuestion(wdkService: WdkService, searchName: string, paramValues?: 
     : wdkService.getQuestionGivenParameters(searchName, paramValues);
 
   const recordClass$ = question$.then(question =>
-    wdkService.findRecordClass(rc => rc.fullName == question.recordClassName));
+    wdkService.findRecordClass(rc => rc.fullName == question.outputRecordClassName));
 
   return Promise.all([question$, recordClass$]).then(
     ([question, recordClass]) => {

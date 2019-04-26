@@ -139,7 +139,7 @@ function getQuestionAndRecordClass(rootState: RootState, props: OwnProps): { que
 
   const searchName = viewState.searchName;
   const question = rootState.globalData.questions.find(q => q.urlSegment === searchName);
-  const recordClass = question && rootState.globalData.recordClasses.find(r => r.fullName === question.recordClassName);
+  const recordClass = question && rootState.globalData.recordClasses.find(r => r.fullName === question.outputRecordClassName);
   return question && recordClass && { question, recordClass };
 }
 

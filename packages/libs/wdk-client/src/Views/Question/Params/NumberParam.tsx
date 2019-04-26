@@ -13,7 +13,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is NumberParam {
-  return param.type === 'NumberParam';
+  return param.type === 'number';
 }
 
 function Component(props: Props<NumberParam, undefined>) {

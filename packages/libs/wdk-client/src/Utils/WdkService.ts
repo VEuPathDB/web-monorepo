@@ -1,7 +1,6 @@
 import stringify from 'json-stable-stringify';
 import localforage from 'localforage';
 import { difference, keyBy, memoize, omit } from 'lodash';
-import { set } from 'lodash/fp';
 import * as QueryString from 'querystring';
 
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
@@ -9,8 +8,8 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise, synchronized } from 'wdk-client/Utils/PromiseUtils';
-import { StepAnalysisConfig, stepAnalysisDecoder, stepAnalysisConfigDecoder, stepAnalysisTypeDecoder, stepAnalysisStatusDecoder, FormParams } from 'wdk-client/Utils/StepAnalysisUtils';
-import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder, UserComment, UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentGetResponse } from 'wdk-client/Utils/WdkUser';
+import { stepAnalysisDecoder, stepAnalysisConfigDecoder, stepAnalysisTypeDecoder, stepAnalysisStatusDecoder, FormParams } from 'wdk-client/Utils/StepAnalysisUtils';
+import { PreferenceScope, Step, User, UserPreferences, UserWithPrefs, strategyDecoder, UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentGetResponse } from 'wdk-client/Utils/WdkUser';
 
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 import {
@@ -35,7 +34,6 @@ import {
   TreeBoxVocabNode,
   UserDataset,
   UserDatasetMeta,
-  AnswerJsonFormatConfig,
   SummaryViewPluginField,
 } from 'wdk-client/Utils/WdkModel';
 import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
@@ -255,11 +253,9 @@ const parameterDecoder: Decode.Decoder<Parameter> =
       Decode.field('dependentParams', Decode.arrayOf(Decode.string))
     ),
     Decode.oneOf(
-      /* AnswerParam */
-      Decode.field('type', Decode.constant('AnswerParam')),
       /* DatasetParam */
       Decode.combine(
-        Decode.field('type', Decode.constant('DatasetParam')),
+        Decode.field('type', Decode.constant('input-dataset')),
         Decode.field('defaultIdList', Decode.optional(Decode.string)),
         Decode.field('parsers', Decode.arrayOf(
           Decode.combine(
@@ -270,15 +266,15 @@ const parameterDecoder: Decode.Decoder<Parameter> =
         ))
       ),
       /* TimestampParam */
-      Decode.field('type', Decode.constant('TimestampParam')),
+      Decode.field('type', Decode.constant('timestamp')),
       /* StringParam  */
       Decode.combine(
-        Decode.field('type', Decode.constant('StringParam')),
+        Decode.field('type', Decode.constant('string')),
         Decode.field('length', Decode.number)
       ),
       /* FilterParamNew */
       Decode.combine(
-        Decode.field('type', Decode.constant('FilterParamNew')),
+        Decode.field('type', Decode.constant('filter')),
         Decode.field('filterDataTypeDisplayName', Decode.optional(Decode.string)),
         Decode.field('minSelectedCount', Decode.number),
         Decode.field('hideEmptyOntologyNodes', Decode.optional(Decode.boolean)),
@@ -300,8 +296,7 @@ const parameterDecoder: Decode.Decoder<Parameter> =
       ),
       /* EnumParam */
       Decode.combine(
-        Decode.field('type', Decode.oneOf(Decode.constant('EnumParam'), Decode.constant('FlatVocabParam'))),
-        // Decode.field('displayType', Decode.string),
+        Decode.field('type', Decode.constant('vocabulary')),
         Decode.field('countOnlyLeaves', Decode.boolean),
         Decode.field('maxSelectedCount', Decode.number),
         Decode.field('minSelectedCount', Decode.number),
@@ -332,28 +327,28 @@ const parameterDecoder: Decode.Decoder<Parameter> =
       ),
       /* NumberParam */
       Decode.combine(
-        Decode.field('type', Decode.constant('NumberParam')),
+        Decode.field('type', Decode.constant('number')),
         Decode.field('min', Decode.number),
         Decode.field('max', Decode.number),
         Decode.field('increment', Decode.number),
       ),
       /* NumberRangeParam */
       Decode.combine(
-        Decode.field('type', Decode.constant('NumberRangeParam')),
+        Decode.field('type', Decode.constant('number-range')),
         Decode.field('min', Decode.number),
         Decode.field('max', Decode.number),
         Decode.field('increment', Decode.number),
       ),
       /* DateParam */
       Decode.combine(
-        Decode.field('type', Decode.constant('DateParam')),
+        Decode.field('type', Decode.constant('date')),
         Decode.field('minDate', Decode.string),
         Decode.field('maxDate', Decode.string),
       ),
 
       /* DateRangeParam */
       Decode.combine(
-        Decode.field('type', Decode.constant('DateRangeParam')),
+        Decode.field('type', Decode.constant('date-range')),
         Decode.field('minDate', Decode.string),
         Decode.field('maxDate', Decode.string),
       ),
@@ -425,7 +420,7 @@ const questionSharedDecoder =
       Decode.field('summary', Decode.optional(Decode.string)),
       Decode.field('description', Decode.optional(Decode.string)),
       Decode.field('shortDisplayName', Decode.string),
-      Decode.field('recordClassName', Decode.string),
+      Decode.field('outputRecordClassName', Decode.string),
       Decode.field('help', Decode.optional(Decode.string)),
       Decode.field('newBuild', Decode.optional(Decode.string)),
       Decode.field('reviseBuild', Decode.optional(Decode.string)),
@@ -442,7 +437,7 @@ const questionSharedDecoder =
     Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
     Decode.field('defaultSummaryView', Decode.string),
     Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder)),
-    Decode.field('stepAnalysisPlugins', Decode.arrayOf(Decode.string)),
+    Decode.field('stepAnalysisPlugins', Decode.arrayOf(stepAnalysisTypeDecoder)),
     Decode.field('filters', Decode.arrayOf(questionFilterDecoder))
   )
 
@@ -455,11 +450,11 @@ const questionDecoder: Decode.Decoder<Question> =
 const questionsDecoder: Decode.Decoder<Question[]> =
   Decode.arrayOf(questionDecoder)
 
-const questionWithParametersDecoder: Decode.Decoder<QuestionWithParameters> =
-  Decode.combine(
+const questionWithParametersDecoder: Decode.Decoder<{ searchData: QuestionWithParameters }> =
+  Decode.field('searchData', Decode.combine(
     questionSharedDecoder,
     Decode.field('parameters', parametersDecoder)
-  )
+  ));
 
 /**
  * A helper to request resources from a Wdk REST Service.
@@ -636,7 +631,7 @@ export default class WdkService {
     });
   }
 
-  async getQuestionAndParameters(questionUrlSegment: string) {
+  async getQuestionAndParameters(questionUrlSegment: string): Promise<QuestionWithParameters> {
     let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
     return this.sendRequest(questionWithParametersDecoder, {
       method: 'get',
@@ -645,19 +640,19 @@ export default class WdkService {
         expandParams: 'true',
       },
       useCache: true
-    });
+    }).then(response => response.searchData);
   }
 
   /**
    * Fetch question information (e.g. vocabularies) given the passed param values; never cached
    */
-  async getQuestionGivenParameters(questionUrlSegment: string, paramValues: ParameterValues) {
+  async getQuestionGivenParameters(questionUrlSegment: string, paramValues: ParameterValues): Promise<QuestionWithParameters> {
     let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
     return this.sendRequest(questionWithParametersDecoder, {
       method: 'post',
       path: searchPath,
       body: JSON.stringify({ contextParamValues: paramValues })
-    });
+    }).then(response => response.searchData);
   }
 
   async getQuestionParamValues(questionUrlSegment: string, paramName: string, paramValue: ParameterValue, paramValues: ParameterValues) {
@@ -674,7 +669,7 @@ export default class WdkService {
 
   private async getSearchPathFromUrlSegment(questionUrlSegment: string) : Promise<string> {
     const question = await this.findQuestion(question => question.urlSegment === questionUrlSegment );
-    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.recordClassName);
+    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
     return this.getSearchPath(recordClass.urlSegment, questionUrlSegment);
   }
 
@@ -806,7 +801,7 @@ export default class WdkService {
 
   private  async getCustomSearchReportRequestInfo (answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<CustomSearchReportRequestInfo>{
     const question = await this.findQuestion(question => question.urlSegment === answerSpec.searchName );
-    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.recordClassName);
+    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
     let url = this.getCustomSearchReportEndpoint(recordClass.urlSegment, question.urlSegment, formatting.format);
     let searchConfig: SearchConfig = answerSpec.searchConfig;
     let reportConfig = formatting.formatConfig;
@@ -829,7 +824,7 @@ export default class WdkService {
    */
   async getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig): Promise<Answer> {
     const question = await this.findQuestion(question => question.urlSegment === answerSpec.searchName );
-    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.recordClassName);
+    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
     let url = this.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
     let searchConfig: SearchConfig = answerSpec.searchConfig
     let body: StandardSearchReportRequest = { searchConfig, reportConfig };

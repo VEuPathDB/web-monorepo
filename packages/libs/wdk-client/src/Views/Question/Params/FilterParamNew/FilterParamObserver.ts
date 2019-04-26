@@ -334,7 +334,7 @@ function getQuestionState(state: State, searchName: string) {
 
 function getFilterParamNewFromState(state: QuestionState, paramName: string) {
   const parameter = state.question.parametersByName[paramName];
-  if (parameter == null || parameter.type !== 'FilterParamNew') {
+  if (parameter == null || parameter.type !== 'filter') {
     throw new Error(`Parameter ${paramName} in ${state.question.urlSegment} is not a FilterParamNew.`);
   }
   return parameter;

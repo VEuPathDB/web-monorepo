@@ -83,7 +83,7 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
         onParamValueChange={onChange}
       />
       {
-        paramSpec.type === 'NumberParam' &&
+        paramSpec.type === 'number' &&
         <span style={numberParamRangeSpanStyle}>
           ({paramSpec.min} - {paramSpec.max})
         </span>

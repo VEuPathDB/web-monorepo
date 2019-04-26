@@ -30,7 +30,7 @@ function StepFiltersController(props: Props) {
             type: "questionFilter",
             name: filter.name,
             searchName: question.urlSegment,
-            recordClassName: question.recordClassName
+            recordClassName: question.outputRecordClassName
           }}
           pluginProps={{
             stepId: step.id,

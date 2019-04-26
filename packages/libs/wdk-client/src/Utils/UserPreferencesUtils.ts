@@ -56,7 +56,7 @@ async function getQuestionFromSearchName(searchName: string, wdkService: WdkServ
 
 export async function getResultTableColumnsPref(wdkService: WdkService, searchName: string, stepId?: number): Promise<string[]> {
   const question = await getQuestionFromSearchName(searchName, wdkService);
-  const recordClass = await wdkService.findRecordClass(({ fullName }) => fullName === question.recordClassName);
+  const recordClass = await wdkService.findRecordClass(({ fullName }) => fullName === question.outputRecordClassName);
   const fixedColumns = [
     recordClass.recordIdAttributeName,
     ...recordClass.attributes

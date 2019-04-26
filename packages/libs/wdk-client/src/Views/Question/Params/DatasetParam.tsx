@@ -52,7 +52,7 @@ type State = {
 
 
 function isType(parameter: Parameter): parameter is DatasetParam {
-  return parameter.type === 'DatasetParam';
+  return parameter.type === 'input-dataset';
 }
 
 function isParamValueValid(ctx: Context<DatasetParam>) {
@@ -267,7 +267,7 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
           parameterName: parameter.name
         }
       }))
-    : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.recordClassName } })
+    : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.outputRecordClassName } })
     : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
     : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: valueToArray(idList) } })
     : Promise.resolve();

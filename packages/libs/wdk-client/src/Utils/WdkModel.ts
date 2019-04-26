@@ -4,6 +4,7 @@
 
 import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 import { Step } from 'wdk-client/Utils/WdkUser';
+import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 interface ModelEntity {
   displayName: string;
@@ -54,20 +55,16 @@ export interface ParameterBase extends NamedModelEntity {
 }
 
 export interface StringParam extends ParameterBase {
-  type: 'StringParam';
+  type: 'string';
   length: number;
 }
 
-export interface AnswerParam extends ParameterBase {
-  type: 'AnswerParam';
-}
-
 export interface TimestampParam extends ParameterBase {
-  type: 'TimestampParam';
+  type: 'timestamp';
 }
 
 export interface FilterParamNew extends ParameterBase {
-  type: 'FilterParamNew';
+  type: 'filter';
   filterDataTypeDisplayName?: string;
   minSelectedCount: number;
   hideEmptyOntologyNodes?: boolean;
@@ -85,7 +82,7 @@ export interface FilterParamNew extends ParameterBase {
 }
 
 export interface EnumParamBase extends ParameterBase {
-  type: 'EnumParam' | 'FlatVocabParam';
+  type: 'vocabulary';
   displayType: string;
   countOnlyLeaves: boolean;
   maxSelectedCount: number;
@@ -135,47 +132,47 @@ export interface TreeBoxEnumParam extends EnumParamBase {
 export type EnumParam = SelectEnumParam | CheckboxEnumParam | TypeAheadEnumParam | TreeBoxEnumParam;
 
 export interface NumberParam extends ParameterBase {
-  type: 'NumberParam';
+  type: 'number';
   min: number;
   max: number;
   increment: number;
 }
 
 export interface NumberRangeParam extends ParameterBase {
-  type: 'NumberRangeParam';
+  type: 'number-range';
   min: number;
   max: number;
   increment: number;
 }
 
 export interface DateParam extends ParameterBase {
-  type: 'DateParam';
+  type: 'date';
   minDate: string;
   maxDate: string;
 }
 
 export interface DateRangeParam extends ParameterBase {
-  type: 'DateRangeParam';
+  type: 'date-range';
   minDate: string;
   maxDate: string;
 }
 
 export interface DatasetParam extends ParameterBase {
-  type: 'DatasetParam';
+  type: 'input-dataset';
   defaultIdList?: string;
   parsers: { name: string; displayName: string; description: string; }[]
 }
 
-export type Parameter = AnswerParam
-                      | DatasetParam
-                      | DateParam
-                      | DateRangeParam
-                      | EnumParam
-                      | FilterParamNew
-                      | NumberParam
-                      | NumberRangeParam
-                      | StringParam
-                      | TimestampParam;
+export type Parameter =
+  | StringParam
+  | TimestampParam
+  | DatasetParam
+  | DateParam
+  | DateRangeParam
+  | EnumParam
+  | FilterParamNew
+  | NumberParam
+  | NumberRangeParam
 
 export interface ParameterGroup {
   description: string;
@@ -198,7 +195,7 @@ interface QuestionShared extends UrlModelEntity {
   description?: string;
   iconName?: string;
   shortDisplayName: string;
-  recordClassName: string;
+  outputRecordClassName: string;
   help?: string;
   newBuild?: string;
   reviseBuild?: string;
@@ -209,7 +206,7 @@ interface QuestionShared extends UrlModelEntity {
   dynamicAttributes: AttributeField[];
   defaultSummaryView: string;
   summaryViewPlugins: SummaryViewPluginField[];
-  stepAnalysisPlugins: string[];
+  stepAnalysisPlugins: StepAnalysisType[];
   filters: QuestionFilter[];
 }
 
