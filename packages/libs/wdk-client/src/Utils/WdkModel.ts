@@ -351,8 +351,8 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
 
 export interface PatchStepSpec {
   customName?: string,
-  isCollapsible?: boolean,
-  collapsedName?: string;
+  expandNested?: boolean, // only allowed on combiner steps
+  nestedName?: string;  // only allowed on combiner steps; not shown if expandNested is false and the step is not nested
   displayPrefs?: Step['displayPrefs'];
 }
 
