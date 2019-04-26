@@ -50,7 +50,7 @@ export interface ParameterBase extends NamedModelEntity {
   isVisible: boolean;
   group: string;
   isReadOnly: boolean;
-  defaultValue?: ParameterValue;
+  initialDisplayValue?: ParameterValue;
   dependentParams: string[];
 }
 

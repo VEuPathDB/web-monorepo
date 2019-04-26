@@ -249,7 +249,7 @@ const parameterDecoder: Decode.Decoder<Parameter> =
       Decode.field('isVisible', Decode.boolean),
       Decode.field('group', Decode.string),
       Decode.field('isReadOnly', Decode.boolean),
-      Decode.field('defaultValue', Decode.optional(Decode.string)),
+      Decode.field('initialDisplayValue', Decode.optional(Decode.string)),
       Decode.field('dependentParams', Decode.arrayOf(Decode.string))
     ),
     Decode.oneOf(

@@ -163,9 +163,9 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
             pollCountdown: 0,
             paramSpecs,
             paramValues: paramSpecs.reduce(
-              (memo, { name, defaultValue }) => ({
+              (memo, { name, initialDisplayValue }) => ({
                 ...memo,
-                [name]: denormalizeParamValue(defaultValue || '')
+                [name]: denormalizeParamValue(initialDisplayValue || '')
               }),
               {}
             ),

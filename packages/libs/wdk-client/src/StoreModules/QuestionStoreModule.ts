@@ -189,7 +189,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
 
     case UPDATE_PARAMS: {
       const newParamsByName = keyBy(action.payload.parameters, 'name');
-      const newParamValuesByName = mapValues(newParamsByName, param => param.defaultValue || '');
+      const newParamValuesByName = mapValues(newParamsByName, param => param.initialDisplayValue || '');
       const newParamErrors = mapValues(newParamsByName, () => undefined);
       // merge updated parameters into quesiton and reset their values
       return {
@@ -392,7 +392,7 @@ function loadQuestion(wdkService: WdkService, searchName: string, paramValues?: 
 }
 
 function makeDefaultParamValues(parameters: Parameter[]) {
-  return parameters.reduce(function(values, { name, defaultValue = ''}) {
-    return Object.assign(values, { [name]: defaultValue });
+  return parameters.reduce(function(values, { name, initialDisplayValue}) {
+    return Object.assign(values, { [name]: initialDisplayValue });
   }, {} as ParameterValues);
 }
