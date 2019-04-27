@@ -33,7 +33,8 @@ type DispatchProps = {
 
 type OwnProps = {
   targetType: string,
-  targetId: string
+  targetId: string,
+  initialCommentId?: number
 };
 
 type MergedProps = UserCommentShowViewProps & {
@@ -150,7 +151,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 const mergeProps = (
   { documentTitle, userId, userComments, loading, title, webAppUrl }: StateProps, 
   { loadUserComments, deleteUserComment }: DispatchProps,
-  { targetId, targetType }: OwnProps
+  { targetId, targetType, initialCommentId }: OwnProps
 ) => {
   const formGroupFields = userComments.reduce(
     (memo, comment) => {
@@ -273,7 +274,7 @@ const mergeProps = (
               {
                 comment.categories.map(
                   (category, i) => (
-                    <div key={category}>{category}
+                    <div key={category}>
                       {i + 1}) {category}
                     </div>
                   )
@@ -449,7 +450,8 @@ const mergeProps = (
     loadUserComments,
     deleteUserComment,
     targetType,
-    targetId
+    targetId,
+    initialCommentId
   };
 };
 
