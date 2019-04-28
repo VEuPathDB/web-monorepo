@@ -132,6 +132,7 @@ const makeCrossStudyStudy = memoize(questions => {
 
   return {
     name: 'Cross Study Analysis',
+    id: 'DS_all',
     route: '/search/dataset/AllDatasets/result',
     searches: [
       {
@@ -155,13 +156,14 @@ function makeHeaderMenuItems(state) {
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = menuItemsFromSocials(siteConfig);
   const allStudiesStudy = makeCrossStudyStudy(questions);
+
   return {
     mainMenu: [
       {
         id: 'search',
         text: 'Search a Study',
-        children: (studies.entities == null ? [] : studies.entities)
-          .concat(allStudiesStudy || [])
+        children: (allStudiesStudy == null ? [] : [allStudiesStudy])
+          .concat(studies.entities == null ? [] : studies.entities)
           .map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
       },
       {
