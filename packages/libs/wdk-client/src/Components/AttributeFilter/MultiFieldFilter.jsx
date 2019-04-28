@@ -8,6 +8,7 @@ import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox
 import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
 import { getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
+import Banner from 'wdk-client/Components/Banners/Banner';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 
@@ -231,6 +232,9 @@ export default class MultiFieldFilter extends React.Component {
     const leafFilters = get(this.props.filters.find(filter => filter.field === this.props.activeField.term), 'value.filters', []);
     const filtersByField = keyBy(leafFilters, 'field');
 
+    const hasRowWithRemaining = Seq.from(this.props.activeFieldState.summary)
+      .some(summary => summary.internalsFilteredCount > 0);
+
     const rows = Seq.from(this.props.activeFieldState.summary)
       .flatMap(summary => [
         {
@@ -273,6 +277,19 @@ export default class MultiFieldFilter extends React.Component {
             : 'Update counts'}
         </button>
 
+        {/*
+          padding: .5em;
+          border: 1px solid #cccccc;
+          border-radius: 6px;
+          background: #fbfbf1;
+        */}
+        {!hasRowWithRemaining && (
+          <Banner banner={{
+            type: 'warning',
+            message: 'Given prior selections, there is no remaining data available for this filter.',
+            pinned: true
+          }}/>
+        )}
         <div style={{ margin: '.5em 0' }}>
           Find {this.props.displayName} with <select
             value={this.getOrCreateFilter(this.props, this.state).value.operation}

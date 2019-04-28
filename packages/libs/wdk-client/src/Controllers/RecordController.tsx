@@ -101,7 +101,7 @@ class RecordController extends PageController<Props> {
 
   loadData(previousProps?: this['props']) {
     const { ownProps } = this.props;
-    const { ownProps: prevOwnProps = undefined } = this.props || {};
+    const { ownProps: prevOwnProps = undefined } = previousProps || {};
     // load data if params have changed
     if (
       previousProps == null ||

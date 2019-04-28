@@ -224,10 +224,13 @@ const routes: RouteEntry[] = [
     path: '/user-comments/show',
     component: (props: RouteComponentProps<{}>) => {
       const { stableId = '', commentTargetId = '' } = parseQueryString(props);
+      const initialCommentId = parseInt((props.location.hash || '#').slice(1)) || undefined;
+
       return (
         <UserCommentShowController
           targetId={stableId}
           targetType={commentTargetId}
+          initialCommentId={initialCommentId}
         />
       );
     }

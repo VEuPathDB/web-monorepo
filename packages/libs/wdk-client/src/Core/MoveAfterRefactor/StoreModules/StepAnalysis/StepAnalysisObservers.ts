@@ -88,16 +88,16 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
     filter(isStartLoadingSavedTab),
     withLatestFrom(state$, focusOnPanelById),
     filter(onTabInUnitializedAnalysisPanelState),
-    mergeMap(async ({ stepId, panelId, panelState }) => {
+    mergeMap(async ({ choices, stepId, panelId, panelState }) => {
       const analysisId = panelState.analysisId;
-
       try {
         const analysisConfig = await wdkService.getStepAnalysis(stepId, analysisId);
         const paramSpecs = await wdkService.getStepAnalysisTypeParamSpecs(stepId, analysisConfig.analysisName);
         const resultContents = analysisConfig.status === 'COMPLETE' 
           ? await wdkService.getStepAnalysisResult(stepId, analysisId)
           : {};
-
+        const myChoice = choices.find(analysis => analysis.name === analysisConfig.analysisName);
+        const isAutorun = myChoice && !myChoice.hasParameters;
         const finishLoading = finishLoadingSavedTab(
           panelId,
           {
@@ -121,14 +121,26 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
           }
         );
 
-        return analysisConfig.status === 'PENDING' || analysisConfig.status === 'RUNNING'
-          ? [
-            finishLoading,
-            checkResultStatus(panelId)
-          ]
-          : [
-            finishLoading
-          ];
+        switch(analysisConfig.status) {
+          // continue to monitor status
+          case 'RUNNING':
+          case 'PENDING':
+            return [ finishLoading, checkResultStatus(panelId) ];
+
+          // resubmit form for auto-runnable analyses when in state non-error like state
+          case 'CREATED':
+          case 'STEP_REVISED':
+          case 'INTERRUPTED':
+          case 'EXPIRED':
+          case 'OUT_OF_DATE':
+            if (isAutorun)
+              return [ finishLoading, startFormSubmission(panelId) ];
+
+          // just finish for everything else
+          default:
+            return [ finishLoading ];
+        }
+
       }
       catch (ex) {
         return finishLoadingSavedTab(
@@ -143,6 +155,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
     })
   );
 };
+
 
 export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(

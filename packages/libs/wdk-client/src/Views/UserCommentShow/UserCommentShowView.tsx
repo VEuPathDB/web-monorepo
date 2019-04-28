@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import { FormRowProps } from 'wdk-client/Views/UserCommentForm/FormRow';
 import { FormBody } from 'wdk-client/Views/UserCommentForm/FormBody';
 
@@ -9,6 +9,7 @@ export interface UserCommentShowViewProps {
   className?: string;
   headerClassName?: string;
   bodyClassName?: string;
+  initialCommentId?: number;
   formGroupFields: Record<string, (FormRowProps & { key: string })[]>;
   formGroupHeaders: Record<string, ReactNode>;
   formGroupOrder: string[];
@@ -22,14 +23,30 @@ export const UserCommentShowView: React.SFC<UserCommentShowViewProps> = ({
   className,
   headerClassName,
   bodyClassName,
+  initialCommentId,
   ...formBodyProps
-}) => (
-  <div className={className}>
-    <div className={headerClassName}>
-      {title}
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current && initialCommentId) {
+      const initialCommentIdSelector = `[id='${initialCommentId}']`;
+      const commentToScrollTo = containerRef.current.querySelector(initialCommentIdSelector);
+
+      if (commentToScrollTo) {
+        commentToScrollTo.scrollIntoView();
+      }
+    }
+  }, []);
+
+  return (
+    <div className={className} ref={containerRef}>
+      <div className={headerClassName}>
+        {title}
+      </div>
+      <div className={bodyClassName}>
+        <FormBody {...formBodyProps} />
+      </div>
     </div>
-    <div className={bodyClassName}>
-      <FormBody {...formBodyProps} />
-    </div>
-  </div>
-);
+  );
+};

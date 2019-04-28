@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from 'react';
 import { StepAnalysisMenuPaneProps, StepAnalysisMenuPane } from './StepAnalysisMenuPane';
 import { StepAnalysisSelectedPane, StepAnalysisSelectedPaneStateProps } from './StepAnalysisSelectedPane';
-import { Loading } from '../../../../Components';
+import { LoadingOverlay } from '../../../../Components';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 
 import 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView.scss';
@@ -52,11 +52,9 @@ export const StepAnalysisView: React.SFC<StepAnalysisStateProps & StepAnalysisEv
         props.type === 'loading-menu-pane' &&
         (
           <div className="analysis-menu-tab-pane">
-            <Loading>
-              <div className="wdk-LoadingSavedAnalysis">
-                Loading saved analysis...
-              </div>
-            </Loading>
+            <LoadingOverlay>
+              Loading saved analysis...
+            </LoadingOverlay>
           </div>
         )
       }

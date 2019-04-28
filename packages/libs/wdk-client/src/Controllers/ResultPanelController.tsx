@@ -41,6 +41,7 @@ import {
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
 import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
+import { LoadingOverlay } from 'wdk-client/Components';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { StepEntry } from 'wdk-client/StoreModules/StepsStoreModule';
 
@@ -112,6 +113,14 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
 
   isRenderDataLoaded() {
     return !this.props.loadingTabs || this.props.stepErrorMessage != null;
+  }
+
+  renderDataLoading() {
+    return (
+      <LoadingOverlay>
+        Loading data...
+      </LoadingOverlay>
+    );
   }
 
   renderView() {
