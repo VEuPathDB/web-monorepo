@@ -886,6 +886,13 @@
              <td>N/A</td>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE127079" target="_blank">E06 Results at NCBI's GEO</a>
+                     </b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS824" target="_blank">E06 Quantitative Metabolomics Results at Metabolights</a><br>
                     </b></td>    
@@ -894,6 +901,11 @@
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
              <td><b><a href="/common/downloads/MaHPIC/Experiment_06/E06TargetedProteomics-Feb2019/" target="_blank">E06 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px"> <b>Telemetry</b></td>
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_06/" target="_blank">E06 Telemetry Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
            </table>
@@ -986,6 +998,13 @@
              <td>N/A</td>
            </tr>
            <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE128115" target="_blank">E07 Results at NCBI's GEO</a>
+                     </b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
              <td><img src="images/MaHPIC_Metabolomics_Core.jpg" height="13px" width="13px"> <b>Metabolomics</b></td>
              <td><b><a href="https://www.ebi.ac.uk/metabolights/MTBLS822" target="_blank">E07 Quantitative Metabolomics Results at MetaboLights</a>
                     </b></td>    
@@ -994,6 +1013,11 @@
            <tr>
              <td><img src="images/MaHPIC_Proteomics_Core.jpg" height="13px" width="13px"> <b>Targeted Proteomics</b></td>
              <td><b><a href="/common/downloads/MaHPIC/Experiment_07/E07TargetedProteomics-Feb2019/" target="_blank">E07 Targeted Proteomics (SOMAScan) Data in PlasmoDB Downloads </a></b></td> 
+             <td>N/A</td>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px"> <b>Telemetry</b></td>
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_07/" target="_blank">E07 Telemetry Data in PlasmoDB Downloads </a></b></td> 
              <td>N/A</td>
            </tr>
           </table>
@@ -1852,7 +1876,9 @@
            </tr>
            <tr>
              <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
-             <td><b>Coming Soon</b></td>  <!--<br> <a href="https://www.ncbi.nlm.nih.gov/sra" target="_blank">E30 Sequence data at NCBI's SRA</a><br><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank">E25 Expression Results on NCBI's GEO</a><br><a href="https://www.ncbi.nlm.nih.gov/bioproject/XXX" target="_blank">E25 BioProject record at NCBI</a>-->
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank">MaHPIC Umbrella BioProject</a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE123495" target="_blank">E30 Results at NCBI's GEO</a>
+                     </b></td> 
              <td>N/A</td>
            </tr>
            <tr>
@@ -1881,6 +1907,11 @@
              <td><b>Coming soon</b></td>
              <td>N/A</td>
            </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Informatics_Core.jpg" height="13px" width="13px"> <b>Telemetry</b></td>
+             <td><b><a href="/common/downloads/MaHPIC/Experiment_30/" target="_blank">E30 Telemetry Data in PlasmoDB Downloads</a></td>
+             <td>N/A</td>
+           </tr>
            </table>
            </div>
 	 
@@ -1901,6 +1932,74 @@
   </div>	
   </div>  
 
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 33: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain to study actute infection.</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo33 table, #ExpInfo33 td, #ExpInfo33 th, #ExpInfo33 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo33 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo33"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 33: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain sporozoites to produce and integrate clinical, hematological, parasitological, omics, and histopathological measures of acute primary infection.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>A mixed cohort of six malaria-naive male <i>Macaca mulatta</i> (n=2) and <i>Macaca fascicularis</i> (n=4) were inoculated intravenously with <i>P. knowlesi</i> Malayan strain cryo-preserved salivary gland sporozoites, obtained from <i>Anopheles dirus</i> infected with parasites from the Pk1A+ clone and previously confirmed in E30, E06 and E07 for their infectivity of macaques. The <i>P. knowlesi</i> sporozoites stocks had been generated, isolated and cryopreserved at the Centers for Disease Control and Prevention, and then stored at Yerkes. The experiment was designed to contain one baseline time point seven days prior to sporozoite inoculation, six time points after inoculation and terminal necropsies (for pathology studies) scheduled after peaking parasitemias. Venous whole blood and bone marrow aspirate samples were collected at time points to profile for clinical, hematological, parasitological, immunological, functional genomics, proteomics, and metabolomics measurements. A single sub-curative dose of chloroquine was administered via I.M. to the M. mulatta animals at the rise of the infection to dampen the high predictably lethal parasitemias in this species. A subsequent time point was collected to examine the effect of chloroquine on host pathways and whether the <i>M. mulatta</i> host responses became similar to the naturally controlling <i>M. fascicularis</i> host responses. Daily collection of capillary samples was performed for the clinical measurement of complete blood counts, reticulocytes, parasitemias and for sample banking. Within the MaHPIC, this project is known as 'Experiment 33'. This dataset was produced by Monica Cabrera-Mora and Chester J Joyner at the Yerkes Primate Research Center at Emory University.  To access other publicly available results from 'E33' and other MaHPIC Experiments, including clinical results (specifics on drugs administered, diet, and veterinary interventions), and other omics, visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).</td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks33 table, #DataLinks33 td, #DataLinks33 th, #DataLinks33 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks33 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks33 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks33"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_33/"><b>E33 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
+</div>
+</div>
 
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Experiment 34: Control necropsy of a mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i></a> </h3> 
@@ -1953,7 +2052,7 @@
            
            #DataLinksE34 td {vertical-align: middle;}
          </style> 
-         <table id="DataLinksE30"> 
+         <table id="DataLinksE34"> 
            <tr>
              <th>Data from MaHPIC Team</th>
              <th>Data Available from</th>
@@ -1979,6 +2078,165 @@
   -->
   </div>	
   </div>  
+
+
+
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 35: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain to study chronic infection.</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo35 table, #ExpInfo35 td, #ExpInfo35 th, #ExpInfo35 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo35 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo35"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 33: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain sporozoites to produce and integrate clinical, hematological, parasitological, omics, and histopathological measures of acute primary infection.</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>A mixed cohort of seven malaria-naive male <i>Macaca mulatta</i> (n=3) and <i>Macaca fascicularis</i> (n=4) were inoculated intravenously with <i>P. knowlesi</i> Malayan strain cryo-preserved salivary gland sporozoites, obtained from Anopheles dirus infected with parasites from the Pk1A+ clone and previously confirmed in E30, E06, E07, and E34 for their infectivity of macaques. The P. knowlesi sporozoites stocks had been generated, isolated and cryopreserved at the Centers for Disease Control and Prevention, and then stored at Yerkes. The experiment was designed to contain two baseline time points at days -13 and -42 prior to sporozoite inoculation, four (<i>M. mulatta</i>) or six (<i>M. fascicularis</i>) time points after inoculation, plus terminal necropsies (for pathology studies) scheduled between days 48-50 at a time when all animals had chronic infections. Venous whole blood and bone marrow aspirate samples were collected at all time points for clinical, hematological, parasitological, immunological, functional genomics, proteomics, and metabolomics measurements, or sample storage for future testing. Sub-curative doses of artemether were administered via I.M. to the <i>M. mulatta</i> animals at the initial high parasitemia and subsequent lower rises of parasitemias when necessary to dampen the parasitemias and allow a chronic infection to develop. No subcurative doses of artemether were needed for the <i>M. fascicularis</i>, which naturally controlled their parasitemias from the time of the first rise of parasites in the blood. Daily collection of capillary samples was performed for the clinical measurement of complete blood counts, reticulocytes, and parasitemias, and for sample banking.  Within the MaHPIC, this project is known as 'Experiment 35'. This dataset was produced by Monica Cabrera-Mora at Emory University. To access other publicly available results from E35 and other MaHPIC experiments, including clinical results (specifics on drugs administered, diet, and veterinary interventions), and other omics, visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>.  This page will be updated as datasets are released to the public.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC) and the MRMC Office of Research Protection Animal Care and Use Review Office (ACURO).
+</td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks35 table, #DataLinks35 td, #DataLinks35 th, #DataLinks35 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks35 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks35 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks35"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_35/"><b>E35 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
+</div>
+</div>
+
+
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi ex vivo</i> time course.</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfoS01 table, #ExpInfoS01 td, #ExpInfoS01 th, #ExpInfoS01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfoS01 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfoS01"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Supporting Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium knowlesi</i> Pk1(A+), Pk1(B+)1+, Pk1(C+) <i>ex vivo</i> time course</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Malaria-naive rhesus macaques (<i>Macaca mulatta</i>), were inoculated with a particular parasite clone and allowed to reach a targeted peak parasitemia of 5% - 10% proportion of infected RBCs. Whole blood was collected at the early ring stage while subjects were under anesthesia, and an ex vivo culture was established using standard protocols, which include but are not limited to the processing of the whole blood by removing platelets and white blood cells. Samples were collected starting at 1.5-2 hours after establishing cultures, followed by collections every 4 hours for a 24-hour period. Blood-stage curative doses of the anti-malarial drug chloroquine were administered to all subjects after whole blood extraction from each subject. Parasitemias were monitored daily by ear sticks. Within the MaHPIC, this project is known as 'Supporting Project 01'. To access other publicly available results from 'S01' including proteomics and other MaHPIC Experiments, visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public.  The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinksS01 table, #DataLinksS01 td, #DataLinksS01 th, #DataLinksS01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinksS01 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinksS01 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinksS01"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Functional_Genomics_Core.jpg" height="13px" width="13px"> <b>Functional Genomics</b></td>
+             <td><b> <a href="https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA368917" target="_blank"><b>MaHPIC Umbrella BioProject</b></a>
+                     <br><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE110970" target="_blank"><b>S01 Results at NCBI's GEO</a></b></td> 
+             <td>N/A</td>
+           </tr>
+           </table>
+           </div>
+<br><br>
+	 
+<!-- 	 
+	   
+	 <h4>Publication(s)</h4>
+	    <div style="margin-left: 2.5em;">
+        <img src="images/MaHPIC_Proteomics_Core.jpg" height="15px" width="15px">&nbsp; &nbsp;
+	     A large scale <i>Plasmodium vivax</i>- <i>Saimiri boliviensis</i> trophozoite-schizont transition proteome.  <a href="http://europepmc.org/abstract/MED/28829774" target="_blank">Anderson et al. PLoS One. 2017 12(8):e0182561</a>
+        </div>
+        <p>
+
+
+     <br><br> 
+     <img align="middle" src="images/MaHPIC_E30_Timeline.png" height="300px" width="500px"><br>
+     <a href="images/MaHPIC_E30_Timeline.png" target="_blank">View Larger Image</a><br>
+  -->
+        
+  </div>	
+  </div>  
+
+
 
    <div class="wdk-toggle" data-show="false">
    <h3 class="wdk-toggle-name"> <a href="#">Supporting Experiment 05: Investigation of <i>P. vivax</i> trophozoite-schizont transition proteome</a> </h3> 
@@ -2064,7 +2322,281 @@
   </div>	
   </div>  
 
+   <div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain infected red blood cells</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo01 table, #ExpInfo01 td, #ExpInfo01 th, #ExpInfo01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo01 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo01"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 01: <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain infected red blood cells</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Be aware that though this dataset is included in the body of MaHPIC results, it was produced before the MaHPIC project started. As of this writing, only the clinical results are planned for public release. Also, different from most MaHPIC datasets, there are no clinical timepoints included in the results. Before the experimental infection, the macaques received an intravenous infusion of a water-soluble biotin derivative to determine the erythrocyte lifespan via daily quantification of the biotinylated cells using flow cytometry. Clinical, hematological, parasitological, and metabolomics measures were collected in the course of the infection. Within the MaHPIC, this project is known as 'Experiment 01'. This dataset was produced by Dr. Alberto Moreno and Monica Cabrera-Mora at Emory University. To access other publicly available data from MaHPIC Experiments visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC). </td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks01 table, #DataLinks01 td, #DataLinks01 th, #DataLinks01 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks01 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks01 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks01"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_01/"><b>E01 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
 
+  </div>	
+  </div>  
+
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 02: Uninfected <i>Macaca mulatta</i> that serve as a control for <i>in vivo</i> biotinylation studies</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo02 table, #ExpInfo02 td, #ExpInfo02 th, #ExpInfo02 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo02 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo02"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 02: Uninfected <i>Macaca mulatta</i> that serve as a control for <i>in vivo</i> biotinylation studies</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Be aware that though this dataset is included in the body of MaHPIC results, it was produced before the MaHPIC project started. As of this writing, only the clinical results are planned for public release. Also, different from most MaHPIC datasets, there are no clinical timepoints included in the results. The macaques received an intravenous infusion of a water-soluble biotin derivative to determine the erythrocyte lifespan via daily quantification of the biotinylated cells using flow cytometry. Clinical, hematological, and metabolomics measures were collected in the course of the follow-up. Within the MaHPIC, this project is known as 'Experiment 02'. This dataset was produced by Dr. Alberto Moreno Emory University. To access other publicly available data from MaHPIC Experiments visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks02 table, #DataLinks02 td, #DataLinks02 th, #DataLinks02 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks02 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks02 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks02"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_02/"><b>E02 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
+</div>
+</div>
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 20: <i>Macaca mulatta</i> infected with <i>Plasmodium coatneyi</i> Hackeri strain infected red blood cells exposed to a homologous re-challenge</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo20 table, #ExpInfo20 td, #ExpInfo20 th, #ExpInfo20 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo20 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo20"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 20: <i>Macaca mulatta</i> previously infected with <i>Plasmodium coatneyi</i> Hackeri strain infected red blood cells exposed to a homologous re-challenge 11 months after the first infection (E01).</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Be aware that though this dataset is included in the body of MaHPIC results, it was produced before the MaHPIC project started. As of this writing, only the clinical results are planned for public release. Also, different from most MaHPIC datasets, there are no clinical timepoints included in the results. Before the experimental infection, the macaques received an intravenous infusion of a water-soluble biotin derivative to determine the erythrocyte lifespan via daily quantification of the biotinylated cells using flow cytometry. Clinical, hematological, parasitological, and metabolomics measures were collected in the course of the infection. Within the MaHPIC, this project is known as 'Experiment 20'. This dataset was produced by Dr. Alberto Moreno at Emory University. To access other publicly available data from MaHPIC Experiments visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks20 table, #DataLinks20 td, #DataLinks20 th, #DataLinks20 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks20 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks20 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks20"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_20/"><b>E20 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
+</div>
+</div>
+
+<div class="wdk-toggle" data-show="false">
+   <h3 class="wdk-toggle-name"> <a href="#">Experiment 21: Uninfected <i>Macaca mulatta</i> that serve as a control for in vivo biotinylation studies ten months after the first infusion (E02)</a> </h3> 
+   <div class="wdk-toggle-content">
+     
+     <h4>Experiment Information</h4>
+	 <div style="margin-left: 2.5em;">
+	 <style>
+           #ExpInfo21 table, #ExpInfo21 td, #ExpInfo21 th, #ExpInfo21 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 0px solid black;
+           }
+           #ExpInfo21 {
+           margin-left : 5 em;
+           }
+           
+         </style> 
+         <table id="ExpInfo21"> 
+           <tr>
+             <td><b>Title:</b></td>
+             <td>Experiment 21: Uninfected <i>Macaca mulatta</i> that serve as a control for in vivo biotinylation studies ten months after the first infusion (E02)</td>
+           </tr>
+           <tr>
+             <td><b>Experiment Description:</b></td>
+             <td>Be aware that though this dataset is included in the body of MaHPIC results, it was produced before the MaHPIC project started. As of this writing, only the clinical results are planned for public release. Also, different from most MaHPIC datasets, there are no clinical timepoints included in the results. The macaques received a second intravenous infusion of a water-soluble biotin derivative ten months after the first infusion (E02) to determine the erythrocyte lifespan via daily quantification of the biotinylated cells using flow cytometry. Clinical, hematological, and metabolomics measures were collected in the course of the follow-up. Within the MaHPIC, this project is known as 'Experiment 21'. This dataset was produced by Dr. Alberto Moreno at Emory University. To access other publicly available data from MaHPIC Experiments visit <a href="http://plasmodb.org/plasmo/mahpic.jsp">http://plasmodb.org/plasmo/mahpic.jsp</a>. This page will be updated as datasets are released to the public. The experimental design and protocols for this study were approved by the Emory University Institutional Animal Care and Use Committee (IACUC).</td>
+           </tr>
+         </table>
+      </div>   
+      <br><br>
+     
+	 <h4>Data Links</h4> 
+       <div style="margin-left: 2.5em;">
+	   <style>
+           #DataLinks21 table, #DataLinks21 td, #DataLinks21 th, #DataLinks21 tr {
+           text-align : left;
+           padding-left: 7px;
+           padding-right: 7px;
+           padding-top: 5px;
+           padding-bottom: 5px;
+           border: 1px solid black;
+           }
+           #DataLinks21 {
+           margin-left : 5 em;
+           }
+           
+           #DataLinks21 td {vertical-align: middle;}
+         </style> 
+         <table id="DataLinks21"> 
+           <tr>
+             <th>Data from MaHPIC Team</th>
+             <th>Data Available from</th>
+             <th>Data Integrated into PlasmoDB Searches</th>
+           </tr>
+           <tr>
+             <td><img src="images/MaHPIC_Malaria_Core.jpg" height="13px" width="13px"> <b>Clinical Malaria</b></td>
+             <td><a href="http://plasmodb.org/common/downloads/MaHPIC/Experiment_21/"><b>E21 Clinical Data in PlasmoDB Downloads</b></a></td>
+             <td>N/A</td>
+           </tr>
+           
+           </tr>
+           </table>
+           </div>
+<br><br>
+</div>
+</div>
 
   </div>
   </div>
