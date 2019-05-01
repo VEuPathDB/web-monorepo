@@ -2104,7 +2104,7 @@
          <table id="ExpInfo35"> 
            <tr>
              <td><b>Title:</b></td>
-             <td>Experiment 33: Mixed cohort of <i>Macaca mulatta</i> and <i>Macaca fascicularis</i> infected with <i>Plasmodium knowlesi</i> Malayan strain sporozoites to produce and integrate clinical, hematological, parasitological, omics, and histopathological measures of acute primary infection.</td>
+             <td>Experiment 33: Mixed cohort of <i>Macaca mulatta</i>i> and <i>Macaca fascicularis</i>i> infected with <i>Plasmodium knowlesi</i> Malayan strain sporozoites to produce and integrate clinical, hematological, parasitological, omics, and histopathological measures of chronic infections.</td>
            </tr>
            <tr>
              <td><b>Experiment Description:</b></td>
