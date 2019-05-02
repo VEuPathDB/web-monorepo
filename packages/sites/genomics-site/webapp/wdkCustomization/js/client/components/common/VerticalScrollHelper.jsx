@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {Component} from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {bindAll, throttle} from 'lodash';
 import {isNodeOverflowing} from 'ebrc-client/util/domUtils';

@@ -1,9 +1,10 @@
 import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
-import { record as RecordStoreModule } from 'wdk-client/StoreModules';
+import * as RecordStoreModule from 'wdk-client/StoreModules/RecordStoreModule';
 import { QuestionActions, RecordActions } from 'wdk-client/Actions';
 import { get } from 'lodash';
-import { TreeUtils as tree, CategoryUtils as cat } from 'wdk-client';
+import * as tree from 'wdk-client/Utils/TreeUtils';
+import * as cat from 'wdk-client/Utils/CategoryUtils';
 import * as persistence from 'ebrc-client/util/persistence';
 import { TABLE_STATE_UPDATED, PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
 

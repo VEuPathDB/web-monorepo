@@ -3,10 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
-import { emptyAction } from 'wdk-client/WdkMiddleware';
+import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
-import { getSingleRecordAnswerSpec } from 'wdk-client/wdkService';
-import { submitAsForm } from 'wdk-client/FormSubmitter';
+import WdkService from 'wdk-client/Utils/WdkService';
+import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
@@ -98,7 +98,7 @@ export function RecordLink(WdkRecordLink) {
 
 function downloadRecordTable(record, tableName) {
   return ({ wdkService }) => {
-    let answerSpec = getSingleRecordAnswerSpec(record);
+    let answerSpec = WdkService.getSingleRecordAnswerSpec(record);
     let formatting = {
       format: 'tableTabular',
       formatConfig: {

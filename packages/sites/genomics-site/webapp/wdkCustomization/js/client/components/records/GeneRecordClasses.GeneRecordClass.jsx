@@ -4,11 +4,11 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import { RecordActions } from 'wdk-client/Actions';
-import * as Category from 'wdk-client/CategoryUtils';
+import * as Category from 'wdk-client/Utils/CategoryUtils';
 import { CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
-import { renderAttributeValue, pure } from 'wdk-client/ComponentUtils';
-import {Seq} from 'wdk-client/IterableUtils';
-import {preorderSeq} from 'wdk-client/TreeUtils';
+import { renderAttributeValue, pure } from 'wdk-client/Utils/ComponentUtils';
+import {Seq} from 'wdk-client/Utils/IterableUtils';
+import {preorderSeq} from 'wdk-client/Utils/TreeUtils';
 
 import DatasetGraph from 'ebrc-client/components/DatasetGraph';
 import {findChildren, isNodeOverflowing} from 'ebrc-client/util/domUtils';

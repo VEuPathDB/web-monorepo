@@ -1,7 +1,8 @@
 /* global ebrc, wdk */
 import {negate} from 'lodash';
+import React from 'react';
 import {render} from 'react-dom';
-import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/CategoryUtils';
+import {getTargetType, getDisplayName, getRefName, getTooltipContent} from 'wdk-client/Utils/CategoryUtils';
 import {CategoriesCheckboxTree, Tooltip, Icon} from 'wdk-client/Components';
 
 wdk.namespace('apidb.bubble', ns => {

@@ -6,14 +6,14 @@ import makeSmallMenuItems from '../smallMenuItems';
 
 const quickSearchReferences = [
   {
-    name: 'GeneQuestions.GeneBySingleLocusTag',
-    alternate: 'GeneQuestions.GeneByLocusTag',
+    name: 'GeneBySingleLocusTag',
+    alternate: 'GeneByLocusTag',
     paramName: 'single_gene_id',
     displayName: 'Gene ID',
     help: `Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs.`,
   },
   {
-    name: 'GeneQuestions.GenesByTextSearch',
+    name: 'GenesByTextSearch',
     paramName: 'text_expression',
     displayName: 'Gene Text Search',
     help: `

@@ -1,4 +1,4 @@
-import { identity } from 'lodash';
+import React from 'react';
 let req = require.context('./records', true);
 let moduleNames = req.keys();
 
