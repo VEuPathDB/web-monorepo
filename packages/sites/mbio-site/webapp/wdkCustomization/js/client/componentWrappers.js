@@ -1,4 +1,5 @@
 import { keyBy, memoize, partition } from 'lodash';
+import React from 'react';
 import Header from 'ebrc-client/App/Header';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
