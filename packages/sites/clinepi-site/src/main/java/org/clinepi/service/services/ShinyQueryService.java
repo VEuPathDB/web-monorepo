@@ -2,6 +2,10 @@ package org.clinepi.service.services;
 
 import static org.gusdb.fgputil.db.stream.ResultSetInputStream.getResultSetStream;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,8 +16,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.gusdb.fgputil.Timer;
+import org.gusdb.fgputil.db.ResultSetColumnInfo;
+import org.gusdb.fgputil.db.runner.SQLRunner;
+import org.gusdb.fgputil.db.stream.ResultSetInputStream.ResultSetRowConverter;
 import org.gusdb.fgputil.db.stream.ResultSetToNdJsonConverter;
 import org.gusdb.fgputil.functional.Functions;
+import org.gusdb.fgputil.runtime.GusHome;
+import org.gusdb.wdk.model.WdkModel;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.service.service.AbstractWdkService;
 
@@ -70,10 +80,46 @@ public class ShinyQueryService extends AbstractWdkService {
       @PathParam("tblPrefix") String tblPrefix,
       @DefaultValue("none") @QueryParam("timeSourceId") String timeSourceId) 
           throws WdkModelException {
+    return getStreamingResponse(getHouseholdSql(sourceId, tblPrefix, timeSourceId),
+        "getShinyHouseholdData", "Failed running SQL to fetch household data.");
+  }
 
+  public static void main(String[] args) throws WdkModelException, IOException {
+    if (args.length != 2) {
+      System.err.println("USAGE: fgpJava " + ShinyQueryService.class.getName() + " <projectId> <outputFile>");
+      System.exit(1);
+    }
+    try (WdkModel wdkModel = WdkModel.construct(args[0], GusHome.getGusHome());
+         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(args[1]), 10240)) {
+      Timer t = new Timer();
+      String sql = getHouseholdSql("OBI_0001627", "D2a6ace17a1", "EUPATH_0015467");
+      ResultSetRowConverter rowConverter = new ResultSetToNdJsonConverter();
+      new SQLRunner(wdkModel.getAppDb().getDataSource(), sql)
+        .executeQuery(rs -> {
+          try {
+            ResultSetColumnInfo metadata = new ResultSetColumnInfo(rs);
+            out.write(rowConverter.getHeader());
+            if (rs.next()) {
+              out.write(rowConverter.getRow(rs, metadata));
+            }
+            while (rs.next()) {
+              out.write(rowConverter.getRowDelimiter());
+              out.write(rowConverter.getRow(rs, metadata));
+            }
+            out.write(rowConverter.getFooter());
+          }
+          catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+      System.out.println("Wrote file in " + t.getElapsedString());
+    }
+  }
+
+  private static String getHouseholdSql(String sourceId, String tblPrefix, String timeSourceId) {
     // have to remember when calling this that timeSourceId representing time is different for households
     // so ask for a different sourceId, the houseObs equivalent of timeSourceId (ex: gems BFO_0000015->EUPATH_0015467)
-    String sql = timeSourceId.equals("none")
+    return timeSourceId.equals("none")
             ? " select pa.name as Participant_Id" +
                     ", h.string_value as " + sourceId +
               " from apidbtuning." + tblPrefix + "HouseholdMD h" +
@@ -97,7 +143,7 @@ public class ShinyQueryService extends AbstractWdkService {
                 " from apidbtuning." + tblPrefix + "HouseholdMD h" +
                     ", apidbtuning." + tblPrefix + "HousePartIO hp" +
                     ", apidbtuning." + tblPrefix + "Participants pa" +
-		    ", indicator i" +
+                    ", indicator i" +
                 " where h.ontology_term_name = '" + sourceId + "'" +
                 " and hp.household_id = h.household_id" +
                 " and hp.participant_id = pa.pan_id)," +
@@ -109,7 +155,7 @@ public class ShinyQueryService extends AbstractWdkService {
                 " from apidbtuning." + tblPrefix + "HouseholdMD h" +
                     ", apidbtuning." + tblPrefix + "HousePartIO hp" +
                     ", apidbtuning." + tblPrefix + "Participants pa" +
-		    ", indicator i" +
+                    ", indicator i" +
                 " where h.ontology_term_name = '" + timeSourceId + "'" +
                 " and hp.household_id = h.household_id" +
                 " and hp.participant_id = pa.pan_id)" +
@@ -118,9 +164,6 @@ public class ShinyQueryService extends AbstractWdkService {
                     ", time." + timeSourceId +
               " from time, term" +
               " where term.key = time.key";
-
-    return getStreamingResponse(sql, "getShinyHouseholdData",
-        "Failed running SQL to fetch household data.");
   }
 
   @GET
