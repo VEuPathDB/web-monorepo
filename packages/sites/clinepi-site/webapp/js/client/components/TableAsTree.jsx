@@ -1,6 +1,6 @@
 import React from 'react';
 import { CategoriesCheckboxTree } from 'wdk-client/Components';
-import * as Category from 'wdk-client/CategoryUtils';                                                                                                                                                                                                                              
+import * as Category from 'wdk-client/Utils/CategoryUtils';                                                                                                                                                                                                                              
 
 function makeTree (rows) {
   const n = Category.createNode; // helper for below

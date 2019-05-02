@@ -1,3 +1,4 @@
+import React from 'react';
 import { StudyMenuItem } from 'ebrc-client/App/Studies';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';

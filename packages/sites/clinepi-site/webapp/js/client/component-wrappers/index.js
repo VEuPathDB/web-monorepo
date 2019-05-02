@@ -1,7 +1,7 @@
 import { compose } from 'lodash/fp';
 import { connect } from 'react-redux';
 import React from 'react';
-import { Seq } from 'wdk-client/IterableUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 import {
   getIdFromRecordClassName,

@@ -1,8 +1,8 @@
 import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Seq } from 'wdk-client/IterableUtils';
-import { makeClassNameHelper } from 'wdk-client/ComponentUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import StudySearches from 'ebrc-client/App/Studies/StudySearches';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
