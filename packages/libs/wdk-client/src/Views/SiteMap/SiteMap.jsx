@@ -53,6 +53,7 @@
  * }
  */
 
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import Link from 'wdk-client/Components/Link/Link';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';

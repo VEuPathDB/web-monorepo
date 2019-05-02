@@ -1,3 +1,4 @@
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import CheckboxList from 'wdk-client/Components/InputControls/CheckboxList';
 

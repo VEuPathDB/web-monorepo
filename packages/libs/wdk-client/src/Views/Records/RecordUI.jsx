@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { debounce, get } from 'lodash';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import Sticky from 'wdk-client/Components/Display/Sticky';
 import { getId } from 'wdk-client/Utils/CategoryUtils';

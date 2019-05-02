@@ -574,15 +574,15 @@ export default class WdkService {
   }
 
   getReportsEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
-    return this.serviceUrl + this.getReportsPath(recordClassUrlSegment, questionUrlSegment);
+    return this.getReportsPath(recordClassUrlSegment, questionUrlSegment);
   }
 
   getStandardSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
-    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/standard";
+    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/standard";
   }
 
   getCustomSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string, reportName: string) {
-    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/" + reportName;
+    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/" + reportName;
   }
 
   tryLogin(email: string, password: string, redirectUrl: string) {

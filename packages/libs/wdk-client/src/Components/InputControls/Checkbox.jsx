@@ -6,6 +6,7 @@
  * checkbox (typically !previousValue), rather than a click event.
  */
 
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 const Checkbox = (props) => {

@@ -1,3 +1,4 @@
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 let PrimaryKeySpan = props => {

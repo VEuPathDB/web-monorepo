@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { flowRight } from 'lodash';
+import React from 'react';
 import RecordMainCategorySection from 'wdk-client/Views/Records/RecordMain/RecordMainCategorySection';
 import { pure, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { getId, getLabel } from 'wdk-client/Utils/CategoryUtils';

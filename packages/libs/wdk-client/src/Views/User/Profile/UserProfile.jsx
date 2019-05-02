@@ -1,3 +1,4 @@
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import UserFormContainer, { UserFormContainerPropTypes } from 'wdk-client/Views/User/UserFormContainer';
 import 'wdk-client/Views/User/Profile/UserProfile.css';

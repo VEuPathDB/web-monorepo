@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { wrappable, getChangeHandler } from 'wdk-client/Utils/ComponentUtils';
 import { interpretFormStatus, FormMessage } from 'wdk-client/Views/User/UserFormContainer';
 import TextBox from 'wdk-client/Components/InputControls/TextBox';

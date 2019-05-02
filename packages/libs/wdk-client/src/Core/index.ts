@@ -3,7 +3,7 @@ import * as AttributeFilterUtils from 'wdk-client/Components/AttributeFilter/Att
 import * as Actions from 'wdk-client/Actions';
 import * as Controllers from 'wdk-client/Controllers';
 import { initialize, wrapComponents } from 'wdk-client/Core/main';
-import * as Plugins from 'wdk-client/Core/Plugins';
+import * as Plugins from 'wdk-client/Plugins';
 import * as ActionCreatorUtils from 'wdk-client/Utils/ActionCreatorUtils';
 import * as CategoryUtils from 'wdk-client/Utils/CategoryUtils';
 import * as ComponentUtils from 'wdk-client/Utils/ComponentUtils';

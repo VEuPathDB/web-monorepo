@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import ChangePasswordLink from 'wdk-client/Views/User/Password/ChangePasswordLink';
 

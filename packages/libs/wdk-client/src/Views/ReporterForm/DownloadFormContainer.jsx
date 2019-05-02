@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import RadioList from 'wdk-client/Components/InputControls/RadioList';
 import { filterOutProps, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import DownloadForm from 'wdk-client/Views/ReporterForm/DownloadForm';
