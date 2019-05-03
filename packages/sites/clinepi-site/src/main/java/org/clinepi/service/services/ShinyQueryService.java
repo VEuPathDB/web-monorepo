@@ -1,13 +1,13 @@
 package org.clinepi.service.services;
 
 import static org.gusdb.fgputil.FormatUtil.NL;
+import static org.gusdb.fgputil.FormatUtil.isValueOf;
+import static org.gusdb.fgputil.FormatUtil.valuesAsString;
 import static org.gusdb.fgputil.db.stream.ResultSetInputStream.getResultSetStream;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -36,20 +36,17 @@ public class ShinyQueryService extends AbstractWdkService {
   @SuppressWarnings("unused")
   private static final Logger LOG = Logger.getLogger(ShinyQueryService.class);
 
+  private enum Mode {
+    PrintSql,
+    RunQuery;
+  }
+
   private enum DataType {
     Participant,
     Household,
     Observation,
     ObservationNames,
     Sample;
-
-    public static boolean isValueOf(String str) {
-      try { valueOf(str); return true; } catch(Exception e) { return false; }
-    }
-
-    public static String valuesAsString() {
-      return "[ " + Arrays.stream(values()).map(DataType::name).collect(Collectors.joining(", ")) + " ]";
-    }
   }
 
   private Response getStreamingResponse(String sql, String queryName, String errorMsgOnFail) throws WdkModelException {
@@ -64,39 +61,47 @@ public class ShinyQueryService extends AbstractWdkService {
   }
 
   public static void main(String[] args) throws WdkModelException, IOException {
-    if (args.length != 6 || !DataType.isValueOf(args[1])) {
+    if (args.length != 7 ||
+        !isValueOf(args[0], Mode::valueOf) ||
+        !isValueOf(args[2], DataType::valueOf)) {
       System.err.println(NL +
           "USAGE: fgpJava " + ShinyQueryService.class.getName() +
-          " <projectId> <dataType> <tblPrefix> <sourceId> <timeSourceId> <outputFile>" + NL + NL +
-          "Note: dataType must be one of " + DataType.valuesAsString() + NL + NL);
+          " <mode> <projectId> <dataType> <tblPrefix> <sourceId> <timeSourceId> <outputFile>" + NL + NL +
+          "Notes:" + NL +
+          "  mode must be one of " + valuesAsString(Mode.values()) + NL +
+          "  dataType must be one of " + valuesAsString(DataType.values()) + NL + NL);
       System.exit(1);
     }
-    try (WdkModel wdkModel = WdkModel.construct(args[0], GusHome.getGusHome());
-         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(args[5]), 10240)) {
-      Timer t = new Timer();
-      //String sql = getSql(DataType.Household, "OBI_0001627", "D2a6ace17a1", "EUPATH_0015467");
-      String sql = getSql(DataType.valueOf(args[1]), args[2], args[3], args[4]);
-      System.out.println("Using SQL: " + sql);
-      ResultSetRowConverter rowConverter = new ResultSetToNdJsonConverter();
-      new SQLRunner(wdkModel.getAppDb().getDataSource(), sql)
-        .executeQuery(rs -> {
-          try {
-            ResultSetColumnInfo metadata = new ResultSetColumnInfo(rs);
-            out.write(rowConverter.getHeader());
-            if (rs.next()) {
-              out.write(rowConverter.getRow(rs, metadata));
+
+    //String sql = getSql(DataType.Household, "OBI_0001627", "D2a6ace17a1", "EUPATH_0015467");
+    String sql = getSql(DataType.valueOf(args[2]), args[3], args[4], args[5]);
+    System.out.println("Using SQL: " + sql);
+
+    if (Mode.valueOf(args[0]).equals(Mode.RunQuery)) {
+      try (WdkModel wdkModel = WdkModel.construct(args[1], GusHome.getGusHome());
+           BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(args[6]), 10240)) {
+        Timer t = new Timer();
+        ResultSetRowConverter rowConverter = new ResultSetToNdJsonConverter();
+        new SQLRunner(wdkModel.getAppDb().getDataSource(), sql)
+          .executeQuery(rs -> {
+            try {
+              ResultSetColumnInfo metadata = new ResultSetColumnInfo(rs);
+              out.write(rowConverter.getHeader());
+              if (rs.next()) {
+                out.write(rowConverter.getRow(rs, metadata));
+              }
+              while (rs.next()) {
+                out.write(rowConverter.getRowDelimiter());
+                out.write(rowConverter.getRow(rs, metadata));
+              }
+              out.write(rowConverter.getFooter());
             }
-            while (rs.next()) {
-              out.write(rowConverter.getRowDelimiter());
-              out.write(rowConverter.getRow(rs, metadata));
+            catch (IOException e) {
+              throw new RuntimeException(e);
             }
-            out.write(rowConverter.getFooter());
-          }
-          catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        });
-      System.out.println("Wrote file in " + t.getElapsedString());
+          });
+        System.out.println("Wrote file in " + t.getElapsedString());
+      }
     }
   }
 
