@@ -76,6 +76,7 @@ public class ShinyQueryService extends AbstractWdkService {
       Timer t = new Timer();
       //String sql = getSql(DataType.Household, "OBI_0001627", "D2a6ace17a1", "EUPATH_0015467");
       String sql = getSql(DataType.valueOf(args[1]), args[2], args[3], args[4]);
+      System.out.println("Using SQL: " + sql);
       ResultSetRowConverter rowConverter = new ResultSetToNdJsonConverter();
       new SQLRunner(wdkModel.getAppDb().getDataSource(), sql)
         .executeQuery(rs -> {
