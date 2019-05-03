@@ -1,8 +1,8 @@
 package org.clinepi.service.services;
 
 import static org.gusdb.fgputil.FormatUtil.NL;
-import static org.gusdb.fgputil.FormatUtil.isValueOf;
-import static org.gusdb.fgputil.FormatUtil.valuesAsString;
+import static org.gusdb.fgputil.EnumUtil.isValueOf;
+import static org.gusdb.fgputil.EnumUtil.valuesAsString;
 import static org.gusdb.fgputil.db.stream.ResultSetInputStream.getResultSetStream;
 
 import java.io.BufferedOutputStream;
