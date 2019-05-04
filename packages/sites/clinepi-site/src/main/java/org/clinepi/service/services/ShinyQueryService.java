@@ -1,9 +1,9 @@
 package org.clinepi.service.services;
 
 import static org.gusdb.fgputil.FormatUtil.NL;
-import static org.gusdb.fgputil.EnumUtil.isValueOf;
-import static org.gusdb.fgputil.EnumUtil.valuesAsString;
+import static org.gusdb.fgputil.FormatUtil.enumValuesAsString;
 import static org.gusdb.fgputil.db.stream.ResultSetInputStream.getResultSetStream;
+import static org.gusdb.fgputil.functional.Functions.executesWithoutException;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -62,14 +62,14 @@ public class ShinyQueryService extends AbstractWdkService {
 
   public static void main(String[] args) throws WdkModelException, IOException {
     if (args.length != 7 ||
-        !isValueOf(args[0], Mode::valueOf) ||
-        !isValueOf(args[2], DataType::valueOf)) {
+        !executesWithoutException(Mode::valueOf, args[0]) ||
+        !executesWithoutException(DataType::valueOf, args[2])) {
       System.err.println(NL +
           "USAGE: fgpJava " + ShinyQueryService.class.getName() +
           " <mode> <projectId> <dataType> <tblPrefix> <sourceId> <timeSourceId> <outputFile>" + NL + NL +
           "Notes:" + NL +
-          "  mode must be one of " + valuesAsString(Mode.values()) + NL +
-          "  dataType must be one of " + valuesAsString(DataType.values()) + NL + NL);
+          "  mode must be one of " + enumValuesAsString(Mode.values()) + NL +
+          "  dataType must be one of " + enumValuesAsString(DataType.values()) + NL + NL);
       System.exit(1);
     }
 
