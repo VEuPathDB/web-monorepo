@@ -4,19 +4,22 @@ import * as QueryString from 'querystring';
 import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise } from 'wdk-client/Utils/PromiseUtils';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
+import {   Question, RecordClass,} from 'wdk-client/Utils/WdkModel';
+import { keyBy } from 'lodash';
+
 
 /**
  * Header added to service requests to indicate the version of the model
  * current stored in cache.
  */
-const CLIENT_WDK_VERSION_HEADER = 'x-client-wdk-timestamp';
+export const CLIENT_WDK_VERSION_HEADER = 'x-client-wdk-timestamp';
 
 /**
  * Response text returned by service that indicates the version of the cached
  * model is stale, based on CLIENT_WDK_VERSION_HEADER.
  */
-const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
+export const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
 
 export interface StandardWdkPostResponse  {id: number};
 
@@ -85,7 +88,7 @@ export class ServiceBase {
   });
   private _cache: Map<string, Promise<any>> = new Map;
   private _initialCheck: Promise<void> | undefined;
-  private _version: number | undefined;
+  protected _version: number | undefined;
   private _isInvalidating = false;
 
   /**
@@ -253,5 +256,81 @@ export class ServiceBase {
     }
     return this._initialCheck;
   }
+
+  getRecordTypesPath() {
+    return '/record-types';
+  }
+
+  getRecordTypePath(recordClassUrlSegment: string) {
+    return this.getRecordTypesPath() + '/' + recordClassUrlSegment;
+  }
+
+  getSearchesPath(recordClassUrlSegment: string) {
+    return this.getRecordTypePath(recordClassUrlSegment) + '/searches';
+  }
+
+  getSearchPath(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.getSearchesPath(recordClassUrlSegment) + "/" + questionUrlSegment;
+  }
+
+  getReportsPath(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.getSearchesPath(recordClassUrlSegment) + '/' + questionUrlSegment;
+  }
+
+  getReportsEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.getReportsPath(recordClassUrlSegment, questionUrlSegment);
+  }
+
+  getStandardSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/standard";
+  }
+
+  getCustomSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string, reportName: string) {
+    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/" + reportName;
+  }
+
+  getRecordClasses() {
+    let url = '/record-types?format=expanded';
+    return this._getFromCache(url, () => this._fetchJson<RecordClass[]>('get', url)
+      .then(recordClasses => {
+        // create indexes by name property for attributes and tables
+        // this is done after recordClasses have been retrieved from the store
+        // since it cannot reliably serialize Maps
+        return recordClasses.map(recordClass =>
+          Object.assign(recordClass, {
+            attributesMap: keyBy(recordClass.attributes, 'name'),
+            tablesMap: keyBy(recordClass.tables, 'name')
+          }));
+    }));
+  }
+
+  getQuestions() : Promise<Array<Question>> {
+    return this.getRecordClasses().then(result => {
+      return result.reduce((arr, rc) => arr.concat(rc.searches), [] as Array<Question>);
+    });
+  }
+
+  findQuestion(test: (question: Question) => boolean) {
+    return this.getQuestions().then(qs => {
+      let question = qs.find(test)
+      if (question == null) {
+        throw new ServiceError("Could not find question.", "Not found", 404);
+      }
+      return question;
+    });
+  }
+
+
+  findRecordClass(test: (recordClass: RecordClass) => boolean) {
+    return this.getRecordClasses().then(rs => {
+      let record = rs.find(test);
+      if (record == null) {
+        throw new ServiceError("Could not find record class.", "Not found", 404);
+      }
+      return record;
+    });
+  }
+
+
 
 }

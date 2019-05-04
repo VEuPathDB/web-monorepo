@@ -41,34 +41,6 @@ type ViewState = {
     (action: Action) => get(action, [ 'payload', 'viewId'])
   );
 
-  /*
-  export const setStepDetailsVisibility = makeActionCreator(
-    'strategyPanel/setStepDetailsVisibility',
-    (viewId: string, stepId: number, isVisible: boolean) => ({ isVisible, stepId, viewId })
-    );
-
-export const setInsertStepWizardVisibility = makeActionCreator(
-    'strategyPanel/setInsertStepWizardVisibility',
-    (viewId: string, stepId: number, isVisible: boolean) => ({ isVisible, stepId, viewId })
-    );
-
-export const setDeleteStepDialogVisibilty = makeActionCreator(
-    'strategyPanel/setDeleteStepDialogVisibilty',
-    (viewId: string, stepId: number, isVisible: boolean) => ({ isVisible, stepId, viewId })
-    );
-
-export const setDeleteStrategyDialogVisibilty = makeActionCreator(
-    'strategyPanel/setDeleteStrategyDialogVisibilty',
-    (viewId: string, strategyId: number, isVisible: boolean) => ({ isVisible, strategyId, viewId })
-    );
-
-export const setStrategyPanelHeight = makeActionCreator(
-    'strategyPanel/setStrategyPanelHeight',
-    (viewId: string, height: number) => ({ height, viewId })
-    );
-
-  */
-  
   function reduceView(state: ViewState = initialViewState, action: Action): ViewState {
     switch (action.type) {
       case fulfillStrategyPanelVisibility.type: {
@@ -100,4 +72,10 @@ export const setStrategyPanelHeight = makeActionCreator(
       }
     }
   }
+
+  /*
+    open -> reqPanelOpen
+    reqPanelOpen -> fulfillPanelOpen
+    reqPanelUpdate -> fulfillPanelOpen
+  */
   

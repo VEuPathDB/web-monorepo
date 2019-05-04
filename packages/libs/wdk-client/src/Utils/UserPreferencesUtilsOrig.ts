@@ -4,16 +4,54 @@ import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from '
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
 import { Question, AttributeSortingSpec, SearchConfig } from "wdk-client/Utils/WdkModel"
 
-/*
-* TODO: this file should be updated to offer request/update/fulfill actions and handlers from request/update to fulfill.  application store modules will call them, and reduce the fulfills into their store state
-caching, if any, will be done in the handlers or service layer.
-*/
+type ViewFilters = SearchConfig['viewFilters'];
 
-export async function getResultPanelTabPref(searchName: string, wdkService: WdkService): Promise<string> {
-  const question = await getQuestionFromSearchName(searchName, wdkService);
-  const resultPanelTab = await getPrefWith(wdkService, prefSpecs.resultPanelTab(question.fullName));
-  if (resultPanelTab) return resultPanelTab;
-  return '';
+function isValidDirection(direction: string): direction is 'ASC' | 'DESC' {
+    return direction === 'ASC' || direction === 'DESC' 
+  }
+
+function constructSortingSpec(specString: string): AttributeSortingSpec {
+    var [ attributeName, direction ] = specString.split(/\s+/);
+    if (!isValidDirection(direction)) throw new Error('Expecting either ASC or DESC in sort directive: ' + specString);
+    return { attributeName, direction };
+}
+
+export type SummaryTableConfigUserPref = {
+    columns: string[];
+    sorting: AttributeSortingSpec[];
+}
+
+export enum Scope {
+  global = 'global',
+  project = 'project',
+}
+
+export const SORT_ASC = "ASC";
+export const SORT_DESC = "DESC";
+
+
+type PrefSpec = [keyof UserPreferences, string];
+
+const getPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec) => 
+  (await wdkService.getCurrentUserPreferences())[scope][key];
+
+const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, value: string | null) =>
+  await wdkService.patchSingleUserPreference(scope, key, value);
+
+export const prefSpecs = {
+  sort: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_sort' ],
+  summary: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_summary' ],
+  itemsPerPage: (): PrefSpec => [ Scope.global, 'preference_global_items_per_page' ],
+  matchedTranscriptsExpanded: (): PrefSpec => [ Scope.global, 'matchted_transcripts_filter_expanded' ],
+  globalViewFilters: (recordClassName: string): PrefSpec => [ Scope.project, recordClassName + '_globalViewFilters' ],
+  resultPanelTab: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_resultPanelTab' ]
+}
+
+async function getQuestionFromSearchName(searchName: string, wdkService: WdkService) : Promise<Question> {
+  const questions = await wdkService.getQuestions();
+  const question = questions.find(question => question.urlSegment === searchName);
+  if (question == null) throw new Error(`Unknown question "${searchName}".`);
+  return question;
 }
 
 export async function getResultTableColumnsPref(wdkService: WdkService, searchName: string, stepId?: number): Promise<string[]> {
@@ -44,17 +82,6 @@ export async function getResultTableSortingPref(searchName: string, wdkService: 
     if (sortingPref) return sortingPref.split(/,\s*/).map(constructSortingSpec);
     return question.defaultSorting;
 }
-
-function isValidDirection(direction: string): direction is 'ASC' | 'DESC' {
-    return direction === 'ASC' || direction === 'DESC' 
-  }
-
-function constructSortingSpec(specString: string): AttributeSortingSpec {
-    var [ attributeName, direction ] = specString.split(/\s+/);
-    if (!isValidDirection(direction)) throw new Error('Expecting either ASC or DESC in sort directive: ' + specString);
-    return { attributeName, direction };
-}
-
 
 export async function setResultTableSortingPref(searchName: string, wdkService: WdkService, sorting : Array<AttributeSortingSpec>) : Promise<UserPreferences> {
     const question = await getQuestionFromSearchName(searchName, wdkService);
@@ -89,9 +116,11 @@ export async function getStrategyPanelVisibility (wdkService: WdkService) : Prom
   return { expanded: pref ? pref === 'yes' : false };
 }
 
-type ViewFilters = SearchConfig['viewFilters'];
+// Global view filters
+// -------------------
 
 // FIXME Need to figure out a way to validate view filter values
+
 const viewFiltersDecoder: Decoder<ViewFilters> = optional(arrayOf(combine(
   field('name', string),
   field('value', ok)
@@ -107,40 +136,3 @@ export async function setGlobalViewFilters(wdkService: WdkService, recordClassNa
   const prefValue = viewFilters ? JSON.stringify(viewFilters) : null;
   return setPrefWith(wdkService, prefSpecs.globalViewFilters(recordClassName), prefValue);
 }
-
-/*
-//////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////// Utilities below ///////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-*/
-
-export enum Scope {
-  global = 'global',
-  project = 'project',
-}
-
-
-type PrefSpec = [keyof UserPreferences, string];
-
-const getPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec) => 
-  (await wdkService.getCurrentUserPreferences())[scope][key];
-
-const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, value: string | null) =>
-  await wdkService.patchSingleUserPreference(scope, key, value);
-
-export const prefSpecs = {
-  sort: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_sort' ],
-  summary: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_summary' ],
-  itemsPerPage: (): PrefSpec => [ Scope.global, 'preference_global_items_per_page' ],
-  matchedTranscriptsExpanded: (): PrefSpec => [ Scope.global, 'matchted_transcripts_filter_expanded' ],
-  globalViewFilters: (recordClassName: string): PrefSpec => [ Scope.project, recordClassName + '_globalViewFilters' ],
-  resultPanelTab: (questionFullName: string): PrefSpec => [ Scope.project, questionFullName + '_resultPanelTab' ]
-}
-
-async function getQuestionFromSearchName(searchName: string, wdkService: WdkService) : Promise<Question> {
-  const questions = await wdkService.getQuestions();
-  const question = questions.find(question => question.urlSegment === searchName);
-  if (question == null) throw new Error(`Unknown question "${searchName}".`);
-  return question;
-}
-

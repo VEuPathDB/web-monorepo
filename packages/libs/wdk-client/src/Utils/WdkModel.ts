@@ -356,6 +356,21 @@ export interface PatchStepSpec {
 export interface NewStepSpec extends PatchStepSpec, AnswerSpec {
 }
 
+export interface StepTree {
+  stepId: number,
+  primaryInput?: StepTree,
+  secondaryInput?: StepTree
+}
+
+export interface NewStrategySpec {
+  name: string,
+  isSaved: boolean,
+  isPublic: boolean,
+  description?: string,
+  savedName?: string,
+  stepTree: StepTree
+}
+
 export type UserDatasetMeta = {
   description: string;
   name: string;

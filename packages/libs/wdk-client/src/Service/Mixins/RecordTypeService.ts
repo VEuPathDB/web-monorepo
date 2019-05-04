@@ -1,9 +1,10 @@
 import { keyBy } from 'lodash';
 import { ServiceBaseClass } from 'wdk-client/Service/ServiceBase';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 
 export default (base: ServiceBaseClass) => class RecordTypeService extends base {
+
   /** Get all RecordClasses defined in WDK Model. */
   getRecordClasses(): Promise<RecordClass[]> {
     let url = '/record-types?format=expanded';
