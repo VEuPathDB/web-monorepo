@@ -1129,10 +1129,24 @@ export default class WdkService {
                 id: +JSON.parse(text).id
               };
             } else if (response.status === 400) {
-              return {
-                type: 'validation-error',
-                errors: JSON.parse(text)
-              };
+              try {
+                // TODO: This logic in this "try" block is meant to handle 
+                // the validation error which arises when we POST a new/edited comment 
+                // with an invalid related stable ID
+                // Eventually, the UserCommentsService will report this error 
+                // as a 422, at which point we'll need to update this client code
+                const validationErrors = JSON.parse(text);
+
+                return {
+                  type: 'validation-error',
+                  errors: validationErrors
+                };
+              } catch (e) {
+                return {
+                  type: 'internal-error',
+                  error: text
+                };
+              }
             } else {
               return {
                 type: 'internal-error',

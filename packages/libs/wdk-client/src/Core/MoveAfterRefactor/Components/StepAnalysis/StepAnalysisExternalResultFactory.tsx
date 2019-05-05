@@ -14,15 +14,15 @@ const generateIframeUrl = (queryParamFactories: [string, QueryParamFactory][], p
 
 export const downloadUrlQueryParamFactory = ({ 
   analysisConfig: { analysisId, stepId },
-  analysisResult: { downloadUrlBase, downloadPath }
+  analysisResult: { downloadUrl, downloadPath }
 }: StepAnalysisResultPluginProps) =>
-  `${downloadUrlBase}/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${downloadPath}`;
+  `${downloadUrl}?path=${downloadPath}`;
 
 export const propertiesUrlQueryParamFactory = ({
   analysisConfig: { analysisId, stepId },
-  analysisResult: { accessToken, propertiesUrlBase }
+  analysisResult: { propertiesUrl, accessToken }
 }: StepAnalysisResultPluginProps) =>
-  `${propertiesUrlBase}/users/current/steps/${stepId}/analyses/${analysisId}/properties?accessToken=${accessToken}`;
+  `${propertiesUrl}?accessToken=${accessToken}`;
 
 export const contextHashQueryParamFactory = ({
   analysisResult: { contextHash }

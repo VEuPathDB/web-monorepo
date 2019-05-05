@@ -545,7 +545,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
               onChange={(newValue: string) => {
                 dispatchProps.updateRawFormField('relatedStableIds')(newValue);
                 dispatchProps.updateFormField('relatedStableIds')(
-                  newValue.split(/\s*,\s*/g).map(x => x.trim()).filter(x => x.length > 0)
+                  newValue.split(/[,;\s]+/g).filter(x => x.length > 0)
                 );
               }}
               value={stateProps.rawFields.relatedStableIds}
