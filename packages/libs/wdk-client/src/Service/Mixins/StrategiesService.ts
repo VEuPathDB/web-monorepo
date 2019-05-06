@@ -16,5 +16,16 @@ export default (base: ServiceBaseClass) => class StrategiesService extends base 
           path: '/users/current/strategies'
         })
       }
+    
+/*
+create
+duplicate
+delete multiple
+get
+update props
+delete
+put step-tree
+duplicated step-tree
+*/
         
 }

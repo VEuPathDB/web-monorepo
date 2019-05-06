@@ -5,6 +5,7 @@ import {
     NewStepSpec,
     PatchStepSpec,
     StandardReportConfig,
+    AnswerSpec,
 } from 'wdk-client/Utils/WdkModel';
 import { Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
@@ -46,7 +47,7 @@ export default (base: ServiceBaseClass) => class StepsService extends base {
         return this._fetchJson<Step>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
     }
 
-    getStepAnswer(stepId: number, formatting: AnswerFormatting, userId: string = 'current') {
+    getStepAnswer(stepId: number, formatting: AnswerFormatting, userId: string = 'current') : any {
         omit
         let reportConfing = formatting.formatConfig;
 
@@ -58,6 +59,7 @@ export default (base: ServiceBaseClass) => class StepsService extends base {
     }
 
     // get step's answer in wdk default json output format
+    // TODO:  use a proper decoder to ensure correct decoding of the Answer
     getStepAnswerJson(stepId: number, reportConfig: StandardReportConfig, userId: string = 'current') {
         return this.sendRequest(Decode.ok, {
             method: 'post',
@@ -79,5 +81,13 @@ export default (base: ServiceBaseClass) => class StepsService extends base {
         })
     }
 
-    
+    deleteStep(stepId: number, userId: string = "current"): void {
+        if (this._stepMap.has(stepId)) this._stepMap.delete(stepId); 
+        this._fetchJson<void>('delete', `/users/${userId}/steps/${stepId}`);
+    }
+
+    updateStepSearchConfig(stepId: number, newStepSpec: AnswerSpec, userId: string = "current") {
+        return this._fetchJson<Step>('put', `/users/${userId}/steps/${stepId}/search-config`, JSON.stringify(newStepSpec));
+    }
+
 }
