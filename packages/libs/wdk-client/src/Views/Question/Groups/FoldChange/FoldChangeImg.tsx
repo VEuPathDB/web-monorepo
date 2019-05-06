@@ -2,11 +2,11 @@ import React from 'react';
 
 import { capitalize } from 'lodash';
 
-import { UpRegulatedFoldChangeGraph, DownRegulatedFoldChangeGraph } from 'wdk-client/Views/Question/Forms/FoldChange/FoldChangeGraph';
-import { UntypedSampleCollectionConfig } from 'wdk-client/Views/Question/Forms/FoldChange/SampleCollection';
-import { FoldChangeDirection } from 'wdk-client/Views/Question/Forms/FoldChange/Types';
+import { UpRegulatedFoldChangeGraph, DownRegulatedFoldChangeGraph } from 'wdk-client/Views/Question/Groups/FoldChange/FoldChangeGraph';
+import { UntypedSampleCollectionConfig } from 'wdk-client/Views/Question/Groups/FoldChange/SampleCollection';
+import { FoldChangeDirection } from 'wdk-client/Views/Question/Groups/FoldChange/Types';
 
-import 'wdk-client/Views/Question/Forms/FoldChange/FoldChangeImg.scss';
+import 'wdk-client/Views/Question/Groups/FoldChange/FoldChangeImg.scss';
 
 interface FoldChangeImgProps {
   direction: FoldChangeDirection;

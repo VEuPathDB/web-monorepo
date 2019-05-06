@@ -22,12 +22,16 @@ export const ParamLine: React.FunctionComponent<ParamLineProps> = ({
   parameter,
   postParameterContent
 }) => (
-  <>
+  <div>
     {preParameterContent}
     {parameterElement}
-    <HelpIcon>
-      {parameter.help}
-    </HelpIcon>
+    {parameterElement && (
+      <HelpIcon>
+        <>
+          {' '}{parameter.help}
+        </>
+      </HelpIcon>
+    )}
     {postParameterContent}
-  </>
+  </div>
 );

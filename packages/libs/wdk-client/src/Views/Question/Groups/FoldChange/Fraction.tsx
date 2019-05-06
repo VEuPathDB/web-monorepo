@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import 'wdk-client/Views/Question/Forms/FoldChange/Fraction.scss';
+import 'wdk-client/Views/Question/Groups/FoldChange/Fraction.scss';
 
 interface FractionProps {
   numerator: ReactNode;

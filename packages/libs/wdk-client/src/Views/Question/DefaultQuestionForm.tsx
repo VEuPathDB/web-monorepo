@@ -14,6 +14,7 @@ import {
   updateQuestionWeight
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
+import { CompoundsByFoldChange } from 'wdk-client/Views/Question/Groups/FoldChange/foldChangeGroup';
 
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,
@@ -58,19 +59,25 @@ export default class DefaultQuestionForm extends React.Component<Props> {
           {question.groups
             .filter(group => group.displayType !== 'hidden')
             .map(group =>
-              <Group
-                key={group.name}
-                searchName={question.urlSegment}
-                group={group}
-                uiState={groupUIState[group.name]}
-                onVisibilityChange={eventHandlers.setGroupVisibility}
-              >
-                <ParameterList
-                  parameterMap={question.parametersByName}
-                  parameterElements={parameterElements}
-                  parameters={group.parameters}
-                />
-              </Group>
+              group.displayType === 'dynamic' && state.question.urlSegment === 'CompoundsByFoldChange'
+                ? (
+                  <CompoundsByFoldChange {...this.props} />
+                )
+                : (
+                <Group
+                  key={group.name}
+                  searchName={question.urlSegment}
+                  group={group}
+                  uiState={groupUIState[group.name]}
+                  onVisibilityChange={eventHandlers.setGroupVisibility}
+                >
+                  <ParameterList
+                    parameterMap={question.parametersByName}
+                    parameterElements={parameterElements}
+                    parameters={group.parameters}
+                  />
+                </Group>
+              )
             )
           }
           <div className={cx('SubmitSection')}>

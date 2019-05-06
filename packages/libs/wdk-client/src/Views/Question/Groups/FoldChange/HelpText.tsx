@@ -1,14 +1,14 @@
 import React, { ReactNode } from 'react';
 
-import { Formula } from 'wdk-client/Views/Question/Forms/FoldChange/Formula';
-import { Fraction } from 'wdk-client/Views/Question/Forms/FoldChange/Fraction';
-import { ComparisonLabel } from 'wdk-client/Views/Question/Forms/FoldChange/ComparisonLabel';
-import { ReferenceLabel } from 'wdk-client/Views/Question/Forms/FoldChange/ReferenceLabel';
+import { Formula } from 'wdk-client/Views/Question/Groups/FoldChange/Formula';
+import { Fraction } from 'wdk-client/Views/Question/Groups/FoldChange/Fraction';
+import { ComparisonLabel } from 'wdk-client/Views/Question/Groups/FoldChange/ComparisonLabel';
+import { ReferenceLabel } from 'wdk-client/Views/Question/Groups/FoldChange/ReferenceLabel';
 
 import {
   FoldChangeOperation,
   FoldChangeDirection
-} from 'wdk-client/Views/Question/Forms/FoldChange/Types';
+} from 'wdk-client/Views/Question/Groups/FoldChange/Types';
 
 const isBroadest = (
   referenceOperation: FoldChangeOperation,

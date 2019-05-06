@@ -43,10 +43,13 @@ const calculateStepStyles = (
       ? BIG_STEPS.slice(0, stepCount).map(percentageToStepStyle)
       : SMALL_STEPS.slice(0, stepCount).map(percentageToStepStyle);
   } else if (
-    operation === 'median' ||
-    operation === 'mean' ||
-    operation === 'average'
-  ) {
+    (
+      operation === 'median' ||
+      operation === 'mean' ||
+      operation === 'average'
+    ) &&
+    stepCount >= 2
+   ) {
     if (stepCount === 2) {
       return [-90, 90].map(percentageToStepStyle);
     } else if (stepCount === 3) {

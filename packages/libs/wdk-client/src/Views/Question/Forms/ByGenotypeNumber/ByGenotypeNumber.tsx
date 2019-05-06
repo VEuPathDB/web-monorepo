@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { memoize } from 'lodash';
+
 import { Link } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -10,7 +12,6 @@ import {
   submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
-import { memoize } from 'lodash';
 
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,

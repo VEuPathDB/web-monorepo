@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ComparisonSampleCollection, ReferenceSampleCollection, SampleCollectionConfig } from 'wdk-client/Views/Question/Forms/FoldChange/SampleCollection';
+import { ComparisonSampleCollection, ReferenceSampleCollection, SampleCollectionConfig } from 'wdk-client/Views/Question/Groups/FoldChange/SampleCollection';
 
 interface FoldChangeGraphProps {
   foldChange: number;
@@ -18,7 +18,7 @@ const foldChangeGraph = (direction: 'up-regulated' | 'down-regulated'): React.Fu
   return (
     <>
       {
-        (referenceConfig.sampleCount > 0 && comparisonConfig.sampleCount > 0) && (
+        (referenceConfig.sampleCount > 0 && comparisonConfig.sampleCount > 0 && foldChange > 0) && (
           <div className="wdk-FoldChangeLabel">
             <div className="wdk-FoldChangeLabelUpArrow"></div>
             <div className="wdk-FoldChangeLabelText">{foldChange} fold</div>

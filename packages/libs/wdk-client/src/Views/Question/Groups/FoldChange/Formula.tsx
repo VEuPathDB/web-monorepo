@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import 'wdk-client/Views/Question/Forms/FoldChange/Formula.scss';
+import 'wdk-client/Views/Question/Groups/FoldChange/Formula.scss';
 
 const cx = makeClassNameHelper('wdk-Formula');
 
