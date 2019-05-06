@@ -1,12 +1,15 @@
-import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { ServiceMixins } from 'wdk-client/Service/ServiceMixins';
+import { composeMixins, CompositeService } from 'wdk-client/Service/ServiceMixins';
 
-export default class WdkService extends ServiceMixins(ServiceBase) {
+export default interface WdkService extends CompositeService {
+  
+}
+
+export default class WdkService {
 
   private static _instances: Map<string, WdkService> = new Map;
 
-  private constructor(protected serviceUrl: string) {
-    super(serviceUrl);
+  private constructor(serviceUrl: string) {
+    return composeMixins(serviceUrl);
   }
 
   // Ensure that only one instance is craeted for a given serviceUrl.

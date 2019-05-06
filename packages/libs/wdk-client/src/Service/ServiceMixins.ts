@@ -1,5 +1,3 @@
-import { compose } from 'lodash/fp';
-
 // Mixins for different services
 // ADD NEW MIXINS HERE
 import RecordTypeService from 'wdk-client/Service/Mixins/RecordTypeService';
@@ -20,26 +18,34 @@ import UserCommentsService from 'wdk-client/Service/Mixins/UserCommentsService';
 import UserDatasetsService from 'wdk-client/Service/Mixins/UserDatasetsService';
 import UserPreferencesService from 'wdk-client/Service/Mixins/UserPreferencesService';
 import UsersService from 'wdk-client/Service/Mixins/UsersService';
-
+import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 
 // Create a function to mixin subclasses with ServiceBase
-  // ADD NEW MIXINS HERE TOO
-export const ServiceMixins
- = compose(BasketsService,
-  compose(DatasetsService,
-  compose(FavoritesService,
-  compose(OauthService,
-  compose(OntologiesService,
-  compose(RecordTypeService,
-  compose(RecordInstanceService,
-  compose(RecordInstanceService,
-  compose(SearchesService,
-  compose(SearchReportsService,
-  compose(StepAnalysisService,
-  compose(StepsService,
-  compose(StrategiesService,
-  compose(StrategyListsService,
-  compose(TemporaryFilesService,
-  compose(UserCommentsService,
-  compose(UserDatasetsService,
-  compose(UserPreferencesService, UsersService))))))))))))))))));
+// ADD NEW MIXINS HERE TOO
+export function composeMixins(baseUrl: string) {
+  const base = ServiceBase(baseUrl);
+  return {
+    ...BasketsService(base),
+    ...DatasetsService(base),
+    ...RecordInstanceService(base),
+    ...RecordTypeService(base),
+    ...FavoritesService(base),
+    ...OauthService(base),
+    ...OntologiesService(base),
+    ...SearchesService(base),
+    ...SearchReportsService(base),
+    ...StepAnalysisService(base),
+    ...StepsService(base),
+    ...StrategiesService(base),
+    ...StrategyListsService(base),
+    ...TemporaryFilesService(base),
+    ...UserCommentsService(base),
+    ...UserDatasetsService(base),
+    ...UserPreferencesService(base),
+    ...UsersService(base),
+    ...base,
+  }
+}
+
+// Creates a unified interface with all of the functions returned by the mixins
+export interface CompositeService extends ReturnType<typeof composeMixins> { }

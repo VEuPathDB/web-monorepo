@@ -1,9 +1,12 @@
-import { ServiceBaseClass } from 'wdk-client/Service/ServiceBase';
+import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 
-export default (base: ServiceBaseClass) => class OauthService extends base {
+export default (base: ServiceBase) => {
+  function getOauthStateToken() {
+    return base._fetchJson<{ oauthStateToken: string }>(
+      'get',
+      '/oauth/state-token'
+    );
+  }
 
-    getOauthStateToken() {
-        return this._fetchJson<{oauthStateToken: string}>('get', '/oauth/state-token');
-      }
-    
-}
+  return { getOauthStateToken };
+};

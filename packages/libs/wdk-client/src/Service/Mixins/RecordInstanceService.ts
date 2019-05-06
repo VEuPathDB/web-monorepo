@@ -1,7 +1,7 @@
 import stringify from 'json-stable-stringify';
 import { difference } from 'lodash';
 
-import { ServiceBaseClass } from 'wdk-client/Service/ServiceBase';
+import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { PrimaryKey, RecordInstance } from 'wdk-client/Utils/WdkModel';
 
 interface RecordRequest {
@@ -10,16 +10,9 @@ interface RecordRequest {
   primaryKey: PrimaryKey;
 }
 
-// A symbol is a special JavaScript value that can be used as an object property
-// name (or a class field name), just like a string. Symbols are unique in that
-// every time a new symbol is created, it is guaranteed to be unique. E.g.,
-// `Symbol() !== Symbol()` and `Symbol('myName') !== Symbol('myName')`. This
-// ensures that this field will not clash with fields defined in other mixins.
-const cache = Symbol('recordCache');
+export default (base: ServiceBase) => {
 
-export default (base: ServiceBaseClass) => class RecordInstanceServices extends base {
-
-  private [cache]: Map<string, {request: RecordRequest; response: Promise<RecordInstance>}> = new Map;
+  const cache: Map<string, {request: RecordRequest; response: Promise<RecordInstance>}> = new Map;
 
   /**
    * Get a record instance identified by the provided record class and primary
@@ -30,20 +23,20 @@ export default (base: ServiceBaseClass) => class RecordInstanceServices extends 
    *
    * XXX Use _getFromCache with key of "recordInstance" so the most recent record is saved??
    */
-  getRecord(recordClassUrlSegment: string, primaryKey: PrimaryKey, options: {attributes?: string[]; tables?: string[];} = {}) {
+  function getRecord(recordClassUrlSegment: string, primaryKey: PrimaryKey, options: {attributes?: string[]; tables?: string[];} = {}) {
     let cacheKey = recordClassUrlSegment + ':' + stringify(primaryKey);
     let method = 'post';
     let url = '/record-types/' + recordClassUrlSegment + '/records';
 
     let { attributes = [], tables = [] } = options;
-    let cacheEntry = this[cache].get(cacheKey);
+    let cacheEntry = cache.get(cacheKey);
 
     // if we don't have the record, fetch whatever is requested
     if (cacheEntry == null) {
       let request = { attributes, tables, primaryKey };
-      let response = this._fetchJson<RecordInstance>(method, url, stringify(request));
+      let response = base._fetchJson<RecordInstance>(method, url, stringify(request));
       cacheEntry = { request, response };
-      this[cache].set(cacheKey, cacheEntry);
+      cache.set(cacheKey, cacheEntry);
     }
 
     // Get the request and response from `_recordCache` and replace them with
@@ -63,7 +56,7 @@ export default (base: ServiceBaseClass) => class RecordInstanceServices extends 
           attributes: reqAttributes,
           tables: reqTables
         };
-        let newResponse = this._fetchJson<RecordInstance>(method, url, stringify(newRequest));
+        let newResponse = base._fetchJson<RecordInstance>(method, url, stringify(newRequest));
 
         let finalRequest = {
           primaryKey,
@@ -80,10 +73,14 @@ export default (base: ServiceBaseClass) => class RecordInstanceServices extends 
           });
         });
         cacheEntry = { request: finalRequest, response: finalResponse };
-        this[cache].set(cacheKey, cacheEntry);
+        cache.set(cacheKey, cacheEntry);
       }
     }
 
     return cacheEntry.response;
+  }
+
+  return {
+    getRecord
   }
 }

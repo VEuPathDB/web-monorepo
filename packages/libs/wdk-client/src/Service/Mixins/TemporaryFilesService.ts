@@ -1,13 +1,13 @@
-import { ServiceBaseClass } from 'wdk-client/Service/ServiceBase';
+import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { ServiceError } from 'wdk-client/Utils/WdkService';
 
-export default (base: ServiceBaseClass) => class DatasetsService extends base {
+export default (base: ServiceBase) => {
 
- createTemporaryFile(file: File): Promise<string> {
+  function createTemporaryFile(file: File): Promise<string> {
     const formData = new FormData();
     const path = '/temporary-file';
     formData.append('file', file, file.name);
-    return fetch(this.serviceUrl + path, {
+    return fetch(base.serviceUrl + path, {
       method: 'POST',
       credentials: 'include',
       body: formData
@@ -27,4 +27,7 @@ export default (base: ServiceBaseClass) => class DatasetsService extends base {
     })
   }
 
+  return {
+    createTemporaryFile
+  }
 }

@@ -1,4 +1,4 @@
-import { ServiceBaseClass } from 'wdk-client/Service/ServiceBase';
+import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import {
     ParameterValue,
     ParameterValues,
@@ -244,15 +244,15 @@ const questionDecoder: Decode.Decoder<Question> =
 const questionsDecoder: Decode.Decoder<Question[]> =
   Decode.arrayOf(questionDecoder)
 
-export default (base: ServiceBaseClass) => class RecordTypeService extends base {
+export default (base: ServiceBase) => {
   
   /**
    * Get all Questions defined in WDK Model.
    *
    * @return {Promise<Array<Object>>}
    */
-  getQuestions() : Promise<Array<Question>> {
-    return this.getRecordClasses().then(result => {
+  function getQuestions() : Promise<Array<Question>> {
+    return base.getRecordClasses().then(result => {
       return result.reduce((arr, rc) => arr.concat(rc.searches), [] as Array<Question>);
     });
   }
@@ -263,8 +263,8 @@ export default (base: ServiceBaseClass) => class RecordTypeService extends base 
    * @param {Function} test Predicate function the Question must satisfy
    * @return {Promise<Object?>}
    */
-  findQuestion(test: (question: Question) => boolean) {
-    return this.getQuestions().then(qs => {
+  function findQuestion(test: (question: Question) => boolean) {
+    return base.getQuestions().then(qs => {
       let question = qs.find(test)
       if (question == null) {
         throw new ServiceError("Could not find question.", "Not found", 404);
@@ -273,9 +273,9 @@ export default (base: ServiceBaseClass) => class RecordTypeService extends base 
     });
   }
 
-  async getQuestionAndParameters(questionUrlSegment: string): Promise<QuestionWithParameters> {
-    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
-    return this.sendRequest(questionWithParametersDecoder, {
+  async function getQuestionAndParameters(questionUrlSegment: string): Promise<QuestionWithParameters> {
+    let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
+    return base.sendRequest(questionWithParametersDecoder, {
       method: 'get',
       path: searchPath,
       params: {
@@ -288,18 +288,18 @@ export default (base: ServiceBaseClass) => class RecordTypeService extends base 
   /**
    * Fetch question information (e.g. vocabularies) given the passed param values; never cached
    */
-  async getQuestionGivenParameters(questionUrlSegment: string, paramValues: ParameterValues): Promise<QuestionWithParameters> {
-    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
-    return this.sendRequest(questionWithParametersDecoder, {
+  async function getQuestionGivenParameters(questionUrlSegment: string, paramValues: ParameterValues): Promise<QuestionWithParameters> {
+    let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
+    return base.sendRequest(questionWithParametersDecoder, {
       method: 'post',
       path: searchPath,
       body: JSON.stringify({ contextParamValues: paramValues })
     }).then(response => response.searchData);
   }
 
-  async getQuestionParamValues(questionUrlSegment: string, paramName: string, paramValue: ParameterValue, paramValues: ParameterValues) {
-    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
-    return this.sendRequest(parametersDecoder, {
+  async function getQuestionParamValues(questionUrlSegment: string, paramName: string, paramValue: ParameterValue, paramValues: ParameterValues) {
+    let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
+    return base.sendRequest(parametersDecoder, {
       method: 'post',
       path: `${searchPath}/refreshed-dependent-params`,
       body: JSON.stringify({
@@ -309,15 +309,15 @@ export default (base: ServiceBaseClass) => class RecordTypeService extends base 
     })
   }
 
-  private async getSearchPathFromUrlSegment(questionUrlSegment: string) : Promise<string> {
-    const question = await this.findQuestion(question => question.urlSegment === questionUrlSegment );
-    const recordClass = await this.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
-    return this.getSearchPath(recordClass.urlSegment, questionUrlSegment);
+  async function getSearchPathFromUrlSegment(questionUrlSegment: string) : Promise<string> {
+    const question = await base.findQuestion(question => question.urlSegment === questionUrlSegment );
+    const recordClass = await base.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
+    return base.getSearchPath(recordClass.urlSegment, questionUrlSegment);
   }
 
-  async getOntologyTermSummary(questionUrlSegment: string, paramName: string, filters: any, ontologyId: string, paramValues: ParameterValues) {
-    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
-    return this._fetchJson<OntologyTermSummary>(
+  async function getOntologyTermSummary(questionUrlSegment: string, paramName: string, filters: any, ontologyId: string, paramValues: ParameterValues) {
+    let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
+    return base._fetchJson<OntologyTermSummary>(
       'post',
       `${searchPath}/${paramName}/ontology-term-summary`,
       JSON.stringify({
@@ -328,9 +328,9 @@ export default (base: ServiceBaseClass) => class RecordTypeService extends base 
     );
   }
 
-  async getFilterParamSummaryCounts(questionUrlSegment: string, paramName: string, filters: any, paramValues: ParameterValues) {
-    let searchPath = await this.getSearchPathFromUrlSegment(questionUrlSegment);
-    return this._fetchJson<{filtered: number, unfiltered: number, nativeFiltered: number, nativeUnfiltered: number}>(
+  async function getFilterParamSummaryCounts(questionUrlSegment: string, paramName: string, filters: any, paramValues: ParameterValues) {
+    let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
+    return base._fetchJson<{filtered: number, unfiltered: number, nativeFiltered: number, nativeUnfiltered: number}>(
       'post',
       `${searchPath}/${paramName}/summary-counts`,
       JSON.stringify({
@@ -338,6 +338,16 @@ export default (base: ServiceBaseClass) => class RecordTypeService extends base 
         contextParamValues: paramValues
       })
     );
+  }
+
+  return {
+    getQuestions,
+    findQuestion,
+    getQuestionAndParameters,
+    getQuestionGivenParameters,
+    getQuestionParamValues,
+    getOntologyTermSummary,
+    getFilterParamSummaryCounts
   }
 
 }

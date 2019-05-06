@@ -1,14 +1,14 @@
 import { keyBy } from 'lodash';
-import { ServiceBaseClass } from 'wdk-client/Service/ServiceBase';
+import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
 
-export default (base: ServiceBaseClass) => class RecordTypeService extends base {
+export default (base: ServiceBase) => {
 
   /** Get all RecordClasses defined in WDK Model. */
-  getRecordClasses(): Promise<RecordClass[]> {
+  function getRecordClasses(): Promise<RecordClass[]> {
     let url = '/record-types?format=expanded';
-    return this._getFromCache(url, () => this._fetchJson<RecordClass[]>('get', url)
+    return base._getFromCache(url, () => base._fetchJson<RecordClass[]>('get', url)
       .then(recordClasses => {
         // create indexes by name property for attributes and tables
         // this is done after recordClasses have been retrieved from the store
@@ -22,13 +22,18 @@ export default (base: ServiceBaseClass) => class RecordTypeService extends base 
   }
 
   /** Get the first RecordClass that matches `test`. */
-  findRecordClass(test: (recordClass: RecordClass) => boolean): Promise<RecordClass> {
-    return this.getRecordClasses().then(rs => {
+  function findRecordClass(test: (recordClass: RecordClass) => boolean): Promise<RecordClass> {
+    return base.getRecordClasses().then(rs => {
       let record = rs.find(test);
       if (record == null) {
         throw new ServiceError("Could not find record class.", "Not found", 404);
       }
       return record;
     });
+  }
+
+  return {
+    getRecordClasses,
+    findRecordClass
   }
 }

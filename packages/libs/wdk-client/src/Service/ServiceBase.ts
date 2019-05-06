@@ -76,31 +76,26 @@ const configDecoder: Decode.Decoder<ServiceConfig> =
    Decode.field('startupTime', Decode.number)
   );
 
-
-export type ServiceBaseClass = typeof ServiceBase;
+export type ServiceBase = ReturnType<typeof ServiceBase>;
 
 /**
  * A helper to request resources from a Wdk REST Service.
+ * @param {string} serviceUrl Base url for Wdk REST Service.
  */
-export class ServiceBase {
-  private _store: LocalForage = localforage.createInstance({
-    name: 'WdkService/' + this.serviceUrl
+export const ServiceBase = (serviceUrl: string) => {
+  const _store: LocalForage = localforage.createInstance({
+    name: 'WdkService/' + serviceUrl
   });
-  private _cache: Map<string, Promise<any>> = new Map;
-  private _initialCheck: Promise<void> | undefined;
-  protected _version: number | undefined;
-  private _isInvalidating = false;
-
-  /**
-   * @param {string} serviceUrl Base url for Wdk REST Service.
-   */
-  constructor(protected serviceUrl: string) { }
+  const _cache: Map<string, Promise<any>> = new Map;
+  let _initialCheck: Promise<void> | undefined;
+  let _version: number | undefined;
+  let _isInvalidating = false;
 
   /**
    * Get the configuration for the Wdk REST Service that resides at the given base url.
    */
-  getConfig(): Promise<ServiceConfig> {
-    return this.sendRequest(configDecoder, {
+  function getConfig(): Promise<ServiceConfig> {
+    return sendRequest(configDecoder, {
       method: 'get',
       path: '/',
       useCache: true,
@@ -124,7 +119,7 @@ export class ServiceBase {
    *    for POST requests that are semantically treated as GET requests.
    * @return {Promise<Resource>}
    */
-   sendRequest<Resource>(decoder: Decode.Decoder<Resource>, options: RequestOptions): Promise<Resource> {
+   function sendRequest<Resource>(decoder: Decode.Decoder<Resource>, options: RequestOptions): Promise<Resource> {
     let { method, path, params, body, useCache, cacheId } = options;
     method = method.toUpperCase();
     let url = path + (params == null ? '' : '?' + QueryString.stringify(params));
@@ -132,10 +127,10 @@ export class ServiceBase {
     // as GET, so we will allow it.
     if (useCache && (method === 'GET' || method === 'POST')) {
       let cacheKey = url + (cacheId == null ? '' : '__' + cacheId);
-      return this._getFromCache(cacheKey,
-        () => this.sendRequest(decoder, { ...options, useCache: false }));
+      return _getFromCache(cacheKey,
+        () => sendRequest(decoder, { ...options, useCache: false }));
     }
-    return this._fetchJson(method, url, body).then(resp => {
+    return _fetchJson(method, url, body).then(resp => {
       const result = decoder(resp);
       if (result.status === 'ok') return result.value;
 
@@ -151,37 +146,37 @@ export class ServiceBase {
       errorMessage += '\n\n' + `    Expected ${result.expected}, but got ${JSON.stringify(result.value)}.`;
 
       const err = Error(errorMessage);
-      this.submitError(err);
+      submitError(err);
       console.error(err);
       throw err;
     })
   }
 
-  submitError(error: Error, extra?: any) {
+  function submitError(error: Error, extra?: any) {
     const { name, message, stack } = error;
     console.error(error);
-    return this._checkStoreVersion().then(() =>
-    this.sendRequest(Decode.none, {
+    return _checkStoreVersion().then(() =>
+    sendRequest(Decode.none, {
       method: 'post',
       path: '/client-errors',
       body: JSON.stringify({ name, message, stack, extra })
     }));
   }
 
-  protected _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
+  function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
     return fetch(
-      isBaseUrl ? url : this.serviceUrl + url, 
+      isBaseUrl ? url : serviceUrl + url, 
       {
         method: method.toUpperCase(),
         body: body,
         credentials: 'include',
         headers: new Headers(Object.assign({
           'Content-Type': 'application/json'
-        }, this._version && {
-          [CLIENT_WDK_VERSION_HEADER]: this._version
+        }, _version && {
+          [CLIENT_WDK_VERSION_HEADER]: _version
         }))
       }).then(response => {
-      if (this._isInvalidating) {
+      if (_isInvalidating) {
         return pendingPromise as Promise<T>;
       }
 
@@ -191,9 +186,9 @@ export class ServiceBase {
 
       return response.text().then(text => {
         if (response.status === 409 && text === CLIENT_OUT_OF_SYNC_TEXT) {
-          this._isInvalidating = true;
+          _isInvalidating = true;
           Promise.all([
-            this._store.clear(),
+            _store.clear(),
             alert('Reload Page', 'This page is no longer valid and will be reloaded when you click "OK"')
           ])
           .then(() => location.reload(true));
@@ -213,34 +208,34 @@ export class ServiceBase {
    * Checks cache for item associated to key. If item is not in cache, then
    * call onCacheMiss callback and set the resolved value in the cache.
    */
-  protected _getFromCache<T>(key: string, onCacheMiss: () => Promise<T>) {
-    if (!this._cache.has(key)) {
-      let cacheValue$ = this._checkStoreVersion()
-      .then(() => this._store.getItem<T>(key))
+  function _getFromCache<T>(key: string, onCacheMiss: () => Promise<T>) {
+    if (!_cache.has(key)) {
+      let cacheValue$ = _checkStoreVersion()
+      .then(() => _store.getItem<T>(key))
       .then(storeItem => {
         if (storeItem != null) return storeItem;
         return onCacheMiss().then(item => {
-          return this._store.setItem(key, item)
+          return _store.setItem(key, item)
           .catch(err => {
             console.error('Unable to store WdkService item with key `' + key + '`.', err);
             return item;
           });
         });
       });
-      this._cache.set(key, cacheValue$);
+      _cache.set(key, cacheValue$);
     }
-    return <Promise<T>>this._cache.get(key);
+    return <Promise<T>>_cache.get(key);
   }
 
-  protected _checkStoreVersion() {
-    if (this._initialCheck == null) {
-      let serviceConfig$ = this._fetchJson<ServiceConfig>('get', '/');
-      let storeConfig$ = this._store.getItem<ServiceConfig>('config');
-      this._initialCheck = Promise.all([ serviceConfig$, storeConfig$ ])
+  function _checkStoreVersion() {
+    if (_initialCheck == null) {
+      let serviceConfig$ = _fetchJson<ServiceConfig>('get', '/');
+      let storeConfig$ = _store.getItem<ServiceConfig>('config');
+      _initialCheck = Promise.all([ serviceConfig$, storeConfig$ ])
       .then(([ serviceConfig, storeConfig ]) => {
         if (storeConfig == null || storeConfig.startupTime != serviceConfig.startupTime) {
-          return this._store.clear().then(() => {
-            return this._store.setItem('config', serviceConfig)
+          return _store.clear().then(() => {
+            return _store.setItem('config', serviceConfig)
             .catch(err => {
               console.error('Unable to store WdkService item with key `config`.', err);
               return serviceConfig;
@@ -250,48 +245,48 @@ export class ServiceBase {
         return serviceConfig;
       })
       .then(serviceConfig => {
-        this._version = serviceConfig.startupTime;
+        _version = serviceConfig.startupTime;
         return undefined;
       })
     }
-    return this._initialCheck;
+    return _initialCheck;
   }
 
-  getRecordTypesPath() {
+  function getRecordTypesPath() {
     return '/record-types';
   }
 
-  getRecordTypePath(recordClassUrlSegment: string) {
-    return this.getRecordTypesPath() + '/' + recordClassUrlSegment;
+  function getRecordTypePath(recordClassUrlSegment: string) {
+    return getRecordTypesPath() + '/' + recordClassUrlSegment;
   }
 
-  getSearchesPath(recordClassUrlSegment: string) {
-    return this.getRecordTypePath(recordClassUrlSegment) + '/searches';
+  function getSearchesPath(recordClassUrlSegment: string) {
+    return getRecordTypePath(recordClassUrlSegment) + '/searches';
   }
 
-  getSearchPath(recordClassUrlSegment: string, questionUrlSegment: string) {
-    return this.getSearchesPath(recordClassUrlSegment) + "/" + questionUrlSegment;
+  function getSearchPath(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return getSearchesPath(recordClassUrlSegment) + "/" + questionUrlSegment;
   }
 
-  getReportsPath(recordClassUrlSegment: string, questionUrlSegment: string) {
-    return this.getSearchesPath(recordClassUrlSegment) + '/' + questionUrlSegment;
+  function getReportsPath(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return getSearchesPath(recordClassUrlSegment) + '/' + questionUrlSegment;
   }
 
-  getReportsEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
-    return this.getReportsPath(recordClassUrlSegment, questionUrlSegment);
+  function getReportsEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return getReportsPath(recordClassUrlSegment, questionUrlSegment);
   }
 
-  getStandardSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
-    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/standard";
+  function getStandardSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string) {
+    return getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/standard";
   }
 
-  getCustomSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string, reportName: string) {
-    return this.getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/" + reportName;
+  function getCustomSearchReportEndpoint(recordClassUrlSegment: string, questionUrlSegment: string, reportName: string) {
+    return getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/" + reportName;
   }
 
-  getRecordClasses() {
+  function getRecordClasses() {
     let url = '/record-types?format=expanded';
-    return this._getFromCache(url, () => this._fetchJson<RecordClass[]>('get', url)
+    return _getFromCache(url, () => _fetchJson<RecordClass[]>('get', url)
       .then(recordClasses => {
         // create indexes by name property for attributes and tables
         // this is done after recordClasses have been retrieved from the store
@@ -304,14 +299,14 @@ export class ServiceBase {
     }));
   }
 
-  getQuestions() : Promise<Array<Question>> {
-    return this.getRecordClasses().then(result => {
+  function getQuestions() : Promise<Array<Question>> {
+    return getRecordClasses().then(result => {
       return result.reduce((arr, rc) => arr.concat(rc.searches), [] as Array<Question>);
     });
   }
 
-  findQuestion(test: (question: Question) => boolean) {
-    return this.getQuestions().then(qs => {
+  function findQuestion(test: (question: Question) => boolean) {
+    return getQuestions().then(qs => {
       let question = qs.find(test)
       if (question == null) {
         throw new ServiceError("Could not find question.", "Not found", 404);
@@ -321,8 +316,8 @@ export class ServiceBase {
   }
 
 
-  findRecordClass(test: (recordClass: RecordClass) => boolean) {
-    return this.getRecordClasses().then(rs => {
+  function findRecordClass(test: (recordClass: RecordClass) => boolean) {
+    return getRecordClasses().then(rs => {
       let record = rs.find(test);
       if (record == null) {
         throw new ServiceError("Could not find record class.", "Not found", 404);
@@ -332,5 +327,26 @@ export class ServiceBase {
   }
 
 
+  return {
+    _version,
+    _fetchJson,
+    _getFromCache,
+    serviceUrl,
+    sendRequest,
+    submitError,
+    getConfig,
+    getRecordClasses,
+    findRecordClass,
+    getQuestions,
+    findQuestion,
+    getRecordTypePath,
+    getRecordTypesPath,
+    getReportsEndpoint,
+    getReportsPath,
+    getSearchesPath,
+    getSearchPath,
+    getStandardSearchReportEndpoint,
+    getCustomSearchReportEndpoint,
+  };
 
 }
