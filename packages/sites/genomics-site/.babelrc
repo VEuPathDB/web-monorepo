@@ -1,4 +1,4 @@
 {
-  "extends": "../../WDKWebsite/View/.babelrc",
+  "extends": "../../install/.babelrc",
   "ignore": [ "cytoscapeweb.min.js" ]
 }

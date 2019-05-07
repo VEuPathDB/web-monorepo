@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
