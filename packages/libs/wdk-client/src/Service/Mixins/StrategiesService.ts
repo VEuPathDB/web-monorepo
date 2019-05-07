@@ -1,5 +1,5 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { NewStrategySpec, DuplicateStrategySpec, strategySummaryDecoder, DeleteStrategySpec, StrategyDetails, } from 'wdk-client/Utils/WdkUser';
+import { NewStrategySpec, DuplicateStrategySpec, strategySummaryDecoder, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
 import { Identifier } from 'wdk-client/Utils/WdkModel';
 
@@ -10,7 +10,6 @@ export interface AnswerFormatting {
 }
 
 export default (base: ServiceBase) => {
-
 
   function getStrategies() {
     return base.sendRequest(Decode.arrayOf(strategySummaryDecoder), {
@@ -35,20 +34,32 @@ export default (base: ServiceBase) => {
     return base._fetchJson<StrategyDetails>('get', `/users/${userId}/strategies/${strategyId}`);
   }
   
+  function deleteStrategy(strategyId: number, userId: string = "current") {
+    return base._fetchJson<void>('delete', `/users/${userId}/strategies/${strategyId}`);
+  }
+  
+  function patchStrategyProperties(strategyId: number, strategyProperties: StrategyProperties, userId: string = "current") {
+    return base._fetchJson<Identifier>('patch', `/users/${userId}/strategies`, JSON.stringify(strategyProperties));
+  }
+
+  function putStrategyStepTree(strategyId: number, newStrategySpec: NewStrategySpec, userId: string = "current") {
+    return base._fetchJson<void>('put', `/users/${userId}/strategies/${strategyId}/step-tree`, JSON.stringify(newStrategySpec));
+  }
+
+  function getDuplicatedStrategyStepTree(strategyId: number,  userId: string = "current") {
+    return base._fetchJson<StepTree>('post', `/users/${userId}/strategies/${strategyId}/duplicated-step-tree`, JSON.stringify({}));
+  }
+
   return { 
     getStrategies,
     createStrategy,
     duplicateStrategy,
     deleteStrategies,
     getStrategy,
+    deleteStrategy,
+    patchStrategyProperties,
+    putStrategyStepTree,
+    getDuplicatedStrategyStepTree,
    };
-
-  /*
-  get
-  update props
-  delete
-  put step-tree
-  duplicated step-tree
-  */
 
 }
