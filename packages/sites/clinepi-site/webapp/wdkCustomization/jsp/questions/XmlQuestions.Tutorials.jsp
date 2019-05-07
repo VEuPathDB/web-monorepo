@@ -21,11 +21,18 @@
   </c:when>
   <c:otherwise>
 
-<div id="clinepi-tutorials">
-  <h1>ClinEpiDB Tutorials</h1>
+<!-- The model does not have a concept of resource vs tutorial. 
+     We assume:
+     * the list provided is sorted: first resources and then tutorials
+     * we set how many resources we have in a variable: NumberOfResources.
+-->
+<c:set var="NumberOfResources">1</c:set>
+
+<div id="clinepi-resources">
+  <h1>ClinEpiDB Resources</h1>
   <ul>
   <c:forEach items="${tutAnswer.recordInstances}" var="record" varStatus="loopCount">
-   <c:if test="${loopCount.count < 4}">
+   <c:if test="${loopCount.count < NumberOfResources + 1}">
     <c:set var="attrs" value="${record.attributesMap}"/>
     <c:forEach items="${record.tables}" var="table">
       <c:forEach items="${table.rows}" var="row">
@@ -48,11 +55,11 @@
 </div>
 
 <br><br>
-<div id="clinepi-resources">
-  <h1>ClinEpiDB Resources</h1>
+<div id="clinepi-tutorials">
+  <h1>ClinEpiDB Tutorials</h1>
   <ul>
   <c:forEach items="${tutAnswer.recordInstances}" var="record" varStatus="loopCount">
-    <c:if test="${loopCount.count > 3}">
+    <c:if test="${loopCount.count > NumberOfResources}">
     <c:set var="attrs" value="${record.attributesMap}"/>
     <c:forEach items="${record.tables}" var="table">
       <c:forEach items="${table.rows}" var="row">
