@@ -1,14 +1,6 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-
-import {
-  NewStepSpec,
-  PatchStepSpec,
-  StandardReportConfig,
-  AnswerSpec,
-  Answer,
-    Identifier,
-} from 'wdk-client/Utils/WdkModel';
-import { Step, } from 'wdk-client/Utils/WdkUser';
+import { StandardReportConfig, AnswerSpec, Answer, Identifier, } from 'wdk-client/Utils/WdkModel';
+import {  NewStepSpec, PatchStepSpec, Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
 
 // Legacy, for backward compatibility of client code with older service API

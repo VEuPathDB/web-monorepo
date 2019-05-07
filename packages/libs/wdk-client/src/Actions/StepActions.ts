@@ -1,6 +1,7 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Step } from "wdk-client/Utils/WdkUser";
-import { SearchConfig, PatchStepSpec } from "wdk-client/Utils/WdkModel";
+import { SearchConfig } from "wdk-client/Utils/WdkModel";
+import { PatchStepSpec } from "wdk-client/Utils/WdkUser";
 
 export const requestStep = makeActionCreator(
     'requestStep',

@@ -38,25 +38,47 @@ export interface Step extends AnswerSpec {
   }
 }
 
-export interface Strategy {
-  author: string;
+export interface PatchStepSpec {
+  customName?: string,
+  expandNested?: boolean, // only allowed on combiner steps
+  nestedName?: string;  // only allowed on combiner steps; not shown if expandNested is false and the step is not nested
+  displayPrefs?: Step['displayPrefs'];
+}
+
+export interface NewStepSpec extends PatchStepSpec, AnswerSpec {
+}
+
+export interface StrategyProperties {
+  name: string,
+  isSaved: boolean,
+  isPublic: boolean,
+  description?: string,
+  savedName?: string,
+}
+
+export interface StrategySummary extends StrategyProperties {
+  strategyId: number;
+  rootStepId: number;
   estimatedSize: number;
-  isDeleted: boolean;
-  isPublic: boolean;
-  isSaved: boolean;
   isValid: boolean;
   lastModified: string;
   latestStepId:	number;
-  name: string;
-  organization: string;
   recordClassName: string;
   signature: string;
-  strategyId: number;
+  author?: string;
+  organization?: string;
+  isDeleted: boolean;
 }
 
-export const strategyDecoder: Decoder<Strategy> = combine(
+export interface StrategyDetails extends StrategySummary {
+  stepTree: StepTree;
+  steps: Step[];
+}
+
+export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
   combine(
     field('author', string),
+    field('description', string),
     field('estimatedSize', number),
     field('lastModified', string),
     field('latestStepId',	number),
@@ -71,8 +93,28 @@ export const strategyDecoder: Decoder<Strategy> = combine(
     field('isPublic', boolean),
     field('isSaved', boolean),
     field('isValid', boolean),
+    field('rootStepId', number),
   )
 )
+
+export interface StepTree {
+  stepId: number,
+  primaryInput?: StepTree,
+  secondaryInput?: StepTree
+}
+
+export interface NewStrategySpec extends StrategyProperties {
+  stepTree: StepTree
+}
+
+export interface DuplicateStrategySpec {
+  sourceStrategySignature: string
+}
+
+export interface DeleteStrategySpec {
+  strategyId: number,
+  isDeleted: boolean
+}
 
 // TODO: should be factored to Ebrc something
 export type PubmedPreview = PubmedPreviewEntry[];

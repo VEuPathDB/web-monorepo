@@ -350,42 +350,6 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
   includeEmptyTables?: boolean;
 }
 
-export interface PatchStepSpec {
-  customName?: string,
-  expandNested?: boolean, // only allowed on combiner steps
-  nestedName?: string;  // only allowed on combiner steps; not shown if expandNested is false and the step is not nested
-  displayPrefs?: Step['displayPrefs'];
-}
-
-export interface NewStepSpec extends PatchStepSpec, AnswerSpec {
-}
-
-export interface StepTree {
-  stepId: number,
-  primaryInput?: StepTree,
-  secondaryInput?: StepTree
-}
-
-export interface StrategyProperties {
-  name: string,
-  isSaved: boolean,
-  isPublic: boolean,
-  description?: string,
-  savedName?: string,
-}
-
-export interface NewStrategySpec extends StrategyProperties {
-  stepTree: StepTree
-}
-
-export interface Strategy {
-  strategyId: number,
-  description: string,
-  name: string,
-  author: string,
-  rootStepId: number,
-}
-
 export type UserDatasetMeta = {
   description: string;
   name: string;

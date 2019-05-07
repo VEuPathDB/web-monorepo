@@ -1,6 +1,4 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { Step } from "wdk-client/Utils/WdkUser";
-import { SearchConfig, PatchStepSpec } from "wdk-client/Utils/WdkModel";
 
 export const openStrategyPanel = makeActionCreator(
     'strategyPanel/open',

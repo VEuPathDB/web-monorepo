@@ -1,6 +1,6 @@
 import { Context } from 'wdk-client/Views/Question/Params/Utils';
 import { DatasetParam } from 'wdk-client/Utils/WdkModel';
-import { Strategy } from 'wdk-client/Utils/WdkUser';
+import { StrategySummary } from "wdk-client/Utils/WdkUser";
 
 type Payload<T> = Context<DatasetParam> & T;
 
@@ -74,7 +74,7 @@ export const SET_STRATEGY_LIST = 'dataset-param/set-strategy-list';
 export interface SetStrategyListAction {
   type: typeof SET_STRATEGY_LIST;
   payload: Payload<{
-    strategyList: Strategy[];
+    strategyList: StrategySummary[];
   }>;
 }
 

@@ -3,7 +3,7 @@ import { ofType } from 'redux-observable';
 import { EMPTY, from, merge } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import { Strategy } from 'wdk-client/Utils/WdkUser';
+import { StrategySummary } from "wdk-client/Utils/WdkUser";
 import {
   Props,
   Context,
@@ -44,7 +44,7 @@ type State = {
   sourceType: 'idList' | 'file' | 'basket' | 'strategy';
   idList?: string;
   file?: File | null;
-  strategyList?: Strategy[];
+  strategyList?: StrategySummary[];
   strategyId?: number;
   basketCount?: number;
   fileParser?: DatasetParam['parsers'][number]['name'];

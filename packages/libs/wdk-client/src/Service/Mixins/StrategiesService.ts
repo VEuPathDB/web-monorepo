@@ -1,7 +1,7 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { strategyDecoder, } from 'wdk-client/Utils/WdkUser';
+import { NewStrategySpec, DuplicateStrategySpec, strategySummaryDecoder, DeleteStrategySpec, StrategyDetails, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
-import { NewStrategySpec, Identifier } from 'wdk-client/Utils/WdkModel';
+import { Identifier } from 'wdk-client/Utils/WdkModel';
 
 // Legacy, for backward compatibility of client code with older service API
 export interface AnswerFormatting {
@@ -13,25 +13,37 @@ export default (base: ServiceBase) => {
 
 
   function getStrategies() {
-    return base.sendRequest(Decode.arrayOf(strategyDecoder), {
+    return base.sendRequest(Decode.arrayOf(strategySummaryDecoder), {
       method: 'GET',
       path: '/users/current/strategies'
     })
   }
 
   function createStrategy(newStepSpec: NewStrategySpec, userId: string = "current") {
-    return base._fetchJson<Identifier>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
-}
+    return base._fetchJson<Identifier>('post', `/users/${userId}/strategies`, JSON.stringify(newStepSpec));
+  }
 
+  function duplicateStrategy(copyStepSpec: DuplicateStrategySpec, userId: string = "current") {
+    return base._fetchJson<Identifier>('post', `/users/${userId}/strategies`, JSON.stringify(copyStepSpec));
+  }
+
+  function deleteStrategies(deleteStrategiesSpecs: DeleteStrategySpec[], userId: string = "current") {
+    return base._fetchJson<void>('delete', `/users/${userId}/strategies`, JSON.stringify(deleteStrategiesSpecs));
+  }
+
+  function getStrategy(strategyId: number, userId: string = "current") {
+    return base._fetchJson<StrategyDetails>('get', `/users/${userId}/strategies/${strategyId}`);
+  }
+  
   return { 
     getStrategies,
     createStrategy,
+    duplicateStrategy,
+    deleteStrategies,
+    getStrategy,
    };
 
   /*
-  create
-  duplicate
-  delete multiple
   get
   update props
   delete
