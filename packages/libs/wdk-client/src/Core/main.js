@@ -1,4 +1,9 @@
 /* global __DEV__ */
+
+// import css files
+// import './webapp/wdk/css/wdk.css';
+import 'wdk-client/Core/Style/index.scss';
+
 import { createBrowserHistory } from 'history';
 import { identity, isString } from 'lodash';
 import { createElement } from 'react';
@@ -17,7 +22,6 @@ import defaultPluginConfig from 'wdk-client/Core/pluginConfig';
 
 import storeModules from 'wdk-client/StoreModules';
 import { createWdkStore } from 'wdk-client/Core/Store';
-
 
 /**
  * Initialize the application.

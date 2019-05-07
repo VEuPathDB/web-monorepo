@@ -1,5 +1,5 @@
 {
-  "extends": "../Build/tsconfig.json",
+  "extends": "../../install/base.tsconfig.json",
   "compilerOptions": {
     "paths": {
       "wdk-client/*": [ "WDKClient/Client/src/*" ]
