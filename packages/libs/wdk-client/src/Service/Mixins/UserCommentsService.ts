@@ -1,5 +1,5 @@
 import { ServiceBase, CLIENT_WDK_VERSION_HEADER, StandardWdkPostResponse } from 'wdk-client/Service/ServiceBase';
-import { UserCommentPostRequest, UserCommentAttachedFileSpec } from 'wdk-client/Utils/WdkUser';
+import { UserCommentPostRequest, UserCommentAttachedFileSpec, PubmedPreview, UserCommentGetResponse } from 'wdk-client/Utils/WdkUser';
 
 // TODO: this should be defined here or in wdk model or someplace, and imported in the store module
 import { CategoryChoice } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
@@ -21,6 +21,22 @@ export type UserCommentPostResponseData =
 
 
 export default (base: ServiceBase) => {
+
+  function getUserComment(id: number) {
+    return base._fetchJson<UserCommentGetResponse>('get', `/user-comments/${id}`)
+  }
+
+  function getPubmedPreview(pubMedIds: number[]) : Promise<PubmedPreview> {
+    let ids = pubMedIds.join(',');
+    return base._fetchJson<PubmedPreview>('get', `/cgi-bin/pmid2json?pmids=${ids}`, undefined, true);
+  }
+
+  function getUserComments(targetType: string, targetId: string) : Promise<UserCommentGetResponse[]> {
+    return base._fetchJson<UserCommentGetResponse[]>(
+      'get',
+      `/user-comments?target-type=${targetType}&target-id=${targetId}`
+    );
+  }
 
   function getUserCommentCategories(targetType: string): Promise<CategoryChoice[]> {
     return base._fetchJson<{ name: string, value: number }[]>(
@@ -103,6 +119,9 @@ export default (base: ServiceBase) => {
   }
 
   return {
+    getUserComment,
+    getPubmedPreview,
+    getUserComments,
     getUserCommentCategories,
     postUserComment,
     deleteUserComment,

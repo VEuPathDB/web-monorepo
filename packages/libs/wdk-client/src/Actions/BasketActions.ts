@@ -3,7 +3,7 @@ import {
   InferAction
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { PrimaryKey } from 'wdk-client/Utils/WdkModel';
-import { BasketRecordOperation } from 'wdk-client/Utils/WdkService';
+import { BasketRecordOperation } from 'wdk-client/Service/Mixins/BasketsService';
 export type BasketScope = 'global' | 'project';
 
 export const requestUpdateBasket = makeActionCreator(

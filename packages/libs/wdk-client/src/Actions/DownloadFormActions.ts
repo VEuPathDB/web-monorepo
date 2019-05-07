@@ -2,7 +2,7 @@ import { getStepBundlePromise, getSingleRecordStepBundlePromise } from 'wdk-clie
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { Step, UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { AnswerRequest } from 'wdk-client/Utils/WdkService';
+import { AnswerRequest } from 'wdk-client/Service/Mixins/SearchReportsService';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 
 export type Action =

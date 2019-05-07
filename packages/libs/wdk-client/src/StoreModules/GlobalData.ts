@@ -23,7 +23,7 @@ import {
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { UserPreferences, User } from 'wdk-client/Utils/WdkUser';
-import { ServiceConfig } from 'wdk-client/Utils/WdkService';
+import { ServiceConfig } from 'wdk-client/Service/ServiceBase';
 
 export const key = 'globalData';
 

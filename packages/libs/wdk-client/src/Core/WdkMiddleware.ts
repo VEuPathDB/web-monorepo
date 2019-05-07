@@ -2,7 +2,7 @@ import { Middleware } from 'redux';
 import { isPromise } from 'wdk-client/Utils/PromiseUtils';
 import { Action } from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 
 export interface ActionCreatorServices {
   wdkService: WdkService;

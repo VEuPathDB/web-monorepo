@@ -1,5 +1,5 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 
 export default (base: ServiceBase) => {
 

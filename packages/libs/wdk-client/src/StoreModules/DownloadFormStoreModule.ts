@@ -9,7 +9,7 @@ import {
 import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
 import {UserPreferences, Step} from 'wdk-client/Utils/WdkUser';
 import {RecordClass, Question, Reporter} from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { Action } from 'wdk-client/Actions';
 

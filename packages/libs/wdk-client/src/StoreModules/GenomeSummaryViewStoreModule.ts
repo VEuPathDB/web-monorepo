@@ -21,7 +21,7 @@ import {
   GenomeSummaryViewReport,
   RecordClass
 } from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 
 export const key = 'genomeSummaryView';
 export type State = IndexedState<ViewState>;

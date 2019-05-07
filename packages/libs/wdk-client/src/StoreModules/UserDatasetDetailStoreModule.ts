@@ -1,6 +1,6 @@
 import sharingReducer from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingReducer';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { Action } from 'wdk-client/Actions';
 import {
   DETAIL_LOADING,

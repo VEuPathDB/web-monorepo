@@ -1,5 +1,5 @@
 import { Question, RecordClass, RecordInstance, getSingleRecordQuestionName } from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import { Step } from 'wdk-client/Utils/WdkUser';
 
 /**

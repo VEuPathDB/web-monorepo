@@ -14,7 +14,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import 'wdk-client/Views/Question/Params/DatasetParam.scss';
 import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { DatasetConfig } from 'wdk-client/Utils/WdkService';
+import { DatasetConfig } from 'wdk-client/Service/Mixins/DatasetsService';
 import { INIT_PARAM, InitParamAction } from 'wdk-client/Actions/QuestionActions';
 import {
   SET_BASKET_COUNT,

@@ -11,6 +11,10 @@ interface ModelEntity {
   properties?: Record<string, string[]>;
 }
 
+export interface Identifier {
+  id: number
+}
+
 interface NamedModelEntity extends ModelEntity {
   name: string
 }
@@ -362,13 +366,24 @@ export interface StepTree {
   secondaryInput?: StepTree
 }
 
-export interface NewStrategySpec {
+export interface StrategyProperties {
   name: string,
   isSaved: boolean,
   isPublic: boolean,
   description?: string,
   savedName?: string,
+}
+
+export interface NewStrategySpec extends StrategyProperties {
   stepTree: StepTree
+}
+
+export interface Strategy {
+  strategyId: number,
+  description: string,
+  name: string,
+  author: string,
+  rootStepId: number,
 }
 
 export type UserDatasetMeta = {

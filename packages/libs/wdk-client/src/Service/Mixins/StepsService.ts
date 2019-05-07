@@ -6,6 +6,7 @@ import {
   StandardReportConfig,
   AnswerSpec,
   Answer,
+    Identifier,
 } from 'wdk-client/Utils/WdkModel';
 import { Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
@@ -44,7 +45,7 @@ export default (base: ServiceBase) => {
   }
 
   function createStep(newStepSpec: NewStepSpec, userId: string = "current") {
-    return base._fetchJson<Step>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
+    return base._fetchJson<Identifier>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
   }
 
   function getStepAnswer(stepId: number, formatting: AnswerFormatting, userId: string = 'current'): Promise<any> {
@@ -85,8 +86,8 @@ export default (base: ServiceBase) => {
     base._fetchJson<void>('delete', `/users/${userId}/steps/${stepId}`);
   }
 
-  function updateStepSearchConfig(stepId: number, newStepSpec: AnswerSpec, userId: string = "current") {
-    return base._fetchJson<Step>('put', `/users/${userId}/steps/${stepId}/search-config`, JSON.stringify(newStepSpec));
+  function updateStepSearchConfig(stepId: number, answerSpec: AnswerSpec, userId: string = "current") {
+    return base._fetchJson<Step>('put', `/users/${userId}/steps/${stepId}/search-config`, JSON.stringify(answerSpec));
   }
 
   return {

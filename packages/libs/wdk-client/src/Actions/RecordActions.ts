@@ -14,7 +14,8 @@ import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddle
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
-import WdkService, { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
+import  WdkService  from 'wdk-client/Service/WdkService';
 
 import { isLeafFor, isNotInternalNode } from 'wdk-client/Views/Records/RecordUtils';
 

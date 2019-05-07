@@ -1,5 +1,6 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { User, UserWithPrefs } from 'wdk-client/Utils/WdkUser';
+import { Identifier } from 'wdk-client/Utils/WdkModel';
 
 export default (base: ServiceBase) => {
   let currentUserPromise: Promise<User> | undefined;
@@ -12,7 +13,7 @@ export default (base: ServiceBase) => {
   }
 
   function createNewUser(userWithPrefs: UserWithPrefs) {
-    return base._fetchJson<User>('post', '/users', JSON.stringify(userWithPrefs));
+    return base._fetchJson<Identifier>('post', '/users', JSON.stringify(userWithPrefs));
   }
 
   function updateCurrentUser(user: User) {

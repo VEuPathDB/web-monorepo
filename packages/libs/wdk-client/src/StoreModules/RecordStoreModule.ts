@@ -3,7 +3,7 @@ import { difference, union } from 'lodash';
 import { CategoryTreeNode, getId, getTargetType } from 'wdk-client/Utils/CategoryUtils';
 import { filterNodes } from 'wdk-client/Utils/TreeUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { Action } from 'wdk-client/Actions';
 import {
   RECORD_LOADING,

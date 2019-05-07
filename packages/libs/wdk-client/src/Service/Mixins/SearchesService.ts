@@ -12,7 +12,7 @@ import {
     SummaryViewPluginField,
   } from 'wdk-client/Utils/WdkModel';
 import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 import * as Decode from 'wdk-client/Utils/Json';
 import { stepAnalysisTypeDecoder } from 'wdk-client/Utils/StepAnalysisUtils';
 

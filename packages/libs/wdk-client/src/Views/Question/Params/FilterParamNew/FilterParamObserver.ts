@@ -2,7 +2,7 @@ import { isEqual } from 'lodash';
 import { combineEpics, ofType, Epic } from 'redux-observable';
 import { concat, empty, from, merge, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import {
   CHANGE_GROUP_VISIBILITY,
   QUESTION_LOADED,

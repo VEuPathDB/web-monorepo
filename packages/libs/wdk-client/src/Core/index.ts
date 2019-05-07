@@ -16,7 +16,7 @@ import * as PromiseUtils from 'wdk-client/Utils/PromiseUtils';
 import StoreModules from 'wdk-client/StoreModules';
 import * as TreeUtils from 'wdk-client/Utils/TreeUtils';
 import * as WdkModel from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
 import * as FilterParamUtils from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 import * as WdkMiddleware from 'wdk-client/Core/WdkMiddleware';

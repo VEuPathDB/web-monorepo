@@ -1,7 +1,7 @@
 import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { ServiceConfig } from 'wdk-client/Utils/WdkService';
+import { ServiceConfig } from 'wdk-client/Service/ServiceBase';
 import { User, UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 

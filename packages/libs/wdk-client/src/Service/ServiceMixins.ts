@@ -6,6 +6,7 @@ import BasketsService from 'wdk-client/Service/Mixins/BasketsService';
 import DatasetsService from 'wdk-client/Service/Mixins/DatasetsService';
 import FavoritesService from 'wdk-client/Service/Mixins/FavoritesService';
 import OauthService from 'wdk-client/Service/Mixins/OauthService';
+import LoginService from 'wdk-client/Service/Mixins/LoginService';
 import OntologiesService from 'wdk-client/Service/Mixins/OntologiesService';
 import SearchesService from 'wdk-client/Service/Mixins/SearchesService';
 import SearchReportsService from 'wdk-client/Service/Mixins/SearchReportsService';
@@ -31,6 +32,7 @@ export function composeMixins(baseUrl: string) {
     ...RecordTypeService(base),
     ...FavoritesService(base),
     ...OauthService(base),
+    ...LoginService(base),
     ...OntologiesService(base),
     ...SearchesService(base),
     ...SearchReportsService(base),
