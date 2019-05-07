@@ -27,8 +27,8 @@ class BlastSummaryViewController extends ViewController< Props > {
     return this.props.blastSummaryData != null;
   }
 
-  loadData () {
-    if (this.props.blastSummaryData == null) {
+  loadData (prevProps?: Props) {
+    if (prevProps == null || prevProps.stepId !== this.props.stepId) {
       this.props.requestBlastSummaryReport(this.props.stepId);
     }
   }

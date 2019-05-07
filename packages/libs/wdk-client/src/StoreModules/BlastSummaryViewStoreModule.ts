@@ -25,6 +25,9 @@ const initialState: ViewState = {
 
 function reduceView(state: ViewState = initialState, action: Action): ViewState {
   switch (action.type) {
+    case requestBlastSummaryReport.type: {
+      return initialState;
+    }
     case fulfillBlastSummaryReport.type: {
       return { ...state, blastSummaryData: action.payload.blastInfo }
     }
@@ -42,5 +45,6 @@ async function getBlastSummaryViewReport([requestAction]:  [InferAction<typeof r
 
 export const observe =
   combineEpics(
-    mergeMapRequestActionsToEpic([requestBlastSummaryReport], getBlastSummaryViewReport)
+    mergeMapRequestActionsToEpic([requestBlastSummaryReport], getBlastSummaryViewReport,
+      { areActionsNew: () => true })
   );
