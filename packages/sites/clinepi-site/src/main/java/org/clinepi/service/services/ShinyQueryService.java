@@ -164,7 +164,7 @@ public class ShinyQueryService extends AbstractWdkService {
         "getShinySampleData", "Failed running SQL to fetch sample data.");
   }
 
-  private static String getSql(DataType dataType, String sourceId, String tblPrefix, String timeSourceId) {
+  private static String getSql(DataType dataType, String tblPrefix, String sourceId, String timeSourceId) {
     switch(dataType) {
       case Participant:
         return timeSourceId.equals("none")
@@ -182,8 +182,6 @@ public class ShinyQueryService extends AbstractWdkService {
               " and io.observation_id = oa.pan_id" +
               " and pa." + sourceId + " is not null";
       case Household:
-        // have to remember when calling this that timeSourceId representing time is different for households
-        // so ask for a different sourceId, the houseObs equivalent of timeSourceId (ex: gems BFO_0000015->EUPATH_0015467)
         return timeSourceId.equals("none")
             ? " select pa.name as Participant_Id" +
                     ", h.string_value as " + sourceId +
@@ -194,41 +192,41 @@ public class ShinyQueryService extends AbstractWdkService {
               " and hp.household_id = h.household_id" +
               " and hp.participant_id = pa.pan_id"   
 
-            : " with indicator as (" +
-                " select CASE WHEN (count(*) > 0) THEN 0" +
-                       " ELSE 1 END as isHouseOb" +
-                " from apidbtuning." + tblPrefix + "HouseholdMD" +     
-                " where ontology_term_name = '" + sourceId + "'" +     
-                " and household_id = household_observation_id)," +
-              " term as (" +
-                " select pa.name as Participant_Id" +
-                      ", h.string_value as " + sourceId +
-                      ", CASE WHEN (i.ishouseob = 0) THEN h.household_id" +
-                       " ELSE h.household_observation_id END as key" +
-                " from apidbtuning." + tblPrefix + "HouseholdMD h" +
-                    ", apidbtuning." + tblPrefix + "HousePartIO hp" +
-                    ", apidbtuning." + tblPrefix + "Participants pa" +
-                    ", indicator i" +
-                " where h.ontology_term_name = '" + sourceId + "'" +
-                " and hp.household_id = h.household_id" +
-                " and hp.participant_id = pa.pan_id)," +
-              " time as (" + 
-                " select pa.name as Participant_Id" +
-                      ", h.string_value as " + timeSourceId +
-                      ", CASE WHEN (i.ishouseob = 0) THEN h.household_id" +
-                       " ELSE h.household_observation_id END as key" +
-                " from apidbtuning." + tblPrefix + "HouseholdMD h" +
-                    ", apidbtuning." + tblPrefix + "HousePartIO hp" +
-                    ", apidbtuning." + tblPrefix + "Participants pa" +
-                    ", indicator i" +
-                " where h.ontology_term_name = '" + timeSourceId + "'" +
-                " and hp.household_id = h.household_id" +
-                " and hp.participant_id = pa.pan_id)" +
-              " select term.Participant_Id" +
-                    ", term." + sourceId +
-                    ", time." + timeSourceId +
-              " from time, term" +
-              " where term.key = time.key";
+            :"with termtime as (" +
+                " select h1.household_id" +
+                      ", h1.string_value as " + sourceId +
+                      ", h2.string_value as " + timeSourceId +
+                " from apidbTuning." + tblPrefix + "HouseholdMD h1" +
+                    ", apidbTuning." + tblPrefix + "HouseholdMD h2" +
+                " where h1.ontology_term_name = '" + sourceId + "'" +
+                " and h2.ontology_term_name = '" + timeSourceId + "'" +
+                " and h1.household_id = h2.household_id" +
+                " and exists (select ontology_term_name" +
+                            " from apidbTuning." + tblPrefix + "HouseholdMD" +
+                            " where ontology_term_name = '" + sourceId + "'" +
+                            " and household_id = household_observation_id)" +
+                " UNION ALL" +
+                " select h1.household_id" +
+                      ", h1.string_value as " + sourceId +
+                      ", h2.string_value as " + timeSourceId +
+                " from apidbTuning." + tblPrefix + "HouseholdMD h1" +
+                    ", apidbTuning." + tblPrefix + "HouseholdMD h2" +
+                " where h1.ontology_term_name = '" + sourceId + "'" +
+                " and h2.ontology_term_name = '" + timeSourceId + "'" +
+                " and h1.household_observation_id = h2.household_observation_id" +
+                " and not exists (select ontology_term_name" +
+                                " from apidbTuning." + tblPrefix + "HouseholdMD" +
+                                " where ontology_term_name = '" + sourceId + "'" +
+                                " and household_id = household_observation_id)" +
+             ")" +
+             " select p.name as participant_id" +
+                  ", termtime." + sourceId +
+                  ", termtime." + timeSourceId +
+             " from termtime" +
+                 ", apidbTuning." + tblPrefix + "HousePartIO hp" +
+                 ", apidbTuning." + tblPrefix + "Participants p" +
+             " where termtime.household_id = hp.household_id" +
+             " and hp.participant_id = p.pan_id";
       case Observation:
         return timeSourceId.equals("none")
             ? " select pa.name as participant_id" +
