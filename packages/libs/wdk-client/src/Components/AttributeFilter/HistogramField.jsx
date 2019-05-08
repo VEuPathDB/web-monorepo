@@ -52,8 +52,8 @@ export default class HistogramField extends React.Component {
 
     this.state = {
       includeUnknown: get(props.filter, 'includeUnknown', false),
-      minInputValue: get(props.filter, 'value.min', this.distributionRange.min),
-      maxInputValue: get(props.filter, 'value.max', this.distributionRange.max)
+      minInputValue: get(props.filter, 'value.min', ''),
+      maxInputValue: get(props.filter, 'value.max', '')
     };
   }
 
@@ -66,8 +66,8 @@ export default class HistogramField extends React.Component {
     if (distributionChanged || filterChanged) {
       this.setState({
         includeUnknown: get(nextProps.filter, 'includeUnknown', false),
-        minInputValue: get(nextProps.filter, 'value.min', this.distributionRange.min),
-        maxInputValue: get(nextProps.filter, 'value.max', this.distributionRange.max)
+        minInputValue: get(nextProps.filter, 'value.min', ''),
+        maxInputValue: get(nextProps.filter, 'value.max', '')
       });
     }
   }
@@ -145,26 +145,20 @@ export default class HistogramField extends React.Component {
   }
 
   rangeIsDifferent({ min, max }) {
-    return this.props.filter == null
-      ? min > this.distributionRange.min || max < this.distributionRange.max
-      : min !== this.props.filter.min || max !== this.props.filter.max;
+    if (this.props.filter == null) return min != null || max != null;
+    return (
+      min !== this.props.filter.value.min ||
+      max !== this.props.filter.value.max
+    );
   }
 
   emitChange(range, includeUnknown = this.state.includeUnknown) {
-    // Use range if strict subset, otherwise use undefined, which indicates
-    // that the user wants everything known.
-    const filterValue = (
-      range &&
-      range.min <= this.distributionRange.min &&
-      range.max >= this.distributionRange.max
-    ) ? undefined : range;
-
-    this.props.onChange(this.props.activeField, filterValue, includeUnknown,
+    this.props.onChange(this.props.activeField, range, includeUnknown,
       this.props.activeFieldState.summary.valueCounts);
 
     this.setState({
-      minInputValue: get(filterValue, 'min', this.distributionRange.min),
-      maxInputValue: get(filterValue, 'max', this.distributionRange.max)
+      minInputValue: get(range, 'min', ''),
+      maxInputValue: get(range, 'max', '')
     });
   }
 
@@ -215,7 +209,7 @@ export default class HistogramField extends React.Component {
               {'Select ' + activeField.display + ' from '}
               <input
                 type="text"
-                size="6"
+                size="8"
                 placeholder={distMin}
                 value={this.state.minInputValue || ''}
                 onChange={this.handleMinInputChange}
@@ -225,7 +219,7 @@ export default class HistogramField extends React.Component {
               {' to '}
               <input
                 type="text"
-                size="6"
+                size="8"
                 placeholder={distMax}
                 value={this.state.maxInputValue || ''}
                 onChange={this.handleMaxInputChange}
