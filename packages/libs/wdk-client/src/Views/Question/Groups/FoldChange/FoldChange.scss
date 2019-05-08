@@ -3,8 +3,20 @@
   display: flex;
 
   .wdk-FoldChangeParams {
+    margin-right: 1em;
+
+    > div {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
     .wdk-QuestionFormFoldChangeSampleParamSubgroup {
-      margin-left: 2em;
+      margin-left: 1em;
+
+      > div {
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
 
       .wdk-FoldChangeSampleParameterTab {
         font-weight: bold;
@@ -37,6 +49,19 @@
         border-image: initial;
         border-radius: 4px;
 
+        .wdk-CheckboxList > div, .wdk-CheckboxTree {
+          background: white;
+          border-radius: 4px;
+          padding: 2px;
+        }
+
+        .wdk-CheckboxList > div:first-child, .wdk-CheckboxTree {
+          height: 100px;
+          overflow-y: scroll;
+          border: 1px solid #AAA;
+          padding: 0 .3em;
+        }
+
         &.wdk-FoldChangeReferenceSample {
           background-color: rgb(180, 210, 235);
         }
@@ -56,6 +81,11 @@
   .wdk-FoldChangeImg {
     font-size: 12px;
     font-family: Arial;
+    margin-left: 25%;
+  }
+
+  .wdk-FoldChangeHelpComplete,.wdk-FoldChangeHelpIncomplete {
+    margin-left: 1em;
   }
 
   .wdk-FoldChangeTitle {
@@ -72,5 +102,15 @@
     font-style: italic;
     font-family: serif;
     font-weight: bold;
+    text-align: center;
+  }
+
+  .wdk-Icon {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  input[type=text],select {
+    margin-left: 4px;
   }
 }

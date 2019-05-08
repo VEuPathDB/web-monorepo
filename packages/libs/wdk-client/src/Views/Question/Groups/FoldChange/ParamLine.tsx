@@ -14,24 +14,33 @@ interface ParamLineProps {
   parameterElement: ReactNode;
   parameter: Parameter;
   postParameterContent: ReactNode;
+  hideParameter?: boolean;
 }
 
 export const ParamLine: React.FunctionComponent<ParamLineProps> = ({
   preParameterContent,
   parameterElement,
   parameter,
-  postParameterContent
+  postParameterContent,
+  hideParameter
 }) => (
   <div>
     {preParameterContent}
     {parameterElement}
-    {parameterElement && (
+    {postParameterContent}
+    {parameterElement && !hideParameter && (
       <HelpIcon>
         <>
           {' '}{parameter.help}
         </>
       </HelpIcon>
     )}
-    {postParameterContent}
+    {hideParameter && (
+      <HelpIcon>
+        <>
+          {' '}{parameter.help}
+        </>
+      </HelpIcon>
+    )}
   </div>
 );

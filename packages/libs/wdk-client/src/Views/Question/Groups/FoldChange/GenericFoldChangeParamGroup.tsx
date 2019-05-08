@@ -17,6 +17,7 @@ type Props = {
   dispatchAction: DispatchAction;
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
+  valueType: string;
 };
 
 const preAndPostParams = (props: Props): PreAndPostParameterEntries[] => 

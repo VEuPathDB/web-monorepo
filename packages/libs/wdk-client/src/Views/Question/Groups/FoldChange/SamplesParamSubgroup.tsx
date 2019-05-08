@@ -7,6 +7,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { ParamLine } from 'wdk-client/Views/Question/Groups/FoldChange/ParamLine';
 import { ReferenceSampleParameterPane, ComparisonSampleParameterPane } from 'wdk-client/Views/Question/Groups/FoldChange/sampleParameterPane';
 import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { HelpIcon } from 'wdk-client/Components';
 
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,
@@ -17,7 +18,8 @@ type Props = {
   state: QuestionState;
   dispatchAction: DispatchAction;
   eventHandlers: EventHandlers;
-  parameterElements: Record<string, React.ReactNode>;
+  parameterElements: Record<string, React.ReactNode>
+  valueType: string;
 };
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
@@ -26,24 +28,25 @@ export const SamplesParamSubgroup: React.FunctionComponent<Props> = ({
   state: {
     paramValues,
     question: {
-      parametersByName,
+      parametersByName
+    },
+    recordClass: {
+      displayName
     }
   },
-  parameterElements
+  parameterElements,
+  valueType
 }) => {
   const hardFloorVisible = parametersByName['hard_floor'] && parametersByName['hard_floor'].isVisible;
 
   return (
     <div className={`${cx('FoldChangeSampleParamSubgroup')}`}>
       <ParamLine
-        preParameterContent="Between each gene's "
-        parameterElement={
-          valueToArray(paramValues['samples_fc_ref_generic']).length >= 2
-            ? parameterElements['min_max_avg_ref']
-            : null
-        }
+        preParameterContent={`between each ${displayName.toLowerCase()}'s `}
+        parameterElement={parameterElements['min_max_avg_ref']}
         parameter={parametersByName['min_max_avg_ref']}
-        postParameterContent={<b>expression value</b>}
+        postParameterContent={<b>{' '}{valueType}</b>}
+        hideParameter={valueToArray(paramValues['samples_fc_ref_generic']).length < 2}
       />
       {
         hardFloorVisible && (
@@ -57,16 +60,14 @@ export const SamplesParamSubgroup: React.FunctionComponent<Props> = ({
       }
       <ReferenceSampleParameterPane
         parameterElement={parameterElements['samples_fc_ref_generic']}
+        parameter={parametersByName['samples_fc_ref_generic']}
       />
       <ParamLine
         preParameterContent="and its "
-        parameterElement={
-          valueToArray(paramValues['samples_fc_comp_generic']).length >= 2
-            ? parameterElements['min_max_avg_comp']
-            : null
-        }
+        parameterElement={parameterElements['min_max_avg_comp']}
         parameter={parametersByName['min_max_avg_comp']}
-        postParameterContent={<b>expression value</b>}
+        postParameterContent={<b>{' '}{valueType}</b>}
+        hideParameter={valueToArray(paramValues['samples_fc_comp_generic']).length < 2}
       />
       {
         hardFloorVisible && (
@@ -77,6 +78,7 @@ export const SamplesParamSubgroup: React.FunctionComponent<Props> = ({
       }
       <ComparisonSampleParameterPane
         parameterElement={parameterElements['samples_fc_comp_generic']}
+        parameter={parametersByName['samples_fc_comp_generic']}
       />
     </div>
   );

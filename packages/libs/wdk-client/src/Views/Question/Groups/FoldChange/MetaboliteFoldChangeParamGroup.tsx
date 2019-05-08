@@ -19,6 +19,7 @@ type Props = {
   dispatchAction: DispatchAction;
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
+  valueType: string;
 };
 
 const metaboliteFoldChangePreAndPostParams = memoize((props: Props): PreAndPostParameterEntries[] => [

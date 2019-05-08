@@ -12,10 +12,11 @@ import {
 import { memoize } from 'lodash';
 import { FoldChangeParamPreview } from 'wdk-client/Views/Question/Groups/FoldChange/FoldChangeParamPreview';
 import { MetaboliteFoldChangeParamGroup } from 'wdk-client/Views/Question/Groups/FoldChange/MetaboliteFoldChangeParamGroup';
+import { GenericFoldChangeParamGroup } from 'wdk-client/Views/Question/Groups/FoldChange/GenericFoldChangeParamGroup';
 import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { FoldChangeDirection, FoldChangeOperation } from 'wdk-client/Views/Question/Groups/FoldChange/Types';
 
-import 'wdk-client/Views/Question/Groups/FoldChange/FoldChange.scss';
+import 'wdk-client/Views/Question/Groups/FoldChange/FoldChange.scss'
 
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,
@@ -36,7 +37,12 @@ const onSubmit = memoize((dispatchAction: DispatchAction, urlSegment: string) =>
   dispatchAction(submitQuestion({ searchName: urlSegment }));
 });
 
-export const CompoundsByFoldChange: React.FunctionComponent<Props> = props => {
+const foldChangeGroup = (
+  valueType: string, 
+  valueTypePlural: string, 
+  foldChangeParamKey: string,
+  FoldChangeParamGroup: React.FunctionComponent<Props & { valueType: string }>
+): React.FunctionComponent<Props> => props => {
   const {
     state: {
       paramValues,
@@ -47,8 +53,11 @@ export const CompoundsByFoldChange: React.FunctionComponent<Props> = props => {
     },
   } = props;
 
-  const refSampleSize = valueToArray(paramValues['samples_fc_ref_generic']).length;
-  const compSampleSize = valueToArray(paramValues['samples_fc_comp_generic']).length;
+  const refSamples = paramValues['samples_fc_ref_generic'];
+  const compSamples = paramValues['samples_fc_comp_generic'];
+
+  const refSampleSize = valueToArray(refSamples).length;
+  const compSampleSize = valueToArray(compSamples).length;
 
   const referenceOperation = refSampleSize === 1
     ? 'none'
@@ -60,16 +69,16 @@ export const CompoundsByFoldChange: React.FunctionComponent<Props> = props => {
 
   return (
     <div className={`${cx()} ${cx('FoldChange')}`}>
-      <MetaboliteFoldChangeParamGroup {...props} />
+      <FoldChangeParamGroup {...props} valueType={valueType} />
       <FoldChangeParamPreview
-        foldChange={+paramValues['fold_change_compound']}
+        foldChange={+paramValues[foldChangeParamKey]}
         hasHardFloorParam={!!paramValues['hard_floor']}
         recordDisplayName={displayName.toLowerCase()}
         recordDisplayNamePlural={displayNamePlural.toLowerCase()}
-        valueType="metabolite level"
-        valueTypePlural="metabolite levels"
-        refSampleSize={valueToArray(paramValues['samples_fc_ref_generic']).length}
-        compSampleSize={valueToArray(paramValues['samples_fc_comp_generic']).length}
+        valueType={valueType}
+        valueTypePlural={valueTypePlural}
+        refSampleSize={refSampleSize}
+        compSampleSize={compSampleSize}
         direction={paramValues['regulated_dir'] as FoldChangeDirection}
         referenceOperation={referenceOperation as FoldChangeOperation}
         comparisonOperation={comparisonOperation as FoldChangeOperation}
@@ -77,3 +86,16 @@ export const CompoundsByFoldChange: React.FunctionComponent<Props> = props => {
     </div>
   );
 };
+
+export const CompoundsByFoldChange = foldChangeGroup(
+  'metabolite level',
+  'metabolite levels',
+  'fold_change_compound',
+  MetaboliteFoldChangeParamGroup
+);
+export const GenericFoldChange = foldChangeGroup(
+  'expression value',
+  'expression values',
+  'fold_change',
+  GenericFoldChangeParamGroup
+);
