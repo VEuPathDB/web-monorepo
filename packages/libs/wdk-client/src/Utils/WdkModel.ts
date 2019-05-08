@@ -3,7 +3,6 @@
  */
 
 import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
-import { Step } from 'wdk-client/Utils/WdkUser';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 interface ModelEntity {

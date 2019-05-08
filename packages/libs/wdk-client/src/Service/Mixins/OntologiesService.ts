@@ -3,12 +3,6 @@ import {keyBy} from 'lodash';
 import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology } from 'wdk-client/Utils/CategoryUtils';
 
-// Legacy, for backward compatibility of client code with older service API
-export interface AnswerFormatting {
-    format: string
-    formatConfig?: object
-} 
-
 export default (base: ServiceBase) => {
 
   function getOntology(name = '__wdk_categories__') {

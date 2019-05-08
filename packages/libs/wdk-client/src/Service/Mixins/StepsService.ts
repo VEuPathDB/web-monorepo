@@ -2,12 +2,7 @@ import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { StandardReportConfig, AnswerSpec, Answer, Identifier, } from 'wdk-client/Utils/WdkModel';
 import {  NewStepSpec, PatchStepSpec, Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
-
-// Legacy, for backward compatibility of client code with older service API
-export interface AnswerFormatting {
-  format: string
-  formatConfig?: object
-}
+import { AnswerFormatting } from './SearchReportsService';
 
 export default (base: ServiceBase) => {
 
@@ -40,7 +35,7 @@ export default (base: ServiceBase) => {
     return base._fetchJson<Identifier>('post', `/users/${userId}/steps`, JSON.stringify(newStepSpec));
   }
 
-  function getStepAnswer(stepId: number, formatting: AnswerFormatting, userId: string = 'current'): Promise<any> {
+  function getStepCustomReport(stepId: number, formatting: AnswerFormatting, userId: string = 'current'): Promise<any> {
     let reportConfing = formatting.formatConfig;
 
     return base.sendRequest(Decode.ok, {
@@ -52,7 +47,7 @@ export default (base: ServiceBase) => {
 
   // get step's answer in wdk default json output format
   // TODO:  use a proper decoder to ensure correct decoding of the Answer
-  function getStepAnswerJson(stepId: number, reportConfig: StandardReportConfig, userId: string = 'current'): Promise<Answer> {
+  function getStepStandardReport(stepId: number, reportConfig: StandardReportConfig, userId: string = 'current'): Promise<Answer> {
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/standard`,
@@ -86,8 +81,8 @@ export default (base: ServiceBase) => {
     findStep,
     updateStep,
     createStep,
-    getStepAnswer,
-    getStepAnswerJson,
+    getStepAnswer: getStepCustomReport,
+    getStepAnswerJson: getStepStandardReport,
     getStepFilterSummary,
     deleteStep,
     updateStepSearchConfig

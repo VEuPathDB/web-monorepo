@@ -3,12 +3,6 @@ import { strategySummaryDecoder, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
 import * as QueryString from 'querystring';
 
-// Legacy, for backward compatibility of client code with older service API
-export interface AnswerFormatting {
-  format: string
-  formatConfig?: object
-}
-
 export default (base: ServiceBase) => {
 
   function getPublicStrategies(queryParams?: { userEmail: QueryString.ParsedUrlQuery[string] }) {

@@ -3,12 +3,6 @@ import { NewStrategySpec, DuplicateStrategySpec, strategySummaryDecoder, DeleteS
 import * as Decode from 'wdk-client/Utils/Json';
 import { Identifier } from 'wdk-client/Utils/WdkModel';
 
-// Legacy, for backward compatibility of client code with older service API
-export interface AnswerFormatting {
-  format: string
-  formatConfig?: object
-}
-
 export default (base: ServiceBase) => {
 
   function getStrategies() {
