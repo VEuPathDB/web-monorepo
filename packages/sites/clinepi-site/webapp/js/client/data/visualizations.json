@@ -1,5 +1,6 @@
 [
   {
+    "name": "contingency_tables",
     "appUrl": "/im.do?s=7412023d29fba952&selectedTab=first_analysis",
     "appImage": "/images/analysis_plugins/contingency_tables.jpg",
     "linkText": "Open The Analysis",
@@ -8,6 +9,7 @@
     "linkTarget": "_self"
   },
   {
+    "name": "summary",
     "appUrl": "/im.do?s=3bb29848445ca389&selectedTab=first_analysis",
     "appImage": "/images/data-summary-chart.jpg",
     "linkText": "Open The Analysis",
@@ -16,6 +18,7 @@
     "linkTarget": "_self"
   },
   {
+    "name": "distributions",
     "appUrl": "/im.do?s=ea06cf5f198037aa&selectedTab=first_analysis",
     "appImage": "/images/analysis_plugins/distributions.jpg",
     "linkText": "Open The Analysis",
