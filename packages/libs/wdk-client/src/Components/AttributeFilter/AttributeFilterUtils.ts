@@ -57,20 +57,7 @@ export function shouldAddFilter(filter: Filter, valueCounts: ValueCounts, select
   // user wants everything except unknowns
   if (filter.value == null) return !filter.includeUnknown;
 
-  if (filter.isRange) {
-    const values = valueCounts
-      .filter(entry => entry.value != null)
-      .map(entry => filter.type === 'number' ? Number(entry.value) : entry.value);
-
-    // these type assertions are required since Array.prototype.filter does not narrow types.
-    const summaryMin = min(values) as string | number;
-    const summaryMax = max(values) as string | number;
-    return (
-      (filter.value.min == null && filter.value.max == null) ||
-      (filter.value.min != null && filter.value.min > summaryMin) ||
-      (filter.value.max != null && filter.value.max < summaryMax)
-    );
-  }
+  if (filter.isRange) return filter.value.min == null && filter.value.max == null;
 
   return filter.value.length !== valueCounts.filter(item => item.value != null).length;
 }
