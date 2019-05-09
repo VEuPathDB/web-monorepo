@@ -2,7 +2,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { Action } from 'wdk-client/Actions';
 import { stubTrue } from 'lodash/fp';
-import { mergeMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { Step } from 'wdk-client/Utils/WdkUser';
 import {
@@ -10,7 +10,12 @@ import {
   requestStepUpdate,
   fulfillStep,
   fulfillStepError,
-  fulfillStepUnauthorized
+  fulfillStepUnauthorized,
+  requestStepSearchConfigUpdate,
+  fulfillDeleteStep,
+  requestCreateStep,
+  fulfillCreateStep,
+  requestDeleteStep
 } from 'wdk-client/Actions/StepActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 
@@ -34,6 +39,7 @@ export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
 
     case requestStep.type:
+    case requestStepSearchConfigUpdate.type:
     case requestStepUpdate.type: {
       const { stepId } = action.payload;
       const entry = state.steps[stepId];
@@ -68,6 +74,13 @@ export function reduce(state: State = initialState, action: Action): State {
           step
         });
       }
+      
+      return state;
+    }
+
+    case fulfillDeleteStep.type: {
+      const stepId = action.payload.stepId;
+      state.steps[stepId] = undefined;
       return state;
     }
 
@@ -128,9 +141,54 @@ async function getFulfillStepUpdate(
   }
 }
 
+async function getFulfillStepSearchConfigUpdate(
+  [requestAction]: [InferAction<typeof requestStepSearchConfigUpdate>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillStep | typeof fulfillStepError | typeof fulfillStepUnauthorized>> {
+  const { stepId, answerSpec } = requestAction.payload;
+  try {
+    let step = await wdkService.updateStepSearchConfig(
+      stepId,
+      answerSpec
+    );
+    return fulfillStep(step);
+  }
+  catch(error) {
+    return 'status' in error && error.status === 403
+      ? fulfillStepUnauthorized(stepId)
+      : fulfillStepError(stepId, error.message);
+  }
+}
+
+async function getFulfillCreateStep(
+  [requestAction]: [InferAction<typeof requestCreateStep>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillCreateStep>> {
+  const { newStepSpec } = requestAction.payload;
+  let stepId = await wdkService.createStep(newStepSpec);
+
+  return fulfillCreateStep(stepId.id);
+}
+
+async function getFulfillDeleteStep(
+  [requestAction]: [InferAction<typeof requestDeleteStep>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillDeleteStep>> {
+  const { stepId } = requestAction.payload;
+  await wdkService.deleteStep(stepId);
+
+  return fulfillDeleteStep(stepId);
+}
+
 export const observe = combineEpics(
-  mergeMapRequestActionsToEpic([requestStep], getFulfillStep, {
+  mrate([requestStep], getFulfillStep, {
     areActionsNew: stubTrue
   }),
-  mergeMapRequestActionsToEpic([requestStepUpdate], getFulfillStepUpdate)
+  mrate([requestStepUpdate], getFulfillStepUpdate),
+  mrate([requestStepSearchConfigUpdate], getFulfillStepSearchConfigUpdate),
+  mrate([requestCreateStep], getFulfillCreateStep),
+  mrate([requestDeleteStep], getFulfillDeleteStep)
 );

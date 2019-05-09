@@ -28,7 +28,7 @@ import {
   takeEpicInWindow
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { fulfillStep, requestStep, requestSearchConfigUpdate } from 'wdk-client/Actions/StepActions';
+import { fulfillStep, requestStep, requestStepSearchConfigUpdate } from 'wdk-client/Actions/StepActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { Step } from 'wdk-client/Utils/WdkUser';
 
@@ -178,10 +178,10 @@ async function getRequestSearchConfigUpdate(
   [openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof requestSearchConfigUpdate>> {
+): Promise<InferAction<typeof requestStepSearchConfigUpdate>> {
   const { searchConfig, searchName } = stepAction.payload.step;
   const filterValue = updateFilterActionToFilterValue(updateFilterAction);
-  return requestSearchConfigUpdate(
+  return requestStepSearchConfigUpdate(
     openAction.payload.stepId,
     {
       ...searchConfig,

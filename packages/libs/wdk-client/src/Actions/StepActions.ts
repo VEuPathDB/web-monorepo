@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { SearchConfig, StandardReportConfig, Answer, AnswerSpec } from "wdk-client/Utils/WdkModel";
+import { StandardReportConfig, Answer, AnswerSpec } from "wdk-client/Utils/WdkModel";
 import { Step, PatchStepSpec } from "wdk-client/Utils/WdkUser";
 import { NewStepSpec } from '../Utils/WdkUser';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
@@ -14,9 +14,9 @@ export const requestStepUpdate = makeActionCreator(
     (stepId: number, stepSpec: PatchStepSpec) => ({ stepId, stepSpec })
 );
 
-export const requestSearchConfigUpdate = makeActionCreator(
-    'requestSearchConfigUpdate',
-    (stepId: number, searchConfig: SearchConfig) => ({ stepId, searchConfig })
+export const requestStepSearchConfigUpdate = makeActionCreator(
+    'requestStepSearchConfigUpdate',
+    (stepId: number, answerSpec: AnswerSpec) => ({ stepId, answerSpec })
 );
 
 export const fulfillStep = makeActionCreator(
@@ -74,15 +74,10 @@ export const fulfillDeleteStep = makeActionCreator(
     (stepId: number) => ({ stepId })
 );
 
-export const requestUpdateStepSearchConfig = makeActionCreator(
-    'requestUpdateStepSearchConfig',
-    (stepId: number, searchConfig: AnswerSpec) => ({ stepId, searchConfig })
-);
-
 export type Action =
     | InferAction<typeof requestStep>
     | InferAction<typeof requestStepUpdate>
-    | InferAction<typeof requestSearchConfigUpdate>
+    | InferAction<typeof requestStepSearchConfigUpdate>
     | InferAction<typeof fulfillStep>
     | InferAction<typeof fulfillStepError>
     | InferAction<typeof fulfillStepUnauthorized>
@@ -94,6 +89,6 @@ export type Action =
     | InferAction<typeof fulfillStepStandardReport>
     | InferAction<typeof requestDeleteStep>
     | InferAction<typeof fulfillDeleteStep>
-    | InferAction<typeof requestUpdateStepSearchConfig>
+
 
 
