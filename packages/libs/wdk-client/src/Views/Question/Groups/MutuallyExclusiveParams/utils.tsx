@@ -3,7 +3,23 @@ import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { Dictionary, keys, mapValues, values } from 'lodash';
 import { createSelector } from 'reselect';
 
-const groupXorSubstates = (xorGrouping: Dictionary<string[]>) => (state: QuestionState): Dictionary<QuestionState> => {
+const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (state: QuestionState): string => {
+  const xorGroup = state.question.groups.find(group => {
+    const groupParameterSet = new Set(group.parameters);
+
+    return values(xorGrouping).every(
+      xorGroupKeys => xorGroupKeys.some(
+        xorGroupKey => groupParameterSet.has(xorGroupKey)
+      )
+    );
+  });
+
+  return xorGroup === undefined
+    ? 'hidden'
+    : xorGroup.name;
+}
+
+const groupXorParameters = (xorGrouping: Dictionary<string[]>) => (state: QuestionState, xorGroupKey: string): Dictionary<string[]> => {
   const xorGroupingUniverse = values(xorGrouping).flat();
   const xorGroupingSets = mapValues(xorGrouping, parameterKeys => new Set(parameterKeys));
   const xorGroupingNegations = mapValues(xorGroupingSets, parameterSet => {
@@ -11,36 +27,33 @@ const groupXorSubstates = (xorGrouping: Dictionary<string[]>) => (state: Questio
     return new Set(negation);
   });
 
-  return mapValues(
-    xorGroupingNegations,
-    xorGroupingNegation => {
-      return {
-        ...state,
-        question: {
-          ...state.question,
-          groups: state.question.groups.filter(
-            group => !xorGroupingNegation.has(group.name)
-          )
-        }
-      };
-    }
-  );
-};
+  const xorGroup = state.question.groupsByName[xorGroupKey];
 
-const isXorGroupingNeeded = (xorGrouping: Dictionary<string[]>) => (xorSubstates: Dictionary<QuestionState>) => 
-  keys(xorGrouping).every(xorGroupKey => xorSubstates[xorGroupKey].question.groups.length > 0);
+  return xorGroup === undefined
+    ? mapValues(
+      xorGroupingNegations,
+      () => []
+    )
+    : mapValues(
+      xorGroupingNegations,
+      xorGroupingNegation => xorGroup.parameters.filter(parameter =>
+        !xorGroupingNegation.has(parameter)
+      )
+    );
+};
 
 const xorGroupingByChromosomeAndSequenceID = {
   'Chromosome': ['organismSinglePick', 'chromosomeOptional', 'chromosomeOptionalForNgsSnps'],
   'Sequence ID': ['sequenceId']
 };
 
-export const groupXorSubstatesByChromosomeAndSequenceID = createSelector(
+export const keyForXorGroupingByChromosomeAndSequenceID = createSelector(
   (state: QuestionState) => state,
-  groupXorSubstates(xorGroupingByChromosomeAndSequenceID)
+  findXorGroupKey(xorGroupingByChromosomeAndSequenceID)
 );
 
-export const isXorGroupingByChromosomeAndSequenceIDNeeded = createSelector(
-  groupXorSubstatesByChromosomeAndSequenceID,
-  isXorGroupingNeeded(xorGroupingByChromosomeAndSequenceID)
+export const groupXorParametersByChromosomeAndSequenceID = createSelector(
+  (state: QuestionState) => state,
+  keyForXorGroupingByChromosomeAndSequenceID,
+  groupXorParameters(xorGroupingByChromosomeAndSequenceID)
 );

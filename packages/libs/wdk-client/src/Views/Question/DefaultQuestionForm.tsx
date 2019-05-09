@@ -165,7 +165,7 @@ type ParameterListProps = {
   parameterMap: Record<string, Parameter>;
   parameterElements: Record<string, React.ReactNode>;
 }
-function ParameterList(props: ParameterListProps) {
+export function ParameterList(props: ParameterListProps) {
   const { parameters, parameterMap, parameterElements } = props;
   return (
     <div className={cx('ParameterList')}>
