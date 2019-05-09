@@ -8,6 +8,10 @@ import heroImageUrl from 'site/images/mbio_hero.png';
 import vizData from './visualizations.json';
 import './StudyCardOverrides.scss';
 
+import { StudyCard } from 'ebrc-client/App/Studies';
+import { SearchCard } from 'ebrc-client/App/Searches';
+import { ImageCard } from 'ebrc-client/App/ImageCard';
+
 export default {
   SiteHeader: () => SiteHeader,
   IndexController: () => IndexController,
@@ -99,23 +103,36 @@ function getHomeContent({ studies, searches, visualizations }) {
     {
       title: 'Explore the Studies',
       contentType: 'StudyCardList',
+      contentNamePlural: 'studies',
       items: studies.entities,
-      isLoading: studies.loading
+      isLoading: studies.loading,
+      isExpandable: true,
+      cardComponent: StudyCard,
+      getSearchStringForItem: item => 
+        item.name + ' ' + item.headLine + ' ' + item.points.join(' ')
     },
     {
       title: 'Explore Example Searches',
       description: 'MicrobiomeDB can be used to employ a sophisticated search strategy system to explore study data. Use the example searches below to jump to saved strategies, view their results and get acquainted with MicrobiomeDB capabilities.',
       viewAllAppUrl: '/showApplication.do?tab=public_strat',
       contentType: 'SearchCardList',
+      contentNamePlural: 'searches',
       items: searches.entities,
-      isLoading: searches.loading
+      isLoading: searches.loading,
+      cardComponent: SearchCard,
+      getSearchStringForItem: item =>
+        item.name + ' ' + item.description
     },
     {
       title: 'Explore Visualization Tools',
       description: 'Gain clear insights into your data and illustrate powerful connections using our visualization and analysis tools. Use the brief tutorials below to get learn how to get started exploring data with these resources.',
       contentType: 'ImageCardList',
+      contentNamePlural: 'visualizations',
       items: visualizations.entities,
-      isLoading: visualizations.loading
+      isLoading: visualizations.loading,
+      cardComponent: ImageCard,
+      getSearchStringForItem: item =>
+        item.title + ' ' + item.description
     }
   ];
 }
