@@ -166,10 +166,10 @@ async function getFulfillCreateStep(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillCreateStep>> {
-  const { newStepSpec } = requestAction.payload;
+  const { newStepSpec, requestTimestamp } = requestAction.payload;
   let stepId = await wdkService.createStep(newStepSpec);
 
-  return fulfillCreateStep(stepId.id);
+  return fulfillCreateStep(stepId.id, requestTimestamp);
 }
 
 async function getFulfillDeleteStep(

@@ -36,32 +36,32 @@ export const fulfillStepUnauthorized = makeActionCreator(
 
 export const requestCreateStep = makeActionCreator(
     'requestCreateStep',
-    (newStepSpec: NewStepSpec) => ({ newStepSpec })
+    (newStepSpec: NewStepSpec) => ({ newStepSpec, requestTimestamp: Date.now() })
 );
 
 export const fulfillCreateStep = makeActionCreator(
     'fulfillCreateStep',
-    (stepId: number) => ({ stepId })
+    (stepId: number, requestTimestamp: number) => ({ stepId, requestTimestamp })
 );
 
 export const requestStepCustomReport = makeActionCreator(
     'requestStepCustomReport',
-    (stepId: number, reportConfig: AnswerFormatting) => ({ stepId, formatting: reportConfig })
+    (stepId: number, reportConfig: AnswerFormatting) => ({ stepId, formatting: reportConfig, requestTimestamp: Date.now() })
 );
 
 export const fulfillStepCustomReport = makeActionCreator(
     'fulfillStepCustomReport',
-    (stepId: number, report: any) => ({ stepId, report })
+    (stepId: number, report: any, requestTimestamp: number) => ({ stepId, report, requestTimestamp })
 );
 
 export const requestStepStandardReport = makeActionCreator(
     'requestStepCustomReport',
-    (stepId: number, reportConfig: StandardReportConfig) => ({ stepId, reportConfig })
+    (stepId: number, reportConfig: StandardReportConfig) => ({ stepId, reportConfig, requestTimestamp: Date.now() })
 );
 
 export const fulfillStepStandardReport = makeActionCreator(
     'fulfillStepStandardReport',
-    (stepId: number, report: Answer) => ({ stepId, report })
+    (stepId: number, report: Answer, requestTimestamp: number) => ({ stepId, report, requestTimestamp })
 );
 
 export const requestDeleteStep = makeActionCreator(

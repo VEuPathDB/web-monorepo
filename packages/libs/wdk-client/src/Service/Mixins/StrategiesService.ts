@@ -12,8 +12,8 @@ export default (base: ServiceBase) => {
     })
   }
 
-  function createStrategy(newStepSpec: NewStrategySpec, userId: string = "current") {
-    return base._fetchJson<Identifier>('post', `/users/${userId}/strategies`, JSON.stringify(newStepSpec));
+  function createStrategy(newStrategySpec: NewStrategySpec, userId: string = "current") {
+    return base._fetchJson<Identifier>('post', `/users/${userId}/strategies`, JSON.stringify(newStrategySpec));
   }
 
   function duplicateStrategy(copyStepSpec: DuplicateStrategySpec, userId: string = "current") {
@@ -24,6 +24,7 @@ export default (base: ServiceBase) => {
     return base._fetchJson<void>('delete', `/users/${userId}/strategies`, JSON.stringify(deleteStrategiesSpecs));
   }
 
+  // TODO:  use a proper decoder to ensure correct decoding of the StrategyDetails
   function getStrategy(strategyId: number, userId: string = "current") {
     return base._fetchJson<StrategyDetails>('get', `/users/${userId}/strategies/${strategyId}`);
   }
@@ -33,7 +34,7 @@ export default (base: ServiceBase) => {
   }
   
   function patchStrategyProperties(strategyId: number, strategyProperties: StrategyProperties, userId: string = "current") {
-    return base._fetchJson<Identifier>('patch', `/users/${userId}/strategies`, JSON.stringify(strategyProperties));
+    return base._fetchJson<Identifier>('patch', `/users/${userId}/strategies/${strategyId}`, JSON.stringify(strategyProperties));
   }
 
   function putStrategyStepTree(strategyId: number, newStrategySpec: NewStrategySpec, userId: string = "current") {
