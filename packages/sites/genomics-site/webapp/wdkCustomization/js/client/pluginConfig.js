@@ -7,6 +7,7 @@ import {
 } from 'wdk-client/Plugins';
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
+import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
 
 export default [
   {
@@ -52,5 +53,10 @@ export default [
     type: 'questionFilter',
     name: 'gene_boolean_filter_array',
     component: MatchedTranscriptsFilterPlugin
+  },
+  {
+    type: 'questionForm',
+    name: 'CompoundsByFoldChange',
+    component: CompoundsByFoldChangeForm
   }
 ];
