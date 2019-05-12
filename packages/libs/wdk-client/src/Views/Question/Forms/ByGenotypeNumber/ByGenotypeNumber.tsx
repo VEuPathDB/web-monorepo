@@ -11,6 +11,7 @@ import {
   updateParamValue,
   submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
+import { SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 
 type EventHandlers = {
@@ -46,9 +47,7 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
     <form onSubmit={onSubmit(dispatchAction, urlSegment)}>
       {parameterElements.genotype}
       <div className={cx('SubmitSection')}>
-        <button type="submit" className="btn">
-          Get Answer
-        </button>
+        <SubmitButton/>
       </div>
       <hr />
       <b>Data Sets used by this search</b>

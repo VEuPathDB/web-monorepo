@@ -55,12 +55,15 @@ interface GroupState {
   isVisible: boolean;
 }
 
+export type QuestionWithMappedParameters =
+  QuestionWithParameters & {
+    parametersByName: Record<string, Parameter>;
+    groupsByName: Record<string, ParameterGroup>;
+  };
+
 export type QuestionState = {
   questionStatus: 'loading' | 'error' | 'not-found' | 'complete';
-  question: QuestionWithParameters & {
-    parametersByName: Record<string, Parameter>;
-    groupsByName: Record<string, ParameterGroup>
-  };
+  question: QuestionWithMappedParameters;
   recordClass: RecordClass;
   paramValues: Record<string, string>;
   paramUIState: Record<string, any>;

@@ -4,8 +4,8 @@ import { HelpIcon, IconAlt } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { QuestionWithParameters, Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   changeGroupVisibility,
   updateParamValue,
@@ -14,107 +14,107 @@ import {
   updateQuestionWeight
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
-import { CompoundsByFoldChange } from 'wdk-client/Views/Question/Groups/FoldChange/foldChangeGroup';
+import { TooltipPosition } from 'wdk-client/Components/Overlays/Tooltip';
+
+type TextboxChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,
   updateParamValue: typeof updateParamValue
 }
 
-type Props = {
+export type Props = {
   state: QuestionState;
   dispatchAction: DispatchAction;
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
+  renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
 }
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 const tooltipPosition = { my: 'right center', at: 'left center' };
 
-export default class DefaultQuestionForm extends React.Component<Props> {
+export default function DefaultQuestionForm(props: Props) {
 
-  handleSubmit = (e: React.FormEvent) => {
-    const { dispatchAction, state: { question } } = this.props;
+  const { dispatchAction, state } = props;
+  const { question, customName, weight } = state;
+
+  let handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatchAction(submitQuestion({ searchName: question.urlSegment }));
   }
 
-  handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { dispatchAction, state: { question } } = this.props;
+  let handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatchAction(updateCustomQuestionName({ searchName: question.urlSegment, customName: event.target.value }));
   }
 
-  handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { dispatchAction, state: { question } } = this.props;
+  let handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatchAction(updateQuestionWeight({ searchName: question.urlSegment, weight: event.target.value }));
   }
 
-  render() {
-    const { state, eventHandlers, parameterElements } = this.props
-    const { customName, groupUIState, question, weight } = state;
-    return (
-      <div className={cx()}>
-        <h1>{question.displayName}</h1>
-        <form onSubmit={this.handleSubmit}>
-          {question.groups
-            .filter(group => group.displayType !== 'hidden')
-            .map(group =>
-              group.displayType === 'dynamic' && state.question.urlSegment === 'CompoundsByFoldChange'
-                ? (
-                  <CompoundsByFoldChange {...this.props} />
-                )
-                : (
-                <Group
-                  key={group.name}
-                  searchName={question.urlSegment}
-                  group={group}
-                  uiState={groupUIState[group.name]}
-                  onVisibilityChange={eventHandlers.setGroupVisibility}
-                >
-                  <ParameterList
-                    parameterMap={question.parametersByName}
-                    parameterElements={parameterElements}
-                    parameters={group.parameters}
-                  />
-                </Group>
-              )
-            )
-          }
-          <div className={cx('SubmitSection')}>
-            <button type="submit" className="btn">
-              Get Answer
-            </button>
-            <div>
-              <HelpIcon tooltipPosition={tooltipPosition}>Give this search strategy a custom name. The name will appear in the first step box (truncated to 15 characters).</HelpIcon>
-              <input
-                type="text"
-                placeholder="Give this search a name (optional)"
-                value={customName}
-                onChange={this.handleCustomNameChange}
-              />
-            </div>
-            <div>
-              <HelpIcon tooltipPosition={tooltipPosition}>Give this search a weight (for example 10, 200, -50, integer only). It will show in a column in your result. In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches. Default weight is 10.</HelpIcon>
-              <input
-                type="text"
-                pattern="[+-]?\d*"
-                placeholder="Give this search a weight (optional)"
-                value={weight}
-                onChange={this.handleWeightChange}
-              />
-            </div>
-          </div>
-          {question.description && (
-            <div>
-              <hr/>
-              <h2>Description</h2>
-              {safeHtml(question.description)}
-            </div>
-          )}
-        </form>
-      </div>
-    )
-  }
+  let renderParamGroup = props.renderParamGroup ? props.renderParamGroup : renderDefaultParamGroup;
+
+  return (
+    <div className={cx()}>
+      <h1>{question.displayName}</h1>
+      <form onSubmit={handleSubmit}>
+        {question.groups
+          .filter(group => group.displayType !== 'hidden')
+          .map(group => renderParamGroup(group, props))
+        }
+        <SubmitSection
+          className={cx('SubmitSection')}
+          tooltipPosition={tooltipPosition}
+          customName={customName}
+          weight={weight}
+          handleCustomNameChange={handleCustomNameChange}
+          handleWeightChange={handleWeightChange}
+        />
+        <QuestionDescription description={question.description}/>
+      </form>
+    </div>
+  );
+}
+
+export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props) {
+  let { state, eventHandlers, parameterElements } = formProps;
+  let { question, groupUIState } = state;
+  return (
+    <DefaultGroup
+      question={question}
+      group={group}
+      uiState={groupUIState[group.name]}
+      onVisibilityChange={eventHandlers.setGroupVisibility}
+      parameterElements={parameterElements}
+    />
+  );
+}
+
+type DefaultGroupProps = {
+  question: QuestionWithMappedParameters;
+  group: ParameterGroup;
+  uiState: any;
+  onVisibilityChange: EventHandlers['setGroupVisibility'];
+  parameterElements: Record<string, React.ReactNode>;
+}
+
+export function DefaultGroup(props: DefaultGroupProps) {
+  let { question, group, uiState, onVisibilityChange, parameterElements } = props;
+  return (
+    <Group
+      key={group.name}
+      searchName={question.urlSegment}
+      group={group}
+      uiState={uiState}
+      onVisibilityChange={onVisibilityChange}
+    >
+      <ParameterList
+        parameterMap={question.parametersByName}
+        parameterElements={parameterElements}
+        parameters={group.parameters}
+      />
+    </Group>
+  );
 }
 
 type GroupProps = {
@@ -125,11 +125,10 @@ type GroupProps = {
   children: React.ReactChild;
 }
 
-function Group(props: GroupProps) {
+export function Group(props: GroupProps) {
   switch(props.group.displayType) {
     case 'ShowHide':
       return <ShowHideGroup {...props}/>
-
     default:
       return <div>{props.children}</div>;
   }
@@ -159,12 +158,12 @@ function ShowHideGroup(props: GroupProps) {
   )
 }
 
-
 type ParameterListProps = {
   parameters: string[];
   parameterMap: Record<string, Parameter>;
   parameterElements: Record<string, React.ReactNode>;
 }
+
 export function ParameterList(props: ParameterListProps) {
   const { parameters, parameterMap, parameterElements } = props;
   return (
@@ -194,3 +193,99 @@ function ParameterHeading(props: { parameter: Parameter}) {
   )
 }
 
+export function SubmitButton() {
+  return (
+    <button type="submit" className="btn">
+      Get Answer
+    </button>
+  );
+}
+
+interface SearchNameInputProps {
+  tooltipPosition: TooltipPosition;
+  customName?: string;
+  handleCustomNameChange: TextboxChangeHandler;
+}
+
+export function SearchNameInput(props: SearchNameInputProps) {
+  let { tooltipPosition, customName, handleCustomNameChange } = props;
+  return (
+    <div>
+      <HelpIcon tooltipPosition={tooltipPosition}>
+        Give this search strategy a custom name. The name will appear in the
+        first step box (truncated to 15 characters).
+      </HelpIcon>
+      <input
+        type="text"
+        placeholder="Give this search a name (optional)"
+        value={customName}
+        onChange={handleCustomNameChange}
+      />
+    </div>
+  );
+}
+
+interface WeightInputProps {
+  tooltipPosition: TooltipPosition;
+  weight?: string;
+  handleWeightChange: TextboxChangeHandler;
+}
+
+export function WeightInput(props: WeightInputProps) {
+  let { tooltipPosition, weight, handleWeightChange } = props;
+  return (
+    <div>
+      <HelpIcon tooltipPosition={tooltipPosition}>
+        Give this search a weight (for example 10, 200, -50, integer only). It
+        will show in a column in your result. In a search strategy, unions and
+        intersects will sum the weights, giving higher scores to items found in
+        multiple searches. Default weight is 10.
+      </HelpIcon>
+      <input
+        type="text"
+        pattern="[+-]?\d*"
+        placeholder="Give this search a weight (optional)"
+        value={weight}
+        onChange={handleWeightChange}
+      />
+    </div>
+  );
+}
+
+export function QuestionDescription(props: { description?: string }) {
+  return !props.description ? null : (
+    <div>
+      <hr/>
+      <h2>Description</h2>
+      {safeHtml(props.description)}
+    </div>
+  );
+}
+
+interface SubmitSectionProps {
+  className: string;
+  tooltipPosition: TooltipPosition;
+  customName?: string;
+  weight?: string;
+  handleCustomNameChange: TextboxChangeHandler;
+  handleWeightChange: TextboxChangeHandler;
+}
+
+export function SubmitSection(props: SubmitSectionProps) {
+  let { className, tooltipPosition, customName, handleCustomNameChange, weight, handleWeightChange } = props;
+  return (
+    <div className={className}>
+      <SubmitButton/>
+      <SearchNameInput
+        tooltipPosition={tooltipPosition}
+        customName={customName}
+        handleCustomNameChange={handleCustomNameChange}
+      />
+      <WeightInput
+        tooltipPosition={tooltipPosition}
+        weight={weight}
+        handleWeightChange={handleWeightChange}
+      />
+    </div>
+  );
+}
