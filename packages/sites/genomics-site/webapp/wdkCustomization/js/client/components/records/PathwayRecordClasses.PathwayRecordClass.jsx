@@ -1139,7 +1139,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
   onExperimentChange(graph) {
     this.state.cy.changeExperiment(this.props.record.attributes[graph]);
-    this.setState({graphSelectorOpen: false});
+    this.setState({ openSelector: null});
   }
 
   onGeneraChange(generaSelection) {
