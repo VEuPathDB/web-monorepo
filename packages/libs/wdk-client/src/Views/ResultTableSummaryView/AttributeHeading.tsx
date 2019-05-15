@@ -5,7 +5,7 @@ import {
   Question
 } from 'wdk-client/Utils/WdkModel';
 import AttributeAnalysisButton from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { Plugin, PluginEntryContext } from 'wdk-client/Utils/ClientPlugin';
 import { OpenAttributeAnalysis, CloseAttributeAnalysis } from 'wdk-client/Views/ResultTableSummaryView/Types';
 
 interface Props {
@@ -60,7 +60,7 @@ export default function AttributeHeading(props: Props) {
       )}
 
       {attribute.formats.map(reporter => {
-        const context = {
+        const context: PluginEntryContext = {
           type: 'attributeAnalysis',
           name: reporter.type,
           recordClassName: recordClass.fullName,

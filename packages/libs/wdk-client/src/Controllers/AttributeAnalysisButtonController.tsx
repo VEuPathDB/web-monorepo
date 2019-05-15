@@ -12,7 +12,7 @@ import { wrappable } from "wdk-client/Utils/ComponentUtils";
 import { Seq } from "wdk-client/Utils/IterableUtils";
 
 import AttributeAnalysisButton from "wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton";
-import { Plugin } from "wdk-client/Utils/ClientPlugin";
+import { Plugin, PluginEntryContext } from "wdk-client/Utils/ClientPlugin";
 import { Step } from "wdk-client/Utils/WdkUser";
 import { Reporter } from "wdk-client/Utils/WdkModel";
 
@@ -59,7 +59,7 @@ class AttributeAnalysisButtonController extends ViewController<Props> {
 
     if ( reporter == null || step == null) return null;
 
-    const context = {
+    const context: PluginEntryContext = {
       type: 'attributeAnalysis',
       name: reporter.type,
       recordClassName: step.recordClassName,
