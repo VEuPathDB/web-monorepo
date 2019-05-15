@@ -13,6 +13,7 @@ function Error(props: Props) {
       {props.children || (
         <p>
           Something went wrong. Please try again later.
+          <br />
           {props.message}
         </p>
       )}
