@@ -3,8 +3,16 @@ import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 
+export type PluginType =
+  'attributeAnalysis' |
+  'questionForm' |
+  'questionFormParameter' |
+  'summaryView' |
+  'stepAnalysis' |
+  'questionFilter';
+
 export interface PluginEntryContext {
-  type: string;
+  type: PluginType;
   name?: string;
   recordClassName?: string;
   searchName?: string;
@@ -60,7 +68,7 @@ type CompositePluginComponent<PluginProps> = React.ComponentType<CompositePlugin
  *
  */
 export interface ClientPluginRegistryEntry<PluginProps> {
-  type: string;
+  type: PluginType;
   name?: string;
   recordClassName?: string;
   searchName?: string;
