@@ -2,7 +2,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="api" uri="http://eupathdb.org/taglib" %>
 <%@ taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome" %>
 
 <c:set var="props" value="${applicationScope.wdkModel.properties}" />
@@ -16,7 +15,7 @@
 
 <c:if test="${project == 'EuPathDB'}">
   <c:catch var="e">
-    <api:configurations var="config" configfile="/WEB-INF/wdk-model/config/projects.xml" />
+    <%<--api:configurations var="config" configfile="/WEB-INF/wdk-model/config/projects.xml" />--%>
   </c:catch>
   <c:if test="${e!=null}">
     <font size="-1" color="#CC0033">News not available for the component Sites</font>

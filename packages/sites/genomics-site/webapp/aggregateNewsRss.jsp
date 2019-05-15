@@ -8,8 +8,6 @@
     taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
 %><%@ 
     taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
-%><%@ 
-    taglib prefix="api" uri="http://eupathdb.org/taglib"
 %><%@
     taglib prefix="wir" uri="http://crashingdaily.com/taglib/wheninrome"
 %><c:catch 
@@ -20,9 +18,9 @@
     value="en-US"
 /><c:set 
     var="project" value="${applicationScope.wdkModel.name}" 
-/><api:configurations 
+/><%--<api:configurations 
     var="config" configfile="/WEB-INF/wdk-model/config/projects.xml"
-/><%--
+/>--%><%--
  wir:feed returns a SyndFeed object which has a Bean interface for
 iteration and getting SyndEntry objects and their attributes.
 See the Rome API for SyndEntry attributes you can get.

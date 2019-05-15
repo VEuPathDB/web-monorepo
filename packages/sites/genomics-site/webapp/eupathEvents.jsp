@@ -7,7 +7,6 @@ Transform XML message into Upcoming and Past events tables.
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<%@ taglib prefix="api" uri="http://eupathdb.org/taglib"%>
 
 <%-- obsolete method to fetch data via cgi
 <c:set var='currentDataUrl'>
@@ -22,14 +21,13 @@ http://${pageContext.request.serverName}/cgi-bin/xmlMessageRead?messageCategory=
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 <c:set var='projectName' value='${applicationScope.wdkModel.name}'/>
 
-
-
 <c:set var='xsltUrl'>
 http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
 </c:set>
 
 <c:catch var='e'>
 
+<%--
 <api:xmlMessages var="currentEvents" 
     messageCategory="Event"
     stopDateSort="DESC"
@@ -40,7 +38,7 @@ http://${pageContext.request.serverName}/assets/xsl/eupathEvents.xsl
     stopDateSort="DESC"
     range="expired"
 />
-
+ --%>
 <c:import var="xslt" url="${xsltUrl}" />
 
 <html>
