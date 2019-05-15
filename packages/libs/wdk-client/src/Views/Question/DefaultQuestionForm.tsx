@@ -125,7 +125,7 @@ type GroupProps = {
   children: React.ReactChild;
 }
 
-export function Group(props: GroupProps) {
+function Group(props: GroupProps) {
   switch(props.group.displayType) {
     case 'ShowHide':
       return <ShowHideGroup {...props}/>

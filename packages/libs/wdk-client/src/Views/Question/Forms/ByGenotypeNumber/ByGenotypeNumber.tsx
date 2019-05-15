@@ -2,29 +2,12 @@ import React from 'react';
 
 import { memoize } from 'lodash';
 
-import { Link } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import {
-  changeGroupVisibility,
-  updateParamValue,
-  submitQuestion
-} from 'wdk-client/Actions/QuestionActions';
-import { SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { submitQuestion } from 'wdk-client/Actions/QuestionActions';
+import { SubmitButton, Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
-
-type EventHandlers = {
-  setGroupVisibility: typeof changeGroupVisibility,
-  updateParamValue: typeof updateParamValue
-};
-
-type Props = {
-  state: QuestionState;
-  dispatchAction: DispatchAction;
-  eventHandlers: EventHandlers;
-  parameterElements: Record<string, React.ReactNode>;
-};
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -47,12 +30,7 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
     <form onSubmit={onSubmit(dispatchAction, urlSegment)}>
       {parameterElements.genotype}
       <div className={cx('SubmitSection')}>
-        <SubmitButton/>
+        <SubmitButton />
       </div>
-      <hr />
-      <b>Data Sets used by this search</b>
-      <Link to="/record/dataset/DS_5dfd0d0bb2">
-        <i>T. gondii</i> RFLP genotypes (Chunlei Su lab)
-      </Link>
     </form>
   </div>;

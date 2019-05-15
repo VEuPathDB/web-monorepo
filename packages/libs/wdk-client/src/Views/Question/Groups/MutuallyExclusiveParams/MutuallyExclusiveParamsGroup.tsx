@@ -1,89 +1,64 @@
 import React, { useState } from 'react';
 
-import { changeGroupVisibility, updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { Tabs } from 'wdk-client/Components';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { ParameterList } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { groupXorParametersByChromosomeAndSequenceID, keyForXorGroupingByChromosomeAndSequenceID } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/utils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { Props, renderDefaultParamGroup } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { groupXorParametersByChromosomeAndSequenceID, keyForXorGroupingByChromosomeAndSequenceID, restrictParameters } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/utils';
 
-type EventHandlers = {
-  setGroupVisibility: typeof changeGroupVisibility,
-  updateParamValue: typeof updateParamValue
-};
+import 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/MutuallyExclusiveParamsGroup.scss';
 
-type Props = {
-  state: QuestionState;
-  dispatchAction: DispatchAction;
-  eventHandlers: EventHandlers;
-  parameterElements: Record<string, React.ReactNode>;
-};
+const cx = makeClassNameHelper('wdk-MutuallyExclusiveParamsGroup');
 
-export const MutuallyExclusiveParams: React.FunctionComponent<Props> = ({
-  state,
-  parameterElements
-}) => {
-  const [activeTab, onTabSelected] = useState('Chromosome');
+export const mutuallyExclusiveParamsGroupRenderer = (group: ParameterGroup, props: Props) => {
+  const { state } = props
+
+  const [ activeTab, onTabSelected ] = useState('Chromosome');
 
   const xorGroupKey = keyForXorGroupingByChromosomeAndSequenceID(state);
   const xorGroupParameters = groupXorParametersByChromosomeAndSequenceID(state);
 
-  const chromosomeParameters = xorGroupParameters['Chromosome'];
-  const sequenceIdParameters = xorGroupParameters['Sequence ID'];
+  const chromosomeParameterKeys = xorGroupParameters['Chromosome'];
+  const sequenceIdParameterKeys = xorGroupParameters['Sequence ID'];
 
   return (
-    <div>
+    <>
       {
-        state.question.groups
-          .filter(group => group.displayType !== 'hidden')
-          .map(group =>
-            group.name !== xorGroupKey || !chromosomeParameters || !sequenceIdParameters
-              ? (
-                  <div>
-                    <ParameterList
-                      parameterMap={state.question.parametersByName}
-                      parameterElements={parameterElements}
-                      parameters={group.parameters}
-                    />
-                  </div>
-                )
-              : (
-                <Tabs
-                  key={group.name}
-                  activeTab={activeTab}
-                  onTabSelected={onTabSelected}
-                  tabs={[
+        group.name !== xorGroupKey || !chromosomeParameterKeys || !sequenceIdParameterKeys
+          ? renderDefaultParamGroup(group, props)
+          : (
+            <Tabs
+              key={group.name}
+              activeTab={activeTab}
+              onTabSelected={onTabSelected}
+              containerClassName={cx('Container')}
+              tabs={[
+                {
+                  key: 'Chromosome',
+                  display: 'Search by Chromosome',
+                  content: renderDefaultParamGroup(
+                    group,
                     {
-                      key: 'Chromosome',
-                      display: 'Chromosome',
-                      content: (
-                        <div>
-                          <ParameterList
-                            parameterMap={state.question.parametersByName}
-                            parameterElements={parameterElements}
-                            parameters={chromosomeParameters}
-                          />
-                        </div>
-                      )
-                    },
+                      ...props,
+                      state: restrictParameters(props.state, chromosomeParameterKeys)
+                    }
+                  )
+                },
+                {
+                  key: 'Sequence ID',
+                  display: 'Search by Sequence ID',
+                  content: renderDefaultParamGroup(
+                    group,
                     {
-                      key: 'Sequence ID',
-                      display: 'Sequence ID',
-                      content: (
-                        <div>
-                          <ParameterList
-                            parameterMap={state.question.parametersByName}
-                            parameterElements={parameterElements}
-                            parameters={sequenceIdParameters}
-                          />
-                        </div>
-                      )
-                    },
-                  ]}
-                />
-              )
+                      ...props,
+                      state: restrictParameters(props.state, sequenceIdParameterKeys)
+                    }
+                  )
+                }
+              ]}
+            />
           )
       }
-    </div>
+    </>
   );
 };
