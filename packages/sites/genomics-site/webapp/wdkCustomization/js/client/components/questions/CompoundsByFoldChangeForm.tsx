@@ -10,6 +10,6 @@ function renderParamGroup(group: ParameterGroup, formProps: Props) {
     renderDefaultParamGroup(group, formProps);
 }
 
-export function CompoundsByFoldChangeForm(formProps: Props) {
+export default function CompoundsByFoldChangeForm(formProps: Props) {
   return <DefaultQuestionForm {...formProps} renderParamGroup={renderParamGroup}/>;
 }
