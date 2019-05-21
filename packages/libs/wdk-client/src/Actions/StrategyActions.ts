@@ -1,5 +1,7 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { StrategySummary, NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree } from "wdk-client/Utils/WdkUser";
+import { StrategySummary, NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec } from "wdk-client/Utils/WdkUser";
+import { AnswerSpec, Answer, StandardReportConfig } from 'wdk-client/Utils/WdkModel';
+import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
 
 export const requestStrategies = makeActionCreator(
     'requestStrategies',
@@ -8,7 +10,7 @@ export const requestStrategies = makeActionCreator(
 
 export const fulfillStrategies = makeActionCreator(
     'fulfillStrategies',
-    (strategySummary: StrategySummary) => ({ strategySummary })
+    (strategySummaries: StrategySummary[]) => ({ strategySummaries })
 );
 
 export const requestCreateStrategy = makeActionCreator(
@@ -18,17 +20,37 @@ export const requestCreateStrategy = makeActionCreator(
 
 export const fulfillCreateStrategy = makeActionCreator(
     'fulfillCreateStrategy',
-    (strategySummary: StrategySummary, requestTimestamp: number) => ({ strategySummary, requestTimestamp })
+    (strategyId: number, requestTimestamp: number) => ({ strategyId, requestTimestamp })
+);
+
+export const requestStrategy = makeActionCreator(
+    'requestStrategy',
+    (strategyId: number) => ({ strategyId })
+);
+
+export const fulfillStrategy = makeActionCreator(
+    'fulfillStrategy',
+    (strategy: StrategyDetails) => ({ strategy })
+);
+
+export const requestDeleteOrRestoreStrategies = makeActionCreator(
+    'requestDeleteOrRestoreStrategies',
+    (deleteStrategiesSpecs: DeleteStrategySpec[]) => ({ deleteStrategiesSpecs, requestTimestamp: Date.now() })
+);
+
+export const fulfillDeleteOrRestoreStrategies = makeActionCreator(
+    'fulfillDeleteOrRestoreStrategies',
+    ( requestTimestamp: number) => ({ requestTimestamp })
 );
 
 export const requestDeleteStrategy = makeActionCreator(
     'requestDeleteStrategy',
-    (deleteStrategiesSpecs: DeleteStrategySpec[]) => ({ deleteStrategiesSpecs, requestTimestamp: Date.now() })
+    (strategyId: number) => ({ strategyId })
 );
 
 export const fulfillDeleteStrategy = makeActionCreator(
     'fulfillDeleteStrategy',
-    ( requestTimestamp: number) => ({ requestTimestamp })
+    (strategyId: number) => ({ strategyId })
 );
 
 export const requestDuplicateStrategy = makeActionCreator(
@@ -41,34 +63,14 @@ export const fulfillDuplicateStrategy = makeActionCreator(
     (strategyId: number, requestTimestamp: number) => ({ strategyId, requestTimestamp })
 );
 
-export const requestGetStrategy = makeActionCreator(
-    'requestGetStrategy',
-    (strategyId: number) => ({ strategyId })
-);
-
-export const fulfillGetStrategy = makeActionCreator(
-    'fulfillGetStrategy',
-    (strategy: StrategyDetails) => ({ strategy })
-);
-
 export const requestPatchStrategyProperties = makeActionCreator(
     'requestPatchStrategyProperties',
     (strategyId: number, strategyProperties: StrategyProperties) => ({ strategyId, strategyProperties })
 );
 
-export const fulfillPatchStrategyProperties = makeActionCreator(
-    'fulfillPatchStrategyProperties',
-    (strategyId: number) => ({ strategyId })
-);
-
 export const requestPutStrategyStepTree = makeActionCreator(
     'requestPutStrategyStepTree',
     (strategyId: number, newStrategySpec: NewStrategySpec) => ({ strategyId, newStrategySpec })
-);
-
-export const fulfillPutStrategyStepTree = makeActionCreator(
-    'fulfillPutStrategyStepTree',
-    (strategyId: number) => ({ strategyId })
 );
 
 export const requestGetDuplicatedStrategyStepTree = makeActionCreator(
@@ -81,6 +83,51 @@ export const fulfillGetDuplicatedStrategyStepTree = makeActionCreator(
     (strategyId: number, requestTimestamp: number, stepTree: StepTree) => ({ strategyId, requestTimestamp,  stepTree})
 );
 
+export const requestUpdateStepProperties = makeActionCreator(
+    'requestUpdateStepProperties',
+    (strategyId: number, stepId: number, stepSpec: PatchStepSpec) => ({ strategyId, stepId, stepSpec })
+);
+
+// need timestamp to match this request with its fulfill
+export const requestCreateStep = makeActionCreator(
+    'requestCreateStep',
+    (newStepSpec: NewStepSpec) => ({ newStepSpec, requestTimestamp: Date.now() })
+);
+
+export const fulfillCreateStep = makeActionCreator(
+    'fulfillCreateStep',
+    (stepId: number, requestTimestamp: number) => ({ stepId, requestTimestamp })
+);
+
+export const requestStepCustomReport = makeActionCreator(
+    'requestStepCustomReport',
+    (stepId: number, reportConfig: AnswerFormatting) => ({ stepId, formatting: reportConfig, requestTimestamp: Date.now() })
+);
+
+export const fulfillStepCustomReport = makeActionCreator(
+    'fulfillStepCustomReport',
+    (stepId: number, report: any, requestTimestamp: number) => ({ stepId, report, requestTimestamp })
+);
+
+export const requestStepStandardReport = makeActionCreator(
+    'requestStepCustomReport',
+    (stepId: number, reportConfig: StandardReportConfig) => ({ stepId, reportConfig, requestTimestamp: Date.now() })
+);
+
+export const fulfillStepStandardReport = makeActionCreator(
+    'fulfillStepStandardReport',
+    (stepId: number, report: Answer, requestTimestamp: number) => ({ stepId, report, requestTimestamp })
+);
+
+export const requestDeleteStep = makeActionCreator(
+    'requestDeleteStep',
+    (strategyId: number, stepId: number) => ({ strategyId, stepId })
+);
+
+export const requestUpdateStepSearchConfig = makeActionCreator(
+    'requestSearchConfigUpdate',
+    (strategyId: number, stepId: number, answerSpec: AnswerSpec) => ({ strategyId, stepId, answerSpec })
+);
 
 export type Action =
 | InferAction<typeof requestStrategies>
@@ -89,13 +136,23 @@ export type Action =
 | InferAction<typeof fulfillCreateStrategy>
 | InferAction<typeof requestDeleteStrategy>
 | InferAction<typeof fulfillDeleteStrategy>
+| InferAction<typeof requestDeleteOrRestoreStrategies>
+| InferAction<typeof fulfillDeleteOrRestoreStrategies>
 | InferAction<typeof requestDuplicateStrategy>
 | InferAction<typeof fulfillDuplicateStrategy>
-| InferAction<typeof requestGetStrategy>
-| InferAction<typeof fulfillGetStrategy>
+| InferAction<typeof requestStrategy>
+| InferAction<typeof fulfillStrategy>
 | InferAction<typeof requestPatchStrategyProperties>
-| InferAction<typeof fulfillPatchStrategyProperties>
 | InferAction<typeof requestPutStrategyStepTree>
-| InferAction<typeof fulfillPutStrategyStepTree>
 | InferAction<typeof requestGetDuplicatedStrategyStepTree>
 | InferAction<typeof fulfillGetDuplicatedStrategyStepTree>
+| InferAction<typeof requestUpdateStepProperties>
+| InferAction<typeof requestCreateStep>
+| InferAction<typeof fulfillCreateStep>
+| InferAction<typeof requestStepCustomReport>
+| InferAction<typeof fulfillStepCustomReport>
+| InferAction<typeof requestStepStandardReport>
+| InferAction<typeof fulfillStepStandardReport>
+| InferAction<typeof requestUpdateStepSearchConfig>
+| InferAction<typeof requestDeleteStep>
+

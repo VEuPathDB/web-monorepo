@@ -1,25 +1,18 @@
-import { combineEpics, StateObservable } from 'redux-observable';
 import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
 import {
-requestStrategyPanelVisibilityUpdate,
-fulfillStrategyPanelVisibility,
 setStepDetailsVisibility,
 setInsertStepWizardVisibility,
 setDeleteStepDialogVisibilty,
 setDeleteStrategyDialogVisibilty,
 setStrategyPanelHeightOverride,
-openStrategyPanel
 } from 'wdk-client/Actions/StrategyPanelActions';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { EpicDependencies } from 'wdk-client/Core/Store';
-import {
-  InferAction,
-  mergeMapRequestActionsToEpic as mrate,
-  takeEpicInWindow
-} from 'wdk-client/Utils/ActionCreatorUtils';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 
+/*
+* So far, this store module does not handle opening and closing the strategy panel.  it is just
+* the panel itself.  Opening and closing it might be controlled here or above in the workspace
+*/
 export const key = 'strategyPanel';
 export type State = IndexedState<ViewState>;
 
@@ -43,10 +36,7 @@ type ViewState = {
 
   function reduceView(state: ViewState = initialViewState, action: Action): ViewState {
     switch (action.type) {
-      case fulfillStrategyPanelVisibility.type: {
-        return { ...state, strategyPanelIsVisible: action.payload.isVisible };
-      }
-  
+
       case setStepDetailsVisibility.type: {
         return { ...state, visibleStepDetails: action.payload.stepId };
       }
@@ -72,10 +62,3 @@ type ViewState = {
       }
     }
   }
-
-  /*
-    open -> reqPanelOpen
-    reqPanelOpen -> fulfillPanelOpen
-    reqPanelUpdate -> fulfillPanelOpen
-  */
-  

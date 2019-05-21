@@ -13,7 +13,7 @@ import {
 
 export const openResultTableSummaryView = makeActionCreator(
   'resultTableSummaryView/open',
-  (viewId: string, stepId: number) => ({ stepId, viewId })
+  (viewId: string, strategyId: number, stepId: number) => ({ strategyId, stepId, viewId })
 );
 
 export const closeResultTableSummaryView = makeActionCreator(

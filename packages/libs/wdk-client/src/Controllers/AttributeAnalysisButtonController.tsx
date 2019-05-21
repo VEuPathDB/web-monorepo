@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { requestStep } from "wdk-client/Actions/StepActions";
+import { requestStrategy } from "wdk-client/Actions/StrategyActions";
 import {
   closeAttributeAnalysis,
   openAttributeAnalysis
@@ -23,7 +23,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
-  requestStep: typeof requestStep,
+  requestStrategy: typeof requestStrategy,
   openAttributeAnalysis: typeof openAttributeAnalysis,
   closeAttributeAnalysis: typeof closeAttributeAnalysis,
 };
@@ -32,6 +32,7 @@ type OwnProps = {
   attributeName: string;
   reporterType: string;
   stepId: number;
+  strategyId: number;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -42,7 +43,7 @@ class AttributeAnalysisButtonController extends ViewController<Props> {
   loadData() {
     // FIXME Add loading, etc, status to step store and check here
     if (this.props.step == null)
-      this.props.requestStep(+this.props.stepId);
+      this.props.requestStrategy(+this.props.strategyId);
   }
 
   renderView() {
@@ -91,9 +92,9 @@ class AttributeAnalysisButtonController extends ViewController<Props> {
 }
 
 function mapStateToProps(state: RootState, props: OwnProps): StateProps {
-  const { attributeName, reporterType, stepId } = props;
-  const stepEntry = state.steps.steps[stepId];
-  const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
+  const { attributeName, reporterType, stepId, strategyId } = props;
+  const strategyEntry = state.strategies.strategies[strategyId];
+  const step = strategyEntry && strategyEntry.status === 'success' && strategyEntry.strategy.steps[stepId]? strategyEntry.strategy.steps[stepId] : undefined;
   const { questions, recordClasses } = state.globalData;
 
   if (
@@ -135,5 +136,5 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
 
 export default connect(
   mapStateToProps,
-  { openAttributeAnalysis, closeAttributeAnalysis, requestStep }
+  { openAttributeAnalysis, closeAttributeAnalysis, requestStrategy }
 )(wrappable(AttributeAnalysisButtonController));

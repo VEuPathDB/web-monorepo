@@ -20,15 +20,11 @@ export default (base: ServiceBase) => {
     return stepMap.get(stepId)!;
   }
 
-  function updateStep(stepId: number, stepSpec: PatchStepSpec, userId: string = 'current'): Promise<Step> {
+  function updateStepProperties(stepId: number, stepSpec: PatchStepSpec, userId: string = 'current'): Promise<void> {
+    stepMap.delete(stepId);
     let data = JSON.stringify(stepSpec);
     let url = `/users/${userId}/steps/${stepId}`;
-    stepMap.set(stepId, base._fetchJson<Step>('patch', url, data).catch(error => {
-      // if the request fails, remove the response since a later request might succeed
-      stepMap.delete(stepId);
-      throw error;
-    }));
-    return stepMap.get(stepId)!;
+    return base._fetchJson<void>('patch', url, data);
   }
 
   function createStep(newStepSpec: NewStepSpec, userId: string = "current") {
@@ -74,15 +70,15 @@ export default (base: ServiceBase) => {
   }
 
   function updateStepSearchConfig(stepId: number, answerSpec: AnswerSpec, userId: string = "current") {
-    return base._fetchJson<Step>('put', `/users/${userId}/steps/${stepId}/search-config`, JSON.stringify(answerSpec));
+    return base._fetchJson<void>('put', `/users/${userId}/steps/${stepId}/search-config`, JSON.stringify(answerSpec));
   }
 
   return {
     findStep,
-    updateStep,
+    updateStepProperties,
     createStep,
-    getStepAnswer: getStepCustomReport,
-    getStepAnswerJson: getStepStandardReport,
+    getStepCustomReport,
+    getStepStandardReport,
     getStepFilterSummary,
     deleteStep,
     updateStepSearchConfig

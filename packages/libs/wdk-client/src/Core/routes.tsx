@@ -170,8 +170,9 @@ const routes: RouteEntry[] = [
 
   {
     path: '/step-analysis/:stepId(\\d+)',
-    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
+    component: (props: RouteComponentProps<{ strategyId: string, stepId: string, viewId: string }>) =>
       <StepAnalysisController
+        strategyId={Number(props.match.params.strategyId)}
         stepId={Number(props.match.params.stepId)}
         viewId={props.match.params.viewId}
       />
@@ -179,10 +180,11 @@ const routes: RouteEntry[] = [
 
   {
     path: '/step/:stepId(\\d+)/resultPanel',
-    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) => {
+    component: (props: RouteComponentProps<{ strategyId: string, stepId: string, viewId: string }>) => {
       const { initialTab } = parseQueryString(props);
       return (
         <ResultPanelController
+          strategyId={Number(props.match.params.strategyId)}
           stepId={Number(props.match.params.stepId)}
           viewId="strategy"
           initialTab={initialTab}
@@ -193,8 +195,9 @@ const routes: RouteEntry[] = [
 
   {
     path: '/step/:stepId(\\d+)/defaultSummaryView',
-    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
+    component: (props: RouteComponentProps<{ strategyId: string, stepId: string, viewId: string }>) =>
       <ResultTableSummaryViewController
+        strategyId={Number(props.match.params.strategyId)}
         stepId={Number(props.match.params.stepId)}
         viewId={props.match.params.viewId}
       />

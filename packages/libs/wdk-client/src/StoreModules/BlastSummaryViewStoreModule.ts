@@ -39,7 +39,7 @@ function reduceView(state: ViewState = initialState, action: Action): ViewState 
 
 async function getBlastSummaryViewReport([requestAction]:  [InferAction<typeof requestBlastSummaryReport>], state$: Observable<RootState>, { wdkService }: EpicDependencies) : Promise<InferAction<typeof fulfillBlastSummaryReport>> {
   let formatting = { format: 'blastSummaryView', formatConfig: { attributes: ['summary', 'alignment']} };
-  let report = await wdkService.getStepAnswer(requestAction.payload.stepId, formatting)
+  let report = await wdkService.getStepCustomReport(requestAction.payload.stepId, formatting)
   return fulfillBlastSummaryReport(requestAction.payload.stepId, report);
 }
 

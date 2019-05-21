@@ -43,10 +43,11 @@ import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPane
 import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
 import { LoadingOverlay } from 'wdk-client/Components';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { StepEntry } from 'wdk-client/StoreModules/StepsStoreModule';
+import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
+import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 
 type StateProps = {
-  stepEntry?: StepEntry;
+  strategyEntry?: StrategyEntry;
   loadingSummaryViewListing: ReturnType<typeof loadingSummaryViewListing>;
   loadingAnalysisChoices: ReturnType<typeof loadingAnalysisChoices>,
   summaryViewPlugins: ReturnType<typeof summaryViewPlugins>;
@@ -65,6 +66,7 @@ type StateProps = {
 type OwnProps = {
   stepId: number;
   viewId: string;
+  strategyId: number;
   initialTab?: string;
 };
 
@@ -138,7 +140,7 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
 }
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
-  stepEntry: state.steps.steps[props.stepId],
+  strategyEntry: state.strategies.strategies[props.strategyId],
   loadingSummaryViewListing: loadingSummaryViewListing(state, props),
   loadingAnalysisChoices: loadingAnalysisChoices(state),
   summaryViewPlugins: summaryViewPlugins(state, props),
@@ -154,8 +156,8 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   newAnalysisButtonVisible: newAnalysisButtonVisible(state)
 });
 
-const mapDispatchToProps = (dispatch: Dispatch, { stepId, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
-  loadTabs: (stepId: number) => dispatch(openTabListing(viewId, stepId, initialTab)),
+const mapDispatchToProps = (dispatch: Dispatch, { stepId, strategyId, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
+  loadTabs: (stepId: number) => dispatch(openTabListing(viewId, stepId, strategyId, initialTab)),
   openAnalysisMenu: () => dispatch(
     createNewTab(
       {
@@ -169,9 +171,9 @@ const mapDispatchToProps = (dispatch: Dispatch, { stepId, viewId, initialTab }: 
   onTabSelected: (tabKey: string) => { 
     if (+tabKey !== +tabKey) {
       dispatch(selectTab(-1));
-      dispatch(selectSummaryView(viewId, stepId, tabKey));
+      dispatch(selectSummaryView(viewId, stepId, strategyId, tabKey));
     } else {
-      dispatch(selectSummaryView(viewId, stepId, null));
+      dispatch(selectSummaryView(viewId, stepId, strategyId, null));
       dispatch(selectTab(+tabKey));
     }
   },
@@ -192,14 +194,12 @@ const mergeProps = (
   stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps 
 ): ResultPanelControllerProps & OwnProps => ({
   ...ownProps,
-  stepErrorMessage: stateProps.stepEntry && stateProps.stepEntry.status === 'error'
-    ? stateProps.stepEntry.message
-    : undefined,
-  isUnauthorized: !!stateProps.stepEntry && stateProps.stepEntry.status === 'unauthorized',
+  stepErrorMessage: undefined,  // TODO: clean up when we have new error handling system
+  isUnauthorized: false,  // TODO: clean up when we have new error handling system
   summaryViewPlugins: stateProps.summaryViewPlugins,
   defaultSummaryView: stateProps.defaultSummaryView,
   loadingTabs: (
-    (stateProps.stepEntry == null || stateProps.stepEntry.status === 'pending') ||
+    (stateProps.strategyEntry == null || stateProps.strategyEntry.status === 'pending') ||
     stateProps.loadingSummaryViewListing ||
     (ownProps.viewId === 'strategy' && stateProps.loadingAnalysisChoices)
   ),
@@ -228,13 +228,12 @@ const mergeProps = (
         display: plugin.displayName,
         removable: false,
         tooltip: plugin.description,
-        content: stateProps.stepEntry && stateProps.stepEntry.status === 'success' ? (
+        content: stateProps.strategyEntry && stateProps.strategyEntry.status === 'success' ? (
           <Plugin 
             context={{
               type: 'summaryView',
               name: plugin.name,
-              recordClassName: stateProps.stepEntry.step.recordClassName,
-              searchName: stateProps.stepEntry.step.searchName
+              ...getPropsFromStep(stateProps.strategyEntry.strategy, ownProps.stepId)
             }}
             pluginProps={{
               stepId: ownProps.stepId,
@@ -279,6 +278,11 @@ const mergeProps = (
     ))
   ]
 });
+
+function getPropsFromStep (strategy: StrategyDetails, stepId: number)  {
+  if (strategy.steps[stepId] === undefined) return { searchName: undefined, recordClassName: undefined};
+  return { searchName: strategy.steps[stepId].searchName, recordClassName: strategy.steps[stepId].recordClassName}
+}
 
 export default connect(
   mapStateToProps,

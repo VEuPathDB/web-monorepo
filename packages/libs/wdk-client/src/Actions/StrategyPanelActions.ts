@@ -15,8 +15,8 @@ export const requestStrategyPanelVisibilityPreference = makeActionCreator(
     (viewId: string, isVisible: boolean) => ({ isVisible, viewId })
   );
   
-export const requestStrategyPanelVisibilityUpdate = makeActionCreator(
-    'strategyPanel/requestStrategyPanelVisibilityUpdate',
+export const requestStrategyPanelVisibilityChange = makeActionCreator(
+    'strategyPanel/requestStrategyPanelVisibilityChange',
     (viewId: string, isVisible: boolean) => ({ isVisible, viewId })
  );
   
@@ -60,7 +60,7 @@ export type Action =
   | InferAction<typeof requestStrategyPanelVisibilityPreference>
   | InferAction<typeof openStrategyPanel>
   | InferAction<typeof closeStrategyPanel>
-  | InferAction<typeof requestStrategyPanelVisibilityUpdate>
+  | InferAction<typeof requestStrategyPanelVisibilityChange>
   | InferAction<typeof fulfillStrategyPanelVisibility> 
   | InferAction<typeof setStepDetailsVisibility>
   | InferAction<typeof setInsertStepWizardVisibility>

@@ -26,6 +26,7 @@ type StateProps = {
 type OwnProps = {
   stepId: number;
   viewId: string;
+  strategyId: number;
 }
 
 interface TabEventHandlers {

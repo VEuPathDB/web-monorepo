@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 
 import { createSelector } from 'reselect';
-import { RootState } from '../../../State/Types';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { get, escapeRegExp } from 'lodash';
 import { StepAnalysesState, AnalysisPanelState, AnalysisMenuState, UnsavedAnalysisState, UninitializedAnalysisPanelState, SavedAnalysisState } from './StepAnalysisState';
 import { transformPanelState } from './StepAnalysisReducer';
@@ -17,18 +17,22 @@ import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
 // Props used by selectors... is there a better way to do this?
-type Props = { viewId: string, stepId: number, initialTab?: string };
+type Props = { viewId: string, strategyId: number, stepId: number, initialTab?: string };
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
 export const recordClassDisplayName = (
+  
   { 
     globalData: { recordClasses = [] }, 
-    steps: { steps }, 
+    strategies: { strategies }, 
   }: RootState,
-  { stepId }: Props
+  { stepId, strategyId }: Props
 ) => {
-  const recordClassName = get(steps[stepId], 'step.recordClassName', '');
+  const strategyEntry = strategies[strategyId];
+  if (strategyEntry == undefined) return '';
+  if (strategyEntry.status != 'success') return '';
+  const recordClassName = get(strategyEntry.strategy.steps[stepId], 'step.recordClassName', '');
   const recordClass = recordClasses.find(({ urlSegment }) => urlSegment === recordClassName);
   return get(recordClass, 'displayName', '');
 };
@@ -36,12 +40,17 @@ export const recordClassDisplayName = (
 export const question = (
   { 
     globalData: { questions = [] }, 
-    steps: { steps }, 
+    strategies: { strategies }, 
   }: RootState,
-  { stepId }: Props
+  { stepId, strategyId }: Props
 ) => {
-  // FIXME this is a bit dirty and not type safe
-  const questionName = get(steps[stepId], 'step.answerSpec.questionName', '');
+  // TODO: use question url segment, not full name
+  const strategyEntry = strategies[strategyId];
+  if (strategyEntry == undefined) return;
+  if (strategyEntry.status != 'success') return;
+  const step = strategyEntry.strategy.steps[stepId];
+  if (step == null) return;
+  const questionName = step.searchName;
   const question = questions.find(({ fullName }) => fullName === questionName);
   return question;
 };
@@ -68,9 +77,11 @@ export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): Resu
 
 export const questionsLoaded = ({ globalData: { questions }}: RootState) => questions != null;
 
-export const stepLoaded = ({ steps: { steps }}: RootState, { stepId }: Props) => {
-  const stepEntry = steps[stepId];
-  return stepEntry != null && !stepEntry.isLoading;
+export const stepLoaded = (
+  { strategies: { strategies }}: RootState, 
+  { strategyId }: Props) => {
+  const strategyEntry = strategies[strategyId];
+  return strategyEntry != null && !strategyEntry.isLoading;
 }
 
 export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean, boolean>(

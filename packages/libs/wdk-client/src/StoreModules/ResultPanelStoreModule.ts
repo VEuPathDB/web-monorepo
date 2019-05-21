@@ -5,7 +5,6 @@ import { filter, mergeMap, mergeMapTo, tap } from 'rxjs/operators';
 
 import { Action } from 'wdk-client/Actions';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
-import { requestStep } from 'wdk-client/Actions/StepActions';
 import { createNewTab, startLoadingTabListing } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { question as selectQuestion } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -13,6 +12,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 import { indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
 import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
 import { ANALYSIS_MENU_STATE } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisState';
+import { requestStrategy } from 'wdk-client/Actions/StrategyActions';
 
 export type ResultPanelState = {
   activeSummaryView: string | null;
@@ -53,7 +53,7 @@ function observeOpenTabListing(action$: ActionsObservable<Action>, state$: State
   return action$.pipe(
     filter(openTabListing.isOfType),
     mergeMap(action => concat(
-      of(requestStep(action.payload.stepId)),
+      of(requestStrategy(action.payload.stepId)),
       action.payload.viewId === 'strategy' ? of(startLoadingTabListing(action.payload.stepId)) : empty(),
       action.payload.initialTab === ANALYSIS_MENU_ID ? of(createNewTab(
         {
@@ -71,7 +71,7 @@ function observeSelectSummaryView(action$: ActionsObservable<Action>, state$: St
   return action$.pipe(
     filter(selectSummaryView.isOfType),
     tap(action => {
-      const question = selectQuestion(state$.value, { stepId: action.payload.stepId, viewId: action.payload.viewId });
+      const question = selectQuestion(state$.value, { stepId: action.payload.stepId, strategyId: action.payload.strategyId, viewId: action.payload.viewId });
       if (question == null) return;
 
       const [ scope, key ] = prefSpecs.resultPanelTab(question.fullName);

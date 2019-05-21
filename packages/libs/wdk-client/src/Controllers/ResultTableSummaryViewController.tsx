@@ -31,6 +31,7 @@ import ResultTableSummaryView, { Action as TableAction } from 'wdk-client/Views/
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { partial, Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ontologyLoaded } from 'wdk-client/Actions/StaticDataActions';
 
 interface StateProps {
   viewData: RootState['resultTableSummaryView'][string];
@@ -63,6 +64,7 @@ type DispatchProps = {
 
 type OwnProps = {
   viewId: string;
+  strategyId: number;
   stepId: number;
   tableActions?: TableAction[];
   showIdAttributeColumn?: boolean;
@@ -75,14 +77,14 @@ type Props = OwnProps & StateProps & {
 class ResultTableSummaryViewController extends React.Component< Props > {
 
   componentDidMount() {
-    this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
+    this.props.actionCreators.openResultTableSummaryView(this.props.strategyId, this.props.stepId);
     console.log('mounting ResultTableSummaryViewController', this);
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.stepId !== this.props.stepId) {
       this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
-      this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
+      this.props.actionCreators.openResultTableSummaryView(this.props.strategyId, this.props.stepId);
       console.log('updating ResultTableSummaryViewController', this);
     }
   }
@@ -107,15 +109,17 @@ class ResultTableSummaryViewController extends React.Component< Props > {
   }
 }
 
+// TODO: what happens if strategy does not actually contain expected stepId?
 const columnsTreeSelector = createSelector(
   (state: RootState) => state.globalData.ontology,
   (state: RootState) => state.globalData.questions,
-  (state: RootState, props: OwnProps) => state.steps.steps[props.stepId],
-  (ontology, questions, stepEntry) => {
-    if (ontology == null || questions == null || stepEntry == null || stepEntry.status !== 'success') return;
-    const searchName = stepEntry.step.searchName;
-    const question = questions.find(q => q.urlSegment === searchName);
-    const { recordClassName } = stepEntry.step;
+  (state: RootState, props: OwnProps) => state.strategies.strategies[props.strategyId],
+  (state: RootState, props: OwnProps) => props.stepId,
+  (ontology, questions, strategyEntry, stepId) => {
+    if (ontology == null || questions == null || strategyEntry == null || strategyEntry.status !== 'success') return;
+    const step = strategyEntry.strategy.steps[stepId];
+    const question = questions.find(q => q.urlSegment === step.searchName);
+    const { recordClassName } = step;
 
     if (question == null) return undefined;
 

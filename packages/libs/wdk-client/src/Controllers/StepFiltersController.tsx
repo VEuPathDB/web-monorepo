@@ -7,6 +7,7 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 
 interface OwnProps {
   stepId: number;
+  strategyId: number;
 }
 
 interface StateProps {
@@ -43,9 +44,12 @@ function StepFiltersController(props: Props) {
 }
 
 function mapPropsToState(state: RootState, props: OwnProps): StateProps {
-  const stepEntry = state.steps.steps[props.stepId];
-  const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
-  const question = step && state.globalData.questions && state.globalData.questions.find(({ urlSegment }) => urlSegment === step.searchName)
+  const strategyEntry = state.strategies.strategies[props.strategyId];
+  if (strategyEntry === undefined || strategyEntry.status !== 'success') 
+    return {question:undefined, step: undefined};
+  const step = strategyEntry.strategy.steps[props.stepId];
+  const question = step && state.globalData.questions && 
+  state.globalData.questions.find(({ urlSegment }) => urlSegment === step.searchName)
   return { step, question };
 }
 

@@ -150,7 +150,7 @@ async function getAttributeReport(
 ) {
   const {reporterName, stepId, config} = requestReportAction.payload;
   try {
-    const report = await wdkService.getStepAnswer(stepId, {format: reporterName, formatConfig: config});
+    const report = await wdkService.getStepCustomReport(stepId, {format: reporterName, formatConfig: config});
     return fulfillAttributeReport(reporterName, stepId, report);
   }
   catch (error) {

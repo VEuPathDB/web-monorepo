@@ -22,6 +22,7 @@ const actionCreators = {
   setDisplayedSelection
 }
 interface OwnProps {
+  strategyId: number;
   stepId: number;
   filterName: string;
 }
@@ -60,15 +61,15 @@ const Leadin: Record<string, string> = {
 class MatchedTranscriptsFilterController extends React.Component<Props> {
 
   componentDidMount() {
-    const { stepId, filterName } = this.props;
-    this.props.actionCreators.openMatchedTranscriptsFilter(stepId, filterName);
+    const { strategyId, stepId, filterName } = this.props;
+    this.props.actionCreators.openMatchedTranscriptsFilter(strategyId, stepId, filterName);
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.stepId !== this.props.stepId) {
-      const { stepId, filterName } = this.props;
+      const { strategyId, stepId, filterName } = this.props;
       this.props.actionCreators.closeMatchedTranscriptsFilter(prevProps.stepId);
-      this.props.actionCreators.openMatchedTranscriptsFilter(stepId, filterName);
+      this.props.actionCreators.openMatchedTranscriptsFilter(strategyId, stepId, filterName);
     }
   }
 
@@ -100,8 +101,8 @@ const statePropsIsComplete = hasAllProps<StateProps>(
 
 export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state: RootState, ownProps: OwnProps) => {
-    const stepEntry = state.steps.steps[ownProps.stepId];
-    const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
+    const strategyEntry = state.strategies.strategies[ownProps.strategyId];
+    const step = strategyEntry && strategyEntry.status === 'success' ? strategyEntry.strategy.steps[ownProps.stepId] : undefined;
     return {
       filterValue: getFilterValue(step, ownProps.filterName),
       ...state.matchedTranscriptsFilter

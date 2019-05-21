@@ -28,7 +28,7 @@ import {
   takeEpicInWindow
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { fulfillStep, requestStep, requestStepSearchConfigUpdate } from 'wdk-client/Actions/StepActions';
+import { fulfillStrategy, requestStrategy, requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { Step } from 'wdk-client/Utils/WdkUser';
 
@@ -75,12 +75,12 @@ export function reduce(state: State = initialState, action: Action): State {
 
 const openMTF = openMatchedTranscriptsFilter;
 
-async function getRequestStep(
+async function getRequestStrategy(
   [openAction]: [InferAction<typeof openMTF>],
   state$: StateObservable<RootState>,
   { }: EpicDependencies
 ) {
-  return requestStep(openAction.payload.stepId);
+  return requestStrategy(openAction.payload.strategyId);
 }
 
 async function getRequestMatchedTransFilterExpandedPref(
@@ -130,9 +130,9 @@ function filterRequestMatchedTransFilterSummary(
 }
 
 async function getRequestMatchedTransFilterSummaryStepChg(
-  [openAction, stepAction]: [
+  [openAction, strategyAction]: [
     InferAction<typeof openMTF>,
-    InferAction<typeof fulfillStep>
+    InferAction<typeof fulfillStrategy>
   ],
   state$: StateObservable<RootState>,
   {  }: EpicDependencies
@@ -141,9 +141,9 @@ async function getRequestMatchedTransFilterSummaryStepChg(
 }
 
 function filterRequestMatchedTransFilterSummaryStepChgActions(
-  [openAction, stepAction]: [
+  [openAction, strategyAction]: [
     InferAction<typeof openMTF>,
-    InferAction<typeof fulfillStep>
+    InferAction<typeof fulfillStrategy>
   ],
   state: RootState
 ) {
@@ -175,13 +175,15 @@ async function getFulfillUpdatedMatchedTransFilterSummary(
 }
 
 async function getRequestSearchConfigUpdate(
-  [openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>],
+  [openAction, strategyAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStrategy>, InferAction<typeof requestMatchedTransFilterUpdate>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof requestStepSearchConfigUpdate>> {
-  const { searchConfig, searchName } = stepAction.payload.step;
+): Promise<InferAction<typeof requestUpdateStepSearchConfig>> {
+  const step = strategyAction.payload.strategy.steps[openAction.payload.stepId];
+  const { searchConfig, searchName } = step;
   const filterValue = updateFilterActionToFilterValue(updateFilterAction);
-  return requestStepSearchConfigUpdate(
+  return requestUpdateStepSearchConfig(
+    openAction.payload.strategyId,
     openAction.payload.stepId,
     {
       searchName,
@@ -197,13 +199,13 @@ async function getRequestSearchConfigUpdate(
   );
 }
 
-function filterStepUpdateActions([openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>]) {
-  return openAction.payload.stepId === stepAction.payload.step.id;
+function filterStepUpdateActions([openAction, strategyAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStrategy>, InferAction<typeof requestMatchedTransFilterUpdate>]) {
+  return strategyAction.payload.strategy.steps[openAction.payload.stepId] != undefined;
 }
 
 function areStepUpdateActionsNew(
-  [openAction, stepAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>],
-  [prevOpenAction, prevStepAction, prevUpdateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStep>, InferAction<typeof requestMatchedTransFilterUpdate>]
+  [openAction, strategyAction, updateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStrategy>, InferAction<typeof requestMatchedTransFilterUpdate>],
+  [prevOpenAction, prevStepAction, prevUpdateFilterAction]: [InferAction<typeof openMTF>, InferAction<typeof fulfillStrategy>, InferAction<typeof requestMatchedTransFilterUpdate>]
 ) {
   return !isEqual(
     updateFilterAction.payload,
@@ -225,17 +227,17 @@ export function getFilterValue(step: Step | undefined, key: string): FilterValue
 export const observe = takeEpicInWindow(
   { startActionCreator: openMTF, endActionCreator: closeMatchedTranscriptsFilter },
   combineEpics(
-    mrate([openMTF], getRequestStep),
+    mrate([openMTF], getRequestStrategy),
     mrate([openMTF], getRequestMatchedTransFilterExpandedPref),
     mrate([requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
     mrate([requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
     mrate([openMTF], getRequestMatchedTransFilterSummary,
     /*{ areActionsCoherent: filterRequestMatchedTransFilterSummary }*/),
     mrate([openMTF, requestMatchedTransFilterSummary], getFulfillMatchedTransFilterSummary),
-    mrate([openMTF, fulfillStep], getRequestMatchedTransFilterSummaryStepChg,
+    mrate([openMTF, fulfillStrategy], getRequestMatchedTransFilterSummaryStepChg,
       { areActionsCoherent: filterRequestMatchedTransFilterSummaryStepChgActions }),
     mrate([requestMatchedTransFilterExpandedPref], getFulfillUpdatedMatchedTransFilterSummary),
-    mrate([openMTF, fulfillStep, requestMatchedTransFilterUpdate], getRequestSearchConfigUpdate,
+    mrate([openMTF, fulfillStrategy, requestMatchedTransFilterUpdate], getRequestSearchConfigUpdate,
       { areActionsCoherent: filterStepUpdateActions, areActionsNew: areStepUpdateActionsNew })
   )
 );

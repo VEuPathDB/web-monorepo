@@ -6,7 +6,7 @@ export type FilterSelection = Array<keyof FilterSummary>;
 
 export const openMatchedTranscriptsFilter = makeActionCreator(
     'matchedTranscriptsFilter/open',
-    (stepId: number, filterKey: string) => ({ stepId, filterKey })
+    (strategyId: number, stepId: number, filterKey: string) => ({ strategyId, stepId, filterKey })
 );
 
 export const closeMatchedTranscriptsFilter = makeActionCreator(
