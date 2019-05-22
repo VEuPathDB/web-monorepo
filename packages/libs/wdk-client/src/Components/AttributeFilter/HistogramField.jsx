@@ -209,7 +209,6 @@ export default class HistogramField extends React.Component {
               {'Select ' + activeField.display + ' from '}
               <input
                 type="text"
-                size="8"
                 placeholder={distMin}
                 value={this.state.minInputValue || ''}
                 onChange={this.handleMinInputChange}
@@ -219,7 +218,6 @@ export default class HistogramField extends React.Component {
               {' to '}
               <input
                 type="text"
-                size="8"
                 placeholder={distMax}
                 value={this.state.maxInputValue || ''}
                 onChange={this.handleMaxInputChange}

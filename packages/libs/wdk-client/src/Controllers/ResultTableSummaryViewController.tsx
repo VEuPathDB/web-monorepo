@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import { Error } from 'wdk-client/Components';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {
@@ -41,6 +42,7 @@ interface StateProps {
     recordClass?: RecordClass;
     question?: Question;
     userIsGuest: boolean;
+    errorMessage?: string;
   };
 }
 type DispatchProps = {
@@ -96,6 +98,8 @@ class ResultTableSummaryViewController extends React.Component< Props > {
 
   render() {
     if (this.props.viewData == null) return null;
+    if (this.props.derivedData.errorMessage != null) return (<Error message={this.props.derivedData.errorMessage} />);
+
     return (
       <ResultTableSummaryView
         stepId={this.props.stepId}
@@ -148,13 +152,23 @@ function getQuestionAndRecordClass(rootState: RootState, props: OwnProps): { que
 }
 
 function mapStateToProps(state: RootState, props: OwnProps): StateProps {
+  const viewData = state.resultTableSummaryView[props.viewId];
+  const errorMessage = viewData && !viewData.answerLoading && !viewData.answer
+    ? (
+      props.viewId.startsWith('basket')
+        ? 'Fixing your basket using the instructions above might help.'
+        : ''
+    )
+    : undefined;
+
   return {
-    viewData: state.resultTableSummaryView[props.viewId],
+    viewData,
     derivedData: {
       ...getQuestionAndRecordClass(state, props),
       columnsTree: columnsTreeSelector(state, props),
       activeAttributeAnalysisName: state.attributeAnalysis.report.activeAnalysis && state.attributeAnalysis.report.activeAnalysis.reporterName,
-      userIsGuest: state.globalData.user ? state.globalData.user.isGuest : false
+      userIsGuest: state.globalData.user ? state.globalData.user.isGuest : false,
+      errorMessage
     }
   };
 }

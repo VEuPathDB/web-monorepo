@@ -123,6 +123,13 @@ export const fulfillAnswer = makeActionCreator(
   ) => ({ stepId, columnsConfig, pagination, viewFilters, answer, viewId })
 );
 
+export const reportAnswerFulfillmentError = makeActionCreator(
+  'requestTableSummaryView/reportAnswerFulfillmentError',
+  (
+    viewId: string
+  ) => ({ viewId })
+);
+
 export const requestRecordsBasketStatus = makeActionCreator(
   'resultTableSummaryView/requestRecordsBasketStatus',
   (
@@ -189,6 +196,7 @@ export type Action =
   | InferAction<typeof viewPageNumber>
   | InferAction<typeof requestAnswer>
   | InferAction<typeof fulfillAnswer>
+  | InferAction<typeof reportAnswerFulfillmentError>
   | InferAction<typeof requestRecordsBasketStatus>
   | InferAction<typeof fulfillRecordsBasketStatus>
   | InferAction<typeof showHideAddColumnsDialog>

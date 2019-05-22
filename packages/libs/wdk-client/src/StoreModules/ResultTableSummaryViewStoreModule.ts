@@ -36,6 +36,7 @@ import {
   requestGlobalViewFilters,
   updateGlobalViewFilters,
   fulfillGlobalViewFilters,
+  reportAnswerFulfillmentError,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -158,6 +159,9 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
     }
     case fulfillAnswer.type: {
       return { ...state, answer: action.payload.answer, answerLoading: false };
+    }
+    case reportAnswerFulfillmentError.type: {
+      return { ...state, answerLoading: false };
     }
     case fulfillRecordsBasketStatus.type: {
       return {
@@ -535,7 +539,7 @@ async function getFulfillAnswer(
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillAnswer>> {
+): Promise<InferAction<typeof fulfillAnswer> | InferAction<typeof reportAnswerFulfillmentError>> {
   const r = requestAction.payload;
   // if only columns have changed, and the new columns are a subset of
   // current, we can avoid making a service call
@@ -563,8 +567,13 @@ async function getFulfillAnswer(
     attributes: r.columnsConfig.attributes,
     pagination: r.pagination
   };
-  let answer = await wdkService.getStepStandardReport(r.stepId, formatConfig);
-  return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
+
+  try {
+    let answer = await wdkService.getStepAnswerJson(r.stepId, formatConfig, r.viewFilters);
+    return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
+  } catch (e) {
+    return reportAnswerFulfillmentError(openAction.payload.viewId);
+  }
 }
 
 function filterFulfillAnswerActions([openAction, requestAction]: [
