@@ -37,6 +37,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
       id: 'userDatasets',
       text: 'My Data Sets',
       beta: true,
+      exclude: [EuPathDB],
       route: '/workspace/datasets'
     } : null,
 
