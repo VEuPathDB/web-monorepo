@@ -235,27 +235,16 @@ public class ShinyQueryService extends AbstractWdkService {
                   ", apidbtuning." + tblPrefix + "Participants pa" +
               " where o.ontology_term_name = '" + sourceId + "'" +
               " and o.participant_id = pa.pan_id"
-            : " with term as (" +
-                " select pa.name as participant_id" +
-                      ", string_value as " + sourceId +
-                      ", sub_observation_id" +  
-                " from apidbtuning." + tblPrefix + "ObservationMD o" +
+            : " select pa.name as participant_id" +
+                      ", o1.string_value as " + sourceId +
+                      ", o2.string_value as " + timeSourceId +
+                " from apidbtuning." + tblPrefix + "ObservationMD o1" +
+                    ", apidbtuning." + tblPrefix + "ObservationMD o2" +
                     ", apidbtuning." + tblPrefix + "Participants pa" +
-                " where o.ontology_term_name = '" + sourceId + "'" +
-                " and o.participant_id = pa.pan_id)," +
-              " time as (" +
-                " select pa.name as participant_id" +
-                      ", string_value as " + timeSourceId +
-                      ", sub_observation_id" +
-                " from apidbtuning." + tblPrefix + "ObservationMD o" +
-                    ", apidbtuning." + tblPrefix + "Participants pa" +
-                " where o.ontology_term_name = '" + timeSourceId + "'" +
-                " and o.participant_id = pa.pan_id)" +
-              " select term.participant_id" +
-                    ", term." + sourceId +
-                    ", time." + timeSourceId + 
-              " from time, term" + 
-              " where term.sub_observation_id = time.sub_observation_id";
+                " where o1.ontology_term_name = '" + sourceId + "'" +
+                " and o2.ontology_term_name = '" + timeSourceId + "'" +
+                " and o1.sub_observation_id = o2.sub_observation_id" +
+                " and o1.participant_id = pa.pan_id";
       case ObservationNames:
         return timeSourceId.equals("none")
             ? " select pa.name as participant_id" +
