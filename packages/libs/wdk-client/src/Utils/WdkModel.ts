@@ -313,10 +313,15 @@ export interface Answer {
 export interface SearchConfig {
   parameters: Record<string, string>;
   legacyFilterName?: string;
-  filters?: { name: string; value: any; }[];
-  viewFilters?: { name: string; value: string; }[];
+  filters?: FilterValueArray;
+  viewFilters?: FilterValueArray;
   wdkWeight?: number;
 }
+
+export type FilterValueArray = {
+  name: string;
+  value: any;
+}[];
 
 export interface AnswerSpec {
   searchName: string;

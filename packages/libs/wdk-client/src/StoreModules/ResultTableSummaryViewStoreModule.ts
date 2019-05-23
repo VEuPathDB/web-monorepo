@@ -569,7 +569,7 @@ async function getFulfillAnswer(
   };
 
   try {
-    let answer = await wdkService.getStepAnswerJson(r.stepId, formatConfig, r.viewFilters);
+    let answer = await wdkService.getStepStandardReport(r.stepId, formatConfig, r.viewFilters);
     return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
   } catch (e) {
     return reportAnswerFulfillmentError(openAction.payload.viewId);

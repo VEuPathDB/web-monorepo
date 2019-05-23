@@ -1,5 +1,5 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { StandardReportConfig, AnswerSpec, Answer, Identifier, } from 'wdk-client/Utils/WdkModel';
+import { StandardReportConfig, AnswerSpec, Answer, Identifier, FilterValueArray } from 'wdk-client/Utils/WdkModel';
 import {  NewStepSpec, PatchStepSpec, Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
 import { AnswerFormatting } from './SearchReportsService';
@@ -43,7 +43,7 @@ export default (base: ServiceBase) => {
 
   // get step's answer in wdk default json output format
   // TODO:  use a proper decoder to ensure correct decoding of the Answer
-  function getStepStandardReport(stepId: number, reportConfig: StandardReportConfig, userId: string = 'current'): Promise<Answer> {
+  function getStepStandardReport(stepId: number, reportConfig: StandardReportConfig, viewFilters: FilterValueArray | undefined, userId: string = 'current'): Promise<Answer> {
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/standard`,

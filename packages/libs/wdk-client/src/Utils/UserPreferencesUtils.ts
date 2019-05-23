@@ -1,6 +1,6 @@
 import { parseInt, uniq } from 'lodash/fp';
 import WdkService from 'wdk-client/Service/WdkService';
-import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
+import { decode, arrayOf, objectOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
 import { Question, AttributeSortingSpec, SearchConfig } from "wdk-client/Utils/WdkModel"
 

@@ -5,7 +5,9 @@ import {
   RecordClass,
   Question,
   Answer,
-  ParameterValues
+  ParameterValues,
+  FilterValueArray,
+  AnswerSpec
 } from "wdk-client/Utils/WdkModel";
 import { isQualifying, isIndividual } from 'wdk-client/Utils/CategoryUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
@@ -29,9 +31,9 @@ export type Sorting = {
 
 export type AnswerOptions = {
   parameters?: ParameterValues;
-  filters?: {name: string, value: any}[]
-  viewFilters?: {name: string, value: any[]}
-  displayInfo: DisplayInfo
+  filters?: FilterValueArray;
+  viewFilters?: FilterValueArray;
+  displayInfo: DisplayInfo;
 }
 
 
@@ -246,7 +248,7 @@ export function loadAnswer(
           displayInfo.tables = [];
 
           // Build XHR request data for '/answer'
-          const answerSpec = {
+          const answerSpec: AnswerSpec = {
             searchName: question.urlSegment,
             searchConfig: {
               parameters,
