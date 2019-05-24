@@ -13,14 +13,14 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 <fmt:setLocale value="en-US"/>
 
-<c:if test="${project == 'EuPathDB'}">
+<%--<c:if test="${project == 'EuPathDB'}">
   <c:catch var="e">
-    <%<--api:configurations var="config" configfile="/WEB-INF/wdk-model/config/projects.xml" />--%>
+    <api:configurations var="config" configfile="/WEB-INF/wdk-model/config/projects.xml" />
   </c:catch>
-  <c:if test="${e!=null}">
-    <font size="-1" color="#CC0033">News not available for the component Sites</font>
-  </c:if>
-</c:if>
+  <c:if test="${e!=null}">--%>
+    <font size="-1" color="#CC0033">News not available</font>
+<%--  </c:if>
+</c:if>--%>
 
 <c:set var="xqSetMap" value="${wdkModel.xmlQuestionSetsMap}"/>
 <c:set var="xqSet" value="${xqSetMap['XmlQuestions']}"/>
