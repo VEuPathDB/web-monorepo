@@ -30,7 +30,7 @@ export default function BasketIconButton({
     ) : (
       <i
         className="fa fa-shopping-basket"
-        style={{ color: status === 'yes' ? 'green' : 'gray', width: iconWidth }}
+        style={{ color: status === 'yes' ? 'green' : '#A6ACAF', width: iconWidth }}
       />
     );
   return (
