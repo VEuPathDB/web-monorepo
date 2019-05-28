@@ -619,9 +619,8 @@ function filterRequestRecordsBasketStatusActions([openAction, answerAction]: [
 }
 
 async function getFulfillRecordsBasketStatus(
-  [openAction, answerAction, requestAction]: [
+  [openAction, requestAction]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillAnswer>,
     InferAction<typeof requestRecordsBasketStatus>
   ],
   state$: StateObservable<RootState>,
@@ -629,7 +628,7 @@ async function getFulfillRecordsBasketStatus(
 ): Promise<InferAction<typeof fulfillRecordsBasketStatus>> {
   let user = await wdkService.getCurrentUser();
   let recordsStatus = user.isGuest
-    ? new Array(answerAction.payload.pagination.numRecords).fill(false)
+    ? new Array(requestAction.payload.basketQuery.length).fill(false)
     : await wdkService.getBasketStatusPk(
         requestAction.payload.recordClassName,
         requestAction.payload.basketQuery
@@ -637,32 +636,24 @@ async function getFulfillRecordsBasketStatus(
   return fulfillRecordsBasketStatus(
     openAction.payload.viewId,
     openAction.payload.stepId,
-    answerAction.payload.pagination.offset,
-    answerAction.payload.pagination.numRecords,
+    requestAction.payload.pageNumber,
+    requestAction.payload.pageSize,
     recordsStatus
   );
 }
 
 function filterFulfillRecordBasketStatusActions([
   openAction,
-  answerAction,
   requestAction
 ]: [
   InferAction<typeof openRTS>,
-  InferAction<typeof fulfillAnswer>,
   InferAction<typeof requestRecordsBasketStatus>
 ]) {
   let rp = requestAction.payload;
-  let ap = answerAction.payload;
   let op = openAction.payload;
   return (
     op.viewId === rp.viewId &&
-    op.viewId === ap.viewId &&
-    op.stepId === rp.stepId &&
-    op.stepId === ap.stepId &&
-    ap.pagination.offset === rp.pageNumber &&
-    ap.pagination.numRecords === rp.pageSize
-  );
+    op.stepId === rp.stepId);
 }
 
 // Global view filters
@@ -794,7 +785,7 @@ export const observe = takeEpicInWindow(
       { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),
     mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus,
       { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
-    mrate([openRTS, fulfillAnswer, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
+    mrate([openRTS, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
       { areActionsCoherent: filterFulfillRecordBasketStatusActions })
   )
 );
