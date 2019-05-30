@@ -36,6 +36,8 @@ public class ShinyQueryService extends AbstractWdkService {
   @SuppressWarnings("unused")
   private static final Logger LOG = Logger.getLogger(ShinyQueryService.class);
 
+  private static final int FETCH_SIZE = 1000;
+
   private enum Mode {
     PrintSql,
     RunQuery;
@@ -53,7 +55,9 @@ public class ShinyQueryService extends AbstractWdkService {
     return Response.ok(
       getStreamingOutput(
         Functions.mapException(
-          () -> getResultSetStream(sql, queryName, getWdkModel().getAppDb().getDataSource(), new ResultSetToNdJsonConverter()),
+          () -> getResultSetStream(sql, queryName,
+              getWdkModel().getAppDb().getDataSource(),
+              FETCH_SIZE, new ResultSetToNdJsonConverter()),
           e -> new WdkModelException(errorMsgOnFail + " SQL: " + sql, e)
         )
       )
