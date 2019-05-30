@@ -80,9 +80,10 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           target: '_blank'
         },
         {
-          id: 'crispr',
-          text: 'CRISPR',
+          id: 'LeishGEdit',
+          text: 'LeishGEdit',
           include: [TriTrypDB],
+          tooltip: 'Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids',
           url: 'http://www.leishgedit.net',
           target: '_blank'
         },

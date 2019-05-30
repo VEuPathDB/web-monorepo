@@ -20,68 +20,63 @@
 <!--	  <li><a href="http://rnaseq.pathogenportal.org"><strong>Pathogen Portal</strong></a>
 			<ul><li  style="border:0">RNA sequence analysis, interactome maps and more</li></ul>
 		</li>  -->
-    <li><a href="https://companion.sanger.ac.uk"><strong>Companion</strong></a>
+                <li><a href="https://companion.sanger.ac.uk" target="_blank"><strong>Companion</strong></a>
 		  <ul><li  style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
-    </li>
-    <li><a href="http://grna.ctegd.uga.edu"><strong>EuPaGDT</strong></a>
-			<ul><li  style="border:0">Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool</li></ul>
+                </li>
+                <c:if test="${sName == 'TriTryp'}">
+                  <li><a href="http://www.leishgedit.net/" target="_blank"><strong>LeishGEdit</strong></a>
+                    <ul><li style="border:0">Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids</li></ul>
+                  </li>
+                </c:if>
+                <li><a href="http://grna.ctegd.uga.edu" target="_blank"><strong>EuPaGDT</strong></a>
+                  <ul><li  style="border:0">Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool</li></ul>
 		</li>
 		<li><a href="/pubcrawler/${modelName}"><strong>PubMed and Entrez</strong></a>
-			<ul><li  style="border:0">View the Latest Pubmed and Entrez Results</li></ul>
+                  <ul><li  style="border:0">View the Latest Pubmed and Entrez Results</li></ul>
 		</li>
+                <c:if test="${sName != 'EuPath'}">
+		  <li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browser</strong></a>
+                    <ul><li  style="border:0">View Sequences and Features in the genome browser</li></ul>
+                  </li>
+                </c:if>
 
-<c:if test="${sName != 'EuPath'}">
-		<li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browser</strong></a>
-			<ul><li  style="border:0">View Sequences and Features in the genome browser</li></ul>
-		</li>
-</c:if> 
-    
-        
+                <c:choose>   <%-- SITES WITH FEW TOOLS, SO THERE IS SPACE IN BUCKET FOR DESCRIPTIONS --%>
+                <c:when test="${sName != 'Plasmo'}">
 
-<c:choose>   <%-- SITES WITH FEW TOOLS, SO THERE IS SPACE IN BUCKET FOR DESCRIPTIONS --%>
-<c:when test="${sName != 'Plasmo'}">
-
-	<c:choose>
-	<c:when test="${sName == 'Crypto'}">
+                <c:choose>
+                <c:when test="${sName == 'Crypto'}">
 		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
-			<ul><li style="border:0">Learn about web service access to our data</li></ul>
+                  <ul><li style="border:0">Learn about web service access to our data</li></ul>
 		</li>
-	</c:when>
-	<c:when test="${sName == 'EuPath'}">
-		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
-			<ul><li style="border:0">Learn about web service access to our data</li></ul>
-		</li>
-	</c:when>
-	<c:when test="${sName == 'Toxo'}">
+	        </c:when>
+	        <c:when test="${sName == 'EuPath'}">
+		  <li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
+                    <ul><li style="border:0">Learn about web service access to our data</li></ul>
+		  </li>
+	        </c:when>
+	        <c:when test="${sName == 'Toxo'}">
 		<li><a href="http://ancillary.toxodb.org"><strong>Ancillary Genome Browse</strong></a>
-                        <ul><li  style="border:0">Access Probeset data and <i>Toxoplasma</i> Array info</li></ul>
-    </li>
+                  <ul><li  style="border:0">Access Probeset data and <i>Toxoplasma</i> Array info</li></ul>
+                </li>
 		<li><p>
-			<i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
+                  <i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
 		</li>
 
-	</c:when>
-	<c:otherwise>   <%----- Giardia, Trich and TriTryp:  fill in 2 empty lines to keep buckets aligned -----%>
-
-		<li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
-			<ul><li style="border:0">Learn about web service access to our data</li></ul>
-		</li>
+                </c:when>
+	        <c:otherwise>   <%----- Giardia, Trich and TriTryp:  fill in 2 empty lines to keep buckets aligned -----%>
+                <li><a href="${urlBase}/serviceList.jsp"><strong>Searches via Web Services</strong></a>
+                  <ul><li style="border:0">Learn about web service access to our data</li></ul>
+                </li>
                 <%-- <li>&nbsp;<ul><li  style="border:0">&nbsp;</li></ul></li> --%>
+                </c:otherwise>
+                </c:choose>
+                </c:when>
 
-	</c:otherwise>
-	</c:choose>
-
-    	</ul>
-</c:when>
-<c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, add descriptions as mouseovers --%>
-
-  		<li><p><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
-		</li>
-
-	</ul>
-
-</c:otherwise>
-</c:choose>
-
+                <c:otherwise>   <%-- PLASMO: LOTS OF TOOLS, add descriptions as mouseovers --%>
+                <li><p><i>For additional tools, use the </i><b>Tools</b><i> menu in the gray toolbar above.....</i></p>
+                </li>
+                </c:otherwise>
+                </c:choose>
+        </ul>
 </div>
 
