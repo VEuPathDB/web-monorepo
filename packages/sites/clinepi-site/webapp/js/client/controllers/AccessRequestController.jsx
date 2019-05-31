@@ -71,6 +71,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = {
   onChangePurpose: onChangeFieldFactory('purpose'),
+  onChangePriorAuth: onChangeFieldFactory('prior_auth'),
   onChangeResearchQuestion: onChangeFieldFactory('research_question'),
   onChangeAnalysisPlan: onChangeFieldFactory('analysis_plan'),
   onChangeDisseminationPlan: onChangeFieldFactory('dissemination_plan'),

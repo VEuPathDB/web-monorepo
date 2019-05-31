@@ -61,6 +61,7 @@ export const fieldElements = state => {
     { key: 'requester_email', FieldComponent: AccessRequestTextField },
     { key: 'organization', FieldComponent: AccessRequestTextField },
     { key: 'purpose', FieldComponent: AccessRequestTextArea, onChangeKey: 'onChangePurpose' },
+    { key: 'prior_auth', FieldComponent: AccessRequestTextArea, onChangeKey: 'onChangePriorAuth' },
     { key: 'research_question', FieldComponent: AccessRequestTextArea, onChangeKey: 'onChangeResearchQuestion' },
     { key: 'analysis_plan', FieldComponent: AccessRequestTextArea, onChangeKey: 'onChangeAnalysisPlan' },
     { key: 'dissemination_plan', FieldComponent: AccessRequestTextArea, onChangeKey: 'onChangeDisseminationPlan' }
