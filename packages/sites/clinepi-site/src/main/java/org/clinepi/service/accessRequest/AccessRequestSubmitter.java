@@ -72,6 +72,7 @@ public class AccessRequestSubmitter {
       "dataset_presenter_id",
       "restriction_level",
       "purpose",
+      "prior_auth",
       "research_question",
       "analysis_plan",
       "dissemination_plan",
@@ -105,12 +106,13 @@ public class AccessRequestSubmitter {
     ps.setString(2, params.getDatasetId());
     ps.setString(3, params.getRestrictionLevel());
     ps.setString(4, params.getPurpose());
-    ps.setString(5, params.getResearchQuestion());
-    ps.setString(6, params.getAnalysisPlan());
-    ps.setString(7, params.getDisseminationPlan());
-    ps.setInt(8, params.getApprovalType());
-    ps.setInt(9, params.getUserId());
-    ps.setString(10, params.getDatasetId());
+    ps.setString(5, params.getPriorAuth));
+    ps.setString(6, params.getResearchQuestion());
+    ps.setString(7, params.getAnalysisPlan());
+    ps.setString(8, params.getDisseminationPlan());
+    ps.setInt(9, params.getApprovalType());
+    ps.setInt(10, params.getUserId());
+    ps.setString(11, params.getDatasetId());
 
     return ps;
   }

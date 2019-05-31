@@ -99,6 +99,10 @@ public class AccessRequestParams {
     return formFields.get("purpose");
   }
 
+  public String getPriorAuth() {
+    return formFields.get("prior_auth");
+  }
+
   public String getResearchQuestion() {
     return formFields.get("research_question");
   }
