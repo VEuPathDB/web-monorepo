@@ -178,8 +178,7 @@ function makeHeaderMenuItems(state) {
       {
         id: 'search',
         text: 'Search a Study',
-        children: (allStudiesStudy == null ? [] : [allStudiesStudy])
-          .concat(studies.entities == null ? [] : studies.entities)
+        children: (studies.entities == null ? [] : studies.entities)
           .map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
       },
       {
