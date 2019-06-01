@@ -36,7 +36,7 @@ public class ShinyQueryService extends AbstractWdkService {
   @SuppressWarnings("unused")
   private static final Logger LOG = Logger.getLogger(ShinyQueryService.class);
 
-  private static final int FETCH_SIZE = 1000;
+  private static final int FETCH_SIZE = 10000;
 
   private enum Mode {
     PrintSql,
