@@ -245,6 +245,9 @@ export function RecordTable(props) {
     case 'RodMalPhenotype':
       return <props.DefaultComponent {...props} childRow={RodMalPhenotypeTableChildRow} />
 
+    case 'TranscriptionSummary':
+      return <TranscriptionSummaryForm {...props}/>
+
     default:
       return <props.DefaultComponent {...props} />
   }
@@ -907,5 +910,20 @@ class OrthologsForm extends SortKeyTable {
   }
 }
 
+class TranscriptionSummaryForm extends SortKeyTable {
+
+  render() {
+      let { source_id } = this.props.record.attributes;
+
+        return (
+          <div id="transcriptionSummary">
+            <p><b>Fold Change Plot:</b></p>
+            <iframe src={"/cgi-bin/dataPlotter.pl?project_id=" + projectId + "&id=" + source_id + "&type=RNASeqTranscriptionSummary&template=1&datasetId=All&wl=0&facet=na&contXAxis=na&fmt=html"} height="900" width="900" frameBorder="0"></iframe>
+            <p><b>Samples Table:</b></p>
+            <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
+          </div>
+        );
+  }
+}
 
 const UserCommentsTable = addCommentLink(props => props.record.attributes.user_comment_link_url);
