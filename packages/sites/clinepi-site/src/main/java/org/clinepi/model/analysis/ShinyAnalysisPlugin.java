@@ -64,7 +64,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
       ", o.ontology_term_name as " + PROPERTY_COL + 
       ", o.type as " + TYPE_COL + 
       ", o.parent_ontology_term_name as " + PARENT_COL +
-      ", m.category as " + CAT_COL +
+      ", pc.category as " + CAT_COL +
       ", ms.min as " +  MIN_COL +
       ", ms.max as "  + MAX_COL +
       ", ms.average as " + AVG_COL +
@@ -73,7 +73,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
       ", ms.number_distinct_values as " + NUM_DISTINCT_COL +
       ", ms.distinct_values as " + DISTINCT_COL +
       " from apidbtuning." + tblPrefix + "Ontology o " +
-      " left join apidbtuning." + tblPrefix + "Metadata m on o.ontology_term_source_id = m.property_source_id" + 
+      " left join apidbtuning." + tblPrefix + "PropertyCategory pc on o.ontology_term_source_id = pc.property_source_id" + 
       " left join apidbtuning." + tblPrefix + "MetadataSummary ms on o.ontology_term_source_id = ms.property_source_id" +
       " where o.ontology_term_source_id is not null" +
       (useDatasetName ? " and o.dataset_name = ?" : "");

@@ -89,7 +89,7 @@ export default class AccessRequestView extends Component {
           <br/><br/>
           To ensure transparency and promote collaboration within the wider scientific community, your name, organization, date of request and purpose for which the data will be used, as submitted below, will appear publicly on the corresponding  <a href={`${webAppUrl}/app/record/dataset/${datasetId}#AccessRequest`}>study page</a> after a request has been granted. The dataset page also contains critical methodologic information and study findings that are necessary to interpret the requested study data. 
           <br/><br/>
-          If you have any questions about a data access request please contact us at <a href={`${webAppUrl}/app`}>help@clinepidb.org</a>.
+          If you have any questions about a data access request please contact us at <a href={`${webAppUrl}/app/contact-us`}>help@clinepidb.org</a>.
         </h4>
         <form 
           onSubmit={e => {

@@ -35,6 +35,7 @@ const initialState = {
     'requester_email': '',
     'organization': '',
     'purpose': '',
+     'prior_auth': '',
     'research_question': '',
     'analysis_plan': '',
     'dissemination_plan': ''
