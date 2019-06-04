@@ -1,7 +1,7 @@
 import { mapValues } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch, bindActionCreators } from "redux";
+import { Dispatch, bindActionCreators } from 'redux';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
@@ -19,16 +19,17 @@ const ActionCreators = {
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { question: string; recordClass: string; }
+type OwnProps = { internalQuestion: string | null, question: string, recordClass: string; }
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 type Props = DispatchProps & StateProps & {
+  internalSearchName: string | null,
   searchName: string,
   recordClassName: string
 };
 
 function QuestionController(props: Props) {
-  const { dispatch, eventHandlers, searchName, recordClassName, ...state } = props;
+  const { dispatch, eventHandlers, internalSearchName, searchName, recordClassName, ...state } = props;
   
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
@@ -80,7 +81,7 @@ function QuestionController(props: Props) {
     <Plugin
       context={{
         type: 'questionForm',
-        name: searchName,
+        name: internalSearchName || searchName,
         searchName,
         recordClassName
       }}
@@ -100,6 +101,7 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
+    internalSearchName: ownProps.internalQuestion,
     searchName: ownProps.question,
     recordClassName: ownProps.recordClass
   })

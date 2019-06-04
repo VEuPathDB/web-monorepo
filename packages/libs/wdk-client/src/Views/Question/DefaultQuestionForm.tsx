@@ -4,7 +4,7 @@ import { HelpIcon, IconAlt } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { QuestionWithParameters, Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   changeGroupVisibility,
@@ -81,6 +81,7 @@ export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props)
   let { question, groupUIState } = state;
   return (
     <DefaultGroup
+      key={group.name}
       question={question}
       group={group}
       uiState={groupUIState[group.name]}
@@ -125,7 +126,7 @@ type GroupProps = {
   children: React.ReactChild;
 }
 
-function Group(props: GroupProps) {
+export function Group(props: GroupProps) {
   switch(props.group.displayType) {
     case 'ShowHide':
       return <ShowHideGroup {...props}/>

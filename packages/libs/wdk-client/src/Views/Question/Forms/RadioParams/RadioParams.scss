@@ -1,0 +1,11 @@
+.wdk-InactiveRadioParam {
+  opacity: 0.35;
+
+  &:hover {
+    opacity: 0.6;
+  }
+
+  * {
+    opacity: inherit;
+  }
+}

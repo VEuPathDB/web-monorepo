@@ -23,7 +23,7 @@ interface StepAnalysisEnrichmentResultTableProps {
 export interface ColumnSettings {
   key: string;
   name: string;
-  helpText: string;
+  helpText?: string;
   sortable: boolean;
   type?: 'text' | 'html';
   width?: string;
@@ -78,6 +78,15 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
         onRowsPerPageChange: this.handleRowsPerPageChange
       }
     });
+  }
+
+  componentDidUpdate(prevProps: StepAnalysisEnrichmentResultTableProps) {
+    if (prevProps !== this.props) {
+      this.setState(
+        (prevState: any, props: StepAnalysisEnrichmentResultTableProps) => 
+          MesaState.setRows(prevState, props.rows)
+      );
+    }
   }
 
   handleSearch(searchQuery: string) {
