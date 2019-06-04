@@ -2,7 +2,7 @@ import { Dictionary, mapValues, values } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 
 const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (state: QuestionState): string => {
   const xorGroup = state.question.groups.find(group => {
@@ -59,14 +59,11 @@ export const groupXorParametersByChromosomeAndSequenceID = createSelector(
   groupXorParameters(xorGroupingByChromosomeAndSequenceID)
 );
 
-export const restrictParameters = (state: QuestionState, parameterKeys: string[]): QuestionState => {
+export const restrictParameterGroup = (group: ParameterGroup, parameterKeys: string[]): ParameterGroup => {
   const parameterKeySet = new Set(parameterKeys);
 
   return {
-    ...state,
-    question: {
-      ...state.question,
-      parameters: state.question.parameters.filter(({ name }) => parameterKeySet.has(name))
-    }
+    ...group,
+    parameters: group.parameters.filter(key  => parameterKeySet.has(key))
   };
 };

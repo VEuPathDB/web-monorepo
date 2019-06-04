@@ -4,7 +4,7 @@ import { Tabs } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { Props, renderDefaultParamGroup } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { groupXorParametersByChromosomeAndSequenceID, keyForXorGroupingByChromosomeAndSequenceID, restrictParameters } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/utils';
+import { groupXorParametersByChromosomeAndSequenceID, keyForXorGroupingByChromosomeAndSequenceID, restrictParameterGroup } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/utils';
 
 import 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/MutuallyExclusiveParamsGroup.scss';
 
@@ -37,22 +37,16 @@ export const mutuallyExclusiveParamsGroupRenderer = (group: ParameterGroup, prop
                   key: 'Chromosome',
                   display: 'Search by Chromosome',
                   content: renderDefaultParamGroup(
-                    group,
-                    {
-                      ...props,
-                      state: restrictParameters(props.state, chromosomeParameterKeys)
-                    }
+                    restrictParameterGroup(group, chromosomeParameterKeys),
+                    props
                   )
                 },
                 {
                   key: 'Sequence ID',
                   display: 'Search by Sequence ID',
                   content: renderDefaultParamGroup(
-                    group,
-                    {
-                      ...props,
-                      state: restrictParameters(props.state, sequenceIdParameterKeys)
-                    }
+                    restrictParameterGroup(group, sequenceIdParameterKeys),
+                    props
                   )
                 }
               ]}

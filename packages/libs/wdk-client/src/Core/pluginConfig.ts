@@ -5,6 +5,7 @@ import { ByGenotypeNumberCheckbox } from 'wdk-client/Views/Question/Params/ByGen
 import { ByGenotypeNumber } from 'wdk-client/Views/Question/Forms/ByGenotypeNumber/ByGenotypeNumber';
 import { RadioParams } from 'wdk-client/Views/Question/Forms/RadioParams/RadioParams';
 import { InternalGeneDataset } from 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset';
+import { ByLocation } from 'wdk-client/Views/Question/Forms/ByLocation/ByLocation';
 
 // Default set of plugins provided by wdk
 // FIXME Make this typesafe by enumerating
@@ -17,19 +18,25 @@ const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => {
-      return (
-        !!question && 
-        !!question.properties && 
-        !!question.properties['radio-params']
-      );
-    },
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties['radio-params']
+    ),
     component: RadioParams
   },
   {
     type: 'questionForm',
     name: 'GenesByMicroarrayEvidence',
     component: InternalGeneDataset
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => !!(
+      question && 
+      /ByLocation$/.exec(question.urlSegment)
+    ),
+    component: ByLocation
   },
   {
     type: 'questionForm',
