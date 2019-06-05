@@ -1,5 +1,5 @@
 import { compose, curryN, update } from 'lodash/fp';
-import { getLeaves } from 'wdk-client/TreeUtils';
+import { getLeaves } from 'wdk-client/Utils/TreeUtils';
 
 /** Compose reducer functions from right to left */
 const composeReducers = (...reducers) => (state, action) =>
