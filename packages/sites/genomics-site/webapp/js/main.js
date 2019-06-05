@@ -4,8 +4,6 @@
 
 import 'site/wdkCustomization/js/client/main';
 import 'eupathdb/wdkCustomization/js/common';
-import '!!script-loader!site/wdkCustomization/js/custom-login';
-import '!!script-loader!eupathdb/js/newwindow';
 
 // home page bubbles
 import 'site/js/bubbles';
