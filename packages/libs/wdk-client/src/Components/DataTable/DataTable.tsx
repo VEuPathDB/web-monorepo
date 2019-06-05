@@ -232,7 +232,7 @@ class DataTable extends PureComponent<Props> {
                 </div>
               `.trim())
                 .attr('title', column.help)
-                .click(e => e.stopPropagation())
+                .click((e: JQuery.Event<HTMLElement, null>) => e.stopPropagation())
                 .qtip({
                   hide: {
                     fixed: true,
@@ -266,7 +266,7 @@ class DataTable extends PureComponent<Props> {
     .width(width || '')
     .appendTo(this.node)
     // click handler for expand single row
-    .on('click keydown', '.wdk-DataTableRow__expandable', event => {
+    .on('click keydown', '.wdk-DataTableRow__expandable', (event: JQuery.Event<HTMLElement, null>) => {
 
       // ignore keydown events if the key is not Enter
       if (event.type === 'keydown' && event.key !== 'Enter') {
@@ -285,9 +285,9 @@ class DataTable extends PureComponent<Props> {
 
       // ignore event if text has been selected
       const selection = window.getSelection();
-      const selectionText = selection.toString();
       if (
-        selectionText &&
+        selection &&
+        selection.toString() &&
         containsAncestorNode(
           selection.anchorNode,
           currNode => currNode.parentNode === tr
@@ -306,7 +306,7 @@ class DataTable extends PureComponent<Props> {
       this._callExpandedRowsCallback(dataTable);
     })
     // click handler for expand all rows
-    .on('click', 'th .wdk-DataTableCellExpand', event => {
+    .on('click', 'th .wdk-DataTableCellExpand', () => {
       // if all are shown, then hide all, otherwise show any that are hidden
       let allShown = areAllChildRowsShown(dataTable);
       for (let tr of dataTable.rows().nodes().toArray()) {
