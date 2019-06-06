@@ -29,6 +29,7 @@ export type Props = {
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
+  onSubmit?: (e: React.FormEvent) => void;
 }
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
@@ -36,11 +37,16 @@ const tooltipPosition = { my: 'right center', at: 'left center' };
 
 export default function DefaultQuestionForm(props: Props) {
 
-  const { dispatchAction, state } = props;
+  const { dispatchAction, onSubmit, state } = props;
   const { question, customName, weight } = state;
 
   let handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (onSubmit) {
+      onSubmit(e);
+    }
+
     dispatchAction(submitQuestion({ searchName: question.urlSegment }));
   }
 

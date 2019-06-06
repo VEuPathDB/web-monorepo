@@ -10,10 +10,13 @@ import 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/MutuallyExclusi
 
 const cx = makeClassNameHelper('wdk-MutuallyExclusiveParamsGroup');
 
-export const mutuallyExclusiveParamsGroupRenderer = (group: ParameterGroup, props: Props) => {
-  const { state } = props
-
-  const [ activeTab, onTabSelected ] = useState('Chromosome');
+export const mutuallyExclusiveParamsGroupRenderer = (
+  group: ParameterGroup, 
+  props: Props, 
+  activeTab: string, 
+  onTabSelected: (activeTab: string) => void
+) => {
+  const { state } = props;
 
   const xorGroupKey = keyForXorGroupingByChromosomeAndSequenceID(state);
   const xorGroupParameters = groupXorParametersByChromosomeAndSequenceID(state);

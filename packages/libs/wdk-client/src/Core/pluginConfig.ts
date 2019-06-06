@@ -27,7 +27,12 @@ const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    name: 'GenesByMicroarrayEvidence',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties.datasetCategory &&
+      question.properties.datasetSubtype
+    ),
     component: InternalGeneDataset
   },
   {

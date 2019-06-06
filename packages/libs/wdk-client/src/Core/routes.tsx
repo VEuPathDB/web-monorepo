@@ -43,24 +43,9 @@ const routes: RouteEntry[] = [
 
   {
     path: '/search/:recordClass/:question',
-    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => {
-      const searchNameHash = props.location.hash.slice(1);
-
-      return searchNameHash
-        ? (
-          <QuestionController
-            {...props.match.params}
-            internalQuestion={props.match.params.question}
-            question={searchNameHash}
-          />
-        )
-        : (
-          <QuestionController
-            {...props.match.params}
-            internalQuestion={null}
-          />
-        );
-    }
+    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => <QuestionController
+      {...props.match.params}
+    />
   },
 
   {

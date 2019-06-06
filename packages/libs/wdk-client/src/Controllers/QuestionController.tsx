@@ -2,6 +2,7 @@ import { mapValues } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
+import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
@@ -19,17 +20,16 @@ const ActionCreators = {
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { internalQuestion: string | null, question: string, recordClass: string; }
+type OwnProps = { question: string, recordClass: string; }
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 type Props = DispatchProps & StateProps & {
-  internalSearchName: string | null,
   searchName: string,
   recordClassName: string
 };
 
 function QuestionController(props: Props) {
-  const { dispatch, eventHandlers, internalSearchName, searchName, recordClassName, ...state } = props;
+  const { dispatch, eventHandlers, searchName, recordClassName, ...state } = props;
   
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
@@ -42,6 +42,7 @@ function QuestionController(props: Props) {
 
   if (state.questionStatus === 'error') return <Error/>;
   if (state.questionStatus === 'not-found') return <NotFound/>;
+  if (state.questionStatus === 'loading') return <Loading/>;
   if (state.questionStatus !== 'complete') return null;
 
   const parameterElements = mapValues(
@@ -81,7 +82,7 @@ function QuestionController(props: Props) {
     <Plugin
       context={{
         type: 'questionForm',
-        name: internalSearchName || searchName,
+        name: searchName,
         searchName,
         recordClassName
       }}
@@ -101,7 +102,6 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
-    internalSearchName: ownProps.internalQuestion,
     searchName: ownProps.question,
     recordClassName: ownProps.recordClass
   })

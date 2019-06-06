@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Props as DefaultQuestionFormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import { QuestionController } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { Question, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
@@ -10,8 +11,8 @@ import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUt
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 import './InternalGeneDataset.scss';
 
@@ -52,7 +53,6 @@ type DisplayCategory = {
 };
 
 const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
-  history,
   location,
   match,
   staticContext,
@@ -64,7 +64,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     return <Loading />;
   }
 
-  const searchNameHash = history.location.hash.slice(1);
+  const searchNameHash = location.hash.slice(1);
 
   const [ internalSearchName, searchName, showingRecordToggle ] = searchNameHash
     ? [ match.params.question, searchNameHash, true ]
@@ -74,7 +74,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     const question = questions.find(question => question.urlSegment === internalSearchName);
 
     if (!question || !question.properties) {
-      return [ '', '' ];
+      return [ undefined, undefined ];
     }
 
     const {
@@ -87,6 +87,10 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       datasetSubtype.join('')
     ];
   }, [ internalSearchName, searchName ]);
+
+  if (!datasetCategory || !datasetSubtype) {
+    return <NotFound />;
+  }
 
   const [ questionNamesByDatasetAndCategory, updateQuestionNamesByDatasetAndCategory ] = useState<Record<string, Record<string, string>> | null>(null);
   const [ displayCategoriesByName, updateDisplayCategoriesByName ] = useState<Record<string, DisplayCategory> | null>(null);
@@ -113,6 +117,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     [ datasetRecords, showingOneRecord, selectedDataSetRecord ]
   );
   
+  // TODO Discuss the use of hooks for data-fetching (redux-observable vs. hooks vs. suspense)
   useEffect(() => {
     formProps.dispatchAction(({ wdkService }) => {
       wdkService.getAnswerJson(
@@ -148,22 +153,40 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       ).then(answer => {
         const internalQuestions = answer.records
           .flatMap(
-            ({ tables: { References } }) => References
+            record => {
+              if (record.tableErrors.includes('References')) {
+                throw new Error(`Failed to resolve References table for record ${JSON.stringify(record)}`);
+              }
+
+              return record.tables.References;
+            }
           )
           .filter(
-            (reference): reference is Record<string, AttributeValue> => 
+            (reference): reference is Record<string, AttributeValue> => (
               reference !== null && 
               reference.target_type === 'question' && 
               reference.record_type === formProps.state.recordClass.fullName
+            )
           ).map(
-            ({ target_name, dataset_id, target_type, dataset_name, record_type }) =>
-              ({ 
-                target_name: `${target_name}`, 
-                dataset_id: `${dataset_id}`, 
-                target_type: `${target_type}`, 
-                dataset_name: `${dataset_name}`, 
-                record_type: `${record_type}`
-              })
+            reference => {
+              if (
+                typeof reference.target_name !== 'string' ||
+                typeof reference.dataset_id !== 'string' ||
+                typeof reference.target_type !== 'string' ||
+                typeof reference.dataset_name !== 'string' ||
+                typeof reference.record_type !== 'string'
+              ) {
+                throw new Error(`Question reference ${JSON.stringify(reference)} is missing required attribute fields`);
+              }
+
+              return {
+                target_name: reference.target_name, 
+                dataset_id: reference.dataset_id, 
+                target_type: reference.target_type, 
+                dataset_name: reference.dataset_name, 
+                record_type: reference.record_type
+              };
+            }
           );
 
         const { 
@@ -178,43 +201,47 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
               Object.keys(questionNamesByDatasetAndCategory[`${dataset_name}`] || {}).length > 0
             )
           .map(
-            (
-              { 
-                attributes: {
-                  dataset_name,
-                  display_name,
-                  organism_prefix,
-                  short_attribution,
-                  dataset_id, 
-                  summary,
-                  description,
-                  build_number_introduced
-                },
-                tables: {
-                  Publications
-                }
+            datasetRecord => {
+              if (
+                typeof datasetRecord.attributes.dataset_name !== 'string' ||
+                typeof datasetRecord.attributes.display_name !== 'string' ||
+                typeof datasetRecord.attributes.organism_prefix !== 'string' ||
+                typeof datasetRecord.attributes.short_attribution !== 'string' ||
+                typeof datasetRecord.attributes.dataset_id !== 'string' ||
+                typeof datasetRecord.attributes.summary !== 'string' ||
+                typeof datasetRecord.attributes.description !== 'string' ||
+                typeof datasetRecord.attributes.build_number_introduced !== 'string'
+              ) {
+                throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
               }
-            ) => ({
-              dataset_name: `${dataset_name}`,
-              display_name: `${display_name} (${short_attribution})`,
-              organism_prefix: `${organism_prefix}`,
-              dataset_id: `${dataset_id}`,
-              summary: `${summary}`,
-              description: `${description}`,
-              build_number_introduced: `${build_number_introduced}`,
-              publications: Publications.map(
-                ({ pubmed_link }) => pubmed_link === null || typeof pubmed_link === 'string'
-                  ? {
-                    url: '',
-                    displayText: ''
+
+              if (datasetRecord.tableErrors.includes('Publications')) {
+                throw new Error(`Failed to resolve Publications table for record ${JSON.stringify(datasetRecord)}`);
+              }
+
+              return {
+                dataset_name: datasetRecord.attributes.dataset_name,
+                display_name: `${datasetRecord.attributes.display_name} (${datasetRecord.attributes.short_attribution})`,
+                organism_prefix: datasetRecord.attributes.organism_prefix,
+                dataset_id: datasetRecord.attributes.dataset_id,
+                summary: datasetRecord.attributes.summary,
+                description: datasetRecord.attributes.description,
+                build_number_introduced: datasetRecord.attributes.build_number_introduced,
+                publications: datasetRecord.tables.Publications.map(
+                  ({ pubmed_link }) => { 
+                    if (pubmed_link === null || typeof pubmed_link === 'string') {
+                      throw new Error(`Pubmed link ${JSON.stringify(pubmed_link)} is invalid - expected a LinkAttributeValue`);
+                    }
+
+                    return pubmed_link;
                   }
-                  : pubmed_link
-              ),
-              searches: displayCategoryOrder
-                .filter(categoryName => questionNamesByDatasetAndCategory[`${dataset_name}`][categoryName])
-                .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
-                .join(' ')
-            }),
+                ),
+                searches: displayCategoryOrder
+                  .filter(categoryName => questionNamesByDatasetAndCategory[`${datasetRecord.attributes.dataset_name}`][categoryName])
+                  .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
+                  .join(' ')
+              };
+            },
           );
 
         updateQuestionNamesByDatasetAndCategory(questionNamesByDatasetAndCategory);
@@ -282,7 +309,6 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                 type: 'html',
                 sortable: true,
                 sortType: 'htmlText',
-                // width: '20%',
                 helpText: 'Organism data is aligned to'
               },
               {
@@ -291,7 +317,6 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                 type: 'html',
                 sortable: true,
                 sortType: 'htmlText',
-                // width: '60%',
                 renderCell: (cellProps: any) => {
                   const { display_name, summary, publications }: { display_name: string, summary: string, publications: LinkAttributeValue[] } 
                     = cellProps.row;
@@ -301,7 +326,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                       <HelpIcon>
                         <div>
                           <h4>Summary</h4>
-                          <div dangerouslySetInnerHTML={{ __html: summary}} />
+                          {safeHtml(summary)}
                           {
                             publications.length > 0 && (
                               <>
@@ -331,7 +356,6 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                 key: 'Searches',
                 name: 'Choose a Search',
                 sortable: false,
-                // width: '20%',
                 renderCell: (cellProps: any) =>
                   <div>
                     {
@@ -416,14 +440,9 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                         </Link>
                       ),
                       content: (
-                        <Plugin
-                          context={{
-                            type: 'questionForm',
-                            name: searchName,
-                            searchName,
-                            recordClassName: formProps.state.recordClass.urlSegment
-                          }}
-                          pluginProps={formProps}
+                        <QuestionController
+                          question={searchName}
+                          recordClass={formProps.state.recordClass.urlSegment}
                         />
                       )
                     })
