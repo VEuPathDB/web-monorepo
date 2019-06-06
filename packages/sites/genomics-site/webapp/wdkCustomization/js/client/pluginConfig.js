@@ -8,6 +8,7 @@ import {
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
+import BlastQuestionForm from './components/questions/BlastQuestionForm';
 
 export default [
   {
@@ -58,5 +59,10 @@ export default [
     type: 'questionForm',
     name: 'CompoundsByFoldChange',
     component: CompoundsByFoldChangeForm
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => question && question.urlSegment.endsWith('BySimilarity'),
+    component: BlastQuestionForm
   }
 ];
