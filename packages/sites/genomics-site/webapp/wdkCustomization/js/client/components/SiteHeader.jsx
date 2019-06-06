@@ -10,7 +10,7 @@ const quickSearchReferences = [
     alternate: 'GeneByLocusTag',
     paramName: 'single_gene_id',
     displayName: 'Gene ID',
-    help: `Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs.`,
+    help: `Use * as a wildcard in a gene ID. <br/>To enter multiple IDs click on <b>Gene ID:</b> to go to the <a href='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'>Gene IDs</a> search page.`,
   },
   {
     name: 'GenesByTextSearch',
@@ -24,7 +24,7 @@ const quickSearchReferences = [
         <li>kinase</li>
         <li>kinas*</li>
         <li>kin*as*</li>
-      </ul>
+      </ul <br/><br/>To query a list of genes with Gene ID(s) use the search  <a href='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'>Gene ID(s)</a> under "Annotation, curation, and identifiers" (in the "New Search" menu or in the home page bubble). 
     `
     // help: `Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.`,
   }
@@ -40,3 +40,4 @@ export default function SiteHeader() {
     />
   )
 }
+
