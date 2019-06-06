@@ -7,16 +7,17 @@ import {
 
 export default (base: ServiceBase) => {
 
-      /**
+  /**
    * Gets favorite ID of a single record, or undefined if record is not a
    * favorite of the current user.  Thus can be used to check whether a record
    * is a favorite of the current user.
    *
    * @param record Record instance to search for
    */
-  function getFavoriteId (record: RecordInstance) {
+  async function getFavoriteId (record: RecordInstance) {
+    let rcObject = await base.findRecordClass(rc => rc.fullName === record.recordClassName);
     let data = [{
-      recordClassName: record.recordClassName,
+      recordClassName: rcObject.urlSegment,
       primaryKey: record.id
     }];
     let url = '/users/current/favorites/query';
@@ -31,9 +32,9 @@ export default (base: ServiceBase) => {
    *
    * @param record Record to add as a favorite
    */
-  function addFavorite (record: RecordInstance) {
-    const { recordClassName, id } = record;
-    const favorite = { recordClassName, primaryKey: id };
+  async function addFavorite (record: RecordInstance) {
+    let rcObject = await base.findRecordClass(rc => rc.fullName === record.recordClassName);
+    const favorite = { recordClassName: rcObject.urlSegment, primaryKey: record.id };
     const url = '/users/current/favorites';
     return base
       ._fetchJson<Favorite>('post', url, JSON.stringify(favorite))

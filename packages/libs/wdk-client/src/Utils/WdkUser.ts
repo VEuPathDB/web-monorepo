@@ -1,4 +1,4 @@
-import { Decoder, combine, field, string, number, boolean } from 'wdk-client/Utils/Json';
+import { Decoder, combine, field, string, number, boolean, oneOf, nullValue } from 'wdk-client/Utils/Json';
 import { AnswerSpec } from 'wdk-client/Utils/WdkModel';
 
 export interface User {
@@ -62,8 +62,7 @@ export interface StrategySummary extends StrategyProperties {
   estimatedSize: number;
   isValid: boolean;
   lastModified: string;
-  latestStepId:	number;
-  recordClassName: string;
+  recordClassName: string | null; // optional; may be empty if root step is invalid
   signature: string;
   author?: string;
   organization?: string;
@@ -81,10 +80,9 @@ export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
     field('description', string),
     field('estimatedSize', number),
     field('lastModified', string),
-    field('latestStepId',	number),
     field('name', string),
     field('organization', string),
-    field('recordClassName', string),
+    field('recordClassName', oneOf(nullValue, string)),
     field('signature', string),
     field('strategyId', number),
   ),
