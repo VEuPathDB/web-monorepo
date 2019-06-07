@@ -12,7 +12,7 @@ import * as Components from 'wdk-client/Components';
 import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
 import { createMockHistory } from 'wdk-client/Utils/MockHistory';
 import { getTransitioner } from 'wdk-client/Utils/PageTransitioner';
-import WdkService from 'wdk-client/Service/WdkService';
+import { getInstance } from 'wdk-client/Service/WdkService';
 import { updateLocation } from 'wdk-client/Actions/RouterActions';
 import { loadAllStaticData } from 'wdk-client/Actions/StaticDataActions';
 import * as Controllers from 'wdk-client/Controllers';
@@ -69,7 +69,7 @@ export function initialize(options) {
   let history = canUseRouter
     ? createBrowserHistory({ basename: rootUrl })
     : createMockHistory({ basename: rootUrl });
-  let wdkService = wrapWdkService(WdkService.getInstance(endpoint));
+  let wdkService = wrapWdkService(getInstance(endpoint));
   let transitioner = getTransitioner(history);
   let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner, additionalMiddleware);
 

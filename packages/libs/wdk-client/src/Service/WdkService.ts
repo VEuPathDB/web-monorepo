@@ -1,23 +1,8 @@
-import { composeMixins, CompositeService } from 'wdk-client/Service/ServiceMixins';
+import { memoize } from 'lodash';
+import { composeMixins, CompositeService as WdkService } from 'wdk-client/Service/ServiceMixins';
 
-export default interface WdkService extends CompositeService {
-  
-}
+export default WdkService;
 
-export default class WdkService {
-
-  private static _instances: Map<string, WdkService> = new Map;
-
-  private constructor(serviceUrl: string) {
-    return composeMixins(serviceUrl);
-  }
-
-  // Ensure that only one instance is craeted for a given serviceUrl.
-  public static getInstance(serviceUrl: string): WdkService {
-    if (!this._instances.has(serviceUrl)) {
-      this._instances.set(serviceUrl, new this(serviceUrl));
-    }
-    return this._instances.get(serviceUrl) as WdkService;
-  }
-
-}
+// Memoize based on serviceUrl, so that we only create one instance per
+// serviceUrl. This will ensure that multiple caches are not created.
+export const getInstance = memoize(composeMixins);
