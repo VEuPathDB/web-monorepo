@@ -1,4 +1,4 @@
-import { keyBy, memoize, partition } from 'lodash';
+import { partition } from 'lodash';
 import React from 'react';
 import Header from 'ebrc-client/App/Header';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
@@ -137,42 +137,12 @@ function getHomeContent({ studies, searches, visualizations }) {
   ];
 }
 
-const samplesSearchName = 'SampleQuestions.MicrobiomeSampleByMetadata';
-const taxonSearchName = 'SampleQuestions.MicrobiomeSampleByTaxonAbundance';
-
-const makeCrossStudyStudy = memoize(questions => {
-  if (questions == null) return;
-
-  const questionsByName = keyBy(questions, 'name');
-  const samplesSearch = questionsByName[samplesSearchName];
-  const taxonSearch = questionsByName[taxonSearchName];
-
-  return {
-    name: 'Cross Study Analysis',
-    id: 'DS_all',
-    route: '/search/dataset/AllDatasets/result',
-    searches: [
-      {
-        displayName: samplesSearch.displayName,
-        name: samplesSearch.name,
-        icon: samplesSearch.iconName,
-      },
-      {
-        displayName: taxonSearch.displayName,
-        name: taxonSearch.name,
-        icon: taxonSearch.iconName,
-      },
-    ]
-  };
-});
-
 function makeHeaderMenuItems(state) {
-  const { siteConfig, questions } = state.globalData;
+  const { siteConfig } = state.globalData;
   const siteData = getSiteData(state);
   const { studies } = siteData;
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = menuItemsFromSocials(siteConfig);
-  const allStudiesStudy = makeCrossStudyStudy(questions);
 
   return {
     mainMenu: [
