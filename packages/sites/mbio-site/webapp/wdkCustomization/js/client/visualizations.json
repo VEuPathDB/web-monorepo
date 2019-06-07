@@ -1,5 +1,6 @@
 [
   {
+    "name": "abundance",
     "appUrl": "/im.do?s=c7283f8b75b1e82a&selectedTab=first_analysis",
     "appImage": "/wdkCustomization/images/OTU_abundance_120.png",
     "linkText": "Open The Strategy",
@@ -8,6 +9,7 @@
     "linkTarget": "_self"
   },
   {
+    "name": "alphaDiversity",
     "appUrl": "/im.do?s=6e34ce48f1765080&selectedTab=first_analysis",
     "appImage": "/wdkCustomization/images/alpha_diversity_120.png",
     "linkText": "Open The Strategy",
@@ -16,6 +18,7 @@
     "linkTarget": "_self"
   },
   {
+    "name": "betaDiversity",
     "appUrl": "/im.do?s=63bf2b6d74138c13&selectedTab=first_analysis",
     "appImage": "/wdkCustomization/images/beta_diversity_120.png",
     "linkText": "Open The Strategy",
@@ -24,6 +27,7 @@
     "linkTarget": "_self"
   },
   {
+    "name": "differentialAbundance",
     "appUrl": "/im.do?s=c286ae8d0549db37&selectedTab=first_analysis",
     "appImage": "/wdkCustomization/images/differential_abundance_120.png",
     "linkText": "Open The Strategy",
@@ -32,6 +36,7 @@
     "linkTarget": "_self"
   },
   {
+    "name": "correlation",
     "appUrl": "/im.do?s=be424110c9d114e0&selectedTab=first_analysis",
     "appImage": "/wdkCustomization/images/correlation_120.png",
     "linkText": "Open The Strategy",
