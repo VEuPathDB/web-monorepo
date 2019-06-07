@@ -54,7 +54,8 @@ export type CategoryOntology = Ontology<CategoryTreeNode>
 
 export function getId(node: CategoryTreeNode) {
   return isIndividual(node)
-    ? node.wdkReference.name
+    // FIXME Remove `fullName` hack when the urlSegment/name/fullName saga is resolved.
+    ? node.wdkReference.name || (node.wdkReference as any).fullName
     : `category:${kebabCase(getLabel(node))}`;
 }
 
@@ -76,6 +77,10 @@ export function getRefName(node: CategoryTreeNode) {
 
 export function getRecordClassName(node: CategoryTreeNode) {
   return getPropertyValue('recordClassName', node);
+}
+
+export function getRecordClassUrlSegment(node: CategoryTreeNode) {
+  return getPropertyValue('recordClassUrlSegment', node);
 }
 
 export function getDisplayName(node: CategoryTreeNode) {
@@ -168,9 +173,7 @@ export function addSearchSpecificSubtree(question: Question, categoryTree: Categ
  * @returns {*} - id/value of node
  */
 export function getNodeId(node: CategoryTreeNode): string {
-  // FIXME: document why the special case for attributes and tables
-  let targetType = getTargetType(node);
-  return (targetType === 'attribute' || targetType === 'table' ? getRefName(node) : getId(node));
+  return getId(node);
 }
 
 /**
@@ -283,7 +286,10 @@ export function resolveWdkReferences(
   preorderSeq(ontology.tree).forEach(node => {
     if (isIndividual(node)) {
       Object.assign(node, {
-        wdkReference: getModelEntity(recordClasses, questions, node)
+        wdkReference: getModelEntity(recordClasses, questions, node),
+        properties: Object.assign(node.properties, {
+          recordClassUrlSegment: [findRecordClassUrlSegment(recordClasses, node)]
+        })
       });
     }
   });
@@ -384,4 +390,9 @@ function getModelEntity(
     }
   }
   return undefined;
+}
+
+function findRecordClassUrlSegment(recordClasses: Record<string, RecordClass>, node: OntologyNode<{}>): string | undefined {
+  const recordClass = recordClasses[getRecordClassName(node)];
+  return recordClass && recordClass.urlSegment;
 }
