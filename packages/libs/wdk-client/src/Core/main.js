@@ -69,7 +69,7 @@ export function initialize(options) {
   let history = canUseRouter
     ? createBrowserHistory({ basename: rootUrl })
     : createMockHistory({ basename: rootUrl });
-  let wdkService = wrapWdkService(WdkService).getInstance(endpoint);
+  let wdkService = wrapWdkService(WdkService.getInstance(endpoint));
   let transitioner = getTransitioner(history);
   let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner, additionalMiddleware);
 
