@@ -18,7 +18,7 @@
     <api:configurations var="config" configfile="/WEB-INF/wdk-model/config/projects.xml" />
   </c:catch>
   <c:if test="${e!=null}">--%>
-    <font size="-1" color="#CC0033">News not available</font>
+   <!--  <font size="-1" color="#CC0033">News not available</font> -->
 <%--  </c:if>
 </c:if>--%>
 

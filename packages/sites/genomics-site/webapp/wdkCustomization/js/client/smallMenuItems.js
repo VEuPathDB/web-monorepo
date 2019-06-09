@@ -69,15 +69,15 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Scientific Working Group',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.AboutAll#swg'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#swg'
         },
         {
           text: 'Scientific Advisory Team',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#advisors'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#advisors'
         },
         {
           text: 'Acknowledgements',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.AboutAll#acks'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#acks'
         },
         {
           text: 'Funding',

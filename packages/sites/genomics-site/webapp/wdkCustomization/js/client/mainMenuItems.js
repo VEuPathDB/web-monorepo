@@ -180,7 +180,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'about-downloads',
           text: 'Understanding Downloads',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.AboutAll#downloads'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#downloads'
         },
         {
           id: 'data-files-eupathdb',
