@@ -28,10 +28,6 @@
     <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
 
-  <!-- <listener>
-    <listener-class>net.bull.javamelody.SessionListener</listener-class>
-  </listener> -->
-
   <!-- The Apache file upload library starts a cleanup thread to remove temporary files -->
   <!--    This listener destroys that thread when the webapp is unloaded.               -->
   <listener>
@@ -57,7 +53,7 @@
   </filter-mapping>
 
   <!-- UrlRewrite filter -->
-  <!-- This is used in conjuction with the asset fingerprinting utilities in EuPathSiteCommon.
+  <!-- This is used in conjuction with the asset fingerprinting utilities in EbrcWebsiteCommon.
        We also set some cache-related headers here (see /WEB-INF/urlrewrite.xml). -->
   <filter>
     <filter-name>UrlRewriteFilter</filter-name>
@@ -78,21 +74,10 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <!-- mitigation for Struts1 security hole CVE-2014-0114 -->
-  <filter>
-    <filter-name>ParamFilter</filter-name>
-    <filter-class>org.gusdb.wdk.controller.filter.ParameterFilter</filter-class>
-    <init-param>
-      <param-name>excludeParams</param-name>
-      <param-value>(.*\.|^|.*|\[('|"))(c|C)lass(\.|('|")]|\[).*</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>ParamFilter</filter-name>
-    <servlet-name>wdkEuPathDbBrc</servlet-name>
-  </filter-mapping>
-
   <!-- JavaMelody monitoring plugin configuration -->
+  <!-- <listener>
+    <listener-class>net.bull.javamelody.SessionListener</listener-class>
+  </listener> -->
   <!-- <filter>
     <filter-name>monitoring-display</filter-name>
     <filter-class>org.eupathdb.common.controller.MelodyDisplayFilter</filter-class>
@@ -122,26 +107,6 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping> -->
   <!-- End JavaMelody monitoring plugin configuration -->
-
-  <!-- Struts servlet to serve out most of the site -->
-  <servlet>
-    <servlet-name>WdkWebsite</servlet-name>
-    <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-    <init-param>
-      <param-name>config</param-name>
-      <param-value>/WEB-INF/struts-config.xml</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>WdkWebsite</servlet-name>
-    <url-pattern>/webservices/*</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>WdkWebsite</servlet-name>
-    <url-pattern>*.do</url-pattern>
-  </servlet-mapping>
-  <!-- End Struts servlet and mapping -->
 
   <!-- WDK RESTful client filter -->
   <servlet>
