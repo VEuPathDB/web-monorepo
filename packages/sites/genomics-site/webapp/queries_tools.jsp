@@ -1,8 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
-<%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 
 <c:if test="${not empty param.GALAXY_URL}">
   <%-- Set galaxy url both as a cookie and on the backend to allow flexibility --%>
