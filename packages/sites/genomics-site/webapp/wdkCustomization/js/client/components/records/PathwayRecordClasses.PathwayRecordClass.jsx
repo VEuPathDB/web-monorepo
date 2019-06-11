@@ -748,7 +748,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
 
 
-            if (pathwaySource.indexOf('Cyc') > -1) {
+            if (pathwaySource.indexOf('Cyc') > -1 || pathwaySource.indexOf('KEGG') > -1) {
                 if (cy.nodes().is('node[?x]')) {
                     cy.nodes('node[node_type="enzyme"]').map(function(node) {
                         //if node is a child, get the parent
@@ -782,16 +782,26 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                                 node.data('placed', 'true'); //change to use boolean instead of text
                                 //if node is a parent, place the children
                                 if (node.isParent()) {
-                                    //use i to ensure child nodes aren't placed on top of each other
-                                    //TODO right now stacked vertically - may need to do something else if many children
-                                    for (let i=0; i<node.children().size(); i++) {
-                                        node.children()[i].data('x', meanX);
-                                        node.children()[i].data('y', ((i*15) + meanY));
-                                        node.children()[i].renderedPosition({ x:meanX, y:((i*15) + meanY)});
-                                        node.data('placed', 'true'); //use boolean
-                                        node.children()[i].data('placed', 'true'); //use boolean
-                                        (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
+                                    if (pathwaySource.indexOf('Cyc') > -1) {
+                                        //use i to ensure child nodes aren't placed on top of each other
+                                        //TODO right now stacked vertically - may need to do something else if many children
+                                        for (let i=0; i<node.children().size(); i++) {
+                                            node.children()[i].data('x', meanX);
+                                            node.children()[i].data('y', ((i*15) + meanY));
+                                            node.children()[i].renderedPosition({ x:meanX, y:((i*15) + meanY)});
+                                            node.data('placed', 'true'); //use boolean
+                                            node.children()[i].data('placed', 'true'); //use boolean
+                                            (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
+                                        }
+                                    } else {
+                                        for (let i=0; i<node.children().size(); i++) {
+                                            node.children()[i].renderedPosition({ x:node.children()[i].data('x'), y:node.children()[i].data('y') });
+                                            node.data('placed', 'true');
+                                            node.children()[i].data('placed', 'true');
+                                            (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
+                                        }
                                     }
+                                            
                                 }
                             }
 
