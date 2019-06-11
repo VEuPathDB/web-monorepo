@@ -26,6 +26,7 @@ import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
+import StrategyController from 'wdk-client/Controllers/StrategyController';
 
 const routes: RouteEntry[] = [
   {
@@ -134,6 +135,11 @@ const routes: RouteEntry[] = [
         />
       );
     }
+  },
+
+  {
+    path: '/workspace/strategies/:strategyId/:stepId?',
+    component: (props: RouteComponentProps<{ strategyId: number, stepId?: number }>) => <StrategyController {...props.match.params} />
   },
 
   {

@@ -41,7 +41,7 @@ export default (base: ServiceBase) => {
 
   async function getCustomSearchReportRequestInfo(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<CustomSearchReportRequestInfo> {
     const question = await base.findQuestion(question => question.urlSegment === answerSpec.searchName);
-    const recordClass = await base.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
+    const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
     let url = base.getCustomSearchReportEndpoint(recordClass.urlSegment, question.urlSegment, formatting.format);
     let searchConfig: SearchConfig = answerSpec.searchConfig;
     let reportConfig = formatting.formatConfig;
@@ -64,7 +64,7 @@ export default (base: ServiceBase) => {
    */
   async function getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig): Promise<Answer> {
     const question = await base.findQuestion(question => question.urlSegment === answerSpec.searchName);
-    const recordClass = await base.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
+    const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
     let url = base.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
     let searchConfig: SearchConfig = answerSpec.searchConfig
     let body: StandardSearchReportRequest = { searchConfig, reportConfig };

@@ -185,7 +185,6 @@ export type Action =
   | InferAction<typeof openResultTableSummaryView>
   | InferAction<typeof closeResultTableSummaryView>
   | InferAction<typeof requestSortingPreference>
-  | InferAction<typeof openResultTableSummaryView>
   | InferAction<typeof requestSortingUpdate>
   | InferAction<typeof fulfillSorting>
   | InferAction<typeof requestColumnsChoicePreference>

@@ -32,7 +32,7 @@ export interface Step extends AnswerSpec {
   recordClassName: string;
   shortDisplayName: string;
   strategyId: number;
-  displayPrefs: {
+  displayPreferences: {
     columnSelection?: string[];
     sortColumns?: { name: string; direction: 'ASC' | 'DESC' }[];
   }
@@ -42,7 +42,7 @@ export interface PatchStepSpec {
   customName?: string,
   expandNested?: boolean, // only allowed on combiner steps
   nestedName?: string;  // only allowed on combiner steps; not shown if expandNested is false and the step is not nested
-  displayPrefs?: Step['displayPrefs'];
+  displayPreferences?: Step['displayPreferences'];
 }
 
 export interface NewStepSpec extends PatchStepSpec, AnswerSpec {

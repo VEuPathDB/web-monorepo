@@ -311,7 +311,7 @@ export default (base: ServiceBase) => {
 
   async function getSearchPathFromUrlSegment(questionUrlSegment: string) : Promise<string> {
     const question = await base.findQuestion(question => question.urlSegment === questionUrlSegment );
-    const recordClass = await base.findRecordClass(recordClass => recordClass.fullName === question.outputRecordClassName);
+    const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
     return base.getSearchPath(recordClass.urlSegment, questionUrlSegment);
   }
 

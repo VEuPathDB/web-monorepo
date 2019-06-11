@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -76,41 +76,29 @@ type Props = OwnProps & StateProps & {
   actionCreators: DispatchProps;
 }
 
-class ResultTableSummaryViewController extends React.Component< Props > {
+function ResultTableSummaryViewController(props: Props) {
+  const { stepId, strategyId, actionCreators, viewData, derivedData, tableActions, showIdAttributeColumn } = props;
 
-  componentDidMount() {
-    this.props.actionCreators.openResultTableSummaryView(this.props.strategyId, this.props.stepId);
-    console.log('mounting ResultTableSummaryViewController', this);
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.stepId !== this.props.stepId) {
-      this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
-      this.props.actionCreators.openResultTableSummaryView(this.props.strategyId, this.props.stepId);
-      console.log('updating ResultTableSummaryViewController', this);
+  useEffect(() => {
+    actionCreators.openResultTableSummaryView(strategyId, stepId);
+    return () => {
+      actionCreators.closeResultTableSummaryView(stepId);
     }
-  }
+  }, [ stepId, strategyId ]);
 
-  componentWillUnmount() {
-    this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
-    console.log('unmounting ResultTableSummaryViewController', this);
-  }
+  if (viewData == null) return null;
+  if (derivedData.errorMessage != null) return (<Error message={derivedData.errorMessage} />);
 
-  render() {
-    if (this.props.viewData == null) return null;
-    if (this.props.derivedData.errorMessage != null) return (<Error message={this.props.derivedData.errorMessage} />);
-
-    return (
-      <ResultTableSummaryView
-        stepId={this.props.stepId}
-        actions={this.props.tableActions}
-        showIdAttributeColumn={this.props.showIdAttributeColumn}
-        {...this.props.viewData}
-        {...this.props.derivedData}
-        {...this.props.actionCreators}
-      />
-    );
-  }
+  return (
+    <ResultTableSummaryView
+      stepId={stepId}
+      actions={tableActions}
+      showIdAttributeColumn={showIdAttributeColumn}
+      {...viewData}
+      {...derivedData}
+      {...actionCreators}
+    />
+  );
 }
 
 // TODO: what happens if strategy does not actually contain expected stepId?
@@ -147,7 +135,7 @@ function getQuestionAndRecordClass(rootState: RootState, props: OwnProps): { que
 
   const searchName = viewState.searchName;
   const question = rootState.globalData.questions.find(q => q.urlSegment === searchName);
-  const recordClass = question && rootState.globalData.recordClasses.find(r => r.fullName === question.outputRecordClassName);
+  const recordClass = question && rootState.globalData.recordClasses.find(r => r.urlSegment === question.outputRecordClassName);
   return question && recordClass && { question, recordClass };
 }
 

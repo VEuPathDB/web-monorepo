@@ -237,6 +237,7 @@ const mergeProps = (
             }}
             pluginProps={{
               stepId: ownProps.stepId,
+              strategyId: ownProps.strategyId,
               viewId: ownProps.viewId
             }}
           />
@@ -280,7 +281,7 @@ const mergeProps = (
 });
 
 function getPropsFromStep (strategy: StrategyDetails, stepId: number)  {
-  if (strategy.steps[stepId] === undefined) return { searchName: undefined, recordClassName: undefined};
+  if (strategy.steps[stepId] === undefined) return { searchName: undefined, recordClassName: undefined };
   return { searchName: strategy.steps[stepId].searchName, recordClassName: strategy.steps[stepId].recordClassName}
 }
 

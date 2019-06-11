@@ -255,7 +255,7 @@ async function getRequestStrategy(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof requestStrategy>> {
-  let strategyId = openRTSAction.payload.stepId;
+  let strategyId = openRTSAction.payload.strategyId;
   return requestStrategy(strategyId);
 }
 
@@ -327,10 +327,10 @@ async function getFulfillColumnsChoiceUpdate(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillColumnsChoice>> {
   const step = strategyAction.payload.strategy.steps[openAction.payload.stepId];
-  const { id, displayPrefs } = step;
+  const { id, displayPreferences } = step;
   const columnSelection = requestAction.payload.columns;
-  const sortColumns = displayPrefs.sortColumns
-    ? displayPrefs.sortColumns
+  const sortColumns = displayPreferences.sortColumns
+    ? displayPreferences.sortColumns
     : (await getResultTableSortingPref(
         requestAction.payload.searchName,
         wdkService
@@ -342,7 +342,7 @@ async function getFulfillColumnsChoiceUpdate(
     wdkService,
     requestAction.payload.columns
   );
-  wdkService.updateStepProperties(id, { displayPrefs: { sortColumns, columnSelection } });
+  wdkService.updateStepProperties(id, { displayPreferences: { sortColumns, columnSelection } });
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     requestAction.payload.columns,
@@ -381,8 +381,8 @@ async function getFulfillSortingPreference(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillSorting>> {
   const step = strategyAction.payload.strategy.steps[openAction.payload.stepId];
-  const sorting = step.displayPrefs.sortColumns
-    ? step.displayPrefs.sortColumns.map(
+  const sorting = step.displayPreferences.sortColumns
+    ? step.displayPreferences.sortColumns.map(
         ({ name: attributeName, direction }) => ({ attributeName, direction })
       )
     : await getResultTableSortingPref(
@@ -424,7 +424,7 @@ async function getFulfillSortingUpdate(
     wdkService,
     requestAction.payload.sorting
   );
-  wdkService.updateStepProperties(id, { displayPrefs: { columnSelection, sortColumns } });
+  wdkService.updateStepProperties(id, { displayPreferences: { columnSelection, sortColumns } });
   return fulfillSorting(
     openAction.payload.viewId,
     requestAction.payload.sorting,

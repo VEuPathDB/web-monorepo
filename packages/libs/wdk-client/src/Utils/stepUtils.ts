@@ -20,7 +20,7 @@ export function getStepBundlePromise(stepId: number, service: WdkService) {
     })
   });
   let recordClassPromise = questionPromise.then(question =>
-    service.findRecordClass( rc => rc.fullName === question.outputRecordClassName )
+    service.findRecordClass( rc => rc.urlSegment === question.outputRecordClassName )
   );
 
   return Promise.all([ stepPromise, questionPromise, recordClassPromise ])
@@ -55,7 +55,7 @@ export function getSingleRecordStepBundlePromise([ recordClass, recordInstance, 
         "primaryKeys": primaryKeyString
       }
     },
-    displayPrefs: { } as Step['displayPrefs']
+    displayPreferences: { } as Step['displayPreferences']
   };
   // TODO: if this is used in places other than step download form, may need
   //   to fill in more fields and think about what their values should be

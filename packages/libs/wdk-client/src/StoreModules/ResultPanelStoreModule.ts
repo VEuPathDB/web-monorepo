@@ -53,7 +53,7 @@ function observeOpenTabListing(action$: ActionsObservable<Action>, state$: State
   return action$.pipe(
     filter(openTabListing.isOfType),
     mergeMap(action => concat(
-      of(requestStrategy(action.payload.stepId)),
+      of(requestStrategy(action.payload.strategyId)),
       action.payload.viewId === 'strategy' ? of(startLoadingTabListing(action.payload.stepId)) : empty(),
       action.payload.initialTab === ANALYSIS_MENU_ID ? of(createNewTab(
         {

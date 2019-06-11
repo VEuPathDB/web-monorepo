@@ -44,14 +44,13 @@ export const question = (
   }: RootState,
   { stepId, strategyId }: Props
 ) => {
-  // TODO: use question url segment, not full name
   const strategyEntry = strategies[strategyId];
   if (strategyEntry == undefined) return;
   if (strategyEntry.status != 'success') return;
   const step = strategyEntry.strategy.steps[stepId];
   if (step == null) return;
   const questionName = step.searchName;
-  const question = questions.find(({ fullName }) => fullName === questionName);
+  const question = questions.find(({ urlSegment }) => urlSegment === questionName);
   return question;
 };
 

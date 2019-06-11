@@ -1,6 +1,6 @@
 import { parseInt, uniq } from 'lodash/fp';
 import WdkService from 'wdk-client/Service/WdkService';
-import { decode, arrayOf, objectOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
+import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
 import { Question, AttributeSortingSpec, SearchConfig } from "wdk-client/Utils/WdkModel"
 
@@ -18,14 +18,14 @@ export async function getResultPanelTabPref(searchName: string, wdkService: WdkS
 
 export async function getResultTableColumnsPref(wdkService: WdkService, searchName: string, stepId?: number): Promise<string[]> {
   const question = await getQuestionFromSearchName(searchName, wdkService);
-  const recordClass = await wdkService.findRecordClass(({ urlSegment }) => urlSegment === question.urlSegment);
+  const recordClass = await wdkService.findRecordClass(({ urlSegment }) => urlSegment === question.outputRecordClassName);
   const fixedColumns = [
     recordClass.recordIdAttributeName,
     ...recordClass.attributes
       .filter(({ isRemovable}) => !isRemovable)
       .map(({ name }) => name)
   ];
-  const displayPrefsColumns = stepId && (await wdkService.findStep(stepId)).displayPrefs.columnSelection;
+  const displayPrefsColumns = stepId && (await wdkService.findStep(stepId)).displayPreferences.columnSelection;
   const columnsPref = await getPrefWith(wdkService, prefSpecs.summary(question.fullName));
   const columns = displayPrefsColumns ? displayPrefsColumns
     : columnsPref ? columnsPref.trim().split(/,\s*/)
@@ -143,4 +143,3 @@ async function getQuestionFromSearchName(searchName: string, wdkService: WdkServ
   if (question == null) throw new Error(`Unknown question "${searchName}".`);
   return question;
 }
-
