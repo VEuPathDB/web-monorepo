@@ -42,7 +42,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import {
   InferAction,
-  mergeMapRequestActionsToEpic as mrate,
+  switchMapRequestActionsToEpic as smrate,
   takeEpicInWindow
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import {
@@ -755,37 +755,37 @@ export const observe = takeEpicInWindow(
     ) => start.payload.viewId === end.payload.viewId
   },
   combineEpics(
-    mrate([openRTS], getRequestStrategy),
-    mrate([openRTS], getFirstPageNumber),
-    mrate([openRTS], getRequestPageSize),
-    mrate([openRTS, fulfillStrategy], getRequestColumnsChoicePreference,
+    smrate([openRTS], getRequestStrategy),
+    smrate([openRTS], getFirstPageNumber),
+    smrate([openRTS], getRequestPageSize),
+    smrate([openRTS, fulfillStrategy], getRequestColumnsChoicePreference,
       { areActionsCoherent: filterRequestFilterByStepId }),
-    mrate([openRTS, fulfillStrategy, requestColumnsChoicePreference], getFulfillColumnsChoicePreference,
+    smrate([openRTS, fulfillStrategy, requestColumnsChoicePreference], getFulfillColumnsChoicePreference,
       { areActionsCoherent: filterFulfillBySearchName }),
-    mrate([openRTS, fulfillStrategy, requestColumnsChoiceUpdate], getFulfillColumnsChoiceUpdate,
+    smrate([openRTS, fulfillStrategy, requestColumnsChoiceUpdate], getFulfillColumnsChoiceUpdate,
       { areActionsCoherent: filterFulfillBySearchName }),
-    mrate([openRTS, fulfillStrategy], getRequestSortingPreference,
+    smrate([openRTS, fulfillStrategy], getRequestSortingPreference,
       { areActionsCoherent: filterRequestFilterByStepId }),
     // need question from step
-    mrate([openRTS, fulfillStrategy, requestSortingPreference], getFulfillSortingPreference,
+    smrate([openRTS, fulfillStrategy, requestSortingPreference], getFulfillSortingPreference,
       { areActionsCoherent: filterFulfillBySearchName }),
-    mrate([openRTS, fulfillStrategy, requestSortingUpdate], getFulfillSortingUpdate,
+    smrate([openRTS, fulfillStrategy, requestSortingUpdate], getFulfillSortingUpdate,
       { areActionsCoherent: filterFulfillBySearchName }),
-    mrate([openRTS, fulfillStrategy], getRequestGlobalViewFiltersPref,
+    smrate([openRTS, fulfillStrategy], getRequestGlobalViewFiltersPref,
       { areActionsCoherent: filterRequestGlobalViewFiltersActionsPref }),
-    mrate([openRTS, fulfillStrategy, requestGlobalViewFilters], getFulfillGlobalViewFiltersPref,
+    smrate([openRTS, fulfillStrategy, requestGlobalViewFilters], getFulfillGlobalViewFiltersPref,
       { areActionsCoherent: filterFulfillStrategyByStepRecordClass }),
-    mrate([openRTS, fulfillStrategy, updateGlobalViewFilters], getFulfillGlobalViewFiltersUpdate,
+    smrate([openRTS, fulfillStrategy, updateGlobalViewFilters], getFulfillGlobalViewFiltersUpdate,
       { areActionsCoherent: filterFulfillStrategyByStepRecordClass }),
-    mrate([requestPageSize], getFulfillPageSize),
-    mrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
-    mrate([openRTS, fulfillStrategy, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting, fulfillGlobalViewFilters], getRequestAnswer,
+    smrate([requestPageSize], getFulfillPageSize),
+    smrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
+    smrate([openRTS, fulfillStrategy, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting, fulfillGlobalViewFilters], getRequestAnswer,
       { areActionsCoherent: filterRequestAnswerActions }),
-    mrate([openRTS, requestAnswer], getFulfillAnswer,
+    smrate([openRTS, requestAnswer], getFulfillAnswer,
       { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),
-    mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus,
+    smrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus,
       { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
-    mrate([openRTS, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
+    smrate([openRTS, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
       { areActionsCoherent: filterFulfillRecordBasketStatusActions })
   )
 );
