@@ -77,7 +77,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Acknowledgements',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.AboutAll#acks'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#acks'
         },
         {
           text: 'Funding',
