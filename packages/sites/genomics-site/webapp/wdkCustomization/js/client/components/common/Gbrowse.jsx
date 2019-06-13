@@ -129,13 +129,16 @@ export function GbrowseContext(props) {
   let jbrowseUrl = "";
 
   if (attribute.name == 'GeneModelGbrowseUrl'){ 
-      jbrowseUrl = record.attributes.jbrowseGeneUrl;
+      jbrowseUrl = record.attributes.geneJbrowseUrl;
   }
   if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
-      jbrowseUrl = record.attributes.jbrowseBlatUrl;
+      jbrowseUrl = record.attributes.blatJbrowseUrl;
   }
   if (attribute.name == 'SnpsGbrowseUrl'){ 
-      jbrowseUrl = record.attributes.jbrowseSnpsUrl;
+      jbrowseUrl = record.attributes.snpsJbrowseUrl;
+  }
+  if (attribute.name == 'SyntenyGbrowseUrl'){ 
+      jbrowseUrl = record.attributes.syntenyJbrowseUrl;
   }
   if ( jbrowseUrl ) {
   return (
