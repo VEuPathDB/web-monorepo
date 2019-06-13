@@ -1,7 +1,7 @@
 // TODO Make this Store Module more generic so that it can be used with an Answer (and no Step).
 
 import stringify from 'json-stable-stringify';
-import { get, stubTrue, isEqual, difference } from 'lodash';
+import { get, stubTrue, isEqual, difference, identity } from 'lodash';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { Action } from 'wdk-client/Actions';
 import {
@@ -53,7 +53,8 @@ import {
   setResultTablePageSizePref,
   setResultTableSortingPref,
   getGlobalViewFilters,
-  setGlobalViewFilters
+  setGlobalViewFilters,
+  filterInvalidAttributes
 } from 'wdk-client/Utils/UserPreferencesUtils';
 import {
   Answer,
@@ -290,15 +291,17 @@ async function getFulfillColumnsChoicePreference(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillColumnsChoice>> {
+  const { questionName } = requestAction.payload;
   const columns = await getResultTableColumnsPref(
     wdkService,
-    requestAction.payload.questionName,
+    questionName,
     openAction.payload.stepId
   );
+  const validColumns = await filterInvalidAttributes(wdkService, questionName, identity, columns);
   return fulfillColumnsChoice(
     openAction.payload.viewId,
-    columns,
-    requestAction.payload.questionName
+    validColumns,
+    questionName
   );
 }
 
@@ -398,17 +401,20 @@ async function getFulfillSortingPreference(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillSorting>> {
-  const sorting = stepAction.payload.step.displayPrefs.sortColumns
-    ? stepAction.payload.step.displayPrefs.sortColumns.map(
+  const { step } = stepAction.payload;
+  const { questionName } = requestAction.payload;
+  const sorting = step.displayPrefs.sortColumns
+    ? step.displayPrefs.sortColumns.map(
         ({ name: attributeName, direction }) => ({ attributeName, direction })
       )
     : await getResultTableSortingPref(
         requestAction.payload.questionName,
         wdkService
       );
+  const validSorting = await filterInvalidAttributes(wdkService, questionName, spec => spec.attributeName, sorting);
   return fulfillSorting(
     openAction.payload.viewId,
-    sorting,
+    validSorting,
     requestAction.payload.questionName
   );
 }

@@ -48,8 +48,7 @@ export const prefSpecs = {
 }
 
 export async function getResultTableColumnsPref(wdkService: WdkService, questionName: string, stepId?: number): Promise<string[]> {
-  const question = await wdkService.findQuestion(({ name }) => name === questionName);
-  const recordClass = await wdkService.findRecordClass(({ name }) => name === question.recordClassName);
+  const { question, recordClass } = await getQuestionAndRecordClass(wdkService, questionName);
   const fixedColumns = [
     recordClass.recordIdAttributeName,
     ...recordClass.attributes
@@ -69,13 +68,10 @@ export async function setResultTableColumnsPref(questionName: string, wdkService
 }
 
 export async function getResultTableSortingPref(questionName: string, wdkService: WdkService): Promise<AttributeSortingSpec[]> {
-    const sortingPref = await getPrefWith(wdkService, prefSpecs.sort(questionName));
-    if (sortingPref) return sortingPref.split(/,\s*/).map(constructSortingSpec);
-
-    const questions = await wdkService.getQuestions();
-    const question = questions.find(question => question.name === questionName);
-    if (question == null) throw new Error(`Unknown question "${questionName}".`);
-    return question.defaultSorting;
+  const { question } = await getQuestionAndRecordClass(wdkService, questionName);
+  const sortingPref = await getPrefWith(wdkService, prefSpecs.sort(questionName));
+  return sortingPref ? sortingPref.split(/,\s*/).map(constructSortingSpec)
+    : question.defaultSorting;
 }
 
 export async function setResultTableSortingPref(questionName: string, wdkService: WdkService, sorting : Array<AttributeSortingSpec>) : Promise<UserPreferences> {
@@ -125,4 +121,23 @@ export async function getGlobalViewFilters(wdkService: WdkService, recordClassNa
 export async function setGlobalViewFilters(wdkService: WdkService, recordClassName: string, viewFilters?: ViewFilters): Promise<UserPreferences> {
   const prefValue = viewFilters ? JSON.stringify(viewFilters) : null;
   return setPrefWith(wdkService, prefSpecs.globalViewFilters(recordClassName), prefValue);
+}
+
+// Helpers
+async function getQuestionAndRecordClass(wdkService: WdkService, questionName: string) {
+  const question = await wdkService.findQuestion(q => q.name === questionName);
+  const recordClass = await wdkService.findRecordClass(r => r.name === question.recordClassName);
+  return { question, recordClass };
+}
+
+async function getValidColumns(wdkService: WdkService, questionName: string): Promise<Set<string>> {
+  const { question, recordClass } = await getQuestionAndRecordClass(wdkService, questionName);
+  return new Set(recordClass.attributes.concat(question.dynamicAttributes)
+    .filter(({ isDisplayable }) => isDisplayable)
+    .map(({ name }) => name));
+}
+
+export async function filterInvalidAttributes<T>(wdkService: WdkService, questionName: string, mapToAttributeName: (t: T) => string, array: T[]): Promise<T[]> {
+  const validColumns = await getValidColumns(wdkService, questionName);
+  return array.filter(item => validColumns.has(mapToAttributeName(item)));
 }
