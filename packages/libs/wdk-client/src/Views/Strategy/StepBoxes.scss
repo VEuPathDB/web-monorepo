@@ -1,0 +1,97 @@
+.StepBoxes {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  overflow-x: auto;
+
+  &--Slot {
+    display: flex;
+    flex-flow: column-reverse;
+  }
+
+  &--Box {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 3.5em;
+    padding: 0 1em;
+    margin: .5em 1em;
+    border-radius: .5em;
+    position: relative;
+
+    &__leaf, &__transform {
+      background-color: #f0f0f0;
+      border: 2px solid gray;
+    }
+
+    &__transform:before {
+      content: '----->';
+      position: absolute;
+      left: -3em;
+      bottom: 2em;
+      font-weight: bold;
+    }
+
+    &__combined {
+      &:before {
+        content: '----->';
+        position: absolute;
+        left: 0;
+        bottom: 2em;
+        font-weight: bold;
+      }
+      &:after {
+        content: '-->';
+        position: absolute;
+        top: -1em;
+        transform: rotate(90deg);
+        transform-origin: center;
+        font-weight: bold;
+      }
+    }
+
+  }
+
+  &--Box.active {
+    background-color: #fff7ab;
+  }
+
+  &--CombineOperator {
+    background-image: url('./operationIcons.png');
+    height: 25px;
+    width: 36px;
+
+    &__INTERSECT {
+      background-position: -30px -35px;
+    }
+
+    &__UNION {
+      background-position: -30px -72px;
+    }
+
+    &__MINUS {
+      background-position: -30px 0px;
+    }
+
+    &__RMINUS {
+      background-position: -30px -106px;
+    }
+
+    &__RONLY {
+      background-position: -30px -142px;
+    }
+
+    &__LONLY {
+      background-position: -30px -178px;
+    }
+
+  }
+
+  // &--Box.active,
+  // &--Box:active,
+  // &--Box:focus {
+  //   box-shadow: 0 0 0 2px #888888;
+  // }
+}

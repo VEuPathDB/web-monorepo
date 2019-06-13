@@ -1,0 +1,25 @@
+.StrategyPanel {
+  &__Heading {
+    font-weight: bold;
+  }
+
+  &__Panel {
+    display: flex;
+    flex-flow: row-reverse nowrap;
+    justify-content: space-between;
+    background-color: #fafafa;
+    border: 1px solid #ccc;
+    border-radius: .6em;
+    padding: 1em 0;
+  }
+
+  &__Controls {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 1.5em;
+    > * {
+      margin: 0 .5em;
+    }
+  }
+
+}

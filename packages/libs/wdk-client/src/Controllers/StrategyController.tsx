@@ -1,6 +1,7 @@
 import React from 'react';
 
-import ResultPanelController from './ResultPanelController';
+import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
+import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
 
 interface Props {
   strategyId: number;
@@ -14,6 +15,10 @@ export default function StrategyController(props: Props) {
 
   return (
     <React.Fragment>
+      <StrategyPanelController
+        strategyId={props.strategyId}
+        stepId={props.stepId}
+      />
       <ResultPanelController 
         strategyId={props.strategyId}
         stepId={props.stepId}

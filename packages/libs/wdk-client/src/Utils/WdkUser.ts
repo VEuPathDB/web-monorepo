@@ -71,7 +71,7 @@ export interface StrategySummary extends StrategyProperties {
 
 export interface StrategyDetails extends StrategySummary {
   stepTree: StepTree;
-  steps: Step[];
+  steps: Record<number, Step>;
 }
 
 export const strategySummaryDecoder: Decoder<StrategySummary> = combine(

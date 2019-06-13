@@ -4,12 +4,13 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 
 export type PluginType =
-  'attributeAnalysis' |
-  'questionForm' |
-  'questionFormParameter' |
-  'summaryView' |
-  'stepAnalysis' |
-  'questionFilter';
+  | 'attributeAnalysis'
+  | 'questionForm'
+  | 'questionFormParameter'
+  | 'summaryView'
+  | 'stepAnalysis'
+  | 'questionFilter'
+  | 'stepBox'
 
 export interface PluginEntryContext {
   type: PluginType;
@@ -21,6 +22,7 @@ export interface PluginEntryContext {
 type CompositePluginComponentProps<PluginProps> = {
   context: PluginEntryContext;
   pluginProps: PluginProps;
+  defaultComponent?: PluginComponent<PluginProps>;
 }
 
 type ResolvedPluginReferences = {
@@ -89,8 +91,9 @@ export function makeCompositePluginComponent<T>(registry: ClientPluginRegistryEn
 
   function CompositePluginComponent(props: MappedProps) {
     if (!isResolved(props.context, props.resolvedReferences)) return null;
+    const defaultPluginComponent = props.defaultComponent || DefaultPluginComponent;
     const entry = registry.find(entry => isMatchingEntry(entry, props.context, props.resolvedReferences));
-    const PluginComponent = entry ? entry.component : DefaultPluginComponent;
+    const PluginComponent = entry ? entry.component : defaultPluginComponent;
     return <PluginComponent {...props.context} {...props.pluginProps}/>
   }
 
@@ -130,7 +133,7 @@ function DefaultPluginComponent() {
 
 export const PluginContext = React.createContext<CompositePluginComponent<any>>(makeCompositePluginComponent([]));
 
-export function Plugin<PluginProps>(props: { context: PluginEntryContext, pluginProps: PluginProps }) {
+export function Plugin<PluginProps>(props: CompositePluginComponentProps<PluginProps>) {
   return (
     <PluginContext.Consumer>
       {PluginComponent => {
