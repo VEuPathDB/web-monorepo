@@ -19,13 +19,13 @@ export default function StrategyPanel(props: Props) {
   return (
     <div className={cx()}>
       <h2 className={cx('__Heading')}>
-        {strategy.estimatedSize.toLocaleString()} {strategy.recordClassName} &mdash; {strategy.name}
+        {strategy.estimatedSize ? strategy.estimatedSize.toLocaleString() : '?'} {strategy.recordClassName} &mdash; {strategy.name}
       </h2>
       <div className={cx('__Panel')}>
         <StrategyControls strategy={strategy}/>
         <StepBoxes steps={strategy.steps} stepTree={strategy.stepTree}/>
       </div>
-      <StrategyActionModel strategy={strategy} action={action}/>
+      <StrategyActionModal strategy={strategy} action={action}/>
     </div>
   );
 }
@@ -58,7 +58,7 @@ interface StrategyActionModelProps {
   action?: string;
 }
 
-function StrategyActionModel(props: StrategyActionModelProps) {
+function StrategyActionModal(props: StrategyActionModelProps) {
   if (!props.action) return null;
   return (
     <Modal>
