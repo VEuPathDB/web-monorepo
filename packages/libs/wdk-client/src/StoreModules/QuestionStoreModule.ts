@@ -1,7 +1,7 @@
 import { keyBy, mapValues } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { from, EMPTY, merge, Subject } from 'rxjs';
-import { debounceTime, filter, mergeMap, takeUntil, map } from 'rxjs/operators';
+import { debounceTime, filter, mergeMap, takeUntil, map, mergeAll } from 'rxjs/operators';
 
 import {
   UNLOAD_QUESTION,
@@ -28,6 +28,8 @@ import {
   questionLoaded,
   questionNotFound,
   questionError,
+  UPDATE_REDIRECT_TO,
+  updateRedirectTo,
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -48,6 +50,7 @@ import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
 import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { fulfillCreateStrategy, requestCreateStrategy } from 'wdk-client/Actions/StrategyActions';
 
 export const key = 'question';
 
@@ -76,10 +79,12 @@ export type QuestionState = {
 
 export type State = {
   questions: Record<string, QuestionState | undefined>;
+  redirectTo: Partial<{ stepId: number; strategyId: number }>;
 }
 
 const initialState: State = {
-  questions: {}
+  questions: {},
+  redirectTo: {}
 }
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -97,11 +102,20 @@ export function reduce(state: State = initialState, action: Action): State {
         };
       }
     }
+    if (action.type === UPDATE_REDIRECT_TO) {
+      console.log(action);
+
+      return {
+        ...state,
+        redirectTo: action.payload
+      };
+    }
   }
+
   return state;
 }
 
-export const observe = (action$: ActionsObservable<Action>, state$: StateObservable<any>, dependencies: EpicDependencies) => {
+export const observe = (action$: ActionsObservable<Action>, state$: StateObservable<RootState>, dependencies: EpicDependencies) => {
   const questionState$ = new StateObservable(
     state$.pipe(
       map(state => state[key])
@@ -110,7 +124,7 @@ export const observe = (action$: ActionsObservable<Action>, state$: StateObserva
   );
 
   return merge(
-    observeQuestion(action$, questionState$, dependencies),
+    observeQuestion(action$, state$, dependencies),
     observeParam(action$, questionState$, dependencies)
   );
 };
@@ -194,7 +208,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       const newParamsByName = keyBy(action.payload.parameters, 'name');
       const newParamValuesByName = mapValues(newParamsByName, param => param.initialDisplayValue || '');
       const newParamErrors = mapValues(newParamsByName, () => undefined);
-      // merge updated parameters into quesiton and reset their values
+      // merge updated parameters into question and reset their values
       return {
         ...state,
         paramValues: {
@@ -338,14 +352,15 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
   mergeMap(action => {
     const questionState = state$.value[key].questions[action.payload.searchName];
     if (questionState == null) return EMPTY;
-    Promise.all(questionState.question.parameters.map(parameter => {
+    return Promise.all(questionState.question.parameters.map(parameter => {
       const ctx = { parameter, searchName: questionState.question.urlSegment, paramValues: questionState.paramValues };
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
     }).then(paramValues => {
       const weight = Number.parseInt(questionState.weight || '');
-      services.wdkService.createStep({
+      
+      return services.wdkService.createStep({
         searchName: questionState.question.urlSegment,
         searchConfig: {
           parameters: paramValues,
@@ -353,15 +368,27 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
         },
         customName: questionState.customName
       }).then(step => {
-        console.log('Created step', step);
-        console.log('TODO: Submit question');
+        // TODO: This logic only accommodates initializing a strategy from a search
+        // page. We will also need to handle the case of adding a step to
+        // an existing strategy
+        return [
+          updateRedirectTo({
+            stepId: step.id
+          }),
+          requestCreateStrategy({
+            isSaved: false,
+            isPublic: false,
+            stepTree: { 
+              stepId: step.id
+            },
+            name: questionState.question.displayName
+          })
+        ];
       })
-    })
-
-    return EMPTY;
-  })
+    });
+  }),
+  mergeAll()
 )
-
 
 export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,

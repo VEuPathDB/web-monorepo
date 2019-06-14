@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-
-import { Props as DefaultQuestionFormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import { QuestionController } from 'wdk-client/Controllers';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { Question, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
-import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
+
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { QuestionController } from 'wdk-client/Controllers';
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
+import { Question, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
+
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
-import './InternalGeneDataset.scss';
+import 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset.scss';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
@@ -22,9 +22,16 @@ type StateProps = {
   questions?: Question[],
   ontology?: CategoryTreeNode
 };
-type OwnProps = DefaultQuestionFormProps & RouteComponentProps<{recordClass: string; question: string;}>;
+type DispatchProps = {
+  dispatchAction: DispatchAction
+};
+type OwnProps = {
+  recordClass: string,
+  question: string,
+  hash: string
+};
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 type InternalQuestionRecord = { 
   target_name: string, 
@@ -40,7 +47,6 @@ type DatasetRecord = {
   organism_prefix: string,
   dataset_id: string,
   summary: string,
-  description: string,
   build_number_introduced: string,
   publications: LinkAttributeValue[],
   searches: string
@@ -53,12 +59,12 @@ type DisplayCategory = {
 };
 
 const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
-  location,
-  match,
-  staticContext,
   questions,
   ontology,
-  ...formProps
+  question,
+  recordClass,
+  hash,
+  dispatchAction
 }) => {
   if (!questions || !ontology) {
     return <Loading />;
@@ -66,29 +72,30 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
 
   const searchNameHash = location.hash.slice(1);
 
-  const [ internalSearchName, searchName, showingRecordToggle ] = searchNameHash
-    ? [ match.params.question, searchNameHash, true ]
-    : [ match.params.question, match.params.question, false ];
+  const [ internalSearchName, searchName, showingRecordToggle ] = hash
+    ? [ question, searchNameHash, true ]
+    : [ question, question, false ];
 
-  const [ datasetCategory, datasetSubtype ] = useMemo(() => {
-    const question = questions.find(question => question.urlSegment === internalSearchName);
+  const [ outputRecordClassName, datasetCategory, datasetSubtype ] = useMemo(() => {
+    const internalQuestion = questions.find(question => question.urlSegment === internalSearchName);
 
-    if (!question || !question.properties) {
-      return [ undefined, undefined ];
+    if (!internalQuestion || !internalQuestion.properties) {
+      return [ undefined, undefined, undefined ];
     }
 
     const {
       datasetCategory = [],
       datasetSubtype = []
-    } = question.properties;
+    } = internalQuestion.properties;
 
     return [
+      internalQuestion.outputRecordClassName,
       datasetCategory.join(''),
       datasetSubtype.join('')
     ];
   }, [ internalSearchName, searchName ]);
 
-  if (!datasetCategory || !datasetSubtype) {
+  if (!outputRecordClassName || !datasetCategory || !datasetSubtype) {
     return <NotFound />;
   }
 
@@ -119,7 +126,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   
   // TODO Discuss the use of hooks for data-fetching (redux-observable vs. hooks vs. suspense)
   useEffect(() => {
-    formProps.dispatchAction(({ wdkService }) => {
+    dispatchAction(({ wdkService }) => {
       wdkService.getAnswerJson(
         {
           searchName: 'DatasetsByCategoryAndSubtype',
@@ -165,7 +172,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
             (reference): reference is Record<string, AttributeValue> => (
               reference !== null && 
               reference.target_type === 'question' && 
-              reference.record_type === formProps.state.recordClass.fullName
+              reference.record_type === outputRecordClassName
             )
           ).map(
             reference => {
@@ -209,7 +216,6 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                 typeof datasetRecord.attributes.short_attribution !== 'string' ||
                 typeof datasetRecord.attributes.dataset_id !== 'string' ||
                 typeof datasetRecord.attributes.summary !== 'string' ||
-                typeof datasetRecord.attributes.description !== 'string' ||
                 typeof datasetRecord.attributes.build_number_introduced !== 'string'
               ) {
                 throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
@@ -225,7 +231,6 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                 organism_prefix: datasetRecord.attributes.organism_prefix,
                 dataset_id: datasetRecord.attributes.dataset_id,
                 summary: datasetRecord.attributes.summary,
-                description: datasetRecord.attributes.description,
                 build_number_introduced: datasetRecord.attributes.build_number_introduced,
                 publications: datasetRecord.tables.Publications.map(
                   ({ pubmed_link }) => { 
@@ -442,7 +447,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                       content: (
                         <QuestionController
                           question={searchName}
-                          recordClass={formProps.state.recordClass.urlSegment}
+                          recordClass={recordClass}
                         />
                       )
                     })
@@ -520,14 +525,15 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
   };
 }
 
-export const InternalGeneDataset = connect<StateProps, {}, OwnProps, RootState>(
+export const InternalGeneDataset = connect<StateProps, DispatchProps, OwnProps, RootState>(
     (state, ownProps) => ({ 
       ...ownProps, 
       questions: state.globalData.questions, 
       ontology: state.globalData.ontology
         ? state.globalData.ontology.tree
         : undefined
+    }),
+    dispatch => ({
+      dispatchAction: dispatch
     })
-  )(
-    withRouter(InternalGeneDatasetView)
-  );
+  )(InternalGeneDatasetView);

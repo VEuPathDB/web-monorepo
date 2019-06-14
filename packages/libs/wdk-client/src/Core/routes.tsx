@@ -18,7 +18,6 @@ import SiteMapController from 'wdk-client/Controllers/SiteMapController';
 import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import FavoritesController from 'wdk-client/Controllers/FavoritesController';
-import QuestionController from 'wdk-client/Controllers/QuestionController';
 import BlastSummaryViewController from 'wdk-client/Controllers/BlastSummaryViewController';
 import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryViewController';
 import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
@@ -27,6 +26,8 @@ import ResultPanelController from 'wdk-client/Controllers/ResultPanelController'
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import StrategyController from 'wdk-client/Controllers/StrategyController';
+
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 
 const routes: RouteEntry[] = [
   {
@@ -44,8 +45,16 @@ const routes: RouteEntry[] = [
 
   {
     path: '/search/:recordClass/:question',
-    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => <QuestionController
-      {...props.match.params}
+    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => <Plugin
+      context={{
+        type: 'questionController',
+        recordClassName: props.match.params.recordClass,
+        searchName: props.match.params.question
+      }}
+      pluginProps={{
+        ...props.match.params,
+        hash: props.location.hash.slice(1)
+      }}
     />
   },
 

@@ -6,11 +6,26 @@ import { ByGenotypeNumber } from 'wdk-client/Views/Question/Forms/ByGenotypeNumb
 import { RadioParams } from 'wdk-client/Views/Question/Forms/RadioParams/RadioParams';
 import { InternalGeneDataset } from 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset';
 import { ByLocation } from 'wdk-client/Views/Question/Forms/ByLocation/ByLocation';
+import DefaultQuestionController from 'wdk-client/Controllers/QuestionController';
 
 // Default set of plugins provided by wdk
 // FIXME Make this typesafe by enumerating
 // TODO Move the custom pages/parameters to the registries for Ebrc and/or Api
 const pluginConfig: ClientPluginRegistryEntry<any>[] = [
+  {
+    type: 'questionController',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties.datasetCategory &&
+      question.properties.datasetSubtype
+    ),    
+    component: InternalGeneDataset
+  },
+  {
+    type: 'questionController',
+    component: DefaultQuestionController
+  },
   {
     type: 'questionForm',
     searchName: 'ByGenotypeNumber',
@@ -39,7 +54,7 @@ const pluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'questionForm',
     test: ({ question }) => !!(
       question && 
-      /ByLocation$/.exec(question.urlSegment)
+      question.urlSegment.endsWith('ByLocation')
     ),
     component: ByLocation
   },

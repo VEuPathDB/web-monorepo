@@ -31,6 +31,7 @@ export interface ColumnSettings {
   sortType?: 'text' | 'number' | 'htmlText' | 'htmlNumber';
 }
 
+// TODO Refactor to use hooks
 export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnrichmentResultTableProps, any> {
   constructor(props: StepAnalysisEnrichmentResultTableProps) {
     super(props);
@@ -84,7 +85,10 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
     if (prevProps !== this.props) {
       this.setState(
         (prevState: any, props: StepAnalysisEnrichmentResultTableProps) => 
-          MesaState.setRows(prevState, props.rows)
+          MesaState.setColumns(
+            MesaState.setRows(prevState, props.rows),
+            props.columns
+          )
       );
     }
   }

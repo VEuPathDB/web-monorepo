@@ -1,29 +1,30 @@
-import { EpicDependencies } from 'wdk-client/Core/Store';
-import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { Action } from 'wdk-client/Actions';
 import { stubTrue } from 'lodash/fp';
-import { mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { Step, StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import {
-requestCreateStrategy,
-fulfillCreateStrategy,
-requestDeleteStrategy,
-fulfillDeleteStrategy,
-requestDeleteOrRestoreStrategies,
-requestDuplicateStrategy,
-fulfillDuplicateStrategy,
-requestStrategy,
-fulfillStrategy,
-requestPatchStrategyProperties,
-requestPutStrategyStepTree,
-requestCreateStep,
-fulfillCreateStep,
-requestUpdateStepProperties,
-requestDeleteStep,
-requestUpdateStepSearchConfig,
-} from 'wdk-client/Actions/StrategyActions';
+
+import { Action } from 'wdk-client/Actions';
+import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { updateRedirectTo } from 'wdk-client/Actions/QuestionActions';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { EpicDependencies } from 'wdk-client/Core/Store';
+import { mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
+import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import {
+  requestCreateStrategy,
+  fulfillCreateStrategy,
+  requestDeleteStrategy,
+  fulfillDeleteStrategy,
+  requestDuplicateStrategy,
+  fulfillDuplicateStrategy,
+  requestStrategy,
+  fulfillStrategy,
+  requestPatchStrategyProperties,
+  requestPutStrategyStepTree,
+  requestCreateStep,
+  fulfillCreateStep,
+  requestUpdateStepProperties,
+  requestDeleteStep,
+  requestUpdateStepSearchConfig,
+} from 'wdk-client/Actions/StrategyActions';
 
 export const key = 'strategies';
 
@@ -196,6 +197,21 @@ async function getFulfillCreateStep(
 
   return fulfillCreateStep(identifier.id, requestTimestamp);
 }
+
+async function getFulfillNewSearch(
+  [requestStrategyAction, fulfillStrategyAction]: [InferAction<typeof requestCreateStrategy>, InferAction<typeof fulfillCreateStrategy>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+) {
+  const redirectTo = state$.value.question.redirectTo;
+
+  return redirectTo.stepId === requestStrategyAction.payload.newStrategySpec.stepTree.stepId
+    ? updateRedirectTo({
+        stepId: redirectTo.stepId,
+        strategyId: fulfillStrategyAction.payload.strategyId
+      })
+    : updateRedirectTo(redirectTo);
+}
   
   export const observe = combineEpics(
     mrate([requestStrategy], getFulfillStrategy, {
@@ -208,6 +224,7 @@ async function getFulfillCreateStep(
     mrate([requestDeleteStrategy], getFulfillStrategyDelete),
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
+    mrate([requestCreateStrategy, fulfillCreateStrategy], getFulfillNewSearch)
   );
 /*
 requestUpdateStepProperties,

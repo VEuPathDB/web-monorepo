@@ -9,19 +9,22 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import {
   updateActiveQuestion,
   updateParamValue,
-  changeGroupVisibility
+  changeGroupVisibility,
+  updateRedirectTo
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { Redirect } from 'react-router';
 
 const ActionCreators = {
   updateParamValue,
-  setGroupVisibility: changeGroupVisibility
+  setGroupVisibility: changeGroupVisibility,
+  updateRedirectTo
 }
 
 type OwnProps = { question: string, recordClass: string; }
-type StateProps = QuestionState;
+type StateProps = QuestionState & { redirectUrl?: string };
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 type Props = DispatchProps & StateProps & {
   searchName: string,
@@ -29,7 +32,7 @@ type Props = DispatchProps & StateProps & {
 };
 
 function QuestionController(props: Props) {
-  const { dispatch, eventHandlers, searchName, recordClassName, ...state } = props;
+  const { dispatch, eventHandlers, searchName, recordClassName, redirectUrl, ...state } = props;
   
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
@@ -38,7 +41,15 @@ function QuestionController(props: Props) {
     }))
   }, [searchName]);
 
+  useEffect(() => {
+    if (redirectUrl) {
+      props.eventHandlers.updateRedirectTo({});
+    }
+  }, [redirectUrl]);
+
   // TODO Add document.title logic
+
+  if (redirectUrl) return <Redirect push to={redirectUrl} />;
 
   if (state.questionStatus === 'error') return <Error/>;
   if (state.questionStatus === 'not-found') return <NotFound/>;
@@ -97,7 +108,12 @@ function QuestionController(props: Props) {
 }
 
 const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
-  (state, props) => state.question.questions[props.question] || {} as QuestionState,
+  (state, props) => ({
+    ...state.question.questions[props.question] || {} as QuestionState,
+    redirectUrl: state.question.redirectTo.strategyId && state.question.redirectTo.stepId
+      ? `/workspace/strategies/${state.question.redirectTo.strategyId}/${state.question.redirectTo.stepId}`
+      : undefined
+  }),
   (dispatch) => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,

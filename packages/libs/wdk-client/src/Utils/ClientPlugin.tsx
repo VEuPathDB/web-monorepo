@@ -5,6 +5,7 @@ import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 
 export type PluginType =
   | 'attributeAnalysis'
+  | 'questionController'
   | 'questionForm'
   | 'questionFormParameter'
   | 'summaryView'
