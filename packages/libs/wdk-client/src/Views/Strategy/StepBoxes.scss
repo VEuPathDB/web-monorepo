@@ -54,7 +54,7 @@
   &--Box {
     display: flex;
     flex-flow: column;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
     height: 45%;
     padding: 0 1em;
@@ -62,14 +62,27 @@
     border-radius: 0.5em;
     position: relative;
 
-    &__leaf,
-    &__transform {
-      background-color: #f0f0f0;
+    &.active {
+      background-color: #ffffa0;
+    }
+
+    &__leaf {
+      background-color: #d0cfcf;
       border: 2px solid black;
       z-index: 1;
     }
 
-    // Line connecting leaf step and combiner step
+    &__transform {
+      background-image: url('./TransformBg.gif');
+      background-size: 100% 100%;
+      z-index: 1;
+
+      &.active {
+        background-image: url('./TransformBg_yellow.gif');
+      }
+    }
+
+    // Line connecting leaf step and combined step
     &__combined:before {
       content: "";
       border: 1px solid black;
@@ -78,11 +91,33 @@
       left: calc(50% + 5px);
       top: -3em;
     }
+
+    &__nested:before {
+      content: '';
+      width: 100%;
+      height: 100%;
+      border: 2px solid #111;
+      position: absolute;
+      border-radius: .5em;
+      left: 3px;
+      bottom: 3px;
+      border-left: none;
+      border-bottom: none;
+      box-shadow: 2px -2px 0 -1px black;
+    }
   }
 
-  &--Box.active {
-    background-color: #fff7ab;
+  &__StepName {
+    color: black;
+    font-weight: bold;
   }
+
+  &__StepCount {
+    font-size: .9em;
+    font-style: italic;
+    font-weight: bold;
+  }
+
 
   &--CombineOperator {
     background-image: url("./operationIcons.png");

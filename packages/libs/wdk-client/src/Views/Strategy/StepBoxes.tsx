@@ -115,7 +115,7 @@ function LeafStepBoxContent(props: StepBoxProps) {
   const { step } = props;
   return (
     <React.Fragment>
-      <div>{step.customName}</div>
+      <StepName step={step}/>
       <StepCount step={step}/>
     </React.Fragment>
   );
@@ -125,7 +125,7 @@ function TransformStepBoxContent(props: StepBoxProps) {
   const { step } = props;
   return (
     <React.Fragment>
-      <div>{step.customName}</div>
+      <StepName step={step}/>
       <StepCount step={step}/>
     </React.Fragment>
   );
@@ -148,9 +148,14 @@ function CombinedStepIcon(props: { step: Step }) {
   );
 }
 
+function StepName(props: { step: Step }) {
+  const { step } = props;
+  return <div className={cx('__StepName')}>{step.customName}</div>;
+}
+
 function StepCount(props: { step: Step }) {
   const { step } = props;
-  return <div>{step.estimatedSize.toLocaleString()} {step.recordClassName}</div>
+  return <div className={cx('__StepCount')}>{step.estimatedSize.toLocaleString()} {step.recordClassName}</div>
 }
 
 function findExpandedStepTree(stepTree: StepTree, steps: Record<number, Step>): StepTree | undefined {
