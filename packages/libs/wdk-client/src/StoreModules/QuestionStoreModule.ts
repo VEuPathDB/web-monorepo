@@ -366,7 +366,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           parameters: paramValues,
           wdkWeight: Number.isNaN(weight) ? undefined : weight
         },
-        customName: questionState.customName
+        customName: questionState.customName || questionState.question.shortDisplayName
       }).then(step => {
         // TODO: This logic only accommodates initializing a strategy from a search
         // page. We will also need to handle the case of adding a step to
