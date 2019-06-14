@@ -148,7 +148,8 @@ const routes: RouteEntry[] = [
 
   {
     path: '/workspace/strategies/:strategyId/:stepId?',
-    component: (props: RouteComponentProps<{ strategyId: number, stepId?: number }>) => <StrategyController {...props.match.params} />
+    component: (props: RouteComponentProps<{ strategyId: number, stepId?: number }>) =>
+      <StrategyController {...props.match.params} action={props.location.hash ? props.location.hash.slice(1) : undefined} />
   },
 
   {

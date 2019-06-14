@@ -5,27 +5,27 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import StepBoxes from './StepBoxes';
 
 import './StrategyPanel.scss';
+import Modal from 'wdk-client/Components/Overlays/Modal';
 
 const cx = makeClassNameHelper('StrategyPanel');
 
 interface Props {
   strategy: StrategyDetails;
-  selectedStepId?: number;
+  action?: string;
 }
 
 export default function StrategyPanel(props: Props) {
-  const { strategy } = props;
+  const { strategy, action } = props;
   return (
     <div className={cx()}>
       <h2 className={cx('__Heading')}>
         {strategy.estimatedSize.toLocaleString()} {strategy.recordClassName} &mdash; {strategy.name}
       </h2>
-
       <div className={cx('__Panel')}>
         <StrategyControls strategy={strategy}/>
         <StepBoxes steps={strategy.steps} stepTree={strategy.stepTree}/>
       </div>
-
+      <StrategyActionModel strategy={strategy} action={action}/>
     </div>
   );
 }
@@ -51,4 +51,21 @@ function StrategyControls(props: StrategyControlProps) {
       </Link>
     </div>
   );
+}
+
+interface StrategyActionModelProps {
+  strategy: StrategyDetails;
+  action?: string;
+}
+
+function StrategyActionModel(props: StrategyActionModelProps) {
+  if (!props.action) return null;
+  return (
+    <Modal>
+      <div className={cx('__Action')}>
+        <div>Ok, we're going to do this action: {props.action}.</div>
+        <Link to="#" replace>close</Link>
+      </div>
+    </Modal>
+  )
 }

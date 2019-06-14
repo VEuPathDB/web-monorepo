@@ -8,8 +8,7 @@ import { Loading } from 'wdk-client/Components';
 interface OwnProps {
   strategyId: number;
   stepId?: number;
-  // Called whenever a step is selected.
-  onStepSelected?: (stepId: number) => void;
+  action?: string;
 }
 
 interface MappedProps {
@@ -29,7 +28,7 @@ function StrategyPanelController(props: Props) {
   return (
     <StrategyPanel
       strategy={props.strategy}
-      selectedStepId={props.stepId}
+      action={props.action}
     />
   );
 }

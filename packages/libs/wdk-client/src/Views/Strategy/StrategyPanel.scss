@@ -14,12 +14,22 @@
   }
 
   &__Controls {
-    display: flex;
-    justify-content: flex-end;
     font-size: 1.5em;
     > * {
       margin: 0 .5em;
     }
+  }
+
+  &__Action {
+    width: 30em;
+    height: 15em;
+    background: white;
+    border-radius: 1em;
+    box-shadow: 0 0 4px #00000045;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
   }
 
 }

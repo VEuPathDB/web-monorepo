@@ -29,8 +29,14 @@ export default function StepBoxes(props: Props) {
   )
 }
 
-function StepTree(props: Props) {
-  const { stepTree, steps } = props;
+interface StepTreeProps {
+  steps: Record<string, Step>;
+  stepTree: StepTree;
+  isChild?: boolean;
+}
+
+function StepTree(props: StepTreeProps) {
+  const { stepTree, steps, isChild = false } = props;
   const step = steps[stepTree.stepId];
 
   // FIXME How should we handle this case?
@@ -44,7 +50,7 @@ function StepTree(props: Props) {
 
   return (
     <React.Fragment>
-      {stepTree.primaryInput && <StepTree stepTree={stepTree.primaryInput} steps={steps}/>}
+      {stepTree.primaryInput && <StepTree stepTree={stepTree.primaryInput} steps={steps} isChild/>}
       <div className={cx('--Slot')}>
         <Plugin
           context={{
@@ -56,7 +62,8 @@ function StepTree(props: Props) {
           pluginProps={{
             step,
             hasPrimaryInput: stepTree.primaryInput != null,
-            hasSecondaryInput: stepTree.secondaryInput != null
+            hasSecondaryInput: stepTree.secondaryInput != null,
+            isChild
           }}
           defaultComponent={StepBox}
         />
@@ -71,7 +78,8 @@ function StepTree(props: Props) {
             pluginProps={{
               step: steps[secondaryInput.stepId],
               hasPrimaryInput: secondaryInput.primaryInput != null,
-              hasSecondaryInput: secondaryInput.secondaryInput != null
+              hasSecondaryInput: secondaryInput.secondaryInput != null,
+              isChild
             }}
             defaultComponent={StepBox}
           />
@@ -85,6 +93,7 @@ interface StepBoxProps {
   step: Step;
   hasPrimaryInput: boolean;
   hasSecondaryInput: boolean;
+  isChild: boolean;
 }
 
 function StepBox(props: StepBoxProps) {

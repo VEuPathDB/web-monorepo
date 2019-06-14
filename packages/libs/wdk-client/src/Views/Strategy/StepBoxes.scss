@@ -4,10 +4,51 @@
   justify-content: flex-start;
   align-items: flex-end;
   overflow-x: auto;
+  padding: 1em;
+  position: relative;
+
+  &,
+  * {
+    box-sizing: border-box;
+  }
+
+  &__Link {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+  }
 
   &--Slot {
     display: flex;
-    flex-flow: column-reverse;
+    flex-flow: column-reverse nowrap;
+    justify-content: space-between;
+    height: 8em;
+    position: relative;
+
+    // Line connecting primary input steps
+    //
+    //           []
+    //           |
+    // []-->[]-->oo-->[]
+    &:before {
+      content: "";
+      border: 1px solid black;
+      position: absolute;
+      bottom: 25%;
+      left: 0;
+      right: 0;
+      z-index: 1;
+    }
+
+    &:first-of-type:before {
+      left: 50%;
+    }
+
+    &:last-of-type:before {
+      right: 50%;
+    }
+
   }
 
   &--Box {
@@ -15,43 +56,28 @@
     flex-flow: column;
     justify-content: space-evenly;
     align-items: center;
-    height: 3.5em;
+    height: 45%;
     padding: 0 1em;
-    margin: .5em 1em;
-    border-radius: .5em;
+    margin: 0 0.5em;
+    border-radius: 0.5em;
     position: relative;
 
-    &__leaf, &__transform {
+    &__leaf,
+    &__transform {
       background-color: #f0f0f0;
-      border: 2px solid gray;
+      border: 2px solid black;
+      z-index: 1;
     }
 
-    &__transform:before {
-      content: '----->';
+    // Line connecting leaf step and combiner step
+    &__combined:before {
+      content: "";
+      border: 1px solid black;
+      height: 4em;
       position: absolute;
-      left: -3em;
-      bottom: 2em;
-      font-weight: bold;
+      left: calc(50% + 5px);
+      top: -3em;
     }
-
-    &__combined {
-      &:before {
-        content: '----->';
-        position: absolute;
-        left: 0;
-        bottom: 2em;
-        font-weight: bold;
-      }
-      &:after {
-        content: '-->';
-        position: absolute;
-        top: -1em;
-        transform: rotate(90deg);
-        transform-origin: center;
-        font-weight: bold;
-      }
-    }
-
   }
 
   &--Box.active {
@@ -59,9 +85,10 @@
   }
 
   &--CombineOperator {
-    background-image: url('./operationIcons.png');
+    background-image: url("./operationIcons.png");
     height: 25px;
     width: 36px;
+    z-index: 1;
 
     &__INTERSECT {
       background-position: -30px -35px;
@@ -86,7 +113,6 @@
     &__LONLY {
       background-position: -30px -178px;
     }
-
   }
 
   // &--Box.active,

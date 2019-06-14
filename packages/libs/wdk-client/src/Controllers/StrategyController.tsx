@@ -6,6 +6,7 @@ import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelControl
 interface Props {
   strategyId: number;
   stepId?: number;
+  action?: string;
 }
 
 export default function StrategyController(props: Props) {
@@ -18,6 +19,7 @@ export default function StrategyController(props: Props) {
       <StrategyPanelController
         strategyId={props.strategyId}
         stepId={props.stepId}
+        action={props.action}
       />
       <ResultPanelController 
         strategyId={props.strategyId}
