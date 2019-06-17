@@ -122,6 +122,12 @@ const PbrowseLink = ({ url }) =>
 <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in protein browser</a>
 </div>
 
+const PbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in protein browser</a>
+<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse protein browser &nbsp;<img src={webAppUrl + '/wdk/images/beta2-30.png'}/></a>
+</div>
+
 
 export function GbrowseContext(props) {
   let { attribute, record } = props;
@@ -140,6 +146,7 @@ export function GbrowseContext(props) {
   if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrl = record.attributes.syntenyJbrowseUrl;
   }
+
   if ( jbrowseUrl ) {
   return (
     <div>
@@ -161,13 +168,16 @@ export function GbrowseContext(props) {
 
 export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
+  let jbrowseUrl = props.rowData.proteinJbrowseUrl;
   return (
     <div>
-      <PbrowseLink url={url}/>
+      <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
       <GbrowseImage url={url} includeImageMap={true} />
-      <PbrowseLink url={url}/>
+      <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
   );
+
+
 }
 
 
