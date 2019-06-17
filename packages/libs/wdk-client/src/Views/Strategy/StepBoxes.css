@@ -1,0 +1,153 @@
+.StepBoxes {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  overflow-x: auto;
+  padding: 1em;
+  position: relative;
+}
+
+.StepBoxes,
+.StepBoxes * {
+  box-sizing: border-box;
+}
+
+.StepBoxes--Link {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.StepBoxes--Slot {
+  display: flex;
+  flex-flow: column-reverse nowrap;
+  justify-content: space-between;
+  height: 8em;
+  position: relative;
+}
+
+/*
+ * Line connecting primary input steps
+ *
+ *           []
+ *           |
+ * []-->[]-->oo-->[]
+ */
+.StepBoxes--Slot:before {
+  content: "";
+  border: 1px solid black;
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.StepBoxes--Slot:first-of-type:before {
+  left: 50%;
+}
+
+.StepBoxes--Slot:last-of-type:before {
+  right: 50%;
+}
+
+.StepBoxes--Box {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  height: 45%;
+  padding: 0 1em;
+  margin-right: 1em;
+  border-radius: 0.5em;
+  position: relative;
+}
+
+.StepBoxes--Box__leaf {
+  background-color: #d0cfcf;
+  border: 2px solid black;
+  z-index: 1;
+}
+
+.StepBoxes--Box__transform {
+  background-image: url("./TransformBg.gif");
+  background-size: 100% 100%;
+  z-index: 1;
+}
+
+.StepBoxes--Box__leaf_active,
+.StepBoxes--Box__combined_active {
+  background-color: #ffffa0;
+}
+
+.StepBoxes--Box__transform_active {
+  background-image: url("./TransformBg_yellow.gif");
+}
+
+/* Line connecting leaf step and combined step */
+.StepBoxes--Box__combined:before {
+  content: "";
+  border: 1px solid black;
+  height: 4em;
+  position: absolute;
+  left: calc(50% + 5px);
+  top: -3em;
+}
+
+.StepBoxes--Box__nested:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  border: 2px solid #111;
+  position: absolute;
+  border-radius: 0.5em;
+  left: 3px;
+  bottom: 3px;
+  border-left: none;
+  border-bottom: none;
+  box-shadow: 2px -2px 0 -1px black;
+}
+
+.StepBoxes--StepName {
+  color: black;
+  font-weight: bold;
+}
+
+.StepBoxes--StepCount {
+  font-size: 0.9em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.StepBoxes--CombineOperator {
+  background-image: url("./operationIcons.png");
+  height: 25px;
+  width: 36px;
+  z-index: 1;
+}
+
+.StepBoxes--CombineOperator__INTERSECT {
+  background-position: -30px -35px;
+}
+
+.StepBoxes--CombineOperator__UNION {
+  background-position: -30px -72px;
+}
+
+.StepBoxes--CombineOperator__MINUS {
+  background-position: -30px 0px;
+}
+
+.StepBoxes--CombineOperator__RMINUS {
+  background-position: -30px -106px;
+}
+
+.StepBoxes--CombineOperator__RONLY {
+  background-position: -30px -142px;
+}
+
+.StepBoxes--CombineOperator__LONLY {
+  background-position: -30px -178px;
+}

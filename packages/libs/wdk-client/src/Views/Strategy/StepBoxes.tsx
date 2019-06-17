@@ -4,7 +4,7 @@ import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 
-import './StepBoxes.scss';
+import './StepBoxes.css';
 
 const cx = makeClassNameHelper('StepBoxes');
 
@@ -105,7 +105,7 @@ function StepBox(props: StepBoxProps) {
     : hasPrimaryInput ? 'transform'
     : 'leaf';
   return (
-    <NavLink className={cx('--Box', classModifier)} activeClassName={cx('--Box', classModifier, 'active')} to={`/workspace/strategies/${step.strategyId}/${step.id}`} replace>
+    <NavLink className={cx('--Box', classModifier)} activeClassName={cx('--Box', classModifier + '_active')} to={`/workspace/strategies/${step.strategyId}/${step.id}`} replace>
       <StepComponent {...props}/>
     </NavLink>
   );
@@ -150,12 +150,12 @@ function CombinedStepIcon(props: { step: Step }) {
 
 function StepName(props: { step: Step }) {
   const { step } = props;
-  return <div className={cx('__StepName')}>{step.customName}</div>;
+  return <div className={cx('--StepName')}>{step.customName}</div>;
 }
 
 function StepCount(props: { step: Step }) {
   const { step } = props;
-  return <div className={cx('__StepCount')}>{step.estimatedSize.toLocaleString()} {step.recordClassName}</div>
+  return <div className={cx('--StepCount')}>{step.estimatedSize.toLocaleString()} {step.recordClassName}</div>
 }
 
 function findExpandedStepTree(stepTree: StepTree, steps: Record<number, Step>): StepTree | undefined {

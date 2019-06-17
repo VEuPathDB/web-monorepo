@@ -1,0 +1,46 @@
+.StrategyPanel--Heading {
+  font-weight: bold;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.StrategyPanel--StrategyCount {
+  margin-right: 2em;
+}
+
+.StrategyPanel--StrategyName {
+  font-weight: normal;
+}
+
+.StrategyPanel--Panel {
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  justify-content: space-between;
+  background-color: #fafafa;
+  border-radius: 1em;
+  box-shadow: 0 0 0 2px #333;
+}
+
+.StrategyPanel--Controls {
+  padding: 1em;
+}
+
+.StrategyPanel--Controls > * {
+  font-size: 1.5em;
+  margin-left: 1em;
+}
+
+.StrategyPanel--Action {
+  min-width: 30em;
+  min-height: 15em;
+  padding: 1em 2em;
+  background: white;
+  border-radius: 1em;
+  box-shadow: 0 0 4px #00000045;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}

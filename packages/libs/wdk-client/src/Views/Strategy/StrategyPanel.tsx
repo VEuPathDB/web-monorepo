@@ -4,7 +4,7 @@ import { IconAlt, Link, SaveableTextEditor } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import StepBoxes from './StepBoxes';
 
-import './StrategyPanel.scss';
+import './StrategyPanel.css';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 
 const cx = makeClassNameHelper('StrategyPanel');
@@ -18,18 +18,18 @@ export default function StrategyPanel(props: Props) {
   const { strategy, action } = props;
   return (
     <div className={cx()}>
-      <h2 className={cx('__Heading')}>
-        <div className={cx('__StrategyCount')}>
+      <h2 className={cx('--Heading')}>
+        <div className={cx('--StrategyCount')}>
           {strategy.estimatedSize ? strategy.estimatedSize.toLocaleString() : '?'} {strategy.recordClassName}      
         </div>
         <div>
           Search Strategy:
         </div>
-        <div className={cx('__StrategyName')}>
+        <div className={cx('--StrategyName')}>
           <SaveableTextEditor value={strategy.name} onSave={() => alert("We'll get to that soon...")}/>
          </div>
       </h2>
-      <div className={cx('__Panel')}>
+      <div className={cx('--Panel')}>
         <StrategyControls strategy={strategy}/>
         <StepBoxes steps={strategy.steps} stepTree={strategy.stepTree}/>
       </div>
@@ -99,7 +99,7 @@ const StrategyActions: Record<string, StrategyAction> = {
 
 function StrategyControls(props: StrategyControlProps) {
   return (
-    <div className={cx('__Controls')}>
+    <div className={cx('--Controls')}>
       {Object.entries(StrategyActions).map(([ key, action ]) => (
         <Link key={key} to={`#${key}`} title={action.title} replace><IconAlt fa={action.iconName}/></Link>
       ))}
@@ -117,7 +117,7 @@ function StrategyActionModal(props: StrategyActionModelProps) {
   if (!action) return null;
   return (
     <Modal>
-      <div className={cx('__Action')}>
+      <div className={cx('--Action')}>
         <h3>{action.title}</h3>
         {action.render(props)}
       </div>
