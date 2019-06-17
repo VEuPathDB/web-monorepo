@@ -1,25 +1,39 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import 'wdk-client/Components/InputControls/wdk-SaveableTextEditor.scss';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import TextBox from 'wdk-client/Components/InputControls/TextBox';
 import TextArea from 'wdk-client/Components/InputControls/TextArea';
 
-function sanitaryTextReformat (text) {
-  if (typeof text !== 'string') return text;
+function sanitaryTextReformat (text: string) {
   return text
     .split('<').join('&lt;')
     .split('>') .join('&gt;')
     .split('\n').join('<br/>');
 }
 
-class SaveableTextEditor extends React.Component {
-  constructor (props) {
+interface Props {
+  value: string;
+  onSave: (value: string) => void;
+  multiLine?: boolean;
+  className?: string;
+  readOnly?: boolean;
+  displayValue?: (value: string, handleEdit: () => void) => JSX.Element
+  emptyText?: string;
+  rows?: number;
+}
+
+interface State {
+  editing: boolean;
+  editingValue: string;
+}
+
+class SaveableTextEditor extends React.Component<Props, State> {
+  constructor (props: Props) {
     super(props);
     this.state = {
       editing: false,
-      editingValue: null
+      editingValue: props.value
     };
     this.handleEdit = this.handleEdit.bind(this);
     this.handleSave = this.handleSave.bind(this);
@@ -28,7 +42,7 @@ class SaveableTextEditor extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleEdit (event) {
+  handleEdit () {
     if (this.state.editing) return;
     const { value } = this.props;
     this.setState({
@@ -37,7 +51,7 @@ class SaveableTextEditor extends React.Component {
     });
   }
 
-  handleSave (event) {
+  handleSave () {
     if (!this.state.editing) return;
     const { onSave } = this.props;
     const { editingValue } = this.state;
@@ -45,20 +59,20 @@ class SaveableTextEditor extends React.Component {
     this.handleCancel();
   }
 
-  handleCancel (event) {
+  handleCancel () {
     if (!this.state.editing) return;
     this.setState({
       editing: false,
-      editingValue: null
+      editingValue: this.props.value
     });
   }
 
-  handleChange (editingValue) {
+  handleChange (editingValue: string) {
     if (!this.state.editing) return;
     this.setState({ editingValue });
   }
 
-  handleSubmit (event) {
+  handleSubmit () {
     if (!this.state.editing) return;
     this.handleSave();
   }
@@ -83,6 +97,8 @@ class SaveableTextEditor extends React.Component {
       value: editingValue,
       onChange: handleChange,
       rows: 3,
+      autoFocus: true,
+      onFocus,
       ...others
     };
 
@@ -98,19 +114,20 @@ class SaveableTextEditor extends React.Component {
         )}
 
         <fieldset className={'wdk-SaveableTextEditor-Field' + (editing ? ' wdk-SaveableTextEditor-Field--Editing' : '')}>
-          {editing
-            ? <Input {...inputProps}/>
-            : typeof displayValue === 'function'
-              ? displayValue(value, handleEdit)
-              : !value.length && emptyText
-                ? <i onClick={handleEdit}>{emptyText}</i>
-                : (
-                  <div
-                    onClick={readOnly ? () => null : handleEdit}
-                    dangerouslySetInnerHTML={{ __html: sanitaryTextReformat(value) }}
-                  />
-                )
-          }
+          {editing && <Input {...inputProps}/> }
+          <div className={'wdk-SaveableTextEditor-ValueContainer' + (editing ? ' wdk-SaveableTextEditor-ValueContainer--Editing' : '')}>
+            {typeof displayValue === 'function'
+                ? displayValue(value, handleEdit)
+                : !value.length && emptyText
+                  ? <i onClick={handleEdit}>{emptyText}</i>
+                  : (
+                    <div
+                      onClick={readOnly ? () => null : handleEdit}
+                      dangerouslySetInnerHTML={{ __html: sanitaryTextReformat(value) }}
+                    />
+                  )
+            }
+          </div>
         </fieldset>
 
 
@@ -119,17 +136,17 @@ class SaveableTextEditor extends React.Component {
             {editing
               ? (
                 <React.Fragment>
-                  <a title="Save Changes" onClick={handleSave}>
+                  <button type="button" title="Save Changes" onClick={handleSave}>
                     <Icon fa="check save"/>
-                  </a>
-                  <a title="Cancel Changes" onClick={handleCancel}>
+                  </button>
+                  <button type="button" title="Cancel Changes" onClick={handleCancel}>
                     <Icon fa="times cancel"/>
-                  </a>
+                  </button>
                 </React.Fragment>
               ) : (
-                <a title="Edit This Value" onClick={handleEdit}>
+                <button type="button" title="Edit This Value" onClick={handleEdit}>
                   <Icon fa="pencil edit"/>
-                </a>
+                </button>
               )
             }
           </fieldset>
@@ -137,14 +154,10 @@ class SaveableTextEditor extends React.Component {
       </form>
     );
   }
-};
-
-SaveableTextEditor.propTypes = {
-  multiLine: PropTypes.bool,
-  className: PropTypes.string,
-  readOnly: PropTypes.bool,
-  value: PropTypes.string.isRequired,
-  onSave: PropTypes.func.isRequired
-};
+}
 
 export default SaveableTextEditor;
+
+function onFocus(event: React.FocusEvent<HTMLInputElement>) {
+  event.target.select();
+}
