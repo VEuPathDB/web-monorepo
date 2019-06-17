@@ -58,30 +58,30 @@
     align-items: center;
     height: 45%;
     padding: 0 1em;
-    margin: 0 0.5em;
+    margin-right: 1em;
     border-radius: 0.5em;
     position: relative;
-
-    &.active {
-      background-color: #ffffa0;
-    }
 
     &__leaf {
       background-color: #d0cfcf;
       border: 2px solid black;
       z-index: 1;
     }
-
+    
     &__transform {
       background-image: url('./TransformBg.gif');
       background-size: 100% 100%;
       z-index: 1;
-
-      &.active {
-        background-image: url('./TransformBg_yellow.gif');
-      }
     }
 
+    &__active {
+      background-color: #ffffa0;
+    }
+    
+    &__transform &__active {
+      background-image: url('./TransformBg_yellow.gif');
+    }
+    
     // Line connecting leaf step and combined step
     &__combined:before {
       content: "";

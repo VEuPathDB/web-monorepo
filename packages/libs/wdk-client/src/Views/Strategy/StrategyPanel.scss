@@ -1,6 +1,17 @@
 .StrategyPanel {
   &__Heading {
     font-weight: bold;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  &__StrategyCount {
+    margin-right: 2em;
+  }
+
+  &__StrategyName {
+    font-weight: normal;
   }
 
   &__Panel {
@@ -8,28 +19,30 @@
     flex-flow: row-reverse nowrap;
     justify-content: space-between;
     background-color: #fafafa;
-    border: 1px solid #ccc;
-    border-radius: .6em;
-    padding: 1em 0;
+    border-radius: 1em;
+    box-shadow: 0 0 0 2px #333;
   }
 
   &__Controls {
-    font-size: 1.5em;
+    padding: 1em;
     > * {
-      margin: 0 .5em;
+      font-size: 1.5em;
+      margin-left: 1em;
     }
   }
 
   &__Action {
-    width: 30em;
-    height: 15em;
+    min-width: 30em;
+    min-height: 15em;
+    padding: 1em 2em;
     background: white;
     border-radius: 1em;
     box-shadow: 0 0 4px #00000045;
     display: flex;
     flex-flow: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
+    text-align: center;
   }
 
 }

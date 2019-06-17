@@ -1,6 +1,6 @@
 import React from 'react';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import { IconAlt, Link } from 'wdk-client/Components';
+import { IconAlt, Link, SaveableTextEditor } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import StepBoxes from './StepBoxes';
 
@@ -19,7 +19,15 @@ export default function StrategyPanel(props: Props) {
   return (
     <div className={cx()}>
       <h2 className={cx('__Heading')}>
-        {strategy.estimatedSize ? strategy.estimatedSize.toLocaleString() : '?'} {strategy.recordClassName} &mdash; {strategy.name}
+        <div className={cx('__StrategyCount')}>
+          {strategy.estimatedSize ? strategy.estimatedSize.toLocaleString() : '?'} {strategy.recordClassName}      
+        </div>
+        <div>
+          Search Strategy:
+        </div>
+        <div className={cx('__StrategyName')}>
+          <SaveableTextEditor value={strategy.name} onSave={() => alert("We'll get to that soon...")}/>
+         </div>
       </h2>
       <div className={cx('__Panel')}>
         <StrategyControls strategy={strategy}/>
@@ -34,21 +42,67 @@ interface StrategyControlProps {
   strategy: StrategyDetails;
 }
 
+interface StrategyAction {
+  iconName: string;
+  title: string;
+  render: (props: StrategyActionModelProps) => JSX.Element;
+}
+
+const StrategyActions: Record<string, StrategyAction> = {
+  copy: {
+    iconName: 'clone',
+    title: 'Create a copy of your search strategy',
+    render: (props: StrategyActionModelProps) => (
+      <React.Fragment>
+        <div>Are you sure you want to make a copy of the strategy {props.strategy.name}?</div>
+        <div><button type="button">Yes, make a copy</button> <Link replace to="#">No thanks</Link></div>
+      </React.Fragment>
+    )
+  },
+
+  save: {
+    iconName: 'floppy-o',
+    title: 'Save your search strategy',
+    render: (props: StrategyActionModelProps) => (
+      <React.Fragment>
+        <div>TODO: Complete form</div>
+        <div><Link replace to="#">Close</Link></div>
+      </React.Fragment>
+    )
+  },
+
+  share: {
+    iconName: 'share-alt',
+    title: 'Share your search strategy',
+    render: (props: StrategyActionModelProps) => (
+      <React.Fragment>
+        <div>
+          Copy the URL to share your search strategy:
+          <br/><input type="text" autoFocus readOnly style={{ width: '20em' }} onFocus={e => e.target.select()} value={`https://plasmodb.org/import/${props.strategy.signature}`}/>
+        </div>
+        <div><Link replace to="#">Close</Link></div>
+      </React.Fragment>
+    )
+  },
+
+  delete: {
+    iconName: 'trash-o',
+    title: 'Delete your search strategy',
+    render: (props: StrategyActionModelProps) => (
+      <React.Fragment>
+        <div>Are you sure you want to delete the strategy {props.strategy.name}?</div>
+        <div><button type="button">Yes, delete my strategy</button> <Link replace to="#">No thanks</Link></div>
+      </React.Fragment>
+    )
+  }
+}
+
 function StrategyControls(props: StrategyControlProps) {
   return (
     <div className={cx('__Controls')}>
-      <Link to={'#copy'} replace title="make a copy of this strategy">
-        <IconAlt fa="clone"/>
-      </Link>
-      <Link to={'#save'} replace title="save this strategy">
-        <IconAlt fa="floppy-o"/>
-      </Link>
-      <Link to={'#share'} replace title="share this strategy">
-        <IconAlt fa="share-alt"/>
-      </Link>
-      <Link to={'#delete'} replace title="delete this strategy">
-        <IconAlt fa="trash-o"/>
-      </Link>
+      {Object.entries(StrategyActions).map(([ key, action ]) => (
+        <Link key={key} to={`#${key}`} title={action.title} replace><IconAlt fa={action.iconName}/></Link>
+      ))}
     </div>
   );
 }
@@ -59,12 +113,13 @@ interface StrategyActionModelProps {
 }
 
 function StrategyActionModal(props: StrategyActionModelProps) {
-  if (!props.action) return null;
+  const action = props.action && StrategyActions[props.action];
+  if (!action) return null;
   return (
     <Modal>
       <div className={cx('__Action')}>
-        <div>Ok, we're going to do this action: {props.action}.</div>
-        <Link to="#" replace>close</Link>
+        <h3>{action.title}</h3>
+        {action.render(props)}
       </div>
     </Modal>
   )

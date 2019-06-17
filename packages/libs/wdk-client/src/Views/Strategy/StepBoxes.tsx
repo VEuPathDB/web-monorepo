@@ -105,7 +105,7 @@ function StepBox(props: StepBoxProps) {
     : hasPrimaryInput ? 'transform'
     : 'leaf';
   return (
-    <NavLink className={cx('--Box', classModifier)} to={`/workspace/strategies/${step.strategyId}/${step.id}`} replace>
+    <NavLink className={cx('--Box', classModifier)} activeClassName={cx('--Box', classModifier, 'active')} to={`/workspace/strategies/${step.strategyId}/${step.id}`} replace>
       <StepComponent {...props}/>
     </NavLink>
   );
