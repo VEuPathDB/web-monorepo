@@ -1,7 +1,7 @@
 // TODO Make this Store Module more generic so that it can be used with an Answer (and no Step).
 
 import stringify from 'json-stable-stringify';
-import { get, stubTrue, isEqual, difference } from 'lodash';
+import { get, stubTrue, isEqual, difference, identity } from 'lodash';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { Action } from 'wdk-client/Actions';
 import {
@@ -53,7 +53,8 @@ import {
   setResultTablePageSizePref,
   setResultTableSortingPref,
   getGlobalViewFilters,
-  setGlobalViewFilters
+  setGlobalViewFilters,
+  filterInvalidAttributes
 } from 'wdk-client/Utils/UserPreferencesUtils';
 import {
   Answer,
@@ -284,16 +285,15 @@ async function getFulfillColumnsChoicePreference(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillColumnsChoice>> {
-
   const columns = await getResultTableColumnsPref(
     wdkService,
     requestAction.payload.searchName,
     openAction.payload.stepId
   );
-
+  const validColumns = await filterInvalidAttributes(wdkService, questionName, identity, columns);
   return fulfillColumnsChoice(
     openAction.payload.viewId,
-    columns,
+    validColumns,
     requestAction.payload.searchName
   );
 }
@@ -389,9 +389,10 @@ async function getFulfillSortingPreference(
         requestAction.payload.searchName,
         wdkService
       );
+  const validSorting = await filterInvalidAttributes(wdkService, questionName, spec => spec.attributeName, sorting);
   return fulfillSorting(
     openAction.payload.viewId,
-    sorting,
+    validSorting,
     requestAction.payload.searchName
   );
 }

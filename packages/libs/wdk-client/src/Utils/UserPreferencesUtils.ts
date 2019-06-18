@@ -16,9 +16,45 @@ export async function getResultPanelTabPref(searchName: string, wdkService: WdkS
   return '';
 }
 
+<<<<<<< .working
 export async function getResultTableColumnsPref(wdkService: WdkService, searchName: string, stepId?: number): Promise<string[]> {
   const question = await getQuestionFromSearchName(searchName, wdkService);
   const recordClass = await wdkService.findRecordClass(({ urlSegment }) => urlSegment === question.outputRecordClassName);
+=======
+export type SummaryTableConfigUserPref = {
+    columns: string[];
+    sorting: AttributeSortingSpec[];
+}
+
+export enum Scope {
+  global = 'global',
+  project = 'project',
+}
+
+export const SORT_ASC = "ASC";
+export const SORT_DESC = "DESC";
+
+
+type PrefSpec = [keyof UserPreferences, string];
+
+const getPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec) => 
+  (await wdkService.getCurrentUserPreferences())[scope][key];
+
+const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, value: string | null) =>
+  await wdkService.patchUserPreference(scope, key, value);
+
+export const prefSpecs = {
+  sort: (questionName: string): PrefSpec => [ Scope.project, questionName + '_sort' ],
+  summary: (questionName: string): PrefSpec => [ Scope.project, questionName + '_summary' ],
+  itemsPerPage: (): PrefSpec => [ Scope.global, 'preference_global_items_per_page' ],
+  matchedTranscriptsExpanded: (): PrefSpec => [ Scope.global, 'matchted_transcripts_filter_expanded' ],
+  globalViewFilters: (recordClassName: string): PrefSpec => [Scope.project, recordClassName + '_globalViewFilters'],
+  resultPanelTab: (questionName: string): PrefSpec => [Scope.project, questionName + '_resultPanelTab']
+}
+
+export async function getResultTableColumnsPref(wdkService: WdkService, questionName: string, stepId?: number): Promise<string[]> {
+  const { question, recordClass } = await getQuestionAndRecordClass(wdkService, questionName);
+>>>>>>> .merge-right.r24980
   const fixedColumns = [
     recordClass.recordIdAttributeName,
     ...recordClass.attributes
@@ -38,11 +74,19 @@ export async function setResultTableColumnsPref(searchName: string, wdkService: 
     return setPrefWith(wdkService, prefSpecs.summary(question.fullName), columns.join(','));
 }
 
+<<<<<<< .working
 export async function getResultTableSortingPref(searchName: string, wdkService: WdkService): Promise<AttributeSortingSpec[]> {
     const question = await getQuestionFromSearchName(searchName, wdkService);
     const sortingPref = await getPrefWith(wdkService, prefSpecs.sort(question.fullName));
     if (sortingPref) return sortingPref.split(/,\s*/).map(constructSortingSpec);
     return question.defaultSorting;
+=======
+export async function getResultTableSortingPref(questionName: string, wdkService: WdkService): Promise<AttributeSortingSpec[]> {
+  const { question } = await getQuestionAndRecordClass(wdkService, questionName);
+  const sortingPref = await getPrefWith(wdkService, prefSpecs.sort(questionName));
+  return sortingPref ? sortingPref.split(/,\s*/).map(constructSortingSpec)
+    : question.defaultSorting;
+>>>>>>> .merge-right.r24980
 }
 
 function isValidDirection(direction: string): direction is 'ASC' | 'DESC' {
@@ -107,6 +151,7 @@ export async function setGlobalViewFilters(wdkService: WdkService, recordClassNa
   const prefValue = viewFilters ? JSON.stringify(viewFilters) : null;
   return setPrefWith(wdkService, prefSpecs.globalViewFilters(recordClassName), prefValue);
 }
+<<<<<<< .working
 
 /*
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -143,3 +188,24 @@ async function getQuestionFromSearchName(searchName: string, wdkService: WdkServ
   if (question == null) throw new Error(`Unknown question "${searchName}".`);
   return question;
 }
+=======
+
+// Helpers
+async function getQuestionAndRecordClass(wdkService: WdkService, questionName: string) {
+  const question = await wdkService.findQuestion(q => q.name === questionName);
+  const recordClass = await wdkService.findRecordClass(r => r.name === question.recordClassName);
+  return { question, recordClass };
+}
+
+async function getValidColumns(wdkService: WdkService, questionName: string): Promise<Set<string>> {
+  const { question, recordClass } = await getQuestionAndRecordClass(wdkService, questionName);
+  return new Set(recordClass.attributes.concat(question.dynamicAttributes)
+    .filter(({ isDisplayable }) => isDisplayable)
+    .map(({ name }) => name));
+}
+
+export async function filterInvalidAttributes<T>(wdkService: WdkService, questionName: string, mapToAttributeName: (t: T) => string, array: T[]): Promise<T[]> {
+  const validColumns = await getValidColumns(wdkService, questionName);
+  return array.filter(item => validColumns.has(mapToAttributeName(item)));
+}
+>>>>>>> .merge-right.r24980
