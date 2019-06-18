@@ -31,16 +31,18 @@ interface CategoryNodeProperties {
   hasDefinition?: string[];
   hasNarrowSynonym?: string[];
   hasExactSynonym?: string[];
+  recordClassName?: string[];
+  recordClassUrlSegment?: string[];
 }
 
 export type CategoryNode = OntologyNode<{
   children: CategoryTreeNode[];
-  properties: CategoryNodeProperties & { [key: string]: string[]; };
+  properties: CategoryNodeProperties;
 }>
 
 export type IndividualNode = OntologyNode<{
   children: CategoryTreeNode[]; // note, this is always empty for an individual
-  properties: CategoryNodeProperties & { [key: string]: string[]; };
+  properties: CategoryNodeProperties;
   wdkReference: {
     name: string;
     displayName: string;
@@ -176,16 +178,20 @@ export function getNodeId(node: CategoryTreeNode): string {
   return getId(node);
 }
 
+type QualifyingSpec = {
+  [K in keyof CategoryNodeProperties]: string;
+}
+
 /**
  * Create a predicate function to filter out of the Categories ontology tree those items appropriate for the given
  * scope that identify attributes for the current record class.  In the case of the Transcript Record Class, a
  * distinction is made depending on whether the summary view applies to transcripts or genes.
  */
-export function isQualifying(spec: { targetType?: string; recordClassName?: string; scope?: string; }) {
+export function isQualifying(spec: QualifyingSpec) {
   return function(node: CategoryTreeNode) {
-    // We have to cast spec as StringDict to avoid an implicitAny error
+    // We have to cast spec as Record<string, string> to avoid an implicitAny error
     // See http://stackoverflow.com/questions/32968332/how-do-i-prevent-the-error-index-signature-of-object-type-implicitly-has-an-an
-    return Object.keys(spec).every(prop => nodeHasProperty(prop, (spec as Dict<string>)[prop], node));
+    return Object.keys(spec).every(prop => nodeHasProperty(prop, (spec as Record<string, string>)[prop] as any, node));
   };
 }
 

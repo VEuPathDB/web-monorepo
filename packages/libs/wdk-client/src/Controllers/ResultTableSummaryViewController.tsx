@@ -117,7 +117,7 @@ const columnsTreeSelector = createSelector(
 
     const tree = getTree(ontology, isQualifying({
       targetType: 'attribute',
-      recordClassName,
+      recordClassUrlSegment: recordClassName,
       scope: 'results'
     }));
     return addSearchSpecificSubtree(question, tree);
