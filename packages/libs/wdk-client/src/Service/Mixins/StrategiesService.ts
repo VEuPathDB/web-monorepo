@@ -33,7 +33,7 @@ export default (base: ServiceBase) => {
     return base._fetchJson<void>('delete', `/users/${userId}/strategies/${strategyId}`);
   }
   
-  function patchStrategyProperties(strategyId: number, strategyProperties: StrategyProperties, userId: string = "current") {
+  function patchStrategyProperties(strategyId: number, strategyProperties: Partial<StrategyProperties>, userId: string = "current") {
     return base._fetchJson<Identifier>('patch', `/users/${userId}/strategies/${strategyId}`, JSON.stringify(strategyProperties));
   }
 

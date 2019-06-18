@@ -18,7 +18,7 @@ interface Props {
   multiLine?: boolean;
   className?: string;
   readOnly?: boolean;
-  displayValue?: (value: string, handleEdit: () => void) => JSX.Element
+  displayValue?: (value: string, handleEdit: () => void) => React.ReactNode
   emptyText?: string;
   rows?: number;
 }
@@ -72,7 +72,8 @@ class SaveableTextEditor extends React.Component<Props, State> {
     this.setState({ editingValue });
   }
 
-  handleSubmit () {
+  handleSubmit (event: React.FormEvent) {
+    event.preventDefault();
     if (!this.state.editing) return;
     this.handleSave();
   }

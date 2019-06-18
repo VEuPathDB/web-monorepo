@@ -290,7 +290,7 @@ async function getFulfillColumnsChoicePreference(
     requestAction.payload.searchName,
     openAction.payload.stepId
   );
-  const validColumns = await filterInvalidAttributes(wdkService, questionName, identity, columns);
+  const validColumns = await filterInvalidAttributes(wdkService, requestAction.payload.searchName, identity, columns);
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     validColumns,
@@ -389,7 +389,7 @@ async function getFulfillSortingPreference(
         requestAction.payload.searchName,
         wdkService
       );
-  const validSorting = await filterInvalidAttributes(wdkService, questionName, spec => spec.attributeName, sorting);
+  const validSorting = await filterInvalidAttributes(wdkService, requestAction.payload.searchName, spec => spec.attributeName, sorting);
   return fulfillSorting(
     openAction.payload.viewId,
     validSorting,

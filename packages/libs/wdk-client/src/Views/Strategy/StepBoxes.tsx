@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import {RecordClass} from 'wdk-client/Utils/WdkModel';
+import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 
 import './StepBoxes.css';
@@ -11,6 +12,7 @@ const cx = makeClassNameHelper('StepBoxes');
 interface Props {
   steps: Record<number, Step>;
   stepTree: StepTree;
+  recordClassesByName: Record<string, RecordClass>;
 }
 
 /**
@@ -30,13 +32,14 @@ export default function StepBoxes(props: Props) {
 }
 
 interface StepTreeProps {
+  recordClassesByName: Record<string, RecordClass>;
   steps: Record<string, Step>;
   stepTree: StepTree;
   isChild?: boolean;
 }
 
 function StepTree(props: StepTreeProps) {
-  const { stepTree, steps, isChild = false } = props;
+  const { recordClassesByName, stepTree, steps, isChild = false } = props;
   const step = steps[stepTree.stepId];
 
   // FIXME How should we handle this case?
@@ -50,7 +53,7 @@ function StepTree(props: StepTreeProps) {
 
   return (
     <React.Fragment>
-      {stepTree.primaryInput && <StepTree stepTree={stepTree.primaryInput} steps={steps} isChild/>}
+      {stepTree.primaryInput && <StepTree recordClassesByName={recordClassesByName} stepTree={stepTree.primaryInput} steps={steps} isChild/>}
       <div className={cx('--Slot')}>
         <Plugin
           context={{
@@ -60,6 +63,7 @@ function StepTree(props: StepTreeProps) {
             recordClassName: step.recordClassName
           }}
           pluginProps={{
+            recordClassesByName,
             step,
             hasPrimaryInput: stepTree.primaryInput != null,
             hasSecondaryInput: stepTree.secondaryInput != null,
@@ -76,6 +80,7 @@ function StepTree(props: StepTreeProps) {
               recordClassName: step.recordClassName
             }}
             pluginProps={{
+              recordClassesByName,
               step: steps[secondaryInput.stepId],
               hasPrimaryInput: secondaryInput.primaryInput != null,
               hasSecondaryInput: secondaryInput.secondaryInput != null,
@@ -91,6 +96,7 @@ function StepTree(props: StepTreeProps) {
 
 interface StepBoxProps {
   step: Step;
+  recordClassesByName: Record<string, RecordClass>;
   hasPrimaryInput: boolean;
   hasSecondaryInput: boolean;
   isChild: boolean;
@@ -112,31 +118,31 @@ function StepBox(props: StepBoxProps) {
 }
 
 function LeafStepBoxContent(props: StepBoxProps) {
-  const { step } = props;
+  const { step, recordClassesByName } = props;
   return (
     <React.Fragment>
       <StepName step={step}/>
-      <StepCount step={step}/>
+      <StepCount step={step} recordClassesByName={recordClassesByName}/>
     </React.Fragment>
   );
 }
 
 function TransformStepBoxContent(props: StepBoxProps) {
-  const { step } = props;
+  const { step, recordClassesByName } = props;
   return (
     <React.Fragment>
       <StepName step={step}/>
-      <StepCount step={step}/>
+      <StepCount step={step} recordClassesByName={recordClassesByName}/>
     </React.Fragment>
   );
 }
 
 function CombinedStepBoxContent(props: StepBoxProps) {
-  const { step } = props;
+  const { step, recordClassesByName } = props;
   return (
     <React.Fragment>
       <CombinedStepIcon step={step}/>
-      <StepCount step={step}/>
+      <StepCount step={step} recordClassesByName={recordClassesByName}/>
     </React.Fragment>
   );
 }
@@ -153,9 +159,13 @@ function StepName(props: { step: Step }) {
   return <div className={cx('--StepName')}>{step.customName}</div>;
 }
 
-function StepCount(props: { step: Step }) {
-  const { step } = props;
-  return <div className={cx('--StepCount')}>{step.estimatedSize.toLocaleString()} {step.recordClassName}</div>
+function StepCount(props: { step: Step, recordClassesByName: Record<string, RecordClass> }) {
+  const { step, recordClassesByName } = props;
+  const recordClass = recordClassesByName[step.recordClassName];
+  const recordClassDisplayName = recordClass && (
+    step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural
+  );
+  return <div className={cx('--StepCount')}>{step.estimatedSize.toLocaleString()} {recordClassDisplayName}</div>
 }
 
 function findExpandedStepTree(stepTree: StepTree, steps: Record<number, Step>): StepTree | undefined {

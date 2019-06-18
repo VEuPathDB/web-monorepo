@@ -69,16 +69,11 @@ export function reduce(state: State = initialState, action: Action): State {
 
   case fulfillStrategy.type:{
     const strategy = action.payload.strategy;
-    const entry = state.strategies[strategy.strategyId];
-    if (entry == null || entry.status !== 'success') {
-      return updateStrategyEntry(state, strategy.strategyId, {
-        status: 'success',
-        isLoading: false,
-        strategy
-      });
-    }
-    
-    return state;
+    return updateStrategyEntry(state, strategy.strategyId, {
+      status: 'success',
+      isLoading: false,
+      strategy
+    });
   }
 
   case fulfillDeleteStrategy.type: {

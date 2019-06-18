@@ -26,6 +26,7 @@ import ResultPanelController from 'wdk-client/Controllers/ResultPanelController'
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import StrategyController from 'wdk-client/Controllers/StrategyController';
+import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 
@@ -144,6 +145,13 @@ const routes: RouteEntry[] = [
         />
       );
     }
+  },
+
+  {
+    path: '/workspace/strategies/all',
+    component: (props: RouteComponentProps<{}>) => (
+      <AllStrategiesController/>
+    )
   },
 
   {
