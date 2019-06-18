@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { RecordActions } from 'wdk-client/Actions';
 import * as Category from 'wdk-client/Utils/CategoryUtils';
-import { CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
+import { CollapsibleSection, CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
 import { renderAttributeValue, pure } from 'wdk-client/Utils/ComponentUtils';
 import {Seq} from 'wdk-client/Utils/IterableUtils';
 import {preorderSeq} from 'wdk-client/Utils/TreeUtils';
@@ -911,16 +911,30 @@ class OrthologsForm extends SortKeyTable {
 }
 
 class TranscriptionSummaryForm extends SortKeyTable {
+  constructor(props) {
+    super(props);
+    this.state = { otherVisible: false };
+    this.toggleOther = () => {
+      this.setState({ otherVisible: !this.state.otherVisible });
+    };
+  }
 
   render() {
       let { source_id } = this.props.record.attributes;
 
         return (
           <div id="transcriptionSummary">
-            <p><b>Fold Change Plot:</b></p>
+            <p><b>Help</b></p>
+            <p>The Transcript Expression Summary is meant to help identify samples in which the current gene is highly regulated. The Summary consists of a plot and a table, both depicting all possible pairwise comparisons within each RNA-seq dataset. In the plot, the FPKM of one sample is plotted against the FPKM of a second sample within the same dataset. Each comparison (sample 1 / sample 2) and its reciprocal (sample 2 / sample 1) are shown; hence, the data form a mirror image. Points within the two diagonal lines represent comparisons that result in less than 2-fold change. The vertical line and the horizontal line represent 1.0 FPKM; points with a value less than 1.0 on an axis are considered below the level of detection in that sample. The points are color-coded by dataset, with dataset names and colors listed in the legend. A dataset can be toggled on or off by pressing the item in the legend. A dataset can be viewed exclusively by double-clicking the item in the legend. The table is closed by default, but can be opened by pressing on the arrow to the left of “Fold Change Table.” In order to find sample comparisons with a large fold-change, sort the “Fold Change” column by clicking on its header.</p>
+            <p><b>Fold Change Plot</b></p>
             <iframe src={"/cgi-bin/dataPlotter.pl?project_id=" + projectId + "&id=" + source_id + "&type=RNASeqTranscriptionSummary&template=1&datasetId=All&wl=0&facet=na&contXAxis=na&fmt=html"} height="900" width="900" frameBorder="0"></iframe>
-            <p><b>Fold Change Table:</b></p>
-            <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
+            <CollapsibleSection
+              headerContent="Fold Change Table"
+              onCollapsedChange={this.toggleOther}
+              isCollapsed={!this.state.otherVisible}
+            >
+              <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
+            </CollapsibleSection>
           </div>
         );
   }
