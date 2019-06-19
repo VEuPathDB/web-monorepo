@@ -24,6 +24,8 @@ import {
   requestUpdateStepProperties,
   requestDeleteStep,
   requestUpdateStepSearchConfig,
+  openStrategy,
+  closeStrategy
 } from 'wdk-client/Actions/StrategyActions';
 
 export const key = 'strategies';
@@ -34,10 +36,12 @@ export type StrategyEntry =
 
 export type State = {
   strategies: Record<number, StrategyEntry|undefined>;
+  openStrategies: number[];
 };
 
 const initialState: State = {
-  strategies: {}
+  strategies: {},
+  openStrategies: []
 };
 
 function reqStrat(state: State, strategyId: number) {
@@ -83,6 +87,23 @@ export function reduce(state: State = initialState, action: Action): State {
       strategies: {
         [strategyId]: undefined
       }
+    }
+  }
+
+  case openStrategy.type: {
+    const strategyId = action.payload.strategyId;
+    if (state.openStrategies.includes(strategyId)) return state;
+    return {
+      ...state,
+      openStrategies: [...state.openStrategies, strategyId]
+    }
+  }
+
+  case closeStrategy.type: {
+    const strategyId = action.payload.strategyId;
+    return {
+      ...state,
+      openStrategies: state.openStrategies.filter((stratId) => stratId != strategyId)
     }
   }
 

@@ -20,6 +20,7 @@ import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSu
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
 import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
+import * as StrategyListActions from 'wdk-client/Actions/StrategyListActions';
 import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
 import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
@@ -46,6 +47,7 @@ export {
   StaticDataActions,
   StrategyPanelActions,
   StrategyActions,
+  StrategyListActions,
   UserDatasetsActions,
   ResultTableSummaryViewActions,
   BlastSummaryViewActions,
@@ -76,6 +78,7 @@ export type Action =
   | StaticDataActions.Action
   | StrategyActions.Action
   | StrategyPanelActions.Action
+  | StrategyListActions.Action
   | UserDatasetsActions.Action
   | UserCommentFormActions.Action
   | UserCommentShowActions.Action

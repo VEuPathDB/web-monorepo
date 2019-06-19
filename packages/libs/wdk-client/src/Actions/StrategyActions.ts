@@ -3,16 +3,6 @@ import { StrategySummary, NewStrategySpec, DuplicateStrategySpec, DeleteStrategy
 import { AnswerSpec, Answer, StandardReportConfig } from 'wdk-client/Utils/WdkModel';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
 
-export const requestStrategies = makeActionCreator(
-    'requestStrategies',
-    () => ({ })
-);
-
-export const fulfillStrategies = makeActionCreator(
-    'fulfillStrategies',
-    (strategySummaries: StrategySummary[]) => ({ strategySummaries })
-);
-
 export const requestCreateStrategy = makeActionCreator(
     'requestCreateStrategy',
     (newStrategySpec: NewStrategySpec) => ({ newStrategySpec, requestTimestamp: Date.now() })
@@ -129,9 +119,17 @@ export const requestUpdateStepSearchConfig = makeActionCreator(
     (strategyId: number, stepId: number, answerSpec: AnswerSpec) => ({ strategyId, stepId, answerSpec })
 );
 
+export const openStrategy = makeActionCreator(
+    'openStrategy',
+    (strategyId: number) => ({ strategyId })
+);
+
+export const closeStrategy = makeActionCreator(
+    'closeStrategy',
+    (strategyId: number) => ({ strategyId })
+);
+
 export type Action =
-| InferAction<typeof requestStrategies>
-| InferAction<typeof fulfillStrategies>
 | InferAction<typeof requestCreateStrategy>
 | InferAction<typeof fulfillCreateStrategy>
 | InferAction<typeof requestDeleteStrategy>
@@ -155,4 +153,6 @@ export type Action =
 | InferAction<typeof fulfillStepStandardReport>
 | InferAction<typeof requestUpdateStepSearchConfig>
 | InferAction<typeof requestDeleteStep>
+| InferAction<typeof openStrategy>
+| InferAction<typeof closeStrategy>
 
