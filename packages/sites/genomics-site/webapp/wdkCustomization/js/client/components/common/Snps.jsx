@@ -48,7 +48,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
         <div className="form-radio"><label><input name="type" type="radio" value="htsSnp" defaultChecked={true} /> Show Alignment</label></div>
         <div className="form-radio"><label><input name="type" type="radio" value="fasta" /> Multi-FASTA</label></div>
         <div className="form-radio" style={{ marginTop: '1rem' }}>
-          <input name="metadata" value="1" type="checkbox" /> Include metadata in the output
+          <input name="metadata" value="1" type="checkbox" checked/> Include strain and isolate metadata in the output.
         </div>
 
         <div style={headingStyle}>Select strains:</div>
