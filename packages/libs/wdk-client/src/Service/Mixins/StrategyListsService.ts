@@ -13,15 +13,7 @@ export default (base: ServiceBase) => {
     })
   }
 
-  function getStrategiesList() {
-     return base.sendRequest(Decode.arrayOf(strategySummaryDecoder), {
-      method: 'GET',
-      path: `/strategy-lists`
-    })
-  }
-
   return {
     getPublicStrategies,
-    getStrategiesList
   }
 }
