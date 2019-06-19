@@ -21,6 +21,7 @@ import * as histogramAnalysis from 'wdk-client/StoreModules/HistogramAnalysisSto
 import * as basket from 'wdk-client/StoreModules/BasketStoreModule';
 import * as resultPanel from 'wdk-client/StoreModules/ResultPanelStoreModule';
 import * as strategies from 'wdk-client/StoreModules/StrategyStoreModule';
+import * as strategyList from 'wdk-client/StoreModules/StrategyListStoreModule';
 import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
 import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
@@ -43,6 +44,7 @@ export default {
   siteMap,
   stepAnalysis,
   strategies,
+  strategyList,
   userCommentForm,
   userCommentShow,
   userDatasetDetail,

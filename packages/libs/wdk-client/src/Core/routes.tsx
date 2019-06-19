@@ -150,7 +150,7 @@ const routes: RouteEntry[] = [
   {
     path: '/workspace/strategies/all',
     component: (props: RouteComponentProps<{}>) => (
-      <AllStrategiesController/>
+      <AllStrategiesController viewId="all"/>
     )
   },
 

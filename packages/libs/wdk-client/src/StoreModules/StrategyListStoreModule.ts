@@ -90,7 +90,7 @@ async function getRequestStrategiesList(
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
   ): Promise<InferAction<typeof fulfillStrategiesList>> {
-    return fulfillStrategiesList(requestStrategiesListAction.payload.viewId, await wdkService.getStrategiesList());
+    return fulfillStrategiesList(requestStrategiesListAction.payload.viewId, await wdkService.getStrategies());
   }
 
 export const observe = takeEpicInWindow(
