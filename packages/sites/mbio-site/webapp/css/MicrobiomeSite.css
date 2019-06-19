@@ -45,6 +45,16 @@ body {
   font-weight: bold;
 }
 
+/* Cross study card */
+.StudyCard__DS_a4a0757110 .StudyCard-DetailsLink,
+.StudyCard__DS_a4a0757110 .StudyCard-Download {
+  visibility: hidden;
+}
+.StudyCard__DS_a4a0757110 .StudyCard-Stripe {
+  background-color: #dd314e;
+  color: white;
+}
+
 /******************************************************************************/
 
 
