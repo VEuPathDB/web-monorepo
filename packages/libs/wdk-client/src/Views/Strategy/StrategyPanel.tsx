@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { IconAlt, Link, SaveableTextEditor } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import StepBoxes from './StepBoxes';
 
-import './StrategyPanel.css';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 import {RecordClass} from 'wdk-client/Utils/WdkModel';
+import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
+
+import './StrategyPanel.css';
 
 const cx = makeClassNameHelper('StrategyPanel');
 
@@ -73,36 +75,7 @@ const StrategyActions: Record<string, StrategyAction> = {
   save: {
     iconName: 'floppy-o',
     title: 'Save your search strategy',
-    render: (props: Props) => {
-      const [ name, setName ] = useState(props.strategy.name);
-      const [ isPublic, setIsPublic ] = useState(props.strategy.isPublic);
-      const [ description, setDescription ] = useState(props.strategy.description);
-      return (
-        <React.Fragment>
-          <div>
-            <form onSubmit={handleSubmit}>
-              <div>
-                <label>Name: </label> <input name="name" value={name} onChange={e => setName(e.target.value)} />
-              </div>
-              <div>
-                <label>Public</label> <input name="isPublic" type="checkbox" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} />
-              </div>
-              <div>
-                <label>Description (optional):</label> <textarea name="description" value={description} onChange={e => setDescription(e.target.value)} />
-              </div>
-              <div>
-                <button type="submit" className="btn">Save</button> <Link className="btn" replace to="#">Close</Link>
-              </div>
-            </form>
-          </div>
-        </React.Fragment>
-      );
-
-      function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        props.onStrategySave(name, isPublic, description);
-      }
-    }
+    render: SaveStrategyForm
   },
 
   share: {

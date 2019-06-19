@@ -1,0 +1,45 @@
+.SaveStrategyForm {
+  text-align: left;
+  width: 600px;
+}
+
+.SaveStrategyForm--Notes {
+  text-align: left;
+  width: 600px;
+  border: 1px solid #ffebd0;
+  background: #fff9ea;
+  padding: 1em 2em;
+  border-radius: .5em;
+  margin: 0;
+  color: #774501;
+}
+
+.SaveStrategyForm--Buttons {
+  text-align: center;
+}
+
+.SaveStrategyForm--Label {
+  display: block;
+  font-size: 1.2em;
+  margin-top: 1em;
+  margin-bottom: .2em;
+}
+
+textarea.SaveStrategyForm--Control,
+input[type=text].SaveStrategyForm--Control {
+  width: 100%;
+}
+
+input[type=checkbox].SaveStrategyForm--Control {
+  margin-right: 1em;
+  vertical-align: middle;
+}
+
+.SaveStrategyForm--Caption {
+  font-size: .9em;
+  color: #222222;
+}
+
+.SaveStrategyForm--Caption__error {
+  color: #bf1414;
+}
