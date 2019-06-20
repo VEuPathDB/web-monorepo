@@ -254,7 +254,7 @@ class UserDatasetSharingModal extends React.Component {
           <h3>{email}</h3>
           {invalid
             ? <span className="danger">{error}</span>
-            : `Will receive ${this.getDatasetNoun()}`
+            : `will receive ${this.getDatasetNoun()}`
           }
         </div>
         <div className="UserDatasetSharing-Recipient-Actions">
