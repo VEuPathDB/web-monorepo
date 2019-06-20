@@ -25,6 +25,7 @@ type MappedProps =
 }
 
 interface MappedDispatch {
+  requestStrategy: (id: number) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategyDelete: () => void;
   onStrategyRename: (name: string) => void;
@@ -45,6 +46,7 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
   return bindActionCreators({
+    requestStrategy,
     onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
     onStrategyDelete: () => requestDeleteStrategy(props.strategyId),
     onStrategyRename: (name: string) => requestPatchStrategyProperties(props.strategyId, { name }),
@@ -54,7 +56,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
 
 function StrategyPanelController(props: Props) {
   useEffect(() => {
-    requestStrategy(props.strategyId);
+    props.requestStrategy(props.strategyId);
   }, [ props.strategyId ]);
   
   if (props.isLoading) return <Loading/>;

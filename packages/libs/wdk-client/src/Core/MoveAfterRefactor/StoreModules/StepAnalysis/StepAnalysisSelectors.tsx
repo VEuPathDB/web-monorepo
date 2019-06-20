@@ -21,7 +21,7 @@ type Props = { viewId: string, strategyId: number, stepId: number, initialTab?: 
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
-export const recordClassDisplayName = (
+export const recordClass = (
   
   { 
     globalData: { recordClasses = [] }, 
@@ -32,9 +32,9 @@ export const recordClassDisplayName = (
   const strategyEntry = strategies[strategyId];
   if (strategyEntry == undefined) return '';
   if (strategyEntry.status != 'success') return '';
-  const recordClassName = get(strategyEntry.strategy.steps[stepId], 'step.recordClassName', '');
+  const recordClassName = get(strategyEntry.strategy.steps[stepId], 'recordClassName', '');
   const recordClass = recordClasses.find(({ urlSegment }) => urlSegment === recordClassName);
-  return get(recordClass, 'displayName', '');
+  return recordClass;
 };
 // FIXME This look suspect
 export const question = (

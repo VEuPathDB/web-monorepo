@@ -38,7 +38,7 @@ function AllStrategiesController(props: Props) {
 
       {strategies
         ? strategies.map(strategy => (
-          <div><Link to={`/workspace/strategies/${strategy.strategyId}`}>{strategy.name}</Link></div>
+          <div><Link to={`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`}>{strategy.name}</Link></div>
         ))
         : <Loading/> }
     </div>

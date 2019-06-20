@@ -1,0 +1,12 @@
+.StrategyHeading {
+  font-size: 1.6em;
+  margin: 1em 0;
+}
+
+.StrategyHeading--Item__active {
+  color: black;
+}
+
+.StrategyHeading--Separator {
+  margin: 0 .5em;
+}

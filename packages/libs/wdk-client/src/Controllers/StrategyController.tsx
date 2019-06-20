@@ -1,40 +1,17 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { Dispatch, bindActionCreators } from 'redux';
-import { withRouter, RouteComponentProps } from 'react-router';
+import React from 'react';
 
-import { requestStrategy } from 'wdk-client/Actions/StrategyActions';
-import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
 import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
-import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import { RootState } from 'wdk-client/Core/State/Types';
+import { ResultPanelController } from 'wdk-client/Controllers';
+import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 
-interface OwnProps {
+interface Props {
   strategyId: number;
   stepId?: number;
   action?: string;
 }
 
-interface MappedDispatch {
-  requestStrategy: (id: number) => void;
-}
-
-interface MappedState {
-  strategy?: StrategyDetails;
-}
-
-type Props = OwnProps & MappedDispatch & MappedState & RouteComponentProps<any>;
-
-function StrategyController({ stepId, strategyId, strategy, action, requestStrategy, history}: Props) {
-  
-  useEffect(() => {
-    if (stepId == null) {
-      if (strategy == null) requestStrategy(strategyId);
-      else history.replace(`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`);
-    }
-  }, [strategyId, stepId, strategy, history, requestStrategy]);
-
+function StrategyController({ stepId, strategyId, action }: Props) {
   return (
     <React.Fragment>
       <StrategyHeader/>
@@ -43,26 +20,14 @@ function StrategyController({ stepId, strategyId, strategy, action, requestStrat
         stepId={stepId}
         action={action}
       />
-      {stepId && <ResultPanelController 
+      {stepId && <ResultPanelController
         strategyId={strategyId}
         stepId={stepId}
         viewId="strategy"
+        renderHeader={ResultPanelHeader}
       />}
     </React.Fragment>
   );
 }
 
-function mapState(state: RootState, props: OwnProps): MappedState {
-  const strategyEntry = state.strategies.strategies[props.strategyId];
-  return {
-    strategy: strategyEntry && strategyEntry.status === 'success' ? strategyEntry.strategy : undefined
-  };
-}
-
-function mapDispatch(dispatch: Dispatch): MappedDispatch {
-  return bindActionCreators({
-    requestStrategy
-  }, dispatch);
-}
-
-export default connect(mapState, mapDispatch)(withRouter(StrategyController));
+export default StrategyController;

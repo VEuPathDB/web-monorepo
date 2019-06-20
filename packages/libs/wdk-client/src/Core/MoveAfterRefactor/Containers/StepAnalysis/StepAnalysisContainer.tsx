@@ -7,14 +7,14 @@ import { memoize } from 'lodash/fp';
 import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
 import { RootState } from '../../../State/Types';
-import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClassDisplayName, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
+import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClass, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import { startLoadingChosenAnalysisTab, startLoadingSavedTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
 type StateProps = {
   webAppUrl: ReturnType<typeof webAppUrl>;
   wdkModelBuildNumber: ReturnType<typeof wdkModelBuildNumber>;
-  recordClassDisplayName: ReturnType<typeof recordClassDisplayName>;
+  recordClass: ReturnType<typeof recordClass>;
   analysisChoices: ReturnType<typeof analysisChoices>;
   analysisBaseTabConfigs: ReturnType<typeof analysisBaseTabConfigs>;
   analysisPanelOrder: ReturnType<typeof analysisPanelOrder>, 
@@ -79,7 +79,7 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({ 
   webAppUrl: webAppUrl(state),
-  recordClassDisplayName: recordClassDisplayName(state, props),
+  recordClass: recordClass(state, props),
   wdkModelBuildNumber: wdkModelBuildNumber(state),
   analysisChoices: analysisChoices(state),
   analysisPanelOrder: analysisPanelOrder(state), 
@@ -145,7 +145,7 @@ const mergeProps = (
               stateProps.analysisChoices,
               stateProps.webAppUrl,
               stateProps.wdkModelBuildNumber,
-              stateProps.recordClassDisplayName
+              stateProps.recordClass ? stateProps.recordClass.displayName : ''
             )
           } 
           loadChoice={eventHandlers.loadChoice(+baseTabConfig.key)}

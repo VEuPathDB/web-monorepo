@@ -14,7 +14,7 @@ import {
   loadingAnalysisChoices,
   mapAnalysisPanelStateToProps,
   webAppUrl,
-  recordClassDisplayName,
+  recordClass,
   wdkModelBuildNumber,
   analysisChoices,
   newAnalysisButtonVisible,
@@ -40,11 +40,11 @@ import {
 } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
-import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
+import { SummaryViewPluginField, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { LoadingOverlay } from 'wdk-client/Components';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
-import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
 
 type StateProps = {
   strategyEntry?: StrategyEntry;
@@ -54,7 +54,7 @@ type StateProps = {
   defaultSummaryView: ReturnType<typeof defaultSummaryView>;
   webAppUrl: ReturnType<typeof webAppUrl>;
   wdkModelBuildNumber: ReturnType<typeof wdkModelBuildNumber>;
-  recordClassDisplayName: ReturnType<typeof recordClassDisplayName>;
+  recordClass: ReturnType<typeof recordClass>;
   analysisChoices: ReturnType<typeof analysisChoices>;
   analysisBaseTabConfigs: ReturnType<typeof analysisBaseTabConfigs>;
   analysisPanelOrder: ReturnType<typeof analysisPanelOrder>, 
@@ -68,6 +68,7 @@ type OwnProps = {
   viewId: string;
   strategyId: number;
   initialTab?: string;
+  renderHeader?: React.ReactType<{ recordClass: RecordClass, step: Step, strategy: StrategyDetails, viewId: string }>;
 };
 
 interface TabEventHandlers {
@@ -82,6 +83,7 @@ type PanelEventHandlers = {
 };
 
 interface ResultPanelControllerProps {
+  header: React.ReactNode;
   summaryViewPlugins: SummaryViewPluginField[];
   defaultSummaryView: string;
   stepId: number;
@@ -127,14 +129,17 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
 
   renderView() {
     return (
-      <ResultTabs
-        activeTab={`${this.props.activeTab}`}
-        onTabSelected={this.props.onTabSelected}
-        onTabRemoved={this.props.onTabRemoved}
-        tabs={this.props.tabs}
-        headerContent={this.props.newAnalysisButton}
-        containerClassName={`result-tabs`}
-      />
+      <React.Fragment>
+        {this.props.header}
+        <ResultTabs
+          activeTab={`${this.props.activeTab}`}
+          onTabSelected={this.props.onTabSelected}
+          onTabRemoved={this.props.onTabRemoved}
+          tabs={this.props.tabs}
+          headerContent={this.props.newAnalysisButton}
+          containerClassName={`result-tabs`}
+        />
+      </React.Fragment>
     );
   }
 }
@@ -146,7 +151,7 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   summaryViewPlugins: summaryViewPlugins(state, props),
   defaultSummaryView: defaultSummaryView(state, props),
   webAppUrl: webAppUrl(state),
-  recordClassDisplayName: recordClassDisplayName(state, props),
+  recordClass: recordClass(state, props),
   wdkModelBuildNumber: wdkModelBuildNumber(state),
   analysisChoices: analysisChoices(state),
   analysisPanelOrder: analysisPanelOrder(state), 
@@ -194,6 +199,14 @@ const mergeProps = (
   stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps 
 ): ResultPanelControllerProps & OwnProps => ({
   ...ownProps,
+  header: ownProps.renderHeader && stateProps.recordClass && stateProps.strategyEntry && stateProps.strategyEntry.status === 'success' ? (
+    <ownProps.renderHeader
+      recordClass={stateProps.recordClass}
+      strategy={stateProps.strategyEntry.strategy}
+      step={stateProps.strategyEntry.strategy.steps[ownProps.stepId]}
+      viewId={ownProps.viewId}
+    />
+  ) : null,
   stepErrorMessage: undefined,  // TODO: clean up when we have new error handling system
   isUnauthorized: false,  // TODO: clean up when we have new error handling system
   summaryViewPlugins: stateProps.summaryViewPlugins,
@@ -260,7 +273,7 @@ const mergeProps = (
                 stateProps.analysisChoices,
                 stateProps.webAppUrl,
                 stateProps.wdkModelBuildNumber,
-                stateProps.recordClassDisplayName
+                stateProps.recordClass ? stateProps.recordClass.displayName : ''
               ),
               loadChoice: eventHandlers.loadChoice(+baseTabConfig.key),
               loadSavedAnalysis: eventHandlers.loadSavedAnalysis(+baseTabConfig.key),

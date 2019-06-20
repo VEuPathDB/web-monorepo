@@ -14,6 +14,7 @@ const cx = makeClassNameHelper('StrategyPanel');
 
 interface Props {
   strategy: StrategyDetails;
+  stepId?: number;
   recordClassesByName: Record<string, RecordClass>;
   action?: string;
   onStrategyRename: (name: string) => void;
@@ -24,22 +25,13 @@ interface Props {
 
 export default function StrategyPanel(props: Props) {
   const { recordClassesByName, strategy } = props;
-  const recordClass = strategy.recordClassName && recordClassesByName[strategy.recordClassName];
-  const recordClassDisplayName = recordClass && (
-    strategy.estimatedSize == 1 ? recordClass.displayName : recordClass.displayNamePlural
-  );
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
-        <div className={cx('--StrategyCount')}>
-          {strategy.estimatedSize ? strategy.estimatedSize.toLocaleString() : '?'} {recordClassDisplayName}      
-        </div>
-        <div>
-          Search Strategy:
-        </div>
+        <div>Search Strategy:</div>
         <div className={cx('--StrategyName')}>
           <SaveableTextEditor value={strategy.name} displayValue={(value, handleEdit) => <em onClick={handleEdit}>{value}{strategy.isSaved ? '' : ' *'}</em>} onSave={props.onStrategyRename}/>
-         </div>
+        </div>        
       </h2>
       <div className={cx('--Panel')}>
         <StrategyControls strategy={strategy}/>
