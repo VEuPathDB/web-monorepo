@@ -145,7 +145,7 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
     ? (
       props.viewId.startsWith('basket')
         ? 'Fixing your basket using the instructions above might help.'
-        : ''
+        : undefined
     )
     : undefined;
 
