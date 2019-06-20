@@ -1,21 +1,21 @@
 import React, {useState} from 'react';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import {Link} from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 
 import './SaveStrategyForm.css';
 
-interface Props {
+interface Props extends RouteComponentProps<void> {
   strategy: StrategyDetails;
   recordClassesByName: Record<string, RecordClass>;
   action?: string;
   onStrategyRename: (name: string) => void;
-  onStrategyCopy: () => void;
+  onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
   onStrategyDelete: () => void;
 }
 
-export default function SaveStrategyForm(props: Props) {
+function SaveStrategyForm(props: Props) {
   const [ name, setName ] = useState(props.strategy.name);
   const [ isPublic, setIsPublic ] = useState(props.strategy.isPublic);
   const [ description, setDescription ] = useState(props.strategy.description || '');
@@ -33,7 +33,7 @@ export default function SaveStrategyForm(props: Props) {
         <form className="SaveStrategyForm" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="save-strat--name" className="SaveStrategyForm--Label">Name</label>
-            <input id="save-strat--name" className="SaveStrategyForm--Control" type="text" value={name} onChange={e => setName(e.target.value)} />
+            <input id="save-strat--name" className="SaveStrategyForm--Control" type="text" minLength={1} maxLength={200} value={name} onChange={e => setName(e.target.value)} />
           </div>
           <div>
             <label htmlFor="save-strat--is-public" className="SaveStrategyForm--Label">Public</label>
@@ -42,7 +42,7 @@ export default function SaveStrategyForm(props: Props) {
           </div>
           <div>
             <label htmlFor="save-strat--description" className="SaveStrategyForm--Label">Description (optional)</label>
-            <textarea id="save-strat--description" className="SaveStrategyForm--Control" rows={8} value={description} onChange={e => setDescription(e.target.value)} />
+            <textarea id="save-strat--description" className="SaveStrategyForm--Control" maxLength={maxDescriptionSize} rows={8} value={description} onChange={e => setDescription(e.target.value)} />
             <aside className={`SaveStrategyForm--Caption ${descriptionTooLong ? 'SaveStrategyForm--Caption__error' : ''}`}>
               {descriptionSize.toLocaleString()} / {maxDescriptionSize.toLocaleString()} characters
             </aside>
@@ -58,5 +58,8 @@ export default function SaveStrategyForm(props: Props) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     props.onStrategySave(name, isPublic, description);
+    props.history.replace('#');
   }
 }
+
+export default withRouter(SaveStrategyForm);

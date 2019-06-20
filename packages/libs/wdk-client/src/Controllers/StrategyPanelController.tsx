@@ -1,12 +1,12 @@
 import { keyBy } from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { Loading } from 'wdk-client/Components';
-import { requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyProperties } from 'wdk-client/Actions/StrategyActions';
+import { requestStrategy, requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyProperties } from 'wdk-client/Actions/StrategyActions';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 interface OwnProps {
@@ -25,7 +25,7 @@ type MappedProps =
 }
 
 interface MappedDispatch {
-  onStrategyCopy: () => void;
+  onStrategyCopy: (signature: string) => void;
   onStrategyDelete: () => void;
   onStrategyRename: (name: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
@@ -45,7 +45,7 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
   return bindActionCreators({
-    onStrategyCopy: () => requestDuplicateStrategy({ sourceStrategySignature: String(props.strategyId) }),
+    onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
     onStrategyDelete: () => requestDeleteStrategy(props.strategyId),
     onStrategyRename: (name: string) => requestPatchStrategyProperties(props.strategyId, { name }),
     onStrategySave: (name: string, isPublic: boolean, description?: string) => requestPatchStrategyProperties(props.strategyId, { isPublic, isSaved: true, name, description })
@@ -53,6 +53,10 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
 }
 
 function StrategyPanelController(props: Props) {
+  useEffect(() => {
+    requestStrategy(props.strategyId);
+  }, [ props.strategyId ]);
+  
   if (props.isLoading) return <Loading/>;
 
   return (

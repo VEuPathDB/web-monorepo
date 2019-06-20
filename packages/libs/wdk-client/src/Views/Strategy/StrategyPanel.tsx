@@ -17,7 +17,7 @@ interface Props {
   recordClassesByName: Record<string, RecordClass>;
   action?: string;
   onStrategyRename: (name: string) => void;
-  onStrategyCopy: () => void;
+  onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
   onStrategyDelete: () => void;
 }
@@ -57,7 +57,7 @@ interface StrategyControlProps {
 interface StrategyAction {
   iconName: string;
   title: string;
-  render: (props: Props) => JSX.Element;
+  render: React.ReactType<Props>;
 }
 
 const StrategyActions: Record<string, StrategyAction> = {
@@ -67,7 +67,7 @@ const StrategyActions: Record<string, StrategyAction> = {
     render: (props: Props) => (
       <React.Fragment>
         <div>Are you sure you want to make a copy of your strategy?</div>
-        <div><button className="btn" type="button" onClick={() => props.onStrategyCopy()}>Yes, make a copy</button> <Link className="btn" replace to="#">No thanks</Link></div>
+        <div><button className="btn" type="button" onClick={() => props.onStrategyCopy(props.strategy.signature)}>Yes, make a copy</button> <Link className="btn" replace to="#">No thanks</Link></div>
       </React.Fragment>
     )
   },

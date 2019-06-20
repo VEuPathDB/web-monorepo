@@ -6,6 +6,7 @@ import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 import { Link, Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {closeStrategiesListView, openStrategiesListView} from 'wdk-client/Actions/StrategyListActions';
+import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
 
 interface OwnProps {
   viewId: string;
@@ -32,11 +33,12 @@ function AllStrategiesController(props: Props) {
   }, [viewId]);
   return (
     <div>
+      <StrategyHeader/>
       <h1>All Strategies</h1>
 
       {strategies
         ? strategies.map(strategy => (
-          <div><Link to={`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`}>{strategy.name}</Link></div>
+          <div><Link to={`/workspace/strategies/${strategy.strategyId}`}>{strategy.name}</Link></div>
         ))
         : <Loading/> }
     </div>
