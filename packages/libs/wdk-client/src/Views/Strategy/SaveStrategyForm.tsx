@@ -33,22 +33,22 @@ function SaveStrategyForm(props: Props) {
         <form className="SaveStrategyForm" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="save-strat--name" className="SaveStrategyForm--Label">Name</label>
-            <input id="save-strat--name" className="SaveStrategyForm--Control" type="text" minLength={1} maxLength={200} value={name} onChange={e => setName(e.target.value)} />
+            <input id="save-strat--name" className="SaveStrategyForm--Control" type="text" required value={name} onChange={handleNameChange} />
           </div>
           <div>
-            <label htmlFor="save-strat--is-public" className="SaveStrategyForm--Label">Public</label>
-            <input id="save-strat--is-public" className="SaveStrategyForm--Control" type="checkbox" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} />
-            <label htmlFor="save-strat--is-public"  className="SaveStrategyForm--Caption">Allow this strategy to be listed on the public strategies page.</label>
+            <div className="SaveStrategyForm--Label">Public</div>
+            <input id="save-strat--is-public" className="SaveStrategyForm--Control" type="checkbox" checked={isPublic} onChange={handleIsPublicChange} />
+            <label htmlFor="save-strat--is-public" >Allow this strategy to be listed on the public strategies page.</label>
           </div>
           <div>
             <label htmlFor="save-strat--description" className="SaveStrategyForm--Label">Description (optional)</label>
-            <textarea id="save-strat--description" className="SaveStrategyForm--Control" maxLength={maxDescriptionSize} rows={8} value={description} onChange={e => setDescription(e.target.value)} />
+            <textarea id="save-strat--description" className="SaveStrategyForm--Control" rows={8} value={description} onChange={handleDescriptionChange} />
             <aside className={`SaveStrategyForm--Caption ${descriptionTooLong ? 'SaveStrategyForm--Caption__error' : ''}`}>
               {descriptionSize.toLocaleString()} / {maxDescriptionSize.toLocaleString()} characters
             </aside>
           </div>
           <div className="SaveStrategyForm--Buttons">
-            <button disabled={descriptionTooLong} type="submit" className="btn">Save</button> <Link className="btn" replace to="#">Close</Link>
+            <button type="submit" className="btn">Save</button> <Link className="btn" replace to="#">Close</Link>
           </div>
         </form>
       </div>
@@ -59,6 +59,24 @@ function SaveStrategyForm(props: Props) {
     event.preventDefault();
     props.onStrategySave(name, isPublic, description);
     props.history.replace('#');
+  }
+
+  function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const { target } = event;
+    const { value } = target;
+    setName(value);
+    target.setCustomValidity(value.length > 200 ? 'The value is too long.' : '');
+  }
+
+  function handleDescriptionChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    const { target } = event;
+    const { value } = target;
+    setDescription(value);
+    target.setCustomValidity(value.length > maxDescriptionSize ? 'The value is too long.' : '');
+  }
+
+  function handleIsPublicChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setIsPublic(event.target.checked);
   }
 }
 
