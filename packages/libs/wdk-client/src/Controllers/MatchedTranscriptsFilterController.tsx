@@ -24,7 +24,7 @@ const actionCreators = {
 interface OwnProps {
   strategyId: number;
   stepId: number;
-  filterName: string;
+  filterName: 'matched_transcript_filter_array' | 'gene_boolean_filter_array';
 }
 
 type DispatchProps = typeof actionCreators;
@@ -48,12 +48,12 @@ const Label: Record<string, string> = {
   NN: 'neither search'
 }
 
-const Description: Record<string, string> = {
+const Description: Record<OwnProps['filterName'], string> = {
   matched_transcript_filter_array: 'Some Genes in your result have Transcripts that did not meet the search criteria.',
   gene_boolean_filter_array: ' Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.'
 }
 
-const Leadin: Record<string, string> = {
+const Leadin: Record<OwnProps['filterName'], string> = {
   matched_transcript_filter_array: 'Include Transcripts that',
   gene_boolean_filter_array: 'Include Transcripts returned by'
 }

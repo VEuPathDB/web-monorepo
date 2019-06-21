@@ -15,6 +15,7 @@ declare global{
 
 export type EpicDependencies = {
   wdkService: WdkService;
+  transitioner: PageTransitioner;
 }
 export type ModuleReducer<T> = (state: T | undefined, action: Action) => T;
 export type ModuleEpic<T> = Epic<Action, Action, T, EpicDependencies>;
@@ -42,7 +43,7 @@ export function createWdkStore<T>(
   const rootReducer = makeRootReducer(storeModules);
   const rootEpic = makeRootEpic(storeModules);
   const epicMiddleware = createEpicMiddleware<Action, Action, T, EpicDependencies>({
-    dependencies: { wdkService }
+    dependencies: { wdkService, transitioner }
   });
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

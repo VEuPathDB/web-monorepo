@@ -34,11 +34,17 @@ function AllStrategiesController(props: Props) {
   return (
     <div>
       <StrategyHeader/>
-      <h1>All Strategies</h1>
+      <h1>
+        <div>All Strategies</div>
+        <div><small>* = unsaved</small></div>
+      </h1>
 
       {strategies
         ? strategies.map(strategy => (
-          <div><Link to={`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`}>{strategy.name}</Link></div>
+          <div>
+            <Link to={`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`}>{strategy.name}</Link>
+            {strategy.isSaved ? '' : ' *'}
+            </div>
         ))
         : <Loading/> }
     </div>

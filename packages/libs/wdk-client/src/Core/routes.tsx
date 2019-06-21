@@ -25,7 +25,7 @@ import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
-import StrategyController from 'wdk-client/Controllers/StrategyController';
+import StrategyViewController from 'wdk-client/Controllers/StrategyViewController';
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
@@ -148,16 +148,16 @@ const routes: RouteEntry[] = [
   },
 
   {
+    path: '/workspace/strategies/:strategyId(\\d+)?/:stepId(\\d+)?',
+    component: (props: RouteComponentProps<{ strategyId?: number, stepId?: number }>) =>
+      <StrategyViewController {...props.match.params} action={props.location.hash ? props.location.hash.slice(1) : undefined} />
+  },
+
+  {
     path: '/workspace/strategies/all',
     component: (props: RouteComponentProps<{}>) => (
       <AllStrategiesController viewId="all"/>
     )
-  },
-
-  {
-    path: '/workspace/strategies/:strategyId(\\d+)/:stepId(\\d+)?',
-    component: (props: RouteComponentProps<{ strategyId: number, stepId?: number }>) =>
-      <StrategyController {...props.match.params} action={props.location.hash ? props.location.hash.slice(1) : undefined} />
   },
 
   {
