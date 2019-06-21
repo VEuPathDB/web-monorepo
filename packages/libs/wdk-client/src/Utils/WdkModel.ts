@@ -25,6 +25,8 @@ interface UrlModelEntity extends ModelEntity {
 
 export interface RecordClass extends UrlModelEntity {
   displayNamePlural: string;
+  shortDisplayName: string;
+  shortDisplayNamePlural: string;
   iconName?: string;
   recordIdAttributeName: string;
   primaryKeyColumnRefs: string[];

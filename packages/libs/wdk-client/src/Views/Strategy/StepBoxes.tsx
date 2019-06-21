@@ -163,7 +163,7 @@ function StepCount(props: { step: Step, recordClassesByName: Record<string, Reco
   const { step, recordClassesByName } = props;
   const recordClass = recordClassesByName[step.recordClassName];
   const recordClassDisplayName = recordClass && (
-    step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural
+    step.estimatedSize === 1 ? recordClass.shortDisplayName : recordClass.shortDisplayNamePlural
   );
   return <div className={cx('--StepCount')}>{step.estimatedSize.toLocaleString()} {recordClassDisplayName}</div>
 }
