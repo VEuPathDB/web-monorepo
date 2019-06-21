@@ -31,7 +31,7 @@ export default function StrategyPanel(props: Props) {
         <div>Search Strategy:</div>
         <div className={cx('--StrategyName')}>
           <SaveableTextEditor value={strategy.name} displayValue={(value, handleEdit) => <em onClick={handleEdit}>{value}{strategy.isSaved ? '' : ' *'}</em>} onSave={props.onStrategyRename}/>
-        </div>        
+        </div>
       </h2>
       <div className={cx('--Panel')}>
         <StrategyControls strategy={strategy}/>
