@@ -17,7 +17,7 @@
 
 <script> 
     $(function(){
-      $("#includedContent").load("${wdkModel.model.properties.COMMUNITY_SITE}/help/general/index.html"); 
+      $("#includedContent").load("${wdkModel.model.properties.COMMUNITY_SITE}/embedded/help/general/index.html"); 
     });
 </script> 
 

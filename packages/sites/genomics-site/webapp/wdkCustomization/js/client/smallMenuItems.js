@@ -69,7 +69,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Scientific Working Group',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.AboutAll#swg'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#swg'
         },
         {
           text: 'Scientific Advisory Team',
@@ -101,7 +101,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'EuPathDB Infrastructure',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Infrastructure'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Infrastructure.jsp'
         },
         {
           text: 'Website Usage Statistics',
