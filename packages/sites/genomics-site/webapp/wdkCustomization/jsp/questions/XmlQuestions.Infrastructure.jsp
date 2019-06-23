@@ -17,7 +17,7 @@
 
 <script> 
     $(function(){
-      $("#includedContent").load("https://qa.community.eupathdb.org/eupathdbpubs.html"); 
+$("#includedContent").load("${wdkModel.model.properties.COMMUNITY_SITE}/brc3/infrastructure.html"); 
     });
 </script> 
 
