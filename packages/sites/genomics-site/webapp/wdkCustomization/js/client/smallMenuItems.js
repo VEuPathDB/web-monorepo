@@ -13,7 +13,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Publications on EuPathDB sites',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
@@ -123,7 +123,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Web Tutorials',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Tutorials.jsp'
         },
         {
           text: 'EuPathDB Workshop',
@@ -139,7 +139,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: `Our Glossary`,
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Glossary'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Glossary.jsp'
         },
         {
           text: 'Contact Us',
