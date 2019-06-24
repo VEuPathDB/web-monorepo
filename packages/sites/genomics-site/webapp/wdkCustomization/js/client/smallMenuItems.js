@@ -9,7 +9,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
       children: [
         {
           text: `What is ${projectId}?`,
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp'
         },
         {
           text: 'Publications on EuPathDB sites',
@@ -45,11 +45,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'How to cite us',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#citing'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citing'
         },
         {
           text: 'Citing Data Providers',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#citingproviders'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citingproviders'
         },
         {
           text: 'Publications that Use our Resources',
@@ -57,7 +57,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Data Access Policy',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#use'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#use'
         },
         {
           text: 'Website Privacy Policy',
@@ -73,7 +73,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Scientific Advisory Team',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#advisors'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#advisors'
         },
         {
           text: 'Acknowledgements',
@@ -81,7 +81,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Funding',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#funding'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#funding'
         },
         {
           text: 'EuPathDB Brochure',
