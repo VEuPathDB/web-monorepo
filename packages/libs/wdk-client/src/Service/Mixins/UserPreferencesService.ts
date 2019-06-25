@@ -1,6 +1,10 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { PreferenceScope, UserPreferences } from 'wdk-client/Utils/WdkUser';
 
+enum Action {
+  Update = 'UPDATE'
+};
+
 export default (base: ServiceBase) => {
 
   let preferences: Promise<UserPreferences> | undefined;
@@ -14,7 +18,7 @@ export default (base: ServiceBase) => {
 
   // update or add a single user preference.  (Set a pref to NULL to clear it).
   function patchSingleUserPreference(scope: PreferenceScope, key: string, value: string | null): Promise<UserPreferences> {
-    let update = { action: 'update', updates: { [key]: value } };
+    let update = { action: Action.Update, updates: { [key]: value } };
     let url = `/users/current/preferences/${scope}`;
     let data = JSON.stringify(update);
     return base._fetchJson<void>('patch', url, data)
@@ -33,7 +37,7 @@ export default (base: ServiceBase) => {
 
   // update multiple user preferences, for a single scope.  (Set a pref to NULL to clear it).
   function patchScopedUserPreferences(scope: PreferenceScope, updates: Record<string, string>): Promise<UserPreferences> {
-    let update = { action: 'update', updates };
+    let update = { action: Action.Update, updates };
     let url = `/users/current/preferences/${scope}`;
     let data = JSON.stringify(update);
     return base._fetchJson<void>('patch', url, data)
