@@ -1,67 +1,20 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<%-- get wdkXmlAnswer saved in request scope --%>
-<c:set var="xmlAnswer" value="${requestScope.wdkXmlAnswer}"/>
-
-<c:set var="banner" value="${xmlAnswer.question.displayName}"/>
 
 <c:set var="wdkModel" value="${applicationScope.wdkModel}"/>
 
-<imp:pageFrame title="${wdkModel.displayName} : ${banner}"
-                 banner="${banner}"
+<imp:pageFrame title="${wdkModel.displayName} : External Links"
+                 banner="External Links"
                  parentDivision="${wdkModel.displayName}"
                  parentUrl="/home.jsp"
-                 divisionName="Useful Links"
-                 division="links">
+                 divisionName="External Links"
+                 division="External Links">
 
-<table border=0 width=100% cellpadding=3 cellspacing=0 bgcolor=white class=thinTopBottomBorders> 
+<div id="includedContent"></div>
 
- <tr>
-  <td bgcolor=white valign=top>
-
-<%-- handle empty result set situation --%>
-<c:choose>
-  <c:when test='${xmlAnswer.resultSize == 0}'>
-    Not available.
-  </c:when>
-  <c:otherwise>
-
-<!-- main body start -->
-
-<table border="0" cellpadding="2" cellspacing="0" width="100%">
-
-<c:forEach items="${xmlAnswer.recordInstances}" var="record">
-  <c:set var="tbls" value="${record.tables}"/>
-  <c:forEach items="${tbls}" var="tbl">
-    <c:set var="tblNam" value="${tbl.displayName}"/>
-
-    <tr><td><b>${tblNam}</b></td></tr>
-
-    <tr><td><ul>
-    <c:set var="rows" value="${tbl.rows}"/>
-    <c:forEach items="${rows}" var="row">
-      <c:set var="title" value="${row[0].value}"/>
-      <c:set var="url" value="${row[1].value}"/>
-      <li><a href="${url}">${title}</a></li>
-    </c:forEach>
-    </ul></td></tr>
-
-  </c:forEach>
-</c:forEach>
-
-</table>
-
-<!-- main body end -->
-
-  </c:otherwise>
-</c:choose>
-
-
-  </td>
-  <td valign=top class=dottedLeftBorder></td> 
-</tr>
-</table> 
+<script> 
+    $(function(){
+     $("#includedContent").load("${wdkModel.model.properties.COMMUNITY_SITE}/brc3/${wdkModel.displayName}/externalLinks.html"); 
+    });
+</script> 
 
 </imp:pageFrame>

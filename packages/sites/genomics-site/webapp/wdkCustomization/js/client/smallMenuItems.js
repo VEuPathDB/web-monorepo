@@ -9,11 +9,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
       children: [
         {
           text: `What is ${projectId}?`,
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp'
         },
         {
           text: 'Publications on EuPathDB sites',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
@@ -45,11 +45,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'How to cite us',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#citing'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citing'
         },
         {
           text: 'Citing Data Providers',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#citingproviders'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citingproviders'
         },
         {
           text: 'Publications that Use our Resources',
@@ -57,7 +57,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Data Access Policy',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#use'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#use'
         },
         {
           text: 'Website Privacy Policy',
@@ -81,7 +81,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Funding',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.About#funding'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#funding'
         },
         {
           text: 'EuPathDB Brochure',
@@ -101,7 +101,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'EuPathDB Infrastructure',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Infrastructure'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Infrastructure.jsp'
         },
         {
           text: 'Website Usage Statistics',
@@ -123,7 +123,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Web Tutorials',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Tutorials.jsp'
         },
         {
           text: 'EuPathDB Workshop',
@@ -139,7 +139,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: `Our Glossary`,
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Glossary'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Glossary.jsp'
         },
         {
           text: 'Contact Us',

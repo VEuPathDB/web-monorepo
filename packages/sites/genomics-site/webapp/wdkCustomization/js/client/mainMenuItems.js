@@ -150,7 +150,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'analysis-methods',
           text: 'Analysis Methods',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.Methods'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Methods.jsp'
         },
         {
           id: 'annotation-sops',
@@ -260,7 +260,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'eupathdb-publications',
           text: 'EuPathDB Publications',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp'
         },
         {
           id: 'mahpic-data',
@@ -325,7 +325,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'related-sites',
           text: 'Related Sites',
-          webAppUrl: '/showXmlDataContent.do?name=XmlQuestions.ExternalLinks'
+          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.ExternalLinks.jsp'
         },
         {
           id: 'public-strategies',
