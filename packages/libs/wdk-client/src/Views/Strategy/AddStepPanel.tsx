@@ -3,30 +3,33 @@ import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { RootState } from 'wdk-client/Core/State/Types';
-import { ActionCreatorServices as WdkEffectCallbackServices, emptyAction } from 'wdk-client/Core/WdkMiddleware';
-import { Question } from 'wdk-client/Utils/WdkModel';
+import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { Question, Identifier, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { requestStrategy } from 'wdk-client/Actions/StrategyActions';
-import { bindActionCreators } from 'redux';
-import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
+import { compose } from 'redux';
 import { Loading } from 'wdk-client/Components';
+import { NewStepSpec, StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { updateActiveQuestion } from 'wdk-client/Actions/QuestionActions';
+import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 
 type StateProps = {
-  strategyEntry?: StrategyEntry
+  strategy?: StrategyDetails,
+  recordClass?: RecordClass,
+  recordClassSegment?: string,
+  booleanSearchState?: QuestionState,
+  basketSearchState?: QuestionState
 };
 
 type DispatchProps = {
-  requestStrategy: typeof requestStrategy,
-  useWdkEffect: (effect: WdkEffectCallback, deps?: any[] | undefined) => void
+  createSteps: (newStepSpecs: NewStepSpec[], onCreation: (specIds: Identifier[]) => void) => void
+  loadBooleanQuestion: (recordClassSegment: string) => void,
+  loadBasketQuestion: (recordClassSegment: string) => void,
+  loadStrategy: (strategyId: number) => void,
 };
 
-
-type WdkEffectCallback = 
-  ((wdkEffectServices: WdkEffectCallbackServices) => void) | 
-  ((wdkEffectServices: WdkEffectCallbackServices) => void | undefined);
-
 type OwnProps = {
-  strategyId: number,
   addType: InsertBefore | Append
+  strategyId: number,
 };
 
 type InsertBefore = {
@@ -44,31 +47,103 @@ type NewStepSearchMap = Record<'combineNewSearch' | 'transformSearch' | 'colocat
 
 const AddStepPanelView = (
   {
-    requestStrategy,
-    strategyEntry,
+    basketSearchState,
+    booleanSearchState,
+    loadBasketQuestion,
+    loadBooleanQuestion,
+    loadStrategy,
+    recordClass,
+    recordClassSegment,
+    strategy,
     strategyId
   }: Props
 ) => {
   useEffect(() => {
-    requestStrategy(strategyId);
+    loadStrategy(strategyId);
   }, [ strategyId ]);
 
-  return !strategyEntry || strategyEntry.isLoading
+  useEffect(() => {
+    if (recordClassSegment) {
+      loadBasketQuestion(recordClassSegment);
+      loadBooleanQuestion(recordClassSegment);
+    }
+  }, [ recordClassSegment ]);
+
+  return (
+    !strategy ||
+    !recordClass ||
+    !booleanSearchState ||
+    !basketSearchState ||
+    booleanSearchState.questionStatus === 'loading' ||
+    basketSearchState.questionStatus === 'loading'
+  )
     ? <Loading />
     : null;
 };
 
-const strategyEntry = createSelector(
+const strategy = createSelector(
   ({ strategies }: RootState) => strategies,
   (_: RootState, { strategyId }: OwnProps) => strategyId,
-  (strategies, strategyId) => strategies.strategies[strategyId]
+  (strategies, strategyId) => {
+    const strategyEntry = strategies.strategies[strategyId];
+    
+    return (
+      !strategyEntry || 
+      strategyEntry.isLoading || 
+      strategyEntry.status === 'pending'
+    )
+      ? undefined
+      : strategyEntry.strategy;
+  }
 );
 
-const recordClassSegment = (recordClassFullName: string) =>
+const recordClass = createSelector(
+  strategy,
+  ({ globalData: { recordClasses } }: RootState) => recordClasses,
+  (strategy, recordClasses) => (
+    !strategy ||
+    !recordClasses
+  )
+    ? undefined
+    : recordClasses.find(({ urlSegment }) => strategy.recordClassName === urlSegment)
+);
+
+const recordClassSegment = createSelector(
+  recordClass,
+  recordClass => recordClass && recordClassFullNameToSegment(recordClass.fullName)
+);
+
+const booleanSearchState = createSelector(
+  recordClass,
+  recordClassSegment,
+  ({ question: { questions } }: RootState) => questions,
+  (recordClass, recordClassSegment, questions) => {
+    if (!recordClass || !recordClassSegment) {
+      return undefined;
+    }
+
+    return questions[booleanSearchUrlSegment(recordClassSegment)]
+  }
+);
+
+const basketSearchState = createSelector(
+  recordClass,
+  recordClassSegment,
+  ({ question: { questions } }: RootState) => questions,
+  (recordClass, recordClassSegment, questions) => {
+    if (!recordClass || !recordClassSegment) {
+      return undefined;
+    }
+
+    return questions[basketSearchUrlSegment(recordClassSegment)]
+  }
+);
+
+const recordClassFullNameToSegment = (recordClassFullName: string) =>
   recordClassFullName.replace('.', '_');
 
 const basketSearchUrlSegment = (recordClassSegment: string) =>
-  `${recordClassSegment}ByBasketSnapshot`;
+  `${recordClassSegment}BySnapshotBasket`;
 
 const booleanSearchUrlSegment = (recordClassSegment: string) =>
   `boolean_question_${recordClassSegment}`;
@@ -106,23 +181,42 @@ const isValidTransform = (
 
 export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state, ownProps) => ({
-    strategyEntry: strategyEntry(state, ownProps)
+    basketSearchState: basketSearchState(state, ownProps),
+    booleanSearchState: booleanSearchState(state, ownProps),
+    recordClass: recordClass(state, ownProps),
+    recordClassSegment: recordClassSegment(state, ownProps),
+    strategy: strategy(state, ownProps)
   }),
   dispatch => ({
-    ...bindActionCreators(
-      {
-        requestStrategy
-      },
-      dispatch
-    ),
-    useWdkEffect: (effect: WdkEffectCallback, deps?: any[] | undefined) => {
-      useEffect(() => {
-        dispatch(services => {
-          effect(services);
-          return emptyAction;
-        });
-      }, deps);
-    }
+    createSteps: (newStepSpecs: NewStepSpec[], onCreation: (specIds: Identifier[]) => void) => {
+      dispatch(async ({ wdkService }) => {
+        const identifiers = await Promise.all(newStepSpecs.map(spec => wdkService.createStep(spec)));
+        onCreation(identifiers);
+        return emptyAction;
+      });
+    },
+    loadBasketQuestion: (recordClassSegment: string) => {
+      dispatch(
+        updateActiveQuestion({
+          searchName: basketSearchUrlSegment(recordClassSegment),
+          stepId: undefined
+        })
+      )
+    },
+    loadBooleanQuestion: (recordClassSegment: string) => {
+      dispatch(
+        updateActiveQuestion({
+          searchName: booleanSearchUrlSegment(recordClassSegment),
+          stepId: undefined,
+          paramValues: {
+            [booleanLeftOperand(recordClassSegment)]: '',
+            [booleanRightOperand(recordClassSegment)]: '',
+            bq_operator: 'intersect'
+          }
+        })
+      )
+    },
+    loadStrategy: compose(dispatch, requestStrategy)
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
