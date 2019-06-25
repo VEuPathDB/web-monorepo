@@ -95,10 +95,6 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     ];
   }, [ internalSearchName, searchName ]);
 
-  if (!outputRecordClassName || !datasetCategory || !datasetSubtype) {
-    return <NotFound />;
-  }
-
   const [ questionNamesByDatasetAndCategory, updateQuestionNamesByDatasetAndCategory ] = useState<Record<string, Record<string, string>> | null>(null);
   const [ displayCategoriesByName, updateDisplayCategoriesByName ] = useState<Record<string, DisplayCategory> | null>(null);
   const [ displayCategoryOrder, updateDisplayCategoryOrder ] = useState<string[] | null>(null);
@@ -126,6 +122,10 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   
   // TODO Discuss the use of hooks for data-fetching (redux-observable vs. hooks vs. suspense)
   useEffect(() => {
+    if (!outputRecordClassName || !datasetCategory || !datasetSubtype) {
+      return;
+    }
+
     dispatchAction(({ wdkService }) => {
       wdkService.getAnswerJson(
         {
@@ -260,206 +260,214 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   }, [ datasetCategory, datasetSubtype ]);
 
   return (
-    !questionNamesByDatasetAndCategory ||
-    !displayCategoriesByName ||
-    !displayCategoryOrder ||
-    !datasetRecords ||
-    !filteredDatasetRecords
-  )
-    ? <Loading />
-    : (
-      <div className={cx()}>
-        <div className={cx('Legend')}>
-          <span>
-            Legend:
-          </span>
-          {
-            displayCategoryOrder.map(
-              categoryName =>
-                  <Tooltip
-                    key={categoryName}
-                    content={
-                      <div>
-                        <h4>
+    (
+      !outputRecordClassName || 
+      !datasetCategory || 
+      !datasetSubtype
+    )
+      ? <NotFound />
+      : (
+          !questionNamesByDatasetAndCategory ||
+          !displayCategoriesByName ||
+          !displayCategoryOrder ||
+          !datasetRecords ||
+          !filteredDatasetRecords
+        )
+      ? <Loading />
+      : (
+        <div className={cx()}>
+          <div className={cx('Legend')}>
+            <span>
+              Legend:
+            </span>
+            {
+              displayCategoryOrder.map(
+                categoryName =>
+                    <Tooltip
+                      key={categoryName}
+                      content={
+                        <div>
+                          <h4>
+                            {displayCategoriesByName[categoryName].displayName}
+                          </h4>
+                          {displayCategoriesByName[categoryName].description}
+                        </div>
+                      }
+                    >
+                      <span key={categoryName}>
+                        <span className="bttn bttn-cyan bttn-active">
+                          {displayCategoriesByName[categoryName].shortDisplayName}
+                        </span>
+                        <span>
                           {displayCategoriesByName[categoryName].displayName}
-                        </h4>
-                        {displayCategoriesByName[categoryName].description}
+                        </span>
+                      </span>
+                    </Tooltip>
+              )
+            }
+          </div>
+          <InternalGeneDatasetTable
+            emptyResultMessage=""
+            rows={
+              showingOneRecord
+                ? filteredDatasetRecords
+                : datasetRecords
+            }
+            columns={
+              [
+                {
+                  key: 'organism_prefix',
+                  name: 'Organism',
+                  type: 'html',
+                  sortable: true,
+                  sortType: 'htmlText',
+                  helpText: 'Organism data is aligned to'
+                },
+                {
+                  key: 'display_name',
+                  name: 'Data Set',
+                  type: 'html',
+                  sortable: true,
+                  sortType: 'htmlText',
+                  renderCell: (cellProps: any) => {
+                    const { display_name, summary, publications }: { display_name: string, summary: string, publications: LinkAttributeValue[] } 
+                      = cellProps.row;
+
+                    return (
+                      <div>
+                        <HelpIcon>
+                          <div>
+                            <h4>Summary</h4>
+                            {safeHtml(summary)}
+                            {
+                              publications.length > 0 && (
+                                <>
+                                  <h4>Publications</h4>
+                                  <ul>
+                                    {
+                                      publications.map(
+                                        ({ url, displayText }) =>
+                                          <li key={url}>
+                                            <a href={url} target="_blank">{displayText || url}</a>
+                                          </li>
+                                      )
+                                    }
+                                  </ul>
+                                </>
+                              )
+                            }
+                          </div>
+                        </HelpIcon>
+                        {' '}
+                        {display_name}
                       </div>
-                    }
-                  >
-                    <span key={categoryName}>
-                      <span className="bttn bttn-cyan bttn-active">
-                        {displayCategoriesByName[categoryName].shortDisplayName}
-                      </span>
-                      <span>
-                        {displayCategoriesByName[categoryName].displayName}
-                      </span>
-                    </span>
-                  </Tooltip>
+                    );
+                  }
+                },
+                {
+                  key: 'Searches',
+                  name: 'Choose a Search',
+                  sortable: false,
+                  renderCell: (cellProps: any) =>
+                    <div>
+                      {
+                        displayCategoryOrder.map(
+                          categoryName => {
+                            const datasetName = cellProps.row.dataset_name;
+                            const categorySearchName = questionNamesByDatasetAndCategory[datasetName][categoryName];
+
+                            return (
+                                <span key={categoryName}>
+                                  {
+                                    categorySearchName && (
+                                      <Link 
+                                        className={
+                                          categorySearchName === searchName
+                                            ? "bttn bttn-cyan bttn-active"
+                                            : "bttn bttn-cyan"
+                                        } 
+                                        key={categoryName} 
+                                        to={`${internalSearchName}#${categorySearchName}`}
+                                      >
+                                        {displayCategoriesByName[categoryName].shortDisplayName}
+                                      </Link>
+                                    )
+                                  }
+                                </span>
+                              );
+                          }
+                        )
+                      }
+                    </div>
+                }
+              ]
+            }
+            initialSortColumnKey="organism_prefix"
+            fixedTableHeader
+          />
+          {
+            showingRecordToggle && (
+              <div 
+                className={cx('RecordToggle')}
+                onClick={() => updateShowingOneRecord(!showingOneRecord)}
+              >
+                {
+                  showingOneRecord
+                    ? (
+                      <>
+                        <i className="fa fa-arrow-down" />
+                        {' '}
+                        Show All Data Sets
+                        {' '}
+                        <i className="fa fa-arrow-down" />
+                      </>
+                    )
+                    : (
+                      <>
+                        <i className="fa fa-arrow-up" />
+                        {' '}
+                        Hide All Data Sets
+                        {' '}
+                        <i className="fa fa-arrow-up" />
+                      </>
+                    )
+                }
+              </div>            
+            )
+          }
+          {
+            selectedDataSetRecord && (
+              <Tabs
+                tabs={
+                  displayCategoryOrder
+                    .filter(
+                      categoryName => questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]
+                    )
+                    .map(
+                      categoryName => ({
+                        key: questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName],
+                        display: (
+                          <Link to={`${internalSearchName}#${questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]}`}>
+                            {displayCategoriesByName[categoryName].displayName}
+                          </Link>
+                        ),
+                        content: (
+                          <QuestionController
+                            question={searchName}
+                            recordClass={recordClass}
+                          />
+                        )
+                      })
+                    )
+                }
+                activeTab={searchName}
+                onTabSelected={() => {}}
+              />
             )
           }
         </div>
-        <InternalGeneDatasetTable
-          emptyResultMessage=""
-          rows={
-            showingOneRecord
-              ? filteredDatasetRecords
-              : datasetRecords
-          }
-          columns={
-            [
-              {
-                key: 'organism_prefix',
-                name: 'Organism',
-                type: 'html',
-                sortable: true,
-                sortType: 'htmlText',
-                helpText: 'Organism data is aligned to'
-              },
-              {
-                key: 'display_name',
-                name: 'Data Set',
-                type: 'html',
-                sortable: true,
-                sortType: 'htmlText',
-                renderCell: (cellProps: any) => {
-                  const { display_name, summary, publications }: { display_name: string, summary: string, publications: LinkAttributeValue[] } 
-                    = cellProps.row;
-
-                  return (
-                    <div>
-                      <HelpIcon>
-                        <div>
-                          <h4>Summary</h4>
-                          {safeHtml(summary)}
-                          {
-                            publications.length > 0 && (
-                              <>
-                                <h4>Publications</h4>
-                                <ul>
-                                  {
-                                    publications.map(
-                                      ({ url, displayText }) =>
-                                        <li key={url}>
-                                          <a href={url} target="_blank">{displayText || url}</a>
-                                        </li>
-                                    )
-                                  }
-                                </ul>
-                              </>
-                            )
-                          }
-                        </div>
-                      </HelpIcon>
-                      {' '}
-                      {display_name}
-                    </div>
-                  );
-                }
-              },
-              {
-                key: 'Searches',
-                name: 'Choose a Search',
-                sortable: false,
-                renderCell: (cellProps: any) =>
-                  <div>
-                    {
-                      displayCategoryOrder.map(
-                        categoryName => {
-                          const datasetName = cellProps.row.dataset_name;
-                          const categorySearchName = questionNamesByDatasetAndCategory[datasetName][categoryName];
-
-                          return (
-                              <span key={categoryName}>
-                                {
-                                  categorySearchName && (
-                                    <Link 
-                                      className={
-                                        categorySearchName === searchName
-                                          ? "bttn bttn-cyan bttn-active"
-                                          : "bttn bttn-cyan"
-                                      } 
-                                      key={categoryName} 
-                                      to={`${internalSearchName}#${categorySearchName}`}
-                                    >
-                                      {displayCategoriesByName[categoryName].shortDisplayName}
-                                    </Link>
-                                  )
-                                }
-                              </span>
-                            );
-                        }
-                      )
-                    }
-                  </div>
-              }
-            ]
-          }
-          initialSortColumnKey="organism_prefix"
-          fixedTableHeader
-        />
-        {
-          showingRecordToggle && (
-            <div 
-              className={cx('RecordToggle')}
-              onClick={() => updateShowingOneRecord(!showingOneRecord)}
-            >
-              {
-                showingOneRecord
-                  ? (
-                    <>
-                      <i className="fa fa-arrow-down" />
-                      {' '}
-                      Show All Data Sets
-                      {' '}
-                      <i className="fa fa-arrow-down" />
-                    </>
-                  )
-                  : (
-                    <>
-                      <i className="fa fa-arrow-up" />
-                      {' '}
-                      Hide All Data Sets
-                      {' '}
-                      <i className="fa fa-arrow-up" />
-                    </>
-                  )
-              }
-            </div>            
-          )
-        }
-        {
-          selectedDataSetRecord && (
-            <Tabs
-              tabs={
-                displayCategoryOrder
-                  .filter(
-                    categoryName => questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]
-                  )
-                  .map(
-                    categoryName => ({
-                      key: questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName],
-                      display: (
-                        <Link to={`${internalSearchName}#${questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]}`}>
-                          {displayCategoriesByName[categoryName].displayName}
-                        </Link>
-                      ),
-                      content: (
-                        <QuestionController
-                          question={searchName}
-                          recordClass={recordClass}
-                        />
-                      )
-                    })
-                  )
-              }
-              activeTab={searchName}
-              onTabSelected={() => {}}
-            />
-          )
-        }
-      </div>
-    );
+      )
+  );
 };
 
 function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: InternalQuestionRecord[]) {
