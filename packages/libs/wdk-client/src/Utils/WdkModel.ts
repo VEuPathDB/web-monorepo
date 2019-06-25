@@ -168,6 +168,10 @@ export interface DatasetParam extends ParameterBase {
   parsers: { name: string; displayName: string; description: string; }[]
 }
 
+export interface AnswerParam extends ParameterBase {
+  type: 'input-step';
+}
+
 export type Parameter =
   | StringParam
   | TimestampParam
@@ -178,6 +182,7 @@ export type Parameter =
   | FilterParamNew
   | NumberParam
   | NumberRangeParam
+  | AnswerParam
 
 export interface ParameterGroup {
   description: string;
@@ -213,6 +218,8 @@ interface QuestionShared extends UrlModelEntity {
   summaryViewPlugins: SummaryViewPluginField[];
   stepAnalysisPlugins: StepAnalysisType[];
   filters: QuestionFilter[];
+  allowedPrimaryInputRecordClassNames?: string[];
+  allowedSecondaryInputRecordClassNames?: string[];
 }
 
 export interface Question extends QuestionShared {

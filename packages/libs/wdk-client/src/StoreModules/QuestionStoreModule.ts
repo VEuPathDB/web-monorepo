@@ -103,8 +103,6 @@ export function reduce(state: State = initialState, action: Action): State {
       }
     }
     if (action.type === UPDATE_REDIRECT_TO) {
-      console.log(action);
-
       return {
         ...state,
         redirectTo: action.payload

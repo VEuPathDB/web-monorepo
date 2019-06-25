@@ -182,6 +182,9 @@ const parameterDecoder: Decode.Decoder<Parameter> =
         Decode.field('minDate', Decode.string),
         Decode.field('maxDate', Decode.string),
       ),
+
+      /* AnswerParam */
+      Decode.field('type', Decode.constant('input-step'))
     )
   )
 
@@ -222,10 +225,20 @@ const questionSharedDecoder =
       )
     )),
     Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
-    Decode.field('defaultSummaryView', Decode.string),
-    Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder)),
-    Decode.field('stepAnalysisPlugins', Decode.arrayOf(stepAnalysisTypeDecoder)),
-    Decode.field('filters', Decode.arrayOf(questionFilterDecoder))
+    Decode.combine(
+      Decode.field('defaultSummaryView', Decode.string),
+      Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder)),
+      Decode.field('stepAnalysisPlugins', Decode.arrayOf(stepAnalysisTypeDecoder))
+    ),
+    Decode.field('filters', Decode.arrayOf(questionFilterDecoder)),
+    Decode.field(
+      'allowedPrimaryInputRecordClassNames', 
+      Decode.optional(Decode.arrayOf(Decode.string))
+    ),
+    Decode.field(
+      'allowedSecondaryInputRecordClassNames', 
+      Decode.optional(Decode.arrayOf(Decode.string))
+    ),
   )
 
   const questionWithParametersDecoder: Decode.Decoder<{ searchData: QuestionWithParameters }> =
