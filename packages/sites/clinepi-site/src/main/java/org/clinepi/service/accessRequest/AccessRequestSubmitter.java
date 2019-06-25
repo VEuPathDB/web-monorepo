@@ -136,6 +136,7 @@ public class AccessRequestSubmitter {
       requesterEmail,
       datasetName
     );
+    LOG.debug("emailAccessRequest() -- here are the formFields: " + formFields);
     String body = createAccessRequestEmailBody(bodyTemplate, formFields, datasetName);
 
     String replyEmail = requesterEmail;
@@ -143,12 +144,11 @@ public class AccessRequestSubmitter {
         "ReplyTo: " + replyEmail + "\n" +
         "WDK Model version: " + version;
 
-    String redmineContent = "****THIS IS NOT A REPLY**** \nThis is an automatic" +
-        " response, that includes your message for your records, to let you" +
-        " know that we have received your email and will get back to you as" +
-        " soon as possible. Thanks so much for contacting us!\n\nThis was" +
-        " your message:\n\n---------------------\n" + body + 
-        "\n---------------------";
+    String redmineContent = "****THIS IS NOT A REPLY****" + 
+                            "This is an automatic response, that includes your message for your records, to let you " +
+                            "know that we have received your email and will get back to you as " +
+                            "soon as possible. Thanks so much for contacting us!" +
+                            "This was your message:" + "\n\n" + body + "\n";
 
     String redmineMetaInfo = "Project: clinepidb\n" + "Category: " + 
         website + "\n" + "\n" +

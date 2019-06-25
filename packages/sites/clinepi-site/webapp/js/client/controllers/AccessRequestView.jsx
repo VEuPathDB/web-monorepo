@@ -44,10 +44,7 @@ export default class AccessRequestView extends Component {
       return (
         <Fragment>
           <p>
-            We have submitted your request to the data provider.
-          </p>
-          <p>
-          Somebody will follow up with you if any clarification is needed.
+            Your data access request has been submitted. We will contact you if any additional information is needed. Please <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a> with any questions.
           </p>
         </Fragment>
       );
@@ -55,10 +52,7 @@ export default class AccessRequestView extends Component {
       return (
         <Fragment>
           <p>
-            Our records indicate that you have already submitted a request for this dataset. 
-          </p>
-          <p>
-            If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a>. 
+            Our records indicate that you have already submitted a request for this dataset. If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a>. 
           </p>
         </Fragment>
       );
