@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { StrategySummary, NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec } from "wdk-client/Utils/WdkUser";
+import { NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec } from "wdk-client/Utils/WdkUser";
 import { AnswerSpec, Answer, StandardReportConfig } from 'wdk-client/Utils/WdkModel';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
 
