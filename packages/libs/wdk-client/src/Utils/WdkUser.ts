@@ -36,12 +36,14 @@ export interface Step extends AnswerSpec {
     columnSelection?: string[];
     sortColumns?: { name: string; direction: 'ASC' | 'DESC' }[];
   }
+  expanded: boolean;
+  expandedName?: string;
 }
 
 export interface PatchStepSpec {
   customName?: string,
-  expandNested?: boolean, // only allowed on combiner steps
-  nestedName?: string;  // only allowed on combiner steps; not shown if expandNested is false and the step is not nested
+  expanded?: boolean, // only allowed on combiner steps
+  expandedName?: string;  // only allowed on combiner steps; not shown if expand is false and the step is not nested
   displayPreferences?: Step['displayPreferences'];
 }
 

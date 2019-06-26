@@ -9,13 +9,13 @@ import {RecordClass} from 'wdk-client/Utils/WdkModel';
 import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
 
 import './StrategyPanel.css';
+import {UiStepTree} from 'wdk-client/Views/Strategy/Types';
 
 const cx = makeClassNameHelper('StrategyPanel');
 
 interface Props {
   strategy: StrategyDetails;
-  stepId?: number;
-  recordClassesByName: Record<string, RecordClass>;
+  uiStepTree: UiStepTree;
   action?: string;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function StrategyPanel(props: Props) {
-  const { recordClassesByName, strategy } = props;
+  const { uiStepTree, strategy } = props;
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
@@ -35,7 +35,9 @@ export default function StrategyPanel(props: Props) {
       </h2>
       <div className={cx('--Panel')}>
         <StrategyControls strategy={strategy}/>
-        <StepBoxes recordClassesByName={recordClassesByName} steps={strategy.steps} stepTree={strategy.stepTree}/>
+        <div>
+          <StepBoxes stepTree={uiStepTree}/>
+        </div>
       </div>
       <StrategyActionModal {...props} />
     </div>

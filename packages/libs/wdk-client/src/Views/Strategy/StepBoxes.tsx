@@ -1,46 +1,40 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import {RecordClass} from 'wdk-client/Utils/WdkModel';
-import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
+import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
 import './StepBoxes.css';
+
 
 const cx = makeClassNameHelper('StepBoxes');
 
 interface Props {
-  steps: Record<number, Step>;
-  stepTree: StepTree;
-  recordClassesByName: Record<string, RecordClass>;
+  stepTree: UiStepTree;
 }
 
 /**
  * Render each step of a strategy as a grid.
  */
 export default function StepBoxes(props: Props) {
-  const { stepTree, steps } = props;
-  const expandedStepTree = findExpandedStepTree(stepTree, steps);
   return (
     <React.Fragment>
       <div className={cx()}>
         <StepTree {...props}/>
       </div>
-      {expandedStepTree && <StepBoxes {...props} stepTree={expandedStepTree}/>}
+      <ExpandedSteps {...props}/>
     </React.Fragment>
   )
 }
 
 interface StepTreeProps {
-  recordClassesByName: Record<string, RecordClass>;
-  steps: Record<string, Step>;
-  stepTree: StepTree;
-  isChild?: boolean;
+  stepTree: UiStepTree;
 }
 
 function StepTree(props: StepTreeProps) {
-  const { recordClassesByName, stepTree, steps, isChild = false } = props;
-  const step = steps[stepTree.stepId];
+  const { stepTree } = props;
+  const { step, primaryInput, secondaryInput } = stepTree;
 
   // FIXME How should we handle this case?
   if (step == null) {
@@ -49,11 +43,9 @@ function StepTree(props: StepTreeProps) {
     );
   }
 
-  const { secondaryInput } = stepTree;
-
   return (
     <React.Fragment>
-      {stepTree.primaryInput && <StepTree recordClassesByName={recordClassesByName} stepTree={stepTree.primaryInput} steps={steps} isChild/>}
+      {primaryInput && <StepTree stepTree={primaryInput} />}
       <div className={cx('--Slot')}>
         <Plugin
           context={{
@@ -63,11 +55,9 @@ function StepTree(props: StepTreeProps) {
             recordClassName: step.recordClassName
           }}
           pluginProps={{
-            recordClassesByName,
-            step,
-            hasPrimaryInput: stepTree.primaryInput != null,
-            hasSecondaryInput: stepTree.secondaryInput != null,
-            isChild
+            stepTree,
+            isNested: false,
+            isExpanded: false,
           }}
           defaultComponent={StepBox}
         />
@@ -80,11 +70,10 @@ function StepTree(props: StepTreeProps) {
               recordClassName: step.recordClassName
             }}
             pluginProps={{
-              recordClassesByName,
-              step: steps[secondaryInput.stepId],
-              hasPrimaryInput: secondaryInput.primaryInput != null,
-              hasSecondaryInput: secondaryInput.secondaryInput != null,
-              isChild
+              stepTree: secondaryInput,
+              isNested: step.expandedName != null && step.expandedName !== step.customName,
+              isExpanded: step.expandedName != null && step.expanded,
+              nestedDisplayName: step.expandedName,
             }}
             defaultComponent={StepBox}
           />
@@ -95,54 +84,62 @@ function StepTree(props: StepTreeProps) {
 }
 
 interface StepBoxProps {
-  step: Step;
-  recordClassesByName: Record<string, RecordClass>;
-  hasPrimaryInput: boolean;
-  hasSecondaryInput: boolean;
-  isChild: boolean;
+  stepTree: UiStepTree,
+  isNested: boolean;
+  isExpanded: boolean;
+  nestedDisplayName?: string;
 }
 
 function StepBox(props: StepBoxProps) {
-  const { hasPrimaryInput, hasSecondaryInput, step } = props;
-  const StepComponent = hasPrimaryInput && hasSecondaryInput ? CombinedStepBoxContent
-    : hasPrimaryInput ? TransformStepBoxContent
+  const { stepTree, isNested, isExpanded } = props;
+  const { step, primaryInput, secondaryInput, color } = stepTree;
+  const StepComponent = primaryInput && secondaryInput && !isNested ? CombinedStepBoxContent
+    : primaryInput && !isNested ? TransformStepBoxContent
     : LeafStepBoxContent;
-  const classModifier = hasPrimaryInput && hasSecondaryInput ? 'combined'
-    : hasPrimaryInput ? 'transform'
+  const classModifier = primaryInput && secondaryInput && !isNested ? 'combined'
+    : primaryInput && !isNested ? 'transform'
     : 'leaf';
+  const nestedModifier = isNested ? 'nested' : '';
   return (
-    <NavLink className={cx('--Box', classModifier)} activeClassName={cx('--Box', classModifier + '_active')} to={`/workspace/strategies/${step.strategyId}/${step.id}`} replace>
+    <NavLink
+      replace
+      style={ isExpanded ? { borderColor: color } : {}}
+      className={cx('--Box', classModifier, nestedModifier)}
+      activeClassName={cx('--Box', classModifier + '_active')}
+      to={`/workspace/strategies/${step.strategyId}/${step.id}`}
+    >
       <StepComponent {...props}/>
     </NavLink>
   );
 }
 
 function LeafStepBoxContent(props: StepBoxProps) {
-  const { step, recordClassesByName } = props;
+  const { stepTree, isNested, nestedDisplayName } = props;
+  const { step, recordClass } = stepTree;
   return (
     <React.Fragment>
-      <StepName step={step}/>
-      <StepCount step={step} recordClassesByName={recordClassesByName}/>
+      <StepName step={step} nestedDisplayName={isNested ? nestedDisplayName : undefined}/>
+      <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
 }
 
 function TransformStepBoxContent(props: StepBoxProps) {
-  const { step, recordClassesByName } = props;
+  const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
       <StepName step={step}/>
-      <StepCount step={step} recordClassesByName={recordClassesByName}/>
+      <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
 }
 
 function CombinedStepBoxContent(props: StepBoxProps) {
-  const { step, recordClassesByName } = props;
+  const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
       <CombinedStepIcon step={step}/>
-      <StepCount step={step} recordClassesByName={recordClassesByName}/>
+      <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
 }
@@ -154,21 +151,42 @@ function CombinedStepIcon(props: { step: Step }) {
   );
 }
 
-function StepName(props: { step: Step }) {
-  const { step } = props;
-  return <div className={cx('--StepName')}>{step.customName}</div>;
+function StepName(props: { step: Step, nestedDisplayName?: string }) {
+  const { step, nestedDisplayName } = props;
+  return <div className={cx('--StepName')}>{nestedDisplayName || step.customName}</div>;
 }
 
-function StepCount(props: { step: Step, recordClassesByName: Record<string, RecordClass> }) {
-  const { step, recordClassesByName } = props;
-  const recordClass = recordClassesByName[step.recordClassName];
+function StepCount(props: { step: Step, recordClass: RecordClass }) {
+  const { step, recordClass } = props;
   const recordClassDisplayName = recordClass && (
     step.estimatedSize === 1 ? recordClass.shortDisplayName : recordClass.shortDisplayNamePlural
   );
   return <div className={cx('--StepCount')}>{step.estimatedSize.toLocaleString()} {recordClassDisplayName}</div>
 }
 
-function findExpandedStepTree(stepTree: StepTree, steps: Record<number, Step>): StepTree | undefined {
-  // TODO Find first collapsible step that is expanded
-  return undefined;
+interface ExpandedStepProps {
+  stepTree?: UiStepTree;
+}
+
+/**
+ * Recurisvely render expanded steps
+ */
+export function ExpandedSteps(props: ExpandedStepProps) {
+  const { stepTree } = props;
+
+  if (stepTree == null || stepTree == null) return null;
+
+  return (
+    <React.Fragment>
+      <ExpandedSteps stepTree={stepTree.primaryInput}/>
+      {stepTree.secondaryInput && stepTree.step.expanded && (
+        <React.Fragment>
+          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName}</em> <button className="link" type="button">close</button></div>
+          <div className="StrategyPanel--Panel" style={{ display: 'block', boxShadow: `0 0 0 2px ${stepTree.secondaryInput.color}` }}>
+            <StepBoxes stepTree={stepTree.secondaryInput}/>
+          </div>
+        </React.Fragment>
+      )}
+    </React.Fragment>
+  );
 }

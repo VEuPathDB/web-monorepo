@@ -1,13 +1,14 @@
 import { keyBy } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch, bindActionCreators } from 'redux';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
+import { bindActionCreators, Dispatch } from 'redux';
+import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestStrategy } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
-import { requestStrategy, requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyProperties } from 'wdk-client/Actions/StrategyActions';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
+import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
 
 interface OwnProps {
   strategyId: number;
@@ -21,7 +22,7 @@ type MappedProps =
 } | {
   isLoading: false;
   strategy: StrategyDetails;
-  recordClassesByName: Record<string, RecordClass>;
+  uiStepTree: UiStepTree;
 }
 
 interface MappedDispatch {
@@ -38,10 +39,10 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   const entry = state.strategies.strategies[ownProps.strategyId];
   const strategy = entry && entry.status === 'success' ? entry.strategy : undefined;
   const { recordClasses } = state.globalData;
-  const recordClassesByName = recordClasses && keyBy(recordClasses, 'urlSegment');
-  return strategy == null || recordClassesByName == null
+  const uiStepTree = strategy && recordClasses && makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'));
+  return strategy == null || uiStepTree == null
     ? { isLoading: true }
-    : { isLoading: false, strategy, recordClassesByName };
+    : { isLoading: false, strategy, uiStepTree };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
@@ -58,7 +59,7 @@ function StrategyPanelController(props: Props) {
   useEffect(() => {
     props.requestStrategy(props.strategyId);
   }, [ props.strategyId ]);
-  
+
   if (props.isLoading) return <Loading/>;
 
   return (
@@ -66,5 +67,42 @@ function StrategyPanelController(props: Props) {
   );
 }
 
-
 export default connect(mapStateToProps, mapDispatchToProps)(StrategyPanelController);
+
+/**
+ * Transform a strategy's StepTree into a UiStepTree
+ */
+function makeUiStepTree(strategy: StrategyDetails, recordClassesByName: Record<string, RecordClass>): UiStepTree {
+  const colorIter = colors([
+    '#A000A0', // purple
+    '#00A0A0', // teal
+    '#0000A0', // blue
+    '#A00000', // brown
+    '#A0A000', // green
+  ]);
+  
+  return recurse(strategy.stepTree);
+
+  function recurse(stepTree: StepTree, color?: string): UiStepTree {
+    const step = strategy.steps[stepTree.stepId];
+    const recordClass = recordClassesByName[step.recordClassName];
+    const primaryInput = stepTree.primaryInput && recurse(stepTree.primaryInput);
+    // XXX Should we reset coloring when we traverse a new branch of secondary inputs?
+    // only secondary inputs get a color
+    const secondaryInput = stepTree.secondaryInput && recurse(stepTree.secondaryInput, colorIter.next().value);
+    return {
+      step,
+      recordClass,
+      primaryInput,
+      secondaryInput,
+      color
+    };
+  }
+}
+
+/**
+ * Returns an iterable that cycles through the listed colors infinitely
+ */
+function* colors(choices: string[]) {
+  while(true) yield* choices;
+}

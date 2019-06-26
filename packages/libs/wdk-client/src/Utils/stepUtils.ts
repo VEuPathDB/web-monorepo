@@ -48,6 +48,7 @@ export function getSingleRecordStepBundlePromise([ recordClass, recordInstance, 
     customName: displayName,
     description: 'Single Record Step',
     estimatedSize: 1,
+    expanded: false,
     hasCompleteStepAnalyses: false,
     searchName: searchName,
     searchConfig: {

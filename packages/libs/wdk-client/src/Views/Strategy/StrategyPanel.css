@@ -18,8 +18,18 @@
   flex-flow: row-reverse nowrap;
   justify-content: space-between;
   background-color: #fafafa;
-  border-radius: 1em;
   box-shadow: 0 0 0 2px #666;
+  border-radius: 1em;
+}
+
+/* Nested strategy */
+.StrategyPanel--Panel .StrategyPanel--Panel {
+  margin: 0em 2em 2em 4em;
+  overflow: auto;
+}
+
+.StrategyPanel--NestedTitle {
+  margin: 2em 2em .5em 4em;
 }
 
 .StrategyPanel--Controls {

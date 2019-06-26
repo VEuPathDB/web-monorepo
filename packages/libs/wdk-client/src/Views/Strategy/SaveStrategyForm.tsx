@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 
 import './SaveStrategyForm.css';
+import {UiStepTree} from 'wdk-client/Views/Strategy/Types';
 
 interface Props extends RouteComponentProps<void> {
   strategy: StrategyDetails;
-  recordClassesByName: Record<string, RecordClass>;
+  uiStepTree: UiStepTree;
   action?: string;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
