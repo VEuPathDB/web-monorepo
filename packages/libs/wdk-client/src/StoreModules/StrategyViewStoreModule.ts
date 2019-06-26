@@ -1,11 +1,11 @@
 import { constant } from 'lodash';
-import { combineEpics, ActionsObservable, StateObservable } from 'redux-observable';
+import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
 import { empty } from 'rxjs';
-import {Action} from 'wdk-client/Actions';
-import {mergeMap} from 'rxjs/operators';
-import {fulfillDeleteStrategy, fulfillDuplicateStrategy} from 'wdk-client/Actions/StrategyActions';
-import {RootState} from 'wdk-client/Core/State/Types';
-import {EpicDependencies} from 'wdk-client/Core/Store';
+import { mergeMap } from 'rxjs/operators';
+import { Action } from 'wdk-client/Actions';
+import { fulfillDeleteStrategy, fulfillDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { EpicDependencies } from 'wdk-client/Core/Store';
 
 // This store has no state, so we can just export a function that always returns null
 export const reduce = constant(null);

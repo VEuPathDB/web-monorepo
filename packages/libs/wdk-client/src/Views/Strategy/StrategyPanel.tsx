@@ -1,15 +1,15 @@
 import React from 'react';
-import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { IconAlt, Link, SaveableTextEditor } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import StepBoxes from './StepBoxes';
-
 import Modal from 'wdk-client/Components/Overlays/Modal';
-import {RecordClass} from 'wdk-client/Utils/WdkModel';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
 import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
-
+import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import StepBoxes from './StepBoxes';
 import './StrategyPanel.css';
-import {UiStepTree} from 'wdk-client/Views/Strategy/Types';
+
+
 
 const cx = makeClassNameHelper('StrategyPanel');
 
@@ -17,14 +17,19 @@ interface Props {
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
   action?: string;
+  insertStepVisibility?: number;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
   onStrategyDelete: () => void;
+  onShowInsertStep: (stepId: number) => void;
+  onHideInsertStep: () => void;
+  onExpandNestedStrategy: (stepId: number) => void;
+  onCollapseNestedStrategy: (stepId: number) => void;
 }
 
 export default function StrategyPanel(props: Props) {
-  const { uiStepTree, strategy } = props;
+  const { uiStepTree, strategy, onShowInsertStep, onHideInsertStep, onExpandNestedStrategy, onCollapseNestedStrategy } = props;
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
@@ -36,10 +41,30 @@ export default function StrategyPanel(props: Props) {
       <div className={cx('--Panel')}>
         <StrategyControls strategy={strategy}/>
         <div>
-          <StepBoxes stepTree={uiStepTree}/>
+          <StepBoxes
+            stepTree={uiStepTree}
+            onShowInsertStep={onShowInsertStep}
+            onHideInsertStep={onHideInsertStep}
+            onExpandNestedStrategy={onExpandNestedStrategy}
+            onCollapseNestedStrategy={onCollapseNestedStrategy}
+          />
         </div>
       </div>
       <StrategyActionModal {...props} />
+      {props.insertStepVisibility && (
+        <Modal>
+          <div>
+            <AddStepPanel
+              strategyId={props.strategy.strategyId}
+              addType={props.insertStepVisibility === strategy.rootStepId
+                ? { type: 'append' }
+                : { type: 'insertBefore', stepId: props.insertStepVisibility}
+              }
+            />
+            <button type="button" onClick={() => onHideInsertStep()}>Close</button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
@@ -69,7 +94,7 @@ const StrategyActions: Record<string, StrategyAction> = {
   save: {
     iconName: 'floppy-o',
     title: 'Save your search strategy',
-    render: SaveStrategyForm
+    render: (props: Props) => <SaveStrategyForm {...props}/>
   },
 
   share: {

@@ -12,6 +12,10 @@ const cx = makeClassNameHelper('StepBoxes');
 
 interface Props {
   stepTree: UiStepTree;
+  onShowInsertStep: (stepId: number) => void;
+  onHideInsertStep: () => void;
+  onExpandNestedStrategy: (stepId: number) => void;
+  onCollapseNestedStrategy: (stepId: number) => void;
 }
 
 /**
@@ -22,6 +26,7 @@ export default function StepBoxes(props: Props) {
     <React.Fragment>
       <div className={cx()}>
         <StepTree {...props}/>
+        <button type="button" onClick={() => props.onShowInsertStep(props.stepTree.step.id)}>Continue building</button>
       </div>
       <ExpandedSteps {...props}/>
     </React.Fragment>
@@ -166,6 +171,10 @@ function StepCount(props: { step: Step, recordClass: RecordClass }) {
 
 interface ExpandedStepProps {
   stepTree?: UiStepTree;
+  onShowInsertStep: (stepId: number) => void;
+  onHideInsertStep: () => void;
+  onExpandNestedStrategy: (stepId: number) => void;
+  onCollapseNestedStrategy: (stepId: number) => void;
 }
 
 /**
@@ -178,12 +187,12 @@ export function ExpandedSteps(props: ExpandedStepProps) {
 
   return (
     <React.Fragment>
-      <ExpandedSteps stepTree={stepTree.primaryInput}/>
+      <ExpandedSteps {...props} stepTree={stepTree.primaryInput}/>
       {stepTree.secondaryInput && stepTree.step.expanded && (
         <React.Fragment>
-          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName}</em> <button className="link" type="button">close</button></div>
+          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName}</em> <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}>close</button></div>
           <div className="StrategyPanel--Panel" style={{ display: 'block', boxShadow: `0 0 0 2px ${stepTree.secondaryInput.color}` }}>
-            <StepBoxes stepTree={stepTree.secondaryInput}/>
+            <StepBoxes {...props} stepTree={stepTree.secondaryInput}/>
           </div>
         </React.Fragment>
       )}
