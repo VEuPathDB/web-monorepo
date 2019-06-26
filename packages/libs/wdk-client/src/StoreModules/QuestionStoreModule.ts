@@ -54,6 +54,10 @@ import { fulfillCreateStrategy, requestCreateStrategy } from 'wdk-client/Actions
 
 export const key = 'question';
 
+// Defaults
+const DEFAULT_STRATEGY_NAME = 'Unnamed Strategy';
+const DEFAULT_STEP_WEIGHT = 10;
+
 interface GroupState {
   isVisible: boolean;
 }
@@ -356,13 +360,15 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
     }).then(paramValues => {
+      // Parse the input string into a number
       const weight = Number.parseInt(questionState.weight || '');
-      
+
       return services.wdkService.createStep({
         searchName: questionState.question.urlSegment,
         searchConfig: {
           parameters: paramValues,
-          wdkWeight: Number.isNaN(weight) ? undefined : weight
+          // FIXME Put 10 into a constant
+          wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
         },
         customName: questionState.customName || questionState.question.shortDisplayName
       }).then(step => {
@@ -379,7 +385,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             stepTree: { 
               stepId: step.id
             },
-            name: questionState.question.displayName
+            name: DEFAULT_STRATEGY_NAME
           })
         ];
       })
