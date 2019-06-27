@@ -5,6 +5,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import './StepBoxes.css';
 
 
@@ -26,18 +27,22 @@ export default function StepBoxes(props: Props) {
     <React.Fragment>
       <div className={cx()}>
         <StepTree {...props}/>
-        <button type="button" onClick={() => props.onShowInsertStep(props.stepTree.step.id)}>Continue building</button>
+        <Tooltip
+          position={{ my: 'top center', at: 'bottom center' }}
+          content="Combine the results of your strategy with the results of a new search, or convert the results of your strategy with available data transformations."
+        >
+          <button
+            className={cx('--InsertStepButton')}
+            type="button" onClick={() => props.onShowInsertStep(props.stepTree.step.id)}
+          >Continue building</button>
+        </Tooltip>
       </div>
       <ExpandedSteps {...props}/>
     </React.Fragment>
   )
 }
 
-interface StepTreeProps {
-  stepTree: UiStepTree;
-}
-
-function StepTree(props: StepTreeProps) {
+function StepTree(props: Props) {
   const { stepTree } = props;
   const { step, primaryInput, secondaryInput } = stepTree;
 
@@ -50,7 +55,7 @@ function StepTree(props: StepTreeProps) {
 
   return (
     <React.Fragment>
-      {primaryInput && <StepTree stepTree={primaryInput} />}
+      {primaryInput && <StepTree {...props} stepTree={primaryInput} />}
       <div className={cx('--Slot')}>
         <Plugin
           context={{
@@ -60,6 +65,7 @@ function StepTree(props: StepTreeProps) {
             recordClassName: step.recordClassName
           }}
           pluginProps={{
+            ...props,
             stepTree,
             isNested: false,
             isExpanded: false,
@@ -75,7 +81,9 @@ function StepTree(props: StepTreeProps) {
               recordClassName: step.recordClassName
             }}
             pluginProps={{
+              ...props,
               stepTree: secondaryInput,
+              nestedId: step.id,
               isNested: step.expandedName != null && step.expandedName !== step.customName,
               isExpanded: step.expandedName != null && step.expanded,
               nestedDisplayName: step.expandedName,
@@ -88,15 +96,15 @@ function StepTree(props: StepTreeProps) {
   );
 }
 
-interface StepBoxProps {
-  stepTree: UiStepTree,
+interface StepBoxProps extends Props {
+  nestedId?: number;
   isNested: boolean;
   isExpanded: boolean;
   nestedDisplayName?: string;
 }
 
 function StepBox(props: StepBoxProps) {
-  const { stepTree, isNested, isExpanded } = props;
+  const { stepTree, isNested, nestedId, isExpanded, onCollapseNestedStrategy, onExpandNestedStrategy } = props;
   const { step, primaryInput, secondaryInput, color } = stepTree;
   const StepComponent = primaryInput && secondaryInput && !isNested ? CombinedStepBoxContent
     : primaryInput && !isNested ? TransformStepBoxContent
@@ -105,16 +113,31 @@ function StepBox(props: StepBoxProps) {
     : primaryInput && !isNested ? 'transform'
     : 'leaf';
   const nestedModifier = isNested ? 'nested' : '';
+  const expandCollapseButton = isNested && nestedId && (
+    <button type="button" onClick={() => isExpanded ? onCollapseNestedStrategy(nestedId) : onExpandNestedStrategy(nestedId)}
+    style={{
+      position: 'absolute',
+      right: '1em',
+      padding: '0 2px',
+      margin: '2px',
+      zIndex: 2
+    }}>
+      {isExpanded ? '-' : '+'}
+    </button>
+  );
   return (
-    <NavLink
-      replace
-      style={ isExpanded ? { borderColor: color } : {}}
-      className={cx('--Box', classModifier, nestedModifier)}
-      activeClassName={cx('--Box', classModifier + '_active')}
-      to={`/workspace/strategies/${step.strategyId}/${step.id}`}
-    >
-      <StepComponent {...props}/>
-    </NavLink>
+    <React.Fragment>
+      {expandCollapseButton}
+      <NavLink
+        replace
+        style={isExpanded ? { borderColor: color } : {}}
+        className={cx("--Box", classModifier, nestedModifier)}
+        activeClassName={cx("--Box", classModifier + "_active")}
+        to={`/workspace/strategies/${step.strategyId}/${step.id}`}
+      >
+        <StepComponent {...props} />
+      </NavLink>
+    </React.Fragment>
   );
 }
 
