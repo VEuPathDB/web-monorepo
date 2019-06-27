@@ -1,13 +1,14 @@
 import React from 'react';
 import { truncate } from 'lodash';
 import { RecordInstance, AttributeField } from 'wdk-client/Utils/WdkModel';
+import {wrappable} from 'wdk-client/Utils/ComponentUtils';
 
 interface AttributeCellProps {
   attribute: AttributeField;
   recordInstance: RecordInstance;
 }
 
-export default function AttributeCell({
+function AttributeCell({
   attribute,
   recordInstance
 }: AttributeCellProps) {
@@ -41,6 +42,8 @@ export default function AttributeCell({
     </div>
   );
 }
+
+export default wrappable(AttributeCell);
 
 function truncateValue(value: string, length: number) {
   return length ? truncate(value, { length }) : value;
