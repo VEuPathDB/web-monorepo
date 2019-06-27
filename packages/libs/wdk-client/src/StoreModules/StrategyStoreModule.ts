@@ -25,7 +25,7 @@ import {
   requestDeleteStep,
   requestUpdateStepSearchConfig,
   openStrategy,
-  closeStrategy
+  closeStrategy,
 } from 'wdk-client/Actions/StrategyActions';
 
 export const key = 'strategies';
@@ -159,6 +159,17 @@ function updateStrategyEntry(
     return fulfillStrategy(strategy);
   }
 
+  async function getFulfillStrategy_PatchStepProps(
+    [requestAction]: [InferAction<typeof requestUpdateStepProperties>],
+    state$: StateObservable<RootState>,
+    { wdkService }: EpicDependencies
+  ): Promise<InferAction<typeof fulfillStrategy>> {
+    const { strategyId, stepId, stepSpec } = requestAction.payload;
+    await wdkService.updateStepProperties(stepId, stepSpec);
+    const strategy = await wdkService.getStrategy(strategyId);
+    return fulfillStrategy(strategy);
+  }
+
   // we read the strat back in to memory to facilitate undo of delete (i guess?)
   async function getFulfillStrategyDelete(
     [requestAction]: [InferAction<typeof requestDeleteStrategy>],
@@ -235,6 +246,7 @@ async function getFulfillNewSearch(
     }),
     mrate([requestPutStrategyStepTree], getFulfillStrategy_PutStepTree),
     mrate([requestPatchStrategyProperties], getFulfillStrategy_PatchStratProps),
+    mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps),
     mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig),
     mrate([requestCreateStrategy], getFulfillCreateStrategy),
     mrate([requestDeleteStrategy], getFulfillStrategyDelete),
