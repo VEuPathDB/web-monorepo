@@ -60,6 +60,7 @@ import Popup from 'wdk-client/Components/Overlays/Popup';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import Tabs from 'wdk-client/Components/Tabs/Tabs';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
 
 export {
@@ -125,5 +126,6 @@ export {
   TextBox,
   TextBoxMultivalued,
   Tooltip,
+  AttributeCell,
   ResultTable,
 };
