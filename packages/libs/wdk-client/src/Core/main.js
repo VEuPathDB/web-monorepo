@@ -95,6 +95,7 @@ export function initialize(options) {
             pluginConfig: pluginConfig.concat(defaultPluginConfig),
             routes: wrapRoutes(wdkRoutes),
             onLocationChange: handleLocationChange,
+            wdkService
           });
         ReactDOM.render(applicationElement, container);
       }

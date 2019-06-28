@@ -1,17 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
 import { QuestionController } from 'wdk-client/Controllers';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
 import { Question, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
-
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 import 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset.scss';
@@ -22,16 +20,13 @@ type StateProps = {
   questions?: Question[],
   ontology?: CategoryTreeNode
 };
-type DispatchProps = {
-  dispatchAction: DispatchAction
-};
 type OwnProps = {
   recordClass: string,
   question: string,
   hash: string
 };
 
-type Props = OwnProps & DispatchProps & StateProps;
+type Props = OwnProps & StateProps;
 
 type InternalQuestionRecord = { 
   target_name: string, 
@@ -61,22 +56,19 @@ type DisplayCategory = {
 const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   questions,
   ontology,
-  question,
+  question: internalSearchName,
   recordClass,
-  hash,
-  dispatchAction
+  hash: searchNameAnchorTag
 }) => {
-  if (!questions || !ontology) {
-    return <Loading />;
-  }
-
-  const searchNameHash = location.hash.slice(1);
-
-  const [ internalSearchName, searchName, showingRecordToggle ] = hash
-    ? [ question, searchNameHash, true ]
-    : [ question, question, false ];
+  const [ searchName, showingRecordToggle ] = searchNameAnchorTag
+    ? [ searchNameAnchorTag, true ]
+    : [ internalSearchName, false ];
 
   const [ outputRecordClassName, datasetCategory, datasetSubtype ] = useMemo(() => {
+    if (!questions) {
+      return [ undefined, undefined, undefined ];
+    }
+
     const internalQuestion = questions.find(question => question.urlSegment === internalSearchName);
 
     if (!internalQuestion || !internalQuestion.properties) {
@@ -119,143 +111,145 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       : datasetRecords.filter(record => record === selectedDataSetRecord), 
     [ datasetRecords, showingOneRecord, selectedDataSetRecord ]
   );
-  
+    
   // TODO Discuss the use of hooks for data-fetching (redux-observable vs. hooks vs. suspense)
-  useEffect(() => {
-    if (!outputRecordClassName || !datasetCategory || !datasetSubtype) {
+  useWdkEffect(wdkService => {
+    if (
+      !questions || 
+      !ontology ||
+      !outputRecordClassName || 
+      !datasetCategory || 
+      !datasetSubtype
+    ) {
       return;
     }
 
-    dispatchAction(({ wdkService }) => {
-      wdkService.getAnswerJson(
-        {
-          searchName: 'DatasetsByCategoryAndSubtype',
-          searchConfig: {
-            parameters: {
-              dataset_category: datasetCategory,
-              dataset_subtype: datasetSubtype
-            }
-          }
-        }, 
-        {
-          attributes: [
-            "dataset_name",
-            "display_name",
-            "organism_prefix",
-            "short_attribution",
-            "dataset_id", 
-            "summary",
-            "description",
-            "build_number_introduced"
-          ],
-          tables: [
-            "References",
-            "Publications"
-          ],
-          pagination: {
-            "offset": 0,
-            "numRecords": -1
+    wdkService.getAnswerJson(
+      {
+        searchName: 'DatasetsByCategoryAndSubtype',
+        searchConfig: {
+          parameters: {
+            dataset_category: datasetCategory,
+            dataset_subtype: datasetSubtype
           }
         }
-      ).then(answer => {
-        const internalQuestions = answer.records
-          .flatMap(
-            record => {
-              if (record.tableErrors.includes('References')) {
-                throw new Error(`Failed to resolve References table for record ${JSON.stringify(record)}`);
-              }
-
-              return record.tables.References;
+      }, 
+      {
+        attributes: [
+          "dataset_name",
+          "display_name",
+          "organism_prefix",
+          "short_attribution",
+          "dataset_id", 
+          "summary",
+          "description",
+          "build_number_introduced"
+        ],
+        tables: [
+          "References",
+          "Publications"
+        ],
+        pagination: {
+          "offset": 0,
+          "numRecords": -1
+        }
+      }
+    ).then(answer => {
+      const internalQuestions = answer.records
+        .flatMap(
+          record => {
+            if (record.tableErrors.includes('References')) {
+              throw new Error(`Failed to resolve References table for record ${JSON.stringify(record)}`);
             }
+
+            return record.tables.References;
+          }
+        )
+        .filter(
+          (reference): reference is Record<string, AttributeValue> => (
+            reference !== null && 
+            reference.target_type === 'question' && 
+            reference.record_type === outputRecordClassName
           )
-          .filter(
-            (reference): reference is Record<string, AttributeValue> => (
-              reference !== null && 
-              reference.target_type === 'question' && 
-              reference.record_type === outputRecordClassName
-            )
-          ).map(
-            reference => {
-              if (
-                typeof reference.target_name !== 'string' ||
-                typeof reference.dataset_id !== 'string' ||
-                typeof reference.target_type !== 'string' ||
-                typeof reference.dataset_name !== 'string' ||
-                typeof reference.record_type !== 'string'
-              ) {
-                throw new Error(`Question reference ${JSON.stringify(reference)} is missing required attribute fields`);
-              }
-
-              return {
-                target_name: reference.target_name, 
-                dataset_id: reference.dataset_id, 
-                target_type: reference.target_type, 
-                dataset_name: reference.dataset_name, 
-                record_type: reference.record_type
-              };
+        ).map(
+          reference => {
+            if (
+              typeof reference.target_name !== 'string' ||
+              typeof reference.dataset_id !== 'string' ||
+              typeof reference.target_type !== 'string' ||
+              typeof reference.dataset_name !== 'string' ||
+              typeof reference.record_type !== 'string'
+            ) {
+              throw new Error(`Question reference ${JSON.stringify(reference)} is missing required attribute fields`);
             }
-          );
 
-        const { 
-          questionNamesByDatasetAndCategory, 
-          displayCategoriesByName, 
-          displayCategoryOrder 
-        } = getDisplayCategoryMetadata(ontology, internalQuestions);
+            return {
+              target_name: reference.target_name, 
+              dataset_id: reference.dataset_id, 
+              target_type: reference.target_type, 
+              dataset_name: reference.dataset_name, 
+              record_type: reference.record_type
+            };
+          }
+        );
 
-        const datasetRecords = answer.records
-          .filter(
-            ({ attributes: { dataset_name } }) => 
-              Object.keys(questionNamesByDatasetAndCategory[`${dataset_name}`] || {}).length > 0
-            )
-          .map(
-            datasetRecord => {
-              if (
-                typeof datasetRecord.attributes.dataset_name !== 'string' ||
-                typeof datasetRecord.attributes.display_name !== 'string' ||
-                typeof datasetRecord.attributes.organism_prefix !== 'string' ||
-                typeof datasetRecord.attributes.short_attribution !== 'string' ||
-                typeof datasetRecord.attributes.dataset_id !== 'string' ||
-                typeof datasetRecord.attributes.summary !== 'string' ||
-                typeof datasetRecord.attributes.build_number_introduced !== 'string'
-              ) {
-                throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
-              }
+      const { 
+        questionNamesByDatasetAndCategory, 
+        displayCategoriesByName, 
+        displayCategoryOrder 
+      } = getDisplayCategoryMetadata(ontology, internalQuestions);
 
-              if (datasetRecord.tableErrors.includes('Publications')) {
-                throw new Error(`Failed to resolve Publications table for record ${JSON.stringify(datasetRecord)}`);
-              }
+      const datasetRecords = answer.records
+        .filter(
+          ({ attributes: { dataset_name } }) => 
+            Object.keys(questionNamesByDatasetAndCategory[`${dataset_name}`] || {}).length > 0
+          )
+        .map(
+          datasetRecord => {
+            if (
+              typeof datasetRecord.attributes.dataset_name !== 'string' ||
+              typeof datasetRecord.attributes.display_name !== 'string' ||
+              typeof datasetRecord.attributes.organism_prefix !== 'string' ||
+              typeof datasetRecord.attributes.short_attribution !== 'string' ||
+              typeof datasetRecord.attributes.dataset_id !== 'string' ||
+              typeof datasetRecord.attributes.summary !== 'string' ||
+              typeof datasetRecord.attributes.build_number_introduced !== 'string'
+            ) {
+              throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
+            }
 
-              return {
-                dataset_name: datasetRecord.attributes.dataset_name,
-                display_name: `${datasetRecord.attributes.display_name} (${datasetRecord.attributes.short_attribution})`,
-                organism_prefix: datasetRecord.attributes.organism_prefix,
-                dataset_id: datasetRecord.attributes.dataset_id,
-                summary: datasetRecord.attributes.summary,
-                build_number_introduced: datasetRecord.attributes.build_number_introduced,
-                publications: datasetRecord.tables.Publications.map(
-                  ({ pubmed_link }) => { 
-                    if (pubmed_link === null || typeof pubmed_link === 'string') {
-                      throw new Error(`Pubmed link ${JSON.stringify(pubmed_link)} is invalid - expected a LinkAttributeValue`);
-                    }
+            if (datasetRecord.tableErrors.includes('Publications')) {
+              throw new Error(`Failed to resolve Publications table for record ${JSON.stringify(datasetRecord)}`);
+            }
 
-                    return pubmed_link;
+            return {
+              dataset_name: datasetRecord.attributes.dataset_name,
+              display_name: `${datasetRecord.attributes.display_name} (${datasetRecord.attributes.short_attribution})`,
+              organism_prefix: datasetRecord.attributes.organism_prefix,
+              dataset_id: datasetRecord.attributes.dataset_id,
+              summary: datasetRecord.attributes.summary,
+              build_number_introduced: datasetRecord.attributes.build_number_introduced,
+              publications: datasetRecord.tables.Publications.map(
+                ({ pubmed_link }) => { 
+                  if (pubmed_link === null || typeof pubmed_link === 'string') {
+                    throw new Error(`Pubmed link ${JSON.stringify(pubmed_link)} is invalid - expected a LinkAttributeValue`);
                   }
-                ),
-                searches: displayCategoryOrder
-                  .filter(categoryName => questionNamesByDatasetAndCategory[`${datasetRecord.attributes.dataset_name}`][categoryName])
-                  .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
-                  .join(' ')
-              };
-            },
-          );
 
-        updateQuestionNamesByDatasetAndCategory(questionNamesByDatasetAndCategory);
-        updateDisplayCategoriesByName(displayCategoriesByName);
-        updateDisplayCategoryOrder(displayCategoryOrder);
-        updateDatasetRecords(datasetRecords);
-      });
+                  return pubmed_link;
+                }
+              ),
+              searches: displayCategoryOrder
+                .filter(categoryName => questionNamesByDatasetAndCategory[`${datasetRecord.attributes.dataset_name}`][categoryName])
+                .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
+                .join(' ')
+            };
+          },
+        );
 
-      return emptyAction;
+      updateQuestionNamesByDatasetAndCategory(questionNamesByDatasetAndCategory);
+      updateDisplayCategoriesByName(displayCategoriesByName);
+      updateDisplayCategoryOrder(displayCategoryOrder);
+      updateDatasetRecords(datasetRecords);
     });
   }, [ datasetCategory, datasetSubtype ]);
 
@@ -267,6 +261,8 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     )
       ? <NotFound />
       : (
+          !questions ||
+          !ontology ||
           !questionNamesByDatasetAndCategory ||
           !displayCategoriesByName ||
           !displayCategoryOrder ||
@@ -533,15 +529,12 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
   };
 }
 
-export const InternalGeneDataset = connect<StateProps, DispatchProps, OwnProps, RootState>(
-    (state, ownProps) => ({ 
-      ...ownProps, 
-      questions: state.globalData.questions, 
-      ontology: state.globalData.ontology
-        ? state.globalData.ontology.tree
-        : undefined
-    }),
-    dispatch => ({
-      dispatchAction: dispatch
-    })
-  )(InternalGeneDatasetView);
+export const InternalGeneDataset = connect<StateProps, {}, OwnProps, RootState>(
+  (state, ownProps) => ({ 
+    ...ownProps, 
+    questions: state.globalData.questions, 
+    ontology: state.globalData.ontology
+      ? state.globalData.ontology.tree
+      : undefined
+  })
+)(InternalGeneDatasetView);

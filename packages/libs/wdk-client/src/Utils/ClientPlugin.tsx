@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
@@ -135,12 +135,7 @@ function DefaultPluginComponent() {
 export const PluginContext = React.createContext<CompositePluginComponent<any>>(makeCompositePluginComponent([]));
 
 export function Plugin<PluginProps>(props: CompositePluginComponentProps<PluginProps>) {
-  return (
-    <PluginContext.Consumer>
-      {PluginComponent => {
-        return <PluginComponent {...props}/>
-      }}
-    </PluginContext.Consumer>
-  );
-}
+  const PluginComponent = useContext(PluginContext);
 
+  return <PluginComponent {...props}/>;
+}
