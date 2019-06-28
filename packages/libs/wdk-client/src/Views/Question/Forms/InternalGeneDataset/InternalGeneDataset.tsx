@@ -9,7 +9,7 @@ import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
-import { Question, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
+import { Question, AttributeValue, LinkAttributeValue, Answer } from 'wdk-client/Utils/WdkModel';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 import 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset.scss';
@@ -125,130 +125,16 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     }
 
     wdkService.getAnswerJson(
-      {
-        searchName: 'DatasetsByCategoryAndSubtype',
-        searchConfig: {
-          parameters: {
-            dataset_category: datasetCategory,
-            dataset_subtype: datasetSubtype
-          }
-        }
-      }, 
-      {
-        attributes: [
-          "dataset_name",
-          "display_name",
-          "organism_prefix",
-          "short_attribution",
-          "dataset_id", 
-          "summary",
-          "description",
-          "build_number_introduced"
-        ],
-        tables: [
-          "References",
-          "Publications"
-        ],
-        pagination: {
-          "offset": 0,
-          "numRecords": -1
-        }
-      }
+      getAnswerSpec(datasetCategory, datasetSubtype),
+      REPORT_CONFIG
     ).then(answer => {
-      const internalQuestions = answer.records
-        .flatMap(
-          record => {
-            if (record.tableErrors.includes('References')) {
-              throw new Error(`Failed to resolve References table for record ${JSON.stringify(record)}`);
-            }
+      const internalQuestions = getInternalQuestions(answer, outputRecordClassName);
+      const displayCategoryMetadata = getDisplayCategoryMetadata(ontology, internalQuestions);
+      const datasetRecords = getDatasetRecords(answer, displayCategoryMetadata);
 
-            return record.tables.References;
-          }
-        )
-        .filter(
-          (reference): reference is Record<string, AttributeValue> => (
-            reference !== null && 
-            reference.target_type === 'question' && 
-            reference.record_type === outputRecordClassName
-          )
-        ).map(
-          reference => {
-            if (
-              typeof reference.target_name !== 'string' ||
-              typeof reference.dataset_id !== 'string' ||
-              typeof reference.target_type !== 'string' ||
-              typeof reference.dataset_name !== 'string' ||
-              typeof reference.record_type !== 'string'
-            ) {
-              throw new Error(`Question reference ${JSON.stringify(reference)} is missing required attribute fields`);
-            }
-
-            return {
-              target_name: reference.target_name, 
-              dataset_id: reference.dataset_id, 
-              target_type: reference.target_type, 
-              dataset_name: reference.dataset_name, 
-              record_type: reference.record_type
-            };
-          }
-        );
-
-      const { 
-        questionNamesByDatasetAndCategory, 
-        displayCategoriesByName, 
-        displayCategoryOrder 
-      } = getDisplayCategoryMetadata(ontology, internalQuestions);
-
-      const datasetRecords = answer.records
-        .filter(
-          ({ attributes: { dataset_name } }) => 
-            Object.keys(questionNamesByDatasetAndCategory[`${dataset_name}`] || {}).length > 0
-          )
-        .map(
-          datasetRecord => {
-            if (
-              typeof datasetRecord.attributes.dataset_name !== 'string' ||
-              typeof datasetRecord.attributes.display_name !== 'string' ||
-              typeof datasetRecord.attributes.organism_prefix !== 'string' ||
-              typeof datasetRecord.attributes.short_attribution !== 'string' ||
-              typeof datasetRecord.attributes.dataset_id !== 'string' ||
-              typeof datasetRecord.attributes.summary !== 'string' ||
-              typeof datasetRecord.attributes.build_number_introduced !== 'string'
-            ) {
-              throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
-            }
-
-            if (datasetRecord.tableErrors.includes('Publications')) {
-              throw new Error(`Failed to resolve Publications table for record ${JSON.stringify(datasetRecord)}`);
-            }
-
-            return {
-              dataset_name: datasetRecord.attributes.dataset_name,
-              display_name: `${datasetRecord.attributes.display_name} (${datasetRecord.attributes.short_attribution})`,
-              organism_prefix: datasetRecord.attributes.organism_prefix,
-              dataset_id: datasetRecord.attributes.dataset_id,
-              summary: datasetRecord.attributes.summary,
-              build_number_introduced: datasetRecord.attributes.build_number_introduced,
-              publications: datasetRecord.tables.Publications.map(
-                ({ pubmed_link }) => { 
-                  if (pubmed_link === null || typeof pubmed_link === 'string') {
-                    throw new Error(`Pubmed link ${JSON.stringify(pubmed_link)} is invalid - expected a LinkAttributeValue`);
-                  }
-
-                  return pubmed_link;
-                }
-              ),
-              searches: displayCategoryOrder
-                .filter(categoryName => questionNamesByDatasetAndCategory[`${datasetRecord.attributes.dataset_name}`][categoryName])
-                .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
-                .join(' ')
-            };
-          },
-        );
-
-      updateQuestionNamesByDatasetAndCategory(questionNamesByDatasetAndCategory);
-      updateDisplayCategoriesByName(displayCategoriesByName);
-      updateDisplayCategoryOrder(displayCategoryOrder);
+      updateQuestionNamesByDatasetAndCategory(displayCategoryMetadata.questionNamesByDatasetAndCategory);
+      updateDisplayCategoriesByName(displayCategoryMetadata.displayCategoriesByName);
+      updateDisplayCategoryOrder(displayCategoryMetadata.displayCategoryOrder);
       updateDatasetRecords(datasetRecords);
     });
   }, [ datasetCategory, datasetSubtype ]);
@@ -465,6 +351,135 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       )
   );
 };
+
+function getAnswerSpec(datasetCategory: string, datasetSubtype: string) {
+  return {
+    searchName: 'DatasetsByCategoryAndSubtype',
+    searchConfig: {
+      parameters: {
+        dataset_category: datasetCategory,
+        dataset_subtype: datasetSubtype
+      }
+    }
+  };
+}
+
+const REPORT_CONFIG = {
+  attributes: [
+    "dataset_name",
+    "display_name",
+    "organism_prefix",
+    "short_attribution",
+    "dataset_id", 
+    "summary",
+    "description",
+    "build_number_introduced"
+  ],
+  tables: [
+    "References",
+    "Publications"
+  ],
+  pagination: {
+    "offset": 0,
+    "numRecords": -1
+  }
+};
+
+function getInternalQuestions(answer: Answer, outputRecordClassName: string) {
+  return answer.records
+    .flatMap(
+      record => {
+        if (record.tableErrors.includes('References')) {
+          throw new Error(`Failed to resolve References table for record ${JSON.stringify(record)}`);
+        }
+
+        return record.tables.References;
+      }
+    )
+    .filter(
+      (reference): reference is Record<string, AttributeValue> => (
+        reference !== null && 
+        reference.target_type === 'question' && 
+        reference.record_type === outputRecordClassName
+      )
+    ).map(
+      reference => {
+        if (
+          typeof reference.target_name !== 'string' ||
+          typeof reference.dataset_id !== 'string' ||
+          typeof reference.target_type !== 'string' ||
+          typeof reference.dataset_name !== 'string' ||
+          typeof reference.record_type !== 'string'
+        ) {
+          throw new Error(`Question reference ${JSON.stringify(reference)} is missing required attribute fields`);
+        }
+
+        return {
+          target_name: reference.target_name, 
+          dataset_id: reference.dataset_id, 
+          target_type: reference.target_type, 
+          dataset_name: reference.dataset_name, 
+          record_type: reference.record_type
+        };
+      }
+    );
+}
+
+function getDatasetRecords(
+  answer: Answer, 
+  {
+    displayCategoriesByName,
+    displayCategoryOrder,
+    questionNamesByDatasetAndCategory
+  }: ReturnType<typeof getDisplayCategoryMetadata>
+) {
+  return answer.records
+  .filter(
+    ({ attributes: { dataset_name } }) => 
+      Object.keys(questionNamesByDatasetAndCategory[`${dataset_name}`] || {}).length > 0
+    )
+  .map(
+    datasetRecord => {
+      if (
+        typeof datasetRecord.attributes.dataset_name !== 'string' ||
+        typeof datasetRecord.attributes.display_name !== 'string' ||
+        typeof datasetRecord.attributes.organism_prefix !== 'string' ||
+        typeof datasetRecord.attributes.short_attribution !== 'string' ||
+        typeof datasetRecord.attributes.dataset_id !== 'string' ||
+        typeof datasetRecord.attributes.summary !== 'string' ||
+        typeof datasetRecord.attributes.build_number_introduced !== 'string'
+      ) {
+        throw new Error(`Dataset record ${JSON.stringify(datasetRecord)} is missing required attribute fields`);
+      }
+
+      if (datasetRecord.tableErrors.includes('Publications')) {
+        throw new Error(`Failed to resolve Publications table for record ${JSON.stringify(datasetRecord)}`);
+      }
+
+      return {
+        dataset_name: datasetRecord.attributes.dataset_name,
+        display_name: `${datasetRecord.attributes.display_name} (${datasetRecord.attributes.short_attribution})`,
+        organism_prefix: datasetRecord.attributes.organism_prefix,
+        dataset_id: datasetRecord.attributes.dataset_id,
+        summary: datasetRecord.attributes.summary,
+        build_number_introduced: datasetRecord.attributes.build_number_introduced,
+        publications: datasetRecord.tables.Publications.map(
+          ({ pubmed_link }) => { 
+            if (pubmed_link === null || typeof pubmed_link === 'string') {
+              throw new Error(`Pubmed link ${JSON.stringify(pubmed_link)} is invalid - expected a LinkAttributeValue`);
+            }
+
+            return pubmed_link;
+          }
+        ),
+        searches: displayCategoryOrder
+          .filter(categoryName => questionNamesByDatasetAndCategory[`${datasetRecord.attributes.dataset_name}`][categoryName])
+          .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
+          .join(' ')
+      };
+    },
+  );
+}
 
 function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: InternalQuestionRecord[]) {
   const datasetNamesByQuestion = internalQuestions.reduce(
