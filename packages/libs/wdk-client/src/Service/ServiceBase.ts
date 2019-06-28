@@ -1,3 +1,4 @@
+import { memoize } from 'lodash';
 import localforage from 'localforage';
 import * as QueryString from 'querystring';
 
@@ -7,6 +8,7 @@ import { pendingPromise } from 'wdk-client/Utils/PromiseUtils';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
 import {   Question, RecordClass,} from 'wdk-client/Utils/WdkModel';
 import { keyBy } from 'lodash';
+import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
 
 
 /**
@@ -75,6 +77,8 @@ const configDecoder: Decode.Decoder<ServiceConfig> =
    Decode.field('releaseDate', Decode.string),
    Decode.field('startupTime', Decode.number)
   );
+
+
 
 export type ServiceBase = ReturnType<typeof ServiceBase>;
 
@@ -284,20 +288,24 @@ export const ServiceBase = (serviceUrl: string) => {
     return getReportsEndpoint(recordClassUrlSegment, questionUrlSegment) + "/reports/" + reportName;
   }
 
-  function getRecordClasses() {
-    let url = '/record-types?format=expanded';
-    return _getFromCache(url, () => _fetchJson<RecordClass[]>('get', url)
-      .then(recordClasses => {
-        // create indexes by name property for attributes and tables
-        // this is done after recordClasses have been retrieved from the store
-        // since it cannot reliably serialize Maps
-        return recordClasses.map(recordClass =>
-          Object.assign(recordClass, {
-            attributesMap: keyBy(recordClass.attributes, 'name'),
-            tablesMap: keyBy(recordClass.tables, 'name')
-          }));
-    }));
-  }
+  const getRecordClasses = memoize(async function getRecordClasses() {
+    const decoder = Decode.arrayOf(expandedRecordClassDecoder);
+    const recordClasses = await sendRequest(decoder, {
+      method: 'get',
+      path: '/record-types',
+      params: { format: 'expanded' },
+      useCache: true,
+      cacheId: 'records'
+    });
+    // create indexes by name property for attributes and tables
+    // this is done after recordClasses have been retrieved from the store
+    // since it cannot reliably serialize Maps
+    return recordClasses.map(recordClass =>
+      Object.assign(recordClass, {
+        attributesMap: keyBy(recordClass.attributes, 'name'),
+        tablesMap: keyBy(recordClass.tables, 'name')
+      }));
+  });
 
   function getQuestions() : Promise<Array<Question>> {
     return getRecordClasses().then(result => {

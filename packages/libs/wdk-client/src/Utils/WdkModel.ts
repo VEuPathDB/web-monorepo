@@ -5,7 +5,7 @@
 import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
-interface ModelEntity {
+export interface ModelEntity {
   displayName: string;
   properties?: Record<string, string[]>;
 }
@@ -14,11 +14,11 @@ export interface Identifier {
   id: number
 }
 
-interface NamedModelEntity extends ModelEntity {
+export interface NamedModelEntity extends ModelEntity {
   name: string
 }
 
-interface UrlModelEntity extends ModelEntity {
+export interface UrlModelEntity extends ModelEntity {
   fullName: string,
   urlSegment: string
 }
@@ -31,7 +31,6 @@ export interface RecordClass extends UrlModelEntity {
   recordIdAttributeName: string;
   primaryKeyColumnRefs: string[];
   description: string;
-  urlSegment: string;
   attributes: AttributeField[];
   tables: TableField[];
   attributesMap: Record<string, AttributeField>;
@@ -193,14 +192,14 @@ export interface ParameterGroup {
   parameters: string[];
 }
 
-interface QuestionFilter {
+export interface QuestionFilter {
   name: string;
   displayName?: string;
   description?: string;
   isViewOnly: boolean;
 }
 
-interface QuestionShared extends UrlModelEntity {
+export interface Question extends UrlModelEntity {
   summary?: string;
   description?: string;
   iconName?: string;
@@ -222,11 +221,7 @@ interface QuestionShared extends UrlModelEntity {
   allowedSecondaryInputRecordClassNames?: string[];
 }
 
-export interface Question extends QuestionShared {
-  parameters: string[];
-}
-
-export interface QuestionWithParameters extends QuestionShared {
+export interface QuestionWithParameters extends Question {
   parameters: Parameter[];
 }
 
@@ -274,9 +269,9 @@ export interface SummaryViewPluginField extends NamedModelEntity {
 }
 
 export interface TableField extends NamedModelEntity {
-  help: string;
-  type: string;
-  description: string;
+  help?: string;
+  type?: string;
+  description?: string;
   attributes: AttributeField[];
 }
 
