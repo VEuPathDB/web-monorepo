@@ -922,6 +922,12 @@ class TranscriptionSummaryForm extends SortKeyTable {
   render() {
       let { source_id } = this.props.record.attributes;
 
+        if (this.props.value.length === 0) {
+          return (
+            <p><em>No data available</em></p>
+          );
+        }
+
         return (
           <div id="transcriptionSummary">
             <p><b>Help</b></p>
