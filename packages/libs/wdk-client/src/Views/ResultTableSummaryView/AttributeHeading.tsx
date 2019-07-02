@@ -63,7 +63,7 @@ export default function AttributeHeading(props: Props) {
         const context: PluginEntryContext = {
           type: 'attributeAnalysis',
           name: reporter.type,
-          recordClassName: recordClass.fullName,
+          recordClassName: recordClass.urlSegment,
           searchName: question.urlSegment
         };
 
