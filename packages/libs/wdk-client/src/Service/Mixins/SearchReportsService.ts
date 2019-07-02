@@ -78,7 +78,7 @@ export default (base: ServiceBase) => {
     // a submission must trigger a form download, meaning we must POST the form
     submitAsForm({
       method: 'post',
-      action: info.url,
+      action: base.serviceUrl + info.url,
       target: target,
       inputs: {
         data: JSON.stringify(info.request)
