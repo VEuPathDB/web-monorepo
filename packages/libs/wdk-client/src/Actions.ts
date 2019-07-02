@@ -5,6 +5,7 @@ import * as BasketActions from 'wdk-client/Actions/BasketActions';
 import * as FavoritesActions from 'wdk-client/Actions/FavoritesActions';
 import * as RouterActions from 'wdk-client/Actions/RouterActions';
 import * as QuestionActions from 'wdk-client/Actions/QuestionActions';
+import * as QuestionWithParametersActions from 'wdk-client/Actions/QuestionWithParametersActions';
 import * as FilterParamActions from 'wdk-client/Actions/FilterParamActions';
 import * as DatasetParamActions from 'wdk-client/Actions/DatasetParamActions';
 import * as TreeBoxEnumParamActions from 'wdk-client/Actions/TreeBoxEnumParamActions';
@@ -39,6 +40,7 @@ export {
   FavoritesActions,
   RouterActions,
   QuestionActions,
+  QuestionWithParametersActions,
   FilterParamActions,
   DatasetParamActions,
   TreeBoxEnumParamActions,
@@ -71,6 +73,7 @@ export type Action =
   | FavoritesActions.Action
   | RouterActions.Action
   | QuestionActions.Action
+  | QuestionWithParametersActions.Action
   | FilterParamActions.Action
   | DatasetParamActions.Action
   | TreeBoxEnumParamActions.Action

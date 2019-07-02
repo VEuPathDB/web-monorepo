@@ -6,6 +6,7 @@ import * as globalData from 'wdk-client//StoreModules/GlobalData';
 import * as passwordChange from 'wdk-client/StoreModules/UserPasswordChangeStoreModule';
 import * as passwordReset from 'wdk-client/StoreModules/UserPasswordResetStoreModule';
 import * as question from 'wdk-client/StoreModules/QuestionStoreModule';
+import * as questionsWithParameters from 'wdk-client/StoreModules/QuestionsWithParametersStoreModule';
 import * as record from 'wdk-client/StoreModules/RecordStoreModule';
 import * as siteMap from 'wdk-client/StoreModules/SiteMapStoreModule';
 import * as userDatasetDetail from 'wdk-client/StoreModules/UserDatasetDetailStoreModule';
@@ -41,6 +42,7 @@ export default {
   passwordChange,
   passwordReset,
   question,
+  questionsWithParameters,
   record,
   resultTableSummaryView,
   siteMap,

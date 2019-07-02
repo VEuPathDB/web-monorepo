@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Dialog } from 'wdk-client/Components';
+import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
+import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
-import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import './StepBoxes.css';
 
 
@@ -104,7 +106,8 @@ interface StepBoxProps extends Props {
 }
 
 function StepBox(props: StepBoxProps) {
-  const { stepTree, isNested, nestedId, isExpanded, onCollapseNestedStrategy, onExpandNestedStrategy } = props;
+  const [ detailVisibility, setDetailVisibility ] = useState(false);
+  const { stepTree, isNested, nestedId, isExpanded, onCollapseNestedStrategy, onExpandNestedStrategy, nestedDisplayName } = props;
   const { step, primaryInput, secondaryInput, color } = stepTree;
   const StepComponent = primaryInput && secondaryInput && !isNested ? CombinedStepBoxContent
     : primaryInput && !isNested ? TransformStepBoxContent
@@ -113,31 +116,62 @@ function StepBox(props: StepBoxProps) {
     : primaryInput && !isNested ? 'transform'
     : 'leaf';
   const nestedModifier = isNested ? 'nested' : '';
-  const expandCollapseButton = isNested && nestedId && (
-    <button type="button" onClick={() => isExpanded ? onCollapseNestedStrategy(nestedId) : onExpandNestedStrategy(nestedId)}
-    style={{
-      position: 'absolute',
-      right: '1em',
-      padding: '0 2px',
-      margin: '2px',
-      zIndex: 2
-    }}>
-      {isExpanded ? '-' : '+'}
+
+  const editButton = (
+    <button
+      type="button"
+      onClick={() => setDetailVisibility(true)}
+      className={cx("--EditButton")}
+    >
+      <div style={{ fontSize: '.8em'}}>Edit</div>
     </button>
   );
+
+  const stepDetails = (
+    <Dialog
+      className={cx("--StepDetails")}
+      title={(
+        <React.Fragment>
+          <div>Details for "{nestedDisplayName || step.customName}"</div>
+          <div className={cx("--StepActions")}>
+            <div><button className="link" type="button" onClick={() => alert("TODO")}>Rename</button></div>
+            <div><NavLink to={`/workspace/strategies/${step.strategyId}/${step.id}`}>View</NavLink></div>
+            <div><button className="link" type="button" onClick={() => alert("TODO")}>Analyze</button></div>
+            <div><button className="link" type="button" onClick={() => alert("TODO")}>Revise</button></div>
+            <div><button className="link" type="button" onClick={() => alert("TODO")}>Make nested strategy</button></div>
+            <div><button className="link" type="button" disabled={!isNested || !nestedId} onClick={() => {
+              if (nestedId == null) return;
+              if (isExpanded) onCollapseNestedStrategy(nestedId);
+              else onExpandNestedStrategy(nestedId);
+            }}>
+              {isExpanded ? 'Hide nested' : 'Show nested'}
+            </button></div>
+            <div><button className="link" type="button" onClick={() => alert("TODO")}>Insert step before</button></div>
+            <div><button className="link" type="button" onClick={() => alert("TODO")}>Delete</button></div>
+          </div>
+        </React.Fragment>
+      )}
+      open={detailVisibility}
+      onClose={() => setDetailVisibility(false)}
+    >
+      <StepDetails stepTree={stepTree}/>
+    </Dialog>
+  )
+
   return (
-    <React.Fragment>
-      {expandCollapseButton}
+    <div className={cx("--Box")}>
       <NavLink
         replace
         style={isExpanded ? { borderColor: color } : {}}
-        className={cx("--Box", classModifier, nestedModifier)}
-        activeClassName={cx("--Box", classModifier + "_active")}
+        className={cx("--BoxLink", classModifier, nestedModifier)}
+        activeClassName={cx("--BoxLink", classModifier + "_active")}
         to={`/workspace/strategies/${step.strategyId}/${step.id}`}
       >
         <StepComponent {...props} />
       </NavLink>
-    </React.Fragment>
+      {editButton}
+      {stepDetails}
+    </div>
   );
 }
 
@@ -222,3 +256,4 @@ export function ExpandedSteps(props: ExpandedStepProps) {
     </React.Fragment>
   );
 }
+

@@ -54,40 +54,45 @@
 }
 
 .StepBoxes--Box {
+  height: 45%;
+  position: relative;
+}
+
+.StepBoxes--BoxLink {
   display: flex;
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  height: 45%;
+  height: 100%;
   padding: 0 1em;
   margin-right: 1em;
   border-radius: 0.5em;
   position: relative;
 }
 
-.StepBoxes--Box__leaf {
+.StepBoxes--BoxLink__leaf {
   background-color: #d0cfcf;
   border: 2px solid black;
   z-index: 1;
 }
 
-.StepBoxes--Box__transform {
+.StepBoxes--BoxLink__transform {
   background-image: url("./TransformBg.gif");
   background-size: 100% 100%;
   z-index: 1;
 }
 
-.StepBoxes--Box__leaf_active,
-.StepBoxes--Box__combined_active {
+.StepBoxes--BoxLink__leaf_active,
+.StepBoxes--BoxLink__combined_active {
   background-color: #ffffa0;
 }
 
-.StepBoxes--Box__transform_active {
+.StepBoxes--BoxLink__transform_active {
   background-image: url("./TransformBg_yellow.gif");
 }
 
 /* Line connecting leaf step and combined step */
-.StepBoxes--Box__combined:before {
+.StepBoxes--BoxLink__combined:before {
   content: "";
   border: 1px solid black;
   height: 4em;
@@ -96,7 +101,7 @@
   top: -3em;
 }
 
-.StepBoxes--Box__nested:before {
+.StepBoxes--BoxLink__nested:before {
   content: "";
   width: 100%;
   height: 100%;
@@ -156,4 +161,74 @@
   height: 3.5em;
   font-weight: bold;
   border-radius: .5em;
+}
+
+button.StepBoxes--EditButton {
+  position: absolute;
+  right: .5em;
+  top: -.5em;
+  padding: 0 2px;
+  margin: 2px;
+  z-index: 1;
+  background: white;
+  border: 1px solid;
+  border-radius: 4px;
+  display: none;
+  color: black;
+}
+
+.StepBoxes--BoxLink__combined + button.StepBoxes--EditButton {
+  right: calc(50% - 3em);
+}
+
+button.StepBoxes--EditButton:hover {
+  background: yellow;
+}
+
+.StepBoxes:hover button.StepBoxes--EditButton {
+  display: inline;
+}
+
+.StepBoxes--StepActions {
+  display: flex;
+  font-size: .8em;
+  white-space: nowrap;
+}
+
+.StepBoxes--StepActions > * {
+  margin-top: .5em;
+  padding: 0 .5em;
+  border-right: 1px solid;
+}
+.StepBoxes--StepActions > *:last-of-type {
+  border-right: none;
+}
+
+.StepBoxes--StepDetailsContent {
+  display: block;
+  width: 100%;
+}
+
+.StepBoxes--StepDetailsContent td,
+.StepBoxes--StepDetailsContent th {
+  border: none;
+  padding: .5em;
+  vertical-align: top;
+}
+
+.StepBoxes--StepDetailsContent th {
+  text-align: right;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.StepBoxes--StepDetailsResults {
+  text-align: center;
+}
+
+.StepBoxes--StepDetailsTitle {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
 }
