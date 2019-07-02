@@ -6,4 +6,8 @@ export class ServiceError extends Error {
   ) {
     super(message);
   }
+
+  toString() {
+    return super.toString() + ': ' + this.response;
+  }
 }

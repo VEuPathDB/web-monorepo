@@ -6,6 +6,8 @@ import { Action } from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Service/WdkService';
 import { wdkMiddleware } from 'wdk-client/Core/WdkMiddleware';
+import { catchError } from 'rxjs/operators';
+import { alert } from 'wdk-client/Utils/Platform';
 
 declare global{
   interface Window {
@@ -76,7 +78,13 @@ function makeRootEpic<T extends Record<string, any>>(storeModules: StoreModuleRe
   const epics = values(storeModules)
     .map(({ observe }: StoreModule<T>): ModuleEpic<T> => (action$, state$, deps) => {
       return observe
-        ? observe(action$, state$, deps)
+        ? observe(action$, state$, deps).pipe(
+          catchError((error, caught) => {
+            // FIXME See https://redmine.apidb.org/issues/34824
+            alert('Oops... something went wrong!', String(error));
+            return caught;
+          })
+        )
         : EMPTY;
     });
   return combineEpics(...epics);
