@@ -378,15 +378,16 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
       mapOperatorFactory((actions: any) => {
         return from(request2Fulfill(actions, state$, dependencies));
       }),
-      catchError((err: Error, caughtObservable: Observable<WdkAction>) => {
-        // TODO submit error to wdkService
-        console.error(err);
-        // continue mapping actions - hopefully this won't results in an infinite loop
-        return concat(
-          of(notifyUnhandledError(err)),
-          caughtObservable
-        );
-      })
+      // TODO Determine if we should keep this
+      // catchError((err: Error, caughtObservable: Observable<WdkAction>) => {
+      //   // TODO submit error to wdkService
+      //   console.error(err);
+      //   // continue mapping actions - hopefully this won't results in an infinite loop
+      //   return concat(
+      //     of(notifyUnhandledError(err)),
+      //     caughtObservable
+      //   );
+      // })
     );
   };
 }
