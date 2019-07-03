@@ -1,30 +1,17 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Dialog } from 'wdk-client/Components';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
-import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
-import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
-import './StepBoxes.css';
-
-
-const cx = makeClassNameHelper('StepBoxes');
-
-interface Props {
-  stepTree: UiStepTree;
-  onShowInsertStep: (stepId: number) => void;
-  onHideInsertStep: () => void;
-  onExpandNestedStrategy: (stepId: number) => void;
-  onCollapseNestedStrategy: (stepId: number) => void;
-}
+import { UiStepTree, StepBoxesProps } from 'wdk-client/Views/Strategy/Types';
+import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
+import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 
 /**
  * Render each step of a strategy as a grid.
  */
-export default function StepBoxes(props: Props) {
+export default function StepBoxes(props: StepBoxesProps) {
   return (
     <React.Fragment>
       <div className={cx()}>
@@ -44,7 +31,7 @@ export default function StepBoxes(props: Props) {
   )
 }
 
-function StepTree(props: Props) {
+function StepTree(props: StepBoxesProps) {
   const { stepTree } = props;
   const { step, primaryInput, secondaryInput } = stepTree;
 
@@ -98,7 +85,7 @@ function StepTree(props: Props) {
   );
 }
 
-interface StepBoxProps extends Props {
+interface StepBoxProps extends StepBoxesProps {
   nestedId?: number;
   isNested: boolean;
   isExpanded: boolean;
@@ -128,34 +115,7 @@ function StepBox(props: StepBoxProps) {
   );
 
   const stepDetails = (
-    <Dialog
-      className={cx("--StepDetails")}
-      title={(
-        <React.Fragment>
-          <div>Details for "{nestedDisplayName || step.customName}"</div>
-          <div className={cx("--StepActions")}>
-            <div><button className="link" type="button" onClick={() => alert("TODO")}>Rename</button></div>
-            <div><NavLink to={`/workspace/strategies/${step.strategyId}/${step.id}`}>View</NavLink></div>
-            <div><button className="link" type="button" onClick={() => alert("TODO")}>Analyze</button></div>
-            <div><button className="link" type="button" onClick={() => alert("TODO")}>Revise</button></div>
-            <div><button className="link" type="button" onClick={() => alert("TODO")}>Make nested strategy</button></div>
-            <div><button className="link" type="button" disabled={!isNested || !nestedId} onClick={() => {
-              if (nestedId == null) return;
-              if (isExpanded) onCollapseNestedStrategy(nestedId);
-              else onExpandNestedStrategy(nestedId);
-            }}>
-              {isExpanded ? 'Hide nested' : 'Show nested'}
-            </button></div>
-            <div><button className="link" type="button" onClick={() => alert("TODO")}>Insert step before</button></div>
-            <div><button className="link" type="button" onClick={() => alert("TODO")}>Delete</button></div>
-          </div>
-        </React.Fragment>
-      )}
-      open={detailVisibility}
-      onClose={() => setDetailVisibility(false)}
-    >
-      <StepDetails stepTree={stepTree}/>
-    </Dialog>
+    <StepDetailsDialog {...props} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
   )
 
   return (

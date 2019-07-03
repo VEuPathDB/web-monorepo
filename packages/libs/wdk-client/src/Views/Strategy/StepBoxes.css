@@ -204,6 +204,26 @@ button.StepBoxes--EditButton:hover {
   border-right: none;
 }
 
+/* Override wdk-DialogPopupWrapper. */
+.StepBoxes--StepDetailsPopupWrapper {
+  /* Make dialog's top position relative to the document body, not the viewport. */
+  position: absolute;
+  /* Forces position of draggable window to be relative to top of document (see .StepBoxes--StepDetails) */
+  top: 0;
+}
+
+/* Override .wdk-Dialog */
+.StepBoxes--StepDetails {
+  width: 700px;
+  /* This is a relatively sane default. */
+  top: 100px;
+}
+
+.StepBoxes--StepDetailsHeader > button {
+  position: absolute;
+  right: 1em;
+}
+
 .StepBoxes--StepDetailsContent {
   display: block;
   width: 100%;
@@ -229,6 +249,30 @@ button.StepBoxes--EditButton:hover {
 .StepBoxes--StepDetailsTitle {
   display: flex;
   flex-flow: column nowrap;
+  flex-grow: 2;
   align-items: center;
   justify-content: center;
+  padding: 0 2em;
+}
+
+.StepBoxes--StepDetailsWeight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  padding: 1em;
+  background: #f0f0f0;
+}
+
+.StepBoxes--StepDetailsWeightHeader {
+  font-weight: bold;
+}
+
+.StepBoxes--StepDetailsWeightContent {
+  text-align: center;
+  padding: .5em;
+}
+
+.StepBoxes--StepDetailsWeightContent > * {
+  padding: .5em;
 }

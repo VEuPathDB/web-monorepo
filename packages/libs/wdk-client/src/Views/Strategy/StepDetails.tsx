@@ -1,14 +1,14 @@
+import { toString, toNumber } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { requestQuestionWithParameters } from 'wdk-client/Actions/QuestionWithParametersActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
-import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { StepBoxProps } from 'wdk-client/Views/Strategy/Types';
 import Loading from 'wdk-client/Components/Loading/Loading';
-
-interface Props {
-  stepTree: UiStepTree;
-}
+import { CollapsibleSection } from 'wdk-client/Components';
+import { Dispatch, bindActionCreators } from 'redux';
+import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
 
 interface MappedProps {
   question?: QuestionWithParameters;
@@ -16,11 +16,12 @@ interface MappedProps {
 
 interface DispatchProps {
   requestQuestionWithParameters: (name: string) => void;
+  assignWeight: (weight: number) => void;
 }
 
-function StepDetails({ stepTree, question, requestQuestionWithParameters }: Props & MappedProps & DispatchProps) {
+function StepDetails({ stepTree, question, requestQuestionWithParameters, assignWeight }: StepBoxProps & MappedProps & DispatchProps) {
   const { step, recordClass } = stepTree;
-  const [ weight, setWeight ] = useState(step.searchConfig.wdkWeight);
+  const [ weightCollapsed, setWeightCollapsed ] = useState(true);
 
   useEffect(() => {
     requestQuestionWithParameters(step.searchName);
@@ -28,7 +29,10 @@ function StepDetails({ stepTree, question, requestQuestionWithParameters }: Prop
 
   if (question == null) return <Loading/>;
 
+  const weight = toString(step.searchConfig.wdkWeight);
+
   return (
+    
     <React.Fragment>
       <table>
         <tbody>
@@ -51,19 +55,50 @@ function StepDetails({ stepTree, question, requestQuestionWithParameters }: Prop
         <strong>Results:</strong> {step.estimatedSize ? step.estimatedSize.toLocaleString() : '?'} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}
       </div>
       <hr/>
-        <form onSubmit={e => e.preventDefault()}>
-          <input type="number" value={weight} onChange={e => setWeight(Number(e.target.value))} />
+      <form onSubmit={e => {
+        e.preventDefault();
+        const weightInput = e.currentTarget.elements.namedItem('weight');
+        if (weightInput == null || !(weightInput instanceof HTMLInputElement)) {
+          throw new Error("Could not find the weight input.");
+        }
+        const wdkWeight = toNumber(weightInput.value);
+        assignWeight(wdkWeight);
+      }}>
+        <CollapsibleSection
+          className="StepBoxes--StepDetailsWeight"
+          headerContent="Give this search a weight"
+          isCollapsed={weightCollapsed}
+          onCollapsedChange={setWeightCollapsed}
+        >
           <div>
             Optionally give this search a 'weight' (for example 10, 200, -50). In a search strategy, unions and intersects will sum the weights, giving higher scores to items found in multiple searches.
           </div>
-        </form>
+          <div><input name="weight" key={weight} type="number" defaultValue={weight} /></div>
+          <div><button className="btn" type="submit">Assign weight</button></div>
+        </CollapsibleSection>
+      </form>
     </React.Fragment>
   );
 }
 
-function mapStateToProps(state: RootState, props: Props): MappedProps {
+function mapStateToProps(state: RootState, props: StepBoxProps): MappedProps {
   const question = state.questionsWithParameters[props.stepTree.step.searchName];
   return { question };
 }
 
-export default connect(mapStateToProps, { requestQuestionWithParameters })(StepDetails);
+function mapDispatchToProps(dispatch: Dispatch, props: StepBoxProps): DispatchProps {
+  const { step } = props.stepTree;
+  return bindActionCreators({
+    requestQuestionWithParameters,
+    assignWeight: (wdkWeight: number) => requestUpdateStepSearchConfig(
+      step.strategyId,
+      step.id,
+      {
+        ...step.searchConfig,
+        wdkWeight
+      }
+    )
+  }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StepDetails);

@@ -8,3 +8,18 @@ export interface UiStepTree {
   primaryInput?: UiStepTree;
   secondaryInput?: UiStepTree;
 }
+
+export interface StepBoxesProps {
+  stepTree: UiStepTree;
+  onShowInsertStep: (stepId: number) => void;
+  onHideInsertStep: () => void;
+  onExpandNestedStrategy: (stepId: number) => void;
+  onCollapseNestedStrategy: (stepId: number) => void;
+}
+
+export interface StepBoxProps extends StepBoxesProps {
+  nestedId?: number;
+  isNested: boolean;
+  isExpanded: boolean;
+  nestedDisplayName?: string;
+}
