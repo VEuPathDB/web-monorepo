@@ -1,6 +1,6 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec } from "wdk-client/Utils/WdkUser";
-import { AnswerSpec, Answer, StandardReportConfig } from 'wdk-client/Utils/WdkModel';
+import { AnswerSpec, Answer, StandardReportConfig, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
 
 export const requestCreateStrategy = makeActionCreator(
@@ -116,7 +116,7 @@ export const requestDeleteStep = makeActionCreator(
 
 export const requestUpdateStepSearchConfig = makeActionCreator(
     'requestSearchConfigUpdate',
-    (strategyId: number, stepId: number, answerSpec: AnswerSpec) => ({ strategyId, stepId, answerSpec })
+    (strategyId: number, stepId: number, searchConfig: SearchConfig) => ({ strategyId, stepId, searchConfig })
 );
 
 export const openStrategy = makeActionCreator(

@@ -186,15 +186,12 @@ async function getRequestSearchConfigUpdate(
     openAction.payload.strategyId,
     openAction.payload.stepId,
     {
-      searchName,
-      searchConfig: {
-        ...searchConfig,
-        filters: (searchConfig.filters || [])
-          .map(filter => filter.name === openAction.payload.filterKey
-            ? { ...filter, value: filterValue }
-            : filter
-          )
-      }
+      ...searchConfig,
+      filters: (searchConfig.filters || [])
+        .map(filter => filter.name === openAction.payload.filterKey
+          ? { ...filter, value: filterValue }
+          : filter
+        )
     }
   );
 }

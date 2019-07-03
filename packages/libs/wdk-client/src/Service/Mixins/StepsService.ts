@@ -1,5 +1,5 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { StandardReportConfig, AnswerSpec, Answer, Identifier, FilterValueArray } from 'wdk-client/Utils/WdkModel';
+import { StandardReportConfig, AnswerSpec, Answer, Identifier, FilterValueArray, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import {  NewStepSpec, PatchStepSpec, Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
 import { AnswerFormatting } from './SearchReportsService';
@@ -69,7 +69,7 @@ export default (base: ServiceBase) => {
     base._fetchJson<void>('delete', `/users/${userId}/steps/${stepId}`);
   }
 
-  function updateStepSearchConfig(stepId: number, answerSpec: AnswerSpec, userId: string = "current") {
+  function updateStepSearchConfig(stepId: number, answerSpec: SearchConfig, userId: string = "current") {
     return base._fetchJson<void>('put', `/users/${userId}/steps/${stepId}/search-config`, JSON.stringify(answerSpec));
   }
 
