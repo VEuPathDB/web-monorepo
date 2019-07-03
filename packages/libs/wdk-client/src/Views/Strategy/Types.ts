@@ -1,5 +1,5 @@
 import {Step} from 'wdk-client/Utils/WdkUser';
-import {RecordClass} from 'wdk-client/Utils/WdkModel';
+import {RecordClass, QuestionWithParameters} from 'wdk-client/Utils/WdkModel';
 
 export interface UiStepTree {
   color?: string;
@@ -22,4 +22,7 @@ export interface StepBoxProps extends StepBoxesProps {
   isNested: boolean;
   isExpanded: boolean;
   nestedDisplayName?: string;
+}
+
+export interface StepDetailProps extends StepBoxProps {
 }

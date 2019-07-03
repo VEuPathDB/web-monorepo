@@ -1,14 +1,13 @@
-import { toString, toNumber } from 'lodash';
+import { toNumber, toString } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import { requestQuestionWithParameters } from 'wdk-client/Actions/QuestionWithParametersActions';
+import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
+import { CollapsibleSection } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
-import { StepBoxProps } from 'wdk-client/Views/Strategy/Types';
-import Loading from 'wdk-client/Components/Loading/Loading';
-import { CollapsibleSection } from 'wdk-client/Components';
-import { Dispatch, bindActionCreators } from 'redux';
-import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
+import { StepBoxProps, StepDetailProps } from 'wdk-client/Views/Strategy/Types';
 
 interface MappedProps {
   question?: QuestionWithParameters;
@@ -19,15 +18,13 @@ interface DispatchProps {
   assignWeight: (weight: number) => void;
 }
 
-function StepDetails({ stepTree, question, requestQuestionWithParameters, assignWeight }: StepBoxProps & MappedProps & DispatchProps) {
+function StepDetails({ stepTree, question, assignWeight, requestQuestionWithParameters }: StepDetailProps & DispatchProps & MappedProps) {
   const { step, recordClass } = stepTree;
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
 
   useEffect(() => {
     requestQuestionWithParameters(step.searchName);
   }, [ step.searchName ]);
-
-  if (question == null) return <Loading/>;
 
   const weight = toString(step.searchConfig.wdkWeight);
 

@@ -1,9 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
+import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
+import CombineStepDetails from 'wdk-client/Views/Strategy/CombineStepDetails';
 import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
 import { StepBoxProps } from 'wdk-client/Views/Strategy/Types';
-import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
+import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
 
 interface Props extends StepBoxProps {
   isOpen: boolean;
@@ -23,6 +25,7 @@ export default function StepDetailsDialog(props: Props) {
     onExpandNestedStrategy,
   } = props;
   const { step } = stepTree;
+  
   return (
     <Dialog
       className={cx("--StepDetails")}
@@ -34,7 +37,7 @@ export default function StepDetailsDialog(props: Props) {
             <div><NavLink to={`/workspace/strategies/${step.strategyId}/${step.id}`}>View</NavLink></div>
             <div><button className="link" type="button" onClick={() => alert("TODO")}>Analyze</button></div>
             <div><button className="link" type="button" onClick={() => alert("TODO")}>Revise</button></div>
-            <div><button className="link" type="button" onClick={() => alert("TODO")}>Make nested strategy</button></div>
+            <div><button className="link" type="button" disabled={isNested} onClick={() => alert("TODO")}>Make nested strategy</button></div>
             <div><button className="link" type="button" disabled={!isNested || !nestedId} onClick={() => {
               if (nestedId == null) return;
               if (isExpanded) onCollapseNestedStrategy(nestedId);
@@ -50,7 +53,9 @@ export default function StepDetailsDialog(props: Props) {
       open={isOpen}
       onClose={onClose}
     >
-      <StepDetails {...props} />
+      { isNested ? <NestedStepDetails {...props}/>
+      : stepTree.primaryInput && stepTree.secondaryInput ? <CombineStepDetails {...props} />
+      : <StepDetails {...props} /> }
     </Dialog>
   );
-};
+}
