@@ -35,11 +35,12 @@
   <c:set var="newsAnswer" value="${newsQuestion.fullAnswer}"/>
 </c:catch>
 
-
+<%--
 <c:set var="tutAnswer" value="${tutQuestion.fullAnswer}"/>
 <c:catch var="extlAnswer_exception">
   <c:set var="extlAnswer" value="${extlQuestion.fullAnswer}"/>
 </c:catch>
+--%>
 
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
 
@@ -218,11 +219,14 @@
          <b>Upcoming Events with EuPathDB presence</b>
          <imp:communityEventListing/>  
     -->
-    <a class="small" href='http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068'>Global view of EuPathDB training >>></a>
+    <a href='http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068'>Global view of EuPathDB training</a>
     <hr>
 
     <!--  LINKS to interesting sites -->
-    <b>Related Sites</b>
+
+    <a  href="${pageContext.request.contextPath}/wdkCustomization/jsp/questions/XmlQuestions.ExternalLinks.jsp"><b>Related Sites</b></a>
+
+<!--
     <c:choose>
       <c:when test="${extlAnswer_exception != null}">
         <br><font size="-1" color="#CC0033"><i>Error. related sites temporarily unavailable</i></font><br>
@@ -251,7 +255,9 @@
         </ul>
       </c:otherwise>
     </c:choose>
-    <br><span style="font-size:8pt;font-style:italic">(If you have a link that you think would be useful for the community,
+-->
+
+    <br><span style="font-size:8pt;font-style:italic">(If you have a link to include,
     please <a href="<c:url value="/app/contact-us"/>" class="new-window" data-name="contact_us">send us a note.)</a></span>
   </div>
 
