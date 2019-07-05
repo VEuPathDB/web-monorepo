@@ -4,7 +4,7 @@ import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
-import { UiStepTree, StepBoxesProps } from 'wdk-client/Views/Strategy/Types';
+import { UiStepTree, StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 
@@ -56,8 +56,7 @@ function StepTree(props: StepBoxesProps) {
           pluginProps={{
             ...props,
             stepTree,
-            isNested: false,
-            isExpanded: false,
+            isNested: false
           }}
           defaultComponent={StepBox}
         />
@@ -72,10 +71,10 @@ function StepTree(props: StepBoxesProps) {
             pluginProps={{
               ...props,
               stepTree: secondaryInput,
-              nestedId: step.id,
-              isNested: step.expandedName != null && step.expandedName !== step.customName,
-              isExpanded: step.expandedName != null && step.expanded,
-              nestedDisplayName: step.expandedName,
+              isNested: (
+                step.expandedName != null &&
+                step.expandedName !== step.customName
+              )
             }}
             defaultComponent={StepBox}
           />
@@ -85,24 +84,19 @@ function StepTree(props: StepBoxesProps) {
   );
 }
 
-interface StepBoxProps extends StepBoxesProps {
-  nestedId?: number;
-  isNested: boolean;
-  isExpanded: boolean;
-  nestedDisplayName?: string;
-}
-
 function StepBox(props: StepBoxProps) {
   const [ detailVisibility, setDetailVisibility ] = useState(false);
-  const { stepTree, isNested, nestedId, isExpanded, onCollapseNestedStrategy, onExpandNestedStrategy, nestedDisplayName } = props;
-  const { step, primaryInput, secondaryInput, color } = stepTree;
-  const StepComponent = primaryInput && secondaryInput && !isNested ? CombinedStepBoxContent
-    : primaryInput && !isNested ? TransformStepBoxContent
+  const { isNested, stepTree } = props;
+  const { step, color } = stepTree;
+
+  const StepComponent = isCombineUiStepTree(stepTree) && !isNested ? CombineStepBoxContent
+    : isTransformUiStepTree(stepTree) && !isNested ? TransformStepBoxContent
     : LeafStepBoxContent;
-  const classModifier = primaryInput && secondaryInput && !isNested ? 'combined'
-    : primaryInput && !isNested ? 'transform'
+  const classModifier = isCombineUiStepTree(stepTree) && !isNested ? 'combined'
+    : isTransformUiStepTree(stepTree) && !isNested ? 'transform'
     : 'leaf';
   const nestedModifier = isNested ? 'nested' : '';
+  const borderColor = isNested && stepTree.nestedControlStep && stepTree.nestedControlStep.expanded ? color : undefined;
 
   const editButton = (
     <button
@@ -122,7 +116,7 @@ function StepBox(props: StepBoxProps) {
     <div className={cx("--Box")}>
       <NavLink
         replace
-        style={isExpanded ? { borderColor: color } : {}}
+        style={{ borderColor }}
         className={cx("--BoxLink", classModifier, nestedModifier)}
         activeClassName={cx("--BoxLink", classModifier + "_active")}
         to={`/workspace/strategies/${step.strategyId}/${step.id}`}
@@ -136,11 +130,11 @@ function StepBox(props: StepBoxProps) {
 }
 
 function LeafStepBoxContent(props: StepBoxProps) {
-  const { stepTree, isNested, nestedDisplayName } = props;
-  const { step, recordClass } = stepTree;
+  const { stepTree } = props;
+  const { step, recordClass, nestedControlStep } = stepTree;
   return (
     <React.Fragment>
-      <StepName step={step} nestedDisplayName={isNested ? nestedDisplayName : undefined}/>
+      <StepName step={step} nestedControlStep={nestedControlStep} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
@@ -156,7 +150,7 @@ function TransformStepBoxContent(props: StepBoxProps) {
   );
 }
 
-function CombinedStepBoxContent(props: StepBoxProps) {
+function CombineStepBoxContent(props: StepBoxProps) {
   const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
@@ -173,9 +167,10 @@ function CombinedStepIcon(props: { step: Step }) {
   );
 }
 
-function StepName(props: { step: Step, nestedDisplayName?: string }) {
-  const { step, nestedDisplayName } = props;
-  return <div className={cx('--StepName')}>{nestedDisplayName || step.customName}</div>;
+function StepName(props: { step: Step, nestedControlStep?: Step }) {
+  const { step, nestedControlStep } = props;
+  const displayName = nestedControlStep && nestedControlStep.expandedName || step.customName;
+  return <div className={cx('--StepName')}>{displayName}</div>;
 }
 
 function StepCount(props: { step: Step, recordClass: RecordClass }) {

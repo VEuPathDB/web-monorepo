@@ -1,5 +1,5 @@
-import {Step} from 'wdk-client/Utils/WdkUser';
-import {RecordClass, QuestionWithParameters} from 'wdk-client/Utils/WdkModel';
+import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { Step } from 'wdk-client/Utils/WdkUser';
 
 export interface UiStepTree {
   color?: string;
@@ -7,6 +7,36 @@ export interface UiStepTree {
   recordClass: RecordClass;
   primaryInput?: UiStepTree;
   secondaryInput?: UiStepTree;
+  nestedControlStep?: Step;
+}
+
+// specialized UiStepTree types and guards
+
+export interface LeafUiStepTree extends UiStepTree {
+  primaryInput: undefined;
+  secondaryInput: undefined;
+}
+
+export function isLeafUiStepTree(stepTree: UiStepTree): stepTree is LeafUiStepTree {
+  return stepTree.primaryInput == null && stepTree.secondaryInput == null;
+}
+
+export interface TransformUiStepTree extends UiStepTree {
+  primaryInput: UiStepTree;
+  secondaryInput: undefined;
+}
+
+export function isTransformUiStepTree(stepTree: UiStepTree): stepTree is TransformUiStepTree {
+  return stepTree.primaryInput != null && stepTree.secondaryInput == null;
+}
+
+export interface CombineUiStepTree extends UiStepTree {
+  primaryInput: UiStepTree;
+  secondaryInput: UiStepTree;
+}
+
+export function isCombineUiStepTree(stepTree: UiStepTree): stepTree is CombineUiStepTree {
+  return stepTree.primaryInput != null && stepTree.secondaryInput != null;
 }
 
 export interface StepBoxesProps {
@@ -18,10 +48,7 @@ export interface StepBoxesProps {
 }
 
 export interface StepBoxProps extends StepBoxesProps {
-  nestedId?: number;
   isNested: boolean;
-  isExpanded: boolean;
-  nestedDisplayName?: string;
 }
 
 export interface StepDetailProps extends StepBoxProps {

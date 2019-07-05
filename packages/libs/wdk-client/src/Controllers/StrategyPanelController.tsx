@@ -6,7 +6,7 @@ import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyPr
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { StepTree, StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
 import { setInsertStepWizardVisibility } from 'wdk-client/Actions/StrategyPanelActions';
@@ -95,18 +95,19 @@ function makeUiStepTree(strategy: StrategyDetails, recordClassesByName: Record<s
   
   return recurse(strategy.stepTree);
 
-  function recurse(stepTree: StepTree, color?: string): UiStepTree {
+  function recurse(stepTree: StepTree, nestedControlStep?: Step, color?: string): UiStepTree {
     const step = strategy.steps[stepTree.stepId];
     const recordClass = recordClassesByName[step.recordClassName];
     const primaryInput = stepTree.primaryInput && recurse(stepTree.primaryInput);
     // XXX Should we reset coloring when we traverse a new branch of secondary inputs?
     // only secondary inputs get a color
-    const secondaryInput = stepTree.secondaryInput && recurse(stepTree.secondaryInput, colorIter.next().value);
+    const secondaryInput = stepTree.secondaryInput && recurse(stepTree.secondaryInput, step, colorIter.next().value);
     return {
       step,
       recordClass,
       primaryInput,
       secondaryInput,
+      nestedControlStep,
       color
     };
   }

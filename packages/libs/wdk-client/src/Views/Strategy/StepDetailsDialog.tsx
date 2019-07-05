@@ -1,12 +1,12 @@
 import React from 'react';
-import { NavLink, RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 import CombineStepDetails from 'wdk-client/Views/Strategy/CombineStepDetails';
-import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
-import { StepBoxProps } from 'wdk-client/Views/Strategy/Types';
 import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
+import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
 import { getStepUrl } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { isCombineUiStepTree, isLeafUiStepTree, StepBoxProps } from 'wdk-client/Views/Strategy/Types';
 
 interface Props extends StepBoxProps, RouteComponentProps<any> {
   isOpen: boolean;
@@ -14,15 +14,22 @@ interface Props extends StepBoxProps, RouteComponentProps<any> {
 }
 
 interface StepAction {
+  /** Text of the button */
   display: React.ReactType<Props>;
+  /** Action to take when user clicks */
   onClick: (props: Props) => void;
+  /** The button should be disabled */
   isDisabled?: (props: Props) => boolean;
+  /** The button should be hidden */
+  isHidden?: (props: Props) => boolean;
+  /** The dialog should be closed when the button is clicked */
   closeOnClick?: boolean;
 }
 const actions: StepAction[] = [
   {
     display: () => <React.Fragment>Rename</React.Fragment>,
-    onClick: () => alert('TODO')
+    onClick: () => alert('TODO'),
+    isDisabled: ({ stepTree, isNested }) => isCombineUiStepTree(stepTree) && !isNested
   },
   {
     display: () => <React.Fragment>View</React.Fragment>,
@@ -44,15 +51,27 @@ const actions: StepAction[] = [
   {
     display: () => <React.Fragment>Make nested strategy</React.Fragment>,
     onClick: () => alert('todo'),
-    isDisabled: ({ stepTree, isNested }) => isNested || stepTree.primaryInput != null
+    isHidden: ({ stepTree, isNested }) => !isLeafUiStepTree(stepTree) || isNested
   },
   {
-    display: ({ isExpanded }) => <React.Fragment>{isExpanded ? 'Hide nested' : 'Show nested'}</React.Fragment>,
-    onClick: ({ nestedId, isExpanded, onCollapseNestedStrategy, onExpandNestedStrategy }) => {
-      if (nestedId == null) return;
-      if (isExpanded) onCollapseNestedStrategy(nestedId);
-      else onExpandNestedStrategy(nestedId);
-    }
+    display: () => <React.Fragment>Unnest strategy</React.Fragment>,
+    onClick: () => alert('todo'),
+    isDisabled: ({ stepTree }) => isCombineUiStepTree(stepTree),
+    isHidden: ({ isNested }) => !isNested
+  },
+  {
+    display: ({ stepTree }) => <React.Fragment>{
+      stepTree.nestedControlStep && stepTree.nestedControlStep.expanded
+        ? 'Hide nested'
+        : 'Show nested'
+      }</React.Fragment>,
+    onClick: ({ stepTree, onCollapseNestedStrategy, onExpandNestedStrategy }) => {
+      const controlStep = stepTree.nestedControlStep ? stepTree.nestedControlStep : undefined;
+      if (controlStep == null) return;
+      if (controlStep.expanded) onCollapseNestedStrategy(controlStep.id);
+      else onExpandNestedStrategy(controlStep.id);
+    },
+    isHidden: ({ isNested }) => !isNested
   },
   {
     display: () => <React.Fragment>Insert step before</React.Fragment>,
@@ -66,26 +85,26 @@ const actions: StepAction[] = [
 
 export default withRouter(function StepDetailsDialog(props: Props) {
   const {
+    isNested,
     isOpen,
     stepTree,
-    nestedDisplayName,
-    isNested,
     onClose,
   } = props;
-  const { step } = stepTree;
-  
+  const { step, nestedControlStep } = stepTree;
   return (
     <Dialog
       className={cx("--StepDetails")}
       title={(
         <React.Fragment>
-          <div>Details for "{nestedDisplayName || step.customName}"</div>
+          <div>Details for "{nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : step.customName}"</div>
           <div className={cx("--StepActions")}>
-            {actions.map((action, index) => (
+            {actions
+            .filter(action => action.isHidden == null || !action.isHidden(props))
+            .map((action, index) => (
               <div key={index}>
                 <button type="button" className="link" onClick={() => {
                   if (action.onClick) action.onClick(props);
-                  if (action.closeOnClick) onClose();
+                  if (action.closeOnClick !== false) onClose();
                 }}
                 disabled={action.isDisabled ? action.isDisabled(props) : false}
               ><action.display {...props}/></button>
@@ -98,7 +117,7 @@ export default withRouter(function StepDetailsDialog(props: Props) {
       onClose={onClose}
     >
       { isNested ? <NestedStepDetails {...props}/>
-      : stepTree.primaryInput && stepTree.secondaryInput ? <CombineStepDetails {...props} />
+      : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} />
       : <StepDetails {...props} /> }
     </Dialog>
   );
