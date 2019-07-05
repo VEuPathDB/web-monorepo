@@ -37,8 +37,8 @@ export default (base: ServiceBase) => {
     return base._fetchJson<Identifier>('patch', `/users/${userId}/strategies/${strategyId}`, JSON.stringify(strategyProperties));
   }
 
-  function putStrategyStepTree(strategyId: number, newStrategySpec: NewStrategySpec, userId: string = "current") {
-    return base._fetchJson<void>('put', `/users/${userId}/strategies/${strategyId}/step-tree`, JSON.stringify(newStrategySpec));
+  function putStrategyStepTree(strategyId: number, newStepTree: StepTree, userId: string = "current") {
+    return base._fetchJson<void>('put', `/users/${userId}/strategies/${strategyId}/step-tree`, JSON.stringify({ stepTree: newStepTree }));
   }
 
   function getDuplicatedStrategyStepTree(strategyId: number,  userId: string = "current") {

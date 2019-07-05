@@ -142,8 +142,8 @@ function updateStrategyEntry(
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
   ): Promise<InferAction<typeof fulfillStrategy>> {
-    const {strategyId, newStrategySpec }  = requestAction.payload;
-    await wdkService.putStrategyStepTree(strategyId, newStrategySpec);
+    const {strategyId, newStepTree }  = requestAction.payload;
+    await wdkService.putStrategyStepTree(strategyId, newStepTree);
     let strategy = await wdkService.getStrategy(strategyId);
     return fulfillStrategy(strategy);
   }

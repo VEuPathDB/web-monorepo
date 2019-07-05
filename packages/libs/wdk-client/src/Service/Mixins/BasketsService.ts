@@ -32,7 +32,11 @@ export default (base: ServiceBase) => {
   async function updateBasketStatus(operation: BasketRecordOperation, recordClassFullName: string, primaryKey: PrimaryKey[]): Promise<void>;
   async function updateBasketStatus(operation: BasketStepOperation, recordClassFullName: string, stepId: number): Promise<void>;
   async function updateBasketStatus(operation: BasketRecordOperation | BasketStepOperation, recordClassUrlSegment: string, pksOrStepId: PrimaryKey[] | number): Promise<void> {
-    let data = JSON.stringify({ [operation]: pksOrStepId });
+    let data = JSON.stringify({
+      action: operation,
+      primaryKeys: pksOrStepId
+    })
+    // let data = JSON.stringify({ [operation]: pksOrStepId });
     let url = `/users/current/baskets/${recordClassUrlSegment}`;
     return base._fetchJson<void>('patch', url, data);
   }

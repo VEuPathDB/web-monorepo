@@ -7,10 +7,14 @@ import { RadioParams } from 'wdk-client/Views/Question/Forms/RadioParams/RadioPa
 import { InternalGeneDataset } from 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset';
 import { ByLocation } from 'wdk-client/Views/Question/Forms/ByLocation/ByLocation';
 import DefaultQuestionController from 'wdk-client/Controllers/QuestionController';
+import { CombineStepForm } from 'wdk-client/Views/Strategy/CombineStepForm';
+import { CombineStepMenu } from 'wdk-client/Views/Strategy/CombineStepMenu';
+import { ConvertStepMenu } from 'wdk-client/Views/Strategy/ConvertStepMenu';
+import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
 
 // Default set of plugins provided by wdk
 // FIXME Make this typesafe by enumerating
-// TODO Move the custom pages/parameters to the registries for Ebrc and/or Api
+// TODO Move the custom question pages/parameters to the registries for Ebrc and/or Api
 const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionController',
@@ -71,6 +75,26 @@ const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionFormParameter',
     component: ParameterComponent
+  },
+  {
+    type: 'addStepOperationMenu',
+    name: 'combine',
+    component: CombineStepMenu
+  },
+  {
+    type: 'addStepOperationMenu',
+    name: 'convert',
+    component: ConvertStepMenu
+  },
+  {
+    type: 'addStepOperationForm',
+    name: 'combine',
+    component: CombineStepForm
+  },
+  {
+    type: 'addStepOperationForm',
+    name: 'convert',
+    component: ConvertStepForm
   }
 ];
 

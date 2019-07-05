@@ -1,35 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { RootState } from 'wdk-client/Core/State/Types';
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
-import { Question, Identifier, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { requestStrategy } from 'wdk-client/Actions/StrategyActions';
-import { compose } from 'redux';
+import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
-import { NewStepSpec, StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import { updateActiveQuestion } from 'wdk-client/Actions/QuestionActions';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { StrategyDetails, StepTree } from 'wdk-client/Utils/WdkUser';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { appendStep, insertStepBefore } from 'wdk-client/Utils/StrategyUtils';
 
 type StateProps = {
   strategy?: StrategyDetails,
-  recordClass?: RecordClass,
-  recordClassSegment?: string,
-  booleanSearchState?: QuestionState,
-  basketSearchState?: QuestionState
+  recordClass?: RecordClass
 };
 
 type DispatchProps = {
-  createSteps: (newStepSpecs: NewStepSpec[], onCreation: (specIds: Identifier[]) => void) => void
-  loadBooleanQuestion: (recordClassSegment: string) => void,
-  loadBasketQuestion: (recordClassSegment: string) => void,
   loadStrategy: (strategyId: number) => void,
+  requestPutStrategyStepTree: (strategyId: number, newStepTree: StepTree) => void
 };
 
 type OwnProps = {
-  addType: InsertBefore | Append
-  strategyId: number,
+  addType: InsertBefore | Append,
+  strategyId: number
 };
 
 type InsertBefore = {
@@ -41,19 +35,29 @@ type Append = {
   type: 'append'
 };
 
-type Props = StateProps & DispatchProps & OwnProps;
+type Props = Partial<StateProps> & DispatchProps & OwnProps;
 
-type NewStepSearchMap = Record<'combineNewSearch' | 'transformSearch' | 'colocationSearch', Question[]>;
+export type AddStepOperationMenuProps = {
+  strategy: StrategyDetails,
+  recordClass: RecordClass,
+  startOperationForm: (selection: string) => void,
+  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void
+};
+
+export type AddStepOperationFormProps = {
+  strategy: StrategyDetails,
+  recordClass: RecordClass,
+  currentPage?: string,
+  advanceToPage: (nextPage: string) => void,
+  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void
+};
 
 const AddStepPanelView = (
   {
-    basketSearchState,
-    booleanSearchState,
-    loadBasketQuestion,
-    loadBooleanQuestion,
+    addType,
     loadStrategy,
     recordClass,
-    recordClassSegment,
+    requestPutStrategyStepTree,
     strategy,
     strategyId
   }: Props
@@ -62,26 +66,101 @@ const AddStepPanelView = (
     loadStrategy(strategyId);
   }, [ strategyId ]);
 
-  useEffect(() => {
-    if (recordClassSegment) {
-      loadBasketQuestion(recordClassSegment);
-      loadBooleanQuestion(recordClassSegment);
+  const [ selectedOperation, setSelectedOperation ] = useState<string | undefined>(undefined);
+  const [ pageHistory, setPageHistory ] = useState<string[]>([]);
+
+  const currentPage = pageHistory[pageHistory.length - 1] || undefined;
+
+  const onClickBack = useCallback(() => {
+    setPageHistory(pageHistory.slice(0, -1));
+  }, [ pageHistory ]);
+
+  const advanceToPage = useCallback((nextPage: string) => {
+    setPageHistory([...pageHistory, nextPage]);
+  }, [ pageHistory ]);
+
+  const startOperationFormCallbacks = useMemo(
+    () => OPERATION_TYPES.reduce(
+      (memo, operation) => ({
+        ...memo,
+        [operation]: (selection: string) => {
+          setSelectedOperation(operation);
+          advanceToPage(selection);
+        }
+      }),
+      {} as Record<string, (selection: string) => void>
+    ),
+    [ OPERATION_TYPES, setSelectedOperation, advanceToPage ]
+  );
+
+  const updateStrategy = useCallback((newStepId: number, newSecondaryInput: StepTree) => {
+    if (strategy) {
+      const oldStepTree = strategy.stepTree;
+
+      const newStepTree = addType.type === 'append'
+        ? appendStep(oldStepTree, newStepId, newSecondaryInput)
+        : insertStepBefore(oldStepTree, addType.stepId, newStepId, newSecondaryInput);
+
+      requestPutStrategyStepTree(strategy.strategyId, newStepTree);
     }
-  }, [ recordClassSegment ]);
+  }, [ strategy, requestPutStrategyStepTree, addType ]);
 
   return (
     !strategy ||
-    !recordClass ||
-    !booleanSearchState ||
-    !basketSearchState ||
-    booleanSearchState.questionStatus === 'loading' ||
-    basketSearchState.questionStatus === 'loading'
+    !recordClass
   )
     ? <Loading />
-    : null;
+    : !selectedOperation
+    ? (
+      <div>
+        {
+          OPERATION_TYPES.map(operation =>
+            <Plugin<AddStepOperationMenuProps>
+              key={operation}
+              context={{
+                type: 'addStepOperationMenu',
+                name: operation
+              }}
+              pluginProps={{
+                strategy,
+                recordClass,
+                startOperationForm: startOperationFormCallbacks[operation],
+                updateStrategy
+              }}
+            />
+          )
+        }
+      </div>
+    )
+    : (
+      <div>
+        <a href="#" onClick={onClickBack}>
+          Go Back
+        </a>
+        <Plugin<AddStepOperationFormProps>
+          context={{
+            type: 'addStepOperationForm',
+            name: selectedOperation
+          }}
+          pluginProps={{
+            strategy,
+            recordClass,
+            currentPage,
+            advanceToPage,
+            updateStrategy
+          }}
+        />
+      </div>
+    );
 };
 
-const strategy = createSelector(
+// TODO Make this configurable
+const OPERATION_TYPES = [
+  'combine',
+  'convert'
+];
+
+export const strategy = createSelector(
   ({ strategies }: RootState) => strategies,
   (_: RootState, { strategyId }: OwnProps) => strategyId,
   (strategies, strategyId) => {
@@ -97,7 +176,7 @@ const strategy = createSelector(
   }
 );
 
-const recordClass = createSelector(
+export const recordClass = createSelector(
   strategy,
   ({ globalData: { recordClasses } }: RootState) => recordClasses,
   (strategy, recordClasses) => (
@@ -108,115 +187,14 @@ const recordClass = createSelector(
     : recordClasses.find(({ urlSegment }) => strategy.recordClassName === urlSegment)
 );
 
-const recordClassSegment = createSelector(
-  recordClass,
-  recordClass => recordClass && recordClassFullNameToSegment(recordClass.fullName)
-);
-
-const booleanSearchState = createSelector(
-  recordClass,
-  recordClassSegment,
-  ({ question: { questions } }: RootState) => questions,
-  (recordClass, recordClassSegment, questions) => {
-    if (!recordClass || !recordClassSegment) {
-      return undefined;
-    }
-
-    return questions[booleanSearchUrlSegment(recordClassSegment)]
-  }
-);
-
-const basketSearchState = createSelector(
-  recordClass,
-  recordClassSegment,
-  ({ question: { questions } }: RootState) => questions,
-  (recordClass, recordClassSegment, questions) => {
-    if (!recordClass || !recordClassSegment) {
-      return undefined;
-    }
-
-    return questions[basketSearchUrlSegment(recordClassSegment)]
-  }
-);
-
-const recordClassFullNameToSegment = (recordClassFullName: string) =>
-  recordClassFullName.replace('.', '_');
-
-const basketSearchUrlSegment = (recordClassSegment: string) =>
-  `${recordClassSegment}BySnapshotBasket`;
-
-const booleanSearchUrlSegment = (recordClassSegment: string) =>
-  `boolean_question_${recordClassSegment}`;
-
-const booleanLeftOperand = (recordClassSegment: string) =>
-  `bq_left_op_${recordClassSegment}`;
-
-const booleanRightOperand = (recordClassSegment: string) =>
-  `bq_right_op_${recordClassSegment}`;
-
-// A "new search" specifies a valid boolean operand <=> 
-//   (1) it has no primary nor secondary input 
-//   (2) its output record class matches the current record class
-const isValidBooleanOperand = (
-  { allowedPrimaryInputRecordClassNames, allowedSecondaryInputRecordClassNames, outputRecordClassName }: Question,
-  recordClassUrlSegment: string
-) =>
-  !allowedPrimaryInputRecordClassNames &&
-  !allowedSecondaryInputRecordClassNames &&
-  outputRecordClassName === recordClassUrlSegment;
-
-// A search specifies a valid transform <=>
-//   (1) it has a primary input and NO seconary input
-//   (2) its primary input is compatible with the current record class
-const isValidTransform = (
-  { allowedPrimaryInputRecordClassNames, allowedSecondaryInputRecordClassNames }: Question,
-  recordClassFullName: string
-) => 
-  (
-    !allowedPrimaryInputRecordClassNames ||
-    allowedSecondaryInputRecordClassNames
-  )
-    ? false
-    : allowedPrimaryInputRecordClassNames.includes(recordClassFullName);
-
 export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state, ownProps) => ({
-    basketSearchState: basketSearchState(state, ownProps),
-    booleanSearchState: booleanSearchState(state, ownProps),
     recordClass: recordClass(state, ownProps),
-    recordClassSegment: recordClassSegment(state, ownProps),
     strategy: strategy(state, ownProps)
   }),
   dispatch => ({
-    createSteps: (newStepSpecs: NewStepSpec[], onCreation: (specIds: Identifier[]) => void) => {
-      dispatch(async ({ wdkService }) => {
-        const identifiers = await Promise.all(newStepSpecs.map(spec => wdkService.createStep(spec)));
-        onCreation(identifiers);
-        return emptyAction;
-      });
-    },
-    loadBasketQuestion: (recordClassSegment: string) => {
-      dispatch(
-        updateActiveQuestion({
-          searchName: basketSearchUrlSegment(recordClassSegment),
-          stepId: undefined
-        })
-      )
-    },
-    loadBooleanQuestion: (recordClassSegment: string) => {
-      dispatch(
-        updateActiveQuestion({
-          searchName: booleanSearchUrlSegment(recordClassSegment),
-          stepId: undefined,
-          paramValues: {
-            [booleanLeftOperand(recordClassSegment)]: '',
-            [booleanRightOperand(recordClassSegment)]: '',
-            bq_operator: 'intersect'
-          }
-        })
-      )
-    },
-    loadStrategy: compose(dispatch, requestStrategy)
+    loadStrategy: compose(dispatch, requestStrategy),
+    requestPutStrategyStepTree: compose(dispatch, requestPutStrategyStepTree)
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,

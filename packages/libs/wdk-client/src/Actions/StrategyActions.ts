@@ -60,7 +60,7 @@ export const requestPatchStrategyProperties = makeActionCreator(
 
 export const requestPutStrategyStepTree = makeActionCreator(
     'requestPutStrategyStepTree',
-    (strategyId: number, newStrategySpec: NewStrategySpec) => ({ strategyId, newStrategySpec })
+    (strategyId: number, newStepTree: StepTree) => ({ strategyId, newStepTree })
 );
 
 export const requestGetDuplicatedStrategyStepTree = makeActionCreator(

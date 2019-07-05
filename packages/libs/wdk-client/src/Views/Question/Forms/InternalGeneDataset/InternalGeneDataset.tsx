@@ -64,55 +64,27 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     ? [ searchNameAnchorTag, true ]
     : [ internalSearchName, false ];
 
-  const [ outputRecordClassName, datasetCategory, datasetSubtype ] = useMemo(() => {
-    if (!questions) {
-      return [ undefined, undefined, undefined ];
-    }
+  const [ outputRecordClassName, datasetCategory, datasetSubtype ] = useMemo(
+    () => getTableQuestionMetadata(questions, internalSearchName, searchName),
+    [ questions, internalSearchName, searchName ]
+  );
 
-    const internalQuestion = questions.find(question => question.urlSegment === internalSearchName);
-
-    if (!internalQuestion || !internalQuestion.properties) {
-      return [ undefined, undefined, undefined ];
-    }
-
-    const {
-      datasetCategory = [],
-      datasetSubtype = []
-    } = internalQuestion.properties;
-
-    return [
-      internalQuestion.outputRecordClassName,
-      datasetCategory.join(''),
-      datasetSubtype.join('')
-    ];
-  }, [ internalSearchName, searchName ]);
-
-  const [ questionNamesByDatasetAndCategory, updateQuestionNamesByDatasetAndCategory ] = useState<Record<string, Record<string, string>> | null>(null);
-  const [ displayCategoriesByName, updateDisplayCategoriesByName ] = useState<Record<string, DisplayCategory> | null>(null);
-  const [ displayCategoryOrder, updateDisplayCategoryOrder ] = useState<string[] | null>(null);
-  const [ datasetRecords, updateDatasetRecords ] = useState<DatasetRecord[] | null>(null);
+  const [ questionNamesByDatasetAndCategory, updateQuestionNamesByDatasetAndCategory ] = useState<Record<string, Record<string, string>> | undefined>(undefined);
+  const [ displayCategoriesByName, updateDisplayCategoriesByName ] = useState<Record<string, DisplayCategory> | undefined>(undefined);
+  const [ displayCategoryOrder, updateDisplayCategoryOrder ] = useState<string[] | undefined>(undefined);
+  const [ datasetRecords, updateDatasetRecords ] = useState<DatasetRecord[] | undefined>(undefined);
   const [ showingOneRecord, updateShowingOneRecord ] = useState(showingRecordToggle);
 
   const selectedDataSetRecord = useMemo(
-    () => !datasetRecords || !questionNamesByDatasetAndCategory
-      ? null
-      : datasetRecords.find(
-        ({ dataset_name }) =>
-          Object.values(questionNamesByDatasetAndCategory[dataset_name]).includes(searchName)
-      ), 
+    () => getSelectedDataSetRecord(datasetRecords, questionNamesByDatasetAndCategory, searchName),
     [ datasetRecords, questionNamesByDatasetAndCategory, searchName ]
   );
 
   const filteredDatasetRecords = useMemo(
-    () => !datasetRecords || !questionNamesByDatasetAndCategory
-      ? null
-      : !showingOneRecord
-      ? datasetRecords
-      : datasetRecords.filter(record => record === selectedDataSetRecord), 
-    [ datasetRecords, showingOneRecord, selectedDataSetRecord ]
+    () => getFilteredDatasetRecords(datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord),
+    [ datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord ]
   );
     
-  // TODO Discuss the use of hooks for data-fetching (redux-observable vs. hooks vs. suspense)
   useWdkEffect(wdkService => {
     if (
       !questions || 
@@ -351,6 +323,58 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       )
   );
 };
+
+function getTableQuestionMetadata(
+  questions: Question[] | undefined, 
+  internalSearchName: string,
+  searchName: string
+) {
+  if (!questions) {
+    return [ undefined, undefined, undefined ];
+  }
+
+  const internalQuestion = questions.find(question => question.urlSegment === internalSearchName);
+
+  if (!internalQuestion || !internalQuestion.properties) {
+    return [ undefined, undefined, undefined ];
+  }
+
+  const {
+    datasetCategory = [],
+    datasetSubtype = []
+  } = internalQuestion.properties;
+
+  return [
+    internalQuestion.outputRecordClassName,
+    datasetCategory.join(''),
+    datasetSubtype.join('')
+  ];
+}
+
+function getSelectedDataSetRecord(
+  datasetRecords: DatasetRecord[] | undefined,
+  questionNamesByDatasetAndCategory: ReturnType<typeof getDisplayCategoryMetadata>['questionNamesByDatasetAndCategory'] | undefined,
+  searchName: string
+) {
+  return !datasetRecords || !questionNamesByDatasetAndCategory
+    ? undefined
+    : datasetRecords.find(
+      ({ dataset_name }) => Object.values(questionNamesByDatasetAndCategory[dataset_name]).includes(searchName)
+    );
+}
+
+function getFilteredDatasetRecords(
+  datasetRecords: DatasetRecord[] | undefined,
+  questionNamesByDatasetAndCategory: ReturnType<typeof getDisplayCategoryMetadata>['questionNamesByDatasetAndCategory'] | undefined,
+  showingOneRecord: boolean,
+  selectedDataSetRecord: DatasetRecord | undefined
+) {
+  return !datasetRecords || !questionNamesByDatasetAndCategory
+    ? undefined
+    : !showingOneRecord
+    ? datasetRecords
+    : datasetRecords.filter(record => record === selectedDataSetRecord)
+}
 
 function getAnswerSpec(datasetCategory: string, datasetSubtype: string) {
   return {
