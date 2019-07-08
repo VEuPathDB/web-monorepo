@@ -1,9 +1,10 @@
+import { toUpper } from 'lodash';
 import React from 'react';
-import { StepDetailProps } from 'wdk-client/Views/Strategy/Types';
-import { cxStepBoxes } from 'wdk-client/Views/Strategy/ClassNames';
-import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
+import { cxStepBoxes } from 'wdk-client/Views/Strategy/ClassNames';
+import { StepDetailProps } from 'wdk-client/Views/Strategy/Types';
 
 interface Operator {
   display: React.ReactNode;
@@ -30,22 +31,25 @@ interface DispatchProps {
 
 function CombineStepDetails({ stepTree, dispatch }: StepDetailProps & DispatchProps) {
   const { step } = stepTree;
-  const currentValue = step.searchConfig.parameters[operatorParamName];
+  const currentValue = toUpper(step.searchConfig.parameters[operatorParamName]);
   return (
     <form onSubmit={e => {
       e.preventDefault();
       const operatorInput = e.currentTarget.elements.namedItem(operatorParamName);
-      if (operatorInput == null || !(operatorInput instanceof RadioNodeList)) {
-        throw new Error(`Could not find "${operatorParamName}" input.`);
-      }
-      const operatorValue = operatorInput.value;
-      dispatch(requestUpdateStepSearchConfig(step.strategyId, step.id, {
-        ...step.searchConfig,
-        parameters: {
-          ...step.searchConfig.parameters,
-          [operatorParamName]: operatorValue
+      dispatch(() => {
+        // Do this check inside of dispatch callback so that error is captured for reporting
+        if (operatorInput == null || !(operatorInput instanceof RadioNodeList)) {
+          throw new Error(`Could not find "${operatorParamName}" input.`);
         }
-      }))
+        const operatorValue = operatorInput.value;
+        return requestUpdateStepSearchConfig(step.strategyId, step.id, {
+          ...step.searchConfig,
+          parameters: {
+            ...step.searchConfig.parameters,
+            [operatorParamName]: operatorValue
+          }
+        });
+      })
     }}>
       <div className="CombineStepDetails">
         <div className="CombineStepDetailsTitle">Revise operation</div>

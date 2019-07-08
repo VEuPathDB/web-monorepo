@@ -1,3 +1,4 @@
+import { toUpper } from 'lodash';
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
@@ -163,7 +164,7 @@ function CombineStepBoxContent(props: StepBoxProps) {
 function CombinedStepIcon(props: { step: Step }) {
   const { step } = props;
   return (
-    <div className={cx('--CombineOperator', step.searchConfig.parameters.bq_operator)}/>
+    <div className={cx('--CombineOperator', toUpper(step.searchConfig.parameters.bq_operator))}/>
   );
 }
 
