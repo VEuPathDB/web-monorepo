@@ -20,6 +20,7 @@ type StateProps = {
   questions?: Question[],
   ontology?: CategoryTreeNode
 };
+
 type OwnProps = {
   recordClass: string,
   question: string,

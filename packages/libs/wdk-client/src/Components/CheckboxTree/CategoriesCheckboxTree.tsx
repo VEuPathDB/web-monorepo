@@ -1,5 +1,5 @@
 import { negate } from 'lodash';
-import React, { ComponentClass, StatelessComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {
   getNodeId,
@@ -9,7 +9,7 @@ import {
   BasicNodeComponent,
   CategoryTreeNode
 } from 'wdk-client/Utils/CategoryUtils';
-import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
 type ChangeHandler = (ids: string[]) => void;
 
@@ -38,9 +38,10 @@ type Props = {
   renderNoResults?: (searchTerm: string, tree: CategoryTreeNode) => React.ReactNode;
   isSelectable?: boolean;
   disableHelp?: boolean;
+  linkPlacement?: LinksPosition;
 };
 
-let CategoriesCheckboxTree: StatelessComponent<Props> = props => {
+let CategoriesCheckboxTree: FunctionComponent<Props> = props => {
 
 let {
   autoFocusSearchBox,
@@ -63,6 +64,7 @@ let {
   defaultSelection,
   title,
   tree,
+  linkPlacement,
 } = props;
 
   if (tree.children.length == 0) {
@@ -85,7 +87,7 @@ let {
           name={name}
           renderNoResults={renderNoResults}
           searchIconName="filter"
-          linkPlacement={CheckboxTree.LinkPlacement.Top}
+          linkPlacement={linkPlacement || CheckboxTree.LinkPlacement.Top}
           getNodeId={getNodeId}
           getNodeChildren={visibilityFilter ? getFilteredNodeChildren(visibilityFilter) : getNodeChildren}
           searchPredicate={visibilityFilter ? nodeSearchPredicateWithHiddenNodes(visibilityFilter) : nodeSearchPredicate}

@@ -9,7 +9,12 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree } from 'wdk-client/Utils/WdkUser';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { appendStep, insertStepBefore } from 'wdk-client/Utils/StrategyUtils';
+
+import 'wdk-client/Views/Strategy/AddStepPanel.scss';
+
+const cx = makeClassNameHelper('AddStepPanel');
 
 type StateProps = {
   strategy?: StrategyDetails,
@@ -47,7 +52,7 @@ export type AddStepOperationMenuProps = {
 export type AddStepOperationFormProps = {
   strategy: StrategyDetails,
   recordClass: RecordClass,
-  currentPage?: string,
+  currentPage: string,
   advanceToPage: (nextPage: string) => void,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void
 };
@@ -69,9 +74,13 @@ const AddStepPanelView = (
   const [ selectedOperation, setSelectedOperation ] = useState<string | undefined>(undefined);
   const [ pageHistory, setPageHistory ] = useState<string[]>([]);
 
-  const currentPage = pageHistory[pageHistory.length - 1] || undefined;
+  const currentPage = pageHistory[pageHistory.length - 1];
 
   const onClickBack = useCallback(() => {
+    const newPageHistory = pageHistory.slice(0, -1);
+    if (newPageHistory.length === 0) {
+      setSelectedOperation(undefined);
+    }
     setPageHistory(pageHistory.slice(0, -1));
   }, [ pageHistory ]);
 
@@ -80,7 +89,7 @@ const AddStepPanelView = (
   }, [ pageHistory ]);
 
   const startOperationFormCallbacks = useMemo(
-    () => OPERATION_TYPES.reduce(
+    () => OPERATION_TYPE_ORDER.reduce(
       (memo, operation) => ({
         ...memo,
         [operation]: (selection: string) => {
@@ -90,7 +99,7 @@ const AddStepPanelView = (
       }),
       {} as Record<string, (selection: string) => void>
     ),
-    [ OPERATION_TYPES, setSelectedOperation, advanceToPage ]
+    [ OPERATION_TYPE_ORDER, advanceToPage ]
   );
 
   const updateStrategy = useCallback((newStepId: number, newSecondaryInput: StepTree) => {
@@ -106,58 +115,69 @@ const AddStepPanelView = (
   }, [ strategy, requestPutStrategyStepTree, addType ]);
 
   return (
-    !strategy ||
-    !recordClass
-  )
-    ? <Loading />
-    : !selectedOperation
-    ? (
-      <div>
-        {
-          OPERATION_TYPES.map(operation =>
-            <Plugin<AddStepOperationMenuProps>
-              key={operation}
-              context={{
-                type: 'addStepOperationMenu',
-                name: operation
-              }}
-              pluginProps={{
-                strategy,
-                recordClass,
-                startOperationForm: startOperationFormCallbacks[operation],
-                updateStrategy
-              }}
-            />
+    <div className={cx()}>
+      {
+        (
+          !strategy ||
+          !recordClass
+        )
+          ? <Loading />
+          : !selectedOperation
+          ? (
+            <div>
+              {
+                OPERATION_TYPE_ORDER.map(operation =>
+                  <Plugin<AddStepOperationMenuProps>
+                    key={operation}
+                    context={{
+                      type: 'addStepOperationMenu',
+                      name: operation
+                    }}
+                    pluginProps={{
+                      strategy,
+                      recordClass,
+                      startOperationForm: startOperationFormCallbacks[operation],
+                      updateStrategy
+                    }}
+                  />
+                )
+              }
+            </div>
           )
-        }
-      </div>
-    )
-    : (
-      <div>
-        <a href="#" onClick={onClickBack}>
-          Go Back
-        </a>
-        <Plugin<AddStepOperationFormProps>
-          context={{
-            type: 'addStepOperationForm',
-            name: selectedOperation
-          }}
-          pluginProps={{
-            strategy,
-            recordClass,
-            currentPage,
-            advanceToPage,
-            updateStrategy
-          }}
-        />
-      </div>
-    );
+          : (
+            <div>
+              <a href="#" onClick={onClickBack}>
+                Go Back
+              </a>
+              <Plugin<AddStepOperationFormProps>
+                context={{
+                  type: 'addStepOperationForm',
+                  name: selectedOperation
+                }}
+                pluginProps={{
+                  strategy,
+                  recordClass,
+                  currentPage,
+                  advanceToPage,
+                  updateStrategy
+                }}
+              />
+            </div>
+          )
+      }
+    </div>
+  )
 };
 
 // TODO Make this configurable
-const OPERATION_TYPES = [
-  'combine',
-  'convert'
+enum OperationTypes {
+  Combine = 'combine',
+  Convert = 'convert'
+}
+
+const OPERATION_TYPE_ORDER  = [
+  OperationTypes.Combine,
+  OperationTypes.Convert
 ];
 
 export const strategy = createSelector(

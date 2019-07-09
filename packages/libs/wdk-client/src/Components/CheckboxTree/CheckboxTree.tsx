@@ -14,7 +14,7 @@ import 'wdk-client/Components/CheckboxTree/wdk-CheckboxTree.scss';
 const NODE_STATE_PROPERTY = '__expandableTreeState';
 const NODE_CHILDREN_PROPERTY = '__expandableTreeChildren';
 
-enum LinksPosition {
+export enum LinksPosition {
   None,
   Top = 1 << 1,
   Bottom = 1 << 2,
