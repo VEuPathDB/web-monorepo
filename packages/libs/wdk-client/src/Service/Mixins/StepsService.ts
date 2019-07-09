@@ -51,6 +51,20 @@ export default (base: ServiceBase) => {
     });
   }
 
+  // get column reporter answer for the passed step
+  function getStepColumnReport(
+      stepId: number,
+      columnName: string,
+      toolName: string,
+      reportConfig: object | undefined,
+      userId: string = 'current') : Promise<any> {
+    return base.sendRequest(Decode.ok, {
+      method: 'post',
+      path: `/users/${userId}/steps/${stepId}/columns/${columnName}/reports/${toolName}`,
+      body: JSON.stringify(reportConfig)
+    });
+  }
+
   // step filters are dynamically typed, so have to pass in the expected type
   function getStepFilterSummary<T>(
     decoder: Decode.Decoder<T>,
@@ -65,7 +79,7 @@ export default (base: ServiceBase) => {
   }
 
   function deleteStep(stepId: number, userId: string = "current"): void {
-    if (stepMap.has(stepId)) stepMap.delete(stepId); 
+    if (stepMap.has(stepId)) stepMap.delete(stepId);
     base._fetchJson<void>('delete', `/users/${userId}/steps/${stepId}`);
   }
 
@@ -79,6 +93,7 @@ export default (base: ServiceBase) => {
     createStep,
     getStepCustomReport,
     getStepStandardReport,
+    getStepColumnReport,
     getStepFilterSummary,
     deleteStep,
     updateStepSearchConfig
