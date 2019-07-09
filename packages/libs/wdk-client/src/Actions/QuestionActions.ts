@@ -23,7 +23,6 @@ export type Action =
   | UpdateParamStateAction
   | ChangeGroupVisibilityAction
   | UpdateGroupStateAction
-  | UpdateRedirectToAction
 
 
 type QuestionPayload<T>  = T & {
@@ -302,25 +301,6 @@ export interface UpdateGroupStateAction {
 export function updateGroupState(payload: UpdateGroupStateAction['payload']): UpdateGroupStateAction {
   return {
     type: UPDATE_GROUP_STATE,
-    payload
-  };
-}
-
-//==============================================================================
-
-export const UPDATE_REDIRECT_TO = 'question/update-redirect-to';
-
-export interface UpdateRedirectToAction {
-  type: typeof UPDATE_REDIRECT_TO;
-  payload: Partial<{
-    stepId: number;
-    strategyId: number;
-  }>
-}
-
-export function updateRedirectTo(payload: UpdateRedirectToAction['payload']): UpdateRedirectToAction {
-  return {
-    type: UPDATE_REDIRECT_TO,
     payload
   };
 }

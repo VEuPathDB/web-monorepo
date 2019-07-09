@@ -27,9 +27,7 @@ import {
   SUBMIT_QUESTION,
   questionLoaded,
   questionNotFound,
-  questionError,
-  UPDATE_REDIRECT_TO,
-  updateRedirectTo,
+  questionError
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -83,12 +81,10 @@ export type QuestionState = {
 
 export type State = {
   questions: Record<string, QuestionState | undefined>;
-  redirectTo: Partial<{ stepId: number; strategyId: number }>;
 }
 
 const initialState: State = {
-  questions: {},
-  redirectTo: {}
+  questions: {}
 }
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -105,12 +101,6 @@ export function reduce(state: State = initialState, action: Action): State {
           }
         };
       }
-    }
-    if (action.type === UPDATE_REDIRECT_TO) {
-      return {
-        ...state,
-        redirectTo: action.payload
-      };
     }
   }
 
@@ -376,9 +366,6 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
         // page. We will also need to handle the case of adding a step to
         // an existing strategy
         return [
-          updateRedirectTo({
-            stepId: step.id
-          }),
           requestCreateStrategy({
             isSaved: false,
             isPublic: false,

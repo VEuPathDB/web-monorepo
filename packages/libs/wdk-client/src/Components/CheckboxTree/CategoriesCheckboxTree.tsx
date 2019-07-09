@@ -87,7 +87,10 @@ let {
           name={name}
           renderNoResults={renderNoResults}
           searchIconName="filter"
-          linkPlacement={linkPlacement || CheckboxTree.LinkPlacement.Top}
+          linkPlacement={linkPlacement === undefined 
+            ? CheckboxTree.LinkPlacement.Top
+            : linkPlacement
+          }
           getNodeId={getNodeId}
           getNodeChildren={visibilityFilter ? getFilteredNodeChildren(visibilityFilter) : getNodeChildren}
           searchPredicate={visibilityFilter ? nodeSearchPredicateWithHiddenNodes(visibilityFilter) : nodeSearchPredicate}

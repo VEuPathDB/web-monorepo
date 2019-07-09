@@ -1,6 +1,6 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec } from "wdk-client/Utils/WdkUser";
-import { AnswerSpec, Answer, StandardReportConfig, SearchConfig } from 'wdk-client/Utils/WdkModel';
+import { Answer, StandardReportConfig, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
 
 export const requestCreateStrategy = makeActionCreator(
@@ -119,6 +119,11 @@ export const requestUpdateStepSearchConfig = makeActionCreator(
     (strategyId: number, stepId: number, searchConfig: SearchConfig) => ({ strategyId, stepId, searchConfig })
 );
 
+export const redirectToNewSearch = makeActionCreator(
+    'redirectToNewSearch',
+    (newStrategyId: number, newStepId: number) => ({ newStrategyId, newStepId })
+);
+
 export const openStrategy = makeActionCreator(
     'openStrategy',
     (strategyId: number) => ({ strategyId })
@@ -155,4 +160,5 @@ export type Action =
 | InferAction<typeof requestDeleteStep>
 | InferAction<typeof openStrategy>
 | InferAction<typeof closeStrategy>
+| InferAction<typeof redirectToNewSearch>
 

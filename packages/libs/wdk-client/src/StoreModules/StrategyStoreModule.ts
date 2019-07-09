@@ -3,7 +3,6 @@ import { combineEpics, StateObservable } from 'redux-observable';
 
 import { Action } from 'wdk-client/Actions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { updateRedirectTo } from 'wdk-client/Actions/QuestionActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
@@ -26,6 +25,7 @@ import {
   requestUpdateStepSearchConfig,
   openStrategy,
   closeStrategy,
+  redirectToNewSearch,
 } from 'wdk-client/Actions/StrategyActions';
 
 export const key = 'strategies';
@@ -226,18 +226,20 @@ async function getFulfillCreateStep(
 }
 
 async function getFulfillNewSearch(
-  [requestStrategyAction, fulfillStrategyAction]: [InferAction<typeof requestCreateStrategy>, InferAction<typeof fulfillCreateStrategy>],
+  [requestStrategyAction, fulfillCreateStrategyAction]: [InferAction<typeof requestCreateStrategy>, InferAction<typeof fulfillCreateStrategy>],
   state$: StateObservable<RootState>,
-  { wdkService }: EpicDependencies
-) {
-  const redirectTo = state$.value.question.redirectTo;
+  { transitioner }: EpicDependencies
+): Promise<InferAction<typeof redirectToNewSearch>> {
+  const newStrategyId = fulfillCreateStrategyAction.payload.strategyId;
+  const newStepId = requestStrategyAction.payload.newStrategySpec.stepTree.stepId;
 
-  return redirectTo.stepId === requestStrategyAction.payload.newStrategySpec.stepTree.stepId
-    ? updateRedirectTo({
-        stepId: redirectTo.stepId,
-        strategyId: fulfillStrategyAction.payload.strategyId
-      })
-    : updateRedirectTo(redirectTo);
+  setTimeout(() => {
+    transitioner.transitionToInternalPage(
+      `/workspace/strategies/${newStrategyId}/${newStepId}`
+    )
+  }, 0);
+
+  return redirectToNewSearch(newStrategyId, newStepId);
 }
   
   export const observe = combineEpics(
