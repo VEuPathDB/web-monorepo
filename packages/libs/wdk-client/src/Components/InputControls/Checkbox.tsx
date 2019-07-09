@@ -9,11 +9,17 @@
 import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
-const Checkbox = (props) => {
+type Props = {
+  value: boolean;
+  onChange: (newValue: boolean) => void;
+  isDisabled?: boolean;
+}
+const Checkbox = (props: Props) => {
   let { onChange, value } = props;
-  let changeHandler = (event) => { onChange(!value); };
+  let changeHandler = (_event: React.FormEvent<HTMLInputElement>) => { onChange(!value); };
+  let isDisabled = props.isDisabled || false;
 
-  return <input type="checkbox" {...props} checked={value} onChange={changeHandler} />;
+  return <input type="checkbox" checked={value} onChange={changeHandler} disabled={isDisabled}/>;
 }
 
 export default wrappable(Checkbox);
