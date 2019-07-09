@@ -4,6 +4,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { Step } from 'wdk-client/Utils/WdkUser';
 import { Question } from 'wdk-client/Utils/WdkModel';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 interface OwnProps {
   stepId: number;
@@ -53,4 +54,4 @@ function mapPropsToState(state: RootState, props: OwnProps): StateProps {
   return { step, question };
 }
 
-export default connect(mapPropsToState)(StepFiltersController);
+export default connect(mapPropsToState)(wrappable(StepFiltersController));
