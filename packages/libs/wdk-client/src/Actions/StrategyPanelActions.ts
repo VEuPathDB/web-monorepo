@@ -50,6 +50,11 @@ export const setStrategyPanelHeightOverride = makeActionCreator(
   (viewId: string, heightOverride: number) => ({ heightOverride, viewId })
 );
 
+export const setRenameStepVisibility = makeActionCreator(
+  'strategyPanel/setRenameStepVisibility',
+  (viewId: string, stepId: number | undefined) => ({ viewId, stepId })
+)
+
 /*
 setDidYouKnowVisibility
 nextDidYouKnow
@@ -67,3 +72,4 @@ export type Action =
   | InferAction<typeof setDeleteStepDialogVisibilty>
   | InferAction<typeof setDeleteStrategyDialogVisibilty>
   | InferAction<typeof setStrategyPanelHeightOverride>
+  | InferAction<typeof setRenameStepVisibility>

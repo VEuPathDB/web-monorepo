@@ -18,18 +18,22 @@ interface Props {
   uiStepTree: UiStepTree;
   action?: string;
   insertStepVisibility?: number;
+  stepToRename?: number;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
   onStrategyDelete: () => void;
   onShowInsertStep: (stepId: number) => void;
   onHideInsertStep: () => void;
+  onShowRenameStep: (stepId: number) => void;
+  onHideRenameStep: () => void;
   onExpandNestedStrategy: (stepId: number) => void;
   onCollapseNestedStrategy: (stepId: number) => void;
+  onRenameStep: (stepId: number, newName: string) => void;
 }
 
 export default function StrategyPanel(props: Props) {
-  const { uiStepTree, strategy, onShowInsertStep, onHideInsertStep, onExpandNestedStrategy, onCollapseNestedStrategy } = props;
+  const { uiStepTree, strategy, stepToRename, onShowInsertStep, onHideInsertStep, onExpandNestedStrategy, onCollapseNestedStrategy, onShowRenameStep, onHideRenameStep, onRenameStep } = props;
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
@@ -43,8 +47,12 @@ export default function StrategyPanel(props: Props) {
         <div>
           <StepBoxes
             stepTree={uiStepTree}
+            stepToRename={stepToRename}
             onShowInsertStep={onShowInsertStep}
             onHideInsertStep={onHideInsertStep}
+            onShowRenameStep={onShowRenameStep}
+            onHideRenameStep={onHideRenameStep}
+            onRenameStep={onRenameStep}
             onExpandNestedStrategy={onExpandNestedStrategy}
             onCollapseNestedStrategy={onCollapseNestedStrategy}
           />

@@ -28,7 +28,7 @@ interface StepAction {
 const actions: StepAction[] = [
   {
     display: () => <React.Fragment>Rename</React.Fragment>,
-    onClick: () => alert('TODO'),
+    onClick: ({ stepTree, onShowRenameStep }) => onShowRenameStep(stepTree.step.id),
     isDisabled: ({ stepTree, isNested }) => isCombineUiStepTree(stepTree) && !isNested
   },
   {

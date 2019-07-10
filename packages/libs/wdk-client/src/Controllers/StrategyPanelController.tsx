@@ -9,7 +9,7 @@ import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StepTree, StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
-import { setInsertStepWizardVisibility } from 'wdk-client/Actions/StrategyPanelActions';
+import { setInsertStepWizardVisibility, setRenameStepVisibility } from 'wdk-client/Actions/StrategyPanelActions';
 
 interface OwnProps {
   strategyId: number;
@@ -25,6 +25,7 @@ type MappedProps =
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
   insertStepVisibility?: number;
+  stepToRename?: number;
 }
 
 interface MappedDispatch {
@@ -37,6 +38,9 @@ interface MappedDispatch {
   onHideInsertStep: () => void;
   onExpandNestedStrategy: (stepId: number) => void;
   onCollapseNestedStrategy: (stepId: number) => void;
+  onShowRenameStep: (stepId: number) => void;
+  onHideRenameStep: () => void;
+  onRenameStep: (stepId: number, newName: string) => void;
 }
 
 type Props = OwnProps & MappedProps & MappedDispatch;
@@ -44,13 +48,14 @@ type Props = OwnProps & MappedProps & MappedDispatch;
 function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   const panelState = state.strategyPanel[ownProps.strategyId];
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
+  const stepToRename = panelState && panelState.visibleRenameStep;
   const entry = state.strategies.strategies[ownProps.strategyId];
   const strategy = entry && entry.status === 'success' ? entry.strategy : undefined;
   const { recordClasses } = state.globalData;
   const uiStepTree = strategy && recordClasses && makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'));
   return strategy == null || uiStepTree == null
     ? { isLoading: true }
-    : { isLoading: false, strategy, uiStepTree, insertStepVisibility };
+    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, stepToRename };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
@@ -64,6 +69,9 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
     onHideInsertStep: () => setInsertStepWizardVisibility(String(props.strategyId), undefined),
     onExpandNestedStrategy: (stepId: number) => requestUpdateStepProperties(props.strategyId, stepId, { expanded: true }),
     onCollapseNestedStrategy: (stepId: number) => requestUpdateStepProperties(props.strategyId, stepId, { expanded: false }),
+    onShowRenameStep: (stepId: number) => setRenameStepVisibility(String(props.strategyId), stepId),
+    onHideRenameStep: () => setRenameStepVisibility(String(props.strategyId), undefined),
+    onRenameStep: (stepId: number, newName: string) => requestUpdateStepProperties(props.strategyId, stepId, { customName: newName })
   }, dispatch);
 }
 

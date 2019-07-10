@@ -6,6 +6,7 @@ setInsertStepWizardVisibility,
 setDeleteStepDialogVisibilty,
 setDeleteStrategyDialogVisibilty,
 setStrategyPanelHeightOverride,
+setRenameStepVisibility
 } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 
@@ -23,6 +24,7 @@ type ViewState = {
     visibleInsertStepWizard?: number  // stepId or none if not shown
     visibleDeleteStepDialog?: number  // stepId or none if not shown
     visibleDeleteStrategyDialog?: number  // strategyId or none if not shown
+    visibleRenameStep?: number // stepId or none if not shown
   };
   
   const initialViewState: ViewState = {
@@ -55,6 +57,10 @@ type ViewState = {
   
       case setStrategyPanelHeightOverride.type: {
         return { ...state, strategyPanelHeightOverride: action.payload.heightOverride };
+      }
+
+      case setRenameStepVisibility.type: {
+        return { ...state, visibleRenameStep: action.payload.stepId };
       }
   
       default: {

@@ -57,7 +57,8 @@ function StepTree(props: StepBoxesProps) {
           pluginProps={{
             ...props,
             stepTree,
-            isNested: false
+            isNested: false,
+            showRename: props.stepToRename === step.id
           }}
           defaultComponent={StepBox}
         />
@@ -75,7 +76,8 @@ function StepTree(props: StepBoxesProps) {
               isNested: (
                 step.expandedName != null &&
                 step.expandedName !== step.customName
-              )
+              ),
+              showRename: props.stepToRename === secondaryInput.step.id
             }}
             defaultComponent={StepBox}
           />
@@ -109,6 +111,35 @@ function StepBox(props: StepBoxProps) {
     </button>
   );
 
+  const renameForm = props.showRename && (
+    <form onSubmit={event => {
+      event.preventDefault();
+      const newNameElement = event.currentTarget.elements.namedItem('name');
+      const newName = newNameElement && ('value' in newNameElement) ? newNameElement.value : '';
+      if (newName !== step.customName) {
+        props.onRenameStep(step.id, newName);
+        props.onHideRenameStep();
+      }
+    }}
+    >
+      <input
+        autoFocus
+        onFocus={e => e.currentTarget.select()}
+        onBlur={() => props.onHideRenameStep()}
+        onKeyPress={e => {
+          if (e.key === 'Esc' || e.key === 'Escape') {
+            props.onHideRenameStep();
+          }
+        }}
+        className={cx('--RenameInput')}
+        type="text"
+        name="name"
+        key={step.customName}
+        defaultValue={step.customName}
+      />
+    </form>
+  );
+
   const stepDetails = (
     <StepDetailsDialog {...props} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
   )
@@ -125,13 +156,14 @@ function StepBox(props: StepBoxProps) {
         <StepComponent {...props} />
       </NavLink>
       {editButton}
+      {renameForm}
       {stepDetails}
     </div>
   );
 }
 
 function LeafStepBoxContent(props: StepBoxProps) {
-  const { stepTree } = props;
+  const { stepTree, showRename, onRenameStep, onHideRenameStep } = props;
   const { step, recordClass, nestedControlStep } = stepTree;
   return (
     <React.Fragment>
@@ -142,6 +174,7 @@ function LeafStepBoxContent(props: StepBoxProps) {
 }
 
 function TransformStepBoxContent(props: StepBoxProps) {
+  const { showRename, onRenameStep, onHideRenameStep } = props;
   const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
@@ -182,25 +215,17 @@ function StepCount(props: { step: Step, recordClass: RecordClass }) {
   return <div className={cx('--StepCount')}>{step.estimatedSize.toLocaleString()} {recordClassDisplayName}</div>
 }
 
-interface ExpandedStepProps {
-  stepTree?: UiStepTree;
-  onShowInsertStep: (stepId: number) => void;
-  onHideInsertStep: () => void;
-  onExpandNestedStrategy: (stepId: number) => void;
-  onCollapseNestedStrategy: (stepId: number) => void;
-}
-
 /**
  * Recurisvely render expanded steps
  */
-export function ExpandedSteps(props: ExpandedStepProps) {
+export function ExpandedSteps(props: StepBoxesProps) {
   const { stepTree } = props;
 
   if (stepTree == null || stepTree == null) return null;
 
   return (
     <React.Fragment>
-      <ExpandedSteps {...props} stepTree={stepTree.primaryInput}/>
+      {stepTree.primaryInput && <ExpandedSteps {...props} stepTree={stepTree.primaryInput}/>}
       {stepTree.secondaryInput && stepTree.step.expanded && (
         <React.Fragment>
           <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName}</em> <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}>close</button></div>

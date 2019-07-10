@@ -41,14 +41,19 @@ export function isCombineUiStepTree(stepTree: UiStepTree): stepTree is CombineUi
 
 export interface StepBoxesProps {
   stepTree: UiStepTree;
+  stepToRename?: number;
   onShowInsertStep: (stepId: number) => void;
   onHideInsertStep: () => void;
   onExpandNestedStrategy: (stepId: number) => void;
   onCollapseNestedStrategy: (stepId: number) => void;
+  onShowRenameStep: (stepId: number) => void;
+  onHideRenameStep: () => void;
+  onRenameStep: (stepId: number, newName: string) => void;
 }
 
 export interface StepBoxProps extends StepBoxesProps {
   isNested: boolean;
+  showRename: boolean;
 }
 
 export interface StepDetailProps extends StepBoxProps {

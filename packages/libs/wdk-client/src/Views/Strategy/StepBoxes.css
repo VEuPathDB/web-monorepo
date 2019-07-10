@@ -190,6 +190,14 @@ button.StepBoxes--EditButton:hover {
   display: inline;
 }
 
+.StepBoxes--RenameInput {
+  position: absolute;
+  top: .8em;
+  z-index: 1;
+  width: calc(100% - 2em);
+  left: .5em;
+}
+
 .StepBoxes--StepActions {
   display: flex;
   font-size: .8em;
