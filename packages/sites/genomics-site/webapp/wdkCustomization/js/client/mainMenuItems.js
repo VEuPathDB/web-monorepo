@@ -161,14 +161,14 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'genomes-and-data-types',
           text: 'Genomes and Data Types',
-          webAppUrl: '/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes',
+          webAppUrl: '/app/search/organism/GenomeDataTypes',
           tooltip: 'Table summarizing all the genomes and their different data types available in ' + siteConfig.projectId
         },
         {
           id: 'gene-metrics',
           text: 'Gene Metrics',
           tooltip: 'Table summarizing gene counts for all the available genomes, and evidence supporting them',
-          webAppUrl: '/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics'
+          webAppUrl: '/app/search/organism/GeneMetrics'
         }
       ]
     },
@@ -255,7 +255,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'community-download',
           text: 'Download Community Files',
           exclude: [EuPathDB],
-          webAppUrl: '/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads'
+          webAppUrl: '/app/search/file/UserFileUploads'
         },
         {
           id: 'eupathdb-publications',
@@ -315,7 +315,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'community-download',
           text: 'Download Community Files',
           exclude: [EuPathDB],
-          webAppUrl: '/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads'
+          webAppUrl: '/app/search/file/UserFileUploads'
         },
 //        {
 //          id: 'events',
