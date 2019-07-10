@@ -49,6 +49,7 @@ export interface StepBoxesProps {
   onShowRenameStep: (stepId: number) => void;
   onHideRenameStep: () => void;
   onRenameStep: (stepId: number, newName: string) => void;
+  onAnalyzeStep: () => void;
 }
 
 export interface StepBoxProps extends StepBoxesProps {

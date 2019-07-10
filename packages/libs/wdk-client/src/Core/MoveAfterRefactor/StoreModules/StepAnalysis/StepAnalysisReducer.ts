@@ -388,6 +388,11 @@ const insertPanelState = (state: StepAnalysesState, newPanelState: AnalysisPanel
   const menuPanelId = Object.keys(state.analysisPanelStates).find(id =>
     state.analysisPanelStates[+id].type === ANALYSIS_MENU_STATE);
 
+  // only one menu tab is allowed
+  if (menuPanelId != null && newPanelState.type === ANALYSIS_MENU_STATE) {
+    return state;
+  }
+
   const nextOrder = menuPanelId == null
     ? [ ...state.analysisPanelOrder, state.nextPanelId ]
     : [ ...state.analysisPanelOrder.filter(id => id !== +menuPanelId), state.nextPanelId, +menuPanelId ]

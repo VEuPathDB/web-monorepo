@@ -10,6 +10,7 @@ import { StepTree, StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
 import { setInsertStepWizardVisibility, setRenameStepVisibility } from 'wdk-client/Actions/StrategyPanelActions';
+import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 
 interface OwnProps {
   strategyId: number;
@@ -41,6 +42,7 @@ interface MappedDispatch {
   onShowRenameStep: (stepId: number) => void;
   onHideRenameStep: () => void;
   onRenameStep: (stepId: number, newName: string) => void;
+  onAnalyzeStep: () => void;
 }
 
 type Props = OwnProps & MappedProps & MappedDispatch;
@@ -71,7 +73,14 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
     onCollapseNestedStrategy: (stepId: number) => requestUpdateStepProperties(props.strategyId, stepId, { expanded: false }),
     onShowRenameStep: (stepId: number) => setRenameStepVisibility(String(props.strategyId), stepId),
     onHideRenameStep: () => setRenameStepVisibility(String(props.strategyId), undefined),
-    onRenameStep: (stepId: number, newName: string) => requestUpdateStepProperties(props.strategyId, stepId, { customName: newName })
+    onRenameStep: (stepId: number, newName: string) => requestUpdateStepProperties(props.strategyId, stepId, { customName: newName }),
+    // FIXME These details should be better encapsulated
+    onAnalyzeStep: () => createNewTab({
+      type: 'ANALYSIS_MENU_STATE',
+      displayName: 'New Analysis',
+      status: 'AWAITING_USER_CHOICE',
+      errorMessage: null 
+    })
   }, dispatch);
 }
 

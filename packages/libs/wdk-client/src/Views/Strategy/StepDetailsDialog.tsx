@@ -40,7 +40,7 @@ const actions: StepAction[] = [
   },
   {
     display: () => <React.Fragment>Analyze</React.Fragment>,
-    onClick: () => alert('TODO'),
+    onClick: ({ onAnalyzeStep }) => onAnalyzeStep(),
     isDisabled: ({ location, stepTree }) => !location.pathname.startsWith(getStepUrl(stepTree.step))
   },
   {

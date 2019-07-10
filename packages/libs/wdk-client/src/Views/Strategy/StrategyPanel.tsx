@@ -30,10 +30,11 @@ interface Props {
   onExpandNestedStrategy: (stepId: number) => void;
   onCollapseNestedStrategy: (stepId: number) => void;
   onRenameStep: (stepId: number, newName: string) => void;
+  onAnalyzeStep: () => void;
 }
 
 export default function StrategyPanel(props: Props) {
-  const { uiStepTree, strategy, stepToRename, onShowInsertStep, onHideInsertStep, onExpandNestedStrategy, onCollapseNestedStrategy, onShowRenameStep, onHideRenameStep, onRenameStep } = props;
+  const { uiStepTree, strategy, stepToRename, onShowInsertStep, onHideInsertStep, onExpandNestedStrategy, onCollapseNestedStrategy, onShowRenameStep, onHideRenameStep, onRenameStep, onAnalyzeStep } = props;
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
@@ -55,6 +56,7 @@ export default function StrategyPanel(props: Props) {
             onRenameStep={onRenameStep}
             onExpandNestedStrategy={onExpandNestedStrategy}
             onCollapseNestedStrategy={onCollapseNestedStrategy}
+            onAnalyzeStep={onAnalyzeStep}
           />
         </div>
       </div>

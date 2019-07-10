@@ -5,7 +5,7 @@ import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
-import { UiStepTree, StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 
