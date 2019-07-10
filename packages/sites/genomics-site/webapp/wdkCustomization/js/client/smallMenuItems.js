@@ -21,11 +21,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Organisms',
-          webAppUrl: '/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes'
+          webAppUrl: '/app/search/organism/GenomeDataTypes'
         },
         {
           text: `${projectId} Gene Metrics`,
-          webAppUrl: '/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics'
+          webAppUrl: '/app/search/organism/GeneMetrics'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
