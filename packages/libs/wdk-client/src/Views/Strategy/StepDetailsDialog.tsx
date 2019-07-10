@@ -95,30 +95,30 @@ export default withRouter(function StepDetailsDialog(props: Props) {
     <Dialog
       className={cx("--StepDetails")}
       title={(
-        <React.Fragment>
-          <div>Details for "{nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : step.customName}"</div>
-          <div className={cx("--StepActions")}>
-            {actions
-            .filter(action => action.isHidden == null || !action.isHidden(props))
-            .map((action, index) => (
-              <div key={index}>
-                <button type="button" className="link" onClick={() => {
-                  if (action.onClick) action.onClick(props);
-                  if (action.closeOnClick !== false) onClose();
-                }}
-                disabled={action.isDisabled ? action.isDisabled(props) : false}
-              ><action.display {...props}/></button>
-              </div>
-            ))}
-          </div>
-        </React.Fragment>
+        <div className={cx("--StepActions")}>
+          {actions
+          .filter(action => action.isHidden == null || !action.isHidden(props))
+          .map((action, index) => (
+            <div key={index}>
+              <button type="button" className="link" onClick={() => {
+                if (action.onClick) action.onClick(props);
+                if (action.closeOnClick !== false) onClose();
+              }}
+              disabled={action.isDisabled ? action.isDisabled(props) : false}
+            ><action.display {...props}/></button>
+            </div>
+          ))}
+        </div>
       )}
       open={isOpen}
       onClose={onClose}
     >
-      { isNested ? <NestedStepDetails {...props}/>
-      : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} />
-      : <StepDetails {...props} /> }
+      <React.Fragment>
+        <div className={cx('--StepDetailsHeading')}>Details for "{nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : step.customName}"</div>
+        { isNested ? <NestedStepDetails {...props}/>
+        : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} />
+        : <StepDetails {...props} /> }
+      </React.Fragment>
     </Dialog>
   );
 });
