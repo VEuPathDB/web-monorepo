@@ -61,8 +61,8 @@
     <a class="heading" id='stats'  href="#">Data Summary</a>
   </h3>
 
-  <c:set var="linkToDataSummary" value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes" />
-  <c:set var="linkToGeneMetrics" value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics" />
+  <c:set var="linkToDataSummary" value="/app/search/organism/GenomeDataTypes" />
+  <c:set var="linkToGeneMetrics" value="/app/search/organism/GeneMetrics" />
   <div class="menu_lefttop_drop" style="text-align:center;">
     <table width="90%" style="text-align:center;margin-left: auto;margin-right: auto;">
       <tr>
@@ -206,7 +206,7 @@
       <b>Community Files</b>
       <ul>
         <li><a href="<c:url value="/communityUpload.jsp"/>">Upload Community Files</a></li>
-        <li><a href="<c:url value="/processQuestion.do?questionFullName=UserFileQuestions.UserFileUploads"/>">Download Community Files</a></li>
+        <li><a href="<c:url value="/app/search/file/UserFileUploads"/>">Download Community Files</a></li>
         <c:if test="${project == 'PlasmoDB'}" >
           <li><a title="Access MaHPIC Data" href="${pageContext.request.contextPath}/mahpic.jsp">MaHPIC Data</a></li>
         </c:if>
