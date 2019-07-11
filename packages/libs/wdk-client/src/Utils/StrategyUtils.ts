@@ -23,7 +23,7 @@ export const insertStepBefore = (
   newStepSecondaryInput
 );
 
-const addStep = (
+export const addStep = (
   stepTree: StepTree,
   insertionPointStepId: number | undefined,
   newStepId: number,

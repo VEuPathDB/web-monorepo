@@ -46,7 +46,8 @@ export type AddStepOperationMenuProps = {
   strategy: StrategyDetails,
   recordClass: RecordClass,
   startOperationForm: (selection: string) => void,
-  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void
+  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
+  insertionPoint: number | undefined
 };
 
 export type AddStepOperationFormProps = {
@@ -54,7 +55,8 @@ export type AddStepOperationFormProps = {
   recordClass: RecordClass,
   currentPage: string,
   advanceToPage: (nextPage: string) => void,
-  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void
+  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
+  insertionPoint: number | undefined
 };
 
 const AddStepPanelView = (
@@ -114,6 +116,10 @@ const AddStepPanelView = (
     }
   }, [ strategy, requestPutStrategyStepTree, addType ]);
 
+  const insertionPoint = addType.type === 'insertBefore'
+    ? addType.stepId
+    : undefined;
+
   return (
     <div className={cx()}>
       {
@@ -137,7 +143,8 @@ const AddStepPanelView = (
                       strategy,
                       recordClass,
                       startOperationForm: startOperationFormCallbacks[operation],
-                      updateStrategy
+                      updateStrategy,
+                      insertionPoint
                     }}
                   />
                 )
@@ -159,7 +166,8 @@ const AddStepPanelView = (
                   recordClass,
                   currentPage,
                   advanceToPage,
-                  updateStrategy
+                  updateStrategy,
+                  insertionPoint
                 }}
               />
             </div>

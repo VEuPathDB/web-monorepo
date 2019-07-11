@@ -32,11 +32,6 @@ type Props = {
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 
-const onSubmit = memoize((dispatchAction: DispatchAction, urlSegment: string) => (e: React.FormEvent) => {
-  e.preventDefault();
-  dispatchAction(submitQuestion({ searchName: urlSegment }));
-});
-
 const foldChangeGroup = (
   valueType: string, 
   valueTypePlural: string, 

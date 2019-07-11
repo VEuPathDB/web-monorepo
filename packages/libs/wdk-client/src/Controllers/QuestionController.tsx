@@ -9,7 +9,8 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import {
   updateActiveQuestion,
   updateParamValue,
-  changeGroupVisibility
+  changeGroupVisibility,
+  SubmissionMetadata
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
@@ -20,16 +21,17 @@ const ActionCreators = {
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { question: string, recordClass: string; }
+type OwnProps = { question: string, recordClass: string, submissionMetadata: SubmissionMetadata };
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 type Props = DispatchProps & StateProps & {
   searchName: string,
-  recordClassName: string
+  recordClassName: string,
+  submissionMetadata: SubmissionMetadata
 };
 
 function QuestionController(props: Props) {
-  const { dispatch, eventHandlers, searchName, recordClassName, ...state } = props;
+  const { dispatch, eventHandlers, searchName, recordClassName, submissionMetadata, ...state } = props;
   
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
@@ -90,7 +92,8 @@ function QuestionController(props: Props) {
         parameterElements,
         state: state,
         eventHandlers: eventHandlers,
-        dispatchAction: dispatch
+        dispatchAction: dispatch,
+        submissionMetadata: submissionMetadata
       }}
     />
   );
@@ -103,7 +106,8 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
     ...stateProps,
     ...dispatchProps,
     searchName: ownProps.question,
-    recordClassName: ownProps.recordClass
+    recordClassName: ownProps.recordClass,
+    submissionMetadata: ownProps.submissionMetadata
   })
 )
 

@@ -11,7 +11,8 @@ import {
   updateParamValue,
   submitQuestion,
   updateCustomQuestionName,
-  updateQuestionWeight
+  updateQuestionWeight,
+  SubmissionMetadata
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 import { TooltipPosition } from 'wdk-client/Components/Overlays/Tooltip';
@@ -28,6 +29,7 @@ export type Props = {
   dispatchAction: DispatchAction;
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
+  submissionMetadata: SubmissionMetadata;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
   onSubmit?: (e: React.FormEvent) => void;
 }
@@ -47,7 +49,7 @@ export default function DefaultQuestionForm(props: Props) {
       onSubmit(e);
     }
 
-    dispatchAction(submitQuestion({ searchName: question.urlSegment }));
+    dispatchAction(submitQuestion({ searchName: question.urlSegment, submissionMetadata: props.submissionMetadata }));
   }
 
   let handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

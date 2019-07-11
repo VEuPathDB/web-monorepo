@@ -160,9 +160,35 @@ export function updateQuestionWeight(payload: UpdateQuestionWeightAction['payloa
 
 export const SUBMIT_QUESTION = 'question/submit-question';
 
+// TODO Consider breaking these into multiple actions
+type NewStrategy = {
+  type: 'create-strategy'
+}
+
+type AddBinaryStep = {
+  type: 'add-binary-step',
+  strategyId: number,
+  operatorSearchName: string,
+  insertionPoint: number | undefined
+}
+
+type AddUnaryStep = {
+  type: 'add-unary-step',
+  strategyId: number,
+  insertionPoint: number | undefined
+}
+
+type EditStep = {
+  type: 'edit-step',
+  strategyId: number,
+  stepId: number
+}
+
+export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | EditStep
+
 export interface SubmitQuestionAction {
   type: typeof SUBMIT_QUESTION;
-  payload: QuestionPayload<{}>;
+  payload: QuestionPayload<{ submissionMetadata: SubmissionMetadata }>;
 }
 
 export function submitQuestion(payload: SubmitQuestionAction['payload']): SubmitQuestionAction {

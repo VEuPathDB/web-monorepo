@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 
+import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
 import { QuestionController } from 'wdk-client/Controllers';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
@@ -24,7 +25,8 @@ type StateProps = {
 type OwnProps = {
   recordClass: string,
   question: string,
-  hash: string
+  hash: string,
+  submissionMetadata: SubmissionMetadata
 };
 
 type Props = OwnProps & StateProps;
@@ -59,7 +61,8 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   ontology,
   question: internalSearchName,
   recordClass,
-  hash: searchNameAnchorTag
+  hash: searchNameAnchorTag,
+  submissionMetadata
 }) => {
   const [ searchName, showingRecordToggle ] = searchNameAnchorTag
     ? [ searchNameAnchorTag, true ]
@@ -310,6 +313,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                           <QuestionController
                             question={searchName}
                             recordClass={recordClass}
+                            submissionMetadata={submissionMetadata}
                           />
                         )
                       })
