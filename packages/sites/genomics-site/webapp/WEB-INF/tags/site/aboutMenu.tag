@@ -16,8 +16,8 @@
   <!-- if the site has statistics on its own, not covered in the Portal Data Summary table, show them, otherwise show the genome table -->
   <c:set var="statsUrl" value="${'/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes'}"/>
 
-  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About">What is ${project}?</a></li>
- <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.EuPathDBPubs">Publications on EuPathDB sites</a></li>
+  <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.About.jsp">What is ${project}?</a></li>
+ <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp">Publications on EuPathDB sites</a></li>
  
 <br/><span class="smallTitle">------ Data in ${project}</span>
   
@@ -45,13 +45,13 @@
 
 <br/><span class="smallTitle">------ Usage and Citation</span>
   
-  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#citing">How to cite us</a></li>
+  <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citing">How to cite us</a></li>
   <c:if test="${not isPortal}">
-    <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#citingproviders">Citing Data Providers</a></li>
+    <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citingproviders">Citing Data Providers</a></li>
   </c:if>
   <li><a href="${constants.publicationUrl}">Publications that Use our Resources</a></li>
  
-  <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#use">Data Access Policy</a></li>
+  <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#use">Data Access Policy</a></li>
 
   <li><a href="/documents/EuPathDB_Website_Privacy_Policy.shtml">Website Privacy Policy</a></li>
 
@@ -59,12 +59,12 @@
 
 <br/><span class="smallTitle">------ Who are we?</span>
   
-	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.AboutAll#swg">Scientific Working Group</a></li>
+	<li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#swg">Scientific Working Group</a></li>
   <c:if test="${not isPortal}">
-    <li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#advisors">Scientific Advisory Team</a></li>
+    <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#advisors">Scientific Advisory Team</a></li>
   </c:if>
-	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.AboutAll#acks">Acknowledgements</a></li>
-	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.About#funding">Funding</a></li>
+	<li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#acks">Acknowledgements</a></li>
+	<li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#funding">Funding</a></li>
  <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer.pdf">EuPathDB Brochure</a></li>
   <li><a href="http://eupathdb.org/tutorials/eupathdbFlyer_Chinese.pdf">EuPathDB Brochure in Chinese</a></li>
 
@@ -72,7 +72,7 @@
 <br/><span class="smallTitle">------ Technical</span>
 	
 	<li><a href="/documents/EuPathDB_Section_508.pdf">Accessibility VPAT</a></li>
-	<li><a href="${baseUrl}/showXmlDataContent.do?name=XmlQuestions.Infrastructure">EuPathDB Infrastructure</a></li>
+	<li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.Infrastructure.jsp">EuPathDB Infrastructure</a></li>
 	<li><a href="/awstats/awstats.pl">Website Usage Statistics</a></li>
     
 </jsp:root>
