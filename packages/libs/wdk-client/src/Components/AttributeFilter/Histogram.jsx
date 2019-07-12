@@ -77,6 +77,8 @@ var Histogram = (function() {
 
     componentWillUnmount() {
       $(window).off('resize', this.handleResize);
+      if (this.plot) this.plot.destroy();
+      if (this.tooltip) this.tooltip.qtip('destroy');
     }
 
     getStateFromProps(props) {
@@ -273,17 +275,15 @@ var Histogram = (function() {
           style: {
             classes: 'qtip-wdk'
           }
-        });
+        })
+
     }
 
     handlePlotHover(event, pos, item) {
       var qtipApi = this.tooltip.qtip('api'),
         previousPoint;
 
-      if (!item) {
-        qtipApi.cache.point = false;
-        return qtipApi.hide(item);
-      }
+      if (!item) return;
 
       previousPoint = qtipApi.cache.point;
 
@@ -302,7 +302,7 @@ var Histogram = (function() {
         qtipApi.set('content.text',
           this.props.xaxisLabel + ': ' + formattedValue +
           '<br/>All ' + this.props.yaxisLabel + ': ' + unfilteredCount +
-          '<br/>Matching ' + this.props.yaxisLabel + ': ' + filteredCount);
+          '<br/>Remaining ' + this.props.yaxisLabel + ': ' + filteredCount);
         qtipApi.elements.tooltip.stop(1, 1);
         qtipApi.show(item);
       }
