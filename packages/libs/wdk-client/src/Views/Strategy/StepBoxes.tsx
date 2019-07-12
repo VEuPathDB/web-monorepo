@@ -1,4 +1,4 @@
-import { toUpper } from 'lodash';
+import { toUpper, noop, partial } from 'lodash';
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
@@ -32,22 +32,27 @@ export default function StepBoxes(props: StepBoxesProps) {
   )
 }
 
+/**
+ * Recursively render the step tree. Steps are rendered into "slots", where a
+ * slot contains one of the following:
+ *   - the root step and its secondary input
+ *   - a primary input and its secondary input if it has one (the left-most
+ *     rendered step, and transforms, do not have seondary inputs)
+ * 
+ * We also close over provided handlers with the appropriate step id and
+ * sequence of actions.
+ */
 function StepTree(props: StepBoxesProps) {
-  const { stepTree } = props;
+  const {
+    stepTree
+  } = props;
   const { step, primaryInput, secondaryInput } = stepTree;
-
-  // FIXME How should we handle this case?
-  if (step == null) {
-    return (
-      <div>Oops... could not find a step</div>
-    );
-  }
 
   return (
     <React.Fragment>
       {primaryInput && <StepTree {...props} stepTree={primaryInput} />}
       <div className={cx('--Slot')}>
-        <Plugin
+        <Plugin<StepBoxProps>
           context={{
             type: 'stepBox',
             name: step.searchName,
@@ -55,15 +60,27 @@ function StepTree(props: StepBoxesProps) {
             recordClassName: step.recordClassName
           }}
           pluginProps={{
-            ...props,
             stepTree,
             isNested: false,
-            showRename: props.stepToRename === step.id
+            isExpanded: false,
+            isInRenameMode: props.stepToRename === step.id,
+            renameStep: partial(props.onRenameStep, step.id),
+            showRenameStep: partial(props.onShowRenameStep, step.id),
+            hideRenameStep: partial(props.onHideRenameStep, step.id),
+            // no-op; primary inputs cannot be nested
+            makeNestedStrategy: noop,
+            makeUnnestStrategy: noop,
+            collapseNestedStrategy: noop,
+            expandNestedStrategy: noop,
+            showNewAnalysisTab: partial(props.onAnalyzeStep, step.id),
+            showReviseForm: TODO,
+            insertStepBefore: TODO,
+            deleteStep: TODO
           }}
           defaultComponent={StepBox}
         />
         {secondaryInput &&
-          <Plugin
+          <Plugin<StepBoxProps>
             context={{
               type: 'stepBox',
               name: step.searchName,
@@ -71,13 +88,46 @@ function StepTree(props: StepBoxesProps) {
               recordClassName: step.recordClassName
             }}
             pluginProps={{
-              ...props,
               stepTree: secondaryInput,
-              isNested: (
-                step.expandedName != null &&
-                step.expandedName !== step.customName
-              ),
-              showRename: props.stepToRename === secondaryInput.step.id
+              isNested: secondaryInput.isNested,
+              isExpanded: step.expanded,
+              isInRenameMode: secondaryInput.isNested
+                ? props.nestedStrategyBranchToRename === step.id
+                : props.stepToRename === secondaryInput.step.id,
+              showRenameStep: secondaryInput.isNested
+                ? partial(props.onShowRenameNestedStrategy, step.id)
+                : partial(props.onShowRenameStep, secondaryInput.step.id),
+              hideRenameStep: secondaryInput.isNested
+                ? partial(props.onHideRenameNestedStrategy, step.id)
+                : partial(props.onHideRenameStep, secondaryInput.step.id),
+              renameStep: (newName: string) => {
+                if (secondaryInput.isNested) {
+                  props.onRenameNestedStrategy(step.id, newName);
+                }
+                else {
+                  props.onRenameStep(secondaryInput.step.id, newName);
+                }
+              },
+              makeNestedStrategy: () => {
+                props.onMakeNestedStrategy(step.id);
+                props.onExpandNestedStrategy(step.id);
+              },
+              makeUnnestStrategy: () => {
+                props.onMakeUnnestedStrategy(step.id);
+                props.onCollapseNestedStrategy(step.id);
+                // Use empty string to indicate that the step should not be rendered as a nested strategy
+                props.onRenameNestedStrategy(step.id, '');
+              },
+              collapseNestedStrategy: () => {
+                props.onCollapseNestedStrategy(step.id);
+              },
+              expandNestedStrategy: () => {
+                props.onExpandNestedStrategy(step.id);
+              },
+              showNewAnalysisTab: partial(props.onAnalyzeStep, secondaryInput.step.id),
+              showReviseForm: TODO,
+              insertStepBefore: TODO,
+              deleteStep: TODO
             }}
             defaultComponent={StepBox}
           />
@@ -111,24 +161,24 @@ function StepBox(props: StepBoxProps) {
     </button>
   );
 
-  const renameForm = props.showRename && (
+  const renameForm = props.isInRenameMode && (
     <form onSubmit={event => {
       event.preventDefault();
       const newNameElement = event.currentTarget.elements.namedItem('name');
       const newName = newNameElement && ('value' in newNameElement) ? newNameElement.value : '';
       if (newName !== step.customName) {
-        props.onRenameStep(step.id, newName);
-        props.onHideRenameStep();
+        props.renameStep(newName);
+        props.hideRenameStep();
       }
     }}
     >
       <input
         autoFocus
         onFocus={e => e.currentTarget.select()}
-        onBlur={() => props.onHideRenameStep()}
-        onKeyPress={e => {
+        onBlur={() => props.hideRenameStep()}
+        onKeyUp={e => {
           if (e.key === 'Esc' || e.key === 'Escape') {
-            props.onHideRenameStep();
+            props.hideRenameStep();
           }
         }}
         className={cx('--RenameInput')}
@@ -163,18 +213,17 @@ function StepBox(props: StepBoxProps) {
 }
 
 function LeafStepBoxContent(props: StepBoxProps) {
-  const { stepTree, showRename, onRenameStep, onHideRenameStep } = props;
+  const { stepTree, isNested } = props;
   const { step, recordClass, nestedControlStep } = stepTree;
   return (
     <React.Fragment>
-      <StepName step={step} nestedControlStep={nestedControlStep} />
+      <StepName step={step} nestedControlStep={isNested ? nestedControlStep : undefined} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
 }
 
 function TransformStepBoxContent(props: StepBoxProps) {
-  const { showRename, onRenameStep, onHideRenameStep } = props;
   const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
@@ -226,9 +275,9 @@ export function ExpandedSteps(props: StepBoxesProps) {
   return (
     <React.Fragment>
       {stepTree.primaryInput && <ExpandedSteps {...props} stepTree={stepTree.primaryInput}/>}
-      {stepTree.secondaryInput && stepTree.step.expanded && (
+      {stepTree.secondaryInput && stepTree.secondaryInput.isNested && stepTree.step.expanded && (
         <React.Fragment>
-          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName}</em> <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}>close</button></div>
+          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName || stepTree.secondaryInput.step.customName}</em> <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}>close</button></div>
           <div className="StrategyPanel--Panel" style={{ display: 'block', boxShadow: `0 0 0 2px ${stepTree.secondaryInput.color}` }}>
             <StepBoxes {...props} stepTree={stepTree.secondaryInput}/>
           </div>
@@ -238,3 +287,6 @@ export function ExpandedSteps(props: StepBoxesProps) {
   );
 }
 
+function TODO() {
+  alert('TODO')
+}

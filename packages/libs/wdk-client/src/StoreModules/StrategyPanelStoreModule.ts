@@ -1,13 +1,6 @@
 import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
-import {
-setStepDetailsVisibility,
-setInsertStepWizardVisibility,
-setDeleteStepDialogVisibilty,
-setDeleteStrategyDialogVisibilty,
-setStrategyPanelHeightOverride,
-setRenameStepVisibility
-} from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setDeleteStrategyDialogVisibilty, setInsertStepWizardVisibility, setRenameNestedStrategyVisibility, setRenameStepVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 
 /*
@@ -25,10 +18,13 @@ type ViewState = {
     visibleDeleteStepDialog?: number  // stepId or none if not shown
     visibleDeleteStrategyDialog?: number  // strategyId or none if not shown
     visibleRenameStep?: number // stepId or none if not shown
+    visibleRenameNestedStrategyBranch?: number // stepId or none if not shown
+    nestedStrategyBranchIds: number[]; // step ids
   };
   
   const initialViewState: ViewState = {
-    strategyPanelIsVisible: false  // the default for this should come from client init file
+    strategyPanelIsVisible: false,  // the default for this should come from client init file,
+    nestedStrategyBranchIds: []
   };
   
   export const reduce = indexByActionProperty(
@@ -38,6 +34,10 @@ type ViewState = {
 
   function reduceView(state: ViewState = initialViewState, action: Action): ViewState {
     switch (action.type) {
+
+      case openStrategyPanel.type: {
+        return initialViewState;
+      }
 
       case setStepDetailsVisibility.type: {
         return { ...state, visibleStepDetails: action.payload.stepId };
@@ -60,7 +60,19 @@ type ViewState = {
       }
 
       case setRenameStepVisibility.type: {
-        return { ...state, visibleRenameStep: action.payload.stepId };
+        return { ...state, visibleRenameStep: action.payload.stepId, visibleRenameNestedStrategyBranch: undefined };
+      }
+
+      case setRenameNestedStrategyVisibility.type: {
+        return { ...state, visibleRenameNestedStrategyBranch: action.payload.branchStepId, visibleRenameStep: undefined };
+      }
+
+      case nestStrategy.type: {
+        return { ...state, nestedStrategyBranchIds: [ ...state.nestedStrategyBranchIds, action.payload.branchStepId ]};
+      }
+
+      case unnestStrategy.type: {
+        return { ...state, nestedStrategyBranchIds: state.nestedStrategyBranchIds.filter(id => id !== action.payload.branchStepId)};
       }
   
       default: {

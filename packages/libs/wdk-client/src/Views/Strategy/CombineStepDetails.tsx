@@ -13,6 +13,7 @@ interface Operator {
 
 const operatorParamName = 'bq_operator';
 
+// FIXME This is now an enum param... either get values from enum param, or make sure these are the same
 const standardOperators: Operator[] = [
   { display: <React.Fragment>A <strong>INTERSECT</strong> B</React.Fragment>, value: 'INTERSECT' },
   { display: <React.Fragment>A <strong>UNION</strong> B</React.Fragment>, value: 'UNION' },
@@ -29,13 +30,14 @@ interface DispatchProps {
   dispatch: Dispatch; 
 }
 
-function CombineStepDetails({ stepTree, dispatch }: StepDetailProps & DispatchProps) {
+function CombineStepDetails({ stepTree, dispatch, onClose }: StepDetailProps & DispatchProps) {
   const { step } = stepTree;
   const currentValue = toUpper(step.searchConfig.parameters[operatorParamName]);
   return (
     <form onSubmit={e => {
       e.preventDefault();
       const operatorInput = e.currentTarget.elements.namedItem(operatorParamName);
+      onClose();
       dispatch(() => {
         // Do this check inside of dispatch callback so that error is captured for reporting
         if (operatorInput == null || !(operatorInput instanceof RadioNodeList)) {

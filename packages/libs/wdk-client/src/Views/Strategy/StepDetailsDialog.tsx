@@ -6,12 +6,9 @@ import CombineStepDetails from 'wdk-client/Views/Strategy/CombineStepDetails';
 import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
 import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
 import { getStepUrl } from 'wdk-client/Views/Strategy/StrategyUtils';
-import { isCombineUiStepTree, isLeafUiStepTree, StepBoxProps } from 'wdk-client/Views/Strategy/Types';
+import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps } from 'wdk-client/Views/Strategy/Types';
 
-interface Props extends StepBoxProps, RouteComponentProps<any> {
-  isOpen: boolean;
-  onClose: () => void;
-}
+type Props = RouteComponentProps<any> & StepDetailProps
 
 interface StepAction {
   /** Text of the button */
@@ -25,10 +22,11 @@ interface StepAction {
   /** The dialog should be closed when the button is clicked */
   closeOnClick?: boolean;
 }
+
 const actions: StepAction[] = [
   {
     display: () => <React.Fragment>Rename</React.Fragment>,
-    onClick: ({ stepTree, onShowRenameStep }) => onShowRenameStep(stepTree.step.id),
+    onClick: ({ showRenameStep }) => showRenameStep(),
     isDisabled: ({ stepTree, isNested }) => isCombineUiStepTree(stepTree) && !isNested
   },
   {
@@ -40,7 +38,7 @@ const actions: StepAction[] = [
   },
   {
     display: () => <React.Fragment>Analyze</React.Fragment>,
-    onClick: ({ onAnalyzeStep }) => onAnalyzeStep(),
+    onClick: ({ showNewAnalysisTab }) => showNewAnalysisTab(),
     isDisabled: ({ location, stepTree }) => !location.pathname.startsWith(getStepUrl(stepTree.step))
   },
   {
@@ -50,12 +48,18 @@ const actions: StepAction[] = [
   },
   {
     display: () => <React.Fragment>Make nested strategy</React.Fragment>,
-    onClick: () => alert('todo'),
-    isHidden: ({ stepTree, isNested }) => !isLeafUiStepTree(stepTree) || isNested
+    onClick: ({ makeNestedStrategy }) => {
+      makeNestedStrategy();
+    },
+    isHidden: ({ stepTree, isNested }) => (
+      !isLeafUiStepTree(stepTree) ||
+      stepTree.nestedControlStep == null ||
+      isNested
+    )
   },
   {
     display: () => <React.Fragment>Unnest strategy</React.Fragment>,
-    onClick: () => alert('todo'),
+    onClick: ({ makeUnnestStrategy }) => makeUnnestStrategy(),
     isDisabled: ({ stepTree }) => isCombineUiStepTree(stepTree),
     isHidden: ({ isNested }) => !isNested
   },
@@ -65,21 +69,19 @@ const actions: StepAction[] = [
         ? 'Hide nested'
         : 'Show nested'
       }</React.Fragment>,
-    onClick: ({ stepTree, onCollapseNestedStrategy, onExpandNestedStrategy }) => {
-      const controlStep = stepTree.nestedControlStep ? stepTree.nestedControlStep : undefined;
-      if (controlStep == null) return;
-      if (controlStep.expanded) onCollapseNestedStrategy(controlStep.id);
-      else onExpandNestedStrategy(controlStep.id);
+    onClick: ({ isExpanded, collapseNestedStrategy, expandNestedStrategy }) => {
+      if (isExpanded) collapseNestedStrategy();
+      else expandNestedStrategy();
     },
     isHidden: ({ isNested }) => !isNested
   },
   {
     display: () => <React.Fragment>Insert step before</React.Fragment>,
-    onClick: () => alert('todo')
+    onClick: ({ insertStepBefore }) => insertStepBefore()
   },
   {
     display: () => <React.Fragment>Delete</React.Fragment>,
-    onClick: () => alert('todo')
+    onClick: ({ deleteStep }) => deleteStep()
   }
 ]
 

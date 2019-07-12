@@ -19,6 +19,7 @@ interface Props {
   action?: string;
   insertStepVisibility?: number;
   stepToRename?: number;
+  nestedStrategyBranchToRename?: number;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
@@ -27,14 +28,37 @@ interface Props {
   onHideInsertStep: () => void;
   onShowRenameStep: (stepId: number) => void;
   onHideRenameStep: () => void;
-  onExpandNestedStrategy: (stepId: number) => void;
-  onCollapseNestedStrategy: (stepId: number) => void;
+  onShowRenameNestedStrategy: (branchStepId: number) => void;
+  onHideRenameNestedStrategy: () => void;
+  onMakeNestedStrategy: (branchStepId: number) => void;
+  onMakeUnnestedStrategy: (branchStepId: number) => void;
+  onExpandNestedStrategy: (branchStepId: number) => void;
+  onCollapseNestedStrategy: (branchStepId: number) => void;
   onRenameStep: (stepId: number, newName: string) => void;
+  onRenameNestedStrategy: (branchStepId: number, newName: string) => void;
   onAnalyzeStep: () => void;
 }
 
 export default function StrategyPanel(props: Props) {
-  const { uiStepTree, strategy, stepToRename, onShowInsertStep, onHideInsertStep, onExpandNestedStrategy, onCollapseNestedStrategy, onShowRenameStep, onHideRenameStep, onRenameStep, onAnalyzeStep } = props;
+  const {
+    uiStepTree,
+    strategy,
+    stepToRename,
+    nestedStrategyBranchToRename,
+    onShowInsertStep,
+    onHideInsertStep,
+    onMakeNestedStrategy,
+    onMakeUnnestedStrategy,
+    onExpandNestedStrategy,
+    onCollapseNestedStrategy,
+    onShowRenameStep,
+    onHideRenameStep,
+    onShowRenameNestedStrategy,
+    onHideRenameNestedStrategy,
+    onRenameStep,
+    onRenameNestedStrategy,
+    onAnalyzeStep,
+  } = props;
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
@@ -49,13 +73,19 @@ export default function StrategyPanel(props: Props) {
           <StepBoxes
             stepTree={uiStepTree}
             stepToRename={stepToRename}
+            nestedStrategyBranchToRename={nestedStrategyBranchToRename}
             onShowInsertStep={onShowInsertStep}
             onHideInsertStep={onHideInsertStep}
-            onShowRenameStep={onShowRenameStep}
-            onHideRenameStep={onHideRenameStep}
-            onRenameStep={onRenameStep}
+            onMakeNestedStrategy={onMakeNestedStrategy}
+            onMakeUnnestedStrategy={onMakeUnnestedStrategy}
             onExpandNestedStrategy={onExpandNestedStrategy}
             onCollapseNestedStrategy={onCollapseNestedStrategy}
+            onShowRenameStep={onShowRenameStep}
+            onHideRenameStep={onHideRenameStep}
+            onShowRenameNestedStrategy={onShowRenameNestedStrategy}
+            onHideRenameNestedStrategy={onHideRenameNestedStrategy}
+            onRenameStep={onRenameStep}
+            onRenameNestedStrategy={onRenameNestedStrategy}
             onAnalyzeStep={onAnalyzeStep}
           />
         </div>

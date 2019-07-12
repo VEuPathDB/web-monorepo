@@ -8,6 +8,7 @@ export interface UiStepTree {
   primaryInput?: UiStepTree;
   secondaryInput?: UiStepTree;
   nestedControlStep?: Step;
+  isNested: boolean;
 }
 
 // specialized UiStepTree types and guards
@@ -42,20 +43,41 @@ export function isCombineUiStepTree(stepTree: UiStepTree): stepTree is CombineUi
 export interface StepBoxesProps {
   stepTree: UiStepTree;
   stepToRename?: number;
+  nestedStrategyBranchToRename?: number;
   onShowInsertStep: (stepId: number) => void;
   onHideInsertStep: () => void;
+  onMakeNestedStrategy: (branchId: number) => void;
+  onMakeUnnestedStrategy: (branchId: number) => void;
   onExpandNestedStrategy: (stepId: number) => void;
   onCollapseNestedStrategy: (stepId: number) => void;
   onShowRenameStep: (stepId: number) => void;
   onHideRenameStep: () => void;
+  onShowRenameNestedStrategy: (branchStepId: number) => void;
+  onHideRenameNestedStrategy: () => void;
   onRenameStep: (stepId: number, newName: string) => void;
+  onRenameNestedStrategy: (branchStepId: number, newName: string) => void;
   onAnalyzeStep: () => void;
 }
 
-export interface StepBoxProps extends StepBoxesProps {
+export interface StepBoxProps {
+  stepTree: UiStepTree;
   isNested: boolean;
-  showRename: boolean;
+  isExpanded: boolean;
+  isInRenameMode: boolean;
+  renameStep: (newName: string) => void;
+  showRenameStep: () => void;
+  hideRenameStep: () => void;
+  makeNestedStrategy: () => void;
+  makeUnnestStrategy: () => void;
+  collapseNestedStrategy: () => void;
+  expandNestedStrategy: () => void;
+  showNewAnalysisTab: () => void;
+  showReviseForm: () => void;
+  insertStepBefore: () => void;
+  deleteStep: () => void;
 }
 
 export interface StepDetailProps extends StepBoxProps {
+  isOpen: boolean;
+  onClose: () => void;
 }

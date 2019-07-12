@@ -34,6 +34,7 @@ function StrategyController({ stepId, strategyId, action, dispatch }: Props) {
           You have not selected a strategy. Please run a new search, or select a strategy from your <Link to="/workspace/strategies/all">history</Link>.
         </div>}
       {strategyId && <StrategyPanelController
+        viewId="active"
         strategyId={strategyId}
         stepId={stepId}
         action={action}
