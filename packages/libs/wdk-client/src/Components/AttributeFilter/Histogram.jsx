@@ -270,7 +270,8 @@ var Histogram = (function() {
           show: false,
           hide: {
             event: false,
-            fixed: true
+            fixed: true,
+            inactive: 2000
           },
           style: {
             classes: 'qtip-wdk'
