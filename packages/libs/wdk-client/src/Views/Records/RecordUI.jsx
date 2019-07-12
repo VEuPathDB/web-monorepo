@@ -116,6 +116,7 @@ class RecordUI extends Component {
                   title={this.props.navigationVisible ? 'Close sidebar' : 'Open sidebar'}/>
               </button>
               <RecordNavigationSection
+                heading={this.props.record.displayName}
                 record={this.props.record}
                 recordClass={this.props.recordClass}
                 categoryTree={this.props.categoryTree}
