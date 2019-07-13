@@ -318,6 +318,7 @@ export interface SearchConfig {
   parameters: Record<string, string>;
   legacyFilterName?: string;
   filters?: FilterValueArray;
+  columnFilters?: Record<string,Record<string,Array<any>>>
   viewFilters?: FilterValueArray;
   wdkWeight?: number;
 }
