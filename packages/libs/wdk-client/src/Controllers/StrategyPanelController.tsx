@@ -7,7 +7,7 @@ import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy } from 'wdk
 import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
@@ -59,8 +59,13 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   const nestedStrategyBranchToRename = panelState && panelState.visibleRenameNestedStrategyBranch;
   const entry = state.strategies.strategies[ownProps.strategyId];
   const strategy = entry && entry.status === 'success' ? entry.strategy : undefined;
-  const { recordClasses } = state.globalData;
-  const uiStepTree = strategy && recordClasses && makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'), nestedStrategyBranchIds);
+  const { recordClasses, questions } = state.globalData;
+  const uiStepTree = (
+    strategy &&
+    recordClasses &&
+    questions &&
+    makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'), keyBy(questions, 'urlSegment'), nestedStrategyBranchIds)
+  );
   return strategy == null || uiStepTree == null
     ? { isLoading: true }
     : { isLoading: false, strategy, uiStepTree, insertStepVisibility, stepToRename, nestedStrategyBranchToRename };
@@ -113,7 +118,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(StrategyPanelControl
 /**
  * Transform a strategy's StepTree into a UiStepTree
  */
-function makeUiStepTree(strategy: StrategyDetails, recordClassesByName: Record<string, RecordClass>, nestedBranchIds: number[]): UiStepTree {
+function makeUiStepTree(
+  strategy: StrategyDetails,
+  recordClassesByName: Record<string, RecordClass>,
+  questionsByName: Record<string, Question>,
+  nestedBranchIds: number[]
+): UiStepTree {
   const colorIter = colors([
     '#A000A0', // purple
     '#00A0A0', // teal
@@ -127,6 +137,7 @@ function makeUiStepTree(strategy: StrategyDetails, recordClassesByName: Record<s
   function _recurse(stepTree: StepTree, nestedControlStep?: Step, color?: string, isNested: boolean = false): UiStepTree {
     const step = strategy.steps[stepTree.stepId];
     const recordClass = recordClassesByName[step.recordClassName];
+    const question = questionsByName[step.searchName];
     const primaryInput = stepTree.primaryInput && _recurse(stepTree.primaryInput);
     // XXX Should we reset coloring when we traverse a new branch of secondary inputs?
     // only secondary inputs get a color
@@ -140,6 +151,7 @@ function makeUiStepTree(strategy: StrategyDetails, recordClassesByName: Record<s
     return {
       step,
       recordClass,
+      question,
       primaryInput,
       secondaryInput,
       nestedControlStep,

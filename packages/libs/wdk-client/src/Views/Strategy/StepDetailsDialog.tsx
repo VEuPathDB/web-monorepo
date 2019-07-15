@@ -22,6 +22,8 @@ interface StepAction {
   isHidden?: (props: Props) => boolean;
   /** The dialog should be closed when the button is clicked */
   closeOnClick?: boolean;
+  /** Text to display in tooltip */
+  tooltip?: (props: Props) => string | undefined;
 }
 
 const actions: StepAction[] = [
@@ -30,17 +32,20 @@ const actions: StepAction[] = [
     onClick: ({ history, stepTree }) => {
       history.push(getStepUrl(stepTree.step));
     },
-    isDisabled: ({ location, stepTree }) => location.pathname.startsWith(getStepUrl(stepTree.step))
+    isDisabled: ({ location, stepTree }) => location.pathname.startsWith(getStepUrl(stepTree.step)),
+    tooltip: () => 'View the results of this search'
   },
   {
     display: () => <React.Fragment>Analyze</React.Fragment>,
     onClick: ({ showNewAnalysisTab }) => showNewAnalysisTab(),
-    isDisabled: ({ location, stepTree }) => !location.pathname.startsWith(getStepUrl(stepTree.step))
+    isDisabled: ({ location, stepTree }) => !location.pathname.startsWith(getStepUrl(stepTree.step)),
+    tooltip: () => 'Analyze the results of this search'
   },
   {
     display: () => <React.Fragment>Revise</React.Fragment>,
     onClick: () => alert('todo'),
-    isDisabled: ({ isNested }) => isNested
+    isDisabled: ({ isNested }) => isNested,
+    tooltip: () => 'Modify the configuration of this search'
   },
   {
     display: () => <React.Fragment>Make nested strategy</React.Fragment>,
@@ -51,13 +56,17 @@ const actions: StepAction[] = [
       !isLeafUiStepTree(stepTree) ||
       stepTree.nestedControlStep == null ||
       isNested
-    )
+    ),
+    tooltip: () => 'Create a non-linear search strategy'
   },
   {
     display: () => <React.Fragment>Unnest strategy</React.Fragment>,
     onClick: ({ makeUnnestStrategy }) => makeUnnestStrategy(),
     isDisabled: ({ stepTree }) => isCombineUiStepTree(stepTree),
-    isHidden: ({ isNested }) => !isNested
+    isHidden: ({ isNested }) => !isNested,
+    tooltip: ({ stepTree }) => isCombineUiStepTree(stepTree)
+      ? 'Nested strategies with more than one step cannot be unnested'
+      : 'Convert nested strategy into a single step'
   },
   {
     display: ({ stepTree }) => <React.Fragment>{
@@ -69,15 +78,19 @@ const actions: StepAction[] = [
       if (isExpanded) collapseNestedStrategy();
       else expandNestedStrategy();
     },
-    isHidden: ({ isNested }) => !isNested
+    isHidden: ({ isNested }) => !isNested,
+    tooltip: ({ isExpanded }) => isExpanded ? 'Hide nested strategy details' : 'Show nested strategy details'
   },
   {
     display: () => <React.Fragment>Insert step before</React.Fragment>,
-    onClick: ({ insertStepBefore }) => insertStepBefore()
+    onClick: ({ insertStepBefore }) => insertStepBefore(),
+    tooltip: () => 'Insert a search into your search strategy before this search'
   },
   {
     display: () => <React.Fragment>Delete</React.Fragment>,
-    onClick: ({ deleteStep }) => deleteStep()
+    onClick: ({ deleteStep }) => deleteStep(),
+    isDisabled: ({ isDeleteable }) => !isDeleteable,
+    tooltip: ({ isDeleteable }) => isDeleteable ? 'Delete this search from your strategy' : 'Deleting this step will yield an invalid search strategy'
   }
 ]
 
@@ -87,7 +100,7 @@ export default withRouter(function StepDetailsDialog(props: Props) {
     isOpen,
     stepTree,
     onClose,
-    renameStep
+    renameStep,
   } = props;
   const { step, nestedControlStep, recordClass } = stepTree;
   const displayName = nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : step.customName;
@@ -105,6 +118,7 @@ export default withRouter(function StepDetailsDialog(props: Props) {
                 if (action.closeOnClick !== false) onClose();
               }}
               disabled={action.isDisabled ? action.isDisabled(props) : false}
+              title={action.tooltip && action.tooltip(props)}
             ><action.display {...props}/></button>
             </div>
           ))}

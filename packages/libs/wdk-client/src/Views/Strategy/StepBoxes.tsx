@@ -42,13 +42,21 @@ export default function StepBoxes(props: StepBoxesProps) {
  */
 function StepTree(props: StepBoxesProps) {
   const {
-    stepTree
+    stepTree,
+    isDeleteable = true
   } = props;
-  const { step, primaryInput, secondaryInput } = stepTree;
+  const { step, primaryInput, secondaryInput, question } = stepTree;
+  // primary input is deleteable if the current step accepts
+  // the record type of the primary input's primary input record type,
+  // or if the primary input does not have a primary input.
+  const primaryInputIsDeletable = primaryInput != null && question.allowedPrimaryInputRecordClassNames != null && (
+    primaryInput.primaryInput == null ||
+    question.allowedPrimaryInputRecordClassNames.includes(primaryInput.primaryInput.step.recordClassName)
+  )
 
   return (
     <React.Fragment>
-      {primaryInput && <StepTree {...props} stepTree={primaryInput} />}
+      {primaryInput && <StepTree {...props} stepTree={primaryInput} isDeleteable={primaryInputIsDeletable} />}
       <div className={cx('--Slot')}>
         <Plugin<StepBoxProps>
           context={{
@@ -61,6 +69,7 @@ function StepTree(props: StepBoxesProps) {
             stepTree,
             isNested: false,
             isExpanded: false,
+            isDeleteable,
             renameStep: partial(props.onRenameStep, step.id),
             // no-op; primary inputs cannot be nested
             makeNestedStrategy: noop,
@@ -86,6 +95,7 @@ function StepTree(props: StepBoxesProps) {
               stepTree: secondaryInput,
               isNested: secondaryInput.isNested,
               isExpanded: step.expanded,
+              isDeleteable,
               renameStep: (newName: string) => {
                 if (secondaryInput.isNested) {
                   props.onRenameNestedStrategy(step.id, newName);

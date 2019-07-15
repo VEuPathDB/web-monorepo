@@ -1,10 +1,11 @@
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step } from 'wdk-client/Utils/WdkUser';
 
 export interface UiStepTree {
   color?: string;
   step: Step;
   recordClass: RecordClass;
+  question: Question;
   primaryInput?: UiStepTree;
   secondaryInput?: UiStepTree;
   nestedControlStep?: Step;
@@ -44,6 +45,7 @@ export interface StepBoxesProps {
   stepTree: UiStepTree;
   stepToRename?: number;
   nestedStrategyBranchToRename?: number;
+  isDeleteable?: boolean;
   onShowInsertStep: (stepId: number) => void;
   onHideInsertStep: () => void;
   onMakeNestedStrategy: (branchId: number) => void;
@@ -60,6 +62,7 @@ export interface StepBoxProps {
   stepTree: UiStepTree;
   isNested: boolean;
   isExpanded: boolean;
+  isDeleteable: boolean;
   renameStep: (newName: string) => void;
   makeNestedStrategy: () => void;
   makeUnnestStrategy: () => void;
