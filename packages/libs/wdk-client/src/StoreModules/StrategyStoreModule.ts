@@ -26,7 +26,11 @@ import {
   openStrategy,
   closeStrategy,
   redirectToNewSearch,
+  fulfillDeleteStep,
+  requestRemoveStepFromStepTree,
 } from 'wdk-client/Actions/StrategyActions';
+import { removeStep, getStepIds } from 'wdk-client/Utils/StrategyUtils';
+import { difference } from 'lodash';
 
 export const key = 'strategies';
 
@@ -192,6 +196,40 @@ function updateStrategyEntry(
     return fulfillStrategy(strategy);
   }
 
+  async function getFulfillStrategy_RemoveStepFromStepTree(
+    [requestAction]: [InferAction<typeof requestRemoveStepFromStepTree>],
+    state$: StateObservable<RootState>,
+    { wdkService }: EpicDependencies
+  ): Promise<InferAction<typeof fulfillStrategy>> {
+    const { strategyId, stepIdToRemove, stepTree } = requestAction.payload;
+    // First, we have to remove the step from the step tree, and then
+    // we have to delete the step.
+    const newStepTree = removeStep(stepTree, stepIdToRemove);
+    const removedSteps = difference(
+      getStepIds(stepTree),
+      getStepIds(newStepTree)
+    )
+    if (newStepTree) {
+      await wdkService.putStrategyStepTree(strategyId, newStepTree);
+    }
+    else {
+      await wdkService.deleteStrategy(strategyId);
+    }
+    await Promise.all(removedSteps.map(stepId => wdkService.deleteStep(stepId)));
+    const strategy = await wdkService.getStrategy(strategyId);
+    return fulfillStrategy(strategy);
+  }
+
+  async function getFulfillDeleteStep(
+    [requestAction]: [InferAction<typeof requestDeleteStep>],
+    state$: StateObservable<RootState>,
+    { wdkService }: EpicDependencies
+  ): Promise<InferAction<typeof fulfillDeleteStep>> {
+    const { strategyId, stepId } = requestAction.payload;
+    await wdkService.deleteStep(stepId);
+    return fulfillDeleteStep(strategyId, stepId);
+  }
+
   async function getFulfillDuplicateStrategy(
     [requestAction]: [InferAction<typeof requestDuplicateStrategy>],
     state$: StateObservable<RootState>,
@@ -250,6 +288,8 @@ async function getFulfillNewSearch(
     mrate([requestPatchStrategyProperties], getFulfillStrategy_PatchStratProps),
     mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps),
     mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig),
+    mrate([requestRemoveStepFromStepTree], getFulfillStrategy_RemoveStepFromStepTree),
+    mrate([requestDeleteStep], getFulfillDeleteStep),
     mrate([requestCreateStrategy], getFulfillCreateStrategy),
     mrate([requestDeleteStrategy], getFulfillStrategyDelete),
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),

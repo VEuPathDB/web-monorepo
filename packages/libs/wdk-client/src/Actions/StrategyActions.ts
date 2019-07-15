@@ -73,6 +73,11 @@ export const fulfillGetDuplicatedStrategyStepTree = makeActionCreator(
     (strategyId: number, requestTimestamp: number, stepTree: StepTree) => ({ strategyId, requestTimestamp,  stepTree})
 );
 
+export const requestRemoveStepFromStepTree = makeActionCreator(
+    'requestRemoveStepFromStepTree',
+    (strategyId: number, stepIdToRemove: number, stepTree: StepTree) => ({ strategyId, stepIdToRemove, stepTree })
+)
+
 export const requestUpdateStepProperties = makeActionCreator(
     'requestUpdateStepProperties',
     (strategyId: number, stepId: number, stepSpec: PatchStepSpec) => ({ strategyId, stepId, stepSpec })
@@ -113,6 +118,11 @@ export const requestDeleteStep = makeActionCreator(
     'requestDeleteStep',
     (strategyId: number, stepId: number) => ({ strategyId, stepId })
 );
+
+export const fulfillDeleteStep = makeActionCreator(
+    'fulfillDeleteStep',
+    (strategyId: number, stepId: number) => ({ strategyId, stepId })
+)
 
 export const requestUpdateStepSearchConfig = makeActionCreator(
     'requestSearchConfigUpdate',
@@ -158,6 +168,7 @@ export type Action =
 | InferAction<typeof fulfillStepStandardReport>
 | InferAction<typeof requestUpdateStepSearchConfig>
 | InferAction<typeof requestDeleteStep>
+| InferAction<typeof fulfillDeleteStep>
 | InferAction<typeof openStrategy>
 | InferAction<typeof closeStrategy>
 | InferAction<typeof redirectToNewSearch>

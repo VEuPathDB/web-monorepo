@@ -57,6 +57,7 @@ export interface StepBoxesProps {
   onRenameStep: (stepId: number, newName: string) => void;
   onRenameNestedStrategy: (branchStepId: number, newName: string) => void;
   onAnalyzeStep: () => void;
+  onDeleteStep: (stepId: number) => void;
 }
 
 export interface StepBoxProps {

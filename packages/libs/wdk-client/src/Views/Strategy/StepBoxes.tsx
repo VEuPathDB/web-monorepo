@@ -34,10 +34,8 @@ export default function StepBoxes(props: StepBoxesProps) {
 
 /**
  * Recursively render the step tree. Steps are rendered into "slots", where a
- * slot contains one of the following:
- *   - the root step and its secondary input
- *   - a primary input and its secondary input if it has one (the left-most
- *     rendered step, and transforms, do not have seondary inputs)
+ * slot contains a primary input and its secondary input if it has one (the
+ * left-most rendered step, and transforms, do not have seondary inputs)
  * 
  * We also close over provided handlers with the appropriate step id and
  * sequence of actions.
@@ -75,7 +73,7 @@ function StepTree(props: StepBoxesProps) {
             showNewAnalysisTab: partial(props.onAnalyzeStep, step.id),
             showReviseForm: TODO,
             insertStepBefore: TODO,
-            deleteStep: TODO
+            deleteStep: partial(props.onDeleteStep, step.id)
           }}
           defaultComponent={StepBox}
         />
@@ -127,7 +125,7 @@ function StepTree(props: StepBoxesProps) {
               showNewAnalysisTab: partial(props.onAnalyzeStep, secondaryInput.step.id),
               showReviseForm: TODO,
               insertStepBefore: TODO,
-              deleteStep: TODO
+              deleteStep: partial(props.onDeleteStep, step.id)
             }}
             defaultComponent={StepBox}
           />

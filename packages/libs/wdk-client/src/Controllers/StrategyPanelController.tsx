@@ -1,17 +1,16 @@
-import { keyBy, isEmpty } from 'lodash';
+import { isEmpty, keyBy, partial } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
+import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
+import { nestStrategy, setInsertStepWizardVisibility, setRenameNestedStrategyVisibility, setRenameStepVisibility, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
 import { Loading } from 'wdk-client/Components';
+import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StepTree, StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
+import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
-import { setInsertStepWizardVisibility, setRenameStepVisibility, setRenameNestedStrategyVisibility, nestStrategy, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
-import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
-import { Action } from 'wdk-client/Actions';
 
 interface OwnProps {
   viewId: string;
@@ -51,6 +50,7 @@ interface MappedDispatch {
   onAnalyzeStep: () => void;
   onMakeNestedStrategy: (branchStepId: number) => void;
   onMakeUnnestedStrategy: (branchStepId: number) => void;
+  onDeleteStep: (stepTree: StepTree, stepId: number) => void;
 }
 
 type Props = OwnProps & MappedProps & MappedDispatch;
@@ -99,7 +99,8 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
       errorMessage: null 
     }),
     onMakeNestedStrategy: (branchStepId: number) => nestStrategy(props.viewId, branchStepId),
-    onMakeUnnestedStrategy: (branchStepId: number) => unnestStrategy(props.viewId, branchStepId)
+    onMakeUnnestedStrategy: (branchStepId: number) => unnestStrategy(props.viewId, branchStepId),
+    onDeleteStep: (stepTree: StepTree, stepId: number) => requestRemoveStepFromStepTree(props.strategyId, stepId, stepTree)
   }, dispatch);
 }
 
@@ -111,7 +112,7 @@ function StrategyPanelController(props: Props) {
   if (props.isLoading) return <Loading/>;
 
   return (
-    <StrategyPanel {...props} />
+    <StrategyPanel {...props} onDeleteStep={partial(props.onDeleteStep, props.strategy.stepTree)} />
   );
 }
 

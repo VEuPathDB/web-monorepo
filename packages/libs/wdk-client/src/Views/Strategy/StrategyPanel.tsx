@@ -37,6 +37,7 @@ interface Props {
   onRenameStep: (stepId: number, newName: string) => void;
   onRenameNestedStrategy: (branchStepId: number, newName: string) => void;
   onAnalyzeStep: () => void;
+  onDeleteStep: (stepId: number) => void;
 }
 
 export default function StrategyPanel(props: Props) {
@@ -58,6 +59,7 @@ export default function StrategyPanel(props: Props) {
     onRenameStep,
     onRenameNestedStrategy,
     onAnalyzeStep,
+    onDeleteStep,
   } = props;
   return (
     <div className={cx()}>
@@ -87,6 +89,7 @@ export default function StrategyPanel(props: Props) {
             onRenameStep={onRenameStep}
             onRenameNestedStrategy={onRenameNestedStrategy}
             onAnalyzeStep={onAnalyzeStep}
+            onDeleteStep={onDeleteStep}
           />
         </div>
       </div>
