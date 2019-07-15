@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
-import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setDeleteStrategyDialogVisibilty, setInsertStepWizardVisibility, setRenameNestedStrategyVisibility, setRenameStepVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setDeleteStrategyDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 
 /*
@@ -57,14 +57,6 @@ type ViewState = {
   
       case setStrategyPanelHeightOverride.type: {
         return { ...state, strategyPanelHeightOverride: action.payload.heightOverride };
-      }
-
-      case setRenameStepVisibility.type: {
-        return { ...state, visibleRenameStep: action.payload.stepId, visibleRenameNestedStrategyBranch: undefined };
-      }
-
-      case setRenameNestedStrategyVisibility.type: {
-        return { ...state, visibleRenameNestedStrategyBranch: action.payload.branchStepId, visibleRenameStep: undefined };
       }
 
       case nestStrategy.type: {

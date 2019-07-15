@@ -61,10 +61,7 @@ function StepTree(props: StepBoxesProps) {
             stepTree,
             isNested: false,
             isExpanded: false,
-            isInRenameMode: props.stepToRename === step.id,
             renameStep: partial(props.onRenameStep, step.id),
-            showRenameStep: partial(props.onShowRenameStep, step.id),
-            hideRenameStep: partial(props.onHideRenameStep, step.id),
             // no-op; primary inputs cannot be nested
             makeNestedStrategy: noop,
             makeUnnestStrategy: noop,
@@ -89,15 +86,6 @@ function StepTree(props: StepBoxesProps) {
               stepTree: secondaryInput,
               isNested: secondaryInput.isNested,
               isExpanded: step.expanded,
-              isInRenameMode: secondaryInput.isNested
-                ? props.nestedStrategyBranchToRename === step.id
-                : props.stepToRename === secondaryInput.step.id,
-              showRenameStep: secondaryInput.isNested
-                ? partial(props.onShowRenameNestedStrategy, step.id)
-                : partial(props.onShowRenameStep, secondaryInput.step.id),
-              hideRenameStep: secondaryInput.isNested
-                ? partial(props.onHideRenameNestedStrategy, step.id)
-                : partial(props.onHideRenameStep, secondaryInput.step.id),
               renameStep: (newName: string) => {
                 if (secondaryInput.isNested) {
                   props.onRenameNestedStrategy(step.id, newName);
@@ -159,35 +147,6 @@ function StepBox(props: StepBoxProps) {
     </button>
   );
 
-  const renameForm = props.isInRenameMode && (
-    <form onSubmit={event => {
-      event.preventDefault();
-      const newNameElement = event.currentTarget.elements.namedItem('name');
-      const newName = newNameElement && ('value' in newNameElement) ? newNameElement.value : '';
-      if (newName !== step.customName) {
-        props.renameStep(newName);
-        props.hideRenameStep();
-      }
-    }}
-    >
-      <input
-        autoFocus
-        onFocus={e => e.currentTarget.select()}
-        onBlur={() => props.hideRenameStep()}
-        onKeyUp={e => {
-          if (e.key === 'Esc' || e.key === 'Escape') {
-            props.hideRenameStep();
-          }
-        }}
-        className={cx('--RenameInput')}
-        type="text"
-        name="name"
-        key={step.customName}
-        defaultValue={step.customName}
-      />
-    </form>
-  );
-
   const stepDetails = (
     <StepDetailsDialog {...props} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
   )
@@ -204,7 +163,6 @@ function StepBox(props: StepBoxProps) {
         <StepComponent {...props} />
       </NavLink>
       {editButton}
-      {renameForm}
       {stepDetails}
     </div>
   );

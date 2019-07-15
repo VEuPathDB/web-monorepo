@@ -50,16 +50,6 @@ export const setStrategyPanelHeightOverride = makeActionCreator(
   (viewId: string, heightOverride: number) => ({ heightOverride, viewId })
 );
 
-export const setRenameStepVisibility = makeActionCreator(
-  'strategyPanel/setRenameStepVisibility',
-  (viewId: string, stepId: number | undefined) => ({ viewId, stepId })
-);
-
-export const setRenameNestedStrategyVisibility = makeActionCreator(
-  'strategyPanel/setRenameBranchStepVisibility',
-  (viewId: string, branchStepId: number | undefined) => ({ viewId, branchStepId })
-)
-
 export const nestStrategy = makeActionCreator(
   'strategyPanel/nestStrategy',
   (viewId: string, branchStepId: number) => ({ viewId, branchStepId })
@@ -87,7 +77,5 @@ export type Action =
   | InferAction<typeof setDeleteStepDialogVisibilty>
   | InferAction<typeof setDeleteStrategyDialogVisibilty>
   | InferAction<typeof setStrategyPanelHeightOverride>
-  | InferAction<typeof setRenameStepVisibility>
-  | InferAction<typeof setRenameNestedStrategyVisibility>
   | InferAction<typeof nestStrategy>
   | InferAction<typeof unnestStrategy>

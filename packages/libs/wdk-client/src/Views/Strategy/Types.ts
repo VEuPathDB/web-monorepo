@@ -50,10 +50,6 @@ export interface StepBoxesProps {
   onMakeUnnestedStrategy: (branchId: number) => void;
   onExpandNestedStrategy: (stepId: number) => void;
   onCollapseNestedStrategy: (stepId: number) => void;
-  onShowRenameStep: (stepId: number) => void;
-  onHideRenameStep: () => void;
-  onShowRenameNestedStrategy: (branchStepId: number) => void;
-  onHideRenameNestedStrategy: () => void;
   onRenameStep: (stepId: number, newName: string) => void;
   onRenameNestedStrategy: (branchStepId: number, newName: string) => void;
   onAnalyzeStep: () => void;
@@ -64,10 +60,7 @@ export interface StepBoxProps {
   stepTree: UiStepTree;
   isNested: boolean;
   isExpanded: boolean;
-  isInRenameMode: boolean;
   renameStep: (newName: string) => void;
-  showRenameStep: () => void;
-  hideRenameStep: () => void;
   makeNestedStrategy: () => void;
   makeUnnestStrategy: () => void;
   collapseNestedStrategy: () => void;

@@ -7,6 +7,7 @@ import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
 import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
 import { getStepUrl } from 'wdk-client/Views/Strategy/StrategyUtils';
 import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps } from 'wdk-client/Views/Strategy/Types';
+import { SaveableTextEditor } from 'wdk-client/Components';
 
 type Props = RouteComponentProps<any> & StepDetailProps
 
@@ -24,11 +25,6 @@ interface StepAction {
 }
 
 const actions: StepAction[] = [
-  {
-    display: () => <React.Fragment>Rename</React.Fragment>,
-    onClick: ({ showRenameStep }) => showRenameStep(),
-    isDisabled: ({ stepTree, isNested }) => isCombineUiStepTree(stepTree) && !isNested
-  },
   {
     display: () => <React.Fragment>View</React.Fragment>,
     onClick: ({ history, stepTree }) => {
@@ -91,8 +87,10 @@ export default withRouter(function StepDetailsDialog(props: Props) {
     isOpen,
     stepTree,
     onClose,
+    renameStep
   } = props;
-  const { step, nestedControlStep } = stepTree;
+  const { step, nestedControlStep, recordClass } = stepTree;
+  const displayName = nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : step.customName;
   return (
     <Dialog
       className={cx("--StepDetails")}
@@ -116,7 +114,8 @@ export default withRouter(function StepDetailsDialog(props: Props) {
       onClose={onClose}
     >
       <React.Fragment>
-        <div className={cx('--StepDetailsHeading')}>Details for "{nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : step.customName}"</div>
+        <div className={cx('--StepDetailsHeading')}>Details for step <SaveableTextEditor value={displayName} onSave={renameStep} className={cx('--StepDetailsName')}/></div>
+        <div className={cx('--StepDetailsCount')}>{step.estimatedSize === -1 ? '?' : step.estimatedSize} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}</div>
         { isNested ? <NestedStepDetails {...props}/>
         : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} />
         : <StepDetails {...props} /> }

@@ -26,10 +26,6 @@ interface Props {
   onStrategyDelete: () => void;
   onShowInsertStep: (stepId: number) => void;
   onHideInsertStep: () => void;
-  onShowRenameStep: (stepId: number) => void;
-  onHideRenameStep: () => void;
-  onShowRenameNestedStrategy: (branchStepId: number) => void;
-  onHideRenameNestedStrategy: () => void;
   onMakeNestedStrategy: (branchStepId: number) => void;
   onMakeUnnestedStrategy: (branchStepId: number) => void;
   onExpandNestedStrategy: (branchStepId: number) => void;
@@ -52,10 +48,6 @@ export default function StrategyPanel(props: Props) {
     onMakeUnnestedStrategy,
     onExpandNestedStrategy,
     onCollapseNestedStrategy,
-    onShowRenameStep,
-    onHideRenameStep,
-    onShowRenameNestedStrategy,
-    onHideRenameNestedStrategy,
     onRenameStep,
     onRenameNestedStrategy,
     onAnalyzeStep,
@@ -82,10 +74,6 @@ export default function StrategyPanel(props: Props) {
             onMakeUnnestedStrategy={onMakeUnnestedStrategy}
             onExpandNestedStrategy={onExpandNestedStrategy}
             onCollapseNestedStrategy={onCollapseNestedStrategy}
-            onShowRenameStep={onShowRenameStep}
-            onHideRenameStep={onHideRenameStep}
-            onShowRenameNestedStrategy={onShowRenameNestedStrategy}
-            onHideRenameNestedStrategy={onHideRenameNestedStrategy}
             onRenameStep={onRenameStep}
             onRenameNestedStrategy={onRenameNestedStrategy}
             onAnalyzeStep={onAnalyzeStep}

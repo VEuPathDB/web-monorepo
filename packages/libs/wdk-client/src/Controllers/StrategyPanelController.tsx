@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
-import { nestStrategy, setInsertStepWizardVisibility, setRenameNestedStrategyVisibility, setRenameStepVisibility, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
 import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -41,10 +41,6 @@ interface MappedDispatch {
   onHideInsertStep: () => void;
   onExpandNestedStrategy: (branchStepId: number) => void;
   onCollapseNestedStrategy: (branchStepId: number) => void;
-  onShowRenameStep: (stepId: number) => void;
-  onHideRenameStep: () => void;
-  onShowRenameNestedStrategy: (branchStepId: number) => void;
-  onHideRenameNestedStrategy: () => void;
   onRenameStep: (stepId: number, newName: string) => void;
   onRenameNestedStrategy: (branchStepId: number, newName: string) => void;
   onAnalyzeStep: () => void;
@@ -81,10 +77,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
     onHideInsertStep: () => setInsertStepWizardVisibility(props.viewId, undefined),
     onExpandNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(props.strategyId, branchStepId, { expanded: true }),
     onCollapseNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(props.strategyId, branchStepId, { expanded: false }),
-    onShowRenameStep: (stepId: number) => setRenameStepVisibility(props.viewId, stepId),
-    onHideRenameStep: () => setRenameStepVisibility(props.viewId, undefined),
-    onShowRenameNestedStrategy: (branchStepId: number) => setRenameNestedStrategyVisibility(props.viewId, branchStepId),
-    onHideRenameNestedStrategy: () => setRenameNestedStrategyVisibility(props.viewId, undefined),
     onRenameStep: (stepId: number, newName: string) => requestUpdateStepProperties(props.strategyId, stepId, { customName: newName }),
     onRenameNestedStrategy: (branchStepId: number, newName: string) =>
       requestUpdateStepProperties(props.strategyId, branchStepId, {

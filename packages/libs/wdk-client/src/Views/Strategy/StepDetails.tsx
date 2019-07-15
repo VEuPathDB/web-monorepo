@@ -19,7 +19,7 @@ interface DispatchProps {
 }
 
 function StepDetails({ stepTree, question, assignWeight, requestQuestionWithParameters }: StepDetailProps & DispatchProps & MappedProps) {
-  const { step, recordClass } = stepTree;
+  const { step } = stepTree;
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
 
   useEffect(() => {
@@ -47,11 +47,6 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
             ))}
         </tbody>
       </table>
-      <hr/>
-      <div className="StepBoxes--StepDetailsResults">
-        <strong>Results:</strong> {step.estimatedSize ? step.estimatedSize.toLocaleString() : '?'} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}
-      </div>
-      <hr/>
       <form onSubmit={e => {
         e.preventDefault();
         const weightInput = e.currentTarget.elements.namedItem('weight');
