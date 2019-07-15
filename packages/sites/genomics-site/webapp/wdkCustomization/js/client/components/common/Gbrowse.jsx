@@ -113,8 +113,8 @@ const GbrowseLink = ({ url }) =>
 
 const GbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser</a>
-<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser &nbsp;<img src={webAppUrl + '/wdk/images/beta2-30.png'}/></a>
+<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser&nbsp;<img src={webAppUrl + '/wdk/images/invalidIcon.png'} height="20" align="center" /></a>
 </div>
 
 const PbrowseLink = ({ url }) =>
@@ -124,9 +124,15 @@ const PbrowseLink = ({ url }) =>
 
 const PbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in protein browser</a>
-<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse protein browser &nbsp;<img src={webAppUrl + '/wdk/images/beta2-30.png'}/></a>
+<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse protein browser</a>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in Gbrowse protein browser&nbsp;<img src={webAppUrl + '/wdk/images/invalidIcon.png'} height="20" align="center" /></a>
+
 </div>
+
+const JbrowseIframe = ({ jbrowseUrl,ht }) =>
+        <div>
+      <iframe src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowfullscreen="false" />
+      </div>
 
 
 export function GbrowseContext(props) {
@@ -147,15 +153,26 @@ export function GbrowseContext(props) {
       jbrowseUrl = record.attributes.syntenyJbrowseUrl;
   }
 
-  if ( jbrowseUrl ) {
+  if ( jbrowseUrl && attribute.name == 'SyntenyGbrowseUrl') {
   return (
     <div>
       <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <GbrowseImage url={url} includeImageMap={true} />
+      <JbrowseIframe jbrowseUrl={jbrowseUrl} ht="500" />
       <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
 	  )
     }
+
+  if ( jbrowseUrl ) {
+  return (
+    <div>
+      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      <JbrowseIframe jbrowseUrl={jbrowseUrl} ht="300" />
+      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+    </div>
+	  )
+    }
+
   return (
     <div>
       <GbrowseLink url={url}/>
@@ -172,7 +189,7 @@ export function ProteinContext(props) {
   return (
     <div>
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <GbrowseImage url={url} includeImageMap={true} />
+      <JbrowseIframe jbrowseUrl={jbrowseUrl} ht="300" />
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
   );
