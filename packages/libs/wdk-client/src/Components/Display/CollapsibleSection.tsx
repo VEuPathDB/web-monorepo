@@ -28,6 +28,7 @@ function CollapsibleSection(props: Props) {
   const [ containerClassName, headerClassName, contentClassName ] =
     makeClassNames(isCollapsed, defaultClassName, className);
   const Header = props.headerComponent || 'div';
+  const contentStyle = isCollapsed ? { display: 'none' } : undefined;
 
   function handleCollapsedChange() {
     setShouldRenderChildren(true);
@@ -38,7 +39,7 @@ function CollapsibleSection(props: Props) {
       <Header className={headerClassName} onClick={handleCollapsedChange}>
         {headerContent}
       </Header>
-      <div className={contentClassName}>
+      <div style={contentStyle} className={contentClassName}>
         {shouldRenderChildren ? children : null}
       </div>
     </div>
