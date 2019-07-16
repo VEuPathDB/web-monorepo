@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
-import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setDeleteStrategyDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setActiveModal, clearActiveModal } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 import { fulfillPutStrategy } from 'wdk-client/Actions/StrategyActions';
 
@@ -17,10 +17,9 @@ type ViewState = {
     visibleStepDetails?: number,  // stepId or none if not shown
     visibleInsertStepWizard?: number  // stepId or none if not shown
     visibleDeleteStepDialog?: number  // stepId or none if not shown
-    visibleDeleteStrategyDialog?: number  // strategyId or none if not shown
-    visibleRenameStep?: number // stepId or none if not shown
     visibleRenameNestedStrategyBranch?: number // stepId or none if not shown
     nestedStrategyBranchIds: number[]; // step ids
+    activeModal?: { type: string, strategyId: number, stepId?: number }
   };
   
   const initialViewState: ViewState = {
@@ -51,11 +50,15 @@ type ViewState = {
       case setDeleteStepDialogVisibilty.type: {
         return { ...state, visibleDeleteStepDialog: action.payload.stepId };
       }
-  
-      case setDeleteStrategyDialogVisibilty.type: {
-        return { ...state, visibleDeleteStrategyDialog: action.payload.strategyId };
+
+      case setActiveModal.type: {
+        return { ...state, activeModal: action.payload };
       }
-  
+
+      case clearActiveModal.type: {
+        return { ...state, activeModal: undefined };
+      }
+
       case setStrategyPanelHeightOverride.type: {
         return { ...state, strategyPanelHeightOverride: action.payload.heightOverride };
       }

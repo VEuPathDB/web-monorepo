@@ -40,11 +40,6 @@ export const setDeleteStepDialogVisibilty = makeActionCreator(
   (viewId: string, stepId: number | undefined) => ({ stepId, viewId })
 );
 
-export const setDeleteStrategyDialogVisibilty = makeActionCreator(
-  'strategyPanel/setDeleteStrategyDialogVisibilty',
-  (viewId: string, strategyId: number | undefined) => ({ strategyId, viewId })
-);
-
 export const setStrategyPanelHeightOverride = makeActionCreator(
   'strategyPanel/setStrategyPanelHeightOverride',
   (viewId: string, heightOverride: number) => ({ heightOverride, viewId })
@@ -58,6 +53,16 @@ export const nestStrategy = makeActionCreator(
 export const unnestStrategy = makeActionCreator(
   'strategyPanel/unnestStrategy',
   (viewId: string, branchStepId: number) => ({ viewId, branchStepId })
+)
+
+export const setActiveModal = makeActionCreator(
+  'strategyPanel/setActiveModal',
+  (viewId: string, type: string, strategyId: number, stepId?: number) => ({ viewId, type, strategyId, stepId })
+)
+
+export const clearActiveModal = makeActionCreator(
+  'strategyPanel/clearActiveModal',
+  (viewId: string) => ({ viewId })
 )
 
 /*
@@ -75,7 +80,8 @@ export type Action =
   | InferAction<typeof setStepDetailsVisibility>
   | InferAction<typeof setInsertStepWizardVisibility>
   | InferAction<typeof setDeleteStepDialogVisibilty>
-  | InferAction<typeof setDeleteStrategyDialogVisibilty>
   | InferAction<typeof setStrategyPanelHeightOverride>
   | InferAction<typeof nestStrategy>
   | InferAction<typeof unnestStrategy>
+  | InferAction<typeof setActiveModal>
+  | InferAction<typeof clearActiveModal>

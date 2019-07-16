@@ -13,11 +13,10 @@ import { Link } from 'wdk-client/Components';
 interface Props {
   strategyId?: number;
   stepId?: number;
-  action?: string;
   dispatch: Dispatch
 }
 
-function StrategyController({ stepId, strategyId, action, dispatch }: Props) {
+function StrategyController({ stepId, strategyId, dispatch }: Props) {
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -37,7 +36,6 @@ function StrategyController({ stepId, strategyId, action, dispatch }: Props) {
         viewId="active"
         strategyId={strategyId}
         stepId={stepId}
-        action={action}
       />}
       {/* stepId && <StepFiltersController
         strategyId={strategyId}

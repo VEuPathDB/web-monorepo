@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconAlt, Link, SaveableTextEditor } from 'wdk-client/Components';
+import { IconAlt, SaveableTextEditor } from 'wdk-client/Components';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
@@ -16,10 +16,10 @@ const cx = makeClassNameHelper('StrategyPanel');
 interface Props {
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
-  action?: string;
   insertStepVisibility?: number;
-  stepToRename?: number;
-  nestedStrategyBranchToRename?: number;
+  activeModal?: string;
+  setActiveModal: (type: string) => void;
+  clearActiveModal: () => void;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
@@ -40,8 +40,6 @@ export default function StrategyPanel(props: Props) {
   const {
     uiStepTree,
     strategy,
-    stepToRename,
-    nestedStrategyBranchToRename,
     onShowInsertStep,
     onHideInsertStep,
     onMakeNestedStrategy,
@@ -62,12 +60,10 @@ export default function StrategyPanel(props: Props) {
         </div>
       </h2>
       <div className={cx('--Panel')}>
-        <StrategyControls strategy={strategy}/>
+        <StrategyControls {...props}/>
         <div>
           <StepBoxes
             stepTree={uiStepTree}
-            stepToRename={stepToRename}
-            nestedStrategyBranchToRename={nestedStrategyBranchToRename}
             onShowInsertStep={onShowInsertStep}
             onHideInsertStep={onHideInsertStep}
             onMakeNestedStrategy={onMakeNestedStrategy}
@@ -100,10 +96,6 @@ export default function StrategyPanel(props: Props) {
   );
 }
 
-interface StrategyControlProps {
-  strategy: StrategyDetails;
-}
-
 interface StrategyAction {
   iconName: string;
   title: string;
@@ -117,7 +109,7 @@ const StrategyActions: Record<string, StrategyAction> = {
     render: (props: Props) => (
       <React.Fragment>
         <div>Are you sure you want to make a copy of your strategy?</div>
-        <div><button className="btn" type="button" onClick={() => props.onStrategyCopy(props.strategy.signature)}>Yes, make a copy</button> <Link className="btn" replace to="#">No thanks</Link></div>
+        <div><button className="btn" type="button" onClick={() => props.onStrategyCopy(props.strategy.signature)}>Yes, make a copy</button> <CloseModalButton {...props}>No thanks</CloseModalButton></div>
       </React.Fragment>
     )
   },
@@ -137,7 +129,7 @@ const StrategyActions: Record<string, StrategyAction> = {
           Copy the URL to share your search strategy:
           <br/><input type="text" autoFocus readOnly style={{ width: '20em' }} onFocus={e => e.target.select()} value={`https://plasmodb.org/import/${props.strategy.signature}`}/>
         </div>
-        <div><Link className="btn" replace to="#">Close</Link></div>
+        <div><CloseModalButton {...props}>Close</CloseModalButton></div>
       </React.Fragment>
     )
   },
@@ -148,24 +140,32 @@ const StrategyActions: Record<string, StrategyAction> = {
     render: (props: Props) => (
       <React.Fragment>
         <div>Are you sure you want to delete your strategy?</div>
-        <div><button className="btn"  type="button" onClick={() => props.onStrategyDelete()}>Yes, delete my strategy</button> <Link className="btn" replace to="#">No thanks</Link></div>
+        <div><button className="btn"  type="button" onClick={() => props.onStrategyDelete()}>Yes, delete my strategy</button> <CloseModalButton {...props}>No thanks</CloseModalButton></div>
       </React.Fragment>
     )
   }
 }
 
-function StrategyControls(props: StrategyControlProps) {
+function CloseModalButton(props: Props & { children: React.ReactNode }) {
+  return (
+    <button type="button" className="btn" onClick={() => props.clearActiveModal()}>{props.children}</button>
+  )
+}
+
+function StrategyControls(props: Props) {
   return (
     <div className={cx('--Controls')}>
       {Object.entries(StrategyActions).map(([ key, action ]) => (
-        <Link key={key} to={`#${key}`} title={action.title} replace><IconAlt fa={action.iconName}/></Link>
+        <div>
+          <button type="button" key={key} className="link" onClick={() => props.setActiveModal(key)}><IconAlt fa={action.iconName}/></button>
+        </div>
       ))}
     </div>
   );
 }
 
 function StrategyActionModal(props: Props) {
-  const action = props.action && StrategyActions[props.action];
+  const action = props.activeModal && StrategyActions[props.activeModal];
   if (!action) return null;
   return (
     <Modal>

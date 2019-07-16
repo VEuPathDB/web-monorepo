@@ -8,7 +8,7 @@ import {UiStepTree} from 'wdk-client/Views/Strategy/Types';
 interface Props extends RouteComponentProps<void> {
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
-  action?: string;
+  clearActiveModal: () => void;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
@@ -48,7 +48,7 @@ function SaveStrategyForm(props: Props) {
             </aside>
           </div>
           <div className="SaveStrategyForm--Buttons">
-            <button type="submit" className="btn">Save</button> <Link className="btn" replace to="#">Close</Link>
+            <button type="submit" className="btn">Save</button> <button type="button" className="btn" onClick={() => props.clearActiveModal()}>Close</button>
           </div>
         </form>
       </div>

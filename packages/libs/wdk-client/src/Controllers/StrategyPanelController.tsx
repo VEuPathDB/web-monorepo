@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
-import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setActiveModal, clearActiveModal } from 'wdk-client/Actions/StrategyPanelActions';
 import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -16,7 +16,6 @@ interface OwnProps {
   viewId: string;
   strategyId: number;
   stepId?: number;
-  action?: string;
 }
 
 type MappedProps = 
@@ -24,14 +23,15 @@ type MappedProps =
   isLoading: true;
 } | {
   isLoading: false;
+  activeModal?: string;
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
   insertStepVisibility?: number;
-  stepToRename?: number;
-  nestedStrategyBranchToRename?: number;
 }
 
 interface MappedDispatch {
+  setActiveModal: (type: string) => void;
+  clearActiveModal: () => void;
   requestStrategy: (id: number) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategyDelete: () => void;
@@ -54,9 +54,8 @@ type Props = OwnProps & MappedProps & MappedDispatch;
 function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   const panelState = state.strategyPanel[ownProps.viewId];
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
-  const stepToRename = panelState && panelState.visibleRenameStep;
+  const activeModal = panelState && panelState.activeModal && panelState.activeModal.strategyId === ownProps.strategyId ? panelState.activeModal.type : undefined;
   const nestedStrategyBranchIds = panelState ? panelState.nestedStrategyBranchIds : [];
-  const nestedStrategyBranchToRename = panelState && panelState.visibleRenameNestedStrategyBranch;
   const entry = state.strategies.strategies[ownProps.strategyId];
   const strategy = entry && entry.status === 'success' ? entry.strategy : undefined;
   const { recordClasses, questions } = state.globalData;
@@ -68,12 +67,14 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   );
   return strategy == null || uiStepTree == null
     ? { isLoading: true }
-    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, stepToRename, nestedStrategyBranchToRename };
+    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, activeModal };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
   return bindActionCreators({
     requestStrategy,
+    setActiveModal: (type: string) => setActiveModal(props.viewId, type, props.strategyId),
+    clearActiveModal: () => clearActiveModal(props.viewId),
     onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
     onStrategyDelete: () => requestDeleteStrategy(props.strategyId),
     onStrategyRename: (name: string) => requestPatchStrategyProperties(props.strategyId, { name }),
