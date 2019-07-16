@@ -1,14 +1,15 @@
 .wdk-CollapsibleSectionHeader {
   cursor: pointer;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .wdk-CollapsibleSectionHeader:before {
-  font-family: FontAwesome;
   content: '\f0d7';
+  font-family: FontAwesome;
   font-size: 1.2em;
-  position: absolute;
-  left: -1rem;
+  width: 1.5ex;
 }
 
 .wdk-CollapsibleSectionHeader__collapsed:before {

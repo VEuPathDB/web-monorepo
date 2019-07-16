@@ -236,6 +236,11 @@ button.StepBoxes--EditButton:hover {
 .StepBoxes--StepDetailsContent {
   display: block;
   width: 100%;
+  padding: 1em;
+}
+
+.StepBoxes--StepDetailsContent table {
+  margin: 2em 1em;
 }
 
 .StepBoxes--StepDetailsContent td,
@@ -249,7 +254,6 @@ button.StepBoxes--EditButton:hover {
   text-align: right;
   font-weight: bold;
   white-space: nowrap;
-  padding-left: 0;
 }
 
 .StepBoxes--StepDetailsResults {
@@ -270,10 +274,6 @@ button.StepBoxes--EditButton:hover {
   font-weight: bold;
 }
 
-.StepBoxes--StepDetailsCount {
-  margin-bottom: 1em;
-}
-
 .StepBoxes--StepDetailsName {
   font-style: italic;
   font-weight: normal;
@@ -287,8 +287,6 @@ button.StepBoxes--EditButton:hover {
   display: flex;
   justify-content: center;
   flex-flow: column;
-  padding: 1em 1.5em;
-  margin-top: 1em;
 }
 
 .StepBoxes--StepDetailsWeightHeader {
