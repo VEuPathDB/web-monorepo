@@ -1,28 +1,5 @@
 import { StepTree } from 'wdk-client/Utils/WdkUser';
 
-export const appendStep = (
-  stepTree: StepTree,
-  newStepId: number,
-  newStepSecondaryInput: StepTree
-) => addStep(
-  stepTree,
-  undefined,
-  newStepId,
-  newStepSecondaryInput
-);
-
-export const insertStepBefore = (
-  stepTree: StepTree,
-  insertionBeforeStepId: number,
-  newStepId: number,
-  newStepSecondaryInput: StepTree
-) => addStep(
-  stepTree,
-  insertionBeforeStepId,
-  newStepId,
-  newStepSecondaryInput
-);
-
 export const addStep = (
   stepTree: StepTree,
   insertionPointStepId: number | undefined,
@@ -30,6 +7,8 @@ export const addStep = (
   newStepSecondaryInput: StepTree | undefined
 ): StepTree => {
   if (insertionPointStepId === undefined) {
+    // Appending a step to the "end" (root) of the step tree
+
     return {
       stepId: newStepId,
       primaryInput: stepTree,
@@ -38,32 +17,85 @@ export const addStep = (
   }
 
   const newStepTree = copyStepTree(stepTree);
+  const [ insertionPoint, insertionPointParent ] = findInsertionPoint(newStepTree, insertionPointStepId);
 
-  const insertionPointNode = findInsertionPoint(newStepTree, insertionPointStepId);
+  if (insertionPoint.primaryInput) {
+    // Insert Before, Case #1: Inserting between two nodes on the primary branch
+    
+    insertionPoint.primaryInput = {
+      stepId: newStepId,
+      primaryInput: insertionPoint.primaryInput,
+      secondaryInput: newStepSecondaryInput
+    };
+  } else if (insertionPointParent) {
+    // Insert Before, Case #2: Inserting before (client-side) Step 1 in a step tree with more than one leaf
 
-  if (insertionPointNode === undefined) {
-    return newStepTree;
+    insertionPointParent.primaryInput = {
+      stepId: newStepId,
+      primaryInput: newStepSecondaryInput,
+      secondaryInput: insertionPoint
+    };
+  } else {
+    // Insert Before, Case #3: Inserting before (client-side) Step 1 in a one-leaf step tree
+
+    return {
+      stepId: newStepId,
+      primaryInput: newStepSecondaryInput,
+      secondaryInput: insertionPoint
+    };
   }
-
-  insertionPointNode.primaryInput = {
-    stepId: newStepId,
-    primaryInput: insertionPointNode.primaryInput,
-    secondaryInput: newStepSecondaryInput
-  };
 
   return newStepTree;
 };
 
-const findInsertionPoint = (stepTree: StepTree | undefined, targetStepId: number): StepTree | undefined => (
-  stepTree === undefined ||
-  stepTree.stepId === targetStepId ||
-  (
-    stepTree.secondaryInput !== undefined &&
-    stepTree.secondaryInput.stepId === targetStepId
-  )
-)
-  ? stepTree
-  : findInsertionPoint(stepTree.primaryInput, targetStepId);
+const contains = (stepTree: StepTree | undefined, targetStepId: number): boolean =>
+  stepTree === undefined
+    ? false
+    : stepTree.stepId === targetStepId
+    ? true
+    : contains(stepTree.primaryInput, targetStepId) || contains(stepTree.secondaryInput, targetStepId);
+
+const findInsertionPoint = (stepTree: StepTree, targetStepId: number): [StepTree, StepTree | undefined] => {
+  if (stepTree.stepId === targetStepId) {
+    return [stepTree, undefined];
+  }
+
+  return traversePrimaryBranchForInsertionPoint(stepTree.primaryInput, stepTree);
+
+  function traversePrimaryBranchForInsertionPoint(currentNode: StepTree | undefined, parentNode: StepTree): [StepTree, StepTree] {
+    if (currentNode === undefined) {
+      throw new Error(`Tried to insert a new step before step #${targetStepId}, but step #${targetStepId} does not appear in the tree`);
+    }
+
+    if (currentNode.stepId === targetStepId || contains(currentNode.secondaryInput, targetStepId)) {
+      return [currentNode, parentNode];
+    }
+
+    return traversePrimaryBranchForInsertionPoint(currentNode.primaryInput, currentNode);
+  }
+}
+
+export const findPreviousStepSubtree = (stepTree: StepTree, targetStepId: number): StepTree | undefined => {
+  const [ insertionPointNode ] = findInsertionPoint(stepTree, targetStepId);
+
+  return insertionPointNode.primaryInput;
+};
+
+export const findPrimaryBranchDepth = (stepTree: StepTree): number => {
+  if (stepTree === undefined) {
+    return -Infinity;
+  }
+
+  return traversePrimaryBranch(stepTree, 0);
+
+  function traversePrimaryBranch(stepTree: StepTree, depth: number = 0): number {
+    if (stepTree.primaryInput === undefined) {
+      return depth;
+    }
+
+    return traversePrimaryBranch(stepTree.primaryInput, depth + 1);
+  }
+}
 
 const copyStepTree = (stepTree: StepTree): StepTree => ({
   stepId: stepTree.stepId,

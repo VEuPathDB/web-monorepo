@@ -16,6 +16,7 @@ import {
   fulfillDuplicateStrategy,
   requestStrategy,
   fulfillStrategy,
+  fulfillPutStrategy,
   requestPatchStrategyProperties,
   requestPutStrategyStepTree,
   requestCreateStep,
@@ -35,8 +36,8 @@ import { difference } from 'lodash';
 export const key = 'strategies';
 
 export type StrategyEntry =
-  | { status: 'pending', isLoading: boolean }
-  | { status: 'success', isLoading: boolean, strategy: StrategyDetails }
+  | { status: 'pending' }
+  | { status: 'success', strategy: StrategyDetails }
 
 export type State = {
   strategies: Record<number, StrategyEntry|undefined>;
@@ -52,9 +53,8 @@ function reqStrat(state: State, strategyId: number) {
   const entry = state.strategies[strategyId];
   if (entry != null) return state;
   return updateStrategyEntry(state, strategyId, prevEntry => ({
-    status: 'pending',
     ...prevEntry,
-    isLoading: true
+    status: 'pending'
   }));  
 }
 
@@ -66,7 +66,6 @@ export function reduce(state: State = initialState, action: Action): State {
   case requestPatchStrategyProperties.type:
   case requestPutStrategyStepTree.type:
   case requestDeleteStrategy.type:
-  case requestPutStrategyStepTree.type:
   case requestUpdateStepProperties.type:
   case requestDeleteStep.type:  
   case requestUpdateStepSearchConfig.type:
@@ -75,11 +74,11 @@ export function reduce(state: State = initialState, action: Action): State {
      return reqStrat(state, strategyId);
    }
 
-  case fulfillStrategy.type:{
+  case fulfillStrategy.type: 
+  case fulfillPutStrategy.type: {
     const strategy = action.payload.strategy;
     return updateStrategyEntry(state, strategy.strategyId, {
       status: 'success',
-      isLoading: false,
       strategy
     });
   }
@@ -120,7 +119,7 @@ export function reduce(state: State = initialState, action: Action): State {
 function updateStrategyEntry(
     state: State,
     strategyId: number,
-    entry: StrategyEntry | ((prevEntry?: StrategyEntry) => StrategyEntry)
+    entry: StrategyEntry | ((prevEntry?: StrategyEntry) => StrategyEntry | undefined)
   ) {
     return {
       ...state,
@@ -145,11 +144,11 @@ function updateStrategyEntry(
     [requestAction]: [InferAction<typeof requestPutStrategyStepTree>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillStrategy>> {
+  ): Promise<InferAction<typeof fulfillPutStrategy>> {
     const {strategyId, newStepTree }  = requestAction.payload;
     await wdkService.putStrategyStepTree(strategyId, newStepTree);
     let strategy = await wdkService.getStrategy(strategyId);
-    return fulfillStrategy(strategy);
+    return fulfillPutStrategy(strategy);
   }
 
   async function getFulfillStrategy_PatchStratProps(

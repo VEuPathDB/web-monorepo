@@ -23,6 +23,11 @@ export const fulfillStrategy = makeActionCreator(
     (strategy: StrategyDetails) => ({ strategy })
 );
 
+export const fulfillPutStrategy = makeActionCreator(
+    'fulfillPutStrategy',
+    (strategy: StrategyDetails) => ({ strategy })
+);
+
 export const requestDeleteOrRestoreStrategies = makeActionCreator(
     'requestDeleteOrRestoreStrategies',
     (deleteStrategiesSpecs: DeleteStrategySpec[]) => ({ deleteStrategiesSpecs, requestTimestamp: Date.now() })
@@ -155,6 +160,7 @@ export type Action =
 | InferAction<typeof fulfillDuplicateStrategy>
 | InferAction<typeof requestStrategy>
 | InferAction<typeof fulfillStrategy>
+| InferAction<typeof fulfillPutStrategy>
 | InferAction<typeof requestPatchStrategyProperties>
 | InferAction<typeof requestPutStrategyStepTree>
 | InferAction<typeof requestGetDuplicatedStrategyStepTree>

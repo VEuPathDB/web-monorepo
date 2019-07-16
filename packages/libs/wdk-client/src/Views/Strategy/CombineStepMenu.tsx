@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
+import { get } from 'lodash';
 
 import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
@@ -15,25 +16,7 @@ import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { getTargetType, getRecordClassUrlSegment, getDisplayName, getTooltipContent, CategoryTreeNode, getLabel } from 'wdk-client/Utils/CategoryUtils';
-import { get } from 'lodash';
-
-const BOOLEAN_OPERATOR_PARAM_NAME = 'bq_operator';
-
-enum BooleanOperator {
-  Intersect = 'INTERSECT',
-  Union = 'UNION',
-  Minus = 'MINUS',
-  RMinus = 'RMINUS',
-  LOnly = 'LOnly',
-  ROnly = 'ROnly'
-}
-
-const BOOLEAN_OPERATOR_ORDER = [
-  BooleanOperator.Intersect,
-  BooleanOperator.Union,
-  BooleanOperator.Minus,
-  BooleanOperator.RMinus
-];
+import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 type StateProps = {
   basketSearchUrlSegment: string,
@@ -243,20 +226,20 @@ export const CombineStepMenuView = (
     : (
       <div>
         {
-          BOOLEAN_OPERATOR_ORDER.map(booleanOperator => (
-            <div key={booleanOperator} >
+          combineOperatorOrder.map(operator => (
+            <div key={operator} >
               <input
-                id={booleanOperator}
+                id={operator}
                 type="radio"
                 name="operator"
-                value={booleanOperator}
-                defaultChecked={booleanOperator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
+                value={operator}
+                defaultChecked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
                 onChange={e => {
                   updateBooleanOperator(e.target.value);
                 }}
               />
-              <label htmlFor={booleanOperator}>
-                <div className={cxOperator('--CombineOperator', booleanOperator)}>
+              <label htmlFor={operator}>
+                <div className={cxOperator('--CombineOperator', operator)}>
                 </div>
               </label>
             </div>
@@ -330,7 +313,7 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
           paramValues: {
             [booleanLeftOperandParamName]: '',
             [booleanRightOperandParamName]: '',
-            [BOOLEAN_OPERATOR_PARAM_NAME]: BooleanOperator.Intersect
+            [BOOLEAN_OPERATOR_PARAM_NAME]: CombineOperator.Intersect
           }
         })
       )
@@ -389,8 +372,7 @@ const submitBasket = async (
       searchName: booleanSearchUrlSegment,
       searchConfig: {
         parameters: booleanSearchState.paramValues
-      },
-      customName: booleanSearchState.question.shortDisplayName
+      }
     })
   ]);
 

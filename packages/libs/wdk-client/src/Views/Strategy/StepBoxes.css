@@ -142,19 +142,19 @@
   background-position: -30px -72px;
 }
 
-.StepBoxes--CombineOperator__MINUS {
+.StepBoxes--CombineOperator__LEFT_MINUS {
   background-position: -30px 0px;
 }
 
-.StepBoxes--CombineOperator__RMINUS {
+.StepBoxes--CombineOperator__RIGHT_MINUS {
   background-position: -30px -108px;
 }
 
-.StepBoxes--CombineOperator__RONLY {
+.StepBoxes--CombineOperator__RIGHT_ONLY {
   background-position: -30px -144px;
 }
 
-.StepBoxes--CombineOperator__LONLY {
+.StepBoxes--CombineOperator__LEFT_ONLY {
   background-position: -30px -180px;
 }
 

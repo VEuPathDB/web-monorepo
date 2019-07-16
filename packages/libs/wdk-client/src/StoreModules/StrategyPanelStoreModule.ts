@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
 import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setDeleteStrategyDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
+import { fulfillPutStrategy } from 'wdk-client/Actions/StrategyActions';
 
 /*
 * So far, this store module does not handle opening and closing the strategy panel.  it is just
@@ -67,6 +68,10 @@ type ViewState = {
         return { ...state, nestedStrategyBranchIds: state.nestedStrategyBranchIds.filter(id => id !== action.payload.branchStepId)};
       }
   
+      case fulfillPutStrategy.type: {
+        return { ...state, visibleInsertStepWizard: undefined };
+      }
+
       default: {
         return state;
       }

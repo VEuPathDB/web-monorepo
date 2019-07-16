@@ -403,14 +403,12 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             }
 
             const operatorParamValues = operatorQuestionState && operatorQuestionState.paramValues || {};
-            const operatorCustomName = operatorQuestionState && operatorQuestionState.question.shortDisplayName;
 
             const operatorStep = services.wdkService.createStep({
               searchName: submissionMetadata.operatorSearchName,
               searchConfig: {
                 parameters: operatorParamValues
-              },
-              customName: operatorCustomName
+              }
             });       
             
             return Promise.all([newSearchStep, operatorStep])

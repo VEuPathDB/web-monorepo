@@ -80,7 +80,7 @@ export const stepLoaded = (
   { strategies: { strategies }}: RootState, 
   { strategyId }: Props) => {
   const strategyEntry = strategies[strategyId];
-  return strategyEntry != null && !strategyEntry.isLoading;
+  return strategyEntry != null && strategyEntry.status === 'success';
 }
 
 export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean, boolean>(

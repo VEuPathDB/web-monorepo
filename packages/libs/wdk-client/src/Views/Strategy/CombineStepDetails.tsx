@@ -13,17 +13,17 @@ interface Operator {
 
 const operatorParamName = 'bq_operator';
 
-// FIXME This is now an enum param... either get values from enum param, or make sure these are the same
+// TODO This is now an enum param... consider getting values from enum param
 const standardOperators: Operator[] = [
   { display: <React.Fragment>A <strong>INTERSECT</strong> B</React.Fragment>, value: 'INTERSECT' },
   { display: <React.Fragment>A <strong>UNION</strong> B</React.Fragment>, value: 'UNION' },
-  { display: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>, value: 'MINUS' },
-  { display: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>, value: 'RMINUS' },
+  { display: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>, value: 'LEFT_MINUS' },
+  { display: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>, value: 'RIGHT_MINUS' },
 ];
 
 const ignoreOperators: Operator[] = [
-  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY' },
-  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY' },
+  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LEFT_ONLY' },
+  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RIGHT_ONLY' },
 ]
 
 interface DispatchProps {
