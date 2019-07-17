@@ -23,7 +23,7 @@ class BodyScrollManager {
   }
 }
 
-export const bodyScrollManager = new BodyScrollManager();
+const bodyScrollManager = new BodyScrollManager();
 
 export function useBodyScrollManager(isDisabled: boolean) {
   // A ref can be treated like an instance variable
@@ -31,14 +31,14 @@ export function useBodyScrollManager(isDisabled: boolean) {
   const ref = useRef({});
   useEffect(() => {
     if (isDisabled) {
-      bodyScrollManager.blockScroll(ref);
+      bodyScrollManager.blockScroll(ref.current);
     }
     else {
-      bodyScrollManager.unblockScroll(ref);
+      bodyScrollManager.unblockScroll(ref.current);
     }
 
     return () => {
-      bodyScrollManager.unblockScroll(ref);
+      bodyScrollManager.unblockScroll(ref.current);
     }
   }, [isDisabled]);
 }
