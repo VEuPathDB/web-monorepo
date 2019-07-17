@@ -83,7 +83,7 @@ export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
     field('estimatedSize', optional(number)),
     field('lastModified', string),
     field('name', string),
-    field('organization', string),
+    field('organization', optional(string)),
     field('recordClassName', oneOf(nullValue, string)),
     field('signature', string),
     field('strategyId', number),
