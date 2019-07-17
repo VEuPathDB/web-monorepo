@@ -253,6 +253,3 @@ export function ExpandedSteps(props: StepBoxesProps) {
   );
 }
 
-function TODO() {
-  alert('TODO')
-}
