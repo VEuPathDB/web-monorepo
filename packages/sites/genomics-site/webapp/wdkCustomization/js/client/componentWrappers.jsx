@@ -13,6 +13,7 @@ import ApiApplicationSpecificProperties from './components/ApiApplicationSpecifi
 import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
+import OrganismFilter from './components/OrganismFilter';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -143,7 +144,7 @@ export function RecordTableSection(DefaultComponent) {
 
       let showDatasetsLink = (
         record.tables[table.name] &&
-        !table.name.startsWith("UserDatasets") &&  
+        !table.name.startsWith("UserDatasets") &&
         !hideDatasetLinkFromProperty
       );
 
@@ -326,4 +327,15 @@ export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitBut
       </div>
     )
   );
+}
+
+export function ResultPanelController(DefaultComponent) {
+  return function ApiResultPanelController(props) {
+    return (
+      <div style={{ display: "flex" }}>
+        <div style={{ flexShrink: 1, padding: "1em" }}><OrganismFilter {...props}/></div>
+        <div style={{ flexGrow: 100, padding: "1em" }}><DefaultComponent {...props}/></div>
+      </div>
+    );
+  };
 }
