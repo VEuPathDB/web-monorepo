@@ -62,6 +62,7 @@ export interface QuestionLoadedAction {
     question: QuestionWithParameters;
     recordClass: RecordClass;
     paramValues: ParameterValues;
+    wdkWeight?: number;
   }>
 }
 

@@ -35,6 +35,11 @@ export const setInsertStepWizardVisibility = makeActionCreator(
   (viewId: string, stepId: number | undefined) => ({ stepId, viewId })
 );
 
+export const setReviseFormVisibility = makeActionCreator(
+  'strategyPanel/setReviseFormVisibility',
+  (viewId: string, stepId: number | undefined) => ({ stepId, viewId })
+)
+
 export const setDeleteStepDialogVisibilty = makeActionCreator(
   'strategyPanel/setDeleteStepDialogVisibilty',
   (viewId: string, stepId: number | undefined) => ({ stepId, viewId })
@@ -79,6 +84,7 @@ export type Action =
   | InferAction<typeof fulfillStrategyPanelVisibility>
   | InferAction<typeof setStepDetailsVisibility>
   | InferAction<typeof setInsertStepWizardVisibility>
+  | InferAction<typeof setReviseFormVisibility>
   | InferAction<typeof setDeleteStepDialogVisibilty>
   | InferAction<typeof setStrategyPanelHeightOverride>
   | InferAction<typeof nestStrategy>

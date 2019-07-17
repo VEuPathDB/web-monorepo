@@ -77,7 +77,7 @@ function StepTree(props: StepBoxesProps) {
             collapseNestedStrategy: noop,
             expandNestedStrategy: noop,
             showNewAnalysisTab: partial(props.onAnalyzeStep, step.id),
-            showReviseForm: TODO,
+            showReviseForm: partial(props.setReviseFormStepId, step.id),
             insertStepBefore: TODO,
             deleteStep: partial(props.onDeleteStep, step.id)
           }}
@@ -87,9 +87,9 @@ function StepTree(props: StepBoxesProps) {
           <Plugin<StepBoxProps>
             context={{
               type: 'stepBox',
-              name: step.searchName,
-              searchName: step.searchName,
-              recordClassName: step.recordClassName
+              name: secondaryInput.step.searchName,
+              searchName: secondaryInput.step.searchName,
+              recordClassName: secondaryInput.step.recordClassName
             }}
             pluginProps={{
               stepTree: secondaryInput,
@@ -121,7 +121,7 @@ function StepTree(props: StepBoxesProps) {
                 props.onExpandNestedStrategy(step.id);
               },
               showNewAnalysisTab: partial(props.onAnalyzeStep, secondaryInput.step.id),
-              showReviseForm: TODO,
+              showReviseForm: partial(props.setReviseFormStepId, secondaryInput.step.id),
               insertStepBefore: TODO,
               deleteStep: partial(props.onDeleteStep, step.id)
             }}

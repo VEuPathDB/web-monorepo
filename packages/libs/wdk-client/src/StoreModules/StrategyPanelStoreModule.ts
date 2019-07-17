@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
-import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setActiveModal, clearActiveModal } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setActiveModal, clearActiveModal, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 import { fulfillPutStrategy } from 'wdk-client/Actions/StrategyActions';
 
@@ -16,8 +16,8 @@ type ViewState = {
     strategyPanelHeightOverride?: number,  // user's choice of height
     visibleStepDetails?: number,  // stepId or none if not shown
     visibleInsertStepWizard?: number  // stepId or none if not shown
+    visibleReviseForm?: number  // stepId or none if not shown
     visibleDeleteStepDialog?: number  // stepId or none if not shown
-    visibleRenameNestedStrategyBranch?: number // stepId or none if not shown
     nestedStrategyBranchIds: number[]; // step ids
     activeModal?: { type: string, strategyId: number, stepId?: number }
   };
@@ -45,6 +45,10 @@ type ViewState = {
   
       case setInsertStepWizardVisibility.type: {
         return { ...state, visibleInsertStepWizard: action.payload.stepId };
+      }
+
+      case setReviseFormVisibility.type: {
+        return { ...state, visibleReviseForm: action.payload.stepId };
       }
   
       case setDeleteStepDialogVisibilty.type: {

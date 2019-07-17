@@ -43,7 +43,7 @@ const actions: StepAction[] = [
   },
   {
     display: () => <React.Fragment>Revise</React.Fragment>,
-    onClick: () => alert('todo'),
+    onClick: ({ showReviseForm }) => showReviseForm(),
     isDisabled: ({ isNested }) => isNested,
     tooltip: () => 'Modify the configuration of this search'
   },

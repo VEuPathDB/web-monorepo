@@ -32,13 +32,14 @@ type Props = DispatchProps & StateProps & {
 
 function QuestionController(props: Props) {
   const { dispatch, eventHandlers, searchName, recordClassName, submissionMetadata, ...state } = props;
+  const stepId = submissionMetadata.type === 'edit-step' ? submissionMetadata.stepId : undefined;
   
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
       searchName,
-      stepId: undefined
+      stepId
     }))
-  }, [searchName]);
+  }, [searchName, stepId]);
 
   // TODO Add document.title logic
   

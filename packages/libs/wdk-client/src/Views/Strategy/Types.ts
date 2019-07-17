@@ -45,6 +45,7 @@ export interface StepBoxesProps {
   stepTree: UiStepTree;
   nestedStrategyBranchToRename?: number;
   isDeleteable?: boolean;
+  setReviseFormStepId: (stepId?: number) => void;
   onShowInsertStep: (stepId: number) => void;
   onHideInsertStep: () => void;
   onMakeNestedStrategy: (branchId: number) => void;

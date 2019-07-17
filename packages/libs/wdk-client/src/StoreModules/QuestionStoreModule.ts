@@ -1,4 +1,4 @@
-import { keyBy, mapValues } from 'lodash';
+import { keyBy, mapValues, toString } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { from, EMPTY, merge, Subject } from 'rxjs';
 import { debounceTime, filter, mergeMap, takeUntil, map, mergeAll } from 'rxjs/operators';
@@ -148,7 +148,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         paramUIState: action.payload.question.parameters.reduce((paramUIState, parameter) =>
           Object.assign(paramUIState, { [parameter.name]: paramReducer(parameter, undefined, { type: '@@parm-stub@@' }) }), {}),
         groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
-          Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {})
+          Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {}),
+        weight: toString(action.payload.wdkWeight)
       }
 
     case QUESTION_ERROR:
@@ -301,7 +302,7 @@ type QuestionEpic = ModuleEpic<RootState>;
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateActiveQuestionAction>(UPDATE_ACTIVE_QUESTION),
   mergeMap(action =>
-    from(loadQuestion(wdkService, action.payload.searchName, action.payload.paramValues)).pipe(
+    from(loadQuestion(wdkService, action.payload.searchName, action.payload.stepId)).pipe(
     takeUntil(action$.pipe(filter(killAction => (
       killAction.type === UNLOAD_QUESTION &&
       killAction.payload.searchName === action.payload.searchName
@@ -454,25 +455,21 @@ export const observeQuestion: QuestionEpic = combineEpics(
 // Helpers
 // -------
 
-function loadQuestion(wdkService: WdkService, searchName: string, paramValues?: ParameterValues) {
-  const question$ = paramValues == null
-    ? wdkService.getQuestionAndParameters(searchName)
-    : wdkService.getQuestionGivenParameters(searchName, paramValues);
-
-  const recordClass$ = question$.then(question =>
-    wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName));
-
-  return Promise.all([question$, recordClass$]).then(
-    ([question, recordClass]) => {
-      if (paramValues == null) {
-        paramValues = makeDefaultParamValues(question.parameters);
-      }
-      return questionLoaded({ searchName, question, recordClass, paramValues })
-    },
-    error => error.status === 404
-      ? questionNotFound({ searchName })
-      : questionError({ searchName })
-  );
+async function loadQuestion(wdkService: WdkService, searchName: string, stepId?: number) {
+  const step = stepId ? await wdkService.findStep(stepId) : undefined;
+  const question = step == null
+    ? await wdkService.getQuestionAndParameters(searchName)
+    : await wdkService.getQuestionGivenParameters(searchName, step.searchConfig.parameters);
+  const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName);
+  const paramValues = step == null
+    ? makeDefaultParamValues(question.parameters)
+    : step.searchConfig.parameters;
+  const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
+  return questionLoaded({ searchName, question, recordClass, paramValues, wdkWeight })
+  //   error => error.status === 404
+  //     ? questionNotFound({ searchName })
+  //     : questionError({ searchName })
+  // );
 }
 
 function makeDefaultParamValues(parameters: Parameter[]) {

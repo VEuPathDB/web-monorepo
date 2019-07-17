@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconAlt, SaveableTextEditor } from 'wdk-client/Components';
+import { IconAlt, SaveableTextEditor, Dialog } from 'wdk-client/Components';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
@@ -8,6 +8,7 @@ import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
 import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepBoxes from './StepBoxes';
 import './StrategyPanel.css';
+import { QuestionController } from 'wdk-client/Controllers';
 
 
 
@@ -18,8 +19,10 @@ interface Props {
   uiStepTree: UiStepTree;
   insertStepVisibility?: number;
   activeModal?: string;
+  reviseFormStepId?: number;
   setActiveModal: (type: string) => void;
   clearActiveModal: () => void;
+  setReviseFormStepId: (stepId?: number) => void;
   onStrategyRename: (name: string) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
@@ -40,6 +43,8 @@ export default function StrategyPanel(props: Props) {
   const {
     uiStepTree,
     strategy,
+    reviseFormStepId,
+    setReviseFormStepId,
     onShowInsertStep,
     onHideInsertStep,
     onMakeNestedStrategy,
@@ -51,6 +56,8 @@ export default function StrategyPanel(props: Props) {
     onAnalyzeStep,
     onDeleteStep,
   } = props;
+  const reviseStep = reviseFormStepId && strategy.steps[reviseFormStepId];
+
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
@@ -64,6 +71,7 @@ export default function StrategyPanel(props: Props) {
         <div>
           <StepBoxes
             stepTree={uiStepTree}
+            setReviseFormStepId={setReviseFormStepId}
             onShowInsertStep={onShowInsertStep}
             onHideInsertStep={onHideInsertStep}
             onMakeNestedStrategy={onMakeNestedStrategy}
@@ -79,8 +87,9 @@ export default function StrategyPanel(props: Props) {
       </div>
       <StrategyActionModal {...props} />
       {props.insertStepVisibility && (
-        <Modal>
+        <Modal className={cx('--Modal')}>
           <div>
+            <button type="button" className="link" onClick={() => onHideInsertStep()}>Close</button>
             <AddStepPanel
               strategyId={props.strategy.strategyId}
               addType={props.insertStepVisibility === strategy.rootStepId
@@ -88,7 +97,23 @@ export default function StrategyPanel(props: Props) {
                 : { type: 'insertBefore', stepId: props.insertStepVisibility}
               }
             />
-            <button type="button" onClick={() => onHideInsertStep()}>Close</button>
+          </div>
+        </Modal>
+      )}
+      {reviseStep && (
+        <Modal className={cx('--Modal')}>
+          <div className={cx('--ReviseForm')}>
+            <button type="button" className="link" onClick={() => setReviseFormStepId()}>Close</button>
+            <h1>Revise step <em style={{ fontWeight: 'normal' }}>{reviseStep.customName}</em></h1>
+            <QuestionController
+              question={reviseStep.searchName}
+              recordClass={reviseStep.recordClassName}
+              submissionMetadata={{
+                type: 'edit-step',
+                strategyId: strategy.strategyId,
+                stepId: reviseStep.id
+              }}
+            />
           </div>
         </Modal>
       )}
@@ -156,8 +181,8 @@ function StrategyControls(props: Props) {
   return (
     <div className={cx('--Controls')}>
       {Object.entries(StrategyActions).map(([ key, action ]) => (
-        <div>
-          <button type="button" key={key} className="link" onClick={() => props.setActiveModal(key)}><IconAlt fa={action.iconName}/></button>
+        <div key={key}>
+          <button type="button" className="link" onClick={() => props.setActiveModal(key)}><IconAlt fa={action.iconName}/></button>
         </div>
       ))}
     </div>

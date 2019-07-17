@@ -1,4 +1,4 @@
-import { StepTree } from 'wdk-client/Utils/WdkUser';
+import { StepTree, Step } from 'wdk-client/Utils/WdkUser';
 
 export const addStep = (
   stepTree: StepTree,
