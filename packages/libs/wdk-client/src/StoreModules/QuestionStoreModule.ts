@@ -48,7 +48,7 @@ import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
 import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { fulfillCreateStrategy, requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction } from 'wdk-client/Actions/StrategyActions';
+import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
 
 export const key = 'question';
@@ -418,7 +418,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                   submissionMetadata.strategyId,
                   addStep(
                     strategyEntry.strategy.stepTree,
-                    submissionMetadata.insertionPoint,
+                    submissionMetadata.addType,
                     binaryOperatorStepId,
                     {
                       stepId: newSearchStepId
@@ -432,7 +432,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                 submissionMetadata.strategyId,
                 addStep(
                   strategyEntry.strategy.stepTree,
-                  submissionMetadata.insertionPoint,
+                  submissionMetadata.addType,
                   unaryOperatorStepId,
                   undefined
                 )
@@ -473,7 +473,16 @@ async function loadQuestion(wdkService: WdkService, searchName: string, stepId?:
 }
 
 function makeDefaultParamValues(parameters: Parameter[]) {
-  return parameters.reduce(function(values, { name, initialDisplayValue}) {
-    return Object.assign(values, { [name]: initialDisplayValue });
+  return parameters.reduce(function(values, { name, initialDisplayValue, type }) {
+    return Object.assign(
+      values, 
+      type === 'input-step'
+        ? {
+          [name]: ''
+        }
+        : { 
+          [name]: initialDisplayValue 
+        }
+    );
   }, {} as ParameterValues);
 }

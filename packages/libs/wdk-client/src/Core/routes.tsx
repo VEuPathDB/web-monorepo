@@ -29,7 +29,6 @@ import StrategyViewController from 'wdk-client/Controllers/StrategyViewControlle
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
 
 const routes: RouteEntry[] = [
   {
@@ -168,25 +167,6 @@ const routes: RouteEntry[] = [
     path: '/workspace/strategies/:strategyId/:stepId?',
     component: (props: RouteComponentProps<{ strategyId: number, stepId?: number }>) =>
       <StrategyViewController {...props.match.params} />
-  },
-
-  // TODO This route is for testing purposes - we'll want to integrate this rendering logic into the strategy panel
-  {
-    path: '/workspace/strategies/:strategyId/:stepId?/add-step',
-    component: (props: RouteComponentProps<{ strategyId: number, stepId?: number }>) =>
-      <AddStepPanel
-        strategyId={props.match.params.strategyId}
-        addType={
-          props.match.params.stepId === undefined
-            ? {
-              type: 'append'
-            }
-            : {
-              type: 'insertBefore',
-              stepId: props.match.params.stepId
-            }
-        }
-      />
   },
 
   {

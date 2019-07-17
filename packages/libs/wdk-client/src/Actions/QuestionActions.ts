@@ -5,6 +5,7 @@ import {
   RecordClass,
   ParameterValue
 } from 'wdk-client/Utils/WdkModel';
+import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 
 export type Action =
@@ -170,13 +171,13 @@ type AddBinaryStep = {
   type: 'add-binary-step',
   strategyId: number,
   operatorSearchName: string,
-  insertionPoint: number | undefined
+  addType: AddType
 }
 
 type AddUnaryStep = {
   type: 'add-unary-step',
   strategyId: number,
-  insertionPoint: number | undefined
+  addType: AddType
 }
 
 type EditStep = {

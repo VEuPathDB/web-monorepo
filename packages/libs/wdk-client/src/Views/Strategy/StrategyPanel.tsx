@@ -93,8 +93,8 @@ export default function StrategyPanel(props: Props) {
             <AddStepPanel
               strategyId={props.strategy.strategyId}
               addType={props.insertStepVisibility === strategy.rootStepId
-                ? { type: 'append' }
-                : { type: 'insertBefore', stepId: props.insertStepVisibility}
+                ? { type: 'append', primaryInputStepId: strategy.rootStepId }
+                : { type: 'insert-before', outputStepId: props.insertStepVisibility}
               }
             />
           </div>

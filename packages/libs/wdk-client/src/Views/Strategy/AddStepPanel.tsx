@@ -7,10 +7,11 @@ import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StrategyDetails, StepTree } from 'wdk-client/Utils/WdkUser';
+import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { findPreviousStepSubtree, findPrimaryBranchDepth, addStep } from 'wdk-client/Utils/StrategyUtils';
+import { findPrimaryBranchHeight, addStep, findSubtree, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
+import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 import 'wdk-client/Views/Strategy/AddStepPanel.scss';
 
@@ -18,9 +19,10 @@ const cx = makeClassNameHelper('AddStepPanel');
 
 type StateProps = {
   strategy?: StrategyDetails,
-  recordClass?: RecordClass
+  inputRecordClass?: RecordClass,
   previousStepNumber?: number,
-  previousStepId?: number
+  previousStep?: Step,
+  operandStep?: Step
 };
 
 type DispatchProps = {
@@ -29,48 +31,39 @@ type DispatchProps = {
 };
 
 type OwnProps = {
-  addType: InsertBefore | Append,
+  addType: AddType,
   strategyId: number
-};
-
-type InsertBefore = {
-  type: 'insertBefore',
-  stepId: number
-};
-
-type Append = {
-  type: 'append'
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
 
 export type AddStepOperationMenuProps = {
   strategy: StrategyDetails,
-  recordClass: RecordClass,
+  inputRecordClass: RecordClass,
   startOperationForm: (selection: string) => void,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
-  insertionPoint: number | undefined
+  addType: AddType
 };
 
 export type AddStepOperationFormProps = {
   strategy: StrategyDetails,
-  recordClass: RecordClass,
+  inputRecordClass: RecordClass,
   currentPage: string,
   advanceToPage: (nextPage: string) => void,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
-  insertionPoint: number | undefined
+  addType: AddType
 };
 
 const AddStepPanelView = (
   {
     addType,
     loadStrategy,
-    recordClass,
+    inputRecordClass,
     requestPutStrategyStepTree,
     strategy,
     strategyId,
     previousStepNumber,
-    previousStepId
+    operandStep
   }: Props
 ) => {
   useEffect(() => {
@@ -114,7 +107,7 @@ const AddStepPanelView = (
 
       const newStepTree = addStep(
         oldStepTree,
-        addType.type === 'append' ? undefined : addType.stepId,
+        addType,
         newStepId,
         newSecondaryInput
       );
@@ -123,20 +116,14 @@ const AddStepPanelView = (
     }
   }, [ strategy, requestPutStrategyStepTree, addType ]);
 
-  const insertionPoint = addType.type === 'insertBefore'
-    ? addType.stepId
-    : undefined;
-
-  const previousStep = strategy && strategy.steps[previousStepId || insertionPoint || strategy.rootStepId];
-
   return (
     <div className={cx()}>
       {
         (
-          !strategy ||
-          !recordClass ||
-          !previousStepNumber ||
-          !previousStep
+          strategy === undefined ||
+          inputRecordClass === undefined ||
+          previousStepNumber === undefined ||
+          operandStep === undefined
         )
           ? <Loading />
           : <div>
@@ -149,10 +136,10 @@ const AddStepPanelView = (
                     <div>
                       <p>
                         So far, your search strategy has {previousStepNumber} {previousStepNumber === 1 ? 'step' : 'steps'}.
-                        It found {previousStep.estimatedSize} {
-                          previousStep.estimatedSize > 1 
-                            ? recordClass.shortDisplayNamePlural
-                            : recordClass.shortDisplayName
+                        It found {operandStep.estimatedSize} {
+                          operandStep.estimatedSize === 1 
+                            ? inputRecordClass.shortDisplayName
+                            : inputRecordClass.shortDisplayNamePlural
                           }.
                       </p>
                       <p>
@@ -168,10 +155,10 @@ const AddStepPanelView = (
                             }}
                             pluginProps={{
                               strategy,
-                              recordClass,
+                              inputRecordClass,
                               startOperationForm: startOperationFormCallbacks[operation],
                               updateStrategy,
-                              insertionPoint
+                              addType
                             }}
                           />
                         )
@@ -190,11 +177,11 @@ const AddStepPanelView = (
                         }}
                         pluginProps={{
                           strategy,
-                          recordClass,
+                          inputRecordClass,
                           currentPage,
                           advanceToPage,
                           updateStrategy,
-                          insertionPoint
+                          addType
                         }}
                       />
                     </div>
@@ -235,51 +222,81 @@ const strategy = createSelector(
   }
 );
 
-const recordClass = createSelector(
-  strategy,
-  ({ globalData: { recordClasses } }: RootState) => recordClasses,
-  (strategy, recordClasses) => (
-    !strategy ||
-    !recordClasses
-  )
-    ? undefined
-    : recordClasses.find(({ urlSegment }) => strategy.recordClassName === urlSegment)
-);
-
 const previousStepSubtree = createSelector(
   strategy,
   (_: RootState, { addType }) => addType,
-  (strategy, addType) => !strategy
-    ? undefined
-    : addType.type === 'append'
-    ? strategy.stepTree
-    : findPreviousStepSubtree(
+  (strategy, addType) => {
+    if (strategy === undefined) {
+      return undefined;
+    }
+
+    if (addType.type === 'append') {
+      return findSubtree(
+        strategy.stepTree,
+        addType.primaryInputStepId
+      );
+    }
+
+    const insertionPointSubtree = findSubtree(
       strategy.stepTree,
-      addType.stepId
-    )
+      addType.outputStepId
+    );
+
+    return insertionPointSubtree && insertionPointSubtree.primaryInput;
+  }
 );
 
 const previousStepNumber = createSelector(
   previousStepSubtree,
-  previousStepSubtree => previousStepSubtree && (findPrimaryBranchDepth(previousStepSubtree) + 1)
+  previousStepSubtree => previousStepSubtree === undefined
+    ? 0
+    : findPrimaryBranchHeight(previousStepSubtree) + 1
 );
 
-const previousStepId = createSelector(
+const previousStep = createSelector(
+  strategy,
   previousStepSubtree,
-  previousStepNumber,
-  (_: RootState, { addType }) => addType,
-  (previousStepSubtree, previousStepNumber, addType) =>
-    previousStepNumber === -Infinity || previousStepSubtree === undefined
-      ? (addType.type === 'append' ? undefined : addType.stepId)
-      : previousStepSubtree.stepId
+  (strategy, previousStepSubtree) => 
+    strategy === undefined || previousStepSubtree === undefined
+      ? undefined
+      : strategy.steps[previousStepSubtree.stepId]
+);
+
+const operandStep = createSelector(
+  strategy,
+  previousStep,
+  (strategy, previousStep) => strategy === undefined
+    ? undefined
+    : previousStep !== undefined
+    ? previousStep
+    : strategy.steps[findPrimaryBranchLeaf(strategy.stepTree).stepId]
+);
+
+const inputRecordClass = createSelector(
+  strategy,
+  operandStep,
+  ({ globalData: { recordClasses } }: RootState) => recordClasses,
+  (_, { addType }) => addType,
+  (strategy, operandStep, recordClasses, addType) => {
+    if (strategy === undefined || operandStep === undefined || recordClasses === undefined) {
+      return undefined;
+    }
+
+    const inputRecordClassName = addType.type === 'insert-before'
+      ? operandStep.recordClassName
+      : strategy.steps[addType.primaryInputStepId].recordClassName;
+
+    return recordClasses.find(({ urlSegment }) => urlSegment === inputRecordClassName);
+  }
 );
 
 export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state, ownProps) => ({
-    recordClass: recordClass(state, ownProps),
+    inputRecordClass: inputRecordClass(state, ownProps),
     strategy: strategy(state, ownProps),
     previousStepNumber: previousStepNumber(state, ownProps),
-    previousStepId: previousStepId(state, ownProps)
+    previousStep: previousStep(state, ownProps),
+    operandStep: operandStep(state, ownProps)
   }),
   dispatch => ({
     loadStrategy: compose(dispatch, requestStrategy),

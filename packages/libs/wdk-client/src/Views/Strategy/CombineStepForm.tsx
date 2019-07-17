@@ -44,7 +44,7 @@ type DispatchProps = {
 };
 
 const recordClassSegment = createSelector(
-  (_: RootState, { recordClass }: OwnProps) => recordClass,
+  (_: RootState, { inputRecordClass }: OwnProps) => inputRecordClass,
   recordClass => recordClass && recordClass.fullName.replace('.', '_')
 );
 
@@ -86,8 +86,8 @@ const CombineStepFormView = ({
   booleanSearchUrlSegment,
   booleanSearchState,
   currentPage,
-  insertionPoint,
-  recordClass,
+  addType,
+  inputRecordClass,
   strategy,
   updateBooleanOperator
 }: CombineStepFormViewProps) => (
@@ -99,12 +99,12 @@ const CombineStepFormView = ({
     />
     <QuestionController
       question={currentPage}
-      recordClass={recordClass.urlSegment}
+      recordClass={inputRecordClass.urlSegment}
       submissionMetadata={{
         type: 'add-binary-step',
         strategyId: strategy.strategyId,
         operatorSearchName: booleanSearchUrlSegment,
-        insertionPoint
+        addType
       }}
     />  
   </div>

@@ -78,3 +78,15 @@ export interface StepDetailProps extends StepBoxProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+export interface InsertBefore {
+  type: 'insert-before';
+  outputStepId: number;
+}
+
+export interface Append {
+  type: 'append';
+  primaryInputStepId: number;
+};
+
+export type AddType = InsertBefore | Append;

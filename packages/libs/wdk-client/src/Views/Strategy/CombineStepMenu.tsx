@@ -16,15 +16,13 @@ import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { getTargetType, getRecordClassUrlSegment, getDisplayName, getTooltipContent, CategoryTreeNode, getLabel } from 'wdk-client/Utils/CategoryUtils';
-import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 type StateProps = {
   basketSearchUrlSegment: string,
   basketDatasetParamName: string,
   basketSearchShortDisplayName?: string,
   booleanSearchUrlSegment: string,
-  booleanLeftOperandParamName: string,
-  booleanRightOperandParamName: string,
   booleanSearchState?: QuestionState,
   booleanOperatorParameter?: Parameter,
   searchTree: CategoryTreeNode,
@@ -32,7 +30,7 @@ type StateProps = {
 };
 
 const recordClassSegment = createSelector(
-  (_: RootState, { recordClass }: OwnProps) => recordClass,
+  (_: RootState, { inputRecordClass }: OwnProps) => inputRecordClass,
   recordClass => recordClass && recordClass.fullName.replace('.', '_')
 );
 
@@ -87,19 +85,9 @@ const booleanOperatorParameter = createSelector(
   }
 );
 
-const booleanLeftOperandParamName = createSelector(
-  recordClassSegment,
-  recordClassSegment => `bq_left_op_${recordClassSegment}`
-);
-
-const booleanRightOperandParamName = createSelector(
-  recordClassSegment,
-  recordClassSegment => `bq_right_op_${recordClassSegment}`
-);
-
 const searchTree = createSelector(
   ({ globalData }: RootState) => globalData, 
-  (_: RootState, { recordClass: { fullName } }: OwnProps) => fullName,
+  (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
   (globalData, recordClassFullName) => {
     // FIXME: This is not typesafe
     const fullSearchTree = get(globalData, 'searchTree') as CategoryTreeNode;
@@ -123,8 +111,6 @@ const linkPlacement = createSelector(
 type DispatchProps = {
   loadBooleanQuestion: (
     booleanSearchUrlSegment: string,
-    booleanLeftOperandParamName: string,
-    booleanRightOperandParamName: string
   ) => void,
   updateParamValue: (payload: {
     searchName: string,
@@ -151,11 +137,9 @@ export const CombineStepMenuView = (
     basketDatasetParamName,
     booleanSearchUrlSegment,
     booleanSearchState,
-    booleanLeftOperandParamName,
-    booleanRightOperandParamName,
     booleanOperatorParameter,
     loadBooleanQuestion,
-    recordClass,
+    inputRecordClass,
     updateBooleanOperator,
     updateStrategy,
     searchTree,
@@ -168,12 +152,8 @@ export const CombineStepMenuView = (
   const [ searchTerm, setSearchTerm ] = useState<string>('');
   
   useEffect(() => {
-    loadBooleanQuestion(
-      booleanSearchUrlSegment, 
-      booleanLeftOperandParamName, 
-      booleanRightOperandParamName
-    );
-  }, [ booleanSearchUrlSegment, booleanLeftOperandParamName, booleanRightOperandParamName ]);
+    loadBooleanQuestion(booleanSearchUrlSegment);
+  }, [ booleanSearchUrlSegment ]);
 
   useWdkEffect(wdkService => {
     if (basketButtonStatus === 'clicked' && basketSearchShortDisplayName && booleanSearchState) {
@@ -184,7 +164,7 @@ export const CombineStepMenuView = (
         basketSearchUrlSegment,
         booleanSearchState,
         booleanSearchUrlSegment,
-        recordClass,
+        inputRecordClass,
         setBasketButtonStatus,
         updateStrategy
       );
@@ -253,7 +233,7 @@ export const CombineStepMenuView = (
             basketButtonStatus !== 'unclicked' 
           }
           type="button">
-          Combine with {recordClass.displayNamePlural} basket
+          Combine with {inputRecordClass.displayNamePlural} basket
         </button>
         <CategoriesCheckboxTree
           selectedLeaves={NO_SELECTED_LEAVES}
@@ -293,28 +273,17 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
     basketDatasetParamName: basketDatasetParamName(state, ownProps),
     basketSearchShortDisplayName: basketSearchShortDisplayName(state, ownProps),
     booleanSearchUrlSegment: booleanSearchUrlSegment(state, ownProps),
-    booleanLeftOperandParamName: booleanLeftOperandParamName(state, ownProps),
-    booleanRightOperandParamName: booleanRightOperandParamName(state, ownProps),
     booleanSearchState: booleanSearchState(state, ownProps),
     booleanOperatorParameter: booleanOperatorParameter(state, ownProps),
     searchTree: searchTree(state, ownProps),
     linkPlacement: linkPlacement(state, ownProps)
   }),
   dispatch => ({
-    loadBooleanQuestion: (
-      booleanSearchUrlSegment: string,
-      booleanLeftOperandParamName: string,
-      booleanRightOperandParamName: string
-    ) => {
+    loadBooleanQuestion: (booleanSearchUrlSegment: string) => {
       dispatch(
         updateActiveQuestion({
           searchName: booleanSearchUrlSegment,
-          stepId: undefined,
-          paramValues: {
-            [booleanLeftOperandParamName]: '',
-            [booleanRightOperandParamName]: '',
-            [BOOLEAN_OPERATOR_PARAM_NAME]: CombineOperator.Intersect
-          }
+          stepId: undefined
         })
       )
     },
