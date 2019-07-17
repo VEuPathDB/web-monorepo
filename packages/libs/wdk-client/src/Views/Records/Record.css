@@ -78,11 +78,18 @@
   padding: 4px 8px;
 }
 
+.wdk-RecordSidebarToggle, h2.wdk-RecordNavigationSectionHeader {
+  word-wrap:break-word;
+  color: black;
+  font-weight:400;
+}
+
 .wdk-RecordContainer__withSidebar .wdk-RecordMain {
   margin-left: 290px;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebar {
+  padding-right: 22px;
   left: 0;
 }
 
@@ -91,7 +98,7 @@
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebarToggle {
-  right: 1em;
+  right: 5px;
   border: 0;
   transform: rotate(-90deg);
   padding: 0;
