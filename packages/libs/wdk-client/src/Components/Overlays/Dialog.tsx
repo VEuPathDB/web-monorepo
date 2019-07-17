@@ -3,34 +3,12 @@ import Popup from 'wdk-client/Components/Overlays/Popup';
 import React, { Component, ReactNode } from 'react';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import 'wdk-client/Components/Overlays/Dialog.css';
+import { bodyScrollManager } from 'wdk-client/Components/Overlays/BodyScrollHook';
 
 
 
 let c = makeClassNameHelper('wdk-Dialog');
 let c2 = makeClassNameHelper(' ');
-
-class BodyScrollManager {
-  private refs = new Set<object>();
-
-  blockScroll(instance: object) {
-    this.refs.add(instance);
-    this.updateBodyClass();
-  }
-
-  unblockScroll(instance: object) {
-    this.refs.delete(instance);
-    this.updateBodyClass();
-  }
-
-  private updateBodyClass() {
-    const className = 'wdk-ModalOpen';
-    const classes = document.body.classList;
-    const needs = this.refs.size > 0;
-    const has = classes.contains(className);
-    if (needs && !has) classes.add(className);
-    else if (has) classes.remove(className);
-  }
-}
 
 type Props = {
   open: boolean;
@@ -47,7 +25,7 @@ type Props = {
 
 class Dialog extends Component<Props> {
 
-  private static bodyScrollManager = new BodyScrollManager();
+  private static bodyScrollManager = bodyScrollManager;
 
   prevFocusNode: Element | null = null;
 

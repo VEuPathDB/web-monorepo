@@ -16,5 +16,6 @@
   &.wdk-Modal-Wrapper--Active {
     pointer-events: all;
     opacity: 1;
+    overflow: auto;
   }
 }
