@@ -104,7 +104,7 @@ export default function StrategyPanel(props: Props) {
         <Modal className={cx('--Modal')}>
           <div className={cx('--ReviseForm')}>
             <button type="button" className="link" onClick={() => setReviseFormStepId()}>Close</button>
-            <h1>Revise step <em style={{ fontWeight: 'normal' }}>{reviseStep.customName}</em></h1>
+            {/* <h1>Revise step <em style={{ fontWeight: 'normal' }}>{reviseStep.customName}</em></h1> */}
             <QuestionController
               question={reviseStep.searchName}
               recordClass={reviseStep.recordClassName}
