@@ -3,7 +3,7 @@ import Popup from 'wdk-client/Components/Overlays/Popup';
 import React, { Component, ReactNode } from 'react';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import 'wdk-client/Components/Overlays/Dialog.css';
-import { bodyScrollManager } from 'wdk-client/Components/Overlays/BodyScrollHook';
+import { bodyScrollManager } from 'wdk-client/Components/Overlays/BodyScrollManager';
 
 
 
