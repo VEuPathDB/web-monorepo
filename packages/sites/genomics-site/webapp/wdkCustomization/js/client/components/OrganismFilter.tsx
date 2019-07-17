@@ -11,11 +11,19 @@ import Checkbox from 'wdk-client/Components/InputControls/Checkbox';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
 
 // constants for service calls
+const ALLOWABLE_RECORD_CLASS_NAME = 'transcript';
 const TAXON_QUESTION_NAME = 'GenesByTaxon';
 const ORGANISM_PARAM_NAME = 'organism';
 const ORGANISM_COLUMN_NAME = 'organism';
 const HISTOGRAM_REPORTER_NAME = 'byValue';
 const HISTOGRAM_FILTER_NAME = 'byValue';
+
+// session storage prop name to hold filter pane expansion preference
+const ORGANISM_FILTER_PANE_EXPANSION_KEY = "defaultOrganismFilterPaneExpansion";
+
+// initial values for component state
+const DEFAULT_PANE_EXPANSION = true;
+const DEFAULT_HIDE_ZEROES = false;
 
 // props passed into this component by caller
 type OwnProps = {
@@ -98,15 +106,17 @@ function ExpansionBar(props: ExpansionBarProps) {
 function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
 
   // don't show anything until step loaded, and after that only if a transcript step
-  if (!step || step.recordClassName !== 'transcript') {
+  if (!step || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
     return null;
   }
 
   // whether organism filter pane is expanded vs pushed against left wall of results pane
-  const [ isExpanded, setExpanded ] = useState<boolean>(true);
+  let initialIsExpandedStr = sessionStorage.getItem(ORGANISM_FILTER_PANE_EXPANSION_KEY);
+  let initialIsExpanded = initialIsExpandedStr ? initialIsExpandedStr === "true" : DEFAULT_PANE_EXPANSION;
+  const [ isExpanded, setExpanded ] = useState<boolean>(initialIsExpanded);
 
   // whether to hide leaves with zero records
-  const [ hideZeroes, setHideZeroes ] = useState<boolean>(false);
+  const [ hideZeroes, setHideZeroes ] = useState<boolean>(DEFAULT_HIDE_ZEROES);
 
   // previous step prop passed; decides whether we should reload the data below
   const [ currentStep, setCurrentStep ] = useState<Step | null>(null);
@@ -125,7 +135,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   // current value of checkbox tree's search box
   const [ searchTerm, setSearchTerm ] = useState<string>("");
 
-  // currently expanded nodes
+  // currently expanded nodes (null indicates user has not yet changed the value)
   const [ savedExpandedNodeIds, setExpandedNodeIds ] = useState<string[] | null>(null);
 
   // clear dependent data if step has changed
@@ -146,9 +156,14 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
     }
   });
 
+  function setExpandedAndPref(isExpanded: boolean) {
+    sessionStorage.setItem(ORGANISM_FILTER_PANE_EXPANSION_KEY, isExpanded.toString());
+    setExpanded(isExpanded);
+  }
+
   // show collapsed view if not expanded
   if (!isExpanded) {
-    return ( <ExpansionBar onClick={() => setExpanded(true)} message="Filter by Organism" arrow="&dArr;"/> );
+    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message="Filter by Organism" arrow="&dArr;"/> );
   }
 
   // show loading spinner if required data not yet present
@@ -227,7 +242,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
             searchPredicate={nodeMeetsSearchCriteria}
         />
       </div>
-      <ExpansionBar onClick={() => setExpanded(false)} message="Hide Organism Filter" arrow="&uArr;"/>
+      <ExpansionBar onClick={() => setExpandedAndPref(false)} message="Hide Organism Filter" arrow="&uArr;"/>
     </div>
   );
 }
