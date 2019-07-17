@@ -78,7 +78,7 @@ function StepTree(props: StepBoxesProps) {
             expandNestedStrategy: noop,
             showNewAnalysisTab: partial(props.onAnalyzeStep, step.id),
             showReviseForm: partial(props.setReviseFormStepId, step.id),
-            insertStepBefore: TODO,
+            insertStepBefore: partial(props.onShowInsertStep, step.id),
             deleteStep: partial(props.onDeleteStep, step.id)
           }}
           defaultComponent={StepBox}
@@ -122,7 +122,7 @@ function StepTree(props: StepBoxesProps) {
               },
               showNewAnalysisTab: partial(props.onAnalyzeStep, secondaryInput.step.id),
               showReviseForm: partial(props.setReviseFormStepId, secondaryInput.step.id),
-              insertStepBefore: TODO,
+              insertStepBefore: partial(props.onShowInsertStep, step.id),
               deleteStep: partial(props.onDeleteStep, step.id)
             }}
             defaultComponent={StepBox}
