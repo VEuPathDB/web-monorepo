@@ -73,7 +73,10 @@ type TaxonomyNodeWithCount = {
   children: TaxonomyNodeWithCount[];
 }
 
-const verticalTextCss: Record<string,string> = {
+const verticalTextCss: React.CSSProperties = {
+  position: "absolute",
+  top: "7em",
+  right: "2em",
   transform: "rotate(270deg)",
   transformOrigin: "right top",
   border: "solid 1px #346792",
@@ -85,7 +88,6 @@ const verticalTextCss: Record<string,string> = {
   backgroundImage: "none",
   backgroundColor: "#4F81BD",
   cursor: "pointer",
-  margin: "110px 3px",
   whiteSpace: "nowrap"
 };
 
@@ -101,6 +103,18 @@ function ExpansionBar(props: ExpansionBarProps) {
       {props.arrow}<span style={{margin:"0 2em"}}>{props.message}</span>{props.arrow}
     </div>
   );
+}
+
+interface ContainerProps {
+  children: React.ReactChild | React.ReactChild[];
+}
+
+function Container(props: ContainerProps) {
+  return (
+    <div style={{ width: "30em", paddingRight: "2em" }}>
+      {props.children}
+    </div>
+  )
 }
 
 function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
@@ -166,13 +180,10 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
     return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message="Filter by Organism" arrow="&dArr;"/> );
   }
 
-  // show loading spinner if required data not yet present
-  if (!taxonomyTree || !filterSummary) {
-    return ( <Loading/> );
-  }
-
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
-  let taxonomyTreeWithCounts: TaxonomyNodeWithCount = createDisplayableTree(taxonomyTree, filterSummary, hideZeroes);
+  let taxonomyTreeWithCounts: TaxonomyNodeWithCount | undefined = taxonomyTree && filterSummary
+    ? createDisplayableTree(taxonomyTree, filterSummary, hideZeroes)
+    : undefined;
 
   // if temporary value assigned, use until user clears or hits apply;
   // else check step for a filter value and if present, use; else use empty string (no filter)
@@ -193,7 +204,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
 
   // if user has not expanded any nodes yet and there is only one top-level child, expand it
   let expandedNodeIds = savedExpandedNodeIds ? savedExpandedNodeIds :
-      taxonomyTreeWithCounts.children.length > 1 ? [] :
+      taxonomyTreeWithCounts == null || taxonomyTreeWithCounts.children.length > 1 ? [] :
       taxonomyTreeWithCounts.children.map(child => child.term);
 
   // event handler function to update the step with the user's new org filter config
@@ -205,45 +216,53 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   }
 
   return (
-    <div style={{display:"flex"}}>
-      <div style={{minWidth:"25em"}}>
-        <div style={{display:"flex",whiteSpace:"nowrap"}}>
-          <h3 style={{display:"inline-block",whiteSpace:"nowrap"}}>Choose Organisms</h3>
+    <Container>
+      <div>
+        <h2 style={{marginTop: "0.75em", fontWeight: "bold"}}>
+          Choose Organisms
           {showApplyAndCancelButtons && (
-            <div style={{marginLeft:"auto",padding:"22px 0 0 10px",whiteSpace:"nowrap"}}>
-              <input type="button" value="Apply" onClick={() => updateSearchConfig()}/>&nbsp;
-              <input type="button" value="Cancel" onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}/>
-            </div>
+            <React.Fragment>
+              &nbsp;
+              <button type="button" style={{ fontSize: 'revert', fontWeight: 'normal'}} onClick={() => updateSearchConfig()}>Apply</button>
+              &nbsp;
+              <button type="button" style={{ fontSize: 'revert', fontWeight: 'normal'}} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
+            </React.Fragment>
           )}
-        </div>
-        {filterSummary.values && (
+        </h2>
+        {filterSummary && filterSummary.values && (
           <div>
             <Checkbox value={hideZeroes} onChange={(newValue: boolean) => setHideZeroes(newValue)}/>
             <span> Hide organisms with zero records</span>
           </div>
         )}
-        <CheckboxTree<TaxonomyNodeWithCount>
-            tree={taxonomyTreeWithCounts}
-            getNodeId={node => node.term}
-            getNodeChildren={node => node.children}
-            onExpansionChange={expandedNodeIds => setExpandedNodeIds(expandedNodeIds)}
-            renderNode={renderTaxonomyNode}
-            expandedList={expandedNodeIds}
-            currentList={appliedFilterList}
-            isSelectable={true}
-            selectedList={selectedLeaves}
-            isMultiPick={true}
-            onSelectionChange={selectedNodeIds => setTemporaryFilterConfig(
-              selectedNodeIds.length == 0 ? NO_ORGANISM_FILTER_APPLIED : { filters: selectedNodeIds })}
-            isSearchable={true}
-            searchBoxPlaceholder="Search organisms..."
-            searchTerm={searchTerm}
-            onSearchTermChange={term => setSearchTerm(term)}
-            searchPredicate={nodeMeetsSearchCriteria}
-        />
+        { taxonomyTreeWithCounts
+        ? (
+            <CheckboxTree<TaxonomyNodeWithCount>
+              tree={taxonomyTreeWithCounts}
+              getNodeId={node => node.term}
+              getNodeChildren={node => node.children}
+              onExpansionChange={expandedNodeIds => setExpandedNodeIds(expandedNodeIds)}
+              renderNode={renderTaxonomyNode}
+              expandedList={expandedNodeIds}
+              currentList={appliedFilterList}
+              isSelectable={true}
+              selectedList={selectedLeaves}
+              isMultiPick={true}
+              onSelectionChange={selectedNodeIds => setTemporaryFilterConfig(
+                selectedNodeIds.length == 0 ? NO_ORGANISM_FILTER_APPLIED : { filters: selectedNodeIds })}
+              isSearchable={true}
+              searchBoxPlaceholder="Search organisms..."
+              searchTerm={searchTerm}
+              onSearchTermChange={term => setSearchTerm(term)}
+              searchPredicate={nodeMeetsSearchCriteria}
+            />
+            )
+        : (
+          <Loading/>
+        )}
       </div>
       <ExpansionBar onClick={() => setExpandedAndPref(false)} message="Hide Organism Filter" arrow="&uArr;"/>
-    </div>
+    </Container>
   );
 }
 

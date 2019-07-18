@@ -333,8 +333,8 @@ export function ResultPanelController(DefaultComponent) {
   return function ApiResultPanelController(props) {
     return (
       <div style={{ display: "flex" }}>
-        <div style={{ flexShrink: 1, padding: "1em" }}><OrganismFilter {...props}/></div>
-        <div style={{ flexGrow: 100, padding: "1em" }}><DefaultComponent {...props}/></div>
+        <div style={{ paddingRight: '2em', position: 'relative' }}><OrganismFilter {...props}/></div>
+        <div style={{ flex: 1 }}><DefaultComponent {...props}/></div>
       </div>
     );
   };
