@@ -329,11 +329,11 @@ export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitBut
   );
 }
 
-export function ResultPanelController(DefaultComponent) {
-  return function ApiResultPanelController(props) {
+export function ResultTabs(DefaultComponent) {
+  return function ApiResultTabs(props) {
     return (
-      <div style={{ display: "flex" }}>
-        <div style={{ paddingRight: '2em', position: 'relative' }}><OrganismFilter {...props}/></div>
+      <div style={{ display: "flex", paddingTop: "1em" }}>
+        <div style={{ position: 'relative' }}><OrganismFilter {...props}/></div>
         <div style={{ flex: 1 }}><DefaultComponent {...props}/></div>
       </div>
     );

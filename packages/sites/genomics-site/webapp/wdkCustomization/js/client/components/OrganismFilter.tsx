@@ -111,7 +111,7 @@ interface ContainerProps {
 
 function Container(props: ContainerProps) {
   return (
-    <div style={{ width: "30em", paddingRight: "2em" }}>
+    <div style={{ width: "30em", paddingRight: "4em" }}>
       {props.children}
     </div>
   )
@@ -218,8 +218,8 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   return (
     <Container>
       <div>
-        <h2 style={{marginTop: "0.75em", fontWeight: "bold"}}>
-          Choose Organisms
+        <h3 style={{ fontSize: "1.4em", padding: "0 0 .5em 0"}}>
+          Filter by Taxonomy
           {showApplyAndCancelButtons && (
             <React.Fragment>
               &nbsp;
@@ -228,7 +228,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
               <button type="button" style={{ fontSize: 'revert', fontWeight: 'normal'}} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
             </React.Fragment>
           )}
-        </h2>
+        </h3>
         {filterSummary && filterSummary.values && (
           <div>
             <Checkbox value={hideZeroes} onChange={(newValue: boolean) => setHideZeroes(newValue)}/>
