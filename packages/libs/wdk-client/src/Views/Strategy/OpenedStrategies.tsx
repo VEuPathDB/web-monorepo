@@ -12,17 +12,17 @@ interface Props {
 }
 
 export default function OpenedStrategies({ activeStrategyId, openStrategies, isVisible, setVisibility }: Props) {
-  if (openStrategies.length === 0) return null;
+  const otherOpenedStrategies = openStrategies.filter(id => id !== activeStrategyId);
+  if (otherOpenedStrategies.length === 0) return null;
   return (
     <CollapsibleSection
       className="OpenedStrategies"
       isCollapsed={!isVisible}
-      headerContent={`${openStrategies.length} opened ${openStrategies.length === 1 ? 'strategy' : 'strategies'}`}
+      headerContent={`${otherOpenedStrategies.length} other opened ${otherOpenedStrategies.length === 1 ? 'strategy' : 'strategies'}`}
       onCollapsedChange={isCollapsed => setVisibility(!isCollapsed)}
     >
       <div>
-        {openStrategies
-          // .filter(id => id !== activeStrategyId)
+        {otherOpenedStrategies
           .map(id =>(
             <StrategyPanelController
               viewId="inactiveStrategyPanel"

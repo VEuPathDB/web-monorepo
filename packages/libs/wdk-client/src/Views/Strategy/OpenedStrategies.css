@@ -3,9 +3,10 @@
 }
 
 .OpenedStrategiesContent {
-  border: 1px solid #333;
-  padding: 2em;
-  border-radius: 1em;
+  background: #f3f3f3;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 0 2em;
 }
 
 .OpenedStrategiesHeader {

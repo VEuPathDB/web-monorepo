@@ -1,3 +1,7 @@
+.StrategyPanel:last-of-type {
+  margin-bottom: 2em;
+}
+
 .StrategyPanel--Heading {
   font-weight: bold;
   display: flex;
@@ -18,6 +22,7 @@
   flex-flow: row-reverse nowrap;
   justify-content: space-between;
   background-color: #fafafa;
+  background-color: #d7d7d70f;
   box-shadow: 0 0 0 2px #666;
   border-radius: 1em;
 }
