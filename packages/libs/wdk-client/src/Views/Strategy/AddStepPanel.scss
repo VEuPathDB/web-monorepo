@@ -9,4 +9,25 @@
   .wdk-CategoriesCheckboxTree {
     position: relative;
   }
+
+  &--MenusHeader {
+    font-size: 1.25em;
+  }
+
+  &--MenuItemsContainer {
+    display: flex;
+
+    h3, p {
+      font-size: 1.25em;
+    }
+  }
+
+  &--MenuItem {
+    flex: 1;
+  }
+
+  &--MenuItemSeparator {
+    text-align: center;
+    flex: 0.25;
+  }
 }

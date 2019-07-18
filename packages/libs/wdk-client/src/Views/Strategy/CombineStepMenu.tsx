@@ -11,12 +11,17 @@ import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { RootState } from 'wdk-client/Core/State/Types';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { getTargetType, getRecordClassUrlSegment, getDisplayName, getTooltipContent, CategoryTreeNode, getLabel } from 'wdk-client/Utils/CategoryUtils';
 import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
+
+import 'wdk-client/Views/Strategy/CombineStepMenu.scss';
+
+const cx = makeClassNameHelper('CombineStepMenu');
 
 type StateProps = {
   basketSearchUrlSegment: string,
@@ -65,7 +70,14 @@ const booleanSearchUrlSegment = createSelector(
 const booleanSearchState = createSelector(
   ({ question: { questions } }: RootState) => questions,
   booleanSearchUrlSegment,
-  (questions, booleanSearchUrlSegment) => questions[booleanSearchUrlSegment]
+  (questions, booleanSearchUrlSegment) => {
+    const booleanSearchStateEntry = questions[booleanSearchUrlSegment];
+
+    // FIXME Should the default question state be something other than an empty object?
+    return !booleanSearchStateEntry || Object.keys(booleanSearchStateEntry).length === 0
+      ? undefined
+      : booleanSearchStateEntry;
+  }
 );
 
 const booleanOperatorParameter = createSelector(
@@ -144,7 +156,8 @@ export const CombineStepMenuView = (
     updateStrategy,
     searchTree,
     startOperationForm,
-    linkPlacement
+    linkPlacement,
+    operandStep
   }: Props
 ) => {
   const [ basketButtonStatus, setBasketButtonStatus ] = useState<BasketButtonStatus>('unclicked');
@@ -196,63 +209,96 @@ export const CombineStepMenuView = (
       : displayElement;
   }, []);
 
+  const onOperatorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    updateBooleanOperator(e.target.value);
+  }, [ updateBooleanOperator ]);
+
+  const onCombineWithBasketClicked = useCallback((e: React.MouseEvent) => {
+    setBasketButtonStatus('clicked');
+  }, []);
+
   return (
-    !basketSearchShortDisplayName ||
-    !booleanSearchState ||
-    booleanSearchState.questionStatus === 'loading' ||
-    !booleanOperatorParameter
-  )
-    ? <Loading />
-    : (
-      <div>
-        {
-          combineOperatorOrder.map(operator => (
-            <div key={operator} >
-              <input
-                id={operator}
-                type="radio"
-                name="operator"
-                value={operator}
-                defaultChecked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
-                onChange={e => {
-                  updateBooleanOperator(e.target.value);
-                }}
-              />
-              <label htmlFor={operator}>
-                <div className={cxOperator('--CombineOperator', operator)}>
+    <div className={cx()}>
+      {
+        (
+          !basketSearchShortDisplayName ||
+          !booleanSearchState ||
+          booleanSearchState.questionStatus === 'loading' ||
+          !booleanOperatorParameter
+        )
+          ? <Loading />
+          : (
+            <div className={cx('--Container')}>
+              <div className={cx('--Header')}>
+                <h3>
+                  Combine it
+                </h3>
+                <p>
+                  with another set of {inputRecordClass.shortDisplayNamePlural} from:
+                </p>
+              </div>
+              <div className={cx('--Body')}>
+                <div className={cx('--PrimaryInputLabel')}>
+                  {operandStep.estimatedSize} {operandStep.estimatedSize === 1 ? inputRecordClass.shortDisplayName : inputRecordClass.shortDisplayNamePlural}
                 </div>
-              </label>
+                <div className={cx('--OperatorSelector')}>
+                  {
+                    combineOperatorOrder.map(operator => (
+                      <div key={operator} >
+                        <input
+                          id={operator}
+                          type="radio"
+                          name="operator"
+                          value={operator}
+                          defaultChecked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
+                          onChange={onOperatorChange}
+                        />
+                        <label htmlFor={operator}>
+                          <div className={cxOperator('--CombineOperator', operator)}>
+                          </div>
+                        </label>
+                      </div>
+                    ))
+                  }
+                </div>
+                <div className={cx('--SecondaryInputSelector')}>
+                  <button 
+                    onClick={onCombineWithBasketClicked} 
+                    disabled={basketButtonStatus !== 'unclicked'}
+                    type="button">
+                    Your {inputRecordClass.shortDisplayNamePlural} basket
+                  </button>
+                  <button onClick={TODO}>
+                    A {inputRecordClass.shortDisplayNamePlural} strategy
+                  </button>
+                  <div className={cx('--NewSearchCheckbox')}>
+                    A new {inputRecordClass.shortDisplayNamePlural} search
+                    <CategoriesCheckboxTree
+                      selectedLeaves={NO_SELECTED_LEAVES}
+                      onChange={NOOP}
+                      tree={searchTree}
+                      expandedBranches={expandedBranches}
+                      searchTerm={searchTerm}
+                      isSelectable={false}
+                      searchBoxPlaceholder="Find a search..."
+                      leafType="search"
+                      renderNode={renderNode}
+                      renderNoResults={renderNoResults}
+                      onUiChange={setExpandedBranches}
+                      onSearchTermChange={setSearchTerm}
+                      linkPlacement={linkPlacement}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-          ))
-        }
-        <button 
-          onClick={() => {
-            setBasketButtonStatus('clicked');
-          }} 
-          disabled={
-            basketButtonStatus !== 'unclicked' 
-          }
-          type="button">
-          Combine with {inputRecordClass.displayNamePlural} basket
-        </button>
-        <CategoriesCheckboxTree
-          selectedLeaves={NO_SELECTED_LEAVES}
-          onChange={NOOP}
-          tree={searchTree}
-          expandedBranches={expandedBranches}
-          searchTerm={searchTerm}
-          isSelectable={false}
-          searchBoxPlaceholder="Find a search..."
-          leafType="search"
-          renderNode={renderNode}
-          renderNoResults={renderNoResults}
-          onUiChange={setExpandedBranches}
-          onSearchTermChange={setSearchTerm}
-          linkPlacement={linkPlacement}
-        />
-      </div>
-    )
+          )
+      }
+    </div>
+  );
 };
+
+const TODO = () => alert('TODO');
 
 const NO_SELECTED_LEAVES: string[] = [];
 const NOOP = () => {};

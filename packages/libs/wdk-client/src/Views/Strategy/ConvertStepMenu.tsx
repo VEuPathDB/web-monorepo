@@ -1,8 +1,41 @@
+import React from 'react';
+
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Question } from 'wdk-client/Utils/WdkModel';
+import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
 
-import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+const cx = makeClassNameHelper('CombineStepMenu');
 
-export const ConvertStepMenu = (_: AddStepOperationMenuProps) => null;
+import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
+
+export const ConvertStepMenu = ({
+  inputRecordClass,
+  operandStep
+}: AddStepOperationMenuProps) => (
+  <div className={cx()}>
+    <div className={cx('--Container')}>
+      <div className={cx('--Header')}>
+        <h3>
+          Convert it
+        </h3>
+        <p>
+          into a related set of:
+        </p>
+      </div>
+      <div className={cx('--Body')}>
+        <div className={cx('--PrimaryInputLabel')}>
+          {operandStep.estimatedSize} {operandStep.estimatedSize === 1 ? inputRecordClass.shortDisplayName : inputRecordClass.shortDisplayNamePlural}
+        </div>
+        <div className={cx('--TransformIcon')}>
+          ->
+        </div>
+        <div className={cx('--OperatorSelector')}>
+          No conversions available.
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 // A search specifies a valid transform <=>
 //   (1) it has a primary input and NO seconary input

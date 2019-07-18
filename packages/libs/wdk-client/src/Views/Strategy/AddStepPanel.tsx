@@ -20,7 +20,7 @@ const cx = makeClassNameHelper('AddStepPanel');
 type StateProps = {
   strategy?: StrategyDetails,
   inputRecordClass?: RecordClass,
-  previousStepNumber?: number,
+  stepsCompletedNumber?: number,
   previousStep?: Step,
   operandStep?: Step
 };
@@ -42,7 +42,10 @@ export type AddStepOperationMenuProps = {
   inputRecordClass: RecordClass,
   startOperationForm: (selection: string) => void,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
-  addType: AddType
+  addType: AddType,
+  stepsCompletedNumber: number,
+  operandStep: Step,
+  previousStep?: Step
 };
 
 export type AddStepOperationFormProps = {
@@ -51,7 +54,10 @@ export type AddStepOperationFormProps = {
   currentPage: string,
   advanceToPage: (nextPage: string) => void,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
-  addType: AddType
+  addType: AddType,
+  stepsCompletedNumber: number,
+  operandStep: Step,
+  previousStep?: Step
 };
 
 const AddStepPanelView = (
@@ -59,11 +65,12 @@ const AddStepPanelView = (
     addType,
     loadStrategy,
     inputRecordClass,
+    operandStep,
+    previousStep,
     requestPutStrategyStepTree,
     strategy,
     strategyId,
-    previousStepNumber,
-    operandStep
+    stepsCompletedNumber
   }: Props
 ) => {
   useEffect(() => {
@@ -75,7 +82,9 @@ const AddStepPanelView = (
 
   const currentPage = pageHistory[pageHistory.length - 1];
 
-  const onClickBack = useCallback(() => {
+  const onClickBack = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+
     const newPageHistory = pageHistory.slice(0, -1);
     if (newPageHistory.length === 0) {
       setSelectedOperation(undefined);
@@ -122,51 +131,71 @@ const AddStepPanelView = (
         (
           strategy === undefined ||
           inputRecordClass === undefined ||
-          previousStepNumber === undefined ||
+          stepsCompletedNumber === undefined ||
           operandStep === undefined
         )
           ? <Loading />
-          : <div>
-              <h1>
+          : <div className={cx('--Container')}>
+              <h1 className={cx('Header')}>
                 Add a Step to your Strategy
               </h1>
               {
                 !selectedOperation
                   ? (
-                    <div>
-                      <p>
-                        So far, your search strategy has {previousStepNumber} {previousStepNumber === 1 ? 'step' : 'steps'}.
-                        It found {operandStep.estimatedSize} {
-                          operandStep.estimatedSize === 1 
-                            ? inputRecordClass.shortDisplayName
-                            : inputRecordClass.shortDisplayNamePlural
-                          }.
-                      </p>
-                      <p>
-                        Gain data mining power by adding a step to your strategy.  You can...
-                      </p>
-                      {
-                        OPERATION_TYPE_ORDER.map(operation =>
-                          <Plugin<AddStepOperationMenuProps>
-                            key={operation}
-                            context={{
-                              type: 'addStepOperationMenu',
-                              name: operation
-                            }}
-                            pluginProps={{
-                              strategy,
-                              inputRecordClass,
-                              startOperationForm: startOperationFormCallbacks[operation],
-                              updateStrategy,
-                              addType
-                            }}
-                          />
-                        )
-                      }
+                    <div className={cx('--MenusContainer')}>
+                      <div className={cx('--MenusHeader')}>
+                        <p>
+                          So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}.
+                          It found {operandStep.estimatedSize} {
+                            operandStep.estimatedSize === 1 
+                              ? inputRecordClass.shortDisplayName
+                              : inputRecordClass.shortDisplayNamePlural
+                            }.
+                        </p>
+                        <p>
+                          Gain data mining power by adding a step to your strategy.  You can...
+                        </p>
+                      </div>
+                      <div className={cx('--MenuItemsContainer')}>
+                        {
+                          OPERATION_TYPE_ORDER
+                            .map((operation, index) =>
+                              <React.Fragment key={operation}>
+                                <div className={cx('--MenuItem')}>
+                                  <Plugin<AddStepOperationMenuProps>
+                                    key={operation}
+                                    context={{
+                                      type: 'addStepOperationMenu',
+                                      name: operation
+                                    }}
+                                    pluginProps={{
+                                      strategy,
+                                      inputRecordClass,
+                                      startOperationForm: startOperationFormCallbacks[operation],
+                                      updateStrategy,
+                                      addType,
+                                      stepsCompletedNumber,
+                                      operandStep,
+                                      previousStep
+                                    }}
+                                  />
+                                </div>
+                                {
+                                  index < OPERATION_TYPE_ORDER.length - 1 &&
+                                  <div className={cx('--MenuItemSeparator')}>
+                                    <p>
+                                      <em>-or-</em>
+                                    </p>
+                                  </div>
+                                }
+                              </React.Fragment>
+                            )
+                        }
+                      </div>
                     </div>
                   )
                   : (
-                    <div>
+                    <div className={cx('--Form')}>
                       <a href="#" onClick={onClickBack}>
                         Go Back
                       </a>
@@ -181,7 +210,10 @@ const AddStepPanelView = (
                           currentPage,
                           advanceToPage,
                           updateStrategy,
-                          addType
+                          addType,
+                          stepsCompletedNumber,
+                          operandStep,
+                          previousStep
                         }}
                       />
                     </div>
@@ -246,13 +278,6 @@ const previousStepSubtree = createSelector(
   }
 );
 
-const previousStepNumber = createSelector(
-  previousStepSubtree,
-  previousStepSubtree => previousStepSubtree === undefined
-    ? 0
-    : findPrimaryBranchHeight(previousStepSubtree) + 1
-);
-
 const previousStep = createSelector(
   strategy,
   previousStepSubtree,
@@ -270,6 +295,13 @@ const operandStep = createSelector(
     : previousStep !== undefined
     ? previousStep
     : strategy.steps[findPrimaryBranchLeaf(strategy.stepTree).stepId]
+);
+
+const stepsCompletedNumber = createSelector(
+  previousStepSubtree,
+  previousStepSubtree => previousStepSubtree === undefined
+    ? 1
+    : findPrimaryBranchHeight(previousStepSubtree) + 1
 );
 
 const inputRecordClass = createSelector(
@@ -294,7 +326,7 @@ export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, 
   (state, ownProps) => ({
     inputRecordClass: inputRecordClass(state, ownProps),
     strategy: strategy(state, ownProps),
-    previousStepNumber: previousStepNumber(state, ownProps),
+    stepsCompletedNumber: stepsCompletedNumber(state, ownProps),
     previousStep: previousStep(state, ownProps),
     operandStep: operandStep(state, ownProps)
   }),
