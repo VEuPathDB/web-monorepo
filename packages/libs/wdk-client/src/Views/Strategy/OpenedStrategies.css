@@ -1,0 +1,13 @@
+.OpenedStrategies {
+  margin-top: .5em;
+}
+
+.OpenedStrategiesContent {
+  border: 1px solid #333;
+  padding: 2em;
+  border-radius: 1em;
+}
+
+.OpenedStrategiesHeader {
+  font-size: 1.2em;
+}

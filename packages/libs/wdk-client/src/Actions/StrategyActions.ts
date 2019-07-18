@@ -149,6 +149,11 @@ export const closeStrategy = makeActionCreator(
     (strategyId: number) => ({ strategyId })
 );
 
+export const setActiveStrategy = makeActionCreator(
+    'setActiveStrategy',
+    (strategyId?: number) => ({ strategyId })
+)
+
 export type Action =
 | InferAction<typeof requestCreateStrategy>
 | InferAction<typeof fulfillCreateStrategy>
@@ -178,4 +183,5 @@ export type Action =
 | InferAction<typeof openStrategy>
 | InferAction<typeof closeStrategy>
 | InferAction<typeof redirectToNewSearch>
+| InferAction<typeof setActiveStrategy>
 

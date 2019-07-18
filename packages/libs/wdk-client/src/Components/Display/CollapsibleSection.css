@@ -16,11 +16,6 @@
   content: '\f0da';
 }
 
-.wdk-CollapsibleSectionContent {
-  padding-left: 1rem;
-  margin: 1em 0 2em 0;
-}
-
 .wdk-CollapsibleSectionContent__collapsed {
   display: none;
 }

@@ -29,6 +29,7 @@ import {
   redirectToNewSearch,
   fulfillDeleteStep,
   requestRemoveStepFromStepTree,
+  setActiveStrategy,
 } from 'wdk-client/Actions/StrategyActions';
 import { removeStep, getStepIds } from 'wdk-client/Utils/StrategyUtils';
 import { difference } from 'lodash';
@@ -42,6 +43,7 @@ export type StrategyEntry =
 export type State = {
   strategies: Record<number, StrategyEntry|undefined>;
   openStrategies: number[];
+  activeStrategyId?: number;
 };
 
 const initialState: State = {
@@ -108,6 +110,10 @@ export function reduce(state: State = initialState, action: Action): State {
       ...state,
       openStrategies: state.openStrategies.filter((stratId) => stratId != strategyId)
     }
+  }
+
+  case setActiveStrategy.type: {
+    return { ...state, activeStrategyId: action.payload.strategyId };
   }
 
   default: {
