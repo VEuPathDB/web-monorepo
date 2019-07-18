@@ -153,7 +153,7 @@ export function GbrowseContext(props) {
       jbrowseUrl = record.attributes.syntenyJbrowseUrl;
   }
 
-  if ( jbrowseUrl && attribute.name == 'SyntenyGbrowseUrl') {
+  if ( jbrowseUrl && ( attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'ProteomicsPbrowseUrl') ) {
   return (
     <div>
       <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
