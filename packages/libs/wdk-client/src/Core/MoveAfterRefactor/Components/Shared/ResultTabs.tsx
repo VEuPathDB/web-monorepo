@@ -1,8 +1,8 @@
-import 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs.scss';
-
 import React from 'react';
-import { Tabs } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import Tabs from 'wdk-client/Components/Tabs/Tabs';
+import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
+
+import 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs.scss';
 
 const cx = makeClassNameHelper('wdk-Tab');
 
@@ -15,6 +15,9 @@ export type TabConfig<TabKey extends string> = {
 };
 
 type Props<TabKey extends string> = {
+  // include stepId and strategyId for consumers wrapping component
+  stepId: number;
+  strategyId: number;
   tabs: TabConfig<TabKey>[];
   activeTab: string;
   onTabSelected: (tab: TabKey) => void;
@@ -23,7 +26,7 @@ type Props<TabKey extends string> = {
   containerClassName?: string;
 };
 
-export default function ResultTabs<T extends string>({ tabs, ...rest }: Props<T>) {
+export default wrappable(function ResultTabs<T extends string>({ tabs, ...rest }: Props<T>) {
   return <Tabs 
     tabs={tabs.map(
       ({ tooltip, display, ...otherOptions }) => ({
@@ -33,4 +36,4 @@ export default function ResultTabs<T extends string>({ tabs, ...rest }: Props<T>
     )}
       {...rest} 
   />;
-}
+});

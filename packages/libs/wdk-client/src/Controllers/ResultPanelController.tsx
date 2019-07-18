@@ -87,6 +87,7 @@ interface ResultPanelControllerProps {
   summaryViewPlugins: SummaryViewPluginField[];
   defaultSummaryView: string;
   stepId: number;
+  strategyId: number;
   viewId: string;
   loadingTabs: boolean;
   stepErrorMessage?: string;
@@ -132,6 +133,8 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
       <React.Fragment>
         {this.props.header}
         <ResultTabs
+          stepId={this.props.stepId}
+          strategyId={this.props.strategyId}
           activeTab={`${this.props.activeTab}`}
           onTabSelected={this.props.onTabSelected}
           onTabRemoved={this.props.onTabRemoved}

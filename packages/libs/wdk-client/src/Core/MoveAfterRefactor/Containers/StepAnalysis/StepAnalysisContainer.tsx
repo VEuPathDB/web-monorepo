@@ -42,6 +42,7 @@ type PanelEventHandlers = {
 
 interface StepAnalysisContainerProps {
   stepId: number;
+  strategyId: number;
   loadingTabs: boolean;
   activeTab: string;
   tabs: TabConfig<string>[];
@@ -66,6 +67,8 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
   renderView() {
     return (
       <ResultTabs
+        stepId={this.props.stepId}
+        strategyId={this.props.strategyId}
         activeTab={`${this.props.activeTab}`}
         onTabSelected={this.props.onTabSelected}
         onTabRemoved={this.props.onTabRemoved}

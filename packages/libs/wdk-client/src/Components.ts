@@ -63,6 +63,7 @@ import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
 import { ResizableContainer } from 'wdk-client/Components/Display/ResizableContainer';
+import ResultTabs from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 
 export {
   AccordionButton,
@@ -117,6 +118,7 @@ export {
   RecordTableSection,
   RecordUI,
   ResizableContainer,
+  ResultTabs,
   ReporterSortMessage,
   SaveableTextEditor,
   ServerSideAttributeFilter,
