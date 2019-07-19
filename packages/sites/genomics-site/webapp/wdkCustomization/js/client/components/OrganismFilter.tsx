@@ -68,7 +68,6 @@ type OrgFilterSummary = {
 type TaxonomyNodeWithCount = {
   term: string;
   display: string;
-  shortDisplay: string;
   count: number;
   children: TaxonomyNodeWithCount[];
 }
@@ -328,14 +327,9 @@ function createDisplayableTree(
           count = mappedChildren.reduce((sum, child) => sum + child.count, 0);
         }
       }
-      // shorten display names of children based on display name of this node
-      mappedChildren = mappedChildren.map(child =>
-        child.display.search(node.data.display) != 0 ? child :
-            Object.assign(child, { shortDisplay: child.display.substr(node.data.display.length).trim() }));
       return {
         term: node.data.term,
         display: node.data.display,
-        shortDisplay: node.data.display,
         count: count,
         children: mappedChildren
       };
@@ -366,7 +360,7 @@ function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
 function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
   return (
     <div style={{display:"flex",width:"calc(100% - 2em)"}}>
-      <div>{node.shortDisplay}</div>
+      <div>{node.display}</div>
       <div style={{marginLeft:"auto"}}>{node.count}</div>
     </div>
   );
