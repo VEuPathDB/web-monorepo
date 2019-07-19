@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconAlt, SaveableTextEditor, Dialog } from 'wdk-client/Components';
+import { IconAlt, SaveableTextEditor } from 'wdk-client/Components';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
@@ -7,8 +7,8 @@ import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
 import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
 import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import StepBoxes from './StepBoxes';
-import './StrategyPanel.css';
 import { QuestionController } from 'wdk-client/Controllers';
+import './StrategyPanel.css';
 
 
 
@@ -20,10 +20,12 @@ interface Props {
   insertStepVisibility?: AddType;
   activeModal?: string;
   reviseFormStepId?: number;
+  showCloseButton?: boolean;
   setActiveModal: (type: string) => void;
   clearActiveModal: () => void;
   setReviseFormStepId: (stepId?: number) => void;
   onStrategyRename: (name: string) => void;
+  onStrategyClose: () => void;
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
   onStrategyDelete: () => void;
@@ -44,6 +46,8 @@ export default function StrategyPanel(props: Props) {
     uiStepTree,
     strategy,
     reviseFormStepId,
+    showCloseButton,
+    onStrategyClose,
     setReviseFormStepId,
     onShowInsertStep,
     onHideInsertStep,
@@ -65,6 +69,13 @@ export default function StrategyPanel(props: Props) {
         <div className={cx('--StrategyName')}>
           <SaveableTextEditor value={strategy.name} displayValue={(value, handleEdit) => <em onClick={handleEdit}>{value}{strategy.isSaved ? '' : ' *'}</em>} onSave={props.onStrategyRename}/>
         </div>
+        {showCloseButton && (
+          <div className={cx('--CloseButton')}>
+            <button className="link" onClick={() => onStrategyClose()}>
+              Close
+            </button>
+          </div>
+        )}
       </h2>
       <div className={cx('--Panel')}>
         <StrategyControls {...props}/>

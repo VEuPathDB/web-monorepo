@@ -2,7 +2,7 @@ import { isEmpty, keyBy, partial } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
+import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties, closeStrategy } from 'wdk-client/Actions/StrategyActions';
 import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setActiveModal, clearActiveModal, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
 import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
@@ -16,6 +16,7 @@ interface OwnProps {
   viewId: string;
   strategyId: number;
   stepId?: number;
+  showCloseButton?: boolean;
 }
 
 type MappedProps = 
@@ -35,6 +36,7 @@ interface MappedDispatch {
   setReviseFormStepId: (stepId?: number) => void;
   clearActiveModal: () => void;
   requestStrategy: (id: number) => void;
+  onStrategyClose: () => void;
   onStrategyCopy: (signature: string) => void;
   onStrategyDelete: () => void;
   onStrategyRename: (name: string) => void;
@@ -77,6 +79,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
   return bindActionCreators({
     requestStrategy,
     setActiveModal: (type: string) => setActiveModal(props.viewId, type, props.strategyId),
+    onStrategyClose: () => closeStrategy(props.strategyId),
     setReviseFormStepId: (stepId?: number) => setReviseFormVisibility(props.viewId, stepId),
     clearActiveModal: () => clearActiveModal(props.viewId),
     onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),

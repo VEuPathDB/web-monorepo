@@ -4,9 +4,11 @@
 
 .OpenedStrategiesContent {
   background: #f3f3f3;
-  border: 1px solid #999;
-  border-radius: 4px;
-  padding: 0 2em;
+  border: 1px solid transparent;
+  border-bottom: 4px solid black;
+  /* border-radius: 4px; */
+  margin: 0 -2em;
+  padding: 0 2em 2em;
 }
 
 .OpenedStrategiesHeader {

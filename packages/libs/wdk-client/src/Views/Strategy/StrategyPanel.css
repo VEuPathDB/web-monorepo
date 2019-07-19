@@ -9,6 +9,13 @@
   align-items: center;
 }
 
+.StrategyPanel--CloseButton {
+  font-size: .75rem;
+  position: relative;
+  top: .3em;
+  margin-left: 1em;
+}
+
 .StrategyPanel--StrategyCount {
   margin-right: 2em;
 }
@@ -22,7 +29,6 @@
   flex-flow: row-reverse nowrap;
   justify-content: space-between;
   background-color: #fafafa;
-  background-color: #d7d7d70f;
   box-shadow: 0 0 0 2px #666;
   border-radius: 1em;
 }

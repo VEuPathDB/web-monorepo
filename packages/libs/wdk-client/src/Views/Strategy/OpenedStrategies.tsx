@@ -11,22 +11,22 @@ interface Props {
   activeStrategyId?: number;
 }
 
-export default function OpenedStrategies({ activeStrategyId, openStrategies, isVisible, setVisibility }: Props) {
-  const otherOpenedStrategies = openStrategies.filter(id => id !== activeStrategyId);
-  if (otherOpenedStrategies.length === 0) return null;
+export default function OpenedStrategies({ openStrategies, isVisible, setVisibility }: Props) {
+  if (openStrategies.length < 2) return null;
   return (
     <CollapsibleSection
       className="OpenedStrategies"
       isCollapsed={!isVisible}
-      headerContent={`${otherOpenedStrategies.length} other opened ${otherOpenedStrategies.length === 1 ? 'strategy' : 'strategies'}`}
+      headerContent={`${openStrategies.length} opened strategies`}
       onCollapsedChange={isCollapsed => setVisibility(!isCollapsed)}
     >
       <div>
-        {otherOpenedStrategies
+        {openStrategies
           .map(id =>(
             <StrategyPanelController
               viewId="inactiveStrategyPanel"
               strategyId={id}
+              showCloseButton
             />
           ))}
       </div>
