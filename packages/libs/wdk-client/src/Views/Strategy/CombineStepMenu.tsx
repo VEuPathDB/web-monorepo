@@ -237,7 +237,7 @@ export const CombineStepMenuView = (
               </div>
               <div className={cx('--Body')}>
                 <div className={cx('--PrimaryInputLabel')}>
-                  {operandStep.estimatedSize} {operandStep.estimatedSize === 1 ? inputRecordClass.shortDisplayName : inputRecordClass.shortDisplayNamePlural}
+                  {operandStep.estimatedSize.toLocaleString()} {operandStep.estimatedSize === 1 ? inputRecordClass.shortDisplayName : inputRecordClass.shortDisplayNamePlural}
                 </div>
                 <div className={cx('--OperatorSelector')}>
                   {

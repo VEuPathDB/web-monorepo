@@ -117,9 +117,9 @@ const CombineStepFormView = ({
   return (
     <div className={cx()}>
       <div className={cx('--Header')}>
-        <h3>
+        <h2>
           Search for {inputRecordClass.shortDisplayNamePlural} {question && `by ${question.displayName}`}
-        </h3>
+        </h2>
 
         The results will be{' '}
         <SingleSelect

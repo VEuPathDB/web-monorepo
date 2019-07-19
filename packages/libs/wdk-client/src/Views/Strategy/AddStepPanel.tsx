@@ -146,7 +146,7 @@ const AddStepPanelView = (
                       <div className={cx('--MenusHeader')}>
                         <p>
                           So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}.
-                          It found {operandStep.estimatedSize} {
+                          It found {operandStep.estimatedSize.toLocaleString()} {
                             operandStep.estimatedSize === 1 
                               ? inputRecordClass.displayName
                               : inputRecordClass.displayNamePlural
