@@ -242,7 +242,7 @@ export const CombineStepMenuView = (
                 <div className={cx('--OperatorSelector')}>
                   {
                     combineOperatorOrder.map(operator => (
-                      <div key={operator} >
+                      <div key={operator} className={cx('--OperatorChoice')} >
                         <input
                           id={operator}
                           type="radio"

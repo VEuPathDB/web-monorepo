@@ -9,4 +9,9 @@
     align-items: center;
     justify-content: space-between;
   }
+
+  &--PrimaryInputLabel {
+    border: 1px solid black;
+    padding: 1em;
+  }
 }

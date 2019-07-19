@@ -10,12 +10,33 @@
     justify-content: space-between;
   }
 
+  &--PrimaryInputLabel {
+    border: 1px solid black;
+    padding: 1em;
+  }
+
+  &--OperatorChoice {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5em;
+
+    input {
+      margin-right: 5px;
+      margin-top: 5px;
+    }
+  }
+
+  &--OperatorSelector {
+    border: 1px solid black;
+  }
+
   &--SecondaryInputSelector {
     display: flex;
     flex-direction: column;
 
-    * > {
-      padding: 1em;
+    > * {
+      margin: 1em;
     }
   }
 

@@ -4,7 +4,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Question } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
 
-const cx = makeClassNameHelper('CombineStepMenu');
+const cx = makeClassNameHelper('ConvertStepMenu');
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
 
