@@ -3,6 +3,7 @@ import { Action } from 'wdk-client/Actions';
 import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setActiveModal, clearActiveModal, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 import { fulfillPutStrategy } from 'wdk-client/Actions/StrategyActions';
+import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 /*
 * So far, this store module does not handle opening and closing the strategy panel.  it is just
@@ -15,7 +16,7 @@ type ViewState = {
     strategyPanelIsVisible: boolean,
     strategyPanelHeightOverride?: number,  // user's choice of height
     visibleStepDetails?: number,  // stepId or none if not shown
-    visibleInsertStepWizard?: number  // stepId or none if not shown
+    visibleInsertStepWizard?: AddType  // AddType or none if not shown
     visibleReviseForm?: number  // stepId or none if not shown
     visibleDeleteStepDialog?: number  // stepId or none if not shown
     nestedStrategyBranchIds: number[]; // step ids
@@ -44,7 +45,7 @@ type ViewState = {
       }
   
       case setInsertStepWizardVisibility.type: {
-        return { ...state, visibleInsertStepWizard: action.payload.stepId };
+        return { ...state, visibleInsertStepWizard: action.payload.addType };
       }
 
       case setReviseFormVisibility.type: {

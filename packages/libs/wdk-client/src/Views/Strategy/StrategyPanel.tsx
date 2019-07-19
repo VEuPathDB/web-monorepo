@@ -5,7 +5,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
 import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
-import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import StepBoxes from './StepBoxes';
 import './StrategyPanel.css';
 import { QuestionController } from 'wdk-client/Controllers';
@@ -17,7 +17,7 @@ const cx = makeClassNameHelper('StrategyPanel');
 interface Props {
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
-  insertStepVisibility?: number;
+  insertStepVisibility?: AddType;
   activeModal?: string;
   reviseFormStepId?: number;
   setActiveModal: (type: string) => void;
@@ -27,7 +27,7 @@ interface Props {
   onStrategyCopy: (signature: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
   onStrategyDelete: () => void;
-  onShowInsertStep: (stepId: number) => void;
+  onShowInsertStep: (addType: AddType) => void;
   onHideInsertStep: () => void;
   onMakeNestedStrategy: (branchStepId: number) => void;
   onMakeUnnestedStrategy: (branchStepId: number) => void;
@@ -92,10 +92,7 @@ export default function StrategyPanel(props: Props) {
             <button type="button" className="link" onClick={() => onHideInsertStep()}>Close</button>
             <AddStepPanel
               strategyId={props.strategy.strategyId}
-              addType={props.insertStepVisibility === strategy.rootStepId
-                ? { type: 'append', primaryInputStepId: strategy.rootStepId }
-                : { type: 'insert-before', outputStepId: props.insertStepVisibility}
-              }
+              addType={props.insertStepVisibility}
             />
           </div>
         </Modal>

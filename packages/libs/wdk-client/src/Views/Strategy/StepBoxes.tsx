@@ -1,4 +1,4 @@
-import { toUpper, noop, partial } from 'lodash';
+import { toUpper, noop } from 'lodash';
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
@@ -23,7 +23,7 @@ export default function StepBoxes(props: StepBoxesProps) {
         >
           <button
             className={cx('--InsertStepButton')}
-            type="button" onClick={() => props.onShowInsertStep(props.stepTree.step.id)}
+            type="button" onClick={() => props.onShowInsertStep({ type: 'append', primaryInputStepId: props.stepTree.step.id })}
           >Continue building</button>
         </Tooltip>
       </div>
@@ -70,16 +70,16 @@ function StepTree(props: StepBoxesProps) {
             isNested: false,
             isExpanded: false,
             isDeleteable,
-            renameStep: partial(props.onRenameStep, step.id),
+            renameStep: (newName: string) => props.onRenameStep(step.id, newName),
             // no-op; primary inputs cannot be nested
             makeNestedStrategy: noop,
             makeUnnestStrategy: noop,
             collapseNestedStrategy: noop,
             expandNestedStrategy: noop,
-            showNewAnalysisTab: partial(props.onAnalyzeStep, step.id),
-            showReviseForm: partial(props.setReviseFormStepId, step.id),
-            insertStepBefore: partial(props.onShowInsertStep, step.id),
-            deleteStep: partial(props.onDeleteStep, step.id)
+            showNewAnalysisTab: () => props.onAnalyzeStep(),
+            showReviseForm: () => props.setReviseFormStepId(step.id),
+            insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', outputStepId: step.id }),
+            deleteStep: () => props.onDeleteStep(step.id)
           }}
           defaultComponent={StepBox}
         />
@@ -120,10 +120,10 @@ function StepTree(props: StepBoxesProps) {
               expandNestedStrategy: () => {
                 props.onExpandNestedStrategy(step.id);
               },
-              showNewAnalysisTab: partial(props.onAnalyzeStep, secondaryInput.step.id),
-              showReviseForm: partial(props.setReviseFormStepId, secondaryInput.step.id),
-              insertStepBefore: partial(props.onShowInsertStep, step.id),
-              deleteStep: partial(props.onDeleteStep, step.id)
+              showNewAnalysisTab: () => props.onAnalyzeStep(),
+              showReviseForm: () => props.setReviseFormStepId(secondaryInput.step.id),
+              insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', outputStepId: step.id }),
+              deleteStep: () => props.onDeleteStep(step.id)
             }}
             defaultComponent={StepBox}
           />

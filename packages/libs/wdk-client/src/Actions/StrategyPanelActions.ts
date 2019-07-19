@@ -1,4 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 export const openStrategyPanel = makeActionCreator(
   'strategyPanel/open',
@@ -32,7 +33,7 @@ export const setStepDetailsVisibility = makeActionCreator(
 
 export const setInsertStepWizardVisibility = makeActionCreator(
   'strategyPanel/setInsertStepWizardVisibility',
-  (viewId: string, stepId: number | undefined) => ({ stepId, viewId })
+  (viewId: string, addType: AddType | undefined) => ({ addType, viewId })
 );
 
 export const setReviseFormVisibility = makeActionCreator(

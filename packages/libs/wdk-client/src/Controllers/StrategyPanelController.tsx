@@ -10,7 +10,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
-import { UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 
 interface OwnProps {
   viewId: string;
@@ -26,7 +26,7 @@ type MappedProps =
   activeModal?: string;
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
-  insertStepVisibility?: number;
+  insertStepVisibility?: AddType;
   reviseFormStepId?: number;
 }
 
@@ -39,7 +39,7 @@ interface MappedDispatch {
   onStrategyDelete: () => void;
   onStrategyRename: (name: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
-  onShowInsertStep: (stepId: number) => void;
+  onShowInsertStep: (addType: AddType) => void;
   onHideInsertStep: () => void;
   onExpandNestedStrategy: (branchStepId: number) => void;
   onCollapseNestedStrategy: (branchStepId: number) => void;
@@ -83,7 +83,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
     onStrategyDelete: () => requestDeleteStrategy(props.strategyId),
     onStrategyRename: (name: string) => requestPatchStrategyProperties(props.strategyId, { name }),
     onStrategySave: (name: string, isPublic: boolean, description?: string) => requestPatchStrategyProperties(props.strategyId, { isPublic, isSaved: true, name, description }),
-    onShowInsertStep: (stepId: number) => setInsertStepWizardVisibility(props.viewId, stepId),
+    onShowInsertStep: (addType: AddType) => setInsertStepWizardVisibility(props.viewId, addType),
     onHideInsertStep: () => setInsertStepWizardVisibility(props.viewId, undefined),
     onExpandNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(props.strategyId, branchStepId, { expanded: true }),
     onCollapseNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(props.strategyId, branchStepId, { expanded: false }),

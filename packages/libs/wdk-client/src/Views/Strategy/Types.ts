@@ -46,7 +46,7 @@ export interface StepBoxesProps {
   nestedStrategyBranchToRename?: number;
   isDeleteable?: boolean;
   setReviseFormStepId: (stepId?: number) => void;
-  onShowInsertStep: (stepId: number) => void;
+  onShowInsertStep: (addType: AddType) => void;
   onHideInsertStep: () => void;
   onMakeNestedStrategy: (branchId: number) => void;
   onMakeUnnestedStrategy: (branchId: number) => void;
