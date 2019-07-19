@@ -67,6 +67,7 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
   renderView() {
     return (
       <ResultTabs
+        loadingTabs={this.props.loadingTabs}
         stepId={this.props.stepId}
         strategyId={this.props.strategyId}
         activeTab={`${this.props.activeTab}`}

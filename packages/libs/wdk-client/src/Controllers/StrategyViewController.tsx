@@ -53,12 +53,14 @@ function StrategyController({ stepId, strategyId, dispatch, openStrategies, isOp
         strategyId={strategyId}
         stepId={stepId}
       /> */}
-      {strategyId && stepId && <ResultPanelController
-        strategyId={strategyId}
-        stepId={stepId}
-        viewId="strategy"
-        renderHeader={ResultPanelHeader}
-      />}
+      <div style={{ position: 'relative', minHeight: '350px' }}>
+        {strategyId && stepId && <ResultPanelController
+          strategyId={strategyId}
+          stepId={stepId}
+          viewId="strategy"
+          renderHeader={ResultPanelHeader}
+        />}
+      </div>
     </React.Fragment>
   );
 }

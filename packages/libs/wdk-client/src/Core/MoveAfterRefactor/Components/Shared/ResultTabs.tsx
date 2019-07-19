@@ -24,6 +24,7 @@ type Props<TabKey extends string> = {
   onTabRemoved?: (tab: TabKey) => void;
   headerContent?: React.ReactNode;
   containerClassName?: string;
+  loadingTabs: boolean;
 };
 
 export default wrappable(function ResultTabs<T extends string>({ tabs, ...rest }: Props<T>) {

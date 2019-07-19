@@ -45,6 +45,7 @@ import { LoadingOverlay } from 'wdk-client/Components';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
 import { StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
+import Loading from 'wdk-client/Components/Loading';
 
 type StateProps = {
   strategyEntry?: StrategyEntry;
@@ -116,23 +117,12 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
     return this.props.isUnauthorized;
   }
 
-  isRenderDataLoaded() {
-    return !this.props.loadingTabs || this.props.stepErrorMessage != null;
-  }
-
-  renderDataLoading() {
-    return (
-      <LoadingOverlay>
-        Loading data...
-      </LoadingOverlay>
-    );
-  }
-
   renderView() {
     return (
       <React.Fragment>
         {this.props.header}
         <ResultTabs
+          loadingTabs={this.props.loadingTabs}
           stepId={this.props.stepId}
           strategyId={this.props.strategyId}
           activeTab={`${this.props.activeTab}`}
