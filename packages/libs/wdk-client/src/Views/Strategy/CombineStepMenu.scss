@@ -1,0 +1,16 @@
+.CombineStepMenu {
+  &--Body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &--SecondaryInputSelector {
+    display: flex;
+    flex-direction: column;
+
+    * > {
+      padding: 1em;
+    }
+  }
+}
