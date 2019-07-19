@@ -217,14 +217,14 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   return (
     <Container>
       <div>
-        <h3 style={{ fontSize: "1.4em", padding: "0 0 .5em 0"}}>
+        <h3 style={{ fontSize: "1.4em", padding: "0 0 .5em 0", display: 'flex', alignItems: 'center', height: '2em' }}>
           Filter by Taxonomy
           {showApplyAndCancelButtons && (
             <React.Fragment>
               &nbsp;
-              <button type="button" style={{ fontSize: 'revert', fontWeight: 'normal'}} onClick={() => updateSearchConfig()}>Apply</button>
+              <button type="button" style={{ fontSize: '.75rem', fontWeight: 'normal', marginLeft: 'auto' }} onClick={() => updateSearchConfig()}>Apply</button>
               &nbsp;
-              <button type="button" style={{ fontSize: 'revert', fontWeight: 'normal'}} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
+              <button type="button" style={{ fontSize: '.75rem', fontWeight: 'normal'}} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
             </React.Fragment>
           )}
         </h3>
