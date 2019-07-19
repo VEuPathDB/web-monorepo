@@ -18,9 +18,7 @@ export const ConvertStepMenu = ({
         <h3>
           Convert it
         </h3>
-        <p>
           into a related set of:
-        </p>
       </div>
       <div className={cx('--Body')}>
         <div className={cx('--PrimaryInputLabel')}>

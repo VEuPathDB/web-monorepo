@@ -1,4 +1,9 @@
 .ConvertStepMenu {
+  &--Header {
+    font-size: 1.5em;
+    margin: 1em 0;
+  }
+
   &--Body {
     display: flex;
     align-items: center;

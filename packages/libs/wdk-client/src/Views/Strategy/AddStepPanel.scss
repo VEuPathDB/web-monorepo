@@ -2,24 +2,17 @@
   background: white;
   width: 75vw;
 
-  h1 {
+  &--Header {
     text-align: center;
-  }
-
-  .wdk-CategoriesCheckboxTree {
-    position: relative;
-  }
-
-  &--MenusHeader {
-    font-size: 1.25em;
   }
 
   &--MenuItemsContainer {
     display: flex;
+  }
 
-    h3, p {
-      font-size: 1.25em;
-    }
+  &--MenusHeader {
+    font-size: 1.5em;
+    text-align: center;
   }
 
   &--MenuItem {
@@ -27,7 +20,18 @@
   }
 
   &--MenuItemSeparator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     text-align: center;
     flex: 0.25;
+    font-size: 1.5em;
+    margin: 2em 0;
+  }
+
+  &--MenuItemDividingLine {
+    border-left: 1px solid black; 
+    height: 100%;
   }
 }

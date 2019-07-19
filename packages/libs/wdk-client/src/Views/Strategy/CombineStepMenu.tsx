@@ -233,9 +233,7 @@ export const CombineStepMenuView = (
                 <h3>
                   Combine it
                 </h3>
-                <p>
                   with another set of {inputRecordClass.shortDisplayNamePlural} from:
-                </p>
               </div>
               <div className={cx('--Body')}>
                 <div className={cx('--PrimaryInputLabel')}>

@@ -136,7 +136,7 @@ const AddStepPanelView = (
         )
           ? <Loading />
           : <div className={cx('--Container')}>
-              <h1 className={cx('Header')}>
+              <h1 className={cx('--Header')}>
                 Add a Step to your Strategy
               </h1>
               {
@@ -148,11 +148,10 @@ const AddStepPanelView = (
                           So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}.
                           It found {operandStep.estimatedSize} {
                             operandStep.estimatedSize === 1 
-                              ? inputRecordClass.shortDisplayName
-                              : inputRecordClass.shortDisplayNamePlural
-                            }.
-                        </p>
-                        <p>
+                              ? inputRecordClass.displayName
+                              : inputRecordClass.displayNamePlural
+                            }. 
+                          <br />
                           Gain data mining power by adding a step to your strategy.  You can...
                         </p>
                       </div>
@@ -186,6 +185,8 @@ const AddStepPanelView = (
                                     <p>
                                       <em>-or-</em>
                                     </p>
+                                    <div className={cx('--MenuItemDividingLine')}>
+                                    </div>
                                   </div>
                                 }
                               </React.Fragment>

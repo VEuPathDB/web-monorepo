@@ -17,31 +17,31 @@ import 'wdk-client/Views/Strategy/CombineStepForm.scss';
 
 const cx = makeClassNameHelper('CombineStepForm');
 
-const selectVerbiage: Record<CombineOperator, string> = {
+const selectVerbiageAppend: Record<CombineOperator, string> = {
   [CombineOperator.Intersect]: 'intersected with', 
   [CombineOperator.Union]: 'unioned with', 
   [CombineOperator.LeftMinus]: 'subtracted by', 
   [CombineOperator.RightMinus]: 'subtracted from'
 };
 
-const selectVerbiagePrimaryLeaf: Record<CombineOperator, string> = {
+const selectVerbiageInsertBefore: Record<CombineOperator, string> = {
   [CombineOperator.Intersect]: 'intersected with', 
   [CombineOperator.Union]: 'unioned with', 
   [CombineOperator.LeftMinus]: 'subtracted from', 
   [CombineOperator.RightMinus]: 'subtracted by'
 };
 
-const selectItems = combineOperatorOrder.map(
+const selectItemsAppend = combineOperatorOrder.map(
   operator => ({
     value: operator,
-    display: selectVerbiage[operator]
+    display: selectVerbiageAppend[operator]
   })
 );
 
-const selectItemsLeaf = combineOperatorOrder.map(
+const selectItemsInsertBefore = combineOperatorOrder.map(
   operator => ({
     value: operator,
-    display: selectVerbiagePrimaryLeaf[operator]
+    display: selectVerbiageInsertBefore[operator]
   })
 );
 
@@ -107,8 +107,7 @@ const CombineStepFormView = ({
   inputRecordClass,
   strategy,
   updateBooleanOperator,
-  stepsCompletedNumber,
-  previousStep
+  stepsCompletedNumber
 }: CombineStepFormViewProps) => {
   const question = useMemo(
     () => inputRecordClass.searches.find(({ urlSegment }) => urlSegment === currentPage), 
@@ -126,9 +125,9 @@ const CombineStepFormView = ({
         <SingleSelect
           value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
           onChange={updateBooleanOperator}
-          items={previousStep ? selectItems : selectItemsLeaf}
+          items={addType.type === 'append' ? selectItemsAppend : selectItemsInsertBefore}
         />
-        {' '}Step {stepsCompletedNumber}.
+        {' '}the results of Step {stepsCompletedNumber}.
       </div>
       <div className={cx('--Body')}>
         <QuestionController
