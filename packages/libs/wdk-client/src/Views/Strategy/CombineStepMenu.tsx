@@ -270,22 +270,26 @@ export const CombineStepMenuView = (
                     A {inputRecordClass.shortDisplayNamePlural} strategy
                   </button>
                   <div className={cx('--NewSearchCheckbox')}>
-                    A new {inputRecordClass.shortDisplayNamePlural} search
-                    <CategoriesCheckboxTree
-                      selectedLeaves={NO_SELECTED_LEAVES}
-                      onChange={NOOP}
-                      tree={searchTree}
-                      expandedBranches={expandedBranches}
-                      searchTerm={searchTerm}
-                      isSelectable={false}
-                      searchBoxPlaceholder="Find a search..."
-                      leafType="search"
-                      renderNode={renderNode}
-                      renderNoResults={renderNoResults}
-                      onUiChange={setExpandedBranches}
-                      onSearchTermChange={setSearchTerm}
-                      linkPlacement={linkPlacement}
-                    />
+                    <div className={cx('--CheckboxHeader')}>
+                      A new {inputRecordClass.shortDisplayNamePlural} search
+                    </div>
+                    <div className={cx('--CheckboxContainer')}>
+                      <CategoriesCheckboxTree
+                        selectedLeaves={NO_SELECTED_LEAVES}
+                        onChange={NOOP}
+                        tree={searchTree}
+                        expandedBranches={expandedBranches}
+                        searchTerm={searchTerm}
+                        isSelectable={false}
+                        searchBoxPlaceholder="Find a search..."
+                        leafType="search"
+                        renderNode={renderNode}
+                        renderNoResults={renderNoResults}
+                        onUiChange={setExpandedBranches}
+                        onSearchTermChange={setSearchTerm}
+                        linkPlacement={linkPlacement}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
