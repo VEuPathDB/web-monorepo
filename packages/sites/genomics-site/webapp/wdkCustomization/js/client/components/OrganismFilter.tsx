@@ -133,6 +133,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
 
   // previous step prop passed; decides whether we should reload the data below
   const [ currentStep, setCurrentStep ] = useState<Step | null>(null);
+  let [ searchConfigChangeRequested, setSearchConfigChangeRequested ] = useState<boolean>(false);
 
   // organism param (including taxonomy data) retrieved from service when component is initially loaded
   const [ taxonomyTreeRequested, setTaxonomyTreeRequested ] = useState<boolean>(false);
@@ -158,6 +159,8 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
     setFilterSummary(null);
     temporaryFilterConfig = NO_ORGANISM_FILTER_APPLIED;
     setTemporaryFilterConfig(NO_ORGANISM_FILTER_APPLIED);
+    searchConfigChangeRequested = false;
+    setSearchConfigChangeRequested(false);
   }
 
   // load data from WDK service if necessary
@@ -177,7 +180,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
 
   // show collapsed view if not expanded
   if (!isExpanded) {
-    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message="Filter by Organism" arrow="&dArr;"/> );
+    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message="Filter by Taxonomy" arrow="&dArr;"/> );
   }
 
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
@@ -197,7 +200,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
     temporaryFilterConfig !== NO_ORGANISM_FILTER_APPLIED ? temporaryFilterConfig : appliedFilterConfig;
 
   // only show apply and cancel buttons if user has unsaved changes
-  let showApplyAndCancelButtons: boolean = !isSameConfig(viewableFilterConfig, appliedFilterConfig);
+  let showApplyAndCancelButtons: boolean = !searchConfigChangeRequested && !isSameConfig(viewableFilterConfig, appliedFilterConfig);
 
   // ids of leaves' boxes to check; if no filter applied, select none
   let selectedLeaves: Array<string> = viewableFilterConfig === NO_ORGANISM_FILTER_APPLIED ? [] : viewableFilterConfig.filters;
@@ -210,6 +213,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   // event handler function to update the step with the user's new org filter config
   function updateSearchConfig() {
     if (step) {
+      setSearchConfigChangeRequested(true);
       let newSearchConfig: SearchConfig = applyOrgFilterConfig(step.searchConfig, temporaryFilterConfig);
       requestUpdateStepSearchConfig(step.strategyId, step.id, newSearchConfig);
     }
@@ -227,6 +231,9 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
               &nbsp;
               <button type="button" style={{ fontSize: '.75rem', fontWeight: 'normal'}} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
             </React.Fragment>
+          )}
+          {searchConfigChangeRequested && (
+            <Loading/>
           )}
         </h3>
         {filterSummary && filterSummary.values && (
@@ -261,7 +268,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
           <Loading/>
         )}
       </div>
-      <ExpansionBar onClick={() => setExpandedAndPref(false)} message="Hide Organism Filter" arrow="&uArr;"/>
+      <ExpansionBar onClick={() => setExpandedAndPref(false)} message="Hide Taxonomy Filter" arrow="&uArr;"/>
     </Container>
   );
 }
