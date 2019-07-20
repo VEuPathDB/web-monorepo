@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
+import { Link } from 'react-router-dom';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-
-import './SaveStrategyForm.css';
 import {UiStepTree} from 'wdk-client/Views/Strategy/Types';
 
-interface Props extends RouteComponentProps<void> {
+import './SaveStrategyForm.css';
+
+interface Props {
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
   clearActiveModal: () => void;
@@ -15,7 +15,7 @@ interface Props extends RouteComponentProps<void> {
   onStrategyDelete: () => void;
 }
 
-function SaveStrategyForm(props: Props) {
+export default function SaveStrategyForm(props: Props) {
   const [ name, setName ] = useState(props.strategy.name);
   const [ isPublic, setIsPublic ] = useState(props.strategy.isPublic);
   const [ description, setDescription ] = useState(props.strategy.description || '');
@@ -25,11 +25,15 @@ function SaveStrategyForm(props: Props) {
   return (
     <React.Fragment>
       <div>
-        <ul className="SaveStrategyForm--Notes">
-          <li>You are saving the configuration of this search strategy, not the data in the result.</li>
-          <li>Re-running the saved search strategy could possibly yield different results in subsequent releases of the site, if the underlying data have changed.</li>
-          <li>To store the exact data in this result, please <Link to={`/step/${props.strategy.rootStepId}/download`}>download the result</Link>.</li>
-        </ul>
+        <div className="SaveStrategyForm--Notes">
+          <p className="important">
+            <strong>NOTE:</strong> You will be saving the <strong>configuration</strong> of this search strategy, <strong>not the data</strong> in the result.
+          </p>
+          <ul>
+            <li>Re-running the saved search strategy might yield different results in subsequent releases of the site, if the underlying data have changed.</li>
+            <li>To store the exact data in this result, please <Link to={`/step/${props.strategy.rootStepId}/download`}>download the result</Link>.</li>
+          </ul>
+        </div>
         <form className="SaveStrategyForm" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="save-strat--name" className="SaveStrategyForm--Label">Name</label>
@@ -43,12 +47,12 @@ function SaveStrategyForm(props: Props) {
           <div>
             <label htmlFor="save-strat--description" className="SaveStrategyForm--Label">Description (optional)</label>
             <textarea id="save-strat--description" className="SaveStrategyForm--Control" rows={8} value={description} onChange={handleDescriptionChange} />
-            <aside className={`SaveStrategyForm--Caption ${descriptionTooLong ? 'SaveStrategyForm--Caption__error' : ''}`}>
+            <aside className={`SaveStrategyForm--Caption ${descriptionTooLong ? 'important' : ''}`}>
               {descriptionSize.toLocaleString()} / {maxDescriptionSize.toLocaleString()} characters
             </aside>
           </div>
           <div className="SaveStrategyForm--Buttons">
-            <button type="submit" className="btn">Save</button> <button type="button" className="btn" onClick={() => props.clearActiveModal()}>Close</button>
+            <button type="submit" className="btn">Save</button> <button type="button" className="btn" onClick={() => props.clearActiveModal()}>Cancel</button>
           </div>
         </form>
       </div>
@@ -58,7 +62,7 @@ function SaveStrategyForm(props: Props) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     props.onStrategySave(name, isPublic, description);
-    props.history.replace('#');
+    props.clearActiveModal();
   }
 
   function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -79,5 +83,3 @@ function SaveStrategyForm(props: Props) {
     setIsPublic(event.target.checked);
   }
 }
-
-export default withRouter(SaveStrategyForm);
