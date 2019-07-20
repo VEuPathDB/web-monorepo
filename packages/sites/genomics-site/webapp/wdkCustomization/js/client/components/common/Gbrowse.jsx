@@ -138,26 +138,27 @@ const JbrowseIframe = ({ jbrowseUrl,ht }) =>
 export function GbrowseContext(props) {
   let { attribute, record } = props;
   let url = record.attributes[attribute.name];
-  let jbrowseUrl = "";
+  let jbrowseUrlMinimal = ""
+  let jbrowseUrl = record.attributes.jbrowseLink;
 
   if (attribute.name == 'GeneModelGbrowseUrl'){ 
-      jbrowseUrl = record.attributes.geneJbrowseUrl;
+      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
   }
   if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
-      jbrowseUrl = record.attributes.blatJbrowseUrl;
+      jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
   }
   if (attribute.name == 'SnpsGbrowseUrl'){ 
-      jbrowseUrl = record.attributes.snpsJbrowseUrl;
+      jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
   }
   if (attribute.name == 'SyntenyGbrowseUrl'){ 
-      jbrowseUrl = record.attributes.syntenyJbrowseUrl;
+      jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
   }
 
-  if ( jbrowseUrl && attribute.name == 'SyntenyGbrowseUrl') {
+  if ( jbrowseUrl && ( attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'ProteomicsPbrowseUrl') ) {
   return (
     <div>
       <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrl} ht="500" />
+      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
       <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
 	  )
@@ -167,7 +168,7 @@ export function GbrowseContext(props) {
   return (
     <div>
       <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrl} ht="300" />
+      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
       <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
 	  )
@@ -178,18 +179,18 @@ export function GbrowseContext(props) {
       <GbrowseLink url={url}/>
       <GbrowseImage url={url} includeImageMap={true} />
       <GbrowseLink url={url}/>
-    }
     </div>
   );
 }
 
 export function ProteinContext(props) {
   let url = props.rowData.ProteinPbrowseUrl;
-  let jbrowseUrl = props.rowData.proteinJbrowseUrl;
+  let jbrowseUrl =        props.rowData.pJbrowseUrl;
+  let jbrowseUrlMinimal = props.rowData.proteinJbrowseUrl;
   return (
     <div>
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrl} ht="300" />
+      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
   );
