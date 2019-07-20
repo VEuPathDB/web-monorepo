@@ -24,7 +24,7 @@ export default function OpenedStrategies({ openStrategies, isVisible, setVisibil
         {openStrategies
           .map(id =>(
             <StrategyPanelController
-              viewId="inactiveStrategyPanel"
+              viewId={`inactiveStrategyPanel__${id}`}
               strategyId={id}
               showCloseButton
             />
