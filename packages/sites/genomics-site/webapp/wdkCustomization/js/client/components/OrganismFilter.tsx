@@ -140,10 +140,10 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
 
   // counts of genes of each organism in the result; retrieved when component is loaded and when step is revised
   const [ filterSummaryRequested, setFilterSummaryRequested ] = useState<boolean>(false);
-  const [ savedFilterSummary, setFilterSummary ] = useState<OrgFilterSummary | null>(null);
+  let [ filterSummary, setFilterSummary ] = useState<OrgFilterSummary | null>(null);
 
   // current value of filter shown in the tree (will be cleared if applied to the step)
-  const [ temporaryFilterConfig, setTemporaryFilterConfig ] = useState<OrgFilterConfig>(NO_ORGANISM_FILTER_APPLIED);
+  let [ temporaryFilterConfig, setTemporaryFilterConfig ] = useState<OrgFilterConfig>(NO_ORGANISM_FILTER_APPLIED);
 
   // current value of checkbox tree's search box
   const [ searchTerm, setSearchTerm ] = useState<string>("");
@@ -152,11 +152,12 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   const [ savedExpandedNodeIds, setExpandedNodeIds ] = useState<string[] | null>(null);
 
   // clear dependent data if step has changed
-  let filterSummary = savedFilterSummary;
   if (step !== currentStep) {
     setCurrentStep(step);
     filterSummary = null;
     setFilterSummary(null);
+    temporaryFilterConfig = NO_ORGANISM_FILTER_APPLIED;
+    setTemporaryFilterConfig(NO_ORGANISM_FILTER_APPLIED);
   }
 
   // load data from WDK service if necessary
@@ -196,7 +197,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
     temporaryFilterConfig !== NO_ORGANISM_FILTER_APPLIED ? temporaryFilterConfig : appliedFilterConfig;
 
   // only show apply and cancel buttons if user has unsaved changes
-  let showApplyAndCancelButtons: boolean = !isSameConfig(temporaryFilterConfig, appliedFilterConfig);
+  let showApplyAndCancelButtons: boolean = !isSameConfig(viewableFilterConfig, appliedFilterConfig);
 
   // ids of leaves' boxes to check; if no filter applied, select none
   let selectedLeaves: Array<string> = viewableFilterConfig === NO_ORGANISM_FILTER_APPLIED ? [] : viewableFilterConfig.filters;
@@ -269,9 +270,8 @@ function findOrganismFilterConfig(searchConfig: SearchConfig): OrgFilterConfig {
   return (
     searchConfig.columnFilters &&
     searchConfig.columnFilters[ORGANISM_COLUMN_NAME] &&
-    searchConfig.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME] &&
-    searchConfig.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME].length > 0 ?
-    searchConfig.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME][0] : NO_ORGANISM_FILTER_APPLIED
+    searchConfig.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME] ?
+    searchConfig.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME] : NO_ORGANISM_FILTER_APPLIED
   );
 }
 
@@ -298,8 +298,7 @@ function applyOrgFilterConfig(oldSearchConfig: SearchConfig, newFilterConfig: Or
       configCopy.columnFilters = {};
     if (!configCopy.columnFilters[ORGANISM_COLUMN_NAME])
       configCopy.columnFilters[ORGANISM_COLUMN_NAME] = {};
-    if (!configCopy.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME])
-      configCopy.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME] = [ newFilterConfig ];
+    configCopy.columnFilters[ORGANISM_COLUMN_NAME][HISTOGRAM_FILTER_NAME] = newFilterConfig;
   }
   return configCopy as SearchConfig;
 }
@@ -354,7 +353,7 @@ function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
     return false;
   }
   return (a.filters.length === b.filters.length &&
-          a.filters.length !== intersection(a.filters, b.filters).length);
+          a.filters.length === intersection(a.filters, b.filters).length);
 }
 
 function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
