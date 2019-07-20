@@ -119,7 +119,8 @@ export default function StrategyPanel(props: Props) {
               submissionMetadata={{
                 type: 'edit-step',
                 strategyId: strategy.strategyId,
-                stepId: reviseStep.id
+                stepId: reviseStep.id,
+                previousSearchConfig: reviseStep.searchConfig
               }}
             />
           </div>

@@ -3,7 +3,8 @@ import {
   ParameterValues,
   QuestionWithParameters,
   RecordClass,
-  ParameterValue
+  ParameterValue,
+  SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
@@ -183,7 +184,8 @@ type AddUnaryStep = {
 type EditStep = {
   type: 'edit-step',
   strategyId: number,
-  stepId: number
+  stepId: number,
+  previousSearchConfig: SearchConfig
 }
 
 export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | EditStep

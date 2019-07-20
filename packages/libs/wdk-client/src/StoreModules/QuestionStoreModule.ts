@@ -362,6 +362,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           submissionMetadata.strategyId,
           submissionMetadata.stepId,
           {
+            ...submissionMetadata.previousSearchConfig,
             parameters: paramValues,
             wdkWeight: weight
           }
@@ -383,7 +384,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               {
                 isSaved: false,
                 isPublic: false,
-                stepTree: { 
+                stepTree: {
                   stepId: newSearchStepId
                 },
                 name: DEFAULT_STRATEGY_NAME
@@ -410,8 +411,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               searchConfig: {
                 parameters: operatorParamValues
               }
-            });       
-            
+            });
+
             return Promise.all([newSearchStep, operatorStep])
               .then(
                 ([{ id: newSearchStepId }, { id: binaryOperatorStepId }]) => requestPutStrategyStepTree(
@@ -425,7 +426,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                     }
                   )
                 )
-              );            
+              );
           } else {
             return newSearchStep.then(
               ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
@@ -475,13 +476,13 @@ async function loadQuestion(wdkService: WdkService, searchName: string, stepId?:
 function makeDefaultParamValues(parameters: Parameter[]) {
   return parameters.reduce(function(values, { name, initialDisplayValue, type }) {
     return Object.assign(
-      values, 
+      values,
       type === 'input-step'
         ? {
           [name]: ''
         }
-        : { 
-          [name]: initialDisplayValue 
+        : {
+          [name]: initialDisplayValue
         }
     );
   }, {} as ParameterValues);
