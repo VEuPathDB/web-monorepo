@@ -217,9 +217,9 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
   mergeMap(action =>
     from(services.wdkService.getCurrentUser()).pipe(
       mergeMap(user => {
-        if (user.isGuest) return EMPTY;
-        // load basket count and strategy list
         const { searchName, parameter, paramValues } = action.payload;
+        if (user.isGuest || !isType(parameter)) return EMPTY;
+        // load basket count and strategy list
         const questionState = state$.value.questions[searchName]
         const recordClassName = questionState && questionState.recordClass.fullName;
 
