@@ -144,7 +144,6 @@ const AddStepPanelView = (
                   ? (
                     <div className={cx('--MenusContainer')}>
                       <div className={cx('--MenusHeader')}>
-                        <p>
                           So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}.
                           It found {operandStep.estimatedSize.toLocaleString()} {
                             operandStep.estimatedSize === 1 
@@ -153,7 +152,6 @@ const AddStepPanelView = (
                             }. 
                           <br />
                           Gain data mining power by adding a step to your strategy.  You can...
-                        </p>
                       </div>
                       <div className={cx('--MenuItemsContainer')}>
                         {

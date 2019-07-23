@@ -14,4 +14,17 @@
     border: 1px solid black;
     padding: 1em;
   }
+
+  &--OperatorSelector {
+    display: flex;
+    flex-direction: column;
+
+    >:first-child {
+      margin-bottom: 1em;
+    }
+
+    >:not(:first-child) {
+      margin: 1em 0;
+    }
+  }
 }

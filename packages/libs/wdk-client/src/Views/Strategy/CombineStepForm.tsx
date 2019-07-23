@@ -111,7 +111,7 @@ const CombineStepFormView = ({
 }: CombineStepFormViewProps) => {
   const question = useMemo(
     () => inputRecordClass.searches.find(({ urlSegment }) => urlSegment === currentPage), 
-    [ currentPage ]
+    [ inputRecordClass, currentPage ]
   );
   
   return (

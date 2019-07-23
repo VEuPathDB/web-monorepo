@@ -5,7 +5,7 @@ import { memoize } from 'lodash';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { submitQuestion, SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
-import { SubmitButton, Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { SubmitButton, Props, QuestionHeader, QuestionDescription } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 
@@ -20,6 +20,8 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
   dispatchAction,
   state: {
     question: {
+      description,
+      displayName,
       urlSegment
     }
   },
@@ -27,11 +29,12 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
   submissionMetadata
 }) =>
   <div className={`${cx()} ${cx('ByGenotypeNumber')}`}>
-    <h1>Identify RFLP Genotype Isolates based on RFLP Genotype Number</h1>
+    <QuestionHeader headerText={displayName} showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'} />
     <form onSubmit={onSubmit(dispatchAction, urlSegment, submissionMetadata)}>
       {parameterElements.genotype}
       <div className={cx('SubmitSection')}>
-        <SubmitButton />
+        <SubmitButton submissionMetadata={submissionMetadata} />
       </div>
     </form>
+    <QuestionDescription description={description} />
   </div>;

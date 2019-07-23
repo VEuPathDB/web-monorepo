@@ -4,7 +4,7 @@ import { HelpIcon, IconAlt } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { Parameter, ParameterGroup, Question } from 'wdk-client/Utils/WdkModel';
 import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   changeGroupVisibility,
@@ -39,7 +39,7 @@ const tooltipPosition = { my: 'right center', at: 'left center' };
 
 export default function DefaultQuestionForm(props: Props) {
 
-  const { dispatchAction, onSubmit, state } = props;
+  const { dispatchAction, onSubmit, submissionMetadata, state } = props;
   const { question, customName, weight } = state;
 
   let handleSubmit = (e: React.FormEvent) => {
@@ -64,7 +64,10 @@ export default function DefaultQuestionForm(props: Props) {
 
   return (
     <div className={cx()}>
-      <h1>{question.displayName}</h1>
+      <QuestionHeader 
+        showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
+        headerText={question.displayName} 
+      />
       <form onSubmit={handleSubmit}>
         {question.groups
           .filter(group => group.displayType !== 'hidden')
@@ -77,11 +80,18 @@ export default function DefaultQuestionForm(props: Props) {
           weight={weight}
           handleCustomNameChange={handleCustomNameChange}
           handleWeightChange={handleWeightChange}
+          submissionMetadata={submissionMetadata}
         />
         <QuestionDescription description={question.description}/>
       </form>
     </div>
   );
+}
+
+export function QuestionHeader(props: { headerText: string, showHeader: boolean }) {
+  return props.showHeader
+    ? <h1>{props.headerText}</h1>
+    : <></>;
 }
 
 export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props) {
@@ -202,10 +212,14 @@ function ParameterHeading(props: { parameter: Parameter}) {
   )
 }
 
-export function SubmitButton() {
+export function SubmitButton(props: { submissionMetadata: SubmissionMetadata }) {
   return (
     <button type="submit" className="btn">
-      Get Answer
+      {
+        props.submissionMetadata.type === 'create-strategy'
+          ? 'Get Answer'
+          : 'Run Step'
+      }
     </button>
   );
 }
@@ -278,13 +292,16 @@ interface SubmitSectionProps {
   weight?: string;
   handleCustomNameChange: TextboxChangeHandler;
   handleWeightChange: TextboxChangeHandler;
+  submissionMetadata: SubmissionMetadata;
 }
 
 export function SubmitSection(props: SubmitSectionProps) {
-  let { className, tooltipPosition, customName, handleCustomNameChange, weight, handleWeightChange } = props;
+  let { className, tooltipPosition, customName, handleCustomNameChange, weight, handleWeightChange, submissionMetadata } = props;
   return (
     <div className={className}>
-      <SubmitButton/>
+      <SubmitButton
+        submissionMetadata={submissionMetadata}
+      />
       <SearchNameInput
         tooltipPosition={tooltipPosition}
         customName={customName}
