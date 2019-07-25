@@ -74,7 +74,7 @@ export default (base: ServiceBase) => {
   ) {
     return base.sendRequest(decoder, {
       method: 'get',
-      path: `/users/${userId}/steps/${stepId}/answer/filter-summary/${filterName}`
+      path: `/users/${userId}/steps/${stepId}/filter-summary/${filterName}`
     })
   }
 

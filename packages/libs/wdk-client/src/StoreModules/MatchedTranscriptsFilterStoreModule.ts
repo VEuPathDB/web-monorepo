@@ -16,7 +16,7 @@ import {
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
 import { Action } from 'wdk-client/Actions';
-import { Decoder, number, objectOf, optional } from 'wdk-client/Utils/Json';
+import { Decoder, number, objectOf, optional, combine, field } from 'wdk-client/Utils/Json';
 import {
   getMatchedTranscriptFilterPref,
   setMatchedTranscriptFilterPref
@@ -155,14 +155,14 @@ async function getFulfillMatchedTransFilterSummary(
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillMatchedTransFilterSummary>> {
-  let summaryDecoder: Decoder<FilterSummary> = objectOf(number);
+  let summaryDecoder: Decoder<{ counts: FilterSummary }> = field('counts', objectOf(number));
   let summary = await wdkService.getStepFilterSummary(
     summaryDecoder,
     requestAction.payload.stepId,
     openAction.payload.filterKey
   );
 
-  return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary);
+  return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary.counts);
 }
 
 async function getFulfillUpdatedMatchedTransFilterSummary(

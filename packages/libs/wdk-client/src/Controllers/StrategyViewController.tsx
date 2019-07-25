@@ -4,6 +4,7 @@ import { Dispatch } from 'redux';
 import { closeStrategyView, openStrategyView, setOpenedStrategiesVisibility, setActiveStrategy } from 'wdk-client/Actions/StrategyViewActions';
 import { Link } from 'wdk-client/Components';
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
+import {StepFiltersController} from 'wdk-client/Controllers';
 import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import OpenedStrategies from 'wdk-client/Views/Strategy/OpenedStrategies';
@@ -57,10 +58,10 @@ function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies
         strategyId={strategyId}
         stepId={stepId}
       />}
-      {/* stepId && <StepFiltersController
+      {strategyId && stepId && <StepFiltersController
         strategyId={strategyId}
         stepId={stepId}
-      /> */}
+      />}
       <div style={{ position: 'relative', minHeight: '350px' }}>
         {strategyId && stepId && <ResultPanelController
           strategyId={strategyId}
