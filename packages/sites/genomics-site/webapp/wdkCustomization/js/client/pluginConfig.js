@@ -45,6 +45,7 @@ export default [
                        Feel free to <a href='/a/app/contact-us'>contact us</a> with any comments and suggestions.
                      </div>
   },
+  // Note that we are leaving out the organism filter from here. It is being added in a different way.
   {
     type: 'questionFilter',
     name: 'matched_transcript_filter_array',
