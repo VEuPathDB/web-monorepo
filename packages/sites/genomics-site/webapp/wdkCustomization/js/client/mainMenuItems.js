@@ -2,7 +2,7 @@ import { get } from 'lodash';
 
 import {
   SHOW_GALAXY_PAGE_PREFERENCE
-} from './components/controllers/GalaxyTermsController';
+} from 'ebrc-client/controllers/GalaxyTermsController';
 
 const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';

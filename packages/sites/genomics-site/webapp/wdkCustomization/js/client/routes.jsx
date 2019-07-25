@@ -3,7 +3,7 @@ import React from 'react';
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
-import GalaxyTermsController from './components/controllers/GalaxyTermsController';
+
 import SampleForm from './components/samples/SampleForm';
 import { projectId } from './config';
 
@@ -81,16 +81,6 @@ export const wrapRoutes = ebrcRoutes => [
   {
     path: '/query-grid',
     component: () => <QueryGridController/>
-  },
-
-  {
-    path: '/galaxy-orientation',
-    component: () => <GalaxyTermsController/>
-  },
-
-  {
-    path: '/galaxy-orientation/sign-up',
-    component: () => <GalaxyTermsController signUp />
   },
 
   {
