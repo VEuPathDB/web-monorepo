@@ -81,7 +81,7 @@ export let contexts = [
     isPbrowse: false
   },
   {
-    gbrowse_url: 'orfGbrowseImageUrl',
+    gbrowse_url: 'orfJbrowseUrl',
     displayName: 'Genomic Context',
     anchor: 'orfGenomicContext',
     isPbrowse: false
@@ -176,9 +176,7 @@ export function GbrowseContext(props) {
 
   return (
     <div>
-      <GbrowseLink url={url}/>
-      <GbrowseImage url={url} includeImageMap={true} />
-      <GbrowseLink url={url}/>
+      <JbrowseIframe jbrowseUrl={url} />
     </div>
   );
 }
