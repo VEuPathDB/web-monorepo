@@ -152,8 +152,15 @@ const routes: RouteEntry[] = [
 
   {
     path: '/workspace/strategies/:strategyId(\\d+)?/:stepId(\\d+)?',
-    component: (props: RouteComponentProps<{ strategyId?: number, stepId?: number }>) =>
-      <StrategyViewController {...props.match.params} />
+    component: (props: RouteComponentProps<{ strategyId?: string, stepId?: string }>) => {
+      const { strategyId, stepId } = props.match.params;
+      return (
+        <StrategyViewController
+          strategyId={strategyId == null ? undefined : Number(strategyId)}
+          stepId={stepId == null ? undefined : Number(stepId)}
+        />
+      );
+    }
   },
 
   {
@@ -164,9 +171,10 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/workspace/strategies/:strategyId/:stepId?',
-    component: (props: RouteComponentProps<{ strategyId: number, stepId?: number }>) =>
-      <StrategyViewController {...props.match.params} />
+    path: '/workspace/strategies/help',
+    component: (props: RouteComponentProps<{}>) => (
+      <div>TODO</div>
+    )
   },
 
   {
