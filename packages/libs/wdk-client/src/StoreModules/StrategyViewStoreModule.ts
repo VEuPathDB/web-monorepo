@@ -1,4 +1,4 @@
-import { defaultTo } from 'lodash';
+import { defaultTo, stubTrue, stubFalse } from 'lodash';
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
 import { empty, Observable } from 'rxjs';
 import { mergeMap, mergeMapTo, tap } from 'rxjs/operators';
@@ -103,9 +103,12 @@ async function getOpenedStrategies(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof setOpenedStrategies>> {
   const strategyId = activeStrategyAction.payload.activeStrategy && activeStrategyAction.payload.activeStrategy.strategyId;
-  const prevOpenedStrategies = defaultTo(await getValue(wdkService, preferences.openedStrategies()), [] as number[]);
-  // TODO Filter out strategies not owned by current user
-  const nextOpenedStrategies = strategyId == null || prevOpenedStrategies.includes(strategyId)
+  const allUserStrats = await wdkService.getStrategies();
+  const allUserStratIds = new Set(allUserStrats.map(strategy => strategy.strategyId));
+  const prevOpenedStrategies = defaultTo(await getValue(wdkService, preferences.openedStrategies()), [] as number[])
+    // Filter out strategies not owned by current user
+    .filter(id => allUserStratIds.has(id));
+  const nextOpenedStrategies = strategyId == null || !allUserStratIds.has(strategyId) || prevOpenedStrategies.includes(strategyId)
     ? prevOpenedStrategies
     : prevOpenedStrategies.concat(strategyId);
   if (prevOpenedStrategies !== nextOpenedStrategies) {
