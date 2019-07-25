@@ -2,12 +2,19 @@
   &--Header {
     font-size: 1.5em;
     margin: 1em 0;
+
+    h3 {
+      font-size: 1.25em;
+      font-weight: 500;
+    }
   }
 
   &--Body {
     display: flex;
     align-items: start;
     justify-content: space-between;
+
+    font-size: 1.25em;
   }
 
   &--PrimaryInputLabel {

@@ -10,6 +10,7 @@ import { Step } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
+import { findAppendPoint } from 'wdk-client/Utils/StrategyUtils';
 
 const cx = makeClassNameHelper('ConvertStepMenu');
 
@@ -28,8 +29,7 @@ const ConvertStepMenuView = ({
   operandStep,
   operatorChoices,
   previousStep,
-  startOperationForm,
-  stepsCompletedNumber
+  startOperationForm
 }: Props) => (
   <div className={cx()}>
     {
@@ -59,7 +59,7 @@ const ConvertStepMenuView = ({
                       <>
                         {
                           operatorChoices.map(({ searchName, display }) =>
-                            <button key={searchName} onClick={() => startOperationForm(searchName)}>
+                            <button key={searchName} onClick={() => startOperationForm('convert', searchName)}>
                               {display}
                             </button>
                           )
@@ -78,8 +78,10 @@ const ConvertStepMenuView = ({
 const outputStep = createSelector(
   (_: RootState, { addType }: OwnProps) => addType,
   (_: RootState, { strategy }: OwnProps) => strategy,
-  (addType, strategy) => addType.type === 'append'
+  (addType, strategy) => addType.type === 'append' && strategy.stepTree.stepId === addType.primaryInputStepId
     ? undefined
+    : addType.type === 'append'
+    ? strategy.steps[findAppendPoint(strategy.stepTree, addType.primaryInputStepId).stepId]
     : strategy.steps[addType.outputStepId]
 );
 

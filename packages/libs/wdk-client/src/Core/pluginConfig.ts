@@ -8,6 +8,7 @@ import { InternalGeneDataset } from 'wdk-client/Views/Question/Forms/InternalGen
 import { ByLocation } from 'wdk-client/Views/Question/Forms/ByLocation/ByLocation';
 import DefaultQuestionController from 'wdk-client/Controllers/QuestionController';
 import { CombineStepForm } from 'wdk-client/Views/Strategy/CombineStepForm';
+import { CombineWithStrategyForm } from 'wdk-client/Views/Strategy/CombineWithStrategyForm';
 import { CombineStepMenu } from 'wdk-client/Views/Strategy/CombineStepMenu';
 import { ConvertStepMenu } from 'wdk-client/Views/Strategy/ConvertStepMenu';
 import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
@@ -88,8 +89,13 @@ const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'addStepOperationForm',
-    name: 'combine',
+    name: 'combine-with-search',
     component: CombineStepForm
+  },
+  {
+    type: 'addStepOperationForm',
+    name: 'combine-with-strategy',
+    component: CombineWithStrategyForm
   },
   {
     type: 'addStepOperationForm',

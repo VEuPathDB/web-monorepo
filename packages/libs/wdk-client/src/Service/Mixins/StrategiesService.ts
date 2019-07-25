@@ -42,7 +42,8 @@ export default (base: ServiceBase) => {
   }
 
   function getDuplicatedStrategyStepTree(strategyId: number,  userId: string = "current") {
-    return base._fetchJson<StepTree>('post', `/users/${userId}/strategies/${strategyId}/duplicated-step-tree`, JSON.stringify({}));
+    return base._fetchJson<{ stepTree: StepTree }>('post', `/users/${userId}/strategies/${strategyId}/duplicated-step-tree`, JSON.stringify({}))
+      .then(({ stepTree }) => stepTree);
   }
 
   return { 

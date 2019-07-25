@@ -190,7 +190,7 @@ export const CombineStepMenuView = (
       ? <Link 
           onClick={(e: Event) => {
             e.preventDefault();
-            startOperationForm(node.wdkReference.urlSegment);
+            startOperationForm('combine-with-search', node.wdkReference.urlSegment);
           }}
           to={`/search/${getRecordClassUrlSegment(node)}/${node.wdkReference.urlSegment}`}
         >
@@ -213,7 +213,11 @@ export const CombineStepMenuView = (
     updateBooleanOperator(e.target.value);
   }, [ updateBooleanOperator ]);
 
-  const onCombineWithBasketClicked = useCallback((e: React.MouseEvent) => {
+  const onCombineWithStrategyClicked = useCallback((_: React.MouseEvent) => {
+    startOperationForm('combine-with-strategy', 'main-page');
+  }, []);
+
+  const onCombineWithBasketClicked = useCallback((_: React.MouseEvent) => {
     setBasketButtonStatus('clicked');
   }, []);
 
@@ -266,7 +270,7 @@ export const CombineStepMenuView = (
                     type="button">
                     Your {inputRecordClass.shortDisplayNamePlural} basket
                   </button>
-                  <button onClick={TODO}>
+                  <button onClick={onCombineWithStrategyClicked}>
                     A {inputRecordClass.shortDisplayNamePlural} strategy
                   </button>
                   <div className={cx('--NewSearchCheckbox')}>

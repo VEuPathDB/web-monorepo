@@ -40,7 +40,7 @@ type Props = StateProps & DispatchProps & OwnProps;
 export type AddStepOperationMenuProps = {
   strategy: StrategyDetails,
   inputRecordClass: RecordClass,
-  startOperationForm: (selection: string) => void,
+  startOperationForm: (formType: string, initialPage: string) => void,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
   addType: AddType,
   stepsCompletedNumber: number,
@@ -96,19 +96,10 @@ const AddStepPanelView = (
     setPageHistory([...pageHistory, nextPage]);
   }, [ pageHistory ]);
 
-  const startOperationFormCallbacks = useMemo(
-    () => OPERATION_TYPE_ORDER.reduce(
-      (memo, operation) => ({
-        ...memo,
-        [operation]: (selection: string) => {
-          setSelectedOperation(operation);
-          advanceToPage(selection);
-        }
-      }),
-      {} as Record<string, (selection: string) => void>
-    ),
-    [ OPERATION_TYPE_ORDER, advanceToPage ]
-  );
+  const startOperationForm = useCallback((formType: string, initialPage: string) => {
+    setSelectedOperation(formType);
+    advanceToPage(initialPage);
+  }, [ advanceToPage ]);
 
   const updateStrategy = useCallback((newStepId: number, newSecondaryInput: StepTree) => {
     if (strategy) {
@@ -168,7 +159,7 @@ const AddStepPanelView = (
                                     pluginProps={{
                                       strategy,
                                       inputRecordClass,
-                                      startOperationForm: startOperationFormCallbacks[operation],
+                                      startOperationForm,
                                       updateStrategy,
                                       addType,
                                       stepsCompletedNumber,

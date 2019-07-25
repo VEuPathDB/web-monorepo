@@ -121,13 +121,15 @@ const CombineStepFormView = ({
           Search for {inputRecordClass.shortDisplayNamePlural} {question && `by ${question.displayName}`}
         </h2>
 
+        <div>
         The results will be{' '}
-        <SingleSelect
-          value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
-          onChange={updateBooleanOperator}
-          items={addType.type === 'append' ? selectItemsAppend : selectItemsInsertBefore}
-        />
-        {' '}the results of Step {stepsCompletedNumber}.
+          <SingleSelect
+            value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
+            onChange={updateBooleanOperator}
+            items={addType.type === 'append' ? selectItemsAppend : selectItemsInsertBefore}
+          />
+          {' '}the results of Step {stepsCompletedNumber}.
+        </div>
       </div>
       <div className={cx('--Body')}>
         <QuestionController

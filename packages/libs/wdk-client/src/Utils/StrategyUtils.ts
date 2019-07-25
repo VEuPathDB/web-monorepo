@@ -74,12 +74,12 @@ export const findSubtree = (stepTree: StepTree | undefined, targetStepId: number
 
 const contains = (stepTree: StepTree | undefined, targetStepId: number) => !!findSubtree(stepTree, targetStepId);
 
-const findAppendPoint = (stepTree: StepTree, primaryInputStepId: number): StepTree => {
+export const findAppendPoint = (stepTree: StepTree, primaryInputStepId: number): StepTree => {
   if (stepTree.primaryInput === undefined) {
     throw new Error(`Tried to insert a step after step #${primaryInputStepId}, but step #${primaryInputStepId} does not appear in the tree`);
   }
 
-  return stepTree.primaryInput.stepId === primaryInputStepId
+  return stepTree.primaryInput.stepId === primaryInputStepId || contains(stepTree.primaryInput.secondaryInput, primaryInputStepId)
     ? stepTree
     : findAppendPoint(stepTree.primaryInput, primaryInputStepId);
 };
@@ -96,11 +96,9 @@ const findInsertionPoint = (stepTree: StepTree, targetStepId: number): [StepTree
       throw new Error(`Tried to insert a new step before step #${targetStepId}, but step #${targetStepId} does not appear in the tree`);
     }
 
-    if (currentNode.stepId === targetStepId || contains(currentNode.secondaryInput, targetStepId)) {
-      return [currentNode, parentNode];
-    }
-
-    return traversePrimaryBranchForInsertionPoint(currentNode.primaryInput, currentNode);
+    return currentNode.stepId === targetStepId || contains(currentNode.secondaryInput, targetStepId)
+      ? [currentNode, parentNode]
+      : traversePrimaryBranchForInsertionPoint(currentNode.primaryInput, currentNode);
   }
 };
 
