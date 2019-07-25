@@ -2,7 +2,7 @@ import { isEmpty, keyBy, partial } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties, closeStrategy } from 'wdk-client/Actions/StrategyActions';
+import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
 import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setActiveModal, clearActiveModal, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
 import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
@@ -11,6 +11,7 @@ import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
+import {setOpenedStrategies} from 'wdk-client/Actions/StrategyViewActions';
 
 interface OwnProps {
   viewId: string;
@@ -29,6 +30,7 @@ type MappedProps =
   uiStepTree: UiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
+  openedStrategies: number[];
 }
 
 interface MappedDispatch {
@@ -36,7 +38,7 @@ interface MappedDispatch {
   setReviseFormStepId: (stepId?: number) => void;
   clearActiveModal: () => void;
   requestStrategy: (id: number) => void;
-  onStrategyClose: () => void;
+  onStrategyClose: (openedStrategies: number[]) => void;
   onStrategyCopy: (signature: string) => void;
   onStrategyDelete: () => void;
   onStrategyRename: (name: string) => void;
@@ -56,6 +58,7 @@ interface MappedDispatch {
 type Props = OwnProps & MappedProps & MappedDispatch;
 
 function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
+  const openedStrategies = state.strategyView.openedStrategies;
   const panelState = state.strategyPanel[ownProps.viewId];
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
   const activeModal = panelState && panelState.activeModal && panelState.activeModal.strategyId === ownProps.strategyId ? panelState.activeModal.type : undefined;
@@ -70,16 +73,16 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
     questions &&
     makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'), keyBy(questions, 'urlSegment'), nestedStrategyBranchIds)
   );
-  return strategy == null || uiStepTree == null
+  return strategy == null || uiStepTree == null || openedStrategies == null
     ? { isLoading: true }
-    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, activeModal, reviseFormStepId };
+    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, activeModal, reviseFormStepId, openedStrategies };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
   return bindActionCreators({
     requestStrategy,
     setActiveModal: (type: string) => setActiveModal(props.viewId, type, props.strategyId),
-    onStrategyClose: () => closeStrategy(props.strategyId),
+    onStrategyClose: setOpenedStrategies,
     setReviseFormStepId: (stepId?: number) => setReviseFormVisibility(props.viewId, stepId),
     clearActiveModal: () => clearActiveModal(props.viewId),
     onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
@@ -117,7 +120,11 @@ function StrategyPanelController(props: Props) {
   if (props.isLoading) return <Loading/>;
 
   return (
-    <StrategyPanel {...props} onDeleteStep={partial(props.onDeleteStep, props.strategy.stepTree)} />
+    <StrategyPanel
+      {...props}
+      onDeleteStep={partial(props.onDeleteStep, props.strategy.stepTree)}
+      onStrategyClose={() => props.onStrategyClose(props.openedStrategies.filter(id => id !== props.strategyId))}
+    />
   );
 }
 

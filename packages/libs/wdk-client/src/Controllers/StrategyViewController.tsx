@@ -1,45 +1,53 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { setActiveStrategy, openStrategy } from 'wdk-client/Actions/StrategyActions';
-import { closeStrategyView, openStrategyView, setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyViewActions';
+import { closeStrategyView, openStrategyView, setOpenedStrategiesVisibility, setActiveStrategy } from 'wdk-client/Actions/StrategyViewActions';
 import { Link } from 'wdk-client/Components';
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
-import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
-import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
 import { RootState } from 'wdk-client/Core/State/Types';
 import OpenedStrategies from 'wdk-client/Views/Strategy/OpenedStrategies';
+import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
+import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
 
-
-interface Props {
+interface OwnProps {
   strategyId?: number;
   stepId?: number;
-  dispatch: Dispatch
-  openStrategies: number[];
-  isOpenedStrategiesVisible: boolean;
 }
 
-function StrategyController({ stepId, strategyId, dispatch, openStrategies, isOpenedStrategiesVisible }: Props) {
+interface MappedProps {
+  openedStrategies?: number[];
+  isOpenedStrategiesVisible?: boolean;
+}
+
+interface DispatchProps {
+  dispatch: Dispatch
+}
+
+type Props = OwnProps & DispatchProps & MappedProps;
+
+function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies, isOpenedStrategiesVisible }: Props) {
 
   useEffect(() => {
     dispatch(openStrategyView());
-    dispatch(setActiveStrategy(strategyId));
-    if (strategyId) dispatch(openStrategy(strategyId));
     return () => {
       dispatch(closeStrategyView());
     }
-  })
+  }, [])
+
+  useEffect(() => {
+    dispatch(setActiveStrategy(strategyId ? { strategyId, stepId } : undefined));
+  }, [ stepId, strategyId ])
 
   return (
     <React.Fragment>
       <StrategyHeader/>
-      <OpenedStrategies
+      {openedStrategies != null && <OpenedStrategies
         activeStrategyId={strategyId}
-        openStrategies={openStrategies}
-        isVisible={isOpenedStrategiesVisible}
+        openStrategies={openedStrategies}
+        isVisible={isOpenedStrategiesVisible || false}
         setVisibility={isVisible => dispatch(setOpenedStrategiesVisibility(isVisible))}
-      />
+      />}
       {strategyId == null &&
         <div>
           You have not selected a strategy. Please run a new search, or select a strategy from your <Link to="/workspace/strategies/all">history</Link>.
@@ -65,9 +73,9 @@ function StrategyController({ stepId, strategyId, dispatch, openStrategies, isOp
   );
 }
 
-function mapState(state: RootState) {
-  const { openStrategies } = state.strategies;
-  const { isOpenedStrategiesVisible } = state.strategyView;
-  return { openStrategies, isOpenedStrategiesVisible };
+function mapState(state: RootState): MappedProps {
+  const { openedStrategies, isOpenedStrategiesVisible } = state.strategyView;
+  return { openedStrategies, isOpenedStrategiesVisible };
 }
-export default connect(mapState)(StrategyController);
+
+export default connect(mapState)(StrategyViewController);

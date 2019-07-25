@@ -17,12 +17,14 @@ const isOpenedLinkActive: NavLinkProps['isActive'] = (match , location) => {
 }
 
 interface Props {
-  activeStrategyId?: number;
+  activeStrategy?: { strategyId: number, stepId?: number };
 }
 
 function StrategyHeader(props: Props) {
   const rootRoute = `/workspace/strategies`;
-  const openedStrategiesRoute = props.activeStrategyId ? `${rootRoute}/${props.activeStrategyId}` : rootRoute;;
+  const activeStratPath = props.activeStrategy ? `/${props.activeStrategy.strategyId}` : '';
+  const activeStepPath = props.activeStrategy && props.activeStrategy.stepId ? `/${props.activeStrategy.stepId}` : '';
+  const openedStrategiesRoute = rootRoute + activeStratPath + activeStepPath;
   return (
     <div className="StrategyHeading">
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={openedStrategiesRoute} isActive={isOpenedLinkActive}>Opened Strategies</NavLink>
@@ -35,8 +37,8 @@ function StrategyHeader(props: Props) {
 }
 
 function mapState(rootState: RootState) {
-  const { activeStrategyId } = rootState.strategies;
-  return { activeStrategyId };
+  const { activeStrategy } = rootState.strategyView;
+  return { activeStrategy };
 }
 
 export default connect(mapState, null)(StrategyHeader);

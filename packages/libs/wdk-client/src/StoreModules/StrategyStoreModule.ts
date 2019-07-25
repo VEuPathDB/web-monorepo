@@ -24,12 +24,9 @@ import {
   requestUpdateStepProperties,
   requestDeleteStep,
   requestUpdateStepSearchConfig,
-  openStrategy,
-  closeStrategy,
   redirectToNewSearch,
   fulfillDeleteStep,
   requestRemoveStepFromStepTree,
-  setActiveStrategy,
 } from 'wdk-client/Actions/StrategyActions';
 import { removeStep, getStepIds } from 'wdk-client/Utils/StrategyUtils';
 import { difference } from 'lodash';
@@ -42,13 +39,10 @@ export type StrategyEntry =
 
 export type State = {
   strategies: Record<number, StrategyEntry|undefined>;
-  openStrategies: number[];
-  activeStrategyId?: number;
 };
 
 const initialState: State = {
-  strategies: {},
-  openStrategies: []
+  strategies: {}
 };
 
 function reqStrat(state: State, strategyId: number) {
@@ -93,27 +87,6 @@ export function reduce(state: State = initialState, action: Action): State {
         [strategyId]: undefined
       }
     }
-  }
-
-  case openStrategy.type: {
-    const strategyId = action.payload.strategyId;
-    if (state.openStrategies.includes(strategyId)) return state;
-    return {
-      ...state,
-      openStrategies: [...state.openStrategies, strategyId]
-    }
-  }
-
-  case closeStrategy.type: {
-    const strategyId = action.payload.strategyId;
-    return {
-      ...state,
-      openStrategies: state.openStrategies.filter((stratId) => stratId != strategyId)
-    }
-  }
-
-  case setActiveStrategy.type: {
-    return { ...state, activeStrategyId: action.payload.strategyId };
   }
 
   default: {

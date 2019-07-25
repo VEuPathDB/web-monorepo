@@ -139,21 +139,6 @@ export const redirectToNewSearch = makeActionCreator(
     (newStrategyId: number, newStepId: number) => ({ newStrategyId, newStepId })
 );
 
-export const openStrategy = makeActionCreator(
-    'openStrategy',
-    (strategyId: number) => ({ strategyId })
-);
-
-export const closeStrategy = makeActionCreator(
-    'closeStrategy',
-    (strategyId: number) => ({ strategyId })
-);
-
-export const setActiveStrategy = makeActionCreator(
-    'setActiveStrategy',
-    (strategyId?: number) => ({ strategyId })
-)
-
 export type Action =
 | InferAction<typeof requestCreateStrategy>
 | InferAction<typeof fulfillCreateStrategy>
@@ -180,8 +165,5 @@ export type Action =
 | InferAction<typeof requestUpdateStepSearchConfig>
 | InferAction<typeof requestDeleteStep>
 | InferAction<typeof fulfillDeleteStep>
-| InferAction<typeof openStrategy>
-| InferAction<typeof closeStrategy>
 | InferAction<typeof redirectToNewSearch>
-| InferAction<typeof setActiveStrategy>
 
