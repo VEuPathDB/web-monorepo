@@ -190,6 +190,10 @@ function makeHeaderMenuItems(state) {
             appUrl: '/showApplication.do'
           },
           {
+            text: 'Analyze My Experiment',
+            appUrl: '/app/galaxy-orientation'
+          },
+          {
             text: 'My Basket',
             appUrl: '/showApplication.do?tab=basket',
             loginRequired: true
