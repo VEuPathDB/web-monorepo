@@ -61,16 +61,20 @@ function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies
         strategyId={strategyId}
         stepId={stepId}
       />}
-      {strategyId && stepId && <StepFiltersController
-        strategyId={strategyId}
-        stepId={stepId}
-      />}
       <div style={{ position: 'relative', minHeight: '350px' }}>
         {strategyId && stepId && <ResultPanelController
           strategyId={strategyId}
           stepId={stepId}
           viewId="strategy"
-          renderHeader={ResultPanelHeader}
+          renderHeader={props => (
+            <React.Fragment>
+              <ResultPanelHeader {...props}/>
+              <StepFiltersController
+                strategyId={strategyId}
+                stepId={stepId}
+              />
+            </React.Fragment>
+          )}
         />}
       </div>
     </React.Fragment>
