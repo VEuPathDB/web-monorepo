@@ -10,6 +10,7 @@ import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, s
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
 import { InferAction, switchMapRequestActionsToEpic, mergeMapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
+import {StrategyDetails} from 'wdk-client/Utils/WdkUser';
 
 export const key = 'strategyView';
 
@@ -77,8 +78,9 @@ export const observe = takeEpicInWindow(
     endActionCreator: closeStrategyView
   },
   combineEpics(
-    deleteStrategyEpic,
-    duplicateStrategyEpic,
+    updateRouteOnStrategySteptreePutEpic,
+    updateRouteOnStrategyDeleteEpic,
+    updateRouteOnStrategyDuplicateEpic,
     updatePreferencesEpic,
     switchMapRequestActionsToEpic([openStrategyView], getOpenedStrategiesVisibility),
     switchMapRequestActionsToEpic([setActiveStrategy], getOpenedStrategies),
@@ -90,9 +92,35 @@ export const observe = takeEpicInWindow(
   )
 );
 
-// We are not using mrate for the next two epics since mrate does not currently allow its requestToFulfill function to return Promise<void>
+// We are not using mrate for the next three epics since mrate does not currently allow its requestToFulfill function to return Promise<void>
+// XXX Add a router store module to handle route update actions? Then we can convert these to mrates
 
-function deleteStrategyEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
+function updateRouteOnStrategySteptreePutEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
+  return action$.pipe(mergeMap(action => {
+    if (fulfillPutStrategy.isOfType(action)) {
+      // when the active srtrategies step tree is updated, select the root state only if the previous selection was the root before the update
+      const { strategy } = action.payload;
+      const { activeStrategy } = state$.value[key];
+      if (shouldMakeRootStepActive(strategy, activeStrategy)) {
+        transitioner.transitionToInternalPage(`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`, { replace: true });
+      }
+    }
+    return empty();
+  }));
+}
+
+function shouldMakeRootStepActive(strategy: StrategyDetails, activeStrategy?: { strategyId: number, stepId?: number }): boolean {
+  if (activeStrategy == null) return true;
+  if (activeStrategy.strategyId !== strategy.strategyId) return false;
+  if (activeStrategy.stepId == null) return true;
+  // single step strategy
+  if (strategy.stepTree.primaryInput == null) return true;
+  // previous root step is active
+  if (strategy.stepTree.primaryInput.stepId === activeStrategy.stepId) return true;
+  return false;
+}
+
+function updateRouteOnStrategyDeleteEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
   return action$.pipe(mergeMap(action => {
     if (fulfillDeleteStrategy.isOfType(action)) {
       const { strategyId } = action.payload;
@@ -102,7 +130,7 @@ function deleteStrategyEpic(action$: ActionsObservable<Action>, state$: StateObs
         : openedStrategies;
       if (activeStrategy != null && activeStrategy.strategyId === strategyId) {
         // We could also go to the first opened strategy by inspecting openedStrategies
-        transitioner.transitionToInternalPage('/workspace/strategies');
+        transitioner.transitionToInternalPage('/workspace/strategies', { replace: true });
       }
       if (nextOpenedStrategies !== openedStrategies) {
         return of(setOpenedStrategies(nextOpenedStrategies));
@@ -112,11 +140,11 @@ function deleteStrategyEpic(action$: ActionsObservable<Action>, state$: StateObs
   }))
 }
 
-function duplicateStrategyEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
+function updateRouteOnStrategyDuplicateEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
   return action$.pipe(mergeMap(action => {
     if (fulfillDuplicateStrategy.isOfType(action)) {
       const { strategyId } = action.payload;
-      transitioner.transitionToInternalPage(`/workspace/strategies/${strategyId}`);
+      transitioner.transitionToInternalPage(`/workspace/strategies/${strategyId}`, { replace: true });
     }
     return empty();
   }))
