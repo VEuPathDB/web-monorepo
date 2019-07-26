@@ -133,13 +133,13 @@ const transformToOperatorChoiceFactory = (recordClasses: RecordClass[], inputRec
 };
 
 const transformToOperatorChoice = createSelector(
-  ({ globalData: { recordClasses } }: RootState) => recordClasses,
+  (_: RootState, { recordClasses }: OwnProps) => recordClasses,
   (_: RootState, { inputRecordClass }: OwnProps) => inputRecordClass,
   (recordClasses, inputRecordClass) => recordClasses && transformToOperatorChoiceFactory(recordClasses, inputRecordClass)
 );
 
 const operatorChoices = createSelector(
-  ({ globalData: { questions }}: RootState) => questions,
+  (_: RootState, { questions }: OwnProps) => questions,
   isValidTransform,
   transformToOperatorChoice,
   (questions, isValidTransform, transformToOperatorChoice) => 

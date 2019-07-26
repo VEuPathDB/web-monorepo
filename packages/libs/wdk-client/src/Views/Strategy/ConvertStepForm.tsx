@@ -12,14 +12,7 @@ import 'wdk-client/Views/Strategy/ConvertStepForm.scss';
 
 const cx = makeClassNameHelper('ConvertStepForm');
 
-type StateProps = {
-  questions?: Question[];
-  recordClasses?: RecordClass[];
-};
-
-type Props = StateProps & AddStepOperationFormProps;
-
-const ConvertStepFormView = ({
+export const ConvertStepForm = ({
   addType,
   currentPage,
   inputRecordClass,
@@ -27,7 +20,7 @@ const ConvertStepFormView = ({
   recordClasses,
   stepsCompletedNumber,
   strategy
-}: Props) => {
+}: AddStepOperationFormProps) => {
   const transformQuestion = useMemo(
     () => questions && questions.find(({ urlSegment }) => urlSegment === currentPage), 
     [ questions, currentPage ]
@@ -65,20 +58,3 @@ const ConvertStepFormView = ({
     </div>
   );
 };
-
-const questions = createSelector(
-  ({ globalData }: RootState) => globalData,
-  globalData => globalData.questions
-);
-
-const recordClasses = createSelector(
-  ({ globalData }: RootState) => globalData,
-  globalData => globalData.recordClasses
-);
-
-const mapStateToProps = (state: RootState): StateProps => ({
-  questions: questions(state),
-  recordClasses: recordClasses(state)
-});
-
-export const ConvertStepForm = connect(mapStateToProps)(ConvertStepFormView);

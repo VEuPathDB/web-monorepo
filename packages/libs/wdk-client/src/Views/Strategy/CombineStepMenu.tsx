@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
@@ -46,12 +46,8 @@ const basketSearchUrlSegment = createSelector(
 
 const basketSearchShortDisplayName = createSelector(
   basketSearchUrlSegment,
-  ({ globalData: { questions } }: RootState) => questions,
+  (_: RootState, { questions }: OwnProps) => questions,
   (basketSearchUrlSegment, questions) => {
-    if (!questions) {
-      return undefined;
-    }
-
     const basketSearchQuestion = questions.find(({ urlSegment }) => urlSegment === basketSearchUrlSegment);
     return basketSearchQuestion && basketSearchQuestion.shortDisplayName;
   }
@@ -279,8 +275,8 @@ export const CombineStepMenuView = (
                     </div>
                     <div className={cx('--CheckboxContainer')}>
                       <CategoriesCheckboxTree
-                        selectedLeaves={NO_SELECTED_LEAVES}
-                        onChange={NOOP}
+                        selectedLeaves={noSelectedLeaves}
+                        onChange={noop}
                         tree={searchTree}
                         expandedBranches={expandedBranches}
                         searchTerm={searchTerm}
@@ -304,10 +300,7 @@ export const CombineStepMenuView = (
   );
 };
 
-const TODO = () => alert('TODO');
-
-const NO_SELECTED_LEAVES: string[] = [];
-const NOOP = () => {};
+const noSelectedLeaves: string[] = [];
 
 function renderNoResults(searchTerm: string) {
   return (

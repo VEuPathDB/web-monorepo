@@ -6,10 +6,10 @@ import { createSelector } from 'reselect';
 import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { findPrimaryBranchHeight, addStep, findSubtree, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
@@ -22,7 +22,9 @@ type StateProps = {
   inputRecordClass?: RecordClass,
   stepsCompletedNumber?: number,
   previousStep?: Step,
-  operandStep?: Step
+  operandStep?: Step,
+  questions?: Question[],
+  recordClasses?: RecordClass[]
 };
 
 type DispatchProps = {
@@ -32,7 +34,8 @@ type DispatchProps = {
 
 type OwnProps = {
   addType: AddType,
-  strategyId: number
+  strategyId: number,
+  operationTypes?: string[]
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -45,7 +48,9 @@ export type AddStepOperationMenuProps = {
   addType: AddType,
   stepsCompletedNumber: number,
   operandStep: Step,
-  previousStep?: Step
+  previousStep?: Step,
+  questions: Question[],
+  recordClasses: RecordClass[]
 };
 
 export type AddStepOperationFormProps = {
@@ -57,16 +62,26 @@ export type AddStepOperationFormProps = {
   addType: AddType,
   stepsCompletedNumber: number,
   operandStep: Step,
-  previousStep?: Step
+  previousStep?: Step,
+  questions: Question[],
+  recordClasses: RecordClass[]
 };
 
-const AddStepPanelView = (
+const defaultOperationTypes = [
+  'combine',
+  'convert'
+];
+
+export const AddStepPanelView = wrappable((
   {
     addType,
     loadStrategy,
     inputRecordClass,
+    operationTypes = defaultOperationTypes,
     operandStep,
     previousStep,
+    questions,
+    recordClasses,
     requestPutStrategyStepTree,
     strategy,
     strategyId,
@@ -123,7 +138,9 @@ const AddStepPanelView = (
           strategy === undefined ||
           inputRecordClass === undefined ||
           stepsCompletedNumber === undefined ||
-          operandStep === undefined
+          operandStep === undefined ||
+          questions === undefined ||
+          recordClasses === undefined
         )
           ? <Loading />
           : <div className={cx('--Container')}>
@@ -146,7 +163,7 @@ const AddStepPanelView = (
                       </div>
                       <div className={cx('--MenuItemsContainer')}>
                         {
-                          OPERATION_TYPE_ORDER
+                          operationTypes
                             .map((operation, index) =>
                               <React.Fragment key={operation}>
                                 <div className={cx('--MenuItem')}>
@@ -164,12 +181,14 @@ const AddStepPanelView = (
                                       addType,
                                       stepsCompletedNumber,
                                       operandStep,
-                                      previousStep
+                                      previousStep,
+                                      questions,
+                                      recordClasses
                                     }}
                                   />
                                 </div>
                                 {
-                                  index < OPERATION_TYPE_ORDER.length - 1 &&
+                                  index < operationTypes.length - 1 &&
                                   <div className={cx('--MenuItemSeparator')}>
                                     <p>
                                       <em>-or-</em>
@@ -203,7 +222,9 @@ const AddStepPanelView = (
                           addType,
                           stepsCompletedNumber,
                           operandStep,
-                          previousStep
+                          previousStep,
+                          questions,
+                          recordClasses
                         }}
                       />
                     </div>
@@ -213,18 +234,19 @@ const AddStepPanelView = (
       }
     </div>
   )
-};
+});
 
-// TODO Make this configurable
-enum OperationTypes {
-  Combine = 'combine',
-  Convert = 'convert'
-}
+const globalData = ({ globalData }: RootState) => globalData;
 
-const OPERATION_TYPE_ORDER  = [
-  OperationTypes.Combine,
-  OperationTypes.Convert
-];
+const questions = createSelector(
+  globalData,
+  globalData => globalData.questions
+);
+
+const recordClasses = createSelector(
+  globalData,
+  globalData => globalData.recordClasses
+);
 
 const strategyEntry = createSelector(
   ({ strategies }: RootState) => strategies,
@@ -318,7 +340,9 @@ export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, 
     strategy: strategy(state, ownProps),
     stepsCompletedNumber: stepsCompletedNumber(state, ownProps),
     previousStep: previousStep(state, ownProps),
-    operandStep: operandStep(state, ownProps)
+    operandStep: operandStep(state, ownProps),
+    questions: questions(state),
+    recordClasses: recordClasses(state)
   }),
   dispatch => ({
     loadStrategy: compose(dispatch, requestStrategy),
