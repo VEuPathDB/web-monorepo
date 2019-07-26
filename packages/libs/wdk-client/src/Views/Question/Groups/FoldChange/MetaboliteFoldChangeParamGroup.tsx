@@ -2,27 +2,15 @@ import React from 'react';
 
 import { memoize } from 'lodash';
 
-import { changeGroupVisibility, updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { PreAndPostParameterEntries, ParamLine } from 'wdk-client/Views/Question/Groups/FoldChange/ParamLine';
 import { SamplesParamSubgroup } from 'wdk-client/Views/Question/Groups/FoldChange/SamplesParamSubgroup';
+import { Props } from '../../DefaultQuestionForm';
 
-type EventHandlers = {
-  setGroupVisibility: typeof changeGroupVisibility,
-  updateParamValue: typeof updateParamValue
-};
-
-type Props = {
-  state: QuestionState;
-  dispatchAction: DispatchAction;
-  eventHandlers: EventHandlers;
-  parameterElements: Record<string, React.ReactNode>;
+type GroupProps = Props & {
   valueType: string;
 };
 
-const metaboliteFoldChangePreAndPostParams = memoize((props: Props): PreAndPostParameterEntries[] => [
+const metaboliteFoldChangePreAndPostParams = memoize((props: GroupProps): PreAndPostParameterEntries[] => [
   {
     preParameterContent: <span>For the <b>Experiment</b></span>, 
     parameterName: 'profileset',
@@ -40,7 +28,7 @@ const metaboliteFoldChangePreAndPostParams = memoize((props: Props): PreAndPostP
   }
 ]);
 
-export const MetaboliteFoldChangeParamGroup: React.FunctionComponent<Props> = props => {
+export const MetaboliteFoldChangeParamGroup: React.FunctionComponent<GroupProps> = props => {
   const {
     state: {
       question: {

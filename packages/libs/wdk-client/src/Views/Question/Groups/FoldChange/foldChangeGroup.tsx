@@ -1,34 +1,14 @@
 import React from 'react';
-
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import {
-  changeGroupVisibility,
-  updateParamValue,
-  submitQuestion
-} from 'wdk-client/Actions/QuestionActions';
-
-import { memoize } from 'lodash';
 import { FoldChangeParamPreview } from 'wdk-client/Views/Question/Groups/FoldChange/FoldChangeParamPreview';
-import { MetaboliteFoldChangeParamGroup } from 'wdk-client/Views/Question/Groups/FoldChange/MetaboliteFoldChangeParamGroup';
 import { GenericFoldChangeParamGroup } from 'wdk-client/Views/Question/Groups/FoldChange/GenericFoldChangeParamGroup';
-import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { MetaboliteFoldChangeParamGroup } from 'wdk-client/Views/Question/Groups/FoldChange/MetaboliteFoldChangeParamGroup';
 import { FoldChangeDirection, FoldChangeOperation } from 'wdk-client/Views/Question/Groups/FoldChange/Types';
+import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { Props } from '../../DefaultQuestionForm';
 
-import 'wdk-client/Views/Question/Groups/FoldChange/FoldChange.scss'
+import 'wdk-client/Views/Question/Groups/FoldChange/FoldChange.scss';
 
-type EventHandlers = {
-  setGroupVisibility: typeof changeGroupVisibility,
-  updateParamValue: typeof updateParamValue
-};
-
-type Props = {
-  state: QuestionState;
-  dispatchAction: DispatchAction;
-  eventHandlers: EventHandlers;
-  parameterElements: Record<string, React.ReactNode>;
-};
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 

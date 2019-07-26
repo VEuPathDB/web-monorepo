@@ -1,26 +1,14 @@
 import React from 'react';
 
-import { changeGroupVisibility, updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { PreAndPostParameterEntries, ParamLine } from 'wdk-client/Views/Question/Groups/FoldChange/ParamLine';
 import { SamplesParamSubgroup } from 'wdk-client/Views/Question/Groups/FoldChange/SamplesParamSubgroup';
+import { Props } from '../../DefaultQuestionForm';
 
-type EventHandlers = {
-  setGroupVisibility: typeof changeGroupVisibility,
-  updateParamValue: typeof updateParamValue
-};
-
-type Props = {
-  state: QuestionState;
-  dispatchAction: DispatchAction;
-  eventHandlers: EventHandlers;
-  parameterElements: Record<string, React.ReactNode>;
+type GroupProps = Props & {
   valueType: string;
 };
 
-const preAndPostParams = (props: Props): PreAndPostParameterEntries[] => 
+const preAndPostParams = (props: GroupProps): PreAndPostParameterEntries[] => 
   props.state.question.parametersByName['protein_coding_only']
     ? [
       {
@@ -62,7 +50,7 @@ const preAndPostParams = (props: Props): PreAndPostParameterEntries[] =>
       }
     ];
 
-export const GenericFoldChangeParamGroup: React.FunctionComponent<Props> = props => {
+export const GenericFoldChangeParamGroup: React.FunctionComponent<GroupProps> = props => {
   const {
     state: {
       question: {
