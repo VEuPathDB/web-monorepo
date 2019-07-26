@@ -1,3 +1,7 @@
 {
-  "extends": "../../EbrcWebsiteCommon/Site/tsconfig.json"
+  "extends": "../../EbrcWebsiteCommon/Site/tsconfig.json",
+  "include": [
+    "./webapp/**/*",
+    "../../WDKClient/Client/src/index.d.ts"
+  ]
 }
