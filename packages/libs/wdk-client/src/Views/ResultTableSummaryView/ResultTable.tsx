@@ -71,6 +71,8 @@ function ResultTable(props: Props) {
   const selectedIdsSet = new Set(selectedIds);
   const options = {
     toolbar: true,
+    useStickyHeader: true,
+    tableBodyMaxHeight: 'calc(95vh - 200px)',
     isRowSelected: (recordInstance: RecordInstance) => {
       return selectedIdsSet.has(recordInstance.attributes[recordClass.recordIdAttributeName] as string);
     }
