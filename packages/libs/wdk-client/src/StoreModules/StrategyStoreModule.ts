@@ -84,6 +84,7 @@ export function reduce(state: State = initialState, action: Action): State {
     return {
       ...state,
       strategies: {
+        ...state.strategies,
         [strategyId]: undefined
       }
     }

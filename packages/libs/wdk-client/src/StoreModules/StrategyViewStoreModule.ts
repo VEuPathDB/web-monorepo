@@ -1,14 +1,15 @@
-import { defaultTo, stubTrue, stubFalse } from 'lodash';
+import { defaultTo } from 'lodash';
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
-import { empty, Observable } from 'rxjs';
+import { empty, Observable, of } from 'rxjs';
 import { mergeMap, mergeMapTo, tap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { fulfillDeleteStrategy, fulfillDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
+import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
-import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy } from 'wdk-client/Actions/StrategyViewActions';
+import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView } from 'wdk-client/Actions/StrategyViewActions';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
-import { InferAction, switchMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
+import { InferAction, switchMapRequestActionsToEpic, mergeMapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
+import { delay } from 'wdk-client/Utils/PromiseUtils';
 
 export const key = 'strategyView';
 
@@ -19,9 +20,12 @@ export interface State {
   }
   isOpenedStrategiesVisible?: boolean;
   openedStrategies?: number[];
+  notifications: Record<string, string | undefined>;
 }
 
-const initialState: State = { }
+const initialState: State = {
+  notifications: {}
+}
 
 export function reduce(state: State = initialState, action: Action): State {
   switch(action.type) {
@@ -44,17 +48,46 @@ export function reduce(state: State = initialState, action: Action): State {
         isOpenedStrategiesVisible: action.payload.isVisible
       }
 
+    case addNotification.type:
+      return {
+        ...state,
+        notifications: {
+          ...state.notifications,
+          [action.payload.id]: action.payload.message
+        }
+      };
+
+    case removeNotification.type:
+      return {
+        ...state,
+        notifications: {
+          ...state.notifications,
+          [action.payload.id]: undefined
+        }
+      }
+
     default:
       return state;
   }
 }
 
-export const observe = combineEpics(
-  deleteStrategyEpic,
-  duplicateStrategyEpic,
-  updatePreferencesEpic,
-  switchMapRequestActionsToEpic([openStrategyView], getOpenedStrategiesVisibility),
-  switchMapRequestActionsToEpic([setActiveStrategy], getOpenedStrategies),
+export const observe = takeEpicInWindow(
+  {
+    startActionCreator: openStrategyView,
+    endActionCreator: closeStrategyView
+  },
+  combineEpics(
+    deleteStrategyEpic,
+    duplicateStrategyEpic,
+    updatePreferencesEpic,
+    switchMapRequestActionsToEpic([openStrategyView], getOpenedStrategiesVisibility),
+    switchMapRequestActionsToEpic([setActiveStrategy], getOpenedStrategies),
+    mergeMapRequestActionsToEpic([fulfillCreateStrategy], getAddNotification),
+    mergeMapRequestActionsToEpic([fulfillDeleteStrategy], getAddNotification),
+    mergeMapRequestActionsToEpic([fulfillDuplicateStrategy], getAddNotification),
+    mergeMapRequestActionsToEpic([fulfillPutStrategy], getAddNotification),
+    mergeMapRequestActionsToEpic([addNotification], getRemoveNotification)
+  )
 );
 
 // We are not using mrate for the next two epics since mrate does not currently allow its requestToFulfill function to return Promise<void>
@@ -62,7 +95,18 @@ export const observe = combineEpics(
 function deleteStrategyEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
   return action$.pipe(mergeMap(action => {
     if (fulfillDeleteStrategy.isOfType(action)) {
-      transitioner.transitionToInternalPage('/workspace/strategies');
+      const { strategyId } = action.payload;
+      const { activeStrategy, openedStrategies = [] } = state$.value[key];
+      const nextOpenedStrategies = openedStrategies.includes(strategyId)
+        ? openedStrategies.filter(id => id !== strategyId)
+        : openedStrategies;
+      if (activeStrategy != null && activeStrategy.strategyId === strategyId) {
+        // We could also go to the first opened strategy by inspecting openedStrategies
+        transitioner.transitionToInternalPage('/workspace/strategies');
+      }
+      if (nextOpenedStrategies !== openedStrategies) {
+        return of(setOpenedStrategies(nextOpenedStrategies));
+      }
     }
     return empty();
   }))
@@ -125,4 +169,37 @@ async function getOpenedStrategiesVisibility(
   return setOpenedStrategiesVisibility(defaultTo(await getValue(wdkService, preferences.openedStrategiesVisibility()), false));
 }
 
-// TODO Add notificationsEpic
+type NotifiableAction =
+  | InferAction<typeof fulfillDeleteStrategy
+  | typeof fulfillDuplicateStrategy
+  | typeof fulfillPutStrategy
+  | typeof fulfillCreateStrategy>
+
+async function getAddNotification(
+  [action]: [NotifiableAction]
+): Promise<InferAction<typeof addNotification>> {
+  return addNotification(`Your strategy has been ${mapActionToDisplayString(action)}.`);
+}
+
+function mapActionToDisplayString(action: NotifiableAction): string {
+  switch(action.type) {
+    case fulfillCreateStrategy.type:
+      return 'created';
+    case fulfillDeleteStrategy.type:
+      return 'deleted';
+    case fulfillDuplicateStrategy.type:
+      return 'duplicated';
+    case fulfillPutStrategy.type:
+      return 'updated';
+  }
+}
+
+const NOTIFICATION_DURATION_MS = 5000;
+
+async function getRemoveNotification(
+  [addAction]: [InferAction<typeof addNotification>]
+): Promise<InferAction<typeof removeNotification>> {
+  const { id } = addAction.payload;
+  await delay(NOTIFICATION_DURATION_MS);
+  return removeNotification(id);
+}

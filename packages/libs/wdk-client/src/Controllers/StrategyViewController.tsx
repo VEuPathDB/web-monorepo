@@ -10,6 +10,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import OpenedStrategies from 'wdk-client/Views/Strategy/OpenedStrategies';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
+import StrategyNotifications from 'wdk-client/Views/Strategy/StrategyNotifications';
 
 interface OwnProps {
   strategyId?: number;
@@ -19,6 +20,7 @@ interface OwnProps {
 interface MappedProps {
   openedStrategies?: number[];
   isOpenedStrategiesVisible?: boolean;
+  notifications: Record<string, string | undefined>;
 }
 
 interface DispatchProps {
@@ -27,7 +29,7 @@ interface DispatchProps {
 
 type Props = OwnProps & DispatchProps & MappedProps;
 
-function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies, isOpenedStrategiesVisible }: Props) {
+function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies, isOpenedStrategiesVisible, notifications }: Props) {
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -42,6 +44,7 @@ function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies
 
   return (
     <React.Fragment>
+      <StrategyNotifications notifications={notifications}/>
       <StrategyHeader/>
       {openedStrategies != null && <OpenedStrategies
         activeStrategyId={strategyId}
@@ -75,8 +78,8 @@ function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies
 }
 
 function mapState(state: RootState): MappedProps {
-  const { openedStrategies, isOpenedStrategiesVisible } = state.strategyView;
-  return { openedStrategies, isOpenedStrategiesVisible };
+  const { openedStrategies, isOpenedStrategiesVisible, notifications } = state.strategyView;
+  return { openedStrategies, isOpenedStrategiesVisible, notifications };
 }
 
 export default connect(mapState)(StrategyViewController);
