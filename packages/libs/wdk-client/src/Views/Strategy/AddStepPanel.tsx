@@ -35,7 +35,8 @@ type DispatchProps = {
 type OwnProps = {
   addType: AddType,
   strategyId: number,
-  operationTypes?: string[]
+  operationTypes?: string[],
+  developmentMode?: boolean
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -50,7 +51,8 @@ export type AddStepOperationMenuProps = {
   operandStep: Step,
   previousStep?: Step,
   questions: Question[],
-  recordClasses: RecordClass[]
+  recordClasses: RecordClass[],
+  developmentMode: boolean
 };
 
 export type AddStepOperationFormProps = {
@@ -75,6 +77,7 @@ const defaultOperationTypes = [
 export const AddStepPanelView = wrappable((
   {
     addType,
+    developmentMode = false,
     loadStrategy,
     inputRecordClass,
     operationTypes = defaultOperationTypes,
@@ -183,7 +186,8 @@ export const AddStepPanelView = wrappable((
                                       operandStep,
                                       previousStep,
                                       questions,
-                                      recordClasses
+                                      recordClasses,
+                                      developmentMode
                                     }}
                                   />
                                 </div>

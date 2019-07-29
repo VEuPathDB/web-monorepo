@@ -12,9 +12,15 @@
   &--Body {
     display: flex;
     align-items: start;
-    justify-content: space-between;
+    justify-content: space-evenly;
 
-    font-size: 1.25em;
+    >:first-child {
+      margin-right: 1em;
+    }
+
+    >:not(:first-child) {
+      margin: 0 1em;
+    }
   }
 
   &--PrimaryInputLabel {

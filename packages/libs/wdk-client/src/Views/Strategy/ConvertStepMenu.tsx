@@ -11,6 +11,7 @@ import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPane
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
 import { findAppendPoint } from 'wdk-client/Utils/StrategyUtils';
+import { PrimaryInputLabel } from './PrimaryInputLabel';
 
 const cx = makeClassNameHelper('ConvertStepMenu');
 
@@ -44,11 +45,13 @@ const ConvertStepMenuView = ({
                 into a related set of:
             </div>
             <div className={cx('--Body')}>
-              <div className={cx('--PrimaryInputLabel')}>
-                {operandStep.estimatedSize.toLocaleString()} {operandStep.estimatedSize === 1 ? inputRecordClass.shortDisplayName : inputRecordClass.shortDisplayNamePlural}
-              </div>
+              <PrimaryInputLabel
+                className={cx('--PrimaryInputLabel')}
+                resultSetSize={operandStep.estimatedSize}
+                recordClass={inputRecordClass}
+              />
               <div className={cx('--TransformIcon')}>
-                ->
+                >
               </div>
 
               <div className={cx('--OperatorSelector')}>

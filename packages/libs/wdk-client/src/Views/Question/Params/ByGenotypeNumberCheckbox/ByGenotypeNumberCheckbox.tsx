@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 
 const detailTypes = ["I", "II", "III", "II or III", "nd", "u-1", "u-2", "u-3"];
 const rawRows = [
@@ -265,15 +265,21 @@ interface ByGenotypeNumberCheckboxProps {
 
 export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberCheckboxProps> = ({ 
   onParamValueChange, 
-  paramValue 
+  paramValue = ''
 }) => {
-  const orderedCheckedValues = paramValue.split(/\s*,\s*/g);
-  const checkedValues = orderedCheckedValues.reduce(
-    (memo, checkedItem) => ({ ...memo, [checkedItem]: true }), 
-    {}
+  const orderedCheckedValues = useMemo(
+    () => paramValue.split(/\s*,\s*/g),
+    [ paramValue ]
   );
-
-  const onToggle = (itemKey: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const checkedValues = useMemo(
+    () => orderedCheckedValues.reduce(
+      (memo, checkedItem) => ({ ...memo, [checkedItem]: true }), 
+      {}
+    ),
+    [ orderedCheckedValues ]
+  );
+  
+  const onToggle = useCallback((itemKey: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const predecessors = orderedCheckedValues.filter(x => parseInt(x) < itemKey);
     const successors = orderedCheckedValues.filter(x => parseInt(x) > itemKey);
 
@@ -289,7 +295,7 @@ export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberC
       ];
 
     onParamValueChange(newParamValueItems.join(','));
-  };
+  }, [ onParamValueChange, orderedCheckedValues ] );
 
   return (
     <>

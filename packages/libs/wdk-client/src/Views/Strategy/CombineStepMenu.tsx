@@ -15,6 +15,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { getTargetType, getRecordClassUrlSegment, getDisplayName, getTooltipContent, CategoryTreeNode, getLabel } from 'wdk-client/Utils/CategoryUtils';
 import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
@@ -236,9 +237,11 @@ export const CombineStepMenuView = (
                   with another set of {inputRecordClass.shortDisplayNamePlural} from:
               </div>
               <div className={cx('--Body')}>
-                <div className={cx('--PrimaryInputLabel')}>
-                  {operandStep.estimatedSize.toLocaleString()} {operandStep.estimatedSize === 1 ? inputRecordClass.shortDisplayName : inputRecordClass.shortDisplayNamePlural}
-                </div>
+                <PrimaryInputLabel
+                  className={cx('--PrimaryInputLabel')}
+                  resultSetSize={operandStep.estimatedSize}
+                  recordClass={inputRecordClass}
+                />
                 <div className={cx('--OperatorSelector')}>
                   {
                     combineOperatorOrder.map(operator => (

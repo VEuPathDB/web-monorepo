@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
 
 import { QuestionController } from 'wdk-client/Controllers';
-import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 
 import 'wdk-client/Views/Strategy/ConvertStepForm.scss';
