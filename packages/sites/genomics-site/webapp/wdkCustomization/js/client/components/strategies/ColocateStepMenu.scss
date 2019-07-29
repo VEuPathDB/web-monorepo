@@ -1,0 +1,43 @@
+.ColocateStepMenu {
+  &--Header {
+    font-size: 1.5em;
+    margin: 1em 0;
+
+    h3 {
+      font-size: 1.25em;
+      font-weight: 500;
+    }
+  }
+
+  &--Body {
+    display: flex;
+    align-items: start;
+    justify-content: space-evenly;
+
+    >:first-child {
+      margin-right: 1em;
+    }
+
+    >:not(:first-child) {
+      margin: 0 1em;
+    }
+  }
+
+  &--PrimaryInputLabel {
+    border: 1px solid black;
+    padding: 1em;
+  }
+
+  &--RecordClassSelector {
+    display: flex;
+    flex-direction: column;
+
+    >:first-child {
+      margin-bottom: 1em;
+    }
+
+    >:not(:first-child) {
+      margin: 1em 0;
+    }
+  }
+}

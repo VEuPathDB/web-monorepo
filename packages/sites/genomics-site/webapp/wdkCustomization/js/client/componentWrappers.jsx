@@ -339,3 +339,15 @@ export function ResultTabs(DefaultComponent) {
     );
   };
 }
+
+const apiOperationTypes = ['combine', 'convert', 'colocate'];
+
+export function AddStepPanelView(DefaultComponent) {
+  return function ApiAddStepPaneView(props) {
+    return <DefaultComponent 
+      {...props} 
+      operationTypes={apiOperationTypes}
+      developmentMode={false}
+    />;
+  };
+}

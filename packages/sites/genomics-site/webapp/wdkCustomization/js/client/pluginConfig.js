@@ -10,6 +10,8 @@ import PopsetResultSummaryViewTableController from './components/controllers/Pop
 import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
 
+import { ColocateStepMenu } from './components/strategies/ColocateStepMenu';
+
 export default [
   {
     type: 'summaryView',
@@ -65,5 +67,10 @@ export default [
     type: 'questionForm',
     test: ({ question }) => question && question.urlSegment.endsWith('BySimilarity'),
     component: BlastQuestionForm
+  },
+  {
+    type: 'addStepOperationMenu',
+    name: 'colocate',
+    component: ColocateStepMenu
   }
 ];
