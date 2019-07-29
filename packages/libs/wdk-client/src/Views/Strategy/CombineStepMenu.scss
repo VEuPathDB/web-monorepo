@@ -57,27 +57,13 @@
     }
   }
 
-  &--NewSearchCheckbox {
-    background: linear-gradient(#f4f4f4, #dddddd);
-    border-radius: 5px;
-    border: 1px solid #afafaf
-  }
-
-  &--CheckboxHeader {
-    padding: 0.5em 0;
-    text-align: center;
-  }
-
-  &--CheckboxContainer {
-    padding: 0 0.5em 0.5em 0.5em
-  }
-
   .wdk-CategoriesCheckboxTree {
     position: relative;
     border: 1px solid grey;
     padding: 0 0.5em;
     background-color: white;
     border-radius: 1px;
+    text-align: left;
 
     .wdk-CheckboxTreeLinks {
       margin-left: unset;

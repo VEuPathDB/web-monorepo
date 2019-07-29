@@ -2,12 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
-import { Loading, Tooltip, Link, Icon, CategoriesCheckboxTree } from 'wdk-client/Components';
-import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
@@ -16,8 +15,9 @@ import { Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
+import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
-import { getTargetType, getRecordClassUrlSegment, getDisplayName, getTooltipContent, CategoryTreeNode, getLabel } from 'wdk-client/Utils/CategoryUtils';
+import { CategoryTreeNode, getLabel } from 'wdk-client/Utils/CategoryUtils';
 import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepMenu.scss';
@@ -31,8 +31,7 @@ type StateProps = {
   booleanSearchUrlSegment: string,
   booleanSearchState?: QuestionState,
   booleanOperatorParameter?: Parameter,
-  searchTree: CategoryTreeNode,
-  linkPlacement: LinksPosition
+  searchTree: CategoryTreeNode
 };
 
 const recordClassSegment = createSelector(
@@ -106,17 +105,6 @@ const searchTree = createSelector(
   }
 );
 
-const linkPlacement = createSelector(
-  searchTree,
-  searchTree => {
-    const hasNoGrandchildren = searchTree.children.every(child => child.children.length === 0);
-
-    return hasNoGrandchildren
-      ? LinksPosition.None
-      : LinksPosition.Top;
-  }
-);
-
 type DispatchProps = {
   loadBooleanQuestion: (
     booleanSearchUrlSegment: string,
@@ -153,13 +141,10 @@ export const CombineStepMenuView = (
     updateStrategy,
     searchTree,
     startOperationForm,
-    linkPlacement,
     operandStep
   }: Props
 ) => {
   const [ basketButtonStatus, setBasketButtonStatus ] = useState<BasketButtonStatus>('unclicked');
-  const [ expandedBranches, setExpandedBranches ] = useState<string[]>([]);
-  const [ searchTerm, setSearchTerm ] = useState<string>('');
   
   useEffect(() => {
     loadBooleanQuestion(booleanSearchUrlSegment);
@@ -181,31 +166,6 @@ export const CombineStepMenuView = (
     }
   }, [ basketButtonStatus ]);
 
-  const renderNode = useCallback((node: any) => {
-    const displayName = getDisplayName(node);
-    const displayElement = getTargetType(node) === 'search'
-      ? <Link 
-          onClick={(e: Event) => {
-            e.preventDefault();
-            startOperationForm('combine-with-search', node.wdkReference.urlSegment);
-          }}
-          to={`/search/${getRecordClassUrlSegment(node)}/${node.wdkReference.urlSegment}`}
-        >
-          {displayName}
-        </Link>
-      : <span>{displayName}</span>
-  
-    const tooltipContent = getTooltipContent(node);
-    
-    return tooltipContent
-      ? (
-        <Tooltip content={tooltipContent}>
-          {displayElement}
-        </Tooltip>
-      )
-      : displayElement;
-  }, []);
-
   const onOperatorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     updateBooleanOperator(e.target.value);
   }, [ updateBooleanOperator ]);
@@ -217,6 +177,10 @@ export const CombineStepMenuView = (
   const onCombineWithBasketClicked = useCallback((_: React.MouseEvent) => {
     setBasketButtonStatus('clicked');
   }, []);
+
+  const onCombineWithNewSearchClicked = useCallback((newSearchUrlSegment: string) => {
+    startOperationForm('combine-with-new-search', newSearchUrlSegment);
+  }, [ startOperationForm ]);
 
   return (
     <div className={cx()}>
@@ -262,39 +226,15 @@ export const CombineStepMenuView = (
                     ))
                   }
                 </div>
-                <div className={cx('--SecondaryInputSelector')}>
-                  <button 
-                    onClick={onCombineWithBasketClicked} 
-                    disabled={basketButtonStatus !== 'unclicked'}
-                    type="button">
-                    Your {inputRecordClass.shortDisplayNamePlural} basket
-                  </button>
-                  <button onClick={onCombineWithStrategyClicked}>
-                    A {inputRecordClass.shortDisplayNamePlural} strategy
-                  </button>
-                  <div className={cx('--NewSearchCheckbox')}>
-                    <div className={cx('--CheckboxHeader')}>
-                      A new {inputRecordClass.shortDisplayNamePlural} search
-                    </div>
-                    <div className={cx('--CheckboxContainer')}>
-                      <CategoriesCheckboxTree
-                        selectedLeaves={noSelectedLeaves}
-                        onChange={noop}
-                        tree={searchTree}
-                        expandedBranches={expandedBranches}
-                        searchTerm={searchTerm}
-                        isSelectable={false}
-                        searchBoxPlaceholder="Find a search..."
-                        leafType="search"
-                        renderNode={renderNode}
-                        renderNoResults={renderNoResults}
-                        onUiChange={setExpandedBranches}
-                        onSearchTermChange={setSearchTerm}
-                        linkPlacement={linkPlacement}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <SearchInputSelector
+                  containerClassName={cx('--SecondaryInputSelector')}
+                  onCombineWithBasketClicked={onCombineWithBasketClicked}
+                  onCombineWithStrategyClicked={onCombineWithStrategyClicked}
+                  onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
+                  combinedWithBasketDisabled={basketButtonStatus !== 'unclicked'}
+                  inputRecordClass={inputRecordClass}
+                  searchTree={searchTree}
+                />
               </div>
             </div>
           )
@@ -302,18 +242,6 @@ export const CombineStepMenuView = (
     </div>
   );
 };
-
-const noSelectedLeaves: string[] = [];
-
-function renderNoResults(searchTerm: string) {
-  return (
-    <div>
-      <p>
-        <Icon type="warning"/> We could not find any searches matching "{searchTerm}".
-      </p>
-    </div>
-  )
-}
 
 export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state, ownProps) => ({
@@ -323,8 +251,7 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
     booleanSearchUrlSegment: booleanSearchUrlSegment(state, ownProps),
     booleanSearchState: booleanSearchState(state, ownProps),
     booleanOperatorParameter: booleanOperatorParameter(state, ownProps),
-    searchTree: searchTree(state, ownProps),
-    linkPlacement: linkPlacement(state, ownProps)
+    searchTree: searchTree(state, ownProps)
   }),
   dispatch => ({
     loadBooleanQuestion: (booleanSearchUrlSegment: string) => {

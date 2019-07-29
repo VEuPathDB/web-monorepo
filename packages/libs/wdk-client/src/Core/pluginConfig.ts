@@ -89,7 +89,7 @@ const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'addStepOperationForm',
-    name: 'combine-with-search',
+    name: 'combine-with-new-search',
     component: CombineStepForm
   },
   {
