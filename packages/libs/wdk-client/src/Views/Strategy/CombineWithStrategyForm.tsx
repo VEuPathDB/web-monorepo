@@ -1,24 +1,20 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
 import { updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { SingleSelect, Loading } from 'wdk-client/Components';
+import { SingleSelect } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import { BOOLEAN_OPERATOR_PARAM_NAME, combineOperatorOrder, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineWithStrategyForm.scss';
-
-import { StrategySummary } from 'wdk-client/Utils/WdkUser';
-import { useWdkEffect } from 'wdk-client/Service/WdkService';
-import { StepAnalysisEnrichmentResultTable as StrategiesChoicesTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
-import { requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
-import { addStep } from 'wdk-client/Utils/StrategyUtils';
 
 const cx = makeClassNameHelper('CombineWithStrategyForm');
 
@@ -104,12 +100,6 @@ type CombineStepFormViewProps = StateProps & {
   updateBooleanOperator: (newBooleanOperator: string) => void,
 } & OwnProps;
 
-type StrategyChoicesRow = {
-  description: string,
-  name: string,
-  strategyId: number
-};
-
 const CombineWithStrategyFormView = ({
   booleanSearchState,
   booleanSearchUrlSegment,
@@ -120,15 +110,10 @@ const CombineWithStrategyFormView = ({
   strategy,
   updateStrategy
 }: CombineStepFormViewProps) => {
-  const [ strategies, setStrategies ] = useState<StrategySummary[] | undefined>(undefined);
-  const [ selectedStrategy, setSelectedStrategy ] = useState<number | undefined>(undefined);
+  const [ selectedStrategyId, setSelectedStrategyId ] = useState<number | undefined>(undefined);
 
   useWdkEffect(wdkService => {
-    wdkService.getStrategies().then(setStrategies);
-  }, []);
-
-  useWdkEffect(wdkService => {
-    if (selectedStrategy !== undefined && booleanSearchState && booleanSearchState.paramValues) {
+    if (selectedStrategyId !== undefined && booleanSearchState && booleanSearchState.paramValues) {
       const operatorStepPromise = wdkService.createStep({
         searchName: booleanSearchUrlSegment,
         searchConfig: {
@@ -136,7 +121,7 @@ const CombineWithStrategyFormView = ({
         }
       });
 
-      const duplicateStepTreePromise = wdkService.getDuplicatedStrategyStepTree(strategy.strategyId);
+      const duplicateStepTreePromise = wdkService.getDuplicatedStrategyStepTree(selectedStrategyId);
 
       Promise.all([
         operatorStepPromise,
@@ -145,88 +130,35 @@ const CombineWithStrategyFormView = ({
         updateStrategy(operatorStepId, duplicateStepTree);
       });
     }
-  }, [ selectedStrategy ]);
-
-  const strategyChoices = useMemo(
-    () => (
-      strategies && 
-      strategies
-        .filter(
-          ({ recordClassName, strategyId }) => (
-            recordClassName === inputRecordClass.urlSegment &&
-            strategyId !== strategy.strategyId
-          )
-        )
-        .map(({ description, name, strategyId }) => ({ description, name, strategyId }))
-    ),
-    [ strategies ]
-  );
+  }, [ selectedStrategyId ]);
 
   return (
-      <div className={cx()}>
-        {
-          (
-            !strategies ||
-            !strategyChoices
-          )
-            ? <Loading />
-            : (
-              <>
-                <div className={cx('--Header')}>
-                  <h2>
-                    Choose an existing strategy
-                  </h2>
-        
-                  <div>
-                    The results will be{' '}
-                    <SingleSelect
-                      value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
-                      onChange={updateBooleanOperator}
-                      items={addType.type === 'append' ? selectItemsAppend : selectItemsInsertBefore}
-                    />
-                    {' '}the results of Step {stepsCompletedNumber}.
-                  </div>
-                </div>
-                <div className={cx('--Body')}>
-                  <StrategiesChoicesTable
-                    emptyResultMessage={`No other ${inputRecordClass.shortDisplayName} strategies found`}
-                    rows={strategyChoices}
-                    columns={[
-                      {
-                        key: 'name',
-                        name: 'Strategy',
-                        renderCell: (cellProps: { row: StrategyChoicesRow }) =>
-                          <a onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedStrategy(cellProps.row.strategyId);
-                          }} href="#">
-                             {cellProps.row.name} 
-                          </a>,
-                        sortable: true,
-                        sortType: 'text'
-                      },
-                      {
-                        key: 'description',
-                        name: 'Description',
-                        renderCell: (cellProps: { value: string }) =>
-                          <>
-                            {
-                              cellProps.value
-                                ? cellProps.value
-                                : <em>Save to add a description</em>
-                            }
-                          </>,
-                        sortable: true,
-                        sortType: 'text'
-                      }
-                    ]}
-                  />
-                </div>
-              </>
-            )
-        }
+    <div className={cx()}>
+      <div className={cx('--Header')}>
+        <h2>
+          Choose an existing strategy
+        </h2>
+
+        <div>
+          The results will be{' '}
+          <SingleSelect
+            value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
+            onChange={updateBooleanOperator}
+            items={addType.type === 'append' ? selectItemsAppend : selectItemsInsertBefore}
+          />
+          {' '}the results of Step {stepsCompletedNumber}.
+        </div>
       </div>
-    );
+      <div className={cx('--Body')}>
+        <StrategyInputSelector
+          onStrategySelected={setSelectedStrategyId}
+          primaryInput={strategy}
+          secondaryInputRecordClass={inputRecordClass}
+          selectedStrategyId={selectedStrategyId}
+        />
+      </div>
+    </div>
+  );
 };
 
 export const CombineWithStrategyForm = connect<StateProps, DispatchProps, OwnProps, CombineStepFormViewProps, RootState>(

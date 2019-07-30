@@ -30,8 +30,7 @@ type StateProps = {
   basketSearchShortDisplayName?: string,
   booleanSearchUrlSegment: string,
   booleanSearchState?: QuestionState,
-  booleanOperatorParameter?: Parameter,
-  searchTree: CategoryTreeNode
+  booleanOperatorParameter?: Parameter
 };
 
 const recordClassSegment = createSelector(
@@ -93,18 +92,6 @@ const booleanOperatorParameter = createSelector(
   }
 );
 
-const searchTree = createSelector(
-  ({ globalData }: RootState) => globalData, 
-  (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
-  (globalData, recordClassFullName) => {
-    // FIXME: This is not typesafe
-    const fullSearchTree = get(globalData, 'searchTree') as CategoryTreeNode;
-    const prunedTree = fullSearchTree.children.find(node => getLabel(node) === recordClassFullName) as CategoryTreeNode;
-
-    return prunedTree;
-  }
-);
-
 type DispatchProps = {
   loadBooleanQuestion: (
     booleanSearchUrlSegment: string,
@@ -139,7 +126,6 @@ export const CombineStepMenuView = (
     inputRecordClass,
     updateBooleanOperator,
     updateStrategy,
-    searchTree,
     startOperationForm,
     operandStep
   }: Props
@@ -233,7 +219,6 @@ export const CombineStepMenuView = (
                   onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
                   combinedWithBasketDisabled={basketButtonStatus !== 'unclicked'}
                   inputRecordClass={inputRecordClass}
-                  searchTree={searchTree}
                 />
               </div>
             </div>
@@ -250,8 +235,7 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
     basketSearchShortDisplayName: basketSearchShortDisplayName(state, ownProps),
     booleanSearchUrlSegment: booleanSearchUrlSegment(state, ownProps),
     booleanSearchState: booleanSearchState(state, ownProps),
-    booleanOperatorParameter: booleanOperatorParameter(state, ownProps),
-    searchTree: searchTree(state, ownProps)
+    booleanOperatorParameter: booleanOperatorParameter(state, ownProps)
   }),
   dispatch => ({
     loadBooleanQuestion: (booleanSearchUrlSegment: string) => {

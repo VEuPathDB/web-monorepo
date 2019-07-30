@@ -1,27 +1,36 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
+import { noop, get } from 'lodash';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+
 import { CategoriesCheckboxTree, Icon, Tooltip, Link } from 'wdk-client/Components';
+import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { RootState } from 'wdk-client/Core/State/Types';
+import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getLabel } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
-import { noop } from 'lodash';
-import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent } from 'wdk-client/Utils/CategoryUtils';
-import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
-type Props = {
+type StateProps = {
+  searchTree: CategoryTreeNode
+};
+
+type OwnProps = {
   containerClassName?: string,
   onCombineWithBasketClicked: (e: React.MouseEvent) => void,
   onCombineWithStrategyClicked: (e: React.MouseEvent) => void,
   onCombineWithNewSearchClicked: (newSearchUrlSegment: string) => void,
   combinedWithBasketDisabled?: boolean,
-  inputRecordClass: RecordClass,
-  searchTree: CategoryTreeNode
+  inputRecordClass: RecordClass
 };
+
+type Props = StateProps & OwnProps;
 
 const cx = makeClassNameHelper('SearchInputSelector');
 
-export const SearchInputSelector = ({
+export const SearchInputSelectorView = ({
   containerClassName,
   combinedWithBasketDisabled,
   inputRecordClass,
@@ -121,3 +130,21 @@ export const SearchInputSelector = ({
     </div>
   );
 };
+
+const searchTree = createSelector(
+  ({ globalData }: RootState) => globalData, 
+  (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
+  (globalData, recordClassFullName) => {
+    // FIXME: This is not typesafe
+    const fullSearchTree = get(globalData, 'searchTree') as CategoryTreeNode;
+    const prunedTree = fullSearchTree.children.find(node => getLabel(node) === recordClassFullName) as CategoryTreeNode;
+
+    return prunedTree;
+  }
+);
+
+const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
+  searchTree: searchTree(state, props)
+});
+
+export const SearchInputSelector = connect(mapStateToProps)(SearchInputSelectorView);
