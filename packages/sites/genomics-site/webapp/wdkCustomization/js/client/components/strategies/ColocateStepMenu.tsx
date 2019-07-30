@@ -5,6 +5,8 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 
+import { selectSearchPage } from './ColocateStepForm';
+
 import './ColocateStepMenu.scss';
 
 const cx = makeClassNameHelper('ColocateStepMenu');
@@ -63,7 +65,7 @@ export const ColocateStepMenu = ({
                     e.preventDefault();
 
                     developmentMode
-                      ? startOperationForm('colocate', urlSegment)
+                      ? startOperationForm('colocate', selectSearchPage(urlSegment))
                       : alert('Under construction');
                   }}>
                     {shortDisplayNamePlural}

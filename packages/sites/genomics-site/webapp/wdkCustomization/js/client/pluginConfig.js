@@ -11,6 +11,7 @@ import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldCha
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
 
 import { ColocateStepMenu } from './components/strategies/ColocateStepMenu';
+import { ColocateStepForm } from './components/strategies/ColocateStepForm';
 
 export default [
   {
@@ -72,5 +73,10 @@ export default [
     type: 'addStepOperationMenu',
     name: 'colocate',
     component: ColocateStepMenu
+  },
+  {
+    type: 'addStepOperationForm',
+    name: 'colocate',
+    component: ColocateStepForm
   }
 ];
