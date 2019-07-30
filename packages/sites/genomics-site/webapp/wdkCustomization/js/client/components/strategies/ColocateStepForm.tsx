@@ -8,6 +8,7 @@ import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelect
 
 import './ColocateStepForm.scss';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { QuestionController } from 'wdk-client/Controllers';
 
 const cx = makeClassNameHelper('ColocateStepForm');
 
@@ -51,36 +52,36 @@ type TypedPage =
 const untypedPageFactory = (prefix: string) => (suffix: string) => `${prefix}/${suffix}`;
 
 const toTypedPage = (untypedPage: string): TypedPage => {
-  const [prefix, suffix] = untypedPage.split('/');
+  const [prefix, suffix0, suffix1] = untypedPage.split('/');
 
   return prefix === PageTypes.SelectSearchPage
     ? {
         pageType: PageTypes.SelectSearchPage,
-        recordClassUrlSegment: suffix
+        recordClassUrlSegment: suffix0
       }
     : prefix === PageTypes.BasketPage
     ? {
         pageType: PageTypes.BasketPage,
-        recordClassUrlSegment: suffix
+        recordClassUrlSegment: suffix0
       }
     : prefix === PageTypes.StrategyForm
     ? {
         pageType: PageTypes.StrategyForm,
-        recordClassUrlSegment: suffix
+        recordClassUrlSegment: suffix0
       }
     : prefix === PageTypes.NewSearchForm
     ? {
         pageType: PageTypes.NewSearchForm,
-        searchUrlSegment: suffix
+        searchUrlSegment: suffix0
       }
     : prefix === PageTypes.ColocationOperatorForm 
     ? {
         pageType: PageTypes.ColocationOperatorForm,
-        recordClassUrlSegment: suffix
+        recordClassUrlSegment: suffix0
       }
     : {
         pageType: PageTypes.PageNotFound,
-        pageName: suffix
+        pageName: untypedPage
       };
 };
 
@@ -108,7 +109,10 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
           : typedPage.pageType === PageTypes.StrategyForm
           ? <StrategyForm {...props} />
           : typedPage.pageType === PageTypes.NewSearchForm
-          ? <NewSearchForm {...props} />
+          ? <NewSearchForm 
+              {...props} 
+              searchUrlSegment={typedPage.searchUrlSegment}
+            />
           : typedPage.pageType === PageTypes.ColocationOperatorForm && secondaryInputStepTree
           ? <ColocateStepForm {...props} />
           : <NotFound />
@@ -154,5 +158,16 @@ const SelectSearchPage = ({
 
 const BasketPage = ({}: AddStepOperationFormProps) => <div>Basket Page</div>;
 const StrategyForm = ({}: AddStepOperationFormProps) => <div>Strategy Form</div>;
-const NewSearchForm = ({}: AddStepOperationFormProps) => <div>New Search Form</div>;
+const NewSearchForm = ({ advanceToPage, searchUrlSegment }: AddStepOperationFormProps & { searchUrlSegment: string }) =>
+  <QuestionController 
+    recordClass={'transcript'}
+    question={searchUrlSegment}
+    submissionMetadata={{
+      type: 'add-custom-step',
+      onStepAdded: () => {
+        console.log('UH LUUUUH');
+        advanceToPage(colocationOperatorForm('transcript'));
+      }
+    }}
+  />
 const ColocationOperatorForm = ({}: AddStepOperationFormProps) => null;
