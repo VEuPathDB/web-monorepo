@@ -10,6 +10,9 @@ import './ColocateStepForm.scss';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { QuestionController } from 'wdk-client/Controllers';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
+import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
+import { number } from 'wdk-client/Utils/Json';
+import { useWdkEffect } from 'wdk-client/Service/WdkService';
 
 const cx = makeClassNameHelper('ColocateStepForm');
 
@@ -106,9 +109,17 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
               recordClassUrlSegment={typedPage.recordClassUrlSegment}
             />
           : typedPage.pageType === PageTypes.BasketPage
-          ? <BasketPage {...props} />
+          ? <BasketPage 
+              {...props}
+              recordClassUrlSegment={typedPage.recordClassUrlSegment}
+              setSecondaryStepTree={setSecondaryInputStepTree}
+            />
           : typedPage.pageType === PageTypes.StrategyForm
-          ? <StrategyForm {...props} />
+          ? <StrategyForm 
+              {...props}
+              recordClassUrlSegment={typedPage.recordClassUrlSegment}
+              setSecondaryStepTree={setSecondaryInputStepTree}
+            />
           : typedPage.pageType === PageTypes.NewSearchForm
           ? <NewSearchForm
               {...props}
@@ -163,8 +174,90 @@ const SelectSearchPage = ({
 };
 
 
-const BasketPage = ({}: AddStepOperationFormProps) => <div>Basket Page</div>;
-const StrategyForm = ({}: AddStepOperationFormProps) => <div>Strategy Form</div>;
+const BasketPage = ({
+  advanceToPage,
+  inputRecordClass,
+  questions,
+  recordClassUrlSegment,
+  recordClasses,
+  setSecondaryStepTree
+}: AddStepOperationFormProps & { recordClassUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }) => {
+  const secondaryInputRecordClass = useMemo(
+    () => recordClasses.find(({ urlSegment }) => urlSegment === recordClassUrlSegment) || inputRecordClass,
+    [ recordClasses, recordClassUrlSegment ]
+  );
+
+  const secondaryInputRecordClassSearchSubsegment = secondaryInputRecordClass.fullName.replace('.', '_');
+  const basketSearchUrlSegment = `${secondaryInputRecordClassSearchSubsegment}BySnapshotBasket`;
+  const basketDatasetParamName = `${secondaryInputRecordClassSearchSubsegment}Dataset`;
+
+  const basketSearchShortDisplayName = useMemo(
+    () => {
+      const basketSearchQuestion = questions.find(({ urlSegment }) => urlSegment === basketSearchUrlSegment);
+      return basketSearchQuestion && basketSearchQuestion.shortDisplayName;
+    },
+    [ questions, basketSearchUrlSegment ]
+  );
+
+  useWdkEffect(wdkService => {
+    wdkService.createDataset({
+      sourceType: 'basket',
+      sourceContent: {
+        basketName: recordClassUrlSegment
+      }
+    })
+      .then(datasetId => wdkService.createStep({
+          searchName: basketSearchUrlSegment,
+          searchConfig: {
+            parameters: {
+              [basketDatasetParamName]: `${datasetId}`
+            }
+          },
+          customName: basketSearchShortDisplayName
+        })
+      )
+      .then(({ id: newStepId }) => {
+        setSecondaryStepTree({ stepId: newStepId });
+        advanceToPage(colocationOperatorForm(recordClassUrlSegment));
+      });
+  }, [ advanceToPage, setSecondaryStepTree, secondaryInputRecordClass ]);
+
+  return <Loading />;
+};
+
+const StrategyForm = ({
+  advanceToPage,
+  inputRecordClass,
+  recordClassUrlSegment,
+  recordClasses,
+  setSecondaryStepTree,
+  strategy
+}: AddStepOperationFormProps & { recordClassUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }) => {
+  const [ selectedStrategyId, setSelectedStrategyId ] = useState<number | undefined>(undefined);
+
+  const secondaryInputRecordClass = useMemo(
+    () => recordClasses.find(({ urlSegment }) => urlSegment === recordClassUrlSegment) || inputRecordClass,
+    [ inputRecordClass, recordClasses, recordClassUrlSegment ]
+  );
+
+  useWdkEffect(wdkService => {
+    if (selectedStrategyId !== undefined) {
+      wdkService.getDuplicatedStrategyStepTree(selectedStrategyId).then(stepTree => {
+        setSecondaryStepTree(stepTree);
+        advanceToPage(colocationOperatorForm(secondaryInputRecordClass.urlSegment));
+      });
+    }
+  }, [ selectedStrategyId ]);
+
+  return selectedStrategyId !== undefined
+    ? <Loading />
+    : <StrategyInputSelector
+        primaryInput={strategy}
+        secondaryInputRecordClass={secondaryInputRecordClass}
+        onStrategySelected={setSelectedStrategyId}
+      />;
+};
+
 const NewSearchForm = ({ 
   advanceToPage, 
   inputRecordClass, 
@@ -183,7 +276,7 @@ const NewSearchForm = ({
     () => (
       newSearchQuestion && recordClasses.find(({ urlSegment }) => urlSegment === newSearchQuestion.outputRecordClassName)
     ) || inputRecordClass,
-    [ recordClasses, newSearchQuestion ]
+    [ inputRecordClass, recordClasses, newSearchQuestion ]
   );
 
   const onStepAdded = useCallback((newSearchStepId: number) => {
@@ -191,18 +284,41 @@ const NewSearchForm = ({
     advanceToPage(colocationOperatorForm(newSearchRecordClass.urlSegment));
   }, [ advanceToPage, newSearchRecordClass, setSecondaryStepTree ]);
 
+  const submissionMetadata = useMemo(
+    () => ({ type: 'add-custom-step', onStepAdded }) as SubmissionMetadata, 
+    [ onStepAdded ]
+  );
+
   return (
     <QuestionController 
       recordClass={newSearchRecordClass.urlSegment}
       question={searchUrlSegment}
-      submissionMetadata={{
-        type: 'add-custom-step',
-        onStepAdded
-      }}
+      submissionMetadata={submissionMetadata}
     />
   );
 }
 
 const ColocationOperatorForm = (
-  { recordClassUrlSegment }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }) => 
-  <div>{recordClassUrlSegment}</div>;
+  { 
+    recordClassUrlSegment,
+    secondaryInputStepTree,
+    updateStrategy
+  }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }
+) => {
+  const onStepAdded = useCallback((colocationStepId: number) => {
+    updateStrategy(colocationStepId, secondaryInputStepTree);
+  }, [ updateStrategy, secondaryInputStepTree ]);
+
+  const submissionMetadata = useMemo(
+    () => ({ type: 'add-custom-step', onStepAdded }) as SubmissionMetadata, 
+    [ onStepAdded ]
+  );
+
+  return (
+    <QuestionController
+      recordClass={recordClassUrlSegment}
+      question={colocationQuestionName}
+      submissionMetadata={submissionMetadata}
+    />
+  );
+};
