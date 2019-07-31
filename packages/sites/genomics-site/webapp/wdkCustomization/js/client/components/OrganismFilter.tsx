@@ -50,7 +50,7 @@ const NO_ORGANISM_FILTER_APPLIED = null;
 
 // configuration type of the organism (byValue) filter
 type OrgFilterConfig = NO_ORGANISM_FILTER_APPLIED | {
-  filters: Array<string>;
+  values: Array<string>;
 }
 
 // type of the data returned by the filter summary (byValue reporter)
@@ -193,7 +193,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   let appliedFilterConfig: OrgFilterConfig = findOrganismFilterConfig(step.searchConfig);
 
   // org filter config currently applied on the step (if any) - used for cancel button
-  let appliedFilterList = appliedFilterConfig == NO_ORGANISM_FILTER_APPLIED ? undefined : appliedFilterConfig.filters;
+  let appliedFilterList = appliedFilterConfig == NO_ORGANISM_FILTER_APPLIED ? undefined : appliedFilterConfig.values;
 
   // choose between step's org filter config and temporary (unapplied) selections
   let viewableFilterConfig: OrgFilterConfig =
@@ -203,7 +203,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
   let showApplyAndCancelButtons: boolean = !searchConfigChangeRequested && !isSameConfig(viewableFilterConfig, appliedFilterConfig);
 
   // ids of leaves' boxes to check; if no filter applied, select none
-  let selectedLeaves: Array<string> = viewableFilterConfig === NO_ORGANISM_FILTER_APPLIED ? [] : viewableFilterConfig.filters;
+  let selectedLeaves: Array<string> = viewableFilterConfig === NO_ORGANISM_FILTER_APPLIED ? [] : viewableFilterConfig.values;
 
   // if user has not expanded any nodes yet and there is only one top-level child, expand it
   let expandedNodeIds = savedExpandedNodeIds ? savedExpandedNodeIds :
@@ -256,7 +256,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
               selectedList={selectedLeaves}
               isMultiPick={true}
               onSelectionChange={selectedNodeIds => setTemporaryFilterConfig(
-                selectedNodeIds.length == 0 ? NO_ORGANISM_FILTER_APPLIED : { filters: selectedNodeIds })}
+                selectedNodeIds.length == 0 ? NO_ORGANISM_FILTER_APPLIED : { values: selectedNodeIds })}
               isSearchable={true}
               searchBoxPlaceholder="Search organisms..."
               searchTerm={searchTerm}
@@ -359,8 +359,8 @@ function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
   if (a === NO_ORGANISM_FILTER_APPLIED || b === NO_ORGANISM_FILTER_APPLIED) {
     return false;
   }
-  return (a.filters.length === b.filters.length &&
-          a.filters.length === intersection(a.filters, b.filters).length);
+  return (a.values.length === b.values.length &&
+          a.values.length === intersection(a.values, b.values).length);
 }
 
 function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
