@@ -81,25 +81,25 @@ export let contexts = [
     isPbrowse: false
   },
   {
-    gbrowse_url: 'orfGbrowseImageUrl',
+    gbrowse_url: 'orfJbrowseUrl',
     displayName: 'Genomic Context',
     anchor: 'orfGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpChipGbrowseImageUrl',
+    gbrowse_url: 'snpChipJbrowseUrl',
     displayName: 'Genomic Context',
     anchor: 'snpChipGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpGbrowseImageUrl',
+    gbrowse_url: 'snpJbrowseUrl',
     displayName: 'Genomic Context',
     anchor: 'snpGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'spanGbrowseImageUrl',
+    gbrowse_url: 'spanJbrowseUrl',
     displayName: 'Genomic Context',
     anchor: 'spanGenomicContext',
     isPbrowse: false
@@ -174,11 +174,18 @@ export function GbrowseContext(props) {
 	  )
     }
 
+  if ( attribute.name == 'snpJbrowseUrl' || attribute.name == 'spanJbrowseUrl' ){
   return (
     <div>
-      <GbrowseLink url={url}/>
-      <GbrowseImage url={url} includeImageMap={true} />
-      <GbrowseLink url={url}/>
+      <JbrowseIframe jbrowseUrl={url} ht="400" />
+      <br></br>
+    </div>
+	  )
+    }
+
+  return (
+    <div>
+      <JbrowseIframe jbrowseUrl={url} />
     </div>
   );
 }
