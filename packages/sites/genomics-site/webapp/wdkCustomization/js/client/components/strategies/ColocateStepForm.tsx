@@ -23,7 +23,7 @@ enum PageTypes {
   PageNotFound = 'not-found'
 }
 
-type TypedPage = 
+type TypedPage =
   | {
       pageType: PageTypes.SelectSearchPage,
       recordClassUrlSegment: string
@@ -74,7 +74,7 @@ const toTypedPage = (untypedPage: string): TypedPage => {
         pageType: PageTypes.NewSearchForm,
         searchUrlSegment: suffix0
       }
-    : prefix === PageTypes.ColocationOperatorForm 
+    : prefix === PageTypes.ColocationOperatorForm
     ? {
         pageType: PageTypes.ColocationOperatorForm,
         recordClassUrlSegment: suffix0
@@ -100,7 +100,7 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
     <div className={cx()}>
       {
         typedPage.pageType === PageTypes.SelectSearchPage
-          ? <SelectSearchPage 
+          ? <SelectSearchPage
               {...props}
               recordClassUrlSegment={typedPage.recordClassUrlSegment}
             />
@@ -109,8 +109,8 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
           : typedPage.pageType === PageTypes.StrategyForm
           ? <StrategyForm {...props} />
           : typedPage.pageType === PageTypes.NewSearchForm
-          ? <NewSearchForm 
-              {...props} 
+          ? <NewSearchForm
+              {...props}
               searchUrlSegment={typedPage.searchUrlSegment}
             />
           : typedPage.pageType === PageTypes.ColocationOperatorForm && secondaryInputStepTree
@@ -118,7 +118,7 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
           : <NotFound />
       }
     </div>
-  ); 
+  );
 };
 
 const SelectSearchPage = ({
@@ -158,12 +158,17 @@ const SelectSearchPage = ({
 
 const BasketPage = ({}: AddStepOperationFormProps) => <div>Basket Page</div>;
 const StrategyForm = ({}: AddStepOperationFormProps) => <div>Strategy Form</div>;
-const NewSearchForm = ({ advanceToPage, searchUrlSegment }: AddStepOperationFormProps & { searchUrlSegment: string }) =>
-  <QuestionController 
+const NewSearchForm = ({ advanceToPage, searchUrlSegment, strategy }: AddStepOperationFormProps & { searchUrlSegment: string }) =>
+  <QuestionController
     recordClass={'transcript'}
     question={searchUrlSegment}
     submissionMetadata={{
       type: 'add-custom-step',
+      strategyId: strategy.strategyId,
+      addType: {
+        type: 'append',
+        primaryInputStepId: strategy.rootStepId
+      },
       onStepAdded: () => {
         console.log('UH LUUUUH');
         advanceToPage(colocationOperatorForm('transcript'));
