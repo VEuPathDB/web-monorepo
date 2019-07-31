@@ -17,7 +17,6 @@ import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPane
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
-import { CategoryTreeNode, getLabel } from 'wdk-client/Utils/CategoryUtils';
 import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepMenu.scss';
