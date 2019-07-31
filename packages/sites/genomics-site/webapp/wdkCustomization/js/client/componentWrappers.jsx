@@ -347,7 +347,7 @@ export function AddStepPanelView(DefaultComponent) {
     return <DefaultComponent 
       {...props} 
       operationTypes={apiOperationTypes}
-      developmentMode={true}
+      developmentMode={false}
     />;
   };
 }
