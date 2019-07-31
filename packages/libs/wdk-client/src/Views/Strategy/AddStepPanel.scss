@@ -5,6 +5,10 @@
     font-size: 2em;
     font-weight: 500;
   }
+
+  &--Container {
+    min-width: 80vw;
+  }
   
   &--Header {
     text-align: center;
