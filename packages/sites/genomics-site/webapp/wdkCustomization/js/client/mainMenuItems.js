@@ -100,10 +100,10 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           url: '/pubcrawler/' + siteConfig.projectId
         },
         {
-          id: 'gbrowse',
+          id: 'jbrowse',
           text: 'Genome Browser',
           exclude: [EuPathDB],
-          url: '/cgi-bin/gbrowse/' + siteConfig.projectId.toLowerCase()
+          url: '/a/jbrowse/index.html?data=/a/service/jbrowse/tracks/default'
         },
         {
           id: 'plasmoap',

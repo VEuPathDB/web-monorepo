@@ -35,7 +35,7 @@
                   <ul><li  style="border:0">View the Latest Pubmed and Entrez Results</li></ul>
 		</li>
                 <c:if test="${sName != 'EuPath'}">
-		  <li><a href="/cgi-bin/gbrowse/${fn:toLowerCase(modelName)}/"><strong>Genome Browser</strong></a>
+		  <li><a href="/a/jbrowse/index.html?data=/a/service/jbrowse/tracks/default"><strong>Genome Browser</strong></a>
                     <ul><li  style="border:0">View Sequences and Features in the genome browser</li></ul>
                   </li>
                 </c:if>
