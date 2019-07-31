@@ -181,6 +181,11 @@ type AddUnaryStep = {
   addType: AddType
 }
 
+type AddCustomStep = {
+  type: 'add-custom-step',
+  onStepAdded: (newStepId: number) => void
+}
+
 type EditStep = {
   type: 'edit-step',
   strategyId: number,
@@ -188,14 +193,7 @@ type EditStep = {
   previousSearchConfig: SearchConfig
 }
 
-type AddCustomStep = {
-  type: 'add-custom-step',
-  strategyId: number,
-  addType: AddType,
-  onStepAdded: () => void;
-}
-
-export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | EditStep | AddCustomStep
+export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | AddCustomStep | EditStep
 
 export interface SubmitQuestionAction {
   type: typeof SUBMIT_QUESTION;

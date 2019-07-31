@@ -48,8 +48,9 @@ import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
 import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction } from 'wdk-client/Actions/StrategyActions';
+import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, requestCreateStep, fulfillCreateStep } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
+import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 
 export const key = 'question';
 
@@ -378,7 +379,15 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           customName: questionState.customName || questionState.question.shortDisplayName
         });
 
-        if (submissionMetadata.type === 'create-strategy') {
+        if (submissionMetadata.type === 'add-custom-step') {
+          return newSearchStep.then(
+            ({ id: newSearchStepId }) => {
+              submissionMetadata.onStepAdded(newSearchStepId);
+
+              return fulfillCreateStep(newSearchStepId, Date.now());
+            }
+          );
+        } else if (submissionMetadata.type === 'create-strategy') {
           return newSearchStep.then(
             ({ id: newSearchStepId }) => requestCreateStrategy(
               {
