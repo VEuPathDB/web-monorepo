@@ -4,7 +4,7 @@ import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
 import { updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { SingleSelect } from 'wdk-client/Components';
+import { SingleSelect, Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
@@ -150,12 +150,16 @@ const CombineWithStrategyFormView = ({
         </div>
       </div>
       <div className={cx('--Body')}>
-        <StrategyInputSelector
-          onStrategySelected={setSelectedStrategyId}
-          primaryInput={strategy}
-          secondaryInputRecordClass={inputRecordClass}
-          selectedStrategyId={selectedStrategyId}
-        />
+        {
+          selectedStrategyId !== undefined
+            ? <Loading />
+            : <StrategyInputSelector
+                onStrategySelected={setSelectedStrategyId}
+                primaryInput={strategy}
+                secondaryInputRecordClass={inputRecordClass}
+                selectedStrategyId={selectedStrategyId}
+              />
+        }
       </div>
     </div>
   );
