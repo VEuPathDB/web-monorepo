@@ -11,12 +11,11 @@ import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { QuestionController } from 'wdk-client/Controllers';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
-import { number } from 'wdk-client/Utils/Json';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
 
 const cx = makeClassNameHelper('ColocateStepForm');
 
-const colocationQuestionName = 'GenesBySpanLogic';
+const colocationQuestionSuffix = 'BySpanLogic';
 
 enum PageTypes {
   SelectSearchPage = 'select-search',
@@ -300,11 +299,21 @@ const NewSearchForm = ({
 
 const ColocationOperatorForm = (
   { 
+    questions,
     recordClassUrlSegment,
     secondaryInputStepTree,
     updateStrategy
   }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }
 ) => {
+  const colocationQuestion = useMemo(
+    () => questions.find(
+      ({ outputRecordClassName, urlSegment }) =>
+        urlSegment.endsWith(colocationQuestionSuffix) &&
+        outputRecordClassName === recordClassUrlSegment
+      ),
+    [ questions, recordClassUrlSegment, colocationQuestionSuffix ]
+  );
+
   const onStepAdded = useCallback((colocationStepId: number) => {
     updateStrategy(colocationStepId, secondaryInputStepTree);
   }, [ updateStrategy, secondaryInputStepTree ]);
@@ -314,11 +323,11 @@ const ColocationOperatorForm = (
     [ onStepAdded ]
   );
 
-  return (
-    <QuestionController
-      recordClass={recordClassUrlSegment}
-      question={colocationQuestionName}
-      submissionMetadata={submissionMetadata}
-    />
-  );
+  return !colocationQuestion
+    ? <NotFound />
+    : <QuestionController
+        recordClass={recordClassUrlSegment}
+        question={colocationQuestion.urlSegment}
+        submissionMetadata={submissionMetadata}
+      />;
 };

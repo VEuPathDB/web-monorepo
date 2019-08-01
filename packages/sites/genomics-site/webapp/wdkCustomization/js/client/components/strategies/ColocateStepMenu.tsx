@@ -11,69 +11,59 @@ import './ColocateStepMenu.scss';
 
 const cx = makeClassNameHelper('ColocateStepMenu');
 
-const colocationQuestionName = 'GenesBySpanLogic';
+const colocationQuestionSuffix = 'BySpanLogic';
 
 export const ColocateStepMenu = ({
   developmentMode,
   inputRecordClass,
   operandStep,
-  questions,
   recordClasses,
   startOperationForm
 }: AddStepOperationMenuProps) => {
-  const colocationQuestionSecondaryInputUrlSegments = useMemo(
-    () => {
-      const colocationQuestion = questions.find(question => question.urlSegment === colocationQuestionName);
-
-      return colocationQuestion && new Set(colocationQuestion.allowedSecondaryInputRecordClassNames);
-    }, 
-    [ questions ]
+  const colocationRecordClasses = useMemo(
+    () => recordClasses.filter(
+      ({ searches }) => 
+        searches.some(
+          ({ urlSegment })=> urlSegment.endsWith(colocationQuestionSuffix)
+        )
+      ), 
+    [ recordClasses, colocationQuestionSuffix ]
   );
 
-  const colocationSecondaryInputClasses = useMemo(
-    () => (
-      colocationQuestionSecondaryInputUrlSegments && 
-      recordClasses.filter(recordClass => colocationQuestionSecondaryInputUrlSegments.has(recordClass.urlSegment))
-    ), 
-    [ recordClasses, colocationQuestionSecondaryInputUrlSegments ]
-  );
-
-  return !colocationSecondaryInputClasses
-    ? <Loading />
-    : (
-      <div className={cx()}>
-        <div className={cx('--Header')}>
-          <h3>
-            Use Genomic Colocation
-          </h3>
-            to combine it with:
+  return (
+    <div className={cx()}>
+      <div className={cx('--Header')}>
+        <h3>
+          Use Genomic Colocation
+        </h3>
+          to combine it with:
+      </div>
+      <div className={cx('--Body')}>
+        <PrimaryInputLabel
+          className={cx('--PrimaryInputLabel')}
+          resultSetSize={operandStep.estimatedSize}
+          recordClass={inputRecordClass}
+        />
+        <div className={cx('--ColocationIcon')}>
+          X
         </div>
-        <div className={cx('--Body')}>
-          <PrimaryInputLabel
-            className={cx('--PrimaryInputLabel')}
-            resultSetSize={operandStep.estimatedSize}
-            recordClass={inputRecordClass}
-          />
-          <div className={cx('--ColocationIcon')}>
-            X
-          </div>
-          <div className={cx('--RecordClassSelector')}>
-            {
-              colocationSecondaryInputClasses.map(
-                ({ shortDisplayNamePlural, urlSegment }) =>
-                  <button key={urlSegment} onClick={e => {
-                    e.preventDefault();
+        <div className={cx('--RecordClassSelector')}>
+          {
+            colocationRecordClasses.map(
+              ({ shortDisplayNamePlural, urlSegment }) =>
+                <button key={urlSegment} onClick={e => {
+                  e.preventDefault();
 
-                    developmentMode
-                      ? startOperationForm('colocate', selectSearchPage(urlSegment))
-                      : alert('Under construction');
-                  }}>
-                    {shortDisplayNamePlural}
-                  </button>
-              )
-            }
-          </div>
+                  developmentMode
+                    ? startOperationForm('colocate', selectSearchPage(urlSegment))
+                    : alert('Under construction');
+                }}>
+                  {shortDisplayNamePlural}
+                </button>
+            )
+          }
         </div>
       </div>
-    );
+    </div>
+  );
 };
