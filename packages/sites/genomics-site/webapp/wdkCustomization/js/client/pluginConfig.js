@@ -9,6 +9,7 @@ import {
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
+import { SpanLogicForm } from './components/questions/SpanLogicForm';
 
 import { ColocateStepMenu } from './components/strategies/ColocateStepMenu';
 import { ColocateStepForm } from './components/strategies/ColocateStepForm';
@@ -68,6 +69,11 @@ export default [
     type: 'questionForm',
     test: ({ question }) => question && question.urlSegment.endsWith('BySimilarity'),
     component: BlastQuestionForm
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => question && question.urlSegment.endsWith('BySpanLogic'),
+    component: SpanLogicForm
   },
   {
     type: 'addStepOperationMenu',

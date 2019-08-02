@@ -6,12 +6,13 @@ import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
-import './ColocateStepForm.scss';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { QuestionController } from 'wdk-client/Controllers';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
+
+import './ColocateStepForm.scss';
 
 const cx = makeClassNameHelper('ColocateStepForm');
 
@@ -139,15 +140,11 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
 
 const SelectSearchPage = ({
   advanceToPage,
-  inputRecordClass,
-  recordClasses,
+  recordClassesByUrlSegment,
   recordClassUrlSegment
 }: AddStepOperationFormProps & { recordClassUrlSegment: string }) => {
-  const secondaryInputRecordClass = useMemo(
-    () => recordClasses.find(({ urlSegment }) => urlSegment === recordClassUrlSegment) || inputRecordClass,
-    [ recordClassUrlSegment ]
-  );
-
+  const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
+ 
   const onCombineWithBasketClicked = useCallback(() => {
     advanceToPage(basketPage(recordClassUrlSegment));
   }, [ advanceToPage, recordClassUrlSegment ]);
@@ -175,28 +172,18 @@ const SelectSearchPage = ({
 
 const BasketPage = ({
   advanceToPage,
-  inputRecordClass,
-  questions,
+  questionsByUrlSegment,
   recordClassUrlSegment,
-  recordClasses,
+  recordClassesByUrlSegment,
   setSecondaryStepTree
 }: AddStepOperationFormProps & { recordClassUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }) => {
-  const secondaryInputRecordClass = useMemo(
-    () => recordClasses.find(({ urlSegment }) => urlSegment === recordClassUrlSegment) || inputRecordClass,
-    [ recordClasses, recordClassUrlSegment ]
-  );
-
+  const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
   const secondaryInputRecordClassSearchSubsegment = secondaryInputRecordClass.fullName.replace('.', '_');
   const basketSearchUrlSegment = `${secondaryInputRecordClassSearchSubsegment}BySnapshotBasket`;
   const basketDatasetParamName = `${secondaryInputRecordClassSearchSubsegment}Dataset`;
 
-  const basketSearchShortDisplayName = useMemo(
-    () => {
-      const basketSearchQuestion = questions.find(({ urlSegment }) => urlSegment === basketSearchUrlSegment);
-      return basketSearchQuestion && basketSearchQuestion.shortDisplayName;
-    },
-    [ questions, basketSearchUrlSegment ]
-  );
+  const basketSearchQuestion = questionsByUrlSegment[basketSearchUrlSegment];
+  const basketSearchShortDisplayName = basketSearchQuestion && basketSearchQuestion.shortDisplayName;
 
   useWdkEffect(wdkService => {
     wdkService.createDataset({
@@ -228,17 +215,14 @@ const StrategyForm = ({
   advanceToPage,
   inputRecordClass,
   recordClassUrlSegment,
-  recordClasses,
+  recordClassesByUrlSegment,
   setSecondaryStepTree,
   strategy
 }: AddStepOperationFormProps & { recordClassUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }) => {
   const [ selectedStrategyId, setSelectedStrategyId ] = useState<number | undefined>(undefined);
 
-  const secondaryInputRecordClass = useMemo(
-    () => recordClasses.find(({ urlSegment }) => urlSegment === recordClassUrlSegment) || inputRecordClass,
-    [ inputRecordClass, recordClasses, recordClassUrlSegment ]
-  );
-
+  const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
+  
   useWdkEffect(wdkService => {
     if (selectedStrategyId !== undefined) {
       wdkService.getDuplicatedStrategyStepTree(selectedStrategyId).then(stepTree => {
@@ -260,23 +244,14 @@ const StrategyForm = ({
 const NewSearchForm = ({ 
   advanceToPage, 
   inputRecordClass, 
-  questions, 
-  recordClasses,
+  questionsByUrlSegment, 
+  recordClassesByUrlSegment,
   searchUrlSegment, 
   setSecondaryStepTree 
 }: AddStepOperationFormProps & { searchUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }
 ) => {
-  const newSearchQuestion = useMemo(
-    () => questions.find(({ urlSegment }) => urlSegment === searchUrlSegment),
-    [ questions, searchUrlSegment ]
-  );
-
-  const newSearchRecordClass = useMemo(
-    () => (
-      newSearchQuestion && recordClasses.find(({ urlSegment }) => urlSegment === newSearchQuestion.outputRecordClassName)
-    ) || inputRecordClass,
-    [ inputRecordClass, recordClasses, newSearchQuestion ]
-  );
+  const newSearchQuestion = questionsByUrlSegment[searchUrlSegment];
+  const newSearchRecordClass = newSearchQuestion && recordClassesByUrlSegment[newSearchQuestion.outputRecordClassName];
 
   const onStepAdded = useCallback((newSearchStepId: number) => {
     setSecondaryStepTree({ stepId: newSearchStepId });
