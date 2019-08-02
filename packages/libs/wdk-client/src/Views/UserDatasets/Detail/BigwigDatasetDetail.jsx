@@ -17,9 +17,20 @@ class BigwigDatasetDetail extends UserDatasetDetail {
 
   getTracksTableColumns () {
     const { userDataset, appUrl, rootUrl, config } = this.props;
-    const { id, ownerUserId, type } = userDataset;
+    const { id, ownerUserId, type, meta, dependencies } = userDataset;
+    const name = meta.name;
     const { projectId } = config;
     const { seqId } = type && type.data ? type.data : { seqId: null };
+
+    var genome;
+    dependencies.forEach( function(dependency) {
+        if (dependency.resourceIdentifier.endsWith("_Genome")) {
+           var regex = new RegExp("-" + dependency.resourceVersion + "_(.*)_Genome");
+	   var genomeList = dependency.resourceIdentifier.match(regex);
+           genome = genomeList[1];
+        };
+    });
+    
     return [
       {
         key: 'datafileName',
@@ -28,8 +39,8 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       },
       {
         key: 'main',
-        name: 'GBrowse Status',
-        renderCell: ({ row }) => <BigwigGBrowseUploader sequenceId={seqId} {...row} datasetId={id} rootUrl={rootUrl} appUrl={appUrl} projectId={projectId} />
+        name: 'Genome Browser Link',
+        renderCell: ({ row }) => <BigwigGBrowseUploader sequenceId={seqId} {...row} datasetId={id} rootUrl={rootUrl} appUrl={appUrl} projectId={projectId} genome={genome} datasetName={name}/>
       }
     ];
   }
