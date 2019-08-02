@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { QuestionController } from 'wdk-client/Controllers';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -12,22 +12,14 @@ export const ConvertStepForm = ({
   addType,
   currentPage,
   inputRecordClass,
-  questions,
-  recordClasses,
+  questionsByUrlSegment,
+  recordClassesByUrlSegment,
   stepsCompletedNumber,
   strategy
 }: AddStepOperationFormProps) => {
-  const transformQuestion = useMemo(
-    () => questions && questions.find(({ urlSegment }) => urlSegment === currentPage), 
-    [ questions, currentPage ]
-  );
-
+  const transformQuestion = questionsByUrlSegment[currentPage];
   const outputRecordClassName = transformQuestion && transformQuestion.outputRecordClassName;
-
-  const outputRecordClass = useMemo(
-    () => recordClasses && recordClasses.find(({ urlSegment }) => urlSegment === outputRecordClassName),
-    [ recordClasses, outputRecordClassName ]
-  );
+  const outputRecordClass = recordClassesByUrlSegment[outputRecordClassName];
 
   return (
     <div className={cx()}>

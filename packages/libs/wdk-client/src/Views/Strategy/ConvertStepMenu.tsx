@@ -6,7 +6,6 @@ import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { Step } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
@@ -90,8 +89,8 @@ const outputStep = createSelector(
 
 const outputStepQuestion = createSelector(
   outputStep,
-  ({ globalData: { questions } }: RootState) => questions,
-  (outputStep, questions) => outputStep && questions && questions.find(({ urlSegment }) => urlSegment === outputStep.searchName)
+  (_: RootState, { questionsByUrlSegment }: OwnProps) => questionsByUrlSegment,
+  (outputStep, questionsByUrlSegment) => outputStep && questionsByUrlSegment[outputStep.searchName]
 );
 
 // A search specifies a valid transform <=>
@@ -120,8 +119,8 @@ const isValidTransform = createSelector(
   isValidTransformFactory
 );
 
-const transformToOperatorChoiceFactory = (recordClasses: RecordClass[], inputRecordClass: RecordClass) => (transform: Question): OperatorChoice => {
-  const outputRecordClass = recordClasses.find(({ urlSegment }) => urlSegment === transform.outputRecordClassName);
+const transformToOperatorChoiceFactory = (recordClassesByUrlSegment: Record<string, RecordClass>, inputRecordClass: RecordClass) => (transform: Question): OperatorChoice => {
+  const outputRecordClass = recordClassesByUrlSegment[transform.outputRecordClassName];
 
   if (!outputRecordClass) {
     throw new Error(`Invalid record class with url segment '${transform.outputRecordClassName}' was encountered.`);
@@ -136,9 +135,9 @@ const transformToOperatorChoiceFactory = (recordClasses: RecordClass[], inputRec
 };
 
 const transformToOperatorChoice = createSelector(
-  (_: RootState, { recordClasses }: OwnProps) => recordClasses,
+  (_: RootState, { recordClassesByUrlSegment }: OwnProps) => recordClassesByUrlSegment,
   (_: RootState, { inputRecordClass }: OwnProps) => inputRecordClass,
-  (recordClasses, inputRecordClass) => recordClasses && transformToOperatorChoiceFactory(recordClasses, inputRecordClass)
+  (recordClassesByUrlSegment, inputRecordClass) => transformToOperatorChoiceFactory(recordClassesByUrlSegment, inputRecordClass)
 );
 
 const operatorChoices = createSelector(

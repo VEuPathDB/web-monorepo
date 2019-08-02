@@ -44,9 +44,9 @@ const basketSearchUrlSegment = createSelector(
 
 const basketSearchShortDisplayName = createSelector(
   basketSearchUrlSegment,
-  (_: RootState, { questions }: OwnProps) => questions,
-  (basketSearchUrlSegment, questions) => {
-    const basketSearchQuestion = questions.find(({ urlSegment }) => urlSegment === basketSearchUrlSegment);
+  (_: RootState, { questionsByUrlSegment }: OwnProps) => questionsByUrlSegment,
+  (basketSearchUrlSegment, questionsByUrlSegment) => {
+    const basketSearchQuestion = questionsByUrlSegment[basketSearchUrlSegment];
     return basketSearchQuestion && basketSearchQuestion.shortDisplayName;
   }
 );

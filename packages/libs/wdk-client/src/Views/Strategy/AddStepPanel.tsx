@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
@@ -51,7 +51,9 @@ export type AddStepOperationMenuProps = {
   operandStep: Step,
   previousStep?: Step,
   questions: Question[],
+  questionsByUrlSegment: Record<string, Question>,
   recordClasses: RecordClass[],
+  recordClassesByUrlSegment: Record<string, RecordClass>,
   developmentMode: boolean
 };
 
@@ -66,7 +68,9 @@ export type AddStepOperationFormProps = {
   operandStep: Step,
   previousStep?: Step,
   questions: Question[],
-  recordClasses: RecordClass[]
+  questionsByUrlSegment: Record<string, Question>,
+  recordClasses: RecordClass[],
+  recordClassesByUrlSegment: Record<string, RecordClass>,
 };
 
 const defaultOperationTypes = [
@@ -134,6 +138,22 @@ export const AddStepPanelView = wrappable((
     }
   }, [ strategy, requestPutStrategyStepTree, addType ]);
 
+  const questionsByUrlSegment = useMemo(
+    () => questions && questions.reduce((memo, question) => {
+      memo[question.urlSegment] = question;
+      return memo;
+    }, {} as Record<string, Question>),
+    [ questions ]
+  );
+
+  const recordClassesByUrlSegment = useMemo(
+    () => recordClasses && recordClasses.reduce((memo, recordClass) => {
+      memo[recordClass.urlSegment] = recordClass;
+      return memo;
+    }, {} as Record<string, RecordClass>),
+    [ recordClasses ]
+  );
+
   return (
     <div className={cx()}>
       {
@@ -143,7 +163,9 @@ export const AddStepPanelView = wrappable((
           stepsCompletedNumber === undefined ||
           operandStep === undefined ||
           questions === undefined ||
-          recordClasses === undefined
+          questionsByUrlSegment === undefined ||
+          recordClasses === undefined ||
+          recordClassesByUrlSegment === undefined
         )
           ? <Loading />
           : <div className={cx('--Container')}>
@@ -186,7 +208,9 @@ export const AddStepPanelView = wrappable((
                                       operandStep,
                                       previousStep,
                                       questions,
+                                      questionsByUrlSegment,
                                       recordClasses,
+                                      recordClassesByUrlSegment,
                                       developmentMode
                                     }}
                                   />
@@ -228,7 +252,9 @@ export const AddStepPanelView = wrappable((
                           operandStep,
                           previousStep,
                           questions,
-                          recordClasses
+                          questionsByUrlSegment,
+                          recordClasses,
+                          recordClassesByUrlSegment
                         }}
                       />
                     </div>
