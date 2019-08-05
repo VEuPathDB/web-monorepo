@@ -37,7 +37,7 @@
  */
 .StepBoxes--Slot:before {
   content: "";
-  border: 1px solid black;
+  border: .085em solid black;
   position: absolute;
   bottom: 25%;
   left: 0;
@@ -72,7 +72,7 @@
 
 .StepBoxes--BoxLink__leaf {
   background-color: #d0cfcf;
-  border: 2px solid black;
+  border: .17em solid black;
   z-index: 1;
 }
 
@@ -94,10 +94,10 @@
 /* Line connecting leaf step and combined step */
 .StepBoxes--BoxLink__combined:before {
   content: "";
-  border: 1px solid black;
+  border: .085em solid black;
   height: 4em;
   position: absolute;
-  left: calc(50% + 5px);
+  left: calc(50% + .4em); /** TODO convert px to em */
   top: -3em;
 }
 
@@ -129,33 +129,58 @@
 .StepBoxes--CombineOperator {
   display: inline-block;
   background-image: url("./operationIcons.png");
-  height: 23px;
-  width: 36px;
+  background-size: 8em;
+  height: 1.9em;
+  width: 3em;
   z-index: 1;
 }
 
+/* Arrows */
+.StepBoxes--CombinePrimaryInputArrow {
+  top: .65em;
+  left: -.6em;
+  position: relative;
+  color: black;
+}
+
+/* Arrows */
+.StepBoxes--CombineSecondaryInputArrow {
+  top: -2em;
+  left: 50%;
+  position: relative;
+  color: black;
+}
+
+/* Arrows */
+.StepBoxes--TransformInputArrow {
+  top: .97em;
+  left: -.3em;
+  position: absolute;
+  color: black;
+}
+
 .StepBoxes--CombineOperator__INTERSECT {
-  background-position: -30px -36px;
+  background-position: -2.5em -3em;
 }
 
 .StepBoxes--CombineOperator__UNION {
-  background-position: -30px -72px;
+  background-position: -2.5em -6em;
 }
 
 .StepBoxes--CombineOperator__LEFT_MINUS {
-  background-position: -30px 0px;
+  background-position: -2.5em 0em;
 }
 
 .StepBoxes--CombineOperator__RIGHT_MINUS {
-  background-position: -30px -108px;
+  background-position: -2.5em -9em;
 }
 
 .StepBoxes--CombineOperator__RIGHT_ONLY {
-  background-position: -30px -144px;
+  background-position: -2.5em -12em;
 }
 
 .StepBoxes--CombineOperator__LEFT_ONLY {
-  background-position: -30px -180px;
+  background-position: -2.5em -15em;
 }
 
 .StepBoxes--InsertStepButton {
@@ -172,7 +197,7 @@ button.StepBoxes--EditButton {
   margin: 2px;
   z-index: 1;
   background: white;
-  border: 1px solid;
+  border: .085em solid;
   border-radius: 4px;
   display: none;
   color: black;
