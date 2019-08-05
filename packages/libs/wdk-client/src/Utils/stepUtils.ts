@@ -40,6 +40,7 @@ export function getSingleRecordStepBundlePromise([ recordClass, recordInstance, 
   let step: Step = {
     // fill primary key string so we know which single record this question is
     id: -1,
+    isFiltered: false,
     strategyId: -1,
     ownerId: -1,
     recordClassName: recordClass.fullName,

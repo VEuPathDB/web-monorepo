@@ -28,6 +28,7 @@ export interface Step extends AnswerSpec {
   estimatedSize: number;
   hasCompleteStepAnalyses: boolean;
   id: number;
+  isFiltered: boolean;
   ownerId: number;
   recordClassName: string;
   shortDisplayName: string;

@@ -115,6 +115,14 @@
   box-shadow: 2px -2px 0 -1px black;
 }
 
+.StepBoxes--FilterIcon {
+  bottom: .6em;
+  color: #ef6565;
+  position: absolute;
+  right: 1.3em;
+  z-index: 1;
+}
+
 .StepBoxes--StepName {
   color: black;
   font-weight: bold;

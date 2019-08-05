@@ -159,7 +159,11 @@ function StepBox(props: StepBoxProps) {
 
   const stepDetails = (
     <StepDetailsDialog {...props} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
-  )
+  );
+
+  const filterIcon = step.isFiltered && (
+    <i className={`${cx('--FilterIcon')} fa fa-filter`}/>
+  );
 
   return (
     <div className={cx("--Box")}>
@@ -174,6 +178,7 @@ function StepBox(props: StepBoxProps) {
       </NavLink>
       {editButton}
       {stepDetails}
+      {filterIcon}
     </div>
   );
 }
