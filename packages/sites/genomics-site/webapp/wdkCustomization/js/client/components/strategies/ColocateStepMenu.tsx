@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 
-import { Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
@@ -24,7 +23,12 @@ export const ColocateStepMenu = ({
     () => recordClasses.filter(
       ({ searches }) => 
         searches.some(
-          ({ urlSegment })=> urlSegment.endsWith(colocationQuestionSuffix)
+          ({ urlSegment, allowedPrimaryInputRecordClassNames }) => (
+            urlSegment.endsWith(colocationQuestionSuffix) &&
+            !!allowedPrimaryInputRecordClassNames &&
+            allowedPrimaryInputRecordClassNames.includes(inputRecordClass.urlSegment) &&
+            inputRecordClass.searches.some(({ urlSegment }) => urlSegment.endsWith(colocationQuestionSuffix))
+          )
         )
       ), 
     [ recordClasses, colocationQuestionSuffix ]
@@ -49,18 +53,18 @@ export const ColocateStepMenu = ({
         </div>
         <div className={cx('--RecordClassSelector')}>
           {
-            colocationRecordClasses.map(
-              ({ shortDisplayNamePlural, urlSegment }) =>
-                <button key={urlSegment} onClick={e => {
-                  e.preventDefault();
-
-                  developmentMode
-                    ? startOperationForm('colocate', selectSearchPage(urlSegment))
-                    : alert('Under construction');
-                }}>
-                  {shortDisplayNamePlural}
-                </button>
-            )
+            colocationRecordClasses.length === 0
+              ? 'No colocation operations available'
+              : colocationRecordClasses.map(
+                  ({ displayNamePlural, urlSegment }) =>
+                    <button key={urlSegment} type="button" onClick={() => {
+                      developmentMode
+                        ? startOperationForm('colocate', selectSearchPage(urlSegment))
+                        : alert('Under construction');
+                    }}>
+                      {displayNamePlural}
+                    </button>
+                )
           }
         </div>
       </div>

@@ -6,13 +6,18 @@ import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { QuestionController } from 'wdk-client/Controllers';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
-import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
+import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+
+import { SpanLogicForm } from '../questions/SpanLogicForm';
 
 import './ColocateStepForm.scss';
+import { findAppendPoint } from 'wdk-client/Utils/StrategyUtils';
+
 
 const cx = makeClassNameHelper('ColocateStepForm');
 
@@ -213,7 +218,6 @@ const BasketPage = ({
 
 const StrategyForm = ({
   advanceToPage,
-  inputRecordClass,
   recordClassUrlSegment,
   recordClassesByUrlSegment,
   setSecondaryStepTree,
@@ -243,7 +247,6 @@ const StrategyForm = ({
 
 const NewSearchForm = ({ 
   advanceToPage, 
-  inputRecordClass, 
   questionsByUrlSegment, 
   recordClassesByUrlSegment,
   searchUrlSegment, 
@@ -277,7 +280,12 @@ const ColocationOperatorForm = (
     questions,
     recordClassUrlSegment,
     secondaryInputStepTree,
-    updateStrategy
+    updateStrategy,
+    operandStep,
+    addType,
+    recordClassesByUrlSegment,
+    strategy,
+    previousStep
   }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }
 ) => {
   const colocationQuestion = useMemo(
@@ -298,11 +306,40 @@ const ColocationOperatorForm = (
     [ onStepAdded ]
   );
 
+  const outputStep = useMemo(
+    () => addType.type === 'append' && strategy.stepTree.stepId === addType.primaryInputStepId
+      ? undefined
+      : addType.type === 'append'
+      ? strategy.steps[findAppendPoint(strategy.stepTree, addType.primaryInputStepId).stepId]
+      : strategy.steps[addType.outputStepId], 
+    [ strategy, addType ]
+  );
+
+  const currentStepRecordClass = recordClassesByUrlSegment[operandStep.recordClassName];
+  const newStepRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
+
+  const insertingBeforeFirstStep = !previousStep;
+
+  const typeChangeAllowed = !outputStep;
+
+  const FormComponent = useCallback(
+    (props: FormProps) =>
+      <SpanLogicForm
+        {...props}
+        currentStepRecordClass={currentStepRecordClass}
+        newStepRecordClass={newStepRecordClass}
+        insertingBeforeFirstStep={insertingBeforeFirstStep}
+        typeChangeAllowed={typeChangeAllowed}
+      />,
+    [ recordClassesByUrlSegment, operandStep, recordClassUrlSegment ]
+  );
+
   return !colocationQuestion
     ? <NotFound />
     : <QuestionController
         recordClass={recordClassUrlSegment}
         question={colocationQuestion.urlSegment}
         submissionMetadata={submissionMetadata}
+        FormComponent={FormComponent}      
       />;
 };
