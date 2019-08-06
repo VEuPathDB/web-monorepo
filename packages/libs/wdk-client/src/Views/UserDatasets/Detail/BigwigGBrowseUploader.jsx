@@ -114,7 +114,7 @@ class BigwigGBrowseUploader extends React.Component {
           ? (
             <a href={GBrowseUrl} target="_blank">
               <button className="btn btn-slim">
-                View In <b>GBrowse</b> <Icon fa="chevron-circle-right right-side" />
+                View in Genome Browser <Icon fa="chevron-circle-right right-side" />
               </button>
             </a>
           ) : (
@@ -128,8 +128,9 @@ class BigwigGBrowseUploader extends React.Component {
   }
 
   getGBrowseUrl () {
-    const { rootUrl, projectId, sequenceId, trackName } = this.props;
-    return `/cgi-bin/gbrowse/${projectId}/?ref=${sequenceId || ''};hmap=gene_model;enable=track_${trackName || ''}_1`
+    const { rootUrl, projectId, sequenceId, trackName, genome, datasetName, datafileName} = this.props;
+    var jbrowseTrackName = datasetName + " " + datafileName;
+    return `/a/jbrowse/index.html?data=/a/service/jbrowse/tracks/${genome}&tracks=gene,${jbrowseTrackName || ''}&highlight=&loc=${sequenceId || ''}`
   }
 
   render () {
@@ -139,8 +140,6 @@ class BigwigGBrowseUploader extends React.Component {
 
     return (
       <div className="BigwigGBrowseUploader">
-        <div className="BigwigGBrowseUploader-Icon"><Icon fa={icon}/></div>
-        <div className="BigwigGBrowseUploader-Message">{message}</div>
         <div className="BigwigGBrowseUploader-Buttons">{buttons}</div>
       </div>
     )
