@@ -1,5 +1,5 @@
 import { mapValues } from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 import { Loading } from 'wdk-client/Components';
@@ -15,25 +15,42 @@ import {
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
 const ActionCreators = {
   updateParamValue,
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { question: string, recordClass: string, submissionMetadata: SubmissionMetadata };
+type OwnProps = { question: string, recordClass: string, FormComponent?: (props: FormProps) => JSX.Element, submissionMetadata: SubmissionMetadata };
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 type Props = DispatchProps & StateProps & {
   searchName: string,
   recordClassName: string,
+  FormComponent?: FunctionComponent<FormProps>,
   submissionMetadata: SubmissionMetadata
 };
 
 function QuestionController(props: Props) {
-  const { dispatch, eventHandlers, searchName, recordClassName, submissionMetadata, ...state } = props;
+  const { dispatch, eventHandlers, searchName, recordClassName, submissionMetadata, FormComponent, ...state } = props;
   const stepId = submissionMetadata.type === 'edit-step' ? submissionMetadata.stepId : undefined;
-  
+
+  const DefaultRenderForm: FunctionComponent<FormProps> = useCallback(
+    (props: FormProps) => (
+      <Plugin<FormProps>
+        context={{
+          type: 'questionForm',
+          name: searchName,
+          searchName,
+          recordClassName
+        }}
+        pluginProps={props}
+      />
+    ),
+    [ searchName, recordClassName ] 
+  );
+
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
       searchName,
@@ -81,23 +98,21 @@ function QuestionController(props: Props) {
     )
   );
 
-  return (
-    <Plugin
-      context={{
-        type: 'questionForm',
-        name: searchName,
-        searchName,
-        recordClassName
-      }}
-      pluginProps={{
-        parameterElements,
-        state: state,
-        eventHandlers: eventHandlers,
-        dispatchAction: dispatch,
-        submissionMetadata: submissionMetadata
-      }}
-    />
-  );
+  return FormComponent
+    ? <FormComponent
+        parameterElements={parameterElements}
+        state={state}
+        eventHandlers={eventHandlers}
+        dispatchAction={dispatch}
+        submissionMetadata={submissionMetadata}
+      />
+    : <DefaultRenderForm
+        parameterElements={parameterElements}
+        state={state}
+        eventHandlers={eventHandlers}
+        dispatchAction={dispatch}
+        submissionMetadata={submissionMetadata}
+      />;
 }
 
 const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
@@ -108,6 +123,7 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
     ...dispatchProps,
     searchName: ownProps.question,
     recordClassName: ownProps.recordClass,
+    FormComponent: ownProps.FormComponent,
     submissionMetadata: ownProps.submissionMetadata
   })
 )

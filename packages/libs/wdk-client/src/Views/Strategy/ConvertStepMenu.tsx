@@ -129,8 +129,8 @@ const transformToOperatorChoiceFactory = (recordClassesByUrlSegment: Record<stri
   return {
     searchName: transform.urlSegment,
     display: inputRecordClass.urlSegment !== outputRecordClass.urlSegment
-      ? outputRecordClass.shortDisplayNamePlural
-      : `${inputRecordClass.shortDisplayNamePlural} (by ${transform.shortDisplayName})`
+      ? outputRecordClass.displayNamePlural
+      : `${inputRecordClass.displayNamePlural} (by ${transform.shortDisplayName})`
   };
 };
 

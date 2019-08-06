@@ -100,14 +100,14 @@ export const SearchInputSelectorView = ({
         disabled={combinedWithBasketDisabled}
         type="button"
       >
-        Your {inputRecordClass.shortDisplayNamePlural} basket
+        Your {inputRecordClass.displayNamePlural} basket
       </button>
       <button onClick={onCombineWithStrategyClicked}>
-        A {inputRecordClass.shortDisplayNamePlural} strategy
+        A {inputRecordClass.displayNamePlural} strategy
       </button>
       <div className={cx('--NewSearchCheckbox')}>
         <div className={cx('--CheckboxHeader')}>
-          A new {inputRecordClass.shortDisplayNamePlural} search
+          A new {inputRecordClass.displayNamePlural} search
         </div>
         <div className={cx('--CheckboxContainer')}>
           <CategoriesCheckboxTree

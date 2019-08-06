@@ -183,7 +183,7 @@ export const CombineStepMenuView = (
                 <h3>
                   Combine it
                 </h3>
-                  with another set of {inputRecordClass.shortDisplayNamePlural} from:
+                  with another set of {inputRecordClass.displayNamePlural} from:
               </div>
               <div className={cx('--Body')}>
                 <PrimaryInputLabel
