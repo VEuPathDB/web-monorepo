@@ -193,7 +193,7 @@ export function loadPageDataFromSearchConfig(
 
     // find record class for that question
     let recordClassPromise = questionPromise
-      .then(q => wdkService.findRecordClass(rc => rc.fullName == q.outputRecordClassName));
+      .then(q => wdkService.findRecordClass(rc => rc.urlSegment === q.outputRecordClassName));
 
     // bundle these with a stub step to populate the store
     let bundlePromise = Promise.all([questionPromise, recordClassPromise])

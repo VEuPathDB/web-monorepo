@@ -51,7 +51,7 @@ export function getSingleRecordStepBundlePromise(
   let question: Question = {
     fullName: searchName,
     urlSegment: searchName,
-    outputRecordClassName: recordClass.fullName,
+    outputRecordClassName: recordClass.urlSegment,
     displayName: 'Single Record',
     shortDisplayName: 'Single Record',
     description: 'Retrieves a single record by ID',

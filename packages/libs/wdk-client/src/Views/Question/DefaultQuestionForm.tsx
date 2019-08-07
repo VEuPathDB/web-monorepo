@@ -40,7 +40,7 @@ const tooltipPosition = { my: 'right center', at: 'left center' };
 export default function DefaultQuestionForm(props: Props) {
 
   const { dispatchAction, onSubmit, submissionMetadata, state } = props;
-  const { question, customName, weight } = state;
+  const { question, customName, paramValues, weight } = state;
 
   let handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +77,8 @@ export default function DefaultQuestionForm(props: Props) {
           className={cx('SubmitSection')}
           tooltipPosition={tooltipPosition}
           customName={customName}
-          question={question}
+          searchName={question.urlSegment}
+          paramValues={paramValues}
           weight={weight}
           handleCustomNameChange={handleCustomNameChange}
           handleWeightChange={handleWeightChange}
@@ -287,26 +288,29 @@ export function QuestionDescription(props: { description?: string }) {
 }
 
 interface WebServicesTutorialLinkProps {
-  question: QuestionWithMappedParameters;
+  searchName: string;
+  paramValues: Record<string,string>;
   weight: string;
 }
 
 function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
-  let weight = (props.weight === "" ? "0" : props.weight);
+  let { searchName, paramValues, weight } = props;
+  weight = (weight === "" ? "0" : weight);
   let queryString =
-    "searchName=" + props.question.urlSegment +
+    "searchName=" + searchName +
     "&weight=" + weight +
-    props.question.parameters.map(
-      (param) => "&" + param.name + "=" + encodeURIComponent(param.initialDisplayValue || ""));
+    Object.keys(paramValues).map(
+      paramName => "&" + paramName + "=" + encodeURIComponent(paramValues[paramName]));
   let link = "/web-services-help?" + queryString;
   return (
-    <div>
+    <div style={{marginBottom:"5px"}}>
       <Link
         to={link}
-        title="Build a Web Services URL from this Search >>"
-        className="wdk-ReactRouterLink wdk-RecordActionLink "
-        replace={false}
-      />
+        title="Build a Web Services URL from this Search"
+        className="wdk-ReactRouterLink wdk-RecordActionLink"
+        replace={false}>
+        Build a Web Services URL from this Search >>
+      </Link>
     </div>
   );
 }
@@ -315,7 +319,8 @@ interface SubmitSectionProps {
   className: string;
   tooltipPosition: TooltipPosition;
   customName?: string;
-  question: QuestionWithMappedParameters;
+  searchName: string;
+  paramValues: Record<string,string>;
   weight?: string;
   handleCustomNameChange: TextboxChangeHandler;
   handleWeightChange: TextboxChangeHandler;
@@ -323,14 +328,15 @@ interface SubmitSectionProps {
 }
 
 export function SubmitSection(props: SubmitSectionProps) {
-  let { className, tooltipPosition, customName, handleCustomNameChange, question, weight, handleWeightChange, submissionMetadata } = props;
+  let { className, tooltipPosition, customName, handleCustomNameChange, searchName, paramValues, weight, handleWeightChange, submissionMetadata } = props;
   return (
     <div className={className}>
       <SubmitButton
         submissionMetadata={submissionMetadata}
       />
       <WebServicesTutorialLink
-        question={question}
+        searchName={searchName}
+        paramValues={paramValues}
         weight={weight || "0"}
       />
       <SearchNameInput
