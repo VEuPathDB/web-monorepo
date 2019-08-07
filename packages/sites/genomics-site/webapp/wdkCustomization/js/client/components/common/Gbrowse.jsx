@@ -114,7 +114,7 @@ const GbrowseLink = ({ url }) =>
 const GbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser&nbsp;<img src={webAppUrl + '/wdk/images/invalidIcon.png'} height="20" align="center" /></a>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser&nbsp;<img src={webAppUrl + '/wdk/images/retired.gif'} height="35" align="center" /></a>
 </div>
 
 const PbrowseLink = ({ url }) =>
@@ -125,7 +125,7 @@ const PbrowseLink = ({ url }) =>
 const PbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse protein browser</a>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in Gbrowse protein browser&nbsp;<img src={webAppUrl + '/wdk/images/invalidIcon.png'} height="20" align="center" /></a>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in Gbrowse protein browser&nbsp;<img src={webAppUrl + '/wdk/images/retired.gif'} height="35" align="center" /></a>
 
 </div>
 
