@@ -157,9 +157,9 @@ export function GbrowseContext(props) {
   if ( jbrowseUrl && ( attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'ProteomicsPbrowseUrl') ) {
   return (
     <div>
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
       <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
     </div>
 	  )
     }
@@ -167,9 +167,9 @@ export function GbrowseContext(props) {
   if ( jbrowseUrl ) {
   return (
     <div>
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
       <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
     </div>
 	  )
     }
