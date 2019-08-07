@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { partial } from 'lodash';
 
 import { TextBox } from 'wdk-client/Components';
-import { Props as DefaultFormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Props as DefaultFormProps, SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -38,6 +38,7 @@ export function SpanLogicForm(
     currentStepRecordClass,
     newStepRecordClass,
     insertingBeforeFirstStep,
+    submissionMetadata,
     typeChangeAllowed
   }: SpanLogicFormProps
 ) {
@@ -227,12 +228,18 @@ export function SpanLogicForm(
           leftRegion === 'region_a' ? regionConfigA : regionConfigB
         }
       </div>
+      <div className={cx('--OperationDescription')}>
+        <div className={cx('--SpanOperator', paramValues['span_operation'])}></div>
+      </div>
       <div className={cx('--RegionConfig-RightRegion')}>
         {
           rightRegion === 'region_b' ? regionConfigB : regionConfigA
         }
       </div>
       <div className={cx('--RightRegionConfigGutter')}></div>
+      <div className={cx('--SubmissionContainer')}>
+        <SubmitButton submissionMetadata={submissionMetadata} />
+      </div>
     </div>
   );
 }

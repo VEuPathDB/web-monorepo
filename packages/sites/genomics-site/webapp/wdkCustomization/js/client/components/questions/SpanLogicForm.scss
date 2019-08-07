@@ -1,11 +1,11 @@
 $red-text: #c80064;
 $blue-text: #0000ee;
 
-$grey-region-background: #efefef;
+$grey-background: #efefef;
 
 $red-region: #c80064;
-$blue-region:  #0000ff; 
-$grey-feature:  #646464;
+$blue-region: #0000ff; 
+$grey-feature: #646464;
 
 .SpanLogicForm {
   display: grid;
@@ -41,7 +41,7 @@ $grey-feature:  #646464;
     font-weight: 500;
     white-space: nowrap;
 
-    background-color: $grey-region-background;
+    background-color: $grey-background;
 
     .region_a {
       margin-left: 0.25em;
@@ -89,7 +89,7 @@ $grey-feature:  #646464;
     font-weight: 500;
     white-space: nowrap;
 
-    background-color: $grey-region-background;
+    background-color: $grey-background;
 
     .region_a {
       margin-left: 0.25em;
@@ -136,7 +136,7 @@ $grey-feature:  #646464;
     border-left: 1px solid grey;
     border-right: 1px solid grey;
 
-    background-color: $grey-region-background;    
+    background-color: $grey-background;    
   } 
 
   &--RightRegionTabBottom {
@@ -146,7 +146,7 @@ $grey-feature:  #646464;
     border-left: 1px solid grey;
     border-right: 1px solid grey;
 
-    background-color: $grey-region-background;
+    background-color: $grey-background;
   }
 
   &--RightRegionGutter {
@@ -166,7 +166,15 @@ $grey-feature:  #646464;
     border-bottom: 1px solid grey;
     border-right: 1px solid grey;
 
-    background-color: $grey-region-background;
+    background-color: $grey-background;
+  }
+  
+  &--OperationDescription {
+    grid-row: 3;
+    grid-column: 3;
+
+    display: flex;
+    justify-content: center;
   }
 
   &--RegionConfig-RightRegion {
@@ -177,7 +185,7 @@ $grey-feature:  #646464;
     border-bottom: 1px solid grey;
     border-right: 1px solid grey;
 
-    background-color: $grey-region-background;
+    background-color: $grey-background;
 
     input[type="text"] {
       width: 6em;
@@ -186,6 +194,16 @@ $grey-feature:  #646464;
     input[type="radio"] {
       margin-right: 0.5em;
     }
+  }
+
+  &--SubmissionContainer {
+    grid-row: 4;
+    grid-column: 1 / 7;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: 2em;
   }
 
   &--RegionConfig {
@@ -276,6 +294,30 @@ $grey-feature:  #646464;
           margin: 0.25em;
         }
       }
+    }
+  }
+
+  // FIXME Standardize the way we generate these icons 
+  // FIXME across the WDKClient and ApiCommonWebsite
+  &--SpanOperator {
+    background-color: $grey-background;
+    background-size: cover;
+
+    width: 4em;
+    height: 4em;
+
+    border: 1px solid grey;
+
+    &__overlap {
+      background-image: url("./overlap.svg");
+    }
+
+    &__b_contain_a {
+      background-image: url("./b_contain_a.svg");
+    }
+
+    &__a_contain_b {
+      background-image: url("./a_contain_b.svg");
     }
   }
 }
