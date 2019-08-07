@@ -219,6 +219,7 @@ export interface Question extends UrlModelEntity {
   filters: QuestionFilter[];
   allowedPrimaryInputRecordClassNames?: string[];
   allowedSecondaryInputRecordClassNames?: string[];
+  paramNames: string[];
 }
 
 export interface QuestionWithParameters extends Question {

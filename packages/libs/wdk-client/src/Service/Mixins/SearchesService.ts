@@ -215,9 +215,12 @@ const questionSharedDecoder =
       Decode.field('newBuild', Decode.optional(Decode.string)),
       Decode.field('reviseBuild', Decode.optional(Decode.string)),
     ),
-    Decode.field('urlSegment', Decode.string),
-    Decode.field('groups', Decode.arrayOf(paramGroupDecoder)),
-    Decode.field('defaultAttributes', Decode.arrayOf(Decode.string)),
+    Decode.combine(
+      Decode.field('urlSegment', Decode.string),
+      Decode.field('groups', Decode.arrayOf(paramGroupDecoder)),
+      Decode.field('defaultAttributes', Decode.arrayOf(Decode.string)),
+      Decode.field('paramNames', Decode.arrayOf(Decode.string))
+    ),
     Decode.field('defaultSorting', Decode.arrayOf(
       Decode.combine(
         Decode.field('attributeName', Decode.string),

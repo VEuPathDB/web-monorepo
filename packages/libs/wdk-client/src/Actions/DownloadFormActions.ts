@@ -1,9 +1,11 @@
-import { getStepBundlePromise, getSingleRecordStepBundlePromise } from 'wdk-client/Utils/stepUtils';
-import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { StepBundle, getStepBundlePromise, getSingleRecordStepBundlePromise, getStubbedStep } from 'wdk-client/Utils/stepUtils';
+import { ActionThunk, EmptyAction, emptyAction, ActionCreatorResult } from 'wdk-client/Core/WdkMiddleware';
 import { Step, UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AnswerRequest } from 'wdk-client/Service/Mixins/SearchReportsService';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
+import { WdkService } from 'wdk-client/Core';
+import { updateParamValues } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 
 export type Action =
   | InitializeAction
@@ -132,7 +134,6 @@ export function setError(error: Error): SetErrorAction {
 
 //==============================================================================
 
-
 type LoadPageDataAction =
   | StartLoadingAction
   | SetErrorAction
@@ -143,23 +144,10 @@ export function loadPageDataFromStepId(
   stepId: number, requestedFormat?: string
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
-    let preferencesPromise = wdkService.getCurrentUserPreferences();
-    let ontologyPromise = wdkService.getOntology();
-    let bundlePromise = getStepBundlePromise(stepId, wdkService);
-    return [
-      startLoading(),
-      Promise.all([bundlePromise, preferencesPromise, ontologyPromise]).then(
-        ([stepBundle, preferences, ontology]) => initialize({
-          ...stepBundle,
-          preferences,
-          ontology,
-          scope: 'results'
-        }),
-        (error: Error) => setError(error)
-      ),
-      bundlePromise.then(() => selectReporter(requestedFormat))
-    ];
-  }
+    return getInitializationActionSet(
+      wdkService, 'results', getStepBundlePromise(stepId, wdkService), requestedFormat
+    );
+  };
 }
 
 export function loadPageDataFromRecord(
@@ -168,8 +156,6 @@ export function loadPageDataFromRecord(
   requestedFormat?: string
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
-    let preferencesPromise = wdkService.getCurrentUserPreferences();
-    let ontologyPromise = wdkService.getOntology();
     // create promise for recordClass
     let recordClassPromise = wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment);
 
@@ -185,26 +171,81 @@ export function loadPageDataFromRecord(
 
     // create promise for bundle, dependent on previous two promises and primaryKeyString
     let bundlePromise = Promise
-    .all([ recordClassPromise, recordPromise, primaryKeyString ])
-    .then(getSingleRecordStepBundlePromise);
+      .all([ recordClassPromise, recordPromise, primaryKeyString ])
+      .then(getSingleRecordStepBundlePromise);
 
-    return [
-      startLoading(),
-      // dispatch appropriate actions
-      Promise.all([ bundlePromise, preferencesPromise, ontologyPromise ]).then(
-        ([ stepBundle, preferences, ontology ]) =>
-          initialize({
-            ...stepBundle,
-            preferences,
-            ontology,
-            scope: 'record'
-          }),
-        (error: Error) => setError(error)
-      ),
-      bundlePromise.then(() => selectReporter(requestedFormat))
-    ];
+    return getInitializationActionSet(
+      wdkService, 'record', bundlePromise, requestedFormat
+    );
   }
 }
+
+export function loadPageDataFromSearchConfig(
+  searchName: string,
+  paramValues: Record<string,string>,
+  weight: number,
+): ActionThunk<LoadPageDataAction> {
+  return function run({ wdkService }) {
+
+    // find question
+    let questionPromise = wdkService
+      .findQuestion(q => q.urlSegment === searchName);
+
+    // find record class for that question
+    let recordClassPromise = questionPromise
+      .then(q => wdkService.findRecordClass(rc => rc.fullName == q.outputRecordClassName));
+
+    // bundle these with a stub step to populate the store
+    let bundlePromise = Promise.all([questionPromise, recordClassPromise])
+      .then(([question, recordClass]) => ({
+        question,
+        recordClass,
+        // make a stub step for the question and passed
+        step: getStubbedStep(question, question.urlSegment, -1, {
+          parameters: chooseParams(question, paramValues),
+          wdkWeight: weight
+        })
+      }));
+
+    return getInitializationActionSet(wdkService, 'results', bundlePromise);
+  };
+}
+
+function chooseParams(question: Question, valueMap: Record<string,string>): Record<string,string> {
+  let paramMap: Record<string,string> = {};
+  question.paramNames.forEach(paramName => {
+    if (Object.keys(valueMap).findIndex(key => key == paramName) == -1) {
+      throw "Query string does not contain required parameter: " + paramName;
+    }
+    paramMap[paramName] = valueMap[paramName];
+  });
+  return paramMap;
+}
+
+function getInitializationActionSet(
+    wdkService: WdkService,
+    scope: string,
+    bundlePromise: Promise<StepBundle>,
+    requestedFormat?: string): ActionCreatorResult<LoadPageDataAction> {
+  let preferencesPromise = wdkService.getCurrentUserPreferences();
+  let ontologyPromise = wdkService.getOntology();
+  return [
+    startLoading(),
+    Promise.all([bundlePromise, preferencesPromise, ontologyPromise]).then(
+      ([stepBundle, preferences, ontology]) =>
+        initialize({
+          ...stepBundle,
+          preferences,
+          ontology,
+          scope
+        }),
+      (error: Error) => setError(error)
+    ),
+    bundlePromise.then(() => selectReporter(requestedFormat))
+  ];
+}
+
+//==============================================================================
 
 export function submitForm(
   step: Step,

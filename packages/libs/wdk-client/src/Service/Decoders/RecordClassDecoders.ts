@@ -79,7 +79,7 @@ export const attributeSortingDecoder: Decode.Decoder<AttributeSortingSpec> =
     Decode.field('attributeName', Decode.string),
     Decode.field('direction', Decode.oneOf(Decode.constant('ASC'), Decode.constant('DESC')))
   )
-  
+
 export const questionDecoder: Decode.Decoder<Question> =
   Decode.combine(
     urlModelEntityDecoder,
@@ -92,6 +92,7 @@ export const questionDecoder: Decode.Decoder<Question> =
       Decode.field('help', Decode.optional(Decode.string)),
       Decode.field('newBuild', Decode.optional(Decode.string)),
       Decode.field('reviseBuild', Decode.optional(Decode.string)),
+      Decode.field('paramNames', Decode.arrayOf(Decode.string)),
     ),
     Decode.combine(
       Decode.field('groups', Decode.arrayOf(parameterGroupDecoder)),
@@ -106,7 +107,7 @@ export const questionDecoder: Decode.Decoder<Question> =
       Decode.field('allowedSecondaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string))),
     )
   )
- 
+
   export const expandedRecordClassDecoder: Decode.Decoder<RecordClassResponse> =
     // Decode.combine can only take up to 10 arguments, but we can nest
     // calls to Decode.combine for larger objects.

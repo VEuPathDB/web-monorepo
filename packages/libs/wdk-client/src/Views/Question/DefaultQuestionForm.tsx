@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { HelpIcon, IconAlt } from 'wdk-client/Components';
+import { HelpIcon, IconAlt, Link } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { Parameter, ParameterGroup, Question } from 'wdk-client/Utils/WdkModel';
+import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   changeGroupVisibility,
@@ -64,9 +64,9 @@ export default function DefaultQuestionForm(props: Props) {
 
   return (
     <div className={cx()}>
-      <QuestionHeader 
+      <QuestionHeader
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
-        headerText={question.displayName} 
+        headerText={question.displayName}
       />
       <form onSubmit={handleSubmit}>
         {question.groups
@@ -77,6 +77,7 @@ export default function DefaultQuestionForm(props: Props) {
           className={cx('SubmitSection')}
           tooltipPosition={tooltipPosition}
           customName={customName}
+          question={question}
           weight={weight}
           handleCustomNameChange={handleCustomNameChange}
           handleWeightChange={handleWeightChange}
@@ -285,10 +286,36 @@ export function QuestionDescription(props: { description?: string }) {
   );
 }
 
+interface WebServicesTutorialLinkProps {
+  question: QuestionWithMappedParameters;
+  weight: string;
+}
+
+function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
+  let weight = (props.weight === "" ? "0" : props.weight);
+  let queryString =
+    "searchName=" + props.question.urlSegment +
+    "&weight=" + weight +
+    props.question.parameters.map(
+      (param) => "&" + param.name + "=" + encodeURIComponent(param.initialDisplayValue || ""));
+  let link = "/web-services-help?" + queryString;
+  return (
+    <div>
+      <Link
+        to={link}
+        title="Build a Web Services URL from this Search >>"
+        className="wdk-ReactRouterLink wdk-RecordActionLink "
+        replace={false}
+      />
+    </div>
+  );
+}
+
 interface SubmitSectionProps {
   className: string;
   tooltipPosition: TooltipPosition;
   customName?: string;
+  question: QuestionWithMappedParameters;
   weight?: string;
   handleCustomNameChange: TextboxChangeHandler;
   handleWeightChange: TextboxChangeHandler;
@@ -296,11 +323,15 @@ interface SubmitSectionProps {
 }
 
 export function SubmitSection(props: SubmitSectionProps) {
-  let { className, tooltipPosition, customName, handleCustomNameChange, weight, handleWeightChange, submissionMetadata } = props;
+  let { className, tooltipPosition, customName, handleCustomNameChange, question, weight, handleWeightChange, submissionMetadata } = props;
   return (
     <div className={className}>
       <SubmitButton
         submissionMetadata={submissionMetadata}
+      />
+      <WebServicesTutorialLink
+        question={question}
+        weight={weight || "0"}
       />
       <SearchNameInput
         tooltipPosition={tooltipPosition}

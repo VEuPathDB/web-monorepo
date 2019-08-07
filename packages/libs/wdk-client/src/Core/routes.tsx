@@ -9,6 +9,7 @@ import NotFoundController from 'wdk-client/Controllers/NotFoundController';
 import AnswerController from 'wdk-client/Controllers/AnswerController';
 import QuestionListController from 'wdk-client/Controllers/QuestionListController';
 import DownloadFormController from 'wdk-client/Controllers/DownloadFormController';
+import WebServicesHelpController from 'wdk-client/Controllers/WebServicesHelpController';
 import UserRegistrationController from 'wdk-client/Controllers/UserRegistrationController';
 import UserProfileController from 'wdk-client/Controllers/UserProfileController';
 import UserPasswordChangeController from 'wdk-client/Controllers/UserPasswordChangeController';
@@ -72,6 +73,12 @@ const routes: RouteEntry[] = [
         summaryView={summaryView}
       />
     }
+  },
+
+  {
+    path: '/web-services-help',
+    component: (props: RouteComponentProps<{}>) =>
+      <WebServicesHelpController {...parseQueryString(props)}/>
   },
 
   {
@@ -289,7 +296,7 @@ const routes: RouteEntry[] = [
 export default routes;
 
 function parseUserCommentQueryString(props: RouteComponentProps<{}>) {
-  const { 
+  const {
     commentId: stringCommentId,
     commentTargetId: targetType,
     stableId: targetId,
