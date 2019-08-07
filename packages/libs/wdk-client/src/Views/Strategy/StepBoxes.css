@@ -192,9 +192,20 @@
 }
 
 .StepBoxes--InsertStepButton {
-  height: 3.5em;
+  height: calc(8em * .45);
   font-weight: bold;
   border-radius: .5em;
+  display: flex;
+  align-items: center;
+  border-style: dashed;
+  background: #fafafa;
+  border-width: 1px;
+  border-color: black;
+}
+
+.StepBoxes--InsertStepButton .fa {
+  font-size: 1.2em;
+  margin-right: .4em;
 }
 
 button.StepBoxes--EditButton {

@@ -3,17 +3,18 @@
 }
 
 .OpenedStrategiesContent {
-  background: #f3f3f3;
   border: 1px solid transparent;
-  border-bottom: 4px solid black;
   margin: 0 -2em;
-  padding: 0 2em 2em;
+  padding: 2em 8em 7em 8em;
 }
 
 .OpenedStrategiesContent > * {
-  font-size: .85em;
+  font-size: .7em;
 }
 
 .OpenedStrategiesHeader {
-  font-size: 1.2em;
+  font-size: 1.7em;
+  font-weight: bold;
+  text-transform: capitalize;
+  padding-bottom: .5em;
 }
