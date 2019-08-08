@@ -10,6 +10,8 @@ import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import {
   requestCreateStrategy,
   fulfillCreateStrategy,
+  requestDeleteOrRestoreStrategies,
+  fulfillDeleteOrRestoreStrategies,
   requestDeleteStrategy,
   fulfillDeleteStrategy,
   requestDuplicateStrategy,
@@ -27,6 +29,7 @@ import {
   redirectToNewSearch,
   fulfillDeleteStep,
   requestRemoveStepFromStepTree,
+  fulfillPatchStrategyProperties,
 } from 'wdk-client/Actions/StrategyActions';
 import { removeStep, getStepIds } from 'wdk-client/Utils/StrategyUtils';
 import { difference } from 'lodash';
@@ -59,12 +62,12 @@ export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
 
   case requestStrategy.type:
-  case requestPatchStrategyProperties.type:
-  case requestPutStrategyStepTree.type:
-  case requestDeleteStrategy.type:
-  case requestUpdateStepProperties.type:
-  case requestDeleteStep.type:  
-  case requestUpdateStepSearchConfig.type:
+  // case requestPatchStrategyProperties.type:
+  // case requestPutStrategyStepTree.type:
+  // case requestDeleteStrategy.type:
+  // case requestUpdateStepProperties.type:
+  // case requestDeleteStep.type:  
+  // case requestUpdateStepSearchConfig.type:
     {
      const strategyId  = action.payload.strategyId;
      return reqStrat(state, strategyId);
@@ -80,14 +83,16 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 
   case fulfillDeleteStrategy.type: {
-    const strategyId = action.payload.strategyId;
-    return {
-      ...state,
-      strategies: {
-        ...state.strategies,
-        [strategyId]: undefined
-      }
-    }
+    return deleteStrategiesFromState(state, [action.payload.strategyId]);
+  }
+
+  case fulfillDeleteOrRestoreStrategies.type: {
+    return deleteStrategiesFromState(
+      state,
+      action.payload.deleteStrategiesSpecs
+        .filter(spec => spec.isDeleted)
+        .map(spec => spec.strategyId)
+    );
   }
 
   default: {
@@ -110,6 +115,18 @@ function updateStrategyEntry(
     };
   }
 
+function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
+  if (strategyIds.length === 0) return state;
+  const newStrategies = { ...state.strategies };
+  for (const strategyId of strategyIds) {
+    delete newStrategies[strategyId];
+  }
+  return {
+    ...state,
+    strategies: newStrategies
+  }
+}
+
   async function getFulfillStrategy(
     [requestAction]: [InferAction<typeof requestStrategy>],
     state$: StateObservable<RootState>,
@@ -131,15 +148,42 @@ function updateStrategyEntry(
     return fulfillPutStrategy(strategy);
   }
 
-  async function getFulfillStrategy_PatchStratProps(
+  async function getFulfillDeleteOrRestoreStrategies(
+    [requestAction]: [InferAction<typeof requestDeleteOrRestoreStrategies>],
+    state$: StateObservable<RootState>,
+    { wdkService }: EpicDependencies
+  ): Promise<InferAction<typeof fulfillDeleteOrRestoreStrategies>> {
+    const { deleteStrategiesSpecs, requestTimestamp } = requestAction.payload;
+    await wdkService.deleteStrategies(deleteStrategiesSpecs);
+    return fulfillDeleteOrRestoreStrategies(deleteStrategiesSpecs, requestTimestamp);
+  }
+
+  // FIXME Return fulfillPatchStrategy
+  async function getFulfillPatchStrategy(
     [requestAction]: [InferAction<typeof requestPatchStrategyProperties>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillStrategy>> {
-    const {strategyId, strategyProperties }  = requestAction.payload;
+  ): Promise<InferAction<typeof fulfillPatchStrategyProperties>> {
+    const { strategyId, strategyProperties }  = requestAction.payload;
     await wdkService.patchStrategyProperties(strategyId, strategyProperties);
+    return fulfillPatchStrategyProperties(strategyId);
+  }
+
+  async function getFulfillStrategy_PatchStratProps(
+    [requestAction]: [InferAction<typeof fulfillPatchStrategyProperties>],
+    state$: StateObservable<RootState>,
+    { wdkService }: EpicDependencies
+  ): Promise<InferAction<typeof fulfillStrategy>> {
+    const { strategyId }  = requestAction.payload;
     let strategy = await wdkService.getStrategy(strategyId);
     return fulfillStrategy(strategy);
+  }
+
+  function areFulfillStrategy_PatchStratPropsActionsCoherent(
+    [requestAction]: [InferAction<typeof fulfillPatchStrategyProperties>],
+    state: RootState
+  ): boolean {
+    return requestAction.payload.strategyId in state[key].strategies;
   }
 
   async function getFulfillStrategy_PatchStepProps(
@@ -263,8 +307,11 @@ async function getFulfillNewSearch(
     mrate([requestStrategy], getFulfillStrategy, {
       areActionsNew: stubTrue
     }),
+    mrate([requestDeleteOrRestoreStrategies], getFulfillDeleteOrRestoreStrategies),
     mrate([requestPutStrategyStepTree], getFulfillStrategy_PutStepTree),
-    mrate([requestPatchStrategyProperties], getFulfillStrategy_PatchStratProps),
+    mrate([requestPatchStrategyProperties], getFulfillPatchStrategy),
+    mrate([fulfillPatchStrategyProperties], getFulfillStrategy_PatchStratProps,
+      { areActionsCoherent: areFulfillStrategy_PatchStratPropsActionsCoherent }),
     mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps),
     mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig),
     mrate([requestRemoveStepFromStepTree], getFulfillStrategy_RemoveStepFromStepTree),

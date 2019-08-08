@@ -65,6 +65,8 @@ export interface StrategySummary extends StrategyProperties {
   estimatedSize?: number;
   isValid: boolean;
   lastModified: string;
+  createdTime: string;
+  releaseVersion: string;
   recordClassName: string | null; // optional; may be empty if root step is invalid
   signature: string;
   author?: string;
@@ -83,13 +85,15 @@ export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
     field('description', string),
     field('estimatedSize', optional(number)),
     field('lastModified', string),
+    field('createdTime', string),
     field('name', string),
     field('organization', optional(string)),
     field('recordClassName', oneOf(nullValue, string)),
     field('signature', string),
     field('strategyId', number),
   ),
-  combine(
+    combine(
+    field('releaseVersion', string),
     field('isDeleted', boolean),
     field('isPublic', boolean),
     field('isSaved', boolean),

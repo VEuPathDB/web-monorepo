@@ -396,3 +396,10 @@ export function makeClassNameHelper(baseClassName: string) {
     return className + modifiedClassNames;
   }
 }
+
+/**
+ * Type guard that narrows an object's type such that the interrogated property value is not null or undefined.
+ */
+export function propertyIsNonNull<T, K extends keyof T>(object: T, key: K): object is T & { [Key in K]-?: T[K] } {
+  return object[key] != null;
+}

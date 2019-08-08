@@ -1,12 +1,12 @@
-import { defaultTo } from 'lodash';
+import { defaultTo, difference, union, last } from 'lodash';
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
-import { empty, Observable, of } from 'rxjs';
-import { mergeMap, mergeMapTo, tap } from 'rxjs/operators';
+import { empty, Observable, of, merge } from 'rxjs';
+import { mergeMap, mergeMapTo, tap, map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
 import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
-import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView } from 'wdk-client/Actions/StrategyViewActions';
+import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyViewActions';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
 import { InferAction, switchMapRequestActionsToEpic, mergeMapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
@@ -43,6 +43,25 @@ export function reduce(state: State = initialState, action: Action): State {
         openedStrategies: action.payload.openedStrategies
       }
 
+    case addToOpenedStrategies.type: {
+      const openedStrategies = union(state.openedStrategies, action.payload.ids);
+      const activeStrategyId = last(openedStrategies);
+      const activeStrategy = activeStrategyId == null ? undefined : {
+        strategyId: activeStrategyId
+      };
+      return {
+        ...state,
+        openedStrategies,
+        activeStrategy
+      }
+    }
+
+    case removeFromOpenedStrategies.type:
+      return {
+        ...state,
+        openedStrategies: difference(state.openedStrategies, action.payload.ids)
+      }
+    
     case setOpenedStrategiesVisibility.type:
       return {
         ...state,
@@ -83,7 +102,8 @@ export const observe = takeEpicInWindow(
     updateRouteOnStrategyDuplicateEpic,
     updatePreferencesEpic,
     switchMapRequestActionsToEpic([openStrategyView], getOpenedStrategiesVisibility),
-    switchMapRequestActionsToEpic([setActiveStrategy], getOpenedStrategies),
+    switchMapRequestActionsToEpic([openStrategyView], getOpenedStrategies),
+    switchMapRequestActionsToEpic([setActiveStrategy], appendActiveStrategyToOpenedStrategies),
     mergeMapRequestActionsToEpic([fulfillCreateStrategy], getAddNotification),
     mergeMapRequestActionsToEpic([fulfillDeleteStrategy], getAddNotification),
     mergeMapRequestActionsToEpic([fulfillDuplicateStrategy], getAddNotification),
@@ -151,17 +171,27 @@ function updateRouteOnStrategyDuplicateEpic(action$: ActionsObservable<Action>, 
 }
 
 function updatePreferencesEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
-  return action$.pipe(
-    tap(action => {
-      switch(action.type) {
-        case setOpenedStrategies.type:
-          setValue(wdkService, preferences.openedStrategies(), action.payload.openedStrategies);
-          break;
-        case setOpenedStrategiesVisibility.type:
-          setValue(wdkService, preferences.openedStrategiesVisibility(), action.payload.isVisible);
-          break;
-      }
-    }),
+  return merge(
+    stateEffect(
+      state$,
+      state => state[key].openedStrategies,
+      openedStrategies => setValue(wdkService, preferences.openedStrategies(), openedStrategies)
+    ),
+    stateEffect(
+      state$,
+      state => state[key].isOpenedStrategiesVisible,
+      isVisible => setValue(wdkService, preferences.openedStrategiesVisibility(), isVisible)
+    )
+  );
+}
+
+// Perform a side effect based on state changes
+function stateEffect<K>(state$: Observable<RootState>, getValue: (state: RootState) => K, effect: (value: NonNullable<K>) => void) {
+  return state$.pipe(
+    map(getValue),
+    filter((value): value is NonNullable<K> => value != null),
+    distinctUntilChanged(),
+    tap(effect),
     mergeMapTo(empty())
   );
 }
@@ -170,23 +200,22 @@ function updatePreferencesEpic(action$: ActionsObservable<Action>, state$: State
 // mrate requestToFulfill
 
 async function getOpenedStrategies(
-  [activeStrategyAction]: [InferAction<typeof setActiveStrategy>],
+  [openAction]: [InferAction<typeof openStrategyView>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof setOpenedStrategies>> {
-  const strategyId = activeStrategyAction.payload.activeStrategy && activeStrategyAction.payload.activeStrategy.strategyId;
   const allUserStrats = await wdkService.getStrategies();
   const allUserStratIds = new Set(allUserStrats.map(strategy => strategy.strategyId));
-  const prevOpenedStrategies = defaultTo(await getValue(wdkService, preferences.openedStrategies()), [] as number[])
-    // Filter out strategies not owned by current user
+  const openedStrategies = defaultTo(await getValue(wdkService, preferences.openedStrategies()), [] as number[])
     .filter(id => allUserStratIds.has(id));
-  const nextOpenedStrategies = strategyId == null || !allUserStratIds.has(strategyId) || prevOpenedStrategies.includes(strategyId)
-    ? prevOpenedStrategies
-    : prevOpenedStrategies.concat(strategyId);
-  if (prevOpenedStrategies !== nextOpenedStrategies) {
-    await setValue(wdkService, preferences.openedStrategies(), nextOpenedStrategies);
-  }
-  return setOpenedStrategies(nextOpenedStrategies);
+  return setOpenedStrategies(openedStrategies);
+}
+
+async function appendActiveStrategyToOpenedStrategies(
+  [activeStrategyAction]: [InferAction<typeof setActiveStrategy>]
+): Promise<InferAction<typeof addToOpenedStrategies>> {
+  const strategyId = activeStrategyAction.payload.activeStrategy && activeStrategyAction.payload.activeStrategy.strategyId;
+  return addToOpenedStrategies(strategyId ? [strategyId] : []);
 }
 
 async function getOpenedStrategiesVisibility(

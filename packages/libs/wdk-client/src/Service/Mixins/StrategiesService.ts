@@ -21,7 +21,7 @@ export default (base: ServiceBase) => {
   }
 
   function deleteStrategies(deleteStrategiesSpecs: DeleteStrategySpec[], userId: string = "current") {
-    return base._fetchJson<void>('delete', `/users/${userId}/strategies`, JSON.stringify(deleteStrategiesSpecs));
+    return base._fetchJson<void>('patch', `/users/${userId}/strategies`, JSON.stringify(deleteStrategiesSpecs));
   }
 
   // TODO:  use a proper decoder to ensure correct decoding of the StrategyDetails

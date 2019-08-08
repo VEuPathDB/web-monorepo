@@ -173,7 +173,7 @@ const routes: RouteEntry[] = [
   {
     path: '/workspace/strategies/all',
     component: (props: RouteComponentProps<{}>) => (
-      <AllStrategiesController viewId="all"/>
+      <AllStrategiesController/>
     )
   },
 
@@ -185,7 +185,7 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/favorites',
+    path: '/workspace/favorites',
     component: () => <FavoritesController/>
   },
 

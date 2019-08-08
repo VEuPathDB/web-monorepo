@@ -551,7 +551,7 @@ class FavoritesList extends Component {
 
   getRecordClassByName (recordClassName) {
     let { recordClasses } = this.props;
-    return recordClasses.find(({ name }) => name === recordClassName);
+    return recordClasses.find(({ fullName }) => fullName === recordClassName);
   }
 }
 

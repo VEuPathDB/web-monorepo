@@ -40,5 +40,5 @@ export interface MesaDataCellProps {
 
 export interface MesaSortObject {
   columnKey: string;
-  direction: string;
+  direction: 'asc' | 'desc';
 };

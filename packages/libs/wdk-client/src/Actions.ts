@@ -21,7 +21,7 @@ import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSu
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
 import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
-import * as StrategyViewActions from 'wdk-client/Actions/StrategyViewActions'
+import * as StrategyViewActions from 'wdk-client/Actions/StrategyViewActions';
 import * as StrategyListActions from 'wdk-client/Actions/StrategyListActions';
 import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
 import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';

@@ -15,6 +15,16 @@ export const setOpenedStrategies = makeActionCreator(
   (openedStrategies: number[]) => ({ openedStrategies })
 );
 
+export const addToOpenedStrategies = makeActionCreator(
+  'strategy-view/addToOpenedStrategies',
+  (ids: number[]) => ({ ids })
+);
+
+export const removeFromOpenedStrategies = makeActionCreator(
+  'strategy-view/removeFromOpenedStrategies',
+  (ids: number[]) => ({ ids })
+);
+
 export const setOpenedStrategiesVisibility = makeActionCreator(
   'strategy-view/setOpenedStrategiesVisibility',
   (isVisible: boolean) => ({ isVisible })
@@ -35,6 +45,8 @@ export type Action =
   | InferAction<typeof closeStrategyView>
   | InferAction<typeof setActiveStrategy>
   | InferAction<typeof setOpenedStrategies>
+  | InferAction<typeof addToOpenedStrategies>
+  | InferAction<typeof removeFromOpenedStrategies>
   | InferAction<typeof setOpenedStrategiesVisibility>
   | InferAction<typeof addNotification>
   | InferAction<typeof removeNotification>

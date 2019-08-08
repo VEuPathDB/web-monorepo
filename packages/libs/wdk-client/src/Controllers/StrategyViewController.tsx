@@ -11,6 +11,7 @@ import OpenedStrategies from 'wdk-client/Views/Strategy/OpenedStrategies';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
 import StrategyNotifications from 'wdk-client/Views/Strategy/StrategyNotifications';
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 
 interface OwnProps {
   strategyId?: number;
@@ -21,6 +22,7 @@ interface MappedProps {
   openedStrategies?: number[];
   isOpenedStrategiesVisible?: boolean;
   notifications: Record<string, string | undefined>;
+  activeStrategy?: { strategyId: number, stepId?: number };
 }
 
 interface DispatchProps {
@@ -29,7 +31,7 @@ interface DispatchProps {
 
 type Props = OwnProps & DispatchProps & MappedProps;
 
-function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies, isOpenedStrategiesVisible, notifications }: Props) {
+function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, openedStrategies, isOpenedStrategiesVisible, notifications }: Props) {
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -39,8 +41,14 @@ function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies
   }, [])
 
   useEffect(() => {
-    dispatch(setActiveStrategy(strategyId ? { strategyId, stepId } : undefined));
-  }, [ stepId, strategyId ])
+    if (strategyId) {
+      dispatch(setActiveStrategy({ strategyId, stepId }));
+    }
+    else if (activeStrategy) {
+      const subPath = `${activeStrategy.strategyId}` + (activeStrategy.stepId ? `/${activeStrategy.stepId}` : ``);
+      dispatch(transitionToInternalPage(`/workspace/strategies/${subPath}`));
+    }
+  }, [ stepId, strategyId, activeStrategy ]);
 
   return (
     <React.Fragment>
@@ -82,8 +90,8 @@ function StrategyViewController({ stepId, strategyId, dispatch, openedStrategies
 }
 
 function mapState(state: RootState): MappedProps {
-  const { openedStrategies, isOpenedStrategiesVisible, notifications } = state.strategyView;
-  return { openedStrategies, isOpenedStrategiesVisible, notifications };
+  const { activeStrategy, openedStrategies, isOpenedStrategiesVisible, notifications } = state.strategyView;
+  return { activeStrategy, openedStrategies, isOpenedStrategiesVisible, notifications };
 }
 
 export default connect(mapState)(StrategyViewController);

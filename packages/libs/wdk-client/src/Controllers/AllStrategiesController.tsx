@@ -1,62 +1,87 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-
-import { StrategySummary } from 'wdk-client/Utils/WdkUser';
-import { Link, Loading } from 'wdk-client/Components';
+import { closeStrategiesListView, openStrategiesListView, setActiveTab, addToStrategyListSelection, removeFromStrategyListSelection, setStrategyListSort } from 'wdk-client/Actions/StrategyListActions';
+import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import {closeStrategiesListView, openStrategiesListView} from 'wdk-client/Actions/StrategyListActions';
-import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
+import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { StrategySummary } from 'wdk-client/Utils/WdkUser';
+import AllStrategies from 'wdk-client/Views/Strategy/AllStrategies';
+import { propertyIsNonNull } from 'wdk-client/Utils/ComponentUtils';
+import { addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyViewActions';
+import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
+import { requestPatchStrategyProperties, requestDeleteOrRestoreStrategies } from 'wdk-client/Actions/StrategyActions';
 
-interface OwnProps {
-  viewId: string;
-}
 
 interface StateProps {
   strategies?: StrategySummary[];
+  recordClasses?: RecordClass[];
+  activeTab?: string;
+  selectionByTableId: Record<string, number[] | undefined>;
+  openedStrategies?: number[];
+  sortByTableId: Record<string, MesaSortObject | undefined>;
 }
 
 interface DispatchProps {
-  dispatch: Dispatch;
+  openStrategiesListView: () => void;
+  closeStrategiesListView: () => void;
+  setActiveTab: (tabId: string) => void;
+  addToSelection: (tableId: string, ids: number[]) => void;
+  removeFromSelection: (TableId: string, ids: number[]) => void;
+  addToOpenedStrategies: (ids: number[]) => void;
+  removeFromOpenedStrategies: (ids: number[]) => void;
+  onSort: (tableId: string, sort: MesaSortObject) => void;
+  deleteStrategies: (ids: number[]) => void;
+  updatePublicStatus: (id: number, isPublic: boolean) => void;
 }
 
-type Props = OwnProps & StateProps & DispatchProps;
+type Props = StateProps & DispatchProps;
 
 function AllStrategiesController(props: Props) {
-  const { viewId, dispatch, strategies } = props;
+  const {
+    openStrategiesListView,
+    closeStrategiesListView,
+    ...restProps
+  } = props;
 
   useEffect(() => {
-    props.dispatch(openStrategiesListView(viewId));
+    openStrategiesListView();
     return () => {
-      dispatch(closeStrategiesListView(viewId));
+      closeStrategiesListView();
     };
-  }, [viewId]);
-  return (
-    <div>
-      <StrategyHeader/>
-      <h1>
-        <div>All Strategies</div>
-        <div><small>* = unsaved</small></div>
-      </h1>
+  }, []);
 
-      {strategies
-        ? strategies.map(strategy => (
-          <div>
-            <Link to={`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`}>{strategy.name}</Link>
-            {strategy.isSaved ? '' : ' *'}
-            </div>
-        ))
-        : <Loading/> }
-    </div>
+  if (!propertyIsNonNull(restProps, 'strategies') || !propertyIsNonNull(restProps, 'recordClasses')) return <Loading/>;
+
+  return (
+    <AllStrategies
+      {...restProps}
+    />
   )
 }
 
-function mapStateToProps(state: RootState, props: OwnProps): StateProps {
-  const { viewId } = props;
-  const viewState = state.strategyList[viewId];
+function mapStateToProps(state: RootState): StateProps {
+  const viewState = state.strategyList;
   return {
-    strategies: viewState && viewState.strategySummaries
+    strategies: viewState && viewState.strategySummaries,
+    recordClasses: state.globalData.recordClasses,
+    activeTab: viewState.activeTab,
+    selectionByTableId: viewState.selectedStrategiesByTableId,
+    openedStrategies: state.strategyView.openedStrategies,
+    sortByTableId: viewState.sortByTableId
   }
 }
 
-export default connect(mapStateToProps)(AllStrategiesController);
+const dispatchProps: DispatchProps = {
+  openStrategiesListView,
+  closeStrategiesListView,
+  setActiveTab,
+  addToSelection: addToStrategyListSelection,
+  removeFromSelection: removeFromStrategyListSelection,
+  addToOpenedStrategies,
+  removeFromOpenedStrategies,
+  onSort: setStrategyListSort,
+  updatePublicStatus: (id: number, isPublic: boolean) => requestPatchStrategyProperties(id, { isPublic }),
+  deleteStrategies: (ids: number[]) => requestDeleteOrRestoreStrategies(ids.map(strategyId => ({ strategyId, isDeleted: true })))
+}
+
+export default connect(mapStateToProps, dispatchProps)(AllStrategiesController);
