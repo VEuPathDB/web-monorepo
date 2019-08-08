@@ -63,6 +63,8 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
     case preferencesLoaded.type:
     case allDataLoaded.type:
     case USER_UPDATE:
+      return { ...state, ...action.payload };
+
     // router actions
     case UPDATE_LOCATION:
       return { ...state, ...action.payload, loginForm: { isOpen: false } };

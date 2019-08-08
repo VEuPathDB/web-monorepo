@@ -84,8 +84,8 @@ class LoginForm extends Component<Props,State> {
               <tr>
                 <td style={{ textAlign: 'center', verticalAlign: 'top' }} colSpan={2}>
                   <span className="small">
-                    <Link to={passwordResetPath} style={{paddingRight:15 }}>Forgot Password?</Link>
-                    <Link to={registerPath}>Register/Subscribe</Link>
+                    <Link onClick={onCancel} to={passwordResetPath} style={{paddingRight:15 }}>Forgot Password?</Link>
+                    <Link onClick={onCancel} to={registerPath}>Register/Subscribe</Link>
                   </span>
                 </td>
               </tr>

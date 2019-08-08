@@ -26,6 +26,7 @@ import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
+import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 
 const routes: RouteEntry[] = [
   {
@@ -78,6 +79,16 @@ const routes: RouteEntry[] = [
           format={format}
           summaryView={summaryView}
         />
+      );
+    }
+  },
+
+  {
+    path: '/user/login',
+    component: (props: RouteComponentProps<void>) => {
+      const { destination } = parseQueryString(props);
+      return (
+        <UserLoginController destination={destination} />
       );
     }
   },
