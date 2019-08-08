@@ -915,13 +915,15 @@ class TranscriptionSummaryForm extends SortKeyTable {
   render() {
       let { source_id } = this.props.record.attributes;
 
-	var height = 0;
+	var height = 700;
         if (this.props.value.length === 0) {
           return (
             <p><em>No data available</em></p>
           );
         } else {
-	  var height = (this.props.value.length * 50) + 100;
+	  if (((this.props.value.length * 50) + 100) > 700) {
+	    height = (this.props.value.length * 50) + 100;
+	  } 
 	}
 
         return (
