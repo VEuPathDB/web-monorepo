@@ -41,7 +41,11 @@ function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, 
   }, [])
 
   useEffect(() => {
-    if (strategyId) {
+    if (strategyId && (
+      activeStrategy == null ||
+      activeStrategy.strategyId !== strategyId ||
+      activeStrategy.stepId !== stepId
+    )) {
       dispatch(setActiveStrategy({ strategyId, stepId }));
     }
     else if (activeStrategy) {
