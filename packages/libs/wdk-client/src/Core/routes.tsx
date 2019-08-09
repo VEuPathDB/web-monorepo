@@ -28,6 +28,7 @@ import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormCon
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import StrategyViewController from 'wdk-client/Controllers/StrategyViewController';
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
+import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 
@@ -99,6 +100,16 @@ const routes: RouteEntry[] = [
           format={format}
           summaryView={summaryView}
         />
+      );
+    }
+  },
+
+  {
+    path: '/user/login',
+    component: (props: RouteComponentProps<void>) => {
+      const { destination } = parseQueryString(props);
+      return (
+        <UserLoginController destination={destination} />
       );
     }
   },
