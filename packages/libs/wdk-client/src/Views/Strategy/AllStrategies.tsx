@@ -85,7 +85,7 @@ function StrategiesTab(props: TabContentProps) {
       <StrategiesTable
         key={isSaved ? 'saved' : 'unsaved'}
         title={`${isSaved ? 'Saved' : 'Unsaved'} Strategies (${unsavedStrategies.length.toLocaleString()})`}
-        strategies={unsavedStrategies}
+        strategies={strategies}
         selection={props.selectionByTableId[tableId]}
         addToSelection={ids => props.addToSelection(tableId, ids)}
         removeFromSelection={ids => props.removeFromSelection(tableId, ids)}
