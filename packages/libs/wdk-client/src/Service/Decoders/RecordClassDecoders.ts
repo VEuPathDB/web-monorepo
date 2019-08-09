@@ -55,17 +55,6 @@ export const summaryViewPluginDecoder: Decode.Decoder<SummaryViewPluginField> =
     Decode.field('description', Decode.string)
   )
 
-export const stepAnalysisPluginDecoder: Decode.Decoder<StepAnalysisType> =
-  Decode.combine(
-    Decode.field('hasParameters', Decode.boolean),
-    Decode.field('displayName', Decode.string),
-    Decode.field('releaseVersion', Decode.string),
-    Decode.field('name', Decode.string),
-    Decode.field('description', Decode.string),
-    Decode.field('customThumbnail', Decode.optional(Decode.string)),
-    Decode.field('shortDescription', Decode.string)
-  )
-
 export const questionFilterDecoder: Decode.Decoder<QuestionFilter> =
   Decode.combine(
     Decode.field('name', Decode.string),
@@ -101,7 +90,6 @@ export const questionDecoder: Decode.Decoder<Question> =
       Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
       Decode.field('defaultSummaryView', Decode.string),
       Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginDecoder)),
-      Decode.field('stepAnalysisPlugins', Decode.arrayOf(stepAnalysisPluginDecoder)),
       Decode.field('filters', Decode.arrayOf(questionFilterDecoder)),
       Decode.field('allowedPrimaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string))),
       Decode.field('allowedSecondaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string))),

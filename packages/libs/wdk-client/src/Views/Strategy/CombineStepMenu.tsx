@@ -97,8 +97,8 @@ type DispatchProps = {
   ) => void,
   updateParamValue: (payload: {
     searchName: string,
-    parameter: Parameter, 
-    paramValues: Record<string, string>, 
+    parameter: Parameter,
+    paramValues: Record<string, string>,
     paramValue: string
   }) => void
 };
@@ -130,7 +130,7 @@ export const CombineStepMenuView = (
   }: Props
 ) => {
   const [ basketButtonStatus, setBasketButtonStatus ] = useState<BasketButtonStatus>('unclicked');
-  
+
   useEffect(() => {
     loadBooleanQuestion(booleanSearchUrlSegment);
   }, [ booleanSearchUrlSegment ]);
@@ -188,7 +188,7 @@ export const CombineStepMenuView = (
               <div className={cx('--Body')}>
                 <PrimaryInputLabel
                   className={cx('--PrimaryInputLabel')}
-                  resultSetSize={operandStep.estimatedSize}
+                  resultSetSize={operandStep.estimatedSize || 0}
                   recordClass={inputRecordClass}
                 />
                 <div className={cx('--OperatorSelector')}>
@@ -308,7 +308,7 @@ const submitBasket = async (
     {
       stepId: basketStepId,
       primaryInput: undefined,
-      secondaryInput: undefined              
+      secondaryInput: undefined
     }
   );
 };

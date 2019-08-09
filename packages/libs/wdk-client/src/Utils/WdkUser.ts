@@ -25,7 +25,7 @@ export interface Step extends AnswerSpec {
   customName: string;
   description: string;
   displayName: string;
-  estimatedSize: number;
+  estimatedSize?: number;
   hasCompleteStepAnalyses: boolean;
   id: number;
   isFiltered: boolean;
@@ -62,12 +62,12 @@ export interface StrategyProperties {
 export interface StrategySummary extends StrategyProperties {
   strategyId: number;
   rootStepId: number;
-  estimatedSize?: number;
+  estimatedSize?: number; // optional; may be null if step was modified but not rerun
   isValid: boolean;
   lastModified: string;
   createdTime: string;
-  releaseVersion: string;
-  recordClassName: string | null; // optional; may be empty if root step is invalid
+  releaseVersion?: string;
+  recordClassName: string | null; // optional; may be null if root step is invalid
   signature: string;
   author?: string;
   organization?: string;
@@ -81,7 +81,7 @@ export interface StrategyDetails extends StrategySummary {
 
 export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
   combine(
-    field('author', string),
+    field('author', optional(string)),
     field('description', string),
     field('estimatedSize', optional(number)),
     field('lastModified', string),
@@ -92,8 +92,8 @@ export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
     field('signature', string),
     field('strategyId', number),
   ),
-    combine(
-    field('releaseVersion', string),
+  combine(
+    field('releaseVersion', optional(string)),
     field('isDeleted', boolean),
     field('isPublic', boolean),
     field('isSaved', boolean),
@@ -131,7 +131,7 @@ export interface PubmedPreviewEntry {
   author: string,
   url: string
 }
- 
+
 export interface UserCommentAttachedFileSpec {
   file: File | null,
   description: string
@@ -158,7 +158,7 @@ export type ReviewStatus =
   "unknown";
 
 export interface UserCommentLocation {
-  coordinateType: string, 
+  coordinateType: string,
   ranges: { start: number, end: number }[],
   reverse?: boolean
 }

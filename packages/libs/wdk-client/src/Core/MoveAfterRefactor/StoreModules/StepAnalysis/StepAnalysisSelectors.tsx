@@ -22,10 +22,10 @@ type Props = { viewId: string, strategyId: number, stepId: number, initialTab?: 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
 export const recordClass = (
-  
-  { 
-    globalData: { recordClasses = [] }, 
-    strategies: { strategies }, 
+
+  {
+    globalData: { recordClasses = [] },
+    strategies: { strategies },
   }: RootState,
   { stepId, strategyId }: Props
 ) => {
@@ -38,9 +38,9 @@ export const recordClass = (
 };
 // FIXME This look suspect
 export const question = (
-  { 
-    globalData: { questions = [] }, 
-    strategies: { strategies }, 
+  {
+    globalData: { questions = [] },
+    strategies: { strategies },
   }: RootState,
   { stepId, strategyId }: Props
 ) => {
@@ -60,7 +60,7 @@ export const userPreferences = (
 
 export const summaryViewPlugins = createSelector<RootState, Props, Question | undefined, SummaryViewPluginField[]>(
   question,
-  question => question 
+  question => question
     ? question.summaryViewPlugins
     : []
 );
@@ -77,7 +77,7 @@ export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): Resu
 export const questionsLoaded = ({ globalData: { questions }}: RootState) => questions != null;
 
 export const stepLoaded = (
-  { strategies: { strategies }}: RootState, 
+  { strategies: { strategies }}: RootState,
   { strategyId }: Props) => {
   const strategyEntry = strategies[strategyId];
   return strategyEntry != null && strategyEntry.status === 'success';
@@ -189,7 +189,7 @@ export const mapAnalysisPanelStateToProps = (
   analysisPanelState: AnalysisPanelState,
   choices: StepAnalysisType[],
   webAppUrl: string,
-  wdkModelBuildNumber: number, 
+  wdkModelBuildNumber: number,
   recordClassDisplayName: string
 ): StepAnalysisStateProps => transformPanelState(
   analysisPanelState,
@@ -216,26 +216,26 @@ const mapAnalysisMenuStateToProps = (
   analysisMenuState: AnalysisMenuState,
   choices: StepAnalysisType[],
   webAppUrl: string,
-  wdkModelBuildNumber: number, 
+  wdkModelBuildNumber: number,
   recordClassDisplayName: string
-): StepAnalysisStateProps => ({ 
+): StepAnalysisStateProps => ({
   type: 'analysis-menu',
   recordClassDisplayName,
   wdkModelBuildNumber,
   webAppUrl,
   choices,
-  selectedType: analysisMenuState.selectedAnalysis 
+  selectedType: analysisMenuState.selectedAnalysis
     ? analysisMenuState.selectedAnalysis.name
     : undefined
 });
 
 const mapUnsavedAnalysisStateToProps = (
-  { 
-    analysisName, 
-    analysisType: { 
+  {
+    analysisName,
+    analysisType: {
       shortDescription,
       description,
-      hasParameters
+      paramNames
     },
     panelUiState: {
       descriptionExpanded,
@@ -257,8 +257,8 @@ const mapUnsavedAnalysisStateToProps = (
     descriptionExpanded
   },
   formSaving: formStatus === 'SAVING_ANALYSIS',
-  formState: { 
-    hasParameters,
+  formState: {
+    hasParameters: paramNames.length > 0,
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
@@ -272,7 +272,7 @@ const mapUnsavedAnalysisStateToProps = (
 });
 
 const mapSavedAnalysisStateToProps = (
-  { 
+  {
     analysisConfig,
     analysisConfigStatus,
     panelUiState: {
@@ -300,7 +300,7 @@ const mapSavedAnalysisStateToProps = (
     descriptionExpanded
   },
   formSaving: formStatus === 'SAVING_ANALYSIS',
-  formState: { 
+  formState: {
     hasParameters: typeHasParameters(analysisConfig.analysisName, choices),
     formExpanded,
     errors: formValidationErrors,

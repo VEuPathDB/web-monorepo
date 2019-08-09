@@ -36,7 +36,7 @@ export default function StepBoxes(props: StepBoxesProps) {
  * Recursively render the step tree. Steps are rendered into "slots", where a
  * slot contains a primary input and its secondary input if it has one (the
  * left-most rendered step, and transforms, do not have seondary inputs)
- * 
+ *
  * We also close over provided handlers with the appropriate step id and
  * sequence of actions.
  */
@@ -236,7 +236,7 @@ function StepCount(props: { step: Step, recordClass: RecordClass }) {
   const recordClassDisplayName = recordClass && (
     step.estimatedSize === 1 ? recordClass.shortDisplayName : recordClass.shortDisplayNamePlural
   );
-  return <div className={cx('--StepCount')}>{step.estimatedSize.toLocaleString()} {recordClassDisplayName}</div>
+  return <div className={cx('--StepCount')}>{step.estimatedSize ? step.estimatedSize.toLocaleString() : "N/A"} {recordClassDisplayName}</div>
 }
 
 /**

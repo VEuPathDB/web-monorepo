@@ -177,12 +177,12 @@ export const AddStepPanelView = wrappable((
                   ? (
                     <div className={cx('--MenusContainer')}>
                       <div className={cx('--MenusHeader')}>
-                          So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}.
-                          It found {operandStep.estimatedSize.toLocaleString()} {
-                            operandStep.estimatedSize === 1 
+                          So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}
+                          and finds {(operandStep.estimatedSize || "0").toLocaleString()} {
+                            operandStep.estimatedSize === 1
                               ? inputRecordClass.displayName
                               : inputRecordClass.displayNamePlural
-                            }. 
+                            }.
                           <br />
                           Gain data mining power by adding a step to your strategy.  You can...
                       </div>
@@ -286,9 +286,9 @@ const strategyEntry = createSelector(
 
 const strategy = createSelector(
   strategyEntry,
-  strategyEntry => {    
+  strategyEntry => {
     return (
-      !strategyEntry || 
+      !strategyEntry ||
       strategyEntry.status === 'pending'
     )
       ? undefined
@@ -323,7 +323,7 @@ const previousStepSubtree = createSelector(
 const previousStep = createSelector(
   strategy,
   previousStepSubtree,
-  (strategy, previousStepSubtree) => 
+  (strategy, previousStepSubtree) =>
     strategy === undefined || previousStepSubtree === undefined
       ? undefined
       : strategy.steps[previousStepSubtree.stepId]

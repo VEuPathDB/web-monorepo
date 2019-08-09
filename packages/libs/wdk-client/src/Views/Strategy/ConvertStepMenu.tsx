@@ -46,7 +46,7 @@ const ConvertStepMenuView = ({
             <div className={cx('--Body')}>
               <PrimaryInputLabel
                 className={cx('--PrimaryInputLabel')}
-                resultSetSize={operandStep.estimatedSize}
+                resultSetSize={operandStep.estimatedSize || 0}
                 recordClass={inputRecordClass}
               />
               <div className={cx('--TransformIcon')}>
@@ -68,7 +68,7 @@ const ConvertStepMenuView = ({
                         }
                       </>
                     )
-                }  
+                }
               </div>
             </div>
           </div>
@@ -106,7 +106,7 @@ const isValidTransformFactory = (inputRecordClass: RecordClass, outputStepQuesti
     search.allowedPrimaryInputRecordClassNames.includes(inputRecordClass.urlSegment)
   ) &&
   ( // (3)
-    !outputStepQuestion || 
+    !outputStepQuestion ||
     outputStepQuestion.allowedPrimaryInputRecordClassNames && outputStepQuestion.allowedPrimaryInputRecordClassNames.includes(search.outputRecordClassName)
   ) &&
   ( // (4)
@@ -144,8 +144,8 @@ const operatorChoices = createSelector(
   (_: RootState, { questions }: OwnProps) => questions,
   isValidTransform,
   transformToOperatorChoice,
-  (questions, isValidTransform, transformToOperatorChoice) => 
-    questions && 
+  (questions, isValidTransform, transformToOperatorChoice) =>
+    questions &&
     transformToOperatorChoice &&
     questions
       .filter(isValidTransform)

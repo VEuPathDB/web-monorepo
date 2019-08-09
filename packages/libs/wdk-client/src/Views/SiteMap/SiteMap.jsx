@@ -48,8 +48,7 @@
  *   defaultAttributes: [ String ],
  *   dynamicAttributes: [ see AttributeFieldFormatter ],
  *   defaultSummaryView: String,
- *   summaryViewPlugins: [ String ],
- *   stepAnalysisPlugins: [ String ]
+ *   summaryViewPlugins: [ String ]
  * }
  */
 

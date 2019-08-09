@@ -1,11 +1,11 @@
 import React, { Fragment, ReactNode } from 'react';
-import { StepAnalysisParameter } from '../../../../Utils/StepAnalysisUtils';
 import { ParamComponent } from '../../../../Views/Question/Params';
 import { join, mapValues, split } from 'lodash/fp';
 import { HelpIcon } from '../../../../Components';
+import { Parameter } from 'wdk-client/Utils/WdkModel';
 
 interface StepAnalysisDefaultFormProps {
-  paramSpecs: StepAnalysisParameter[];
+  paramSpecs: Parameter[];
   paramValues: Record<string, string[]>;
   updateParamValues: (newParamValues: Record<string, string[]>) => void;
   onFormSubmit: () => void;
@@ -21,12 +21,12 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
     <tbody>
       {
         paramSpecs
-          .map(paramSpec => 
-            <StepAnalysisParamRow 
-              key={paramSpec.name} 
+          .map(paramSpec =>
+            <StepAnalysisParamRow
+              key={paramSpec.name}
               displayName={<ParamDisplayName paramSpec={paramSpec} />}
-              paramValues={paramValues} 
-              paramSpec={paramSpec} 
+              paramValues={paramValues}
+              paramSpec={paramSpec}
               onChange={value => {
                 updateParamValues({
                   ...paramValues,
@@ -48,7 +48,7 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
 interface StepAnalysisRowProps {
   displayName: ReactNode;
   paramValues: Record<string, string[]>;
-  paramSpec: StepAnalysisParameter;
+  paramSpec: Parameter;
   onChange: (newValue: string) => void;
 }
 
@@ -64,13 +64,13 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
         <span style={labelSpanStyle}>{displayName}</span>
         {
           paramSpec.help &&
-          <HelpIcon tooltipPosition={tooltipPosition}>{paramSpec.help}</HelpIcon> 
+          <HelpIcon tooltipPosition={tooltipPosition}>{paramSpec.help}</HelpIcon>
         }
-      </label>    
+      </label>
     </td>
     <td>
       <ParamComponent
-        key={paramSpec.name}  
+        key={paramSpec.name}
         ctx={{
           searchName: '',
           parameter: paramSpec,
@@ -92,7 +92,7 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
   </tr>
 
 interface ParamDisplayNameProps {
-  paramSpec: StepAnalysisParameter;
+  paramSpec: Parameter;
 }
 
 const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
@@ -109,8 +109,8 @@ const NOOP = () => {};
 const normalizeParamValues = (paramValues: Record<string, string[]>) => mapValues(join(','), paramValues);
 export const denormalizeParamValue = split(/\s*,\s*/g);
 
-const tooltipPosition = { 
-  my: 'top center', 
+const tooltipPosition = {
+  my: 'top center',
   at: 'bottom center'
 };
 

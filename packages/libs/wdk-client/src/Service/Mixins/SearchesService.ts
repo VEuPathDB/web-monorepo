@@ -14,7 +14,6 @@ import {
 import { OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
 import * as Decode from 'wdk-client/Utils/Json';
-import { stepAnalysisTypeDecoder } from 'wdk-client/Utils/StepAnalysisUtils';
 
 const reporterDecoder: Decode.Decoder<Reporter> =
   Decode.combine(
@@ -191,7 +190,7 @@ const parameterDecoder: Decode.Decoder<Parameter> =
 export const parametersDecoder: Decode.Decoder<Parameter[]> =
   Decode.arrayOf(parameterDecoder)
 
-const paramGroupDecoder: Decode.Decoder<ParameterGroup> =
+export const paramGroupDecoder: Decode.Decoder<ParameterGroup> =
   Decode.combine(
     Decode.field('description', Decode.string),
     Decode.field('displayName', Decode.string),
@@ -230,16 +229,15 @@ const questionSharedDecoder =
     Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
     Decode.combine(
       Decode.field('defaultSummaryView', Decode.string),
-      Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder)),
-      Decode.field('stepAnalysisPlugins', Decode.arrayOf(stepAnalysisTypeDecoder))
+      Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder))
     ),
     Decode.field('filters', Decode.arrayOf(questionFilterDecoder)),
     Decode.field(
-      'allowedPrimaryInputRecordClassNames', 
+      'allowedPrimaryInputRecordClassNames',
       Decode.optional(Decode.arrayOf(Decode.string))
     ),
     Decode.field(
-      'allowedSecondaryInputRecordClassNames', 
+      'allowedSecondaryInputRecordClassNames',
       Decode.optional(Decode.arrayOf(Decode.string))
     ),
   )
@@ -261,7 +259,7 @@ const questionsDecoder: Decode.Decoder<Question[]> =
   Decode.arrayOf(questionDecoder)
 
 export default (base: ServiceBase) => {
-  
+
   /**
    * Get all Questions defined in WDK Model.
    *

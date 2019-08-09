@@ -1,4 +1,5 @@
-import { StepAnalysisConfig, StepAnalysisType, StepAnalysisParameter } from '../../../../Utils/StepAnalysisUtils';
+import { StepAnalysisConfig, StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
+import { Parameter } from 'wdk-client/Utils/WdkModel';
 
 export const UNINITIALIZED_PANEL_STATE = 'UNINITIALIZED_PANEL_STATE';
 export const ANALYSIS_MENU_STATE = 'ANALYSIS_MENU_STATE';
@@ -52,7 +53,7 @@ export interface SavedAnalysisState extends AnalysisFormState, AnalysisResultSta
 }
 
 interface AnalysisFormState {
-  paramSpecs: StepAnalysisParameter[];
+  paramSpecs: Parameter[];
   paramValues: Record<string, string[]>;
   formStatus: 'AWAITING_USER_SUBMISSION' | 'SAVING_ANALYSIS' | 'ERROR';
   formErrorMessage: string | null;

@@ -215,7 +215,6 @@ export interface Question extends UrlModelEntity {
   dynamicAttributes: AttributeField[];
   defaultSummaryView: string;
   summaryViewPlugins: SummaryViewPluginField[];
-  stepAnalysisPlugins: StepAnalysisType[];
   filters: QuestionFilter[];
   allowedPrimaryInputRecordClassNames?: string[];
   allowedSecondaryInputRecordClassNames?: string[];
