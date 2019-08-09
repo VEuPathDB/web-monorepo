@@ -21,7 +21,7 @@ export const ColocateStepMenu = ({
 }: AddStepOperationMenuProps) => {
   const colocationRecordClasses = useMemo(
     () => recordClasses.filter(
-      ({ searches }) => 
+      ({ searches }) =>
         searches.some(
           ({ urlSegment, allowedPrimaryInputRecordClassNames }) => (
             urlSegment.endsWith(colocationQuestionSuffix) &&
@@ -30,7 +30,7 @@ export const ColocateStepMenu = ({
             inputRecordClass.searches.some(({ urlSegment }) => urlSegment.endsWith(colocationQuestionSuffix))
           )
         )
-      ), 
+      ),
     [ recordClasses, colocationQuestionSuffix ]
   );
 
@@ -45,7 +45,7 @@ export const ColocateStepMenu = ({
       <div className={cx('--Body')}>
         <PrimaryInputLabel
           className={cx('--PrimaryInputLabel')}
-          resultSetSize={operandStep.estimatedSize}
+          resultSetSize={operandStep.estimatedSize || 0}
           recordClass={inputRecordClass}
         />
         <div className={cx('--ColocationIcon')}>
