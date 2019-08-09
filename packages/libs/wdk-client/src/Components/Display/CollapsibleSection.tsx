@@ -36,7 +36,7 @@ function CollapsibleSection(props: Props) {
   }
   return (
     <div id={id} className={containerClassName}>
-      <Header tabIndex={0} className={headerClassName} onClick={handleCollapsedChange}>
+      <Header className={headerClassName} onClick={handleCollapsedChange}>
         {headerContent}
       </Header>
       <div style={contentStyle} className={contentClassName}>
