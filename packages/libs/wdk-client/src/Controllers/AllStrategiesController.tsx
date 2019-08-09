@@ -7,9 +7,10 @@ import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 import AllStrategies from 'wdk-client/Views/Strategy/AllStrategies';
 import { propertyIsNonNull } from 'wdk-client/Utils/ComponentUtils';
-import { addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyViewActions';
+import { addToOpenedStrategies, removeFromOpenedStrategies, setActiveStrategy } from 'wdk-client/Actions/StrategyViewActions';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
 import { requestPatchStrategyProperties, requestDeleteOrRestoreStrategies } from 'wdk-client/Actions/StrategyActions';
+import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
 
 interface StateProps {
@@ -24,6 +25,7 @@ interface StateProps {
 interface DispatchProps {
   openStrategiesListView: () => void;
   closeStrategiesListView: () => void;
+  goToStrategy: (strategyId: number, stepId?: number) => void;
   setActiveTab: (tabId: string) => void;
   addToSelection: (tableId: string, ids: number[]) => void;
   removeFromSelection: (TableId: string, ids: number[]) => void;
@@ -74,6 +76,10 @@ function mapStateToProps(state: RootState): StateProps {
 const dispatchProps: DispatchProps = {
   openStrategiesListView,
   closeStrategiesListView,
+  goToStrategy: (strategyId: number, stepId?: number) => {
+    const subPath = strategyId + (stepId ? '/' + stepId : '');
+    return transitionToInternalPage(`/workspace/strategies/${subPath}`);
+  },
   setActiveTab,
   addToSelection: addToStrategyListSelection,
   removeFromSelection: removeFromStrategyListSelection,

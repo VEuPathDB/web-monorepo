@@ -1,4 +1,4 @@
-import { groupBy, orderBy, partition, truncate } from 'lodash';
+import { groupBy, last, orderBy, partition, truncate } from 'lodash';
 import React from 'react';
 
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
@@ -22,6 +22,8 @@ interface Props {
   strategies: StrategySummary[];
   recordClasses: RecordClass[];
   
+  goToStrategy: (strategyId: number, stepId?: number) => void;
+
   activeTab?: string;
   setActiveTab: (tabId: string) => void;
   
@@ -97,6 +99,7 @@ function StrategiesTab(props: TabContentProps) {
         isSaved={isSaved}
         title={`${isSaved ? 'Saved' : 'Unsaved'} Strategies (${strategies.length.toLocaleString()})`}
         strategies={strategies}
+        goToStrategy={props.goToStrategy}
         selection={props.selectionByTableId[tableId]}
         addToSelection={ids => props.addToSelection(tableId, ids)}
         removeFromSelection={ids => props.removeFromSelection(tableId, ids)}
@@ -128,6 +131,8 @@ interface TableProps {
   isSaved: boolean;
 
   updatePublicStatus: (id: number, isPublic: boolean) => void;
+
+  goToStrategy: (strategyId: number, stepId?: number) => void;
   
   selection: number[] | undefined;
   addToSelection: BatchOperation;
@@ -147,6 +152,7 @@ function StrategiesTable(props: TableProps) {
   const {
     isSaved,
     updatePublicStatus,
+    goToStrategy,
 
     selection = [],
     addToSelection,
@@ -252,12 +258,18 @@ function StrategiesTable(props: TableProps) {
       renderCell: ({ value }: CellRenderProps<number|undefined>) => value == null ? '?' : value.toLocaleString()
     }
   ];
+
+  const handleOpen = makeActionCallback(addToOpened, removeFromSelection);
   
   const mesaActions = [
     {
       selectionRequired: true,
       element: <button type="button" className="btn">Open</button>,
-      callback: makeActionCallback(addToOpened, removeFromSelection)
+      callback: (selection: StrategySummary[]) => {
+        const target = last(selection);
+        handleOpen(selection);
+        if (target) goToStrategy(target.strategyId, target.rootStepId);
+      }
     },
     {
       selectionRequired: true,

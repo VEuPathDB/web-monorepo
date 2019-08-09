@@ -105,22 +105,12 @@ async function getFulfillStrategiesList(
   return fulfillStrategiesList(await wdkService.getStrategies());
 }
 
-function redirectWhenOpened(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
-  return action$.pipe(
-    filter(addToOpenedStrategies.isOfType),
-    // FIXME Put routes in constants
-    tap(() => transitioner.transitionToInternalPage('/workspace/strategies')),
-    mergeMapTo(empty())
-  );
-}
-
 export const observe = takeEpicInWindow(
   {
     startActionCreator: openStrategiesListView,
     endActionCreator: closeStrategiesListView
   },
   combineEpics(
-    redirectWhenOpened,
     smrate([ openSLV                                   ], getRequestStrategiesList),
     smrate([ openSLV, fulfillCreateStrategy            ], getRequestStrategiesList),
     smrate([ openSLV, fulfillDeleteStrategy            ], getRequestStrategiesList),
