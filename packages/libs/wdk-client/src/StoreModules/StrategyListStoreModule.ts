@@ -1,5 +1,5 @@
 import { union, difference } from 'lodash';
-import { combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
+import { combineEpics, StateObservable } from 'redux-observable';
 import { Action } from 'wdk-client/Actions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -18,7 +18,6 @@ import {
   fulfillDeleteStrategy,
   fulfillStrategy,
   fulfillDeleteOrRestoreStrategies,
-  requestPatchStrategyProperties,
   fulfillPatchStrategyProperties,
 } from 'wdk-client/Actions/StrategyActions';
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
@@ -28,9 +27,6 @@ import {
   takeEpicInWindow
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
-import { addToOpenedStrategies } from 'wdk-client/Actions/StrategyViewActions';
-import { Observable, empty } from 'rxjs';
-import { filter, tap, mergeMapTo } from 'rxjs/operators';
 
 /*
 * So far, this store module does not handle opening and closing the strategy panel.  it is just
