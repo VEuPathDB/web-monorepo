@@ -60,12 +60,22 @@ export default function AllStrategies(props: Props) {
   return (
     <React.Fragment>
       <StrategyHeader/>
-      <Tabs
-        activeTab={activeTab || tabs[0].key}
-        tabs={tabs}
-        onTabSelected={setActiveTab}
-        containerClassName={cx()}
-      />
+      <div className={cx()}>
+        <div className={cx('--Info')}>
+          <div className="wdk-Banner warning-banner">
+            <div>
+              <strong>Strategy results are not stored</strong>, only the strategy steps and parameter values are.&nbsp;
+              <strong>Results might change</strong> with subsequent releases of the site if the underlying data has changed.
+            </div>
+          </div>
+        </div>
+        <Tabs
+          activeTab={activeTab || tabs[0].key}
+          tabs={tabs}
+          onTabSelected={setActiveTab}
+          containerClassName={cx()}
+        />
+      </div>
     </React.Fragment>
   )
 }
@@ -84,6 +94,7 @@ function StrategiesTab(props: TabContentProps) {
     return strategies.length > 0 && (
       <StrategiesTable
         key={isSaved ? 'saved' : 'unsaved'}
+        isSaved={isSaved}
         title={`${isSaved ? 'Saved' : 'Unsaved'} Strategies (${strategies.length.toLocaleString()})`}
         strategies={strategies}
         selection={props.selectionByTableId[tableId]}
@@ -114,6 +125,7 @@ interface CellRenderProps<T> {
 interface TableProps {
   title: string;
   strategies: StrategySummary[];
+  isSaved: boolean;
 
   updatePublicStatus: (id: number, isPublic: boolean) => void;
   
@@ -133,7 +145,7 @@ interface TableProps {
 
 function StrategiesTable(props: TableProps) {
   const {
-
+    isSaved,
     updatePublicStatus,
 
     selection = [],
@@ -150,8 +162,17 @@ function StrategiesTable(props: TableProps) {
     onSort
 
   } = props;
+
+  const invalidIcon = <i className={`${cx('--InvalidIcon')} fa fa-ban`} />;
   
   const mesaColumns = [
+    {
+      key: 'isValid',
+      name: invalidIcon,
+      className: cx('--TableCell', 'isValid'),
+      renderCell: ({ value }: CellRenderProps<boolean>) => value ? null : invalidIcon,
+      sortable: true
+    },
     {
       key: 'name',
       name: 'Strategy',
@@ -159,23 +180,37 @@ function StrategiesTable(props: TableProps) {
       sortable: true,
       renderCell: (({ row, value }: CellRenderProps<string>) =>
         <React.Fragment>
-          <Link to={`/workspace/strategies/${row.strategyId}/${row.rootStepId}`}>{value}</Link>&nbsp;
-          {!row.isValid && <i className={`${cx('--InvalidIcon')} fa fa-ban`} />}
+          <Link to={`/workspace/strategies/${row.strategyId}/${row.rootStepId}`}>{value}</Link>
         </React.Fragment>
       )
     },
-    {
-      key: 'nameOfFirstStep',
-      name: 'First Step',
-      className: cx('--TableCell', 'nameOfFirstStep'),
-      sortable: true,
-      renderCell: TruncatedText
-    },
-    {
+    ( isSaved ? {
       key: 'description',
       name: 'Description',
       className: cx('--TableCell', 'description'),
       renderCell: TruncatedText
+    } : {
+      key: 'nameOfFirstStep',
+      name: 'Name of first step',
+      className: cx('--TableCell', 'nameOfFirstStep'),
+      sortable: true,
+      renderCell: TruncatedText
+    }),
+    {
+      key: 'leafAndTransformStepCount',
+      name: '# steps',
+      className: cx('--TableCell', 'leafAndTransformStepCount'),
+      sortable: true
+    },
+    {
+      key: 'actions',
+      name: 'Actions',
+      className: cx('--TableCell', 'actions'),
+      renderCell: () => {
+        <React.Fragment>
+          TODO
+        </React.Fragment>
+      },
     },
     {
       key: 'isPublic',
@@ -211,7 +246,7 @@ function StrategiesTable(props: TableProps) {
     },
     {
       key: 'estimatedSize',
-      name: 'Size',
+      name: 'Result size',
       className: cx('--TableCell', 'estimatedSize'),
       sortable: true,
       renderCell: ({ value }: CellRenderProps<number|undefined>) => value == null ? '?' : value.toLocaleString()
