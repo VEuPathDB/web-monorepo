@@ -1,31 +1,31 @@
-import { 
-  START_LOADING_TAB_LISTING, 
-  FINISH_LOADING_TAB_LISTING, 
-  SELECT_TAB, 
-  START_LOADING_SAVED_TAB, 
-  FINISH_LOADING_SAVED_TAB, 
-  START_LOADING_CHOSEN_ANALYSIS_TAB, 
-  FINISH_LOADING_CHOSEN_ANALYSIS_TAB, 
-  CREATE_NEW_TAB, 
+import {
+  START_LOADING_TAB_LISTING,
+  FINISH_LOADING_TAB_LISTING,
+  SELECT_TAB,
+  START_LOADING_SAVED_TAB,
+  FINISH_LOADING_SAVED_TAB,
+  START_LOADING_CHOSEN_ANALYSIS_TAB,
+  FINISH_LOADING_CHOSEN_ANALYSIS_TAB,
+  CREATE_NEW_TAB,
   DELETE_ANALYSIS,
   REMOVE_TAB,
-  START_FORM_SUBMISSION, 
-  CHECK_RESULT_STATUS, 
-  COUNT_DOWN, 
-  FINISH_FORM_SUBMISSION, 
-  RENAME_ANALYSIS, 
-  RENAME_TAB, 
+  START_FORM_SUBMISSION,
+  CHECK_RESULT_STATUS,
+  COUNT_DOWN,
+  FINISH_FORM_SUBMISSION,
+  RENAME_ANALYSIS,
+  RENAME_TAB,
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
   TOGGLE_PARAMETERS,
   UPDATE_UI_STATE
 } from './StepAnalysisActionConstants';
-import { 
-  UninitializedAnalysisPanelState, 
-  SavedAnalysisState, 
-  AnalysisMenuState, 
-  UnsavedAnalysisState, 
+import {
+  UninitializedAnalysisPanelState,
+  SavedAnalysisState,
+  AnalysisMenuState,
+  UnsavedAnalysisState,
   AnalysisPanelState
 } from '../../StoreModules/StepAnalysis/StepAnalysisState';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
@@ -52,16 +52,16 @@ export type FinishFormSubmissionAction = TypedAction<typeof FINISH_FORM_SUBMISSI
 export type RenameAnalysisAction = TypedAction<typeof RENAME_ANALYSIS, { panelId: number, newDisplayName: string }>
 export type RenameTabAction = TypedAction<typeof RENAME_TAB, { panelId: number, newDisplayName: string }>
 export type DuplicateAnalysisAction = TypedAction<typeof DUPLICATE_ANALYSIS, { panelId: number }>
-export type UpdateParamValues = TypedAction<typeof UPDATE_PARAM_VALUES, { panelId: number, newParamValues: Record<string, string[]> }>;
+export type UpdateParamValues = TypedAction<typeof UPDATE_PARAM_VALUES, { panelId: number, newParamValues: Record<string, string> }>;
 export type ToggleDescription = TypedAction<typeof TOGGLE_DESCRIPTION, { panelId: number }>;
 export type ToggleParameters = TypedAction<typeof TOGGLE_PARAMETERS, { panelId: number }>;
 export type UpdateUiState = TypedAction<typeof UPDATE_UI_STATE, { panelId: number, uiType: 'formUiState' | 'resultUiState', newUiState: Record<string, any> }>;
 
-export type StepAnalysisAction = StartLoadingTabListingAction 
-  | FinishLoadingTabListingAction 
+export type StepAnalysisAction = StartLoadingTabListingAction
+  | FinishLoadingTabListingAction
   | SelectTabAction
-  | StartLoadingSavedTabAction 
-  | FinishLoadingSavedTabAction 
+  | StartLoadingSavedTabAction
+  | FinishLoadingSavedTabAction
   | StartLoadingChosenAnalysisTabAction
   | FinishLoadingChosenAnalysisTabAction
   | CreateNewTabAction

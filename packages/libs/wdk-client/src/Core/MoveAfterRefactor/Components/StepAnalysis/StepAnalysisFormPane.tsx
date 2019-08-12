@@ -15,12 +15,12 @@ export type StepAnalysisFormPluginProps = StepAnalysisFormPluginState & StepAnal
 
 export interface StepAnalysisFormPluginState {
   paramSpecs: Parameter[];
-  paramValues: Record<string, string[]>;
+  paramValues: Record<string, string>;
   formUiState: Record<string, any>;
 }
 
 export interface StepAnalysisFormPluginEventHandlers {
-  updateParamValues: (newParamValues: Record<string, string[]>) => void;
+  updateParamValues: (newParamValues: Record<string, string>) => void;
   updateFormUiState: (newFormState: any) => void;
   onFormSubmit: () => void;
 }

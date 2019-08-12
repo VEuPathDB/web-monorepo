@@ -174,14 +174,12 @@ const parameterDecoder: Decode.Decoder<Parameter> =
         Decode.field('minDate', Decode.string),
         Decode.field('maxDate', Decode.string),
       ),
-
       /* DateRangeParam */
       Decode.combine(
         Decode.field('type', Decode.constant('date-range')),
         Decode.field('minDate', Decode.string),
         Decode.field('maxDate', Decode.string),
       ),
-
       /* AnswerParam */
       Decode.field('type', Decode.constant('input-step'))
     )
@@ -242,12 +240,19 @@ const questionSharedDecoder =
     ),
   )
 
-  const questionWithParametersDecoder: Decode.Decoder<{ searchData: QuestionWithParameters }> =
-  Decode.field('searchData', Decode.combine(
-    questionSharedDecoder,
-    Decode.field('parameters', parametersDecoder)
-  ));
+export type QuestionWithValidatedParameters = {
+  searchData: QuestionWithParameters;
+  validation: any; // FIXME: use actual type here
+}
 
+const questionWithParametersDecoder: Decode.Decoder<QuestionWithValidatedParameters> =
+  Decode.combine(
+    Decode.field('searchData', Decode.combine(
+      questionSharedDecoder,
+      Decode.field('parameters', parametersDecoder)
+    )),
+    Decode.field('validation', Decode.ok)
+  )
 
 const questionDecoder: Decode.Decoder<Question> =
   Decode.combine(

@@ -32,7 +32,7 @@ export interface StepAnalysisType {
 }
 
 export interface FormParams {
-  [key: string]: string[]
+  [key: string]: string
 }
 
 export type StepAnalysisStatus =
@@ -81,7 +81,7 @@ export const stepAnalysisTypeDecoder: Decoder<StepAnalysisType> = combine(
   field('groups', arrayOf(paramGroupDecoder))
 );
 
-export const formParamsDecoder: Decoder<FormParams> = objectOf(arrayOf(string));
+export const formParamsDecoder: Decoder<FormParams> = objectOf(string);
 
 export const stepAnalysisStatusDecoder: Decoder<StepAnalysisStatus> = oneOf(
   constant('CREATED'),

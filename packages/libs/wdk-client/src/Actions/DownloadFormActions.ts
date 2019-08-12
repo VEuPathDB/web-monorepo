@@ -5,7 +5,6 @@ import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AnswerRequest } from 'wdk-client/Service/Mixins/SearchReportsService';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { WdkService } from 'wdk-client/Core';
-import { updateParamValues } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 
 export type Action =
   | InitializeAction

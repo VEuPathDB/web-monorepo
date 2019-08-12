@@ -44,7 +44,6 @@ import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/ope
 import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
-import { denormalizeParamValue } from '../../Components/StepAnalysis/StepAnalysisDefaultForm';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
@@ -92,7 +91,6 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
       const analysisId = panelState.analysisId;
       try {
         const analysisConfig = await wdkService.getStepAnalysis(stepId, analysisId);
-        const paramSpecs = await wdkService.getStepAnalysisTypeParamSpecs(stepId, analysisConfig.analysisName);
         const resultContents = analysisConfig.status === 'COMPLETE'
           ? await wdkService.getStepAnalysisResult(stepId, analysisId)
           : {};
@@ -105,7 +103,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
             analysisConfig,
             analysisConfigStatus: 'COMPLETE',
             pollCountdown: 3,
-            paramSpecs,
+            paramSpecs: analysisConfig.displayParams,
             paramValues: analysisConfig.formParams,
             panelUiState: {
               descriptionExpanded: false,
@@ -178,7 +176,7 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
             paramValues: paramSpecs.reduce(
               (memo, { name, initialDisplayValue }) => ({
                 ...memo,
-                [name]: denormalizeParamValue(initialDisplayValue || '')
+                [name]: initialDisplayValue || ''
               }),
               {}
             ),

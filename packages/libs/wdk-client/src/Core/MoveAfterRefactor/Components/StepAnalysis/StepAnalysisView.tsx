@@ -17,7 +17,7 @@ export interface StepAnalysisLoadingMenuPaneTypedProps {
 }
 
 export type StepAnalysisMenuPaneTypedProps = {
-  type: 'analysis-menu'; 
+  type: 'analysis-menu';
 } & StepAnalysisMenuPaneProps;
 
 export type StepAnalysisSelectedPaneTypedProps = {
@@ -29,7 +29,7 @@ export interface StepAnalysisEventHandlers {
   loadSavedAnalysis: () => void;
   toggleDescription: () => void;
   toggleParameters: () => void;
-  updateParamValues: (newParamValues: Record<string, string[]>) => void;
+  updateParamValues: (newParamValues: Record<string, string>) => void;
   updateFormUiState: (newFormState: Record<string, any>) => void;
   updateResultsUiState: (newResultsState: Record<string, any>) => void;
   onFormSubmit: () => void;

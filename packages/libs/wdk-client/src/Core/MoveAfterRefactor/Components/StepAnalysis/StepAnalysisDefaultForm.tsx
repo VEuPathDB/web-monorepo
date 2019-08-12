@@ -6,12 +6,12 @@ import { Parameter } from 'wdk-client/Utils/WdkModel';
 
 interface StepAnalysisDefaultFormProps {
   paramSpecs: Parameter[];
-  paramValues: Record<string, string[]>;
-  updateParamValues: (newParamValues: Record<string, string[]>) => void;
+  paramValues: Record<string, string>;
+  updateParamValues: (newParamValues: Record<string, string>) => void;
   onFormSubmit: () => void;
 }
 
-export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = ({
+export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisDefaultFormProps> = ({
   paramSpecs,
   paramValues,
   updateParamValues,
@@ -21,6 +21,7 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
     <tbody>
       {
         paramSpecs
+          .filter(paramSpec => paramSpec.isVisible)
           .map(paramSpec =>
             <StepAnalysisParamRow
               key={paramSpec.name}
@@ -30,7 +31,7 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
               onChange={value => {
                 updateParamValues({
                   ...paramValues,
-                  [paramSpec.name]: denormalizeParamValue(value)
+                  [paramSpec.name]: value
                 });
               }}
             />
@@ -47,12 +48,12 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
 
 interface StepAnalysisRowProps {
   displayName: ReactNode;
-  paramValues: Record<string, string[]>;
+  paramValues: Record<string, string>;
   paramSpec: Parameter;
   onChange: (newValue: string) => void;
 }
 
-const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
+const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
   displayName,
   paramValues,
   paramSpec,
@@ -74,10 +75,10 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
         ctx={{
           searchName: '',
           parameter: paramSpec,
-          paramValues: normalizeParamValues(paramValues)
+          paramValues
         }}
         parameter={paramSpec}
-        value={(paramValues[paramSpec.name] || []).join(',')}
+        value={paramValues[paramSpec.name]}
         uiState={uiState}
         dispatch={NOOP}
         onParamValueChange={onChange}
@@ -105,9 +106,6 @@ const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
 
 const uiState = {};
 const NOOP = () => {};
-
-const normalizeParamValues = (paramValues: Record<string, string[]>) => mapValues(join(','), paramValues);
-export const denormalizeParamValue = split(/\s*,\s*/g);
 
 const tooltipPosition = {
   my: 'top center',

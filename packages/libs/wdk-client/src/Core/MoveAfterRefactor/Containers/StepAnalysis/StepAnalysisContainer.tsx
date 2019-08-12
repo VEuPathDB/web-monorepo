@@ -17,8 +17,8 @@ type StateProps = {
   recordClass: ReturnType<typeof recordClass>;
   analysisChoices: ReturnType<typeof analysisChoices>;
   analysisBaseTabConfigs: ReturnType<typeof analysisBaseTabConfigs>;
-  analysisPanelOrder: ReturnType<typeof analysisPanelOrder>, 
-  analysisPanelStates: ReturnType<typeof analysisPanelStates>, 
+  analysisPanelOrder: ReturnType<typeof analysisPanelOrder>,
+  analysisPanelStates: ReturnType<typeof analysisPanelStates>,
   activeTab: ReturnType<typeof activeTab>;
   newAnalysisButtonVisible: boolean;
 };
@@ -81,12 +81,12 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
   }
 }
 
-const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({ 
+const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   webAppUrl: webAppUrl(state),
   recordClass: recordClass(state, props),
   wdkModelBuildNumber: wdkModelBuildNumber(state),
   analysisChoices: analysisChoices(state),
-  analysisPanelOrder: analysisPanelOrder(state), 
+  analysisPanelOrder: analysisPanelOrder(state),
   analysisPanelStates: analysisPanelStates(state),
   analysisBaseTabConfigs: analysisBaseTabConfigs(state),
   activeTab: activeTab(state, { viewId: 'strategy', ...props }),
@@ -101,7 +101,7 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
         type: 'ANALYSIS_MENU_STATE',
         displayName: 'New Analysis',
         status: 'AWAITING_USER_CHOICE',
-        errorMessage: null 
+        errorMessage: null
       }
     )
   ),
@@ -111,7 +111,7 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
   toggleParameters: memoize((panelId: number) => () => dispatch(toggleParameters(panelId))),
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
   loadSavedAnalysis: memoize((panelId: number) => () => dispatch(startLoadingSavedTab(panelId))),
-  updateParamValues: memoize((panelId: number) => (newParamValues: Record<string, string[]>) => dispatch(updateParamValues(panelId, newParamValues))),
+  updateParamValues: memoize((panelId: number) => (newParamValues: Record<string, string>) => dispatch(updateParamValues(panelId, newParamValues))),
   updateFormUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateFormUiState(panelId, newUiState))),
   onFormSubmit: memoize((panelId: number) => () => dispatch(startFormSubmission(panelId))),
   updateResultsUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateResultUiState(panelId, newUiState))),
@@ -120,15 +120,15 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
 });
 
 const mergeProps = (
-  stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps 
+  stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps
 ): StepAnalysisContainerProps & OwnProps => ({
   ...ownProps,
   loadingTabs: stateProps.analysisChoices.length === 0,
   activeTab: `${stateProps.activeTab}`,
   newAnalysisButton: (
-    <button 
-      id="add-analysis" 
-      title="Choose an analysis tool to apply to the results of your current step." 
+    <button
+      id="add-analysis"
+      title="Choose an analysis tool to apply to the results of your current step."
       onClick={eventHandlers.openAnalysisMenu}
     >
       Analyze Results
@@ -138,8 +138,8 @@ const mergeProps = (
   onTabRemoved: eventHandlers.onTabRemoved,
   loadTabs: eventHandlers.loadTabs,
   tabs: stateProps.analysisBaseTabConfigs.map(
-    baseTabConfig => ({ 
-      ...baseTabConfig, 
+    baseTabConfig => ({
+      ...baseTabConfig,
       content: (
         <StepAnalysisView
           key={baseTabConfig.key}
@@ -151,7 +151,7 @@ const mergeProps = (
               stateProps.wdkModelBuildNumber,
               stateProps.recordClass ? stateProps.recordClass.displayName : ''
             )
-          } 
+          }
           loadChoice={eventHandlers.loadChoice(+baseTabConfig.key)}
           loadSavedAnalysis={eventHandlers.loadSavedAnalysis(+baseTabConfig.key)}
           toggleDescription={eventHandlers.toggleDescription(+baseTabConfig.key)}

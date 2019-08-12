@@ -54,7 +54,7 @@ export interface SavedAnalysisState extends AnalysisFormState, AnalysisResultSta
 
 interface AnalysisFormState {
   paramSpecs: Parameter[];
-  paramValues: Record<string, string[]>;
+  paramValues: Record<string, string>;
   formStatus: 'AWAITING_USER_SUBMISSION' | 'SAVING_ANALYSIS' | 'ERROR';
   formErrorMessage: string | null;
   formValidationErrors: string[];
