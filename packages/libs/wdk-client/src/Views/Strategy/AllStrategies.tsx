@@ -68,7 +68,7 @@ export default function AllStrategies(props: Props) {
       <StrategyHeader/>
       <div className={cx()}>
         <div className={cx('--Info')}>
-          <div className="wdk-Banner warning-banner">
+          <div className="wdk-Banner info-banner">
             <div>
               <strong>Strategy results are not stored</strong>, only the strategy steps and parameter values are.&nbsp;
               <strong>Results might change</strong> with subsequent releases of the site if the underlying data has changed.
