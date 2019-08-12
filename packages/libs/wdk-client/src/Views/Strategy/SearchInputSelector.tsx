@@ -65,7 +65,7 @@ export const SearchInputSelectorView = ({
         </Tooltip>
       )
       : displayElement;
-  }, []);
+  }, [ onCombineWithNewSearchClicked ]);
 
   const noSelectedLeaves = useMemo(
     () => [] as string[],
@@ -94,7 +94,7 @@ export const SearchInputSelectorView = ({
   );
 
   return (
-    <div className={containerClassName}>
+    <div className={`${containerClassName || ''} ${cx()}`}>
       <button 
         onClick={onCombineWithBasketClicked} 
         disabled={combinedWithBasketDisabled}

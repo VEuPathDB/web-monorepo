@@ -1,8 +1,19 @@
 .SearchInputSelector {
+  display: flex;
+  flex-direction: column;
+
+  >:first-child {
+    margin-bottom: 1em;
+  }
+    
+  >:not(:first-child) {
+    margin: 1em 0;
+  }
+
   &--NewSearchCheckbox {
-    background: linear-gradient(#f4f4f4, #dddddd);
+    background: #f1f1f1;
     border-radius: 5px;
-    border: 1px solid #afafaf
+    border: 1px solid black;
   }
   
   &--CheckboxHeader {
@@ -12,5 +23,18 @@
 
   &--CheckboxContainer {
     padding: 0 0.5em 0.5em 0.5em
+  }
+
+  .wdk-CategoriesCheckboxTree {
+    position: relative;
+    border: 1px solid grey;
+    padding: 0 0.5em;
+    background-color: white;
+    border-radius: 1px;
+    text-align: left;
+
+    .wdk-CheckboxTreeLinks {
+      margin-left: unset;
+    }
   }
 }

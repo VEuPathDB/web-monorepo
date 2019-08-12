@@ -23,9 +23,14 @@
     }
   }
 
-  &--PrimaryInputLabel {
+  &--TransformIcon {
+    background-image: url('./convertStepMenuIcon.svg');
+    background-size: cover;
+
     border: 1px solid black;
-    padding: 1em;
+
+    width: 4em;
+    height: 4em;
   }
 
   &--OperatorSelector {

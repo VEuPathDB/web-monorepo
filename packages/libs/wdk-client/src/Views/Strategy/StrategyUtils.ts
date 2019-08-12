@@ -27,3 +27,9 @@ export const combineOperatorOrder = [
 export function getStepUrl(step: Step) {
   return `/workspace/strategies/${step.strategyId}/${step.id}`;
 }
+
+export function formatDateTimeString(dateTimeString: string) {
+  const [ date, time ] = dateTimeString.split('T');
+  const hoursAndMinutes = time.replace(/:[^:]*$/, '');
+  return `${date} ${hoursAndMinutes}`;
+}

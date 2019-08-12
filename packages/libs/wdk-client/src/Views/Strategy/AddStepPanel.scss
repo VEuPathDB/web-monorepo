@@ -4,6 +4,32 @@
   h1 {
     font-size: 2em;
     font-weight: 500;
+
+    margin-bottom: 1em;
+
+    padding: unset;
+  }
+
+  div:not(.wdk-QuestionFormParameterHeading) {
+    & > h2, & > p {
+      text-align: center;
+      margin: 1em 0;
+      padding: unset;
+    }
+
+    & > p {
+      font-size: 1.5em;
+      margin: 0 0 1em 0;
+    }
+  }
+
+  button {
+    padding: 0.5em;
+    background: #f1f1f1;
+    color: black;
+    border-color: black;
+    border-width: 1px 1px 2px 1px;
+    border-radius: 5px;
   }
 
   &--Container {
@@ -11,16 +37,16 @@
   }
   
   &--Header {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
   }
 
   &--MenuItemsContainer {
     display: flex;
-
-    text-align: center;
+    justify-content: center;
 
     h3 {
-      text-align: center;
+      padding: unset;
     }
 
     >:first-child {
@@ -46,13 +72,13 @@
     font-size: 1.5em;
     white-space: nowrap;
     
-    p {
-      padding-top: 2em
+    em {
+      margin: 1.15em 0 1.2em 0
     }
   }
 
   &--MenuItemDividingLine {
-    border-left: 1px solid black; 
+    border-left: 2px solid lightgrey; 
     height: 100%;
   }
 }

@@ -3,6 +3,7 @@ import React, {useMemo} from 'react';
 
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
+import { formatDateTimeString } from 'wdk-client/Views/Strategy/StrategyUtils';
 import { Link } from 'react-router-dom';
 import { MesaState, Mesa } from 'wdk-client/Components/Mesa';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
@@ -405,9 +406,7 @@ function TruncatedText({ value, length = 50 }: { value: string, length?: number 
 }
 
 function formatDateTime(props: CellRenderProps<string>) {
-  const [ date, time ] = props.value.split('T');
-  const hoursAndMinutes = time.replace(/:[^:]*$/, '');
-  return `${date} ${hoursAndMinutes}`;
+  return formatDateTimeString(props.value);
 }
 
 function makeActionCallback(...operations: BatchOperation[]) {

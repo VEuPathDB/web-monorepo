@@ -5,13 +5,14 @@ import { RealTimeSearchBox } from '../../../../Components';
 import React from 'react';
 import { htmlStringValue, numericValue } from '../../../../Components/Mesa/Utils/Utils';
 import { compose, debounce } from 'lodash/fp';
+import { MesaColumn } from 'wdk-client/Core/CommonTypes';
 
 const simpleFilterPredicateFactory = (searchQuery: string) => (row: Record<string, string>) =>
   Object.values(row).some(entry => `${entry}`.toLowerCase().includes(searchQuery.toLowerCase()));
 
-interface StepAnalysisEnrichmentResultTableProps {
+interface StepAnalysisEnrichmentResultTableProps<R> {
   emptyResultMessage: string;
-  rows: Record<string, any>[];
+  rows: R[];
   columns: ColumnSettings[];
   initialSearchQuery?: string;
   initialSortColumnKey?: string;
@@ -20,20 +21,14 @@ interface StepAnalysisEnrichmentResultTableProps {
   pagination?: boolean;
 }
 
-export interface ColumnSettings {
-  key: string;
-  name: string;
-  helpText?: string;
-  sortable: boolean;
-  type?: 'text' | 'html';
-  width?: string;
-  renderCell?: (cellProps: any) => JSX.Element;
+export interface ColumnSettings extends MesaColumn {
+  type?: 'number' | 'text' | 'html';
   sortType?: 'text' | 'number' | 'htmlText' | 'htmlNumber';
 }
 
-// TODO Refactor to use hooks
-export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnrichmentResultTableProps, any> {
-  constructor(props: StepAnalysisEnrichmentResultTableProps) {
+// TODO Refactor using hooks
+export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends Component<StepAnalysisEnrichmentResultTableProps<R>, any> {
+  constructor(props: StepAnalysisEnrichmentResultTableProps<R>) {
     super(props);
     this.handleSearch = debounce(200, this.handleSearch.bind(this));
     this.handleSort = this.handleSort.bind(this);
@@ -81,10 +76,10 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
     });
   }
 
-  componentDidUpdate(prevProps: StepAnalysisEnrichmentResultTableProps) {
+  componentDidUpdate(prevProps: StepAnalysisEnrichmentResultTableProps<R>) {
     if (prevProps !== this.props) {
       this.setState(
-        (prevState: any, props: StepAnalysisEnrichmentResultTableProps) => 
+        (prevState: any, props: StepAnalysisEnrichmentResultTableProps<R>) => 
           MesaState.setColumns(
             MesaState.setRows(prevState, props.rows),
             props.columns

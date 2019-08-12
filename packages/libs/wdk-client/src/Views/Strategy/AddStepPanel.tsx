@@ -36,6 +36,7 @@ type OwnProps = {
   addType: AddType,
   strategyId: number,
   operationTypes?: string[],
+  onHideInsertStep: () => void,
   developmentMode?: boolean
 };
 
@@ -84,6 +85,7 @@ export const AddStepPanelView = wrappable((
     developmentMode = false,
     loadStrategy,
     inputRecordClass,
+    onHideInsertStep,
     operationTypes = defaultOperationTypes,
     operandStep,
     previousStep,
@@ -108,10 +110,12 @@ export const AddStepPanelView = wrappable((
     e.preventDefault();
 
     const newPageHistory = pageHistory.slice(0, -1);
+
     if (newPageHistory.length === 0) {
       setSelectedOperation(undefined);
     }
-    setPageHistory(pageHistory.slice(0, -1));
+
+    setPageHistory(newPageHistory);
   }, [ pageHistory ]);
 
   const advanceToPage = useCallback((nextPage: string) => {
@@ -170,7 +174,19 @@ export const AddStepPanelView = wrappable((
           ? <Loading />
           : <div className={cx('--Container')}>
               <h1 className={cx('--Header')}>
-                Add a Step to your Strategy
+                <button 
+                  type="button" 
+                  className="link" 
+                  onClick={selectedOperation ? onClickBack : onHideInsertStep} 
+                  title="Go Back">
+                  <i className="fa fa-lg fa-arrow-circle-left" />
+                </button>
+                <div>
+                  Add a Step to your Strategy
+                </div>
+                <button type="button" className="link" onClick={onHideInsertStep} title="Close">
+                  <i className="fa fa-lg fa-times-circle" />
+                </button>
               </h1>
               {
                 !selectedOperation
@@ -218,11 +234,8 @@ export const AddStepPanelView = wrappable((
                                 {
                                   index < operationTypes.length - 1 &&
                                   <div className={cx('--MenuItemSeparator')}>
-                                    <p>
-                                      <em>-or-</em>
-                                    </p>
-                                    <div className={cx('--MenuItemDividingLine')}>
-                                    </div>
+                                    <em>-or-</em>
+                                    <div className={cx('--MenuItemDividingLine')}></div>
                                   </div>
                                 }
                               </React.Fragment>
@@ -233,9 +246,6 @@ export const AddStepPanelView = wrappable((
                   )
                   : (
                     <div className={cx('--Form')}>
-                      <a href="#" onClick={onClickBack}>
-                        Go Back
-                      </a>
                       <Plugin<AddStepOperationFormProps>
                         context={{
                           type: 'addStepOperationForm',

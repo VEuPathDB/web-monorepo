@@ -23,11 +23,6 @@
     }
   }
 
-  &--PrimaryInputLabel {
-    border: 1px solid black;
-    padding: 1em;
-  }
-
   &--OperatorChoice {
     display: flex;
     flex-direction: row;
@@ -42,31 +37,5 @@
 
   &--OperatorSelector {
     border: 1px solid black;
-  }
-
-  &--SecondaryInputSelector {
-    display: flex;
-    flex-direction: column;
-
-    >:first-child {
-      margin-bottom: 1em;
-    }
-      
-    >:not(:first-child) {
-      margin: 1em 0;
-    }
-  }
-
-  .wdk-CategoriesCheckboxTree {
-    position: relative;
-    border: 1px solid grey;
-    padding: 0 0.5em;
-    background-color: white;
-    border-radius: 1px;
-    text-align: left;
-
-    .wdk-CheckboxTreeLinks {
-      margin-left: unset;
-    }
   }
 }

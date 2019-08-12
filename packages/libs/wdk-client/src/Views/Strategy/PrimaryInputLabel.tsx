@@ -1,23 +1,37 @@
 import React from 'react';
 
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
+import 'wdk-client/Views/Strategy/PrimaryInputLabel.scss';
+
+const cx = makeClassNameHelper('PrimaryInputLabel');
+
 type Props = {
-  className?: string,
-  resultSetSize: number,
+  resultSetSize: number | undefined,
   recordClass: RecordClass;
 };
 
 export const PrimaryInputLabel = ({
-  className,
   resultSetSize,
   recordClass
 }: Props) =>
-  <div className={className}>
-    {resultSetSize.toLocaleString()}
-    {' '}
-    {resultSetSize === 1 
-      ? recordClass.shortDisplayName 
-      : recordClass.shortDisplayNamePlural
-    }
+  <div className={cx()}>
+    <div className={cx('--Text')}>
+      {resultSetSize ? resultSetSize.toLocaleString() : '?'}
+      <br />
+      {resultSetSize === 1 
+        ? recordClass.shortDisplayName 
+        : recordClass.shortDisplayNamePlural
+      }
+    </div>
+    <div className={cx('--Arrow')}>
+      <svg viewBox="1 0 36 72">
+        <polygon 
+          points="0 0, 36 36, 0 72"
+          fill="#f1f1f1"
+          stroke="black"
+        />
+      </svg>
+    </div>
   </div>;

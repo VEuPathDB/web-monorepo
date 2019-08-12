@@ -136,10 +136,10 @@ const CombineWithStrategyFormView = ({
     <div className={cx()}>
       <div className={cx('--Header')}>
         <h2>
-          Choose an existing strategy
+          Choose an existing {inputRecordClass.displayNamePlural} strategy
         </h2>
 
-        <div>
+        <p>
           The results will be{' '}
           <SingleSelect
             value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
@@ -147,7 +147,7 @@ const CombineWithStrategyFormView = ({
             items={addType.type === 'append' ? selectItemsAppend : selectItemsInsertBefore}
           />
           {' '}the results of Step {stepsCompletedNumber}.
-        </div>
+        </p>
       </div>
       <div className={cx('--Body')}>
         {

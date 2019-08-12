@@ -187,8 +187,7 @@ export const CombineStepMenuView = (
               </div>
               <div className={cx('--Body')}>
                 <PrimaryInputLabel
-                  className={cx('--PrimaryInputLabel')}
-                  resultSetSize={operandStep.estimatedSize || 0}
+                  resultSetSize={operandStep.estimatedSize}
                   recordClass={inputRecordClass}
                 />
                 <div className={cx('--OperatorSelector')}>

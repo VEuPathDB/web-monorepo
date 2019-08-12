@@ -99,13 +99,11 @@ export default function StrategyPanel(props: Props) {
       <StrategyActionModal {...props} />
       {props.insertStepVisibility && (
         <Modal className={cx('--Modal')}>
-          <div>
-            <button type="button" className="link" onClick={() => onHideInsertStep()}>Close</button>
-            <AddStepPanel
-              strategyId={props.strategy.strategyId}
-              addType={props.insertStepVisibility}
-            />
-          </div>
+          <AddStepPanel
+            strategyId={props.strategy.strategyId}
+            addType={props.insertStepVisibility}
+            onHideInsertStep={onHideInsertStep}
+          />
         </Modal>
       )}
       {reviseStep && (

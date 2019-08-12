@@ -37,20 +37,33 @@ export type Props = {
 const cx = makeClassNameHelper('wdk-QuestionForm');
 const tooltipPosition = { my: 'right center', at: 'left center' };
 
+// FIXME Should be made nicer once we upgrade to a version of Redux that supports hooks
+export const useDefaultOnSubmit = (dispatchAction: DispatchAction, urlSegment: string, submissionMetadata: SubmissionMetadata) =>
+  React.useCallback(
+    (event: React.FormEvent) => {
+      event.preventDefault();
+      dispatchAction(submitQuestion({ searchName: urlSegment, submissionMetadata }));
+    },
+    [ dispatchAction, urlSegment, submissionMetadata ]
+  );
+
 export default function DefaultQuestionForm(props: Props) {
 
   const { dispatchAction, onSubmit, submissionMetadata, state } = props;
   const { question, customName, paramValues, weight } = state;
 
-  let handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata);
 
-    if (onSubmit) {
-      onSubmit(e);
-    }
+  let handleSubmit = React.useCallback(
+    (event: React.FormEvent) => {
+      if (onSubmit) {
+        onSubmit(event);
+      }
 
-    dispatchAction(submitQuestion({ searchName: question.urlSegment, submissionMetadata: props.submissionMetadata }));
-  }
+      defaultOnSubmit(event);
+    },
+    [ defaultOnSubmit ]
+  );
 
   let handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatchAction(updateCustomQuestionName({ searchName: question.urlSegment, customName: event.target.value }));
