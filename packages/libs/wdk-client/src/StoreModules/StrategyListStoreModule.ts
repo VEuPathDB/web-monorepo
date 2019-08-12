@@ -29,10 +29,6 @@ import {
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
 
-/*
-* So far, this store module does not handle opening and closing the strategy panel.  it is just
-* the panel itself.  Opening and closing it might be controlled here or above in the workspace
-*/
 export const key = 'strategyList';
 
 type State = {
