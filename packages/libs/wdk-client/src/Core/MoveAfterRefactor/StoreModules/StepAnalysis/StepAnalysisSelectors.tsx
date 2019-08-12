@@ -301,7 +301,7 @@ const mapSavedAnalysisStateToProps = (
   },
   formSaving: formStatus === 'SAVING_ANALYSIS',
   formState: {
-    hasParameters: typeHasParameters(analysisConfig.analysisName, choices),
+    hasParameters: paramSpecs.length > 0,
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
@@ -360,12 +360,6 @@ const displayToType = (display: string, choices: StepAnalysisType[]) => get(
   choices.find(({ displayName }) => display === displayName),
   'name',
   ''
-);
-
-const typeHasParameters = (display: string, choices: StepAnalysisType[]) => get(
-  choices.find(({ name }) => display === name),
-  'hasParameters',
-  false
 );
 
 const typeToDisplay = (type: string, choices: StepAnalysisType[]) => get(
