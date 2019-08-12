@@ -1,37 +1,41 @@
 .ColocateStepForm {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-
   &--Header {
     text-align: center;
   }
 
-  &--SearchInputSelector {
+  &--SelectSearchPage {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
 
-    width: 25%;
+  &--SearchInputSelectorContainer {
+    display: flex;
+    align-items: start;
+    justify-content: space-evenly;
 
     >:first-child {
-      margin-bottom: 1em;
+      margin-right: 1em;
     }
-      
+
     >:not(:first-child) {
-      margin: 1em 0;
+      margin: 0 1em;
     }
   }
 
-  .wdk-CategoriesCheckboxTree {
-    position: relative;
-    border: 1px solid grey;
-    padding: 0 0.5em;
-    background-color: white;
-    border-radius: 1px;
-    text-align: left;
+  &--SearchInputSelector {
+    width: 50%;
+  }
 
-    .wdk-CheckboxTreeLinks {
-      margin-left: unset;
-    }
+  &--ColocationIcon {
+    background-image: url('../questions/overlap.svg');
+    background-size: cover;
+
+    border: 1px solid black;
+
+    width: 4em;
+    height: 4em;
   }
 }

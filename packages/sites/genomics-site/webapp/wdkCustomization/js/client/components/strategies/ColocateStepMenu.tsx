@@ -31,7 +31,7 @@ export const ColocateStepMenu = ({
           )
         )
       ),
-    [ recordClasses, colocationQuestionSuffix ]
+    [ inputRecordClass, recordClasses, colocationQuestionSuffix ]
   );
 
   return (
@@ -44,13 +44,10 @@ export const ColocateStepMenu = ({
       </div>
       <div className={cx('--Body')}>
         <PrimaryInputLabel
-          className={cx('--PrimaryInputLabel')}
-          resultSetSize={operandStep.estimatedSize || 0}
+          resultSetSize={operandStep.estimatedSize}
           recordClass={inputRecordClass}
         />
-        <div className={cx('--ColocationIcon')}>
-          X
-        </div>
+        <div className={cx('--ColocationIcon')}></div>
         <div className={cx('--RecordClassSelector')}>
           {
             colocationRecordClasses.length === 0

@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { partial } from 'lodash';
 
-import { TextBox } from 'wdk-client/Components';
-import { Props as DefaultFormProps, SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { TextBox, SingleSelect } from 'wdk-client/Components';
+import { Props as DefaultFormProps, SubmitButton, useDefaultOnSubmit } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -30,8 +30,39 @@ const regionTypeOrder: RegionType[] = [
   'custom'
 ];
 
+const operationItemsAB = [
+  {
+    value: 'overlap',
+    display: 'overlaps'
+  },
+  {
+    value: 'a_contain_b',
+    display: 'contains'
+  },
+  {
+    value: 'b_contain_a',
+    display: 'is contained in',
+  }
+];
+
+const operationItemsBA = [
+  {
+    value: 'overlap',
+    display: 'overlaps'
+  },
+  {
+    value: 'b_contain_a',
+    display: 'contains'
+  },
+  {
+    value: 'a_contain_b',
+    display: 'is contained in',
+  }
+];
+
 export function SpanLogicForm(
   { 
+    dispatchAction,
     eventHandlers: { updateParamValue }, 
     state: { paramValues, question: { parametersByName, urlSegment } },
     parameterElements,
@@ -54,21 +85,24 @@ export function SpanLogicForm(
       paramValue,
       searchName: urlSegment
     });
-  }, [ urlSegment ]);
+  }, [ paramValues, parametersByName, urlSegment ]);
 
   useEffect(() => {
     // TODO: Discuss whether we still need this parameter
     updateSpanLogicParam('span_sentence', undefined, 'sentence');
-  }, [ updateSpanLogicParam ]);
+  }, [ urlSegment ]);
 
   useEffect(() => {
-    // TODO: Discuss whether we still need this parameter
     updateSpanLogicParam('span_output', undefined, !insertingBeforeFirstStep ? 'a' : 'b');
-  }, [ updateSpanLogicParam, insertingBeforeFirstStep ]);
+  }, [ urlSegment, insertingBeforeFirstStep ]);
 
   const updateOutputParam = useCallback((newOutputParam: RegionName) => {
     updateSpanLogicParam('span_output', undefined, newOutputParam);
-  }, [ updateSpanLogicParam ] )
+  }, [ updateSpanLogicParam ] );
+
+  const updateOperationParam = useCallback((newOperationParam: string) => {
+    updateSpanLogicParam('span_operation', undefined, newOperationParam);
+  }, [ updateSpanLogicParam ] );
 
   const updateUpstreamOffset = useCallback((regionName: RegionName, newUpstream: string) => {
     if (regionName === 'a') {
@@ -117,6 +151,16 @@ export function SpanLogicForm(
     }
   }, [ upstreamOffsetA, upstreamOffsetB, downstreamOffsetA, downstreamOffsetB, updateUpstreamOffset, updateDownstreamOffset, updateSpanLogicParam ]);
 
+  const onSubmit = useDefaultOnSubmit(dispatchAction, urlSegment, submissionMetadata);
+
+  const [ leftRegion, rightRegion ] = paramValues['span_output'] !== 'b' && !insertingBeforeFirstStep
+    ? [ 'region_a', 'region_b' ]
+    : paramValues['span_output'] !== 'b' && insertingBeforeFirstStep
+    ? [ 'region_b', 'region_a' ]
+    : paramValues['span_output'] !== 'a' && !insertingBeforeFirstStep
+    ? [ 'region_b', 'region_a' ]
+    : [ 'region_a', 'region_b' ];
+
   const regionConfigA = (
     <RegionConfig
       regionTypeParamValue={paramValues['region_a'] as RegionType}
@@ -132,7 +176,7 @@ export function SpanLogicForm(
       updateRegionType={partial(updateRegionType, 'a')}
       updateUpstreamOffset={partial(updateUpstreamOffset, 'a')}
       updateDownstreamOffset={partial(updateDownstreamOffset, 'a')}
-      recordClass={currentStepRecordClass}
+      recordClass={!insertingBeforeFirstStep ? currentStepRecordClass : newStepRecordClass}
       spanBeginValue={paramValues['span_begin_a'] as RegionOrigin}
       spanBeginDirectionValue={paramValues['span_begin_direction_a'] as RegionDirection}
       spanBeginOffsetValue={parseInt(paramValues['span_begin_offset_a'], 10) || 0}
@@ -157,7 +201,7 @@ export function SpanLogicForm(
       updateRegionType={partial(updateRegionType, 'b')}
       updateUpstreamOffset={partial(updateUpstreamOffset, 'b')}
       updateDownstreamOffset={partial(updateDownstreamOffset, 'b')}
-      recordClass={newStepRecordClass}
+      recordClass={!insertingBeforeFirstStep ? newStepRecordClass : currentStepRecordClass}
       spanBeginValue={paramValues['span_begin_b'] as RegionOrigin}
       spanBeginDirectionValue={paramValues['span_begin_direction_b'] as RegionDirection}
       spanBeginOffsetValue={parseInt(paramValues['span_begin_offset_b'], 10) || 0}
@@ -166,14 +210,6 @@ export function SpanLogicForm(
       spanEndOffsetValue={parseInt(paramValues['span_end_offset_b'], 10) || 0}
     />
   );
-
-  const [ leftRegion, rightRegion ] = paramValues['span_output'] !== 'b' && !insertingBeforeFirstStep
-    ? [ 'region_a', 'region_b' ]
-    : paramValues['span_output'] !== 'b' && insertingBeforeFirstStep
-    ? [ 'region_b', 'region_a' ]
-    : paramValues['span_output'] !== 'a' && !insertingBeforeFirstStep
-    ? [ 'region_b', 'region_a' ]
-    : [ 'region_a', 'region_b' ];
 
   return (
     <div className={cx()}>
@@ -198,7 +234,13 @@ export function SpanLogicForm(
       </div>
       <div className={cx('--SpanSentence-Operation')}>
         <span>
-          {parameterElements['span_operation']} the
+          <SingleSelect
+            value={paramValues['span_operation']} 
+            items={leftRegion === 'region_a' ? operationItemsAB : operationItemsBA}
+            onChange={updateOperationParam}
+          />
+          {' '}
+          the
         </span>
       </div>
       <div className={cx('--SpanSentence-RightRegion')}>
@@ -238,7 +280,9 @@ export function SpanLogicForm(
       </div>
       <div className={cx('--RightRegionConfigGutter')}></div>
       <div className={cx('--SubmissionContainer')}>
-        <SubmitButton submissionMetadata={submissionMetadata} />
+        <form onSubmit={onSubmit}>
+          <SubmitButton submissionMetadata={submissionMetadata} />
+        </form>
       </div>
     </div>
   );
@@ -320,7 +364,7 @@ const RegionConfig = ({
   spanEndOffsetValue
 }: RegionConfigProps) => {
   // TODO Figure out how to eliminate this hardcoding
-  const singleBpFeature = recordClass.urlSegment === 'snps';
+  const singleBpFeature = recordClass.urlSegment === 'snp';
   const featureLength = singleBpFeature ? 1 : 2000;
 
   const beginFeatureEndpoint = spanBeginValue === 'start' ? 0 : featureLength;

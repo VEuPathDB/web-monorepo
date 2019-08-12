@@ -17,6 +17,7 @@ import { SpanLogicForm } from '../questions/SpanLogicForm';
 
 import './ColocateStepForm.scss';
 import { findAppendPoint } from 'wdk-client/Utils/StrategyUtils';
+import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 
 
 const cx = makeClassNameHelper('ColocateStepForm');
@@ -145,6 +146,8 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
 
 const SelectSearchPage = ({
   advanceToPage,
+  inputRecordClass,
+  operandStep,
   recordClassesByUrlSegment,
   recordClassUrlSegment
 }: AddStepOperationFormProps & { recordClassUrlSegment: string }) => {
@@ -163,14 +166,36 @@ const SelectSearchPage = ({
   }, [ advanceToPage ]);
 
   return (
-    <SearchInputSelector
-      combinedWithBasketDisabled={false}
-      containerClassName={cx('--SearchInputSelector')}
-      inputRecordClass={secondaryInputRecordClass}
-      onCombineWithBasketClicked={onCombineWithBasketClicked}
-      onCombineWithStrategyClicked={onCombineWithStrategyClicked}
-      onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
-    />
+    <div className={cx('--SelectSearchPage')}>
+      <h2>
+        Choose a {secondaryInputRecordClass.displayName} result to combine with your strategy using <em>genomic colocation</em>
+      </h2>
+
+      <p>
+        Genomic colocation allows you to select members of either result based on their proximity to members of the other set.<br />  
+        For example, you can find {inputRecordClass.displayNamePlural} in your strategy that are 100 bp upstream of {secondaryInputRecordClass.displayNamePlural} in the result you are combining.
+      </p>
+
+      <p>
+        The next step is to choose a set of {secondaryInputRecordClass.displayNamePlural} to combine. 
+      </p>
+
+      <div className={cx('--SearchInputSelectorContainer')}>
+        <PrimaryInputLabel
+          resultSetSize={operandStep.estimatedSize}
+          recordClass={inputRecordClass}
+        />
+        <div className={cx('--ColocationIcon')}></div>
+        <SearchInputSelector
+          combinedWithBasketDisabled={false}
+          containerClassName={cx('--SearchInputSelector')}
+          inputRecordClass={secondaryInputRecordClass}
+          onCombineWithBasketClicked={onCombineWithBasketClicked}
+          onCombineWithStrategyClicked={onCombineWithStrategyClicked}
+          onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
+        />
+      </div>
+    </div>
   );
 };
 
@@ -319,7 +344,7 @@ const ColocationOperatorForm = (
   const newStepRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
 
   const insertingBeforeFirstStep = !previousStep;
-
+  
   const typeChangeAllowed = !outputStep;
 
   const FormComponent = useCallback(
@@ -331,7 +356,7 @@ const ColocationOperatorForm = (
         insertingBeforeFirstStep={insertingBeforeFirstStep}
         typeChangeAllowed={typeChangeAllowed}
       />,
-    [ recordClassesByUrlSegment, operandStep, recordClassUrlSegment ]
+    [ currentStepRecordClass, newStepRecordClass, insertingBeforeFirstStep, typeChangeAllowed ]
   );
 
   return !colocationQuestion
