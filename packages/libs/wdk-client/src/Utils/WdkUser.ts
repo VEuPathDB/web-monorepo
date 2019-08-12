@@ -60,6 +60,7 @@ export interface StrategyProperties {
 }
 
 export interface StrategySummary extends StrategyProperties {
+  nameOfFirstStep?: string;
   strategyId: number;
   rootStepId: number;
   estimatedSize?: number; // optional; may be null if step was modified but not rerun

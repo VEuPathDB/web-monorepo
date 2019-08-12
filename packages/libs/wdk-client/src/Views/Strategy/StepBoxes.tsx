@@ -236,7 +236,8 @@ function StepCount(props: { step: Step, recordClass: RecordClass }) {
   const recordClassDisplayName = recordClass && (
     step.estimatedSize === 1 ? recordClass.shortDisplayName : recordClass.shortDisplayNamePlural
   );
-  return <div className={cx('--StepCount')}>{step.estimatedSize ? step.estimatedSize.toLocaleString() : "N/A"} {recordClassDisplayName}</div>
+  const count = step.estimatedSize ? step.estimatedSize.toLocaleString() : '?';
+  return <div className={cx('--StepCount')}>{count} {recordClassDisplayName}</div>
 }
 
 /**

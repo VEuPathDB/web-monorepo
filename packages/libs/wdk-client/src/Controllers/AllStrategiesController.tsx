@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { closeStrategiesListView, openStrategiesListView, setActiveTab, addToStrategyListSelection, removeFromStrategyListSelection, setStrategyListSort } from 'wdk-client/Actions/StrategyListActions';
+import { closeStrategiesListView, openStrategiesListView, setActiveTab, setSearchTerm, addToStrategyListSelection, removeFromStrategyListSelection, setStrategyListSort } from 'wdk-client/Actions/StrategyListActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 import AllStrategies from 'wdk-client/Views/Strategy/AllStrategies';
 import { propertyIsNonNull } from 'wdk-client/Utils/ComponentUtils';
-import { addToOpenedStrategies, removeFromOpenedStrategies, setActiveStrategy } from 'wdk-client/Actions/StrategyViewActions';
+import { addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyViewActions';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
 import { requestPatchStrategyProperties, requestDeleteOrRestoreStrategies } from 'wdk-client/Actions/StrategyActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
@@ -17,6 +17,7 @@ interface StateProps {
   strategies?: StrategySummary[];
   recordClasses?: RecordClass[];
   activeTab?: string;
+  searchTermsByTableId: Record<string, string | undefined>;
   selectionByTableId: Record<string, number[] | undefined>;
   openedStrategies?: number[];
   sortByTableId: Record<string, MesaSortObject | undefined>;
@@ -27,6 +28,7 @@ interface DispatchProps {
   closeStrategiesListView: () => void;
   goToStrategy: (strategyId: number, stepId?: number) => void;
   setActiveTab: (tabId: string) => void;
+  setSearchTerm: (tabledId: string, searchTerm: string) => void;
   addToSelection: (tableId: string, ids: number[]) => void;
   removeFromSelection: (TableId: string, ids: number[]) => void;
   addToOpenedStrategies: (ids: number[]) => void;
@@ -69,7 +71,8 @@ function mapStateToProps(state: RootState): StateProps {
     activeTab: viewState.activeTab,
     selectionByTableId: viewState.selectedStrategiesByTableId,
     openedStrategies: state.strategyView.openedStrategies,
-    sortByTableId: viewState.sortByTableId
+    sortByTableId: viewState.sortByTableId,
+    searchTermsByTableId: viewState.searchTermsByTableId
   }
 }
 
@@ -81,6 +84,7 @@ const dispatchProps: DispatchProps = {
     return transitionToInternalPage(`/workspace/strategies/${subPath}`);
   },
   setActiveTab,
+  setSearchTerm,
   addToSelection: addToStrategyListSelection,
   removeFromSelection: removeFromStrategyListSelection,
   addToOpenedStrategies,

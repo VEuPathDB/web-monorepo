@@ -18,8 +18,14 @@
     width: 100%;
   }
 
+  .ActionToolbar-Children {
+    display: flex;
+  }
+
   &--Title {
     padding: 0;
+    white-space: nowrap;
+    margin-right: .5em;
   }
 
   &--OpenedRow {
@@ -38,12 +44,16 @@
   }
 
   &--TableCell {
+
     &__isPublic {
       text-align: center;
     }
+
+    &__leafAndTransformStepCount,
     &__estimatedSize {
       text-align: right;
     }
+
   }
 
 }

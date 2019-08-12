@@ -24,6 +24,11 @@ export const setActiveTab = makeActionCreator(
   (tabId: string) => ({ tabId })
 )
 
+export const setSearchTerm = makeActionCreator(
+  'strategiesList/setSearchTerm',
+  (tableId: string, searchTerm: string) => ({ tableId, searchTerm })
+);
+
 export const addToStrategyListSelection = makeActionCreator(
   'strategiesList/addToSelection',
   (tableId: string, strategyIds: number[]) => ({ tableId, strategyIds })
@@ -45,6 +50,7 @@ export type Action =
   | InferAction<typeof requestStrategiesList>
   | InferAction<typeof fulfillStrategiesList>
   | InferAction<typeof setActiveTab>
+  | InferAction<typeof setSearchTerm>
   | InferAction<typeof addToStrategyListSelection>
   | InferAction<typeof removeFromStrategyListSelection>
   | InferAction<typeof setStrategyListSort>

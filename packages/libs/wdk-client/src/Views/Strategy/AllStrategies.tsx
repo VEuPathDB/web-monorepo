@@ -1,5 +1,5 @@
 import { groupBy, last, orderBy, partition, truncate } from 'lodash';
-import React from 'react';
+import React, {useMemo} from 'react';
 
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
@@ -11,6 +11,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import './AllStrategies.scss';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
+import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 
 const cx = makeClassNameHelper('AllStrategies');
 
@@ -26,6 +27,9 @@ interface Props {
 
   activeTab?: string;
   setActiveTab: (tabId: string) => void;
+
+  searchTermsByTableId: Record<string, string | undefined>;
+  setSearchTerm: (tableId: string, searchTerm: string) => void;
   
   updatePublicStatus: (id: number, isPublic: boolean) => void;
   
@@ -45,7 +49,7 @@ interface Props {
 
 export default function AllStrategies(props: Props) {
   const { strategies, recordClasses, activeTab, setActiveTab } = props;
-  const strategiesByRecordClass = groupBy(strategies, 'recordClassName');
+  const strategiesByRecordClass = useMemo(() => groupBy(strategies, 'recordClassName'), [strategies]);
   const tabs = recordClasses
     .map((rc): [ RecordClass, StrategySummary[] | undefined ] => [rc, strategiesByRecordClass[rc.urlSegment]])
     .filter((entry): entry is [ RecordClass, StrategySummary[]] => entry[1] != null)
@@ -98,6 +102,8 @@ function StrategiesTab(props: TabContentProps) {
         key={isSaved ? 'saved' : 'unsaved'}
         isSaved={isSaved}
         title={`${isSaved ? 'Saved' : 'Unsaved'} Strategies (${strategies.length.toLocaleString()})`}
+        searchTerm={props.searchTermsByTableId[tableId]}
+        setSearchTerm={searchTerm => props.setSearchTerm(tableId, searchTerm)}
         strategies={strategies}
         goToStrategy={props.goToStrategy}
         selection={props.selectionByTableId[tableId]}
@@ -125,53 +131,10 @@ interface CellRenderProps<T> {
   value: T;
 }
 
-interface TableProps {
-  title: string;
-  strategies: StrategySummary[];
-  isSaved: boolean;
-
-  updatePublicStatus: (id: number, isPublic: boolean) => void;
-
-  goToStrategy: (strategyId: number, stepId?: number) => void;
+const invalidIcon = <i className={`${cx('--InvalidIcon')} fa fa-ban`} />;
   
-  selection: number[] | undefined;
-  addToSelection: BatchOperation;
-  removeFromSelection: BatchOperation;
-
-  opened?: number[];
-  addToOpened: BatchOperation;
-  removeFromOpened: BatchOperation;
-
-  deleteStrategies: BatchOperation;
-
-  sort?: MesaSortObject;
-  onSort: (sort: MesaSortObject) => void;
-}
-
-function StrategiesTable(props: TableProps) {
-  const {
-    isSaved,
-    updatePublicStatus,
-    goToStrategy,
-
-    selection = [],
-    addToSelection,
-    removeFromSelection,
-
-    opened = [],
-    addToOpened,
-    removeFromOpened,
-
-    deleteStrategies,
-
-    sort = { columnKey: 'lastModified', direction: 'desc' },
-    onSort
-
-  } = props;
-
-  const invalidIcon = <i className={`${cx('--InvalidIcon')} fa fa-ban`} />;
-  
-  const mesaColumns = [
+function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePublicStatus']) {
+  return [
     {
       key: 'isValid',
       name: invalidIcon,
@@ -212,11 +175,11 @@ function StrategiesTable(props: TableProps) {
       key: 'actions',
       name: 'Actions',
       className: cx('--TableCell', 'actions'),
-      renderCell: () => {
+      renderCell: () => (
         <React.Fragment>
           TODO
         </React.Fragment>
-      },
+      ),
     },
     {
       key: 'isPublic',
@@ -237,12 +200,14 @@ function StrategiesTable(props: TableProps) {
       name: 'Created',
       className: cx('--TableCell', 'createdTime'),
       sortable: true,
+      renderCell: formatDateTime
     },
     {
       key: 'lastModified',
       name: 'Last Modified',
       className: cx('--TableCell', 'lastModified'),
       sortable: true,
+      renderCell: formatDateTime
     },
     {
       key: 'releaseVersion',
@@ -259,9 +224,17 @@ function StrategiesTable(props: TableProps) {
     }
   ];
 
+}
+
+function makeActions(
+  addToOpened: TableProps['addToOpened'],
+  goToStrategy: TableProps['goToStrategy'],
+  removeFromOpened: TableProps['removeFromOpened'],
+  removeFromSelection: TableProps['removeFromSelection'],
+  deleteStrategies: TableProps['deleteStrategies']
+) {
   const handleOpen = makeActionCallback(addToOpened, removeFromSelection);
-  
-  const mesaActions = [
+  return [
     {
       selectionRequired: true,
       element: <button type="button" className="btn">Open</button>,
@@ -283,15 +256,23 @@ function StrategiesTable(props: TableProps) {
     }
   ];
 
-    
-  const mesaOptions = {
+}
+
+function makeMesaOptions(selection: TableProps['selection'] = [], opened: TableProps['opened'] = []) {
+  return {
     useStickyHeader: true,
     tableBodyMaxHeight: 'calc(80vh - 200px)',
     isRowSelected: (row: StrategySummary) => selection.includes(row.strategyId),
     deriveRowClassName: (strategy: StrategySummary) => opened.includes(strategy.strategyId) ? cx('--OpenedRow') : undefined
   };
-    
-  const mesaEventHandlers = {
+}
+
+function makeMesaEventHandlers(
+  onSort: TableProps['onSort'],
+  addToSelection: TableProps['addToSelection'],
+  removeFromSelection: TableProps['removeFromSelection']
+) {
+  return {
     // sort
     onSort: ({ key }: { key: string }, direction: MesaSortObject['direction']) => {
       onSort({ columnKey: key, direction });
@@ -310,17 +291,90 @@ function StrategiesTable(props: TableProps) {
     onMultipleRowDeselect: (rows: StrategySummary[]) => {
       removeFromSelection(rows.map(row => row.strategyId));
     },
-  
-  };
 
-  const uiState = {
-    sort,
   };
+};
 
-  const mesaRows = orderBy(props.strategies, [sort.columnKey], [sort.direction]);
+function makeMesaUiState(sort: MesaSortObject) {
+  return { sort };
+}
+
+function makeMesaRows(strategies: TableProps['strategies'], sort: MesaSortObject) {
+  return  orderBy(strategies, [sort.columnKey], [sort.direction]);
+}
+
+function makeMesaFilteredRows(rows: TableProps['strategies'], searchTerm: string) {
+  if (!searchTerm) return rows;
+  return rows.filter(strategy => (
+    strategy.name.toLowerCase().includes(searchTerm) ||
+    (strategy.nameOfFirstStep && strategy.nameOfFirstStep.toLowerCase().includes(searchTerm)) ||
+    (strategy.description && strategy.description.toLowerCase().includes(searchTerm))
+  ));
+}
+
+interface TableProps {
+  title: string;
+  strategies: StrategySummary[];
+  isSaved: boolean;
+
+  updatePublicStatus: (id: number, isPublic: boolean) => void;
+
+  goToStrategy: (strategyId: number, stepId?: number) => void;
+
+  searchTerm?: string;
+  setSearchTerm: (searchTerm: string) => void;
   
+  selection: number[] | undefined;
+  addToSelection: BatchOperation;
+  removeFromSelection: BatchOperation;
+
+  opened?: number[];
+  addToOpened: BatchOperation;
+  removeFromOpened: BatchOperation;
+
+  deleteStrategies: BatchOperation;
+
+  sort?: MesaSortObject;
+  onSort: (sort: MesaSortObject) => void;
+}
+
+function StrategiesTable(props: TableProps) {
+  const {
+    isSaved,
+    updatePublicStatus,
+    goToStrategy,
+
+    strategies,
+
+    selection = [],
+    addToSelection,
+    removeFromSelection,
+
+    searchTerm = '',
+    setSearchTerm,
+
+    opened = [],
+    addToOpened,
+    removeFromOpened,
+
+    deleteStrategies,
+
+    sort = { columnKey: 'lastModified', direction: 'desc' } as MesaSortObject,
+    onSort
+
+  } = props;
+
+  const mesaColumns = useMemo(() => makeColumns(isSaved, updatePublicStatus), [isSaved, updatePublicStatus]);
+  const mesaActions = useMemo(() => makeActions(addToOpened, goToStrategy, removeFromOpened, removeFromSelection, deleteStrategies), [addToOpened, goToStrategy, removeFromOpened, removeFromSelection, deleteStrategies])
+  const mesaOptions = useMemo(() => makeMesaOptions(selection, opened), [selection, opened]);
+  const mesaEventHandlers = useMemo(() => makeMesaEventHandlers(onSort, addToSelection, removeFromSelection), [onSort, addToSelection, removeFromSelection]);
+  const uiState = useMemo(() => makeMesaUiState(sort), [sort]);
+  const mesaRows = useMemo(() => makeMesaRows(strategies, sort), [strategies, sort]);
+  const mesaFilteredRows = useMemo(() => makeMesaFilteredRows(mesaRows, searchTerm.toLowerCase()), [mesaRows, searchTerm]);
+
   const tableState = MesaState.create({
     rows: mesaRows,
+    filteredRows: mesaFilteredRows,
     columns: mesaColumns,
     options: mesaOptions,
     actions: mesaActions,
@@ -332,6 +386,11 @@ function StrategiesTable(props: TableProps) {
     <React.Fragment>
       <Mesa state={tableState}>
         <h3 className={cx('--Title')}>{props.title}</h3>
+        <RealTimeSearchBox
+          searchTerm={searchTerm}
+          onSearchTermChange={setSearchTerm}
+          placeholderText="Filter strategies"
+        />
       </Mesa>
     </React.Fragment>
   )
@@ -343,6 +402,12 @@ function TruncatedText({ value, length = 50 }: { value: string, length?: number 
   return (
     <span title={title}>{truncated}</span>
   )
+}
+
+function formatDateTime(props: CellRenderProps<string>) {
+  const [ date, time ] = props.value.split('T');
+  const hoursAndMinutes = time.replace(/:[^:]*$/, '');
+  return `${date} ${hoursAndMinutes}`;
 }
 
 function makeActionCallback(...operations: BatchOperation[]) {

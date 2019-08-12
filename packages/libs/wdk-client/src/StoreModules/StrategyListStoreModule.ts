@@ -12,6 +12,7 @@ import {
   addToStrategyListSelection,
   removeFromStrategyListSelection,
   setStrategyListSort,
+  setSearchTerm,
 } from 'wdk-client/Actions/StrategyListActions';
 import {
   fulfillCreateStrategy,
@@ -38,11 +39,13 @@ type State = {
   strategySummaries?: StrategySummary[];
   selectedStrategyIds: number[];
   activeTab?: string;
+  searchTermsByTableId: Record<string, string | undefined>;
   selectedStrategiesByTableId: Record<string, number[] | undefined>;
   sortByTableId: Record<string, MesaSortObject>;
 };
 
 const initialViewState: State = {
+  searchTermsByTableId: {},
   selectedStrategyIds: [],
   selectedStrategiesByTableId: {},
   sortByTableId: {}
@@ -54,6 +57,14 @@ export function reduce(state: State = initialViewState, action: Action): State {
       return { ...state, strategySummaries: action.payload.strategies };
     case setActiveTab.type:
       return { ...state, activeTab: action.payload.tabId };
+    case setSearchTerm.type:
+      return {
+        ...state,
+        searchTermsByTableId: {
+          ...state.searchTermsByTableId,
+          [action.payload.tableId]: action.payload.searchTerm
+        }
+      }
     case addToStrategyListSelection.type:
       return {
         ...state,
