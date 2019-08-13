@@ -175,7 +175,7 @@ const sections: Section[] = [
     isAvailable: ({ uiState }) => uiState.strategyList != null && uiState.strategyList.length > 0,
     render: ({ ctx, uiState, parameter }) =>
       <div>
-        {uiState.strategyList
+        {uiState.strategyList && uiState.strategyList.length > 0
           ? <select value={getStrategyId(uiState, parameter)} onChange={e => setStrategyId({ ...ctx, strategyId: Number(e.target.value) })}>
               {uiState.strategyList.map(strategy =>
                 <option key={strategy.strategyId} title="Can you see me?" value={strategy.strategyId}>{strategy.name}</option>
