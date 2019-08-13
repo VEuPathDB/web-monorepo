@@ -1,8 +1,9 @@
+import { orderBy, partition } from 'lodash';
 import React from 'react';
 import { ofType } from 'redux-observable';
 import { EMPTY, from, merge } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
+import { DatasetParam, Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from "wdk-client/Utils/WdkUser";
 import {
   Props,
@@ -76,7 +77,11 @@ function reduce(state: State = defaultState, action: Action): State {
     case SET_FILE:
       return { ...state, file: action.payload.file };
     case SET_STRATEGY_LIST:
-      return { ...state, strategyList: action.payload.strategyList };
+      return {
+        ...state,
+        strategyList: action.payload.strategyList,
+        strategyId: action.payload.strategyList.length > 0 ? action.payload.strategyList[0].strategyId : undefined
+      };
     case SET_STRATEGY_ID:
       return { ...state, strategyId: action.payload.strategyId };
     case SET_BASKET_COUNT:
@@ -175,18 +180,37 @@ const sections: Section[] = [
     sourceType: 'strategy',
     label: 'Copy from My Strategy',
     isAvailable: ({ uiState }) => uiState.strategyList != null && uiState.strategyList.length > 0,
-    render: ({ ctx, uiState, parameter }) =>
-      <div>
-        {uiState.strategyList && uiState.strategyList.length > 0
-          ? <select value={getStrategyId(uiState, parameter)} onChange={e => setStrategyId({ ...ctx, strategyId: Number(e.target.value) })}>
-              {uiState.strategyList.map(strategy =>
-                <option key={strategy.strategyId} title="Can you see me?" value={strategy.strategyId}>{strategy.name}</option>
-              )}
-            </select>
-          : 'Option is not available' }
-      </div>
+    render: ({ ctx, uiState, parameter, dispatch }) => {
+      const { strategyList } = uiState;
+      if (strategyList == null || strategyList.length === 0) return (
+        <div>Option is not available</div>
+      );
+
+      const [ saved, unsaved ] = partition(strategyList, strategy => strategy.isSaved);
+      return (
+        <div>
+          <select value={getStrategyId(uiState, parameter)} onChange={e => dispatch(setStrategyId({ ...ctx, strategyId: Number(e.target.value) }))}>
+            {renderStrategyOptGroup('Saved strategies', saved)}
+            {renderStrategyOptGroup('Unsaved strategies', unsaved)}
+          </select>
+        </div>
+      );
+    }
   }
 ]
+
+function renderStrategyOptGroup(label: string, strategyList: StrategySummary[]) {
+  if (strategyList.length === 0) return null;
+  return (
+    <optgroup label={label}>
+      {strategyList.map(strategy =>
+        <option key={strategy.strategyId} disabled={!strategy.isValid} title={strategy.description || strategy.nameOfFirstStep} value={strategy.strategyId}>
+          {strategy.name} {strategy.isSaved ? '' : '*'} ({strategy.estimatedSize == null ? '?' : strategy.estimatedSize.toLocaleString()} records)
+        </option>
+      )}
+    </optgroup>
+  );
+}
 
 function DatasetParamComponent(props: Props<DatasetParam, State>) {
   const { dispatch, uiState, ctx } = props;
@@ -223,7 +247,7 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
         if (user.isGuest || !isType(parameter)) return EMPTY;
         // load basket count and strategy list
         const questionState = state$.value.questions[searchName]
-        const recordClassName = questionState && questionState.recordClass.fullName;
+        const recordClassName = questionState && questionState.recordClass.urlSegment;
 
         if (recordClassName == null) return EMPTY;
 
@@ -241,7 +265,8 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
               searchName,
               paramValues,
               parameter: (parameter as DatasetParam),
-              strategyList: strategies.filter(strategy => strategy.recordClassName === recordClassName)
+              strategyList: orderBy(strategies, strategy => !strategy.isSaved)
+                .filter(strategy => strategy.recordClassName === recordClassName)
             })
           )
         );
