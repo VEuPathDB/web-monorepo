@@ -99,9 +99,11 @@ const getParser = (uiState: State, parameter: DatasetParam) =>
     : uiState.fileParser;
 
 const getStrategyId = (uiState: State, parameter: DatasetParam) =>
-  uiState.strategyId == null
-    ? uiState.strategyList && uiState.strategyList[0].strategyId
-    : uiState.strategyId;
+  uiState.strategyId != null
+    ? uiState.strategyId
+    : uiState.strategyList && uiState.strategyList.length > 0
+    ? uiState.strategyList[0].strategyId
+    : undefined;
 
 type Section = {
   sourceType: State['sourceType'];
