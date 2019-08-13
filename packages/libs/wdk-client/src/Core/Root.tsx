@@ -92,8 +92,8 @@ export default class Root extends React.Component<Props> {
                 <Page>
                   <React.Fragment>
                     <Switch>
-                      {this.props.routes.map(route => (
-                        <Route key={route.path} exact path={route.path} component={route.component} />
+                      {this.props.routes.map(({ path, exact = true, component }) => (
+                        <Route key={path} exact={exact == null ? false: exact} path={path} component={component} />
                       ))}
                     </Switch>
                     <LoginFormController />

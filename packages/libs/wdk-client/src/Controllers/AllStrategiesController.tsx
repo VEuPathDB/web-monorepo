@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { closeStrategiesListView, openStrategiesListView, setActiveTab, setSearchTerm, addToStrategyListSelection, removeFromStrategyListSelection, setStrategyListSort } from 'wdk-client/Actions/StrategyListActions';
 import { Loading } from 'wdk-client/Components';
@@ -7,14 +7,16 @@ import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 import AllStrategies from 'wdk-client/Views/Strategy/AllStrategies';
 import { propertyIsNonNull } from 'wdk-client/Utils/ComponentUtils';
-import { addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyViewActions';
+import { addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
 import { requestPatchStrategyProperties, requestDeleteOrRestoreStrategies } from 'wdk-client/Actions/StrategyActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
+interface OwnProps {
+  strategies?: StrategySummary[];
+}
 
 interface StateProps {
-  strategies?: StrategySummary[];
   recordClasses?: RecordClass[];
   activeTab?: string;
   searchTermsByTableId: Record<string, string | undefined>;
@@ -38,7 +40,7 @@ interface DispatchProps {
   updatePublicStatus: (id: number, isPublic: boolean) => void;
 }
 
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 function AllStrategiesController(props: Props) {
   const {
@@ -46,13 +48,6 @@ function AllStrategiesController(props: Props) {
     closeStrategiesListView,
     ...restProps
   } = props;
-
-  useEffect(() => {
-    openStrategiesListView();
-    return () => {
-      closeStrategiesListView();
-    };
-  }, []);
 
   if (!propertyIsNonNull(restProps, 'strategies') || !propertyIsNonNull(restProps, 'recordClasses')) return <Loading/>;
 
@@ -66,11 +61,10 @@ function AllStrategiesController(props: Props) {
 function mapStateToProps(state: RootState): StateProps {
   const viewState = state.strategyList;
   return {
-    strategies: viewState && viewState.strategySummaries,
     recordClasses: state.globalData.recordClasses,
     activeTab: viewState.activeTab,
     selectionByTableId: viewState.selectedStrategiesByTableId,
-    openedStrategies: state.strategyView.openedStrategies,
+    openedStrategies: state.strategyWorkspace.openedStrategies,
     sortByTableId: viewState.sortByTableId,
     searchTermsByTableId: viewState.searchTermsByTableId
   }

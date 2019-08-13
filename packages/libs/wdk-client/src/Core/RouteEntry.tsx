@@ -4,6 +4,7 @@ import { RouteComponentProps, RouteProps } from 'react-router';
 
 export interface RouteEntry {
   readonly path: string;
+  readonly exact?: false;
   readonly component: RouteProps['component'];
 }
 

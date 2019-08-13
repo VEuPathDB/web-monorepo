@@ -2,7 +2,6 @@ import { groupBy, last, orderBy, partition, truncate } from 'lodash';
 import React, {useMemo} from 'react';
 
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
-import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
 import { formatDateTimeString } from 'wdk-client/Views/Strategy/StrategyUtils';
 import { Link } from 'react-router-dom';
 import { MesaState, Mesa } from 'wdk-client/Components/Mesa';
@@ -66,7 +65,6 @@ export default function AllStrategies(props: Props) {
 
   return (
     <React.Fragment>
-      <StrategyHeader/>
       <div className={cx()}>
         <div className={cx('--Info')}>
           <div className="wdk-Banner info-banner">

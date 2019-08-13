@@ -1,9 +1,7 @@
 import React from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
-import { RootState } from 'wdk-client/Core/State/Types';
 
 import './StrategyHeading.css';
-import { connect } from 'react-redux';
 
 // The link for Opened strategies is active if the url matches one of:
 // - /workspace/strategies
@@ -18,6 +16,8 @@ const isOpenedLinkActive: NavLinkProps['isActive'] = (match , location) => {
 
 interface Props {
   activeStrategy?: { strategyId: number, stepId?: number };
+  openedStrategiesCount?: number;
+  allStrategiesCount?: number;
 }
 
 function StrategyHeader(props: Props) {
@@ -25,20 +25,20 @@ function StrategyHeader(props: Props) {
   const activeStratPath = props.activeStrategy ? `/${props.activeStrategy.strategyId}` : '';
   const activeStepPath = props.activeStrategy && props.activeStrategy.stepId ? `/${props.activeStrategy.stepId}` : '';
   const openedStrategiesRoute = rootRoute + activeStratPath + activeStepPath;
+  const { openedStrategiesCount, allStrategiesCount } = props
   return (
     <div className="StrategyHeading">
-      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={openedStrategiesRoute} isActive={isOpenedLinkActive}>Opened Strategies</NavLink>
+      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={openedStrategiesRoute} isActive={isOpenedLinkActive}>
+        Opened Strategies ({openedStrategiesCount != null ? openedStrategiesCount.toLocaleString() : '...'})
+      </NavLink>
       <span className="StrategyHeading--Separator"> | </span>
-      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/all`}>All Strategies</NavLink>
+      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/all`}>
+        All Strategies ({allStrategiesCount != null ? allStrategiesCount.toLocaleString() : '...'})
+      </NavLink>
       <span className="StrategyHeading--Separator"> | </span>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/help`}>Help</NavLink>
     </div>
   )
 }
 
-function mapState(rootState: RootState) {
-  const { activeStrategy } = rootState.strategyView;
-  return { activeStrategy };
-}
-
-export default connect(mapState, null)(StrategyHeader);
+export default StrategyHeader;

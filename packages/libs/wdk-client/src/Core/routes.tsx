@@ -26,11 +26,10 @@ import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
-import StrategyViewController from 'wdk-client/Controllers/StrategyViewController';
-import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
 
 const routes: RouteEntry[] = [
   {
@@ -169,30 +168,14 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/workspace/strategies/:strategyId(\\d+)?/:stepId(\\d+)?',
-    component: (props: RouteComponentProps<{ strategyId?: string, stepId?: string }>) => {
-      const { strategyId, stepId } = props.match.params;
+    path: '/workspace/strategies/:subPath*',
+    exact: false,
+    component: (props: RouteComponentProps<{ subPath?: string }>) => {
+      const { subPath = '' } = props.match.params;
       return (
-        <StrategyViewController
-          strategyId={strategyId == null ? undefined : Number(strategyId)}
-          stepId={stepId == null ? undefined : Number(stepId)}
-        />
+        <StrategyWorkspaceController workspacePath="/workspace/strategies" subPath={subPath}/>
       );
     }
-  },
-
-  {
-    path: '/workspace/strategies/all',
-    component: (props: RouteComponentProps<{}>) => (
-      <AllStrategiesController/>
-    )
-  },
-
-  {
-    path: '/workspace/strategies/help',
-    component: (props: RouteComponentProps<{}>) => (
-      <div>TODO</div>
-    )
   },
 
   {

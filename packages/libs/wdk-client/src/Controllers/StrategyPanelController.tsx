@@ -11,7 +11,7 @@ import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
-import {setOpenedStrategies} from 'wdk-client/Actions/StrategyViewActions';
+import {setOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 
 interface OwnProps {
   viewId: string;
@@ -58,7 +58,7 @@ interface MappedDispatch {
 type Props = OwnProps & MappedProps & MappedDispatch;
 
 function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
-  const openedStrategies = state.strategyView.openedStrategies;
+  const openedStrategies = state.strategyWorkspace.openedStrategies;
   const panelState = state.strategyPanel[ownProps.viewId];
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
   const activeModal = panelState && panelState.activeModal && panelState.activeModal.strategyId === ownProps.strategyId ? panelState.activeModal.type : undefined;

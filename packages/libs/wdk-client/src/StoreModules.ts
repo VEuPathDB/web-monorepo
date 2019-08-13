@@ -23,7 +23,7 @@ import * as basket from 'wdk-client/StoreModules/BasketStoreModule';
 import * as resultPanel from 'wdk-client/StoreModules/ResultPanelStoreModule';
 import * as strategies from 'wdk-client/StoreModules/StrategyStoreModule';
 import * as strategyPanel from 'wdk-client/StoreModules/StrategyPanelStoreModule';
-import * as strategyView from 'wdk-client/StoreModules/StrategyViewStoreModule';
+import * as strategyWorkspace from 'wdk-client/StoreModules/StrategyWorkspaceStoreModule';
 import * as strategyList from 'wdk-client/StoreModules/StrategyListStoreModule';
 import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
@@ -49,7 +49,7 @@ export default {
   stepAnalysis,
   strategies,
   strategyPanel,
-  strategyView,
+  strategyWorkspace,
   strategyList,
   userCommentForm,
   userCommentShow,

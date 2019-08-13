@@ -21,7 +21,7 @@ import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSu
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
 import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
-import * as StrategyViewActions from 'wdk-client/Actions/StrategyViewActions';
+import * as StrategyWorkspaceActions from 'wdk-client/Actions/StrategyWorkspaceActions';
 import * as StrategyListActions from 'wdk-client/Actions/StrategyListActions';
 import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
 import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
@@ -50,7 +50,7 @@ export {
   StaticDataActions,
   StrategyPanelActions,
   StrategyActions,
-  StrategyViewActions,
+  StrategyWorkspaceActions,
   StrategyListActions,
   UserDatasetsActions,
   ResultTableSummaryViewActions,
@@ -82,7 +82,7 @@ export type Action =
   | SiteMapActions.Action
   | StaticDataActions.Action
   | StrategyActions.Action
-  | StrategyViewActions.Action
+  | StrategyWorkspaceActions.Action
   | StrategyPanelActions.Action
   | StrategyListActions.Action
   | UserDatasetsActions.Action
