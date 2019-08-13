@@ -9,9 +9,11 @@ import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import Tabs from 'wdk-client/Components/Tabs/Tabs';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
-import './AllStrategies.scss';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import { StrategyControls} from 'wdk-client/Views/Strategy/StrategyControls';
+
+import './AllStrategies.scss';
 
 const cx = makeClassNameHelper('AllStrategies');
 
@@ -174,10 +176,8 @@ function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePub
       key: 'actions',
       name: 'Actions',
       className: cx('--TableCell', 'actions'),
-      renderCell: () => (
-        <React.Fragment>
-          TODO
-        </React.Fragment>
+      renderCell: ({ row }: CellRenderProps<void>) => (
+        <StrategyControls strategyId={row.strategyId} />
       ),
     },
     {

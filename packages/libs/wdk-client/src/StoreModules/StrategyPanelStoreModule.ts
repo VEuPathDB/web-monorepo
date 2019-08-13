@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
-import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setActiveModal, clearActiveModal, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 import { fulfillPutStrategy } from 'wdk-client/Actions/StrategyActions';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
@@ -20,9 +20,8 @@ type ViewState = {
     visibleReviseForm?: number  // stepId or none if not shown
     visibleDeleteStepDialog?: number  // stepId or none if not shown
     nestedStrategyBranchIds: number[]; // step ids
-    activeModal?: { type: string, strategyId: number, stepId?: number }
   };
-  
+
   const initialViewState: ViewState = {
     strategyPanelIsVisible: false,  // the default for this should come from client init file,
     nestedStrategyBranchIds: []
@@ -54,14 +53,6 @@ type ViewState = {
   
       case setDeleteStepDialogVisibilty.type: {
         return { ...state, visibleDeleteStepDialog: action.payload.stepId };
-      }
-
-      case setActiveModal.type: {
-        return { ...state, activeModal: action.payload };
-      }
-
-      case clearActiveModal.type: {
-        return { ...state, activeModal: undefined };
       }
 
       case setStrategyPanelHeightOverride.type: {

@@ -1,18 +1,13 @@
 import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
-import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import {UiStepTree} from 'wdk-client/Views/Strategy/Types';
+import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 
 import './SaveStrategyForm.css';
 
 interface Props {
-  strategy: StrategyDetails;
-  uiStepTree: UiStepTree;
+  strategy: StrategySummary;
   clearActiveModal: () => void;
-  onStrategyRename: (name: string) => void;
-  onStrategyCopy: (signature: string) => void;
-  onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
-  onStrategyDelete: () => void;
+  saveStrategy: (strategyId: number, name: string, isPublic: boolean, description?: string) => void;
 }
 
 export default function SaveStrategyForm(props: Props) {
@@ -61,7 +56,7 @@ export default function SaveStrategyForm(props: Props) {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    props.onStrategySave(name, isPublic, description);
+    props.saveStrategy(props.strategy.strategyId, name, isPublic, description);
     props.clearActiveModal();
   }
 

@@ -40,6 +40,15 @@ export const removeNotification = makeActionCreator(
   (id: string) => ({ id })
 );
 
+export const setActiveModal = makeActionCreator(
+  'strategyPanel/setActiveModal',
+  (activeModal: {type: string, strategyId: number}) => activeModal
+)
+
+export const clearActiveModal = makeActionCreator(
+  'strategyPanel/clearActiveModal',
+)
+
 export type Action =
   | InferAction<typeof openStrategyView>
   | InferAction<typeof closeStrategyView>
@@ -50,3 +59,5 @@ export type Action =
   | InferAction<typeof setOpenedStrategiesVisibility>
   | InferAction<typeof addNotification>
   | InferAction<typeof removeNotification>
+  | InferAction<typeof setActiveModal>
+  | InferAction<typeof clearActiveModal>

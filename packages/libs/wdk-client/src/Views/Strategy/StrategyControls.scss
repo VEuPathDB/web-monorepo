@@ -1,0 +1,24 @@
+.StrategyControls {
+  &--Controls {
+    display: flex;
+  }
+
+  &--Controls > * {
+    font-size: 1.5em;
+    margin-left: 1em;
+  }
+
+  &--Action {
+    min-width: 30em;
+    min-height: 15em;
+    padding: 1em 2em;
+    background: white;
+    border-radius: 1em;
+    box-shadow: 0 0 4px #00000045;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+  }
+}

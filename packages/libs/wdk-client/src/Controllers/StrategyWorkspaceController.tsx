@@ -11,6 +11,7 @@ import StrategyViewController from 'wdk-client/Controllers/StrategyViewControlle
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 import {openStrategyView, closeStrategyView} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {StrategyDetails} from 'wdk-client/Utils/WdkUser';
+import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
 
 interface OwnProps {
   workspacePath: string;
@@ -23,6 +24,7 @@ interface DispatchProps {
 
 interface MappedProps {
   activeStrategy?: { strategyId: number, stepId?: number };
+  activeModal?: RootState['strategyWorkspace']['activeModal'];
   notifications: Record<string, string | undefined>;
   openedStrategies?: number[];
   strategySummaries?: StrategyDetails[];
@@ -45,6 +47,7 @@ function StrategyWorkspaceController(props: Props) {
   return (
     <div className="StrategyWorkspace">
       <StrategyNotifications notifications={notifications}/>
+      <StrategyActionModal activeModal={props.activeModal} strategySummaries={strategySummaries}/>
       <StrategyHeader activeStrategy={activeStrategy} openedStrategiesCount={openedStrategiesCount} allStrategiesCount={allStrategiesCount}/>
       <ChildView {...props}/>
     </div>
@@ -84,9 +87,10 @@ function parseSubPath(subPath: string): ChildView {
 }
 
 function mapState(rootState: RootState) {
-  const { activeStrategy, notifications, openedStrategies, strategySummaries } = rootState.strategyWorkspace;
+  const { activeStrategy, notifications, openedStrategies, strategySummaries, activeModal } = rootState.strategyWorkspace;
   return {
     activeStrategy,
+    activeModal,
     notifications,
     openedStrategies,
     strategySummaries

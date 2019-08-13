@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
-import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setActiveModal, clearActiveModal, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
 import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -25,7 +25,6 @@ type MappedProps =
   isLoading: true;
 } | {
   isLoading: false;
-  activeModal?: string;
   strategy: StrategyDetails;
   uiStepTree: UiStepTree;
   insertStepVisibility?: AddType;
@@ -34,9 +33,7 @@ type MappedProps =
 }
 
 interface MappedDispatch {
-  setActiveModal: (type: string) => void;
   setReviseFormStepId: (stepId?: number) => void;
-  clearActiveModal: () => void;
   requestStrategy: (id: number) => void;
   onStrategyClose: (openedStrategies: number[]) => void;
   onStrategyCopy: (signature: string) => void;
@@ -61,7 +58,6 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   const openedStrategies = state.strategyWorkspace.openedStrategies;
   const panelState = state.strategyPanel[ownProps.viewId];
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
-  const activeModal = panelState && panelState.activeModal && panelState.activeModal.strategyId === ownProps.strategyId ? panelState.activeModal.type : undefined;
   const nestedStrategyBranchIds = panelState ? panelState.nestedStrategyBranchIds : [];
   const reviseFormStepId = panelState && panelState.visibleReviseForm;
   const entry = state.strategies.strategies[ownProps.strategyId];
@@ -75,16 +71,14 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   );
   return strategy == null || uiStepTree == null || openedStrategies == null
     ? { isLoading: true }
-    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, activeModal, reviseFormStepId, openedStrategies };
+    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, reviseFormStepId, openedStrategies };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
   return bindActionCreators({
     requestStrategy,
-    setActiveModal: (type: string) => setActiveModal(props.viewId, type, props.strategyId),
     onStrategyClose: setOpenedStrategies,
     setReviseFormStepId: (stepId?: number) => setReviseFormVisibility(props.viewId, stepId),
-    clearActiveModal: () => clearActiveModal(props.viewId),
     onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
     onStrategyDelete: () => requestDeleteStrategy(props.strategyId),
     onStrategyRename: (name: string) => requestPatchStrategyProperties(props.strategyId, { name }),

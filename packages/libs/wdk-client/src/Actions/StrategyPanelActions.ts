@@ -61,16 +61,6 @@ export const unnestStrategy = makeActionCreator(
   (viewId: string, branchStepId: number) => ({ viewId, branchStepId })
 )
 
-export const setActiveModal = makeActionCreator(
-  'strategyPanel/setActiveModal',
-  (viewId: string, type: string, strategyId: number, stepId?: number) => ({ viewId, type, strategyId, stepId })
-)
-
-export const clearActiveModal = makeActionCreator(
-  'strategyPanel/clearActiveModal',
-  (viewId: string) => ({ viewId })
-)
-
 /*
 setDidYouKnowVisibility
 nextDidYouKnow
@@ -90,5 +80,3 @@ export type Action =
   | InferAction<typeof setStrategyPanelHeightOverride>
   | InferAction<typeof nestStrategy>
   | InferAction<typeof unnestStrategy>
-  | InferAction<typeof setActiveModal>
-  | InferAction<typeof clearActiveModal>

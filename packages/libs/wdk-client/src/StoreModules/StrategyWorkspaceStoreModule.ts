@@ -6,7 +6,7 @@ import { Action } from 'wdk-client/Actions';
 import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillStrategy, fulfillPatchStrategyProperties } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
-import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyWorkspaceActions';
+import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies, clearActiveModal, setActiveModal } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
 import { InferAction, switchMapRequestActionsToEpic, mergeMapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
@@ -20,6 +20,7 @@ export interface State {
     strategyId: number;
     stepId?: number;
   }
+  activeModal?: { type: string, strategyId: number }
   isOpenedStrategiesVisible?: boolean;
   openedStrategies?: number[];
   notifications: Record<string, string | undefined>;
@@ -38,6 +39,12 @@ export function reduce(state: State = initialState, action: Action): State {
         ...state,
         activeStrategy: action.payload.activeStrategy
       }
+
+    case setActiveModal.type:
+      return { ...state, activeModal: action.payload };
+
+    case clearActiveModal.type:
+      return { ...state, activeModal: undefined };
 
     case setOpenedStrategies.type:
       return {
