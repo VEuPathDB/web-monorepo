@@ -18,13 +18,13 @@ export default [
   {
     type: 'summaryView',
     name: '_default',
-    recordClassName: 'PopsetRecordClasses.PopsetRecordClass',
+    recordClassName: 'popsetSequence',
     component: PopsetResultSummaryViewTableController
   },
   {
     type: 'summaryView',
     name: '_default',
-    recordClassName: 'UserFileRecords.UserFile',
+    recordClassName: 'file',
     component: ResultTableSummaryViewPlugin.withOptions({
       showIdAttributeColumn: false
     })
