@@ -194,7 +194,8 @@ export const AddStepPanelView = wrappable((
                     <div className={cx('--MenusContainer')}>
                       <div className={cx('--MenusHeader')}>
                           So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}
-                          and finds {(operandStep.estimatedSize || "0").toLocaleString()} {
+                          {' '}
+                          and finds {(operandStep.estimatedSize || 0).toLocaleString()} {
                             operandStep.estimatedSize === 1
                               ? inputRecordClass.displayName
                               : inputRecordClass.displayNamePlural

@@ -209,7 +209,17 @@ function CombineStepBoxContent(props: StepBoxProps) {
   const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
-      <CombinedStepIcon step={step}/>
+      <Plugin<{ step: Step }>
+        context={{
+          type: 'stepBoxIcon',
+          searchName: step.searchName,
+          recordClassName: recordClass.urlSegment
+        }}
+        pluginProps={{
+          step: step
+        }}
+        defaultComponent={CombinedStepIcon}
+      />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
@@ -236,7 +246,7 @@ function StepCount(props: { step: Step, recordClass: RecordClass }) {
   const recordClassDisplayName = recordClass && (
     step.estimatedSize === 1 ? recordClass.shortDisplayName : recordClass.shortDisplayNamePlural
   );
-  const count = step.estimatedSize ? step.estimatedSize.toLocaleString() : '?';
+  const count = step.estimatedSize != null ? step.estimatedSize.toLocaleString() : '?';
   return <div className={cx('--StepCount')}>{count} {recordClassDisplayName}</div>
 }
 

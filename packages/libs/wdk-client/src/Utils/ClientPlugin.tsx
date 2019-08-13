@@ -12,6 +12,7 @@ export type PluginType =
   | 'stepAnalysis'
   | 'questionFilter'
   | 'stepBox'
+  | 'stepBoxIcon'
   | 'addStepOperationMenu'
   | 'addStepOperationForm'
 

@@ -10,7 +10,7 @@
     padding: unset;
   }
 
-  div:not(.wdk-QuestionFormParameterHeading) {
+  div:not(.wdk-QuestionFormParameterHeading), div:not(.wdk-QuestionFormShowHideGroupToggle) {
     & > h2, & > p {
       text-align: center;
       margin: 1em 0;

@@ -18,7 +18,7 @@ export const PrimaryInputLabel = ({
 }: Props) =>
   <div className={cx()}>
     <div className={cx('--Text')}>
-      {resultSetSize ? resultSetSize.toLocaleString() : '?'}
+      {resultSetSize !== undefined ? resultSetSize.toLocaleString() : '?'}
       <br />
       {resultSetSize === 1 
         ? recordClass.shortDisplayName 

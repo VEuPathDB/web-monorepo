@@ -25,7 +25,8 @@
 
   &--TransformIcon {
     background-image: url('./convertStepMenuIcon.svg');
-    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 
     border: 1px solid black;
 
