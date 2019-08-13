@@ -9,8 +9,8 @@ import {
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
-import { SpanLogicController } from './components/questions/SpanLogicForm';
 
+import { ColocateStepBoxIcon } from './components/strategies/ColocateStepBoxIcon';
 import { ColocateStepMenu } from './components/strategies/ColocateStepMenu';
 import { ColocateStepForm } from './components/strategies/ColocateStepForm';
 
@@ -79,5 +79,10 @@ export default [
     type: 'addStepOperationForm',
     name: 'colocate',
     component: ColocateStepForm
+  },
+  {
+    type: 'stepBoxIcon',
+    test: ({ question }) => question && question.urlSegment.endsWith('BySpanLogic'),
+    component: ColocateStepBoxIcon
   }
 ];
