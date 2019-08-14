@@ -148,11 +148,14 @@ function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePub
       name: 'Strategy',
       className: cx('--TableCell', 'name'),
       sortable: true,
-      renderCell: (({ row, value }: CellRenderProps<string>) =>
-        <React.Fragment>
-          <Link to={`/workspace/strategies/${row.strategyId}/${row.rootStepId}`}>{value}</Link>
-        </React.Fragment>
-      )
+      renderCell: (({ row, value }: CellRenderProps<string>) => {
+        const path = row.isValid ? `${row.strategyId}/${row.rootStepId}` : row.strategyId;
+        return (
+          <React.Fragment>
+            <Link to={`/workspace/strategies/${path}`}>{value}</Link>
+          </React.Fragment>
+        );
+      })
     },
     ( isSaved ? {
       key: 'description',

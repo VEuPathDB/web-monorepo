@@ -166,8 +166,10 @@ function StepBox(props: StepBoxProps) {
     <i className={`${cx('--FilterIcon')} fa fa-filter`}/>
   );
 
+  const title = step.validation.isValid ? undefined : 'This step is no longer valid and must be revised to view results.';
+
   return (
-    <div className={cx("--Box")}>
+    <div title={title} className={cx("--Box", step.validation.isValid ? 'valid' : 'invalid')}>
       <NavLink
         replace
         style={{ borderColor }}

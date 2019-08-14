@@ -1,6 +1,6 @@
 import { Question, RecordClass, RecordInstance, getSingleRecordQuestionName, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Service/WdkService';
-import { Step } from 'wdk-client/Utils/WdkUser';
+import { Step, StepValidationLevel } from 'wdk-client/Utils/WdkUser';
 
 export interface StepBundle {
   step: Step;
@@ -96,6 +96,10 @@ export function getStubbedStep(question: Question, displayName: string, estimate
     hasCompleteStepAnalyses: false,
     searchName: question.urlSegment,
     searchConfig: searchConfig,
-    displayPreferences: { } as Step['displayPreferences']
+    displayPreferences: { } as Step['displayPreferences'],
+    validation: {
+      isValid: true,
+      level: StepValidationLevel.Runnable
+    }
   };
 }

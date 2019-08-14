@@ -21,6 +21,31 @@ export type UserPredicate = (user: User) => boolean;
 
 export interface FilterValue { }
 
+/**
+ * Validation level performed on step.
+ */
+export enum StepValidationLevel {
+  None = 'NONE',
+  Syntactic = 'SYNTACTIC',
+  Displayable = 'DISPLAYABLE',
+  Semantic = 'SEMANTIC',
+  Runnable = 'RUNNABLE'
+}
+
+export interface ValidStepValidation {
+  isValid: true;
+  level: StepValidationLevel;
+}
+
+export interface InvalidStepValidation {
+  isValid: false;
+  level: StepValidationLevel;
+  errors: {
+    general: string[];
+    byKey: Record<string, string[] | undefined>;
+  }
+}
+
 export interface Step extends AnswerSpec {
   customName: string;
   description: string;
@@ -39,6 +64,10 @@ export interface Step extends AnswerSpec {
   }
   expanded: boolean;
   expandedName?: string;
+  validation: {
+    isValid: boolean;
+    level: StepValidationLevel
+  }
 }
 
 export interface PatchStepSpec {
