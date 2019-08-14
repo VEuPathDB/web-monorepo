@@ -25,6 +25,8 @@ const ORGANISM_FILTER_PANE_EXPANSION_KEY = "defaultOrganismFilterPaneExpansion";
 const DEFAULT_PANE_EXPANSION = true;
 const DEFAULT_HIDE_ZEROES = false;
 
+const TITLE = "Organisms";
+
 // props passed into this component by caller
 type OwnProps = {
   stepId: number;
@@ -75,9 +77,9 @@ type TaxonomyNodeWithCount = {
 const verticalTextCss: React.CSSProperties = {
   position: "absolute",
   top: "7em",
-  right: "2em",
-  transform: "rotate(270deg)",
-  transformOrigin: "right top",
+  left: 0,
+  transform: "rotate(90deg)",
+  transformOrigin: "left bottom",
   border: "solid 1px #346792",
   padding: "5px",
   height: "2em",
@@ -110,7 +112,7 @@ interface ContainerProps {
 
 function Container(props: ContainerProps) {
   return (
-    <div style={{ width: "30em", paddingRight: "4em" }}>
+    <div style={{ width: "30em", paddingLeft: "3em" }}>
       {props.children}
     </div>
   )
@@ -180,7 +182,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
 
   // show collapsed view if not expanded
   if (!isExpanded) {
-    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message="Filter by Taxonomy" arrow="&dArr;"/> );
+    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message={TITLE} arrow="&dArr;"/> );
   }
 
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
@@ -223,7 +225,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
     <Container>
       <div>
         <h3 style={{ fontSize: "1.4em", padding: "0 0 .5em 0", display: 'flex', alignItems: 'center', height: '2em' }}>
-          Filter by Taxonomy
+          {TITLE}
           {showApplyAndCancelButtons && (
             <React.Fragment>
               &nbsp;
@@ -236,12 +238,6 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
             <Loading/>
           )}
         </h3>
-        {filterSummary && filterSummary.values && (
-          <div>
-            <Checkbox value={hideZeroes} onChange={(newValue: boolean) => setHideZeroes(newValue)}/>
-            <span> Hide organisms with zero records</span>
-          </div>
-        )}
         { taxonomyTreeWithCounts
         ? (
             <CheckboxTree<TaxonomyNodeWithCount>
@@ -262,6 +258,10 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
               searchTerm={searchTerm}
               onSearchTermChange={term => setSearchTerm(term)}
               searchPredicate={nodeMeetsSearchCriteria}
+              additionalActions={[{
+                displayText: `${hideZeroes ? 'show' : 'hide'} zero counts`,
+                onClick: () => setHideZeroes(!hideZeroes)
+              }]}
             />
             )
         : (
@@ -367,7 +367,7 @@ function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
   return (
     <div style={{display:"flex",width:"calc(100% - 2em)"}}>
       <div>{node.display}</div>
-      <div style={{marginLeft:"auto"}}>{node.count}</div>
+      <div style={{marginLeft:"auto"}}>{node.count.toLocaleString()}</div>
     </div>
   );
 }
