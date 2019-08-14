@@ -12,7 +12,7 @@ import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
 
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 
-type CustomBinaryOperation = {
+export type CustomBinaryOperation = {
   name: string,
   AddStepMenuComponent: React.ComponentType<AddStepOperationMenuProps>,
   addStepFormComponents: Record<string, React.ComponentType<AddStepOperationFormProps>>,

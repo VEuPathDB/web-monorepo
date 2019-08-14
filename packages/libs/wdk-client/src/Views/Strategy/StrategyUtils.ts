@@ -7,13 +7,13 @@ export type BooleanOperator = CombineOperator & IgnoreOperator;
 export enum CombineOperator {
   Intersect = 'INTERSECT',
   Union = 'UNION',
-  LeftMinus = 'LEFT_MINUS',
-  RightMinus = 'RIGHT_MINUS'
+  LeftMinus = 'MINUS',
+  RightMinus = 'RMINUS'
 }
 
 enum IgnoreOperator {
-  LeftOnly = 'LEFT_ONLY',
-  RightOnly = 'RIGHT_ONLY'
+  LeftOnly = 'LONLY',
+  RightOnly = 'RONLY'
 }
 
 // TODO Consider using the boolean question's vocabulary to drive the operator menus

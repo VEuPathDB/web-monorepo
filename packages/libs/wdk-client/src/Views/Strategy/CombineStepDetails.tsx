@@ -17,13 +17,13 @@ const operatorParamName = 'bq_operator';
 const standardOperators: Operator[] = [
   { display: <React.Fragment>A <strong>INTERSECT</strong> B</React.Fragment>, value: 'INTERSECT' },
   { display: <React.Fragment>A <strong>UNION</strong> B</React.Fragment>, value: 'UNION' },
-  { display: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>, value: 'LEFT_MINUS' },
-  { display: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>, value: 'RIGHT_MINUS' },
+  { display: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>, value: 'MINUS' },
+  { display: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>, value: 'RMINUS' },
 ];
 
 const ignoreOperators: Operator[] = [
-  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LEFT_ONLY' },
-  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RIGHT_ONLY' },
+  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY' },
+  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY' },
 ]
 
 interface DispatchProps {
