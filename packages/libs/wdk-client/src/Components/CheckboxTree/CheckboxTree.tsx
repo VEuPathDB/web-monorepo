@@ -201,17 +201,20 @@ let TreeLinks: StatelessComponent<TreeLinksProps> = props => {
             <button type="button" className="link" onClick={selectDefaultList}>reset to default</button>
           </span>
         }
+
       </div>
+
       { additionalActions && additionalActions.length > 0 &&
-      <div>
-        { additionalActions.map((action, index, additionalActions) => (
-          <span key={index}>
-            <button type="button" className="link" onClick={() => action.onClick()}>{action.displayText}</button>
-            {index !== (additionalActions.length - 1) && <Bar/>}
-          </span>
-        )) }
-      </div>
+        <div>
+          { additionalActions.map((action, index, additionalActions) => (
+            <span key={index}>
+              <button type="button" className="link" onClick={() => action.onClick()}>{action.displayText}</button>
+              {index !== (additionalActions.length - 1) && <Bar/>}
+            </span>
+          )) }
+        </div>
       }
+
     </div>
   );
 };
