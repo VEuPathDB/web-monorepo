@@ -8,6 +8,7 @@ import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
+import { useBinaryOperatorClassName } from 'wdk-client/Utils/Operations';
 
 /**
  * Render each step of a strategy as a grid.
@@ -209,17 +210,7 @@ function CombineStepBoxContent(props: StepBoxProps) {
   const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
-      <Plugin<{ step: Step }>
-        context={{
-          type: 'stepBoxIcon',
-          searchName: step.searchName,
-          recordClassName: recordClass.urlSegment
-        }}
-        pluginProps={{
-          step: step
-        }}
-        defaultComponent={CombinedStepIcon}
-      />
+      <CombinedStepIcon step={step} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
@@ -227,8 +218,10 @@ function CombineStepBoxContent(props: StepBoxProps) {
 
 function CombinedStepIcon(props: { step: Step }) {
   const { step } = props;
+  const operatorClassName = useBinaryOperatorClassName(step);
+
   return (
-    <div className={cx('--CombineOperator', toUpper(step.searchConfig.parameters.bq_operator))}>
+    <div className={operatorClassName}>
       <div className={cx('--CombinePrimaryInputArrow')}>&#9654;</div>
       <div className={cx('--CombineSecondaryInputArrow')}>&#9660;</div>
     </div>

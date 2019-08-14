@@ -12,9 +12,6 @@ export type PluginType =
   | 'stepAnalysis'
   | 'questionFilter'
   | 'stepBox'
-  | 'stepBoxIcon'
-  | 'addStepOperationMenu'
-  | 'addStepOperationForm'
 
 export interface PluginEntryContext {
   type: PluginType;

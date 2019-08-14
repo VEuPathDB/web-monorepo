@@ -6,11 +6,11 @@ import { createSelector } from 'reselect';
 import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { useAddStepMenuConfigs, useSelectedFormComponent } from 'wdk-client/Utils/Operations';
+import { findPrimaryBranchHeight, addStep, findSubtree, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { findPrimaryBranchHeight, addStep, findSubtree, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 import 'wdk-client/Views/Strategy/AddStepPanel.scss';
@@ -35,9 +35,7 @@ type DispatchProps = {
 type OwnProps = {
   addType: AddType,
   strategyId: number,
-  operationTypes?: string[],
-  onHideInsertStep: () => void,
-  developmentMode?: boolean
+  onHideInsertStep: () => void
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -54,8 +52,7 @@ export type AddStepOperationMenuProps = {
   questions: Question[],
   questionsByUrlSegment: Record<string, Question>,
   recordClasses: RecordClass[],
-  recordClassesByUrlSegment: Record<string, RecordClass>,
-  developmentMode: boolean
+  recordClassesByUrlSegment: Record<string, RecordClass>
 };
 
 export type AddStepOperationFormProps = {
@@ -74,19 +71,12 @@ export type AddStepOperationFormProps = {
   recordClassesByUrlSegment: Record<string, RecordClass>,
 };
 
-const defaultOperationTypes = [
-  'combine',
-  'convert'
-];
-
 export const AddStepPanelView = wrappable((
   {
     addType,
-    developmentMode = false,
     loadStrategy,
     inputRecordClass,
     onHideInsertStep,
-    operationTypes = defaultOperationTypes,
     operandStep,
     previousStep,
     questions,
@@ -158,6 +148,9 @@ export const AddStepPanelView = wrappable((
     [ recordClasses ]
   );
 
+  const addStepMenuConfigs = useAddStepMenuConfigs();
+  const SelectedForm = useSelectedFormComponent(selectedOperation);
+
   return (
     <div className={cx()}>
       {
@@ -205,35 +198,27 @@ export const AddStepPanelView = wrappable((
                       </div>
                       <div className={cx('--MenuItemsContainer')}>
                         {
-                          operationTypes
-                            .map((operation, index) =>
+                          addStepMenuConfigs
+                            .map(({ name: operation, AddStepMenuComponent }, index) =>
                               <React.Fragment key={operation}>
                                 <div className={cx('--MenuItem')}>
-                                  <Plugin<AddStepOperationMenuProps>
-                                    key={operation}
-                                    context={{
-                                      type: 'addStepOperationMenu',
-                                      name: operation
-                                    }}
-                                    pluginProps={{
-                                      strategy,
-                                      inputRecordClass,
-                                      startOperationForm,
-                                      updateStrategy,
-                                      addType,
-                                      stepsCompletedNumber,
-                                      operandStep,
-                                      previousStep,
-                                      questions,
-                                      questionsByUrlSegment,
-                                      recordClasses,
-                                      recordClassesByUrlSegment,
-                                      developmentMode
-                                    }}
+                                  <AddStepMenuComponent
+                                    strategy={strategy}
+                                    inputRecordClass={inputRecordClass}
+                                    startOperationForm={startOperationForm}
+                                    updateStrategy={updateStrategy}
+                                    addType={addType}
+                                    stepsCompletedNumber={stepsCompletedNumber}
+                                    operandStep={operandStep}
+                                    previousStep={previousStep}
+                                    questions={questions}
+                                    questionsByUrlSegment={questionsByUrlSegment}
+                                    recordClasses={recordClasses}
+                                    recordClassesByUrlSegment={recordClassesByUrlSegment}
                                   />
                                 </div>
                                 {
-                                  index < operationTypes.length - 1 &&
+                                  index < addStepMenuConfigs.length - 1 &&
                                   <div className={cx('--MenuItemSeparator')}>
                                     <em>-or-</em>
                                     <div className={cx('--MenuItemDividingLine')}></div>
@@ -247,26 +232,20 @@ export const AddStepPanelView = wrappable((
                   )
                   : (
                     <div className={cx('--Form')}>
-                      <Plugin<AddStepOperationFormProps>
-                        context={{
-                          type: 'addStepOperationForm',
-                          name: selectedOperation
-                        }}
-                        pluginProps={{
-                          strategy,
-                          inputRecordClass,
-                          currentPage,
-                          advanceToPage,
-                          updateStrategy,
-                          addType,
-                          stepsCompletedNumber,
-                          operandStep,
-                          previousStep,
-                          questions,
-                          questionsByUrlSegment,
-                          recordClasses,
-                          recordClassesByUrlSegment
-                        }}
+                      <SelectedForm
+                        strategy={strategy}
+                        inputRecordClass={inputRecordClass}
+                        currentPage={currentPage}
+                        advanceToPage={advanceToPage}
+                        updateStrategy={updateStrategy}
+                        addType={addType}
+                        stepsCompletedNumber={stepsCompletedNumber}
+                        operandStep={operandStep}
+                        previousStep={previousStep}
+                        questions={questions}
+                        questionsByUrlSegment={questionsByUrlSegment}
+                        recordClasses={recordClasses}
+                        recordClassesByUrlSegment={recordClassesByUrlSegment}
                       />
                     </div>
                   )

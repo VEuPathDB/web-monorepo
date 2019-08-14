@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
-import { get } from 'lodash';
 
 import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
