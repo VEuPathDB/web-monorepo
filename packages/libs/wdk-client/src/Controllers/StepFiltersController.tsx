@@ -24,7 +24,7 @@ function StepFiltersController(props: Props) {
   const { step, question } = props;
   if (step == null || question == null) return null;
   return (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       {question.filters.map(filter =>
         <Plugin
           key={filter.name}
@@ -41,7 +41,7 @@ function StepFiltersController(props: Props) {
           }}
         />
       )}
-    </>
+    </div>
   )
 }
 

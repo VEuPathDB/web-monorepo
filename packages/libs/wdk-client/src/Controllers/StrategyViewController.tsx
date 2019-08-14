@@ -29,6 +29,8 @@ interface DispatchProps {
 
 type Props = OwnProps & DispatchProps & MappedProps;
 
+const STRATEGY_PANEL_VIEW_ID = 'activeStrategyPanel';
+
 function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, openedStrategies, isOpenedStrategiesVisible }: Props) {
 
   useEffect(() => {
@@ -64,7 +66,7 @@ function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, 
           You have not selected a strategy. Please run a new search, or select a strategy from your <Link to="/workspace/strategies/all">history</Link>.
         </div>}
       {strategyId && <StrategyPanelController
-        viewId="activeStrategyPanel"
+        viewId={STRATEGY_PANEL_VIEW_ID}
         strategyId={strategyId}
         stepId={stepId}
       />}
@@ -75,7 +77,7 @@ function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, 
           viewId="strategy"
           renderHeader={props => (
             <React.Fragment>
-              <ResultPanelHeader {...props}/>
+              <ResultPanelHeader reviseViewId={STRATEGY_PANEL_VIEW_ID} {...props}/>
               <StepFiltersController
                 strategyId={strategyId}
                 stepId={stepId}
