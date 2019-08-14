@@ -13,7 +13,6 @@ const cx = makeClassNameHelper('ColocateStepMenu');
 const colocationQuestionSuffix = 'BySpanLogic';
 
 export const ColocateStepMenu = ({
-  developmentMode,
   inputRecordClass,
   operandStep,
   recordClasses,
@@ -55,9 +54,7 @@ export const ColocateStepMenu = ({
               : colocationRecordClasses.map(
                   ({ displayNamePlural, urlSegment }) =>
                     <button key={urlSegment} type="button" onClick={() => {
-                      developmentMode
-                        ? startOperationForm('colocate', selectSearchPage(urlSegment))
-                        : alert('Under construction');
+                      startOperationForm('colocate', selectSearchPage(urlSegment));
                     }}>
                       {displayNamePlural}
                     </button>

@@ -15,6 +15,10 @@ import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCre
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
 
+import { ColocateStepMenu } from './components/strategies/ColocateStepMenu';
+import { CustomBinaryOperationsContext } from 'wdk-client/Utils/Operations';
+import { ColocateStepForm } from './components/strategies/ColocateStepForm';
+
 export const SiteHeader = () => ApiSiteHeader;
 
 const stopPropagation = event => event.stopPropagation();
@@ -340,14 +344,24 @@ export function ResultTabs(DefaultComponent) {
   };
 }
 
-const apiOperationTypes = ['combine', 'convert', 'colocate'];
+const apiCustomBinaryOperations = [
+  {
+    name: 'colocate',
+    AddStepMenuComponent: ColocateStepMenu,
+    addStepFormComponents: {
+      'colocate': ColocateStepForm
+    },
+    isOperation: step => step.searchName.endsWith('BySpanLogic'),
+    operatorBaseClassName: 'SpanOperator'
+  }
+];
 
-export function AddStepPanelView(DefaultComponent) {
-  return function ApiAddStepPaneView(props) {
-    return <DefaultComponent 
-      {...props} 
-      operationTypes={apiOperationTypes}
-      developmentMode={true}
-    />;
-  };
+export function StrategyWorkspaceController(DefaultComponent) {
+  return function ApiStrategyWorkspaceController(props) {
+    return (
+      <CustomBinaryOperationsContext.Provider value={apiCustomBinaryOperations}>
+        <DefaultComponent {...props} />
+      </CustomBinaryOperationsContext.Provider>
+    );
+  }
 }

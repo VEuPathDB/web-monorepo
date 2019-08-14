@@ -69,20 +69,5 @@ export default [
     type: 'questionForm',
     test: ({ question }) => question && question.urlSegment.endsWith('BySimilarity'),
     component: BlastQuestionForm
-  },
-  {
-    type: 'addStepOperationMenu',
-    name: 'colocate',
-    component: ColocateStepMenu
-  },
-  {
-    type: 'addStepOperationForm',
-    name: 'colocate',
-    component: ColocateStepForm
-  },
-  {
-    type: 'stepBoxIcon',
-    test: ({ question }) => question && question.urlSegment.endsWith('BySpanLogic'),
-    component: ColocateStepBoxIcon
   }
 ];
