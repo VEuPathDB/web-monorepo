@@ -11,10 +11,12 @@ import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
-import {setOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
+import {removeFromOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
+import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
 interface OwnProps {
   viewId: string;
+  isActive: boolean;
   strategyId: number;
   stepId?: number;
   showCloseButton?: boolean;
@@ -35,7 +37,7 @@ type MappedProps =
 interface MappedDispatch {
   setReviseFormStepId: (stepId?: number) => void;
   requestStrategy: (id: number) => void;
-  onStrategyClose: (openedStrategies: number[]) => void;
+  onStrategyClose: () => void;
   onStrategyCopy: (signature: string) => void;
   onStrategyDelete: () => void;
   onStrategyRename: (name: string) => void;
@@ -77,7 +79,10 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
   return bindActionCreators({
     requestStrategy,
-    onStrategyClose: setOpenedStrategies,
+    onStrategyClose: () => [
+      removeFromOpenedStrategies([props.strategyId]),
+      transitionToInternalPage('/workspace/strategies')
+    ],
     setReviseFormStepId: (stepId?: number) => setReviseFormVisibility(props.viewId, stepId),
     onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
     onStrategyDelete: () => requestDeleteStrategy(props.strategyId),
@@ -117,7 +122,6 @@ function StrategyPanelController(props: Props) {
     <StrategyPanel
       {...props}
       onDeleteStep={partial(props.onDeleteStep, props.strategy.stepTree)}
-      onStrategyClose={() => props.onStrategyClose(props.openedStrategies.filter(id => id !== props.strategyId))}
     />
   );
 }

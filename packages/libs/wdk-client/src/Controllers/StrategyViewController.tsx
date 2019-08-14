@@ -1,4 +1,4 @@
-import { last } from 'lodash';
+import { castArray, last } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -31,7 +31,8 @@ type Props = OwnProps & DispatchProps & MappedProps;
 
 const STRATEGY_PANEL_VIEW_ID = 'activeStrategyPanel';
 
-function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, openedStrategies, isOpenedStrategiesVisible }: Props) {
+function StrategyViewController(props: Props) {
+  const { stepId, strategyId, activeStrategy, dispatch, openedStrategies, isOpenedStrategiesVisible } = props;
 
   useEffect(() => {
     if (strategyId && (
@@ -54,7 +55,40 @@ function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, 
   }, [ stepId, strategyId, activeStrategy, openedStrategies ]);
 
   return (
-    <React.Fragment>
+    <>
+      {/* <StrategyPanelWithOpenedPanel {...props}/> */}
+      <StrategyPanelWithToggle {...props}/>
+      <div style={{ position: 'relative', minHeight: '350px' }}>
+        {strategyId && stepId && <ResultPanelController
+          strategyId={strategyId}
+          stepId={stepId}
+          viewId="strategy"
+          renderHeader={props => (
+            <>
+              <ResultPanelHeader reviseViewId={STRATEGY_PANEL_VIEW_ID} {...props}/>
+              <StepFiltersController
+                strategyId={strategyId}
+                stepId={stepId}
+              />
+            </>
+          )}
+        />}
+      </div>
+    </>
+  );
+}
+
+function mapState(state: RootState): MappedProps {
+  const { isOpenedStrategiesVisible } = state.strategyWorkspace;
+  return { isOpenedStrategiesVisible };
+}
+
+export default connect(mapState)(StrategyViewController);
+
+function StrategyPanelWithOpenedPanel(props: Props) {
+  const { stepId, strategyId, dispatch, openedStrategies, isOpenedStrategiesVisible } = props;
+  return (
+    <>
       {openedStrategies != null && <OpenedStrategies
         activeStrategyId={strategyId}
         openStrategies={openedStrategies}
@@ -66,33 +100,48 @@ function StrategyViewController({ stepId, strategyId, activeStrategy, dispatch, 
           You have not selected a strategy. Please run a new search, or select a strategy from your <Link to="/workspace/strategies/all">history</Link>.
         </div>}
       {strategyId && <StrategyPanelController
+        isActive
         viewId={STRATEGY_PANEL_VIEW_ID}
         strategyId={strategyId}
         stepId={stepId}
       />}
-      <div style={{ position: 'relative', minHeight: '350px' }}>
-        {strategyId && stepId && <ResultPanelController
-          strategyId={strategyId}
-          stepId={stepId}
-          viewId="strategy"
-          renderHeader={props => (
-            <React.Fragment>
-              <ResultPanelHeader reviseViewId={STRATEGY_PANEL_VIEW_ID} {...props}/>
-              <StepFiltersController
-                strategyId={strategyId}
-                stepId={stepId}
-              />
-            </React.Fragment>
-          )}
-        />}
-      </div>
-    </React.Fragment>
+    </>
   );
 }
 
-function mapState(state: RootState): MappedProps {
-  const { isOpenedStrategiesVisible } = state.strategyWorkspace;
-  return { isOpenedStrategiesVisible };
+function StrategyPanelWithToggle(props: Props) {
+  const { stepId, strategyId, dispatch, openedStrategies = [], isOpenedStrategiesVisible } = props;
+  const toggleId = "openedStrategiesPanelToggle";
+  const strategiesToShow = isOpenedStrategiesVisible ? openedStrategies : castArray(strategyId);
+  return (
+    <>
+      {openedStrategies.length > 1 &&
+        <>
+          <input id={toggleId} type="checkbox" checked={isOpenedStrategiesVisible} onChange={event => dispatch(setOpenedStrategiesVisibility(event.target.checked))}/> <label htmlFor={toggleId}>Show all opened strategies</label>
+        </>
+      }
+      <div className="OpenedStrategiesPanel">
+        {strategiesToShow.map(id => (
+          <StrategyPanelController
+            key={id}
+            isActive={id === strategyId}
+            showCloseButton
+            viewId={id === strategyId ? STRATEGY_PANEL_VIEW_ID : `inactiveStrategyPanel__${id}`}
+            strategyId={id}
+            stepId={id === strategyId ? stepId : undefined}
+          />
+        ))}
+      </div>
+      {strategyId == null &&
+        <div>
+          You have not selected a strategy. Please run a new search, or select a strategy from your <Link to="/workspace/strategies/all">history</Link>.
+        </div>
+      }
+      {strategyId != null && stepId == null &&
+        <div>
+          Select a search above to see the results.
+        </div>
+      }
+    </>
+  )
 }
-
-export default connect(mapState)(StrategyViewController);

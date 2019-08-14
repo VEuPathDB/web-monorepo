@@ -11,7 +11,7 @@ interface Props {
   activeStrategyId?: number;
 }
 
-export default function OpenedStrategies({ openStrategies, isVisible, setVisibility }: Props) {
+export default function OpenedStrategies({ openStrategies, isVisible, setVisibility, activeStrategyId }: Props) {
   if (openStrategies.length < 2) return null;
   return (
     <CollapsibleSection
@@ -25,6 +25,7 @@ export default function OpenedStrategies({ openStrategies, isVisible, setVisibil
           .map(id =>(
             <StrategyPanelController
               key={id}
+              isActive={id === activeStrategyId}
               viewId={`inactiveStrategyPanel__${id}`}
               strategyId={id}
               showCloseButton

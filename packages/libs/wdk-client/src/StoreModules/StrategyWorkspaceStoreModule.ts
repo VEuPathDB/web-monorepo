@@ -46,11 +46,17 @@ export function reduce(state: State = initialState, action: Action): State {
     case clearActiveModal.type:
       return { ...state, activeModal: undefined };
 
-    case setOpenedStrategies.type:
+    case setOpenedStrategies.type: {
+      const openedStrategies = action.payload.openedStrategies;
+      const activeStrategy = state.activeStrategy == null || !openedStrategies.includes(state.activeStrategy.strategyId)
+        ? undefined
+        : state.activeStrategy;
       return {
         ...state,
-        openedStrategies: action.payload.openedStrategies
+        openedStrategies,
+        activeStrategy
       }
+    }
 
     case addToOpenedStrategies.type: {
       const openedStrategies = union(state.openedStrategies, action.payload.ids);
@@ -65,11 +71,17 @@ export function reduce(state: State = initialState, action: Action): State {
       }
     }
 
-    case removeFromOpenedStrategies.type:
+    case removeFromOpenedStrategies.type: {
+      const openedStrategies = difference(state.openedStrategies, action.payload.ids);
+      const activeStrategy = state.activeStrategy == null || !openedStrategies.includes(state.activeStrategy.strategyId)
+        ? undefined
+        : state.activeStrategy;
       return {
         ...state,
-        openedStrategies: difference(state.openedStrategies, action.payload.ids)
+        openedStrategies,
+        activeStrategy
       }
+    }
     
     case setOpenedStrategiesVisibility.type:
       return {
@@ -141,7 +153,7 @@ export const observe = takeEpicInWindow(
 function updateRouteOnStrategySteptreePutEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
   return action$.pipe(mergeMap(action => {
     if (fulfillPutStrategy.isOfType(action)) {
-      // when the active srtrategies step tree is updated, select the root state only if the previous selection was the root before the update
+      // when the active srtrategies step tree is updated, select the root step only if the previous selection was the root before the update
       const { strategy } = action.payload;
       const { activeStrategy } = state$.value[key];
       if (shouldMakeRootStepActive(strategy, activeStrategy)) {
