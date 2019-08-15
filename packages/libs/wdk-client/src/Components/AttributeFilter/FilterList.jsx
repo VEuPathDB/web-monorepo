@@ -71,7 +71,7 @@ export default class FilterList extends React.Component {
         <a className="select"
           onClick={handleSelectClick}
           href={'#' + filter.field}
-          title={filterDisplay}>{field.display}</a>
+          title={filterDisplay}>{field == null ? filter.field : field.display}</a>
         {/* Use String.fromCharCode to avoid conflicts with
             character ecoding. Other methods detailed at
             http://facebook.github.io/react/docs/jsx-gotchas.html#html-entities
@@ -152,7 +152,7 @@ export default class FilterList extends React.Component {
                         : (
                           <React.Fragment>
                             <sup className="multiFilter-operation">
-                              {getOperationDisplay(filter.value.operation).toUpperCase()} {field.display} filters
+                              {getOperationDisplay(filter.value.operation).toUpperCase()} {field == null ? filter.field : field.display} filters
                             </sup>
                             <ul className="filter-items">
                               {filter.value.filters.map(leaf => <li key={leaf.field}>{this.renderFilterItem(leaf, filter)}</li>)}

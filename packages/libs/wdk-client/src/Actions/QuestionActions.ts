@@ -7,6 +7,7 @@ import {
   SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
+import {Step} from 'wdk-client/Utils/WdkUser';
 
 
 export type Action =
@@ -65,6 +66,7 @@ export interface QuestionLoadedAction {
     recordClass: RecordClass;
     paramValues: ParameterValues;
     wdkWeight?: number;
+    stepValidation?: Step['validation'];
   }>
 }
 

@@ -16,6 +16,7 @@ import {
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 import { TooltipPosition } from 'wdk-client/Components/Overlays/Tooltip';
+import StepValidationInfo from 'wdk-client/Views/Question/StepValidationInfo';
 
 type TextboxChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
@@ -50,7 +51,7 @@ export const useDefaultOnSubmit = (dispatchAction: DispatchAction, urlSegment: s
 export default function DefaultQuestionForm(props: Props) {
 
   const { dispatchAction, onSubmit, submissionMetadata, state } = props;
-  const { question, customName, paramValues, weight } = state;
+  const { question, customName, paramValues, weight, stepValidation } = state;
 
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata);
 
@@ -81,6 +82,7 @@ export default function DefaultQuestionForm(props: Props) {
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
         headerText={question.displayName}
       />
+      <StepValidationInfo stepValidation={stepValidation}/>
       <form onSubmit={handleSubmit}>
         {question.groups
           .filter(group => group.displayType !== 'hidden')

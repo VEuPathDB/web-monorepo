@@ -51,6 +51,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, requestCreateStep, fulfillCreateStep } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import {Step} from 'wdk-client/Utils/WdkUser';
 
 export const key = 'question';
 
@@ -79,6 +80,7 @@ export type QuestionState = {
   stepId: number | undefined;
   weight?: string;
   customName?: string;
+  stepValidation?: Step['validation'];
 }
 
 export type State = {
@@ -142,6 +144,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         ...state,
         questionStatus: 'complete',
         question: normalizeQuestion(action.payload.question),
+        stepValidation: action.payload.stepValidation,
         recordClass: action.payload.recordClass,
         paramValues: action.payload.paramValues,
         paramErrors: action.payload.question.parameters.reduce((paramValues, param) =>
@@ -473,16 +476,23 @@ async function loadQuestion(wdkService: WdkService, searchName: string, stepId?:
   const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName);
   const paramValues = step == null
     ? makeDefaultParamValues(question.parameters)
-    : step.searchConfig.parameters;
+    : integrateStepAndDefaultParamValues(question.parameters, step)
   const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
-  return questionLoaded({ searchName, question, recordClass, paramValues, wdkWeight })
+  return questionLoaded({
+    searchName,
+    question,
+    recordClass,
+    paramValues,
+    wdkWeight,
+    stepValidation: step && step.validation
+  })
   //   error => error.status === 404
   //     ? questionNotFound({ searchName })
   //     : questionError({ searchName })
   // );
 }
 
-function makeDefaultParamValues(parameters: Parameter[]) {
+function makeDefaultParamValues(parameters: Parameter[]): ParameterValues {
   return parameters.reduce(function(values, { name, initialDisplayValue, type }) {
     return Object.assign(
       values,
@@ -494,5 +504,18 @@ function makeDefaultParamValues(parameters: Parameter[]) {
           [name]: initialDisplayValue
         }
     );
+  }, {} as ParameterValues);
+}
+
+function integrateStepAndDefaultParamValues(parameters: Parameter[], step: Step): ParameterValues {
+  const { searchConfig: { parameters: currentParamValues }, validation } = step;
+  const keyedErrors = validation.isValid == true ? {} : validation.errors.byKey;
+  return parameters.reduce(function(values, { name, initialDisplayValue }): ParameterValues {
+    const value = (name in currentParamValues) && !(name in keyedErrors)
+      ? currentParamValues[name]
+      : initialDisplayValue;
+    return Object.assign(values, {
+      [name]: value
+    });
   }, {} as ParameterValues);
 }

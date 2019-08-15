@@ -64,10 +64,7 @@ export interface Step extends AnswerSpec {
   }
   expanded: boolean;
   expandedName?: string;
-  validation: {
-    isValid: boolean;
-    level: StepValidationLevel
-  }
+  validation: ValidStepValidation | InvalidStepValidation;
 }
 
 export interface PatchStepSpec {
