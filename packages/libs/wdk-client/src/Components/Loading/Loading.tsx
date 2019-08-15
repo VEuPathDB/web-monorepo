@@ -1,10 +1,11 @@
-import 'spin.js/spin.css';
-import 'wdk-client/Components/Loading/Loading.css';
 import { flow } from 'lodash';
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { Spinner } from 'spin.js';
 import { delay, wrappable } from 'wdk-client/Utils/ComponentUtils';
+
+import 'spin.js/spin.css';
+import 'wdk-client/Components/Loading/Loading.css';
 
 type Props = {
   /** Additional class name to use for container element */
