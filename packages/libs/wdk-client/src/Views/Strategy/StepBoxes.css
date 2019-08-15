@@ -68,20 +68,15 @@
   bottom: 0;
   z-index: 2;
   border-radius: .75em;
-  background-color: #33333338;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: 100% 100%, auto;
 }
 
-/* Top-left to bottom-right diagonal line */
+/* Red X over step box */
 .StepBoxes--Box__invalid:before {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'> <path d='M0 0 L100 100 ' stroke-width='5' stroke='%23b40606' /></svg>");
-}
-
-/* Bottom-left to top-right diagonal line */
-.StepBoxes--Box__invalid:after {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'> <path d='M0 100 L100 0 ' stroke-width='5' stroke='%23b40606' /></svg>");
+  background-image: url("./red-x.svg");
+  background-color: #ffffff60;
 }
 
 .StepBoxes--BoxLink {
