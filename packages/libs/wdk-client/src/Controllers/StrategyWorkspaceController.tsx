@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 import {Dispatch} from 'redux';
 
-import {wrappable} from 'wdk-client/Utils/ComponentUtils';
+import {wrappable, useSetDocumentTitle} from 'wdk-client/Utils/ComponentUtils';
 import {RootState} from 'wdk-client/Core/State/Types';
 import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
 import StrategyNotifications from 'wdk-client/Views/Strategy/StrategyNotifications';
@@ -40,6 +40,8 @@ function StrategyWorkspaceController(props: Props) {
       dispatch(closeStrategyView());
     }
   }, []);
+
+  useSetDocumentTitle('My Strategies');
 
   const openedStrategiesCount = openedStrategies && openedStrategies.length;
   const allStrategiesCount = strategySummaries && strategySummaries.length;
