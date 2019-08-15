@@ -112,7 +112,9 @@ function StrategyPanelWithOpenedPanel(props: Props) {
 function StrategyPanelWithToggle(props: Props) {
   const { stepId, strategyId, dispatch, openedStrategies = [], isOpenedStrategiesVisible } = props;
   const toggleId = "openedStrategiesPanelToggle";
-  const strategiesToShow = isOpenedStrategiesVisible ? openedStrategies : castArray(strategyId);
+  const strategiesToShow = isOpenedStrategiesVisible ? openedStrategies
+    : strategyId != null ? [ strategyId ]
+    : [];
   return (
     <>
       {openedStrategies.length > 1 &&
