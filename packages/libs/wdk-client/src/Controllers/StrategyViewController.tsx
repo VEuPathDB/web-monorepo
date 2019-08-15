@@ -32,9 +32,10 @@ type Props = OwnProps & DispatchProps & MappedProps;
 const STRATEGY_PANEL_VIEW_ID = 'activeStrategyPanel';
 
 function StrategyViewController(props: Props) {
-  const { stepId, strategyId, activeStrategy, dispatch, openedStrategies, isOpenedStrategiesVisible } = props;
+  const { stepId, strategyId, activeStrategy, dispatch, openedStrategies } = props;
 
   useEffect(() => {
+    // XXX Move this logic to store module?
     if (strategyId && (
       activeStrategy == null ||
       activeStrategy.strategyId !== strategyId ||
