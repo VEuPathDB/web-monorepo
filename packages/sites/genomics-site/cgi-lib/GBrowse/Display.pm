@@ -850,11 +850,11 @@ sub chipColor {
   ($a) = (defined $a) ? $a : $f->get_tag_values('immunoglobulin complex, circulating');
   my ($t) = $f->get_tag_values('Compound');
   my ($r) = $f->get_tag_values('Replicate');
-  my ($g) = $f->get_tag_values('genotype information');
+  my ($g) = $f->get_tag_values('parasite genotype');
   my ($l) = $f->get_tag_values('life cycle stage');
   my ($anls) = $f->get_tag_values('name');
 
-  return '#D80000' if($anls eq 'H4_schizonti_smoothed (ChIP-chip)');
+  return '#D80000' if($anls eq 'H4_schizont_smoothed (ChIP-chip)');
   return '#006633' if($anls eq 'H4_trophozoite_smoothed (ChIP-chip)');
   return '#27408B' if($anls eq 'H4_ring_smoothed (ChIP-chip)');
   return '#524818' if($anls eq 'H3K9ac_troph_smoothed (ChIP-chip)');
