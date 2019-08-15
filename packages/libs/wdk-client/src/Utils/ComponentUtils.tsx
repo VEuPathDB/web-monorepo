@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { AttributeValue } from 'wdk-client/Utils/WdkModel';
 
 /**
@@ -402,4 +402,11 @@ export function makeClassNameHelper(baseClassName: string) {
  */
 export function propertyIsNonNull<T, K extends keyof T>(object: T, key: K): object is T & { [Key in K]-?: T[K] } {
   return object[key] != null;
+}
+
+export function useSetDocumentTitle(title: string) {
+  useEffect(() => {
+    document.title = title;
+    return () => { document.title = ''; }
+  }, [ title ]);
 }
