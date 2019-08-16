@@ -267,6 +267,11 @@
   margin-bottom: 1em;
 }
 
+.wdk-RecordTableContainerContent .wdk-DataTableContainer {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 .wdk-RecordTableList {
   vertical-align: top;
   display: inline-block;
