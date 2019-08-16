@@ -1,9 +1,11 @@
 import { get } from 'lodash';
 import { Action } from 'wdk-client/Actions';
-import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInsertStepWizardVisibility, setStepDetailsVisibility, setStrategyPanelHeightOverride, unnestStrategy, setReviseFormVisibility, closeStrategyPanel } from 'wdk-client/Actions/StrategyPanelActions';
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
-import { fulfillPutStrategy } from 'wdk-client/Actions/StrategyActions';
+import { fulfillPutStrategy, fulfillStrategy } from 'wdk-client/Actions/StrategyActions';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
+import {takeEpicInWindow, mergeMapRequestActionsToEpic, InferAction} from 'wdk-client/Utils/ActionCreatorUtils';
+import {combineEpics} from 'redux-observable';
 
 /*
 * So far, this store module does not handle opening and closing the strategy panel.  it is just
@@ -76,3 +78,28 @@ type ViewState = {
       }
     }
   }
+
+export const observe = takeEpicInWindow(
+  {
+    startActionCreator: openStrategyPanel,
+    endActionCreator: closeStrategyPanel
+  },
+  combineEpics(
+    mergeMapRequestActionsToEpic([openStrategyPanel, setReviseFormVisibility, fulfillStrategy], getCloseReviseForm,
+      { areActionsCoherent: areCloseReviseFormActionsCoherent })
+  )
+);
+
+
+type CloseReviseFormActions = [InferAction<typeof openStrategyPanel>, InferAction<typeof setReviseFormVisibility>, InferAction<typeof fulfillStrategy>];
+
+async function getCloseReviseForm([openAction]: CloseReviseFormActions) {
+  return setReviseFormVisibility(openAction.payload.viewId, undefined);
+}
+
+function areCloseReviseFormActionsCoherent([openAction, reviseAction, fulfilStrategy]: CloseReviseFormActions): boolean {
+  return reviseAction.payload.stepId != null && (
+    openAction.payload.viewId === reviseAction.payload.viewId &&
+    fulfilStrategy.payload.strategy.steps[reviseAction.payload.stepId] != null
+  );
+}

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
-import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setReviseFormVisibility } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setReviseFormVisibility, openStrategyPanel, closeStrategyPanel } from 'wdk-client/Actions/StrategyPanelActions';
 import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -35,6 +35,8 @@ type MappedProps =
 }
 
 interface MappedDispatch {
+  openStrategyPanel: (viewId: string) => void;
+  closeStrategyPanel: (viewId: string) => void;
   setReviseFormStepId: (stepId?: number) => void;
   requestStrategy: (id: number) => void;
   onStrategyClose: () => void;
@@ -79,6 +81,8 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
   return bindActionCreators({
     requestStrategy,
+    openStrategyPanel,
+    closeStrategyPanel,
     onStrategyClose: () => [
       removeFromOpenedStrategies([props.strategyId]),
       transitionToInternalPage('/workspace/strategies')
@@ -113,7 +117,9 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
 
 function StrategyPanelController(props: Props) {
   useEffect(() => {
+    props.openStrategyPanel(props.viewId);
     props.requestStrategy(props.strategyId);
+    return () => props.closeStrategyPanel(props.viewId);
   }, [ props.strategyId ]);
 
   if (props.isLoading) return <Loading/>;
