@@ -182,7 +182,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
 
   // show collapsed view if not expanded
   if (!isExpanded) {
-    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message={TITLE} arrow="&dArr;"/> );
+    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message={'Show ' + TITLE} arrow="&dArr;"/> );
   }
 
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
@@ -268,7 +268,7 @@ function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
           <Loading/>
         )}
       </div>
-      <ExpansionBar onClick={() => setExpandedAndPref(false)} message="Hide Taxonomy Filter" arrow="&uArr;"/>
+      <ExpansionBar onClick={() => setExpandedAndPref(false)} message={'Hide ' + TITLE} arrow="&uArr;"/>
     </Container>
   );
 }
