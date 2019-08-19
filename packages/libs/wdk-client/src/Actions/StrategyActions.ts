@@ -139,6 +139,11 @@ export const requestUpdateStepSearchConfig = makeActionCreator(
     (strategyId: number, stepId: number, searchConfig: SearchConfig) => ({ strategyId, stepId, searchConfig })
 );
 
+export const requestReplaceStep = makeActionCreator(
+    'requestReplaceStep',
+    (strategyId: number, stepId: number, newStepSpec: NewStepSpec) => ({ strategyId, stepId, newStepSpec })
+);
+
 export const redirectToNewSearch = makeActionCreator(
     'redirectToNewSearch',
     (newStrategyId: number, newStepId: number) => ({ newStrategyId, newStepId })
@@ -169,6 +174,7 @@ export type Action =
 | InferAction<typeof requestStepStandardReport>
 | InferAction<typeof fulfillStepStandardReport>
 | InferAction<typeof requestUpdateStepSearchConfig>
+| InferAction<typeof requestReplaceStep>
 | InferAction<typeof requestDeleteStep>
 | InferAction<typeof fulfillDeleteStep>
 | InferAction<typeof redirectToNewSearch>

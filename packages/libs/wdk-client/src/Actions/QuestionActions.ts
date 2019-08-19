@@ -7,7 +7,8 @@ import {
   SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
-import {Step} from 'wdk-client/Utils/WdkUser';
+import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
+import { WdkService } from 'wdk-client/Core';
 
 
 export type Action =
@@ -183,9 +184,9 @@ type AddUnaryStep = {
   addType: AddType
 }
 
-type AddCustomStep = {
-  type: 'add-custom-step',
-  onStepAdded: (newStepId: number) => void
+type SubmitCustomForm = {
+  type: 'submit-custom-form',
+  onStepSubmitted: (wdkService: WdkService, submissionSpec: NewStepSpec) => void
 }
 
 type EditStep = {
@@ -195,7 +196,7 @@ type EditStep = {
   previousSearchConfig: SearchConfig
 }
 
-export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | AddCustomStep | EditStep
+export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | SubmitCustomForm | EditStep
 
 export interface SubmitQuestionAction {
   type: typeof SUBMIT_QUESTION;

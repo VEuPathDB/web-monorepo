@@ -297,7 +297,8 @@ const submitBasket = async (
       searchName: booleanSearchUrlSegment,
       searchConfig: {
         parameters: booleanSearchState.paramValues
-      }
+      },
+      customName: booleanSearchState.question.displayName
     })
   ]);
 

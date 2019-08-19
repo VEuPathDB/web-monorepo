@@ -118,7 +118,8 @@ const CombineWithStrategyFormView = ({
         searchName: booleanSearchUrlSegment,
         searchConfig: {
           parameters: booleanSearchState.paramValues
-        }
+        },
+        customName: booleanSearchState.question.displayName
       });
 
       const duplicateStepTreePromise = wdkService.getDuplicatedStrategyStepTree(selectedStrategyId);

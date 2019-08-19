@@ -1,5 +1,22 @@
-import { StepTree, Step } from 'wdk-client/Utils/WdkUser';
+import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
+
+export const replaceStep = (
+  stepTree: StepTree,
+  oldStepId: number,
+  newStepId: number
+): StepTree => 
+  stepTree.stepId === oldStepId
+    ? {
+        stepId: newStepId,
+        primaryInput: stepTree.primaryInput,
+        secondaryInput: stepTree.secondaryInput
+      }
+    : {
+        stepId: stepTree.stepId,
+        primaryInput: stepTree.primaryInput && replaceStep(stepTree.primaryInput, oldStepId, newStepId),
+        secondaryInput: stepTree.secondaryInput && replaceStep(stepTree.secondaryInput, oldStepId, newStepId)
+      };
 
 export const addStep = (
   stepTree: StepTree,

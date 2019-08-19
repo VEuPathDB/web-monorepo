@@ -372,7 +372,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           }
         ));
       } else {
-        const newSearchStep = services.wdkService.createStep({
+        const newSearchStepSpec = {
           searchName: questionState.question.urlSegment,
           searchConfig: {
             parameters: paramValues,
@@ -380,17 +380,17 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
           },
           customName: questionState.customName || questionState.question.shortDisplayName
-        });
+        };
 
-        if (submissionMetadata.type === 'add-custom-step') {
-          return newSearchStep.then(
-            ({ id: newSearchStepId }) => {
-              submissionMetadata.onStepAdded(newSearchStepId);
+        if (submissionMetadata.type === 'submit-custom-form') {
+          submissionMetadata.onStepSubmitted(services.wdkService, newSearchStepSpec);
 
-              return fulfillCreateStep(newSearchStepId, Date.now());
-            }
-          );
-        } else if (submissionMetadata.type === 'create-strategy') {
+          return Promise.resolve(fulfillCreateStep(-1, Date.now()));
+        }
+
+        const newSearchStep = services.wdkService.createStep(newSearchStepSpec);
+
+        if (submissionMetadata.type === 'create-strategy') {
           return newSearchStep.then(
             ({ id: newSearchStepId }) => requestCreateStrategy(
               {

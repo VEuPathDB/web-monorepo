@@ -30,8 +30,9 @@ import {
   fulfillDeleteStep,
   requestRemoveStepFromStepTree,
   fulfillPatchStrategyProperties,
+  requestReplaceStep,
 } from 'wdk-client/Actions/StrategyActions';
-import { removeStep, getStepIds } from 'wdk-client/Utils/StrategyUtils';
+import { removeStep, getStepIds, replaceStep } from 'wdk-client/Utils/StrategyUtils';
 import { difference } from 'lodash';
 
 export const key = 'strategies';
@@ -219,6 +220,28 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     return fulfillStrategy(strategy);
   }
 
+  async function getFulfillStrategy_ReplaceStep(
+    [requestAction]: [InferAction<typeof requestReplaceStep>],
+    state$: StateObservable<RootState>,
+    { wdkService }: EpicDependencies
+  ): Promise<InferAction<typeof requestPutStrategyStepTree>> {
+    const { strategyId, stepId: oldStepId, newStepSpec } = requestAction.payload;
+
+    const { id: newStepId } = await wdkService.createStep(newStepSpec);
+    const strategyEntry = state$.value.strategies.strategies[strategyId];
+
+    if (!strategyEntry || strategyEntry.status !== 'success') {
+      throw new Error(`Tried to replace strategy #${strategyId}, which is pending`);
+    }
+
+    const oldStepTree = strategyEntry.strategy.stepTree;
+
+    return requestPutStrategyStepTree(
+      strategyId,
+      replaceStep(oldStepTree, oldStepId, newStepId)
+    );
+  }
+
   async function getFulfillStrategy_RemoveStepFromStepTree(
     [requestAction]: [InferAction<typeof requestRemoveStepFromStepTree>],
     state$: StateObservable<RootState>,
@@ -314,6 +337,7 @@ async function getFulfillNewSearch(
       { areActionsCoherent: areFulfillStrategy_PatchStratPropsActionsCoherent }),
     mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps),
     mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig),
+    mrate([requestReplaceStep], getFulfillStrategy_ReplaceStep),
     mrate([requestRemoveStepFromStepTree], getFulfillStrategy_RemoveStepFromStepTree),
     mrate([requestDeleteStep], getFulfillDeleteStep),
     mrate([requestCreateStrategy], getFulfillCreateStrategy),

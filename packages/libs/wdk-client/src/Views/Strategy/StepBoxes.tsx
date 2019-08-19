@@ -8,7 +8,7 @@ import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
-import { useBinaryOperatorClassName } from 'wdk-client/Utils/Operations';
+import { useBinaryStepBoxClassName } from 'wdk-client/Utils/Operations';
 
 /**
  * Render each step of a strategy as a grid.
@@ -220,7 +220,7 @@ function CombineStepBoxContent(props: StepBoxProps) {
 
 function CombinedStepIcon(props: { step: Step }) {
   const { step } = props;
-  const operatorClassName = useBinaryOperatorClassName(step);
+  const operatorClassName = useBinaryStepBoxClassName(step);
 
   return (
     <div className={operatorClassName}>
