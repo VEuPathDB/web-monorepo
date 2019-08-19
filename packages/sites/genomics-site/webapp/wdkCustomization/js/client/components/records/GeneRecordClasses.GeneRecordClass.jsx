@@ -922,7 +922,7 @@ class TranscriptionSummaryForm extends SortKeyTable {
           );
         } else {
 	  if (((this.props.value.length * 50) + 100) > 700) {
-	    height = (this.props.value.length * 50) + 100;
+	    height = (this.props.value.length * 50) + 150;
 	  } 
 	}
 
