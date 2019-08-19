@@ -2,22 +2,36 @@
   &--BoxLink {
     &__combined {
       & .StepBoxes--SpanOperator {
-        display: inline-block;
-
-        background-image: url('../questions/overlap.svg');
-        background-position: center center;
-        background-repeat: no-repeat;
         background-color: #fafafa;
-
-        width: 3em;
-        height: 1.9em;
-
-        z-index: 1;
       }
 
       &_active .StepBoxes--SpanOperator {
         background-color: #ffffa0;
       }
     }
+  }
+}
+
+.StepBoxes--SpanOperator {
+  display: inline-block;
+
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  width: 3em;
+  height: 1.9em;
+
+  z-index: 1;
+
+  &__OVERLAP {
+    background-image: url('../questions/overlap.svg');
+  }
+
+  &__B_CONTAIN_A {
+    background-image: url('../questions/b_contain_a.svg');
+  }
+
+  &__A_CONTAIN_B {
+    background-image: url('../questions/a_contain_b.svg');
   }
 }

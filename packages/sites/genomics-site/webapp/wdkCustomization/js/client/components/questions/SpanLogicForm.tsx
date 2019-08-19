@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { partial } from 'lodash';
+import { partial, toUpper } from 'lodash';
 
 import { TextBox, SingleSelect } from 'wdk-client/Components';
 import { Props as DefaultFormProps, SubmitButton, useDefaultOnSubmit } from 'wdk-client/Views/Question/DefaultQuestionForm';
@@ -271,7 +271,7 @@ export function SpanLogicForm(
         }
       </div>
       <div className={cx('--OperationDescription')}>
-        <div className={cx('--SpanOperator', paramValues['span_operation'])}></div>
+        <div className={cx('--SpanOperator', toUpper(paramValues['span_operation']))}></div>
       </div>
       <div className={cx('--RegionConfig-RightRegion')}>
         {

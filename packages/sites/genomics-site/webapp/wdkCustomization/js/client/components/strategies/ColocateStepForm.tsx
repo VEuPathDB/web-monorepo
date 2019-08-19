@@ -2,13 +2,13 @@ import React, { useState, useMemo, useCallback } from 'react';
 
 import { Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { StepTree } from 'wdk-client/Utils/WdkUser';
+import { StepTree, NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { QuestionController } from 'wdk-client/Controllers';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
-import { useWdkEffect } from 'wdk-client/Service/WdkService';
+import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
@@ -281,14 +281,18 @@ const NewSearchForm = ({
   const newSearchQuestion = questionsByUrlSegment[searchUrlSegment];
   const newSearchRecordClass = newSearchQuestion && recordClassesByUrlSegment[newSearchQuestion.outputRecordClassName];
 
-  const onStepAdded = useCallback((newSearchStepId: number) => {
-    setSecondaryStepTree({ stepId: newSearchStepId });
-    advanceToPage(colocationOperatorForm(newSearchRecordClass.urlSegment));
+  const onStepSubmitted = useCallback((wdkService: WdkService, newSearchStepSpec: NewStepSpec) => {
+    wdkService
+      .createStep(newSearchStepSpec)
+      .then(({ id }) => {
+        setSecondaryStepTree({ stepId: id });
+        advanceToPage(colocationOperatorForm(newSearchRecordClass.urlSegment));
+      });
   }, [ advanceToPage, newSearchRecordClass, setSecondaryStepTree ]);
 
   const submissionMetadata = useMemo(
-    () => ({ type: 'add-custom-step', onStepAdded }) as SubmissionMetadata, 
-    [ onStepAdded ]
+    () => ({ type: 'submit-custom-form', onStepSubmitted }) as SubmissionMetadata, 
+    [ onStepSubmitted ]
   );
 
   return (
@@ -303,6 +307,7 @@ const NewSearchForm = ({
 const ColocationOperatorForm = (
   { 
     questions,
+    inputRecordClass,
     recordClassUrlSegment,
     secondaryInputStepTree,
     updateStrategy,
@@ -313,22 +318,22 @@ const ColocationOperatorForm = (
     previousStep
   }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }
 ) => {
-  const colocationQuestion = useMemo(
+  const colocationQuestionPrimaryInput = useMemo(
+    () => questions.find(
+      ({ outputRecordClassName, urlSegment }) =>
+        urlSegment.endsWith(colocationQuestionSuffix) &&
+        outputRecordClassName === inputRecordClass.urlSegment
+      ),
+    [ questions, inputRecordClass, colocationQuestionSuffix ]
+  );
+
+  const colocationQuestionSecondaryInput = useMemo(
     () => questions.find(
       ({ outputRecordClassName, urlSegment }) =>
         urlSegment.endsWith(colocationQuestionSuffix) &&
         outputRecordClassName === recordClassUrlSegment
       ),
     [ questions, recordClassUrlSegment, colocationQuestionSuffix ]
-  );
-
-  const onStepAdded = useCallback((colocationStepId: number) => {
-    updateStrategy(colocationStepId, secondaryInputStepTree);
-  }, [ updateStrategy, secondaryInputStepTree ]);
-
-  const submissionMetadata = useMemo(
-    () => ({ type: 'add-custom-step', onStepAdded }) as SubmissionMetadata, 
-    [ onStepAdded ]
   );
 
   const outputStep = useMemo(
@@ -347,6 +352,34 @@ const ColocationOperatorForm = (
   
   const typeChangeAllowed = !outputStep;
 
+  const onStepSubmitted = useCallback((wdkService: WdkService, colocationStepSpec: NewStepSpec) => {
+    if (!colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput) {
+      throw new Error(`Could not find the necessary questions to perform span logic operation '${JSON.stringify(colocationStepSpec)}'`);
+    }
+
+    const shouldUsePrimaryInputQuestion = 
+      (colocationStepSpec.searchConfig.parameters['span_output'] === 'a' && !insertingBeforeFirstStep) ||
+      (colocationStepSpec.searchConfig.parameters['span_output'] === 'b' && insertingBeforeFirstStep);
+
+    const searchName = shouldUsePrimaryInputQuestion
+      ? colocationQuestionPrimaryInput.urlSegment
+      : colocationQuestionSecondaryInput.urlSegment;
+
+    wdkService
+      .createStep({
+        ...colocationStepSpec,
+        searchName
+      })
+      .then(({ id }) => {
+        updateStrategy(id, secondaryInputStepTree);
+      });    
+  }, [ updateStrategy, insertingBeforeFirstStep, secondaryInputStepTree, colocationQuestionPrimaryInput, colocationQuestionSecondaryInput ]);
+
+  const submissionMetadata = useMemo(
+    () => ({ type: 'submit-custom-form', onStepSubmitted }) as SubmissionMetadata, 
+    [ onStepSubmitted ]
+  );
+
   const FormComponent = useCallback(
     (props: FormProps) =>
       <SpanLogicForm
@@ -356,14 +389,16 @@ const ColocationOperatorForm = (
         insertingBeforeFirstStep={insertingBeforeFirstStep}
         typeChangeAllowed={typeChangeAllowed}
       />,
-    [ currentStepRecordClass, newStepRecordClass, insertingBeforeFirstStep, typeChangeAllowed ]
+    [ currentStepRecordClass, newStepRecordClass, insertingBeforeFirstStep, typeChangeAllowed, questions ]
   );
 
-  return !colocationQuestion
+  return (
+    !colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput
+  )
     ? <NotFound />
     : <QuestionController
         recordClass={recordClassUrlSegment}
-        question={colocationQuestion.urlSegment}
+        question={colocationQuestionPrimaryInput.urlSegment}
         submissionMetadata={submissionMetadata}
         FormComponent={FormComponent}      
       />;

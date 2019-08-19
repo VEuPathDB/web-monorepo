@@ -15,8 +15,8 @@ import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCre
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
 
-import { CustomBinaryOperationsContext } from 'wdk-client/Utils/Operations';
-import { apiCustomBinaryOperations } from './components/strategies/ApiCustomBinaryOperations';
+import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
+import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -346,9 +346,9 @@ export function ResultTabs(DefaultComponent) {
 export function StrategyWorkspaceController(DefaultComponent) {
   return function ApiStrategyWorkspaceController(props) {
     return (
-      <CustomBinaryOperationsContext.Provider value={apiCustomBinaryOperations}>
+      <BinaryOperationsContext.Provider value={apiBinaryOperations}>
         <DefaultComponent {...props} />
-      </CustomBinaryOperationsContext.Provider>
+      </BinaryOperationsContext.Provider>
     );
   }
 }

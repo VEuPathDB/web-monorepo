@@ -308,15 +308,15 @@ $grey-feature: #646464;
 
     border: 1px solid grey;
 
-    &__overlap {
+    &__OVERLAP {
       background-image: url("./overlap.svg");
     }
 
-    &__b_contain_a {
+    &__B_CONTAIN_A {
       background-image: url("./b_contain_a.svg");
     }
 
-    &__a_contain_b {
+    &__A_CONTAIN_B {
       background-image: url("./a_contain_b.svg");
     }
   }
