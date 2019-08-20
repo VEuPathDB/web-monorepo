@@ -19,7 +19,7 @@ class BodyScrollManager {
     const needs = this.refs.size > 0;
     const has = classes.contains(className);
     if (needs && !has) classes.add(className);
-    else if (has) classes.remove(className);
+    else if (!needs && has) classes.remove(className);
   }
 }
 
