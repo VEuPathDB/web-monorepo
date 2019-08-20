@@ -39,9 +39,9 @@ export default {
     withRestrictionHandler(Action.search, (state, props) => {
       const { questions = [], recordClasses = [] } = state.globalData;
       return Seq.from(questions)
-        .filter(question => question.fullName === props.questionName)
+        .filter(question => question.urlSegment === props.questionName)
         .flatMap(question => Seq.from(recordClasses)
-          .filter(recordClass => recordClass.fullName === question.recordClassName))
+          .filter(recordClass => recordClass.urlSegment === question.outputRecordClassName))
         .first();
     }),
     QuestionWizardController
