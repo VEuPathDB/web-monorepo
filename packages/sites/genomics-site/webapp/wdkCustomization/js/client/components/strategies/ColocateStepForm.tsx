@@ -6,7 +6,6 @@ import { StepTree, NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
-import { QuestionController } from 'wdk-client/Controllers';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
@@ -18,6 +17,7 @@ import { SpanLogicForm } from '../questions/SpanLogicForm';
 import './ColocateStepForm.scss';
 import { findAppendPoint } from 'wdk-client/Utils/StrategyUtils';
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
+import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 
 
 const cx = makeClassNameHelper('ColocateStepForm');
@@ -296,10 +296,17 @@ const NewSearchForm = ({
   );
 
   return (
-    <QuestionController 
-      recordClass={newSearchRecordClass.urlSegment}
-      question={searchUrlSegment}
-      submissionMetadata={submissionMetadata}
+    <Plugin
+      context={{
+        type: 'questionController',
+        searchName: searchUrlSegment,
+        recordClassName: newSearchRecordClass.urlSegment
+      }}
+      pluginProps={{
+        recordClass: newSearchRecordClass.urlSegment,
+        question: searchUrlSegment,
+        submissionMetadata: submissionMetadata
+      }}
     />
   );
 }
@@ -396,10 +403,17 @@ const ColocationOperatorForm = (
     !colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput
   )
     ? <NotFound />
-    : <QuestionController
-        recordClass={recordClassUrlSegment}
-        question={colocationQuestionPrimaryInput.urlSegment}
-        submissionMetadata={submissionMetadata}
-        FormComponent={FormComponent}      
+    : <Plugin
+        context={{
+          type: 'questionController',
+          searchName: colocationQuestionPrimaryInput.urlSegment,
+          recordClassName: recordClassUrlSegment
+        }}
+        pluginProps={{
+          recordClass: recordClassUrlSegment,
+          question: colocationQuestion.urlSegment,
+          submissionMetadata: submissionMetadata,
+          FormComponent: FormComponent
+        }}
       />;
 };
