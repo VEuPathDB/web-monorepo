@@ -4,8 +4,10 @@ import { nestStrategy, openStrategyPanel, setDeleteStepDialogVisibilty, setInser
 import { indexByActionProperty, IndexedState } from 'wdk-client/Utils/ReducerUtils';
 import { fulfillPutStrategy, fulfillStrategy } from 'wdk-client/Actions/StrategyActions';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
-import {takeEpicInWindow, mergeMapRequestActionsToEpic, InferAction} from 'wdk-client/Utils/ActionCreatorUtils';
-import {combineEpics} from 'redux-observable';
+import {takeEpicInWindow} from 'wdk-client/Utils/ActionCreatorUtils';
+import {combineEpics, ActionsObservable} from 'redux-observable';
+import {Observable} from 'rxjs';
+import {filter, map, mergeMap, mapTo} from 'rxjs/operators';
 
 /*
 * So far, this store module does not handle opening and closing the strategy panel.  it is just
@@ -85,21 +87,20 @@ export const observe = takeEpicInWindow(
     endActionCreator: closeStrategyPanel
   },
   combineEpics(
-    mergeMapRequestActionsToEpic([openStrategyPanel, setReviseFormVisibility, fulfillStrategy], getCloseReviseForm,
-      { areActionsCoherent: areCloseReviseFormActionsCoherent })
+    closeReviseForm
   )
 );
 
 
-type CloseReviseFormActions = [InferAction<typeof openStrategyPanel>, InferAction<typeof setReviseFormVisibility>, InferAction<typeof fulfillStrategy>];
-
-async function getCloseReviseForm([openAction]: CloseReviseFormActions) {
-  return setReviseFormVisibility(openAction.payload.viewId, undefined);
-}
-
-function areCloseReviseFormActionsCoherent([openAction, reviseAction, fulfilStrategy]: CloseReviseFormActions): boolean {
-  return reviseAction.payload.stepId != null && (
-    openAction.payload.viewId === reviseAction.payload.viewId &&
-    fulfilStrategy.payload.strategy.steps[reviseAction.payload.stepId] != null
+function closeReviseForm(action$: ActionsObservable<Action>): Observable<Action> {
+  return action$.pipe(
+    filter(setReviseFormVisibility.isOfType),
+    map(action => action.payload),
+    filter((payload): payload is { stepId: number, viewId: string } => payload.stepId != null),
+    mergeMap(({ stepId, viewId }) => action$.pipe(
+      filter(fulfillStrategy.isOfType),
+      filter(action => action.payload.strategy.steps[stepId] != null),
+      mapTo(setReviseFormVisibility(viewId, undefined))
+    ))
   );
 }
