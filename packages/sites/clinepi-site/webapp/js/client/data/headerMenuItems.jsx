@@ -26,16 +26,16 @@ export default function headerMenuItems (state) {
         children: [
           {
             text: 'My Search Strategies',
-            appUrl: '/showApplication.do'
+            route: '/workspace/strategies/all'
           },
           {
             text: 'My Basket',
-            appUrl: '/showApplication.do?tab=basket',
+            route: '/workspace/basket',
             loginRequired: true
           },
           {
             text: 'Public Search Strategies',
-            appUrl: '/showApplication.do?tab=public_strat'
+            route: '/workspace/strategies/public'
           }
         ]
       },
@@ -53,7 +53,7 @@ export default function headerMenuItems (state) {
           },
           {
             text: 'Public Strategies',
-            appUrl: '/showApplication.do?tab=public_strat'
+            route: '/workspace/strategies/public'
           },
           {
             text: 'Video Tutorials',
@@ -75,7 +75,7 @@ export default function headerMenuItems (state) {
         target: '_blank',
         id: 'contactus',
         text: 'Contact Us',
-        url: '/a/app/contact-us'
+        route: '/contact-us'
       }
     ],
     iconMenu: [ ...socialIcons ]
