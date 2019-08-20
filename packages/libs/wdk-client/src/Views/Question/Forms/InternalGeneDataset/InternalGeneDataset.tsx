@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
-import { QuestionController } from 'wdk-client/Controllers';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
@@ -11,6 +10,7 @@ import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
 import { Question, AttributeValue, LinkAttributeValue, Answer } from 'wdk-client/Utils/WdkModel';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 import 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset.scss';
@@ -310,10 +310,17 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                           </Link>
                         ),
                         content: (
-                          <QuestionController
-                            question={searchName}
-                            recordClass={recordClass}
-                            submissionMetadata={submissionMetadata}
+                          <Plugin
+                            context={{
+                              type: 'questionController',
+                              searchName,
+                              recordClassName: recordClass
+                            }}
+                            pluginProps={{
+                              question: searchName,
+                              recordClass: recordClass,
+                              submissionMetadata: submissionMetadata
+                            }}
                           />
                         )
                       })

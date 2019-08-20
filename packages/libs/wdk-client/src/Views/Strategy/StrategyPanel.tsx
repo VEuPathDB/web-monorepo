@@ -6,10 +6,10 @@ import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import StepBoxes from './StepBoxes';
-import { QuestionController } from 'wdk-client/Controllers';
 import {StrategyControls} from 'wdk-client/Views/Strategy/StrategyControls';
 
 import './StrategyPanel.css';
+import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 
 const cx = makeClassNameHelper('StrategyPanel');
 
@@ -106,14 +106,21 @@ export default function StrategyPanel(props: Props) {
           <div className={cx('--ReviseForm')}>
             <button type="button" className="link" onClick={() => setReviseFormStepId()}>Close</button>
             {/* <h1>Revise step <em style={{ fontWeight: 'normal' }}>{reviseStep.customName}</em></h1> */}
-            <QuestionController
-              question={reviseStep.searchName}
-              recordClass={reviseStep.recordClassName}
-              submissionMetadata={{
-                type: 'edit-step',
-                strategyId: strategy.strategyId,
-                stepId: reviseStep.id,
-                previousSearchConfig: reviseStep.searchConfig
+            <Plugin
+              context={{
+                type: 'questionController',
+                recordClassName: reviseStep.recordClassName,
+                searchName: reviseStep.searchName
+              }}
+              pluginProps={{
+                question: reviseStep.searchName,
+                recordClass: reviseStep.recordClassName,
+                submissionMetadata: {
+                  type: 'edit-step',
+                  strategyId: strategy.strategyId,
+                  stepId: reviseStep.id,
+                  previousSearchConfig: reviseStep.searchConfig
+                }
               }}
             />
           </div>

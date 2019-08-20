@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { QuestionController } from 'wdk-client/Controllers';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 
 import 'wdk-client/Views/Strategy/ConvertStepForm.scss';
+import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 
 const cx = makeClassNameHelper('ConvertStepForm');
 
@@ -33,13 +33,20 @@ export const ConvertStepForm = ({
         </h2>
       </div>
       <div className={cx('--Body')}>
-        <QuestionController
-          question={currentPage}
-          recordClass={inputRecordClass.urlSegment}
-          submissionMetadata={{
-            type: 'add-unary-step',
-            strategyId: strategy.strategyId,
-            addType
+        <Plugin
+          context={{
+            type: 'questionController',
+            searchName: currentPage,
+            recordClassName: inputRecordClass.urlSegment
+          }}
+          pluginProps={{
+            question: currentPage,
+            recordClass: inputRecordClass.urlSegment,
+            submissionMetadata: {
+              type: 'add-unary-step',
+              strategyId: strategy.strategyId,
+              addType
+            }
           }}
         />
       </div>

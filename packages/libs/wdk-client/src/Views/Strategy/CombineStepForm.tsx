@@ -5,7 +5,6 @@ import { createSelector } from 'reselect';
 
 import { updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { SingleSelect } from 'wdk-client/Components';
-import { QuestionController } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -14,6 +13,7 @@ import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPane
 import { BOOLEAN_OPERATOR_PARAM_NAME, combineOperatorOrder, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepForm.scss';
+import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 
 const cx = makeClassNameHelper('CombineStepForm');
 
@@ -132,14 +132,21 @@ const CombineStepFormView = ({
         </p>
       </div>
       <div className={cx('--Body')}>
-        <QuestionController
-          question={currentPage}
-          recordClass={inputRecordClass.urlSegment}
-          submissionMetadata={{
-            type: 'add-binary-step',
-            strategyId: strategy.strategyId,
-            operatorSearchName: booleanSearchUrlSegment,
-            addType
+        <Plugin
+          context={{
+            type: 'questionController',
+            searchName: currentPage,
+            recordClassName: inputRecordClass.urlSegment
+          }}
+          pluginProps={{
+            question: currentPage,
+            recordClass: inputRecordClass.urlSegment,
+            submissionMetadata: {
+              type: 'add-binary-step',
+              strategyId: strategy.strategyId,
+              operatorSearchName: booleanSearchUrlSegment,
+              addType
+            }
           }}
         />  
       </div>
