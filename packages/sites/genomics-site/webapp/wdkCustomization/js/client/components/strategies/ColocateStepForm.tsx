@@ -411,7 +411,7 @@ const ColocationOperatorForm = (
         }}
         pluginProps={{
           recordClass: recordClassUrlSegment,
-          question: colocationQuestion.urlSegment,
+          question: colocationQuestionPrimaryInput.urlSegment,
           submissionMetadata: submissionMetadata,
           FormComponent: FormComponent
         }}
