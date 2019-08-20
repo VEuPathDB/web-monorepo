@@ -43,12 +43,6 @@ export const emptyAction: EmptyAction = {
  */
 export type DispatchAction<T extends Action> = (action: ActionCreatorResult<T>) => ActionCreatorResult<T>;
 
-declare module 'redux' {
-  export interface Dispatch<A extends Action = AnyAction> {
-    <T extends A>(action: ActionCreatorResult<T>): ActionCreatorResult<T>;
-  }
-}
-
 type WdkMiddleWare = Middleware<DispatchAction<Action>>;
 
 
@@ -116,4 +110,10 @@ export const logger: WdkMiddleWare = store => next => action => {
   let result = next(action)
   console.log('next state', store.getState())
   return result
+}
+
+declare module 'redux' {
+  export interface Dispatch<A extends Action = AnyAction> {
+    <T extends A>(action: ActionCreatorResult<T>): ActionCreatorResult<T>;
+  }
 }
