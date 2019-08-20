@@ -158,15 +158,15 @@ function makeHeaderMenuItems(state) {
         children: [
           {
             text: 'My Search Strategies',
-            appUrl: '/showApplication.do'
+            route: '/workspace/strategies/all'
           },
           {
             text: 'Analyze My Experiment',
-            appUrl: '/app/galaxy-orientation'
+            route: '/galaxy-orientation'
           },
           {
             text: 'My Basket',
-            appUrl: '/showApplication.do?tab=basket',
+            appUrl: '/workspace/basket',
             loginRequired: true
           },
           {
@@ -176,7 +176,7 @@ function makeHeaderMenuItems(state) {
           },
           {
             text: 'Public Search Strategies',
-            appUrl: '/showApplication.do?tab=public_strat'
+            route: '/workspace/strategies/public'
           }
         ]
       },
