@@ -186,6 +186,7 @@ type AddUnaryStep = {
 
 type SubmitCustomForm = {
   type: 'submit-custom-form',
+  stepId?: number,
   onStepSubmitted: (wdkService: WdkService, submissionSpec: NewStepSpec) => void
 }
 

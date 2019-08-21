@@ -34,7 +34,7 @@ type Props = DispatchProps & StateProps & {
 
 function QuestionController(props: Props) {
   const { dispatch, eventHandlers, searchName, recordClassName, submissionMetadata, FormComponent, ...state } = props;
-  const stepId = submissionMetadata.type === 'edit-step' ? submissionMetadata.stepId : undefined;
+  const stepId = submissionMetadata.type === 'edit-step' || submissionMetadata.type === 'submit-custom-form' ? submissionMetadata.stepId : undefined;
 
   const DefaultRenderForm: FunctionComponent<FormProps> = useCallback(
     (props: FormProps) => (

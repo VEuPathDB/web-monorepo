@@ -288,7 +288,7 @@ button.StepBoxes--EditButton:hover {
 
 /* Override .wdk-Dialog */
 .StepBoxes--StepDetails {
-  width: 700px;
+  min-width: 700px;
   /* This is a relatively sane default. */
   top: 100px;
 }

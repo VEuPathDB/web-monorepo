@@ -2,7 +2,7 @@ import React, { ReactNode, useContext, useMemo, useCallback } from 'react';
 
 import { pick, toUpper } from 'lodash/fp';
 
-import { Step } from 'wdk-client/Utils/WdkUser';
+import { Step, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps, AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { CombineStepMenu } from 'wdk-client/Views/Strategy/CombineStepMenu';
 import { ConvertStepMenu } from 'wdk-client/Views/Strategy/ConvertStepMenu';
@@ -11,8 +11,9 @@ import { CombineWithStrategyForm } from 'wdk-client/Views/Strategy/CombineWithSt
 import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
 
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
-import { Question } from 'wdk-client/Utils/WdkModel';
+import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ReviseOperatorMenuItem } from 'wdk-client/Views/Strategy/CombineStepDetails';
+import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
 
 type OperatorMenuItem = {
   radioDisplay: ReactNode,
@@ -26,9 +27,23 @@ type OperatorMenuGroup = {
   items: OperatorMenuItem[]
 }
 
-type ParameterConfiguration = 
-  | { type: 'formComponent', FormComponent: React.Component<any> }
-  | { type: 'seedValues', seedValues: Record<string, string> }
+export type ReviseOperationFormProps = {
+  searchName: string,
+  step: Step,
+  strategy: StrategyDetails,
+  primaryInputRecordClass: RecordClass,
+  primaryInputQuestion: Question,
+  secondaryInputRecordClass: RecordClass
+  secondaryInputQuestion: Question,
+  questions: Question[],
+  onClose: () => void,
+  requestUpdateStepSearchConfig: typeof requestUpdateStepSearchConfig,
+  requestReplaceStep: typeof requestReplaceStep
+};
+
+export type ReviseOperationParameterConfiguration = 
+  | { type: 'form', FormComponent: React.ComponentType<ReviseOperationFormProps> }
+  | { type: 'inline' };
 
 export type BinaryOperation = {
   name: string,
@@ -37,7 +52,7 @@ export type BinaryOperation = {
   isOperationSearchName: (searchName: string) => boolean,
   baseClassName: string,
   operatorParamName: string,
-  needsParameterConfiguration: boolean,
+  reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration,
   operatorMenuGroup: OperatorMenuGroup
 };
 
@@ -52,7 +67,7 @@ export const defaultBinaryOperations: BinaryOperation[] = [
     isOperationSearchName: searchName => searchName.startsWith('boolean_question'),
     baseClassName: 'CombineOperator',
     operatorParamName: 'bq_operator',
-    needsParameterConfiguration: false,
+    reviseOperatorParamConfiguration: { type: 'inline' },
     operatorMenuGroup: {
       name: 'standard_boolean_operators',
       display: 'Revise as a boolean operation',
@@ -88,12 +103,12 @@ export const useBinaryOperations = () => useContext(BinaryOperationsContext);
 
 type AddStepMenuConfig = Pick<BinaryOperation, 'name' | 'AddStepMenuComponent' | 'addStepFormComponents'>;
 
-type OperatorMetadata = {
+export type OperatorMetadata = {
   operatorName: string,
   searchName: string,
   baseClassName: string,
   paramName: string,
-  needsParameterConfiguration: boolean
+  reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration
 };
 
 export const useCompatibleOperatorMetadata = (questions: Question[] | undefined, outputRecordClass: string | undefined, primaryInputRecordClass: string | undefined, secondaryInputRecordClass: string | undefined): Record<string, OperatorMetadata> | undefined => {
@@ -106,7 +121,7 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
       }
 
       const compatibleOperatorMetadata = binaryOperations.reduce(
-        (memo, { name, isOperationSearchName, operatorParamName, baseClassName, operatorMenuGroup, needsParameterConfiguration }) => {
+        (memo, { name, isOperationSearchName, operatorParamName, baseClassName, operatorMenuGroup, reviseOperatorParamConfiguration }) => {
           const operationQuestion = questions.find(
             question => 
               isOperationSearchName(question.urlSegment) &&
@@ -149,7 +164,7 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
                 searchName: operationQuestion.urlSegment,
                 paramName: operatorParamName,
                 baseClassName,
-                needsParameterConfiguration
+                reviseOperatorParamConfiguration
               }
             }),
             {} as Record<string, OperatorMetadata>
@@ -171,7 +186,7 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
   return compatibleOperatorMetadata;
 };
 
-type ReviseOperatorMenuGroup = {
+export type ReviseOperatorMenuGroup = {
   name: string,
   display: string,
   items: ReviseOperatorMenuItem[]
@@ -256,7 +271,7 @@ export const useAddStepMenuConfigs = (): AddStepMenuConfig[] => {
   return menuConfigs;
 };
 
-export const useSelectedFormComponent = (formName: string | undefined): React.ComponentType<AddStepOperationFormProps> => {
+export const useSelectedAddStepFormComponent = (formName: string | undefined): React.ComponentType<AddStepOperationFormProps> => {
   const menuConfigs = useAddStepMenuConfigs();
   const operationFormsByName = useMemo(
     () => menuConfigs.reduce(

@@ -422,7 +422,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               searchName: submissionMetadata.operatorSearchName,
               searchConfig: {
                 parameters: operatorParamValues
-              }
+              },
+              customName: operatorQuestionState.question.shortDisplayName
             });
 
             return Promise.all([newSearchStep, operatorStep])

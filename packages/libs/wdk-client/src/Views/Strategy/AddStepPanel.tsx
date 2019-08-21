@@ -7,7 +7,7 @@ import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { useAddStepMenuConfigs, useSelectedFormComponent } from 'wdk-client/Utils/Operations';
+import { useAddStepMenuConfigs, useSelectedAddStepFormComponent } from 'wdk-client/Utils/Operations';
 import { findPrimaryBranchHeight, addStep, findSubtree, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
@@ -149,7 +149,7 @@ export const AddStepPanelView = wrappable((
   );
 
   const addStepMenuConfigs = useAddStepMenuConfigs();
-  const SelectedForm = useSelectedFormComponent(selectedOperation);
+  const SelectedForm = useSelectedAddStepFormComponent(selectedOperation);
 
   return (
     <div className={cx()}>
