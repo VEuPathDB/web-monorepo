@@ -194,13 +194,17 @@ export type ReviseOperatorMenuGroup = {
   items: ReviseOperatorMenuItem[]
 }
 
-const ignoreOperatorsDifferentType: ReviseOperatorMenuItem[] = [
+const ignoreOperatorsPrimaryInputDifferentType: ReviseOperatorMenuItem[] = [
+  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
+];
+
+const ignoreOperatorsSecondaryInputDifferentType: ReviseOperatorMenuItem[] = [
   { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY', iconClassName: cxOperator('--CombineOperator', 'LONLY') }
 ];
 
-const ignoreOperatorsSameType: ReviseOperatorMenuItem[] = [
-  ...ignoreOperatorsDifferentType,
-  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') },
+const ignoreOperatorsInputsSameType: ReviseOperatorMenuItem[] = [
+  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY', iconClassName: cxOperator('--CombineOperator', 'LONLY') },
+  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
 ];
 
 export const useReviseOperatorConfigs = (questions: Question[] | undefined, outputRecordClass: string | undefined, primaryInputRecordClass: string | undefined, secondaryInputRecordClass: string | undefined) => {
@@ -238,12 +242,21 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
       {
         name: 'ignore_boolean_operators',
         display: 'Ignore one of the inputs',
-        items: primaryInputRecordClass === secondaryInputRecordClass
-          ? ignoreOperatorsSameType
-          : ignoreOperatorsDifferentType
+        items: primaryInputRecordClass !== outputRecordClass
+          ? ignoreOperatorsPrimaryInputDifferentType
+          : secondaryInputRecordClass !== outputRecordClass
+          ? ignoreOperatorsSecondaryInputDifferentType
+          : ignoreOperatorsInputsSameType
       }
     ],
-    [ reviseOperatorConfigsWithoutIgnore, primaryInputRecordClass, secondaryInputRecordClass, ignoreOperatorsDifferentType, ignoreOperatorsSameType ]
+    [ 
+      reviseOperatorConfigsWithoutIgnore, 
+      primaryInputRecordClass, 
+      secondaryInputRecordClass, 
+      ignoreOperatorsPrimaryInputDifferentType,
+      ignoreOperatorsSecondaryInputDifferentType,
+      ignoreOperatorsInputsSameType
+    ]
   );
   
   return reviseOperatorConfigs;
