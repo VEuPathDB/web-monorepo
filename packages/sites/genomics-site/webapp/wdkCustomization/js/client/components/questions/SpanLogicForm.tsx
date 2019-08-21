@@ -73,10 +73,10 @@ export function SpanLogicForm(
     typeChangeAllowed
   }: SpanLogicFormProps
 ) {
-  const [ upstreamOffsetA, setUpstreamOffsetA ] = useState('1000');
-  const [ downstreamOffsetA, setDownstreamOffsetA ] = useState('1000');
-  const [ upstreamOffsetB, setUpstreamOffsetB ] = useState('1000');
-  const [ downstreamOffsetB, setDownstreamOffsetB ] = useState('1000');
+  const [ upstreamOffsetA, setUpstreamOffsetA ] = useState(paramValues['region_a'] === 'upstream' ? paramValues['span_begin_offset_a'] : '1000');
+  const [ downstreamOffsetA, setDownstreamOffsetA ] = useState(paramValues['region_a'] === 'downstream' ? paramValues['span_end_offset_a'] : '1000');
+  const [ upstreamOffsetB, setUpstreamOffsetB ] = useState(paramValues['region_b'] === 'upstream' ? paramValues['span_begin_offset_b'] : '1000');
+  const [ downstreamOffsetB, setDownstreamOffsetB ] = useState(paramValues['region_b'] === 'downstream' ? paramValues['span_end_offset_b'] : '1000');
 
   const updateSpanLogicParam = useCallback((paramName: string, regionName: RegionName | undefined, paramValue: string) => {
     updateParamValue({
@@ -421,7 +421,7 @@ const RegionConfig = ({
           {
             regionTypeOrder.map(
               regionType => (
-                <div key={`${regionTypeParamName} ${regionType}`} onFocus={() => updateRegionType(regionType)}>
+                <div key={`${regionTypeParamName} ${regionType}`} onFocus={() =>  updateRegionType(regionType)}>
                   <input 
                     id={`${regionTypeParamName} ${regionType}`}
                     name={regionTypeParamName}

@@ -1,9 +1,18 @@
-import * as React from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { BinaryOperation, defaultBinaryOperations } from 'wdk-client/Utils/Operations';
+import { omit, pick } from 'lodash';
+import { BinaryOperation, defaultBinaryOperations, ReviseOperationFormProps } from 'wdk-client/Utils/Operations';
+import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
 import { ColocateStepMenu } from './ColocateStepMenu';
 import { ColocateStepForm } from './ColocateStepForm';
+import { SpanLogicForm } from '../questions/SpanLogicForm';
+import { WdkService } from 'wdk-client/Core';
+import { NewStepSpec } from 'wdk-client/Utils/WdkUser';
+import { QuestionController } from 'wdk-client/Controllers';
+import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
+
+const colocationQuestionSuffix = 'BySpanLogic';
 
 export const apiBinaryOperations: BinaryOperation[] = [
   ...defaultBinaryOperations,
@@ -15,7 +24,104 @@ export const apiBinaryOperations: BinaryOperation[] = [
     },
     isOperationSearchName: searchName => searchName.endsWith('BySpanLogic'),
     baseClassName: 'SpanOperator',
-    needsParameterConfiguration: true,
+    reviseOperatorParamConfiguration: { 
+      type: 'form',
+      FormComponent: ({
+        questions,
+        step,
+        strategy,
+        primaryInputQuestion,
+        primaryInputRecordClass,
+        secondaryInputRecordClass,
+        onClose,
+        requestUpdateStepSearchConfig,
+        requestReplaceStep
+      }: ReviseOperationFormProps) => {
+        const colocationQuestionPrimaryInput = useMemo(
+          () => questions.find(
+            ({ outputRecordClassName, urlSegment }) =>
+              urlSegment.endsWith(colocationQuestionSuffix) &&
+              outputRecordClassName === primaryInputRecordClass.urlSegment
+            ),
+          [ questions, primaryInputRecordClass, colocationQuestionSuffix ]
+        );
+      
+        const colocationQuestionSecondaryInput = useMemo(
+          () => questions.find(
+            ({ outputRecordClassName, urlSegment }) =>
+              urlSegment.endsWith(colocationQuestionSuffix) &&
+              outputRecordClassName === secondaryInputRecordClass.urlSegment
+            ),
+          [ questions, secondaryInputRecordClass, colocationQuestionSuffix ]
+        );
+
+        const typeChangeAllowed = strategy.rootStepId === step.id;
+
+        const onStepSubmitted = useCallback((wdkService: WdkService, colocationStepSpec: NewStepSpec) => {
+          onClose();
+
+          if (!colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput) {
+            throw new Error(`Could not find the necessary questions to perform span logic operation '${JSON.stringify(colocationStepSpec)}'`);
+          }
+      
+          const shouldUsePrimaryInputQuestion = colocationStepSpec.searchConfig.parameters['span_output'] === 'a';
+      
+          const searchName = shouldUsePrimaryInputQuestion
+            ? colocationQuestionPrimaryInput.urlSegment
+            : colocationQuestionSecondaryInput.urlSegment;
+
+          if (step.searchName === searchName) {
+            requestUpdateStepSearchConfig(
+              strategy.strategyId,
+              step.id,
+              {
+                ...step.searchConfig,
+                parameters: colocationStepSpec.searchConfig.parameters
+              }
+            );
+          } else {
+            requestReplaceStep(
+              strategy.strategyId,
+              step.id,
+              {
+                ...colocationStepSpec,
+                searchName
+              }
+            )
+          }
+        }, [ colocationQuestionPrimaryInput, colocationQuestionSecondaryInput ]);
+      
+        const submissionMetadata = useMemo(
+          () => ({ 
+            type: 'submit-custom-form', 
+            stepId: step.searchName.endsWith(colocationQuestionSuffix) ? step.id : undefined, 
+            onStepSubmitted 
+          }) as SubmissionMetadata, 
+          [ onStepSubmitted ]
+        );        
+
+        const FormComponent = useCallback(
+          (props: FormProps) =>
+            <SpanLogicForm
+              {...props}
+              currentStepRecordClass={primaryInputRecordClass}
+              newStepRecordClass={secondaryInputRecordClass}
+              insertingBeforeFirstStep={false}
+              typeChangeAllowed={typeChangeAllowed}
+            />,
+          [ primaryInputRecordClass, secondaryInputRecordClass, typeChangeAllowed ]
+        );
+
+        return (
+          <QuestionController
+            question={primaryInputQuestion.urlSegment}
+            recordClass={primaryInputRecordClass.urlSegment}
+            submissionMetadata={submissionMetadata}
+            FormComponent={FormComponent}
+          />
+        )
+      }
+    },
     operatorParamName: 'span_operation',
     operatorMenuGroup: {
       name: 'span_operation',
