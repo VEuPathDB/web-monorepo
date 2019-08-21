@@ -11,6 +11,8 @@ import { WdkService } from 'wdk-client/Core';
 import { NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { QuestionController } from 'wdk-client/Controllers';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 const colocationQuestionSuffix = 'BySpanLogic';
 
@@ -113,13 +115,21 @@ export const apiBinaryOperations: BinaryOperation[] = [
         );
 
         return (
-          <QuestionController
-            question={primaryInputQuestion.urlSegment}
-            recordClass={primaryInputRecordClass.urlSegment}
-            submissionMetadata={submissionMetadata}
-            FormComponent={FormComponent}
-          />
-        )
+          !colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput
+        ) ? <NotFound />
+          : <Plugin
+              context={{
+                type: 'questionController',
+                searchName: colocationQuestionPrimaryInput.urlSegment,
+                recordClassName: colocationQuestionPrimaryInput.outputRecordClassName
+              }}
+              pluginProps={{
+                question: colocationQuestionPrimaryInput.urlSegment,
+                recordClass: primaryInputRecordClass.urlSegment,
+                submissionMetadata: submissionMetadata,
+                FormComponent: FormComponent
+              }}
+            />;
       }
     },
     operatorParamName: 'span_operation',

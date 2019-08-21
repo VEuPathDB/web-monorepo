@@ -421,7 +421,7 @@ const RegionConfig = ({
           {
             regionTypeOrder.map(
               regionType => (
-                <div key={`${regionTypeParamName} ${regionType}`} onFocus={() =>  updateRegionType(regionType)}>
+                <div key={`${regionTypeParamName} ${regionType}`} onFocus={() => updateRegionType(regionType)}>
                   <input 
                     id={`${regionTypeParamName} ${regionType}`}
                     name={regionTypeParamName}
