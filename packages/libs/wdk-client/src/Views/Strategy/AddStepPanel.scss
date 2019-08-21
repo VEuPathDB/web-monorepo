@@ -10,16 +10,29 @@
     padding: unset;
   }
 
-  div:not(.wdk-QuestionFormParameterHeading), div:not(.wdk-QuestionFormShowHideGroupToggle) {
-    & > h2, & > p {
-      text-align: center;
-      margin: 1em 0;
-      padding: unset;
+  h2, p {
+    text-align: center;
+    margin: 1em 0;
+    padding: unset;
+  }
+
+  p {
+    font-size: 1.5em;
+    margin: 0 0 1em 0;
+  }
+
+  .wdk-QuestionForm {
+    h2, p {
+      text-align: left;
+      margin: unset;
     }
 
-    & > p {
-      font-size: 1.5em;
-      margin: 0 0 1em 0;
+    h2 {
+      padding: 12px 0 8px 0;
+    }
+    
+    p {
+      font-size: unset;
     }
   }
 
