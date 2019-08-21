@@ -32,7 +32,6 @@ export const apiBinaryOperations: BinaryOperation[] = [
         questions,
         step,
         strategy,
-        primaryInputQuestion,
         primaryInputRecordClass,
         secondaryInputRecordClass,
         onClose,
@@ -110,6 +109,8 @@ export const apiBinaryOperations: BinaryOperation[] = [
               newStepRecordClass={secondaryInputRecordClass}
               insertingBeforeFirstStep={false}
               typeChangeAllowed={typeChangeAllowed}
+              currentStepName="Step A"
+              newStepName="Step B"
             />,
           [ primaryInputRecordClass, secondaryInputRecordClass, typeChangeAllowed ]
         );

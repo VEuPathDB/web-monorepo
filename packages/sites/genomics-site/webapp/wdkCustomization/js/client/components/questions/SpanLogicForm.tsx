@@ -16,7 +16,9 @@ type SpanLogicFormProps = DefaultFormProps & {
   currentStepRecordClass: RecordClass,
   newStepRecordClass: RecordClass,
   insertingBeforeFirstStep: boolean,
-  typeChangeAllowed: boolean
+  typeChangeAllowed: boolean,
+  currentStepName?: string,
+  newStepName?: string
 };
 type RegionName = 'a' | 'b';
 type RegionType = 'exact' | 'upstream' | 'downstream' | 'custom';
@@ -70,7 +72,9 @@ export function SpanLogicForm(
     newStepRecordClass,
     insertingBeforeFirstStep,
     submissionMetadata,
-    typeChangeAllowed
+    typeChangeAllowed,
+    currentStepName = 'the current step',
+    newStepName = 'the new step'
   }: SpanLogicFormProps
 ) {
   const [ upstreamOffsetA, setUpstreamOffsetA ] = useState(paramValues['region_a'] === 'upstream' ? paramValues['span_begin_offset_a'] : '1000');
@@ -224,6 +228,8 @@ export function SpanLogicForm(
             updateOutputParam={updateOutputParam} 
             insertingBeforeFirstStep={insertingBeforeFirstStep}
             typeChangeAllowed={typeChangeAllowed}
+            currentStepName={currentStepName}
+            newStepName={newStepName}
           />
           {' '}
           whose
@@ -249,8 +255,8 @@ export function SpanLogicForm(
       <div className={cx('--SpanSentence-Strand')}>
         <span>
           of a {rightRegion === 'region_b' 
-            ? `${newStepRecordClass.displayName} from the new step` 
-            : `${currentStepRecordClass.displayName} from the current step`
+            ? `${newStepRecordClass.displayName} from ${newStepName}` 
+            : `${currentStepRecordClass.displayName} from ${currentStepName}`
           }
           {' '}
           and is on
@@ -294,7 +300,9 @@ type SpanOutputParamProps = {
   paramValue: RegionName,
   updateOutputParam: (newOutputParam: RegionName) => void,
   insertingBeforeFirstStep: boolean,
-  typeChangeAllowed: boolean
+  typeChangeAllowed: boolean,
+  currentStepName: string,
+  newStepName: string
 };
 
 const SpanOutputParam = ({
@@ -303,19 +311,21 @@ const SpanOutputParam = ({
   paramValue,
   updateOutputParam,
   insertingBeforeFirstStep,
-  typeChangeAllowed
+  typeChangeAllowed,
+  currentStepName,
+  newStepName
 }: SpanOutputParamProps) => 
   typeChangeAllowed || currentStepRecordClass.urlSegment === newStepRecordClass.urlSegment
     ? <select onChange={e => updateOutputParam(e.target.value as RegionName)} value={paramValue}>
         <option value={!insertingBeforeFirstStep ? 'a' : 'b'}>
-          {currentStepRecordClass.displayName} from the current step
+          {currentStepRecordClass.displayName} from {currentStepName}
         </option>
         <option value={!insertingBeforeFirstStep ? 'b' : 'a'}>
-          {newStepRecordClass.displayName} from the new step
+          {newStepRecordClass.displayName} from {newStepName}
         </option>   
       </select>
     : <span>
-        {currentStepRecordClass.displayName} from the current step
+        {currentStepRecordClass.displayName} from {currentStepName}
       </span>;
 
 type RegionConfigProps = {
