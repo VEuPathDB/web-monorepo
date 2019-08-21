@@ -63,7 +63,11 @@ function CombineStepDetails({
 
   const currentOperatorParamName = currentOperatorMetadata && currentOperatorMetadata.paramName;
   const currentOperatorSearchName = currentOperatorMetadata && currentOperatorMetadata.searchName;
-  const currentOperatorValue = currentOperatorParamName && step.searchConfig.parameters[currentOperatorParamName];
+  const currentOperatorValue = currentOperatorMetadata && currentOperatorParamName && (
+    currentOperatorMetadata.reviseOperatorParamConfiguration.type === 'inline'
+      ? step.searchConfig.parameters[currentOperatorParamName]
+      : currentOperatorMetadata.paramValue
+  );
   
   return (
     !questions ||

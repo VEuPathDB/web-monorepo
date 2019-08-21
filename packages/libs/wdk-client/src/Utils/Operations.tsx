@@ -108,6 +108,7 @@ export type OperatorMetadata = {
   searchName: string,
   baseClassName: string,
   paramName: string,
+  paramValue: string,
   reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration
 };
 
@@ -164,6 +165,7 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
                 searchName: operationQuestion.urlSegment,
                 paramName: operatorParamName,
                 baseClassName,
+                paramValue: itemValue,
                 reviseOperatorParamConfiguration
               }
             }),
