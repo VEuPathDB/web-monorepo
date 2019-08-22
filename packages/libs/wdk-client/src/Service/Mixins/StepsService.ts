@@ -1,5 +1,5 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { StandardReportConfig, AnswerSpec, Answer, Identifier, FilterValueArray, SearchConfig } from 'wdk-client/Utils/WdkModel';
+import { StandardReportConfig, Answer, Identifier, FilterValueArray, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import {  NewStepSpec, PatchStepSpec, Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
 import { AnswerFormatting } from './SearchReportsService';
@@ -32,12 +32,11 @@ export default (base: ServiceBase) => {
   }
 
   function getStepCustomReport(stepId: number, formatting: AnswerFormatting, userId: string = 'current'): Promise<any> {
-    let reportConfing = formatting.formatConfig;
-
+    let reportConfig = formatting.formatConfig;
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/${formatting.format}`,
-      body: JSON.stringify(reportConfing)
+      body: JSON.stringify({ reportConfig })
     });
   }
 
@@ -47,7 +46,7 @@ export default (base: ServiceBase) => {
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/standard`,
-      body: JSON.stringify(reportConfig)
+      body: JSON.stringify({ reportConfig })
     });
   }
 
@@ -56,12 +55,12 @@ export default (base: ServiceBase) => {
       stepId: number,
       columnName: string,
       toolName: string,
-      reportConfig: object | undefined,
+      reportConfig: object,
       userId: string = 'current') : Promise<any> {
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/columns/${columnName}/reports/${toolName}`,
-      body: JSON.stringify(reportConfig)
+      body: JSON.stringify({ reportConfig })
     });
   }
 

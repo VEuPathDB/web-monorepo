@@ -38,7 +38,7 @@ export const closeAttributeAnalysis = makeActionCreator(
 // Request report
 export const requestAttributeReport = makeActionCreator(
   'attribute-analysis/request-report',
-  (reporterName: string, stepId: number, config?: any) => ({
+  (reporterName: string, stepId: number, config: object) => ({
     reporterName,
     stepId,
     config

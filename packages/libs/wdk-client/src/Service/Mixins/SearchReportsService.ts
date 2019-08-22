@@ -12,7 +12,7 @@ import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 // Legacy, for backward compatibility of client code with older service API
 export interface AnswerFormatting {
   format: string
-  formatConfig?: object
+  formatConfig: object
 }
 
 // Legacy, for backward compatibility of client code with older service API
@@ -23,12 +23,12 @@ export interface AnswerRequest {
 
 export interface StandardSearchReportRequest {
   searchConfig: SearchConfig;
-  reportConfig?: StandardReportConfig;
+  reportConfig: StandardReportConfig;
 }
 
 export interface CustomSearchReportRequest {
   searchConfig: SearchConfig;
-  reportConfig?: object;
+  reportConfig: object;
 }
 
 interface CustomSearchReportRequestInfo {
@@ -44,7 +44,7 @@ export default (base: ServiceBase) => {
     const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
     let url = base.getCustomSearchReportEndpoint(recordClass.urlSegment, question.urlSegment, formatting.format);
     let searchConfig: SearchConfig = answerSpec.searchConfig;
-    let reportConfig = formatting.formatConfig;
+    let reportConfig = formatting.formatConfig || {};
     let request: CustomSearchReportRequest = { searchConfig, reportConfig };
     return { url, request };
   }

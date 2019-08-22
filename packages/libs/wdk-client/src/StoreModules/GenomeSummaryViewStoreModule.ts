@@ -118,7 +118,7 @@ async function getGenomeSummaryViewReport(
   );
   let report: GenomeSummaryViewReport = await wdkService.getStepCustomReport(
     requestAction.payload.stepId,
-    { format: format }
+    { format: format, formatConfig: {} }
   );
   return fulfillGenomeSummaryReport(requestAction.payload.viewId, report, recordClass);
 }

@@ -65,7 +65,12 @@ class WebServicesHelpController extends PageController<Props> {
     let formProps = {
       ...this.props,
     };
-    return ( <DownloadFormContainer {...formProps}/> );
+    return (
+      <div>
+        <h3>Coming Soon...</h3>
+        <DownloadFormContainer {...formProps}/>
+      </div>
+    );
   }
 
   loadData() {
