@@ -34,6 +34,11 @@
   padding: 6px 8px;
 }
 
+.wdk-DataTableCell:empty:after {
+  content: 'N/A';
+  opacity: 0.4;
+}
+
 .wdk-DataTable .wdk-DataTableRow__expandable {
   cursor: pointer;
 }
