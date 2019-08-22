@@ -21,6 +21,10 @@
   </listener>
 
   <listener>
+    <listener-class>org.gusdb.wdk.model.user.dataset.irods.session.IrodsWebAppHook</listener-class>
+  </listener>
+
+  <listener>
     <listener-class>org.gusdb.wdk.controller.InitListenerForBeans</listener-class>
   </listener>
 
