@@ -142,37 +142,33 @@ export function GbrowseContext(props) {
   let jbrowseUrl = record.attributes.jbrowseLink;
 
   if (attribute.name == 'GeneModelGbrowseUrl'){ 
-      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
-  }
+      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl; 
+      return (
+    	<div>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	</div>
+	)
+  }	
+  if (attribute.name == 'SyntenyGbrowseUrl'){ 
+      jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
+      return (
+        <div>
+          <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
+      	 <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      </div>
+	  )
+    }
   if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
   }
   if (attribute.name == 'SnpsGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
   }
-  if (attribute.name == 'SyntenyGbrowseUrl'){ 
-      jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
-  }
 
-  if ( jbrowseUrl && ( attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'ProteomicsPbrowseUrl') ) {
-  return (
-    <div>
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-    </div>
-	  )
-    }
 
-  if ( jbrowseUrl ) {
-  return (
-    <div>
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-    </div>
-	  )
-    }
 
   if ( attribute.name == 'snpJbrowseUrl' || attribute.name == 'spanJbrowseUrl' ){
   return (
@@ -183,9 +179,21 @@ export function GbrowseContext(props) {
 	  )
     }
 
+
+  if (attribute.name == 'BlatAlignmentsGbrowseUrl'|| attribute.name == 'SnpsGbrowseUrl'){ 
+  return (
+      <div>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseImage url={url} includeImageMap={true} />
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      </div>
+      )
+    }
   return (
     <div>
-      <JbrowseIframe jbrowseUrl={url} />
+      <GbrowseLink url={url}/>
+      <GbrowseImage url={url} includeImageMap={true} />
+      <GbrowseLink url={url}/>
     </div>
   );
 }
@@ -197,7 +205,7 @@ export function ProteinContext(props) {
   return (
     <div>
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
+      <GbrowseImage url={url} includeImageMap={true} />
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
   );
@@ -468,4 +476,14 @@ function makeGbrowseLinkUrl(url) {
     .replace(TRACKS_PARAM_REGEXP, tracksReplacer)
     .replace(GENEPAGE_PARAM_REGEXP, '')
     .replace('/gbrowse_img/', '/gbrowse/');
+}
+
+function replaceWithFullUrl(url) {
+  return url
+    .replace('/geneAnnotationTracks/', '/tracks/')
+    .replace('/syntenyTracks/', '/tracks/')
+    .replace('/geneticVariationTracks/', '/tracks/')
+    .replace('/blatAlignmentTracks/', '/tracks/')
+    .replace('/syntenyTracks/', '/tracks/');
+
 }
