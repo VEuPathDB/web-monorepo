@@ -14,10 +14,13 @@ const isOpenedLinkActive: NavLinkProps['isActive'] = (match , location) => {
   return /^(\/\d+){0,2}$/.test(subPath);
 }
 
+const toCountString = (count?: number) => count != null ? count.toLocaleString() : '...';
+
 interface Props {
   activeStrategy?: { strategyId: number, stepId?: number };
   openedStrategiesCount?: number;
   allStrategiesCount?: number;
+  publicStrategiesCount?: number;
 }
 
 function StrategyHeader(props: Props) {
@@ -25,18 +28,24 @@ function StrategyHeader(props: Props) {
   const activeStratPath = props.activeStrategy ? `/${props.activeStrategy.strategyId}` : '';
   const activeStepPath = props.activeStrategy && props.activeStrategy.stepId ? `/${props.activeStrategy.stepId}` : '';
   const openedStrategiesRoute = rootRoute + activeStratPath + activeStepPath;
-  const { openedStrategiesCount, allStrategiesCount } = props
+  const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount } = props
   return (
     <div className="StrategyHeading">
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={openedStrategiesRoute} isActive={isOpenedLinkActive}>
-        Opened Strategies ({openedStrategiesCount != null ? openedStrategiesCount.toLocaleString() : '...'})
+        Opened Strategies ({toCountString(openedStrategiesCount)})
       </NavLink>
       <span className="StrategyHeading--Separator"> | </span>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/all`}>
-        All Strategies ({allStrategiesCount != null ? allStrategiesCount.toLocaleString() : '...'})
+        All Strategies ({toCountString(allStrategiesCount)})
       </NavLink>
       <span className="StrategyHeading--Separator"> | </span>
-      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/help`}>Help</NavLink>
+      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/public`}>
+        Public Strategies ({toCountString(publicStrategiesCount)})
+      </NavLink>
+      <span className="StrategyHeading--Separator"> | </span>
+      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/help`}>
+        Help
+      </NavLink>
     </div>
   )
 }

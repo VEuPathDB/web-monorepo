@@ -10,8 +10,9 @@ import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, s
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
 import { InferAction, switchMapRequestActionsToEpic, mergeMapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
-import {StrategyDetails, StrategySummary} from 'wdk-client/Utils/WdkUser';
-import {requestStrategiesList, fulfillStrategiesList} from 'wdk-client/Actions/StrategyListActions';
+import { StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { requestStrategiesList, fulfillStrategiesList } from 'wdk-client/Actions/StrategyListActions';
+import { requestPublicStrategies, fulfillPublicStrategies } from 'wdk-client/Actions/PublicStrategyActions';
 
 export const key = 'strategyWorkspace';
 
@@ -25,6 +26,7 @@ export interface State {
   openedStrategies?: number[];
   notifications: Record<string, string | undefined>;
   strategySummaries?: StrategySummary[];
+  publicStrategySummaries?: StrategySummary[];
 }
 
 const initialState: State = {
@@ -110,6 +112,9 @@ export function reduce(state: State = initialState, action: Action): State {
     case fulfillStrategiesList.type:
       return { ...state, strategySummaries: action.payload.strategies };
 
+    case fulfillPublicStrategies.type:
+      return { ...state, publicStrategySummaries: action.payload.publicStrategies }
+
     default:
       return state;
   }
@@ -130,6 +135,7 @@ export const observe = takeEpicInWindow(
     switchMapRequestActionsToEpic([openStrategyView, fulfillStrategiesList], getOpenedStrategies),
     switchMapRequestActionsToEpic([setActiveStrategy], appendActiveStrategyToOpenedStrategies),
     switchMapRequestActionsToEpic([openStrategyView], getRequestStrategiesList),
+    switchMapRequestActionsToEpic([openStrategyView], getRequestPublicStrategies),
 
     mergeMapRequestActionsToEpic([fulfillCreateStrategy], getAddNotification),
     mergeMapRequestActionsToEpic([fulfillDeleteStrategy], getAddNotification),
@@ -144,6 +150,8 @@ export const observe = takeEpicInWindow(
     switchMapRequestActionsToEpic([openStrategyView, fulfillPatchStrategyProperties], getRequestStrategiesList),
     switchMapRequestActionsToEpic([openStrategyView, requestStrategiesList], getFulfillStrategiesList,
       { areActionsNew: () => true}),
+    switchMapRequestActionsToEpic([openStrategyView, requestPublicStrategies], getFulfillPublicStrategies,
+      { areActionsNew: () => true})
   )
 );
 
@@ -312,3 +320,18 @@ async function getFulfillStrategiesList(
   return fulfillStrategiesList(await wdkService.getStrategies());
 }
 
+async function getRequestPublicStrategies(
+  [ openAction ]: [ InferAction<typeof openStrategyView> ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof requestPublicStrategies>> {
+  return requestPublicStrategies();
+}
+
+async function getFulfillPublicStrategies(
+  [ openAction, requestPublicStrategiesAction ]: [ InferAction<typeof openStrategyView>, InferAction<typeof requestPublicStrategies> ],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillPublicStrategies>> {
+  return fulfillPublicStrategies(await wdkService.getPublicStrategies());
+}

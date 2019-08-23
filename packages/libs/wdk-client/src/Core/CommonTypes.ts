@@ -14,8 +14,8 @@ export interface DispatchAction {
   (action: ActionCreatorResult<Action>): any;
 }
 
-export interface MesaColumn {
-  key: string;
+export interface MesaColumn<K extends string = string> {
+  key: K;
   name?: string;
   type?: string;
   sortable?: boolean;

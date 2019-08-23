@@ -1,0 +1,63 @@
+.PublicStrategies {
+  &--Info {
+    display: flex;
+
+    .wdk-Banner {
+      width: auto;
+    }
+  }
+
+  .MesaComponent {
+    .TableToolbar-Children {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      padding: 1em 0;
+
+      white-space: nowrap;
+
+      .PublicStrategies--SearchGroup {
+        display: flex;
+        align-items: center;
+
+        .PublicStrategies--SearchTitle {
+          margin-right: 1em;
+          padding: unset;
+        }
+
+        .wdk-RealTimeSearchBox {
+          width: 33%;
+        }
+      }
+
+      .PublicStrategies--PriorityCheckbox {
+        label {
+          margin-left: 0.25em;
+        }
+      }
+    }
+
+    .MesaComponent {
+      width: 100%;
+
+      td {
+        padding: 0.5em;
+      }
+
+      .PublicStrategies--EuPathDBRow {
+        font-weight: bold;
+      }
+
+      .PublicStrategies--DescriptionCell {
+        & > div {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

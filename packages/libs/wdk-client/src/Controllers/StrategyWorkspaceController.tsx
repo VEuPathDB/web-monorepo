@@ -9,8 +9,9 @@ import StrategyHeader from 'wdk-client/Views/Strategy/StrategyHeader';
 import StrategyNotifications from 'wdk-client/Views/Strategy/StrategyNotifications';
 import StrategyViewController from 'wdk-client/Controllers/StrategyViewController';
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
+import { PublicStrategiesController } from 'wdk-client/Controllers/PublicStrategiesController';
 import {openStrategyView, closeStrategyView} from 'wdk-client/Actions/StrategyWorkspaceActions';
-import {StrategyDetails} from 'wdk-client/Utils/WdkUser';
+import {StrategyDetails, StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
 
 interface OwnProps {
@@ -27,13 +28,14 @@ interface MappedProps {
   activeModal?: RootState['strategyWorkspace']['activeModal'];
   notifications: Record<string, string | undefined>;
   openedStrategies?: number[];
-  strategySummaries?: StrategyDetails[];
+  strategySummaries?: StrategySummary[];
+  publicStrategySummaries?: StrategySummary[];
 }
 
 type Props = OwnProps & DispatchProps & MappedProps;
 
 function StrategyWorkspaceController(props: Props) {
-  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries } = props;
+  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries } = props;
   useEffect(() => {
     dispatch(openStrategyView());
     return () => {
@@ -45,12 +47,18 @@ function StrategyWorkspaceController(props: Props) {
 
   const openedStrategiesCount = openedStrategies && openedStrategies.length;
   const allStrategiesCount = strategySummaries && strategySummaries.length;
+  const publicStrategiesCount = publicStrategySummaries && publicStrategySummaries.length;
 
   return (
     <div className="StrategyWorkspace">
       <StrategyNotifications notifications={notifications}/>
       <StrategyActionModal activeModal={props.activeModal} strategySummaries={strategySummaries}/>
-      <StrategyHeader activeStrategy={activeStrategy} openedStrategiesCount={openedStrategiesCount} allStrategiesCount={allStrategiesCount}/>
+      <StrategyHeader 
+        activeStrategy={activeStrategy} 
+        openedStrategiesCount={openedStrategiesCount} 
+        allStrategiesCount={allStrategiesCount}
+        publicStrategiesCount={publicStrategiesCount}
+      />
       <ChildView {...props}/>
     </div>
   )
@@ -63,6 +71,8 @@ function ChildView({ subPath, openedStrategies, strategySummaries }: Props) {
       return <StrategyViewController openedStrategies={openedStrategies} strategyId={childView.strategyId} stepId={childView.stepId}/>
     case 'allStrategies':
       return <AllStrategiesController strategies={strategySummaries}/>
+    case 'publicStrategies':
+      return <PublicStrategiesController />
     case 'help':
       return <div>TODO</div>
     default:
@@ -73,10 +83,12 @@ function ChildView({ subPath, openedStrategies, strategySummaries }: Props) {
 type ChildView =
   | { type: 'openedStrategies', strategyId?: number, stepId?: number }
   | { type: 'allStrategies' }
+  | { type: 'publicStrategies' }
   | { type: 'help' };
 
 function parseSubPath(subPath: string): ChildView {
   if (subPath === 'all') return { type: 'allStrategies' };
+  if (subPath === 'public') return { type: 'publicStrategies' };
   if (subPath === 'help') return { type: 'help' };
 
   const [ strategyId, stepId ] = subPath.split('/');
@@ -88,14 +100,15 @@ function parseSubPath(subPath: string): ChildView {
   }
 }
 
-function mapState(rootState: RootState) {
-  const { activeStrategy, notifications, openedStrategies, strategySummaries, activeModal } = rootState.strategyWorkspace;
+function mapState(rootState: RootState): MappedProps {
+  const { activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, activeModal } = rootState.strategyWorkspace;
   return {
     activeStrategy,
     activeModal,
     notifications,
     openedStrategies,
-    strategySummaries
+    strategySummaries,
+    publicStrategySummaries
   };
 }
 

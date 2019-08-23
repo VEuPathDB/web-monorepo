@@ -23,6 +23,7 @@ import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
 import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
 import * as StrategyWorkspaceActions from 'wdk-client/Actions/StrategyWorkspaceActions';
 import * as StrategyListActions from 'wdk-client/Actions/StrategyListActions';
+import * as PublicStrategyActions from 'wdk-client/Actions/PublicStrategyActions';
 import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
 import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
@@ -52,6 +53,7 @@ export {
   StrategyActions,
   StrategyWorkspaceActions,
   StrategyListActions,
+  PublicStrategyActions,
   UserDatasetsActions,
   ResultTableSummaryViewActions,
   BlastSummaryViewActions,
@@ -85,6 +87,7 @@ export type Action =
   | StrategyWorkspaceActions.Action
   | StrategyPanelActions.Action
   | StrategyListActions.Action
+  | PublicStrategyActions.Action
   | UserDatasetsActions.Action
   | UserCommentFormActions.Action
   | UserCommentShowActions.Action
