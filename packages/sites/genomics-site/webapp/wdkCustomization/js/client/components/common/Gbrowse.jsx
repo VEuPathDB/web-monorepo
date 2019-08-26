@@ -81,25 +81,25 @@ export let contexts = [
     isPbrowse: false
   },
   {
-    gbrowse_url: 'orfJbrowseUrl',
+    gbrowse_url: 'orfGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'orfGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpChipJbrowseUrl',
+    gbrowse_url: 'snpChipGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'snpChipGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpJbrowseUrl',
+    gbrowse_url: 'snpGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'snpGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'spanJbrowseUrl',
+    gbrowse_url: 'spanGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'spanGenomicContext',
     isPbrowse: false
@@ -179,7 +179,6 @@ export function GbrowseContext(props) {
 	  )
     }
 
-
   if (attribute.name == 'BlatAlignmentsGbrowseUrl'|| attribute.name == 'SnpsGbrowseUrl'){ 
   return (
       <div>
@@ -189,6 +188,7 @@ export function GbrowseContext(props) {
       </div>
       )
     }
+
   return (
     <div>
       <GbrowseLink url={url}/>
