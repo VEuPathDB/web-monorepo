@@ -35,7 +35,8 @@ class TabbableContainer extends React.Component<Props> {
       // not a descendent of container
       !this.node.contains(document.activeElement)
     ) {
-      $(this.node).find(':tabbable:first').focus();
+      this.node.focus();
+      // $(this.node).find(':tabbable:first').focus();
     }
   }
 
