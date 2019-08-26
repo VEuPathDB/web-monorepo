@@ -89,11 +89,15 @@ function ResultTable(props: Props) {
     eventHandlers,
     uiState
   });
+
+  const downloadLink = resultType.type === 'step' ? `/step/${resultType.step.id}/download` : undefined;
   return (
     <Mesa state={tableState}>
-      <div className="ResultTableButton">
-        <Link to={`/step/${'FIXME'}/download`}>Download FIXME FIXME</Link>
-      </div>
+      {downloadLink &&
+        <div className="ResultTableButton">
+          <Link to={downloadLink}>Download</Link>
+        </div>
+      }
       {!recordClass.useBasket || resultType.type !== 'step' ? null :
         <div className="ResultTableButton">
           <button type="button"
