@@ -17,7 +17,7 @@ export default ({ studies, searches, visualizations }) => ([
   {
     title: 'Explore Example Searches',
     description: 'ClinEpiDB can be used to employ a sophisticated search strategy system to explore study data. Use the example searches below to jump to saved strategies, view their results and get acquainted with ClinEpiDB capabilities.',
-    viewAllAppUrl: '/showApplication.do?tab=public_strat',
+    viewAllAppUrl: '/app/workspace/strategies/public',
     contentType: 'SearchCardList',
     contentNamePlural: 'searches',
     items: searches.entities,
