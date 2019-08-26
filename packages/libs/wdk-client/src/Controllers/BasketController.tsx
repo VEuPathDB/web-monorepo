@@ -39,7 +39,15 @@ function BasketController({ basketCounts, dispatch }: DispatchProps &  MappedPro
 
   return (
     <React.Fragment>
-      <h1>Baskets</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <h1>My Baskets</h1>
+        <div style={{ textAlign: 'right' }}>
+          <div>In case of Error: Fix Basket</div>
+          <div>On new releases IDs sometimes change or are retired. Why?</div>
+          <div>Old IDs are mapped to new IDs when possible. Retired IDs will not be in the basket.</div>
+          <div>To keep a copy of your current basket please download your IDs now</div>
+        </div>
+      </div>
       <Tabs
         tabs={basketCounts.map(({ recordClass, count }) => ({
           key: recordClass.urlSegment,
