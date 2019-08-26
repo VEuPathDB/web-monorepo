@@ -9,6 +9,7 @@ import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyAction
 import { Loading, CheckboxTree } from 'wdk-client/Components';
 import Checkbox from 'wdk-client/Components/InputControls/Checkbox';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 // constants for service calls
 const ALLOWABLE_RECORD_CLASS_NAME = 'transcript';
@@ -29,13 +30,7 @@ const TITLE = "Organisms";
 
 // props passed into this component by caller
 type OwnProps = {
-  stepId: number;
-  strategyId: number;
-};
-
-// props provided by mapStateToProps function
-type StateProps = {
-  step: Step | null;
+  resultType: ResultType;
 };
 
 // configured action creators provided by connect
@@ -44,7 +39,7 @@ type DispatchProps = {
 };
 
 // props actually passed to the component below after connect translation
-type Props = StateProps & DispatchProps;
+type Props = OwnProps & DispatchProps;
 
 // use constant and type to indicate no filter applied
 type NO_ORGANISM_FILTER_APPLIED = null;
@@ -118,7 +113,9 @@ function Container(props: ContainerProps) {
   )
 }
 
-function OrganismFilter({step, requestUpdateStepSearchConfig}: Props) {
+function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
+
+  const step = resultType && resultType.type === 'step' && resultType.step;
 
   // don't show anything until step loaded, and after that only if a transcript step
   if (!step || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
@@ -401,26 +398,12 @@ function loadFilterSummary(wdkService: WdkService,
     });
 }
 
-function mapStateToProps(state: RootState, ownProps: OwnProps): StateProps {
-  // should be able to load these without confirming existence since
-  //   this component only lives in the result panel; however, typescript enforces it
-  let strategy = state.strategies.strategies[ownProps.strategyId];
-  if (strategy && strategy.status == 'success') {
-    let details = strategy.strategy;
-    let step = details.steps[ownProps.stepId] || null;
-    return { step };
-  }
-  return {
-    step: null
-  };
-}
-
 const mapDispatchToProps = {
   // when user clicks Apply, will need to update step with new filter value
   requestUpdateStepSearchConfig
 };
 
-export default connect<StateProps, typeof mapDispatchToProps, OwnProps, RootState>(
-  mapStateToProps,
+export default connect<null, typeof mapDispatchToProps, OwnProps, RootState>(
+  null,
   mapDispatchToProps
 )(OrganismFilter);
