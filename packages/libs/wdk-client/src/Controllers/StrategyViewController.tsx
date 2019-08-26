@@ -118,8 +118,9 @@ function StrategyPanelWithOpenedPanel(props: Props) {
         setVisibility={isVisible => dispatch(setOpenedStrategiesVisibility(isVisible))}
       />}
       {strategyId == null &&
-        <div>
-          You have not selected a strategy. Please run a new search, or select a strategy from your <Link to="/workspace/strategies/all">history</Link>.
+        <div style={{ fontSize: '1.2em' }}>
+          <p>You have no open strategies. Please run a search to start a strategy.</p>
+          <p>To open an existing strategy, visit the <Link to="/workspace/strategies/all">'All' page</Link>.</p>
         </div>}
       {strategyId && <StrategyPanelController
         isActive
@@ -157,8 +158,9 @@ function StrategyPanelWithToggle(props: Props) {
         ))}
       </div>
       {strategyId == null &&
-        <div>
-          You have not selected a strategy. Please run a new search, or select a strategy from your <Link to="/workspace/strategies/all">history</Link>.
+        <div style={{ fontSize: '1.2em' }}>
+          <p>You have no open strategies. Please run a search to start a strategy.</p>
+          <p>To open an existing strategy, visit the <Link to="/workspace/strategies/all">'All' page</Link>.</p>
         </div>
       }
       {strategyId != null && stepId == null &&
