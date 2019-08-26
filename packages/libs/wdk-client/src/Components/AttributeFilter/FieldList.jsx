@@ -182,11 +182,17 @@ function FieldNode({node, isActive, handleFieldSelect }) {
             e.stopPropagation();
             handleFieldSelect(node, e.target);
           }}>
-          <Icon fa={isRange(node.field) ? 'bar-chart-o' : 'list'}/> {node.field.display}
+          <Icon fa={getIcon(node.field)}/> {node.field.display}
         </a>
       ) : (
         <div className="wdk-Link wdk-AttributeFilterFieldParent">{node.field.display}</div>
       )}
     </Tooltip>
   );
+}
+
+function getIcon(field) {
+  return isRange(field) ? 'bar-chart-o'
+    : isMulti(field) ? 'th-list'
+    : 'list';
 }
