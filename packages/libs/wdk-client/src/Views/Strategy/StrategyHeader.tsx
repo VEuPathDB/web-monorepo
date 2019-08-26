@@ -31,18 +31,19 @@ function StrategyHeader(props: Props) {
   const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount } = props
   return (
     <div className="StrategyHeading">
+      <h1>My Strategies</h1>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={openedStrategiesRoute} isActive={isOpenedLinkActive}>
-        Opened Strategies ({toCountString(openedStrategiesCount)})
+        Opened ({toCountString(openedStrategiesCount)})
       </NavLink>
-      <span className="StrategyHeading--Separator"> | </span>
+      <span className="StrategyHeading--Separator"></span>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/all`}>
-        All Strategies ({toCountString(allStrategiesCount)})
+        All ({toCountString(allStrategiesCount)})
       </NavLink>
-      <span className="StrategyHeading--Separator"> | </span>
+      <span className="StrategyHeading--Separator"></span>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/public`}>
-        Public Strategies ({toCountString(publicStrategiesCount)})
+        Public ({toCountString(publicStrategiesCount)})
       </NavLink>
-      <span className="StrategyHeading--Separator"> | </span>
+      <span className="StrategyHeading--Separator"></span>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/help`}>
         Help
       </NavLink>
