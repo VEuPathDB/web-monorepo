@@ -12,9 +12,7 @@
 
 .StrategyPanel--CloseButton {
   font-size: .75rem;
-  position: relative;
-  top: .3em;
-  margin-left: 1em;
+  margin-left: auto;
 }
 
 .StrategyPanel--StrategyCount {
