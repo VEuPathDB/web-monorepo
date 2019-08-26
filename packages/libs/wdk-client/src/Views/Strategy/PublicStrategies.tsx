@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { RealTimeSearchBox, Link } from 'wdk-client/Components';
+import { RealTimeSearchBox, Link, Icon } from 'wdk-client/Components';
 import { MesaState, Mesa } from 'wdk-client/Components/Mesa';
 import { MesaSortObject, MesaColumn } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -76,10 +76,10 @@ export const PublicStrategies = ({
   return (
     <div className={cx()}>
       <div className={cx('--Info')}>
-        <div className="wdk-Banner info-banner">
-          <div>
-            To make one of your strategies visible to the community, go to <strong>All Strategies</strong> and click its Public checkbox.
-          </div>
+        <Icon type="info" />{' '}
+        <div>
+          To make one of your strategies public, go to <strong>All Strategies</strong> and click its Public checkbox.&nbsp;
+          Public strategies are visible to the community.
         </div>
       </div>
       <Mesa state={mesaState}>
@@ -97,8 +97,9 @@ export const PublicStrategies = ({
             checked={prioritizeEuPathDbExamples}
             onChange={onPriorityCheckboxChange} type="checkbox" 
           />
+          {' '}
           <label htmlFor="public_strategies_priority_checkbox">
-            Set EuPathDB Example Strategies On Top
+            Sort EuPathDB Example Strategies To Top
           </label>
         </div>
       </Mesa>
@@ -122,10 +123,10 @@ function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null)
         <Link to={`workspace/strategies/import/${props.row.signature}`} onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
           e.preventDefault();
           alert('Under construction');
-        }} >
+        }}>
           {props.value}
         </Link>,
-      width: '20%'
+      width: '15em'
     },
     {
       key: 'recordClassName',
@@ -133,8 +134,7 @@ function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null)
       className: cx('--RecordClassCell'),
       sortable: true,
       renderCell: (props: RenderCellProps<string | null>) => 
-        recordClassToDisplayString(props.value),
-      width: '10%',
+        recordClassToDisplayString(props.value)
     },
     {
       key: 'description',
@@ -142,38 +142,85 @@ function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null)
       className: cx('--DescriptionCell'),
       sortable: true,
       renderCell: (props: RenderCellProps<string | undefined>) => 
-        <div onClick={(e: React.MouseEvent) => {
-          e.preventDefault();
-          alert('Under construction');
-        }}>
-          {props.value || ''}
-        </div>,
-      width: '30%'
+        <OverflowingTextCell {...props} key={props.row.strategyId} />,
+      width: '25em'
     },
     {
       key: 'author',
       name: 'Author',
       className: cx('--AuthorCell'),
-      sortable: true,
-      width: '15%',
+      sortable: true
     },
     {
       key: 'organization',
       name: 'Organization',
       className: cx('--OrganizatiohCell'),
-      sortable: true,
-      width: '15%',
+      sortable: true
     },
     {
       key: 'lastModified',
-      name: 'Last Modified',
+      name: 'Modified',
       className: cx('--LastModifiedCell'),
       sortable: true,
       renderCell: (props: RenderCellProps<string>) => 
-        formatDateTimeString(props.value),
-      width: '10%'
+        formatDateTimeString(props.value)
     }
   ];
+}
+
+function OverflowingTextCell(props: RenderCellProps<string | undefined>) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isOverflowing = useIsRefOverflowing(ref);
+  const [ isExpanded, setExpanded ] = useState(false);
+
+  const textContents = props.value || '';
+  const htmlContents = !isExpanded && isOverflowing
+    ? textContents
+    : textContents.split('\n').map((line, i) => 
+        <React.Fragment key={i}>{line}<br /></React.Fragment>
+      );
+
+  const contentsClassName = isOverflowing && isExpanded
+    ? cx('--OverflowableContents', 'expanded')
+    : cx('--OverflowableContents');
+
+  return (
+    <div ref={ref} className={contentsClassName}>
+      {htmlContents}
+      {
+        isOverflowing &&
+        <div>
+          <button type="button" className="link" onClick={() => {
+            setExpanded(!isExpanded);
+          }}>
+            {
+              isExpanded ? 'Read Less' : 'Read More'
+            }
+          </button>
+        </div>
+      }
+    </div>
+  );
+}
+
+// FIXME This hook has a deficiency - currently, it only updates
+// "isOverflowing" when the associated ref is changed - that is,
+// upon the mounting of a new DOM element. It would more responsive to update
+// "isOverflowing" whenever the size of the ref element changes - 
+// one possible way of handling this would be to have this hook employ a
+// ResizeObserver. The catch with this approach is that the
+// ResizeObserver API is still experimental - maybe this would
+// be a good use case for a ponyfill?
+function useIsRefOverflowing(ref: React.RefObject<HTMLElement>) {
+  const [ isOverflowing, setIsOverflowing ] = React.useState(false);
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      setIsOverflowing(ref.current.scrollWidth > ref.current.clientWidth);
+    }
+  }, [ ref.current ]);
+
+  return isOverflowing;
 }
 
 function makeMesaRows(

@@ -206,7 +206,7 @@ function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePub
     },
     {
       key: 'lastModified',
-      name: 'Last Modified',
+      name: 'Modified',
       className: cx('--TableCell', 'lastModified'),
       sortable: true,
       renderCell: formatDateTime

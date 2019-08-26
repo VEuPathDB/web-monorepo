@@ -107,7 +107,7 @@ export const StrategyInputSelector = ({
       },
       {
         key: 'lastModified',
-        name: 'Last Modified',
+        name: 'Modified',
         sortable: true,
         renderCell: ({ value }: StrategyInputCellProps<string>) =>
           <>

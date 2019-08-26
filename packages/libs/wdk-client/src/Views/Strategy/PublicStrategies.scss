@@ -1,9 +1,11 @@
 .PublicStrategies {
   &--Info {
     display: flex;
+    align-items: center;
 
-    .wdk-Banner {
-      width: auto;
+    .wdk-Icon {
+      font-size: 1.5em;
+      margin-right: 0.25em;
     }
   }
 
@@ -31,12 +33,6 @@
           width: 33%;
         }
       }
-
-      .PublicStrategies--PriorityCheckbox {
-        label {
-          margin-left: 0.25em;
-        }
-      }
     }
 
     .MesaComponent {
@@ -51,11 +47,15 @@
       }
 
       .PublicStrategies--DescriptionCell {
-        & > div {
+        .PublicStrategies--OverflowableContents {
           white-space: nowrap;
-          text-overflow: ellipsis;
           overflow: hidden;
-          cursor: pointer;
+          text-overflow: ellipsis;
+
+          &__expanded {
+            white-space: normal;
+            overflow: visible;
+          }
         }
       }
     }
