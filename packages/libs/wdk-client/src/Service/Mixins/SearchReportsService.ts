@@ -5,6 +5,7 @@ import {
   StandardReportConfig,
   SearchConfig,
   Answer,
+  FilterValueArray,
 } from 'wdk-client/Utils/WdkModel';
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 
@@ -53,16 +54,16 @@ export default (base: ServiceBase) => {
    * Get an answer from the searches/{name}/reports/{name} service
    * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
    */
-  async function getAnswer(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<Answer> {
+  async function getAnswer<T>(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<T> {
     let info = await getCustomSearchReportRequestInfo(answerSpec, formatting);
-    return base._fetchJson<Answer>('post', info.url, stringify(info.request));
+    return base._fetchJson<T>('post', info.url, stringify(info.request));
   }
 
   /**
    * Get an answer from the searches/{name}/reports/standard service
    * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
    */
-  async function getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig): Promise<Answer> {
+  async function getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig, viewFilters?: FilterValueArray): Promise<Answer> {
     const question = await base.findQuestion(question => question.urlSegment === answerSpec.searchName);
     const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
     let url = base.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);

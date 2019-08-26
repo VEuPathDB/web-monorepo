@@ -534,8 +534,9 @@ export function combineLatestIf<T>(...args: Array<Observable<T> | Array<Observab
 
 // Utility to partially apply a function. This type definiton works with how we
 // define ActionCreator. Eventually, we want to curry ActionCreator.
-export type Partial1<T> = T extends (first: infer first, ...rest: infer Rest) => infer Return
-  ? (...rest: Rest) => Return
+export type Partial1<T> =
+  T extends (soleArg: infer sole) => infer Return ? () => Return
+  : T extends (first: infer first, ...rest: infer Rest) => infer Return ? (...rest: Rest) => Return
   : never;
 
 export function partial<T, F extends Function>(fn: F, t: T): Partial1<F>;

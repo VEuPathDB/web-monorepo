@@ -10,15 +10,26 @@ import {
   PrimaryKey,
   SearchConfig
 } from 'wdk-client/Utils/WdkModel';
+import {ResultType, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
 
 export const openResultTableSummaryView = makeActionCreator(
   'resultTableSummaryView/open',
-  (viewId: string, strategyId: number, stepId: number) => ({ strategyId, stepId, viewId })
+  (viewId: string, resultType: ResultType) => ({ resultType, viewId })
 );
 
 export const closeResultTableSummaryView = makeActionCreator(
   'resultTableSummaryView/close',
-  (viewId: string, stepId: number) => ({ stepId, viewId })
+  (viewId: string) => ({ viewId })
+);
+
+export const requestResultTypeDetails = makeActionCreator(
+  'resultTableSummaryView/requestResultTypeDetails',
+  (viewId: string, resultType: ResultType) => ({ viewId, resultType })
+);
+
+export const fulfillResultTypeDetails = makeActionCreator(
+  'resultTableSummaryView/fulfillResultTypeDetails',
+  (viewId: string, resultTypeDetails: ResultTypeDetails) => ({ viewId, resultTypeDetails })
 );
 
 export const showHideAddColumnsDialog = makeActionCreator(
@@ -104,23 +115,23 @@ export const requestAnswer = makeActionCreator(
   'resultTableSummaryView/requestAnswer',
   (
     viewId: string,
-    stepId: number,
+    resultType: ResultType,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
     viewFilters?: SearchConfig['viewFilters'],
-  ) => ({ stepId, columnsConfig, pagination, viewFilters, viewId })
+  ) => ({ resultType, columnsConfig, pagination, viewFilters, viewId })
 );
 
 export const fulfillAnswer = makeActionCreator(
   'resultTableSummaryView/fulfillAnswer',
   (
     viewId: string,
-    stepId: number,
+    resultType: ResultType,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
     viewFilters: SearchConfig['viewFilters'] | undefined,
     answer: Answer
-  ) => ({ stepId, columnsConfig, pagination, viewFilters, answer, viewId })
+  ) => ({ resultType, columnsConfig, pagination, viewFilters, answer, viewId })
 );
 
 export const reportAnswerFulfillmentError = makeActionCreator(
@@ -134,23 +145,21 @@ export const requestRecordsBasketStatus = makeActionCreator(
   'resultTableSummaryView/requestRecordsBasketStatus',
   (
     viewId: string,
-    stepId: number,
     pageNumber: number,
     pageSize: number,
     recordClassName: string,
     basketQuery: PrimaryKey[]
-  ) => ({ stepId, pageNumber, pageSize, recordClassName, basketQuery, viewId })
+  ) => ({ pageNumber, pageSize, recordClassName, basketQuery, viewId })
 );
 
 export const fulfillRecordsBasketStatus = makeActionCreator(
   'resultTableSummaryView/fulfillRecordsBasketStatus',
   (
     viewId: string,
-    stepId: number,
     pageNumber: number,
     pageSize: number,
     basketStatus: boolean[]
-  ) => ({ stepId, pageNumber, pageSize, basketStatus, viewId })
+  ) => ({ pageNumber, pageSize, basketStatus, viewId })
 );
 
 export const updateSelectedIds = makeActionCreator(
@@ -181,28 +190,31 @@ export const fulfillGlobalViewFilters = makeActionCreator(
   })
 );
 
-export type Action =
-  | InferAction<typeof openResultTableSummaryView>
-  | InferAction<typeof closeResultTableSummaryView>
-  | InferAction<typeof requestSortingPreference>
-  | InferAction<typeof requestSortingUpdate>
-  | InferAction<typeof fulfillSorting>
-  | InferAction<typeof requestColumnsChoicePreference>
-  | InferAction<typeof requestColumnsChoiceUpdate>
-  | InferAction<typeof fulfillColumnsChoice>
-  | InferAction<typeof requestPageSize>
-  | InferAction<typeof fulfillPageSize>
-  | InferAction<typeof viewPageNumber>
-  | InferAction<typeof requestAnswer>
-  | InferAction<typeof fulfillAnswer>
-  | InferAction<typeof reportAnswerFulfillmentError>
-  | InferAction<typeof requestRecordsBasketStatus>
-  | InferAction<typeof fulfillRecordsBasketStatus>
-  | InferAction<typeof showHideAddColumnsDialog>
-  | InferAction<typeof updateColumnsDialogSearchString>
-  | InferAction<typeof updateColumnsDialogSelection>
-  | InferAction<typeof updateColumnsDialogExpandedNodes>
-  | InferAction<typeof updateSelectedIds>
-  | InferAction<typeof requestGlobalViewFilters>
-  | InferAction<typeof updateGlobalViewFilters>
-  | InferAction<typeof fulfillGlobalViewFilters>;
+export type Action = InferAction<
+  | typeof openResultTableSummaryView
+  | typeof closeResultTableSummaryView
+  | typeof requestResultTypeDetails
+  | typeof fulfillResultTypeDetails
+  | typeof requestSortingPreference
+  | typeof requestSortingUpdate
+  | typeof fulfillSorting
+  | typeof requestColumnsChoicePreference
+  | typeof requestColumnsChoiceUpdate
+  | typeof fulfillColumnsChoice
+  | typeof requestPageSize
+  | typeof fulfillPageSize
+  | typeof viewPageNumber
+  | typeof requestAnswer
+  | typeof fulfillAnswer
+  | typeof reportAnswerFulfillmentError
+  | typeof requestRecordsBasketStatus
+  | typeof fulfillRecordsBasketStatus
+  | typeof showHideAddColumnsDialog
+  | typeof updateColumnsDialogSearchString
+  | typeof updateColumnsDialogSelection
+  | typeof updateColumnsDialogExpandedNodes
+  | typeof updateSelectedIds
+  | typeof requestGlobalViewFilters
+  | typeof updateGlobalViewFilters
+  | typeof fulfillGlobalViewFilters
+  >

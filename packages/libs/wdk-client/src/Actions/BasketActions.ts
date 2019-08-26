@@ -34,8 +34,33 @@ export const fulfillAddStepToBasket = makeActionCreator(
   (stepId: number) => ({ stepId })
 )
 
+export const requestBasketCounts = makeActionCreator(
+  'requestBasketCounts'
+);
+
+export const fulfillBasketCounts = makeActionCreator(
+  'fulfillBasketCounts',
+  (counts: Record<string, number>) => ({ counts })
+);
+
+export const requestBasketDetails = makeActionCreator(
+  'resultTableSummaryView/requestBasketDetails',
+  (basketName: string) => ({ basketName })
+);
+
+export const fulfillBasketDetails = makeActionCreator(
+  'resultTableSummaryView/fulfillBasketDetails',
+  (basketName: string, recordClassName: string, searchName: string) =>
+    ({ basketName, recordClassName, searchName })
+);
+
+
 export type Action =
   | InferAction<typeof requestUpdateBasket>
   | InferAction<typeof fulfillUpdateBasket>
   | InferAction<typeof requestAddStepToBasket>
   | InferAction<typeof fulfillAddStepToBasket>
+  | InferAction<typeof requestBasketCounts>
+  | InferAction<typeof fulfillBasketCounts>
+  | InferAction<typeof requestBasketDetails>
+  | InferAction<typeof fulfillBasketDetails>

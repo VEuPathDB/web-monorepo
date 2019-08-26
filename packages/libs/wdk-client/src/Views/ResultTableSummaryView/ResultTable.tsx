@@ -16,10 +16,11 @@ import PrimaryKeyCell from 'wdk-client/Views/ResultTableSummaryView/PrimaryKeyCe
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from 'wdk-client/Views/ResultTableSummaryView/AttributeHeading';
 import { Action, BasketStatusArray, RequestSortingUpdate, RequestColumnsChoiceUpdate, RequestUpdateBasket, RequestAddStepToBasket, ViewPageNumber, RequestPageSizeUpdate, ShowHideAddColumnsDialog, OpenAttributeAnalysis, CloseAttributeAnalysis, UpdateSelectedIds, ShowLoginWarning } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 
 export interface Props {
-  stepId: number;
+  resultType: ResultType;
   actions?: Action[];
   selectedIds?: string[];
   showIdAttributeColumn: boolean;
@@ -46,7 +47,7 @@ function ResultTable(props: Props) {
   const {
     answer,
     recordClass,
-    stepId,
+    resultType,
     showHideAddColumnsDialog,
     requestAddStepToBasket,
     actions,
@@ -91,16 +92,16 @@ function ResultTable(props: Props) {
   return (
     <Mesa state={tableState}>
       <div className="ResultTableButton">
-        <Link to={`/step/${stepId}/download`}>Download</Link>
+        <Link to={`/step/${'FIXME'}/download`}>Download FIXME FIXME</Link>
       </div>
-      {!recordClass.useBasket ? null :
+      {!recordClass.useBasket || resultType.type !== 'step' ? null :
         <div className="ResultTableButton">
           <button type="button"
             className="wdk-Link"
             title={userIsGuest ? 'You must login to use baskets' : 'Add all records returned by this search to your basket'}
             onClick={() => {
               if (userIsGuest) showLoginWarning('use baskets');
-              else requestAddStepToBasket(stepId)
+              else requestAddStepToBasket(resultType.step.id)
             }}>
             Add to Basket
           </button>
@@ -193,7 +194,7 @@ function getEventHandlers(props: Props) {
 }
 
 function getColumns({
-  stepId,
+  resultType,
   activeAttributeAnalysisName,
   showIdAttributeColumn,
   answer,
@@ -263,7 +264,7 @@ function getColumns({
         ClickBoundary: React.ComponentType<any>
       }) => (
         <AttributeHeading
-          stepId={stepId}
+          resultType={resultType}
           activeAttributeAnalysisName={activeAttributeAnalysisName}
           attribute={attribute}
           question={question}

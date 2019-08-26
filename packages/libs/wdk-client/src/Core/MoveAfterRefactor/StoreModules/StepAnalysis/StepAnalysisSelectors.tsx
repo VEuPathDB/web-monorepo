@@ -9,48 +9,58 @@ import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalys
 import { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
-import { Question, SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
+import { Question, SummaryViewPluginField, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ResultPanelState } from 'wdk-client/StoreModules/ResultPanelStoreModule';
 import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
 // Props used by selectors... is there a better way to do this?
-type Props = { viewId: string, strategyId: number, stepId: number, initialTab?: string };
+type Props = {
+  viewId: string,
+  resultType: ResultType,
+  initialTab?: string
+};
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
+export const resultTypeDetails = (state: RootState, props: Props) => {
+  const viewState = state.resultPanel[props.viewId];
+  return viewState && viewState.resultTypeDetails;
+}
 export const recordClass = (
 
   {
+    resultPanel,
     globalData: { recordClasses = [] },
-    strategies: { strategies },
   }: RootState,
-  { stepId, strategyId }: Props
-) => {
-  const strategyEntry = strategies[strategyId];
-  if (strategyEntry == undefined) return '';
-  if (strategyEntry.status != 'success') return '';
-  const recordClassName = get(strategyEntry.strategy.steps[stepId], 'recordClassName', '');
+  { viewId }: Props
+): RecordClass | undefined => {
+  const resultPanelState = resultPanel[viewId];
+  if (resultPanelState == undefined) return undefined;
+  const { resultTypeDetails } = resultPanelState;
+  if (resultTypeDetails == undefined) return undefined;
+  const { recordClassName } = resultTypeDetails;
   const recordClass = recordClasses.find(({ urlSegment }) => urlSegment === recordClassName);
   return recordClass;
 };
-// FIXME This look suspect
+
 export const question = (
+
   {
+    resultPanel,
     globalData: { questions = [] },
-    strategies: { strategies },
   }: RootState,
-  { stepId, strategyId }: Props
-) => {
-  const strategyEntry = strategies[strategyId];
-  if (strategyEntry == undefined) return;
-  if (strategyEntry.status != 'success') return;
-  const step = strategyEntry.strategy.steps[stepId];
-  if (step == null) return;
-  const questionName = step.searchName;
-  const question = questions.find(({ urlSegment }) => urlSegment === questionName);
+  { viewId }: Props
+): Question | undefined => {
+  const resultPanelState = resultPanel[viewId];
+  if (resultPanelState == undefined) return undefined
+  const { resultTypeDetails } = resultPanelState;
+  if (resultTypeDetails == undefined) return undefined
+  const { searchName } = resultTypeDetails;
+  const question = questions.find(({ urlSegment }) => urlSegment === searchName);
   return question;
 };
 
@@ -76,18 +86,10 @@ export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): Resu
 
 export const questionsLoaded = ({ globalData: { questions }}: RootState) => questions != null;
 
-export const stepLoaded = (
-  { strategies: { strategies }}: RootState,
-  { strategyId }: Props) => {
-  const strategyEntry = strategies[strategyId];
-  return strategyEntry != null && strategyEntry.status === 'success';
-}
-
-export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean, boolean>(
+export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean>(
   resultPanel,
   questionsLoaded,
-  stepLoaded,
-  (resultPanel, questionsLoaded, stepLoaded) => resultPanel != null && (!questionsLoaded || !stepLoaded)
+  (resultPanel, questionsLoaded) => resultPanel != null && (!questionsLoaded)
 );
 
 export const stepAnalyses = ({ stepAnalysis }: RootState) => stepAnalysis;

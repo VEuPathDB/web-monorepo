@@ -1,15 +1,16 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { BlastSummaryViewReport } from "wdk-client/Utils/WdkModel";
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 
 export const requestBlastSummaryReport = makeActionCreator(
   'blastSummaryView/requestBlastSummaryReport',
-  (stepId: number) => ({ stepId })
+  (viewId: string, resultType: ResultType) => ({ viewId, resultType })
 );
 
 export const fulfillBlastSummaryReport = makeActionCreator(
   'blastSummaryView/fulfillBlastSummaryReport',
-  (stepId: number, blastInfo: BlastSummaryViewReport) => ({ blastInfo, stepId })
+  (viewId: string, resultType: ResultType, blastInfo: BlastSummaryViewReport) => ({ viewId, blastInfo, resultType })
 );
 
 export type Action =

@@ -2,7 +2,7 @@ import React from 'react';
 import ViewController from 'wdk-client/Core/Controllers/ViewController';
 import { StepAnalysisEventHandlers } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisView';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
-import { memoize } from 'lodash/fp';
+import { memoize, isEqual } from 'lodash/fp';
 import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -20,7 +20,8 @@ import {
   newAnalysisButtonVisible,
   summaryViewPlugins,
   defaultSummaryView,
-  loadingSummaryViewListing
+  loadingSummaryViewListing,
+  resultTypeDetails
 } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import {
@@ -41,14 +42,12 @@ import {
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
 import { SummaryViewPluginField, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { LoadingOverlay } from 'wdk-client/Components';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
 import { StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
-import Loading from 'wdk-client/Components/Loading';
+import {ResultType, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
 
 type StateProps = {
-  strategyEntry?: StrategyEntry;
+  resultTypeDetails?: ResultTypeDetails;
   loadingSummaryViewListing: ReturnType<typeof loadingSummaryViewListing>;
   loadingAnalysisChoices: ReturnType<typeof loadingAnalysisChoices>,
   summaryViewPlugins: ReturnType<typeof summaryViewPlugins>;
@@ -65,15 +64,14 @@ type StateProps = {
 };
 
 type OwnProps = {
-  stepId: number;
+  resultType: ResultType;
   viewId: string;
-  strategyId: number;
   initialTab?: string;
   renderHeader?: React.ReactType<{ recordClass: RecordClass, step: Step, strategy: StrategyDetails, viewId: string }>;
 };
 
 interface TabEventHandlers {
-  loadTabs: (stepId: number) => void;
+  loadTabs: (resultType: ResultType) => void;
   openAnalysisMenu: () => void;
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
@@ -87,8 +85,7 @@ interface ResultPanelControllerProps {
   header: React.ReactNode;
   summaryViewPlugins: SummaryViewPluginField[];
   defaultSummaryView: string;
-  stepId: number;
-  strategyId: number;
+  resultType: ResultType;
   viewId: string;
   loadingTabs: boolean;
   stepErrorMessage?: string;
@@ -97,15 +94,15 @@ interface ResultPanelControllerProps {
   tabs: TabConfig<string>[];
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
-  loadTabs: (stepId: number) => void;
+  loadTabs: (resultType: ResultType) => void;
   newAnalysisButton: React.ReactNode;
 }
 
 class ResultPanelController extends ViewController< ResultPanelControllerProps > {
 
   loadData(prevProps?: ResultPanelControllerProps) {
-    if (prevProps == null || prevProps.stepId !== this.props.stepId) {
-      this.props.loadTabs(this.props.stepId);
+    if (prevProps == null || !isEqual(prevProps.resultType, this.props.resultType)) {
+      this.props.loadTabs(this.props.resultType);
     }
   }
 
@@ -123,8 +120,7 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
         {this.props.header}
         <ResultTabs
           loadingTabs={this.props.loadingTabs}
-          stepId={this.props.stepId}
-          strategyId={this.props.strategyId}
+          resultType={this.props.resultType}
           activeTab={`${this.props.activeTab}`}
           onTabSelected={this.props.onTabSelected}
           onTabRemoved={this.props.onTabRemoved}
@@ -138,7 +134,7 @@ class ResultPanelController extends ViewController< ResultPanelControllerProps >
 }
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
-  strategyEntry: state.strategies.strategies[props.strategyId],
+  resultTypeDetails: resultTypeDetails(state, props),
   loadingSummaryViewListing: loadingSummaryViewListing(state, props),
   loadingAnalysisChoices: loadingAnalysisChoices(state),
   summaryViewPlugins: summaryViewPlugins(state, props),
@@ -154,8 +150,8 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   newAnalysisButtonVisible: newAnalysisButtonVisible(state)
 });
 
-const mapDispatchToProps = (dispatch: Dispatch, { stepId, strategyId, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
-  loadTabs: (stepId: number) => dispatch(openTabListing(viewId, stepId, strategyId, initialTab)),
+const mapDispatchToProps = (dispatch: Dispatch, { resultType, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
+  loadTabs: (resultType: ResultType) => dispatch(openTabListing(viewId, resultType, initialTab)),
   openAnalysisMenu: () => dispatch(
     createNewTab(
       {
@@ -169,9 +165,9 @@ const mapDispatchToProps = (dispatch: Dispatch, { stepId, strategyId, viewId, in
   onTabSelected: (tabKey: string) => {
     if (+tabKey !== +tabKey) {
       dispatch(selectTab(-1));
-      dispatch(selectSummaryView(viewId, stepId, strategyId, tabKey));
+      dispatch(selectSummaryView(viewId, resultType, tabKey));
     } else {
-      dispatch(selectSummaryView(viewId, stepId, strategyId, null));
+      dispatch(selectSummaryView(viewId, resultType, null));
       dispatch(selectTab(+tabKey));
     }
   },
@@ -192,20 +188,20 @@ const mergeProps = (
   stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps
 ): ResultPanelControllerProps & OwnProps => ({
   ...ownProps,
-  header: ownProps.renderHeader && stateProps.recordClass && stateProps.strategyEntry && stateProps.strategyEntry.status === 'success' ? (
-    <ownProps.renderHeader
-      recordClass={stateProps.recordClass}
-      strategy={stateProps.strategyEntry.strategy}
-      step={stateProps.strategyEntry.strategy.steps[ownProps.stepId]}
-      viewId={ownProps.viewId}
-    />
-  ) : null,
+  // header: ownProps.renderHeader && stateProps.recordClass && stateProps.strategyEntry && stateProps.strategyEntry.status === 'success' ? (
+  //   <ownProps.renderHeader
+  //     recordClass={stateProps.recordClass}
+  //     strategy={stateProps.strategyEntry.strategy}
+  //     step={stateProps.strategyEntry.strategy.steps[ownProps.stepId]}
+  //     viewId={ownProps.viewId}
+  //   />
+  // ) : null,
+  header: null,
   stepErrorMessage: undefined,  // TODO: clean up when we have new error handling system
   isUnauthorized: false,  // TODO: clean up when we have new error handling system
   summaryViewPlugins: stateProps.summaryViewPlugins,
   defaultSummaryView: stateProps.defaultSummaryView,
   loadingTabs: (
-    (stateProps.strategyEntry == null || stateProps.strategyEntry.status === 'pending') ||
     stateProps.loadingSummaryViewListing ||
     (ownProps.viewId === 'strategy' && stateProps.loadingAnalysisChoices)
   ),
@@ -234,16 +230,15 @@ const mergeProps = (
         display: plugin.displayName,
         removable: false,
         tooltip: plugin.description,
-        content: stateProps.strategyEntry && stateProps.strategyEntry.status === 'success' ? (
+        content: stateProps.resultTypeDetails ? (
           <Plugin
             context={{
               type: 'summaryView',
               name: plugin.name,
-              ...getPropsFromStep(stateProps.strategyEntry.strategy, ownProps.stepId)
+              ...stateProps.resultTypeDetails
             }}
             pluginProps={{
-              stepId: ownProps.stepId,
-              strategyId: ownProps.strategyId,
+              resultType: ownProps.resultType,
               viewId: ownProps.viewId
             }}
           />
@@ -285,11 +280,6 @@ const mergeProps = (
     ))
   ]
 });
-
-function getPropsFromStep (strategy: StrategyDetails, stepId: number)  {
-  if (strategy.steps[stepId] === undefined) return { searchName: undefined, recordClassName: undefined };
-  return { searchName: strategy.steps[stepId].searchName, recordClassName: strategy.steps[stepId].recordClassName}
-}
 
 export default connect(
   mapStateToProps,

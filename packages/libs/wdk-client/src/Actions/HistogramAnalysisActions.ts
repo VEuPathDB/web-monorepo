@@ -1,13 +1,14 @@
 import { makeActionCreator, InferAction } from "wdk-client/Utils/ActionCreatorUtils";
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 export const openView = makeActionCreator(
   'histogram-analysis/open-view',
-  (reporterName: string, stepId: number) => ({ reporterName, stepId })
+  (reporterName: string, resultType: ResultType) => ({ reporterName, resultType })
 )
 
 export const closeView = makeActionCreator(
   'histogram-analysis/close-view',
-  (reporterName: string, stepId: number) => ({ reporterName, stepId })
+  (reporterName: string, resultType: ResultType) => ({ reporterName, resultType })
 )
 
 export const setBinSize = makeActionCreator(

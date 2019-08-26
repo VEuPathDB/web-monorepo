@@ -1,4 +1,5 @@
 import { AttributeSortingSpec, PrimaryKey } from "wdk-client/Utils/WdkModel";
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 // Types that are shared by ResultTableSummaryView Components
 
@@ -45,8 +46,8 @@ export type UpdateColumnsDialogSearchString = (searchString: string) => void;
 
 export type UpdateColumnsDialogExpandedNodes = (nodes: string[]) => void;
 
-export type OpenAttributeAnalysis = (reporterName: string, stepId: number) => void;
+export type OpenAttributeAnalysis = (reporterName: string, resultType: ResultType) => void;
 
-export type CloseAttributeAnalysis = (reporterName: string, stepId: number) => void;
+export type CloseAttributeAnalysis = (reporterName: string, resultType: ResultType) => void;
 
 export type UpdateSelectedIds = (ids: string[]) => void;

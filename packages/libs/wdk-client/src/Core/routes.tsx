@@ -19,17 +19,13 @@ import SiteMapController from 'wdk-client/Controllers/SiteMapController';
 import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import FavoritesController from 'wdk-client/Controllers/FavoritesController';
-import BlastSummaryViewController from 'wdk-client/Controllers/BlastSummaryViewController';
-import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryViewController';
-import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
-import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers/StepAnalysis/StepAnalysisContainer';
-import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
+import BasketController from 'wdk-client/Controllers/BasketController';
 
 const routes: RouteEntry[] = [
   {
@@ -143,6 +139,11 @@ const routes: RouteEntry[] = [
   },
 
   {
+    path: '/workspace/basket',
+    component: BasketController
+  },
+
+  {
     path: '/workspace/datasets',
     component: (props: RouteComponentProps<{}>) => {
       const { history, location } = props;
@@ -191,58 +192,6 @@ const routes: RouteEntry[] = [
   {
     path: '/question-list',
     component: () => <QuestionListController />
-  },
-
-  {
-    path: '/step/:stepId(\\d+)/blastSummaryView',
-    component: (props: RouteComponentProps<{stepId: string}>) =>
-      <BlastSummaryViewController
-        stepId={Number(props.match.params.stepId)}
-      />
-  },
-
-  {
-    path: '/step/:stepId(\\d+)/genomeSummaryView',
-    component: (props: RouteComponentProps<{ stepId: string }>) =>
-      <GenomeSummaryViewController
-        viewId="route"
-        stepId={Number(props.match.params.stepId)}
-      />
-  },
-
-  {
-    path: '/step-analysis/:stepId(\\d+)',
-    component: (props: RouteComponentProps<{ strategyId: string, stepId: string, viewId: string }>) =>
-      <StepAnalysisController
-        strategyId={Number(props.match.params.strategyId)}
-        stepId={Number(props.match.params.stepId)}
-        viewId={props.match.params.viewId}
-      />
-  },
-
-  {
-    path: '/step/:stepId(\\d+)/resultPanel',
-    component: (props: RouteComponentProps<{ strategyId: string, stepId: string, viewId: string }>) => {
-      const { initialTab } = parseQueryString(props);
-      return (
-        <ResultPanelController
-          strategyId={Number(props.match.params.strategyId)}
-          stepId={Number(props.match.params.stepId)}
-          viewId="strategy"
-          initialTab={initialTab}
-        />
-      );
-    }
-  },
-
-  {
-    path: '/step/:stepId(\\d+)/defaultSummaryView',
-    component: (props: RouteComponentProps<{ strategyId: string, stepId: string, viewId: string }>) =>
-      <ResultTableSummaryViewController
-        strategyId={Number(props.match.params.strategyId)}
-        stepId={Number(props.match.params.stepId)}
-        viewId={props.match.params.viewId}
-      />
   },
 
   {

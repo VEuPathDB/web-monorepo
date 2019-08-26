@@ -1,4 +1,5 @@
 import { makeActionCreator, InferAction } from "wdk-client/Utils/ActionCreatorUtils";
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 export type RankRange = {
   min: number;
@@ -9,12 +10,12 @@ export type Sort = 'rank' | 'alpha';
 
 export const openView = makeActionCreator(
   'wordCloud-analysis/open-view',
-  (reporterName: string, stepId: number) => ({ reporterName, stepId })
+  (reporterName: string, resultType: ResultType) => ({ reporterName, resultType })
 )
 
 export const closeView = makeActionCreator(
   'wordCloud-analysis/close-view',
-  (reporterName: string, stepId: number) => ({ reporterName, stepId })
+  (reporterName: string, resultType: ResultType) => ({ reporterName, resultType })
 )
 
 export const changeRankRange = makeActionCreator(

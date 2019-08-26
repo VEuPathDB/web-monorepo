@@ -32,7 +32,7 @@ import ResultTableSummaryView, { Action as TableAction } from 'wdk-client/Views/
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { partial, Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
-import { ontologyLoaded } from 'wdk-client/Actions/StaticDataActions';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 interface StateProps {
   viewData: RootState['resultTableSummaryView'][string];
@@ -66,8 +66,7 @@ type DispatchProps = {
 
 type OwnProps = {
   viewId: string;
-  strategyId: number;
-  stepId: number;
+  resultType: ResultType;
   tableActions?: TableAction[];
   showIdAttributeColumn?: boolean;
 }
@@ -77,21 +76,21 @@ type Props = OwnProps & StateProps & {
 }
 
 function ResultTableSummaryViewController(props: Props) {
-  const { stepId, strategyId, actionCreators, viewData, derivedData, tableActions, showIdAttributeColumn } = props;
+  const { resultType, actionCreators, viewData, derivedData, tableActions, showIdAttributeColumn } = props;
 
   useEffect(() => {
-    actionCreators.openResultTableSummaryView(strategyId, stepId);
+    actionCreators.openResultTableSummaryView(resultType);
     return () => {
-      actionCreators.closeResultTableSummaryView(stepId);
+      actionCreators.closeResultTableSummaryView();
     }
-  }, [ stepId, strategyId ]);
+  }, [ resultType ]);
 
   if (viewData == null) return null;
   if (derivedData.errorMessage != null) return (<Error message={derivedData.errorMessage} />);
 
   return (
     <ResultTableSummaryView
-      stepId={stepId}
+      resultType={resultType}
       actions={tableActions}
       showIdAttributeColumn={showIdAttributeColumn}
       {...viewData}
@@ -101,17 +100,17 @@ function ResultTableSummaryViewController(props: Props) {
   );
 }
 
-// TODO: what happens if strategy does not actually contain expected stepId?
 const columnsTreeSelector = createSelector(
   (state: RootState) => state.globalData.ontology,
   (state: RootState) => state.globalData.questions,
-  (state: RootState, props: OwnProps) => state.strategies.strategies[props.strategyId],
-  (state: RootState, props: OwnProps) => props.stepId,
-  (ontology, questions, strategyEntry, stepId) => {
-    if (ontology == null || questions == null || strategyEntry == null || strategyEntry.status !== 'success') return;
-    const step = strategyEntry.strategy.steps[stepId];
-    const question = questions.find(q => q.urlSegment === step.searchName);
-    const { recordClassName } = step;
+  (state: RootState, props: OwnProps) => state.resultTableSummaryView[props.viewId],
+  (ontology, questions, summaryViewState) => {
+    if (ontology == null || questions == null || summaryViewState == null) return;
+    const { resultTypeDetails } = summaryViewState;
+    if (resultTypeDetails == null) return;
+
+    const { recordClassName, searchName } = resultTypeDetails;
+    const question = questions.find(({ urlSegment }) => urlSegment === searchName);
 
     if (question == null) return undefined;
 
@@ -161,7 +160,7 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, { stepId, viewId }: OwnProps): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, { viewId }: OwnProps): DispatchProps {
   return bindActionCreators({
     showLoginWarning,
     closeAttributeAnalysis,

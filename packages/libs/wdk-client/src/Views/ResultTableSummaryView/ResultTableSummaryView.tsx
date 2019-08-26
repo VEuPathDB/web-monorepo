@@ -25,6 +25,7 @@ import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView
 import { LoadingOverlay } from 'wdk-client/Components';
 
 import './ResultTableSummaryView.scss';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 // Export this for convenience
 export { Action };
@@ -38,7 +39,7 @@ interface Props {
   showIdAttributeColumn?: boolean;
   userIsGuest: boolean;
   activeAttributeAnalysisName: string | undefined;
-  stepId: number;
+  resultType: ResultType;
   recordClass?: RecordClass;
   question?: Question;
   basketStatusArray?: BasketStatusArray;
@@ -73,7 +74,7 @@ export default function ResultTableSummaryView({
   selectedIds,
   showIdAttributeColumn = true,
   activeAttributeAnalysisName,
-  stepId,
+  resultType,
   recordClass,
   question,
   userIsGuest,
@@ -128,7 +129,7 @@ export default function ResultTableSummaryView({
           selectedIds={selectedIds}
           showIdAttributeColumn={showIdAttributeColumn}
           activeAttributeAnalysisName={activeAttributeAnalysisName}
-          stepId={stepId}
+          resultType={resultType}
           question={question}
           recordClass={recordClass}
           userIsGuest={userIsGuest}

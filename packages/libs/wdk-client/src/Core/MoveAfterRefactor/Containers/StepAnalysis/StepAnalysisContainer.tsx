@@ -10,6 +10,7 @@ import { RootState } from '../../../State/Types';
 import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClass, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import { startLoadingChosenAnalysisTab, startLoadingSavedTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 type StateProps = {
   webAppUrl: ReturnType<typeof webAppUrl>;
@@ -24,9 +25,8 @@ type StateProps = {
 };
 
 type OwnProps = {
-  stepId: number;
   viewId: string;
-  strategyId: number;
+  resultType: ResultType;
 }
 
 interface TabEventHandlers {
@@ -41,8 +41,7 @@ type PanelEventHandlers = {
 };
 
 interface StepAnalysisContainerProps {
-  stepId: number;
-  strategyId: number;
+  resultType: ResultType;
   loadingTabs: boolean;
   activeTab: string;
   tabs: TabConfig<string>[];
@@ -55,9 +54,11 @@ interface StepAnalysisContainerProps {
 class StepAnalysisController extends ViewController< StepAnalysisContainerProps > {
   componentDidMount() {
     super.componentDidMount();
-    this.props.loadTabs(
-      this.props.stepId
-    );
+    if (this.props.resultType.type === 'step') {
+      this.props.loadTabs(
+        this.props.resultType.step.id
+      );
+    }
   }
 
   isRenderDataLoaded() {
@@ -68,8 +69,7 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
     return (
       <ResultTabs
         loadingTabs={this.props.loadingTabs}
-        stepId={this.props.stepId}
-        strategyId={this.props.strategyId}
+        resultType={this.props.resultType}
         activeTab={`${this.props.activeTab}`}
         onTabSelected={this.props.onTabSelected}
         onTabRemoved={this.props.onTabRemoved}
