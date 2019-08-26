@@ -330,7 +330,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'public-strategies',
           text: 'Public Strategies',
-          webAppUrl: '/app/workspace/strategies/public'
+          route: '/workspace/strategies/public'
         },
         {
           id: 'mahpic-data',
