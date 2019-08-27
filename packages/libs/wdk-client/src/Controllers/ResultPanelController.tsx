@@ -41,9 +41,8 @@ import {
 } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { openTabListing, selectSummaryView } from 'wdk-client/Actions/ResultPanelActions';
-import { SummaryViewPluginField, RecordClass } from 'wdk-client/Utils/WdkModel';
+import { SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { StrategyDetails, Step } from 'wdk-client/Utils/WdkUser';
 import {ResultType, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
 
 type StateProps = {
@@ -67,7 +66,7 @@ type OwnProps = {
   resultType: ResultType;
   viewId: string;
   initialTab?: string;
-  renderHeader?: React.ReactType<{ recordClass: RecordClass, step: Step, strategy: StrategyDetails, viewId: string }>;
+  renderHeader?: () => React.ReactNode;
 };
 
 interface TabEventHandlers {
@@ -188,15 +187,7 @@ const mergeProps = (
   stateProps: StateProps, eventHandlers: TabEventHandlers & PanelEventHandlers, ownProps: OwnProps
 ): ResultPanelControllerProps & OwnProps => ({
   ...ownProps,
-  // header: ownProps.renderHeader && stateProps.recordClass && stateProps.strategyEntry && stateProps.strategyEntry.status === 'success' ? (
-  //   <ownProps.renderHeader
-  //     recordClass={stateProps.recordClass}
-  //     strategy={stateProps.strategyEntry.strategy}
-  //     step={stateProps.strategyEntry.strategy.steps[ownProps.stepId]}
-  //     viewId={ownProps.viewId}
-  //   />
-  // ) : null,
-  header: null,
+  header: ownProps.renderHeader ? ownProps.renderHeader() : null,
   stepErrorMessage: undefined,  // TODO: clean up when we have new error handling system
   isUnauthorized: false,  // TODO: clean up when we have new error handling system
   summaryViewPlugins: stateProps.summaryViewPlugins,

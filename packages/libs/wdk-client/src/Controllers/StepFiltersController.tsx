@@ -7,12 +7,10 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 interface OwnProps {
-  stepId: number;
-  strategyId: number;
+  step: Step;
 }
 
 interface StateProps {
-  step?: Step;
   question?: Question;
 }
 
@@ -35,8 +33,7 @@ function StepFiltersController(props: Props) {
             recordClassName: question.outputRecordClassName
           }}
           pluginProps={{
-            strategyId: step.strategyId,
-            stepId: step.id,
+            step: step,
             filterName: filter.name
           }}
         />
@@ -46,13 +43,9 @@ function StepFiltersController(props: Props) {
 }
 
 function mapPropsToState(state: RootState, props: OwnProps): StateProps {
-  const strategyEntry = state.strategies.strategies[props.strategyId];
-  if (strategyEntry === undefined || strategyEntry.status !== 'success') 
-    return {question:undefined, step: undefined};
-  const step = strategyEntry.strategy.steps[props.stepId];
-  const question = step && state.globalData.questions && 
-  state.globalData.questions.find(({ urlSegment }) => urlSegment === step.searchName)
-  return { step, question };
+  const question = state.globalData.questions && 
+  state.globalData.questions.find(({ urlSegment }) => urlSegment === props.step.searchName)
+  return { question };
 }
 
 export default connect(mapPropsToState)(wrappable(StepFiltersController));

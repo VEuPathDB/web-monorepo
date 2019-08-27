@@ -13,6 +13,7 @@ import {
   getFilterValue,
   FilterValue
 } from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
+import {Step} from 'wdk-client/Utils/WdkUser';
 
 const actionCreators = {
   openMatchedTranscriptsFilter,
@@ -21,9 +22,9 @@ const actionCreators = {
   requestMatchedTransFilterUpdate,
   setDisplayedSelection
 }
+
 interface OwnProps {
-  strategyId: number;
-  stepId: number;
+  step: Step;
   filterName: 'matched_transcript_filter_array' | 'gene_boolean_filter_array';
 }
 
@@ -61,20 +62,20 @@ const Leadin: Record<OwnProps['filterName'], string> = {
 class MatchedTranscriptsFilterController extends React.Component<Props> {
 
   componentDidMount() {
-    const { strategyId, stepId, filterName } = this.props;
-    this.props.actionCreators.openMatchedTranscriptsFilter(strategyId, stepId, filterName);
+    const { step, filterName } = this.props;
+    this.props.actionCreators.openMatchedTranscriptsFilter(step, filterName);
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.stepId !== this.props.stepId) {
-      const { strategyId, stepId, filterName } = this.props;
-      this.props.actionCreators.closeMatchedTranscriptsFilter(prevProps.stepId);
-      this.props.actionCreators.openMatchedTranscriptsFilter(strategyId, stepId, filterName);
+    if (prevProps.step !== this.props.step) {
+      const { step, filterName } = this.props;
+      this.props.actionCreators.closeMatchedTranscriptsFilter(prevProps.step.id);
+      this.props.actionCreators.openMatchedTranscriptsFilter(step, filterName);
     }
   }
 
   componentWillUnmount() {
-    this.props.actionCreators.closeMatchedTranscriptsFilter(this.props.stepId);
+    this.props.actionCreators.closeMatchedTranscriptsFilter(this.props.step.id);
   }
 
   render() {
@@ -101,8 +102,7 @@ const statePropsIsComplete = hasAllProps<StateProps>(
 
 export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state: RootState, ownProps: OwnProps) => {
-    const strategyEntry = state.strategies.strategies[ownProps.strategyId];
-    const step = strategyEntry && strategyEntry.status === 'success' ? strategyEntry.strategy.steps[ownProps.stepId] : undefined;
+    const { step } = ownProps;
     return {
       filterValue: getFilterValue(step, ownProps.filterName),
       ...state.matchedTranscriptsFilter

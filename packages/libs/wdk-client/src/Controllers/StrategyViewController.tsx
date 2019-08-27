@@ -14,7 +14,8 @@ import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import {Step} from 'wdk-client/Utils/WdkUser';
 import {requestStrategy} from 'wdk-client/Actions/StrategyActions';
 import {createSelector} from 'reselect';
-import {ResultType, StepResultType} from 'wdk-client/Utils/WdkResult';
+import {StepResultType} from 'wdk-client/Utils/WdkResult';
+import {RecordClass} from 'wdk-client/Utils/WdkModel';
 
 interface OwnProps {
   strategyId?: number;
@@ -26,6 +27,7 @@ interface OwnProps {
 interface MappedProps {
   isOpenedStrategiesVisible?: boolean;
   resultType?: StepResultType;
+  recordClass?: RecordClass;
 }
 
 interface DispatchProps {
@@ -37,7 +39,7 @@ type Props = OwnProps & DispatchProps & MappedProps;
 const STRATEGY_PANEL_VIEW_ID = 'activeStrategyPanel';
 
 function StrategyViewController(props: Props) {
-  const { stepId, strategyId, resultType, activeStrategy, dispatch, openedStrategies } = props;
+  const { stepId, strategyId, resultType, recordClass, activeStrategy, dispatch, openedStrategies } = props;
 
   useEffect(() => {
     // XXX Move this logic to store module?
@@ -74,15 +76,18 @@ function StrategyViewController(props: Props) {
         {resultType && <ResultPanelController
           resultType={resultType}
           viewId="strategy"
-          renderHeader={props => (
+          renderHeader={() => resultType && recordClass ? (
             <>
-              <ResultPanelHeader reviseViewId={STRATEGY_PANEL_VIEW_ID} {...props}/>
+              <ResultPanelHeader
+                reviseViewId={STRATEGY_PANEL_VIEW_ID}
+                step={resultType.step}
+                recordClass={recordClass}
+              />
               <StepFiltersController
-                strategyId={resultType.step.strategyId}
-                stepId={resultType.step.id}
+                step={resultType.step}
               />
             </>
-          )}
+          ) : null}
         />}
       </div>
     </>
@@ -99,10 +104,17 @@ const getResultType = createSelector<RootState, OwnProps, Step | undefined, Step
   step => step && { type: 'step', step }
 )
 
+function getRecordClass(state: RootState, resultType?: StepResultType): RecordClass | undefined {
+  if (resultType == null) return;
+  const { recordClasses = [] } = state.globalData;
+  return recordClasses.find(rc => rc.urlSegment === resultType.step.recordClassName);
+}
+
 function mapState(state: RootState, props: OwnProps): MappedProps {
   const { isOpenedStrategiesVisible } = state.strategyWorkspace;
   const resultType = getResultType(state, props);
-  return { isOpenedStrategiesVisible, resultType };
+  const recordClass = getRecordClass(state, resultType);
+  return { isOpenedStrategiesVisible, resultType, recordClass };
 }
 
 export default connect(mapState)(StrategyViewController);
