@@ -120,10 +120,7 @@ function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null)
       className: cx('--NameCell'),
       sortable: true,
       renderCell: (props: RenderCellProps<string>) => 
-        <Link to={`workspace/strategies/import/${props.row.signature}`} onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-          e.preventDefault();
-          alert('Under construction');
-        }}>
+        <Link to={`/workspace/strategies/import/${props.row.signature}`}>
           {props.value}
         </Link>,
       width: '15em'

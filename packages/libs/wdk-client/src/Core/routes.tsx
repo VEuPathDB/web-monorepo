@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, Redirect } from 'react-router';
 
 import { RouteEntry, parseQueryString } from 'wdk-client/Core/RouteEntry';
 
@@ -228,6 +228,12 @@ const routes: RouteEntry[] = [
         />
       );
     }
+  },
+
+  {
+    path: '/import/:signature',
+    component: (props: RouteComponentProps<{ signature: string }>) => 
+      <Redirect to={`/workspace/strategies/import/${props.match.params.signature}`} />
   },
 
   {

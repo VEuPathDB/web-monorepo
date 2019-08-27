@@ -10,6 +10,7 @@ import StrategyNotifications from 'wdk-client/Views/Strategy/StrategyNotificatio
 import StrategyViewController from 'wdk-client/Controllers/StrategyViewController';
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 import { PublicStrategiesController } from 'wdk-client/Controllers/PublicStrategiesController';
+import { ImportStrategyController } from 'wdk-client/Controllers/ImportStrategyController';
 import {openStrategyView, closeStrategyView} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {StrategyDetails, StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
@@ -73,6 +74,8 @@ function ChildView({ subPath, openedStrategies, strategySummaries }: Props) {
       return <AllStrategiesController strategies={strategySummaries}/>
     case 'publicStrategies':
       return <PublicStrategiesController />
+    case 'importStrategy':
+      return <ImportStrategyController strategySignature={childView.signature} />
     case 'help':
       return <div>TODO</div>
     default:
@@ -84,11 +87,13 @@ type ChildView =
   | { type: 'openedStrategies', strategyId?: number, stepId?: number }
   | { type: 'allStrategies' }
   | { type: 'publicStrategies' }
+  | { type: 'importStrategy', signature: string }
   | { type: 'help' };
 
 function parseSubPath(subPath: string): ChildView {
   if (subPath === 'all') return { type: 'allStrategies' };
   if (subPath === 'public') return { type: 'publicStrategies' };
+  if (subPath.startsWith('import/')) return { type: 'importStrategy', signature: subPath.replace('import/', '') };
   if (subPath === 'help') return { type: 'help' };
 
   const [ strategyId, stepId ] = subPath.split('/');

@@ -1,6 +1,7 @@
 import { find } from 'lodash';
 import React from 'react';
 import {IconAlt, Modal} from 'wdk-client/Components';
+import { RootState } from 'wdk-client/Core/State/Types';
 import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
 import {StrategySummary} from 'wdk-client/Utils/WdkUser';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
@@ -51,6 +52,34 @@ interface StrategyAction {
   render: React.ReactType<ActionProps>;
 }
 
+// FIXME Find a cleaner way to assmeble the share URL - ideally without using window.location and/or rootUrl
+const ShareAction = connect(
+  ({ globalData }: RootState, { strategy: { signature }}: ActionProps) => ({
+    shareUrl: 
+    `${window.location.origin}${globalData.siteConfig.rootUrl as string}/import/${signature}`
+  })
+)(_ShareAction);
+
+function _ShareAction (props: ActionProps & { shareUrl: string }) {
+  return (
+    <React.Fragment>
+      <div>
+        Copy the URL to share your search strategy:
+        <br/>
+        <input 
+          type="text" 
+          autoFocus 
+          readOnly 
+          style={{ width: '20em' }} 
+          onFocus={e => e.target.select()} 
+          value={props.shareUrl}
+        />
+      </div>
+      <div><CloseModalButton {...props}>Close</CloseModalButton></div>
+    </React.Fragment>
+  );
+}
+
 export const StrategyActions: Record<string, StrategyAction> = {
   copy: {
     iconName: 'clone',
@@ -76,15 +105,7 @@ export const StrategyActions: Record<string, StrategyAction> = {
   share: {
     iconName: 'share-alt',
     title: 'Share your search strategy',
-    render: (props: ActionProps) => (
-      <React.Fragment>
-        <div>
-          Copy the URL to share your search strategy:
-          <br/><input type="text" autoFocus readOnly style={{ width: '20em' }} onFocus={e => e.target.select()} value={`https://plasmodb.org/import/${props.strategy.signature}`}/>
-        </div>
-        <div><CloseModalButton {...props}>Close</CloseModalButton></div>
-      </React.Fragment>
-    )
+    render: ShareAction
   },
 
   delete: {
