@@ -61,21 +61,21 @@ export default function StrategyPanel(props: Props) {
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
-        <div>Search Strategy:</div>
+        {/*<div>Search Strategy:</div>*/}
         <div className={cx('--StrategyName')}>
           <SaveableTextEditor value={strategy.name} displayValue={(value, handleEdit) => <em onClick={handleEdit}>{value}{strategy.isSaved ? '' : ' *'}</em>} onSave={props.onStrategyRename}/>
         </div>
+      </h2>
+      <div className={cx('--Panel')}>
         {showCloseButton && (
-          <div className={cx('--CloseButton')}>
+          <div className={cx('--CloseButton')} title="Close this strategy.">
             <button className="link" onClick={() => onStrategyClose()}>
-              Close
+              &#10799;
             </button>
           </div>
         )}
-      </h2>
-      <div className={cx('--Panel')}>
         <StrategyControls strategyId={strategy.strategyId}/>
-        <div>
+        <div className={cx('--StepBoxesContainer')}>
           <StepBoxes
             stepTree={uiStepTree}
             setReviseFormStepId={setReviseFormStepId}

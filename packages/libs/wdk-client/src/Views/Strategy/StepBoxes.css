@@ -220,7 +220,7 @@
   display: flex;
   align-items: center;
   border-style: dashed;
-  background: #1acd2233;
+  background: #d0cfcf6b;
   border-width: 1px;
   border-color: black;
 }
@@ -228,7 +228,7 @@
 .StepBoxes--InsertStepButton:hover,
 .StepBoxes--InsertStepButton:focus,
 .StepBoxes--InsertStepButton:active {
-  background: #1acd225e;
+  background: #d0cfcfcf;
 }
 
 .StepBoxes--InsertStepButton .fa {
