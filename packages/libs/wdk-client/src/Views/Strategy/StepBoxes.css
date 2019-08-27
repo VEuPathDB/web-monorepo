@@ -94,6 +94,7 @@
 .StepBoxes--BoxLink__leaf {
   background-color: #d0cfcf;
   border: .17em solid black;
+  box-shadow: .1em .1em .35em #6a6a6a78;
   z-index: 1;
 }
 
