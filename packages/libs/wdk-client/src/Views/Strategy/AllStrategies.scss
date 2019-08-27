@@ -56,7 +56,7 @@
       text-align: right;
     }
 
-    &__actions {
+    &__actions:not(.HeadingCell) {
       font-size: .8em;
     }
 
