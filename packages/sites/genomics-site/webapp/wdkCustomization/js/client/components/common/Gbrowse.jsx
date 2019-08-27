@@ -111,6 +111,12 @@ const GbrowseLink = ({ url }) =>
 <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser</a>
 </div>
 
+const JbrowseLink = ({ url }) =>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={url} className="eupathdb-BigButton">View in Genome Browser</a>
+</div>
+
+
 const GbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
@@ -140,6 +146,7 @@ export function GbrowseContext(props) {
   let url = record.attributes[attribute.name];
   let jbrowseUrlMinimal = ""
   let jbrowseUrl = record.attributes.jbrowseLink;
+  let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
   if (attribute.name == 'GeneModelGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl; 
@@ -191,9 +198,9 @@ export function GbrowseContext(props) {
 
   return (
     <div>
-      <GbrowseLink url={url}/>
+      <JbrowseLink url={jbrowseCommonUrl}/>
       <GbrowseImage url={url} includeImageMap={true} />
-      <GbrowseLink url={url}/>
+      <JbrowseLink url={jbrowseCommonUrl}/>
     </div>
   );
 }
