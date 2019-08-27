@@ -20,13 +20,15 @@ const dispatchProps: DispatchProps = {
 
 const headerStyle: React.CSSProperties = {
   marginTop: '.75em',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  fontSize: '1.4em'
 };
 
 const buttonStyle: React.CSSProperties = {
-  fontSize: '.6em',
+  fontSize: '.7em',
   fontWeight: 'normal',
-  verticalAlign: 'middle'
+  verticalAlign: 'middle',
+  marginLeft: '.5em'
 }
 
 function ResultPanelHeader({ step, recordClass, reviseViewId, setReviseFormVisibility }: Props & DispatchProps) {
