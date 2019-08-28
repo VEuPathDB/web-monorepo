@@ -214,7 +214,6 @@ export const CombineStepMenuView = (
                   onCombineWithBasketClicked={onCombineWithBasketClicked}
                   onCombineWithStrategyClicked={onCombineWithStrategyClicked}
                   onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
-                  combinedWithBasketDisabled={basketButtonStatus !== 'unclicked'}
                   inputRecordClass={inputRecordClass}
                 />
               </div>

@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
 import { noop, get } from 'lodash';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
-import { CategoriesCheckboxTree, Icon, Tooltip, Link } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getLabel } from 'wdk-client/Utils/CategoryUtils';
@@ -12,9 +12,18 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
+import { compose } from 'redux';
+import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
 
 type StateProps = {
+  basketCount?: number,
+  isGuest?: boolean,
   searchTree: CategoryTreeNode
+};
+
+type DispatchProps = {
+  requestBasketCounts: () => void;
 };
 
 type OwnProps = {
@@ -22,23 +31,30 @@ type OwnProps = {
   onCombineWithBasketClicked: (e: React.MouseEvent) => void,
   onCombineWithStrategyClicked: (e: React.MouseEvent) => void,
   onCombineWithNewSearchClicked: (newSearchUrlSegment: string) => void,
-  combinedWithBasketDisabled?: boolean,
   inputRecordClass: RecordClass
 };
 
-type Props = StateProps & OwnProps;
+type Props = StateProps & DispatchProps & OwnProps;
 
 const cx = makeClassNameHelper('SearchInputSelector');
 
 export const SearchInputSelectorView = ({
+  basketCount,
   containerClassName,
-  combinedWithBasketDisabled,
   inputRecordClass,
+  isGuest,
   onCombineWithBasketClicked,
   onCombineWithStrategyClicked,
   onCombineWithNewSearchClicked,
-  searchTree
+  searchTree,
+  requestBasketCounts
 }: Props) => {
+  useEffect(() => {
+    if (!isGuest) {
+      requestBasketCounts();
+    }
+  }, [ isGuest ]);
+
   const [ expandedBranches, setExpandedBranches ] = useState<string[]>([]);
   const [ searchTerm, setSearchTerm ] = useState<string>('');
 
@@ -92,44 +108,56 @@ export const SearchInputSelectorView = ({
     },
     [ searchTree ]
   );
+  
+  const [ combineWithBasketDisabled, combineWithBasketTooltip] = isGuest 
+    ? [true, 'You must log in to use this feature']
+    : basketCount === 0
+    ? [true, `Your ${inputRecordClass.displayNamePlural} basket is empty`]
+    : [false, undefined];
 
-  return (
-    <div className={`${containerClassName || ''} ${cx()}`}>
-      <button 
-        onClick={onCombineWithBasketClicked} 
-        disabled={combinedWithBasketDisabled}
-        type="button"
-      >
-        Your {inputRecordClass.displayNamePlural} basket
-      </button>
-      <button onClick={onCombineWithStrategyClicked}>
-        A {inputRecordClass.displayNamePlural} strategy
-      </button>
-      <div className={cx('--NewSearchCheckbox')}>
-        <div className={cx('--CheckboxHeader')}>
-          A new {inputRecordClass.displayNamePlural} search
+  return isGuest === undefined || (isGuest === false && basketCount === undefined)
+    ? <Loading />
+    : <div className={`${containerClassName || ''} ${cx()}`}>
+        <button 
+          onClick={onCombineWithBasketClicked} 
+          disabled={combineWithBasketDisabled}
+          type="button"
+          title={combineWithBasketTooltip}
+        >
+          Your {inputRecordClass.displayNamePlural} basket
+        </button>
+        <button onClick={onCombineWithStrategyClicked}>
+          A {inputRecordClass.displayNamePlural} strategy
+        </button>
+        <div className={cx('--NewSearchCheckbox')}>
+          <div className={cx('--CheckboxHeader')}>
+            A new {inputRecordClass.displayNamePlural} search
+          </div>
+          <div className={cx('--CheckboxContainer')}>
+            <CategoriesCheckboxTree
+              selectedLeaves={noSelectedLeaves}
+              onChange={noop}
+              tree={searchTree}
+              expandedBranches={expandedBranches}
+              searchTerm={searchTerm}
+              isSelectable={false}
+              searchBoxPlaceholder="Find a search..."
+              leafType="search"
+              renderNode={renderNode}
+              renderNoResults={renderNoResults}
+              onUiChange={setExpandedBranches}
+              onSearchTermChange={setSearchTerm}
+              linkPlacement={linkPlacement}
+            />
+          </div>
         </div>
-        <div className={cx('--CheckboxContainer')}>
-          <CategoriesCheckboxTree
-            selectedLeaves={noSelectedLeaves}
-            onChange={noop}
-            tree={searchTree}
-            expandedBranches={expandedBranches}
-            searchTerm={searchTerm}
-            isSelectable={false}
-            searchBoxPlaceholder="Find a search..."
-            leafType="search"
-            renderNode={renderNode}
-            renderNoResults={renderNoResults}
-            onUiChange={setExpandedBranches}
-            onSearchTermChange={setSearchTerm}
-            linkPlacement={linkPlacement}
-          />
-        </div>
-      </div>
-    </div>
-  );
+      </div>;
 };
+
+const isGuest = ({ globalData: { user } }: RootState) => user && user.isGuest;
+
+const basketCount = ({ basket }: RootState, { inputRecordClass: { urlSegment } }: OwnProps) =>
+    basket.counts && basket.counts[urlSegment];
 
 const searchTree = createSelector(
   ({ globalData }: RootState) => globalData, 
@@ -143,8 +171,16 @@ const searchTree = createSelector(
   }
 );
 
+
+
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
+  isGuest: isGuest(state),
+  basketCount: basketCount(state, props),
   searchTree: searchTree(state, props)
 });
 
-export const SearchInputSelector = connect(mapStateToProps)(SearchInputSelectorView);
+const mapDispatchToProps = (dispatch: DispatchAction) => ({
+  requestBasketCounts: compose(dispatch, requestBasketCounts)
+})
+
+export const SearchInputSelector = connect(mapStateToProps, mapDispatchToProps)(SearchInputSelectorView);
