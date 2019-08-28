@@ -32,6 +32,7 @@
 
 .StrategyPanel--StepBoxesContainer {
   margin-right: auto;
+  overflow-x: auto;
 }
 
 .StrategyPanel--StrategyCount {
@@ -49,6 +50,7 @@
   background-color: #fafafa;
   border: .17em solid #666;
   border-radius: 1em;
+  white-space: nowrap;
 }
 
 /* Nested strategy */
