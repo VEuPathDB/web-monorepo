@@ -17,7 +17,6 @@ import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Ac
 
 type OperatorMenuItem = {
   radioDisplay: ReactNode,
-  dropdownDisplay: string,
   value: string
 }
 
@@ -74,22 +73,18 @@ export const defaultBinaryOperations: BinaryOperation[] = [
       items: [
         { 
           radioDisplay: <React.Fragment>A <strong>INTERSECT</strong> B</React.Fragment>,
-          dropdownDisplay: 'intersected with',
           value: 'INTERSECT'
         },
         { 
           radioDisplay: <React.Fragment>A <strong>UNION</strong> B</React.Fragment>,
-          dropdownDisplay: 'intersected with',
           value: 'UNION'
         },
         { 
           radioDisplay: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>,
-          dropdownDisplay: 'intersected with',
           value: 'MINUS'
         },
         { 
           radioDisplay: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>,
-          dropdownDisplay: 'intersected with',
           value: 'RMINUS'
         }
       ]

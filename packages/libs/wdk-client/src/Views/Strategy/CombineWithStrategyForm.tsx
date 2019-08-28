@@ -3,48 +3,23 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
+import { ValueType } from 'react-select/src/types';
+
 import { updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { SingleSelect, Loading } from 'wdk-client/Components';
+import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { BooleanSelect, BooleanOption } from 'wdk-client/Views/Strategy/BooleanSelect';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
-import { BOOLEAN_OPERATOR_PARAM_NAME, combineOperatorOrder, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineWithStrategyForm.scss';
 
 const cx = makeClassNameHelper('CombineWithStrategyForm');
-
-const selectVerbiageAppend: Record<CombineOperator, string> = {
-  [CombineOperator.Intersect]: 'intersected with', 
-  [CombineOperator.Union]: 'unioned with', 
-  [CombineOperator.LeftMinus]: 'subtracted by', 
-  [CombineOperator.RightMinus]: 'subtracted from'
-};
-
-const selectVerbiageInsertBefore: Record<CombineOperator, string> = {
-  [CombineOperator.Intersect]: 'intersected with', 
-  [CombineOperator.Union]: 'unioned with', 
-  [CombineOperator.LeftMinus]: 'subtracted from', 
-  [CombineOperator.RightMinus]: 'subtracted by'
-};
-
-const selectItemsAppend = combineOperatorOrder.map(
-  operator => ({
-    value: operator,
-    display: selectVerbiageAppend[operator]
-  })
-);
-
-const selectItemsInsertBefore = combineOperatorOrder.map(
-  operator => ({
-    value: operator,
-    display: selectVerbiageInsertBefore[operator]
-  })
-);
 
 type StateProps = {
   booleanSearchUrlSegment: string,
@@ -97,7 +72,7 @@ const booleanOperatorParameter = createSelector(
 type OwnProps = AddStepOperationFormProps;
 
 type CombineStepFormViewProps = StateProps & {
-  updateBooleanOperator: (newBooleanOperator: string) => void,
+  updateBooleanOperator: (newBooleanOperator: ValueType<BooleanOption>) => void,
 } & OwnProps;
 
 const CombineWithStrategyFormView = ({
@@ -133,37 +108,37 @@ const CombineWithStrategyFormView = ({
     }
   }, [ selectedStrategyId ]);
 
-  return (
-    <div className={cx()}>
-      <div className={cx('--Header')}>
-        <h2>
-          Choose an existing {inputRecordClass.displayNamePlural} strategy
-        </h2>
+  return !booleanSearchState || booleanSearchState.questionStatus === 'loading'
+    ? <Loading />
+    : <div className={cx()}>
+        <div className={cx('--Header')}>
+          <h2>
+            Choose an existing {inputRecordClass.displayNamePlural} strategy
+          </h2>
 
-        <p>
-          The results will be{' '}
-          <SingleSelect
-            value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
-            onChange={updateBooleanOperator}
-            items={addType.type === 'append' ? selectItemsAppend : selectItemsInsertBefore}
-          />
-          {' '}the results of Step {stepsCompletedNumber}.
-        </p>
-      </div>
-      <div className={cx('--Body')}>
-        {
-          selectedStrategyId !== undefined
-            ? <Loading />
-            : <StrategyInputSelector
-                onStrategySelected={setSelectedStrategyId}
-                primaryInput={strategy}
-                secondaryInputRecordClass={inputRecordClass}
-                selectedStrategyId={selectedStrategyId}
-              />
-        }
-      </div>
-    </div>
-  );
+          <p>
+            The results will be{' '}
+            <BooleanSelect
+              value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME] as CombineOperator}
+              onChange={updateBooleanOperator}
+              addType={addType}
+            />
+            {' '}the results of Step {stepsCompletedNumber}.
+          </p>
+        </div>
+        <div className={cx('--Body')}>
+          {
+            selectedStrategyId !== undefined
+              ? <Loading />
+              : <StrategyInputSelector
+                  onStrategySelected={setSelectedStrategyId}
+                  primaryInput={strategy}
+                  secondaryInputRecordClass={inputRecordClass}
+                  selectedStrategyId={selectedStrategyId}
+                />
+          }
+        </div>
+      </div>;
 };
 
 export const CombineWithStrategyForm = connect<StateProps, DispatchProps, OwnProps, CombineStepFormViewProps, RootState>(
@@ -177,13 +152,13 @@ export const CombineWithStrategyForm = connect<StateProps, DispatchProps, OwnPro
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
-    updateBooleanOperator: (newBooleanOperator: string) => {
+    updateBooleanOperator: (newBooleanOperator: ValueType<BooleanOption>) => {
       if (stateProps.booleanSearchState && stateProps.booleanOperatorParameter) {
         dispatchProps.updateParamValue({
           searchName: stateProps.booleanSearchUrlSegment,
           parameter: stateProps.booleanOperatorParameter,
           paramValues: stateProps.booleanSearchState.paramValues,
-          paramValue: newBooleanOperator
+          paramValue: newBooleanOperator as unknown as string
         });
       }
     },
