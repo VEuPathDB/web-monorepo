@@ -109,7 +109,7 @@ export const SearchInputSelectorView = ({
     [ searchTree ]
   );
   
-  const [ combineWithBasketDisabled, combineWithBasketTooltip] = isGuest 
+  const [ combineWithBasketDisabled, combineWithBasketTooltip ] = isGuest 
     ? [true, 'You must log in to use this feature']
     : basketCount === 0
     ? [true, `Your ${inputRecordClass.displayNamePlural} basket is empty`]

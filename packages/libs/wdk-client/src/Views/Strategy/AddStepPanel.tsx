@@ -52,7 +52,8 @@ export type AddStepOperationMenuProps = {
   questions: Question[],
   questionsByUrlSegment: Record<string, Question>,
   recordClasses: RecordClass[],
-  recordClassesByUrlSegment: Record<string, RecordClass>
+  recordClassesByUrlSegment: Record<string, RecordClass>,
+  onHideInsertStep: () => void
 };
 
 export type AddStepOperationFormProps = {
@@ -69,6 +70,7 @@ export type AddStepOperationFormProps = {
   questionsByUrlSegment: Record<string, Question>,
   recordClasses: RecordClass[],
   recordClassesByUrlSegment: Record<string, RecordClass>,
+  onHideInsertStep: () => void
 };
 
 export const AddStepPanelView = wrappable((
@@ -215,6 +217,7 @@ export const AddStepPanelView = wrappable((
                                     questionsByUrlSegment={questionsByUrlSegment}
                                     recordClasses={recordClasses}
                                     recordClassesByUrlSegment={recordClassesByUrlSegment}
+                                    onHideInsertStep={onHideInsertStep}
                                   />
                                 </div>
                                 {
@@ -246,6 +249,7 @@ export const AddStepPanelView = wrappable((
                         questionsByUrlSegment={questionsByUrlSegment}
                         recordClasses={recordClasses}
                         recordClassesByUrlSegment={recordClassesByUrlSegment}
+                        onHideInsertStep={onHideInsertStep}
                       />
                     </div>
                   )

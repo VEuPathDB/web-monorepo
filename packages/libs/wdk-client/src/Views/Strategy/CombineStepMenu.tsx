@@ -110,8 +110,6 @@ type OwnProps = AddStepOperationMenuProps;
 
 type Props = StateProps & DispatchProps & MergedProps & OwnProps;
 
-type BasketButtonStatus = 'unclicked' | 'clicked' | 'loading';
-
 export const CombineStepMenuView = (
   {
     basketSearchUrlSegment,
@@ -125,17 +123,18 @@ export const CombineStepMenuView = (
     updateBooleanOperator,
     updateStrategy,
     startOperationForm,
-    operandStep
+    operandStep,
+    onHideInsertStep
   }: Props
 ) => {
-  const [ basketButtonStatus, setBasketButtonStatus ] = useState<BasketButtonStatus>('unclicked');
+  const [ basketButtonClicked, setBasketButtonClicked ] = useState(false);
 
   useEffect(() => {
     loadBooleanQuestion(booleanSearchUrlSegment);
   }, [ booleanSearchUrlSegment ]);
 
   useWdkEffect(wdkService => {
-    if (basketButtonStatus === 'clicked' && basketSearchShortDisplayName && booleanSearchState) {
+    if (basketButtonClicked && basketSearchShortDisplayName && booleanSearchState) {
       submitBasket(
         wdkService,
         basketDatasetParamName,
@@ -144,11 +143,11 @@ export const CombineStepMenuView = (
         booleanSearchState,
         booleanSearchUrlSegment,
         inputRecordClass,
-        setBasketButtonStatus,
-        updateStrategy
+        updateStrategy,
+        onHideInsertStep
       );
     }
-  }, [ basketButtonStatus ]);
+  }, [ basketButtonClicked ]);
 
   const onOperatorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     updateBooleanOperator(e.target.value);
@@ -159,7 +158,7 @@ export const CombineStepMenuView = (
   }, []);
 
   const onCombineWithBasketClicked = useCallback((_: React.MouseEvent) => {
-    setBasketButtonStatus('clicked');
+    setBasketButtonClicked(true);
   }, []);
 
   const onCombineWithNewSearchClicked = useCallback((newSearchUrlSegment: string) => {
@@ -270,10 +269,10 @@ const submitBasket = async (
   booleanSearchState: QuestionState,
   booleanSearchUrlSegment: string,
   recordClass: RecordClass,
-  setBasketButtonStatus: (newStatus: BasketButtonStatus) => void,
-  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void
+  updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
+  onHideInsertStep: () => void
 ) => {
-  setBasketButtonStatus('loading');
+  onHideInsertStep();
 
   const datasetId = await wdkService.createDataset({
     sourceType: 'basket',
