@@ -187,7 +187,6 @@ const SelectSearchPage = ({
         />
         <div className={cx('--ColocationIcon')}></div>
         <SearchInputSelector
-          combinedWithBasketDisabled={false}
           containerClassName={cx('--SearchInputSelector')}
           inputRecordClass={secondaryInputRecordClass}
           onCombineWithBasketClicked={onCombineWithBasketClicked}
