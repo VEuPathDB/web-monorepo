@@ -7,6 +7,7 @@ import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary, StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { OverflowingTextCell } from 'wdk-client/Views/Strategy/OverflowingTextCell';
 import { formatDateTimeString } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/StrategyInputSelector.scss';
@@ -57,7 +58,7 @@ export const StrategyInputSelector = ({
             e.preventDefault();
             onStrategySelected(cellProps.row.strategyId);
           }} href="#">
-              {cellProps.row.name} 
+              {cellProps.row.name}{cellProps.row.isSaved ? '' : '*'}
           </a>,
         sortable: true,
         sortType: 'text'
@@ -77,14 +78,8 @@ export const StrategyInputSelector = ({
       {
         key: 'description',
         name: 'Description',
-        renderCell: (cellProps: StrategyInputCellProps<string>) =>
-          <>
-            {
-              cellProps.value
-                ? cellProps.value
-                : <em>Save to add a description</em>
-            }
-          </>,
+        renderCell: (cellProps: StrategyInputCellProps<string | undefined>) =>
+          <OverflowingTextCell {...cellProps} key={cellProps.row.strategyId} />,
         sortable: true,
         sortType: 'text'
       },

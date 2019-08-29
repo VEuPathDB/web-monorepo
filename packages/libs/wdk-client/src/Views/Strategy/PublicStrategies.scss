@@ -45,19 +45,6 @@
       .PublicStrategies--EuPathDBRow {
         font-weight: bold;
       }
-
-      .PublicStrategies--DescriptionCell {
-        .PublicStrategies--OverflowableContents {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-
-          &__expanded {
-            white-space: normal;
-            overflow: visible;
-          }
-        }
-      }
     }
   }
 }
