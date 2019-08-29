@@ -1,4 +1,4 @@
-import { defaultTo, difference, union, last } from 'lodash';
+import { defaultTo, difference, union, last, stubTrue } from 'lodash';
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
 import { empty, Observable, of, merge } from 'rxjs';
 import { mergeMap, mergeMapTo, tap, map, distinctUntilChanged, filter } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies, clearActiveModal, setActiveModal } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
-import { InferAction, switchMapRequestActionsToEpic, mergeMapRequestActionsToEpic, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
+import { InferAction, switchMapRequestActionsToEpic as srate, mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
 import { StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
 import { requestStrategiesList, fulfillStrategiesList } from 'wdk-client/Actions/StrategyListActions';
@@ -131,27 +131,34 @@ export const observe = takeEpicInWindow(
     updateRouteOnStrategyDuplicateEpic,
     updatePreferencesEpic,
 
-    switchMapRequestActionsToEpic([openStrategyView], getOpenedStrategiesVisibility),
-    switchMapRequestActionsToEpic([openStrategyView, fulfillStrategiesList], getOpenedStrategies),
-    switchMapRequestActionsToEpic([setActiveStrategy], appendActiveStrategyToOpenedStrategies),
-    switchMapRequestActionsToEpic([openStrategyView], getRequestStrategiesList),
-    switchMapRequestActionsToEpic([openStrategyView], getRequestPublicStrategies),
+    srate([openStrategyView], getOpenedStrategiesVisibility),
+    srate([openStrategyView, fulfillStrategiesList], getOpenedStrategies),
+    srate([setActiveStrategy], appendActiveStrategyToOpenedStrategies),
+    srate([openStrategyView], getRequestStrategiesList),
+    srate([openStrategyView], getRequestPublicStrategies),
 
-    mergeMapRequestActionsToEpic([fulfillCreateStrategy], getAddNotification),
-    mergeMapRequestActionsToEpic([fulfillDeleteStrategy], getAddNotification),
-    mergeMapRequestActionsToEpic([fulfillDuplicateStrategy], getAddNotification),
-    mergeMapRequestActionsToEpic([fulfillPutStrategy], getAddNotification),
-    mergeMapRequestActionsToEpic([addNotification], getRemoveNotification),
+    mrate([fulfillCreateStrategy], getAddNotification),
+    mrate([fulfillDeleteStrategy], getAddNotification),
+    mrate([fulfillDuplicateStrategy], getAddNotification),
+    mrate([fulfillPutStrategy], getAddNotification),
+    mrate([fulfillPatchStrategyProperties], getAddNotification),
+    mrate([addNotification], getRemoveNotification),
 
-    switchMapRequestActionsToEpic([openStrategyView, fulfillCreateStrategy], getRequestStrategiesList),
-    switchMapRequestActionsToEpic([openStrategyView, fulfillDeleteStrategy], getRequestStrategiesList),
-    switchMapRequestActionsToEpic([openStrategyView, fulfillDeleteOrRestoreStrategies], getRequestStrategiesList),
-    switchMapRequestActionsToEpic([openStrategyView, fulfillStrategy], getRequestStrategiesList),
-    switchMapRequestActionsToEpic([openStrategyView, fulfillPatchStrategyProperties], getRequestStrategiesList),
-    switchMapRequestActionsToEpic([openStrategyView, requestStrategiesList], getFulfillStrategiesList,
-      { areActionsNew: () => true}),
-    switchMapRequestActionsToEpic([openStrategyView, requestPublicStrategies], getFulfillPublicStrategies,
-      { areActionsNew: () => true})
+    srate([openStrategyView, fulfillCreateStrategy], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
+    srate([openStrategyView, fulfillDeleteStrategy], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
+    srate([openStrategyView, fulfillDeleteOrRestoreStrategies], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
+    srate([openStrategyView, fulfillStrategy], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
+    srate([openStrategyView, fulfillPatchStrategyProperties], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
+
+    srate([openStrategyView, requestStrategiesList], getFulfillStrategiesList,
+      { areActionsNew: stubTrue }),
+    srate([openStrategyView, requestPublicStrategies], getFulfillPublicStrategies,
+      { areActionsNew: stubTrue })
   )
 );
 
@@ -273,7 +280,8 @@ type NotifiableAction =
   | InferAction<typeof fulfillDeleteStrategy
   | typeof fulfillDuplicateStrategy
   | typeof fulfillPutStrategy
-  | typeof fulfillCreateStrategy>
+  | typeof fulfillCreateStrategy
+  | typeof fulfillPatchStrategyProperties>
 
 async function getAddNotification(
   [action]: [NotifiableAction]
@@ -290,6 +298,8 @@ function mapActionToDisplayString(action: NotifiableAction): string {
     case fulfillDuplicateStrategy.type:
       return 'duplicated';
     case fulfillPutStrategy.type:
+      return 'updated';
+    case fulfillPatchStrategyProperties.type:
       return 'updated';
   }
 }

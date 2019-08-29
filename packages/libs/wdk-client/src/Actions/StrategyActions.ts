@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec } from "wdk-client/Utils/WdkUser";
+import { NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec, SaveStrategyOptions } from "wdk-client/Utils/WdkUser";
 import { Answer, StandardReportConfig, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
 
@@ -61,6 +61,11 @@ export const fulfillDuplicateStrategy = makeActionCreator(
 export const requestPatchStrategyProperties = makeActionCreator(
     'requestPatchStrategyProperties',
     (strategyId: number, strategyProperties: Partial<StrategyProperties>) => ({ strategyId, strategyProperties })
+);
+
+export const requestSaveAsStrategy = makeActionCreator(
+  'requestSaveAsStrategy',
+  (strategyId: number, strategyProperties: StrategyProperties, options: SaveStrategyOptions) => ({ strategyId, strategyProperties, options })
 );
 
 export const fulfillPatchStrategyProperties = makeActionCreator(

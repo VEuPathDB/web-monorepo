@@ -1,5 +1,6 @@
 import { Decoder, combine, field, string, number, boolean, oneOf, nullValue, optional } from 'wdk-client/Utils/Json';
 import { AnswerSpec } from 'wdk-client/Utils/WdkModel';
+import {Omit} from 'wdk-client/Core/CommonTypes';
 
 export interface User {
   id: number;
@@ -77,6 +78,10 @@ export interface PatchStepSpec {
 export interface NewStepSpec extends PatchStepSpec, AnswerSpec {
 }
 
+export interface SaveStrategyOptions {
+  removeOrigin: boolean;
+}
+
 export interface StrategyProperties {
   name: string,
   isSaved: boolean,
@@ -84,6 +89,8 @@ export interface StrategyProperties {
   description?: string,
   savedName?: string,
 }
+
+export type EditStrategySpec = Omit<StrategyProperties, 'isSaved'>;
 
 export interface StrategySummary extends StrategyProperties {
   nameOfFirstStep?: string;

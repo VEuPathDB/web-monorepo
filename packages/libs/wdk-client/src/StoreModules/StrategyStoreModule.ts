@@ -1,12 +1,12 @@
 import { stubTrue } from 'lodash/fp';
-import { combineEpics, StateObservable } from 'redux-observable';
+import { combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
 
 import { Action } from 'wdk-client/Actions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
-import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { StrategyDetails, strategySummaryDecoder } from 'wdk-client/Utils/WdkUser';
 import {
   requestCreateStrategy,
   fulfillCreateStrategy,
@@ -31,9 +31,13 @@ import {
   requestRemoveStepFromStepTree,
   fulfillPatchStrategyProperties,
   requestReplaceStep,
+  requestSaveAsStrategy,
 } from 'wdk-client/Actions/StrategyActions';
 import { removeStep, getStepIds, replaceStep } from 'wdk-client/Utils/StrategyUtils';
 import { difference } from 'lodash';
+import {confirm, alert} from 'wdk-client/Utils/Platform';
+import {filter, mergeMap, mergeAll} from 'rxjs/operators';
+import {empty, of, Observable} from 'rxjs';
 
 export const key = 'strategies';
 
@@ -159,16 +163,104 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     return fulfillDeleteOrRestoreStrategies(deleteStrategiesSpecs, requestTimestamp);
   }
 
-  // FIXME Return fulfillPatchStrategy
   async function getFulfillPatchStrategy(
     [requestAction]: [InferAction<typeof requestPatchStrategyProperties>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
   ): Promise<InferAction<typeof fulfillPatchStrategyProperties>> {
-    const { strategyId, strategyProperties }  = requestAction.payload;
+    const { strategyId, strategyProperties } = requestAction.payload;
     await wdkService.patchStrategyProperties(strategyId, strategyProperties);
     return fulfillPatchStrategyProperties(strategyId);
   }
+
+async function getFulfillStrategy_SaveAs(
+  [requestAction]: [InferAction<typeof requestSaveAsStrategy>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof requestStrategy>> {
+  const { strategyId, strategyProperties } = requestAction.payload;
+  const stepTree = await wdkService.getDuplicatedStrategyStepTree(strategyId);
+  const newStrategyResponse = await wdkService.createStrategy({ ...strategyProperties, isSaved: true, stepTree });
+  return requestStrategy(newStrategyResponse.id);
+}
+
+/*
+
+ Commenting out the two epics below, which are an attempt to approximate the logic and rules of the production application.
+ We are hoping to develop a more intuitive workflow.
+
+ These would replace getFulfillPatchStrategy and getFulfillStrategy_SaveAs.
+
+// This logic is complicated to express with mrate, so we're using a vanilla Epic
+function observePatchStrategy(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
+  return action$.pipe(
+    filter(requestPatchStrategyProperties.isOfType),
+    mergeMap(async action => {
+      const { strategyId, strategyProperties }  = action.payload;
+
+      // If updating name, make sure there are no name conflicts
+      if (strategyProperties.name != null) {
+        const allStrategies = await wdkService.getStrategies();
+        const currentStrategy = allStrategies.find(strategy => strategy.strategyId === strategyId);
+        if (currentStrategy == null) throw new Error("Could not find the target strategy.");
+        const conflictingStrategy = allStrategies.find(strategy => (
+          strategy.isSaved === currentStrategy.isSaved &&
+          strategy.name === strategyProperties.name &&
+          strategy.strategyId !== currentStrategy.strategyId
+        ));
+        if (conflictingStrategy) {
+          await alert('Cannot update strategy', `A strategy with the name "${strategyProperties.name}" already exists.`)
+          return empty();
+        }
+      }
+
+      await wdkService.patchStrategyProperties(strategyId, strategyProperties);
+      return of(fulfillPatchStrategyProperties(strategyId));
+    }),
+    mergeAll()
+  );
+}
+
+// This logic is complicated to express with mrate, so we're using a vanilla Epic
+function observeSaveStrategyAs(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
+  return action$.pipe(
+    filter(requestSaveAsStrategy.isOfType),
+    mergeMap(async action => {
+      const { strategyId, strategyProperties, options } = action.payload;
+      const allStrategies = await wdkService.getStrategies();
+      const conflictingStrategy = allStrategies.find(strategy => (
+        strategy.isSaved &&
+        strategy.name === strategyProperties.name &&
+        strategy.strategyId !== strategyId
+      ));
+      const proceed = conflictingStrategy == null ? true : await confirm(
+        'Replace existing strategy?',
+        `A strategy with the name "${strategyProperties.name}" already exists. Would you like to replace it?`
+      );
+
+      if (!proceed) return empty();
+
+      const stepTree = await wdkService.getDuplicatedStrategyStepTree(strategyId);
+
+      // If it exists, then update that strategy
+      if (conflictingStrategy == null) {
+        const newStratResponse = await wdkService.createStrategy({ ...strategyProperties, isSaved: true, stepTree });
+        const strategy = await wdkService.getStrategy(newStratResponse.id);
+        if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
+        return of(fulfillStrategy(strategy));
+      }
+
+      const { isSaved, ...restProps } = strategyProperties;
+      await wdkService.putStrategyStepTree(conflictingStrategy.strategyId, stepTree);
+      await wdkService.patchStrategyProperties(conflictingStrategy.strategyId, restProps);
+      if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
+      return of(fulfillPatchStrategyProperties(conflictingStrategy.strategyId));
+    }),
+    // The above operation results a Promise<Observable<T>>. `mergeAll` flattens that to Observable<T>.
+    mergeAll()
+  );
+}
+*/
 
   async function getFulfillStrategy_PatchStratProps(
     [requestAction]: [InferAction<typeof fulfillPatchStrategyProperties>],
@@ -333,18 +425,26 @@ async function getFulfillNewSearch(
     mrate([requestDeleteOrRestoreStrategies], getFulfillDeleteOrRestoreStrategies),
     mrate([requestPutStrategyStepTree], getFulfillStrategy_PutStepTree),
     mrate([requestPatchStrategyProperties], getFulfillPatchStrategy),
+    mrate([requestSaveAsStrategy], getFulfillStrategy_SaveAs,
+      { areActionsNew: stubTrue }),
     mrate([fulfillPatchStrategyProperties], getFulfillStrategy_PatchStratProps,
-      { areActionsCoherent: areFulfillStrategy_PatchStratPropsActionsCoherent }),
-    mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps),
-    mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig),
-    mrate([requestReplaceStep], getFulfillStrategy_ReplaceStep),
-    mrate([requestRemoveStepFromStepTree], getFulfillStrategy_RemoveStepFromStepTree),
+      { areActionsNew: stubTrue,  areActionsCoherent: areFulfillStrategy_PatchStratPropsActionsCoherent }),
+    mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps,
+      { areActionsNew: stubTrue }),
+    mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig,
+      { areActionsNew: stubTrue }),
+    mrate([requestReplaceStep], getFulfillStrategy_ReplaceStep,
+      { areActionsNew: stubTrue }),
+    mrate([requestRemoveStepFromStepTree], getFulfillStrategy_RemoveStepFromStepTree,
+      { areActionsNew: stubTrue }),
     mrate([requestDeleteStep], getFulfillDeleteStep),
     mrate([requestCreateStrategy], getFulfillCreateStrategy),
     mrate([requestDeleteStrategy], getFulfillStrategyDelete),
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
-    mrate([requestCreateStrategy, fulfillCreateStrategy], getFulfillNewSearch)
+    mrate([requestCreateStrategy, fulfillCreateStrategy], getFulfillNewSearch),
+    // observePatchStrategy,
+    // observeSaveStrategyAs
   );
 /*
 requestUpdateStepProperties,

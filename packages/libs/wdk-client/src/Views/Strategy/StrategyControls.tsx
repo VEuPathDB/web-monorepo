@@ -3,12 +3,12 @@ import React from 'react';
 import {IconAlt, Modal} from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
-import {StrategySummary} from 'wdk-client/Utils/WdkUser';
+import {StrategySummary, StrategyProperties, SaveStrategyOptions, EditStrategySpec} from 'wdk-client/Utils/WdkUser';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 
 import {connect} from 'react-redux';
 import {clearActiveModal, setActiveModal} from 'wdk-client/Actions/StrategyWorkspaceActions';
-import {requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyProperties} from 'wdk-client/Actions/StrategyActions';
+import {requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyProperties, requestSaveAsStrategy} from 'wdk-client/Actions/StrategyActions';
 
 import './StrategyControls.scss';
 
@@ -28,7 +28,8 @@ interface DispatchProps {
   copyStrategy: (signature: string) => void;
   deleteStrategy: (strategyId: number) => void;
   renameStrategy: (strategyId: number, name: string) => void;
-  saveStrategy: (strategyId: number, name: string, isPublic: boolean, description?: string) => void;
+  saveStrategy: (strategyId: number, properties: StrategyProperties, options: SaveStrategyOptions) => void;
+  editStrategy: (strategyId: number, properties: EditStrategySpec) => void;
 }
 
 const dispatchProps: DispatchProps = {
@@ -37,7 +38,10 @@ const dispatchProps: DispatchProps = {
   copyStrategy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
   deleteStrategy: (strategyId: number) => requestDeleteStrategy(strategyId),
   renameStrategy: (strategyId: number, name: string) => requestPatchStrategyProperties(strategyId, { name }),
-  saveStrategy: (strategyId: number, name: string, isPublic: boolean, description?: string) => requestPatchStrategyProperties(strategyId, { isPublic, isSaved: true, name, description }),
+  saveStrategy: (strategyId: number, properties: StrategyProperties, options: SaveStrategyOptions) =>
+    requestSaveAsStrategy(strategyId, properties, options),
+  editStrategy: (strategyId: number, properties: EditStrategySpec) =>
+    requestPatchStrategyProperties(strategyId, properties)
 }
 
 type Props = OwnProps & DispatchProps;
@@ -61,6 +65,19 @@ const ShareAction = connect(
 )(_ShareAction);
 
 function _ShareAction (props: ActionProps & { shareUrl: string }) {
+  const { strategy } = props;
+  if (!strategy.isSaved) {
+    return (
+      <React.Fragment>
+        <div>Before you can share your strategy, you need to save it. Would you like to do that now?</div>
+        <div>
+          <button className="btn" type="button" onClick={() => {
+              props.setActiveModal({ type: 'save', strategyId: strategy.strategyId });
+            }}>Yes, save my strategy</button> <CloseModalButton {...props}>No thanks</CloseModalButton>
+        </div>
+      </React.Fragment>
+    );
+  }
   return (
     <React.Fragment>
       <div>
@@ -83,7 +100,7 @@ function _ShareAction (props: ActionProps & { shareUrl: string }) {
 export const StrategyActions: Record<string, StrategyAction> = {
   copy: {
     iconName: 'clone',
-    title: 'Create a copy of your search strategy',
+    title: 'Create an unsaved copy of your search strategy',
     render: (props: ActionProps) => (
       <React.Fragment>
         <div>Are you sure you want to make a copy of your strategy?</div>
@@ -96,9 +113,15 @@ export const StrategyActions: Record<string, StrategyAction> = {
     )
   },
 
+  edit: {
+    iconName: 'pencil-square-o',
+    title: 'Edit details of your search strategy',
+    render: (props: ActionProps) => <SaveStrategyForm isEdit {...props}/>
+  },
+
   save: {
     iconName: 'floppy-o',
-    title: 'Save or edit the description of your search strategy',
+    title: 'Create a saved copy of your search strategy',
     render: (props: ActionProps) => <SaveStrategyForm {...props}/>
   },
 
