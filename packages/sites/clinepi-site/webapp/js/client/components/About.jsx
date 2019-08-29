@@ -45,7 +45,7 @@ export default function About() {
 
       <h2 id="Can-i-access-code-used-for-site">Can I access code used for ClinEpiDB?</h2>
       <div>
-        <p>Yes! Our code is maintained using Subversion, and we welcome input from the community. Check out our <a target="_blank" href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/ClinEpiWebsite/trunk/View/lib/R/shiny/apps/">scripts for each of the Shiny apps</a>.
+        <p>Yes! Our code is maintained using Git, and we welcome input from the community. Check out our <a target="_blank" href="https://github.com/EuPathDB/ClinEpiWebsite/tree/master/View/lib/R/shiny/apps">scripts for each of the Shiny apps</a>.
         </p>
       </div>
 
@@ -59,9 +59,9 @@ export default function About() {
         <div style={{ padding: '1em 0' }}>
           <div style={{ textDecoration: 'underline' }}>The EuPathDB Team</div>
           <div>
-            Cristina Aurrecoechea<sup>2</sup>,            
+            Cristina Aurrecoechea<sup>2</sup>,
             John Brestelli<sup>3</sup>,
-            Brian Brunk<sup>1</sup>,            
+            Brian Brunk<sup>1</sup>,
             Danielle Callan<sup>1</sup>,
             Dave Falke<sup>2</sup>,
             Steve Fischer<sup>4</sup>,
@@ -76,7 +76,7 @@ export default function About() {
         </div>
 
         <ol>
-          <li>Department of Biology, University of Pennsylvania, Philadelphia, PA 19104 USA</li>          
+          <li>Department of Biology, University of Pennsylvania, Philadelphia, PA 19104 USA</li>
           <li>Center for Tropical &amp; Emerging Global Diseases, University of Georgia, Athens, GA 30602 USA</li>
           <li>Department of Genetics, University of Pennsylvania School of Medicine, Philadelphia, PA 19104 USA</li>
           <li>Institute of Integrative Biology, University of Liverpool, UK</li>
