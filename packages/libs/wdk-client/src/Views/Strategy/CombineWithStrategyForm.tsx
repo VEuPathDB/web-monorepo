@@ -116,7 +116,7 @@ const CombineWithStrategyFormView = ({
             Choose an existing {inputRecordClass.displayNamePlural} strategy
           </h2>
 
-          <p>
+          <div className={cx('--BooleanOperatorMenu')}>
             The results will be{' '}
             <BooleanSelect
               value={booleanSearchState && booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME] as CombineOperator}
@@ -124,7 +124,7 @@ const CombineWithStrategyFormView = ({
               addType={addType}
             />
             {' '}the results of Step {stepsCompletedNumber}.
-          </p>
+          </div>
         </div>
         <div className={cx('--Body')}>
           {

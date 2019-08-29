@@ -97,7 +97,7 @@ const CombineStepFormView = ({
             Search for {inputRecordClass.shortDisplayNamePlural} {question && `by ${question.displayName}`}
           </h2>
 
-          <p>
+          <div className={cx('--BooleanOperatorMenu')}>
             The results will be{' '}
             <BooleanSelect
               addType={addType}
@@ -105,7 +105,7 @@ const CombineStepFormView = ({
               onChange={updateBooleanOperator}
             />
             {' '}the results of Step {stepsCompletedNumber}.
-          </p>
+          </div>
         </div>
         <div className={cx('--Body')}>
           <Plugin

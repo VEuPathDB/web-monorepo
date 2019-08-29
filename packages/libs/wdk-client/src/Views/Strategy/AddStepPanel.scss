@@ -3,9 +3,9 @@
 
   h1 {
     font-size: 2em;
-    font-weight: 500;
+    font-weight: bold;
 
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
 
     padding: unset;
   }
@@ -52,6 +52,10 @@
   &--Header {
     display: flex;
     justify-content: space-between;
+
+    i {
+      color: #9e9e9e;
+    }
   }
 
   &--MenuItemsContainer {
@@ -72,7 +76,7 @@
   }
 
   &--MenusHeader {
-    font-size: 1.5em;
+    font-size: 1.4em;
     text-align: center;
   }
 

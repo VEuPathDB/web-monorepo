@@ -61,6 +61,7 @@ export type AddStepOperationFormProps = {
   inputRecordClass: RecordClass,
   currentPage: string,
   advanceToPage: (nextPage: string) => void,
+  replacePage: (nextPage: string) => void,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
   addType: AddType,
   stepsCompletedNumber: number,
@@ -112,6 +113,10 @@ export const AddStepPanelView = wrappable((
 
   const advanceToPage = useCallback((nextPage: string) => {
     setPageHistory([...pageHistory, nextPage]);
+  }, [ pageHistory ]);
+
+  const replacePage = useCallback((nextPage: string) => {
+    setPageHistory([...pageHistory.slice(0, -1), nextPage]);
   }, [ pageHistory ]);
 
   const startOperationForm = useCallback((formType: string, initialPage: string) => {
@@ -240,6 +245,7 @@ export const AddStepPanelView = wrappable((
                         inputRecordClass={inputRecordClass}
                         currentPage={currentPage}
                         advanceToPage={advanceToPage}
+                        replacePage={replacePage}
                         updateStrategy={updateStrategy}
                         addType={addType}
                         stepsCompletedNumber={stepsCompletedNumber}
