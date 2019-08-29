@@ -236,7 +236,7 @@ export default connect(
   (state: RootState, ownProps: OwnProps) => {
     const questions = state.globalData.questions;
     const strategyDetails = state.strategies.strategies[ownProps.stepTree.step.strategyId];
-    const strategy = strategyDetails && strategyDetails.status === 'success' ? strategyDetails.strategy : undefined;
+    const strategy = strategyDetails && strategyDetails.strategy;
 
     return {
       questions,

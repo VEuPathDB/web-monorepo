@@ -97,7 +97,7 @@ function StrategyViewController(props: Props) {
 const getResultType = createSelector<RootState, OwnProps, Step | undefined, StepResultType | undefined>(
   (state, props) => {
     const strategyEntry = props.strategyId != null ? state.strategies.strategies[props.strategyId] : undefined;
-    const strategy = strategyEntry && strategyEntry.status === 'success' && strategyEntry.strategy;
+    const strategy = strategyEntry && strategyEntry.strategy;
     const step = props.stepId != null && strategy ? strategy.steps[props.stepId] : undefined;
     return step;
   },

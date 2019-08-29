@@ -41,9 +41,10 @@ import {empty, of, Observable} from 'rxjs';
 
 export const key = 'strategies';
 
-export type StrategyEntry =
-  | { status: 'pending' }
-  | { status: 'success', strategy: StrategyDetails }
+export interface StrategyEntry {
+  isLoading: boolean;
+  strategy?: StrategyDetails;
+}
 
 export type State = {
   strategies: Record<number, StrategyEntry|undefined>;
@@ -53,36 +54,28 @@ const initialState: State = {
   strategies: {}
 };
 
-function reqStrat(state: State, strategyId: number) {
-  const entry = state.strategies[strategyId];
-  if (entry != null) return state;
-  return updateStrategyEntry(state, strategyId, prevEntry => ({
-    ...prevEntry,
-    status: 'pending'
-  }));  
-}
-
-// TODO: why are the action variables "any" type?
 export function reduce(state: State = initialState, action: Action): State {
   switch (action.type) {
 
   case requestStrategy.type:
-  // case requestPatchStrategyProperties.type:
-  // case requestPutStrategyStepTree.type:
-  // case requestDeleteStrategy.type:
-  // case requestUpdateStepProperties.type:
-  // case requestDeleteStep.type:  
-  // case requestUpdateStepSearchConfig.type:
-    {
-     const strategyId  = action.payload.strategyId;
-     return reqStrat(state, strategyId);
-   }
+  case requestPatchStrategyProperties.type:
+  case requestPutStrategyStepTree.type:
+  case requestDeleteStrategy.type:
+  case requestUpdateStepProperties.type:
+  case requestDeleteStep.type:  
+  case requestUpdateStepSearchConfig.type: {
+    const strategyId  = action.payload.strategyId;
+    return updateStrategyEntry(state, strategyId, prevEntry => ({
+      ...prevEntry,
+      isLoading: true
+    }));
+  }
 
   case fulfillStrategy.type: 
   case fulfillPutStrategy.type: {
     const strategy = action.payload.strategy;
     return updateStrategyEntry(state, strategy.strategyId, {
-      status: 'success',
+      isLoading: false,
       strategy
     });
   }
@@ -322,7 +315,7 @@ function observeSaveStrategyAs(action$: ActionsObservable<Action>, state$: State
     const { id: newStepId } = await wdkService.createStep(newStepSpec);
     const strategyEntry = state$.value.strategies.strategies[strategyId];
 
-    if (!strategyEntry || strategyEntry.status !== 'success') {
+    if (strategyEntry == null || strategyEntry.isLoading || strategyEntry.strategy == null) {
       throw new Error(`Tried to replace strategy #${strategyId}, which is pending`);
     }
 

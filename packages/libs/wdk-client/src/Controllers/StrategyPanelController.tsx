@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
 import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setReviseFormVisibility, openStrategyPanel, closeStrategyPanel } from 'wdk-client/Actions/StrategyPanelActions';
-import { Loading } from 'wdk-client/Components';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
@@ -13,6 +12,7 @@ import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import {removeFromOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
+import {StrategyEntry} from 'wdk-client/StoreModules/StrategyStoreModule';
 
 interface OwnProps {
   viewId: string;
@@ -22,16 +22,12 @@ interface OwnProps {
   showCloseButton?: boolean;
 }
 
-type MappedProps = 
-| {
-  isLoading: true;
-} | {
-  isLoading: false;
-  strategy: StrategyDetails;
-  uiStepTree: UiStepTree;
+interface MappedProps {
+  strategy?: StrategyDetails;
+  uiStepTree?: UiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
-  openedStrategies: number[];
+  isLoading: boolean;
 }
 
 interface MappedDispatch {
@@ -59,13 +55,13 @@ interface MappedDispatch {
 type Props = OwnProps & MappedProps & MappedDispatch;
 
 function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
-  const openedStrategies = state.strategyWorkspace.openedStrategies;
   const panelState = state.strategyPanel[ownProps.viewId];
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
   const nestedStrategyBranchIds = panelState ? panelState.nestedStrategyBranchIds : [];
   const reviseFormStepId = panelState && panelState.visibleReviseForm;
-  const entry = state.strategies.strategies[ownProps.strategyId];
-  const strategy = entry && entry.status === 'success' ? entry.strategy : undefined;
+  const entry: StrategyEntry = state.strategies.strategies[ownProps.strategyId] || { isLoading: true };
+  const { strategy, isLoading } = entry;
+  // FIXME
   const { recordClasses, questions } = state.globalData;
   const uiStepTree = (
     strategy &&
@@ -73,9 +69,7 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
     questions &&
     makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'), keyBy(questions, 'urlSegment'), nestedStrategyBranchIds)
   );
-  return strategy == null || uiStepTree == null || openedStrategies == null
-    ? { isLoading: true }
-    : { isLoading: false, strategy, uiStepTree, insertStepVisibility, reviseFormStepId, openedStrategies };
+  return { strategy, uiStepTree, insertStepVisibility, reviseFormStepId, isLoading };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
@@ -122,12 +116,10 @@ function StrategyPanelController(props: Props) {
     return () => props.closeStrategyPanel(props.viewId);
   }, [ props.strategyId ]);
 
-  if (props.isLoading) return <Loading/>;
-
   return (
     <StrategyPanel
       {...props}
-      onDeleteStep={partial(props.onDeleteStep, props.strategy.stepTree)}
+      onDeleteStep={props.strategy == null ? () => {} : partial(props.onDeleteStep, props.strategy.stepTree)}
     />
   );
 }

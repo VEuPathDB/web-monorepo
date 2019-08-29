@@ -287,12 +287,7 @@ const strategyEntry = createSelector(
 const strategy = createSelector(
   strategyEntry,
   strategyEntry => {
-    return (
-      !strategyEntry ||
-      strategyEntry.status === 'pending'
-    )
-      ? undefined
-      : strategyEntry.strategy;
+    return strategyEntry && strategyEntry.strategy;
   }
 );
 

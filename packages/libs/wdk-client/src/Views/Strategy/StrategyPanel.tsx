@@ -1,5 +1,5 @@
 import React from 'react';
-import { SaveableTextEditor } from 'wdk-client/Components';
+import { SaveableTextEditor, Loading } from 'wdk-client/Components';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
@@ -10,12 +10,14 @@ import {StrategyControls} from 'wdk-client/Views/Strategy/StrategyControls';
 
 import './StrategyPanel.css';
 import {Plugin} from 'wdk-client/Utils/ClientPlugin';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
 
 const cx = makeClassNameHelper('StrategyPanel');
 
 interface Props {
-  strategy: StrategyDetails;
-  uiStepTree: UiStepTree;
+  isLoading: boolean;
+  strategy?: StrategyDetails;
+  uiStepTree?: UiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
   showCloseButton?: boolean;
@@ -39,8 +41,10 @@ interface Props {
 
 export default function StrategyPanel(props: Props) {
   const {
+    isLoading,
     uiStepTree,
     strategy,
+    insertStepVisibility,
     reviseFormStepId,
     showCloseButton,
     onStrategyClose,
@@ -56,56 +60,63 @@ export default function StrategyPanel(props: Props) {
     onAnalyzeStep,
     onDeleteStep,
   } = props;
-  const reviseStep = reviseFormStepId && strategy.steps[reviseFormStepId];
+
+  const reviseStep = reviseFormStepId != null && strategy != null ? strategy.steps[reviseFormStepId] : undefined;
 
   return (
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
         {/*<div>Search Strategy:</div>*/}
-        <div className={cx('--StrategyName')}>
-          <SaveableTextEditor
-            value={strategy.name}
-            displayValue={(value, handleEdit) => <em onClick={handleEdit}>{value}{strategy.isSaved ? '' : ' *'}</em>}
-            onSave={props.onStrategyRename}
-          />
-        </div>
+        {strategy == null ? <em>Loading...</em> :
+          <div className={cx('--StrategyName')}>
+            <SaveableTextEditor
+              value={strategy.name}
+              displayValue={(value, handleEdit) => <em onClick={handleEdit}>{value}{strategy.isSaved ? '' : ' *'}</em>}
+              onSave={props.onStrategyRename}
+            />
+          </div>
+        }
       </h2>
       <div className={cx('--Panel')}>
-        {showCloseButton && (
+        {isLoading || strategy == null || uiStepTree == null ? <Loading className={cx('--Loading')}/> : null}
+        {strategy && uiStepTree && showCloseButton && (
           <div className={cx('--CloseButton')} title="Close this strategy.">
             <button className="link" onClick={() => onStrategyClose()}>
-              &#10799;
+              <Icon fa="times"/>
             </button>
           </div>
         )}
-        <StrategyControls strategyId={strategy.strategyId}/>
-        <div className={cx('--StepBoxesContainer')}>
-          <StepBoxes
-            stepTree={uiStepTree}
-            setReviseFormStepId={setReviseFormStepId}
-            onShowInsertStep={onShowInsertStep}
-            onHideInsertStep={onHideInsertStep}
-            onMakeNestedStrategy={onMakeNestedStrategy}
-            onMakeUnnestedStrategy={onMakeUnnestedStrategy}
-            onExpandNestedStrategy={onExpandNestedStrategy}
-            onCollapseNestedStrategy={onCollapseNestedStrategy}
-            onRenameStep={onRenameStep}
-            onRenameNestedStrategy={onRenameNestedStrategy}
-            onAnalyzeStep={onAnalyzeStep}
-            onDeleteStep={onDeleteStep}
-          />
-        </div>
-      </div>
-      {props.insertStepVisibility && (
-        <Modal className={cx('--Modal')}>
-          <AddStepPanel
-            strategyId={props.strategy.strategyId}
-            addType={props.insertStepVisibility}
-            onHideInsertStep={onHideInsertStep}
-          />
-        </Modal>
-      )}
-      {reviseStep && (
+        {strategy != null && uiStepTree != null ?
+          <>
+            <StrategyControls strategyId={strategy.strategyId}/>
+            <div className={cx('--StepBoxesContainer')}>
+              <StepBoxes
+                stepTree={uiStepTree}
+                setReviseFormStepId={setReviseFormStepId}
+                onShowInsertStep={onShowInsertStep}
+                onHideInsertStep={onHideInsertStep}
+                onMakeNestedStrategy={onMakeNestedStrategy}
+                onMakeUnnestedStrategy={onMakeUnnestedStrategy}
+                onExpandNestedStrategy={onExpandNestedStrategy}
+                onCollapseNestedStrategy={onCollapseNestedStrategy}
+                onRenameStep={onRenameStep}
+                onRenameNestedStrategy={onRenameNestedStrategy}
+                onAnalyzeStep={onAnalyzeStep}
+                onDeleteStep={onDeleteStep}
+              />
+            </div>
+          </> : null}
+          </div>
+          {strategy != null && insertStepVisibility != null ? (
+            <Modal className={cx('--Modal')}>
+              <AddStepPanel
+                strategyId={strategy.strategyId}
+                addType={insertStepVisibility}
+                onHideInsertStep={onHideInsertStep}
+              />
+            </Modal>
+          ) : null}
+      {strategy != null && reviseStep != null ? (
         <Modal className={cx('--Modal')}>
           <div className={cx('--ReviseForm')}>
             <button type="button" className="link" onClick={() => setReviseFormStepId()}>Close</button>
@@ -129,7 +140,7 @@ export default function StrategyPanel(props: Props) {
             />
           </div>
         </Modal>
-      )}
+      ): null}
     </div>
   );
 }

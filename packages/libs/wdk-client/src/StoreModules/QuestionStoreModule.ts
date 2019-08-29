@@ -404,8 +404,9 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           );
         } else {
           const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
+          const strategy = strategyEntry && strategyEntry.strategy;
 
-          if (!strategyEntry || strategyEntry.status !== 'success') {
+          if (!strategy) {
             throw new Error(`Tried to update a nonexistent or unloaded strategy ${submissionMetadata.strategyId}`);
           }
 
@@ -431,7 +432,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                 ([{ id: newSearchStepId }, { id: binaryOperatorStepId }]) => requestPutStrategyStepTree(
                   submissionMetadata.strategyId,
                   addStep(
-                    strategyEntry.strategy.stepTree,
+                    strategy.stepTree,
                     submissionMetadata.addType,
                     binaryOperatorStepId,
                     {
@@ -445,7 +446,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
                 submissionMetadata.strategyId,
                 addStep(
-                  strategyEntry.strategy.stepTree,
+                  strategy.stepTree,
                   submissionMetadata.addType,
                   unaryOperatorStepId,
                   undefined
