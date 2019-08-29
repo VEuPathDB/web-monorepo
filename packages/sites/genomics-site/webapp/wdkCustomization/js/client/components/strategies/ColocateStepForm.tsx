@@ -200,7 +200,7 @@ const SelectSearchPage = ({
 
 
 const BasketPage = ({
-  advanceToPage,
+  replacePage,
   questionsByUrlSegment,
   recordClassUrlSegment,
   recordClassesByUrlSegment,
@@ -233,9 +233,9 @@ const BasketPage = ({
       )
       .then(({ id: newStepId }) => {
         setSecondaryStepTree({ stepId: newStepId });
-        advanceToPage(colocationOperatorForm(recordClassUrlSegment));
+        replacePage(colocationOperatorForm(recordClassUrlSegment));
       });
-  }, [ advanceToPage, setSecondaryStepTree, secondaryInputRecordClass ]);
+  }, [ replacePage, setSecondaryStepTree, secondaryInputRecordClass ]);
 
   return <Loading />;
 };
