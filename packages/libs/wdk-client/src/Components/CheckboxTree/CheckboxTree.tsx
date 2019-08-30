@@ -35,11 +35,6 @@ let Bar = () => <span> | </span>;
 
 type ChangeHandler = (ids: string[]) => void;
 
-interface CheckboxTreeAction {
-  displayText: string;
-  onClick: () => void;
-}
-
 type Props<T> = {
 
   //%%%%%%%%%%% Basic expandable tree props %%%%%%%%%%%
@@ -126,7 +121,7 @@ type Props<T> = {
   linksPosition?: LinksPosition;
 
   /** Additional actions to render with links */
-  additionalActions?: CheckboxTreeAction[];
+  additionalActions?: React.ReactNode[];
 };
 
 type TreeLinkHandler = MouseEventHandler<HTMLButtonElement>;
@@ -146,7 +141,7 @@ type TreeLinksProps = {
   selectCurrentList: TreeLinkHandler;
   selectDefaultList: TreeLinkHandler;
   isFiltered: boolean;
-  additionalActions?: CheckboxTreeAction[];
+  additionalActions?: React.ReactNode[];
 }
 
 /**
@@ -208,7 +203,7 @@ let TreeLinks: StatelessComponent<TreeLinksProps> = props => {
         <div>
           { additionalActions.map((action, index, additionalActions) => (
             <span key={index}>
-              <button type="button" className="link" onClick={() => action.onClick()}>{action.displayText}</button>
+              {action}
               {index !== (additionalActions.length - 1) && <Bar/>}
             </span>
           )) }
