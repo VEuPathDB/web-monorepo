@@ -85,8 +85,8 @@ export const RecordHeading = connect(
 
     let transcriptomicsThumbnail = {
       displayName: 'Transcriptomics',
-      element: <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}/>,
-      anchor: 'ExpressionGraphs'
+      element: <img src={webAppUrl + '/wdkCustomization/images/transcription_summary.png'}/>,
+      anchor: 'TranscriptionSummary'
     };
 
     let phenotypeThumbnail = {
