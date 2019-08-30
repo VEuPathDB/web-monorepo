@@ -62,8 +62,11 @@ export function reduce(state: State = initialState, action: Action): State {
   case requestPutStrategyStepTree.type:
   case requestDeleteStrategy.type:
   case requestUpdateStepProperties.type:
-  case requestDeleteStep.type:  
-  case requestUpdateStepSearchConfig.type: {
+  case requestSaveAsStrategy.type:
+  case requestDeleteStep.type:
+  case requestRemoveStepFromStepTree.type:
+  case requestUpdateStepSearchConfig.type:
+  case requestReplaceStep.type: {
     const strategyId  = action.payload.strategyId;
     return updateStrategyEntry(state, strategyId, prevEntry => ({
       ...prevEntry,

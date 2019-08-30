@@ -168,9 +168,11 @@ export type Action =
 | InferAction<typeof fulfillPutStrategy>
 | InferAction<typeof requestPatchStrategyProperties>
 | InferAction<typeof fulfillPatchStrategyProperties>
+| InferAction<typeof requestSaveAsStrategy>
 | InferAction<typeof requestPutStrategyStepTree>
 | InferAction<typeof requestGetDuplicatedStrategyStepTree>
 | InferAction<typeof fulfillGetDuplicatedStrategyStepTree>
+| InferAction<typeof requestRemoveStepFromStepTree>
 | InferAction<typeof requestUpdateStepProperties>
 | InferAction<typeof requestCreateStep>
 | InferAction<typeof fulfillCreateStep>
