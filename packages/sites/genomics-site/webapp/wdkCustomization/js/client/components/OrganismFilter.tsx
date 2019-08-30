@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { set, update, intersection } from 'lodash/fp'
+import { intersection } from 'lodash/fp'
 import { RootState } from 'wdk-client/Core/State/Types';
 import { TreeBoxVocabNode, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
@@ -10,6 +10,11 @@ import { Loading, CheckboxTree } from 'wdk-client/Components';
 import Checkbox from 'wdk-client/Components/InputControls/Checkbox';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
+import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
+
+import './OrganismFilter.scss';
+
+const cx = makeClassNameHelper('OrganismFilter')
 
 // constants for service calls
 const ALLOWABLE_RECORD_CLASS_NAME = 'transcript';
@@ -26,7 +31,7 @@ const ORGANISM_FILTER_PANE_EXPANSION_KEY = "defaultOrganismFilterPaneExpansion";
 const DEFAULT_PANE_EXPANSION = true;
 const DEFAULT_HIDE_ZEROES = false;
 
-const TITLE = "Organisms";
+const TITLE = "Organism Filter";
 
 // props passed into this component by caller
 type OwnProps = {
@@ -69,24 +74,6 @@ type TaxonomyNodeWithCount = {
   children: TaxonomyNodeWithCount[];
 }
 
-const verticalTextCss: React.CSSProperties = {
-  position: "absolute",
-  top: "7em",
-  left: 0,
-  transform: "rotate(90deg)",
-  transformOrigin: "left bottom",
-  border: "solid 1px #346792",
-  padding: "5px",
-  height: "2em",
-  width: "18em",
-  textAlign: "center",
-  color: "#FFF",
-  backgroundImage: "none",
-  backgroundColor: "#4F81BD",
-  cursor: "pointer",
-  whiteSpace: "nowrap"
-};
-
 type ExpansionBarProps = {
   onClick: () => void;
   message: string;
@@ -95,8 +82,8 @@ type ExpansionBarProps = {
 
 function ExpansionBar(props: ExpansionBarProps) {
   return (
-    <div style={verticalTextCss} onClick={props.onClick}>
-      {props.arrow}<span style={{margin:"0 2em"}}>{props.message}</span>{props.arrow}
+    <div className={cx('--ExpansionBar')} onClick={props.onClick}>
+      {props.arrow}<span className={cx('--ExpansionBarText')}>{props.message}</span>{props.arrow}
     </div>
   );
 }
@@ -107,7 +94,7 @@ interface ContainerProps {
 
 function Container(props: ContainerProps) {
   return (
-    <div style={{ width: "30em", paddingLeft: "3em" }}>
+    <div className={cx()}>
       {props.children}
     </div>
   )
@@ -221,20 +208,16 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
   return (
     <Container>
       <div>
-        <h3 style={{ fontSize: "1.4em", padding: "0 0 .5em 0", display: 'flex', alignItems: 'center', height: '2em' }}>
+        <h3 className={cx('--Heading')}>
           {TITLE}
-          {showApplyAndCancelButtons && (
-            <React.Fragment>
-              &nbsp;
-              <button type="button" style={{ fontSize: '.75rem', fontWeight: 'normal', marginLeft: 'auto' }} onClick={() => updateSearchConfig()}>Apply</button>
-              &nbsp;
-              <button type="button" style={{ fontSize: '.75rem', fontWeight: 'normal'}} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
-            </React.Fragment>
-          )}
           {searchConfigChangeRequested && (
             <Loading/>
           )}
         </h3>
+        <div className={cx('--Buttons', showApplyAndCancelButtons ? 'visible' : 'hidden')}>
+          <button type="button" className={cx('--ApplyButton') + ' btn'} onClick={() => updateSearchConfig()}>Apply</button>
+          <button type="button" className={cx('--CancelButton') + ' btn'} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
+        </div>
         { taxonomyTreeWithCounts
         ? (
             <CheckboxTree<TaxonomyNodeWithCount>
@@ -255,10 +238,12 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
               searchTerm={searchTerm}
               onSearchTermChange={term => setSearchTerm(term)}
               searchPredicate={nodeMeetsSearchCriteria}
-              additionalActions={[{
-                displayText: `${hideZeroes ? 'show' : 'hide'} zero counts`,
-                onClick: () => setHideZeroes(!hideZeroes)
-              }]}
+              additionalActions={[
+                <label className={cx('--HideZeroes')}>
+                  <input className={cx('--HideZeroes-Input')} type="checkbox" checked={hideZeroes} onChange={() => setHideZeroes(!hideZeroes)}/>
+                  hide zero counts
+                </label>
+              ]}
             />
             )
         : (
@@ -362,9 +347,9 @@ function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
 
 function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
   return (
-    <div style={{display:"flex",width:"calc(100% - 2em)"}}>
+    <div className={cx('--Node')}>
       <div>{node.display}</div>
-      <div style={{marginLeft:"auto"}}>{node.count.toLocaleString()}</div>
+      <div className={cx('--NodeCount')}>{node.count.toLocaleString()}</div>
     </div>
   );
 }

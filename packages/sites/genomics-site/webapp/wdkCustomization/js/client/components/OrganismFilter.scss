@@ -1,0 +1,78 @@
+.OrganismFilter {
+  width: 30em;
+  padding-left: 3em;
+
+  &--Heading {
+    font-size: 1.4em;
+    padding: 0 0 .5em 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  &--Buttons {
+    text-align: center;
+    &__hidden {
+      visibility: hidden;
+    }
+    > button.btn {
+      margin: 0 .5em;
+      padding: .4em .6em;
+      text-shadow: 0 0 1px #585858;
+    }
+  }
+  &--ApplyButton.btn {
+    &, &:hover {
+      background: #1c6ccc;
+      color: white;
+    }
+  }
+
+  &--CancelButton.btn {
+    &, &:hover {
+      background: #cb2b39;
+      color: white;
+    }
+  }
+
+  &--Node {
+    display: flex;
+    width: calc(100% - 2em);
+
+    &Count {
+      margin-left: auto;
+    }
+  }
+
+  &--HideZeroes {
+    display: inline-flex;
+    align-items: center;
+    margin: .4em 0;
+
+    &-Input {
+      margin-right: .25em;
+    }
+  }
+
+  &--ExpansionBar {
+    background-color: #4F81BD;
+    background-image: none;
+    border: solid 1px #346792;
+    color: #FFF;
+    cursor: pointer;
+    height: 2em;
+    left: 0;
+    padding: 5px;
+    position: absolute;
+    text-align: center;
+    top: 7em;
+    transform-origin: left bottom;
+    transform: rotate(90deg);
+    white-space: nowrap;
+    width: 18em;
+
+    &Text {
+      margin: 0 2em;
+    }
+  }
+
+}
