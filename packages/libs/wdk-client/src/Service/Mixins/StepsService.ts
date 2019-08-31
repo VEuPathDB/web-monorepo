@@ -6,22 +6,11 @@ import { AnswerFormatting } from './SearchReportsService';
 
 export default (base: ServiceBase) => {
 
-  const stepMap = new Map<number, Promise<Step>>();
-
   function findStep(stepId: number, userId: string = "current"): Promise<Step> {
-    // cache step resonse
-    if (!stepMap.has(stepId)) {
-      stepMap.set(stepId, base._fetchJson<Step>('get', `/users/${userId}/steps/${stepId}`).catch(error => {
-        // if the request fails, remove the response since a later request might succeed
-        stepMap.delete(stepId);
-        throw error;
-      }))
-    }
-    return stepMap.get(stepId)!;
+    return base._fetchJson<Step>('get', `/users/${userId}/steps/${stepId}`);
   }
 
   function updateStepProperties(stepId: number, stepSpec: PatchStepSpec, userId: string = 'current'): Promise<void> {
-    stepMap.delete(stepId);
     let data = JSON.stringify(stepSpec);
     let url = `/users/${userId}/steps/${stepId}`;
     return base._fetchJson<void>('patch', url, data);
@@ -46,7 +35,7 @@ export default (base: ServiceBase) => {
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/standard`,
-      body: JSON.stringify({ reportConfig })
+      body: JSON.stringify({ reportConfig, viewFilters })
     });
   }
 
@@ -78,7 +67,6 @@ export default (base: ServiceBase) => {
   }
 
   function deleteStep(stepId: number, userId: string = "current"): void {
-    if (stepMap.has(stepId)) stepMap.delete(stepId);
     base._fetchJson<void>('delete', `/users/${userId}/steps/${stepId}`);
   }
 
