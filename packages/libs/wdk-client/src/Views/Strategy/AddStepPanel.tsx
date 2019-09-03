@@ -8,7 +8,7 @@ import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { useAddStepMenuConfigs, useSelectedAddStepFormComponent } from 'wdk-client/Utils/Operations';
-import { findPrimaryBranchHeight, addStep, findSubtree, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
+import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
@@ -294,25 +294,7 @@ const strategy = createSelector(
 const previousStepSubtree = createSelector(
   strategy,
   (_: RootState, { addType }) => addType,
-  (strategy, addType) => {
-    if (strategy === undefined) {
-      return undefined;
-    }
-
-    if (addType.type === 'append') {
-      return findSubtree(
-        strategy.stepTree,
-        addType.primaryInputStepId
-      );
-    }
-
-    const insertionPointSubtree = findSubtree(
-      strategy.stepTree,
-      addType.outputStepId
-    );
-
-    return insertionPointSubtree && insertionPointSubtree.primaryInput;
-  }
+  (strategy, addType) => strategy && getPreviousStep(strategy.stepTree, addType)
 );
 
 const previousStep = createSelector(

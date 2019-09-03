@@ -18,6 +18,7 @@ import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
 
 type StateProps = {
   basketCount?: number,
+  hasOtherStrategies: boolean,
   isGuest?: boolean,
   searchTree: CategoryTreeNode
 };
@@ -41,6 +42,7 @@ const cx = makeClassNameHelper('SearchInputSelector');
 export const SearchInputSelectorView = ({
   basketCount,
   containerClassName,
+  hasOtherStrategies,
   inputRecordClass,
   isGuest,
   onCombineWithBasketClicked,
@@ -110,10 +112,14 @@ export const SearchInputSelectorView = ({
   );
   
   const [ combineWithBasketDisabled, combineWithBasketTooltip ] = isGuest 
-    ? [true, 'You must log in to use this feature']
+    ?  [true, 'You must log in to use this feature' ]
     : basketCount === 0
-    ? [true, `Your ${inputRecordClass.displayNamePlural} basket is empty`]
-    : [false, undefined];
+    ? [ true, `Your ${inputRecordClass.displayNamePlural} basket is empty` ]
+    : [ false, undefined ];
+
+  const [ combineWithStrategyDisabled, combineWithStrategyTooltip ] = hasOtherStrategies
+    ? [ false, undefined ]
+    : [ true, `You have no other ${inputRecordClass.displayNamePlural} strategies` ];
 
   return isGuest === undefined || (isGuest === false && basketCount === undefined)
     ? <Loading />
@@ -126,7 +132,12 @@ export const SearchInputSelectorView = ({
         >
           Your {inputRecordClass.displayNamePlural} basket
         </button>
-        <button onClick={onCombineWithStrategyClicked}>
+        <button 
+          onClick={onCombineWithStrategyClicked}
+          disabled={combineWithStrategyDisabled}
+          type="button"
+          title={combineWithBasketTooltip}
+        >
           A {inputRecordClass.displayNamePlural} strategy
         </button>
         <div className={cx('--NewSearchCheckbox')}>
@@ -159,6 +170,14 @@ const isGuest = ({ globalData: { user } }: RootState) => user && user.isGuest;
 const basketCount = ({ basket }: RootState, { inputRecordClass: { urlSegment } }: OwnProps) =>
     basket.counts && basket.counts[urlSegment];
 
+const hasOtherStrategies = ({ strategyWorkspace }: RootState, { inputRecordClass: { urlSegment } }: OwnProps) => strategyWorkspace.strategySummaries
+  ? strategyWorkspace.strategySummaries.some(({ strategyId, recordClassName }) => 
+      recordClassName === urlSegment && 
+      strategyWorkspace.activeStrategy !== undefined && 
+      strategyWorkspace.activeStrategy.strategyId !== strategyId
+    )
+  : false;
+
 const searchTree = createSelector(
   ({ globalData }: RootState) => globalData, 
   (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
@@ -176,6 +195,7 @@ const searchTree = createSelector(
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   isGuest: isGuest(state),
   basketCount: basketCount(state, props),
+  hasOtherStrategies: hasOtherStrategies(state, props),
   searchTree: searchTree(state, props)
 });
 

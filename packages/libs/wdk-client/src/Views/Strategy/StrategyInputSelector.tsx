@@ -58,7 +58,7 @@ export const StrategyInputSelector = ({
             e.preventDefault();
             onStrategySelected(cellProps.row.strategyId);
           }} href="#">
-              {cellProps.row.name}{cellProps.row.isSaved ? '' : '*'}
+              {cellProps.row.name}{cellProps.row.isSaved ? '' : ' *'}
           </a>,
         sortable: true,
         sortType: 'text'

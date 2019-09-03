@@ -1,4 +1,4 @@
-import { StepTree } from 'wdk-client/Utils/WdkUser';
+import { StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 export const replaceStep = (
@@ -23,101 +23,173 @@ export const addStep = (
   addType: AddType,
   newStepId: number,
   newStepSecondaryInput: StepTree | undefined
-): StepTree => {
-  if (addType.type === 'append') {
-    if (stepTree.stepId === addType.primaryInputStepId) {
-      // Append, Case #1: Appending to the root node of the main step tree
+): StepTree => 
+  addType.type === 'append'
+    ? append(stepTree, addType.primaryInputStepId, newStepId, newStepSecondaryInput)
+    : insertBefore(stepTree, addType.outputStepId, newStepId, newStepSecondaryInput);
 
-      return {
-        stepId: newStepId,
-        primaryInput: stepTree,
-        secondaryInput: newStepSecondaryInput
-      };
-    } else {
-      // Append, Case #2: Appending to the root node of a nested step tree
-      // TODO Also need to change associated expandedName
+type NodeMetadata =
+  | { type: "not-in-tree" }
+  | { type: "root"; node: StepTree }
+  | { type: "primary-input"; node: StepTree; parentNode: StepTree }
+  | { type: "secondary-input"; node: StepTree; parentNode: StepTree };
 
-      const newStepTree = copyStepTree(stepTree);
-      const appendPoint = findAppendPoint(newStepTree, addType.primaryInputStepId);
+export const getNodeMetadata = (tree: StepTree, targetId: number) => {
+  return findTarget(tree, undefined);
 
-      appendPoint.primaryInput = {
-        stepId: newStepId,
-        primaryInput: appendPoint.primaryInput,
-        secondaryInput: newStepSecondaryInput
-      };
-
-      return newStepTree;
+  function findTarget(node: StepTree, parentNode?: StepTree): NodeMetadata {
+    if (node.stepId === targetId) {
+      return !parentNode
+        ? { type: "root", node }
+        : parentNode.primaryInput && parentNode.primaryInput.stepId === targetId
+        ? { type: "primary-input", node, parentNode }
+        : { type: "secondary-input", node, parentNode };
     }
+
+    return [node.primaryInput, node.secondaryInput].reduce(
+      (memo, childNode) =>
+        childNode === undefined || memo.type !== "not-in-tree"
+          ? memo
+          : findTarget(childNode, node),
+      { type: "not-in-tree" } as NodeMetadata
+    );
   }
+};
 
-  const newStepTree = copyStepTree(stepTree);
-  const [ insertionPoint, insertionPointParent ] = findInsertionPoint(newStepTree, addType.outputStepId);
+const append = (
+  oldStepTree: StepTree,
+  primaryStepId: number,
+  newStepId: number,
+  newStepSecondaryInput: StepTree | undefined
+): StepTree => {
+  const newStepTree = copyStepTree(oldStepTree);
+  const primaryInput = getNodeMetadata(newStepTree, primaryStepId);
 
-  if (insertionPoint.primaryInput) {
-    // Insert Before, Case #1: Inserting between two nodes on the primary branch
+  if (
+    primaryInput.type === "not-in-tree" ||
+    primaryInput.type === "primary-input"
+  ) {
+    // Trying to append to an absent node or a node which is not
+    // the root of a strategy (main or nested)
 
-    insertionPoint.primaryInput = {
+    return newStepTree;
+  } else if (primaryInput.type === "root") {
+    // Appending to the root node of the "main" strategy
+
+    return {
       stepId: newStepId,
-      primaryInput: insertionPoint.primaryInput,
+      primaryInput: newStepTree,
       secondaryInput: newStepSecondaryInput
     };
-  } else if (insertionPointParent) {
-    // Insert Before, Case #2: Inserting before (client-side) Step 1 in a step tree with more than one leaf
+  } else {
+    // Appending to the root node of a nested strategy
+    const newStepParentNode = primaryInput.parentNode;
 
-    insertionPointParent.primaryInput = {
+    newStepParentNode.secondaryInput = {
+      stepId: newStepId,
+      primaryInput: primaryInput.node,
+      secondaryInput: newStepSecondaryInput
+    };
+
+    return newStepTree;
+  }
+};
+
+const insertBefore = (
+  oldStepTree: StepTree,
+  outputStepId: number,
+  newStepId: number,
+  newStepSecondaryInput: StepTree | undefined
+): StepTree => {
+  const newStepTree = copyStepTree(oldStepTree);
+  const outputStep = getNodeMetadata(newStepTree, outputStepId);
+
+  if (outputStep.type === "not-in-tree") {
+    // Trying to insert before an absent node
+
+    return newStepTree;
+  } else if (outputStep.node.primaryInput) {
+    // Inserting before (client-side) Step >= 2
+    outputStep.node.primaryInput = {
+      stepId: newStepId,
+      primaryInput: outputStep.node.primaryInput,
+      secondaryInput: newStepSecondaryInput
+    };
+
+    return newStepTree;
+  } else if (outputStep.type === "primary-input") {
+    // Inserting before (client-side) Step 1 in a strategy with more than one leaf
+    outputStep.parentNode.primaryInput = {
       stepId: newStepId,
       primaryInput: newStepSecondaryInput,
-      secondaryInput: insertionPoint
+      secondaryInput: outputStep.node
     };
-  } else {
-    // Insert Before, Case #3: Inserting before (client-side) Step 1 in a one-leaf step tree
+
+    return newStepTree;
+  } else if (outputStep.type === "root") {
+    // Inserting before (client-side) Step 1 in a one-leaf "main" streategy
 
     return {
       stepId: newStepId,
       primaryInput: newStepSecondaryInput,
-      secondaryInput: insertionPoint
+      secondaryInput: outputStep.node
     };
-  }
+  } else {
+    // Inserting before (client-side) Step 1 in a one-leaf nested strategy
+    outputStep.parentNode.secondaryInput = {
+      stepId: newStepId,
+      primaryInput: newStepSecondaryInput,
+      secondaryInput: outputStep.node
+    };
 
-  return newStepTree;
+    return newStepTree;
+  }
 };
 
-export const findSubtree = (stepTree: StepTree | undefined, targetStepId: number): StepTree | undefined => 
+export const getOutputStep = (stepTree: StepTree, addType: AddType) => {
+  if (addType.type === 'append') {
+    const primaryInputMetadata = getNodeMetadata(stepTree, addType.primaryInputStepId);
+
+    return primaryInputMetadata.type === 'not-in-tree' || primaryInputMetadata.type === 'root'
+      ? undefined
+      : primaryInputMetadata.parentNode;
+  } else {
+    const outputMetadata = getNodeMetadata(stepTree, addType.outputStepId);
+
+    return outputMetadata.type === 'not-in-tree' 
+      ? undefined
+      : outputMetadata.node;
+  }  
+};
+
+const copyStepTree = (stepTree: StepTree): StepTree => ({
+  stepId: stepTree.stepId,
+  primaryInput: stepTree.primaryInput && copyStepTree(stepTree.primaryInput),
+  secondaryInput: stepTree.secondaryInput && copyStepTree(stepTree.secondaryInput)
+});
+
+export const getPreviousStep = (stepTree: StepTree, addType: AddType) => {
+  if (addType.type === 'append') {
+    return findSubtree(
+      stepTree,
+      addType.primaryInputStepId
+    );
+  }
+
+  const insertionPointSubtree = findSubtree(
+    stepTree,
+    addType.outputStepId
+  );
+
+  return insertionPointSubtree && insertionPointSubtree.primaryInput;  
+}
+
+const findSubtree = (stepTree: StepTree | undefined, targetStepId: number): StepTree | undefined => 
   stepTree === undefined
     ? undefined
     : stepTree.stepId === targetStepId
     ? stepTree
     : findSubtree(stepTree.primaryInput, targetStepId) || findSubtree(stepTree.secondaryInput, targetStepId);
-
-const contains = (stepTree: StepTree | undefined, targetStepId: number) => !!findSubtree(stepTree, targetStepId);
-
-export const findAppendPoint = (stepTree: StepTree, primaryInputStepId: number): StepTree => {
-  if (stepTree.primaryInput === undefined) {
-    throw new Error(`Tried to insert a step after step #${primaryInputStepId}, but step #${primaryInputStepId} does not appear in the tree`);
-  }
-
-  return stepTree.primaryInput.stepId === primaryInputStepId || contains(stepTree.primaryInput.secondaryInput, primaryInputStepId)
-    ? stepTree
-    : findAppendPoint(stepTree.primaryInput, primaryInputStepId);
-};
-
-const findInsertionPoint = (stepTree: StepTree, targetStepId: number): [StepTree, StepTree | undefined] => {
-  if (stepTree.stepId === targetStepId) {
-    return [stepTree, undefined];
-  }
-
-  return traversePrimaryBranchForInsertionPoint(stepTree.primaryInput, stepTree);
-
-  function traversePrimaryBranchForInsertionPoint(currentNode: StepTree | undefined, parentNode: StepTree): [StepTree, StepTree] {
-    if (currentNode === undefined) {
-      throw new Error(`Tried to insert a new step before step #${targetStepId}, but step #${targetStepId} does not appear in the tree`);
-    }
-
-    return currentNode.stepId === targetStepId || contains(currentNode.secondaryInput, targetStepId)
-      ? [currentNode, parentNode]
-      : traversePrimaryBranchForInsertionPoint(currentNode.primaryInput, currentNode);
-  }
-};
 
 export const findPrimaryBranchHeight = (stepTree: StepTree): number => {
   return traversePrimaryBranch(stepTree, 0);
@@ -135,16 +207,6 @@ export const findPrimaryBranchLeaf = (stepTree: StepTree): StepTree =>
   stepTree.primaryInput === undefined
     ? stepTree
     : findPrimaryBranchLeaf(stepTree.primaryInput);
-
-const copyStepTree = (stepTree: StepTree): StepTree => ({
-  stepId: stepTree.stepId,
-  primaryInput: !stepTree.primaryInput
-    ? undefined 
-    : copyStepTree(stepTree.primaryInput),
-  secondaryInput: !stepTree.secondaryInput
-    ? undefined
-    : copyStepTree(stepTree.secondaryInput)
-});
 
 /**
  * Creates a new step tree with the target step and affected steps removed from

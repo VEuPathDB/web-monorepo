@@ -9,7 +9,7 @@ import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
-import { findAppendPoint } from 'wdk-client/Utils/StrategyUtils';
+import { getOutputStep } from 'wdk-client/Utils/StrategyUtils';
 import { PrimaryInputLabel } from './PrimaryInputLabel';
 
 const cx = makeClassNameHelper('ConvertStepMenu');
@@ -76,11 +76,11 @@ const ConvertStepMenuView = ({
 const outputStep = createSelector(
   (_: RootState, { addType }: OwnProps) => addType,
   (_: RootState, { strategy }: OwnProps) => strategy,
-  (addType, strategy) => addType.type === 'append' && strategy.stepTree.stepId === addType.primaryInputStepId
-    ? undefined
-    : addType.type === 'append'
-    ? strategy.steps[findAppendPoint(strategy.stepTree, addType.primaryInputStepId).stepId]
-    : strategy.steps[addType.outputStepId]
+  (addType, strategy) => {
+    const outputStep = getOutputStep(strategy.stepTree, addType);
+
+    return outputStep && strategy.steps[outputStep.stepId];
+  }
 );
 
 const outputStepQuestion = createSelector(
