@@ -15,7 +15,7 @@ import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionFor
 import { SpanLogicForm } from '../questions/SpanLogicForm';
 
 import './ColocateStepForm.scss';
-import { findAppendPoint } from 'wdk-client/Utils/StrategyUtils';
+import { getOutputStep } from 'wdk-client/Utils/StrategyUtils';
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 
@@ -343,11 +343,7 @@ const ColocationOperatorForm = (
   );
 
   const outputStep = useMemo(
-    () => addType.type === 'append' && strategy.stepTree.stepId === addType.primaryInputStepId
-      ? undefined
-      : addType.type === 'append'
-      ? strategy.steps[findAppendPoint(strategy.stepTree, addType.primaryInputStepId).stepId]
-      : strategy.steps[addType.outputStepId], 
+    () => getOutputStep(strategy.stepTree, addType),
     [ strategy, addType ]
   );
 
