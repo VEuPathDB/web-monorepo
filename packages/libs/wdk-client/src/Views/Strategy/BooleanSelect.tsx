@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import Select from 'react-select';
 import { ValueType } from 'react-select/src/types';
@@ -15,7 +15,7 @@ import 'wdk-client/Views/Strategy/BooleanSelect.scss';
 interface Props {
   addType: AddType
   value: CombineOperator;
-  onChange: (value: ValueType<BooleanOption>) => void;
+  onChange: (value: CombineOperator) => void;
 }
 
 export type BooleanOption = {
@@ -43,9 +43,13 @@ const formatBooleanOptionLabel = (option: BooleanOption) =>
       <div>{option.label}</div>
   </div>;
 
-export const BooleanSelect = ({ addType, value, onChange }: Props) => {
+export const BooleanSelect = ({ addType, value, onChange: onChangeValue }: Props) => {
   const options = addType.type === 'append' ? appendOptions : insertBeforeOptions;
   const valueOption = options.find(option => option.value === value);
+
+  const onChange = useCallback((option: ValueType<BooleanOption>) => {
+    onChangeValue((option as BooleanOption).value);
+  }, [ onChangeValue ]);
 
   return (
     <Select<BooleanOption>

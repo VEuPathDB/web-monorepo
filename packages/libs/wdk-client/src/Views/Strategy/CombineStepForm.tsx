@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { ValueType } from 'react-select/src/types';
-
 import { updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { Loading } from 'wdk-client/Components';
@@ -13,7 +11,7 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { BooleanSelect, BooleanOption } from 'wdk-client/Views/Strategy/BooleanSelect';
+import { BooleanSelect } from 'wdk-client/Views/Strategy/BooleanSelect';
 import { BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepForm.scss';
@@ -71,7 +69,7 @@ const booleanOperatorParameter = createSelector(
 type OwnProps = AddStepOperationFormProps;
 
 type CombineStepFormViewProps = StateProps & {
-  updateBooleanOperator: (newBooleanOperator: ValueType<BooleanOption>) => void
+  updateBooleanOperator: (newBooleanOperator: CombineOperator) => void
 } & OwnProps;
 
 const CombineStepFormView = ({
@@ -140,13 +138,13 @@ export const CombineStepForm = connect<StateProps, DispatchProps, OwnProps, Comb
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
-    updateBooleanOperator: (newBooleanOperator: ValueType<BooleanOption>) => {
+    updateBooleanOperator: (newBooleanOperator: CombineOperator) => {
       if (stateProps.booleanSearchState && stateProps.booleanOperatorParameter) {
         dispatchProps.updateParamValue({
           searchName: stateProps.booleanSearchUrlSegment,
           parameter: stateProps.booleanOperatorParameter,
           paramValues: stateProps.booleanSearchState.paramValues,
-          paramValue: newBooleanOperator as unknown as string
+          paramValue: newBooleanOperator
         });
       }
     },
