@@ -13,6 +13,7 @@
     text-align: left;
     @include unify-parent('th, td') {
       padding: 3px 4px;
+      vertical-align: middle;
     }
   }
 
