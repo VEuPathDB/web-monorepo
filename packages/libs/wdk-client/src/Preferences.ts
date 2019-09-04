@@ -1,6 +1,7 @@
 import { memoize } from 'lodash';
-import { Decoder, arrayOf, number, string, boolean, decode } from 'wdk-client/Utils/Json';
-import WdkService from 'wdk-client/Service/WdkService';
+import { Decoder, arrayOf, oneOf, number, string, boolean, decode, constant, combine, field } from 'wdk-client/Utils/Json';
+import WdkService, {useWdkEffect} from 'wdk-client/Service/WdkService';
+import {useState} from 'react';
 
 /**
  * Configuration of available preferences used by the system.
@@ -22,6 +23,16 @@ export const preferences = {
     arrayOf(number),
     PersistenceLevel.Session,
     'wdk/openedStrategies'
+  )),
+
+  saveAsSort: memoize(() => makePreference(
+    'saveAsSort',
+    combine(
+      field('columnKey', string),
+      field('direction', oneOf(constant('asc'), constant('desc')))
+    ),
+    PersistenceLevel.Session,
+    'wdk/saveAsSort'
   )),
 
   /* this is currently handled in a different file. here for reference.
@@ -126,4 +137,20 @@ export async function setValue<T extends PreferenceEntry>(wdkService: WdkService
       return;
     }
   }
+}
+
+/** React hook to use preferences in components */
+export function usePreference<T extends PreferenceEntry>(preference: T, defaultValue?: PreferenceType<T>) {
+  const [ preferenceValue, setPreferenceValue ] = useState<PreferenceType<T>>();
+  useWdkEffect(wdkService => {
+    (async () => {
+      setPreferenceValue((await getValue(wdkService, preference)) || defaultValue);
+    })();
+  }, [preference]);
+
+  useWdkEffect(wdkService => {
+    if (preferenceValue) setValue(wdkService, preference, preferenceValue);
+  }, [preferenceValue]);
+
+  return [ preferenceValue, setPreferenceValue ] as [ typeof preferenceValue, typeof setPreferenceValue ];
 }
