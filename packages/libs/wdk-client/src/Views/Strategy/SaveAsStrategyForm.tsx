@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {StrategySummary, StrategyProperties, SaveStrategyOptions} from 'wdk-client/Utils/WdkUser';
+import {StrategySummary, SaveStrategyOptions} from 'wdk-client/Utils/WdkUser';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 import {formatDateTimeString} from 'wdk-client/Views/Strategy/StrategyUtils';
 import Mesa, {MesaState} from 'wdk-client/Components/Mesa';

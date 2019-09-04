@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { StrategySummary, EditStrategySpec } from 'wdk-client/Utils/WdkUser';
 
-import './SaveStrategyForm.css';
+import './EditStrategyForm.css';
 
 interface Props {
   strategy: StrategySummary;
