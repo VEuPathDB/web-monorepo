@@ -81,25 +81,25 @@ export let contexts = [
     isPbrowse: false
   },
   {
-    gbrowse_url: 'orfJbrowseUrl',
+    gbrowse_url: 'orfGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'orfGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpChipJbrowseUrl',
+    gbrowse_url: 'snpChipGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'snpChipGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpJbrowseUrl',
+    gbrowse_url: 'snpGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'snpGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'spanJbrowseUrl',
+    gbrowse_url: 'spanGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'spanGenomicContext',
     isPbrowse: false
@@ -111,10 +111,16 @@ const GbrowseLink = ({ url }) =>
 <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser</a>
 </div>
 
+const JbrowseLink = ({ url }) =>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={url} className="eupathdb-BigButton">View in Genome Browser</a>
+</div>
+
+
 const GbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser&nbsp;<img src={webAppUrl + '/wdk/images/retired.gif'} height="35" align="center" /></a>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser&nbsp;<img src={webAppUrl + '/wdk/images/toBeRetired.png'} height="35" align="center" /></a>
 </div>
 
 const PbrowseLink = ({ url }) =>
@@ -125,7 +131,7 @@ const PbrowseLink = ({ url }) =>
 const PbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse protein browser</a>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in Gbrowse protein browser&nbsp;<img src={webAppUrl + '/wdk/images/retired.gif'} height="35" align="center" /></a>
+<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in Gbrowse protein browser&nbsp;<img src={webAppUrl + '/wdk/images/toBeRetired.png'} height="35" align="center" /></a>
 
 </div>
 
@@ -140,39 +146,36 @@ export function GbrowseContext(props) {
   let url = record.attributes[attribute.name];
   let jbrowseUrlMinimal = ""
   let jbrowseUrl = record.attributes.jbrowseLink;
+  let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
   if (attribute.name == 'GeneModelGbrowseUrl'){ 
-      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
-  }
+      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl; 
+      return (
+    	<div>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	</div>
+	)
+  }	
+  if (attribute.name == 'SyntenyGbrowseUrl'){ 
+      jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
+      return (
+        <div>
+          <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
+      	 <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      </div>
+	  )
+    }
   if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
   }
   if (attribute.name == 'SnpsGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
   }
-  if (attribute.name == 'SyntenyGbrowseUrl'){ 
-      jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
-  }
 
-  if ( jbrowseUrl && ( attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'ProteomicsPbrowseUrl') ) {
-  return (
-    <div>
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-    </div>
-	  )
-    }
 
-  if ( jbrowseUrl ) {
-  return (
-    <div>
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-      <GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlMinimal}/>
-    </div>
-	  )
-    }
 
   if ( attribute.name == 'snpJbrowseUrl' || attribute.name == 'spanJbrowseUrl' ){
   return (
@@ -183,9 +186,21 @@ export function GbrowseContext(props) {
 	  )
     }
 
+  if (attribute.name == 'BlatAlignmentsGbrowseUrl'|| attribute.name == 'SnpsGbrowseUrl'){ 
+  return (
+      <div>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseImage url={url} includeImageMap={true} />
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      </div>
+      )
+    }
+
   return (
     <div>
-      <JbrowseIframe jbrowseUrl={url} />
+      <JbrowseLink url={jbrowseCommonUrl}/>
+      <GbrowseImage url={url} includeImageMap={true} />
+      <JbrowseLink url={jbrowseCommonUrl}/>
     </div>
   );
 }
@@ -197,7 +212,7 @@ export function ProteinContext(props) {
   return (
     <div>
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
+      <GbrowseImage url={url} includeImageMap={true} />
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
   );
@@ -468,4 +483,14 @@ function makeGbrowseLinkUrl(url) {
     .replace(TRACKS_PARAM_REGEXP, tracksReplacer)
     .replace(GENEPAGE_PARAM_REGEXP, '')
     .replace('/gbrowse_img/', '/gbrowse/');
+}
+
+function replaceWithFullUrl(url) {
+  return url
+    .replace('/geneAnnotationTracks/', '/tracks/')
+    .replace('/syntenyTracks/', '/tracks/')
+    .replace('/geneticVariationTracks/', '/tracks/')
+    .replace('/blatAlignmentTracks/', '/tracks/')
+    .replace('/syntenyTracks/', '/tracks/');
+
 }

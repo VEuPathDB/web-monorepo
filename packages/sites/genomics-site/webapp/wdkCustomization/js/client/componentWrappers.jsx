@@ -14,6 +14,7 @@ import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
+import newFeatureImage from 'wdk/images/new-feature.png';
 
 import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
 import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
@@ -144,6 +145,10 @@ export function RecordTableSection(DefaultComponent) {
             table.properties.hideDatasetLink[0].toLowerCase() == 'true'
         );
 
+      let showNewFeature = (
+	record.tables[table.name] &&
+	table.name == 'TranscriptionSummary'
+      );
 
       let showDatasetsLink = (
         record.tables[table.name] &&
@@ -165,6 +170,9 @@ export function RecordTableSection(DefaultComponent) {
           displayName: (
             <span>
               {table.displayName}
+	      {showNewFeature &&
+	        <img src={newFeatureImage}/>
+	      }
               {showDownload &&
                 <span
                   style={{

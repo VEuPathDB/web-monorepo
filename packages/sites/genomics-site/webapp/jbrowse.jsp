@@ -9,7 +9,7 @@
 <c:set var="project" value="${applicationScope.wdkModel.name}" />
 
 <c:set var="iframeSrc">
-  /a/jbrowse/index.html?data=${param.data}&tracks=${param.tracks}
+  /a/jbrowse/index.html?data=${param.data}&tracks=${param.tracks}&highlight=${param.highlight}
 </c:set>
 
 
