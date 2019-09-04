@@ -184,7 +184,7 @@ export const getPreviousStep = (stepTree: StepTree, addType: AddType) => {
   return insertionPointSubtree && insertionPointSubtree.primaryInput;  
 }
 
-const findSubtree = (stepTree: StepTree | undefined, targetStepId: number): StepTree | undefined => 
+export const findSubtree = (stepTree: StepTree | undefined, targetStepId: number): StepTree | undefined => 
   stepTree === undefined
     ? undefined
     : stepTree.stepId === targetStepId

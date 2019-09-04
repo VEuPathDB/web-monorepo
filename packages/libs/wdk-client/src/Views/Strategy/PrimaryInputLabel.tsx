@@ -21,8 +21,8 @@ export const PrimaryInputLabel = ({
       {resultSetSize !== undefined ? resultSetSize.toLocaleString() : '?'}
       <br />
       {resultSetSize === 1 
-        ? recordClass.shortDisplayName 
-        : recordClass.shortDisplayNamePlural
+        ? recordClass.displayName
+        : recordClass.displayNamePlural
       }
     </div>
     <div className={cx('--Arrow')}>

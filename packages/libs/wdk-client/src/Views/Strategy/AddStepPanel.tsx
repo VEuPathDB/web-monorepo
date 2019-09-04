@@ -8,7 +8,7 @@ import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { useAddStepMenuConfigs, useSelectedAddStepFormComponent } from 'wdk-client/Utils/Operations';
-import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf } from 'wdk-client/Utils/StrategyUtils';
+import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf, findSubtree } from 'wdk-client/Utils/StrategyUtils';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
@@ -309,11 +309,22 @@ const previousStep = createSelector(
 const operandStep = createSelector(
   strategy,
   previousStep,
-  (strategy, previousStep) => strategy === undefined
-    ? undefined
-    : previousStep !== undefined
-    ? previousStep
-    : strategy.steps[findPrimaryBranchLeaf(strategy.stepTree).stepId]
+  (_, { addType }: OwnProps) => addType,
+  (strategy, previousStep, addType) => {
+    if (strategy === undefined) {
+      return undefined;
+    }
+
+    if (previousStep !== undefined) {
+      return previousStep;
+    }
+
+    const insertionPointSubtree = addType.type === 'append'
+      ? findSubtree(strategy.stepTree, addType.primaryInputStepId)
+      : findSubtree(strategy.stepTree, addType.outputStepId);
+
+    return strategy.steps[findPrimaryBranchLeaf(insertionPointSubtree || strategy.stepTree).stepId];
+  }
 );
 
 const stepsCompletedNumber = createSelector(

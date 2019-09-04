@@ -93,7 +93,7 @@ const outputStepQuestion = createSelector(
 //   (1) the search has a primary input and NO secondary input
 //   (2) the search's primary input is compatible with the input step's record class
 //   (3) if inserting before a step (the "output step"), the search's output record class is compatible with the output step's primary input
-//   (4) the search has at least one visible parameter group
+//   (4) FIXME - ugly hardcoding - the search's outputRecordClassName is not "gene"
 const isValidTransformFactory = (inputRecordClass: RecordClass, outputStepQuestion?: Question) => (search: Question) =>
   ( // (1)
     !!search.allowedPrimaryInputRecordClassNames && !search.allowedSecondaryInputRecordClassNames
@@ -106,7 +106,7 @@ const isValidTransformFactory = (inputRecordClass: RecordClass, outputStepQuesti
     outputStepQuestion.allowedPrimaryInputRecordClassNames && outputStepQuestion.allowedPrimaryInputRecordClassNames.includes(search.outputRecordClassName)
   ) &&
   ( // (4)
-    search.groups.some(group => group.isVisible)
+    search.outputRecordClassName !== 'gene'
   );
 
 const isValidTransform = createSelector(
