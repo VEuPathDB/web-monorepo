@@ -6,7 +6,7 @@ import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
-import { StrategyDetails, strategySummaryDecoder } from 'wdk-client/Utils/WdkUser';
+import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import {
   requestCreateStrategy,
   fulfillCreateStrategy,
@@ -159,15 +159,16 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     return fulfillDeleteOrRestoreStrategies(deleteStrategiesSpecs, requestTimestamp);
   }
 
-  async function getFulfillPatchStrategy(
-    [requestAction]: [InferAction<typeof requestPatchStrategyProperties>],
-    state$: StateObservable<RootState>,
-    { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillPatchStrategyProperties>> {
-    const { strategyId, strategyProperties } = requestAction.payload;
-    await wdkService.patchStrategyProperties(strategyId, strategyProperties);
-    return fulfillPatchStrategyProperties(strategyId);
-  }
+/*
+async function getFulfillPatchStrategy(
+  [requestAction]: [InferAction<typeof requestPatchStrategyProperties>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillPatchStrategyProperties>> {
+  const { strategyId, strategyProperties } = requestAction.payload;
+  await wdkService.patchStrategyProperties(strategyId, strategyProperties);
+  return fulfillPatchStrategyProperties(strategyId);
+}
 
 async function getFulfillStrategy_SaveAs(
   [requestAction]: [InferAction<typeof requestSaveAsStrategy>],
@@ -179,13 +180,7 @@ async function getFulfillStrategy_SaveAs(
   const newStrategyResponse = await wdkService.createStrategy({ ...strategyProperties, isSaved: true, stepTree });
   return requestStrategy(newStrategyResponse.id);
 }
-
-/*
-
- Commenting out the two epics below, which are an attempt to approximate the logic and rules of the production application.
- We are hoping to develop a more intuitive workflow.
-
- These would replace getFulfillPatchStrategy and getFulfillStrategy_SaveAs.
+ */
 
 // This logic is complicated to express with mrate, so we're using a vanilla Epic
 function observePatchStrategy(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
@@ -222,33 +217,39 @@ function observeSaveStrategyAs(action$: ActionsObservable<Action>, state$: State
   return action$.pipe(
     filter(requestSaveAsStrategy.isOfType),
     mergeMap(async action => {
-      const { strategyId, strategyProperties, options } = action.payload;
+      const { strategyId, targetName, options } = action.payload;
       const allStrategies = await wdkService.getStrategies();
+      const sourceStrategy = allStrategies.find(s => s.strategyId === strategyId);
+
+      if (sourceStrategy == null) throw new Error(`Could not find strategy being saved.`);
+
       const conflictingStrategy = allStrategies.find(strategy => (
         strategy.isSaved &&
-        strategy.name === strategyProperties.name &&
+        strategy.name === targetName &&
         strategy.strategyId !== strategyId
       ));
+
       const proceed = conflictingStrategy == null ? true : await confirm(
         'Replace existing strategy?',
-        `A strategy with the name "${strategyProperties.name}" already exists. Would you like to replace it?`
+        `A strategy with the name "${targetName}" already exists. Would you like to replace it?`
       );
 
       if (!proceed) return empty();
 
       const stepTree = await wdkService.getDuplicatedStrategyStepTree(strategyId);
 
-      // If it exists, then update that strategy
+      const { description } = sourceStrategy;
+
+      // If there is a saved strategy with targetName, update it; otherwise create a new strategy.
       if (conflictingStrategy == null) {
-        const newStratResponse = await wdkService.createStrategy({ ...strategyProperties, isSaved: true, stepTree });
+        const newStratResponse = await wdkService.createStrategy({ name: targetName, description, isSaved: true, isPublic: false, stepTree });
         const strategy = await wdkService.getStrategy(newStratResponse.id);
         if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
         return of(fulfillStrategy(strategy));
       }
 
-      const { isSaved, ...restProps } = strategyProperties;
       await wdkService.putStrategyStepTree(conflictingStrategy.strategyId, stepTree);
-      await wdkService.patchStrategyProperties(conflictingStrategy.strategyId, restProps);
+      await wdkService.patchStrategyProperties(conflictingStrategy.strategyId, { name: targetName, description });
       if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
       return of(fulfillPatchStrategyProperties(conflictingStrategy.strategyId));
     }),
@@ -256,7 +257,6 @@ function observeSaveStrategyAs(action$: ActionsObservable<Action>, state$: State
     mergeAll()
   );
 }
-*/
 
   async function getFulfillStrategy_PatchStratProps(
     [requestAction]: [InferAction<typeof fulfillPatchStrategyProperties>],
@@ -420,9 +420,9 @@ async function getFulfillNewSearch(
     }),
     mrate([requestDeleteOrRestoreStrategies], getFulfillDeleteOrRestoreStrategies),
     mrate([requestPutStrategyStepTree], getFulfillStrategy_PutStepTree),
-    mrate([requestPatchStrategyProperties], getFulfillPatchStrategy),
-    mrate([requestSaveAsStrategy], getFulfillStrategy_SaveAs,
-      { areActionsNew: stubTrue }),
+    // mrate([requestPatchStrategyProperties], getFulfillPatchStrategy),
+    // mrate([requestSaveAsStrategy], getFulfillStrategy_SaveAs,
+    // { areActionsNew: stubTrue }),
     mrate([fulfillPatchStrategyProperties], getFulfillStrategy_PatchStratProps,
       { areActionsNew: stubTrue,  areActionsCoherent: areFulfillStrategy_PatchStratPropsActionsCoherent }),
     mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps,
@@ -439,10 +439,6 @@ async function getFulfillNewSearch(
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
     mrate([requestCreateStrategy, fulfillCreateStrategy], getFulfillNewSearch),
-    // observePatchStrategy,
-    // observeSaveStrategyAs
+    observePatchStrategy,
+    observeSaveStrategyAs
   );
-/*
-requestUpdateStepProperties,
-requestDeleteStep,
-*/

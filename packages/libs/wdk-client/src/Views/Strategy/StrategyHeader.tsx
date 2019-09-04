@@ -14,7 +14,9 @@ const isOpenedLinkActive: NavLinkProps['isActive'] = (match , location) => {
   return /^(\/\d+){0,2}$/.test(subPath);
 }
 
-const toCountString = (count?: number) => count != null ? count.toLocaleString() : '...';
+const toCountString = (count?: number) => count != null
+  ? count.toLocaleString()
+  : <div className="Count-Loading" title="Loading...">...</div>
 
 interface Props {
   activeStrategy?: { strategyId: number, stepId?: number };

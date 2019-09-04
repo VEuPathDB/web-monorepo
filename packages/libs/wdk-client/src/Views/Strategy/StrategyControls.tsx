@@ -2,8 +2,9 @@ import { find } from 'lodash';
 import React from 'react';
 import {IconAlt, Modal} from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import SaveStrategyForm from 'wdk-client/Views/Strategy/SaveStrategyForm';
-import {StrategySummary, StrategyProperties, SaveStrategyOptions, EditStrategySpec} from 'wdk-client/Utils/WdkUser';
+import EditStrategyForm from 'wdk-client/Views/Strategy/EditStrategyForm';
+import SaveAsStrategyForm from 'wdk-client/Views/Strategy/SaveAsStrategyForm';
+import {StrategySummary, SaveStrategyOptions, EditStrategySpec} from 'wdk-client/Utils/WdkUser';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 
 import {connect} from 'react-redux';
@@ -28,7 +29,7 @@ interface DispatchProps {
   copyStrategy: (signature: string) => void;
   deleteStrategy: (strategyId: number) => void;
   renameStrategy: (strategyId: number, name: string) => void;
-  saveStrategy: (strategyId: number, properties: StrategyProperties, options: SaveStrategyOptions) => void;
+  saveStrategy: (strategyId: number, targetName: string, options: SaveStrategyOptions) => void;
   editStrategy: (strategyId: number, properties: EditStrategySpec) => void;
 }
 
@@ -38,8 +39,8 @@ const dispatchProps: DispatchProps = {
   copyStrategy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
   deleteStrategy: (strategyId: number) => requestDeleteStrategy(strategyId),
   renameStrategy: (strategyId: number, name: string) => requestPatchStrategyProperties(strategyId, { name }),
-  saveStrategy: (strategyId: number, properties: StrategyProperties, options: SaveStrategyOptions) =>
-    requestSaveAsStrategy(strategyId, properties, options),
+  saveStrategy: (strategyId: number, targetName: string, options: SaveStrategyOptions) =>
+    requestSaveAsStrategy(strategyId, targetName, options),
   editStrategy: (strategyId: number, properties: EditStrategySpec) =>
     requestPatchStrategyProperties(strategyId, properties)
 }
@@ -48,6 +49,7 @@ type Props = OwnProps & DispatchProps;
 
 interface ActionProps extends DispatchProps {
   strategy: StrategySummary;
+  strategySummaries: StrategySummary[];
 }
 
 interface StrategyAction {
@@ -100,7 +102,7 @@ function _ShareAction (props: ActionProps & { shareUrl: string }) {
 export const StrategyActions: Record<string, StrategyAction> = {
   copy: {
     iconName: 'clone',
-    title: 'Create an unsaved copy of your search strategy',
+    title: 'Copy',
     render: (props: ActionProps) => (
       <React.Fragment>
         <div>Are you sure you want to make a copy of your strategy?</div>
@@ -115,25 +117,25 @@ export const StrategyActions: Record<string, StrategyAction> = {
 
   edit: {
     iconName: 'pencil-square-o',
-    title: 'Edit details of your search strategy',
-    render: (props: ActionProps) => <SaveStrategyForm isEdit {...props}/>
+    title: 'Edit details',
+    render: (props: ActionProps) => <EditStrategyForm {...props}/>
   },
 
   save: {
     iconName: 'floppy-o',
-    title: 'Create a saved copy of your search strategy',
-    render: (props: ActionProps) => <SaveStrategyForm {...props}/>
+    title: 'Save as',
+    render: (props: ActionProps) => <SaveAsStrategyForm {...props}/>
   },
 
   share: {
     iconName: 'share-alt',
-    title: 'Share your search strategy',
+    title: 'Share',
     render: ShareAction
   },
 
   delete: {
     iconName: 'trash-o',
-    title: 'Delete your search strategy',
+    title: 'Delete',
     render: (props: ActionProps) => (
       <React.Fragment>
         <div>Are you sure you want to delete your strategy?</div>
@@ -148,7 +150,7 @@ export const StrategyActions: Record<string, StrategyAction> = {
 
 function _StrategyActionModal(props: Props) {
   const { activeModal, strategySummaries, ...callbacks } = props;
-  if ( activeModal == null ) return null;
+  if ( activeModal == null || strategySummaries == null ) return null;
 
   const action = StrategyActions[activeModal.type];
   const strategy = find<StrategySummary>(strategySummaries, strat => strat.strategyId === activeModal.strategyId);
@@ -159,7 +161,7 @@ function _StrategyActionModal(props: Props) {
     <Modal>
       <div className={cx('--Action')}>
         <h3>{action.title}</h3>
-        <action.render {...callbacks} strategy={strategy}/>
+        <action.render {...callbacks} strategySummaries={strategySummaries} strategy={strategy}/>
       </div>
     </Modal>
   )

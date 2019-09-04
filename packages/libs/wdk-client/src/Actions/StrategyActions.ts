@@ -65,7 +65,7 @@ export const requestPatchStrategyProperties = makeActionCreator(
 
 export const requestSaveAsStrategy = makeActionCreator(
   'requestSaveAsStrategy',
-  (strategyId: number, strategyProperties: StrategyProperties, options: SaveStrategyOptions) => ({ strategyId, strategyProperties, options })
+  (strategyId: number, targetName: string, options: SaveStrategyOptions) => ({ strategyId, targetName, options })
 );
 
 export const fulfillPatchStrategyProperties = makeActionCreator(

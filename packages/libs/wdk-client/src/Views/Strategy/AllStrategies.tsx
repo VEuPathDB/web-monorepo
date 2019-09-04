@@ -133,7 +133,7 @@ interface CellRenderProps<T> {
 }
 
 const invalidIcon = <i className={`${cx('--InvalidIcon')} fa fa-ban`} />;
-  
+
 function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePublicStatus']) {
   return [
     {
@@ -152,23 +152,18 @@ function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePub
         const path = row.isValid ? `${row.strategyId}/${row.rootStepId}` : row.strategyId;
         return (
           <React.Fragment>
-            <Link to={`/workspace/strategies/${path}`}>{value}</Link>
+            <Link to={`/workspace/strategies/${path}`}>{value + (isSaved ? '' : ' *')}</Link>
           </React.Fragment>
         );
       })
     },
-    ( isSaved ? {
+    {
       key: 'description',
       name: 'Description',
       className: cx('--TableCell', 'description'),
-      renderCell: TruncatedText
-    } : {
-      key: 'nameOfFirstStep',
-      name: 'Name of first step',
-      className: cx('--TableCell', 'nameOfFirstStep'),
-      sortable: true,
-      renderCell: TruncatedText
-    }),
+      renderCell: ({ value, row }: CellRenderProps<string>) =>
+        value || !row.nameOfFirstStep ? <TruncatedText value={value}/> : <em>{row.nameOfFirstStep}</em>
+    },
     {
       key: 'leafAndTransformStepCount',
       name: '# steps',

@@ -5,13 +5,8 @@
 
 .SaveStrategyForm--Notes {
   text-align: left;
-  width: 600px;
-  border: 1px solid #ffebd0;
-  background: #fff9ea;
   padding: 1em 2em;
   border-radius: .5em;
-  margin: 0;
-  /* color: #774501; */
 }
 
 .SaveStrategyForm--Notes .important {
