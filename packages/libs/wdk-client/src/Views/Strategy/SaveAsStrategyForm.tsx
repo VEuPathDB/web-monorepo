@@ -1,11 +1,15 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {StrategySummary, SaveStrategyOptions} from 'wdk-client/Utils/WdkUser';
-import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
-import {formatDateTimeString} from 'wdk-client/Views/Strategy/StrategyUtils';
+import {orderBy} from 'lodash';
+import React, {useEffect, useRef, useState} from 'react';
+import {Link} from 'react-router-dom';
 import Mesa, {MesaState} from 'wdk-client/Components/Mesa';
+import {MesaSortObject} from 'wdk-client/Core/CommonTypes';
+import {preferences, usePreference} from 'wdk-client/Preferences';
+import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
+import {SaveStrategyOptions, StrategySummary} from 'wdk-client/Utils/WdkUser';
+import {formatDateTimeString} from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import './SaveAsStrategyForm.scss';
-import {Link} from 'react-router-dom';
+
 
 interface Props {
   strategy: StrategySummary;
@@ -65,17 +69,25 @@ export default function SaveAsStrategyForm(props: Props) {
   const [ name, setName ] = useState(strategy.name);
   const [ selectedStrategyId, setSelectedStrategyId ] = useState<number | null>(strategy.strategyId);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [ sort, setSort ] = usePreference(preferences.saveAsSort(), { columnKey: 'lastModified', direction: 'desc' })
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
   }, [selectedStrategyId])
 
-  if (strategySummaries == null) return null;
+  if (strategySummaries == null || sort == null) return null;
 
-  const mesaRows = strategySummaries.filter(s => s.isSaved && s.recordClassName === strategy.recordClassName);
+  const eventHandlers = {
+    onSort: ({ key: columnKey }: { key: string }, direction: MesaSortObject['direction']) =>
+      setSort({ columnKey, direction })
+  }
+
+  const mesaRows = orderBy(strategySummaries.filter(s => s.isSaved && s.recordClassName === strategy.recordClassName), [ sort.columnKey ], [ sort.direction ]);
   const tableState = MesaState.create({
     rows: mesaRows,
     columns: mesaColumns,
+    eventHandlers,
+    uiState: { sort },
     options: {
       useStickyHeader: true,
       tableBodyMaxHeight: '50vh',
