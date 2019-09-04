@@ -14,7 +14,7 @@ import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
-import newFeatureImage from 'wdk/images/new-feature.png';
+import newFeatureImage from 'wdk-client/Core/Style/images/new-feature.png';
 
 import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
 import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
