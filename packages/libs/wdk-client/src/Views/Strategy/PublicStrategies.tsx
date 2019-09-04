@@ -194,12 +194,12 @@ function makeMesaFilteredRows(
   return !normalizedSearchTerm
     ? rows
     : rows.filter(
-      row => columns.some(({ key: columnKey }) =>
-        columnKey === 'recordClassName'
-          ? recordClassToDisplayString(row.recordClassName).toLowerCase().includes(normalizedSearchTerm)
-          : columnKey === 'lastModified'
-          ? formatDateTimeString(row.lastModified).includes(normalizedSearchTerm)
-          : (row[columnKey] || '').toString().toLowerCase().includes(normalizedSearchTerm))
+        row => columns.some(({ key: columnKey }) =>
+          columnKey === 'recordClassName'
+            ? recordClassToDisplayString(row.recordClassName).toLowerCase().includes(normalizedSearchTerm)
+            : columnKey === 'lastModified'
+            ? formatDateTimeString(row.lastModified).includes(normalizedSearchTerm)
+            : (row[columnKey] || '').toString().toLowerCase().includes(normalizedSearchTerm))
       );
 }
 

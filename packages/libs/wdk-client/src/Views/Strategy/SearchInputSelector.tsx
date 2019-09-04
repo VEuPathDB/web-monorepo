@@ -170,13 +170,28 @@ const isGuest = ({ globalData: { user } }: RootState) => user && user.isGuest;
 const basketCount = ({ basket }: RootState, { inputRecordClass: { urlSegment } }: OwnProps) =>
     basket.counts && basket.counts[urlSegment];
 
-const hasOtherStrategies = ({ strategyWorkspace }: RootState, { inputRecordClass: { urlSegment } }: OwnProps) => strategyWorkspace.strategySummaries
-  ? strategyWorkspace.strategySummaries.some(({ strategyId, recordClassName }) => 
-      recordClassName === urlSegment && 
-      strategyWorkspace.activeStrategy !== undefined && 
-      strategyWorkspace.activeStrategy.strategyId !== strategyId
-    )
-  : false;
+const openedStrategiesSet = createSelector(
+  ({ strategyWorkspace: { openedStrategies } }: RootState) => openedStrategies,
+  openedStrategies => openedStrategies && new Set(openedStrategies)
+);
+
+// We permit combining with strategies which are open or saved
+const hasOtherStrategies = createSelector(
+  ({ strategyWorkspace: { strategySummaries } }: RootState) => strategySummaries,
+  ({ strategyWorkspace: { activeStrategy } }: RootState) => activeStrategy && activeStrategy.strategyId,
+  (_: RootState, { inputRecordClass: { urlSegment: inputRecordClassName } }: OwnProps) => inputRecordClassName,
+  openedStrategiesSet,
+  (strategySummaries, activeStrategyId, inputRecordClassName, openedStrategiesSet) => !strategySummaries || !activeStrategyId || !openedStrategiesSet
+    ? false
+    : strategySummaries.some(({ isSaved, strategyId, recordClassName }) => 
+        recordClassName === inputRecordClassName &&
+        strategyId !== activeStrategyId &&
+        (
+          openedStrategiesSet.has(strategyId) ||
+          isSaved
+        )
+      )
+);
 
 const searchTree = createSelector(
   ({ globalData }: RootState) => globalData, 

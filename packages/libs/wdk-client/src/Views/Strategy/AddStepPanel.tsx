@@ -179,13 +179,13 @@ export const AddStepPanelView = wrappable((
                   className="link" 
                   onClick={selectedOperation ? onClickBack : onHideInsertStep} 
                   title="Go Back">
-                  <i className="fa fa-lg fa-arrow-circle-left" />
+                  <i className="fa fa-lg fa-arrow-left" />
                 </button>
                 <div>
                   Add a Step to your Strategy
                 </div>
                 <button type="button" className="link" onClick={onHideInsertStep} title="Close">
-                  <i className="fa fa-lg fa-times-circle" />
+                  <i className="fa fa-lg fa-times" />
                 </button>
               </h1>
               {
