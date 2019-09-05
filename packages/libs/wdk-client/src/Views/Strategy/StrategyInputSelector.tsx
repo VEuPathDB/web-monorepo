@@ -209,7 +209,7 @@ function makeMesaOptions() {
   return {
     toolbar: true,
     useStickyHeader: true,
-    tableBodyMaxHeight: 'calc(80vh - 200px)',
+    tableBodyMaxHeight: '40vh',
   };
 }
 

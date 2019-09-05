@@ -8,7 +8,7 @@ import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { useAddStepMenuConfigs, useSelectedAddStepFormComponent } from 'wdk-client/Utils/Operations';
-import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf, findSubtree } from 'wdk-client/Utils/StrategyUtils';
+import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf, findSubtree, getOutputStep } from 'wdk-client/Utils/StrategyUtils';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
@@ -23,6 +23,7 @@ type StateProps = {
   stepsCompletedNumber?: number,
   previousStep?: Step,
   operandStep?: Step,
+  outputStep?: Step,
   questions?: Question[],
   recordClasses?: RecordClass[]
 };
@@ -49,6 +50,7 @@ export type AddStepOperationMenuProps = {
   stepsCompletedNumber: number,
   operandStep: Step,
   previousStep?: Step,
+  outputStep?: Step,
   questions: Question[],
   questionsByUrlSegment: Record<string, Question>,
   recordClasses: RecordClass[],
@@ -67,6 +69,7 @@ export type AddStepOperationFormProps = {
   stepsCompletedNumber: number,
   operandStep: Step,
   previousStep?: Step,
+  outputStep?: Step,
   questions: Question[],
   questionsByUrlSegment: Record<string, Question>,
   recordClasses: RecordClass[],
@@ -82,6 +85,7 @@ export const AddStepPanelView = wrappable((
     onHideInsertStep,
     operandStep,
     previousStep,
+    outputStep,
     questions,
     recordClasses,
     requestPutStrategyStepTree,
@@ -155,7 +159,7 @@ export const AddStepPanelView = wrappable((
     [ recordClasses ]
   );
 
-  const addStepMenuConfigs = useAddStepMenuConfigs();
+  const addStepMenuConfigs = useAddStepMenuConfigs(questionsByUrlSegment, recordClassesByUrlSegment, operandStep, previousStep, outputStep);
   const SelectedForm = useSelectedAddStepFormComponent(selectedOperation);
 
   return (
@@ -169,7 +173,8 @@ export const AddStepPanelView = wrappable((
           questions === undefined ||
           questionsByUrlSegment === undefined ||
           recordClasses === undefined ||
-          recordClassesByUrlSegment === undefined
+          recordClassesByUrlSegment === undefined ||
+          addStepMenuConfigs === undefined
         )
           ? <Loading />
           : <div className={cx('--Container')}>
@@ -195,7 +200,7 @@ export const AddStepPanelView = wrappable((
                       <div className={cx('--MenusHeader')}>
                           So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}
                           {' '}
-                          and finds {(operandStep.estimatedSize || 0).toLocaleString()} {
+                          and finds {operandStep.estimatedSize === undefined ? '?' : operandStep.estimatedSize.toLocaleString()} {
                             operandStep.estimatedSize === 1
                               ? inputRecordClass.displayName
                               : inputRecordClass.displayNamePlural
@@ -218,6 +223,7 @@ export const AddStepPanelView = wrappable((
                                     stepsCompletedNumber={stepsCompletedNumber}
                                     operandStep={operandStep}
                                     previousStep={previousStep}
+                                    outputStep={outputStep}
                                     questions={questions}
                                     questionsByUrlSegment={questionsByUrlSegment}
                                     recordClasses={recordClasses}
@@ -251,6 +257,7 @@ export const AddStepPanelView = wrappable((
                         stepsCompletedNumber={stepsCompletedNumber}
                         operandStep={operandStep}
                         previousStep={previousStep}
+                        outputStep={outputStep}
                         questions={questions}
                         questionsByUrlSegment={questionsByUrlSegment}
                         recordClasses={recordClasses}
@@ -327,6 +334,20 @@ const operandStep = createSelector(
   }
 );
 
+const outputStep = createSelector(
+  (_: RootState, { addType }: OwnProps) => addType,
+  strategy,
+  (addType, strategy) => {
+    if (!strategy) {
+      return undefined;
+    }
+
+    const outputStep = getOutputStep(strategy.stepTree, addType);
+
+    return outputStep && strategy.steps[outputStep.stepId];
+  }
+);
+
 const stepsCompletedNumber = createSelector(
   previousStepSubtree,
   previousStepSubtree => previousStepSubtree === undefined
@@ -359,6 +380,7 @@ export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, 
     stepsCompletedNumber: stepsCompletedNumber(state, ownProps),
     previousStep: previousStep(state, ownProps),
     operandStep: operandStep(state, ownProps),
+    outputStep: outputStep(state, ownProps),
     questions: questions(state),
     recordClasses: recordClasses(state)
   }),

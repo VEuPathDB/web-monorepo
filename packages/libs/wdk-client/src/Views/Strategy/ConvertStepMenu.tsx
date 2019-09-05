@@ -7,10 +7,9 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
+import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
-import { getOutputStep } from 'wdk-client/Utils/StrategyUtils';
-import { PrimaryInputLabel } from './PrimaryInputLabel';
 
 const cx = makeClassNameHelper('ConvertStepMenu');
 
@@ -73,28 +72,15 @@ const ConvertStepMenuView = ({
   </div>
 );
 
-const outputStep = createSelector(
-  (_: RootState, { addType }: OwnProps) => addType,
-  (_: RootState, { strategy }: OwnProps) => strategy,
-  (addType, strategy) => {
-    const outputStep = getOutputStep(strategy.stepTree, addType);
-
-    return outputStep && strategy.steps[outputStep.stepId];
-  }
-);
-
-const outputStepQuestion = createSelector(
-  outputStep,
-  (_: RootState, { questionsByUrlSegment }: OwnProps) => questionsByUrlSegment,
-  (outputStep, questionsByUrlSegment) => outputStep && questionsByUrlSegment[outputStep.searchName]
-);
+const outputStepQuestion = (_: RootState, { outputStep, questionsByUrlSegment }: OwnProps) =>
+  outputStep && questionsByUrlSegment[outputStep.searchName]
 
 // A search specifies a valid transform <=>
 //   (1) the search has a primary input and NO secondary input
 //   (2) the search's primary input is compatible with the input step's record class
 //   (3) if inserting before a step (the "output step"), the search's output record class is compatible with the output step's primary input
 //   (4) FIXME - ugly hardcoding - the search's outputRecordClassName is not "gene"
-const isValidTransformFactory = (inputRecordClass: RecordClass, outputStepQuestion?: Question) => (search: Question) =>
+export const isValidTransformFactory = (inputRecordClass: RecordClass, outputStepQuestion?: Question) => (search: Question) =>
   ( // (1)
     !!search.allowedPrimaryInputRecordClassNames && !search.allowedSecondaryInputRecordClassNames
   ) &&
@@ -103,7 +89,8 @@ const isValidTransformFactory = (inputRecordClass: RecordClass, outputStepQuesti
   ) &&
   ( // (3)
     !outputStepQuestion ||
-    outputStepQuestion.allowedPrimaryInputRecordClassNames && outputStepQuestion.allowedPrimaryInputRecordClassNames.includes(search.outputRecordClassName)
+    !!outputStepQuestion.allowedPrimaryInputRecordClassNames && 
+    outputStepQuestion.allowedPrimaryInputRecordClassNames.includes(search.outputRecordClassName)
   ) &&
   ( // (4)
     search.outputRecordClassName !== 'gene'

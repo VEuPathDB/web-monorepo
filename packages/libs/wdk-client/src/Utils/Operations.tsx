@@ -2,18 +2,17 @@ import React, { ReactNode, useContext, useMemo, useCallback } from 'react';
 
 import { pick, toUpper } from 'lodash/fp';
 
+import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
+import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps, AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
+import { ReviseOperatorMenuItem } from 'wdk-client/Views/Strategy/CombineStepDetails';
 import { CombineStepMenu } from 'wdk-client/Views/Strategy/CombineStepMenu';
-import { ConvertStepMenu } from 'wdk-client/Views/Strategy/ConvertStepMenu';
+import { ConvertStepMenu, isValidTransformFactory } from 'wdk-client/Views/Strategy/ConvertStepMenu';
 import { CombineStepForm } from 'wdk-client/Views/Strategy/CombineStepForm';
 import { CombineWithStrategyForm } from 'wdk-client/Views/Strategy/CombineWithStrategyForm';
 import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
-
-import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
-import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { ReviseOperatorMenuItem } from 'wdk-client/Views/Strategy/CombineStepDetails';
-import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
 
 type OperatorMenuItem = {
   radioDisplay: ReactNode,
@@ -52,7 +51,15 @@ export type BinaryOperation = {
   baseClassName: string,
   operatorParamName: string,
   reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration,
-  operatorMenuGroup: OperatorMenuGroup
+  operatorMenuGroup: OperatorMenuGroup,
+  isCompatibleAddStepSearch: (
+    search: Question, 
+    questionsByUrlSegment: Record<string, Question>,
+    recordClassesByUrlSegment: Record<string, RecordClass>,
+    primaryOperandStep: Step,
+    previousStep?: Step, 
+    outputStep?: Step
+  ) => boolean
 };
 
 export const defaultBinaryOperations: BinaryOperation[] = [
@@ -88,7 +95,15 @@ export const defaultBinaryOperations: BinaryOperation[] = [
           value: 'RMINUS'
         }
       ]
-    }
+    },
+    isCompatibleAddStepSearch: (
+      search: Question, 
+      questionsByUrlSegment: Record<string, Question>,
+      recordClassesByUrlSegment: Record<string, RecordClass>,
+      primaryOperandStep: Step
+    ) => 
+      search.outputRecordClassName === primaryOperandStep.recordClassName &&
+      search.urlSegment.startsWith('boolean_question')
   }
 ];
 
@@ -96,7 +111,7 @@ export const BinaryOperationsContext = React.createContext<BinaryOperation[]>(de
 
 export const useBinaryOperations = () => useContext(BinaryOperationsContext);
 
-type AddStepMenuConfig = Pick<BinaryOperation, 'name' | 'AddStepMenuComponent' | 'addStepFormComponents'>;
+type AddStepMenuConfig = Pick<BinaryOperation, 'name' | 'AddStepMenuComponent' | 'addStepFormComponents' | 'isCompatibleAddStepSearch'>;
 
 export type OperatorMetadata = {
   operatorName: string,
@@ -257,25 +272,64 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
   return reviseOperatorConfigs;
 };
 
-const toAddStepMenuConfig = pick<BinaryOperation, keyof AddStepMenuConfig>(['name', 'AddStepMenuComponent', 'addStepFormComponents']);
+const toAddStepMenuConfig = pick<BinaryOperation, keyof AddStepMenuConfig>(['name', 'AddStepMenuComponent', 'addStepFormComponents', 'isCompatibleAddStepSearch']);
 
-const convertConfig = {
+const convertConfig: AddStepMenuConfig = {
   name: 'convert',
   AddStepMenuComponent: ConvertStepMenu,
   addStepFormComponents: {
     'convert': ConvertStepForm
-  }
+  },
+  isCompatibleAddStepSearch: (
+    search: Question, 
+    questionsByUrlSegment: Record<string, Question>,
+    recordClassesByUrlSegment: Record<string, RecordClass>,
+    primaryOperandStep: Step,
+    previousStep?: Step, 
+    outputStep?: Step
+  ) => 
+    !!previousStep &&
+    isValidTransformFactory(
+      recordClassesByUrlSegment[previousStep.recordClassName], 
+      outputStep && questionsByUrlSegment[outputStep.recordClassName]
+    )(search)
 };
 
-export const useAddStepMenuConfigs = (): AddStepMenuConfig[] => {
+export const useAddStepMenuConfigs = (
+  questionsByUrlSegment?: Record<string, Question>,
+  recordClassesByUrlSegment?: Record<string, RecordClass>,
+  primaryOperandStep?: Step,
+  previousStep?: Step, 
+  outputStep?: Step
+): AddStepMenuConfig[] | undefined => {
   const binaryOperations = useBinaryOperations();
+
   const menuConfigs = useMemo(
-    () => [
+    () => questionsByUrlSegment && recordClassesByUrlSegment && primaryOperandStep && [
       ...binaryOperations.filter(({ name }) => name === 'combine').map(toAddStepMenuConfig),
       convertConfig,
       ...binaryOperations.filter(({ name }) => name !== 'combine').map(toAddStepMenuConfig)
-    ],
-    [ binaryOperations ]
+    ].filter(
+      ({ isCompatibleAddStepSearch }) =>
+        Object.values(questionsByUrlSegment)
+          .some(search => isCompatibleAddStepSearch(
+            search, 
+            questionsByUrlSegment, 
+            recordClassesByUrlSegment, 
+            primaryOperandStep, 
+            previousStep, 
+            outputStep
+          )
+        )
+    ),
+    [ 
+      binaryOperations, 
+      questionsByUrlSegment, 
+      recordClassesByUrlSegment, 
+      primaryOperandStep, 
+      previousStep, 
+      outputStep 
+    ]
   );
 
   return menuConfigs;
@@ -284,7 +338,7 @@ export const useAddStepMenuConfigs = (): AddStepMenuConfig[] => {
 export const useSelectedAddStepFormComponent = (formName: string | undefined): React.ComponentType<AddStepOperationFormProps> => {
   const menuConfigs = useAddStepMenuConfigs();
   const operationFormsByName = useMemo(
-    () => menuConfigs.reduce(
+    () => menuConfigs && menuConfigs.reduce(
       (memo, { addStepFormComponents }) => ({ ...memo, ...addStepFormComponents }), 
       {} as Record<string, React.ComponentType<AddStepOperationFormProps>>
     ),
@@ -296,7 +350,7 @@ export const useSelectedAddStepFormComponent = (formName: string | undefined): R
     []
   );
 
-  return (formName && operationFormsByName[formName]) || DefaultFormComponent;
+  return (formName && operationFormsByName && operationFormsByName[formName]) || DefaultFormComponent;
 };
 
 export const useBinaryStepBoxClassName = (step: Step) => {
