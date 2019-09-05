@@ -11,16 +11,17 @@ interface BasketCellProps {
     primaryKeys: PrimaryKey[]
   ) => void;
   row: RecordInstance;
+  recordClassUrlSegment: string;
   userIsGuest: boolean;
   showLoginWarning: ShowLoginWarning;
 }
 
-export default function BasketCell({ value, requestUpdateBasket, row, userIsGuest, showLoginWarning }: BasketCellProps) {
+export default function BasketCell({ value, requestUpdateBasket, recordClassUrlSegment, row, userIsGuest, showLoginWarning }: BasketCellProps) {
   return (
     <BasketIconButton
       status={value}
       idsToToggle={[row.id]}
-      recordClassName={row.recordClassName}
+      recordClassName={recordClassUrlSegment}
       requestUpdateBasket={requestUpdateBasket}
       userIsGuest={userIsGuest}
       showLoginWarning={showLoginWarning}

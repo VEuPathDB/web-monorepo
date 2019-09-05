@@ -230,6 +230,7 @@ function getColumns({
     }) => (
       <BasketCell
         value={basketStatusArray ? basketStatusArray[rowIndex] : 'loading'}
+        recordClassUrlSegment={recordClass.urlSegment}
         row={row}
         requestUpdateBasket={requestUpdateBasket}
         userIsGuest={userIsGuest}
