@@ -68,6 +68,11 @@ export const requestSaveAsStrategy = makeActionCreator(
   (strategyId: number, targetName: string, options: SaveStrategyOptions) => ({ strategyId, targetName, options })
 );
 
+export const fulfillSaveAsStrategy = makeActionCreator(
+  'fulfillSaveAsStrategy',
+  (oldStrategyId: number, newStrategyId: number) => ({ oldStrategyId, newStrategyId })
+);
+
 export const fulfillPatchStrategyProperties = makeActionCreator(
     'fulfillPatchStrategyProperties',
     (strategyId: number) => ({ strategyId })
@@ -154,35 +159,37 @@ export const redirectToNewSearch = makeActionCreator(
     (newStrategyId: number, newStepId: number) => ({ newStrategyId, newStepId })
 );
 
-export type Action =
-| InferAction<typeof requestCreateStrategy>
-| InferAction<typeof fulfillCreateStrategy>
-| InferAction<typeof requestDeleteStrategy>
-| InferAction<typeof fulfillDeleteStrategy>
-| InferAction<typeof requestDeleteOrRestoreStrategies>
-| InferAction<typeof fulfillDeleteOrRestoreStrategies>
-| InferAction<typeof requestDuplicateStrategy>
-| InferAction<typeof fulfillDuplicateStrategy>
-| InferAction<typeof requestStrategy>
-| InferAction<typeof fulfillStrategy>
-| InferAction<typeof fulfillPutStrategy>
-| InferAction<typeof requestPatchStrategyProperties>
-| InferAction<typeof fulfillPatchStrategyProperties>
-| InferAction<typeof requestSaveAsStrategy>
-| InferAction<typeof requestPutStrategyStepTree>
-| InferAction<typeof requestGetDuplicatedStrategyStepTree>
-| InferAction<typeof fulfillGetDuplicatedStrategyStepTree>
-| InferAction<typeof requestRemoveStepFromStepTree>
-| InferAction<typeof requestUpdateStepProperties>
-| InferAction<typeof requestCreateStep>
-| InferAction<typeof fulfillCreateStep>
-| InferAction<typeof requestStepCustomReport>
-| InferAction<typeof fulfillStepCustomReport>
-| InferAction<typeof requestStepStandardReport>
-| InferAction<typeof fulfillStepStandardReport>
-| InferAction<typeof requestUpdateStepSearchConfig>
-| InferAction<typeof requestReplaceStep>
-| InferAction<typeof requestDeleteStep>
-| InferAction<typeof fulfillDeleteStep>
-| InferAction<typeof redirectToNewSearch>
+export type Action = InferAction<
+  | typeof requestCreateStrategy
+  | typeof fulfillCreateStrategy
+  | typeof requestDeleteStrategy
+  | typeof fulfillDeleteStrategy
+  | typeof requestDeleteOrRestoreStrategies
+  | typeof fulfillDeleteOrRestoreStrategies
+  | typeof requestDuplicateStrategy
+  | typeof fulfillDuplicateStrategy
+  | typeof requestStrategy
+  | typeof fulfillStrategy
+  | typeof fulfillPutStrategy
+  | typeof requestPatchStrategyProperties
+  | typeof fulfillPatchStrategyProperties
+  | typeof requestSaveAsStrategy
+  | typeof fulfillSaveAsStrategy
+  | typeof requestPutStrategyStepTree
+  | typeof requestGetDuplicatedStrategyStepTree
+  | typeof fulfillGetDuplicatedStrategyStepTree
+  | typeof requestRemoveStepFromStepTree
+  | typeof requestUpdateStepProperties
+  | typeof requestCreateStep
+  | typeof fulfillCreateStep
+  | typeof requestStepCustomReport
+  | typeof fulfillStepCustomReport
+  | typeof requestStepStandardReport
+  | typeof fulfillStepStandardReport
+  | typeof requestUpdateStepSearchConfig
+  | typeof requestReplaceStep
+  | typeof requestDeleteStep
+  | typeof fulfillDeleteStep
+  | typeof redirectToNewSearch
+  >
 

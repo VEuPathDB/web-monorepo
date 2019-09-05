@@ -3,7 +3,7 @@ import { ActionsObservable, combineEpics, StateObservable } from 'redux-observab
 import { empty, Observable, of, merge } from 'rxjs';
 import { mergeMap, mergeMapTo, tap, map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillStrategy, fulfillPatchStrategyProperties } from 'wdk-client/Actions/StrategyActions';
+import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillStrategy, fulfillPatchStrategyProperties, fulfillSaveAsStrategy } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies, clearActiveModal, setActiveModal } from 'wdk-client/Actions/StrategyWorkspaceActions';
@@ -41,6 +41,14 @@ export function reduce(state: State = initialState, action: Action): State {
         ...state,
         activeStrategy: action.payload.activeStrategy
       }
+
+    case fulfillSaveAsStrategy.type:
+      return updateOpenedStrategies(state, openedStrategies =>
+        openedStrategies.filter(id => id !== action.payload.oldStrategyId));
+
+    case fulfillDeleteStrategy.type:
+      return updateOpenedStrategies(state, openedStrategies =>
+        openedStrategies.filter(id => id !== action.payload.strategyId));
 
     case setActiveModal.type:
       return { ...state, activeModal: action.payload };
@@ -117,6 +125,13 @@ export function reduce(state: State = initialState, action: Action): State {
 
     default:
       return state;
+  }
+}
+
+function updateOpenedStrategies(state: State, updater: (openedStrategies: number[]) => number[]): State {
+  return state.openedStrategies == null ? state : {
+    ...state,
+    openedStrategies: updater(state.openedStrategies)
   }
 }
 
@@ -215,6 +230,13 @@ function updateRouteOnStrategyDuplicateEpic(action$: ActionsObservable<Action>, 
     if (fulfillDuplicateStrategy.isOfType(action)) {
       const { strategyId } = action.payload;
       transitioner.transitionToInternalPage(`/workspace/strategies/${strategyId}`, { replace: true });
+    }
+    if (fulfillSaveAsStrategy.isOfType(action)) {
+      const { activeStrategy } =  state$.value[key];
+      if (activeStrategy && activeStrategy.strategyId === action.payload.oldStrategyId) {
+        const { newStrategyId } = action.payload;
+        transitioner.transitionToInternalPage(`/workspace/strategies/${newStrategyId}`, { replace: true });
+      }
     }
     return empty();
   }))

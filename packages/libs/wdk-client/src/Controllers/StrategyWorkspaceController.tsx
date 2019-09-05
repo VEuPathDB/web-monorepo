@@ -12,7 +12,7 @@ import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesControl
 import { PublicStrategiesController } from 'wdk-client/Controllers/PublicStrategiesController';
 import { ImportStrategyController } from 'wdk-client/Controllers/ImportStrategyController';
 import {openStrategyView, closeStrategyView} from 'wdk-client/Actions/StrategyWorkspaceActions';
-import {StrategyDetails, StrategySummary} from 'wdk-client/Utils/WdkUser';
+import {StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
 
 interface OwnProps {

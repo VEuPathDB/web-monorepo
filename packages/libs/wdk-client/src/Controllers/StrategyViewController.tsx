@@ -11,7 +11,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import OpenedStrategies from 'wdk-client/Views/Strategy/OpenedStrategies';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
-import {Step} from 'wdk-client/Utils/WdkUser';
+import {Step, StrategyDetails} from 'wdk-client/Utils/WdkUser';
 import {requestStrategy} from 'wdk-client/Actions/StrategyActions';
 import {createSelector} from 'reselect';
 import {StepResultType} from 'wdk-client/Utils/WdkResult';
@@ -21,13 +21,13 @@ interface OwnProps {
   strategyId?: number;
   stepId?: number;
   openedStrategies?: number[];
-  activeStrategy?: { strategyId: number, stepId?: number };
 }
 
 interface MappedProps {
   isOpenedStrategiesVisible?: boolean;
   resultType?: StepResultType;
   recordClass?: RecordClass;
+  selectedStrategy?: StrategyDetails;
 }
 
 interface DispatchProps {
@@ -39,34 +39,40 @@ type Props = OwnProps & DispatchProps & MappedProps;
 const STRATEGY_PANEL_VIEW_ID = 'activeStrategyPanel';
 
 function StrategyViewController(props: Props) {
-  const { stepId, strategyId, resultType, recordClass, activeStrategy, dispatch, openedStrategies } = props;
+  const { stepId, strategyId, resultType, recordClass, selectedStrategy, dispatch, openedStrategies } = props;
 
-  useEffect(() => {
-    // XXX Move this logic to store module?
-    if (strategyId && (
-      activeStrategy == null ||
-      activeStrategy.strategyId !== strategyId ||
-      activeStrategy.stepId !== stepId
-    )) {
-      dispatch(setActiveStrategy({ strategyId, stepId }));
-    }
-    else if (activeStrategy) {
-      const subPath = `${activeStrategy.strategyId}` + (activeStrategy.stepId ? `/${activeStrategy.stepId}` : ``);
-      dispatch(transitionToInternalPage(`/workspace/strategies/${subPath}`));
-    }
-    else if (openedStrategies) {
-      const lastOpened = last(openedStrategies);
-      if (lastOpened) {
-        dispatch(transitionToInternalPage(`/workspace/strategies/${lastOpened}`));
-      }
-    }
-  }, [ stepId, strategyId, activeStrategy, openedStrategies ]);
-
+  // Loading strategy
   useEffect(() => {
     if (strategyId) {
       dispatch(requestStrategy(strategyId));
     }
   }, [strategyId]);
+
+  // Update active strategy to match what is in the url
+  useEffect(() => {
+    if (strategyId) dispatch(setActiveStrategy({ strategyId, stepId }));
+  }, [strategyId, stepId]);
+
+
+  // Select root step if no step is selected
+  useEffect(() => {
+    if (selectedStrategy && stepId == null) {
+      dispatch(transitionToInternalPage(`/workspace/strategies/${selectedStrategy.strategyId}/${selectedStrategy.rootStepId}`));
+    }
+  }, [stepId, strategyId, selectedStrategy]);
+
+  // Select last opened strategy, if no strategy is specified in url
+  useEffect(() => {
+    if (strategyId == null && openedStrategies) {
+      const lastOpened = last(openedStrategies);
+      if (lastOpened) {
+        dispatch(transitionToInternalPage(`/workspace/strategies/${lastOpened}`));
+      }
+    }
+
+  }, [strategyId, openedStrategies]);
+
+  if (openedStrategies == null) return null;
 
   return (
     <>
@@ -114,7 +120,9 @@ function mapState(state: RootState, props: OwnProps): MappedProps {
   const { isOpenedStrategiesVisible } = state.strategyWorkspace;
   const resultType = getResultType(state, props);
   const recordClass = getRecordClass(state, resultType);
-  return { isOpenedStrategiesVisible, resultType, recordClass };
+  const selectedStrategyEntry = props.strategyId == null ? undefined : state.strategies.strategies[props.strategyId]
+  const selectedStrategy = selectedStrategyEntry && selectedStrategyEntry.strategy;
+  return { isOpenedStrategiesVisible, resultType, recordClass, selectedStrategy };
 }
 
 export default connect(mapState)(StrategyViewController);
@@ -150,6 +158,7 @@ function StrategyPanelWithToggle(props: Props) {
   const strategiesToShow = isOpenedStrategiesVisible ? openedStrategies
     : strategyId != null ? [ strategyId ]
     : [];
+
   return (
     <>
       {openedStrategies.length > 1 &&
