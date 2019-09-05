@@ -4,13 +4,12 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 
+import { colocationQuestionSuffix } from './ApiBinaryOperations';
 import { selectSearchPage } from './ColocateStepForm';
 
 import './ColocateStepMenu.scss';
 
 const cx = makeClassNameHelper('ColocateStepMenu');
-
-const colocationQuestionSuffix = 'BySpanLogic';
 
 export const ColocateStepMenu = ({
   inputRecordClass,

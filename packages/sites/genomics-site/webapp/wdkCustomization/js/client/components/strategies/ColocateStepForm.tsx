@@ -8,21 +8,19 @@ import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelect
 
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
+
+import { colocationQuestionSuffix } from './ApiBinaryOperations';
 
 import { SpanLogicForm } from '../questions/SpanLogicForm';
 
 import './ColocateStepForm.scss';
-import { getOutputStep } from 'wdk-client/Utils/StrategyUtils';
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
-import {Plugin} from 'wdk-client/Utils/ClientPlugin';
-
 
 const cx = makeClassNameHelper('ColocateStepForm');
-
-const colocationQuestionSuffix = 'BySpanLogic';
 
 enum PageTypes {
   SelectSearchPage = 'select-search',
@@ -318,10 +316,9 @@ const ColocationOperatorForm = (
     secondaryInputStepTree,
     updateStrategy,
     operandStep,
-    addType,
     recordClassesByUrlSegment,
-    strategy,
-    previousStep
+    previousStep,
+    outputStep
   }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }
 ) => {
   const colocationQuestionPrimaryInput = useMemo(
@@ -340,11 +337,6 @@ const ColocationOperatorForm = (
         outputRecordClassName === recordClassUrlSegment
       ),
     [ questions, recordClassUrlSegment, colocationQuestionSuffix ]
-  );
-
-  const outputStep = useMemo(
-    () => getOutputStep(strategy.stepTree, addType),
-    [ strategy, addType ]
   );
 
   const currentStepRecordClass = recordClassesByUrlSegment[operandStep.recordClassName];

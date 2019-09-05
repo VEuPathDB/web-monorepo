@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { omit, pick } from 'lodash';
 import { BinaryOperation, defaultBinaryOperations, ReviseOperationFormProps } from 'wdk-client/Utils/Operations';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
@@ -8,13 +7,13 @@ import { ColocateStepMenu } from './ColocateStepMenu';
 import { ColocateStepForm } from './ColocateStepForm';
 import { SpanLogicForm } from '../questions/SpanLogicForm';
 import { WdkService } from 'wdk-client/Core';
-import { NewStepSpec } from 'wdk-client/Utils/WdkUser';
-import { QuestionController } from 'wdk-client/Controllers';
+import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
-const colocationQuestionSuffix = 'BySpanLogic';
+export const colocationQuestionSuffix = 'BySpanLogic';
 
 export const apiBinaryOperations: BinaryOperation[] = [
   ...defaultBinaryOperations,
@@ -143,6 +142,14 @@ export const apiBinaryOperations: BinaryOperation[] = [
           value: 'overlap'
         }
       ]
-    }
+    },
+    isCompatibleAddStepSearch: (
+      search: Question, 
+      questionsByUrlSegment: Record<string, Question>,
+      recordClassesByUrlSegment: Record<string, RecordClass>,
+      primaryOperandStep: Step
+    ) =>
+      search.outputRecordClassName === primaryOperandStep.recordClassName &&
+      search.urlSegment.endsWith(colocationQuestionSuffix)
   }
 ];
