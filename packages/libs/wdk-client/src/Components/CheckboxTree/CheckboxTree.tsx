@@ -496,7 +496,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
     searchTerm: '',
     onSearchTermChange: () => {},
     searchPredicate: () => true,
-    linkPlacement: LinksPosition.Both
+    linksPosition: LinksPosition.Both
   };
 
   expandAll: TreeLinkHandler;

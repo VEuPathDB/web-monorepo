@@ -38,7 +38,8 @@ type Props = {
   renderNoResults?: (searchTerm: string, tree: CategoryTreeNode) => React.ReactNode;
   isSelectable?: boolean;
   disableHelp?: boolean;
-  linkPlacement?: LinksPosition;
+  linksPosition?: LinksPosition;
+  showSearchBox?: boolean;
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = props => {
@@ -64,7 +65,8 @@ let {
   defaultSelection,
   title,
   tree,
-  linkPlacement,
+  linksPosition,
+  showSearchBox
 } = props;
 
   if (tree.children.length == 0) {
@@ -87,10 +89,8 @@ let {
           name={name}
           renderNoResults={renderNoResults}
           searchIconName="filter"
-          linkPlacement={linkPlacement === undefined 
-            ? CheckboxTree.LinkPlacement.Top
-            : linkPlacement
-          }
+          linksPosition={linksPosition}
+          showSearchBox={showSearchBox}
           getNodeId={getNodeId}
           getNodeChildren={visibilityFilter ? getFilteredNodeChildren(visibilityFilter) : getNodeChildren}
           searchPredicate={visibilityFilter ? nodeSearchPredicateWithHiddenNodes(visibilityFilter) : nodeSearchPredicate}

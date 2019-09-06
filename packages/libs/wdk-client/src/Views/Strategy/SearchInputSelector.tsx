@@ -7,7 +7,7 @@ import { createSelector } from 'reselect';
 import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getLabel } from 'wdk-client/Utils/CategoryUtils';
+import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getLabel, getAllBranchIds } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
@@ -57,8 +57,37 @@ export const SearchInputSelectorView = ({
     }
   }, [ isGuest ]);
 
-  const [ expandedBranches, setExpandedBranches ] = useState<string[]>([]);
-  const [ searchTerm, setSearchTerm ] = useState<string>('');
+  const { linksPosition, initialExpandedBranches, showSearchBox } = useMemo(
+    () => {
+      const has0Categories = searchTree.children.every(child => child.children.length === 0);
+      const has1Category = searchTree.children.length === 1 && searchTree.children[0].children.every(child => child.children.length === 0);
+      const checkboxRowsCount = countCheckboxRows(searchTree);
+      const SMALL_CHECKBOX_ROW_COUNT = 8;
+
+      // If there are 0 or 1 search categories, or fewer than SMALL_CHECKBOX_ROW_COUNT rows in the checkbox tree
+      // ... don't offer expand/collapse links, and start expanded
+      const [ linksPosition, initialExpandedBranches ] = has0Categories || has1Category || checkboxRowsCount < SMALL_CHECKBOX_ROW_COUNT
+        ? [ LinksPosition.None, getAllBranchIds(searchTree) ]
+        : [ LinksPosition.Top, [] ];
+
+      // If there are fewer than SMALL_CHECKBOX_ROW_COUNT rows in the checkbox tree
+      // ... don't offer a search box
+      const showSearchBox = checkboxRowsCount >= SMALL_CHECKBOX_ROW_COUNT;
+
+      return { linksPosition, initialExpandedBranches, showSearchBox };
+
+      function countCheckboxRows(node: CategoryTreeNode): number {
+        return node.children.reduce(
+          (count, child) => count + countCheckboxRows(child), 
+          node.children.length
+        );
+      }
+    },
+    [ searchTree ]
+  );
+
+  const [ expandedBranches, setExpandedBranches ] = useState(initialExpandedBranches);
+  const [ searchTerm, setSearchTerm ] = useState('');
 
   const renderNode = useCallback((node: any) => {
     const displayName = getDisplayName(node);
@@ -99,17 +128,6 @@ export const SearchInputSelectorView = ({
       </div>,
     []
   );
-
-  const linkPlacement = useMemo(
-    () => {
-      const hasNoGrandchildren = searchTree.children.every(child => child.children.length === 0);
-  
-      return hasNoGrandchildren
-        ? LinksPosition.None
-        : LinksPosition.Top;
-    },
-    [ searchTree ]
-  );
   
   const [ combineWithBasketDisabled, combineWithBasketTooltip ] = isGuest 
     ?  [true, 'You must log in to use this feature' ]
@@ -136,7 +154,7 @@ export const SearchInputSelectorView = ({
           onClick={onCombineWithStrategyClicked}
           disabled={combineWithStrategyDisabled}
           type="button"
-          title={combineWithBasketTooltip}
+          title={combineWithStrategyTooltip}
         >
           A {inputRecordClass.displayNamePlural} strategy
         </button>
@@ -158,7 +176,8 @@ export const SearchInputSelectorView = ({
               renderNoResults={renderNoResults}
               onUiChange={setExpandedBranches}
               onSearchTermChange={setSearchTerm}
-              linkPlacement={linkPlacement}
+              linksPosition={linksPosition}
+              showSearchBox={showSearchBox}
             />
           </div>
         </div>
