@@ -335,8 +335,22 @@ export const useAddStepMenuConfigs = (
   return menuConfigs;
 };
 
-export const useSelectedAddStepFormComponent = (formName: string | undefined): React.ComponentType<AddStepOperationFormProps> => {
-  const menuConfigs = useAddStepMenuConfigs();
+export const useSelectedAddStepFormComponent = (
+  formName: string | undefined,
+  questionsByUrlSegment?: Record<string, Question>,
+  recordClassesByUrlSegment?: Record<string, RecordClass>,
+  primaryOperandStep?: Step,
+  previousStep?: Step, 
+  outputStep?: Step  
+): React.ComponentType<AddStepOperationFormProps> => {
+  const menuConfigs = useAddStepMenuConfigs(
+    questionsByUrlSegment, 
+    recordClassesByUrlSegment, 
+    primaryOperandStep, 
+    previousStep, 
+    outputStep
+  );
+  
   const operationFormsByName = useMemo(
     () => menuConfigs && menuConfigs.reduce(
       (memo, { addStepFormComponents }) => ({ ...memo, ...addStepFormComponents }), 

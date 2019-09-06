@@ -160,7 +160,14 @@ export const AddStepPanelView = wrappable((
   );
 
   const addStepMenuConfigs = useAddStepMenuConfigs(questionsByUrlSegment, recordClassesByUrlSegment, operandStep, previousStep, outputStep);
-  const SelectedForm = useSelectedAddStepFormComponent(selectedOperation);
+  const SelectedForm = useSelectedAddStepFormComponent(
+    selectedOperation,
+    questionsByUrlSegment, 
+    recordClassesByUrlSegment, 
+    operandStep, 
+    previousStep, 
+    outputStep  
+  );
 
   return (
     <div className={cx()}>

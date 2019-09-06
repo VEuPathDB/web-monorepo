@@ -187,7 +187,7 @@ function makeMesaRows(
   strategies: StrategySummary[], 
   sort: MesaSortObject
 ) {
-  return orderBy(strategies, [ sort.columnKey ], [ sort.columnKey ]);
+  return orderBy(strategies, [ sort.columnKey ], [ sort.direction ]);
 }
 
 function makeMesaFilteredRows(
