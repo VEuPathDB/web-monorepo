@@ -12,7 +12,7 @@ export default function FilterLegend(props) {
       </div>
       <div>
         <div className="bar"><div className="fill filtered"></div></div>
-        <div className="label">Matching {props.displayName} when <em>other</em> criteria have been applied.</div>
+        <div className="label">Remaining {props.displayName} when <em>other</em> criteria have been applied.</div>
       </div>
     </div>
   );

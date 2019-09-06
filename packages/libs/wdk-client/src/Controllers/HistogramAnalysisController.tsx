@@ -39,7 +39,7 @@ interface DispatchProps {
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-class HistrogramAnalysisController extends React.PureComponent<Props> {
+class HistogramAnalysisController extends React.PureComponent<Props> {
   componentDidMount() {
     const { openView, reporterType, stepId, attributeName } = this.props;
     const reporterName = `${attributeName}-${reporterType}`;
