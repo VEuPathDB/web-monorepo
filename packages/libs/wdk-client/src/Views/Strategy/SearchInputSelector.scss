@@ -37,4 +37,16 @@
       margin-left: unset;
     }
   }
+
+  .wdk-CheckboxTreeItem__leaf {
+    list-style: disc;
+    color: #aaa;
+    line-height: 1.1em;
+    padding:1px;
+    margin-left: 2.6em;
+
+    .wdk-CheckboxTreeNodeContent {
+      margin: unset;
+    }
+  }
 }
