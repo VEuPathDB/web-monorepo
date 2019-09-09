@@ -16,7 +16,7 @@ import {
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
 import { Action } from 'wdk-client/Actions';
-import { Decoder, number, objectOf, optional, combine, field } from 'wdk-client/Utils/Json';
+import { Decoder, number, objectOf, field } from 'wdk-client/Utils/Json';
 import {
   getMatchedTranscriptFilterPref,
   setMatchedTranscriptFilterPref
@@ -114,13 +114,6 @@ async function getRequestMatchedTransFilterSummary(
   return requestMatchedTransFilterSummary(openAction.payload.step.id);
 }
 
-function filterRequestMatchedTransFilterSummary(
-  [openAction]: [InferAction<typeof openMTF>],
-  state: RootState
-) {
-  return !!state[key].expanded;
-}
-
 async function getRequestMatchedTransFilterSummaryStepChg(
   [openAction]: [InferAction<typeof openMTF>],
   state$: StateObservable<RootState>,
@@ -147,8 +140,13 @@ async function getFulfillMatchedTransFilterSummary(
     requestAction.payload.stepId,
     openAction.payload.filterKey
   );
-
   return fulfillMatchedTransFilterSummary(requestAction.payload.stepId, summary.counts);
+}
+
+function filterFulfillMatchedTransFilterSummaryActions(
+  [openAction, requestAction]: [InferAction<typeof openMatchedTranscriptsFilter>, InferAction<typeof requestMatchedTransFilterSummary>],
+) {
+  return openAction.payload.step.id === requestAction.payload.stepId;
 }
 
 async function getFulfillUpdatedMatchedTransFilterSummary(
@@ -209,9 +207,9 @@ export const observe = takeEpicInWindow(
     mrate([openMTF], getRequestMatchedTransFilterExpandedPref),
     mrate([requestMatchedTransFilterExpandedPref], getFulfillMatchedTransFilterExpandedPref),
     mrate([requestMatchedTransFilterExpandedUpdate], getFulfillMatchedTransFilterExpandedUpdate),
-    mrate([openMTF], getRequestMatchedTransFilterSummary,
-    /*{ areActionsCoherent: filterRequestMatchedTransFilterSummary }*/),
-    mrate([openMTF, requestMatchedTransFilterSummary], getFulfillMatchedTransFilterSummary),
+    mrate([openMTF], getRequestMatchedTransFilterSummary),
+    mrate([openMTF, requestMatchedTransFilterSummary], getFulfillMatchedTransFilterSummary,
+      { areActionsCoherent: filterFulfillMatchedTransFilterSummaryActions }),
     mrate([openMTF], getRequestMatchedTransFilterSummaryStepChg,
       { areActionsCoherent: filterRequestMatchedTransFilterSummaryStepChgActions }),
     mrate([requestMatchedTransFilterExpandedPref], getFulfillUpdatedMatchedTransFilterSummary),
