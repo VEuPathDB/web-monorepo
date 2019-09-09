@@ -272,14 +272,14 @@
           <imp:image style="width:20px;display:inline;vertical-align:middle;" src="images/youtube_32x32.png"/>
         </a>
       </li>
-      <li id='edu-1'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Tutorials"/>">Web Tutorials</a> (video and pdf)</li>
+      <li id='edu-1'><a href="<c:url value="/wdkCustomization/jsp/questions/XmlQuestions.Tutorials.jsp"/>">Web Tutorials</a></li>
       <li id='edu-1'><a href="http://maps.google.com/maps/ms?vps=2&ie=UTF8&hl=en&oe=UTF8&msa=0&msid=208351045565585105018.000490de33b177c1f9068">Global view of EuPathDB training</a></li>
       <li id='edu-2'><a href="http://workshop.eupathdb.org">EuPathDB Workshops</a></li>
       <!--  <li id='edu-3-1'><a href="http://workshop.eupathdb.org/most_recent/index.php?page=schedule">Exercises from our most recent Workshop at UGA</a> (English)</li> -->
 <li><a href="http://workshop.eupathdb.org/current/index.php?page=schedule">Exercises from the most recent UGA Workshop</a></li>
       <li id='edu-3-2'><a href="http://workshop.eupathdb.org/athens/2011/index.php?page=schedule">Exercises in Spanish from 2011 UGA Workshop</a></li>
       <li id='edu-4'><a href="http://www.genome.gov/Glossary/">NCBI's Glossary of Terms</a></li>
-      <li id='edu-5'><a href="<c:url value="/showXmlDataContent.do?name=XmlQuestions.Glossary"/>">Our Glossary</a></li>
+      <li id='edu-5'><a href="<c:url value="/wdkCustomization/jsp/questions/XmlQuestions.Glossary.jsp"/>">Our Glossary</a></li>
       <li id='edu-6'><a href="${pageContext.request.contextPath}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a></li>
     </ul>
   </div>
