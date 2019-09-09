@@ -122,11 +122,9 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
   let [ searchConfigChangeRequested, setSearchConfigChangeRequested ] = useState<boolean>(false);
 
   // organism param (including taxonomy data) retrieved from service when component is initially loaded
-  const [ taxonomyTreeRequested, setTaxonomyTreeRequested ] = useState<boolean>(false);
   const [ taxonomyTree, setTaxonomyTree ] = useState<TreeBoxVocabNode | null>(null);
 
   // counts of genes of each organism in the result; retrieved when component is loaded and when step is revised
-  const [ filterSummaryRequested, setFilterSummaryRequested ] = useState<boolean>(false);
   let [ filterSummary, setFilterSummary ] = useState<OrgFilterSummary | null>(null);
 
   // current value of filter shown in the tree (will be cleared if applied to the step)
@@ -151,13 +149,9 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
 
   // load data from WDK service if necessary
   useWdkEffect(wdkService => {
-    if (taxonomyTree == null && !taxonomyTreeRequested) {
-      loadTaxonomyTree(wdkService, setTaxonomyTree, setTaxonomyTreeRequested);
-    }
-    if (filterSummary == null && !filterSummaryRequested) {
-      loadFilterSummary(wdkService, step.id, setFilterSummary, setFilterSummaryRequested);
-    }
-  });
+    loadTaxonomyTree(wdkService, setTaxonomyTree);
+    loadFilterSummary(wdkService, step.id, setFilterSummary);
+  }, [step]);
 
   function setExpandedAndPref(isExpanded: boolean) {
     sessionStorage.setItem(ORGANISM_FILTER_PANE_EXPANSION_KEY, isExpanded.toString());
@@ -355,15 +349,12 @@ function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
 }
 
 function loadTaxonomyTree(wdkService: WdkService,
-    setTaxonomyTree: (t: TreeBoxVocabNode) => void,
-    setTaxonomyTreeRequested: (b: boolean) => void): void {
-  setTaxonomyTreeRequested(true);
+    setTaxonomyTree: (t: TreeBoxVocabNode) => void): void {
   wdkService.getQuestionAndParameters(TAXON_QUESTION_NAME)
     .then(question => {
       let orgParam  = question.parameters.find(p => p.name == ORGANISM_PARAM_NAME);
       if (orgParam && orgParam.type == 'vocabulary' && orgParam.displayType == "treeBox") {
         setTaxonomyTree(orgParam.vocabulary);
-        setTaxonomyTreeRequested(false);
       }
       else {
         throw TAXON_QUESTION_NAME + " does not contain treebox enum param " + ORGANISM_PARAM_NAME;
@@ -373,13 +364,10 @@ function loadTaxonomyTree(wdkService: WdkService,
 
 function loadFilterSummary(wdkService: WdkService,
     stepId: number,
-    setFilterSummary: (s: OrgFilterSummary) => void,
-    setFilterSummaryRequested: (b: boolean) => void): void {
-  setFilterSummaryRequested(true);
+    setFilterSummary: (s: OrgFilterSummary) => void): void {
   wdkService.getStepColumnReport(stepId, ORGANISM_COLUMN_NAME, HISTOGRAM_REPORTER_NAME, {})
     .then(filterSummary => {
       setFilterSummary(filterSummary as OrgFilterSummary);
-      setFilterSummaryRequested(false);
     });
 }
 
