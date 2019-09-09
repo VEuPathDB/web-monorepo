@@ -1,4 +1,4 @@
-import { toUpper, noop } from 'lodash';
+import { noop } from 'lodash';
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
@@ -24,7 +24,7 @@ export default function StepBoxes(props: StepBoxesProps) {
         >
           <button
             className={cx('--InsertStepButton')}
-            type="button" onClick={() => props.onShowInsertStep({ type: 'append', primaryInputStepId: props.stepTree.step.id })}
+            type="button" onClick={() => props.onShowInsertStep({ type: 'append', stepId: props.stepTree.step.id })}
           ><i className="fa fa-plus"/> Extend your search strategy</button>
         </Tooltip>
       </div>
@@ -79,7 +79,7 @@ function StepTree(props: StepBoxesProps) {
             expandNestedStrategy: noop,
             showNewAnalysisTab: () => props.onAnalyzeStep(),
             showReviseForm: () => props.setReviseFormStepId(step.id),
-            insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', outputStepId: step.id }),
+            insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', stepId: step.id }),
             deleteStep: () => props.onDeleteStep(step.id)
           }}
           defaultComponent={StepBox}
@@ -123,7 +123,7 @@ function StepTree(props: StepBoxesProps) {
               },
               showNewAnalysisTab: () => props.onAnalyzeStep(),
               showReviseForm: () => props.setReviseFormStepId(secondaryInput.step.id),
-              insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', outputStepId: step.id }),
+              insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', stepId: step.id }),
               deleteStep: () => props.onDeleteStep(step.id)
             }}
             defaultComponent={StepBox}

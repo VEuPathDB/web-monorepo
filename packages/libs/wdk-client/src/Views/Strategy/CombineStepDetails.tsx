@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch, compose } from 'redux';
+import { Dispatch } from 'redux';
 import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
@@ -23,8 +23,6 @@ interface StateProps {
 
 interface DispatchProps {
   dispatch: Dispatch; 
-  requestUpdateStepSearchConfig: typeof requestUpdateStepSearchConfig;
-  requestReplaceStep: typeof requestReplaceStep;
 }
 
 type OwnProps = StepDetailProps;
@@ -35,8 +33,6 @@ function CombineStepDetails({
   stepTree, 
   onClose, 
   dispatch,
-  requestUpdateStepSearchConfig, 
-  requestReplaceStep 
 }: OwnProps & StateProps & DispatchProps) {
   const { step } = stepTree;
 
@@ -242,12 +238,7 @@ export default connect(
       questions,
       strategy
     };
-  },
-  dispatch => ({
-    dispatch,
-    requestUpdateStepSearchConfig: compose(dispatch, requestUpdateStepSearchConfig),
-    requestReplaceStep: compose(dispatch, requestReplaceStep)
-  }))(CombineStepDetails);
+  })(CombineStepDetails);
 
 interface OperatorsProps {
   operators: ReviseOperatorMenuItem[];

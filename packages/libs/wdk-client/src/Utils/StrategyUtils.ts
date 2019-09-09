@@ -1,4 +1,4 @@
-import { StepTree, Step } from 'wdk-client/Utils/WdkUser';
+import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 export const replaceStep = (
@@ -25,8 +25,8 @@ export const addStep = (
   newStepSecondaryInput: StepTree | undefined
 ): StepTree => 
   addType.type === 'append'
-    ? append(stepTree, addType.primaryInputStepId, newStepId, newStepSecondaryInput)
-    : insertBefore(stepTree, addType.outputStepId, newStepId, newStepSecondaryInput);
+    ? append(stepTree, addType.stepId, newStepId, newStepSecondaryInput)
+    : insertBefore(stepTree, addType.stepId, newStepId, newStepSecondaryInput);
 
 type NodeMetadata =
   | { type: "not-in-tree" }
@@ -148,13 +148,13 @@ const insertBefore = (
 
 export const getOutputStep = (stepTree: StepTree, addType: AddType) => {
   if (addType.type === 'append') {
-    const primaryInputMetadata = getNodeMetadata(stepTree, addType.primaryInputStepId);
+    const primaryInputMetadata = getNodeMetadata(stepTree, addType.stepId);
 
     return primaryInputMetadata.type === 'not-in-tree' || primaryInputMetadata.type === 'root'
       ? undefined
       : primaryInputMetadata.parentNode;
   } else {
-    const outputMetadata = getNodeMetadata(stepTree, addType.outputStepId);
+    const outputMetadata = getNodeMetadata(stepTree, addType.stepId);
 
     return outputMetadata.type === 'not-in-tree' 
       ? undefined
@@ -172,13 +172,13 @@ export const getPreviousStep = (stepTree: StepTree, addType: AddType) => {
   if (addType.type === 'append') {
     return findSubtree(
       stepTree,
-      addType.primaryInputStepId
+      addType.stepId
     );
   }
 
   const insertionPointSubtree = findSubtree(
     stepTree,
-    addType.outputStepId
+    addType.stepId
   );
 
   return insertionPointSubtree && insertionPointSubtree.primaryInput;  
@@ -255,6 +255,29 @@ export const removeStep = (stepTree: StepTree, targetStepId: number): StepTree |
       primaryInput: _recurse(stepTree.primaryInput),
       secondaryInput: _recurse(stepTree.secondaryInput)
     }
+  }
+}
+
+/**
+ * Create a new copy of the provided stepTree, converting stepIds using
+ * the provided mapStepId function.
+ */
+export function mapStepTreeIds(stepTree: StepTree, mapStepId: (stepId: number) => number): StepTree {
+  if (stepTree.primaryInput && stepTree.secondaryInput) {
+    return {
+      stepId: mapStepId(stepTree.stepId),
+      primaryInput: mapStepTreeIds(stepTree.primaryInput, mapStepId),
+      secondaryInput: mapStepTreeIds(stepTree.secondaryInput, mapStepId)
+    }
+  }
+  if (stepTree.primaryInput) {
+    return {
+      stepId: mapStepId(stepTree.stepId),
+      primaryInput: mapStepTreeIds(stepTree.primaryInput, mapStepId),
+    }
+  }
+  return {
+    stepId: mapStepId(stepTree.stepId),
   }
 }
 

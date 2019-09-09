@@ -28,6 +28,12 @@ export const fulfillPutStrategy = makeActionCreator(
     (strategy: StrategyDetails) => ({ strategy })
 );
 
+// A draft of a saved strategy was fulfilled
+export const fulfillDraftStrategy = makeActionCreator(
+  'fulfillDraftStrategy',
+  (strategy: StrategyDetails, savedStrategyId: number) => ({ strategy, savedStrategyId })
+);
+
 export const requestDeleteOrRestoreStrategies = makeActionCreator(
     'requestDeleteOrRestoreStrategies',
     (deleteStrategiesSpecs: DeleteStrategySpec[]) => ({ deleteStrategiesSpecs, requestTimestamp: Date.now() })
@@ -171,6 +177,7 @@ export type Action = InferAction<
   | typeof requestStrategy
   | typeof fulfillStrategy
   | typeof fulfillPutStrategy
+  | typeof fulfillDraftStrategy
   | typeof requestPatchStrategyProperties
   | typeof fulfillPatchStrategyProperties
   | typeof requestSaveAsStrategy

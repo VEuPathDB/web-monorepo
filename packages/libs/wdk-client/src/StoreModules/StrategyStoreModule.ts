@@ -1,4 +1,4 @@
-import { stubTrue } from 'lodash/fp';
+import { stubTrue, zip } from 'lodash/fp';
 import { combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
 
 import { Action } from 'wdk-client/Actions';
@@ -19,6 +19,7 @@ import {
   requestStrategy,
   fulfillStrategy,
   fulfillPutStrategy,
+  fulfillDraftStrategy,
   requestPatchStrategyProperties,
   requestPutStrategyStepTree,
   requestCreateStep,
@@ -34,7 +35,7 @@ import {
   requestSaveAsStrategy,
   fulfillSaveAsStrategy,
 } from 'wdk-client/Actions/StrategyActions';
-import { removeStep, getStepIds, replaceStep } from 'wdk-client/Utils/StrategyUtils';
+import { removeStep, getStepIds, replaceStep, mapStepTreeIds } from 'wdk-client/Utils/StrategyUtils';
 import { difference } from 'lodash';
 import {confirm, alert} from 'wdk-client/Utils/Platform';
 import {filter, mergeMap, mergeAll} from 'rxjs/operators';
@@ -81,6 +82,17 @@ export function reduce(state: State = initialState, action: Action): State {
     });
   }
 
+  case fulfillDraftStrategy.type: {
+    const newState = updateStrategyEntry(state, action.payload.savedStrategyId, {
+      isLoading: false
+    });
+    return updateStrategyEntry(newState, action.payload.strategy.strategyId, {
+      isLoading: false,
+      strategy: action.payload.strategy
+    });
+  }
+
+  // XXX Consider doing a deep compare of current and new strategy. Will have to determine which values to compare (e.g., omit step.{estimatedSize,lastRunTime})
   case fulfillStrategy.type: 
   case fulfillPutStrategy.type: {
     const strategy = action.payload.strategy;
@@ -149,11 +161,23 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     [requestAction]: [InferAction<typeof requestPutStrategyStepTree>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillPutStrategy>> {
-    const {strategyId, newStepTree }  = requestAction.payload;
-    await wdkService.putStrategyStepTree(strategyId, newStepTree);
-    let strategy = await wdkService.getStrategy(strategyId);
-    return fulfillPutStrategy(strategy);
+  ): Promise<InferAction<typeof fulfillPutStrategy | typeof fulfillDraftStrategy>> {
+    // XXX Should we delete steps that have been removed from the step tree?
+    const { strategyId, newStepTree } = requestAction.payload;
+    const strategy = await wdkService.getStrategy(strategyId);
+    if (!strategy.isSaved) {
+      await wdkService.putStrategyStepTree(strategyId, newStepTree);
+      return fulfillPutStrategy(await wdkService.getStrategy(strategyId));
+    }
+    // Make duplicate strategy and apply changes to it
+    const duplicateStrategyResponse = await wdkService.duplicateStrategy({ sourceStrategySignature: strategy.signature });
+    const duplicateStrategy = await wdkService.getStrategy(duplicateStrategyResponse.id);
+    const oldStepTree = getStepIds(strategy.stepTree);
+    const duplicateStepTree = getStepIds(duplicateStrategy.stepTree);
+    const stepMap = new Map<number, number>(zip(oldStepTree, duplicateStepTree) as [number, number][]);
+    const translatedStepTree = mapStepTreeIds(newStepTree, id => stepMap.has(id) ? stepMap.get(id)! : id)
+    await wdkService.putStrategyStepTree(duplicateStrategyResponse.id, translatedStepTree);
+    return fulfillDraftStrategy(await wdkService.getStrategy(duplicateStrategyResponse.id), strategyId);
   }
 
   async function getFulfillDeleteOrRestoreStrategies(
@@ -293,11 +317,33 @@ async function getFulfillStrategy_SaveAs(
     [requestAction]: [InferAction<typeof requestUpdateStepSearchConfig>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillStrategy>> {
+  ): Promise<InferAction<typeof fulfillStrategy | typeof fulfillDraftStrategy>> {
     const {strategyId, stepId, searchConfig }  = requestAction.payload;
+    const strategy = await wdkService.getStrategy(strategyId);
+    if (strategy.isSaved) {
+      // Make duplicate strategy and apply changes to it
+      const { id: duplicateStrategyId } = await wdkService.duplicateStrategy({ sourceStrategySignature: strategy.signature });
+      const duplicateStrategy = await wdkService.getStrategy(duplicateStrategyId);
+      const oldStepIds = getStepIds(strategy.stepTree);
+      const duplicateStepIds = getStepIds(duplicateStrategy.stepTree);
+      const duplicateStepId = duplicateStepIds[oldStepIds.indexOf(stepId)];
+      if (duplicateStepId == null) throw new Error("Could not revise step of draft strategy.");
+      // Map answer param values to new step ids
+      const { searchName } = duplicateStrategy.steps[duplicateStepId];
+      const question = await wdkService.getQuestionAndParameters(searchName);
+      const duplicateParameters = question.parameters.reduce((duplicateParameters, parameter) =>
+        Object.assign(duplicateParameters, {
+          [parameter.name]: parameter.type === 'input-step'
+          ? String(duplicateStepIds[oldStepIds.indexOf(Number(searchConfig.parameters[parameter.name]))])
+          : searchConfig.parameters[parameter.name]
+        }), { ...searchConfig.parameters });
+      const duplicateSearchConfig = { ...searchConfig, parameters: duplicateParameters };
+      await wdkService.updateStepSearchConfig(duplicateStepId, duplicateSearchConfig);
+      return fulfillDraftStrategy(await wdkService.getStrategy(duplicateStrategyId), strategyId);
+    }
+
     await wdkService.updateStepSearchConfig(stepId, searchConfig);
-    let strategy = await wdkService.getStrategy(strategyId);
-    return fulfillStrategy(strategy);
+    return fulfillStrategy(await wdkService.getStrategy(strategyId));
   }
 
   async function getFulfillStrategy_ReplaceStep(
@@ -326,24 +372,19 @@ async function getFulfillStrategy_SaveAs(
     [requestAction]: [InferAction<typeof requestRemoveStepFromStepTree>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillStrategy>> {
+  ): Promise<InferAction<typeof requestPutStrategyStepTree | typeof requestDeleteStrategy>> {
     const { strategyId, stepIdToRemove, stepTree } = requestAction.payload;
     // First, we have to remove the step from the step tree, and then
     // we have to delete the step.
     const newStepTree = removeStep(stepTree, stepIdToRemove);
-    const removedSteps = difference(
-      getStepIds(stepTree),
-      getStepIds(newStepTree)
-    )
-    if (newStepTree) {
-      await wdkService.putStrategyStepTree(strategyId, newStepTree);
-    }
-    else {
-      await wdkService.deleteStrategy(strategyId);
-    }
-    await Promise.all(removedSteps.map(stepId => wdkService.deleteStep(stepId)));
-    const strategy = await wdkService.getStrategy(strategyId);
-    return fulfillStrategy(strategy);
+    return newStepTree ? requestPutStrategyStepTree(strategyId, newStepTree) : requestDeleteStrategy(strategyId);
+    // const removedSteps = difference(
+    //   getStepIds(stepTree),
+    //   getStepIds(newStepTree)
+    // )
+    // await Promise.all(removedSteps.map(stepId => wdkService.deleteStep(stepId)));
+    // const strategy = await wdkService.getStrategy(strategyId);
+    // return fulfillStrategy(strategy);
   }
 
   async function getFulfillDeleteStep(
@@ -389,6 +430,7 @@ async function getFulfillCreateStep(
   return fulfillCreateStep(identifier.id, requestTimestamp);
 }
 
+// XXX This should probably go in the QuestionStoreModule
 async function getFulfillNewSearch(
   [requestStrategyAction, fulfillCreateStrategyAction]: [InferAction<typeof requestCreateStrategy>, InferAction<typeof fulfillCreateStrategy>],
   state$: StateObservable<RootState>,
@@ -411,18 +453,18 @@ async function getFulfillNewSearch(
       areActionsNew: stubTrue
     }),
     mrate([requestDeleteOrRestoreStrategies], getFulfillDeleteOrRestoreStrategies),
-    mrate([requestPutStrategyStepTree], getFulfillStrategy_PutStepTree),
+    mrate([requestPutStrategyStepTree], getFulfillStrategy_PutStepTree), // replace saved with unsaved
     mrate([fulfillSaveAsStrategy], getFulfillStrategy_SaveAs,
       { areActionsNew: stubTrue }),
     mrate([fulfillPatchStrategyProperties], getFulfillStrategy_PatchStratProps,
       { areActionsNew: stubTrue,  areActionsCoherent: areFulfillStrategy_PatchStratPropsActionsCoherent }),
     mrate([requestUpdateStepProperties], getFulfillStrategy_PatchStepProps,
       { areActionsNew: stubTrue }),
-    mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig,
+    mrate([requestUpdateStepSearchConfig], getFulfillStrategy_PostStepSearchConfig, // replace saved with unsaved
       { areActionsNew: stubTrue }),
     mrate([requestReplaceStep], getFulfillStrategy_ReplaceStep,
       { areActionsNew: stubTrue }),
-    mrate([requestRemoveStepFromStepTree], getFulfillStrategy_RemoveStepFromStepTree,
+    mrate([requestRemoveStepFromStepTree], getFulfillStrategy_RemoveStepFromStepTree, // replace saved with unsaved
       { areActionsNew: stubTrue }),
     mrate([requestDeleteStep], getFulfillDeleteStep),
     mrate([requestCreateStrategy], getFulfillCreateStrategy),

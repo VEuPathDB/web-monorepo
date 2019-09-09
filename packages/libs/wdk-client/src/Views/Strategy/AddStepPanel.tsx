@@ -18,7 +18,6 @@ import 'wdk-client/Views/Strategy/AddStepPanel.scss';
 const cx = makeClassNameHelper('AddStepPanel');
 
 type StateProps = {
-  strategy?: StrategyDetails,
   inputRecordClass?: RecordClass,
   stepsCompletedNumber?: number,
   previousStep?: Step,
@@ -34,8 +33,8 @@ type DispatchProps = {
 };
 
 type OwnProps = {
+  strategy: StrategyDetails,
   addType: AddType,
-  strategyId: number,
   onHideInsertStep: () => void
 };
 
@@ -80,7 +79,6 @@ export type AddStepOperationFormProps = {
 export const AddStepPanelView = wrappable((
   {
     addType,
-    loadStrategy,
     inputRecordClass,
     onHideInsertStep,
     operandStep,
@@ -90,14 +88,9 @@ export const AddStepPanelView = wrappable((
     recordClasses,
     requestPutStrategyStepTree,
     strategy,
-    strategyId,
     stepsCompletedNumber
   }: Props
 ) => {
-  useEffect(() => {
-    loadStrategy(strategyId);
-  }, [ strategyId ]);
-
   const [ selectedOperation, setSelectedOperation ] = useState<string | undefined>(undefined);
   const [ pageHistory, setPageHistory ] = useState<string[]>([]);
 
@@ -292,18 +285,9 @@ const recordClasses = createSelector(
   globalData => globalData.recordClasses
 );
 
-const strategyEntry = createSelector(
-  ({ strategies }: RootState) => strategies,
-  (_: RootState, { strategyId }: OwnProps) => strategyId,
-  (strategies, strategyId) => strategies.strategies[strategyId]
-);
-
-const strategy = createSelector(
-  strategyEntry,
-  strategyEntry => {
-    return strategyEntry && strategyEntry.strategy;
-  }
-);
+const strategy = (_: RootState, { strategy }: OwnProps) => {
+  return strategy;
+}
 
 const previousStepSubtree = createSelector(
   strategy,
@@ -333,9 +317,7 @@ const operandStep = createSelector(
       return previousStep;
     }
 
-    const insertionPointSubtree = addType.type === 'append'
-      ? findSubtree(strategy.stepTree, addType.primaryInputStepId)
-      : findSubtree(strategy.stepTree, addType.outputStepId);
+    const insertionPointSubtree = findSubtree(strategy.stepTree, addType.stepId);
 
     return strategy.steps[findPrimaryBranchLeaf(insertionPointSubtree || strategy.stepTree).stepId];
   }
@@ -374,7 +356,7 @@ const inputRecordClass = createSelector(
 
     const inputRecordClassName = addType.type === 'insert-before'
       ? operandStep.recordClassName
-      : strategy.steps[addType.primaryInputStepId].recordClassName;
+      : strategy.steps[addType.stepId].recordClassName;
 
     return recordClasses.find(({ urlSegment }) => urlSegment === inputRecordClassName);
   }

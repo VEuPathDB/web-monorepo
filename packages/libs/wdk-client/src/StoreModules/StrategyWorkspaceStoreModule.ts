@@ -3,7 +3,7 @@ import { ActionsObservable, combineEpics, StateObservable } from 'redux-observab
 import { empty, Observable, of, merge } from 'rxjs';
 import { mergeMap, mergeMapTo, tap, map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillStrategy, fulfillPatchStrategyProperties, fulfillSaveAsStrategy } from 'wdk-client/Actions/StrategyActions';
+import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillStrategy, fulfillPatchStrategyProperties, fulfillSaveAsStrategy, fulfillDraftStrategy } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies, clearActiveModal, setActiveModal } from 'wdk-client/Actions/StrategyWorkspaceActions';
@@ -45,6 +45,12 @@ export function reduce(state: State = initialState, action: Action): State {
     case fulfillSaveAsStrategy.type:
       return updateOpenedStrategies(state, openedStrategies =>
         openedStrategies.filter(id => id !== action.payload.oldStrategyId));
+
+    case fulfillDraftStrategy.type:
+      return updateOpenedStrategies(state, openedStrategies =>
+        openedStrategies
+        .filter(id => id !== action.payload.savedStrategyId)
+        .concat(action.payload.strategy.strategyId));
 
     case fulfillDeleteStrategy.type:
       return updateOpenedStrategies(state, openedStrategies =>
@@ -236,6 +242,13 @@ function updateRouteOnStrategyDuplicateEpic(action$: ActionsObservable<Action>, 
       if (activeStrategy && activeStrategy.strategyId === action.payload.oldStrategyId) {
         const { newStrategyId } = action.payload;
         transitioner.transitionToInternalPage(`/workspace/strategies/${newStrategyId}`, { replace: true });
+      }
+    }
+    if (fulfillDraftStrategy.isOfType(action)) {
+      const { activeStrategy } =  state$.value[key];
+      if (activeStrategy && activeStrategy.strategyId === action.payload.savedStrategyId) {
+        const { strategy: { strategyId, rootStepId } } = action.payload;
+        transitioner.transitionToInternalPage(`/workspace/strategies/${strategyId}/${rootStepId}`, { replace: true });
       }
     }
     return empty();

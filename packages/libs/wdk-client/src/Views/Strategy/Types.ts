@@ -81,12 +81,14 @@ export interface StepDetailProps extends StepBoxProps {
 
 export interface InsertBefore {
   type: 'insert-before';
-  outputStepId: number;
+  /** The output step id of the new step */
+  stepId: number;
 }
 
 export interface Append {
   type: 'append';
-  primaryInputStepId: number;
+  /** The primary input step id of the new step */
+  stepId: number;
 };
 
 export type AddType = InsertBefore | Append;
