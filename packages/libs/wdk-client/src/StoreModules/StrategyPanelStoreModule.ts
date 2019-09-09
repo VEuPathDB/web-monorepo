@@ -39,9 +39,9 @@ type ViewState = {
   function reduceView(state: ViewState = initialViewState, action: Action): ViewState {
     switch (action.type) {
 
-      case openStrategyPanel.type: {
+      case openStrategyPanel.type:
+      case closeStrategyPanel.type:
         return initialViewState;
-      }
 
       case setStepDetailsVisibility.type: {
         return { ...state, visibleStepDetails: action.payload.stepId };

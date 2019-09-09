@@ -3,11 +3,12 @@ import { CollapsibleSection } from 'wdk-client/Components';
 import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
 
 import "./OpenedStrategies.css";
+import {StrategyDetails} from 'wdk-client/Utils/WdkUser';
 
 interface Props {
   isVisible: boolean;
   setVisibility: (isVisible: boolean) => void;
-  openStrategies: number[];
+  openStrategies: [number, { strategy?: StrategyDetails, isLoading: boolean }][];
   activeStrategyId?: number;
 }
 
@@ -22,13 +23,14 @@ export default function OpenedStrategies({ openStrategies, isVisible, setVisibil
     >
       <div>
         {openStrategies
-          .map(id =>(
+          .map(([id, entry]) =>(
             <StrategyPanelController
               key={id}
               isActive={id === activeStrategyId}
               viewId={`inactiveStrategyPanel__${id}`}
               strategyId={id}
               showCloseButton
+              {...entry}
             />
           ))}
       </div>

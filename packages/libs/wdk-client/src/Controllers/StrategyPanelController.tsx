@@ -12,22 +12,21 @@ import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import {removeFromOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
-import {StrategyEntry} from 'wdk-client/StoreModules/StrategyStoreModule';
 
 interface OwnProps {
   viewId: string;
   isActive: boolean;
+  strategy?: StrategyDetails;
+  isLoading: boolean;
   strategyId: number;
   stepId?: number;
   showCloseButton?: boolean;
 }
 
 interface MappedProps {
-  strategy?: StrategyDetails;
   uiStepTree?: UiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
-  isLoading: boolean;
 }
 
 interface MappedDispatch {
@@ -55,12 +54,11 @@ interface MappedDispatch {
 type Props = OwnProps & MappedProps & MappedDispatch;
 
 function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
+  const { strategy } = ownProps;
   const panelState = state.strategyPanel[ownProps.viewId];
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
   const nestedStrategyBranchIds = panelState ? panelState.nestedStrategyBranchIds : [];
   const reviseFormStepId = panelState && panelState.visibleReviseForm;
-  const entry: StrategyEntry = state.strategies.strategies[ownProps.strategyId] || { isLoading: true };
-  const { strategy, isLoading } = entry;
   // FIXME
   const { recordClasses, questions } = state.globalData;
   const uiStepTree = (
@@ -69,7 +67,7 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
     questions &&
     makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'), keyBy(questions, 'urlSegment'), nestedStrategyBranchIds)
   );
-  return { strategy, uiStepTree, insertStepVisibility, reviseFormStepId, isLoading };
+  return { uiStepTree, insertStepVisibility, reviseFormStepId };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
@@ -112,9 +110,8 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
 function StrategyPanelController(props: Props) {
   useEffect(() => {
     props.openStrategyPanel(props.viewId);
-    props.requestStrategy(props.strategyId);
     return () => props.closeStrategyPanel(props.viewId);
-  }, [ props.strategyId ]);
+  }, [props.strategyId]);
 
   return (
     <StrategyPanel

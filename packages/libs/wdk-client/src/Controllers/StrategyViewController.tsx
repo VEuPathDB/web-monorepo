@@ -1,5 +1,5 @@
 import { last } from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { setOpenedStrategiesVisibility, setActiveStrategy } from 'wdk-client/Actions/StrategyWorkspaceActions';
@@ -16,6 +16,10 @@ import {requestStrategy} from 'wdk-client/Actions/StrategyActions';
 import {createSelector} from 'reselect';
 import {StepResultType} from 'wdk-client/Utils/WdkResult';
 import {RecordClass} from 'wdk-client/Utils/WdkModel';
+import {Omit} from 'wdk-client/Core/CommonTypes';
+
+type StrategyEntry = { strategy?: StrategyDetails, isLoading: boolean; };
+type OpenedStrategiesMap = [number, StrategyEntry][];
 
 interface OwnProps {
   strategyId?: number;
@@ -27,26 +31,34 @@ interface MappedProps {
   isOpenedStrategiesVisible?: boolean;
   resultType?: StepResultType;
   recordClass?: RecordClass;
-  selectedStrategy?: StrategyDetails;
+  selectedStrategy?: StrategyEntry;
+  openedStrategies?: OpenedStrategiesMap;
 }
 
 interface DispatchProps {
   dispatch: Dispatch
 }
 
-type Props = OwnProps & DispatchProps & MappedProps;
+type Props = Omit<OwnProps, 'openedStrategies'> & DispatchProps & MappedProps;
 
-const STRATEGY_PANEL_VIEW_ID = 'activeStrategyPanel';
+const strategyPanelViewId = (strategyId: number) => `strategyPanel__${strategyId}`;
 
 function StrategyViewController(props: Props) {
   const { stepId, strategyId, resultType, recordClass, selectedStrategy, dispatch, openedStrategies } = props;
 
+  // Track which strategies have been loaded. We only want to load a strategy once per mount.
+  const loadedStratsRef = useRef(new Set<number>());
+
   // Loading strategy
   useEffect(() => {
-    if (strategyId) {
-      dispatch(requestStrategy(strategyId));
+    if (openedStrategies == null) return;
+
+    for (const [ id ] of openedStrategies) {
+      if (loadedStratsRef.current.has(id)) continue;
+      loadedStratsRef.current.add(id);
+      dispatch(requestStrategy(id));
     }
-  }, [strategyId]);
+  }, [openedStrategies]);
 
   // Update active strategy to match what is in the url
   useEffect(() => {
@@ -56,8 +68,8 @@ function StrategyViewController(props: Props) {
 
   // Select root step if no step is selected
   useEffect(() => {
-    if (selectedStrategy && stepId == null) {
-      dispatch(transitionToInternalPage(`/workspace/strategies/${selectedStrategy.strategyId}/${selectedStrategy.rootStepId}`));
+    if (selectedStrategy && selectedStrategy.strategy && stepId == null) {
+      dispatch(transitionToInternalPage(`/workspace/strategies/${selectedStrategy.strategy.strategyId}/${selectedStrategy.strategy.rootStepId}`));
     }
   }, [stepId, strategyId, selectedStrategy]);
 
@@ -66,7 +78,7 @@ function StrategyViewController(props: Props) {
     if (strategyId == null && openedStrategies) {
       const lastOpened = last(openedStrategies);
       if (lastOpened) {
-        dispatch(transitionToInternalPage(`/workspace/strategies/${lastOpened}`));
+        dispatch(transitionToInternalPage(`/workspace/strategies/${lastOpened[0]}`));
       }
     }
 
@@ -85,7 +97,7 @@ function StrategyViewController(props: Props) {
           renderHeader={() => resultType && recordClass ? (
             <>
               <ResultPanelHeader
-                reviseViewId={STRATEGY_PANEL_VIEW_ID}
+                reviseViewId={strategyPanelViewId(resultType.step.strategyId)}
                 step={resultType.step}
                 recordClass={recordClass}
               />
@@ -116,19 +128,24 @@ function getRecordClass(state: RootState, resultType?: StepResultType): RecordCl
   return recordClasses.find(rc => rc.urlSegment === resultType.step.recordClassName);
 }
 
+function getStrategyEntry(state: RootState, id?: number): StrategyEntry {
+  const entry = id == null ? undefined : state.strategies.strategies[id];
+  return entry || { isLoading: true };
+}
+
 function mapState(state: RootState, props: OwnProps): MappedProps {
   const { isOpenedStrategiesVisible } = state.strategyWorkspace;
   const resultType = getResultType(state, props);
   const recordClass = getRecordClass(state, resultType);
-  const selectedStrategyEntry = props.strategyId == null ? undefined : state.strategies.strategies[props.strategyId]
-  const selectedStrategy = selectedStrategyEntry && selectedStrategyEntry.strategy;
-  return { isOpenedStrategiesVisible, resultType, recordClass, selectedStrategy };
+  const selectedStrategy = getStrategyEntry(state, props.strategyId);
+  const openedStrategies = props.openedStrategies && props.openedStrategies.map(id => [id, getStrategyEntry(state, id)]) as OpenedStrategiesMap;
+  return { isOpenedStrategiesVisible, resultType, recordClass, selectedStrategy, openedStrategies };
 }
 
 export default connect(mapState)(StrategyViewController);
 
 function StrategyPanelWithOpenedPanel(props: Props) {
-  const { stepId, strategyId, dispatch, openedStrategies, isOpenedStrategiesVisible } = props;
+  const { stepId, strategyId, selectedStrategy, dispatch, openedStrategies, isOpenedStrategiesVisible } = props;
   return (
     <>
       {openedStrategies != null && <OpenedStrategies
@@ -144,19 +161,21 @@ function StrategyPanelWithOpenedPanel(props: Props) {
         </div>}
       {strategyId && <StrategyPanelController
         isActive
-        viewId={STRATEGY_PANEL_VIEW_ID}
+        viewId={strategyPanelViewId(strategyId)}
         strategyId={strategyId}
         stepId={stepId}
+        strategy={selectedStrategy && selectedStrategy.strategy}
+        isLoading={selectedStrategy ? selectedStrategy.isLoading : true}
       />}
     </>
   );
 }
 
 function StrategyPanelWithToggle(props: Props) {
-  const { stepId, strategyId, dispatch, openedStrategies = [], isOpenedStrategiesVisible } = props;
+  const { stepId, strategyId, dispatch, selectedStrategy,  openedStrategies = [], isOpenedStrategiesVisible } = props;
   const toggleId = "openedStrategiesPanelToggle";
-  const strategiesToShow = isOpenedStrategiesVisible ? openedStrategies
-    : strategyId != null ? [ strategyId ]
+  const strategiesToShow: OpenedStrategiesMap = isOpenedStrategiesVisible ? openedStrategies
+    : selectedStrategy && strategyId ? [[ strategyId, selectedStrategy ]]
     : [];
 
   return (
@@ -167,14 +186,15 @@ function StrategyPanelWithToggle(props: Props) {
         </div>
       }
       <div className="OpenedStrategiesPanel">
-        {strategiesToShow.map(id => (
+        {strategiesToShow.map(([id, entry]) => (
           <StrategyPanelController
             key={id}
             isActive={id === strategyId}
             showCloseButton
-            viewId={id === strategyId ? STRATEGY_PANEL_VIEW_ID : `inactiveStrategyPanel__${id}`}
+            viewId={strategyPanelViewId(id)}
             strategyId={id}
             stepId={id === strategyId ? stepId : undefined}
+            {...entry}
           />
         ))}
       </div>

@@ -110,7 +110,7 @@ export default function StrategyPanel(props: Props) {
           {strategy != null && insertStepVisibility != null ? (
             <Modal className={cx('--Modal')}>
               <AddStepPanel
-                strategyId={strategy.strategyId}
+                strategy={strategy}
                 addType={insertStepVisibility}
                 onHideInsertStep={onHideInsertStep}
               />
