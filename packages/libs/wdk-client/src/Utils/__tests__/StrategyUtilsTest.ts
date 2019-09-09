@@ -156,8 +156,8 @@ describe('addStep', () => {
     const stepTree: StepTree = {
       stepId: 1
     }
-    expect(addStep(stepTree, { type: 'append', primaryInputStepId: 2 }, 3, { stepId: 4 })).toEqual(stepTree);
-    expect(addStep(stepTree, { type: 'insert-before', outputStepId: 2 }, 3, { stepId: 4 })).toEqual(stepTree);
+    expect(addStep(stepTree, { type: 'append', stepId: 2 }, 3, { stepId: 4 })).toEqual(stepTree);
+    expect(addStep(stepTree, { type: 'insert-before', stepId: 2 }, 3, { stepId: 4 })).toEqual(stepTree);
   });
 
   it('should return the same step tree structure, if trying to append a step to a non-head step', () => {
@@ -184,8 +184,8 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree, { type: 'append', primaryInputStepId: 2 }, 6, { stepId: 7 })).toEqual(stepTree);
-    expect(addStep(stepTree, { type: 'append', primaryInputStepId: 4 }, 6, { stepId: 7 })).toEqual(stepTree);
+    expect(addStep(stepTree, { type: 'append', stepId: 2 }, 6, { stepId: 7 })).toEqual(stepTree);
+    expect(addStep(stepTree, { type: 'append', stepId: 4 }, 6, { stepId: 7 })).toEqual(stepTree);
   });
 
   it('should return a step tree with a properly appended step, if trying to append a step to a head step', () => {
@@ -240,7 +240,7 @@ describe('addStep', () => {
         stepId: 7
       }
     };
-    expect(addStep(stepTree, { type: 'append', primaryInputStepId: 1 }, 6, { stepId: 7 })).toEqual(resultStepTree1);
+    expect(addStep(stepTree, { type: 'append', stepId: 1 }, 6, { stepId: 7 })).toEqual(resultStepTree1);
  
     //      5    7
     //      |    |
@@ -270,7 +270,7 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree, { type: 'append', primaryInputStepId: 3 }, 6, { stepId: 7 })).toEqual(resultStepTree2);    
+    expect(addStep(stepTree, { type: 'append', stepId: 3 }, 6, { stepId: 7 })).toEqual(resultStepTree2);    
 
     //           7
     //           |
@@ -303,7 +303,7 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree, { type: 'append', primaryInputStepId: 5 }, 6, { stepId: 7 })).toEqual(resultStepTree3);    
+    expect(addStep(stepTree, { type: 'append', stepId: 5 }, 6, { stepId: 7 })).toEqual(resultStepTree3);    
   });
 
   it('should return a step tree with a properly inserted step, if trying to insert a step before Step >= 2', () => {
@@ -364,7 +364,7 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree, { type: 'insert-before', outputStepId: 2 }, 7, { stepId: 8 })).toEqual(resultStepTree1);   
+    expect(addStep(stepTree, { type: 'insert-before', stepId: 2 }, 7, { stepId: 8 })).toEqual(resultStepTree1);   
 
     //                             5
     //                             |
@@ -397,7 +397,7 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree, { type: 'insert-before', outputStepId: 1 }, 7, { stepId: 8 })).toEqual(resultStepTree2);
+    expect(addStep(stepTree, { type: 'insert-before', stepId: 1 }, 7, { stepId: 8 })).toEqual(resultStepTree2);
     
     //                     8    5
     //                     |    |
@@ -430,7 +430,7 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree, { type: 'insert-before', outputStepId: 3 }, 7, { stepId: 8 })).toEqual(resultStepTree3);
+    expect(addStep(stepTree, { type: 'insert-before', stepId: 3 }, 7, { stepId: 8 })).toEqual(resultStepTree3);
   });
 
   it('should return a step tree with a properly inserted step, if trying to insert a step before Step 1', () => {
@@ -452,7 +452,7 @@ describe('addStep', () => {
         stepId: 1
       }
     };
-    expect(addStep(stepTree1, { type: 'insert-before', outputStepId: 1 }, 2, { stepId: 3 })).toEqual(resultStepTree1);
+    expect(addStep(stepTree1, { type: 'insert-before', stepId: 1 }, 2, { stepId: 3 })).toEqual(resultStepTree1);
 
     //                     5
     //                     |
@@ -511,7 +511,7 @@ describe('addStep', () => {
         }
       }
     };    
-    expect(addStep(stepTree2, { type: 'insert-before', outputStepId: 6 }, 7, { stepId: 8 })).toEqual(resultStepTree2);
+    expect(addStep(stepTree2, { type: 'insert-before', stepId: 6 }, 7, { stepId: 8 })).toEqual(resultStepTree2);
 
     //                4    5
     //                |    |
@@ -544,7 +544,7 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree2, { type: 'insert-before', outputStepId: 4 }, 7, { stepId: 8 })).toEqual(resultStepTree3);
+    expect(addStep(stepTree2, { type: 'insert-before', stepId: 4 }, 7, { stepId: 8 })).toEqual(resultStepTree3);
 
     //                     5
     //                     |
@@ -580,6 +580,6 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree2, { type: 'insert-before', outputStepId: 5 }, 7, { stepId: 8 })).toEqual(resultStepTree4);
+    expect(addStep(stepTree2, { type: 'insert-before', stepId: 5 }, 7, { stepId: 8 })).toEqual(resultStepTree4);
   });
 });
