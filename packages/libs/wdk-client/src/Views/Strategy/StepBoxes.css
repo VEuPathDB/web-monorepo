@@ -37,7 +37,7 @@
  */
 .StepBoxes--Slot:before {
   content: "";
-  border: .085em solid black;
+  border-top: .17em solid black;
   position: absolute;
   bottom: 25%;
   left: 0;
@@ -116,7 +116,7 @@
 /* Line connecting leaf step and combined step */
 .StepBoxes--BoxLink__combined:before {
   content: "";
-  border: .085em solid black;
+  border-right: .17em solid black;
   height: 4em;
   position: absolute;
   left: calc(50% + .4em); /** TODO convert px to em */
