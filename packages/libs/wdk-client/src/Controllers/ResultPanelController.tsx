@@ -194,10 +194,10 @@ const mergeProps = (
   defaultSummaryView: stateProps.defaultSummaryView,
   loadingTabs: (
     stateProps.loadingSummaryViewListing ||
-    (ownProps.viewId === 'strategy' && stateProps.loadingAnalysisChoices)
+    (ownProps.resultType.type === 'step' && stateProps.loadingAnalysisChoices)
   ),
   activeTab: `${stateProps.activeTab}`,
-  newAnalysisButton: ownProps.viewId === 'strategy' && stateProps.analysisChoices.length > 0 && stateProps.newAnalysisButtonVisible
+  newAnalysisButton: ownProps.resultType.type === 'step' && stateProps.analysisChoices.length > 0 && stateProps.newAnalysisButtonVisible
     ? (
       <button
         id="add-analysis"
@@ -236,7 +236,7 @@ const mergeProps = (
         ) : null
       })
     ),
-    ...(ownProps.viewId !== 'strategy' ? [] : stateProps.analysisBaseTabConfigs.map(
+    ...(ownProps.resultType.type !== 'step' ? [] : stateProps.analysisBaseTabConfigs.map(
       baseTabConfig => ({
         ...baseTabConfig,
         content: (

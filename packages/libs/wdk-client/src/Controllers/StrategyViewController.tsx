@@ -93,7 +93,7 @@ function StrategyViewController(props: Props) {
       <div style={{ position: 'relative', minHeight: '350px' }}>
         {resultType && <ResultPanelController
           resultType={resultType}
-          viewId="strategy"
+          viewId={`step__${resultType.step.id}`}
           renderHeader={() => resultType && recordClass ? (
             <>
               <ResultPanelHeader
