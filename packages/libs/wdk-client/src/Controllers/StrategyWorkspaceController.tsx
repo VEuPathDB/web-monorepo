@@ -11,7 +11,7 @@ import StrategyViewController from 'wdk-client/Controllers/StrategyViewControlle
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 import { PublicStrategiesController } from 'wdk-client/Controllers/PublicStrategiesController';
 import { ImportStrategyController } from 'wdk-client/Controllers/ImportStrategyController';
-import {openStrategyView, closeStrategyView} from 'wdk-client/Actions/StrategyWorkspaceActions';
+import {openStrategyView, closeStrategyView, addToOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
 
@@ -37,12 +37,20 @@ type Props = OwnProps & DispatchProps & MappedProps;
 
 function StrategyWorkspaceController(props: Props) {
   const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries } = props;
+  const activeStrategyId = activeStrategy && activeStrategy.strategyId;
+
   useEffect(() => {
     dispatch(openStrategyView());
     return () => {
       dispatch(closeStrategyView());
     }
   }, []);
+
+  useEffect(() => {
+    if (activeStrategyId) {
+      dispatch(addToOpenedStrategies([activeStrategyId]));
+    }
+  }, [activeStrategyId]);
 
   useSetDocumentTitle('My Strategies');
 

@@ -154,7 +154,6 @@ export const observe = takeEpicInWindow(
 
     srate([openStrategyView], getOpenedStrategiesVisibility),
     srate([openStrategyView, fulfillStrategiesList], getOpenedStrategies),
-    srate([setActiveStrategy], appendActiveStrategyToOpenedStrategies),
     srate([openStrategyView], getRequestStrategiesList),
     srate([openStrategyView], getRequestPublicStrategies),
 
@@ -171,8 +170,8 @@ export const observe = takeEpicInWindow(
       { areActionsNew: stubTrue }),
     srate([openStrategyView, fulfillDeleteOrRestoreStrategies], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
-    srate([openStrategyView, fulfillStrategy], getRequestStrategiesList,
-      { areActionsNew: stubTrue }),
+    // srate([openStrategyView, fulfillStrategy], getRequestStrategiesList,
+    //   { areActionsNew: stubTrue }),
     srate([openStrategyView, fulfillPatchStrategyProperties], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
 
@@ -294,13 +293,6 @@ async function getOpenedStrategies(
   const openedStrategies = defaultTo(await getValue(wdkService, preferences.openedStrategies()), [] as number[])
     .filter(id => allUserStratIds.has(id));
   return setOpenedStrategies(openedStrategies);
-}
-
-async function appendActiveStrategyToOpenedStrategies(
-  [activeStrategyAction]: [InferAction<typeof setActiveStrategy>]
-): Promise<InferAction<typeof addToOpenedStrategies>> {
-  const strategyId = activeStrategyAction.payload.activeStrategy && activeStrategyAction.payload.activeStrategy.strategyId;
-  return addToOpenedStrategies(strategyId ? [strategyId] : []);
 }
 
 async function getOpenedStrategiesVisibility(
