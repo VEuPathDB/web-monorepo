@@ -77,6 +77,7 @@ export interface StepBoxProps {
 export interface StepDetailProps extends StepBoxProps {
   isOpen: boolean;
   onClose: () => void;
+  allowRevise?: boolean;
 }
 
 export interface InsertBefore {

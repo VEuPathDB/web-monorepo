@@ -44,7 +44,7 @@ const actions: StepAction[] = [
   {
     display: () => <React.Fragment>Revise</React.Fragment>,
     onClick: ({ showReviseForm }) => showReviseForm(),
-    isDisabled: ({ isNested }) => isNested,
+    isHidden: ({ allowRevise = true }) => !allowRevise,
     tooltip: () => 'Modify the configuration of this search'
   },
   {

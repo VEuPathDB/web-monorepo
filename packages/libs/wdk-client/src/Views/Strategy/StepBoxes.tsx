@@ -147,6 +147,7 @@ function StepBox(props: StepBoxProps) {
     : 'leaf';
   const nestedModifier = isNested ? 'nested' : '';
   const borderColor = isNested && stepTree.nestedControlStep && stepTree.nestedControlStep.expanded ? color : undefined;
+  const allowRevise = !isNested && !isCombineUiStepTree(stepTree);
 
   const editButton = (
     <button
@@ -159,7 +160,7 @@ function StepBox(props: StepBoxProps) {
   );
 
   const stepDetails = (
-    <StepDetailsDialog {...props} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
+    <StepDetailsDialog {...props} allowRevise={allowRevise} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
   );
 
   const filterIcon = step.isFiltered && (
