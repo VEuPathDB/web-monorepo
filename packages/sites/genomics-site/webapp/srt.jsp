@@ -14,18 +14,6 @@
                parentUrl="/home.jsp"
                divisionName="Retrieve Sequences"
                division="queries_tools">
-  <c:set var="qSetMap" value="${wdkModel.questionSetsMap}"/>
-
-  <c:set var="gqSet" value="${qSetMap['InternalQuestions2']}"/>
-  <c:set var="gqMap" value="${gqSet.questionsMap}"/>
-
-  <c:set var="geneByIdQuestion" value="${gqMap['SRT']}"/>
-  <c:set var="gidqpMap" value="${geneByIdQuestion.paramsMap}"/>
-  <c:set var="genesIds" value="${gidqpMap['genes_ids']}"/>
-  <c:set var="contigsIds" value="${gidqpMap['contigs_ids']}"/>
-  <c:set var="contigsIds2" value="${gidqpMap['contigs_ids']}"/>
-  <c:set var="contigsIds3" value="${gidqpMap['contigs_ids']}"/>
-  <c:set var="orfsIds" value="${gidqpMap['orfs_ids']}"/>
 
   <c:set var="gSrt" value="geneSrt"/>
   <c:set var="cSrt" value="contigSrt"/>
