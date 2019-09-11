@@ -1,5 +1,5 @@
 import { stubTrue, zip } from 'lodash/fp';
-import { combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
+import { combineEpics, StateObservable } from 'redux-observable';
 
 import { Action } from 'wdk-client/Actions';
 import { enableSubmission, EnableSubmissionAction } from 'wdk-client/Actions/QuestionActions';
@@ -35,12 +35,10 @@ import {
   requestReplaceStep,
   requestSaveAsStrategy,
   fulfillSaveAsStrategy,
+  cancelStrategyRequest,
 } from 'wdk-client/Actions/StrategyActions';
 import { removeStep, getStepIds, replaceStep, mapStepTreeIds } from 'wdk-client/Utils/StrategyUtils';
-import { difference } from 'lodash';
 import {confirm, alert} from 'wdk-client/Utils/Platform';
-import {filter, mergeMap, mergeAll} from 'rxjs/operators';
-import {empty, of, Observable} from 'rxjs';
 
 export const key = 'strategies';
 
@@ -74,6 +72,13 @@ export function reduce(state: State = initialState, action: Action): State {
     return updateStrategyEntry(state, strategyId, prevEntry => ({
       ...prevEntry,
       isLoading: true
+    }));
+  }
+
+  case cancelStrategyRequest.type: {
+    return updateStrategyEntry(state, action.payload.strategyId, entry => ({
+      ...entry,
+      isLoading: false
     }));
   }
 
@@ -191,80 +196,72 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     return fulfillDeleteOrRestoreStrategies(deleteStrategiesSpecs, requestTimestamp);
   }
 
-// This logic is complicated to express with mrate, so we're using a vanilla Epic
-function observePatchStrategy(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
-  return action$.pipe(
-    filter(requestPatchStrategyProperties.isOfType),
-    mergeMap(async action => {
-      const { strategyId, strategyProperties }  = action.payload;
+async function getFulfillPatchStrategy(
+  [requestAction]: [InferAction<typeof requestPatchStrategyProperties>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillPatchStrategyProperties | typeof cancelStrategyRequest>> {
+  const { strategyId, strategyProperties }  = requestAction.payload;
 
-      // If updating name, make sure there are no name conflicts
-      if (strategyProperties.name != null) {
-        const allStrategies = await wdkService.getStrategies();
-        const currentStrategy = allStrategies.find(strategy => strategy.strategyId === strategyId);
-        if (currentStrategy == null) throw new Error("Could not find the target strategy.");
-        const conflictingStrategy = allStrategies.find(strategy => (
-          strategy.isSaved === currentStrategy.isSaved &&
-          strategy.name === strategyProperties.name &&
-          strategy.strategyId !== currentStrategy.strategyId
-        ));
-        if (conflictingStrategy) {
-          await alert('Cannot update strategy', `A strategy with the name "${strategyProperties.name}" already exists.`)
-          return empty();
-        }
-      }
+  // If updating name, make sure there are no name conflicts
+  if (strategyProperties.name != null) {
+    const allStrategies = await wdkService.getStrategies();
+    const currentStrategy = allStrategies.find(strategy => strategy.strategyId === strategyId);
+    if (currentStrategy == null) throw new Error("Could not find the target strategy.");
+    const conflictingStrategy = currentStrategy.isSaved ? allStrategies.find(strategy => (
+      strategy.isSaved === currentStrategy.isSaved &&
+      strategy.name === strategyProperties.name &&
+      strategy.strategyId !== currentStrategy.strategyId
+    )) : undefined;
+    if (conflictingStrategy) {
+      await alert('Cannot update strategy', `A strategy with the name "${strategyProperties.name}" already exists.`)
+      return cancelStrategyRequest(strategyId);
+    }
+  }
 
-      await wdkService.patchStrategyProperties(strategyId, strategyProperties);
-      return of(fulfillPatchStrategyProperties(strategyId));
-    }),
-    mergeAll()
-  );
+  await wdkService.patchStrategyProperties(strategyId, strategyProperties);
+  return fulfillPatchStrategyProperties(strategyId);
 }
 
-// This logic is complicated to express with mrate, so we're using a vanilla Epic
-function observeSaveStrategyAs(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
-  return action$.pipe(
-    filter(requestSaveAsStrategy.isOfType),
-    mergeMap(async action => {
-      const { strategyId, targetName, options } = action.payload;
-      const allStrategies = await wdkService.getStrategies();
-      const sourceStrategy = allStrategies.find(s => s.strategyId === strategyId);
+async function getFulfilllSaveAs(
+  [requestAction]: [InferAction<typeof requestSaveAsStrategy>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillSaveAsStrategy | typeof cancelStrategyRequest>> {
+  const { strategyId, targetName, options } = requestAction.payload;
+  const allStrategies = await wdkService.getStrategies();
+  const sourceStrategy = allStrategies.find(s => s.strategyId === strategyId);
 
-      if (sourceStrategy == null) throw new Error(`Could not find strategy being saved.`);
+  if (sourceStrategy == null) throw new Error(`Could not find strategy being saved.`);
 
-      const conflictingStrategy = allStrategies.find(strategy => (
-        strategy.isSaved &&
-        strategy.name === targetName &&
-        strategy.strategyId !== strategyId
-      ));
+  const conflictingStrategy = allStrategies.find(strategy => (
+    strategy.isSaved &&
+    strategy.name === targetName &&
+    strategy.strategyId !== strategyId
+  ));
 
-      const proceed = conflictingStrategy == null ? true : await confirm(
-        'Replace existing strategy?',
-        `A strategy with the name "${targetName}" already exists. Would you like to replace it?`
-      );
-
-      if (!proceed) return empty();
-
-      const stepTree = await wdkService.getDuplicatedStrategyStepTree(strategyId);
-
-      const { description } = sourceStrategy;
-
-      // If there is a saved strategy with targetName, update it; otherwise create a new strategy.
-      if (conflictingStrategy) {
-        await wdkService.putStrategyStepTree(conflictingStrategy.strategyId, stepTree);
-        await wdkService.patchStrategyProperties(conflictingStrategy.strategyId, { name: targetName, description });
-        if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
-        return of(fulfillSaveAsStrategy(strategyId, conflictingStrategy.strategyId));
-      }
-
-      const newStratResponse = await wdkService.createStrategy({ name: targetName, description, isSaved: true, isPublic: false, stepTree });
-      if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
-      return of(fulfillSaveAsStrategy(strategyId, newStratResponse.id));
-
-    }),
-    // The above operation results a Promise<Observable<T>>. `mergeAll` flattens that to Observable<T>.
-    mergeAll()
+  const proceed = conflictingStrategy == null ? true : await confirm(
+    'Replace existing strategy?',
+    `A strategy with the name "${targetName}" already exists. Would you like to replace it?`
   );
+
+  if (!proceed) return cancelStrategyRequest(strategyId);
+
+  const stepTree = await wdkService.getDuplicatedStrategyStepTree(strategyId);
+
+  const { description } = sourceStrategy;
+
+  // If there is a saved strategy with targetName, update it; otherwise create a new strategy.
+  if (conflictingStrategy) {
+    await wdkService.putStrategyStepTree(conflictingStrategy.strategyId, stepTree);
+    await wdkService.patchStrategyProperties(conflictingStrategy.strategyId, { name: targetName, description });
+    if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
+    return fulfillSaveAsStrategy(strategyId, conflictingStrategy.strategyId);
+  }
+
+  const newStratResponse = await wdkService.createStrategy({ name: targetName, description, isSaved: true, isPublic: false, stepTree });
+  if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
+  return fulfillSaveAsStrategy(strategyId, newStratResponse.id);
 }
 
 async function getFulfillStrategy_SaveAs(
@@ -472,6 +469,8 @@ async function getFulfillNewSearch(
     mrate([requestStrategy], getFulfillStrategy, {
       areActionsNew: stubTrue
     }),
+    mrate([requestPatchStrategyProperties], getFulfillPatchStrategy),
+    mrate([requestSaveAsStrategy], getFulfilllSaveAs),
     mrate([requestDeleteOrRestoreStrategies], getFulfillDeleteOrRestoreStrategies),
     mrate([requestPutStrategyStepTree], getFulfillStrategy_PutStepTree), // replace saved with unsaved
     mrate([fulfillSaveAsStrategy], getFulfillStrategy_SaveAs,
@@ -492,6 +491,4 @@ async function getFulfillNewSearch(
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
     mrate([requestCreateStrategy, fulfillCreateStrategy], getFulfillNewSearch),
-    observePatchStrategy,
-    observeSaveStrategyAs
   );

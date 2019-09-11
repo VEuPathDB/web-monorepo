@@ -18,6 +18,12 @@ export const requestStrategy = makeActionCreator(
     (strategyId: number) => ({ strategyId })
 );
 
+// Cancel any type of strategy request (update, create, fetch, etc).
+export const cancelStrategyRequest = makeActionCreator(
+  'cancelStrategyRequest',
+  (strategyId: number) => ({ strategyId })
+);
+
 export const fulfillStrategy = makeActionCreator(
     'fulfillStrategy',
     (strategy: StrategyDetails) => ({ strategy })
@@ -166,6 +172,7 @@ export const redirectToNewSearch = makeActionCreator(
 );
 
 export type Action = InferAction<
+  | typeof cancelStrategyRequest
   | typeof requestCreateStrategy
   | typeof fulfillCreateStrategy
   | typeof requestDeleteStrategy
