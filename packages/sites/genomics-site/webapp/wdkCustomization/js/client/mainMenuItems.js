@@ -49,7 +49,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'blast',
           text: 'BLAST',
-          webAppUrl: '/showQuestion.do?questionFullName=UniversalQuestions.UnifiedBlast'
+          webAppUrl: '/app/search/transcript/UnifiedBlast'
         },
         {
           id: 'analysis',
@@ -303,7 +303,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           text: 'Find Genes with Comments from the ' + siteConfig.projectId + ' Community',
           exclude: [EuPathDB],
           tooltip: 'Add your comments to your gene of interest: start at the gene page',
-          webAppUrl: '/showSummary.do?questionFullName=GeneQuestions.GenesWithUserComments&value(timestamp)=817205'
+          webAppUrl: '/app/search/gene/GenesWithUserComments'
         },
         {
           id: 'community-upload',
