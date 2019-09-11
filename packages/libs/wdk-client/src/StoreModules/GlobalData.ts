@@ -1,6 +1,6 @@
 import { Location } from 'history';
 import { Action } from 'wdk-client/Actions';
-import { UPDATE_LOCATION } from 'wdk-client/Actions/RouterActions';
+import { updateLocation } from 'wdk-client/Actions/RouterActions';
 import {
   questionsLoaded,
   configLoaded,
@@ -66,7 +66,7 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
       return { ...state, ...action.payload };
 
     // router actions
-    case UPDATE_LOCATION:
+    case updateLocation.type:
       return { ...state, ...action.payload, loginForm: { isOpen: false } };
 
     // user actions

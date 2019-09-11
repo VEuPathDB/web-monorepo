@@ -1,5 +1,5 @@
 import { Action } from 'redux';
-import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { transitionToExternalPage, transitionToInternalPage, Action as RouteAction } from 'wdk-client/Actions/RouterActions';
 import { showLoginWarning } from 'wdk-client/Actions/UserSessionActions';
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
@@ -369,7 +369,7 @@ export function favoritesStatusError(record: RecordInstance, error: Error): Favo
  * the passed path.  Optional external param lets caller specify if path is
  * internal or external, defaulting to false (internal).
  */
-export function conditionallyTransition(test: UserPredicate, path: string, external: boolean = false): ActionThunk<EmptyAction> {
+export function conditionallyTransition(test: UserPredicate, path: string, external: boolean = false): ActionThunk<EmptyAction | RouteAction> {
   return function run({ wdkService }) {
     return wdkService.getCurrentUser().then(user => {
       if (test(user)) {

@@ -6,6 +6,7 @@ import { PrimaryKey } from 'wdk-client/Utils/WdkModel';
 import { BasketRecordOperation } from 'wdk-client/Service/Mixins/BasketsService';
 export type BasketScope = 'global' | 'project';
 
+// If `operation` is `removeAll`, `primaryKeys` is ignored
 export const requestUpdateBasket = makeActionCreator(
   'requestUpdateBasket',
   (
@@ -14,6 +15,17 @@ export const requestUpdateBasket = makeActionCreator(
     primaryKeys: Array<PrimaryKey>
   ) => ({ operation: operation, recordClassName, primaryKeys })
 );
+
+export const requestUpdateBasketWithConfirmation = makeActionCreator(
+  'requestUpdateBasketWithConfirmation',
+  (
+    operation: BasketRecordOperation,
+    recordClassName: string,
+    primaryKeys: PrimaryKey[]
+  ) =>  ({ operation, recordClassName, primaryKeys })
+);
+
+export const cancelRequestUpdateBasket = makeActionCreator('cancelRequestUpdateBasket');
 
 export const fulfillUpdateBasket = makeActionCreator(
   'fulfillUpdateBasket',
@@ -54,13 +66,21 @@ export const fulfillBasketDetails = makeActionCreator(
     ({ basketName, recordClassName, searchName })
 );
 
+export const saveBasketToStrategy = makeActionCreator(
+  'saveBasketToStrategy',
+  (basketName: string) => ({ basketName })
+);
 
-export type Action =
-  | InferAction<typeof requestUpdateBasket>
-  | InferAction<typeof fulfillUpdateBasket>
-  | InferAction<typeof requestAddStepToBasket>
-  | InferAction<typeof fulfillAddStepToBasket>
-  | InferAction<typeof requestBasketCounts>
-  | InferAction<typeof fulfillBasketCounts>
-  | InferAction<typeof requestBasketDetails>
-  | InferAction<typeof fulfillBasketDetails>
+export type Action = InferAction<
+  | typeof requestUpdateBasket
+  | typeof requestUpdateBasketWithConfirmation
+  | typeof cancelRequestUpdateBasket
+  | typeof fulfillUpdateBasket
+  | typeof requestAddStepToBasket
+  | typeof fulfillAddStepToBasket
+  | typeof requestBasketCounts
+  | typeof fulfillBasketCounts
+  | typeof requestBasketDetails
+  | typeof fulfillBasketDetails
+  | typeof saveBasketToStrategy
+  >

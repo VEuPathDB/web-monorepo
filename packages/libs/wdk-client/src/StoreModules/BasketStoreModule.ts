@@ -1,4 +1,5 @@
 import { StateObservable } from 'redux-observable';
+import { confirm } from 'wdk-client/Utils/Platform';
 import {
   requestUpdateBasket,
   fulfillUpdateBasket,
@@ -6,6 +7,9 @@ import {
   fulfillAddStepToBasket,
   fulfillBasketCounts,
   requestBasketCounts,
+  requestUpdateBasketWithConfirmation,
+  cancelRequestUpdateBasket,
+  saveBasketToStrategy,
 } from 'wdk-client/Actions/BasketActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
@@ -18,6 +22,9 @@ import {
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics } from 'redux-observable';
 import { RootState } from 'wdk-client/Core/State/Types';
+import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
+import {SearchConfig} from 'wdk-client/Utils/WdkModel';
+import {DEFAULT_STRATEGY_NAME} from 'wdk-client/StoreModules/QuestionStoreModule';
 
 export const key = 'basket';
 
@@ -37,11 +44,18 @@ export function reduce(state: State = initialState, action: Action): State {
 }
 
 async function getFulfillUpdateBasket(
-  [requestAction]: [InferAction<typeof requestUpdateBasket>],
+  [requestAction]: [InferAction<typeof requestUpdateBasket | typeof requestUpdateBasketWithConfirmation>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillUpdateBasket>> {
+): Promise<InferAction<typeof fulfillUpdateBasket | typeof cancelRequestUpdateBasket>> {
   let payload = requestAction.payload;
+  if (requestUpdateBasketWithConfirmation.isOfType(requestAction)) {
+    const proceed = await confirm(
+      'Empty basket',
+      'Are you sure you want to empty this basket? This operation cannot be undone.'
+    );
+    if (!proceed) return cancelRequestUpdateBasket();
+  }
   await wdkService.updateBasketStatus(
     payload.operation,
     payload.recordClassName,
@@ -69,7 +83,7 @@ async function getFulfillAddStepToBasket(
 }
 
 async function getFulfillBasketCounts(
-  [requestAction]: [InferAction<typeof requestBasketCounts>],
+  _: unknown,
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillBasketCounts>> {
@@ -77,12 +91,47 @@ async function getFulfillBasketCounts(
   return fulfillBasketCounts(counts);
 }
 
+async function getBasketStrategy(
+  [action]: [InferAction<typeof saveBasketToStrategy>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof transitionToInternalPage>> {
+  const { basketName } = action.payload;
+  const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment === basketName);
+  const datasetId = await wdkService.createDataset({
+    sourceType: 'basket',
+    sourceContent: { basketName }
+  });
+  const prefix = recordClass.fullName.replace('.', '_');
+  const searchName = prefix + 'BySnapshotBasket';
+  const paramName = prefix + 'Dataset';
+  const searchConfig: SearchConfig = {
+    parameters: {
+      [paramName]: String(datasetId)
+    }
+  };
+  const { id: stepId } = await wdkService.createStep({ searchName, searchConfig, customName: 'Copy of Basket' });
+  const stepTree = { stepId };
+  const { id: strategyId } = await wdkService.createStrategy({ name: DEFAULT_STRATEGY_NAME, isPublic: false, isSaved: false, stepTree })
+  return transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}`);
+}
+
 export const observe = combineEpics(
   crate([requestUpdateBasket], getFulfillUpdateBasket,
     // Always request basket update requests
     { areActionsNew: () => true }),
+  crate([requestUpdateBasketWithConfirmation], getFulfillUpdateBasket,
+    // Always request basket update requests
+    { areActionsNew: () => true }),
   crate([requestAddStepToBasket], getFulfillAddStepToBasket,
+    { areActionsNew: () => true }),
+
+  srate([fulfillUpdateBasket], getFulfillBasketCounts,
+    { areActionsNew: () => true }),
+  srate([fulfillAddStepToBasket], getFulfillBasketCounts,
     { areActionsNew: () => true }),
   srate([requestBasketCounts], getFulfillBasketCounts,
     { areActionsNew: () => true }),
+  srate([saveBasketToStrategy], getBasketStrategy,
+    { areActionsNew: () => true })
 );

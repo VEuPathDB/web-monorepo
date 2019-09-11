@@ -9,7 +9,7 @@ import {
 import {AnswerFormatting} from 'wdk-client/Service/Mixins/SearchReportsService';
 
 type BasketStatusResponse = Array<boolean>;
-export type BasketRecordOperation = 'add' | 'remove' ;
+export type BasketRecordOperation = 'add' | 'remove' | 'removeAll' ;
 export type BasketStepOperation = 'addFromStepId';
 
 const BASKETS_PATH = '/users/current/baskets';

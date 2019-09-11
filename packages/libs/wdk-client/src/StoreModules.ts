@@ -28,6 +28,7 @@ import * as strategyList from 'wdk-client/StoreModules/StrategyListStoreModule';
 import * as publicStrategies from 'wdk-client/StoreModules/PublicStrategyStoreModule';
 import * as unhandledErrors from 'wdk-client/StoreModules/UnhandledErrorStoreModule';
 import * as matchedTranscriptsFilter from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
+import * as router from 'wdk-client/StoreModules/RouterStoreModule';
 import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
 import * as userSession from 'wdk-client/StoreModules/UserSessionStoreModule';
@@ -53,6 +54,7 @@ export default {
   strategyWorkspace,
   strategyList,
   publicStrategies,
+  router,
   userCommentForm,
   userCommentShow,
   userDatasetDetail,
