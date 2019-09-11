@@ -66,12 +66,13 @@ export function SpanLogicForm(
   { 
     dispatchAction,
     eventHandlers: { updateParamValue }, 
-    state: { paramValues, question: { parametersByName, urlSegment } },
+    state: { paramValues, question: { parametersByName, urlSegment }, submitting },
     parameterElements,
     currentStepRecordClass,
     newStepRecordClass,
     insertingBeforeFirstStep,
     submissionMetadata,
+    submitButtonText,
     typeChangeAllowed,
     currentStepName = 'the current step',
     newStepName = 'the new step'
@@ -287,7 +288,11 @@ export function SpanLogicForm(
       <div className={cx('--RightRegionConfigGutter')}></div>
       <div className={cx('--SubmissionContainer')}>
         <form onSubmit={onSubmit}>
-          <SubmitButton submissionMetadata={submissionMetadata} />
+          <SubmitButton 
+            submissionMetadata={submissionMetadata} 
+            submitting={submitting} 
+            submitButtonText={submitButtonText} 
+          />
         </form>
       </div>
     </div>

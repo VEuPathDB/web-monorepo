@@ -127,7 +127,8 @@ export const apiBinaryOperations: BinaryOperation[] = [
                 question: colocationQuestionPrimaryInput.urlSegment,
                 recordClass: primaryInputRecordClass.urlSegment,
                 submissionMetadata: submissionMetadata,
-                FormComponent: FormComponent
+                FormComponent: FormComponent,
+                submitButtonText: 'Revise'
               }}
             />;
       }
