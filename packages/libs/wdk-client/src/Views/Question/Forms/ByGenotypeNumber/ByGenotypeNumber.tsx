@@ -14,10 +14,12 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
       description,
       displayName,
       urlSegment
-    }
+    },
+    submitting
   },
   parameterElements,
-  submissionMetadata
+  submissionMetadata,
+  submitButtonText
 }) => {
   const onSubmit = useDefaultOnSubmit(dispatchAction, urlSegment, submissionMetadata);
 
@@ -27,7 +29,7 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
       <form onSubmit={onSubmit}>
         {parameterElements.genotype}
         <div className={cx('SubmitSection')}>
-          <SubmitButton submissionMetadata={submissionMetadata} />
+          <SubmitButton submissionMetadata={submissionMetadata} submitting={submitting} submitButtonText={submitButtonText} />
         </div>
       </form>
       <QuestionDescription description={description} />

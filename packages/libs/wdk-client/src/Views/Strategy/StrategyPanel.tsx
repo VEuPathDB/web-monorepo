@@ -135,7 +135,8 @@ export default function StrategyPanel(props: Props) {
                   strategyId: strategy.strategyId,
                   stepId: reviseStep.id,
                   previousSearchConfig: reviseStep.searchConfig
-                }
+                },
+                submitButtonText: 'Revise'
               }}
             />
           </div>

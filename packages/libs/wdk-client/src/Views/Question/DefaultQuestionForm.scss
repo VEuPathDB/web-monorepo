@@ -52,6 +52,14 @@
     }
   }
 
+  &SubmittingIndicator {
+    background-image: url('./wizard-busy.gif');
+    height: 24px;
+    width: 160px;
+    background-size: cover;
+    margin: 1em;
+  }
+
   /* Parameter-specific rules */
 
   .wdk-TreeBoxParam {

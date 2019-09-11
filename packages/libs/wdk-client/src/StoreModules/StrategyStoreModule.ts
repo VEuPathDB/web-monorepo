@@ -2,6 +2,7 @@ import { stubTrue, zip } from 'lodash/fp';
 import { combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
 
 import { Action } from 'wdk-client/Actions';
+import { enableSubmission, EnableSubmissionAction } from 'wdk-client/Actions/QuestionActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -317,7 +318,7 @@ async function getFulfillStrategy_SaveAs(
     [requestAction]: [InferAction<typeof requestUpdateStepSearchConfig>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillStrategy | typeof fulfillDraftStrategy>> {
+  ): Promise<InferAction<typeof fulfillStrategy | typeof fulfillDraftStrategy> | EnableSubmissionAction> {
     const {strategyId, stepId, searchConfig }  = requestAction.payload;
     const strategy = await wdkService.getStrategy(strategyId);
     if (strategy.isSaved) {
@@ -338,34 +339,53 @@ async function getFulfillStrategy_SaveAs(
           : searchConfig.parameters[parameter.name]
         }), { ...searchConfig.parameters });
       const duplicateSearchConfig = { ...searchConfig, parameters: duplicateParameters };
-      await wdkService.updateStepSearchConfig(duplicateStepId, duplicateSearchConfig);
-      return fulfillDraftStrategy(await wdkService.getStrategy(duplicateStrategyId), strategyId);
+
+      try {
+        await wdkService.updateStepSearchConfig(duplicateStepId, duplicateSearchConfig);
+        return fulfillDraftStrategy(await wdkService.getStrategy(duplicateStrategyId), strategyId);
+      } catch (error) {
+        // FIXME Instead of alerting, display the error(s) on the associated question form
+        alert('A submission error occurred', String(error));
+        return enableSubmission({ searchName });
+      }
     }
 
-    await wdkService.updateStepSearchConfig(stepId, searchConfig);
-    return fulfillStrategy(await wdkService.getStrategy(strategyId));
+    try {
+      await wdkService.updateStepSearchConfig(stepId, searchConfig);
+      return fulfillStrategy(await wdkService.getStrategy(strategyId));
+    } catch (error) {
+      // FIXME Instead of alerting, display the error(s) on the associated question form
+      alert('A submission error occurred', String(error));
+      return enableSubmission({ searchName: strategy.steps[stepId].searchName });
+    }
   }
 
   async function getFulfillStrategy_ReplaceStep(
     [requestAction]: [InferAction<typeof requestReplaceStep>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof requestPutStrategyStepTree>> {
+  ): Promise<InferAction<typeof requestPutStrategyStepTree> | EnableSubmissionAction> {
     const { strategyId, stepId: oldStepId, newStepSpec } = requestAction.payload;
 
-    const { id: newStepId } = await wdkService.createStep(newStepSpec);
-    const strategyEntry = state$.value.strategies.strategies[strategyId];
+    try {
+      const { id: newStepId } = await wdkService.createStep(newStepSpec);
+      const strategyEntry = state$.value.strategies.strategies[strategyId];
 
-    if (strategyEntry == null || strategyEntry.isLoading || strategyEntry.strategy == null) {
-      throw new Error(`Tried to replace strategy #${strategyId}, which is pending`);
+      if (strategyEntry == null || strategyEntry.isLoading || strategyEntry.strategy == null) {
+        throw new Error(`Tried to replace strategy #${strategyId}, which is pending`);
+      }
+
+      const oldStepTree = strategyEntry.strategy.stepTree;
+
+      return requestPutStrategyStepTree(
+        strategyId,
+        replaceStep(oldStepTree, oldStepId, newStepId)
+      );
+    } catch (error) {
+      // FIXME Instead of alerting, display the error(s) on the associated question form
+      alert('A submission error occurred', error);
+      return enableSubmission({ searchName: newStepSpec.searchName });
     }
-
-    const oldStepTree = strategyEntry.strategy.stepTree;
-
-    return requestPutStrategyStepTree(
-      strategyId,
-      replaceStep(oldStepTree, oldStepId, newStepId)
-    );
   }
 
   async function getFulfillStrategy_RemoveStepFromStepTree(

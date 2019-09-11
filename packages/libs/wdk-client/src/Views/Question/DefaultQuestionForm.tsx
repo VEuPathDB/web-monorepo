@@ -31,6 +31,7 @@ export type Props = {
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
   submissionMetadata: SubmissionMetadata;
+  submitButtonText?: string;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
   onSubmit?: (e: React.FormEvent) => void;
 }
@@ -50,8 +51,8 @@ export const useDefaultOnSubmit = (dispatchAction: DispatchAction, urlSegment: s
 
 export default function DefaultQuestionForm(props: Props) {
 
-  const { dispatchAction, onSubmit, submissionMetadata, state } = props;
-  const { question, customName, paramValues, weight, stepValidation } = state;
+  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText } = props;
+  const { question, customName, paramValues, weight, stepValidation, submitting } = state;
 
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata);
 
@@ -98,6 +99,8 @@ export default function DefaultQuestionForm(props: Props) {
           handleCustomNameChange={handleCustomNameChange}
           handleWeightChange={handleWeightChange}
           submissionMetadata={submissionMetadata}
+          submitting={submitting}
+          submitButtonText={submitButtonText}
         />
         <QuestionDescription description={question.description}/>
       </form>
@@ -229,16 +232,22 @@ function ParameterHeading(props: { parameter: Parameter}) {
   )
 }
 
-export function SubmitButton(props: { submissionMetadata: SubmissionMetadata }) {
-  return (
-    <button type="submit" className="btn">
-      {
-        props.submissionMetadata.type === 'create-strategy'
-          ? 'Get Answer'
-          : 'Run Step'
-      }
-    </button>
-  );
+export function SubmitButton(
+  props: { submissionMetadata: SubmissionMetadata, submitButtonText?: string, submitting: boolean }
+) {
+  return props.submitting
+    ? <div className={cx('SubmittingIndicator')}></div>
+    : <button type="submit" className="btn">
+        {
+          props.submitButtonText
+            ? props.submitButtonText
+            : props.submissionMetadata.type === 'create-strategy'
+            ? 'Get Answer'
+            : props.submissionMetadata.type === 'edit-step'
+            ? 'Revise Step'
+            : 'Run Step'
+        }
+      </button>;
 }
 
 interface SearchNameInputProps {
@@ -340,14 +349,30 @@ interface SubmitSectionProps {
   handleCustomNameChange: TextboxChangeHandler;
   handleWeightChange: TextboxChangeHandler;
   submissionMetadata: SubmissionMetadata;
+  submitting: boolean;
+  submitButtonText?: string;
 }
 
 export function SubmitSection(props: SubmitSectionProps) {
-  let { className, tooltipPosition, customName, handleCustomNameChange, searchName, paramValues, weight, handleWeightChange, submissionMetadata } = props;
+  let { 
+    className, 
+    tooltipPosition, 
+    customName, 
+    handleCustomNameChange, 
+    searchName, 
+    paramValues, 
+    weight, 
+    handleWeightChange, 
+    submissionMetadata, 
+    submitting,
+    submitButtonText 
+  } = props;
   return (
     <div className={className}>
       <SubmitButton
         submissionMetadata={submissionMetadata}
+        submitting={submitting}
+        submitButtonText={submitButtonText}
       />
       <WebServicesTutorialLink
         searchName={searchName}

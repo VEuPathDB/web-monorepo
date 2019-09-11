@@ -22,18 +22,25 @@ const ActionCreators = {
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { question: string, recordClass: string, FormComponent?: (props: FormProps) => JSX.Element, submissionMetadata: SubmissionMetadata };
+type OwnProps = { 
+  question: string, 
+  recordClass: string, 
+  FormComponent?: (props: FormProps) => JSX.Element, 
+  submissionMetadata: SubmissionMetadata,
+  submitButtonText?: string
+};
 type StateProps = QuestionState;
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
 type Props = DispatchProps & StateProps & {
   searchName: string,
   recordClassName: string,
   FormComponent?: FunctionComponent<FormProps>,
-  submissionMetadata: SubmissionMetadata
+  submissionMetadata: SubmissionMetadata,
+  submitButtonText?: string
 };
 
 function QuestionController(props: Props) {
-  const { dispatch, eventHandlers, searchName, recordClassName, submissionMetadata, FormComponent, ...state } = props;
+  const { dispatch, eventHandlers, searchName, recordClassName, submissionMetadata, FormComponent, submitButtonText, ...state } = props;
   const stepId = submissionMetadata.type === 'edit-step' || submissionMetadata.type === 'submit-custom-form' ? submissionMetadata.stepId : undefined;
 
   const DefaultRenderForm: FunctionComponent<FormProps> = useCallback(
@@ -105,6 +112,7 @@ function QuestionController(props: Props) {
         eventHandlers={eventHandlers}
         dispatchAction={dispatch}
         submissionMetadata={submissionMetadata}
+        submitButtonText={submitButtonText}
       />
     : <DefaultRenderForm
         parameterElements={parameterElements}
@@ -112,6 +120,7 @@ function QuestionController(props: Props) {
         eventHandlers={eventHandlers}
         dispatchAction={dispatch}
         submissionMetadata={submissionMetadata}
+        submitButtonText={submitButtonText}
       />;
 }
 
@@ -124,7 +133,8 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
     searchName: ownProps.question,
     recordClassName: ownProps.recordClass,
     FormComponent: ownProps.FormComponent,
-    submissionMetadata: ownProps.submissionMetadata
+    submissionMetadata: ownProps.submissionMetadata,
+    submitButtonText: ownProps.submitButtonText
   })
 )
 

@@ -27,6 +27,7 @@ export type Action =
   | UpdateParamStateAction
   | ChangeGroupVisibilityAction
   | UpdateGroupStateAction
+  | EnableSubmissionAction
 
 
 type QuestionPayload<T>  = T & {
@@ -340,6 +341,22 @@ export interface UpdateGroupStateAction {
 export function updateGroupState(payload: UpdateGroupStateAction['payload']): UpdateGroupStateAction {
   return {
     type: UPDATE_GROUP_STATE,
+    payload
+  };
+}
+
+//==============================================================================
+
+export const ENABLE_SUBMISSION = 'question/enable-submission';
+
+export interface EnableSubmissionAction {
+  type: typeof ENABLE_SUBMISSION;
+  payload: QuestionPayload<{}>;
+}
+
+export function enableSubmission(payload: EnableSubmissionAction['payload']): EnableSubmissionAction {
+  return {
+    type: ENABLE_SUBMISSION,
     payload
   };
 }

@@ -26,7 +26,8 @@ type OwnProps = {
   recordClass: string,
   question: string,
   hash: string,
-  submissionMetadata: SubmissionMetadata
+  submissionMetadata: SubmissionMetadata,
+  submitButtonText?: string
 };
 
 type Props = OwnProps & StateProps;
@@ -62,7 +63,8 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   question: internalSearchName,
   recordClass,
   hash: searchNameAnchorTag,
-  submissionMetadata
+  submissionMetadata,
+  submitButtonText
 }) => {
   const [ searchName, showingRecordToggle ] = searchNameAnchorTag
     ? [ searchNameAnchorTag, true ]
@@ -318,8 +320,9 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                             }}
                             pluginProps={{
                               question: searchName,
-                              recordClass: recordClass,
-                              submissionMetadata: submissionMetadata
+                              recordClass,
+                              submissionMetadata,
+                              submitButtonText
                             }}
                           />
                         )

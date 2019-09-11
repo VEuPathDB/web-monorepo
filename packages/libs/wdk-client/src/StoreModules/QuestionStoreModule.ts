@@ -1,7 +1,9 @@
 import { keyBy, mapValues, toString } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { from, EMPTY, merge, Subject } from 'rxjs';
-import { debounceTime, filter, mergeMap, takeUntil, map, mergeAll } from 'rxjs/operators';
+import { debounceTime, filter, mergeMap, takeUntil, map } from 'rxjs/operators';
+
+import { alert } from 'wdk-client/Utils/Platform';
 
 import {
   UNLOAD_QUESTION,
@@ -27,7 +29,9 @@ import {
   SUBMIT_QUESTION,
   questionLoaded,
   questionNotFound,
-  questionError
+  questionError,
+  ENABLE_SUBMISSION,
+  enableSubmission
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -81,6 +85,7 @@ export type QuestionState = {
   weight?: string;
   customName?: string;
   stepValidation?: Step['validation'];
+  submitting: boolean;
 }
 
 export type State = {
@@ -136,7 +141,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         ...state,
         paramValues: action.payload.paramValues || {},
         stepId: action.payload.stepId,
-        questionStatus: 'loading'
+        questionStatus: 'loading',
+        submitting: false
       }
 
     case QUESTION_LOADED:
@@ -258,6 +264,20 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           [action.payload.groupName]: action.payload.groupState
         }
       };
+
+    case SUBMIT_QUESTION: {
+      return {
+        ...state,
+        submitting: true
+      };
+    }
+
+    case ENABLE_SUBMISSION: {
+      return {
+        ...state,
+        submitting: false
+      };
+    }
 
     // finally, handle parameter specific actions
     default:
@@ -391,17 +411,18 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
         const newSearchStep = services.wdkService.createStep(newSearchStepSpec);
 
         if (submissionMetadata.type === 'create-strategy') {
-          return newSearchStep.then(
-            ({ id: newSearchStepId }) => requestCreateStrategy(
-              {
-                isSaved: false,
-                isPublic: false,
-                stepTree: {
-                  stepId: newSearchStepId
-                },
-                name: DEFAULT_STRATEGY_NAME
-            })
-          );
+          return newSearchStep
+            .then(
+              ({ id: newSearchStepId }) => requestCreateStrategy(
+                {
+                  isSaved: false,
+                  isPublic: false,
+                  stepTree: {
+                    stepId: newSearchStepId
+                  },
+                  name: DEFAULT_STRATEGY_NAME
+              })
+            );
         } else {
           const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
           const strategy = strategyEntry && strategyEntry.strategy;
@@ -442,21 +463,28 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                 )
               );
           } else {
-            return newSearchStep.then(
-              ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
-                submissionMetadata.strategyId,
-                addStep(
-                  strategy.stepTree,
-                  submissionMetadata.addType,
-                  unaryOperatorStepId,
-                  undefined
+            return newSearchStep
+              .then(
+                ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
+                  submissionMetadata.strategyId,
+                  addStep(
+                    strategy.stepTree,
+                    submissionMetadata.addType,
+                    unaryOperatorStepId,
+                    undefined
+                  )
                 )
-              )
-            );
+              );
           }
         }
       }
-    });
+    }).catch(
+      (error) => {
+        // FIXME Instead of alerting, display the error(s) on the associated question form
+        alert('A submission error occurred', String(error));
+        return enableSubmission({ searchName: action.payload.searchName });
+      }
+    );
   })
 )
 
