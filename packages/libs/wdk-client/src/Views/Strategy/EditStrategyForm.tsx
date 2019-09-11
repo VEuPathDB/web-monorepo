@@ -39,7 +39,7 @@ export default function SaveStrategyForm(props: Props) {
             </aside>
           </div>
           <div className="SaveStrategyForm--Buttons">
-            <button type="submit" className="btn">Save</button> <button type="button" className="btn" onClick={() => props.clearActiveModal()}>Cancel</button>
+            <button className="btn">Update</button> <button className="btn" onClick={handleCancel}>Cancel</button>
           </div>
         </form>
       </div>
@@ -49,6 +49,11 @@ export default function SaveStrategyForm(props: Props) {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     props.editStrategy(props.strategy.strategyId, { name, isPublic, description });
+    props.clearActiveModal();
+  }
+
+  function handleCancel(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
     props.clearActiveModal();
   }
 
