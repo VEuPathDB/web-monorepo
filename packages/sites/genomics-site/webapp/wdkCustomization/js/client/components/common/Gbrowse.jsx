@@ -145,26 +145,29 @@ export function GbrowseContext(props) {
   let { attribute, record } = props;
   let url = record.attributes[attribute.name];
   let jbrowseUrlMinimal = ""
+  let jbrowseUrlFull = ""
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
   if (attribute.name == 'GeneModelGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl; 
+      jbrowseUrlFull = record.attributes.geneJbrowseFullUrl; 
       return (
     	<div>
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
       	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
       	</div>
 	)
   }	
   if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
+      jbrowseUrlFull = record.attributes.syntenyJbrowseFullUrl;
       return (
         <div>
-          <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
-         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      	 <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
       </div>
 	  )
     }
