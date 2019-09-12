@@ -95,7 +95,7 @@ function StrategiesTab(props: TabContentProps) {
       <StrategiesTable
         key={isSaved ? 'saved' : 'unsaved'}
         isSaved={isSaved}
-        title={`${isSaved ? 'Saved' : 'Unsaved'} Strategies (${strategies.length.toLocaleString()})`}
+        title={`${isSaved ? 'Saved' : 'Draft'} Strategies (${strategies.length.toLocaleString()})`}
         searchTerm={props.searchTermsByTableId[tableId]}
         setSearchTerm={searchTerm => props.setSearchTerm(tableId, searchTerm)}
         strategies={strategies}

@@ -191,7 +191,7 @@ const sections: Section[] = [
         <div>
           <select value={getStrategyId(uiState, parameter)} onChange={e => dispatch(setStrategyId({ ...ctx, strategyId: Number(e.target.value) }))}>
             {renderStrategyOptGroup('Saved strategies', saved)}
-            {renderStrategyOptGroup('Unsaved strategies', unsaved)}
+            {renderStrategyOptGroup('Draft strategies', unsaved)}
           </select>
         </div>
       );
