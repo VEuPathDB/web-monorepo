@@ -4,7 +4,7 @@ import {IconAlt, Modal} from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import EditStrategyForm from 'wdk-client/Views/Strategy/EditStrategyForm';
 import SaveAsStrategyForm from 'wdk-client/Views/Strategy/SaveAsStrategyForm';
-import {StrategySummary, SaveStrategyOptions, EditStrategySpec} from 'wdk-client/Utils/WdkUser';
+import {StrategySummary, SaveStrategyOptions, EditStrategySpec, User} from 'wdk-client/Utils/WdkUser';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 
 import {connect} from 'react-redux';
@@ -12,6 +12,7 @@ import {clearActiveModal, setActiveModal} from 'wdk-client/Actions/StrategyWorks
 import {requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyProperties, requestSaveAsStrategy} from 'wdk-client/Actions/StrategyActions';
 
 import './StrategyControls.scss';
+import {showLoginWarning} from 'wdk-client/Actions/UserSessionActions';
 
 const cx = makeClassNameHelper('StrategyControls');
 
@@ -26,6 +27,7 @@ interface OwnProps {
 interface DispatchProps {
   setActiveModal: (activeModal: { type: string, strategyId: number }) => void;
   clearActiveModal: () => void;
+  showLoginWarning: (attemptedAction: string) => void;
   copyStrategy: (signature: string) => void;
   deleteStrategy: (strategyId: number) => void;
   renameStrategy: (strategyId: number, name: string) => void;
@@ -36,6 +38,7 @@ interface DispatchProps {
 const dispatchProps: DispatchProps = {
   clearActiveModal,
   setActiveModal,
+  showLoginWarning,
   copyStrategy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
   deleteStrategy: (strategyId: number) => requestDeleteStrategy(strategyId),
   renameStrategy: (strategyId: number, name: string) => requestPatchStrategyProperties(strategyId, { name }),
@@ -56,6 +59,7 @@ interface StrategyAction {
   iconName: string;
   title: string;
   render: React.ReactType<ActionProps>;
+  loginRequired?: boolean;
 }
 
 // FIXME Find a cleaner way to assmeble the share URL - ideally without using window.location and/or rootUrl
@@ -124,13 +128,15 @@ export const StrategyActions: Record<string, StrategyAction> = {
   save: {
     iconName: 'floppy-o',
     title: 'Save as',
-    render: (props: ActionProps) => <SaveAsStrategyForm {...props}/>
+    render: (props: ActionProps) => <SaveAsStrategyForm {...props}/>,
+    loginRequired: true
   },
 
   share: {
     iconName: 'share-alt',
     title: 'Share',
-    render: ShareAction
+    render: ShareAction,
+    loginRequired: true
   },
 
   delete: {
@@ -177,19 +183,34 @@ function CloseModalButton(props: Props & { children: React.ReactNode }) {
 
 interface StrategyControlsProps {
   strategyId: number;
+  user?: User;
+}
+
+function mappedProps(state: RootState) {
+  const { user } = state.globalData;
+  return { user };
 }
 
 function _StrategyControls(props: StrategyControlsProps & DispatchProps) {
-  const { strategyId, setActiveModal } = props;
+  const { strategyId, setActiveModal, user, showLoginWarning } = props;
   return (
     <div className={cx('--Controls')}>
         {Object.entries(StrategyActions).map(([ type, action ]) => (
       <div key={type} title={action.title}>
-        <button type="button" className="link" onClick={() => setActiveModal({ type, strategyId })}><IconAlt fa={action.iconName}/></button>
+        <button type="button" className="link" onClick={() => handleClick({ type, strategyId }, action)}><IconAlt fa={action.iconName}/></button>
       </div>
         ))}
     </div>
   );
+
+  function handleClick(activeModal: { type: string, strategyId: number}, action: StrategyAction) {
+    if (action.loginRequired && (user == null || user.isGuest)) {
+      showLoginWarning(action.title.toLowerCase());
+    }
+    else {
+      setActiveModal(activeModal);
+    }
+  }
 }
 
-export const StrategyControls = connect(null, dispatchProps)(_StrategyControls);
+export const StrategyControls = connect(mappedProps, dispatchProps)(_StrategyControls);
