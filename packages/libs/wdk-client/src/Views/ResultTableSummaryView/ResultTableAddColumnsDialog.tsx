@@ -15,6 +15,7 @@ import {
 
 export interface Props {
   answer: Answer;
+  viewId: string;
   question: Question;
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: string[];

@@ -21,6 +21,7 @@ import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 export interface Props {
   resultType: ResultType;
+  viewId: string;
   actions?: Action[];
   selectedIds?: string[];
   showIdAttributeColumn: boolean;

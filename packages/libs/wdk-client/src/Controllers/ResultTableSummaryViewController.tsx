@@ -76,7 +76,7 @@ type Props = OwnProps & StateProps & {
 }
 
 function ResultTableSummaryViewController(props: Props) {
-  const { resultType, actionCreators, viewData, derivedData, tableActions, showIdAttributeColumn } = props;
+  const { resultType, actionCreators, viewData, viewId, derivedData, tableActions, showIdAttributeColumn } = props;
 
   useEffect(() => {
     actionCreators.openResultTableSummaryView(resultType);
@@ -90,6 +90,7 @@ function ResultTableSummaryViewController(props: Props) {
 
   return (
     <ResultTableSummaryView
+      viewId={viewId}
       resultType={resultType}
       actions={tableActions}
       showIdAttributeColumn={showIdAttributeColumn}

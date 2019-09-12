@@ -54,6 +54,7 @@ interface Props {
   requestAddStepToBasket: RequestAddStepToBasket;
   requestPageSizeUpdate: RequestPageSizeUpdate;
   viewPageNumber: ViewPageNumber;
+  viewId: string;
   showHideAddColumnsDialog: ShowHideAddColumnsDialog;
   updateColumnsDialogSelection: UpdateColumnsDialogSelection;
   updateColumnsDialogSearchString: UpdateColumnsDialogSearchString;
@@ -85,6 +86,7 @@ export default function ResultTableSummaryView({
   requestAddStepToBasket,
   requestPageSizeUpdate,
   viewPageNumber,
+  viewId,
   showHideAddColumnsDialog,
   columnsDialogExpandedNodes,
   columnsDialogIsOpen,
@@ -110,6 +112,7 @@ export default function ResultTableSummaryView({
         <ResultTableAddColumnsDialog
           answer={answer}
           question={question}
+          viewId={viewId}
           columnsDialogExpandedNodes={columnsDialogExpandedNodes}
           columnsDialogIsOpen={columnsDialogIsOpen}
           columnsDialogSelection={columnsDialogSelection}
@@ -125,6 +128,7 @@ export default function ResultTableSummaryView({
       {answer && recordClass && question ? (
         <ResultTable
           answer={answer}
+          viewId={viewId}
           actions={actions}
           selectedIds={selectedIds}
           showIdAttributeColumn={showIdAttributeColumn}
