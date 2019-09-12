@@ -60,7 +60,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       <section>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="bar-chart"/>
-          GBrowse Tracks
+          Genome Browser Tracks
         </h3>
         <div className="TracksTable">
           <Mesa state={tracksTableState}/>
