@@ -71,15 +71,13 @@ function TranscriptViewFilter({
   )
 }
 
-// FIXME Need to access viewId from Controller...
-const viewId = 'strategy';
 const ConnectedTranscriptViewFilter = connect(
   (state, props) => ({
-    isEnabled: isTranscripFilterEnabled(state, { viewId }),
-    globalViewFilters: get(state, ['resultTableSummaryView', viewId, 'globalViewFilters'], {})
+    isEnabled: isTranscripFilterEnabled(state, { viewId: props.viewId }),
+    globalViewFilters: get(state, ['resultTableSummaryView', props.viewId, 'globalViewFilters'], {})
   }),
   (dispatch, props) => ({
-    requestTranscriptFilterUpdate: (...args) => dispatch(requestTranscriptFilterUpdate(viewId, ...args))
+    requestTranscriptFilterUpdate: (...args) => dispatch(requestTranscriptFilterUpdate(props.viewId, ...args))
   })
 )(TranscriptViewFilter);
 
