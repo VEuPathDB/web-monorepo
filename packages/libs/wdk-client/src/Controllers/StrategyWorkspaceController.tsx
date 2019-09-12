@@ -1,5 +1,5 @@
-import { toNumber } from 'lodash';
-import React, {useEffect} from 'react';
+import { toNumber, last } from 'lodash';
+import React, {useEffect, useLayoutEffect} from 'react';
 import { connect } from 'react-redux';
 import {Dispatch} from 'redux';
 
@@ -14,10 +14,12 @@ import { ImportStrategyController } from 'wdk-client/Controllers/ImportStrategyC
 import {openStrategyView, closeStrategyView, addToOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
+import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
 interface OwnProps {
   workspacePath: string;
   subPath: string;
+  allowEmptyOpened: boolean;
 }
 
 interface DispatchProps {
@@ -73,8 +75,26 @@ function StrategyWorkspaceController(props: Props) {
   )
 }
 
-function ChildView({ subPath, openedStrategies, strategySummaries }: Props) {
-  const childView = parseSubPath(subPath);
+function ChildView({ allowEmptyOpened, dispatch, subPath, openedStrategies, strategySummaries }: Props) {
+  const childView = parseSubPath(subPath, allowEmptyOpened);
+
+  // Select last opened strategy, if no strategy is specified in url
+  // Note, using `useLayoutEffect` to prevent glitches when transistion between routes
+  useLayoutEffect(() => {
+    if (childView.type === 'unknown' && openedStrategies != null) {
+      const lastOpened = last(openedStrategies);
+      if (lastOpened) {
+        dispatch(transitionToInternalPage(`/workspace/strategies/${lastOpened}`));
+      }
+      else if (strategySummaries && strategySummaries.length > 0) {
+        dispatch(transitionToInternalPage(`/workspace/strategies/all`));
+      }
+    }
+  }, [childView, openedStrategies, strategySummaries, dispatch]);
+
+  // Prevent opened tab from being selecting while data needed for redirect above is being loaded
+  if (openedStrategies == null || strategySummaries == null) return null;
+
   switch(childView.type) {
     case 'openedStrategies':
       return <StrategyViewController openedStrategies={openedStrategies} strategyId={childView.strategyId} stepId={childView.stepId}/>
@@ -96,15 +116,18 @@ type ChildView =
   | { type: 'allStrategies' }
   | { type: 'publicStrategies' }
   | { type: 'importStrategy', signature: string }
-  | { type: 'help' };
+  | { type: 'help' }
+  | { type: 'unknown' }
 
-function parseSubPath(subPath: string): ChildView {
+function parseSubPath(subPath: string, allowEmptyOpened: boolean): ChildView {
   if (subPath === 'all') return { type: 'allStrategies' };
   if (subPath === 'public') return { type: 'publicStrategies' };
   if (subPath.startsWith('import/')) return { type: 'importStrategy', signature: subPath.replace('import/', '') };
   if (subPath === 'help') return { type: 'help' };
+  if (subPath === '' && !allowEmptyOpened) return { type: 'unknown' };
 
   const [ strategyId, stepId ] = subPath.split('/');
+
   return {
     type: 'openedStrategies',
     // if toNumber returns falsey, it is either 0 or NaN, both of which we want to treat as undefined

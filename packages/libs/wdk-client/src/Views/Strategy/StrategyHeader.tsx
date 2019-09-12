@@ -29,7 +29,10 @@ function StrategyHeader(props: Props) {
   const rootRoute = `/workspace/strategies`;
   const activeStratPath = props.activeStrategy ? `/${props.activeStrategy.strategyId}` : '';
   const activeStepPath = props.activeStrategy && props.activeStrategy.stepId ? `/${props.activeStrategy.stepId}` : '';
-  const openedStrategiesRoute = rootRoute + activeStratPath + activeStepPath;
+  const openedStrategiesRoute = {
+    pathname: rootRoute + activeStratPath + activeStepPath,
+    state: { allowEmptyOpened: true }
+  };
   const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount } = props
   return (
     <div className="StrategyHeading">

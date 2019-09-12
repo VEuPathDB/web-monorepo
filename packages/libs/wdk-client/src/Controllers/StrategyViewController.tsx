@@ -1,4 +1,3 @@
-import { last } from 'lodash';
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -65,24 +64,12 @@ function StrategyViewController(props: Props) {
     if (strategyId) dispatch(setActiveStrategy({ strategyId, stepId }));
   }, [strategyId, stepId]);
 
-
   // Select root step if no step is selected
   useEffect(() => {
     if (selectedStrategy && selectedStrategy.strategy && stepId == null) {
       dispatch(transitionToInternalPage(`/workspace/strategies/${selectedStrategy.strategy.strategyId}/${selectedStrategy.strategy.rootStepId}`));
     }
   }, [stepId, strategyId, selectedStrategy]);
-
-  // Select last opened strategy, if no strategy is specified in url
-  useEffect(() => {
-    if (strategyId == null && openedStrategies) {
-      const lastOpened = last(openedStrategies);
-      if (lastOpened) {
-        dispatch(transitionToInternalPage(`/workspace/strategies/${lastOpened[0]}`));
-      }
-    }
-
-  }, [strategyId, openedStrategies]);
 
   if (openedStrategies == null) return null;
 
