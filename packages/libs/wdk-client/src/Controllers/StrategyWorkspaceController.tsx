@@ -128,6 +128,8 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean): ChildView {
 
   const [ strategyId, stepId ] = subPath.split('/');
 
+  if (!strategyId) return { type: 'unknown' }
+
   return {
     type: 'openedStrategies',
     // if toNumber returns falsey, it is either 0 or NaN, both of which we want to treat as undefined
