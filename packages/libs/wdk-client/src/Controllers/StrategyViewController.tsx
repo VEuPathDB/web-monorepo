@@ -59,11 +59,6 @@ function StrategyViewController(props: Props) {
     }
   }, [openedStrategies]);
 
-  // Update active strategy to match what is in the url
-  useEffect(() => {
-    if (strategyId) dispatch(setActiveStrategy({ strategyId, stepId }));
-  }, [strategyId, stepId]);
-
   // Select root step if no step is selected
   useEffect(() => {
     if (selectedStrategy && selectedStrategy.strategy && stepId == null) {

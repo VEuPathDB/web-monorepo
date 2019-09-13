@@ -11,7 +11,7 @@ import StrategyViewController from 'wdk-client/Controllers/StrategyViewControlle
 import AllStrategiesController from 'wdk-client/Controllers/AllStrategiesController';
 import { PublicStrategiesController } from 'wdk-client/Controllers/PublicStrategiesController';
 import { ImportStrategyController } from 'wdk-client/Controllers/ImportStrategyController';
-import {openStrategyView, closeStrategyView, addToOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
+import {openStrategyView, closeStrategyView, addToOpenedStrategies, setActiveStrategy} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
@@ -39,7 +39,6 @@ type Props = OwnProps & DispatchProps & MappedProps;
 
 function StrategyWorkspaceController(props: Props) {
   const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries } = props;
-  const activeStrategyId = activeStrategy && activeStrategy.strategyId;
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -47,12 +46,6 @@ function StrategyWorkspaceController(props: Props) {
       dispatch(closeStrategyView());
     }
   }, []);
-
-  useEffect(() => {
-    if (activeStrategyId) {
-      dispatch(addToOpenedStrategies([activeStrategyId]));
-    }
-  }, [activeStrategyId]);
 
   useSetDocumentTitle('My Strategies');
 
@@ -77,6 +70,8 @@ function StrategyWorkspaceController(props: Props) {
 
 function ChildView({ allowEmptyOpened, dispatch, subPath, openedStrategies, strategySummaries }: Props) {
   const childView = parseSubPath(subPath, allowEmptyOpened);
+  const activeStrategyId = childView.type === 'openedStrategies' ? childView.strategyId : undefined;
+  const activeStepId = childView.type === 'openedStrategies' ? childView.stepId : undefined;
 
   // Select last opened strategy, if no strategy is specified in url
   // Note, using `useLayoutEffect` to prevent glitches when transistion between routes
@@ -91,6 +86,18 @@ function ChildView({ allowEmptyOpened, dispatch, subPath, openedStrategies, stra
       }
     }
   }, [childView, openedStrategies, strategySummaries, dispatch]);
+
+  useLayoutEffect(() => {
+    if (activeStrategyId) {
+      dispatch(addToOpenedStrategies([activeStrategyId]));
+      dispatch(setActiveStrategy(activeStrategyId == null ? undefined : {
+        strategyId: activeStrategyId,
+        stepId: activeStepId
+      }));
+    }
+  }, [activeStrategyId, activeStepId]);
+
+  useEffect
 
   // Prevent opened tab from being selecting while data needed for redirect above is being loaded
   if (openedStrategies == null || strategySummaries == null) return null;
