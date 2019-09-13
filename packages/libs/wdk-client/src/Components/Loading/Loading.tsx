@@ -11,6 +11,9 @@ type Props = {
   /** Additional class name to use for container element */
   className?: string;
 
+  /** Additional style properties to apply */
+  style?: React.CSSProperties,
+
   /** Radius in pixels of the inner circle */
   radius?: number;
 
@@ -54,9 +57,9 @@ class Loading extends React.Component<Props> {
   }
 
   render() {
-    const { className = '' } = this.props;
+    const { className = '', style } = this.props;
     return (
-      <div className={`wdk-Loading ${className}`}>
+      <div style={style} className={`wdk-Loading ${className}`}>
         {this.props.children}
       </div>
     );
