@@ -11,7 +11,7 @@ class DataTable extends React.Component {
   constructor (props) {
     super(props);
     this.widthCache = {};
-    this.state = { dynamicWidths: null };
+    this.state = { dynamicWidths: null, tableWrapperWidth: null };
     this.renderPlainTable = this.renderPlainTable.bind(this);
     this.renderStickyTable = this.renderStickyTable.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -43,28 +43,22 @@ class DataTable extends React.Component {
   setDynamicWidths () {
     const { columns } = this.props;
     const hasSelectionColumn = this.hasSelectionColumn();
-    const { headingTable, contentTable, getInnerCellWidth } = this;
-    if (!headingTable || !contentTable) return;
-    const headingCells = Array.from(headingTable.getElementsByTagName('th'));
-    const contentCells = Array.from(contentTable.getElementsByTagName('td'));
-
+    const { contentTable, getInnerCellWidth } = this;
+    if (!contentTable) return;
+    const contentCells = Array.from(contentTable.querySelectorAll('tbody > tr > td'));
     if (hasSelectionColumn) {
-      headingCells.shift();
       contentCells.shift();
     }
-    const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], headingCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
-    this.setState({ dynamicWidths }, () => {
+    const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
+    const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
+    this.setState({ dynamicWidths, tableWrapperWidth }, () => {
       window.dispatchEvent(new CustomEvent('MesaReflow'));
     });
   }
 
-  getInnerCellWidth (cell, headingCell, { key }) {
+  getInnerCellWidth (cell, { key }) {
     if (key && key in this.widthCache) return this.widthCache[key];
-
-    const contentWidth = cell.clientWidth;
-    const headingWidth = headingCell.clientWidth;
-    const higher = Math.max(contentWidth, headingWidth);
-    return this.widthCache[key] = higher;
+    return this.widthCache[key] = cell.clientWidth;
   }
 
   hasSelectionColumn () {
@@ -84,31 +78,33 @@ class DataTable extends React.Component {
 
   renderStickyTable () {
     const { options, columns, rows, filteredRows, actions, eventHandlers, uiState } = this.props;
-    const { dynamicWidths } = this.state;
+    const { dynamicWidths, tableWrapperWidth } = this.state;
     const newColumns = columns.every(({ width }) => width) || !dynamicWidths || dynamicWidths.length == 0
       ? columns
       : columns.map((column, index) => Object.assign({}, column, { width: dynamicWidths[index] }));
-    const maxHeight = { maxHeight: options ? options.tableBodyMaxHeight : null };
-    const maxWidth = { minWidth: dynamicWidths ? combineWidths(columns.map(({ width }) => width)) : null };
+    const bodyWrapperStyle = { maxHeight: options ? options.tableBodyMaxHeight : null };
+    const wrapperStyle = { minWidth: dynamicWidths ? combineWidths(columns.map(({ width }) => width)) : null };
+    const headerWrapperStyle = { width: tableWrapperWidth };
     const tableLayout = { tableLayout: dynamicWidths ? 'fixed' : 'auto' };
     const tableProps = { options, rows, filteredRows, actions, eventHandlers, uiState, columns: newColumns };
     return (
       <div className="MesaComponent">
-        <div className={dataTableClass()} style={maxWidth}>
-          <div className={dataTableClass('Sticky')} style={maxWidth}>
+        <div className={dataTableClass()} style={wrapperStyle}>
+          <div className={dataTableClass('Sticky')} style={wrapperStyle}>
             <div
+              style={headerWrapperStyle}
               ref={node => this.headerNode = node}
               className={dataTableClass('Header')}>
               <table
                 cellSpacing={0}
                 cellPadding={0}
                 style={tableLayout}
-                ref={node => this.headingTable = node}>
-                <HeadingRow {...tableProps} />
+              >
+                {dynamicWidths == null ? null : <HeadingRow {...tableProps} />}
               </table>
             </div>
             <div
-              style={maxHeight}
+              style={bodyWrapperStyle}
               ref={node => this.bodyNode = node}
               className={dataTableClass('Body')}
               onScroll={this.handleTableBodyScroll}>
@@ -117,6 +113,7 @@ class DataTable extends React.Component {
                 cellPadding={0}
                 style={tableLayout}
                 ref={node => this.contentTable = node}>
+                {dynamicWidths == null ? <HeadingRow {...tableProps} /> : null}
                 <DataRowList {...tableProps} />
               </table>
             </div>
