@@ -10,10 +10,6 @@ import PopsetResultSummaryViewTableController from './components/controllers/Pop
 import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
 
-import { ColocateStepBoxIcon } from './components/strategies/ColocateStepBoxIcon';
-import { ColocateStepMenu } from './components/strategies/ColocateStepMenu';
-import { ColocateStepForm } from './components/strategies/ColocateStepForm';
-
 export default [
   {
     type: 'summaryView',
