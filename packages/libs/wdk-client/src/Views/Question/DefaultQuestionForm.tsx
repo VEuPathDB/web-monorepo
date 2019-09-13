@@ -33,6 +33,7 @@ export type Props = {
   submissionMetadata: SubmissionMetadata;
   submitButtonText?: string;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
+  DescriptionComponent?: (props: { description?: string }) => JSX.Element;
   onSubmit?: (e: React.FormEvent) => void;
 }
 
@@ -76,6 +77,7 @@ export default function DefaultQuestionForm(props: Props) {
   }
 
   let renderParamGroup = props.renderParamGroup ? props.renderParamGroup : renderDefaultParamGroup;
+  let Description = props.DescriptionComponent || QuestionDescription;
 
   return (
     <div className={cx()}>
@@ -102,7 +104,7 @@ export default function DefaultQuestionForm(props: Props) {
           submitting={submitting}
           submitButtonText={submitButtonText}
         />
-        <QuestionDescription description={question.description}/>
+        <Description description={question.description}/>
       </form>
     </div>
   );
@@ -301,7 +303,7 @@ export function WeightInput(props: WeightInputProps) {
   );
 }
 
-export function QuestionDescription(props: { description?: string }) {
+export function QuestionDescription(props: { description?: string, searchName?: string }) {
   return !props.description ? null : (
     <div>
       <hr/>

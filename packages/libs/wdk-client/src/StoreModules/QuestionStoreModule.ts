@@ -54,7 +54,6 @@ import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, requestCreateStep, fulfillCreateStep } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import {Step} from 'wdk-client/Utils/WdkUser';
 
 export const key = 'question';
