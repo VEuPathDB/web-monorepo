@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -19,6 +20,7 @@ class DataTable extends React.Component {
     this.hasSelectionColumn = this.hasSelectionColumn.bind(this);
     this.shouldUseStickyHeader = this.shouldUseStickyHeader.bind(this);
     this.handleTableBodyScroll = this.handleTableBodyScroll.bind(this);
+    this.handleWindowResize = debounce(this.handleWindowResize.bind(this), 250);
   }
 
   shouldUseStickyHeader () {
@@ -33,11 +35,20 @@ class DataTable extends React.Component {
 
   componentDidMount () {
     this.setDynamicWidths();
+    window.addEventListener('resize', this.handleWindowResize, { passive: true });
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props && this.props.columns && this.props.columns !== prevProps.columns)
+    if (
+      this.props.rows !== prevProps.rows ||
+      this.props.columns.map(c => c.name).toString() !== prevProps.columns.map(c => c.name).toString()
+    ) {
       this.setState({ dynamicWidths: null }, () => this.setDynamicWidths()); // eslint-disable-line react/no-did-update-set-state
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleWindowResize, { passive: true });
   }
 
   setDynamicWidths () {
@@ -72,6 +83,10 @@ class DataTable extends React.Component {
     const offset = this.bodyNode.scrollLeft;
     this.headerNode.scrollLeft = offset;
     window.dispatchEvent(new CustomEvent('MesaScroll'));
+  }
+
+  handleWindowResize() {
+    this.setState({ dynamicWidths: null, tableWrapperWidth: null });
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
