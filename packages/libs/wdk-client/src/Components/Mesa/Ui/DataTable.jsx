@@ -43,7 +43,7 @@ class DataTable extends React.Component {
       this.props.rows !== prevProps.rows ||
       this.props.columns.map(c => c.name).toString() !== prevProps.columns.map(c => c.name).toString()
     ) {
-      this.setState({ dynamicWidths: null }, () => this.setDynamicWidths()); // eslint-disable-line react/no-did-update-set-state
+      this.setState({ dynamicWidths: null, tableWrapperWidth: null }, () => this.setDynamicWidths()); // eslint-disable-line react/no-did-update-set-state
     }
   }
 
@@ -61,9 +61,10 @@ class DataTable extends React.Component {
       contentCells.shift();
     }
     const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
-    const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
-    this.setState({ dynamicWidths, tableWrapperWidth }, () => {
+    this.setState({ dynamicWidths }, () => {
       window.dispatchEvent(new CustomEvent('MesaReflow'));
+      const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
+      this.setState({ tableWrapperWidth });
     });
   }
 
@@ -86,7 +87,7 @@ class DataTable extends React.Component {
   }
 
   handleWindowResize() {
-    this.setState({ dynamicWidths: null, tableWrapperWidth: null });
+    this.setState({ dynamicWidths: null, tableWrapperWidth: null }, () => this.setDynamicWidths());
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
