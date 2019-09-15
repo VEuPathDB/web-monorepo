@@ -87,17 +87,23 @@ function ChildView({ allowEmptyOpened, dispatch, subPath, openedStrategies, stra
     }
   }, [childView, openedStrategies, strategySummaries, dispatch]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    // only do this if we have a strategyId AND openedStrategies have been loaded (to prevent clobbering previous values)
+    if (activeStrategyId && openedStrategies != null) {
+      if (!openedStrategies.includes(activeStrategyId)) {
+        dispatch(addToOpenedStrategies([activeStrategyId]));
+      }
+    }
+  }, [activeStrategyId, openedStrategies]);
+
+  useEffect(() => {
     if (activeStrategyId) {
-      dispatch(addToOpenedStrategies([activeStrategyId]));
       dispatch(setActiveStrategy(activeStrategyId == null ? undefined : {
         strategyId: activeStrategyId,
         stepId: activeStepId
       }));
     }
   }, [activeStrategyId, activeStepId]);
-
-  useEffect
 
   // Prevent opened tab from being selecting while data needed for redirect above is being loaded
   if (openedStrategies == null || strategySummaries == null) return null;

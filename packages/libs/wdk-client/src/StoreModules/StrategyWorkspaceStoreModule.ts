@@ -265,12 +265,16 @@ function updatePreferencesEpic(action$: ActionsObservable<Action>, state$: State
     stateEffect(
       state$,
       state => state[key].openedStrategies,
-      openedStrategies => setValue(wdkService, preferences.openedStrategies(), openedStrategies)
+      openedStrategies => {
+        setValue(wdkService, preferences.openedStrategies(), openedStrategies);
+      }
     ),
     stateEffect(
       state$,
       state => state[key].isOpenedStrategiesVisible,
-      isVisible => setValue(wdkService, preferences.openedStrategiesVisibility(), isVisible)
+      isVisible => {
+        setValue(wdkService, preferences.openedStrategiesVisibility(), isVisible);
+      }
     )
   );
 }
