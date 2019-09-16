@@ -134,7 +134,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'webservices',
           text: 'Searches via Web Services',
-          webAppUrl: '/serviceList.jsp'
+          url: '/WebServices-URLBuilder-HELPPAGE.pdf'
         }
       ]
     },
