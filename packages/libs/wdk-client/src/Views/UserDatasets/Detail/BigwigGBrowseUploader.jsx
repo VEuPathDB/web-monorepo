@@ -110,19 +110,11 @@ class BigwigGBrowseUploader extends React.Component {
     const GBrowseUrl = this.getGBrowseUrl();
     return (
       <React.Fragment>
-        {isInstalled
-          ? (
             <a href={GBrowseUrl} target="_blank">
               <button className="btn btn-slim">
                 View in Genome Browser <Icon fa="chevron-circle-right right-side" />
               </button>
             </a>
-          ) : (
-            <button onClick={this.startUpload} className="btn btn-slim" disabled={inProgress || isInstalled}>
-              Send To <b>GBrowse</b> <Icon fa="upload right-side"/>
-            </button>
-          )
-        }
       </React.Fragment>
     )
   }

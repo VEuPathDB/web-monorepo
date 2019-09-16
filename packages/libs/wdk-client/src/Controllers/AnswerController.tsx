@@ -45,7 +45,7 @@ type Props = {
 };
 
 class AnswerController extends PageController<Props> {
-  loadData() {
+  loadData(prevProps?: Props) {
     // incoming values from the router
     let { question, recordClass: recordClassName, parameters } = this.props.ownProps;
     let [ , questionName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
@@ -53,15 +53,10 @@ class AnswerController extends PageController<Props> {
     // decide whether new answer needs to be loaded (may not need to be loaded
     //   if user goes someplace else and hits 'back' to here- store already correct)
     const {
-      stateProps,
       dispatchProps
     } = this.props;
 
-    if (
-      stateProps.question == null ||
-      stateProps.question.urlSegment !== questionName ||
-      !isEqual(stateProps.parameters, parameters)
-    ) {
+    if (prevProps == null || !isEqual(prevProps.ownProps, this.props.ownProps)) {
 
       // (re)initialize the page
       let pagination = { numRecords: 1000, offset: 0 };
