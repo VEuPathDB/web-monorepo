@@ -81,25 +81,25 @@ export let contexts = [
     isPbrowse: false
   },
   {
-    gbrowse_url: 'orfJbrowseUrl',
+    gbrowse_url: 'orfGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'orfGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpChipJbrowseUrl',
+    gbrowse_url: 'snpChipGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'snpChipGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'snpJbrowseUrl',
+    gbrowse_url: 'snpGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'snpGenomicContext',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'spanJbrowseUrl',
+    gbrowse_url: 'spanGbrowseImageUrl',
     displayName: 'Genomic Context',
     anchor: 'spanGenomicContext',
     isPbrowse: false
@@ -110,6 +110,12 @@ const GbrowseLink = ({ url }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser</a>
 </div>
+
+const JbrowseLink = ({ url }) =>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={url} className="eupathdb-BigButton">View in Genome Browser</a>
+</div>
+
 
 const GbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
@@ -139,25 +145,29 @@ export function GbrowseContext(props) {
   let { attribute, record } = props;
   let url = record.attributes[attribute.name];
   let jbrowseUrlMinimal = ""
+  let jbrowseUrlFull = ""
   let jbrowseUrl = record.attributes.jbrowseLink;
+  let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
   if (attribute.name == 'GeneModelGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl; 
+      jbrowseUrlFull = record.attributes.geneJbrowseFullUrl; 
       return (
     	<div>
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
       	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
       	</div>
 	)
   }	
   if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
+      jbrowseUrlFull = record.attributes.syntenyJbrowseFullUrl;
       return (
         <div>
-          <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
-         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      	 <GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
+      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
       </div>
 	  )
     }
@@ -179,7 +189,6 @@ export function GbrowseContext(props) {
 	  )
     }
 
-
   if (attribute.name == 'BlatAlignmentsGbrowseUrl'|| attribute.name == 'SnpsGbrowseUrl'){ 
   return (
       <div>
@@ -189,11 +198,12 @@ export function GbrowseContext(props) {
       </div>
       )
     }
+
   return (
     <div>
-      <GbrowseLink url={url}/>
+      <JbrowseLink url={jbrowseCommonUrl}/>
       <GbrowseImage url={url} includeImageMap={true} />
-      <GbrowseLink url={url}/>
+      <JbrowseLink url={jbrowseCommonUrl}/>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import ApiApplicationSpecificProperties from './components/ApiApplicationSpecifi
 import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
+import newFeatureImage from 'wdk/images/new-feature.png';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -141,6 +142,10 @@ export function RecordTableSection(DefaultComponent) {
             table.properties.hideDatasetLink[0].toLowerCase() == 'true'
         );
 
+      let showNewFeature = (
+	record.tables[table.name] &&
+	table.name == 'TranscriptionSummary'
+      );
 
       let showDatasetsLink = (
         record.tables[table.name] &&
@@ -162,6 +167,9 @@ export function RecordTableSection(DefaultComponent) {
           displayName: (
             <span>
               {table.displayName}
+	      {showNewFeature &&
+	        <img src={newFeatureImage}/>
+	      }
               {showDownload &&
                 <span
                   style={{

@@ -12,6 +12,7 @@ import {Seq} from 'wdk-client/IterableUtils';
 import {preorderSeq} from 'wdk-client/TreeUtils';
 
 import DatasetGraph from 'ebrc-client/components/DatasetGraph';
+import ExternalResource from 'ebrc-client/components/ExternalResource';
 import {findChildren, isNodeOverflowing} from 'ebrc-client/util/domUtils';
 
 import { projectId, webAppUrl } from '../../config';
@@ -85,8 +86,8 @@ export const RecordHeading = connect(
 
     let transcriptomicsThumbnail = {
       displayName: 'Transcriptomics',
-      element: <img src={webAppUrl + '/wdkCustomization/images/transcriptomics.jpg'}/>,
-      anchor: 'ExpressionGraphs'
+      element: <img src={webAppUrl + '/wdkCustomization/images/transcription_summary.png'}/>,
+      anchor: 'TranscriptionSummary'
     };
 
     let phenotypeThumbnail = {
@@ -921,17 +922,33 @@ class TranscriptionSummaryForm extends SortKeyTable {
             <p><em>No data available</em></p>
           );
         } else {
-	  if (((this.props.value.length * 50) + 100) > 700) {
+	  if (((this.props.value.length * 50) + 150) > 700) {
 	    height = (this.props.value.length * 50) + 150;
 	  } 
 	}
 
         return (
           <div id="transcriptionSummary">
-            <p><b>Help</b></p>
-            <p>The Transcript Expression Summary will help identify experiments in which the current gene is highly regulated. Experiments are separated across the y-axis. The FPKM values of each sample within an experiment are displayed across the x-axis, which is by default Log Scale but can be changed to Linear Scale by pressing the button to the left of the graph. Samples are represented by points and summary statistics are represented by the box plot. The sample names and FPKM values for an individual experiment can be toggled on and off by pressing anywhere across a boxplot; all names and values can be removed by pressing the "Remove Sample Labels" button to the left of the graph. All samples names and FPKM values appear in a box when hovering over an experiment name. To navigate, use the buttons to the top right of the graph. Easily zoom in by dragging horizontally in the graph, which allows visualization of adjacent samples or smaller fold-changes. Zoom out by double-clicking within the graph.</p>
-            <p><b>Plot</b></p>
-            <iframe src={"/cgi-bin/dataPlotter.pl?project_id=" + projectId + "&id=" + source_id + "&type=RNASeqTranscriptionSummary&template=1&datasetId=All&wl=0&facet=na&contXAxis=na&fmt=html"} height={height} width="1100" frameBorder="0"></iframe>
+            <details>
+	    	    <summary>Help</summary>
+			<ul>
+				<li>The graph summarizes expression of the current gene across RNA-seq experiments.</li>
+				<li>Experiments are layered vertically with their FPKM values on the x axis.</li>
+				<li>Each sample is shown with a black dot. Summary statistics are represented by the grey box.</li>
+				<li>Use the toggle button to switch from Log Scale to Linear Scale.</li>
+				<li>Log Scale values are log2(FPKM+1) for these reasons:
+					<ol>
+						<li>FPKM+1: to de-emphasize low noisy FPKM values (i.e., &lt;1).</li>
+						<li>log2: so that each unit on the x-axis represents a 2-fold difference.</li>
+					</ol>
+				</li>
+				<li>Navigation buttons are located at the top right:  zoom in to see adjacent samples or smaller fold-changes; zoom out by double-clicking within the graph.</li>
+				<li>This graph was created with Plotly. <a href="https://help.plot.ly/getting-to-know-the-plotly-modebar/" target="_blank">Get more help at their website.</a></li>
+			</ul>
+		</details> 
+            <ExternalResource>
+              <iframe src={"/cgi-bin/dataPlotter.pl?project_id=" + projectId + "&id=" + source_id + "&type=RNASeqTranscriptionSummary&template=1&datasetId=All&wl=0&facet=na&contXAxis=na&fmt=html"} height={height} width="1100" frameBorder="0"></iframe>
+            </ExternalResource>
           </div>
         );
   }
