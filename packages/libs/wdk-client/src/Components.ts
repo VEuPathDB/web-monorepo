@@ -66,6 +66,7 @@ import { ResizableContainer } from 'wdk-client/Components/Display/ResizableConta
 import ResultTabs from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { AddStepPanelView } from 'wdk-client/Views/Strategy/AddStepPanel';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
+import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 
 export {
   AccordionButton,
@@ -135,5 +136,6 @@ export {
   Tooltip,
   AttributeCell,
   ResultTable,
+  ResultPanelHeader,
   StrategyWorkspaceController
 };
