@@ -24,6 +24,7 @@ function Component(props: Props<DateParam, undefined>) {
       end={parameter.maxDate}
       value={value}
       onChange={onParamValueChange}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

@@ -79,7 +79,8 @@ const parameterDecoder: Decode.Decoder<Parameter> =
       Decode.field('group', Decode.string),
       Decode.field('isReadOnly', Decode.boolean),
       Decode.field('initialDisplayValue', Decode.optional(Decode.string)),
-      Decode.field('dependentParams', Decode.arrayOf(Decode.string))
+      Decode.field('dependentParams', Decode.arrayOf(Decode.string)),
+      Decode.field('allowEmptyValue', Decode.boolean)
     ),
     Decode.oneOf(
       /* DatasetParam */

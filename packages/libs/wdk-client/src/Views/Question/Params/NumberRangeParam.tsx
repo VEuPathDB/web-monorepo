@@ -26,6 +26,7 @@ function Component(props: Props<NumberRangeParam, void>) {
       step={parameter.increment}
       value={JSON.parse(value)}
       onChange={value => onParamValueChange(JSON.stringify(value))}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

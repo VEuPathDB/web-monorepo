@@ -27,10 +27,12 @@ function SelectEnumParam(props: Props<SelectEnumParam>) {
         items={parameter.vocabulary.map(([value, display]) => ({ value, display }))}
         value={valueToArray(value)}
         onChange={(value: string[]) => onParamValueChange(value.join(','))}
+        required={!parameter.allowEmptyValue}
       />
     : <SingleSelect
         items={parameter.vocabulary.map(([value, display]) => ({ value, display }))}
         value={value}
         onChange={onParamValueChange}
+        required={!parameter.allowEmptyValue}
       />
 }

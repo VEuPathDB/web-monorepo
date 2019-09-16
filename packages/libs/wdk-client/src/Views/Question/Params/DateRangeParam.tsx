@@ -25,6 +25,7 @@ function Component(props: Props<DateRangeParam, void>) {
       end={parameter.maxDate}
       value={JSON.parse(value)}
       onChange={(value: any) => onParamValueChange(JSON.stringify(value))}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

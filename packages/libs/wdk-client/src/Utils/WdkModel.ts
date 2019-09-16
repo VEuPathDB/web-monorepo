@@ -3,7 +3,6 @@
  */
 
 import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
-import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 export interface ModelEntity {
   displayName: string;
@@ -56,6 +55,7 @@ export interface ParameterBase extends NamedModelEntity {
   isReadOnly: boolean;
   initialDisplayValue?: ParameterValue;
   dependentParams: string[];
+  allowEmptyValue: boolean;
 }
 
 export interface StringParam extends ParameterBase {

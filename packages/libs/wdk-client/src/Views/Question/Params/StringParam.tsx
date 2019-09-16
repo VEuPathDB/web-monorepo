@@ -27,6 +27,7 @@ function Component(props: Props<StringParam, undefined>) {
       value={value}
       readOnly={parameter.isReadOnly}
       onChange={onParamValueChange}
+      required={!parameter.allowEmptyValue}
     />
   ) : (
     <TextArea
@@ -35,6 +36,7 @@ function Component(props: Props<StringParam, undefined>) {
       readOnly={parameter.isReadOnly}
       value={value}
       onChange={onParamValueChange}
+      required={!parameter.allowEmptyValue}
     />
   );
 }

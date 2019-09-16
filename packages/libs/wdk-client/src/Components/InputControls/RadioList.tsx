@@ -16,6 +16,8 @@ type Props = {
   }>;
   /** Value of the radio input element that should be checked **/
   value?: string;
+  /** Whether a value is required for submission */
+  required?: boolean;
   /**
    * Callback function that will be called when user changes selected value.
    * The new (string) value of the selected button will be passed to this
@@ -45,6 +47,7 @@ class RadioList extends React.Component<Props> {
 
   render() {
     let className = baseClassName + " " + getValueOrDefault(this.props, "className", "");
+    const { required = false } = this.props;
     return (
       <ul className={className}>
         {this.props.items.map(item => (
@@ -54,7 +57,9 @@ class RadioList extends React.Component<Props> {
                 name={this.props.name}
                 value={item.value}
                 checked={item.value === this.props.value}
-                onChange={this.onChange}/>
+                onChange={this.onChange}
+                required={required}
+              />
               {' ' + item.display + ' '}
               {item.description != null &&
                 <HelpIcon tooltipPosition={{ my: 'center left', at: 'center right' }}>

@@ -61,7 +61,7 @@ class DateRangeSelector extends React.Component {
   }
 
   render () {
-    let { min, max } = this.props.value;
+    let { value: { min, max }, required = false } = this.props;
     let { start, end } = this.state;
 
     start = DateUtils.formatDateObject(start);
@@ -84,10 +84,10 @@ class DateRangeSelector extends React.Component {
         </div>
         <div className="control-column">
           <div className="control-cell">
-            <DateSelector start={start} end={end} value={min} onChange={this.handleMinValueChange} />
+            <DateSelector start={start} end={end} value={min} onChange={this.handleMinValueChange} required={required} />
           </div>
           <div className="control-cell">
-            <DateSelector start={start} end={end} value={max} onChange={this.handleMaxValueChange} />
+            <DateSelector start={start} end={end} value={max} onChange={this.handleMaxValueChange} required={required} />
           </div>
           <div className="control-cell">
             <button type="button" className={alreadyDefault ? 'disabled link' : 'link'} onClick={this.handleReset}>Reset to Defaults</button>

@@ -26,6 +26,7 @@ function Component(props: Props<NumberParam, undefined>) {
       step={parameter.increment}
       value={Number(value)}
       onChange={value => onParamValueChange(String(value))}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

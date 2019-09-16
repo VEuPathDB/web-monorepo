@@ -11,6 +11,7 @@ type Props = {
   name?: string
   items: Item[]
   value: any
+  required?: boolean
   onChange: (value: string[]) => void
 }
 
@@ -41,14 +42,16 @@ class CheckboxList extends Component<Props> {
   }
 
   render() {
-    let { name, items, value } = this.props;
+    let { name, items, value, required = false } = this.props;
     return (
       <NativeCheckboxList name={name}
          onChange={this.onChange}
          onSelectAll={this.onSelectAll}
          onClearAll={this.onClearAll}
          selectedItems={value}
-         items={items}/>
+         items={items}
+         required={required}
+      />
     );
   }
 }

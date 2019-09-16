@@ -33,6 +33,9 @@ type Props = {
    */
   selectedItems: Item[]
 
+  /** Whether a value is required for submission */
+  required?: boolean
+
   /**
    * Callback function that will be called when the set of selected items
    * changes. The function will be called with two arguments:
@@ -74,6 +77,7 @@ class NativeCheckboxList extends Component<Props, State> {
 
   static defaultProps = {
     defaultSelectedItems: [] as Item[],
+    required: false,
     onChange: (event: FormEvent<HTMLInputElement>, item: Item) => {},
     onSelectAll: (event: MouseEvent<HTMLButtonElement>) => {},
     onClearAll: (event: MouseEvent<HTMLButtonElement>) => {}
@@ -144,6 +148,7 @@ class NativeCheckboxList extends Component<Props, State> {
                     value={item.value}
                     checked={selectedItems.includes(item.value)}
                     onChange={e => this.toggle(e, item)}
+                    required={this.props.required}
                   />
                   {' ' + item.display}
                 </label>

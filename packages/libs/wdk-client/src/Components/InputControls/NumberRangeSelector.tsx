@@ -15,6 +15,7 @@ type Props = {
   value: Value;
   onChange: (value: Value) => void;
   step: number;
+  required?: boolean;
 };
 
 
@@ -31,7 +32,8 @@ class NumberRangeSelector extends React.Component<Props> {
       max: PropTypes.number
     }),
     onChange: PropTypes.func,
-    step: PropTypes.number
+    step: PropTypes.number,
+    required: PropTypes.bool
   };
 
   constructor (props: Props) {
@@ -62,15 +64,15 @@ class NumberRangeSelector extends React.Component<Props> {
   }
 
   render () {
-    let { start, end, value, step } = this.props;
+    let { start, end, value, step, required = false } = this.props;
     if (typeof value.min === 'string') value.min = value.min * 1;
     if (typeof value.max === 'string') value.max = value.max * 1;
 
     return (
       <div className="wdk-NumberRangeSelector">
-        <NumberSelector start={start} end={end} step={step} onChange={this.handleMinChange} value={value.min} />
+        <NumberSelector start={start} end={end} step={step} onChange={this.handleMinChange} value={value.min} required={required} />
         <label>&nbsp; to &nbsp;</label>
-        <NumberSelector start={start} end={end} step={step} onChange={this.handleMaxChange} value={value.max} />
+        <NumberSelector start={start} end={end} step={step} onChange={this.handleMaxChange} value={value.max} required={required} />
       </div>
     );
   }

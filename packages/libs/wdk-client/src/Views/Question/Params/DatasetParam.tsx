@@ -127,6 +127,7 @@ const sections: Section[] = [
         cols={30}
         value={getIdList(uiState, parameter)}
         onChange={e => dispatch(setIdList({ ...ctx, idList: e.target.value }))}
+        required={uiState.sourceType === 'idList' && !parameter.allowEmptyValue}
       />
   },
   {
@@ -138,6 +139,7 @@ const sections: Section[] = [
           type="file"
           accept="text/*"
           onChange={e => dispatch(setFile({ ...ctx, file: e.target.files && e.target.files[0] }))}
+          required={uiState.sourceType === 'file' && !parameter.allowEmptyValue}
         />
         <small>
           <div>Maximum size 10MB. The file should contain the list of IDs.</div>
@@ -173,7 +175,7 @@ const sections: Section[] = [
     isAvailable: ({ uiState }) => typeof uiState.basketCount === 'number',
     render: ({ uiState }) =>
       uiState.basketCount == null
-        ? <div>Options is not available</div>
+        ? <div>Option is not available</div>
         : <div>{uiState.basketCount} records will be copied from your basket.</div>
   },
   {
@@ -189,7 +191,11 @@ const sections: Section[] = [
       const [ saved, unsaved ] = partition(strategyList, strategy => strategy.isSaved);
       return (
         <div>
-          <select value={getStrategyId(uiState, parameter)} onChange={e => dispatch(setStrategyId({ ...ctx, strategyId: Number(e.target.value) }))}>
+          <select 
+            value={getStrategyId(uiState, parameter)} 
+            onChange={e => dispatch(setStrategyId({ ...ctx, strategyId: Number(e.target.value) }))}
+            required={uiState.sourceType === 'strategy' && !parameter.allowEmptyValue}
+          >
             {renderStrategyOptGroup('Saved strategies', saved)}
             {renderStrategyOptGroup('Draft strategies', unsaved)}
           </select>

@@ -42,7 +42,8 @@ class TypeAheadEnumParamComponent extends React.Component<Props<TypeAheadEnumPar
         ))}
         <Autocomplete
           inputProps={{
-            type: 'text'
+            type: 'text',
+            required: !parameter.allowEmptyValue
           }}
           getItemValue={first}
           items={parameter.vocabulary}
