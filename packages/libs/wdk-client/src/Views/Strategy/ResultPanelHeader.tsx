@@ -3,6 +3,7 @@ import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step } from 'wdk-client/Utils/WdkUser';
 import {setReviseFormVisibility} from 'wdk-client/Actions/StrategyPanelActions';
 import {connect} from 'react-redux';
+import {wrappable} from 'wdk-client/Utils/ComponentUtils';
 
 interface Props {
   step: Step;
@@ -19,30 +20,33 @@ const dispatchProps: DispatchProps = {
 }
 
 const headerStyle: React.CSSProperties = {
-  marginTop: '.75em',
+  order: 1,
+  margin: '0',
+  padding: '0',
   fontWeight: 'bold',
   fontSize: '1.4em'
 };
 
 const buttonStyle: React.CSSProperties = {
-  fontSize: '.7em',
+  order: 2,
   fontWeight: 'normal',
   verticalAlign: 'middle',
-  marginLeft: '.5em'
+  marginLeft: '1em'
 }
 
 function ResultPanelHeader({ step, recordClass, reviseViewId, setReviseFormVisibility }: Props & DispatchProps) {
   return (
-    <h2 style={headerStyle}>
-      {step.estimatedSize == null ? '?' : step.estimatedSize.toLocaleString()} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}
-      &nbsp;
+    <React.Fragment>
+      <h2 style={headerStyle}>
+        {step.estimatedSize == null ? '?' : step.estimatedSize.toLocaleString()} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}
+      </h2>
       <button
         style={buttonStyle}
         type="button"
         onClick={() => setReviseFormVisibility(reviseViewId, step.id)}
       >Revise this search</button>
-    </h2>
+    </React.Fragment>
   )
 }
 
-export default connect(null, dispatchProps)(ResultPanelHeader);
+export default connect(null, dispatchProps)(wrappable(ResultPanelHeader));

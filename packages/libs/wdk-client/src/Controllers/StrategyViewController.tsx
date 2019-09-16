@@ -77,7 +77,7 @@ function StrategyViewController(props: Props) {
           resultType={resultType}
           viewId={`step__${resultType.step.id}`}
           renderHeader={() => resultType && recordClass ? (
-            <>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <ResultPanelHeader
                 reviseViewId={strategyPanelViewId(resultType.step.strategyId)}
                 step={resultType.step}
@@ -86,7 +86,7 @@ function StrategyViewController(props: Props) {
               <StepFiltersController
                 step={resultType.step}
               />
-            </>
+            </div>
           ) : null}
         />}
       </div>
