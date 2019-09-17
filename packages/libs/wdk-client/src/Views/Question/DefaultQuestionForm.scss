@@ -34,6 +34,14 @@
     padding: 1.3rem;
   }
 
+  &VisibleHelp {
+    font-style: oblique;
+    margin: auto;
+    color: #525252;
+    font-weight: 400;
+    max-width: 50vw;
+  }
+
   &SubmitSection {
     padding: 1rem 0;
     display: flex;

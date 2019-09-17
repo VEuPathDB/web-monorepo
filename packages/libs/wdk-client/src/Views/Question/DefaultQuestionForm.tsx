@@ -216,6 +216,12 @@ export function ParameterList(props: ParameterListProps) {
             <ParameterHeading parameter={parameter}/>
             <div className={cx('ParameterControl')}>
               {parameterElements[parameter.name]}
+              {
+                parameter.visibleHelp !== undefined &&
+                <div className={cx('VisibleHelp')}>
+                  {safeHtml(parameter.visibleHelp)}
+                </div>
+              }
             </div>
           </React.Fragment>
         ))}
