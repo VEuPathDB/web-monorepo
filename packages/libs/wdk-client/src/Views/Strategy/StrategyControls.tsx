@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 import React from 'react';
-import {IconAlt, Modal} from 'wdk-client/Components';
+import {IconAlt} from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import EditStrategyForm from 'wdk-client/Views/Strategy/EditStrategyForm';
 import SaveAsStrategyForm from 'wdk-client/Views/Strategy/SaveAsStrategyForm';
@@ -13,6 +13,7 @@ import {requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyPro
 
 import './StrategyControls.scss';
 import {showLoginWarning} from 'wdk-client/Actions/UserSessionActions';
+import StrategyModal from 'wdk-client/Views/Strategy/StrategyModal';
 
 const cx = makeClassNameHelper('StrategyControls');
 
@@ -164,12 +165,11 @@ function _StrategyActionModal(props: Props) {
   if (action == null || strategy == null) return null;
 
   return (
-    <Modal>
+    <StrategyModal title={action.title} onClose={props.clearActiveModal}>
       <div className={cx('--Action')}>
-        <h3>{action.title}</h3>
         <action.render {...callbacks} strategySummaries={strategySummaries} strategy={strategy}/>
       </div>
-    </Modal>
+    </StrategyModal>
   )
 }
 
