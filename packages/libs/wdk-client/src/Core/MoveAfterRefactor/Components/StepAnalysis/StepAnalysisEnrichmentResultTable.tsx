@@ -19,6 +19,8 @@ interface StepAnalysisEnrichmentResultTableProps<R> {
   initialSortDirection?: 'asc' | 'desc';
   fixedTableHeader?: boolean;
   pagination?: boolean;
+  children?: any;
+  showCount?: boolean;
 }
 
 export interface ColumnSettings extends MesaColumn {
@@ -40,20 +42,20 @@ export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends 
       columns: this.props.columns,
       options: 
         this.props.fixedTableHeader 
-          ? (
-            {
-              showCount: true,
+          ? {
+              showCount: this.props.showCount === undefined 
+                ? true 
+                : this.props.showCount,
               toolbar: true
             }
-          )
-          : (
-            {
-              showCount: true,
+          : {
+              showCount: this.props.showCount === undefined 
+                ? true 
+                : this.props.showCount,
               toolbar: true,
               useStickyHeader: true,
               tableBodyMaxHeight: '80vh'
-            }
-          ),
+            },
       uiState: {
         searchQuery: this.props.initialSearchQuery || '',
         sort: {
@@ -197,6 +199,7 @@ export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends 
                   placeholderText={''}
                   helpText={'The entire table will be searched'}
                 />
+                {this.props.children}
               </Mesa>
             )
             : (

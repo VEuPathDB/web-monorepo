@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
@@ -9,7 +9,7 @@ import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
-import { Question, AttributeValue, LinkAttributeValue, Answer } from 'wdk-client/Utils/WdkModel';
+import { Question, AttributeValue, LinkAttributeValue, Answer, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
@@ -19,7 +19,8 @@ const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
 type StateProps = {
   questions?: Question[],
-  ontology?: CategoryTreeNode
+  ontology?: CategoryTreeNode,
+  recordClasses?: RecordClass[]
 };
 
 type OwnProps = {
@@ -60,6 +61,7 @@ type DisplayCategory = {
 const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   questions,
   ontology,
+  recordClasses,
   question: internalSearchName,
   recordClass,
   hash: searchNameAnchorTag,
@@ -70,9 +72,9 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     ? [ searchNameAnchorTag, true ]
     : [ internalSearchName, false ];
 
-  const [ outputRecordClassName, datasetCategory, datasetSubtype ] = useMemo(
-    () => getTableQuestionMetadata(questions, internalSearchName, searchName),
-    [ questions, internalSearchName, searchName ]
+  const [ outputRecordClassFullName, datasetCategory, datasetSubtype ] = useMemo(
+    () => getTableQuestionMetadata(questions, recordClasses, internalSearchName),
+    [ questions, recordClasses, internalSearchName ]
   );
 
   const [ questionNamesByDatasetAndCategory, updateQuestionNamesByDatasetAndCategory ] = useState<Record<string, Record<string, string>> | undefined>(undefined);
@@ -95,7 +97,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     if (
       !questions || 
       !ontology ||
-      !outputRecordClassName || 
+      !outputRecordClassFullName || 
       !datasetCategory || 
       !datasetSubtype
     ) {
@@ -106,7 +108,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       getAnswerSpec(datasetCategory, datasetSubtype),
       REPORT_CONFIG
     ).then(answer => {
-      const internalQuestions = getInternalQuestions(answer, outputRecordClassName);
+      const internalQuestions = getInternalQuestions(answer, outputRecordClassFullName);
       const displayCategoryMetadata = getDisplayCategoryMetadata(ontology, internalQuestions);
       const datasetRecords = getDatasetRecords(answer, displayCategoryMetadata);
 
@@ -115,11 +117,15 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       updateDisplayCategoryOrder(displayCategoryMetadata.displayCategoryOrder);
       updateDatasetRecords(datasetRecords);
     });
-  }, [ datasetCategory, datasetSubtype ]);
+  }, [ questions, ontology, outputRecordClassFullName, datasetCategory, datasetSubtype ]);
+
+  useEffect(() => {
+    updateShowingOneRecord(searchName !== internalSearchName);
+  }, [ searchName, internalSearchName ]);
 
   return (
     (
-      !outputRecordClassName || 
+      !outputRecordClassFullName || 
       !datasetCategory || 
       !datasetSubtype
     )
@@ -136,38 +142,9 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       ? <Loading />
       : (
         <div className={cx()}>
-          <div className={cx('Legend')}>
-            <span>
-              Legend:
-            </span>
-            {
-              displayCategoryOrder.map(
-                categoryName =>
-                    <Tooltip
-                      key={categoryName}
-                      content={
-                        <div>
-                          <h4>
-                            {displayCategoriesByName[categoryName].displayName}
-                          </h4>
-                          {displayCategoriesByName[categoryName].description}
-                        </div>
-                      }
-                    >
-                      <span key={categoryName}>
-                        <span className="bttn bttn-cyan bttn-active">
-                          {displayCategoriesByName[categoryName].shortDisplayName}
-                        </span>
-                        <span>
-                          {displayCategoriesByName[categoryName].displayName}
-                        </span>
-                      </span>
-                    </Tooltip>
-              )
-            }
-          </div>
           <InternalGeneDatasetTable
             emptyResultMessage=""
+            showCount={false}
             rows={
               showingOneRecord
                 ? filteredDatasetRecords
@@ -228,6 +205,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                   key: 'Searches',
                   name: 'Choose a Search',
                   sortable: false,
+                  width: '25%',
                   renderCell: (cellProps: any) =>
                     <div>
                       {
@@ -264,12 +242,45 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
             }
             initialSortColumnKey="organism_prefix"
             fixedTableHeader
-          />
+          >
+            <div className={cx('Legend')}>
+              <span>
+                Legend:
+              </span>
+              {
+                displayCategoryOrder.map(
+                  categoryName =>
+                      <Tooltip
+                        key={categoryName}
+                        content={
+                          <div>
+                            <h4>
+                              {displayCategoriesByName[categoryName].displayName}
+                            </h4>
+                            {displayCategoriesByName[categoryName].description}
+                          </div>
+                        }
+                      >
+                        <span key={categoryName}>
+                          <span className="bttn bttn-cyan bttn-active">
+                            {displayCategoriesByName[categoryName].shortDisplayName}
+                          </span>
+                          <span>
+                            {displayCategoriesByName[categoryName].displayName}
+                          </span>
+                        </span>
+                      </Tooltip>
+                )
+              }
+            </div>
+          </InternalGeneDatasetTable>
           {
             showingRecordToggle && (
               <div 
                 className={cx('RecordToggle')}
-                onClick={() => updateShowingOneRecord(!showingOneRecord)}
+                onClick={() => {
+                  updateShowingOneRecord(!showingOneRecord);
+                }}
               >
                 {
                   showingOneRecord
@@ -341,10 +352,10 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
 
 function getTableQuestionMetadata(
   questions: Question[] | undefined, 
-  internalSearchName: string,
-  searchName: string
+  recordClasses: RecordClass[] | undefined,
+  internalSearchName: string
 ) {
-  if (!questions) {
+  if (!questions || !recordClasses) {
     return [ undefined, undefined, undefined ];
   }
 
@@ -359,8 +370,10 @@ function getTableQuestionMetadata(
     datasetSubtype = []
   } = internalQuestion.properties;
 
+  const outputRecordClass = recordClasses.find(({ urlSegment }) => urlSegment === internalQuestion.outputRecordClassName);
+
   return [
-    internalQuestion.outputRecordClassName,
+    outputRecordClass && outputRecordClass.fullName,
     datasetCategory.join(''),
     datasetSubtype.join('')
   ];
@@ -589,6 +602,7 @@ export const InternalGeneDataset = connect<StateProps, {}, OwnProps, RootState>(
     questions: state.globalData.questions, 
     ontology: state.globalData.ontology
       ? state.globalData.ontology.tree
-      : undefined
+      : undefined,
+    recordClasses: state.globalData.recordClasses
   })
 )(InternalGeneDatasetView);
