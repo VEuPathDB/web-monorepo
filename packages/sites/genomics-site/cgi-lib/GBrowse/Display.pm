@@ -854,47 +854,51 @@ sub chipColor {
   my ($l) = $f->get_tag_values('life cycle stage');
   my ($anls) = $f->get_tag_values('name');
 
+  # plasmo - Winzeler Westenberger
   return '#D80000' if($anls eq 'H4_schizont_smoothed (ChIP-chip)');
   return '#006633' if($anls eq 'H4_trophozoite_smoothed (ChIP-chip)');
   return '#27408B' if($anls eq 'H4_ring_smoothed (ChIP-chip)');
   return '#524818' if($anls eq 'H3K9ac_troph_smoothed (ChIP-chip)');
 
+  # toxo - Einstein_centromeres
   return '#000080' if($a =~ /CenH3_H3K9me2/i);
   return '#B0E0E6' if($a =~ /CenH3/i);
 
+  # plasmo - Artur Scherf
   return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
+  # toxo - Einstein + Einstein_ME1
   return '#00FF00' if($a =~ /H3K4me3/i && $r eq 'Replicate 1');
   return '#00C896' if($a =~ /H3K4me3/i && $r eq 'Replicate 2');
-  return '#0033FF' if($a =~ /H3k4me1/i && $r eq 'Replicate 1');
-  return '#0066FF' if($a =~ /H3k4me1/i && $r eq 'Replicate 2');
-
-
+  return '#0033FF' if($a =~ /H3K4me1/i && $r eq 'Replicate 1');
+  return '#0066FF' if($a =~ /H3K4me1/i && $r eq 'Replicate 2');
   return '#C86400' if($a =~ /H3K9/i && $r eq 'Replicate 1');
   return '#FA9600' if($a =~ /H3K9/i && $r eq 'Replicate 2');
 
+  # toxo - Hakimi Ali
   return '#4B0082' if($t =~ /DMSO/i );
   return '#F08080' if($t =~ /FR235222/i );
 
-  return '#00C800' if($r eq 'replicate1');
-  return '#FA9600' if($r eq 'replicate2');
-  return '#884C00' if($r eq 'replicate3');
-
+  # tryp - Peter Myler
+  return '#00C800' if($r eq 'Replicate1');
+  return '#FA9600' if($r eq 'Replicate2');
+  return '#884C00' if($r eq 'Replicate3');
   return '#B22222' if($l =~ /early-log promastigotes/i);
   return '#4682B4' if($l =~ /stationary promastigotes/i);
 
+  # plasmo - Artur Scherf (obsolete?)
   return '#00C800' if($a =~ /H3K4me3/i);
   return '#FA9600' if($a =~ /H3K9Ac/i);
   return '#57178F' if($a =~ /H3K9me3/i );
   return '#E6E600' if($a =~ /H3/i );
   return '#F00000' if($a =~ /H4K20me3/i);
 
+  # toxo Hakimi Ali 2
   return '#600000' if($a =~ /SET8/i && $r eq 'Replicate 1' );
   return '#600000' if($a =~ /TBP1/i && $r eq 'Replicate 1' );
   return '#600000' if($a =~ /TBP2/i && $r eq 'Replicate 1' );
   return '#600000' if($a =~ /RPB9_RNA_pol_II/i && $r eq 'Replicate 1' );
-
   return '#C00000' if($a =~ /SET8/i && $r eq 'Replicate 2' );
   return '#C00000' if($a =~ /TBP1/i && $r eq 'Replicate 2' );
   return '#C00000' if($a =~ /TBP2/i && $r eq 'Replicate 2' );
