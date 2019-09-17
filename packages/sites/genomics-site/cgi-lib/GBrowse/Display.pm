@@ -851,8 +851,11 @@ sub chipColor {
   my ($t) = $f->get_tag_values('Compound');
   my ($r) = $f->get_tag_values('Replicate');
   my ($g) = $f->get_tag_values('parasite genotype');
-  my ($l) = $f->get_tag_values('life cycle stage');
+  my ($l) = $f->get_tag_values('Parasite lifecycle stage');
   my ($anls) = $f->get_tag_values('name');
+
+  print STDERR Dumper $r;
+  print STDERR Dumper $l;
 
   # plasmo - Winzeler Westenberger
   return '#D80000' if($anls eq 'H4_schizont_smoothed (ChIP-chip)');
@@ -881,9 +884,9 @@ sub chipColor {
   return '#F08080' if($t =~ /FR235222/i );
 
   # tryp - Peter Myler
-  return '#00C800' if($r eq 'Replicate1');
-  return '#FA9600' if($r eq 'Replicate2');
-  return '#884C00' if($r eq 'Replicate3');
+  return '#00C800' if($r eq 'Replicate 1');
+  return '#FA9600' if($r eq 'Replicate 2');
+  return '#884C00' if($r eq 'Replicate 3');
   return '#B22222' if($l =~ /early-log promastigotes/i);
   return '#4682B4' if($l =~ /stationary promastigotes/i);
 
