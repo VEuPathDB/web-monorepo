@@ -1,4 +1,13 @@
 .wdk-QuestionForm {
+  margin: auto;
+
+  &__default-width {
+    width: 62.5rem;
+  }
+
+  &__wide-width {
+    width: 81.25em;
+  }
 
   &ShowHideGroup {
     border: 1px solid #eaeaea;
@@ -27,6 +36,9 @@
   }
 
   &ParameterHeading {
+    h2 {
+      font-size: 1.6em;
+    }
     border-bottom: 1px solid #ccc;
   }
 
@@ -66,6 +78,17 @@
     width: 160px;
     background-size: cover;
     margin: 1em;
+  }
+
+  &DescriptionSection {
+    padding-top: 7em;
+    margin: -5em 0 1em 0;
+  }
+
+  &Description {
+    h2 {
+      font-size: 1.6em;
+    }
   }
 
   /* Parameter-specific rules */

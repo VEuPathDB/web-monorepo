@@ -79,8 +79,12 @@ export default function DefaultQuestionForm(props: Props) {
   let renderParamGroup = props.renderParamGroup ? props.renderParamGroup : renderDefaultParamGroup;
   let Description = props.DescriptionComponent || QuestionDescription;
 
+  let containerClassName = question.parameters.every(({ type }) => type !== 'filter') 
+    ? cx('', 'default-width')
+    : cx('', 'width-width');
+
   return (
-    <div className={cx()}>
+    <div className={containerClassName}>
       <QuestionHeader
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
         headerText={question.displayName}
@@ -311,10 +315,12 @@ export function WeightInput(props: WeightInputProps) {
 
 export function QuestionDescription(props: { description?: string, searchName?: string }) {
   return !props.description ? null : (
-    <div>
-      <hr/>
-      <h2>Description</h2>
-      {safeHtml(props.description)}
+    <div className={cx('DescriptionSection')}>
+      <div className={cx('Description')}>
+        <hr/>
+        <h2>Description</h2>
+        {safeHtml(props.description)}
+      </div>
     </div>
   );
 }
