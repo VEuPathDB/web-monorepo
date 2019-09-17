@@ -51,15 +51,15 @@ export default function About() {
 
       <h2 id="Can-i-access-code-used-for-microbiomeDB">Can I access code used for microbiomeDB?</h2>
       <div>
-        <p>Yes!  Our code is maintained using Subversion, and we welcome input from the community.  Checkout our scripts for each of the <a href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/MicrobiomeWebsite/trunk/View/lib/R/shiny/apps/">Shiny apps</a>.  In addition, you can access the code we use for running DADA2 on our cluster on all samples prior to loading into the site, which consists of the following four scripts:</p>
+        <p>Yes!  Our code is maintained using Git, and we welcome input from the community.  Checkout our scripts for each of the <a href="https://github.com/EuPathDB/MicrobiomeWebsite/tree/master/View/lib/R/shiny/apps">Shiny apps</a>.  In addition, you can access the code we use for running DADA2 on our cluster on all samples prior to loading into the site, which consists of the following four scripts:</p>
 
-          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/demuxAndBuildErrorModels.R">demuxAndBuildErrorModels.R</a></p> 
+          <p><a href="https://github.com/EuPathDB/DJob/tree/master/DistribJobTasks/bin/demuxAndBuildErrorModels.R">demuxAndBuildErrorModels.R</a></p>
 
-          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/merge.R">merge.R</a></p>  
+          <p><a href="https://github.com/EuPathDB/DJob/tree/master/DistribJobTasks/bin/merge.R">merge.R</a></p>
 
-          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/bin/runDada.R">runDada.R</a></p> 
+          <p><a href="https://github.com/EuPathDB/DJob/tree/master/DistribJobTasks/bin/runDada.R">runDada.R</a></p>
 
-          <p><a href="https://cbilsvn.pmacs.upenn.edu/svn/gus/DJob/trunk/DistribJobTasks/lib/perl/ASVTableTask.pm">ASVTableTask.pm</a></p>
+          <p><a href="https://github.com/EuPathDB/DJob/tree/master/DistribJobTasks/lib/perl/ASVTableTask.pm">ASVTableTask.pm</a></p>
 
       </div>
 
