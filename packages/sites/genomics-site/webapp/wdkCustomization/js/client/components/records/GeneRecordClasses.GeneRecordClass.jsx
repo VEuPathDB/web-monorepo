@@ -930,9 +930,8 @@ class TranscriptionSummaryForm extends SortKeyTable {
         return (
           <div id="transcriptionSummary">
             <details>
-	    	    <summary>Help</summary>
+	    	    <summary style={{cursor:'help'}}>The graph summarizes expression of the current gene across RNA-seq experiments. Read more...</summary>
 			<ul>
-				<li>The graph summarizes expression of the current gene across RNA-seq experiments.</li>
 				<li>Experiments are layered vertically with their FPKM values on the x axis.</li>
 				<li>Each sample is shown with a black dot. Summary statistics are represented by the grey box.</li>
 				<li>Use the toggle button to switch from Log Scale to Linear Scale.</li>
