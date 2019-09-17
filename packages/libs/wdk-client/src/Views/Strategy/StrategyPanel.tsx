@@ -1,6 +1,5 @@
 import React from 'react';
 import { SaveableTextEditor, Loading } from 'wdk-client/Components';
-import Modal from 'wdk-client/Components/Overlays/Modal';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
@@ -11,6 +10,7 @@ import {StrategyControls} from 'wdk-client/Views/Strategy/StrategyControls';
 import './StrategyPanel.css';
 import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
+import StrategyModal from 'wdk-client/Views/Strategy/StrategyModal';
 
 const cx = makeClassNameHelper('StrategyPanel');
 
@@ -108,19 +108,15 @@ export default function StrategyPanel(props: Props) {
           </> : null}
           </div>
           {strategy != null && insertStepVisibility != null ? (
-            <Modal className={cx('--Modal')}>
-              <AddStepPanel
-                strategy={strategy}
-                addType={insertStepVisibility}
-                onHideInsertStep={onHideInsertStep}
-              />
-            </Modal>
+            <AddStepPanel
+              strategy={strategy}
+              addType={insertStepVisibility}
+              onHideInsertStep={onHideInsertStep}
+            />
           ) : null}
       {strategy != null && reviseStep != null ? (
-        <Modal className={cx('--Modal')}>
+        <StrategyModal title="Revise your step" onClose={setReviseFormStepId} >
           <div className={cx('--ReviseForm')}>
-            <button type="button" className="link" onClick={() => setReviseFormStepId()}>Close</button>
-            {/* <h1>Revise step <em style={{ fontWeight: 'normal' }}>{reviseStep.customName}</em></h1> */}
             <Plugin
               context={{
                 type: 'questionController',
@@ -140,7 +136,7 @@ export default function StrategyPanel(props: Props) {
               }}
             />
           </div>
-        </Modal>
+        </StrategyModal>
       ): null}
     </div>
   );

@@ -15,6 +15,7 @@ import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 import 'wdk-client/Views/Strategy/AddStepPanel.scss';
+import StrategyModal from 'wdk-client/Views/Strategy/StrategyModal';
 
 const cx = makeClassNameHelper('AddStepPanel');
 
@@ -101,9 +102,7 @@ export const AddStepPanelView = wrappable((
 
   const currentPage = pageHistory[pageHistory.length - 1];
 
-  const onClickBack = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-
+  const onClickBack = useCallback(() => {
     const newPageHistory = pageHistory.slice(0, -1);
 
     if (newPageHistory.length === 0) {
@@ -168,115 +167,102 @@ export const AddStepPanelView = wrappable((
   );
 
   return (
-    <div className={cx()}>
-      {
-        (
-          strategy === undefined ||
-          inputRecordClass === undefined ||
-          stepsCompletedNumber === undefined ||
-          operandStep === undefined ||
-          questions === undefined ||
-          questionsByUrlSegment === undefined ||
-          recordClasses === undefined ||
-          recordClassesByUrlSegment === undefined ||
-          addStepMenuConfigs === undefined
-        )
-          ? <Loading />
-          : <div className={cx('--Container')}>
-              <h1 className={cx('--Header')}>
-                <button 
-                  type="button" 
-                  className="link" 
-                  onClick={selectedOperation ? onClickBack : onHideInsertStep} 
-                  title="Go Back">
-                  <i className="fa fa-lg fa-arrow-left" />
-                </button>
-                <div>
-                  Add a Step to your Strategy
-                </div>
-                <button type="button" className="link" onClick={onHideInsertStep} title="Close">
-                  <i className="fa fa-lg fa-times" />
-                </button>
-              </h1>
-              {
-                !selectedOperation
-                  ? (
-                    <div className={cx('--MenusContainer')}>
-                      <div className={cx('--MenusHeader')}>
-                          So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}
-                          {' '}
-                          and finds {operandStep.estimatedSize === undefined ? '?' : operandStep.estimatedSize.toLocaleString()} {
-                            operandStep.estimatedSize === 1
-                              ? inputRecordClass.displayName
-                              : inputRecordClass.displayNamePlural
-                            }.
-                          <br />
-                          Gain data mining power by adding a step to your strategy.  You can...
-                      </div>
-                      <div className={cx('--MenuItemsContainer')}>
-                        {
-                          addStepMenuConfigs
-                            .map(({ name: operation, AddStepMenuComponent }, index) =>
-                              <React.Fragment key={operation}>
-                                <div className={cx('--MenuItem')}>
-                                  <AddStepMenuComponent
-                                    strategy={strategy}
-                                    inputRecordClass={inputRecordClass}
-                                    startOperationForm={startOperationForm}
-                                    updateStrategy={updateStrategy}
-                                    addType={addType}
-                                    stepsCompletedNumber={stepsCompletedNumber}
-                                    operandStep={operandStep}
-                                    previousStep={previousStep}
-                                    outputStep={outputStep}
-                                    questions={questions}
-                                    questionsByUrlSegment={questionsByUrlSegment}
-                                    recordClasses={recordClasses}
-                                    recordClassesByUrlSegment={recordClassesByUrlSegment}
-                                    onHideInsertStep={onHideInsertStep}
-                                    enableSubmission={enableSubmission}
-                                  />
-                                </div>
-                                {
-                                  index < addStepMenuConfigs.length - 1 &&
-                                  <div className={cx('--MenuItemSeparator')}>
-                                    <em>-or-</em>
-                                    <div className={cx('--MenuItemDividingLine')}></div>
+    <StrategyModal title="Add a Step to your Strategy" onGoBack={selectedOperation ? onClickBack : onHideInsertStep} onClose={onHideInsertStep}>
+      <div className={cx()}>
+        {
+          (
+            strategy === undefined ||
+            inputRecordClass === undefined ||
+            stepsCompletedNumber === undefined ||
+            operandStep === undefined ||
+            questions === undefined ||
+            questionsByUrlSegment === undefined ||
+            recordClasses === undefined ||
+            recordClassesByUrlSegment === undefined ||
+            addStepMenuConfigs === undefined
+          )
+            ? <Loading />
+            : <div className={cx('--Container')}>
+                {
+                  !selectedOperation
+                    ? (
+                      <div className={cx('--MenusContainer')}>
+                        <div className={cx('--MenusHeader')}>
+                            So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}
+                            {' '}
+                            and finds {operandStep.estimatedSize === undefined ? '?' : operandStep.estimatedSize.toLocaleString()} {
+                              operandStep.estimatedSize === 1
+                                ? inputRecordClass.displayName
+                                : inputRecordClass.displayNamePlural
+                              }.
+                            <br />
+                            Gain data mining power by adding a step to your strategy.  You can...
+                        </div>
+                        <div className={cx('--MenuItemsContainer')}>
+                          {
+                            addStepMenuConfigs
+                              .map(({ name: operation, AddStepMenuComponent }, index) =>
+                                <React.Fragment key={operation}>
+                                  <div className={cx('--MenuItem')}>
+                                    <AddStepMenuComponent
+                                      strategy={strategy}
+                                      inputRecordClass={inputRecordClass}
+                                      startOperationForm={startOperationForm}
+                                      updateStrategy={updateStrategy}
+                                      addType={addType}
+                                      stepsCompletedNumber={stepsCompletedNumber}
+                                      operandStep={operandStep}
+                                      previousStep={previousStep}
+                                      outputStep={outputStep}
+                                      questions={questions}
+                                      questionsByUrlSegment={questionsByUrlSegment}
+                                      recordClasses={recordClasses}
+                                      recordClassesByUrlSegment={recordClassesByUrlSegment}
+                                      onHideInsertStep={onHideInsertStep}
+                                      enableSubmission={enableSubmission}
+                                    />
                                   </div>
-                                }
-                              </React.Fragment>
-                            )
-                        }
+                                  {
+                                    index < addStepMenuConfigs.length - 1 &&
+                                    <div className={cx('--MenuItemSeparator')}>
+                                      <em>-or-</em>
+                                      <div className={cx('--MenuItemDividingLine')}></div>
+                                    </div>
+                                  }
+                                </React.Fragment>
+                              )
+                          }
+                        </div>
                       </div>
-                    </div>
-                  )
-                  : (
-                    <div className={cx('--Form')}>
-                      <SelectedForm
-                        strategy={strategy}
-                        inputRecordClass={inputRecordClass}
-                        currentPage={currentPage}
-                        advanceToPage={advanceToPage}
-                        replacePage={replacePage}
-                        updateStrategy={updateStrategy}
-                        addType={addType}
-                        stepsCompletedNumber={stepsCompletedNumber}
-                        operandStep={operandStep}
-                        previousStep={previousStep}
-                        outputStep={outputStep}
-                        questions={questions}
-                        questionsByUrlSegment={questionsByUrlSegment}
-                        recordClasses={recordClasses}
-                        recordClassesByUrlSegment={recordClassesByUrlSegment}
-                        onHideInsertStep={onHideInsertStep}
-                        enableSubmission={enableSubmission}
-                      />
-                    </div>
-                  )
-              }
-            </div>
-      }
-    </div>
+                    )
+                    : (
+                      <div className={cx('--Form')}>
+                        <SelectedForm
+                          strategy={strategy}
+                          inputRecordClass={inputRecordClass}
+                          currentPage={currentPage}
+                          advanceToPage={advanceToPage}
+                          replacePage={replacePage}
+                          updateStrategy={updateStrategy}
+                          addType={addType}
+                          stepsCompletedNumber={stepsCompletedNumber}
+                          operandStep={operandStep}
+                          previousStep={previousStep}
+                          outputStep={outputStep}
+                          questions={questions}
+                          questionsByUrlSegment={questionsByUrlSegment}
+                          recordClasses={recordClasses}
+                          recordClassesByUrlSegment={recordClassesByUrlSegment}
+                          onHideInsertStep={onHideInsertStep}
+                          enableSubmission={enableSubmission}
+                        />
+                      </div>
+                    )
+                }
+              </div>
+        }
+      </div>
+    </StrategyModal>
   )
 });
 
