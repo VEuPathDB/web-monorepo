@@ -136,7 +136,7 @@ class NativeCheckboxList extends Component<Props, State> {
     return (
       <div className="wdk-CheckboxList">
         <div>
-          {this.props.items.map(item => {
+          {this.props.items.map((item, index) => {
             let id = `${this.id}.${item.value}`;
             return (
               <div key={item.value} className="wdk-CheckboxListItem">
@@ -148,7 +148,10 @@ class NativeCheckboxList extends Component<Props, State> {
                     value={item.value}
                     checked={selectedItems.includes(item.value)}
                     onChange={e => this.toggle(e, item)}
-                    required={this.props.required}
+                    required={index === 0 && this.props.required}
+                    onInvalid={function(event) {
+                      event.currentTarget.setCustomValidity('Please select at least one value');
+                    }}
                   />
                   {' ' + item.display}
                 </label>
