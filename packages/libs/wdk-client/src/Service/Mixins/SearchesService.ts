@@ -71,16 +71,21 @@ const parameterDecoder: Decode.Decoder<Parameter> =
   Decode.combine(
     /* Common properties */
     Decode.combine(
-      Decode.field('name', Decode.string),
-      Decode.field('displayName', Decode.string),
-      Decode.field('properties', Decode.optional(Decode.objectOf(Decode.arrayOf(Decode.string)))),
-      Decode.field('help', Decode.string),
-      Decode.field('isVisible', Decode.boolean),
-      Decode.field('group', Decode.string),
-      Decode.field('isReadOnly', Decode.boolean),
-      Decode.field('initialDisplayValue', Decode.optional(Decode.string)),
-      Decode.field('dependentParams', Decode.arrayOf(Decode.string)),
-      Decode.field('allowEmptyValue', Decode.boolean)
+      Decode.combine(
+        Decode.field('name', Decode.string),
+        Decode.field('displayName', Decode.string),
+        Decode.field('properties', Decode.optional(Decode.objectOf(Decode.arrayOf(Decode.string)))),
+        Decode.field('help', Decode.string),
+        Decode.field('isVisible', Decode.boolean),
+        Decode.field('group', Decode.string),
+        Decode.field('isReadOnly', Decode.boolean),
+        Decode.field('initialDisplayValue', Decode.optional(Decode.string)),
+        Decode.field('dependentParams', Decode.arrayOf(Decode.string)),
+      ),
+      Decode.combine(
+        Decode.field('allowEmptyValue', Decode.boolean),
+        Decode.field('visibleHelp', Decode.optional(Decode.string))
+      )
     ),
     Decode.oneOf(
       /* DatasetParam */

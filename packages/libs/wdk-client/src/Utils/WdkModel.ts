@@ -56,6 +56,7 @@ export interface ParameterBase extends NamedModelEntity {
   initialDisplayValue?: ParameterValue;
   dependentParams: string[];
   allowEmptyValue: boolean;
+  visibleHelp?: string;
 }
 
 export interface StringParam extends ParameterBase {
