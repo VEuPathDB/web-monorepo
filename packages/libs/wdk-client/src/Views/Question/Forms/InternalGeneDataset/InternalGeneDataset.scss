@@ -1,11 +1,35 @@
 .wdk-InternalGeneDatasetForm {
+  margin: auto;
+  width: 81.25rem;
+
+  .TableToolbar-Children {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .wdk-RealTimeSearchBox {
+    width: 25%;
+  }
+
   .wdk-InternalGeneDatasetFormLegend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
     background-color: #f6f6f6;
+    padding: 0.5rem;
+
+    span {
+      padding: 0 0.25rem;
+    }
   }
 
   .wdk-InternalGeneDatasetFormRecordToggle {
     cursor: pointer;
-    padding: 0.25em;
+    margin: 0.5rem 0;
+    padding: 0.25rem;
     border-bottom: 1px solid #dddddd;
     background-color: #f7f7f7;
     font-weight: bold;
@@ -15,9 +39,12 @@
   tr.DataRow { 
     .DataCell:nth-child(3) {
       > div {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, 0);
+        display: flex;
         justify-content: space-between;
+
+        span {
+          width: 36px;
+        }
       }
     }
   }
