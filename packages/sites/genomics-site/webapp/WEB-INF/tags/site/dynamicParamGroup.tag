@@ -19,7 +19,13 @@
     <c:when test="${wdkQuestion.queryName eq 'CompoundsByFoldChange'}">
       <imp:metabolitefoldchangeParamGroup paramGroup="${paramGroup}"/>
     </c:when>
-    <c:otherwise>
+    <c:when test="${wdkQuestion.queryName eq 'CompoundsByFoldChangeIso'}">
+      <imp:metaboliteIsofoldchangeParamGroup paramGroup="${paramGroup}"/>
+	</c:when>
+	<!--c:when test="${wdkQuestion.queryName eq 'CompoundsByPercentile'}">
+	 . <imp:metabolitePercentileParamGroup paramGroup="${paramGroup}"/>
+	</c:when-->
+	<c:otherwise>
       <imp:questionParamGroup paramGroup="${paramGroup}"/>
     </c:otherwise>
   </c:choose>
