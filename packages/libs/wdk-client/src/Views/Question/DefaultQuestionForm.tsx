@@ -33,7 +33,8 @@ export type Props = {
   submissionMetadata: SubmissionMetadata;
   submitButtonText?: string;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
-  DescriptionComponent?: (props: { description?: string }) => JSX.Element;
+  DescriptionComponent?: (props: { description?: string, navigatingToDescription: boolean }) => JSX.Element;
+  onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onSubmit?: (e: React.FormEvent) => void;
 }
 
@@ -83,9 +84,31 @@ export default function DefaultQuestionForm(props: Props) {
     ? cx('', 'default-width')
     : cx('', 'width-width');
 
+  let containerRef = React.useRef<HTMLDivElement>(null);
+
+  let [ navigatingToDescription, setNavigatingToDescription ] = React.useState(false);
+
+  let defaultOnClickDescriptionLink = React.useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const descriptionSection = containerRef.current && containerRef.current.querySelector(`.${cx('DescriptionSection')}`);
+
+    if (descriptionSection) {
+      descriptionSection.scrollIntoView();
+
+      setNavigatingToDescription(true);
+      setTimeout(() => {
+        setNavigatingToDescription(false);
+      }, 3000);
+    }
+  }, []);
+
+  let onClickDescriptionLink = props.onClickDescriptionLink || defaultOnClickDescriptionLink;
+
   return (
-    <div className={containerClassName}>
+    <div className={containerClassName} ref={containerRef}>
       <QuestionHeader
+        showDescriptionLink={true}
+        onClickDescriptionLink={onClickDescriptionLink}
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
         headerText={question.displayName}
       />
@@ -108,15 +131,36 @@ export default function DefaultQuestionForm(props: Props) {
           submitting={submitting}
           submitButtonText={submitButtonText}
         />
-        <Description description={question.description}/>
+        <Description description={question.description} navigatingToDescription={navigatingToDescription} />
       </form>
     </div>
   );
 }
 
-export function QuestionHeader(props: { headerText: string, showHeader: boolean }) {
+type QuestionHeaderProps = { 
+  headerText: string, 
+  showHeader: boolean,
+  showDescriptionLink?: boolean,
+  onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void
+};
+
+export function QuestionHeader(props: QuestionHeaderProps) {
   return props.showHeader
-    ? <h1>{props.headerText}</h1>
+    ? (
+      <div className={cx('QuestionHeader')}>
+        {
+          !!props.showDescriptionLink && (
+            <div className={cx('DescriptionLink')}>
+              <IconAlt fa="info-circle" className="fa-fw" />
+              <a title="Read more about this search below" href="#" onClick={props.onClickDescriptionLink}>
+                Learn more about this search
+              </a>
+            </div>
+          )
+        }
+        <h1>{props.headerText}</h1>
+      </div>
+    )
     : <></>;
 }
 
@@ -313,12 +357,12 @@ export function WeightInput(props: WeightInputProps) {
   );
 }
 
-export function QuestionDescription(props: { description?: string, searchName?: string }) {
+export function QuestionDescription(props: { description?: string, navigatingToDescription: boolean }) {
   return !props.description ? null : (
     <div className={cx('DescriptionSection')}>
       <div className={cx('Description')}>
         <hr/>
-        <h2>Description</h2>
+        <h2 className={props.navigatingToDescription ? 'navigatingToDescription' : undefined}>Description</h2>
         {safeHtml(props.description)}
       </div>
     </div>

@@ -9,6 +9,14 @@
     width: 81.25em;
   }
 
+  &DescriptionLink {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1rem;
+    margin: 1em 0 -1em 0;
+  }
+
   &ShowHideGroup {
     border: 1px solid #eaeaea;
     background-color: #f0f0f0;
@@ -83,6 +91,17 @@
   &DescriptionSection {
     padding-top: 7em;
     margin: -5em 0 1em 0;
+
+    h2.navigatingToDescription::before {
+      animation: fade-in-out ease-in 3s;
+      opacity: 0;
+      content: "\f0da";
+      position: absolute;
+      margin-left: -.6em;
+      color: #046599;
+      font-family: FontAwesome;
+      font-size: 2.5em;    
+    } 
   }
 
   &Description {
