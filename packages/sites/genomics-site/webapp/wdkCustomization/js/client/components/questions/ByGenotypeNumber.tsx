@@ -23,16 +23,20 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
 }) => {
   const onSubmit = useDefaultOnSubmit(dispatchAction, urlSegment, submissionMetadata);
 
+  // FIXME Determine if we can eliminate some of the hardcoding around the header and description
   return (
     <div className={`${cx()} ${cx('ByGenotypeNumber')}`}>
-      <QuestionHeader headerText={displayName} showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'} />
+      <QuestionHeader 
+        headerText={displayName} 
+        showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
+      />
       <form onSubmit={onSubmit}>
         {parameterElements.genotype}
         <div className={cx('SubmitSection')}>
           <SubmitButton submissionMetadata={submissionMetadata} submitting={submitting} submitButtonText={submitButtonText} />
         </div>
       </form>
-      <QuestionDescription description={description} />
+      <QuestionDescription description={description} navigatingToDescription={false} />
     </div>
   );
 };
