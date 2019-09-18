@@ -9,6 +9,14 @@
     width: 81.25em;
   }
 
+  &QuestionHeader {
+    position: sticky;
+    top: 1.75rem;
+    z-index: 1;
+    background-color: white;
+    border-bottom: 0.0625rem solid black;
+  }
+
   &DescriptionLink {
     display: flex;
     align-items: center;
