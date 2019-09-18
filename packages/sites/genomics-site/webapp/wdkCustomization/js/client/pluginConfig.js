@@ -9,6 +9,7 @@ import {
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
+import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 
 export default [
   {
@@ -55,6 +56,26 @@ export default [
     type: 'questionFilter',
     name: 'gene_boolean_filter_array',
     component: MatchedTranscriptsFilterPlugin
+  },
+  {
+    type: 'questionController',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties.datasetCategory &&
+      question.properties.datasetSubtype
+    ),    
+    component: InternalGeneDataset
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties.datasetCategory &&
+      question.properties.datasetSubtype
+    ),
+    component: InternalGeneDataset
   },
   {
     type: 'questionForm',
