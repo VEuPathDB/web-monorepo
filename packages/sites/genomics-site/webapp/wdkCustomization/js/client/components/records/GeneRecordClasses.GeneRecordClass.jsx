@@ -930,8 +930,8 @@ class TranscriptionSummaryForm extends SortKeyTable {
         return (
           <div id="transcriptionSummary">
             <details>
-	    	    <summary style={{cursor:'help'}}>The graph summarizes expression of the current gene across RNA-seq experiments. Read more...</summary>
-			<ul>
+	    	    <summary style={{cursor:'help'}}><i>The graph summarizes expression of the current gene across RNA-seq experiments. Read more...</i></summary>
+			<ul><i>
 				<li>Experiments are layered vertically with their FPKM values on the x axis.</li>
 				<li>Each sample is shown with a black dot. Summary statistics are represented by the grey box.</li>
 				<li>Use the toggle button to switch from Log Scale to Linear Scale.</li>
@@ -943,7 +943,7 @@ class TranscriptionSummaryForm extends SortKeyTable {
 				</li>
 				<li>Navigation buttons are located at the top right:  zoom in to see adjacent samples or smaller fold-changes; zoom out by double-clicking within the graph.</li>
 				<li>This graph was created with Plotly. <a href="https://help.plot.ly/getting-to-know-the-plotly-modebar/" target="_blank">Get more help at their website.</a></li>
-			</ul>
+			</i></ul>
 		</details> 
             <ExternalResource>
               <iframe src={"/cgi-bin/dataPlotter.pl?project_id=" + projectId + "&id=" + source_id + "&type=RNASeqTranscriptionSummary&template=1&datasetId=All&wl=0&facet=na&contXAxis=na&fmt=html"} height={height} width="1100" frameBorder="0"></iframe>
