@@ -14,6 +14,7 @@ import { ByLocation } from './components/questions/ByLocation';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
+import { RadioParams } from './components/questions/RadioParams';
 
 export default [
   {
@@ -70,6 +71,15 @@ export default [
       question.properties.datasetSubtype
     ),    
     component: InternalGeneDataset
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties['radio-params']
+    ),
+    component: RadioParams
   },
   {
     type: 'questionForm',
