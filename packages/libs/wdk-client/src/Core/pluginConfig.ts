@@ -3,7 +3,6 @@ import DefaultQuestionForm from 'wdk-client/Views/Question/DefaultQuestionForm';
 import ParameterComponent from 'wdk-client/Views/Question/ParameterComponent';
 import { ByGenotypeNumberCheckbox } from 'wdk-client/Views/Question/Params/ByGenotypeNumberCheckbox/ByGenotypeNumberCheckbox'
 import { ByGenotypeNumber } from 'wdk-client/Views/Question/Forms/ByGenotypeNumber/ByGenotypeNumber';
-import { InternalGeneDataset } from 'wdk-client/Views/Question/Forms/InternalGeneDataset/InternalGeneDataset';
 import { ByLocation } from 'wdk-client/Views/Question/Forms/ByLocation/ByLocation';
 import DefaultQuestionController from 'wdk-client/Controllers/QuestionController';
 
@@ -13,32 +12,12 @@ import DefaultQuestionController from 'wdk-client/Controllers/QuestionController
 const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionController',
-    test: ({ question }) => !!(
-      question && 
-      question.properties && 
-      question.properties.datasetCategory &&
-      question.properties.datasetSubtype
-    ),    
-    component: InternalGeneDataset
-  },
-  {
-    type: 'questionController',
     component: DefaultQuestionController
   },
   {
     type: 'questionForm',
     searchName: 'ByGenotypeNumber',
     component: ByGenotypeNumber
-  },
-  {
-    type: 'questionForm',
-    test: ({ question }) => !!(
-      question && 
-      question.properties && 
-      question.properties.datasetCategory &&
-      question.properties.datasetSubtype
-    ),
-    component: InternalGeneDataset
   },
   {
     type: 'questionForm',
