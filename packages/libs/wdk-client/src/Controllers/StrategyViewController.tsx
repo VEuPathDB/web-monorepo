@@ -78,7 +78,7 @@ function StrategyViewController(props: Props) {
           viewId={`step__${resultType.step.id}`}
           renderHeader={() => resultType && recordClass ? (
             <React.Fragment>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1em' }}>
                 <ResultPanelHeader
                   reviseViewId={strategyPanelViewId(resultType.step.strategyId)}
                   step={resultType.step}
