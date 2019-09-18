@@ -81,7 +81,10 @@ function makeRootEpic<T extends Record<string, any>>(storeModules: StoreModuleRe
         ? observe(action$, state$, deps).pipe(
           catchError((error, caught) => {
             // FIXME See https://redmine.apidb.org/issues/34824
-            alert('Oops... something went wrong!', String(error));
+            const message = 'status' in error && 'response' in error && error.status === 422
+              ? error.response
+              : 'An error was encountered.';
+            alert('Oops... something went wrong!', message);
             return caught;
           })
         )
