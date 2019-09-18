@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
 
-import DefaultQuestionForm, { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { mutuallyExclusiveParamsGroupRenderer } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
+
+import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
 export const ByLocation: React.FunctionComponent<Props> = props => {
   const [ activeTab, onTabSelected ] = useState('Chromosome');
@@ -18,7 +20,7 @@ export const ByLocation: React.FunctionComponent<Props> = props => {
   );
 
   return (
-    <DefaultQuestionForm
+    <EbrcDefaultQuestionForm
       {...props}
       renderParamGroup={renderParamGroup}
     />
