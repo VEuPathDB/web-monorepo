@@ -25,6 +25,7 @@ type RadioParameterListProps = {
 
 function RadioParameterList(props: RadioParameterListProps) {
   const { parameters, parameterMap, parameterElements, radioParamSet, activeRadioParam, updateActiveRadioParam } = props;
+
   return (
     <div className={cx('ParameterList')}>
       {Seq.from(parameters)
@@ -37,33 +38,29 @@ function RadioParameterList(props: RadioParameterListProps) {
                 ? 'wdk-InactiveRadioParam'
                 : undefined
             }
+            onFocus={
+              radioParamSet.has(parameter.name) 
+                ? () => {
+                    updateActiveRadioParam(parameter.name);
+                  }
+                : undefined
+            }
           >
             <div className={cx('ParameterHeading')}>
-              <h2>
-                {
-                  radioParamSet.has(parameter.name) &&
+              {
+                radioParamSet.has(parameter.name) && (
                   <input 
                     type="radio"
                     name="radio-param" 
+                    className={cx('RadioParamElement')}
                     checked={parameter.name === activeRadioParam}
-                    onChange={e => {
-                      if (
-                        e.target.parentElement && 
-                        e.target.parentElement.parentElement &&
-                        e.target.parentElement.parentElement.parentElement
-                      ) {
-                        const paramInput: HTMLInputElement | null = 
-                          e.target.parentElement.parentElement.parentElement.querySelector('input:not([type=radio])');
-
-                        if (paramInput) {
-                          paramInput.focus();
-                        }
-                      }
-
+                    onChange={() => {
                       updateActiveRadioParam(parameter.name);
                     }}
                   />
-                }
+                )
+              }
+              <h2>
                 <HelpIcon>{parameter.help}</HelpIcon> {parameter.displayName}
               </h2>
             </div>
