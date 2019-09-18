@@ -166,7 +166,7 @@ export function QuestionHeader(props: QuestionHeaderProps) {
 
 export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props) {
   let { state, eventHandlers, parameterElements } = formProps;
-  let { question, groupUIState } = state;
+  let { question, groupUIState, paramDependenciesUpdating } = state;
   return (
     <DefaultGroup
       key={group.name}
@@ -175,6 +175,7 @@ export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props)
       uiState={groupUIState[group.name]}
       onVisibilityChange={eventHandlers.setGroupVisibility}
       parameterElements={parameterElements}
+      paramDependenciesUpdating={paramDependenciesUpdating}
     />
   );
 }
@@ -185,10 +186,11 @@ type DefaultGroupProps = {
   uiState: any;
   onVisibilityChange: EventHandlers['setGroupVisibility'];
   parameterElements: Record<string, React.ReactNode>;
+  paramDependenciesUpdating: Record<string, boolean>;
 }
 
 export function DefaultGroup(props: DefaultGroupProps) {
-  let { question, group, uiState, onVisibilityChange, parameterElements } = props;
+  let { question, group, uiState, onVisibilityChange, parameterElements, paramDependenciesUpdating } = props;
   return (
     <Group
       key={group.name}
@@ -201,6 +203,7 @@ export function DefaultGroup(props: DefaultGroupProps) {
         parameterMap={question.parametersByName}
         parameterElements={parameterElements}
         parameters={group.parameters}
+        paramDependenciesUpdating={paramDependenciesUpdating}
       />
     </Group>
   );
@@ -251,17 +254,21 @@ type ParameterListProps = {
   parameters: string[];
   parameterMap: Record<string, Parameter>;
   parameterElements: Record<string, React.ReactNode>;
+  paramDependenciesUpdating: Record<string, boolean>;
 }
 
 export function ParameterList(props: ParameterListProps) {
-  const { parameters, parameterMap, parameterElements } = props;
+  const { parameters, parameterMap, parameterElements, paramDependenciesUpdating } = props;
   return (
     <div className={cx('ParameterList')}>
       {Seq.from(parameters)
         .map(paramName => parameterMap[paramName])
         .map(parameter => (
           <React.Fragment key={parameter.name}>
-            <ParameterHeading parameter={parameter}/>
+            <ParameterHeading 
+              parameter={parameter} 
+              paramDependencyUpdating={!!paramDependenciesUpdating[parameter.name]}
+            />
             <div className={cx('ParameterControl')}>
               {parameterElements[parameter.name]}
               {
@@ -277,12 +284,13 @@ export function ParameterList(props: ParameterListProps) {
   )
 }
 
-function ParameterHeading(props: { parameter: Parameter}) {
-  const { parameter } = props;
+function ParameterHeading(props: { parameter: Parameter, paramDependencyUpdating: boolean }) {
+  const { parameter, paramDependencyUpdating } = props;
   return (
-    <div className={cx('ParameterHeading')} >
+    <div className={cx('ParameterHeading')}>
       <h2>
         <HelpIcon>{parameter.help}</HelpIcon> {parameter.displayName}
+        {paramDependencyUpdating && <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />}
       </h2>
     </div>
   )

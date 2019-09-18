@@ -142,7 +142,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         paramValues: action.payload.paramValues || {},
         stepId: action.payload.stepId,
         questionStatus: 'loading',
-        submitting: false
+        submitting: false,
+        paramDependenciesUpdating: {}
       }
 
     case QUESTION_LOADED:
