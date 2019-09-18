@@ -52,7 +52,7 @@ import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
 import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, requestCreateStep, fulfillCreateStep } from 'wdk-client/Actions/StrategyActions';
+import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, fulfillCreateStep } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
 import {Step} from 'wdk-client/Utils/WdkUser';
 
@@ -85,6 +85,7 @@ export type QuestionState = {
   customName?: string;
   stepValidation?: Step['validation'];
   submitting: boolean;
+  paramDependenciesUpdating: Record<string, boolean>;
 }
 
 export type State = {
@@ -186,7 +187,12 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       }
 
     case UPDATE_PARAM_VALUE:
-       return {
+      const newParamDependenciesUpdating = action.payload.parameter.dependentParams.reduce(
+        (memo, dependentParam) => ({ ...memo, [dependentParam]: true }), 
+        {} as Record<string, boolean>
+      );
+
+      return {
         ...state,
         paramValues: {
           ...state.paramValues,
@@ -195,6 +201,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         paramErrors: {
           ...state.paramErrors,
           [action.payload.parameter.name]: undefined
+        },
+        paramDependenciesUpdating: {
+          ...state.paramDependenciesUpdating,
+          ...newParamDependenciesUpdating
         }
       };
 
@@ -211,6 +221,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       const newParamsByName = keyBy(action.payload.parameters, 'name');
       const newParamValuesByName = mapValues(newParamsByName, param => param.initialDisplayValue || '');
       const newParamErrors = mapValues(newParamsByName, () => undefined);
+      const newParamDependenciesUpdating = mapValues(newParamsByName, () => false);
       // merge updated parameters into question and reset their values
       return {
         ...state,
@@ -230,6 +241,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           },
           parameters: state.question.parameters
             .map(parameter => newParamsByName[parameter.name] || parameter)
+        },
+        paramDependenciesUpdating: {
+          ...state.paramDependenciesUpdating,
+          ...newParamDependenciesUpdating
         }
       };
     }
