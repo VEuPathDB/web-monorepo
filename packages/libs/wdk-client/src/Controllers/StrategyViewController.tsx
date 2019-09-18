@@ -16,6 +16,7 @@ import {createSelector} from 'reselect';
 import {StepResultType} from 'wdk-client/Utils/WdkResult';
 import {RecordClass} from 'wdk-client/Utils/WdkModel';
 import {Omit} from 'wdk-client/Core/CommonTypes';
+import InvalidStepResults from 'wdk-client/Views/Strategy/InvalidStepResults';
 
 type StrategyEntry = { strategy?: StrategyDetails, isLoading: boolean; };
 type OpenedStrategiesMap = [number, StrategyEntry][];
@@ -68,29 +69,43 @@ function StrategyViewController(props: Props) {
 
   if (openedStrategies == null) return null;
 
+  const isSelectedValid = (
+    selectedStrategy &&
+    selectedStrategy.strategy &&
+    selectedStrategy.strategy.isValid &&
+    Object.values(selectedStrategy.strategy.steps).every(step => step.validation.isValid)
+  );
+
   return (
     <>
       {/* <StrategyPanelWithOpenedPanel {...props}/> */}
       <StrategyPanelWithToggle {...props}/>
       <div style={{ position: 'relative', minHeight: '350px' }}>
-        {resultType && <ResultPanelController
-          resultType={resultType}
-          viewId={`step__${resultType.step.id}`}
-          renderHeader={() => resultType && recordClass ? (
-            <React.Fragment>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1em' }}>
-                <ResultPanelHeader
-                  reviseViewId={strategyPanelViewId(resultType.step.strategyId)}
+      { resultType == null ? null
+        : isSelectedValid ? (
+            <ResultPanelController
+            resultType={resultType}
+            viewId={`step__${resultType.step.id}`}
+            renderHeader={() => resultType && recordClass ? (
+              <React.Fragment>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1em' }}>
+                  <ResultPanelHeader
+                    reviseViewId={strategyPanelViewId(resultType.step.strategyId)}
+                    step={resultType.step}
+                    recordClass={recordClass}
+                  />
+                </div>
+                <StepFiltersController
                   step={resultType.step}
-                  recordClass={recordClass}
                 />
-              </div>
-              <StepFiltersController
-                step={resultType.step}
-              />
-            </React.Fragment>
-          ) : null}
-        />}
+              </React.Fragment>
+            ) : null}
+          />
+        )
+        : (
+          <InvalidStepResults/>
+        )
+        }
       </div>
     </>
   );
