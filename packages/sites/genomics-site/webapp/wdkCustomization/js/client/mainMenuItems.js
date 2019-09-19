@@ -245,12 +245,12 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           text: 'Sequence Retrieval',
           webAppUrl: '/srt.jsp'
         },
-        {
-          id: 'community-upload',
-          text: 'Upload Community Files',
-          exclude: [EuPathDB],
-          webAppUrl: '/communityUpload.jsp'
-        },
+       // {
+       //   id: 'community-upload',
+       //   text: 'Upload Community Files',
+       //   exclude: [EuPathDB],
+       //   webAppUrl: '/communityUpload.jsp'
+       // },
         {
           id: 'community-download',
           text: 'Download Community Files',
@@ -305,12 +305,12 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           tooltip: 'Add your comments to your gene of interest: start at the gene page',
           webAppUrl: '/app/search/gene/GenesWithUserComments'
         },
-        {
-          id: 'community-upload',
-          text: 'Upload Community Files',
-          exclude: [EuPathDB],
-          webAppUrl: '/communityUpload.jsp'
-        },
+        //{
+        //  id: 'community-upload',
+        //  text: 'Upload Community Files',
+        //  exclude: [EuPathDB],
+        //  webAppUrl: '/communityUpload.jsp'
+        //},
         {
           id: 'community-download',
           text: 'Download Community Files',
