@@ -114,7 +114,7 @@ function OrthologCount(props) {
         setUniqueOrthologValues(uniqueValues);
       },
       error => {
-        alert('Oops... something went wrong', error.toString());
+        alert('Oops... something went wrong', 'An error was encountered.');
         wdkService.submitError(error);
       }
     );

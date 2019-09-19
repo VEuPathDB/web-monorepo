@@ -6,9 +6,15 @@ import {
   ResultTableSummaryViewPlugin
 } from 'wdk-client/Plugins';
 
+import { ByGenotypeNumberCheckbox } from 'wdk-client/Views/Question/Params/ByGenotypeNumberCheckbox/ByGenotypeNumberCheckbox'
+
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
-import CompoundsByFoldChangeForm from './components/questions/CompoundsByFoldChangeForm';
+import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';
+import { ByLocation } from './components/questions/ByLocation';
+import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
+import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
+import { RadioParams } from './components/questions/RadioParams';
 
 export default [
   {
@@ -57,6 +63,48 @@ export default [
     component: MatchedTranscriptsFilterPlugin
   },
   {
+    type: 'questionController',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties.datasetCategory &&
+      question.properties.datasetSubtype
+    ),    
+    component: InternalGeneDataset
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties['radio-params']
+    ),
+    component: RadioParams
+  },
+  {
+    type: 'questionForm',
+    searchName: 'ByGenotypeNumber',
+    component: ByGenotypeNumber
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => !!(
+      question && 
+      question.urlSegment.endsWith('ByLocation')
+    ),
+    component: ByLocation
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => !!(
+      question && 
+      question.properties && 
+      question.properties.datasetCategory &&
+      question.properties.datasetSubtype
+    ),
+    component: InternalGeneDataset
+  },
+  {
     type: 'questionForm',
     name: 'CompoundsByFoldChange',
     component: CompoundsByFoldChangeForm
@@ -65,5 +113,11 @@ export default [
     type: 'questionForm',
     test: ({ question }) => question && question.urlSegment.endsWith('BySimilarity'),
     component: BlastQuestionForm
-  }
+  },
+  {
+    type: 'questionFormParameter',
+    name: 'genotype',
+    searchName: 'ByGenotypeNumber',
+    component: ByGenotypeNumberCheckbox
+  },
 ];

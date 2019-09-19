@@ -1,0 +1,19 @@
+.wdk-QuestionForm {
+  &RadioParamElement {
+    position: relative;
+    left: -2em;
+    bottom: -2.75em;
+  }
+
+  .wdk-InactiveRadioParam {
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 0.85;
+    }
+
+    * {
+      opacity: inherit;
+    }
+  }
+}
