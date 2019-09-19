@@ -8,13 +8,13 @@
 
   <jsp:directive.attribute name="paramGroup" type="java.util.Map" required="true"/>
 
-  <c:set var="profilesetParam" value="${paramGroup['profileset']}"/>
+  <c:set var="profilesetParam" value="${paramGroup['profilesetIso']}"/>
   <c:set var="regulated_dirParam" value="${paramGroup['regulated_dir']}"/>
   <c:set var="fold_change_compoundParam" value="${paramGroup['fold_change_compound']}"/>
 
-  <c:set var="samples_fc_ref_genericParam" value="${paramGroup['samples_fc_ref_generic']}"/>
+  <c:set var="samples_fc_ref_genericParam" value="${paramGroup['samples_fc_ref_genericIso']}"/>
   <c:set var="min_max_avg_refParam" value="${paramGroup['min_max_avg_ref']}"/>
-  <c:set var="samples_fc_comp_genericParam" value="${paramGroup['samples_fc_comp_generic']}"/>
+  <c:set var="samples_fc_comp_genericParam" value="${paramGroup['samples_fc_comp_genericIso']}"/>
   <c:set var="min_max_avg_compParam" value="${paramGroup['min_max_avg_comp']}"/>
   <c:set var="preferred_compoundsParam" value="${paramGroup['preferred_compounds']}"/>
   
@@ -69,7 +69,7 @@
         </div>
 
         <div id="min_max_avg_compaaa" class="param-line">
-          compared with the 
+          and its
           <imp:enumParamInput qp="${min_max_avg_compParam}"/>
           <span class="text prompt"> metabolite level </span>
           <imp:helpIcon helpContent="${min_max_avg_compParam.help}" />
@@ -77,7 +77,7 @@
 
         <div class="param-line" style="padding-bottom:0">
           <span class="text">
-             in the following <span class="samples-tab comparison">Comparison Samples</span>
+             compared with the following <span class="samples-tab comparison">Comparison Samples</span>
             <jsp:text> </jsp:text>
             <imp:helpIcon helpContent="${samples_fc_comp_genericParam.help}" />
           </span>
