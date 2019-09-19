@@ -7,8 +7,10 @@ import {
   SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
+import { alert } from 'wdk-client/Utils/Platform';
 import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
 import { WdkService } from 'wdk-client/Core';
+import { curry } from 'lodash';
 
 
 export type Action =
@@ -351,12 +353,23 @@ export const ENABLE_SUBMISSION = 'question/enable-submission';
 
 export interface EnableSubmissionAction {
   type: typeof ENABLE_SUBMISSION;
-  payload: QuestionPayload<{}>;
+  payload: QuestionPayload<{ stepValidation?: Step['validation'] }>;
 }
 
-export function enableSubmission(payload: EnableSubmissionAction['payload']): EnableSubmissionAction {
+function enableSubmission(payload: EnableSubmissionAction['payload']): EnableSubmissionAction {
   return {
     type: ENABLE_SUBMISSION,
     payload
   };
 }
+
+export const reportSubmissionError = curry((searchName: string, error: any): EnableSubmissionAction => {
+  const isValidationError = 'status' in error && 'response' in error && error.status === 422;
+  const stepValidation = isValidationError ? JSON.parse(error.response) : undefined;
+
+  if (!isValidationError) {
+    alert('Oops... something went wrong!', 'An error was encountered.');
+  }
+
+  return enableSubmission({ searchName, stepValidation });
+});

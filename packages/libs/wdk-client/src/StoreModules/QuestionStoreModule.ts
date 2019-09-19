@@ -3,8 +3,6 @@ import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-
 import { from, EMPTY, merge, Subject } from 'rxjs';
 import { debounceTime, filter, mergeMap, takeUntil, map } from 'rxjs/operators';
 
-import { alert } from 'wdk-client/Utils/Platform';
-
 import {
   UNLOAD_QUESTION,
   UPDATE_ACTIVE_QUESTION,
@@ -31,7 +29,7 @@ import {
   questionNotFound,
   questionError,
   ENABLE_SUBMISSION,
-  enableSubmission
+  reportSubmissionError
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -290,7 +288,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     case ENABLE_SUBMISSION: {
       return {
         ...state,
-        submitting: false
+        submitting: false,
+        stepValidation: action.payload.stepValidation ? action.payload.stepValidation : state.stepValidation
       };
     }
 
@@ -493,13 +492,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           }
         }
       }
-    }).catch(
-      (error) => {
-        // FIXME Instead of alerting, display the error(s) on the associated question form
-        alert('A submission error occurred', String(error));
-        return enableSubmission({ searchName: action.payload.searchName });
-      }
-    );
+    }).catch(reportSubmissionError(action.payload.searchName))
   })
 )
 

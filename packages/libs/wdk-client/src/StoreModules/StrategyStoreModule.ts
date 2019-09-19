@@ -2,7 +2,7 @@ import { stubTrue, zip } from 'lodash/fp';
 import { combineEpics, StateObservable } from 'redux-observable';
 
 import { Action } from 'wdk-client/Actions';
-import { enableSubmission, EnableSubmissionAction } from 'wdk-client/Actions/QuestionActions';
+import { reportSubmissionError, EnableSubmissionAction } from 'wdk-client/Actions/QuestionActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -341,9 +341,7 @@ async function getFulfillStrategy_SaveAs(
         await wdkService.updateStepSearchConfig(duplicateStepId, duplicateSearchConfig);
         return fulfillDraftStrategy(await wdkService.getStrategy(duplicateStrategyId), strategyId);
       } catch (error) {
-        // FIXME Instead of alerting, display the error(s) on the associated question form
-        alert('A submission error occurred', String(error));
-        return enableSubmission({ searchName });
+        return reportSubmissionError(searchName, error);
       }
     }
 
@@ -351,9 +349,7 @@ async function getFulfillStrategy_SaveAs(
       await wdkService.updateStepSearchConfig(stepId, searchConfig);
       return fulfillStrategy(await wdkService.getStrategy(strategyId));
     } catch (error) {
-      // FIXME Instead of alerting, display the error(s) on the associated question form
-      alert('A submission error occurred', String(error));
-      return enableSubmission({ searchName: strategy.steps[stepId].searchName });
+      return reportSubmissionError(strategy.steps[stepId].searchName, error);
     }
   }
 
@@ -379,9 +375,7 @@ async function getFulfillStrategy_SaveAs(
         replaceStep(oldStepTree, oldStepId, newStepId)
       );
     } catch (error) {
-      // FIXME Instead of alerting, display the error(s) on the associated question form
-      alert('A submission error occurred', error);
-      return enableSubmission({ searchName: newStepSpec.searchName });
+      return reportSubmissionError(newStepSpec.searchName, error);
     }
   }
 

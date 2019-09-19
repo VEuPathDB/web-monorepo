@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { enableSubmission } from 'wdk-client/Actions/QuestionActions';
+import { curry } from 'lodash';
+
+import { reportSubmissionError } from 'wdk-client/Actions/QuestionActions';
 import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -32,7 +34,7 @@ type StateProps = {
 type DispatchProps = {
   loadStrategy: (strategyId: number) => void,
   requestPutStrategyStepTree: (strategyId: number, newStepTree: StepTree) => void,
-  enableSubmission: (payload: { searchName: string }) => void
+  reportSubmissionError: typeof reportSubmissionError
 };
 
 type OwnProps = {
@@ -58,7 +60,7 @@ export type AddStepOperationMenuProps = {
   recordClasses: RecordClass[],
   recordClassesByUrlSegment: Record<string, RecordClass>,
   onHideInsertStep: () => void,
-  enableSubmission: (payload: { searchName: string }) => void
+  reportSubmissionError: typeof reportSubmissionError
 };
 
 export type AddStepOperationFormProps = {
@@ -78,13 +80,13 @@ export type AddStepOperationFormProps = {
   recordClasses: RecordClass[],
   recordClassesByUrlSegment: Record<string, RecordClass>,
   onHideInsertStep: () => void,
-  enableSubmission: (payload: { searchName: string }) => void
+  reportSubmissionError: typeof reportSubmissionError
 };
 
 export const AddStepPanelView = wrappable((
   {
     addType,
-    enableSubmission,
+    reportSubmissionError,
     inputRecordClass,
     onHideInsertStep,
     operandStep,
@@ -219,7 +221,7 @@ export const AddStepPanelView = wrappable((
                                       recordClasses={recordClasses}
                                       recordClassesByUrlSegment={recordClassesByUrlSegment}
                                       onHideInsertStep={onHideInsertStep}
-                                      enableSubmission={enableSubmission}
+                                      reportSubmissionError={reportSubmissionError}
                                     />
                                   </div>
                                   {
@@ -254,7 +256,7 @@ export const AddStepPanelView = wrappable((
                           recordClasses={recordClasses}
                           recordClassesByUrlSegment={recordClassesByUrlSegment}
                           onHideInsertStep={onHideInsertStep}
-                          enableSubmission={enableSubmission}
+                          reportSubmissionError={reportSubmissionError}
                         />
                       </div>
                     )
@@ -369,7 +371,7 @@ export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, 
   dispatch => ({
     loadStrategy: compose(dispatch, requestStrategy),
     requestPutStrategyStepTree: compose(dispatch, requestPutStrategyStepTree),
-    enableSubmission: compose(dispatch, enableSubmission)
+    reportSubmissionError: curry(compose(dispatch, reportSubmissionError))
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
