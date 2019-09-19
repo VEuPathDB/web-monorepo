@@ -13,6 +13,8 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
+import './ColocateStepBoxIcon.scss';
+
 export const colocationQuestionSuffix = 'BySpanLogic';
 
 export const apiBinaryOperations: BinaryOperation[] = [
