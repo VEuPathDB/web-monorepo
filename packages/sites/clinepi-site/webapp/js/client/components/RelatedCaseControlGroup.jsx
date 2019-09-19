@@ -30,9 +30,9 @@ export default class RelatedCaseControlGroup extends React.Component {
     if (
       param === caseControlParam &&
       paramValue.startsWith('Both') &&
-      controller.state.paramValues[toggleParam.name] !== toggleParam.defaultValue
+      controller.state.paramValues[toggleParam.name] !== toggleParam.initialDisplayValue
     ) {
-      controller.setParamValue(toggleParam, toggleParam.defaultValue);
+      controller.setParamValue(toggleParam, toggleParam.initialDisplayValue);
     }
   }
 
