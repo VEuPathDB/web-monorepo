@@ -6,6 +6,7 @@
  */
 import { Location } from 'history';
 import {InferAction, makeActionCreator} from 'wdk-client/Utils/ActionCreatorUtils';
+import {TransitionOptions} from 'wdk-client/Utils/PageTransitioner';
 
 export type Action = InferAction<
   | typeof updateLocation
@@ -21,10 +22,10 @@ export const updateLocation = makeActionCreator(
 
 export const transitionToInternalPage = makeActionCreator(
   'router-transition-internal',
-  (path: string) => ({ path })
+  (path: string, options?: TransitionOptions) => ({ path, options })
 );
 
 export const transitionToExternalPage = makeActionCreator(
   'router-transition-external',
-  (path: string) => ({ path })
+  (path: string, options?: TransitionOptions) => ({ path, options })
 );

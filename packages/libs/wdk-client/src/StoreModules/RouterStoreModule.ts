@@ -18,10 +18,10 @@ function doTransition(action$: ActionsObservable<Action>, state$: StateObservabl
   return action$.pipe(
     tap(action => {
       if (transitionToInternalPage.isOfType(action)) {
-        transitioner.transitionToInternalPage(action.payload.path);
+        transitioner.transitionToInternalPage(action.payload.path, action.payload.options);
       }
       if (transitionToExternalPage.isOfType(action)) {
-        transitioner.transitionToExternalPage(action.payload.path);
+        transitioner.transitionToExternalPage(action.payload.path, action.payload.options);
       }
     }),
     mergeMapTo(EMPTY)

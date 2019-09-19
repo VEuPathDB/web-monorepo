@@ -1,6 +1,6 @@
 import { History } from 'history';
 
-type TransitionOptions = {
+export type TransitionOptions = {
   replace?: boolean // defaults to false
 }
 export type TransitionFunction = (url: string, options?: TransitionOptions) => void;
