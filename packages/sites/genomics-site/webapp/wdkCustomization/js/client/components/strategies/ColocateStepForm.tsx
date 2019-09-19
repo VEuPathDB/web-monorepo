@@ -6,10 +6,9 @@ import { StepTree, NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
-import { SubmissionMetadata, enableSubmission } from 'wdk-client/Actions/QuestionActions';
+import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { alert } from 'wdk-client/Utils/Platform';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
@@ -270,7 +269,7 @@ const StrategyForm = ({
 
 const NewSearchForm = ({ 
   advanceToPage, 
-  enableSubmission,
+  reportSubmissionError,
   questionsByUrlSegment, 
   recordClassesByUrlSegment,
   searchUrlSegment, 
@@ -287,12 +286,8 @@ const NewSearchForm = ({
         setSecondaryStepTree({ stepId: id });
         advanceToPage(colocationOperatorForm(newSearchRecordClass.urlSegment));
       })
-      .catch(error => {
-        // FIXME Instead of alerting, display the error(s) on the associated question form
-        alert('A submission error occurred', String(error));
-        enableSubmission({ searchName: searchUrlSegment });
-      });
-  }, [ advanceToPage, newSearchRecordClass, setSecondaryStepTree, searchUrlSegment, enableSubmission ]);
+      .catch(reportSubmissionError(searchUrlSegment));
+  }, [ advanceToPage, newSearchRecordClass, setSecondaryStepTree, searchUrlSegment, reportSubmissionError ]);
 
   const submissionMetadata = useMemo(
     () => ({ type: 'submit-custom-form', onStepSubmitted }) as SubmissionMetadata, 
@@ -327,7 +322,7 @@ const ColocationOperatorForm = (
     recordClassesByUrlSegment,
     previousStep,
     outputStep,
-    enableSubmission
+    reportSubmissionError
   }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }
 ) => {
   const colocationQuestionPrimaryInput = useMemo(
@@ -376,12 +371,8 @@ const ColocationOperatorForm = (
       .then(({ id }) => {
         updateStrategy(id, secondaryInputStepTree);
       })
-      .catch(error => {
-        // FIXME Instead of alerting, display the error(s) on the associated question form
-        alert('A submission error occurred', String(error));
-        enableSubmission({ searchName: colocationStepSpec.searchName });
-      });
-  }, [ updateStrategy, insertingBeforeFirstStep, secondaryInputStepTree, colocationQuestionPrimaryInput, colocationQuestionSecondaryInput, enableSubmission ]);
+      .catch(reportSubmissionError(colocationStepSpec.searchName));
+  }, [ updateStrategy, insertingBeforeFirstStep, secondaryInputStepTree, colocationQuestionPrimaryInput, colocationQuestionSecondaryInput, reportSubmissionError ]);
 
   const submissionMetadata = useMemo(
     () => ({ type: 'submit-custom-form', onStepSubmitted }) as SubmissionMetadata, 
