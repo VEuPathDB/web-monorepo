@@ -150,7 +150,7 @@ class NativeCheckboxList extends Component<Props, State> {
                     onChange={e => this.toggle(e, item)}
                     required={index === 0 && this.props.required}
                     onInvalid={function(event) {
-                      event.currentTarget.setCustomValidity('Please select at least one value');
+                      event.currentTarget.setCustomValidity('Please select at least one value.');
                     }}
                   />
                   {' ' + item.display}
