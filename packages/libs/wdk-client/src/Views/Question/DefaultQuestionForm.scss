@@ -15,6 +15,10 @@
     z-index: 1;
     background-color: white;
     border-bottom: 0.0625rem solid black;
+
+    h1 {
+      padding-top: 0;
+    }
   }
 
   &DescriptionLink {
@@ -22,7 +26,8 @@
     align-items: center;
     justify-content: flex-end;
     font-size: 1rem;
-    margin: 1em 0 -1em 0;
+    margin-bottom: -0.5em;
+    padding-top: 1em;
   }
 
   &ShowHideGroup {
