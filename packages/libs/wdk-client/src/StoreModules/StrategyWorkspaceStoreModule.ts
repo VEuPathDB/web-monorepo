@@ -1,9 +1,9 @@
 import { defaultTo, difference, union, last, stubTrue } from 'lodash';
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
-import { empty, Observable, of, merge } from 'rxjs';
+import { empty, Observable, of, merge, concat } from 'rxjs';
 import { mergeMap, mergeMapTo, tap, map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillStrategy, fulfillPatchStrategyProperties, fulfillSaveAsStrategy, fulfillDraftStrategy } from 'wdk-client/Actions/StrategyActions';
+import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillPatchStrategyProperties, fulfillSaveAsStrategy, fulfillDraftStrategy, requestDeleteStrategy } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies, clearActiveModal, setActiveModal } from 'wdk-client/Actions/StrategyWorkspaceActions';
@@ -13,6 +13,7 @@ import { delay } from 'wdk-client/Utils/PromiseUtils';
 import { StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
 import { requestStrategiesList, fulfillStrategiesList } from 'wdk-client/Actions/StrategyListActions';
 import { requestPublicStrategies, fulfillPublicStrategies } from 'wdk-client/Actions/PublicStrategyActions';
+import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
 export const key = 'strategyWorkspace';
 
@@ -218,18 +219,15 @@ function shouldMakeRootStepActive(strategy: StrategyDetails, activeStrategy?: { 
 
 function updateRouteOnStrategyDeleteEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
   return action$.pipe(mergeMap(action => {
-    if (fulfillDeleteStrategy.isOfType(action)) {
+    // Transition on request instead of fulfill to prevent a race between
+    // changing route and removing deleted strategy from openedStrategies.
+    if (requestDeleteStrategy.isOfType(action)) {
       const { strategyId } = action.payload;
       const { activeStrategy, openedStrategies = [] } = state$.value[key];
-      const nextOpenedStrategies = openedStrategies.includes(strategyId)
-        ? openedStrategies.filter(id => id !== strategyId)
-        : openedStrategies;
       if (activeStrategy != null && activeStrategy.strategyId === strategyId) {
-        // We could also go to the first opened strategy by inspecting openedStrategies
-        transitioner.transitionToInternalPage('/workspace/strategies', { replace: true });
-      }
-      if (nextOpenedStrategies !== openedStrategies) {
-        return of(setOpenedStrategies(nextOpenedStrategies));
+        const nextOpenedStrategies = openedStrategies.filter(id => id !== strategyId)
+        const nextActiveStrategy = last(nextOpenedStrategies);
+        return of(transitionToInternalPage(`/workspace/strategies/${nextActiveStrategy == null ? 'all' : nextActiveStrategy}`));
       }
     }
     return empty();
