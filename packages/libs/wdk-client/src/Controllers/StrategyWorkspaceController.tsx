@@ -15,6 +15,7 @@ import {openStrategyView, closeStrategyView, addToOpenedStrategies, setActiveStr
 import {StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
+import StrategyHelpPage from 'wdk-client/Views/Strategy/StrategyHelpPage';
 
 interface OwnProps {
   workspacePath: string;
@@ -124,7 +125,7 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
     case 'importStrategy':
       return <ImportStrategyController strategySignature={childView.signature} selectedTab={childView.selectedTab} />
     case 'help':
-      return <div>TODO</div>
+      return <StrategyHelpPage/>
     default:
       return <StrategyViewController openedStrategies={openedStrategies}/>
   }
