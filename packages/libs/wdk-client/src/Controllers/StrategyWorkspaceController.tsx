@@ -20,6 +20,7 @@ interface OwnProps {
   workspacePath: string;
   subPath: string;
   allowEmptyOpened: boolean;
+  queryParams: Record<string, string>;
 }
 
 interface DispatchProps {
@@ -68,8 +69,8 @@ function StrategyWorkspaceController(props: Props) {
   )
 }
 
-function ChildView({ allowEmptyOpened, dispatch, subPath, openedStrategies, strategySummaries }: Props) {
-  const childView = parseSubPath(subPath, allowEmptyOpened);
+function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies, strategySummaries }: Props) {
+  const childView = parseSubPath(subPath, allowEmptyOpened, queryParams);
   const activeStrategyId = childView.type === 'openedStrategies' ? childView.strategyId : undefined;
   const activeStepId = childView.type === 'openedStrategies' ? childView.stepId : undefined;
 
@@ -110,13 +111,18 @@ function ChildView({ allowEmptyOpened, dispatch, subPath, openedStrategies, stra
 
   switch(childView.type) {
     case 'openedStrategies':
-      return <StrategyViewController openedStrategies={openedStrategies} strategyId={childView.strategyId} stepId={childView.stepId}/>
+      return <StrategyViewController
+        openedStrategies={openedStrategies}
+        strategyId={childView.strategyId}
+        stepId={childView.stepId}
+        selectedTab={childView.selectedTab}
+      />
     case 'allStrategies':
       return <AllStrategiesController strategies={strategySummaries}/>
     case 'publicStrategies':
       return <PublicStrategiesController />
     case 'importStrategy':
-      return <ImportStrategyController strategySignature={childView.signature} />
+      return <ImportStrategyController strategySignature={childView.signature} selectedTab={childView.selectedTab} />
     case 'help':
       return <div>TODO</div>
     default:
@@ -125,17 +131,17 @@ function ChildView({ allowEmptyOpened, dispatch, subPath, openedStrategies, stra
 }
 
 type ChildView =
-  | { type: 'openedStrategies', strategyId?: number, stepId?: number }
+  | { type: 'openedStrategies', strategyId?: number, stepId?: number, selectedTab?: string }
   | { type: 'allStrategies' }
   | { type: 'publicStrategies' }
-  | { type: 'importStrategy', signature: string }
+  | { type: 'importStrategy', signature: string, selectedTab?: string }
   | { type: 'help' }
   | { type: 'unknown' }
 
-function parseSubPath(subPath: string, allowEmptyOpened: boolean): ChildView {
+function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: Record<string, string>): ChildView {
   if (subPath === 'all') return { type: 'allStrategies' };
   if (subPath === 'public') return { type: 'publicStrategies' };
-  if (subPath.startsWith('import/')) return { type: 'importStrategy', signature: subPath.replace('import/', '') };
+  if (subPath.startsWith('import/')) return { type: 'importStrategy', signature: subPath.replace('import/', ''), selectedTab: queryParams.selectedTab };
   if (subPath === 'help') return { type: 'help' };
   if (subPath === '' && !allowEmptyOpened) return { type: 'unknown' };
 
@@ -143,11 +149,14 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean): ChildView {
 
   if (!strategyId) return { type: 'unknown' }
 
+  const { selectedTab } = queryParams;
+
   return {
     type: 'openedStrategies',
     // if toNumber returns falsey, it is either 0 or NaN, both of which we want to treat as undefined
     strategyId: toNumber(strategyId) || undefined,
-    stepId: toNumber(stepId) || undefined
+    stepId: toNumber(stepId) || undefined,
+    selectedTab
   }
 }
 

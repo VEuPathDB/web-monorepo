@@ -172,10 +172,16 @@ const routes: RouteEntry[] = [
     path: '/workspace/strategies/:subPath*',
     exact: false,
     component: (props: RouteComponentProps<{ subPath?: string }, {}, { allowEmptyOpened?: boolean } | undefined>) => {
+      const queryParams = parseQueryString(props);
       const { subPath = '' } = props.match.params;
       const { state: { allowEmptyOpened = false } = {} } = props.location;
       return (
-        <StrategyWorkspaceController workspacePath="/workspace/strategies" subPath={subPath} allowEmptyOpened={allowEmptyOpened}/>
+        <StrategyWorkspaceController
+          queryParams={queryParams}
+          workspacePath="/workspace/strategies"
+          subPath={subPath}
+          allowEmptyOpened={allowEmptyOpened}
+        />
       );
     }
   },

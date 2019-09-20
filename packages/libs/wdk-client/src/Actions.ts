@@ -19,6 +19,7 @@ import * as UserDatasetsActions from 'wdk-client/Actions/UserDatasetsActions';
 import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
+import * as ImportStrategyActions from 'wdk-client/Actions/ImportStrategyActions';
 import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
 import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
 import * as StrategyWorkspaceActions from 'wdk-client/Actions/StrategyWorkspaceActions';
@@ -47,6 +48,7 @@ export {
   TreeBoxEnumParamActions,
   UserActions,
   RecordActions,
+  ImportStrategyActions,
   SiteMapActions,
   StaticDataActions,
   StrategyPanelActions,
@@ -81,6 +83,7 @@ export type Action =
   | TreeBoxEnumParamActions.Action
   | UserActions.Action
   | RecordActions.Action
+  | ImportStrategyActions.Action
   | SiteMapActions.Action
   | StaticDataActions.Action
   | StrategyActions.Action

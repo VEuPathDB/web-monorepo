@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { setOpenedStrategiesVisibility, setActiveStrategy } from 'wdk-client/Actions/StrategyWorkspaceActions';
+import { setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { Link } from 'wdk-client/Components';
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import {StepFiltersController} from 'wdk-client/Controllers';
@@ -25,6 +25,7 @@ interface OwnProps {
   strategyId?: number;
   stepId?: number;
   openedStrategies?: number[];
+  selectedTab?: string;
 }
 
 interface MappedProps {
@@ -44,7 +45,7 @@ type Props = Omit<OwnProps, 'openedStrategies'> & DispatchProps & MappedProps;
 const strategyPanelViewId = (strategyId: number) => `strategyPanel__${strategyId}`;
 
 function StrategyViewController(props: Props) {
-  const { stepId, strategyId, resultType, recordClass, selectedStrategy, dispatch, openedStrategies } = props;
+  const { stepId, strategyId, resultType, recordClass, selectedStrategy, selectedTab, dispatch, openedStrategies } = props;
 
   // Track which strategies have been loaded. We only want to load a strategy once per mount.
   const loadedStratsRef = useRef(new Set<number>());
@@ -86,6 +87,7 @@ function StrategyViewController(props: Props) {
             <ResultPanelController
             resultType={resultType}
             viewId={`step__${resultType.step.id}`}
+            initialTab={selectedTab}
             renderHeader={() => resultType && recordClass ? (
               <React.Fragment>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1em' }}>

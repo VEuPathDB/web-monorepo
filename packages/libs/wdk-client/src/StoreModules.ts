@@ -21,6 +21,7 @@ import * as wordCloudAnalysis from 'wdk-client/StoreModules/WordCloudAnalysisSto
 import * as histogramAnalysis from 'wdk-client/StoreModules/HistogramAnalysisStoreModule';
 import * as basket from 'wdk-client/StoreModules/BasketStoreModule';
 import * as resultPanel from 'wdk-client/StoreModules/ResultPanelStoreModule';
+import * as importStrategy from 'wdk-client/StoreModules/ImportStrategyStoreModule';
 import * as strategies from 'wdk-client/StoreModules/StrategyStoreModule';
 import * as strategyPanel from 'wdk-client/StoreModules/StrategyPanelStoreModule';
 import * as strategyWorkspace from 'wdk-client/StoreModules/StrategyWorkspaceStoreModule';
@@ -48,6 +49,7 @@ export default {
   record,
   resultTableSummaryView,
   siteMap,
+  importStrategy,
   stepAnalysis,
   strategies,
   strategyPanel,
