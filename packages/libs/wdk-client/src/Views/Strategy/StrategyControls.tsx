@@ -1,5 +1,6 @@
 import { find } from 'lodash';
-import React from 'react';
+import React, {useRef, useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
 import {IconAlt} from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import EditStrategyForm from 'wdk-client/Views/Strategy/EditStrategyForm';
@@ -63,16 +64,19 @@ interface StrategyAction {
   loginRequired?: boolean;
 }
 
-// FIXME Find a cleaner way to assmeble the share URL - ideally without using window.location and/or rootUrl
-const ShareAction = connect(
-  ({ globalData }: RootState, { strategy: { signature }}: ActionProps) => ({
-    shareUrl: 
-    `${window.location.origin}${globalData.siteConfig.rootUrl as string}/import/${signature}`
-  })
-)(_ShareAction);
-
-function _ShareAction (props: ActionProps & { shareUrl: string }) {
+function ShareAction (props: ActionProps) {
   const { strategy } = props;
+  const anchorRef = useRef<HTMLAnchorElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [ shareUrl, setShareUrl ] = useState('');
+  // get full URL from import link to put in the input box
+  useEffect(() => {
+    if (anchorRef.current) setShareUrl(anchorRef.current.href);
+    if (inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [anchorRef.current, inputRef.current])
   if (!strategy.isSaved) {
     return (
       <React.Fragment>
@@ -91,13 +95,13 @@ function _ShareAction (props: ActionProps & { shareUrl: string }) {
         Copy the URL to share your search strategy:
         <br/>
         <input 
-          type="text" 
-          autoFocus 
-          readOnly 
-          style={{ width: '20em' }} 
-          onFocus={e => e.target.select()} 
-          value={props.shareUrl}
+          ref={inputRef}
+          type="text"
+          readOnly
+          style={{ width: '45em' }}
+          value={shareUrl}
         />
+        <Link style={{ display: 'none' }} innerRef={anchorRef as any} to={`/workspace/strategies/import/${strategy.signature}`}>link</Link>
       </div>
       <div><CloseModalButton {...props}>Close</CloseModalButton></div>
     </React.Fragment>
