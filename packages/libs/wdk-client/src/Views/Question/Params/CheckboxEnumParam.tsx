@@ -27,7 +27,6 @@ function CheckboxEnumParam(props: Props<CheckboxEnumParam>) {
         items={parameter.vocabulary.map(([value, display]) => ({ value, display }))}
         value={valueToArray(value)}
         onChange={value => onParamValueChange(value.join(','))}
-        required={!parameter.allowEmptyValue}
       />
     : <RadioList
         items={parameter.vocabulary.map(([value, display]) => ({ value, display }))}
