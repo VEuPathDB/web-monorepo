@@ -80,7 +80,7 @@ function _ShareAction (props: ActionProps & { shareUrl: string }) {
         <div>
           <button className="btn" type="button" onClick={() => {
               props.setActiveModal({ type: 'save', strategyId: strategy.strategyId });
-            }}>Yes, save my strategy</button> <CloseModalButton {...props}>No thanks</CloseModalButton>
+            }}>Yes, save my strategy</button> <CloseModalButton {...props}>Cancel</CloseModalButton>
         </div>
       </React.Fragment>
     );
@@ -115,7 +115,7 @@ export const StrategyActions: Record<string, StrategyAction> = {
           <button className="btn" type="button" onClick={() => {
               props.copyStrategy(props.strategy.signature);
               props.clearActiveModal();
-            }}>Yes, make a copy</button> <CloseModalButton {...props}>No thanks</CloseModalButton></div>
+            }}>Yes, make a copy</button> <CloseModalButton {...props}>Cancel</CloseModalButton></div>
       </React.Fragment>
     )
   },
@@ -149,7 +149,7 @@ export const StrategyActions: Record<string, StrategyAction> = {
         <div><button className="btn"  type="button" onClick={() => {
           props.deleteStrategy(props.strategy.strategyId);
           props.clearActiveModal();
-        }}>Yes, delete my strategy</button> <CloseModalButton {...props}>No thanks</CloseModalButton></div>
+        }}>Yes, delete my strategy</button> <CloseModalButton {...props}>Cancel</CloseModalButton></div>
       </React.Fragment>
     )
   }
