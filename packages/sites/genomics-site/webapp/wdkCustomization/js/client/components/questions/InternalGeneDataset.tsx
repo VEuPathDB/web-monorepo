@@ -94,6 +94,11 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   );
     
   useWdkEffect(wdkService => {
+    updateQuestionNamesByDatasetAndCategory(undefined);
+    updateDisplayCategoriesByName(undefined);
+    updateDisplayCategoryOrder(undefined);
+    updateDatasetRecords(undefined);
+
     if (
       !questions || 
       !ontology ||
@@ -117,7 +122,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       updateDisplayCategoryOrder(displayCategoryMetadata.displayCategoryOrder);
       updateDatasetRecords(datasetRecords);
     });
-  }, [ questions, ontology, outputRecordClassFullName, datasetCategory, datasetSubtype ]);
+  }, [ questions, ontology, internalSearchName, outputRecordClassFullName, datasetCategory, datasetSubtype ]);
 
   useEffect(() => {
     updateShowingOneRecord(searchName !== internalSearchName);
