@@ -33,7 +33,7 @@ import org.json.JSONObject;
 public class AccessRequestService extends UserService {
   
   private static final Logger LOG = Logger.getLogger(AccessRequestService.class);
-  private static final String DATASET_RECORD_CLASS = "DatasetRecordClasses.DatasetRecordClass";
+  private static final String DATASET_RECORD_CLASS = "dataset";
 
   interface DatasetAccessRequestAttributes {
     public String getStudyAccess() throws WdkModelException, WdkUserException;
