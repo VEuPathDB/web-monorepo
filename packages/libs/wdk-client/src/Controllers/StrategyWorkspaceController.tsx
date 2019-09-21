@@ -147,9 +147,6 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: R
   if (subPath === '' && !allowEmptyOpened) return { type: 'unknown' };
 
   const [ strategyId, stepId ] = subPath.split('/');
-
-  if (!strategyId) return { type: 'unknown' }
-
   const { selectedTab } = queryParams;
 
   return {
