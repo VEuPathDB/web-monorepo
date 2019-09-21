@@ -59,18 +59,19 @@ function StrategyWorkspaceController(props: Props) {
     <div className="StrategyWorkspace">
       <StrategyNotifications notifications={notifications}/>
       <StrategyActionModal activeModal={props.activeModal} strategySummaries={strategySummaries}/>
-      <StrategyHeader 
+      <StrategyHeader
         activeStrategy={activeStrategy} 
         openedStrategiesCount={openedStrategiesCount} 
         allStrategiesCount={allStrategiesCount}
         publicStrategiesCount={publicStrategiesCount}
       />
-      <ChildView {...props}/>
+      {/* Only load ChildView when openedStrategies are loaded, to prevent clobbering store values. Not ideal, but it works. */}
+      {openedStrategies && <ChildView {...props}/>}
     </div>
   )
 }
 
-function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies, strategySummaries }: Props) {
+function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies = [], strategySummaries }: Props) {
   const childView = parseSubPath(subPath, allowEmptyOpened, queryParams);
   const activeStrategyId = childView.type === 'openedStrategies' ? childView.strategyId : undefined;
   const activeStepId = childView.type === 'openedStrategies' ? childView.stepId : undefined;
@@ -90,13 +91,12 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
   }, [childView, openedStrategies, strategySummaries, dispatch]);
 
   useEffect(() => {
-    // only do this if we have a strategyId AND openedStrategies have been loaded (to prevent clobbering previous values)
-    if (activeStrategyId && openedStrategies != null) {
+    if (activeStrategyId) {
       if (!openedStrategies.includes(activeStrategyId)) {
         dispatch(addToOpenedStrategies([activeStrategyId]));
       }
     }
-  }, [activeStrategyId, openedStrategies]);
+  }, [activeStrategyId]);
 
   useEffect(() => {
     if (activeStrategyId) {
