@@ -120,11 +120,11 @@ function OrthologCount(props) {
     );
   }, [step]);
 
-  return uniqueOrthologValues && (
+  return uniqueOrthologValues == null ? null : (
     <React.Fragment>
       <DefaultComponent {...props}/>
       <div style={{ order: 1, fontSize: '1.4em', marginLeft: '.5em' }}>
-        ({uniqueOrthologValues.toLocaleString()} orthologs)
+        ({uniqueOrthologValues.toLocaleString()} ortholog groups)
       </div>
     </React.Fragment>
   );
