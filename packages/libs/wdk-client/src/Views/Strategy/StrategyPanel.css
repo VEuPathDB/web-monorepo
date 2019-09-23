@@ -78,3 +78,7 @@
   min-width: 1000px;
   width: 80vw;
 }
+
+.StrategyPanel--ReviseForm .wdk-QuestionFormQuestionHeader {
+  position: inherit;
+}

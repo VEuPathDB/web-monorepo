@@ -109,7 +109,7 @@ export default function DefaultQuestionForm(props: Props) {
   return (
     <div className={containerClassName} ref={containerRef}>
       <QuestionHeader
-        showDescriptionLink={true}
+        showDescriptionLink={submissionMetadata.type === 'create-strategy'}
         onClickDescriptionLink={onClickDescriptionLink}
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}

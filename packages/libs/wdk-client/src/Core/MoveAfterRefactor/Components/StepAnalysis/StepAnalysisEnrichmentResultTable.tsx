@@ -21,6 +21,7 @@ interface StepAnalysisEnrichmentResultTableProps<R> {
   pagination?: boolean;
   children?: any;
   showCount?: boolean;
+  searchBoxHeader?: string;
 }
 
 export interface ColumnSettings extends MesaColumn {
@@ -191,14 +192,17 @@ export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends 
           this.props.rows.length
             ? (
               <Mesa state={sortedState}>
-                <RealTimeSearchBox
-                  className="enrichment-search-field"
-                  autoFocus={false}
-                  searchTerm={searchQuery}
-                  onSearchTermChange={this.handleSearch}
-                  placeholderText={''}
-                  helpText={'The entire table will be searched'}
-                />
+                <div className="wdk-RealTimeSearchBoxContainer">
+                  <span>{this.props.searchBoxHeader || null}</span>
+                  <RealTimeSearchBox
+                    className="enrichment-search-field"
+                    autoFocus={false}
+                    searchTerm={searchQuery}
+                    onSearchTermChange={this.handleSearch}
+                    placeholderText={''}
+                    helpText={'The entire table will be searched'}
+                  />
+                </div>
                 {this.props.children}
               </Mesa>
             )
