@@ -162,10 +162,12 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       : (
         <div className={cx()}>
           <QuestionHeader
-            showHeader={true}
+            showDescriptionLink={submissionMetadata.type === 'create-strategy'}
+            showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
             headerText={`Identify ${outputRecordClass.displayNamePlural} based on ${internalQuestion.displayName}`}
           />
           <InternalGeneDatasetTable
+            searchBoxHeader="Filter Data Sets:"
             emptyResultMessage=""
             showCount={false}
             rows={
