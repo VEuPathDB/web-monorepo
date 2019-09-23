@@ -54,7 +54,8 @@ const routes: RouteEntry[] = [
         hash: props.location.hash.slice(1),
         submissionMetadata: {
           type: 'create-strategy'
-        }
+        },
+        shouldChangeDocumentTitle: true
       }}
     />
   },

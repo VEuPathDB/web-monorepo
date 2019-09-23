@@ -4,7 +4,7 @@ import { HelpIcon, IconAlt, Link } from 'wdk-client/Components';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { Parameter, ParameterGroup, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   changeGroupVisibility,
@@ -31,6 +31,7 @@ export type Props = {
   eventHandlers: EventHandlers;
   parameterElements: Record<string, React.ReactNode>;
   submissionMetadata: SubmissionMetadata;
+  recordClass: RecordClass;
   submitButtonText?: string;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
   DescriptionComponent?: (props: { description?: string, navigatingToDescription: boolean }) => JSX.Element;
@@ -53,7 +54,7 @@ export const useDefaultOnSubmit = (dispatchAction: DispatchAction, urlSegment: s
 
 export default function DefaultQuestionForm(props: Props) {
 
-  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText } = props;
+  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText, recordClass } = props;
   const { question, customName, paramValues, weight, stepValidation, submitting } = state;
 
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata);
@@ -93,7 +94,8 @@ export default function DefaultQuestionForm(props: Props) {
     const descriptionSection = containerRef.current && containerRef.current.querySelector(`.${cx('DescriptionSection')}`);
 
     if (descriptionSection) {
-      descriptionSection.scrollIntoView();
+      descriptionSection.scrollIntoView(true);
+      document.documentElement.scrollTop -= 22;
 
       setNavigatingToDescription(true);
       setTimeout(() => {
@@ -110,7 +112,7 @@ export default function DefaultQuestionForm(props: Props) {
         showDescriptionLink={true}
         onClickDescriptionLink={onClickDescriptionLink}
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
-        headerText={question.displayName}
+        headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
       />
       <StepValidationInfo stepValidation={stepValidation}/>
       <form onSubmit={handleSubmit}>
