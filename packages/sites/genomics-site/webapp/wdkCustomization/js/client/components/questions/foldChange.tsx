@@ -9,7 +9,7 @@ const foldChangeForm = (FoldChangeComponent: React.FunctionComponent<Props>): Re
   <EbrcDefaultQuestionForm
     {...props}
     renderParamGroup={(group, formProps) =>
-      group.name === 'dynamic'
+      group.displayType === 'dynamic'
         ? <FoldChangeComponent {...formProps} />
         : renderDefaultParamGroup(group, formProps)
     }

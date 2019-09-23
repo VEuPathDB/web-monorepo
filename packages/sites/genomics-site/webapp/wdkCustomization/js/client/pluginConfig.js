@@ -111,6 +111,11 @@ export default [
   },
   {
     type: 'questionForm',
+    component: GenericFoldChangeForm,
+    test: ({ question }) => !!question && question.groups.some(group => group.displayType === 'dynamic')
+  },
+  {
+    type: 'questionForm',
     test: ({ question }) => question && question.urlSegment.endsWith('BySimilarity'),
     component: BlastQuestionForm
   },

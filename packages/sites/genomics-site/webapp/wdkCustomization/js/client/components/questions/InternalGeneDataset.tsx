@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { useSetSearchDocumentTitle } from 'wdk-client/Controllers/QuestionController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
@@ -12,6 +13,7 @@ import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUt
 import { Question, AttributeValue, LinkAttributeValue, Answer, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { QuestionHeader } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
 import './InternalGeneDataset.scss';
 
@@ -28,7 +30,8 @@ type OwnProps = {
   question: string,
   hash: string,
   submissionMetadata: SubmissionMetadata,
-  submitButtonText?: string
+  submitButtonText?: string,
+  shouldChangeDocumentTitle?: boolean
 };
 
 type Props = OwnProps & StateProps;
@@ -66,13 +69,14 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   recordClass,
   hash: searchNameAnchorTag,
   submissionMetadata,
-  submitButtonText
+  submitButtonText,
+  shouldChangeDocumentTitle
 }) => {
   const [ searchName, showingRecordToggle ] = searchNameAnchorTag
     ? [ searchNameAnchorTag, true ]
     : [ internalSearchName, false ];
 
-  const [ outputRecordClassFullName, datasetCategory, datasetSubtype ] = useMemo(
+  const [ internalQuestion, outputRecordClass, datasetCategory, datasetSubtype ] = useMemo(
     () => getTableQuestionMetadata(questions, recordClasses, internalSearchName),
     [ questions, recordClasses, internalSearchName ]
   );
@@ -102,7 +106,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     if (
       !questions || 
       !ontology ||
-      !outputRecordClassFullName || 
+      !outputRecordClass || 
       !datasetCategory || 
       !datasetSubtype
     ) {
@@ -113,7 +117,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       getAnswerSpec(datasetCategory, datasetSubtype),
       REPORT_CONFIG
     ).then(answer => {
-      const internalQuestions = getInternalQuestions(answer, outputRecordClassFullName);
+      const internalQuestions = getInternalQuestions(answer, outputRecordClass.fullName);
       const displayCategoryMetadata = getDisplayCategoryMetadata(ontology, internalQuestions);
       const datasetRecords = getDatasetRecords(answer, displayCategoryMetadata);
 
@@ -122,20 +126,30 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       updateDisplayCategoryOrder(displayCategoryMetadata.displayCategoryOrder);
       updateDatasetRecords(datasetRecords);
     });
-  }, [ questions, ontology, internalSearchName, outputRecordClassFullName, datasetCategory, datasetSubtype ]);
+  }, [ questions, ontology, internalSearchName, outputRecordClass, datasetCategory, datasetSubtype ]);
 
   useEffect(() => {
     updateShowingOneRecord(searchName !== internalSearchName);
   }, [ searchName, internalSearchName ]);
 
+  useSetSearchDocumentTitle(
+    internalQuestion, 
+    internalQuestion ? 'complete' : 'loading', 
+    recordClasses, 
+    outputRecordClass, 
+    shouldChangeDocumentTitle
+  );
+
   return (
     (
-      !outputRecordClassFullName || 
+      (!internalQuestion && questions) ||
+      !outputRecordClass || 
       !datasetCategory || 
       !datasetSubtype
     )
       ? <NotFound />
       : (
+          !internalQuestion ||
           !questions ||
           !ontology ||
           !questionNamesByDatasetAndCategory ||
@@ -147,6 +161,10 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
       ? <Loading />
       : (
         <div className={cx()}>
+          <QuestionHeader
+            showHeader={true}
+            headerText={`Identify ${outputRecordClass.displayNamePlural} based on ${internalQuestion.displayName}`}
+          />
           <InternalGeneDatasetTable
             emptyResultMessage=""
             showCount={false}
@@ -359,15 +377,15 @@ function getTableQuestionMetadata(
   questions: Question[] | undefined, 
   recordClasses: RecordClass[] | undefined,
   internalSearchName: string
-) {
+): [ Question | undefined, RecordClass | undefined, string | undefined, string | undefined ] {
   if (!questions || !recordClasses) {
-    return [ undefined, undefined, undefined ];
+    return [ undefined, undefined, undefined, undefined ];
   }
 
   const internalQuestion = questions.find(question => question.urlSegment === internalSearchName);
 
   if (!internalQuestion || !internalQuestion.properties) {
-    return [ undefined, undefined, undefined ];
+    return [ undefined, undefined, undefined, undefined ];
   }
 
   const {
@@ -378,7 +396,8 @@ function getTableQuestionMetadata(
   const outputRecordClass = recordClasses.find(({ urlSegment }) => urlSegment === internalQuestion.outputRecordClassName);
 
   return [
-    outputRecordClass && outputRecordClass.fullName,
+    internalQuestion,
+    outputRecordClass,
     datasetCategory.join(''),
     datasetSubtype.join('')
   ];
