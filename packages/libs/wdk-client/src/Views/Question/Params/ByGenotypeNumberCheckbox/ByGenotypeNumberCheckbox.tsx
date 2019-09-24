@@ -1,5 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
 
+import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { Props as ParameterProps } from 'wdk-client/Views/Question/Params/Utils';
+
 const detailTypes = ["I", "II", "III", "II or III", "nd", "u-1", "u-2", "u-3"];
 const rawRows = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4],
@@ -258,18 +261,15 @@ const TableBody: React.SFC<TableBodyProps> = ({ checkedValues, onToggle }) =>
     }
   </tbody>;
 
-interface ByGenotypeNumberCheckboxProps {
-  onParamValueChange: (newParamValue: string) => void;
-  paramValue: string;
-}
+type ByGenotypeNumberCheckboxProps = ParameterProps<Parameter>;
 
 export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberCheckboxProps> = ({ 
   onParamValueChange, 
-  paramValue = ''
+  value = ''
 }) => {
   const orderedCheckedValues = useMemo(
-    () => paramValue.split(/\s*,\s*/g),
-    [ paramValue ]
+    () => value.split(/\s*,\s*/g),
+    [ value ]
   );
   const checkedValues = useMemo(
     () => orderedCheckedValues.reduce(
