@@ -1,5 +1,5 @@
 import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { getValueOrDefault, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import 'wdk-client/Components/InputControls/RadioList.css';
 
@@ -10,7 +10,7 @@ type Props = {
   name?: string;
   /** Array of items to display in the list **/
   items: Array<{
-    display: string;
+    display: ReactNode;
     value: string;
     description?: string;
   }>;
@@ -60,7 +60,7 @@ class RadioList extends React.Component<Props> {
                 onChange={this.onChange}
                 required={required}
               />
-              {' ' + item.display + ' '}
+              {' '}{item.display}{' '}
               {item.description != null &&
                 <HelpIcon tooltipPosition={{ my: 'center left', at: 'center right' }}>
                   {item.description}

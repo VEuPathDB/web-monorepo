@@ -1,9 +1,9 @@
-import React, { Component, FormEvent } from 'react';
+import React, { Component, FormEvent, ReactNode } from 'react';
 import { wrappable, addOrRemove } from 'wdk-client/Utils/ComponentUtils';
 import NativeCheckboxList from 'wdk-client/Components/InputControls/NativeCheckboxList';
 
 type Item = {
-  display: string
+  display: ReactNode
   value: any
 }
 

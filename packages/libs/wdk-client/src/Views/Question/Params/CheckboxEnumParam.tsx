@@ -1,6 +1,7 @@
 import React from 'react';
 import CheckboxList from 'wdk-client/Components/InputControls/CheckboxList';
 import RadioList from 'wdk-client/Components/InputControls/RadioList';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { CheckboxEnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
 import { Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
 import { isEnumParam, valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
@@ -24,12 +25,12 @@ function CheckboxEnumParam(props: Props<CheckboxEnumParam>) {
 
   return parameter.multiPick
     ? <CheckboxList
-        items={parameter.vocabulary.map(([value, display]) => ({ value, display }))}
+        items={parameter.vocabulary.map(([value, display]) => ({ value, display: safeHtml(display) }))}
         value={valueToArray(value)}
         onChange={value => onParamValueChange(value.join(','))}
       />
     : <RadioList
-        items={parameter.vocabulary.map(([value, display]) => ({ value, display }))}
+        items={parameter.vocabulary.map(([value, display]) => ({ value, display: safeHtml(display) }))}
         value={value}
         onChange={onParamValueChange}
         required={!parameter.allowEmptyValue}
