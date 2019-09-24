@@ -4,12 +4,12 @@
   margin-top: 0.5em;
 
   .wdk-FoldChangeParams {
-    margin-right: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
 
     > div {
       margin-top: 4px;
       margin-bottom: 4px;
-      white-space: nowrap;
     }
 
     .wdk-QuestionFormFoldChangeSampleParamSubgroup {
@@ -79,6 +79,9 @@
     display: flex;
     flex-direction: column;
     border-left: 1px inset #aaaaaa;
+
+    padding-left: 1em;
+    padding-right: 1em;
   }
 
   .wdk-FoldChangeImg {

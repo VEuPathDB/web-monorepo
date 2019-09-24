@@ -17,9 +17,9 @@ const preAndPostParams = (props: GroupProps): PreAndPostParameterEntries[] =>
         postParameterContent: null
       },
       {
-        preParameterContent: <span>return <b>Genes</b></span>,
+        preParameterContent: <span>return</span>,
         parameterName: 'protein_coding_only',
-        postParameterContent: null
+        postParameterContent: <span><b>Genes</b></span>
       },
       {
         preParameterContent: <span>that are</span>,

@@ -27,7 +27,6 @@ export const ParamLine: React.FunctionComponent<ParamLineProps> = ({
   <div>
     {preParameterContent}
     {parameterElement}
-    {postParameterContent}
     {parameterElement && !hideParameter && (
       <HelpIcon>
         <>
@@ -42,5 +41,6 @@ export const ParamLine: React.FunctionComponent<ParamLineProps> = ({
         </>
       </HelpIcon>
     )}
+    {postParameterContent}
   </div>
 );
