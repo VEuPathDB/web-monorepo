@@ -1,15 +1,9 @@
-import React from 'react';
-import Autocomplete from 'react-autocomplete';
-import {
-  first,
-  join,
-  filter,
-  concat,
-  map
-} from 'wdk-client/Utils/IterableUtils';
+import React, { useMemo, useState, useCallback } from 'react';
+import Select from 'react-select';
 import { TypeAheadEnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
 import { Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
-import { isEnumParam, valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { ValueType, InputActionMeta } from 'react-select/src/types';
 
 function isType(parameter: Parameter): parameter is TypeAheadEnumParam {
   return isEnumParam(parameter) && parameter.displayType === 'typeAhead';
@@ -19,82 +13,95 @@ function isParamValueValid() {
   return true;
 }
 
-class TypeAheadEnumParamComponent extends React.Component<Props<TypeAheadEnumParam>, { typeAheadValue: string }> {
+type Option = {
+  value: string,
+  label: string
+};
 
-  state = {
-    typeAheadValue: ''
-  }
+export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) => {
+  const vocabularyByValue = useMemo(
+    () => props.parameter.vocabulary.reduce(
+        (memo, entry) => ({
+          ...memo,
+          [entry[0]]: entry
+        }), 
+        {} as Record<string, [string, string, null]>
+      ),
+    [ props.parameter.vocabulary ]
+  );
 
-  render() {
-    const { typeAheadValue} = this.state;
-    const { parameter, value, onParamValueChange } = this.props;
-    const valueSet = new Set(valueToArray(value));
-    const displayNameMap = new Map<string, string>(parameter.vocabulary.map(([term, display]) => [term, display] as [string, string]));
-    const removeTerm = (term: string) =>
-      onParamValueChange(join(',', filter(value => value !== term, valueSet)));
-    return (
-      <div>
-        {Array.from(map(term =>
-          <div key={term}>
-            {displayNameMap.get(term)} <button type="button" onClick={() => removeTerm(term)}>X</button>
-          </div>,
-          valueSet
-        ))}
-        <Autocomplete
-          inputProps={{
-            type: 'text',
-            required: !parameter.allowEmptyValue
-          }}
-          getItemValue={first}
-          items={parameter.vocabulary}
-          menuStyle={{
-            border: '1px solid #ccc',
-            borderRadius: '3px',
-            boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
-            background: 'rgba(255, 255, 255, 0.9)',
-            padding: '2px 0',
-            fontSize: '90%',
-            position: 'fixed',
-            overflow: 'auto',
-            maxHeight: '50%',
-          }}
-          renderItem={([term, display], isHighlighted) =>
-            <div key={term} style={{ background: isHighlighted ? 'lightskyblue' : 'white', padding: '.5em' }}>
-              {display}
-            </div>
-          }
-          renderMenu={function(this: Autocomplete.Props, items, value, style) {
-            // for browsers that support calc and vh, override the default height
-            const top = typeof style.top === 'number' ? `${style.top}px`
-                      : style.top || '0px';
-            const maxHeight = `calc(100vh - ${top} - 25px)`;
-            const children = value.length >= 3
-              ? items
-              : <div style={{ padding: '.5em' }}><em>Please enter 3 or more characters</em></div>;
+  const options = useMemo(
+    () => props.parameter.vocabulary.map(([ value, label ]) => ({ value, label })), 
+    [ props.parameter.vocabulary ]
+  );
 
-            return (
-              <div style={{...style, ...this.menuStyle, maxHeight}}>
-                {children}
-              </div>
-            );
-          }}
-          value={typeAheadValue}
-          onSelect={typeAheadValue => {
-            if (parameter.multiPick && valueSet.size > 0) onParamValueChange(join(',', concat(valueSet, [typeAheadValue])));
-            else onParamValueChange(typeAheadValue);
-            // this.setState({ typeAheadValue: '' });
-          }}
-          onChange={(event, typeAheadValue) => {
-            this.setState({ typeAheadValue });
-          }}
-          shouldItemRender={([term, display], value) =>
-            !valueSet.has(term) && (term.includes(value) || display.includes(value))
-          }
-        />
-      </div>
-    );
-  }
-}
+  const [ searchTerm, setSearchTerm ] = useState('');
+
+  const selection = useMemo(
+    () => {
+      const stringValueArray = props.value === ''
+        ? []
+        : props.parameter.multiPick
+        ? props.value.split(',')
+        : [ props.value ];
+
+      return stringValueArray.map(
+        value => ({ value, label: vocabularyByValue[value][1] })
+      );
+    },
+    [ props.value, props.parameter.multiPick ]
+  );
+
+  const onInputChange = useCallback((inputValue: string, { action }: InputActionMeta) => {
+    if (action === 'input-change') {
+      setSearchTerm(inputValue);
+    }
+  }, []);
+
+  const onChange = useCallback((newSelection: ValueType<Option>) => {
+    const newSelectionArray = newSelection == null 
+      ? [] 
+      : Array.isArray(newSelection)
+      ? (newSelection as Option[])
+      : [newSelection as Option];
+
+    props.onParamValueChange(newSelectionArray.map(({ value }) => value).join(','));
+    setSearchTerm('');
+  }, [ props.onParamValueChange ]);
+
+  const filterOption = useCallback(
+    (option: Option, inputValue: string) => 
+      (inputValue.length >= 3 || option.label.length < 3) &&
+      option.label.toLowerCase().includes(inputValue.toLowerCase()),
+    []
+  );
+
+  const noOptionsMessage = useCallback(
+    ({ inputValue }: { inputValue: string } ) => 
+      inputValue.length === 0
+        ? 'Please input at least 3 characters'
+        : inputValue.length === 1
+        ? 'Please input at least 2 more characters'
+        : inputValue.length === 2
+        ? 'Please input at least 1 more character'
+        : 'No matches found', 
+    []
+  );
+
+  return (
+    <Select<Option>
+      isMulti={props.parameter.multiPick}
+      isSearchable
+      options={options}
+      filterOption={filterOption}
+      noOptionsMessage={noOptionsMessage}
+      value={selection}
+      onChange={onChange}
+      inputValue={searchTerm}
+      onInputChange={onInputChange}
+    />
+  );
+};
 
 export default createParamModule({
   isType,
