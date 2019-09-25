@@ -34,7 +34,7 @@ type StateProps = {
 type DispatchProps = {
   loadStrategy: (strategyId: number) => void,
   requestPutStrategyStepTree: (strategyId: number, newStepTree: StepTree) => void,
-  reportSubmissionError: typeof reportSubmissionError
+  reportSubmissionError: (searchName: string, error: any) => void
 };
 
 type OwnProps = {
@@ -60,7 +60,7 @@ export type AddStepOperationMenuProps = {
   recordClasses: RecordClass[],
   recordClassesByUrlSegment: Record<string, RecordClass>,
   onHideInsertStep: () => void,
-  reportSubmissionError: typeof reportSubmissionError
+  reportSubmissionError: (searchName: string, error: any) => void
 };
 
 export type AddStepOperationFormProps = {
@@ -80,7 +80,7 @@ export type AddStepOperationFormProps = {
   recordClasses: RecordClass[],
   recordClassesByUrlSegment: Record<string, RecordClass>,
   onHideInsertStep: () => void,
-  reportSubmissionError: typeof reportSubmissionError
+  reportSubmissionError: (searchName: string, error: any) => void
 };
 
 export const AddStepPanelView = wrappable((
@@ -371,7 +371,7 @@ export const AddStepPanel = connect<StateProps, DispatchProps, OwnProps, Props, 
   dispatch => ({
     loadStrategy: compose(dispatch, requestStrategy),
     requestPutStrategyStepTree: compose(dispatch, requestPutStrategyStepTree),
-    reportSubmissionError: curry(compose(dispatch, reportSubmissionError))
+    reportSubmissionError: compose(dispatch, reportSubmissionError)
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
