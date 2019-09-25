@@ -220,6 +220,7 @@ export interface Question extends UrlModelEntity {
   allowedPrimaryInputRecordClassNames?: string[];
   allowedSecondaryInputRecordClassNames?: string[];
   paramNames: string[];
+  queryName?: string;
 }
 
 export interface QuestionWithParameters extends Question {

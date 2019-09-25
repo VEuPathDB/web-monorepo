@@ -93,6 +93,7 @@ export const questionDecoder: Decode.Decoder<Question> =
       Decode.field('filters', Decode.arrayOf(questionFilterDecoder)),
       Decode.field('allowedPrimaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string))),
       Decode.field('allowedSecondaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string))),
+      Decode.field('queryName', Decode.optional(Decode.string))
     )
   )
 
