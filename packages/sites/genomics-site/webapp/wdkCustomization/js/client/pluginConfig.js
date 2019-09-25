@@ -11,11 +11,13 @@ import { ByGenotypeNumberCheckbox } from 'wdk-client/Views/Question/Params/ByGen
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';
 import { ByLocation } from './components/questions/ByLocation';
-import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import BlastQuestionForm from './components/questions/BlastQuestionForm';
+import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
+import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 import { RadioParams } from './components/questions/RadioParams';
+
 
 export default [
   {
@@ -112,14 +114,24 @@ export default [
   },
   {
     type: 'questionForm',
+    test: ({ question }) => 
+      !!question && 
+      (
+        question.queryName === 'GenesByGenericFoldChange' ||
+        question.queryName === 'GenesByUserDatasetRnaSeq'
+      ),
     component: GenericFoldChangeForm,
-    test: ({ question }) => !!question && question.groups.some(group => group.displayType === 'dynamic')
   },
   {
     type: 'questionFormParameter',
     name: 'tfbs_name',
     searchName: 'GenesByBindingSiteFeature',
     component: GenesByBindingSiteFeature
+  },
+  {
+    type: 'questionForm',
+    name: 'DynSpansBySourceId',
+    component: DynSpansBySourceId
   },
   {
     type: 'questionForm',
