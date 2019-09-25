@@ -109,6 +109,10 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
     return null;
   }
 
+  // if temporary value assigned, use until user clears or hits apply;
+  // else check step for a filter value and if present, use; else use empty string (no filter)
+  let appliedFilterConfig: OrgFilterConfig = findOrganismFilterConfig(step.searchConfig);
+
   // whether organism filter pane is expanded vs pushed against left wall of results pane
   let initialIsExpandedStr = sessionStorage.getItem(ORGANISM_FILTER_PANE_EXPANSION_KEY);
   let initialIsExpanded = initialIsExpandedStr ? initialIsExpandedStr === "true" : DEFAULT_PANE_EXPANSION;
@@ -128,7 +132,7 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
   let [ filterSummary, setFilterSummary ] = useState<OrgFilterSummary | null>(null);
 
   // current value of filter shown in the tree (will be cleared if applied to the step)
-  let [ temporaryFilterConfig, setTemporaryFilterConfig ] = useState<OrgFilterConfig>(NO_ORGANISM_FILTER_APPLIED);
+  let [ temporaryFilterConfig, setTemporaryFilterConfig ] = useState<OrgFilterConfig>(appliedFilterConfig);
 
   // current value of checkbox tree's search box
   const [ searchTerm, setSearchTerm ] = useState<string>("");
@@ -141,8 +145,8 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
     setCurrentStep(step);
     filterSummary = null;
     setFilterSummary(null);
-    temporaryFilterConfig = NO_ORGANISM_FILTER_APPLIED;
-    setTemporaryFilterConfig(NO_ORGANISM_FILTER_APPLIED);
+    temporaryFilterConfig = appliedFilterConfig;
+    setTemporaryFilterConfig(appliedFilterConfig);
     searchConfigChangeRequested = false;
     setSearchConfigChangeRequested(false);
   }
@@ -168,22 +172,14 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
     ? createDisplayableTree(taxonomyTree, filterSummary, hideZeroes)
     : undefined;
 
-  // if temporary value assigned, use until user clears or hits apply;
-  // else check step for a filter value and if present, use; else use empty string (no filter)
-  let appliedFilterConfig: OrgFilterConfig = findOrganismFilterConfig(step.searchConfig);
-
   // org filter config currently applied on the step (if any) - used for cancel button
   let appliedFilterList = appliedFilterConfig == NO_ORGANISM_FILTER_APPLIED ? undefined : appliedFilterConfig.values;
 
-  // choose between step's org filter config and temporary (unapplied) selections
-  let viewableFilterConfig: OrgFilterConfig =
-    temporaryFilterConfig !== NO_ORGANISM_FILTER_APPLIED ? temporaryFilterConfig : appliedFilterConfig;
-
   // only show apply and cancel buttons if user has unsaved changes
-  let showApplyAndCancelButtons: boolean = !searchConfigChangeRequested && !isSameConfig(viewableFilterConfig, appliedFilterConfig);
+  let showApplyAndCancelButtons: boolean = !searchConfigChangeRequested && !isSameConfig(temporaryFilterConfig, appliedFilterConfig);
 
   // ids of leaves' boxes to check; if no filter applied, select none
-  let selectedLeaves: Array<string> = viewableFilterConfig === NO_ORGANISM_FILTER_APPLIED ? [] : viewableFilterConfig.values;
+  let selectedLeaves: Array<string> = temporaryFilterConfig === NO_ORGANISM_FILTER_APPLIED ? [] : temporaryFilterConfig.values;
 
   // if user has not expanded any nodes yet and there is only one top-level child, expand it
   let expandedNodeIds = savedExpandedNodeIds ? savedExpandedNodeIds :
