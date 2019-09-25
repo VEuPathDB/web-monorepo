@@ -208,7 +208,7 @@ function updateRouteOnStrategySteptreePutEpic(action$: ActionsObservable<Action>
 
 function shouldMakeRootStepActive(strategy: StrategyDetails, activeStrategy?: { strategyId: number, stepId?: number }): boolean {
   if (activeStrategy == null) return true;
-  if (activeStrategy.strategyId !== strategy.strategyId) return false;
+  if (activeStrategy.strategyId !== strategy.strategyId) return true;
   if (activeStrategy.stepId == null) return true;
   // single step strategy
   if (strategy.stepTree.primaryInput == null) return true;
