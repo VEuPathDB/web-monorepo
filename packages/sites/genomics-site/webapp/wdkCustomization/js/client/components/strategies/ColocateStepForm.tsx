@@ -286,7 +286,7 @@ const NewSearchForm = ({
         setSecondaryStepTree({ stepId: id });
         advanceToPage(colocationOperatorForm(newSearchRecordClass.urlSegment));
       })
-      .catch(reportSubmissionError(searchUrlSegment));
+      .catch(error => reportSubmissionError(searchUrlSegment, error));
   }, [ advanceToPage, newSearchRecordClass, setSecondaryStepTree, searchUrlSegment, reportSubmissionError ]);
 
   const submissionMetadata = useMemo(
@@ -371,7 +371,7 @@ const ColocationOperatorForm = (
       .then(({ id }) => {
         updateStrategy(id, secondaryInputStepTree);
       })
-      .catch(reportSubmissionError(colocationStepSpec.searchName));
+      .catch(error => reportSubmissionError(colocationStepSpec.searchName, error));
   }, [ updateStrategy, insertingBeforeFirstStep, secondaryInputStepTree, colocationQuestionPrimaryInput, colocationQuestionSecondaryInput, reportSubmissionError ]);
 
   const submissionMetadata = useMemo(
