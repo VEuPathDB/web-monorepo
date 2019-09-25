@@ -33,6 +33,7 @@ export type Props = {
   submissionMetadata: SubmissionMetadata;
   recordClass: RecordClass;
   submitButtonText?: string;
+  validateForm?: boolean;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
   DescriptionComponent?: (props: { description?: string, navigatingToDescription: boolean }) => JSX.Element;
   onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
@@ -54,7 +55,7 @@ export const useDefaultOnSubmit = (dispatchAction: DispatchAction, urlSegment: s
 
 export default function DefaultQuestionForm(props: Props) {
 
-  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText, recordClass } = props;
+  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText, recordClass, validateForm = true } = props;
   const { question, customName, paramValues, weight, stepValidation, submitting } = state;
 
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata);
@@ -115,7 +116,7 @@ export default function DefaultQuestionForm(props: Props) {
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
       />
       <StepValidationInfo stepValidation={stepValidation}/>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate={!validateForm}>
         {question.groups
           .filter(group => group.displayType !== 'hidden')
           .map(group => renderParamGroup(group, props))
