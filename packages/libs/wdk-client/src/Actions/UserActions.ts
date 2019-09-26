@@ -534,9 +534,11 @@ type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | Basket
  * @param {Record} record
  */
 export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketAction|EmptyAction> {
-  return maybeLoggedIn<BasketAction>(({ wdkService }) =>
-    setBasketStatus(record,
-      wdkService.getBasketStatus(record.recordClassName, [record]).then(response => response[0]))
+  return maybeLoggedIn<BasketAction>(async ({ wdkService }) =>
+    setBasketStatus(record, wdkService.getBasketStatus(
+      (await wdkService.findRecordClass(rc => rc.fullName === record.recordClassName)).urlSegment,
+      [record]
+    ).then(response => response[0]))
   );
 };
 
@@ -547,9 +549,13 @@ export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketActi
  */
 export function updateBasketStatus(record: RecordInstance, status: boolean): ActionThunk<BasketAction|ShowLoginModalAction|EmptyAction> {
   return maybeLoggedIn<BasketAction, ShowLoginModalAction|EmptyAction>(
-    ({ wdkService }) =>
+    async ({ wdkService }) =>
       setBasketStatus(record,
-        wdkService.updateBasketStatus(status? 'add' : 'remove', record.recordClassName, [record.id]).then(response => status)),
+        wdkService.updateBasketStatus(
+          status? 'add' : 'remove',
+          (await wdkService.findRecordClass(rc => rc.fullName === record.recordClassName)).urlSegment,
+          [record.id]
+        ).then(() => status)),
     () => showLoginWarning('use baskets')
   );
 };
