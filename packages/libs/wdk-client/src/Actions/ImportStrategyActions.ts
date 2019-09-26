@@ -5,6 +5,12 @@ export const requestImportStrategy = makeActionCreator(
   (strategySignature: string, selectedTab?: string) => ({ strategySignature, selectedTab })
 )
 
+export const fulfillImportStrategy = makeActionCreator(
+  'fulfillImportStrategy',
+  (strategyId: number, selectedTab?: string) => ({ strategyId, selectedTab })
+);
+
 export type Action = InferAction<
   | typeof requestImportStrategy
+  | typeof fulfillImportStrategy
   >

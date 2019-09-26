@@ -14,6 +14,7 @@ import { StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
 import { requestStrategiesList, fulfillStrategiesList } from 'wdk-client/Actions/StrategyListActions';
 import { requestPublicStrategies, fulfillPublicStrategies, fulfillPublicStrategiesError } from 'wdk-client/Actions/PublicStrategyActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
+import {fulfillImportStrategy} from 'wdk-client/Actions/ImportStrategyActions';
 
 export const key = 'strategyWorkspace';
 
@@ -180,6 +181,8 @@ export const observe = takeEpicInWindow(
     srate([openStrategyView, fulfillDuplicateStrategy], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
     srate([openStrategyView, fulfillSaveAsStrategy], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
+    srate([openStrategyView, fulfillImportStrategy], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
     // srate([openStrategyView, fulfillStrategy], getRequestStrategiesList,
     //   { areActionsNew: stubTrue }),
