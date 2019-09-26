@@ -167,6 +167,11 @@ export const ServiceBase = (serviceUrl: string) => {
     }));
   }
 
+  async function submitErrorIfNot500(error: Error): Promise<void> {
+    if ('status' in error && (error as ServiceError).status >= 500) return;
+    return submitError(error);
+  }
+
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
     return fetch(
       isBaseUrl ? url : serviceUrl + url, 
@@ -342,6 +347,7 @@ export const ServiceBase = (serviceUrl: string) => {
     serviceUrl,
     sendRequest,
     submitError,
+    submitErrorIfNot500,
     getConfig,
     getRecordClasses,
     findRecordClass,
