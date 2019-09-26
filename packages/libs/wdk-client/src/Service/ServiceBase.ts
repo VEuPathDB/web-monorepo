@@ -158,7 +158,9 @@ export const ServiceBase = (serviceUrl: string) => {
 
   function submitError(error: Error, extra?: any) {
     const { name, message, stack } = error;
+    console.group('Client error log');
     console.error(error);
+    console.groupEnd();
     return _checkStoreVersion().then(() =>
     sendRequest(Decode.none, {
       method: 'post',

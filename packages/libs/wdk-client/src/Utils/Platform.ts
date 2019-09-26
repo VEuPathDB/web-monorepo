@@ -55,7 +55,8 @@ export function dialog(title: string, message: string, buttons: ButtonDescriptor
       $node.dialog({
         title: title,
         modal: true,
-        position: [ 'center', window.innerHeight * .3 ],
+        draggable: false,
+        position: [ 'center', 100 ],
         resizable: false,
         dialogClass: 'wdk-Alert',
         minWidth: 350,

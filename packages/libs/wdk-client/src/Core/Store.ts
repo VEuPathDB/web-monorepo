@@ -85,6 +85,7 @@ function makeRootEpic<T extends Record<string, any>>(storeModules: StoreModuleRe
               ? error.response
               : 'An error was encountered.';
             alert('Oops... something went wrong!', message);
+            deps.wdkService.submitErrorIfNot500(error);
             return caught;
           })
         )

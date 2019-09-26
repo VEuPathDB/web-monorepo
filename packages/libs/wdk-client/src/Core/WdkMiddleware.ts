@@ -97,7 +97,6 @@ export const wdkMiddleware = (services: ActionCreatorServices): WdkMiddleWare =>
   }
 
   function logError(error: Error) {
-    console.error(error);
     services.wdkService.submitError(error).catch(err => {
       console.error('Could not submit error to log.', err);
     });
