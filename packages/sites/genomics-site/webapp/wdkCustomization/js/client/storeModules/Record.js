@@ -269,7 +269,7 @@ function observeSnpsAlignment(action$) {
           : empty()),
     map(organismSinglePick => {
       return QuestionActions.updateActiveQuestion({
-        questionName: 'SnpAlignmentForm',
+        searchName: 'SnpAlignmentForm',
         paramValues: {
           organismSinglePick,
           ngsSnp_strain_meta: JSON.stringify({ filters: [] })
