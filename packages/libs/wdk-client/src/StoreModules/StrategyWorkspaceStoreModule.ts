@@ -12,7 +12,7 @@ import { InferAction, switchMapRequestActionsToEpic as srate, mergeMapRequestAct
 import { delay } from 'wdk-client/Utils/PromiseUtils';
 import { StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
 import { requestStrategiesList, fulfillStrategiesList } from 'wdk-client/Actions/StrategyListActions';
-import { requestPublicStrategies, fulfillPublicStrategies } from 'wdk-client/Actions/PublicStrategyActions';
+import { requestPublicStrategies, fulfillPublicStrategies, fulfillPublicStrategiesError } from 'wdk-client/Actions/PublicStrategyActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
 export const key = 'strategyWorkspace';
@@ -28,6 +28,7 @@ export interface State {
   notifications: Record<string, string | undefined>;
   strategySummaries?: StrategySummary[];
   publicStrategySummaries?: StrategySummary[];
+  publicStrategySummariesError?: boolean;
 }
 
 const initialState: State = {
@@ -129,6 +130,9 @@ export function reduce(state: State = initialState, action: Action): State {
 
     case fulfillPublicStrategies.type:
       return { ...state, publicStrategySummaries: action.payload.publicStrategies }
+
+    case fulfillPublicStrategiesError.type:
+      return { ...state, publicStrategySummariesError: true };
 
     default:
       return state;
@@ -377,6 +381,12 @@ async function getFulfillPublicStrategies(
   [ openAction, requestPublicStrategiesAction ]: [ InferAction<typeof openStrategyView>, InferAction<typeof requestPublicStrategies> ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillPublicStrategies>> {
-  return fulfillPublicStrategies(await wdkService.getPublicStrategies());
+): Promise<InferAction<typeof fulfillPublicStrategies | typeof fulfillPublicStrategiesError>> {
+  try {
+    return fulfillPublicStrategies(await wdkService.getPublicStrategies());
+  }
+  catch (error) {
+    wdkService.submitErrorIfNot500(error);
+    return fulfillPublicStrategiesError();
+  }
 }

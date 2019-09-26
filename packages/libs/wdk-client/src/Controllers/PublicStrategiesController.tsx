@@ -13,6 +13,7 @@ import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
 import { PublicStrategies } from 'wdk-client/Views/Strategy/PublicStrategies';
 import { createSelector } from 'reselect';
+import Error from 'wdk-client/Components/PageStatus/Error';
 
 interface StateProps {
   searchTerm: string;
@@ -20,6 +21,7 @@ interface StateProps {
   prioritizeEuPathDbExamples: boolean;
   publicStrategySummaries?: StrategySummary[];
   recordClassesByUrlSegment?: Record<string, RecordClass>;
+  hasError?: boolean;
 }
 
 interface DispatchProps {
@@ -31,7 +33,8 @@ interface DispatchProps {
 type Props = StateProps & DispatchProps;
 
 const PublicStrategiesControllerView = (props: Props) =>
-  !propertyIsNonNull(props, 'publicStrategySummaries') || !propertyIsNonNull(props, 'recordClassesByUrlSegment')
+  props.hasError ? <Error/>
+  : !propertyIsNonNull(props, 'publicStrategySummaries') || !propertyIsNonNull(props, 'recordClassesByUrlSegment')
     ? <Loading />
     : <PublicStrategies {...props}  />;
 
@@ -47,7 +50,8 @@ const mapStateToProps = (state: RootState): StateProps => ({
   sort: state.publicStrategies.sort,
   prioritizeEuPathDbExamples: state.publicStrategies.prioritizeEuPathDBExamples,
   publicStrategySummaries: state.strategyWorkspace.publicStrategySummaries,
-  recordClassesByUrlSegment: recordClassesByUrlSegment(state)
+  recordClassesByUrlSegment: recordClassesByUrlSegment(state),
+  hasError: state.strategyWorkspace.publicStrategySummariesError
 });
 
 const mapDispatchToProps = (dispatch: DispatchAction): DispatchProps => ({

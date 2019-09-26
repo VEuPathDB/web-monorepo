@@ -11,6 +11,10 @@ export const fulfillPublicStrategies = makeActionCreator(
   (publicStrategies: StrategySummary[]) => ({ publicStrategies })
 );
 
+export const fulfillPublicStrategiesError = makeActionCreator(
+  'publicStrategies/fulfillPublicStrategiesError'
+);
+
 export const setSearchTerm = makeActionCreator(
   'publicStrategies/setSearchTerm',
   (searchTerm: string) => ({ searchTerm })
@@ -29,6 +33,7 @@ export const setPrioritizeEuPathDbExamples = makeActionCreator(
 export type Action =
   | InferAction<typeof requestPublicStrategies>
   | InferAction<typeof fulfillPublicStrategies>
+  | InferAction<typeof fulfillPublicStrategiesError>
   | InferAction<typeof setSearchTerm>
   | InferAction<typeof setSort>
   | InferAction<typeof setPrioritizeEuPathDbExamples>;

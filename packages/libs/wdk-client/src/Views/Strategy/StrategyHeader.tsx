@@ -14,15 +14,18 @@ const isOpenedLinkActive: NavLinkProps['isActive'] = (match , location) => {
   return /^(\/\d+){0,2}$/.test(subPath);
 }
 
-const toCountString = (count?: number) => count != null
-  ? count.toLocaleString()
+const toCountString = (count?: number, isError?: boolean) => (
+  isError ? <div className="Count-Error">!</div>
+  : count != null ? count.toLocaleString()
   : <div className="Count-Loading" title="Loading...">...</div>
+)
 
 interface Props {
   activeStrategy?: { strategyId: number, stepId?: number };
   openedStrategiesCount?: number;
   allStrategiesCount?: number;
   publicStrategiesCount?: number;
+  publicStrategiesError?: boolean;
 }
 
 function StrategyHeader(props: Props) {
@@ -33,7 +36,7 @@ function StrategyHeader(props: Props) {
     pathname: rootRoute + activeStratPath + activeStepPath,
     state: { allowEmptyOpened: true }
   };
-  const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount } = props
+  const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount, publicStrategiesError } = props
   return (
     <div className="StrategyHeading">
       <h1>My Strategies</h1>
@@ -46,7 +49,7 @@ function StrategyHeader(props: Props) {
       </NavLink>
       <span className="StrategyHeading--Separator"></span>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/public`}>
-        Public ({toCountString(publicStrategiesCount)})
+        Public ({toCountString(publicStrategiesCount, publicStrategiesError)})
       </NavLink>
       <span className="StrategyHeading--Separator"></span>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/help`}>

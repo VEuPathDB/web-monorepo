@@ -30,6 +30,13 @@
   display: inline-block;
 }
 
+.Count-Error {
+  display: inline-block;
+  color: darkred;
+  font-weight: bold;
+  padding: 0 .1em;
+}
+
 @keyframes loading-count {
   0% { color: black; }
   50% { color: #eee; }

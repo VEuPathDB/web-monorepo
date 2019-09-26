@@ -35,12 +35,13 @@ interface MappedProps {
   openedStrategies?: number[];
   strategySummaries?: StrategySummary[];
   publicStrategySummaries?: StrategySummary[];
+  publicStrategySummariesError?: boolean;
 }
 
 type Props = OwnProps & DispatchProps & MappedProps;
 
 function StrategyWorkspaceController(props: Props) {
-  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries } = props;
+  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError } = props;
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -64,6 +65,7 @@ function StrategyWorkspaceController(props: Props) {
         openedStrategiesCount={openedStrategiesCount} 
         allStrategiesCount={allStrategiesCount}
         publicStrategiesCount={publicStrategiesCount}
+        publicStrategiesError={publicStrategySummariesError}
       />
       {/* Only load ChildView when openedStrategies are loaded, to prevent clobbering store values. Not ideal, but it works. */}
       {openedStrategies && <ChildView {...props}/>}
@@ -159,14 +161,15 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: R
 }
 
 function mapState(rootState: RootState): MappedProps {
-  const { activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, activeModal } = rootState.strategyWorkspace;
+  const { activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, activeModal } = rootState.strategyWorkspace;
   return {
     activeStrategy,
     activeModal,
     notifications,
     openedStrategies,
     strategySummaries,
-    publicStrategySummaries
+    publicStrategySummaries,
+    publicStrategySummariesError
   };
 }
 
