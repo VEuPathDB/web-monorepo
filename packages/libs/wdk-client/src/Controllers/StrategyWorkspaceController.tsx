@@ -16,6 +16,7 @@ import {StrategySummary} from 'wdk-client/Utils/WdkUser';
 import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 import StrategyHelpPage from 'wdk-client/Views/Strategy/StrategyHelpPage';
+import Loading from 'wdk-client/Components/Loading';
 
 interface OwnProps {
   workspacePath: string;
@@ -68,7 +69,7 @@ function StrategyWorkspaceController(props: Props) {
         publicStrategiesError={publicStrategySummariesError}
       />
       {/* Only load ChildView when openedStrategies are loaded, to prevent clobbering store values. Not ideal, but it works. */}
-      {openedStrategies && <ChildView {...props}/>}
+        {openedStrategies ? <ChildView {...props}/> : <Loading/>}
     </div>
   )
 }
@@ -110,7 +111,7 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
   }, [activeStrategyId, activeStepId]);
 
   // Prevent opened tab from being selecting while data needed for redirect above is being loaded
-  if (openedStrategies == null || strategySummaries == null) return null;
+  if (openedStrategies == null || strategySummaries == null) return <Loading/>;
 
   switch(childView.type) {
     case 'openedStrategies':
