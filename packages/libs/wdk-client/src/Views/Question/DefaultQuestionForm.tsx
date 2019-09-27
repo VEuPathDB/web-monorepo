@@ -84,7 +84,7 @@ export default function DefaultQuestionForm(props: Props) {
 
   let containerClassName = question.parameters.every(({ type }) => type !== 'filter') 
     ? cx('', 'default-width')
-    : cx('', 'width-width');
+    : cx('', 'wide-width');
 
   let containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -305,17 +305,18 @@ export function SubmitButton(
   return props.submitting
     ? <div className={cx('SubmittingIndicator')}></div>
     : <button type="submit" className="btn">
-        {
-          props.submitButtonText
-            ? props.submitButtonText
-            : props.submissionMetadata.type === 'create-strategy'
-            ? 'Get Answer'
-            : props.submissionMetadata.type === 'edit-step'
-            ? 'Revise Step'
-            : 'Run Step'
-        }
+        {getSubmitButtonText(props.submissionMetadata, props.submitButtonText)}
       </button>;
 }
+
+export const getSubmitButtonText = (submissionMetadata: SubmissionMetadata, submitButtonText?: string) =>
+  submitButtonText
+    ? submitButtonText
+    : submissionMetadata.type === 'create-strategy'
+    ? 'Get Answer'
+    : submissionMetadata.type === 'edit-step'
+    ? 'Revise Step'
+    : 'Run Step';
 
 interface SearchNameInputProps {
   tooltipPosition: TooltipPosition;
