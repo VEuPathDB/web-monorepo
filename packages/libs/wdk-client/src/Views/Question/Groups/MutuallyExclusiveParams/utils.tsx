@@ -32,15 +32,15 @@ const groupXorParameters = (xorGrouping: Dictionary<string[]>) => (state: Questi
 
   return xorGroup === undefined
     ? mapValues(
-      xorGroupingNegations,
-      () => []
-    )
-    : mapValues(
-      xorGroupingNegations,
-      xorGroupingNegation => xorGroup.parameters.filter(parameter =>
-        !xorGroupingNegation.has(parameter)
+        xorGroupingNegations,
+        () => []
       )
-    );
+    : mapValues(
+        xorGroupingNegations,
+        xorGroupingNegation => xorGroup.parameters.filter(parameter =>
+          !xorGroupingNegation.has(parameter)
+        )
+      );
 };
 
 const xorGroupingByChromosomeAndSequenceID = {

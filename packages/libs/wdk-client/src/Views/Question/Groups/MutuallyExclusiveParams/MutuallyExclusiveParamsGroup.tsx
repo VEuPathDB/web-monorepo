@@ -10,11 +10,13 @@ import 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/MutuallyExclusi
 
 const cx = makeClassNameHelper('wdk-MutuallyExclusiveParamsGroup');
 
+export type MutuallyExclusiveTabKey = 'Chromosome' | 'Sequence ID';
+
 export const mutuallyExclusiveParamsGroupRenderer = (
   group: ParameterGroup, 
   props: Props, 
-  activeTab: string, 
-  onTabSelected: (activeTab: string) => void
+  activeTab: MutuallyExclusiveTabKey, 
+  onTabSelected: (activeTab: MutuallyExclusiveTabKey) => void
 ) => {
   const { state } = props;
 
@@ -37,7 +39,7 @@ export const mutuallyExclusiveParamsGroupRenderer = (
               containerClassName={cx('Container')}
               tabs={[
                 {
-                  key: 'Chromosome',
+                  key: 'Chromosome' as MutuallyExclusiveTabKey,
                   display: 'Search by Chromosome',
                   content: renderDefaultParamGroup(
                     restrictParameterGroup(group, chromosomeParameterKeys),
@@ -45,7 +47,7 @@ export const mutuallyExclusiveParamsGroupRenderer = (
                   )
                 },
                 {
-                  key: 'Sequence ID',
+                  key: 'Sequence ID' as MutuallyExclusiveTabKey,
                   display: 'Search by Sequence ID',
                   content: renderDefaultParamGroup(
                     restrictParameterGroup(group, sequenceIdParameterKeys),
