@@ -551,8 +551,8 @@ export function updateBasketStatus(record: RecordInstance, status: boolean): Act
   return maybeLoggedIn<BasketAction, ShowLoginModalAction|EmptyAction>(
     async ({ wdkService }) =>
       setBasketStatus(record,
-        wdkService.updateBasketStatus(
-          status? 'add' : 'remove',
+        wdkService.updateRecordsBasketStatus(
+          status ? 'add' : 'remove',
           (await wdkService.findRecordClass(rc => rc.fullName === record.recordClassName)).urlSegment,
           [record.id]
         ).then(() => status)),

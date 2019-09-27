@@ -5,7 +5,7 @@ import {wrappable} from 'wdk-client/Utils/ComponentUtils';
 import {Dispatch, bindActionCreators} from 'redux';
 import {ResultPanelController} from 'wdk-client/Controllers';
 import {BasketResultType} from 'wdk-client/Utils/WdkResult';
-import {requestUpdateBasketWithConfirmation, saveBasketToStrategy} from 'wdk-client/Actions/BasketActions';
+import {requestClearBasket, saveBasketToStrategy} from 'wdk-client/Actions/BasketActions';
 import {RecordClass} from 'wdk-client/Utils/WdkModel';
 
 interface OwnProps {
@@ -37,7 +37,7 @@ function BasketPaneController(props: Props) {
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): DispatchProps {
   return bindActionCreators({
-    emptyBasket: () => requestUpdateBasketWithConfirmation('removeAll', props.recordClass.urlSegment, []),
+    emptyBasket: () => requestClearBasket(props.recordClass.urlSegment),
     saveBasketToStrategy: () => saveBasketToStrategy(props.recordClass.urlSegment)
   }, dispatch);
 }

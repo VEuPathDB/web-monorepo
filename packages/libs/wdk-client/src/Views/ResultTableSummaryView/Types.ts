@@ -1,5 +1,6 @@
 import { AttributeSortingSpec, PrimaryKey } from "wdk-client/Utils/WdkModel";
 import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { BasketPatchIdsOperation } from 'wdk-client/Service/Mixins/BasketsService'
 
 // Types that are shared by ResultTableSummaryView Components
 
@@ -25,7 +26,7 @@ export type RequestSortingUpdate = (
 export type RequestColumnsChoiceUpdate = (columns: string[], searchName: string) => void;
 
 export type RequestUpdateBasket = (
-  operation: 'add' | 'remove',
+  operation: BasketPatchIdsOperation,
   recordClass: string,
   primaryKeys: PrimaryKey[]
 ) => void;

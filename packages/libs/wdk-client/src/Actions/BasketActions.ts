@@ -3,34 +3,40 @@ import {
   InferAction
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { PrimaryKey } from 'wdk-client/Utils/WdkModel';
-import { BasketRecordOperation } from 'wdk-client/Service/Mixins/BasketsService';
+import { BasketPatchIdsOperation } from 'wdk-client/Service/Mixins/BasketsService';
 export type BasketScope = 'global' | 'project';
 
-// If `operation` is `removeAll`, `primaryKeys` is ignored
 export const requestUpdateBasket = makeActionCreator(
   'requestUpdateBasket',
   (
-    operation: BasketRecordOperation,
+    operation: BasketPatchIdsOperation,
     recordClassName: string,
     primaryKeys: Array<PrimaryKey>
   ) => ({ operation: operation, recordClassName, primaryKeys })
 );
 
-export const requestUpdateBasketWithConfirmation = makeActionCreator(
-  'requestUpdateBasketWithConfirmation',
+export const requestClearBasket = makeActionCreator(
+  'requestClearBasket',
   (
-    operation: BasketRecordOperation,
-    recordClassName: string,
-    primaryKeys: PrimaryKey[]
-  ) =>  ({ operation, recordClassName, primaryKeys })
+    recordClassName: string
+  ) => ({ recordClassName })
 );
 
 export const cancelRequestUpdateBasket = makeActionCreator('cancelRequestUpdateBasket');
 
+export const cancelRequestClearBasket = makeActionCreator('cancelRequestClearBasket');
+
+export const fulfillClearBasket = makeActionCreator(
+  'fulfillClearBasket',
+  (
+    recordClassName: string
+  ) => ({ recordClassName })
+);
+
 export const fulfillUpdateBasket = makeActionCreator(
   'fulfillUpdateBasket',
   (
-    operation: BasketRecordOperation,
+    operation: BasketPatchIdsOperation,
     recordClassName: string,
     primaryKeys: Array<PrimaryKey>
   ) => ({ operation, recordClassName, primaryKeys })
@@ -73,9 +79,11 @@ export const saveBasketToStrategy = makeActionCreator(
 
 export type Action = InferAction<
   | typeof requestUpdateBasket
-  | typeof requestUpdateBasketWithConfirmation
-  | typeof cancelRequestUpdateBasket
   | typeof fulfillUpdateBasket
+  | typeof cancelRequestUpdateBasket
+  | typeof requestClearBasket
+  | typeof fulfillClearBasket
+  | typeof cancelRequestClearBasket
   | typeof requestAddStepToBasket
   | typeof fulfillAddStepToBasket
   | typeof requestBasketCounts

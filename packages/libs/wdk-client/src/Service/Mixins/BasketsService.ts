@@ -9,8 +9,7 @@ import {
 import {AnswerFormatting} from 'wdk-client/Service/Mixins/SearchReportsService';
 
 type BasketStatusResponse = Array<boolean>;
-export type BasketRecordOperation = 'add' | 'remove' | 'removeAll' ;
-export type BasketStepOperation = 'addFromStepId';
+export type BasketPatchIdsOperation = 'add' | 'remove';
 
 const BASKETS_PATH = '/users/current/baskets';
 
@@ -35,16 +34,27 @@ export default (base: ServiceBase) => {
     return base._fetchJson<BasketStatusResponse>('post', url, data);
   }
 
-  async function updateBasketStatus(operation: BasketRecordOperation, recordClassFullName: string, primaryKey: PrimaryKey[]): Promise<void>;
-  async function updateBasketStatus(operation: BasketStepOperation, recordClassFullName: string, stepId: number): Promise<void>;
-  async function updateBasketStatus(operation: BasketRecordOperation | BasketStepOperation, recordClassUrlSegment: string, pksOrStepId: PrimaryKey[] | number): Promise<void> {
-    let data = JSON.stringify({
+  async function updateRecordsBasketStatus(operation: BasketPatchIdsOperation, recordClassUrlSegment: string, primaryKey: PrimaryKey[]): Promise<void> {
+    return performBasketStatusPatch(recordClassUrlSegment, {
       action: operation,
-      primaryKeys: pksOrStepId
-    })
-    // let data = JSON.stringify({ [operation]: pksOrStepId });
+      primaryKeys: primaryKey
+    });
+  }
+
+  async function clearBasket(recordClassUrlSegment: string): Promise<void> {
+    return performBasketStatusPatch(recordClassUrlSegment, { action: "removeAll" });
+  }
+
+  async function addStepToBasket(recordClassUrlSegment: string, stepId: number): Promise<void> {
+    return performBasketStatusPatch(recordClassUrlSegment, {
+      action: "addFromStepId",
+      stepId: stepId
+    });
+  }
+
+  function performBasketStatusPatch(recordClassUrlSegment: string, patchData: any): Promise<void> {
     let url = `${BASKETS_PATH}/${recordClassUrlSegment}`;
-    return base._fetchJson<void>('patch', url, data);
+    return base._fetchJson<void>('patch', url, JSON.stringify(patchData));
   }
 
   async function getBasketCustomReport<T>(basketName: string, formatting: AnswerFormatting): Promise<T> {
@@ -56,7 +66,7 @@ export default (base: ServiceBase) => {
 
   async function getBasketStandardReport(basketName: string, reportConfig: StandardReportConfig, viewFilters?: FilterValueArray): Promise<Answer> {
     const url = `${BASKETS_PATH}/${basketName}/reports/standard`;
-    const body = JSON.stringify({ reportConfig });
+    const body = JSON.stringify({ reportConfig, viewFilters });
     return base._fetchJson<Answer>('post', url, body);
   }
 
@@ -64,7 +74,9 @@ export default (base: ServiceBase) => {
     getBasketCounts,
     getBasketStatus,
     getBasketStatusPk,
-    updateBasketStatus,
+    updateRecordsBasketStatus,
+    clearBasket,
+    addStepToBasket,
     getBasketCustomReport,
     getBasketStandardReport,
   }

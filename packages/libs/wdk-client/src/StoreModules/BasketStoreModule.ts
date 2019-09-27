@@ -3,12 +3,14 @@ import { confirm } from 'wdk-client/Utils/Platform';
 import {
   requestUpdateBasket,
   fulfillUpdateBasket,
+  requestClearBasket,
+  fulfillClearBasket,
   requestAddStepToBasket,
   fulfillAddStepToBasket,
   fulfillBasketCounts,
   requestBasketCounts,
-  requestUpdateBasketWithConfirmation,
   cancelRequestUpdateBasket,
+  cancelRequestClearBasket,
   saveBasketToStrategy,
 } from 'wdk-client/Actions/BasketActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
@@ -44,19 +46,12 @@ export function reduce(state: State = initialState, action: Action): State {
 }
 
 async function getFulfillUpdateBasket(
-  [requestAction]: [InferAction<typeof requestUpdateBasket | typeof requestUpdateBasketWithConfirmation>],
+  [requestAction]: [InferAction<typeof requestUpdateBasket>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillUpdateBasket | typeof cancelRequestUpdateBasket>> {
   let payload = requestAction.payload;
-  if (requestUpdateBasketWithConfirmation.isOfType(requestAction)) {
-    const proceed = await confirm(
-      'Empty basket',
-      'Are you sure you want to empty this basket? This operation cannot be undone.'
-    );
-    if (!proceed) return cancelRequestUpdateBasket();
-  }
-  await wdkService.updateBasketStatus(
+  await wdkService.updateRecordsBasketStatus(
     payload.operation,
     payload.recordClassName,
     payload.primaryKeys
@@ -68,14 +63,28 @@ async function getFulfillUpdateBasket(
   );
 }
 
+async function getFulfillClearBasket(
+  [requestAction]: [InferAction<typeof requestClearBasket>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillClearBasket | typeof cancelRequestClearBasket>> {
+  let payload = requestAction.payload;
+  const proceed = await confirm(
+    'Empty basket',
+    'Are you sure you want to empty this basket? This operation cannot be undone.'
+  );
+  if (!proceed) return cancelRequestClearBasket();
+  await wdkService.clearBasket(payload.recordClassName);
+  return fulfillClearBasket(payload.recordClassName);
+}
+
 async function getFulfillAddStepToBasket(
   [requestAction]: [InferAction<typeof requestAddStepToBasket>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ) {
   const step = await wdkService.findStep(requestAction.payload.stepId);
-  await wdkService.updateBasketStatus(
-    'addFromStepId',
+  await wdkService.addStepToBasket(
     step.recordClassName,
     step.id
   );
@@ -118,15 +127,15 @@ async function getBasketStrategy(
 
 export const observe = combineEpics(
   crate([requestUpdateBasket], getFulfillUpdateBasket,
-    // Always request basket update requests
     { areActionsNew: () => true }),
-  crate([requestUpdateBasketWithConfirmation], getFulfillUpdateBasket,
-    // Always request basket update requests
+  crate([requestClearBasket], getFulfillClearBasket,
     { areActionsNew: () => true }),
   crate([requestAddStepToBasket], getFulfillAddStepToBasket,
     { areActionsNew: () => true }),
 
   srate([fulfillUpdateBasket], getFulfillBasketCounts,
+    { areActionsNew: () => true }),
+  srate([fulfillClearBasket], getFulfillBasketCounts,
     { areActionsNew: () => true }),
   srate([fulfillAddStepToBasket], getFulfillBasketCounts,
     { areActionsNew: () => true }),
