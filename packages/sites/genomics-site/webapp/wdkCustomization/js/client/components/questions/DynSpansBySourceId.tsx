@@ -62,7 +62,7 @@ const makeMutuallyExclusiveSubgroup = (groupsByName: QuestionState['question']['
   parameters: groupsByName[GROUP_NAME].parameters.filter(parameter => parameter !== SPAN_ID_LIST_PARAM)
 });
 
-const makeOnSubmit = (sourceType: string, idList?: string) => { console.log('hi mom'); return (e: React.FormEvent) => {
+const makeOnSubmit = (sourceType: string, idList?: string) => (e: React.FormEvent) => {
   e.preventDefault();
 
   if (sourceType !== 'idList') {

@@ -135,7 +135,12 @@ export default [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => question && question.urlSegment.endsWith('BySimilarity'),
+    test: ({ question }) => 
+      !!question && 
+      (
+        question.urlSegment.endsWith('BySimilarity') ||
+        question.urlSegment === 'UnifiedBlast'
+      ),
     component: BlastQuestionForm
   },
   {
