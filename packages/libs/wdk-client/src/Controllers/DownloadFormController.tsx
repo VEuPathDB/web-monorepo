@@ -83,7 +83,7 @@ class DownloadFormController extends PageController<Props> {
 
     const { ownProps, loadPageDataFromRecord, loadPageDataFromStepId } = this.props;
 
-    if (isEqual(ownProps, prevProps.ownProps)) return;
+    if (prevProps && isEqual(ownProps, prevProps.ownProps)) return;
 
     // must reinitialize with every new props
     if ('stepId' in ownProps) {
