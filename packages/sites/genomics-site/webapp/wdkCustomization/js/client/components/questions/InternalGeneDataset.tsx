@@ -230,9 +230,8 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                   key: 'Searches',
                   name: 'Choose a Search',
                   sortable: false,
-                  width: '25%',
                   renderCell: (cellProps: any) =>
-                    <div>
+                    <>
                       {
                         displayCategoryOrder.map(
                           categoryName => {
@@ -240,7 +239,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                             const categorySearchName = questionNamesByDatasetAndCategory[datasetName][categoryName];
 
                             return (
-                                <span key={categoryName}>
+                                <div key={categoryName}>
                                   {
                                     categorySearchName && (
                                       <Link 
@@ -256,12 +255,12 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                                       </Link>
                                     )
                                   }
-                                </span>
+                                </div>
                               );
                           }
                         )
                       }
-                    </div>
+                    </>
                 }
               ]
             }

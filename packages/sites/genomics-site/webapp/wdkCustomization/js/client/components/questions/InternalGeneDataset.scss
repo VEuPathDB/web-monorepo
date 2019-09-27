@@ -49,13 +49,13 @@
 
   tr.DataRow { 
     .DataCell:nth-child(3) {
-      > div {
-        display: flex;
-        justify-content: space-between;
+      display: flex;
+      justify-content: center;
 
-        span {
-          width: 36px;
-        }
+      div {
+        display: inline-block;
+        width: 36px;
+        margin: 0 2px;
       }
     }
   }
