@@ -17,7 +17,7 @@ export default QuestionWizard => injectSearchStudy(props => {
         : (
           <div className="clinepi-StudyLink">
             <IconAlt fa="info-circle" />&nbsp;
-                Learn about the <Link to={activeStudy.route} _target="blank" >{activeStudy.name}</Link>
+                <Link to={activeStudy.route} _target="blank" >{activeStudy.name} methodology, publications and documentation.</Link> 
           </div>
         )
       }
