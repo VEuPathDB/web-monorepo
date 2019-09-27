@@ -76,7 +76,7 @@ const makeOnSubmit = (sourceType: string, idList?: string) => (e: React.FormEven
   }
 
   return idListValidation.type === 'valid';
-}};
+};
 
 const makeOnClickAddLocation = (
   paramValues: QuestionState['paramValues'], 
