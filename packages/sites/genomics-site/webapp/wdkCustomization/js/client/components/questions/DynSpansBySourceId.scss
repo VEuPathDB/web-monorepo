@@ -38,6 +38,10 @@
       display: grid;
       grid-template-columns: 14em 1fr;
     }
+
+    .wdk-DatasetParamLabel {
+      flex: 2.5
+    }
   }
 
   &MutuallyExclusiveParams {

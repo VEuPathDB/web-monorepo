@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { updateParamState } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
@@ -23,101 +23,140 @@ const SPAN_ID_LIST_PARAM = 'span_id';
 const cx = makeClassNameHelper('DynSpansBySourceId');
 
 export const DynSpansBySourceId: React.FunctionComponent<Props> = props => {
+  const spanIdParamUIState = props.state.paramUIState[SPAN_ID_LIST_PARAM];
+
   const [ activeTab, onTabSelected ] = useState<MutuallyExclusiveTabKey>('Chromosome');
 
   const mutuallyExclusiveSubgroup = useMemo(
-    () => ({
-      ...props.state.question.groupsByName[GROUP_NAME],
-      parameters: props.state.question.groupsByName[GROUP_NAME].parameters.filter(parameter => parameter !== SPAN_ID_LIST_PARAM)
-    }),
+    () => makeMutuallyExclusiveSubgroup(props.state.question.groupsByName),
     [ props.state.question.groupsByName ]
   );
 
-  const onClickAddLocation = useCallback(
-    () => {
-      const validationResult = validateNewLocation(props.state.paramValues, activeTab);
-      const paramUIState = props.state.paramUIState[SPAN_ID_LIST_PARAM];
-
-      if (validationResult.type === 'valid') {
-        const idList = (paramUIState.idList || '').trim().length === 0
-          ? validationResult.value
-          : `${paramUIState.idList}, ${validationResult.value}`;
-
-        props.dispatchAction(updateParamState({
-          searchName: SEARCH_NAME,
-          paramName: SPAN_ID_LIST_PARAM,
-          paramState: {
-            ...paramUIState,
-            idList
-          }
-        }));
-      } else {
-        alert(validationResult.error);
-      }
-    },
-    [ props.state.paramValues, props.state.paramUIState[SPAN_ID_LIST_PARAM], props.dispatchAction, activeTab ]
+  const onSubmit = useMemo(
+    () => makeOnSubmit(spanIdParamUIState.sourceType, spanIdParamUIState.idList),
+    [ spanIdParamUIState.sourceType, spanIdParamUIState.idList ]
   );
 
-  const renderParamGroup = useCallback(
-    (group: ParameterGroup, props: Props) => (
-      <div className={cx('ParamGroup')}>
-        <div className={cx('MutuallyExclusiveParams')}>
-          <h4 className={cx('PhaseHeader')}>
-            1. Generate a list of segment IDs
-          </h4>
-          {mutuallyExclusiveParamsGroupRenderer(mutuallyExclusiveSubgroup, props, activeTab, onTabSelected)}
-          <AddLocationButton onClick={onClickAddLocation} />
-          <div className={cx('Instructions')}>
-            <ul>
-              <li>
-                The max length of each segment is {MAX_SEGMENT_LENGTH_DISPLAY}
-              </li>
-              <li>
-                <span className={cx('ParamName')}>
-                  End Location
-                </span>
-                {' '}
-                cannot be smaller than 
-                {' '}
-                <span className={cx('ParamName')}>
-                  Start at
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className={cx('SpanIdListParam')}>
-          <h4 className={cx('PhaseHeader')}>
-            2. When your list is ready, click the 
-            "{getSubmitButtonText(props.submissionMetadata, props.submitButtonText)}" 
-            button below
-          </h4>
-          <div className={cx('Instructions')}>
-            You may also enter genomic segments, delimited by commas, semicolons, or whitespace, directly into the box below.
-            The format of a segment is:
-
-            <div className={cx('Format')}>
-              sequence_id:start-end:strand
-            </div>
-            <div className={cx('Example')}>
-              (Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)
-            </div>
-          </div>
-          {props.parameterElements[SPAN_ID_LIST_PARAM]}
-        </div>
-      </div>
-    ), 
-    [ activeTab, onTabSelected, onClickAddLocation, props.parameterElements[SPAN_ID_LIST_PARAM] ]
+  const onClickAddLocation = useMemo(
+    () => makeOnClickAddLocation(props.state.paramValues, activeTab, props.dispatchAction, spanIdParamUIState),
+    [ props.state.paramValues, activeTab, props.dispatchAction, spanIdParamUIState ]
   );
 
+  const renderParamGroup = useMemo(
+    () => makeRenderParamGroup(mutuallyExclusiveSubgroup, activeTab, onTabSelected, onClickAddLocation),
+    [ mutuallyExclusiveSubgroup, activeTab, onTabSelected, onClickAddLocation ]
+  );
+  
   return (
     <EbrcDefaultQuestionForm
       {...props}
       renderParamGroup={renderParamGroup}
       validateForm={false}
+      onSubmit={onSubmit}
     />
   );
 };
+
+const makeMutuallyExclusiveSubgroup = (groupsByName: QuestionState['question']['groupsByName']) => ({
+  ...groupsByName[GROUP_NAME],
+  parameters: groupsByName[GROUP_NAME].parameters.filter(parameter => parameter !== SPAN_ID_LIST_PARAM)
+});
+
+const makeOnSubmit = (sourceType: string, idList?: string) => { console.log('hi mom'); return (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (sourceType !== 'idList') {
+    return true;
+  }
+
+  const idListValidation = validateIdList(idList);
+
+  if (idListValidation.type === 'invalid') {
+    alert(idListValidation.error);
+  }
+
+  return idListValidation.type === 'valid';
+}};
+
+const makeOnClickAddLocation = (
+  paramValues: QuestionState['paramValues'], 
+  activeTab: MutuallyExclusiveTabKey,
+  dispatchAction: Props['dispatchAction'],
+  spanIdParamUIState: QuestionState['paramUIState'][typeof SPAN_ID_LIST_PARAM]
+) => () => {
+  const validationResult = validateNewLocation(paramValues, activeTab);
+
+  if (validationResult.type === 'valid') {
+    const idList = (spanIdParamUIState.idList || '').trim().length === 0
+      ? validationResult.value
+      : `${spanIdParamUIState.idList}, ${validationResult.value}`;
+
+    dispatchAction(updateParamState({
+      searchName: SEARCH_NAME,
+      paramName: SPAN_ID_LIST_PARAM,
+      paramState: {
+        ...spanIdParamUIState,
+        idList
+      }
+    }));
+  } else {
+    alert(validationResult.error);
+  }
+};
+
+const makeRenderParamGroup = (
+  mutuallyExclusiveSubgroup: ParameterGroup, 
+  activeTab: MutuallyExclusiveTabKey, 
+  onTabSelected: (tab: MutuallyExclusiveTabKey) => void, 
+  onClickAddLocation: () => void
+) => (group: ParameterGroup, props: Props) => (
+  <div className={cx('ParamGroup')}>
+    <div className={cx('MutuallyExclusiveParams')}>
+      <h4 className={cx('PhaseHeader')}>
+        1. Generate a list of segment IDs
+      </h4>
+      {mutuallyExclusiveParamsGroupRenderer(mutuallyExclusiveSubgroup, props, activeTab, onTabSelected)}
+      <AddLocationButton onClick={onClickAddLocation} />
+      <div className={cx('Instructions')}>
+        <ul>
+          <li>
+            The max length of each segment is {MAX_SEGMENT_LENGTH_DISPLAY}
+          </li>
+          <li>
+            <span className={cx('ParamName')}>
+              End Location
+            </span>
+            {' '}
+            cannot be smaller than 
+            {' '}
+            <span className={cx('ParamName')}>
+              Start at
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div className={cx('SpanIdListParam')}>
+      <h4 className={cx('PhaseHeader')}>
+        2. When your list is ready, click the 
+        "{getSubmitButtonText(props.submissionMetadata, props.submitButtonText)}" 
+        button below
+      </h4>
+      <div className={cx('Instructions')}>
+        You may also enter genomic segments, delimited by commas, semicolons, or whitespace, directly into the box below.
+        The format of a segment is:
+
+        <div className={cx('Format')}>
+          sequence_id:start-end:strand
+        </div>
+        <div className={cx('Example')}>
+          (Examples: TGME49_chrIa:10000-10500:f, Pf3D7_04:100-200:r)
+        </div>
+      </div>
+      {props.parameterElements[SPAN_ID_LIST_PARAM]}
+    </div>
+  </div>
+);
 
 const AddLocationButton = (props: { onClick: () => void }) =>
   <div className={cx('AddLocationButton')}>
@@ -126,17 +165,27 @@ const AddLocationButton = (props: { onClick: () => void }) =>
     <span className={cx('AddLocationArrows')}>>>></span>
   </div>
 
-type NewLocationValidation = 
+type Validation =
   | {
-      type: 'valid',
-      value: string
+      type: "valid";
+      value: string;
     }
   | {
-      type: 'invalid',
-      error: string
+      type: "invalid";
+      error: string;
     };
 
-const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTab: MutuallyExclusiveTabKey): NewLocationValidation => {
+const valid = (value: string): Validation => ({
+  type: "valid",
+  value
+});
+
+const invalid = (error: string): Validation => ({
+  type: "invalid",
+  error
+});
+
+const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTab: MutuallyExclusiveTabKey): Validation => {
   const { 
     [CHROMOSOME_PARAM]: chromosomeParamValue, 
     [SEQUENCE_ID_PARAM]: sequenceIdParamValue,
@@ -173,8 +222,8 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTa
     return invalid('Please input an "End Location" value');
   }
 
-  const startNumericValue = parseInt(startParamValue);
-  const endNumericValue = parseInt(endParamValue);
+  const startNumericValue = +startParamValue;
+  const endNumericValue = +endParamValue;
 
   if (Number.isNaN(startNumericValue)) {
     return invalid('"Start at" should be numeric');
@@ -197,12 +246,66 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTa
   return valid(`${sequenceString}:${startNumericValue}-${endNumericValue}:${sequenceStrandParamValue}`);
 };
 
-const valid = (value: string): NewLocationValidation => ({
-  type: 'valid',
-  value
-});
+const validateIdList = (idList?: string): Validation => {
+  const segmentIds = (idList || "")
+    .split(/[;,\s]+/g)
+    .filter(id => id.length > 0);
 
-const invalid = (error: string): NewLocationValidation => ({
-  type: 'invalid',
-  error
-});
+  if (segmentIds.length === 0) {
+    return invalid("Your list should have at least one segment id");
+  }
+
+  return segmentIds.reduce(
+    (memo, segmentId) => {
+      if (memo.type === "invalid") {
+        return memo;
+      }
+
+      const segmentIdValidity = validateSegmentId(segmentId);
+
+      return segmentIdValidity.type === "invalid" ? segmentIdValidity : memo;
+    },
+    { type: "valid", value: segmentIds.join(",") } as Validation
+  );
+};
+
+const validateSegmentId = (segmentId: string): Validation => {
+  const [chromosome, range, strand, ...restIdTokens] = segmentId.split(":");
+
+  if (!chromosome) {
+    return invalid(`Your segment ID "${segmentId}" is missing a chromosome`);
+  } else if (!range) {
+    return invalid(`Your segment ID "${segmentId}" is missing a range`);
+  } else if (!strand) {
+    return invalid(`Your segment ID "${segmentId}" is missing a strand`);
+  } else if (restIdTokens.length > 0) {
+    return invalid(`Your segment ID "${segmentId}" has extraneous input ${restIdTokens.join(';')}`);
+  }
+
+  const [ start, end, ...restRangeTokens ] = range.split('-');
+
+  if (!start) {
+    return invalid(`The range for your segment ID "${segmentId}" is missing a start value`)
+  } else if (!end) {
+    return invalid(`The range for your segment ID "${segmentId}" is missing an end value`)
+  } else if (restRangeTokens.length > 0) {
+    return invalid(`Your segment ID "${segmentId}" has extraneous input "${restRangeTokens.join('-')}"`);
+  } else if (Number.isNaN(+start)) {
+    return invalid(`Your segment ID "${segmentId}" has a non-numeric start value "${start}"`);
+  } else if (Number.isNaN(+end)) {
+    return invalid(`Your segment ID "${segmentId}" has a non-numeric end value "${start}"`);
+  }
+
+  const startNumericValue = +start;
+  const endNumericValue = +end;
+
+  if (endNumericValue < startNumericValue) {
+    return invalid(`Your segment ID "${segmentId}" has an end "${endNumericValue}" which is smaller than its start "${startNumericValue}"`);
+  } else if (endNumericValue - startNumericValue >= MAX_SEGMENT_LENGTH) {
+    return invalid(`Your segment ID "${segmentId}" is longer than the maximum supported length of ${MAX_SEGMENT_LENGTH_DISPLAY}`);
+  }
+
+  return strand !== 'f' && strand !== 'r'
+    ? invalid(`Your segment ID ${segmentId} has an invalid strand "${strand}"`)
+    : valid(segmentId);
+};
