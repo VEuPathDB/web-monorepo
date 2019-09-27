@@ -36,6 +36,7 @@ import {
   requestSaveAsStrategy,
   fulfillSaveAsStrategy,
   cancelStrategyRequest,
+  cancelRequestDeleteOrRestoreStrategies as cancelDeleteOrRestoreStrategies,
 } from 'wdk-client/Actions/StrategyActions';
 import { removeStep, getStepIds, replaceStep, mapStepTreeIds } from 'wdk-client/Utils/StrategyUtils';
 import {confirm, alert} from 'wdk-client/Utils/Platform';
@@ -190,10 +191,16 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     [requestAction]: [InferAction<typeof requestDeleteOrRestoreStrategies>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillDeleteOrRestoreStrategies>> {
+  ): Promise<InferAction<typeof fulfillDeleteOrRestoreStrategies | typeof cancelDeleteOrRestoreStrategies>> {
     const { deleteStrategiesSpecs, requestTimestamp } = requestAction.payload;
-    await wdkService.deleteStrategies(deleteStrategiesSpecs);
-    return fulfillDeleteOrRestoreStrategies(deleteStrategiesSpecs, requestTimestamp);
+    const numberToDelete = deleteStrategiesSpecs.filter(s => s.isDeleted).length;
+    if (numberToDelete === 0 || await confirm('Delete strategies?', `Are you sure you want to delete ${numberToDelete} strategies?`)) {
+      await wdkService.deleteStrategies(deleteStrategiesSpecs);
+      return fulfillDeleteOrRestoreStrategies(deleteStrategiesSpecs, requestTimestamp);
+    }
+    else {
+      return cancelDeleteOrRestoreStrategies(deleteStrategiesSpecs, requestTimestamp);
+    }
   }
 
 async function getFulfillPatchStrategy(

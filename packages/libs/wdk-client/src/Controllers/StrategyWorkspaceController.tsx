@@ -35,6 +35,7 @@ interface MappedProps {
   notifications: Record<string, string | undefined>;
   openedStrategies?: number[];
   strategySummaries?: StrategySummary[];
+  strategySummariesLoading?: boolean;
   publicStrategySummaries?: StrategySummary[];
   publicStrategySummariesError?: boolean;
 }
@@ -74,7 +75,7 @@ function StrategyWorkspaceController(props: Props) {
   )
 }
 
-function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies = [], strategySummaries }: Props) {
+function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies = [], strategySummaries, strategySummariesLoading }: Props) {
   const childView = parseSubPath(subPath, allowEmptyOpened, queryParams);
   const activeStrategyId = childView.type === 'openedStrategies' ? childView.strategyId : undefined;
   const activeStepId = childView.type === 'openedStrategies' ? childView.stepId : undefined;
@@ -122,7 +123,7 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
         selectedTab={childView.selectedTab}
       />
     case 'allStrategies':
-      return <AllStrategiesController strategies={strategySummaries}/>
+      return <AllStrategiesController strategies={strategySummaries} strategiesLoading={strategySummariesLoading}/>
     case 'publicStrategies':
       return <PublicStrategiesController />
     case 'importStrategy':
@@ -162,13 +163,14 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: R
 }
 
 function mapState(rootState: RootState): MappedProps {
-  const { activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, activeModal } = rootState.strategyWorkspace;
+  const { activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, activeModal, strategySummariesLoading } = rootState.strategyWorkspace;
   return {
     activeStrategy,
     activeModal,
     notifications,
     openedStrategies,
     strategySummaries,
+    strategySummariesLoading,
     publicStrategySummaries,
     publicStrategySummariesError
   };

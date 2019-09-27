@@ -14,6 +14,7 @@ import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
 interface OwnProps {
   strategies?: StrategySummary[];
+  strategiesLoading?: boolean;
 }
 
 interface StateProps {

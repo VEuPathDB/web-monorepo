@@ -45,6 +45,11 @@ export const requestDeleteOrRestoreStrategies = makeActionCreator(
     (deleteStrategiesSpecs: DeleteStrategySpec[]) => ({ deleteStrategiesSpecs, requestTimestamp: Date.now() })
 );
 
+export const cancelRequestDeleteOrRestoreStrategies = makeActionCreator(
+    'cancelRequestDeleteOrRestoreStrategies',
+    (deleteStrategiesSpecs: DeleteStrategySpec[], requestTimestamp: number) => ({ deleteStrategiesSpecs, requestTimestamp })
+)
+
 export const fulfillDeleteOrRestoreStrategies = makeActionCreator(
     'fulfillDeleteOrRestoreStrategies',
     (deleteStrategiesSpecs: DeleteStrategySpec[], requestTimestamp: number) => ({ deleteStrategiesSpecs, requestTimestamp })
@@ -178,6 +183,7 @@ export type Action = InferAction<
   | typeof requestDeleteStrategy
   | typeof fulfillDeleteStrategy
   | typeof requestDeleteOrRestoreStrategies
+  | typeof cancelRequestDeleteOrRestoreStrategies
   | typeof fulfillDeleteOrRestoreStrategies
   | typeof requestDuplicateStrategy
   | typeof fulfillDuplicateStrategy

@@ -13,8 +13,10 @@ import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import { StrategyControls} from 'wdk-client/Views/Strategy/StrategyControls';
 
-import './AllStrategies.scss';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
+import LoadingOverlay from 'wdk-client/Components/Loading/LoadingOverlay';
+
+import './AllStrategies.scss';
 
 const cx = makeClassNameHelper('AllStrategies');
 
@@ -23,6 +25,7 @@ interface BatchOperation {
 }
 
 interface Props {
+  strategiesLoading?: boolean;
   strategies: StrategySummary[];
   recordClasses: RecordClass[];
   
@@ -51,7 +54,7 @@ interface Props {
 }
 
 export default function AllStrategies(props: Props) {
-  const { strategies, recordClasses, activeTab, setActiveTab } = props;
+  const { strategies, recordClasses, activeTab, setActiveTab, strategiesLoading } = props;
   const strategiesByRecordClass = useMemo(() => groupBy(strategies, 'recordClassName'), [strategies]);
   const tabs = recordClasses
     .map((rc): [ RecordClass, StrategySummary[] | undefined ] => [rc, strategiesByRecordClass[rc.urlSegment]])
@@ -69,6 +72,7 @@ export default function AllStrategies(props: Props) {
   return (
     <React.Fragment>
       <div className={cx()}>
+      {strategiesLoading && <LoadingOverlay>Updating strategies</LoadingOverlay>}
         <Tabs
           activeTab={activeTab || tabs[0].key}
           tabs={tabs}

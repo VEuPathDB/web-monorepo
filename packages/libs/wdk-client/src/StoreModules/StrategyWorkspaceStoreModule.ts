@@ -3,7 +3,7 @@ import { ActionsObservable, combineEpics, StateObservable } from 'redux-observab
 import { empty, Observable, of, merge, concat } from 'rxjs';
 import { mergeMap, mergeMapTo, tap, map, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillPatchStrategyProperties, fulfillSaveAsStrategy, fulfillDraftStrategy, requestDeleteStrategy } from 'wdk-client/Actions/StrategyActions';
+import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillPatchStrategyProperties, fulfillSaveAsStrategy, fulfillDraftStrategy, requestDeleteStrategy, requestDeleteOrRestoreStrategies, cancelRequestDeleteOrRestoreStrategies, requestDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies, clearActiveModal, setActiveModal } from 'wdk-client/Actions/StrategyWorkspaceActions';
@@ -28,6 +28,7 @@ export interface State {
   openedStrategies?: number[];
   notifications: Record<string, string | undefined>;
   strategySummaries?: StrategySummary[];
+  strategySummariesLoading?: boolean;
   publicStrategySummaries?: StrategySummary[];
   publicStrategySummariesError?: boolean;
 }
@@ -126,8 +127,17 @@ export function reduce(state: State = initialState, action: Action): State {
         }
       }
 
+    case requestDeleteStrategy.type:
+    case requestDuplicateStrategy.type:
+    case requestDeleteOrRestoreStrategies.type:
+    case requestStrategiesList.type:
+      return { ...state, strategySummariesLoading: true };
+
+    case cancelRequestDeleteOrRestoreStrategies.type:
+      return { ...state, strategySummariesLoading: false };
+
     case fulfillStrategiesList.type:
-      return { ...state, strategySummaries: action.payload.strategies };
+      return { ...state, strategySummaries: action.payload.strategies, strategySummariesLoading: false };
 
     case fulfillPublicStrategies.type:
       return { ...state, publicStrategySummaries: action.payload.publicStrategies }
