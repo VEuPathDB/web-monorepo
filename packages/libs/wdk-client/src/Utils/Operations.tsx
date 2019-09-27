@@ -3,8 +3,8 @@ import React, { ReactNode, useContext, useMemo, useCallback } from 'react';
 import { pick, toUpper } from 'lodash/fp';
 
 import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
-import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { Step, StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { Question, RecordClass, SearchConfig } from 'wdk-client/Utils/WdkModel';
+import { Step, StrategyDetails, NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps, AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { ReviseOperatorMenuItem } from 'wdk-client/Views/Strategy/CombineStepDetails';
@@ -35,8 +35,8 @@ export type ReviseOperationFormProps = {
   secondaryInputQuestion: Question,
   questions: Question[],
   onClose: () => void,
-  requestUpdateStepSearchConfig: typeof requestUpdateStepSearchConfig,
-  requestReplaceStep: typeof requestReplaceStep
+  requestUpdateStepSearchConfig: (strategyId: number, stepId: number, searchConfig: SearchConfig) => void,
+  requestReplaceStep: (strategyId: number, stepId: number, newStepSpec: NewStepSpec) => void
 };
 
 export type ReviseOperationParameterConfiguration = 

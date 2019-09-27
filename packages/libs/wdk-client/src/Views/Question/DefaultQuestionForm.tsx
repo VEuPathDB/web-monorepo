@@ -37,7 +37,7 @@ export type Props = {
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
   DescriptionComponent?: (props: { description?: string, navigatingToDescription: boolean }) => JSX.Element;
   onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  onSubmit?: (e: React.FormEvent) => void;
+  onSubmit?: (e: React.FormEvent) => boolean | void;
 }
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
@@ -62,13 +62,13 @@ export default function DefaultQuestionForm(props: Props) {
 
   let handleSubmit = React.useCallback(
     (event: React.FormEvent) => {
-      if (onSubmit) {
-        onSubmit(event);
+      if (onSubmit && !onSubmit(event)) {
+        return false;
       }
 
-      defaultOnSubmit(event);
+      return defaultOnSubmit(event);
     },
-    [ defaultOnSubmit ]
+    [ onSubmit, defaultOnSubmit ]
   );
 
   let handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

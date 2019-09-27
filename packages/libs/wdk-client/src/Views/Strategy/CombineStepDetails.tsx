@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { Dispatch, compose } from 'redux';
 import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
@@ -80,8 +80,6 @@ function CombineStepDetails({
         strategy={strategy}
         onClose={onClose}
         dispatch={dispatch}
-        requestUpdateStepSearchConfig={requestUpdateStepSearchConfig}
-        requestReplaceStep={requestReplaceStep}
         compatibleOperatorMetadata={compatibleOperatorMetadata}
         currentOperatorSearchName={currentOperatorSearchName}
         currentOperatorValue={currentOperatorValue}
@@ -95,8 +93,6 @@ type CombineStepDetailsFormProps = {
   strategy: StrategyDetails;
   onClose: () => void;
   dispatch: Dispatch;
-  requestUpdateStepSearchConfig: typeof requestUpdateStepSearchConfig;
-  requestReplaceStep: typeof requestReplaceStep;
   compatibleOperatorMetadata: Record<string, OperatorMetadata>;
   currentOperatorSearchName: string;
   currentOperatorValue: string;
@@ -109,8 +105,6 @@ const CombineStepDetailsForm = ({
   strategy, 
   onClose, 
   dispatch,
-  requestUpdateStepSearchConfig,
-  requestReplaceStep, 
   compatibleOperatorMetadata, 
   currentOperatorSearchName, 
   currentOperatorValue, 
@@ -222,8 +216,8 @@ const CombineStepDetailsForm = ({
         secondaryInputQuestion={stepTree.secondaryInput!.question}
         secondaryInputRecordClass={stepTree.secondaryInput!.recordClass}
         onClose={onClose}
-        requestUpdateStepSearchConfig={requestUpdateStepSearchConfig}
-        requestReplaceStep={requestReplaceStep}
+        requestUpdateStepSearchConfig={compose(dispatch, requestUpdateStepSearchConfig)}
+        requestReplaceStep={compose(dispatch, requestReplaceStep)}
       />
   );
 };
