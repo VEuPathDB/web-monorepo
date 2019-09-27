@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { isEqual } from 'lodash';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import {
@@ -78,10 +79,11 @@ class DownloadFormController extends PageController<Props> {
     return ( <DownloadFormContainer {...formProps}/> );
   }
 
-  loadData() {
-    const { ownProps, isLoading, step, loadPageDataFromRecord, loadPageDataFromStepId } = this.props;
+  loadData(prevProps: Props) {
 
-    if (step || isLoading) return;
+    const { ownProps, loadPageDataFromRecord, loadPageDataFromStepId } = this.props;
+
+    if (isEqual(ownProps, prevProps.ownProps)) return;
 
     // must reinitialize with every new props
     if ('stepId' in ownProps) {
