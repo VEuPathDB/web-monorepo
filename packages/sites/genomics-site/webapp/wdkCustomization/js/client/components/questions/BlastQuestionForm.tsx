@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { zip } from 'lodash';
@@ -262,11 +262,15 @@ const useAlgorithmParamProps = (
 
   const onChange = useChangeParamValue(parameter, state, updateParamValue);
 
+  useEffect(() => {
+    if (enabledAlgorithms && !enabledAlgorithms.includes(algorithm)) {
+      onChange(enabledAlgorithms[0]);
+    }
+  }, [ enabledAlgorithms, algorithm, onChange ]);
+
   return {
     items,
-    value: !enabledAlgorithms || enabledAlgorithms.includes(algorithm)
-      ? algorithm
-      : enabledAlgorithms[0],
+    value: algorithm,
     onChange,
     required: true
   };
