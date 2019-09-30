@@ -11,9 +11,10 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { AnswerSpec, StandardReportConfig, Answer, CheckboxEnumParam, Parameter, StringParam } from 'wdk-client/Utils/WdkModel';
+import { AnswerSpec, StandardReportConfig, Answer, CheckboxEnumParam, StringParam } from 'wdk-client/Utils/WdkModel';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { DEFAULT_COLS, calculateRows } from 'wdk-client/Views/Question/Params/StringParam';
+import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
@@ -240,22 +241,6 @@ const useTargetParamProps = (state: QuestionState, updateParamValue: Props['even
     onChange,
     required: true
   };
-};
-
-const useChangeParamValue = (parameter: Parameter, state: QuestionState, updateParamValue: Props['eventHandlers']['updateParamValue']) => {
-  const searchName = state.question.urlSegment;
-  const paramValues = state.paramValues;
-
-  const changeParamValue = useCallback((paramValue: string) => {
-    updateParamValue({
-      searchName,
-      parameter,
-      paramValues,
-      paramValue
-    });
-  }, [ updateParamValue, searchName, parameter, paramValues ]);
-
-  return changeParamValue;
 };
 
 const useAlgorithmParamProps = (

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { get } from 'lodash';
 
 import { HelpIcon } from 'wdk-client/Components';
-import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Props, Group } from 'wdk-client/Views/Question/DefaultQuestionForm';
@@ -73,45 +73,82 @@ function RadioParameterList(props: RadioParameterListProps) {
   )
 }
 
+const NONSENSE_VALUE = 'N/A';
+const NONSENSE_VALUE_REGEX = /^(nil|N\/A)$/;
+
 export const RadioParams: React.FunctionComponent<Props> = props => {
   const radioParams: string[] = get( 
     props.state.question.properties,
     'radio-params',
     []
   );
-  const radioParamSet = new Set(radioParams);
+  const radioParamSet = useMemo(
+    () => new Set(radioParams),
+    [ radioParams ]
+  );
 
-  const [ activeRadioParam, updateActiveRadioParam ] = React.useState(radioParams[0] || '');
+  const initialRadioParam = radioParams.find(
+    radioParam => {
+      const radioParamValue = (props.state.paramValues[radioParam] || '').trim();
+      
+      return !!radioParamValue && !NONSENSE_VALUE_REGEX.test(radioParamValue)
+    }
+  ) || radioParams[0];
+
+  const [ activeRadioParam, updateActiveRadioParam ] = React.useState(initialRadioParam);
+
+  const renderParamGroup = useCallback((group: ParameterGroup, props: Props) => {
+      const { 
+        state: { question, groupUIState },
+        eventHandlers: { setGroupVisibility }, 
+        parameterElements 
+      } = props;
+
+      return (
+        <Group
+          key={group.name}
+          searchName={question.urlSegment}
+          group={group}
+          uiState={groupUIState}
+          onVisibilityChange={setGroupVisibility}
+        >
+          <RadioParameterList
+            parameterMap={question.parametersByName}
+            parameterElements={parameterElements}
+            parameters={group.parameters}
+            radioParamSet={radioParamSet}
+            activeRadioParam={activeRadioParam}
+            updateActiveRadioParam={updateActiveRadioParam}
+          />
+        </Group>
+      );
+    }, 
+    [ radioParamSet, activeRadioParam ]
+  );
+
+  const onSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+
+    radioParams.forEach(radioParam => {
+      if (radioParam !== activeRadioParam) {
+        props.eventHandlers.updateParamValue({
+          searchName: props.state.question.urlSegment,
+          parameter: props.state.question.parametersByName[radioParam],
+          paramValues: props.state.paramValues,
+          paramValue: NONSENSE_VALUE
+        });
+      }
+    });
+
+    return true;
+  }, [ props.state, props.eventHandlers.updateParamValue, activeRadioParam ]);
 
   return (
     <EbrcDefaultQuestionForm 
       {...props}
-      renderParamGroup={(group, props) => {
-        const { 
-          state: { question, groupUIState },
-          eventHandlers: { setGroupVisibility }, 
-          parameterElements 
-        } = props;
-
-        return (
-          <Group
-            key={group.name}
-            searchName={question.urlSegment}
-            group={group}
-            uiState={groupUIState}
-            onVisibilityChange={setGroupVisibility}
-          >
-            <RadioParameterList
-              parameterMap={question.parametersByName}
-              parameterElements={parameterElements}
-              parameters={group.parameters}
-              radioParamSet={radioParamSet}
-              activeRadioParam={activeRadioParam}
-              updateActiveRadioParam={updateActiveRadioParam}
-            />
-          </Group>
-        );
-      }}
+      renderParamGroup={renderParamGroup}
+      onSubmit={onSubmit}
+      validateForm={false}
     />
   );
 };
