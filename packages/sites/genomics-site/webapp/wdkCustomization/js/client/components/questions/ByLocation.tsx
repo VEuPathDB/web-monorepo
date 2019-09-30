@@ -39,15 +39,27 @@ export const ByLocation: React.FunctionComponent<Props> = props => {
     props.eventHandlers.updateParamValue
   );
 
+  const changeSequenceId = useChangeParamValue(
+    props.state.question.parametersByName[sequenceIdKey], 
+    props.state, 
+    props.eventHandlers.updateParamValue
+  );
+
   const clearChromosomeOptional = useCallback(() => {
     changeChromosomeOptional(chromosomeOptionalParam.vocabulary[0][0]);
-  }, [ chromosomeOptionalParam, changeChromosomeOptional ])
+  }, [ chromosomeOptionalParam, changeChromosomeOptional ]);
+
+  const clearSequenceId = useCallback(() => {
+    changeSequenceId('No Match');
+  }, [ changeSequenceId ]);
 
   const onSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
 
     if (activeTab === 'Sequence ID') {
       clearChromosomeOptional();
+    } else {
+      clearSequenceId();
     }
 
     return true;
