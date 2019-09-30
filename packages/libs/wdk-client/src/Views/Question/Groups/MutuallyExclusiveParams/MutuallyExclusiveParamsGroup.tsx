@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Tabs } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -27,7 +27,7 @@ export const mutuallyExclusiveParamsGroupRenderer = (
   const sequenceIdParameterKeys = xorGroupParameters['Sequence ID'];
 
   return (
-    <>
+    <React.Fragment>
       {
         group.name !== xorGroupKey || !chromosomeParameterKeys || !sequenceIdParameterKeys
           ? renderDefaultParamGroup(group, props)
@@ -58,6 +58,6 @@ export const mutuallyExclusiveParamsGroupRenderer = (
             />
           )
       }
-    </>
+    </React.Fragment>
   );
 };
