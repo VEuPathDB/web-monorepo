@@ -7,7 +7,7 @@ import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyAction
 import { CollapsibleSection } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
-import { StepBoxProps, StepDetailProps } from 'wdk-client/Views/Strategy/Types';
+import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
 
 interface MappedProps {
   question?: QuestionWithParameters;
@@ -18,7 +18,7 @@ interface DispatchProps {
   assignWeight: (weight: number) => void;
 }
 
-function StepDetails({ stepTree, question, assignWeight, requestQuestionWithParameters }: StepDetailProps & DispatchProps & MappedProps) {
+function StepDetails({ stepTree, question, assignWeight, requestQuestionWithParameters }: StepDetailProps<UiStepTree> & DispatchProps & MappedProps) {
   const { step } = stepTree;
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
 

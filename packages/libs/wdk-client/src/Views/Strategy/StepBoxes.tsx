@@ -5,10 +5,13 @@ import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
-import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree, UiStepTree, isCompleteUiStepTree, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 import { useBinaryStepBoxClassName } from 'wdk-client/Utils/Operations';
+
+const INVALID_SEARCH_TITLE = 'This step refers to a search is no longer valid. In order to fix your strategy, this step must be deleted.';
+const INVALID_PARAMS_TITLE = 'This step contains a configuration that is no longer valid and must be revised to view results.'
 
 /**
  * Render each step of a strategy as a grid.
@@ -46,7 +49,13 @@ function StepTree(props: StepBoxesProps) {
     stepTree,
     isDeleteable = true
   } = props;
+
+  if (!isCompleteUiStepTree(stepTree)) {
+    return <UnknownQuestionStepBox stepTree={stepTree} deleteStep={() => props.onDeleteStep(step.id)}/>
+  }
+
   const { step, primaryInput, secondaryInput, question } = stepTree;
+
   // primary input is deleteable if the current step accepts
   // the record type of the primary input's primary input record type,
   // or if the primary input does not have a primary input.
@@ -84,60 +93,85 @@ function StepTree(props: StepBoxesProps) {
           }}
           defaultComponent={StepBox}
         />
-        {secondaryInput &&
-          <Plugin<StepBoxProps>
-            context={{
-              type: 'stepBox',
-              name: secondaryInput.step.searchName,
-              searchName: secondaryInput.step.searchName,
-              recordClassName: secondaryInput.step.recordClassName
-            }}
-            pluginProps={{
-              stepTree: secondaryInput,
-              isNested: secondaryInput.isNested,
-              isExpanded: step.expanded,
-              isDeleteable,
-              renameStep: (newName: string) => {
-                if (secondaryInput.isNested) {
-                  props.onRenameNestedStrategy(step.id, newName);
-                }
-                else {
-                  props.onRenameStep(secondaryInput.step.id, newName);
-                }
-              },
-              makeNestedStrategy: () => {
-                props.onMakeNestedStrategy(step.id);
-                props.onExpandNestedStrategy(step.id);
-              },
-              makeUnnestStrategy: () => {
-                props.onMakeUnnestedStrategy(step.id);
-                props.onCollapseNestedStrategy(step.id);
-                // Use empty string to indicate that the step should not be rendered as a nested strategy
-                props.onRenameNestedStrategy(step.id, '');
-              },
-              collapseNestedStrategy: () => {
-                props.onCollapseNestedStrategy(step.id);
-              },
-              expandNestedStrategy: () => {
-                props.onExpandNestedStrategy(step.id);
-              },
-              showNewAnalysisTab: () => props.onAnalyzeStep(),
-              showReviseForm: () => props.setReviseFormStepId(secondaryInput.step.id),
-              insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', stepId: step.id }),
-              deleteStep: () => props.onDeleteStep(step.id)
-            }}
-            defaultComponent={StepBox}
-          />
+        {secondaryInput && (
+          !isCompleteUiStepTree(secondaryInput) ? <UnknownQuestionStepBox stepTree={secondaryInput} deleteStep={() => props.onDeleteStep(secondaryInput.step.id)}/>
+            : (
+              <Plugin<StepBoxProps>
+                context={{
+                  type: 'stepBox',
+                  name: secondaryInput.step.searchName,
+                  searchName: secondaryInput.step.searchName,
+                  recordClassName: secondaryInput.step.recordClassName
+                }}
+                pluginProps={{
+                  stepTree: secondaryInput,
+                  isNested: secondaryInput.isNested,
+                  isExpanded: step.expanded,
+                  isDeleteable,
+                  renameStep: (newName: string) => {
+                    if (secondaryInput.isNested) {
+                      props.onRenameNestedStrategy(step.id, newName);
+                    }
+                    else {
+                      props.onRenameStep(secondaryInput.step.id, newName);
+                    }
+                  },
+                  makeNestedStrategy: () => {
+                    props.onMakeNestedStrategy(step.id);
+                    props.onExpandNestedStrategy(step.id);
+                  },
+                  makeUnnestStrategy: () => {
+                    props.onMakeUnnestedStrategy(step.id);
+                    props.onCollapseNestedStrategy(step.id);
+                    // Use empty string to indicate that the step should not be rendered as a nested strategy
+                    props.onRenameNestedStrategy(step.id, '');
+                  },
+                  collapseNestedStrategy: () => {
+                    props.onCollapseNestedStrategy(step.id);
+                  },
+                  expandNestedStrategy: () => {
+                    props.onExpandNestedStrategy(step.id);
+                  },
+                  showNewAnalysisTab: () => props.onAnalyzeStep(),
+                  showReviseForm: () => props.setReviseFormStepId(secondaryInput.step.id),
+                  insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', stepId: step.id }),
+                  deleteStep: () => props.onDeleteStep(step.id)
+                }}
+                defaultComponent={StepBox}
+              />
+            )
+          )
         }
       </div>
     </React.Fragment>
   );
 }
 
+function UnknownQuestionStepBox({ stepTree: { step, recordClass }, deleteStep }: { stepTree: PartialUiStepTree, deleteStep: () => void }) {
+  const deleteButton = (
+    <button
+      type="button"
+      onClick={() => deleteStep()}
+      className={cx("--EditButton")}
+    >
+      <div style={{ fontSize: '.8em'}}>Delete</div>
+    </button>
+  );
+  return (
+    <div title={INVALID_SEARCH_TITLE} className={cx('--Box', 'invalid')}>
+      <div className={cx('--BoxLink', 'leaf')}>
+        <StepName step={step}/>
+        <StepCount step={step} recordClass={recordClass}/>
+      </div>
+      {deleteButton}
+    </div>
+  );
+}
+
 function StepBox(props: StepBoxProps) {
   const [ detailVisibility, setDetailVisibility ] = useState(false);
-  const { isNested, stepTree } = props;
-  const { step, color } = stepTree;
+  const { isNested, stepTree, deleteStep } = props;
+  const { step, color, primaryInput, secondaryInput } = stepTree;
 
   const StepComponent = isCombineUiStepTree(stepTree) && !isNested ? CombineStepBoxContent
     : isTransformUiStepTree(stepTree) && !isNested ? TransformStepBoxContent
@@ -149,15 +183,29 @@ function StepBox(props: StepBoxProps) {
   const borderColor = isNested && stepTree.nestedControlStep && stepTree.nestedControlStep.expanded ? color : undefined;
   const allowRevise = !isNested && !isCombineUiStepTree(stepTree);
 
-  const editButton = (
-    <button
-      type="button"
-      onClick={() => setDetailVisibility(true)}
-      className={cx("--EditButton")}
-    >
-      <div style={{ fontSize: '.8em'}}>Edit</div>
-    </button>
+  const hasValidSearch = (
+    (primaryInput == null || isCompleteUiStepTree(primaryInput)) &&
+    (secondaryInput == null || isCompleteUiStepTree(secondaryInput))
   );
+
+  const editButton = hasValidSearch
+    ? (
+      <button
+        type="button"
+        onClick={() => setDetailVisibility(true)}
+        className={cx("--EditButton")}
+      >
+        <div style={{ fontSize: '.8em'}}>Edit</div>
+      </button>
+    ) : (
+      <button
+        type="button"
+        onClick={() => deleteStep()}
+        className={cx("--EditButton")}
+      >
+        <div style={{ fontSize: '.8em'}}>Delete</div>
+      </button>
+    )
 
   const stepDetails = (
     <StepDetailsDialog {...props} allowRevise={allowRevise} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
@@ -167,7 +215,9 @@ function StepBox(props: StepBoxProps) {
     <i className={`${cx('--FilterIcon')} fa fa-filter`}/>
   );
 
-  const title = step.validation.isValid ? undefined : 'This step is no longer valid and must be revised to view results.';
+  const title = !hasValidSearch ? INVALID_SEARCH_TITLE
+    : !step.validation.isValid ? INVALID_PARAMS_TITLE
+    : undefined;
 
   return (
     <div title={title} className={cx("--Box", step.validation.isValid ? 'valid' : 'invalid')}>
@@ -237,7 +287,7 @@ function StepName(props: { step: Step, nestedControlStep?: Step }) {
   return <div className={cx('--StepName')}>{displayName}</div>;
 }
 
-function StepCount(props: { step: Step, recordClass: RecordClass }) {
+function StepCount(props: { step: Step, recordClass?: RecordClass }) {
   const { step, recordClass } = props;
   const recordClassDisplayName = recordClass && (
     step.estimatedSize === 1 ? recordClass.shortDisplayName : recordClass.shortDisplayNamePlural

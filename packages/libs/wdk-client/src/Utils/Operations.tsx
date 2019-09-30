@@ -26,13 +26,13 @@ type OperatorMenuGroup = {
 }
 
 export type ReviseOperationFormProps = {
-  searchName: string,
+  searchName?: string,
   step: Step,
   strategy: StrategyDetails,
-  primaryInputRecordClass: RecordClass,
-  primaryInputQuestion: Question,
-  secondaryInputRecordClass: RecordClass
-  secondaryInputQuestion: Question,
+  primaryInputRecordClass?: RecordClass,
+  primaryInputQuestion?: Question,
+  secondaryInputRecordClass?: RecordClass
+  secondaryInputQuestion?: Question,
   questions: Question[],
   onClose: () => void,
   requestUpdateStepSearchConfig: (strategyId: number, stepId: number, searchConfig: SearchConfig) => void,
@@ -115,7 +115,7 @@ type AddStepMenuConfig = Pick<BinaryOperation, 'name' | 'AddStepMenuComponent' |
 
 export type OperatorMetadata = {
   operatorName: string,
-  searchName: string,
+  searchName?: string,
   baseClassName: string,
   paramName: string,
   paramValue: string,
@@ -154,25 +154,30 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
           );
 
           // Also needed to handle the special case of "ignore" combine operators
-          const parameterValues = name === 'combine' && primaryInputRecordClass === secondaryInputRecordClass
-            ? [
-                ...operatorMenuGroup.items.map(({ value }) => value),
-                'LONLY',
-                'RONLY'
-              ]
-            : name === 'combine' && primaryInputRecordClass !== secondaryInputRecordClass
-            ? [ 
-                'LONLY',
-                'RONLY'
-              ]
-            : operatorMenuGroup.items.map(({ value }) => value);
+          // const parameterValues = name === 'combine' && primaryInputRecordClass === secondaryInputRecordClass
+          //   ? [
+          //       ...operatorMenuGroup.items.map(({ value }) => value),
+          //       'LONLY',
+          //       'RONLY'
+          //     ]
+          //   : name === 'combine' && primaryInputRecordClass !== secondaryInputRecordClass
+          //   ? [ 
+          //       'LONLY',
+          //       'RONLY'
+          //     ]
+          //   : operatorMenuGroup.items.map(({ value }) => value);
+
+          const parameterValues = [
+            ...operatorMenuGroup.items.map(({ value }) => value),
+            ...(name === 'combine' ? [ 'LONLY', 'RONLY' ] : [])
+          ];
   
-          const newMetadataEntries = operationQuestion && parameterValues.reduce(
+          const newMetadataEntries = parameterValues.reduce(
             (memo, itemValue) => ({
               ...memo,
               [itemValue]: {
                 operatorName: name,
-                searchName: operationQuestion.urlSegment,
+                searchName: operationQuestion && operationQuestion.urlSegment,
                 paramName: operatorParamName,
                 baseClassName,
                 paramValue: itemValue,
@@ -247,7 +252,7 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
   );
 
   const reviseOperatorConfigs = useMemo(
-    () => reviseOperatorConfigsWithoutIgnore && primaryInputRecordClass !== undefined && secondaryInputRecordClass !== undefined && [
+    () => reviseOperatorConfigsWithoutIgnore && [
       ...reviseOperatorConfigsWithoutIgnore,
       {
         name: 'ignore_boolean_operators',

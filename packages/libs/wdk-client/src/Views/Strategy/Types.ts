@@ -1,13 +1,28 @@
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step } from 'wdk-client/Utils/WdkUser';
 
+export interface PartialUiStepTree {
+  color?: string;
+  step: Step;
+  recordClass?: RecordClass;
+  question?: Question;
+  primaryInput?: PartialUiStepTree;
+  secondaryInput?: PartialUiStepTree;
+  nestedControlStep?: Step;
+  isNested: boolean;
+}
+
+export function isCompleteUiStepTree(stepTree: PartialUiStepTree): stepTree is UiStepTree {
+  return stepTree.recordClass != null && stepTree.question != null;
+}
+
 export interface UiStepTree {
   color?: string;
   step: Step;
   recordClass: RecordClass;
   question: Question;
-  primaryInput?: UiStepTree;
-  secondaryInput?: UiStepTree;
+  primaryInput?: PartialUiStepTree;
+  secondaryInput?: PartialUiStepTree;
   nestedControlStep?: Step;
   isNested: boolean;
 }
@@ -24,7 +39,7 @@ export function isLeafUiStepTree(stepTree: UiStepTree): stepTree is LeafUiStepTr
 }
 
 export interface TransformUiStepTree extends UiStepTree {
-  primaryInput: UiStepTree;
+  primaryInput: PartialUiStepTree;
   secondaryInput: undefined;
 }
 
@@ -33,8 +48,8 @@ export function isTransformUiStepTree(stepTree: UiStepTree): stepTree is Transfo
 }
 
 export interface CombineUiStepTree extends UiStepTree {
-  primaryInput: UiStepTree;
-  secondaryInput: UiStepTree;
+  primaryInput: PartialUiStepTree;
+  secondaryInput: PartialUiStepTree;
 }
 
 export function isCombineUiStepTree(stepTree: UiStepTree): stepTree is CombineUiStepTree {
@@ -42,7 +57,7 @@ export function isCombineUiStepTree(stepTree: UiStepTree): stepTree is CombineUi
 }
 
 export interface StepBoxesProps {
-  stepTree: UiStepTree;
+  stepTree: PartialUiStepTree;
   nestedStrategyBranchToRename?: number;
   isDeleteable?: boolean;
   setReviseFormStepId: (stepId?: number) => void;
@@ -58,8 +73,8 @@ export interface StepBoxesProps {
   onDeleteStep: (stepId: number) => void;
 }
 
-export interface StepBoxProps {
-  stepTree: UiStepTree;
+export interface StepBoxProps<T extends UiStepTree = UiStepTree> {
+  stepTree: T;
   isNested: boolean;
   isExpanded: boolean;
   isDeleteable: boolean;
@@ -74,7 +89,7 @@ export interface StepBoxProps {
   deleteStep: () => void;
 }
 
-export interface StepDetailProps extends StepBoxProps {
+export interface StepDetailProps<T extends UiStepTree> extends StepBoxProps<T> {
   isOpen: boolean;
   onClose: () => void;
   allowRevise?: boolean;

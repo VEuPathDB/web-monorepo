@@ -9,7 +9,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree, StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
-import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
+import { PartialUiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import {removeFromOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 
@@ -24,7 +24,7 @@ interface OwnProps {
 }
 
 interface MappedProps {
-  uiStepTree?: UiStepTree;
+  uiStepTree?: PartialUiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
 }
@@ -131,7 +131,7 @@ function makeUiStepTree(
   recordClassesByName: Record<string, RecordClass>,
   questionsByName: Record<string, Question>,
   nestedBranchIds: number[]
-): UiStepTree {
+): PartialUiStepTree {
   const colorIter = colors([
     '#A000A0', // purple
     '#00A0A0', // teal
@@ -142,7 +142,7 @@ function makeUiStepTree(
   
   return _recurse(strategy.stepTree);
 
-  function _recurse(stepTree: StepTree, nestedControlStep?: Step, color?: string, isNested: boolean = false): UiStepTree {
+  function _recurse(stepTree: StepTree, nestedControlStep?: Step, color?: string, isNested: boolean = false): PartialUiStepTree {
     const step = strategy.steps[stepTree.stepId];
     const recordClass = recordClassesByName[step.recordClassName];
     const question = questionsByName[step.searchName];

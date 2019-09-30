@@ -91,6 +91,7 @@ export function makeCompositePluginComponent<T>(registry: ClientPluginRegistryEn
   type MappedProps = OwnProps & StateProps;
 
   function CompositePluginComponent(props: MappedProps) {
+    // FIXME Distinguish between resolving reference-loading and reference-does-not-exist
     if (!isResolved(props.context, props.resolvedReferences)) return null;
     const defaultPluginComponent = props.defaultComponent || DefaultPluginComponent;
     const entry = registry.find(entry => isMatchingEntry(entry, props.context, props.resolvedReferences));

@@ -6,10 +6,10 @@ import CombineStepDetails from 'wdk-client/Views/Strategy/CombineStepDetails';
 import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
 import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
 import { getStepUrl } from 'wdk-client/Views/Strategy/StrategyUtils';
-import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps } from 'wdk-client/Views/Strategy/Types';
+import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
 import { SaveableTextEditor } from 'wdk-client/Components';
 
-type Props = RouteComponentProps<any> & StepDetailProps
+type Props = RouteComponentProps<any> & StepDetailProps<UiStepTree>;
 
 interface StepAction {
   /** Text of the button */
@@ -131,7 +131,7 @@ export default withRouter(function StepDetailsDialog(props: Props) {
         <div className={cx('--StepDetailsHeading')}>Details for step <SaveableTextEditor value={displayName} onSave={renameStep} className={cx('--StepDetailsName')}/></div>
         <div className={cx('--StepDetailsCount')}>{step.estimatedSize === -1 ? '?' : step.estimatedSize} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}</div>
         { isNested ? <NestedStepDetails {...props}/>
-        : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} />
+        : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} stepTree={stepTree} />
         : <StepDetails {...props} /> }
       </React.Fragment>
     </Dialog>

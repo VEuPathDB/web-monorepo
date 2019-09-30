@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dispatch, compose } from 'redux';
 import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { StepDetailProps, CombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import { useReviseOperatorConfigs, useCompatibleOperatorMetadata, OperatorMetadata, ReviseOperatorMenuGroup } from 'wdk-client/Utils/Operations';
 import { Question } from 'wdk-client/Utils/WdkModel';
 import Loading from 'wdk-client/Components/Loading';
@@ -25,7 +25,7 @@ interface DispatchProps {
   dispatch: Dispatch; 
 }
 
-type OwnProps = StepDetailProps;
+type OwnProps = StepDetailProps<CombineUiStepTree>;
 
 function CombineStepDetails({ 
   questions, 
@@ -36,8 +36,8 @@ function CombineStepDetails({
 }: OwnProps & StateProps & DispatchProps) {
   const { step } = stepTree;
 
-  const primaryInputRecordClass = stepTree.primaryInput!.recordClass.urlSegment;
-  const secondaryInputRecordClass = stepTree.secondaryInput!.recordClass.urlSegment;
+  const primaryInputRecordClass = stepTree.primaryInput.recordClass && stepTree.primaryInput.recordClass.urlSegment;
+  const secondaryInputRecordClass = stepTree.secondaryInput.recordClass && stepTree.secondaryInput.recordClass.urlSegment;
 
   const compatibleOperatorMetadata = useCompatibleOperatorMetadata(
     questions,
@@ -96,7 +96,7 @@ type CombineStepDetailsFormProps = {
   compatibleOperatorMetadata: Record<string, OperatorMetadata>;
   currentOperatorSearchName: string;
   currentOperatorValue: string;
-  stepTree: UiStepTree;
+  stepTree: CombineUiStepTree;
   reviseOperatorConfigs: ReviseOperatorMenuGroup[];
 };
 
@@ -144,8 +144,8 @@ const CombineStepDetailsForm = ({
               } else {
                 const newOperatorQuestion = questions.find(({ urlSegment }) => urlSegment === newOperatorSearchName);
 
-                if (!newOperatorQuestion) {
-                  throw new Error(`Could not find "${newOperatorSearchName}" question.`);
+                if (!newOperatorQuestion || !newOperatorSearchName) {
+                  throw new Error(`Could not find "${newOperatorSearchName || 'Unknown'}" question.`);
                 }
 
                 // FIXME This is coupled to the order in which the answer parameters appear in the parameter list
@@ -211,10 +211,10 @@ const CombineStepDetailsForm = ({
         questions={questions}
         step={step}
         strategy={strategy}
-        primaryInputQuestion={stepTree.primaryInput!.question}
-        primaryInputRecordClass={stepTree.primaryInput!.recordClass}
-        secondaryInputQuestion={stepTree.secondaryInput!.question}
-        secondaryInputRecordClass={stepTree.secondaryInput!.recordClass}
+        primaryInputQuestion={stepTree.primaryInput.question}
+        primaryInputRecordClass={stepTree.primaryInput.recordClass}
+        secondaryInputQuestion={stepTree.secondaryInput.question}
+        secondaryInputRecordClass={stepTree.secondaryInput.recordClass}
         onClose={onClose}
         requestUpdateStepSearchConfig={compose(dispatch, requestUpdateStepSearchConfig)}
         requestReplaceStep={compose(dispatch, requestReplaceStep)}

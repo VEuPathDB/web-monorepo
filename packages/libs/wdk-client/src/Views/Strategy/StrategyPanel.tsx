@@ -3,7 +3,7 @@ import { SaveableTextEditor, Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { UiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
+import { AddType, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepBoxes from './StepBoxes';
 import {StrategyControls} from 'wdk-client/Views/Strategy/StrategyControls';
 
@@ -17,7 +17,7 @@ const cx = makeClassNameHelper('StrategyPanel');
 interface Props {
   isLoading: boolean;
   strategy?: StrategyDetails;
-  uiStepTree?: UiStepTree;
+  uiStepTree?: PartialUiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
   showCloseButton?: boolean;
