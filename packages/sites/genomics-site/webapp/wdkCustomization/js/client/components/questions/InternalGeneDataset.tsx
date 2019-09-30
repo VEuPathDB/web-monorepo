@@ -72,8 +72,10 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
   submitButtonText,
   shouldChangeDocumentTitle
 }) => {
-  const [ searchName, showingRecordToggle ] = searchNameAnchorTag
-    ? [ searchNameAnchorTag, true ]
+  const [ selectedSearch, setSelectedSearch ] = useState<string | undefined>(searchNameAnchorTag);
+
+  const [ searchName, showingRecordToggle ] = selectedSearch
+    ? [ selectedSearch, true ]
     : [ internalSearchName, false ];
 
   const [ internalQuestion, outputRecordClass, datasetCategory, datasetSubtype ] = useMemo(
@@ -250,6 +252,13 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                                         } 
                                         key={categoryName} 
                                         to={`${internalSearchName}#${categorySearchName}`}
+                                        onClick={(e: React.MouseEvent) => {
+                                          if (submissionMetadata.type !== 'create-strategy') {
+                                            e.preventDefault();
+                                          }
+
+                                          setSelectedSearch(categorySearchName);
+                                        }}
                                       >
                                         {displayCategoriesByName[categoryName].shortDisplayName}
                                       </Link>
@@ -342,7 +351,16 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                       categoryName => ({
                         key: questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName],
                         display: (
-                          <Link to={`${internalSearchName}#${questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]}`}>
+                          <Link 
+                            to={`${internalSearchName}#${questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]}`}
+                            onClick={(e: React.MouseEvent) => {
+                              if (submissionMetadata.type) {
+                                e.preventDefault();
+                              }
+
+                              setSelectedSearch(questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]);
+                            }}
+                          >
                             {displayCategoriesByName[categoryName].displayName}
                           </Link>
                         ),
@@ -365,7 +383,9 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                     )
                 }
                 activeTab={searchName}
-                onTabSelected={() => {}}
+                onTabSelected={(tab) => {
+                  setSelectedSearch(tab);
+                }}
               />
             )
           }
