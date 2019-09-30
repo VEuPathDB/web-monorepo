@@ -40,7 +40,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
         requestReplaceStep
       }: ReviseOperationFormProps) => {
         const colocationQuestionPrimaryInput = useMemo(
-          () => questions.find(
+          () => primaryInputRecordClass && questions.find(
             ({ outputRecordClassName, urlSegment }) =>
               urlSegment.endsWith(colocationQuestionSuffix) &&
               outputRecordClassName === primaryInputRecordClass.urlSegment
@@ -49,7 +49,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
         );
       
         const colocationQuestionSecondaryInput = useMemo(
-          () => questions.find(
+          () => secondaryInputRecordClass && questions.find(
             ({ outputRecordClassName, urlSegment }) =>
               urlSegment.endsWith(colocationQuestionSuffix) &&
               outputRecordClassName === secondaryInputRecordClass.urlSegment
@@ -117,7 +117,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
         );
 
         return (
-          !colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput
+          !colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput || !primaryInputRecordClass
         ) ? <NotFound />
           : <Plugin
               context={{

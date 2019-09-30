@@ -13,8 +13,8 @@ const cx = makeClassNameHelper('SpanLogicForm');
 import './SpanLogicForm.scss';
 
 type SpanLogicFormProps = DefaultFormProps & {
-  currentStepRecordClass: RecordClass,
-  newStepRecordClass: RecordClass,
+  currentStepRecordClass?: RecordClass,
+  newStepRecordClass?: RecordClass,
   insertingBeforeFirstStep: boolean,
   typeChangeAllowed: boolean,
   currentStepName?: string,
@@ -256,8 +256,8 @@ export function SpanLogicForm(
       <div className={cx('--SpanSentence-Strand')}>
         <span>
           of a {rightRegion === 'region_b' 
-            ? `${newStepRecordClass.displayName} from ${newStepName}` 
-            : `${currentStepRecordClass.displayName} from ${currentStepName}`
+            ? `${newStepRecordClass ? newStepRecordClass.displayName : 'Unknown'} from ${newStepName}` 
+            : `${currentStepRecordClass ? currentStepRecordClass.displayName : ' Unknown'} from ${currentStepName}`
           }
           {' '}
           and is on
@@ -300,8 +300,8 @@ export function SpanLogicForm(
 }
 
 type SpanOutputParamProps = {
-  currentStepRecordClass: RecordClass,
-  newStepRecordClass: RecordClass,
+  currentStepRecordClass?: RecordClass,
+  newStepRecordClass?: RecordClass,
   paramValue: RegionName,
   updateOutputParam: (newOutputParam: RegionName) => void,
   insertingBeforeFirstStep: boolean,
@@ -320,17 +320,17 @@ const SpanOutputParam = ({
   currentStepName,
   newStepName
 }: SpanOutputParamProps) => 
-  typeChangeAllowed || currentStepRecordClass.urlSegment === newStepRecordClass.urlSegment
+  typeChangeAllowed || (currentStepRecordClass && newStepRecordClass && currentStepRecordClass.urlSegment === newStepRecordClass.urlSegment)
     ? <select onChange={e => updateOutputParam(e.target.value as RegionName)} value={paramValue}>
         <option value={!insertingBeforeFirstStep ? 'a' : 'b'}>
-          {currentStepRecordClass.displayName} from {currentStepName}
+          {currentStepRecordClass ? currentStepRecordClass.displayName : 'Unknown'} from {currentStepName}
         </option>
         <option value={!insertingBeforeFirstStep ? 'b' : 'a'}>
-          {newStepRecordClass.displayName} from {newStepName}
+          {newStepRecordClass ? newStepRecordClass.displayName : 'Unknown'} from {newStepName}
         </option>   
       </select>
     : <span>
-        {currentStepRecordClass.displayName} from {currentStepName}
+        {currentStepRecordClass ? currentStepRecordClass.displayName : 'Unknown'} from {currentStepName}
       </span>;
 
 type RegionConfigProps = {
@@ -347,7 +347,7 @@ type RegionConfigProps = {
   updateRegionType: (newRegion: RegionType) => void,
   updateUpstreamOffset: (newUpstream: string) => void
   updateDownstreamOffset: (newDownstream: string) => void,
-  recordClass: RecordClass,
+  recordClass?: RecordClass,
   spanBeginValue: RegionOrigin,
   spanBeginDirectionValue: RegionDirection,
   spanBeginOffsetValue: number,
@@ -379,7 +379,7 @@ const RegionConfig = ({
   spanEndOffsetValue
 }: RegionConfigProps) => {
   // TODO Figure out how to eliminate this hardcoding
-  const singleBpFeature = recordClass.urlSegment === 'snp';
+  const singleBpFeature = recordClass && recordClass.urlSegment === 'snp';
   const featureLength = singleBpFeature ? 1 : 2000;
 
   const beginFeatureEndpoint = spanBeginValue === 'start' ? 0 : featureLength;
@@ -425,7 +425,7 @@ const RegionConfig = ({
             right={f_right}
             dy={dy}
             y={8 * dy}
-            name={recordClass.displayName}
+            name={recordClass ? recordClass.displayName : 'Unknown'}
             className="feature"
             singleBp={singleBpFeature}
           />
