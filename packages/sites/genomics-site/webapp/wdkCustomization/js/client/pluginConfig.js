@@ -11,7 +11,7 @@ import { ByGenotypeNumberCheckbox } from 'wdk-client/Views/Question/Params/ByGen
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';
 import { ByLocation } from './components/questions/ByLocation';
-import BlastQuestionForm from './components/questions/BlastQuestionForm';
+import { BlastQuestionForm } from './components/questions/BlastQuestionForm';
 import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
