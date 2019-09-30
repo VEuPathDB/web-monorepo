@@ -1,4 +1,4 @@
-import { memoize, sortBy, stubTrue as T, flowRight as compose } from 'lodash';
+import { memoize, sortBy, stubTrue as T } from 'lodash';
 import natsort from 'natural-sort';
 
 import { Filter, MemberFilter, ValueCounts, FieldTreeNode } from 'wdk-client/Components/AttributeFilter/Types';
@@ -8,7 +8,6 @@ import { FilterParamNew, Parameter } from 'wdk-client/Utils/WdkModel';
 
 import { SortSpec, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { Context } from 'wdk-client/Views/Question/Params/Utils';
-import { getRecordClassName } from 'wdk-client/Utils/CategoryUtils';
 
 const natSortComparator = (natsort as any)();
 
@@ -23,21 +22,11 @@ export function isParamValueValid(context: Context<FilterParamNew>, state: State
   );
 }
 
-const getOntologyTreeWithAllNodes = compose(
-  sortLeavesBeforeBranches,
-  getTree
-);
-
-const getOntologyWithoutEmptyOntologyNodes = compose(
-  sortLeavesBeforeBranches,
-  removeIntermediateNodesWithSingleChild,
-  getTree
-);
-
 export function getOntologyTree(param: FilterParamNew): FieldTreeNode {
-  return param.hideEmptyOntologyNodes
-    ? getOntologyWithoutEmptyOntologyNodes(param.ontology)
-    : getOntologyTreeWithAllNodes(param.ontology);
+  let tree = getTree(param.ontology);
+  if (param.hideEmptyOntologyNodes) tree = removeIntermediateNodesWithSingleChild(tree);
+  if (param.sortLeavesBeforeBranches) tree = sortLeavesBeforeBranches(tree);
+  return tree;
 }
 
 export function getFilterFields(param: FilterParamNew) {
