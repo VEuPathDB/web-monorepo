@@ -16,8 +16,7 @@ export default QuestionWizard => injectSearchStudy(props => {
         ? "Could not find study based on the record class."
         : (
           <div className="clinepi-StudyLink">
-            <IconAlt fa="info-circle" />&nbsp;
-                <Link to={activeStudy.route} _target="blank" >{activeStudy.name} methodology, publications and documentation.</Link> 
+            <Link to={activeStudy.route} _target="blank" >Study Details >></Link> 
           </div>
         )
       }
