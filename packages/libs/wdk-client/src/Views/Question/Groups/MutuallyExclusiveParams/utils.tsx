@@ -62,7 +62,7 @@ export const groupXorParametersByChromosomeAndSequenceID = createSelector(
 export const findChromosomeOptionalKey = (paramNames: string[]) => 
   paramNames.includes('chromosomeOptionalForNgsSnps') ? 'chromosomeOptionalForNgsSnps' : 'chromosomeOptional';
 
-export const findSequenceIdKey = (paramNames: string[]) => 'Sequence';
+export const findSequenceIdKey = (paramNames: string[]) => 'sequenceId';
 
 export const restrictParameterGroup = (group: ParameterGroup, parameterKeys: string[]): ParameterGroup => {
   const parameterKeySet = new Set(parameterKeys);
