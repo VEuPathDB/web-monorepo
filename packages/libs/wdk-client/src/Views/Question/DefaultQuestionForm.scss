@@ -2,11 +2,11 @@
   margin: auto;
 
   &__default-width {
-    width: 62.5rem;
+    max-width: 62.5rem;
   }
 
   &__wide-width {
-    width: 81.25em;
+    max-width: 81.25em;
   }
 
   &QuestionHeader {
