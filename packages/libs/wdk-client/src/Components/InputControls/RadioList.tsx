@@ -13,6 +13,7 @@ type Props = {
     display: ReactNode;
     value: string;
     description?: string;
+    disabled?: boolean;
   }>;
   /** Value of the radio input element that should be checked **/
   value?: string;
@@ -51,7 +52,7 @@ class RadioList extends React.Component<Props> {
     return (
       <ul className={className}>
         {this.props.items.map(item => (
-          <li key={item.value}>
+          <li key={item.value} className={item.disabled ? 'disabled' : ''}>
             <label>
               <input type="radio"
                 name={this.props.name}
@@ -59,6 +60,7 @@ class RadioList extends React.Component<Props> {
                 checked={item.value === this.props.value}
                 onChange={this.onChange}
                 required={required}
+                disabled={item.disabled}
               />
               {' '}{item.display}{' '}
               {item.description != null &&

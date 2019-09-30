@@ -5,6 +5,14 @@ ul.wdk-RadioList {
   margin-left: -1em;
 }
 
+ul.wdk-RadioList li {
+  margin: .4em 0;
+}
+
+ul.wdk-RadioList li.disabled {
+  color: gray;
+}
+
 ul.wdk-RadioList li span {
   margin-left: 0.5em
 }
