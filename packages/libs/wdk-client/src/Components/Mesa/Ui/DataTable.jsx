@@ -21,6 +21,7 @@ class DataTable extends React.Component {
     this.shouldUseStickyHeader = this.shouldUseStickyHeader.bind(this);
     this.handleTableBodyScroll = this.handleTableBodyScroll.bind(this);
     this.handleWindowResize = debounce(this.handleWindowResize.bind(this), 250);
+    this.setDynamicWidths = debounce(this.setDynamicWidths.bind(this), 250, { leading: true });
   }
 
   shouldUseStickyHeader () {
@@ -36,6 +37,7 @@ class DataTable extends React.Component {
   componentDidMount () {
     this.setDynamicWidths();
     window.addEventListener('resize', this.handleWindowResize, { passive: true });
+    this.attachLoadEventHandlers();
   }
 
   componentDidUpdate(prevProps) {
@@ -43,7 +45,8 @@ class DataTable extends React.Component {
       this.props.rows !== prevProps.rows ||
       this.props.columns.map(c => c.name).toString() !== prevProps.columns.map(c => c.name).toString()
     ) {
-      this.setState({ dynamicWidths: null, tableWrapperWidth: null }, () => this.setDynamicWidths()); // eslint-disable-line react/no-did-update-set-state
+      this.setDynamicWidths();
+      this.attachLoadEventHandlers();
     }
   }
 
@@ -51,20 +54,32 @@ class DataTable extends React.Component {
     window.removeEventListener('resize', this.handleWindowResize, { passive: true });
   }
 
+  attachLoadEventHandlers() {
+    if (this.bodyNode == null) return;
+    this.bodyNode.querySelectorAll('img, iframe, object').forEach(node => {
+      if (node.complete) return;
+      node.addEventListener('load', this.setDynamicWidths);
+    });
+  }
+
   setDynamicWidths () {
-    const { columns } = this.props;
-    const hasSelectionColumn = this.hasSelectionColumn();
-    const { contentTable, getInnerCellWidth } = this;
-    if (!contentTable) return;
-    const contentCells = Array.from(contentTable.querySelectorAll('tbody > tr > td'));
-    if (hasSelectionColumn) {
-      contentCells.shift();
-    }
-    const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
-    this.setState({ dynamicWidths }, () => {
-      window.dispatchEvent(new CustomEvent('MesaReflow'));
-      const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
-      this.setState({ tableWrapperWidth });
+    this.setState({ dynamicWidths: null, tableWrapperWidth: null }, () => {
+      this.widthCache = {};
+      const { columns } = this.props;
+      const hasSelectionColumn = this.hasSelectionColumn();
+      const { contentTable, getInnerCellWidth } = this;
+      if (!contentTable) return;
+      const contentCells = Array.from(contentTable.querySelectorAll('tbody > tr:first-child > td'));
+      if (hasSelectionColumn) {
+        contentCells.shift();
+      }
+      const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
+      console.debug('dynamicWidths updating', dynamicWidths);
+      this.setState({ dynamicWidths }, () => {
+        window.dispatchEvent(new CustomEvent('MesaReflow'));
+        const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
+        this.setState({ tableWrapperWidth });
+      });
     });
   }
 
@@ -87,7 +102,7 @@ class DataTable extends React.Component {
   }
 
   handleWindowResize() {
-    this.setState({ dynamicWidths: null, tableWrapperWidth: null }, () => this.setDynamicWidths());
+    this.setDynamicWidths();
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
