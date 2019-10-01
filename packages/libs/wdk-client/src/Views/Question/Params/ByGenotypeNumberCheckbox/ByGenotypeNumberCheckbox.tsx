@@ -298,11 +298,11 @@ export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberC
   }, [ onParamValueChange, orderedCheckedValues ] );
 
   return (
-    <>
-      <b>Description:</b>
+    <React.Fragment>
+      <span className={"DescriptionHeader"}>Description:</span>{' '}
       Shown below is a table of identified RFLP Genotypes (Chunlei Su). 
       Use the check boxes on the left to search for associated isolates. 
-      Click {<a href="/Standards_gel_pics.pdf">here</a>} for RFLP images in PDF format.
+      Click {<a href="/Standards_gel_pics.pdf" target="_blank">here</a>} for RFLP images in PDF format.
       <table>
         <AnnotationsRow />
         <HeaderRow />
@@ -311,6 +311,6 @@ export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberC
           checkedValues={checkedValues} 
         />
       </table>
-    </>
+    </React.Fragment>
   );
 };
