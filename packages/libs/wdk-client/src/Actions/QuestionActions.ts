@@ -363,7 +363,7 @@ function enableSubmission(payload: EnableSubmissionAction['payload']): EnableSub
   };
 }
 
-export const reportSubmissionError = curry((searchName: string, error: any): EnableSubmissionAction => {
+export const reportSubmissionError = (searchName: string, error: any): EnableSubmissionAction => {
   const isValidationError = 'status' in error && 'response' in error && error.status === 422;
   const stepValidation = isValidationError ? JSON.parse(error.response) : undefined;
 
@@ -372,4 +372,4 @@ export const reportSubmissionError = curry((searchName: string, error: any): Ena
   }
 
   return enableSubmission({ searchName, stepValidation });
-});
+};
