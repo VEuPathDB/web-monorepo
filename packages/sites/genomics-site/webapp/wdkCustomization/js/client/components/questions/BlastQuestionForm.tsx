@@ -343,7 +343,7 @@ const useSubmissionMetadata = (
                 }));
               })
               .catch(error => {
-                dispatchAction(reportSubmissionError(pageSearchName, error));
+                dispatchAction(reportSubmissionError(pageSearchName, error, wdkService));
               });
           }
         } as SubmissionMetadata, 
