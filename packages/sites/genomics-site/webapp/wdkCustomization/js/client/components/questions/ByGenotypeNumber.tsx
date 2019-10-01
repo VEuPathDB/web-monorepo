@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { SubmitButton, Props, QuestionHeader, QuestionDescription, useDefaultOnSubmit } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { SubmitButton, Props, QuestionHeader, useDefaultOnSubmit } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
-import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
+import './ByGenotypeNumber.scss';
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -36,7 +36,6 @@ export const ByGenotypeNumber: React.FunctionComponent<Props> = ({
           <SubmitButton submissionMetadata={submissionMetadata} submitting={submitting} submitButtonText={submitButtonText} />
         </div>
       </form>
-      <QuestionDescription description={description} navigatingToDescription={false} />
     </div>
   );
 };
