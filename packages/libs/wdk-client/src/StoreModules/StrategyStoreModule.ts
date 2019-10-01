@@ -348,7 +348,7 @@ async function getFulfillStrategy_SaveAs(
         await wdkService.updateStepSearchConfig(duplicateStepId, duplicateSearchConfig);
         return fulfillDraftStrategy(await wdkService.getStrategy(duplicateStrategyId), strategyId);
       } catch (error) {
-        return reportSubmissionError(searchName, error);
+        return reportSubmissionError(searchName, error, wdkService);
       }
     }
 
@@ -356,7 +356,7 @@ async function getFulfillStrategy_SaveAs(
       await wdkService.updateStepSearchConfig(stepId, searchConfig);
       return fulfillStrategy(await wdkService.getStrategy(strategyId));
     } catch (error) {
-      return reportSubmissionError(strategy.steps[stepId].searchName, error);
+      return reportSubmissionError(strategy.steps[stepId].searchName, error, wdkService);
     }
   }
 
@@ -371,7 +371,7 @@ async function getFulfillStrategy_SaveAs(
       const { id: newStepId } = await wdkService.createStep(newStepSpec);
       const strategyEntry = state$.value.strategies.strategies[strategyId];
 
-      if (strategyEntry == null || strategyEntry.isLoading || strategyEntry.strategy == null) {
+      if (strategyEntry == null || strategyEntry.strategy == null) {
         throw new Error(`Tried to replace strategy #${strategyId}, which is pending`);
       }
 
@@ -382,7 +382,7 @@ async function getFulfillStrategy_SaveAs(
         replaceStep(oldStepTree, oldStepId, newStepId)
       );
     } catch (error) {
-      return reportSubmissionError(newStepSpec.searchName, error);
+      return reportSubmissionError(newStepSpec.searchName, error, wdkService);
     }
   }
 

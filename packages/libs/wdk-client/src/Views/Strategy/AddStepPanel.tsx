@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { curry } from 'lodash';
-
 import { reportSubmissionError } from 'wdk-client/Actions/QuestionActions';
 import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
@@ -34,7 +32,7 @@ type StateProps = {
 type DispatchProps = {
   loadStrategy: (strategyId: number) => void,
   requestPutStrategyStepTree: (strategyId: number, newStepTree: StepTree) => void,
-  reportSubmissionError: (searchName: string, error: any) => void
+  reportSubmissionError: typeof reportSubmissionError
 };
 
 type OwnProps = {
@@ -60,7 +58,7 @@ export type AddStepOperationMenuProps = {
   recordClasses: RecordClass[],
   recordClassesByUrlSegment: Record<string, RecordClass>,
   onHideInsertStep: () => void,
-  reportSubmissionError: (searchName: string, error: any) => void
+  reportSubmissionError: typeof reportSubmissionError
 };
 
 export type AddStepOperationFormProps = {
@@ -80,7 +78,7 @@ export type AddStepOperationFormProps = {
   recordClasses: RecordClass[],
   recordClassesByUrlSegment: Record<string, RecordClass>,
   onHideInsertStep: () => void,
-  reportSubmissionError: (searchName: string, error: any) => void
+  reportSubmissionError: typeof reportSubmissionError
 };
 
 export const AddStepPanelView = wrappable((

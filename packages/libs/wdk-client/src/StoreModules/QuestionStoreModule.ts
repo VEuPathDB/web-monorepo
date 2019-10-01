@@ -492,7 +492,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           }
         }
       }
-    }).catch(error => reportSubmissionError(action.payload.searchName, error))
+    }).catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
   })
 )
 

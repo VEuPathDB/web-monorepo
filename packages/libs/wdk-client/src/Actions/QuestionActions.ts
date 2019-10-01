@@ -363,12 +363,13 @@ function enableSubmission(payload: EnableSubmissionAction['payload']): EnableSub
   };
 }
 
-export const reportSubmissionError = (searchName: string, error: any): EnableSubmissionAction => {
+export const reportSubmissionError = (searchName: string, error: any, wdkService: WdkService): EnableSubmissionAction => {
   const isValidationError = 'status' in error && 'response' in error && error.status === 422;
   const stepValidation = isValidationError ? JSON.parse(error.response) : undefined;
 
   if (!isValidationError) {
     alert('Oops... something went wrong!', 'An error was encountered.');
+    wdkService.submitErrorIfNot500(error);
   }
 
   return enableSubmission({ searchName, stepValidation });
