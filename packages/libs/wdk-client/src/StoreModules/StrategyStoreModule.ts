@@ -37,8 +37,9 @@ import {
   fulfillSaveAsStrategy,
   cancelStrategyRequest,
   cancelRequestDeleteOrRestoreStrategies as cancelDeleteOrRestoreStrategies,
+  requestCombineWithBasket
 } from 'wdk-client/Actions/StrategyActions';
-import { removeStep, getStepIds, replaceStep, mapStepTreeIds } from 'wdk-client/Utils/StrategyUtils';
+import { removeStep, getStepIds, replaceStep, mapStepTreeIds, addStep } from 'wdk-client/Utils/StrategyUtils';
 import {confirm, alert} from 'wdk-client/Utils/Platform';
 
 export const key = 'strategies';
@@ -68,7 +69,8 @@ export function reduce(state: State = initialState, action: Action): State {
   case requestDeleteStep.type:
   case requestRemoveStepFromStepTree.type:
   case requestUpdateStepSearchConfig.type:
-  case requestReplaceStep.type: {
+  case requestReplaceStep.type: 
+  case requestCombineWithBasket.type: {
     const strategyId  = action.payload.strategyId;
     return updateStrategyEntry(state, strategyId, prevEntry => ({
       ...prevEntry,
@@ -465,6 +467,73 @@ async function getFulfillNewSearch(
 
   return redirectToNewSearch(newStrategyId, newStepId);
 }
+
+async function getFulfillCombineWithBasket(
+  [requestCombineWithBasketAction]: [InferAction<typeof requestCombineWithBasket>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof requestPutStrategyStepTree>> {
+  const {
+    strategyId,
+    basketRecordClass,
+    basketSearchUrlSegment,
+    basketDatasetParamName,
+    basketSearchDisplayName,
+    booleanSearchUrlSegment,
+    booleanSearchParamValues,
+    booleanSearchDisplayName,
+    addType
+  } = requestCombineWithBasketAction.payload;
+
+  const strategyEntry = state$.value.strategies.strategies[strategyId];
+
+  if (strategyEntry == null || strategyEntry.strategy == null) {
+    throw new Error(`Tried to combine your basket in strategy #${strategyId}, which is pending`);
+  }
+
+  const datasetId = await wdkService.createDataset({
+    sourceType: 'basket',
+    sourceContent: {
+      basketName: basketRecordClass
+    }
+  });
+
+  const [{ id: basketStepId }, { id: booleanStepId }] = await Promise.all([
+    wdkService.createStep({
+      searchName: basketSearchUrlSegment,
+      searchConfig: {
+        parameters: {
+          [basketDatasetParamName]: `${datasetId}`
+        }
+      },
+      customName: basketSearchDisplayName
+    }),
+    wdkService.createStep({
+      searchName: booleanSearchUrlSegment,
+      searchConfig: {
+        parameters: booleanSearchParamValues
+      },
+      customName: booleanSearchDisplayName
+    })
+  ]);
+
+  const oldStepTree = strategyEntry.strategy.stepTree;
+  const newStepTree = addStep(
+    oldStepTree,
+    addType,
+    booleanStepId,
+    {
+      stepId: basketStepId,
+      primaryInput: undefined,
+      secondaryInput: undefined
+    }
+  );
+
+  return requestPutStrategyStepTree(
+    strategyId,
+    newStepTree
+  );
+}
   
   export const observe = combineEpics(
     mrate([requestStrategy], getFulfillStrategy, {
@@ -492,4 +561,5 @@ async function getFulfillNewSearch(
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
     mrate([requestCreateStrategy, fulfillCreateStrategy], getFulfillNewSearch),
+    mrate([requestCombineWithBasket], getFulfillCombineWithBasket)
   );

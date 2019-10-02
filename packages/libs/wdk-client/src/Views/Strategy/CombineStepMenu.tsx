@@ -4,10 +4,10 @@ import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
 import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
+import { requestCombineWithBasket } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
@@ -16,6 +16,7 @@ import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPane
 import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
+import { AddType } from 'wdk-client/Views/Strategy/Types';
 import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepMenu.scss';
@@ -99,7 +100,18 @@ type DispatchProps = {
     parameter: Parameter,
     paramValues: Record<string, string>,
     paramValue: string
-  }) => void
+  }) => void,
+  startCombiningWithBasket: (
+    strategyId: number,
+    basketRecordClass: string,
+    basketSearchUrlSegment: string,
+    basketDatasetParamName: string,
+    basketSearchDisplayName: string,
+    booleanSearchUrlSegment: string,
+    booleanSearchParamValues: Record<string, string>,
+    booleanSearchDisplayName: string,
+    addType: AddType
+  ) => void
 };
 
 type MergedProps = {
@@ -121,33 +133,17 @@ export const CombineStepMenuView = (
     loadBooleanQuestion,
     inputRecordClass,
     updateBooleanOperator,
-    updateStrategy,
     startOperationForm,
     operandStep,
-    onHideInsertStep
+    onHideInsertStep,
+    startCombiningWithBasket,
+    strategy,
+    addType
   }: Props
 ) => {
-  const [ basketButtonClicked, setBasketButtonClicked ] = useState(false);
-
   useEffect(() => {
     loadBooleanQuestion(booleanSearchUrlSegment);
   }, [ booleanSearchUrlSegment ]);
-
-  useWdkEffect(wdkService => {
-    if (basketButtonClicked && basketSearchShortDisplayName && booleanSearchState) {
-      submitBasket(
-        wdkService,
-        basketDatasetParamName,
-        basketSearchShortDisplayName,
-        basketSearchUrlSegment,
-        booleanSearchState,
-        booleanSearchUrlSegment,
-        inputRecordClass,
-        updateStrategy,
-        onHideInsertStep
-      );
-    }
-  }, [ basketButtonClicked ]);
 
   const onOperatorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     updateBooleanOperator(e.target.value);
@@ -158,8 +154,33 @@ export const CombineStepMenuView = (
   }, []);
 
   const onCombineWithBasketClicked = useCallback((_: React.MouseEvent) => {
-    setBasketButtonClicked(true);
-  }, []);
+    if (basketSearchShortDisplayName && booleanSearchState) {
+      onHideInsertStep();
+      startCombiningWithBasket(
+        strategy.strategyId,
+        inputRecordClass.urlSegment,
+        basketSearchUrlSegment,
+        basketDatasetParamName,
+        basketSearchShortDisplayName,
+        booleanSearchUrlSegment,
+        booleanSearchState.paramValues,
+        booleanSearchState.question.displayName,
+        addType
+      );
+    }
+  }, 
+  [ 
+    onHideInsertStep, 
+    startCombiningWithBasket,
+    strategy.strategyId, 
+    inputRecordClass.urlSegment, 
+    basketSearchUrlSegment, 
+    basketDatasetParamName ,
+    basketSearchShortDisplayName,
+    booleanSearchUrlSegment,
+    booleanSearchState,
+    addType
+  ]);
 
   const onCombineWithNewSearchClicked = useCallback((newSearchUrlSegment: string) => {
     startOperationForm('combine-with-new-search', newSearchUrlSegment);
@@ -242,7 +263,7 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
       )
     },
     updateParamValue: compose(dispatch, updateParamValue),
-    requestPutStrategyStepTree: compose(dispatch, requestPutStrategyStepTree)
+    startCombiningWithBasket: compose(dispatch, requestCombineWithBasket)
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
@@ -270,7 +291,9 @@ const submitBasket = async (
   booleanSearchUrlSegment: string,
   recordClass: RecordClass,
   updateStrategy: (newStepId: number, newSecondaryInput: StepTree) => void,
-  onHideInsertStep: () => void
+  onHideInsertStep: () => void,
+  startCombiningWithBasket: DispatchProps['startCombiningWithBasket'],
+  strategyId: number
 ) => {
   onHideInsertStep();
 

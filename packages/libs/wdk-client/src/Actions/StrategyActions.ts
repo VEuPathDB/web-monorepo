@@ -2,6 +2,7 @@ import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUt
 import { NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec, SaveStrategyOptions } from "wdk-client/Utils/WdkUser";
 import { Answer, StandardReportConfig, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
+import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 export const requestCreateStrategy = makeActionCreator(
     'requestCreateStrategy',
@@ -176,6 +177,31 @@ export const redirectToNewSearch = makeActionCreator(
     (newStrategyId: number, newStepId: number) => ({ newStrategyId, newStepId })
 );
 
+export const requestCombineWithBasket = makeActionCreator(
+    'requestCombineWithBasket',
+    (
+        strategyId: number,
+        basketRecordClass: string,
+        basketSearchUrlSegment: string,
+        basketDatasetParamName: string,
+        basketSearchDisplayName: string,
+        booleanSearchUrlSegment: string,
+        booleanSearchParamValues: Record<string, string>,
+        booleanSearchDisplayName: string,
+        addType: AddType
+    ) => ({ 
+        strategyId,
+        basketRecordClass,
+        basketSearchUrlSegment,
+        basketDatasetParamName,
+        basketSearchDisplayName,
+        booleanSearchUrlSegment,
+        booleanSearchParamValues,
+        booleanSearchDisplayName,
+        addType
+    })
+);
+
 export type Action = InferAction<
   | typeof cancelStrategyRequest
   | typeof requestCreateStrategy
@@ -211,5 +237,6 @@ export type Action = InferAction<
   | typeof requestDeleteStep
   | typeof fulfillDeleteStep
   | typeof redirectToNewSearch
+  | typeof requestCombineWithBasket
   >
 
