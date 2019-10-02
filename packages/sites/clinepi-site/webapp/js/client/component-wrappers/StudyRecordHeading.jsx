@@ -62,7 +62,7 @@ function mapStateToProps(state) {
           .take(1)
           .flatMap(question =>
             Seq.from(recordClasses)
-              .filter(recordClass => question.recordClassName === recordClass.fullName)
+              .filter(recordClass => question.outputRecordClassName === recordClass.urlSegment)
               .map(recordClass => ({ question, recordClass }))
               .take(1)))
       .toArray();
