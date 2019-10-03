@@ -64,10 +64,9 @@ class FavoritesListController extends PageController<Props> {
     return 'Favorites';
   }
 
-  loadData() {
+  loadData(prevProps?: Props) {
     // only load favorites on initial mount
-    if (this.props.stateProps.tableState) return;
-    this.props.dispatchProps.loadFavoritesList();
+    if (prevProps == null) this.props.dispatchProps.loadFavoritesList();
   }
 
   isRenderDataLoaded() {
