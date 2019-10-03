@@ -53,6 +53,11 @@
 
   &--TableCell {
 
+    &__name.DataCell {
+      overflow: visible;
+      white-space: break-spaces;
+    }
+
     &__isPublic {
       text-align: center;
     }

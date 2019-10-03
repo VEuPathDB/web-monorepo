@@ -18,6 +18,7 @@ import LoadingOverlay from 'wdk-client/Components/Loading/LoadingOverlay';
 
 import './AllStrategies.scss';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
+import {OverflowingTextCell} from 'wdk-client/Views/Strategy/OverflowingTextCell';
 
 const cx = makeClassNameHelper('AllStrategies');
 
@@ -161,17 +162,21 @@ function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePub
         const path = row.isValid ? `${row.strategyId}/${row.rootStepId}` : row.strategyId;
         return (
           <React.Fragment>
-            <Link to={`/workspace/strategies/${path}`}>{value + (isSaved ? '' : ' *')}</Link>
+            <Link to={`/workspace/strategies/${path}`}>
+              {value}
+            </Link>
           </React.Fragment>
         );
-      })
+      }),
+      width: '25em'
     },
     {
       key: 'description',
       name: 'Description',
       className: cx('--TableCell', 'description'),
       renderCell: ({ value, row }: CellRenderProps<string>) =>
-        value || !row.nameOfFirstStep ? <TruncatedText value={value}/> : <em>{row.nameOfFirstStep}</em>
+        <OverflowingTextCell value={value || row.nameOfFirstStep || ''}/>,
+      width: '25em'
     },
     {
       key: 'leafAndTransformStepCount',
@@ -206,14 +211,16 @@ function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePub
       name: 'Created',
       className: cx('--TableCell', 'createdTime'),
       sortable: true,
-      renderCell: formatDateTime
+      renderCell: formatDateTime,
+      width: '9em'
     },
     {
       key: 'lastModified',
       name: 'Modified',
       className: cx('--TableCell', 'lastModified'),
       sortable: true,
-      renderCell: formatDateTime
+      renderCell: formatDateTime,
+      width: '9em'
     },
     {
       key: 'releaseVersion',
