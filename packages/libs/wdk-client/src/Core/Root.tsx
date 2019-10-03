@@ -12,6 +12,7 @@ import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 import WdkService, { WdkServiceContext } from 'wdk-client/Service/WdkService';
+import LoginRequiredDisclaimer from 'wdk-client/Views/User/LoginRequiredDisclaimer';
 
 type Props = {
   rootUrl: string,
@@ -92,8 +93,18 @@ export default class Root extends React.Component<Props> {
                 <Page>
                   <React.Fragment>
                     <Switch>
-                      {this.props.routes.map(({ path, exact = true, component }) => (
-                        <Route key={path} exact={exact == null ? false: exact} path={path} component={component} />
+                      {this.props.routes.map(({ path, exact = true, component: RouteComponent, requiresLogin }) => (
+                        <Route
+                          key={path}
+                          exact={exact == null ? false: exact}
+                          path={path}
+                          render={props => {
+                            if (RouteComponent == null) return null;
+                            if (requiresLogin) return <LoginRequiredDisclaimer><RouteComponent {...props}/></LoginRequiredDisclaimer>
+                            return <RouteComponent {...props}/>
+                            }
+                          }
+                        />
                       ))}
                     </Switch>
                     <LoginFormController />

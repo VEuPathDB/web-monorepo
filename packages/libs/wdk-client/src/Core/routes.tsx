@@ -141,11 +141,13 @@ const routes: RouteEntry[] = [
 
   {
     path: '/workspace/basket',
+    requiresLogin: true,
     component: BasketController
   },
 
   {
     path: '/workspace/datasets',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{}>) => {
       const { history, location } = props;
       return <UserDatasetListController history={history} location={location}/>
@@ -154,6 +156,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/workspace/datasets/:id',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{ id: string }>) => {
       // FIXME Remove this requirement from the component by updating action creators
       const rootUrl = window.location.href.substring(
@@ -189,6 +192,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/workspace/favorites',
+    requiresLogin: true,
     component: () => <FavoritesController/>
   },
 
@@ -204,6 +208,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/user-comments/add',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{}>) => {
       const parsedProps = parseUserCommentQueryString(props);
       return (
@@ -214,6 +219,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/user-comments/edit',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{}>) => {
       const parsedProps = parseUserCommentQueryString(props);
       return (
