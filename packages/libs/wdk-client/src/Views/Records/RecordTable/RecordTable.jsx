@@ -21,7 +21,10 @@ const sortSpecToOrder = (sortSpec) =>
   [ sortSpec.itemName, sortSpec.direction.toLowerCase() ];
 
 const getColumns = (tableField) =>
-  defaultSortColumn.concat(tableField.attributes);
+  defaultSortColumn.concat(tableField.attributes.map(attr => ({
+    ...attr,
+    sortType: attr.type
+  })));
 
 const getDisplayableAttributes = (tableField) =>
   tableField.attributes.filter(attr => attr.isDisplayable);
