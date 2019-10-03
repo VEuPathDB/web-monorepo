@@ -17,6 +17,7 @@ import Icon from 'wdk-client/Components/Icon/IconAlt';
 import LoadingOverlay from 'wdk-client/Components/Loading/LoadingOverlay';
 
 import './AllStrategies.scss';
+import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 
 const cx = makeClassNameHelper('AllStrategies');
 
@@ -136,7 +137,11 @@ interface CellRenderProps<T> {
   value: T;
 }
 
-const invalidIcon = <i className={`${cx('--InvalidIcon')} fa fa-ban`} />;
+const invalidIcon = (
+  <Tooltip content="Indicates that a strategy is invalid. You can fix errors by opening your strategy and updating steps marked as invalid.">
+    <i className={`${cx('--InvalidIcon')} fa fa-ban`} />
+  </Tooltip>
+)
 
 function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePublicStatus']) {
   return [

@@ -39,11 +39,16 @@
     color: #d62d2d;
   }
 
-  .MesaComponent td {
+  &--TableCell__isValid .HeadingCell-Content {
+    justify-content: flex-end;
+  }
+
+  &--TableCell.DataCell {
     padding: .3em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    vertical-align: middle;
   }
 
   &--TableCell {
@@ -51,6 +56,12 @@
     &__isPublic {
       text-align: center;
     }
+
+    &__isValid.DataCell {
+      text-align: right;
+      padding-left: 10px;
+      padding-right: 10px;
+    }  
 
     &__leafAndTransformStepCount,
     &__estimatedSize {
