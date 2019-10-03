@@ -2,7 +2,6 @@ import React, { ReactNode, useContext, useMemo, useCallback } from 'react';
 
 import { pick, toUpper } from 'lodash/fp';
 
-import { requestUpdateStepSearchConfig, requestReplaceStep } from 'wdk-client/Actions/StrategyActions';
 import { Question, RecordClass, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import { Step, StrategyDetails, NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationMenuProps, AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
@@ -145,39 +144,21 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
                   question.outputRecordClassName === outputRecordClass &&
                   question.allowedPrimaryInputRecordClassNames.includes(primaryInputRecordClass) &&
                   question.allowedSecondaryInputRecordClassNames.includes(secondaryInputRecordClass)
-                ) ||
-                ( // Needed to handle the special case of "ignore" combine operators - maybe these operators could get their own questions?
-                  name === 'combine' &&
-                  question.outputRecordClassName === outputRecordClass
                 )
               )
           );
-
-          // Also needed to handle the special case of "ignore" combine operators
-          // const parameterValues = name === 'combine' && primaryInputRecordClass === secondaryInputRecordClass
-          //   ? [
-          //       ...operatorMenuGroup.items.map(({ value }) => value),
-          //       'LONLY',
-          //       'RONLY'
-          //     ]
-          //   : name === 'combine' && primaryInputRecordClass !== secondaryInputRecordClass
-          //   ? [ 
-          //       'LONLY',
-          //       'RONLY'
-          //     ]
-          //   : operatorMenuGroup.items.map(({ value }) => value);
 
           const parameterValues = [
             ...operatorMenuGroup.items.map(({ value }) => value),
             ...(name === 'combine' ? [ 'LONLY', 'RONLY' ] : [])
           ];
   
-          const newMetadataEntries = parameterValues.reduce(
+          const newMetadataEntries = operationQuestion && parameterValues.reduce(
             (memo, itemValue) => ({
               ...memo,
               [itemValue]: {
                 operatorName: name,
-                searchName: operationQuestion && operationQuestion.urlSegment,
+                searchName: operationQuestion.urlSegment,
                 paramName: operatorParamName,
                 baseClassName,
                 paramValue: itemValue,
@@ -209,15 +190,7 @@ export type ReviseOperatorMenuGroup = {
   items: ReviseOperatorMenuItem[]
 }
 
-const ignoreOperatorsPrimaryInputDifferentType: ReviseOperatorMenuItem[] = [
-  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
-];
-
-const ignoreOperatorsSecondaryInputDifferentType: ReviseOperatorMenuItem[] = [
-  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY', iconClassName: cxOperator('--CombineOperator', 'LONLY') }
-];
-
-const ignoreOperatorsInputsSameType: ReviseOperatorMenuItem[] = [
+const ignoreOperators: ReviseOperatorMenuItem[] = [
   { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY', iconClassName: cxOperator('--CombineOperator', 'LONLY') },
   { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
 ];
@@ -252,25 +225,23 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
   );
 
   const reviseOperatorConfigs = useMemo(
-    () => reviseOperatorConfigsWithoutIgnore && [
-      ...reviseOperatorConfigsWithoutIgnore,
-      {
-        name: 'ignore_boolean_operators',
-        display: 'Ignore one of the inputs',
-        items: primaryInputRecordClass !== outputRecordClass
-          ? ignoreOperatorsPrimaryInputDifferentType
-          : secondaryInputRecordClass !== outputRecordClass
-          ? ignoreOperatorsSecondaryInputDifferentType
-          : ignoreOperatorsInputsSameType
-      }
-    ],
+    () => !reviseOperatorConfigsWithoutIgnore 
+      ? undefined
+      : primaryInputRecordClass !== secondaryInputRecordClass
+      ? reviseOperatorConfigsWithoutIgnore
+      : [
+          ...reviseOperatorConfigsWithoutIgnore,
+          {
+            name: 'ignore_boolean_operators',
+            display: 'Ignore one of the inputs',
+            items: ignoreOperators
+          }
+        ],
     [ 
       reviseOperatorConfigsWithoutIgnore, 
-      primaryInputRecordClass, 
-      secondaryInputRecordClass, 
-      ignoreOperatorsPrimaryInputDifferentType,
-      ignoreOperatorsSecondaryInputDifferentType,
-      ignoreOperatorsInputsSameType
+      ignoreOperators,
+      primaryInputRecordClass,
+      secondaryInputRecordClass
     ]
   );
   
