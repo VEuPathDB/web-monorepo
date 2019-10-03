@@ -82,11 +82,21 @@ export const apiBinaryOperations: BinaryOperation[] = [
               }
             );
           } else {
+            const { span_a, span_b, ...nonAnswerParams } = colocationStepSpec.searchConfig.parameters
+
             requestReplaceStep(
               strategy.strategyId,
               step.id,
               {
                 ...colocationStepSpec,
+                searchConfig: {
+                  ...colocationStepSpec.searchConfig,
+                  parameters: {
+                    ...nonAnswerParams,
+                    span_a: '',
+                    span_b: ''
+                  }
+                },
                 searchName
               }
             )
