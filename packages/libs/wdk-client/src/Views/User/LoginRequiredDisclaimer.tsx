@@ -35,7 +35,7 @@ function LoginRequiredDisclaimer(props: Props) {
   return (
     <div style={style}>
       <h3>It looks like you are not logged in.</h3>
-      <p><i className="fa fa-user-secret fa-5x"/></p>
+      <p><i className="fa fa-user-o fa-5x"/></p>
       <p>To use this page, please <Link to={`/user/login?destination=${destination}`}>log in</Link> or <Link to={`/user/register`}>register</Link>.</p>
     </div>
   );
