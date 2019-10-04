@@ -30,7 +30,7 @@ export function filterRecords(records: RecordInstance[], filterSpec: FilterSpec)
 /**
  * Strip HTML characters from a string.
  */
-function stripHTML(str: string): string {
+export function stripHTML(str: string): string {
   let span = document.createElement('span');
   span.innerHTML = str;
   return span.textContent || '';
