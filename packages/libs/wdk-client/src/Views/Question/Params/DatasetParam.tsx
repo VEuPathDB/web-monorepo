@@ -250,12 +250,30 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
     from(services.wdkService.getCurrentUser()).pipe(
       mergeMap(user => {
         const { searchName, parameter, paramValues } = action.payload;
-        if (user.isGuest || !isType(parameter)) return EMPTY;
+
+        if (!isType(parameter)) return EMPTY;
+
+        const initializeIdList$ = !paramValues[parameter.name]
+          ? EMPTY
+          : services.wdkService.getDataset(+paramValues[parameter.name]).then(
+            datasetParamItems => setIdList({
+              searchName,
+              paramValues,
+              parameter: (parameter as DatasetParam),
+              idList: datasetParamItems
+                .map(datasetParamItem =>
+                  datasetParamItem.filter(id => id !== null).join('______')
+                )
+                .join(', ')
+            })
+          );
+
+        if (user.isGuest) return initializeIdList$;
         // load basket count and strategy list
         const questionState = state$.value.questions[searchName]
         const recordClassName = questionState && questionState.recordClass.urlSegment;
 
-        if (recordClassName == null) return EMPTY;
+        if (recordClassName == null) return initializeIdList$;
 
         return merge(
           services.wdkService.getBasketCounts().then(
@@ -274,7 +292,8 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
               strategyList: orderBy(strategies, strategy => !strategy.isSaved)
                 .filter(strategy => strategy.recordClassName === recordClassName)
             })
-          )
+          ),
+          initializeIdList$
         );
       })
     )
