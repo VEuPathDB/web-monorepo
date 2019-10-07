@@ -12,8 +12,8 @@ import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import { QuestionWithParameters, Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
 import { valueToArray, isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { datasetItemToString, DatasetItem } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
-import { datasetItemToString, DatasetItem } from '../Question/Params/Utils';
 
 interface MappedProps {
   question?: QuestionWithParameters;
