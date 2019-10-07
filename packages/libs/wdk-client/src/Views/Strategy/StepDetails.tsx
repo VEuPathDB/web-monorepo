@@ -5,14 +5,15 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { requestQuestionWithParameters } from 'wdk-client/Actions/QuestionWithParametersActions';
 import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
 import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { QuestionWithParameters, Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
-import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
-import { valueToArray, isEnumParam } from '../Question/Params/EnumParamUtils';
-import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import { getFilterValueDisplay } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { FilterWithFieldDisplayName } from 'wdk-client/Components/AttributeFilter/Types';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
+import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
+import { QuestionWithParameters, Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
+import { valueToArray, isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { datasetItemToString, DatasetItem } from '../Question/Params/Utils';
 
 interface MappedProps {
   question?: QuestionWithParameters;
@@ -26,7 +27,7 @@ interface DispatchProps {
 function StepDetails({ stepTree, question, assignWeight, requestQuestionWithParameters }: StepDetailProps<UiStepTree> & DispatchProps & MappedProps) {
   const { step } = stepTree;
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
-  const [ datasetParamItems, setDatasetParamItems ] = useState<Record<string, (string | null)[][]> | undefined>(undefined);
+  const [ datasetParamItems, setDatasetParamItems ] = useState<Record<string, DatasetItem[]> | undefined>(undefined);
 
   useEffect(() => {
     setDatasetParamItems(undefined);
@@ -54,9 +55,9 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
         setDatasetParamItems(paramsWithItemValues.reduce(
           (memo, [ param, itemArray ]) => ({
             ...memo,
-            [(param as Parameter).name]: itemArray as (string | null)[][]
+            [(param as Parameter).name]: itemArray as DatasetItem[]
           }),
-          {} as Record<number, (string | null)[][]>
+          {} as Record<number, DatasetItem[]>
         ));
       }
     })();
@@ -111,7 +112,7 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
 function formatParameterValue(
   parameter: Parameter, 
   value: string | undefined, 
-  datasetParamItems: Record<string, (string | null)[][]> | undefined
+  datasetParamItems: Record<string, DatasetItem[]> | undefined
 ) {
   if (
     !value || 
@@ -181,14 +182,12 @@ function formatFilterValue(value: string) {
 
 function formatDatasetValue(
   parameter: DatasetParam, 
-  datasetParamItems: Record<string, (string | null)[][]> | undefined
+  datasetParamItems: Record<string, DatasetItem[]> | undefined
 ) {
   return !datasetParamItems
     ? <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />
     : datasetParamItems[parameter.name]
-        .map(
-          datasetItem => datasetItem.filter(id => id !== null).join('______')
-        )
+        .map(datasetItemToString)
         .join(', ');
 }
 

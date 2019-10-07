@@ -3,13 +3,14 @@ import React from 'react';
 import { ofType } from 'redux-observable';
 import { EMPTY, from, merge } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import { DatasetParam, Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
+import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from "wdk-client/Utils/WdkUser";
 import {
   Props,
   Context,
   createParamModule,
-  ParamModule
+  ParamModule,
+  datasetItemToString
 } from 'wdk-client/Views/Question/Params/Utils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
@@ -260,11 +261,7 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
               searchName,
               paramValues,
               parameter: (parameter as DatasetParam),
-              idList: datasetParamItems
-                .map(datasetParamItem =>
-                  datasetParamItem.filter(id => id !== null).join('______')
-                )
-                .join(', ')
+              idList: datasetParamItems.map(datasetItemToString).join(', ')
             })
           );
 
