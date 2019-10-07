@@ -114,7 +114,13 @@ const CombineStepDetailsForm = ({
   const { step } = stepTree;
 
   const [ newOperatorValue, setNewOperatorValue ] = useState(currentOperatorValue);
-  const [ isConfiguringOperatorParams, setIsConfiguringOperatorParams ] = useState(false);
+
+  // If there is only one choice of operator value, and that operator requires a form,
+  // jump directly to said form
+  const [ isConfiguringOperatorParams, setIsConfiguringOperatorParams ] = useState(
+    Object.values(compatibleOperatorMetadata).length === 1 &&
+    compatibleOperatorMetadata[newOperatorValue].reviseOperatorParamConfiguration.type === 'form'
+  );
 
   const {
     searchName: newOperatorSearchName,

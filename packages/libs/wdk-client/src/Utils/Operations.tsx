@@ -114,7 +114,7 @@ type AddStepMenuConfig = Pick<BinaryOperation, 'name' | 'AddStepMenuComponent' |
 
 export type OperatorMetadata = {
   operatorName: string,
-  searchName?: string,
+  searchName: string,
   baseClassName: string,
   paramName: string,
   paramValue: string,
