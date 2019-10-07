@@ -68,9 +68,9 @@ export const apiBinaryOperations: BinaryOperation[] = [
       
           const shouldUsePrimaryInputQuestion = colocationStepSpec.searchConfig.parameters['span_output'] === 'a';
       
-          const searchName = shouldUsePrimaryInputQuestion
-            ? colocationQuestionPrimaryInput.urlSegment
-            : colocationQuestionSecondaryInput.urlSegment;
+          const { urlSegment: searchName, shortDisplayName: customName } = shouldUsePrimaryInputQuestion
+            ? colocationQuestionPrimaryInput
+            : colocationQuestionSecondaryInput;
 
           if (step.searchName === searchName) {
             requestUpdateStepSearchConfig(
@@ -97,7 +97,8 @@ export const apiBinaryOperations: BinaryOperation[] = [
                     span_b: ''
                   }
                 },
-                searchName
+                searchName,
+                customName
               }
             )
           }

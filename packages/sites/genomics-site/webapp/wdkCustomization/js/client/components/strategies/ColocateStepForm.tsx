@@ -359,14 +359,15 @@ const ColocationOperatorForm = (
       (colocationStepSpec.searchConfig.parameters['span_output'] === 'a' && !insertingBeforeFirstStep) ||
       (colocationStepSpec.searchConfig.parameters['span_output'] === 'b' && insertingBeforeFirstStep);
 
-    const searchName = shouldUsePrimaryInputQuestion
-      ? colocationQuestionPrimaryInput.urlSegment
-      : colocationQuestionSecondaryInput.urlSegment;
+      const { urlSegment: searchName, shortDisplayName: customName } = shouldUsePrimaryInputQuestion
+        ? colocationQuestionPrimaryInput
+        : colocationQuestionSecondaryInput;
 
     wdkService
       .createStep({
         ...colocationStepSpec,
-        searchName
+        searchName,
+        customName
       })
       .then(({ id }) => {
         updateStrategy(id, secondaryInputStepTree);

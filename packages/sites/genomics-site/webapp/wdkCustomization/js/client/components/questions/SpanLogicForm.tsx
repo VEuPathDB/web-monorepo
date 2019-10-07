@@ -98,7 +98,13 @@ export function SpanLogicForm(
   }, [ urlSegment ]);
 
   useEffect(() => {
-    updateSpanLogicParam('span_output', undefined, !insertingBeforeFirstStep ? 'a' : 'b');
+    if (!paramValues['span_output'] || paramValues['span_output'] === 'none') {
+      updateSpanLogicParam(
+        'span_output', 
+        undefined, 
+        !insertingBeforeFirstStep ? 'a' : 'b'
+      );
+    }
   }, [ urlSegment, insertingBeforeFirstStep ]);
 
   const updateOutputParam = useCallback((newOutputParam: RegionName) => {
@@ -319,19 +325,34 @@ const SpanOutputParam = ({
   typeChangeAllowed,
   currentStepName,
   newStepName
-}: SpanOutputParamProps) => 
-  typeChangeAllowed || (currentStepRecordClass && newStepRecordClass && currentStepRecordClass.urlSegment === newStepRecordClass.urlSegment)
-    ? <select onChange={e => updateOutputParam(e.target.value as RegionName)} value={paramValue}>
+}: SpanOutputParamProps) => {
+  const currentStepRecordClassDisplayName = (currentStepRecordClass && currentStepRecordClass.displayName) || 'Unknown';
+  const newStepRecordClassDisplayName = (newStepRecordClass && newStepRecordClass.displayName) || 'Unknown';
+
+  return (
+    typeChangeAllowed || 
+    (
+      currentStepRecordClass && 
+      newStepRecordClass && 
+      currentStepRecordClass.urlSegment === newStepRecordClass.urlSegment
+    )
+  ) ? <select onChange={e => updateOutputParam(e.target.value as RegionName)} value={paramValue}>
         <option value={!insertingBeforeFirstStep ? 'a' : 'b'}>
-          {currentStepRecordClass ? currentStepRecordClass.displayName : 'Unknown'} from {currentStepName}
+          {currentStepRecordClassDisplayName} from {currentStepName}
         </option>
         <option value={!insertingBeforeFirstStep ? 'b' : 'a'}>
-          {newStepRecordClass ? newStepRecordClass.displayName : 'Unknown'} from {newStepName}
+          {newStepRecordClassDisplayName} from {newStepName}
         </option>   
       </select>
     : <span>
-        {currentStepRecordClass ? currentStepRecordClass.displayName : 'Unknown'} from {currentStepName}
+        {
+          (paramValue !== 'b' && !insertingBeforeFirstStep) || (paramValue !== 'a' && insertingBeforeFirstStep)
+            ? `${currentStepRecordClassDisplayName} from ${currentStepName}`
+            : `${newStepRecordClassDisplayName} from ${newStepName}`
+        }
       </span>;
+};
+
 
 type RegionConfigProps = {
   regionTypeParamValue: RegionType,
