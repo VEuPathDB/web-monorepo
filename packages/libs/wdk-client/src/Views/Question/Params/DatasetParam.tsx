@@ -4,13 +4,13 @@ import { ofType } from 'redux-observable';
 import { EMPTY, from, merge } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import { StrategySummary } from "wdk-client/Utils/WdkUser";
+import { StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { datasetItemToString } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import {
   Props,
   Context,
   createParamModule,
-  ParamModule,
-  datasetItemToString
+  ParamModule
 } from 'wdk-client/Views/Question/Params/Utils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
