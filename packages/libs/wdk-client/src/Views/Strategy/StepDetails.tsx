@@ -9,11 +9,16 @@ import { getFilterValueDisplay } from 'wdk-client/Components/AttributeFilter/Att
 import { FilterWithFieldDisplayName } from 'wdk-client/Components/AttributeFilter/Types';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import { QuestionWithParameters, Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
 import { valueToArray, isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { datasetItemToString, DatasetItem } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
+
+import './StepDetails.scss';
+
+const cx = makeClassNameHelper('StepDetails');
 
 interface MappedProps {
   question?: QuestionWithParameters;
@@ -67,7 +72,7 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
 
   return (
     <React.Fragment>
-      <table>
+      <table className={cx('Table')}>
         <tbody>
           {question && question.parameters
             .filter(parameter => parameter.isVisible)
