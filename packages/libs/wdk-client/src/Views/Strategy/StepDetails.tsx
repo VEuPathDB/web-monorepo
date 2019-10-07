@@ -33,7 +33,7 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
     requestQuestionWithParameters(step.searchName);
   }, [ step.searchName ]);
 
-  useWdkEffect(service => {
+  useWdkEffect(wdkService => {
     (async () => {
       if (question) {
         const nonemptyDatasetParams = question.parameters
@@ -45,7 +45,7 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
 
         const datasetParamItemArrays = await Promise.all(
           nonemptyDatasetParams.map(
-            ({ name }) => service.getDataset(+step.searchConfig.parameters[name])
+            ({ name }) => wdkService.getDataset(+step.searchConfig.parameters[name])
           )
         );
 
