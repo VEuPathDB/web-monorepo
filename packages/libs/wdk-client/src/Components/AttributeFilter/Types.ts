@@ -122,6 +122,8 @@ export type RangeFilter = NumberRangeFilter | DateRangeFilter;
 
 export type Filter = MemberFilter | RangeFilter | MultiFilter;
 
+export type FilterWithFieldDisplayName = Filter & { fieldDisplayName?: string };
+
 export type ValueCounts = Array<{
   value: string | number | null;
   count: number;

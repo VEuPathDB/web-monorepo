@@ -30,5 +30,15 @@ export default (base: ServiceBase) => {
         }).then(response => response.id)
     }
 
-    return { createDataset };
+    function getDataset(id: number): Promise<(string | null)[][]> {
+        return base.sendRequest(
+            Decode.arrayOf(Decode.arrayOf(
+                Decode.oneOf(Decode.string, Decode.nullValue)
+            )), {
+            path: `/users/current/datasets/${id}`,
+            method: 'GET'
+        });
+    }
+
+    return { createDataset, getDataset };
 }

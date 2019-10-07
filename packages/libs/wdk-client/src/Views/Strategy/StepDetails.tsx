@@ -1,13 +1,18 @@
-import { toNumber, toString } from 'lodash';
+import { toNumber, toString, memoize, zip } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestQuestionWithParameters } from 'wdk-client/Actions/QuestionWithParametersActions';
 import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
-import { CollapsibleSection } from 'wdk-client/Components';
+import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
+import { QuestionWithParameters, Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
 import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { valueToArray, isEnumParam } from '../Question/Params/EnumParamUtils';
+import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
+import { getFilterValueDisplay } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { FilterWithFieldDisplayName } from 'wdk-client/Components/AttributeFilter/Types';
+import { useWdkEffect } from 'wdk-client/Service/WdkService';
 
 interface MappedProps {
   question?: QuestionWithParameters;
@@ -21,15 +26,45 @@ interface DispatchProps {
 function StepDetails({ stepTree, question, assignWeight, requestQuestionWithParameters }: StepDetailProps<UiStepTree> & DispatchProps & MappedProps) {
   const { step } = stepTree;
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
+  const [ datasetParamItems, setDatasetParamItems ] = useState<Record<string, (string | null)[][]> | undefined>(undefined);
 
   useEffect(() => {
+    setDatasetParamItems(undefined);
     requestQuestionWithParameters(step.searchName);
   }, [ step.searchName ]);
+
+  useWdkEffect(service => {
+    (async () => {
+      if (question) {
+        const nonemptyDatasetParams = question.parameters
+          .filter(
+            ({ name, type }) => (
+              type === 'input-dataset' && step.searchConfig.parameters[name]
+            )
+          );
+
+        const datasetParamItemArrays = await Promise.all(
+          nonemptyDatasetParams.map(
+            ({ name }) => service.getDataset(+step.searchConfig.parameters[name])
+          )
+        );
+
+        const paramsWithItemValues = zip(nonemptyDatasetParams, datasetParamItemArrays);
+
+        setDatasetParamItems(paramsWithItemValues.reduce(
+          (memo, [ param, itemArray ]) => ({
+            ...memo,
+            [(param as Parameter).name]: itemArray as (string | null)[][]
+          }),
+          {} as Record<number, (string | null)[][]>
+        ));
+      }
+    })();
+  }, [ question ]);
 
   const weight = toString(step.searchConfig.wdkWeight);
 
   return (
-    
     <React.Fragment>
       <table>
         <tbody>
@@ -41,7 +76,7 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
                   {parameter.displayName}
                 </th>
                 <td>
-                  {step.searchConfig.parameters[parameter.name] || <em>No value</em>}
+                  {formatParameterValue(parameter, step.searchConfig.parameters[parameter.name], datasetParamItems) || <em>No value</em>}
                 </td>
               </tr>
             ))}
@@ -71,6 +106,90 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
       </form>
     </React.Fragment>
   );
+}
+
+function formatParameterValue(
+  parameter: Parameter, 
+  value: string | undefined, 
+  datasetParamItems: Record<string, (string | null)[][]> | undefined
+) {
+  if (
+    !value || 
+    parameter.type === 'string' || 
+    parameter.type === 'number' || 
+    parameter.type === 'date' ||
+    parameter.type === 'timestamp' ||
+    parameter.type === 'input-step'
+  ) {
+    return value;
+  } else if (parameter.type === 'date-range' || parameter.type === 'number-range') {
+    return formatRangeParameterValue(value);
+  } else if (isEnumParam(parameter)) {
+    return formatEnumParameterValue(parameter, value);
+  } else if (parameter.type === 'filter') {
+    return formatFilterValue(value);
+  } else {
+    return formatDatasetValue(parameter, datasetParamItems)
+  }
+}
+
+function formatRangeParameterValue(value: string) {
+  try {
+    const { min, max } = JSON.parse(value);
+    
+    return min !== undefined && max !== undefined
+      ? `min:${min},max:${max}`
+      : value;
+  } catch {
+    return value;
+  }
+}
+
+function formatEnumParameterValue(parameter: EnumParam, value: string) {
+  const valueSet = new Set(parameter.multiPick ? valueToArray(value) : [ value ]);
+  const termDisplayPairs = makeTermDisplayPairs(parameter.vocabulary);
+  
+  return termDisplayPairs
+    .filter(([term]) => valueSet.has(term))
+    .map(([, display]) => display)
+    .join(', '); 
+}
+
+const makeTermDisplayPairs = memoize((vocabulary: EnumParam['vocabulary']): [string, string, null][] =>
+  Array.isArray(vocabulary)
+    ? vocabulary
+    : preorderSeq(vocabulary)
+        .filter(node => node.children.length === 0)
+        .map((node): [ string, string, null ] => [ node.data.term, node.data.display, null ])
+        .toArray()
+);
+
+function formatFilterValue(value: string) {
+  try {
+    const { filters } = JSON.parse(value) as { filters: FilterWithFieldDisplayName[] };
+
+    return filters.flatMap((filter, i, coll) => 
+      <React.Fragment key={filter.field}>
+        {filter.fieldDisplayName || filter.field}: {getFilterValueDisplay(filter)}
+        {i < coll.length - 1 ? <><br /><br /></> : null}
+      </React.Fragment>
+    );
+  } catch {
+    return value;
+  }
+}
+
+function formatDatasetValue(
+  parameter: DatasetParam, 
+  datasetParamItems: Record<string, (string | null)[][]> | undefined
+) {
+  return !datasetParamItems
+    ? <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />
+    : datasetParamItems[parameter.name]
+        .map(
+          datasetItem => datasetItem.filter(id => id !== null).join('______')
+        )
+        .join(', ');
 }
 
 function mapStateToProps(state: RootState, props: StepBoxProps): MappedProps {
