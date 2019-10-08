@@ -19,7 +19,7 @@ import {
 
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { getAttributeNames, getTableNames } from 'wdk-client/Views/Records/RecordUtils';
+import { getAttributeNames, getTableNames, stripHTML } from 'wdk-client/Views/Records/RecordUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = {
@@ -91,7 +91,7 @@ class RecordController extends PageController<Props> {
   }
 
   getTitle() {
-    return this.props.recordClass.displayName + ' ' + this.props.record.displayName;
+    return this.props.recordClass.displayName + ' ' + stripHTML(this.props.record.displayName);
   }
 
   getErrorMessage(status: number) {

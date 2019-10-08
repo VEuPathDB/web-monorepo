@@ -12,7 +12,7 @@ import { CheckboxList, TextArea, TextBox, Link, HelpIcon } from 'wdk-client/Comp
 import { UserCommentFormView, UserCommentFormViewProps } from 'wdk-client/Views/UserCommentForm/UserCommentFormView';
 import { get, omit } from 'lodash';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
-import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery } from 'wdk-client/Actions/UserCommentFormActions';
+import { openUserCommentForm, requestSubmitComment, updateFormFields, requestPubmedPreview, closePubmedPreview, addFileToAttach, removeFileToAttach, modifyFileToAttach, removeAttachedFile, updateRawFormFields, changePubmedIdSearchQuery, closeUserCommentForm } from 'wdk-client/Actions/UserCommentFormActions';
 import { UserCommentPostRequest, PubmedPreview, UserCommentAttachedFileSpec, UserCommentAttachedFile, KeyedUserCommentAttachedFileSpec, UserCommentRawFormFields, UserCommentLocation } from 'wdk-client/Utils/WdkUser';
 import { createSelector } from 'reselect';
 import { UserCommentFormState, CategoryChoice } from 'wdk-client/StoreModules/UserCommentFormStoreModule';
@@ -54,6 +54,7 @@ type DispatchProps = {
   updatePubmedIdSearchQuery: (newBalue: string) => void;
   openAddComment: (request: UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>) => void;
   openEditComment: (commentId: number) => void;
+  closeUserCommentForm: () => void;
   removeAttachedFile: (attachmentId: number) => void;
   removeFileToAttach: (index: number) => void;
   modifyFileToAttach: (newFileSpec: Partial<UserCommentAttachedFileSpec>, index: number) => void;
@@ -93,6 +94,7 @@ type MergedProps = UserCommentFormViewProps & {
   formLoaded: boolean;
   openAddComment: (request: UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>) => void;
   openEditComment: (commentId: number) => void;
+  closeUserCommentForm: () => void;
   queryParams: OwnProps;
 };
 
@@ -347,6 +349,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   hidePubmedPreview: () => dispatch(closePubmedPreview()),
   openAddComment: (request: UserCommentPostRequest, initialRawFields: Partial<UserCommentRawFormFields>) => dispatch(openUserCommentForm(request, initialRawFields)),
   openEditComment: (commentId: number) => dispatch(openUserCommentForm(commentId, {})),
+  closeUserCommentForm: () => dispatch(closeUserCommentForm()),
   requestSubmitComment: (request: UserCommentPostRequest) => dispatch(requestSubmitComment(request)),
   removeAttachedFile: (attachmentId: number) => dispatch(removeAttachedFile(attachmentId)),
   addFileToAttach: (newFileSpec: UserCommentAttachedFileSpec) => dispatch(addFileToAttach(newFileSpec)),
@@ -569,6 +572,7 @@ const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownPro
     formLoaded: stateProps.formLoaded,
     openAddComment: dispatchProps.openAddComment,
     openEditComment: dispatchProps.openEditComment,
+    closeUserCommentForm: dispatchProps.closeUserCommentForm,
     queryParams: stateProps.queryParams,
     backendValidationErrors: stateProps.backendValidationErrors,
     internalError: stateProps.internalError,
@@ -605,6 +609,10 @@ class UserCommentFormController extends PageController<Props> {
         );
       }    
     }
+  }
+
+  componentWillUnmount() {
+    this.props.closeUserCommentForm();
   }
 
   getTitle() {

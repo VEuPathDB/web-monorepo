@@ -5,6 +5,15 @@ import PropTypes from 'prop-types';
 import DataTable from 'wdk-client/Components/DataTable/DataTable';
 import { renderAttributeValue, pure, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
+const mapAttributeType = type => {
+  switch(type) {
+    case 'number':
+      return 'num';
+    default:
+      return undefined;
+  }
+};
+
 // max columns for list mode
 const maxColumns = 4;
 
@@ -18,7 +27,10 @@ const addDefaultSortId = (row, index) =>
   Object.assign({}, row, { [defaultSortId]: index });
 
 const getColumns = (tableField) =>
-  defaultSortColumn.concat(tableField.attributes);
+  defaultSortColumn.concat(tableField.attributes.map(attr => ({
+    ...attr,
+    sortType: mapAttributeType(attr.type)
+  })));
 
 const getDisplayableAttributes = (tableField) =>
   tableField.attributes.filter(attr => attr.isDisplayable);
