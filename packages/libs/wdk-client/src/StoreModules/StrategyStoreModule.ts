@@ -175,8 +175,9 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     const { strategyId, newStepTree } = requestAction.payload;
     const strategy = await wdkService.getStrategy(strategyId);
     if (!strategy.isSaved) {
+      const oldStepTree = strategy.stepTree;
       await wdkService.putStrategyStepTree(strategyId, newStepTree);
-      return fulfillPutStrategy(await wdkService.getStrategy(strategyId));
+      return fulfillPutStrategy(await wdkService.getStrategy(strategyId), oldStepTree);
     }
     // Make duplicate strategy and apply changes to it
     const duplicateStrategyResponse = await wdkService.duplicateStrategy({ sourceStrategySignature: strategy.signature });

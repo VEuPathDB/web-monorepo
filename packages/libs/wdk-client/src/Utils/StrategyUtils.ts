@@ -1,6 +1,45 @@
 import { StepTree } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
+type SimilarTreesDiffResult =
+  | { areSimilar: false }
+  | { areSimilar: true, diffs: { oldStepId: number, newStepId: number }[] };
+
+export const diffSimilarStepTrees = (oldTree: StepTree, newTree: StepTree): SimilarTreesDiffResult => {
+  const rootDiffs = oldTree.stepId === newTree.stepId
+    ? []
+    : [{ oldStepId: oldTree.stepId, newStepId: newTree.stepId }];
+
+  const primaryInputDiffResult: SimilarTreesDiffResult = !oldTree.primaryInput && !newTree.primaryInput
+    ? { areSimilar: true, diffs: [] }
+    : oldTree.primaryInput && newTree.primaryInput
+    ? diffSimilarStepTrees(oldTree.primaryInput, newTree.primaryInput)
+    : { areSimilar: false };
+
+  if (!primaryInputDiffResult.areSimilar) {
+    return { areSimilar: false };
+  }
+
+  const secondaryInputDiffResult: SimilarTreesDiffResult = !oldTree.secondaryInput && !newTree.secondaryInput
+    ? { areSimilar: true, diffs: [] }
+    : oldTree.secondaryInput && newTree.secondaryInput
+    ? diffSimilarStepTrees(oldTree.secondaryInput, newTree.secondaryInput)
+    : { areSimilar: false };
+
+  if (!secondaryInputDiffResult.areSimilar) {
+    return { areSimilar: false };
+  }
+
+  return {
+    areSimilar: true,
+    diffs: [
+      ...rootDiffs,
+      ...primaryInputDiffResult.diffs,
+      ...secondaryInputDiffResult.diffs
+    ]
+  };
+}
+
 export const replaceStep = (
   stepTree: StepTree,
   oldStepId: number,

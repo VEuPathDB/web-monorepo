@@ -10,11 +10,12 @@ import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, s
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
 import { InferAction, switchMapRequestActionsToEpic as srate, mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
-import { StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { StrategyDetails, StrategySummary, StepTree } from 'wdk-client/Utils/WdkUser';
 import { requestStrategiesList, fulfillStrategiesList } from 'wdk-client/Actions/StrategyListActions';
 import { requestPublicStrategies, fulfillPublicStrategies, fulfillPublicStrategiesError } from 'wdk-client/Actions/PublicStrategyActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 import {fulfillImportStrategy} from 'wdk-client/Actions/ImportStrategyActions';
+import { diffSimilarStepTrees } from 'wdk-client/Utils/StrategyUtils';
 
 export const key = 'strategyWorkspace';
 
@@ -217,6 +218,15 @@ function updateRouteOnStrategySteptreePutEpic(action$: ActionsObservable<Action>
       const { activeStrategy } = state$.value[key];
       if (shouldMakeRootStepActive(strategy, activeStrategy)) {
         transitioner.transitionToInternalPage(`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`, { replace: true });
+      } else {
+        const replaceStepRedirectMetadata = shouldMakeReplacedStepActive(action.payload.oldStepTree, strategy.stepTree);
+
+        if (replaceStepRedirectMetadata.shouldRedirect) {
+          transitioner.transitionToInternalPage(
+            `/workspace/strategies/${strategy.strategyId}/${replaceStepRedirectMetadata.redirectTo}`, 
+            { replace: true }
+          );
+        }
       }
     }
     return empty();
@@ -232,6 +242,21 @@ function shouldMakeRootStepActive(strategy: StrategyDetails, activeStrategy?: { 
   // previous root step is active
   if (strategy.stepTree.primaryInput.stepId === activeStrategy.stepId) return true;
   return false;
+}
+
+type ReplaceStepRedirectMetadata = 
+  | { shouldRedirect: false } 
+  | { shouldRedirect: true, redirectTo: number };
+
+function shouldMakeReplacedStepActive(
+  oldStepTree: StepTree,
+  newStepTree: StepTree
+): ReplaceStepRedirectMetadata {
+  const putRequestDiffResult = diffSimilarStepTrees(oldStepTree, newStepTree);
+
+  return (!putRequestDiffResult.areSimilar || putRequestDiffResult.diffs.length !== 1)
+    ? { shouldRedirect: false }
+    : { shouldRedirect: true, redirectTo: putRequestDiffResult.diffs[0].newStepId };
 }
 
 function updateRouteOnStrategyDeleteEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {

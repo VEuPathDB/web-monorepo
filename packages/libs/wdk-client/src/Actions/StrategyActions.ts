@@ -32,7 +32,7 @@ export const fulfillStrategy = makeActionCreator(
 
 export const fulfillPutStrategy = makeActionCreator(
     'fulfillPutStrategy',
-    (strategy: StrategyDetails) => ({ strategy })
+    (strategy: StrategyDetails, oldStepTree: StepTree) => ({ strategy, oldStepTree })
 );
 
 // A draft of a saved strategy was fulfilled
