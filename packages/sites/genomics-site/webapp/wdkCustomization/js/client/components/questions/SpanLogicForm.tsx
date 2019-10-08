@@ -416,7 +416,10 @@ const RegionConfig = ({
 
   const [ r_left, r_right ] = [ Math.min(...regionInterval), Math.max(...regionInterval) ];
   const [ f_left, f_right ] = [0, featureLength];
-  const unpaddedWidth = Math.max(r_right, f_right) - Math.min(f_left, r_left);
+  const unpaddedWidth = Math.max(
+    Math.max(r_right, f_right) - Math.min(f_left, r_left),
+    1000
+  );
   const unpaddedHeight = unpaddedWidth / 4;
   const padding = unpaddedHeight / 12;
 
