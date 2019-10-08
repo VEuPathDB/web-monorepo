@@ -11,16 +11,19 @@ const injectSearchStudy = connect((state, props) => ({
 export default QuestionWizard => injectSearchStudy(props => {
   let { activeStudy } = props;
   return (
-    <div>
-      {activeStudy == null
-        ? "Could not find study based on the record class."
-        : (
+    <QuestionWizard
+      {...props}
+      additionalHeadingContent={activeStudy
+        ? (
           <div className="clinepi-StudyLink">
-            <Link to={activeStudy.route} _target="blank" >Study Details >></Link> 
+            <i className="fa fa-info-circle"/>&nbsp;&nbsp;
+            <Link to={activeStudy.route} _target="blank">
+              Study Details &raquo;
+            </Link>
           </div>
-        )
-      }
-      <QuestionWizard {...props} />
-    </div>
-  )
+        ) : (
+          <div>Could not find study based on record class.</div>
+        )}
+    />
+  );
 })
