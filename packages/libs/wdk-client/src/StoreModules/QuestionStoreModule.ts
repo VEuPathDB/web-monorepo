@@ -395,6 +395,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
       // Parse the input string into a number
       const weight = Number.parseInt(questionState.weight || '');
 
+      const customName = questionState.customName || questionState.question.shortDisplayName;
+
       if (submissionMetadata.type === 'edit-step') {
         return Promise.resolve(requestUpdateStepSearchConfig(
           submissionMetadata.strategyId,
@@ -413,7 +415,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             // FIXME Put 10 into a constant
             wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
           },
-          customName: questionState.customName || questionState.question.shortDisplayName
+          customName
         };
 
         if (submissionMetadata.type === 'submit-custom-form') {
