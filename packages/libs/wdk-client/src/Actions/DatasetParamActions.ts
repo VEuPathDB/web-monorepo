@@ -9,6 +9,7 @@ export type Action =
   | SetFileAction
   | SetFileParserAction
   | SetIdListAction
+  | SetLoadingIdListAction
   | SetSourceTypeAction
   | SetStrategyIdAction
   | SetStrategyListAction
@@ -45,6 +46,24 @@ export interface SetIdListAction {
 export function setIdList(payload: SetIdListAction['payload']): SetIdListAction {
   return {
     type: SET_ID_LIST,
+    payload
+  }
+}
+
+//==============================================================================
+
+export const SET_LOADING_ID_LIST = 'dataset-param/set-loading-id-list';
+
+export interface SetLoadingIdListAction {
+  type: typeof SET_LOADING_ID_LIST;
+  payload: Payload<{
+    loadingIdList?: boolean;
+  }>;
+}
+
+export function setLoadingIdList(payload: SetLoadingIdListAction['payload']): SetLoadingIdListAction {
+  return {
+    type: SET_LOADING_ID_LIST,
     payload
   }
 }

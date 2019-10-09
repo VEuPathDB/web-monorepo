@@ -5,7 +5,7 @@ import { EMPTY, from, merge } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
-import { datasetItemToString } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
+import { datasetItemToString, idListToArray } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import {
   Props,
   Context,
@@ -15,7 +15,6 @@ import {
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import 'wdk-client/Views/Question/Params/DatasetParam.scss';
-import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { DatasetConfig } from 'wdk-client/Service/Mixins/DatasetsService';
 import { INIT_PARAM, InitParamAction } from 'wdk-client/Actions/QuestionActions';
 import {
@@ -23,6 +22,7 @@ import {
   SET_FILE,
   SET_FILE_PARSER,
   SET_ID_LIST,
+  SET_LOADING_ID_LIST,
   SET_SOURCE_TYPE,
   SET_STRATEGY_ID,
   SET_STRATEGY_LIST,
@@ -30,6 +30,7 @@ import {
   setFile,
   setFileParser,
   setIdList,
+  setLoadingIdList,
   setSourceType,
   setStrategyId,
   setStrategyList,
@@ -45,6 +46,7 @@ const cx = makeClassNameHelper('wdk-DatasetParam');
 type State = {
   sourceType: 'idList' | 'file' | 'basket' | 'strategy';
   idList?: string;
+  loadingIdList?: boolean;
   file?: File | null;
   strategyList?: StrategySummary[];
   strategyId?: number;
@@ -75,6 +77,11 @@ function reduce(state: State = defaultState, action: Action): State {
       return { ...state, sourceType: action.payload.sourceType };
     case SET_ID_LIST:
       return { ...state, idList: action.payload.idList };
+    case SET_LOADING_ID_LIST: {
+      return action.payload.loadingIdList
+        ? { ...state, sourceType: 'file', loadingIdList: true }
+        : { ...state, loadingIdList: false }
+    }
     case SET_FILE:
       return { ...state, file: action.payload.file };
     case SET_STRATEGY_LIST:
@@ -122,6 +129,7 @@ const sections: Section[] = [
   {
     sourceType: 'idList',
     label: 'Enter a list of IDs or text',
+    isAvailable: ({ uiState }) => !uiState.loadingIdList,
     render: ({ ctx, dispatch, parameter, uiState }) =>
       <textarea
         rows={5}
@@ -256,14 +264,25 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
 
         const initializeIdList$ = !paramValues[parameter.name]
           ? EMPTY
-          : services.wdkService.getDataset(+paramValues[parameter.name]).then(
-            datasetParamItems => setIdList({
-              searchName,
-              paramValues,
-              parameter: (parameter as DatasetParam),
-              idList: datasetParamItems.map(datasetItemToString).join(', ')
-            })
-          );
+          : [
+              setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: true }),
+              services.wdkService.getDataset(+paramValues[parameter.name])
+                .then(
+                  datasetParamItems => 
+                    [
+                      setIdList({
+                        searchName,
+                        paramValues,
+                        parameter: (parameter as DatasetParam),
+                        idList: datasetParamItems.map(datasetItemToString).join(', ')
+                      }),
+                      setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: false })
+                    ]
+                )
+                .catch(
+                    _ => setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: false })
+                )
+            ];
 
         if (user.isGuest) return initializeIdList$;
         // load basket count and strategy list
@@ -318,7 +337,7 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
       }))
     : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.outputRecordClassName } })
     : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
-    : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: valueToArray(idList) } })
+    : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: idListToArray(idList) } })
     : Promise.resolve();
 
   return datasetConfigPromise.then(config => config == null ? '' : wdkService.createDataset(config).then(String));
