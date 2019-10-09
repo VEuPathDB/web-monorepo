@@ -126,7 +126,7 @@ class Answer extends React.Component {
       return Object.assign({}, attributes, { id });
     }), uiState.sort.columnKey, uiState.sort.direction === 'asc');
 
-    const columns = visibleAttributes.map(({ name, displayName, help, isSortable, isPrimary }) => {
+    const columns = visibleAttributes.map(({ name, displayName, help, isSortable, isPrimary, type }) => {
       const renderCell = ({ value, row }) => (
         <a
           href={this.createRecordUrl(row)}
@@ -135,7 +135,7 @@ class Answer extends React.Component {
       );
       return Object.assign({
         key: name,
-        type: 'html',
+        type: (type==='link')?'wdkLink':'html',
         helpText: help,
         name: displayName,
         sortable: isSortable,
