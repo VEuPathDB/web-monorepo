@@ -5,7 +5,6 @@ import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { projectId } from 'ebrc-client/config';
-import { emptyAction } from 'wdk-client/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
