@@ -2,7 +2,21 @@
   display: inline-block;
   width: 13em;
 
-  &--OptionLabel {
+  & &__control {
+    border-color: black;
+    background-color: #eaeaea;
+    cursor: pointer;
+  }
+
+  & &__indicator {
+    color: black;
+  }
+
+  & &__indicator-separator {
+    background-color: black;
+  }
+
+  & &--OptionLabel {
     display: flex;
     align-items: center;
 

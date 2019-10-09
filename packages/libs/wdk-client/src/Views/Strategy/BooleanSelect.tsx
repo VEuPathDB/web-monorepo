@@ -57,6 +57,7 @@ export const BooleanSelect = ({ addType, value, onChange: onChangeValue }: Props
       options={options}
       onChange={onChange}
       className={cx()}
+      classNamePrefix={cx()}
       formatOptionLabel={formatBooleanOptionLabel}
       isSearchable={false}
       isClearable={false}
