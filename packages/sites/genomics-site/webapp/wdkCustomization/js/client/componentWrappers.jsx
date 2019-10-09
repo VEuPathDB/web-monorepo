@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { projectId } from 'ebrc-client/config';
+import { emptyAction } from 'wdk-client/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
@@ -92,13 +94,42 @@ const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
 
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
-  const ResolvedRecordLink = RecordClassSpecificRecordlink(WdkRecordLink);
+  const isPortal = projectId === 'EuPathDB';
+  const DefaultRecordLink = isPortal ? PortalRecordLink : WdkRecordLink;
+  const ResolvedRecordLink = RecordClassSpecificRecordlink(DefaultRecordLink);
   return function ApiRecordLink(props) {
-    let recordId = props.recordId.filter(p => p.name !== 'project_id');
+    let recordId = isPortal ? props.recordId : props.recordId.filter(p => p.name !== 'project_id');
     return (
       <ResolvedRecordLink {...props} recordId={recordId}/>
     );
   };
+}
+
+function PortalRecordLink(props) {
+  const { recordId, recordClass } = props;
+  const projectIdPart = recordId.find(part => part.name === 'project_id');
+  const baseUrl = getBaseUrl(projectIdPart && projectIdPart.value);
+  const pkValues = recordId.filter(p => p.name !== 'project_id').map(p => p.value).join('/');
+  return (
+    <a href={`${baseUrl}/app/record/${recordClass.urlSegment}/${pkValues}`} target="_blank">{props.children}</a>
+  );
+}
+
+function getBaseUrl(projectId) {
+  switch(projectId) {
+    case 'AmoebaDB': return 'https://amoebadb.org/amoeba';
+    case 'CryptoDB': return 'https://cryptodb.org/cryptodb';
+    case 'FungiDB': return 'https://fungidb.org/fungidb';
+    case 'GiardiaDB': return 'https://giardiadb.org/giardiadb';
+    case 'MicrosporidiaDB': return 'https://microsporidiadb.org/micro';
+    case 'PiroplasmaDB': return 'https://piroplasmadb.org/piro';
+    case 'PlasmoDB': return 'https://plasmodb.org/plasmo';
+    case 'ToxoDB': return 'https://toxodb.org/toxo';
+    case 'TrichDB': return 'https://trichdb.org/trichdb';
+    case 'TriTrypDB': return 'https://tritrypdb.org/tritrypdb';
+    case 'OrthoMCL': return 'https://orthomcl.org/orthomcl';
+    default: return 'https://eupathdb.org/eupathdb';
+  }
 }
 
 function downloadRecordTable(record, tableName) {
