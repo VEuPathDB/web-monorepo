@@ -6,13 +6,15 @@ import { makeClassNameHelper } from 'wdk-client/ComponentUtils';
 import StudySearches from 'ebrc-client/App/Studies/StudySearches';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
+import { set } from 'lodash/fp';
 
 const cx = makeClassNameHelper('ce-StudyRecordHeadingSearchLinks');
 
 function StudyRecordHeading({ entries, loading, webAppUrl, study, attemptAction, ...props }) {
+  let newProps = set(['recordClass','displayName'],'Study', props); 
   return (
     <React.Fragment>
-      <props.DefaultComponent {...props}/>
+      <props.DefaultComponent {...newProps}/>
       <div className={cx()}>
         <div className={cx('Label')}>Search the data</div>
         {loading ? null :

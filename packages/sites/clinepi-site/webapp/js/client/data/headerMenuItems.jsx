@@ -23,6 +23,10 @@ export default function headerMenuItems (state) {
         id: 'workspace',
         text: 'Workspace',
         children: [
+           {
+            text: 'All Studies',
+            appUrl: '/app/search/dataset/Studies/result'
+          },
           {
             text: 'My Search Strategies',
             appUrl: '/showApplication.do'
