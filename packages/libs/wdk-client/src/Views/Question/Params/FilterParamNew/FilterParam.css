@@ -92,10 +92,12 @@
 }
 .filter-param .chart-container {
   position: relative;
+  padding: 1em;
+  margin-top: 1em;
 }
 .filter-param .chart {
   height: 200px;
-  margin-left: 2em;
+  margin-left: 3em;
 }
 .filter-param .chart-title {
   color: #666;
@@ -108,7 +110,7 @@
 .filter-param .chart-title.y-axis {
   width: 200px;
   position: absolute;
-  left: -220px;
+  left: -190px;
   top: 0;
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
@@ -120,6 +122,18 @@
   -ms-transform-origin: top right;
   -o-transform-origin: top right;
   transform-origin: top right;
+}
+.filter-param .chart-controls {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #dadada;
+  padding-top: 1em;
+}
+.filter-param .chart-controls > *:not(last-child) {
+  margin-right: 2em;
+}
+.filter-param .chart-controls input {
+  vertical-align: middle;
 }
 .filter-param .filters, .filter-param .filters-server-side {
   position: relative;
