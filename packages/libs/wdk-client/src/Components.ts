@@ -62,9 +62,11 @@ import Tabs from 'wdk-client/Components/Tabs/Tabs';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
+import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 
 export {
   AccordionButton,
+  AnswerTableCell,
   ApplicationSpecificProperties,
   Banner,
   BannerList,
