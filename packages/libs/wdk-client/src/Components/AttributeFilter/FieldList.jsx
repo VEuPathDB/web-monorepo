@@ -139,8 +139,8 @@ export default class FieldList extends React.Component { // eslint-disable-line 
           onExpansionChange={this.handleExpansionChange}
           isSelectable={false}
           isSearchable={true}
-          searchBoxPlaceholder="Find a filter"
-          searchBoxHelp="Find a filter by searching names and descriptions"
+          searchBoxPlaceholder="Find a variable"
+          searchBoxHelp="Find a variable by searching names and descriptions"
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}

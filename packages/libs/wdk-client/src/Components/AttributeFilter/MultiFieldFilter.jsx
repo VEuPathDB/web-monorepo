@@ -286,7 +286,7 @@ export default class MultiFieldFilter extends React.Component {
         {!hasRowWithRemaining && (
           <Banner banner={{
             type: 'warning',
-            message: 'Given prior selections, there is no remaining data available for this filter.',
+            message: 'Given prior selections, there is no remaining data available for this variable.',
             pinned: true
           }}/>
         )}
