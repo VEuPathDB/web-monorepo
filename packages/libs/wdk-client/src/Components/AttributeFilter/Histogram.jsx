@@ -16,6 +16,29 @@ var distributionEntryPropType = PropTypes.shape({
   filteredCount: PropTypes.number.isRequired
 });
 
+const transforms = {
+  none: {
+    display: 'None',
+    xform: v => v,
+    inverse: v => v
+  },
+  e: {
+    display: 'log',
+    xform: v => Math.log(v + 1),
+    inverse: v => Math.exp(v) - 1
+  },
+  2: {
+    display: 'log2',
+    xform: v => Math.log2(v + 1),
+    inverse: v => Math.pow(2, v) - 1
+  },
+  10: {
+    display: 'log10',
+    xform: v => Math.log10(v + 1),
+    inverse: v => Math.pow(10, v) - 1
+  }
+}
+
 var Histogram = (function() {
 
   /** Common histogram component */
@@ -26,7 +49,7 @@ var Histogram = (function() {
       this.handleResize = throttle(this.handleResize.bind(this), 100);
       this.emitStateChange = debounce(this.emitStateChange, 100);
       this.state = {
-        uiState: this.getStateFromProps(props)
+        uiState: this.getStateFromProps(props),
       };
       this.getRange = memoize(this.getRange);
       this.getNumFixedDigits = memoize(this.getNumFixedDigits);
@@ -85,7 +108,7 @@ var Histogram = (function() {
       // Set default yAxis max based on distribution
       var yaxisMax = this.getYAxisMax(props);
       var { xaxisMin, xaxisMax } = this.getXAxisMinMax(props);
-      return { yaxisMax, xaxisMin, xaxisMax };
+      return { yaxisMax, xaxisMin, xaxisMax, scaleYAxis: false };
     }
 
     getRange(distribution) {
@@ -220,6 +243,8 @@ var Histogram = (function() {
 
       var seriesData = this.getSeriesData(clampedDistribution);
 
+      var yTransform = this.state.uiState.scaleYAxis ? transforms['10'] : transforms.none;
+
       var plotOptions = {
         series: {
           bars: {
@@ -237,7 +262,9 @@ var Histogram = (function() {
         }, xaxisBaseOptions),
         yaxis: {
           min: 0,
-          max: uiState.yaxisMax
+          max: uiState.yaxisMax,
+          transform: yTransform.xform,
+          inverseTransform: yTransform.inverse,
         },
         grid: {
           clickable: true,
@@ -356,6 +383,10 @@ var Histogram = (function() {
       this.updateUIState(Object.assign({}, this.state.uiState, { xaxisMin, xaxisMax }));
     }
 
+    setScaleYAxis(scaleYAxis) {
+      this.updateUIState({ ...this.state.uiState, scaleYAxis })
+    }
+
     render() {
       var { xaxisLabel, yaxisLabel, chartType, timeformat, distribution } = this.props;
       var { yaxisMax, xaxisMin, xaxisMax } = this.state.uiState;
@@ -398,12 +429,14 @@ var Histogram = (function() {
         <div className="chart-container">
           <div className="chart"></div>
             <div className="chart-title y-axis">
-              <div>{yaxisLabel}</div>
+              <div>
+                {yaxisLabel}
+              </div>
               <div>
                 <input
                   style={{width: '90%'}}
                   type="range"
-                  min={Math.max(countsMin, 1)}
+                  min={Math.max(countsMin, 1.1)}
                   max={countsMax + countsMax * 0.1}
                   title={yaxisMax}
                   value={yaxisMax}
@@ -411,8 +444,16 @@ var Histogram = (function() {
               </div>
             </div>
           <div className="chart-title x-axis">{xaxisLabel}</div>
-          <div>
-            Zoom: {scaleSelector}
+          <div className="chart-controls">
+            <div>
+              Zoom: {scaleSelector}
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" checked={this.state.uiState.scaleYAxis} onChange={event => this.setScaleYAxis(event.target.checked)}/>
+                &nbsp;Scale counts (log<sub>10</sub>)
+              </label>
+            </div>
           </div>
         </div>
       );
