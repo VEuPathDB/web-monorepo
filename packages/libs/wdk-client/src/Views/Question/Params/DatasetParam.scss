@@ -18,6 +18,21 @@
     list-style: none;
   }
 
+  &IdList {
+    position: relative;
+    display: inline-block;
+
+    &__loading::before {
+      content: "\f1ce";
+      position: absolute;
+      top: .35em;
+      right: .35em;
+      font-family: FontAwesome;
+      -webkit-animation: fa-spin 2s infinite linear;
+      animation: fa-spin 2s infinite linear;
+    }
+  }
+
   &FileParserList {
     list-style: none;
     display: flex;

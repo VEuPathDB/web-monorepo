@@ -78,9 +78,7 @@ function reduce(state: State = defaultState, action: Action): State {
     case SET_ID_LIST:
       return { ...state, idList: action.payload.idList };
     case SET_LOADING_ID_LIST: {
-      return action.payload.loadingIdList
-        ? { ...state, sourceType: 'file', loadingIdList: true }
-        : { ...state, loadingIdList: false }
+      return { ...state, loadingIdList: action.payload.loadingIdList };
     }
     case SET_FILE:
       return { ...state, file: action.payload.file };
@@ -102,7 +100,9 @@ function reduce(state: State = defaultState, action: Action): State {
 }
 
 const getIdList = (uiState: State, parameter: DatasetParam) =>
-    uiState.idList == null
+    uiState.loadingIdList
+      ? ''
+      : uiState.idList == null
       ? parameter.defaultIdList
       : uiState.idList
 
@@ -131,13 +131,15 @@ const sections: Section[] = [
     label: 'Enter a list of IDs or text',
     isAvailable: ({ uiState }) => !uiState.loadingIdList,
     render: ({ ctx, dispatch, parameter, uiState }) =>
-      <textarea
-        rows={5}
-        cols={30}
-        value={getIdList(uiState, parameter)}
-        onChange={e => dispatch(setIdList({ ...ctx, idList: e.target.value }))}
-        required={uiState.sourceType === 'idList' && !parameter.allowEmptyValue}
-      />
+      <div className={uiState.loadingIdList ? cx('IdList', 'loading') : cx('IdList')}>
+        <textarea
+          rows={5}
+          cols={30}
+          value={getIdList(uiState, parameter)}
+          onChange={e => dispatch(setIdList({ ...ctx, idList: e.target.value }))}
+          required={uiState.sourceType === 'idList' && !parameter.allowEmptyValue}
+        />
+      </div>
   },
   {
     sourceType: 'file',
