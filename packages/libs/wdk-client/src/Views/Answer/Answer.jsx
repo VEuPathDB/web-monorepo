@@ -6,7 +6,10 @@ import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import AttributeSelector from 'wdk-client/Views/Answer/AnswerAttributeSelector';
 import AnswerFilter from 'wdk-client/Views/Answer/AnswerFilter';
+import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 import 'wdk-client/Views/Answer/wdk-Answer.scss';
+import { orderBy } from 'lodash';
+
 
 class Answer extends React.Component {
   constructor(props) {
@@ -122,26 +125,30 @@ class Answer extends React.Component {
       }
     };
 
-    const rows = MesaUtils.textSort(records.map(({ id, attributes }) => {
-      return Object.assign({}, attributes, { id });
-    }), uiState.sort.columnKey, uiState.sort.direction === 'asc');
+    let sortingAttribute = visibleAttributes.find( attribute => attribute.name === sorting[0].attributeName )
+    const rows = orderBy( records, 
+                          [record => sortingAttribute.type === 'link' ? record.attributes[sortingAttribute.name].displayText : record.attributes[sortingAttribute.name]],
+                          sorting[0].direction.toLowerCase() || 'asc' )
 
-    const columns = visibleAttributes.map(({ name, displayName, help, isSortable, isPrimary, type }) => {
-      const renderCell = ({ value, row }) => (
-        <a
-          href={this.createRecordUrl(row)}
-          dangerouslySetInnerHTML={{ __html: value }}
-        />
-      );
-      return Object.assign({
-        key: name,
-        type: (type==='link')?'wdkLink':'html',
-        helpText: help,
-        name: displayName,
-        sortable: isSortable,
-        primary: isPrimary,
-        moveable: true
-      }, name === recordClass.recordIdAttributeName ? { renderCell } : {});
+    const columns = visibleAttributes.map((attribute) => {
+      return {
+        key: attribute.name,
+        helpText: attribute.help,
+        name: attribute.displayName,
+        sortable: attribute.isSortable,
+        primary: attribute.isPrimary,
+        moveable: true,
+        renderCell: ({ row }) => {
+          return (
+            <AnswerTableCell
+              value = {row.attributes[attribute.name]}
+              descriptor = {attribute}
+              record = {row}
+              recordClass= {recordClass}
+            />
+          )
+        } 
+      }
     });
 
 

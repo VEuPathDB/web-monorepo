@@ -34,7 +34,6 @@ AnswerTableCell.propTypes = {
   descriptor: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
   recordClass: PropTypes.object.isRequired,
-  width: PropTypes.number.isRequired
 };
 
 export default wrappable(AnswerTableCell);
