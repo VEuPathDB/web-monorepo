@@ -446,13 +446,13 @@ var Histogram = (function() {
           <div className="chart-title x-axis">{xaxisLabel}</div>
           <div className="chart-controls">
             <div>
+              Zoom: {scaleSelector}
+            </div>
+            <div>
               <label>
                 <input type="checkbox" checked={this.state.uiState.scaleYAxis} onChange={event => this.setScaleYAxis(event.target.checked)}/>
                 &nbsp;Scale counts (log<sub>10</sub>)
               </label>
-            </div>
-            <div>
-              Zoom: {scaleSelector}
             </div>
           </div>
         </div>

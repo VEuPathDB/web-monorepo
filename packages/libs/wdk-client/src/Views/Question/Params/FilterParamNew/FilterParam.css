@@ -129,8 +129,8 @@
   border-top: 1px solid #dadada;
   padding-top: 1em;
 }
-.filter-param .chart-controls > *:not(last-child) {
-  margin-right: 2em;
+.filter-param .chart-controls > * {
+  margin: 0 2em;
 }
 .filter-param .chart-controls input {
   vertical-align: middle;
