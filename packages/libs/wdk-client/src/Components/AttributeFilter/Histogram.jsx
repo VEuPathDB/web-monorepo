@@ -108,7 +108,8 @@ var Histogram = (function() {
       // Set default yAxis max based on distribution
       var yaxisMax = this.getYAxisMax(props);
       var { xaxisMin, xaxisMax } = this.getXAxisMinMax(props);
-      return { yaxisMax, xaxisMin, xaxisMax, scaleYAxis: false };
+      var { scaleYAxis = false } = props.uiState;
+      return { yaxisMax, xaxisMin, xaxisMax, scaleYAxis };
     }
 
     getRange(distribution) {
