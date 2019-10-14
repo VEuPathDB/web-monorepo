@@ -16,7 +16,6 @@ import Loading from 'wdk-client/Components/Loading/Loading';
 import { State } from 'wdk-client/StoreModules/AnswerViewStoreModule';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
 import { AttributeField, TableField } from 'wdk-client/Utils/WdkModel';
 
 const ActionCreators = {
