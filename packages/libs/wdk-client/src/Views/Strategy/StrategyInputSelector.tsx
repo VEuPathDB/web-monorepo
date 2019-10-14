@@ -22,10 +22,9 @@ type StateProps = {
 };
 
 type OwnProps = {
-  onStrategySelected: (strategyId: number) => void,
+  onStrategySelected: (strategyId: number, strategyName: string) => void,
   primaryInput: StrategyDetails,
-  secondaryInputRecordClass: RecordClass,
-  selectedStrategyId?: number
+  secondaryInputRecordClass: RecordClass
 };
 
 type Props = StateProps & OwnProps;
@@ -39,8 +38,7 @@ const StrategyInputSelectorView = ({
   openedStrategies,
   onStrategySelected,
   primaryInput,
-  secondaryInputRecordClass,
-  selectedStrategyId
+  secondaryInputRecordClass
 }: Props) => {
   const [ strategies, setStrategies ] = useState<StrategySummary[] | undefined>(undefined);
 
@@ -72,8 +70,7 @@ const StrategyInputSelectorView = ({
 
   return (
     !savedStrategyChoices ||
-    !openedStrategyChoices ||
-    selectedStrategyId !== undefined
+    !openedStrategyChoices
   )
     ? <Loading />
     : (
@@ -111,7 +108,7 @@ export const StrategyInputSelector = connect(mapStateToProps)(StrategyInputSelec
 type StrategyInputSelectorTableProps = {
   tableTitle: string,
   strategyChoices: StrategySummary[],
-  onStrategySelected: (strategyId: number) => void
+  onStrategySelected: (strategyId: number, strategyName: string) => void
 }
 
 const StrategyInputSelectorTable = ({
@@ -158,7 +155,7 @@ const StrategyInputSelectorTable = ({
   );
 };
 
-function makeMesaColumns(onStrategySelected: (strategyId: number) => void): MesaColumn<'name' | 'description'>[] {
+function makeMesaColumns(onStrategySelected: (strategyId: number, strategyName: string) => void): MesaColumn<'name' | 'description'>[] {
   return [
     {
       key: 'name',
@@ -167,7 +164,7 @@ function makeMesaColumns(onStrategySelected: (strategyId: number) => void): Mesa
       renderCell: (cellProps: StrategyInputCellProps<string>) =>
         <a onClick={(e) => {
           e.preventDefault();
-          onStrategySelected(cellProps.row.strategyId);
+          onStrategySelected(cellProps.row.strategyId, cellProps.row.name);
         }} href="#">
             {cellProps.row.name}{cellProps.row.isSaved ? '' : ' *'}
         </a>,

@@ -29,6 +29,15 @@ export interface UiStepTree {
 
 // specialized UiStepTree types and guards
 
+export interface PartialLeafUiStepTree extends PartialUiStepTree {
+  primaryInput: undefined;
+  secondaryInput: undefined;
+}
+
+export function isPartialLeafUiStepTree(stepTree: PartialUiStepTree): stepTree is PartialLeafUiStepTree {
+  return stepTree.primaryInput == null && stepTree.secondaryInput == null;
+}
+
 export interface LeafUiStepTree extends UiStepTree {
   primaryInput: undefined;
   secondaryInput: undefined;

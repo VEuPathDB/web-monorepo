@@ -5,8 +5,8 @@ import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 import CombineStepDetails from 'wdk-client/Views/Strategy/CombineStepDetails';
 import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
 import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
-import { getStepUrl } from 'wdk-client/Views/Strategy/StrategyUtils';
-import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { getStepUrl, getDefaultStepName } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps, UiStepTree, isPartialLeafUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import { SaveableTextEditor } from 'wdk-client/Components';
 
 type Props = RouteComponentProps<any> & StepDetailProps<UiStepTree>;
@@ -103,7 +103,7 @@ export default withRouter(function StepDetailsDialog(props: Props) {
     renameStep,
   } = props;
   const { step, nestedControlStep, recordClass } = stepTree;
-  const displayName = nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : step.customName;
+  const displayName = nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : getDefaultStepName(step, isPartialLeafUiStepTree(stepTree));
   return (
     <Dialog
       className={cx("--StepDetails")}

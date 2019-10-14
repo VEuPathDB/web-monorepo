@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
@@ -7,7 +7,7 @@ import { updateParamValue } from 'wdk-client/Actions/QuestionActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
@@ -73,6 +73,11 @@ type CombineStepFormViewProps = StateProps & {
   updateBooleanOperator: (newBooleanOperator: CombineOperator) => void,
 } & OwnProps;
 
+type SelectedStrategy = {
+  id: number,
+  name: string
+};
+
 const CombineWithStrategyFormView = ({
   booleanSearchState,
   booleanSearchUrlSegment,
@@ -83,19 +88,27 @@ const CombineWithStrategyFormView = ({
   strategy,
   updateStrategy
 }: CombineStepFormViewProps) => {
-  const [ selectedStrategyId, setSelectedStrategyId ] = useState<number | undefined>(undefined);
+  const [ selectedStrategy, setSelectedStrategy ] = useState<SelectedStrategy | undefined>(undefined);
+
+  const onStrategySelected = useCallback((strategyId: number, strategyName: string) => {
+    setSelectedStrategy({ 
+      id: strategyId,
+      name: strategyName || DEFAULT_STRATEGY_NAME
+    });
+  }, []);
 
   useWdkEffect(wdkService => {
-    if (selectedStrategyId !== undefined && booleanSearchState && booleanSearchState.paramValues) {
+    if (selectedStrategy !== undefined && booleanSearchState && booleanSearchState.paramValues) {
       const operatorStepPromise = wdkService.createStep({
         searchName: booleanSearchUrlSegment,
         searchConfig: {
           parameters: booleanSearchState.paramValues
         },
-        customName: booleanSearchState.question.displayName
+        customName: booleanSearchState.question.displayName,
+        expandedName: `Copy of ${selectedStrategy.name}`
       });
 
-      const duplicateStepTreePromise = wdkService.getDuplicatedStrategyStepTree(selectedStrategyId);
+      const duplicateStepTreePromise = wdkService.getDuplicatedStrategyStepTree(selectedStrategy.id);
 
       Promise.all([
         operatorStepPromise,
@@ -104,7 +117,7 @@ const CombineWithStrategyFormView = ({
         updateStrategy(operatorStepId, duplicateStepTree);
       });
     }
-  }, [ selectedStrategyId ]);
+  }, [ selectedStrategy ]);
 
   return !booleanSearchState || booleanSearchState.questionStatus === 'loading'
     ? <Loading />
@@ -126,13 +139,12 @@ const CombineWithStrategyFormView = ({
         </div>
         <div className={cx('--Body')}>
           {
-            selectedStrategyId !== undefined
+            selectedStrategy !== undefined
               ? <Loading />
               : <StrategyInputSelector
-                  onStrategySelected={setSelectedStrategyId}
+                  onStrategySelected={onStrategySelected}
                   primaryInput={strategy}
                   secondaryInputRecordClass={inputRecordClass}
-                  selectedStrategyId={selectedStrategyId}
                 />
           }
         </div>

@@ -33,3 +33,9 @@ export function formatDateTimeString(dateTimeString: string) {
   const hoursAndMinutes = time.replace(/:[^:]*$/, '');
   return `${date} ${hoursAndMinutes}`;
 }
+
+export function getDefaultStepName(step: Step, isLeaf: boolean) {
+  return isLeaf
+    ? step.customName
+    : 'Unnamed Nested Strategy'
+}

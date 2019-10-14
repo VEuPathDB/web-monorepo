@@ -5,7 +5,8 @@ import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
-import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree, UiStepTree, isCompleteUiStepTree, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { getDefaultStepName } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree, isCompleteUiStepTree, PartialUiStepTree, isPartialLeafUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 import { useBinaryStepBoxClassName } from 'wdk-client/Utils/Operations';
@@ -147,7 +148,7 @@ function StepTree(props: StepBoxesProps) {
   );
 }
 
-function UnknownQuestionStepBox({ stepTree: { step, recordClass }, deleteStep }: { stepTree: PartialUiStepTree, deleteStep: () => void }) {
+function UnknownQuestionStepBox({ stepTree, deleteStep }: { stepTree: PartialUiStepTree, deleteStep: () => void }) {
   const deleteButton = (
     <button
       type="button"
@@ -160,8 +161,8 @@ function UnknownQuestionStepBox({ stepTree: { step, recordClass }, deleteStep }:
   return (
     <div title={INVALID_SEARCH_TITLE} className={cx('--Box', 'invalid')}>
       <div className={cx('--BoxLink', 'leaf')}>
-        <StepName step={step}/>
-        <StepCount step={step} recordClass={recordClass}/>
+        <StepName step={stepTree.step} isLeaf={isPartialLeafUiStepTree(stepTree)} />
+        <StepCount step={stepTree.step} recordClass={stepTree.recordClass}/>
       </div>
       {deleteButton}
     </div>
@@ -242,7 +243,7 @@ function LeafStepBoxContent(props: StepBoxProps) {
   const { step, recordClass, nestedControlStep } = stepTree;
   return (
     <React.Fragment>
-      <StepName step={step} nestedControlStep={isNested ? nestedControlStep : undefined} />
+      <StepName step={step} isLeaf={isPartialLeafUiStepTree(stepTree)} nestedControlStep={isNested ? nestedControlStep : undefined} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
@@ -253,7 +254,7 @@ function TransformStepBoxContent(props: StepBoxProps) {
   return (
     <React.Fragment>
       <div className={cx('--TransformInputArrow')}>&#9654;</div>
-      <StepName step={step}/>
+      <StepName step={step} isLeaf={isPartialLeafUiStepTree(props.stepTree)} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
@@ -281,9 +282,9 @@ function CombinedStepIcon(props: { step: Step }) {
   );
 }
 
-function StepName(props: { step: Step, nestedControlStep?: Step }) {
-  const { step, nestedControlStep } = props;
-  const displayName = nestedControlStep && nestedControlStep.expandedName || step.customName;
+function StepName(props: { step: Step, isLeaf: boolean, nestedControlStep?: Step }) {
+  const { step, isLeaf, nestedControlStep } = props;
+  const displayName = nestedControlStep && nestedControlStep.expandedName || getDefaultStepName(step, isLeaf);
   return <div className={cx('--StepName')}>{displayName}</div>;
 }
 
@@ -309,7 +310,7 @@ export function ExpandedSteps(props: StepBoxesProps) {
       {stepTree.primaryInput && <ExpandedSteps {...props} stepTree={stepTree.primaryInput}/>}
       {stepTree.secondaryInput && stepTree.secondaryInput.isNested && stepTree.step.expanded && (
         <React.Fragment>
-          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName || stepTree.secondaryInput.step.customName}</em> <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}>close</button></div>
+          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName || getDefaultStepName(stepTree.secondaryInput.step, isPartialLeafUiStepTree(stepTree.secondaryInput))}</em> <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}>close</button></div>
           <div className="StrategyPanel--Panel" style={{ display: 'block', border: `.1em solid ${stepTree.secondaryInput.color}` }}>
             <StepBoxes {...props} stepTree={stepTree.secondaryInput}/>
           </div>
@@ -318,4 +319,3 @@ export function ExpandedSteps(props: StepBoxesProps) {
     </React.Fragment>
   );
 }
-
