@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import { Mesa, MesaState, Utils as MesaUtils } from 'wdk-client/Components/Mesa';
+import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import AttributeSelector from 'wdk-client/Views/Answer/AnswerAttributeSelector';
