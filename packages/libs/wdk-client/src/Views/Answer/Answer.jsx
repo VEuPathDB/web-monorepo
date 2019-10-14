@@ -11,6 +11,11 @@ import 'wdk-client/Views/Answer/wdk-Answer.scss';
 import { orderBy } from 'lodash';
 
 
+// TODO Annotate props better
+//
+// Optional props
+// - renderCellContent
+// - deriveRowClassName
 class Answer extends React.Component {
   constructor(props) {
     super(props);
@@ -110,12 +115,13 @@ class Answer extends React.Component {
   }
 
   getTableState () {
-    const { records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo } = this.props;
+    const { records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName } = this.props;
     const { sorting } = displayInfo;
 
     const options = {
       useStickyHeader: true,
-      tableBodyMaxHeight: 'calc(100vh - 120px)'
+      tableBodyMaxHeight: 'calc(100vh - 120px)',
+      deriveRowClassName
     };
 
     const uiState = {
@@ -139,14 +145,15 @@ class Answer extends React.Component {
         primary: attribute.isPrimary,
         moveable: true,
         renderCell: ({ row }) => {
-          return (
-            <AnswerTableCell
-              value = {row.attributes[attribute.name]}
-              descriptor = {attribute}
-              record = {row}
-              recordClass= {recordClass}
-            />
-          )
+          const cellProps = {
+            attribute,
+            recordClass,
+            value: row.attributes[attribute.name],
+            record: row
+          };
+          return renderCellContent
+            ? renderCellContent(cellProps)
+            : <AnswerTableCell {...cellProps}/>
         } 
       }
     });
@@ -155,9 +162,9 @@ class Answer extends React.Component {
     const eventHandlers = {
       onSort ({ key }, direction) { onSort([{ attributeName: key, direction }]); },
       onColumnReorder: (colKey, newIndex) => {
-	const currentIndex = columns.findIndex(col => col.key === colKey);
-	if (currentIndex < 0) return;
-	if (newIndex < currentIndex) newIndex++;
+        const currentIndex = columns.findIndex(col => col.key === colKey);
+        if (currentIndex < 0) return;
+        if (newIndex < currentIndex) newIndex++;
         onMoveColumn(colKey, newIndex);
       }
     };

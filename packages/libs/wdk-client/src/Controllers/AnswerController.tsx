@@ -16,7 +16,7 @@ import Loading from 'wdk-client/Components/Loading/Loading';
 import { State } from 'wdk-client/StoreModules/AnswerViewStoreModule';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { connect } from 'react-redux';
-import { AttributeField, TableField } from 'wdk-client/Utils/WdkModel';
+import { AttributeField, TableField, AttributeValue, RecordInstance, RecordClass } from 'wdk-client/Utils/WdkModel';
 
 const ActionCreators = {
   loadAnswer,
@@ -30,18 +30,39 @@ const ActionCreators = {
 const CastAnswer: any = Answer;
 
 type StateProps = State;
+
 type DispatchProps = typeof ActionCreators;
+
+interface CellContentProps {
+  value: AttributeValue;
+  attribute: AttributeField;
+  record: RecordInstance;
+  recordClass: RecordClass;
+};
+
+interface RowClassNameProps {
+  record: RecordInstance;
+  recordClass: RecordClass;
+};
+
 type OwnProps = {
   recordClass: string;
   question: string;
   parameters: Record<string, string>;
+
 }
+
+type Options = {
+  // optional overrides
+  renderCellContent?: (props: CellContentProps) => React.ReactNode;
+  deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
+};
 
 type Props = {
   stateProps: StateProps,
   dispatchProps: DispatchProps
   ownProps: OwnProps;
-};
+} & Options;
 
 class AnswerController extends PageController<Props> {
   loadData(prevProps?: Props) {
@@ -175,6 +196,8 @@ class AnswerController extends PageController<Props> {
         onMoveColumn={changeColumnPosition}
         onChangeColumns={changeVisibleColumns}
         onFilter={changeFilter}
+        renderCellContent={this.props.renderCellContent}
+        deriveRowClassName={this.props.deriveRowClassName}
       />
     );
   }
