@@ -121,7 +121,7 @@ class Answer extends React.Component {
     const options = {
       useStickyHeader: true,
       tableBodyMaxHeight: 'calc(100vh - 120px)',
-      deriveRowClassName
+      deriveRowClassName: deriveRowClassName && (record => deriveRowClassName({ recordClass, record }))
     };
 
     const uiState = {
@@ -144,16 +144,15 @@ class Answer extends React.Component {
         sortable: attribute.isSortable,
         primary: attribute.isPrimary,
         moveable: true,
-        renderCell: ({ row }) => {
+        renderCell: ({ row: record }) => {
           const cellProps = {
             attribute,
+            record,
             recordClass,
-            value: row.attributes[attribute.name],
-            record: row
+            value: record.attributes[attribute.name],
           };
-          return renderCellContent
-            ? renderCellContent(cellProps)
-            : <AnswerTableCell {...cellProps}/>
+          if (renderCellContent) return renderCellContent({ ...cellProps, CellContent: AnswerTableCell });
+          return <AnswerTableCell {...cellProps}/>;
         } 
       }
     });
