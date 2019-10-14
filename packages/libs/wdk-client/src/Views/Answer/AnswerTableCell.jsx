@@ -20,12 +20,12 @@ function AnswerTableCell(props) {
         recordClass={recordClass}
         className="wdk-AnswerTable-recordLink"
       >
-        {renderAttributeValue(value, props)}
+        {renderAttributeValue(value)}
       </RecordLink>
     );
   }
   else {
-    return renderAttributeValue(value, props);
+    return renderAttributeValue(value);
   }
 }
 
