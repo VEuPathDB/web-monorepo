@@ -46,7 +46,7 @@ const deriveRowClassName = props => {
 
 const renderCellContent = props => {
   if (props.attribute.name === 'bulk_download_url') {
-    return <DownloadLink study={props.record} attemptAction={attemptAction}/>;
+    return <DownloadLink studyId={props.record.id.value} studyUrl= {props.record.attributes.bulk_download_url.url} attemptAction={attemptAction}/>;
   }
   return <props.CellContent {...props}/>
 };
