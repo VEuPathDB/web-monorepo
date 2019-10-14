@@ -21,9 +21,10 @@ import QuestionWizard from './QuestionWizard';
 import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 import SiteHeader from './SiteHeader';
 import IndexController from './IndexController';
+import AnswerController from './AnswerController';
 
 export default {
-
+  AnswerController,
   IndexController,
   SiteHeader,
 
