@@ -8,6 +8,7 @@ import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelect
 
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
+import { DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
@@ -99,8 +100,15 @@ const strategyForm = untypedPageFactory(PageTypes.StrategyForm);
 const newSearchForm = untypedPageFactory(PageTypes.NewSearchForm);
 const colocationOperatorForm = untypedPageFactory(PageTypes.ColocationOperatorForm);
 
+type SelectedSecondaryInput = {
+  stepTree: StepTree,
+  expandedName?: string
+};
+
+type SetSelectedSecondaryInput = React.Dispatch<React.SetStateAction<SelectedSecondaryInput | undefined>>;
+
 export const ColocateStepForm = (props: AddStepOperationFormProps) => {
-  const [ secondaryInputStepTree, setSecondaryInputStepTree ] = useState<StepTree | undefined>(undefined);
+  const [ selectedSecondaryInput, setSelectedSecondaryInput ] = useState<SelectedSecondaryInput | undefined>(undefined);
 
   const typedPage = toTypedPage(props.currentPage);
 
@@ -116,25 +124,26 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
           ? <BasketPage 
               {...props}
               recordClassUrlSegment={typedPage.recordClassUrlSegment}
-              setSecondaryStepTree={setSecondaryInputStepTree}
+              setSelectedSecondaryInput={setSelectedSecondaryInput}
             />
           : typedPage.pageType === PageTypes.StrategyForm
           ? <StrategyForm 
               {...props}
               recordClassUrlSegment={typedPage.recordClassUrlSegment}
-              setSecondaryStepTree={setSecondaryInputStepTree}
+              setSelectedSecondaryInput={setSelectedSecondaryInput}
             />
           : typedPage.pageType === PageTypes.NewSearchForm
           ? <NewSearchForm
               {...props}
               searchUrlSegment={typedPage.searchUrlSegment}
-              setSecondaryStepTree={setSecondaryInputStepTree}
+              setSelectedSecondaryInput={setSelectedSecondaryInput}
             />
-          : typedPage.pageType === PageTypes.ColocationOperatorForm && secondaryInputStepTree
+          : typedPage.pageType === PageTypes.ColocationOperatorForm && selectedSecondaryInput
           ? <ColocationOperatorForm
               {...props}
               recordClassUrlSegment={typedPage.recordClassUrlSegment}
-              secondaryInputStepTree={secondaryInputStepTree}
+              secondaryInputStepTree={selectedSecondaryInput.stepTree}
+              expandedName={selectedSecondaryInput.expandedName}
             />
           : <NotFound />
       }
@@ -202,8 +211,8 @@ const BasketPage = ({
   questionsByUrlSegment,
   recordClassUrlSegment,
   recordClassesByUrlSegment,
-  setSecondaryStepTree
-}: AddStepOperationFormProps & { recordClassUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }) => {
+  setSelectedSecondaryInput
+}: AddStepOperationFormProps & { recordClassUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }) => {
   const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
   const secondaryInputRecordClassSearchSubsegment = secondaryInputRecordClass.fullName.replace('.', '_');
   const basketSearchUrlSegment = `${secondaryInputRecordClassSearchSubsegment}BySnapshotBasket`;
@@ -230,10 +239,10 @@ const BasketPage = ({
         })
       )
       .then(({ id: newStepId }) => {
-        setSecondaryStepTree({ stepId: newStepId });
+        setSelectedSecondaryInput({ stepTree: { stepId: newStepId } });
         replacePage(colocationOperatorForm(recordClassUrlSegment));
       });
-  }, [ replacePage, setSecondaryStepTree, secondaryInputRecordClass ]);
+  }, [ replacePage, setSelectedSecondaryInput, secondaryInputRecordClass ]);
 
   return <Loading />;
 };
@@ -242,28 +251,32 @@ const StrategyForm = ({
   advanceToPage,
   recordClassUrlSegment,
   recordClassesByUrlSegment,
-  setSecondaryStepTree,
+  setSelectedSecondaryInput,
   strategy
-}: AddStepOperationFormProps & { recordClassUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }) => {
-  const [ selectedStrategyId, setSelectedStrategyId ] = useState<number | undefined>(undefined);
+}: AddStepOperationFormProps & { recordClassUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }) => {
+  const [ selectedStrategy, setSelectedStrategy ] = useState<{ id: number, name: string } | undefined>(undefined);
 
   const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
   
+  const onStrategySelected = useCallback((id: number, name: string) => {
+    setSelectedStrategy({ id, name });
+  }, []);
+
   useWdkEffect(wdkService => {
-    if (selectedStrategyId !== undefined) {
-      wdkService.getDuplicatedStrategyStepTree(selectedStrategyId).then(stepTree => {
-        setSecondaryStepTree(stepTree);
+    if (selectedStrategy !== undefined) {
+      wdkService.getDuplicatedStrategyStepTree(selectedStrategy.id).then(stepTree => {
+        setSelectedSecondaryInput({ stepTree, expandedName: `Copy of ${selectedStrategy.name}` });
         advanceToPage(colocationOperatorForm(secondaryInputRecordClass.urlSegment));
       });
     }
-  }, [ selectedStrategyId ]);
+  }, [ selectedStrategy ]);
 
-  return selectedStrategyId !== undefined
+  return selectedStrategy !== undefined
     ? <Loading />
     : <StrategyInputSelector
         primaryInput={strategy}
         secondaryInputRecordClass={secondaryInputRecordClass}
-        onStrategySelected={setSelectedStrategyId}
+        onStrategySelected={onStrategySelected}
       />;
 };
 
@@ -273,8 +286,8 @@ const NewSearchForm = ({
   questionsByUrlSegment, 
   recordClassesByUrlSegment,
   searchUrlSegment, 
-  setSecondaryStepTree
-}: AddStepOperationFormProps & { searchUrlSegment: string, setSecondaryStepTree: (stepTree: StepTree) => void }
+  setSelectedSecondaryInput
+}: AddStepOperationFormProps & { searchUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }
 ) => {
   const newSearchQuestion = questionsByUrlSegment[searchUrlSegment];
   const newSearchRecordClass = newSearchQuestion && recordClassesByUrlSegment[newSearchQuestion.outputRecordClassName];
@@ -283,11 +296,11 @@ const NewSearchForm = ({
     wdkService
       .createStep(newSearchStepSpec)
       .then(({ id }) => {
-        setSecondaryStepTree({ stepId: id });
+        setSelectedSecondaryInput({ stepTree: { stepId: id }});
         advanceToPage(colocationOperatorForm(newSearchRecordClass.urlSegment));
       })
       .catch(error => reportSubmissionError(searchUrlSegment, error, wdkService));
-  }, [ advanceToPage, newSearchRecordClass, setSecondaryStepTree, searchUrlSegment, reportSubmissionError ]);
+  }, [ advanceToPage, newSearchRecordClass, setSelectedSecondaryInput, searchUrlSegment, reportSubmissionError ]);
 
   const submissionMetadata = useMemo(
     () => ({ type: 'submit-custom-form', onStepSubmitted }) as SubmissionMetadata, 
@@ -317,13 +330,14 @@ const ColocationOperatorForm = (
     inputRecordClass,
     recordClassUrlSegment,
     secondaryInputStepTree,
+    expandedName,
     updateStrategy,
     operandStep,
     recordClassesByUrlSegment,
     previousStep,
     outputStep,
     reportSubmissionError
-  }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree }
+  }: AddStepOperationFormProps & { recordClassUrlSegment: string, secondaryInputStepTree: StepTree, expandedName?: string }
 ) => {
   const colocationQuestionPrimaryInput = useMemo(
     () => questions.find(
@@ -367,13 +381,14 @@ const ColocationOperatorForm = (
       .createStep({
         ...colocationStepSpec,
         searchName,
-        customName
+        customName,
+        expandedName
       })
       .then(({ id }) => {
         updateStrategy(id, secondaryInputStepTree);
       })
       .catch(error => reportSubmissionError(colocationStepSpec.searchName, error, wdkService));
-  }, [ updateStrategy, insertingBeforeFirstStep, secondaryInputStepTree, colocationQuestionPrimaryInput, colocationQuestionSecondaryInput, reportSubmissionError ]);
+  }, [ updateStrategy, insertingBeforeFirstStep, secondaryInputStepTree, expandedName, colocationQuestionPrimaryInput, colocationQuestionSecondaryInput, reportSubmissionError ]);
 
   const submissionMetadata = useMemo(
     () => ({ type: 'submit-custom-form', onStepSubmitted }) as SubmissionMetadata, 
