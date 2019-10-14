@@ -40,9 +40,19 @@ interface CellContentProps {
   recordClass: RecordClass;
 };
 
+interface RenderCellProps extends CellContentProps {
+  CellContent: React.ComponentType<CellContentProps>;
+}
+
 interface RowClassNameProps {
   record: RecordInstance;
   recordClass: RecordClass;
+};
+
+type Options = {
+  // optional overrides
+  renderCellContent?: (props: RenderCellProps) => React.ReactNode;
+  deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
 };
 
 type OwnProps = {
@@ -51,12 +61,6 @@ type OwnProps = {
   parameters: Record<string, string>;
 
 }
-
-type Options = {
-  // optional overrides
-  renderCellContent?: (props: CellContentProps) => React.ReactNode;
-  deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
-};
 
 type Props = {
   stateProps: StateProps,
