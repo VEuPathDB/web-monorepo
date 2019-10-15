@@ -16,7 +16,7 @@ function AttributeSelector({ onSubmit, allAttributes, selectedAttributes, onChan
                 name="pendingAttribute"
                 value={attribute.name}
                 disabled={!attribute.isRemovable}
-                checked={selectedAttributes.includes(attribute)}
+                checked={selectedAttributes.includes(attribute.name)}
                 onChange={({ target }) => onChange(target.value, target.checked)}
               />
               <label htmlFor={`column-select-${attribute.name}`}> {attribute.displayName} </label>

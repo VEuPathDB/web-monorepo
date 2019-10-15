@@ -1,3 +1,4 @@
+import { orderBy, uniq } from 'lodash';
 import React from 'react';
 import { withRouter } from 'react-router';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
@@ -8,7 +9,6 @@ import AttributeSelector from 'wdk-client/Views/Answer/AnswerAttributeSelector';
 import AnswerFilter from 'wdk-client/Views/Answer/AnswerFilter';
 import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 import 'wdk-client/Views/Answer/wdk-Answer.scss';
-import { orderBy } from 'lodash';
 
 
 // TODO Annotate props better
@@ -32,7 +32,7 @@ class Answer extends React.Component {
 
     this.state = {
       attributeSelectorOpen: false,
-      pendingVisibleAttributes: visibleAttributes,
+      pendingVisibleAttributes: visibleAttributes.map(attr => attr.name),
     };
   }
 
@@ -44,29 +44,25 @@ class Answer extends React.Component {
   closeAttributeSelector () {
     const { visibleAttributes } = this.props;
     const attributeSelectorOpen = false;
-    const pendingVisibleAttributes = visibleAttributes;
+    const pendingVisibleAttributes = visibleAttributes.map(attr => attr.name);
     this.setState({ attributeSelectorOpen, pendingVisibleAttributes });
   }
 
   togglePendingAttribute (attributeName, isVisible) {
-    const { allAttributes } = this.props;
-    const currentlyVisible = this.state.pendingVisibleAttributes;
-    const pendingAttributeNames = currentlyVisible.map(({ name }) => name);
-    const pendingVisibleAttributes = allAttributes.filter(({ name }) => {
-      return name === attributeName
-        ? isVisible
-        : pendingAttributeNames.includes(name)
-    });
+    const pendingVisibleAttributes = isVisible
+      ? uniq([ ...this.state.pendingVisibleAttributes, attributeName])
+      : this.state.pendingVisibleAttributes.filter(attrName => attrName !== attributeName);
     this.setState({ pendingVisibleAttributes });
   }
 
   handleAttributeSelectorSubmit (event) {
     event.preventDefault();
     event.stopPropagation();
-    const { onChangeColumns } = this.props;
+    const { allAttributes, onChangeColumns } = this.props;
     const { pendingVisibleAttributes } = this.state;
+    const visibleAttributes = pendingVisibleAttributes.map(attrName => allAttributes.find(attr => attr.name === attrName));
     const attributeSelectorOpen = false;
-    onChangeColumns(pendingVisibleAttributes);
+    onChangeColumns(visibleAttributes);
     this.setState({ attributeSelectorOpen });
   }
 
