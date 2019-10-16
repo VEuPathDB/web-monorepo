@@ -182,9 +182,10 @@ function StrategyPanelWithToggle(props: Props) {
   return (
     <>
       {openedStrategies.length > 1 &&
-        <div style={{ textAlign: 'center' }}>
-          <input id={toggleId} type="checkbox" checked={isOpenedStrategiesVisible} onChange={event => dispatch(setOpenedStrategiesVisibility(event.target.checked))}/> <label htmlFor={toggleId}>Show all opened strategies</label>
-        </div>
+        <ShowAllToggle
+          on={!!isOpenedStrategiesVisible}
+          onChange={on => dispatch(setOpenedStrategiesVisibility(on))}
+        />
       }
       <div className="OpenedStrategiesPanel">
         {strategiesToShow.map(([id, entry]) => (
