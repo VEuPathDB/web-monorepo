@@ -374,9 +374,9 @@ export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitBut
 export function ResultTabs(DefaultComponent) {
   return function ApiResultTabs(props) {
     return (
-      <div style={{ display: "flex", paddingTop: "1em" }}>
+      <div style={{ display: "flex", paddingTop: "1em", alignItems: "stretch" }}>
+        <OrganismFilter {...props}/>
         <div style={{ flex: 1, overflow: 'auto' }}><DefaultComponent {...props}/></div>
-        <div style={{ position: 'relative' }}><OrganismFilter {...props}/></div>
       </div>
     );
   };
