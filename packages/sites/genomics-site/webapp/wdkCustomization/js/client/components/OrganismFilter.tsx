@@ -164,7 +164,11 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
 
   // show collapsed view if not expanded
   if (!isExpanded) {
-    return ( <ExpansionBar onClick={() => setExpandedAndPref(true)} message={'Show ' + TITLE} arrow="&dArr;"/> );
+    return ( 
+      <div style={{ position: 'relative' }}>
+        <ExpansionBar onClick={() => setExpandedAndPref(true)} message={'Show ' + TITLE} arrow="&dArr;"/>
+      </div>
+    );
   }
 
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
