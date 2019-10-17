@@ -110,4 +110,9 @@
     -webkit-box-shadow: 1px 1px 0 #dddddd;
     -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
   }
+
+  &NewDataset {
+    content: url('~wdk-client/Core/Style/images/new-feature.png');
+    margin-left: 0.25em;
+  }
 }

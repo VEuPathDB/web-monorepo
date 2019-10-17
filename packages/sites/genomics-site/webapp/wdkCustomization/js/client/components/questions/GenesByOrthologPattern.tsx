@@ -287,11 +287,11 @@ function ConstraintIcon({
   }, [ onClick ]);
 
   return (
-    <div
+    <span
       className={cx('ConstraintIcon', constraintType)}
       onClick={onClickSpan}
     >  
-    </div>
+    </span>
   );
 }
 

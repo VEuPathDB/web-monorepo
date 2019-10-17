@@ -47,24 +47,20 @@
   }
 
   &ConstraintIcon {
-    height: 12px;
-    width: 14px;
-    display: inline-block;
-
     &__free {
-      background-image: url('/a/images/dc.gif');
+      content: url('/a/images/dc.gif');
     }
 
     &__include {
-      background-image: url('/a/images/yes.gif');
+      content: url('/a/images/yes.gif');
     }
 
     &__exclude {
-      background-image: url('/a/images/no.gif');
+      content: url('/a/images/no.gif');
     }
 
     &__mixed {
-      background-image: url('/a/images/unk.gif');
+      content: url('/a/images/unk.gif');
     }
   }
 

@@ -20,6 +20,7 @@ import './InternalGeneDataset.scss';
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
 type StateProps = {
+  buildNumber?: string,
   questions?: Question[],
   ontology?: CategoryTreeNode,
   recordClasses?: RecordClass[]
@@ -62,6 +63,7 @@ type DisplayCategory = {
 };
 
 const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
+  buildNumber,
   questions,
   ontology,
   recordClasses,
@@ -194,7 +196,12 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                   sortable: true,
                   sortType: 'htmlText',
                   renderCell: (cellProps: any) => {
-                    const { display_name, summary, publications }: { display_name: string, summary: string, publications: LinkAttributeValue[] } 
+                    const { 
+                      display_name, 
+                      summary, 
+                      publications,
+                      build_number_introduced
+                    }: DatasetRecord 
                       = cellProps.row;
 
                     return (
@@ -224,6 +231,10 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                         </HelpIcon>
                         {' '}
                         {display_name}
+                        {
+                          build_number_introduced === buildNumber &&
+                          <span className={cx('NewDataset')}></span>
+                        }
                       </div>
                     );
                   }
@@ -644,6 +655,7 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
 export const InternalGeneDataset = connect<StateProps, {}, OwnProps, RootState>(
   (state, ownProps) => ({ 
     ...ownProps, 
+    buildNumber: state.globalData.config && state.globalData.config.buildNumber,
     questions: state.globalData.questions, 
     ontology: state.globalData.ontology
       ? state.globalData.ontology.tree
