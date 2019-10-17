@@ -160,25 +160,25 @@ export function GbrowseContext(props) {
       	</div>
 	)
   }	
-  if (attribute.name == 'SyntenyGbrowseUrl'){ 
+  if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl'){ 
+    if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
       jbrowseUrlFull = record.attributes.syntenyJbrowseFullUrl;
-      return (
+    }
+    if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
+        jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
+    }
+    if (attribute.name == 'SnpsGbrowseUrl'){ 
+      jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
+    }
+    return (
         <div>
       	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
       	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
       </div>
 	  )
-    }
-  if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
-      jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
   }
-  if (attribute.name == 'SnpsGbrowseUrl'){ 
-      jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
-  }
-
-
 
   if ( attribute.name == 'snpJbrowseUrl' || attribute.name == 'spanJbrowseUrl' ){
   return (
@@ -187,16 +187,6 @@ export function GbrowseContext(props) {
       <br></br>
     </div>
 	  )
-    }
-
-  if (attribute.name == 'BlatAlignmentsGbrowseUrl'|| attribute.name == 'SnpsGbrowseUrl'){ 
-  return (
-      <div>
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={replaceWithFullUrl(jbrowseUrlMinimal)}/>
-      	<GbrowseImage url={url} includeImageMap={true} />
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      </div>
-      )
     }
 
   return (
@@ -215,7 +205,7 @@ export function ProteinContext(props) {
   return (
     <div>
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
-      <GbrowseImage url={url} includeImageMap={true} />
+      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
       <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
     </div>
   );
