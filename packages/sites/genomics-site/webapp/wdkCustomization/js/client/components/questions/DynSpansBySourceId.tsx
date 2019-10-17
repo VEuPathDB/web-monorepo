@@ -111,7 +111,7 @@ const makeRenderParamGroup = (
   onTabSelected: (tab: MutuallyExclusiveTabKey) => void, 
   onClickAddLocation: () => void
 ) => (group: ParameterGroup, props: Props) => (
-  <div className={cx('ParamGroup')}>
+  <div key={group.name} className={cx('ParamGroup')}>
     <div className={cx('MutuallyExclusiveParams')}>
       <h4 className={cx('PhaseHeader')}>
         1. Generate a list of segment IDs

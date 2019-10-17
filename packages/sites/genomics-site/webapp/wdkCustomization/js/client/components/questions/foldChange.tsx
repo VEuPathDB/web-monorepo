@@ -10,7 +10,7 @@ const foldChangeForm = (FoldChangeComponent: React.FunctionComponent<Props>): Re
     {...props}
     renderParamGroup={(group, formProps) =>
       group.displayType === 'dynamic'
-        ? <FoldChangeComponent {...formProps} />
+        ? <FoldChangeComponent key={group.name} {...formProps} />
         : renderDefaultParamGroup(group, formProps)
     }
   />;
