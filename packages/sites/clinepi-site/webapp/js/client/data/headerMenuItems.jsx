@@ -16,9 +16,13 @@ export default function headerMenuItems (state) {
       {
         id: 'search',
         text: 'Search a Study',
-        children: studies.entities != null
+        children:[{
+            text: 'All Studies',
+            appUrl: '/app/search/dataset/Studies/result'
+          }].concat(  
+          studies.entities != null
           ? studies.entities.map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
-          : [{ text: <i style={{ fontSize: '13em' }} className="fa fa-align-justify"/> }]
+          : [{ text: <i style={{ fontSize: '13em' }} className="fa fa-align-justify"/> }])
       },
       {
         id: 'workspace',
