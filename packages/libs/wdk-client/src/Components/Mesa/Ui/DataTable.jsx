@@ -124,7 +124,7 @@ class DataTable extends React.Component {
       : columns.map((column, index) => Object.assign({}, column, { width: dynamicWidths[index] }));
     const bodyWrapperStyle = { maxHeight: options ? options.tableBodyMaxHeight : null };
     const wrapperStyle = { minWidth: dynamicWidths ? combineWidths(columns.map(({ width }) => width)) : null };
-    const headerWrapperStyle = { width: tableWrapperWidth };
+    const headerWrapperStyle = { width: tableWrapperWidth, display: dynamicWidths == null ? 'none' : 'block' };
     const tableLayout = { tableLayout: dynamicWidths ? 'fixed' : 'auto' };
     const tableProps = { options, rows, filteredRows, actions, eventHandlers, uiState, columns: newColumns };
     return (
@@ -140,7 +140,7 @@ class DataTable extends React.Component {
                 cellPadding={0}
                 style={tableLayout}
               >
-                {dynamicWidths == null ? null : <HeadingRow {...tableProps} />}
+                <HeadingRow {...tableProps} />
               </table>
             </div>
             <div
