@@ -17,6 +17,7 @@ import {StepResultType} from 'wdk-client/Utils/WdkResult';
 import {RecordClass} from 'wdk-client/Utils/WdkModel';
 import {Omit} from 'wdk-client/Core/CommonTypes';
 import InvalidStepResults from 'wdk-client/Views/Strategy/InvalidStepResults';
+import ShowAllToggle from 'wdk-client/Views/Strategy/ShowAllToggle';
 
 type StrategyEntry = { strategy?: StrategyDetails, isLoading: boolean; };
 type OpenedStrategiesMap = [number, StrategyEntry][];

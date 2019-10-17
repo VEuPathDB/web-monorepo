@@ -158,7 +158,8 @@ const parameterDecoder: Decode.Decoder<Parameter> =
             Decode.field('displayType', Decode.constant('treeBox')),
             Decode.field('vocabulary', treeBoxVocabDecoder)
           ),
-        )
+        ),
+        Decode.field('vocabularyMap', Decode.objectOf(Decode.string))
       ),
       /* NumberParam */
       Decode.combine(
