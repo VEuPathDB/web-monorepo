@@ -27,7 +27,7 @@ export const mutuallyExclusiveParamsGroupRenderer = (
   const sequenceIdParameterKeys = xorGroupParameters['Sequence ID'];
 
   return (
-    <React.Fragment>
+    <React.Fragment key={group.name}>
       {
         group.name !== xorGroupKey || !chromosomeParameterKeys || !sequenceIdParameterKeys
           ? renderDefaultParamGroup(group, props)
