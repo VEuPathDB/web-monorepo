@@ -1,22 +1,82 @@
 .GenesByOrthologPattern {
+  &ProfileParameter {
+    .wdk-CheckboxTree {
+      width: 50%;
+      position: relative;
+
+      > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeNodeWrapper > i {
+        visibility: hidden;
+      }
+
+      .GenesByOrthologPatternConstraintIcon {
+        cursor: pointer;
+      }
+    }
+
+    .wdk-CheckboxTreeList {
+      .wdk-CheckboxTreeToggle {
+        &__collapsed {
+          margin-left: 0.1em;
+        }
+      }
+    }
+
+    .wdk-CheckboxTreeNodeContent {
+      margin-left: 1em;
+    }
+
+    .wdk-CheckboxTreeLinks {
+      position: absolute;
+      top: 1.1em;
+      left: 9.5em;
+      z-index: 1;
+      margin: 0 0 0 1rem;
+      
+      > div {
+        text-align: left;
+      }
+    }
+  }
+
+  &ConstraintIconLegend {
+    font-style: italic;
+
+    .GenesByOrthologPatternConstraintIcon {
+      margin-left: 0.25em;
+    }
+  }
+
   &ConstraintIcon {
     height: 12px;
     width: 14px;
+    display: inline-block;
 
     &__free {
-      background-image: url('../../../../../images/dc.gif');
+      background-image: url('/a/images/dc.gif');
     }
 
     &__include {
-      background-image: url('../../../../../images/yes.gif');
+      background-image: url('/a/images/yes.gif');
     }
 
     &__exclude {
-      background-image: url('../../../../../images/no.gif');
+      background-image: url('/a/images/no.gif');
     }
 
     &__mixed {
-      background-image: url('../../../../../images/unk.gif');
+      background-image: url('/a/images/unk.gif');
+    }
+  }
+
+  &ProfileNodeDisplay {
+    margin: 0 .25em;
+
+    &__root-node {
+      font-weight: bold;
+    }
+
+    &__interior-node {
+      font-style: italic;
     }
   }
 }

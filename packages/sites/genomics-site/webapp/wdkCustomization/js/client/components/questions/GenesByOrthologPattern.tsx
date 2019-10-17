@@ -2,18 +2,20 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { mapValues } from 'lodash'
 
-import { Props as FormProps, renderDefaultParamGroup } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { CheckboxTree, HelpIcon } from 'wdk-client/Components';
+import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { CheckboxEnumParam, ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
-import { CheckboxEnumParam, ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { CheckboxTree } from 'wdk-client/Components';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import './GenesByOrthologPattern.scss';
 
 const cx = makeClassNameHelper('GenesByOrthologPattern');
+const cxDefaultQuestionForm = makeClassNameHelper('wdk-QuestionForm');
 
 const PHYLETIC_INDENT_MAP_PARAM_NAME = 'phyletic_indent_map';
 const PHYLETIC_TERM_MAP_PARAM_NAME = 'phyletic_term_map';
@@ -33,23 +35,34 @@ type Props = OwnProps;
 
 export const GenesByOrthologPattern = (props: Props) => {
   const renderParamGroup = useCallback((group: ParameterGroup, formProps: Props) => {
-    return renderDefaultParamGroup(
-      {
-        ...group,
-        parameters: [ ORGANISM_PARAM_NAME, PROFILE_PATTERN_PARAM_NAME ]
-      },
-      {
-        ...formProps,
-        parameterElements: {
-          [ ORGANISM_PARAM_NAME ]: formProps.parameterElements[ORGANISM_PARAM_NAME],
-          [ PROFILE_PATTERN_PARAM_NAME ]: (
-            <ProfileParameter
-              questionState={formProps.state}
-              eventHandlers={formProps.eventHandlers}
-            />
-          )
-        }
-      }
+    return (
+      <div key={group.name} className={cxDefaultQuestionForm('ParameterList')}>
+        <div className={cxDefaultQuestionForm('ParameterHeading')}>
+          <h2>
+            <HelpIcon>
+              Find genes in these organisms that belong to an ortholog group with the profile you select below
+            </HelpIcon>{' '}
+            Find genes in these organisms
+          </h2>
+        </div>
+        <div className={cxDefaultQuestionForm('ParameterControl')}>
+          {formProps.parameterElements[ORGANISM_PARAM_NAME]}
+        </div>
+        <div className={cxDefaultQuestionForm('ParameterHeading')}>
+          <h2>
+            <HelpIcon>
+              If you do not force the inclusion of any organism you will get back all genes, since each gene is in a group by itself.
+            </HelpIcon>{' '}
+            Select orthology profile
+          </h2>
+        </div>
+        <div className={cxDefaultQuestionForm('ParameterControl')}>
+          <ProfileParameter
+            questionState={formProps.state}
+            eventHandlers={formProps.eventHandlers}
+          />
+        </div>
+      </div>
     );
   }, []);
 
@@ -145,7 +158,23 @@ function ProfileParameter({
     [ constraints ]
   );
 
-  const [ expandedList, setExpandedList ] = useState<string[]>([]);
+  const initialExpandedList = useMemo(
+    () => getInitialExpandedList(depthMap),
+    [ depthMap ]
+  );
+
+  const [ expandedList, setExpandedList ] = useState<string[]>(initialExpandedList);
+
+  const onExpansionChange = useCallback((newExpandedList: string[]) => {
+    setExpandedList([
+      ALL_ORGANISMS_TERM,
+      ...newExpandedList
+    ]);
+  }, []);
+
+  useEffect(() => {
+    setExpandedList(initialExpandedList);
+  }, [ depthMap ]);
 
   const renderNode = useMemo(
     () => makeRenderNode(constraints, nodeMap, profileTree, eventHandlers, questionState),
@@ -153,16 +182,38 @@ function ProfileParameter({
   );
   
   return (
-    <CheckboxTree<ProfileNode>
-      tree={profileTree}
-      getNodeId={getNodeId}
-      getNodeChildren={getNodeChildren}
-      onExpansionChange={setExpandedList}
-      renderNode={renderNode}
-      expandedList={expandedList}
-      showRoot
-    />
+    <div className={cx('ProfileParameter')}>
+      <div className={cx('ProfileParameterHelp')}>
+        <div>
+        Click on <ConstraintIcon constraintType="free"/> to determine which organisms to include or exclude in the orthology profile.
+        </div>
+        <div className={cx('ConstraintIconLegend')}>
+          (
+            <ConstraintIcon constraintType="free" /> = no constraints |
+            <ConstraintIcon constraintType="include" /> = must be in group |
+            <ConstraintIcon constraintType="exclude" /> = must not be in group |
+            <ConstraintIcon constraintType="mixed" /> = mixture of constraints
+          )
+        </div>
+      </div>
+      <CheckboxTree<ProfileNode>
+        tree={profileTree}
+        getNodeId={getNodeId}
+        getNodeChildren={getNodeChildren}
+        onExpansionChange={onExpansionChange}
+        renderNode={renderNode}
+        expandedList={expandedList}
+        showRoot
+        linksPosition={LinksPosition.Top}
+      />
+    </div>
   );
+}
+
+function getInitialExpandedList(depthMap: Record<string, number>) {
+  return Object.entries(depthMap)
+    .filter(([ term, depth ]) => depth <= 1)
+    .map(([ term ]) => term);
 }
 
 function getNodeId(node: ProfileNode) {
@@ -182,10 +233,9 @@ function makeRenderNode(
 ) {
   return (node: ProfileNode) => (
     <>
-      <span className={cx('ConstraintIcon', constraints[node.term])}
-        onClick={e => {
-          e.stopPropagation();
-
+      <ConstraintIcon
+        constraintType={constraints[node.term]}
+        onClick={() => {
           const [ newIncludedTermsParam, newExcludedTermsParam ] = updateProfileTerms(
             node.term,
             nodeMap[node.term],
@@ -197,7 +247,6 @@ function makeRenderNode(
             constraints,
             profileTree
           );
-
           eventHandlers.updateParamValue({
             searchName: questionState.question.urlSegment,
             parameter: questionState.question.parametersByName[INCLUDED_SPECIES_PARAM_NAME],
@@ -211,11 +260,38 @@ function makeRenderNode(
             paramValues: questionState.paramValues,
             paramValue: newExcludedTermsParam
           });
-        }}>  
+        }}
+      />
+      <span className={cx('ProfileNodeDisplay', node.term == ALL_ORGANISMS_TERM ? 'root-node' : 'interior-node')}>
+        {node.display}
       </span>
-      {node.display}
-      <code>({node.term})</code>
+      {node.term !== ALL_ORGANISMS_TERM && <code>({node.term})</code>}
     </>
+  );
+}
+
+type ConstraintIconProps = {
+  constraintType: TermConstraintState,
+  onClick?: () => void
+};
+
+function ConstraintIcon({
+  constraintType,
+  onClick
+}: ConstraintIconProps) {
+  const onClickSpan = useCallback((e: React.MouseEvent) => {
+    if (onClick) {
+      e.stopPropagation();
+      onClick();
+    }
+  }, [ onClick ]);
+
+  return (
+    <div
+      className={cx('ConstraintIcon', constraintType)}
+      onClick={onClickSpan}
+    >  
+    </div>
   );
 }
 
