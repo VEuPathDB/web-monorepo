@@ -30,7 +30,7 @@ interface DispatchProps {
   setActiveModal: (activeModal: { type: string, strategyId: number }) => void;
   clearActiveModal: () => void;
   showLoginWarning: (attemptedAction: string) => void;
-  copyStrategy: (signature: string) => void;
+  copyStrategy: (strategyId: number) => void;
   deleteStrategy: (strategyId: number) => void;
   renameStrategy: (strategyId: number, name: string) => void;
   saveStrategy: (strategyId: number, targetName: string, options: SaveStrategyOptions) => void;
@@ -41,7 +41,7 @@ const dispatchProps: DispatchProps = {
   clearActiveModal,
   setActiveModal,
   showLoginWarning,
-  copyStrategy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
+  copyStrategy: (strategyId: number) => requestDuplicateStrategy(strategyId),
   deleteStrategy: (strategyId: number) => requestDeleteStrategy(strategyId),
   renameStrategy: (strategyId: number, name: string) => requestPatchStrategyProperties(strategyId, { name }),
   saveStrategy: (strategyId: number, targetName: string, options: SaveStrategyOptions) =>
@@ -117,7 +117,7 @@ export const StrategyActions: Record<string, StrategyAction> = {
         <div>Are you sure you want to make a copy of your strategy?</div>
         <div>
           <button className="btn" type="button" onClick={() => {
-              props.copyStrategy(props.strategy.signature);
+              props.copyStrategy(props.strategy.strategyId);
               props.clearActiveModal();
             }}>Yes, make a copy</button> <CloseModalButton {...props}>Cancel</CloseModalButton></div>
       </React.Fragment>

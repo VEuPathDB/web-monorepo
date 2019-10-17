@@ -1,5 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { NewStrategySpec, DuplicateStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec, SaveStrategyOptions } from "wdk-client/Utils/WdkUser";
+import { NewStrategySpec, DeleteStrategySpec, StrategyDetails, StrategyProperties, StepTree, NewStepSpec, PatchStepSpec, SaveStrategyOptions } from "wdk-client/Utils/WdkUser";
 import { Answer, StandardReportConfig, SearchConfig } from 'wdk-client/Utils/WdkModel';
 import { AnswerFormatting } from 'wdk-client/Service/Mixins/SearchReportsService';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
@@ -68,12 +68,12 @@ export const fulfillDeleteStrategy = makeActionCreator(
 
 export const requestDuplicateStrategy = makeActionCreator(
     'requestDuplicateStrategy',
-    (copyStepSpec: DuplicateStrategySpec) => ({ copyStepSpec, requestTimestamp: Date.now() })
+    (strategyId: number) => ({ strategyId, requestTimestamp: Date.now() })
 );
 
 export const fulfillDuplicateStrategy = makeActionCreator(
     'fulfillDuplicateStrategy',
-    (strategyId: number, requestTimestamp: number) => ({ strategyId, requestTimestamp })
+  (strategyId: number, sourceStrategyId: number, requestTimestamp: number) => ({ strategyId, sourceStrategyId, requestTimestamp })
 );
 
 export const requestPatchStrategyProperties = makeActionCreator(

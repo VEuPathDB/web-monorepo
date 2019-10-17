@@ -64,6 +64,7 @@ export function reduce(state: State = initialState, action: Action): State {
   case requestPatchStrategyProperties.type:
   case requestPutStrategyStepTree.type:
   case requestDeleteStrategy.type:
+  case requestDuplicateStrategy.type:
   case requestUpdateStepProperties.type:
   case requestSaveAsStrategy.type:
   case requestDeleteStep.type:
@@ -80,6 +81,13 @@ export function reduce(state: State = initialState, action: Action): State {
 
   case cancelStrategyRequest.type: {
     return updateStrategyEntry(state, action.payload.strategyId, entry => ({
+      ...entry,
+      isLoading: false
+    }));
+  }
+
+  case fulfillDuplicateStrategy.type: {
+    return updateStrategyEntry(state, action.payload.sourceStrategyId, entry => ({
       ...entry,
       isLoading: false
     }));
@@ -423,9 +431,18 @@ async function getFulfillStrategy_SaveAs(
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
   ): Promise<InferAction<typeof fulfillDuplicateStrategy>> {
-    const {copyStepSpec, requestTimestamp }  = requestAction.payload;
-      let strategy = await wdkService.duplicateStrategy(copyStepSpec);
-      return fulfillDuplicateStrategy(strategy.id, requestTimestamp);
+    const {strategyId, requestTimestamp }  = requestAction.payload;
+    const currentStrategy = await wdkService.getStrategy(strategyId);
+    const stepTree = await wdkService.getDuplicatedStrategyStepTree(strategyId);
+    const { name, description } = currentStrategy;
+    const strategy = await wdkService.createStrategy({
+      isSaved: false,
+      isPublic: false,
+      name: `${name}, Copy of`,
+      description,
+      stepTree,
+    })
+    return fulfillDuplicateStrategy(strategy.id, strategyId, requestTimestamp);
   }
 
   async function getFulfillCreateStrategy(

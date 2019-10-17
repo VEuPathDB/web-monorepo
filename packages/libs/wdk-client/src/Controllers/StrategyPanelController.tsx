@@ -35,7 +35,7 @@ interface MappedDispatch {
   setReviseFormStepId: (stepId?: number) => void;
   requestStrategy: (id: number) => void;
   onStrategyClose: () => void;
-  onStrategyCopy: (signature: string) => void;
+  onStrategyCopy: () => void;
   onStrategyDelete: () => void;
   onStrategyRename: (name: string) => void;
   onStrategySave: (name: string, isPublic: boolean, description?: string) => void;
@@ -71,26 +71,27 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
+  const { strategyId, viewId } = props;
   return bindActionCreators({
     requestStrategy,
     openStrategyPanel,
     closeStrategyPanel,
     onStrategyClose: () => [
-      removeFromOpenedStrategies([props.strategyId]),
+      removeFromOpenedStrategies([strategyId]),
       transitionToInternalPage('/workspace/strategies')
     ],
-    setReviseFormStepId: (stepId?: number) => setReviseFormVisibility(props.viewId, stepId),
-    onStrategyCopy: (sourceStrategySignature: string) => requestDuplicateStrategy({ sourceStrategySignature }),
-    onStrategyDelete: () => requestDeleteStrategy(props.strategyId),
-    onStrategyRename: (name: string) => requestPatchStrategyProperties(props.strategyId, { name }),
-    onStrategySave: (name: string, isPublic: boolean, description?: string) => requestPatchStrategyProperties(props.strategyId, { isPublic, isSaved: true, name, description }),
-    onShowInsertStep: (addType: AddType) => setInsertStepWizardVisibility(props.viewId, addType),
-    onHideInsertStep: () => setInsertStepWizardVisibility(props.viewId, undefined),
-    onExpandNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(props.strategyId, branchStepId, { expanded: true }),
-    onCollapseNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(props.strategyId, branchStepId, { expanded: false }),
-    onRenameStep: (stepId: number, newName: string) => requestUpdateStepProperties(props.strategyId, stepId, { customName: newName }),
+    setReviseFormStepId: (stepId?: number) => setReviseFormVisibility(viewId, stepId),
+    onStrategyCopy: () => requestDuplicateStrategy(strategyId),
+    onStrategyDelete: () => requestDeleteStrategy(strategyId),
+    onStrategyRename: (name: string) => requestPatchStrategyProperties(strategyId, { name }),
+    onStrategySave: (name: string, isPublic: boolean, description?: string) => requestPatchStrategyProperties(strategyId, { isPublic, isSaved: true, name, description }),
+    onShowInsertStep: (addType: AddType) => setInsertStepWizardVisibility(viewId, addType),
+    onHideInsertStep: () => setInsertStepWizardVisibility(viewId, undefined),
+    onExpandNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(strategyId, branchStepId, { expanded: true }),
+    onCollapseNestedStrategy: (branchStepId: number) => requestUpdateStepProperties(strategyId, branchStepId, { expanded: false }),
+    onRenameStep: (stepId: number, newName: string) => requestUpdateStepProperties(strategyId, stepId, { customName: newName }),
     onRenameNestedStrategy: (branchStepId: number, newName: string) =>
-      requestUpdateStepProperties(props.strategyId, branchStepId, {
+      requestUpdateStepProperties(strategyId, branchStepId, {
         expanded: true,
         expandedName: newName
       }),
@@ -101,9 +102,9 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
       status: 'AWAITING_USER_CHOICE',
       errorMessage: null 
     }),
-    onMakeNestedStrategy: (branchStepId: number) => nestStrategy(props.viewId, branchStepId),
-    onMakeUnnestedStrategy: (branchStepId: number) => unnestStrategy(props.viewId, branchStepId),
-    onDeleteStep: (stepTree: StepTree, stepId: number) => requestRemoveStepFromStepTree(props.strategyId, stepId, stepTree)
+    onMakeNestedStrategy: (branchStepId: number) => nestStrategy(viewId, branchStepId),
+    onMakeUnnestedStrategy: (branchStepId: number) => unnestStrategy(viewId, branchStepId),
+    onDeleteStep: (stepTree: StepTree, stepId: number) => requestRemoveStepFromStepTree(strategyId, stepId, stepTree)
   }, dispatch);
 }
 
