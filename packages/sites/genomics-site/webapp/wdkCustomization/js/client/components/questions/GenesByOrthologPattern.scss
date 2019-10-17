@@ -1,0 +1,22 @@
+.GenesByOrthologPattern {
+  &ConstraintIcon {
+    height: 12px;
+    width: 14px;
+
+    &__free {
+      background-image: url('../../../../../images/dc.gif');
+    }
+
+    &__include {
+      background-image: url('../../../../../images/yes.gif');
+    }
+
+    &__exclude {
+      background-image: url('../../../../../images/no.gif');
+    }
+
+    &__mixed {
+      background-image: url('../../../../../images/unk.gif');
+    }
+  }
+}

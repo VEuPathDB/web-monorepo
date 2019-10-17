@@ -15,6 +15,7 @@ import { BlastQuestionForm } from './components/questions/BlastQuestionForm';
 import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
+import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 import { RadioParams } from './components/questions/RadioParams';
 
@@ -142,6 +143,11 @@ export default [
         question.urlSegment === 'UnifiedBlast'
       ),
     component: BlastQuestionForm
+  },
+  {
+    type: 'questionForm',
+    name: 'GenesByOrthologPattern',
+    component: GenesByOrthologPattern
   },
   {
     type: 'questionFormParameter',
