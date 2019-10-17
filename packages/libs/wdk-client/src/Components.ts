@@ -67,9 +67,11 @@ import ResultTabs from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/Resu
 import { AddStepPanelView } from 'wdk-client/Views/Strategy/AddStepPanel';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
+import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 
 export {
   AccordionButton,
+  AnswerTableCell,
   ApplicationSpecificProperties,
   AddStepPanelView,
   Banner,

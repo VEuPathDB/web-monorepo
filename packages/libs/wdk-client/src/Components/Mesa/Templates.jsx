@@ -23,6 +23,19 @@ const Templates = {
     return <div className={className}>{display}</div>
   },
 
+  wdkLinkCell ({ key, value, row, rowIndex, column }) {
+    const className = 'Cell wdkLinkCell Cell-' + key;
+    let { displayText, url } = value;
+    let href = (url ? url : '#');
+    let text = (displayText.length ? value.displayText : href);
+    text = (<div dangerouslySetInnerHTML={{ __html: text }} />); 
+    let target = '_blank';
+
+    const props = { href, target, className };
+
+    return <a {...props}>{text}</a>
+  },
+
   linkCell ({ key, value, row, rowIndex, column }) {
     const className = 'Cell LinkCell Cell-' + key;
     const defaults = { href: null, target: '_blank', text: '' };

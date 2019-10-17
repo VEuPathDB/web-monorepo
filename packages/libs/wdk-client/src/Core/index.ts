@@ -20,6 +20,7 @@ import WdkService from 'wdk-client/Service/WdkService';
 import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
 import * as FilterParamUtils from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 import * as WdkMiddleware from 'wdk-client/Core/WdkMiddleware';
+import * as SearchUtils from 'wdk-client/Utils/SearchUtils';
 
 declare global {
   interface Window {
@@ -46,6 +47,7 @@ export {
   Plugins,
   PromiseUtils,
   ReporterUtils,
+  SearchUtils,
   StoreModules,
   TreeUtils,
   WdkModel,

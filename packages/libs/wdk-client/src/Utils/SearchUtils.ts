@@ -42,9 +42,7 @@ export function parseSearchQueryString(searchQueryString: string) {
  * @returns boolean
  */
 export function areTermsInString(queryTerms: Array<string>, searchableString: string) {
-    return queryTerms.reduce(function (matchesFlag, term) {
-        return matchesFlag && isTermInString(term, searchableString)
-    }, true);
+  return queryTerms.every(term => isTermInString(term, searchableString));
 }
 
 /**

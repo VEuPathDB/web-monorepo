@@ -1,6 +1,6 @@
 import { memoize, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useLayoutEffect, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
@@ -49,12 +49,6 @@ export default class FieldList extends React.Component { // eslint-disable-line 
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.activeField !== this.props.activeField) {
-      this._scrollSelectedFieldIntoView();
-    }
-  }
-
   handleCheckboxTreeRef(component) {
     this.treeDomNode = ReactDOM.findDOMNode(component);
   }
@@ -63,7 +57,7 @@ export default class FieldList extends React.Component { // eslint-disable-line 
     this.setState({ expandedNodes });
   }
 
-  handleFieldSelect(node, domNode) {
+  handleFieldSelect(node) {
     this.props.onActiveFieldChange(node.field.term);
     const expandedNodes = Seq.from(this.state.expandedNodes)
       .concat(this._getPathToField(node.field))
@@ -71,31 +65,12 @@ export default class FieldList extends React.Component { // eslint-disable-line 
       .uniq()
       .toArray();
     this.setState({ expandedNodes });
-    this.selectedFieldDOMNode = domNode;
   }
 
   handleSearchTermChange(searchTerm) {
     // update search term, then if it is empty, make sure selected field is visible
-    this.setState({searchTerm}, () => {
-      if (searchTerm == '') this._scrollSelectedFieldIntoView();
-    });
+    this.setState({searchTerm});
   }
-
-  _scrollSelectedFieldIntoView() {
-    if (this.selectedFieldDOMNode != null) {
-      let scrollList = this.treeDomNode.querySelector('.wdk-CheckboxTreeList');
-      if (
-        scrollList != null &&
-        // below the bottom
-        ((scrollList.scrollTop > this.selectedFieldDOMNode.offsetTop) ||
-        (scrollList.clientHeight + scrollList.scrollTop) <= (this.selectedFieldDOMNode.offsetTop + this.selectedFieldDOMNode.clientHeight))
-        // above the top
-      ) {
-        scrollList.scrollTop = this.selectedFieldDOMNode.offsetTop - (scrollList.clientHeight / 2);
-      }
-    }
-  }
-
   getNodeId(node) {
     return node.field.term;
   }
@@ -139,8 +114,8 @@ export default class FieldList extends React.Component { // eslint-disable-line 
           onExpansionChange={this.handleExpansionChange}
           isSelectable={false}
           isSearchable={true}
-          searchBoxPlaceholder="Find a filter"
-          searchBoxHelp="Find a filter by searching names and descriptions"
+          searchBoxPlaceholder="Find a variable"
+          searchBoxHelp="Find a variable by searching names and descriptions"
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}
@@ -169,18 +144,25 @@ function getNodeSearchString(valuesMap) {
 
 
 function FieldNode({node, isActive, handleFieldSelect }) {
+  const nodeRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (isActive && nodeRef.current) scrollIntoViewIfNeeded(nodeRef.current);
+  }, [ isActive, nodeRef.current ])
+
   return (
     <Tooltip content={node.field.description} hideDelay={0}>
       {isFilterField(node.field)
       ? (
         <a
+          ref={nodeRef}
           className={'wdk-AttributeFilterFieldItem' +
             (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')}
           href={'#' + node.field.term}
           onClick={e => {
             e.preventDefault();
             e.stopPropagation();
-            handleFieldSelect(node, e.target);
+            handleFieldSelect(node);
           }}>
           <Icon fa={getIcon(node.field)}/> {node.field.display}
         </a>
@@ -195,4 +177,17 @@ function getIcon(field) {
   return isRange(field) ? 'bar-chart-o'
     : isMulti(field) ? 'th-list'
     : 'list';
+}
+
+function scrollIntoViewIfNeeded(element) {
+  const { offsetParent } = element;
+  if (
+    offsetParent != null &&
+    // below the bottom
+    ((offsetParent.scrollTop > element.offsetTop) ||
+    (offsetParent.clientHeight + offsetParent.scrollTop) <= (element.offsetTop + element.clientHeight))
+    // above the top
+  ) {
+    offsetParent.scrollTop = element.offsetTop - (offsetParent.clientHeight / 2);
+  }
 }

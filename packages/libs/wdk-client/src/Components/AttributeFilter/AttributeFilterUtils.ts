@@ -12,7 +12,7 @@ import {
   RangeField,
   ValueCounts
 } from 'wdk-client/Components/AttributeFilter/Types';
-import { preorderSeq, pruneDescendantNodes, postorderSeq, mapStructure } from 'wdk-client/Utils/TreeUtils';
+import { preorderSeq, mapStructure } from 'wdk-client/Utils/TreeUtils';
 
 /**
  * Determine if a field should use a range filter display
@@ -176,13 +176,12 @@ function mapBy<T, S>(iter: Iterable<T>, keyAccessor: (item: T) => S) {
 /**
  * Create an array of ancestor nodes for a given node predicate.
  */
-export function findAncestorFields<T>(tree: FieldTreeNode, term: string): Seq<Field> {
-  return postorderSeq(tree)
-    .reduce((ancestors: Seq<Field>, node: FieldTreeNode) =>
-      node.field.term === term ? Seq.of(node.field)
-      : !ancestors.isEmpty() && node.field.term === ancestors.first().parent ? Seq.of(node.field, ...ancestors)
-      : ancestors,
-      Seq.empty())
+export function findAncestorFields(tree: FieldTreeNode, term: string): Seq<Field> {
+  if (tree.field.term === term) return Seq.of(tree.field);
+  const ancestors = Seq.from(tree.children)
+    .flatMap(child => findAncestorFields(child, term));
+  if (ancestors.isEmpty()) return Seq.empty();
+  return Seq.of(tree.field).concat(ancestors);
 }
 
 

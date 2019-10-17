@@ -23,8 +23,11 @@ class DataCell extends React.PureComponent {
     }
 
     if (!column.type) return Templates.textCell(cellProps);
+    if (!cellProps.value) return Templates.textCell(cellProps);
 
     switch (column.type.toLowerCase()) {
+      case 'wdklink':
+        return Templates.wdkLinkCell(cellProps);
       case 'link':
         return Templates.linkCell(cellProps);
       case 'number':

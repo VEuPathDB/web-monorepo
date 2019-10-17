@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import RecordLink from 'wdk-client/Views/Records/RecordLink';
 import { renderAttributeValue, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
+// FIXME Remove hardcoded name and lookup from recordClass
 let primaryKeyName = 'primary_key';
 
 function AnswerTableCell(props) {
@@ -10,31 +11,30 @@ function AnswerTableCell(props) {
     return null;
   }
 
-  let { value, descriptor, record, recordClass } = props;
+  let { value, attribute, record, recordClass } = props;
 
-  if (descriptor.name === primaryKeyName) {
+  if (attribute.name === primaryKeyName) {
     return (
       <RecordLink
         recordId={record.id}
         recordClass={recordClass}
         className="wdk-AnswerTable-recordLink"
       >
-        {renderAttributeValue(value, props)}
+        {renderAttributeValue(value)}
       </RecordLink>
     );
   }
   else {
-    return renderAttributeValue(value, props);
+    return renderAttributeValue(value);
   }
 }
 
 AnswerTableCell.propTypes = {
   // TODO Put reusable propTypes in a module
   value: PropTypes.string,
-  descriptor: PropTypes.object.isRequired,
+  attribute: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
   recordClass: PropTypes.object.isRequired,
-  width: PropTypes.number.isRequired
 };
 
 export default wrappable(AnswerTableCell);

@@ -63,6 +63,9 @@ class DataTable extends React.Component {
   }
 
   setDynamicWidths () {
+    // noop if rows or filteredRows is empty
+    if (this.props.rows.length === 0 || this.props.filteredRows.length === 0) return;
+
     this.setState({ dynamicWidths: null, tableWrapperWidth: null }, () => {
       this.widthCache = {};
       const { columns } = this.props;
@@ -70,9 +73,15 @@ class DataTable extends React.Component {
       const { contentTable, getInnerCellWidth } = this;
       if (!contentTable) return;
       const contentCells = Array.from(contentTable.querySelectorAll('tbody > tr:first-child > td'));
+
+      if (contentCells.length === 0) {
+        return;
+      }
+
       if (hasSelectionColumn) {
         contentCells.shift();
       }
+
       const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
       console.debug('dynamicWidths updating', dynamicWidths);
       this.setState({ dynamicWidths }, () => {
@@ -115,7 +124,7 @@ class DataTable extends React.Component {
       : columns.map((column, index) => Object.assign({}, column, { width: dynamicWidths[index] }));
     const bodyWrapperStyle = { maxHeight: options ? options.tableBodyMaxHeight : null };
     const wrapperStyle = { minWidth: dynamicWidths ? combineWidths(columns.map(({ width }) => width)) : null };
-    const headerWrapperStyle = { width: tableWrapperWidth };
+    const headerWrapperStyle = { width: tableWrapperWidth, display: dynamicWidths == null ? 'none' : 'block' };
     const tableLayout = { tableLayout: dynamicWidths ? 'fixed' : 'auto' };
     const tableProps = { options, rows, filteredRows, actions, eventHandlers, uiState, columns: newColumns };
     return (
@@ -131,7 +140,7 @@ class DataTable extends React.Component {
                 cellPadding={0}
                 style={tableLayout}
               >
-                {dynamicWidths == null ? null : <HeadingRow {...tableProps} />}
+                <HeadingRow {...tableProps} />
               </table>
             </div>
             <div
