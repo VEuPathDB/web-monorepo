@@ -56,13 +56,13 @@ const renderCellContent = props => {
                    };
     return (
     <div className={cx()}>
-      {Object.entries(cardQuestions).map(([key,value]) => {
+      {Object.entries(cardQuestions).map(([key,value]) => (
         <div key={key} className={cx('Item')}>
             <a href={`ce/showQuestion.do?questionFullName=${value}`}>
               <i className={iconNames[key]}/>
             </a>
         </div>
-        })
+        ))
       }</div>
     );
   }
