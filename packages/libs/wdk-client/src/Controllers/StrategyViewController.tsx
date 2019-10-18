@@ -90,7 +90,7 @@ function StrategyViewController(props: Props) {
             viewId={`step__${resultType.step.id}`}
             initialTab={selectedTab}
             renderHeader={() => resultType && recordClass ? (
-              <React.Fragment>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1em' }}>
                   <ResultPanelHeader
                     reviseViewId={strategyPanelViewId(resultType.step.strategyId)}
@@ -101,7 +101,7 @@ function StrategyViewController(props: Props) {
                 <StepFiltersController
                   step={resultType.step}
                 />
-              </React.Fragment>
+              </div>
             ) : null}
           />
         )
