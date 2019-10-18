@@ -241,7 +241,9 @@ export function loadAnswer(
           const question = await wdkService.findQuestion(hasUrlSegment(questionUrlSegment));
           const recordClass = await wdkService.findRecordClass(hasUrlSegment(recordClassUrlSegment));
           const attributes = recordClass.attributes
-            .filter(attr => attr.isDisplayable)
+          // Get all attributes for applications that need internal attributes for rendering purposes.
+          // TODO Figure out a way to allow applications to declore additional non-displayable attributes for request
+          // .filter(attr => attr.isDisplayable)
             .map(attr => attr.name);
 
           displayInfo.attributes = attributes;
