@@ -89,8 +89,9 @@ function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
   let visibleAttributes = state.visibleAttributes;
   if (!visibleAttributes || state.meta && state.meta.recordClassName !== answer.meta.recordClassName) {
     // need to populate attribute details for visible attributes
-    visibleAttributes = allAttributes
-      .filter(attr => isNotWeight(attr) && question.defaultAttributes.includes(attr.name));
+    visibleAttributes = question.defaultAttributes
+      .map(attrName => allAttributes.find(attr => attr.name ===  attrName))
+      .filter((attr): attr is AttributeField => attr != null)
   }
 
   // Remove search weight from answer meta since it doens't apply to non-Step answers
