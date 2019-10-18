@@ -310,8 +310,13 @@ export function ExpandedSteps(props: StepBoxesProps) {
       {stepTree.primaryInput && <ExpandedSteps {...props} stepTree={stepTree.primaryInput}/>}
       {stepTree.secondaryInput && stepTree.secondaryInput.isNested && stepTree.step.expanded && (
         <React.Fragment>
-          <div className="StrategyPanel--NestedTitle">Expanded view of <em>{stepTree.step.expandedName || getDefaultStepName(stepTree.secondaryInput.step, isPartialLeafUiStepTree(stepTree.secondaryInput))}</em> <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}>close</button></div>
-          <div className="StrategyPanel--Panel" style={{ display: 'block', border: `.1em solid ${stepTree.secondaryInput.color}` }}>
+          <div className="StrategyPanel--NestedTitle">
+            Expanded view of <em>{stepTree.step.expandedName || getDefaultStepName(stepTree.secondaryInput.step, isPartialLeafUiStepTree(stepTree.secondaryInput))}</em>
+          </div>
+          <div className="StrategyPanel--Panel" style={{ border: `.1em solid ${stepTree.secondaryInput.color}` }}>
+            <div style={{ fontSize: '1.4em', padding: '.35em .4em' }}>
+              <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}><i className="fa fa-times"/></button>
+            </div>
             <StepBoxes {...props} stepTree={stepTree.secondaryInput}/>
           </div>
         </React.Fragment>
