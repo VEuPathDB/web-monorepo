@@ -36,6 +36,14 @@ class Answer extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.visibleAttributes !== this.props.visibleAttributes) {
+      this.setState({
+        pendingVisibleAttributes: this.props.visibleAttributes.map(attr => attr.name)
+      });
+    }
+  }
+
   openAttributeSelector () {
     const attributeSelectorOpen = true;
     this.setState({ attributeSelectorOpen });
