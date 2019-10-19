@@ -671,3 +671,8 @@ div.wdk-Answer tr.greyed-out {
   pointer-events: none;
 }
 
+ul.wdk-AnswerTable-AttributeSelector li input#column-select-description, ul.wdk-AnswerTable-AttributeSelector li input#column-select-description + label {
+  display:none;
+}
+
+
