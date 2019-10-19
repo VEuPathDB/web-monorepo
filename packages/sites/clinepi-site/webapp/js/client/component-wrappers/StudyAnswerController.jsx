@@ -1,8 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
+import { Seq } from 'wdk-client/IterableUtils';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import CategoryIcon from 'ebrc-client/App/Categories/CategoryIcon';
-import { makeClassNameHelper } from 'wdk-client/ComponentUtils';
+import StudySearchIconLinks from 'ebrc-client/App/Studies/StudySearches';
 
+// wrapping WDKClient AnswerController for specific rendering on certain columns
 function StudyAnswerController(props) {
   return (
     <React.Fragment>
@@ -16,7 +20,15 @@ function StudyAnswerController(props) {
   );
 }
 
-/* defined in WDKClient/../AnswerController.jsx
+// StudySearchCellContent wraps StudySearchIconLinks
+// - accessing the store to get new props needed to render StudySearchIconLinks (aka StudySearches) which we want to reuse
+// --- using connect(mapStateToProps,..): pattern also used in StudyRecordHeading
+let StudySearchCellContent = connect(mapStateToProps, null)(StudySearchIconLinks);
+
+
+/* prop types defined in WDKClient/../AnswerController.jsx
+   and used in Answer.jsx
+ 
 interface CellContentProps {
   value: AttributeValue;
   attribute: AttributeField;
@@ -32,13 +44,12 @@ interface RowClassNameProps {
 }
 */
 
+// TODO: use website projectid
 const deriveRowClassName = props => {
   if (props.record.attributes.project_availability.includes('"ClinEpiDB"')) {
     return 'non-greyed-out';}
   return 'greyed-out';
 };
-
-const cx = makeClassNameHelper('ce-StudySearchIconLinks');
 
 const renderCellContent = props => {
   if (props.attribute.name === 'study_categories') {
@@ -48,28 +59,55 @@ const renderCellContent = props => {
             ));
   }
   if (props.attribute.name === 'card_questions') { 
-    let cardQuestions = JSON.parse(props.record.attributes.card_questions);
-    let iconNames = {"participants":"fa fa-male",
-                     "observations":"fa fa-stethoscope",
-                     "lighttraps":"fa fa-bug",
-                     "households":"fa fa-home"
-                   };
-    return (
-    <div className={cx()}>
-      {Object.entries(cardQuestions).map(([key,value]) => (
-        <div key={key} className={cx('Item')}>
-            <a href={`ce/showQuestion.do?questionFullName=${value}`}>
-              <i className={iconNames[key]}/>
-            </a>
-        </div>
-        ))
-      }</div>
-    );
+     return <StudySearchCellContent {...props}/> 
   }
   if (props.attribute.name === 'bulk_download_url') {
     return <DownloadLink studyId={props.record.id[0].value} studyUrl= {props.record.attributes.bulk_download_url.url}/>;
   }
   return <props.CellContent {...props}/>
 };
+
+
+// mapStateToProps()
+// - input props: StudySearchCellContent, of type RenderCellProps  
+//   will be converted into new props needed to render StudySearchIconLinks (defined in StudySearches.jsx)
+// --- entries = [{question, recordClass}],
+// --- webAppUrl
+//
+function mapStateToProps(state,props) {
+  const { record } = props;
+  const { globalData, studies } = state;
+  const { questions, recordClasses, siteConfig } = globalData;
+  const { webAppUrl } = siteConfig;
+
+  if (questions == null || recordClasses == null || studies.loading) {
+    return { loading: true };
+  }
+
+  const studyId = record.id
+    .filter(part => part.name === 'dataset_id')
+    .map(part => part.value)[0];
+
+  const activeStudy = get(studies, 'entities', [])
+    .find(study => study.id === studyId);
+
+  // Find record class and searches from study id.
+  // If none found, render nothing.
+  // FIXME Start with questions!!
+  const entries = activeStudy && Seq.from(activeStudy.searches)
+      .map(search => search.name)
+      .flatMap(questionName =>
+        Seq.from(questions)
+          .filter(question => question.name === questionName)
+          .take(1)
+          .flatMap(question =>
+            Seq.from(recordClasses)
+              .filter(recordClass => question.recordClassName === recordClass.name)
+              .map(recordClass => ({ question, recordClass }))
+              .take(1)))
+      .toArray();
+
+  return { entries, webAppUrl };
+}
 
 export default StudyAnswerController;
