@@ -16,7 +16,7 @@ export default function headerMenuItems (state) {
         id: 'search',
         text: 'Search a Study',
         children:[{
-            text: 'All Studies',
+            text: <div style={{ padding: '0.5em 0' }}>All Studies</div>,
             appUrl: '/app/search/dataset/Studies/result'
           }].concat(  
           studies.entities != null
