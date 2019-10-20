@@ -71,7 +71,7 @@ class HistogramAnalysisController extends React.PureComponent<Props> {
 
     const histogramReport = report.resource as HistogramReport;
 
-    const { avg, min, max } = getReportSummary(
+    const { avg, median, min, max } = getReportSummary(
       histogramReport,
       histogramAnalysis.logXAxis
     );
@@ -109,6 +109,7 @@ class HistogramAnalysisController extends React.PureComponent<Props> {
               recordCountLabel={histogramReport.recordCountLabel}
               data={histogramReport.data}
               avg={avg}
+              median={median}
               min={min}
               max={max}
               type={histogramReport.type}
