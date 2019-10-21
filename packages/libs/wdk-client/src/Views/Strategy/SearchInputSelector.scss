@@ -22,7 +22,8 @@
   }
 
   &--CheckboxContainer {
-    padding: 0 0.5em 0.5em 0.5em
+    padding: 0 0.5em 0.5em 0.5em;
+    min-width: 20em;
   }
 
   .wdk-CategoriesCheckboxTree {

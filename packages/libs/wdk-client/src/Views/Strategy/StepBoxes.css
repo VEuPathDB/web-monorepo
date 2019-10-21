@@ -309,7 +309,7 @@ button.StepBoxes--EditButton:hover {
 .StepBoxes--StepDetails {
   min-width: 700px;
   /* This is a relatively sane default. */
-  top: 100px;
+  top: 250px;
 }
 
 .StepBoxes--StepDetailsHeader > button {
@@ -347,7 +347,6 @@ button.StepBoxes--EditButton:hover {
 .StepBoxes--StepDetailsTitle {
   display: flex;
   flex-flow: column nowrap;
-  flex-grow: 2;
   align-items: center;
   justify-content: center;
   padding: 0 2em;

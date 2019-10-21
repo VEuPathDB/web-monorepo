@@ -1,6 +1,6 @@
 import React from 'react';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
-import Modal from 'wdk-client/Components/Overlays/Modal';
+import Dialog from 'wdk-client/Components/Overlays/Dialog';
 
 import './StrategyModal.scss';
 
@@ -15,30 +15,16 @@ interface Props {
 
 export default function StrategyModal(props: Props) {
   const { children, title, onClose, onGoBack } = props;
+  const leftButtons = onGoBack && [
+    <button type="button" onClick={() => onGoBack()}>
+      <i className="fa fa-arrow-left"/>
+    </button>
+  ]
   return (
-    <Modal className={cx()}>
-      <div className={cx('--Header')}>
-        <div className={cx('--GoBack')}>
-          {onGoBack && (
-            <button type="button" className="link" onClick={() => onGoBack()}>
-              <i className="fa fa-lg fa-arrow-left"/>
-            </button>
-          )}
-        </div>
-        <div className={cx('--Title')}>
-          {title}
-        </div>
-        <div className={cx('--Close')}>
-          {onClose && (
-            <button type="button" className="link" onClick={() => onClose()}>
-              <i className="fa fa-lg fa-times"/>
-            </button>
-          )}
-        </div>
-      </div>
+    <Dialog open modal className={cx()} title={title} leftButtons={leftButtons} onClose={onClose}>
       <div className={cx('--Content')}>
         {children}
       </div>
-    </Modal>
+    </Dialog>
   );
 }

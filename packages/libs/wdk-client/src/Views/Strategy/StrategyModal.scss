@@ -1,26 +1,26 @@
 .StrategyModal {
-  align-self: flex-start;
-  margin-top: 100px;
-  margin-bottom: 50px;
-  max-width: 90vw;
-  background: white;
-  border-radius: 1em;
-  box-shadow: 0px 0 10px #666;
-  position: relative;
-  padding: 2em;
 
-  &--Header {
-    display: flex;
-    font-weight: bold;
-    justify-content: space-between;
-    margin-bottom: 1em;
-
-    > * { font-size: 2em; }
+  &Header {
+    background: white;
+    button {
+      border-radius: 50%;
+      font-size: 1.2em;
+      height: 2em;
+      width: 2em;
+    }
+    i {
+      color: #3e3e3e;
+    }
   }
 
-  &--GoBack, &--Close {
-    width: 1em;
-    i { color: #9e9e9e; }
+  &Title {
+    font-size: 1.4em;
+    margin: auto;
+  }
+
+  &Content {
+    max-height: 80vh;
+    padding: 1em 2em;
   }
 
 }
