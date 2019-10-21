@@ -245,6 +245,10 @@ const questionSharedDecoder =
       'allowedSecondaryInputRecordClassNames',
       Decode.optional(Decode.arrayOf(Decode.string))
     ),
+    Decode.field(
+      'isAnalyzable',
+      Decode.boolean
+    )
   )
 
 export type QuestionWithValidatedParameters = {

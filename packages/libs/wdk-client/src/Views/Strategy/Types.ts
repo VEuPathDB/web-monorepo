@@ -87,6 +87,7 @@ export interface StepBoxProps<T extends UiStepTree = UiStepTree> {
   isNested: boolean;
   isExpanded: boolean;
   isDeleteable: boolean;
+  isAnalyzable: boolean;
   renameStep: (newName: string) => void;
   makeNestedStrategy: () => void;
   makeUnnestStrategy: () => void;

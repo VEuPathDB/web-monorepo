@@ -66,6 +66,7 @@ export function getSingleRecordStepBundlePromise(
     defaultSummaryView: '_default',
     summaryViewPlugins: [ ],
     filters: [ ],
+    isAnalyzable: false,
     paramNames: [ "primaryKeys" ]
   };
 

@@ -78,6 +78,7 @@ function StepTree(props: StepBoxesProps) {
           }}
           pluginProps={{
             stepTree,
+            isAnalyzable: question.isAnalyzable,
             isNested: false,
             isExpanded: false,
             isDeleteable,
@@ -109,6 +110,7 @@ function StepTree(props: StepBoxesProps) {
                 }}
                 pluginProps={{
                   stepTree: secondaryInput,
+                  isAnalyzable: secondaryInput.question.isAnalyzable,
                   isNested: secondaryInput.isNested,
                   isExpanded: step.expanded,
                   isDeleteable,

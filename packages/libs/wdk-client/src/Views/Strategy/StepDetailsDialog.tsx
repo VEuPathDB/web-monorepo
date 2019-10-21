@@ -43,6 +43,7 @@ export const defaultActions: StepAction[] = [
     display: () => <React.Fragment>Analyze</React.Fragment>,
     onClick: ({ showNewAnalysisTab }) => showNewAnalysisTab(),
     isDisabled: ({ location, stepTree }) => !location.pathname.startsWith(getStepUrl(stepTree.step)),
+    isHidden: ({ isAnalyzable }) => !isAnalyzable,
     tooltip: () => 'Analyze the results of this search'
   },
   {

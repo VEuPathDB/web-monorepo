@@ -1,7 +1,6 @@
 import * as Decode from 'wdk-client/Utils/Json';
 import { AttributeField, RecordClass, Reporter, TableField, Question, ParameterGroup, SummaryViewPluginField, QuestionFilter, AttributeSortingSpec } from 'wdk-client/Utils/WdkModel';
 import { namedModelEntityDecoder, urlModelEntityDecoder } from 'wdk-client/Service/Decoders/CommonDecoders';
-import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 import { Omit } from 'wdk-client/Core/CommonTypes';
 
 // We add attributesMap and tablesMap after we get the data from the server
@@ -82,6 +81,7 @@ export const questionDecoder: Decode.Decoder<Question> =
       Decode.field('newBuild', Decode.optional(Decode.string)),
       Decode.field('reviseBuild', Decode.optional(Decode.string)),
       Decode.field('paramNames', Decode.arrayOf(Decode.string)),
+      Decode.field('isAnalyzable', Decode.boolean)
     ),
     Decode.combine(
       Decode.field('groups', Decode.arrayOf(parameterGroupDecoder)),

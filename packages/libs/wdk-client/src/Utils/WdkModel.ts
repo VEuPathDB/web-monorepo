@@ -221,6 +221,7 @@ export interface Question extends UrlModelEntity {
   filters: QuestionFilter[];
   allowedPrimaryInputRecordClassNames?: string[];
   allowedSecondaryInputRecordClassNames?: string[];
+  isAnalyzable: boolean;
   paramNames: string[];
   queryName?: string;
 }
