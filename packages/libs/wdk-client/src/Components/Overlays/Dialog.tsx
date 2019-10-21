@@ -11,6 +11,7 @@ type Props = {
   children: ReactNode;
   modal?: boolean;
   title?: ReactNode;
+  leftButtons?: ReactNode[];
   buttons?: ReactNode[];
   draggable?: boolean;
   resizable?: boolean;
@@ -32,14 +33,20 @@ function Dialog(props: Props) {
       <button key="close" type="button" onClick={() => onClose()}>
         <Icon type="close"/>
       </button>
-    )]
+    )],
+    leftButtons
   } = props;
 
   const content = (
     <div onKeyDown={handleKeyDown} className={makeClassName(props.className, '', props.modal && 'modal')} >
       <div ref={headerNode} className={makeClassName(props.className, 'Header')} >
+        <div className={makeClassName(props.className, 'LeftButtons')}>
+          {leftButtons}
+        </div>
         <div className={makeClassName(props.className, 'Title')}>{props.title}</div>
-        {buttons}
+        <div className={makeClassName(props.className, 'RightButtons')}>
+          {buttons}
+        </div>
       </div>
       <div className={makeClassName(props.className, 'Content')}>
         {props.children}

@@ -59,11 +59,31 @@ body.wdk-ModalOpen {
   background: none;
 }
 
+.wdk-DialogHeader button:hover {
+  background: #eee;
+}
+
 .wdk-DialogTitle {
+  display: flex;
+  justify-content: center;
+  flex: 5;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   margin-right: auto;
+}
+
+.wdk-DialogLeftButtons, .wdk-DialogRightButtons {
+  display: flex;
+  flex: 1;
+}
+
+.wdk-DialogLeftButtons {
+  justify-content: flex-start;
+}
+
+.wdk-DialogRightButtons {
+  justify-content: flex-end;
 }
 
 .wdk-DialogContent {
